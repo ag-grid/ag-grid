@@ -28,23 +28,26 @@ class FakeVScrollComp extends abstractFakeScrollComp_1.AbstractFakeScrollComp {
         const scrollbarWidth = vScrollShowing ? (this.gridOptionsService.getScrollbarWidth() || 0) : 0;
         const adjustedScrollbarWidth = (scrollbarWidth === 0 && invisibleScrollbar) ? 16 : scrollbarWidth;
         this.addOrRemoveCssClass('ag-scrollbar-invisible', invisibleScrollbar);
-        dom_1.setFixedWidth(this.getGui(), adjustedScrollbarWidth);
-        dom_1.setFixedWidth(this.eViewport, adjustedScrollbarWidth);
-        dom_1.setFixedWidth(this.eContainer, adjustedScrollbarWidth);
+        (0, dom_1.setFixedWidth)(this.getGui(), adjustedScrollbarWidth);
+        (0, dom_1.setFixedWidth)(this.eViewport, adjustedScrollbarWidth);
+        (0, dom_1.setFixedWidth)(this.eContainer, adjustedScrollbarWidth);
         this.setDisplayed(vScrollShowing, { skipAriaHidden: true });
     }
     onRowContainerHeightChanged() {
-        const gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
+        const { ctrlsService } = this;
+        const gridBodyCtrl = ctrlsService.getGridBodyCtrl();
         const gridBodyViewportEl = gridBodyCtrl.getBodyViewportElement();
-        if (this.eViewport.scrollTop != gridBodyViewportEl.scrollTop) {
-            this.eViewport.scrollTop = gridBodyViewportEl.scrollTop;
+        const eViewportScrollTop = this.getScrollPosition();
+        const gridBodyViewportScrollTop = gridBodyViewportEl.scrollTop;
+        if (eViewportScrollTop != gridBodyViewportScrollTop) {
+            this.setScrollPosition(gridBodyViewportScrollTop, true);
         }
     }
     getScrollPosition() {
         return this.getViewport().scrollTop;
     }
-    setScrollPosition(value) {
-        if (!dom_1.isVisible(this.getViewport())) {
+    setScrollPosition(value, force) {
+        if (!force && !(0, dom_1.isVisible)(this.getViewport())) {
             this.attemptSettingScrollPosition(value);
         }
         this.getViewport().scrollTop = value;

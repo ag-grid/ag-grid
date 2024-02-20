@@ -20,13 +20,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { RefSelector } from '../widgets/componentAnnotations';
-import { ManagedFocusFeature } from '../widgets/managedFocusFeature';
 import { clearElement } from '../utils/dom';
 import { setAriaLabel, setAriaRole } from '../utils/aria';
-import { callIfPresent } from '../utils/function';
 import { KeyCode } from '../constants/keyCode';
-import { Component } from '../widgets/component';
 import { PostConstruct, Autowired } from '../context/context';
+import { TabGuardComp } from '../widgets/tabGuardComp';
 var TabbedLayout = /** @class */ (function (_super) {
     __extends(TabbedLayout, _super);
     function TabbedLayout(params) {
@@ -41,14 +39,16 @@ var TabbedLayout = /** @class */ (function (_super) {
     }
     TabbedLayout.prototype.postConstruct = function () {
         var _this = this;
-        this.createManagedBean(new ManagedFocusFeature(this.getFocusableElement(), {
+        this.initialiseTabGuard({
             onTabKeyDown: this.onTabKeyDown.bind(this),
-            handleKeyDown: this.handleKeyDown.bind(this)
-        }));
+            handleKeyDown: this.handleKeyDown.bind(this),
+            focusInnerElement: this.focusInnerElement.bind(this),
+            focusTrapActive: true
+        });
         this.addDestroyFunc(function () { var _a, _b, _c; return (_c = (_b = (_a = _this.activeItem) === null || _a === void 0 ? void 0 : _a.tabbedItem) === null || _b === void 0 ? void 0 : _b.afterDetachedCallback) === null || _c === void 0 ? void 0 : _c.call(_b); });
     };
     TabbedLayout.getTemplate = function (cssClass) {
-        return /* html */ "<div class=\"ag-tabs " + cssClass + "\">\n            <div ref=\"eHeader\" role=\"tablist\" class=\"ag-tabs-header " + (cssClass ? cssClass + "-header" : '') + "\"></div>\n            <div ref=\"eBody\" role=\"presentation\" class=\"ag-tabs-body " + (cssClass ? cssClass + "-body" : '') + "\"></div>\n        </div>";
+        return /* html */ "<div class=\"ag-tabs ".concat(cssClass, "\">\n            <div ref=\"eHeader\" role=\"tablist\" class=\"ag-tabs-header ").concat(cssClass ? "".concat(cssClass, "-header") : '', "\"></div>\n            <div ref=\"eBody\" role=\"presentation\" class=\"ag-tabs-body ").concat(cssClass ? "".concat(cssClass, "-body") : '', "\"></div>\n        </div>");
     };
     TabbedLayout.prototype.handleKeyDown = function (e) {
         var eDocument = this.gridOptionsService.getDocument();
@@ -59,7 +59,7 @@ var TabbedLayout = /** @class */ (function (_super) {
                     return;
                 }
                 var isRightKey = e.key === KeyCode.RIGHT;
-                var isRtl = this.gridOptionsService.is('enableRtl');
+                var isRtl = this.gridOptionsService.get('enableRtl');
                 var currentPosition = this.items.indexOf(this.activeItem);
                 var nextPosition = isRightKey !== isRtl ? Math.min(currentPosition + 1, this.items.length - 1) : Math.max(currentPosition - 1, 0);
                 if (currentPosition === nextPosition) {
@@ -87,7 +87,7 @@ var TabbedLayout = /** @class */ (function (_super) {
         e.preventDefault();
         if (eHeader.contains(activeElement)) {
             // focus is in header, move into body of popup
-            focusService.focusInto(eBody, e.shiftKey);
+            this.focusBody(e.shiftKey);
             return;
         }
         var nextEl = null;
@@ -102,12 +102,26 @@ var TabbedLayout = /** @class */ (function (_super) {
         if (!nextEl && eBody.contains(activeElement)) {
             nextEl = focusService.findNextFocusableElement(eBody, false, e.shiftKey);
             if (!nextEl) {
-                nextEl = activeItem.eHeaderButton;
+                this.focusHeader();
             }
         }
         if (nextEl) {
             nextEl.focus();
         }
+    };
+    TabbedLayout.prototype.focusInnerElement = function (fromBottom) {
+        if (fromBottom) {
+            this.focusHeader();
+        }
+        else {
+            this.focusBody(true);
+        }
+    };
+    TabbedLayout.prototype.focusHeader = function () {
+        this.activeItem.eHeaderButton.focus();
+    };
+    TabbedLayout.prototype.focusBody = function (fromBottom) {
+        this.focusService.focusInto(this.eBody, fromBottom);
     };
     TabbedLayout.prototype.setAfterAttachedParams = function (params) {
         this.afterAttachedParams = params;
@@ -140,13 +154,11 @@ var TabbedLayout = /** @class */ (function (_super) {
     };
     TabbedLayout.prototype.showItemWrapper = function (wrapper) {
         var _this = this;
-        var _a, _b;
+        var _a, _b, _c, _d, _e, _f;
         var tabbedItem = wrapper.tabbedItem, eHeaderButton = wrapper.eHeaderButton;
-        if (this.params.onItemClicked) {
-            this.params.onItemClicked({ item: tabbedItem });
-        }
+        (_b = (_a = this.params).onItemClicked) === null || _b === void 0 ? void 0 : _b.call(_a, { item: tabbedItem });
         if (this.activeItem === wrapper) {
-            callIfPresent(this.params.onActiveItemClicked);
+            (_d = (_c = this.params).onActiveItemClicked) === null || _d === void 0 ? void 0 : _d.call(_c);
             return;
         }
         if (this.lastScrollListener) {
@@ -176,7 +188,7 @@ var TabbedLayout = /** @class */ (function (_super) {
         });
         if (this.activeItem) {
             this.activeItem.eHeaderButton.classList.remove('ag-tab-selected');
-            (_b = (_a = this.activeItem.tabbedItem).afterDetachedCallback) === null || _b === void 0 ? void 0 : _b.call(_a);
+            (_f = (_e = this.activeItem.tabbedItem).afterDetachedCallback) === null || _f === void 0 ? void 0 : _f.call(_e);
         }
         eHeaderButton.classList.add('ag-tab-selected');
         this.activeItem = wrapper;
@@ -194,5 +206,5 @@ var TabbedLayout = /** @class */ (function (_super) {
         PostConstruct
     ], TabbedLayout.prototype, "postConstruct", null);
     return TabbedLayout;
-}(Component));
+}(TabGuardComp));
 export { TabbedLayout };

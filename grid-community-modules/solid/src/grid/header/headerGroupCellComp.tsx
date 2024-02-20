@@ -51,7 +51,7 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
 
     return (
         <div ref={eGui!} class={getClassName()} style={style()} col-id={getColId()} 
-                    role="columnheader" tabIndex={-1} aria-expanded={getAriaExpanded()}>
+                    role="columnheader" aria-expanded={getAriaExpanded()}>
 
             { getUserCompDetails() 
                 && <UserComp compDetails={getUserCompDetails()!} /> }

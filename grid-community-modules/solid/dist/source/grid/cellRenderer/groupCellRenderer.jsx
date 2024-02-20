@@ -10,6 +10,7 @@ const GroupCellRenderer = (props) => {
     let eCheckboxRef;
     let eExpandedRef;
     let eContractedRef;
+    let role = 'gridcell';
     const [getInnerCompDetails, setInnerCompDetails] = createSignal();
     const [getChildCount, setChildCount] = createSignal();
     const [getValue, setValue] = createSignal();
@@ -36,6 +37,8 @@ const GroupCellRenderer = (props) => {
         };
         const ctrl = context.createBean(new GroupCellRendererCtrl());
         ctrl.init(compProxy, eGui, eCheckboxRef, eExpandedRef, eContractedRef, GroupCellRenderer, props);
+        eGui.setAttribute('role', ctrl.getCellAriaRole());
+        role = ctrl.getCellAriaRole();
         return () => { context.destroyBean(ctrl); };
     });
     const getClassName = createMemo(() => `ag-cell-wrapper ${getCssClasses().toString()}`);
@@ -44,7 +47,7 @@ const GroupCellRenderer = (props) => {
     const getCheckboxClassName = createMemo(() => `ag-group-checkbox ${getCheckboxCssClasses().toString()}`);
     const isShowUserComp = () => getInnerCompDetails() != null;
     const isShowValue = () => getInnerCompDetails() == null && getValue() != null;
-    return (<span class={getClassName()} ref={eGui} {...(!props.colDef ? { role: 'gridcell' } : {})}>
+    return (<span class={getClassName()} ref={eGui} {...(!props.colDef ? { role } : {})}>
             <span class={getExpandedClassName()} ref={eExpandedRef}></span>
             <span class={getContractedClassName()} ref={eContractedRef}></span>
             <span class={getCheckboxClassName()} ref={eCheckboxRef}></span>

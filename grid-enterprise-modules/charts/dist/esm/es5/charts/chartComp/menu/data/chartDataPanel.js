@@ -35,10 +35,14 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 var __values = (this && this.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
@@ -53,6 +57,7 @@ var __values = (this && this.__values) || function(o) {
 };
 import { _, AgCheckbox, AgGroupComponent, AgRadioButton, AgSelect, AgToggleButton, AutoScrollService, Autowired, Component, DragAndDropService, DragSourceType, Events, PostConstruct } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController";
+import { isHierarchical } from "../../utils/seriesTypeMapper";
 var DefaultDataPanelDef = {
     groups: [
         { type: 'categories', isOpen: true },
@@ -89,7 +94,7 @@ var ChartDataPanel = /** @class */ (function (_super) {
         var groupExpandedState = this.getGroupExpandedState();
         if (_.areEqual(_.keys(this.columnComps), colIds) && this.chartType === currentChartType) {
             // if possible, we just update existing components
-            __spreadArray(__spreadArray([], __read(dimensionCols)), __read(valueCols)).forEach(function (col) {
+            __spreadArray(__spreadArray([], __read(dimensionCols), false), __read(valueCols), false).forEach(function (col) {
                 _this.columnComps.get(col.colId).setValue(col.selected, true);
             });
             if (this.chartController.isActiveXYChart()) {
@@ -127,7 +132,7 @@ var ChartDataPanel = /** @class */ (function (_super) {
                     _this.createSeriesChartTypeGroup(valueCols);
                 }
                 else {
-                    console.warn("AG Grid: invalid charts data panel group name supplied: '" + type + "'");
+                    console.warn("AG Grid: invalid charts data panel group name supplied: '".concat(type, "'"));
                 }
             });
         }
@@ -202,17 +207,42 @@ var ChartDataPanel = /** @class */ (function (_super) {
             suppressOpenCloseIcons: false,
             cssIdentifier: 'charts-data'
         }));
-        var inputName = "chartDimension" + this.getCompId();
+        var inputName = "chartDimension".concat(this.categoriesGroupComp.getCompId());
+        // Display either radio buttons or checkboxes
+        // depending on whether the current chart type supports multiple category columns
+        var chartType = this.chartController.getChartType();
+        var supportsMultipleCategoryColumns = isHierarchical(chartType);
         columns.forEach(function (col) {
-            var comp = _this.categoriesGroupComp.createManagedBean(new AgRadioButton());
+            var comp = _this.categoriesGroupComp.createManagedBean(supportsMultipleCategoryColumns
+                ? (function () {
+                    var checkboxComp = new AgCheckbox();
+                    checkboxComp.addCssClass('ag-data-select-checkbox');
+                    return checkboxComp;
+                })()
+                : new AgRadioButton());
             comp.setLabel(_.escapeString(col.displayName));
             comp.setValue(col.selected);
             comp.setInputName(inputName);
             _this.addChangeListener(comp, col);
             _this.categoriesGroupComp.addItem(comp);
             _this.columnComps.set(col.colId, comp);
+            if (supportsMultipleCategoryColumns)
+                _this.addDragHandle(comp, col);
         });
         this.addComponent(this.getGui(), this.categoriesGroupComp, 'categoriesGroup');
+        if (supportsMultipleCategoryColumns) {
+            var categoriesGroupGui_1 = this.categoriesGroupComp.getGui();
+            var dropTarget_1 = {
+                getIconName: function () { return DragAndDropService.ICON_MOVE; },
+                getContainer: function () { return categoriesGroupGui_1; },
+                onDragging: function (params) { return _this.onDragging(params); },
+                onDragLeave: function () { return _this.onDragLeave(); },
+                isInterestedIn: this.isInterestedIn.bind(this),
+                targetContainsSource: true
+            };
+            this.dragAndDropService.addDropTarget(dropTarget_1);
+            this.addDestroyFunc(function () { return _this.dragAndDropService.removeDropTarget(dropTarget_1); });
+        }
     };
     ChartDataPanel.prototype.createSeriesGroup = function (columns) {
         var _this = this;
@@ -229,7 +259,7 @@ var ChartDataPanel = /** @class */ (function (_super) {
                 .setLabel(this.chartTranslationService.translate('paired'))
                 .setLabelAlignment('left')
                 .setLabelWidth('flex')
-                .setInputWidth(45)
+                .setInputWidth('flex')
                 .setValue(this.chartOptionsService.getPairedMode())
                 .onValueChange(function (newValue) {
                 _this.chartOptionsService.setPairedMode(!!newValue);
@@ -370,7 +400,7 @@ var ChartDataPanel = /** @class */ (function (_super) {
                 }
             }
             selectedValuesCount++;
-            return escapedLabel + " (" + axisLabel + ")";
+            return "".concat(escapedLabel, " (").concat(axisLabel, ")");
         };
     };
     ChartDataPanel.prototype.getCategoryGroupTitle = function () {
@@ -409,7 +439,7 @@ var ChartDataPanel = /** @class */ (function (_super) {
         this.clearHoveredItems();
         this.lastHoveredItem = { comp: comp, position: position };
         var eGui = comp.getGui();
-        eGui.classList.add('ag-list-item-hovered', "ag-item-highlight-" + position);
+        eGui.classList.add('ag-list-item-hovered', "ag-item-highlight-".concat(position));
     };
     ChartDataPanel.prototype.checkHoveredItem = function (draggingEvent) {
         var e_1, _a;
@@ -449,7 +479,7 @@ var ChartDataPanel = /** @class */ (function (_super) {
         var _this = this;
         if (this.lastHoveredItem) {
             var _a = this.chartController.getColStateForMenu(), dimensionCols = _a.dimensionCols, valueCols = _a.valueCols;
-            var draggedColumnState = __spreadArray(__spreadArray([], __read(dimensionCols)), __read(valueCols)).find(function (state) { return state.column === _this.lastDraggedColumn; });
+            var draggedColumnState = __spreadArray(__spreadArray([], __read(dimensionCols), false), __read(valueCols), false).find(function (state) { return state.column === _this.lastDraggedColumn; });
             if (draggedColumnState) {
                 var targetIndex = Array.from(this.columnComps.values()).indexOf(this.lastHoveredItem.comp);
                 if (this.lastHoveredItem.position === 'bottom') {

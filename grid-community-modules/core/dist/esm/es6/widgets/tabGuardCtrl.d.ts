@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "../context/beanStub";
@@ -16,6 +16,8 @@ export declare class TabGuardCtrl extends BeanStub {
     private readonly eTopGuard;
     private readonly eBottomGuard;
     private readonly eFocusableElement;
+    private readonly focusTrapActive;
+    private readonly forceFocusOutWhenTabGuardsAreEmpty;
     private readonly providedFocusInnerElement?;
     private readonly providedFocusIn?;
     private readonly providedFocusOut?;
@@ -23,14 +25,17 @@ export declare class TabGuardCtrl extends BeanStub {
     private readonly providedOnTabKeyDown?;
     private readonly providedHandleKeyDown?;
     private skipTabGuardFocus;
+    private forcingFocusOut;
     constructor(params: {
         comp: ITabGuard;
         eTopGuard: HTMLElement;
         eBottomGuard: HTMLElement;
         eFocusableElement: HTMLElement;
+        focusTrapActive?: boolean;
+        forceFocusOutWhenTabGuardsAreEmpty?: boolean;
         focusInnerElement?: (fromBottom: boolean) => void;
-        onFocusIn?: (event: FocusEvent) => boolean;
-        onFocusOut?: (event: FocusEvent) => boolean;
+        onFocusIn?: (event: FocusEvent) => void;
+        onFocusOut?: (event: FocusEvent) => void;
         shouldStopEventPropagation?: () => boolean;
         onTabKeyDown?: (e: KeyboardEvent) => void;
         handleKeyDown?: (e: KeyboardEvent) => void;
@@ -42,10 +47,12 @@ export declare class TabGuardCtrl extends BeanStub {
     private activateTabGuards;
     private deactivateTabGuards;
     private onFocus;
+    private findNextElementOutsideAndFocus;
     private onFocusIn;
     private onFocusOut;
     onTabKeyDown(e: KeyboardEvent): void;
     focusInnerElement(fromBottom?: boolean): void;
     getNextFocusableElement(backwards?: boolean): HTMLElement | null;
     forceFocusOutOfContainer(up?: boolean): void;
+    isTabGuard(element: HTMLElement): boolean;
 }

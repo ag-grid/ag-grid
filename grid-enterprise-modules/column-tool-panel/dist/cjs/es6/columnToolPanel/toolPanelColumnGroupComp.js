@@ -32,9 +32,6 @@ class ToolPanelColumnGroupComp extends core_1.Component {
         const checkboxInput = this.cbSelect.getInputElement();
         checkboxGui.insertAdjacentElement('afterend', this.eDragHandle);
         checkboxInput.setAttribute('tabindex', '-1');
-        if (core_1._.missing(this.displayName)) {
-            this.displayName = '>>';
-        }
         this.eLabel.innerHTML = this.displayName ? this.displayName : '';
         this.setupExpandContract();
         this.addCssClass('ag-column-select-indent-' + this.columnDept);
@@ -94,7 +91,7 @@ class ToolPanelColumnGroupComp extends core_1.Component {
     }
     onContextMenu(e) {
         const { columnGroup, gridOptionsService } = this;
-        if (gridOptionsService.is('functionsReadOnly')) {
+        if (gridOptionsService.get('functionsReadOnly')) {
             return;
         }
         const contextMenu = this.createBean(new toolPanelContextMenu_1.ToolPanelContextMenu(columnGroup, e, this.focusWrapper));
@@ -117,14 +114,15 @@ class ToolPanelColumnGroupComp extends core_1.Component {
             core_1._.setDisplayed(this.eDragHandle, false);
             return;
         }
-        const hideColumnOnExit = !this.gridOptionsService.is('suppressDragLeaveHidesColumns');
+        let hideColumnOnExit = !this.gridOptionsService.get('suppressDragLeaveHidesColumns');
         const dragSource = {
             type: core_1.DragSourceType.ToolPanel,
             eElement: this.eDragHandle,
             dragItemName: this.displayName,
-            defaultIconName: hideColumnOnExit ? core_1.DragAndDropService.ICON_HIDE : core_1.DragAndDropService.ICON_NOT_ALLOWED,
+            getDefaultIconName: () => hideColumnOnExit ? core_1.DragAndDropService.ICON_HIDE : core_1.DragAndDropService.ICON_NOT_ALLOWED,
             getDragItem: () => this.createDragItem(),
             onDragStarted: () => {
+                hideColumnOnExit = !this.gridOptionsService.get('suppressDragLeaveHidesColumns');
                 const event = {
                     type: core_1.Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START,
                     column: this.columnGroup
@@ -328,28 +326,28 @@ ToolPanelColumnGroupComp.TEMPLATE = `<div class="ag-column-select-column-group" 
             <span class="ag-column-select-column-label" ref="eLabel"></span>
         </div>`;
 __decorate([
-    core_1.Autowired('columnModel')
+    (0, core_1.Autowired)('columnModel')
 ], ToolPanelColumnGroupComp.prototype, "columnModel", void 0);
 __decorate([
-    core_1.Autowired('dragAndDropService')
+    (0, core_1.Autowired)('dragAndDropService')
 ], ToolPanelColumnGroupComp.prototype, "dragAndDropService", void 0);
 __decorate([
-    core_1.Autowired('modelItemUtils')
+    (0, core_1.Autowired)('modelItemUtils')
 ], ToolPanelColumnGroupComp.prototype, "modelItemUtils", void 0);
 __decorate([
-    core_1.RefSelector('cbSelect')
+    (0, core_1.RefSelector)('cbSelect')
 ], ToolPanelColumnGroupComp.prototype, "cbSelect", void 0);
 __decorate([
-    core_1.RefSelector('eLabel')
+    (0, core_1.RefSelector)('eLabel')
 ], ToolPanelColumnGroupComp.prototype, "eLabel", void 0);
 __decorate([
-    core_1.RefSelector('eGroupOpenedIcon')
+    (0, core_1.RefSelector)('eGroupOpenedIcon')
 ], ToolPanelColumnGroupComp.prototype, "eGroupOpenedIcon", void 0);
 __decorate([
-    core_1.RefSelector('eGroupClosedIcon')
+    (0, core_1.RefSelector)('eGroupClosedIcon')
 ], ToolPanelColumnGroupComp.prototype, "eGroupClosedIcon", void 0);
 __decorate([
-    core_1.RefSelector('eColumnGroupIcons')
+    (0, core_1.RefSelector)('eColumnGroupIcons')
 ], ToolPanelColumnGroupComp.prototype, "eColumnGroupIcons", void 0);
 __decorate([
     core_1.PostConstruct

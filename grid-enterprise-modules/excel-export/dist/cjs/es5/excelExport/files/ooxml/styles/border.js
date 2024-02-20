@@ -6,7 +6,7 @@ var getBorderColor = function (color) {
         name: 'color',
         properties: {
             rawMap: {
-                rgb: excelLegacyConvert_1.convertLegacyColor(color || '#000000')
+                rgb: (0, excelLegacyConvert_1.convertLegacyColor)(color || '#000000')
             }
         }
     };

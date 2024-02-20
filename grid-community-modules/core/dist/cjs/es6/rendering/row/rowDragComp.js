@@ -32,7 +32,7 @@ class RowDragComp extends component_1.Component {
     postConstruct() {
         if (!this.customGui) {
             this.setTemplate(/* html */ `<div class="ag-drag-handle ag-row-drag" aria-hidden="true"></div>`);
-            this.getGui().appendChild(icon_1.createIconNoSpan('rowDrag', this.gridOptionsService, null));
+            this.getGui().appendChild((0, icon_1.createIconNoSpan)('rowDrag', this.gridOptionsService, null));
             this.addDragSource();
         }
         else {
@@ -40,7 +40,7 @@ class RowDragComp extends component_1.Component {
         }
         this.checkCompatibility();
         if (!this.suppressVisibilityChange) {
-            const strategy = this.gridOptionsService.is('rowDragManaged') ?
+            const strategy = this.gridOptionsService.get('rowDragManaged') ?
                 new ManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column) :
                 new NonManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column);
             this.createManagedBean(strategy, this.beans.context);
@@ -51,7 +51,7 @@ class RowDragComp extends component_1.Component {
         this.addDragSource(dragStartPixels);
     }
     getSelectedNodes() {
-        const isRowDragMultiRow = this.gridOptionsService.is('rowDragMultiRow');
+        const isRowDragMultiRow = this.gridOptionsService.get('rowDragMultiRow');
         if (!isRowDragMultiRow) {
             return [this.rowNode];
         }
@@ -60,10 +60,10 @@ class RowDragComp extends component_1.Component {
     }
     // returns true if all compatibility items work out
     checkCompatibility() {
-        const managed = this.gridOptionsService.is('rowDragManaged');
-        const treeData = this.gridOptionsService.isTreeData();
+        const managed = this.gridOptionsService.get('rowDragManaged');
+        const treeData = this.gridOptionsService.get('treeData');
         if (treeData && managed) {
-            function_1.doOnce(() => console.warn('AG Grid: If using row drag with tree data, you cannot have rowDragManaged=true'), 'RowDragComp.managedAndTreeData');
+            (0, function_1.warnOnce)('If using row drag with tree data, you cannot have rowDragManaged=true');
         }
     }
     getDragItem() {
@@ -88,7 +88,6 @@ class RowDragComp extends component_1.Component {
         if (this.dragSource) {
             this.removeDragSource();
         }
-        const rowDragText = this.getRowDragText(this.column);
         const translate = this.localeService.getLocaleTextFunc();
         this.dragSource = {
             type: dragAndDropService_1.DragSourceType.RowDrag,
@@ -97,6 +96,7 @@ class RowDragComp extends component_1.Component {
                 var _a;
                 const dragItem = this.getDragItem();
                 const dragItemCount = ((_a = dragItem.rowNodes) === null || _a === void 0 ? void 0 : _a.length) || 1;
+                const rowDragText = this.getRowDragText(this.column);
                 if (rowDragText) {
                     return rowDragText(dragItem, dragItemCount);
                 }
@@ -116,7 +116,7 @@ class RowDragComp extends component_1.Component {
     }
 }
 __decorate([
-    context_1.Autowired('beans')
+    (0, context_1.Autowired)('beans')
 ], RowDragComp.prototype, "beans", void 0);
 __decorate([
     context_1.PostConstruct
@@ -142,7 +142,7 @@ class VisibilityStrategy extends beanStub_1.BeanStub {
             let isShownSometimes = false;
             if (this.column) {
                 shown = this.column.isRowDrag(this.rowNode) || this.parent.isCustomGui();
-                isShownSometimes = function_1.isFunction(this.column.getColDef().rowDrag);
+                isShownSometimes = (0, function_1.isFunction)(this.column.getColDef().rowDrag);
             }
             // if shown sometimes, them some rows can have drag handle while other don't,
             // so we use setVisible to keep the handles horizontally aligned (as setVisible
@@ -178,7 +178,7 @@ class NonManagedVisibilityStrategy extends VisibilityStrategy {
     }
     workOutVisibility() {
         // only show the drag if both sort and filter are not present
-        const neverDisplayed = this.gridOptionsService.is('suppressRowDrag');
+        const neverDisplayed = this.gridOptionsService.get('suppressRowDrag');
         this.setDisplayedOrVisible(neverDisplayed);
     }
 }
@@ -211,7 +211,7 @@ class ManagedVisibilityStrategy extends VisibilityStrategy {
         const gridBodyCon = this.beans.ctrlsService.getGridBodyCtrl();
         const rowDragFeature = gridBodyCon.getRowDragFeature();
         const shouldPreventRowMove = rowDragFeature && rowDragFeature.shouldPreventRowMove();
-        const suppressRowDrag = this.gridOptionsService.is('suppressRowDrag');
+        const suppressRowDrag = this.gridOptionsService.get('suppressRowDrag');
         const hasExternalDropZones = this.beans.dragAndDropService.hasExternalDropZones();
         const neverDisplayed = (shouldPreventRowMove && !hasExternalDropZones) || suppressRowDrag;
         this.setDisplayedOrVisible(neverDisplayed);

@@ -56,7 +56,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
     }
 
     private setAutoHeightClasses(): void {
-        const autoHeight = this.gridOptionsService.is('detailRowAutoHeight');
+        const autoHeight = this.gridOptionsService.get('detailRowAutoHeight');
 
         const parentClass = autoHeight ? 'ag-details-row-auto-height' : 'ag-details-row-fixed-height';
         const detailClass =  autoHeight ? 'ag-details-grid-auto-height' : 'ag-details-grid-fixed-height';
@@ -98,7 +98,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
             return;
         }
 
-        const autoHeight = this.gridOptionsService.is('detailRowAutoHeight');
+        const autoHeight = this.gridOptionsService.get('detailRowAutoHeight');
 
         // we clone the detail grid options, as otherwise it would be shared
         // across many instances, and that would be a problem because we set
@@ -140,11 +140,16 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
     }
 
     private loadRowData(): void {
-
         // in case a refresh happens before the last refresh completes (as we depend on async
         // application logic) we keep track on what the latest call was.
         this.loadRowDataVersion++;
         const versionThisCall = this.loadRowDataVersion;
+
+        if (this.params.detailGridOptions?.rowModelType === 'serverSide') {
+            const node = this.params.node as RowNode;
+            node.detailGridInfo?.api?.refreshServerSide({ purge: true });
+            return;
+        }
 
         const userFunc = this.params.getDetailRowData;
         if (!userFunc) {
@@ -166,7 +171,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
             // as the data could have been updated with new instance
             data: this.params.node.data,
             successCallback: successCallback,
-            context: this.gridOptionsService.context
+            context: this.gridOptionsService.getGridCommonParams().context
         };
         userFunc(funcParams);
     }
@@ -175,7 +180,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
         const GET_GRID_TO_REFRESH = false;
         const GET_GRID_TO_DO_NOTHING = true;
 
-        switch(this.refreshStrategy) {
+        switch (this.refreshStrategy) {
             // ignore this refresh, make grid think we've refreshed but do nothing
             case 'nothing': return GET_GRID_TO_DO_NOTHING;
             // grid will destroy and recreate the cell

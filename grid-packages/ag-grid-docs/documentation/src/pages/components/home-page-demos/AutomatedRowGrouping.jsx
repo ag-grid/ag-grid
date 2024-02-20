@@ -10,11 +10,16 @@ import automatedExamplesVars from '../../../components/automated-examples/lib/va
 import { OverlayButton } from '../../../components/automated-examples/OverlayButton';
 import { ToggleAutomatedExampleButton } from '../../../components/automated-examples/ToggleAutomatedExampleButton';
 import { UpdateSpeedSlider } from '../../../components/automated-examples/UpdateSpeedSlider';
-import FeaturesList from '../../../components/FeaturesList';
 import LogoMark from '../../../components/LogoMark';
 import breakpoints from '../../../design-system/breakpoint.module.scss';
 import { trackHomepageExampleRowGrouping, trackOnceHomepageExampleRowGrouping } from '../../../utils/analytics';
-import { hostPrefix, isProductionBuild, localPrefix } from '../../../utils/consts';
+import {
+    agGridEnterpriseVersion,
+    hostPrefix,
+    integratedChartsUsesChartsEnterprise,
+    isProductionBuild,
+    localPrefix
+} from '../../../utils/consts';
 import { useIntersectionObserver } from '../../../utils/use-intersection-observer';
 import styles from './AutomatedRowGrouping.module.scss';
 
@@ -43,13 +48,13 @@ if (!isProductionBuild()) {
     helmet.push(
         <script
             key="enterprise-lib"
-            src="https://cdn.jsdelivr.net/npm/ag-grid-enterprise/dist/ag-grid-enterprise.min.js"
+            src={`https://cdn.jsdelivr.net/npm/ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise@${agGridEnterpriseVersion}/dist/ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise.min.js`}
             type="text/javascript"
         />
     );
 }
 
-function AutomatedRowGrouping({ automatedExampleManager, useStaticData, runOnce, visibilityThreshold }) {
+function AutomatedRowGrouping({ automatedExampleManager, useStaticData, runOnce, visibilityThreshold, darkMode }) {
     const exampleId = ROW_GROUPING_ID;
     const gridClassname = 'automated-row-grouping-grid';
     const gridRef = useRef(null);
@@ -106,6 +111,7 @@ function AutomatedRowGrouping({ automatedExampleManager, useStaticData, runOnce,
     useEffect(() => {
         let params = {
             gridClassname,
+            darkMode,
             getOverlay: () => {
                 return overlayRef.current;
             },
@@ -147,11 +153,18 @@ function AutomatedRowGrouping({ automatedExampleManager, useStaticData, runOnce,
         });
     }, []);
 
+    useEffect(() => {
+        if (!exampleRef.current) {
+            return;
+        }
+        exampleRef.current.updateDarkMode(darkMode);
+    }, [darkMode])
+
     return (
         <>
             <header className={styles.sectionHeader}>
-                <h2 className="font-size-gargantuan">Feature Packed, Incredible Performance</h2>
-                <p className="font-size-extra-large">
+                <h2 className="text-3xl">Feature Packed, Incredible Performance</h2>
+                <p className="text-xl">
                     Millions of rows, thousands of updates per second? No problem!
                     <br />
                     Out of the box performance that can handle any data you can throw at it.
@@ -160,7 +173,11 @@ function AutomatedRowGrouping({ automatedExampleManager, useStaticData, runOnce,
 
             <Helmet>{helmet.map((entry) => entry)}</Helmet>
             {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
-            <div ref={gridRef} className="automated-row-grouping-grid ag-theme-alpine-dark" onClick={gridInteraction}>
+            <div ref={gridRef} className={classNames("automated-row-grouping-grid", {
+                "ag-theme-quartz": !darkMode,
+                "ag-theme-quartz-dark": darkMode,
+            })}
+            onClick={gridInteraction}>
                 <OverlayButton
                     ref={overlayRef}
                     ariaLabel="Give me control"
@@ -181,7 +198,7 @@ function AutomatedRowGrouping({ automatedExampleManager, useStaticData, runOnce,
             </div>
 
             <footer className={styles.sectionFooter}>
-                <div className={classNames(styles.exploreButtonOuter, 'font-size-extra-large')}>
+                <div className={classNames(styles.exploreButtonOuter, 'text-xl')}>
                     <span className="text-secondary">Live example:</span>
                     <ToggleAutomatedExampleButton
                         onClick={() => {
@@ -213,8 +230,6 @@ function AutomatedRowGrouping({ automatedExampleManager, useStaticData, runOnce,
                     setValue={updateFrequency}
                 />
             </footer>
-
-            <FeaturesList />
         </>
     );
 }

@@ -11,14 +11,10 @@ This guide is intended as a starting point when learning how to use the [Server-
 
 The sample Olympic Medals application is developed using a Node.js server that connects to a MySQL database and will demonstrate how data can be lazy-loaded as required, even when performing group, filter and sort operations when working with large datasets.
 
-The following screenshot shows what the finished application looks like:
-
-<image-caption src="server-side-operations-nodejs/resources/nodejs-app.png" alt="NodeJS" constrained="true"></image-caption>
-
-<note>
+<warning>
 The reference implementation covered in this guide is for demonstration purposes only. If you use
 this in production it comes with no warranty or support.
-</note>
+</warning>
 
 The source code can be found here: [https://github.com/ag-grid/ag-grid-server-side-nodejs-example](https://github.com/ag-grid/ag-grid-server-side-nodejs-example).
 
@@ -28,7 +24,7 @@ In this Olympic Medals application, the server endpoint will be hosted using a w
 
 An overview of technologies used in this guide is illustrated in the diagram below:
 
-<image-caption src="server-side-operations-nodejs/resources/app-arch.png" alt="App Arch" constrained="true"></image-caption>
+<image-caption src="server-side-operations-nodejs/resources/app-arch.png" alt="App Arch" constrained="true" filterdarkmode="true"></image-caption>
 
 We will now proceed to install and run the application before going through the implementation details.
 
@@ -97,17 +93,13 @@ const gridOptions = {
         { field: 'silver', aggFunc: 'sum' },
         { field: 'bronze', aggFunc: 'sum' },
     ],
-
-    defaultColDef: {
-        sortable: true
-    }
 }
 ```
 
 In the code snippet above, the grid is configured to use the Server-Side Row Model by setting: `gridOptions.rowModelType = 'serverSide'`.
 
 
-Sorting is enabled via `defaultColDef.sortable = true` property. A simple number filter is also added to the 'year' column. Note that as new data is loaded the applied filters are kept.
+Sorting is enabled by default. A simple number filter is also added to the 'year' column. Note that as new data is loaded the applied filters are kept.
 
 To demonstrate [Row Grouping](/server-side-model-grouping/), the 'country' and 'sport' columns have been configured with `rowGroup = true`. Finally, to ensure the medal values are aggregated up the group hierarchy, the value columns have been set up with an aggregation function: `aggFunc='sum'`.
 
@@ -141,7 +133,7 @@ const datasource = {
 };
 
 // register datasource with the grid
-gridOptions.api.setServerSideDatasource(datasource);
+api.setGridOption('serverSideDatasource', datasource);
 ```
 
 ## Server Endpoint

@@ -32,12 +32,12 @@ var CellRangeFeature = /** @class */ (function () {
         this.rangeCount = this.beans.rangeService.getCellRangeCount(this.cellCtrl.getCellPosition());
         this.hasChartRange = this.getHasChartRange();
         this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_SELECTED, this.rangeCount !== 0);
-        this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_SELECTED + "-1", this.rangeCount === 1);
-        this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_SELECTED + "-2", this.rangeCount === 2);
-        this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_SELECTED + "-3", this.rangeCount === 3);
-        this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_SELECTED + "-4", this.rangeCount >= 4);
+        this.cellComp.addOrRemoveCssClass("".concat(CSS_CELL_RANGE_SELECTED, "-1"), this.rangeCount === 1);
+        this.cellComp.addOrRemoveCssClass("".concat(CSS_CELL_RANGE_SELECTED, "-2"), this.rangeCount === 2);
+        this.cellComp.addOrRemoveCssClass("".concat(CSS_CELL_RANGE_SELECTED, "-3"), this.rangeCount === 3);
+        this.cellComp.addOrRemoveCssClass("".concat(CSS_CELL_RANGE_SELECTED, "-4"), this.rangeCount >= 4);
         this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_CHART, this.hasChartRange);
-        aria_1.setAriaSelected(this.eGui, this.rangeCount > 0 ? true : undefined);
+        (0, aria_1.setAriaSelected)(this.eGui, this.rangeCount > 0 ? true : undefined);
         this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_SINGLE_CELL, this.isSingleCell());
         this.updateRangeBorders();
         this.refreshHandle();
@@ -64,7 +64,7 @@ var CellRangeFeature = /** @class */ (function () {
             return false;
         }
         var cellRanges = rangeService.getCellRanges();
-        return cellRanges.length > 0 && cellRanges.every(function (range) { return array_1.includes([IRangeService_1.CellRangeType.DIMENSION, IRangeService_1.CellRangeType.VALUE], range.type); });
+        return cellRanges.length > 0 && cellRanges.every(function (range) { return (0, array_1.includes)([IRangeService_1.CellRangeType.DIMENSION, IRangeService_1.CellRangeType.VALUE], range.type); });
     };
     CellRangeFeature.prototype.updateRangeBordersIfRangeCount = function () {
         // we only need to update range borders if we are in a range
@@ -75,7 +75,7 @@ var CellRangeFeature = /** @class */ (function () {
     };
     CellRangeFeature.prototype.getRangeBorders = function () {
         var _this = this;
-        var isRtl = this.beans.gridOptionsService.is('enableRtl');
+        var isRtl = this.beans.gridOptionsService.get('enableRtl');
         var top = false;
         var right = false;
         var bottom = false;
@@ -124,7 +124,7 @@ var CellRangeFeature = /** @class */ (function () {
         return { top: top, right: right, bottom: bottom, left: left };
     };
     CellRangeFeature.prototype.refreshHandle = function () {
-        if (!this.beans.rangeService) {
+        if (!this.beans.rangeService || this.beans.context.isDestroyed()) {
             return;
         }
         var shouldHaveSelectionHandle = this.shouldHaveSelectionHandle();
@@ -143,10 +143,10 @@ var CellRangeFeature = /** @class */ (function () {
         if (this.rangeCount < 1 || rangesLen < 1) {
             return false;
         }
-        var cellRange = array_1.last(cellRanges);
+        var cellRange = (0, array_1.last)(cellRanges);
         var cellPosition = this.cellCtrl.getCellPosition();
-        var isFillHandleAvailable = gridOptionsService.is('enableFillHandle') && !this.cellCtrl.isSuppressFillHandle();
-        var isRangeHandleAvailable = gridOptionsService.is('enableRangeHandle');
+        var isFillHandleAvailable = gridOptionsService.get('enableFillHandle') && !this.cellCtrl.isSuppressFillHandle();
+        var isRangeHandleAvailable = gridOptionsService.get('enableRangeHandle');
         var handleIsAvailable = rangesLen === 1 && !this.cellCtrl.isEditing() && (isFillHandleAvailable || isRangeHandleAvailable);
         if (this.hasChartRange) {
             var hasCategoryRange = cellRanges[0].type === IRangeService_1.CellRangeType.DIMENSION;
@@ -161,8 +161,8 @@ var CellRangeFeature = /** @class */ (function () {
     };
     CellRangeFeature.prototype.addSelectionHandle = function () {
         var _a = this.beans, gridOptionsService = _a.gridOptionsService, rangeService = _a.rangeService;
-        var cellRangeType = array_1.last(rangeService.getCellRanges()).type;
-        var selectionHandleFill = gridOptionsService.is('enableFillHandle') && generic_1.missing(cellRangeType);
+        var cellRangeType = (0, array_1.last)(rangeService.getCellRanges()).type;
+        var selectionHandleFill = gridOptionsService.get('enableFillHandle') && (0, generic_1.missing)(cellRangeType);
         var type = selectionHandleFill ? IRangeService_1.SelectionHandleType.FILL : IRangeService_1.SelectionHandleType.RANGE;
         if (this.selectionHandle && this.selectionHandle.getType() !== type) {
             this.selectionHandle = this.beans.context.destroyBean(this.selectionHandle);

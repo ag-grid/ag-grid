@@ -1,4 +1,4 @@
-// @ag-grid-community/react v30.1.0
+// @ag-grid-community/react v31.1.0
 import ReactDOM from "react-dom";
 export const classesList = (...list) => {
     const filtered = list.filter(s => s != null && s !== '');
@@ -35,13 +35,25 @@ export const isComponentStateless = (Component) => {
 };
 // CreateRoot is only available from React 18, which if used requires us to use flushSync.
 const createRootAndFlushSyncAvailable = ReactDOM.createRoot != null && ReactDOM.flushSync != null;
+let disableFlushSync = false;
+/** Enable flushSync to be disabled for the callback and the next frame (via setTimeout 0) to prevent flushSync during an existing render.
+ * Provides an alternative to the more fine grained useFlushSync boolean param to agFlushSync.
+ */
+export function runWithoutFlushSync(func) {
+    if (!disableFlushSync) {
+        // We only re-enable flushSync asynchronously to avoid re-enabling it while React is still triggering renders related to the original call.
+        setTimeout(() => disableFlushSync = false, 0);
+    }
+    disableFlushSync = true;
+    return func();
+}
 /**
  * Wrapper around flushSync to provide backwards compatibility with React 16-17
  * Also allows us to control via the `useFlushSync` param whether we want to use flushSync or not
  * as we do not want to use flushSync when we are likely to already be in a render cycle
  */
 export const agFlushSync = (useFlushSync, fn) => {
-    if (createRootAndFlushSyncAvailable && useFlushSync) {
+    if (createRootAndFlushSyncAvailable && useFlushSync && !disableFlushSync) {
         ReactDOM.flushSync(fn);
     }
     else {

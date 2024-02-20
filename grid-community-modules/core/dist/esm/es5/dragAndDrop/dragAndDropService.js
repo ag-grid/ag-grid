@@ -38,23 +38,15 @@ import { flatten, removeFromArray } from "../utils/array";
 import { getBodyHeight, getBodyWidth } from "../utils/browser";
 import { loadTemplate, clearElement, getElementRectWithOffset } from "../utils/dom";
 import { isFunction } from "../utils/function";
+import { HorizontalDirection, VerticalDirection } from "../constants/direction";
 export var DragSourceType;
 (function (DragSourceType) {
     DragSourceType[DragSourceType["ToolPanel"] = 0] = "ToolPanel";
     DragSourceType[DragSourceType["HeaderCell"] = 1] = "HeaderCell";
     DragSourceType[DragSourceType["RowDrag"] = 2] = "RowDrag";
     DragSourceType[DragSourceType["ChartPanel"] = 3] = "ChartPanel";
+    DragSourceType[DragSourceType["AdvancedFilterBuilder"] = 4] = "AdvancedFilterBuilder";
 })(DragSourceType || (DragSourceType = {}));
-export var VerticalDirection;
-(function (VerticalDirection) {
-    VerticalDirection[VerticalDirection["Up"] = 0] = "Up";
-    VerticalDirection[VerticalDirection["Down"] = 1] = "Down";
-})(VerticalDirection || (VerticalDirection = {}));
-export var HorizontalDirection;
-(function (HorizontalDirection) {
-    HorizontalDirection[HorizontalDirection["Left"] = 0] = "Left";
-    HorizontalDirection[HorizontalDirection["Right"] = 1] = "Right";
-})(HorizontalDirection || (HorizontalDirection = {}));
 var DragAndDropService = /** @class */ (function (_super) {
     __extends(DragAndDropService, _super);
     function DragAndDropService() {
@@ -111,7 +103,6 @@ var DragAndDropService = /** @class */ (function (_super) {
         this.dragSource = dragSource;
         this.eventLastTime = mouseEvent;
         this.dragItem = this.dragSource.getDragItem();
-        this.lastDropTarget = this.dragSource.dragSourceDropTarget;
         if (this.dragSource.onDragStarted) {
             this.dragSource.onDragStarted();
         }
@@ -348,8 +339,8 @@ var DragAndDropService = /** @class */ (function (_super) {
         if (top < 0) {
             top = 0;
         }
-        ghost.style.left = left + "px";
-        ghost.style.top = top + "px";
+        ghost.style.left = "".concat(left, "px");
+        ghost.style.top = "".concat(top, "px");
     };
     DragAndDropService.prototype.removeGhost = function () {
         if (this.eGhost && this.eGhostParent) {
@@ -376,27 +367,31 @@ var DragAndDropService = /** @class */ (function (_super) {
         this.eGhost.style.top = '20px';
         this.eGhost.style.left = '20px';
         var eDocument = this.gridOptionsService.getDocument();
+        var rootNode = null;
         var targetEl = null;
         try {
-            targetEl = eDocument.fullscreenElement;
+            rootNode = eDocument.fullscreenElement;
         }
         catch (e) {
             // some environments like SalesForce will throw errors
             // simply by trying to read the fullscreenElement property
         }
         finally {
-            if (!targetEl) {
-                var rootNode = this.gridOptionsService.getRootNode();
-                var body = rootNode.querySelector('body');
-                if (body) {
-                    targetEl = body;
-                }
-                else if (rootNode instanceof ShadowRoot) {
-                    targetEl = rootNode;
-                }
-                else {
-                    targetEl = rootNode === null || rootNode === void 0 ? void 0 : rootNode.documentElement;
-                }
+            if (!rootNode) {
+                rootNode = this.gridOptionsService.getRootNode();
+            }
+            var body = rootNode.querySelector('body');
+            if (body) {
+                targetEl = body;
+            }
+            else if (rootNode instanceof ShadowRoot) {
+                targetEl = rootNode;
+            }
+            else if (rootNode instanceof Document) {
+                targetEl = rootNode === null || rootNode === void 0 ? void 0 : rootNode.documentElement;
+            }
+            else {
+                targetEl = rootNode;
             }
         }
         this.eGhostParent = targetEl;
@@ -412,7 +407,7 @@ var DragAndDropService = /** @class */ (function (_super) {
         clearElement(this.eGhostIcon);
         var eIcon = null;
         if (!iconName) {
-            iconName = this.dragSource.defaultIconName || DragAndDropService_1.ICON_NOT_ALLOWED;
+            iconName = this.dragSource.getDefaultIconName ? this.dragSource.getDefaultIconName() : DragAndDropService_1.ICON_NOT_ALLOWED;
         }
         switch (iconName) {
             case DragAndDropService_1.ICON_PINNED:
@@ -444,7 +439,7 @@ var DragAndDropService = /** @class */ (function (_super) {
                 break;
         }
         this.eGhostIcon.classList.toggle('ag-shake-left-to-right', shake);
-        if (eIcon === this.eHideIcon && this.gridOptionsService.is('suppressDragLeaveHidesColumns')) {
+        if (eIcon === this.eHideIcon && this.gridOptionsService.get('suppressDragLeaveHidesColumns')) {
             return;
         }
         if (eIcon) {

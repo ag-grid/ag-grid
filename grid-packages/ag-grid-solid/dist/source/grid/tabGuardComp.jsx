@@ -2,7 +2,7 @@ import { TabGuardClassNames, TabGuardCtrl } from 'ag-grid-community';
 import { createSignal, onCleanup, onMount, useContext } from "solid-js";
 import { BeansContext } from "./core/beansContext";
 const TabGuardComp = (props) => {
-    const { children, eFocusableElement, onTabKeyDown, gridCtrl } = props;
+    const { children, eFocusableElement, onTabKeyDown, gridCtrl, forceFocusOutWhenTabGuardsAreEmpty } = props;
     const [tabIndex, setTabIndex] = createSignal();
     let eTopGuard;
     let eBottomGuard;
@@ -18,11 +18,12 @@ const TabGuardComp = (props) => {
             eBottomGuard: eBottomGuard,
             eFocusableElement: eFocusableElement,
             onTabKeyDown: onTabKeyDown,
+            forceFocusOutWhenTabGuardsAreEmpty: forceFocusOutWhenTabGuardsAreEmpty,
             focusInnerElement: fromBottom => gridCtrl.focusInnerElement(fromBottom)
         }));
         props.ref({
-            forceFocusOutOfContainer() {
-                ctrl.forceFocusOutOfContainer();
+            forceFocusOutOfContainer(up) {
+                ctrl.forceFocusOutOfContainer(up);
             }
         });
     });

@@ -10,12 +10,12 @@ export class YearFilter implements IFilterComp {
     init(params: IFilterParams) {
         this.eGui = document.createElement('div');
         this.eGui.innerHTML =
-            `<div style="display: inline-block; width: 400px;">
-                <div style="padding: 10px; background-color: #d3d3d3; text-align: center;">Select Year Range</div>
-                <label style="margin: 10px; padding: 50px; display: inline-block; background-color: #999999">  
+            `<div class="year-filter">
+                <div>Select Year Range</div>
+                <label>  
                     <input type="radio" name="yearFilter" checked="true" id="rbAllYears" filter-checkbox="true"/> All
                 </label>
-                <label style="margin: 10px; padding: 50px; display: inline-block; background-color: #999999">  
+                <label>  
                     <input type="radio" name="yearFilter" id="rbSince2010" filter-checkbox="true"/> Since 2010
                 </label>
             </div>`;

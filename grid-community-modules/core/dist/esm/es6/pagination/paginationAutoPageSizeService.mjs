@@ -14,11 +14,20 @@ let PaginationAutoPageSizeService = class PaginationAutoPageSizeService extends 
             this.centerRowContainerCon = p.centerRowContainerCtrl;
             this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.checkPageSize.bind(this));
             this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.checkPageSize.bind(this));
+            this.addManagedPropertyListener('paginationAutoPageSize', this.onPaginationAutoSizeChanged.bind(this));
             this.checkPageSize();
         });
     }
     notActive() {
-        return !this.gridOptionsService.is('paginationAutoPageSize') || this.centerRowContainerCon == null;
+        return !this.gridOptionsService.get('paginationAutoPageSize') || this.centerRowContainerCon == null;
+    }
+    onPaginationAutoSizeChanged() {
+        if (this.notActive()) {
+            this.paginationProxy.unsetAutoCalculatedPageSize();
+        }
+        else {
+            this.checkPageSize();
+        }
     }
     checkPageSize() {
         if (this.notActive()) {
@@ -29,7 +38,7 @@ let PaginationAutoPageSizeService = class PaginationAutoPageSizeService extends 
             const update = () => {
                 const rowHeight = this.gridOptionsService.getRowHeightAsNumber();
                 const newPageSize = Math.floor(bodyHeight / rowHeight);
-                this.gridOptionsService.set('paginationPageSize', newPageSize);
+                this.paginationProxy.setPageSize(newPageSize, 'autoCalculated');
             };
             if (!this.isBodyRendered) {
                 update();
@@ -47,6 +56,9 @@ let PaginationAutoPageSizeService = class PaginationAutoPageSizeService extends 
 __decorate([
     Autowired('ctrlsService')
 ], PaginationAutoPageSizeService.prototype, "ctrlsService", void 0);
+__decorate([
+    Autowired('paginationProxy')
+], PaginationAutoPageSizeService.prototype, "paginationProxy", void 0);
 __decorate([
     PostConstruct
 ], PaginationAutoPageSizeService.prototype, "postConstruct", null);

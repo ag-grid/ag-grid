@@ -53,7 +53,7 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         if (this.groupsExist) {
             this.addCssClass('ag-column-select-add-group-indent');
         }
-        this.addCssClass("ag-column-select-indent-" + indent);
+        this.addCssClass("ag-column-select-indent-".concat(indent));
         this.setupDragging();
         this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this));
         this.addManagedListener(this.column, core_1.Column.EVENT_VALUE_CHANGED, this.onColumnStateChanged.bind(this));
@@ -92,7 +92,7 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
     ToolPanelColumnComp.prototype.onContextMenu = function (e) {
         var _this = this;
         var _a = this, column = _a.column, gridOptionsService = _a.gridOptionsService;
-        if (gridOptionsService.is('functionsReadOnly')) {
+        if (gridOptionsService.get('functionsReadOnly')) {
             return;
         }
         var contextMenu = this.createBean(new toolPanelContextMenu_1.ToolPanelContextMenu(column, e, this.focusWrapper));
@@ -111,7 +111,7 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         }
     };
     ToolPanelColumnComp.prototype.onLabelClicked = function () {
-        if (this.gridOptionsService.is('functionsReadOnly')) {
+        if (this.gridOptionsService.get('functionsReadOnly')) {
             return;
         }
         var nextState = !this.cbSelect.getValue();
@@ -138,8 +138,8 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         var columnLabel = translate('ariaColumn', 'Column');
         var state = this.cbSelect.getValue() ? translate('ariaVisible', 'visible') : translate('ariaHidden', 'hidden');
         var visibilityLabel = translate('ariaToggleVisibility', 'Press SPACE to toggle visibility');
-        core_1._.setAriaLabel(this.focusWrapper, this.displayName + " " + columnLabel);
-        this.cbSelect.setInputAriaLabel(visibilityLabel + " (" + state + ")");
+        core_1._.setAriaLabel(this.focusWrapper, "".concat(this.displayName, " ").concat(columnLabel));
+        this.cbSelect.setInputAriaLabel("".concat(visibilityLabel, " (").concat(state, ")"));
         core_1._.setAriaDescribedBy(this.focusWrapper, this.cbSelect.getInputElement().id);
     };
     ToolPanelColumnComp.prototype.setupDragging = function () {
@@ -148,14 +148,15 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
             core_1._.setDisplayed(this.eDragHandle, false);
             return;
         }
-        var hideColumnOnExit = !this.gridOptionsService.is('suppressDragLeaveHidesColumns');
+        var hideColumnOnExit = !this.gridOptionsService.get('suppressDragLeaveHidesColumns');
         var dragSource = {
             type: core_1.DragSourceType.ToolPanel,
             eElement: this.eDragHandle,
             dragItemName: this.displayName,
-            defaultIconName: hideColumnOnExit ? core_1.DragAndDropService.ICON_HIDE : core_1.DragAndDropService.ICON_NOT_ALLOWED,
+            getDefaultIconName: function () { return hideColumnOnExit ? core_1.DragAndDropService.ICON_HIDE : core_1.DragAndDropService.ICON_NOT_ALLOWED; },
             getDragItem: function () { return _this.createDragItem(); },
             onDragStarted: function () {
+                hideColumnOnExit = !_this.gridOptionsService.get('suppressDragLeaveHidesColumns');
                 var event = {
                     type: core_1.Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START,
                     column: _this.column
@@ -218,7 +219,7 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         if (isPivotMode) {
             // when in pivot mode, the item should be read only if:
             //  a) gui is not allowed make any changes
-            var functionsReadOnly = this.gridOptionsService.is('functionsReadOnly');
+            var functionsReadOnly = this.gridOptionsService.get('functionsReadOnly');
             //  b) column is not allow any functions on it
             var noFunctionsAllowed = !this.column.isAnyFunctionAllowed();
             canBeToggled = !functionsReadOnly && !noFunctionsAllowed;
@@ -234,7 +235,7 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         this.cbSelect.setReadOnly(!canBeToggled);
         this.eDragHandle.classList.toggle('ag-column-select-column-readonly', !canBeDragged);
         this.addOrRemoveCssClass('ag-column-select-column-readonly', !canBeDragged && !canBeToggled);
-        var checkboxPassive = isPivotMode && this.gridOptionsService.is('functionsPassive');
+        var checkboxPassive = isPivotMode && this.gridOptionsService.get('functionsPassive');
         this.cbSelect.setPassive(checkboxPassive);
         this.processingColumnStateChange = false;
     };
@@ -262,19 +263,19 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
     };
     ToolPanelColumnComp.TEMPLATE = "<div class=\"ag-column-select-column\" aria-hidden=\"true\">\n            <ag-checkbox ref=\"cbSelect\" class=\"ag-column-select-checkbox\"></ag-checkbox>\n            <span class=\"ag-column-select-column-label\" ref=\"eLabel\"></span>\n        </div>";
     __decorate([
-        core_1.Autowired('columnModel')
+        (0, core_1.Autowired)('columnModel')
     ], ToolPanelColumnComp.prototype, "columnModel", void 0);
     __decorate([
-        core_1.Autowired('dragAndDropService')
+        (0, core_1.Autowired)('dragAndDropService')
     ], ToolPanelColumnComp.prototype, "dragAndDropService", void 0);
     __decorate([
-        core_1.Autowired('modelItemUtils')
+        (0, core_1.Autowired)('modelItemUtils')
     ], ToolPanelColumnComp.prototype, "modelItemUtils", void 0);
     __decorate([
-        core_1.RefSelector('eLabel')
+        (0, core_1.RefSelector)('eLabel')
     ], ToolPanelColumnComp.prototype, "eLabel", void 0);
     __decorate([
-        core_1.RefSelector('cbSelect')
+        (0, core_1.RefSelector)('cbSelect')
     ], ToolPanelColumnComp.prototype, "cbSelect", void 0);
     __decorate([
         core_1.PostConstruct

@@ -15,13 +15,12 @@ export declare class SortController extends BeanStub {
     progressSort(column: Column, multiSort: boolean, source: ColumnEventType): void;
     setSortForColumn(column: Column, sort: SortDirection, multiSort: boolean, source: ColumnEventType): void;
     private updateSortIndex;
-    onSortChanged(source: string): void;
+    onSortChanged(source: string, columns?: Column[]): void;
     isSortActive(): boolean;
-    dispatchSortChangedEvents(source: string): void;
+    dispatchSortChangedEvents(source: string, columns?: Column[]): void;
     private clearSortBarTheseColumns;
     private getNextSortDirection;
     /**
-     * @param includeRedundantColumns whether to include non-grouped, non-secondary, non-aggregated columns when pivot active
      * @returns a map of sort indexes for every sorted column, if groups sort primaries then they will have equivalent indices
      */
     private getIndexedSortMap;

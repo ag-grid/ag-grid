@@ -53,6 +53,9 @@ var GroupFloatingFilterComp = /** @class */ (function (_super) {
         });
     };
     GroupFloatingFilterComp.prototype.onParamsUpdated = function (params) {
+        this.refresh(params);
+    };
+    GroupFloatingFilterComp.prototype.refresh = function (params) {
         this.params = params;
         this.setParams();
     };
@@ -60,7 +63,7 @@ var GroupFloatingFilterComp = /** @class */ (function (_super) {
         var _a;
         var displayName = this.columnModel.getDisplayNameForColumn(this.params.column, 'header', true);
         var translate = this.localeService.getLocaleTextFunc();
-        (_a = this.eFloatingFilterText) === null || _a === void 0 ? void 0 : _a.setInputAriaLabel(displayName + " " + translate('ariaFilterInput', 'Filter Input'));
+        (_a = this.eFloatingFilterText) === null || _a === void 0 ? void 0 : _a.setInputAriaLabel("".concat(displayName, " ").concat(translate('ariaFilterInput', 'Filter Input')));
     };
     GroupFloatingFilterComp.prototype.setupReadOnlyFloatingFilterElement = function () {
         var _this = this;
@@ -107,13 +110,18 @@ var GroupFloatingFilterComp = /** @class */ (function (_super) {
         this.setupUnderlyingFloatingFilterElement();
     };
     GroupFloatingFilterComp.prototype.onColDefChanged = function (event) {
-        var _a, _b;
+        var _a, _b, _c;
         if (!event.column) {
             return;
         }
         var compDetails = this.filterManager.getFloatingFilterCompDetails(event.column, this.params.showParentFilter);
         if (compDetails) {
-            (_b = (_a = this.underlyingFloatingFilter) === null || _a === void 0 ? void 0 : _a.onParamsUpdated) === null || _b === void 0 ? void 0 : _b.call(_a, compDetails.params);
+            if ((_a = this.underlyingFloatingFilter) === null || _a === void 0 ? void 0 : _a.refresh) {
+                this.underlyingFloatingFilter.refresh(compDetails.params);
+            }
+            else {
+                (_c = (_b = this.underlyingFloatingFilter) === null || _b === void 0 ? void 0 : _b.onParamsUpdated) === null || _c === void 0 ? void 0 : _c.call(_b, compDetails.params);
+            }
         }
     };
     GroupFloatingFilterComp.prototype.onParentModelChanged = function (_model, event) {
@@ -158,13 +166,13 @@ var GroupFloatingFilterComp = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     __decorate([
-        core_1.Autowired('columnModel')
+        (0, core_1.Autowired)('columnModel')
     ], GroupFloatingFilterComp.prototype, "columnModel", void 0);
     __decorate([
-        core_1.Autowired('filterManager')
+        (0, core_1.Autowired)('filterManager')
     ], GroupFloatingFilterComp.prototype, "filterManager", void 0);
     __decorate([
-        core_1.RefSelector('eFloatingFilter')
+        (0, core_1.RefSelector)('eFloatingFilter')
     ], GroupFloatingFilterComp.prototype, "eFloatingFilter", void 0);
     return GroupFloatingFilterComp;
 }(core_1.Component));

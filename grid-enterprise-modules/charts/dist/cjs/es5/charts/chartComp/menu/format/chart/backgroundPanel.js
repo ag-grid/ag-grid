@@ -54,19 +54,19 @@ var BackgroundPanel = /** @class */ (function (_super) {
         this.colorPicker
             .setLabel(this.chartTranslationService.translate('color'))
             .setLabelWidth('flex')
-            .setInputWidth(45)
+            .setInputWidth('flex')
             .setValue(this.chartOptionsService.getChartOption('background.fill'))
             .onValueChange(function (newColor) { return _this.chartOptionsService.setChartOption('background.fill', newColor); });
     };
     BackgroundPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"chartBackgroundGroup\">\n                <ag-color-picker ref=\"colorPicker\"></ag-color-picker>\n            </ag-group-component>\n        <div>";
     __decorate([
-        core_1.RefSelector('chartBackgroundGroup')
+        (0, core_1.RefSelector)('chartBackgroundGroup')
     ], BackgroundPanel.prototype, "group", void 0);
     __decorate([
-        core_1.RefSelector('colorPicker')
+        (0, core_1.RefSelector)('colorPicker')
     ], BackgroundPanel.prototype, "colorPicker", void 0);
     __decorate([
-        core_1.Autowired('chartTranslationService')
+        (0, core_1.Autowired)('chartTranslationService')
     ], BackgroundPanel.prototype, "chartTranslationService", void 0);
     __decorate([
         core_1.PostConstruct

@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/row-grouping - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.1.0
+          * @ag-grid-enterprise/row-grouping - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.1.0
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -36,13 +36,6 @@ var AggregationStage = /** @class */ (function (_super) {
     function AggregationStage() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    AggregationStage.prototype.init = function () {
-        var _this = this;
-        this.alwaysAggregateAtRootLevel = this.gridOptionsService.is('alwaysAggregateAtRootLevel');
-        this.addManagedPropertyListener('alwaysAggregateAtRootLevel', function (propChange) { return _this.alwaysAggregateAtRootLevel = propChange.currentValue; });
-        this.groupIncludeTotalFooter = this.gridOptionsService.is('groupIncludeTotalFooter');
-        this.addManagedPropertyListener('groupIncludeTotalFooter', function (propChange) { return _this.groupIncludeTotalFooter = propChange.currentValue; });
-    };
     // it's possible to recompute the aggregate without doing the other parts
     // + api.refreshClientSideRowModel('aggregate')
     AggregationStage.prototype.execute = function (params) {
@@ -65,20 +58,22 @@ var AggregationStage = /** @class */ (function (_super) {
         var measureColumns = this.columnModel.getValueColumns();
         var pivotColumns = pivotActive ? this.columnModel.getPivotColumns() : [];
         var aggDetails = {
+            alwaysAggregateAtRootLevel: this.gridOptionsService.get('alwaysAggregateAtRootLevel'),
+            groupIncludeTotalFooter: this.gridOptionsService.get('groupIncludeTotalFooter'),
             changedPath: params.changedPath,
             valueColumns: measureColumns,
-            pivotColumns: pivotColumns
+            pivotColumns: pivotColumns,
+            filteredOnly: !this.isSuppressAggFilteredOnly(),
+            userAggFunc: this.gridOptionsService.getCallback('getGroupRowAgg'),
         };
         return aggDetails;
     };
     AggregationStage.prototype.isSuppressAggFilteredOnly = function () {
         var isGroupAggFiltering = this.gridOptionsService.getGroupAggFiltering() !== undefined;
-        return isGroupAggFiltering || this.gridOptionsService.is('suppressAggFilteredOnly');
+        return isGroupAggFiltering || this.gridOptionsService.get('suppressAggFilteredOnly');
     };
     AggregationStage.prototype.recursivelyCreateAggData = function (aggDetails) {
         var _this = this;
-        // update prop, in case changed since last time
-        this.filteredOnly = !this.isSuppressAggFilteredOnly();
         var callback = function (rowNode) {
             var hasNoChildren = !rowNode.hasChildren();
             if (hasNoChildren) {
@@ -93,9 +88,10 @@ var AggregationStage = /** @class */ (function (_super) {
             //Optionally enable the aggregation at the root Node
             var isRootNode = rowNode.level === -1;
             // if total footer is displayed, the value is in use
-            if (isRootNode && !_this.groupIncludeTotalFooter) {
+            if (isRootNode && !aggDetails.groupIncludeTotalFooter) {
                 var notPivoting = !_this.columnModel.isPivotMode();
-                if (!_this.alwaysAggregateAtRootLevel && notPivoting) {
+                if (!aggDetails.alwaysAggregateAtRootLevel && notPivoting) {
+                    rowNode.setAggData(null);
                     return;
                 }
             }
@@ -106,11 +102,9 @@ var AggregationStage = /** @class */ (function (_super) {
     AggregationStage.prototype.aggregateRowNode = function (rowNode, aggDetails) {
         var measureColumnsMissing = aggDetails.valueColumns.length === 0;
         var pivotColumnsMissing = aggDetails.pivotColumns.length === 0;
-        var userFunc = this.gridOptionsService.getCallback('getGroupRowAgg');
         var aggResult;
-        if (userFunc) {
-            var params = { nodes: rowNode.childrenAfterFilter };
-            aggResult = userFunc(params);
+        if (aggDetails.userAggFunc) {
+            aggResult = aggDetails.userAggFunc({ nodes: rowNode.childrenAfterFilter });
         }
         else if (measureColumnsMissing) {
             aggResult = null;
@@ -129,42 +123,42 @@ var AggregationStage = /** @class */ (function (_super) {
         }
     };
     AggregationStage.prototype.aggregateRowNodeUsingValuesAndPivot = function (rowNode) {
-        var _this = this;
-        var _a;
+        var _a, _b;
         var result = {};
         var secondaryColumns = (_a = this.columnModel.getSecondaryColumns()) !== null && _a !== void 0 ? _a : [];
-        secondaryColumns.forEach(function (secondaryCol) {
-            var _a = secondaryCol.getColDef(), pivotValueColumn = _a.pivotValueColumn, pivotTotalColumnIds = _a.pivotTotalColumnIds, colId = _a.colId, pivotKeys = _a.pivotKeys;
-            if (core._.exists(pivotTotalColumnIds)) {
-                return;
+        var canSkipTotalColumns = true;
+        for (var i = 0; i < secondaryColumns.length; i++) {
+            var secondaryCol = secondaryColumns[i];
+            var colDef = secondaryCol.getColDef();
+            if (colDef.pivotTotalColumnIds != null) {
+                canSkipTotalColumns = false;
+                continue;
             }
-            var keys = pivotKeys !== null && pivotKeys !== void 0 ? pivotKeys : [];
-            var values;
+            var keys = (_b = colDef.pivotKeys) !== null && _b !== void 0 ? _b : [];
+            var values = void 0;
             if (rowNode.leafGroup) {
                 // lowest level group, get the values from the mapped set
-                values = _this.getValuesFromMappedSet(rowNode.childrenMapped, keys, pivotValueColumn);
+                values = this.getValuesFromMappedSet(rowNode.childrenMapped, keys, colDef.pivotValueColumn);
             }
             else {
                 // value columns and pivot columns, non-leaf group
-                values = _this.getValuesPivotNonLeaf(rowNode, colId);
+                values = this.getValuesPivotNonLeaf(rowNode, colDef.colId);
             }
-            result[colId] = _this.aggregateValues(values, pivotValueColumn.getAggFunc(), pivotValueColumn, rowNode, secondaryCol);
-        });
-        secondaryColumns.forEach(function (secondaryCol) {
-            var _a = secondaryCol.getColDef(), pivotValueColumn = _a.pivotValueColumn, pivotTotalColumnIds = _a.pivotTotalColumnIds, colId = _a.colId;
-            if (!core._.exists(pivotTotalColumnIds)) {
-                return;
+            // bit of a memory drain storing null/undefined, but seems to speed up performance.
+            result[colDef.colId] = this.aggregateValues(values, colDef.pivotValueColumn.getAggFunc(), colDef.pivotValueColumn, rowNode, secondaryCol);
+        }
+        if (!canSkipTotalColumns) {
+            for (var i = 0; i < secondaryColumns.length; i++) {
+                var secondaryCol = secondaryColumns[i];
+                var colDef = secondaryCol.getColDef();
+                if (colDef.pivotTotalColumnIds == null || !colDef.pivotTotalColumnIds.length) {
+                    continue;
+                }
+                var aggResults = colDef.pivotTotalColumnIds.map(function (currentColId) { return result[currentColId]; });
+                // bit of a memory drain storing null/undefined, but seems to speed up performance.
+                result[colDef.colId] = this.aggregateValues(aggResults, colDef.pivotValueColumn.getAggFunc(), colDef.pivotValueColumn, rowNode, secondaryCol);
             }
-            var aggResults = [];
-            //retrieve results for colIds associated with this pivot total column
-            if (!pivotTotalColumnIds || !pivotTotalColumnIds.length) {
-                return;
-            }
-            pivotTotalColumnIds.forEach(function (currentColId) {
-                aggResults.push(result[currentColId]);
-            });
-            result[colId] = _this.aggregateValues(aggResults, pivotValueColumn.getAggFunc(), pivotValueColumn, rowNode, secondaryCol);
-        });
+        }
         return result;
     };
     AggregationStage.prototype.aggregateRowNodeUsingValuesOnly = function (rowNode, aggDetails) {
@@ -176,7 +170,7 @@ var AggregationStage = /** @class */ (function (_super) {
         var notChangedValueColumns = aggDetails.changedPath.isActive() ?
             aggDetails.changedPath.getNotValueColumnsForNode(rowNode, aggDetails.valueColumns)
             : null;
-        var values2d = this.getValuesNormal(rowNode, changedValueColumns);
+        var values2d = this.getValuesNormal(rowNode, changedValueColumns, aggDetails.filteredOnly);
         var oldValues = rowNode.aggData;
         changedValueColumns.forEach(function (valueColumn, index) {
             result[valueColumn.getId()] = _this.aggregateValues(values2d[index], valueColumn.getAggFunc(), valueColumn, rowNode);
@@ -189,33 +183,26 @@ var AggregationStage = /** @class */ (function (_super) {
         return result;
     };
     AggregationStage.prototype.getValuesPivotNonLeaf = function (rowNode, colId) {
-        var values = [];
-        rowNode.childrenAfterFilter.forEach(function (node) {
-            var value = node.aggData[colId];
-            values.push(value);
-        });
-        return values;
+        return rowNode.childrenAfterFilter.map(function (childNode) { return childNode.aggData[colId]; });
     };
     AggregationStage.prototype.getValuesFromMappedSet = function (mappedSet, keys, valueColumn) {
         var _this = this;
         var mapPointer = mappedSet;
-        keys.forEach(function (key) { return (mapPointer = mapPointer ? mapPointer[key] : null); });
+        for (var i = 0; i < keys.length; i++) {
+            var key = keys[i];
+            mapPointer = mapPointer ? mapPointer[key] : null;
+        }
         if (!mapPointer) {
             return [];
         }
-        var values = [];
-        mapPointer.forEach(function (rowNode) {
-            var value = _this.valueService.getValue(valueColumn, rowNode);
-            values.push(value);
-        });
-        return values;
+        return mapPointer.map(function (rowNode) { return _this.valueService.getValue(valueColumn, rowNode); });
     };
-    AggregationStage.prototype.getValuesNormal = function (rowNode, valueColumns) {
+    AggregationStage.prototype.getValuesNormal = function (rowNode, valueColumns, filteredOnly) {
         // create 2d array, of all values for all valueColumns
         var values = [];
         valueColumns.forEach(function () { return values.push([]); });
         var valueColumnCount = valueColumns.length;
-        var nodeList = this.filteredOnly ? rowNode.childrenAfterFilter : rowNode.childrenAfterGroup;
+        var nodeList = filteredOnly ? rowNode.childrenAfterFilter : rowNode.childrenAfterGroup;
         var rowCount = nodeList.length;
         for (var i = 0; i < rowCount; i++) {
             var childNode = nodeList[i];
@@ -234,21 +221,18 @@ var AggregationStage = /** @class */ (function (_super) {
             this.aggFuncService.getAggFunc(aggFuncOrString) :
             aggFuncOrString;
         if (typeof aggFunc !== 'function') {
-            console.error("AG Grid: unrecognised aggregation function " + aggFuncOrString);
+            console.error("AG Grid: unrecognised aggregation function ".concat(aggFuncOrString));
             return null;
         }
         var aggFuncAny = aggFunc;
-        var params = {
+        var params = this.gridOptionsService.addGridCommonParams({
             values: values,
             column: column,
             colDef: column ? column.getColDef() : undefined,
             pivotResultColumn: pivotResultColumn,
             rowNode: rowNode,
-            data: rowNode ? rowNode.data : undefined,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-            context: this.gridOptionsService.context,
-        }; // the "as any" is needed to allow the deprecation warning messages
+            data: rowNode ? rowNode.data : undefined
+        }); // the "as any" is needed to allow the deprecation warning messages
         return aggFuncAny(params);
     };
     __decorate$d([
@@ -260,15 +244,6 @@ var AggregationStage = /** @class */ (function (_super) {
     __decorate$d([
         core.Autowired('aggFuncService')
     ], AggregationStage.prototype, "aggFuncService", void 0);
-    __decorate$d([
-        core.Autowired('gridApi')
-    ], AggregationStage.prototype, "gridApi", void 0);
-    __decorate$d([
-        core.Autowired('columnApi')
-    ], AggregationStage.prototype, "columnApi", void 0);
-    __decorate$d([
-        core.PostConstruct
-    ], AggregationStage.prototype, "init", null);
     AggregationStage = __decorate$d([
         core.Bean('aggregationStage')
     ], AggregationStage);
@@ -364,27 +339,20 @@ var __read$2 = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray$2 = (undefined && undefined.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray$2 = (undefined && undefined.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 var GroupStage = /** @class */ (function (_super) {
     __extends$c(GroupStage, _super);
     function GroupStage() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        // we use a sequence variable so that each time we do a grouping, we don't
-        // reuse the ids - otherwise the rowRenderer will confuse rowNodes between redraws
-        // when it tries to animate between rows.
-        _this.groupIdSequence = new core.NumberSequence();
-        return _this;
+        return _super !== null && _super.apply(this, arguments) || this;
     }
-    GroupStage.prototype.postConstruct = function () {
-        this.usingTreeData = this.gridOptionsService.isTreeData();
-        if (this.usingTreeData) {
-            this.getDataPath = this.gridOptionsService.get('getDataPath');
-        }
-    };
     GroupStage.prototype.execute = function (params) {
         var details = this.createGroupingDetails(params);
         if (details.transactions) {
@@ -394,15 +362,14 @@ var GroupStage = /** @class */ (function (_super) {
             var afterColsChanged = params.afterColumnsChanged === true;
             this.shotgunResetEverything(details, afterColsChanged);
         }
-        this.positionLeafsAndGroups(params.changedPath);
-        this.orderGroups(details.rootNode);
-        this.selectableService.updateSelectableAfterGrouping(details.rootNode);
+        if (!details.usingTreeData) {
+            // we don't do group sorting for tree data
+            this.positionLeafsAndGroups(params.changedPath);
+            this.orderGroups(details);
+        }
+        this.selectableService.updateSelectableAfterGrouping();
     };
     GroupStage.prototype.positionLeafsAndGroups = function (changedPath) {
-        // we don't do group sorting for tree data
-        if (this.usingTreeData) {
-            return;
-        }
         changedPath.forEachChangedNodeDepthFirst(function (group) {
             if (group.childrenAfterGroup) {
                 var leafNodes_1 = [];
@@ -425,27 +392,35 @@ var GroupStage = /** @class */ (function (_super) {
                 if (unbalancedNode_1) {
                     groupNodes_1.push(unbalancedNode_1);
                 }
-                group.childrenAfterGroup = __spreadArray$2(__spreadArray$2([], __read$2(leafNodes_1)), __read$2(groupNodes_1));
+                group.childrenAfterGroup = __spreadArray$2(__spreadArray$2([], __read$2(leafNodes_1), false), __read$2(groupNodes_1), false);
             }
         }, false);
     };
     GroupStage.prototype.createGroupingDetails = function (params) {
+        var _a;
         var rowNode = params.rowNode, changedPath = params.changedPath, rowNodeTransactions = params.rowNodeTransactions, rowNodeOrder = params.rowNodeOrder;
-        var groupedCols = this.usingTreeData ? null : this.columnModel.getRowGroupColumns();
+        var usingTreeData = this.gridOptionsService.get('treeData');
+        var groupedCols = usingTreeData ? null : this.columnModel.getRowGroupColumns();
         var details = {
             // someone complained that the parent attribute was causing some change detection
-            // to break is some angular add-on - which i never used. taking the parent out breaks
-            // a cyclic dependency, hence this flag got introduced.
-            includeParents: !this.gridOptionsService.is('suppressParentsInRowNodes'),
-            expandByDefault: this.gridOptionsService.getNum('groupDefaultExpanded'),
+            // to break in an angular add-on.  Taking the parent out breaks a cyclic dependency, hence this flag got introduced.
+            includeParents: !this.gridOptionsService.get('suppressParentsInRowNodes'),
+            expandByDefault: this.gridOptionsService.get('groupDefaultExpanded'),
             groupedCols: groupedCols,
             rootNode: rowNode,
             pivotMode: this.columnModel.isPivotMode(),
-            groupedColCount: this.usingTreeData || !groupedCols ? 0 : groupedCols.length,
+            groupedColCount: usingTreeData || !groupedCols ? 0 : groupedCols.length,
             rowNodeOrder: rowNodeOrder,
             transactions: rowNodeTransactions,
             // if no transaction, then it's shotgun, changed path would be 'not active' at this point anyway
-            changedPath: changedPath
+            changedPath: changedPath,
+            groupAllowUnbalanced: this.gridOptionsService.get('groupAllowUnbalanced'),
+            isGroupOpenByDefault: this.gridOptionsService.getCallback('isGroupOpenByDefault'),
+            initialGroupOrderComparator: this.gridOptionsService.getCallback('initialGroupOrderComparator'),
+            usingTreeData: usingTreeData,
+            suppressGroupMaintainValueType: this.gridOptionsService.get('suppressGroupMaintainValueType'),
+            getDataPath: usingTreeData ? this.gridOptionsService.get('getDataPath') : undefined,
+            keyCreators: (_a = groupedCols === null || groupedCols === void 0 ? void 0 : groupedCols.map(function (column) { return column.getColDef().keyCreator; })) !== null && _a !== void 0 ? _a : []
         };
         return details;
     };
@@ -457,7 +432,7 @@ var GroupStage = /** @class */ (function (_super) {
             // and moving. if we want to Batch Remover working with tree data then would need
             // to consider how Filler Nodes would be impacted (it's possible that it can be easily
             // modified to work, however for now I don't have the brain energy to work it all out).
-            var batchRemover = !_this.usingTreeData ? new BatchRemover() : undefined;
+            var batchRemover = !details.usingTreeData ? new BatchRemover() : undefined;
             // the order here of [add, remove, update] needs to be the same as in ClientSideNodeManager,
             // as the order is important when a record with the same id is added and removed in the same
             // transaction.
@@ -494,14 +469,10 @@ var GroupStage = /** @class */ (function (_super) {
             }
         }, false, true);
     };
-    GroupStage.prototype.orderGroups = function (rootNode) {
-        // we don't do group sorting for tree data
-        if (this.usingTreeData) {
-            return;
-        }
-        var comparator = this.gridOptionsService.getCallback('initialGroupOrderComparator');
+    GroupStage.prototype.orderGroups = function (details) {
+        var comparator = details.initialGroupOrderComparator;
         if (core._.exists(comparator)) {
-            recursiveSort(rootNode);
+            recursiveSort(details.rootNode);
         }
         function recursiveSort(rowNode) {
             var doSort = core._.exists(rowNode.childrenAfterGroup) &&
@@ -517,7 +488,7 @@ var GroupStage = /** @class */ (function (_super) {
         var res = [];
         // when doing tree data, the node is part of the path,
         // but when doing grid grouping, the node is not part of the path so we start with the parent.
-        var pointer = this.usingTreeData ? node : node.parent;
+        var pointer = details.usingTreeData ? node : node.parent;
         while (pointer && pointer !== details.rootNode) {
             res.push({
                 key: pointer.key,
@@ -570,7 +541,7 @@ var GroupStage = /** @class */ (function (_super) {
     };
     GroupStage.prototype.removeNodesInStages = function (leafRowNodes, details, batchRemover) {
         this.removeNodesFromParents(leafRowNodes, details, batchRemover);
-        if (this.usingTreeData) {
+        if (details.usingTreeData) {
             this.postRemoveCreateFillerNodes(leafRowNodes, details);
             // When not TreeData, then removeEmptyGroups is called just before the BatchRemover is flushed.
             // However for TreeData, there is no BatchRemover, so we have to call removeEmptyGroups here.
@@ -704,7 +675,7 @@ var GroupStage = /** @class */ (function (_super) {
         if (d1 == null || d2 == null || d1.pivotMode !== d2.pivotMode) {
             return false;
         }
-        return core._.areEqual(d1.groupedCols, d2.groupedCols);
+        return core._.areEqual(d1.groupedCols, d2.groupedCols) && core._.areEqual(d1.keyCreators, d2.keyCreators);
     };
     GroupStage.prototype.checkAllGroupDataAfterColsChanged = function (details) {
         var _this = this;
@@ -713,16 +684,17 @@ var GroupStage = /** @class */ (function (_super) {
                 return;
             }
             rowNodes.forEach(function (rowNode) {
-                var isLeafNode = !_this.usingTreeData && !rowNode.group;
+                var isLeafNode = !details.usingTreeData && !rowNode.group;
                 if (isLeafNode) {
                     return;
                 }
                 var groupInfo = {
                     field: rowNode.field,
                     key: rowNode.key,
-                    rowGroupColumn: rowNode.rowGroupColumn
+                    rowGroupColumn: rowNode.rowGroupColumn,
+                    leafNode: rowNode.allLeafChildren[0],
                 };
-                _this.setGroupData(rowNode, groupInfo);
+                _this.setGroupData(rowNode, groupInfo, details);
                 recurse(rowNode.childrenAfterGroup);
             });
         };
@@ -739,7 +711,7 @@ var GroupStage = /** @class */ (function (_super) {
         // here to change leafGroup once.
         // we set .leafGroup to false for tree data, as .leafGroup is only used when pivoting, and pivoting
         // isn't allowed with treeData, so the grid never actually use .leafGroup when doing treeData.
-        rootNode.leafGroup = this.usingTreeData ? false : groupedCols.length === 0;
+        rootNode.leafGroup = details.usingTreeData ? false : groupedCols.length === 0;
         // we are doing everything from scratch, so reset childrenAfterGroup and childrenMapped from the rootNode
         rootNode.childrenAfterGroup = [];
         rootNode.childrenMapped = {};
@@ -759,7 +731,7 @@ var GroupStage = /** @class */ (function (_super) {
         if (afterColumnsChanged) {
             // we only need to redo grouping if doing normal grouping (ie not tree data)
             // and the group cols have changed.
-            noFurtherProcessingNeeded = this.usingTreeData || this.areGroupColsEqual(details, this.oldGroupingDetails);
+            noFurtherProcessingNeeded = details.usingTreeData || this.areGroupColsEqual(details, this.oldGroupingDetails);
             // if the group display cols have changed, then we need to update rowNode.groupData
             // (regardless of tree data or row grouping)
             if (this.oldGroupDisplayColIds !== newGroupDisplayColIds) {
@@ -785,7 +757,7 @@ var GroupStage = /** @class */ (function (_super) {
         if (!parentGroup.group) {
             console.warn("AG Grid: duplicate group keys for row data, keys should be unique", [parentGroup.data, childNode.data]);
         }
-        if (this.usingTreeData) {
+        if (details.usingTreeData) {
             this.swapGroupWithUserNode(parentGroup, childNode, isMove);
         }
         else {
@@ -852,38 +824,69 @@ var GroupStage = /** @class */ (function (_super) {
         groupNode.group = true;
         groupNode.field = groupInfo.field;
         groupNode.rowGroupColumn = groupInfo.rowGroupColumn;
-        this.setGroupData(groupNode, groupInfo);
-        // we put 'row-group-' before the group id, so it doesn't clash with standard row id's. we also use 't-' and 'b-'
-        // for top pinned and bottom pinned rows.
-        groupNode.id = core.RowNode.ID_PREFIX_ROW_GROUP + this.groupIdSequence.next();
+        this.setGroupData(groupNode, groupInfo, details);
         groupNode.key = groupInfo.key;
+        groupNode.id = this.createGroupId(groupNode, parent, details.usingTreeData, level);
         groupNode.level = level;
-        groupNode.leafGroup = this.usingTreeData ? false : level === (details.groupedColCount - 1);
+        groupNode.leafGroup = details.usingTreeData ? false : level === (details.groupedColCount - 1);
         groupNode.allLeafChildren = [];
         // why is this done here? we are not updating the children count as we go,
         // i suspect this is updated in the filter stage
         groupNode.setAllChildrenCount(0);
-        groupNode.rowGroupIndex = this.usingTreeData ? null : level;
+        groupNode.rowGroupIndex = details.usingTreeData ? null : level;
         groupNode.childrenAfterGroup = [];
         groupNode.childrenMapped = {};
         groupNode.updateHasChildren();
         groupNode.parent = details.includeParents ? parent : null;
         this.setExpandedInitialValue(details, groupNode);
-        if (this.gridOptionsService.is('groupIncludeFooter')) {
-            groupNode.createFooter();
-        }
         return groupNode;
     };
-    GroupStage.prototype.setGroupData = function (groupNode, groupInfo) {
+    GroupStage.prototype.createGroupId = function (node, parent, usingTreeData, level) {
+        var createGroupId;
+        if (usingTreeData) {
+            createGroupId = function (node, parent, level) {
+                if (level < 0) {
+                    return null;
+                } // root node
+                var parentId = parent ? createGroupId(parent, parent.parent, level - 1) : null;
+                return "".concat(parentId == null ? '' : parentId + '-').concat(level, "-").concat(node.key);
+            };
+        }
+        else {
+            createGroupId = function (node, parent) {
+                if (!node.rowGroupColumn) {
+                    return null;
+                } // root node
+                var parentId = parent ? createGroupId(parent, parent.parent, 0) : null;
+                return "".concat(parentId == null ? '' : parentId + '-').concat(node.rowGroupColumn.getColId(), "-").concat(node.key);
+            };
+        }
+        // we put 'row-group-' before the group id, so it doesn't clash with standard row id's. we also use 't-' and 'b-'
+        // for top pinned and bottom pinned rows.
+        return core.RowNode.ID_PREFIX_ROW_GROUP + createGroupId(node, parent, level);
+    };
+    GroupStage.prototype.setGroupData = function (groupNode, groupInfo, details) {
         var _this = this;
         groupNode.groupData = {};
         var groupDisplayCols = this.columnModel.getGroupDisplayColumns();
         groupDisplayCols.forEach(function (col) {
             // newGroup.rowGroupColumn=null when working off GroupInfo, and we always display the group in the group column
             // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so
-            var displayGroupForCol = _this.usingTreeData || (groupNode.rowGroupColumn ? col.isRowGroupDisplayed(groupNode.rowGroupColumn.getId()) : false);
-            if (displayGroupForCol) {
+            var isTreeData = details.usingTreeData;
+            if (isTreeData) {
                 groupNode.groupData[col.getColId()] = groupInfo.key;
+                return;
+            }
+            var groupColumn = groupNode.rowGroupColumn;
+            var isRowGroupDisplayed = groupColumn !== null && col.isRowGroupDisplayed(groupColumn.getId());
+            if (isRowGroupDisplayed) {
+                if (details.suppressGroupMaintainValueType) {
+                    groupNode.groupData[col.getColId()] = groupInfo.key;
+                }
+                else {
+                    // if maintain group value type, get the value from any leaf node.
+                    groupNode.groupData[col.getColId()] = _this.valueService.getValue(groupColumn, groupInfo.leafNode);
+                }
             }
         });
     };
@@ -902,7 +905,7 @@ var GroupStage = /** @class */ (function (_super) {
             return;
         }
         // use callback if exists
-        var userCallback = this.gridOptionsService.getCallback('isGroupOpenByDefault');
+        var userCallback = details.isGroupOpenByDefault;
         if (userCallback) {
             var params = {
                 rowNode: groupNode,
@@ -924,15 +927,15 @@ var GroupStage = /** @class */ (function (_super) {
         groupNode.expanded = groupNode.level < expandByDefault;
     };
     GroupStage.prototype.getGroupInfo = function (rowNode, details) {
-        if (this.usingTreeData) {
-            return this.getGroupInfoFromCallback(rowNode);
+        if (details.usingTreeData) {
+            return this.getGroupInfoFromCallback(rowNode, details);
         }
         return this.getGroupInfoFromGroupColumns(rowNode, details);
     };
-    GroupStage.prototype.getGroupInfoFromCallback = function (rowNode) {
-        var keys = this.getDataPath ? this.getDataPath(rowNode.data) : null;
+    GroupStage.prototype.getGroupInfoFromCallback = function (rowNode, details) {
+        var keys = details.getDataPath ? details.getDataPath(rowNode.data) : null;
         if (keys === null || keys === undefined || keys.length === 0) {
-            core._.doOnce(function () { return console.warn("AG Grid: getDataPath() should not return an empty path for data", rowNode.data); }, 'groupStage.getGroupInfoFromCallback');
+            core._.warnOnce("getDataPath() should not return an empty path for data ".concat(rowNode.data));
         }
         var groupInfoMapper = function (key) { return ({ key: key, field: null, rowGroupColumn: null }); };
         return keys ? keys.map(groupInfoMapper) : [];
@@ -946,7 +949,7 @@ var GroupStage = /** @class */ (function (_super) {
             // unbalanced tree and pivot mode don't work together - not because of the grid, it doesn't make
             // mathematical sense as you are building up a cube. so if pivot mode, we put in a blank key where missing.
             // this keeps the tree balanced and hence can be represented as a group.
-            var createGroupForEmpty = details.pivotMode || !_this.gridOptionsService.is('groupAllowUnbalanced');
+            var createGroupForEmpty = details.pivotMode || !details.groupAllowUnbalanced;
             if (createGroupForEmpty && !keyExists) {
                 key = '';
                 keyExists = true;
@@ -955,7 +958,8 @@ var GroupStage = /** @class */ (function (_super) {
                 var item = {
                     key: key,
                     field: groupCol.getColDef().field,
-                    rowGroupColumn: groupCol
+                    rowGroupColumn: groupCol,
+                    leafNode: rowNode,
                 };
                 res.push(item);
             }
@@ -977,9 +981,6 @@ var GroupStage = /** @class */ (function (_super) {
     __decorate$c([
         core.Autowired('selectionService')
     ], GroupStage.prototype, "selectionService", void 0);
-    __decorate$c([
-        core.PostConstruct
-    ], GroupStage.prototype, "postConstruct", null);
     GroupStage = __decorate$c([
         core.Bean('groupStage')
     ], GroupStage);
@@ -1034,10 +1035,14 @@ var __read$1 = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray$1 = (undefined && undefined.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray$1 = (undefined && undefined.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 var PivotColDefService = /** @class */ (function (_super) {
     __extends$b(PivotColDefService, _super);
@@ -1047,11 +1052,12 @@ var PivotColDefService = /** @class */ (function (_super) {
     PivotColDefService_1 = PivotColDefService;
     PivotColDefService.prototype.init = function () {
         var _this = this;
-        var _a, _b;
-        this.fieldSeparator = (_a = this.gos.get('serverSidePivotResultFieldSeparator')) !== null && _a !== void 0 ? _a : '_';
-        this.addManagedPropertyListener('serverSidePivotResultFieldSeparator', function (propChange) { return _this.fieldSeparator = propChange.currentValue; });
-        this.pivotDefaultExpanded = (_b = this.gos.getNum('pivotDefaultExpanded')) !== null && _b !== void 0 ? _b : 0;
-        this.addManagedPropertyListener('pivotDefaultExpanded', function (propChange) { return _this.pivotDefaultExpanded = propChange.currentValue; });
+        var getFieldSeparator = function () { var _a; return (_a = _this.gos.get('serverSidePivotResultFieldSeparator')) !== null && _a !== void 0 ? _a : '_'; };
+        this.fieldSeparator = getFieldSeparator();
+        this.addManagedPropertyListener('serverSidePivotResultFieldSeparator', function () { _this.fieldSeparator = getFieldSeparator(); });
+        var getPivotDefaultExpanded = function () { return _this.gos.get('pivotDefaultExpanded'); };
+        this.pivotDefaultExpanded = getPivotDefaultExpanded();
+        this.addManagedPropertyListener('pivotDefaultExpanded', function () { _this.pivotDefaultExpanded = getPivotDefaultExpanded(); });
     };
     PivotColDefService.prototype.createPivotColumnDefs = function (uniqueValues) {
         // this is passed to the columnModel, to configure the columns and groups we show
@@ -1100,10 +1106,10 @@ var PivotColDefService = /** @class */ (function (_super) {
         var primaryPivotColumnDefs = primaryPivotColumns[index].getColDef();
         var comparator = this.headerNameComparator.bind(this, primaryPivotColumnDefs.pivotComparator);
         // Base case for the compact layout, instead of recursing build the last layer of groups as measure columns instead
-        if (measureColumns.length === 1 && this.gridOptionsService.is('removePivotHeaderRowWhenSingleValueColumn') && index === maxDepth - 1) {
+        if (measureColumns.length === 1 && this.gridOptionsService.get('removePivotHeaderRowWhenSingleValueColumn') && index === maxDepth - 1) {
             var leafCols_1 = [];
             core._.iterateObject(uniqueValue, function (key) {
-                var newPivotKeys = __spreadArray$1(__spreadArray$1([], __read$1(pivotKeys)), [key]);
+                var newPivotKeys = __spreadArray$1(__spreadArray$1([], __read$1(pivotKeys), false), [key], false);
                 var colDef = _this.createColDef(measureColumns[0], key, newPivotKeys);
                 colDef.columnGroupShow = 'open';
                 leafCols_1.push(colDef);
@@ -1116,7 +1122,7 @@ var PivotColDefService = /** @class */ (function (_super) {
         core._.iterateObject(uniqueValue, function (key, value) {
             // expand group by default based on depth of group. (pivotDefaultExpanded provides desired level of depth for expanding group by default)
             var openByDefault = _this.pivotDefaultExpanded === -1 || (index < _this.pivotDefaultExpanded);
-            var newPivotKeys = __spreadArray$1(__spreadArray$1([], __read$1(pivotKeys)), [key]);
+            var newPivotKeys = __spreadArray$1(__spreadArray$1([], __read$1(pivotKeys), false), [key], false);
             groups.push({
                 children: _this.recursivelyBuildGroup(index + 1, value, newPivotKeys, maxDepth, primaryPivotColumns),
                 headerName: key,
@@ -1145,7 +1151,7 @@ var PivotColDefService = /** @class */ (function (_super) {
     };
     PivotColDefService.prototype.addExpandablePivotGroups = function (pivotColumnGroupDefs, pivotColumnDefs) {
         var _this = this;
-        if (this.gridOptionsService.is('suppressExpandablePivotGroups') ||
+        if (this.gridOptionsService.get('suppressExpandablePivotGroups') ||
             this.gridOptionsService.get('pivotColumnGroupTotals')) {
             return;
         }
@@ -1253,7 +1259,7 @@ var PivotColDefService = /** @class */ (function (_super) {
             pivotColumnGroupDefs.forEach(function (groupDef) {
                 colIds = colIds.concat(_this.extractColIdsForValueColumn(groupDef, valueCol));
             });
-            var withGroup = valueCols.length > 1 || !this_1.gridOptionsService.is('removePivotHeaderRowWhenSingleValueColumn');
+            var withGroup = valueCols.length > 1 || !this_1.gridOptionsService.get('removePivotHeaderRowWhenSingleValueColumn');
             this_1.createRowGroupTotal(pivotColumnGroupDefs, pivotColumnDefs, valueCol, colIds, insertAfter, withGroup);
         };
         var this_1 = this;
@@ -1293,7 +1299,7 @@ var PivotColDefService = /** @class */ (function (_super) {
         var valueGroup = addGroup ? {
             children: [colDef],
             pivotKeys: [],
-            groupId: PivotColDefService_1.PIVOT_ROW_TOTAL_PREFIX + "_pivotGroup_" + valueColumn.getColId(),
+            groupId: "".concat(PivotColDefService_1.PIVOT_ROW_TOTAL_PREFIX, "_pivotGroup_").concat(valueColumn.getColId()),
         } : colDef;
         insertAfter ? parentChildren.push(valueGroup) : parentChildren.unshift(valueGroup);
     };
@@ -1365,17 +1371,17 @@ var PivotColDefService = /** @class */ (function (_super) {
     PivotColDefService.prototype.merge = function (m1, m2) {
         m2.forEach(function (value, key, map) {
             var existingList = m1.has(key) ? m1.get(key) : [];
-            var updatedList = __spreadArray$1(__spreadArray$1([], __read$1(existingList)), __read$1(value));
+            var updatedList = __spreadArray$1(__spreadArray$1([], __read$1(existingList), false), __read$1(value), false);
             m1.set(key, updatedList);
         });
     };
     PivotColDefService.prototype.generateColumnGroupId = function (pivotKeys) {
         var pivotCols = this.columnModel.getPivotColumns().map(function (col) { return col.getColId(); });
-        return "pivotGroup_" + pivotCols.join('-') + "_" + pivotKeys.join('-');
+        return "pivotGroup_".concat(pivotCols.join('-'), "_").concat(pivotKeys.join('-'));
     };
     PivotColDefService.prototype.generateColumnId = function (pivotKeys, measureColumnId) {
         var pivotCols = this.columnModel.getPivotColumns().map(function (col) { return col.getColId(); });
-        return "pivot_" + pivotCols.join('-') + "_" + pivotKeys.join('-') + "_" + measureColumnId;
+        return "pivot_".concat(pivotCols.join('-'), "_").concat(pivotKeys.join('-'), "_").concat(measureColumnId);
     };
     /**
      * Used by the SSRM to create secondary columns from provided fields
@@ -1403,10 +1409,19 @@ var PivotColDefService = /** @class */ (function (_super) {
             var children = [];
             for (var key_1 in uniqueValues) {
                 var item = uniqueValues[key_1];
-                var child = uniqueValuesToGroups("" + id + _this.fieldSeparator + key_1, key_1, item, depth + 1);
+                var child = uniqueValuesToGroups("".concat(id).concat(_this.fieldSeparator).concat(key_1), key_1, item, depth + 1);
                 children.push(child);
             }
             if (children.length === 0) {
+                var potentialAggCol = _this.columnModel.getPrimaryColumn(key);
+                if (potentialAggCol) {
+                    var headerName = (_a = _this.columnModel.getDisplayNameForColumn(potentialAggCol, 'header')) !== null && _a !== void 0 ? _a : key;
+                    var colDef = _this.createColDef(potentialAggCol, headerName, undefined, false);
+                    colDef.colId = id;
+                    colDef.aggFunc = potentialAggCol.getAggFunc();
+                    colDef.valueGetter = function (params) { var _a; return (_a = params.data) === null || _a === void 0 ? void 0 : _a[id]; };
+                    return colDef;
+                }
                 var col = {
                     colId: id,
                     headerName: key,
@@ -1414,17 +1429,11 @@ var PivotColDefService = /** @class */ (function (_super) {
                     // however pinned rows still access the data object by field, this prevents values with dots from being treated as complex objects
                     valueGetter: function (params) { var _a; return (_a = params.data) === null || _a === void 0 ? void 0 : _a[id]; },
                 };
-                var potentialAggCol = _this.columnModel.getPrimaryColumn(key);
-                if (potentialAggCol) {
-                    col.headerName = (_a = _this.columnModel.getDisplayNameForColumn(potentialAggCol, 'header')) !== null && _a !== void 0 ? _a : key;
-                    col.aggFunc = potentialAggCol.getAggFunc();
-                    col.pivotValueColumn = potentialAggCol;
-                }
                 return col;
             }
             // this is a bit sketchy. As the fields can be anything we just build groups as deep as the fields go.
             // nothing says user has to give us groups the same depth.
-            var collapseSingleChildren = _this.gridOptionsService.is('removePivotHeaderRowWhenSingleValueColumn');
+            var collapseSingleChildren = _this.gridOptionsService.get('removePivotHeaderRowWhenSingleValueColumn');
             if (collapseSingleChildren && children.length === 1 && 'colId' in children[0]) {
                 children[0].headerName = key;
                 return children[0];
@@ -1513,7 +1522,7 @@ var PivotStage = /** @class */ (function (_super) {
         var uniqueValues = this.bucketUpRowNodes(changedPath);
         var uniqueValuesChanged = this.setUniqueValues(uniqueValues);
         var aggregationColumns = this.columnModel.getValueColumns();
-        var aggregationColumnsHash = aggregationColumns.map(function (column) { return column.getId() + "-" + column.getColDef().headerName; }).join('#');
+        var aggregationColumnsHash = aggregationColumns.map(function (column) { return "".concat(column.getId(), "-").concat(column.getColDef().headerName); }).join('#');
         var aggregationFuncsHash = aggregationColumns.map(function (column) { return column.getAggFunc().toString(); }).join('#');
         var aggregationColumnsChanged = this.aggregationColumnsHashLastTime !== aggregationColumnsHash;
         var aggregationFuncsChanged = this.aggregationFuncsHashLastTime !== aggregationFuncsHash;
@@ -1522,7 +1531,17 @@ var PivotStage = /** @class */ (function (_super) {
         var groupColumnsHash = this.columnModel.getRowGroupColumns().map(function (column) { return column.getId(); }).join('#');
         var groupColumnsChanged = groupColumnsHash !== this.groupColumnsHashLastTime;
         this.groupColumnsHashLastTime = groupColumnsHash;
-        if (uniqueValuesChanged || aggregationColumnsChanged || groupColumnsChanged || aggregationFuncsChanged) {
+        var pivotRowTotals = this.gridOptionsService.get('pivotRowTotals');
+        var pivotColumnGroupTotals = this.gridOptionsService.get('pivotColumnGroupTotals');
+        var suppressExpandablePivotGroups = this.gridOptionsService.get('suppressExpandablePivotGroups');
+        var removePivotHeaderRowWhenSingleValueColumn = this.gridOptionsService.get('removePivotHeaderRowWhenSingleValueColumn');
+        var anyGridOptionsChanged = (pivotRowTotals !== this.pivotRowTotalsLastTime || pivotColumnGroupTotals !== this.pivotColumnGroupTotalsLastTime ||
+            suppressExpandablePivotGroups !== this.suppressExpandablePivotGroupsLastTime || removePivotHeaderRowWhenSingleValueColumn !== this.removePivotHeaderRowWhenSingleValueColumnLastTime);
+        this.pivotRowTotalsLastTime = pivotRowTotals;
+        this.pivotColumnGroupTotalsLastTime = pivotColumnGroupTotals;
+        this.suppressExpandablePivotGroupsLastTime = suppressExpandablePivotGroups;
+        this.removePivotHeaderRowWhenSingleValueColumnLastTime = removePivotHeaderRowWhenSingleValueColumn;
+        if (uniqueValuesChanged || aggregationColumnsChanged || groupColumnsChanged || aggregationFuncsChanged || anyGridOptionsChanged) {
             var _a = this.pivotColDefService.createPivotColumnDefs(this.uniqueValues), pivotColumnGroupDefs = _a.pivotColumnGroupDefs, pivotColumnDefs = _a.pivotColumnDefs;
             this.pivotColumnDefs = pivotColumnDefs;
             this.columnModel.setSecondaryColumns(pivotColumnGroupDefs, "rowModelUpdated");
@@ -1652,6 +1671,15 @@ var __decorate$9 = (undefined && undefined.__decorate) || function (decorators, 
 };
 // @ts-ignore
 var AGBigInt = typeof BigInt === 'undefined' ? null : BigInt;
+var defaultAggFuncNames = {
+    sum: 'Sum',
+    first: 'First',
+    last: 'Last',
+    min: 'Min',
+    max: 'Max',
+    count: 'Count',
+    avg: 'Average',
+};
 var AggFuncService = /** @class */ (function (_super) {
     __extends$9(AggFuncService, _super);
     function AggFuncService() {
@@ -1684,6 +1712,10 @@ var AggFuncService = /** @class */ (function (_super) {
         var funcExists = core._.exists(this.aggFuncsMap[func]);
         return allowed && funcExists;
     };
+    AggFuncService.prototype.getDefaultFuncLabel = function (fctName) {
+        var _a;
+        return (_a = defaultAggFuncNames[fctName]) !== null && _a !== void 0 ? _a : fctName;
+    };
     AggFuncService.prototype.getDefaultAggFunc = function (column) {
         var defaultAgg = column.getColDef().defaultAggFunc;
         if (core._.exists(defaultAgg) && this.isAggFuncPossible(column, defaultAgg)) {
@@ -1696,11 +1728,11 @@ var AggFuncService = /** @class */ (function (_super) {
         return core._.existsAndNotEmpty(allKeys) ? allKeys[0] : null;
     };
     AggFuncService.prototype.addAggFuncs = function (aggFuncs) {
-        core._.iterateObject(aggFuncs, this.addAggFunc.bind(this));
-    };
-    AggFuncService.prototype.addAggFunc = function (key, aggFunc) {
+        var _this = this;
         this.init();
-        this.aggFuncsMap[key] = aggFunc;
+        core._.iterateObject(aggFuncs, function (key, aggFunc) {
+            _this.aggFuncsMap[key] = aggFunc;
+        });
     };
     AggFuncService.prototype.getAggFunc = function (name) {
         this.init();
@@ -1925,7 +1957,7 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
         var _this = this;
         this.setTemplate(DropZoneColumnComp.TEMPLATE);
         var eGui = this.getGui();
-        var isFunctionsReadOnly = this.gridOptionsService.is('functionsReadOnly');
+        var isFunctionsReadOnly = this.gridOptionsService.get('functionsReadOnly');
         this.addElementClasses(eGui);
         this.addElementClasses(this.eDragHandle, 'drag-handle');
         this.addElementClasses(this.eText, 'text');
@@ -1944,6 +1976,19 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
         });
         this.setupTooltip();
         this.activateTabIndex();
+        var checkColumnLock = function () {
+            var isLocked = _this.isGroupingAndLocked();
+            core._.setDisplayed(_this.eButton, !isLocked && !_this.gridOptionsService.get('functionsReadOnly'));
+            _this.eDragHandle.classList.toggle('ag-column-select-column-readonly', isLocked);
+            _this.setupAria();
+        };
+        checkColumnLock();
+        if (this.isGroupingZone()) {
+            this.addManagedPropertyListener('groupLockGroupColumns', function () { return checkColumnLock(); });
+        }
+    };
+    DropZoneColumnComp.prototype.getColumn = function () {
+        return this.column;
     };
     DropZoneColumnComp.prototype.setupAria = function () {
         var translate = this.localeService.getLocaleTextFunc();
@@ -1954,25 +1999,27 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
             desc: translate('ariaDropZoneColumnComponentSortDescending', 'descending'),
         };
         var columnSort = this.column.getSort();
-        var isSortSuppressed = this.gridOptionsService.is('rowGroupPanelSuppressSort');
+        var isSortSuppressed = this.gridOptionsService.get('rowGroupPanelSuppressSort');
         var ariaInstructions = [
             [
-                aggFuncName && "" + aggFuncName + aggSeparator,
+                aggFuncName && "".concat(aggFuncName).concat(aggSeparator),
                 name,
-                this.isGroupingZone() && !isSortSuppressed && columnSort && ", " + sortDirection[columnSort]
+                this.isGroupingZone() && !isSortSuppressed && columnSort && ", ".concat(sortDirection[columnSort])
             ].filter(function (part) { return !!part; }).join(''),
         ];
-        var isFunctionsReadOnly = this.gridOptionsService.is('functionsReadOnly');
+        var isFunctionsReadOnly = this.gridOptionsService.get('functionsReadOnly');
         if (this.isAggregationZone() && !isFunctionsReadOnly) {
             var aggregationMenuAria = translate('ariaDropZoneColumnValueItemDescription', 'Press ENTER to change the aggregation type');
             ariaInstructions.push(aggregationMenuAria);
         }
-        if (this.isGroupingZone() && this.column.getColDef().sortable && !isSortSuppressed) {
+        if (this.isGroupingZone() && this.column.isSortable() && !isSortSuppressed) {
             var sortProgressAria = translate('ariaDropZoneColumnGroupItemDescription', 'Press ENTER to sort');
             ariaInstructions.push(sortProgressAria);
         }
-        var deleteAria = translate('ariaDropZoneColumnComponentDescription', 'Press DELETE to remove');
-        ariaInstructions.push(deleteAria);
+        if (!this.isGroupingAndLocked()) {
+            var deleteAria = translate('ariaDropZoneColumnComponentDescription', 'Press DELETE to remove');
+            ariaInstructions.push(deleteAria);
+        }
         core._.setAriaLabel(this.getGui(), ariaInstructions.join('. '));
     };
     DropZoneColumnComp.prototype.setupTooltip = function () {
@@ -1986,12 +2033,12 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
     };
     DropZoneColumnComp.prototype.setupSort = function () {
         var _this = this;
-        var canSort = this.column.getColDef().sortable;
+        var canSort = this.column.isSortable();
         var isGroupingZone = this.isGroupingZone();
         if (!canSort || !isGroupingZone) {
             return;
         }
-        if (!this.gridOptionsService.is('rowGroupPanelSuppressSort')) {
+        if (!this.gridOptionsService.get('rowGroupPanelSuppressSort')) {
             this.eSortIndicator.setupSort(this.column, true);
             var performSort_1 = function (event) {
                 event.preventDefault();
@@ -2010,22 +2057,22 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
     };
     DropZoneColumnComp.prototype.addDragSource = function () {
         var _this = this;
+        var _a = this, dragAndDropService = _a.dragAndDropService, displayName = _a.displayName, eDragHandle = _a.eDragHandle, column = _a.column;
         var dragSource = {
             type: core.DragSourceType.ToolPanel,
-            eElement: this.eDragHandle,
-            defaultIconName: core.DragAndDropService.ICON_HIDE,
-            getDragItem: function () { return _this.createDragItem(); },
-            dragItemName: this.displayName,
-            dragSourceDropTarget: this.dragSourceDropTarget
+            eElement: eDragHandle,
+            getDefaultIconName: function () { return core.DragAndDropService.ICON_HIDE; },
+            getDragItem: function () { return _this.createDragItem(column); },
+            dragItemName: displayName
         };
-        this.dragAndDropService.addDragSource(dragSource, true);
-        this.addDestroyFunc(function () { return _this.dragAndDropService.removeDragSource(dragSource); });
+        dragAndDropService.addDragSource(dragSource, true);
+        this.addDestroyFunc(function () { return dragAndDropService.removeDragSource(dragSource); });
     };
-    DropZoneColumnComp.prototype.createDragItem = function () {
+    DropZoneColumnComp.prototype.createDragItem = function (column) {
         var visibleState = {};
-        visibleState[this.column.getId()] = this.column.isVisible();
+        visibleState[column.getId()] = column.isVisible();
         return {
-            columns: [this.column],
+            columns: [column],
             visibleState: visibleState
         };
     };
@@ -2035,22 +2082,27 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
         if (this.ghost) {
             this.addCssClass('ag-column-drop-cell-ghost');
         }
-        if (this.isAggregationZone() && !this.gridOptionsService.is('functionsReadOnly')) {
+        if (this.isAggregationZone() && !this.gridOptionsService.get('functionsReadOnly')) {
             this.addGuiEventListener('click', this.onShowAggFuncSelection.bind(this));
         }
     };
+    DropZoneColumnComp.prototype.isGroupingAndLocked = function () {
+        return this.isGroupingZone() && this.columnModel.isColumnGroupingLocked(this.column);
+    };
     DropZoneColumnComp.prototype.setupRemove = function () {
         var _this = this;
-        core._.setDisplayed(this.eButton, !this.gridOptionsService.is('functionsReadOnly'));
+        core._.setDisplayed(this.eButton, !this.isGroupingAndLocked() && !this.gridOptionsService.get('functionsReadOnly'));
         var agEvent = { type: DropZoneColumnComp.EVENT_COLUMN_REMOVE };
         this.addGuiEventListener('keydown', function (e) {
             var isEnter = e.key === core.KeyCode.ENTER;
             var isDelete = e.key === core.KeyCode.DELETE;
             if (isDelete) {
-                e.preventDefault();
-                _this.dispatchEvent(agEvent);
+                if (!_this.isGroupingAndLocked()) {
+                    e.preventDefault();
+                    _this.dispatchEvent(agEvent);
+                }
             }
-            if (isEnter && _this.isAggregationZone() && !_this.gridOptionsService.is('functionsReadOnly')) {
+            if (isEnter && _this.isAggregationZone() && !_this.gridOptionsService.get('functionsReadOnly')) {
                 e.preventDefault();
                 _this.onShowAggFuncSelection();
             }
@@ -2079,7 +2131,7 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
     };
     DropZoneColumnComp.prototype.setTextValue = function () {
         var _a = this.getColumnAndAggFuncName(), name = _a.name, aggFuncName = _a.aggFuncName;
-        var displayValue = this.isAggregationZone() ? aggFuncName + "(" + name + ")" : name;
+        var displayValue = this.isAggregationZone() ? "".concat(aggFuncName, "(").concat(name, ")") : name;
         var displayValueSanitised = core._.escapeString(displayValue);
         this.eText.innerHTML = displayValueSanitised;
     };
@@ -2102,7 +2154,7 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
         ePopup.style.top = '0px';
         ePopup.style.left = '0px';
         ePopup.appendChild(virtualListGui);
-        ePopup.style.width = eGui.clientWidth + "px";
+        ePopup.style.width = "".concat(eGui.clientWidth, "px");
         var focusoutListener = this.addManagedListener(ePopup, 'focusout', function (e) {
             if (!ePopup.contains(e.relatedTarget) && addPopupRes) {
                 addPopupRes.hideFunc();
@@ -2160,7 +2212,7 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
         var _this = this;
         var itemSelected = function () {
             hidePopup();
-            if (_this.gridOptionsService.is('functionsPassive')) {
+            if (_this.gridOptionsService.get('functionsPassive')) {
                 var event_1 = {
                     type: core.Events.EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST,
                     columns: [_this.column],
@@ -2179,15 +2231,20 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
         return comp;
     };
     DropZoneColumnComp.prototype.addElementClasses = function (el, suffix) {
-        suffix = suffix ? "-" + suffix : '';
+        suffix = suffix ? "-".concat(suffix) : '';
         var direction = this.horizontal ? 'horizontal' : 'vertical';
-        el.classList.add("ag-column-drop-cell" + suffix, "ag-column-drop-" + direction + "-cell" + suffix);
+        el.classList.add("ag-column-drop-cell".concat(suffix), "ag-column-drop-".concat(direction, "-cell").concat(suffix));
     };
     DropZoneColumnComp.prototype.isAggregationZone = function () {
         return this.dropZonePurpose === 'aggregation';
     };
     DropZoneColumnComp.prototype.isGroupingZone = function () {
         return this.dropZonePurpose === 'rowGroup';
+    };
+    DropZoneColumnComp.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+        this.column = null;
+        this.dragSourceDropTarget = null;
     };
     DropZoneColumnComp.EVENT_COLUMN_REMOVE = 'columnRemove';
     DropZoneColumnComp.TEMPLATE = "<span role=\"option\">\n          <span ref=\"eDragHandle\" class=\"ag-drag-handle ag-column-drop-cell-drag-handle\" role=\"presentation\"></span>\n          <span ref=\"eText\" class=\"ag-column-drop-cell-text\" aria-hidden=\"true\"></span>\n          <ag-sort-indicator ref=\"eSortIndicator\"></ag-sort-indicator>\n          <span ref=\"eButton\" class=\"ag-column-drop-cell-button\" role=\"presentation\"></span>\n        </span>";
@@ -2272,10 +2329,14 @@ var __read = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (undefined && undefined.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (undefined && undefined.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 var BaseDropZonePanel = /** @class */ (function (_super) {
     __extends$7(BaseDropZonePanel, _super);
@@ -2303,6 +2364,10 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
     BaseDropZonePanel.prototype.setBeans = function (beans) {
         this.beans = beans;
     };
+    BaseDropZonePanel.prototype.isSourceEventFromTarget = function (draggingEvent) {
+        var dropZoneTarget = draggingEvent.dropZoneTarget, dragSource = draggingEvent.dragSource;
+        return dropZoneTarget.contains(dragSource.eElement);
+    };
     BaseDropZonePanel.prototype.destroy = function () {
         this.destroyGui();
         _super.prototype.destroy.call(this);
@@ -2320,7 +2385,7 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
             handleKeyDown: this.handleKeyDown.bind(this)
         }));
         this.addManagedListener(this.beans.eventService, core.Events.EVENT_NEW_COLUMNS_LOADED, this.refreshGui.bind(this));
-        this.addManagedPropertyListener('functionsReadOnly', this.refreshGui.bind(this));
+        this.addManagedPropertyListeners(['functionsReadOnly', 'rowGroupPanelSuppressSort', 'groupLockGroupColumns'], this.refreshGui.bind(this));
         this.setupDropTarget();
         this.positionableFeature = new core.PositionableFeature(this.getGui(), { minHeight: 100 });
         this.createManagedBean(this.positionableFeature);
@@ -2335,7 +2400,7 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         var isNext = e.key === core.KeyCode.DOWN;
         var isPrevious = e.key === core.KeyCode.UP;
         if (!isVertical) {
-            var isRtl = this.gridOptionsService.is('enableRtl');
+            var isRtl = this.gridOptionsService.get('enableRtl');
             isNext = (!isRtl && e.key === core.KeyCode.RIGHT) || (isRtl && e.key === core.KeyCode.LEFT);
             isPrevious = (!isRtl && e.key === core.KeyCode.LEFT) || (isRtl && e.key === core.KeyCode.RIGHT);
         }
@@ -2349,9 +2414,9 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         }
     };
     BaseDropZonePanel.prototype.addElementClasses = function (el, suffix) {
-        suffix = suffix ? "-" + suffix : '';
+        suffix = suffix ? "-".concat(suffix) : '';
         var direction = this.horizontal ? 'horizontal' : 'vertical';
-        el.classList.add("ag-column-drop" + suffix, "ag-column-drop-" + direction + suffix);
+        el.classList.add("ag-column-drop".concat(suffix), "ag-column-drop-".concat(direction).concat(suffix));
     };
     BaseDropZonePanel.prototype.setupDropTarget = function () {
         this.dropTarget = {
@@ -2369,15 +2434,25 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         // not interested in row drags
         return type === core.DragSourceType.HeaderCell || type === core.DragSourceType.ToolPanel;
     };
+    BaseDropZonePanel.prototype.minimumAllowedNewInsertIndex = function () {
+        var numberOfLockedCols = this.gridOptionsService.get('groupLockGroupColumns');
+        var numberOfGroupCols = this.colModel.getRowGroupColumns().length;
+        if (numberOfLockedCols === -1) {
+            return numberOfGroupCols;
+        }
+        return Math.min(numberOfLockedCols, numberOfGroupCols);
+    };
     BaseDropZonePanel.prototype.checkInsertIndex = function (draggingEvent) {
         var newIndex = this.getNewInsertIndex(draggingEvent);
         // <0 happens when drag is no a direction we are interested in, eg drag is up/down but in horizontal panel
         if (newIndex < 0) {
             return false;
         }
-        var changed = newIndex !== this.insertIndex;
+        var minimumAllowedIndex = this.minimumAllowedNewInsertIndex();
+        var newAdjustedIndex = Math.max(minimumAllowedIndex, newIndex);
+        var changed = newAdjustedIndex !== this.insertIndex;
         if (changed) {
-            this.insertIndex = newIndex;
+            this.insertIndex = newAdjustedIndex;
         }
         return changed;
     };
@@ -2390,7 +2465,7 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         var hoveredIndex = boundsList.findIndex(function (rect) { return (_this.horizontal ? (rect.right > mouseLocation && rect.left < mouseLocation) : (rect.top < mouseLocation && rect.bottom > mouseLocation)); });
         // not hovering a non-ghost component
         if (hoveredIndex === -1) {
-            var enableRtl = this.beans.gridOptionsService.is('enableRtl');
+            var enableRtl = this.beans.gridOptionsService.get('enableRtl');
             // if mouse is below or right of all components then new index should be placed last
             var isLast = boundsList.every(function (rect) { return (mouseLocation > (_this.horizontal ? rect.right : rect.bottom)); });
             if (isLast) {
@@ -2428,25 +2503,31 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         }
     };
     BaseDropZonePanel.prototype.onDragEnter = function (draggingEvent) {
+        var _this = this;
         // this will contain all columns that are potential drops
         var dragColumns = draggingEvent.dragSource.getDragItem().columns || [];
         this.state = BaseDropZonePanel.STATE_NEW_COLUMNS_IN;
         // take out columns that are not droppable
-        var goodDragColumns = dragColumns.filter(this.isColumnDroppable.bind(this));
-        if (goodDragColumns.length > 0) {
-            var hideColumnOnExit = this.isRowGroupPanel() && !this.gridOptionsService.is('suppressRowGroupHidesColumns') && !draggingEvent.fromNudge;
-            if (hideColumnOnExit) {
-                var dragItem = draggingEvent.dragSource.getDragItem();
-                var columns = dragItem.columns;
-                this.setColumnsVisible(columns, false, "uiColumnDragged");
-            }
-            this.potentialDndColumns = goodDragColumns;
-            this.checkInsertIndex(draggingEvent);
-            this.refreshGui();
+        var goodDragColumns = dragColumns.filter(function (col) { return _this.isColumnDroppable(col, draggingEvent); });
+        var alreadyPresent = goodDragColumns.every(function (col) { return _this.childColumnComponents.map(function (cmp) { return cmp.getColumn(); }).indexOf(col) !== -1; });
+        if (goodDragColumns.length === 0) {
+            return;
         }
+        this.potentialDndColumns = goodDragColumns;
+        if (alreadyPresent) {
+            this.state = BaseDropZonePanel.STATE_NOT_DRAGGING;
+            return;
+        }
+        var hideColumnOnExit = this.isRowGroupPanel() && !this.gridOptionsService.get('suppressRowGroupHidesColumns') && !draggingEvent.fromNudge;
+        if (hideColumnOnExit) {
+            var dragItem = draggingEvent.dragSource.getDragItem();
+            var columns = dragItem.columns;
+            this.setColumnsVisible(columns, false, "uiColumnDragged");
+        }
+        this.checkInsertIndex(draggingEvent);
+        this.refreshGui();
     };
     BaseDropZonePanel.prototype.setColumnsVisible = function (columns, visible, source) {
-        if (source === void 0) { source = "api"; }
         if (columns) {
             var allowedCols = columns.filter(function (c) { return !c.getColDef().lockVisible; });
             this.colModel.setColumnsVisible(allowedCols, visible, source);
@@ -2466,7 +2547,7 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
             this.removeColumns(columns);
         }
         if (this.isPotentialDndColumns()) {
-            var showColumnOnExit = this.isRowGroupPanel() && !this.gridOptionsService.is('suppressMakeColumnVisibleAfterUnGroup') && !draggingEvent.fromNudge;
+            var showColumnOnExit = this.isRowGroupPanel() && !this.gridOptionsService.get('suppressMakeColumnVisibleAfterUnGroup') && !draggingEvent.fromNudge;
             if (showColumnOnExit) {
                 var dragItem = draggingEvent.dragSource.getDragItem();
                 this.setColumnsVisible(dragItem.columns, true, "uiColumnDragged");
@@ -2492,7 +2573,7 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
             // cause a refresh. This gives a nice GUI where the ghost stays until the app has caught
             // up with the changes. However, if there was no change in the order, then we do need to
             // refresh to reset the columns
-            if (!this.beans.gridOptionsService.is('functionsPassive') || !success) {
+            if (!this.beans.gridOptionsService.get('functionsPassive') || !success) {
                 this.refreshGui();
             }
         }
@@ -2591,10 +2672,10 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         if (this.isPotentialDndColumns()) {
             var dndColumns = this.potentialDndColumns.map(function (column) { return (_this.createColumnComponent(column, true)); });
             if (this.insertIndex >= itemsToAddToGui.length) {
-                itemsToAddToGui.push.apply(itemsToAddToGui, __spreadArray([], __read(dndColumns)));
+                itemsToAddToGui.push.apply(itemsToAddToGui, __spreadArray([], __read(dndColumns), false));
             }
             else {
-                itemsToAddToGui.splice.apply(itemsToAddToGui, __spreadArray([this.insertIndex, 0], __read(dndColumns)));
+                itemsToAddToGui.splice.apply(itemsToAddToGui, __spreadArray([this.insertIndex, 0], __read(dndColumns), false));
             }
         }
         this.appendChild(this.eColumnDropList);
@@ -2657,7 +2738,7 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         // only add the arrows if the layout is horizontal
         if (this.horizontal) {
             // for RTL it's a left arrow, otherwise it's a right arrow
-            var enableRtl = this.beans.gridOptionsService.is('enableRtl');
+            var enableRtl = this.beans.gridOptionsService.get('enableRtl');
             var icon = core._.createIconNoSpan(enableRtl ? 'smallLeft' : 'smallRight', this.beans.gridOptionsService);
             this.addElementClasses(icon, 'cell-separator');
             eParent.appendChild(icon);
@@ -2730,15 +2811,15 @@ var RowGroupDropZonePanel = /** @class */ (function (_super) {
         res.location = 'rowGroupColumnsList';
         return res;
     };
-    RowGroupDropZonePanel.prototype.isColumnDroppable = function (column) {
+    RowGroupDropZonePanel.prototype.isColumnDroppable = function (column, draggingEvent) {
         // we never allow grouping of secondary columns
-        if (this.gridOptionsService.is('functionsReadOnly') || !column.isPrimary()) {
+        if (this.gridOptionsService.get('functionsReadOnly') || !column.isPrimary()) {
             return false;
         }
-        return column.isAllowRowGroup() && !column.isRowGroupActive();
+        return column.isAllowRowGroup() && (!column.isRowGroupActive() || this.isSourceEventFromTarget(draggingEvent));
     };
     RowGroupDropZonePanel.prototype.updateColumns = function (columns) {
-        if (this.gridOptionsService.is('functionsPassive')) {
+        if (this.gridOptionsService.get('functionsPassive')) {
             var event_1 = {
                 type: core.Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST,
                 columns: columns
@@ -2856,15 +2937,15 @@ var PivotDropZonePanel = /** @class */ (function (_super) {
             this.setDisplayed(pivotMode);
         }
     };
-    PivotDropZonePanel.prototype.isColumnDroppable = function (column) {
+    PivotDropZonePanel.prototype.isColumnDroppable = function (column, draggingEvent) {
         // we never allow grouping of secondary columns
-        if (this.gridOptionsService.is('functionsReadOnly') || !column.isPrimary()) {
+        if (this.gridOptionsService.get('functionsReadOnly') || !column.isPrimary()) {
             return false;
         }
-        return column.isAllowPivot() && !column.isPivotActive();
+        return column.isAllowPivot() && (!column.isPivotActive() || this.isSourceEventFromTarget(draggingEvent));
     };
     PivotDropZonePanel.prototype.updateColumns = function (columns) {
-        if (this.gridOptionsService.is('functionsPassive')) {
+        if (this.gridOptionsService.get('functionsPassive')) {
             var event_1 = {
                 type: core.Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST,
                 columns: columns
@@ -2923,15 +3004,17 @@ var GridHeaderDropZones = /** @class */ (function (_super) {
         return _super.call(this) || this;
     }
     GridHeaderDropZones.prototype.postConstruct = function () {
+        var _this = this;
         this.setGui(this.createNorthPanel());
-        this.addManagedListener(this.eventService, core.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this));
-        this.addManagedListener(this.eventService, core.Events.EVENT_NEW_COLUMNS_LOADED, this.onRowGroupChanged.bind(this));
-        this.addManagedPropertyListener('rowGroupPanelShow', this.onRowGroupChanged.bind(this));
+        this.addManagedListener(this.eventService, core.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, function () { return _this.onRowGroupChanged(); });
+        this.addManagedListener(this.eventService, core.Events.EVENT_NEW_COLUMNS_LOADED, function () { return _this.onRowGroupChanged(); });
+        this.addManagedPropertyListener('rowGroupPanelShow', function () { return _this.onRowGroupChanged(); });
+        this.addManagedPropertyListener('pivotPanelShow', function () { return _this.onPivotPanelShow(); });
         this.onRowGroupChanged();
     };
     GridHeaderDropZones.prototype.createNorthPanel = function () {
+        var _this = this;
         var topPanelGui = document.createElement('div');
-        var dropPanelVisibleListener = this.onDropPanelVisible.bind(this);
         topPanelGui.classList.add('ag-column-drop-wrapper');
         core._.setAriaRole(topPanelGui, 'presentation');
         this.rowGroupComp = new RowGroupDropZonePanel(true);
@@ -2940,8 +3023,8 @@ var GridHeaderDropZones = /** @class */ (function (_super) {
         this.createManagedBean(this.pivotComp);
         topPanelGui.appendChild(this.rowGroupComp.getGui());
         topPanelGui.appendChild(this.pivotComp.getGui());
-        this.addManagedListener(this.rowGroupComp, core.Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
-        this.addManagedListener(this.pivotComp, core.Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
+        this.addManagedListener(this.rowGroupComp, core.Component.EVENT_DISPLAYED_CHANGED, function () { return _this.onDropPanelVisible(); });
+        this.addManagedListener(this.pivotComp, core.Component.EVENT_DISPLAYED_CHANGED, function () { return _this.onDropPanelVisible(); });
         this.onDropPanelVisible();
         return topPanelGui;
     };
@@ -2964,6 +3047,22 @@ var GridHeaderDropZones = /** @class */ (function (_super) {
         }
         else {
             this.rowGroupComp.setDisplayed(false);
+        }
+    };
+    GridHeaderDropZones.prototype.onPivotPanelShow = function () {
+        if (!this.pivotComp) {
+            return;
+        }
+        var pivotPanelShow = this.gridOptionsService.get('pivotPanelShow');
+        if (pivotPanelShow === 'always') {
+            this.pivotComp.setDisplayed(true);
+        }
+        else if (pivotPanelShow === 'onlyWhenPivoting') {
+            var pivoting = this.columnModel.isPivotActive();
+            this.pivotComp.setDisplayed(pivoting);
+        }
+        else {
+            this.pivotComp.setDisplayed(false);
         }
     };
     __decorate$4([
@@ -3081,7 +3180,7 @@ var FilterAggregatesStage = /** @class */ (function (_super) {
             rowNode.setAllChildrenCount(null);
             return;
         }
-        if (this.gridOptionsService.isTreeData()) {
+        if (this.gridOptionsService.get('treeData')) {
             this.setAllChildrenCountTreeData(rowNode);
         }
         else {
@@ -3101,7 +3200,7 @@ var FilterAggregatesStage = /** @class */ (function (_super) {
 }(core.BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '30.1.0';
+var VERSION = '31.1.0';
 
 var __extends$2 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -3143,13 +3242,13 @@ var GroupFilter = /** @class */ (function (_super) {
     GroupFilter.prototype.validateParams = function () {
         var colDef = this.params.colDef;
         if (colDef.field) {
-            core._.doOnce(function () { return console.warn('AG Grid: Group Column Filter does not work with the colDef property "field". This property will be ignored.'); }, 'groupFilterFieldParam');
+            core._.warnOnce('Group Column Filter does not work with the colDef property "field". This property will be ignored.');
         }
         if (colDef.filterValueGetter) {
-            core._.doOnce(function () { return console.warn('AG Grid: Group Column Filter does not work with the colDef property "filterValueGetter". This property will be ignored.'); }, 'groupFilterFilterValueGetterParam');
+            core._.warnOnce('Group Column Filter does not work with the colDef property "filterValueGetter". This property will be ignored.');
         }
         if (colDef.filterParams) {
-            core._.doOnce(function () { return console.warn('AG Grid: Group Column Filter does not work with the colDef property "filterParams". This property will be ignored.'); }, 'groupFilterFilterParams');
+            core._.warnOnce('Group Column Filter does not work with the colDef property "filterParams". This property will be ignored.');
         }
     };
     GroupFilter.prototype.updateGroups = function () {
@@ -3158,13 +3257,13 @@ var GroupFilter = /** @class */ (function (_super) {
     };
     GroupFilter.prototype.getSourceColumns = function () {
         this.groupColumn = this.params.column;
-        if (this.gridOptionsService.is('treeData')) {
-            core._.doOnce(function () { return console.warn('AG Grid: Group Column Filter does not work with Tree Data enabled. Please disable Tree Data, or use a different filter.'); }, 'groupFilterTreeData');
+        if (this.gridOptionsService.get('treeData')) {
+            core._.warnOnce('Group Column Filter does not work with Tree Data enabled. Please disable Tree Data, or use a different filter.');
             return [];
         }
         var sourceColumns = this.columnModel.getSourceColumnsForGroupColumn(this.groupColumn);
         if (!sourceColumns) {
-            core._.doOnce(function () { return console.warn('AG Grid: Group Column Filter only works on group columns. Please use a different filter.'); }, 'groupFilterNotGroupColumn');
+            core._.warnOnce('Group Column Filter only works on group columns. Please use a different filter.');
             return [];
         }
         return sourceColumns;
@@ -3417,6 +3516,9 @@ var GroupFloatingFilterComp = /** @class */ (function (_super) {
         });
     };
     GroupFloatingFilterComp.prototype.onParamsUpdated = function (params) {
+        this.refresh(params);
+    };
+    GroupFloatingFilterComp.prototype.refresh = function (params) {
         this.params = params;
         this.setParams();
     };
@@ -3424,7 +3526,7 @@ var GroupFloatingFilterComp = /** @class */ (function (_super) {
         var _a;
         var displayName = this.columnModel.getDisplayNameForColumn(this.params.column, 'header', true);
         var translate = this.localeService.getLocaleTextFunc();
-        (_a = this.eFloatingFilterText) === null || _a === void 0 ? void 0 : _a.setInputAriaLabel(displayName + " " + translate('ariaFilterInput', 'Filter Input'));
+        (_a = this.eFloatingFilterText) === null || _a === void 0 ? void 0 : _a.setInputAriaLabel("".concat(displayName, " ").concat(translate('ariaFilterInput', 'Filter Input')));
     };
     GroupFloatingFilterComp.prototype.setupReadOnlyFloatingFilterElement = function () {
         var _this = this;
@@ -3471,13 +3573,18 @@ var GroupFloatingFilterComp = /** @class */ (function (_super) {
         this.setupUnderlyingFloatingFilterElement();
     };
     GroupFloatingFilterComp.prototype.onColDefChanged = function (event) {
-        var _a, _b;
+        var _a, _b, _c;
         if (!event.column) {
             return;
         }
         var compDetails = this.filterManager.getFloatingFilterCompDetails(event.column, this.params.showParentFilter);
         if (compDetails) {
-            (_b = (_a = this.underlyingFloatingFilter) === null || _a === void 0 ? void 0 : _a.onParamsUpdated) === null || _b === void 0 ? void 0 : _b.call(_a, compDetails.params);
+            if ((_a = this.underlyingFloatingFilter) === null || _a === void 0 ? void 0 : _a.refresh) {
+                this.underlyingFloatingFilter.refresh(compDetails.params);
+            }
+            else {
+                (_c = (_b = this.underlyingFloatingFilter) === null || _b === void 0 ? void 0 : _b.onParamsUpdated) === null || _c === void 0 ? void 0 : _c.call(_b, compDetails.params);
+            }
         }
     };
     GroupFloatingFilterComp.prototype.onParentModelChanged = function (_model, event) {
@@ -3607,15 +3714,15 @@ var ValuesDropZonePanel = /** @class */ (function (_super) {
     ValuesDropZonePanel.prototype.getIconName = function () {
         return this.isPotentialDndColumns() ? core.DragAndDropService.ICON_AGGREGATE : core.DragAndDropService.ICON_NOT_ALLOWED;
     };
-    ValuesDropZonePanel.prototype.isColumnDroppable = function (column) {
+    ValuesDropZonePanel.prototype.isColumnDroppable = function (column, draggingEvent) {
         // we never allow grouping of secondary columns
-        if (this.gridOptionsService.is('functionsReadOnly') || !column.isPrimary()) {
+        if (this.gridOptionsService.get('functionsReadOnly') || !column.isPrimary()) {
             return false;
         }
-        return column.isAllowValue() && !column.isValueActive();
+        return column.isAllowValue() && (!column.isValueActive() || this.isSourceEventFromTarget(draggingEvent));
     };
     ValuesDropZonePanel.prototype.updateColumns = function (columns) {
-        if (this.gridOptionsService.is('functionsPassive')) {
+        if (this.gridOptionsService.get('functionsPassive')) {
             var event_1 = {
                 type: core.Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST,
                 columns: columns

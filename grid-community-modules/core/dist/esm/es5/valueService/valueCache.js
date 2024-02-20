@@ -29,8 +29,8 @@ var ValueCache = /** @class */ (function (_super) {
         return _this;
     }
     ValueCache.prototype.init = function () {
-        this.active = this.gridOptionsService.is('valueCache');
-        this.neverExpires = this.gridOptionsService.is('valueCacheNeverExpires');
+        this.active = this.gridOptionsService.get('valueCache');
+        this.neverExpires = this.gridOptionsService.get('valueCacheNeverExpires');
     };
     ValueCache.prototype.onDataChanged = function () {
         if (this.neverExpires) {

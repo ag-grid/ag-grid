@@ -7,7 +7,7 @@ const { ComponentUtil } = require("@ag-grid-community/core/dist/cjs/es5/componen
 const { getFormatterForTS } = require('../../scripts/formatAST');
 const prettierJs = require('prettier');
 
-const { formatNode, findNode, getJsDoc } = getFormatterForTS(ts);
+const { formatNode, findNode, getFullJsDoc, getJsDoc } = getFormatterForTS(ts);
 
 const EVENT_LOOKUP = ComponentUtil.EVENT_CALLBACKS;
 
@@ -25,9 +25,6 @@ const INTERFACE_GLOBS = [
     ...buildGlob('../angular/projects/ag-grid-angular/src/lib'),
     ...buildGlob('../react/src/shared'),
 ];
-const CHARTS_INTERFACE_GLOBS = [
-    ...buildGlob('../../charts-community-modules/ag-charts-community/src'),
-];
 
 const TEST_INTERFACE_GLOBS = [
     ...buildGlob('../../grid-packages/ag-grid-docs/documentation/src/components/expandable-snippet'),
@@ -38,7 +35,7 @@ function findAllInNodesTree(node) {
     let interfaces = [];
 
     const interfaceNode = kind == 'InterfaceDeclaration' || kind == 'EnumDeclaration' || kind == 'TypeAliasDeclaration';
-    const classNode = kind == 'ClassDeclaration' && getJsDoc(node)?.indexOf('@docsInterface') >= 0;
+    const classNode = kind == 'ClassDeclaration' && getFullJsDoc(node)?.indexOf('@docsInterface') >= 0;
     if (interfaceNode || classNode) {
         interfaces.push(node);
     }
@@ -63,7 +60,7 @@ function getArgTypes(parameters, file) {
 }
 
 function toCamelCase(value) {
-    return value[0].toLowerCase() + value.substr(1);
+    return value[0].toLowerCase() + value.substring(1);
 }
 
 function extractTypesFromNode(node, srcFile, includeQuestionMark) {
@@ -82,12 +79,12 @@ function extractTypesFromNode(node, srcFile, includeQuestionMark) {
             const methodArgs = getArgTypes(node.type.parameters, srcFile);
             returnType = formatNode(node.type.type, srcFile);
             nodeMembers[name] = {
-                description: getJsDoc(node),
+                meta: getJsDoc(node),
                 type: { arguments: methodArgs, returnType, optional }
             };
         } else {
             // i.e colWidth?: number;             
-            nodeMembers[name] = { description: getJsDoc(node), type: { returnType, optional } };
+            nodeMembers[name] = { meta: getJsDoc(node), type: { returnType, optional } };
         }
     } else if (kind == 'MethodSignature' || kind == 'MethodDeclaration') {
         // i.e isExternalFilterPresent?(): boolean;
@@ -95,17 +92,17 @@ function extractTypesFromNode(node, srcFile, includeQuestionMark) {
         const methodArgs = getArgTypes(node.parameters, srcFile);
 
         nodeMembers[name] = {
-            description: getJsDoc(node),
+            meta: getJsDoc(node),
             type: { arguments: methodArgs, returnType, optional }
         };
 
         if (EVENT_LOOKUP.includes(name)) {
             // Duplicate events without their prefix
-            let shortName = name.substr(2);
+            let shortName = name.substring(2);
             shortName = toCamelCase(shortName);
 
-            nodeMembers[shortName] = { ...nodeMembers[name], meta: { isEvent: true, name } };
-            nodeMembers[name] = { ...nodeMembers[name], meta: { isEvent: true, name } };
+            nodeMembers[shortName] = { ...nodeMembers[name], meta: { ...nodeMembers[name].meta, isEvent: true, name } };
+            nodeMembers[name] = { ...nodeMembers[name], meta: { ...nodeMembers[name].meta, isEvent: true, name } };
         }
 
     }
@@ -292,7 +289,7 @@ function extractInterfaces(srcFile, extension) {
         if (kind == 'EnumDeclaration') {
             iLookup[name] = {
                 meta: { isEnum: true }, type: node.members.map(n => formatNode(n, srcFile)),
-                docs: node.members.map(n => getJsDoc(n))
+                docs: node.members.map(n => getFullJsDoc(n))
             }
         } else if (kind == 'TypeAliasDeclaration') {
             iLookup[name] = {
@@ -324,9 +321,9 @@ function extractInterfaces(srcFile, extension) {
                         const propName = formatNode(p, srcFile, true);
                         const propType = formatNode(p.type, srcFile);
                         members[propName] = propType;
-                        const doc = getJsDoc(p);
+                        const doc = getFullJsDoc(p);
                         if (doc) {
-                            docs[propName] = getJsDoc(p);
+                            docs[propName] = getFullJsDoc(p);
                         }
                     }
 
@@ -351,7 +348,7 @@ function extractInterfaces(srcFile, extension) {
                 iLookup[name] = { ...orig, meta: { ...orig.meta, typeParams: node.typeParameters.map(tp => formatNode(tp, srcFile)) } }
             }
 
-            const doc = getJsDoc(node);
+            const doc = getFullJsDoc(node);
             if (doc) {
                 const orig = iLookup[name];
                 iLookup[name] = { ...orig, meta: { ...orig.meta, doc } }
@@ -437,12 +434,12 @@ function extractMethodsAndPropsFromNode(node, srcFile) {
         const methodArgs = getArgTypes(node.parameters, srcFile);
 
         nodeMembers[name] = {
-            description: getJsDoc(node),
+            meta: getJsDoc(node),
             type: { arguments: methodArgs, returnType }
         };
     } else if (kind == 'PropertyDeclaration') {
         nodeMembers[name] = {
-            description: getJsDoc(node),
+            meta: getJsDoc(node),
             type: { returnType: returnType }
         }
     }
@@ -503,10 +500,6 @@ function getGridApi() {
     const gridApiFile = "../core/src/ts/gridApi.ts";
     return getClassProperties(gridApiFile, 'GridApi');
 }
-function getColumnApi() {
-    const colApiFile = "../core/src/ts/columns/columnApi.ts";
-    return getClassProperties(colApiFile, 'ColumnApi');
-}
 function getRowNode() {
     const file = "../core/src/ts/interfaces/iRowNode.ts";
     const srcFile = parseFile(file);
@@ -531,26 +524,15 @@ function getColumn() {
     return getClassProperties(file, 'Column');
 }
 
-function getChartInterfaces() {
-    return getInterfaces(CHARTS_INTERFACE_GLOBS);
-}
-
-function getChartInterfaceProps() {
-    return buildInterfaceProps(CHARTS_INTERFACE_GLOBS);
-}
-
 const generateMetaFiles = () => {
     writeFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/grid-api/', 'grid-options.AUTO.json', getGridOptions());
     writeFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/grid-api/', 'interfaces.AUTO.json', getInterfaces(INTERFACE_GLOBS));
     writeFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/grid-api/', 'grid-api.AUTO.json', getGridApi());
     writeFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/row-object/', 'row-node.AUTO.json', getRowNode());
     writeFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/column-properties/', 'column-options.AUTO.json', getColumnOptions());
-    writeFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/column-api/', 'column-api.AUTO.json', getColumnApi());
     writeFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/column-object/', 'column.AUTO.json', getColumn());
     writeFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/grid-api/', 'doc-interfaces.AUTO.json', buildInterfaceProps(INTERFACE_GLOBS));
-    // Charts.
-    writeFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/charts-api/', 'interfaces.AUTO.json', getChartInterfaces());
-    writeFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/charts-api/', 'doc-interfaces.AUTO.json', getChartInterfaceProps());
+
     // Tests.
     writeFile('../../grid-packages/ag-grid-docs/documentation/src/components/expandable-snippet/', 'test-interfaces.AUTO.json', getInterfaces(TEST_INTERFACE_GLOBS));
     writeFile('../../grid-packages/ag-grid-docs/documentation/src/components/expandable-snippet/', 'test-doc-interfaces.AUTO.json', buildInterfaceProps(TEST_INTERFACE_GLOBS));

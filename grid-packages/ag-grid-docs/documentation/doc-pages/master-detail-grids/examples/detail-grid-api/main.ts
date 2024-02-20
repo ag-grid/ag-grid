@@ -1,4 +1,13 @@
-import { Grid, FirstDataRenderedEvent, GridOptions, GetRowIdParams, IDetailCellRendererParams } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  FirstDataRenderedEvent,
+  GridOptions,
+  GetRowIdParams,
+  IDetailCellRendererParams,
+} from '@ag-grid-community/core';
+
+let gridApi: GridApi<IAccount>;
 
 const gridOptions: GridOptions<IAccount> = {
   columnDefs: [
@@ -22,7 +31,6 @@ const gridOptions: GridOptions<IAccount> = {
       defaultColDef: {
         flex: 1,
         editable: true,
-        resizable: true,
       },
     },
     getDetailRowData: (params) => {
@@ -36,14 +44,13 @@ const gridOptions: GridOptions<IAccount> = {
   defaultColDef: {
     flex: 1,
     editable: true,
-    resizable: true,
   },
   onFirstDataRendered: onFirstDataRendered,
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
   // expand the first two rows
-  setTimeout(function () {
+  setTimeout(() => {
     params.api.forEachNode(function (node) {
       node.setExpanded(true)
     })
@@ -52,14 +59,14 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 
 function flashMilaSmithOnly() {
   // flash Mila Smith - we know her account is 177001 and we use the account for the row ID
-  var detailGrid = gridOptions.api!.getDetailGridInfo('detail_177001')
+  var detailGrid = gridApi!.getDetailGridInfo('detail_177001')
   if (detailGrid) {
     detailGrid.api!.flashCells()
   }
 }
 
 function flashAll() {
-  gridOptions.api!.forEachDetailGridInfo(function (detailGridApi) {
+  gridApi!.forEachDetailGridInfo(function (detailGridApi) {
     detailGridApi.api!.flashCells()
   })
 }
@@ -67,11 +74,11 @@ function flashAll() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/master-detail-data.json')
     .then(response => response.json())
     .then((data: IAccount[]) => {
-      gridOptions.api!.setRowData(data)
+      gridApi!.setGridOption('rowData', data)
     })
 })

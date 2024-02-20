@@ -103,14 +103,14 @@ let RangeService = class RangeService extends BeanStub {
         };
     }
     setRangeToCell(cell, appendRange = false) {
-        if (!this.gridOptionsService.isEnableRangeSelection()) {
+        if (!this.gridOptionsService.get('enableRangeSelection')) {
             return;
         }
         const columns = this.calculateColumnsBetween(cell.column, cell.column);
         if (!columns) {
             return;
         }
-        const suppressMultiRangeSelections = this.gridOptionsService.is('suppressMultiRangeSelection');
+        const suppressMultiRangeSelections = this.gridOptionsService.get('suppressMultiRangeSelection');
         // if not appending, then clear previous range selections
         if (suppressMultiRangeSelections || !appendRange || _.missing(this.cellRanges)) {
             this.removeAllCellRanges(true);
@@ -216,7 +216,7 @@ let RangeService = class RangeService extends BeanStub {
         return newEndCell;
     }
     setCellRange(params) {
-        if (!this.gridOptionsService.isEnableRangeSelection()) {
+        if (!this.gridOptionsService.get('enableRangeSelection')) {
             return;
         }
         this.removeAllCellRanges(true);
@@ -264,7 +264,7 @@ let RangeService = class RangeService extends BeanStub {
                 for (let i = 0; i < cellRange.columns.length; i++) {
                     const column = this.columnModel.getGridColumn(cellRange.columns[i]);
                     if (!column || !column.isCellEditable(rowNode)) {
-                        return;
+                        continue;
                     }
                     rowNode.setDataValue(column, null, cellEventSource);
                 }
@@ -314,7 +314,7 @@ let RangeService = class RangeService extends BeanStub {
         };
     }
     addCellRange(params) {
-        if (!this.gridOptionsService.isEnableRangeSelection()) {
+        if (!this.gridOptionsService.get('enableRangeSelection')) {
             return;
         }
         const newRange = this.createCellRangeFromCellRangeParams(params);
@@ -466,13 +466,13 @@ let RangeService = class RangeService extends BeanStub {
         return this.draggingRange;
     }
     onDragStart(mouseEvent) {
-        if (!this.gridOptionsService.isEnableRangeSelection()) {
+        if (!this.gridOptionsService.get('enableRangeSelection')) {
             return;
         }
         const { ctrlKey, metaKey, shiftKey } = mouseEvent;
         // ctrlKey for windows, metaKey for Apple
         const isMultiKey = ctrlKey || metaKey;
-        const allowMulti = !this.gridOptionsService.is('suppressMultiRangeSelection');
+        const allowMulti = !this.gridOptionsService.get('suppressMultiRangeSelection');
         const isMultiSelect = allowMulti ? isMultiKey : false;
         const extendRange = shiftKey && _.existsAndNotEmpty(this.cellRanges);
         if (!isMultiSelect && (!extendRange || _.exists(_.last(this.cellRanges).type))) {
@@ -522,7 +522,7 @@ let RangeService = class RangeService extends BeanStub {
         if (fromMouseClick && this.dragging) {
             return;
         }
-        if (this.gridOptionsService.is('suppressMultiRangeSelection')) {
+        if (this.gridOptionsService.get('suppressMultiRangeSelection')) {
             return;
         }
         if (this.isEmpty()) {

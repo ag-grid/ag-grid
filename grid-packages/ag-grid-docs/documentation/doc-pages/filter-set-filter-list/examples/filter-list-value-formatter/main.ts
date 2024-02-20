@@ -1,9 +1,13 @@
 import {
-  FirstDataRenderedEvent, Grid,
+  FirstDataRenderedEvent,
+  GridApi,
+  createGrid,
   GridOptions,
   ISetFilterParams,
   ValueFormatterParams,
-} from '@ag-grid-community/core'
+} from '@ag-grid-community/core';
+
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -29,7 +33,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     flex: 1,
     minWidth: 225,
-    resizable: true,
     floatingFilter: true,
   },
   sideBar: 'filters',
@@ -42,7 +45,7 @@ function countryValueFormatter(params: ValueFormatterParams) {
 }
 
 function printFilterModel() {
-  var filterModel = gridOptions.api!.getFilterModel()
+  var filterModel = gridApi!.getFilterModel()
   console.log(filterModel)
 }
 
@@ -53,7 +56,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
@@ -63,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return COUNTRY_CODES[d.country]
       })
 
-      gridOptions.api!.setRowData(dataWithFlags)
+      gridApi!.setGridOption('rowData', dataWithFlags)
     })
 })
 

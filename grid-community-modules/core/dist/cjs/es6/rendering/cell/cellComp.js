@@ -25,7 +25,9 @@ class CellComp extends component_1.Component {
         this.rowCtrl = cellCtrl.getRowCtrl();
         this.eRow = eRow;
         this.cellCtrl = cellCtrl;
-        this.setTemplate(/* html */ `<div comp-id="${this.getCompId()}"/>`);
+        const cellDiv = document.createElement('div');
+        cellDiv.setAttribute('comp-id', `${this.getCompId()}`);
+        this.setTemplateFromElement(cellDiv);
         const eGui = this.getGui();
         this.forceWrapper = cellCtrl.isForceWrapper();
         this.refreshWrapper(false);
@@ -37,7 +39,7 @@ class CellComp extends component_1.Component {
                 eGui.removeAttribute(name);
             }
         };
-        aria_1.setAriaRole(eGui, 'gridcell');
+        (0, aria_1.setAriaRole)(eGui, cellCtrl.getCellAriaRole());
         setAttribute('col-id', cellCtrl.getColumnIdSanitised());
         const tabIndex = cellCtrl.getTabIndex();
         if (tabIndex !== undefined) {
@@ -45,7 +47,7 @@ class CellComp extends component_1.Component {
         }
         const compProxy = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
-            setUserStyles: (styles) => dom_1.addStylesToElement(eGui, styles),
+            setUserStyles: (styles) => (0, dom_1.addStylesToElement)(eGui, styles),
             getFocusableElement: () => this.getFocusableElement(),
             setIncludeSelection: include => this.includeSelection = include,
             setIncludeRowDrag: include => this.includeRowDrag = include,
@@ -114,24 +116,30 @@ class CellComp extends component_1.Component {
         const usingWrapper = providingControls || this.forceWrapper;
         const putWrapperIn = usingWrapper && this.eCellWrapper == null;
         if (putWrapperIn) {
-            this.eCellWrapper = dom_1.loadTemplate(/* html */ `<div class="ag-cell-wrapper" role="presentation"></div>`);
+            const wrapperDiv = document.createElement('div');
+            wrapperDiv.setAttribute('role', 'presentation');
+            wrapperDiv.setAttribute('class', 'ag-cell-wrapper');
+            this.eCellWrapper = wrapperDiv;
             this.getGui().appendChild(this.eCellWrapper);
         }
         const takeWrapperOut = !usingWrapper && this.eCellWrapper != null;
         if (takeWrapperOut) {
-            dom_1.removeFromParent(this.eCellWrapper);
+            (0, dom_1.removeFromParent)(this.eCellWrapper);
             this.eCellWrapper = undefined;
         }
         this.addOrRemoveCssClass('ag-cell-value', !usingWrapper);
         const usingCellValue = !editing && usingWrapper;
         const putCellValueIn = usingCellValue && this.eCellValue == null;
         if (putCellValueIn) {
-            this.eCellValue = dom_1.loadTemplate(/* html */ `<span class="ag-cell-value" role="presentation"></span>`);
+            const cellSpan = document.createElement('span');
+            cellSpan.setAttribute('role', 'presentation');
+            cellSpan.setAttribute('class', 'ag-cell-value');
+            this.eCellValue = cellSpan;
             this.eCellWrapper.appendChild(this.eCellValue);
         }
         const takeCellValueOut = !usingCellValue && this.eCellValue != null;
         if (takeCellValueOut) {
-            dom_1.removeFromParent(this.eCellValue);
+            (0, dom_1.removeFromParent)(this.eCellValue);
             this.eCellValue = undefined;
         }
         const templateChanged = putWrapperIn || takeWrapperOut || putCellValueIn || takeCellValueOut;
@@ -180,17 +188,17 @@ class CellComp extends component_1.Component {
         // if we don't do this, and editor component is async, then there will be a period
         // when the component isn't present and keyboard navigation won't work - so example
         // of user hitting tab quickly (more quickly than renderers getting created) won't work
-        const cellEditorAsync = generic_1.missing(this.cellEditor);
+        const cellEditorAsync = (0, generic_1.missing)(this.cellEditor);
         if (cellEditorAsync && params.cellStartedEdit) {
             this.cellCtrl.focusCell(true);
         }
     }
     insertValueWithoutCellRenderer(valueToDisplay) {
         const eParent = this.getParentOfValue();
-        dom_1.clearElement(eParent);
-        const escapedValue = valueToDisplay != null ? string_1.escapeString(valueToDisplay) : null;
+        (0, dom_1.clearElement)(eParent);
+        const escapedValue = valueToDisplay != null ? (0, string_1.escapeString)(valueToDisplay, true) : null;
         if (escapedValue != null) {
-            eParent.innerHTML = escapedValue;
+            eParent.textContent = escapedValue;
         }
     }
     destroyEditorAndRenderer() {
@@ -200,7 +208,7 @@ class CellComp extends component_1.Component {
     destroyRenderer() {
         const { context } = this.beans;
         this.cellRenderer = context.destroyBean(this.cellRenderer);
-        dom_1.removeFromParent(this.cellRendererGui);
+        (0, dom_1.removeFromParent)(this.cellRendererGui);
         this.cellRendererGui = null;
         this.rendererVersion++;
     }
@@ -212,7 +220,7 @@ class CellComp extends component_1.Component {
         this.hideEditorPopup = undefined;
         this.cellEditor = context.destroyBean(this.cellEditor);
         this.cellEditorPopupWrapper = context.destroyBean(this.cellEditorPopupWrapper);
-        dom_1.removeFromParent(this.cellEditorGui);
+        (0, dom_1.removeFromParent)(this.cellEditorGui);
         this.cellEditorGui = null;
         this.editorVersion++;
     }
@@ -237,7 +245,7 @@ class CellComp extends component_1.Component {
         // never use task service if animation frame service is turned off.
         // and lastly we never use it if doing auto-height, as the auto-height service checks the
         // row height directly after the cell is created, it doesn't wait around for the tasks to complete        
-        const suppressAnimationFrame = this.beans.gridOptionsService.is('suppressAnimationFrame');
+        const suppressAnimationFrame = this.beans.gridOptionsService.get('suppressAnimationFrame');
         const useTaskService = !suppressAnimationFrame;
         const displayComponentVersionCopy = this.rendererVersion;
         const { componentClass } = compDetails;
@@ -287,7 +295,7 @@ class CellComp extends component_1.Component {
         this.cellRendererGui = this.cellRenderer.getGui();
         if (this.cellRendererGui != null) {
             const eParent = this.getParentOfValue();
-            dom_1.clearElement(eParent);
+            (0, dom_1.clearElement)(eParent);
             eParent.appendChild(this.cellRendererGui);
         }
     }
@@ -361,14 +369,14 @@ class CellComp extends component_1.Component {
             ePopupGui.appendChild(this.cellEditorGui);
         }
         const popupService = this.beans.popupService;
-        const useModelPopup = this.beans.gridOptionsService.is('stopEditingWhenCellsLoseFocus');
+        const useModelPopup = this.beans.gridOptionsService.get('stopEditingWhenCellsLoseFocus');
         // see if position provided by colDef, if not then check old way of method on cellComp
         const positionToUse = position != null
             ? position
             : cellEditor.getPopupPosition
                 ? cellEditor.getPopupPosition()
                 : 'over';
-        const isRtl = this.beans.gridOptionsService.is('enableRtl');
+        const isRtl = this.beans.gridOptionsService.get('enableRtl');
         const positionParams = {
             ePopup: ePopupGui,
             column: this.column,
@@ -414,10 +422,10 @@ class CellComp extends component_1.Component {
         // if focus is inside the cell, we move focus to the cell itself
         // before removing it's contents, otherwise errors could be thrown.
         const eDocument = this.beans.gridOptionsService.getDocument();
-        if (eGui.contains(eDocument.activeElement) && browser_1.browserSupportsPreventScroll()) {
+        if (eGui.contains(eDocument.activeElement) && (0, browser_1.browserSupportsPreventScroll)()) {
             eGui.focus({ preventScroll: true });
         }
-        dom_1.clearElement(this.getParentOfValue());
+        (0, dom_1.clearElement)(this.getParentOfValue());
     }
 }
 exports.CellComp = CellComp;

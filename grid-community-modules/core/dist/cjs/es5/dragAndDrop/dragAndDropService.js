@@ -32,7 +32,7 @@ var __values = (this && this.__values) || function(o) {
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DragAndDropService = exports.HorizontalDirection = exports.VerticalDirection = exports.DragSourceType = void 0;
+exports.DragAndDropService = exports.DragSourceType = void 0;
 var beanStub_1 = require("../context/beanStub");
 var context_1 = require("../context/context");
 var string_1 = require("../utils/string");
@@ -41,23 +41,15 @@ var array_1 = require("../utils/array");
 var browser_1 = require("../utils/browser");
 var dom_1 = require("../utils/dom");
 var function_1 = require("../utils/function");
+var direction_1 = require("../constants/direction");
 var DragSourceType;
 (function (DragSourceType) {
     DragSourceType[DragSourceType["ToolPanel"] = 0] = "ToolPanel";
     DragSourceType[DragSourceType["HeaderCell"] = 1] = "HeaderCell";
     DragSourceType[DragSourceType["RowDrag"] = 2] = "RowDrag";
     DragSourceType[DragSourceType["ChartPanel"] = 3] = "ChartPanel";
+    DragSourceType[DragSourceType["AdvancedFilterBuilder"] = 4] = "AdvancedFilterBuilder";
 })(DragSourceType = exports.DragSourceType || (exports.DragSourceType = {}));
-var VerticalDirection;
-(function (VerticalDirection) {
-    VerticalDirection[VerticalDirection["Up"] = 0] = "Up";
-    VerticalDirection[VerticalDirection["Down"] = 1] = "Down";
-})(VerticalDirection = exports.VerticalDirection || (exports.VerticalDirection = {}));
-var HorizontalDirection;
-(function (HorizontalDirection) {
-    HorizontalDirection[HorizontalDirection["Left"] = 0] = "Left";
-    HorizontalDirection[HorizontalDirection["Right"] = 1] = "Right";
-})(HorizontalDirection = exports.HorizontalDirection || (exports.HorizontalDirection = {}));
 var DragAndDropService = /** @class */ (function (_super) {
     __extends(DragAndDropService, _super);
     function DragAndDropService() {
@@ -68,15 +60,15 @@ var DragAndDropService = /** @class */ (function (_super) {
     }
     DragAndDropService_1 = DragAndDropService;
     DragAndDropService.prototype.init = function () {
-        this.ePinnedIcon = icon_1.createIcon('columnMovePin', this.gridOptionsService, null);
-        this.eHideIcon = icon_1.createIcon('columnMoveHide', this.gridOptionsService, null);
-        this.eMoveIcon = icon_1.createIcon('columnMoveMove', this.gridOptionsService, null);
-        this.eLeftIcon = icon_1.createIcon('columnMoveLeft', this.gridOptionsService, null);
-        this.eRightIcon = icon_1.createIcon('columnMoveRight', this.gridOptionsService, null);
-        this.eGroupIcon = icon_1.createIcon('columnMoveGroup', this.gridOptionsService, null);
-        this.eAggregateIcon = icon_1.createIcon('columnMoveValue', this.gridOptionsService, null);
-        this.ePivotIcon = icon_1.createIcon('columnMovePivot', this.gridOptionsService, null);
-        this.eDropNotAllowedIcon = icon_1.createIcon('dropNotAllowed', this.gridOptionsService, null);
+        this.ePinnedIcon = (0, icon_1.createIcon)('columnMovePin', this.gridOptionsService, null);
+        this.eHideIcon = (0, icon_1.createIcon)('columnMoveHide', this.gridOptionsService, null);
+        this.eMoveIcon = (0, icon_1.createIcon)('columnMoveMove', this.gridOptionsService, null);
+        this.eLeftIcon = (0, icon_1.createIcon)('columnMoveLeft', this.gridOptionsService, null);
+        this.eRightIcon = (0, icon_1.createIcon)('columnMoveRight', this.gridOptionsService, null);
+        this.eGroupIcon = (0, icon_1.createIcon)('columnMoveGroup', this.gridOptionsService, null);
+        this.eAggregateIcon = (0, icon_1.createIcon)('columnMoveValue', this.gridOptionsService, null);
+        this.ePivotIcon = (0, icon_1.createIcon)('columnMovePivot', this.gridOptionsService, null);
+        this.eDropNotAllowedIcon = (0, icon_1.createIcon)('dropNotAllowed', this.gridOptionsService, null);
     };
     DragAndDropService.prototype.addDragSource = function (dragSource, allowTouch) {
         if (allowTouch === void 0) { allowTouch = false; }
@@ -95,7 +87,7 @@ var DragAndDropService = /** @class */ (function (_super) {
         var sourceAndParams = this.dragSourceAndParamsList.find(function (item) { return item.dragSource === dragSource; });
         if (sourceAndParams) {
             this.dragService.removeDragSource(sourceAndParams.params);
-            array_1.removeFromArray(this.dragSourceAndParamsList, sourceAndParams);
+            (0, array_1.removeFromArray)(this.dragSourceAndParamsList, sourceAndParams);
         }
     };
     DragAndDropService.prototype.clearDragSourceParamsList = function () {
@@ -114,7 +106,6 @@ var DragAndDropService = /** @class */ (function (_super) {
         this.dragSource = dragSource;
         this.eventLastTime = mouseEvent;
         this.dragItem = this.dragSource.getDragItem();
-        this.lastDropTarget = this.dragSource.dragSourceDropTarget;
         if (this.dragSource.onDragStarted) {
             this.dragSource.onDragStarted();
         }
@@ -237,7 +228,7 @@ var DragAndDropService = /** @class */ (function (_super) {
                 try {
                     for (var validDropTargets_1 = (e_4 = void 0, __values(validDropTargets)), validDropTargets_1_1 = validDropTargets_1.next(); !validDropTargets_1_1.done; validDropTargets_1_1 = validDropTargets_1.next()) {
                         var dropTarget = validDropTargets_1_1.value;
-                        var containers = array_1.flatten(this.getAllContainersFromDropTarget(dropTarget));
+                        var containers = (0, array_1.flatten)(this.getAllContainersFromDropTarget(dropTarget));
                         if (containers.indexOf(el) !== -1) {
                             return dropTarget;
                         }
@@ -302,7 +293,7 @@ var DragAndDropService = /** @class */ (function (_super) {
         if (clientX === eClientX) {
             return null;
         }
-        return clientX > eClientX ? HorizontalDirection.Left : HorizontalDirection.Right;
+        return clientX > eClientX ? direction_1.HorizontalDirection.Left : direction_1.HorizontalDirection.Right;
     };
     DragAndDropService.prototype.getVerticalDirection = function (event) {
         var clientY = this.eventLastTime && this.eventLastTime.clientY;
@@ -310,7 +301,7 @@ var DragAndDropService = /** @class */ (function (_super) {
         if (clientY === eClientY) {
             return null;
         }
-        return clientY > eClientY ? VerticalDirection.Up : VerticalDirection.Down;
+        return clientY > eClientY ? direction_1.VerticalDirection.Up : direction_1.VerticalDirection.Down;
     };
     DragAndDropService.prototype.createDropTargetEvent = function (dropTarget, event, hDirection, vDirection, fromNudge) {
         // localise x and y to the target
@@ -328,9 +319,9 @@ var DragAndDropService = /** @class */ (function (_super) {
         }
         var ghostRect = ghost.getBoundingClientRect();
         var ghostHeight = ghostRect.height;
-        var browserWidth = browser_1.getBodyWidth() - 2; // 2px for 1px borderLeft and 1px borderRight
-        var browserHeight = browser_1.getBodyHeight() - 2; // 2px for 1px borderTop and 1px borderBottom
-        var offsetParentSize = dom_1.getElementRectWithOffset(ghost.offsetParent);
+        var browserWidth = (0, browser_1.getBodyWidth)() - 2; // 2px for 1px borderLeft and 1px borderRight
+        var browserHeight = (0, browser_1.getBodyHeight)() - 2; // 2px for 1px borderTop and 1px borderBottom
+        var offsetParentSize = (0, dom_1.getElementRectWithOffset)(ghost.offsetParent);
         var clientY = event.clientY, clientX = event.clientX;
         var top = (clientY - offsetParentSize.top) - (ghostHeight / 2);
         var left = (clientX - offsetParentSize.left) - 10;
@@ -351,8 +342,8 @@ var DragAndDropService = /** @class */ (function (_super) {
         if (top < 0) {
             top = 0;
         }
-        ghost.style.left = left + "px";
-        ghost.style.top = top + "px";
+        ghost.style.left = "".concat(left, "px");
+        ghost.style.top = "".concat(top, "px");
     };
     DragAndDropService.prototype.removeGhost = function () {
         if (this.eGhost && this.eGhostParent) {
@@ -361,7 +352,7 @@ var DragAndDropService = /** @class */ (function (_super) {
         this.eGhost = null;
     };
     DragAndDropService.prototype.createGhost = function () {
-        this.eGhost = dom_1.loadTemplate(DragAndDropService_1.GHOST_TEMPLATE);
+        this.eGhost = (0, dom_1.loadTemplate)(DragAndDropService_1.GHOST_TEMPLATE);
         this.mouseEventService.stampTopLevelGridCompWithGridInstance(this.eGhost);
         var theme = this.environment.getTheme().theme;
         if (theme) {
@@ -371,35 +362,39 @@ var DragAndDropService = /** @class */ (function (_super) {
         this.setGhostIcon(null);
         var eText = this.eGhost.querySelector('.ag-dnd-ghost-label');
         var dragItemName = this.dragSource.dragItemName;
-        if (function_1.isFunction(dragItemName)) {
+        if ((0, function_1.isFunction)(dragItemName)) {
             dragItemName = dragItemName();
         }
-        eText.innerHTML = string_1.escapeString(dragItemName) || '';
+        eText.innerHTML = (0, string_1.escapeString)(dragItemName) || '';
         this.eGhost.style.height = '25px';
         this.eGhost.style.top = '20px';
         this.eGhost.style.left = '20px';
         var eDocument = this.gridOptionsService.getDocument();
+        var rootNode = null;
         var targetEl = null;
         try {
-            targetEl = eDocument.fullscreenElement;
+            rootNode = eDocument.fullscreenElement;
         }
         catch (e) {
             // some environments like SalesForce will throw errors
             // simply by trying to read the fullscreenElement property
         }
         finally {
-            if (!targetEl) {
-                var rootNode = this.gridOptionsService.getRootNode();
-                var body = rootNode.querySelector('body');
-                if (body) {
-                    targetEl = body;
-                }
-                else if (rootNode instanceof ShadowRoot) {
-                    targetEl = rootNode;
-                }
-                else {
-                    targetEl = rootNode === null || rootNode === void 0 ? void 0 : rootNode.documentElement;
-                }
+            if (!rootNode) {
+                rootNode = this.gridOptionsService.getRootNode();
+            }
+            var body = rootNode.querySelector('body');
+            if (body) {
+                targetEl = body;
+            }
+            else if (rootNode instanceof ShadowRoot) {
+                targetEl = rootNode;
+            }
+            else if (rootNode instanceof Document) {
+                targetEl = rootNode === null || rootNode === void 0 ? void 0 : rootNode.documentElement;
+            }
+            else {
+                targetEl = rootNode;
             }
         }
         this.eGhostParent = targetEl;
@@ -412,10 +407,10 @@ var DragAndDropService = /** @class */ (function (_super) {
     };
     DragAndDropService.prototype.setGhostIcon = function (iconName, shake) {
         if (shake === void 0) { shake = false; }
-        dom_1.clearElement(this.eGhostIcon);
+        (0, dom_1.clearElement)(this.eGhostIcon);
         var eIcon = null;
         if (!iconName) {
-            iconName = this.dragSource.defaultIconName || DragAndDropService_1.ICON_NOT_ALLOWED;
+            iconName = this.dragSource.getDefaultIconName ? this.dragSource.getDefaultIconName() : DragAndDropService_1.ICON_NOT_ALLOWED;
         }
         switch (iconName) {
             case DragAndDropService_1.ICON_PINNED:
@@ -447,7 +442,7 @@ var DragAndDropService = /** @class */ (function (_super) {
                 break;
         }
         this.eGhostIcon.classList.toggle('ag-shake-left-to-right', shake);
-        if (eIcon === this.eHideIcon && this.gridOptionsService.is('suppressDragLeaveHidesColumns')) {
+        if (eIcon === this.eHideIcon && this.gridOptionsService.get('suppressDragLeaveHidesColumns')) {
             return;
         }
         if (eIcon) {
@@ -466,16 +461,16 @@ var DragAndDropService = /** @class */ (function (_super) {
     DragAndDropService.ICON_HIDE = 'hide';
     DragAndDropService.GHOST_TEMPLATE = "<div class=\"ag-dnd-ghost ag-unselectable\">\n            <span class=\"ag-dnd-ghost-icon ag-shake-left-to-right\"></span>\n            <div class=\"ag-dnd-ghost-label\"></div>\n        </div>";
     __decorate([
-        context_1.Autowired('dragService')
+        (0, context_1.Autowired)('dragService')
     ], DragAndDropService.prototype, "dragService", void 0);
     __decorate([
-        context_1.Autowired('mouseEventService')
+        (0, context_1.Autowired)('mouseEventService')
     ], DragAndDropService.prototype, "mouseEventService", void 0);
     __decorate([
-        context_1.Autowired('columnApi')
+        (0, context_1.Autowired)('columnApi')
     ], DragAndDropService.prototype, "columnApi", void 0);
     __decorate([
-        context_1.Autowired('gridApi')
+        (0, context_1.Autowired)('gridApi')
     ], DragAndDropService.prototype, "gridApi", void 0);
     __decorate([
         context_1.PostConstruct
@@ -484,7 +479,7 @@ var DragAndDropService = /** @class */ (function (_super) {
         context_1.PreDestroy
     ], DragAndDropService.prototype, "clearDragSourceParamsList", null);
     DragAndDropService = DragAndDropService_1 = __decorate([
-        context_1.Bean('dragAndDropService')
+        (0, context_1.Bean)('dragAndDropService')
     ], DragAndDropService);
     return DragAndDropService;
 }(beanStub_1.BeanStub));

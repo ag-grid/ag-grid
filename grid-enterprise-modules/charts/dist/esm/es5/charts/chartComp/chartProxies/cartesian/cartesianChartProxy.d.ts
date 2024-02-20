@@ -7,9 +7,9 @@ export declare abstract class CartesianChartProxy extends ChartProxy {
     abstract getAxes(params: UpdateParams): AgCartesianAxisOptions[];
     abstract getSeries(params: UpdateParams): AgBaseSeriesOptions<any>[];
     update(params: UpdateParams): void;
-    private getData;
+    protected getData(params: UpdateParams, axes: AgCartesianAxisOptions[]): any[];
     private getDataTransformedData;
-    protected getXAxisType(params: UpdateParams): "time" | "category" | "groupedCategory";
+    protected getXAxisType(params: UpdateParams): "time" | "category" | "grouped-category";
     private static isTimeAxis;
     crossFilteringReset(): void;
     protected crossFilteringPointSelected(point: string): boolean;

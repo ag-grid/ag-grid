@@ -1,11 +1,12 @@
-import { Component, ISideBar, IToolPanel, SideBarDef } from "@ag-grid-community/core";
+import { Component, ISideBar, IToolPanel, SideBarDef, SideBarState } from "@ag-grid-community/core";
 export declare class SideBarComp extends Component implements ISideBar {
-    private gridApi;
     private focusService;
     private filterManager;
+    private sideBarService;
     private sideBarButtonsComp;
     private toolPanelWrappers;
     private sideBar;
+    private position;
     private static readonly TEMPLATE;
     constructor();
     private postConstruct;
@@ -16,6 +17,10 @@ export declare class SideBarComp extends Component implements ISideBar {
     private setSideBarDef;
     getDef(): SideBarDef | undefined;
     setSideBarPosition(position?: 'left' | 'right'): this;
+    setDisplayed(displayed: boolean, options?: {
+        skipAriaHidden?: boolean | undefined;
+    } | undefined): void;
+    getState(): SideBarState;
     private createToolPanelsAndSideButtons;
     private validateDef;
     private createToolPanelAndSideButton;
@@ -26,6 +31,7 @@ export declare class SideBarComp extends Component implements ISideBar {
     close(source?: 'sideBarButtonClicked' | 'sideBarInitializing' | 'api'): void;
     isToolPanelShowing(): boolean;
     openedItem(): string | null;
+    private onSideBarUpdated;
     private destroyToolPanelWrappers;
     protected destroy(): void;
 }

@@ -1,4 +1,4 @@
-import { FirstDataRenderedEvent, Grid, GridOptions, ISetFilterParams, } from '@ag-grid-community/core'
+import { FirstDataRenderedEvent, GridApi, createGrid, GridOptions, ISetFilterParams } from '@ag-grid-community/core';
 import { CountryCellRenderer } from './countryCellRenderer_typescript'
 
 const COUNTRY_CODES: Record<string, string> = {
@@ -22,6 +22,8 @@ const COUNTRY_CODES: Record<string, string> = {
     Venezuela: 've',
     Uruguay: 'uy',
 };
+
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
@@ -51,7 +53,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     defaultColDef: {
         flex: 1,
         minWidth: 225,
-        resizable: true,
         floatingFilter: true,
     },
     sideBar: 'filters',
@@ -59,7 +60,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function printFilterModel() {
-    const filterModel = gridOptions.api!.getFilterModel();
+    const filterModel = gridApi!.getFilterModel();
     console.log(filterModel)
 }
 
@@ -70,7 +71,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    new Grid(gridDiv, gridOptions)
+    gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then(response => response.json())
@@ -83,7 +84,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // Empty data used to demonstrate custom (Blanks) handling in filter cell renderer
             dataWithFlags[0].country = '';
 
-            gridOptions.api!.setRowData(dataWithFlags)
+            gridApi!.setGridOption('rowData', dataWithFlags)
         })
 })
 

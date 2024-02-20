@@ -24,7 +24,7 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-import { SimpleFilter, SimpleFilterModelFormatter } from '../simpleFilter';
+import { SimpleFilter, SimpleFilterModelFormatter, } from '../simpleFilter';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { makeNull } from '../../../utils/generic';
 import { _ } from '../../../utils';
@@ -38,13 +38,13 @@ var TextFilterModelFormatter = /** @class */ (function (_super) {
         var numberOfInputs = (options || {}).numberOfInputs;
         var isRange = condition.type == SimpleFilter.IN_RANGE || numberOfInputs === 2;
         if (isRange) {
-            return condition.filter + "-" + condition.filterTo;
+            return "".concat(condition.filter, "-").concat(condition.filterTo);
         }
         // cater for when the type doesn't need a value
         if (condition.filter != null) {
-            return "" + condition.filter;
+            return "".concat(condition.filter);
         }
-        return "" + condition.type;
+        return "".concat(condition.type);
     };
     return TextFilterModelFormatter;
 }(SimpleFilterModelFormatter));
@@ -76,7 +76,7 @@ var TextFilter = /** @class */ (function (_super) {
     TextFilter.prototype.getTextMatcher = function () {
         var legacyComparator = this.textFilterParams.textCustomComparator;
         if (legacyComparator) {
-            _.doOnce(function () { return console.warn('AG Grid - textCustomComparator is deprecated, use textMatcher instead.'); }, 'textCustomComparator.deprecated');
+            _.warnOnce('textCustomComparator is deprecated, use textMatcher instead.');
             return function (_a) {
                 var filterOption = _a.filterOption, value = _a.value, filterText = _a.filterText;
                 return legacyComparator(filterOption, value, filterText);
@@ -145,7 +145,7 @@ var TextFilter = /** @class */ (function (_super) {
     };
     TextFilter.prototype.createFromToElement = function (eCondition, eValues, fromTo) {
         var eValue = this.createManagedBean(new AgInputTextField());
-        eValue.addCssClass("ag-filter-" + fromTo);
+        eValue.addCssClass("ag-filter-".concat(fromTo));
         eValue.addCssClass('ag-filter-filter');
         eValues.push(eValue);
         eCondition.appendChild(eValue.getGui());

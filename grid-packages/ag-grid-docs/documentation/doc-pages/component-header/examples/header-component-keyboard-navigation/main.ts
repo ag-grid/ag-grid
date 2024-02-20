@@ -1,4 +1,10 @@
-import { Grid, ColDef, GridOptions, SuppressHeaderKeyboardEventParams } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  ColDef,
+  GridOptions,
+  SuppressHeaderKeyboardEventParams,
+} from '@ag-grid-community/core';
 import { CustomHeader } from './customHeader_typescript'
 
 const GRID_CELL_CLASSNAME = "ag-header-cell";
@@ -85,23 +91,27 @@ function suppressHeaderKeyboardEvent({ event }: SuppressHeaderKeyboardEventParam
 
 const columnDefs: ColDef[] = [
   {
-    field: "athlete"
+    field: "athlete",
+    sortable: false,
   },
   {
     field: "country",
     headerComponent: CustomHeader,
     minWidth: 270,
     flex: 1,
+    sortable: false,
   },
   {
-    field: "age"
+    field: "age",
+    sortable: false,
   }
 ]
+
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs,
   defaultColDef: {
-    resizable: true,
     minWidth: 130,
     flex: 1,
     suppressHeaderKeyboardEvent
@@ -111,11 +121,11 @@ const gridOptions: GridOptions<IOlympicData> = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
     .then(data => {
-      gridOptions.api!.setRowData(data)
+      gridApi!.setGridOption('rowData', data)
     })
 })

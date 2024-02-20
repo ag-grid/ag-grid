@@ -4,7 +4,7 @@ import {
     AgBaseSeriesOptions,
     AgCartesianAxisOptions,
     AgCartesianChartOptions,
-    AgChart,
+    AgCharts,
     AgLineSeriesOptions,
 } from "ag-charts-community";
 
@@ -29,25 +29,25 @@ export abstract class CartesianChartProxy extends ChartProxy {
             series: this.getSeries(params),
         };
 
-        AgChart.update(this.getChartRef(), options);
+        AgCharts.update(this.getChartRef(), options);
     }
 
-    private getData(params: UpdateParams, axes: AgCartesianAxisOptions[]): any[] {
+    protected getData(params: UpdateParams, axes: AgCartesianAxisOptions[]): any[] {
         const supportsCrossFiltering = ['area', 'line'].includes(this.standaloneChartType);
-        const xPosition = this.standaloneChartType === 'bar' ? 'left' : 'bottom';
-        const xAxisIsCategory = axes.find(o => o.position === xPosition)?.type === 'category';
+        const xAxisIsCategory = axes.some(axes => axes?.type === 'category');
         return this.crossFiltering && supportsCrossFiltering ?
             this.getCrossFilterData(params) :
             this.getDataTransformedData(params, xAxisIsCategory);
     }
 
     private getDataTransformedData(params: UpdateParams, isCategoryAxis: boolean) {
-        return this.transformData(params.data, params.category.id, isCategoryAxis);
+        const [category] = params.categories;
+        return this.transformData(params.data, category.id, isCategoryAxis);
     }
 
     protected getXAxisType(params: UpdateParams) {
         if (params.grouping) {
-            return 'groupedCategory';
+            return 'grouped-category';
         } else if (CartesianChartProxy.isTimeAxis(params)) {
             return 'time';
         }
@@ -55,11 +55,12 @@ export abstract class CartesianChartProxy extends ChartProxy {
     }
 
     private static isTimeAxis(params: UpdateParams): boolean {
-        if (params.category && params.category.chartDataType) {
-            return params.category.chartDataType === 'time';
+        const [category] = params.categories;
+        if (category && category.chartDataType) {
+            return category.chartDataType === 'time';
         }
         const testDatum = params.data[0];
-        return (testDatum && testDatum[params.category.id]) instanceof Date;
+        return (testDatum && testDatum[category.id]) instanceof Date;
     }
 
     public crossFilteringReset(): void {
@@ -77,8 +78,10 @@ export abstract class CartesianChartProxy extends ChartProxy {
     }
 
     protected extractLineAreaCrossFilterSeries(series: (AgLineSeriesOptions | AgAreaSeriesOptions)[], params: UpdateParams) {
+        const [category] = params.categories;
+
         const getYKey = (yKey: string) => {
-            if(this.standaloneChartType === 'area') {
+            if (this.standaloneChartType === 'area') {
                 const lastSelectedChartId = params.getCrossFilteringContext().lastSelectedChartId;
                 return (lastSelectedChartId === params.chartId) ? yKey + '-total' : yKey;
             }
@@ -97,10 +100,10 @@ export abstract class CartesianChartProxy extends ChartProxy {
             };
             s.marker = {
                 formatter: (p: any) => {
-                    const category = p.datum[params.category.id];
+                    const value = p.datum[category.id];
                     return {
                         fill: p.highlighted ? 'yellow' : p.fill,
-                        size: p.highlighted ? 14 : this.crossFilteringPointSelected(category) ? 8 : 0,
+                        size: p.highlighted ? 14 : this.crossFilteringPointSelected(value) ? 8 : 0,
                     };
                 }
             };
@@ -117,15 +120,16 @@ export abstract class CartesianChartProxy extends ChartProxy {
 
     private getCrossFilterData(params: UpdateParams): any[] {
         this.crossFilteringAllPoints.clear();
+        const [category] = params.categories;
         const colId = params.fields[0].colId;
         const filteredOutColId = `${colId}-filtered-out`;
         const lastSelectedChartId = params.getCrossFilteringContext().lastSelectedChartId;
 
         return params.data.map(d => {
-            const category = d[params.category.id];
-            this.crossFilteringAllPoints.add(category);
+            const value = d[category.id];
+            this.crossFilteringAllPoints.add(value);
 
-            const pointSelected = this.crossFilteringPointSelected(category);
+            const pointSelected = this.crossFilteringPointSelected(value);
             if (this.standaloneChartType === 'area' && lastSelectedChartId === params.chartId) {
                 d[`${colId}-total`] = pointSelected ? d[colId] : d[colId] + d[filteredOutColId];
             }

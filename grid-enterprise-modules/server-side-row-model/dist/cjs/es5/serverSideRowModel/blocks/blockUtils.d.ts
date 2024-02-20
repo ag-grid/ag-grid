@@ -5,10 +5,7 @@ export declare class BlockUtils extends BeanStub {
     private columnModel;
     private nodeManager;
     private beans;
-    private rowHeight;
-    private usingTreeData;
-    private usingMasterDetail;
-    private postConstruct;
+    private readonly expansionService;
     createRowNode(params: {
         group: boolean;
         leafGroup: boolean;

@@ -20,7 +20,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { BeanStub } from "../context/beanStub";
-import { Autowired, Optional } from "../context/context";
+import { Autowired } from "../context/context";
 import { LayoutFeature } from "../styling/layoutFeature";
 import { Events } from "../eventKeys";
 import { GridBodyScrollFeature } from "./gridBodyScrollFeature";
@@ -50,13 +50,15 @@ var GridBodyCtrl = /** @class */ (function (_super) {
         return this.eBodyViewport;
     };
     GridBodyCtrl.prototype.setComp = function (comp, eGridBody, eBodyViewport, eTop, eBottom, eStickyTop) {
+        var _this = this;
         this.comp = comp;
         this.eGridBody = eGridBody;
         this.eBodyViewport = eBodyViewport;
         this.eTop = eTop;
         this.eBottom = eBottom;
         this.eStickyTop = eStickyTop;
-        this.setCellTextSelection(this.gridOptionsService.is('enableCellTextSelection'));
+        this.setCellTextSelection(this.gridOptionsService.get('enableCellTextSelection'));
+        this.addManagedPropertyListener('enableCellTextSelection', function (props) { return _this.setCellTextSelection(props.currentValue); });
         this.createManagedBean(new LayoutFeature(this.comp));
         this.bodyScrollFeature = this.createManagedBean(new GridBodyScrollFeature(this.eBodyViewport));
         this.addRowDragListener();
@@ -122,12 +124,12 @@ var GridBodyCtrl = /** @class */ (function (_super) {
         this.setStickyTopWidth(visible);
         var scrollbarWidth = visible ? (this.gridOptionsService.getScrollbarWidth() || 0) : 0;
         var pad = isInvisibleScrollbar() ? 16 : 0;
-        var width = "calc(100% + " + (scrollbarWidth + pad) + "px)";
+        var width = "calc(100% + ".concat(scrollbarWidth + pad, "px)");
         this.animationFrameService.requestAnimationFrame(function () { return _this.comp.setBodyViewportWidth(width); });
     };
     GridBodyCtrl.prototype.onGridColumnsChanged = function () {
         var columns = this.columnModel.getAllGridColumns();
-        this.comp.setColumnCount(columns ? columns.length : 0);
+        this.comp.setColumnCount(columns.length);
     };
     // if we do not do this, then the user can select a pic in the grid (eg an image in a custom cell renderer)
     // and then that will start the browser native drag n' drop, which messes up with our own drag and drop.
@@ -141,7 +143,7 @@ var GridBodyCtrl = /** @class */ (function (_super) {
     };
     GridBodyCtrl.prototype.addStopEditingWhenGridLosesFocus = function () {
         var _this = this;
-        if (!this.gridOptionsService.is('stopEditingWhenCellsLoseFocus')) {
+        if (!this.gridOptionsService.get('stopEditingWhenCellsLoseFocus')) {
             return;
         }
         var focusOutListener = function (event) {
@@ -183,7 +185,7 @@ var GridBodyCtrl = /** @class */ (function (_super) {
         this.comp.setPinnedTopBottomOverflowY(overflowY);
     };
     GridBodyCtrl.prototype.isVerticalScrollShowing = function () {
-        var show = this.gridOptionsService.is('alwaysShowVerticalScroll');
+        var show = this.gridOptionsService.get('alwaysShowVerticalScroll');
         var cssClass = show ? CSS_CLASS_FORCE_VERTICAL_SCROLL : null;
         var allowVerticalScroll = this.gridOptionsService.isDomLayout('normal');
         this.comp.setAlwaysVerticalScrollClass(cssClass, show);
@@ -237,22 +239,14 @@ var GridBodyCtrl = /** @class */ (function (_super) {
         if (!mouseEvent && !touchEvent) {
             return;
         }
-        if (this.gridOptionsService.is('preventDefaultOnContextMenu')) {
+        if (this.gridOptionsService.get('preventDefaultOnContextMenu')) {
             var event_1 = (mouseEvent || touchEvent);
             event_1.preventDefault();
         }
         var target = (mouseEvent || touch).target;
         if (target === this.eBodyViewport || target === this.ctrlsService.getCenterRowContainerCtrl().getViewportElement()) {
             // show it
-            if (!this.contextMenuFactory) {
-                return;
-            }
-            if (mouseEvent) {
-                this.contextMenuFactory.onContextMenu(mouseEvent, null, null, null, null, this.eGridBody);
-            }
-            else if (touchEvent) {
-                this.contextMenuFactory.onContextMenu(null, touchEvent, null, null, null, this.eGridBody);
-            }
+            this.menuService.showContextMenu({ mouseEvent: mouseEvent, touchEvent: touchEvent, value: null, anchorToElement: this.eGridBody });
         }
     };
     GridBodyCtrl.prototype.mockContextMenuForIPad = function (listener) {
@@ -268,7 +262,7 @@ var GridBodyCtrl = /** @class */ (function (_super) {
         this.addDestroyFunc(function () { return touchListener.destroy(); });
     };
     GridBodyCtrl.prototype.onBodyViewportWheel = function (e) {
-        if (!this.gridOptionsService.is('suppressScrollWhenPopupsAreOpen')) {
+        if (!this.gridOptionsService.get('suppressScrollWhenPopupsAreOpen')) {
             return;
         }
         if (this.popupService.hasAnchoredPopup()) {
@@ -303,15 +297,7 @@ var GridBodyCtrl = /** @class */ (function (_super) {
     GridBodyCtrl.prototype.setFloatingHeights = function () {
         var pinnedRowModel = this.pinnedRowModel;
         var floatingTopHeight = pinnedRowModel.getPinnedTopTotalHeight();
-        if (floatingTopHeight) {
-            // adding 1px for cell bottom border
-            floatingTopHeight += 1;
-        }
         var floatingBottomHeight = pinnedRowModel.getPinnedBottomTotalHeight();
-        if (floatingBottomHeight) {
-            // adding 1px for cell bottom border
-            floatingBottomHeight += 1;
-        }
         this.comp.setTopHeight(floatingTopHeight);
         this.comp.setBottomHeight(floatingBottomHeight);
         this.comp.setTopDisplay(floatingTopHeight ? 'inherit' : 'none');
@@ -321,7 +307,7 @@ var GridBodyCtrl = /** @class */ (function (_super) {
     GridBodyCtrl.prototype.setStickyTopHeight = function (height) {
         if (height === void 0) { height = 0; }
         // console.log('setting sticky top height ' + height);
-        this.comp.setStickyTopHeight(height + "px");
+        this.comp.setStickyTopHeight("".concat(height, "px"));
         this.stickyTopHeight = height;
     };
     GridBodyCtrl.prototype.getStickyTopHeight = function () {
@@ -333,7 +319,7 @@ var GridBodyCtrl = /** @class */ (function (_super) {
         }
         else {
             var scrollbarWidth = this.gridOptionsService.getScrollbarWidth();
-            this.comp.setStickyTopWidth("calc(100% - " + scrollbarWidth + "px)");
+            this.comp.setStickyTopWidth("calc(100% - ".concat(scrollbarWidth, "px)"));
         }
     };
     GridBodyCtrl.prototype.onHeaderHeightChanged = function () {
@@ -350,7 +336,7 @@ var GridBodyCtrl = /** @class */ (function (_super) {
         if (pinnedTopHeight > 0) {
             height += pinnedTopHeight + 1;
         }
-        this.comp.setStickyTopTop(height + "px");
+        this.comp.setStickyTopTop("".concat(height, "px"));
     };
     // method will call itself if no available width. this covers if the grid
     // isn't visible, but is just about to be visible.
@@ -410,8 +396,8 @@ var GridBodyCtrl = /** @class */ (function (_super) {
         Autowired('scrollVisibleService')
     ], GridBodyCtrl.prototype, "scrollVisibleService", void 0);
     __decorate([
-        Optional('contextMenuFactory')
-    ], GridBodyCtrl.prototype, "contextMenuFactory", void 0);
+        Autowired('menuService')
+    ], GridBodyCtrl.prototype, "menuService", void 0);
     __decorate([
         Autowired('headerNavigationService')
     ], GridBodyCtrl.prototype, "headerNavigationService", void 0);

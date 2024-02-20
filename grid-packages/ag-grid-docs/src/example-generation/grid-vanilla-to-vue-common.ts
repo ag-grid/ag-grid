@@ -1,4 +1,4 @@
-import { getFunctionName, ImportType, isInstanceMethod, removeFunctionKeyword } from './parser-utils';
+import { getFunctionName, ImportType, isInstanceMethod, removeFunctionKeyword, replaceGridReadyRowData } from './parser-utils';
 import { convertTemplate, toAssignment, toConst, toInput, toMember } from './vue-utils';
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
 import * as JSON5 from "json5";
@@ -28,7 +28,8 @@ export const GRID_COMPONENTS = [
     'cellRenderer',
     'tooltipComponent',
     'statusPanel',
-    'toolPanel'
+    'toolPanel',
+    'menuItem'
 ];
 
 export const PARAMS_PROPERTIES = [
@@ -45,41 +46,6 @@ export const OVERRIDABLE_AG_COMPONENTS = [
     'agTextCellEditor',
     'agDetailCellRenderer',
 ];
-
-export function getOnGridReadyCode(bindings: any): string {
-    const { onGridReady, resizeToFit, data } = bindings;
-    const additionalLines = [];
-
-    if (onGridReady) {
-        additionalLines.push(onGridReady.trim().replace(/^\{|\}$/g, ''));
-    }
-
-    if (resizeToFit) {
-        additionalLines.push('params.api.sizeColumnsToFit();');
-    }
-
-    if (data) {
-        const { url, callback } = data;
-
-        const setRowDataBlock = callback.indexOf('api.setRowData') >= 0 ?
-            callback.replace("params.api.setRowData(data);", "this.rowData = data;") :
-            callback;
-
-        additionalLines.push(`
-            const updateData = (data) => ${setRowDataBlock};
-            
-            fetch(${url})
-                .then(resp => resp.json())
-                .then(data => updateData(data));`
-        );
-    }
-
-    return `onGridReady(params) {
-        this.gridApi = params.api;
-        this.gridColumnApi = params.columnApi;
-        ${additionalLines.length > 0 ? `\n\n        ${additionalLines.join('\n        ')}` : ''}
-    }`;
-}
 
 export function isExternalVueFile(componentFileNames, component) {
     return componentFileNames.length > 0 && componentFileNames.some(fileName => fileName.toUpperCase().includes(component.toUpperCase()));
@@ -181,7 +147,7 @@ export function getPropertyBindings(bindings: any, componentFileNames: string[],
             }
         });
 
-    if (bindings.data && bindings.data.callback.indexOf('api.setRowData') >= 0) {
+    if (bindings.data && bindings.data.callback.indexOf('gridApi.setGridOption(\'rowData\',') >= 0) {
         if (propertyAttributes.filter(item => item.indexOf(':rowData') >= 0).length === 0) {
             propertyAttributes.push(':rowData="rowData"');
         }
@@ -201,7 +167,7 @@ export function getTemplate(bindings: any, attributes: string[]): string {
     const agGridTag = `<ag-grid-vue
     ${bindings.gridSettings.myGridReference ? 'id="myGrid"' : ''}
     ${style}
-    class="${gridSettings.theme}"
+    :class="themeClass"
     :columnDefs="columnDefs"
     @grid-ready="onGridReady"
     ${attributes.join('\n    ')}></ag-grid-vue>`;

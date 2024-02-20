@@ -103,7 +103,7 @@ var RowPositionUtils = /** @class */ (function (_super) {
                 break;
             default:
                 // if we are not floating, but the other one is floating...
-                if (generic_1.exists(rowB.rowPinned)) {
+                if ((0, generic_1.exists)(rowB.rowPinned)) {
                     return rowB.rowPinned !== 'top';
                 }
                 break;
@@ -131,16 +131,16 @@ var RowPositionUtils = /** @class */ (function (_super) {
         return min;
     };
     __decorate([
-        context_1.Autowired('rowModel')
+        (0, context_1.Autowired)('rowModel')
     ], RowPositionUtils.prototype, "rowModel", void 0);
     __decorate([
-        context_1.Autowired('pinnedRowModel')
+        (0, context_1.Autowired)('pinnedRowModel')
     ], RowPositionUtils.prototype, "pinnedRowModel", void 0);
     __decorate([
-        context_1.Autowired('paginationProxy')
+        (0, context_1.Autowired)('paginationProxy')
     ], RowPositionUtils.prototype, "paginationProxy", void 0);
     RowPositionUtils = __decorate([
-        context_1.Bean('rowPositionUtils')
+        (0, context_1.Bean)('rowPositionUtils')
     ], RowPositionUtils);
     return RowPositionUtils;
 }(beanStub_1.BeanStub));

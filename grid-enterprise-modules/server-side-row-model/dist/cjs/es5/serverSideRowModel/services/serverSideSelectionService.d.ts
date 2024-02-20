@@ -1,11 +1,10 @@
-import { BeanStub, ChangedPath, ISelectionService, IServerSideSelectionState, IServerSideGroupSelectionState, RowNode, SelectionEventSourceType, ISetNodesSelectedParams } from "@ag-grid-community/core";
+import { BeanStub, ChangedPath, ISelectionService, RowNode, SelectionEventSourceType, ISetNodesSelectedParams, ServerSideRowSelectionState, ServerSideRowGroupSelectionState } from "@ag-grid-community/core";
 export declare class ServerSideSelectionService extends BeanStub implements ISelectionService {
     private rowModel;
     private selectionStrategy;
-    private rowSelection;
     private init;
-    getServerSideSelectionState(): any;
-    setServerSideSelectionState(state: IServerSideSelectionState | IServerSideGroupSelectionState): void;
+    getSelectionState(): string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState | null;
+    setSelectionState(state: string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState, source: SelectionEventSourceType): void;
     setNodesSelected(params: ISetNodesSelectedParams): number;
     /**
      * Deletes the selection state for a set of nodes, for use after deleting nodes via
@@ -19,6 +18,7 @@ export declare class ServerSideSelectionService extends BeanStub implements ISel
     syncInRowNode(rowNode: RowNode<any>, oldNode: RowNode<any> | null): void;
     reset(): void;
     isEmpty(): boolean;
+    hasNodesToSelect(justFiltered?: boolean, justCurrentPage?: boolean): boolean;
     selectAllRowNodes(params: {
         source: SelectionEventSourceType;
         justFiltered?: boolean | undefined;

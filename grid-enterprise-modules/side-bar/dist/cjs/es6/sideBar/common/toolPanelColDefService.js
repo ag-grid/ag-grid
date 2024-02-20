@@ -178,9 +178,9 @@ let ToolPanelColDefService = class ToolPanelColDefService extends core_1.BeanStu
     }
 };
 __decorate([
-    core_1.Autowired('columnModel')
+    (0, core_1.Autowired)('columnModel')
 ], ToolPanelColDefService.prototype, "columnModel", void 0);
 ToolPanelColDefService = __decorate([
-    core_1.Bean('toolPanelColDefService')
+    (0, core_1.Bean)('toolPanelColDefService')
 ], ToolPanelColDefService);
 exports.ToolPanelColDefService = ToolPanelColDefService;

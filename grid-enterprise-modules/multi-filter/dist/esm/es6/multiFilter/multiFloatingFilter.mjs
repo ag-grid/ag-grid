@@ -38,6 +38,9 @@ export class MultiFloatingFilterComp extends Component {
         });
     }
     onParamsUpdated(params) {
+        this.refresh(params);
+    }
+    refresh(params) {
         this.params = params;
         const { compDetailsList: newCompDetailsList, floatingFilterParamsList } = this.getCompDetailsList(params);
         const allFloatingFilterCompsUnchanged = newCompDetailsList.length === this.compDetailsList.length
@@ -46,7 +49,17 @@ export class MultiFloatingFilterComp extends Component {
             floatingFilterParamsList.forEach((floatingFilterParams, index) => {
                 var _a;
                 const floatingFilter = this.floatingFilters[index];
-                (_a = floatingFilter.onParamsUpdated) === null || _a === void 0 ? void 0 : _a.call(floatingFilter, floatingFilterParams);
+                let hasRefreshed = false;
+                if (floatingFilter.refresh) {
+                    const result = floatingFilter.refresh(floatingFilterParams);
+                    // framework wrapper always implements optional methods, but returns null if no underlying method
+                    if (result !== null) {
+                        hasRefreshed = true;
+                    }
+                }
+                if (!hasRefreshed) {
+                    (_a = floatingFilter.onParamsUpdated) === null || _a === void 0 ? void 0 : _a.call(floatingFilter, floatingFilterParams);
+                }
             });
         }
         else {

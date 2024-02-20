@@ -75,7 +75,7 @@ class ModuleRegistry {
         }
         else {
             if (ModuleRegistry.moduleBased !== moduleBased) {
-                function_1.doOnce(() => {
+                (0, function_1.doOnce)(() => {
                     console.warn(`AG Grid: You are mixing modules (i.e. @ag-grid-community/core) and packages (ag-grid-community) - you can only use one or the other of these mechanisms.`);
                     console.warn('Please see https://www.ag-grid.com/javascript-grid/packages-modules/ for more information.');
                 }, 'ModulePackageCheck');
@@ -126,10 +126,22 @@ For more info see: https://www.ag-grid.com/javascript-grid/modules/`;
             
 For more info see: https://www.ag-grid.com/javascript-grid/packages/`;
         }
-        function_1.doOnce(() => {
+        (0, function_1.doOnce)(() => {
             console.warn(warningMessage);
         }, warningKey);
         return false;
+    }
+    /**
+     * AG GRID INTERNAL - Warn that a given integrated chart type is not supported under the community distribution.
+     */
+    static __warnEnterpriseChartDisabled(chartType) {
+        const reason = 'ag-charts-enterprise';
+        const warningKey = reason + ':' + chartType;
+        const url = 'https://ag-grid.com/javascript-data-grid/integrated-charts/';
+        const warningMessage = `AG Grid: the '${chartType}' chart type is not supported in AG Charts Community. See ${url} for more details.`;
+        (0, function_1.doOnce)(() => {
+            console.warn(warningMessage);
+        }, warningKey);
     }
     /** AG GRID INTERNAL - Is the given module registered, globally or individually with this grid. */
     static __isRegistered(moduleName, gridId) {
@@ -138,12 +150,12 @@ For more info see: https://www.ag-grid.com/javascript-grid/packages/`;
     }
     /** AG GRID INTERNAL - Get all registered modules globally / individually for this grid. */
     static __getRegisteredModules(gridId) {
-        return [...generic_1.values(ModuleRegistry.globalModulesMap), ...generic_1.values(ModuleRegistry.gridModulesMap[gridId] || {})];
+        return [...(0, generic_1.values)(ModuleRegistry.globalModulesMap), ...(0, generic_1.values)(ModuleRegistry.gridModulesMap[gridId] || {})];
     }
     /** AG GRID INTERNAL - Get the list of modules registered individually for this grid. */
     static __getGridRegisteredModules(gridId) {
         var _a;
-        return generic_1.values((_a = ModuleRegistry.gridModulesMap[gridId]) !== null && _a !== void 0 ? _a : {}) || [];
+        return (0, generic_1.values)((_a = ModuleRegistry.gridModulesMap[gridId]) !== null && _a !== void 0 ? _a : {}) || [];
     }
     /** INTERNAL */
     static __isPackageBased() {

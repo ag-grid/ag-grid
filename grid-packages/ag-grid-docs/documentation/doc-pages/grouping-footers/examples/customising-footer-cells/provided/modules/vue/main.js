@@ -3,7 +3,7 @@ import { AgGridVue } from '@ag-grid-community/vue';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 import MyInnerRenderer from './myInnerRendererVue.js';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
@@ -16,13 +16,12 @@ const VueExample = {
             <ag-grid-vue
 
                     style="width: 100%; height: 100%;"
-                    class="ag-theme-alpine"
+                    :class="themeClass"
                     :columnDefs="columnDefs"
                     :defaultColDef="defaultColDef"
                     :autoGroupColumnDef="autoGroupColumnDef"
                     :groupIncludeFooter="true"
                     :groupIncludeTotalFooter="true"
-                    :animateRows="true"
                     :rowData="rowData"></ag-grid-vue>
         </div>
     `,
@@ -51,12 +50,9 @@ const VueExample = {
                 aggFunc: "sum"
             }],
             gridApi: null,
-            columnApi: null,
             defaultColDef: {
                 flex: 1,
                 minWidth: 150,
-                sortable: true,
-                resizable: true,
             },
             autoGroupColumnDef: {
                 minWidth: 300,
@@ -64,7 +60,8 @@ const VueExample = {
                     innerRenderer: 'MyInnerRenderer'
                 }
             },
-            rowData: null
+            rowData: null,
+            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
         }
     },
     created() {

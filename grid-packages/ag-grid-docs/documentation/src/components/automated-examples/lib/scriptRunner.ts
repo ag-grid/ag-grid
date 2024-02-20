@@ -1,5 +1,5 @@
 import { Group } from '@tweenjs/tween.js';
-import { ColumnState, GridOptions } from 'ag-grid-community';
+import { ColumnState, GridApi } from 'ag-grid-community';
 import { createAgElementFinder } from './agElements';
 import { AGCreatorAction, createAGActionCreator } from './createAGActionCreator';
 import { Mouse } from './createMouse';
@@ -91,7 +91,7 @@ export interface CreateScriptActionParams {
     containerEl?: HTMLElement;
     getOverlay: () => HTMLElement;
     action: ScriptAction;
-    gridOptions: GridOptions;
+    gridApi: GridApi;
     tweenGroup: Group;
     scriptDebugger?: ScriptDebugger;
     defaultEasing?: EasingFunction;
@@ -103,7 +103,7 @@ export interface CreateScriptRunnerParams {
     containerEl?: HTMLElement;
     getOverlay: () => HTMLElement;
     script: ScriptAction[];
-    gridOptions: GridOptions;
+    gridApi: GridApi;
     tweenGroup: Group;
     loop?: boolean;
     loopOnError?: boolean;
@@ -129,7 +129,7 @@ interface CreateScriptActionSequenceParams {
     containerEl?: HTMLElement;
     getOverlay: () => HTMLElement;
     mouse: Mouse;
-    gridOptions: GridOptions;
+    gridApi: GridApi;
     tweenGroup: Group;
     scriptDebugger?: ScriptDebugger;
     defaultEasing?: EasingFunction;
@@ -148,7 +148,7 @@ function createScriptAction({
     mouse,
     action,
     tweenGroup,
-    gridOptions,
+    gridApi,
     scriptDebugger,
     defaultEasing,
 }: CreateScriptActionParams) {
@@ -156,7 +156,7 @@ function createScriptAction({
     const agElementFinder = createAgElementFinder({ containerEl });
     const agActionCreator = createAGActionCreator({
         getOverlay,
-        gridOptions,
+        gridApi,
         agElementFinder,
         mouse,
         tweenGroup,
@@ -212,7 +212,7 @@ function createScriptActionSequence({
     containerEl,
     getOverlay,
     mouse,
-    gridOptions,
+    gridApi,
     tweenGroup,
     scriptDebugger,
     defaultEasing,
@@ -225,7 +225,7 @@ function createScriptActionSequence({
                     getOverlay,
                     mouse,
                     action: scriptAction,
-                    gridOptions,
+                    gridApi,
                     tweenGroup,
                     scriptDebugger,
                     defaultEasing,
@@ -254,7 +254,7 @@ export function createScriptRunner({
     getOverlay,
     mouse,
     script,
-    gridOptions,
+    gridApi,
     loop,
     loopOnError,
     tweenGroup,
@@ -266,7 +266,7 @@ export function createScriptRunner({
     let loopScript = loop;
     let pausedState: PausedState | undefined;
     let currentSeqId;
-    const rowExpandedState = createRowExpandedState(gridOptions);
+    const rowExpandedState = createRowExpandedState(gridApi);
 
     function createActionSequenceRunner({
         seqId,
@@ -329,7 +329,7 @@ export function createScriptRunner({
     const setPausedState = (scriptIndex: number) => {
         pausedState = {
             scriptIndex,
-            columnState: gridOptions.columnApi?.getColumnState()!,
+            columnState: gridApi.getColumnState()!,
             rowExpandedState: rowExpandedState.get(),
         };
     };
@@ -345,7 +345,7 @@ export function createScriptRunner({
     const playAgain = () => {
         let pausedScriptIndex;
         if (pausedState) {
-            gridOptions.columnApi?.applyColumnState({
+            gridApi.applyColumnState({
                 state: pausedState.columnState,
                 applyOrder: true,
             });
@@ -366,7 +366,7 @@ export function createScriptRunner({
         containerEl,
         getOverlay,
         mouse,
-        gridOptions,
+        gridApi,
         tweenGroup,
         scriptDebugger,
         defaultEasing,

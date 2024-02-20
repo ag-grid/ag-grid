@@ -11,6 +11,12 @@ export function doOnce(func, key) {
     func();
     doOnceFlags[key] = true;
 }
+export function warnOnce(msg) {
+    doOnce(function () { return console.warn("AG Grid: " + msg); }, msg);
+}
+export function errorOnce(msg) {
+    doOnce(function () { return console.error("AG Grid: " + msg); }, msg);
+}
 export function getFunctionName(funcConstructor) {
     // for every other browser in the world
     if (funcConstructor.name) {
@@ -119,10 +125,5 @@ export function compose() {
         fns[_i] = arguments[_i];
     }
     return function (arg) { return fns.reduce(function (composed, f) { return f(composed); }, arg); };
-}
-export function callIfPresent(func) {
-    if (func) {
-        func();
-    }
 }
 export var noop = function () { return; };

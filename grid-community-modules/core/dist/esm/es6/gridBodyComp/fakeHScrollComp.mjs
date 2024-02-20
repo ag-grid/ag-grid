@@ -24,12 +24,13 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         this.addManagedPropertyListener('domLayout', spacerWidthsListener);
         this.ctrlsService.registerFakeHScrollComp(this);
         this.createManagedBean(new CenterWidthFeature(width => this.eContainer.style.width = `${width}px`));
+        this.addManagedPropertyListeners(['suppressHorizontalScroll'], this.onScrollVisibilityChanged.bind(this));
     }
     initialiseInvisibleScrollbar() {
         if (this.invisibleScrollbar !== undefined) {
             return;
         }
-        this.enableRtl = this.gridOptionsService.is('enableRtl');
+        this.enableRtl = this.gridOptionsService.get('enableRtl');
         super.initialiseInvisibleScrollbar();
         if (this.invisibleScrollbar) {
             this.refreshCompBottom();
@@ -74,7 +75,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
     setScrollVisible() {
         const hScrollShowing = this.scrollVisibleService.isHorizontalScrollShowing();
         const invisibleScrollbar = this.invisibleScrollbar;
-        const isSuppressHorizontalScroll = this.gridOptionsService.is('suppressHorizontalScroll');
+        const isSuppressHorizontalScroll = this.gridOptionsService.get('suppressHorizontalScroll');
         const scrollbarWidth = hScrollShowing ? (this.gridOptionsService.getScrollbarWidth() || 0) : 0;
         const adjustedScrollbarWidth = (scrollbarWidth === 0 && invisibleScrollbar) ? 16 : scrollbarWidth;
         const scrollContainerSize = !isSuppressHorizontalScroll ? adjustedScrollbarWidth : 0;

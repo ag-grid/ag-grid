@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/range-selection - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.1.0
+          * @ag-grid-enterprise/range-selection - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.1.0
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -58,10 +58,14 @@ var __read$1 = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray$1 = (undefined && undefined.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray$1 = (undefined && undefined.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 var __values = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
@@ -177,14 +181,14 @@ var RangeService = /** @class */ (function (_super) {
     };
     RangeService.prototype.setRangeToCell = function (cell, appendRange) {
         if (appendRange === void 0) { appendRange = false; }
-        if (!this.gridOptionsService.isEnableRangeSelection()) {
+        if (!this.gridOptionsService.get('enableRangeSelection')) {
             return;
         }
         var columns = this.calculateColumnsBetween(cell.column, cell.column);
         if (!columns) {
             return;
         }
-        var suppressMultiRangeSelections = this.gridOptionsService.is('suppressMultiRangeSelection');
+        var suppressMultiRangeSelections = this.gridOptionsService.get('suppressMultiRangeSelection');
         // if not appending, then clear previous range selections
         if (suppressMultiRangeSelections || !appendRange || core._.missing(this.cellRanges)) {
             this.removeAllCellRanges(true);
@@ -230,7 +234,7 @@ var RangeService = /** @class */ (function (_super) {
             var otherCols = cellRange.columns.filter(function (col) { return col !== colToMove; });
             if (colToMove) {
                 cellRange.startColumn = colToMove;
-                cellRange.columns = moveToFront ? __spreadArray$1([colToMove], __read$1(otherCols)) : __spreadArray$1(__spreadArray$1([], __read$1(otherCols)), [colToMove]);
+                cellRange.columns = moveToFront ? __spreadArray$1([colToMove], __read$1(otherCols), false) : __spreadArray$1(__spreadArray$1([], __read$1(otherCols), false), [colToMove], false);
             }
             else {
                 cellRange.columns = otherCols;
@@ -291,7 +295,7 @@ var RangeService = /** @class */ (function (_super) {
         return newEndCell;
     };
     RangeService.prototype.setCellRange = function (params) {
-        if (!this.gridOptionsService.isEnableRangeSelection()) {
+        if (!this.gridOptionsService.get('enableRangeSelection')) {
             return;
         }
         this.removeAllCellRanges(true);
@@ -341,7 +345,7 @@ var RangeService = /** @class */ (function (_super) {
                 for (var i = 0; i < cellRange.columns.length; i++) {
                     var column = _this.columnModel.getGridColumn(cellRange.columns[i]);
                     if (!column || !column.isCellEditable(rowNode)) {
-                        return;
+                        continue;
                     }
                     rowNode.setDataValue(column, null, cellEventSource);
                 }
@@ -392,7 +396,7 @@ var RangeService = /** @class */ (function (_super) {
         };
     };
     RangeService.prototype.addCellRange = function (params) {
-        if (!this.gridOptionsService.isEnableRangeSelection()) {
+        if (!this.gridOptionsService.get('enableRangeSelection')) {
             return;
         }
         var newRange = this.createCellRangeFromCellRangeParams(params);
@@ -439,12 +443,12 @@ var RangeService = /** @class */ (function (_super) {
             return true;
         this.cellRanges.forEach(function (range) {
             _this.forEachRowInRange(range, function (row) {
-                var rowName = (row.rowPinned || 'normal') + "_" + row.rowIndex;
+                var rowName = "".concat(row.rowPinned || 'normal', "_").concat(row.rowIndex);
                 var columns = rowToColumnMap.get(rowName);
                 var currentRangeColIds = range.columns.map(function (col) { return col.getId(); });
                 if (columns) {
                     var filteredColumns = currentRangeColIds.filter(function (col) { return columns.indexOf(col) === -1; });
-                    columns.push.apply(columns, __spreadArray$1([], __read$1(filteredColumns)));
+                    columns.push.apply(columns, __spreadArray$1([], __read$1(filteredColumns), false));
                 }
                 else {
                     rowToColumnMap.set(rowName, currentRangeColIds);
@@ -557,13 +561,13 @@ var RangeService = /** @class */ (function (_super) {
         return this.draggingRange;
     };
     RangeService.prototype.onDragStart = function (mouseEvent) {
-        if (!this.gridOptionsService.isEnableRangeSelection()) {
+        if (!this.gridOptionsService.get('enableRangeSelection')) {
             return;
         }
         var ctrlKey = mouseEvent.ctrlKey, metaKey = mouseEvent.metaKey, shiftKey = mouseEvent.shiftKey;
         // ctrlKey for windows, metaKey for Apple
         var isMultiKey = ctrlKey || metaKey;
-        var allowMulti = !this.gridOptionsService.is('suppressMultiRangeSelection');
+        var allowMulti = !this.gridOptionsService.get('suppressMultiRangeSelection');
         var isMultiSelect = allowMulti ? isMultiKey : false;
         var extendRange = shiftKey && core._.existsAndNotEmpty(this.cellRanges);
         if (!isMultiSelect && (!extendRange || core._.exists(core._.last(this.cellRanges).type))) {
@@ -614,7 +618,7 @@ var RangeService = /** @class */ (function (_super) {
         if (fromMouseClick && this.dragging) {
             return;
         }
-        if (this.gridOptionsService.is('suppressMultiRangeSelection')) {
+        if (this.gridOptionsService.get('suppressMultiRangeSelection')) {
             return;
         }
         if (this.isEmpty()) {
@@ -643,7 +647,7 @@ var RangeService = /** @class */ (function (_super) {
             // Top
             if (_this.rowPositionUtils.before(startRow, intersectionStartRow)) {
                 var top_1 = {
-                    columns: __spreadArray$1([], __read$1(cols)),
+                    columns: __spreadArray$1([], __read$1(cols), false),
                     startColumn: lastRange.startColumn,
                     startRow: __assign$2({}, startRow),
                     endRow: _this.cellNavigationService.getRowAbove(intersectionStartRow),
@@ -663,7 +667,7 @@ var RangeService = /** @class */ (function (_super) {
             // Bottom
             if (_this.rowPositionUtils.before(intersectionEndRow, endRow)) {
                 newRanges.push({
-                    columns: __spreadArray$1([], __read$1(cols)),
+                    columns: __spreadArray$1([], __read$1(cols), false),
                     startColumn: lastRange.startColumn,
                     startRow: _this.cellNavigationService.getRowBelow(intersectionEndRow),
                     endRow: __assign$2({}, endRow),
@@ -752,12 +756,12 @@ var RangeService = /** @class */ (function (_super) {
         var isSameColumn = columnFrom === columnTo;
         var fromIndex = allColumns.indexOf(columnFrom);
         if (fromIndex < 0) {
-            console.warn("AG Grid: column " + columnFrom.getId() + " is not visible");
+            console.warn("AG Grid: column ".concat(columnFrom.getId(), " is not visible"));
             return;
         }
         var toIndex = isSameColumn ? fromIndex : allColumns.indexOf(columnTo);
         if (toIndex < 0) {
-            console.warn("AG Grid: column " + columnTo.getId() + " is not visible");
+            console.warn("AG Grid: column ".concat(columnTo.getId(), " is not visible"));
             return;
         }
         if (isSameColumn) {
@@ -901,7 +905,7 @@ var AbstractSelectionHandle = /** @class */ (function (_super) {
         document.body.classList.add(this.getDraggingCssClass());
     };
     AbstractSelectionHandle.prototype.getDraggingCssClass = function () {
-        return "ag-dragging-" + (this.type === core.SelectionHandleType.FILL ? 'fill' : 'range') + "-handle";
+        return "ag-dragging-".concat(this.type === core.SelectionHandleType.FILL ? 'fill' : 'range', "-handle");
     };
     AbstractSelectionHandle.prototype.updateValuesOnMove = function (e) {
         var cell = this.mouseEventService.getCellPositionForEvent(e);
@@ -1087,10 +1091,14 @@ var __read = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (undefined && undefined.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (undefined && undefined.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 var FillHandle = /** @class */ (function (_super) {
     __extends$2(FillHandle, _super);
@@ -1185,7 +1193,7 @@ var FillHandle = /** @class */ (function (_super) {
             return 'xy';
         }
         if (direction !== 'x' && direction !== 'y' && direction !== 'xy') {
-            core._.doOnce(function () { return console.warn("AG Grid: valid values for fillHandleDirection are 'x', 'y' and 'xy'. Default to 'xy'."); }, 'warn invalid fill direction');
+            core._.warnOnce("valid values for fillHandleDirection are 'x', 'y' and 'xy'. Default to 'xy'.");
             return 'xy';
         }
         return direction;
@@ -1213,7 +1221,7 @@ var FillHandle = /** @class */ (function (_super) {
         var isVertical = this.dragAxis === 'y';
         // if the range is being reduced in size, all we need to do is
         // clear the cells that are no longer part of the range
-        if (this.isReduce && !this.gridOptionsService.is('suppressClearOnFillReduction')) {
+        if (this.isReduce && !this.gridOptionsService.get('suppressClearOnFillReduction')) {
             var columns = isVertical
                 ? initialRange.columns
                 : initialRange.columns.filter(function (col) { return finalRange.columns.indexOf(col) < 0; });
@@ -1223,13 +1231,17 @@ var FillHandle = /** @class */ (function (_super) {
             }
             return;
         }
-        var withinInitialRange = true;
         var values = [];
         var initialValues = [];
+        var initialNonAggregatedValues = [];
+        var initialFormattedValues = [];
+        var withinInitialRange = true;
         var idx = 0;
         var resetValues = function () {
             values.length = 0;
             initialValues.length = 0;
+            initialNonAggregatedValues.length = 0;
+            initialFormattedValues.length = 0;
             idx = 0;
         };
         var iterateAcrossCells = function (column, columns) {
@@ -1272,18 +1284,29 @@ var FillHandle = /** @class */ (function (_super) {
             if (withinInitialRange) {
                 currentValue = _this.valueService.getValue(col, rowNode);
                 initialValues.push(currentValue);
+                initialNonAggregatedValues.push(_this.valueService.getValue(col, rowNode, undefined, true));
+                initialFormattedValues.push(_this.valueFormatterService.formatValue(col, rowNode, currentValue));
                 withinInitialRange = updateInitialSet();
             }
             else {
-                var _c = _this.processValues(e, currentValues, initialValues, col, rowNode, idx++), value = _c.value, fromUserFunction = _c.fromUserFunction, sourceCol = _c.sourceCol, sourceRowNode = _c.sourceRowNode;
+                var _c = _this.processValues({
+                    event: e,
+                    values: currentValues,
+                    initialValues: initialValues,
+                    initialNonAggregatedValues: initialNonAggregatedValues,
+                    initialFormattedValues: initialFormattedValues,
+                    col: col,
+                    rowNode: rowNode,
+                    idx: idx++
+                }), value = _c.value, fromUserFunction = _c.fromUserFunction, sourceCol = _c.sourceCol, sourceRowNode = _c.sourceRowNode;
                 currentValue = value;
                 if (col.isCellEditable(rowNode)) {
                     var cellValue = _this.valueService.getValue(col, rowNode);
                     if (!fromUserFunction) {
-                        if ((_a = sourceCol === null || sourceCol === void 0 ? void 0 : sourceCol.getColDef()) === null || _a === void 0 ? void 0 : _a.useValueFormatterForExport) {
+                        if (sourceCol && ((_a = sourceCol.getColDef()) === null || _a === void 0 ? void 0 : _a.useValueFormatterForExport) !== false) {
                             currentValue = (_b = _this.valueFormatterService.formatValue(sourceCol, sourceRowNode, currentValue)) !== null && _b !== void 0 ? _b : currentValue;
                         }
-                        if (col.getColDef().useValueParserForImport) {
+                        if (col.getColDef().useValueParserForImport !== false) {
                             currentValue = _this.valueParserService.parseValue(col, rowNode, 
                             // if no sourceCol, then currentValue is a number
                             sourceCol ? currentValue : core._.toStringOrNull(currentValue), cellValue);
@@ -1311,7 +1334,7 @@ var FillHandle = /** @class */ (function (_super) {
             });
         }
         else {
-            var columns = this.isLeft ? __spreadArray([], __read(finalRange.columns)).reverse() : finalRange.columns;
+            var columns = this.isLeft ? __spreadArray([], __read(finalRange.columns), false).reverse() : finalRange.columns;
             iterateAcrossCells(undefined, columns);
         }
     };
@@ -1324,7 +1347,8 @@ var FillHandle = /** @class */ (function (_super) {
         };
         this.rangeService.clearCellRangeCellValues({ cellRanges: [cellRange] });
     };
-    FillHandle.prototype.processValues = function (event, values, initialValues, col, rowNode, idx) {
+    FillHandle.prototype.processValues = function (params) {
+        var event = params.event, values = params.values, initialValues = params.initialValues, initialNonAggregatedValues = params.initialNonAggregatedValues, initialFormattedValues = params.initialFormattedValues, col = params.col, rowNode = params.rowNode, idx = params.idx;
         var userFillOperation = this.gridOptionsService.getCallback('fillOperation');
         var isVertical = this.dragAxis === 'y';
         var direction;
@@ -1335,20 +1359,22 @@ var FillHandle = /** @class */ (function (_super) {
             direction = this.isLeft ? 'left' : 'right';
         }
         if (userFillOperation) {
-            var params = {
+            var params_1 = {
                 event: event,
                 values: values.map(function (_a) {
                     var value = _a.value;
                     return value;
                 }),
                 initialValues: initialValues,
+                initialNonAggregatedValues: initialNonAggregatedValues,
+                initialFormattedValues: initialFormattedValues,
                 currentIndex: idx,
                 currentCellValue: this.valueService.getValue(col, rowNode),
                 direction: direction,
                 column: col,
                 rowNode: rowNode
             };
-            var userResult = userFillOperation(params);
+            var userResult = userFillOperation(params_1);
             if (userResult !== false) {
                 return { value: userResult, fromUserFunction: true };
             }
@@ -1701,7 +1727,7 @@ var SelectionHandleFactory = /** @class */ (function (_super) {
 }(core.BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '30.1.0';
+var VERSION = '31.1.0';
 
 var RangeSelectionModule = {
     version: VERSION,

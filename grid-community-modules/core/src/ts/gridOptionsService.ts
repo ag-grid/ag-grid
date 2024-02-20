@@ -1,22 +1,22 @@
 import { ColumnApi } from "./columns/columnApi";
 import { ComponentUtil } from "./components/componentUtil";
-import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from "./context/context";
+import { Autowired, Bean, PostConstruct, PreDestroy } from "./context/context";
 import { DomLayoutType, GridOptions } from "./entities/gridOptions";
-import { GetGroupAggFilteringParams, GetRowIdParams, RowHeightParams } from "./interfaces/iCallbackParams";
+import { GetGroupAggFilteringParams, GetGroupIncludeFooterParams, RowHeightParams } from "./interfaces/iCallbackParams";
 import { Environment } from "./environment";
 import { AgEvent, Events } from "./events";
 import { EventService } from "./eventService";
 import { GridApi } from "./gridApi";
 import { AgGridCommon, WithoutGridCommon } from "./interfaces/iCommon";
 import { RowModelType } from "./interfaces/iRowModel";
-import { AnyGridOptions } from "./propertyKeys";
-import { doOnce } from "./utils/function";
+import { AnyGridOptions, INITIAL_GRID_OPTION_KEYS, PropertyKeys } from "./propertyKeys";
+import { warnOnce } from "./utils/function";
 import { exists, missing } from "./utils/generic";
 import { getScrollbarWidth } from './utils/browser';
-import { ModuleRegistry } from "./modules/moduleRegistry";
-import { ModuleNames } from "./modules/moduleNames";
-import { matchesGroupDisplayType } from "./gridOptionsValidator";
 import { IRowNode } from "./interfaces/iRowNode";
+import { GRID_OPTION_DEFAULTS } from "./validation/rules/gridOptionsValidations";
+import { ValidationService } from "./validation/validationService";
+import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 
 type GetKeys<T, U> = {
     [K in keyof T]: T[K] extends U | undefined ? K : never
@@ -29,37 +29,44 @@ type GetKeys<T, U> = {
 export type KeysOfType<U> = Exclude<GetKeys<GridOptions, U>, AnyGridOptions>;
 
 type BooleanProps = Exclude<KeysOfType<boolean>, AnyGridOptions>;
-type NumberProps = Exclude<KeysOfType<number>, AnyGridOptions>;
 type NoArgFuncs = KeysOfType<() => any>;
 type AnyArgFuncs = KeysOfType<(arg: 'NO_MATCH') => any>;
 type CallbackProps = Exclude<KeysOfType<(params: AgGridCommon<any, any>) => any>, NoArgFuncs | AnyArgFuncs>;
-type NonPrimitiveProps = Exclude<keyof GridOptions, BooleanProps | NumberProps | CallbackProps | 'api' | 'columnApi' | 'context'>;
 
 
 type ExtractParamsFromCallback<TCallback> = TCallback extends (params: infer PA) => any ? PA : never;
 type ExtractReturnTypeFromCallback<TCallback> = TCallback extends (params: AgGridCommon<any, any>) => infer RT ? RT : never;
 type WrappedCallback<K extends CallbackProps, OriginalCallback extends GridOptions[K]> = undefined | ((params: WithoutGridCommon<ExtractParamsFromCallback<OriginalCallback>>) => ExtractReturnTypeFromCallback<OriginalCallback>)
+export interface PropertyChangeSet {
+    /** Unique id which can be used to link changes of multiple properties that were updated together.
+     * i.e a user updated multiple properties at the same time.
+     */
+    id: number;
+    /** All the properties that have been updated in this change set */
+    properties: (keyof GridOptions)[];
+}
+export type PropertyChangedSource = 'api' | 'gridOptionsUpdated';
 export interface PropertyChangedEvent extends AgEvent {
-    type: keyof GridOptions,
-    currentValue: any;
-    previousValue: any;
+    type: 'gridPropertyChanged',
+    changeSet: PropertyChangeSet | undefined;
+    source: PropertyChangedSource
 }
 
-export type PropertyChangedListener<T extends PropertyChangedEvent> = (event: T) => void
+/**
+ * For boolean properties the changed value will have been coerced to a boolean, so we do not want the type to include the undefined value.
+ */
+type GridOptionsOrBooleanCoercedValue<K extends keyof GridOptions> = K extends BooleanProps ? boolean : GridOptions[K];
 
-function toNumber(value: any): number | undefined {
-    if (typeof value == 'number') {
-        return value;
-    }
-
-    if (typeof value == 'string') {
-        return parseInt(value, 10);
-    }
+export interface PropertyValueChangedEvent<K extends keyof GridOptions> extends AgEvent {
+    type: K;
+    changeSet: PropertyChangeSet | undefined;
+    currentValue: GridOptionsOrBooleanCoercedValue<K>;
+    previousValue: GridOptionsOrBooleanCoercedValue<K>;
+    source: PropertyChangedSource
 }
 
-function isTrue(value: any): boolean {
-    return value === true || value === 'true';
-}
+export type PropertyChangedListener = (event: PropertyChangedEvent) => void
+export type PropertyValueChangedListener<K extends keyof GridOptions> = (event: PropertyValueChangedEvent<K>) => void
 
 @Bean('gridOptionsService')
 export class GridOptionsService {
@@ -67,74 +74,53 @@ export class GridOptionsService {
     @Autowired('gridOptions') private readonly gridOptions: GridOptions;
     @Autowired('eventService') private readonly eventService: EventService;
     @Autowired('environment') private readonly environment: Environment;
+    @Autowired('frameworkOverrides') frameworkOverrides: IFrameworkOverrides;
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
+    @Autowired('validationService') private validationService: ValidationService;
 
     private destroyed = false;
     // we store this locally, so we are not calling getScrollWidth() multiple times as it's an expensive operation
     private scrollbarWidth: number;
     private domDataKey = '__AG_' + Math.random().toString();
+    private static readonly alwaysSyncGlobalEvents: Set<string> = new Set([Events.EVENT_GRID_PRE_DESTROYED]);
 
     // Store locally to avoid retrieving many times as these are requested for every callback
-    public api: GridApi;
-    public columnApi: ColumnApi;
+    @Autowired('gridApi') private readonly api: GridApi;
+    /** @deprecated v31 ColumnApi has been deprecated and all methods moved to the api. */
+    private columnApi: ColumnApi;
     // This is quicker then having code call gridOptionsService.get('context')
-    public get context() {
+    private get context() {
         return this.gridOptions['context'];
     }
 
     private propertyEventService: EventService = new EventService();
-    private gridOptionLookup: Set<string>;
 
-    private agWire(@Qualifier('gridApi') gridApi: GridApi, @Qualifier('columnApi') columnApi: ColumnApi): void {
-        this.gridOptions.api = gridApi;
-        this.gridOptions.columnApi = columnApi;
-        this.api = gridApi;
-        this.columnApi = columnApi;
-    }
 
     @PostConstruct
     public init(): void {
-        this.gridOptionLookup = new Set([...ComponentUtil.ALL_PROPERTIES, ...ComponentUtil.EVENT_CALLBACKS]);
-        const async = !this.is('suppressAsyncEvents');
-        this.eventService.addGlobalListener(this.globalEventHandler.bind(this), async);
+        this.columnApi = new ColumnApi(this.api);
+        const async = !this.get('suppressAsyncEvents');
+        this.eventService.addGlobalListener(this.globalEventHandlerFactory().bind(this), async);
+        this.eventService.addGlobalListener(this.globalEventHandlerFactory(true).bind(this), false);
 
+        // Ensure the propertyEventService has framework overrides set so that it can fire events outside of angular
+        this.propertyEventService.setFrameworkOverrides(this.frameworkOverrides);
         // sets an initial calculation for the scrollbar width
         this.getScrollbarWidth();
 
     }
     @PreDestroy
     private destroy(): void {
-        // need to remove these, as we don't own the lifecycle of the gridOptions, we need to
-        // remove the references in case the user keeps the grid options, we want the rest
-        // of the grid to be picked up by the garbage collector
-        this.gridOptions.api = null;
-        this.gridOptions.columnApi = null;
-
         this.destroyed = true;
-    }
-
-    /**
-     * Is the given GridOption property set to true.
-     * @param property GridOption property that has the type `boolean | undefined`
-     */
-    public is(property: BooleanProps): boolean {
-        return isTrue(this.gridOptions[property]);
+        this.columnApi = undefined as any;
     }
 
     /**
      * Get the raw value of the GridOptions property provided.
      * @param property
      */
-    public get<K extends NonPrimitiveProps>(property: K): GridOptions[K] {
-        return this.gridOptions[property];
-    }
-
-    /**
-     * Get the GridOption property as a number, raw value is returned via a toNumber coercion function.
-     * @param property GridOption property that has the type `number | undefined`
-     */
-    public getNum<K extends NumberProps>(property: K): number | undefined {
-        return toNumber(this.gridOptions[property]);
+    public get<K extends keyof GridOptions>(property: K): K extends keyof typeof GRID_OPTION_DEFAULTS ? NonNullable<GridOptions[K]> : GridOptions[K] {
+        return this.gridOptions[property] ?? (GRID_OPTION_DEFAULTS[property as keyof typeof GRID_OPTION_DEFAULTS] as GridOptions[K]);
     }
 
     /**
@@ -173,56 +159,159 @@ export class GridOptionsService {
         }
         return callback;
     }
-
+    
     /**
-     *
-     * @param key - key of the GridOption property to update
-     * @param newValue - new value for this property
-     * @param force - force the property change Event to be fired even if the value has not changed
-     * @param eventParams - additional params to merge into the property changed event
+     * Handles value coercion including validation of ranges etc. If value is invalid, undefined is set, allowing default to be used.
      */
-    public set<K extends keyof GridOptions>(key: K, newValue: GridOptions[K], force = false, eventParams: object = {}): void {
-        if (this.gridOptionLookup.has(key)) {
-            const previousValue = this.gridOptions[key];
-            if (force || previousValue !== newValue) {
-                this.gridOptions[key] = newValue;
-                const event: PropertyChangedEvent = {
-                    type: key,
-                    currentValue: newValue,
-                    previousValue: previousValue,
-                    ...eventParams
-                };
-                this.propertyEventService.dispatchEvent(event);
+    private static PROPERTY_COERCIONS: Map<keyof GridOptions, ((value: any) => GridOptions[keyof GridOptions])> = new Map([
+        ...PropertyKeys.BOOLEAN_PROPERTIES.map(key => [key as keyof GridOptions, GridOptionsService.toBoolean]),
+        ...PropertyKeys.NUMBER_PROPERTIES.map(key => [key as keyof GridOptions, GridOptionsService.toNumber]),
+        ['groupAggFiltering', (val: any) => typeof val === 'function' ? val : GridOptionsService.toBoolean(val)],
+        ['pageSize', GridOptionsService.toConstrainedNum(1, Number.MAX_VALUE)],
+        ['autoSizePadding', GridOptionsService.toConstrainedNum(0, Number.MAX_VALUE)],
+        ['keepDetailRowsCount', GridOptionsService.toConstrainedNum(1, Number.MAX_VALUE)],
+        ['rowBuffer', GridOptionsService.toConstrainedNum(0, Number.MAX_VALUE)],
+        ['infiniteInitialRowCount', GridOptionsService.toConstrainedNum(1, Number.MAX_VALUE)],
+        ['cacheOverflowSize', GridOptionsService.toConstrainedNum(1, Number.MAX_VALUE)],
+        ['cacheBlockSize', GridOptionsService.toConstrainedNum(1, Number.MAX_VALUE)],
+        ['serverSideInitialRowCount', GridOptionsService.toConstrainedNum(1, Number.MAX_VALUE)],
+        ['viewportRowModelPageSize', GridOptionsService.toConstrainedNum(1, Number.MAX_VALUE)],
+        ['viewportRowModelBufferSize', GridOptionsService.toConstrainedNum(0, Number.MAX_VALUE)],
+    ] as [keyof GridOptions, ((value: any) => GridOptions[keyof GridOptions])][]);
+
+    private static toBoolean(value: any): boolean {
+        if (typeof value === 'boolean') {
+            return value;
+        }
+
+        if (typeof value === 'string') {
+            // for boolean, compare to empty String to allow attributes appearing with
+            // no value to be treated as 'true'
+            return value.toUpperCase() === 'TRUE' || value == '';
+        }
+
+        return false;
+    }
+
+    private static toNumber(value: any): number | undefined {
+        if (typeof value === 'number') {
+            return value;
+        }
+
+        if (typeof value === 'string') {
+            const parsed = parseInt(value);
+            if (isNaN(parsed)) {
+                return undefined;
             }
+            return parsed;
+        }
+        return undefined;
+    }
+
+    private static toConstrainedNum(min: number, max: number): (value: any) => number | undefined {
+        return (value: any) => {
+            const num = GridOptionsService.toNumber(value);
+            if (num == null || num < min || num > max) {
+                return undefined; // return undefined if outside bounds, this will then be coerced to the default value.
+            }
+            return num;
         }
     }
 
-    addEventListener<T extends PropertyChangedEvent>(key: keyof GridOptions, listener: PropertyChangedListener<T>): void {
-        this.propertyEventService.addEventListener(key, listener);
+    private static getCoercedValue<K extends keyof GridOptions>(key: K, value: GridOptions[K]): GridOptions[K] {
+        const coerceFunc = GridOptionsService.PROPERTY_COERCIONS.get(key);
+
+        if (!coerceFunc) {
+            return value;
+        }
+        
+        return coerceFunc(value);
     }
-    removeEventListener<T extends PropertyChangedEvent>(key: keyof GridOptions, listener: PropertyChangedListener<T>): void {
-        this.propertyEventService.removeEventListener(key, listener);
+
+    public static getCoercedGridOptions(gridOptions: GridOptions): GridOptions {
+        const newGo: GridOptions = {};
+        Object.entries(gridOptions).forEach(([key, value]: [keyof GridOptions, any]) => {
+            const coercedValue = GridOptionsService.getCoercedValue(key, value);
+            newGo[key] = coercedValue;
+        });
+        return newGo;
+    }
+
+    private static changeSetId = 0;
+    public updateGridOptions({ options, source = 'api' }: { options: Partial<GridOptions>, source?: PropertyChangedSource }): void {
+        const changeSet: PropertyChangeSet = { id: GridOptionsService.changeSetId++, properties: [] };
+        // all events are fired after grid options has finished updating.
+        const events: PropertyValueChangedEvent<keyof GridOptions>[] = [];
+        Object.entries(options).forEach(([key, value]) => {
+            if (source === 'api' && (INITIAL_GRID_OPTION_KEYS as any)[key]) {
+                warnOnce(`${key} is an initial property and cannot be updated.`)
+            }
+            const coercedValue = GridOptionsService.getCoercedValue(key as keyof GridOptions, value);
+            const shouldForce = (typeof coercedValue) === 'object' && source === 'api'; // force objects as they could have been mutated.
+
+            const previousValue = this.gridOptions[key as keyof GridOptions];
+            if (shouldForce || previousValue !== coercedValue) {
+                this.gridOptions[key as keyof GridOptions] = coercedValue;
+                const event: PropertyValueChangedEvent<keyof GridOptions> = {
+                    type: key as keyof GridOptions,
+                    currentValue: coercedValue,
+                    previousValue,
+                    changeSet,
+                    source
+                };
+                events.push(event);
+            }
+        });
+
+        this.validationService.processGridOptions(this.gridOptions);
+
+        // changeSet should just include the properties that have changed.
+        changeSet.properties = events.map(event => event.type);
+
+        events.forEach(event => {
+            if (this.gridOptions.debug) {
+                console.log(`AG Grid: Updated property ${event.type} from `, event.previousValue, ' to  ', event.currentValue);
+            }
+            this.propertyEventService.dispatchEvent(event);
+        });
+    }
+
+    addEventListener<K extends keyof GridOptions>(key: K, listener: PropertyValueChangedListener<K>): void {
+        this.propertyEventService.addEventListener(key, listener as any);
+    }
+    removeEventListener<K extends keyof GridOptions>(key: K, listener: PropertyValueChangedListener<K>): void {
+        this.propertyEventService.removeEventListener(key, listener as any);
     }
 
     // responsible for calling the onXXX functions on gridOptions
-    globalEventHandler(eventName: string, event?: any): void {
-        // prevent events from being fired _after_ the grid has been destroyed
-        if (this.destroyed) {
-            return;
-        }
+    // It forces events defined in GridOptionsService.alwaysSyncGlobalEvents to be fired synchronously.
+    // This is required for events such as GridPreDestroyed.
+    // Other events can be fired asynchronously or synchronously depending on config.
+    globalEventHandlerFactory = (restrictToSyncOnly?: boolean) => {
+        return (eventName: string, event?: any) => {
+            // prevent events from being fired _after_ the grid has been destroyed
+            if (this.destroyed) {
+                return;
+            }
 
-        const callbackMethodName = ComponentUtil.getCallbackForEvent(eventName);
-        if (typeof (this.gridOptions as any)[callbackMethodName] === 'function') {
-            (this.gridOptions as any)[callbackMethodName](event);
+            const alwaysSync = GridOptionsService.alwaysSyncGlobalEvents.has(eventName);
+            if ((alwaysSync && !restrictToSyncOnly) || (!alwaysSync && restrictToSyncOnly)) {
+                return;
+            }
+
+            const eventHandlerName = ComponentUtil.getCallbackForEvent(eventName);
+            const eventHandler = (this.gridOptions as any)[eventHandlerName];
+            if (typeof eventHandler === 'function') {
+                this.frameworkOverrides.wrapOutgoing(() => {
+                    eventHandler(event);
+                })
+            }
         }
-    }
+    };
 
     // *************** Helper methods ************************** //
     // Methods to share common GridOptions related logic that goes above accessing a single property
 
-    public getGridId(): string {
-        return this.api.getGridId();
-    }
 
     // the user might be using some non-standard scrollbar, eg a scrollbar that has zero
     // width and overlays (like the Safari scrollbar, but presented in Chrome). so we
@@ -259,7 +348,7 @@ export class GridOptionsService {
     }
 
     public useAsyncEvents() {
-        return !this.is('suppressAsyncEvents');
+        return !this.get('suppressAsyncEvents');
     }
 
     public isGetRowHeightFunction(): boolean {
@@ -289,13 +378,13 @@ export class GridOptionsService {
 
             if (this.isNumeric(height)) {
                 if (height === 0) {
-                    doOnce(() => console.warn('AG Grid: The return of `getRowHeight` cannot be zero. If the intention is to hide rows, use a filter instead.'), 'invalidRowHeight');
+                    warnOnce('The return of `getRowHeight` cannot be zero. If the intention is to hide rows, use a filter instead.');
                 }
                 return { height: Math.max(1, height), estimated: false };
             }
         }
 
-        if (rowNode.detail && this.is('masterDetail')) {
+        if (rowNode.detail && this.get('masterDetail')) {
             return this.getMasterDetailRowHeight();
         }
 
@@ -308,7 +397,7 @@ export class GridOptionsService {
         // if autoHeight, we want the height to grow to the new height starting at 1, as otherwise a flicker would happen,
         // as the detail goes to the default (eg 200px) and then immediately shrink up/down to the new measured height
         // (due to auto height) which looks bad, especially if doing row animation.
-        if (this.is('detailRowAutoHeight')) {
+        if (this.get('detailRowAutoHeight')) {
             return { height: 1, estimated: false };
         }
 
@@ -325,10 +414,9 @@ export class GridOptionsService {
             return this.environment.getDefaultRowHeight();
         }
 
-        const rowHeight = this.gridOptions.rowHeight;
+        const rowHeight = this.environment.refreshRowHeightVariable();
 
-        if (rowHeight && this.isNumeric(rowHeight)) {
-            this.environment.setRowHeightVariable(rowHeight);
+        if (rowHeight !== -1) {
             return rowHeight;
         }
 
@@ -394,35 +482,25 @@ export class GridOptionsService {
 
     public isAnimateRows() {
         // never allow animating if enforcing the row order
-        if (this.is('ensureDomOrder')) { return false; }
+        if (this.get('ensureDomOrder')) { return false; }
 
-        return this.is('animateRows');
+        return this.get('animateRows');
     }
 
     public isGroupRowsSticky(): boolean {
         if (
-            this.is('suppressGroupRowsSticky') ||
-            this.is('paginateChildRows') ||
-            this.is('groupHideOpenParents')
+            this.get('suppressGroupRowsSticky') ||
+            this.get('paginateChildRows') ||
+            this.get('groupHideOpenParents') ||
+            this.isDomLayout('print')
         ) { return false; }
 
         return true;
     }
 
-    public isTreeData(): boolean {
-        return this.is('treeData') && ModuleRegistry.__assertRegistered(ModuleNames.RowGroupingModule, 'Tree Data', this.api.getGridId());
-    }
-    public isMasterDetail() {
-        return this.is('masterDetail') && ModuleRegistry.__assertRegistered(ModuleNames.MasterDetailModule, 'masterDetail', this.api.getGridId());
-    }
-    public isEnableRangeSelection(): boolean {
-        return this.is('enableRangeSelection') && ModuleRegistry.__isRegistered(ModuleNames.RangeSelectionModule, this.api.getGridId());
-    }
-
     public isColumnsSortingCoupledToGroup(): boolean {
         const autoGroupColumnDef = this.gridOptions.autoGroupColumnDef;
-        const isClientSideRowModel = this.isRowModelType('clientSide');
-        return isClientSideRowModel && !autoGroupColumnDef?.comparator && !this.isTreeData();
+        return !autoGroupColumnDef?.comparator && !this.get('treeData');
     }
 
     public getGroupAggFiltering(): ((params: WithoutGridCommon<GetGroupAggFilteringParams>) => boolean) | undefined {
@@ -432,24 +510,60 @@ export class GridOptionsService {
             return this.getCallback('groupAggFiltering' as any) as any;
         }
 
-        if (isTrue(userValue)) {
+        if (userValue === true) {
             return () => true;
         }
 
         return undefined;
     }
+
+    public isGroupIncludeFooterTrueOrCallback(): boolean{
+        const userValue = this.gridOptions.groupIncludeFooter;
+        return userValue === true || typeof userValue === 'function';
+    }
+
+    public getGroupIncludeFooter(): (params: WithoutGridCommon<GetGroupIncludeFooterParams>) => boolean{
+        const userValue = this.gridOptions.groupIncludeFooter;
+
+        if (typeof userValue === 'function') {
+            return this.getCallback('groupIncludeFooter' as any) as any;
+        }
+
+        if (userValue === true) {
+            return () => true; 
+        }
+
+        return () => false;
+    }
+
     public isGroupMultiAutoColumn() {
         if (this.gridOptions.groupDisplayType) {
-            return matchesGroupDisplayType('multipleColumns', this.gridOptions.groupDisplayType);
+            return this.gridOptions.groupDisplayType === 'multipleColumns';
         }
         // if we are doing hideOpenParents we also show multiple columns, otherwise hideOpenParents would not work
-        return this.is('groupHideOpenParents');
+        return this.get('groupHideOpenParents');
     }
 
     public isGroupUseEntireRow(pivotMode: boolean): boolean {
         // we never allow groupDisplayType = 'groupRows' if in pivot mode, otherwise we won't see the pivot values.
         if (pivotMode) { return false; }
 
-        return this.gridOptions.groupDisplayType ? matchesGroupDisplayType('groupRows', this.gridOptions.groupDisplayType) : false;
+        return this.gridOptions.groupDisplayType === 'groupRows';
+    }
+
+    public getGridCommonParams<TData = any, TContext = any>(): AgGridCommon<TData, TContext> {
+        return {
+            api: this.api,
+            columnApi: this.columnApi,
+            context: this.context
+        };
+    }
+
+    public addGridCommonParams<T extends AgGridCommon<TData, TContext>, TData = any, TContext = any>(params: WithoutGridCommon<T>): T {
+        const updatedParams = params as T;
+        updatedParams.api = this.api;
+        updatedParams.columnApi = this.columnApi;
+        updatedParams.context = this.context;
+        return updatedParams;
     }
 }

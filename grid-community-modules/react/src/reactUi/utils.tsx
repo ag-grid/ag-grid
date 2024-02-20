@@ -47,13 +47,26 @@ export const isComponentStateless = (Component: any) => {
 // CreateRoot is only available from React 18, which if used requires us to use flushSync.
 const createRootAndFlushSyncAvailable = (ReactDOM as any).createRoot != null && (ReactDOM as any).flushSync != null;
 
+let disableFlushSync = false;
+/** Enable flushSync to be disabled for the callback and the next frame (via setTimeout 0) to prevent flushSync during an existing render.
+ * Provides an alternative to the more fine grained useFlushSync boolean param to agFlushSync.
+ */
+export function runWithoutFlushSync<T>(func: () => T){
+    if(!disableFlushSync){
+        // We only re-enable flushSync asynchronously to avoid re-enabling it while React is still triggering renders related to the original call.
+        setTimeout(() => disableFlushSync = false, 0);
+    }
+    disableFlushSync = true;
+    return func();
+}
+
 /**
  * Wrapper around flushSync to provide backwards compatibility with React 16-17
  * Also allows us to control via the `useFlushSync` param whether we want to use flushSync or not
  * as we do not want to use flushSync when we are likely to already be in a render cycle
  */
 export const agFlushSync = (useFlushSync: boolean, fn: () => void) => {
-    if (createRootAndFlushSyncAvailable && useFlushSync) {
+    if (createRootAndFlushSyncAvailable && useFlushSync && !disableFlushSync) {
         (ReactDOM as any).flushSync(fn);
     } else {
         fn();
@@ -67,7 +80,6 @@ export const agFlushSync = (useFlushSync: boolean, fn: () => void) => {
  * @returns 
  */
 export function getNextValueIfDifferent<T extends { getInstanceId: () => string }>(prev: T[] | null, next: T[] | null, maintainOrder: boolean): T[] | null {
-
     if (next == null || prev == null) {
         return next;
     }
@@ -99,7 +111,7 @@ export function getNextValueIfDifferent<T extends { getInstanceId: () => string 
     for (let i = 0; i < prev.length; i++) {
         const c = prev[i];
         prevMap.set(c.getInstanceId(), c);
-        if(nextMap.has(c.getInstanceId())){
+        if (nextMap.has(c.getInstanceId())) {
             oldValues.push(c);
         }
     }
@@ -107,7 +119,8 @@ export function getNextValueIfDifferent<T extends { getInstanceId: () => string 
     for (let i = 0; i < next.length; i++) {
         const c = next[i];
         const instanceId = c.getInstanceId();
-        if (!prevMap.has(instanceId)) {          
+
+        if (!prevMap.has(instanceId)) {
             newValues.push(c);
         }
     }

@@ -11,15 +11,22 @@ import { initFontPanelParams } from "./fontPanelParams.mjs";
 import { getMaxValue } from "../formatPanel.mjs";
 import { MarkersPanel } from "./markersPanel.mjs";
 import { ChartController } from "../../../chartController.mjs";
-import { getSeriesType } from "../../../utils/seriesTypeMapper.mjs";
+import { getSeriesType, isPieChartSeries } from "../../../utils/seriesTypeMapper.mjs";
+import { AgColorPicker } from '../../../../../widgets/agColorPicker.mjs';
 import { CalloutPanel } from "./calloutPanel.mjs";
+import { CapsPanel } from "./capsPanel.mjs";
+import { ConnectorLinePanel } from "./connectorLinePanel.mjs";
+import { WhiskersPanel } from "./whiskersPanel.mjs";
+import { SeriesItemsPanel } from "./seriesItemsPanel.mjs";
+import { TileSpacingPanel } from "./tileSpacingPanel.mjs";
 export class SeriesPanel extends Component {
     constructor({ chartController, chartOptionsService, seriesType, isExpandedOnInit = false }) {
         super();
         this.activePanels = [];
         this.widgetFuncs = {
-            'lineWidth': () => this.initLineWidth(),
-            'strokeWidth': () => this.initStrokeWidth(),
+            'lineWidth': () => this.initStrokeWidth('lineWidth'),
+            'strokeWidth': () => this.initStrokeWidth('strokeWidth'),
+            'lineColor': () => this.initLineColor(),
             'lineDash': () => this.initLineDash(),
             'lineOpacity': () => this.initLineOpacity(),
             'fillOpacity': () => this.initFillOpacity(),
@@ -28,15 +35,34 @@ export class SeriesPanel extends Component {
             'shadow': () => this.initShadow(),
             'tooltips': () => this.initTooltips(),
             'bins': () => this.initBins(),
+            'whiskers': () => this.initWhiskers(),
+            'caps': () => this.initCaps(),
+            'connectorLine': () => this.initConnectorLine(),
+            'seriesItems': () => this.initSeriesItemsPanel(),
+            'tileSpacing': () => this.initTileSpacingPanel(),
         };
         this.seriesWidgetMappings = {
-            'area': ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels', 'shadow'],
-            'bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
             'column': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
-            'line': ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'markers', 'labels'],
-            'histogram': ['tooltips', 'bins', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
-            'scatter': ['tooltips', 'markers', 'labels'],
+            'bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
             'pie': ['tooltips', 'strokeWidth', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
+            'donut': ['tooltips', 'strokeWidth', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
+            'line': ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'markers', 'labels'],
+            'scatter': ['tooltips', 'markers', 'labels'],
+            'bubble': ['tooltips', 'markers', 'labels'],
+            'area': ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels', 'shadow'],
+            'histogram': ['tooltips', 'bins', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
+            'radial-column': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
+            'radial-bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
+            'radar-line': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'markers', 'labels'],
+            'radar-area': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels'],
+            'nightingale': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
+            'box-plot': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'whiskers', 'caps'],
+            'range-bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
+            'range-area': ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels', 'shadow'],
+            'treemap': ['tooltips', 'tileSpacing'],
+            'sunburst': ['tooltips'],
+            'heatmap': ['tooltips', 'labels', 'lineColor', 'lineWidth', 'lineOpacity'],
+            'waterfall': ['tooltips', 'connectorLine', 'seriesItems'],
         };
         this.chartController = chartController;
         this.chartOptionsService = chartOptionsService;
@@ -60,11 +86,18 @@ export class SeriesPanel extends Component {
         this.destroyActivePanels();
         const chart = this.chartController.getChartProxy().getChart();
         chart.waitForUpdate().then(() => {
+            var _a;
+            const componentWasRemoved = !this.isAlive();
+            if (componentWasRemoved) {
+                // It's possible that the component was unmounted during the async delay in updating the chart.
+                // If this is the case we want to bail out to avoid operating on stale UI components.
+                return;
+            }
             if (this.chartController.isComboChart()) {
                 this.updateSeriesType();
                 this.initSeriesSelect();
             }
-            this.seriesWidgetMappings[this.seriesType].forEach((w) => this.widgetFuncs[w]());
+            ((_a = this.seriesWidgetMappings[this.seriesType]) !== null && _a !== void 0 ? _a : []).forEach((w) => this.widgetFuncs[w]());
         })
             .catch(e => console.error(`AG Grid - chart rendering failed`, e));
     }
@@ -74,7 +107,7 @@ export class SeriesPanel extends Component {
             .setLabel(this.translate('seriesType'))
             .setLabelAlignment("left")
             .setLabelWidth('flex')
-            .setInputWidth(100)
+            .setInputWidth('flex')
             .addOptions(this.getSeriesSelectOptions())
             .setValue(`${this.seriesType}`)
             .onValueChange((newValue) => {
@@ -90,32 +123,33 @@ export class SeriesPanel extends Component {
             .setLabel(this.translate("tooltips"))
             .setLabelAlignment("left")
             .setLabelWidth("flex")
-            .setInputWidth(45)
+            .setInputWidth('flex')
             .setValue(this.getSeriesOption("tooltip.enabled") || false)
             .onValueChange(newValue => this.setSeriesOption("tooltip.enabled", newValue));
         this.addWidget(seriesTooltipsToggle);
     }
-    initStrokeWidth() {
-        const currentValue = this.getSeriesOption("strokeWidth");
+    initLineColor() {
+        const currentValue = this.getSeriesOption("stroke");
+        const seriesLineColorPicker = this.createBean(new AgColorPicker());
+        seriesLineColorPicker
+            .setLabel(this.translate("strokeColor"))
+            .setLabelWidth('flex')
+            .onValueChange(newValue => this.setSeriesOption("stroke", newValue));
+        if (currentValue)
+            seriesLineColorPicker.setValue(currentValue);
+        this.addWidget(seriesLineColorPicker);
+    }
+    initStrokeWidth(label) {
+        var _a;
+        const currentValue = (_a = this.getSeriesOption("strokeWidth")) !== null && _a !== void 0 ? _a : 0;
         const seriesStrokeWidthSlider = this.createBean(new AgSlider());
         seriesStrokeWidthSlider
-            .setLabel(this.translate("strokeWidth"))
+            .setLabel(this.translate(label))
             .setMaxValue(getMaxValue(currentValue, 10))
             .setTextFieldWidth(45)
             .setValue(`${currentValue}`)
             .onValueChange(newValue => this.setSeriesOption("strokeWidth", newValue));
         this.addWidget(seriesStrokeWidthSlider);
-    }
-    initLineWidth() {
-        const currentValue = this.getSeriesOption("strokeWidth");
-        const seriesLineWidthSlider = this.createBean(new AgSlider());
-        seriesLineWidthSlider
-            .setLabel(this.translate('lineWidth'))
-            .setMaxValue(getMaxValue(currentValue, 10))
-            .setTextFieldWidth(45)
-            .setValue(`${currentValue}`)
-            .onValueChange(newValue => this.setSeriesOption("strokeWidth", newValue));
-        this.addWidget(seriesLineWidthSlider);
     }
     initLineDash() {
         const lineDash = this.getSeriesOption("lineDash");
@@ -130,7 +164,8 @@ export class SeriesPanel extends Component {
         this.addWidget(seriesLineDashSlider);
     }
     initLineOpacity() {
-        const currentValue = this.getSeriesOption("strokeOpacity");
+        var _a;
+        const currentValue = (_a = this.getSeriesOption("strokeOpacity")) !== null && _a !== void 0 ? _a : 0;
         const seriesLineOpacitySlider = this.createBean(new AgSlider());
         seriesLineOpacitySlider
             .setLabel(this.translate("strokeOpacity"))
@@ -142,7 +177,8 @@ export class SeriesPanel extends Component {
         this.addWidget(seriesLineOpacitySlider);
     }
     initFillOpacity() {
-        const currentValue = this.getSeriesOption("fillOpacity");
+        var _a;
+        const currentValue = (_a = this.getSeriesOption("fillOpacity")) !== null && _a !== void 0 ? _a : 0;
         const seriesFillOpacitySlider = this.createBean(new AgSlider());
         seriesFillOpacitySlider
             .setLabel(this.translate("fillOpacity"))
@@ -154,8 +190,9 @@ export class SeriesPanel extends Component {
         this.addWidget(seriesFillOpacitySlider);
     }
     initLabels() {
-        const seriesOptionLabelProperty = this.seriesType === 'pie' ? 'calloutLabel' : 'label';
-        const labelName = this.seriesType === 'pie'
+        const isPieChart = isPieChartSeries(this.seriesType);
+        const seriesOptionLabelProperty = isPieChart ? 'calloutLabel' : 'label';
+        const labelName = isPieChart
             ? this.chartTranslationService.translate('calloutLabels')
             : this.chartTranslationService.translate('labels');
         const labelParams = initFontPanelParams({
@@ -165,13 +202,13 @@ export class SeriesPanel extends Component {
             seriesOptionLabelProperty
         });
         const labelPanelComp = this.createBean(new FontPanel(labelParams));
-        if (this.seriesType === 'pie') {
+        if (isPieChart) {
             const calloutPanelComp = this.createBean(new CalloutPanel(this.chartOptionsService, () => this.seriesType));
             labelPanelComp.addCompToPanel(calloutPanelComp);
             this.activePanels.push(calloutPanelComp);
         }
         this.addWidget(labelPanelComp);
-        if (this.seriesType === 'pie') {
+        if (isPieChart) {
             const sectorParams = initFontPanelParams({
                 labelName: this.chartTranslationService.translate('sectorLabels'),
                 chartOptionsService: this.chartOptionsService,
@@ -182,6 +219,35 @@ export class SeriesPanel extends Component {
             const positionRatioComp = this.getSectorLabelPositionRatio();
             sectorPanelComp.addCompToPanel(positionRatioComp);
             this.addWidget(sectorPanelComp);
+        }
+        if (this.seriesType === 'range-bar') {
+            // Add label placement dropdown
+            const options = [
+                { value: 'inside', text: this.translate('inside') },
+                { value: 'outside', text: this.translate('outside') },
+            ];
+            const placementValue = this.chartOptionsService.getSeriesOption('label.placement', this.seriesType);
+            const placementSelect = labelPanelComp.createManagedBean(new AgSelect());
+            placementSelect
+                .setLabel(this.translate('labelPlacement'))
+                .setLabelAlignment('left')
+                .setLabelWidth('flex')
+                .setInputWidth('flex')
+                .addOptions(options)
+                .setValue(placementValue)
+                .onValueChange((newValue) => this.chartOptionsService.setSeriesOption('label.placement', newValue, this.seriesType));
+            labelPanelComp.addCompToPanel(placementSelect);
+            this.activePanels.push(placementSelect);
+            // Add padding slider
+            const paddingValue = this.chartOptionsService.getSeriesOption('label.padding', this.seriesType);
+            const paddingSlider = labelPanelComp.createManagedBean(new AgSlider());
+            paddingSlider.setLabel(this.chartTranslationService.translate('padding'))
+                .setMaxValue(getMaxValue(paddingValue, 200))
+                .setValue(`${paddingValue}`)
+                .setTextFieldWidth(45)
+                .onValueChange(newValue => this.chartOptionsService.setSeriesOption('label.padding', newValue, this.seriesType));
+            labelPanelComp.addCompToPanel(paddingSlider);
+            this.activePanels.push(paddingSlider);
         }
     }
     getSectorLabelPositionRatio() {
@@ -206,7 +272,7 @@ export class SeriesPanel extends Component {
     }
     initBins() {
         var _a;
-        const currentValue = ((_a = this.getSeriesOption("bins")) !== null && _a !== void 0 ? _a : this.getSeriesOption("calculatedBins")).length;
+        const currentValue = ((_a = this.getSeriesOption("bins")) !== null && _a !== void 0 ? _a : this.getSeriesOption("calculatedBins", true)).length;
         const seriesBinCountSlider = this.createBean(new AgSlider());
         seriesBinCountSlider
             .setLabel(this.translate("histogramBinCount"))
@@ -217,24 +283,47 @@ export class SeriesPanel extends Component {
             .onValueChange(newValue => this.setSeriesOption("binCount", newValue));
         this.addWidget(seriesBinCountSlider);
     }
+    initWhiskers() {
+        const whiskersPanelComp = this.createBean(new WhiskersPanel(this.chartOptionsService, () => this.seriesType));
+        this.addWidget(whiskersPanelComp);
+    }
+    initCaps() {
+        const capsPanelComp = this.createBean(new CapsPanel(this.chartOptionsService, () => this.seriesType));
+        this.addWidget(capsPanelComp);
+    }
+    initConnectorLine() {
+        const connectorLinePanelComp = this.createBean(new ConnectorLinePanel(this.chartOptionsService, () => this.seriesType));
+        this.addWidget(connectorLinePanelComp);
+    }
+    initSeriesItemsPanel() {
+        const seriesItemsPanelComp = this.createBean(new SeriesItemsPanel(this.chartOptionsService, () => this.seriesType));
+        this.addWidget(seriesItemsPanelComp);
+    }
+    initTileSpacingPanel() {
+        const tileSpacingPanelComp = this.createBean(new TileSpacingPanel(this.chartOptionsService, () => this.seriesType));
+        this.addWidget(tileSpacingPanelComp);
+    }
     addWidget(widget) {
         this.seriesGroup.addItem(widget);
         this.activePanels.push(widget);
     }
-    getSeriesOption(expression) {
-        return this.chartOptionsService.getSeriesOption(expression, this.seriesType);
+    getSeriesOption(expression, calculated) {
+        return this.chartOptionsService.getSeriesOption(expression, this.seriesType, calculated);
     }
     setSeriesOption(expression, newValue) {
         this.chartOptionsService.setSeriesOption(expression, newValue, this.seriesType);
     }
     getChartSeriesType() {
-        if (this.chartController.getSeriesChartTypes().length === 0)
+        if (this.chartController.getSeriesChartTypes().length === 0) {
             return 'column';
+        }
         const ct = this.chartController.getSeriesChartTypes()[0].chartType;
-        if (ct === 'columnLineCombo')
+        if (ct === 'columnLineCombo') {
             return 'column';
-        if (ct === 'areaColumnCombo')
+        }
+        if (ct === 'areaColumnCombo') {
             return 'area';
+        }
         return getSeriesType(ct);
     }
     getSeriesSelectOptions() {
@@ -247,7 +336,19 @@ export class SeriesPanel extends Component {
                 ['line', { value: 'line', text: this.translate('line', 'Line') }],
                 ['scatter', { value: 'scatter', text: this.translate('scatter', 'Scatter') }],
                 ['histogram', { value: 'histogram', text: this.translate('histogram', 'Histogram') }],
+                ['radial-column', { value: 'radial-column', text: this.translate('radialColumn', 'Radial Column') }],
+                ['radial-bar', { value: 'radial-bar', text: this.translate('radialBar', 'Radial Bar') }],
+                ['radar-line', { value: 'radar-line', text: this.translate('radarLine', 'Radar Line') }],
+                ['radar-area', { value: 'radar-area', text: this.translate('radarArea', 'Radar Area') }],
+                ['nightingale', { value: 'nightingale', text: this.translate('nightingale', 'Nightingale') }],
+                ['range-bar', { value: 'range-bar', text: this.translate('rangeBar', 'Range Bar') }],
+                ['range-area', { value: 'range-area', text: this.translate('rangeArea', 'Range Area') }],
+                ['treemap', { value: 'treemap', text: this.translate('treemap', 'Treemap') }],
+                ['sunburst', { value: 'sunburst', text: this.translate('sunburst', 'Sunburst') }],
+                ['waterfall', { value: 'waterfall', text: this.translate('waterfall', 'Waterfall') }],
+                ['box-plot', { value: 'box-plot', text: this.translate('boxPlot', 'Box Plot') }],
                 ['pie', { value: 'pie', text: this.translate('pie', 'Pie') }],
+                ['donut', { value: 'donut', text: this.translate('donut', 'Donut') }],
             ]);
         }
         const seriesSelectOptions = new Set();

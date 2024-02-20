@@ -15,7 +15,7 @@ const context_2 = require("./context/context");
 const beanStub_1 = require("./context/beanStub");
 let LoggerFactory = class LoggerFactory extends beanStub_1.BeanStub {
     setBeans(gridOptionsService) {
-        this.logging = gridOptionsService.is('debug');
+        this.logging = gridOptionsService.get('debug');
     }
     create(name) {
         return new Logger(name, this.isLogging.bind(this));
@@ -25,10 +25,10 @@ let LoggerFactory = class LoggerFactory extends beanStub_1.BeanStub {
     }
 };
 __decorate([
-    __param(0, context_2.Qualifier('gridOptionsService'))
+    __param(0, (0, context_2.Qualifier)('gridOptionsService'))
 ], LoggerFactory.prototype, "setBeans", null);
 LoggerFactory = __decorate([
-    context_1.Bean('loggerFactory')
+    (0, context_1.Bean)('loggerFactory')
 ], LoggerFactory);
 exports.LoggerFactory = LoggerFactory;
 class Logger {

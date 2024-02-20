@@ -13,6 +13,7 @@ export declare class FlatSetDisplayValueModel<V> implements ISetDisplayValueMode
     getDisplayedValueCount(): number;
     getDisplayedItem(index: number): string | null;
     getSelectAllItem(): string;
+    getAddSelectionToFilterItem(): string;
     getDisplayedKeys(): (string | null)[];
     forEachDisplayedKey(func: (key: string | null) => void): void;
     someDisplayedKey(func: (key: string | null) => boolean): boolean;

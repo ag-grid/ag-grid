@@ -25,7 +25,7 @@ Afterwards, depending on your project setup, you can either `require` or `import
 var AgGrid = require('ag-grid-community');
 
 // ECMA 6 - using the system import method
-import { Grid } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 ```
 
 For AG Grid Enterprise features, import the `ag-grid-enterprise` package for it to be included in your application:

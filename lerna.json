@@ -2,8 +2,6 @@
   "packages": [
     "grid-community-modules/*",
     "grid-enterprise-modules/*",
-    "charts-community-modules/*",
-    "charts-enterprise-modules/*",
     "grid-packages/*",
     "grid-examples/*",
     "grid-packages/ag-grid-docs/documentation/"
@@ -17,5 +15,5 @@
       ]
     }
   },
-  "version": "30.1.0"
+  "version": "31.1.0"
 }

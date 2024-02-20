@@ -1,7 +1,6 @@
 import { getAllowedCharPattern, NumberFilter, NumberFilterModel, NumberFilterModelFormatter, NumberFilterParams } from './numberFilter';
 import { FloatingFilterInputService, FloatingFilterTextInputService, ITextInputFloatingFilterParams,TextInputFloatingFilter } from '../../floating/provided/textInputFloatingFilter';
 import { SimpleFilterModelFormatter } from '../simpleFilter';
-import { IFloatingFilterParams } from '../../floating/floatingFilter';
 import { AgInputNumberField } from '../../../widgets/agInputNumberField';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { BeanStub } from '../../../context/beanStub';
@@ -92,11 +91,15 @@ export class NumberFloatingFilter extends TextInputFloatingFilter<NumberFilterMo
     }
 
     public onParamsUpdated(params: INumberFloatingFilterParams): void {
+        this.refresh(params);
+    }
+
+    public refresh(params: INumberFloatingFilterParams): void {
         const allowedCharPattern = getAllowedCharPattern(params.filterParams);
         if (allowedCharPattern !== this.allowedCharPattern) {
             this.recreateFloatingFilterInputService(params);
         }
-        super.onParamsUpdated(params);
+        super.refresh(params);
         this.filterModelFormatter.updateParams({ optionsFactory: this.optionsFactory });
     }
 

@@ -48,7 +48,7 @@ export class RowContainerEventsFeature extends BeanStub {
         const rowComp = this.getRowForEvent(mouseEvent);
         const cellCtrl = this.mouseEventService.getRenderedCellForEvent(mouseEvent);
         if (eventName === "contextmenu") {
-            this.handleContextMenuMouseEvent(mouseEvent, null, rowComp, cellCtrl);
+            this.handleContextMenuMouseEvent(mouseEvent, undefined, rowComp, cellCtrl);
         }
         else {
             if (cellCtrl) {
@@ -68,7 +68,7 @@ export class RowContainerEventsFeature extends BeanStub {
         const longTapListener = (event) => {
             const rowComp = this.getRowForEvent(event.touchEvent);
             const cellComp = this.mouseEventService.getRenderedCellForEvent(event.touchEvent);
-            this.handleContextMenuMouseEvent(null, event.touchEvent, rowComp, cellComp);
+            this.handleContextMenuMouseEvent(undefined, event.touchEvent, rowComp, cellComp);
         };
         this.addManagedListener(touchListener, TouchListener.EVENT_LONG_TAP, longTapListener);
         this.addDestroyFunc(() => touchListener.destroy());
@@ -90,15 +90,13 @@ export class RowContainerEventsFeature extends BeanStub {
         let value = null;
         if (column) {
             const event = mouseEvent ? mouseEvent : touchEvent;
-            cellCtrl.dispatchCellContextMenuEvent(event);
+            cellCtrl.dispatchCellContextMenuEvent(event !== null && event !== void 0 ? event : null);
             value = this.valueService.getValue(column, rowNode);
         }
         // if user clicked on a cell, anchor to that cell, otherwise anchor to the grid panel
         const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         const anchorToElement = cellCtrl ? cellCtrl.getGui() : gridBodyCon.getGridBodyElement();
-        if (this.contextMenuFactory) {
-            this.contextMenuFactory.onContextMenu(mouseEvent, touchEvent, rowNode, column, value, anchorToElement);
-        }
+        this.menuService.showContextMenu({ mouseEvent, touchEvent, rowNode, column, value, anchorToElement });
     }
     getControlsForEventTarget(target) {
         return {
@@ -247,7 +245,7 @@ export class RowContainerEventsFeature extends BeanStub {
         event.preventDefault();
     }
     onCtrlAndC(event) {
-        if (!this.clipboardService || this.gridOptionsService.is('enableCellTextSelection')) {
+        if (!this.clipboardService || this.gridOptionsService.get('enableCellTextSelection')) {
             return;
         }
         const { cellCtrl, rowCtrl } = this.getControlsForEventTarget(event.target);
@@ -259,8 +257,8 @@ export class RowContainerEventsFeature extends BeanStub {
     }
     onCtrlAndX(event) {
         if (!this.clipboardService ||
-            this.gridOptionsService.is('enableCellTextSelection') ||
-            this.gridOptionsService.is('suppressCutToClipboard')) {
+            this.gridOptionsService.get('enableCellTextSelection') ||
+            this.gridOptionsService.get('suppressCutToClipboard')) {
             return;
         }
         const { cellCtrl, rowCtrl } = this.getControlsForEventTarget(event.target);
@@ -275,18 +273,18 @@ export class RowContainerEventsFeature extends BeanStub {
         if ((cellCtrl === null || cellCtrl === void 0 ? void 0 : cellCtrl.isEditing()) || (rowCtrl === null || rowCtrl === void 0 ? void 0 : rowCtrl.isEditing())) {
             return;
         }
-        if (this.clipboardService && !this.gridOptionsService.is('suppressClipboardPaste')) {
+        if (this.clipboardService && !this.gridOptionsService.get('suppressClipboardPaste')) {
             this.clipboardService.pasteFromClipboard();
         }
     }
     onCtrlAndD(event) {
-        if (this.clipboardService && !this.gridOptionsService.is('suppressClipboardPaste')) {
+        if (this.clipboardService && !this.gridOptionsService.get('suppressClipboardPaste')) {
             this.clipboardService.copyRangeDown();
         }
         event.preventDefault();
     }
     onCtrlAndZ(event) {
-        if (!this.gridOptionsService.is('undoRedoCellEditing')) {
+        if (!this.gridOptionsService.get('undoRedoCellEditing')) {
             return;
         }
         event.preventDefault();
@@ -308,8 +306,8 @@ __decorate([
     Autowired('valueService')
 ], RowContainerEventsFeature.prototype, "valueService", void 0);
 __decorate([
-    Optional('contextMenuFactory')
-], RowContainerEventsFeature.prototype, "contextMenuFactory", void 0);
+    Autowired('menuService')
+], RowContainerEventsFeature.prototype, "menuService", void 0);
 __decorate([
     Autowired('ctrlsService')
 ], RowContainerEventsFeature.prototype, "ctrlsService", void 0);

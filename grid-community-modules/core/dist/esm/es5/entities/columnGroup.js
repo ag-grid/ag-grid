@@ -57,7 +57,7 @@ var ColumnGroup = /** @class */ (function () {
         });
         // set our left based on first displayed column
         if (this.displayedChildren.length > 0) {
-            if (this.gridOptionsService.is('enableRtl')) {
+            if (this.gridOptionsService.get('enableRtl')) {
                 var lastChild = last(this.displayedChildren);
                 var lastChildLeft = lastChild.getLeft();
                 this.setLeft(lastChildLeft);
@@ -80,7 +80,7 @@ var ColumnGroup = /** @class */ (function () {
         return this.oldLeft;
     };
     ColumnGroup.prototype.setLeft = function (left) {
-        this.oldLeft = left;
+        this.oldLeft = this.left;
         if (this.left !== left) {
             this.left = left;
             this.localEventService.dispatchEvent(this.createAgEvent(ColumnGroup.EVENT_LEFT_CHANGED));

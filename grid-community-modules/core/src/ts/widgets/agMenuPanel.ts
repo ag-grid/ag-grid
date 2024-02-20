@@ -33,7 +33,7 @@ export class AgMenuPanel extends TabGuardComp {
     }
 
     private closePanel(): void {
-        const menuItem = (this.parentComponent as AgMenuItemComponent);
+        const menuItem = (this.parentComponent as unknown as AgMenuItemComponent);
         menuItem.closeSubMenu();
         setTimeout(() => menuItem.getGui().focus(), 0);
     }

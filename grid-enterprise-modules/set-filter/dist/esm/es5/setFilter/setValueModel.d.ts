@@ -1,4 +1,4 @@
-import { SetFilterParams, AgPromise, ValueFormatterService, IEventEmitter, RowNode, SetFilterModelValue, ValueFormatterParams, GridOptionsService, ColumnModel, ValueService } from '@ag-grid-community/core';
+import { SetFilterParams, AgPromise, ValueFormatterService, IEventEmitter, RowNode, SetFilterModelValue, ValueFormatterParams, GridOptionsService, ColumnModel, ValueService, AgEventListener } from '@ag-grid-community/core';
 import { ISetFilterLocaleText } from './localeText';
 import { SetFilterModelTreeItem } from './iSetDisplayValueModel';
 export declare enum SetFilterModelValuesType {
@@ -15,27 +15,29 @@ export interface SetValueModelParams<V> {
     setIsLoading: (loading: boolean) => void;
     translate: (key: keyof ISetFilterLocaleText) => string;
     caseFormat: <T extends string | null>(valueToFormat: T) => typeof valueToFormat;
-    createKey: (value: V | null, node?: RowNode) => string | null;
+    createKey: (value: V | null | undefined, node?: RowNode) => string | null;
     valueFormatter?: (params: ValueFormatterParams) => string;
     usingComplexObjects?: boolean;
     treeDataTreeList?: boolean;
     groupingTreeList?: boolean;
+    addManagedListener: (event: string, listener: (event?: any) => void) => (() => null) | undefined;
 }
 /** @param V type of value in the Set Filter */
 export declare class SetValueModel<V> implements IEventEmitter {
     static EVENT_AVAILABLE_VALUES_CHANGED: string;
+    private readonly gridOptionsService;
     private readonly localEventService;
-    private readonly formatter;
+    private formatter;
+    private suppressSorting;
     private readonly clientSideValuesExtractor;
     private readonly doesRowPassOtherFilters;
-    private readonly suppressSorting;
     private readonly keyComparator;
     private readonly entryComparator;
     private readonly compareByValue;
     private readonly convertValuesToStrings;
     private readonly caseSensitive;
-    private readonly displayValueModel;
-    private readonly filterParams;
+    private displayValueModel;
+    private filterParams;
     private readonly setIsLoading;
     private readonly translate;
     private readonly caseFormat;
@@ -43,6 +45,8 @@ export declare class SetValueModel<V> implements IEventEmitter {
     private readonly usingComplexObjects;
     private valuesType;
     private miniFilterText;
+    /** When true, in excelMode = 'windows', it adds previously selected filter items to newly checked filter selection */
+    private addCurrentSelectionToFilter;
     /** Values provided to the filter for use. */
     private providedValues;
     /** Values can be loaded asynchronously, so wait on this promise if you need to ensure values have been loaded. */
@@ -53,10 +57,18 @@ export declare class SetValueModel<V> implements IEventEmitter {
     private availableKeys;
     /** Keys that have been selected for this filter. */
     private selectedKeys;
+    /**
+     * Here we keep track of the keys that are currently being used for filtering.
+     * In most cases, the filtering keys are the same as the selected keys,
+     * but for the specific case when excelMode = 'windows' and the user has ticked 'Add current selection to filter',
+     * the filtering keys can be different from the selected keys.
+     */
+    private filteringKeys;
     private initialised;
     constructor(params: SetValueModelParams<V>);
-    addEventListener(eventType: string, listener: Function, async?: boolean): void;
-    removeEventListener(eventType: string, listener: Function, async?: boolean): void;
+    addEventListener(eventType: string, listener: AgEventListener, async?: boolean): void;
+    removeEventListener(eventType: string, listener: AgEventListener, async?: boolean): void;
+    updateOnParamsChange(filterParams: SetFilterParams<any, V>): AgPromise<void>;
     /**
      * Re-fetches the values used in the filter from the value source.
      * If keepSelection is false, the filter selection will be reset to everything selected,
@@ -73,7 +85,7 @@ export declare class SetValueModel<V> implements IEventEmitter {
     refreshAfterAnyFilterChanged(): AgPromise<boolean>;
     isInitialised(): boolean;
     private updateAllValues;
-    private processAllKeys;
+    private processAllValues;
     private validateProvidedValues;
     setValuesType(value: SetFilterModelValuesType): void;
     getValuesType(): SetFilterModelValuesType;
@@ -81,7 +93,9 @@ export declare class SetValueModel<V> implements IEventEmitter {
     private showAvailableOnly;
     private updateAvailableKeys;
     sortKeys(nullableValues: Map<string | null, V | null> | null): (string | null)[];
+    private getParamsForValuesFromRows;
     private getValuesFromRows;
+    private getValuesFromRowsAsync;
     /** Sets mini filter value. Returns true if it changed from last value, otherwise false. */
     setMiniFilter(value?: string | null): boolean;
     getMiniFilter(): string | null;
@@ -89,10 +103,15 @@ export declare class SetValueModel<V> implements IEventEmitter {
     getDisplayedValueCount(): number;
     getDisplayedItem(index: number): string | SetFilterModelTreeItem | null;
     getSelectAllItem(): string | SetFilterModelTreeItem;
+    getAddSelectionToFilterItem(): string | SetFilterModelTreeItem;
     hasSelections(): boolean;
     getKeys(): SetFilterModelValue;
     getValues(): (V | null)[];
     getValue(key: string | null): V | null;
+    setAddCurrentSelectionToFilter(value: boolean): void;
+    private isInWindowsExcelMode;
+    isAddCurrentSelectionToFilterChecked(): boolean;
+    showAddCurrentSelectionToFilter(): boolean;
     selectAllMatchingMiniFilter(clearExistingSelection?: boolean): void;
     deselectAllMatchingMiniFilter(): void;
     selectKey(key: string | null): void;
@@ -107,4 +126,10 @@ export declare class SetValueModel<V> implements IEventEmitter {
     private resetSelectionState;
     hasGroups(): boolean;
     private createTreeDataOrGroupingComparator;
+    setAppliedModelKeys(appliedModelKeys: Set<string | null> | null): void;
+    addToAppliedModelKeys(appliedModelKey: string | null): void;
+    getAppliedModelKeys(): Set<string | null> | null;
+    getCaseFormattedAppliedModelKeys(): Set<string | null> | null;
+    hasAppliedModelKey(appliedModelKey: string | null): boolean;
+    hasAnyAppliedModelKey(): boolean;
 }

@@ -19,11 +19,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { AgCheckbox } from "../../../widgets/agCheckbox";
 import { BeanStub } from "../../../context/beanStub";
 import { Autowired } from "../../../context/context";
 import { Events } from "../../../events";
 import { setAriaHidden, setAriaRole } from "../../../utils/aria";
+import { AgCheckbox } from "../../../widgets/agCheckbox";
 var SelectAllFeature = /** @class */ (function (_super) {
     __extends(SelectAllFeature, _super);
     function SelectAllFeature(column) {
@@ -31,9 +31,6 @@ var SelectAllFeature = /** @class */ (function (_super) {
         _this.cbSelectAllVisible = false;
         _this.processingEventFromCheckbox = false;
         _this.column = column;
-        var colDef = column.getColDef();
-        _this.filteredOnly = !!(colDef === null || colDef === void 0 ? void 0 : colDef.headerCheckboxSelectionFilteredOnly);
-        _this.currentPageOnly = !!(colDef === null || colDef === void 0 ? void 0 : colDef.headerCheckboxSelectionCurrentPageOnly);
         return _this;
     }
     SelectAllFeature.prototype.onSpaceKeyDown = function (e) {
@@ -53,8 +50,8 @@ var SelectAllFeature = /** @class */ (function (_super) {
         this.cbSelectAll.addCssClass('ag-header-select-all');
         setAriaRole(this.cbSelectAll.getGui(), 'presentation');
         this.showOrHideSelectAll();
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideSelectAll.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.showOrHideSelectAll.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_SELECTION_CHANGED, this.onSelectionChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onSelectionChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelChanged.bind(this));
@@ -63,12 +60,23 @@ var SelectAllFeature = /** @class */ (function (_super) {
         this.cbSelectAll.getInputElement().setAttribute('tabindex', '-1');
         this.refreshSelectAllLabel();
     };
+    SelectAllFeature.prototype.onNewColumnsLoaded = function () {
+        this.showOrHideSelectAll();
+    };
+    SelectAllFeature.prototype.onDisplayedColumnsChanged = function () {
+        if (!this.isAlive()) {
+            return;
+        }
+        this.showOrHideSelectAll();
+    };
     SelectAllFeature.prototype.showOrHideSelectAll = function () {
         this.cbSelectAllVisible = this.isCheckboxSelection();
         this.cbSelectAll.setDisplayed(this.cbSelectAllVisible, { skipAriaHidden: true });
         if (this.cbSelectAllVisible) {
             // in case user is trying this feature with the wrong model type
             this.checkRightRowModelType('selectAllCheckbox');
+            // in case user is trying this feature with the wrong model type
+            this.checkSelectionType('selectAllCheckbox');
             // make sure checkbox is showing the right state
             this.updateStateOfCheckbox();
         }
@@ -91,8 +99,10 @@ var SelectAllFeature = /** @class */ (function (_super) {
             return;
         }
         this.processingEventFromCheckbox = true;
-        var allSelected = this.selectionService.getSelectAllState(this.filteredOnly, this.currentPageOnly);
+        var allSelected = this.selectionService.getSelectAllState(this.isFilteredOnly(), this.isCurrentPageOnly());
         this.cbSelectAll.setValue(allSelected);
+        var hasNodesToSelect = this.selectionService.hasNodesToSelect(this.isFilteredOnly(), this.isCurrentPageOnly());
+        this.cbSelectAll.setDisabled(!hasNodesToSelect);
         this.refreshSelectAllLabel();
         this.processingEventFromCheckbox = false;
     };
@@ -105,16 +115,24 @@ var SelectAllFeature = /** @class */ (function (_super) {
             this.headerCellCtrl.setAriaDescriptionProperty('selectAll', null);
         }
         else {
-            this.headerCellCtrl.setAriaDescriptionProperty('selectAll', ariaLabel + " (" + ariaStatus + ")");
+            this.headerCellCtrl.setAriaDescriptionProperty('selectAll', "".concat(ariaLabel, " (").concat(ariaStatus, ")"));
         }
-        this.cbSelectAll.setInputAriaLabel(ariaLabel + " (" + ariaStatus + ")");
-        this.headerCellCtrl.refreshAriaDescription();
+        this.cbSelectAll.setInputAriaLabel("".concat(ariaLabel, " (").concat(ariaStatus, ")"));
+        this.headerCellCtrl.announceAriaDescription();
+    };
+    SelectAllFeature.prototype.checkSelectionType = function (feature) {
+        var isMultiSelect = this.gridOptionsService.get('rowSelection') === 'multiple';
+        if (!isMultiSelect) {
+            console.warn("AG Grid: ".concat(feature, " is only available if using 'multiple' rowSelection."));
+            return false;
+        }
+        return true;
     };
     SelectAllFeature.prototype.checkRightRowModelType = function (feature) {
         var rowModelType = this.rowModel.getType();
         var rowModelMatches = rowModelType === 'clientSide' || rowModelType === 'serverSide';
         if (!rowModelMatches) {
-            console.warn("AG Grid: " + feature + " is only available if using 'clientSide' or 'serverSide' rowModelType, you are using " + rowModelType + ".");
+            console.warn("AG Grid: ".concat(feature, " is only available if using 'clientSide' or 'serverSide' rowModelType, you are using ").concat(rowModelType, "."));
             return false;
         }
         return true;
@@ -127,15 +145,19 @@ var SelectAllFeature = /** @class */ (function (_super) {
             return;
         }
         var value = this.cbSelectAll.getValue();
+        var justFiltered = this.isFilteredOnly();
+        var justCurrentPage = this.isCurrentPageOnly();
         var source = 'uiSelectAll';
-        if (this.currentPageOnly)
+        if (justCurrentPage) {
             source = 'uiSelectAllCurrentPage';
-        else if (this.filteredOnly)
+        }
+        else if (justFiltered) {
             source = 'uiSelectAllFiltered';
+        }
         var params = {
             source: source,
-            justFiltered: this.filteredOnly,
-            justCurrentPage: this.currentPageOnly,
+            justFiltered: justFiltered,
+            justCurrentPage: justCurrentPage,
         };
         if (value) {
             this.selectionService.selectAllRowNodes(params);
@@ -148,26 +170,23 @@ var SelectAllFeature = /** @class */ (function (_super) {
         var result = this.column.getColDef().headerCheckboxSelection;
         if (typeof result === 'function') {
             var func = result;
-            var params = {
+            var params = this.gridOptionsService.addGridCommonParams({
                 column: this.column,
-                colDef: this.column.getColDef(),
-                columnApi: this.columnApi,
-                api: this.gridApi,
-                context: this.gridOptionsService.context
-            };
+                colDef: this.column.getColDef()
+            });
             result = func(params);
         }
         if (result) {
-            return this.checkRightRowModelType('headerCheckboxSelection');
+            return this.checkRightRowModelType('headerCheckboxSelection') && this.checkSelectionType('headerCheckboxSelection');
         }
         return false;
     };
-    __decorate([
-        Autowired('gridApi')
-    ], SelectAllFeature.prototype, "gridApi", void 0);
-    __decorate([
-        Autowired('columnApi')
-    ], SelectAllFeature.prototype, "columnApi", void 0);
+    SelectAllFeature.prototype.isFilteredOnly = function () {
+        return !!this.column.getColDef().headerCheckboxSelectionFilteredOnly;
+    };
+    SelectAllFeature.prototype.isCurrentPageOnly = function () {
+        return !!this.column.getColDef().headerCheckboxSelectionCurrentPageOnly;
+    };
     __decorate([
         Autowired('rowModel')
     ], SelectAllFeature.prototype, "rowModel", void 0);

@@ -2,13 +2,15 @@
 title: "AG Grid Design System"
 ---
 
-Our [Figma](https://www.figma.com/) design system allows designers to prototype & customise AG Grid applications with ease.
+Our Figma design system allows designers to prototype & customise AG Grid applications with ease.
 
-<image-caption src="ag-grid-design-system/resources/FDS-Example.png" alt="AG Grid Design System" constrained="false" centered="true"></image-caption>
+<image-caption src="ag-grid-design-system/resources/FDS-Example.png" alt="AG Grid Design System" constrained="false" centered="true" toggledarkmode="true"></image-caption>
 
-The AG Grid design system replicates the Alpine & Alpine Dark AG Grid themes within [Figma](https://www.figma.com/). These default themes can be extended with Figma variables to match any existing visual design or create entirely new AG Grid themes.
+The AG Grid design system replicates the Quartz and Alpine AG Grid themes within Figma. These default themes can be extended with Figma variables to match any existing visual design or create entirely new AG Grid themes.
 
 The design system has been built from the ground up to be consistent with the javascript library, aiding in the designer - developer handoff process.
+
+<download-ds-button></download-ds-button>
 
 ## Video introduction & Figma documentation
 
@@ -19,21 +21,22 @@ The design system has been built from the ground up to be consistent with the ja
 
 ## Download & Install
 
-To get started with the AG Grid design system first download the `.zip` file below. Within the zip archive you'll find a `AG-Grid-design-system-X.X.X.fig` Figma file, and a directory with a sample [Style Dictionary](https://amzn.github.io/style-dictionary/#/) project.
+To get started with the AG Grid design system first download the .zip file using the button below. Within the zip archive you'll find a `AG-Grid-design-system-X.X.X.fig` Figma file, and a directory with a sample [Style Dictionary](https://amzn.github.io/style-dictionary/#/) project.
+
+<download-ds-button></download-ds-button>
+<br />
 
 To start using the AG Grid Design System in Figma just drag and drop the `.fig` file into the Figma application. Alternatively you may want to use one of the other methods of [importing files content into Figma](https://help.figma.com/hc/en-us/articles/360041003114-Import-files-into-Figma).
 
 The Figma file contains comprehensive documentation for how to use the design system and examples of pre-built grids including all our core features.
 
-<a href="../../../downloads/ag-grid-design-system-30.1.0.zip" download class="button">Download the AG Grid Design System</a>
-
 ## Customising the Design System
 
-The AG Grid design system utilises [Figma's native variables feature](https://help.figma.com/hc/en-us/articles/15339657135383-Guide-to-variables-in-Figma) for all of it's customisable attributes. All of the [CSS variables](/global-style-customisation-variables/) used by the Alpine & Alpine Dark themes are referenced within Figma and can be extended to your own theme.
+The AG Grid design system utilises [Figma's native variables feature](https://help.figma.com/hc/en-us/articles/15339657135383-Guide-to-variables-in-Figma) for all of its customisable attributes. All of the [CSS variables](/global-style-customisation-variables/) used by the Quartz and Alpine themes are referenced within Figma and can be extended to your own theme.
 
 You can find more information about how to create and manage themes within the Figma file under the **Create your own theme** page in the Figma file.
 
-<image-caption src="ag-grid-design-system/resources/FDS-themes.png" alt="Figma Variable Theming" constrained="false" centered="true"></image-caption>
+<image-caption src="ag-grid-design-system/resources/FDS-themes.png" alt="Figma Variable Theming" constrained="false" centered="true" toggledarkmode="true"></image-caption>
 
 ## Generating AG Grid Themes From Figma Variables
 
@@ -46,10 +49,10 @@ To export your Figma Variables as json...
 3. Deselect all include types except for "Figma Variables".
 4. Click the 'Save & Export' button and save the json to the `./tokens/` directory.
 
-<image-caption src="ag-grid-design-system/resources/FDS-export-variables.png" alt="Export Figma Variables" constrained="false" centered="true"></image-caption>
+<image-caption src="ag-grid-design-system/resources/FDS-export-variables.png" alt="Export Figma Variables" constrained="false" centered="true" toggledarkmode="true"></image-caption>
 
 ## Support and Future versions
 
-AG Grid Enterprise customers can request support or suggest features and improvements via [Zenhub](https://ag-grid.zendesk.com/hc/en-us). Community users can file bug reports via [AG Grid Github issues](https://github.com/ag-grid/ag-grid/issues).
+AG Grid Enterprise customers can request support or suggest features and improvements via [Zendesk](https://ag-grid.zendesk.com/hc/en-us). Community users can file bug reports via [AG Grid Github issues](https://github.com/ag-grid/ag-grid/issues).
 
 Future versions of the AG Grid design system will include support for all features of the grid.

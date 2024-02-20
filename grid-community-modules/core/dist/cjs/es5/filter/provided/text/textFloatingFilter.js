@@ -28,7 +28,10 @@ var TextFloatingFilter = /** @class */ (function (_super) {
         this.filterModelFormatter = new textFilter_1.TextFilterModelFormatter(this.localeService, this.optionsFactory);
     };
     TextFloatingFilter.prototype.onParamsUpdated = function (params) {
-        _super.prototype.onParamsUpdated.call(this, params);
+        this.refresh(params);
+    };
+    TextFloatingFilter.prototype.refresh = function (params) {
+        _super.prototype.refresh.call(this, params);
         this.filterModelFormatter.updateParams({ optionsFactory: this.optionsFactory });
     };
     TextFloatingFilter.prototype.getDefaultFilterOptions = function () {

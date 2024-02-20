@@ -4,8 +4,8 @@
  
 | Module              | Info |
 | --------------------|------------------:|
-| ag-grid-community   | [![npm](https://img.shields.io/npm/dm/ag-grid-community)](https://www.npmjs.com/package/ag-grid-community) <br> [![Bundle Phobia](https://badgen.net/bundlephobia/minzip/ag-grid-community)](https://bundlephobia.com/result?p=ag-grid-community) <br> [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ag-grid-community&metric=alert_status)](https://sonarcloud.io/dashboard?id=ag-grid-community) <br> |
-| ag-grid-enterprise  | [![npm](https://img.shields.io/npm/dm/ag-grid-enterprise)](https://www.npmjs.com/package/ag-grid-enterprise) <br> [![Bundle Phobia](https://badgen.net/bundlephobia/minzip/ag-grid-enterprise)](https://bundlephobia.com/result?p=ag-grid-enterprise) <br> [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ag-grid-enterprise&metric=alert_status)](https://sonarcloud.io/dashboard?id=ag-grid-enterprise) |
+| ag-grid-community   | [![npm](https://img.shields.io/npm/dm/ag-grid-community)](https://www.npmjs.com/package/ag-grid-community) <br> [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ag-grid-community&metric=alert_status)](https://sonarcloud.io/dashboard?id=ag-grid-community) <br> |
+| ag-grid-enterprise  | [![npm](https://img.shields.io/npm/dm/ag-grid-enterprise)](https://www.npmjs.com/package/ag-grid-enterprise) <br> [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ag-grid-enterprise&metric=alert_status)](https://sonarcloud.io/dashboard?id=ag-grid-enterprise) |
 
 # AG Grid
 
@@ -59,6 +59,7 @@ Check out the [developer documentation](https://www.ag-grid.com/documentation/?u
 * [Get Started with Angular](https://www.ag-grid.com/angular-data-grid/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
 * [Get Started with React](https://www.ag-grid.com/react-data-grid/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
 * [Get Started with Vue](https://www.ag-grid.com/vue-data-grid/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
+* [Get Started with Solid](https://www.ag-grid.com/react-data-grid/solidjs/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
 
 ## Getting started
 
@@ -71,22 +72,22 @@ $ npm install --save ag-grid-community
 ### Add a placeholder to HTML
 
 ```html
-<div id="myGrid" style="height: 150px; width: 600px" class="ag-theme-alpine"></div>
+<div id="myGrid" style="height: 150px; width: 600px" class="ag-theme-quartz"></div>
 ```
 
 ### Import the grid and styles
 
 ```js
-import { Grid } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 
 import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-alpine.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
 ```
 
 ### Set configuration
 
 ```js
-var gridOptions = {
+const gridOptions = {
 	columnDefs: [
 		{ headerName: 'Make', field: 'make' },
 		{ headerName: 'Model', field: 'model' },
@@ -103,8 +104,8 @@ var gridOptions = {
 ### Initialise the grid
 
 ```js
-var eGridDiv = document.querySelector('#myGrid');
-new Grid(eGridDiv, this.gridOptions);
+const eGridDiv = document.querySelector('#myGrid');
+const api = createGrid(eGridDiv, gridOptions);
 ```
 
 For more information on how to integrate the grid into your project see [Building AG Grid Applications](https://www.ag-grid.com/javascript-data-grid/building/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github).

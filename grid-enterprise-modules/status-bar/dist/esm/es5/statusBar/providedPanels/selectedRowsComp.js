@@ -41,7 +41,7 @@ var SelectedRowsComp = /** @class */ (function (_super) {
     };
     SelectedRowsComp.prototype.isValidRowModel = function () {
         // this component is only really useful with client or server side rowmodels
-        var rowModelType = this.gridApi.getModel().getType();
+        var rowModelType = this.gridApi.__getModel().getType();
         return rowModelType === 'clientSide' || rowModelType === 'serverSide';
     };
     SelectedRowsComp.prototype.onRowSelectionChanged = function () {
@@ -58,6 +58,9 @@ var SelectedRowsComp = /** @class */ (function (_super) {
         this.setDisplayed(selectedRowCount > 0);
     };
     SelectedRowsComp.prototype.init = function () {
+    };
+    SelectedRowsComp.prototype.refresh = function () {
+        return true;
     };
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.

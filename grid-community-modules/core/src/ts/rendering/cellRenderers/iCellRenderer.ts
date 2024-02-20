@@ -17,7 +17,7 @@ export interface ICellRendererParams<TData = any, TValue = any, TContext = any> 
     data: TData | undefined;
     /** The row node. */
     node: IRowNode<TData>;
-    /** The current index of the row (this changes after filter and sort). */
+    /** @deprecated v30.2 Use `node.rowIndex` to get the current index of the row (which updates after filter and sort). */
     rowIndex: number;
     /** The cell's column definition. */
     colDef?: ColDef<TData, TValue>;

@@ -1,7 +1,7 @@
-import { ICellRendererParams } from '@ag-grid-community/core';
+import { CustomCellRendererProps } from '@ag-grid-community/react';
 import React, { useEffect, useState } from 'react';
 
-interface GroupFlagCellRendererParams extends ICellRendererParams {
+interface GroupFlagCellRendererParams extends CustomCellRendererProps {
     flagCodes: Record<string, string>
 }
 
@@ -35,8 +35,10 @@ export default (props: GroupFlagCellRendererParams) => {
         props.api.addEventListener('filterChanged', dataChangedListener);
 
         return () => {
-            props.api.removeEventListener('cellValueChanged', dataChangedListener);
-            props.api.removeEventListener('filterChanged', dataChangedListener);
+            if (!props.api.isDestroyed()) {
+                props.api.removeEventListener('cellValueChanged', dataChangedListener);
+                props.api.removeEventListener('filterChanged', dataChangedListener);
+            }
         }
     }, [])
 

@@ -9,13 +9,20 @@ import { INTEGRATED_CHARTS_ID } from '../../../components/automated-examples/lib
 import automatedExamplesVars from '../../../components/automated-examples/lib/vars.module.scss';
 import { OverlayButton } from '../../../components/automated-examples/OverlayButton';
 import { ToggleAutomatedExampleButton } from '../../../components/automated-examples/ToggleAutomatedExampleButton';
+import { useGlobalContext } from '../../../components/GlobalContext';
 import LogoMark from '../../../components/LogoMark';
 import breakpoints from '../../../design-system/breakpoint.module.scss';
 import {
     trackHomepageExampleIntegratedCharts,
     trackOnceHomepageExampleIntegratedCharts,
 } from '../../../utils/analytics';
-import { hostPrefix, isProductionBuild, localPrefix } from '../../../utils/consts';
+import {
+    agGridEnterpriseVersion,
+    hostPrefix,
+    integratedChartsUsesChartsEnterprise,
+    isProductionBuild,
+    localPrefix
+} from '../../../utils/consts';
 import { useIntersectionObserver } from '../../../utils/use-intersection-observer';
 import styles from './AutomatedIntegratedCharts.module.scss';
 
@@ -44,7 +51,7 @@ if (!isProductionBuild()) {
     helmet.push(
         <script
             key="enterprise-lib"
-            src="https://cdn.jsdelivr.net/npm/ag-grid-enterprise/dist/ag-grid-enterprise.min.js"
+            src={`https://cdn.jsdelivr.net/npm/ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise@${agGridEnterpriseVersion}/dist/ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise.min.js`}
             type="text/javascript"
         />
     );
@@ -57,7 +64,9 @@ function AutomatedIntegratedCharts({ automatedExampleManager, useStaticData, run
     const overlayRef = useRef(null);
     const [scriptIsEnabled, setScriptIsEnabled] = useState(true);
     const [gridIsReady, setGridIsReady] = useState(false);
+    const [automatedExample, setAutomatedExample] = useState();
     const [gridIsHoveredOver, setGridIsHoveredOver] = useState(false);
+    const { darkMode } = useGlobalContext();
     const debuggerManager = automatedExampleManager?.getDebuggerManager();
     const isMobile = () => window.innerWidth <= AUTOMATED_EXAMPLE_MEDIUM_WIDTH;
 
@@ -95,6 +104,7 @@ function AutomatedIntegratedCharts({ automatedExampleManager, useStaticData, run
     useEffect(() => {
         let params = {
             gridClassname,
+            darkMode,
             getOverlay: () => {
                 return overlayRef.current;
             },
@@ -129,17 +139,27 @@ function AutomatedIntegratedCharts({ automatedExampleManager, useStaticData, run
             visibilityThreshold,
         };
 
+        const automatedExample = createAutomatedIntegratedCharts(params);
         automatedExampleManager.add({
             id: exampleId,
-            automatedExample: createAutomatedIntegratedCharts(params),
+            automatedExample,
         });
+
+        setAutomatedExample(automatedExample);
     }, []);
+
+    useEffect(() => {
+        if (!automatedExample) {
+            return;
+        }
+        automatedExample.updateDarkMode(darkMode);
+    }, [darkMode])
 
     return (
         <>
             <header className={styles.sectionHeader}>
-                <h2 className="font-size-gargantuan">Fully Integrated Charting</h2>
-                <p className="font-size-extra-large">
+                <h2 className="text-3xl">Fully Integrated Charting</h2>
+                <p className="text-xl">
                     With a complete suite of integrated charting tools, your users can visualise their data any way they
                     choose.
                 </p>
@@ -147,7 +167,10 @@ function AutomatedIntegratedCharts({ automatedExampleManager, useStaticData, run
 
             <Helmet>{helmet.map((entry) => entry)}</Helmet>
             {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
-            <div ref={gridRef} className="automated-integrated-charts-grid ag-theme-alpine" onClick={gridInteraction}>
+            <div ref={gridRef} className={classNames("automated-integrated-charts-grid", {
+                "ag-theme-quartz": !darkMode,
+                "ag-theme-quartz-dark": darkMode,
+            })} onClick={gridInteraction}>
                 <OverlayButton
                     ref={overlayRef}
                     ariaLabel="Give me control"
@@ -170,7 +193,7 @@ function AutomatedIntegratedCharts({ automatedExampleManager, useStaticData, run
             </div>
 
             <footer className={styles.sectionFooter}>
-                <div className={classNames(styles.exploreButtonOuter, 'font-size-extra-large')}>
+                <div className={classNames(styles.exploreButtonOuter, 'text-xl')}>
                     <span className="text-secondary">Live example:</span>
                     <ToggleAutomatedExampleButton
                         onClick={() => {

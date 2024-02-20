@@ -104,7 +104,7 @@ var FontPanel = /** @class */ (function (_super) {
         var options = families.sort().map(function (value) { return ({ value: value, text: value }); });
         this.familySelect.addOptions(options)
             .setInputWidth('flex')
-            .setValue("" + initialValue)
+            .setValue("".concat(initialValue))
             .onValueChange(function (newValue) { return _this.params.setFont({ family: newValue }); });
     };
     FontPanel.prototype.initFontSizeSelect = function () {
@@ -114,10 +114,10 @@ var FontPanel = /** @class */ (function (_super) {
         if (!_.includes(sizes, size)) {
             sizes.push(size);
         }
-        var options = sizes.sort(function (a, b) { return a - b; }).map(function (value) { return ({ value: "" + value, text: "" + value }); });
+        var options = sizes.sort(function (a, b) { return a - b; }).map(function (value) { return ({ value: "".concat(value), text: "".concat(value) }); });
         this.sizeSelect.addOptions(options)
             .setInputWidth('flex')
-            .setValue("" + size)
+            .setValue("".concat(size))
             .onValueChange(function (newValue) { return _this.params.setFont({ size: parseInt(newValue, 10) }); });
         this.sizeSelect.setLabel(this.chartTranslationService.translate('size'));
     };
@@ -151,8 +151,8 @@ var FontPanel = /** @class */ (function (_super) {
         var _this = this;
         this.colorPicker
             .setLabel(this.chartTranslationService.translate('color'))
-            .setInputWidth(45)
-            .setValue("" + this.params.initialFont.color)
+            .setInputWidth('flex')
+            .setValue("".concat(this.params.initialFont.color))
             .onValueChange(function (newColor) { return _this.params.setFont({ color: newColor }); });
     };
     FontPanel.prototype.addItemToPanel = function (item) {

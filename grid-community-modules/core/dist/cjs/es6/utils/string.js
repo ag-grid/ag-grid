@@ -98,7 +98,7 @@ function utf8_encode(s) {
 }
 exports.utf8_encode = utf8_encode;
 function capitalise(str) {
-    return str[0].toUpperCase() + str.substr(1).toLowerCase();
+    return str[0].toUpperCase() + str.substring(1).toLowerCase();
 }
 exports.capitalise = capitalise;
 function escapeString(toEscape, skipEscapingHtmlChars) {

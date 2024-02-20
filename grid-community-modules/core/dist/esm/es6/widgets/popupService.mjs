@@ -10,9 +10,8 @@ import { Events } from '../events.mjs';
 import { BeanStub } from "../context/beanStub.mjs";
 import { getAbsoluteHeight, getAbsoluteWidth, getElementRectWithOffset } from '../utils/dom.mjs';
 import { last } from '../utils/array.mjs';
-import { isElementInEventPath } from '../utils/event.mjs';
+import { isElementInEventPath, isStopPropagationForAgGrid } from '../utils/event.mjs';
 import { KeyCode } from '../constants/keyCode.mjs';
-import { FocusService } from "../focusService.mjs";
 import { AgPromise } from "../utils/index.mjs";
 import { setAriaLabel, setAriaRole } from "../utils/aria.mjs";
 import { exists } from "../utils/generic.mjs";
@@ -30,13 +29,8 @@ let PopupService = PopupService_1 = class PopupService extends BeanStub {
     postConstruct() {
         this.ctrlsService.whenReady(p => {
             this.gridCtrl = p.gridCtrl;
-            this.addManagedListener(this.gridCtrl, Events.EVENT_KEYBOARD_FOCUS, () => {
-                this.popupList.forEach(popup => popup.element.classList.add(FocusService.AG_KEYBOARD_FOCUS));
-            });
-            this.addManagedListener(this.gridCtrl, Events.EVENT_MOUSE_FOCUS, () => {
-                this.popupList.forEach(popup => popup.element.classList.remove(FocusService.AG_KEYBOARD_FOCUS));
-            });
         });
+        this.addManagedListener(this.eventService, Events.EVENT_GRID_STYLES_CHANGED, this.handleThemeChange.bind(this));
     }
     getPopupParent() {
         const ePopupParent = this.gridOptionsService.get('popupParent');
@@ -63,7 +57,7 @@ let PopupService = PopupService_1 = class PopupService extends BeanStub {
         // to the right, unless it doesn't fit and we then put it to the left. for RTL it's the other way around,
         // we try place it first to the left, and then if not to the right.
         let x;
-        if (this.gridOptionsService.is('enableRtl')) {
+        if (this.gridOptionsService.get('enableRtl')) {
             // for RTL, try left first
             x = xLeftPosition();
             if (x < 0) {
@@ -326,14 +320,11 @@ let PopupService = PopupService_1 = class PopupService extends BeanStub {
             eWrapper.classList.add(...allThemes);
         }
         eWrapper.classList.add('ag-popup');
-        element.classList.add(this.gridOptionsService.is('enableRtl') ? 'ag-rtl' : 'ag-ltr', 'ag-popup-child');
+        element.classList.add(this.gridOptionsService.get('enableRtl') ? 'ag-rtl' : 'ag-ltr', 'ag-popup-child');
         if (!element.hasAttribute('role')) {
             setAriaRole(element, 'dialog');
         }
         setAriaLabel(element, ariaLabel);
-        if (this.focusService.isKeyboardMode()) {
-            element.classList.add(FocusService.AG_KEYBOARD_FOCUS);
-        }
         eWrapper.appendChild(element);
         ePopupParent.appendChild(eWrapper);
         if (alwaysOnTop) {
@@ -343,6 +334,19 @@ let PopupService = PopupService_1 = class PopupService extends BeanStub {
             this.bringPopupToFront(element);
         }
         return eWrapper;
+    }
+    handleThemeChange() {
+        const { allThemes } = this.environment.getTheme();
+        for (const popup of this.popupList) {
+            for (const className of Array.from(popup.wrapper.classList)) {
+                if (className.startsWith("ag-theme-")) {
+                    popup.wrapper.classList.remove(className);
+                }
+            }
+            if (allThemes.length) {
+                popup.wrapper.classList.add(...allThemes);
+            }
+        }
     }
     addEventListenersToPopup(params) {
         const eDocument = this.gridOptionsService.getDocument();
@@ -354,7 +358,7 @@ let PopupService = PopupService_1 = class PopupService extends BeanStub {
                 return;
             }
             const key = event.key;
-            if (key === KeyCode.ESCAPE) {
+            if (key === KeyCode.ESCAPE && !isStopPropagationForAgGrid(event)) {
                 removeListeners({ keyboardEvent: event });
             }
         };
@@ -366,8 +370,6 @@ let PopupService = PopupService_1 = class PopupService extends BeanStub {
             // we don't hide popup if the event was on the child, or any
             // children of this child
             this.isEventFromCurrentPopup({ mouseEvent, touchEvent }, popupEl) ||
-                // if the event to close is actually the open event, then ignore it
-                this.isEventSameChainAsOriginalEvent({ originalMouseEvent: pointerEvent, mouseEvent, touchEvent }) ||
                 // this method should only be called once. the client can have different
                 // paths, each one wanting to close, so this method may be called multiple times.
                 popupHidden) {
@@ -526,36 +528,6 @@ let PopupService = PopupService_1 = class PopupService extends BeanStub {
         }
         return false;
     }
-    // in some browsers, the context menu event can be fired before the click event, which means
-    // the context menu event could open the popup, but then the click event closes it straight away.
-    isEventSameChainAsOriginalEvent(params) {
-        const { originalMouseEvent, mouseEvent, touchEvent } = params;
-        // we check the coordinates of the event, to see if it's the same event. there is a 1 / 1000 chance that
-        // the event is a different event, however that is an edge case that is not very relevant (the user clicking
-        // twice on the same location isn't a normal path).
-        // event could be mouse event or touch event.
-        let mouseEventOrTouch = null;
-        if (mouseEvent) {
-            // mouse event can be used direction, it has coordinates
-            mouseEventOrTouch = mouseEvent;
-        }
-        else if (touchEvent) {
-            // touch event doesn't have coordinates, need it's touch object
-            mouseEventOrTouch = touchEvent.touches[0];
-        }
-        if (mouseEventOrTouch && originalMouseEvent) {
-            // for x, allow 4px margin, to cover iPads, where touch (which opens menu) is followed
-            // by browser click (when you finger up, touch is interrupted as click in browser)
-            const screenX = mouseEvent ? mouseEvent.screenX : 0;
-            const screenY = mouseEvent ? mouseEvent.screenY : 0;
-            const xMatch = Math.abs(originalMouseEvent.screenX - screenX) < 5;
-            const yMatch = Math.abs(originalMouseEvent.screenY - screenY) < 5;
-            if (xMatch && yMatch) {
-                return true;
-            }
-        }
-        return false;
-    }
     getWrapper(ePopup) {
         while (!ePopup.classList.contains('ag-popup') && ePopup.parentElement) {
             ePopup = ePopup.parentElement;
@@ -610,8 +582,6 @@ let PopupService = PopupService_1 = class PopupService extends BeanStub {
         }
         const params = {
             type: 'popupToFront',
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
             eWrapper
         };
         this.eventService.dispatchEvent(params);

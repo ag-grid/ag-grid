@@ -1,4 +1,4 @@
-import { ColDef, Grid, GridOptions } from '@ag-grid-community/core'
+import { ColDef, GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 import { FlagContext } from './interfaces';
 import { CountryCellRenderer } from './countryCellRenderer_typescript'
 
@@ -31,11 +31,12 @@ const columnDefs: ColDef[] = [
     { field: 'total' },
 ]
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: columnDefs,
     defaultColDef: {
         width: 150,
-        resizable: true,
     },
     defaultExcelExportParams: {
         addImageToCell: (rowIndex, col, value) => {
@@ -66,16 +67,16 @@ const gridOptions: GridOptions<IOlympicData> = {
     onGridReady: params => {
         fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
             .then(data => createBase64FlagsFromResponse(data, countryCodes, base64flags))
-            .then(data => params.api.setRowData(data));
+            .then(data => params.api.setGridOption('rowData', data));
     },
 }
 
 function onBtExport() {
-    gridOptions.api!.exportDataAsExcel()
+    gridApi!.exportDataAsExcel()
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    new Grid(gridDiv, gridOptions)
+    gridApi = createGrid(gridDiv, gridOptions);
 })

@@ -16,6 +16,7 @@ var __extends = (this && this.__extends) || (function () {
 import { AgAbstractLabel } from './agAbstractLabel';
 import { setFixedWidth } from '../utils/dom';
 import { Events } from '../eventKeys';
+import { getAriaLabel, setAriaLabel, setAriaLabelledBy } from '../utils/aria';
 var AgAbstractField = /** @class */ (function (_super) {
     __extends(AgAbstractField, _super);
     function AgAbstractField(config, template, className) {
@@ -28,6 +29,22 @@ var AgAbstractField = /** @class */ (function (_super) {
         if (this.className) {
             this.addCssClass(this.className);
         }
+        this.refreshAriaLabelledBy();
+    };
+    AgAbstractField.prototype.refreshAriaLabelledBy = function () {
+        var ariaEl = this.getAriaElement();
+        var labelId = this.getLabelId();
+        if (getAriaLabel(ariaEl) !== null) {
+            setAriaLabelledBy(ariaEl, '');
+        }
+        else {
+            setAriaLabelledBy(ariaEl, labelId !== null && labelId !== void 0 ? labelId : '');
+        }
+    };
+    AgAbstractField.prototype.setAriaLabel = function (label) {
+        setAriaLabel(this.getAriaElement(), label);
+        this.refreshAriaLabelledBy();
+        return this;
     };
     AgAbstractField.prototype.onValueChange = function (callbackFn) {
         var _this = this;

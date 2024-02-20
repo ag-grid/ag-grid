@@ -17,13 +17,13 @@ The example below shows print layout. The following can be noted:
 
 ## Toggling Print Layout
 
-Print layout can be turned on by setting the property `domLayout='print'` or by calling the grid API `setDomLayout('print')`. Similarly the layout can be set back to normal by unsetting the `domLayout` property or calling the grid API `setDomLayout(null)`.
+Print layout can be turned on by setting the property `domLayout='print'` or by calling the grid API `setGridOption('domLayout', 'print')`. Similarly the layout can be set back to normal by unsetting the `domLayout` property or calling the grid API `setGridOption('domLayout', null)`.
 
 <snippet>
 // setting the grid layout to 'print'
-gridOptions.api.setDomLayout('print');
+api.setGridOption('domLayout', 'print');
 // resetting the layout back to normal
-gridOptions.api.setDomLayout();
+api.setGridOption('domLayout', undefined);
 </snippet>
 
 ## Toggling Grid Size

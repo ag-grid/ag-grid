@@ -11,7 +11,7 @@
 |    });
 |  }
 |  
-|   updateStatusBar(){ ... }
+|   updateStatusBar() { ... }
 |}
 </snippet>
 </framework-specific-section>

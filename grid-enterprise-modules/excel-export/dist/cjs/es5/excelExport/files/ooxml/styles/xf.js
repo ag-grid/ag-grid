@@ -4,7 +4,7 @@ var alignment_1 = require("./alignment");
 var protection_1 = require("./protection");
 var xfFactory = {
     getTemplate: function (xf) {
-        var alignment = xf.alignment, borderId = xf.borderId, fillId = xf.fillId, fontId = xf.fontId, numFmtId = xf.numFmtId, protection = xf.protection, xfId = xf.xfId;
+        var alignment = xf.alignment, borderId = xf.borderId, fillId = xf.fillId, fontId = xf.fontId, numFmtId = xf.numFmtId, protection = xf.protection, quotePrefix = xf.quotePrefix, xfId = xf.xfId;
         var children = [];
         if (alignment) {
             children.push(alignment_1.default.getTemplate(alignment));
@@ -26,6 +26,7 @@ var xfFactory = {
                     fontId: fontId,
                     applyNumberFormat: numFmtId ? 1 : undefined,
                     numFmtId: numFmtId,
+                    quotePrefix: quotePrefix ? 1 : undefined,
                     xfId: xfId
                 }
             },

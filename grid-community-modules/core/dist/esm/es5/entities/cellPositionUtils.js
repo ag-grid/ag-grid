@@ -32,7 +32,7 @@ var CellPositionUtils = /** @class */ (function (_super) {
     };
     CellPositionUtils.prototype.createIdFromValues = function (cellPosition) {
         var rowIndex = cellPosition.rowIndex, rowPinned = cellPosition.rowPinned, column = cellPosition.column;
-        return rowIndex + "." + (rowPinned == null ? 'null' : rowPinned) + "." + column.getId();
+        return "".concat(rowIndex, ".").concat(rowPinned == null ? 'null' : rowPinned, ".").concat(column.getId());
     };
     CellPositionUtils.prototype.equals = function (cellA, cellB) {
         var colsMatch = cellA.column === cellB.column;

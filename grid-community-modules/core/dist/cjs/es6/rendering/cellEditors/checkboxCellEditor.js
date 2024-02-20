@@ -23,7 +23,8 @@ class CheckboxCellEditor extends popupComponent_1.PopupComponent {
         this.params = params;
         const isSelected = (_a = params.value) !== null && _a !== void 0 ? _a : undefined;
         this.eCheckbox.setValue(isSelected);
-        this.eCheckbox.getInputElement().setAttribute('tabindex', '-1');
+        const inputEl = this.eCheckbox.getInputElement();
+        inputEl.setAttribute('tabindex', '-1');
         this.setAriaLabel(isSelected);
         this.addManagedListener(this.eCheckbox, eventKeys_1.Events.EVENT_FIELD_VALUE_CHANGED, (event) => this.setAriaLabel(event.selected));
     }
@@ -43,12 +44,12 @@ class CheckboxCellEditor extends popupComponent_1.PopupComponent {
     }
     setAriaLabel(isSelected) {
         const translate = this.localeService.getLocaleTextFunc();
-        const stateName = aria_1.getAriaCheckboxStateName(translate, isSelected);
+        const stateName = (0, aria_1.getAriaCheckboxStateName)(translate, isSelected);
         const ariaLabel = translate('ariaToggleCellValue', 'Press SPACE to toggle cell value');
         this.eCheckbox.setInputAriaLabel(`${ariaLabel} (${stateName})`);
     }
 }
 __decorate([
-    componentAnnotations_1.RefSelector('eCheckbox')
+    (0, componentAnnotations_1.RefSelector)('eCheckbox')
 ], CheckboxCellEditor.prototype, "eCheckbox", void 0);
 exports.CheckboxCellEditor = CheckboxCellEditor;

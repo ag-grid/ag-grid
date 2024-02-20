@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, ValueFormatterParams, GetRowIdParams } from '@ag-grid-community/core'
+import { createGrid, ColDef, GridApi, GridOptions, ValueFormatterParams, GetRowIdParams } from '@ag-grid-community/core'
 import { getData, globalRowData } from "./data";
 
 var UPDATE_COUNT = 200
@@ -135,13 +135,13 @@ const columnDefs: ColDef[] = [
 function numberCellFormatter(params: ValueFormatterParams) {
   return Math.floor(params.value)
     .toString()
-    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 }
 
+let gridApi: GridApi;
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   suppressAggFuncInHeader: true,
-  animateRows: true,
   rowGroupPanelShow: 'always',
   pivotPanelShow: 'always',
   getRowId: (params: GetRowIdParams) => {
@@ -149,15 +149,13 @@ const gridOptions: GridOptions = {
   },
   defaultColDef: {
     width: 120,
-    sortable: true,
-    resizable: true,
   },
   autoGroupColumnDef: {
     width: 250,
   },
   onGridReady: (params) => {
     getData();
-    params.api.setRowData(globalRowData)
+    params.api.setGridOption('rowData', globalRowData)
   },
 }
 
@@ -166,10 +164,8 @@ function onNormalUpdate() {
 
   setMessage('Running Transaction')
 
-  var api = gridOptions.api!
-
   for (var i = 0; i < UPDATE_COUNT; i++) {
-    setTimeout(function () {
+    setTimeout(() => {
       // pick one index at random
       var index = Math.floor(Math.random() * globalRowData.length)
       var itemToUpdate = globalRowData[index]
@@ -179,14 +175,14 @@ function onNormalUpdate() {
       // then create new current value
       newItem.current = Math.floor(Math.random() * 100000) + 100
       // do normal update. update is done before method returns
-      api.applyTransaction({ update: [newItem] })
+      gridApi.applyTransaction({ update: [newItem] })
     }, 0)
   }
 
   // print message in next VM turn to allow browser to refresh first.
   // we assume the browser executes the timeouts in order they are created,
   // so this timeout executes after all the update timeouts created above.
-  setTimeout(function () {
+  setTimeout(() => {
     var endMillis = new Date().getTime()
     var duration = endMillis - startMillis
     setMessage('Transaction took ' + duration.toLocaleString() + 'ms')
@@ -194,7 +190,7 @@ function onNormalUpdate() {
 
   function setMessage(msg: string) {
     var eMessage = document.querySelector('#eMessage') as any
-    eMessage.innerHTML = msg
+    eMessage.textContent = msg
   }
 }
 
@@ -204,10 +200,8 @@ function onAsyncUpdate() {
   setMessage('Running Async')
 
   var updatedCount = 0
-  var api = gridOptions.api!
-
   for (var i = 0; i < UPDATE_COUNT; i++) {
-    setTimeout(function () {
+    setTimeout(() => {
       // pick one index at random
       var index = Math.floor(Math.random() * globalRowData.length)
       var itemToUpdate = globalRowData[index]
@@ -220,7 +214,7 @@ function onAsyncUpdate() {
       // update using async method. passing the callback is
       // optional, we are doing it here so we know when the update
       // was processed by the grid.
-      api.applyTransactionAsync({ update: [newItem] }, resultCallback)
+      gridApi.applyTransactionAsync({ update: [newItem] }, resultCallback)
     }, 0)
   }
 
@@ -228,7 +222,7 @@ function onAsyncUpdate() {
     updatedCount++
     if (updatedCount === UPDATE_COUNT) {
       // print message in next VM turn to allow browser to refresh
-      setTimeout(function () {
+      setTimeout(() => {
         var endMillis = new Date().getTime()
         var duration = endMillis - startMillis
         setMessage('Async took ' + duration.toLocaleString() + 'ms')
@@ -238,7 +232,7 @@ function onAsyncUpdate() {
 
   function setMessage(msg: string) {
     var eMessage = document.querySelector('#eMessage') as any
-    eMessage.innerHTML = msg
+    eMessage.textContent = msg
   }
 }
 
@@ -248,7 +242,7 @@ function copyObject(object: any) {
   var newObject: any = {}
 
   // copy in the old values
-  Object.keys(object).forEach(function (key) {
+  Object.keys(object).forEach((key) => {
     newObject[key] = object[key]
   })
 
@@ -258,5 +252,5 @@ function copyObject(object: any) {
 // after page is loaded, create the grid.
 document.addEventListener('DOMContentLoaded', function () {
   var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(eGridDiv, gridOptions)
+  gridApi = createGrid(eGridDiv, gridOptions)
 })

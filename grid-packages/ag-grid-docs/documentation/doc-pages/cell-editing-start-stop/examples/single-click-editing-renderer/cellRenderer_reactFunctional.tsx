@@ -1,10 +1,10 @@
-import React, {Component} from "react";
-import { ICellRendererParams } from "@ag-grid-community/core";
+import React from "react";
+import { CustomCellRendererProps } from "@ag-grid-community/react";
 
-export default function cellRenderer(props: ICellRendererParams) {
+export default function cellRenderer(props: CustomCellRendererProps) {
   const handleClick = () => {
     props.api.startEditingCell({
-      rowIndex: props.rowIndex,
+      rowIndex: props.node.rowIndex!,
       colKey: props.column!.getId(),
     });
   };

@@ -8,11 +8,11 @@ import { waitUntil } from '../utils/function';
 import { TabGuardComp } from './tabGuardComp';
 import { Events } from '../eventKeys';
 import { stopPropagationForAgGrid } from '../utils/event';
+import { AnimationFrameService } from '../misc/animationFrameService';
 
 export interface VirtualListModel {
     getRowCount(): number;
     getRow(index: number): any;
-    isRowSelected?(index: number): boolean | undefined;
     /** Required if using soft refresh. If rows are equal, componentUpdater will be called instead of remove/create */
     areRowsEqual?(oldRow: any, newRow: any): boolean;
 }
@@ -23,19 +23,20 @@ interface VirtualListParams {
     listName?: string;
 }
 
-export class VirtualList extends TabGuardComp {
+export class VirtualList<C extends Component = Component> extends TabGuardComp {
     private readonly cssIdentifier: string;
     private readonly ariaRole: string;
     private listName?: string;
 
     private model: VirtualListModel;
-    private renderedRows = new Map<number, { rowComponent: Component; eDiv: HTMLDivElement; value: any; }>();
-    private componentCreator: (value: any, listItemElement: HTMLElement) => Component;
-    private componentUpdater: (value: any, component: Component) => void;
+    private renderedRows = new Map<number, { rowComponent: C; eDiv: HTMLDivElement; value: any; }>();
+    private componentCreator: (value: any, listItemElement: HTMLElement) => C;
+    private componentUpdater: (value: any, component: C) => void;
     private rowHeight = 20;
     private lastFocusedRowIndex: number | null;
 
     @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
+    @Autowired('animationFrameService') private readonly animationFrameService: AnimationFrameService;
     @RefSelector('eContainer') private readonly eContainer: HTMLElement;
 
     constructor(params?: VirtualListParams) {
@@ -81,7 +82,8 @@ export class VirtualList extends TabGuardComp {
     }
 
     private addResizeObserver(): void {
-        const listener = () => this.drawVirtualRows();
+        // do this in an animation frame to prevent loops
+        const listener = () => this.animationFrameService.requestAnimationFrame(() => this.drawVirtualRows());
         const destroyObserver = this.resizeObserverService.observeResize(this.getGui(), listener);
         this.addDestroyFunc(destroyObserver);
     }
@@ -90,22 +92,18 @@ export class VirtualList extends TabGuardComp {
         this.focusRow(fromBottom ? this.model.getRowCount() - 1 : 0);
     }
 
-    protected onFocusIn(e: FocusEvent): boolean {
+    protected onFocusIn(e: FocusEvent): void {
         const target = e.target as HTMLElement;
 
         if (target.classList.contains('ag-virtual-list-item')) {
             this.lastFocusedRowIndex = getAriaPosInSet(target) - 1;
         }
-
-        return false;
     }
 
-    protected onFocusOut(e: FocusEvent): boolean {
+    protected onFocusOut(e: FocusEvent): void {
         if (!this.getFocusableElement().contains(e.relatedTarget as HTMLElement)) {
             this.lastFocusedRowIndex = null;
         }
-
-        return false;
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {
@@ -158,13 +156,13 @@ export class VirtualList extends TabGuardComp {
         }, 10);
     }
 
-    public getComponentAt(rowIndex: number): Component | undefined {
+    public getComponentAt(rowIndex: number): C | undefined {
         const comp = this.renderedRows.get(rowIndex);
 
         return comp && comp.rowComponent;
     }
 
-    public forEachRenderedRow(func: (comp: Component, idx: number) => void): void {
+    public forEachRenderedRow(func: (comp: C, idx: number) => void): void {
         this.renderedRows.forEach((value, key)  => func(value.rowComponent, key));
     }
 
@@ -180,12 +178,15 @@ export class VirtualList extends TabGuardComp {
         return this.environment.getListItemHeight();
     }
 
-    public ensureIndexVisible(index: number): void {
+    /**
+     * Returns true if the view had to be scrolled, otherwise, false.
+     */
+    public ensureIndexVisible(index: number, scrollPartialIntoView: boolean = true): boolean {
         const lastRow = this.model.getRowCount();
 
         if (typeof index !== 'number' || index < 0 || index >= lastRow) {
             console.warn('AG Grid: invalid row index for ensureIndexVisible: ' + index);
-            return;
+            return false;
         }
 
         const rowTopPixel = index * this.rowHeight;
@@ -196,24 +197,31 @@ export class VirtualList extends TabGuardComp {
         const viewportHeight = eGui.offsetHeight;
         const viewportBottomPixel = viewportTopPixel + viewportHeight;
 
-        const viewportScrolledPastRow = viewportTopPixel > rowTopPixel;
-        const viewportScrolledBeforeRow = viewportBottomPixel < rowBottomPixel;
+        const diff = scrollPartialIntoView ? 0 : this.rowHeight;
+        const viewportScrolledPastRow = viewportTopPixel > rowTopPixel + diff;
+        const viewportScrolledBeforeRow = viewportBottomPixel < rowBottomPixel - diff;
 
         if (viewportScrolledPastRow) {
             // if row is before, scroll up with row at top
             eGui.scrollTop = rowTopPixel;
-        } else if (viewportScrolledBeforeRow) {
+            return true;
+        }
+        
+        if (viewportScrolledBeforeRow) {
             // if row is below, scroll down with row at bottom
             const newScrollPosition = rowBottomPixel - viewportHeight;
             eGui.scrollTop = newScrollPosition;
+            return true;
         }
+
+        return false;
     }
 
-    public setComponentCreator(componentCreator: (value: any, listItemElement: HTMLElement) => Component): void {
+    public setComponentCreator(componentCreator: (value: any, listItemElement: HTMLElement) => C): void {
         this.componentCreator = componentCreator;
     }
 
-    public setComponentUpdater(componentUpdater: (value: any, component: Component) => void): void {
+    public setComponentUpdater(componentUpdater: (value: any, component: C) => void): void {
         this.componentUpdater = componentUpdater;
     }
 
@@ -304,13 +312,6 @@ export class VirtualList extends TabGuardComp {
         setAriaSetSize(eDiv, this.model.getRowCount());
         setAriaPosInSet(eDiv, rowIndex + 1);
         eDiv.setAttribute('tabindex', '-1');
-
-        if (typeof this.model.isRowSelected === 'function') {
-            const isSelected = this.model.isRowSelected(rowIndex);
-
-            setAriaSelected(eDiv, !!isSelected);
-            setAriaChecked(eDiv, isSelected);
-        }
 
         eDiv.style.height = `${this.rowHeight}px`;
         eDiv.style.top = `${this.rowHeight * rowIndex}px`;

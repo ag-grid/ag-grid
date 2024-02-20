@@ -25,8 +25,7 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-import { browserSupportsPreventScroll, isBrowserChrome, isBrowserSafari } from './browser';
-import { exists } from './generic';
+import { isBrowserChrome, isBrowserSafari } from './browser';
 import { setAriaHidden } from './aria';
 import { camelCaseToHyphenated } from './string';
 var rtlNegativeScroll;
@@ -51,7 +50,7 @@ export function radioCssClass(element, elementClass, otherElementClass) {
     }
 }
 export var FOCUSABLE_SELECTOR = '[tabindex], input, select, button, textarea, [href]';
-export var FOCUSABLE_EXCLUDE = '.ag-hidden, .ag-hidden *, [disabled], .ag-disabled:not(.ag-button), .ag-disabled *';
+export var FOCUSABLE_EXCLUDE = '[disabled], .ag-disabled:not(.ag-button), .ag-disabled *';
 export function isFocusableFormField(element) {
     var matches = Element.prototype.matches || Element.prototype.msMatchesSelector;
     var inputSelector = 'input, select, button, textarea';
@@ -110,20 +109,20 @@ export function isElementChildOfClass(element, cls, maxNest) {
 export function getElementSize(el) {
     var _a = window.getComputedStyle(el), height = _a.height, width = _a.width, borderTopWidth = _a.borderTopWidth, borderRightWidth = _a.borderRightWidth, borderBottomWidth = _a.borderBottomWidth, borderLeftWidth = _a.borderLeftWidth, paddingTop = _a.paddingTop, paddingRight = _a.paddingRight, paddingBottom = _a.paddingBottom, paddingLeft = _a.paddingLeft, marginTop = _a.marginTop, marginRight = _a.marginRight, marginBottom = _a.marginBottom, marginLeft = _a.marginLeft, boxSizing = _a.boxSizing;
     return {
-        height: parseFloat(height),
-        width: parseFloat(width),
-        borderTopWidth: parseFloat(borderTopWidth),
-        borderRightWidth: parseFloat(borderRightWidth),
-        borderBottomWidth: parseFloat(borderBottomWidth),
-        borderLeftWidth: parseFloat(borderLeftWidth),
-        paddingTop: parseFloat(paddingTop),
-        paddingRight: parseFloat(paddingRight),
-        paddingBottom: parseFloat(paddingBottom),
-        paddingLeft: parseFloat(paddingLeft),
-        marginTop: parseFloat(marginTop),
-        marginRight: parseFloat(marginRight),
-        marginBottom: parseFloat(marginBottom),
-        marginLeft: parseFloat(marginLeft),
+        height: parseFloat(height || '0'),
+        width: parseFloat(width || '0'),
+        borderTopWidth: parseFloat(borderTopWidth || '0'),
+        borderRightWidth: parseFloat(borderRightWidth || '0'),
+        borderBottomWidth: parseFloat(borderBottomWidth || '0'),
+        borderLeftWidth: parseFloat(borderLeftWidth || '0'),
+        paddingTop: parseFloat(paddingTop || '0'),
+        paddingRight: parseFloat(paddingRight || '0'),
+        paddingBottom: parseFloat(paddingBottom || '0'),
+        paddingLeft: parseFloat(paddingLeft || '0'),
+        marginTop: parseFloat(marginTop || '0'),
+        marginRight: parseFloat(marginRight || '0'),
+        marginBottom: parseFloat(marginBottom || '0'),
+        marginLeft: parseFloat(marginLeft || '0'),
         boxSizing: boxSizing
     };
 }
@@ -209,17 +208,21 @@ export function clearElement(el) {
         el.removeChild(el.firstChild);
     }
 }
-/** @deprecated */
-export function removeElement(parent, cssSelector) {
-    removeFromParent(parent.querySelector(cssSelector));
-}
 export function removeFromParent(node) {
     if (node && node.parentNode) {
         node.parentNode.removeChild(node);
     }
 }
+export function isInDOM(element) {
+    return !!element.offsetParent;
+}
 export function isVisible(element) {
-    return element.offsetParent !== null;
+    var el = element;
+    if (el.checkVisibility) {
+        return el.checkVisibility({ checkVisibilityCSS: true });
+    }
+    var isHidden = !isInDOM(element) || window.getComputedStyle(element).visibility !== 'visible';
+    return !isHidden;
 }
 /**
  * Loads the template and returns it as an element. makes up for no simple way in
@@ -232,39 +235,11 @@ export function loadTemplate(template) {
     tempDiv.innerHTML = (template || '').trim();
     return tempDiv.firstChild;
 }
-export function appendHtml(eContainer, htmlTemplate) {
-    if (eContainer.lastChild) {
-        // https://developer.mozilla.org/en-US/docs/Web/API/Element/insertAdjacentHTML
-        // we put the items at the start, so new items appear underneath old items,
-        // so when expanding/collapsing groups, the new rows don't go on top of the
-        // rows below that are moving our of the way
-        eContainer.insertAdjacentHTML('afterbegin', htmlTemplate);
-    }
-    else {
-        eContainer.innerHTML = htmlTemplate;
-    }
-}
-/** @deprecated */
-export function getElementAttribute(element, attributeName) {
-    if (element.attributes && element.attributes[attributeName]) {
-        var attribute = element.attributes[attributeName];
-        return attribute.value;
-    }
-    return null;
-}
-export function offsetHeight(element) {
-    return element && element.clientHeight ? element.clientHeight : 0;
-}
-export function offsetWidth(element) {
-    return element && element.clientWidth ? element.clientWidth : 0;
-}
 export function ensureDomOrder(eContainer, eChild, eChildBefore) {
     // if already in right order, do nothing
     if (eChildBefore && eChildBefore.nextSibling === eChild) {
         return;
     }
-    var focusedEl = document.activeElement;
-    var eChildHasFocus = eChild.contains(focusedEl);
     if (eChildBefore) {
         if (eChildBefore.nextSibling) {
             // insert between the eRowBefore and the row after it
@@ -281,9 +256,6 @@ export function ensureDomOrder(eContainer, eChild, eChildBefore) {
             // insert it at the first location
             eContainer.insertAdjacentElement('afterbegin', eChild);
         }
-    }
-    if (eChildHasFocus && focusedEl && browserSupportsPreventScroll()) {
-        focusedEl.focus({ preventScroll: true });
     }
 }
 export function setDomChildOrder(eContainer, orderedChildren) {
@@ -309,15 +281,6 @@ export function insertWithDomOrder(eContainer, eToInsert, eChildBefore) {
             // otherwise eContainer is empty, so just append it
             eContainer.appendChild(eToInsert);
         }
-    }
-}
-/** @deprecated */
-export function prependDC(parent, documentFragment) {
-    if (exists(parent.firstChild)) {
-        parent.insertBefore(documentFragment, parent.firstChild);
-    }
-    else {
-        parent.appendChild(documentFragment);
     }
 }
 export function addStylesToElement(eElement, styles) {
@@ -389,7 +352,7 @@ export function setFixedHeight(element, height) {
 }
 export function formatSize(size) {
     if (typeof size === 'number') {
-        return size + "px";
+        return "".concat(size, "px");
     }
     return size;
 }

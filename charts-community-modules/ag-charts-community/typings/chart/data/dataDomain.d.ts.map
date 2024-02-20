@@ -1,1 +1,0 @@
-{"version":3,"file":"dataDomain.d.ts","sourceRoot":"","sources":["../../../src/chart/data/dataDomain.ts"],"names":[],"mappings":"AAAA,qBAAa,UAAU;IAIA,OAAO,CAAC,QAAQ,CAAC,IAAI;IAHxC,OAAO,CAAC,gBAAgB,CAAyB;IACjD,OAAO,CAAC,cAAc,CAAa;gBAEC,IAAI,EAAE,YAAY,GAAG,UAAU;IAEnE,MAAM,CAAC,GAAG,EAAE,GAAG;IAaf,SAAS;CASZ"}

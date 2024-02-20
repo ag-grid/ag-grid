@@ -14,10 +14,6 @@ export interface LoadSuccessParams {
      */
     rowCount?: number;
     /**
-     * @deprecated use groupLevelInfo instead
-     */
-    storeInfo?: any;
-    /**
      * Any extra information for the grid to associate with this load.
      */
     groupLevelInfo?: any;

@@ -48,7 +48,7 @@ var AgAngleSelect = /** @class */ (function (_super) {
             .setInputWidth(45)
             .setMin(0)
             .setMax(360)
-            .setValue("" + this.degrees)
+            .setValue("".concat(this.degrees))
             .onValueChange(function (value) {
             if (value == null || value === '') {
                 value = '0';
@@ -81,8 +81,8 @@ var AgAngleSelect = /** @class */ (function (_super) {
         var eChildCircle = this.eChildCircle;
         var centerX = rect.width / 2;
         var centerY = rect.height / 2;
-        eChildCircle.style.left = centerX + Math.cos(radians) * 8 + "px";
-        eChildCircle.style.top = centerY + Math.sin(radians) * 8 + "px";
+        eChildCircle.style.left = "".concat(centerX + Math.cos(radians) * 8, "px");
+        eChildCircle.style.top = "".concat(centerY + Math.sin(radians) * 8, "px");
     };
     AgAngleSelect.prototype.calculatePolar = function () {
         var x = this.offsetX;

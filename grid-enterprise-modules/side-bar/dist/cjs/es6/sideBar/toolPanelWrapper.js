@@ -23,13 +23,13 @@ class ToolPanelWrapper extends core_1.Component {
     getToolPanelId() {
         return this.toolPanelId;
     }
-    setToolPanelDef(toolPanelDef) {
+    setToolPanelDef(toolPanelDef, params) {
         const { id, minWidth, maxWidth, width } = toolPanelDef;
         this.toolPanelId = id;
         this.width = width;
-        const params = {};
         const compDetails = this.userComponentFactory.getToolPanelCompDetails(toolPanelDef, params);
         const componentPromise = compDetails.newAgStackInstance();
+        this.params = compDetails.params;
         if (componentPromise == null) {
             console.warn(`AG Grid: error processing tool panel component ${id}. You need to specify 'toolPanel'`);
             return;
@@ -56,18 +56,18 @@ class ToolPanelWrapper extends core_1.Component {
         return this.toolPanelCompInstance;
     }
     setResizerSizerSide(side) {
-        const isRtl = this.gridOptionsService.is('enableRtl');
+        const isRtl = this.gridOptionsService.get('enableRtl');
         const isLeft = side === 'left';
         const inverted = isRtl ? isLeft : !isLeft;
         this.resizeBar.setInverted(inverted);
     }
     refresh() {
-        this.toolPanelCompInstance.refresh();
+        this.toolPanelCompInstance.refresh(this.params);
     }
 }
 ToolPanelWrapper.TEMPLATE = `<div class="ag-tool-panel-wrapper" role="tabpanel"/>`;
 __decorate([
-    core_1.Autowired("userComponentFactory")
+    (0, core_1.Autowired)("userComponentFactory")
 ], ToolPanelWrapper.prototype, "userComponentFactory", void 0);
 __decorate([
     core_1.PostConstruct

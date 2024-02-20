@@ -87,7 +87,7 @@ let FilterAggregatesStage = class FilterAggregatesStage extends core_1.BeanStub 
             rowNode.setAllChildrenCount(null);
             return;
         }
-        if (this.gridOptionsService.isTreeData()) {
+        if (this.gridOptionsService.get('treeData')) {
             this.setAllChildrenCountTreeData(rowNode);
         }
         else {
@@ -96,12 +96,12 @@ let FilterAggregatesStage = class FilterAggregatesStage extends core_1.BeanStub 
     }
 };
 __decorate([
-    core_1.Autowired('filterManager')
+    (0, core_1.Autowired)('filterManager')
 ], FilterAggregatesStage.prototype, "filterManager", void 0);
 __decorate([
-    core_1.Autowired('columnModel')
+    (0, core_1.Autowired)('columnModel')
 ], FilterAggregatesStage.prototype, "columnModel", void 0);
 FilterAggregatesStage = __decorate([
-    core_1.Bean('filterAggregatesStage')
+    (0, core_1.Bean)('filterAggregatesStage')
 ], FilterAggregatesStage);
 exports.FilterAggregatesStage = FilterAggregatesStage;

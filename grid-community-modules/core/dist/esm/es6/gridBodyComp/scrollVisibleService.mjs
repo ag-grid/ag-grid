@@ -19,18 +19,24 @@ let ScrollVisibleService = class ScrollVisibleService extends BeanStub {
         this.update();
     }
     update() {
-        // because of column animation (which takes 200ms), we have to do this twice.
-        // eg if user removes cols anywhere except at the RHS, then the cols on the RHS
-        // will animate to the left to fill the gap. this animation means just after
-        // the cols are removed, the remaining cols are still in the original location
-        // at the start of the animation, so pre animation the H scrollbar is still needed,
-        // but post animation it is not.
-        this.updateImpl();
-        setTimeout(this.updateImpl.bind(this), 500);
+        // Because of column animation, if user removes cols anywhere except at the RHS, 
+        // then the cols on the RHS will animate to the left to fill the gap. This animation 
+        // means just after the cols are removed, the remaining cols are still in the original
+        // location at the start of the animation, so pre animation the H scrollbar is still
+        // needed, but post animation it is not. So if animation is active, we only update
+        // after the animation has ended.
+        if (this.columnAnimationService.isActive()) {
+            this.columnAnimationService.executeLaterVMTurn(() => {
+                this.columnAnimationService.executeLaterVMTurn(() => this.updateImpl());
+            });
+        }
+        else {
+            this.updateImpl();
+        }
     }
     updateImpl() {
         const centerRowCtrl = this.ctrlsService.getCenterRowContainerCtrl();
-        if (!centerRowCtrl) {
+        if (!centerRowCtrl || this.columnAnimationService.isActive()) {
             return;
         }
         const params = {
@@ -63,6 +69,9 @@ let ScrollVisibleService = class ScrollVisibleService extends BeanStub {
 __decorate([
     Autowired('ctrlsService')
 ], ScrollVisibleService.prototype, "ctrlsService", void 0);
+__decorate([
+    Autowired('columnAnimationService')
+], ScrollVisibleService.prototype, "columnAnimationService", void 0);
 __decorate([
     PostConstruct
 ], ScrollVisibleService.prototype, "postConstruct", null);

@@ -29,7 +29,7 @@ var keyCode_1 = require("../../constants/keyCode");
 var SimpleCellEditor = /** @class */ (function (_super) {
     __extends(SimpleCellEditor, _super);
     function SimpleCellEditor(cellEditorInput) {
-        var _this = _super.call(this, /* html */ "\n            <div class=\"ag-cell-edit-wrapper\">\n                " + cellEditorInput.getTemplate() + "\n            </div>") || this;
+        var _this = _super.call(this, /* html */ "\n            <div class=\"ag-cell-edit-wrapper\">\n                ".concat(cellEditorInput.getTemplate(), "\n            </div>")) || this;
         _this.cellEditorInput = cellEditorInput;
         return _this;
     }
@@ -80,7 +80,7 @@ var SimpleCellEditor = /** @class */ (function (_super) {
         // Added for AG-3238. We can't remove this explicit focus() because Chrome requires an input
         // to be focused before setSelectionRange will work. But it triggers a bug in Safari where
         // explicitly focusing then blurring an empty field will cause the parent container to scroll.
-        if (!browser_1.isBrowserSafari()) {
+        if (!(0, browser_1.isBrowserSafari)()) {
             eInput.getFocusableElement().focus();
         }
         var inputEl = eInput.getInputElement();
@@ -106,7 +106,7 @@ var SimpleCellEditor = /** @class */ (function (_super) {
         return false;
     };
     __decorate([
-        componentAnnotations_1.RefSelector('eInput')
+        (0, componentAnnotations_1.RefSelector)('eInput')
     ], SimpleCellEditor.prototype, "eInput", void 0);
     return SimpleCellEditor;
 }(popupComponent_1.PopupComponent));

@@ -17,7 +17,7 @@ To see how chart ranges are created from a cell range, using our [demo page](../
 
 - Bring up the [Context Menu](/context-menu/) and select the desired chart type from the 'Chart Range' sub menu.
 
-<gif src="charting-ranges.gif" alt="Charting Ranges"></gif>
+<gif src="range-chart.gif" alt="Charting Ranges" toggledarkmode="true"></gif>
 
 As illustrated above, the resulting chart range can subsequently be modified by dragging on the chart range handle, located in the bottom right corner of the chart range.
 
@@ -91,7 +91,7 @@ The example below demonstrates the different ways columns can be defined for cha
 - **Silver**: defined as 'series' as `chartType='series'`.
 - **Bronze**: considered a 'series' as data is a `number`.
 
-<grid-example title='Defining categories and series' name='defining-categories-and-series' type='generated' options='{ "exampleHeight": 710, "enterprise": true, "modules": ["clientside", "menu", "charts", "rowgrouping"] }'></grid-example>
+<grid-example title='Defining categories and series' name='defining-categories-and-series' type='generated' options='{ "exampleHeight": 710, "enterprise": true, "modules": ["clientside", "menu", "charts-enterprise", "rowgrouping"] }'></grid-example>
 
 Cell ranges from which categories and data are taken will be highlighted on the grid. The highlight colours can be customised using the `--ag-range-selection-chart-category-background-color` and `--ag-range-selection-chart-background-color` CSS variables. See `style.css` in the example above.
 

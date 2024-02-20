@@ -13,6 +13,7 @@ const GroupCellRenderer = (props: GroupCellRendererParams) => {
     let eCheckboxRef: HTMLElement;
     let eExpandedRef: HTMLElement;
     let eContractedRef: HTMLElement;
+    let role: any = 'gridcell';
 
     const [getInnerCompDetails, setInnerCompDetails] = createSignal<UserCompDetails>();
     const [getChildCount, setChildCount] = createSignal<string>();
@@ -27,8 +28,7 @@ const GroupCellRenderer = (props: GroupCellRendererParams) => {
         refresh() { return false; }
     }));
 
-    onMount( ()=> {
-
+    onMount(() => {
         const compProxy: IGroupCellRenderer = {
             setInnerRenderer: (details, valueToDisplay) => {
                 setInnerCompDetails(details);
@@ -44,6 +44,8 @@ const GroupCellRenderer = (props: GroupCellRendererParams) => {
 
         const ctrl = context.createBean(new GroupCellRendererCtrl());
         ctrl.init(compProxy, eGui, eCheckboxRef, eExpandedRef, eContractedRef, GroupCellRenderer, props);
+        eGui.setAttribute('role', ctrl.getCellAriaRole());
+        role = ctrl.getCellAriaRole();
 
         return () => { context.destroyBean(ctrl);};
     });
@@ -57,7 +59,7 @@ const GroupCellRenderer = (props: GroupCellRendererParams) => {
     const isShowValue = ()=> getInnerCompDetails() == null && getValue() != null;
 
     return (
-        <span class={getClassName()} ref={eGui!} {...(!props.colDef ? { role: 'gridcell' } : {})}>
+        <span class={getClassName()} ref={eGui!} {...(!props.colDef ? { role } : {})}>
             <span class={getExpandedClassName()} ref={eExpandedRef!}></span>
             <span class={getContractedClassName()} ref={eContractedRef!}></span>
             <span class={getCheckboxClassName()} ref={eCheckboxRef!}></span>

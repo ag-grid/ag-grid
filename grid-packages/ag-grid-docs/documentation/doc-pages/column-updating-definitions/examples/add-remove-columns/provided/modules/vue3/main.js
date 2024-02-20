@@ -2,7 +2,7 @@ import { createApp } from 'vue';
 import { AgGridVue } from '@ag-grid-community/vue3';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
@@ -40,7 +40,7 @@ const VueExample = {
                 </div>
                 <ag-grid-vue
                         style="width: 100%; height: 100%;"
-                        class="ag-theme-alpine"
+                        :class="themeClass"
                         id="myGrid"
                         :columnDefs="columnDefs"
                         @grid-ready="onGridReady"
@@ -57,13 +57,11 @@ const VueExample = {
         return {
             columnDefs: colDefsMedalsIncluded,
             gridApi: null,
-            columnApi: null,
             defaultColDef: {
                 initialWidth: 100,
-                sortable: true,
-                resizable: true
             },
-            rowData: null
+            rowData: null,
+            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
         }
     },
     beforeMount() {
@@ -71,14 +69,13 @@ const VueExample = {
     },
     methods: {
         onBtExcludeMedalColumns() {
-            this.gridApi.setColumnDefs(colDefsMedalsExcluded);
+            this.gridApi.setGridOption('columnDefs', colDefsMedalsExcluded);
         },
         onBtIncludeMedalColumns() {
-            this.gridApi.setColumnDefs(colDefsMedalsIncluded);
+            this.gridApi.setGridOption('columnDefs', colDefsMedalsIncluded);
         },
         onGridReady(params) {
             this.gridApi = params.api;
-            this.gridColumnApi = params.columnApi;
 
 
             const updateData = (data) => {

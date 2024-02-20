@@ -4,41 +4,92 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, Component, PostConstruct, AgPromise, RefSelector } from '@ag-grid-community/core';
+import { Autowired, Component, PostConstruct, PreDestroy, AgPromise, RefSelector, _ } from '@ag-grid-community/core';
 export class StatusBar extends Component {
     constructor() {
         super(StatusBar.TEMPLATE);
+        this.compDestroyFunctions = {};
     }
     postConstruct() {
+        this.processStatusPanels(new Map());
+        this.addManagedPropertyListeners(['statusBar'], this.handleStatusBarChanged.bind(this));
+    }
+    processStatusPanels(existingStatusPanelsToReuse) {
         var _a;
         const statusPanels = (_a = this.gridOptionsService.get('statusBar')) === null || _a === void 0 ? void 0 : _a.statusPanels;
         if (statusPanels) {
             const leftStatusPanelComponents = statusPanels
                 .filter((componentConfig) => componentConfig.align === 'left');
-            this.createAndRenderComponents(leftStatusPanelComponents, this.eStatusBarLeft);
+            this.createAndRenderComponents(leftStatusPanelComponents, this.eStatusBarLeft, existingStatusPanelsToReuse);
             const centerStatusPanelComponents = statusPanels
                 .filter((componentConfig) => componentConfig.align === 'center');
-            this.createAndRenderComponents(centerStatusPanelComponents, this.eStatusBarCenter);
+            this.createAndRenderComponents(centerStatusPanelComponents, this.eStatusBarCenter, existingStatusPanelsToReuse);
             const rightStatusPanelComponents = statusPanels
                 .filter((componentConfig) => (!componentConfig.align || componentConfig.align === 'right'));
-            this.createAndRenderComponents(rightStatusPanelComponents, this.eStatusBarRight);
+            this.createAndRenderComponents(rightStatusPanelComponents, this.eStatusBarRight, existingStatusPanelsToReuse);
         }
         else {
             this.setDisplayed(false);
         }
     }
-    createAndRenderComponents(statusBarComponents, ePanelComponent) {
+    handleStatusBarChanged() {
+        var _a;
+        const statusPanels = (_a = this.gridOptionsService.get('statusBar')) === null || _a === void 0 ? void 0 : _a.statusPanels;
+        const validStatusBarPanelsProvided = Array.isArray(statusPanels) && statusPanels.length > 0;
+        this.setDisplayed(validStatusBarPanelsProvided);
+        const existingStatusPanelsToReuse = new Map();
+        if (validStatusBarPanelsProvided) {
+            statusPanels.forEach(statusPanelConfig => {
+                var _a, _b;
+                const key = (_a = statusPanelConfig.key) !== null && _a !== void 0 ? _a : statusPanelConfig.statusPanel;
+                const existingStatusPanel = this.statusBarService.getStatusPanel(key);
+                if (existingStatusPanel === null || existingStatusPanel === void 0 ? void 0 : existingStatusPanel.refresh) {
+                    const newParams = this.gridOptionsService.addGridCommonParams((_b = statusPanelConfig.statusPanelParams) !== null && _b !== void 0 ? _b : {});
+                    const hasRefreshed = existingStatusPanel.refresh(newParams);
+                    if (hasRefreshed) {
+                        existingStatusPanelsToReuse.set(key, existingStatusPanel);
+                        delete this.compDestroyFunctions[key];
+                        _.removeFromParent(existingStatusPanel.getGui());
+                    }
+                }
+            });
+        }
+        this.resetStatusBar();
+        if (validStatusBarPanelsProvided) {
+            this.processStatusPanels(existingStatusPanelsToReuse);
+        }
+    }
+    resetStatusBar() {
+        this.eStatusBarLeft.innerHTML = '';
+        this.eStatusBarCenter.innerHTML = '';
+        this.eStatusBarRight.innerHTML = '';
+        this.destroyComponents();
+        this.statusBarService.unregisterAllComponents();
+    }
+    destroyComponents() {
+        Object.values(this.compDestroyFunctions).forEach((func) => func());
+        this.compDestroyFunctions = {};
+    }
+    createAndRenderComponents(statusBarComponents, ePanelComponent, existingStatusPanelsToReuse) {
         const componentDetails = [];
         statusBarComponents.forEach(componentConfig => {
-            const params = {};
-            const compDetails = this.userComponentFactory.getStatusPanelCompDetails(componentConfig, params);
-            const promise = compDetails.newAgStackInstance();
-            if (!promise) {
-                return;
+            // default to the component name if no key supplied
+            const key = componentConfig.key || componentConfig.statusPanel;
+            const existingStatusPanel = existingStatusPanelsToReuse.get(key);
+            let promise;
+            if (existingStatusPanel) {
+                promise = AgPromise.resolve(existingStatusPanel);
+            }
+            else {
+                const params = {};
+                const compDetails = this.userComponentFactory.getStatusPanelCompDetails(componentConfig, params);
+                promise = compDetails.newAgStackInstance();
+                if (!promise) {
+                    return;
+                }
             }
             componentDetails.push({
-                // default to the component name if no key supplied
-                key: componentConfig.key || componentConfig.statusPanel,
+                key,
                 promise
             });
         });
@@ -52,7 +103,7 @@ export class StatusBar extends Component {
                     if (this.isAlive()) {
                         this.statusBarService.registerStatusPanel(componentDetail.key, component);
                         ePanelComponent.appendChild(component.getGui());
-                        this.addDestroyFunc(destroyFunc);
+                        this.compDestroyFunctions[componentDetail.key] = destroyFunc;
                     }
                     else {
                         destroyFunc();
@@ -85,3 +136,6 @@ __decorate([
 __decorate([
     PostConstruct
 ], StatusBar.prototype, "postConstruct", null);
+__decorate([
+    PreDestroy
+], StatusBar.prototype, "destroyComponents", null);

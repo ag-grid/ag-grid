@@ -24,25 +24,41 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
 import { _ } from "@ag-grid-community/core";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { deepMerge } from "../../utils/object";
 import { hexToRGBA } from "../../utils/color";
+import { isHorizontal, isStacked } from "../../utils/seriesTypeMapper";
 var BarChartProxy = /** @class */ (function (_super) {
     __extends(BarChartProxy, _super);
     function BarChartProxy(params) {
         return _super.call(this, params) || this;
     }
     BarChartProxy.prototype.getAxes = function (params) {
-        var isBar = this.standaloneChartType === 'bar';
         var axes = [
             {
                 type: this.getXAxisType(params),
-                position: isBar ? 'left' : 'bottom',
+                position: isHorizontal(this.chartType) ? 'left' : 'bottom',
             },
             {
                 type: 'number',
-                position: isBar ? 'bottom' : 'left',
+                position: isHorizontal(this.chartType) ? 'bottom' : 'left',
             },
         ];
         // Add a default label formatter to show '%' for normalized charts if none is provided
@@ -54,15 +70,14 @@ var BarChartProxy = /** @class */ (function (_super) {
     };
     BarChartProxy.prototype.getSeries = function (params) {
         var _this = this;
-        var groupedCharts = ['groupedColumn', 'groupedBar'];
-        var isGrouped = !this.crossFiltering && _.includes(groupedCharts, this.chartType);
+        var _a = __read(params.categories, 1), category = _a[0];
         var series = params.fields.map(function (f) { return ({
             type: _this.standaloneChartType,
-            grouped: isGrouped,
-            stacked: ['stackedColumn', 'normalizedColumn', 'stackedBar', 'normalizedBar'].includes(_this.chartType),
+            direction: isHorizontal(_this.chartType) ? 'horizontal' : 'vertical',
+            stacked: _this.crossFiltering || isStacked(_this.chartType),
             normalizedTo: _this.isNormalised() ? 100 : undefined,
-            xKey: params.category.id,
-            xName: params.category.name,
+            xKey: category.id,
+            xName: category.name,
             yKey: f.colId,
             yName: f.displayName
         }); });

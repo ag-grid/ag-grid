@@ -1,10 +1,15 @@
 import {
-  FirstDataRenderedEvent, Grid,
+  FirstDataRenderedEvent,
+  GridApi,
+  createGrid,
   GridOptions,
   ICellRendererParams,
-  ISetFilterParams
+  ISetFilterParams,
 } from '@ag-grid-community/core';
 import { getData } from "./data";
+
+
+let gridApi: GridApi;
 
 
 const gridOptions: GridOptions = {
@@ -32,7 +37,6 @@ const gridOptions: GridOptions = {
     flex: 1,
     minWidth: 225,
     cellRenderer: colourCellRenderer,
-    resizable: true,
     floatingFilter: true,
   },
   sideBar: 'filters',
@@ -59,5 +63,5 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

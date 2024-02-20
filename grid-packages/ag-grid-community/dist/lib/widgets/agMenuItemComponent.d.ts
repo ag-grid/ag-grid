@@ -1,62 +1,75 @@
-import { AgEvent } from '../events';
-import { IPopupComponent } from '../interfaces/iPopupComponent';
 import { Component } from './component';
-import { MenuItemLeafDef, MenuItemDef } from '../entities/gridOptions';
-import { ITooltipParams } from '../rendering/tooltipComponent';
+import { AgEvent } from '../events';
+import { BeanStub } from '../context/beanStub';
+import { AgPromise } from '../utils/promise';
+import { MenuItemDef } from '../interfaces/menuItem';
 import { IComponent } from '../interfaces/iComponent';
 import { WithoutGridCommon } from '../interfaces/iCommon';
-interface MenuItemComponentParams extends MenuItemLeafDef {
-    isCompact?: boolean;
-    isAnotherSubMenuOpen: () => boolean;
-    subMenu?: (MenuItemDef | string)[] | IComponent<any>;
-}
-export interface MenuItemSelectedEvent extends AgEvent {
-    name: string;
-    disabled?: boolean;
-    shortcut?: string;
-    action?: () => void;
-    checked?: boolean;
-    icon?: Element | string;
-    subMenu?: (MenuItemDef | string)[] | IPopupComponent<any>;
-    cssClasses?: string[];
-    tooltip?: string;
-    event: MouseEvent | KeyboardEvent;
+import { IMenuActionParams } from '../interfaces/iCallbackParams';
+export interface CloseMenuEvent extends AgEvent {
+    event?: MouseEvent | KeyboardEvent;
 }
 export interface MenuItemActivatedEvent extends AgEvent {
     menuItem: AgMenuItemComponent;
 }
-export declare class AgMenuItemComponent extends Component {
-    private readonly params;
+interface AgMenuItemComponentParams {
+    menuItemDef: MenuItemDef;
+    isAnotherSubMenuOpen: () => boolean;
+    level: number;
+    childComponent?: IComponent<any>;
+    contextParams: WithoutGridCommon<IMenuActionParams>;
+}
+export declare class AgMenuItemComponent extends BeanStub {
     private readonly popupService;
-    static EVENT_MENU_ITEM_SELECTED: string;
+    private readonly userComponentFactory;
+    private readonly beans;
+    static EVENT_CLOSE_MENU: string;
     static EVENT_MENU_ITEM_ACTIVATED: string;
     static ACTIVATION_DELAY: number;
+    private eGui?;
+    private params;
+    private isAnotherSubMenuOpen;
+    private level;
+    private childComponent?;
+    private contextParams;
+    private menuItemComp;
     private isActive;
-    private tooltip;
     private hideSubMenu;
     private subMenuIsOpen;
+    private subMenuIsOpening;
     private activateTimeoutId;
     private deactivateTimeoutId;
-    constructor(params: MenuItemComponentParams);
-    private init;
+    private parentComponent?;
+    private tooltip?;
+    private tooltipFeature?;
+    private suppressRootStyles;
+    private suppressAria;
+    private suppressFocus;
+    private cssClassPrefix;
+    private eSubMenuGui?;
+    init(params: AgMenuItemComponentParams): AgPromise<void>;
+    private addListeners;
     isDisabled(): boolean;
     openSubMenu(activateFirstItem?: boolean): void;
+    private setAriaExpanded;
     closeSubMenu(): void;
     isSubMenuOpen(): boolean;
+    isSubMenuOpening(): boolean;
     activate(openSubMenu?: boolean): void;
     deactivate(): void;
-    private addIcon;
-    private addName;
-    private addTooltip;
-    getTooltipParams(): WithoutGridCommon<ITooltipParams>;
-    private addShortcut;
-    private addSubMenu;
+    getGui(): HTMLElement;
+    getParentComponent(): Component | undefined;
+    setParentComponent(component: Component): void;
+    getSubMenuGui(): HTMLElement | undefined;
     private onItemSelected;
+    private closeMenu;
     private onItemActivated;
     private cancelActivate;
     private cancelDeactivate;
     private onMouseEnter;
     private onMouseLeave;
-    private getClassName;
+    private configureDefaults;
+    private updateTooltip;
+    private setTooltip;
 }
 export {};

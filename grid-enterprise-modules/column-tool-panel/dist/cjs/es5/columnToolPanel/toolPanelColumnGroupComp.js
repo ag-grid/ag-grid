@@ -50,9 +50,6 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
         var checkboxInput = this.cbSelect.getInputElement();
         checkboxGui.insertAdjacentElement('afterend', this.eDragHandle);
         checkboxInput.setAttribute('tabindex', '-1');
-        if (core_1._.missing(this.displayName)) {
-            this.displayName = '>>';
-        }
         this.eLabel.innerHTML = this.displayName ? this.displayName : '';
         this.setupExpandContract();
         this.addCssClass('ag-column-select-indent-' + this.columnDept);
@@ -114,7 +111,7 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
     ToolPanelColumnGroupComp.prototype.onContextMenu = function (e) {
         var _this = this;
         var _a = this, columnGroup = _a.columnGroup, gridOptionsService = _a.gridOptionsService;
-        if (gridOptionsService.is('functionsReadOnly')) {
+        if (gridOptionsService.get('functionsReadOnly')) {
             return;
         }
         var contextMenu = this.createBean(new toolPanelContextMenu_1.ToolPanelContextMenu(columnGroup, e, this.focusWrapper));
@@ -139,14 +136,15 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
             core_1._.setDisplayed(this.eDragHandle, false);
             return;
         }
-        var hideColumnOnExit = !this.gridOptionsService.is('suppressDragLeaveHidesColumns');
+        var hideColumnOnExit = !this.gridOptionsService.get('suppressDragLeaveHidesColumns');
         var dragSource = {
             type: core_1.DragSourceType.ToolPanel,
             eElement: this.eDragHandle,
             dragItemName: this.displayName,
-            defaultIconName: hideColumnOnExit ? core_1.DragAndDropService.ICON_HIDE : core_1.DragAndDropService.ICON_NOT_ALLOWED,
+            getDefaultIconName: function () { return hideColumnOnExit ? core_1.DragAndDropService.ICON_HIDE : core_1.DragAndDropService.ICON_NOT_ALLOWED; },
             getDragItem: function () { return _this.createDragItem(); },
             onDragStarted: function () {
+                hideColumnOnExit = !_this.gridOptionsService.get('suppressDragLeaveHidesColumns');
                 var event = {
                     type: core_1.Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START,
                     column: _this.columnGroup
@@ -246,8 +244,8 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
             translate('ariaIndeterminate', 'indeterminate') :
             (checkboxValue ? translate('ariaVisible', 'visible') : translate('ariaHidden', 'hidden'));
         var visibilityLabel = translate('ariaToggleVisibility', 'Press SPACE to toggle visibility');
-        core_1._.setAriaLabel(this.focusWrapper, this.displayName + " " + columnLabel);
-        this.cbSelect.setInputAriaLabel(visibilityLabel + " (" + state + ")");
+        core_1._.setAriaLabel(this.focusWrapper, "".concat(this.displayName, " ").concat(columnLabel));
+        this.cbSelect.setInputAriaLabel("".concat(visibilityLabel, " (").concat(state, ")"));
         core_1._.setAriaDescribedBy(this.focusWrapper, this.cbSelect.getInputElement().id);
     };
     ToolPanelColumnGroupComp.prototype.onColumnStateChanged = function () {
@@ -344,28 +342,28 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
     };
     ToolPanelColumnGroupComp.TEMPLATE = "<div class=\"ag-column-select-column-group\" aria-hidden=\"true\">\n            <span class=\"ag-column-group-icons\" ref=\"eColumnGroupIcons\" >\n                <span class=\"ag-column-group-closed-icon\" ref=\"eGroupClosedIcon\"></span>\n                <span class=\"ag-column-group-opened-icon\" ref=\"eGroupOpenedIcon\"></span>\n            </span>\n            <ag-checkbox ref=\"cbSelect\" class=\"ag-column-select-checkbox\"></ag-checkbox>\n            <span class=\"ag-column-select-column-label\" ref=\"eLabel\"></span>\n        </div>";
     __decorate([
-        core_1.Autowired('columnModel')
+        (0, core_1.Autowired)('columnModel')
     ], ToolPanelColumnGroupComp.prototype, "columnModel", void 0);
     __decorate([
-        core_1.Autowired('dragAndDropService')
+        (0, core_1.Autowired)('dragAndDropService')
     ], ToolPanelColumnGroupComp.prototype, "dragAndDropService", void 0);
     __decorate([
-        core_1.Autowired('modelItemUtils')
+        (0, core_1.Autowired)('modelItemUtils')
     ], ToolPanelColumnGroupComp.prototype, "modelItemUtils", void 0);
     __decorate([
-        core_1.RefSelector('cbSelect')
+        (0, core_1.RefSelector)('cbSelect')
     ], ToolPanelColumnGroupComp.prototype, "cbSelect", void 0);
     __decorate([
-        core_1.RefSelector('eLabel')
+        (0, core_1.RefSelector)('eLabel')
     ], ToolPanelColumnGroupComp.prototype, "eLabel", void 0);
     __decorate([
-        core_1.RefSelector('eGroupOpenedIcon')
+        (0, core_1.RefSelector)('eGroupOpenedIcon')
     ], ToolPanelColumnGroupComp.prototype, "eGroupOpenedIcon", void 0);
     __decorate([
-        core_1.RefSelector('eGroupClosedIcon')
+        (0, core_1.RefSelector)('eGroupClosedIcon')
     ], ToolPanelColumnGroupComp.prototype, "eGroupClosedIcon", void 0);
     __decorate([
-        core_1.RefSelector('eColumnGroupIcons')
+        (0, core_1.RefSelector)('eColumnGroupIcons')
     ], ToolPanelColumnGroupComp.prototype, "eColumnGroupIcons", void 0);
     __decorate([
         core_1.PostConstruct

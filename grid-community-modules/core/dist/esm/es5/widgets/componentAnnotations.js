@@ -3,7 +3,7 @@ export function QuerySelector(selector) {
     return querySelectorFunc.bind(this, selector, undefined);
 }
 export function RefSelector(ref) {
-    return querySelectorFunc.bind(this, "[ref=" + ref + "]", ref);
+    return querySelectorFunc.bind(this, "[ref=".concat(ref, "]"), ref);
 }
 function querySelectorFunc(selector, refSelector, classPrototype, methodOrAttributeName, index) {
     if (selector === null) {

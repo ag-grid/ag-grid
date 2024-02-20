@@ -32,7 +32,7 @@ let virtualList: jest.Mocked<VirtualList>;
 let setValueModel: jest.Mocked<SetValueModel<string>>;
 
 beforeEach(() => {
-    rowModel = mock<IClientSideRowModel>('getType', 'forEachLeafNode');
+    rowModel = mock<IClientSideRowModel>('getType', 'forEachLeafNode', 'isRowDataLoaded');
     rowModel.getType.mockReturnValue('clientSide');
 
     eventService = mock<EventService>('addEventListener');
@@ -56,14 +56,21 @@ beforeEach(() => {
     eSelectAll = mock<AgCheckbox>('setValue', 'getInputElement', 'onValueChange', 'setLabel');
     eSelectAll.getInputElement.mockImplementation(() => mock<HTMLInputElement>('addEventListener'));
 
-    gridOptionsService = mock<GridOptionsService>('is', 'get');
+    gridOptionsService = mock<GridOptionsService>('get', 'addEventListener');
 
     columnModel = mock<ColumnModel>('getRowGroupColumns');
     columnModel.getRowGroupColumns.mockImplementation(() => []);
 
     virtualList = mock<VirtualList>('refresh');
 
-    setValueModel = mock<SetValueModel<string>>('getModel', 'isEverythingVisibleSelected');
+    setValueModel = mock<SetValueModel<string>>(
+        'getModel',
+        'setAppliedModelKeys',
+        'addToAppliedModelKeys',
+        'isEverythingVisibleSelected',
+        'showAddCurrentSelectionToFilter',
+        'isAddCurrentSelectionToFilterChecked'
+    );
 });
 
 function createSetFilter(filterParams?: any): SetFilter<unknown> {
@@ -79,6 +86,7 @@ function createSetFilter(filterParams?: any): SetFilter<unknown> {
         filterChangedCallback: () => { },
         filterModifiedCallback: () => { },
         valueGetter: ({node}) => node.data.value,
+        getValue: (node) => node.data.value,
         ...filterParams,
     };
 
@@ -168,7 +176,16 @@ describe('applyModel', () => {
     });
 
     it.each(['windows', 'mac'])('ensures any active filter is removed by selecting all values if all visible values are selected', excelMode => {
-        setValueModel = mock<SetValueModel<string>>('getModel', 'isEverythingVisibleSelected', 'selectAllMatchingMiniFilter');
+        setValueModel = mock<SetValueModel<string>>(
+            'getModel',
+            'setAppliedModelKeys',
+            'addToAppliedModelKeys',
+            'isEverythingVisibleSelected',
+            'selectAllMatchingMiniFilter',
+            'showAddCurrentSelectionToFilter',
+            'isAddCurrentSelectionToFilterChecked'
+        );
+
         const setFilter = createSetFilter({ excelMode });
 
         setValueModel.isEverythingVisibleSelected.mockReturnValue(true);

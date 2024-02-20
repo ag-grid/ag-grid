@@ -10,7 +10,7 @@ class MiniCustomCombo extends miniChart_1.MiniChart {
         this.columnData = [3, 4];
         this.lineData = [[5, 4, 6, 5, 4]];
         const { root, columnData, lineData, size, padding } = this;
-        this.columns = miniChartHelpers_1.createColumnRects({
+        this.columns = (0, miniChartHelpers_1.createColumnRects)({
             stacked: false,
             root,
             data: columnData,
@@ -21,7 +21,7 @@ class MiniCustomCombo extends miniChart_1.MiniChart {
             xScalePadding: 0.5,
         });
         root.append(this.columns);
-        this.lines = miniChartHelpers_1.createLinePaths(root, lineData, size, padding);
+        this.lines = (0, miniChartHelpers_1.createLinePaths)(root, lineData, size, padding);
         const axisStroke = 'grey';
         const axisOvershoot = 3;
         const leftAxis = new ag_charts_community_1._Scene.Line();

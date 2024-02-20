@@ -12,7 +12,7 @@ const walk = require('walk');
 
 const args = process.argv.slice(2)
 
-if(!args[0]) {
+if (!args[0]) {
     console.error('No release provided');
     process.exit(0);
 }
@@ -83,7 +83,7 @@ const removeGoogleTagManager = filename => {
     const contents = fs.readFileSync(filename, 'UTF8');
     const start = contents.indexOf('<!-- Google Tag Manager -->')
     const end = contents.indexOf('<!-- End Google Tag Manager -->');
-    return contents.substr(0, start) + contents.substr(end, contents.length);
+    return contents.substring(0, start) + contents.substring(end, end + contents.length);
 };
 
 console.log('Starting...');
@@ -93,13 +93,13 @@ walker.on("file", (root, fileStats, next) => {
         const fullFileName = `${root}/${fileStats.name}`;
 
         let scrubbedContents;
-        if(fullFileName.includes('includes/html-helpers.php')) {
+        if (fullFileName.includes('includes/html-helpers.php')) {
             scrubbedContents = removeGoogleTagManager(fullFileName);
         } else {
             scrubbedContents = scrubFile(fullFileName);
         }
 
-        if(modified) {
+        if (modified) {
             console.log(fullFileName);
             execFile('/bin/cp', [fullFileName, `${fullFileName}.bak`]);
             fs.writeFileSync(fullFileName, scrubbedContents, "UTF8");

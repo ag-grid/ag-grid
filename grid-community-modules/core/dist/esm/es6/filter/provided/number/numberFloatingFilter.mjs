@@ -63,11 +63,14 @@ export class NumberFloatingFilter extends TextInputFloatingFilter {
         this.filterModelFormatter = new NumberFilterModelFormatter(this.localeService, this.optionsFactory, (_a = params.filterParams) === null || _a === void 0 ? void 0 : _a.numberFormatter);
     }
     onParamsUpdated(params) {
+        this.refresh(params);
+    }
+    refresh(params) {
         const allowedCharPattern = getAllowedCharPattern(params.filterParams);
         if (allowedCharPattern !== this.allowedCharPattern) {
             this.recreateFloatingFilterInputService(params);
         }
-        super.onParamsUpdated(params);
+        super.refresh(params);
         this.filterModelFormatter.updateParams({ optionsFactory: this.optionsFactory });
     }
     getDefaultFilterOptions() {

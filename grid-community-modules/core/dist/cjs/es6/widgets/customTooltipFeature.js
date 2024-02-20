@@ -30,8 +30,6 @@ class CustomTooltipFeature extends beanStub_1.BeanStub {
         this.parentComp = parentComp;
         this.tooltipShowDelayOverride = tooltipShowDelayOverride;
         this.tooltipHideDelayOverride = tooltipHideDelayOverride;
-        this.DEFAULT_SHOW_TOOLTIP_DELAY = 2000;
-        this.DEFAULT_HIDE_TOOLTIP_DELAY = 10000;
         this.SHOW_QUICK_TOOLTIP_DIFF = 1000;
         this.FADE_OUT_TOOLTIP_TIMEOUT = 1000;
         this.INTERACTIVE_HIDE_DELAY = 100;
@@ -45,13 +43,11 @@ class CustomTooltipFeature extends beanStub_1.BeanStub {
         this.tooltipMouseTrack = false;
     }
     postConstruct() {
-        if (this.gridOptionsService.is('tooltipInteraction')) {
+        if (this.gridOptionsService.get('tooltipInteraction')) {
             this.interactionEnabled = true;
         }
         this.tooltipTrigger = this.getTooltipTrigger();
-        this.tooltipShowDelay = this.getTooltipDelay('show');
-        this.tooltipHideDelay = this.getTooltipDelay('hide');
-        this.tooltipMouseTrack = this.gridOptionsService.is('tooltipMouseTrack');
+        this.tooltipMouseTrack = this.gridOptionsService.get('tooltipMouseTrack');
         const el = this.parentComp.getGui();
         if (this.tooltipTrigger === TooltipTrigger.HOVER) {
             this.addManagedListener(el, 'mouseenter', this.onMouseEnter.bind(this));
@@ -68,22 +64,19 @@ class CustomTooltipFeature extends beanStub_1.BeanStub {
         }
     }
     getGridOptionsTooltipDelay(delayOption) {
-        const delay = this.gridOptionsService.getNum(delayOption);
-        if (generic_1.exists(delay)) {
-            if (delay < 0) {
-                function_1.doOnce(() => console.warn(`AG Grid: ${delayOption} should not be lower than 0`), `${delayOption}Warn`);
-            }
-            return Math.max(200, delay);
+        const delay = this.gridOptionsService.get(delayOption);
+        if (delay < 0) {
+            (0, function_1.warnOnce)(`${delayOption} should not be lower than 0`);
         }
-        return undefined;
+        return Math.max(200, delay);
     }
     getTooltipDelay(type) {
-        var _a, _b, _c, _d;
+        var _a, _b;
         if (type === 'show') {
-            return (_b = (_a = this.getGridOptionsTooltipDelay('tooltipShowDelay')) !== null && _a !== void 0 ? _a : this.tooltipShowDelayOverride) !== null && _b !== void 0 ? _b : this.DEFAULT_SHOW_TOOLTIP_DELAY;
+            return (_a = this.tooltipShowDelayOverride) !== null && _a !== void 0 ? _a : this.getGridOptionsTooltipDelay('tooltipShowDelay');
         }
         else {
-            return (_d = (_c = this.getGridOptionsTooltipDelay('tooltipHideDelay')) !== null && _c !== void 0 ? _c : this.tooltipHideDelayOverride) !== null && _d !== void 0 ? _d : this.DEFAULT_HIDE_TOOLTIP_DELAY;
+            return (_b = this.tooltipHideDelayOverride) !== null && _b !== void 0 ? _b : this.getGridOptionsTooltipDelay('tooltipHideDelay');
         }
     }
     destroy() {
@@ -107,7 +100,7 @@ class CustomTooltipFeature extends beanStub_1.BeanStub {
             this.unlockService();
             this.startHideTimeout();
         }
-        if (browser_1.isIOSUserAgent()) {
+        if ((0, browser_1.isIOSUserAgent)()) {
             return;
         }
         if (CustomTooltipFeature.isLocked) {
@@ -176,7 +169,7 @@ class CustomTooltipFeature extends beanStub_1.BeanStub {
         // if another tooltip was hidden very recently, we only wait 200ms to show, not the normal waiting time
         let delay = 0;
         if (mouseEvent) {
-            delay = this.isLastTooltipHiddenRecently() ? 200 : this.tooltipShowDelay;
+            delay = this.isLastTooltipHiddenRecently() ? 200 : this.getTooltipDelay('show');
         }
         this.lastMouseEvent = mouseEvent || null;
         this.showTooltipTimeoutId = window.setTimeout(this.showTooltip.bind(this), delay);
@@ -207,7 +200,7 @@ class CustomTooltipFeature extends beanStub_1.BeanStub {
     }
     showTooltip() {
         const params = Object.assign({}, this.parentComp.getTooltipParams());
-        if (!generic_1.exists(params.value)) {
+        if (!(0, generic_1.exists)(params.value)) {
             this.setToDoNothing();
             return;
         }
@@ -372,7 +365,7 @@ class CustomTooltipFeature extends beanStub_1.BeanStub {
     }
     startHideTimeout() {
         this.clearHideTimeout();
-        this.hideTooltipTimeoutId = window.setTimeout(this.hideTooltip.bind(this), this.tooltipHideDelay);
+        this.hideTooltipTimeoutId = window.setTimeout(this.hideTooltip.bind(this), this.getTooltipDelay('hide'));
     }
     clearShowTimeout() {
         if (!this.showTooltipTimeoutId) {
@@ -403,10 +396,10 @@ class CustomTooltipFeature extends beanStub_1.BeanStub {
 }
 CustomTooltipFeature.isLocked = false;
 __decorate([
-    context_1.Autowired('popupService')
+    (0, context_1.Autowired)('popupService')
 ], CustomTooltipFeature.prototype, "popupService", void 0);
 __decorate([
-    context_1.Autowired('userComponentFactory')
+    (0, context_1.Autowired)('userComponentFactory')
 ], CustomTooltipFeature.prototype, "userComponentFactory", void 0);
 __decorate([
     context_1.PostConstruct

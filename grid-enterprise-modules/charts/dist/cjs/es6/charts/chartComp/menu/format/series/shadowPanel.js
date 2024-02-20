@@ -10,10 +10,11 @@ exports.ShadowPanel = void 0;
 const core_1 = require("@ag-grid-community/core");
 const formatPanel_1 = require("../formatPanel");
 class ShadowPanel extends core_1.Component {
-    constructor(chartOptionsService, getSelectedSeries) {
+    constructor(chartOptionsService, getSelectedSeries, propertyKey = "shadow") {
         super();
         this.chartOptionsService = chartOptionsService;
         this.getSelectedSeries = getSelectedSeries;
+        this.propertyKey = propertyKey;
     }
     init() {
         const groupParams = {
@@ -28,25 +29,27 @@ class ShadowPanel extends core_1.Component {
         this.initSeriesShadow();
     }
     initSeriesShadow() {
+        // Determine the path within the series options object to get/set the individual shadow options
+        const propertyNamespace = this.propertyKey;
         this.shadowGroup
             .setTitle(this.chartTranslationService.translate("shadow"))
-            .setEnabled(this.chartOptionsService.getSeriesOption("shadow.enabled", this.getSelectedSeries()))
+            .setEnabled(this.chartOptionsService.getSeriesOption(`${propertyNamespace}.enabled`, this.getSelectedSeries()))
             .hideOpenCloseIcons(true)
             .hideEnabledCheckbox(false)
-            .onEnableChange(newValue => this.chartOptionsService.setSeriesOption("shadow.enabled", newValue, this.getSelectedSeries()));
+            .onEnableChange(newValue => this.chartOptionsService.setSeriesOption(`${propertyNamespace}.enabled`, newValue, this.getSelectedSeries()));
         this.shadowColorPicker
             .setLabel(this.chartTranslationService.translate("color"))
             .setLabelWidth("flex")
-            .setInputWidth(45)
-            .setValue(this.chartOptionsService.getSeriesOption("shadow.color", this.getSelectedSeries()))
-            .onValueChange(newValue => this.chartOptionsService.setSeriesOption("shadow.color", newValue, this.getSelectedSeries()));
+            .setInputWidth('flex')
+            .setValue(this.chartOptionsService.getSeriesOption(`${propertyNamespace}.color`, this.getSelectedSeries()))
+            .onValueChange(newValue => this.chartOptionsService.setSeriesOption(`${propertyNamespace}.color`, newValue, this.getSelectedSeries()));
         const initInput = (input, property, minValue, defaultMaxValue) => {
-            const currentValue = this.chartOptionsService.getSeriesOption(`shadow.${property}`, this.getSelectedSeries());
+            const currentValue = this.chartOptionsService.getSeriesOption(`${propertyNamespace}.${property}`, this.getSelectedSeries());
             input.setLabel(this.chartTranslationService.translate(property))
                 .setMinValue(minValue)
-                .setMaxValue(formatPanel_1.getMaxValue(currentValue, defaultMaxValue))
+                .setMaxValue((0, formatPanel_1.getMaxValue)(currentValue, defaultMaxValue))
                 .setValue(`${currentValue}`)
-                .onValueChange(newValue => this.chartOptionsService.setSeriesOption(`shadow.${property}`, newValue, this.getSelectedSeries()));
+                .onValueChange(newValue => this.chartOptionsService.setSeriesOption(`${propertyNamespace}.${property}`, newValue, this.getSelectedSeries()));
         };
         initInput(this.shadowBlurSlider, "blur", 0, 20);
         initInput(this.shadowXOffsetSlider, "xOffset", -10, 10);
@@ -62,22 +65,22 @@ ShadowPanel.TEMPLATE = `<div>
             </ag-group-component>
         </div>`;
 __decorate([
-    core_1.RefSelector('shadowGroup')
+    (0, core_1.RefSelector)('shadowGroup')
 ], ShadowPanel.prototype, "shadowGroup", void 0);
 __decorate([
-    core_1.RefSelector('shadowColorPicker')
+    (0, core_1.RefSelector)('shadowColorPicker')
 ], ShadowPanel.prototype, "shadowColorPicker", void 0);
 __decorate([
-    core_1.RefSelector('shadowBlurSlider')
+    (0, core_1.RefSelector)('shadowBlurSlider')
 ], ShadowPanel.prototype, "shadowBlurSlider", void 0);
 __decorate([
-    core_1.RefSelector('shadowXOffsetSlider')
+    (0, core_1.RefSelector)('shadowXOffsetSlider')
 ], ShadowPanel.prototype, "shadowXOffsetSlider", void 0);
 __decorate([
-    core_1.RefSelector('shadowYOffsetSlider')
+    (0, core_1.RefSelector)('shadowYOffsetSlider')
 ], ShadowPanel.prototype, "shadowYOffsetSlider", void 0);
 __decorate([
-    core_1.Autowired('chartTranslationService')
+    (0, core_1.Autowired)('chartTranslationService')
 ], ShadowPanel.prototype, "chartTranslationService", void 0);
 __decorate([
     core_1.PostConstruct

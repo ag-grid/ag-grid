@@ -39,7 +39,6 @@ var events_1 = require("../events");
 var componentAnnotations_1 = require("../widgets/componentAnnotations");
 var rowNode_1 = require("../entities/rowNode");
 var event_1 = require("../utils/event");
-var aria_1 = require("../utils/aria");
 var CheckboxSelectionComponent = /** @class */ (function (_super) {
     __extends(CheckboxSelectionComponent, _super);
     function CheckboxSelectionComponent() {
@@ -47,7 +46,6 @@ var CheckboxSelectionComponent = /** @class */ (function (_super) {
     }
     CheckboxSelectionComponent.prototype.postConstruct = function () {
         this.eCheckbox.setPassive(true);
-        aria_1.setAriaLive(this.eCheckbox.getInputElement(), 'polite');
     };
     CheckboxSelectionComponent.prototype.getCheckboxId = function () {
         return this.eCheckbox.getInputElement().id;
@@ -61,12 +59,8 @@ var CheckboxSelectionComponent = /** @class */ (function (_super) {
         this.showOrHideSelect();
     };
     CheckboxSelectionComponent.prototype.onSelectionChanged = function () {
-        var translate = this.localeService.getLocaleTextFunc();
         var state = this.rowNode.isSelected();
-        var stateName = aria_1.getAriaCheckboxStateName(translate, state);
-        var ariaLabel = translate('ariaRowToggleSelection', 'Press Space to toggle row selection');
         this.eCheckbox.setValue(state, true);
-        this.eCheckbox.setInputAriaLabel(ariaLabel + " (" + stateName + ")");
     };
     CheckboxSelectionComponent.prototype.onClicked = function (newValue, groupSelectsFiltered, event) {
         return this.rowNode.setSelectedParams({ newValue: newValue, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered, event: event, source: 'checkboxSelected' });
@@ -79,13 +73,13 @@ var CheckboxSelectionComponent = /** @class */ (function (_super) {
         this.onSelectionChanged();
         // we don't want double click on this icon to open a group
         this.addManagedListener(this.eCheckbox.getInputElement(), 'dblclick', function (event) {
-            event_1.stopPropagationForAgGrid(event);
+            (0, event_1.stopPropagationForAgGrid)(event);
         });
         this.addManagedListener(this.eCheckbox.getInputElement(), 'click', function (event) {
             // we don't want the row clicked event to fire when selecting the checkbox, otherwise the row
             // would possibly get selected twice
-            event_1.stopPropagationForAgGrid(event);
-            var groupSelectsFiltered = _this.gridOptionsService.is('groupSelectsFiltered');
+            (0, event_1.stopPropagationForAgGrid)(event);
+            var groupSelectsFiltered = _this.gridOptionsService.get('groupSelectsFiltered');
             var isSelected = _this.eCheckbox.getValue();
             if (_this.shouldHandleIndeterminateState(isSelected, groupSelectsFiltered)) {
                 // try toggling children to determine action.
@@ -162,7 +156,7 @@ var CheckboxSelectionComponent = /** @class */ (function (_super) {
         return (_b = (_a = this.column) === null || _a === void 0 ? void 0 : _a.getColDef()) === null || _b === void 0 ? void 0 : _b.checkboxSelection;
     };
     __decorate([
-        componentAnnotations_1.RefSelector('eCheckbox')
+        (0, componentAnnotations_1.RefSelector)('eCheckbox')
     ], CheckboxSelectionComponent.prototype, "eCheckbox", void 0);
     __decorate([
         context_1.PostConstruct

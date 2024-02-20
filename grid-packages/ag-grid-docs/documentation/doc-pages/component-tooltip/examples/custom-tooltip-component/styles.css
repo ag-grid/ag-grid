@@ -1,8 +1,8 @@
 .custom-tooltip {
     width: 150px;
-    height: 70px;
-    border: 1px solid cornflowerblue;
-    overflow: hidden;
+    padding: 5px;
+    color: var(--ag-foreground-color);
+    background-color: #5577CC;
 }
 
 .custom-tooltip p {

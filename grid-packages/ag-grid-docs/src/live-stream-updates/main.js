@@ -263,11 +263,10 @@
             .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
     }
 
+    let api;
     var gridOptions = {
         defaultColDef: {
             width: 120,
-            sortable: true,
-            resizable: true
         },
         columnTypes: {
             dimension: {
@@ -289,7 +288,6 @@
                 {component: 'agAggregationComponent'}
             ]
         },
-        animateRows: true,
         enableRangeSelection: true,
         rowGroupPanelShow: "always",
         pivotPanelShow: "always",
@@ -316,10 +314,10 @@
                     logStressResults(e.messageCount, e.updateCount);
                     break;
                 case "setRowData":
-                    gridOptions.api.setRowData(e.records);
+                    api.setGridOption('rowData', e.records);
                     break;
                 case "updateData":
-                    gridOptions.api.applyTransactionAsync({update: e.records});
+                    api.applyTransactionAsync({update: e.records});
                     break;
                 default:
                 // console.log("unrecognised event type " + e.type);
@@ -356,20 +354,20 @@
     function initLiveStreamUpdates() {
         if (document.querySelector("#live-stream-updates-grid") && window.agGrid) {
             var eGridDiv = document.querySelector("#live-stream-updates-grid");
-            new agGrid.Grid(eGridDiv, gridOptions);
+            api = agGrid.createGrid(eGridDiv, gridOptions);
             startWorker();
 
             setTimeout(function () {
-                gridOptions.api.getDisplayedRowAtIndex(2).setExpanded(true);
+                api.getDisplayedRowAtIndex(2).setExpanded(true);
             }, 800);
             setTimeout(function () {
-                gridOptions.api.getDisplayedRowAtIndex(8).setExpanded(true);
+                api.getDisplayedRowAtIndex(8).setExpanded(true);
             }, 1200);
             setTimeout(function () {
-                gridOptions.api.getDisplayedRowAtIndex(9).setExpanded(true);
+                api.getDisplayedRowAtIndex(9).setExpanded(true);
             }, 1600);
             setTimeout(function () {
-                gridOptions.api.getDisplayedRowAtIndex(10).setExpanded(true);
+                api.getDisplayedRowAtIndex(10).setExpanded(true);
             }, 2000);
         } else {
             setTimeout(() => initLiveStreamUpdates())

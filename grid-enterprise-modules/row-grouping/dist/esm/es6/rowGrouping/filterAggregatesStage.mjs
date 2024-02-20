@@ -84,7 +84,7 @@ let FilterAggregatesStage = class FilterAggregatesStage extends BeanStub {
             rowNode.setAllChildrenCount(null);
             return;
         }
-        if (this.gridOptionsService.isTreeData()) {
+        if (this.gridOptionsService.get('treeData')) {
             this.setAllChildrenCountTreeData(rowNode);
         }
         else {

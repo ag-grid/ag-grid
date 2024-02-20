@@ -5,10 +5,9 @@ import { AbstractColDef } from "./colDef";
 import { ProvidedColumnGroup } from "./providedColumnGroup";
 import { EventService } from "../eventService";
 import { Autowired } from "../context/context";
-import { AgEvent } from "../events";
+import { AgEvent, AgEventListener } from "../events";
 import { last } from "../utils/array";
 import { GridOptionsService } from "../gridOptionsService";
-import { logDeprecation } from "../gridOptionsValidator";
 
 export type ColumnGroupShowType = 'open' | 'closed';
 
@@ -89,7 +88,7 @@ export class ColumnGroup implements IHeaderColumn {
 
         // set our left based on first displayed column
         if (this.displayedChildren!.length > 0) {
-            if (this.gridOptionsService.is('enableRtl')) {
+            if (this.gridOptionsService.get('enableRtl')) {
                 const lastChild = last(this.displayedChildren!);
                 const lastChildLeft = lastChild.getLeft();
                 this.setLeft(lastChildLeft);
@@ -113,7 +112,7 @@ export class ColumnGroup implements IHeaderColumn {
     }
 
     public setLeft(left: number | null) {
-        this.oldLeft = left;
+        this.oldLeft = this.left;
         if (this.left !== left) {
             this.left = left;
             this.localEventService.dispatchEvent(this.createAgEvent(ColumnGroup.EVENT_LEFT_CHANGED));
@@ -129,11 +128,11 @@ export class ColumnGroup implements IHeaderColumn {
     }
 
     public addEventListener(eventType: string, listener: Function): void {
-        this.localEventService.addEventListener(eventType, listener);
+        this.localEventService.addEventListener(eventType, listener as AgEventListener);
     }
 
     public removeEventListener(eventType: string, listener: Function): void {
-        this.localEventService.removeEventListener(eventType, listener);
+        this.localEventService.removeEventListener(eventType, listener as AgEventListener);
     }
 
     public getGroupId(): string {

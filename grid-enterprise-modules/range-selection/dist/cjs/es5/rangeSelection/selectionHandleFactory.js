@@ -34,7 +34,7 @@ var SelectionHandleFactory = /** @class */ (function (_super) {
         return this.createBean(type === core_1.SelectionHandleType.RANGE ? new rangeHandle_1.RangeHandle() : new fillHandle_1.FillHandle());
     };
     SelectionHandleFactory = __decorate([
-        core_1.Bean('selectionHandleFactory')
+        (0, core_1.Bean)('selectionHandleFactory')
     ], SelectionHandleFactory);
     return SelectionHandleFactory;
 }(core_1.BeanStub));

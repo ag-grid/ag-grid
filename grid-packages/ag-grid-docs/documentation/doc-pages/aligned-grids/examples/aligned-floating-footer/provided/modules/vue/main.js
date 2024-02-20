@@ -4,7 +4,8 @@ import { AgGridVue } from "@ag-grid-community/vue";
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
 import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
+import "./styles.css";
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
@@ -12,15 +13,18 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const VueExample = {
     template: `
-        <div style="height: 100%; display: flex; flex-direction: column" class="ag-theme-alpine">
+        <div style="height: 100%; display: flex; flex-direction: column" :class="themeClass">
             <ag-grid-vue style="flex: 1 1 auto;"
+                         ref="topGrid"
+                         class="top"
                          :gridOptions="topGridOptions"
                          @grid-ready="onGridReady"
-                         @first-data-rendered="onFirstDataRendered"
                          :columnDefs="columnDefs"
                          :rowData="rowData"
             ></ag-grid-vue>
             <ag-grid-vue style="height: 60px; flex: none;"
+                         ref="bottomGrid"
+                         class="bottom"
                          :gridOptions="bottomGridOptions"
                          :headerHeight="0"
                          :columnDefs="columnDefs"
@@ -37,14 +41,14 @@ const VueExample = {
             topGridOptions: null,
             bottomGridOptions: null,
             gridApi: null,
-            columnApi: null,
             rowData: null,
             bottomData: null,
             columnDefs: null,
             athleteVisible: true,
             ageVisible: true,
             countryVisible: true,
-            rowStyle: { fontWeight: 'bold' }
+            rowStyle: { fontWeight: 'bold' },
+            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
         };
     },
     beforeMount() {
@@ -63,30 +67,27 @@ const VueExample = {
         ];
 
         this.topGridOptions = {
-            alignedGrids: [],
+            alignedGrids: () => [this.$refs.bottomGrid],
             defaultColDef: {
-                editable: true,
-                sortable: true,
-                resizable: true,
                 filter: true,
                 flex: 1,
                 minWidth: 100
             },
-            suppressHorizontalScroll: true
+            suppressHorizontalScroll: true,
+            alwaysShowVerticalScroll: true,
+            autoSizeStrategy: {
+                type: 'fitCellContents'
+            },
         };
         this.bottomGridOptions = {
-            alignedGrids: [],
+            alignedGrids: () => [this.$refs.topGrid],
             defaultColDef: {
-                editable: true,
-                sortable: true,
-                resizable: true,
                 filter: true,
                 flex: 1,
                 minWidth: 100
-            }
+            },
+            alwaysShowVerticalScroll: true,
         };
-        this.topGridOptions.alignedGrids.push(this.bottomGridOptions);
-        this.bottomGridOptions.alignedGrids.push(this.topGridOptions);
 
         this.columnDefs = [
             { field: 'athlete', width: 200, hide: !this.athleteVisible },
@@ -95,12 +96,9 @@ const VueExample = {
             { field: 'year', width: 120 },
             { field: 'date', width: 150 },
             { field: 'sport', width: 150 },
-            // in the total col, we have a value getter, which usually means we don't need to provide a field
-            // however the master/slave depends on the column id (which is derived from the field if provided) in
-            // order ot match up the columns
             {
                 headerName: 'Total',
-                field: 'total',
+                colId: 'total',
                 valueGetter: 'data.gold + data.silver + data.bronze',
                 width: 200
             },
@@ -110,8 +108,7 @@ const VueExample = {
         ];
     },
     mounted() {
-        this.gridApi = this.topGridOptions.api;
-        this.gridColumnApi = this.topGridOptions.columnApi;
+        this.gridApi = this.$refs.topGrid.api;
     },
     methods: {
         onGridReady(params) {
@@ -131,10 +128,6 @@ const VueExample = {
                 }
             };
         },
-
-        onFirstDataRendered() {
-            this.gridColumnApi.autoSizeAllColumns();
-        }
     },
 };
 

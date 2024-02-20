@@ -5,7 +5,9 @@ enterprise: true
 
 ## Customising Cell and Row Group values
 
-The grid cell and row group values exported to Excel can be customised using the following function params for a call to `exportDataAsExcel` API method or in the `defaultExcelExportParams`.
+By default, the values exported to Excel will be formatted via the [Using the Value Formatter for Export](/value-formatters/#use-value-formatter-for-export) feature.
+
+The grid cell and row group values can be customised specifically for Excel export using the following function params for a call to `exportDataAsExcel` API method or in the `defaultExcelExportParams`.
 
 <snippet>
 | gridApi.exportDataAsExcel({
@@ -25,8 +27,6 @@ The grid cell and row group values exported to Excel can be customised using the
     config='{"description":"See below the functions on the `ExcelExportParams` interface to customise exported grid cell and row group values."}'>
 </interface-documentation>
 
-Note that it is also possible to format the values by [Using the Value Formatter for Export](/value-formatters/#use-value-formatter-for-export).
-
 The following example shows Excel customisations where the exported document has the following:
 
 * All row groups with the prefix `row group: `
@@ -37,7 +37,7 @@ Row group column cells are also cells. This means that each row group column cel
 </note>
 
 <note>
-When using row grouping while [hiding open parents](/grouping-multiple-group-columns/#hide-open-parents) (`groupHideOpenParents=true`), export to Excel doesn't export the group rows as collapsible groups in Excel. Instead, all exported rows are on the same level and cannot be expanded/collapsed in Excel.
+When using row grouping while [hiding open parents](../grouping-multiple-group-columns/#hide-open-parents) (`groupHideOpenParents=true`), export to Excel doesn't export the group rows as collapsible groups in Excel. Instead, all exported rows are on the same level and cannot be expanded/collapsed in Excel.
 </note>
 
 <grid-example title='Excel Export - Customising Row Groups' name='excel-export-customising-row-groups' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "csv", "excel", "menu", "setfilter"]}'></grid-example>
@@ -49,10 +49,10 @@ The column headers and group headers exported to Excel can be customised using t
 <snippet>
 | gridApi.exportDataAsExcel({
 |     processGroupHeaderCallback(params) {
-|         return `group header: ${params.columnApi.getDisplayNameForColumnGroup(params.columnGroup, null)}`
+|         return `group header: ${params.api.getDisplayNameForColumnGroup(params.columnGroup, null)}`
 |     },
 |     processHeaderCallback(params) {
-|         return `header: ${params.columnApi.getDisplayNameForColumn(params.column, null)}`
+|         return `header: ${params.api.getDisplayNameForColumn(params.column, null)}`
 |     }
 | });
 </snippet>

@@ -37,7 +37,7 @@ export class StickyRowFeature extends BeanStub {
             let lastChildBottom;
             if (this.isClientSide) {
                 let lastAncestor = stickyRow;
-                while (lastAncestor.expanded) {
+                while (lastAncestor.isExpandable() && lastAncestor.expanded) {
                     if (lastAncestor.master) {
                         lastAncestor = lastAncestor.detailNode;
                     }
@@ -77,6 +77,7 @@ export class StickyRowFeature extends BeanStub {
                 }
             });
         };
+        let counter = 0;
         while (true) {
             const firstPixelAfterStickyRows = firstPixel + height;
             const firstIndex = this.rowModel.getRowIndexAtPixel(firstPixelAfterStickyRows);
@@ -86,6 +87,11 @@ export class StickyRowFeature extends BeanStub {
             }
             // only happens when pivoting, and we are showing root node
             if (firstRow.level < 0) {
+                break;
+            }
+            // added logic to break out of the loop when the row calculation
+            // changes while rows are becoming sticky (happens with auto height)
+            if (counter++ === 100) {
                 break;
             }
             const parents = [];

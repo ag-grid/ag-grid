@@ -32,7 +32,7 @@ export function radioCssClass(element: HTMLElement, elementClass: string | null,
 }
 
 export const FOCUSABLE_SELECTOR = '[tabindex], input, select, button, textarea, [href]';
-export const FOCUSABLE_EXCLUDE = '.ag-hidden, .ag-hidden *, [disabled], .ag-disabled:not(.ag-button), .ag-disabled *';
+export const FOCUSABLE_EXCLUDE = '[disabled], .ag-disabled:not(.ag-button), .ag-disabled *';
 
 export function isFocusableFormField(element: HTMLElement): boolean {
     const matches: (str: string) => boolean =
@@ -137,20 +137,20 @@ export function getElementSize(el: HTMLElement): {
     } = window.getComputedStyle(el);
 
     return {
-        height: parseFloat(height),
-        width: parseFloat(width),
-        borderTopWidth: parseFloat(borderTopWidth),
-        borderRightWidth: parseFloat(borderRightWidth),
-        borderBottomWidth: parseFloat(borderBottomWidth),
-        borderLeftWidth: parseFloat(borderLeftWidth),
-        paddingTop: parseFloat(paddingTop),
-        paddingRight: parseFloat(paddingRight),
-        paddingBottom: parseFloat(paddingBottom),
-        paddingLeft: parseFloat(paddingLeft),
-        marginTop: parseFloat(marginTop),
-        marginRight: parseFloat(marginRight),
-        marginBottom: parseFloat(marginBottom),
-        marginLeft: parseFloat(marginLeft),
+        height: parseFloat(height || '0'),
+        width: parseFloat(width || '0'),
+        borderTopWidth: parseFloat(borderTopWidth || '0'),
+        borderRightWidth: parseFloat(borderRightWidth || '0'),
+        borderBottomWidth: parseFloat(borderBottomWidth || '0'),
+        borderLeftWidth: parseFloat(borderLeftWidth || '0'),
+        paddingTop: parseFloat(paddingTop || '0'),
+        paddingRight: parseFloat(paddingRight || '0'),
+        paddingBottom: parseFloat(paddingBottom || '0'),
+        paddingLeft: parseFloat(paddingLeft || '0'),
+        marginTop: parseFloat(marginTop || '0'),
+        marginRight: parseFloat(marginRight || '0'),
+        marginBottom: parseFloat(marginBottom || '0'),
+        marginLeft: parseFloat(marginLeft || '0'),
         boxSizing
     };
 }
@@ -265,19 +265,24 @@ export function clearElement(el: HTMLElement): void {
     while (el && el.firstChild) { el.removeChild(el.firstChild); }
 }
 
-/** @deprecated */
-export function removeElement(parent: HTMLElement, cssSelector: string) {
-    removeFromParent(parent.querySelector(cssSelector));
-}
-
 export function removeFromParent(node: Element | null) {
     if (node && node.parentNode) {
         node.parentNode.removeChild(node);
     }
 }
 
+export function isInDOM(element: HTMLElement): boolean {
+    return !!element.offsetParent;
+}
+
 export function isVisible(element: HTMLElement) {
-    return element.offsetParent !== null;
+    const el = element as any;
+    if (el.checkVisibility) {
+        return el.checkVisibility({ checkVisibilityCSS: true })
+    }
+
+    const isHidden = !isInDOM(element) || window.getComputedStyle(element).visibility !== 'visible';
+    return !isHidden;
 }
 
 /**
@@ -293,45 +298,11 @@ export function loadTemplate(template: string): HTMLElement {
     return tempDiv.firstChild as HTMLElement;
 }
 
-export function appendHtml(eContainer: HTMLElement, htmlTemplate: string) {
-    if (eContainer.lastChild) {
-        // https://developer.mozilla.org/en-US/docs/Web/API/Element/insertAdjacentHTML
-        // we put the items at the start, so new items appear underneath old items,
-        // so when expanding/collapsing groups, the new rows don't go on top of the
-        // rows below that are moving our of the way
-        eContainer.insertAdjacentHTML('afterbegin', htmlTemplate);
-    } else {
-        eContainer.innerHTML = htmlTemplate;
-    }
-}
-
-/** @deprecated */
-export function getElementAttribute(element: any, attributeName: string): string | null {
-    if (element.attributes && element.attributes[attributeName]) {
-        const attribute = element.attributes[attributeName];
-
-        return attribute.value;
-    }
-
-    return null;
-}
-
-export function offsetHeight(element: HTMLElement) {
-    return element && element.clientHeight ? element.clientHeight : 0;
-}
-
-export function offsetWidth(element: HTMLElement) {
-    return element && element.clientWidth ? element.clientWidth : 0;
-}
-
 export function ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore?: HTMLElement | null): void {
     // if already in right order, do nothing
     if (eChildBefore && eChildBefore.nextSibling === eChild) {
         return;
     }
-
-    const focusedEl = document.activeElement as HTMLElement;
-    const eChildHasFocus = eChild.contains(focusedEl);
 
     if (eChildBefore) {
         if (eChildBefore.nextSibling) {
@@ -347,10 +318,6 @@ export function ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eCh
             // insert it at the first location
             eContainer.insertAdjacentElement('afterbegin', eChild);
         }
-    }
-
-    if (eChildHasFocus && focusedEl && browserSupportsPreventScroll()) {
-        focusedEl.focus({ preventScroll: true });
     }
 }
 
@@ -381,15 +348,6 @@ export function insertWithDomOrder(
             // otherwise eContainer is empty, so just append it
             eContainer.appendChild(eToInsert);
         }
-    }
-}
-
-/** @deprecated */
-export function prependDC(parent: HTMLElement, documentFragment: DocumentFragment): void {
-    if (exists(parent.firstChild)) {
-        parent.insertBefore(documentFragment, parent.firstChild);
-    } else {
-        parent.appendChild(documentFragment);
     }
 }
 

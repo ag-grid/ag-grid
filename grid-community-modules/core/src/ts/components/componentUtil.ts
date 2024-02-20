@@ -6,11 +6,13 @@ import { iterateObject } from '../utils/object';
 import { includes } from '../utils/array';
 import { values } from '../utils/generic';
 import { WithoutGridCommon } from '../interfaces/iCommon';
-import { ColDefPropertyChangedEvent } from '../columns/columnModel';
+
 export class ComponentUtil {
 
     // all events
     public static EVENTS: string[] = values<any>(Events);
+
+    public static VUE_OMITTED_PROPERTY = 'AG-VUE-OMITTED-PROPERTY';
 
     // events that are internal to AG Grid and should not be exposed to users via documentation or generated framework components
     /** Exclude the following internal events from code generation to prevent exposing these events via framework components */
@@ -19,6 +21,7 @@ export class ComponentUtil {
         Events.EVENT_CHECKBOX_CHANGED,
         Events.EVENT_HEIGHT_SCALE_CHANGED,
         Events.EVENT_BODY_HEIGHT_CHANGED,
+        Events.EVENT_COLUMN_CONTAINER_WIDTH_CHANGED,
         Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED,
         Events.EVENT_SCROLL_VISIBILITY_CHANGED,
         Events.EVENT_COLUMN_HOVER_CHANGED,
@@ -29,8 +32,6 @@ export class ComponentUtil {
         Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED,
         Events.EVENT_ROW_CONTAINER_HEIGHT_CHANGED,
         Events.EVENT_POPUP_TO_FRONT,
-        Events.EVENT_KEYBOARD_FOCUS,
-        Events.EVENT_MOUSE_FOCUS,
         Events.EVENT_STORE_UPDATED,
         Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START,
         Events.EVENT_COLUMN_PANEL_ITEM_DRAG_END,
@@ -48,7 +49,12 @@ export class ComponentUtil {
         Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED,
         Events.EVENT_DATA_TYPES_INFERRED,
         Events.EVENT_FIELD_VALUE_CHANGED,
-        Events.EVENT_FIELD_PICKER_VALUE_SELECTED
+        Events.EVENT_FIELD_PICKER_VALUE_SELECTED,
+        Events.EVENT_SUPPRESS_COLUMN_MOVE_CHANGED,
+        Events.EVENT_SUPPRESS_MENU_HIDE_CHANGED,
+        Events.EVENT_SUPPRESS_FIELD_DOT_NOTATION,
+        Events.EVENT_ROW_COUNT_READY,
+        Events.EVENT_SIDE_BAR_UPDATED,
     ];
 
     // events that are available for use by users of AG Grid and so should be documented
@@ -59,7 +65,7 @@ export class ComponentUtil {
         if (!eventName || eventName.length < 2) {
             return eventName;
         }
-        return 'on' + eventName[0].toUpperCase() + eventName.substr(1);
+        return 'on' + eventName[0].toUpperCase() + eventName.substring(1);
     }
     // onXXX methods, based on the above events
     public static EVENT_CALLBACKS: string[] = ComponentUtil.EVENTS.map(event => ComponentUtil.getCallbackForEvent(event));
@@ -71,152 +77,66 @@ export class ComponentUtil {
     public static BOOLEAN_PROPERTIES = PropertyKeys.BOOLEAN_PROPERTIES;
     public static FUNCTION_PROPERTIES = PropertyKeys.FUNCTION_PROPERTIES;
     public static ALL_PROPERTIES = PropertyKeys.ALL_PROPERTIES;
-    public static ALL_PROPERTIES_SET = new Set(PropertyKeys.ALL_PROPERTIES);
 
-    private static getCoercionLookup() {
-        let coercionLookup = {} as any;
+    public static ALL_PROPERTIES_AND_CALLBACKS = [...this.ALL_PROPERTIES, ...this.EVENT_CALLBACKS];
+    public static ALL_PROPERTIES_AND_CALLBACKS_SET = new Set(ComponentUtil.ALL_PROPERTIES_AND_CALLBACKS);
 
-        [
-            ...ComponentUtil.ARRAY_PROPERTIES,
-            ...ComponentUtil.OBJECT_PROPERTIES,
-            ...ComponentUtil.STRING_PROPERTIES,
-            ...ComponentUtil.FUNCTION_PROPERTIES,
-            ...ComponentUtil.EVENT_CALLBACKS,
-        ]
-            .forEach((key: keyof GridOptions) => coercionLookup[key] = 'none');
-        ComponentUtil.BOOLEAN_PROPERTIES
-            .forEach(key => coercionLookup[key] = 'boolean');
-        ComponentUtil.NUMBER_PROPERTIES
-            .forEach(key => coercionLookup[key] = 'number');
-        return coercionLookup;
-    }
-    private static coercionLookup: Record<keyof GridOptions, 'number' | 'boolean' | 'none'> = ComponentUtil.getCoercionLookup();
-
-    private static getValue(key: string, rawValue: any) {
-        const coercionStep = ComponentUtil.coercionLookup[key as keyof GridOptions];
-
-        if (coercionStep) {
-            let newValue = rawValue;
-            switch (coercionStep) {
-                case 'number': {
-                    newValue = ComponentUtil.toNumber(rawValue);
-                    break;
-                }
-                case 'boolean': {
-                    newValue = ComponentUtil.toBoolean(rawValue);
-                    break;
-                }
-                case 'none': {
-                    // if groupAggFiltering exists and isn't a function, handle as a boolean.
-                    if (key === 'groupAggFiltering' && typeof rawValue !== 'function') {
-                        newValue = ComponentUtil.toBoolean(rawValue);
-                    }
-                    break;
-                }
-            }
-            return newValue;
-        }
-        return undefined;
-    }
-
-    private static getGridOptionKeys(component: any, isVue: boolean) {
+    private static getGridOptionKeys() {
         // Vue does not have keys in prod so instead need to run through all the 
         // gridOptions checking for presence of a gridOption key.
-        return isVue
-            ? Object.keys(ComponentUtil.coercionLookup)
-            : Object.keys(component);
+        return this.ALL_PROPERTIES_AND_CALLBACKS;
     }
 
-    public static copyAttributesToGridOptions(gridOptions: GridOptions | undefined, component: any, isVue: boolean = false): GridOptions {
+    /** Combines component props / attributes with the provided gridOptions returning a new combined gridOptions object */
+    public static combineAttributesAndGridOptions(gridOptions: GridOptions | undefined, component: any): GridOptions {
 
         // create empty grid options if none were passed
         if (typeof gridOptions !== 'object') {
             gridOptions = {} as GridOptions;
         }
-        // to allow array style lookup in TypeScript, take type away from 'this' and 'gridOptions'
-        const pGridOptions = gridOptions as any;
-        const keys = ComponentUtil.getGridOptionKeys(component, isVue);
+        // shallow copy (so we don't change the provided object)
+        const mergedOptions = {...gridOptions} as any;
+        const keys = ComponentUtil.getGridOptionKeys();
         // Loop through component props, if they are not undefined and a valid gridOption copy to gridOptions
         keys.forEach(key => {
             const value = component[key];
-            if (typeof value !== 'undefined') {
-                const coercedValue = ComponentUtil.getValue(key, value);
-                if (coercedValue !== undefined) {
-                    pGridOptions[key] = coercedValue;
-                }
+            if (typeof value !== 'undefined' && value !== ComponentUtil.VUE_OMITTED_PROPERTY) {
+                mergedOptions[key] = value;
             }
         })
-        return gridOptions;
+        return mergedOptions;
     }
 
-
-
     public static processOnChange(changes: any, api: GridApi): void {
-        if (!changes || Object.keys(changes).length === 0) {
+        if (!changes) {
+            return;
+        }
+        
+        // Only process changes to properties that are part of the gridOptions
+        const gridChanges: any = {};
+        let hasChanges = false;
+        Object.keys(changes)
+            .filter((key) => ComponentUtil.ALL_PROPERTIES_AND_CALLBACKS_SET.has(key))
+            .forEach((key) => {
+                gridChanges[key] = changes[key]
+                hasChanges = true;
+            });
+
+        if (!hasChanges) {
             return;
         }
 
-        const changesToApply = { ...changes };
+        api.__internalUpdateGridOptions(gridChanges);
 
-        // We manually call these updates so that we can provide a different source of gridOptionsChanged
-        // We do not call setProperty as this will be called by the grid api methods
-        if (changesToApply.columnTypes) {
-            api.setColumnTypes(changesToApply.columnTypes.currentValue, "gridOptionsChanged");
-            delete changesToApply.columnTypes;
-        }
-        if (changesToApply.autoGroupColumnDef) {
-            api.setAutoGroupColumnDef(changesToApply.autoGroupColumnDef.currentValue, "gridOptionsChanged");
-            delete changesToApply.autoGroupColumnDef;
-        }
-        if (changesToApply.defaultColDef) {
-            api.setDefaultColDef(changesToApply.defaultColDef.currentValue, "gridOptionsChanged");
-            delete changesToApply.defaultColDef;
-        }
-        if (changesToApply.columnDefs) {
-            api.setColumnDefs(changesToApply.columnDefs.currentValue, "gridOptionsChanged");
-            delete changesToApply.columnDefs;
-        }
-
-        Object.keys(changesToApply).forEach(key => {
-            const gridKey = key as keyof GridOptions;
-
-            const coercedValue = ComponentUtil.getValue(gridKey, changesToApply[gridKey].currentValue);
-            api.__setProperty(gridKey, coercedValue);
-        });
-
-        // copy changes into an event for dispatch
+        // copy gridChanges into an event for dispatch
         const event: WithoutGridCommon<ComponentStateChangedEvent> = {
             type: Events.EVENT_COMPONENT_STATE_CHANGED
         };
 
-        iterateObject(changes, (key: string, value: any) => {
+        iterateObject(gridChanges, (key: string, value: any) => {
             (event as any)[key] = value;
         });
 
         api.dispatchEvent(event);
-    }
-
-    public static toBoolean(value: any): boolean {
-        if (typeof value === 'boolean') {
-            return value;
-        }
-
-        if (typeof value === 'string') {
-            // for boolean, compare to empty String to allow attributes appearing with
-            // no value to be treated as 'true'
-            return value.toUpperCase() === 'TRUE' || value == '';
-        }
-
-        return false;
-    }
-
-    public static toNumber(value: any): number | undefined {
-        if (typeof value === 'number') {
-            return value;
-        }
-
-        if (typeof value === 'string') {
-            return Number(value);
-        }
     }
 }

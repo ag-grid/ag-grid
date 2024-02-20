@@ -23,6 +23,9 @@ let GridLicenseManager = class GridLicenseManager extends BeanStub {
     static setLicenseKey(licenseKey) {
         LicenseManager.setLicenseKey(licenseKey);
     }
+    static setChartsLicenseManager(chartsLicenseManager) {
+        LicenseManager.setChartsLicenseManager(chartsLicenseManager);
+    }
 };
 __decorate([
     PreConstruct

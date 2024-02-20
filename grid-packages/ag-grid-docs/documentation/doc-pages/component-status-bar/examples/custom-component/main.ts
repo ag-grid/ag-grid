@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions, IAggregationStatusPanelParams } from '@ag-grid-community/core';
 import { ClickableStatusBarComponent } from './clickableStatusBarComponent_typescript'
 import { CountStatusBarComponent } from './countStatusBarComponent_typescript'
 
@@ -11,14 +11,14 @@ const columnDefs: ColDef[] = [
   },
 ]
 
+let gridApi: GridApi;
+
 const gridOptions: GridOptions = {
   defaultColDef: {
     editable: true,
-    sortable: true,
     flex: 1,
     minWidth: 100,
     filter: true,
-    resizable: true,
   },
   columnDefs: columnDefs,
   rowData: [
@@ -51,7 +51,7 @@ const gridOptions: GridOptions = {
         statusPanel: 'agAggregationComponent',
         statusPanelParams: {
           aggFuncs: ['count', 'sum'],
-        },
+        } as IAggregationStatusPanelParams,
       },
     ],
   },
@@ -60,6 +60,5 @@ const gridOptions: GridOptions = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
-  gridOptions.api!.sizeColumnsToFit()
+  gridApi = createGrid(gridDiv, gridOptions);
 })

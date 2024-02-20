@@ -77,25 +77,6 @@ export interface CellRangeParams {
     columns?: (string | Column)[];
 }
 
-/** @deprecated */
-// instead of this, we now use CellRange
-export interface RangeSelection {
-    start: CellPosition;
-    end: CellPosition;
-    columns: Column[] | null;
-}
-
-/** @deprecated */
-// instead of this, we now use AddCellRangeParams
-export interface AddRangeSelectionParams {
-    rowStart: number;
-    floatingStart: string;
-    rowEnd: number;
-    floatingEnd: string;
-    columnStart: string | Column;
-    columnEnd: string | Column;
-}
-
 export interface ClearCellRangeParams {
     cellRanges?: CellRange[],
     /** Source passed to `cellValueChanged` event */

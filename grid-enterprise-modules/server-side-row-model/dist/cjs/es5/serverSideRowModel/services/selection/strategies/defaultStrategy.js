@@ -36,10 +36,14 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DefaultStrategy = void 0;
@@ -65,7 +69,7 @@ var DefaultStrategy = /** @class */ (function (_super) {
     DefaultStrategy.prototype.getSelectedState = function () {
         return {
             selectAll: this.selectedState.selectAll,
-            toggledNodes: __spreadArray([], __read(this.selectedState.toggledNodes)),
+            toggledNodes: __spreadArray([], __read(this.selectedState.toggledNodes), false),
         };
     };
     DefaultStrategy.prototype.setSelectedState = function (state) {
@@ -91,7 +95,7 @@ var DefaultStrategy = /** @class */ (function (_super) {
                     newState.toggledNodes.add(key);
                 }
                 else {
-                    console.warn("AG Grid: Provided ids must be of string type. Invalid id provided: " + key);
+                    console.warn("AG Grid: Provided ids must be of string type. Invalid id provided: ".concat(key));
                 }
             });
         }
@@ -239,7 +243,7 @@ var DefaultStrategy = /** @class */ (function (_super) {
         return false;
     };
     __decorate([
-        core_1.Autowired('rowModel')
+        (0, core_1.Autowired)('rowModel')
     ], DefaultStrategy.prototype, "rowModel", void 0);
     __decorate([
         core_1.PostConstruct

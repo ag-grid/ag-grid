@@ -36,6 +36,7 @@ import {
     HeaderGroupComponent,
     InnerRendererComponent,
     LoadingOverlayComponent,
+    MenuItemComponent,
     NoRowsOverlayComponent,
     StatusPanelComponent,
     ToolPanelComponent,
@@ -46,6 +47,7 @@ import { UserComponentRegistry } from "./userComponentRegistry";
 import { FloatingFilterMapper } from '../../filter/floating/floatingFilterMapper';
 import { AgGridCommon, WithoutGridCommon } from "../../interfaces/iCommon";
 import { RichSelectParams } from "../../widgets/agRichSelect";
+import { IMenuItemParams, MenuItemDef } from "../../interfaces/menuItem";
 
 export type DefinitionObject =
     GridOptions
@@ -55,7 +57,8 @@ export type DefinitionObject =
     | SetFilterParams
     | RichSelectParams
     | ToolPanelDef
-    | StatusPanelDef;
+    | StatusPanelDef
+    | MenuItemDef;
 
 export interface UserCompDetails {
     componentClass: any;
@@ -155,6 +158,10 @@ export class UserComponentFactory extends BeanStub {
 
     public getStatusPanelCompDetails(def: StatusPanelDef, params: WithoutGridCommon<IStatusPanelParams>): UserCompDetails {
         return this.getCompDetails(def, StatusPanelComponent, null, params, true)!;
+    }
+
+    public getMenuItemCompDetails(def: MenuItemDef, params: WithoutGridCommon<IMenuItemParams>): UserCompDetails {
+        return this.getCompDetails(def, MenuItemComponent, 'agMenuItem', params, true)!;
     }
 
     private getCompDetails(defObject: DefinitionObject, type: ComponentType, defaultName: string | null | undefined, params: any, mandatory = false): UserCompDetails | undefined {
@@ -307,11 +314,7 @@ export class UserComponentFactory extends BeanStub {
         paramsFromGrid: any,
         paramsFromSelector: any = null
     ): any {
-        const params: AgGridCommon<any, any> = {
-            context: this.gridOptionsService.context,
-            columnApi: this.gridOptionsService.columnApi,
-            api: this.gridOptionsService.api
-        };
+        const params: AgGridCommon<any, any> = this.gridOptionsService.getGridCommonParams();
 
         mergeDeep(params, paramsFromGrid);
 

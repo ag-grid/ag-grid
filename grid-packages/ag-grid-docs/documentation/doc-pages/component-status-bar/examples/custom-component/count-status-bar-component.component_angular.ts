@@ -4,7 +4,7 @@ import { IStatusPanelParams } from "@ag-grid-community/core";
 import { IStatusPanelAngularComp } from "@ag-grid-community/angular";
 
 @Component({
-    selector: 'status-component',
+    standalone: true,
     template: `
         <div class="ag-status-name-value">
             <span>Row Count Component&nbsp;:</span>
@@ -23,6 +23,6 @@ export class CountStatusBarComponent implements IStatusPanelAngularComp {
     }
 
     onGridReady() {
-        this.count = this.params.api.getModel().getRowCount();
+        this.count = this.params.api.getDisplayedRowCount();
     }
 }

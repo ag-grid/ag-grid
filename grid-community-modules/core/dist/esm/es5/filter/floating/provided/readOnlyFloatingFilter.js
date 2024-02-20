@@ -41,11 +41,11 @@ var ReadOnlyFloatingFilter = /** @class */ (function (_super) {
         var translate = this.localeService.getLocaleTextFunc();
         this.eFloatingFilterText
             .setDisabled(true)
-            .setInputAriaLabel(displayName + " " + translate('ariaFilterInput', 'Filter Input'));
+            .setInputAriaLabel("".concat(displayName, " ").concat(translate('ariaFilterInput', 'Filter Input')));
     };
     ReadOnlyFloatingFilter.prototype.onParentModelChanged = function (parentModel) {
         var _this = this;
-        if (!parentModel) {
+        if (parentModel == null) {
             this.eFloatingFilterText.setValue('');
             return;
         }
@@ -61,6 +61,9 @@ var ReadOnlyFloatingFilter = /** @class */ (function (_super) {
         });
     };
     ReadOnlyFloatingFilter.prototype.onParamsUpdated = function (params) {
+        this.refresh(params);
+    };
+    ReadOnlyFloatingFilter.prototype.refresh = function (params) {
         this.init(params);
     };
     __decorate([

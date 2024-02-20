@@ -1,11 +1,11 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgPromise } from '../utils';
 import { RowNode } from '../entities/rowNode';
 import { Column } from '../entities/column';
 import { ColumnEventType, FilterChangedEventSourceType } from '../events';
-import { IFilterComp, IFilter, IFilterParams } from '../interfaces/iFilter';
+import { IFilterComp, IFilter, IFilterParams, FilterModel } from '../interfaces/iFilter';
 import { ColDef } from '../entities/colDef';
 import { UserCompDetails } from '../components/framework/userComponentFactory';
 import { BeanStub } from '../context/beanStub';
@@ -18,30 +18,26 @@ export declare class FilterManager extends BeanStub {
     private userComponentFactory;
     private rowRenderer;
     private dataTypeService;
+    private quickFilterService;
     private advancedFilterService;
-    static QUICK_FILTER_SEPARATOR: string;
     private allColumnFilters;
     private allColumnListeners;
     private activeAggregateFilters;
     private activeColumnFilters;
-    private quickFilter;
-    private quickFilterParts;
     private processingFilterChange;
-    private allowShowChangeAfterFilter;
     private externalFilterPresent;
     private aggFiltering;
     private filterModelUpdateQueue;
+    private columnFilterModelUpdateQueue;
+    private advancedFilterModelUpdateQueue;
+    private initialFilterModel;
     init(): void;
     private isExternalFilterPresentCallback;
     private doesExternalFilterPass;
-    private setQuickFilterParts;
-    setFilterModel(model: {
-        [key: string]: any;
-    }): void;
+    setFilterModel(model: FilterModel | null, source?: FilterChangedEventSourceType): void;
     private setModelOnFilterWrapper;
-    getFilterModel(): {
-        [key: string]: any;
-    };
+    getFilterModel(): FilterModel;
+    private getModelFromFilterWrapper;
     isColumnFilterPresent(): boolean;
     isAggregateFilterPresent(): boolean;
     isExternalFilterPresent(): boolean;
@@ -55,10 +51,7 @@ export declare class FilterManager extends BeanStub {
     private updateFilterFlagInColumns;
     isAnyFilterPresent(): boolean;
     private doColumnFiltersPass;
-    private parseQuickFilter;
-    private setQuickFilter;
     resetQuickFilterCache(): void;
-    private onIncludeHiddenColumnsInQuickFilterChanged;
     private refreshFiltersForAggregations;
     callOnFilterChangedOutsideRenderCycle(params: {
         source?: FilterChangedEventSourceType;
@@ -78,9 +71,6 @@ export declare class FilterManager extends BeanStub {
     isAggregateQuickFilterPresent(): boolean;
     private isNonAggregateQuickFilterPresent;
     doesRowPassOtherFilters(filterToSkip: IFilterComp, node: any): boolean;
-    private doesRowPassQuickFilterNoCache;
-    private doesRowPassQuickFilterCache;
-    private doesRowPassQuickFilter;
     doesRowPassAggregateFilters(params: {
         rowNode: RowNode;
         filterInstanceToSkip?: IFilterComp;
@@ -89,10 +79,9 @@ export declare class FilterManager extends BeanStub {
         rowNode: RowNode;
         filterInstanceToSkip?: IFilterComp;
     }): boolean;
-    private getQuickFilterTextForColumn;
-    private aggregateRowForQuickFilter;
     onNewRowsLoaded(source: ColumnEventType): void;
     private createValueGetter;
+    private createGetValue;
     getFilterComponent(column: Column, source: FilterRequestSource, createIfDoesNotExist?: boolean): AgPromise<IFilterComp> | null;
     isFilterActive(column: Column): boolean;
     getOrCreateFilterWrapper(column: Column, source: FilterRequestSource): FilterWrapper | null;
@@ -108,22 +97,30 @@ export declare class FilterManager extends BeanStub {
     isFilterAllowed(column: Column): boolean;
     getFloatingFilterCompDetails(column: Column, showParentFilter: () => void): UserCompDetails | undefined;
     getCurrentFloatingFilterParentModel(column: Column): any;
-    destroyFilter(column: Column, source?: 'api' | 'columnChanged'): void;
+    destroyFilter(column: Column, source?: 'api' | 'columnChanged' | 'paramsUpdated'): void;
     private disposeColumnListener;
     private disposeFilterWrapper;
+    private filterModifiedCallbackFactory;
+    private filterChangedCallbackFactory;
     private checkDestroyFilter;
+    private setColumnFilterWrapper;
     areFilterCompsDifferent(oldCompDetails: UserCompDetails | null, newCompDetails: UserCompDetails | null): boolean;
     getAdvancedFilterModel(): AdvancedFilterModel | null;
-    setAdvancedFilterModel(expression: AdvancedFilterModel | null): void;
+    setAdvancedFilterModel(expression: AdvancedFilterModel | null | undefined): void;
+    showAdvancedFilterBuilder(source: 'api' | 'ui'): void;
     private updateAdvancedFilterColumns;
     hasFloatingFilters(): boolean;
     getFilterInstance<TFilter extends IFilter>(key: string | Column, callback?: (filter: TFilter | null) => void): TFilter | null | undefined;
+    getColumnFilterInstance<TFilter extends IFilter>(key: string | Column): Promise<TFilter | null | undefined>;
     private getFilterInstanceImpl;
     private warnAdvancedFilters;
     setupAdvancedFilterHeaderComp(eCompToInsertBefore: HTMLElement): void;
     getHeaderRowCount(): number;
     getHeaderHeight(): number;
     private processFilterModelUpdateQueue;
+    getColumnFilterModel(key: string | Column): any;
+    setColumnFilterModel(key: string | Column, model: any): Promise<void>;
+    private getFilterWrapper;
     protected destroy(): void;
 }
 export interface FilterWrapper {

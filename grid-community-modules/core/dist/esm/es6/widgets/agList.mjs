@@ -10,6 +10,7 @@ import { escapeString } from "../utils/string.mjs";
 import { KeyCode } from '../constants/keyCode.mjs';
 import { setAriaPosInSet, setAriaRole, setAriaSelected, setAriaSetSize } from '../utils/aria.mjs';
 import { Events } from "../eventKeys.mjs";
+import { isVisible } from "../utils/dom.mjs";
 export class AgList extends Component {
     constructor(cssIdentifier = 'default') {
         super(/* html */ `<div class="ag-list ag-${cssIdentifier}-list" role="listbox"></div>`);
@@ -125,7 +126,7 @@ export class AgList extends Component {
         this.fireChangeEvent();
     }
     highlightItem(el) {
-        if (!el.offsetParent) {
+        if (!isVisible(el)) {
             return;
         }
         this.clearHighlighted();
@@ -135,7 +136,7 @@ export class AgList extends Component {
         this.highlightedEl.focus();
     }
     clearHighlighted() {
-        if (!this.highlightedEl || !this.highlightedEl.offsetParent) {
+        if (!this.highlightedEl || !isVisible(this.highlightedEl)) {
             return;
         }
         this.highlightedEl.classList.remove(AgList.ACTIVE_CLASS);

@@ -1,18 +1,18 @@
 import classnames from 'classnames';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Alert } from '../components/alert/Alert';
-import ChevronButtonCellRenderer from '../components/grid/ChevronButtonRenderer';
+import { useGlobalContext } from '../components/GlobalContext';
 import DetailCellRenderer from '../components/grid/DetailCellRendererComponent';
 import Grid from '../components/grid/Grid';
-import IssueTypeCellRenderer from '../components/grid/IssueTypeRenderer';
-import PaddingCellRenderer from '../components/grid/PaddingCellRenderer';
 import { Icon } from '../components/Icon';
 import ReleaseVersionNotes from '../components/release-notes/ReleaseVersionNotes.jsx';
 import { hostPrefix } from '../utils/consts';
-import styles from './pipelineChangelog.module.scss';
+import { IssueColDef, IssueTypeColDef } from '../utils/grid/issueColDefs';
+import styles from '@design-system/modules/pipelineChangelog.module.scss';
 
 const IS_SSR = typeof window === 'undefined';
 const ALL_FIX_VERSIONS = 'All Versions';
+
 
 const Changelog = ({ location }) => {
     const extractFixVersionParameter = (location) => {
@@ -32,24 +32,19 @@ const Changelog = ({ location }) => {
     const [currentReleaseNotes, setCurrentReleaseNotes] = useState(null);
     const [markdownContent, setMarkdownContent] = useState(undefined);
     const [fixVersion, setFixVersion] = useState(extractFixVersionParameter(location) || ALL_FIX_VERSIONS);
+    const [hideExpander, setHideExpander] = useState(fixVersion === ALL_FIX_VERSIONS);
     const URLFilterItemKey = useState(extractFilterTerm(location))[0];
     const searchBarEl = useRef(null);
-
-    const components = useMemo(() => {
-        return {
-            myDetailCellRenderer: DetailCellRenderer,
-            paddingCellRenderer: PaddingCellRenderer,
-            chevronButtonCellRenderer: ChevronButtonCellRenderer,
-            issueTypeCellRenderer: IssueTypeCellRenderer,
-        };
-    }, []);
+    const autoSizeStrategy = useMemo(() => ({ type: 'fitGridWidth' }), []);
+    const { darkMode } = useGlobalContext();
 
     const applyFixVersionFilter = useCallback(() => {
         if (gridApi && fixVersion) {
-            const versionsFilterComponent = gridApi.getFilterInstance('versions');
-            const newModel = { values: fixVersion === ALL_FIX_VERSIONS ? versions : [fixVersion], filterType: 'set' };
-            versionsFilterComponent.setModel(newModel);
-            gridApi.onFilterChanged();
+            const newModel = fixVersion === ALL_FIX_VERSIONS ? null : { values: [fixVersion], filterType: 'set' };
+            if (gridApi.getColumnFilterModel('version') === newModel) { return; };
+            gridApi.setColumnFilterModel('version', newModel).then(() => {
+                gridApi.onFilterChanged();
+            });
         }
     }, [gridApi, fixVersion, versions]);
 
@@ -59,6 +54,10 @@ const Changelog = ({ location }) => {
             .then((data) => {
                 const gridVersions = [ALL_FIX_VERSIONS, ...data.map((row) => row.versions[0])];
                 setVersions([...new Set(gridVersions)]);
+                data.forEach((row) => {
+                    // Only one version per row
+                    row.version = row.versions[0];
+                });
                 setRowData(data);
             });
         fetch(`${hostPrefix}/changelog/releaseVersionNotes.json`)
@@ -70,7 +69,7 @@ const Changelog = ({ location }) => {
 
     useEffect(() => {
         applyFixVersionFilter();
-    }, [gridApi, fixVersion, versions, applyFixVersionFilter]);
+    }, [fixVersion]);
 
     useEffect(() => {
         let releaseNotesVersion = fixVersion;
@@ -85,8 +84,10 @@ const Changelog = ({ location }) => {
             );
 
             let currentReleaseNotesHtml = null;
-
+            let newHideExpander = hideExpander;
             if (releaseNotes) {
+                newHideExpander = !releaseNotes['showExpandLink'] && releaseNotes["markdown"];
+            
                 if (releaseNotes['markdown']) {
                     fetch(`${hostPrefix}/changelog` + releaseNotes['markdown'])
                         .then((response) => response.text())
@@ -102,7 +103,11 @@ const Changelog = ({ location }) => {
                         .join(' ');
                     setMarkdownContent(undefined);
                 }
+            } else {
+                newHideExpander = true;
             }
+
+            setHideExpander(newHideExpander);
             setCurrentReleaseNotes(currentReleaseNotesHtml);
         }
     }, [fixVersion, allReleaseNotes]);
@@ -111,15 +116,14 @@ const Changelog = ({ location }) => {
         (params) => {
             setGridApi(params.api);
             searchBarEl.current.value = URLFilterItemKey;
-            params.api.setQuickFilter(URLFilterItemKey);
-            params.api.sizeColumnsToFit();
+            params.api.setGridOption('quickFilterText', URLFilterItemKey);
         },
         [URLFilterItemKey]
     );
 
     const onQuickFilterChange = useCallback(
         (event) => {
-            gridApi.setQuickFilter(event.target.value);
+            gridApi.setGridOption('quickFilterText', event.target.value);
         },
         [gridApi]
     );
@@ -138,14 +142,12 @@ const Changelog = ({ location }) => {
         [setFixVersion]
     );
 
-    const defaultColDef = {
-        sortable: true,
-        resizable: true,
+    const defaultColDef = useMemo(() => ({
         cellClass: styles.fontClass,
         headerClass: styles.fontClass,
         autoHeaderHeight: true,
         wrapHeaderText: true,
-        suppressMenu: true,
+        suppressHeaderMenuButton: true,
         filter: true,
         floatingFilter: true,
         suppressKeyboardEvent: (params) => {
@@ -156,7 +158,7 @@ const Changelog = ({ location }) => {
             return false;
         },
         cellDataType: false,
-    };
+    }), []);
 
     const detailCellRendererParams = useCallback((params) => {
         function produceHTML(fieldName, fieldInfo) {
@@ -192,14 +194,15 @@ const Changelog = ({ location }) => {
                             length = endIndex - beginningIndex;
                         }
 
+                        const httpIdx = element.indexOf('http');
                         const link = length
-                            ? element.substr(element.indexOf('http'), length)
-                            : element.substr(element.indexOf('http'));
+                            ? element.substring(httpIdx, httpIdx + length)
+                            : element.substring(httpIdx);
                         const htmlLink = isEndIndex
                             ? `<a class=${styles.link} href="${link}"
-         target="_blank">${link}</a>${element.substr(endIndex)}`
+         target="_blank">${link}</a>${element.substring(endIndex)}`
                             : `<a class=${styles.link} target="_blank" href="${link}">${link}</a>`;
-                        return element.substr(0, beginningIndex) + htmlLink;
+                        return element.substring(0, beginningIndex) + htmlLink;
                     }
                     return element;
                 });
@@ -221,72 +224,29 @@ const Changelog = ({ location }) => {
 
     const COLUMN_DEFS = useMemo(
         () => [
-            {
-                colId: 'key',
-                field: 'key',
-                headerName: 'Issue',
-                width: 150,
-                resizable: true,
-                cellRendererSelector: (params) => {
-                    if (
-                        params.node.data.moreInformation ||
-                        params.node.data.deprecationNotes ||
-                        params.node.data.breakingChangesNotes
-                    ) {
-                        return {
-                            component: 'chevronButtonCellRenderer',
-                        };
-                    }
-                    return {
-                        component: 'paddingCellRenderer',
-                    };
-                },
-                filter: 'agSetColumnFilter',
-                filterParams: {
-                    comparator: (a, b) => {
-                        const valA = parseInt(a);
-                        const valB = parseInt(b);
-                        if (valA === valB) return 0;
-                        return valA > valB ? -1 : 1;
-                    }
-                }
-            },
+            IssueColDef,
             {
                 field: 'summary',
                 tooltipField: 'summary',
-                resizable: true,
                 width: 300,
                 minWidth: 200,
                 flex: 1,
                 filter: 'agTextColumnFilter'
             },
             {
-                field: 'versions',
+                field: 'version',
                 headerName: 'Version',
-                width: 145,
-                resizable: true,
                 filter: 'agSetColumnFilter',
-                filterParams: {
-                    comparator: (a, b) => {
-                        const valA = parseInt(a);
-                        const valB = parseInt(b);
-                        if (valA === valB) return 0;
-                        return valA > valB ? -1 : 1;
-                    }
-                }
+                width: 145,                
             },
-            {
-                field: 'issueType',
-                valueFormatter: (params) => (params.value === 'Bug' ? 'Defect' : 'Feature Request'),
-                cellRenderer: 'issueTypeCellRenderer',
-                width: 175,
-            },
+            IssueTypeColDef,
             {
                 field: 'status',
                 valueGetter: (params) => {
                     return params.data.resolution;
                 },
                 width: 110,
+                resizable: false
             },
         ],
         []
@@ -311,7 +271,7 @@ const Changelog = ({ location }) => {
                             versions={versions}
                             fixVersion={fixVersion}
                             onChange={switchDisplayedFixVersion}
-                            hideExpander={fixVersion === ALL_FIX_VERSIONS}
+                            hideExpander={hideExpander}
                         />
                     </section>
 
@@ -333,18 +293,19 @@ const Changelog = ({ location }) => {
                         gridHeight={'70.5vh'}
                         columnDefs={COLUMN_DEFS}
                         rowData={rowData}
-                        components={components}
                         defaultColDef={defaultColDef}
                         detailRowAutoHeight={true}
                         enableCellTextSelection={true}
                         detailCellRendererParams={detailCellRendererParams}
-                        detailCellRenderer={'myDetailCellRenderer'}
+                        detailCellRenderer={DetailCellRenderer}
                         isRowMaster={isRowMaster}
                         masterDetail
+                        autoSizeStrategy={autoSizeStrategy}
                         onGridReady={gridReady}
                         onFirstDataRendered={() => {
                             applyFixVersionFilter();
                         }}
+                        theme={!darkMode ? 'ag-theme-quartz' : 'ag-theme-quartz-dark'}
                     ></Grid>
                 </div>
             )}

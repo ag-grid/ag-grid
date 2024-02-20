@@ -1,4 +1,11 @@
-import { CellDoubleClickedEvent, CellKeyDownEvent, ColDef, Grid, GridOptions } from '@ag-grid-community/core';
+import {
+    CellDoubleClickedEvent,
+    CellKeyDownEvent,
+    ColDef,
+    GridApi,
+    createGrid,
+    GridOptions,
+} from '@ag-grid-community/core';
 import { CustomGroupCellRenderer } from './customGroupCellRenderer_typescript';
 
 const columnDefs: ColDef[] = [
@@ -26,18 +33,18 @@ const autoGroupColumnDef: ColDef = {
     cellRenderer: CustomGroupCellRenderer,
 };
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: columnDefs,
     autoGroupColumnDef: autoGroupColumnDef,
     defaultColDef: {
         flex: 1,
         minWidth: 120,
-        resizable: true,
     },
     groupDefaultExpanded: 1,
-    animateRows: true,
     onCellDoubleClicked: (params: CellDoubleClickedEvent<IOlympicData, any>) => {
-        if(params.colDef.showRowGroup) {
+        if (params.colDef.showRowGroup) {
             params.node.setExpanded(!params.node.expanded);
         }
     },
@@ -51,7 +58,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         if (params.event.code !== "Enter") {
             return;
         }
-        if(params.colDef.showRowGroup) {
+        if (params.colDef.showRowGroup) {
             params.node.setExpanded(!params.node.expanded);
         }
     }
@@ -60,9 +67,9 @@ const gridOptions: GridOptions<IOlympicData> = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    new Grid(gridDiv, gridOptions);
+    gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
         .then(response => response.json())
-        .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

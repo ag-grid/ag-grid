@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.exists = exports.mergeDeep = exports.deepMerge = void 0;
+exports.set = exports.get = exports.deepMerge = void 0;
 // deepMerge
 function emptyTarget(value) {
     return Array.isArray(value) ? [] : {};
@@ -102,55 +102,37 @@ function deepMerge(target, source, options) {
 }
 exports.deepMerge = deepMerge;
 // END - deep merge
-function mergeDeep(dest, source, copyUndefined, objectsThatNeedCopy, iteration) {
-    if (copyUndefined === void 0) { copyUndefined = true; }
-    if (objectsThatNeedCopy === void 0) { objectsThatNeedCopy = []; }
-    if (iteration === void 0) { iteration = 0; }
-    if (!exists(source)) {
+function get(source, expression, defaultValue) {
+    if (source == null) {
+        return defaultValue;
+    }
+    var keys = expression.split('.');
+    var objectToRead = source;
+    while (keys.length > 1) {
+        objectToRead = objectToRead[keys.shift()];
+        if (objectToRead == null) {
+            return defaultValue;
+        }
+    }
+    var value = objectToRead[keys[0]];
+    return value != null ? value : defaultValue;
+}
+exports.get = get;
+function set(target, expression, value) {
+    if (target == null) {
         return;
     }
-    iterateObject(source, function (key, sourceValue) {
-        var destValue = dest[key];
-        if (destValue === sourceValue) {
-            return;
+    var keys = expression.split('.');
+    var objectToUpdate = target;
+    // Create empty objects
+    keys.forEach(function (key, i) {
+        if (!objectToUpdate[key]) {
+            objectToUpdate[key] = {};
         }
-        var dontCopyOverSourceObject = iteration == 0 && destValue == null && sourceValue != null && objectsThatNeedCopy.indexOf(key) >= 0;
-        if (dontCopyOverSourceObject) {
-            // by putting an empty value into destValue first, it means we end up copying over values from
-            // the source object, rather than just copying in the source object in it's entirety.
-            destValue = {};
-            dest[key] = destValue;
-        }
-        if (typeof destValue === 'object' && typeof sourceValue === 'object' && !Array.isArray(destValue)) {
-            mergeDeep(destValue, sourceValue, copyUndefined, objectsThatNeedCopy, iteration++);
-        }
-        else if (copyUndefined || sourceValue !== undefined) {
-            dest[key] = sourceValue;
+        if (i < keys.length - 1) {
+            objectToUpdate = objectToUpdate[key];
         }
     });
+    objectToUpdate[keys[keys.length - 1]] = value;
 }
-exports.mergeDeep = mergeDeep;
-function iterateObject(object, callback) {
-    if (object == null) {
-        return;
-    }
-    if (Array.isArray(object)) {
-        forEach(object, function (value, index) { return callback("" + index, value); });
-    }
-    else {
-        forEach(Object.keys(object), function (key) { return callback(key, object[key]); });
-    }
-}
-function exists(value, allowEmptyString) {
-    if (allowEmptyString === void 0) { allowEmptyString = false; }
-    return value != null && (allowEmptyString || value !== '');
-}
-exports.exists = exists;
-function forEach(list, action) {
-    if (list == null) {
-        return;
-    }
-    for (var i = 0; i < list.length; i++) {
-        action(list[i], i);
-    }
-}
+exports.set = set;

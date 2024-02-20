@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from './component';
@@ -43,7 +43,9 @@ export declare class AgGroupComponent extends Component {
     setAlignItems(alignment: AgGroupComponentParams['alignItems']): this;
     toggleGroupExpand(expanded?: boolean): this;
     addItems(items: GroupItem[]): void;
+    prependItem(item: GroupItem): void;
     addItem(item: GroupItem): void;
+    private insertItem;
     hideItem(hide: boolean, index: number): void;
     setTitle(title: string): this;
     addCssClassToTitleBar(cssClass: string): void;

@@ -62,7 +62,7 @@ var LegendPanel = /** @class */ (function (_super) {
         this.legendPositionSelect
             .setLabel(this.chartTranslationService.translate("position"))
             .setLabelWidth("flex")
-            .setInputWidth(80)
+            .setInputWidth('flex')
             .addOptions(positions.map(function (position) { return ({
             value: position,
             text: _this.chartTranslationService.translate(position)
@@ -76,20 +76,21 @@ var LegendPanel = /** @class */ (function (_super) {
         this.legendPaddingSlider
             .setLabel(this.chartTranslationService.translate("spacing"))
             .setMaxValue(getMaxValue(currentValue, 200))
-            .setValue("" + currentValue)
+            .setValue("".concat(currentValue))
             .setTextFieldWidth(45)
             .onValueChange(function (newValue) { return _this.chartOptionsService.setChartOption("legend.spacing", newValue); });
     };
     LegendPanel.prototype.initLegendItems = function () {
         var _this = this;
         var initSlider = function (expression, labelKey, input, defaultMaxValue) {
-            var currentValue = _this.chartOptionsService.getChartOption("legend." + expression);
+            var _a;
+            var currentValue = (_a = _this.chartOptionsService.getChartOption("legend.".concat(expression))) !== null && _a !== void 0 ? _a : 0;
             input.setLabel(_this.chartTranslationService.translate(labelKey))
                 .setMaxValue(getMaxValue(currentValue, defaultMaxValue))
-                .setValue("" + currentValue)
+                .setValue("".concat(currentValue))
                 .setTextFieldWidth(45)
                 .onValueChange(function (newValue) {
-                _this.chartOptionsService.setChartOption("legend." + expression, newValue);
+                _this.chartOptionsService.setChartOption("legend.".concat(expression), newValue);
             });
         };
         initSlider("item.marker.size", "markerSize", this.markerSizeSlider, 40);

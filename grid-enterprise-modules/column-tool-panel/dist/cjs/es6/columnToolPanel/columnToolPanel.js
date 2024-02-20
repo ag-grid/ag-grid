@@ -1,10 +1,4 @@
 "use strict";
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ColumnToolPanel = void 0;
 const core_1 = require("@ag-grid-community/core");
@@ -25,7 +19,7 @@ class ColumnToolPanel extends core_1.Component {
         }
     }
     init(params) {
-        const defaultParams = {
+        const defaultParams = this.gridOptionsService.addGridCommonParams({
             suppressColumnMove: false,
             suppressColumnSelectAll: false,
             suppressColumnFilter: false,
@@ -36,10 +30,8 @@ class ColumnToolPanel extends core_1.Component {
             suppressValues: false,
             suppressPivots: false,
             suppressSyncLayoutWithGrid: false,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-        };
-        this.params = Object.assign(Object.assign(Object.assign({}, defaultParams), params), { context: this.gridOptionsService.context });
+        });
+        this.params = Object.assign(Object.assign({}, defaultParams), params);
         if (this.isRowGroupingModuleLoaded() && !this.params.suppressPivotMode) {
             // DO NOT CHANGE TO createManagedBean
             this.pivotModePanel = this.createBean(new pivotModePanel_1.PivotModePanel());
@@ -189,9 +181,15 @@ class ColumnToolPanel extends core_1.Component {
         this.childDestroyFuncs.length = 0;
         core_1._.clearElement(this.getGui());
     }
-    refresh() {
+    refresh(params) {
         this.destroyChildren();
-        this.init(this.params);
+        this.init(params);
+        return true;
+    }
+    getState() {
+        return {
+            expandedGroupIds: this.primaryColsPanel.getExpandedGroups()
+        };
     }
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so this must be public.
@@ -200,11 +198,5 @@ class ColumnToolPanel extends core_1.Component {
         super.destroy();
     }
 }
-ColumnToolPanel.TEMPLATE = `<div class="ag-column-panel"></div>`;
-__decorate([
-    core_1.Autowired("gridApi")
-], ColumnToolPanel.prototype, "gridApi", void 0);
-__decorate([
-    core_1.Autowired("columnApi")
-], ColumnToolPanel.prototype, "columnApi", void 0);
 exports.ColumnToolPanel = ColumnToolPanel;
+ColumnToolPanel.TEMPLATE = `<div class="ag-column-panel"></div>`;

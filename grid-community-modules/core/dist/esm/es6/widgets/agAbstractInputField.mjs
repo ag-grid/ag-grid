@@ -7,8 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { RefSelector } from './componentAnnotations.mjs';
 import { AgAbstractField } from './agAbstractField.mjs';
 import { setDisabled, setElementWidth, addOrRemoveAttribute } from '../utils/dom.mjs';
-import { setAriaLabelledBy, setAriaLabel } from '../utils/aria.mjs';
-import { exists } from '../utils/generic.mjs';
+import { setAriaLabel } from '../utils/aria.mjs';
 export class AgAbstractInputField extends AgAbstractField {
     constructor(config, className, inputType = 'text', displayFieldTag = 'input') {
         super(config, /* html */ `
@@ -38,15 +37,6 @@ export class AgAbstractInputField extends AgAbstractField {
         }
         this.addInputListeners();
         this.activateTabIndex([this.eInput]);
-    }
-    refreshLabel() {
-        if (exists(this.getLabel())) {
-            setAriaLabelledBy(this.eInput, this.getLabelId());
-        }
-        else {
-            this.eInput.removeAttribute('aria-labelledby');
-        }
-        super.refreshLabel();
     }
     addInputListeners() {
         this.addManagedListener(this.eInput, 'input', e => this.setValue(e.target.value));
@@ -81,6 +71,7 @@ export class AgAbstractInputField extends AgAbstractField {
     }
     setInputAriaLabel(label) {
         setAriaLabel(this.eInput, label);
+        this.refreshAriaLabelledBy();
         return this;
     }
     setDisabled(disabled) {

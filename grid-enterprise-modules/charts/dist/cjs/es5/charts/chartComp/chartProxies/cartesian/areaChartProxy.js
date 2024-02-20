@@ -25,6 +25,22 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AreaChartProxy = void 0;
 var cartesianChartProxy_1 = require("./cartesianChartProxy");
@@ -53,10 +69,11 @@ var AreaChartProxy = /** @class */ (function (_super) {
     };
     AreaChartProxy.prototype.getSeries = function (params) {
         var _this = this;
+        var _a = __read(params.categories, 1), category = _a[0];
         var series = params.fields.map(function (f) { return ({
             type: _this.standaloneChartType,
-            xKey: params.category.id,
-            xName: params.category.name,
+            xKey: category.id,
+            xName: category.name,
             yKey: f.colId,
             yName: f.displayName,
             normalizedTo: _this.chartType === 'normalizedArea' ? 100 : undefined,

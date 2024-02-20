@@ -1,7 +1,7 @@
 import { MiniChartWithAxes } from "../miniChartWithAxes.mjs";
 import { _Scene } from "ag-charts-community";
 export class MiniStackedBar extends MiniChartWithAxes {
-    constructor(container, fills, strokes, data = MiniStackedBar.data, xScaleDomain = [0, 16], tooltipName = "stackedBarTooltip") {
+    constructor(container, fills, strokes, _themeTemplateParameters, _isCustomTheme, data = MiniStackedBar.data, xScaleDomain = [0, 16], tooltipName = "stackedBarTooltip") {
         super(container, tooltipName);
         const size = this.size;
         const padding = this.padding;
@@ -21,7 +21,7 @@ export class MiniStackedBar extends MiniChartWithAxes {
             rect.y = yScale.convert(i);
             rect.width = bottom - xScale.convert(datum);
             rect.height = height;
-            rect.strokeWidth = 1;
+            rect.strokeWidth = 0;
             rect.crisp = true;
             return rect;
         }));

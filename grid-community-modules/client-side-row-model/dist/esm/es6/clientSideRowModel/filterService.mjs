@@ -69,7 +69,7 @@ let FilterService = class FilterService extends BeanStub {
         }
     }
     doingTreeDataFiltering() {
-        return this.gridOptionsService.isTreeData() && !this.gridOptionsService.is('excludeChildrenWhenTreeDataFiltering');
+        return this.gridOptionsService.get('treeData') && !this.gridOptionsService.get('excludeChildrenWhenTreeDataFiltering');
     }
 };
 __decorate([

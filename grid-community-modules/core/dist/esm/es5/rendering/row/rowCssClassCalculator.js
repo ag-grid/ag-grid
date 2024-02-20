@@ -107,15 +107,12 @@ var RowCssClassCalculator = /** @class */ (function () {
         return res;
     };
     RowCssClassCalculator.prototype.processRowClassRules = function (rowNode, onApplicableClass, onNotApplicableClass) {
-        var rowClassParams = {
+        var rowClassParams = this.gridOptionsService.addGridCommonParams({
             data: rowNode.data,
             node: rowNode,
-            rowIndex: rowNode.rowIndex,
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context
-        };
-        this.stylingService.processClassRules(this.gridOptionsService.get('rowClassRules'), rowClassParams, onApplicableClass, onNotApplicableClass);
+            rowIndex: rowNode.rowIndex
+        });
+        this.stylingService.processClassRules(undefined, this.gridOptionsService.get('rowClassRules'), rowClassParams, onApplicableClass, onNotApplicableClass);
     };
     RowCssClassCalculator.prototype.calculateRowLevel = function (rowNode) {
         if (rowNode.group) {

@@ -23,13 +23,13 @@ class AbstractFakeScrollComp extends component_1.Component {
     postConstruct() {
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
         this.onScrollVisibilityChanged();
-        this.addOrRemoveCssClass('ag-apple-scrollbar', browser_1.isMacOsUserAgent() || browser_1.isIOSUserAgent());
+        this.addOrRemoveCssClass('ag-apple-scrollbar', (0, browser_1.isMacOsUserAgent)() || (0, browser_1.isIOSUserAgent)());
     }
     initialiseInvisibleScrollbar() {
         if (this.invisibleScrollbar !== undefined) {
             return;
         }
-        this.invisibleScrollbar = browser_1.isInvisibleScrollbar();
+        this.invisibleScrollbar = (0, browser_1.isInvisibleScrollbar)();
         if (this.invisibleScrollbar) {
             this.hideAndShowInvisibleScrollAsNeeded();
             this.addActiveListenerToggles();
@@ -70,7 +70,7 @@ class AbstractFakeScrollComp extends component_1.Component {
     }
     attemptSettingScrollPosition(value) {
         const viewport = this.getViewport();
-        function_1.waitUntil(() => dom_1.isVisible(viewport), () => this.setScrollPosition(value), 100);
+        (0, function_1.waitUntil)(() => (0, dom_1.isVisible)(viewport), () => this.setScrollPosition(value), 100);
     }
     getViewport() {
         return this.eViewport;
@@ -83,18 +83,18 @@ class AbstractFakeScrollComp extends component_1.Component {
     }
 }
 __decorate([
-    componentAnnotations_1.RefSelector('eViewport')
+    (0, componentAnnotations_1.RefSelector)('eViewport')
 ], AbstractFakeScrollComp.prototype, "eViewport", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eContainer')
+    (0, componentAnnotations_1.RefSelector)('eContainer')
 ], AbstractFakeScrollComp.prototype, "eContainer", void 0);
 __decorate([
-    context_1.Autowired('scrollVisibleService')
+    (0, context_1.Autowired)('scrollVisibleService')
 ], AbstractFakeScrollComp.prototype, "scrollVisibleService", void 0);
 __decorate([
-    context_1.Autowired('ctrlsService')
+    (0, context_1.Autowired)('ctrlsService')
 ], AbstractFakeScrollComp.prototype, "ctrlsService", void 0);
 __decorate([
-    context_1.Autowired('animationFrameService')
+    (0, context_1.Autowired)('animationFrameService')
 ], AbstractFakeScrollComp.prototype, "animationFrameService", void 0);
 exports.AbstractFakeScrollComp = AbstractFakeScrollComp;

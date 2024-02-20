@@ -14,43 +14,49 @@ let FlattenStage = class FlattenStage extends core_1.BeanStub {
         // even if not doing grouping, we do the mapping, as the client might
         // of passed in data that already has a grouping in it somewhere
         const result = [];
-        // putting value into a wrapper so it's passed by reference
-        const nextRowTop = { value: 0 };
         const skipLeafNodes = this.columnModel.isPivotMode();
         // if we are reducing, and not grouping, then we want to show the root node, as that
         // is where the pivot values are
         const showRootNode = skipLeafNodes && rootNode.leafGroup;
         const topList = showRootNode ? [rootNode] : rootNode.childrenAfterSort;
-        this.recursivelyAddToRowsToDisplay(topList, result, nextRowTop, skipLeafNodes, 0);
+        const details = this.getFlattenDetails();
+        this.recursivelyAddToRowsToDisplay(details, topList, result, skipLeafNodes, 0);
         // we do not want the footer total if the gris is empty
         const atLeastOneRowPresent = result.length > 0;
         const includeGroupTotalFooter = !showRootNode
             // don't show total footer when showRootNode is true (i.e. in pivot mode and no groups)
             && atLeastOneRowPresent
-            && this.gridOptionsService.is('groupIncludeTotalFooter');
+            && details.groupIncludeTotalFooter;
         if (includeGroupTotalFooter) {
             rootNode.createFooter();
-            this.addRowNodeToRowsToDisplay(rootNode.sibling, result, nextRowTop, 0);
+            this.addRowNodeToRowsToDisplay(details, rootNode.sibling, result, 0);
         }
         return result;
     }
-    recursivelyAddToRowsToDisplay(rowsToFlatten, result, nextRowTop, skipLeafNodes, uiLevel) {
+    getFlattenDetails() {
+        // these two are mutually exclusive, so if first set, we don't set the second
+        const groupRemoveSingleChildren = this.gridOptionsService.get('groupRemoveSingleChildren');
+        const groupRemoveLowestSingleChildren = !groupRemoveSingleChildren && this.gridOptionsService.get('groupRemoveLowestSingleChildren');
+        return {
+            groupRemoveLowestSingleChildren,
+            groupRemoveSingleChildren,
+            isGroupMultiAutoColumn: this.gridOptionsService.isGroupMultiAutoColumn(),
+            hideOpenParents: this.gridOptionsService.get('groupHideOpenParents'),
+            groupIncludeTotalFooter: this.gridOptionsService.get('groupIncludeTotalFooter'),
+            getGroupIncludeFooter: this.gridOptionsService.getGroupIncludeFooter(),
+        };
+    }
+    recursivelyAddToRowsToDisplay(details, rowsToFlatten, result, skipLeafNodes, uiLevel) {
         if (core_1._.missingOrEmpty(rowsToFlatten)) {
             return;
         }
-        const hideOpenParents = this.gridOptionsService.is('groupHideOpenParents');
-        // these two are mutually exclusive, so if first set, we don't set the second
-        const groupRemoveSingleChildren = this.gridOptionsService.is('groupRemoveSingleChildren');
-        const groupRemoveLowestSingleChildren = !groupRemoveSingleChildren && this.gridOptionsService.is('groupRemoveLowestSingleChildren');
         for (let i = 0; i < rowsToFlatten.length; i++) {
             const rowNode = rowsToFlatten[i];
             // check all these cases, for working out if this row should be included in the final mapped list
             const isParent = rowNode.hasChildren();
             const isSkippedLeafNode = skipLeafNodes && !isParent;
-            const isRemovedSingleChildrenGroup = groupRemoveSingleChildren &&
-                isParent &&
-                rowNode.childrenAfterGroup.length === 1;
-            const isRemovedLowestSingleChildrenGroup = groupRemoveLowestSingleChildren &&
+            const isRemovedSingleChildrenGroup = details.groupRemoveSingleChildren && isParent && rowNode.childrenAfterGroup.length === 1;
+            const isRemovedLowestSingleChildrenGroup = details.groupRemoveLowestSingleChildren &&
                 isParent &&
                 rowNode.leafGroup &&
                 rowNode.childrenAfterGroup.length === 1;
@@ -58,11 +64,11 @@ let FlattenStage = class FlattenStage extends core_1.BeanStub {
             // group is expandable in the first place (as leaf groups are not expandable if pivot mode is on).
             // the UI will never allow expanding leaf  groups, however the user might via the API (or menu option 'expand all row groups')
             const neverAllowToExpand = skipLeafNodes && rowNode.leafGroup;
-            const isHiddenOpenParent = hideOpenParents && rowNode.expanded && !rowNode.master && (!neverAllowToExpand);
+            const isHiddenOpenParent = details.hideOpenParents && rowNode.expanded && !rowNode.master && !neverAllowToExpand;
             const thisRowShouldBeRendered = !isSkippedLeafNode && !isHiddenOpenParent &&
                 !isRemovedSingleChildrenGroup && !isRemovedLowestSingleChildrenGroup;
             if (thisRowShouldBeRendered) {
-                this.addRowNodeToRowsToDisplay(rowNode, result, nextRowTop, uiLevel);
+                this.addRowNodeToRowsToDisplay(details, rowNode, result, uiLevel);
             }
             // if we are pivoting, we never map below the leaf group
             if (skipLeafNodes && rowNode.leafGroup) {
@@ -75,24 +81,30 @@ let FlattenStage = class FlattenStage extends core_1.BeanStub {
                 if (rowNode.expanded || excludedParent) {
                     // if the parent was excluded, then ui level is that of the parent
                     const uiLevelForChildren = excludedParent ? uiLevel : uiLevel + 1;
-                    this.recursivelyAddToRowsToDisplay(rowNode.childrenAfterSort, result, nextRowTop, skipLeafNodes, uiLevelForChildren);
+                    this.recursivelyAddToRowsToDisplay(details, rowNode.childrenAfterSort, result, skipLeafNodes, uiLevelForChildren);
                     // put a footer in if user is looking for it
-                    if (this.gridOptionsService.is('groupIncludeFooter')) {
-                        this.addRowNodeToRowsToDisplay(rowNode.sibling, result, nextRowTop, uiLevelForChildren);
+                    const doesRowShowFooter = details.getGroupIncludeFooter({ node: rowNode });
+                    if (doesRowShowFooter) {
+                        // ensure node is available.
+                        rowNode.createFooter();
+                        this.addRowNodeToRowsToDisplay(details, rowNode.sibling, result, uiLevelForChildren);
+                    }
+                    else {
+                        // remove node if it's unnecessary.
+                        rowNode.destroyFooter();
                     }
                 }
             }
             else if (rowNode.master && rowNode.expanded) {
                 const detailNode = this.createDetailNode(rowNode);
-                this.addRowNodeToRowsToDisplay(detailNode, result, nextRowTop, uiLevel);
+                this.addRowNodeToRowsToDisplay(details, detailNode, result, uiLevel);
             }
         }
     }
     // duplicated method, it's also in floatingRowModel
-    addRowNodeToRowsToDisplay(rowNode, result, nextRowTop, uiLevel) {
-        const isGroupMultiAutoColumn = this.gridOptionsService.isGroupMultiAutoColumn();
+    addRowNodeToRowsToDisplay(details, rowNode, result, uiLevel) {
         result.push(rowNode);
-        rowNode.setUiLevel(isGroupMultiAutoColumn ? 0 : uiLevel);
+        rowNode.setUiLevel(details.isGroupMultiAutoColumn ? 0 : uiLevel);
     }
     createDetailNode(masterNode) {
         if (core_1._.exists(masterNode.detailNode)) {
@@ -112,12 +124,12 @@ let FlattenStage = class FlattenStage extends core_1.BeanStub {
     }
 };
 __decorate([
-    core_1.Autowired('columnModel')
+    (0, core_1.Autowired)('columnModel')
 ], FlattenStage.prototype, "columnModel", void 0);
 __decorate([
-    core_1.Autowired('beans')
+    (0, core_1.Autowired)('beans')
 ], FlattenStage.prototype, "beans", void 0);
 FlattenStage = __decorate([
-    core_1.Bean('flattenStage')
+    (0, core_1.Bean)('flattenStage')
 ], FlattenStage);
 exports.FlattenStage = FlattenStage;

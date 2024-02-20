@@ -1,12 +1,10 @@
-// @ag-grid-community/react v30.1.0
-import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
+// @ag-grid-community/react v31.1.0
+import React, { memo, useCallback, useContext, useRef, useState } from 'react';
 import { BeansContext } from '../beansContext.mjs';
 import { HeaderRowContainerCtrl } from '@ag-grid-community/core';
-import { CssClasses } from '../utils.mjs';
 import HeaderRowComp from './headerRowComp.mjs';
 const HeaderRowContainerComp = (props) => {
-    const [cssClasses, setCssClasses] = useState(() => new CssClasses());
-    const [ariaHidden, setAriaHidden] = useState(false);
+    const [displayed, setDisplayed] = useState(true);
     const [headerRowCtrls, setHeaderRowCtrls] = useState([]);
     const { context } = useContext(BeansContext);
     const eGui = useRef(null);
@@ -23,10 +21,7 @@ const HeaderRowContainerComp = (props) => {
             return;
         }
         const compProxy = {
-            setDisplayed: displayed => {
-                setCssClasses(prev => prev.setClass('ag-hidden', !displayed));
-                setAriaHidden(!displayed);
-            },
+            setDisplayed,
             setCtrls: ctrls => setHeaderRowCtrls(ctrls),
             // centre only
             setCenterWidth: width => {
@@ -51,13 +46,13 @@ const HeaderRowContainerComp = (props) => {
         headerRowCtrlRef.current = context.createBean(new HeaderRowContainerCtrl(props.pinned));
         headerRowCtrlRef.current.setComp(compProxy, eGui.current);
     }, []);
-    const className = useMemo(() => cssClasses.toString(), [cssClasses]);
+    const className = !displayed ? 'ag-hidden' : '';
     const insertRowsJsx = () => headerRowCtrls.map(ctrl => React.createElement(HeaderRowComp, { ctrl: ctrl, key: ctrl.getInstanceId() }));
     return (React.createElement(React.Fragment, null,
         pinnedLeft &&
-            React.createElement("div", { ref: setRef, className: "ag-pinned-left-header " + className, "aria-hidden": ariaHidden, role: "presentation" }, insertRowsJsx()),
+            React.createElement("div", { ref: setRef, className: "ag-pinned-left-header " + className, "aria-hidden": !displayed, role: "rowgroup" }, insertRowsJsx()),
         pinnedRight &&
-            React.createElement("div", { ref: setRef, className: "ag-pinned-right-header " + className, "aria-hidden": ariaHidden, role: "presentation" }, insertRowsJsx()),
+            React.createElement("div", { ref: setRef, className: "ag-pinned-right-header " + className, "aria-hidden": !displayed, role: "rowgroup" }, insertRowsJsx()),
         centre &&
             React.createElement("div", { ref: setRef, className: "ag-header-viewport " + className, role: "presentation" },
                 React.createElement("div", { ref: eCenterContainer, className: "ag-header-container", role: "rowgroup" }, insertRowsJsx()))));

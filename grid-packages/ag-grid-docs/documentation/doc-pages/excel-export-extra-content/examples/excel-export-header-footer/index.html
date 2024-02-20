@@ -1,16 +1,16 @@
 <div class="container">
     <div class="columns">
-        <div class="column">
-            <span>Header</span>
-            <label>
+        <fieldset class="column">
+            <legend>Header</legend>
+            <div class="row">
                 Position
                 <select id="headerPosition">
                     <option>Left</option>
                     <option>Center</option>
                     <option>Right</option>
                 </select>
-            </label>
-            <label>
+            </div>
+            <div class="row">
                 Font
                 <select id="headerFontName">
                     <option>Calibri</option>
@@ -31,25 +31,24 @@
                     <option>Bold Italic</option>
                 </select>
                 <label class="option underline" for="headerUnderline">
-                    <input type="checkbox" id="headerUnderline">
-                    <button style="text-decoration: underline;">U</button>
+                    <input type="checkbox" id="headerUnderline"><u>U</u>
                 </label>
-            </label>
-            <label class="option" for="headerValue">Value
+            </div>
+            <div class="row option">Value
                 <input id="headerValue" />
-            </label>
-        </div>
-        <div class="column">
-            <span>Footer</span>
-            <label>
+            </div>
+        </fieldset>
+        <fieldset class="column">
+            <legend>Footer</legend>
+            <div class="row">
                 Position
                 <select id="footerPosition">
                     <option>Left</option>
                     <option>Center</option>
                     <option>Right</option>
                 </select>
-            </label>
-            <label>
+            </div>
+            <div class="row">
                 Font
                 <select id="footerFontName">
                     <option>Calibri</option>
@@ -70,19 +69,18 @@
                     <option>Bold Italic</option>
                 </select>
                 <label class="option underline" for="footerUnderline">
-                    <input type="checkbox" id="footerUnderline">
-                    <button style="text-decoration: underline;">U</button>
+                    <input type="checkbox" id="footerUnderline"><u>U</u>
                 </label>
-            </label>
-            <label class="option" for="footerValue">Value
+            </div>
+            <div class="row">Value
                 <input id="footerValue" />
-            </label>
-        </div>
+            </div>
+        </fieldset>
     </div>
     <div>
         <button onclick="onBtExport()" style="margin: 5px 0px; font-weight: bold;">Export to Excel</button>
     </div>
     <div class="grid-wrapper">
-        <div id="myGrid" class="ag-theme-alpine"></div>
+        <div id="myGrid" class="ag-theme-quartz"></div>
     </div>
 </div>

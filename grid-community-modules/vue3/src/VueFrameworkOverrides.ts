@@ -5,7 +5,7 @@ export class VueFrameworkOverrides extends VanillaFrameworkOverrides {
     private readonly parent: any;
 
     constructor(parent: any) {
-        super();
+        super('vue');
 
         this.parent = parent;
     }

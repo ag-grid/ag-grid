@@ -34,7 +34,7 @@ Note the following:
 
 [Grouped columns](../column-groups/) can be exported to Excel as grouped columns. However, there are a few points to keep in mind to configure this correctly: 
 
-1. By default only visible columns are exported. Collapsed columns are hidden and as such aren’t exported to Excel. In order to export collapsed columns, set `allColumns: true` in the [ExcelExportParams](../excel-export-api/#excelexportparams) provided to the grid. However, this will also export all hidden columns in the grid. If you want to export collapsed columns but not all hidden columns, you can set the list of columns to be exported via the [columnKeys](../excel-export-api/#reference-excelExportParams-columnKeys) property.
+1. By default only visible columns are exported. Collapsed columns are hidden and as such aren’t exported to Excel. In order to export collapsed columns, set `allColumns: true` in the [ExcelExportParams](../excel-export-api/#excelexportparams) provided to the grid. However, this will also export all hidden columns in the grid. If you want to export collapsed columns but not all hidden columns, you can set the list of columns to be exported via the [columnKeys](../excel-export-api/#reference-ExcelExportParams-columnKeys) property.
 
 1. Excel doesn't have a `columnGroupShow: 'closed'` equivalent, so this option will not work the same when collapsing columns in Excel.
 

@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, RowClassParams, RowStyle } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions, RowClassParams, RowStyle } from '@ag-grid-community/core';
 import { CustomPinnedRowRenderer } from "./customPinnedRowRenderer_typescript";
 
 const columnDefs: ColDef[] = [
@@ -9,7 +9,7 @@ const columnDefs: ColDef[] = [
         return {
           component: CustomPinnedRowRenderer,
           params: {
-            style: { color: 'blue' },
+            style: { color: '#5577CC' },
           },
         }
       } else {
@@ -40,12 +40,13 @@ const columnDefs: ColDef[] = [
   { field: 'sport' },
 ]
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     width: 200,
-    sortable: true,
     filter: true,
-    resizable: true,
+    cellDataType: false,
   },
   columnDefs: columnDefs,
   rowData: null,
@@ -63,14 +64,14 @@ function onPinnedRowTopCount() {
   var headerRowsToFloat = (document.getElementById('top-row-count') as any).value
   var count = Number(headerRowsToFloat)
   var rows = createData(count, 'Top')
-  gridOptions.api!.setPinnedTopRowData(rows)
+  gridApi!.setGridOption('pinnedTopRowData', rows)
 }
 
 function onPinnedRowBottomCount() {
   var footerRowsToFloat = (document.getElementById('bottom-row-count') as any).value
   var count = Number(footerRowsToFloat)
   var rows = createData(count, 'Bottom')
-  gridOptions.api!.setPinnedBottomRowData(rows)
+  gridApi!.setGridOption('pinnedBottomRowData', rows)
 }
 
 function createData(count: number, prefix: string): any[] {
@@ -91,9 +92,9 @@ function createData(count: number, prefix: string): any[] {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

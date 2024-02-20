@@ -23,7 +23,7 @@ class MiniScatter extends miniChartWithAxes_1.MiniChartWithAxes {
         data.forEach(series => {
             series.forEach(([x, y]) => {
                 const arc = new ag_charts_community_1._Scene.Arc();
-                arc.strokeWidth = 1;
+                arc.strokeWidth = 0;
                 arc.centerX = xScale.convert(x);
                 arc.centerY = yScale.convert(y);
                 arc.radius = 2.5;

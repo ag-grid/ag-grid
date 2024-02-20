@@ -1,12 +1,9 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-export interface IServerSideSelectionState {
-    selectAll: boolean;
-    toggledNodes: string[];
+import { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from "./selectionState";
+export interface IServerSideSelectionState extends ServerSideRowSelectionState {
 }
-export interface IServerSideGroupSelectionState {
-    nodeId?: string;
-    selectAllChildren?: boolean;
+export interface IServerSideGroupSelectionState extends ServerSideRowGroupSelectionState {
     toggledNodes?: IServerSideGroupSelectionState[];
 }

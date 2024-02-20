@@ -30,9 +30,9 @@ export function useIntersectionObserver({
         observer.observe(elementRef.current);
 
         return () => {
-            if(elementRef.current) {
+            if (elementRef.current) {
                 observer.unobserve(elementRef.current);
             }
         };
-    }, [elementRef.current]);
+    }, [elementRef.current, isDisabled]);
 }

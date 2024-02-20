@@ -6,7 +6,7 @@ import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
@@ -35,8 +35,6 @@ const GridExample = () => {
         return {
             flex: 1,
             minWidth: 100,
-            sortable: true,
-            resizable: true,
         };
     }, []);
 
@@ -50,13 +48,12 @@ const GridExample = () => {
 
     return (
         <div style={containerStyle}>
-            <div style={gridStyle} className="ag-theme-alpine">
+            <div style={gridStyle} className={/** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
                 <AgGridReact
                     rowData={rowData}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
                     groupDisplayType={'groupRows'}
-                    animateRows={true}
                     onGridReady={onGridReady}
                 />
             </div>

@@ -1,7 +1,7 @@
 import { MiniChartWithAxes } from "../miniChartWithAxes.mjs";
 import { _Scene } from "ag-charts-community";
 export class MiniArea extends MiniChartWithAxes {
-    constructor(container, fills, strokes, data = MiniArea.data) {
+    constructor(container, fills, strokes, _themeTemplateParameters, _isCustomTheme, data = MiniArea.data) {
         super(container, "groupedAreaTooltip");
         const size = this.size;
         const padding = this.padding;
@@ -35,6 +35,7 @@ export class MiniArea extends MiniChartWithAxes {
         this.areas = pathData.reverse().map(points => {
             const area = new _Scene.Path();
             area.strokeWidth = 1;
+            area.strokeOpacity = 0.75;
             area.fillOpacity = 0.7;
             const path = area.path;
             path.clear();

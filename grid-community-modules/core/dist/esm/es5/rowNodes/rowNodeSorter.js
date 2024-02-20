@@ -30,7 +30,7 @@ var RowNodeSorter = /** @class */ (function (_super) {
     }
     RowNodeSorter.prototype.init = function () {
         var _this = this;
-        this.isAccentedSort = this.gridOptionsService.is('accentedSort');
+        this.isAccentedSort = this.gridOptionsService.get('accentedSort');
         this.primaryColumnsSortGroups = this.gridOptionsService.isColumnsSortingCoupledToGroup();
         this.addManagedPropertyListener('accentedSort', function (propChange) { return _this.isAccentedSort = propChange.currentValue; });
         this.addManagedPropertyListener('autoGroupColumnDef', function () { return _this.primaryColumnsSortGroups = _this.gridOptionsService.isColumnsSortingCoupledToGroup(); });
@@ -99,15 +99,9 @@ var RowNodeSorter = /** @class */ (function (_super) {
         var isNodeGroupedAtLevel = node.rowGroupColumn === column;
         if (isNodeGroupedAtLevel) {
             var isGroupRows = this.gridOptionsService.isGroupUseEntireRow(this.columnModel.isPivotActive());
+            // because they're group rows, no display cols exist, so groupData never populated.
+            // instead delegate to getting value from leaf child.
             if (isGroupRows) {
-                // if the column has a provided a keyCreator, we have to use the key, as the group could be
-                // irrelevant to the column value
-                var keyCreator = column.getColDef().keyCreator;
-                if (keyCreator) {
-                    return node.key;
-                }
-                // if the group was generated from the column data, all the leaf children should return the same
-                // value
                 var leafChild = (_a = node.allLeafChildren) === null || _a === void 0 ? void 0 : _a[0];
                 if (leafChild) {
                     return this.valueService.getValue(column, leafChild, false, false);

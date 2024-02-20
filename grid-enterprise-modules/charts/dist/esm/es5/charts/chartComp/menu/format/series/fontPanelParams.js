@@ -1,7 +1,7 @@
 export function initFontPanelParams(_a) {
     var labelName = _a.labelName, chartOptionsService = _a.chartOptionsService, getSelectedSeries = _a.getSelectedSeries, seriesOptionLabelProperty = _a.seriesOptionLabelProperty;
     var getFontOptionExpression = function (fontOption) {
-        return seriesOptionLabelProperty + "." + fontOption;
+        return "".concat(seriesOptionLabelProperty, ".").concat(fontOption);
     };
     var getFontOption = function (fontOption) {
         var expression = getFontOptionExpression(fontOption);

@@ -22,9 +22,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { _, Autowired, Column, Component, Events, KeyCode, PostConstruct, RefSelector } from "@ag-grid-community/core";
 var ToolPanelFilterComp = /** @class */ (function (_super) {
     __extends(ToolPanelFilterComp, _super);
-    function ToolPanelFilterComp(hideHeader) {
-        if (hideHeader === void 0) { hideHeader = false; }
+    function ToolPanelFilterComp(hideHeader, expandedCallback) {
         var _this = _super.call(this, ToolPanelFilterComp.TEMPLATE) || this;
+        _this.expandedCallback = expandedCallback;
         _this.expanded = false;
         _this.hideHeader = hideHeader;
         return _this;
@@ -85,12 +85,12 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
     };
     ToolPanelFilterComp.prototype.onFilterDestroyed = function (event) {
         if (this.expanded &&
-            event.source === 'api' &&
+            (event.source === 'api' || event.source === 'paramsUpdated') &&
             event.column.getId() === this.column.getId() &&
             this.columnModel.getPrimaryColumn(this.column)) {
-            // filter was visible and has been destroyed by the API. If the column still exists, need to recreate UI component
+            // filter was visible and has been destroyed by the API or params changing. If the column still exists, need to recreate UI component
             this.removeFilterElement();
-            this.addFilterElement();
+            this.addFilterElement(true);
         }
     };
     ToolPanelFilterComp.prototype.toggleExpanded = function () {
@@ -105,8 +105,9 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
         _.setDisplayed(this.eExpandChecked, true);
         _.setDisplayed(this.eExpandUnchecked, false);
         this.addFilterElement();
+        this.expandedCallback();
     };
-    ToolPanelFilterComp.prototype.addFilterElement = function () {
+    ToolPanelFilterComp.prototype.addFilterElement = function (suppressFocus) {
         var _this = this;
         var filterPanelWrapper = _.loadTemplate(/* html */ "<div class=\"ag-filter-toolpanel-instance-filter\"></div>");
         var filterWrapper = this.filterManager.getOrCreateFilterWrapper(this.column, 'TOOLBAR');
@@ -125,7 +126,7 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
                 }
                 _this.agFilterToolPanelBody.appendChild(filterPanelWrapper);
                 if (filter.afterGuiAttached) {
-                    filter.afterGuiAttached({ container: 'toolPanel' });
+                    filter.afterGuiAttached({ container: 'toolPanel', suppressFocus: suppressFocus });
                 }
             });
         });
@@ -141,6 +142,7 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
         _.setDisplayed(this.eExpandChecked, false);
         _.setDisplayed(this.eExpandUnchecked, true);
         (_b = (_a = this.underlyingFilter) === null || _a === void 0 ? void 0 : _a.afterGuiDetached) === null || _b === void 0 ? void 0 : _b.call(_a);
+        this.expandedCallback();
     };
     ToolPanelFilterComp.prototype.removeFilterElement = function () {
         _.clearElement(this.agFilterToolPanelBody);

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "../context/beanStub";
@@ -8,6 +8,7 @@ import { GridApi } from "../gridApi";
 import { RowDropZoneParams } from "../gridBodyComp/rowDragFeature";
 import { IRowNode } from "../interfaces/iRowNode";
 import { IAggFunc } from "../entities/colDef";
+import { HorizontalDirection, VerticalDirection } from "../constants/direction";
 export interface DragItem {
     /**
      * When dragging a row, this contains the row node being dragged
@@ -35,7 +36,8 @@ export declare enum DragSourceType {
     ToolPanel = 0,
     HeaderCell = 1,
     RowDrag = 2,
-    ChartPanel = 3
+    ChartPanel = 3,
+    AdvancedFilterBuilder = 4
 }
 export interface DragSource {
     /**
@@ -58,12 +60,7 @@ export interface DragSource {
     /**
      * Icon to show when not over a drop zone
      */
-    defaultIconName?: string;
-    /**
-     * The drop target associated with this dragSource. When dragging starts, this
-     * target does not get an onDragEnter event.
-     */
-    dragSourceDropTarget?: DropTarget;
+    getDefaultIconName?: () => string;
     /**
      * The drag source DOM Data Key, this is useful to detect if the origin grid is the same
      * as the target grid.
@@ -102,7 +99,7 @@ export interface DropTarget {
     /**
      * If `true`, the DragSources will only be allowed to be dragged within the DragTarget that contains them.
      * This is useful for changing order of items within a container, and not moving items across containers.
-     * Default: `false`
+     * @default false
      */
     targetContainsSource?: boolean;
     /** Callback for when drag enters */
@@ -115,14 +112,6 @@ export interface DropTarget {
     onDragStop?(params: DraggingEvent): void;
     external?: boolean;
 }
-export declare enum VerticalDirection {
-    Up = 0,
-    Down = 1
-}
-export declare enum HorizontalDirection {
-    Left = 0,
-    Right = 1
-}
 export interface DraggingEvent {
     event: MouseEvent;
     x: number;
@@ -133,6 +122,7 @@ export interface DraggingEvent {
     dragItem: DragItem;
     fromNudge: boolean;
     api: GridApi;
+    /** @deprecated v31 ColumnApi has been deprecated and all methods moved to the api. */
     columnApi: ColumnApi;
     dropZoneTarget: HTMLElement;
 }

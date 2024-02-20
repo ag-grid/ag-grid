@@ -1,7 +1,8 @@
 import { _ } from '@ag-grid-community/core';
 import { _Theme, } from 'ag-charts-community';
 import { ALL_AXIS_TYPES } from '../utils/axisTypeMapper.mjs';
-import { getSeriesType } from '../utils/seriesTypeMapper.mjs';
+import { getSeriesType, isPieChartSeries } from '../utils/seriesTypeMapper.mjs';
+import { get } from '../utils/object.mjs';
 export function createAgChartTheme(chartProxyParams, proxy) {
     var _a;
     const { chartOptionsToRestore, chartPaletteToRestore, chartThemeToRestore } = chartProxyParams;
@@ -13,7 +14,7 @@ export function createAgChartTheme(chartProxyParams, proxy) {
     const gridOptionsThemeOverrides = chartProxyParams.getGridOptionsChartThemeOverrides();
     const apiThemeOverrides = chartProxyParams.apiChartThemeOverrides;
     const standaloneChartType = getSeriesType(chartProxyParams.chartType);
-    const crossFilterThemeOverridePoint = standaloneChartType === 'pie' ? 'polar' : 'cartesian';
+    const crossFilterThemeOverridePoint = isPieChartSeries(standaloneChartType) ? standaloneChartType : 'cartesian';
     const crossFilteringOverrides = chartProxyParams.crossFiltering
         ? createCrossFilterThemeOverrides(proxy, chartProxyParams, crossFilterThemeOverridePoint)
         : undefined;
@@ -23,7 +24,7 @@ export function createAgChartTheme(chartProxyParams, proxy) {
             if (!obj) {
                 return false;
             }
-            return Object.keys(obj).some(key => _.get(obj[key], 'title.enabled', false));
+            return Object.keys(obj).some(key => get(obj[key], 'title.enabled', false));
         };
         return isTitleEnabled(gridOptionsThemeOverrides) || isTitleEnabled(apiThemeOverrides);
     };
@@ -55,6 +56,16 @@ export function createAgChartTheme(chartProxyParams, proxy) {
     }
     return theme;
 }
+export function applyThemeOverrides(baseTheme, overrides) {
+    return overrides.reduce((baseTheme, overrides) => {
+        if (!overrides)
+            return baseTheme;
+        return {
+            baseTheme: baseTheme,
+            overrides,
+        };
+    }, baseTheme);
+}
 function isIdenticalPalette(paletteA, paletteB) {
     const arrayCompare = (arrA, arrB) => {
         if (arrA.length !== arrB.length)
@@ -80,19 +91,6 @@ function createCrossFilterThemeOverrides(proxy, chartProxyParams, overrideType) 
         },
     };
     const series = {};
-    if (overrideType === 'polar') {
-        series.pie = {
-            tooltip: {
-                renderer: ({ angleName, datum, calloutLabelKey, radiusKey, angleValue, }) => {
-                    const title = angleName;
-                    const label = datum[calloutLabelKey];
-                    const ratio = datum[radiusKey];
-                    const totalValue = angleValue;
-                    return { title, content: `${label}: ${totalValue * ratio}` };
-                },
-            },
-        };
-    }
     return {
         [overrideType]: {
             tooltip: {
@@ -111,6 +109,9 @@ function inbuiltStockThemeOverrides(params, titleEnabled) {
     const extraPadding = params.getExtraPaddingDirections();
     return {
         common: {
+            animation: {
+                duration: 500,
+            },
             axes: STATIC_INBUILT_STOCK_THEME_AXES_OVERRIDES,
             padding: {
                 // don't add extra padding when a title is present!
@@ -121,6 +122,16 @@ function inbuiltStockThemeOverrides(params, titleEnabled) {
             },
         },
         pie: {
+            series: {
+                title: { _enabledFromTheme: true },
+                calloutLabel: { _enabledFromTheme: true },
+                sectorLabel: {
+                    enabled: false,
+                    _enabledFromTheme: true,
+                },
+            },
+        },
+        donut: {
             series: {
                 title: { _enabledFromTheme: true },
                 calloutLabel: { _enabledFromTheme: true },

@@ -1,4 +1,12 @@
-import { Grid, GridOptions, IServerSideDatasource, IServerSideGetRowsRequest } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  GridOptions,
+  IServerSideDatasource,
+  IServerSideGetRowsRequest,
+} from '@ag-grid-community/core';
+
+let gridApi: GridApi<IOlympicDataWithId>;
 
 const gridOptions: GridOptions<IOlympicDataWithId> = {
   columnDefs: [
@@ -15,7 +23,7 @@ const gridOptions: GridOptions<IOlympicDataWithId> = {
   defaultColDef: {
     flex: 1,
     minWidth: 100,
-    resizable: true,
+    sortable: false,
   },
 
   // to help with this example, no row buffer, so no rows drawn off screen
@@ -24,17 +32,17 @@ const gridOptions: GridOptions<IOlympicDataWithId> = {
   // use the server-side row model
   rowModelType: 'serverSide',
 
-  // fetch 10 rows at a time (default is 100)
+  // fetch 50 rows at a time (default is 100)
   cacheBlockSize: 50,
 
-  // only keep 4 blocks of rows (default is keep all rows)
+  // only keep 2 blocks of rows (default is keep all rows)
   maxBlocksInCache: 2,
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
@@ -52,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var datasource = createServerSideDatasource(fakeServer)
 
       // register the datasource with the grid
-      gridOptions.api!.setServerSideDatasource(datasource)
+      gridApi!.setGridOption('serverSideDatasource', datasource)
     })
 })
 
@@ -65,7 +73,7 @@ function createServerSideDatasource(server: any): IServerSideDatasource {
       var response = server.getData(params.request)
 
       // simulating real server call with a 500ms delay
-      setTimeout(function () {
+      setTimeout(() => {
         if (response.success) {
           // supply rows for requested block to grid
           params.success({ rowData: response.rows, rowCount: response.lastRow })

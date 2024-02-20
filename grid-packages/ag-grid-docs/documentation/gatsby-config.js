@@ -7,10 +7,8 @@ require("dotenv").config()
 
 const isDevelopment = require("./src/utils/is-development")
 
-const agGridVersion = require("../../../grid-community-modules/core/package.json")
-  .version
-const agChartsVersion = require("../../../charts-community-modules/ag-charts-community/package.json")
-  .version
+const agGridVersion = require("../../../grid-community-modules/core/package.json").version
+const agChartsVersion = require("../node_modules/ag-charts-community/package.json").version
 
 // We use graceful-fs to stop issues with running out of file handles, particularly on Windows
 const fs = require("fs")
@@ -193,6 +191,16 @@ const plugins = [
       },
     },
   },
+  {
+    // Alias imports e.g. `import { Component } from "@components/Component";`
+    resolve: `gatsby-alias-imports`,
+    options: {
+      aliases: {
+        "@components": "src/components/",
+        "@design-system": "src/design-system/",
+      }
+    }
+  }
 ]
 
 module.exports = {

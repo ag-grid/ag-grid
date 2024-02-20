@@ -1,8 +1,7 @@
-import { AgEvent } from "./events";
+import { AgEvent, AgEventListener, AgGlobalEventListener } from "./events";
 import { GridOptionsService } from "./gridOptionsService";
 import { IEventEmitter } from "./interfaces/iEventEmitter";
 import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
-import { LoggerFactory } from "./logger";
 export declare class EventService implements IEventEmitter {
     private allSyncListeners;
     private allAsyncListeners;
@@ -13,13 +12,14 @@ export declare class EventService implements IEventEmitter {
     private asyncFunctionsQueue;
     private scheduled;
     private firedEvents;
-    setBeans(loggerFactory: LoggerFactory, gridOptionsService: GridOptionsService, frameworkOverrides: IFrameworkOverrides, globalEventListener?: Function | null): void;
+    setBeans(gridOptionsService: GridOptionsService, frameworkOverrides: IFrameworkOverrides, globalEventListener?: AgGlobalEventListener | null, globalSyncEventListener?: AgGlobalEventListener | null): void;
+    setFrameworkOverrides(frameworkOverrides: IFrameworkOverrides): void;
     private getListeners;
     noRegisteredListenersExist(): boolean;
-    addEventListener(eventType: string, listener: Function, async?: boolean): void;
-    removeEventListener(eventType: string, listener: Function, async?: boolean): void;
-    addGlobalListener(listener: Function, async?: boolean): void;
-    removeGlobalListener(listener: Function, async?: boolean): void;
+    addEventListener(eventType: string, listener: AgEventListener, async?: boolean): void;
+    removeEventListener(eventType: string, listener: AgEventListener, async?: boolean): void;
+    addGlobalListener(listener: AgGlobalEventListener, async?: boolean): void;
+    removeGlobalListener(listener: AgGlobalEventListener, async?: boolean): void;
     dispatchEvent(event: AgEvent): void;
     dispatchEventOnce(event: AgEvent): void;
     private dispatchToListeners;

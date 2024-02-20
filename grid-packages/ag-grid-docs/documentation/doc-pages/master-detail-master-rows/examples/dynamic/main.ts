@@ -1,4 +1,12 @@
-import { Grid, FirstDataRenderedEvent, GridOptions, IDetailCellRendererParams } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  FirstDataRenderedEvent,
+  GridOptions,
+  IDetailCellRendererParams,
+} from '@ag-grid-community/core';
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   masterDetail: true,
@@ -38,7 +46,7 @@ const gridOptions: GridOptions = {
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
   // arbitrarily expand a row for presentational purposes
-  setTimeout(function () {
+  setTimeout(() => {
     params.api.getDisplayedRowAtIndex(1)!.setExpanded(true)
   }, 0)
 }
@@ -46,13 +54,13 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch(
     'https://www.ag-grid.com/example-assets/master-detail-dynamic-data.json'
   )
     .then(response => response.json())
     .then(function (data) {
-      gridOptions.api!.setRowData(data)
+      gridApi!.setGridOption('rowData', data)
     })
 })

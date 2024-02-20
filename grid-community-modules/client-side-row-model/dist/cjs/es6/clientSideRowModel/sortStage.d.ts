@@ -1,7 +1,6 @@
-import { StageExecuteParams, BeanStub } from "@ag-grid-community/core";
-export declare class SortStage extends BeanStub {
+import { StageExecuteParams, BeanStub, IRowNodeStage } from "@ag-grid-community/core";
+export declare class SortStage extends BeanStub implements IRowNodeStage {
     private sortService;
     private sortController;
-    private columnModel;
     execute(params: StageExecuteParams): void;
 }

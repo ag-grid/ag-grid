@@ -47,16 +47,21 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChartService = void 0;
 var core_1 = require("@ag-grid-community/core");
 var ag_charts_community_1 = require("ag-charts-community");
 var gridChartComp_1 = require("./chartComp/gridChartComp");
+var seriesTypeMapper_1 = require("./chartComp/utils/seriesTypeMapper");
 var chartModelMigration_1 = require("./chartModelMigration");
 var version_1 = require("../version");
 var ChartService = /** @class */ (function (_super) {
@@ -71,16 +76,22 @@ var ChartService = /** @class */ (function (_super) {
         _this.crossFilteringContext = {
             lastSelectedChartId: '',
         };
+        _this.isEnterprise = function () { return ag_charts_community_1._ModuleSupport.enterpriseModule.isEnterprise; };
         return _this;
     }
     ChartService.prototype.updateChart = function (params) {
+        var chartType = params.chartType;
+        if (chartType && (0, seriesTypeMapper_1.isEnterpriseChartType)(chartType) && !this.isEnterprise()) {
+            core_1.ModuleRegistry.__warnEnterpriseChartDisabled(chartType);
+            return;
+        }
         if (this.activeChartComps.size === 0) {
             console.warn("AG Grid - No active charts to update.");
             return;
         }
-        var chartComp = __spreadArray([], __read(this.activeChartComps)).find(function (chartComp) { return chartComp.getChartId() === params.chartId; });
+        var chartComp = __spreadArray([], __read(this.activeChartComps), false).find(function (chartComp) { return chartComp.getChartId() === params.chartId; });
         if (!chartComp) {
-            console.warn("AG Grid - Unable to update chart. No active chart found with ID: " + params.chartId + ".");
+            console.warn("AG Grid - Unable to update chart. No active chart found with ID: ".concat(params.chartId, "."));
             return;
         }
         chartComp.update(params);
@@ -144,7 +155,7 @@ var ChartService = /** @class */ (function (_super) {
             return;
         }
         if (model.version !== version_1.VERSION) {
-            model = chartModelMigration_1.upgradeChartModel(model);
+            model = (0, chartModelMigration_1.upgradeChartModel)(model);
         }
         var params = {
             cellRange: model.cellRange,
@@ -163,9 +174,7 @@ var ChartService = /** @class */ (function (_super) {
         };
         if (model.modelType === 'pivot') {
             // if required enter pivot mode
-            if (!this.columnModel.isPivotMode()) {
-                this.columnModel.setPivotMode(true, "pivotChart");
-            }
+            this.gridOptionsService.updateGridOptions({ options: { pivotMode: true }, source: 'pivotChart' });
             // pivot chart range contains all visible column without a row range to include all rows
             var columns = this.columnModel.getAllDisplayedColumns().map(function (col) { return col.getColId(); });
             var chartAllRangeParams = {
@@ -200,9 +209,7 @@ var ChartService = /** @class */ (function (_super) {
     };
     ChartService.prototype.createPivotChart = function (params) {
         // if required enter pivot mode
-        if (!this.columnModel.isPivotMode()) {
-            this.columnModel.setPivotMode(true, "pivotChart");
-        }
+        this.gridOptionsService.updateGridOptions({ options: { pivotMode: true }, source: 'pivotChart' });
         // pivot chart range contains all visible column without a row range to include all rows
         var chartAllRangeParams = {
             rowStartIndex: null,
@@ -238,12 +245,16 @@ var ChartService = /** @class */ (function (_super) {
         if (suppressChartRanges === void 0) { suppressChartRanges = false; }
         if (unlinkChart === void 0) { unlinkChart = false; }
         if (crossFiltering === void 0) { crossFiltering = false; }
+        if ((0, seriesTypeMapper_1.isEnterpriseChartType)(chartType) && !this.isEnterprise()) {
+            core_1.ModuleRegistry.__warnEnterpriseChartDisabled(chartType);
+            return undefined;
+        }
         var createChartContainerFunc = this.gridOptionsService.getCallback('createChartContainer');
         var params = {
             chartId: this.generateId(),
             pivotChart: pivotChart,
             cellRange: cellRange,
-            chartType: chartType,
+            chartType: (0, seriesTypeMapper_1.getCanonicalChartType)(chartType),
             chartThemeName: chartThemeName,
             insideDialog: !(container || createChartContainerFunc),
             suppressChartRanges: suppressChartRanges,
@@ -255,7 +266,7 @@ var ChartService = /** @class */ (function (_super) {
             chartOptionsToRestore: chartOptionsToRestore,
             chartPaletteToRestore: chartPaletteToRestore,
             seriesChartTypes: seriesChartTypes,
-            crossFilteringResetCallback: function () { return _this.activeChartComps.forEach(function (c) { return c.crossFilteringReset(); }); }
+            crossFilteringResetCallback: function () { return _this.activeChartComps.forEach(function (c) { return c.crossFilteringReset(); }); },
         };
         var chartComp = new gridChartComp_1.GridChartComp(params);
         this.context.createBean(chartComp);
@@ -308,23 +319,23 @@ var ChartService = /** @class */ (function (_super) {
         return ranges.length > 0 ? ranges[0] : {};
     };
     ChartService.prototype.generateId = function () {
-        return "id-" + Math.random().toString(36).substring(2, 18);
+        return "id-".concat(Math.random().toString(36).substring(2, 18));
     };
     ChartService.prototype.destroyAllActiveCharts = function () {
         this.activeCharts.forEach(function (chart) { return chart.destroyChart(); });
     };
     ChartService.CHARTS_VERSION = ag_charts_community_1.VERSION;
     __decorate([
-        core_1.Optional('rangeService')
+        (0, core_1.Optional)('rangeService')
     ], ChartService.prototype, "rangeService", void 0);
     __decorate([
-        core_1.Autowired('columnModel')
+        (0, core_1.Autowired)('columnModel')
     ], ChartService.prototype, "columnModel", void 0);
     __decorate([
         core_1.PreDestroy
     ], ChartService.prototype, "destroyAllActiveCharts", null);
     ChartService = __decorate([
-        core_1.Bean('chartService')
+        (0, core_1.Bean)('chartService')
     ], ChartService);
     return ChartService;
 }(core_1.BeanStub));

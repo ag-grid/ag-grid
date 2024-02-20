@@ -19,4 +19,5 @@ export declare class RowComp extends Component {
     private setFullWidthRowComp;
     private getFullWidthCellRenderer;
     private destroyCells;
+    private refreshFullWidth;
 }

@@ -30,8 +30,7 @@ class HeaderRowComp extends component_1.Component {
     }
     //noinspection JSUnusedLocalSymbols
     init() {
-        this.getGui().style.transform = this.ctrl.getTransform();
-        aria_1.setAriaRowIndex(this.getGui(), this.ctrl.getAriaRowIndex());
+        (0, aria_1.setAriaRowIndex)(this.getGui(), this.ctrl.getAriaRowIndex());
         const compProxy = {
             setHeight: height => this.getGui().style.height = height,
             setTop: top => this.getGui().style.top = top,
@@ -59,12 +58,12 @@ class HeaderRowComp extends component_1.Component {
             }
             this.headerComps[id] = comp;
         });
-        object_1.iterateObject(oldComps, (id, comp) => {
+        (0, object_1.iterateObject)(oldComps, (id, comp) => {
             this.getGui().removeChild(comp.getGui());
             this.destroyBean(comp);
         });
         if (forceOrder) {
-            const comps = object_1.getAllValuesInObject(this.headerComps);
+            const comps = (0, object_1.getAllValuesInObject)(this.headerComps);
             // ordering the columns by left position orders them in the order they appear on the screen
             comps.sort((a, b) => {
                 const leftA = a.getCtrl().getColumnGroupChild().getLeft();
@@ -72,7 +71,7 @@ class HeaderRowComp extends component_1.Component {
                 return leftA - leftB;
             });
             const elementsInOrder = comps.map(c => c.getGui());
-            dom_1.setDomChildOrder(this.getGui(), elementsInOrder);
+            (0, dom_1.setDomChildOrder)(this.getGui(), elementsInOrder);
         }
     }
     createHeaderComp(headerCtrl) {

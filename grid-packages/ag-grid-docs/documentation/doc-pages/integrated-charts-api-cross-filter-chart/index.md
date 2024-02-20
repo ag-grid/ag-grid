@@ -19,7 +19,7 @@ Cross-Filter charts are created programmatically using `createCrossFilterChart(p
 The following snippet shows how a cross-filtering pie chart can be created:
 
 <snippet>
-| gridOptions.api.createCrossFilterChart({
+| api.createCrossFilterChart({
 |     chartType: 'pie',
 |     cellRange: {
 |         columns: ['salesRep', 'sale'],
@@ -51,7 +51,7 @@ The following example shows how to create a simple cross-filtering pie chart. No
 - **Ctrl (Cmd) Click** on another sector to additionally adds rows corresponding to the selected sales rep.
 - **Click Chart Background** to remove / reset the filtering in the grid to restore all rows in the grid.
 
-<grid-example title='Simple Cross-Filter' name='simple-cross-filter' type='generated' options='{ "exampleHeight": 680, "enterprise":  true,  "modules": ["clientside", "menu", "charts", "setfilter", "multifilter", "filterpanel", "columnpanel"] }'></grid-example>
+<grid-example title='Simple Cross-Filter' name='simple-cross-filter' type='generated' options='{ "exampleHeight": 680, "enterprise":  true,  "modules": ["clientside", "menu", "charts-enterprise", "setfilter", "multifilter", "filterpanel", "columnpanel"] }'></grid-example>
 
 ## Cross-filter API
 
@@ -60,7 +60,7 @@ different defaults which make sense for cross-filtering.
 
 <api-documentation source='grid-api/api.json' section='charts' names='["createCrossFilterChart"]'></api-documentation>
 
-<br>
+<br />
 
 <interface-documentation interfaceName='CreateCrossFilterChartParams' overrideSrc='integrated-charts-api-cross-filter-chart/resources/cross-filter-api.json' ></interface-documentation>
 
@@ -70,16 +70,17 @@ The following examples show the different chart types that support cross-filteri
 
 ### Example: Sales Dashboard #1
 
-<grid-example title='Sales Dashboard' name='sales-dashboard' type='generated' options='{ "exampleHeight": 1000, "enterprise":  true,  "modules": ["clientside", "menu", "charts", "setfilter", "multifilter", "filterpanel", "columnpanel"] }'></grid-example>
+<grid-example title='Sales Dashboard' name='sales-dashboard' type='generated' options='{ "exampleHeight": 1000, "enterprise":  true,  "modules": ["clientside", "menu", "charts-enterprise", "setfilter", "multifilter", "filterpanel", "columnpanel"] }'></grid-example>
 
 ### Example: Sales Dashboard #2
 
-<grid-example title='Sales Dashboard 2' name='sales-dashboard2' type='generated' options='{ "exampleHeight": 1000, "enterprise":  true,  "modules": ["clientside", "menu", "charts", "setfilter", "multifilter", "filterpanel", "columnpanel"] }'></grid-example>
+<grid-example title='Sales Dashboard 2' name='sales-dashboard2' type='generated' options='{ "exampleHeight": 1000, "enterprise":  true,  "modules": ["clientside", "menu", "charts-enterprise", "setfilter", "multifilter", "filterpanel", "columnpanel"] }'></grid-example>
 
 ### Example: Most Populous Cities
 
-<grid-example title='Most Populous Cities' name='most-populous-cities' type='generated' options='{ "exampleHeight": 1000, "enterprise":  true,  "modules": ["clientside", "menu", "charts", "setfilter", "multifilter", "filterpanel", "columnpanel"] }'></grid-example>
+<grid-example title='Most Populous Cities' name='most-populous-cities' type='generated' options='{ "exampleHeight": 1000, "enterprise":  true,  "modules": ["clientside", "menu", "charts-enterprise", "setfilter", "multifilter", "filterpanel", "columnpanel"] }'></grid-example>
 
 ## Next Up
 
-Continue to the next section to learn about: [Chart Tool Panels](/integrated-charts-chart-tool-panels/).
+Continue to the next section to learn about: [Chart Types](/integrated-charts-chart-types/).
+

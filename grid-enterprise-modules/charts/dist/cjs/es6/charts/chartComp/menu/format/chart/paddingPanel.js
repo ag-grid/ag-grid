@@ -38,7 +38,7 @@ class PaddingPanel extends core_1.Component {
         const initInput = (property, input) => {
             const currentValue = this.chartOptionsService.getChartOption('padding.' + property);
             input.setLabel(this.chartTranslationService.translate(property))
-                .setMaxValue(formatPanel_1.getMaxValue(currentValue, 200))
+                .setMaxValue((0, formatPanel_1.getMaxValue)(currentValue, 200))
                 .setValue(`${currentValue}`)
                 .setTextFieldWidth(45)
                 .onValueChange(newValue => this.chartOptionsService.setChartOption('padding.' + property, newValue));
@@ -49,10 +49,10 @@ class PaddingPanel extends core_1.Component {
         initInput('left', this.paddingLeftSlider);
     }
     updateTopPadding(chartOptions) {
-        var _a, _b;
         // keep 'top' padding in sync with chart as toggling chart title on / off change the 'top' padding
-        const seriesType = this.chartController.getChartSeriesTypes()[0];
-        const topPadding = (_b = (_a = chartOptions[seriesType]) === null || _a === void 0 ? void 0 : _a.padding) === null || _b === void 0 ? void 0 : _b.top;
+        const topPadding = [...this.chartController.getChartSeriesTypes(), 'common']
+            .map((seriesType) => { var _a, _b; return (_b = (_a = chartOptions[seriesType]) === null || _a === void 0 ? void 0 : _a.padding) === null || _b === void 0 ? void 0 : _b.top; })
+            .find((value) => value != null);
         if (topPadding != null) {
             this.paddingTopSlider.setValue(topPadding);
         }
@@ -67,22 +67,22 @@ PaddingPanel.TEMPLATE = `<div>
             </ag-group-component>
         <div>`;
 __decorate([
-    core_1.RefSelector('chartPaddingGroup')
+    (0, core_1.RefSelector)('chartPaddingGroup')
 ], PaddingPanel.prototype, "chartPaddingGroup", void 0);
 __decorate([
-    core_1.RefSelector('paddingTopSlider')
+    (0, core_1.RefSelector)('paddingTopSlider')
 ], PaddingPanel.prototype, "paddingTopSlider", void 0);
 __decorate([
-    core_1.RefSelector('paddingRightSlider')
+    (0, core_1.RefSelector)('paddingRightSlider')
 ], PaddingPanel.prototype, "paddingRightSlider", void 0);
 __decorate([
-    core_1.RefSelector('paddingBottomSlider')
+    (0, core_1.RefSelector)('paddingBottomSlider')
 ], PaddingPanel.prototype, "paddingBottomSlider", void 0);
 __decorate([
-    core_1.RefSelector('paddingLeftSlider')
+    (0, core_1.RefSelector)('paddingLeftSlider')
 ], PaddingPanel.prototype, "paddingLeftSlider", void 0);
 __decorate([
-    core_1.Autowired('chartTranslationService')
+    (0, core_1.Autowired)('chartTranslationService')
 ], PaddingPanel.prototype, "chartTranslationService", void 0);
 __decorate([
     core_1.PostConstruct

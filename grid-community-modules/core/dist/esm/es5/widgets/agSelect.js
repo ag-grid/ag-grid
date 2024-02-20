@@ -28,22 +28,25 @@ import { AgPickerField } from "./agPickerField";
 import { AgList } from "./agList";
 import { Events } from "../eventKeys";
 import { KeyCode } from "../constants/keyCode";
-import { getInnerHeight } from "../utils/dom";
+import { setAriaControls } from "../utils/aria";
 var AgSelect = /** @class */ (function (_super) {
     __extends(AgSelect, _super);
     function AgSelect(config) {
-        return _super.call(this, __assign({ pickerAriaLabelKey: 'ariaLabelSelectField', pickerAriaLabelValue: 'Select Field', pickerType: 'ag-list' }, config), 'ag-select', 'smallDown', 'listbox') || this;
+        return _super.call(this, __assign({ pickerAriaLabelKey: 'ariaLabelSelectField', pickerAriaLabelValue: 'Select Field', pickerType: 'ag-list', className: 'ag-select', pickerIcon: 'smallDown', ariaRole: 'combobox' }, config)) || this;
     }
     AgSelect.prototype.postConstruct = function () {
-        var _a;
         _super.prototype.postConstruct.call(this);
         this.createListComponent();
-        this.eWrapper.tabIndex = (_a = this.gridOptionsService.getNum('tabIndex')) !== null && _a !== void 0 ? _a : 0;
+        this.eWrapper.tabIndex = this.gridOptionsService.get('tabIndex');
     };
     AgSelect.prototype.createListComponent = function () {
         var _this = this;
         this.listComponent = this.createBean(new AgList('select'));
         this.listComponent.setParentComponent(this);
+        var eListAriaEl = this.listComponent.getAriaElement();
+        var listId = "ag-select-list-".concat(this.listComponent.getCompId());
+        eListAriaEl.setAttribute('id', listId);
+        setAriaControls(this.getAriaElement(), eListAriaEl);
         this.listComponent.addGuiEventListener('keydown', function (e) {
             if (e.key === KeyCode.TAB) {
                 e.preventDefault();
@@ -74,26 +77,11 @@ var AgSelect = /** @class */ (function (_super) {
         return this.listComponent;
     };
     AgSelect.prototype.showPicker = function () {
-        var _this = this;
         if (!this.listComponent) {
             return;
         }
         _super.prototype.showPicker.call(this);
-        this.listComponent.getGui().style.maxHeight = getInnerHeight(this.popupService.getPopupParent()) + "px";
-        var ePicker = this.listComponent.getGui();
-        this.pickerFocusOutListener = this.addManagedListener(ePicker, 'focusout', function (e) {
-            if (!ePicker.contains(e.relatedTarget)) {
-                _this.hidePicker();
-            }
-        });
         this.listComponent.refreshHighlighted();
-    };
-    AgSelect.prototype.beforeHidePicker = function () {
-        if (this.pickerFocusOutListener) {
-            this.pickerFocusOutListener();
-            this.pickerFocusOutListener = undefined;
-        }
-        _super.prototype.beforeHidePicker.call(this);
     };
     AgSelect.prototype.addOptions = function (options) {
         var _this = this;

@@ -1,4 +1,10 @@
-import { CellClassParams, GetRowIdParams, Grid, GridApi, GridOptions, RefreshCellsParams, RowDragEndEvent, RowDragLeaveEvent, RowDragMoveEvent, IRowNode, ValueFormatterParams } from '@ag-grid-community/core';
+import {
+  CellClassParams, createGrid, GetRowIdParams,
+  GridApi, GridOptions, IRowNode, RefreshCellsParams,
+  RowDragEndEvent,
+  RowDragLeaveEvent,
+  RowDragMoveEvent, ValueFormatterParams
+} from '@ag-grid-community/core';
 import { getData } from "./data";
 
 declare var FileCellRenderer: any;
@@ -12,6 +18,8 @@ var cellClassRules = {
     return params.node === potentialParent
   },
 }
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -27,11 +35,9 @@ const gridOptions: GridOptions = {
   ],
   defaultColDef: {
     flex: 1,
-    resizable: true,
   },
   rowData: getData(),
   treeData: true,
-  animateRows: true,
   groupDefaultExpanded: -1,
   getDataPath: (data: any) => {
     return data.filePath
@@ -91,10 +97,10 @@ function onRowDragEnd(event: RowDragEndEvent) {
     var updatedRows: any[] = []
     moveToPath(newParentPath, event.node, updatedRows)
 
-    gridOptions.api!.applyTransaction({
+    gridApi!.applyTransaction({
       update: updatedRows,
     })
-    gridOptions.api!.clearFocusedCell()
+    gridApi!.clearFocusedCell()
   }
 
   // clear node to highlight
@@ -113,7 +119,7 @@ function moveToPath(newParentPath: string[], node: IRowNode, allUpdatedNodes: an
   allUpdatedNodes.push(node.data)
 
   if (node.childrenAfterGroup) {
-    node.childrenAfterGroup.forEach(function (childNode) {
+    node.childrenAfterGroup.forEach((childNode) => {
       moveToPath(newChildPath, childNode, allUpdatedNodes)
     })
   }
@@ -197,5 +203,5 @@ document.addEventListener('DOMContentLoaded', function () {
   var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
 
   // create the grid passing in the div to use together with the columns & data we want to use
-  new Grid(eGridDiv, gridOptions)
+  gridApi = createGrid(eGridDiv, gridOptions);
 })

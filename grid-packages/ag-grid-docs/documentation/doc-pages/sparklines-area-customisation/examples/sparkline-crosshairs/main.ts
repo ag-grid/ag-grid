@@ -1,5 +1,14 @@
-import { AreaSparklineOptions, Grid, GridOptions, TooltipRendererParams } from '@ag-grid-community/core';
+import {
+    AreaSparklineOptions,
+    GridApi,
+    createGrid,
+    GridOptions,
+    TooltipRendererParams,
+} from '@ag-grid-community/core';
 import { getData } from "./data";
+
+
+let gridApi: GridApi;
 
 
 const gridOptions: GridOptions = {
@@ -28,12 +37,12 @@ const gridOptions: GridOptions = {
                         xLine: {
                             enabled: true,
                             lineDash: 'dash',
-                            stroke: 'rgba(0, 0, 0, 0.5)',
+                            stroke: '#999',
                         },
                         yLine: {
                             enabled: true,
                             lineDash: 'dash',
-                            stroke: 'rgba(0, 0, 0, 0.5)',
+                            stroke: '#999',
                         },
                     },
                 } as AreaSparklineOptions,
@@ -74,7 +83,6 @@ const gridOptions: GridOptions = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
-        resizable: true,
     },
     rowData: getData(),
     rowHeight: 50,
@@ -83,12 +91,12 @@ const gridOptions: GridOptions = {
 function renderer(params: TooltipRendererParams) {
     return {
         backgroundColor: 'black',
-        opacity: 0.5,
+        opacity: 0.9,
         color: 'white'
     }
 }
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    new Grid(gridDiv, gridOptions);
+    gridApi = createGrid(gridDiv, gridOptions);
 });

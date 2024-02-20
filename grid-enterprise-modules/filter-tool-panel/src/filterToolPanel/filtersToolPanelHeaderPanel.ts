@@ -44,8 +44,10 @@ export class FiltersToolPanelHeaderPanel extends Component {
     public postConstruct(): void {
         const translate = this.localeService.getLocaleTextFunc();
 
-        this.eFilterTextField.onValueChange(this.onSearchTextChanged.bind(this));
-        this.eFilterTextField.setInputAriaLabel(translate('ariaFilterColumnsInput', 'Filter Columns Input'));
+        this.eFilterTextField
+            .setAutoComplete(false)
+            .setInputAriaLabel(translate('ariaFilterColumnsInput', 'Filter Columns Input'))
+            .onValueChange(this.onSearchTextChanged.bind(this));
 
         this.createExpandIcons();
         this.setExpandState(EXPAND_STATE.EXPANDED);

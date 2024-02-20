@@ -33,7 +33,7 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         var _this = this;
         var compProxy = {
             setInnerRenderer: function (compDetails, valueToDisplay) { return _this.setRenderDetails(compDetails, valueToDisplay); },
-            setChildCount: function (count) { return _this.eChildCount.innerHTML = count; },
+            setChildCount: function (count) { return _this.eChildCount.textContent = count; },
             addOrRemoveCssClass: function (cssClass, value) { return _this.addOrRemoveCssClass(cssClass, value); },
             setContractedDisplayed: function (expanded) { return setDisplayed(_this.eContracted, expanded); },
             setExpandedDisplayed: function (expanded) { return setDisplayed(_this.eExpanded, expanded); },
@@ -44,7 +44,7 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         var eGui = this.getGui();
         ctrl.init(compProxy, eGui, this.eCheckbox, this.eExpanded, this.eContracted, this.constructor, params);
         if (fullWidth) {
-            setAriaRole(eGui, 'gridcell');
+            setAriaRole(eGui, ctrl.getCellAriaRole());
         }
     };
     GroupCellRenderer.prototype.setRenderDetails = function (compDetails, valueToDisplay) {

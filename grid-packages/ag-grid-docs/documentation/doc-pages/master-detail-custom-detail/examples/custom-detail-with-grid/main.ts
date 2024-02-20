@@ -1,7 +1,8 @@
-import { Grid, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core';
 import { DetailCellRenderer } from './detailCellRenderer_typescript'
 
 declare var window: any;
+let gridApi: GridApi<IAccount>;
 const gridOptions: GridOptions<IAccount> = {
   columnDefs: [
     // group cell renderer needed for expand / collapse icons
@@ -20,24 +21,24 @@ const gridOptions: GridOptions<IAccount> = {
 }
 
 function expandCollapseAll() {
-  gridOptions.api!.forEachNode(function (node) {
+  gridApi!.forEachNode(function (node) {
     node.expanded = !!window.collapsed
   })
 
   window.collapsed = !window.collapsed
-  gridOptions.api!.onGroupExpandedOrCollapsed()
+  gridApi!.onGroupExpandedOrCollapsed()
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
   // arbitrarily expand a row for presentational purposes
-  setTimeout(function () {
+  setTimeout(() => {
     params.api.getDisplayedRowAtIndex(1)!.setExpanded(true)
   }, 0)
 }
 
 function printDetailGridInfo() {
   console.log("Currently registered detail grid's: ")
-  gridOptions.api!.forEachDetailGridInfo(function (detailGridInfo) {
+  gridApi!.forEachDetailGridInfo(function (detailGridInfo) {
     console.log(detailGridInfo)
   })
 }
@@ -45,11 +46,11 @@ function printDetailGridInfo() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/master-detail-data.json')
     .then(response => response.json())
     .then((data: IAccount[]) => {
-      gridOptions.api!.setRowData(data)
+      gridApi!.setGridOption('rowData', data)
     })
 })

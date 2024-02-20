@@ -25,9 +25,9 @@ exports.ToolPanelFilterComp = void 0;
 var core_1 = require("@ag-grid-community/core");
 var ToolPanelFilterComp = /** @class */ (function (_super) {
     __extends(ToolPanelFilterComp, _super);
-    function ToolPanelFilterComp(hideHeader) {
-        if (hideHeader === void 0) { hideHeader = false; }
+    function ToolPanelFilterComp(hideHeader, expandedCallback) {
         var _this = _super.call(this, ToolPanelFilterComp.TEMPLATE) || this;
+        _this.expandedCallback = expandedCallback;
         _this.expanded = false;
         _this.hideHeader = hideHeader;
         return _this;
@@ -88,12 +88,12 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
     };
     ToolPanelFilterComp.prototype.onFilterDestroyed = function (event) {
         if (this.expanded &&
-            event.source === 'api' &&
+            (event.source === 'api' || event.source === 'paramsUpdated') &&
             event.column.getId() === this.column.getId() &&
             this.columnModel.getPrimaryColumn(this.column)) {
-            // filter was visible and has been destroyed by the API. If the column still exists, need to recreate UI component
+            // filter was visible and has been destroyed by the API or params changing. If the column still exists, need to recreate UI component
             this.removeFilterElement();
-            this.addFilterElement();
+            this.addFilterElement(true);
         }
     };
     ToolPanelFilterComp.prototype.toggleExpanded = function () {
@@ -108,8 +108,9 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
         core_1._.setDisplayed(this.eExpandChecked, true);
         core_1._.setDisplayed(this.eExpandUnchecked, false);
         this.addFilterElement();
+        this.expandedCallback();
     };
-    ToolPanelFilterComp.prototype.addFilterElement = function () {
+    ToolPanelFilterComp.prototype.addFilterElement = function (suppressFocus) {
         var _this = this;
         var filterPanelWrapper = core_1._.loadTemplate(/* html */ "<div class=\"ag-filter-toolpanel-instance-filter\"></div>");
         var filterWrapper = this.filterManager.getOrCreateFilterWrapper(this.column, 'TOOLBAR');
@@ -128,7 +129,7 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
                 }
                 _this.agFilterToolPanelBody.appendChild(filterPanelWrapper);
                 if (filter.afterGuiAttached) {
-                    filter.afterGuiAttached({ container: 'toolPanel' });
+                    filter.afterGuiAttached({ container: 'toolPanel', suppressFocus: suppressFocus });
                 }
             });
         });
@@ -144,6 +145,7 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
         core_1._.setDisplayed(this.eExpandChecked, false);
         core_1._.setDisplayed(this.eExpandUnchecked, true);
         (_b = (_a = this.underlyingFilter) === null || _a === void 0 ? void 0 : _a.afterGuiDetached) === null || _b === void 0 ? void 0 : _b.call(_a);
+        this.expandedCallback();
     };
     ToolPanelFilterComp.prototype.removeFilterElement = function () {
         core_1._.clearElement(this.agFilterToolPanelBody);
@@ -186,25 +188,25 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
     };
     ToolPanelFilterComp.TEMPLATE = "\n        <div class=\"ag-filter-toolpanel-instance\">\n            <div class=\"ag-filter-toolpanel-header ag-filter-toolpanel-instance-header\" ref=\"eFilterToolPanelHeader\" role=\"button\" aria-expanded=\"false\">\n                <div ref=\"eExpand\" class=\"ag-filter-toolpanel-expand\"></div>\n                <span ref=\"eFilterName\" class=\"ag-header-cell-text\"></span>\n                <span ref=\"eFilterIcon\" class=\"ag-header-icon ag-filter-icon ag-filter-toolpanel-instance-header-icon\" aria-hidden=\"true\"></span>\n            </div>\n            <div class=\"ag-filter-toolpanel-instance-body ag-filter\" ref=\"agFilterToolPanelBody\"></div>\n        </div>";
     __decorate([
-        core_1.RefSelector('eFilterToolPanelHeader')
+        (0, core_1.RefSelector)('eFilterToolPanelHeader')
     ], ToolPanelFilterComp.prototype, "eFilterToolPanelHeader", void 0);
     __decorate([
-        core_1.RefSelector('eFilterName')
+        (0, core_1.RefSelector)('eFilterName')
     ], ToolPanelFilterComp.prototype, "eFilterName", void 0);
     __decorate([
-        core_1.RefSelector('agFilterToolPanelBody')
+        (0, core_1.RefSelector)('agFilterToolPanelBody')
     ], ToolPanelFilterComp.prototype, "agFilterToolPanelBody", void 0);
     __decorate([
-        core_1.RefSelector('eFilterIcon')
+        (0, core_1.RefSelector)('eFilterIcon')
     ], ToolPanelFilterComp.prototype, "eFilterIcon", void 0);
     __decorate([
-        core_1.RefSelector('eExpand')
+        (0, core_1.RefSelector)('eExpand')
     ], ToolPanelFilterComp.prototype, "eExpand", void 0);
     __decorate([
-        core_1.Autowired('filterManager')
+        (0, core_1.Autowired)('filterManager')
     ], ToolPanelFilterComp.prototype, "filterManager", void 0);
     __decorate([
-        core_1.Autowired('columnModel')
+        (0, core_1.Autowired)('columnModel')
     ], ToolPanelFilterComp.prototype, "columnModel", void 0);
     __decorate([
         core_1.PostConstruct

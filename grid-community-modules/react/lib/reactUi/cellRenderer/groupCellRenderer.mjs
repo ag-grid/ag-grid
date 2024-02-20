@@ -1,10 +1,11 @@
-// @ag-grid-community/react v30.1.0
+// @ag-grid-community/react v31.1.0
 import { GroupCellRendererCtrl, _ } from "@ag-grid-community/core";
 import React, { useContext, useImperativeHandle, forwardRef, useMemo, useRef, useState, useLayoutEffect, useCallback } from 'react';
 import { BeansContext } from "../beansContext.mjs";
 import { showJsComp } from "../jsComp.mjs";
 import { CssClasses } from "../utils.mjs";
 const GroupCellRenderer = forwardRef((props, ref) => {
+    var _a;
     const context = useContext(BeansContext).context;
     const eGui = useRef(null);
     const eValueRef = useRef(null);
@@ -57,7 +58,8 @@ const GroupCellRenderer = forwardRef((props, ref) => {
     const FwRenderer = useFwRenderer ? innerCompDetails.componentClass : undefined;
     const useValue = innerCompDetails == null && value != null;
     const escapedValue = _.escapeString(value, true);
-    return (React.createElement("span", Object.assign({ className: className, ref: setRef }, (!props.colDef ? { role: 'gridcell' } : {})),
+    // if there is no ColDef, it means this is a Full Width Group, then we need to add `role="gridcell"`.
+    return (React.createElement("span", Object.assign({ className: className, ref: setRef }, (!props.colDef ? { role: (_a = ctrlRef.current) === null || _a === void 0 ? void 0 : _a.getCellAriaRole() } : {})),
         React.createElement("span", { className: expandedClassName, ref: eExpandedRef }),
         React.createElement("span", { className: contractedClassName, ref: eContractedRef }),
         React.createElement("span", { className: checkboxClassName, ref: eCheckboxRef }),

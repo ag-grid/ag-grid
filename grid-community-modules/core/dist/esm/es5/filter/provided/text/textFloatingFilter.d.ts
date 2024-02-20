@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { TextFilterModel } from './textFilter';
@@ -10,6 +10,7 @@ export declare class TextFloatingFilter extends TextInputFloatingFilter<TextFilt
     private filterModelFormatter;
     init(params: ITextFloatingFilterParams): void;
     onParamsUpdated(params: ITextFloatingFilterParams): void;
+    refresh(params: ITextFloatingFilterParams): void;
     protected getDefaultFilterOptions(): string[];
     protected getFilterModelFormatter(): SimpleFilterModelFormatter;
     protected createFloatingFilterInputService(): FloatingFilterInputService;

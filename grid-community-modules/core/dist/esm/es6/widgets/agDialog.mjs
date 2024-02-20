@@ -46,19 +46,25 @@ export class AgDialog extends AgPanel {
     }
     renderComponent() {
         const eGui = this.getGui();
-        const { alwaysOnTop, modal, title } = this.config;
+        const { alwaysOnTop, modal, title, afterGuiAttached } = this.config;
         const translate = this.localeService.getLocaleTextFunc();
         const addPopupRes = this.popupService.addPopup({
             modal,
             eChild: eGui,
             closeOnEsc: true,
-            closedCallback: this.destroy.bind(this),
+            closedCallback: this.onClosed.bind(this),
             alwaysOnTop,
-            ariaLabel: title || translate('ariaLabelDialog', 'Dialog')
+            ariaLabel: title || translate('ariaLabelDialog', 'Dialog'),
+            afterGuiAttached
         });
         if (addPopupRes) {
             this.close = addPopupRes.hideFunc;
         }
+    }
+    onClosed(event) {
+        var _a, _b;
+        this.destroy();
+        (_b = (_a = this.config).closedCallback) === null || _b === void 0 ? void 0 : _b.call(_a, event);
     }
     toggleMaximize() {
         const position = this.positionableFeature.getPosition();

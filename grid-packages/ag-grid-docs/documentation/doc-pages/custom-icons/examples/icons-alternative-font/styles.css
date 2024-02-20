@@ -1,6 +1,12 @@
 /* replace the icons with fontswesome */
-.ag-theme-alpine {
+.ag-theme-quartz, .ag-theme-quartz-dark {
+    /* Use Font Awesome as the default icon font */
     --ag-icon-font-family: "Font Awesome 5 Free";
+
+    /* Font Awesome requires the bold weight to be used */
+    --ag-icon-font-weight: bold;
+
+    /* Since we have changed the default icon font we must must provide the correct code for every icon */
     --ag-icon-font-code-aggregation: "\f247";
     --ag-icon-font-code-arrows: "\f0b2";
     --ag-icon-font-code-asc: "\f062";
@@ -47,25 +53,15 @@
     --ag-icon-font-code-unlinked: "\f127";
     --ag-icon-font-code-checkbox-checked: "\f00c";
     --ag-icon-font-code-checkbox-unchecked: "\f00d";
-}
-
-.ag-theme-alpine .ag-icon,
-.ag-theme-alpine .ag-checkbox-input-wrapper,
-.ag-theme-alpine .ag-radio-button-input-wrapper {
-    /* Font Awesome requires bold on all icon elements */
-    font-weight: bold;
-}
-
-/* selectively replace the group and aggregation icons with Material Design Icons */
-.ag-theme-alpine .ag-icon-group {
-    --ag-icon-font-family: "Material Design Icons";
+    
+    /* selectively replace the group and aggregation icons with Material Design Icons */
+    --ag-icon-font-family-group: "Material Design Icons";
     --ag-icon-font-code-group: "\F0328";
-    font-weight: normal;
-    color: red;
-}
-.ag-theme-alpine .ag-icon-aggregation {
-    --ag-icon-font-family: "Material Design Icons";
+    --ag-icon-font-color-group: red;
+    --ag-icon-font-weight-group: normal;
+
+    --ag-icon-font-family-aggregation: "Material Design Icons";
     --ag-icon-font-code-aggregation: "\F02C3";
-    font-weight: normal;
-    color: red;
+    --ag-icon-font-color-aggregation: red;
+    --ag-icon-font-weight-aggregation: normal;
 }

@@ -57,7 +57,7 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp {
         }
     }
 }
-HeaderFilterCellComp.TEMPLATE = `<div class="ag-header-cell ag-floating-filter" role="gridcell" tabindex="-1">
+HeaderFilterCellComp.TEMPLATE = `<div class="ag-header-cell ag-floating-filter" role="gridcell">
             <div ref="eFloatingFilterBody" role="presentation"></div>
             <div class="ag-floating-filter-button ag-hidden" ref="eButtonWrapper" role="presentation">
                 <button type="button" class="ag-button ag-floating-filter-button-button" ref="eButtonShowMainFilter" tabindex="-1"></button>

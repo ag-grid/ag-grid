@@ -1,8 +1,10 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 import { DoublingEditor } from './doublingEditor_typescript'
 import { MoodRenderer } from './moodRenderer_typescript'
 import { MoodEditor } from './moodEditor_typescript'
 import { NumericEditor } from './numericEditor_typescript'
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -46,16 +48,14 @@ const gridOptions: GridOptions = {
   ],
   defaultColDef: {
     editable: true,
-    sortable: true,
     flex: 1,
     minWidth: 100,
     filter: true,
-    resizable: true,
   },
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

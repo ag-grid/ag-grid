@@ -27,7 +27,7 @@ The simplest approach is to send all row data to the browser in response to a si
 
 This scenario is illustrated below where 10,000 records are loaded directly into the browser:
 
-<image-caption src="server-side-model/resources/in-memory-row-model.png" alt="in-memory-row-model" constrained="true" centered="true"></image-caption>
+<image-caption src="server-side-model/resources/in-memory-row-model.png" alt="in-memory-row-model" constrained="true" centered="true" filterdarkmode="true"></image-caption>
 
 Once the data is loaded into the grid using the Client-Side Row Model, the grid can then do sorting, filtering, grouping etc. on the data inside the grid without requiring further assistance from the application.
 
@@ -41,7 +41,7 @@ This is precisely the problem the SSRM addresses, along with delegating server-s
 
 The following diagram shows the approach used by the SSRM. Here there are 10 million records, however the number of records is only constrained by the limits of the server-side:
 
-<image-caption src="server-side-model/resources/enterprise-row-model.png" alt="enterprise-row-model" constrained="true" centered="true"></image-caption>
+<image-caption src="server-side-model/resources/enterprise-row-model.png" alt="enterprise-row-model" constrained="true" centered="true" filterdarkmode="true"></image-caption>
 
 As the user performs operations such as expanding groups, the grid issues requests to the server for more data.
 

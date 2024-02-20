@@ -31,13 +31,13 @@
             "macExcel": "N/A"
         },
         {
-            "behaviour": "Press <kbd>Enter</kbd> to apply the filter",
+            "behaviour": "Press <kbd>↵ Enter</kbd> to apply the filter",
             "agGrid": false,
             "windowsExcel": true,
             "macExcel": "N/A"
         },
         {
-            "behaviour": "Close the filter when <kbd>Enter</kbd> is pressed",
+            "behaviour": "Close the filter when <kbd>↵ Enter</kbd> is pressed",
             "agGrid": false,
             "windowsExcel": true,
             "macExcel": false
@@ -63,11 +63,14 @@
         {
             "behaviour": "Combine selected values from different searches before applying",
             "agGrid": true,
-            "windowsExcel": false,
+            "windowsExcel": [
+                true,
+                "when \"Add current selection to filter\" is checked"
+            ],
             "macExcel": false
         },
         {
-            "behaviour": "Press <kbd>Enter</kbd> in the search box to apply the filter using all visible values",
+            "behaviour": "Press <kbd>↵ Enter</kbd> in the search box to apply the filter using all visible values",
             "agGrid": true,
             "windowsExcel": "unless search box is empty",
             "macExcel": "N/A"
@@ -79,7 +82,7 @@
             "macExcel": "after 500ms delay"
         },
         {
-            "behaviour": "Press <kbd>Enter</kbd> in the search box to select all search text",
+            "behaviour": "Press <kbd>↵ Enter</kbd> in the search box to select all search text",
             "agGrid": false,
             "windowsExcel": false,
             "macExcel": true

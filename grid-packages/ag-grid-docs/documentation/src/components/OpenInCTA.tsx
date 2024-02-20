@@ -1,7 +1,7 @@
 import classnames from 'classnames';
 import React, { FunctionComponent, MouseEventHandler, ReactNode } from 'react';
 import { Icon } from './Icon';
-import styles from './OpenInCTA.module.scss';
+import styles from '@design-system/modules/OpenInCTA.module.scss';
 
 type CtaType = 'newTab' | 'plunker' | 'stackblitz' | 'codesandbox';
 
@@ -21,22 +21,22 @@ type Props = ButtonProps | LinkProps;
 const COPY_TEXT: Record<CtaType, ReactNode> = {
     newTab: (
         <>
-            Open in New Tab <Icon name="docs-import-export" />
+            <span className={styles.tooltip}>New Tab</span><Icon name="newTab" />
         </>
     ),
     plunker: (
         <>
-            Edit on Plunker <Icon name="plunker" />
+            <span className={styles.tooltip}>Plunker</span><Icon name="plunker" />
         </>
     ),
     stackblitz: (
         <>
-            Edit on StackBlitz <Icon name="stackblitz" />
+            <span className={styles.tooltip}>StackBlitz</span><Icon name="stackblitz" />
         </>
     ),
     codesandbox: (
         <>
-            Edit on CodeSandbox <Icon name="codesandbox" />
+            <span className={styles.tooltip}>CodeSandbox</span><Icon name="codesandbox" />
         </>
     ),
 };

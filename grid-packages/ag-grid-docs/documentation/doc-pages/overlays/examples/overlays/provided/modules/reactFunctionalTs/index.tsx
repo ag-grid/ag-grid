@@ -5,7 +5,7 @@ import { createRoot } from 'react-dom/client';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 
 import { ColDef, GridReadyEvent, ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
@@ -33,8 +33,6 @@ const GridExample = () => {
             flex: 1,
             minWidth: 100,
             filter: true,
-            sortable: true,
-            resizable: true,
         }
     }, []);
 
@@ -67,14 +65,14 @@ const GridExample = () => {
                     <button onClick={onBtHide}>Hide Overlay</button>
                 </div>
 
-                <div style={gridStyle} className="ag-theme-alpine">
+                <div style={gridStyle} className={/** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
                     <AgGridReact
                         ref={gridRef}
                         rowData={rowData}
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
-                        overlayLoadingTemplate={'<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>'}
-                        overlayNoRowsTemplate={'<span style="padding: 10px; border: 2px solid #444; background: lightgoldenrodyellow">This is a custom \'no rows\' overlay</span>'}
+                        overlayLoadingTemplate={'<div aria-live="polite" aria-atomic="true" style="position:absolute;top:0;left:0;right:0; bottom:0; background: url(https://ag-grid.com/images/ag-grid-loading-spinner.svg) center no-repeat" aria-label="loading"></div>'}
+                        overlayNoRowsTemplate={'<span aria-live="polite" aria-atomic="true" style="padding: 10px; border: 2px solid #666; background: #55AA77">This is a custom \'no rows\' overlay</span>'}
                         onGridReady={onGridReady}
                      />
                 </div>

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import * as AriaUtils from './aria';
@@ -12,25 +12,15 @@ export declare const _: {
     sortRowNodesByOrder(rowNodes: import("../main").RowNode<any>[], rowNodeOrder: {
         [id: string]: number;
     }): boolean;
-    traverseNodesWithKey(nodes: import("../main").RowNode<any>[] | null, callback: (node: import("../main").RowNode<any>, key: string) => void): void;
     iterateObject<T_1>(object: {
         [p: string]: T_1;
     } | T_1[] | null | undefined, callback: (key: string, value: T_1) => void): void;
     cloneObject<T_2 extends {}>(object: T_2): T_2;
-    deepCloneObject<T_3>(object: T_3): T_3;
-    deepCloneDefinition<T_4>(object: T_4, keysToSkip?: string[] | undefined): T_4 | undefined;
-    getProperty<T_5, K extends keyof T_5>(object: T_5, key: K): any;
-    setProperty<T_6, K_1 extends keyof T_6>(object: T_6, key: K_1, value: any): void;
-    copyPropertiesIfPresent<S, T_7 extends S, K_2 extends keyof S>(source: S, target: T_7, ...properties: K_2[]): void;
-    copyPropertyIfPresent<S_1, T_8 extends S_1, K_3 extends keyof S_1>(source: S_1, target: T_8, property: K_3, transform?: ((value: S_1[K_3]) => any) | undefined): void;
-    getAllKeysInObjects(objects: any[]): string[];
-    getAllValuesInObject<T_9 extends Object>(obj: T_9): any[];
+    deepCloneDefinition<T_3>(object: T_3, keysToSkip?: string[] | undefined): T_3 | undefined;
+    getAllValuesInObject<T_4 extends Object>(obj: T_4): any[];
     mergeDeep(dest: any, source: any, copyUndefined?: boolean, makeCopyOfSimpleObjects?: boolean): void;
-    missingOrEmptyObject(value: any): boolean;
-    get(source: any, expression: string, defaultValue: any): any;
-    set(target: any, expression: string, value: any): void;
     getValueUsingField(data: any, field: string, fieldContainsDots: boolean): any;
-    removeAllReferences(obj: any, objectName: string): void;
+    removeAllReferences<T_5>(obj: any, preserveKeys: (keyof T_5)[] | undefined, preDestroyLink: string): void;
     isNonNullObject(value: any): boolean;
     padStartWidthZeros(value: number, totalStringSize: number): string;
     createArrayOfNumbers(first: number, last: number): number[];
@@ -39,15 +29,13 @@ export declare const _: {
     formatNumberTwoDecimalPlacesAndCommas(value: number, thousandSeparator: string, decimalSeparator: string): string;
     formatNumberCommas(value: number, thousandSeparator: string, decimalSeparator: string): string;
     sum(values: number[] | null): number | null;
-    zeroOrGreater(value: any, defaultValue: number): number;
-    oneOrGreater(value: any, defaultValue?: number | undefined): number | undefined;
     areEventsNear(e1: MouseEvent | Touch, e2: MouseEvent | Touch, pixelCount: number): boolean;
-    convertToMap<K_4, V>(arr: [K_4, V][]): Map<K_4, V>;
+    convertToMap<K, V>(arr: [K, V][]): Map<K, V>;
     mapById<V_1>(arr: V_1[], callback: (obj: V_1) => string): Map<string, V_1>;
-    keys<T_10>(map: Map<T_10, any>): T_10[];
+    keys<T_6>(map: Map<T_6, any>): T_6[];
     isEventFromPrintableCharacter(event: KeyboardEvent): boolean;
     isUserSuppressingKeyboardEvent(gridOptionsService: import("../gridOptionsService").GridOptionsService, keyboardEvent: KeyboardEvent, rowNode: import("../main").IRowNode<any>, column: import("../main").Column<any>, editing: boolean): boolean;
-    isUserSuppressingHeaderKeyboardEvent(gridOptionsService: import("../gridOptionsService").GridOptionsService, keyboardEvent: KeyboardEvent, headerRowIndex: number, column: import("../main").Column<any> | import("../main").ColumnGroup): boolean;
+    isUserSuppressingHeaderKeyboardEvent(gridOptionsService: import("../gridOptionsService").GridOptionsService, keyboardEvent: KeyboardEvent, headerRowIndex: number, column: import("../main").ColumnGroup | import("../main").Column<any>): boolean;
     normaliseQwertyAzerty(keyboardEvent: KeyboardEvent): string;
     isDeleteKey(key: string, alwaysReturnFalseOnBackspace?: boolean): boolean;
     createIcon(iconName: string, gridOptionsService: import("../gridOptionsService").GridOptionsService, column: import("../main").Column<any> | null): Element;
@@ -55,26 +43,30 @@ export declare const _: {
     iconNameClassMap: {
         [key: string]: string;
     };
-    makeNull<T_11 extends unknown>(value?: T_11 | undefined): T_11 | null;
+    makeNull<T_7 extends unknown>(value?: T_7 | undefined): T_7 | null;
     exists(value: string | null | undefined, allowEmptyString?: boolean | undefined): value is string;
-    exists<T_12>(value: T_12): value is NonNullable<T_12>;
-    missing<T_13>(value: T_13 | null | undefined): value is Exclude<undefined, T_13> | Exclude<null, T_13>;
-    missingOrEmpty<T_14>(value?: string | T_14[] | null | undefined): boolean;
+    exists<T_8>(value: T_8): value is NonNullable<T_8>;
+    missing<T_9>(value: T_9 | null | undefined): value is Exclude<undefined, T_9> | Exclude<null, T_9>;
+    missingOrEmpty<T_10>(value?: string | T_10[] | null | undefined): boolean;
     toStringOrNull(value: any): string | null;
     attrToNumber(value?: string | number | null | undefined): number | null | undefined;
     attrToBoolean(value?: string | boolean | null | undefined): boolean | undefined;
     attrToString(value?: string | undefined): string | undefined;
-    referenceCompare<T_15>(left: T_15, right: T_15): boolean;
     jsonEquals<T1, T2>(val1: T1, val2: T2): boolean;
     defaultComparator(valueA: any, valueB: any, accentedCompare?: boolean): number;
-    values<T_16>(object: {
-        [key: string]: T_16;
-    } | Set<T_16> | Map<any, T_16>): T_16[];
+    values<T_11>(object: {
+        [key: string]: T_11;
+    } | Set<T_11> | Map<any, T_11>): T_11[];
     fuzzyCheckStrings(inputValues: string[], validValues: string[], allSuggestions: string[]): {
         [p: string]: string[];
     };
-    fuzzySuggestions(inputValue: string, allSuggestions: string[], hideIrrelevant?: boolean | undefined, filterByPercentageOfBestMatch?: number | undefined): string[];
+    fuzzySuggestions(inputValue: string, allSuggestions: string[], hideIrrelevant?: boolean | undefined, filterByPercentageOfBestMatch?: number | undefined): {
+        values: string[];
+        indices: number[];
+    };
     doOnce(func: () => void, key: string): void;
+    warnOnce(msg: string): void;
+    errorOnce(msg: string): void;
     getFunctionName(funcConstructor: any): any;
     isFunction(val: any): boolean;
     executeInAWhile(funcs: Function[]): void;
@@ -84,11 +76,10 @@ export declare const _: {
     throttle(func: (...args: any[]) => void, wait: number): (...args: any[]) => void;
     waitUntil(condition: () => boolean, callback: () => void, timeout?: number, timeoutMessage?: string | undefined): void;
     compose(...fns: Function[]): (arg: any) => any;
-    callIfPresent(func: Function): void;
     noop: () => void;
     stopPropagationForAgGrid(event: Event): void;
     isStopPropagationForAgGrid(event: Event): boolean;
-    getCtrlForEventTarget<T_17>(gridOptionsService: import("../gridOptionsService").GridOptionsService, eventTarget: EventTarget | null, type: string): T_17 | null;
+    getCtrlForEventTarget<T_12>(gridOptionsService: import("../gridOptionsService").GridOptionsService, eventTarget: EventTarget | null, type: string): T_12 | null;
     isElementInEventPath(element: HTMLElement, event: Event): boolean;
     createEventPath(event: {
         target: EventTarget;
@@ -139,18 +130,13 @@ export declare const _: {
     getScrollLeft(element: HTMLElement, rtl: boolean): number;
     setScrollLeft(element: HTMLElement, value: number, rtl: boolean): void;
     clearElement(el: HTMLElement): void;
-    removeElement(parent: HTMLElement, cssSelector: string): void;
     removeFromParent(node: Element | null): void;
-    isVisible(element: HTMLElement): boolean;
+    isInDOM(element: HTMLElement): boolean;
+    isVisible(element: HTMLElement): any;
     loadTemplate(template: string): HTMLElement;
-    appendHtml(eContainer: HTMLElement, htmlTemplate: string): void;
-    getElementAttribute(element: any, attributeName: string): string | null;
-    offsetHeight(element: HTMLElement): number;
-    offsetWidth(element: HTMLElement): number;
     ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore?: HTMLElement | null | undefined): void;
     setDomChildOrder(eContainer: HTMLElement, orderedChildren: (HTMLElement | null)[]): void;
     insertWithDomOrder(eContainer: HTMLElement, eToInsert: HTMLElement, eChildBefore: HTMLElement | null): void;
-    prependDC(parent: HTMLElement, documentFragment: DocumentFragment): void;
     addStylesToElement(eElement: any, styles: import("../main").RowStyle | import("../main").CellStyle | null | undefined): void;
     isHorizontalScrollShowing(element: HTMLElement): boolean;
     isVerticalScrollShowing(element: HTMLElement): boolean;
@@ -163,10 +149,10 @@ export declare const _: {
     copyNodeList(nodeList: NodeListOf<Node> | null): Node[];
     iterateNamedNodeMap(map: NamedNodeMap, callback: (key: string, value: string) => void): void;
     addOrRemoveAttribute(element: HTMLElement, name: string, value: any): void;
-    nodeListForEach<T_18 extends Node>(nodeList: NodeListOf<T_18> | null, action: (value: T_18) => void): void;
+    nodeListForEach<T_13 extends Node>(nodeList: NodeListOf<T_13> | null, action: (value: T_13) => void): void;
     bindCellRendererToHtmlElement(cellRendererPromise: import("./promise").AgPromise<import("../main").ICellRendererComp<any>>, eTarget: HTMLElement): void;
     FOCUSABLE_SELECTOR: "[tabindex], input, select, button, textarea, [href]";
-    FOCUSABLE_EXCLUDE: ".ag-hidden, .ag-hidden *, [disabled], .ag-disabled:not(.ag-button), .ag-disabled *";
+    FOCUSABLE_EXCLUDE: "[disabled], .ag-disabled:not(.ag-button), .ag-disabled *";
     serialiseDate(date: Date | null, includeTime?: boolean, separator?: string): string | null;
     dateToFormattedString(date: Date, format?: string): string;
     parseDateTimeFromString(value?: string | null | undefined): Date | null;
@@ -183,39 +169,40 @@ export declare const _: {
     getBodyHeight(): number;
     getScrollbarWidth(): number | null;
     isInvisibleScrollbar(): boolean;
-    firstExistingValue<A>(...values: A[]): A | null;
-    existsAndNotEmpty<T_19>(value?: T_19[] | undefined): boolean;
-    last<T_20>(arr: T_20[]): T_20;
-    last<T_21 extends Node>(arr: NodeListOf<T_21>): T_21;
-    areEqual<T_22>(a?: T_22[] | null | undefined, b?: T_22[] | null | undefined, comparator?: ((a: T_22, b: T_22) => boolean) | undefined): boolean;
+    existsAndNotEmpty<T_14>(value?: T_14[] | undefined): boolean;
+    last<T_15>(arr: T_15[]): T_15;
+    last<T_16 extends Node>(arr: NodeListOf<T_16>): T_16;
+    areEqual<T_17>(a?: T_17[] | null | undefined, b?: T_17[] | null | undefined, comparator?: ((a: T_17, b: T_17) => boolean) | undefined): boolean;
     shallowCompare(arr1: any[], arr2: any[]): boolean;
     sortNumerically(array: number[]): number[];
-    removeRepeatsFromArray<T_23>(array: T_23[], object: T_23): void;
-    removeFromUnorderedArray<T_24>(array: T_24[], object: T_24): void;
-    removeFromArray<T_25>(array: T_25[], object: T_25): void;
-    removeAllFromUnorderedArray<T_26>(array: T_26[], toRemove: T_26[]): void;
-    removeAllFromArray<T_27>(array: T_27[], toRemove: T_27[]): void;
-    insertIntoArray<T_28>(array: T_28[], object: T_28, toIndex: number): void;
-    insertArrayIntoArray<T_29>(dest: T_29[], src: T_29[], toIndex: number): void;
-    moveInArray<T_30>(array: T_30[], objectsToMove: T_30[], toIndex: number): void;
-    includes<T_31>(array: T_31[], value: T_31): boolean;
-    flatten(arrayOfArrays: any[]): any[];
-    pushAll<T_32>(target: T_32[], source: T_32[]): void;
-    toStrings<T_33>(array: T_33[]): (string | null)[] | null;
-    forEachReverse<T_34>(list: T_34[], action: (value: T_34, index: number) => void): void;
+    removeRepeatsFromArray<T_18>(array: T_18[], object: T_18): void;
+    removeFromUnorderedArray<T_19>(array: T_19[], object: T_19): void;
+    removeFromArray<T_20>(array: T_20[], object: T_20): void;
+    removeAllFromUnorderedArray<T_21>(array: T_21[], toRemove: T_21[]): void;
+    removeAllFromArray<T_22>(array: T_22[], toRemove: T_22[]): void;
+    insertIntoArray<T_23>(array: T_23[], object: T_23, toIndex: number): void;
+    insertArrayIntoArray<T_24>(dest: T_24[], src: T_24[], toIndex: number): void;
+    moveInArray<T_25>(array: T_25[], objectsToMove: T_25[], toIndex: number): void;
+    includes<T_26>(array: T_26[], value: T_26): boolean;
+    flatten<T_27>(arrayOfArrays: (T_27 | T_27[])[]): T_27[];
+    pushAll<T_28>(target: T_28[], source: T_28[]): void;
+    toStrings<T_29>(array: T_29[]): (string | null)[] | null;
+    forEachReverse<T_30>(list: T_30[], action: (value: T_30, index: number) => void): void;
     setAriaRole(element: Element, role?: string | null | undefined): void;
-    getAriaSortState(sortDirection: import("../main").SortDirection | "mixed"): AriaUtils.ColumnSortState;
+    getAriaSortState(sortDirection: "mixed" | import("../main").SortDirection): AriaUtils.ColumnSortState;
     getAriaLevel(element: Element): number;
     getAriaPosInSet(element: Element): number;
-    getAriaDescribedBy(element: Element): string;
+    getAriaLabel(element: Element): string | null;
     setAriaLabel(element: Element, label?: string | null | undefined): void;
     setAriaLabelledBy(element: Element, labelledBy: string): void;
-    setAriaDescription(element: Element, description?: string | undefined): void;
     setAriaDescribedBy(element: Element, describedby?: string | undefined): void;
     setAriaLive(element: Element, live?: "polite" | "assertive" | "off" | null | undefined): void;
+    setAriaAtomic(element: Element, atomic: boolean | null): void;
+    setAriaRelevant(element: Element, relevant: "all" | "text" | "additions" | "additions text" | "removals" | null): void;
     setAriaLevel(element: Element, level: number): void;
     setAriaDisabled(element: Element, disabled: boolean): void;
     setAriaHidden(element: Element, hidden: boolean): void;
+    setAriaActiveDescendant(element: Element, descendantId: string | null): void;
     setAriaExpanded(element: Element, expanded: boolean): void;
     removeAriaExpanded(element: Element): void;
     setAriaSetSize(element: Element, setsize: number): void;

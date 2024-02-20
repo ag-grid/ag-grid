@@ -82,7 +82,7 @@ var RowContainerEventsFeature = /** @class */ (function (_super) {
         var rowComp = this.getRowForEvent(mouseEvent);
         var cellCtrl = this.mouseEventService.getRenderedCellForEvent(mouseEvent);
         if (eventName === "contextmenu") {
-            this.handleContextMenuMouseEvent(mouseEvent, null, rowComp, cellCtrl);
+            this.handleContextMenuMouseEvent(mouseEvent, undefined, rowComp, cellCtrl);
         }
         else {
             if (cellCtrl) {
@@ -103,7 +103,7 @@ var RowContainerEventsFeature = /** @class */ (function (_super) {
         var longTapListener = function (event) {
             var rowComp = _this.getRowForEvent(event.touchEvent);
             var cellComp = _this.mouseEventService.getRenderedCellForEvent(event.touchEvent);
-            _this.handleContextMenuMouseEvent(null, event.touchEvent, rowComp, cellComp);
+            _this.handleContextMenuMouseEvent(undefined, event.touchEvent, rowComp, cellComp);
         };
         this.addManagedListener(touchListener, TouchListener.EVENT_LONG_TAP, longTapListener);
         this.addDestroyFunc(function () { return touchListener.destroy(); });
@@ -125,15 +125,13 @@ var RowContainerEventsFeature = /** @class */ (function (_super) {
         var value = null;
         if (column) {
             var event_1 = mouseEvent ? mouseEvent : touchEvent;
-            cellCtrl.dispatchCellContextMenuEvent(event_1);
+            cellCtrl.dispatchCellContextMenuEvent(event_1 !== null && event_1 !== void 0 ? event_1 : null);
             value = this.valueService.getValue(column, rowNode);
         }
         // if user clicked on a cell, anchor to that cell, otherwise anchor to the grid panel
         var gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         var anchorToElement = cellCtrl ? cellCtrl.getGui() : gridBodyCon.getGridBodyElement();
-        if (this.contextMenuFactory) {
-            this.contextMenuFactory.onContextMenu(mouseEvent, touchEvent, rowNode, column, value, anchorToElement);
-        }
+        this.menuService.showContextMenu({ mouseEvent: mouseEvent, touchEvent: touchEvent, rowNode: rowNode, column: column, value: value, anchorToElement: anchorToElement });
     };
     RowContainerEventsFeature.prototype.getControlsForEventTarget = function (target) {
         return {
@@ -282,7 +280,7 @@ var RowContainerEventsFeature = /** @class */ (function (_super) {
         event.preventDefault();
     };
     RowContainerEventsFeature.prototype.onCtrlAndC = function (event) {
-        if (!this.clipboardService || this.gridOptionsService.is('enableCellTextSelection')) {
+        if (!this.clipboardService || this.gridOptionsService.get('enableCellTextSelection')) {
             return;
         }
         var _a = this.getControlsForEventTarget(event.target), cellCtrl = _a.cellCtrl, rowCtrl = _a.rowCtrl;
@@ -294,8 +292,8 @@ var RowContainerEventsFeature = /** @class */ (function (_super) {
     };
     RowContainerEventsFeature.prototype.onCtrlAndX = function (event) {
         if (!this.clipboardService ||
-            this.gridOptionsService.is('enableCellTextSelection') ||
-            this.gridOptionsService.is('suppressCutToClipboard')) {
+            this.gridOptionsService.get('enableCellTextSelection') ||
+            this.gridOptionsService.get('suppressCutToClipboard')) {
             return;
         }
         var _a = this.getControlsForEventTarget(event.target), cellCtrl = _a.cellCtrl, rowCtrl = _a.rowCtrl;
@@ -310,18 +308,18 @@ var RowContainerEventsFeature = /** @class */ (function (_super) {
         if ((cellCtrl === null || cellCtrl === void 0 ? void 0 : cellCtrl.isEditing()) || (rowCtrl === null || rowCtrl === void 0 ? void 0 : rowCtrl.isEditing())) {
             return;
         }
-        if (this.clipboardService && !this.gridOptionsService.is('suppressClipboardPaste')) {
+        if (this.clipboardService && !this.gridOptionsService.get('suppressClipboardPaste')) {
             this.clipboardService.pasteFromClipboard();
         }
     };
     RowContainerEventsFeature.prototype.onCtrlAndD = function (event) {
-        if (this.clipboardService && !this.gridOptionsService.is('suppressClipboardPaste')) {
+        if (this.clipboardService && !this.gridOptionsService.get('suppressClipboardPaste')) {
             this.clipboardService.copyRangeDown();
         }
         event.preventDefault();
     };
     RowContainerEventsFeature.prototype.onCtrlAndZ = function (event) {
-        if (!this.gridOptionsService.is('undoRedoCellEditing')) {
+        if (!this.gridOptionsService.get('undoRedoCellEditing')) {
             return;
         }
         event.preventDefault();
@@ -342,8 +340,8 @@ var RowContainerEventsFeature = /** @class */ (function (_super) {
         Autowired('valueService')
     ], RowContainerEventsFeature.prototype, "valueService", void 0);
     __decorate([
-        Optional('contextMenuFactory')
-    ], RowContainerEventsFeature.prototype, "contextMenuFactory", void 0);
+        Autowired('menuService')
+    ], RowContainerEventsFeature.prototype, "menuService", void 0);
     __decorate([
         Autowired('ctrlsService')
     ], RowContainerEventsFeature.prototype, "ctrlsService", void 0);

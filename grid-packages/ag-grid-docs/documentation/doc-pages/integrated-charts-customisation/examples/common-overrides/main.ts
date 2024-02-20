@@ -1,116 +1,80 @@
-import { ColDef, CreateRangeChartParams, FirstDataRenderedEvent, Grid, GridOptions } from '@ag-grid-community/core';
-import { getData } from "./data";
+import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent} from '@ag-grid-community/core';
+import {getData} from "./data";
 
-
-const columnDefs: ColDef[] = [
-  { field: 'country', width: 150, chartDataType: 'category' },
-  { field: 'gold', chartDataType: 'series' },
-  { field: 'silver', chartDataType: 'series' },
-  { field: 'bronze', chartDataType: 'series' },
-  {
-    headerName: 'A',
-    valueGetter: 'Math.floor(Math.random()*1000)',
-    chartDataType: 'series',
-  },
-  {
-    headerName: 'B',
-    valueGetter: 'Math.floor(Math.random()*1000)',
-    chartDataType: 'series',
-  },
-  {
-    headerName: 'C',
-    valueGetter: 'Math.floor(Math.random()*1000)',
-    chartDataType: 'series',
-  },
-  {
-    headerName: 'D',
-    valueGetter: 'Math.floor(Math.random()*1000)',
-    chartDataType: 'series',
-  },
-]
-
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
+  columnDefs: [
+    { field: 'country', width: 150, chartDataType: 'category' },
+    { field: 'gold', chartDataType: 'series' },
+    { field: 'silver', chartDataType: 'series' },
+    { field: 'bronze', chartDataType: 'series' },
+  ],
   defaultColDef: {
-    editable: true,
-    sortable: true,
     flex: 1,
     minWidth: 100,
-    filter: true,
-    resizable: true,
   },
   popupParent: document.body,
-  columnDefs: columnDefs,
-  rowData: getData(),
   enableRangeSelection: true,
   enableCharts: true,
-  onFirstDataRendered: onFirstDataRendered,
   chartThemeOverrides: {
     common: {
-      background: {
-        fill: '#e5e5e5',
-      },
       title: {
         enabled: true,
         text: 'Precious Metals Production',
-        fontStyle: 'italic',
-        fontWeight: '600',
-        fontSize: 18,
-        fontFamily: 'Impact, sans-serif',
-        color: '#414182',
       },
       subtitle: {
         enabled: true,
         text: 'by country',
         fontSize: 14,
         fontFamily: 'Monaco, monospace',
-        color: 'rgb(100, 100, 100)',
+        color: '#aaa',
+        spacing: 10,
+      },
+      padding: {
+        left: 80,
+        right: 80,
       },
       legend: {
-        position: 'left',
-        spacing: 2,
+        spacing: 30,
         item: {
           label: {
             fontStyle: 'italic',
             fontWeight: 'bold',
             fontSize: 18,
             fontFamily: 'Palatino, serif',
-            color: '#555',
+            color: '#aaa',
           },
           marker: {
-            shape: 'diamond',
+            shape: 'circle',
             size: 10,
             padding: 10,
             strokeWidth: 2,
           },
-          paddingX: 120,
-          paddingY: 20,
+          paddingX: 30,
         },
-      },
-      tooltip: {
-        class: 'my-tooltip-class',
       },
     },
   },
-}
+  onGridReady : (params: GridReadyEvent) => {
+    getData().then(rowData => params.api.setGridOption('rowData', rowData));
+  },
+  onFirstDataRendered,
+};
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  var cellRange = {
-    rowStartIndex: 0,
-    rowEndIndex: 4,
-    columns: ['country', 'gold', 'silver', 'bronze'],
-  }
-
-  var createRangeChartParams: CreateRangeChartParams = {
-    cellRange: cellRange,
-    chartType: 'groupedBar',
-  }
-
-  params.api.createRangeChart(createRangeChartParams)
+  params.api.createRangeChart({
+    cellRange: {
+      rowStartIndex: 0,
+      rowEndIndex: 3,
+      columns: ['country', 'gold', 'silver', 'bronze'],
+    },
+    chartType: 'groupedColumn',
+  });
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  gridApi = createGrid(gridDiv, gridOptions);
 })

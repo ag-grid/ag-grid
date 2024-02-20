@@ -1,13 +1,14 @@
-import { DndSourceOnRowDragParams, Grid, GridOptions } from '@ag-grid-community/core';
+import { DndSourceOnRowDragParams, GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 import { getData } from "./data";
+
+
+let gridApi: GridApi;
 
 
 const gridOptions: GridOptions = {
   defaultColDef: {
     width: 80,
-    sortable: true,
     filter: true,
-    resizable: true,
   },
   rowSelection: 'multiple',
   suppressRowClickSelection: true,
@@ -30,7 +31,6 @@ const gridOptions: GridOptions = {
     { field: 'value1' },
     { field: 'value2' },
   ],
-  animateRows: true,
 }
 
 function onDragOver(event: any) {
@@ -74,5 +74,5 @@ function onRowDrag(params: DndSourceOnRowDragParams) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

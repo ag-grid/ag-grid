@@ -94,7 +94,7 @@ var InfiniteCache = /** @class */ (function (_super) {
         if (!this.isAlive()) {
             return;
         }
-        this.logger.log("onPageLoaded: page = " + block.getId() + ", lastRow = " + lastRow);
+        this.logger.log("onPageLoaded: page = ".concat(block.getId(), ", lastRow = ").concat(lastRow));
         this.checkRowCount(block, lastRow);
         // we fire cacheUpdated even if the row count has not changed, as some items need updating even
         // if no new rows to render. for example the pagination panel has '?' as the total rows when loading
@@ -291,13 +291,13 @@ var InfiniteCache = /** @class */ (function (_super) {
     // scrolled over are not needed to be loaded.
     InfiniteCache.MAX_EMPTY_BLOCKS_TO_KEEP = 2;
     __decorate([
-        core_1.Autowired('rowRenderer')
+        (0, core_1.Autowired)('rowRenderer')
     ], InfiniteCache.prototype, "rowRenderer", void 0);
     __decorate([
-        core_1.Autowired("focusService")
+        (0, core_1.Autowired)("focusService")
     ], InfiniteCache.prototype, "focusService", void 0);
     __decorate([
-        __param(0, core_1.Qualifier('loggerFactory'))
+        __param(0, (0, core_1.Qualifier)('loggerFactory'))
     ], InfiniteCache.prototype, "setBeans", null);
     __decorate([
         core_1.PreDestroy

@@ -11,8 +11,10 @@ const keyCode_1 = require("../constants/keyCode");
 const beanStub_1 = require("../context/beanStub");
 const context_1 = require("../context/context");
 const eventKeys_1 = require("../eventKeys");
+const browser_1 = require("../utils/browser");
 const generic_1 = require("../utils/generic");
 const managedFocusFeature_1 = require("../widgets/managedFocusFeature");
+const touchListener_1 = require("../widgets/touchListener");
 const headerNavigationService_1 = require("./common/headerNavigationService");
 class GridHeaderCtrl extends beanStub_1.BeanStub {
     setComp(comp, eGui, eFocusableElement) {
@@ -28,6 +30,9 @@ class GridHeaderCtrl extends beanStub_1.BeanStub {
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.onPivotModeChanged();
         this.setupHeaderHeight();
+        const listener = this.onHeaderContextMenu.bind(this);
+        this.addManagedListener(this.eGui, 'contextmenu', listener);
+        this.mockContextMenuForIPad(listener);
         this.ctrlsService.registerGridHeaderCtrl(this);
     }
     setupHeaderHeight() {
@@ -86,7 +91,7 @@ class GridHeaderCtrl extends beanStub_1.BeanStub {
         this.comp.addOrRemoveCssClass('ag-header-allow-overflow', shouldAllowOverflow);
     }
     onTabKeyDown(e) {
-        const isRtl = this.gridOptionsService.is('enableRtl');
+        const isRtl = this.gridOptionsService.get('enableRtl');
         const direction = e.shiftKey !== isRtl
             ? headerNavigationService_1.HeaderNavigationDirection.LEFT
             : headerNavigationService_1.HeaderNavigationDirection.RIGHT;
@@ -101,7 +106,7 @@ class GridHeaderCtrl extends beanStub_1.BeanStub {
             case keyCode_1.KeyCode.LEFT:
                 direction = headerNavigationService_1.HeaderNavigationDirection.LEFT;
             case keyCode_1.KeyCode.RIGHT:
-                if (!generic_1.exists(direction)) {
+                if (!(0, generic_1.exists)(direction)) {
                     direction = headerNavigationService_1.HeaderNavigationDirection.RIGHT;
                 }
                 this.headerNavigationService.navigateHorizontally(direction, false, e);
@@ -109,7 +114,7 @@ class GridHeaderCtrl extends beanStub_1.BeanStub {
             case keyCode_1.KeyCode.UP:
                 direction = headerNavigationService_1.HeaderNavigationDirection.UP;
             case keyCode_1.KeyCode.DOWN:
-                if (!generic_1.exists(direction)) {
+                if (!(0, generic_1.exists)(direction)) {
                     direction = headerNavigationService_1.HeaderNavigationDirection.DOWN;
                 }
                 if (this.headerNavigationService.navigateVertically(direction, null, e)) {
@@ -130,20 +135,44 @@ class GridHeaderCtrl extends beanStub_1.BeanStub {
             this.focusService.clearFocusedHeader();
         }
     }
+    onHeaderContextMenu(mouseEvent, touch, touchEvent) {
+        if ((!mouseEvent && !touchEvent) || !this.menuService.isHeaderContextMenuEnabled()) {
+            return;
+        }
+        const { target } = (mouseEvent !== null && mouseEvent !== void 0 ? mouseEvent : touch);
+        if (target === this.eGui || target === this.ctrlsService.getHeaderRowContainerCtrl().getViewport()) {
+            this.menuService.showHeaderContextMenu(undefined, mouseEvent, touchEvent);
+        }
+    }
+    mockContextMenuForIPad(listener) {
+        // we do NOT want this when not in iPad
+        if (!(0, browser_1.isIOSUserAgent)()) {
+            return;
+        }
+        const touchListener = new touchListener_1.TouchListener(this.eGui);
+        const longTapListener = (event) => {
+            listener(undefined, event.touchStart, event.touchEvent);
+        };
+        this.addManagedListener(touchListener, touchListener_1.TouchListener.EVENT_LONG_TAP, longTapListener);
+        this.addDestroyFunc(() => touchListener.destroy());
+    }
 }
 __decorate([
-    context_1.Autowired('headerNavigationService')
+    (0, context_1.Autowired)('headerNavigationService')
 ], GridHeaderCtrl.prototype, "headerNavigationService", void 0);
 __decorate([
-    context_1.Autowired('focusService')
+    (0, context_1.Autowired)('focusService')
 ], GridHeaderCtrl.prototype, "focusService", void 0);
 __decorate([
-    context_1.Autowired('columnModel')
+    (0, context_1.Autowired)('columnModel')
 ], GridHeaderCtrl.prototype, "columnModel", void 0);
 __decorate([
-    context_1.Autowired('ctrlsService')
+    (0, context_1.Autowired)('ctrlsService')
 ], GridHeaderCtrl.prototype, "ctrlsService", void 0);
 __decorate([
-    context_1.Autowired('filterManager')
+    (0, context_1.Autowired)('filterManager')
 ], GridHeaderCtrl.prototype, "filterManager", void 0);
+__decorate([
+    (0, context_1.Autowired)('menuService')
+], GridHeaderCtrl.prototype, "menuService", void 0);
 exports.GridHeaderCtrl = GridHeaderCtrl;

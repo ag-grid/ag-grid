@@ -1,5 +1,5 @@
 ---
-title: "Components"
+title: "Custom Components"
 ---
 
 <framework-specific-section frameworks="javascript,vue">
@@ -38,8 +38,9 @@ The remainder of this page gives information that is common across all the compo
 
 md-include:declare-vue.md
 
-md-include:register-javascript.md
+## Registering Custom Components
 
+md-include:register-javascript.md
 md-include:register-angular.md 
 md-include:register-react.md 
 md-include:register-vue.md
@@ -87,7 +88,7 @@ The below table gives a summary of the components, where they are configured and
 | Component                     | Where                     | Attribute | 
 | ----------------------------- | ------------------------- | ------------------------ | 
 | Cell Renderer                 | Column Definition         | cellRenderer<br/>cellRendererParams<br/>cellRendererSelector         | 
-| Cell Editor                   | Column Definition         | cellEditor<br>cellEditorParams<br/>cellEditorSelector| 
+| Cell Editor                   | Column Definition         | cellEditor<br />cellEditorParams<br/>cellEditorSelector| 
 | Filter                        | Column Definition         | filter<br/>filterParams              | 
 | Floating Filter               | Column Definition         | floatingFilter<br/>floatingFilterParams       | 
 | Header Component              | Column Definition         | headerComponent<br/>headerComponentParams               | 
@@ -103,6 +104,7 @@ The below table gives a summary of the components, where they are configured and
 | Date Component                | Grid Option               | dateComponent<br/>dateComponentParams                  | 
 | Status Bar Component          | Grid Option -> Status Bar | statusPanel<br/>statusPanelParams          | 
 | Tool Panel                    | Grid Option -> Side Bar   | toolPanel<br/>toolPanelParams            | 
+| Menu Item                     | Grid Option -> Menu       | menuItem<br/>menuItemParams            | 
 
 ## Grid Provided Components
 
@@ -260,6 +262,13 @@ The grid comes with pre-registered components that can be used. Each component p
             <td>agDetailCellRenderer<enterprise-icon></enterprise-icon></td>
             <td>Detail panel for master / detail grid.</td>
         </tr>
+        <tr>
+            <td colspan="2"><h3>Column Menu / Context Menu</h3></td>
+        </tr>
+        <tr>
+            <td>agMenuItem<enterprise-icon></enterprise-icon></td>
+            <td>Menu item within column or context menu</td>
+        </tr>
     </tbody>
 </table>
 
@@ -275,6 +284,7 @@ It is also possible to override components. Where the grid uses a default value,
 - **agNoRowsOverlay**: To change the default loading 'no rows' overlay.
 - **agCellEditor**: To change the default cell editor.
 - **agDetailCellRenderer**: To change the default detail panel for master / detail grids.
+- **agMenuItem**: To change the default menu item for column and context menus.
 
 To override the default component, register the custom component in the GridOptions `components` property under the above name.
 
@@ -296,7 +306,7 @@ To override the default component, register the custom component in the GridOpti
 |    selector: 'my-app',
 |    template: `
 |      &lt;ag-grid-angular
-|          class="ag-theme-alpine"
+|          class="ag-theme-quartz"
 |          [components]="components"
 |          ...other properties...  
 |      >&lt;/ag-grid-angular>
@@ -313,8 +323,13 @@ To override the default component, register the custom component in the GridOpti
 
 <framework-specific-section frameworks="react">
 <snippet transform={false} language="jsx">
+| const components = useMemo(() => (
+|    { agDateInput: CustomDateComponent,
+|      agColumnHeader: CustomHeaderComponent 
+|    }), []);
+|
 |&lt;AgGridReact
-|    components={{ agDateInput: CustomDateComponent, agColumnHeader: CustomHeaderComponent }}
+|    components={components}
 |    ...other properties...
 |/>
 </snippet>

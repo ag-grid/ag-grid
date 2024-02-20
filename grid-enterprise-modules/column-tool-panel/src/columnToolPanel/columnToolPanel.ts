@@ -1,17 +1,15 @@
 import {
     _,
-    Autowired,
     ColDef,
     ColGroupDef,
-    ColumnApi,
     Component,
     Events,
-    GridApi,
     IColumnToolPanel,
     IToolPanelComp,
     ToolPanelColumnCompParams,
     ModuleNames,
-    ModuleRegistry
+    ModuleRegistry,
+    ColumnToolPanelState
 } from "@ag-grid-community/core";
 import { PivotModePanel } from "./pivotModePanel";
 import { PivotDropZonePanel, RowGroupDropZonePanel, ValuesDropZonePanel } from "@ag-grid-enterprise/row-grouping";
@@ -20,9 +18,6 @@ import { PrimaryColsPanel } from "./primaryColsPanel";
 export class ColumnToolPanel extends Component implements IColumnToolPanel, IToolPanelComp {
 
     private static TEMPLATE = `<div class="ag-column-panel"></div>`;
-
-    @Autowired("gridApi") private gridApi: GridApi;
-    @Autowired("columnApi") private columnApi: ColumnApi;
 
     private initialised = false;
     private params: ToolPanelColumnCompParams;
@@ -48,7 +43,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     public init(params: ToolPanelColumnCompParams): void {
-        const defaultParams: Omit<ToolPanelColumnCompParams, 'context'> = {
+        const defaultParams: Partial<ToolPanelColumnCompParams> = this.gridOptionsService.addGridCommonParams({
             suppressColumnMove: false,
             suppressColumnSelectAll: false,
             suppressColumnFilter: false,
@@ -59,13 +54,10 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             suppressValues: false,
             suppressPivots: false,
             suppressSyncLayoutWithGrid: false,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-        };
+        });
         this.params = {
             ...defaultParams,
             ...params,
-            context: this.gridOptionsService.context,
         };
 
         if (this.isRowGroupingModuleLoaded() && !this.params.suppressPivotMode) {
@@ -235,9 +227,16 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         _.clearElement(this.getGui());
     }
 
-    public refresh(): void {
+    public refresh(params: ToolPanelColumnCompParams): boolean {
         this.destroyChildren();
-        this.init(this.params);
+        this.init(params);
+        return true;
+    }
+
+    public getState(): ColumnToolPanelState {
+        return {
+            expandedGroupIds: this.primaryColsPanel.getExpandedGroups()
+        };
     }
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.

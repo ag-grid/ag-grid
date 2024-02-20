@@ -4,6 +4,7 @@ exports.AgAbstractField = void 0;
 const agAbstractLabel_1 = require("./agAbstractLabel");
 const dom_1 = require("../utils/dom");
 const eventKeys_1 = require("../eventKeys");
+const aria_1 = require("../utils/aria");
 class AgAbstractField extends agAbstractLabel_1.AgAbstractLabel {
     constructor(config, template, className) {
         super(config, template);
@@ -14,6 +15,22 @@ class AgAbstractField extends agAbstractLabel_1.AgAbstractLabel {
         if (this.className) {
             this.addCssClass(this.className);
         }
+        this.refreshAriaLabelledBy();
+    }
+    refreshAriaLabelledBy() {
+        const ariaEl = this.getAriaElement();
+        const labelId = this.getLabelId();
+        if ((0, aria_1.getAriaLabel)(ariaEl) !== null) {
+            (0, aria_1.setAriaLabelledBy)(ariaEl, '');
+        }
+        else {
+            (0, aria_1.setAriaLabelledBy)(ariaEl, labelId !== null && labelId !== void 0 ? labelId : '');
+        }
+    }
+    setAriaLabel(label) {
+        (0, aria_1.setAriaLabel)(this.getAriaElement(), label);
+        this.refreshAriaLabelledBy();
+        return this;
     }
     onValueChange(callbackFn) {
         this.addManagedListener(this, eventKeys_1.Events.EVENT_FIELD_VALUE_CHANGED, () => callbackFn(this.getValue()));
@@ -23,7 +40,7 @@ class AgAbstractField extends agAbstractLabel_1.AgAbstractLabel {
         return this.getGui().clientWidth;
     }
     setWidth(width) {
-        dom_1.setFixedWidth(this.getGui(), width);
+        (0, dom_1.setFixedWidth)(this.getGui(), width);
         return this;
     }
     getPreviousValue() {

@@ -1,4 +1,4 @@
-// @ag-grid-community/react v30.1.0
+// @ag-grid-community/react v31.1.0
 import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { BeansContext } from '../beansContext.mjs';
 import { CssClassManager, _ } from '@ag-grid-community/core';
@@ -6,22 +6,22 @@ import { isComponentStateless } from '../utils.mjs';
 import { showJsComp } from '../jsComp.mjs';
 const HeaderCellComp = (props) => {
     const { ctrl } = props;
+    const isAlive = ctrl.isAlive();
     const { context } = useContext(BeansContext);
-    const colId = ctrl.getColId();
+    const colId = isAlive ? ctrl.getColId() : undefined;
     const [userCompDetails, setUserCompDetails] = useState();
     const eGui = useRef(null);
     const eResize = useRef(null);
     const eHeaderCompWrapper = useRef(null);
     const userCompRef = useRef();
     let cssClassManager = useRef();
-    if (!cssClassManager.current) {
+    if (isAlive && !cssClassManager.current) {
         cssClassManager.current = new CssClassManager(() => eGui.current);
     }
     const setRef = useCallback((e) => {
         var _a;
         eGui.current = e;
-        if (!eGui.current) {
-            // Any clean up required?
+        if (!eGui.current || !isAlive) {
             return;
         }
         const compProxy = {
@@ -31,11 +31,6 @@ const HeaderCellComp = (props) => {
                 }
             },
             addOrRemoveCssClass: (name, on) => cssClassManager.current.addOrRemoveCssClass(name, on),
-            setAriaDescription: label => {
-                if (eGui.current) {
-                    _.setAriaDescription(eGui.current, label);
-                }
-            },
             setAriaSort: sort => {
                 if (eGui.current) {
                     sort ? _.setAriaSort(eGui.current, sort) : _.removeAriaSort(eGui.current);
@@ -60,7 +55,7 @@ const HeaderCellComp = (props) => {
     }, [userCompDetails]);
     const reactUserComp = userCompDetails && userCompDetails.componentFromFramework;
     const UserCompClass = userCompDetails && userCompDetails.componentClass;
-    return (React.createElement("div", { ref: setRef, className: "ag-header-cell", "col-id": colId, role: "columnheader", tabIndex: -1 },
+    return (React.createElement("div", { ref: setRef, className: "ag-header-cell", "col-id": colId, role: "columnheader" },
         React.createElement("div", { ref: eResize, className: "ag-header-cell-resize", role: "presentation" }),
         React.createElement("div", { ref: eHeaderCompWrapper, className: "ag-header-cell-comp-wrapper", role: "presentation" },
             reactUserComp && userCompStateless && React.createElement(UserCompClass, Object.assign({}, userCompDetails.params)),

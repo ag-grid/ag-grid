@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.1.0
+ * @version v31.1.0
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -30,10 +30,11 @@ export { BeanStub } from "./context/beanStub";
 export { Context, Autowired, PostConstruct, PreConstruct, Optional, Bean, Qualifier, PreDestroy } from "./context/context";
 export { QuerySelector, RefSelector } from "./widgets/componentAnnotations";
 // excel
-export { ExcelFactoryMode } from "./interfaces/iExcelCreator";
+export { ExcelFactoryMode, } from "./interfaces/iExcelCreator";
 // dragAndDrop
-export { DragAndDropService, DragSourceType, HorizontalDirection, VerticalDirection } from "./dragAndDrop/dragAndDropService";
+export { DragAndDropService, DragSourceType } from "./dragAndDrop/dragAndDropService";
 export { DragService } from "./dragAndDrop/dragService";
+export { VirtualListDragFeature } from "./dragAndDrop/virtualListDragFeature";
 // entities
 export { Column } from "./entities/column";
 export { ColumnGroup } from "./entities/columnGroup";
@@ -80,9 +81,10 @@ export { StandardMenuFactory } from "./headerRendering/cells/column/standardMenu
 // layout
 export { TabbedLayout } from "./layout/tabbedLayout";
 // misc
-export { simpleHttpRequest } from "./misc/simpleHttpRequest";
 export { ResizeObserverService } from "./misc/resizeObserverService";
 export { AnimationFrameService } from "./misc/animationFrameService";
+export { ExpansionService } from "./misc/expansionService";
+export { MenuService } from "./misc/menuService";
 export { LargeTextCellEditor } from "./rendering/cellEditors/largeTextCellEditor";
 export { PopupEditorWrapper } from "./rendering/cellEditors/popupEditorWrapper";
 export { SelectCellEditor } from "./rendering/cellEditors/selectCellEditor";
@@ -135,6 +137,7 @@ export { AgRichSelect } from "./widgets/agRichSelect";
 export { AgSelect } from "./widgets/agSelect";
 export { AgSlider } from "./widgets/agSlider";
 export { AgGroupComponent } from "./widgets/agGroupComponent";
+export { AgMenuItemRenderer } from "./widgets/agMenuItemRenderer";
 export { AgMenuItemComponent } from "./widgets/agMenuItemComponent";
 export { AgMenuList } from "./widgets/agMenuList";
 export { AgMenuPanel } from "./widgets/agMenuPanel";
@@ -159,7 +162,8 @@ export { VanillaFrameworkOverrides } from "./vanillaFrameworkOverrides";
 export { CellNavigationService } from "./cellNavigationService";
 export { AlignedGridsService } from "./alignedGridsService";
 export { KeyCode } from "./constants/keyCode";
-export { Grid, GridCoreCreator } from "./grid";
+export { VerticalDirection, HorizontalDirection } from "./constants/direction";
+export { Grid, GridCoreCreator, createGrid } from "./grid";
 export { GridApi } from "./gridApi";
 export { Events } from "./eventKeys";
 export { FocusService } from "./focusService";
@@ -184,10 +188,11 @@ export { RowPositionUtils } from "./entities/rowPositionUtils";
 export { HeaderPositionUtils } from "./headerRendering/common/headerPosition";
 export { HeaderNavigationService, HeaderNavigationDirection } from "./headerRendering/common/headerNavigationService";
 export { DataTypeService } from "./columns/dataTypeService";
-export * from "./propertyKeys";
+export { PropertyKeys } from "./propertyKeys";
 export { ColumnApi } from "./columns/columnApi";
 export { BaseComponentWrapper } from "./components/framework/frameworkComponentWrapper";
 export { Environment } from "./environment";
+export { TooltipFeature } from "./widgets/tooltipFeature";
 export { CustomTooltipFeature } from "./widgets/customTooltipFeature";
 // charts
 export * from "./interfaces/iChartOptions";

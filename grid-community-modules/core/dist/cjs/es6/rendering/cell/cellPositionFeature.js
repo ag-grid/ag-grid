@@ -23,6 +23,7 @@ class CellPositionFeature extends beanStub_1.BeanStub {
     }
     setupRowSpan() {
         this.rowSpan = this.column.getRowSpan(this.rowNode);
+        this.addManagedListener(this.beans.eventService, eventKeys_1.Events.EVENT_NEW_COLUMNS_LOADED, () => this.onNewColumnsLoaded());
     }
     setComp(eGui) {
         this.eGui = eGui;
@@ -30,9 +31,17 @@ class CellPositionFeature extends beanStub_1.BeanStub {
         this.onWidthChanged();
         this.applyRowSpan();
     }
+    onNewColumnsLoaded() {
+        const rowSpan = this.column.getRowSpan(this.rowNode);
+        if (this.rowSpan === rowSpan) {
+            return;
+        }
+        this.rowSpan = rowSpan;
+        this.applyRowSpan(true);
+    }
     onDisplayColumnsChanged() {
         const colsSpanning = this.getColSpanningList();
-        if (!array_1.areEqual(this.colsSpanning, colsSpanning)) {
+        if (!(0, array_1.areEqual)(this.colsSpanning, colsSpanning)) {
             this.colsSpanning = colsSpanning;
             this.onWidthChanged();
             this.onLeftChanged(); // left changes when doing RTL
@@ -78,7 +87,7 @@ class CellPositionFeature extends beanStub_1.BeanStub {
             for (let i = 0; pointer && i < colSpan; i++) {
                 colsSpanning.push(pointer);
                 pointer = this.beans.columnModel.getDisplayedColAfter(pointer);
-                if (!pointer || generic_1.missing(pointer)) {
+                if (!pointer || (0, generic_1.missing)(pointer)) {
                     break;
                 }
                 // we do not allow col spanning to span outside of pinned areas
@@ -98,8 +107,8 @@ class CellPositionFeature extends beanStub_1.BeanStub {
     }
     getCellLeft() {
         let mostLeftCol;
-        if (this.beans.gridOptionsService.is('enableRtl') && this.colsSpanning) {
-            mostLeftCol = array_1.last(this.colsSpanning);
+        if (this.beans.gridOptionsService.get('enableRtl') && this.colsSpanning) {
+            mostLeftCol = (0, array_1.last)(this.colsSpanning);
         }
         else {
             mostLeftCol = this.column;
@@ -118,8 +127,8 @@ class CellPositionFeature extends beanStub_1.BeanStub {
         // is in body
         return leftWidth + (leftPosition || 0);
     }
-    applyRowSpan() {
-        if (this.rowSpan === 1) {
+    applyRowSpan(force) {
+        if (this.rowSpan === 1 && !force) {
             return;
         }
         const singleRowHeight = this.beans.gridOptionsService.getRowHeightAsNumber();

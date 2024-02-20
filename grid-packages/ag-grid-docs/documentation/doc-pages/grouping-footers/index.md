@@ -29,6 +29,50 @@ The following example demonstrates these properties. Note the following:
 
 <grid-example title='Enabling Group Footers' name='enabling-group-footers' type='generated' options='{ "enterprise": true, "exampleHeight": 503, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
+## Dynamic Group Footers
+
+If you want a group footer to only be enabled for certain groups but not others, you can dynamically specify which groups to add footers for through passing a custom callback function to the property `groupIncludeFooter` instead of a boolean.
+
+For example, to enable group footers for the second level of groups and groups with name 'France':
+
+<snippet>
+|const gridOptions = {
+|    // adds a group footer to the second level of groups and groups with name 'France'
+|    groupIncludeFooter: (params) => {
+|        const node = params.node;
+|        if (node && node.level === 1) return true;
+|        if (node && node.key === 'France') return true;
+|        return false;
+|    }
+|}
+</snippet>
+
+The following example demonstrates a custom group footer enablement. Note the following:
+
+- Group Footer is shown for the second level of groups
+- Group Footer is shown for the group called `France`
+- No Group Footers are shown for any other groups.
+
+<grid-example title='Customising Enabling Group Footers' name='customising-enabling-group-footers' type='generated' options='{ "enterprise": true, "exampleHeight": 588, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+
+### Example: Group Column Footers
+To enable group footer for a particular row group column, you could do the following: 
+
+<snippet>
+const gridOptions = {
+    // adds a group footer to rows grouped by the country column
+    groupIncludeFooter: (params) => params.node.rowGroupColumn.getId() === 'country' 
+}
+</snippet>
+
+The following example demonstrates a custom group footer enablement for rows grouped by a country column. Note the following:
+
+- Group Footer is shown for rows grouped by the country column.
+- Group Footer are not shown for any other groups
+
+<grid-example title='Customising Enabling Group Footers' name='customising-enabling-group-footers-row-grouped' type='generated' options='{ "enterprise": true, "exampleHeight": 488, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+
+
 ## Customising Footer Values
 
 By default, the footer will display the word 'Total' followed by the group key. However, this can be changed using the
@@ -67,7 +111,7 @@ non-footer cells differently.
 <grid-example title='Customising Footer Cells' name='customising-footer-cells' type='mixed' options='{ "enterprise": true, "exampleHeight": 503, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
 <note>
-It is also possible to customise footer cells using: `cellRendererParams.innerRendererSelector`. For more details see the [Group Cell Renderer](/group-cell-renderer/) section.
+It is also possible to customise footer cells using: `cellRendererParams.innerRendererSelector`. For more details see the [Group Cell Renderer](../group-cell-renderer/) section.
 </note>
 
 ## Group Footer Limitations

@@ -38,7 +38,7 @@ class DetailCellRendererCtrl extends core_1.BeanStub {
         this.focusService.focusInto(this.comp.getGui(), e.fromBelow);
     }
     setAutoHeightClasses() {
-        const autoHeight = this.gridOptionsService.is('detailRowAutoHeight');
+        const autoHeight = this.gridOptionsService.get('detailRowAutoHeight');
         const parentClass = autoHeight ? 'ag-details-row-auto-height' : 'ag-details-row-fixed-height';
         const detailClass = autoHeight ? 'ag-details-grid-auto-height' : 'ag-details-grid-fixed-height';
         this.comp.addOrRemoveCssClass(parentClass, true);
@@ -71,7 +71,7 @@ class DetailCellRendererCtrl extends core_1.BeanStub {
                 'please set gridOptions.detailCellRendererParams.detailGridOptions');
             return;
         }
-        const autoHeight = this.gridOptionsService.is('detailRowAutoHeight');
+        const autoHeight = this.gridOptionsService.get('detailRowAutoHeight');
         // we clone the detail grid options, as otherwise it would be shared
         // across many instances, and that would be a problem because we set
         // api and columnApi into gridOptions
@@ -105,10 +105,16 @@ class DetailCellRendererCtrl extends core_1.BeanStub {
         });
     }
     loadRowData() {
+        var _a, _b, _c;
         // in case a refresh happens before the last refresh completes (as we depend on async
         // application logic) we keep track on what the latest call was.
         this.loadRowDataVersion++;
         const versionThisCall = this.loadRowDataVersion;
+        if (((_a = this.params.detailGridOptions) === null || _a === void 0 ? void 0 : _a.rowModelType) === 'serverSide') {
+            const node = this.params.node;
+            (_c = (_b = node.detailGridInfo) === null || _b === void 0 ? void 0 : _b.api) === null || _c === void 0 ? void 0 : _c.refreshServerSide({ purge: true });
+            return;
+        }
         const userFunc = this.params.getDetailRowData;
         if (!userFunc) {
             console.warn('AG Grid: could not find getDetailRowData for master / detail, ' +
@@ -127,7 +133,7 @@ class DetailCellRendererCtrl extends core_1.BeanStub {
             // as the data could have been updated with new instance
             data: this.params.node.data,
             successCallback: successCallback,
-            context: this.gridOptionsService.context
+            context: this.gridOptionsService.getGridCommonParams().context
         };
         userFunc(funcParams);
     }
@@ -146,9 +152,9 @@ class DetailCellRendererCtrl extends core_1.BeanStub {
     }
 }
 __decorate([
-    core_1.Autowired('rowPositionUtils')
+    (0, core_1.Autowired)('rowPositionUtils')
 ], DetailCellRendererCtrl.prototype, "rowPositionUtils", void 0);
 __decorate([
-    core_1.Autowired('focusService')
+    (0, core_1.Autowired)('focusService')
 ], DetailCellRendererCtrl.prototype, "focusService", void 0);
 exports.DetailCellRendererCtrl = DetailCellRendererCtrl;

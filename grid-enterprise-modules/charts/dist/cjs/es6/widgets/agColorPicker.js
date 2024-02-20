@@ -5,7 +5,7 @@ const agColorPanel_1 = require("./agColorPanel");
 const core_1 = require("@ag-grid-community/core");
 class AgColorPicker extends core_1.AgPickerField {
     constructor(config) {
-        super(Object.assign({ pickerAriaLabelKey: 'ariaLabelColorPicker', pickerAriaLabelValue: 'Color Picker', pickerType: 'ag-list' }, config), 'ag-color-picker', 'colorPicker');
+        super(Object.assign({ pickerAriaLabelKey: 'ariaLabelColorPicker', pickerAriaLabelValue: 'Color Picker', pickerType: 'ag-list', className: 'ag-color-picker', pickerIcon: 'colorPicker' }, config));
         if (config && config.color) {
             this.value = config.color;
         }

@@ -76,23 +76,30 @@ var SimpleFloatingFilter = /** @class */ (function (_super) {
         return this.isTypeEditable(simpleModel.type);
     };
     SimpleFloatingFilter.prototype.init = function (params) {
-        this.setSimpleParams(params);
+        this.setSimpleParams(params, false);
     };
-    SimpleFloatingFilter.prototype.setSimpleParams = function (params) {
+    SimpleFloatingFilter.prototype.setSimpleParams = function (params, update) {
+        if (update === void 0) { update = true; }
         this.optionsFactory = new optionsFactory_1.OptionsFactory();
         this.optionsFactory.init(params.filterParams, this.getDefaultFilterOptions());
-        this.lastType = this.optionsFactory.getDefaultOption();
+        // Initial call
+        if (!update) {
+            this.lastType = this.optionsFactory.getDefaultOption();
+        }
         // readOnly is a property of ProvidedFilterParams - we need to find a better (type-safe)
         // way to support reading this in the future.
         this.readOnly = !!params.filterParams.readOnly;
         // we are editable if:
         // 1) there is a type (user has configured filter wrong if not type)
         //  AND
-        // 2) the default type is not 'in range'
-        var editable = this.isTypeEditable(this.lastType);
+        // 2) the default type is not 'inRange'
+        var editable = this.isTypeEditable(this.optionsFactory.getDefaultOption());
         this.setEditable(editable);
     };
     SimpleFloatingFilter.prototype.onParamsUpdated = function (params) {
+        this.refresh(params);
+    };
+    SimpleFloatingFilter.prototype.refresh = function (params) {
         this.setSimpleParams(params);
     };
     SimpleFloatingFilter.prototype.doesFilterHaveSingleInput = function (filterType) {

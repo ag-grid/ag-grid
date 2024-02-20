@@ -26,7 +26,7 @@ import { KeyCode } from '../../constants/keyCode';
 var SimpleCellEditor = /** @class */ (function (_super) {
     __extends(SimpleCellEditor, _super);
     function SimpleCellEditor(cellEditorInput) {
-        var _this = _super.call(this, /* html */ "\n            <div class=\"ag-cell-edit-wrapper\">\n                " + cellEditorInput.getTemplate() + "\n            </div>") || this;
+        var _this = _super.call(this, /* html */ "\n            <div class=\"ag-cell-edit-wrapper\">\n                ".concat(cellEditorInput.getTemplate(), "\n            </div>")) || this;
         _this.cellEditorInput = cellEditorInput;
         return _this;
     }

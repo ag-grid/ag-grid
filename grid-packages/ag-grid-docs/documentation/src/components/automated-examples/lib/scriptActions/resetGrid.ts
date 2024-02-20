@@ -1,4 +1,4 @@
-import { GridOptions } from 'ag-grid-community';
+import { GridApi } from 'ag-grid-community';
 import { clearAllMenuOptionHighlights } from './clearAllMenuOptionHighlights';
 import { clearAllRowHighlights } from './clearAllRowHighlights';
 import { destoryAllCharts } from './destroyAllCharts';
@@ -6,21 +6,19 @@ import { removeDragAndDropHandles } from './removeDragAndDropHandles';
 import { clearAllSingleCellSelections } from './singleCell';
 
 interface Params {
-    gridOptions: GridOptions;
+    gridApi: GridApi;
     scrollRow?: number;
     scrollColumn?: number;
 }
 
-export function resetGrid({ gridOptions, scrollRow, scrollColumn }: Params) {
-    gridOptions?.columnApi?.resetColumnState();
-    gridOptions?.columnApi?.resetColumnGroupState();
-    gridOptions?.columnApi?.setColumnsPinned([], null);
-    if (gridOptions?.api) {
-        gridOptions.api.setFilterModel(null);
-        gridOptions.api.closeToolPanel();
-        gridOptions.api.clearRangeSelection();
-        destoryAllCharts(gridOptions.api);
-    }
+export function resetGrid({ gridApi, scrollRow, scrollColumn }: Params) {
+    gridApi.resetColumnState();
+    gridApi.resetColumnGroupState();
+    gridApi.setColumnsPinned([], null);
+    gridApi.setFilterModel(null);
+    gridApi.closeToolPanel();
+    gridApi.clearRangeSelection();
+    destoryAllCharts(gridApi);
     removeDragAndDropHandles();
     clearAllSingleCellSelections();
     clearAllRowHighlights();
@@ -29,19 +27,19 @@ export function resetGrid({ gridOptions, scrollRow, scrollColumn }: Params) {
     // Send escape to clear context menu
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
 
-    const rowCount = gridOptions.api?.getModel().getRowCount() || 0;
+    const rowCount = gridApi?.getDisplayedRowCount() || 0;
     if (rowCount > 0) {
         if (scrollColumn !== undefined) {
-            const allColumns = gridOptions.columnApi!.getColumns();
+            const allColumns = gridApi!.getColumns();
             if (allColumns) {
                 const column = allColumns[scrollColumn];
                 if (column) {
-                    gridOptions.api!.ensureColumnVisible(column);
+                    gridApi!.ensureColumnVisible(column);
                 }
             }
         }
         if (scrollRow !== undefined) {
-            gridOptions.api!.ensureIndexVisible(scrollRow);
+            gridApi!.ensureIndexVisible(scrollRow);
         }
     }
 }

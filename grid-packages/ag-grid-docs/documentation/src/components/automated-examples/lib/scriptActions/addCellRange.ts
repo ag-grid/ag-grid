@@ -1,5 +1,5 @@
-export function addCellRange({ gridOptions, rowStartIndex, rowEndIndex, columnStartIndex, columnEndIndex }) {
-    const allColumns = gridOptions.columnApi!.getColumns();
+export function addCellRange({ gridApi, rowStartIndex, rowEndIndex, columnStartIndex, columnEndIndex }) {
+    const allColumns = gridApi!.getColumns();
     const columnStart = allColumns[columnStartIndex];
     const columnEnd = allColumns[columnEndIndex];
 
@@ -7,7 +7,7 @@ export function addCellRange({ gridOptions, rowStartIndex, rowEndIndex, columnSt
         return;
     }
 
-    gridOptions.api?.addCellRange({
+    gridApi.addCellRange({
         rowStartIndex,
         rowEndIndex,
         columnStart,

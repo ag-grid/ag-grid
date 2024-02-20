@@ -1,15 +1,18 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export interface ChartGroupsDef {
     columnGroup?: ('column' | 'stackedColumn' | 'normalizedColumn')[];
     barGroup?: ('bar' | 'stackedBar' | 'normalizedBar')[];
-    pieGroup?: ('pie' | 'doughnut')[];
+    pieGroup?: ('pie' | 'donut' | 'doughnut')[];
     lineGroup?: ('line')[];
     scatterGroup?: ('scatter' | 'bubble')[];
     areaGroup?: ('area' | 'stackedArea' | 'normalizedArea')[];
-    histogramGroup?: ('histogram')[];
     combinationGroup?: ('columnLineCombo' | 'areaColumnCombo' | 'customCombo')[];
+    polarGroup?: ('radarLine' | 'radarArea' | 'nightingale' | 'radialColumn' | 'radialBar')[];
+    statisticalGroup?: ('boxPlot' | 'histogram' | 'rangeBar' | 'rangeArea')[];
+    hierarchicalGroup?: ('treemap' | 'sunburst')[];
+    specializedGroup?: ('heatmap' | 'waterfall')[];
 }
 export declare const DEFAULT_CHART_GROUPS: ChartGroupsDef;
 export declare type ChartToolPanelName = 'settings' | 'data' | 'format';
@@ -45,8 +48,8 @@ export interface ChartToolPanelsDef {
     /** The panel to open by default when the chart loads. If none specified, the tool panel is hidden by default and the first panel is open when triggered. */
     defaultToolPanel?: ChartToolPanelName;
 }
-export declare type ChartType = 'column' | 'groupedColumn' | 'stackedColumn' | 'normalizedColumn' | 'bar' | 'groupedBar' | 'stackedBar' | 'normalizedBar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'doughnut' | 'area' | 'stackedArea' | 'normalizedArea' | 'histogram' | 'columnLineCombo' | 'areaColumnCombo' | 'customCombo';
-export declare type CrossFilterChartType = 'column' | 'bar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'doughnut' | 'area';
+export declare type ChartType = 'column' | 'groupedColumn' | 'stackedColumn' | 'normalizedColumn' | 'bar' | 'groupedBar' | 'stackedBar' | 'normalizedBar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'donut' | 'doughnut' | 'area' | 'stackedArea' | 'normalizedArea' | 'histogram' | 'radarLine' | 'radarArea' | 'nightingale' | 'radialColumn' | 'radialBar' | 'sunburst' | 'rangeBar' | 'rangeArea' | 'boxPlot' | 'treemap' | 'sunburst' | 'heatmap' | 'waterfall' | 'columnLineCombo' | 'areaColumnCombo' | 'customCombo';
+export declare type CrossFilterChartType = 'column' | 'bar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'donut' | 'doughnut' | 'area';
 export declare type ChartToolPanelMenuOptions = 'chartSettings' | 'chartData' | 'chartFormat';
 export declare type ChartToolbarMenuItemOptions = 'chartLink' | 'chartUnlink' | 'chartDownload';
 export declare type ChartMenuOptions = ChartToolPanelMenuOptions | ChartToolbarMenuItemOptions;

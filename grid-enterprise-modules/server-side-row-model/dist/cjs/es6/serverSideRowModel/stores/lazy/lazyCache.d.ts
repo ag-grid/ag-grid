@@ -12,6 +12,8 @@ export declare class LazyCache extends BeanStub {
     private focusService;
     private nodeManager;
     private serverSideRowModel;
+    private rowNodeSorter;
+    private sortController;
     /**
      * Indicates whether this is still the live dataset for this store (used for ignoring old requests after purge)
      */
@@ -134,18 +136,29 @@ export declare class LazyCache extends BeanStub {
     private extractDuplicateIds;
     onLoadSuccess(firstRowIndex: number, numberOfRowsExpected: number, response: LoadSuccessParams): void;
     fireRefreshFinishedEvent(): void;
+    /**
+     * @returns true if all rows are loaded
+     */
+    isStoreFullyLoaded(): boolean | undefined;
     isLastRowIndexKnown(): boolean;
     onLoadFailed(firstRowIndex: number, numberOfRowsExpected: number): void;
     markNodesForRefresh(): void;
     isNodeInCache(id: string): boolean;
     private fireStoreUpdatedEvent;
     private getRowId;
-    updateRowNodes(updates: any[]): RowNode[];
-    insertRowNodes(inserts: any[], indexToAdd?: number): RowNode[];
     getOrderedNodeMap(): {
         [key: number]: LazyStoreNode;
     };
     clearDisplayIndexes(): void;
+    /**
+     * Client side sorting
+     */
+    clientSideSortRows(): void;
+    /**
+     * Transaction Support here
+     */
+    updateRowNodes(updates: any[]): RowNode[];
+    insertRowNodes(inserts: any[], indexToAdd?: number): RowNode[];
     removeRowNodes(idsToRemove: string[]): RowNode[];
 }
 export {};

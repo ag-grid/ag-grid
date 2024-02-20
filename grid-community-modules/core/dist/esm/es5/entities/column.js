@@ -4,34 +4,16 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
-};
-import { EventService } from "../eventService";
 import { Autowired, PostConstruct } from "../context/context";
-import { ModuleNames } from "../modules/moduleNames";
-import { ModuleRegistry } from "../modules/moduleRegistry";
-import { attrToNumber, attrToBoolean, exists, missing } from "../utils/generic";
-import { doOnce } from "../utils/function";
+import { EventService } from "../eventService";
+import { FrameworkEventListenerService } from "../misc/frameworkEventListenerService";
+import { exists, missing } from "../utils/generic";
 import { mergeDeep } from "../utils/object";
+import { warnOnce } from "../utils/function";
+var COL_DEF_DEFAULTS = {
+    resizable: true,
+    sortable: true
+};
 var instanceIdSequence = 0;
 export function getNextColInstanceId() {
     return instanceIdSequence++;
@@ -81,8 +63,8 @@ var Column = /** @class */ (function () {
             }
         }
         // sortIndex
-        var sortIndex = attrToNumber(colDef.sortIndex);
-        var initialSortIndex = attrToNumber(colDef.initialSortIndex);
+        var sortIndex = colDef.sortIndex;
+        var initialSortIndex = colDef.initialSortIndex;
         if (sortIndex !== undefined) {
             if (sortIndex !== null) {
                 this.sortIndex = sortIndex;
@@ -94,8 +76,8 @@ var Column = /** @class */ (function () {
             }
         }
         // hide
-        var hide = attrToBoolean(colDef.hide);
-        var initialHide = attrToBoolean(colDef.initialHide);
+        var hide = colDef.hide;
+        var initialHide = colDef.initialHide;
         if (hide !== undefined) {
             this.visible = !hide;
         }
@@ -110,8 +92,8 @@ var Column = /** @class */ (function () {
             this.setPinned(colDef.initialPinned);
         }
         // flex
-        var flex = attrToNumber(colDef.flex);
-        var initialFlex = attrToNumber(colDef.initialFlex);
+        var flex = colDef.flex;
+        var initialFlex = colDef.initialFlex;
         if (flex !== undefined) {
             this.flex = flex;
         }
@@ -120,12 +102,13 @@ var Column = /** @class */ (function () {
         }
     };
     // gets called when user provides an alternative colDef, eg
-    Column.prototype.setColDef = function (colDef, userProvidedColDef) {
+    Column.prototype.setColDef = function (colDef, userProvidedColDef, source) {
         this.colDef = colDef;
         this.userProvidedColDef = userProvidedColDef;
         this.initMinAndMaxWidths();
         this.initDotNotation();
-        this.eventService.dispatchEvent(this.createColumnEvent('colDefChanged', "api"));
+        this.initTooltip();
+        this.eventService.dispatchEvent(this.createColumnEvent('colDefChanged', source));
     };
     /**
      * Returns the column definition provided by the application.
@@ -159,10 +142,9 @@ var Column = /** @class */ (function () {
         this.resetActualWidth('gridInitializing');
         this.initDotNotation();
         this.initTooltip();
-        this.validate();
     };
     Column.prototype.initDotNotation = function () {
-        var suppressDotNotation = this.gridOptionsService.is('suppressFieldDotNotation');
+        var suppressDotNotation = this.gridOptionsService.get('suppressFieldDotNotation');
         this.fieldContainsDots = exists(this.colDef.field) && this.colDef.field.indexOf('.') >= 0 && !suppressDotNotation;
         this.tooltipFieldContainsDots = exists(this.colDef.tooltipField) && this.colDef.tooltipField.indexOf('.') >= 0 && !suppressDotNotation;
     };
@@ -177,7 +159,6 @@ var Column = /** @class */ (function () {
             exists(this.colDef.tooltipComponent);
     };
     Column.prototype.resetActualWidth = function (source) {
-        if (source === void 0) { source = 'api'; }
         var initialWidth = this.columnUtils.calculateColInitialWidth(this.colDef);
         this.setActualWidth(initialWidth, source, true);
     };
@@ -212,85 +193,30 @@ var Column = /** @class */ (function () {
     Column.prototype.isTooltipFieldContainsDots = function () {
         return this.tooltipFieldContainsDots;
     };
-    Column.prototype.validate = function () {
-        var colDefAny = this.colDef;
-        function warnOnce(msg, key, obj) {
-            doOnce(function () {
-                if (obj) {
-                    console.warn(msg, obj);
-                }
-                else {
-                    doOnce(function () { return console.warn(msg); }, key);
-                }
-            }, key);
-        }
-        var usingCSRM = this.gridOptionsService.isRowModelType('clientSide');
-        if (usingCSRM && !ModuleRegistry.__isRegistered(ModuleNames.RowGroupingModule, this.gridOptionsService.getGridId())) {
-            var rowGroupingItems = ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'enableValue', 'pivot', 'pivotIndex', 'aggFunc'];
-            var itemsUsed = rowGroupingItems.filter(function (x) { return exists(colDefAny[x]); });
-            if (itemsUsed.length > 0) {
-                ModuleRegistry.__assertRegistered(ModuleNames.RowGroupingModule, itemsUsed.map(function (i) { return 'colDef.' + i; }).join(', '), this.gridOptionsService.getGridId());
-            }
-        }
-        if (this.colDef.cellEditor === 'agRichSelect' || this.colDef.cellEditor === 'agRichSelectCellEditor') {
-            ModuleRegistry.__assertRegistered(ModuleNames.RichSelectModule, this.colDef.cellEditor, this.gridOptionsService.getGridId());
-        }
-        if (this.gridOptionsService.isTreeData()) {
-            var itemsNotAllowedWithTreeData = ['rowGroup', 'rowGroupIndex', 'pivot', 'pivotIndex'];
-            var itemsUsed = itemsNotAllowedWithTreeData.filter(function (x) { return exists(colDefAny[x]); });
-            if (itemsUsed.length > 0) {
-                warnOnce("AG Grid: " + itemsUsed.join() + " is not possible when doing tree data, your column definition should not have " + itemsUsed.join(), 'TreeDataCannotRowGroup');
-            }
-        }
-        if (exists(colDefAny.menuTabs)) {
-            if (Array.isArray(colDefAny.menuTabs)) {
-                var communityMenuTabs_1 = ['filterMenuTab'];
-                var enterpriseMenuTabs_1 = ['columnsMenuTab', 'generalMenuTab'];
-                var itemsUsed = enterpriseMenuTabs_1.filter(function (x) { return colDefAny.menuTabs.includes(x); });
-                if (itemsUsed.length > 0) {
-                    ModuleRegistry.__assertRegistered(ModuleNames.MenuModule, "menuTab(s): " + itemsUsed.map(function (t) { return "'" + t + "'"; }).join(), this.gridOptionsService.getGridId());
-                }
-                colDefAny.menuTabs.forEach(function (tab) {
-                    if (!enterpriseMenuTabs_1.includes(tab) && !communityMenuTabs_1.includes(tab)) {
-                        warnOnce("AG Grid: '" + tab + "' is not valid for 'colDef.menuTabs'. Valid values are: " + __spreadArray(__spreadArray([], __read(communityMenuTabs_1)), __read(enterpriseMenuTabs_1)).map(function (t) { return "'" + t + "'"; }).join() + ".", 'wrongValue_menuTabs_' + tab);
-                    }
-                });
-            }
-            else {
-                warnOnce("AG Grid: The typeof 'colDef.menuTabs' should be an array not:" + typeof colDefAny.menuTabs, 'wrongType_menuTabs');
-            }
-        }
-        if (exists(colDefAny.columnsMenuParams)) {
-            ModuleRegistry.__assertRegistered(ModuleNames.MenuModule, 'columnsMenuParams', this.gridOptionsService.getGridId());
-        }
-        if (exists(colDefAny.columnsMenuParams)) {
-            ModuleRegistry.__assertRegistered(ModuleNames.ColumnsToolPanelModule, 'columnsMenuParams', this.gridOptionsService.getGridId());
-        }
-        if (exists(this.colDef.width) && typeof this.colDef.width !== 'number') {
-            warnOnce('AG Grid: colDef.width should be a number, not ' + typeof this.colDef.width, 'ColumnCheck');
-        }
-        if (exists(colDefAny.columnGroupShow) && colDefAny.columnGroupShow !== 'closed' && colDefAny.columnGroupShow !== 'open') {
-            warnOnce("AG Grid: '" + colDefAny.columnGroupShow + "' is not valid for columnGroupShow. Valid values are 'open', 'closed', undefined, null", 'columnGroupShow_invalid');
-        }
-    };
     /** Add an event listener to the column. */
-    Column.prototype.addEventListener = function (eventType, listener) {
+    Column.prototype.addEventListener = function (eventType, userListener) {
+        var _a, _b;
+        if (this.frameworkOverrides.shouldWrapOutgoing && !this.frameworkEventListenerService) {
+            // Only construct if we need it, as it's an overhead for column construction
+            this.eventService.setFrameworkOverrides(this.frameworkOverrides);
+            this.frameworkEventListenerService = new FrameworkEventListenerService(this.frameworkOverrides);
+        }
+        var listener = (_b = (_a = this.frameworkEventListenerService) === null || _a === void 0 ? void 0 : _a.wrap(userListener)) !== null && _b !== void 0 ? _b : userListener;
         this.eventService.addEventListener(eventType, listener);
     };
     /** Remove event listener from the column. */
-    Column.prototype.removeEventListener = function (eventType, listener) {
+    Column.prototype.removeEventListener = function (eventType, userListener) {
+        var _a, _b;
+        var listener = (_b = (_a = this.frameworkEventListenerService) === null || _a === void 0 ? void 0 : _a.unwrap(userListener)) !== null && _b !== void 0 ? _b : userListener;
         this.eventService.removeEventListener(eventType, listener);
     };
     Column.prototype.createColumnFunctionCallbackParams = function (rowNode) {
-        return {
+        return this.gridOptionsService.addGridCommonParams({
             node: rowNode,
             data: rowNode.data,
             column: this,
-            colDef: this.colDef,
-            context: this.gridOptionsService.context,
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi
-        };
+            colDef: this.colDef
+        });
     };
     Column.prototype.isSuppressNavigable = function (rowNode) {
         // if boolean set, then just use it
@@ -310,19 +236,19 @@ var Column = /** @class */ (function () {
      */
     Column.prototype.isCellEditable = function (rowNode) {
         // only allow editing of groups if the user has this option enabled
-        if (rowNode.group && !this.gridOptionsService.is('enableGroupEdit')) {
+        if (rowNode.group && !this.gridOptionsService.get('enableGroupEdit')) {
             return false;
         }
         return this.isColumnFunc(rowNode, this.colDef.editable);
     };
     Column.prototype.isSuppressFillHandle = function () {
-        return !!attrToBoolean(this.colDef.suppressFillHandle);
+        return !!this.colDef.suppressFillHandle;
     };
     Column.prototype.isAutoHeight = function () {
-        return !!attrToBoolean(this.colDef.autoHeight);
+        return !!this.colDef.autoHeight;
     };
     Column.prototype.isAutoHeaderHeight = function () {
-        return !!attrToBoolean(this.colDef.autoHeaderHeight);
+        return !!this.colDef.autoHeaderHeight;
     };
     Column.prototype.isRowDrag = function (rowNode) {
         return this.isColumnFunc(rowNode, this.colDef.rowDrag);
@@ -337,7 +263,12 @@ var Column = /** @class */ (function () {
         return this.isColumnFunc(rowNode, this.colDef ? this.colDef.suppressPaste : null);
     };
     Column.prototype.isResizable = function () {
-        return !!attrToBoolean(this.colDef.resizable);
+        return !!this.getColDefValue('resizable');
+    };
+    /** Get value from ColDef or default if it exists. */
+    Column.prototype.getColDefValue = function (key) {
+        var _a;
+        return (_a = this.colDef[key]) !== null && _a !== void 0 ? _a : COL_DEF_DEFAULTS[key];
     };
     Column.prototype.isColumnFunc = function (rowNode, value) {
         // if boolean set, then just use it
@@ -353,20 +284,16 @@ var Column = /** @class */ (function () {
         return false;
     };
     Column.prototype.setMoving = function (moving, source) {
-        if (source === void 0) { source = "api"; }
         this.moving = moving;
         this.eventService.dispatchEvent(this.createColumnEvent('movingChanged', source));
     };
     Column.prototype.createColumnEvent = function (type, source) {
-        return {
+        return this.gridOptionsService.addGridCommonParams({
             type: type,
             column: this,
             columns: [this],
-            source: source,
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context
-        };
+            source: source
+        });
     };
     Column.prototype.isMoving = function () {
         return this.moving;
@@ -376,7 +303,6 @@ var Column = /** @class */ (function () {
         return this.sort;
     };
     Column.prototype.setSort = function (sort, source) {
-        if (source === void 0) { source = "api"; }
         if (this.sort !== sort) {
             this.sort = sort;
             this.eventService.dispatchEvent(this.createColumnEvent('sortChanged', source));
@@ -384,7 +310,6 @@ var Column = /** @class */ (function () {
         this.dispatchStateUpdatedEvent('sort');
     };
     Column.prototype.setMenuVisible = function (visible, source) {
-        if (source === void 0) { source = "api"; }
         if (this.menuVisible !== visible) {
             this.menuVisible = visible;
             this.eventService.dispatchEvent(this.createColumnEvent('menuVisibleChanged', source));
@@ -392,6 +317,9 @@ var Column = /** @class */ (function () {
     };
     Column.prototype.isMenuVisible = function () {
         return this.menuVisible;
+    };
+    Column.prototype.isSortable = function () {
+        return !!this.getColDefValue('sortable');
     };
     Column.prototype.isSortAscending = function () {
         return this.sort === 'asc';
@@ -430,7 +358,6 @@ var Column = /** @class */ (function () {
         return this.left + this.actualWidth;
     };
     Column.prototype.setLeft = function (left, source) {
-        if (source === void 0) { source = "api"; }
         this.oldLeft = this.left;
         if (this.left !== left) {
             this.left = left;
@@ -443,7 +370,6 @@ var Column = /** @class */ (function () {
     };
     // additionalEventAttributes is used by provided simple floating filter, so it can add 'floatingFilter=true' to the event
     Column.prototype.setFilterActive = function (active, source, additionalEventAttributes) {
-        if (source === void 0) { source = "api"; }
         if (this.filterActive !== active) {
             this.filterActive = active;
             this.eventService.dispatchEvent(this.createColumnEvent('filterActiveChanged', source));
@@ -471,14 +397,12 @@ var Column = /** @class */ (function () {
         this.dispatchStateUpdatedEvent('pinned');
     };
     Column.prototype.setFirstRightPinned = function (firstRightPinned, source) {
-        if (source === void 0) { source = "api"; }
         if (this.firstRightPinned !== firstRightPinned) {
             this.firstRightPinned = firstRightPinned;
             this.eventService.dispatchEvent(this.createColumnEvent('firstRightPinnedChanged', source));
         }
     };
     Column.prototype.setLastLeftPinned = function (lastLeftPinned, source) {
-        if (source === void 0) { source = "api"; }
         if (this.lastLeftPinned !== lastLeftPinned) {
             this.lastLeftPinned = lastLeftPinned;
             this.eventService.dispatchEvent(this.createColumnEvent('lastLeftPinnedChanged', source));
@@ -503,7 +427,6 @@ var Column = /** @class */ (function () {
         return this.pinned;
     };
     Column.prototype.setVisible = function (visible, source) {
-        if (source === void 0) { source = "api"; }
         var newValue = visible === true;
         if (this.visible !== newValue) {
             this.visible = newValue;
@@ -517,6 +440,22 @@ var Column = /** @class */ (function () {
     Column.prototype.isSpanHeaderHeight = function () {
         var colDef = this.getColDef();
         return !colDef.suppressSpanHeaderHeight && !colDef.autoHeaderHeight;
+    };
+    Column.prototype.getColumnGroupPaddingInfo = function () {
+        var parent = this.getParent();
+        if (!parent || !parent.isPadding()) {
+            return { numberOfParents: 0, isSpanningTotal: false };
+        }
+        var numberOfParents = parent.getPaddingLevel() + 1;
+        var isSpanningTotal = true;
+        while (parent) {
+            if (!parent.isPadding()) {
+                isSpanningTotal = false;
+                break;
+            }
+            parent = parent.getParent();
+        }
+        return { numberOfParents: numberOfParents, isSpanningTotal: isSpanningTotal };
     };
     /** Returns the column definition for this column.
      * The column definition will be the result of merging the application provided column definition with any provided defaults
@@ -567,15 +506,12 @@ var Column = /** @class */ (function () {
         return changed;
     };
     Column.prototype.createBaseColDefParams = function (rowNode) {
-        var params = {
+        var params = this.gridOptionsService.addGridCommonParams({
             node: rowNode,
             data: rowNode.data,
             colDef: this.colDef,
-            column: this,
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context
-        };
+            column: this
+        });
         return params;
     };
     Column.prototype.getColSpan = function (rowNode) {
@@ -597,7 +533,6 @@ var Column = /** @class */ (function () {
         return Math.max(rowSpan, 1);
     };
     Column.prototype.setActualWidth = function (actualWidth, source, silent) {
-        if (source === void 0) { source = "api"; }
         if (silent === void 0) { silent = false; }
         if (this.minWidth != null) {
             actualWidth = Math.max(actualWidth, this.minWidth);
@@ -644,13 +579,11 @@ var Column = /** @class */ (function () {
         this.dispatchStateUpdatedEvent('flex');
     };
     Column.prototype.setMinimum = function (source) {
-        if (source === void 0) { source = "api"; }
         if (exists(this.minWidth)) {
             this.setActualWidth(this.minWidth, source);
         }
     };
     Column.prototype.setRowGroupActive = function (rowGroup, source) {
-        if (source === void 0) { source = "api"; }
         if (this.rowGroupActive !== rowGroup) {
             this.rowGroupActive = rowGroup;
             this.eventService.dispatchEvent(this.createColumnEvent('columnRowGroupChanged', source));
@@ -662,7 +595,6 @@ var Column = /** @class */ (function () {
         return this.rowGroupActive;
     };
     Column.prototype.setPivotActive = function (pivot, source) {
-        if (source === void 0) { source = "api"; }
         if (this.pivotActive !== pivot) {
             this.pivotActive = pivot;
             this.eventService.dispatchEvent(this.createColumnEvent('columnPivotChanged', source));
@@ -680,7 +612,6 @@ var Column = /** @class */ (function () {
         return this.isAllowPivot() || this.isAllowRowGroup() || this.isAllowValue();
     };
     Column.prototype.setValueActive = function (value, source) {
-        if (source === void 0) { source = "api"; }
         if (this.aggregationActive !== value) {
             this.aggregationActive = value;
             this.eventService.dispatchEvent(this.createColumnEvent('columnValueChanged', source));
@@ -699,7 +630,11 @@ var Column = /** @class */ (function () {
     Column.prototype.isAllowRowGroup = function () {
         return this.colDef.enableRowGroup === true;
     };
+    /**
+     * @deprecated v31.1 Use `getColDef().menuTabs ?? defaultValues` instead.
+     */
     Column.prototype.getMenuTabs = function (defaultValues) {
+        warnOnce("As of v31.1, 'getMenuTabs' is deprecated. Use 'getColDef().menuTabs ?? defaultValues' instead.");
         var menuTabs = this.getColDef().menuTabs;
         if (menuTabs == null) {
             menuTabs = defaultValues;
@@ -749,6 +684,9 @@ var Column = /** @class */ (function () {
     __decorate([
         Autowired('columnHoverService')
     ], Column.prototype, "columnHoverService", void 0);
+    __decorate([
+        Autowired('frameworkOverrides')
+    ], Column.prototype, "frameworkOverrides", void 0);
     __decorate([
         PostConstruct
     ], Column.prototype, "initialise", null);

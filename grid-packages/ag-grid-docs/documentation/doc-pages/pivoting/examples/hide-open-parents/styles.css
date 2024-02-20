@@ -11,16 +11,16 @@
 }
 
 .ag-row {
-    border-color: #ccc !important;
+    border-color: #99999966 !important;
 }
 .ag-row-level-0 {
-    background-color: #fff !important;
+    background-color: transparent !important;
 }
 .ag-row-level-1 {
-    background-color: #eee !important;
+    background-color: #99999944 !important;
 }
 .ag-row-level-2 {
-    background-color: #ddd !important;
+    background-color: #99999922 !important;
 }
 .legend-item {
     display: inline-block;

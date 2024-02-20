@@ -1,4 +1,3 @@
-import { _ } from '@ag-grid-community/core';
 const getFont = (props) => {
     const [type, typeface, script, panose] = props;
     return {
@@ -14,7 +13,6 @@ const getFont = (props) => {
 };
 const fontScheme = {
     getTemplate() {
-        const { utf8_encode } = _;
         return {
             name: "a:fontScheme",
             properties: {
@@ -28,10 +26,10 @@ const fontScheme = {
                         getFont(['latin', 'Calibri Light', undefined, '020F0302020204030204']),
                         getFont(['ea', '']),
                         getFont(['cs', '']),
-                        getFont(['font', utf8_encode('游ゴシック Light'), 'Jpan']),
-                        getFont(['font', utf8_encode('맑은 고딕'), 'Hang']),
-                        getFont(['font', utf8_encode('等线 Light'), 'Hans']),
-                        getFont(['font', utf8_encode('新細明體'), 'Hant']),
+                        getFont(['font', '游ゴシック Light', 'Jpan']),
+                        getFont(['font', '맑은 고딕', 'Hang']),
+                        getFont(['font', '等线 Light', 'Hans']),
+                        getFont(['font', '新細明體', 'Hant']),
                         getFont(['font', 'Times New Roman', 'Arab']),
                         getFont(['font', 'Times New Roman', 'Hebr']),
                         getFont(['font', 'Tahoma', 'Thai']),
@@ -82,10 +80,10 @@ const fontScheme = {
                         getFont(['latin', 'Calibri', undefined, '020F0502020204030204']),
                         getFont(['ea', '']),
                         getFont(['cs', '']),
-                        getFont(['font', utf8_encode('游ゴシック'), 'Jpan']),
-                        getFont(['font', utf8_encode('맑은 고딕'), 'Hang']),
-                        getFont(['font', utf8_encode('等线'), 'Hans']),
-                        getFont(['font', utf8_encode('新細明體'), 'Hant']),
+                        getFont(['font', '游ゴシック', 'Jpan']),
+                        getFont(['font', '맑은 고딕', 'Hang']),
+                        getFont(['font', '等线', 'Hans']),
+                        getFont(['font', '新細明體', 'Hant']),
                         getFont(['font', 'Arial', 'Arab']),
                         getFont(['font', 'Arial', 'Hebr']),
                         getFont(['font', 'Tahoma', 'Thai']),

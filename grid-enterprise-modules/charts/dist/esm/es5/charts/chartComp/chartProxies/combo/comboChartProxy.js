@@ -24,6 +24,22 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
 import { CartesianChartProxy } from "../cartesian/cartesianChartProxy";
 import { getSeriesType } from "../../utils/seriesTypeMapper";
 var ComboChartProxy = /** @class */ (function (_super) {
@@ -39,7 +55,6 @@ var ComboChartProxy = /** @class */ (function (_super) {
             {
                 type: this.getXAxisType(params),
                 position: 'bottom',
-                gridStyle: [{ stroke: undefined }],
             },
         ];
         if (primaryYKeys.length > 0) {
@@ -50,7 +65,7 @@ var ComboChartProxy = /** @class */ (function (_super) {
             });
         }
         if (secondaryYKeys.length > 0) {
-            secondaryYKeys.forEach(function (secondaryYKey, i) {
+            secondaryYKeys.forEach(function (secondaryYKey) {
                 var field = fieldsMap.get(secondaryYKey);
                 var secondaryAxisIsVisible = field && field.colId === secondaryYKey;
                 if (!secondaryAxisIsVisible) {
@@ -61,21 +76,14 @@ var ComboChartProxy = /** @class */ (function (_super) {
                     keys: [secondaryYKey],
                     position: 'right',
                 };
-                var primaryYAxis = primaryYKeys.some(function (primaryYKey) { return !!fieldsMap.get(primaryYKey); });
-                var lastSecondaryAxis = i === secondaryYKeys.length - 1;
-                if (!primaryYAxis && lastSecondaryAxis) {
-                    // don't remove grid lines from the secondary axis closest to the chart, i.e. last supplied
-                }
-                else {
-                    secondaryAxisOptions.gridStyle = [{ stroke: undefined }];
-                }
                 axes.push(secondaryAxisOptions);
             });
         }
         return axes;
     };
     ComboChartProxy.prototype.getSeries = function (params) {
-        var fields = params.fields, category = params.category, seriesChartTypes = params.seriesChartTypes;
+        var fields = params.fields, seriesChartTypes = params.seriesChartTypes;
+        var _a = __read(params.categories, 1), category = _a[0];
         return fields.map(function (field) {
             var seriesChartType = seriesChartTypes.find(function (s) { return s.colId === field.colId; });
             if (seriesChartType) {

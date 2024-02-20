@@ -60,8 +60,8 @@ class ColumnGroup {
         });
         // set our left based on first displayed column
         if (this.displayedChildren.length > 0) {
-            if (this.gridOptionsService.is('enableRtl')) {
-                const lastChild = array_1.last(this.displayedChildren);
+            if (this.gridOptionsService.get('enableRtl')) {
+                const lastChild = (0, array_1.last)(this.displayedChildren);
                 const lastChildLeft = lastChild.getLeft();
                 this.setLeft(lastChildLeft);
             }
@@ -83,7 +83,7 @@ class ColumnGroup {
         return this.oldLeft;
     }
     setLeft(left) {
-        this.oldLeft = left;
+        this.oldLeft = this.left;
         if (this.left !== left) {
             this.left = left;
             this.localEventService.dispatchEvent(this.createAgEvent(ColumnGroup.EVENT_LEFT_CHANGED));
@@ -273,6 +273,6 @@ class ColumnGroup {
 ColumnGroup.EVENT_LEFT_CHANGED = 'leftChanged';
 ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED = 'displayedChildrenChanged';
 __decorate([
-    context_1.Autowired('gridOptionsService')
+    (0, context_1.Autowired)('gridOptionsService')
 ], ColumnGroup.prototype, "gridOptionsService", void 0);
 exports.ColumnGroup = ColumnGroup;

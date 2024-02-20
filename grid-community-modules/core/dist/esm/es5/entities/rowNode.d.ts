@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { SelectionEventSourceType } from "../events";
@@ -168,6 +168,7 @@ export declare class RowNode<TData = any> implements IEventEmitter, IRowNode<TDa
     private hovered;
     private selected;
     private eventService;
+    private frameworkEventListenerService;
     private beans;
     private checkAutoHeightsDebounced;
     constructor(beans: Beans);
@@ -187,7 +188,7 @@ export declare class RowNode<TData = any> implements IEventEmitter, IRowNode<TDa
     private createDaemonNode;
     setDataAndId(data: TData, id: string | undefined): void;
     private checkRowSelectable;
-    setRowSelectable(newVal: boolean): void;
+    setRowSelectable(newVal: boolean, suppressSelectionUpdate?: boolean): void;
     setId(id?: string): void;
     getGroupKeys(excludeSelf?: boolean): string[];
     isPixelInRange(pixel: number): boolean;
@@ -278,9 +279,9 @@ export declare class RowNode<TData = any> implements IEventEmitter, IRowNode<TDa
     isRowPinned(): boolean;
     isParentOfNode(potentialParent: RowNode): boolean;
     /** Add an event listener. */
-    addEventListener(eventType: RowNodeEventType, listener: Function): void;
+    addEventListener(eventType: RowNodeEventType, userListener: Function): void;
     /** Remove event listener. */
-    removeEventListener(eventType: RowNodeEventType, listener: Function): void;
+    removeEventListener(eventType: RowNodeEventType, userListener: Function): void;
     onMouseEnter(): void;
     onMouseLeave(): void;
     getFirstChildOfFirstChild(rowGroupColumn: Column | null): RowNode | null;
@@ -296,4 +297,5 @@ export declare class RowNode<TData = any> implements IEventEmitter, IRowNode<TDa
      */
     getRoute(): string[] | undefined;
     createFooter(): void;
+    destroyFooter(): void;
 }

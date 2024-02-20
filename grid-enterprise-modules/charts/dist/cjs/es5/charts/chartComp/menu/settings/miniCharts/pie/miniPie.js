@@ -16,13 +16,13 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MiniPie = void 0;
-var miniDoughnut_1 = require("./miniDoughnut");
+var miniDonut_1 = require("./miniDonut");
 var MiniPie = /** @class */ (function (_super) {
     __extends(MiniPie, _super);
-    function MiniPie(container, fills, strokes) {
-        return _super.call(this, container, fills, strokes, 0, "pieTooltip") || this;
+    function MiniPie(container, fills, strokes, themeTemplateParameters, isCustomTheme) {
+        return _super.call(this, container, fills, strokes, themeTemplateParameters, isCustomTheme, 0, "pieTooltip") || this;
     }
     MiniPie.chartType = 'pie';
     return MiniPie;
-}(miniDoughnut_1.MiniDoughnut));
+}(miniDonut_1.MiniDonut));
 exports.MiniPie = MiniPie;

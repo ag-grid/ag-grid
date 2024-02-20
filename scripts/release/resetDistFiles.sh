@@ -45,6 +45,7 @@ git reset grid-enterprise-modules/sparklines/dist
 git reset grid-enterprise-modules/side-bar/dist
 git reset grid-enterprise-modules/status-bar/dist
 git reset grid-enterprise-modules/viewport-row-model/dist
+git reset grid-enterprise-modules/advanced-filter/dist
 git reset grid-community-modules/all-modules/dist
 git reset grid-community-modules/angular/dist
 git reset grid-community-modules/client-side-row-model/dist
@@ -70,7 +71,6 @@ git reset charts-community-modules/ag-charts-vue/lib
 git reset charts-community-modules/ag-charts-vue/dist
 git reset charts-community-modules/ag-charts-vue3/lib
 git reset charts-community-modules/ag-charts-vue3/dist
-git reset charts-enterprise-modules/ag-charts-enterprise/dist
 git reset grid-community-modules/vue/lib
 
 git reset grid-community-modules/all-modules/styles

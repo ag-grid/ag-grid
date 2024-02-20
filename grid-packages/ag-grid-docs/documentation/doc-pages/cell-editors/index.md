@@ -122,7 +122,7 @@ Here is a full example:
 - `colDef.cellEditorSelector` is a function that returns the name of the component to use to edit based on the type of data for that row
 - Edit a cell by double clicking to observe the different editors used. 
 
-<grid-example title='Dynamic Editor Component' name='dynamic-editor-component' type='mixed' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel", "richselect"], "exampleHeight": 450, "includeNgFormsModule" : true }'></grid-example>
+<grid-example title='Dynamic Editor Component' name='dynamic-editor-component' type='mixed' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel", "richselect"], "exampleHeight": 450, "includeNgFormsModule": true }'></grid-example>
 
 ## Dynamic Parameters
 
@@ -144,6 +144,8 @@ cellEditorParams: params => {
 }
 ```
 
+The `params` object provided to the function is of type `ICellEditorParams`, and it is expected to return the type of the parameters for the specific editor (e.g. `IRichSelectCellEditorParams` in the above example).
+
 ## Example: Rich Cell Editor / Dynamic Parameters
 
 Below shows an example with dynamic editor parameters. The following can be noted:
@@ -153,7 +155,7 @@ Below shows an example with dynamic editor parameters. The following can be note
 - Column **City** uses dynamic parameters to display values for the selected country, and uses `formatValue` to add the selected city's country as a suffix.
 - Column **Address** uses the large text area editor.
 
-<grid-example title='Dynamic Parameters' name='dynamic-parameters' type='generated' options='{ "enterprise": true, "modules": ["clientside", "richselect", "menu", "columnpanel"], "exampleHeight": 520 }'></grid-example>
+<grid-example title='Dynamic Parameters' name='dynamic-parameters' type='generated' options='{ "enterprise": true, "modules": ["clientside", "richselect", "menu", "columnpanel"], "exampleHeight": 520, "extras": ["fontawesome"] }'></grid-example>
 
 
 ## Datepicker Cell Editing Example

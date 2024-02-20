@@ -36,7 +36,7 @@ class SimpleFilterModelFormatter {
             }
             const customOptions = conditions.map(condition => this.getModelAsString(condition));
             const joinOperatorTranslateKey = combinedModel.operator === 'AND' ? 'andCondition' : 'orCondition';
-            return customOptions.join(` ${translate(joinOperatorTranslateKey, filterLocaleText_1.DEFAULT_FILTER_LOCALE_TEXT[joinOperatorTranslateKey])} `);
+            return customOptions.join(` ${translate(joinOperatorTranslateKey, filterLocaleText_1.FILTER_LOCALE_TEXT[joinOperatorTranslateKey])} `);
         }
         else if (model.type === SimpleFilter.BLANK || model.type === SimpleFilter.NOT_BLANK) {
             return translate(model.type, model.type);
@@ -170,9 +170,39 @@ class SimpleFilter extends providedFilter_1.ProvidedFilter {
             const aCombined = a;
             const bCombined = b;
             res = aCombined.operator === bCombined.operator
-                && array_1.areEqual(aCombined.conditions, bCombined.conditions, (aModel, bModel) => this.areSimpleModelsEqual(aModel, bModel));
+                && (0, array_1.areEqual)(aCombined.conditions, bCombined.conditions, (aModel, bModel) => this.areSimpleModelsEqual(aModel, bModel));
         }
         return res;
+    }
+    shouldRefresh(newParams) {
+        var _a, _b, _c;
+        const model = this.getModel();
+        const conditions = model ? ((_a = model.conditions) !== null && _a !== void 0 ? _a : [model]) : null;
+        // Do Not refresh when one of the existing condition options is not in new options list
+        const newOptionsList = (_c = (_b = newParams.filterOptions) === null || _b === void 0 ? void 0 : _b.map(option => typeof option === 'string' ? option : option.displayKey)) !== null && _c !== void 0 ? _c : this.getDefaultFilterOptions();
+        const allConditionsExistInNewOptionsList = !conditions || conditions.every(condition => newOptionsList.find(option => option === condition.type) !== undefined);
+        if (!allConditionsExistInNewOptionsList) {
+            return false;
+        }
+        // Check number of conditions vs maxNumConditions
+        if (typeof newParams.maxNumConditions === 'number' && conditions && conditions.length > newParams.maxNumConditions) {
+            return false;
+        }
+        return true;
+    }
+    refresh(newParams) {
+        if (!this.shouldRefresh(newParams)) {
+            return false;
+        }
+        const parentRefreshed = super.refresh(newParams);
+        if (!parentRefreshed) {
+            return false;
+        }
+        this.setParams(newParams);
+        this.removeConditionsAndOperators(0);
+        this.createOption();
+        this.setModel(this.getModel());
+        return true;
     }
     setModelIntoUi(model) {
         const isCombined = model.operator;
@@ -220,7 +250,7 @@ class SimpleFilter extends providedFilter_1.ProvidedFilter {
         let numConditions = conditions.length;
         if (numConditions > this.maxNumConditions) {
             conditions.splice(this.maxNumConditions);
-            function_1.doOnce(() => console.warn('AG Grid: Filter Model contains more conditions than "filterParams.maxNumConditions". Additional conditions have been ignored.'), 'simpleFilterSetModelMaxNumConditions');
+            (0, function_1.warnOnce)('Filter Model contains more conditions than "filterParams.maxNumConditions". Additional conditions have been ignored.');
             numConditions = this.maxNumConditions;
         }
         return numConditions;
@@ -262,23 +292,23 @@ class SimpleFilter extends providedFilter_1.ProvidedFilter {
     setNumConditions(params) {
         var _a, _b;
         if (params.suppressAndOrCondition != null) {
-            function_1.doOnce(() => console.warn('AG Grid: Since v29.2 "filterParams.suppressAndOrCondition" is deprecated. Use "filterParams.maxNumConditions = 1" instead.'), 'simpleFilterSuppressAndOrCondition');
+            (0, function_1.warnOnce)('Since v29.2 "filterParams.suppressAndOrCondition" is deprecated. Use "filterParams.maxNumConditions = 1" instead.');
         }
         if (params.alwaysShowBothConditions != null) {
-            function_1.doOnce(() => console.warn('AG Grid: Since v29.2 "filterParams.alwaysShowBothConditions" is deprecated. Use "filterParams.numAlwaysVisibleConditions = 2" instead.'), 'simpleFilterAlwaysShowBothConditions');
+            (0, function_1.warnOnce)('Since v29.2 "filterParams.alwaysShowBothConditions" is deprecated. Use "filterParams.numAlwaysVisibleConditions = 2" instead.');
         }
         this.maxNumConditions = (_a = params.maxNumConditions) !== null && _a !== void 0 ? _a : (params.suppressAndOrCondition ? 1 : 2);
         if (this.maxNumConditions < 1) {
-            function_1.doOnce(() => console.warn('AG Grid: "filterParams.maxNumConditions" must be greater than or equal to zero.'), 'simpleFilterMaxNumConditions');
+            (0, function_1.warnOnce)('"filterParams.maxNumConditions" must be greater than or equal to zero.');
             this.maxNumConditions = 1;
         }
         this.numAlwaysVisibleConditions = (_b = params.numAlwaysVisibleConditions) !== null && _b !== void 0 ? _b : (params.alwaysShowBothConditions ? 2 : 1);
         if (this.numAlwaysVisibleConditions < 1) {
-            function_1.doOnce(() => console.warn('AG Grid: "filterParams.numAlwaysVisibleConditions" must be greater than or equal to zero.'), 'simpleFilterNumAlwaysVisibleConditions');
+            (0, function_1.warnOnce)('"filterParams.numAlwaysVisibleConditions" must be greater than or equal to zero.');
             this.numAlwaysVisibleConditions = 1;
         }
         if (this.numAlwaysVisibleConditions > this.maxNumConditions) {
-            function_1.doOnce(() => console.warn('AG Grid: "filterParams.numAlwaysVisibleConditions" cannot be greater than "filterParams.maxNumConditions".'), 'simpleFilterNumAlwaysVisibleGreaterThanMaxNumConditions');
+            (0, function_1.warnOnce)('"filterParams.numAlwaysVisibleConditions" cannot be greater than "filterParams.maxNumConditions".');
             this.numAlwaysVisibleConditions = this.maxNumConditions;
         }
     }
@@ -406,13 +436,13 @@ class SimpleFilter extends providedFilter_1.ProvidedFilter {
             const disabled = this.isConditionDisabled(position, lastUiCompletePosition);
             eType.setDisabled(disabled || this.filterListOptions.length <= 1);
             if (position === 1) {
-                dom_1.setDisabled(this.eJoinOperatorPanels[0], disabled);
+                (0, dom_1.setDisabled)(this.eJoinOperatorPanels[0], disabled);
                 this.eJoinOperatorsAnd[0].setDisabled(disabled);
                 this.eJoinOperatorsOr[0].setDisabled(disabled);
             }
         });
         this.eConditionBodies.forEach((element, index) => {
-            dom_1.setDisplayed(element, this.isConditionBodyVisible(index));
+            (0, dom_1.setDisplayed)(element, this.isConditionBodyVisible(index));
         });
         const orChecked = (joinOperator !== null && joinOperator !== void 0 ? joinOperator : this.getJoinOperator()) === 'OR';
         this.eJoinOperatorsAnd.forEach((eJoinOperatorAnd, index) => {
@@ -444,12 +474,12 @@ class SimpleFilter extends providedFilter_1.ProvidedFilter {
     }
     removeElements(elements, startPosition, deleteCount) {
         const removedElements = this.removeItems(elements, startPosition, deleteCount);
-        removedElements.forEach(element => dom_1.removeFromParent(element));
+        removedElements.forEach(element => (0, dom_1.removeFromParent)(element));
     }
     removeComponents(components, startPosition, deleteCount) {
         const removedComponents = this.removeItems(components, startPosition, deleteCount);
         removedComponents.forEach(comp => {
-            dom_1.removeFromParent(comp.getGui());
+            (0, dom_1.removeFromParent)(comp.getGui());
             this.destroyBean(comp);
         });
     }
@@ -478,9 +508,8 @@ class SimpleFilter extends providedFilter_1.ProvidedFilter {
     afterGuiDetached() {
         super.afterGuiDetached();
         const appliedModel = this.getModel();
-        if (!this.areModelsEqual(appliedModel, this.getModelFromUi()) || this.hasInvalidInputs()) {
-            this.resetUiToActiveModel(appliedModel);
-        }
+        // Reset temporary UI state that was applied to the DOM but not committed to the model
+        this.resetUiToActiveModel(appliedModel);
         // remove incomplete positions
         let lastUiCompletePosition = -1;
         // as we remove incomplete positions, the last UI complete position will change
@@ -527,7 +556,7 @@ class SimpleFilter extends providedFilter_1.ProvidedFilter {
     }
     getPlaceholderText(defaultPlaceholder, position) {
         let placeholder = this.translate(defaultPlaceholder);
-        if (function_1.isFunction(this.filterPlaceholder)) {
+        if ((0, function_1.isFunction)(this.filterPlaceholder)) {
             const filterPlaceholderFn = this.filterPlaceholder;
             const filterOptionKey = this.eTypes[position].getValue();
             const filterOption = this.translate(filterOptionKey);
@@ -559,19 +588,19 @@ class SimpleFilter extends providedFilter_1.ProvidedFilter {
             element.setInputAriaLabel(ariaLabel);
         });
     }
-    setElementValue(element, value) {
+    setElementValue(element, value, fromFloatingFilter) {
         if (element instanceof agAbstractInputField_1.AgAbstractInputField) {
             element.setValue(value != null ? String(value) : null, true);
         }
     }
     setElementDisplayed(element, displayed) {
         if (element instanceof component_1.Component) {
-            dom_1.setDisplayed(element.getGui(), displayed);
+            (0, dom_1.setDisplayed)(element.getGui(), displayed);
         }
     }
     setElementDisabled(element, disabled) {
         if (element instanceof component_1.Component) {
-            dom_1.setDisabled(element.getGui(), disabled);
+            (0, dom_1.setDisabled)(element.getGui(), disabled);
         }
     }
     attachElementOnChange(element, listener) {
@@ -710,7 +739,7 @@ class SimpleFilter extends providedFilter_1.ProvidedFilter {
     // (as that's where value is controlled), the 'type' part from the floating filter is dealt with in this class.
     setValueFromFloatingFilter(value) {
         this.forEachInput((element, index, position, _) => {
-            this.setElementValue(element, index === 0 && position === 0 ? value : null);
+            this.setElementValue(element, index === 0 && position === 0 ? value : null, true);
         });
     }
     isDefaultOperator(operator) {

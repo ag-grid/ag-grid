@@ -32,6 +32,7 @@ import { DateCellEditor } from "../../rendering/cellEditors/dateCellEditor";
 import { DateStringCellEditor } from "../../rendering/cellEditors/dateStringCellEditor";
 import { CheckboxCellRenderer } from "../../rendering/cellRenderers/checkboxCellRenderer";
 import { CheckboxCellEditor } from "../../rendering/cellEditors/checkboxCellEditor";
+import { AgMenuItemRenderer } from "../../widgets/agMenuItemRenderer";
 
 @Bean('userComponentRegistry')
 export class UserComponentRegistry extends BeanStub {
@@ -81,7 +82,10 @@ export class UserComponentRegistry extends BeanStub {
         agNoRowsOverlay: NoRowsOverlayComponent,
 
         // tooltips
-        agTooltipComponent: TooltipComponent
+        agTooltipComponent: TooltipComponent,
+
+        // menu item
+        agMenuItem: AgMenuItemRenderer
     };
 
     /** Used to provide useful error messages if a user is trying to use an enterprise component without loading the module. */
@@ -159,12 +163,12 @@ export class UserComponentRegistry extends BeanStub {
             // Don't include the old names / internals in potential suggestions
             ...Object.keys(this.agGridDefaults).filter(k => !['agCellEditor', 'agGroupRowRenderer', 'agSortIndicator'].includes(k)),
             ...Object.keys(this.jsComps)];
-        const suggestions = fuzzySuggestions(componentName, validComponents, true, 0.8);
+        const suggestions = fuzzySuggestions(componentName, validComponents, true, 0.8).values;
 
         console.warn(`AG Grid: Could not find '${componentName}' component. It was configured as "${propertyName}: '${componentName}'" but it wasn't found in the list of registered components.`);
         if (suggestions.length > 0) {
             console.warn(`         Did you mean: [${suggestions.slice(0, 3)}]?`);
         }
-        console.warn(`If using a custom component check it has been registered as described in: https://ag-grid.com/javascript-data-grid/components/`);
+        console.warn(`If using a custom component check it has been registered as described in: ${this.getFrameworkOverrides().getDocLink('components/')}`);
     }
 }

@@ -1,1 +1,0 @@
-{"version":3,"file":"colorScale.d.ts","sourceRoot":"","sources":["../../src/scale/colorScale.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,KAAK,EAAE,MAAM,SAAS,CAAC;AAKrC,qBAAa,UAAW,YAAW,KAAK,CAAC,MAAM,EAAE,MAAM,EAAE,MAAM,CAAC;IAC5D,MAAM,WAAU;IAChB,KAAK,WAAmB;IAExB,OAAO,CAAC,WAAW,CAA8C;IAEjE,MAAM;IAuCN,OAAO,CAAC,CAAC,EAAE,MAAM;CAsCpB"}

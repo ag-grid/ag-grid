@@ -204,7 +204,7 @@ export function addMoreLink(description, seeMore) {
 export function removeDefaultValue(docString) {
 
     // Default may or may not be on a new line in JsDoc but in both cases we want the default to be on the next line
-    const defaultReg = /(\n\s+\*)?(<br>)? Default:.*<\/code>/g;
+    const defaultReg = /@default .*\n/g;
 
     return docString.replace(defaultReg, '');
 }

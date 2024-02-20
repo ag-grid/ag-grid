@@ -62,7 +62,7 @@ var BodyDropTarget = /** @class */ (function (_super) {
     };
     BodyDropTarget.prototype.isInterestedIn = function (type) {
         return type === DragSourceType.HeaderCell ||
-            (type === DragSourceType.ToolPanel && this.gridOptionsService.is('allowDragFromColumnsToolPanel'));
+            (type === DragSourceType.ToolPanel && this.gridOptionsService.get('allowDragFromColumnsToolPanel'));
     };
     BodyDropTarget.prototype.getSecondaryContainers = function () {
         return this.eSecondaryContainers;

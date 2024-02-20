@@ -34,19 +34,22 @@ var PinnedRowModel = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     PinnedRowModel.prototype.init = function () {
-        this.setPinnedTopRowData(this.gridOptionsService.get('pinnedTopRowData'));
-        this.setPinnedBottomRowData(this.gridOptionsService.get('pinnedBottomRowData'));
+        var _this = this;
+        this.setPinnedTopRowData();
+        this.setPinnedBottomRowData();
+        this.addManagedPropertyListener('pinnedTopRowData', function () { return _this.setPinnedTopRowData(); });
+        this.addManagedPropertyListener('pinnedBottomRowData', function () { return _this.setPinnedBottomRowData(); });
     };
     PinnedRowModel.prototype.isEmpty = function (floating) {
         var rows = floating === 'top' ? this.pinnedTopRows : this.pinnedBottomRows;
-        return generic_1.missingOrEmpty(rows);
+        return (0, generic_1.missingOrEmpty)(rows);
     };
     PinnedRowModel.prototype.isRowsToRender = function (floating) {
         return !this.isEmpty(floating);
     };
     PinnedRowModel.prototype.getRowAtPixel = function (pixel, floating) {
         var rows = floating === 'top' ? this.pinnedTopRows : this.pinnedBottomRows;
-        if (generic_1.missingOrEmpty(rows)) {
+        if ((0, generic_1.missingOrEmpty)(rows)) {
             return 0; // this should never happen, just in case, 0 is graceful failure
         }
         for (var i = 0; i < rows.length; i++) {
@@ -60,14 +63,16 @@ var PinnedRowModel = /** @class */ (function (_super) {
         }
         return rows.length - 1;
     };
-    PinnedRowModel.prototype.setPinnedTopRowData = function (rowData) {
+    PinnedRowModel.prototype.setPinnedTopRowData = function () {
+        var rowData = this.gridOptionsService.get('pinnedTopRowData');
         this.pinnedTopRows = this.createNodesFromData(rowData, true);
         var event = {
             type: events_1.Events.EVENT_PINNED_ROW_DATA_CHANGED
         };
         this.eventService.dispatchEvent(event);
     };
-    PinnedRowModel.prototype.setPinnedBottomRowData = function (rowData) {
+    PinnedRowModel.prototype.setPinnedBottomRowData = function () {
+        var rowData = this.gridOptionsService.get('pinnedBottomRowData');
         this.pinnedBottomRows = this.createNodesFromData(rowData, false);
         var event = {
             type: events_1.Events.EVENT_PINNED_ROW_DATA_CHANGED
@@ -116,13 +121,13 @@ var PinnedRowModel = /** @class */ (function (_super) {
         return this.pinnedBottomRows[index];
     };
     PinnedRowModel.prototype.forEachPinnedTopRow = function (callback) {
-        if (generic_1.missingOrEmpty(this.pinnedTopRows)) {
+        if ((0, generic_1.missingOrEmpty)(this.pinnedTopRows)) {
             return;
         }
         this.pinnedTopRows.forEach(callback);
     };
     PinnedRowModel.prototype.forEachPinnedBottomRow = function (callback) {
-        if (generic_1.missingOrEmpty(this.pinnedBottomRows)) {
+        if ((0, generic_1.missingOrEmpty)(this.pinnedBottomRows)) {
             return;
         }
         this.pinnedBottomRows.forEach(callback);
@@ -134,17 +139,17 @@ var PinnedRowModel = /** @class */ (function (_super) {
         if (!rowNodes || rowNodes.length === 0) {
             return 0;
         }
-        var lastNode = array_1.last(rowNodes);
+        var lastNode = (0, array_1.last)(rowNodes);
         return lastNode.rowTop + lastNode.rowHeight;
     };
     __decorate([
-        context_1.Autowired('beans')
+        (0, context_1.Autowired)('beans')
     ], PinnedRowModel.prototype, "beans", void 0);
     __decorate([
         context_1.PostConstruct
     ], PinnedRowModel.prototype, "init", null);
     PinnedRowModel = __decorate([
-        context_1.Bean('pinnedRowModel')
+        (0, context_1.Bean)('pinnedRowModel')
     ], PinnedRowModel);
     return PinnedRowModel;
 }(beanStub_1.BeanStub));

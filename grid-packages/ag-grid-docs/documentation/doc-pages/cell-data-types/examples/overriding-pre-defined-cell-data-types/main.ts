@@ -1,4 +1,12 @@
-import { Grid, GridOptions, ValueFormatterLiteParams, ValueParserLiteParams } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  GridOptions,
+  ValueFormatterLiteParams,
+  ValueParserLiteParams,
+} from '@ag-grid-community/core';
+
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -9,8 +17,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     filter: true,
     floatingFilter: true,
-    sortable: true,
-    resizable: true,
     editable: true,
   },
   dataTypeDefinitions: {
@@ -42,11 +48,10 @@ const gridOptions: GridOptions<IOlympicData> = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
-  // do http request to get our sample data - not using any framework to keep the example self contained.
-  // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
+
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

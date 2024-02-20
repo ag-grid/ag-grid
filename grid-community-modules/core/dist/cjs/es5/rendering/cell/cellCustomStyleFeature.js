@@ -37,18 +37,19 @@ var CellCustomStyleFeature = /** @class */ (function (_super) {
     CellCustomStyleFeature.prototype.applyCellClassRules = function () {
         var _this = this;
         var colDef = this.column.getColDef();
-        var cellClassParams = {
+        var cellClassRules = colDef.cellClassRules;
+        var cellClassParams = this.beans.gridOptionsService.addGridCommonParams({
             value: this.cellCtrl.getValue(),
             data: this.rowNode.data,
             node: this.rowNode,
             colDef: colDef,
             column: this.column,
-            rowIndex: this.rowNode.rowIndex,
-            api: this.beans.gridOptionsService.api,
-            columnApi: this.beans.gridOptionsService.columnApi,
-            context: this.beans.gridOptionsService.context
-        };
-        this.beans.stylingService.processClassRules(colDef.cellClassRules, cellClassParams, function (className) { return _this.cellComp.addOrRemoveCssClass(className, true); }, function (className) { return _this.cellComp.addOrRemoveCssClass(className, false); });
+            rowIndex: this.rowNode.rowIndex
+        });
+        this.beans.stylingService.processClassRules(
+        // if current was previous, skip
+        cellClassRules === this.cellClassRules ? undefined : this.cellClassRules, cellClassRules, cellClassParams, function (className) { return _this.cellComp.addOrRemoveCssClass(className, true); }, function (className) { return _this.cellComp.addOrRemoveCssClass(className, false); });
+        this.cellClassRules = cellClassRules;
     };
     CellCustomStyleFeature.prototype.applyUserStyles = function () {
         var colDef = this.column.getColDef();
@@ -57,17 +58,14 @@ var CellCustomStyleFeature = /** @class */ (function (_super) {
         }
         var styles;
         if (typeof colDef.cellStyle === 'function') {
-            var cellStyleParams = {
+            var cellStyleParams = this.beans.gridOptionsService.addGridCommonParams({
                 column: this.column,
                 value: this.cellCtrl.getValue(),
                 colDef: colDef,
                 data: this.rowNode.data,
                 node: this.rowNode,
-                rowIndex: this.rowNode.rowIndex,
-                api: this.beans.gridOptionsService.api,
-                columnApi: this.beans.gridOptionsService.columnApi,
-                context: this.beans.gridOptionsService.context,
-            };
+                rowIndex: this.rowNode.rowIndex
+            });
             var cellStyleFunc = colDef.cellStyle;
             styles = cellStyleFunc(cellStyleParams);
         }
@@ -81,17 +79,14 @@ var CellCustomStyleFeature = /** @class */ (function (_super) {
     CellCustomStyleFeature.prototype.applyClassesFromColDef = function () {
         var _this = this;
         var colDef = this.column.getColDef();
-        var cellClassParams = {
+        var cellClassParams = this.beans.gridOptionsService.addGridCommonParams({
             value: this.cellCtrl.getValue(),
             data: this.rowNode.data,
             node: this.rowNode,
             column: this.column,
             colDef: colDef,
-            rowIndex: this.rowNode.rowIndex,
-            api: this.beans.gridOptionsService.api,
-            columnApi: this.beans.gridOptionsService.columnApi,
-            context: this.beans.gridOptionsService.context
-        };
+            rowIndex: this.rowNode.rowIndex
+        });
         if (this.staticClasses.length) {
             this.staticClasses.forEach(function (className) { return _this.cellComp.addOrRemoveCssClass(className, false); });
         }

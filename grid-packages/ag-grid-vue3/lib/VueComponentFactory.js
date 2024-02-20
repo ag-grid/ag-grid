@@ -73,7 +73,13 @@ export class VueComponentFactory {
             currentParent.$options &&
             (++depth < maxDepth)) {
             const currentParentAsThis = currentParent;
-            componentInstance = currentParentAsThis.$options && currentParentAsThis.$options.components ? currentParentAsThis.$options.components[component] : null;
+            if (currentParentAsThis.$options && currentParentAsThis.$options.components && currentParentAsThis.$options.components[component]) {
+                componentInstance = currentParentAsThis.$options.components[component];
+            }
+            else if (currentParentAsThis[component]) {
+                componentInstance = currentParentAsThis[component];
+            }
+            // componentInstance =  : null;
             currentParent = currentParent.$parent;
         }
         // then search in globally registered components of app

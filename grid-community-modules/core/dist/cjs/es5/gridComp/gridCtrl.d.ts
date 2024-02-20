@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { FocusService } from "../focusService";
@@ -8,7 +8,6 @@ export interface IGridComp extends LayoutView {
     setRtlClass(cssClass: string): void;
     destroyGridUi(): void;
     forceFocusOutOfContainer(up: boolean): void;
-    addOrRemoveKeyboardFocusClass(value: boolean): void;
     getFocusableContainers(): HTMLElement[];
     setCursor(value: string | null): void;
     setUserSelect(value: string | null): void;

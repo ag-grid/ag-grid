@@ -201,7 +201,7 @@ export class FontPanel extends Component {
     private initFontColorPicker() {
         this.colorPicker
             .setLabel(this.chartTranslationService.translate('color'))
-            .setInputWidth(45)
+            .setInputWidth('flex')
             .setValue(`${this.params.initialFont.color}`)
             .onValueChange(newColor => this.params.setFont({ color: newColor! }));
     }

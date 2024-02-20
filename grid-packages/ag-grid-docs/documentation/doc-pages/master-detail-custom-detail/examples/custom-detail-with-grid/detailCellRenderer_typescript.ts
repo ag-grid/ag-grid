@@ -1,4 +1,4 @@
-import { DetailGridInfo, Grid, GridApi, GridOptions, ICellRendererComp, ICellRendererParams } from "@ag-grid-community/core";
+import { DetailGridInfo, createGrid, GridApi, GridOptions, ICellRendererComp, ICellRendererParams } from "@ag-grid-community/core";
 
 export class DetailCellRenderer implements ICellRendererComp {
   eGui!: HTMLElement;
@@ -33,17 +33,14 @@ export class DetailCellRenderer implements ICellRendererComp {
       rowData: this.params.data.callRecords
     };
 
-    new Grid(eDetailGrid, detailGridOptions);
-
-    this.detailGridApi = detailGridOptions.api!;
+    this.detailGridApi = createGrid(eDetailGrid, detailGridOptions);
 
     var masterGridApi = this.params.api;
     var rowId = this.params.node.id!;
 
     var gridInfo: DetailGridInfo = {
       id: rowId,
-      api: detailGridOptions.api!,
-      columnApi: detailGridOptions.columnApi!
+      api: this.detailGridApi,
     };
 
     console.log("adding detail grid info with id: ", rowId);
@@ -52,13 +49,15 @@ export class DetailCellRenderer implements ICellRendererComp {
 
   getTemplate() {
     var data = this.params.data;
+   // Application logic to match parent theme for this Example
+    const themeClass: string = "full-width-grid " + (document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz');
     var template =
       '<div class="full-width-panel">' +
       '  <div class="full-width-details">' +
       '    <div class="full-width-detail"><b>Name: </b>' + data.name + '</div>' +
       '    <div class="full-width-detail"><b>Account: </b>' + data.account + '</div>' +
       '  </div>' +
-      '  <div class="full-width-grid ag-theme-alpine"></div>' +
+      `  <div class="${themeClass}"></div>` +
       '</div>';
 
     return template;

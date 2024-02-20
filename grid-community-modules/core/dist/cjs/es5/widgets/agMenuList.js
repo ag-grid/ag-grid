@@ -14,17 +14,6 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -39,21 +28,29 @@ var tabGuardComp_1 = require("./tabGuardComp");
 var keyCode_1 = require("../constants/keyCode");
 var dom_1 = require("../utils/dom");
 var array_1 = require("../utils/array");
-var aria_1 = require("../utils/aria");
+var promise_1 = require("../utils/promise");
+var event_1 = require("../utils/event");
 var AgMenuList = /** @class */ (function (_super) {
     __extends(AgMenuList, _super);
-    function AgMenuList(level) {
-        if (level === void 0) { level = 1; }
+    function AgMenuList(level, params) {
+        if (level === void 0) { level = 0; }
         var _this = _super.call(this, /* html */ "<div class=\"ag-menu-list\" role=\"tree\"></div>") || this;
         _this.level = level;
         _this.menuItems = [];
+        _this.params = params !== null && params !== void 0 ? params : {
+            column: null,
+            node: null,
+            value: null
+        };
         return _this;
     }
     AgMenuList.prototype.postConstruct = function () {
         var _this = this;
         this.initialiseTabGuard({
             onTabKeyDown: function (e) { return _this.onTabKeyDown(e); },
-            handleKeyDown: function (e) { return _this.handleKeyDown(e); }
+            handleKeyDown: function (e) { return _this.handleKeyDown(e); },
+            onFocusIn: function (e) { return _this.handleFocusIn(e); },
+            onFocusOut: function (e) { return _this.handleFocusOut(e); },
         });
     };
     AgMenuList.prototype.onTabKeyDown = function (e) {
@@ -77,11 +74,35 @@ var AgMenuList = /** @class */ (function (_super) {
                 this.handleNavKey(e.key);
                 break;
             case keyCode_1.KeyCode.ESCAPE:
-                var topMenu = this.findTopMenu();
-                if (topMenu) {
-                    this.focusService.focusInto(topMenu.getGui());
+                if (this.closeIfIsChild()) {
+                    (0, event_1.stopPropagationForAgGrid)(e);
                 }
                 break;
+        }
+    };
+    AgMenuList.prototype.handleFocusIn = function (e) {
+        var _a, _b;
+        // if focus is coming from outside the menu list, then re-activate an item
+        var oldFocusedElement = e.relatedTarget;
+        if (!this.tabGuardCtrl.isTabGuard(oldFocusedElement) && (this.getGui().contains(oldFocusedElement) || ((_b = (_a = this.activeMenuItem) === null || _a === void 0 ? void 0 : _a.getSubMenuGui()) === null || _b === void 0 ? void 0 : _b.contains(oldFocusedElement)))) {
+            return;
+        }
+        if (this.activeMenuItem) {
+            this.activeMenuItem.activate();
+        }
+        else {
+            this.activateFirstItem();
+        }
+    };
+    AgMenuList.prototype.handleFocusOut = function (e) {
+        var _a;
+        // if focus is going outside the menu list, deactivate the current item
+        var newFocusedElement = e.relatedTarget;
+        if (!this.activeMenuItem || this.getGui().contains(newFocusedElement) || ((_a = this.activeMenuItem.getSubMenuGui()) === null || _a === void 0 ? void 0 : _a.contains(newFocusedElement))) {
+            return;
+        }
+        if (!this.activeMenuItem.isSubMenuOpening()) {
+            this.activeMenuItem.deactivate();
         }
     };
     AgMenuList.prototype.clearActiveItem = function () {
@@ -95,33 +116,51 @@ var AgMenuList = /** @class */ (function (_super) {
         if (menuItems == null) {
             return;
         }
-        menuItems.forEach(function (menuItemOrString) {
+        promise_1.AgPromise.all(menuItems.map(function (menuItemOrString) {
             if (menuItemOrString === 'separator') {
-                _this.addSeparator();
+                return promise_1.AgPromise.resolve({ eGui: _this.createSeparator() });
             }
             else if (typeof menuItemOrString === 'string') {
-                console.warn("AG Grid: unrecognised menu item " + menuItemOrString);
+                console.warn("AG Grid: unrecognised menu item ".concat(menuItemOrString));
+                return promise_1.AgPromise.resolve({ eGui: null });
             }
             else {
-                _this.addItem(menuItemOrString);
+                return _this.addItem(menuItemOrString);
             }
+        })).then(function (elements) {
+            elements.forEach(function (element) {
+                if (element === null || element === void 0 ? void 0 : element.eGui) {
+                    _this.appendChild(element.eGui);
+                    if (element.comp) {
+                        _this.menuItems.push(element.comp);
+                    }
+                }
+            });
         });
     };
     AgMenuList.prototype.addItem = function (menuItemDef) {
         var _this = this;
-        var menuItem = this.createManagedBean(new agMenuItemComponent_1.AgMenuItemComponent(__assign(__assign({}, menuItemDef), { isAnotherSubMenuOpen: function () { return _this.menuItems.some(function (m) { return m.isSubMenuOpen(); }); } })));
-        menuItem.setParentComponent(this);
-        aria_1.setAriaLevel(menuItem.getGui(), this.level);
-        this.menuItems.push(menuItem);
-        this.appendChild(menuItem.getGui());
-        this.addManagedListener(menuItem, agMenuItemComponent_1.AgMenuItemComponent.EVENT_MENU_ITEM_SELECTED, function (event) {
-            _this.dispatchEvent(event);
-        });
-        this.addManagedListener(menuItem, agMenuItemComponent_1.AgMenuItemComponent.EVENT_MENU_ITEM_ACTIVATED, function (event) {
-            if (_this.activeMenuItem && _this.activeMenuItem !== event.menuItem) {
-                _this.activeMenuItem.deactivate();
-            }
-            _this.activeMenuItem = event.menuItem;
+        var menuItem = this.createManagedBean(new agMenuItemComponent_1.AgMenuItemComponent());
+        return menuItem.init({
+            menuItemDef: menuItemDef,
+            isAnotherSubMenuOpen: function () { return _this.menuItems.some(function (m) { return m.isSubMenuOpen(); }); },
+            level: this.level,
+            contextParams: this.params
+        }).then(function () {
+            menuItem.setParentComponent(_this);
+            _this.addManagedListener(menuItem, agMenuItemComponent_1.AgMenuItemComponent.EVENT_CLOSE_MENU, function (event) {
+                _this.dispatchEvent(event);
+            });
+            _this.addManagedListener(menuItem, agMenuItemComponent_1.AgMenuItemComponent.EVENT_MENU_ITEM_ACTIVATED, function (event) {
+                if (_this.activeMenuItem && _this.activeMenuItem !== event.menuItem) {
+                    _this.activeMenuItem.deactivate();
+                }
+                _this.activeMenuItem = event.menuItem;
+            });
+            return {
+                comp: menuItem,
+                eGui: menuItem.getGui()
+            };
         });
     };
     AgMenuList.prototype.activateFirstItem = function () {
@@ -131,23 +170,9 @@ var AgMenuList = /** @class */ (function (_super) {
         }
         item.activate();
     };
-    AgMenuList.prototype.addSeparator = function () {
+    AgMenuList.prototype.createSeparator = function () {
         var separatorHtml = /* html */ "\n            <div class=\"ag-menu-separator\" aria-hidden=\"true\">\n                <div class=\"ag-menu-separator-part\"></div>\n                <div class=\"ag-menu-separator-part\"></div>\n                <div class=\"ag-menu-separator-part\"></div>\n                <div class=\"ag-menu-separator-part\"></div>\n            </div>";
-        this.appendChild(dom_1.loadTemplate(separatorHtml));
-    };
-    AgMenuList.prototype.findTopMenu = function () {
-        var parent = this.getParentComponent();
-        if (!parent && this instanceof AgMenuList) {
-            return this;
-        }
-        while (true) {
-            var nextParent = parent && parent.getParentComponent && parent.getParentComponent();
-            if (!nextParent || (!(nextParent instanceof AgMenuList || nextParent instanceof agMenuItemComponent_1.AgMenuItemComponent))) {
-                break;
-            }
-            parent = nextParent;
-        }
-        return parent instanceof AgMenuList ? parent : undefined;
+        return (0, dom_1.loadTemplate)(separatorHtml);
     };
     AgMenuList.prototype.handleNavKey = function (key) {
         switch (key) {
@@ -159,7 +184,7 @@ var AgMenuList = /** @class */ (function (_super) {
                 }
                 return;
         }
-        var left = this.gridOptionsService.is('enableRtl') ? keyCode_1.KeyCode.RIGHT : keyCode_1.KeyCode.LEFT;
+        var left = this.gridOptionsService.get('enableRtl') ? keyCode_1.KeyCode.RIGHT : keyCode_1.KeyCode.LEFT;
         if (key === left) {
             this.closeIfIsChild();
         }
@@ -175,7 +200,9 @@ var AgMenuList = /** @class */ (function (_super) {
             }
             parentItem.closeSubMenu();
             parentItem.getGui().focus();
+            return true;
         }
+        return false;
     };
     AgMenuList.prototype.openChild = function () {
         if (this.activeMenuItem) {
@@ -188,7 +215,7 @@ var AgMenuList = /** @class */ (function (_super) {
             return;
         }
         if (!this.activeMenuItem) {
-            return up ? array_1.last(items) : items[0];
+            return up ? (0, array_1.last)(items) : items[0];
         }
         if (up) {
             items.reverse();
@@ -206,6 +233,10 @@ var AgMenuList = /** @class */ (function (_super) {
             nextItem = item;
             break;
         }
+        if (foundCurrent && !nextItem) {
+            // start again from the beginning (/end)
+            return items[0];
+        }
         return nextItem || this.activeMenuItem;
     };
     AgMenuList.prototype.destroy = function () {
@@ -213,7 +244,7 @@ var AgMenuList = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     __decorate([
-        context_1.Autowired('focusService')
+        (0, context_1.Autowired)('focusService')
     ], AgMenuList.prototype, "focusService", void 0);
     __decorate([
         context_1.PostConstruct

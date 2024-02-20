@@ -37,7 +37,7 @@ class AgAbstractLabel extends component_1.Component {
         this.refreshLabel();
     }
     refreshLabel() {
-        dom_1.clearElement(this.eLabel);
+        (0, dom_1.clearElement)(this.eLabel);
         if (typeof this.label === 'string') {
             this.eLabel.innerText = this.label + this.labelSeparator;
         }
@@ -45,12 +45,12 @@ class AgAbstractLabel extends component_1.Component {
             this.eLabel.appendChild(this.label);
         }
         if (this.label === '') {
-            dom_1.setDisplayed(this.eLabel, false);
-            aria_1.setAriaRole(this.eLabel, 'presentation');
+            (0, dom_1.setDisplayed)(this.eLabel, false);
+            (0, aria_1.setAriaRole)(this.eLabel, 'presentation');
         }
         else {
-            dom_1.setDisplayed(this.eLabel, true);
-            aria_1.setAriaRole(this.eLabel, null);
+            (0, dom_1.setDisplayed)(this.eLabel, true);
+            (0, aria_1.setAriaRole)(this.eLabel, null);
         }
     }
     setLabelSeparator(labelSeparator) {
@@ -94,13 +94,13 @@ class AgAbstractLabel extends component_1.Component {
         if (this.label == null) {
             return this;
         }
-        dom_1.setElementWidth(this.eLabel, width);
+        (0, dom_1.setElementWidth)(this.eLabel, width);
         return this;
     }
     setDisabled(disabled) {
         disabled = !!disabled;
         const element = this.getGui();
-        dom_1.setDisabled(element, disabled);
+        (0, dom_1.setDisabled)(element, disabled);
         element.classList.toggle('ag-disabled', disabled);
         this.disabled = disabled;
         return this;

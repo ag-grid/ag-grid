@@ -8,7 +8,6 @@
 #top {
     flex: 1;
     display: flex;
-    background: #181d1f;
     height: 25%;
 }
 
@@ -17,7 +16,7 @@
 }
 
 #pieChart {
-    width: 40%;
+    width: calc(40% - 8px);
 }
 
 #barChart {

@@ -1,4 +1,5 @@
-import {addBindingImports, addGenericInterfaceImport, getModuleRegistration, ImportType} from './parser-utils';
+import {addBindingImports, addGenericInterfaceImport, getIntegratedDarkModeCode, getModuleRegistration, ImportType} from './parser-utils';
+import {integratedChartsUsesChartsEnterprise} from "./consts";
 
 const path = require('path');
 const fs = require('fs-extra');
@@ -27,10 +28,10 @@ function getModuleImports(bindings: any, allStylesheets: string[]): string[] {
 
     let imports = [];
     imports.push("import '@ag-grid-community/styles/ag-grid.css';");
-    // to account for the (rare) example that has more than one class...just default to alpine if it does
+    // to account for the (rare) example that has more than one class...just default to quartz if it does
     // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
     // "source" non dark version
-    const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-alpine';
+    const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-quartz';
     imports.push(`import "@ag-grid-community/styles/${theme}.css";`);
 
     let propertyInterfaces = getPropertyInterfaces(properties);
@@ -57,15 +58,15 @@ function getPackageImports(bindings: any, allStylesheets: string[]): string[] {
     const imports = [];
 
     if (gridSettings.enterprise) {
-        imports.push("import 'ag-grid-enterprise';");
+        imports.push(`import 'ag-grid-${integratedChartsUsesChartsEnterprise && bindings.gridSettings.modules.includes('charts-enterprise') ? 'charts-' : ''}enterprise';`);
     }
 
     imports.push("import 'ag-grid-community/styles/ag-grid.css';");
 
-    // to account for the (rare) example that has more than one class...just default to alpine if it does
+    // to account for the (rare) example that has more than one class...just default to quartz if it does
     // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
     // "source" non dark version
-    const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-alpine';
+    const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-quartz';
     imports.push(`import "ag-grid-community/styles/${theme}.css";`);
 
     let propertyInterfaces = getPropertyInterfaces(properties);
@@ -130,7 +131,8 @@ export function vanillaToTypescript(bindings: any, mainFilePath: string, allStyl
         // Remove the original import statements
         unWrapped = unWrapped.replace(/import ((.|\n)*?)from.*\n/g, '');
 
-        return `${formattedImports}${unWrapped} ${toAttach || ''}`
+        // TODO: skipping dark mode handling for TS
+        return `${formattedImports}${unWrapped} ${toAttach || ''} ${getIntegratedDarkModeCode(bindings.exampleName, true, 'gridApi')}`
     }
 }
 

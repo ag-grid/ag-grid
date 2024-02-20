@@ -20,7 +20,7 @@ if (typeof window !== 'undefined') {
         // systemjs load, and marked for reload
         var reloadable = true;
         forEach(links, function(link) {
-            if(!link.hasAttribute('data-systemjs-css')) {
+            if (!link.hasAttribute('data-systemjs-css')) {
                 reloadable = false;
                 link.setAttribute('data-systemjs-css', '');
             }
@@ -28,10 +28,10 @@ if (typeof window !== 'undefined') {
         return reloadable;
     }
 
-    var findExistingCSS = function findExistingCSS(url){
+    var findExistingCSS = function findExistingCSS(url) {
         // Search for existing link to reload
         var links = head.getElementsByTagName('link')
-        return filter(links, function(link){ return link.href === url; });
+        return filter(links, function(link) { return link.href === url; });
     }
 
     var noop = function() {};
@@ -78,11 +78,11 @@ if (typeof window !== 'undefined') {
                         head.appendChild(link);
                 })
                     // Remove the old link regardless of loading outcome
-                    .then(function(result){
-                        forEach(existingLinks, function(link){link.parentElement.removeChild(link);})
+                    .then(function(result) {
+                        forEach(existingLinks, function(link) {link.parentElement.removeChild(link);})
                         return result;
-                    }, function(err){
-                        forEach(existingLinks, function(link){link.parentElement.removeChild(link);})
+                    }, function(err) {
+                        forEach(existingLinks, function(link) {link.parentElement.removeChild(link);})
                         throw err;
                     })
             }, stylesUrl ? 5 : 0)
@@ -92,7 +92,7 @@ if (typeof window !== 'undefined') {
     exports.fetch = function(load) {
         // dont reload styles loaded in the head
         var links = findExistingCSS(load.address);
-        if(!cssIsReloadable(links))
+        if (!cssIsReloadable(links))
             return '';
         return loadCSS(load.address, links);
     };
@@ -155,15 +155,15 @@ else {
 // Because IE8?
 function filter(arrayLike, func) {
     var arr = []
-    forEach(arrayLike, function(item){
-        if(func(item))
+    forEach(arrayLike, function(item) {
+        if (func(item))
             arr.push(item);
     });
     return arr;
 }
 
 // Because IE8?
-function forEach(arrayLike, func){
+function forEach(arrayLike, func) {
     for (var i = 0; i < arrayLike.length; i++) {
         func(arrayLike[i])
     }

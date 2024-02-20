@@ -1,7 +1,7 @@
 import { createApp } from 'vue';
 import { AgGridVue } from '@ag-grid-community/vue3';
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 import './styles.css';
 import CustomGroupCellRenderer from './customGroupCellRendererVue.js';
 import { ModuleRegistry } from '@ag-grid-community/core';
@@ -18,7 +18,7 @@ const VueExample = {
                 <ag-grid-vue
                 
                 style="width: 100%; height: 100%;"
-                class="ag-theme-alpine"
+                :class="themeClass"
                 :columnDefs="columnDefs"
                 @grid-ready="onGridReady"
                 @cell-double-clicked="onCellDoubleClicked"
@@ -26,7 +26,6 @@ const VueExample = {
                 :autoGroupColumnDef="autoGroupColumnDef"
                 :defaultColDef="defaultColDef"
                 :groupDefaultExpanded="groupDefaultExpanded"
-                :animateRows="true"
                 :rowData="rowData"></ag-grid-vue>
         </div>
     `,
@@ -43,15 +42,14 @@ const VueExample = {
                 { field: 'total', aggFunc: 'sum' },
             ],
             gridApi: null,
-            columnApi: null,
             defaultColDef: {
                 flex: 1,
                 minWidth: 120,
-                resizable: true,
             },
             autoGroupColumnDef: null,
             groupDefaultExpanded: null,
             rowData: null,
+            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
         };
     },
     created() {
@@ -63,9 +61,8 @@ const VueExample = {
     methods: {
         onGridReady(params) {
             this.gridApi = params.api;
-            this.gridColumnApi = params.columnApi;
 
-            const updateData = (data) => params.api.setRowData(data);
+            const updateData = (data) => params.api.setGridOption('rowData', data);
 
             fetch(
                 'https://www.ag-grid.com/example-assets/small-olympic-winners.json'
@@ -74,7 +71,7 @@ const VueExample = {
                 .then((data) => updateData(data));
         },
         onCellDoubleClicked: (params) => {
-            if(params.colDef.showRowGroup) {
+            if (params.colDef.showRowGroup) {
                 params.node.setExpanded(!params.node.expanded);
             }
         },
@@ -88,7 +85,7 @@ const VueExample = {
             if (params.event.code !== "Enter") {
                 return;
             }
-            if(params.colDef.showRowGroup) {
+            if (params.colDef.showRowGroup) {
                 params.node.setExpanded(!params.node.expanded);
             }
         }

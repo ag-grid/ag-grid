@@ -8,7 +8,6 @@ export declare class GridBodyComp extends Component {
     private eTop;
     private eBottom;
     headerRootComp: GridHeaderComp;
-    private eBodyClipper;
     private eBody;
     private ctrl;
     constructor();

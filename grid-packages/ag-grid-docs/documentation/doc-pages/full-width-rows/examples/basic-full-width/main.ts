@@ -1,4 +1,11 @@
-import { ColDef, Grid, GridOptions, IsFullWidthRowParams, RowHeightParams } from '@ag-grid-community/core'
+import {
+    ColDef,
+    GridApi,
+    createGrid,
+    GridOptions,
+    IsFullWidthRowParams,
+    RowHeightParams,
+} from '@ag-grid-community/core';
 import { FullWidthCellRenderer } from './fullWidthCellRenderer_typescript'
 
 const rowData = createData(100, 'body')
@@ -7,7 +14,7 @@ const pinnedBottomRowData = createData(3, 'pinned')
 
 function getColumnDefs() {
     const columnDefs: ColDef[] = []
-    alphabet().forEach(function (letter) {
+    alphabet().forEach((letter) => {
         const colDef: ColDef = {
             headerName: letter,
             field: letter,
@@ -23,6 +30,8 @@ function getColumnDefs() {
     })
     return columnDefs
 }
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
     columnDefs: getColumnDefs(),
@@ -63,7 +72,7 @@ function createData(count: number, prefix: string) {
         // if a row is full width or not is totally up to you.
         item.fullWidth = i % 3 === 2
         // put in a column for each letter of the alphabet
-        alphabet().forEach(function (letter) {
+        alphabet().forEach((letter) => {
             item[letter] = prefix + ' (' + letter + ',' + i + ')'
         })
         rowData.push(item)
@@ -74,5 +83,5 @@ function createData(count: number, prefix: string) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-    new Grid(gridDiv, gridOptions)
+    gridApi = createGrid(gridDiv, gridOptions);
 })

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgEvent } from "../events";
@@ -16,10 +16,6 @@ export interface LoadSuccessParams {
      * The last row, if known, to help Infinite Scroll.
      */
     rowCount?: number;
-    /**
-     * @deprecated use groupLevelInfo instead
-     */
-    storeInfo?: any;
     /**
      * Any extra information for the grid to associate with this load.
      */

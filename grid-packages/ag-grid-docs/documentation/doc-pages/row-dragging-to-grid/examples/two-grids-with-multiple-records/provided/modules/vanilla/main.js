@@ -25,7 +25,7 @@ const leftColumnDefs = [
     {
         rowDrag: true,
         maxWidth: 50,
-        suppressMenu: true,
+        suppressHeaderMenuButton: true,
         rowDragText: (params, dragItemCount) => {
             if (dragItemCount > 1) {
                 return dragItemCount + ' athletes';
@@ -37,7 +37,7 @@ const leftColumnDefs = [
         colId: 'checkbox',
         maxWidth: 50,
         checkboxSelection: true,
-        suppressMenu: true,
+        suppressHeaderMenuButton: true,
         headerCheckboxSelection: true
     },
     { field: "athlete" },
@@ -48,7 +48,7 @@ const rightColumnDefs = [
     {
         rowDrag: true,
         maxWidth: 50,
-        suppressMenu: true,
+        suppressHeaderMenuButton: true,
         rowDragText: (params, dragItemCount) => {
             if (dragItemCount > 1) {
                 return dragItemCount + ' athletes';
@@ -59,19 +59,17 @@ const rightColumnDefs = [
     { field: "athlete" },
     { field: "sport" },
     {
-        suppressMenu: true,
+        suppressHeaderMenuButton: true,
         maxWidth: 50,
         cellRenderer: SportRenderer
     }
 ];
-
+let leftApi;
 const leftGridOptions = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
-        sortable: true,
         filter: true,
-        resizable: true
     },
     rowSelection: 'multiple',
     rowDragMultiRow: true,
@@ -82,43 +80,39 @@ const leftGridOptions = {
     rowDragManaged: true,
     suppressMoveWhenRowDragging: true,
     columnDefs: leftColumnDefs,
-    animateRows: true,
     onGridReady: (params) => {
         addGridDropZone(params);
     }
 };
-
+let rightApi;
 const rightGridOptions = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
-        sortable: true,
         filter: true,
-        resizable: true
     },
     getRowId: (params) => {
         return params.data.athlete;
     },
     rowDragManaged: true,
     columnDefs: rightColumnDefs,
-    animateRows: true
 };
 
 function addGridDropZone(params) {
-    const dropZoneParams = rightGridOptions.api.getRowDropZoneParams({
+    const dropZoneParams = rightApi.getRowDropZoneParams({
         onDragStop: (params) => {
             const deselectCheck = document.querySelector('input#deselect').checked;
             const moveCheck = document.querySelector('input#move').checked;
             const nodes = params.nodes;
 
             if (moveCheck) {
-                leftGridOptions.api.applyTransaction({
+                leftApi.applyTransaction({
                     remove: nodes.map(function (node) {
                         return node.data;
                     })
                 });
             } else if (deselectCheck) {
-                leftGridOptions.api.setNodesSelected({ nodes, newValue: false });
+                leftApi.setNodesSelected({ nodes, newValue: false });
             }
         }
     });
@@ -126,15 +120,12 @@ function addGridDropZone(params) {
     params.api.addRowDropZone(dropZoneParams);
 }
 
-function loadGrid(options, side, data) {
+function loadGrid(options, oldApi, side, data) {
     const grid = document.querySelector('#e' + side + 'Grid');
 
-    if (options && options.api) {
-        options.api.destroy();
-    }
-
+    oldApi?.destroy();
     options.rowData = data;
-    new agGrid.Grid(grid, options);
+    return agGrid.createGrid(grid, options);
 }
 
 function resetInputs() {
@@ -165,8 +156,8 @@ function loadGrids() {
                 athletes.push(data[pos]);
             }
 
-            loadGrid(leftGridOptions, 'Left', athletes);
-            loadGrid(rightGridOptions, 'Right', []);
+            leftApi = loadGrid(leftGridOptions, leftApi, 'Left', athletes);
+            rightApi = loadGrid(rightGridOptions, rightApi, 'Right', []);
         });
 }
 
@@ -181,8 +172,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     checkboxToggle.addEventListener('change', function () {
-        leftGridOptions.columnApi.setColumnVisible('checkbox', checkboxToggle.checked);
-        leftGridOptions.api.setSuppressRowClickSelection(checkboxToggle.checked);
+        leftApi.setColumnsVisible(['checkbox'], checkboxToggle.checked);
+        leftApi.setGridOption('suppressRowClickSelection', checkboxToggle.checked);
     });
 
     loadGrids();

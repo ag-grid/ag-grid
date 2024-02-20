@@ -1,8 +1,7 @@
-function createServerSideDatasource(fakeServer, gridOptions) {
+function createServerSideDatasource(fakeServer) {
     class ServerSideDatasource {
-        constructor(fakeServer, gridOptions) {
+        constructor(fakeServer) {
             this.fakeServer = fakeServer;
-            this.gridOptions = gridOptions;
         }
 
         getRows(params) {
@@ -19,7 +18,7 @@ function createServerSideDatasource(fakeServer, gridOptions) {
         }
     }
 
-    return new ServerSideDatasource(fakeServer, gridOptions);
+    return new ServerSideDatasource(fakeServer);
 }
 
 function createFakeServer(data) {

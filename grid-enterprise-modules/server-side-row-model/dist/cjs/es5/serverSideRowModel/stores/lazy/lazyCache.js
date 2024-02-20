@@ -36,10 +36,14 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LazyCache = void 0;
@@ -77,7 +81,7 @@ var LazyCache = /** @class */ (function (_super) {
         this.defaultNodeIdPrefix = this.blockUtils.createNodeIdPrefix(this.store.getParentNode());
         this.rowLoader = this.createManagedBean(new lazyBlockLoader_1.LazyBlockLoader(this, this.store.getParentNode(), this.storeParams));
         this.getRowIdFunc = this.gridOptionsService.getCallback('getRowId');
-        this.isMasterDetail = this.gridOptionsService.isMasterDetail();
+        this.isMasterDetail = this.gridOptionsService.get('masterDetail');
     };
     LazyCache.prototype.destroyRowNodes = function () {
         var _this = this;
@@ -325,15 +329,17 @@ var LazyCache = /** @class */ (function (_super) {
         // if node already exists, update it or destroy it
         if (lazyNode) {
             var node = lazyNode.node;
-            this.nodesToRefresh.delete(node);
             node.__needsRefreshWhenVisible = false;
             // if the node is the same, just update the content
             if (this.doesNodeMatch(data, node)) {
                 this.blockUtils.updateDataIntoRowNode(node, data);
+                this.nodesToRefresh.delete(node);
                 return node;
             }
             // if there's no id and this is an open group, protect this node from changes
-            if (this.getRowIdFunc == null && node.group && node.expanded) {
+            // hasChildren also checks for tree data and master detail
+            if (this.getRowIdFunc == null && node.hasChildren() && node.expanded) {
+                this.nodesToRefresh.delete(node);
                 return node;
             }
             // destroy the old node, might be worth caching state here
@@ -434,10 +440,10 @@ var LazyCache = /** @class */ (function (_super) {
         Object.entries(blockStates).forEach(function (_a) {
             var _b;
             var _c = __read(_a, 2), blockStart = _c[0], uniqueStates = _c[1];
-            var sortedStates = __spreadArray([], __read(uniqueStates)).sort(function (a, b) { var _a, _b; return ((_a = statePriorityMap[a]) !== null && _a !== void 0 ? _a : 0) - ((_b = statePriorityMap[b]) !== null && _b !== void 0 ? _b : 0); });
+            var sortedStates = __spreadArray([], __read(uniqueStates), false).sort(function (a, b) { var _a, _b; return ((_a = statePriorityMap[a]) !== null && _a !== void 0 ? _a : 0) - ((_b = statePriorityMap[b]) !== null && _b !== void 0 ? _b : 0); });
             var priorityState = sortedStates[0];
             var blockNumber = Number(blockStart) / _this.rowLoader.getBlockSize();
-            var blockId = blockPrefix ? blockPrefix + "-" + blockNumber : String(blockNumber);
+            var blockId = blockPrefix ? "".concat(blockPrefix, "-").concat(blockNumber) : String(blockNumber);
             results[blockId] = {
                 blockNumber: blockNumber,
                 startRow: Number(blockStart),
@@ -455,8 +461,7 @@ var LazyCache = /** @class */ (function (_super) {
         }
         this.nodeMap.delete(lazyNode);
         this.nodeDisplayIndexMap.delete(lazyNode.node.rowIndex);
-        this.nodesToRefresh.delete(lazyNode.node);
-        if (lazyNode.node.group && this.nodesToRefresh.size > 0) {
+        if (this.nodesToRefresh.size > 0) {
             // while refreshing, we retain the group nodes so they can be moved
             // without losing state
             this.removedNodeCache.set(lazyNode.node.id, lazyNode.node);
@@ -464,6 +469,7 @@ var LazyCache = /** @class */ (function (_super) {
         else {
             this.blockUtils.destroyRowNode(lazyNode.node);
         }
+        this.nodesToRefresh.delete(lazyNode.node);
     };
     LazyCache.prototype.getSsrmParams = function () {
         return this.store.getSsrmParams();
@@ -503,8 +509,8 @@ var LazyCache = /** @class */ (function (_super) {
      */
     LazyCache.prototype.purgeStubsOutsideOfViewport = function () {
         var _this = this;
-        var firstRow = this.api.getFirstDisplayedRow();
-        var lastRow = this.api.getLastDisplayedRow();
+        var firstRow = this.api.getFirstDisplayedRowIndex();
+        var lastRow = this.api.getLastDisplayedRowIndex();
         var firstRowBlockStart = this.rowLoader.getBlockStartIndexForIndex(firstRow);
         var _a = __read(this.rowLoader.getBlockBoundsForIndex(lastRow), 2), _ = _a[0], lastRowBlockEnd = _a[1];
         this.nodeMap.forEach(function (lazyNode) {
@@ -546,8 +552,8 @@ var LazyCache = /** @class */ (function (_super) {
             // if group is collapsed, or max blocks missing, ignore the event
             return;
         }
-        var firstRowInViewport = this.api.getFirstDisplayedRow();
-        var lastRowInViewport = this.api.getLastDisplayedRow();
+        var firstRowInViewport = this.api.getFirstDisplayedRowIndex();
+        var lastRowInViewport = this.api.getLastDisplayedRowIndex();
         // the start storeIndex of every block in this store
         var allLoadedBlocks = new Set();
         // the start storeIndex of every displayed block in this store
@@ -623,7 +629,7 @@ var LazyCache = /** @class */ (function (_super) {
     };
     LazyCache.prototype.extractDuplicateIds = function (rows) {
         var _this = this;
-        if (this.getRowIdFunc != null) {
+        if (this.getRowIdFunc == null) {
             return [];
         }
         var newIds = new Set();
@@ -636,20 +642,19 @@ var LazyCache = /** @class */ (function (_super) {
             }
             newIds.add(id);
         });
-        return __spreadArray([], __read(duplicates));
+        return __spreadArray([], __read(duplicates), false);
     };
     LazyCache.prototype.onLoadSuccess = function (firstRowIndex, numberOfRowsExpected, response) {
         var _this = this;
-        var _a;
         if (!this.live)
             return;
-        var info = (_a = response.groupLevelInfo) !== null && _a !== void 0 ? _a : response.storeInfo;
+        var info = response.groupLevelInfo;
         this.store.setStoreInfo(info);
         if (this.getRowIdFunc != null) {
             var duplicates = this.extractDuplicateIds(response.rowData);
             if (duplicates.length > 0) {
                 var duplicateIdText = duplicates.join(', ');
-                console.warn("AG Grid: Unable to display rows as duplicate row ids (" + duplicateIdText + ") were returned by the getRowId callback. Please modify the getRowId callback to provide unique ids.");
+                console.warn("AG Grid: Unable to display rows as duplicate row ids (".concat(duplicateIdText, ") were returned by the getRowId callback. Please modify the getRowId callback to provide unique ids."));
                 this.onLoadFailed(firstRowIndex, numberOfRowsExpected);
                 return;
             }
@@ -677,10 +682,6 @@ var LazyCache = /** @class */ (function (_super) {
             // create row will handle deleting the overwritten row
             _this.createRowAtIndex(rowIndex, data);
         });
-        var finishedRefreshing = this.nodesToRefresh.size === 0;
-        if (wasRefreshing && finishedRefreshing) {
-            this.fireRefreshFinishedEvent();
-        }
         if (response.rowCount != undefined && response.rowCount !== -1) {
             // if the rowCount has been provided, set the row count
             this.numberOfRows = response.rowCount;
@@ -704,6 +705,11 @@ var LazyCache = /** @class */ (function (_super) {
             lazyNodesAfterStoreEnd.forEach(function (lazyNode) { return _this.destroyRowAtIndex(lazyNode.index); });
         }
         this.fireStoreUpdatedEvent();
+        // Happens after store updated, as store updating can clear our excess rows.
+        var finishedRefreshing = this.nodesToRefresh.size === 0;
+        if (wasRefreshing && finishedRefreshing) {
+            this.fireRefreshFinishedEvent();
+        }
     };
     LazyCache.prototype.fireRefreshFinishedEvent = function () {
         var _this = this;
@@ -719,6 +725,39 @@ var LazyCache = /** @class */ (function (_super) {
         });
         this.removedNodeCache = new Map();
         this.store.fireRefreshFinishedEvent();
+    };
+    /**
+     * @returns true if all rows are loaded
+     */
+    LazyCache.prototype.isStoreFullyLoaded = function () {
+        var knowsSize = this.isLastRowKnown;
+        var hasCorrectRowCount = this.nodeMap.getSize() === this.numberOfRows;
+        if (!knowsSize || !hasCorrectRowCount) {
+            return;
+        }
+        if (this.nodesToRefresh.size > 0) {
+            return;
+        }
+        // nodeMap find cancels early when it finds a matching record.
+        // better to use this than forEach
+        var index = -1;
+        var firstOutOfPlaceNode = this.nodeMap.find(function (lazyNode) {
+            index += 1;
+            // node not contiguous, nodes must be missing
+            if (lazyNode.index !== index) {
+                return true;
+            }
+            // node data is out of date
+            if (lazyNode.node.__needsRefreshWhenVisible) {
+                return true;
+            }
+            // node not yet loaded
+            if (lazyNode.node.stub) {
+                return true;
+            }
+            return false;
+        });
+        return firstOutOfPlaceNode == null;
     };
     LazyCache.prototype.isLastRowIndexKnown = function () {
         return this.isLastRowKnown;
@@ -789,11 +828,45 @@ var LazyCache = /** @class */ (function (_super) {
         });
         return String(id);
     };
+    LazyCache.prototype.getOrderedNodeMap = function () {
+        var obj = {};
+        this.nodeMap.forEach(function (node) { return obj[node.index] = node; });
+        return obj;
+    };
+    LazyCache.prototype.clearDisplayIndexes = function () {
+        this.nodeDisplayIndexMap.clear();
+    };
+    /**
+     * Client side sorting
+     */
+    LazyCache.prototype.clientSideSortRows = function () {
+        var _this = this;
+        var sortOptions = this.sortController.getSortOptions();
+        var isAnySort = sortOptions.some(function (opt) { return opt.sort != null; });
+        if (!isAnySort) {
+            return;
+        }
+        // the node map does not need entirely recreated, only the indexes need updated.
+        var allNodes = new Array(this.nodeMap.getSize());
+        this.nodeMap.forEach(function (lazyNode) { return allNodes[lazyNode.index] = lazyNode.node; });
+        this.nodeMap.clear();
+        var sortedNodes = this.rowNodeSorter.doFullSort(allNodes, sortOptions);
+        sortedNodes.forEach(function (node, index) {
+            _this.nodeMap.set({
+                id: node.id,
+                node: node,
+                index: index,
+            });
+        });
+    };
+    /**
+     * Transaction Support here
+     */
     LazyCache.prototype.updateRowNodes = function (updates) {
         var _this = this;
         if (this.getRowIdFunc == null) {
             // throw error, as this is type checked in the store. User likely abusing internal apis if here.
-            throw new Error('AG Grid: Insert transactions can only be applied when row ids are supplied.');
+            throw new Error('AG Grid: Transactions can only be applied when row ids are supplied.');
         }
         var updatedNodes = [];
         updates.forEach(function (data) {
@@ -808,15 +881,17 @@ var LazyCache = /** @class */ (function (_super) {
     };
     LazyCache.prototype.insertRowNodes = function (inserts, indexToAdd) {
         var _this = this;
+        // adjust row count to allow for footer row
+        var realRowCount = this.store.getRowCount() - (this.store.getParentNode().sibling ? 1 : 0);
         // if missing and we know the last row, we're inserting at the end
-        var addIndex = indexToAdd == null && this.isLastRowKnown ? this.store.getRowCount() : indexToAdd;
+        var addIndex = indexToAdd == null && this.isLastRowKnown ? realRowCount : indexToAdd;
         // can't insert nodes past the end of the store
-        if (addIndex == null || this.store.getRowCount() < addIndex) {
+        if (addIndex == null || realRowCount < addIndex) {
             return [];
         }
         if (this.getRowIdFunc == null) {
             // throw error, as this is type checked in the store. User likely abusing internal apis if here.
-            throw new Error('AG Grid: Insert transactions can only be applied when row ids are supplied.');
+            throw new Error('AG Grid: Transactions can only be applied when row ids are supplied.');
         }
         var uniqueInsertsMap = {};
         inserts.forEach(function (data) {
@@ -847,24 +922,16 @@ var LazyCache = /** @class */ (function (_super) {
         // finally insert the new rows
         return uniqueInserts.map(function (data, uniqueInsertOffset) { return _this.createRowAtIndex(addIndex + uniqueInsertOffset, data); });
     };
-    LazyCache.prototype.getOrderedNodeMap = function () {
-        var obj = {};
-        this.nodeMap.forEach(function (node) { return obj[node.index] = node; });
-        return obj;
-    };
-    LazyCache.prototype.clearDisplayIndexes = function () {
-        this.nodeDisplayIndexMap.clear();
-    };
     LazyCache.prototype.removeRowNodes = function (idsToRemove) {
         if (this.getRowIdFunc == null) {
             // throw error, as this is type checked in the store. User likely abusing internal apis if here.
-            throw new Error('AG Grid: Insert transactions can only be applied when row ids are supplied.');
+            throw new Error('AG Grid: Transactions can only be applied when row ids are supplied.');
         }
         var removedNodes = [];
         var nodesToVerify = [];
         // track how many nodes have been deleted, as when we pass other nodes we need to shift them up
         var deletedNodeCount = 0;
-        var remainingIdsToRemove = __spreadArray([], __read(idsToRemove));
+        var remainingIdsToRemove = __spreadArray([], __read(idsToRemove), false);
         var allNodes = this.getOrderedNodeMap();
         var contiguousIndex = -1;
         var _loop_1 = function (stringIndex) {
@@ -908,20 +975,26 @@ var LazyCache = /** @class */ (function (_super) {
         return removedNodes;
     };
     __decorate([
-        core_1.Autowired('gridApi')
+        (0, core_1.Autowired)('gridApi')
     ], LazyCache.prototype, "api", void 0);
     __decorate([
-        core_1.Autowired('ssrmBlockUtils')
+        (0, core_1.Autowired)('ssrmBlockUtils')
     ], LazyCache.prototype, "blockUtils", void 0);
     __decorate([
-        core_1.Autowired('focusService')
+        (0, core_1.Autowired)('focusService')
     ], LazyCache.prototype, "focusService", void 0);
     __decorate([
-        core_1.Autowired('ssrmNodeManager')
+        (0, core_1.Autowired)('ssrmNodeManager')
     ], LazyCache.prototype, "nodeManager", void 0);
     __decorate([
-        core_1.Autowired('rowModel')
+        (0, core_1.Autowired)('rowModel')
     ], LazyCache.prototype, "serverSideRowModel", void 0);
+    __decorate([
+        (0, core_1.Autowired)('rowNodeSorter')
+    ], LazyCache.prototype, "rowNodeSorter", void 0);
+    __decorate([
+        (0, core_1.Autowired)('sortController')
+    ], LazyCache.prototype, "sortController", void 0);
     __decorate([
         core_1.PostConstruct
     ], LazyCache.prototype, "init", null);

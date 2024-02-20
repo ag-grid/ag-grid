@@ -7,5 +7,6 @@ export declare class FilteredRowsComp extends NameValueComp implements IStatusPa
     private getTotalRowCountValue;
     private getFilteredRowCountValue;
     init(): void;
+    refresh(): boolean;
     destroy(): void;
 }

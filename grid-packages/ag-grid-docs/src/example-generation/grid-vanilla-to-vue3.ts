@@ -1,9 +1,13 @@
 import {
     convertFunctionToConstProperty,
+    getActiveTheme,
     getFunctionName,
+    getIntegratedDarkModeCode,
     getModuleRegistration,
     ImportType,
-    isInstanceMethod
+    isInstanceMethod,
+    preferParamsApi,
+    replaceGridReadyRowData
 } from './parser-utils';
 import {getImport, toConst, toInput, toOutput, toRef} from './vue-utils';
 import {
@@ -16,6 +20,7 @@ import {
     OVERRIDABLE_AG_COMPONENTS
 } from "./grid-vanilla-to-vue-common";
 import * as JSON5 from "json5";
+import {integratedChartsUsesChartsEnterprise} from "./consts";
 
 const path = require('path');
 
@@ -34,10 +39,8 @@ function getOnGridReadyCode(bindings: any): string {
     if (data) {
         const {url, callback} = data;
 
-        const setRowDataBlock = callback.indexOf('api.setRowData') >= 0 ?
-            callback.replace("params.api.setRowData(data);", "rowData.value = data;") :
-            callback;
-
+        const setRowDataBlock = replaceGridReadyRowData(callback, 'rowData.value');
+        
         additionalLines.push(`
             const updateData = (data) => ${setRowDataBlock};
             
@@ -47,15 +50,15 @@ function getOnGridReadyCode(bindings: any): string {
         );
     }
 
+    const additional = preferParamsApi(additionalLines.length > 0 ? `\n\n        ${additionalLines.join('\n        ')}` : '')
     return `const onGridReady = (params) => {
+        ${getIntegratedDarkModeCode(bindings.exampleName)}
         gridApi.value = params.api;
-        gridColumnApi.value = params.columnApi;
-        ${additionalLines.length > 0 ? `\n\n        ${additionalLines.join('\n        ')}` : ''}
+        ${additional}
     }`;
 }
 
-const replaceApiThisReference = (code) => code.replaceAll("this.gridApi", 'gridApi.value')
-    .replaceAll("this.gridColumnApi", 'gridColumnApi.value');
+const replaceApiThisReference = (code) => code.replaceAll("gridApi", 'gridApi.value');
 
 function getAllMethods(bindings: any): [string[], string[], string[], string[], string[]] {
     const eventHandlers = bindings.eventHandlers
@@ -217,7 +220,7 @@ function getPropertyBindings(bindings: any, componentFileNames: string[], import
             }
         });
 
-    if (bindings.data && bindings.data.callback.indexOf('api.setRowData') >= 0) {
+    if (bindings.data && bindings.data.callback.indexOf('gridApi.setGridOption(\'rowData\',') >= 0) {
         if (propertyAttributes.filter(item => item.indexOf(':rowData') >= 0).length === 0) {
             propertyAttributes.push(':rowData="rowData"');
             propertyNames.push('rowData');
@@ -247,10 +250,10 @@ function getModuleImports(bindings: any, componentFileNames: string[], allStyles
     }
 
     imports.push("import '@ag-grid-community/styles/ag-grid.css';");
-    // to account for the (rare) example that has more than one class...just default to alpine if it does
+    // to account for the (rare) example that has more than one class...just default to quartz if it does
     // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
     // "source" non dark version
-    const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-alpine';
+    const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-quartz';
     imports.push(`import "@ag-grid-community/styles/${theme}.css";`);
 
     if (allStylesheets && allStylesheets.length > 0) {
@@ -275,7 +278,7 @@ function getPackageImports(bindings: any, componentFileNames: string[], allStyle
     ];
 
     if (gridSettings.enterprise) {
-        imports.push("import 'ag-grid-enterprise';");
+        imports.push(`import 'ag-grid-${integratedChartsUsesChartsEnterprise && bindings.gridSettings.modules.includes('charts-enterprise') ? 'charts-' : ''}enterprise';`);
     }
     if (bindings.gridSettings.enableChartApi) {
         imports.push("import { AgChart } from 'ag-charts-community'");
@@ -290,10 +293,10 @@ function getPackageImports(bindings: any, componentFileNames: string[], allStyle
         allStylesheets.forEach(styleSheet => imports.push(`import './${path.basename(styleSheet)}';`));
     }
 
-    // to account for the (rare) example that has more than one class...just default to alpine if it does
+    // to account for the (rare) example that has more than one class...just default to quartz if it does
     // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
     // "source" non dark version
-    const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-alpine';
+    const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-quartz';
     imports.push(`import 'ag-grid-community/styles/${theme}.css';`);
 
     if (componentFileNames) {
@@ -344,12 +347,11 @@ const VueExample = {
     setup(props) {
         const columnDefs = ref(${columnDefs});
         const gridApi = ref();
-        const gridColumnApi = ref();
         ${defaultColDef ? `const defaultColDef = ref(${defaultColDef});` : ''}
         ${propertyVars.join(';\n')}
         
         onBeforeMount(() => {
-            ${propertyAssignments.join(';\n')}
+            ${propertyAssignments.join(';\n')}            
         });
         
         ${eventHandlers
@@ -362,9 +364,9 @@ const VueExample = {
         return {
             columnDefs,
             gridApi,
-            gridColumnApi,
             ${propertyNames.join(',\n')},
             onGridReady,
+            themeClass: ${getActiveTheme(bindings.gridSettings.theme, false)},
             ${functionNames ? functionNames.filter(functionName => !propertyNames.includes(functionName)).join(',\n') : ''}
         }        
     }

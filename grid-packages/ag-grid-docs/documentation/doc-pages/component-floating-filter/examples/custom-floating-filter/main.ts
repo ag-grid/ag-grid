@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
 import { NumberFloatingFilterComponent } from "./numberFloatingFilterComponent_typescript";
 
 const columnDefs: ColDef[] = [
@@ -6,54 +6,53 @@ const columnDefs: ColDef[] = [
   {
     field: 'gold',
     filter: 'agNumberColumnFilter',
-    suppressMenu: true,
+    suppressHeaderMenuButton: true,
     floatingFilterComponent: NumberFloatingFilterComponent,
     floatingFilterComponentParams: {
-      suppressFilterButton: true,
-      color: 'red',
+      color: 'gold',
     },
+    suppressFloatingFilterButton: true,
   },
   {
     field: 'silver',
     filter: 'agNumberColumnFilter',
-    suppressMenu: true,
+    suppressHeaderMenuButton: true,
     floatingFilterComponent: NumberFloatingFilterComponent,
     floatingFilterComponentParams: {
-      suppressFilterButton: true,
-      color: 'blue',
+      color: 'silver',
     },
+    suppressFloatingFilterButton: true,
   },
   {
     field: 'bronze',
     filter: 'agNumberColumnFilter',
-    suppressMenu: true,
+    suppressHeaderMenuButton: true,
     floatingFilterComponent: NumberFloatingFilterComponent,
     floatingFilterComponentParams: {
-      suppressFilterButton: true,
-      color: 'green',
+      color: '#CD7F32',
     },
+    suppressFloatingFilterButton: true,
   },
   {
     field: 'total',
     filter: 'agNumberColumnFilter',
-    suppressMenu: true,
+    suppressHeaderMenuButton: true,
     floatingFilterComponent: NumberFloatingFilterComponent,
     floatingFilterComponentParams: {
-      suppressFilterButton: true,
-      color: 'orange',
+      color: 'unset',
     },
+    suppressFloatingFilterButton: true,
   },
 ]
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
-    editable: true,
-    sortable: true,
     flex: 1,
     minWidth: 100,
     filter: true,
     floatingFilter: true,
-    resizable: true,
   },
   columnDefs: columnDefs,
   rowData: null,
@@ -62,11 +61,11 @@ const gridOptions: GridOptions<IOlympicData> = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
     .then(data => {
-      gridOptions.api!.setRowData(data)
+      gridApi!.setGridOption('rowData', data)
     })
 })

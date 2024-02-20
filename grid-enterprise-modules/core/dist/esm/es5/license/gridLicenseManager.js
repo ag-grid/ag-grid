@@ -42,6 +42,9 @@ var GridLicenseManager = /** @class */ (function (_super) {
     GridLicenseManager.setLicenseKey = function (licenseKey) {
         LicenseManager.setLicenseKey(licenseKey);
     };
+    GridLicenseManager.setChartsLicenseManager = function (chartsLicenseManager) {
+        LicenseManager.setChartsLicenseManager(chartsLicenseManager);
+    };
     __decorate([
         PreConstruct
     ], GridLicenseManager.prototype, "validateLicense", null);

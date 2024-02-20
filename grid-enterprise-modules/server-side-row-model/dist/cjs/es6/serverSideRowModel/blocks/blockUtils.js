@@ -10,14 +10,9 @@ exports.BlockUtils = exports.GROUP_MISSING_KEY_ID = void 0;
 const core_1 = require("@ag-grid-community/core");
 exports.GROUP_MISSING_KEY_ID = 'ag-Grid-MissingKey';
 let BlockUtils = class BlockUtils extends core_1.BeanStub {
-    postConstruct() {
-        this.rowHeight = this.gridOptionsService.getRowHeightAsNumber();
-        this.usingTreeData = this.gridOptionsService.isTreeData();
-        this.usingMasterDetail = this.gridOptionsService.isMasterDetail();
-    }
     createRowNode(params) {
         const rowNode = new core_1.RowNode(this.beans);
-        const rowHeight = params.rowHeight != null ? params.rowHeight : this.rowHeight;
+        const rowHeight = params.rowHeight != null ? params.rowHeight : this.gridOptionsService.getRowHeightAsNumber();
         rowNode.setRowHeight(rowHeight);
         rowNode.group = params.group;
         rowNode.leafGroup = params.leafGroup;
@@ -44,7 +39,8 @@ let BlockUtils = class BlockUtils extends core_1.BeanStub {
             this.destroyBean(rowNode.childStore);
             rowNode.childStore = null;
         }
-        if (rowNode.sibling) {
+        // if this has a footer, destroy that too
+        if (rowNode.sibling && !rowNode.footer) {
             this.destroyRowNode(rowNode.sibling, false);
         }
         // this is needed, so row render knows to fade out the row, otherwise it
@@ -78,7 +74,9 @@ let BlockUtils = class BlockUtils extends core_1.BeanStub {
                 console.warn(`data is `, rowNode.data);
             }, 'ServerSideBlock-CannotHaveNullOrUndefinedForKey');
         }
-        if (this.beans.gridOptionsService.is('groupIncludeFooter')) {
+        const getGroupIncludeFooter = this.beans.gridOptionsService.getGroupIncludeFooter();
+        const doesRowShowFooter = getGroupIncludeFooter({ node: rowNode });
+        if (doesRowShowFooter) {
             rowNode.createFooter();
             if (rowNode.sibling) {
                 rowNode.sibling.uiLevel = rowNode.uiLevel + 1;
@@ -96,17 +94,32 @@ let BlockUtils = class BlockUtils extends core_1.BeanStub {
     }
     updateDataIntoRowNode(rowNode, data) {
         rowNode.updateData(data);
-        if (this.usingTreeData) {
+        if (this.gridOptionsService.get('treeData')) {
             this.setTreeGroupInfo(rowNode);
             this.setChildCountIntoRowNode(rowNode);
         }
         else if (rowNode.group) {
             this.setChildCountIntoRowNode(rowNode);
+            if (!rowNode.footer) {
+                const getGroupIncludeFooter = this.beans.gridOptionsService.getGroupIncludeFooter();
+                const doesRowShowFooter = getGroupIncludeFooter({ node: rowNode });
+                if (doesRowShowFooter) {
+                    if (rowNode.sibling) {
+                        rowNode.sibling.updateData(data);
+                    }
+                    else {
+                        rowNode.createFooter();
+                    }
+                }
+                else if (rowNode.sibling) {
+                    rowNode.destroyFooter();
+                }
+            }
             // it's not possible for a node to change whether it's a group or not
             // when doing row grouping (as only rows at certain levels are groups),
             // so nothing to do here
         }
-        else if (this.usingMasterDetail) {
+        else if (this.gridOptionsService.get('masterDetail')) {
             // this should be implemented, however it's not the use case i'm currently
             // programming, so leaving for another day. to test this, create an example
             // where whether a master row is expandable or not is dynamic
@@ -115,15 +128,16 @@ let BlockUtils = class BlockUtils extends core_1.BeanStub {
     setDataIntoRowNode(rowNode, data, defaultId, cachedRowHeight) {
         var _a;
         rowNode.stub = false;
+        const treeData = this.gridOptionsService.get('treeData');
         if (core_1._.exists(data)) {
             rowNode.setDataAndId(data, defaultId);
-            if (this.usingTreeData) {
+            if (treeData) {
                 this.setTreeGroupInfo(rowNode);
             }
             else if (rowNode.group) {
                 this.setRowGroupInfo(rowNode);
             }
-            else if (this.usingMasterDetail) {
+            else if (this.gridOptionsService.get('masterDetail')) {
                 this.setMasterDetailInfo(rowNode);
             }
         }
@@ -131,7 +145,7 @@ let BlockUtils = class BlockUtils extends core_1.BeanStub {
             rowNode.setDataAndId(undefined, undefined);
             rowNode.key = null;
         }
-        if (this.usingTreeData || rowNode.group) {
+        if (treeData || rowNode.group) {
             this.setGroupDataIntoRowNode(rowNode);
             this.setChildCountIntoRowNode(rowNode);
         }
@@ -150,7 +164,7 @@ let BlockUtils = class BlockUtils extends core_1.BeanStub {
     }
     setGroupDataIntoRowNode(rowNode) {
         const groupDisplayCols = this.columnModel.getGroupDisplayColumns();
-        const usingTreeData = this.gridOptionsService.isTreeData();
+        const usingTreeData = this.gridOptionsService.get('treeData');
         groupDisplayCols.forEach(col => {
             if (rowNode.groupData == null) {
                 rowNode.groupData = {};
@@ -181,6 +195,9 @@ let BlockUtils = class BlockUtils extends core_1.BeanStub {
         rowNode.setRowIndex(displayIndexSeq.next());
         rowNode.setRowTop(nextRowTop.value);
         nextRowTop.value += rowNode.rowHeight;
+        if (rowNode.footer) {
+            return;
+        }
         // set child for master / detail
         const hasDetailRow = rowNode.master;
         if (hasDetailRow) {
@@ -306,45 +323,25 @@ let BlockUtils = class BlockUtils extends core_1.BeanStub {
         return undefined;
     }
     checkOpenByDefault(rowNode) {
-        if (!rowNode.isExpandable()) {
-            return;
-        }
-        const userFunc = this.gridOptionsService.getCallback('isServerSideGroupOpenByDefault');
-        if (!userFunc) {
-            return;
-        }
-        const params = {
-            data: rowNode.data,
-            rowNode
-        };
-        const userFuncRes = userFunc(params);
-        if (userFuncRes) {
-            // we do this in a timeout, so that we don't expand a row node while in the middle
-            // of setting up rows, setting up rows is complex enough without another chunk of work
-            // getting added to the call stack. this is also helpful as openByDefault may or may
-            // not happen (so makes setting up rows more deterministic by expands never happening)
-            // and also checkOpenByDefault is shard with both store types, so easier control how it
-            // impacts things by keeping it in new VM turn.
-            window.setTimeout(() => rowNode.setExpanded(true), 0);
-        }
+        return this.expansionService.checkOpenByDefault(rowNode);
     }
 };
 __decorate([
-    core_1.Autowired('valueService')
+    (0, core_1.Autowired)('valueService')
 ], BlockUtils.prototype, "valueService", void 0);
 __decorate([
-    core_1.Autowired('columnModel')
+    (0, core_1.Autowired)('columnModel')
 ], BlockUtils.prototype, "columnModel", void 0);
 __decorate([
-    core_1.Autowired('ssrmNodeManager')
+    (0, core_1.Autowired)('ssrmNodeManager')
 ], BlockUtils.prototype, "nodeManager", void 0);
 __decorate([
-    core_1.Autowired('beans')
+    (0, core_1.Autowired)('beans')
 ], BlockUtils.prototype, "beans", void 0);
 __decorate([
-    core_1.PostConstruct
-], BlockUtils.prototype, "postConstruct", null);
+    (0, core_1.Autowired)('expansionService')
+], BlockUtils.prototype, "expansionService", void 0);
 BlockUtils = __decorate([
-    core_1.Bean('ssrmBlockUtils')
+    (0, core_1.Bean)('ssrmBlockUtils')
 ], BlockUtils);
 exports.BlockUtils = BlockUtils;

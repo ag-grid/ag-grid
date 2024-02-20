@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ICellEditorParams } from "../../interfaces/iCellEditor";
@@ -18,8 +18,16 @@ export interface INumberCellEditorParams<TData = any, TContext = any> extends IC
      * Defaults to any value allowed.
      */
     step?: number;
-    /** Display stepper buttons in editor. Default: `false` */
+    /**
+     * Display stepper buttons in editor. Note: Does not work when `preventStepping` is `true`.
+     * @default false
+     */
     showStepperButtons?: boolean;
+    /**
+     * Set to `true` to prevent key up/down from stepping the field's value.
+     * @default false
+     */
+    preventStepping?: boolean;
 }
 export declare class NumberCellEditor extends SimpleCellEditor<number, INumberCellEditorParams, AgInputNumberField> {
     constructor();

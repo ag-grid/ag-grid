@@ -1,4 +1,4 @@
-// ag-grid-react v30.1.0
+// ag-grid-react v31.1.0
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -34,7 +34,6 @@ var HeaderRowComp = function (props) {
     var _a = react_1.useMemo(function () { return ctrl.getTopAndHeight(); }, []), topOffset = _a.topOffset, rowHeight = _a.rowHeight;
     var ariaRowIndex = ctrl.getAriaRowIndex();
     var className = ctrl.getHeaderRowClass();
-    var transform = react_1.useMemo(function () { return ctrl.getTransform(); }, []);
     var _b = react_1.useState(function () { return rowHeight + 'px'; }), height = _b[0], setHeight = _b[1];
     var _c = react_1.useState(function () { return topOffset + 'px'; }), top = _c[0], setTop = _c[1];
     var _d = react_1.useState(function () { return ctrl.getHeaderCtrls(); }), cellCtrls = _d[0], setCellCtrls = _d[1];
@@ -47,8 +46,10 @@ var HeaderRowComp = function (props) {
         var compProxy = {
             setHeight: function (height) { return setHeight(height); },
             setTop: function (top) { return setTop(top); },
-            setHeaderCtrls: function (ctrls, forceOrder) {
-                return setCellCtrls(function (prev) { return utils_1.getNextValueIfDifferent(prev, ctrls, forceOrder); });
+            setHeaderCtrls: function (ctrls, forceOrder, afterScroll) {
+                utils_1.agFlushSync(afterScroll, function () {
+                    setCellCtrls(function (prev) { return utils_1.getNextValueIfDifferent(prev, ctrls, forceOrder); });
+                });
             },
             setWidth: function (width) {
                 if (eGui.current) {
@@ -59,10 +60,9 @@ var HeaderRowComp = function (props) {
         ctrl.setComp(compProxy, false);
     }, []);
     var style = react_1.useMemo(function () { return ({
-        transform: transform,
         height: height,
         top: top,
-    }); }, [transform, height, top]);
+    }); }, [height, top]);
     var createCellJsx = react_1.useCallback(function (cellCtrl) {
         switch (ctrl.getType()) {
             case ag_grid_community_1.HeaderRowType.COLUMN_GROUP:

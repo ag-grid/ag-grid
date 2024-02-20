@@ -24,7 +24,7 @@ let RowNodeBlockLoader = RowNodeBlockLoader_1 = class RowNodeBlockLoader extends
     }
     postConstruct() {
         this.maxConcurrentRequests = this.getMaxConcurrentDatasourceRequests();
-        const blockLoadDebounceMillis = this.gridOptionsService.getNum('blockLoadDebounceMillis');
+        const blockLoadDebounceMillis = this.gridOptionsService.get('blockLoadDebounceMillis');
         if (blockLoadDebounceMillis && blockLoadDebounceMillis > 0) {
             this.checkBlockToLoadDebounce = utils_1._.debounce(this.performCheckBlocksToLoad.bind(this), blockLoadDebounceMillis);
         }
@@ -33,7 +33,7 @@ let RowNodeBlockLoader = RowNodeBlockLoader_1 = class RowNodeBlockLoader extends
         this.logger = loggerFactory.create('RowNodeBlockLoader');
     }
     getMaxConcurrentDatasourceRequests() {
-        const res = this.gridOptionsService.getNum('maxConcurrentDatasourceRequests');
+        const res = this.gridOptionsService.get('maxConcurrentDatasourceRequests');
         if (res == null) {
             return 2;
         } // 2 is the default
@@ -119,15 +119,15 @@ let RowNodeBlockLoader = RowNodeBlockLoader_1 = class RowNodeBlockLoader extends
 RowNodeBlockLoader.BLOCK_LOADED_EVENT = 'blockLoaded';
 RowNodeBlockLoader.BLOCK_LOADER_FINISHED_EVENT = 'blockLoaderFinished';
 __decorate([
-    context_1.Autowired('rowModel')
+    (0, context_1.Autowired)('rowModel')
 ], RowNodeBlockLoader.prototype, "rowModel", void 0);
 __decorate([
     context_1.PostConstruct
 ], RowNodeBlockLoader.prototype, "postConstruct", null);
 __decorate([
-    __param(0, context_1.Qualifier('loggerFactory'))
+    __param(0, (0, context_1.Qualifier)('loggerFactory'))
 ], RowNodeBlockLoader.prototype, "setBeans", null);
 RowNodeBlockLoader = RowNodeBlockLoader_1 = __decorate([
-    context_1.Bean('rowNodeBlockLoader')
+    (0, context_1.Bean)('rowNodeBlockLoader')
 ], RowNodeBlockLoader);
 exports.RowNodeBlockLoader = RowNodeBlockLoader;

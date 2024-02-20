@@ -1,4 +1,4 @@
-// ag-grid-react v30.1.0
+// ag-grid-react v31.1.0
 "use strict";
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
@@ -20,7 +20,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getNextValueIfDifferent = exports.agFlushSync = exports.isComponentStateless = exports.CssClasses = exports.classesList = void 0;
+exports.getNextValueIfDifferent = exports.agFlushSync = exports.runWithoutFlushSync = exports.isComponentStateless = exports.CssClasses = exports.classesList = void 0;
 var react_dom_1 = __importDefault(require("react-dom"));
 var classesList = function () {
     var list = [];
@@ -71,13 +71,26 @@ var isComponentStateless = function (Component) {
 exports.isComponentStateless = isComponentStateless;
 // CreateRoot is only available from React 18, which if used requires us to use flushSync.
 var createRootAndFlushSyncAvailable = react_dom_1.default.createRoot != null && react_dom_1.default.flushSync != null;
+var disableFlushSync = false;
+/** Enable flushSync to be disabled for the callback and the next frame (via setTimeout 0) to prevent flushSync during an existing render.
+ * Provides an alternative to the more fine grained useFlushSync boolean param to agFlushSync.
+ */
+function runWithoutFlushSync(func) {
+    if (!disableFlushSync) {
+        // We only re-enable flushSync asynchronously to avoid re-enabling it while React is still triggering renders related to the original call.
+        setTimeout(function () { return disableFlushSync = false; }, 0);
+    }
+    disableFlushSync = true;
+    return func();
+}
+exports.runWithoutFlushSync = runWithoutFlushSync;
 /**
  * Wrapper around flushSync to provide backwards compatibility with React 16-17
  * Also allows us to control via the `useFlushSync` param whether we want to use flushSync or not
  * as we do not want to use flushSync when we are likely to already be in a render cycle
  */
 var agFlushSync = function (useFlushSync, fn) {
-    if (createRootAndFlushSyncAvailable && useFlushSync) {
+    if (createRootAndFlushSyncAvailable && useFlushSync && !disableFlushSync) {
         react_dom_1.default.flushSync(fn);
     }
     else {

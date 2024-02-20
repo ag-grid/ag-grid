@@ -2,7 +2,7 @@ import { VanillaFrameworkOverrides } from '@ag-grid-community/core';
 import { VueComponentFactory } from './VueComponentFactory';
 export class VueFrameworkOverrides extends VanillaFrameworkOverrides {
     constructor(parent) {
-        super();
+        super('vue');
         this.parent = parent;
     }
     /*

@@ -30,16 +30,13 @@ export class ValueFormatterService extends BeanStub {
         }
 
         if (formatter) {
-            const params: ValueFormatterParams = {
+            const params: ValueFormatterParams = this.gridOptionsService.addGridCommonParams({
                 value,
                 node,
                 data: node ? node.data : null,
                 colDef,
-                column,
-                api: this.gridOptionsService.api,
-                columnApi: this.gridOptionsService.columnApi,
-                context: this.gridOptionsService.context
-            };
+                column
+            });
             if (typeof formatter === 'function') {
                 result = formatter(params);
             } else {

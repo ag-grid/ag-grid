@@ -47,17 +47,20 @@ var FakeVScrollComp = /** @class */ (function (_super) {
         this.setDisplayed(vScrollShowing, { skipAriaHidden: true });
     };
     FakeVScrollComp.prototype.onRowContainerHeightChanged = function () {
-        var gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
+        var ctrlsService = this.ctrlsService;
+        var gridBodyCtrl = ctrlsService.getGridBodyCtrl();
         var gridBodyViewportEl = gridBodyCtrl.getBodyViewportElement();
-        if (this.eViewport.scrollTop != gridBodyViewportEl.scrollTop) {
-            this.eViewport.scrollTop = gridBodyViewportEl.scrollTop;
+        var eViewportScrollTop = this.getScrollPosition();
+        var gridBodyViewportScrollTop = gridBodyViewportEl.scrollTop;
+        if (eViewportScrollTop != gridBodyViewportScrollTop) {
+            this.setScrollPosition(gridBodyViewportScrollTop, true);
         }
     };
     FakeVScrollComp.prototype.getScrollPosition = function () {
         return this.getViewport().scrollTop;
     };
-    FakeVScrollComp.prototype.setScrollPosition = function (value) {
-        if (!isVisible(this.getViewport())) {
+    FakeVScrollComp.prototype.setScrollPosition = function (value, force) {
+        if (!force && !isVisible(this.getViewport())) {
             this.attemptSettingScrollPosition(value);
         }
         this.getViewport().scrollTop = value;

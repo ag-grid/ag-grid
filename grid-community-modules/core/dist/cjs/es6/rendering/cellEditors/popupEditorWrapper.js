@@ -23,7 +23,7 @@ class PopupEditorWrapper extends popupComponent_1.PopupComponent {
         const eGui = this.getGui();
         const params = this.params;
         const listener = (event) => {
-            if (!keyboard_1.isUserSuppressingKeyboardEvent(this.gridOptionsService, event, params.node, params.column, true)) {
+            if (!(0, keyboard_1.isUserSuppressingKeyboardEvent)(this.gridOptionsService, event, params.node, params.column, true)) {
                 params.onKeyDown(event);
             }
         };

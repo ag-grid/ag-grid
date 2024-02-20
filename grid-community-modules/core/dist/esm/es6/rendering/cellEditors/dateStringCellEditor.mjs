@@ -40,10 +40,10 @@ class DateStringCellEditorInput {
         return serialiseDate((_b = this.parseDate((_a = this.params.value) !== null && _a !== void 0 ? _a : undefined)) !== null && _b !== void 0 ? _b : null, false);
     }
     parseDate(value) {
-        return this.getDataTypeService().getDateParserFunction()(value);
+        return this.getDataTypeService().getDateParserFunction(this.params.column)(value);
     }
     formatDate(value) {
-        return this.getDataTypeService().getDateFormatterFunction()(value);
+        return this.getDataTypeService().getDateFormatterFunction(this.params.column)(value);
     }
 }
 export class DateStringCellEditor extends SimpleCellEditor {

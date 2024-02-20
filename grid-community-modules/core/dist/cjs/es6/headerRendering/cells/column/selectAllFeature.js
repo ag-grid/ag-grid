@@ -7,20 +7,17 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SelectAllFeature = void 0;
-const agCheckbox_1 = require("../../../widgets/agCheckbox");
 const beanStub_1 = require("../../../context/beanStub");
 const context_1 = require("../../../context/context");
 const events_1 = require("../../../events");
 const aria_1 = require("../../../utils/aria");
+const agCheckbox_1 = require("../../../widgets/agCheckbox");
 class SelectAllFeature extends beanStub_1.BeanStub {
     constructor(column) {
         super();
         this.cbSelectAllVisible = false;
         this.processingEventFromCheckbox = false;
         this.column = column;
-        const colDef = column.getColDef();
-        this.filteredOnly = !!(colDef === null || colDef === void 0 ? void 0 : colDef.headerCheckboxSelectionFilteredOnly);
-        this.currentPageOnly = !!(colDef === null || colDef === void 0 ? void 0 : colDef.headerCheckboxSelectionCurrentPageOnly);
     }
     onSpaceKeyDown(e) {
         const checkbox = this.cbSelectAll;
@@ -37,17 +34,26 @@ class SelectAllFeature extends beanStub_1.BeanStub {
         this.headerCellCtrl = ctrl;
         this.cbSelectAll = this.createManagedBean(new agCheckbox_1.AgCheckbox());
         this.cbSelectAll.addCssClass('ag-header-select-all');
-        aria_1.setAriaRole(this.cbSelectAll.getGui(), 'presentation');
+        (0, aria_1.setAriaRole)(this.cbSelectAll.getGui(), 'presentation');
         this.showOrHideSelectAll();
-        this.addManagedListener(this.eventService, events_1.Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideSelectAll.bind(this));
-        this.addManagedListener(this.eventService, events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.showOrHideSelectAll.bind(this));
+        this.addManagedListener(this.eventService, events_1.Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
+        this.addManagedListener(this.eventService, events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addManagedListener(this.eventService, events_1.Events.EVENT_SELECTION_CHANGED, this.onSelectionChanged.bind(this));
         this.addManagedListener(this.eventService, events_1.Events.EVENT_PAGINATION_CHANGED, this.onSelectionChanged.bind(this));
         this.addManagedListener(this.eventService, events_1.Events.EVENT_MODEL_UPDATED, this.onModelChanged.bind(this));
         this.addManagedListener(this.cbSelectAll, events_1.Events.EVENT_FIELD_VALUE_CHANGED, this.onCbSelectAll.bind(this));
-        aria_1.setAriaHidden(this.cbSelectAll.getGui(), true);
+        (0, aria_1.setAriaHidden)(this.cbSelectAll.getGui(), true);
         this.cbSelectAll.getInputElement().setAttribute('tabindex', '-1');
         this.refreshSelectAllLabel();
+    }
+    onNewColumnsLoaded() {
+        this.showOrHideSelectAll();
+    }
+    onDisplayedColumnsChanged() {
+        if (!this.isAlive()) {
+            return;
+        }
+        this.showOrHideSelectAll();
     }
     showOrHideSelectAll() {
         this.cbSelectAllVisible = this.isCheckboxSelection();
@@ -55,6 +61,8 @@ class SelectAllFeature extends beanStub_1.BeanStub {
         if (this.cbSelectAllVisible) {
             // in case user is trying this feature with the wrong model type
             this.checkRightRowModelType('selectAllCheckbox');
+            // in case user is trying this feature with the wrong model type
+            this.checkSelectionType('selectAllCheckbox');
             // make sure checkbox is showing the right state
             this.updateStateOfCheckbox();
         }
@@ -77,8 +85,10 @@ class SelectAllFeature extends beanStub_1.BeanStub {
             return;
         }
         this.processingEventFromCheckbox = true;
-        const allSelected = this.selectionService.getSelectAllState(this.filteredOnly, this.currentPageOnly);
+        const allSelected = this.selectionService.getSelectAllState(this.isFilteredOnly(), this.isCurrentPageOnly());
         this.cbSelectAll.setValue(allSelected);
+        const hasNodesToSelect = this.selectionService.hasNodesToSelect(this.isFilteredOnly(), this.isCurrentPageOnly());
+        this.cbSelectAll.setDisabled(!hasNodesToSelect);
         this.refreshSelectAllLabel();
         this.processingEventFromCheckbox = false;
     }
@@ -94,7 +104,15 @@ class SelectAllFeature extends beanStub_1.BeanStub {
             this.headerCellCtrl.setAriaDescriptionProperty('selectAll', `${ariaLabel} (${ariaStatus})`);
         }
         this.cbSelectAll.setInputAriaLabel(`${ariaLabel} (${ariaStatus})`);
-        this.headerCellCtrl.refreshAriaDescription();
+        this.headerCellCtrl.announceAriaDescription();
+    }
+    checkSelectionType(feature) {
+        const isMultiSelect = this.gridOptionsService.get('rowSelection') === 'multiple';
+        if (!isMultiSelect) {
+            console.warn(`AG Grid: ${feature} is only available if using 'multiple' rowSelection.`);
+            return false;
+        }
+        return true;
     }
     checkRightRowModelType(feature) {
         const rowModelType = this.rowModel.getType();
@@ -113,15 +131,19 @@ class SelectAllFeature extends beanStub_1.BeanStub {
             return;
         }
         const value = this.cbSelectAll.getValue();
+        const justFiltered = this.isFilteredOnly();
+        const justCurrentPage = this.isCurrentPageOnly();
         let source = 'uiSelectAll';
-        if (this.currentPageOnly)
+        if (justCurrentPage) {
             source = 'uiSelectAllCurrentPage';
-        else if (this.filteredOnly)
+        }
+        else if (justFiltered) {
             source = 'uiSelectAllFiltered';
+        }
         const params = {
             source,
-            justFiltered: this.filteredOnly,
-            justCurrentPage: this.currentPageOnly,
+            justFiltered,
+            justCurrentPage,
         };
         if (value) {
             this.selectionService.selectAllRowNodes(params);
@@ -134,31 +156,28 @@ class SelectAllFeature extends beanStub_1.BeanStub {
         let result = this.column.getColDef().headerCheckboxSelection;
         if (typeof result === 'function') {
             const func = result;
-            const params = {
+            const params = this.gridOptionsService.addGridCommonParams({
                 column: this.column,
-                colDef: this.column.getColDef(),
-                columnApi: this.columnApi,
-                api: this.gridApi,
-                context: this.gridOptionsService.context
-            };
+                colDef: this.column.getColDef()
+            });
             result = func(params);
         }
         if (result) {
-            return this.checkRightRowModelType('headerCheckboxSelection');
+            return this.checkRightRowModelType('headerCheckboxSelection') && this.checkSelectionType('headerCheckboxSelection');
         }
         return false;
     }
+    isFilteredOnly() {
+        return !!this.column.getColDef().headerCheckboxSelectionFilteredOnly;
+    }
+    isCurrentPageOnly() {
+        return !!this.column.getColDef().headerCheckboxSelectionCurrentPageOnly;
+    }
 }
 __decorate([
-    context_1.Autowired('gridApi')
-], SelectAllFeature.prototype, "gridApi", void 0);
-__decorate([
-    context_1.Autowired('columnApi')
-], SelectAllFeature.prototype, "columnApi", void 0);
-__decorate([
-    context_1.Autowired('rowModel')
+    (0, context_1.Autowired)('rowModel')
 ], SelectAllFeature.prototype, "rowModel", void 0);
 __decorate([
-    context_1.Autowired('selectionService')
+    (0, context_1.Autowired)('selectionService')
 ], SelectAllFeature.prototype, "selectionService", void 0);
 exports.SelectAllFeature = SelectAllFeature;

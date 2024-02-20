@@ -17,7 +17,7 @@ These variables use [Variable Cascading](/global-style-customisation-css/#variab
 ## Example
 
 ```css
-.ag-theme-alpine {
+.ag-theme-quartz {
     /* disable all borders */
     --ag-borders: none;
     /* then add back a border between rows */

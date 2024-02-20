@@ -7,11 +7,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { Autowired, Bean, PostConstruct } from '../context/context.mjs';
 import { BeanStub } from '../context/beanStub.mjs';
 import { Events } from '../eventKeys.mjs';
+import { convertSourceType } from './columnModel.mjs';
 import { getValueUsingField } from '../utils/object.mjs';
 import { ModuleRegistry } from '../modules/moduleRegistry.mjs';
 import { ModuleNames } from '../modules/moduleNames.mjs';
 import { Column } from '../entities/column.mjs';
-import { doOnce } from '../utils/function.mjs';
+import { warnOnce } from '../utils/function.mjs';
 import { KeyCode } from '../constants/keyCode.mjs';
 import { exists, toStringOrNull } from '../utils/generic.mjs';
 import { parseDateTimeFromString, serialiseDate } from '../utils/date.mjs';
@@ -41,14 +42,14 @@ let DataTypeService = class DataTypeService extends BeanStub {
         this.columnStateUpdateListenerDestroyFuncs = [];
     }
     init() {
-        this.groupHideOpenParents = this.gridOptionsService.is('groupHideOpenParents');
+        this.groupHideOpenParents = this.gridOptionsService.get('groupHideOpenParents');
         this.addManagedPropertyListener('groupHideOpenParents', () => {
-            this.groupHideOpenParents = this.gridOptionsService.is('groupHideOpenParents');
+            this.groupHideOpenParents = this.gridOptionsService.get('groupHideOpenParents');
         });
         this.processDataTypeDefinitions();
-        this.addManagedPropertyListener('dataTypeDefinitions', () => {
+        this.addManagedPropertyListener('dataTypeDefinitions', (event) => {
             this.processDataTypeDefinitions();
-            this.columnModel.recreateColumnDefs('gridOptionsChanged');
+            this.columnModel.recreateColumnDefs(convertSourceType(event.source));
         });
     }
     processDataTypeDefinitions() {
@@ -98,7 +99,12 @@ let DataTypeService = class DataTypeService extends BeanStub {
             this.isColumnTypeOverrideInDataTypeDefinitions = true;
         }
         if (dataTypeDefinition.extendsDataType === dataTypeDefinition.baseDataType) {
-            const baseDataTypeDefinition = defaultDataTypes[extendsCellDataType];
+            let baseDataTypeDefinition = defaultDataTypes[extendsCellDataType];
+            const overriddenBaseDataTypeDefinition = dataTypeDefinitions[extendsCellDataType];
+            if (baseDataTypeDefinition && overriddenBaseDataTypeDefinition) {
+                // only if it's valid do we override with a provided one
+                baseDataTypeDefinition = overriddenBaseDataTypeDefinition;
+            }
             if (!this.validateDataTypeDefinition(dataTypeDefinition, baseDataTypeDefinition, extendsCellDataType)) {
                 return undefined;
             }
@@ -106,7 +112,7 @@ let DataTypeService = class DataTypeService extends BeanStub {
         }
         else {
             if (alreadyProcessedDataTypes.includes(extendsCellDataType)) {
-                doOnce(() => console.warn('AG Grid: Data type definition hierarchies (via the "extendsDataType" property) cannot contain circular references.'), 'dataTypeExtendsCircularRef');
+                warnOnce('Data type definition hierarchies (via the "extendsDataType" property) cannot contain circular references.');
                 return undefined;
             }
             const extendedDataTypeDefinition = dataTypeDefinitions[extendsCellDataType];
@@ -123,11 +129,11 @@ let DataTypeService = class DataTypeService extends BeanStub {
     }
     validateDataTypeDefinition(dataTypeDefinition, parentDataTypeDefinition, parentCellDataType) {
         if (!parentDataTypeDefinition) {
-            doOnce(() => console.warn(`AG Grid: The data type definition ${parentCellDataType} does not exist.`), 'dataTypeDefMissing' + parentCellDataType);
+            warnOnce(`The data type definition ${parentCellDataType} does not exist.`);
             return false;
         }
         if (parentDataTypeDefinition.baseDataType !== dataTypeDefinition.baseDataType) {
-            doOnce(() => console.warn('AG Grid: The "baseDataType" property of a data type definition must match that of its parent.'), 'dataTypeBaseTypesMatch');
+            warnOnce('The "baseDataType" property of a data type definition must match that of its parent.');
             return false;
         }
         return true;
@@ -162,7 +168,11 @@ let DataTypeService = class DataTypeService extends BeanStub {
                         }
                     }
                 }
-                return undefined;
+                // we don't want to double format the value
+                // as this is already formatted by using the valueFormatter as the keyCreator
+                if (!this.gridOptionsService.get('suppressGroupMaintainValueType')) {
+                    return undefined;
+                }
             }
             else if (this.groupHideOpenParents && params.column.isRowGroupActive()) {
                 // `groupHideOpenParents` passes leaf values in the group column, so need to format still.
@@ -170,7 +180,11 @@ let DataTypeService = class DataTypeService extends BeanStub {
                 if (typeof params.value !== 'string' || ((_b = dataTypeDefinition.dataTypeMatcher) === null || _b === void 0 ? void 0 : _b.call(dataTypeDefinition, params.value))) {
                     return dataTypeDefinition.valueFormatter(params);
                 }
-                return undefined;
+                // we don't want to double format the value
+                // as this is already formatted by using the valueFormatter as the keyCreator
+                if (!this.gridOptionsService.get('suppressGroupMaintainValueType')) {
+                    return undefined;
+                }
             }
             return dataTypeDefinition.valueFormatter(params);
         };
@@ -190,7 +204,7 @@ let DataTypeService = class DataTypeService extends BeanStub {
         }
         const dataTypeDefinition = this.dataTypeDefinitions[cellDataType];
         if (!dataTypeDefinition) {
-            doOnce(() => console.warn(`AG Grid: Missing data type definition - "${cellDataType}"`), 'dataTypeMissing' + cellDataType);
+            warnOnce(`Missing data type definition - "${cellDataType}"`);
             return undefined;
         }
         colDef.cellDataType = cellDataType;
@@ -274,7 +288,7 @@ let DataTypeService = class DataTypeService extends BeanStub {
         let value;
         const initialData = this.getInitialData();
         if (initialData) {
-            const fieldContainsDots = field.indexOf('.') >= 0 && !this.gridOptionsService.is('suppressFieldDotNotation');
+            const fieldContainsDots = field.indexOf('.') >= 0 && !this.gridOptionsService.get('suppressFieldDotNotation');
             value = getValueUsingField(initialData, field, fieldContainsDots);
         }
         else {
@@ -348,7 +362,7 @@ let DataTypeService = class DataTypeService extends BeanStub {
                 return;
             }
             const oldColDef = column.getColDef();
-            if (!this.columnModel.resetColumnDefIntoColumn(column)) {
+            if (!this.columnModel.resetColumnDefIntoColumn(column, 'cellDataTypeInferred')) {
                 return;
             }
             const newColDef = column.getColDef();
@@ -396,7 +410,7 @@ let DataTypeService = class DataTypeService extends BeanStub {
         if (type instanceof Array) {
             const invalidArray = type.some((a) => typeof a !== 'string');
             if (invalidArray) {
-                console.warn("AG Grid: if colDef.type is supplied an array it should be of type 'string[]'");
+                console.warn("if colDef.type is supplied an array it should be of type 'string[]'");
             }
             else {
                 typeKeys = type;
@@ -406,18 +420,22 @@ let DataTypeService = class DataTypeService extends BeanStub {
             typeKeys = type.split(',');
         }
         else {
-            console.warn("AG Grid: colDef.type should be of type 'string' | 'string[]'");
+            console.warn("colDef.type should be of type 'string' | 'string[]'");
         }
         return typeKeys;
     }
-    getDateStringTypeDefinition() {
-        return this.dataTypeDefinitions.dateString;
+    getDateStringTypeDefinition(column) {
+        var _a;
+        if (!column) {
+            return this.dataTypeDefinitions.dateString;
+        }
+        return ((_a = this.getDataTypeDefinition(column)) !== null && _a !== void 0 ? _a : this.dataTypeDefinitions.dateString);
     }
-    getDateParserFunction() {
-        return this.getDateStringTypeDefinition().dateParser;
+    getDateParserFunction(column) {
+        return this.getDateStringTypeDefinition(column).dateParser;
     }
-    getDateFormatterFunction() {
-        return this.getDateStringTypeDefinition().dateFormatter;
+    getDateFormatterFunction(column) {
+        return this.getDateStringTypeDefinition(column).dateFormatter;
     }
     getDataTypeDefinition(column) {
         const colDef = column.getColDef();
@@ -444,10 +462,10 @@ let DataTypeService = class DataTypeService extends BeanStub {
     validateColDef(colDef) {
         if (colDef.cellDataType === 'object') {
             if (colDef.valueFormatter === this.dataTypeDefinitions.object.groupSafeValueFormatter && !this.hasObjectValueFormatter) {
-                doOnce(() => console.warn('AG Grid: Cell data type is "object" but no value formatter has been provided. Please either provide an object data type definition with a value formatter, or set "colDef.valueFormatter"'), 'dataTypeObjectValueFormatter');
+                warnOnce('Cell data type is "object" but no value formatter has been provided. Please either provide an object data type definition with a value formatter, or set "colDef.valueFormatter"');
             }
             if (colDef.editable && colDef.valueParser === this.dataTypeDefinitions.object.valueParser && !this.hasObjectValueParser) {
-                doOnce(() => console.warn('AG Grid: Cell data type is "object" but no value parser has been provided. Please either provide an object data type definition with a value parser, or set "colDef.valueParser"'), 'dataTypeObjectValueParser');
+                warnOnce('Cell data type is "object" but no value parser has been provided. Please either provide an object data type definition with a value parser, or set "colDef.valueParser"');
             }
         }
     }
@@ -465,8 +483,6 @@ let DataTypeService = class DataTypeService extends BeanStub {
             const { filterParams } = colDef;
             colDef.filterParams = typeof filterParams === 'object' ? Object.assign(Object.assign({}, filterParams), params) : params;
         };
-        colDef.useValueFormatterForExport = true;
-        colDef.useValueParserForImport = true;
         switch (dataTypeDefinition.baseDataType) {
             case 'number': {
                 colDef.cellEditor = 'agNumberCellEditor';
@@ -500,6 +516,7 @@ let DataTypeService = class DataTypeService extends BeanStub {
                 else {
                     mergeFilterParams({
                         maxNumConditions: 1,
+                        debounceMs: 0,
                         filterOptions: [
                             'empty',
                             {
@@ -543,7 +560,7 @@ let DataTypeService = class DataTypeService extends BeanStub {
             case 'dateString': {
                 colDef.cellEditor = 'agDateStringCellEditor';
                 colDef.keyCreator = (params) => formatValue(params.column, params.node, params.value);
-                const convertToDate = this.getDateParserFunction();
+                const convertToDate = dataTypeDefinition.dateParser;
                 if (usingSetFilter) {
                     mergeFilterParams({
                         valueFormatter: (params) => {
@@ -618,7 +635,13 @@ let DataTypeService = class DataTypeService extends BeanStub {
         return {
             number: {
                 baseDataType: 'number',
-                valueParser: (params) => params.newValue === '' ? null : Number(params.newValue),
+                // can be empty space with legacy copy
+                valueParser: (params) => {
+                    var _a, _b;
+                    return ((_b = (_a = params.newValue) === null || _a === void 0 ? void 0 : _a.trim) === null || _b === void 0 ? void 0 : _b.call(_a)) === ''
+                        ? null
+                        : Number(params.newValue);
+                },
                 valueFormatter: (params) => {
                     if (params.value == null) {
                         return '';
@@ -637,7 +660,16 @@ let DataTypeService = class DataTypeService extends BeanStub {
             },
             boolean: {
                 baseDataType: 'boolean',
-                valueParser: (params) => params.newValue === '' ? null : String(params.newValue).toLowerCase() === 'true',
+                valueParser: (params) => {
+                    var _a, _b;
+                    if (params.newValue == null) {
+                        return params.newValue;
+                    }
+                    // can be empty space with legacy copy
+                    return ((_b = (_a = params.newValue) === null || _a === void 0 ? void 0 : _a.trim) === null || _b === void 0 ? void 0 : _b.call(_a)) === ''
+                        ? null
+                        : String(params.newValue).toLowerCase() === 'true';
+                },
                 valueFormatter: (params) => params.value == null ? '' : String(params.value),
                 dataTypeMatcher: (value) => typeof value === 'boolean',
             },

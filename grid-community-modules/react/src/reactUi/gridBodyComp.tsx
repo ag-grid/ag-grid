@@ -37,7 +37,7 @@ const GridBodyComp = () => {
     const [layoutClass, setLayoutClass] = useState<string>('ag-layout-normal');
 
     let cssClassManager = useRef<CssClassManager>();
-    if(!cssClassManager.current){
+    if (!cssClassManager.current) {
         cssClassManager.current = new CssClassManager(() => eRoot.current);
     }
 
@@ -96,7 +96,7 @@ const GridBodyComp = () => {
         const compProxy: IGridBodyComp = {
             setRowAnimationCssOnBodyViewport: setRowAnimationClass,
             setColumnCount: count => {
-                if(eRoot.current){
+                if (eRoot.current) {
                     _.setAriaColCount(eRoot.current, count)
                 }
             } ,
@@ -123,7 +123,7 @@ const GridBodyComp = () => {
                 }
             },
             registerBodyViewportResizeListener: listener => {
-                if(eBodyViewport.current){
+                if (eBodyViewport.current) {
                     const unsubscribeFromResize = resizeObserverService.observeResize(eBodyViewport.current, listener);
                     destroyFuncs.current.push(() => unsubscribeFromResize());
                 }
@@ -153,10 +153,6 @@ const GridBodyComp = () => {
     );
     const bodyClasses = useMemo(() =>
         classesList('ag-body', layoutClass), 
-        [layoutClass]
-    );
-    const bodyClipperClasses = useMemo(() =>
-        classesList('ag-body-clipper', layoutClass), 
         [layoutClass]
     );
     const topClasses = useMemo(() =>
@@ -214,15 +210,13 @@ const GridBodyComp = () => {
                 RowContainerName.TOP_FULL_WIDTH,
             ]}) }
             <div className={bodyClasses} ref={eBody} role="presentation">
-                <div className={bodyClipperClasses} role="presentation">
-                    { createSection({ section: eBodyViewport, className: bodyViewportClasses, 
-                        children: [
-                        RowContainerName.LEFT,
-                        RowContainerName.CENTER,
-                        RowContainerName.RIGHT,
-                        RowContainerName.FULL_WIDTH,
-                    ]}) }
-                </div>
+                { createSection({ section: eBodyViewport, className: bodyViewportClasses, 
+                    children: [
+                    RowContainerName.LEFT,
+                    RowContainerName.CENTER,
+                    RowContainerName.RIGHT,
+                    RowContainerName.FULL_WIDTH,
+                ]}) }
             </div>
             { createSection({ section: eStickyTop, className: stickyTopClasses, style: stickyTopStyle, children: [
                 RowContainerName.STICKY_TOP_LEFT,

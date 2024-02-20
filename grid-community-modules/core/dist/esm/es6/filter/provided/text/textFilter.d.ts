@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { SimpleFilter, ISimpleFilterParams, ISimpleFilterModel, ISimpleFilterModelType, Tuple, SimpleFilterModelFormatter } from '../simpleFilter';
@@ -11,11 +11,11 @@ export interface TextFilterModel extends ISimpleFilterModel {
     /**
      * The text value associated with the filter.
      * It's optional as custom filters may not have a text value.
-     * */
+     */
     filter?: string | null;
     /**
      * The 2nd text value associated with the filter, if supported.
-     * */
+     */
     filterTo?: string | null;
 }
 export interface TextMatcherParams extends BaseColDefParams {
@@ -64,7 +64,7 @@ export interface ITextFilterParams extends ISimpleFilterParams {
     textMatcher?: TextMatcher;
     /**
      * By default, text filtering is case-insensitive. Set this to `true` to make text filtering case-sensitive.
-     * Default: `false`
+     * @default false
      */
     caseSensitive?: boolean;
     /**
@@ -76,7 +76,7 @@ export interface ITextFilterParams extends ISimpleFilterParams {
      * If `true`, the input that the user enters will be trimmed when the filter is applied, so any leading or trailing whitespace will be removed.
      * If only whitespace is entered, it will be left as-is.
      * If you enable `trimInput`, it is best to also increase the `debounceMs` to give users more time to enter text.
-     * Default: `false`
+     * @default false
      */
     trimInput?: boolean;
 }

@@ -75,8 +75,8 @@ class CellKeyboardListenerFeature extends beanStub_1.BeanStub {
             return;
         }
         eventService.dispatchEvent({ type: eventKeys_1.Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_START });
-        if (keyboard_1.isDeleteKey(key, gridOptionsService.is('enableCellEditingOnBackspace'))) {
-            if (rangeService && gridOptionsService.isEnableRangeSelection()) {
+        if ((0, keyboard_1.isDeleteKey)(key, gridOptionsService.get('enableCellEditingOnBackspace'))) {
+            if (rangeService && gridOptionsService.get('enableRangeSelection')) {
                 rangeService.clearCellRangeCellValues({ dispatchWrapperEvents: true, wrapperEventSource: 'deleteKey' });
             }
             else if (cellCtrl.isCellEditable()) {
@@ -93,7 +93,7 @@ class CellKeyboardListenerFeature extends beanStub_1.BeanStub {
             this.cellCtrl.stopEditingAndFocus(false, e.shiftKey);
         }
         else {
-            if (this.beans.gridOptionsService.is('enterNavigatesVertically')) {
+            if (this.beans.gridOptionsService.get('enterNavigatesVertically')) {
                 const key = e.shiftKey ? keyCode_1.KeyCode.UP : keyCode_1.KeyCode.DOWN;
                 this.beans.navigationService.navigateToNextCell(null, key, this.cellCtrl.getCellPosition(), false);
             }
@@ -147,8 +147,8 @@ class CellKeyboardListenerFeature extends beanStub_1.BeanStub {
         if (!this.cellCtrl.isEditing() && gridOptionsService.isRowSelection()) {
             const currentSelection = this.rowNode.isSelected();
             const newSelection = !currentSelection;
-            if (newSelection || !gridOptionsService.is('suppressRowDeselection')) {
-                const groupSelectsFiltered = this.beans.gridOptionsService.is('groupSelectsFiltered');
+            if (newSelection || !gridOptionsService.get('suppressRowDeselection')) {
+                const groupSelectsFiltered = this.beans.gridOptionsService.get('groupSelectsFiltered');
                 const updatedCount = this.rowNode.setSelectedParams({
                     newValue: newSelection,
                     rangeSelect: event.shiftKey,

@@ -1,23 +1,12 @@
-.cell-green {
-    background-color: lightgreen;
-}
-
-.cell-blue {
-    background-color: lightblue;
-}
-
 .cell-red {
-    background-color: lightpink;
+    background-color: #CC222244;
 }
-
+.cell-green {
+    background-color: #33CC3344;
+}
+.cell-blue {
+    background-color: #2244CC44;
+}
 .cell-yellow {
-    background-color: lightyellow;
-}
-
-.cell-orange {
-    background-color: lightsalmon;
-}
-
-.cell-grey {
-    background-color: lightgrey;
+    background-color: #ccaa22a9;
 }

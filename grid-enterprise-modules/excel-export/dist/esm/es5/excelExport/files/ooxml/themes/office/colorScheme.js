@@ -17,9 +17,9 @@ var __read = (this && this.__read) || function (o, n) {
 var getColorChildren = function (props) {
     var _a = __read(props, 4), type = _a[0], innerType = _a[1], val = _a[2], lastClr = _a[3];
     return {
-        name: "a:" + type,
+        name: "a:".concat(type),
         children: [{
-                name: "a:" + innerType,
+                name: "a:".concat(innerType),
                 properties: {
                     rawMap: {
                         val: val,

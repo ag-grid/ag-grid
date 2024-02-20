@@ -1,6 +1,7 @@
-import { FirstDataRenderedEvent, Grid, GridApi, GridOptions } from '@ag-grid-community/core';
-import { getData } from "./data";
+import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent} from '@ag-grid-community/core';
+import {getData} from "./data";
 
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -13,24 +14,24 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     editable: true,
-    sortable: true,
     filter: 'agMultiColumnFilter',
     floatingFilter: true,
-    resizable: true,
   },
-  rowData: getData(),
   enableCharts: true,
-  chartThemes: ['ag-default-dark'],
-  onFirstDataRendered: onFirstDataRendered,
+  onGridReady : (params: GridReadyEvent) => {
+    getData().then(rowData => params.api.setGridOption('rowData', rowData));
+  },
+  onFirstDataRendered,
 }
+
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  createColumnChart(params.api)
-  createBubbleChart(params.api)
+  createColumnChart(params.api);
+  createBubbleChart(params.api);
 }
 
-function createColumnChart(gridApi: GridApi) {
-  gridApi.createCrossFilterChart({
+function createColumnChart(api: GridApi) {
+  api.createCrossFilterChart({
     chartType: 'column',
     cellRange: {
       columns: ['country', 'population'],
@@ -46,7 +47,7 @@ function createColumnChart(gridApi: GridApi) {
           enabled: false,
         },
       },
-      cartesian: {
+      bar: {
         axes: {
           category: {
             label: {
@@ -57,11 +58,11 @@ function createColumnChart(gridApi: GridApi) {
       },
     },
     chartContainer: document.querySelector('#barChart') as any,
-  })
+  });
 }
 
-function createBubbleChart(gridApi: GridApi) {
-  gridApi.createCrossFilterChart({
+function createBubbleChart(api: GridApi) {
+  api.createCrossFilterChart({
     chartType: 'bubble',
     cellRange: {
       columns: ['longitude', 'latitude', 'population'],
@@ -78,11 +79,10 @@ function createBubbleChart(gridApi: GridApi) {
       },
     },
     chartContainer: document.querySelector('#bubbleChart') as any,
-  })
+  });
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
 })

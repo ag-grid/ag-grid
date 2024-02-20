@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/status-bar - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.1.0
+          * @ag-grid-enterprise/status-bar - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.1.0
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -36,14 +36,24 @@ var StatusBarService = /** @class */ (function (_super) {
     // tslint:disable-next-line
     function StatusBarService() {
         var _this = _super.call(this) || this;
-        _this.allComponents = {};
+        _this.allComponents = new Map();
         return _this;
     }
     StatusBarService.prototype.registerStatusPanel = function (key, component) {
-        this.allComponents[key] = component;
+        this.allComponents.set(key, component);
+    };
+    StatusBarService.prototype.unregisterStatusPanel = function (key) {
+        this.allComponents.delete(key);
+    };
+    StatusBarService.prototype.unregisterAllComponents = function () {
+        this.allComponents.clear();
     };
     StatusBarService.prototype.getStatusPanel = function (key) {
-        return this.allComponents[key];
+        return this.allComponents.get(key);
+    };
+    StatusBarService.prototype.destroy = function () {
+        this.unregisterAllComponents();
+        _super.prototype.destroy.call(this);
     };
     StatusBarService = __decorate$7([
         core.Bean('statusBarService')
@@ -75,39 +85,92 @@ var __decorate$6 = (undefined && undefined.__decorate) || function (decorators, 
 var StatusBar = /** @class */ (function (_super) {
     __extends$6(StatusBar, _super);
     function StatusBar() {
-        return _super.call(this, StatusBar.TEMPLATE) || this;
+        var _this = _super.call(this, StatusBar.TEMPLATE) || this;
+        _this.compDestroyFunctions = {};
+        return _this;
     }
     StatusBar.prototype.postConstruct = function () {
+        this.processStatusPanels(new Map());
+        this.addManagedPropertyListeners(['statusBar'], this.handleStatusBarChanged.bind(this));
+    };
+    StatusBar.prototype.processStatusPanels = function (existingStatusPanelsToReuse) {
         var _a;
         var statusPanels = (_a = this.gridOptionsService.get('statusBar')) === null || _a === void 0 ? void 0 : _a.statusPanels;
         if (statusPanels) {
             var leftStatusPanelComponents = statusPanels
                 .filter(function (componentConfig) { return componentConfig.align === 'left'; });
-            this.createAndRenderComponents(leftStatusPanelComponents, this.eStatusBarLeft);
+            this.createAndRenderComponents(leftStatusPanelComponents, this.eStatusBarLeft, existingStatusPanelsToReuse);
             var centerStatusPanelComponents = statusPanels
                 .filter(function (componentConfig) { return componentConfig.align === 'center'; });
-            this.createAndRenderComponents(centerStatusPanelComponents, this.eStatusBarCenter);
+            this.createAndRenderComponents(centerStatusPanelComponents, this.eStatusBarCenter, existingStatusPanelsToReuse);
             var rightStatusPanelComponents = statusPanels
                 .filter(function (componentConfig) { return (!componentConfig.align || componentConfig.align === 'right'); });
-            this.createAndRenderComponents(rightStatusPanelComponents, this.eStatusBarRight);
+            this.createAndRenderComponents(rightStatusPanelComponents, this.eStatusBarRight, existingStatusPanelsToReuse);
         }
         else {
             this.setDisplayed(false);
         }
     };
-    StatusBar.prototype.createAndRenderComponents = function (statusBarComponents, ePanelComponent) {
+    StatusBar.prototype.handleStatusBarChanged = function () {
+        var _this = this;
+        var _a;
+        var statusPanels = (_a = this.gridOptionsService.get('statusBar')) === null || _a === void 0 ? void 0 : _a.statusPanels;
+        var validStatusBarPanelsProvided = Array.isArray(statusPanels) && statusPanels.length > 0;
+        this.setDisplayed(validStatusBarPanelsProvided);
+        var existingStatusPanelsToReuse = new Map();
+        if (validStatusBarPanelsProvided) {
+            statusPanels.forEach(function (statusPanelConfig) {
+                var _a, _b;
+                var key = (_a = statusPanelConfig.key) !== null && _a !== void 0 ? _a : statusPanelConfig.statusPanel;
+                var existingStatusPanel = _this.statusBarService.getStatusPanel(key);
+                if (existingStatusPanel === null || existingStatusPanel === void 0 ? void 0 : existingStatusPanel.refresh) {
+                    var newParams = _this.gridOptionsService.addGridCommonParams((_b = statusPanelConfig.statusPanelParams) !== null && _b !== void 0 ? _b : {});
+                    var hasRefreshed = existingStatusPanel.refresh(newParams);
+                    if (hasRefreshed) {
+                        existingStatusPanelsToReuse.set(key, existingStatusPanel);
+                        delete _this.compDestroyFunctions[key];
+                        core._.removeFromParent(existingStatusPanel.getGui());
+                    }
+                }
+            });
+        }
+        this.resetStatusBar();
+        if (validStatusBarPanelsProvided) {
+            this.processStatusPanels(existingStatusPanelsToReuse);
+        }
+    };
+    StatusBar.prototype.resetStatusBar = function () {
+        this.eStatusBarLeft.innerHTML = '';
+        this.eStatusBarCenter.innerHTML = '';
+        this.eStatusBarRight.innerHTML = '';
+        this.destroyComponents();
+        this.statusBarService.unregisterAllComponents();
+    };
+    StatusBar.prototype.destroyComponents = function () {
+        Object.values(this.compDestroyFunctions).forEach(function (func) { return func(); });
+        this.compDestroyFunctions = {};
+    };
+    StatusBar.prototype.createAndRenderComponents = function (statusBarComponents, ePanelComponent, existingStatusPanelsToReuse) {
         var _this = this;
         var componentDetails = [];
         statusBarComponents.forEach(function (componentConfig) {
-            var params = {};
-            var compDetails = _this.userComponentFactory.getStatusPanelCompDetails(componentConfig, params);
-            var promise = compDetails.newAgStackInstance();
-            if (!promise) {
-                return;
+            // default to the component name if no key supplied
+            var key = componentConfig.key || componentConfig.statusPanel;
+            var existingStatusPanel = existingStatusPanelsToReuse.get(key);
+            var promise;
+            if (existingStatusPanel) {
+                promise = core.AgPromise.resolve(existingStatusPanel);
+            }
+            else {
+                var params = {};
+                var compDetails = _this.userComponentFactory.getStatusPanelCompDetails(componentConfig, params);
+                promise = compDetails.newAgStackInstance();
+                if (!promise) {
+                    return;
+                }
             }
             componentDetails.push({
-                // default to the component name if no key supplied
-                key: componentConfig.key || componentConfig.statusPanel,
+                key: key,
                 promise: promise
             });
         });
@@ -121,7 +184,7 @@ var StatusBar = /** @class */ (function (_super) {
                     if (_this.isAlive()) {
                         _this.statusBarService.registerStatusPanel(componentDetail.key, component);
                         ePanelComponent.appendChild(component.getGui());
-                        _this.addDestroyFunc(destroyFunc);
+                        _this.compDestroyFunctions[componentDetail.key] = destroyFunc;
                     }
                     else {
                         destroyFunc();
@@ -149,6 +212,9 @@ var StatusBar = /** @class */ (function (_super) {
     __decorate$6([
         core.PostConstruct
     ], StatusBar.prototype, "postConstruct", null);
+    __decorate$6([
+        core.PreDestroy
+    ], StatusBar.prototype, "destroyComponents", null);
     return StatusBar;
 }(core.Component));
 
@@ -225,7 +291,7 @@ var TotalAndFilteredRowsComp = /** @class */ (function (_super) {
     }
     TotalAndFilteredRowsComp.prototype.postConstruct = function () {
         // this component is only really useful with client side row model
-        if (this.gridApi.getModel().getType() !== 'clientSide') {
+        if (this.gridApi.__getModel().getType() !== 'clientSide') {
             console.warn("AG Grid: agTotalAndFilteredRowCountComponent should only be used with the client side row model.");
             return;
         }
@@ -247,7 +313,7 @@ var TotalAndFilteredRowsComp = /** @class */ (function (_super) {
         }
         else {
             var localeTextFunc_1 = this.localeService.getLocaleTextFunc();
-            this.setValue(rowCount + " " + localeTextFunc_1('of', 'of') + " " + totalRowCount);
+            this.setValue("".concat(rowCount, " ").concat(localeTextFunc_1('of', 'of'), " ").concat(totalRowCount));
         }
     };
     TotalAndFilteredRowsComp.prototype.getFilteredRowCountValue = function () {
@@ -269,6 +335,9 @@ var TotalAndFilteredRowsComp = /** @class */ (function (_super) {
         return totalRowCount;
     };
     TotalAndFilteredRowsComp.prototype.init = function () { };
+    TotalAndFilteredRowsComp.prototype.refresh = function () {
+        return true;
+    };
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
     TotalAndFilteredRowsComp.prototype.destroy = function () {
@@ -312,7 +381,7 @@ var FilteredRowsComp = /** @class */ (function (_super) {
     FilteredRowsComp.prototype.postConstruct = function () {
         this.setLabel('filteredRows', 'Filtered');
         // this component is only really useful with client side row model
-        if (this.gridApi.getModel().getType() !== 'clientSide') {
+        if (this.gridApi.__getModel().getType() !== 'clientSide') {
             console.warn("AG Grid: agFilteredRowCountComponent should only be used with the client side row model.");
             return;
         }
@@ -347,6 +416,9 @@ var FilteredRowsComp = /** @class */ (function (_super) {
         return filteredRowCount;
     };
     FilteredRowsComp.prototype.init = function () { };
+    FilteredRowsComp.prototype.refresh = function () {
+        return true;
+    };
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
     FilteredRowsComp.prototype.destroy = function () {
@@ -390,7 +462,7 @@ var TotalRowsComp = /** @class */ (function (_super) {
     TotalRowsComp.prototype.postConstruct = function () {
         this.setLabel('totalRows', 'Total Rows');
         // this component is only really useful with client side row model
-        if (this.gridApi.getModel().getType() !== 'clientSide') {
+        if (this.gridApi.__getModel().getType() !== 'clientSide') {
             console.warn("AG Grid: agTotalRowCountComponent should only be used with the client side row model.");
             return;
         }
@@ -412,6 +484,9 @@ var TotalRowsComp = /** @class */ (function (_super) {
         return totalRowCount;
     };
     TotalRowsComp.prototype.init = function () {
+    };
+    TotalRowsComp.prototype.refresh = function () {
+        return true;
     };
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
@@ -468,7 +543,7 @@ var SelectedRowsComp = /** @class */ (function (_super) {
     };
     SelectedRowsComp.prototype.isValidRowModel = function () {
         // this component is only really useful with client or server side rowmodels
-        var rowModelType = this.gridApi.getModel().getType();
+        var rowModelType = this.gridApi.__getModel().getType();
         return rowModelType === 'clientSide' || rowModelType === 'serverSide';
     };
     SelectedRowsComp.prototype.onRowSelectionChanged = function () {
@@ -485,6 +560,9 @@ var SelectedRowsComp = /** @class */ (function (_super) {
         this.setDisplayed(selectedRowCount > 0);
     };
     SelectedRowsComp.prototype.init = function () {
+    };
+    SelectedRowsComp.prototype.refresh = function () {
+        return true;
     };
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
@@ -549,13 +627,20 @@ var AggregationComp = /** @class */ (function (_super) {
     };
     AggregationComp.prototype.isValidRowModel = function () {
         // this component is only really useful with client or server side rowmodels
-        var rowModelType = this.gridApi.getModel().getType();
+        var rowModelType = this.gridApi.__getModel().getType();
         return rowModelType === 'clientSide' || rowModelType === 'serverSide';
     };
-    AggregationComp.prototype.init = function () {
+    AggregationComp.prototype.init = function (params) {
+        this.params = params;
+    };
+    AggregationComp.prototype.refresh = function (params) {
+        this.params = params;
+        this.onRangeSelectionChanged();
+        return true;
     };
     AggregationComp.prototype.setAggregationComponentValue = function (aggFuncName, value, visible) {
-        var statusBarValueComponent = this.getAggregationValueComponent(aggFuncName);
+        var _a;
+        var statusBarValueComponent = this.getAllowedAggregationValueComponent(aggFuncName);
         if (core._.exists(statusBarValueComponent) && statusBarValueComponent) {
             var localeTextFunc = this.localeService.getLocaleTextFunc();
             var thousandSeparator = localeTextFunc('thousandSeparator', ',');
@@ -563,31 +648,26 @@ var AggregationComp = /** @class */ (function (_super) {
             statusBarValueComponent.setValue(core._.formatNumberTwoDecimalPlacesAndCommas(value, thousandSeparator, decimalSeparator));
             statusBarValueComponent.setDisplayed(visible);
         }
+        else {
+            // might have previously been visible, so hide now
+            (_a = this.getAggregationValueComponent(aggFuncName)) === null || _a === void 0 ? void 0 : _a.setDisplayed(false);
+        }
     };
-    AggregationComp.prototype.getAggregationValueComponent = function (aggFuncName) {
-        // converts user supplied agg name to our reference - eg: sum => sumAggregationComp
-        var refComponentName = aggFuncName + "AggregationComp";
+    AggregationComp.prototype.getAllowedAggregationValueComponent = function (aggFuncName) {
         // if the user has specified the agAggregationPanelComp but no aggFuncs we show the all
         // if the user has specified the agAggregationPanelComp and aggFuncs, then we only show the aggFuncs listed
-        var statusBarValueComponent = null;
-        var statusBar = this.gridOptionsService.get('statusBar');
-        var aggregationPanelConfig = core._.exists(statusBar) && statusBar ? statusBar.statusPanels.find(function (panel) { return panel.statusPanel === 'agAggregationComponent'; }) : null;
-        if (core._.exists(aggregationPanelConfig) && aggregationPanelConfig) {
-            // a little defensive here - if no statusPanelParams show it, if componentParams we also expect aggFuncs
-            if (!core._.exists(aggregationPanelConfig.statusPanelParams) ||
-                (core._.exists(aggregationPanelConfig.statusPanelParams) &&
-                    core._.exists(aggregationPanelConfig.statusPanelParams.aggFuncs) &&
-                    core._.exists(aggregationPanelConfig.statusPanelParams.aggFuncs.find(function (func) { return func === aggFuncName; })))) {
-                statusBarValueComponent = this[refComponentName];
-            }
-        }
-        else {
-            // components not specified - assume we can show this component
-            statusBarValueComponent = this[refComponentName];
+        var aggFuncs = this.params.aggFuncs;
+        if (!aggFuncs || aggFuncs.includes(aggFuncName)) {
+            return this.getAggregationValueComponent(aggFuncName);
         }
         // either we can't find it (which would indicate a typo or similar user side), or the user has deliberately
         // not listed the component in aggFuncs
-        return statusBarValueComponent;
+        return null;
+    };
+    AggregationComp.prototype.getAggregationValueComponent = function (aggFuncName) {
+        // converts user supplied agg name to our reference - eg: sum => sumAggregationComp
+        var refComponentName = "".concat(aggFuncName, "AggregationComp");
+        return this[refComponentName];
     };
     AggregationComp.prototype.onRangeSelectionChanged = function () {
         var _this = this;
@@ -711,7 +791,7 @@ var AggregationComp = /** @class */ (function (_super) {
 }(core.Component));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '30.1.0';
+var VERSION = '31.1.0';
 
 var StatusBarModule = {
     version: VERSION,

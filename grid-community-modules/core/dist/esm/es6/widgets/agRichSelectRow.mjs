@@ -10,7 +10,7 @@ import { bindCellRendererToHtmlElement } from "../utils/dom.mjs";
 import { Component } from "./component.mjs";
 import { escapeString } from "../utils/string.mjs";
 import { exists } from "../utils/generic.mjs";
-import { setAriaSelected } from "../utils/aria.mjs";
+import { setAriaActiveDescendant, setAriaSelected } from "../utils/aria.mjs";
 export class RichSelectRow extends Component {
     constructor(params, wrapperEl) {
         super(/* html */ `<div class="ag-rich-select-row" role="presentation"></div>`);
@@ -18,9 +18,9 @@ export class RichSelectRow extends Component {
         this.wrapperEl = wrapperEl;
     }
     postConstruct() {
-        this.addManagedListener(this.getGui(), 'mouseup', this.onMouseUp.bind(this));
+        this.addManagedListener(this.getGui(), 'click', this.onClick.bind(this));
     }
-    setState(value, selected) {
+    setState(value) {
         let formattedValue = '';
         if (this.params.valueFormatter) {
             formattedValue = this.params.valueFormatter(value);
@@ -31,6 +31,29 @@ export class RichSelectRow extends Component {
         }
         this.value = value;
     }
+    highlightString(matchString) {
+        const { parsedValue } = this;
+        if (this.params.cellRenderer || !exists(parsedValue)) {
+            return;
+        }
+        let hasMatch = exists(matchString);
+        if (hasMatch) {
+            const index = parsedValue === null || parsedValue === void 0 ? void 0 : parsedValue.toLocaleLowerCase().indexOf(matchString.toLocaleLowerCase());
+            if (index >= 0) {
+                const highlightEndIndex = index + matchString.length;
+                const startPart = escapeString(parsedValue.slice(0, index), true);
+                const highlightedPart = escapeString(parsedValue.slice(index, highlightEndIndex), true);
+                const endPart = escapeString(parsedValue.slice(highlightEndIndex));
+                this.renderValueWithoutRenderer(`${startPart}<span class="ag-rich-select-row-text-highlight">${highlightedPart}</span>${endPart}`);
+            }
+            else {
+                hasMatch = false;
+            }
+        }
+        if (!hasMatch) {
+            this.renderValueWithoutRenderer(parsedValue);
+        }
+    }
     updateHighlighted(highlighted) {
         var _a;
         const eGui = this.getGui();
@@ -38,7 +61,7 @@ export class RichSelectRow extends Component {
         (_a = eGui.parentElement) === null || _a === void 0 ? void 0 : _a.setAttribute('id', parentId);
         if (highlighted) {
             const parentAriaEl = this.getParentComponent().getAriaElement();
-            parentAriaEl.setAttribute('aria-activedescendant', parentId);
+            setAriaActiveDescendant(parentAriaEl, parentId);
             this.wrapperEl.setAttribute('data-active-option', parentId);
         }
         setAriaSelected(eGui.parentElement, highlighted);
@@ -50,9 +73,17 @@ export class RichSelectRow extends Component {
         const span = eDocument.createElement('span');
         span.style.overflow = 'hidden';
         span.style.textOverflow = 'ellipsis';
-        const parsedValue = escapeString(exists(valueFormatted) ? valueFormatted : value);
-        span.textContent = exists(parsedValue) ? parsedValue : '&nbsp;';
+        const parsedValue = escapeString(exists(valueFormatted) ? valueFormatted : value, true);
+        this.parsedValue = exists(parsedValue) ? parsedValue : null;
         eGui.appendChild(span);
+        this.renderValueWithoutRenderer(parsedValue);
+    }
+    renderValueWithoutRenderer(value) {
+        const span = this.getGui().querySelector('span');
+        if (!span) {
+            return;
+        }
+        span.innerHTML = exists(value) ? value : '&nbsp;';
     }
     populateWithRenderer(value, valueFormatted) {
         // bad coder here - we are not populating all values of the cellRendererParams
@@ -61,8 +92,7 @@ export class RichSelectRow extends Component {
         if (this.params.cellRenderer) {
             userCompDetails = this.userComponentFactory.getCellRendererDetails(this.params, {
                 value,
-                valueFormatted,
-                api: this.gridOptionsService.api
+                valueFormatted
             });
         }
         if (userCompDetails) {
@@ -81,7 +111,7 @@ export class RichSelectRow extends Component {
         }
         return false;
     }
-    onMouseUp() {
+    onClick() {
         const parent = this.getParentComponent();
         const event = {
             type: Events.EVENT_FIELD_PICKER_VALUE_SELECTED,

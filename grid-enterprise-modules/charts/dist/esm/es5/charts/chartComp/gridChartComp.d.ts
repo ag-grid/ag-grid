@@ -37,11 +37,10 @@ export declare class GridChartComp extends Component {
     private chartOptionsService;
     private chartProxy;
     private chartType;
-    private chartThemeName?;
     private readonly params;
+    private onDestroyColorSchemeChangeListener;
     constructor(params: GridChartParams);
     init(): void;
-    private validateCustomThemes;
     private createChart;
     private getChartThemeName;
     private getChartThemes;
@@ -67,6 +66,10 @@ export declare class GridChartComp extends Component {
     getUnderlyingChart(): AgChartInstance;
     crossFilteringReset(): void;
     private setActiveChartCellRange;
+    private getThemeName;
+    private getAllKeysInObjects;
+    private validateCustomThemes;
+    private reactivePropertyUpdate;
     private raiseChartCreatedEvent;
     private raiseChartDestroyedEvent;
     protected destroy(): void;

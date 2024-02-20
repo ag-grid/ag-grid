@@ -109,8 +109,8 @@ const gridOptions = {
             cellClassRules: {
                 // apply green to 2008
                 'rag-green-outer': params => params.value === 2008,
-                // apply amber 2004
-                'rag-amber-outer': params => params.value === 2004,
+                // apply blue to 2004
+                'rag-blue-outer': params => params.value === 2004,
                 // apply red to 2000
                 'rag-red-outer': params => params.value === 2000,
             }
@@ -151,7 +151,7 @@ const gridOptions = {
             field: 'age',
             cellClassRules: {
                 'rag-green': 'x < 20',
-                'rag-amber': 'x >= 20 && x < 25',
+                'rag-blue': 'x >= 20 && x < 25',
                 'rag-red': 'x >= 25',
             }
         }
@@ -193,3 +193,19 @@ Below shows both cssClassRules snippets above in a full working example. The exa
 - Silver and Bronze set `cellStyle` using a function and depends on the value. Editing will update the cellStyle.
 
 <grid-example title='Cell Styling' name='cell-styling' type='mixed'></grid-example>
+
+## Styling Cells in the First and Last Columns
+
+It's possible to style the cells in the first and last columns using CSS by targeting the `.ag-column-first` and `.ag-column-last` selectors as follows:
+
+```css
+.ag-cell.ag-column-first {
+    background-color: #2244CC44;
+}
+
+.ag-cell.ag-column-last {
+    background-color: #CC333344;
+}
+```
+
+<grid-example title='Cell Styling' name='cell-styling-first-last' type='generated'></grid-example>

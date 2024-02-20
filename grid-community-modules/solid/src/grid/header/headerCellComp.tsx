@@ -9,7 +9,6 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl})=> {
     const [getWidth, setWidth] = createSignal<string>();
     const [getColId, setColId] = createSignal<string>(ctrl.getColId());
     const [getAriaSort, setAriaSort] = createSignal<ColumnSortState>();
-    const [getAriaDescription, setAriaDescription] = createSignal<string>();
     const [getUserCompDetails, setUserCompDetails] = createSignal<UserCompDetails>();
 
     let eGui: HTMLDivElement;
@@ -22,20 +21,12 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl})=> {
         userComp = ref;
     }
 
-    const clearRef = (ref: any) => {
-        if (userComp===ref) {
-            userComp = undefined;
-        }
-    }
-
     const cssClassManager = new CssClassManager(() => eGui);
 
     onMount(() => {
         const compProxy: IHeaderCellComp = {
             setWidth: width => setWidth(width),
             addOrRemoveCssClass: (name, on) => cssClassManager.addOrRemoveCssClass(name, on),
-
-            setAriaDescription: description => setAriaDescription(description),
             setAriaSort: sort => setAriaSort(sort),
             setUserCompDetails: compDetails => setUserCompDetails(compDetails),
             getUserCompInstance: () => userComp
@@ -50,18 +41,6 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl})=> {
 
     const style = createMemo(() => ({ width: getWidth() }));
 
-    const showSolidComp = createMemo( ()=> {
-        const details = getUserCompDetails();
-        if (!details) { return false; }
-        return details.componentFromFramework;
-    });
-
-    const showJsComp = createMemo( ()=> {
-        const details = getUserCompDetails();
-        if (!details) { return false; }
-        return !details.componentFromFramework;
-    });
-
     return (
         <div
             ref={eGui!}
@@ -70,8 +49,6 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl})=> {
             col-id={ getColId() }
             aria-sort={ getAriaSort() }
             role="columnheader"
-            tabIndex={-1}
-            aria-description={ getAriaDescription() }
         >
             <div ref={eResize!} class="ag-header-cell-resize" role="presentation"></div>
             <div ref={eHeaderCompWrapper!} class="ag-header-cell-comp-wrapper" role="presentation">

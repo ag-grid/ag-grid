@@ -25,7 +25,10 @@ var RowComp = /** @class */ (function (_super) {
         _this.cellComps = {};
         _this.beans = beans;
         _this.rowCtrl = ctrl;
-        _this.setTemplate(/* html */ "<div comp-id=\"" + _this.getCompId() + "\" style=\"" + _this.getInitialStyle(containerType) + "\"/>");
+        var rowDiv = document.createElement('div');
+        rowDiv.setAttribute('comp-id', "".concat(_this.getCompId()));
+        rowDiv.setAttribute('style', _this.getInitialStyle(containerType));
+        _this.setTemplateFromElement(rowDiv);
         var eGui = _this.getGui();
         var style = eGui.style;
         _this.domOrder = _this.rowCtrl.getDomOrder();
@@ -46,6 +49,7 @@ var RowComp = /** @class */ (function (_super) {
             setRowIndex: function (rowIndex) { return eGui.setAttribute('row-index', rowIndex); },
             setRowId: function (rowId) { return eGui.setAttribute('row-id', rowId); },
             setRowBusinessKey: function (businessKey) { return eGui.setAttribute('row-business-key', businessKey); },
+            refreshFullWidth: function (getUpdatedParams) { return _this.refreshFullWidth(getUpdatedParams); }
         };
         ctrl.setComp(compProxy, _this.getGui(), containerType);
         _this.addDestroyFunc(function () {
@@ -55,8 +59,7 @@ var RowComp = /** @class */ (function (_super) {
     }
     RowComp.prototype.getInitialStyle = function (containerType) {
         var transform = this.rowCtrl.getInitialTransform(containerType);
-        var top = this.rowCtrl.getInitialRowTop(containerType);
-        return transform ? "transform: " + transform : "top: " + top;
+        return transform ? "transform: ".concat(transform) : "top: ".concat(this.rowCtrl.getInitialRowTop(containerType));
     };
     RowComp.prototype.showFullWidth = function (compDetails) {
         var _this = this;
@@ -152,6 +155,14 @@ var RowComp = /** @class */ (function (_super) {
             cellComp.destroy();
             _this.cellComps[instanceId] = null;
         });
+    };
+    RowComp.prototype.refreshFullWidth = function (getUpdatedParams) {
+        var fullWidthCellRenderer = this.fullWidthCellRenderer;
+        if (!fullWidthCellRenderer || !fullWidthCellRenderer.refresh) {
+            return false;
+        }
+        var params = getUpdatedParams();
+        return fullWidthCellRenderer.refresh(params);
     };
     return RowComp;
 }(Component));

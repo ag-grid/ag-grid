@@ -2,10 +2,10 @@
 
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AgGridReact } from '@ag-grid-community/react';
+import { AgGridReact, getInstance } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
-import { ColDef, ColGroupDef, GridReadyEvent } from '@ag-grid-community/core';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { ColDef, ColGroupDef, IFilter } from '@ag-grid-community/core';
 import PartialMatchFilter from './partialMatchFilter';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
@@ -29,24 +29,21 @@ const GridExample = () => {
     const defaultColDef = useMemo<ColDef>(() => {
         return {
             editable: true,
-            sortable: true,
             flex: 1,
             minWidth: 100,
             filter: true,
-            resizable: true,
         }
     }, []);
 
-
-    const onGridReady = useCallback((params: GridReadyEvent) => {
-        gridRef.current!.api.sizeColumnsToFit();
-    }, []);
-
     const onClicked = useCallback(() => {
-        gridRef.current!.api.getFilterInstance('name', function (instance: any) {
-            instance?.componentMethod('Hello World!');
+        gridRef.current!.api.getColumnFilterInstance('name').then((instance) => {
+            getInstance<IFilter, IFilter & { componentMethod(message: string): void }>(instance!, component => {
+                if (component) {
+                    component.componentMethod('Hello World!');
+                }
+            });
         });
-    }, [])
+    }, []);
 
 
     return (
@@ -54,13 +51,13 @@ const GridExample = () => {
             <div className="example-wrapper">
                 <button style={{ "marginBottom": "5px" }} onClick={onClicked} className="btn btn-primary">Invoke Filter Instance Method</button>
 
-                <div style={gridStyle} className="ag-theme-alpine">
+                <div style={gridStyle} className={/** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
                     <AgGridReact
                         ref={gridRef}
                         rowData={rowData}
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
-                        onGridReady={onGridReady}
+                        reactiveCustomComponents
                     />
                 </div>
             </div>

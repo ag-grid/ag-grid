@@ -83,15 +83,15 @@ The following example demonstrates these rules. Try the following:
 
 ## Setting New Data
 
-When `api.setRowData(data)` is called existing filter selections are kept when new rows are added. However it is possible to clear filter selections using: `api.setFilterModel([])`.
+When `api.setGridOption('rowData', data)` is called existing filter selections are kept when new rows are added. However it is possible to clear filter selections using: `api.setFilterModel([])`.
 
-The following example demonstrates how `api.setRowData(data)` affects filter selections. Try the following:
+The following example demonstrates how `api.setGridOption('rowData', data)` affects filter selections. Try the following:
 
-- Deselect value 'B' from the set filter list and click the **Set New Data** button which calls `api.setRowData(newData)` to add new data with extra rows to the grid.
+- Deselect value 'B' from the set filter list and click the **Set New Data** button which calls `api.setGridOption('rowData', newData)` to add new data with extra rows to the grid.
 
 - Notice 'B' remains deselected after new data is supplied to the grid.
 
-- Clicking **Reset** invokes `api.setRowData(origData)` to restore the original data but also clears any selections using `api.setFilterModel([])`.
+- Clicking **Reset** invokes `api.setGridOption('rowData', origData)` to restore the original data but also clears any selections using `api.setFilterModel([])`.
 
 <grid-example title='Setting New Data' name='setting-new-data' type='generated' options='{ "enterprise": true, "exampleHeight": 500, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] }'></grid-example>
 

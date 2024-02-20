@@ -21,6 +21,10 @@ const BASE_GRID_SIZE = 4;
 const BALHAM_GRID_SIZE = 4;
 const ALPINE_GRID_SIZE = 6;
 
+const QUARTZ_ICON_SIZE = 16;
+const QUARTZ_FONT_SIZE = 14;
+const QUARTZ_GRID_SIZE = 8;
+
 const HARD_CODED_SIZES: HardCodedSize = {
     // this item is required for custom themes
     'ag-theme-custom': {
@@ -50,6 +54,13 @@ const HARD_CODED_SIZES: HardCodedSize = {
         listItemHeight: ALPINE_GRID_SIZE * 4,
         rowHeight: ALPINE_GRID_SIZE * 7,
         chartMenuPanelWidth: 240
+    },
+    'ag-theme-quartz': {
+        headerHeight: QUARTZ_FONT_SIZE + QUARTZ_GRID_SIZE * 4.25,
+        headerCellMinWidth: 36,
+        listItemHeight: QUARTZ_ICON_SIZE + QUARTZ_GRID_SIZE,
+        rowHeight: QUARTZ_FONT_SIZE + QUARTZ_GRID_SIZE * 3.5,
+        chartMenuPanelWidth: 260
     }
 };
 
@@ -82,6 +93,8 @@ export class Environment extends BeanStub {
     @PostConstruct
     private postConstruct(): void {
         const el = this.getTheme().el ?? this.eGridDiv;
+
+        this.addManagedPropertyListener('rowHeight', () => this.refreshRowHeightVariable());
 
         this.mutationObserver = new MutationObserver(() => {
             this.calculatedSizes = {};
@@ -217,13 +230,25 @@ export class Environment extends BeanStub {
         return this.getFromTheme(20, 'listItemHeight');
     }
 
-    public setRowHeightVariable(height: number): void {
+    public refreshRowHeightVariable(): number {
         const oldRowHeight = this.eGridDiv.style.getPropertyValue('--ag-line-height').trim();
+        const height = this.gridOptionsService.get('rowHeight');
+
+        if (height == null || isNaN(height) || !isFinite(height)) {
+            if (oldRowHeight !== null) {
+                this.eGridDiv.style.setProperty('--ag-line-height', null);
+            }
+            return -1;
+        }
+
         const newRowHeight = `${height}px`;
 
         if (oldRowHeight != newRowHeight) {
             this.eGridDiv.style.setProperty('--ag-line-height', newRowHeight);
+            return height;
         }
+
+        return oldRowHeight != '' ? parseFloat(oldRowHeight) : -1;
     }
 
     public getMinColWidth(): number {

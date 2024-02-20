@@ -1,9 +1,11 @@
 import {
-  FirstDataRenderedEvent, Grid,
+  FirstDataRenderedEvent,
+  GridApi,
+  createGrid,
   GridOptions,
   ISetFilter,
   ISetFilterParams,
-  SetFilterValuesFuncParams
+  SetFilterValuesFuncParams,
 } from '@ag-grid-community/core';
 import { getData } from "./data";
 
@@ -15,7 +17,7 @@ var valuesArray = list1.slice()
 var valuesCallbackList = list1
 
 function valuesCallback(params: SetFilterValuesFuncParams) {
-  setTimeout(function () {
+  setTimeout(() => {
     params.success(valuesCallbackList)
   }, 1000)
 }
@@ -28,6 +30,8 @@ var callbackFilterParams: ISetFilterParams = {
   values: valuesCallback,
   refreshValuesOnOpen: true,
 }
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -49,7 +53,6 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     filter: true,
-    resizable: true,
   },
   sideBar: 'filters',
   rowData: getData(),
@@ -63,31 +66,33 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 function useList1() {
   console.log('Updating values to ' + list1)
   valuesArray.length = 0
-  list1.forEach(function (value) {
+  list1.forEach((value) => {
     valuesArray.push(value)
   })
 
-  var filter = gridOptions.api!.getFilterInstance<ISetFilter>('array')!;
-  filter.refreshFilterValues()
+  gridApi!.getColumnFilterInstance<ISetFilter>('array').then(filter => {
+    filter!.refreshFilterValues()
 
-  valuesCallbackList = list1
+    valuesCallbackList = list1
+  });
 }
 
 function useList2() {
   console.log('Updating values to ' + list2)
   valuesArray.length = 0
-  list2.forEach(function (value) {
+  list2.forEach((value) => {
     valuesArray.push(value)
   })
 
-  var filter = gridOptions.api!.getFilterInstance<ISetFilter>('array')!;
-  filter.refreshFilterValues()
-
-  valuesCallbackList = list2
+  gridApi!.getColumnFilterInstance<ISetFilter>('array').then(filter => {
+    filter!.refreshFilterValues()
+  
+    valuesCallbackList = list2
+  })!;
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

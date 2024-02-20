@@ -9,19 +9,20 @@ import {
 import { BeansContext } from './beansContext';
 
 export interface TabGuardCompCallback {
-    forceFocusOutOfContainer(): void;
+    forceFocusOutOfContainer(up?: boolean): void;
 }
 
 interface TabGuardProps {
     children: React.ReactNode,
     eFocusableElement: HTMLDivElement,
-    onTabKeyDown: (e: KeyboardEvent) => void,
+    forceFocusOutWhenTabGuardsAreEmpty?: boolean;
     gridCtrl: GridCtrl,
+    onTabKeyDown: (e: KeyboardEvent) => void,
 }
 
 const TabGuardCompRef: ForwardRefRenderFunction<TabGuardCompCallback, TabGuardProps> = (props: any, forwardRef: any) => {
 
-    const { children, eFocusableElement, onTabKeyDown, gridCtrl } = props;
+    const { children, eFocusableElement, onTabKeyDown, gridCtrl, forceFocusOutWhenTabGuardsAreEmpty } = props;
     const { context } = useContext(BeansContext);
 
     const topTabGuardRef = useRef<HTMLDivElement | null>(null);
@@ -42,8 +43,8 @@ const TabGuardCompRef: ForwardRefRenderFunction<TabGuardCompCallback, TabGuardPr
     }
 
     useImperativeHandle(forwardRef, () => ({
-        forceFocusOutOfContainer() {
-            tabGuardCtrlRef.current?.forceFocusOutOfContainer();
+        forceFocusOutOfContainer(up?: boolean) {
+            tabGuardCtrlRef.current?.forceFocusOutOfContainer(up);
         }
     }));
 
@@ -66,8 +67,8 @@ const TabGuardCompRef: ForwardRefRenderFunction<TabGuardCompCallback, TabGuardPr
                 eTopGuard: topTabGuardRef.current,
                 eBottomGuard: bottomTabGuardRef.current,
                 eFocusableElement: eFocusableElement,
-
                 onTabKeyDown: onTabKeyDown,
+                forceFocusOutWhenTabGuardsAreEmpty: forceFocusOutWhenTabGuardsAreEmpty,
                 focusInnerElement: (fromBottom: any) => gridCtrl.focusInnerElement(fromBottom)
             }));
         }

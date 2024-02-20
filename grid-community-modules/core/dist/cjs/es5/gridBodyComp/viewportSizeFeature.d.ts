@@ -1,10 +1,11 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "../context/beanStub";
 import { RowContainerCtrl } from "./rowContainer/rowContainerCtrl";
 export declare class ViewportSizeFeature extends BeanStub {
     private ctrlsService;
+    private pinnedWidthService;
     private columnModel;
     private scrollVisibleService;
     private centerContainerCtrl;
@@ -16,6 +17,8 @@ export declare class ViewportSizeFeature extends BeanStub {
     private listenForResize;
     private onScrollbarWidthChanged;
     private onCenterViewportResized;
+    private keepPinnedColumnsNarrowerThanViewport;
+    private getPinnedColumnsOverflowingViewport;
     private checkViewportAndScrolls;
     getBodyHeight(): number;
     private checkBodyHeight;

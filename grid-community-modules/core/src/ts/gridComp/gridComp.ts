@@ -5,7 +5,6 @@ import { Component } from "../widgets/component";
 import { ISideBar } from "../interfaces/iSideBar";
 import { RefSelector } from "../widgets/componentAnnotations";
 import { isVisible } from "../utils/dom";
-import { FocusService } from "../focusService";
 import { GridCtrl, IGridComp } from "./gridCtrl";
 import { LayoutCssClasses, UpdateLayoutClassesParams } from "../styling/layoutFeature";
 import { TabGuardComp } from "../widgets/tabGuardComp";
@@ -36,8 +35,6 @@ export class GridComp extends TabGuardComp {
                 () => this.destroyBean(this),
             setRtlClass:
                 (cssClass: string) => this.addCssClass(cssClass),
-            addOrRemoveKeyboardFocusClass:
-                (addOrRemove: boolean) => this.addOrRemoveCssClass(FocusService.AG_KEYBOARD_FOCUS, addOrRemove),
             forceFocusOutOfContainer: this.forceFocusOutOfContainer.bind(this),
             updateLayoutClasses: this.updateLayoutClasses.bind(this),
             getFocusableContainers: this.getFocusableContainers.bind(this),
@@ -62,7 +59,8 @@ export class GridComp extends TabGuardComp {
         this.initialiseTabGuard({
             // we want to override the default behaviour to do nothing for onTabKeyDown
             onTabKeyDown: () => undefined,
-            focusInnerElement: fromBottom => this.ctrl.focusInnerElement(fromBottom)
+            focusInnerElement: fromBottom => this.ctrl.focusInnerElement(fromBottom),
+            forceFocusOutWhenTabGuardsAreEmpty: true
         });
     }
 

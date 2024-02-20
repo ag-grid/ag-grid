@@ -23,15 +23,15 @@ class AgAutocompleteRow extends component_1.Component {
     setSearchString(searchString) {
         var _a;
         let keepHighlighting = false;
-        if (generic_1.exists(searchString)) {
+        if ((0, generic_1.exists)(searchString)) {
             const index = (_a = this.value) === null || _a === void 0 ? void 0 : _a.toLocaleLowerCase().indexOf(searchString.toLocaleLowerCase());
             if (index >= 0) {
                 keepHighlighting = true;
                 this.hasHighlighting = true;
                 const highlightEndIndex = index + searchString.length;
-                const startPart = string_1.escapeString(this.value.slice(0, index));
-                const highlightedPart = string_1.escapeString(this.value.slice(index, highlightEndIndex));
-                const endPart = string_1.escapeString(this.value.slice(highlightEndIndex));
+                const startPart = (0, string_1.escapeString)(this.value.slice(0, index));
+                const highlightedPart = (0, string_1.escapeString)(this.value.slice(index, highlightEndIndex));
+                const endPart = (0, string_1.escapeString)(this.value.slice(highlightEndIndex));
                 this.getGui().lastElementChild.innerHTML = `${startPart}<b>${highlightedPart}</b>${endPart}`;
             }
         }
@@ -43,7 +43,7 @@ class AgAutocompleteRow extends component_1.Component {
     render() {
         var _a;
         // putting in blank if missing, so at least the user can click on it
-        this.getGui().lastElementChild.innerHTML = (_a = string_1.escapeString(this.value)) !== null && _a !== void 0 ? _a : '&nbsp;';
+        this.getGui().lastElementChild.innerHTML = (_a = (0, string_1.escapeString)(this.value)) !== null && _a !== void 0 ? _a : '&nbsp;';
     }
 }
 exports.AgAutocompleteRow = AgAutocompleteRow;

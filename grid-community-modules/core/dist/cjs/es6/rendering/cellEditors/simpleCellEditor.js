@@ -66,7 +66,7 @@ class SimpleCellEditor extends popupComponent_1.PopupComponent {
         // Added for AG-3238. We can't remove this explicit focus() because Chrome requires an input
         // to be focused before setSelectionRange will work. But it triggers a bug in Safari where
         // explicitly focusing then blurring an empty field will cause the parent container to scroll.
-        if (!browser_1.isBrowserSafari()) {
+        if (!(0, browser_1.isBrowserSafari)()) {
             eInput.getFocusableElement().focus();
         }
         const inputEl = eInput.getInputElement();
@@ -93,6 +93,6 @@ class SimpleCellEditor extends popupComponent_1.PopupComponent {
     }
 }
 __decorate([
-    componentAnnotations_1.RefSelector('eInput')
+    (0, componentAnnotations_1.RefSelector)('eInput')
 ], SimpleCellEditor.prototype, "eInput", void 0);
 exports.SimpleCellEditor = SimpleCellEditor;

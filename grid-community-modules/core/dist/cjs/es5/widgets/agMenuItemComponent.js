@@ -14,6 +14,17 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -22,57 +33,70 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AgMenuItemComponent = void 0;
-var context_1 = require("../context/context");
 var agMenuList_1 = require("./agMenuList");
 var agMenuPanel_1 = require("./agMenuPanel");
-var component_1 = require("./component");
 var keyCode_1 = require("../constants/keyCode");
-var context_2 = require("../context/context");
-var icon_1 = require("../utils/icon");
+var context_1 = require("../context/context");
 var dom_1 = require("../utils/dom");
-var customTooltipFeature_1 = require("./customTooltipFeature");
 var aria_1 = require("../utils/aria");
+var beanStub_1 = require("../context/beanStub");
+var tooltipFeature_1 = require("./tooltipFeature");
 var AgMenuItemComponent = /** @class */ (function (_super) {
     __extends(AgMenuItemComponent, _super);
-    function AgMenuItemComponent(params) {
-        var _this = _super.call(this) || this;
-        _this.params = params;
+    function AgMenuItemComponent() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.isActive = false;
         _this.subMenuIsOpen = false;
-        _this.setTemplate(/* html */ "<div class=\"" + _this.getClassName() + "\" tabindex=\"-1\" role=\"treeitem\"></div>");
+        _this.subMenuIsOpening = false;
+        _this.suppressRootStyles = true;
+        _this.suppressAria = true;
+        _this.suppressFocus = true;
         return _this;
     }
-    AgMenuItemComponent.prototype.init = function () {
+    AgMenuItemComponent.prototype.init = function (params) {
         var _this = this;
-        this.addIcon();
-        this.addName();
-        this.addShortcut();
-        this.addSubMenu();
-        this.addTooltip();
-        var eGui = this.getGui();
-        if (this.params.disabled) {
-            this.addCssClass(this.getClassName('disabled'));
-            aria_1.setAriaDisabled(eGui, true);
+        var _a, _b;
+        var menuItemDef = params.menuItemDef, isAnotherSubMenuOpen = params.isAnotherSubMenuOpen, level = params.level, childComponent = params.childComponent, contextParams = params.contextParams;
+        this.params = params.menuItemDef;
+        this.level = level;
+        this.isAnotherSubMenuOpen = isAnotherSubMenuOpen;
+        this.childComponent = childComponent;
+        this.contextParams = contextParams;
+        this.cssClassPrefix = (_b = (_a = this.params.menuItemParams) === null || _a === void 0 ? void 0 : _a.cssClassPrefix) !== null && _b !== void 0 ? _b : 'ag-menu-option';
+        var compDetails = this.userComponentFactory.getMenuItemCompDetails(this.params, __assign(__assign({}, menuItemDef), { level: level, isAnotherSubMenuOpen: isAnotherSubMenuOpen, openSubMenu: function (activateFirstItem) { return _this.openSubMenu(activateFirstItem); }, closeSubMenu: function () { return _this.closeSubMenu(); }, closeMenu: function (event) { return _this.closeMenu(event); }, updateTooltip: function (tooltip) { return _this.updateTooltip(tooltip); }, onItemActivated: function () { return _this.onItemActivated(); } }));
+        return compDetails.newAgStackInstance().then(function (comp) {
+            var _a;
+            _this.menuItemComp = comp;
+            var configureDefaults = (_a = comp.configureDefaults) === null || _a === void 0 ? void 0 : _a.call(comp);
+            if (configureDefaults) {
+                _this.configureDefaults(configureDefaults === true ? undefined : configureDefaults);
+            }
+        });
+    };
+    AgMenuItemComponent.prototype.addListeners = function (eGui, params) {
+        var _this = this;
+        if (!(params === null || params === void 0 ? void 0 : params.suppressClick)) {
+            this.addManagedListener(eGui, 'click', function (e) { return _this.onItemSelected(e); });
         }
-        else {
-            this.addGuiEventListener('click', function (e) { return _this.onItemSelected(e); });
-            this.addGuiEventListener('keydown', function (e) {
+        if (!(params === null || params === void 0 ? void 0 : params.suppressKeyboardSelect)) {
+            this.addManagedListener(eGui, 'keydown', function (e) {
                 if (e.key === keyCode_1.KeyCode.ENTER || e.key === keyCode_1.KeyCode.SPACE) {
                     e.preventDefault();
                     _this.onItemSelected(e);
                 }
             });
-            this.addGuiEventListener('mousedown', function (e) {
+        }
+        if (!(params === null || params === void 0 ? void 0 : params.suppressMouseDown)) {
+            this.addManagedListener(eGui, 'mousedown', function (e) {
                 // Prevent event bubbling to other event handlers such as PopupService triggering
                 // premature closing of any open sub-menu popup.
                 e.stopPropagation();
                 e.preventDefault();
             });
-            this.addGuiEventListener('mouseenter', function () { return _this.onMouseEnter(); });
-            this.addGuiEventListener('mouseleave', function () { return _this.onMouseLeave(); });
         }
-        if (this.params.cssClasses) {
-            this.params.cssClasses.forEach(function (it) { return _this.addCssClass(it); });
+        if (!(params === null || params === void 0 ? void 0 : params.suppressMouseOver)) {
+            this.addManagedListener(eGui, 'mouseenter', function () { return _this.onMouseEnter(); });
+            this.addManagedListener(eGui, 'mouseleave', function () { return _this.onMouseLeave(); });
         }
     };
     AgMenuItemComponent.prototype.isDisabled = function () {
@@ -80,31 +104,21 @@ var AgMenuItemComponent = /** @class */ (function (_super) {
     };
     AgMenuItemComponent.prototype.openSubMenu = function (activateFirstItem) {
         var _this = this;
+        var _a, _b;
         if (activateFirstItem === void 0) { activateFirstItem = false; }
         this.closeSubMenu();
         if (!this.params.subMenu) {
             return;
         }
-        var ePopup = dom_1.loadTemplate(/* html */ "<div class=\"ag-menu\" role=\"presentation\"></div>");
+        this.subMenuIsOpening = true;
+        var ePopup = (0, dom_1.loadTemplate)(/* html */ "<div class=\"ag-menu\" role=\"presentation\"></div>");
+        this.eSubMenuGui = ePopup;
         var destroySubMenu;
-        if (this.params.subMenu instanceof Array) {
-            var currentLevel = aria_1.getAriaLevel(this.getGui());
-            var nextLevel = isNaN(currentLevel) ? 1 : (currentLevel + 1);
-            var childMenu_1 = this.createBean(new agMenuList_1.AgMenuList(nextLevel));
-            childMenu_1.setParentComponent(this);
-            childMenu_1.addMenuItems(this.params.subMenu);
-            ePopup.appendChild(childMenu_1.getGui());
-            // bubble menu item selected events
-            this.addManagedListener(childMenu_1, AgMenuItemComponent.EVENT_MENU_ITEM_SELECTED, function (e) { return _this.dispatchEvent(e); });
-            childMenu_1.addGuiEventListener('mouseenter', function () { return _this.cancelDeactivate(); });
-            destroySubMenu = function () { return _this.destroyBean(childMenu_1); };
-            if (activateFirstItem) {
-                setTimeout(function () { return childMenu_1.activateFirstItem(); }, 0);
-            }
-        }
-        else {
-            var subMenu_1 = this.params.subMenu;
-            var menuPanel = this.createBean(new agMenuPanel_1.AgMenuPanel(subMenu_1));
+        var afterGuiAttached = function () {
+            _this.subMenuIsOpening = false;
+        };
+        if (this.childComponent) {
+            var menuPanel = this.createBean(new agMenuPanel_1.AgMenuPanel(this.childComponent));
             menuPanel.setParentComponent(this);
             var subMenuGui_1 = menuPanel.getGui();
             var mouseEvent_1 = 'mouseenter';
@@ -112,30 +126,58 @@ var AgMenuItemComponent = /** @class */ (function (_super) {
             subMenuGui_1.addEventListener(mouseEvent_1, mouseEnterListener_1);
             destroySubMenu = function () { return subMenuGui_1.removeEventListener(mouseEvent_1, mouseEnterListener_1); };
             ePopup.appendChild(subMenuGui_1);
-            if (subMenu_1.afterGuiAttached) {
-                setTimeout(function () { return subMenu_1.afterGuiAttached(); }, 0);
+            if (this.childComponent.afterGuiAttached) {
+                afterGuiAttached = function () {
+                    _this.childComponent.afterGuiAttached();
+                    _this.subMenuIsOpening = false;
+                };
             }
         }
-        var eGui = this.getGui();
-        var positionCallback = this.popupService.positionPopupForMenu.bind(this.popupService, { eventSource: eGui, ePopup: ePopup });
+        else if (this.params.subMenu) {
+            var childMenu_1 = this.createBean(new agMenuList_1.AgMenuList(this.level + 1, this.contextParams));
+            childMenu_1.setParentComponent(this);
+            childMenu_1.addMenuItems(this.params.subMenu);
+            ePopup.appendChild(childMenu_1.getGui());
+            // bubble menu item selected events
+            this.addManagedListener(childMenu_1, AgMenuItemComponent.EVENT_CLOSE_MENU, function (e) { return _this.dispatchEvent(e); });
+            childMenu_1.addGuiEventListener('mouseenter', function () { return _this.cancelDeactivate(); });
+            destroySubMenu = function () { return _this.destroyBean(childMenu_1); };
+            if (activateFirstItem) {
+                afterGuiAttached = function () {
+                    childMenu_1.activateFirstItem();
+                    _this.subMenuIsOpening = false;
+                };
+            }
+        }
+        var positionCallback = this.popupService.positionPopupForMenu.bind(this.popupService, { eventSource: this.eGui, ePopup: ePopup });
         var translate = this.localeService.getLocaleTextFunc();
         var addPopupRes = this.popupService.addPopup({
             modal: true,
             eChild: ePopup,
             positionCallback: positionCallback,
-            anchorToElement: eGui,
-            ariaLabel: translate('ariaLabelSubMenu', 'SubMenu')
+            anchorToElement: this.eGui,
+            ariaLabel: translate('ariaLabelSubMenu', 'SubMenu'),
+            afterGuiAttached: afterGuiAttached
         });
         this.subMenuIsOpen = true;
-        aria_1.setAriaExpanded(eGui, true);
+        this.setAriaExpanded(true);
         this.hideSubMenu = function () {
+            var _a, _b;
             if (addPopupRes) {
                 addPopupRes.hideFunc();
             }
             _this.subMenuIsOpen = false;
-            aria_1.setAriaExpanded(eGui, false);
+            _this.setAriaExpanded(false);
             destroySubMenu();
+            (_b = (_a = _this.menuItemComp).setExpanded) === null || _b === void 0 ? void 0 : _b.call(_a, false);
+            _this.eSubMenuGui = undefined;
         };
+        (_b = (_a = this.menuItemComp).setExpanded) === null || _b === void 0 ? void 0 : _b.call(_a, true);
+    };
+    AgMenuItemComponent.prototype.setAriaExpanded = function (expanded) {
+        if (!this.suppressAria) {
+            (0, aria_1.setAriaExpanded)(this.eGui, expanded);
+        }
     };
     AgMenuItemComponent.prototype.closeSubMenu = function () {
         if (!this.hideSubMenu) {
@@ -143,20 +185,29 @@ var AgMenuItemComponent = /** @class */ (function (_super) {
         }
         this.hideSubMenu();
         this.hideSubMenu = null;
-        aria_1.setAriaExpanded(this.getGui(), false);
+        this.setAriaExpanded(false);
     };
     AgMenuItemComponent.prototype.isSubMenuOpen = function () {
         return this.subMenuIsOpen;
     };
+    AgMenuItemComponent.prototype.isSubMenuOpening = function () {
+        return this.subMenuIsOpening;
+    };
     AgMenuItemComponent.prototype.activate = function (openSubMenu) {
         var _this = this;
+        var _a, _b;
         this.cancelActivate();
         if (this.params.disabled) {
             return;
         }
         this.isActive = true;
-        this.addCssClass(this.getClassName('active'));
-        this.getGui().focus();
+        if (!this.suppressRootStyles) {
+            this.eGui.classList.add("".concat(this.cssClassPrefix, "-active"));
+        }
+        (_b = (_a = this.menuItemComp).setActive) === null || _b === void 0 ? void 0 : _b.call(_a, true);
+        if (!this.suppressFocus) {
+            this.eGui.focus({ preventScroll: true });
+        }
         if (openSubMenu && this.params.subMenu) {
             window.setTimeout(function () {
                 if (_this.isAlive() && _this.isActive) {
@@ -167,100 +218,47 @@ var AgMenuItemComponent = /** @class */ (function (_super) {
         this.onItemActivated();
     };
     AgMenuItemComponent.prototype.deactivate = function () {
+        var _a, _b;
         this.cancelDeactivate();
-        this.removeCssClass(this.getClassName('active'));
+        if (!this.suppressRootStyles) {
+            this.eGui.classList.remove("".concat(this.cssClassPrefix, "-active"));
+        }
+        (_b = (_a = this.menuItemComp).setActive) === null || _b === void 0 ? void 0 : _b.call(_a, false);
         this.isActive = false;
         if (this.subMenuIsOpen) {
             this.hideSubMenu();
         }
     };
-    AgMenuItemComponent.prototype.addIcon = function () {
-        if (!this.params.checked && !this.params.icon && this.params.isCompact) {
-            return;
-        }
-        var icon = dom_1.loadTemplate(/* html */ "<span ref=\"eIcon\" class=\"" + this.getClassName('part') + " " + this.getClassName('icon') + "\" role=\"presentation\"></span>");
-        if (this.params.checked) {
-            icon.appendChild(icon_1.createIconNoSpan('check', this.gridOptionsService));
-        }
-        else if (this.params.icon) {
-            if (dom_1.isNodeOrElement(this.params.icon)) {
-                icon.appendChild(this.params.icon);
-            }
-            else if (typeof this.params.icon === 'string') {
-                icon.innerHTML = this.params.icon;
-            }
-            else {
-                console.warn('AG Grid: menu item icon must be DOM node or string');
-            }
-        }
-        this.getGui().appendChild(icon);
+    AgMenuItemComponent.prototype.getGui = function () {
+        return this.menuItemComp.getGui();
     };
-    AgMenuItemComponent.prototype.addName = function () {
-        if (!this.params.name && this.params.isCompact) {
-            return;
-        }
-        var name = dom_1.loadTemplate(/* html */ "<span ref=\"eName\" class=\"" + this.getClassName('part') + " " + this.getClassName('text') + "\">" + (this.params.name || '') + "</span>");
-        this.getGui().appendChild(name);
+    AgMenuItemComponent.prototype.getParentComponent = function () {
+        return this.parentComponent;
     };
-    AgMenuItemComponent.prototype.addTooltip = function () {
-        if (!this.params.tooltip) {
-            return;
-        }
-        this.tooltip = this.params.tooltip;
-        if (this.gridOptionsService.is('enableBrowserTooltips')) {
-            this.getGui().setAttribute('title', this.tooltip);
-        }
-        else {
-            this.createManagedBean(new customTooltipFeature_1.CustomTooltipFeature(this));
-        }
+    AgMenuItemComponent.prototype.setParentComponent = function (component) {
+        this.parentComponent = component;
     };
-    AgMenuItemComponent.prototype.getTooltipParams = function () {
-        return {
-            location: 'menu',
-            value: this.tooltip
-        };
-    };
-    AgMenuItemComponent.prototype.addShortcut = function () {
-        if (!this.params.shortcut && this.params.isCompact) {
-            return;
-        }
-        var shortcut = dom_1.loadTemplate(/* html */ "<span ref=\"eShortcut\" class=\"" + this.getClassName('part') + " " + this.getClassName('shortcut') + "\">" + (this.params.shortcut || '') + "</span>");
-        this.getGui().appendChild(shortcut);
-    };
-    AgMenuItemComponent.prototype.addSubMenu = function () {
-        if (!this.params.subMenu && this.params.isCompact) {
-            return;
-        }
-        var pointer = dom_1.loadTemplate(/* html */ "<span ref=\"ePopupPointer\" class=\"" + this.getClassName('part') + " " + this.getClassName('popup-pointer') + "\"></span>");
-        var eGui = this.getGui();
-        if (this.params.subMenu) {
-            var iconName = this.gridOptionsService.is('enableRtl') ? 'smallLeft' : 'smallRight';
-            aria_1.setAriaExpanded(eGui, false);
-            pointer.appendChild(icon_1.createIconNoSpan(iconName, this.gridOptionsService));
-        }
-        eGui.appendChild(pointer);
+    AgMenuItemComponent.prototype.getSubMenuGui = function () {
+        return this.eSubMenuGui;
     };
     AgMenuItemComponent.prototype.onItemSelected = function (event) {
+        var _this = this;
+        var _a, _b;
+        (_b = (_a = this.menuItemComp).select) === null || _b === void 0 ? void 0 : _b.call(_a);
         if (this.params.action) {
-            this.params.action();
+            this.getFrameworkOverrides().wrapOutgoing(function () { return _this.params.action(_this.gridOptionsService.addGridCommonParams(__assign({}, _this.contextParams))); });
         }
         else {
             this.openSubMenu(event && event.type === 'keydown');
         }
-        if (this.params.subMenu && !this.params.action) {
+        if ((this.params.subMenu && !this.params.action) || this.params.suppressCloseOnSelect) {
             return;
         }
+        this.closeMenu(event);
+    };
+    AgMenuItemComponent.prototype.closeMenu = function (event) {
         var e = {
-            type: AgMenuItemComponent.EVENT_MENU_ITEM_SELECTED,
-            action: this.params.action,
-            checked: this.params.checked,
-            cssClasses: this.params.cssClasses,
-            disabled: this.params.disabled,
-            icon: this.params.icon,
-            name: this.params.name,
-            shortcut: this.params.shortcut,
-            subMenu: this.params.subMenu,
-            tooltip: this.params.tooltip,
+            type: AgMenuItemComponent.EVENT_CLOSE_MENU,
             event: event
         };
         this.dispatchEvent(e);
@@ -287,7 +285,7 @@ var AgMenuItemComponent = /** @class */ (function (_super) {
     AgMenuItemComponent.prototype.onMouseEnter = function () {
         var _this = this;
         this.cancelDeactivate();
-        if (this.params.isAnotherSubMenuOpen()) {
+        if (this.isAnotherSubMenuOpen()) {
             // wait to see if the user enters the open sub-menu
             this.activateTimeoutId = window.setTimeout(function () { return _this.activate(true); }, AgMenuItemComponent.ACTIVATION_DELAY);
         }
@@ -308,19 +306,82 @@ var AgMenuItemComponent = /** @class */ (function (_super) {
             this.deactivate();
         }
     };
-    AgMenuItemComponent.prototype.getClassName = function (suffix) {
-        var prefix = this.params.isCompact ? 'ag-compact-menu-option' : 'ag-menu-option';
-        return suffix ? prefix + "-" + suffix : prefix;
+    AgMenuItemComponent.prototype.configureDefaults = function (params) {
+        var _this = this;
+        var _a, _b, _c;
+        this.tooltip = this.params.tooltip;
+        if (!this.menuItemComp) {
+            // need to wait for init to complete
+            setTimeout(function () { return _this.configureDefaults(params); });
+            return;
+        }
+        var eGui = this.menuItemComp.getGui();
+        // in some frameworks, `getGui` might be a framework element
+        var rootElement = (_b = (_a = this.menuItemComp).getRootElement) === null || _b === void 0 ? void 0 : _b.call(_a);
+        if (rootElement) {
+            if (!(params === null || params === void 0 ? void 0 : params.suppressRootStyles)) {
+                eGui.classList.add('ag-menu-option-custom');
+            }
+            eGui = rootElement;
+        }
+        this.eGui = eGui;
+        this.suppressRootStyles = !!(params === null || params === void 0 ? void 0 : params.suppressRootStyles);
+        if (!this.suppressRootStyles) {
+            eGui.classList.add(this.cssClassPrefix);
+            (_c = this.params.cssClasses) === null || _c === void 0 ? void 0 : _c.forEach(function (it) { return eGui.classList.add(it); });
+            if (this.params.disabled) {
+                eGui.classList.add("".concat(this.cssClassPrefix, "-disabled"));
+            }
+        }
+        if (!(params === null || params === void 0 ? void 0 : params.suppressTooltip)) {
+            this.setTooltip();
+        }
+        this.suppressAria = !!(params === null || params === void 0 ? void 0 : params.suppressAria);
+        if (!this.suppressAria) {
+            (0, aria_1.setAriaRole)(eGui, 'treeitem');
+            (0, aria_1.setAriaLevel)(eGui, this.level + 1);
+            if (this.params.disabled) {
+                (0, aria_1.setAriaDisabled)(eGui, true);
+            }
+        }
+        if (!(params === null || params === void 0 ? void 0 : params.suppressTabIndex)) {
+            eGui.setAttribute('tabindex', '-1');
+        }
+        if (!this.params.disabled) {
+            this.addListeners(eGui, params);
+        }
+        this.suppressFocus = !!(params === null || params === void 0 ? void 0 : params.suppressFocus);
     };
-    AgMenuItemComponent.EVENT_MENU_ITEM_SELECTED = 'menuItemSelected';
+    AgMenuItemComponent.prototype.updateTooltip = function (tooltip) {
+        this.tooltip = tooltip;
+        if (!this.tooltipFeature && this.menuItemComp) {
+            this.setTooltip();
+        }
+    };
+    AgMenuItemComponent.prototype.setTooltip = function () {
+        var _this = this;
+        if (!this.tooltip) {
+            return;
+        }
+        this.tooltipFeature = this.createManagedBean(new tooltipFeature_1.TooltipFeature({
+            getGui: function () { return _this.getGui(); },
+            getTooltipValue: function () { return _this.tooltip; },
+            getLocation: function () { return 'menu'; }
+        }, this.beans));
+        this.tooltipFeature.setComp(this.getGui());
+    };
+    AgMenuItemComponent.EVENT_CLOSE_MENU = 'closeMenu';
     AgMenuItemComponent.EVENT_MENU_ITEM_ACTIVATED = 'menuItemActivated';
     AgMenuItemComponent.ACTIVATION_DELAY = 80;
     __decorate([
-        context_1.Autowired('popupService')
+        (0, context_1.Autowired)('popupService')
     ], AgMenuItemComponent.prototype, "popupService", void 0);
     __decorate([
-        context_2.PostConstruct
-    ], AgMenuItemComponent.prototype, "init", null);
+        (0, context_1.Autowired)('userComponentFactory')
+    ], AgMenuItemComponent.prototype, "userComponentFactory", void 0);
+    __decorate([
+        (0, context_1.Autowired)('beans')
+    ], AgMenuItemComponent.prototype, "beans", void 0);
     return AgMenuItemComponent;
-}(component_1.Component));
+}(beanStub_1.BeanStub));
 exports.AgMenuItemComponent = AgMenuItemComponent;

@@ -45,11 +45,14 @@ var GridLicenseManager = /** @class */ (function (_super) {
     GridLicenseManager.setLicenseKey = function (licenseKey) {
         licenseManager_1.LicenseManager.setLicenseKey(licenseKey);
     };
+    GridLicenseManager.setChartsLicenseManager = function (chartsLicenseManager) {
+        licenseManager_1.LicenseManager.setChartsLicenseManager(chartsLicenseManager);
+    };
     __decorate([
         core_1.PreConstruct
     ], GridLicenseManager.prototype, "validateLicense", null);
     GridLicenseManager = __decorate([
-        core_1.Bean('licenseManager')
+        (0, core_1.Bean)('licenseManager')
     ], GridLicenseManager);
     return GridLicenseManager;
 }(core_1.BeanStub));

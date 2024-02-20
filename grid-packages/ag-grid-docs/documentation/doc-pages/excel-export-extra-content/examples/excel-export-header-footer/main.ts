@@ -1,4 +1,13 @@
-import { Grid, ExcelExportParams, ExcelHeaderFooterConfig, ExcelHeaderFooterContent, GridOptions } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  ExcelExportParams,
+  ExcelHeaderFooterConfig,
+  ExcelHeaderFooterContent,
+  GridOptions,
+} from '@ag-grid-community/core';
+
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -11,9 +20,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     { field: 'total' },
   ],
   defaultColDef: {
-    sortable: true,
     filter: true,
-    resizable: true,
     minWidth: 100,
     flex: 1,
   },
@@ -95,17 +102,17 @@ const getParams: () => ExcelExportParams | undefined = () => {
 }
 
 function onBtExport() {
-  gridOptions.api!.exportDataAsExcel(getParams())
+  gridApi!.exportDataAsExcel(getParams())
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
     .then(response => response.json())
     .then(data =>
-      gridOptions.api!.setRowData(data.filter((rec: any) => rec.country != null))
+      gridApi!.setGridOption('rowData', data.filter((rec: any) => rec.country != null))
     )
 })

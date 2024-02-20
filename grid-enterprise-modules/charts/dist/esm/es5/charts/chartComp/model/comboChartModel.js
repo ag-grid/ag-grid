@@ -23,8 +23,9 @@ import { BeanStub, PostConstruct, } from "@ag-grid-community/core";
 var ComboChartModel = /** @class */ (function (_super) {
     __extends(ComboChartModel, _super);
     function ComboChartModel(chartDataModel) {
+        var _this = this;
         var _a;
-        var _this = _super.call(this) || this;
+        _this = _super.call(this) || this;
         // this control flag is used to only log warning for the initial user config
         _this.suppressComboChartWarnings = false;
         _this.chartDataModel = chartDataModel;
@@ -75,7 +76,7 @@ var ComboChartModel = /** @class */ (function (_super) {
         // ensure correct chartTypes are supplied
         this.seriesChartTypes = this.seriesChartTypes.map(function (s) {
             if (!ComboChartModel.SUPPORTED_COMBO_CHART_TYPES.includes(s.chartType)) {
-                console.warn("AG Grid: invalid chartType '" + s.chartType + "' supplied in 'seriesChartTypes', converting to 'line' instead.");
+                console.warn("AG Grid: invalid chartType '".concat(s.chartType, "' supplied in 'seriesChartTypes', converting to 'line' instead."));
                 s.chartType = 'line';
             }
             return s;
@@ -87,7 +88,7 @@ var ComboChartModel = /** @class */ (function (_super) {
             var providedSeriesChartType = _this.savedCustomSeriesChartTypes.find(function (s) { return s.colId === valueCol.colId; });
             if (!providedSeriesChartType) {
                 if (valueCol.selected && !_this.suppressComboChartWarnings) {
-                    console.warn("AG Grid: no 'seriesChartType' found for colId = '" + valueCol.colId + "', defaulting to 'line'.");
+                    console.warn("AG Grid: no 'seriesChartType' found for colId = '".concat(valueCol.colId, "', defaulting to 'line'."));
                 }
                 return {
                     colId: valueCol.colId,

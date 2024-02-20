@@ -2,8 +2,7 @@
 
 @use "./balham-variables";
 
-.ag-theme-balham, .ag-theme-balham-dark {
-
+.ag-theme-balham, .ag-theme-balham-dark, .ag-theme-balham-auto-dark {
     .ag-filter-toolpanel-header,
     .ag-filter-toolpanel-search,
     .ag-status-bar,
@@ -90,6 +89,11 @@
         padding-top: calc(var(--ag-grid-size) * 2);
     }
 
+    .ag-column-select-column-readonly.ag-icon-grip,
+    .ag-column-select-column-readonly .ag-icon-grip {
+        opacity: 0.35;
+    }
+
     .ag-menu-header {
         background-color: var(--ag-header-background-color);
     }
@@ -107,6 +111,10 @@
 
     .ag-panel-title-bar-button-icon {
         font-size: calc(var(--ag-icon-size) + var(--ag-grid-size));
+    }
+    
+    .ag-panel {
+        background-color: var(--ag-header-background-color);
     }
 
     .ag-chart-data-section,
@@ -139,8 +147,8 @@
         border: 1px solid var(--ag-secondary-border-color);
         border-right: none;
     }
-}
 
-.ag-theme-balham-dark {
-    color-scheme: dark;
+    .ag-filter-active .ag-icon-filter {
+        color: var(--ag-balham-active-color);
+    }
 }

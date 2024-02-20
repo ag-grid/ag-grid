@@ -88,13 +88,13 @@ var AgSlider = /** @class */ (function (_super) {
     };
     AgSlider.TEMPLATE = "<div class=\"ag-slider\">\n            <label ref=\"eLabel\"></label>\n            <div class=\"ag-wrapper ag-slider-wrapper\">\n                <ag-input-range ref=\"eSlider\"></ag-input-range>\n                <ag-input-number-field ref=\"eText\"></ag-input-number-field>\n            </div>\n        </div>";
     __decorate([
-        componentAnnotations_1.RefSelector('eLabel')
+        (0, componentAnnotations_1.RefSelector)('eLabel')
     ], AgSlider.prototype, "eLabel", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('eSlider')
+        (0, componentAnnotations_1.RefSelector)('eSlider')
     ], AgSlider.prototype, "eSlider", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('eText')
+        (0, componentAnnotations_1.RefSelector)('eText')
     ], AgSlider.prototype, "eText", void 0);
     __decorate([
         context_1.PostConstruct

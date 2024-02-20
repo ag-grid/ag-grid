@@ -7,6 +7,7 @@ export declare class TextFloatingFilter extends TextInputFloatingFilter<TextFilt
     private filterModelFormatter;
     init(params: ITextFloatingFilterParams): void;
     onParamsUpdated(params: ITextFloatingFilterParams): void;
+    refresh(params: ITextFloatingFilterParams): void;
     protected getDefaultFilterOptions(): string[];
     protected getFilterModelFormatter(): SimpleFilterModelFormatter;
     protected createFloatingFilterInputService(): FloatingFilterInputService;

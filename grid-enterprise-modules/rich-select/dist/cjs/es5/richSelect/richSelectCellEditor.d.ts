@@ -8,6 +8,7 @@ export declare class RichSelectCellEditor<TData = any, TValue = any> extends Pop
     private onEditorPickerValueSelected;
     private onEditorFocusOut;
     private buildRichSelectParams;
+    private getSearchStringCallback;
     afterGuiAttached(): void;
     getValue(): any;
     isPopup(): boolean;

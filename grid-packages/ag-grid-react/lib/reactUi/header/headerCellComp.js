@@ -1,4 +1,4 @@
-// ag-grid-react v30.1.0
+// ag-grid-react v31.1.0
 "use strict";
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
@@ -38,22 +38,22 @@ var utils_1 = require("../utils");
 var jsComp_1 = require("../jsComp");
 var HeaderCellComp = function (props) {
     var ctrl = props.ctrl;
+    var isAlive = ctrl.isAlive();
     var context = react_1.useContext(beansContext_1.BeansContext).context;
-    var colId = ctrl.getColId();
+    var colId = isAlive ? ctrl.getColId() : undefined;
     var _a = react_1.useState(), userCompDetails = _a[0], setUserCompDetails = _a[1];
     var eGui = react_1.useRef(null);
     var eResize = react_1.useRef(null);
     var eHeaderCompWrapper = react_1.useRef(null);
     var userCompRef = react_1.useRef();
     var cssClassManager = react_1.useRef();
-    if (!cssClassManager.current) {
+    if (isAlive && !cssClassManager.current) {
         cssClassManager.current = new ag_grid_community_1.CssClassManager(function () { return eGui.current; });
     }
     var setRef = react_1.useCallback(function (e) {
         var _a;
         eGui.current = e;
-        if (!eGui.current) {
-            // Any clean up required?
+        if (!eGui.current || !isAlive) {
             return;
         }
         var compProxy = {
@@ -63,11 +63,6 @@ var HeaderCellComp = function (props) {
                 }
             },
             addOrRemoveCssClass: function (name, on) { return cssClassManager.current.addOrRemoveCssClass(name, on); },
-            setAriaDescription: function (label) {
-                if (eGui.current) {
-                    ag_grid_community_1._.setAriaDescription(eGui.current, label);
-                }
-            },
             setAriaSort: function (sort) {
                 if (eGui.current) {
                     sort ? ag_grid_community_1._.setAriaSort(eGui.current, sort) : ag_grid_community_1._.removeAriaSort(eGui.current);
@@ -92,7 +87,7 @@ var HeaderCellComp = function (props) {
     }, [userCompDetails]);
     var reactUserComp = userCompDetails && userCompDetails.componentFromFramework;
     var UserCompClass = userCompDetails && userCompDetails.componentClass;
-    return (react_1.default.createElement("div", { ref: setRef, className: "ag-header-cell", "col-id": colId, role: "columnheader", tabIndex: -1 },
+    return (react_1.default.createElement("div", { ref: setRef, className: "ag-header-cell", "col-id": colId, role: "columnheader" },
         react_1.default.createElement("div", { ref: eResize, className: "ag-header-cell-resize", role: "presentation" }),
         react_1.default.createElement("div", { ref: eHeaderCompWrapper, className: "ag-header-cell-comp-wrapper", role: "presentation" },
             reactUserComp && userCompStateless && react_1.default.createElement(UserCompClass, __assign({}, userCompDetails.params)),

@@ -1,4 +1,4 @@
-import { Column, ColumnEventType, Component, Context, DragAndDropService, EventService, GridOptionsService, LoggerFactory } from "@ag-grid-community/core";
+import { Column, ColumnEventType, Component, Context, DragAndDropService, DraggingEvent, EventService, GridOptionsService, LoggerFactory } from "@ag-grid-community/core";
 export interface BaseDropZonePanelParams {
     dragAndDropIcon: string;
     emptyMessage: string;
@@ -31,7 +31,7 @@ export declare abstract class BaseDropZonePanel extends Component {
     private eColumnDropList;
     private positionableFeature;
     private resizeEnabled;
-    protected abstract isColumnDroppable(column: Column): boolean;
+    protected abstract isColumnDroppable(column: Column, draggingEvent: DraggingEvent): boolean;
     protected abstract updateColumns(columns: Column[]): void;
     protected abstract getExistingColumns(): Column[];
     protected abstract getIconName(): string;
@@ -41,6 +41,7 @@ export declare abstract class BaseDropZonePanel extends Component {
     isHorizontal(): boolean;
     toggleResizable(resizable: boolean): void;
     setBeans(beans: BaseDropZonePanelBeans): void;
+    protected isSourceEventFromTarget(draggingEvent: DraggingEvent): boolean;
     protected destroy(): void;
     private destroyGui;
     init(params: BaseDropZonePanelParams): void;
@@ -48,12 +49,13 @@ export declare abstract class BaseDropZonePanel extends Component {
     private addElementClasses;
     private setupDropTarget;
     private isInterestedIn;
+    private minimumAllowedNewInsertIndex;
     private checkInsertIndex;
     private getNewInsertIndex;
     private checkDragStartedBySelf;
     private onDragging;
     private onDragEnter;
-    setColumnsVisible(columns: Column[] | null | undefined, visible: boolean, source?: ColumnEventType): void;
+    setColumnsVisible(columns: Column[] | null | undefined, visible: boolean, source: ColumnEventType): void;
     protected isPotentialDndColumns(): boolean;
     private isRowGroupPanel;
     private onDragLeave;

@@ -2,6 +2,29 @@
     "_config_": {
         "codeSrc": "grid-api/grid-api.AUTO.json"
     },
+    "gridOptions": {
+        "meta": {
+            "displayName": "Grid Options"
+        },
+        "getGridOption": {
+            "more": {
+                "name": "GridOptions",
+                "url": "/grid-options/"
+            }
+        },
+        "setGridOption": {
+            "more": {
+                "name": "GridOptions",
+                "url": "/grid-options/"
+            }
+        },
+        "updateGridOptions": {
+            "more": {
+                "name": "GridOptions",
+                "url": "/grid-options/"
+            }
+        }
+    },
     "columns": {
         "meta": {
             "displayName": "Column Definitions",
@@ -10,14 +33,150 @@
                 "url": "/column-updating-definitions/"
             }
         },
-        "getColumnDefs": {},
-        "setColumnDefs": {},
-        "setAutoGroupColumnDef": {},
-        "setDefaultColDef": {},
+        "getColumnDefs": {
+            "more": {
+                "name": "Column Definition Retrieval",
+                "url": "/column-updating-definitions/#column-definition-retrieval"
+            }
+        },
+        "getColumn": {},
+        "getColumns": {},
+        "getAllGridColumns": {}
+    },
+    "columnSizing": {
+        "meta": {
+            "displayName": "Column Sizing",
+            "description": "See [Column Sizing](/column-sizing/)"
+        },
+        "setColumnWidths": {},
         "sizeColumnsToFit": {
             "more": {
-                "name": "Size Columns to Fit",
-                "url": "/column-sizing/#size-columns-to-fit"
+                "name": "Auto-Size Columns to Fit Grid",
+                "url": "/column-sizing/#auto-size-columns-to-fit-grid"
+            }
+        },
+        "autoSizeColumns": {
+            "more": {
+                "name": "Auto-Size Columns to Fit Cell Contents",
+                "url": "/column-sizing/#auto-size-columns-to-fit-cell-contents"
+            }
+        },
+        "autoSizeAllColumns": {
+            "more": {
+                "name": "Auto-Size Columns to Fit Cell Contents",
+                "url": "/column-sizing/#auto-size-columns-to-fit-cell-contents"
+            }
+        }
+    },
+    "columnMoving":{
+        "meta": {
+            "displayName": "Column Moving",
+            "description": "See [Column Moving](/column-moving/)"
+        },
+        "moveColumns": {},
+        "moveColumnByIndex": {}
+    },
+    "columnPinning": {
+        "meta": {
+            "displayName": "Column Pinning",
+            "description": "See [Column Pinning](/column-pinning/)"
+        },
+        "isPinning": {},
+        "isPinningLeft": {},
+        "isPinningRight": {},
+        "setColumnsPinned": {}
+    },
+    "state": {
+        "meta": {
+            "displayName": "Column State",
+            "description": "See [Column State](/column-state/)"
+        },
+        "getColumnState": {
+            "more": {
+                "name": "Save and Apply State",
+                "url": "/column-state/#save-and-apply"
+            }
+        },
+        "applyColumnState": {
+            "more": {
+                "name": "Save and Apply State",
+                "url": "/column-state/#save-and-apply"
+            }
+        },
+        "resetColumnState": {},
+        "getColumnGroupState": {
+            "more": {
+                "name": "Column Group State",
+                "url": "/column-state/#column-group-state"
+            }
+        },
+        "setColumnGroupState": {
+            "more": {
+                "name": "Column Group State",
+                "url": "/column-state/#column-group-state"
+            }
+        },
+        "resetColumnGroupState": {}
+    },
+    "colGroups": {
+        "meta": {
+            "displayName": "Column Groups",
+            "description": "See [Column Groups](/column-groups/)"
+        },
+        "getColumnGroup": {
+            "more": {
+                "name": "Column Groups",
+                "url": "/column-groups/"
+            }
+        },
+        "getProvidedColumnGroup": {},
+        "setColumnGroupOpened": {}
+    },
+    "Visibility and Display": {
+        "meta": {
+            "displayName": "Column Display"
+        },
+        "setColumnsVisible": {},
+        "getDisplayNameForColumn": {},
+        "getDisplayNameForColumnGroup": {},
+        "getDisplayedColAfter": {},
+        "getDisplayedColBefore": {},
+        "getAllDisplayedVirtualColumns": {},
+        "getAllDisplayedColumns": {},
+        "getDisplayedCenterColumns": {},
+        "getDisplayedLeftColumns": {},
+        "getDisplayedRightColumns": {},
+        "getAllDisplayedColumnGroups": {},
+        "getCenterDisplayedColumnGroups": {},
+        "getLeftDisplayedColumnGroups": {},
+        "getRightDisplayedColumnGroups": {}
+    },
+    "Pivoting": {
+        "meta": {
+            "displayName": "Pivoting",
+            "description": "See [Pivoting](/pivoting/)"
+        },
+        "isPivotMode": {},
+        "getPivotColumns": {},
+        "setPivotColumns": {},
+        "addPivotColumns": {},
+        "removePivotColumns": {},
+        "getPivotResultColumn": {
+            "more": {
+                "name": "Looking up Pivot Result Columns",
+                "url": "/pivoting/#looking-up-pivot-result-columns"
+            }
+        },
+        "setPivotResultColumns": {
+            "more": {
+                "name": "Creating Pivot Result Columns",
+                "url": "/server-side-model-pivoting/#creating-pivot-result-columns-advanced"
+            }
+        },
+        "getPivotResultColumns": {
+            "more": {
+                "name": "Columns vs Pivot Result Columns",
+                "url": "/pivoting/#columns-vs-pivot-result-columns"
             }
         }
     },
@@ -29,8 +188,6 @@
                 "url": "/row-pinning/"
             }
         },
-        "setPinnedTopRowData": {},
-        "setPinnedBottomRowData": {},
         "getPinnedTopRowCount": {},
         "getPinnedBottomRowCount": {},
         "getPinnedTopRow": {},
@@ -40,22 +197,66 @@
         "meta": {
             "displayName": "Row Nodes"
         },
-        "getRowNode": {},
+        "getRowNode": {
+            "more": {
+                "name": "Application Assigned IDs",
+                "url": "/row-ids/#application-assigned-ids"
+            }
+        },
         "forEachNode": {
+            "more": {
+                "name": "Iterating Rows",
+                "url": "/accessing-data/#iterating-rows"
+            },
             "description": "Iterates through each node (row) in the grid and calls the callback for each node. This works similar to the `forEach` method on a JavaScript array. This is called for every node, ignoring any filtering or sorting applied within the grid. If using the [Infinite Row Model](/infinite-scrolling/), then this gets called for each page loaded in the page cache."
         },
-        "forEachNodeAfterFilter": {},
-        "forEachNodeAfterFilterAndSort": {},
-        "forEachLeafNode": {}
+        "forEachNodeAfterFilter": {
+            "more": {
+                "name": "Iterating Rows",
+                "url": "/accessing-data/#iterating-rows"
+            }
+        },
+        "forEachNodeAfterFilterAndSort": {
+            "more": {
+                "name": "Iterating Rows",
+                "url": "/accessing-data/#iterating-rows"
+            }
+        },
+        "forEachLeafNode": {
+            "more": {
+                "name": "Iterating Rows",
+                "url": "/accessing-data/#iterating-rows"
+            }
+        }
     },
     "displayedRows": {
         "meta": {
             "displayName": "Row Displayed"
         },
-        "getDisplayedRowAtIndex": {},
-        "getDisplayedRowCount": {},
-        "getFirstDisplayedRow": {},
-        "getLastDisplayedRow": {}
+        "getDisplayedRowAtIndex": {
+            "more": {
+                "name": "Rendering API",
+                "url": "/rendering-api/"
+            }
+        },
+        "getDisplayedRowCount": {
+            "more": {
+                "name": "Rendering API",
+                "url": "/rendering-api/"
+            }
+        },
+        "getFirstDisplayedRowIndex": {
+            "more": {
+                "name": "Rendering API",
+                "url": "/rendering-api/"
+            }
+        },
+        "getLastDisplayedRowIndex": {
+            "more": {
+                "name": "Rendering API",
+                "url": "/rendering-api/"
+            }
+        }
     },
     "masterDetail": {
         "meta": {
@@ -65,7 +266,12 @@
                 "url": "/master-detail/"
             }
         },
-        "getDetailGridInfo": {},
+        "getDetailGridInfo": {
+            "more": {
+                "name": "Accessing Detail Grids",
+                "url": "/master-detail-grids/#accessing-detail-grids"
+            }
+        },
         "forEachDetailGridInfo": {
             "more": {
                 "name": "Accessing Detail Grids",
@@ -75,13 +281,13 @@
         "addDetailGridInfo": {
             "more": {
                 "name": "Register Detail Grid",
-                "url": "/master-detail-custom-detail/#registering-detail-grid"
+                "url": "/master-detail-custom-detail/#register-detail-grid"
             }
         },
         "removeDetailGridInfo": {
             "more": {
                 "name": "Register Detail Grid",
-                "url": "/master-detail-custom-detail/#registering-detail-grid"
+                "url": "/master-detail-custom-detail/#register-detail-grid"
             }
         }
     },
@@ -103,20 +309,22 @@
         "getSelectedRows": {},
         "setNodesSelected": {},
         "getBestCostNodeSelection": {},
-        "getCellRanges": {},
-        "addCellRange": {},
-        "clearRangeSelection": {},
-        "setSuppressRowClickSelection": {},
-        "setEnableCellTextSelection": {
+        "getCellRanges": {
             "more": {
-                "name": "Cell Text Selection",
-                "url": "/selection-overview/#cell-text-selection"
+                "name": "getCellRanges",
+                "url": "/range-selection/#getcellranges"
             }
         },
-        "setFillHandleDirection": {
+        "addCellRange": {
             "more": {
-                "name": "Fill Handle",
-                "url": "/range-selection-fill-handle/"
+                "name": "addCellRange",
+                "url": "/range-selection/#addcellrangerangeselection"
+            }
+        },
+        "clearRangeSelection": {
+            "more": {
+                "name": "clearRangeSelection",
+                "url": "/range-selection/#clearrangeselection"
             }
         }
     },
@@ -156,13 +364,7 @@
                 "url": "/row-sorting/"
             }
         },
-        "onSortChanged": {},
-        "setDeltaSort": {
-            "more": {
-                "name": "Delta sorting",
-                "url": "/data-update-transactions/#delta-sorting"
-            }
-        }
+        "onSortChanged": {}
     },
     "filter": {
         "meta": {
@@ -178,12 +380,6 @@
                 "url": "/filter-quick/#checking-the-quick-filter"
             }
         },
-        "setQuickFilter": {
-            "more": {
-                "name": "Setting the Quick Filter",
-                "url": "/filter-quick/#setting-the-quick-filter"
-            }
-        },
         "resetQuickFilter": {
             "more": {
                 "name": "Reset Cache Text",
@@ -196,23 +392,44 @@
                 "url": "/filter-quick/#checking-the-quick-filter"
             }
         },
-        "setIncludeHiddenColumnsInQuickFilter": {
-            "more": {
-                "name": "Include Hidden Columns",
-                "url": "/filter-quick/#include-hidden-columns"
-            }
-        },
         "isColumnFilterPresent": {},
         "isAnyFilterPresent": {},
-        "getFilterInstance": {
+        "getColumnFilterInstance": {
             "more": {
                 "name": "Accessing Individual Filter Component Instances",
                 "url": "/filter-api/#accessing-individual-filter-component-instances"
             }
         },
-        "getFilterModel": {},
-        "setFilterModel": {},
-        "onFilterChanged": {},
+        "getFilterModel": {
+            "more": {
+                "name": "Get / Set All Filter Models",
+                "url": "/filter-api/#get--set-all-filter-models"
+            }
+        },
+        "setFilterModel": {
+            "more": {
+                "name": "Get / Set All Filter Models",
+                "url": "/filter-api/#get--set-all-filter-models"
+            }
+        },
+        "getColumnFilterModel": {
+            "more": {
+                "name": "Get / Set Individual Filter Model",
+                "url": "/filter-api/#get--set-individual-filter-model"
+            }
+        },
+        "setColumnFilterModel": {
+            "more": {
+                "name": "Get / Set Individual Filter Model",
+                "url": "/filter-api/#get--set-individual-filter-model"
+            }
+        },
+        "onFilterChanged": {
+            "more": {
+                "name": "Re-running Grid Filtering",
+                "url": "/filter-api/#re-running-grid-filtering"
+            }
+        },
         "destroyFilter": {},
         "getAdvancedFilterModel":  {
             "more": {
@@ -225,23 +442,11 @@
                 "name": "Advanced Filter",
                 "url": "/filter-advanced/#filter-model--api"
             }
-        },
-        "setEnableAdvancedFilter":  {
+        },        
+        "showAdvancedFilterBuilder":  {
             "more": {
                 "name": "Advanced Filter",
-                "url": "/filter-advanced/"
-            }
-        },
-        "setIncludeHiddenColumnsInAdvancedFilter":  {
-            "more": {
-                "name": "Advanced Filter",
-                "url": "/filter-advanced/#including-hidden-columns"
-            }
-        },
-        "setAdvancedFilterParent":  {
-            "more": {
-                "name": "Advanced Filter",
-                "url": "/filter-advanced/#advanced-filter-parent"
+                "url": "/filter-advanced/#configuring-advanced-filter-builder"
             }
         }
     },
@@ -256,8 +461,18 @@
         "getFocusedCell": {},
         "setFocusedCell": {},
         "clearFocusedCell": {},
-        "tabToNextCell": {},
-        "tabToPreviousCell": {}
+        "tabToNextCell": {
+            "more": {
+                "name": "Custom Navigation",
+                "url": "/keyboard-navigation/#custom-navigation"
+            }
+        },
+        "tabToPreviousCell": {
+            "more": {
+                "name": "Custom Navigation",
+                "url": "/keyboard-navigation/#custom-navigation"
+            }
+        }
     },
     "editing": {
         "meta": {
@@ -306,13 +521,43 @@
                 "url": "/excel-export/"
             }
         },
-        "exportDataAsCsv": {},
-        "getDataAsCsv": {},
-        "exportDataAsExcel": {},
+        "exportDataAsCsv": {
+            "more": {
+                "name": "CSV Export",
+                "url": "/csv-export/"
+            }
+        },
+        "getDataAsCsv": {
+            "more": {
+                "name": "CSV Export",
+                "url": "/csv-export/"
+            }
+        },
+        "exportDataAsExcel": {
+            "more": {
+                "name": "Enabling Excel Export",
+                "url": "/excel-export/#enabling-excel-export"
+            }
+        },
         "getDataAsExcel": {},
-        "getSheetDataForExcel": {},
-        "exportMultipleSheetsAsExcel": {},
-        "getMultipleSheetsAsExcel": {}
+        "getSheetDataForExcel": {
+            "more": {
+                "name": "Excel Export - Multiple Sheets",
+                "url": "/excel-export-multiple-sheets/"
+            }
+        },
+        "exportMultipleSheetsAsExcel": {
+            "more": {
+                "name": "Excel Export - Multiple Sheets",
+                "url": "/excel-export-multiple-sheets/"
+            }
+        },
+        "getMultipleSheetsAsExcel": {
+            "more": {
+                "name": "Excel Export - Multiple Sheets",
+                "url": "/excel-export-multiple-sheets/"
+            }
+        }
     },
     "events": {
         "meta": {
@@ -322,9 +567,14 @@
         "addGlobalListener": {},
         "removeEventListener": {},
         "removeGlobalListener": {},
-        "addRenderedRowListener": {}
+        "addRenderedRowListener": {
+            "more": {
+                "name": "Row Events",
+                "url": "/row-events/"
+            }
+        }
     },
-    "rowGroups": {
+    "rowGroupsCols": {
         "meta": {
             "displayName": "Row Grouping",
             "page": {
@@ -332,10 +582,30 @@
                 "url": "/grouping/"
             }
         },
-        "expandAll": {},
-        "collapseAll": {},
-        "setRowNodeExpanded": {},
-        "onGroupExpandedOrCollapsed": {}
+        "expandAll": {
+            "more": {
+                "name": "Expand / Collapse Groups via API",
+                "url": "/grouping-opening-groups/#expand--collapse-groups-via-api"
+            }
+        },
+        "collapseAll": {
+            "more": {
+                "name": "Expand / Collapse Groups via API",
+                "url": "/grouping-opening-groups/#expand--collapse-groups-via-api"
+            }
+        },
+        "setRowNodeExpanded": {
+            "more": {
+                "name": "Expand / Collapse Groups via API",
+                "url": "/grouping-opening-groups/#expand--collapse-groups-via-api"
+            }
+        },
+        "onGroupExpandedOrCollapsed": {},
+        "getRowGroupColumns": {},
+        "setRowGroupColumns": {},
+        "addRowGroupColumns": {},
+        "removeRowGroupColumns": {},
+        "moveRowGroupColumn": {}
     },
     "rowDrag": {
         "meta": {
@@ -343,18 +613,6 @@
             "page": {
                 "name": "Row Dragging",
                 "url": "/row-dragging/"
-            }
-        },
-        "setSuppressRowDrag": {
-            "more": {
-                "name": "Suppress Row Drag",
-                "url": "/row-dragging/#suppress-row-drag"
-            }
-        },
-        "setSuppressMoveWhenRowDragging": {
-            "more": {
-                "name": "Suppress Move When Dragging",
-                "url": "/row-dragging/#suppress-move-when-dragging"
             }
         },
         "addRowDropZone": {
@@ -415,8 +673,18 @@
             }
         },
         "getSizesForCurrentTheme": {},
-        "resetRowHeights": {},
-        "onRowHeightChanged": {}
+        "resetRowHeights": {
+            "more": {
+                "name": "Changing Row Height",
+                "url": "/row-height/#changing-row-height"
+            }
+        },
+        "onRowHeightChanged": {
+            "more": {
+                "name": "Changing Row Height",
+                "url": "/row-height/#changing-row-height"
+            }
+        }
     },
     "scrolling": {
         "meta": {
@@ -426,8 +694,6 @@
                 "url": "/scrolling-scenarios/"
             }
         },
-        "setAlwaysShowHorizontalScroll": {},
-        "setAlwaysShowVerticalScroll": {},
         "ensureIndexVisible": {
             "more": {
                 "name": "firstDataRendered event",
@@ -457,7 +723,6 @@
                 "url": "/infinite-scrolling/"
             }
         },
-        "setDatasource": {},
         "refreshInfiniteCache": {},
         "purgeInfiniteCache": {},
         "getInfiniteRowCount": {},
@@ -472,8 +737,7 @@
                 "name": "Viewport Row Model",
                 "url": "/viewport/"
             }
-        },
-        "setViewportDatasource": {}
+        }
     },
     "overlays": {
         "meta": {
@@ -497,11 +761,21 @@
         },
         "cutToClipboard": {},
         "copyToClipboard": {},
-        "copySelectedRangeToClipboard": {},
-        "copySelectedRangeDown": {
-            "description": "Copies the selected range down, similar to <kbd>Ctrl</kbd>+<kbd>D</kbd> in Excel."
+        "copySelectedRangeToClipboard": {
+            "more": {
+                "name": "Copying via the API",
+                "url": "/clipboard/#copying-via-the-api"
+            }
         },
-        "copySelectedRowsToClipboard": {},
+        "copySelectedRangeDown": {
+            "description": "Copies the selected range down, similar to <kbd>^ Ctrl</kbd>+<kbd>D</kbd> in Excel."
+        },
+        "copySelectedRowsToClipboard": {
+            "more": {
+                "name": "Copying via the API",
+                "url": "/clipboard/#copying-via-the-api"
+            }
+        },
         "pasteFromClipboard": {}
     },
     "pagination": {
@@ -512,12 +786,10 @@
                 "url": "/row-pagination"
             }
         },
-        "setPagination": {},
         "paginationIsLastPageFound": {
             "description": "Returns `true` when the last page is known; this will always be the case if you are using the [Client-Side Row Model](/client-side-model/) for pagination. Returns `false` when the last page is not known; this only happens when using [Infinite Row Model](/infinite-scrolling/)."
         },
         "paginationGetPageSize": {},
-        "paginationSetPageSize": {},
         "paginationGetCurrentPage": {},
         "paginationGetTotalPages": {},
         "paginationGetRowCount": {},
@@ -526,20 +798,6 @@
         "paginationGoToPreviousPage": {},
         "paginationGoToFirstPage": {},
         "paginationGoToLastPage": {}
-    },
-    "headers": {
-        "meta": {
-            "displayName": "Column Headers",
-            "page": {
-                "name": "Column Headers",
-                "url": "/column-headers/"
-            }
-        },
-        "setHeaderHeight": {},
-        "setGroupHeaderHeight": {},
-        "setFloatingFiltersHeight": {},
-        "setPivotHeaderHeight": {},
-        "setPivotGroupHeaderHeight": {}
     },
     "UndoRedo": {
         "meta": {
@@ -559,58 +817,110 @@
             "displayName": "Pivot and Aggregation",
             "description": "See [Pivot](/pivoting/) and [Aggregation](/aggregation/) for more information"
         },
-        "addAggFunc": {},
-        "addAggFuncs": {},
+        "getValueColumns": {},
+        "addValueColumns": {},
+        "removeValueColumns": {},
+        "setValueColumns": {},
+        "setColumnAggFunc": {},
+        "addAggFuncs": {
+            "more": {
+                "name": "Registering Custom Functions",
+                "url": "/aggregation-custom-functions/#registering-custom-functions"
+            }
+        },
         "clearAggFuncs": {}
     },
     "accessories": {
         "meta": {
             "displayName": "Accessories"
         },
-        "setPopupParent": {
+        "showColumnChooser": {
             "more": {
-                "name": "Popup Parent",
-                "url": "/context-menu/#popup-parent"
+                "name": "Column Menu API",
+                "url": "/column-menu/#column-menu-api--events"
             }
         },
-        "showColumnMenuAfterButtonClick": {},
-        "showColumnMenuAfterMouseClick": {},
+        "showColumnFilter": {
+            "more": {
+                "name": "Column Menu API",
+                "url": "/column-menu/#column-menu-api--events"
+            }
+        },
+        "showColumnMenu": {
+            "more": {
+                "name": "Column Menu API",
+                "url": "/column-menu/#column-menu-api--events"
+            }
+        },
         "hidePopupMenu": {
             "description": "Hides any visible [context menu](/context-menu/) or [column menu](/column-menu/)."
         },
-        "setSideBar": {
+        "hideColumnChooser": {
+            "more": {
+                "name": "Column Menu API",
+                "url": "/column-menu/#column-menu-api--events"
+            }
+        },
+        "getSideBar": {
+            "more": {
+                "name": "Side Bar API",
+                "url": "/side-bar/#side-bar-api"
+            },
             "interfaceHierarchyOverrides": {
                 "exclude": [
                     "ToolPanelDef"
                 ],
                 "include": []
-            },
+            }
+        },
+        "setSideBarVisible": {
             "more": {
                 "name": "Side Bar",
                 "url": "/side-bar/"
             }
         },
-        "getSideBar": {
-            "interfaceHierarchyOverrides": {
-                "exclude": [
-                    "ToolPanelDef"
-                ],
-                "include": []
+        "isSideBarVisible": {
+            "more": {
+                "name": "Side Bar",
+                "url": "/side-bar/"
             }
         },
-        "setSideBarVisible": {},
-        "isSideBarVisible": {},
-        "setSideBarPosition": {},
+        "setSideBarPosition": {
+            "more": {
+                "name": "Side Bar",
+                "url": "/side-bar/"
+            }
+        },
         "openToolPanel": {
             "more": {
                 "name": "Tool Panel",
                 "url": "/tool-panel/"
             }
         },
-        "closeToolPanel": {},
-        "getOpenedToolPanel": {},
-        "isToolPanelShowing": {},
-        "refreshToolPanel": {},
+        "closeToolPanel": {
+            "more": {
+                "name": "Tool Panel",
+                "url": "/tool-panel/"
+            }
+        },
+        "getOpenedToolPanel": {
+            "more": {
+                "name": "Tool Panel",
+                "url": "/tool-panel/"
+            }
+        },
+        "isToolPanelShowing": {
+            "more": {
+                "name": "Tool Panel",
+                "url": "/tool-panel/"
+            }
+        },
+        "refreshToolPanel": {
+            "more": {
+                "name": "Tool Panel",
+                "url": "/tool-panel/"
+            }
+        },
         "getToolPanelInstance": {
             "more": {
                 "name": "Tool Panel Expand / Collapse Column Groups",
@@ -671,6 +981,10 @@
             }
         },
         "updateChart": {
+            "more": {
+                "name": "Event Driven Chart Updates",
+                "url": "/integrated-charts-events/#event-driven-chart-updates"
+            },
             "interfaceHierarchyOverrides": {
                 "exclude": [
                     "CellRangeParams",
@@ -727,13 +1041,13 @@
         "openChartToolPanel": {
             "more": {
                 "name": "Open Chart Tool Panel",
-                "url": "/integrated-charts-api-chart-tool-panel/"
+                "url": "/integrated-charts-chart-tool-panels/#chart-tool-panel-api"
             }
         },
         "closeChartToolPanel": {
             "more": {
                 "name": "Close Chart Tool Panel",
-                "url": "/integrated-charts-api-chart-tool-panel/"
+                "url": "/integrated-charts-chart-tool-panels/#chart-tool-panel-api"
             }
         }
     },
@@ -742,28 +1056,17 @@
             "displayName": "Miscellaneous"
         },
         "getValue": {},
-        "setDomLayout": {
-            "more": {
-                "name": "DOM Layout",
-                "url": "/grid-size/#dom-layout"
-            }
-        },
         "destroy": {},
+        "isDestroyed": {},
         "setGridAriaProperty": {
+            "more": {
+                "name": "ARIA Attributes",
+                "url": "/accessibility/#aria-attributes"
+            },
             "description": "Sets an ARIA property in the grid panel (element with `role=\"grid\"`), and removes an ARIA property when the value is null.<br /><br />Example:<br />`api.setGridAriaProperty('label', 'my grid')` will set `aria-label=\"my grid\"`.<br />`api.setGridAriaProperty('label', null)` will remove the `aria-label` attribute from the grid element."
         },
         "getGridId": {},
         "isAnimationFrameQueueEmpty": {}
-    },
-    "rowModels": {
-        "meta": {
-            "displayName": "RowModel",
-            "page": {
-                "name": "Row Model",
-                "url": "/row-models/"
-            }
-        },
-        "getModel": {}
     },
     "data": {
         "meta": {
@@ -773,11 +1076,30 @@
                 "url": "/client-side-model/"
             }
         },
-        "setRowData": {},
-        "applyTransaction": {},
-        "applyTransactionAsync": {},
-        "flushAsyncTransactions": {},
-        "refreshClientSideRowModel": {}
+        "applyTransaction": {
+            "more": {
+                "name": "Transaction Updates",
+                "url": "/data-update-transactions/"
+            }
+        },
+        "applyTransactionAsync": {
+            "more": {
+                "name": "High Frequency Updates",
+                "url": "/data-update-high-frequency/"
+            }
+        },
+        "flushAsyncTransactions": {
+            "more": {
+                "name": "Flush Async Transactions",
+                "url": "/data-update-high-frequency/#flush-async-transactions"
+            }
+        },
+        "refreshClientSideRowModel": {
+            "more": {
+                "name": "Sort / Filter / Group Refresh",
+                "url": "/data-update-single-row-cell/#sort--filter--group-refresh"
+            }
+        }
     },
     "serverSideRowModel": {
         "meta": {
@@ -787,21 +1109,14 @@
                 "url": "/server-side-model/"
             }
         },
-        "setServerSideDatasource": {},
-        "setCacheBlockSize": {},
         "setRowCount": {},
         "refreshServerSide": {
             "more": {
                 "name": "Purging Groups",
-                "url": "/server-side-model-refresh/"
+                "url": "/server-side-model-updating-refresh/"
             }
         },
-        "getServerSideGroupLevelState": {
-            "more": {
-                "name": "Store State",
-                "url": "/server-side-model-grouping/#store-state--store-info"
-            }
-        },
+        "getServerSideGroupLevelState": {},
         "retryServerSideLoads": {
             "more": {
                 "name": "Retry Loads",
@@ -818,6 +1133,12 @@
             "more": {
                 "name": "Transactions",
                 "url": "/server-side-model-updating-transactions/#asynchronous-updates"
+            }
+        },
+        "applyServerSideRowData": {
+            "more": {
+                "name": "Providing Additional Data",
+                "url": "/server-side-model-configuration/#providing-additional-data"
             }
         },
         "getServerSideSelectionState": {

@@ -41,6 +41,7 @@ export declare class Component extends BeanStub {
     protected wireQuerySelectors(): void;
     getGui(): HTMLElement;
     getFocusableElement(): HTMLElement;
+    getAriaElement(): Element;
     setParentComponent(component: Component): void;
     getParentComponent(): Component | undefined;
     protected setGui(eGui: HTMLElement): void;

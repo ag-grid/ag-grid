@@ -19,61 +19,47 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
 import { Bean } from "./context/context";
 import { BeanStub } from "./context/beanStub";
-import { Qualifier } from "./context/context";
 import { Events } from "./events";
 import { Autowired } from "./context/context";
 import { PostConstruct } from "./context/context";
 import { ChangedPath } from "./utils/changedPath";
-import { iterateObject } from "./utils/object";
-import { exists } from "./utils/generic";
-import { _ } from "./utils";
+import { exists, missing } from "./utils/generic";
+import { last } from "./utils/array";
 var SelectionService = /** @class */ (function (_super) {
     __extends(SelectionService, _super);
     function SelectionService() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.selectedNodes = new Map();
+        _this.lastRowNode = null;
+        return _this;
     }
-    SelectionService.prototype.setBeans = function (loggerFactory) {
-        this.logger = loggerFactory.create('selectionService');
-        this.reset();
-    };
     SelectionService.prototype.init = function () {
         var _this = this;
-        this.groupSelectsChildren = this.gridOptionsService.is('groupSelectsChildren');
-        this.addManagedPropertyListener('groupSelectsChildren', function (propChange) { return _this.groupSelectsChildren = propChange.currentValue; });
         this.rowSelection = this.gridOptionsService.get('rowSelection');
-        this.addManagedPropertyListener('rowSelection', function (propChange) { return _this.rowSelection = propChange.currentValue; });
+        this.groupSelectsChildren = this.gridOptionsService.get('groupSelectsChildren');
+        this.addManagedPropertyListeners(['groupSelectsChildren', 'rowSelection'], function () {
+            _this.groupSelectsChildren = _this.gridOptionsService.get('groupSelectsChildren');
+            _this.rowSelection = _this.gridOptionsService.get('rowSelection');
+            _this.deselectAllRowNodes({ source: 'api' });
+        });
         this.addManagedListener(this.eventService, Events.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
+    };
+    SelectionService.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+        this.resetNodes();
+        this.lastRowNode = null;
     };
     SelectionService.prototype.isMultiselect = function () {
         return this.rowSelection === 'multiple';
     };
     SelectionService.prototype.setNodesSelected = function (params) {
         var _a;
-        if (params.nodes.length === 0)
+        var newValue = params.newValue, clearSelection = params.clearSelection, suppressFinishActions = params.suppressFinishActions, rangeSelect = params.rangeSelect, nodes = params.nodes, event = params.event, _b = params.source, source = _b === void 0 ? 'api' : _b;
+        if (nodes.length === 0)
             return 0;
-        var newValue = params.newValue, clearSelection = params.clearSelection, suppressFinishActions = params.suppressFinishActions, rangeSelect = params.rangeSelect, event = params.event, _b = params.source, source = _b === void 0 ? 'api' : _b;
-        if (params.nodes.length > 1 && !this.isMultiselect()) {
+        if (nodes.length > 1 && !this.isMultiselect()) {
             console.warn("AG Grid: cannot multi select while rowSelection='single'");
             return 0;
         }
@@ -81,35 +67,47 @@ var SelectionService = /** @class */ (function (_super) {
         var groupSelectsFiltered = this.groupSelectsChildren && (params.groupSelectsFiltered === true);
         // if node is a footer, we don't do selection, just pass the info
         // to the sibling (the parent of the group)
-        var nodes = params.nodes.map(function (node) { return node.footer ? node.sibling : node; });
+        var filteredNodes = nodes.map(function (node) { return node.footer ? node.sibling : node; });
         if (rangeSelect) {
-            if (params.nodes.length > 1) {
+            if (nodes.length > 1) {
                 console.warn('AG Grid: cannot range select while selecting multiple rows');
                 return 0;
             }
-            var lastSelectedNode = this.getLastSelectedNode();
-            if (lastSelectedNode) {
+            var toNode = null;
+            if (source === 'checkboxSelected' && newValue === false && this.lastRowNode) {
+                if (this.lastRowNode.id) {
+                    toNode = this.lastRowNode;
+                }
+                else {
+                    this.lastRowNode = null;
+                }
+            }
+            if (toNode == null) {
+                toNode = this.getLastSelectedNode();
+            }
+            if (toNode) {
                 // if node is a footer, we don't do selection, just pass the info
                 // to the sibling (the parent of the group)
-                var node = nodes[0];
-                var newRowClicked = lastSelectedNode !== node;
+                var fromNode = filteredNodes[0];
+                var newRowClicked = fromNode !== toNode;
                 if (newRowClicked && this.isMultiselect()) {
-                    var nodesChanged = this.selectRange(node, lastSelectedNode, params.newValue, source);
-                    this.setLastSelectedNode(node);
-                    return nodesChanged;
+                    return this.selectRange(fromNode, toNode, newValue, source);
                 }
             }
         }
+        // when deselecting nodes, we want to use the last deselected node
+        // as starting point for deselection
+        this.lastRowNode = newValue ? null : filteredNodes[0];
         var updatedCount = 0;
-        for (var i = 0; i < nodes.length; i++) {
-            var node = nodes[i];
+        for (var i = 0; i < filteredNodes.length; i++) {
+            var node = filteredNodes[i];
             // when groupSelectsFiltered, then this node may end up intermediate despite
             // trying to set it to true / false. this group will be calculated further on
             // down when we call calculatedSelectedForAllGroupNodes(). we need to skip it
             // here, otherwise the updatedCount would include it.
             var skipThisNode = groupSelectsFiltered && node.group;
             if (!skipThisNode) {
-                var thisNodeWasSelected = node.selectThisNode(newValue, params.event, source);
+                var thisNodeWasSelected = node.selectThisNode(newValue, event, source);
                 if (thisNodeWasSelected) {
                     updatedCount++;
                 }
@@ -122,7 +120,7 @@ var SelectionService = /** @class */ (function (_super) {
         if (!suppressFinishActions) {
             var clearOtherNodes = newValue && (clearSelection || !this.isMultiselect());
             if (clearOtherNodes) {
-                updatedCount += this.clearOtherNodes(nodes[0], source);
+                updatedCount += this.clearOtherNodes(filteredNodes[0], source);
             }
             // only if we selected something, then update groups and fire events
             if (updatedCount > 0) {
@@ -134,10 +132,6 @@ var SelectionService = /** @class */ (function (_super) {
                     source: source
                 };
                 this.eventService.dispatchEvent(event_1);
-            }
-            // so if user next does shift-select, we know where to start the selection from
-            if (newValue) {
-                this.setLastSelectedNode(nodes[nodes.length - 1]);
             }
         }
         return updatedCount;
@@ -151,7 +145,7 @@ var SelectionService = /** @class */ (function (_super) {
         var nodesToSelect = this.rowModel.getNodesInRangeForSelection(fromNode, toNode);
         var updatedCount = 0;
         nodesToSelect.forEach(function (rowNode) {
-            if (rowNode.group && _this.groupSelectsChildren || (value === false && fromNode === rowNode)) {
+            if (rowNode.group && _this.groupSelectsChildren) {
                 return;
             }
             var nodeWasSelected = rowNode.selectThisNode(value, undefined, source);
@@ -169,7 +163,7 @@ var SelectionService = /** @class */ (function (_super) {
     };
     SelectionService.prototype.selectChildren = function (node, newValue, groupSelectsFiltered, source) {
         var children = groupSelectsFiltered ? node.childrenAfterAggFilter : node.childrenAfterGroup;
-        if (_.missing(children)) {
+        if (missing(children)) {
             return 0;
         }
         return this.setNodesSelected({
@@ -181,15 +175,20 @@ var SelectionService = /** @class */ (function (_super) {
             nodes: children,
         });
     };
-    SelectionService.prototype.setLastSelectedNode = function (rowNode) {
-        this.lastSelectedNode = rowNode;
-    };
     SelectionService.prototype.getLastSelectedNode = function () {
-        return this.lastSelectedNode;
+        var selectedKeys = Array.from(this.selectedNodes.keys());
+        if (selectedKeys.length == 0) {
+            return null;
+        }
+        var node = this.selectedNodes.get(last(selectedKeys));
+        if (node) {
+            return node;
+        }
+        return null;
     };
     SelectionService.prototype.getSelectedNodes = function () {
         var selectedNodes = [];
-        iterateObject(this.selectedNodes, function (key, rowNode) {
+        this.selectedNodes.forEach(function (rowNode) {
             if (rowNode) {
                 selectedNodes.push(rowNode);
             }
@@ -198,7 +197,7 @@ var SelectionService = /** @class */ (function (_super) {
     };
     SelectionService.prototype.getSelectedRows = function () {
         var selectedRows = [];
-        iterateObject(this.selectedNodes, function (key, rowNode) {
+        this.selectedNodes.forEach(function (rowNode) {
             if (rowNode && rowNode.data) {
                 selectedRows.push(rowNode.data);
             }
@@ -206,19 +205,18 @@ var SelectionService = /** @class */ (function (_super) {
         return selectedRows;
     };
     SelectionService.prototype.getSelectionCount = function () {
-        return Object.values(this.selectedNodes).length;
+        return this.selectedNodes.size;
     };
     /**
      * This method is used by the CSRM to remove groups which are being disposed of,
      * events do not need fired in this case
      */
     SelectionService.prototype.filterFromSelection = function (predicate) {
-        var newSelectedNodes = {};
-        Object.entries(this.selectedNodes).forEach(function (_a) {
-            var _b = __read(_a, 2), key = _b[0], node = _b[1];
-            var passesPredicate = node && predicate(node);
+        var newSelectedNodes = new Map();
+        this.selectedNodes.forEach(function (rowNode, key) {
+            var passesPredicate = rowNode && predicate(rowNode);
             if (passesPredicate) {
-                newSelectedNodes[key] = node;
+                newSelectedNodes.set(key, rowNode);
             }
         });
         this.selectedNodes = newSelectedNodes;
@@ -250,11 +248,11 @@ var SelectionService = /** @class */ (function (_super) {
     };
     SelectionService.prototype.clearOtherNodes = function (rowNodeToKeepSelected, source) {
         var _this = this;
-        var groupsToRefresh = {};
+        var groupsToRefresh = new Map();
         var updatedCount = 0;
-        iterateObject(this.selectedNodes, function (key, otherRowNode) {
+        this.selectedNodes.forEach(function (otherRowNode) {
             if (otherRowNode && otherRowNode.id !== rowNodeToKeepSelected.id) {
-                var rowNode = _this.selectedNodes[otherRowNode.id];
+                var rowNode = _this.selectedNodes.get(otherRowNode.id);
                 updatedCount += rowNode.setSelectedParams({
                     newValue: false,
                     clearSelection: false,
@@ -262,11 +260,11 @@ var SelectionService = /** @class */ (function (_super) {
                     source: source,
                 });
                 if (_this.groupSelectsChildren && otherRowNode.parent) {
-                    groupsToRefresh[otherRowNode.parent.id] = otherRowNode.parent;
+                    groupsToRefresh.set(otherRowNode.parent.id, otherRowNode.parent);
                 }
             }
         });
-        iterateObject(groupsToRefresh, function (key, group) {
+        groupsToRefresh.forEach(function (group) {
             var selected = group.calculateSelectedFromChildren();
             group.selectThisNode(selected === null ? false : selected, undefined, source);
         });
@@ -279,10 +277,10 @@ var SelectionService = /** @class */ (function (_super) {
             return;
         }
         if (rowNode.isSelected()) {
-            this.selectedNodes[rowNode.id] = rowNode;
+            this.selectedNodes.set(rowNode.id, rowNode);
         }
         else {
-            delete this.selectedNodes[rowNode.id];
+            this.selectedNodes.delete(rowNode.id);
         }
     };
     SelectionService.prototype.syncInRowNode = function (rowNode, oldNode) {
@@ -304,25 +302,35 @@ var SelectionService = /** @class */ (function (_super) {
         var oldNodeHasDifferentId = exists(oldNode) && (rowNode.id !== oldNode.id);
         if (oldNodeHasDifferentId && oldNode) {
             var id = oldNode.id;
-            var oldNodeSelected = this.selectedNodes[id] == rowNode;
+            var oldNodeSelected = this.selectedNodes.get(id) == rowNode;
             if (oldNodeSelected) {
-                this.selectedNodes[oldNode.id] = oldNode;
+                this.selectedNodes.set(oldNode.id, oldNode);
             }
         }
     };
     SelectionService.prototype.syncInNewRowNode = function (rowNode) {
-        if (exists(this.selectedNodes[rowNode.id])) {
+        if (this.selectedNodes.has(rowNode.id)) {
             rowNode.setSelectedInitialValue(true);
-            this.selectedNodes[rowNode.id] = rowNode;
+            this.selectedNodes.set(rowNode.id, rowNode);
         }
         else {
             rowNode.setSelectedInitialValue(false);
         }
     };
-    SelectionService.prototype.reset = function () {
-        this.logger.log('reset');
-        this.selectedNodes = {};
-        this.lastSelectedNode = null;
+    SelectionService.prototype.reset = function (source) {
+        var selectionCount = this.getSelectionCount();
+        this.resetNodes();
+        if (selectionCount) {
+            var event_2 = {
+                type: Events.EVENT_SELECTION_CHANGED,
+                source: source
+            };
+            this.eventService.dispatchEvent(event_2);
+        }
+    };
+    SelectionService.prototype.resetNodes = function () {
+        var _a;
+        (_a = this.selectedNodes) === null || _a === void 0 ? void 0 : _a.clear();
     };
     // returns a list of all nodes at 'best cost' - a feature to be used
     // with groups / trees. if a group has all it's children selected,
@@ -362,7 +370,7 @@ var SelectionService = /** @class */ (function (_super) {
     };
     SelectionService.prototype.isEmpty = function () {
         var count = 0;
-        iterateObject(this.selectedNodes, function (nodeId, rowNode) {
+        this.selectedNodes.forEach(function (rowNode) {
             if (rowNode) {
                 count++;
             }
@@ -381,14 +389,14 @@ var SelectionService = /** @class */ (function (_super) {
             this.getNodesToSelect(justFiltered, justCurrentPage).forEach(callback);
         }
         else {
-            iterateObject(this.selectedNodes, function (id, rowNode) {
+            this.selectedNodes.forEach(function (rowNode) {
                 // remember the reference can be to null, as we never 'delete' from the map
                 if (rowNode) {
                     callback(rowNode);
                 }
             });
             // this clears down the map (whereas above only sets the items in map to 'undefined')
-            this.reset();
+            this.reset(source);
         }
         // the above does not clean up the parent rows if they are selected
         if (rowModelClientSide && this.groupSelectsChildren) {
@@ -400,7 +408,7 @@ var SelectionService = /** @class */ (function (_super) {
         };
         this.eventService.dispatchEvent(event);
     };
-    SelectionService.prototype.getSelectAllState = function (justFiltered, justCurrentPage) {
+    SelectionService.prototype.getSelectedCounts = function (justFiltered, justCurrentPage) {
         var _this = this;
         var selectedCount = 0;
         var notSelectedCount = 0;
@@ -419,6 +427,10 @@ var SelectionService = /** @class */ (function (_super) {
             }
         };
         this.getNodesToSelect(justFiltered, justCurrentPage).forEach(callback);
+        return { selectedCount: selectedCount, notSelectedCount: notSelectedCount };
+    };
+    SelectionService.prototype.getSelectAllState = function (justFiltered, justCurrentPage) {
+        var _a = this.getSelectedCounts(justFiltered, justCurrentPage), selectedCount = _a.selectedCount, notSelectedCount = _a.notSelectedCount;
         // if no rows, always have it unselected
         if (selectedCount === 0 && notSelectedCount === 0) {
             return false;
@@ -430,6 +442,11 @@ var SelectionService = /** @class */ (function (_super) {
         // only selected
         return selectedCount > 0;
     };
+    SelectionService.prototype.hasNodesToSelect = function (justFiltered, justCurrentPage) {
+        if (justFiltered === void 0) { justFiltered = false; }
+        if (justCurrentPage === void 0) { justCurrentPage = false; }
+        return this.getNodesToSelect(justFiltered, justCurrentPage).filter(function (node) { return node.selectable; }).length > 0;
+    };
     /**
      * @param justFiltered whether to just include nodes which have passed the filter
      * @param justCurrentPage whether to just include nodes on the current page
@@ -440,7 +457,7 @@ var SelectionService = /** @class */ (function (_super) {
         if (justFiltered === void 0) { justFiltered = false; }
         if (justCurrentPage === void 0) { justCurrentPage = false; }
         if (this.rowModel.getType() !== 'clientSide') {
-            throw new Error("selectAll only available when rowModelType='clientSide', ie not " + this.rowModel.getType());
+            throw new Error("selectAll only available when rowModelType='clientSide', ie not ".concat(this.rowModel.getType()));
         }
         var nodes = [];
         if (justCurrentPage) {
@@ -483,7 +500,7 @@ var SelectionService = /** @class */ (function (_super) {
     };
     SelectionService.prototype.selectAllRowNodes = function (params) {
         if (this.rowModel.getType() !== 'clientSide') {
-            throw new Error("selectAll only available when rowModelType='clientSide', ie not " + this.rowModel.getType());
+            throw new Error("selectAll only available when rowModelType='clientSide', ie not ".concat(this.rowModel.getType()));
         }
         var source = params.source, justFiltered = params.justFiltered, justCurrentPage = params.justCurrentPage;
         var callback = function (rowNode) { return rowNode.selectThisNode(true, undefined, source); };
@@ -498,20 +515,38 @@ var SelectionService = /** @class */ (function (_super) {
         };
         this.eventService.dispatchEvent(event);
     };
-    // Used by SSRM
-    SelectionService.prototype.getServerSideSelectionState = function () {
-        return null;
+    SelectionService.prototype.getSelectionState = function () {
+        var selectedIds = [];
+        this.selectedNodes.forEach(function (node) {
+            if (node === null || node === void 0 ? void 0 : node.id) {
+                selectedIds.push(node.id);
+            }
+        });
+        return selectedIds.length ? selectedIds : null;
     };
-    SelectionService.prototype.setServerSideSelectionState = function (state) { };
+    SelectionService.prototype.setSelectionState = function (state, source) {
+        if (!Array.isArray(state)) {
+            return;
+        }
+        var rowIds = new Set(state);
+        var nodes = [];
+        this.rowModel.forEachNode(function (node) {
+            if (rowIds.has(node.id)) {
+                nodes.push(node);
+            }
+        });
+        this.setNodesSelected({
+            newValue: true,
+            nodes: nodes,
+            source: source
+        });
+    };
     __decorate([
         Autowired('rowModel')
     ], SelectionService.prototype, "rowModel", void 0);
     __decorate([
         Autowired('paginationProxy')
     ], SelectionService.prototype, "paginationProxy", void 0);
-    __decorate([
-        __param(0, Qualifier('loggerFactory'))
-    ], SelectionService.prototype, "setBeans", null);
     __decorate([
         PostConstruct
     ], SelectionService.prototype, "init", null);

@@ -1,26 +1,28 @@
-// @ag-grid-community/react v30.1.0
+// @ag-grid-community/react v31.1.0
 import { ReactPortal } from 'react';
-import { ComponentType, IComponent, WrappableInterface } from '@ag-grid-community/core';
-import { LegacyPortalManager } from './portalManager';
-declare abstract class BaseReactComponent implements IComponent<any>, WrappableInterface {
-    abstract getGui(): HTMLElement;
-    abstract getFrameworkComponentInstance(): any;
-    abstract rendered(): boolean;
-    abstract getReactComponentName(): string;
-    abstract hasMethod(name: string): boolean;
-    abstract callMethod(name: string, args: IArguments): void;
-    abstract addMethod(name: string, callback: Function): void;
-}
-export declare abstract class ReactComponent extends BaseReactComponent {
+import { AgPromise, ComponentType, IComponent, WrappableInterface } from '@ag-grid-community/core';
+import { PortalManager } from './portalManager';
+export declare class ReactComponent implements IComponent<any>, WrappableInterface {
     protected eParentElement: HTMLElement;
     protected componentInstance: any;
     protected reactComponent: any;
-    protected portalManager: LegacyPortalManager;
+    protected portalManager: PortalManager;
     protected portal: ReactPortal | null;
     protected statelessComponent: boolean;
     protected componentType: ComponentType;
-    constructor(reactComponent: any, portalManager: LegacyPortalManager, componentType: ComponentType);
+    protected key: string;
+    protected ref?: (element: any) => void;
+    private portalKey;
+    private oldPortal;
+    private reactElement;
+    private params;
+    protected instanceCreated: AgPromise<boolean>;
+    private resolveInstanceCreated?;
+    private suppressFallbackMethods;
+    constructor(reactComponent: any, portalManager: PortalManager, componentType: ComponentType, suppressFallbackMethods?: boolean);
     getGui(): HTMLElement;
+    /** `getGui()` returns the parent element. This returns the actual root element. */
+    getRootElement(): HTMLElement;
     destroy(): void;
     protected createParentElement(params: any): HTMLElement;
     protected addParentContainerStyleAndClasses(): void;
@@ -34,8 +36,14 @@ export declare abstract class ReactComponent extends BaseReactComponent {
     hasMethod(name: string): boolean;
     callMethod(name: string, args: IArguments): void;
     addMethod(name: string, callback: Function): void;
-    protected abstract fallbackMethod(name: string, params: any): any;
-    protected abstract fallbackMethodAvailable(name: string): boolean;
-    abstract isNullValue(): boolean;
+    init(params: any): AgPromise<void>;
+    private createOrUpdatePortal;
+    protected createElement(reactComponent: any, props: any): any;
+    private createReactComponent;
+    isNullValue(): boolean;
+    rendered(): boolean;
+    private valueRenderedIsNull;
+    protected refreshComponent(args: any): void;
+    protected fallbackMethod(name: string, params: any): any;
+    protected fallbackMethodAvailable(name: string): boolean;
 }
-export {};

@@ -28,11 +28,13 @@ export class CountStatusBarComponent implements IStatusPanelComp {
     }
 
     destroy() {
-        this.params.api.removeEventListener("gridReady", this.onGridReady);
+        if (!this.params.api.isDestroyed()) {
+            this.params.api.removeEventListener("gridReady", this.onGridReady);
+        }
     }
 
     onGridReady() {
-        this.eCount.innerText = this.params.api.getModel().getRowCount() + ''
+        this.eCount.innerText = this.params.api.getDisplayedRowCount() + ''
     }
 }
 

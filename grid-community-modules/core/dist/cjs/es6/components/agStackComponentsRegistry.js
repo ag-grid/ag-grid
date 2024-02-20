@@ -34,6 +34,6 @@ let AgStackComponentsRegistry = class AgStackComponentsRegistry extends beanStub
     }
 };
 AgStackComponentsRegistry = __decorate([
-    context_1.Bean('agStackComponentsRegistry')
+    (0, context_1.Bean)('agStackComponentsRegistry')
 ], AgStackComponentsRegistry);
 exports.AgStackComponentsRegistry = AgStackComponentsRegistry;

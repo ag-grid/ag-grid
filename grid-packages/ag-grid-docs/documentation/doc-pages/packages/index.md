@@ -4,6 +4,12 @@ title: "AG Grid Packages"
 
 AG Grid `packages` are the easiest way to get started with AG Grid, but the trade-off will be a larger overall bundle size if you don't need all of the features within a given package.
 
+<framework-specific-section frameworks="vue">
+<note>
+|Note that the following describes the setup for Vue 3. For Vue 2, use `ag-grid-vue` instead of `ag-grid-vue3`.
+</note>
+</framework-specific-section>
+
 ## Introduction
 
 The following artifacts are "`packages`" and are designed to work together:
@@ -25,6 +31,10 @@ The following artifacts are "`packages`" and are designed to work together:
         <td><code>ag-grid-enterprise</code></td>
         <td>All Enterprise Features</td>
     </tr>
+    <tr>
+        <td><code>ag-grid-charts-enterprise</code></td>
+        <td>AG Grid Enterprise & AG Charts Enterprise</td>
+    </tr>
     </tbody>
 </table>
 </framework-specific-section>
@@ -45,6 +55,10 @@ The following artifacts are "`packages`" and are designed to work together:
     <tr>
         <td><code>ag-grid-enterprise</code></td>
         <td>All Enterprise Features</td>
+    </tr>
+    <tr>
+        <td><code>ag-grid-charts-enterprise</code></td>
+        <td>AG Grid Enterprise & AG Charts Enterprise</td>
     </tr>
     <tr>
         <td><code>ag-grid-angular</code></td>
@@ -72,6 +86,10 @@ The following artifacts are "`packages`" and are designed to work together:
         <td>All Enterprise Features</td>
     </tr>
     <tr>
+        <td><code>ag-grid-charts-enterprise</code></td>
+        <td>AG Grid Enterprise & AG Charts Enterprise</td>
+    </tr>
+    <tr>
         <td><code>ag-grid-react</code></td>
         <td>React Support</td>
     </tr>
@@ -97,7 +115,11 @@ The following artifacts are "`packages`" and are designed to work together:
         <td>All Enterprise Features</td>
     </tr>
     <tr>
-        <td><code>ag-grid-vue</code></td>
+        <td><code>ag-grid-charts-enterprise</code></td>
+        <td>AG Grid Enterprise & AG Charts Enterprise</td>
+    </tr>
+    <tr>
+        <td><code>ag-grid-vue3</code></td>
         <td>Vue Support</td>
     </tr>
     </tbody>
@@ -137,6 +159,7 @@ import 'ag-grid-enterprise';
 |Finally, if you're using Angular you'll need to specify `ag-grid-angular` packages:
 </framework-specific-section>
 
+<framework-specific-section frameworks="angular">
 <snippet transform={false} language="diff">
 |"dependencies": {
 |    "ag-grid-community": "~@AG_GRID_VERSION@"
@@ -145,6 +168,7 @@ import 'ag-grid-enterprise';
 |    //...other dependencies...
 |}
 </snippet>
+</framework-specific-section>
 
 <framework-specific-section frameworks="react">
 |Finally, if you're using React you'll need to specify `ag-grid-react` packages:
@@ -162,15 +186,15 @@ import 'ag-grid-enterprise';
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
-|Finally, if you're using Vue you'll need to specify `ag-grid-vue` packages:
+|Finally, if you're using Vue you'll need to specify `ag-grid-vue3` packages:
 </framework-specific-section>
 
-<framework-specific-section frameworks="javascript">
+<framework-specific-section frameworks="vue">
 <snippet transform={false} language="diff">
 |"dependencies": {
 |    "ag-grid-community": "~@AG_GRID_VERSION@"
 |    "ag-grid-enterprise": "~@AG_GRID_VERSION@"
-|+   "ag-grid-vue": "~@AG_GRID_VERSION@"
+|+   "ag-grid-vue3": "~@AG_GRID_VERSION@"
 |    //...other dependencies...
 |}
 </snippet>
@@ -180,7 +204,7 @@ import 'ag-grid-enterprise';
 
 If you are using packages then check that you select the 'Packages' option from the example runner dropdown as this means the code that you see will be using `packages`. This is important as it means any imports will be from `packages` enabling correct copy and pasting.
 
-<image-caption src="package-example-runner.png" alt="Example Runner using Packages" maxWidth="90%" constrained="true" centered="true"></image-caption>
+<image-caption src="package-example-runner.png" alt="Example Runner using Packages" maxWidth="90%" constrained="true" centered="true" toggleDarkMode="true"></image-caption>
 
 ## Mixing **packages** and **modules**
 
@@ -198,8 +222,8 @@ It is vitally important that you do not mix packages and modules in the same app
 
 <snippet transform={false}> 
 "dependencies": {
-    "ag-grid-community": "~@AG_GRID_VERSION@" <- a package dependency
-    "@ag-grid-enterprise/row-grouping": "~@AG_GRID_VERSION@"  <- a module dependency
+    "ag-grid-community": "~@AG_GRID_VERSION@" // a package dependency
+    "@ag-grid-enterprise/row-grouping": "~@AG_GRID_VERSION@" // a module dependency
     //...other dependencies...
 }
 </snippet>

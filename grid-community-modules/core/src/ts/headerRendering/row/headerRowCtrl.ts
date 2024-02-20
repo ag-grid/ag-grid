@@ -1,25 +1,22 @@
-import { ColumnModel } from "../../columns/columnModel";
 import { BeanStub } from "../../context/beanStub";
 import { Autowired, PostConstruct } from "../../context/context";
 import { Column, ColumnPinnedType } from "../../entities/column";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { IHeaderColumn } from "../../interfaces/iHeaderColumn";
 import { Events } from "../../eventKeys";
-import { FocusService } from "../../focusService";
-import { isBrowserSafari } from "../../utils/browser";
-import { getAllValuesInObject, iterateObject } from "../../utils/object";
+import { VirtualColumnsChangedEvent } from "../../events";
 import { AbstractHeaderCellCtrl } from "../cells/abstractCell/abstractHeaderCellCtrl";
 import { HeaderFilterCellCtrl } from "../cells/floatingFilter/headerFilterCellCtrl";
 import { HeaderCellCtrl } from "../cells/column/headerCellCtrl";
 import { HeaderGroupCellCtrl } from "../cells/columnGroup/headerGroupCellCtrl";
 import { HeaderRowType } from "./headerRowComp";
 import { values } from "../../utils/generic";
-import { FilterManager } from "../../filter/filterManager";
+import { Beans } from "../../rendering/beans";
 
 export interface IHeaderRowComp {
     setTop(top: string): void;
     setHeight(height: string): void;
-    setHeaderCtrls(ctrls: AbstractHeaderCellCtrl[], forceOrder: boolean): void;
+    setHeaderCtrls(ctrls: AbstractHeaderCellCtrl[], forceOrder: boolean, afterScroll: boolean): void;
     setWidth(width: string): void;
 }
 
@@ -27,9 +24,7 @@ let instanceIdSequence = 0;
 
 export class HeaderRowCtrl extends BeanStub {
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('filterManager') private filterManager: FilterManager;
+    @Autowired('beans') private beans: Beans;
 
     private comp: IHeaderRowComp;
     private rowIndex: number;
@@ -39,7 +34,7 @@ export class HeaderRowCtrl extends BeanStub {
 
     private instanceId = instanceIdSequence++;
 
-    private headerCellCtrls: { [key: string]: AbstractHeaderCellCtrl } = {};
+    private headerCellCtrls: Map<string, AbstractHeaderCellCtrl> | undefined;
 
     private isPrintLayout: boolean;
     private isEnsureDomOrder: boolean;
@@ -59,7 +54,7 @@ export class HeaderRowCtrl extends BeanStub {
     @PostConstruct
     private postConstruct(): void {
         this.isPrintLayout = this.gridOptionsService.isDomLayout('print');
-        this.isEnsureDomOrder = this.gridOptionsService.is('ensureDomOrder');
+        this.isEnsureDomOrder = this.gridOptionsService.get('ensureDomOrder');
     }
 
 
@@ -75,7 +70,7 @@ export class HeaderRowCtrl extends BeanStub {
     public setComp(comp: IHeaderRowComp, initCompState: boolean = true): void {
         this.comp = comp;
 
-        if(initCompState){
+        if (initCompState) {
             this.onRowHeightChanged();
             this.onVirtualColumnsChanged();
         }
@@ -91,19 +86,11 @@ export class HeaderRowCtrl extends BeanStub {
     public getAriaRowIndex(): number {
         return this.rowIndex + 1;
     }
-    public getTransform(): string | undefined {
-        if (isBrowserSafari()) {
-            // fix for a Safari rendering bug that caused the header to flicker above chart panels
-            // as you move the mouse over the header
-            return 'translateZ(0)';
-        }
-    }
-
 
     private addEventListeners(): void {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, (params: VirtualColumnsChangedEvent) => this.onVirtualColumnsChanged(params.afterScroll));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED, this.onRowHeightChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_GRID_STYLES_CHANGED, this.onRowHeightChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED, this.onRowHeightChanged.bind(this));
@@ -122,6 +109,7 @@ export class HeaderRowCtrl extends BeanStub {
     public getHeaderCellCtrl(column: ColumnGroup): HeaderGroupCellCtrl | undefined;
     public getHeaderCellCtrl(column: Column): HeaderCellCtrl | undefined;
     public getHeaderCellCtrl(column: any): any {
+        if (!this.headerCellCtrls) { return; }
         return values(this.headerCellCtrls).find(cellCtrl => cellCtrl.getColumnGroupChild() === column);
     }
 
@@ -146,17 +134,18 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private getWidthForRow(): number {
+        const { columnModel } = this.beans;
         if (this.isPrintLayout) {
             const pinned = this.pinned != null;
             if (pinned) { return 0; }
 
-            return this.columnModel.getContainerWidth('right')
-                + this.columnModel.getContainerWidth('left')
-                + this.columnModel.getContainerWidth(null);
+            return columnModel.getContainerWidth('right')
+                + columnModel.getContainerWidth('left')
+                + columnModel.getContainerWidth(null);
         }
 
         // if not printing, just return the width as normal
-        return this.columnModel.getContainerWidth(this.pinned);
+        return columnModel.getContainerWidth(this.pinned);
     }
 
     private onRowHeightChanged(): void {
@@ -167,18 +156,19 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     public getTopAndHeight() {
-        let headerRowCount = this.columnModel.getHeaderRowCount();
+        const { columnModel, filterManager } = this.beans;
+        let headerRowCount = columnModel.getHeaderRowCount();
         const sizes: number[] = [];
 
         let numberOfFloating = 0;
 
-        if (this.filterManager.hasFloatingFilters()) {
+        if (filterManager.hasFloatingFilters()) {
             headerRowCount++;
             numberOfFloating = 1;
         }
 
-        const groupHeight = this.columnModel.getColumnGroupHeaderRowHeight();
-        const headerHeight = this.columnModel.getColumnHeaderRowHeight();
+        const groupHeight = columnModel.getColumnGroupHeaderRowHeight();
+        const headerHeight = columnModel.getColumnHeaderRowHeight();
 
         const numberOfNonGroups = 1 + numberOfFloating;
         const numberOfGroups = headerRowCount - numberOfNonGroups;
@@ -187,7 +177,7 @@ export class HeaderRowCtrl extends BeanStub {
 
         sizes.push(headerHeight);
 
-        for (let i = 0; i < numberOfFloating; i++) { sizes.push(this.columnModel.getFloatingFiltersHeight() as number); }
+        for (let i = 0; i < numberOfFloating; i++) { sizes.push(columnModel.getFloatingFiltersHeight() as number); }
 
         let topOffset = 0;
 
@@ -205,78 +195,89 @@ export class HeaderRowCtrl extends BeanStub {
         return this.rowIndex;
     }
 
-    private onVirtualColumnsChanged(): void {
+    private onVirtualColumnsChanged(afterScroll: boolean = false): void {
         const ctrlsToDisplay = this.getHeaderCtrls();
         const forceOrder = this.isEnsureDomOrder || this.isPrintLayout;
-        this.comp.setHeaderCtrls(ctrlsToDisplay, forceOrder);
+        this.comp.setHeaderCtrls(ctrlsToDisplay, forceOrder, afterScroll);
     }
 
     public getHeaderCtrls() {
         const oldCtrls = this.headerCellCtrls;
-        this.headerCellCtrls = {};
+        this.headerCellCtrls = new Map();
         const columns = this.getColumnsInViewport();
 
-        columns.forEach(child => {
-            // skip groups that have no displayed children. this can happen when the group is broken,
-            // and this section happens to have nothing to display for the open / closed state.
-            // (a broken group is one that is split, ie columns in the group have a non-group column
-            // in between them)
-            if (child.isEmptyGroup()) {
-                return;
-            }
-
-            const idOfChild = child.getUniqueId();
-
-            // if we already have this cell rendered, do nothing
-            let headerCtrl: AbstractHeaderCellCtrl | undefined = oldCtrls[idOfChild];
-            delete oldCtrls[idOfChild];
-
-            // it's possible there is a new Column with the same ID, but it's for a different Column.
-            // this is common with pivoting, where the pivot cols change, but the id's are still pivot_0,
-            // pivot_1 etc. so if new col but same ID, need to remove the old col here first as we are
-            // about to replace it in the this.headerComps map.
-            const forOldColumn = headerCtrl && headerCtrl.getColumnGroupChild() != child;
-            if (forOldColumn) {
-                this.destroyBean(headerCtrl);
-                headerCtrl = undefined;
-            }
-
-            if (headerCtrl == null) {
-                switch (this.type) {
-                    case HeaderRowType.FLOATING_FILTER:
-                        headerCtrl = this.createBean(new HeaderFilterCellCtrl(child as Column, this));
-                        break;
-                    case HeaderRowType.COLUMN_GROUP:
-                        headerCtrl = this.createBean(new HeaderGroupCellCtrl(child as ColumnGroup, this));
-                        break;
-                    default:
-                        headerCtrl = this.createBean(new HeaderCellCtrl(child as Column, this));
-                        break;
-                }
-            }
-
-            this.headerCellCtrls[idOfChild] = headerCtrl;
-        });
+        for (const child of columns) {
+            this.recycleAndCreateHeaderCtrls(child, oldCtrls)
+        }
 
         // we want to keep columns that are focused, otherwise keyboard navigation breaks
         const isFocusedAndDisplayed = (ctrl: HeaderCellCtrl) => {
-            const isFocused = this.focusService.isHeaderWrapperFocused(ctrl);
+            const { focusService, columnModel } = this.beans;
+
+            const isFocused = focusService.isHeaderWrapperFocused(ctrl);
             if (!isFocused) { return false; }
-            const isDisplayed = this.columnModel.isDisplayed(ctrl.getColumnGroupChild());
+            const isDisplayed = columnModel.isDisplayed(ctrl.getColumnGroupChild());
             return isDisplayed;
         };
 
-        iterateObject(oldCtrls, (id: string, oldCtrl: HeaderCellCtrl) => {
-            const keepCtrl = isFocusedAndDisplayed(oldCtrl);
-            if (keepCtrl) {
-                this.headerCellCtrls[id] = oldCtrl;
-            } else {
-                this.destroyBean(oldCtrl);
+        if (oldCtrls) {
+            for (const [id, oldCtrl] of oldCtrls) {
+                const keepCtrl = isFocusedAndDisplayed(oldCtrl as HeaderCellCtrl);
+                if (keepCtrl) {
+                    this.headerCellCtrls.set(id, oldCtrl);
+                } else {
+                    this.destroyBean(oldCtrl);
+                }
             }
-        });
+        }
 
-        const ctrlsToDisplay = getAllValuesInObject(this.headerCellCtrls);
+
+        const ctrlsToDisplay = Array.from(this.headerCellCtrls.values());
         return ctrlsToDisplay;
+    }
+
+    private recycleAndCreateHeaderCtrls(headerColumn: IHeaderColumn, oldCtrls?: Map<string, AbstractHeaderCellCtrl>): void {
+        if (!this.headerCellCtrls) { return; }
+        // skip groups that have no displayed children. this can happen when the group is broken,
+        // and this section happens to have nothing to display for the open / closed state.
+        // (a broken group is one that is split, ie columns in the group have a non-group column
+        // in between them)
+        if (headerColumn.isEmptyGroup()) { return; }
+
+        const idOfChild = headerColumn.getUniqueId();
+
+        // if we already have this cell rendered, do nothing
+        let headerCtrl: AbstractHeaderCellCtrl | undefined;
+        if (oldCtrls) {
+            headerCtrl = oldCtrls.get(idOfChild);
+            oldCtrls.delete(idOfChild);
+        }
+
+        // it's possible there is a new Column with the same ID, but it's for a different Column.
+        // this is common with pivoting, where the pivot cols change, but the id's are still pivot_0,
+        // pivot_1 etc. so if new col but same ID, need to remove the old col here first as we are
+        // about to replace it in the this.headerComps map.
+        const forOldColumn = headerCtrl && headerCtrl.getColumnGroupChild() != headerColumn;
+        if (forOldColumn) {
+            this.destroyBean(headerCtrl);
+            headerCtrl = undefined;
+        }
+
+        if (headerCtrl == null) {
+            switch (this.type) {
+                case HeaderRowType.FLOATING_FILTER:
+                    headerCtrl = this.createBean(new HeaderFilterCellCtrl(headerColumn as Column, this.beans, this));
+                    break;
+                case HeaderRowType.COLUMN_GROUP:
+                    headerCtrl = this.createBean(new HeaderGroupCellCtrl(headerColumn as ColumnGroup, this.beans, this));
+                    break;
+                default:
+                    headerCtrl = this.createBean(new HeaderCellCtrl(headerColumn as Column, this.beans, this));
+                    break;
+            }
+        }
+
+        this.headerCellCtrls.set(idOfChild, headerCtrl);
     }
 
     private getColumnsInViewport(): IHeaderColumn[] {
@@ -289,9 +290,10 @@ export class HeaderRowCtrl extends BeanStub {
 
         let viewportColumns: IHeaderColumn[] = [];
         const actualDepth = this.getActualDepth();
+        const { columnModel } = this.beans;
 
         (['left', null, 'right'] as ColumnPinnedType[]).forEach(pinned => {
-            const items = this.columnModel.getVirtualHeaderGroupRow(pinned, actualDepth);
+            const items = columnModel.getVirtualHeaderGroupRow(pinned, actualDepth);
             viewportColumns = viewportColumns.concat(items);
         });
 
@@ -304,25 +306,27 @@ export class HeaderRowCtrl extends BeanStub {
 
     private getColumnsInViewportNormalLayout(): IHeaderColumn[] {
         // when in normal layout, we add the columns for that container only
-        return this.columnModel.getVirtualHeaderGroupRow(this.pinned, this.getActualDepth());
+        return this.beans.columnModel.getVirtualHeaderGroupRow(this.pinned, this.getActualDepth());
     }
 
     public focusHeader(column: IHeaderColumn, event?: KeyboardEvent): boolean {
-        const allCtrls = getAllValuesInObject(this.headerCellCtrls);
-        const ctrl: AbstractHeaderCellCtrl = allCtrls.find(ctrl => ctrl.getColumnGroupChild() == column);
+        if (!this.headerCellCtrls) { return false; }
+
+        const allCtrls = Array.from(this.headerCellCtrls.values());
+        const ctrl: AbstractHeaderCellCtrl | undefined = allCtrls.find(ctrl => ctrl.getColumnGroupChild() == column);
+
         if (!ctrl) { return false; }
 
-        ctrl.focus(event);
-
-        return true;
+        return ctrl.focus(event);
     }
 
     protected destroy(): void {
-        iterateObject(this.headerCellCtrls, (key, ctrl) => {
-            this.destroyBean(ctrl);
-        });
-        this.headerCellCtrls = {};
-
+        if (this.headerCellCtrls) {
+            this.headerCellCtrls.forEach((ctrl) => {
+                this.destroyBean(ctrl);
+            });
+        }
+        this.headerCellCtrls = undefined;
         super.destroy();
     }
 }

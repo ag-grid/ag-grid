@@ -33,6 +33,12 @@ class NumberFilter extends scalarFilter_1.ScalarFilter {
         this.eValuesFrom = [];
         this.eValuesTo = [];
     }
+    refresh(params) {
+        if (this.numberFilterParams.allowedCharPattern !== params.allowedCharPattern) {
+            return false;
+        }
+        return super.refresh(params);
+    }
     mapValuesFromModel(filterModel) {
         const { filter, filterTo, type } = filterModel || {};
         return [
@@ -59,8 +65,9 @@ class NumberFilter extends scalarFilter_1.ScalarFilter {
     getDefaultFilterOptions() {
         return NumberFilter.DEFAULT_FILTER_OPTIONS;
     }
-    setElementValue(element, value) {
-        const valueToSet = this.numberFilterParams.numberFormatter
+    setElementValue(element, value, fromFloatingFilter) {
+        // values from floating filter are directly from the input, not from the model
+        const valueToSet = !fromFloatingFilter && this.numberFilterParams.numberFormatter
             ? this.numberFilterParams.numberFormatter(value !== null && value !== void 0 ? value : null)
             : value;
         super.setElementValue(element, valueToSet);
@@ -69,7 +76,7 @@ class NumberFilter extends scalarFilter_1.ScalarFilter {
         const allowedCharPattern = getAllowedCharPattern(this.numberFilterParams);
         const eCondition = document.createElement('div');
         eCondition.classList.add('ag-filter-body');
-        aria_1.setAriaRole(eCondition, 'presentation');
+        (0, aria_1.setAriaRole)(eCondition, 'presentation');
         this.createFromToElement(eCondition, this.eValuesFrom, 'from', allowedCharPattern);
         this.createFromToElement(eCondition, this.eValuesTo, 'to', allowedCharPattern);
         return eCondition;
@@ -112,7 +119,7 @@ class NumberFilter extends scalarFilter_1.ScalarFilter {
         if (typeof value === 'number') {
             return value;
         }
-        let filterText = generic_1.makeNull(value);
+        let filterText = (0, generic_1.makeNull)(value);
         if (filterText != null && filterText.trim() === '') {
             filterText = null;
         }
@@ -161,10 +168,10 @@ exports.NumberFilter = NumberFilter;
 NumberFilter.DEFAULT_FILTER_OPTIONS = [
     scalarFilter_1.ScalarFilter.EQUALS,
     scalarFilter_1.ScalarFilter.NOT_EQUAL,
-    scalarFilter_1.ScalarFilter.LESS_THAN,
-    scalarFilter_1.ScalarFilter.LESS_THAN_OR_EQUAL,
     scalarFilter_1.ScalarFilter.GREATER_THAN,
     scalarFilter_1.ScalarFilter.GREATER_THAN_OR_EQUAL,
+    scalarFilter_1.ScalarFilter.LESS_THAN,
+    scalarFilter_1.ScalarFilter.LESS_THAN_OR_EQUAL,
     scalarFilter_1.ScalarFilter.IN_RANGE,
     scalarFilter_1.ScalarFilter.BLANK,
     scalarFilter_1.ScalarFilter.NOT_BLANK,

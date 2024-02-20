@@ -1,4 +1,4 @@
-import { Grid, ColDef, ColGroupDef, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, ColGroupDef, GridOptions } from '@ag-grid-community/core';
 
 const columnDefs: (ColDef | ColGroupDef)[] = [
   {
@@ -6,7 +6,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
     headerCheckboxSelection: true,
     checkboxSelection: true,
     floatingFilter: false,
-    suppressMenu: true,
+    suppressHeaderMenuButton: true,
     minWidth: 55,
     maxWidth: 55,
     width: 55,
@@ -61,6 +61,8 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
   { field: 'year', filter: 'agNumberColumnFilter' },
 ]
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   rowData: null,
   columnDefs: columnDefs,
@@ -68,10 +70,8 @@ const gridOptions: GridOptions<IOlympicData> = {
   suppressRowClickSelection: true,
   defaultColDef: {
     editable: true,
-    sortable: true,
     minWidth: 100,
     filter: true,
-    resizable: true,
     floatingFilter: true,
     flex: 1,
   },
@@ -84,9 +84,9 @@ const gridOptions: GridOptions<IOlympicData> = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

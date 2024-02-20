@@ -1,88 +1,75 @@
 const columnDefs = [
     {
         headerName: 'Group 1',
-        headerClass: 'blue',
         groupId: 'Group1',
         children: [
-            { field: 'athlete', pinned: true, width: 100 },
-            { field: 'age', pinned: true, columnGroupShow: 'open', width: 100 },
-            { field: 'country', width: 100 },
-            { field: 'year', columnGroupShow: 'open', width: 100 },
-            { field: 'date', width: 100 },
-            { field: 'sport', columnGroupShow: 'open', width: 100 },
-            { field: 'date', width: 100 },
-            { field: 'sport', columnGroupShow: 'open', width: 100 }
+            { field: 'athlete', pinned: true, },
+            { field: 'age', pinned: true, columnGroupShow: 'open', },
+            { field: 'country', },
+            { field: 'year', columnGroupShow: 'open', },
+            { field: 'date', },
+            { field: 'sport', columnGroupShow: 'open', },
         ]
     },
     {
         headerName: 'Group 2',
-        headerClass: 'green',
         groupId: 'Group2',
         children: [
-            { field: 'athlete', pinned: true, width: 100 },
-            { field: 'age', pinned: true, columnGroupShow: 'open', width: 100 },
-            { field: 'country', width: 100 },
-            { field: 'year', columnGroupShow: 'open', width: 100 },
-            { field: 'date', width: 100 },
-            { field: 'sport', columnGroupShow: 'open', width: 100 },
-            { field: 'date', width: 100 },
-            { field: 'sport', columnGroupShow: 'open', width: 100 }
+            { field: 'athlete', pinned: true, },
+            { field: 'age', pinned: true, columnGroupShow: 'open', },
+            { field: 'country', },
+            { field: 'year', columnGroupShow: 'open', },
+            { field: 'date', },
+            { field: 'sport', columnGroupShow: 'open', },
         ]
     }
 ];
 
 // this is the grid options for the top grid
+let topApi;
+let bottomApi;
 const gridOptionsTop = {
     defaultColDef: {
-        editable: true,
-        sortable: true,
-        resizable: true,
         filter: true,
         flex: 1,
-        minWidth: 100
+        minWidth: 120
     },
     columnDefs: columnDefs,
     rowData: null,
-    // debug: true,
-    alignedGrids: []
+    alignedGrids: () => [bottomApi],
+    autoSizeStrategy: {
+        type: 'fitGridWidth'
+    },
 };
 
 // this is the grid options for the bottom grid
 const gridOptionsBottom = {
     defaultColDef: {
-        editable: true,
-        sortable: true,
-        resizable: true,
         filter: true,
         flex: 1,
-        minWidth: 100
+        minWidth: 120
     },
     columnDefs: columnDefs,
     rowData: null,
-    // debug: true,
-    alignedGrids: []
+    alignedGrids: () => [topApi],
 };
 
-gridOptionsTop.alignedGrids.push(gridOptionsBottom);
-gridOptionsBottom.alignedGrids.push(gridOptionsTop);
-
 function setData(rowData) {
-    gridOptionsTop.api.setRowData(rowData);
-    gridOptionsBottom.api.setRowData(rowData);
-    gridOptionsTop.api.sizeColumnsToFit();
+    topApi.setGridOption('rowData', rowData);
+    bottomApi.setGridOption('rowData', rowData);
 
     // mix up some columns
-    gridOptionsTop.columnApi.moveColumnByIndex(11, 4);
-    gridOptionsTop.columnApi.moveColumnByIndex(11, 4);
+    topApi.moveColumnByIndex(11, 4);
+    topApi.moveColumnByIndex(11, 4);
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
     const gridDivTop = document.querySelector('#myGridTop');
-    new agGrid.Grid(gridDivTop, gridOptionsTop);
+    topApi = agGrid.createGrid(gridDivTop, gridOptionsTop);
 
     const gridDivBottom = document.querySelector('#myGridBottom');
-    new agGrid.Grid(gridDivBottom, gridOptionsBottom);
+    bottomApi = agGrid.createGrid(gridDivBottom, gridOptionsBottom);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then(response => response.json())

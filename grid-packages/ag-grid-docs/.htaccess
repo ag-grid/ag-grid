@@ -101,7 +101,7 @@ AddType text/javascript ts jsx
     Redirect 301 /react-grid/ /react-data-grid/
     Redirect 301 /angular-grid/ /angular-data-grid/
     Redirect 301 /vue-grid/ /vue-data-grid/
-    Redirect 301 /ag-grid-8-performance-hacks-for-javascript/ /javascript-data-grid/8-performance-hacks-for-javascript/
+    Redirect 301 /ag-grid-8-performance-hacks-for-javascript/ /javascript-data-grid/
     Redirect 301 /ag-grid-angular-aot-dynamic-components/ https://medium.com/ag-grid/understanding-aot-and-dynamic-components-in-angular-2-9b7548ce5845
     Redirect 301 /ag-grid-angular-connect-2016/ https://medium.com/ag-grid/were-gonna-need-a-bigger-boat-from-speaker-to-sponsor-with-ag-grid-cf5e01a2d9ba
     Redirect 301 /ag-grid-angular-systemjs/ /angular-data-grid/
@@ -223,62 +223,6 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/angular/cell-styles/ /angular-data-grid/cell-styles/
     Redirect 301 /documentation/angular/change-cell-renderers/ /angular-data-grid/change-cell-renderers/
     Redirect 301 /documentation/angular/change-detection/ /angular-data-grid/change-detection/
-    Redirect 301 /documentation/angular/charts-api-explorer/ /angular-charts/api-explorer/
-    Redirect 301 /documentation/angular/charts-api-themes/ /angular-charts/api-themes/
-    Redirect 301 /documentation/angular/charts-api/ /angular-charts/api/
-    Redirect 301 /documentation/angular/charts-area-series/ /angular-charts/area-series/
-    Redirect 301 /documentation/angular/charts-axes/ /angular-charts/axes/
-    Redirect 301 /documentation/angular/charts-bar-series/ /angular-charts/bar-series/
-    Redirect 301 /documentation/angular/charts-events/ /angular-charts/events/
-    Redirect 301 /documentation/angular/charts-formatters/ /angular-charts/formatters/
-    Redirect 301 /documentation/angular/charts-getting-started/ /angular-charts/getting-started/
-    Redirect 301 /documentation/angular/charts-histogram-series/ /angular-charts/histogram-series/
-    Redirect 301 /documentation/angular/charts-layout/ /angular-charts/layout/
-    Redirect 301 /documentation/angular/charts-legend/ /angular-charts/legend/
-    Redirect 301 /documentation/angular/charts-line-series/ /angular-charts/line-series/
-    Redirect 301 /documentation/angular/charts-markers/ /angular-charts/markers/
-    Redirect 301 /documentation/angular/charts-navigator/ /angular-charts/navigator/
-    Redirect 301 /documentation/angular/charts-pie-series/ /angular-charts/pie-series/
-    Redirect 301 /documentation/angular/charts-scatter-series/ /angular-charts/scatter-series/
-    Redirect 301 /documentation/angular/charts-themes/ /angular-charts/themes/
-    Redirect 301 /documentation/angular/charts-tooltips/ /angular-charts/tooltips/
-    Redirect 301 /documentation/angular/charts-treemap-series/ /angular-charts/treemap-series/
-    Redirect 301 /documentation/angular/charts/ /angular-charts/overview/
-    Redirect 301 /documentation/angular/charts/100--stacked-area/ /angular-charts/gallery/100--stacked-area/
-    Redirect 301 /documentation/angular/charts/100--stacked-bar/ /angular-charts/gallery/100--stacked-bar/
-    Redirect 301 /documentation/angular/charts/100--stacked-column/ /angular-charts/gallery/100--stacked-column/
-    Redirect 301 /documentation/angular/charts/area-with-negative-values/ /angular-charts/gallery/area-with-negative-values/
-    Redirect 301 /documentation/angular/charts/bar-with-labels/ /angular-charts/gallery/bar-with-labels/
-    Redirect 301 /documentation/angular/charts/bubble-with-categories/ /angular-charts/gallery/bubble-with-categories/
-    Redirect 301 /documentation/angular/charts/bubble-with-negative-values/ /angular-charts/gallery/bubble-with-negative-values/
-    Redirect 301 /documentation/angular/charts/chart-customisation/ /angular-charts/gallery/chart-customisation/
-    Redirect 301 /documentation/angular/charts/column-with-negative-values/ /angular-charts/gallery/column-with-negative-values/
-    Redirect 301 /documentation/angular/charts/combination-of-different-series-types/ /angular-charts/gallery/combination-of-different-series-types/
-    Redirect 301 /documentation/angular/charts/custom-marker-shapes/ /angular-charts/gallery/custom-marker-shapes/
-    Redirect 301 /documentation/angular/charts/custom-tooltips/ /angular-charts/gallery/custom-tooltips/
-    Redirect 301 /documentation/angular/charts/grouped-bar/ /angular-charts/gallery/grouped-bar/
-    Redirect 301 /documentation/angular/charts/grouped-column/ /angular-charts/gallery/grouped-column/
-    Redirect 301 /documentation/angular/charts/histogram-with-specified-bins/ /angular-charts/gallery/histogram-with-specified-bins/
-    Redirect 301 /documentation/angular/charts/line-with-gaps/ /angular-charts/gallery/line-with-gaps/
-    Redirect 301 /documentation/angular/charts/market-index-treemap/ /angular-charts/gallery/market-index-treemap/
-    Redirect 301 /documentation/angular/charts/per-marker-customisation/ /angular-charts/gallery/per-marker-customisation/
-    Redirect 301 /documentation/angular/charts/pie-in-a-doughnut/ /angular-charts/gallery/pie-in-a-doughnut/
-    Redirect 301 /documentation/angular/charts/real-time-data-updates/ /angular-charts/gallery/real-time-data-updates/
-    Redirect 301 /documentation/angular/charts/simple-area/ /angular-charts/gallery/simple-area/
-    Redirect 301 /documentation/angular/charts/simple-bar/ /angular-charts/gallery/simple-bar/
-    Redirect 301 /documentation/angular/charts/simple-bubble/ /angular-charts/gallery/simple-bubble/
-    Redirect 301 /documentation/angular/charts/simple-column/ /angular-charts/gallery/simple-column/
-    Redirect 301 /documentation/angular/charts/simple-doughnut/ /angular-charts/gallery/simple-doughnut/
-    Redirect 301 /documentation/angular/charts/simple-histogram/ /angular-charts/gallery/simple-histogram/
-    Redirect 301 /documentation/angular/charts/simple-line/ /angular-charts/gallery/simple-line/
-    Redirect 301 /documentation/angular/charts/simple-pie/ /angular-charts/gallery/simple-pie/
-    Redirect 301 /documentation/angular/charts/simple-scatter/ /angular-charts/gallery/simple-scatter/
-    Redirect 301 /documentation/angular/charts/stacked-area/ /angular-charts/gallery/stacked-area/
-    Redirect 301 /documentation/angular/charts/stacked-bar/ /angular-charts/gallery/stacked-bar/
-    Redirect 301 /documentation/angular/charts/stacked-column/ /angular-charts/gallery/stacked-column/
-    Redirect 301 /documentation/angular/charts/time-axis-with-irregular-intervals/ /angular-charts/gallery/time-axis-with-irregular-intervals/
-    Redirect 301 /documentation/angular/charts/xy-histogram-with-mean-aggregation/ /angular-charts/gallery/xy-histogram-with-mean-aggregation/
-    redirectMatch ^/angular-charts/$ /angular-charts/overview/
     Redirect 301 /documentation/angular/client-side-model/ /angular-data-grid/client-side-model/
     Redirect 301 /documentation/angular/clipboard/ /angular-data-grid/clipboard/
     Redirect 301 /documentation/angular/column-api/ /angular-data-grid/column-api/
@@ -307,7 +251,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/angular/component-status-bar/ /angular-data-grid/component-status-bar/
     Redirect 301 /documentation/angular/component-tool-panel/ /angular-data-grid/component-tool-panel/
     Redirect 301 /documentation/angular/component-tooltip/ /angular-data-grid/component-tooltip/
-    Redirect 301 /documentation/angular/component-types/ /angular-data-grid/component-types/
+    Redirect 301 /documentation/angular/component-types/ /angular-data-grid/components/
     Redirect 301 /documentation/angular/components/ /angular-data-grid/components/
     Redirect 301 /documentation/angular/context-menu/ /angular-data-grid/context-menu/
     Redirect 301 /documentation/angular/context/ /angular-data-grid/context/
@@ -376,7 +320,6 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/angular/master-detail-other/ /angular-data-grid/master-detail-other/
     Redirect 301 /documentation/angular/master-detail-refresh/ /angular-data-grid/master-detail-refresh/
     Redirect 301 /documentation/angular/master-detail/ /angular-data-grid/master-detail/
-    Redirect 301 /documentation/angular/material-design/ /angular-data-grid/material-design/
     Redirect 301 /documentation/angular/modules-building/ /angular-data-grid/modules-building/
     Redirect 301 /documentation/angular/modules-more-details/ /angular-data-grid/modules/
     Redirect 301 /angular-data-grid/modules-more-details/ /angular-data-grid/modules/
@@ -458,13 +401,13 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/angular/view-refresh/ /angular-data-grid/view-refresh/
     Redirect 301 /documentation/angular/viewport/ /angular-data-grid/viewport/
     Redirect 301 /documentation/angular/webpack-2/ /angular-data-grid/
-    Redirect 301 /angular-data-grid/webpack-2/ /angular-data-grid/ 
+    Redirect 301 /angular-data-grid/webpack-2/ /angular-data-grid/
     Redirect 301 /documentation/angular/webpack-3/ /angular-data-grid/
     Redirect 301 /angular-data-grid/webpack-3/ /angular-data-grid/
     Redirect 301 /documentation/angular/webpack/ /angular-data-grid/
     Redirect 301 /angular-data-grid/webpack/ /angular-data-grid/
     Redirect 301 /documentation/angular/ /angular-data-grid/
-    Redirect 301 /documentation/javascript/8-performance-hacks-for-javascript/ /javascript-data-grid/8-performance-hacks-for-javascript/
+    Redirect 301 /documentation/javascript/8-performance-hacks-for-javascript/ /javascript-data-grid/
     Redirect 301 /documentation/javascript/accessibility/ /javascript-data-grid/accessibility/
     Redirect 301 /documentation/javascript/accessing-data/ /javascript-data-grid/accessing-data/
     Redirect 301 /documentation/javascript/aggregation/ /javascript-data-grid/aggregation/
@@ -480,61 +423,6 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/javascript/cell-styles/ /javascript-data-grid/cell-styles/
     Redirect 301 /documentation/javascript/change-cell-renderers/ /javascript-data-grid/change-cell-renderers/
     Redirect 301 /documentation/javascript/change-detection/ /javascript-data-grid/change-detection/
-    Redirect 301 /documentation/javascript/charts-api-explorer/ /javascript-charts/api-explorer/
-    Redirect 301 /documentation/javascript/charts-api-themes/ /javascript-charts/api-themes/
-    Redirect 301 /documentation/javascript/charts-api/ /javascript-charts/api/
-    Redirect 301 /documentation/javascript/charts-area-series/ /javascript-charts/area-series/
-    Redirect 301 /documentation/javascript/charts-axes/ /javascript-charts/axes/
-    Redirect 301 /documentation/javascript/charts-bar-series/ /javascript-charts/bar-series/
-    Redirect 301 /documentation/javascript/charts-events/ /javascript-charts/events/
-    Redirect 301 /documentation/javascript/charts-formatters/ /javascript-charts/formatters/
-    Redirect 301 /documentation/javascript/charts-getting-started/ /javascript-charts/getting-started/
-    Redirect 301 /documentation/javascript/charts-histogram-series/ /javascript-charts/histogram-series/
-    Redirect 301 /documentation/javascript/charts-layout/ /javascript-charts/layout/
-    Redirect 301 /documentation/javascript/charts-legend/ /javascript-charts/legend/
-    Redirect 301 /documentation/javascript/charts-line-series/ /javascript-charts/line-series/
-    Redirect 301 /documentation/javascript/charts-markers/ /javascript-charts/markers/
-    Redirect 301 /documentation/javascript/charts-navigator/ /javascript-charts/navigator/
-    Redirect 301 /documentation/javascript/charts-pie-series/ /javascript-charts/pie-series/
-    Redirect 301 /documentation/javascript/charts-scatter-series/ /javascript-charts/scatter-series/
-    Redirect 301 /documentation/javascript/charts-themes/ /javascript-charts/themes/
-    Redirect 301 /documentation/javascript/charts-tooltips/ /javascript-charts/tooltips/
-    Redirect 301 /documentation/javascript/charts-treemap-series/ /javascript-charts/treemap-series/
-    Redirect 301 /documentation/javascript/charts/ /javascript-charts/overview/
-    Redirect 301 /documentation/javascript/charts/100--stacked-area/ /javascript-charts/gallery/100--stacked-area/
-    Redirect 301 /documentation/javascript/charts/100--stacked-bar/ /javascript-charts/gallery/100--stacked-bar/
-    Redirect 301 /documentation/javascript/charts/100--stacked-column/ /javascript-charts/gallery/100--stacked-column/
-    Redirect 301 /documentation/javascript/charts/area-with-negative-values/ /javascript-charts/gallery/area-with-negative-values/
-    Redirect 301 /documentation/javascript/charts/bar-with-labels/ /javascript-charts/gallery/bar-with-labels/
-    Redirect 301 /documentation/javascript/charts/bubble-with-categories/ /javascript-charts/gallery/bubble-with-categories/
-    Redirect 301 /documentation/javascript/charts/bubble-with-negative-values/ /javascript-charts/gallery/bubble-with-negative-values/
-    Redirect 301 /documentation/javascript/charts/chart-customisation/ /javascript-charts/gallery/chart-customisation/
-    Redirect 301 /documentation/javascript/charts/column-with-negative-values/ /javascript-charts/gallery/column-with-negative-values/
-    Redirect 301 /documentation/javascript/charts/combination-of-different-series-types/ /javascript-charts/gallery/combination-of-different-series-types/
-    Redirect 301 /documentation/javascript/charts/custom-marker-shapes/ /javascript-charts/gallery/custom-marker-shapes/
-    Redirect 301 /documentation/javascript/charts/custom-tooltips/ /javascript-charts/gallery/custom-tooltips/
-    Redirect 301 /documentation/javascript/charts/grouped-bar/ /javascript-charts/gallery/grouped-bar/
-    Redirect 301 /documentation/javascript/charts/grouped-column/ /javascript-charts/gallery/grouped-column/
-    Redirect 301 /documentation/javascript/charts/histogram-with-specified-bins/ /javascript-charts/gallery/histogram-with-specified-bins/
-    Redirect 301 /documentation/javascript/charts/line-with-gaps/ /javascript-charts/gallery/line-with-gaps/
-    Redirect 301 /documentation/javascript/charts/market-index-treemap/ /javascript-charts/gallery/market-index-treemap/
-    Redirect 301 /documentation/javascript/charts/per-marker-customisation/ /javascript-charts/gallery/per-marker-customisation/
-    Redirect 301 /documentation/javascript/charts/pie-in-a-doughnut/ /javascript-charts/gallery/pie-in-a-doughnut/
-    Redirect 301 /documentation/javascript/charts/real-time-data-updates/ /javascript-charts/gallery/real-time-data-updates/
-    Redirect 301 /documentation/javascript/charts/simple-area/ /javascript-charts/gallery/simple-area/
-    Redirect 301 /documentation/javascript/charts/simple-bar/ /javascript-charts/gallery/simple-bar/
-    Redirect 301 /documentation/javascript/charts/simple-bubble/ /javascript-charts/gallery/simple-bubble/
-    Redirect 301 /documentation/javascript/charts/simple-column/ /javascript-charts/gallery/simple-column/
-    Redirect 301 /documentation/javascript/charts/simple-doughnut/ /javascript-charts/gallery/simple-doughnut/
-    Redirect 301 /documentation/javascript/charts/simple-histogram/ /javascript-charts/gallery/simple-histogram/
-    Redirect 301 /documentation/javascript/charts/simple-line/ /javascript-charts/gallery/simple-line/
-    Redirect 301 /documentation/javascript/charts/simple-pie/ /javascript-charts/gallery/simple-pie/
-    Redirect 301 /documentation/javascript/charts/simple-scatter/ /javascript-charts/gallery/simple-scatter/
-    Redirect 301 /documentation/javascript/charts/stacked-area/ /javascript-charts/gallery/stacked-area/
-    Redirect 301 /documentation/javascript/charts/stacked-bar/ /javascript-charts/gallery/stacked-bar/
-    Redirect 301 /documentation/javascript/charts/stacked-column/ /javascript-charts/gallery/stacked-column/
-    Redirect 301 /documentation/javascript/charts/time-axis-with-irregular-intervals/ /javascript-charts/gallery/time-axis-with-irregular-intervals/
-    Redirect 301 /documentation/javascript/charts/xy-histogram-with-mean-aggregation/ /javascript-charts/gallery/xy-histogram-with-mean-aggregation/
     Redirect 301 /documentation/javascript/client-side-model/ /javascript-data-grid/client-side-model/
     Redirect 301 /documentation/javascript/clipboard/ /javascript-data-grid/clipboard/
     Redirect 301 /documentation/javascript/column-api/ /javascript-data-grid/column-api/
@@ -562,7 +450,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/javascript/component-status-bar/ /javascript-data-grid/component-status-bar/
     Redirect 301 /documentation/javascript/component-tool-panel/ /javascript-data-grid/component-tool-panel/
     Redirect 301 /documentation/javascript/component-tooltip/ /javascript-data-grid/component-tooltip/
-    Redirect 301 /documentation/javascript/component-types/ /javascript-data-grid/component-types/
+    Redirect 301 /documentation/javascript/component-types/ /javascript-data-grid/components/
     Redirect 301 /documentation/javascript/components/ /javascript-data-grid/components/
     Redirect 301 /documentation/javascript/context-menu/ /javascript-data-grid/context-menu/
     Redirect 301 /documentation/javascript/context/ /javascript-data-grid/context/
@@ -724,62 +612,6 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/react/cell-styles/ /react-data-grid/cell-styles/
     Redirect 301 /documentation/react/change-cell-renderers/ /react-data-grid/change-cell-renderers/
     Redirect 301 /documentation/react/change-detection/ /react-data-grid/change-detection/
-    Redirect 301 /documentation/react/charts-api-explorer/ /react-charts/api-explorer/
-    Redirect 301 /documentation/react/charts-api-themes/ /react-charts/api-themes/
-    Redirect 301 /documentation/react/charts-api/ /react-charts/api/
-    Redirect 301 /documentation/react/charts-area-series/ /react-charts/area-series/
-    Redirect 301 /documentation/react/charts-axes/ /react-charts/axes/
-    Redirect 301 /documentation/react/charts-bar-series/ /react-charts/bar-series/
-    Redirect 301 /documentation/react/charts-events/ /react-charts/events/
-    Redirect 301 /documentation/react/charts-formatters/ /react-charts/formatters/
-    Redirect 301 /documentation/react/charts-getting-started/ /react-charts/getting-started/
-    Redirect 301 /documentation/react/charts-histogram-series/ /react-charts/histogram-series/
-    Redirect 301 /documentation/react/charts-layout/ /react-charts/layout/
-    Redirect 301 /documentation/react/charts-legend/ /react-charts/legend/
-    Redirect 301 /documentation/react/charts-line-series/ /react-charts/line-series/
-    Redirect 301 /documentation/react/charts-markers/ /react-charts/markers/
-    Redirect 301 /documentation/react/charts-navigator/ /react-charts/navigator/
-    Redirect 301 /documentation/react/charts-pie-series/ /react-charts/pie-series/
-    Redirect 301 /documentation/react/charts-scatter-series/ /react-charts/scatter-series/
-    Redirect 301 /documentation/react/charts-themes/ /react-charts/themes/
-    Redirect 301 /documentation/react/charts-tooltips/ /react-charts/tooltips/
-    Redirect 301 /documentation/react/charts-treemap-series/ /react-charts/treemap-series/
-    Redirect 301 /documentation/react/charts/ /react-charts/overview/
-    Redirect 301 /documentation/react/charts/100--stacked-area/ /react-charts/gallery/100--stacked-area/
-    Redirect 301 /documentation/react/charts/100--stacked-bar/ /react-charts/gallery/100--stacked-bar/
-    Redirect 301 /documentation/react/charts/100--stacked-column/ /react-charts/gallery/100--stacked-column/
-    Redirect 301 /documentation/react/charts/area-with-negative-values/ /react-charts/gallery/area-with-negative-values/
-    Redirect 301 /documentation/react/charts/bar-with-labels/ /react-charts/gallery/bar-with-labels/
-    Redirect 301 /documentation/react/charts/bubble-with-categories/ /react-charts/gallery/bubble-with-categories/
-    Redirect 301 /documentation/react/charts/bubble-with-negative-values/ /react-charts/gallery/bubble-with-negative-values/
-    Redirect 301 /documentation/react/charts/chart-customisation/ /react-charts/gallery/chart-customisation/
-    Redirect 301 /documentation/react/charts/column-with-negative-values/ /react-charts/gallery/column-with-negative-values/
-    Redirect 301 /documentation/react/charts/combination-of-different-series-types/ /react-charts/gallery/combination-of-different-series-types/
-    Redirect 301 /documentation/react/charts/custom-marker-shapes/ /react-charts/gallery/custom-marker-shapes/
-    Redirect 301 /documentation/react/charts/custom-tooltips/ /react-charts/gallery/custom-tooltips/
-    Redirect 301 /documentation/react/charts/grouped-bar/ /react-charts/gallery/grouped-bar/
-    Redirect 301 /documentation/react/charts/grouped-column/ /react-charts/gallery/grouped-column/
-    Redirect 301 /documentation/react/charts/histogram-with-specified-bins/ /react-charts/gallery/histogram-with-specified-bins/
-    Redirect 301 /documentation/react/charts/line-with-gaps/ /react-charts/gallery/line-with-gaps/
-    Redirect 301 /documentation/react/charts/market-index-treemap/ /react-charts/gallery/market-index-treemap/
-    Redirect 301 /documentation/react/charts/per-marker-customisation/ /react-charts/gallery/per-marker-customisation/
-    Redirect 301 /documentation/react/charts/pie-in-a-doughnut/ /react-charts/gallery/pie-in-a-doughnut/
-    Redirect 301 /documentation/react/charts/real-time-data-updates/ /react-charts/gallery/real-time-data-updates/
-    Redirect 301 /documentation/react/charts/simple-area/ /react-charts/gallery/simple-area/
-    Redirect 301 /documentation/react/charts/simple-bar/ /react-charts/gallery/simple-bar/
-    Redirect 301 /documentation/react/charts/simple-bubble/ /react-charts/gallery/simple-bubble/
-    Redirect 301 /documentation/react/charts/simple-column/ /react-charts/gallery/simple-column/
-    Redirect 301 /documentation/react/charts/simple-doughnut/ /react-charts/gallery/simple-doughnut/
-    Redirect 301 /documentation/react/charts/simple-histogram/ /react-charts/gallery/simple-histogram/
-    Redirect 301 /documentation/react/charts/simple-line/ /react-charts/gallery/simple-line/
-    Redirect 301 /documentation/react/charts/simple-pie/ /react-charts/gallery/simple-pie/
-    Redirect 301 /documentation/react/charts/simple-scatter/ /react-charts/gallery/simple-scatter/
-    Redirect 301 /documentation/react/charts/stacked-area/ /react-charts/gallery/stacked-area/
-    Redirect 301 /documentation/react/charts/stacked-bar/ /react-charts/gallery/stacked-bar/
-    Redirect 301 /documentation/react/charts/stacked-column/ /react-charts/gallery/stacked-column/
-    Redirect 301 /documentation/react/charts/time-axis-with-irregular-intervals/ /react-charts/gallery/time-axis-with-irregular-intervals/
-    Redirect 301 /documentation/react/charts/xy-histogram-with-mean-aggregation/ /react-charts/gallery/xy-histogram-with-mean-aggregation/
-    redirectMatch 301 ^/react-charts/$ /react-charts/overview/
     Redirect 301 /documentation/react/client-side-model/ /react-data-grid/client-side-model/
     Redirect 301 /documentation/react/clipboard/ /react-data-grid/clipboard/
     Redirect 301 /documentation/react/column-api/ /react-data-grid/column-api/
@@ -808,7 +640,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/react/component-styling/ /react-data-grid/
     Redirect 301 /documentation/react/component-tool-panel/ /react-data-grid/component-tool-panel/
     Redirect 301 /documentation/react/component-tooltip/ /react-data-grid/component-tooltip/
-    Redirect 301 /documentation/react/component-types/ /react-data-grid/component-types/
+    Redirect 301 /documentation/react/component-types/ /react-data-grid/components/
     Redirect 301 /documentation/react/components/ /react-data-grid/components/
     Redirect 301 /documentation/react/context-menu/ /react-data-grid/context-menu/
     Redirect 301 /documentation/react/context/ /react-data-grid/context/
@@ -973,62 +805,6 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/vue/cell-styles/ /vue-data-grid/cell-styles/
     Redirect 301 /documentation/vue/change-cell-renderers/ /vue-data-grid/change-cell-renderers/
     Redirect 301 /documentation/vue/change-detection/ /vue-data-grid/change-detection/
-    Redirect 301 /documentation/vue/charts-api-explorer/ /vue-charts/api-explorer/
-    Redirect 301 /documentation/vue/charts-api-themes/ /vue-charts/api-themes/
-    Redirect 301 /documentation/vue/charts-api/ /vue-charts/api/
-    Redirect 301 /documentation/vue/charts-area-series/ /vue-charts/area-series/
-    Redirect 301 /documentation/vue/charts-axes/ /vue-charts/axes/
-    Redirect 301 /documentation/vue/charts-bar-series/ /vue-charts/bar-series/
-    Redirect 301 /documentation/vue/charts-events/ /vue-charts/events/
-    Redirect 301 /documentation/vue/charts-formatters/ /vue-charts/formatters/
-    Redirect 301 /documentation/vue/charts-getting-started/ /vue-charts/getting-started/
-    Redirect 301 /documentation/vue/charts-histogram-series/ /vue-charts/histogram-series/
-    Redirect 301 /documentation/vue/charts-layout/ /vue-charts/layout/
-    Redirect 301 /documentation/vue/charts-legend/ /vue-charts/legend/
-    Redirect 301 /documentation/vue/charts-line-series/ /vue-charts/line-series/
-    Redirect 301 /documentation/vue/charts-markers/ /vue-charts/markers/
-    Redirect 301 /documentation/vue/charts-navigator/ /vue-charts/navigator/
-    Redirect 301 /documentation/vue/charts-pie-series/ /vue-charts/pie-series/
-    Redirect 301 /documentation/vue/charts-scatter-series/ /vue-charts/scatter-series/
-    Redirect 301 /documentation/vue/charts-themes/ /vue-charts/themes/
-    Redirect 301 /documentation/vue/charts-tooltips/ /vue-charts/tooltips/
-    Redirect 301 /documentation/vue/charts-treemap-series/ /vue-charts/treemap-series/
-    Redirect 301 /documentation/vue/charts/ /vue-charts/overview/
-    Redirect 301 /documentation/vue/charts/100--stacked-area/ /vue-charts/gallery/100--stacked-area/
-    Redirect 301 /documentation/vue/charts/100--stacked-bar/ /vue-charts/gallery/100--stacked-bar/
-    Redirect 301 /documentation/vue/charts/100--stacked-column/ /vue-charts/gallery/100--stacked-column/
-    Redirect 301 /documentation/vue/charts/area-with-negative-values/ /vue-charts/gallery/area-with-negative-values/
-    Redirect 301 /documentation/vue/charts/bar-with-labels/ /vue-charts/gallery/bar-with-labels/
-    Redirect 301 /documentation/vue/charts/bubble-with-categories/ /vue-charts/gallery/bubble-with-categories/
-    Redirect 301 /documentation/vue/charts/bubble-with-negative-values/ /vue-charts/gallery/bubble-with-negative-values/
-    Redirect 301 /documentation/vue/charts/chart-customisation/ /vue-charts/gallery/chart-customisation/
-    Redirect 301 /documentation/vue/charts/column-with-negative-values/ /vue-charts/gallery/column-with-negative-values/
-    Redirect 301 /documentation/vue/charts/combination-of-different-series-types/ /vue-charts/gallery/combination-of-different-series-types/
-    Redirect 301 /documentation/vue/charts/custom-marker-shapes/ /vue-charts/gallery/custom-marker-shapes/
-    Redirect 301 /documentation/vue/charts/custom-tooltips/ /vue-charts/gallery/custom-tooltips/
-    Redirect 301 /documentation/vue/charts/grouped-bar/ /vue-charts/gallery/grouped-bar/
-    Redirect 301 /documentation/vue/charts/grouped-column/ /vue-charts/gallery/grouped-column/
-    Redirect 301 /documentation/vue/charts/histogram-with-specified-bins/ /vue-charts/gallery/histogram-with-specified-bins/
-    Redirect 301 /documentation/vue/charts/line-with-gaps/ /vue-charts/gallery/line-with-gaps/
-    Redirect 301 /documentation/vue/charts/market-index-treemap/ /vue-charts/gallery/market-index-treemap/
-    Redirect 301 /documentation/vue/charts/per-marker-customisation/ /vue-charts/gallery/per-marker-customisation/
-    Redirect 301 /documentation/vue/charts/pie-in-a-doughnut/ /vue-charts/gallery/pie-in-a-doughnut/
-    Redirect 301 /documentation/vue/charts/real-time-data-updates/ /vue-charts/gallery/real-time-data-updates/
-    Redirect 301 /documentation/vue/charts/simple-area/ /vue-charts/gallery/simple-area/
-    Redirect 301 /documentation/vue/charts/simple-bar/ /vue-charts/gallery/simple-bar/
-    Redirect 301 /documentation/vue/charts/simple-bubble/ /vue-charts/gallery/simple-bubble/
-    Redirect 301 /documentation/vue/charts/simple-column/ /vue-charts/gallery/simple-column/
-    Redirect 301 /documentation/vue/charts/simple-doughnut/ /vue-charts/gallery/simple-doughnut/
-    Redirect 301 /documentation/vue/charts/simple-histogram/ /vue-charts/gallery/simple-histogram/
-    Redirect 301 /documentation/vue/charts/simple-line/ /vue-charts/gallery/simple-line/
-    Redirect 301 /documentation/vue/charts/simple-pie/ /vue-charts/gallery/simple-pie/
-    Redirect 301 /documentation/vue/charts/simple-scatter/ /vue-charts/gallery/simple-scatter/
-    Redirect 301 /documentation/vue/charts/stacked-area/ /vue-charts/gallery/stacked-area/
-    Redirect 301 /documentation/vue/charts/stacked-bar/ /vue-charts/gallery/stacked-bar/
-    Redirect 301 /documentation/vue/charts/stacked-column/ /vue-charts/gallery/stacked-column/
-    Redirect 301 /documentation/vue/charts/time-axis-with-irregular-intervals/ /vue-charts/gallery/time-axis-with-irregular-intervals/
-    Redirect 301 /documentation/vue/charts/xy-histogram-with-mean-aggregation/ /vue-charts/gallery/xy-histogram-with-mean-aggregation/
-    redirectMatch ^/vue-charts/$ /vue-charts/overview/
     Redirect 301 /documentation/vue/client-side-model/ /vue-data-grid/client-side-model/
     Redirect 301 /documentation/vue/clipboard/ /vue-data-grid/clipboard/
     Redirect 301 /documentation/vue/column-api/ /vue-data-grid/column-api/
@@ -1057,7 +833,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/vue/component-status-bar/ /vue-data-grid/component-status-bar/
     Redirect 301 /documentation/vue/component-tool-panel/ /vue-data-grid/component-tool-panel/
     Redirect 301 /documentation/vue/component-tooltip/ /vue-data-grid/component-tooltip/
-    Redirect 301 /documentation/vue/component-types/ /vue-data-grid/component-types/
+    Redirect 301 /documentation/vue/component-types/ /vue-data-grid/components/
     Redirect 301 /documentation/vue/components/ /vue-data-grid/components/
     Redirect 301 /documentation/vue/context-menu/ /vue-data-grid/context-menu/
     Redirect 301 /documentation/vue/context/ /vue-data-grid/context/
@@ -1208,7 +984,6 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/vue/viewport/ /vue-data-grid/viewport/
     Redirect 301 /documentation/vue/ /vue-data-grid/
     Redirect 301 /embracing-the-future-with-angularjs2-web-components-and-ag-grid/ https://medium.com/ag-grid/embracing-the-future-with-angular-2-0-web-components-and-ag-grid-fec000d5a304
-    Redirect 301 /example-angular-material-design/ /angular-data-grid/material-design/
     Redirect 301 /example-angular-rxjs/ /angular-data-grid/data-update/
     Redirect 301 /example-excel-import/ /javascript-data-grid/excel-import/
     Redirect 301 /example-expressions-and-context/ /javascript-data-grid/expressions-and-context/
@@ -1216,25 +991,6 @@ AddType text/javascript ts jsx
     Redirect 301 /features-overview/ https://www.ag-grid.com/
     Redirect 301 /git-color/ https://medium.com/ag-grid/git-on-the-command-line-improving-the-experience-5a604cb14cf6
     Redirect 301 /graphql-server-side-operations/ /javascript-data-grid/server-side-operations-graphql/
-    Redirect 301 /javascript-charts-api-explorer/ /javascript-charts/api-explorer/
-    Redirect 301 /javascript-charts-api-themes/ /javascript-charts/api-themes/
-    Redirect 301 /javascript-charts-api/ /javascript-charts/api/
-    Redirect 301 /javascript-charts-area-series/ /javascript-charts/area-series/
-    Redirect 301 /javascript-charts-axis/ /javascript-charts/axes/
-    Redirect 301 /javascript-charts-bar-series/ /javascript-charts/bar-series/
-    Redirect 301 /javascript-charts-events/ /javascript-charts/events/
-    Redirect 301 /javascript-charts-formatters/ /javascript-charts/formatters/
-    Redirect 301 /javascript-charts-histogram-series/ /javascript-charts/histogram-series/
-    Redirect 301 /javascript-charts-layout/ /javascript-charts/layout/
-    Redirect 301 /javascript-charts-legend/ /javascript-charts/legend/
-    Redirect 301 /javascript-charts-line-series/ /javascript-charts/line-series/
-    Redirect 301 /javascript-charts-markers/ /javascript-charts/markers/
-    Redirect 301 /javascript-charts-navigator/ /javascript-charts/navigator/
-    Redirect 301 /javascript-charts-overview/ /javascript-charts/overview/
-    Redirect 301 /javascript-charts-pie-series/ /javascript-charts/pie-series/
-    Redirect 301 /javascript-charts-scatter-series/ /javascript-charts/scatter-series/
-    Redirect 301 /javascript-charts-themes/ /javascript-charts/themes/
-    Redirect 301 /javascript-charts-tooltips/ /javascript-charts/tooltips/
     Redirect 301 /javascript-datagrid/ https://medium.com/ag-grid/8-reasons-to-choose-ag-grid-as-your-javascript-datagrid-eb4a767a351f
     Redirect 301 /javascript-getting-started/ /javascript-data-grid/getting-started/
     Redirect 301 /javascript-grid-accessibility/ /javascript-data-grid/accessibility/
@@ -1252,34 +1008,6 @@ AddType text/javascript ts jsx
     Redirect 301 /javascript-grid-cell-styles/ /javascript-data-grid/cell-styles/
     Redirect 301 /javascript-grid-cell-template/ /angular-data-grid/getting-started/
     Redirect 301 /javascript-grid-change-detection/ /javascript-data-grid/change-detection/
-    Redirect 301 /javascript-grid-charts-chart-toolbar/ /javascript-data-grid/integrated-charts-toolbar/
-    Redirect 301 /javascript-grid-charts-container/ /javascript-data-grid/integrated-charts-container/
-    Redirect 301 /javascript-grid-charts-customisation-area/ /javascript-data-grid/integrated-charts-customisation/
-    Redirect 301 /javascript-grid-charts-customisation-bar/ /javascript-data-grid/integrated-charts-customisation/
-    Redirect 301 /javascript-grid-charts-customisation-general/ /javascript-data-grid/integrated-charts-customisation/
-    Redirect 301 /javascript-grid-charts-customisation-line/ /javascript-data-grid/integrated-charts-customisation/
-    Redirect 301 /javascript-grid-charts-customisation-pie/ /javascript-data-grid/integrated-charts-customisation/
-    Redirect 301 /javascript-grid-charts-customisation-scatter/ /javascript-data-grid/integrated-charts-customisation/
-    Redirect 301 /javascript-grid-charts-customisation/ /javascript-data-grid/integrated-charts-customisation/
-    Redirect 301 /javascript-grid-charts-integrated-chart-events/ /javascript-data-grid/integrated-charts-events/
-    Redirect 301 /javascript-grid-charts-integrated-chart-toolbar/ /javascript-data-grid/integrated-charts-toolbar/
-    Redirect 301 /javascript-grid-charts-integrated-container/ /javascript-data-grid/integrated-charts-container/
-    Redirect 301 /javascript-grid-charts-integrated-customisation-area/ /javascript-data-grid/integrated-charts-customisation/
-    Redirect 301 /javascript-grid-charts-integrated-customisation-bar/ /javascript-data-grid/integrated-charts-customisation/
-    Redirect 301 /javascript-grid-charts-integrated-customisation-cartesian/ /javascript-data-grid/integrated-charts-customisation/
-    Redirect 301 /javascript-grid-charts-integrated-customisation-general/ /javascript-data-grid/integrated-charts-customisation/
-    Redirect 301 /javascript-grid-charts-integrated-customisation-histogram/ /javascript-data-grid/integrated-charts-customisation/
-    Redirect 301 /javascript-grid-charts-integrated-customisation-line/ /javascript-data-grid/integrated-charts-customisation/
-    Redirect 301 /javascript-grid-charts-integrated-customisation-pie/ /javascript-data-grid/integrated-charts-customisation/
-    Redirect 301 /javascript-grid-charts-integrated-customisation-scatter/ /javascript-data-grid/integrated-charts-customisation/
-    Redirect 301 /javascript-grid-charts-integrated-customisation/ /javascript-data-grid/integrated-charts-customisation/
-    Redirect 301 /javascript-grid-charts-integrated-overview/ /javascript-data-grid/integrated-charts/
-    Redirect 301 /javascript-grid-charts-integrated-pivot-chart/ /javascript-data-grid/integrated-charts-pivot-chart/
-    Redirect 301 /javascript-grid-charts-integrated-range-chart/ /javascript-data-grid/integrated-charts-range-chart/
-    Redirect 301 /javascript-grid-charts-integrated-time-series/ /javascript-data-grid/integrated-charts-time-series/
-    Redirect 301 /javascript-grid-charts-overview/ /javascript-data-grid/integrated-charts/
-    Redirect 301 /javascript-grid-charts-pivot-chart/ /javascript-data-grid/integrated-charts-pivot-chart/
-    Redirect 301 /javascript-grid-charts-range-chart/ /javascript-data-grid/integrated-charts-range-chart/
     Redirect 301 /javascript-grid-client-side-model/ /javascript-data-grid/client-side-model/
     Redirect 301 /javascript-grid-clipboard/ /javascript-data-grid/clipboard/
     Redirect 301 /javascript-grid-column-api/ /javascript-data-grid/column-api/
@@ -1293,7 +1021,7 @@ AddType text/javascript ts jsx
     Redirect 301 /javascript-grid-column-state/ /javascript-data-grid/column-state/
     Redirect 301 /javascript-grid-column-updating-definitions/ /javascript-data-grid/column-updating-definitions/
     Redirect 301 /javascript-grid-column/ /javascript-data-grid/column-object/
-    Redirect 301 /javascript-grid-component-types/ /javascript-data-grid/component-types/
+    Redirect 301 /javascript-grid-component-types/ /javascript-data-grid/components/
     Redirect 301 /javascript-grid-components/ /javascript-data-grid/components/
     Redirect 301 /javascript-grid-context-menu/ /javascript-data-grid/context-menu/
     Redirect 301 /javascript-grid-context/ /javascript-data-grid/context/
@@ -1484,7 +1212,7 @@ AddType text/javascript ts jsx
     Redirect 301 /javascript-grid/component-status-bar/ /javascript-data-grid/component-status-bar/
     Redirect 301 /javascript-grid/component-tool-panel/ /javascript-data-grid/component-tool-panel/
     Redirect 301 /javascript-grid/component-tooltip/ /javascript-data-grid/component-tooltip/
-    Redirect 301 /javascript-grid/component-types/ /javascript-data-grid/component-types/
+    Redirect 301 /javascript-grid/component-types/ /javascript-data-grid/components/
     Redirect 301 /javascript-grid/components/ /javascript-data-grid/components/
     Redirect 301 /javascript-grid/context/ /javascript-data-grid/context/
     Redirect 301 /javascript-grid/context-menu/ /javascript-data-grid/context-menu/
@@ -1544,7 +1272,7 @@ AddType text/javascript ts jsx
     Redirect 301 /javascript-grid/grouping/ /javascript-data-grid/grouping/
     Redirect 301 /javascript-grid/immutable-data/ https://www.ag-grid.com/
     Redirect 301 /javascript-data-grid/immutable-data/ https://www.ag-grid.com/
-    Redirect 301 /javascript-grid/index.html /javascript-data-grid/index.html
+    Redirect 301 /javascript-grid/index.html /javascript-data-grid/getting-started/
     Redirect 301 /javascript-grid/infinite-scrolling/ /javascript-data-grid/infinite-scrolling/
     Redirect 301 /javascript-grid/integrated-charts/ /javascript-data-grid/integrated-charts/
     Redirect 301 /javascript-grid/integrated-charts-container/ /javascript-data-grid/integrated-charts-container/
@@ -1681,7 +1409,7 @@ AddType text/javascript ts jsx
     Redirect 301 /angular-grid/component-status-bar/ /angular-data-grid/component-status-bar/
     Redirect 301 /angular-grid/component-tool-panel/ /angular-data-grid/component-tool-panel/
     Redirect 301 /angular-grid/component-tooltip/ /angular-data-grid/component-tooltip/
-    Redirect 301 /angular-grid/component-types/ /angular-data-grid/component-types/
+    Redirect 301 /angular-grid/component-types/ /angular-data-grid/components/
     Redirect 301 /angular-grid/components/ /angular-data-grid/components/
     Redirect 301 /angular-grid/context/ /angular-data-grid/context/
     Redirect 301 /angular-grid/context-menu/ /angular-data-grid/context-menu/
@@ -1741,7 +1469,7 @@ AddType text/javascript ts jsx
     Redirect 301 /angular-grid/grouping/ /angular-data-grid/grouping/
     Redirect 301 /angular-grid/immutable-data/ https://www.ag-grid.com/
     Redirect 301 /angular-data-grid/immutable-data/ https://www.ag-grid.com/
-    Redirect 301 /angular-grid/index.html /angular-data-grid/index.html
+    Redirect 301 /angular-grid/index.html /angular-data-grid/getting-started/
     Redirect 301 /angular-grid/infinite-scrolling/ /angular-data-grid/infinite-scrolling/
     Redirect 301 /angular-grid/integrated-charts/ /angular-data-grid/integrated-charts/
     Redirect 301 /angular-grid/integrated-charts-container/ /angular-data-grid/integrated-charts-container/
@@ -1880,7 +1608,7 @@ AddType text/javascript ts jsx
     Redirect 301 /react-grid/component-styling/ /react-data-grid/
     Redirect 301 /react-grid/component-tool-panel/ /react-data-grid/component-tool-panel/
     Redirect 301 /react-grid/component-tooltip/ /react-data-grid/component-tooltip/
-    Redirect 301 /react-grid/component-types/ /react-data-grid/component-types/
+    Redirect 301 /react-grid/component-types/ /react-data-grid/components/
     Redirect 301 /react-grid/components/ /react-data-grid/components/
     Redirect 301 /react-grid/context/ /react-data-grid/context/
     Redirect 301 /react-grid/context-menu/ /react-data-grid/context-menu/
@@ -1942,7 +1670,7 @@ AddType text/javascript ts jsx
     Redirect 301 /react-grid/grouping/ /react-data-grid/grouping/
     Redirect 301 /react-grid/immutable-data/ https://www.ag-grid.com/
     Redirect 301 /react-data-grid/immutable-data/ https://www.ag-grid.com/
-    Redirect 301 /react-grid/index.html /react-data-grid/index.html
+    Redirect 301 /react-grid/index.html /react-data-grid/getting-started/
     Redirect 301 /react-grid/infinite-scrolling/ /react-data-grid/infinite-scrolling/
     Redirect 301 /react-grid/integrated-charts/ /react-data-grid/integrated-charts/
     Redirect 301 /react-grid/integrated-charts-container/ /react-data-grid/integrated-charts-container/
@@ -2083,7 +1811,7 @@ AddType text/javascript ts jsx
     Redirect 301 /vue-grid/component-status-bar/ /vue-data-grid/component-status-bar/
     Redirect 301 /vue-grid/component-tool-panel/ /vue-data-grid/component-tool-panel/
     Redirect 301 /vue-grid/component-tooltip/ /vue-data-grid/component-tooltip/
-    Redirect 301 /vue-grid/component-types/ /vue-data-grid/component-types/
+    Redirect 301 /vue-grid/component-types/ /vue-data-grid/components/
     Redirect 301 /vue-grid/components/ /vue-data-grid/components/
     Redirect 301 /vue-grid/context/ /vue-data-grid/context/
     Redirect 301 /vue-grid/context-menu/ /vue-data-grid/context-menu/
@@ -2143,7 +1871,7 @@ AddType text/javascript ts jsx
     Redirect 301 /vue-grid/grouping/ /vue-data-grid/grouping/
     Redirect 301 /vue-grid/immutable-data/ https://www.ag-grid.com/
     Redirect 301 /vue-data-grid/immutable-data/ https://www.ag-grid.com/
-    Redirect 301 /vue-grid/index.html /vue-data-grid/index.html
+    Redirect 301 /vue-grid/index.html /vue-data-grid/getting-started/
     Redirect 301 /vue-grid/infinite-scrolling/ /vue-data-grid/infinite-scrolling/
     Redirect 301 /vue-grid/integrated-charts/ /vue-data-grid/integrated-charts/
     Redirect 301 /vue-grid/integrated-charts-container/ /vue-data-grid/integrated-charts-container/
@@ -2264,7 +1992,6 @@ AddType text/javascript ts jsx
     Redirect 301 /vue-getting-started/ /vue-data-grid/getting-started/
     Redirect 301 /vue-js-grid/ https://medium.com/ag-grid/using-ag-grid-inside-a-vuejs-application-b6c442d77da8
     Redirect 301 /vue-markup/ /vue-data-grid/getting-started/
-    Redirect 301 /vuejs-charts/ /vue-charts/getting-started/
     Redirect 301 /vuejs-grid/ /vue-data-grid/getting-started/
     Redirect 301 /vuejs-misc/ /vue-data-grid/framework-misc/
     Redirect 301 /vuex-data-flow/ /vue-data-grid/framework-data-flow/
@@ -2314,10 +2041,30 @@ AddType text/javascript ts jsx
     Redirect 301 /react-data-grid/grid-features/ https://www.ag-grid.com/
     Redirect 301 /vue-data-grid/grid-features/ https://www.ag-grid.com/
 
+    RedirectMatch 301 "^/javascript-data-grid/$" "https://ag-grid.com/javascript-data-grid/getting-started/"
+    RedirectMatch 301 "^/react-data-grid/$" "https://ag-grid.com/react-data-grid/getting-started/"
+    RedirectMatch 301 "^/angular-data-grid/$" "https://ag-grid.com/angular-data-grid/getting-started/"
+    RedirectMatch 301 "^/vue-data-grid/$" "https://ag-grid.com/vue-data-grid/getting-started/"
+
     Redirect 301 /javascript-data-grid/integrated-charts-api-downloading-image/ /javascript-data-grid/integrated-charts-chart-tool-panels/
     Redirect 301 /angular-data-grid/integrated-charts-api-downloading-image/ /angular-data-grid/integrated-charts-chart-tool-panels/
     Redirect 301 /react-data-grid/integrated-charts-api-downloading-image/ /react-data-grid/integrated-charts-chart-tool-panels/
     Redirect 301 /vue-data-grid/integrated-charts-api-downloading-image/ /vue-data-grid/integrated-charts-chart-tool-panels/
+
+    RedirectMatch 301 "^/javascript-charts.*" "https://charts.ag-grid.com/javascript/quick-start/"
+    RedirectMatch 301 "^/angular-charts.*" "https://charts.ag-grid.com/angular/quick-start/"
+    RedirectMatch 301 "^/react-charts.*" "https://charts.ag-grid.com/react/quick-start/"
+    RedirectMatch 301 "^/vue-charts.*" "https://charts.ag-grid.com/vue/quick-start/"
+
+    RedirectMatch 301 "^/documentation/javascript/charts.*" "https://charts.ag-grid.com/javascript/quick-start/"
+    RedirectMatch 301 "^/documentation/angular/charts.*" "https://charts.ag-grid.com/angular/quick-start/"
+    RedirectMatch 301 "^/documentation/react/charts.*" "https://charts.ag-grid.com/react/quick-start/"
+    RedirectMatch 301 "^/documentation/vue/charts.*" "https://charts.ag-grid.com/vue/quick-start/"
+
+    Redirect 301 /javascript-data-grid/component-types/ /javascript-data-grid/components/
+    Redirect 301 /angular-data-grid/component-types/ /angular-data-grid/components/
+    Redirect 301 /react-data-grid/component-types/ /react-data-grid/components/
+    Redirect 301 /vue-data-grid/component-types/ /vue-data-grid/components/
 
     Redirect 301 /cookies.php /cookies
     Redirect 301 /privacy.php /privacy

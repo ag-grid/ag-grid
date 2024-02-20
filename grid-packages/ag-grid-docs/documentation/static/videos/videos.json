@@ -1,21 +1,6 @@
 {
   "javascript": [
     {
-      "title": "AG Grid Enterprise License Explained",
-      "url": "https://www.youtube.com/watch?v=20SLdu4wLtI&list=PLsZlhayVgqNxijfRQxg5Mc6W4MzZHQ9MK",
-      "thumbnail": {
-        "image": "AgGridVideo.png",
-        "altText": "AG Grid Enterprise License"
-      },
-      "keyPoints": [
-        "Community MIT License",
-        "Single App License",
-        "Multiple App License",
-        "Deployment License"
-      ],
-      "runningTime": "4:42"
-    },
-    {
       "title": "Getting Started with AG Grid Community",
       "url": "https://www.youtube.com/watch?v=j-Odsb0EjVo&list=PLsZlhayVgqNxijfRQxg5Mc6W4MzZHQ9MK",
       "thumbnail": {
@@ -97,15 +82,13 @@
         "Auto Group Columns"
       ],
       "runningTime": "20:23"
-    }
-  ],
-  "react": [
+    },
     {
-      "title": "AG Grid Enterprise License Explained",
-      "url": "https://www.youtube.com/watch?v=20SLdu4wLtI&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
+      "title": "AG Grid Enterprise and AG Charts Enterprise License Explained",
+      "url": "https://www.youtube.com/watch?v=xacx_attYuo&list=PLsZlhayVgqNxijfRQxg5Mc6W4MzZHQ9MK",
       "thumbnail": {
         "image": "AgGridVideo.png",
-        "altText": "AG Grid Enterprise License"
+        "altText": "AG Grid & AG Charts Enterprise License"
       },
       "keyPoints": [
         "Community MIT License",
@@ -113,8 +96,10 @@
         "Multiple App License",
         "Deployment License"
       ],
-      "runningTime": "4:42"
-    },
+      "runningTime": "8:10"
+    }
+  ],
+  "react": [
     {
       "title": "Getting Started with AG Grid Community",
       "url": "https://www.youtube.com/watch?v=Pr__B6HM_s4&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
@@ -202,7 +187,7 @@
     },
     {
       "title": "Custom Column Filter Components",
-      "url": "https://www.youtube.com/watch?v=yO3_nTyDv6o&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
+      "url": "https://www.youtube.com/watch?v=98JVaTcoexc&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW&index=6&pp=gAQBiAQB",
       "thumbnail": {
         "image": "AgGridVideo.png",
         "altText": "Custom Column Filter Components"
@@ -211,11 +196,11 @@
         "Creating Filter Components",
         "Custom Filter Models"
       ],
-      "runningTime": "18:04"
+      "runningTime": "7:52"
     },
     {
       "title": "Custom Floating Filter Components",
-      "url": "https://www.youtube.com/watch?v=CxwfX4KodaM&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
+      "url": "https://www.youtube.com/watch?v=MdO6vZN2Gxo&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW&index=7&pp=gAQBiAQB",
       "thumbnail": {
         "image": "AgGridVideo.png",
         "altText": "Custom Floating Filter Components"
@@ -223,7 +208,7 @@
       "keyPoints": [
         "Creating Floating Components"
       ],
-      "runningTime": "11:03"
+      "runningTime": "7:11"
     },
     {
       "title": "Custom Components",
@@ -282,15 +267,13 @@
         "Auto Group Columns"
       ],
       "runningTime": "20:23"
-    }
-  ],
-  "angular": [
+    },
     {
-      "title": "AG Grid Enterprise License Explained",
-      "url": "https://www.youtube.com/watch?v=20SLdu4wLtI&list=PLsZlhayVgqNw6VHFn4j6FcJM5vLACsf0x",
+      "title": "AG Grid Enterprise and AG Charts Enterprise License Explained",
+      "url": "https://www.youtube.com/watch?v=xacx_attYuo&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
       "thumbnail": {
         "image": "AgGridVideo.png",
-        "altText": "AG Grid Enterprise License"
+        "altText": "AG Grid & AG Charts Enterprise License"
       },
       "keyPoints": [
         "Community MIT License",
@@ -298,8 +281,10 @@
         "Multiple App License",
         "Deployment License"
       ],
-      "runningTime": "4:42"
-    },
+      "runningTime": "8:10"
+    }
+  ],
+  "angular": [
     {
       "title": "Getting Started with AG Grid Community",
       "url": "https://www.youtube.com/watch?v=_cRDVM6NlPk&list=PLsZlhayVgqNw6VHFn4j6FcJM5vLACsf0x",
@@ -369,15 +354,13 @@
         "Auto Group Columns"
       ],
       "runningTime": "20:23"
-    }
-  ],
-  "vue": [
+    },
     {
-      "title": "AG Grid Enterprise License Explained",
-      "url": "https://www.youtube.com/watch?v=20SLdu4wLtI&list=PLsZlhayVgqNz5iC0wFQDgixcAepFyrWbP",
+      "title": "AG Grid Enterprise and AG Charts Enterprise License Explained",
+      "url": "https://www.youtube.com/watch?v=xacx_attYuo&list=PLsZlhayVgqNw6VHFn4j6FcJM5vLACsf0x",
       "thumbnail": {
         "image": "AgGridVideo.png",
-        "altText": "AG Grid Enterprise License"
+        "altText": "AG Grid & AG Charts Enterprise License"
       },
       "keyPoints": [
         "Community MIT License",
@@ -385,8 +368,10 @@
         "Multiple App License",
         "Deployment License"
       ],
-      "runningTime": "4:42"
-    },
+      "runningTime": "8:10"
+    }
+  ],
+  "vue": [
     {
       "title": "Getting Started with AG Grid Community",
       "url": "https://www.youtube.com/watch?v=V14w_NFuZB4&list=PLsZlhayVgqNz5iC0wFQDgixcAepFyrWbP",
@@ -456,7 +441,21 @@
         "Auto Group Columns"
       ],
       "runningTime": "20:23"
+    },
+    {
+      "title": "AG Grid Enterprise and AG Charts Enterprise License Explained",
+      "url": "https://www.youtube.com/watch?v=xacx_attYuo&list=PLsZlhayVgqNz5iC0wFQDgixcAepFyrWbP",
+      "thumbnail": {
+        "image": "AgGridVideo.png",
+        "altText": "AG Grid & AG Charts Enterprise License"
+      },
+      "keyPoints": [
+        "Community MIT License",
+        "Single App License",
+        "Multiple App License",
+        "Deployment License"
+      ],
+      "runningTime": "8:10"
     }
-
   ]
 }

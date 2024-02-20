@@ -1,4 +1,4 @@
-export const ALL_AXIS_TYPES = ['number', 'category', 'groupedCategory', 'log', 'time'];
+export const ALL_AXIS_TYPES = ['number', 'category', 'grouped-category', 'log', 'time'];
 export function getLegacyAxisType(chartType) {
     switch (chartType) {
         case 'bar':
@@ -6,7 +6,7 @@ export function getLegacyAxisType(chartType) {
         case 'normalizedBar':
             return ['number', 'category'];
         case 'groupedBar':
-            return ['number', 'groupedCategory'];
+            return ['number', 'grouped-category'];
         case 'column':
         case 'stackedColumn':
         case 'normalizedColumn':
@@ -17,7 +17,7 @@ export function getLegacyAxisType(chartType) {
         case 'histogram':
             return ['category', 'number'];
         case 'groupedColumn':
-            return ['groupedCategory', 'number'];
+            return ['grouped-category', 'number'];
         case 'scatter':
         case 'bubble':
             return ['number', 'number'];

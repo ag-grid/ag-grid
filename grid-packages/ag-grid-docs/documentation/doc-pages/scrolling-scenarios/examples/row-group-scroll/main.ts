@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, RowGroupOpenedEvent } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions, RowGroupOpenedEvent } from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
   { field: 'athlete', width: 150, rowGroupIndex: 0 },
@@ -8,6 +8,8 @@ const columnDefs: ColDef[] = [
   { field: 'date', width: 110, rowGroupIndex: 2 },
 ]
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
   rowData: null,
@@ -16,8 +18,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   onRowGroupOpened: onRowGroupOpened,
   defaultColDef: {
     editable: true,
-    sortable: true,
-    resizable: true,
     filter: true,
     flex: 1,
     minWidth: 100,
@@ -31,15 +31,15 @@ function onRowGroupOpened(event: RowGroupOpenedEvent<IOlympicData>) {
     ? event.node.childrenAfterSort.length
     : 0
   var newIndex = rowNodeIndex + childCount
-  gridOptions.api!.ensureIndexVisible(newIndex)
+  gridApi!.ensureIndexVisible(newIndex)
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

@@ -1,4 +1,6 @@
-import { Grid, GridOptions, IRowNode } from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions, IRowNode } from '@ag-grid-community/core';
+
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -16,7 +18,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     flex: 1,
     minWidth: 100,
-    sortable: true,
     filter: true,
   },
   autoGroupColumnDef: {
@@ -27,22 +28,22 @@ const gridOptions: GridOptions<IOlympicData> = {
 
 function onBtForEachNode() {
   console.log('### api.forEachNode() ###')
-  gridOptions.api!.forEachNode(printNode)
+  gridApi!.forEachNode(printNode)
 }
 
 function onBtForEachNodeAfterFilter() {
   console.log('### api.forEachNodeAfterFilter() ###')
-  gridOptions.api!.forEachNodeAfterFilter(printNode)
+  gridApi!.forEachNodeAfterFilter(printNode)
 }
 
 function onBtForEachNodeAfterFilterAndSort() {
   console.log('### api.forEachNodeAfterFilterAndSort() ###')
-  gridOptions.api!.forEachNodeAfterFilterAndSort(printNode)
+  gridApi!.forEachNodeAfterFilterAndSort(printNode)
 }
 
 function onBtForEachLeafNode() {
   console.log('### api.forEachLeafNode() ###')
-  gridOptions.api!.forEachLeafNode(printNode)
+  gridApi!.forEachLeafNode(printNode)
 }
 
 const printNode = (node: IRowNode<IOlympicData>, index?: number) => {
@@ -58,9 +59,9 @@ const printNode = (node: IRowNode<IOlympicData>, index?: number) => {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data.slice(0, 50)))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data.slice(0, 50)))
 })

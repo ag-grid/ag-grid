@@ -48,7 +48,7 @@ var ColumnHoverService = /** @class */ (function (_super) {
         return !!this.selectedColumns && this.selectedColumns.indexOf(column) >= 0;
     };
     ColumnHoverService = __decorate([
-        context_1.Bean('columnHoverService')
+        (0, context_1.Bean)('columnHoverService')
     ], ColumnHoverService);
     return ColumnHoverService;
 }(beanStub_1.BeanStub));

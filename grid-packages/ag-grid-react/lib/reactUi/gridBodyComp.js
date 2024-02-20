@@ -1,4 +1,4 @@
-// ag-grid-react v30.1.0
+// ag-grid-react v31.1.0
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -145,9 +145,6 @@ var GridBodyComp = function () {
     var bodyClasses = react_1.useMemo(function () {
         return utils_1.classesList('ag-body', layoutClass);
     }, [layoutClass]);
-    var bodyClipperClasses = react_1.useMemo(function () {
-        return utils_1.classesList('ag-body-clipper', layoutClass);
-    }, [layoutClass]);
     var topClasses = react_1.useMemo(function () {
         return utils_1.classesList('ag-floating-top', cellSelectableCss);
     }, [cellSelectableCss]);
@@ -187,14 +184,13 @@ var GridBodyComp = function () {
                 ag_grid_community_1.RowContainerName.TOP_RIGHT,
                 ag_grid_community_1.RowContainerName.TOP_FULL_WIDTH,
             ] }),
-        react_1.default.createElement("div", { className: bodyClasses, ref: eBody, role: "presentation" },
-            react_1.default.createElement("div", { className: bodyClipperClasses, role: "presentation" }, createSection({ section: eBodyViewport, className: bodyViewportClasses,
-                children: [
-                    ag_grid_community_1.RowContainerName.LEFT,
-                    ag_grid_community_1.RowContainerName.CENTER,
-                    ag_grid_community_1.RowContainerName.RIGHT,
-                    ag_grid_community_1.RowContainerName.FULL_WIDTH,
-                ] }))),
+        react_1.default.createElement("div", { className: bodyClasses, ref: eBody, role: "presentation" }, createSection({ section: eBodyViewport, className: bodyViewportClasses,
+            children: [
+                ag_grid_community_1.RowContainerName.LEFT,
+                ag_grid_community_1.RowContainerName.CENTER,
+                ag_grid_community_1.RowContainerName.RIGHT,
+                ag_grid_community_1.RowContainerName.FULL_WIDTH,
+            ] })),
         createSection({ section: eStickyTop, className: stickyTopClasses, style: stickyTopStyle, children: [
                 ag_grid_community_1.RowContainerName.STICKY_TOP_LEFT,
                 ag_grid_community_1.RowContainerName.STICKY_TOP_CENTER,

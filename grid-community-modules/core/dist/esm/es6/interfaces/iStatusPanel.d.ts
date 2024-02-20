@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IComponent } from "./iComponent";
@@ -11,7 +11,23 @@ export interface StatusPanelDef {
 }
 export interface IStatusPanelParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
 }
-export interface IStatusPanel {
+export declare type AggregationStatusPanelAggFunc = 'count' | 'sum' | 'min' | 'max' | 'avg';
+export interface IAggregationStatusPanelParams {
+    aggFuncs: AggregationStatusPanelAggFunc[];
 }
-export interface IStatusPanelComp extends IStatusPanel, IComponent<IStatusPanelParams> {
+export interface AggregationStatusPanelParams<TData = any, TContext = any> extends IAggregationStatusPanelParams, IStatusPanelParams<TData, TContext> {
+    aggFuncs: AggregationStatusPanelAggFunc[];
+}
+export interface IStatusPanel<TData = any, TContext = any> {
+    /**
+     * Called when the `statusBar` grid option is updated.
+     * If this method returns `true`,
+     * the grid assumes that the status panel has updated with the latest params,
+     * and takes no further action.
+     * If this method returns `false`, or is not implemented,
+     * the grid will destroy and recreate the status panel.
+     */
+    refresh?(params: IStatusPanelParams<TData, TContext>): boolean;
+}
+export interface IStatusPanelComp<TData = any, TContext = any> extends IStatusPanel<TData, TContext>, IComponent<IStatusPanelParams<TData, TContext>> {
 }

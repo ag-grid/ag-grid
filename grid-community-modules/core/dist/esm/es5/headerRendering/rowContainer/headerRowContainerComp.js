@@ -100,8 +100,8 @@ var HeaderRowContainerComp = /** @class */ (function (_super) {
         });
         getAllValuesInObject(oldRowComps).forEach(function (c) { return _this.destroyRowComp(c); });
     };
-    HeaderRowContainerComp.PINNED_LEFT_TEMPLATE = "<div class=\"ag-pinned-left-header\" role=\"presentation\"></div>";
-    HeaderRowContainerComp.PINNED_RIGHT_TEMPLATE = "<div class=\"ag-pinned-right-header\" role=\"presentation\"></div>";
+    HeaderRowContainerComp.PINNED_LEFT_TEMPLATE = "<div class=\"ag-pinned-left-header\" role=\"rowgroup\"></div>";
+    HeaderRowContainerComp.PINNED_RIGHT_TEMPLATE = "<div class=\"ag-pinned-right-header\" role=\"rowgroup\"></div>";
     HeaderRowContainerComp.CENTER_TEMPLATE = "<div class=\"ag-header-viewport\" role=\"presentation\">\n            <div class=\"ag-header-container\" ref=\"eCenterContainer\" role=\"rowgroup\"></div>\n        </div>";
     __decorate([
         RefSelector('eCenterContainer')

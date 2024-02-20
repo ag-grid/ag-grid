@@ -21,7 +21,7 @@ let RowNodeBlockLoader = RowNodeBlockLoader_1 = class RowNodeBlockLoader extends
     }
     postConstruct() {
         this.maxConcurrentRequests = this.getMaxConcurrentDatasourceRequests();
-        const blockLoadDebounceMillis = this.gridOptionsService.getNum('blockLoadDebounceMillis');
+        const blockLoadDebounceMillis = this.gridOptionsService.get('blockLoadDebounceMillis');
         if (blockLoadDebounceMillis && blockLoadDebounceMillis > 0) {
             this.checkBlockToLoadDebounce = _.debounce(this.performCheckBlocksToLoad.bind(this), blockLoadDebounceMillis);
         }
@@ -30,7 +30,7 @@ let RowNodeBlockLoader = RowNodeBlockLoader_1 = class RowNodeBlockLoader extends
         this.logger = loggerFactory.create('RowNodeBlockLoader');
     }
     getMaxConcurrentDatasourceRequests() {
-        const res = this.gridOptionsService.getNum('maxConcurrentDatasourceRequests');
+        const res = this.gridOptionsService.get('maxConcurrentDatasourceRequests');
         if (res == null) {
             return 2;
         } // 2 is the default

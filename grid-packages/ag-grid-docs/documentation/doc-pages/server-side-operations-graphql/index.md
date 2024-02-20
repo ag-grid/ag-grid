@@ -8,13 +8,9 @@ Learn how to perform server-side operations using GraphQL with a complete refere
 
 In this guide we will develop an Olympic Medals application that demonstrates how to integrate a GraphQL endpoint with AG Grid's [Server-Side Row Model](/server-side-model/). Specifically it will show how data can be lazy-loaded as required, even when performing group, filter, sort operations when working with large datasets.
 
-The following screenshot shows what the finished application looks like:
-
-<image-caption src="server-side-operations-graphql/resources/graphql-app.png" alt="GraphQL" constrained="true"/></image-caption>
-
-<note>
+<warning>
 The reference implementation covered in this guide is for demonstration purposes only. If you use this in production it comes with no warranty or support.
-</note>
+</warning>
 
 The source code can be found here: [https://github.com/ag-grid/ag-grid-server-side-graphql-example](https://github.com/ag-grid/ag-grid-server-side-graphql-example).
 
@@ -28,7 +24,7 @@ One of the main benefits of GraphQL is the ability to expose a single endpoint a
 
 In our application, the GraphQL endpoint will be hosted using a web server comprised of [Node.js](https://nodejs.org/) running [Express.js](https://expressjs.com/). An overview of technologies used in this guide is illustrated in the diagram below:
 
-<image-caption src="server-side-operations-graphql/resources/graphql-arch.png" alt="GraphQL" constrained="true"/></image-caption>
+<image-caption src="server-side-operations-graphql/resources/graphql-arch.png" alt="GraphQL" constrained="true" filterdarkmode="true"></image-caption>
 
 We will now proceed to install and run the application before going through the implementation details.
 
@@ -123,7 +119,7 @@ input RowGroup {
 }
 ```
 
-The input types defined in the schema directly map to the [IServerSideGetRowsRequest](/server-side-model-datasource/#datasource-interface). We will discuss these mappings in detail in the following sections.
+The input types defined in the schema directly map to the [IServerSideGetRowsRequest](/server-side-model-datasource/#registering-the-datasource). We will discuss these mappings in detail in the following sections.
 
 The corresponding `rows` resolver function is implemented as follows:
 
@@ -181,7 +177,7 @@ app.listen(4000, () => {
 
 Notice that we have supplied the option: `graphiql: true` to enable the GraphiQL client, which is a useful tool for testing queries during development, and is available at: [http://localhost:4000/graphql](http://localhost:4000/graphql/).
 
-<image-caption src="server-side-operations-graphql/resources/graphiql.png" alt="GraphQL" constrained="true"></image-caption>
+<image-caption src="server-side-operations-graphql/resources/graphiql.png" alt="GraphQL" constrained="true" filterdarkmode="true"></image-caption>
 
 ## Server-Side Datasource
 
@@ -284,7 +280,7 @@ The `ServerSideDatasource` is then registered with the grid via the grid API as 
 // client/index.js
 
 const datasource = new ServerSideDatasource(gridOptions);
-gridOptions.api.setServerSideDatasource(datasource);
+api.setGridOption('serverSideDatasource', datasource);
 ```
 
 ## Conclusion

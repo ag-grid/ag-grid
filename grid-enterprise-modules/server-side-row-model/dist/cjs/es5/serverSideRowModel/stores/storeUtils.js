@@ -45,21 +45,16 @@ var StoreUtils = /** @class */ (function (_super) {
             filterModel: storeParams.filterModel,
             sortModel: storeParams.sortModel
         };
-        var getRowsParams = {
-            successCallback: p.successCallback,
+        var getRowsParams = this.gridOptionsService.addGridCommonParams({
             success: p.success,
-            failCallback: p.failCallback,
             fail: p.fail,
             request: request,
-            parentNode: p.parentNode,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-            context: this.gridOptionsService.context
-        };
+            parentNode: p.parentNode
+        });
         window.setTimeout(function () {
             if (!storeParams.datasource || !parentBlock.isAlive()) {
                 // failCallback() is important, to reduce the 'RowNodeBlockLoader.activeBlockLoadsCount' count
-                p.failCallback();
+                p.fail();
                 return;
             }
             storeParams.datasource.getRows(getRowsParams);
@@ -72,6 +67,12 @@ var StoreUtils = /** @class */ (function (_super) {
         var nextKey = keys[0];
         var nextNode = findNodeFunc(nextKey);
         if (nextNode) {
+            // if we have the final node, but not the final store, we create it to allow
+            // early population of data
+            if (keys.length === 1 && !nextNode.childStore) {
+                var storeParams = this.serverSideRowModel.getParams();
+                nextNode.childStore = this.createBean(this.storeFactory.createStore(storeParams, nextNode));
+            }
             var keyListForNextLevel = keys.slice(1, keys.length);
             var nextStore = nextNode.childStore;
             return nextStore ? nextStore.getChildStore(keyListForNextLevel) : null;
@@ -103,49 +104,45 @@ var StoreUtils = /** @class */ (function (_super) {
         return affectedGroupCols;
     };
     StoreUtils.prototype.getServerSideInitialRowCount = function () {
-        var rowCount = this.gridOptionsService.getNum('serverSideInitialRowCount');
-        if (typeof rowCount === 'number' && rowCount > 0) {
-            return rowCount;
-        }
-        return 1;
+        return this.gridOptionsService.get('serverSideInitialRowCount');
     };
     StoreUtils.prototype.assertRowModelIsServerSide = function (key) {
         if (!this.gridOptionsService.isRowModelType('serverSide')) {
-            core_1._.doOnce(function () { return console.warn("AG Grid: The '" + key + "' property can only be used with the Server Side Row Model."); }, key);
+            core_1._.warnOnce("The '".concat(key, "' property can only be used with the Server Side Row Model."));
             return false;
         }
         return true;
     };
     StoreUtils.prototype.assertNotTreeData = function (key) {
-        if (this.gridOptionsService.is('treeData')) {
-            core_1._.doOnce(function () { return console.warn("AG Grid: The '" + key + "' property cannot be used while using tree data."); }, key + '_TreeData');
+        if (this.gridOptionsService.get('treeData')) {
+            core_1._.warnOnce("The '".concat(key, "' property cannot be used while using tree data."));
             return false;
         }
         return true;
     };
     StoreUtils.prototype.isServerSideSortAllLevels = function () {
-        return this.gridOptionsService.is('serverSideSortAllLevels') && this.assertRowModelIsServerSide('serverSideSortAllLevels');
+        return this.gridOptionsService.get('serverSideSortAllLevels') && this.assertRowModelIsServerSide('serverSideSortAllLevels');
     };
     StoreUtils.prototype.isServerSideOnlyRefreshFilteredGroups = function () {
-        return this.gridOptionsService.is('serverSideOnlyRefreshFilteredGroups') && this.assertRowModelIsServerSide('serverSideOnlyRefreshFilteredGroups');
+        return this.gridOptionsService.get('serverSideOnlyRefreshFilteredGroups') && this.assertRowModelIsServerSide('serverSideOnlyRefreshFilteredGroups');
     };
     StoreUtils.prototype.isServerSideSortOnServer = function () {
-        return this.gridOptionsService.is('serverSideSortOnServer') && this.assertRowModelIsServerSide('serverSideSortOnServer') && this.assertNotTreeData('serverSideSortOnServer');
+        return this.gridOptionsService.get('serverSideSortOnServer') && this.assertRowModelIsServerSide('serverSideSortOnServer') && this.assertNotTreeData('serverSideSortOnServer');
     };
     StoreUtils.prototype.isServerSideFilterOnServer = function () {
-        return this.gridOptionsService.is('serverSideFilterOnServer') && this.assertRowModelIsServerSide('serverSideFilterOnServer') && this.assertNotTreeData('serverSideFilterOnServer');
+        return this.gridOptionsService.get('serverSideFilterOnServer') && this.assertRowModelIsServerSide('serverSideFilterOnServer') && this.assertNotTreeData('serverSideFilterOnServer');
     };
     __decorate([
-        core_1.Autowired('columnApi')
-    ], StoreUtils.prototype, "columnApi", void 0);
-    __decorate([
-        core_1.Autowired('columnModel')
+        (0, core_1.Autowired)('columnModel')
     ], StoreUtils.prototype, "columnModel", void 0);
     __decorate([
-        core_1.Autowired('gridApi')
-    ], StoreUtils.prototype, "gridApi", void 0);
+        (0, core_1.Autowired)('rowModel')
+    ], StoreUtils.prototype, "serverSideRowModel", void 0);
+    __decorate([
+        (0, core_1.Autowired)('ssrmStoreFactory')
+    ], StoreUtils.prototype, "storeFactory", void 0);
     StoreUtils = __decorate([
-        core_1.Bean('ssrmStoreUtils')
+        (0, core_1.Bean)('ssrmStoreUtils')
     ], StoreUtils);
     return StoreUtils;
 }(core_1.BeanStub));

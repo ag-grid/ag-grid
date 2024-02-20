@@ -4,7 +4,7 @@ title: "Number Filter"
 
 Number Filters allow you to filter number data.
 
-<image-caption src="filter-number/resources/number-filter.png" alt="Number Filter" width="12.5rem" centered="true"></image-caption>
+<image-caption src="filter-number/resources/number-filter.png" alt="Number Filter" centered="true" toggleDarkMode="true"></image-caption>
 
 ## Enabling Number Filters
 
@@ -58,7 +58,10 @@ const gridOptions = {
                 allowedCharPattern: '\\d\\-\\,',
                 numberParser: text => {
                     return text == null ? null : parseFloat(text.replace(',', '.'));
-                }
+                },
+                numberFormatter: value => {
+                    return value == null ? null : value.toString().replace('.', ',');
+                },
             }
         }
     ]
@@ -68,6 +71,8 @@ const gridOptions = {
 The `allowedCharPattern` is a regex of all the characters that are allowed to be typed. This is surrounded by square brackets `[]` and used as a character class to be compared against each typed character individually and prevent the character from appearing in the input if it does not match (in supported browsers).
 
 The `numberParser` should take the user-entered text and return either a number if one can be interpreted, or `null` if not.
+
+The `numberFormatter` should take a number (e.g. from the Filter Model) and convert it into the formatted text to be displayed, or `null` if no value.
 
 Custom number support can be seen in the [Number Filter Example](#example-number-filter) above.
 
@@ -125,20 +130,20 @@ The Number Filter presents a list of [Filter Options](/filter-conditions/#filter
 
 The list of options are as follows:
 
-| Option Name             | Option Key            | Included by Default |
-| ----------------------- | --------------------- | ------------------- |
-| Equals                  | `equals`              | Yes                 |
-| Not equal               | `notEqual`            | Yes                 |
-| Less than               | `lessThan`            | Yes                 |
-| Less than or equals     | `lessThanOrEqual`     | Yes                 |
-| Greater than            | `greaterThan`         | Yes                 |
-| Greater than or equals  | `greaterThanOrEqual`  | Yes                 |
-| In range                | `inRange`             | Yes                 |
-| Blank                   | `blank`               | Yes                 |
-| Not blank               | `notBlank`            | Yes                 |
-| Choose One              | `empty`               | No                  |
+| Option Name              | Option Key            | Included by Default |
+| ------------------------ | --------------------- | ------------------- |
+| Equals                   | `equals`              | Yes                 |
+| Does not equal           | `notEqual`            | Yes                 |
+| Greater than             | `greaterThan`         | Yes                 |
+| Greater than or equal to | `greaterThanOrEqual`  | Yes                 |
+| Less than                | `lessThan`            | Yes                 |
+| Less than or equal to    | `lessThanOrEqual`     | Yes                 |
+| Between                  | `inRange`             | Yes                 |
+| Blank                    | `blank`               | Yes                 |
+| Not blank                | `notBlank`            | Yes                 |
+| Choose one               | `empty`               | No                  |
 
-Note that the `empty` filter option is primarily used when creating [Custom Filter Options](/filter-conditions/#custom-filter-options). When 'Choose One' is displayed, the filter is not active.
+Note that the `empty` filter option is primarily used when creating [Custom Filter Options](/filter-conditions/#custom-filter-options). When 'Choose one' is displayed, the filter is not active.
 
 The default option for the Number Filter is `equals`.
 
@@ -157,7 +162,7 @@ Applying the Number Filter is described in more detail in the following sections
 
 ## Blank Cells
 
-If the row data contains blanks (i.e. `null` or `undefined`), by default the row won't be included in filter results. To change this, use the filter params `includeBlanksInEquals`, `includeBlanksInLessThan`, `includeBlanksInGreaterThan` and `includeBlanksInRange`. For example, the code snippet below configures a filter to include `null` for equals, but not for less than, greater than or in range:
+If the row data contains blanks (i.e. `null` or `undefined`), by default the row won't be included in filter results. To change this, use the filter params `includeBlanksInEquals`, `includeBlanksInLessThan`, `includeBlanksInGreaterThan` and `includeBlanksInRange`. For example, the code snippet below configures a filter to include `null` for equals, but not for less than, greater than or in range (between):
 
 ```js
 const filterParams = {

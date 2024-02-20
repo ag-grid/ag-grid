@@ -9,9 +9,9 @@ Style the Filters [Tool Panel](/component-tool-panel/) and [Columns Tool Panel](
 The Tool Panel is a tabbed container. It exposes CSS variables:
 
 ```css
-.ag-theme-alpine {
-    --ag-control-panel-background-color: rgb(228, 197, 203);
-    --ag-side-button-selected-background-color: rgb(228, 197, 203);
+.ag-theme-quartz {
+    --ag-control-panel-background-color: #CC222244;
+    --ag-side-button-selected-background-color: #CC222244;
 
     --ag-selected-tab-underline-color: deeppink;
     --ag-selected-tab-underline-width: 2px;
@@ -30,19 +30,19 @@ The `--ag-column-select-indent-size` CSS Variable sets the indent of each column
 This example demonstrates changing the column indent and the style of the column drop component in the Row Groups area:
 
 ```css
-.ag-theme-alpine {
+.ag-theme-quartz {
     --ag-column-select-indent-size: 40px
 }
 
-.ag-theme-alpine .ag-column-drop-cell {
+.ag-theme-quartz .ag-column-drop-cell {
     background-color: purple;
 }
 
-.ag-theme-alpine .ag-column-drop-cell .ag-icon {
+.ag-theme-quartz .ag-column-drop-cell .ag-icon {
     color: white;
 }
 
-.ag-theme-alpine .ag-column-drop-cell-text {
+.ag-theme-quartz .ag-column-drop-cell-text {
     color: white;
     font-weight: bold;
 }

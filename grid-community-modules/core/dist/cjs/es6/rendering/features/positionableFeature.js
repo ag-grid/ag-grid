@@ -66,8 +66,8 @@ class PositionableFeature extends beanStub_1.BeanStub {
         let computedMinWidth = 0;
         // here we don't use the main offset parent but the element's offsetParent
         // in order to calculated the minWidth and minHeight correctly
-        const isVisible = !!this.element.offsetParent;
-        if (isVisible) {
+        const isElementVisible = (0, dom_1.isVisible)(this.element);
+        if (isElementVisible) {
             const boundaryEl = this.findBoundaryElement();
             const offsetParentComputedStyles = window.getComputedStyle(boundaryEl);
             if (offsetParentComputedStyles.minWidth != null) {
@@ -96,7 +96,7 @@ class PositionableFeature extends beanStub_1.BeanStub {
         else if (x || y) {
             this.offsetElement(x, y);
         }
-        else if (isVisible && forcePopupParentAsOffsetParent) {
+        else if (isElementVisible && forcePopupParentAsOffsetParent) {
             let boundaryEl = this.boundaryEl;
             let initialisedDuringPositioning = true;
             if (!boundaryEl) {
@@ -212,8 +212,8 @@ class PositionableFeature extends beanStub_1.BeanStub {
         const eGui = this.element;
         let isPercent = false;
         if (typeof height === 'string' && height.indexOf('%') !== -1) {
-            dom_1.setFixedHeight(eGui, height);
-            height = dom_1.getAbsoluteHeight(eGui);
+            (0, dom_1.setFixedHeight)(eGui, height);
+            height = (0, dom_1.getAbsoluteHeight)(eGui);
             isPercent = true;
         }
         else {
@@ -230,7 +230,7 @@ class PositionableFeature extends beanStub_1.BeanStub {
         }
         if (!isPercent) {
             if (popup) {
-                dom_1.setFixedHeight(eGui, height);
+                (0, dom_1.setFixedHeight)(eGui, height);
             }
             else {
                 eGui.style.height = `${height}px`;
@@ -277,8 +277,8 @@ class PositionableFeature extends beanStub_1.BeanStub {
         const { popup } = this.config;
         let isPercent = false;
         if (typeof width === 'string' && width.indexOf('%') !== -1) {
-            dom_1.setFixedWidth(eGui, width);
-            width = dom_1.getAbsoluteWidth(eGui);
+            (0, dom_1.setFixedWidth)(eGui, width);
+            width = (0, dom_1.getAbsoluteWidth)(eGui);
             isPercent = true;
         }
         else if (this.positioned) {
@@ -294,7 +294,7 @@ class PositionableFeature extends beanStub_1.BeanStub {
         }
         if (!isPercent) {
             if (this.config.popup) {
-                dom_1.setFixedWidth(eGui, width);
+                (0, dom_1.setFixedWidth)(eGui, width);
             }
             else {
                 eGui.style.width = `${width}px`;
@@ -619,9 +619,7 @@ class PositionableFeature extends beanStub_1.BeanStub {
         this.currentResizer = null;
         this.boundaryEl = null;
         const params = {
-            type: 'resize',
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi
+            type: 'resize'
         };
         this.element.classList.remove('ag-resizing');
         this.resizerMap[side].element.classList.remove('ag-active');
@@ -705,12 +703,12 @@ class PositionableFeature extends beanStub_1.BeanStub {
     }
 }
 __decorate([
-    context_1.Autowired('popupService')
+    (0, context_1.Autowired)('popupService')
 ], PositionableFeature.prototype, "popupService", void 0);
 __decorate([
-    context_1.Autowired('resizeObserverService')
+    (0, context_1.Autowired)('resizeObserverService')
 ], PositionableFeature.prototype, "resizeObserverService", void 0);
 __decorate([
-    context_1.Autowired('dragService')
+    (0, context_1.Autowired)('dragService')
 ], PositionableFeature.prototype, "dragService", void 0);
 exports.PositionableFeature = PositionableFeature;

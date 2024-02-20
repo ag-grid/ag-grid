@@ -1,4 +1,6 @@
 import { Component } from "@angular/core";
+import { FormsModule } from "@angular/forms";
+
 import { IFloatingFilter, IFloatingFilterParams, NumberFilter, NumberFilterModel } from "@ag-grid-community/core";
 import { AgFrameworkComponent } from "@ag-grid-community/angular";
 
@@ -8,6 +10,8 @@ export interface SliderFloatingFilterParams extends IFloatingFilterParams {
 }
 
 @Component({
+    standalone: true,
+    imports: [FormsModule],
     template: `
         <input type="range"
                min="0" [max]="maxValue"

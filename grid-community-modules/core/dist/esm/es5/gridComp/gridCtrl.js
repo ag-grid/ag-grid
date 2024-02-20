@@ -47,12 +47,6 @@ var GridCtrl = /** @class */ (function (_super) {
         this.mouseEventService.stampTopLevelGridCompWithGridInstance(eGridDiv);
         this.createManagedBean(new LayoutFeature(this.view));
         this.addRtlSupport();
-        this.addManagedListener(this, Events.EVENT_KEYBOARD_FOCUS, function () {
-            _this.view.addOrRemoveKeyboardFocusClass(true);
-        });
-        this.addManagedListener(this, Events.EVENT_MOUSE_FOCUS, function () {
-            _this.view.addOrRemoveKeyboardFocusClass(false);
-        });
         var unsubscribeFromResize = this.resizeObserverService.observeResize(this.eGridHostDiv, this.onGridSizeChanged.bind(this));
         this.addDestroyFunc(function () { return unsubscribeFromResize(); });
         this.ctrlsService.registerGridCtrl(this);
@@ -83,7 +77,7 @@ var GridCtrl = /** @class */ (function (_super) {
         this.eventService.dispatchEvent(event);
     };
     GridCtrl.prototype.addRtlSupport = function () {
-        var cssClass = this.gridOptionsService.is('enableRtl') ? 'ag-rtl' : 'ag-ltr';
+        var cssClass = this.gridOptionsService.get('enableRtl') ? 'ag-rtl' : 'ag-ltr';
         this.view.setRtlClass(cssClass);
     };
     GridCtrl.prototype.destroyGridUi = function () {
@@ -120,8 +114,16 @@ var GridCtrl = /** @class */ (function (_super) {
                 return true;
             }
         }
-        if (this.gridOptionsService.getNum('headerHeight') === 0) {
-            return this.focusService.focusGridView(allColumns[0]);
+        if (this.gridOptionsService.get('headerHeight') === 0 || this.gridOptionsService.get('suppressHeaderFocus')) {
+            if (this.focusService.focusGridView(allColumns[0])) {
+                return true;
+            }
+            for (var i = 1; i < focusableContainers.length; i++) {
+                if (this.focusService.focusInto(focusableContainers[i])) {
+                    return true;
+                }
+            }
+            return false;
         }
         return this.focusService.focusFirstHeader();
     };

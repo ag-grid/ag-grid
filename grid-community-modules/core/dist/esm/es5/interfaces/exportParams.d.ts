@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -6,11 +6,14 @@ import { ColumnGroup } from "../entities/columnGroup";
 import { RowPosition } from "../entities/rowPositionUtils";
 import { AgGridCommon } from "./iCommon";
 import { IRowNode } from "./iRowNode";
+export interface ExportFileNameGetterParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+}
+export declare type ExportFileNameGetter = (params?: ExportFileNameGetterParams) => string;
 export interface BaseExportParams {
     /**
      * If `true`, all columns will be exported in the order they appear in the columnDefs.
      * When `false` only the columns currently being displayed will be exported.
-     * Default: `false`
+     * @default false
      */
     allColumns?: boolean;
     /**
@@ -20,47 +23,47 @@ export interface BaseExportParams {
     /** Row node positions. */
     rowPositions?: RowPosition[];
     /**
-     * String to use as the file name.
+     * String to use as the file name or a function that returns a string.
      */
-    fileName?: string;
+    fileName?: string | ExportFileNameGetter;
     /**
      * Determines whether rows are exported before being filtered and sorted.
-     * Default: `filteredAndSorted`
+     * @default 'filteredAndSorted'
      */
     exportedRows?: 'all' | 'filteredAndSorted';
     /**
      * Export only selected rows.
-     * Default: `false`
+     * @default false
      */
     onlySelected?: boolean;
     /**
      * Only export selected rows including other pages (only makes sense when using pagination).
-     * Default: `false`
+     * @default false
      */
     onlySelectedAllPages?: boolean;
     /**
      * Set to `true` to exclude header column groups.
-     * Default: `false`
+     * @default false
      */
     skipColumnGroupHeaders?: boolean;
     /**
      * Set to `true` if you don't want to export column headers.
-     * Default: `false`
+     * @default false
      */
     skipColumnHeaders?: boolean;
     /**
      * Set to `true` to skip row group headers if grouping rows. Only relevant when grouping rows.
-     * Default: `false`
+     * @default false
      */
     skipRowGroups?: boolean;
     /**
      * Set to `true` to suppress exporting rows pinned to the top of the grid.
-     * Default: `false`
+     * @default false
      */
     skipPinnedTop?: boolean;
     /**
      * Set to `true` to suppress exporting rows pinned to the bottom of the grid.
-     * Default: `false`
+     * @default false
      */
     skipPinnedBottom?: boolean;
     /**
@@ -84,12 +87,6 @@ export interface BaseExportParams {
      * A callback function invoked once per row group. Return a `string` to be displayed in the group cell.
      */
     processRowGroupCallback?(params: ProcessRowGroupForExportParams): string;
-    /** @deprecated */
-    columnGroups?: boolean;
-    /** @deprecated */
-    skipGroups?: boolean;
-    /** @deprecated */
-    skipHeader?: boolean;
 }
 export interface ExportParams<T> extends BaseExportParams {
     /**
@@ -100,14 +97,6 @@ export interface ExportParams<T> extends BaseExportParams {
      * Content to put at the bottom of the exported sheet.
      */
     appendContent?: T;
-    /**
-     * @deprecated Use prependContent
-     */
-    customHeader?: T;
-    /**
-     * @deprecated Use appendContent
-     */
-    customFooter?: T;
     /** A callback function to return content to be inserted below a row in the export. */
     getCustomContentBelowRow?: (params: ProcessRowGroupForExportParams) => T | undefined;
 }
@@ -119,7 +108,7 @@ export interface CsvCell {
     data: CsvCellData;
     /**
      * The number of cells to span across (1 means span 2 columns).
-     * Default: `0`
+     * @default 0
      */
     mergeAcross?: number;
 }
@@ -131,13 +120,13 @@ export declare type CsvCustomContent = CsvCell[][] | string;
 export interface CsvExportParams extends ExportParams<CsvCustomContent> {
     /**
      * Delimiter to insert between cell values.
-     * Default: `,`
+     * @default ,
      */
     columnSeparator?: string;
     /**
      * By default cell values are encoded according to CSV format rules: values are wrapped in double quotes, and any double quotes within the values are escaped, so my value becomes \"my\"\"value\". Pass `true` to insert the value into the CSV file without escaping.
      * In this case it is your responsibility to ensure that no cells contain the columnSeparator character.
-     * Default: `false`
+     * @default false
      */
     suppressQuotes?: boolean;
 }
@@ -163,6 +152,6 @@ export interface ProcessGroupHeaderForExportParams<TData = any, TContext = any> 
     columnGroup: ColumnGroup;
 }
 export interface ProcessRowGroupForExportParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
-    /** Row node. */
     node: IRowNode<TData>;
+    column?: Column;
 }

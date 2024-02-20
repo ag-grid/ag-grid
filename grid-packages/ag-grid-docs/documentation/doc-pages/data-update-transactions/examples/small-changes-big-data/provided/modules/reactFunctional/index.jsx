@@ -5,7 +5,7 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 import './styles.css';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
@@ -71,18 +71,8 @@ const getMyFilter = () => {
         }
         doesFilterPass(params) {
             filterCallCount++;
-            const { api, colDef, column, columnApi, context } = this.filterParams;
             const { node } = params;
-            const value = this.filterParams.valueGetter({
-                api,
-                colDef,
-                column,
-                columnApi,
-                context,
-                data: node.data,
-                getValue: (field) => node.data[field],
-                node,
-            });
+            const value = this.filterParams.getValue(node);
             return value > (this.filterValue || 0);
         }
     }
@@ -126,8 +116,6 @@ const GridExample = () => {
         return {
             flex: 1,
             filter: true,
-            sortable: true,
-            resizable: true,
         }
     }, []);
     const autoGroupColumnDef = useMemo(() => {
@@ -144,7 +132,7 @@ const GridExample = () => {
             value: { value: '50' },
         });
         timeOperation('Initialisation', function () {
-            params.api.setRowData(getData());
+            params.api.setGridOption('rowData', getData());
         });
 
     }, []);
@@ -222,7 +210,7 @@ const GridExample = () => {
                     <button onClick={onBtClearSelection}>Clear Selection</button>
                 </div>
 
-                <div style={gridStyle} className="ag-theme-alpine">
+                <div style={gridStyle} className={/** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
                     <AgGridReact
                         ref={gridRef}
                         rowData={rowData}
@@ -231,7 +219,6 @@ const GridExample = () => {
                         defaultColDef={defaultColDef}
                         rowSelection={'multiple'}
                         groupSelectsChildren={true}
-                        animateRows={true}
                         suppressRowClickSelection={true}
                         autoGroupColumnDef={autoGroupColumnDef}
                         isGroupOpenByDefault={isGroupOpenByDefault}

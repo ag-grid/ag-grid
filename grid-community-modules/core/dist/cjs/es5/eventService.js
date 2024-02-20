@@ -31,14 +31,21 @@ var EventService = /** @class */ (function () {
     //
     // the times when this class is used outside of the context (eg RowNode has an instance of this
     // class) then it is not a bean, and this setBeans method is not called.
-    EventService.prototype.setBeans = function (loggerFactory, gridOptionsService, frameworkOverrides, globalEventListener) {
+    EventService.prototype.setBeans = function (gridOptionsService, frameworkOverrides, globalEventListener, globalSyncEventListener) {
         if (globalEventListener === void 0) { globalEventListener = null; }
+        if (globalSyncEventListener === void 0) { globalSyncEventListener = null; }
         this.frameworkOverrides = frameworkOverrides;
         this.gridOptionsService = gridOptionsService;
         if (globalEventListener) {
             var async = gridOptionsService.useAsyncEvents();
             this.addGlobalListener(globalEventListener, async);
         }
+        if (globalSyncEventListener) {
+            this.addGlobalListener(globalSyncEventListener, false);
+        }
+    };
+    EventService.prototype.setFrameworkOverrides = function (frameworkOverrides) {
+        this.frameworkOverrides = frameworkOverrides;
     };
     EventService.prototype.getListeners = function (eventType, async, autoCreateListenerCollection) {
         var listenerMap = async ? this.allAsyncListeners : this.allSyncListeners;
@@ -86,10 +93,7 @@ var EventService = /** @class */ (function () {
         if (this.gridOptionsService) {
             // Apply common properties to all dispatched events if this event service has had its beans set with gridOptionsService.
             // Note there are multiple instances of EventService that are used local to components which do not set gridOptionsService.
-            var _a = this.gridOptionsService, api = _a.api, columnApi = _a.columnApi, context = _a.context;
-            agEvent.api = api;
-            agEvent.columnApi = columnApi;
-            agEvent.context = context;
+            this.gridOptionsService.addGridCommonParams(agEvent);
         }
         this.dispatchToListeners(agEvent, true);
         this.dispatchToListeners(agEvent, false);
@@ -102,6 +106,7 @@ var EventService = /** @class */ (function () {
     };
     EventService.prototype.dispatchToListeners = function (event, async) {
         var _this = this;
+        var _a;
         var eventType = event.type;
         if (async && 'event' in event) {
             var browserEvent = event.event;
@@ -111,26 +116,37 @@ var EventService = /** @class */ (function () {
                 event.eventPath = browserEvent.composedPath();
             }
         }
-        var processEventListeners = function (listeners) { return listeners.forEach(function (listener) {
+        var processEventListeners = function (listeners, originalListeners) { return listeners.forEach(function (listener) {
+            if (!originalListeners.has(listener)) {
+                // A listener could have been removed by a previously processed listener. In this case we don't want to call 
+                return;
+            }
+            var callback = _this.frameworkOverrides
+                ? function () { return _this.frameworkOverrides.wrapIncoming(function () { return listener(event); }); }
+                : function () { return listener(event); };
             if (async) {
-                _this.dispatchAsync(function () { return listener(event); });
+                _this.dispatchAsync(callback);
             }
             else {
-                listener(event);
+                callback();
             }
         }); };
+        var originalListeners = (_a = this.getListeners(eventType, async, false)) !== null && _a !== void 0 ? _a : new Set();
         // create a shallow copy to prevent listeners cyclically adding more listeners to capture this event
-        var listeners = new Set(this.getListeners(eventType, async, false));
-        if (listeners) {
-            processEventListeners(listeners);
+        var listeners = new Set(originalListeners);
+        if (listeners.size > 0) {
+            processEventListeners(listeners, originalListeners);
         }
         var globalListeners = new Set(async ? this.globalAsyncListeners : this.globalSyncListeners);
         globalListeners.forEach(function (listener) {
+            var callback = _this.frameworkOverrides
+                ? function () { return _this.frameworkOverrides.wrapIncoming(function () { return listener(eventType, event); }); }
+                : function () { return listener(eventType, event); };
             if (async) {
-                _this.dispatchAsync(function () { return _this.frameworkOverrides.dispatchEvent(eventType, function () { return listener(eventType, event); }, true); });
+                _this.dispatchAsync(callback);
             }
             else {
-                _this.frameworkOverrides.dispatchEvent(eventType, function () { return listener(eventType, event); }, true);
+                callback();
             }
         });
     };
@@ -139,6 +155,7 @@ var EventService = /** @class */ (function () {
     // because setTimeout() is an expensive operation. ideally we would have
     // each event in it's own setTimeout(), but we batch for performance.
     EventService.prototype.dispatchAsync = function (func) {
+        var _this = this;
         // add to the queue for executing later in the next VM turn
         this.asyncFunctionsQueue.push(func);
         // check if timeout is already scheduled. the first time the grid calls
@@ -147,7 +164,9 @@ var EventService = /** @class */ (function () {
         // set to 'true' so it will know it's already scheduled for subsequent calls.
         if (!this.scheduled) {
             // if not scheduled, schedule one
-            window.setTimeout(this.flushAsyncQueue.bind(this), 0);
+            this.frameworkOverrides.wrapIncoming(function () {
+                window.setTimeout(_this.flushAsyncQueue.bind(_this), 0);
+            });
             // mark that it is scheduled
             this.scheduled = true;
         }
@@ -166,13 +185,13 @@ var EventService = /** @class */ (function () {
         queueCopy.forEach(function (func) { return func(); });
     };
     __decorate([
-        __param(0, context_1.Qualifier('loggerFactory')),
-        __param(1, context_1.Qualifier('gridOptionsService')),
-        __param(2, context_1.Qualifier('frameworkOverrides')),
-        __param(3, context_1.Qualifier('globalEventListener'))
+        __param(0, (0, context_1.Qualifier)('gridOptionsService')),
+        __param(1, (0, context_1.Qualifier)('frameworkOverrides')),
+        __param(2, (0, context_1.Qualifier)('globalEventListener')),
+        __param(3, (0, context_1.Qualifier)('globalSyncEventListener'))
     ], EventService.prototype, "setBeans", null);
     EventService = __decorate([
-        context_1.Bean('eventService')
+        (0, context_1.Bean)('eventService')
     ], EventService);
     return EventService;
 }());

@@ -38,11 +38,12 @@ var PaginationProxy = /** @class */ (function (_super) {
         return _this;
     }
     PaginationProxy.prototype.postConstruct = function () {
-        this.active = this.gridOptionsService.is('pagination');
+        this.active = this.gridOptionsService.get('pagination');
+        this.pageSizeFromGridOptions = this.gridOptionsService.get('paginationPageSize');
         this.paginateChildRows = this.isPaginateChildRows();
         this.addManagedListener(this.eventService, events_1.Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
-        this.addManagedPropertyListener('pagination', this.onPaginationPageSizeChanged.bind(this));
-        this.addManagedPropertyListener('paginationPageSize', this.onPaginationPageSizeChanged.bind(this));
+        this.addManagedPropertyListener('pagination', this.onPaginationGridOptionChanged.bind(this));
+        this.addManagedPropertyListener('paginationPageSize', this.onPageSizeGridOptionChanged.bind(this));
         this.onModelUpdated();
     };
     PaginationProxy.prototype.ensureRowHeightsValid = function (startPixel, endPixel, startLimitIndex, endLimitIndex) {
@@ -53,11 +54,11 @@ var PaginationProxy = /** @class */ (function (_super) {
         return res;
     };
     PaginationProxy.prototype.isPaginateChildRows = function () {
-        var shouldPaginate = this.gridOptionsService.is('groupRemoveSingleChildren') || this.gridOptionsService.is('groupRemoveLowestSingleChildren');
+        var shouldPaginate = this.gridOptionsService.get('groupRemoveSingleChildren') || this.gridOptionsService.get('groupRemoveLowestSingleChildren');
         if (shouldPaginate) {
             return true;
         }
-        return this.gridOptionsService.is('paginateChildRows');
+        return this.gridOptionsService.get('paginateChildRows');
     };
     PaginationProxy.prototype.onModelUpdated = function (modelUpdatedEvent) {
         this.calculatePages();
@@ -66,23 +67,28 @@ var PaginationProxy = /** @class */ (function (_super) {
             animate: modelUpdatedEvent ? modelUpdatedEvent.animate : false,
             newData: modelUpdatedEvent ? modelUpdatedEvent.newData : false,
             newPage: modelUpdatedEvent ? modelUpdatedEvent.newPage : false,
+            newPageSize: modelUpdatedEvent ? modelUpdatedEvent.newPageSize : false,
             keepRenderedRows: modelUpdatedEvent ? modelUpdatedEvent.keepRenderedRows : false
         };
         this.eventService.dispatchEvent(paginationChangedEvent);
     };
-    PaginationProxy.prototype.onPaginationPageSizeChanged = function () {
-        this.active = this.gridOptionsService.is('pagination');
+    PaginationProxy.prototype.onPaginationGridOptionChanged = function () {
+        this.active = this.gridOptionsService.get('pagination');
         this.calculatePages();
         var paginationChangedEvent = {
             type: events_1.Events.EVENT_PAGINATION_CHANGED,
             animate: false,
             newData: false,
             newPage: false,
+            newPageSize: false,
             // important to keep rendered rows, otherwise every time grid is resized,
             // we would destroy all the rows.
             keepRenderedRows: true
         };
         this.eventService.dispatchEvent(paginationChangedEvent);
+    };
+    PaginationProxy.prototype.onPageSizeGridOptionChanged = function () {
+        this.setPageSize(this.gridOptionsService.get('paginationPageSize'), 'gridOptions');
     };
     PaginationProxy.prototype.goToPage = function (page) {
         if (!this.active || this.currentPage === page || typeof this.currentPage !== 'number') {
@@ -94,7 +100,8 @@ var PaginationProxy = /** @class */ (function (_super) {
             animate: false,
             keepRenderedRows: false,
             newData: false,
-            newPage: true
+            newPage: true,
+            newPageSize: false
         };
         this.onModelUpdated(event);
     };
@@ -111,7 +118,7 @@ var PaginationProxy = /** @class */ (function (_super) {
         return this.rowModel.getRowIndexAtPixel(pixel);
     };
     PaginationProxy.prototype.getCurrentPageHeight = function () {
-        if (generic_1.missing(this.topRowBounds) || generic_1.missing(this.bottomRowBounds)) {
+        if ((0, generic_1.missing)(this.topRowBounds) || (0, generic_1.missing)(this.bottomRowBounds)) {
             return 0;
         }
         return Math.max(this.bottomRowBounds.rowTop + this.bottomRowBounds.rowHeight - this.topRowBounds.rowTop, 0);
@@ -207,16 +214,85 @@ var PaginationProxy = /** @class */ (function (_super) {
     PaginationProxy.prototype.getTotalPages = function () {
         return this.totalPages;
     };
-    PaginationProxy.prototype.setPageSize = function () {
-        // show put this into super class
-        this.pageSize = this.gridOptionsService.getNum('paginationPageSize');
-        if (this.pageSize == null || this.pageSize < 1) {
-            this.pageSize = 100;
+    /** This is only for state setting before data has been loaded */
+    PaginationProxy.prototype.setPage = function (page) {
+        this.currentPage = page;
+    };
+    Object.defineProperty(PaginationProxy.prototype, "pageSize", {
+        get: function () {
+            if ((0, generic_1.exists)(this.pageSizeAutoCalculated)) {
+                return this.pageSizeAutoCalculated;
+            }
+            if ((0, generic_1.exists)(this.pageSizeFromPageSizeSelector)) {
+                return this.pageSizeFromPageSizeSelector;
+            }
+            if ((0, generic_1.exists)(this.pageSizeFromInitialState)) {
+                return this.pageSizeFromInitialState;
+            }
+            if ((0, generic_1.exists)(this.pageSizeFromGridOptions)) {
+                return this.pageSizeFromGridOptions;
+            }
+            return this.defaultPageSize;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    PaginationProxy.prototype.unsetAutoCalculatedPageSize = function () {
+        if (this.pageSizeAutoCalculated === undefined) {
+            return;
+        }
+        var oldPageSize = this.pageSizeAutoCalculated;
+        this.pageSizeAutoCalculated = undefined;
+        if (this.pageSize === oldPageSize) {
+            return;
+        }
+        this.onModelUpdated({
+            type: events_1.Events.EVENT_MODEL_UPDATED,
+            animate: false,
+            keepRenderedRows: false,
+            newData: false,
+            newPage: false,
+            newPageSize: true,
+        });
+    };
+    PaginationProxy.prototype.setPageSize = function (size, source) {
+        var currentSize = this.pageSize;
+        switch (source) {
+            case 'autoCalculated':
+                this.pageSizeAutoCalculated = size;
+                break;
+            case 'pageSizeSelector':
+                this.pageSizeFromPageSizeSelector = size;
+                if (this.currentPage !== 0) {
+                    this.goToFirstPage();
+                }
+                break;
+            case 'initialState':
+                this.pageSizeFromInitialState = size;
+                break;
+            case 'gridOptions':
+                this.pageSizeFromGridOptions = size;
+                this.pageSizeFromInitialState = undefined;
+                this.pageSizeFromPageSizeSelector = undefined;
+                if (this.currentPage !== 0) {
+                    this.goToFirstPage();
+                }
+                break;
+        }
+        if (currentSize !== this.pageSize) {
+            var event_1 = {
+                type: events_1.Events.EVENT_MODEL_UPDATED,
+                animate: false,
+                keepRenderedRows: false,
+                newData: false,
+                newPage: false,
+                newPageSize: true,
+            };
+            this.onModelUpdated(event_1);
         }
     };
     PaginationProxy.prototype.calculatePages = function () {
         if (this.active) {
-            this.setPageSize();
             if (this.paginateChildRows) {
                 this.calculatePagesAllRows();
             }
@@ -235,7 +311,7 @@ var PaginationProxy = /** @class */ (function (_super) {
         if (this.bottomRowBounds) {
             this.bottomRowBounds.rowIndex = this.bottomDisplayedRowIndex;
         }
-        this.setPixelOffset(generic_1.exists(this.topRowBounds) ? this.topRowBounds.rowTop : 0);
+        this.setPixelOffset((0, generic_1.exists)(this.topRowBounds) ? this.topRowBounds.rowTop : 0);
     };
     PaginationProxy.prototype.setPixelOffset = function (value) {
         if (this.pixelOffset === value) {
@@ -310,20 +386,20 @@ var PaginationProxy = /** @class */ (function (_super) {
         }
     };
     PaginationProxy.prototype.calculatedPagesNotActive = function () {
-        this.pageSize = this.rowModel.getRowCount();
+        this.setPageSize(this.masterRowCount, 'autoCalculated');
         this.totalPages = 1;
         this.currentPage = 0;
         this.topDisplayedRowIndex = 0;
         this.bottomDisplayedRowIndex = this.rowModel.getRowCount() - 1;
     };
     __decorate([
-        context_1.Autowired('rowModel')
+        (0, context_1.Autowired)('rowModel')
     ], PaginationProxy.prototype, "rowModel", void 0);
     __decorate([
         context_1.PostConstruct
     ], PaginationProxy.prototype, "postConstruct", null);
     PaginationProxy = __decorate([
-        context_1.Bean('paginationProxy')
+        (0, context_1.Bean)('paginationProxy')
     ], PaginationProxy);
     return PaginationProxy;
 }(beanStub_1.BeanStub));

@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { Autowired, PostConstruct } from '../context/context.mjs';
 import { RefSelector } from './componentAnnotations.mjs';
-import { getAriaPosInSet, setAriaSetSize, setAriaPosInSet, setAriaSelected, setAriaChecked, setAriaRole, setAriaLabel } from '../utils/aria.mjs';
+import { getAriaPosInSet, setAriaSetSize, setAriaPosInSet, setAriaRole, setAriaLabel } from '../utils/aria.mjs';
 import { KeyCode } from '../constants/keyCode.mjs';
 import { waitUntil } from '../utils/function.mjs';
 import { TabGuardComp } from './tabGuardComp.mjs';
@@ -48,7 +48,8 @@ export class VirtualList extends TabGuardComp {
         setAriaLabel(ariaEl, listName);
     }
     addResizeObserver() {
-        const listener = () => this.drawVirtualRows();
+        // do this in an animation frame to prevent loops
+        const listener = () => this.animationFrameService.requestAnimationFrame(() => this.drawVirtualRows());
         const destroyObserver = this.resizeObserverService.observeResize(this.getGui(), listener);
         this.addDestroyFunc(destroyObserver);
     }
@@ -60,13 +61,11 @@ export class VirtualList extends TabGuardComp {
         if (target.classList.contains('ag-virtual-list-item')) {
             this.lastFocusedRowIndex = getAriaPosInSet(target) - 1;
         }
-        return false;
     }
     onFocusOut(e) {
         if (!this.getFocusableElement().contains(e.relatedTarget)) {
             this.lastFocusedRowIndex = null;
         }
-        return false;
     }
     handleKeyDown(e) {
         switch (e.key) {
@@ -128,11 +127,14 @@ export class VirtualList extends TabGuardComp {
     getItemHeight() {
         return this.environment.getListItemHeight();
     }
-    ensureIndexVisible(index) {
+    /**
+     * Returns true if the view had to be scrolled, otherwise, false.
+     */
+    ensureIndexVisible(index, scrollPartialIntoView = true) {
         const lastRow = this.model.getRowCount();
         if (typeof index !== 'number' || index < 0 || index >= lastRow) {
             console.warn('AG Grid: invalid row index for ensureIndexVisible: ' + index);
-            return;
+            return false;
         }
         const rowTopPixel = index * this.rowHeight;
         const rowBottomPixel = rowTopPixel + this.rowHeight;
@@ -140,17 +142,21 @@ export class VirtualList extends TabGuardComp {
         const viewportTopPixel = eGui.scrollTop;
         const viewportHeight = eGui.offsetHeight;
         const viewportBottomPixel = viewportTopPixel + viewportHeight;
-        const viewportScrolledPastRow = viewportTopPixel > rowTopPixel;
-        const viewportScrolledBeforeRow = viewportBottomPixel < rowBottomPixel;
+        const diff = scrollPartialIntoView ? 0 : this.rowHeight;
+        const viewportScrolledPastRow = viewportTopPixel > rowTopPixel + diff;
+        const viewportScrolledBeforeRow = viewportBottomPixel < rowBottomPixel - diff;
         if (viewportScrolledPastRow) {
             // if row is before, scroll up with row at top
             eGui.scrollTop = rowTopPixel;
+            return true;
         }
-        else if (viewportScrolledBeforeRow) {
+        if (viewportScrolledBeforeRow) {
             // if row is below, scroll down with row at bottom
             const newScrollPosition = rowBottomPixel - viewportHeight;
             eGui.scrollTop = newScrollPosition;
+            return true;
         }
+        return false;
     }
     setComponentCreator(componentCreator) {
         this.componentCreator = componentCreator;
@@ -235,11 +241,6 @@ export class VirtualList extends TabGuardComp {
         setAriaSetSize(eDiv, this.model.getRowCount());
         setAriaPosInSet(eDiv, rowIndex + 1);
         eDiv.setAttribute('tabindex', '-1');
-        if (typeof this.model.isRowSelected === 'function') {
-            const isSelected = this.model.isRowSelected(rowIndex);
-            setAriaSelected(eDiv, !!isSelected);
-            setAriaChecked(eDiv, isSelected);
-        }
         eDiv.style.height = `${this.rowHeight}px`;
         eDiv.style.top = `${this.rowHeight * rowIndex}px`;
         const rowComponent = this.componentCreator(value, eDiv);
@@ -302,6 +303,9 @@ export class VirtualList extends TabGuardComp {
 __decorate([
     Autowired('resizeObserverService')
 ], VirtualList.prototype, "resizeObserverService", void 0);
+__decorate([
+    Autowired('animationFrameService')
+], VirtualList.prototype, "animationFrameService", void 0);
 __decorate([
     RefSelector('eContainer')
 ], VirtualList.prototype, "eContainer", void 0);

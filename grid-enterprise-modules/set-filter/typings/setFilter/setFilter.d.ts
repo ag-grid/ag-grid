@@ -19,8 +19,6 @@ export declare class SetFilter<V = string> extends ProvidedFilter<SetFilterModel
     private groupingTreeList;
     private hardRefreshVirtualList;
     private noValueFormatterSupplied;
-    private appliedModelKeys;
-    private noAppliedModelKeys;
     private createKey;
     private valueFormatter?;
     private readonly filterModelFormatter;
@@ -36,6 +34,8 @@ export declare class SetFilter<V = string> extends ProvidedFilter<SetFilterModel
     private getComponentForKeyEvent;
     protected getCssIdentifier(): string;
     setModel(model: SetFilterModel | null): AgPromise<void>;
+    refresh(params: SetFilterParams<any, V>): boolean;
+    private haveColDefParamsChanged;
     private setModelAndRefresh;
     protected resetUiToDefaults(): AgPromise<void>;
     protected setModelIntoUi(model: SetFilterModel | null): AgPromise<void>;
@@ -43,7 +43,9 @@ export declare class SetFilter<V = string> extends ProvidedFilter<SetFilterModel
     getFilterType(): 'set';
     getValueModel(): SetValueModel<V> | null;
     protected areModelsEqual(a: SetFilterModel, b: SetFilterModel): boolean;
+    private updateSetFilterOnParamsChange;
     setParams(params: SetFilterParams<any, V>): void;
+    private onAddCurrentSelectionToFilterChange;
     private setValueFormatter;
     private generateCreateKey;
     getFormattedValue(key: string | null): string | null;
@@ -54,11 +56,15 @@ export declare class SetFilter<V = string> extends ProvidedFilter<SetFilterModel
     private initialiseFilterBodyUi;
     private initVirtualList;
     private getSelectAllLabel;
+    private getAddSelectionToFilterLabel;
     private createSetListItem;
+    private newSetTreeItemAttributes;
+    private newSetListItemAttributes;
     private updateSetListItem;
     private isSelectedExpanded;
     private isSetFilterModelTreeItem;
     private initMiniFilter;
+    private updateMiniFilter;
     afterGuiAttached(params?: IAfterGuiAttachedParams): void;
     afterGuiDetached(): void;
     applyModel(source?: 'api' | 'ui' | 'rowDataUpdated'): boolean;
@@ -104,7 +110,7 @@ export declare class SetFilter<V = string> extends ProvidedFilter<SetFilterModel
     private refreshAfterSelection;
     setMiniFilter(newMiniFilter: string | null): void;
     getMiniFilter(): string | null;
-    private refresh;
+    private checkAndRefreshVirtualList;
     getFilterKeys(): SetFilterModelValue;
     getFilterValues(): (V | null)[];
     getValues(): SetFilterModelValue;

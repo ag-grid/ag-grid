@@ -1,8 +1,17 @@
-import { Grid, CellClassParams, CellClassRules, ColDef, GridOptions, ICellRendererParams, ValueParserParams } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  CellClassParams,
+  CellClassRules,
+  ColDef,
+  GridOptions,
+  ICellRendererParams,
+  ValueParserParams,
+} from '@ag-grid-community/core';
 
 const ragCellClassRules: CellClassRules = {
   'rag-green-outer': params => params.value === 2008,
-  'rag-amber-outer': params => params.value === 2004,
+  'rag-blue-outer': params => params.value === 2004,
   'rag-red-outer': params => params.value === 2000,
 }
 
@@ -14,7 +23,7 @@ const columnDefs: ColDef[] = [
     valueParser: numberParser,
     cellClassRules: {
       'rag-green': 'x < 20',
-      'rag-amber': 'x >= 20 && x < 25',
+      'rag-blue': 'x >= 20 && x < 25',
       'rag-red': 'x >= 25',
     },
   },
@@ -26,7 +35,7 @@ const columnDefs: ColDef[] = [
     cellClassRules: ragCellClassRules,
     cellRenderer: ragRenderer,
   },
-  { field: 'date', cellClass: 'rag-amber' },
+  { field: 'date', cellClass: 'rag-blue' },
   {
     field: 'sport',
     cellClass: cellClass,
@@ -62,7 +71,7 @@ function cellStyle(params: CellClassParams) {
 }
 
 function cellClass(params: CellClassParams) {
-  return params.value === 'Swimming' ? 'rag-green' : 'rag-amber'
+  return params.value === 'Swimming' ? 'rag-green' : 'rag-blue'
 }
 
 function numberToColor(val: number) {
@@ -90,6 +99,8 @@ function numberParser(params: ValueParserParams) {
   return valueAsNumber
 }
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
   defaultColDef: {
@@ -102,9 +113,9 @@ const gridOptions: GridOptions<IOlympicData> = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

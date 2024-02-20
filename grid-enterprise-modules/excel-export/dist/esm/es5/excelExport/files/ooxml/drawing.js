@@ -1,7 +1,7 @@
 import { ExcelXlsxFactory } from '../../excelXlsxFactory';
 import { pixelsToEMU } from '../../assets/excelUtils';
 var getAnchor = function (name, imageAnchor) { return ({
-    name: "xdr:" + name,
+    name: "xdr:".concat(name),
     children: [{
             name: 'xdr:col',
             textNode: (imageAnchor.col).toString()
@@ -180,7 +180,7 @@ var getBlipFill = function (image, index) {
                 properties: {
                     rawMap: {
                         'cstate': 'print',
-                        'r:embed': "rId" + index,
+                        'r:embed': "rId".concat(index),
                         'xmlns:r': 'http://schemas.openxmlformats.org/officeDocument/2006/relationships'
                     }
                 },

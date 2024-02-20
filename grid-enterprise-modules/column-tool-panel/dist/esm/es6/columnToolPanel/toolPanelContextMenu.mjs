@@ -24,7 +24,11 @@ export class ToolPanelContextMenu extends Component {
         }
         if (this.isActive()) {
             this.mouseEvent.preventDefault();
-            this.displayContextMenu();
+            const menuItemsMapped = this.getMappedMenuItems();
+            if (menuItemsMapped.length === 0) {
+                return;
+            }
+            this.displayContextMenu(menuItemsMapped);
         }
     }
     initializeProperties(column) {
@@ -42,7 +46,7 @@ export class ToolPanelContextMenu extends Component {
         const localeTextFunc = this.localeService.getLocaleTextFunc();
         this.menuItemMap = new Map();
         this.menuItemMap.set('rowGroup', {
-            allowedFunction: (col) => col.isPrimary() && col.isAllowRowGroup(),
+            allowedFunction: (col) => col.isPrimary() && col.isAllowRowGroup() && !this.columnModel.isColumnGroupingLocked(col),
             activeFunction: (col) => col.isRowGroupActive(),
             activateLabel: () => `${localeTextFunc('groupBy', 'Group by')} ${this.displayName}`,
             deactivateLabel: () => `${localeTextFunc('ungroupBy', 'Un-Group by')} ${this.displayName}`,
@@ -96,15 +100,14 @@ export class ToolPanelContextMenu extends Component {
     removeColumnsFromList(columnList) {
         return columnList.filter(col => this.columns.indexOf(col) === -1);
     }
-    displayContextMenu() {
+    displayContextMenu(menuItemsMapped) {
         const eGui = this.getGui();
         const menuList = this.createBean(new AgMenuList());
-        const menuItemsMapped = this.getMappedMenuItems();
         const localeTextFunc = this.localeService.getLocaleTextFunc();
         let hideFunc = () => { };
         eGui.appendChild(menuList.getGui());
         menuList.addMenuItems(menuItemsMapped);
-        menuList.addManagedListener(menuList, AgMenuItemComponent.EVENT_MENU_ITEM_SELECTED, () => {
+        menuList.addManagedListener(menuList, AgMenuItemComponent.EVENT_CLOSE_MENU, () => {
             this.parentEl.focus();
             hideFunc();
         });

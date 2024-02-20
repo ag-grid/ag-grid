@@ -19,3 +19,4 @@ export declare const FullWidth: ComponentType;
 export declare const FullWidthLoading: ComponentType;
 export declare const FullWidthGroup: ComponentType;
 export declare const FullWidthDetail: ComponentType;
+export declare const MenuItemComponent: ComponentType;

@@ -8,6 +8,7 @@
 #bubbleChart {
     flex: 1;
     height: 25%;
+    margin-top: 0;
 }
 
 #barChart {

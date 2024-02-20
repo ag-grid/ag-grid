@@ -2,10 +2,10 @@ import classnames from 'classnames';
 import { withPrefix } from 'gatsby';
 import React from 'react';
 import { Icon } from './Icon';
-import styles from './IconsPanel.module.scss';
+import styles from '@design-system/modules/IconsPanel.module.scss';
 import { Tabs } from './tabs/Tabs';
 
-const THEMES = ['alpine', 'balham', 'material'];
+const THEMES = ['quartz', 'balham', 'material', 'alpine'];
 const ICONS = [
     'aggregation',
     'arrows',
@@ -23,6 +23,7 @@ const ICONS = [
     'cross',
     'csv',
     'desc',
+    'down',
     'excel',
     'expanded',
     'eye-slash',
@@ -37,13 +38,16 @@ const ICONS = [
     'loading',
     'maximize',
     'menu',
+    'menu-alt',
     'minimize',
+    'minus',
     'next',
     'none',
     'not-allowed',
     'paste',
     'pin',
     'pivot',
+    'plus',
     'previous',
     'radio-button-off',
     'radio-button-on',
@@ -58,6 +62,7 @@ const ICONS = [
     'tree-indeterminate',
     'tree-open',
     'unlinked',
+    'up',
 ];
 
 const capitalizeName = (name) => `${name.slice(0, 1).toUpperCase()}${name.slice(1)}`;
@@ -66,7 +71,7 @@ const capitalizeName = (name) => `${name.slice(0, 1).toUpperCase()}${name.slice(
 const IconsList = ({ theme }) => (
     <>
         {ICONS.map((icon) => (
-            <div className={styles.iconItem}>
+            <div key={icon} className={styles.iconItem}>
                 <img src={withPrefix(`/theme-icons/${theme}/${icon}.svg`)} alt={icon} title={icon}></img>
                 <p className={styles.iconName}>{icon}</p>
             </div>

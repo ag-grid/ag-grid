@@ -54,7 +54,7 @@ var AgAbstractLabel = /** @class */ (function (_super) {
         this.refreshLabel();
     };
     AgAbstractLabel.prototype.refreshLabel = function () {
-        dom_1.clearElement(this.eLabel);
+        (0, dom_1.clearElement)(this.eLabel);
         if (typeof this.label === 'string') {
             this.eLabel.innerText = this.label + this.labelSeparator;
         }
@@ -62,12 +62,12 @@ var AgAbstractLabel = /** @class */ (function (_super) {
             this.eLabel.appendChild(this.label);
         }
         if (this.label === '') {
-            dom_1.setDisplayed(this.eLabel, false);
-            aria_1.setAriaRole(this.eLabel, 'presentation');
+            (0, dom_1.setDisplayed)(this.eLabel, false);
+            (0, aria_1.setAriaRole)(this.eLabel, 'presentation');
         }
         else {
-            dom_1.setDisplayed(this.eLabel, true);
-            aria_1.setAriaRole(this.eLabel, null);
+            (0, dom_1.setDisplayed)(this.eLabel, true);
+            (0, aria_1.setAriaRole)(this.eLabel, null);
         }
     };
     AgAbstractLabel.prototype.setLabelSeparator = function (labelSeparator) {
@@ -81,7 +81,7 @@ var AgAbstractLabel = /** @class */ (function (_super) {
         return this;
     };
     AgAbstractLabel.prototype.getLabelId = function () {
-        this.eLabel.id = this.eLabel.id || "ag-" + this.getCompId() + "-label";
+        this.eLabel.id = this.eLabel.id || "ag-".concat(this.getCompId(), "-label");
         return this.eLabel.id;
     };
     AgAbstractLabel.prototype.getLabel = function () {
@@ -111,13 +111,13 @@ var AgAbstractLabel = /** @class */ (function (_super) {
         if (this.label == null) {
             return this;
         }
-        dom_1.setElementWidth(this.eLabel, width);
+        (0, dom_1.setElementWidth)(this.eLabel, width);
         return this;
     };
     AgAbstractLabel.prototype.setDisabled = function (disabled) {
         disabled = !!disabled;
         var element = this.getGui();
-        dom_1.setDisabled(element, disabled);
+        (0, dom_1.setDisabled)(element, disabled);
         element.classList.toggle('ag-disabled', disabled);
         this.disabled = disabled;
         return this;

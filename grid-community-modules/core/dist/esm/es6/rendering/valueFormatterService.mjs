@@ -19,16 +19,13 @@ let ValueFormatterService = class ValueFormatterService extends BeanStub {
             formatter = colDef.valueFormatter;
         }
         if (formatter) {
-            const params = {
+            const params = this.gridOptionsService.addGridCommonParams({
                 value,
                 node,
                 data: node ? node.data : null,
                 colDef,
-                column,
-                api: this.gridOptionsService.api,
-                columnApi: this.gridOptionsService.columnApi,
-                context: this.gridOptionsService.context
-            };
+                column
+            });
             if (typeof formatter === 'function') {
                 result = formatter(params);
             }

@@ -66,10 +66,10 @@ ChartPanel.TEMPLATE = `<div>
             <ag-group-component ref="chartGroup"></ag-group-component>
         </div>`;
 __decorate([
-    core_1.RefSelector('chartGroup')
+    (0, core_1.RefSelector)('chartGroup')
 ], ChartPanel.prototype, "chartGroup", void 0);
 __decorate([
-    core_1.Autowired('chartTranslationService')
+    (0, core_1.Autowired)('chartTranslationService')
 ], ChartPanel.prototype, "chartTranslationService", void 0);
 __decorate([
     core_1.PostConstruct

@@ -28,8 +28,8 @@ class SetLeftFeature extends beanStub_1.BeanStub {
         this.onLeftChanged();
     }
     getColumnOrGroup() {
-        if (this.beans.gridOptionsService.is('enableRtl') && this.colsSpanning) {
-            return array_1.last(this.colsSpanning);
+        if (this.beans.gridOptionsService.get('enableRtl') && this.colsSpanning) {
+            return (0, array_1.last)(this.colsSpanning);
         }
         return this.columnOrGroup;
     }
@@ -43,8 +43,8 @@ class SetLeftFeature extends beanStub_1.BeanStub {
         this.addManagedPropertyListener('domLayout', this.onLeftChanged.bind(this));
     }
     setLeftFirstTime() {
-        const suppressMoveAnimation = this.beans.gridOptionsService.is('suppressColumnMoveAnimation');
-        const oldLeftExists = generic_1.exists(this.columnOrGroup.getOldLeft());
+        const suppressMoveAnimation = this.beans.gridOptionsService.get('suppressColumnMoveAnimation');
+        const oldLeftExists = (0, generic_1.exists)(this.columnOrGroup.getOldLeft());
         const animateColumnMove = this.beans.columnAnimationService.isActive() && oldLeftExists && !suppressMoveAnimation;
         if (animateColumnMove) {
             this.animateInLeft();
@@ -99,7 +99,7 @@ class SetLeftFeature extends beanStub_1.BeanStub {
         // if the value is null, then that means the column is no longer
         // displayed. there is logic in the rendering to fade these columns
         // out, so we don't try and change their left positions.
-        if (generic_1.exists(value)) {
+        if ((0, generic_1.exists)(value)) {
             this.eCell.style.left = `${value}px`;
         }
         let indexColumn;
@@ -113,12 +113,10 @@ class SetLeftFeature extends beanStub_1.BeanStub {
                 return;
             }
             if (children.length > 1) {
-                aria_1.setAriaColSpan(this.ariaEl, children.length);
+                (0, aria_1.setAriaColSpan)(this.ariaEl, children.length);
             }
             indexColumn = children[0];
         }
-        const index = this.beans.columnModel.getAriaColumnIndex(indexColumn);
-        aria_1.setAriaColIndex(this.ariaEl, index);
     }
 }
 __decorate([

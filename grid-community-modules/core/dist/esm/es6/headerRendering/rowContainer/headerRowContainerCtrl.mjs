@@ -138,7 +138,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
             } // can happen at initialisation, width not yet set
             const hidden = (width == 0);
             const hiddenChanged = this.hidden !== hidden;
-            const isRtl = this.gridOptionsService.is('enableRtl');
+            const isRtl = this.gridOptionsService.get('enableRtl');
             const scrollbarWidth = this.gridOptionsService.getScrollbarWidth();
             // if there is a scroll showing (and taking up space, so Windows, and not iOS)
             // in the body, then we add extra space to keep header aligned with the body,
@@ -194,6 +194,9 @@ export class HeaderRowContainerCtrl extends BeanStub {
             return false;
         }
         return ctrl.focusHeader(column, event);
+    }
+    getViewport() {
+        return this.eViewport;
     }
     getRowCount() {
         return this.groupsRowCtrls.length + (this.columnsRowCtrl ? 1 : 0) + (this.filtersRowCtrl ? 1 : 0);

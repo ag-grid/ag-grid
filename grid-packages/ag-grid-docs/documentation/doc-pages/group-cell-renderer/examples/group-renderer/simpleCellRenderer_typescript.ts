@@ -5,7 +5,7 @@ export class SimpleCellRenderer implements ICellRendererComp {
 
     init(params: ICellRendererParams) {
         const tempDiv = document.createElement('div');
-        const color = params.node.group ? 'coral' : 'lightgreen';
+        const color = params.node.group ? '#CC222244' : '#33CC3344';
         tempDiv.innerHTML = `<span style="background-color: ${color}; padding: 2px; ">${params.value}</span>`
         this.eGui = tempDiv.firstChild!
     }

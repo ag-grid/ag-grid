@@ -4,7 +4,7 @@ import protectionFactory from './protection';
 
 const xfFactory: ExcelOOXMLTemplate = {
     getTemplate(xf: Xf) {
-        const {alignment, borderId, fillId, fontId, numFmtId, protection, xfId} = xf;
+        const { alignment, borderId, fillId, fontId, numFmtId, protection, quotePrefix, xfId } = xf;
         const children: XmlElement[] = [];
         if (alignment) {
             children.push(alignmentFactory.getTemplate(alignment));
@@ -28,6 +28,7 @@ const xfFactory: ExcelOOXMLTemplate = {
                     fontId,
                     applyNumberFormat: numFmtId ? 1 : undefined,
                     numFmtId,
+                    quotePrefix: quotePrefix ? 1 : undefined,
                     xfId
                 }
             },
@@ -44,6 +45,7 @@ export interface Xf {
     fillId: number;
     fontId: number;
     numFmtId: number;
+    quotePrefix?: number;
     xfId?: number;
     protection?: ExcelProtection;
 }

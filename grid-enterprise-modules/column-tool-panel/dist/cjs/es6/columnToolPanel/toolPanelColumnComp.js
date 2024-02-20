@@ -72,7 +72,7 @@ class ToolPanelColumnComp extends core_1.Component {
     }
     onContextMenu(e) {
         const { column, gridOptionsService } = this;
-        if (gridOptionsService.is('functionsReadOnly')) {
+        if (gridOptionsService.get('functionsReadOnly')) {
             return;
         }
         const contextMenu = this.createBean(new toolPanelContextMenu_1.ToolPanelContextMenu(column, e, this.focusWrapper));
@@ -91,7 +91,7 @@ class ToolPanelColumnComp extends core_1.Component {
         }
     }
     onLabelClicked() {
-        if (this.gridOptionsService.is('functionsReadOnly')) {
+        if (this.gridOptionsService.get('functionsReadOnly')) {
             return;
         }
         const nextState = !this.cbSelect.getValue();
@@ -127,14 +127,15 @@ class ToolPanelColumnComp extends core_1.Component {
             core_1._.setDisplayed(this.eDragHandle, false);
             return;
         }
-        const hideColumnOnExit = !this.gridOptionsService.is('suppressDragLeaveHidesColumns');
+        let hideColumnOnExit = !this.gridOptionsService.get('suppressDragLeaveHidesColumns');
         const dragSource = {
             type: core_1.DragSourceType.ToolPanel,
             eElement: this.eDragHandle,
             dragItemName: this.displayName,
-            defaultIconName: hideColumnOnExit ? core_1.DragAndDropService.ICON_HIDE : core_1.DragAndDropService.ICON_NOT_ALLOWED,
+            getDefaultIconName: () => hideColumnOnExit ? core_1.DragAndDropService.ICON_HIDE : core_1.DragAndDropService.ICON_NOT_ALLOWED,
             getDragItem: () => this.createDragItem(),
             onDragStarted: () => {
+                hideColumnOnExit = !this.gridOptionsService.get('suppressDragLeaveHidesColumns');
                 const event = {
                     type: core_1.Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START,
                     column: this.column
@@ -196,7 +197,7 @@ class ToolPanelColumnComp extends core_1.Component {
         if (isPivotMode) {
             // when in pivot mode, the item should be read only if:
             //  a) gui is not allowed make any changes
-            const functionsReadOnly = this.gridOptionsService.is('functionsReadOnly');
+            const functionsReadOnly = this.gridOptionsService.get('functionsReadOnly');
             //  b) column is not allow any functions on it
             const noFunctionsAllowed = !this.column.isAnyFunctionAllowed();
             canBeToggled = !functionsReadOnly && !noFunctionsAllowed;
@@ -212,7 +213,7 @@ class ToolPanelColumnComp extends core_1.Component {
         this.cbSelect.setReadOnly(!canBeToggled);
         this.eDragHandle.classList.toggle('ag-column-select-column-readonly', !canBeDragged);
         this.addOrRemoveCssClass('ag-column-select-column-readonly', !canBeDragged && !canBeToggled);
-        const checkboxPassive = isPivotMode && this.gridOptionsService.is('functionsPassive');
+        const checkboxPassive = isPivotMode && this.gridOptionsService.get('functionsPassive');
         this.cbSelect.setPassive(checkboxPassive);
         this.processingColumnStateChange = false;
     }
@@ -244,19 +245,19 @@ ToolPanelColumnComp.TEMPLATE = `<div class="ag-column-select-column" aria-hidden
             <span class="ag-column-select-column-label" ref="eLabel"></span>
         </div>`;
 __decorate([
-    core_1.Autowired('columnModel')
+    (0, core_1.Autowired)('columnModel')
 ], ToolPanelColumnComp.prototype, "columnModel", void 0);
 __decorate([
-    core_1.Autowired('dragAndDropService')
+    (0, core_1.Autowired)('dragAndDropService')
 ], ToolPanelColumnComp.prototype, "dragAndDropService", void 0);
 __decorate([
-    core_1.Autowired('modelItemUtils')
+    (0, core_1.Autowired)('modelItemUtils')
 ], ToolPanelColumnComp.prototype, "modelItemUtils", void 0);
 __decorate([
-    core_1.RefSelector('eLabel')
+    (0, core_1.RefSelector)('eLabel')
 ], ToolPanelColumnComp.prototype, "eLabel", void 0);
 __decorate([
-    core_1.RefSelector('cbSelect')
+    (0, core_1.RefSelector)('cbSelect')
 ], ToolPanelColumnComp.prototype, "cbSelect", void 0);
 __decorate([
     core_1.PostConstruct

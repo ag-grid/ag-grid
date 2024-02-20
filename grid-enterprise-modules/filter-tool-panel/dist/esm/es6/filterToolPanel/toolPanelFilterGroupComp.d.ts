@@ -11,7 +11,7 @@ export declare class ToolPanelFilterGroupComp extends Component {
     private childFilterComps;
     private expandedCallback;
     private filterGroupName;
-    constructor(columnGroup: IProvidedColumn, childFilterComps: ToolPanelFilterItem[], expandedCallback: () => void, depth: number, showingColumn: boolean);
+    constructor(columnGroup: IProvidedColumn, childFilterComps: (ToolPanelFilterGroupComp | ToolPanelFilterComp)[], expandedCallback: () => void, depth: number, showingColumn: boolean);
     private preConstruct;
     init(): void;
     private setupTooltip;

@@ -10,6 +10,7 @@ export declare class MultiFloatingFilterComp extends Component implements IFloat
     init(params: IFloatingFilterParams<MultiFilter>): AgPromise<void>;
     private setParams;
     onParamsUpdated(params: IFloatingFilterParams<MultiFilter>): void;
+    refresh(params: IFloatingFilterParams<MultiFilter>): void;
     private getCompDetailsList;
     onParentModelChanged(model: IMultiFilterModel, event: FilterChangedEvent): void;
     destroy(): void;

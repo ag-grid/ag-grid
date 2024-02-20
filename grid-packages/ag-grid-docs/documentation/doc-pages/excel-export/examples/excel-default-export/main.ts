@@ -1,4 +1,6 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
+
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -21,26 +23,24 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
   ],
   defaultColDef: {
-    sortable: true,
     filter: true,
-    resizable: true,
     minWidth: 100,
     flex: 1,
   },
 }
 
 function onBtExport() {
-  gridOptions.api!.exportDataAsExcel()
+  gridApi!.exportDataAsExcel()
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
     .then(response => response.json())
     .then(function (data) {
-      gridOptions.api!.setRowData(data)
+      gridApi!.setGridOption('rowData', data)
     })
 })

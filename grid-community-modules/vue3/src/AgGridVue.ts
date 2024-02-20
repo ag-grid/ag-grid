@@ -1,16 +1,17 @@
-import {defineComponent, getCurrentInstance, h, PropType} from 'vue';
-import {markRaw, toRaw} from '@vue/reactivity';
-import { ComponentUtil, Grid, GridOptions, Module, IRowNode } from '@ag-grid-community/core';
+import { defineComponent, getCurrentInstance, h, PropType } from 'vue';
+import { markRaw, toRaw } from '@vue/reactivity';
+import { ComponentUtil, createGrid, Events, GridApi, GridOptions, IRowNode, Module } from '@ag-grid-community/core';
 
-import {VueFrameworkComponentWrapper} from './VueFrameworkComponentWrapper';
 import { getAgGridProperties, Properties } from './Utils';
-import {VueFrameworkOverrides} from './VueFrameworkOverrides';
+import { VueFrameworkComponentWrapper } from './VueFrameworkComponentWrapper';
+import { VueFrameworkOverrides } from './VueFrameworkOverrides';
 
-const ROW_DATA_EVENTS = ['rowDataChanged', 'rowDataUpdated', 'cellValueChanged', 'rowValueChanged'];
+const ROW_DATA_EVENTS: Set<string> = new Set(['rowDataUpdated', 'cellValueChanged', 'rowValueChanged']);
+const ALWAYS_SYNC_GLOBAL_EVENTS: Set<string> = new Set([Events.EVENT_GRID_PRE_DESTROYED]);
 const DATA_MODEL_ATTR_NAME = 'onUpdate:modelValue'; // emit name would be update:ModelValue
 const DATA_MODEL_EMIT_NAME = 'update:modelValue';
 
-const [props, watch] = getAgGridProperties();
+const [props, computed, watch] = getAgGridProperties();
 
 export const AgGridVue = defineComponent({
     render() {
@@ -41,34 +42,41 @@ export const AgGridVue = defineComponent({
         },
         ...props
     },
-    data() {
+    data() : {
+        api: GridApi | undefined,
+        gridCreated: boolean,
+        isDestroyed: boolean,
+        gridReadyFired: boolean,
+        emitRowModel?: (() => void | null),
+    } {
         return {
+            api: undefined,
             gridCreated: false,
             isDestroyed: false,
             gridReadyFired: false,
-            emitRowModel: undefined as (() => void | null) | undefined
+            emitRowModel: undefined
         }
     },
-    watch: {
-        modelValue: {
-            handler(currentValue: any, previousValue: any) {
-                this.processChanges('rowData', currentValue, previousValue);
-            },
-            deep: true
-        },
-        ...watch
-    },
+    computed,
+    watch,
     methods: {
-        globalEventListener(eventType: string, event: any) {
-            if (this.isDestroyed) {
-                return;
-            }
+        globalEventListenerFactory(restrictToSyncOnly?: boolean) {
+            return (eventType: string, event: any) => {
+                if (this.isDestroyed) {
+                    return;
+                }
 
-            if (eventType === 'gridReady') {
-                this.gridReadyFired = true;
-            }
+                if (eventType === 'gridReady') {
+                    this.gridReadyFired = true;
+                }
 
-            this.updateModelIfUsed(eventType);
+                const alwaysSync = ALWAYS_SYNC_GLOBAL_EVENTS.has(eventType);
+                if ((alwaysSync && !restrictToSyncOnly) || (!alwaysSync && restrictToSyncOnly)) {
+                    return;
+                }
+
+                this.updateModelIfUsed(eventType);
+            }
         },
         processChanges(propertyName: string, currentValue: any, previousValue: any) {
             if (this.gridCreated) {
@@ -76,14 +84,14 @@ export const AgGridVue = defineComponent({
                     return;
                 }
 
-                const changes: Properties = {};
-                changes[propertyName] = {
-                    // decouple the row data - if we don't when the grid changes row data directly that'll trigger this component to react to rowData changes,
-                    // which can reset grid state (ie row selection)
-                    currentValue: propertyName === 'rowData' ? (Object.isFrozen(currentValue) ? currentValue : markRaw(toRaw(currentValue))) : currentValue,
-                    previousValue,
+                const options: Properties = {
+                    [propertyName]: propertyName === 'rowData' ? (
+                            Object.isFrozen(currentValue) ? currentValue : markRaw(toRaw(currentValue))
+                        ) : currentValue,
                 };
-                ComponentUtil.processOnChange(changes, this.gridOptions.api!);
+                // decouple the row data - if we don't when the grid changes row data directly that'll trigger this component to react to rowData changes,
+                // which can reset grid state (ie row selection)
+                ComponentUtil.processOnChange(options, this.api as any);
             }
         },
         checkForBindingConflicts() {
@@ -95,7 +103,7 @@ export const AgGridVue = defineComponent({
         },
         getRowData(): any[] {
             const rowData: any[] = [];
-            this.gridOptions.api!.forEachNode((rowNode: IRowNode) => {
+            this.api?.forEachNode((rowNode: IRowNode) => {
                 rowData.push(rowNode.data);
             });
             return rowData;
@@ -103,7 +111,7 @@ export const AgGridVue = defineComponent({
         updateModelIfUsed(eventType: string) {
             if (this.gridReadyFired &&
                 this.$attrs[DATA_MODEL_ATTR_NAME] &&
-                ROW_DATA_EVENTS.indexOf(eventType) !== -1) {
+                ROW_DATA_EVENTS.has(eventType)) {
 
                 if (this.emitRowModel) {
                     this.emitRowModel();
@@ -182,15 +190,18 @@ export const AgGridVue = defineComponent({
 
         // the gridOptions we pass to the grid don't need to be reactive (and shouldn't be - it'll cause issues
         // with mergeDeep for example
-        const gridOptions = markRaw(ComponentUtil.copyAttributesToGridOptions(toRaw(this.gridOptions), this, true));
+        const gridOptions = markRaw(ComponentUtil.combineAttributesAndGridOptions(toRaw(this.gridOptions), this));
 
         this.checkForBindingConflicts();
 
         const rowData = this.getRowDataBasedOnBindings();
-        gridOptions.rowData = rowData ? (Object.isFrozen(rowData) ? rowData : markRaw(toRaw(rowData))) : rowData;
+        if (rowData !== ComponentUtil.VUE_OMITTED_PROPERTY) {
+            gridOptions.rowData = rowData ? (Object.isFrozen(rowData) ? rowData : markRaw(toRaw(rowData))) : rowData;
+        }
 
         const gridParams = {
-            globalEventListener: this.globalEventListener.bind(this),
+            globalEventListener: this.globalEventListenerFactory().bind(this),
+            globalSyncEventListener: this.globalEventListenerFactory(true).bind(this),
             frameworkOverrides: new VueFrameworkOverrides(this),
             providedBeanInstances: {
                 frameworkComponentWrapper,
@@ -198,15 +209,12 @@ export const AgGridVue = defineComponent({
             modules: this.modules,
         };
 
-        new Grid(this.$el as HTMLElement, gridOptions, gridParams);
-
+        this.api = createGrid(this.$el as HTMLElement, gridOptions, gridParams);
         this.gridCreated = true;
     },
     unmounted() {
         if (this.gridCreated) {
-            if (this.gridOptions.api) {
-                this.gridOptions.api.destroy();
-            }
+            this.api?.destroy();
             this.isDestroyed = true;
         }
     }

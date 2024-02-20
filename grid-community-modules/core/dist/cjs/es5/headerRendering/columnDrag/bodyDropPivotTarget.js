@@ -21,7 +21,7 @@ var BodyDropPivotTarget = /** @class */ (function () {
         var _this = this;
         this.clearColumnsList();
         // in pivot mode, we don't accept any drops if functions are read only
-        if (this.gridOptionsService.is('functionsReadOnly')) {
+        if (this.gridOptionsService.get('functionsReadOnly')) {
             return;
         }
         var dragColumns = draggingEvent.dragItem.columns;
@@ -80,10 +80,10 @@ var BodyDropPivotTarget = /** @class */ (function () {
         }
     };
     __decorate([
-        context_1.Autowired('columnModel')
+        (0, context_1.Autowired)('columnModel')
     ], BodyDropPivotTarget.prototype, "columnModel", void 0);
     __decorate([
-        context_1.Autowired('gridOptionsService')
+        (0, context_1.Autowired)('gridOptionsService')
     ], BodyDropPivotTarget.prototype, "gridOptionsService", void 0);
     return BodyDropPivotTarget;
 }());

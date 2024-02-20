@@ -57,7 +57,7 @@ let ModelItemUtils = class ModelItemUtils {
         }
     }
     setAllPivot(columns, value, eventType) {
-        if (this.gridOptionsService.is('functionsPassive')) {
+        if (this.gridOptionsService.get('functionsPassive')) {
             this.setAllPivotPassive(columns, value);
         }
         else {

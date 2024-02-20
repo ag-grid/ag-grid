@@ -2,8 +2,7 @@ import {
     DragAndDropService,
     DraggingEvent,
     DragSourceType,
-    DropTarget,
-    VerticalDirection
+    DropTarget
 } from "../dragAndDrop/dragAndDropService";
 import { Autowired, Optional, PostConstruct } from "../context/context";
 import { ColumnModel } from "../columns/columnModel";
@@ -22,10 +21,11 @@ import { SortController } from "../sortController";
 import { FilterManager } from "../filter/filterManager";
 import { BeanStub } from "../context/beanStub";
 import { missingOrEmpty } from "../utils/generic";
-import { doOnce } from "../utils/function";
+import { warnOnce } from "../utils/function";
 import { PaginationProxy } from "../pagination/paginationProxy";
 import { CtrlsService } from "../ctrlsService";
 import { AutoScrollService } from "../autoScrollService";
+import { VerticalDirection } from "../constants/direction";
 
 export interface RowDropZoneEvents {
     /** Callback function that will be executed when the rowDrag enters the target. */
@@ -64,9 +64,6 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private clientSideRowModel: IClientSideRowModel;
     private eContainer: HTMLElement;
     private isMultiRowDrag: boolean = false;
-    private isGridSorted: boolean = false;
-    private isGridFiltered: boolean = false;
-    private isRowGroupActive: boolean = false;
     private lastDraggingEvent: DraggingEvent;
     private autoScrollService: AutoScrollService;
 
@@ -81,21 +78,6 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }
 
-        const refreshStatus = () => {
-            this.onSortChanged();
-            this.onFilterChanged();
-            this.onRowGroupChanged();
-        };
-
-        this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, () => {
-            refreshStatus();
-        });
-
-        refreshStatus();
-
         this.ctrlsService.whenReady(() => {
             const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
             this.autoScrollService = new AutoScrollService({
@@ -108,18 +90,6 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         });
     }
 
-    private onSortChanged(): void {
-        this.isGridSorted = this.sortController.isSortActive();
-    }
-
-    private onFilterChanged(): void {
-        this.isGridFiltered = this.filterManager.isAnyFilterPresent();
-    }
-
-    private onRowGroupChanged(): void {
-        const rowGroups = this.columnModel.getRowGroupColumns();
-        this.isRowGroupActive = !missingOrEmpty(rowGroups);
-    }
 
     public getContainer(): HTMLElement {
         return this.eContainer;
@@ -130,7 +100,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     public getIconName(): string {
-        const managedDrag = this.gridOptionsService.is('rowDragManaged');
+        const managedDrag = this.gridOptionsService.get('rowDragManaged');
 
         if (managedDrag && this.shouldPreventRowMove()) {
             return DragAndDropService.ICON_NOT_ALLOWED;
@@ -140,7 +110,19 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     public shouldPreventRowMove(): boolean {
-        return this.isGridSorted || this.isGridFiltered || this.isRowGroupActive;
+        const rowGroupCols = this.columnModel.getRowGroupColumns();
+        if (rowGroupCols.length) {
+            return true;
+        }
+        const isFilterPresent = this.filterManager.isAnyFilterPresent();
+        if (isFilterPresent) {
+            return true;
+        }
+        const isSortActive = this.sortController.isSortActive();
+        if (isSortActive) {
+            return true;
+        }
+        return false;
     }
 
     private getRowNodes(draggingEvent: DraggingEvent): RowNode[] {
@@ -148,7 +130,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             return (draggingEvent.dragItem.rowNodes || []) as RowNode[];
         }
 
-        const isRowDragMultiRow = this.gridOptionsService.is('rowDragMultiRow');
+        const isRowDragMultiRow = this.gridOptionsService.get('rowDragMultiRow');
         const selectedNodes = [...this.selectionService.getSelectedNodes()].sort(
             (a, b) => {
                 if (a.rowIndex == null || b.rowIndex == null) { return 0; }
@@ -209,7 +191,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         this.lastDraggingEvent = draggingEvent;
 
         const pixel = this.mouseEventService.getNormalisedPosition(draggingEvent).y;
-        const managedDrag = this.gridOptionsService.is('rowDragManaged');
+        const managedDrag = this.gridOptionsService.get('rowDragManaged');
 
         if (managedDrag) {
             this.doManagedDrag(draggingEvent, pixel);
@@ -220,14 +202,14 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
     private doManagedDrag(draggingEvent: DraggingEvent, pixel: number): void {
         const isFromThisGrid = this.isFromThisGrid(draggingEvent);
-        const managedDrag = this.gridOptionsService.is('rowDragManaged');
+        const managedDrag = this.gridOptionsService.get('rowDragManaged');
         const rowNodes = draggingEvent.dragItem.rowNodes! as RowNode[];
 
         if (managedDrag && this.shouldPreventRowMove()) {
             return;
         }
 
-        if (this.gridOptionsService.is('suppressMoveWhenRowDragging') || !isFromThisGrid) {
+        if (this.gridOptionsService.get('suppressMoveWhenRowDragging') || !isFromThisGrid) {
             if (!this.isDropZoneWithinThisGrid(draggingEvent)) {
                 this.clientSideRowModel.highlightRowAtPixel(rowNodes[0], pixel);
             }
@@ -294,7 +276,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
     public addRowDropZone(params: RowDropZoneParams): void {
         if (!params.getContainer()) {
-            doOnce(() => console.warn('AG Grid: addRowDropZone - A container target needs to be provided'), 'add-drop-zone-empty-target');
+            warnOnce('addRowDropZone - A container target needs to be provided');
             return;
         }
 
@@ -408,11 +390,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 break;
         }
 
-        const event: RowDragEvent = {
+        const event: RowDragEvent = this.gridOptionsService.addGridCommonParams({
             type: type,
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context,
             event: draggingEvent.event,
             node: draggingEvent.dragItem.rowNode!,
             nodes: draggingEvent.dragItem.rowNodes!,
@@ -420,7 +399,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             overNode: overNode,
             y: yNormalised,
             vDirection: vDirectionString!
-        };
+        });
 
         return event;
     }
@@ -435,7 +414,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         this.dispatchGridEvent(Events.EVENT_ROW_DRAG_LEAVE, draggingEvent);
         this.stopDragging(draggingEvent);
 
-        if (this.gridOptionsService.is('rowDragManaged')) {
+        if (this.gridOptionsService.get('rowDragManaged')) {
             this.clearRowHighlight();
         }
 
@@ -449,8 +428,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         this.stopDragging(draggingEvent);
 
         if (
-            this.gridOptionsService.is('rowDragManaged') &&
-            (this.gridOptionsService.is('suppressMoveWhenRowDragging') || !this.isFromThisGrid(draggingEvent)) &&
+            this.gridOptionsService.get('rowDragManaged') &&
+            (this.gridOptionsService.get('suppressMoveWhenRowDragging') || !this.isFromThisGrid(draggingEvent)) &&
             !this.isDropZoneWithinThisGrid(draggingEvent)
         ) {
             this.moveRowAndClearHighlight(draggingEvent);

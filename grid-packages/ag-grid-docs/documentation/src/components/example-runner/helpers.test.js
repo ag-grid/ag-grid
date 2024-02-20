@@ -3,7 +3,7 @@ import { getEntryFile } from './helpers';
 describe('getEntryFile', () => {
     it.each([
         ['javascript', 'main.js'],
-        ['angular', 'app/app.component.ts'],
+        ['angular', 'app.component.ts'],
         ['react', 'index.jsx'],
         ['vue', 'main.js'],
     ])

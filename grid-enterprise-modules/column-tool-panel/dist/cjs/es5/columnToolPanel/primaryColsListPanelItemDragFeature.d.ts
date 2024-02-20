@@ -1,26 +1,16 @@
-import { BeanStub, VirtualList } from "@ag-grid-community/core";
+import { BeanStub, GridOptionsService, VirtualList } from "@ag-grid-community/core";
 import { PrimaryColsListPanel } from "./primaryColsListPanel";
 export declare class PrimaryColsListPanelItemDragFeature extends BeanStub {
     private readonly comp;
     private readonly virtualList;
     private columnModel;
-    private dragAndDropService;
-    private currentDragColumn;
-    private lastHoveredColumnItem;
-    private autoScrollService;
-    private moveBlocked;
+    protected readonly gridOptionsService: GridOptionsService;
     constructor(comp: PrimaryColsListPanel, virtualList: VirtualList);
     private postConstruct;
-    private columnPanelItemDragStart;
-    private columnPanelItemDragEnd;
-    private createDropTarget;
-    private createAutoScrollService;
-    private onDragging;
-    private getDragColumnItem;
-    private onDragStop;
+    private getCurrentDragValue;
+    private isMoveBlocked;
+    private moveItem;
     private getMoveDiff;
     private getCurrentColumns;
     private getTargetIndex;
-    private onDragLeave;
-    private clearHoveredItems;
 }

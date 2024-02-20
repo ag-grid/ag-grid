@@ -29,7 +29,7 @@ export class Component extends BeanStub {
         }
     }
     preConstructOnComponent() {
-        this.usingBrowserTooltips = this.gridOptionsService.is('enableBrowserTooltips');
+        this.usingBrowserTooltips = this.gridOptionsService.get('enableBrowserTooltips');
     }
     getCompId() {
         return this.compId;
@@ -144,7 +144,7 @@ export class Component extends BeanStub {
         }
     }
     activateTabIndex(elements) {
-        const tabIndex = this.gridOptionsService.getNum('tabIndex') || 0;
+        const tabIndex = this.gridOptionsService.get('tabIndex');
         if (!elements) {
             elements = [];
         }
@@ -202,6 +202,9 @@ export class Component extends BeanStub {
     }
     getFocusableElement() {
         return this.eGui;
+    }
+    getAriaElement() {
+        return this.getFocusableElement();
     }
     setParentComponent(component) {
         this.parentComponent = component;

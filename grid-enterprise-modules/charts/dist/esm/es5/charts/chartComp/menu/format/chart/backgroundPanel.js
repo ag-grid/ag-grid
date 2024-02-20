@@ -51,7 +51,7 @@ var BackgroundPanel = /** @class */ (function (_super) {
         this.colorPicker
             .setLabel(this.chartTranslationService.translate('color'))
             .setLabelWidth('flex')
-            .setInputWidth(45)
+            .setInputWidth('flex')
             .setValue(this.chartOptionsService.getChartOption('background.fill'))
             .onValueChange(function (newColor) { return _this.chartOptionsService.setChartOption('background.fill', newColor); });
     };

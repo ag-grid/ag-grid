@@ -141,13 +141,11 @@
         { headerName: 'Deal Type', field: 'dealType' },
         { headerName: 'Bid', field: 'bidFlag' }
     ];
-
+    let api;
     var gridOptions = {
         columnDefs: columnDefs,
         defaultColDef: {
             width: 120,
-            sortable: true,
-            resizable: true
         },
         columnTypes: {
             measure: {
@@ -157,7 +155,6 @@
                 cellRenderer: 'agAnimateShowChangeCellRenderer'
             }
         },
-        animateRows: true,
         enableCharts: true,
         suppressAggFuncInHeader: true,
         getRowId: function(params) { return params.data.trade; },
@@ -238,9 +235,9 @@
     }
 
     function initLiveStreamUpdates() {
-        if(document.querySelector("#integrated-charting-grid") && window.agGrid) {
+        if (document.querySelector("#integrated-charting-grid") && window.agGrid) {
             var eGridDiv = document.querySelector("#integrated-charting-grid");
-            new agGrid.Grid(eGridDiv, gridOptions);
+            api = agGrid.createGrid(eGridDiv, gridOptions);
             startWorker();
         } else {
             setTimeout(() => initLiveStreamUpdates())
@@ -250,10 +247,10 @@
     function startWorker() {
         MyWorker(function(e) {
             if (e.type === 'setRowData') {
-                gridOptions.api.setRowData(e.records);
+                api.setGridOption('rowData', e.records);
             }
             if (e.type === 'updateData') {
-                gridOptions.api.applyTransactionAsync({ update: e.records });
+                api.applyTransactionAsync({ update: e.records });
             }
         })
     }

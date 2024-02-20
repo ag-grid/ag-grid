@@ -48,7 +48,7 @@ const HeaderRowContainerComp = (props: {pinned: ColumnPinnedType | null})=> {
         destroyFuncs.push( ()=> context.destroyBean(ctrl) );
     });
 
-    const getClassName = createMemo( ()=> getCssClasses.toString() );
+    const getClassName = createMemo( ()=> getCssClasses().toString() );
 
     const insertRowsJsx = ()=> 
     <For each={getHeaderRowCtrls()}>{ ctrl =>
@@ -69,13 +69,13 @@ const HeaderRowContainerComp = (props: {pinned: ColumnPinnedType | null})=> {
         <>
             { 
                 pinnedLeft && 
-                <div ref={eGui!} class={"ag-pinned-left-header " + getClassName()} aria-hidden={getAriaHidden()} role="presentation" style={ePinnedStyle()}>
+                <div ref={eGui!} class={"ag-pinned-left-header " + getClassName()} aria-hidden={getAriaHidden()} role="rowgroup" style={ePinnedStyle()}>
                     { insertRowsJsx() }
                 </div>
             }
             { 
                 pinnedRight && 
-                <div ref={eGui!} class={"ag-pinned-right-header " + getClassName()} aria-hidden={getAriaHidden()} role="presentation" style={ePinnedStyle()}>
+                <div ref={eGui!} class={"ag-pinned-right-header " + getClassName()} aria-hidden={getAriaHidden()} role="rowgroup" style={ePinnedStyle()}>
                 { insertRowsJsx() }
             </div>
             }

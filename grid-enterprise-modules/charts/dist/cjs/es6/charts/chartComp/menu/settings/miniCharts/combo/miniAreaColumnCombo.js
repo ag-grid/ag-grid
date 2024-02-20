@@ -12,7 +12,7 @@ class MiniAreaColumnCombo extends miniChartWithAxes_1.MiniChartWithAxes {
             [5, 4, 6, 5, 4],
         ];
         const { root, columnData, areaData, size, padding } = this;
-        this.columns = miniChartHelpers_1.createColumnRects({
+        this.columns = (0, miniChartHelpers_1.createColumnRects)({
             stacked: false,
             root,
             data: columnData,
@@ -54,7 +54,7 @@ class MiniAreaColumnCombo extends miniChartWithAxes_1.MiniChartWithAxes {
         });
         this.areas = pathData.map((points) => {
             const area = new ag_charts_community_1._Scene.Path();
-            area.strokeWidth = 1;
+            area.strokeWidth = 0;
             area.fillOpacity = 0.8;
             const path = area.path;
             points.forEach((point, i) => path[i > 0 ? 'lineTo' : 'moveTo'](point.x, point.y));

@@ -1,37 +1,73 @@
 @use '../core' as *;
 
-table {
+@mixin stack-table() {
+    thead {
+        display: none;
+    }
+
+    tr,
+    td {
+        display: block;
+        text-align: left;
+    }
+
+    tr {
+        padding: $spacing-size-4 0;
+
+        &:nth-child(even) {
+            background-color: unset;
+        }
+    }
+
+    td {
+        padding: 0;
+        line-height: var(--text-lh-tight);
+        font-weight: var(--text-bold);
+
+        &:not(:last-child) {
+            margin-bottom: $spacing-size-2;
+        }
+    }
+
+    td[data-column]::before {
+        content: attr(data-column) ': ';
+        font-weight: var(--text-regular);
+        color: var(--color-fg-secondary);
+    }
+}
+
+table#{$selector-exclude-grid} {
     width: 100%;
-    margin-bottom: $size-2;
+    margin-bottom: $spacing-size-4;
     border-collapse: collapse;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--color-border-primary);
 }
 
-thead,
-table:not(.no-zebra) tr:nth-child(even) {
-    background-color: var(--table-odd-row-background-color);
-}
-
-tbody {
+tbody#{$selector-exclude-grid} {
     vertical-align: top;
 }
 
-tr {
-    border-top: 1px solid var(--border-color);
+tr#{$selector-exclude-grid} {
+    border-top: 1px solid var(--color-border-primary);
 }
 
-th,
-td {
-    padding: $size-1 $size-2;
+th#{$selector-exclude-grid},
+td#{$selector-exclude-grid} {
+    padding: $spacing-size-2 $spacing-size-4;
     text-align: left;
 }
 
 table.small-header th {
-    font-weight: $font-weight-normal;
-    padding-top: $size-half;
-    padding-bottom: $size-half;
+    font-weight: var(--text-regular);
+    padding-top: $spacing-size-1;
+    padding-bottom: $spacing-size-1;
 }
 
 table.stack {
     @include stack-table();
+}
+
+thead > tr {
+    border-top: none;
+    color: var(--color-fg-primary);
 }

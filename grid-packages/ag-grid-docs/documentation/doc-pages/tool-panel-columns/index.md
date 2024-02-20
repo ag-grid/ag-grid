@@ -9,7 +9,7 @@ The Columns Tool Panel provides functions for managing the grid's columns.
 
 Below shows an example of the Columns Tool Panel. The following can be noted:
 
-- Grid property `toolPanel='columns'` which shows only the Columns Tool Panel.
+- Grid property `sideBar='columns'` which shows only the Columns Tool Panel.
 - Grid property `defaultColDef` has `enableValue`, `enableRowGroup` and `enablePivot` set. This means all columns can be dragged to any of the Row Groups, Values and Column sections. Although each column can be dragged to these sections, it does not make sense to do so. For example, it does not make sense to aggregate the country column, but it does make sense to group rows by country.
 
 Things to try:
@@ -38,29 +38,34 @@ columns to the desired sections.
 
 Selecting columns means different things depending on whether the grid is in pivot mode or not as follows:
 
-- **Pivot Mode Off**: When pivot mode is off, selecting a column toggles the visibility of the column. A selected column is visible and an unselected column is hidden. With `allowDragFromColumnsToolPanel=true` you can drag a column from the tool panel onto the grid it will become visible.
+- **Pivot Mode Off**: When pivot mode is off, selecting a column toggles the visibility of the column. A selected column is visible and an unselected column is hidden. With `allowDragFromColumnsToolPanel=true`, you can drag a column from the tool panel onto the grid and it will become visible.
 - **Pivot Mode On**: When pivot mode is on, selecting a column will trigger the column to be either aggregated, grouped or pivoted depending on what is allowed for that column.
 
 ## Columns Tool Panel Sections
 
-The Columns Tool Panel is split into different sections as follows:
+The Columns Tool Panel is split into different sections as described from the top:
 
-- **Pivot Mode Section**: Check the 'Pivot Mode' checkbox to turn the grid into [Pivot Mode](/pivoting/). Uncheck to take the grid out of pivot mode.
-- **Expand / Collapse All**: Toggle to expand or collapse all column groups.
-- **Columns Section**: Display all columns, grouped by column groups, that are available to be displayed in the grid. By default the order of the columns is kept in sync with the order they are shown in the grid, but this behaviour can be disabled.
-- **Select / Unselect All**: Toggle to select or unselect all columns in the columns section.
-- **Select / Unselect Column (or Group)**: Each column can be individually selected. The [Selection Action](#selection-action) depends on pivot mode.
-- **Drag Handle**: Each column can be dragged either with the mouse or via touch on touch devices. The column can then be dragged to one of the following:
-    1. Row Groups Section
-    2. Values (Pivot) Section
-    3. Column Labels Section
-    4. Onto the grid (when `gridOptions.allowDragFromColumnsToolPanel=true`)
-    5. Inside Columns Section to reorder columns (see [Suppress Column Reordering](/tool-panel-columns/#suppress-column-reordering))
-- **Row Groups Section**: Columns here will form the grid's [Row Grouping](/grouping/).
-- **Values Section**: Columns here will form the grid's [Aggregations](/aggregation/). The grid calls this function 'Aggregations', however for the UI we follow the Excel naming convention and call it 'Values'.
-- **Column Labels (Pivot) Section**: Columns here will form the grid's [Pivot](/pivoting/). The grid calls this function 'Pivot', however for the UI we follow the Excel naming convention and call it 'Column Labels'.
+- Top area
+    - **Pivot Mode Section**: Check the 'Pivot Mode' checkbox to turn the grid into [Pivot Mode](/pivoting/). Uncheck to take the grid out of pivot mode.
+    - **Expand / Collapse All**: Toggle to expand or collapse all column groups.
+- **Columns Section**
+    - This section displays all columns, grouped by column groups, that are available to be displayed in the grid. By default the order of the columns is kept in sync with the order they are shown in the grid, but this behaviour can be disabled.
+    - **Select / Unselect All**: Toggle to select or unselect all columns in the columns section.
+    - **Select / Unselect Column (or Group)**: Each column can be individually selected. The [Selection Action](#selection-action) depends on pivot mode.
+    - **Drag Handle**: Each column can be dragged either with the mouse or via touch on touch devices. The column can then be dragged to one of the following:
+        1. Row Groups Section
+        2. Values (Pivot) Section
+        3. Column Labels Section
+        4. Onto the grid (when `gridOptions.allowDragFromColumnsToolPanel=true`)
+        5. Inside Columns Section to reorder columns (see [Suppress Column Reordering](/tool-panel-columns/#suppress-column-reordering))
+- **Row Groups Section**
+    - Columns here will form the grid's [Row Grouping](/grouping/).
+- **Values Section**
+    - Columns here will form the grid's [Aggregations](/aggregation/). The grid calls this function 'Aggregations', however for the UI we follow the Excel naming convention and call it 'Values'.
+- **Column Labels (Pivot) Section**
+    - Columns here will form the grid's [Pivot](/pivoting/). The grid calls this function 'Pivot', however for the UI we follow the Excel naming convention and call it 'Column Labels'.
 
-<image-caption src="tool-panel-columns/resources/screenshot.png" alt="AG Grid Tool Panel Section" width="46rem" centered="true" constrained="true"></image-caption>
+<image-caption src="tool-panel-columns/resources/screenshot.png" alt="AG Grid Tool Panel Section" width="46rem" centered="true" constrained="true" toggledarkmode="true"></image-caption>
 
 ## Section Visibility
 
@@ -194,7 +199,7 @@ The code snippet below shows how to expand and collapse column groups using the 
 
 <snippet>
 | // lookup Columns Tool Panel instance by id, in this case using the default columns instance id
-| const columnsToolPanel = gridOptions.api.getToolPanelInstance('columns');
+| const columnsToolPanel = api.getToolPanelInstance('columns');
 | 
 | // expands all column groups in the Columns Tool Panel
 | columnsToolPanel.expandColumnGroups();
@@ -249,7 +254,7 @@ const gridOptions = {
 
 <snippet>
 | // lookup Columns Tool Panel instance by id, in this case using the default columns instance id
-| const columnsToolPanel = gridOptions.api.getToolPanelInstance('columns');
+| const columnsToolPanel = api.getToolPanelInstance('columns');
 | 
 | // set custom Columns Tool Panel layout
 | columnsToolPanel.setColumnLayout([

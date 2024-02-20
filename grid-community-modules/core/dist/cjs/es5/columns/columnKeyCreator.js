@@ -17,7 +17,7 @@ var ColumnKeyCreator = /** @class */ (function () {
     };
     ColumnKeyCreator.prototype.getUniqueKey = function (colId, colField) {
         // in case user passed in number for colId, convert to string
-        colId = generic_1.toStringOrNull(colId);
+        colId = (0, generic_1.toStringOrNull)(colId);
         var count = 0;
         while (true) {
             var idToTry = void 0;

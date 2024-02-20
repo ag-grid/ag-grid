@@ -1,15 +1,8 @@
 "use strict";
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HeaderFilterCellCtrl = void 0;
 const abstractHeaderCellCtrl_1 = require("../abstractCell/abstractHeaderCellCtrl");
 const keyCode_1 = require("../../../constants/keyCode");
-const context_1 = require("../../../context/context");
 const column_1 = require("../../../entities/column");
 const events_1 = require("../../../events");
 const setLeftFeature_1 = require("../../../rendering/features/setLeftFeature");
@@ -18,17 +11,18 @@ const icon_1 = require("../../../utils/icon");
 const managedFocusFeature_1 = require("../../../widgets/managedFocusFeature");
 const hoverFeature_1 = require("../hoverFeature");
 const aria_1 = require("../../../utils/aria");
+const function_1 = require("../../../utils/function");
 class HeaderFilterCellCtrl extends abstractHeaderCellCtrl_1.AbstractHeaderCellCtrl {
-    constructor(column, parentRowCtrl) {
-        super(column, parentRowCtrl);
+    constructor(column, beans, parentRowCtrl) {
+        super(column, beans, parentRowCtrl);
         this.iconCreated = false;
         this.column = column;
     }
     setComp(comp, eGui, eButtonShowMainFilter, eFloatingFilterBody) {
-        super.setGui(eGui);
         this.comp = comp;
         this.eButtonShowMainFilter = eButtonShowMainFilter;
         this.eFloatingFilterBody = eFloatingFilterBody;
+        this.setGui(eGui);
         this.setupActive();
         this.setupWidth();
         this.setupLeft();
@@ -43,6 +37,10 @@ class HeaderFilterCellCtrl extends abstractHeaderCellCtrl_1.AbstractHeaderCellCt
         this.setupFilterChangedListener();
         this.addManagedListener(this.column, column_1.Column.EVENT_COL_DEF_CHANGED, this.onColDefChanged.bind(this));
     }
+    // empty abstract method
+    resizeHeader() { }
+    // empty abstract method
+    moveHeader() { }
     setupActive() {
         const colDef = this.column.getColDef();
         const filterExists = !!colDef.filter;
@@ -56,7 +54,7 @@ class HeaderFilterCellCtrl extends abstractHeaderCellCtrl_1.AbstractHeaderCellCt
         if (!this.active || this.iconCreated) {
             return;
         }
-        const eMenuIcon = icon_1.createIconNoSpan('filter', this.gridOptionsService, this.column);
+        const eMenuIcon = (0, icon_1.createIconNoSpan)('filter', this.gridOptionsService, this.column);
         if (eMenuIcon) {
             this.iconCreated = true;
             this.eButtonShowMainFilter.appendChild(eMenuIcon);
@@ -72,7 +70,7 @@ class HeaderFilterCellCtrl extends abstractHeaderCellCtrl_1.AbstractHeaderCellCt
     }
     setupAria() {
         const localeTextFunc = this.localeService.getLocaleTextFunc();
-        aria_1.setAriaLabel(this.eButtonShowMainFilter, localeTextFunc('ariaFilterMenuOpen', 'Open Filter Menu'));
+        (0, aria_1.setAriaLabel)(this.eButtonShowMainFilter, localeTextFunc('ariaFilterMenuOpen', 'Open Filter Menu'));
     }
     onTabKeyDown(e) {
         const eDocument = this.gridOptionsService.getDocument();
@@ -103,12 +101,12 @@ class HeaderFilterCellCtrl extends abstractHeaderCellCtrl_1.AbstractHeaderCellCt
         }
     }
     findNextColumnWithFloatingFilter(backwards) {
-        const columModel = this.beans.columnModel;
+        const columnModel = this.beans.columnModel;
         let nextCol = this.column;
         do {
             nextCol = backwards
-                ? columModel.getDisplayedColBefore(nextCol)
-                : columModel.getDisplayedColAfter(nextCol);
+                ? columnModel.getDisplayedColBefore(nextCol)
+                : columnModel.getDisplayedColAfter(nextCol);
             if (!nextCol) {
                 break;
             }
@@ -151,7 +149,7 @@ class HeaderFilterCellCtrl extends abstractHeaderCellCtrl_1.AbstractHeaderCellCt
             return;
         }
         const notFromHeaderWrapper = !!e.relatedTarget && !e.relatedTarget.classList.contains('ag-floating-filter');
-        const fromWithinHeader = !!e.relatedTarget && dom_1.isElementChildOfClass(e.relatedTarget, 'ag-floating-filter');
+        const fromWithinHeader = !!e.relatedTarget && (0, dom_1.isElementChildOfClass)(e.relatedTarget, 'ag-floating-filter');
         if (notFromHeaderWrapper && fromWithinHeader && e.target === this.eGui) {
             const lastFocusEvent = this.lastFocusEvent;
             const fromTab = !!(lastFocusEvent && lastFocusEvent.key === keyCode_1.KeyCode.TAB);
@@ -166,10 +164,10 @@ class HeaderFilterCellCtrl extends abstractHeaderCellCtrl_1.AbstractHeaderCellCt
     setupHover() {
         this.createManagedBean(new hoverFeature_1.HoverFeature([this.column], this.eGui));
         const listener = () => {
-            if (!this.gridOptionsService.is('columnHoverHighlight')) {
+            if (!this.gridOptionsService.get('columnHoverHighlight')) {
                 return;
             }
-            const hovered = this.columnHoverService.isHovered(this.column);
+            const hovered = this.beans.columnHoverService.isHovered(this.column);
             this.comp.addOrRemoveCssClass('ag-column-hover', hovered);
         };
         this.addManagedListener(this.eventService, events_1.Events.EVENT_COLUMN_HOVER_CHANGED, listener);
@@ -180,16 +178,14 @@ class HeaderFilterCellCtrl extends abstractHeaderCellCtrl_1.AbstractHeaderCellCt
         this.createManagedBean(setLeftFeature);
     }
     setupFilterButton() {
-        const colDef = this.column.getColDef();
-        // this is unusual - we need a params value OUTSIDE the component the params are for.
-        // the params are for the floating filter component, but this property is actually for the wrapper.
-        this.suppressFilterButton = colDef.floatingFilterComponentParams ? !!colDef.floatingFilterComponentParams.suppressFilterButton : false;
+        this.suppressFilterButton = !this.menuService.isFloatingFilterButtonEnabled(this.column);
+        this.highlightFilterButtonWhenActive = !this.menuService.isLegacyMenuEnabled();
     }
     setupUserComp() {
         if (!this.active) {
             return;
         }
-        const compDetails = this.filterManager.getFloatingFilterCompDetails(this.column, () => this.showParentFilter());
+        const compDetails = this.beans.filterManager.getFloatingFilterCompDetails(this.column, () => this.showParentFilter());
         if (compDetails) {
             this.setCompDetails(compDetails);
         }
@@ -200,12 +196,18 @@ class HeaderFilterCellCtrl extends abstractHeaderCellCtrl_1.AbstractHeaderCellCt
     }
     showParentFilter() {
         const eventSource = this.suppressFilterButton ? this.eFloatingFilterBody : this.eButtonShowMainFilter;
-        this.menuFactory.showMenuAfterButtonClick(this.column, eventSource, 'floatingFilter', 'filterMenuTab', ['filterMenuTab']);
+        this.menuService.showFilterMenu({
+            column: this.column,
+            buttonElement: eventSource,
+            containerType: 'floatingFilter',
+            positionBy: 'button'
+        });
     }
     setupSyncWithFilter() {
         if (!this.active) {
             return;
         }
+        const { filterManager } = this.beans;
         const syncWithFilter = (filterChangedEvent) => {
             const compPromise = this.comp.getFloatingFilterComp();
             if (!compPromise) {
@@ -213,13 +215,13 @@ class HeaderFilterCellCtrl extends abstractHeaderCellCtrl_1.AbstractHeaderCellCt
             }
             compPromise.then(comp => {
                 if (comp) {
-                    const parentModel = this.filterManager.getCurrentFloatingFilterParentModel(this.column);
+                    const parentModel = filterManager.getCurrentFloatingFilterParentModel(this.column);
                     comp.onParentModelChanged(parentModel, filterChangedEvent);
                 }
             });
         };
         this.destroySyncListener = this.addManagedListener(this.column, column_1.Column.EVENT_FILTER_CHANGED, syncWithFilter);
-        if (this.filterManager.isFilterActive(this.column)) {
+        if (filterManager.isFilterActive(this.column)) {
             syncWithFilter(null);
         }
     }
@@ -234,11 +236,16 @@ class HeaderFilterCellCtrl extends abstractHeaderCellCtrl_1.AbstractHeaderCellCt
     setupFilterChangedListener() {
         if (this.active) {
             this.destroyFilterChangedListener = this.addManagedListener(this.column, column_1.Column.EVENT_FILTER_CHANGED, this.updateFilterButton.bind(this));
+            this.updateFilterButton();
         }
     }
     updateFilterButton() {
         if (!this.suppressFilterButton && this.comp) {
-            this.comp.setButtonWrapperDisplayed(this.filterManager.isFilterAllowed(this.column));
+            const isFilterAllowed = this.beans.filterManager.isFilterAllowed(this.column);
+            this.comp.setButtonWrapperDisplayed(isFilterAllowed);
+            if (this.highlightFilterButtonWhenActive && isFilterAllowed) {
+                this.eButtonShowMainFilter.classList.toggle('ag-filter-active', this.column.isFilterActive());
+            }
         }
     }
     onColDefChanged() {
@@ -251,7 +258,7 @@ class HeaderFilterCellCtrl extends abstractHeaderCellCtrl_1.AbstractHeaderCellCt
             (_b = this.destroyFilterChangedListener) === null || _b === void 0 ? void 0 : _b.call(this);
         }
         const newCompDetails = this.active
-            ? this.filterManager.getFloatingFilterCompDetails(this.column, () => this.showParentFilter())
+            ? this.beans.filterManager.getFloatingFilterCompDetails(this.column, () => this.showParentFilter())
             : null;
         const compPromise = this.comp.getFloatingFilterComp();
         if (!compPromise || !newCompDetails) {
@@ -260,7 +267,7 @@ class HeaderFilterCellCtrl extends abstractHeaderCellCtrl_1.AbstractHeaderCellCt
         else {
             compPromise.then(compInstance => {
                 var _a;
-                if (!compInstance || this.filterManager.areFilterCompsDifferent((_a = this.userCompDetails) !== null && _a !== void 0 ? _a : null, newCompDetails)) {
+                if (!compInstance || this.beans.filterManager.areFilterCompsDifferent((_a = this.userCompDetails) !== null && _a !== void 0 ? _a : null, newCompDetails)) {
                     this.updateCompDetails(newCompDetails, becomeActive);
                 }
                 else {
@@ -270,6 +277,9 @@ class HeaderFilterCellCtrl extends abstractHeaderCellCtrl_1.AbstractHeaderCellCt
         }
     }
     updateCompDetails(compDetails, becomeActive) {
+        if (!this.isAlive()) {
+            return;
+        }
         this.setCompDetails(compDetails);
         // filter button and UI can change based on params, so always want to update
         this.setupFilterButton();
@@ -286,19 +296,29 @@ class HeaderFilterCellCtrl extends abstractHeaderCellCtrl_1.AbstractHeaderCellCt
         }
         const params = userCompDetails.params;
         (_a = this.comp.getFloatingFilterComp()) === null || _a === void 0 ? void 0 : _a.then(floatingFilter => {
-            if ((floatingFilter === null || floatingFilter === void 0 ? void 0 : floatingFilter.onParamsUpdated) && typeof floatingFilter.onParamsUpdated === 'function') {
-                floatingFilter.onParamsUpdated(params);
+            let hasRefreshed = false;
+            if ((floatingFilter === null || floatingFilter === void 0 ? void 0 : floatingFilter.refresh) && typeof floatingFilter.refresh === 'function') {
+                const result = floatingFilter.refresh(params);
+                // framework wrapper always implements optional methods, but returns null if no underlying method
+                if (result !== null) {
+                    hasRefreshed = true;
+                }
+            }
+            if (!hasRefreshed && (floatingFilter === null || floatingFilter === void 0 ? void 0 : floatingFilter.onParamsUpdated) && typeof floatingFilter.onParamsUpdated === 'function') {
+                const result = floatingFilter.onParamsUpdated(params);
+                if (result !== null) {
+                    (0, function_1.warnOnce)(`Custom floating filter method 'onParamsUpdated' is deprecated. Use 'refresh' instead.`);
+                }
             }
         });
     }
+    destroy() {
+        super.destroy();
+        this.eButtonShowMainFilter = null;
+        this.eFloatingFilterBody = null;
+        this.userCompDetails = null;
+        this.destroySyncListener = null;
+        this.destroyFilterChangedListener = null;
+    }
 }
-__decorate([
-    context_1.Autowired('filterManager')
-], HeaderFilterCellCtrl.prototype, "filterManager", void 0);
-__decorate([
-    context_1.Autowired('columnHoverService')
-], HeaderFilterCellCtrl.prototype, "columnHoverService", void 0);
-__decorate([
-    context_1.Autowired('menuFactory')
-], HeaderFilterCellCtrl.prototype, "menuFactory", void 0);
 exports.HeaderFilterCellCtrl = HeaderFilterCellCtrl;

@@ -1,5 +1,8 @@
-import { AreaSparklineOptions, Grid, GridOptions } from '@ag-grid-community/core';
+import { AreaSparklineOptions, GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 import { getData } from "./data";
+
+
+let gridApi: GridApi;
 
 
 const gridOptions: GridOptions = {
@@ -26,7 +29,6 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     minWidth: 100,
-    resizable: true,
   },
   rowData: getData(),
   rowHeight: 50,
@@ -35,5 +37,5 @@ const gridOptions: GridOptions = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

@@ -1,5 +1,14 @@
-import { Grid, GridOptions, IServerSideDatasource, GetRowIdParams, IsServerSideGroupOpenByDefaultParams, StoreRefreshedEvent } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  GridOptions,
+  IServerSideDatasource,
+  GetRowIdParams,
+  IsServerSideGroupOpenByDefaultParams,
+  StoreRefreshedEvent,
+} from '@ag-grid-community/core';
 declare var FakeServer: any;
+let gridApi: GridApi;
 const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'country', hide: true, rowGroup: true, },
@@ -12,8 +21,6 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     minWidth: 150,
-    resizable: true,
-    sortable: true,
   },
   autoGroupColumnDef: {
     flex: 1,
@@ -46,7 +53,6 @@ const gridOptions: GridOptions = {
   enableCellChangeFlash: true,
   suppressAggFuncInHeader: true,
 
-  animateRows: true,
 };
 
 let allData: any[];
@@ -71,7 +77,7 @@ const beginPeriodicallyModifyingData = () => {
 
 function refreshCache(route?: string[]) {
   const purge = !!(document.querySelector('#purge') as HTMLInputElement).checked;
-  gridOptions.api!.refreshServerSide({ route: route, purge: purge })
+  gridApi!.refreshServerSide({ route: route, purge: purge })
 }
 
 const getServerSideDatasource = (server: any): IServerSideDatasource => {
@@ -120,7 +126,7 @@ const getServerSideDatasource = (server: any): IServerSideDatasource => {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
@@ -140,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const datasource = getServerSideDatasource(fakeServer);
 
       // register the datasource with the grid
-      gridOptions.api!.setServerSideDatasource(datasource);
+      gridApi!.setGridOption('serverSideDatasource', datasource);
       beginPeriodicallyModifyingData();
     })
 })

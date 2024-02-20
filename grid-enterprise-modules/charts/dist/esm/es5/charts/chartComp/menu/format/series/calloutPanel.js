@@ -48,7 +48,7 @@ var CalloutPanel = /** @class */ (function (_super) {
             var currentValue = _this.chartOptionsService.getSeriesOption(expression, _this.getSelectedSeries());
             input.setLabel(_this.chartTranslationService.translate(labelKey))
                 .setMaxValue(getMaxValue(currentValue, defaultMaxValue))
-                .setValue("" + currentValue)
+                .setValue("".concat(currentValue))
                 .setTextFieldWidth(45)
                 .onValueChange(function (newValue) { return _this.chartOptionsService.setSeriesOption(expression, newValue, _this.getSelectedSeries()); });
         };

@@ -1,4 +1,4 @@
-// ag-grid-react v30.1.0
+// ag-grid-react v31.1.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createSyncJsComp = exports.showJsComp = void 0;

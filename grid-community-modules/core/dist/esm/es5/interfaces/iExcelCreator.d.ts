@@ -1,8 +1,9 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
-import { ExportParams } from "./exportParams";
+import { ExportFileNameGetter, ExportParams } from "./exportParams";
+import { AgGridCommon } from "./iCommon";
 import { XmlElement } from "./iXmlFactory";
 export interface ExcelStyle {
     /** The id of the Excel Style, this should match a CSS cell class. */
@@ -29,37 +30,37 @@ export interface ExcelStyle {
 export interface ExcelAlignment {
     /**
      * Use this property to change the cell horizontal alignment.
-     * Default: `Automatic`
+     * @default 'Automatic'
      */
     horizontal?: 'Automatic' | 'Left' | 'Center' | 'Right' | 'Fill' | 'Justify' | 'CenterAcrossSelection' | 'Distributed' | 'JustifyDistributed';
     /**
      * Use this property to change the level of indentation in the cell.
-     * Default: 0
+     * @default 0
      */
     indent?: number;
     /**
      * Use this property to change the cell reading order.
-     * Default: `LeftToRight`
+     * @default 'LeftToRight'
      */
     readingOrder?: 'RightToLeft' | 'LeftToRight' | 'Context';
     /**
      * The number of degrees between 0 and 359 to rotate the text.
-     * Default: `0`
+     * @default 0
      */
     rotate?: number;
     /**
      * If set to `true`, the font size of the cell will automatically change to force the text to fit within the cell.
-     * Default: `false`
+     * @default false
      */
     shrinkToFit?: boolean;
     /**
      * Use this property to change the cell vertical alignment.
-     * Default: `Automatic`
+     * @default 'Automatic'
      */
     vertical?: 'Automatic' | 'Top' | 'Bottom' | 'Center' | 'Justify' | 'Distributed' | 'JustifyDistributed';
     /**
      * If set to `true`, multiline text will be displayed as multiline by Excel.
-     * Default: `false`
+     * @default false
      */
     wrapText?: boolean;
     /**
@@ -80,55 +81,55 @@ export interface ExcelBorders {
 export interface ExcelBorder {
     /**
      * The color or the border.
-     * Default: `black`
+     * @default 'black'
      */
     color?: string;
     /**
      * The style of the border.
-     * Default: `None`
+     * @default 'None'
      */
     lineStyle?: 'None' | 'Continuous' | 'Dash' | 'Dot' | 'DashDot' | 'DashDotDot' | 'SlantDashDot' | 'Double';
     /**
      * The thickness of the border from 0 (thin) to 3 (thick).
-     * Default: `0`
+     * @default 0
      */
     weight?: 0 | 1 | 2 | 3;
 }
 export interface ExcelFont {
     /**
      * Set to `true` to set the cell text to bold.
-     * Default: `false`
+     * @default false
      */
     bold?: boolean;
     /**
      * The color of the cell font.
-     * Default: `#000000`
+     * @default '#000000'
      */
     color?: string;
     /**
      * The family of the font to used in the cell.
      * Options: `Automatic`,`Roman`,`Swiss`,`Modern`,`Script`,`Decorative`,
-     * Default: `Automatic`
+     * @default 'Automatic'
      */
     family?: string;
     /**
      * The name of the font to be used in the cell.
-     * Default: `Calibri`
+     * @default 'Calibri'
      */
     fontName?: string;
     /**
      * Set to `true` to display the cell font as italic.
-     * Default: `false`
+     * @default false
      */
     italic?: boolean;
     /**
      * Set to `true` to add a text outline.
-     * Default: `false`
+     * @default false
      */
     outline?: boolean;
     /**
      * Set to `true` to add text shadow.
-     * Default: `false`
+     * @default false
      */
     shadow?: boolean;
     /**
@@ -137,7 +138,7 @@ export interface ExcelFont {
     size?: number;
     /**
      * Set to `true` to add a strikeThrough line.
-     * Default: `false`
+     * @default false
      */
     strikeThrough?: boolean;
     /**
@@ -166,12 +167,12 @@ export interface ExcelNumberFormat {
 export interface ExcelProtection {
     /**
      * Set to `false` to disable cell protection (locking)
-     * Default: `true`
+     * @default true
      */
     protected: boolean;
     /**
      * Set to `true` to hide formulas within protected cells.
-     * Default: `false`
+     * @default false
      */
     hideFormula: boolean;
 }
@@ -215,7 +216,7 @@ export interface ExcelCell {
     styleId?: string | string[];
     /**
      * The number of cells to span across (1 means span 2 columns).
-     * Default: `0`
+     * @default 0
      */
     mergeAcross?: number;
 }
@@ -224,24 +225,24 @@ export interface ExcelImagePosition {
     row?: number;
     /**
      * The amount of rows this image will cover.
-     * Default: `1`
+     * @default 1
      *  */
     rowSpan?: number;
     /** The column containing this image. This property is set automatically, don't change it unless you know what you are doing. */
     column?: number;
     /**
      * The amount of columns this image will cover.
-     * Default: `1`
+     * @default 1
      */
     colSpan?: number;
     /**
      * The amount in pixels the image should be offset horizontally.
-     * Default: `0`
+     * @default 0
      */
     offsetX?: number;
     /**
      * The amount in pixels the image should be offset vertically.
-     * Default: `0`
+     * @default 0
      */
     offsetY?: number;
 }
@@ -260,17 +261,17 @@ export interface ExcelImage {
     altText?: string;
     /**
      * If set to `true`, the image will cover the whole cell that is being imported to.
-     * Default: `false`
+     * @default false
      */
     fitCell?: boolean;
     /**
      * Set a value between 0 - 100 that will indicate the percentage of transparency of the image.
-     * Default: `0`
+     * @default 0
      */
     transparency?: number;
     /**
      * Set a value between 0 - 359 that will indicate the number of degrees to rotate the image clockwise.
-     * Default: `0`
+     * @default 0
      */
     rotation?: number;
     /** Set this property to select a preset that changes the appearance of the image. */
@@ -301,9 +302,6 @@ export interface ExcelContentType {
     Extension?: string;
     PartName?: string;
 }
-export interface ExcelXMLTemplate {
-    getTemplate(styleProperties?: ExcelStyle | ExcelWorksheet | ExcelColumn | ExcelRow | ExcelCell): XmlElement;
-}
 export interface ExcelOOXMLTemplate {
     getTemplate(config?: any, idx?: number, currentSheet?: number): XmlElement;
     convertType?(type: string): string;
@@ -312,6 +310,9 @@ export declare enum ExcelFactoryMode {
     SINGLE_SHEET = 0,
     MULTI_SHEET = 1
 }
+export interface ExcelSheetNameGetterParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+}
+export declare type ExcelSheetNameGetter = (params?: ExcelSheetNameGetterParams) => string;
 export interface ColumnWidthCallbackParams {
     column: Column | null;
     index: number;
@@ -320,11 +321,14 @@ export interface RowHeightCallbackParams {
     rowIndex: number;
 }
 export interface ExcelExportParams extends ExportParams<ExcelRow[]> {
-    /** The author of the exported file. Default: `"AG Grid"` */
+    /**
+     * The author of the exported file.
+     * @default "AG Grid"
+     * */
     author?: string;
     /**
      * If set to `true`, this will try to convert any cell that starts with `=` to a formula, instead of setting the cell value as regular string that starts with `=`.
-     * Default: `false`
+     * @default false
      */
     autoConvertFormulas?: boolean;
     /**
@@ -332,13 +336,8 @@ export interface ExcelExportParams extends ExportParams<ExcelRow[]> {
      */
     columnWidth?: number | ((params: ColumnWidthCallbackParams) => number);
     /**
-     * For backwards compatibility, this property could be set to `xml`, which will export an Excel Spreadsheet compatible with old Office versions (prior to Office 2007). Setting this to `xml` is not recommended as some features will not work in legacy mode.
-     * Default: `xlsx`
-     */
-    exportMode?: 'xlsx' | 'xml';
-    /**
      * The default value for the font size of the Excel document.
-     * Default: `11`
+     * @default 11
      */
     fontSize?: number;
     /**
@@ -350,10 +349,12 @@ export interface ExcelExportParams extends ExportParams<ExcelRow[]> {
      */
     rowHeight?: number | ((params: RowHeightCallbackParams) => number);
     /**
-     * The name of the sheet in Excel where the grid will be exported. There is a max limit of 31 characters.
-     * Default: `ag-grid`
+     * The name of the sheet in Excel where the grid will be exported. Either a string or a function that returns a
+     * string can be used. If a function is used, it will be called once before the export starts.
+     * There is a max limit of 31 characters per sheet name.
+     * @default 'ag-grid'
      */
-    sheetName?: string;
+    sheetName?: string | ExcelSheetNameGetter;
     /** The Excel document page margins. Relevant for printing. */
     margins?: ExcelSheetMargin;
     /** Allows you to setup the page orientation and size. */
@@ -361,18 +362,13 @@ export interface ExcelExportParams extends ExportParams<ExcelRow[]> {
     /** The configuration for header and footers. */
     headerFooterConfig?: ExcelHeaderFooterConfig;
     /**
-     * If `true`, text content will be encoded with XML character entities like `&amp;lt;` and `&amp;gt;`. This is only relevant when `exportMode='xml'`.
-     * Default: `false`
-     */
-    suppressTextAsCDATA?: boolean;
-    /**
      * If `true`, the outline (controls to expand and collapse) for Row Groups will not be added automatically to the Excel Document.
-     * Default: `false`.
+     * @default false.
      */
     suppressRowOutline?: boolean;
     /**
      * If `true`, the outline (controls to expand and collapse) for Group Columns will not be added automatically to the Excel Document.
-     * Default: `false`.
+     * @default false.
      */
     suppressColumnOutline?: boolean;
     /**
@@ -380,12 +376,12 @@ export interface ExcelExportParams extends ExportParams<ExcelRow[]> {
      *  - expanded: All row groups will be expanded by default.
      *  - collapsed: All row groups will be collapsed by default.
      *  - match: The row groups will match their current state in the Grid.
-     * Default: `expanded`.
+     * @default 'expanded'
      */
     rowGroupExpandState?: 'expanded' | 'collapsed' | 'match';
     /**
-     * The mimeType of the Excel file. Note that this defaults to `application/vnd.ms-excel` if exportMode is `xml`.
-     * Default: `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`
+     * The mimeType of the Excel file.
+     * @default 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
      */
     mimeType?: string;
     /** Use to export an image for the gridCell in question. */
@@ -397,7 +393,7 @@ export interface ExcelExportParams extends ExportParams<ExcelRow[]> {
 export interface ExcelExportMultipleSheetParams {
     /**
      * The author of the exported file.
-     * Default: `AG Grid`
+     * @default 'AG Grid'
      */
     author?: string;
     /**
@@ -406,18 +402,18 @@ export interface ExcelExportMultipleSheetParams {
      */
     data: string[];
     /**
-     * String to use as the file name.
-     * Default: `export.xlsx`
+     * String to use as the file name or a function that returns a string.
+     * @default 'export.xlsx'
      */
-    fileName?: string;
+    fileName?: string | ExportFileNameGetter;
     /**
      * The default value for the font size of the Excel document.
-     * Default: `11`
+     * @default 11
      */
     fontSize?: number;
     /**
      * The mimeType of the Excel file.
-     * Default: `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`
+     * @default 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
      */
     mimeType?: string;
 }
@@ -440,63 +436,63 @@ export interface ExcelHeaderFooterContent {
     value: string;
     /**
      * Configures where the text should be added: `Left`, `Center` or `Right`.
-     * Default: `Left`
+     * @default 'Left'
      */
     position?: 'Left' | 'Center' | 'Right';
     /** The font style of the header/footer value. */
     font?: ExcelFont;
 }
 export interface IExcelCreator {
-    exportDataAsExcel(params?: ExcelExportParams): void;
     getDataAsExcel(params?: ExcelExportParams): Blob | string | undefined;
     getSheetDataForExcel(params?: ExcelExportParams): string;
     getMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): Blob | undefined;
+    exportDataAsExcel(params?: ExcelExportParams): void;
     exportMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): void;
     /** private methods */
-    setFactoryMode(factoryMode: ExcelFactoryMode, exportMode: 'xml' | 'xlsx'): void;
-    getFactoryMode(exportMode: 'xml' | 'xlsx'): ExcelFactoryMode;
+    setFactoryMode(factoryMode: ExcelFactoryMode): void;
+    getFactoryMode(): ExcelFactoryMode;
 }
 export interface ExcelSheetMargin {
     /**
      * The sheet top margin.
-     * Default: `0.75`
+     * @default 0.75
      */
     top?: number;
     /**
      * The sheet right margin.
-     * Default: `0.7`
+     * @default 0.7
      */
     right?: number;
     /**
      * The sheet bottom margin.
-     * Default: `0.75`
+     * @default 0.75
      */
     bottom?: number;
     /**
      * The sheet left margin.
-     * Default: `0.7`
+     * @default 0.7
      */
     left?: number;
     /**
      * The sheet header margin.
-     * Default: `0.3`
+     * @default 0.3
      */
     header?: number;
     /**
      * The sheet footer margin.
-     * Default: `0.3`
+     * @default 0.3
      */
     footer?: number;
 }
 export interface ExcelSheetPageSetup {
     /**
      * Use this property to change the print orientation.
-     * Default: `Portrait`
+     * @default 'Portrait'
      */
     orientation?: 'Portrait' | 'Landscape';
     /**
      * Use this property to set the sheet size.
-     * Default: `Letter`
+     * @default 'Letter'
      */
     pageSize?: 'Letter' | 'Letter Small' | 'Tabloid' | 'Ledger' | 'Legal' | 'Statement' | 'Executive' | 'A3' | 'A4' | 'A4 Small' | 'A5' | 'A6' | 'B4' | 'B5' | 'Folio' | 'Envelope' | 'Envelope DL' | 'Envelope C5' | 'Envelope B5' | 'Envelope C3' | 'Envelope C4' | 'Envelope C6' | 'Envelope Monarch' | 'Japanese Postcard' | 'Japanese Double Postcard';
 }

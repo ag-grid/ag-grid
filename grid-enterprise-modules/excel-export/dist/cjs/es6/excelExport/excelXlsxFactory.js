@@ -13,12 +13,14 @@ const worksheet_1 = require("./files/ooxml/worksheet");
 const relationships_1 = require("./files/ooxml/relationships");
 const excelUtils_1 = require("./assets/excelUtils");
 /**
- * See https://www.ecma-international.org/news/TC45_current_work/OpenXML%20White%20Paper.pdf
+ * See links for more info on the Office Open XML format being used:
+ * https://www.ecma-international.org/wp-content/uploads/Office-Open-XML-White-Paper.pdf
+ * https://ecma-international.org/publications-and-standards/standards/ecma-376/
  */
 class ExcelXlsxFactory {
     static createExcel(styles, worksheet, config) {
         this.addSheetName(worksheet);
-        stylesheet_1.registerStyles(styles, this.sheetNames.length);
+        (0, stylesheet_1.registerStyles)(styles, this.sheetNames.length);
         return this.createWorksheet(worksheet, config);
     }
     static buildImageMap(image, rowIndex, col, columnsToExport, rowHeight) {
@@ -34,8 +36,8 @@ class ExcelXlsxFactory {
             });
         }
         const calculatedImage = image;
-        excelUtils_1.setExcelImageTotalWidth(calculatedImage, columnsToExport);
-        excelUtils_1.setExcelImageTotalHeight(calculatedImage, rowHeight);
+        (0, excelUtils_1.setExcelImageTotalWidth)(calculatedImage, columnsToExport);
+        (0, excelUtils_1.setExcelImageTotalHeight)(calculatedImage, rowHeight);
         if (registeredImage) {
             const currentSheetImages = registeredImage.find(currentImage => currentImage.sheetId === currentSheetIndex);
             if (currentSheetImages) {
@@ -104,19 +106,19 @@ class ExcelXlsxFactory {
         this.factoryMode = core_1.ExcelFactoryMode.SINGLE_SHEET;
     }
     static createWorkbook() {
-        return excelUtils_1.createXmlPart(workbook_1.default.getTemplate(this.sheetNames));
+        return (0, excelUtils_1.createXmlPart)(workbook_1.default.getTemplate(this.sheetNames));
     }
     static createStylesheet(defaultFontSize) {
-        return excelUtils_1.createXmlPart(stylesheet_1.default.getTemplate(defaultFontSize));
+        return (0, excelUtils_1.createXmlPart)(stylesheet_1.default.getTemplate(defaultFontSize));
     }
     static createSharedStrings() {
-        return excelUtils_1.createXmlPart(sharedStrings_1.default.getTemplate(this.sharedStrings));
+        return (0, excelUtils_1.createXmlPart)(sharedStrings_1.default.getTemplate(this.sharedStrings));
     }
     static createCore(author) {
-        return excelUtils_1.createXmlPart(core_2.default.getTemplate(author));
+        return (0, excelUtils_1.createXmlPart)(core_2.default.getTemplate(author));
     }
     static createContentTypes(sheetLen) {
-        return excelUtils_1.createXmlPart(contentTypes_1.default.getTemplate(sheetLen));
+        return (0, excelUtils_1.createXmlPart)(contentTypes_1.default.getTemplate(sheetLen));
     }
     static createRels() {
         const rs = relationships_1.default.getTemplate([{
@@ -128,10 +130,10 @@ class ExcelXlsxFactory {
                 Type: 'http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties',
                 Target: 'docProps/core.xml'
             }]);
-        return excelUtils_1.createXmlPart(rs);
+        return (0, excelUtils_1.createXmlPart)(rs);
     }
     static createTheme() {
-        return excelUtils_1.createXmlPart(office_1.default.getTemplate());
+        return (0, excelUtils_1.createXmlPart)(office_1.default.getTemplate());
     }
     static createWorkbookRels(sheetLen) {
         const worksheets = new Array(sheetLen).fill(undefined).map((v, i) => ({
@@ -155,10 +157,10 @@ class ExcelXlsxFactory {
                 Target: 'sharedStrings.xml'
             }
         ]);
-        return excelUtils_1.createXmlPart(rs);
+        return (0, excelUtils_1.createXmlPart)(rs);
     }
     static createDrawing(sheetIndex) {
-        return excelUtils_1.createXmlPart(drawing_1.default.getTemplate({ sheetIndex }));
+        return (0, excelUtils_1.createXmlPart)(drawing_1.default.getTemplate({ sheetIndex }));
     }
     static createDrawingRel(sheetIndex) {
         const worksheetImageIds = this.worksheetImageIds.get(sheetIndex);
@@ -170,7 +172,7 @@ class ExcelXlsxFactory {
                 Target: `../media/image${this.workbookImageIds.get(key).index + 1}.${value.type}`
             });
         });
-        return excelUtils_1.createXmlPart(relationships_1.default.getTemplate(XMLArr));
+        return (0, excelUtils_1.createXmlPart)(relationships_1.default.getTemplate(XMLArr));
     }
     static createWorksheetDrawingRel(currentRelationIndex) {
         const rs = relationships_1.default.getTemplate([{
@@ -178,10 +180,10 @@ class ExcelXlsxFactory {
                 Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing',
                 Target: `../drawings/drawing${currentRelationIndex + 1}.xml`
             }]);
-        return excelUtils_1.createXmlPart(rs);
+        return (0, excelUtils_1.createXmlPart)(rs);
     }
     static createWorksheet(worksheet, config) {
-        return excelUtils_1.createXmlPart(worksheet_1.default.getTemplate({
+        return (0, excelUtils_1.createXmlPart)(worksheet_1.default.getTemplate({
             worksheet,
             currentSheet: this.sheetNames.length - 1,
             config

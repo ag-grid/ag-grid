@@ -36,7 +36,7 @@ const getHeightFromProperty = (rowIndex, height) => {
         const heightFunc = height;
         finalHeight = heightFunc({ rowIndex });
     }
-    return exports.pixelsToPoint(finalHeight);
+    return (0, exports.pixelsToPoint)(finalHeight);
 };
 exports.getHeightFromProperty = getHeightFromProperty;
 const setExcelImageTotalWidth = (image, columnsToExport) => {
@@ -69,7 +69,7 @@ const setExcelImageTotalHeight = (image, rowHeight) => {
             let totalHeight = 0;
             let counter = 0;
             for (let i = row; i < row + rowSpan; i++) {
-                const nextRowHeight = exports.pointsToPixel(exports.getHeightFromProperty(i, rowHeight) || 20);
+                const nextRowHeight = (0, exports.pointsToPixel)((0, exports.getHeightFromProperty)(i, rowHeight) || 20);
                 if (image.height < totalHeight + nextRowHeight) {
                     image.position.rowSpan = counter + 1;
                     image.totalHeight = image.height;
@@ -105,11 +105,11 @@ const getExcelColumnName = (colIdx) => {
         return fromCharCode(startCode + colIdx - 1);
     }
     if (!tableIdx) {
-        return exports.getExcelColumnName(pos - 1) + 'Z';
+        return (0, exports.getExcelColumnName)(pos - 1) + 'Z';
     }
     if (pos < tableWidth) {
         return fromCharCode(startCode + pos - 1) + fromCharCode(startCode + tableIdx - 1);
     }
-    return exports.getExcelColumnName(pos) + fromCharCode(startCode + tableIdx - 1);
+    return (0, exports.getExcelColumnName)(pos) + fromCharCode(startCode + tableIdx - 1);
 };
 exports.getExcelColumnName = getExcelColumnName;

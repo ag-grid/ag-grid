@@ -199,7 +199,7 @@ class DefaultStrategy extends core_1.BeanStub {
     }
 }
 __decorate([
-    core_1.Autowired('rowModel')
+    (0, core_1.Autowired)('rowModel')
 ], DefaultStrategy.prototype, "rowModel", void 0);
 __decorate([
     core_1.PostConstruct

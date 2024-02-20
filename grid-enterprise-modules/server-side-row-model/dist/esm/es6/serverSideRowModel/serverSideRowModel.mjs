@@ -4,7 +4,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { _, Autowired, Bean, BeanStub, Events, NumberSequence, PostConstruct, PreDestroy, RowNode, Optional } from "@ag-grid-community/core";
+import { _, Autowired, Bean, BeanStub, Events, NumberSequence, PostConstruct, PreDestroy, RowNode, Optional, } from "@ag-grid-community/core";
 import { FullStore } from "./stores/fullStore.mjs";
 import { LazyStore } from "./stores/lazy/lazyStore.mjs";
 let ServerSideRowModel = class ServerSideRowModel extends BeanStub {
@@ -19,10 +19,7 @@ let ServerSideRowModel = class ServerSideRowModel extends BeanStub {
     ensureRowHeightsValid() { return false; }
     start() {
         this.started = true;
-        const datasource = this.gridOptionsService.get('serverSideDatasource');
-        if (datasource) {
-            this.setDatasource(datasource);
-        }
+        this.updateDatasource();
     }
     destroyDatasource() {
         if (!this.datasource) {
@@ -42,16 +39,30 @@ let ServerSideRowModel = class ServerSideRowModel extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, resetListener);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, resetListener);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, resetListener);
+        this.addManagedPropertyListeners([
+            /**
+             * Following properties omitted as they are likely to come with undesired  side effects.
+             * 'getRowId', 'isRowMaster', 'getRowHeight', 'isServerSideGroup', 'getServerSideGroupKey',
+             * */
+            'masterDetail', 'treeData', 'removePivotHeaderRowWhenSingleValueColumn',
+            'suppressServerSideInfiniteScroll', 'cacheBlockSize',
+        ], resetListener);
+        this.addManagedPropertyListener('rowHeight', () => this.resetRowHeights());
         this.verifyProps();
+        this.addManagedPropertyListener('serverSideDatasource', () => this.updateDatasource());
+    }
+    updateDatasource() {
+        const datasource = this.gridOptionsService.get('serverSideDatasource');
+        if (datasource) {
+            this.setDatasource(datasource);
+        }
     }
     verifyProps() {
         if (this.gridOptionsService.exists('initialGroupOrderComparator')) {
-            const message = `AG Grid: initialGroupOrderComparator cannot be used with Server Side Row Model. If using Full Store, then provide the rows to the grid in the desired sort order. If using Infinite Scroll, then sorting is done on the server side, nothing to do with the client.`;
-            _.doOnce(() => console.warn(message), 'SSRM.InitialGroupOrderComparator');
+            _.warnOnce(`initialGroupOrderComparator cannot be used with Server Side Row Model.`);
         }
         if (this.gridOptionsService.isRowSelection() && !this.gridOptionsService.exists('getRowId')) {
-            const message = `AG Grid: getRowId callback must be provided for Server Side Row Model selection to work correctly.`;
-            _.doOnce(() => console.warn(message), 'SSRM.SelectionNeedsRowNodeIdFunc');
+            _.warnOnce(`getRowId callback must be provided for Server Side Row Model selection to work correctly.`);
         }
     }
     setDatasource(datasource) {
@@ -66,6 +77,23 @@ let ServerSideRowModel = class ServerSideRowModel extends BeanStub {
         this.destroyDatasource();
         this.datasource = datasource;
         this.resetRootStore();
+    }
+    applyRowData(rowDataParams, startRow, route) {
+        const rootStore = this.getRootStore();
+        if (!rootStore) {
+            return;
+        }
+        const storeToExecuteOn = rootStore.getChildStore(route);
+        if (!storeToExecuteOn) {
+            return;
+        }
+        ;
+        if (storeToExecuteOn instanceof LazyStore) {
+            storeToExecuteOn.applyRowData(rowDataParams, startRow, rowDataParams.rowData.length);
+        }
+        else if (storeToExecuteOn instanceof FullStore) {
+            storeToExecuteOn.processServerResult(rowDataParams);
+        }
     }
     isLastRowIndexKnown() {
         const cache = this.getRootStore();
@@ -100,7 +128,7 @@ let ServerSideRowModel = class ServerSideRowModel extends BeanStub {
             const missingCols = !params.allowRemovedColumns && !!Object.values(oldColsMap).length;
             return allColsUnchanged && !missingCols;
         };
-        const sortModelDifferent = !_.jsonEquals(this.storeParams.sortModel, this.sortListener.extractSortModel());
+        const sortModelDifferent = !_.jsonEquals(this.storeParams.sortModel, this.sortController.getSortModel());
         const rowGroupDifferent = !areColsSame({
             oldCols: this.storeParams.rowGroupCols,
             newCols: rowGroupColumnVos,
@@ -151,6 +179,41 @@ let ServerSideRowModel = class ServerSideRowModel extends BeanStub {
         this.columnModel.setSecondaryColumns(pivotColumnGroupDefs, "rowModelUpdated");
     }
     ;
+    resetRowHeights() {
+        const atLeastOne = this.resetRowHeightsForAllRowNodes();
+        const rootNodeHeight = this.gridOptionsService.getRowHeightForNode(this.rootNode);
+        this.rootNode.setRowHeight(rootNodeHeight.height, rootNodeHeight.estimated);
+        if (this.rootNode.sibling) {
+            const rootNodeSibling = this.gridOptionsService.getRowHeightForNode(this.rootNode.sibling);
+            this.rootNode.sibling.setRowHeight(rootNodeSibling.height, rootNodeSibling.estimated);
+        }
+        // when pivotMode but pivot not active, root node is displayed on its own
+        // because it's only ever displayed alone, refreshing the model (onRowHeightChanged) is not required
+        if (atLeastOne) {
+            this.onRowHeightChanged();
+        }
+    }
+    resetRowHeightsForAllRowNodes() {
+        let atLeastOne = false;
+        this.forEachNode(rowNode => {
+            const rowHeightForNode = this.gridOptionsService.getRowHeightForNode(rowNode);
+            rowNode.setRowHeight(rowHeightForNode.height, rowHeightForNode.estimated);
+            // we keep the height each row is at, however we set estimated=true rather than clear the height.
+            // this means the grid will not reset the row heights back to defaults, rather it will re-calc
+            // the height for each row as the row is displayed. otherwise the scroll will jump when heights are reset.
+            const detailNode = rowNode.detailNode;
+            if (detailNode) {
+                const detailRowHeight = this.gridOptionsService.getRowHeightForNode(detailNode);
+                detailNode.setRowHeight(detailRowHeight.height, detailRowHeight.estimated);
+            }
+            if (rowNode.sibling) {
+                const siblingRowHeight = this.gridOptionsService.getRowHeightForNode(rowNode.sibling);
+                detailNode.setRowHeight(siblingRowHeight.height, siblingRowHeight.estimated);
+            }
+            atLeastOne = true;
+        });
+        return atLeastOne;
+    }
     resetRootStore() {
         this.destroyRootStore();
         this.rootNode = new RowNode(this.beans);
@@ -163,14 +226,9 @@ let ServerSideRowModel = class ServerSideRowModel extends BeanStub {
         }
         if (this.managingPivotResultColumns) {
             // if managing pivot columns, also reset secondary columns.
-            this.columnModel.setSecondaryColumns(null);
+            this.columnModel.setSecondaryColumns(null, 'api');
             this.managingPivotResultColumns = false;
         }
-        // this event shows/hides 'no rows' overlay
-        const rowDataChangedEvent = {
-            type: Events.EVENT_ROW_DATA_UPDATED
-        };
-        this.eventService.dispatchEvent(rowDataChangedEvent);
         // this gets the row to render rows (or remove the previously rendered rows, as it's blank to start).
         // important to NOT pass in an event with keepRenderedRows or animate, as we want the renderer
         // to treat the rows as new rows, as it's all new data
@@ -196,8 +254,10 @@ let ServerSideRowModel = class ServerSideRowModel extends BeanStub {
             pivotCols: pivotColumnVos,
             pivotMode: this.columnModel.isPivotMode(),
             // sort and filter model
-            filterModel: this.filterManager.getFilterModel(),
-            sortModel: this.sortListener.extractSortModel(),
+            filterModel: this.filterManager.isAdvancedFilterEnabled()
+                ? this.filterManager.getAdvancedFilterModel()
+                : this.filterManager.getFilterModel(),
+            sortModel: this.sortController.getSortModel(),
             datasource: this.datasource,
             lastAccessedSequence: new NumberSequence(),
             // blockSize: blockSize == null ? 100 : blockSize,
@@ -371,22 +431,27 @@ let ServerSideRowModel = class ServerSideRowModel extends BeanStub {
         }
         rootStore.forEachNodeDeep(callback);
     }
-    forEachNodeAfterFilterAndSort(callback) {
+    forEachNodeAfterFilterAndSort(callback, includeFooterNodes = false) {
         const rootStore = this.getRootStore();
         if (!rootStore) {
             return;
         }
-        rootStore.forEachNodeDeepAfterFilterAndSort(callback);
+        rootStore.forEachNodeDeepAfterFilterAndSort(callback, undefined, includeFooterNodes);
     }
+    /** @return false if store hasn't started */
     executeOnStore(route, callback) {
+        if (!this.started) {
+            return false;
+        }
         const rootStore = this.getRootStore();
         if (!rootStore) {
-            return;
+            return true;
         }
         const storeToExecuteOn = rootStore.getChildStore(route);
         if (storeToExecuteOn) {
             callback(storeToExecuteOn);
         }
+        return true;
     }
     refreshStore(params = {}) {
         const route = params.route ? params.route : [];
@@ -462,6 +527,9 @@ __decorate([
 __decorate([
     Autowired('filterManager')
 ], ServerSideRowModel.prototype, "filterManager", void 0);
+__decorate([
+    Autowired('sortController')
+], ServerSideRowModel.prototype, "sortController", void 0);
 __decorate([
     Autowired('rowRenderer')
 ], ServerSideRowModel.prototype, "rowRenderer", void 0);

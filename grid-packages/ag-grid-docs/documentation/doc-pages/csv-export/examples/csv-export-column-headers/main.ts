@@ -1,9 +1,10 @@
-import { Grid, GridOptions, GridReadyEvent } from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions, GridReadyEvent } from '@ag-grid-community/core';
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   defaultColDef: {
     editable: true,
-    resizable: true,
     minWidth: 100,
     flex: 1,
   },
@@ -44,11 +45,11 @@ function getParams() {
 }
 
 function onBtnExport() {
-  gridOptions.api!.exportDataAsCsv(getParams())
+  gridApi!.exportDataAsCsv(getParams())
 }
 
 function onBtnUpdate() {
-  (document.querySelector('#csvResult') as any).value = gridOptions.api!.getDataAsCsv(
+  (document.querySelector('#csvResult') as any).value = gridApi!.getDataAsCsv(
     getParams()
   )
 }
@@ -56,5 +57,5 @@ function onBtnUpdate() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

@@ -4,17 +4,18 @@
 
 // NOTE: Only typescript types should be imported from the AG Grid packages
 // to prevent AG Grid from loading the code twice
-import { GetRowIdParams, GridOptions, GridSizeChangedEvent, ISetFilter } from 'ag-grid-community';
+import { GetRowIdParams, GridOptions, GridSizeChangedEvent, ISetFilter, GridApi } from 'ag-grid-community';
 import { createGenerator } from '../../utils/grid/generator-utils';
 import { COLUMN_ID_PRIORITIES, FILTER_ROWS_BREAKPOINT, UPDATE_INTERVAL } from './constants';
 import { columnDefs, generateStocks, generateStockUpdate } from './data';
 import { fixtureData } from './rowDataFixture';
 
+let api: GridApi;
 const rowData = generateStocks();
 const generator = createGenerator({
     interval: UPDATE_INTERVAL,
     callback: () => {
-        if (!gridOptions.api) {
+        if (!api) {
             return;
         }
 
@@ -23,22 +24,18 @@ const generator = createGenerator({
         const newStock = generateStockUpdate(stockToUpdate);
 
         rowData[randomIndex] = newStock;
-        gridOptions.api.applyTransactionAsync({
+        api.applyTransactionAsync({
             update: [newStock],
         });
     },
 });
-
 const gridOptions: GridOptions = {
     columnDefs,
     rowData,
     rowHeight: 48,
     headerHeight: 30,
-    defaultColDef: {
-        resizable: true,
-        sortable: true,
-    },
     domLayout: 'autoHeight',
+    animateRows: false,
     getRowId: ({ data }: GetRowIdParams) => {
         return data.stock;
     },
@@ -48,7 +45,7 @@ const gridOptions: GridOptions = {
         let totalWidth: number = 0;
         let hasFilledColumns = false;
         COLUMN_ID_PRIORITIES.forEach((colId) => {
-            const col = params.columnApi.getColumn(colId);
+            const col = params.api.getColumn(colId);
             const minWidth = col?.getMinWidth() || 0;
             const newTotalWidth = totalWidth + minWidth;
 
@@ -62,22 +59,19 @@ const gridOptions: GridOptions = {
         });
 
         // show/hide columns based on current grid width
-        params.columnApi.setColumnsVisible(columnsToShow, true);
-        params.columnApi.setColumnsVisible(columnsToHide, false);
+        params.api.setColumnsVisible(columnsToShow, true);
+        params.api.setColumnsVisible(columnsToHide, false);
 
-        const stockFilter: ISetFilter = params.api.getFilterInstance('stock')!;
-        const stocks = stockFilter.getFilterValues();
-
-        if (innerWidth < FILTER_ROWS_BREAKPOINT) {
-            stockFilter.setModel({
-                values: stocks.slice(0, 6),
+        params.api.getColumnFilterInstance<ISetFilter>('stock').then(stockFilter => {
+            const stocks = stockFilter!.getFilterValues();
+            const values = innerWidth < FILTER_ROWS_BREAKPOINT ? stocks.slice(0, 6) : stocks;
+            
+            stockFilter!.setModel({
+                values,
+            }).then(() => {
+                params.api.onFilterChanged();
             });
-        } else {
-            stockFilter.setModel({
-                values: stocks,
-            });
-        }
-        params.api.onFilterChanged();
+        })!;
     },
 };
 
@@ -110,7 +104,7 @@ export function initGrid({
 
             generator.start();
         };
-        new globalThis.agGrid.Grid(gridDiv, gridOptions);
+        api = globalThis.agGrid.createGrid(gridDiv, gridOptions);
 
         gridDiv.classList.add('loaded');
     };
@@ -128,7 +122,7 @@ export function initGrid({
 
 export function cleanUp() {
     generator.stop();
-    gridOptions.api?.destroy();
+    api?.destroy();
 
     // Clean up tooltip, if user mouse happens to be hovering over
     document.querySelector('.ag-sparkline-tooltip-wrapper')?.remove();

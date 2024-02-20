@@ -32,9 +32,10 @@ export default {
     methods: {
         // called when the cell is refreshed
         refresh(params) {
-            // check and see if we need to get the grid to tear this
-            // component down and update it again
-            return params.data.calls === this.params.data.callsCount;
+            this.callsCount = params.data.calls;
+            this.now = new Date().toLocaleTimeString();
+            // tell the grid not to destroy and recreate
+            return true;
         }
     }
 };

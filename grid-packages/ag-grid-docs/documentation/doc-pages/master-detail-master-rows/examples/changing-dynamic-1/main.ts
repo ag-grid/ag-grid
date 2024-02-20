@@ -1,4 +1,13 @@
-import { Grid, FirstDataRenderedEvent, GridOptions, IDetailCellRendererParams, GetRowIdParams } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  FirstDataRenderedEvent,
+  GridOptions,
+  IDetailCellRendererParams,
+  GetRowIdParams,
+} from '@ag-grid-community/core';
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   masterDetail: true,
@@ -40,20 +49,20 @@ const gridOptions: GridOptions = {
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
   // arbitrarily expand a row for presentational purposes
-  setTimeout(function () {
+  setTimeout(() => {
     params.api.getDisplayedRowAtIndex(1)!.setExpanded(true)
   }, 0)
 }
 
 function onBtClearMilaCalls() {
-  var milaSmithRowNode = gridOptions.api!.getRowNode('177001')!
+  var milaSmithRowNode = gridApi!.getRowNode('177001')!
   var milaSmithData = milaSmithRowNode.data
   milaSmithData.callRecords = []
-  gridOptions.api!.applyTransaction({ update: [milaSmithData] })
+  gridApi!.applyTransaction({ update: [milaSmithData] })
 }
 
 function onBtSetMilaCalls() {
-  var milaSmithRowNode = gridOptions.api!.getRowNode('177001')!
+  var milaSmithRowNode = gridApi!.getRowNode('177001')!
   var milaSmithData = milaSmithRowNode.data
   milaSmithData.callRecords = [
     {
@@ -73,19 +82,19 @@ function onBtSetMilaCalls() {
       number: '(02) 32367069',
     },
   ]
-  gridOptions.api!.applyTransaction({ update: [milaSmithData] })
+  gridApi!.applyTransaction({ update: [milaSmithData] })
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch(
     'https://www.ag-grid.com/example-assets/master-detail-dynamic-data.json'
   )
     .then(response => response.json())
     .then(function (data) {
-      gridOptions.api!.setRowData(data)
+      gridApi!.setGridOption('rowData', data)
     })
 })

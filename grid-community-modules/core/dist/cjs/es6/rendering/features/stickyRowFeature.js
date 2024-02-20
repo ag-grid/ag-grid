@@ -40,7 +40,7 @@ class StickyRowFeature extends beanStub_1.BeanStub {
             let lastChildBottom;
             if (this.isClientSide) {
                 let lastAncestor = stickyRow;
-                while (lastAncestor.expanded) {
+                while (lastAncestor.isExpandable() && lastAncestor.expanded) {
                     if (lastAncestor.master) {
                         lastAncestor = lastAncestor.detailNode;
                     }
@@ -50,7 +50,7 @@ class StickyRowFeature extends beanStub_1.BeanStub {
                         if (lastAncestor.childrenAfterSort.length === 0) {
                             break;
                         }
-                        lastAncestor = array_1.last(lastAncestor.childrenAfterSort);
+                        lastAncestor = (0, array_1.last)(lastAncestor.childrenAfterSort);
                     }
                 }
                 lastChildBottom = lastAncestor.rowTop + lastAncestor.rowHeight;
@@ -80,6 +80,7 @@ class StickyRowFeature extends beanStub_1.BeanStub {
                 }
             });
         };
+        let counter = 0;
         while (true) {
             const firstPixelAfterStickyRows = firstPixel + height;
             const firstIndex = this.rowModel.getRowIndexAtPixel(firstPixelAfterStickyRows);
@@ -89,6 +90,11 @@ class StickyRowFeature extends beanStub_1.BeanStub {
             }
             // only happens when pivoting, and we are showing root node
             if (firstRow.level < 0) {
+                break;
+            }
+            // added logic to break out of the loop when the row calculation
+            // changes while rows are becoming sticky (happens with auto height)
+            if (counter++ === 100) {
                 break;
             }
             const parents = [];
@@ -156,13 +162,13 @@ class StickyRowFeature extends beanStub_1.BeanStub {
     }
 }
 __decorate([
-    context_1.Autowired("rowModel")
+    (0, context_1.Autowired)("rowModel")
 ], StickyRowFeature.prototype, "rowModel", void 0);
 __decorate([
-    context_1.Autowired("rowRenderer")
+    (0, context_1.Autowired)("rowRenderer")
 ], StickyRowFeature.prototype, "rowRenderer", void 0);
 __decorate([
-    context_1.Autowired("ctrlsService")
+    (0, context_1.Autowired)("ctrlsService")
 ], StickyRowFeature.prototype, "ctrlsService", void 0);
 __decorate([
     context_1.PostConstruct

@@ -1,4 +1,4 @@
-import { Component, IStatusPanelComp, CellPositionUtils, RowPositionUtils } from '@ag-grid-community/core';
+import { Component, IStatusPanelComp, CellPositionUtils, RowPositionUtils, AggregationStatusPanelParams } from '@ag-grid-community/core';
 export declare class AggregationComp extends Component implements IStatusPanelComp {
     private static TEMPLATE;
     private rangeService;
@@ -13,12 +13,15 @@ export declare class AggregationComp extends Component implements IStatusPanelCo
     private minAggregationComp;
     private maxAggregationComp;
     private avgAggregationComp;
+    private params;
     constructor();
     destroy(): void;
     private postConstruct;
     private isValidRowModel;
-    init(): void;
+    init(params: AggregationStatusPanelParams): void;
+    refresh(params: AggregationStatusPanelParams): boolean;
     private setAggregationComponentValue;
+    private getAllowedAggregationValueComponent;
     private getAggregationValueComponent;
     private onRangeSelectionChanged;
 }

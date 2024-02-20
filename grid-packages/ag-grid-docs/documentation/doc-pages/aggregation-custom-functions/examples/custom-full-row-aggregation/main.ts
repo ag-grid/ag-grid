@@ -1,4 +1,6 @@
-import { GetGroupRowAggParams, Grid, GridOptions } from '@ag-grid-community/core'
+import { GetGroupRowAggParams, GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -15,7 +17,6 @@ const gridOptions: GridOptions = {
     flex: 1,
     minWidth: 150,
     filter: true,
-    sortable: true,
   },
   autoGroupColumnDef: {
     headerName: 'Athlete',
@@ -59,19 +60,19 @@ function getGroupRowAgg(params: GetGroupRowAggParams) {
 }
 
 function expandAll() {
-  gridOptions.api!.expandAll()
+  gridApi!.expandAll()
 }
 
 function collapseAll() {
-  gridOptions.api!.collapseAll()
+  gridApi!.collapseAll()
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: any[]) => gridOptions.api!.setRowData(data))
+    .then((data: any[]) => gridApi!.setGridOption('rowData', data))
 })

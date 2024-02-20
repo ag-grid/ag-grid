@@ -77,10 +77,7 @@ export function convertFunctionalTemplate(template: string) {
         .replace(/<input (.+?[^=])>/g, '<input $1 />')
         .replace(/<input (.*)value=/g, '<input $1defaultValue=')
         .replace(/ class=/g, ' className=')
-        .replace(/ for=/g, ' htmlFor=')
-        // when using fontawesome just use "class" instead - it's always the case that we're treating it as a raw value
-        // I had some fancy regex here to exclude rows with <i class but I thought this was easier to grok and maintain
-        .replace(/<i className=/g, '<i class=')
+        .replace(/ for=/g, ' htmlFor=')        
         .replace(/ \<option (.*)selected=\"\"/g, '<option $1selected={true}');
 
     return convertStyles(template);

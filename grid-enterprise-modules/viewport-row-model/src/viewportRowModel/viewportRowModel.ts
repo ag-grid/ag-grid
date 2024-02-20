@@ -18,9 +18,6 @@ import {
     RowModelType
 } from "@ag-grid-community/core";
 
-
-const DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
-const DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE = 5;
 @Bean('rowModel')
 export class ViewportRowModel extends BeanStub implements IRowModel {
 
@@ -45,12 +42,15 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
     private init(): void {
         this.rowHeight = this.gridOptionsService.getRowHeightAsNumber();
         this.addManagedListener(this.eventService, Events.EVENT_VIEWPORT_CHANGED, this.onViewportChanged.bind(this));
+        this.addManagedPropertyListener('viewportDatasource', () => this.updateDatasource());
+        this.addManagedPropertyListener('rowHeight', () => {
+            this.rowHeight = this.gridOptionsService.getRowHeightAsNumber();
+            this.updateRowHeights();
+        });
     }
 
     public start(): void {
-        if (this.gridOptionsService.get('viewportDatasource')) {
-            this.setViewportDatasource(this.gridOptionsService.get('viewportDatasource')!);
-        }
+        this.updateDatasource();
     }
 
     public isLastRowIndexKnown(): boolean {
@@ -70,12 +70,19 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
         this.lastRow = -1;
     }
 
+    private updateDatasource(): void {
+        const datasource = this.gridOptionsService.get('viewportDatasource');
+        if (datasource) {
+            this.setViewportDatasource(datasource);
+        }
+    }
+
     private getViewportRowModelPageSize(): number | undefined {
-        return _.oneOrGreater(this.gridOptionsService.getNum('viewportRowModelPageSize'), DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE);
+        return this.gridOptionsService.get('viewportRowModelPageSize');
     }
 
     private getViewportRowModelBufferSize(): number {
-        return _.zeroOrGreater(this.gridOptionsService.getNum('viewportRowModelBufferSize'), DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE);
+        return this.gridOptionsService.get('viewportRowModelBufferSize');
     }
 
     private calculateFirstRow(firstRenderedRow: number): number {
@@ -194,6 +201,22 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
         };
     }
 
+    private updateRowHeights() {
+        this.forEachNode(node => {
+            node.setRowHeight(this.rowHeight);
+            node.setRowTop(this.rowHeight * node.rowIndex!);
+        });
+        
+        const event: WithoutGridCommon<ModelUpdatedEvent> = {
+            type: Events.EVENT_MODEL_UPDATED,
+            newData: false,
+            newPage: false,
+            keepRenderedRows: true,
+            animate: false,
+        };
+        this.eventService.dispatchEvent(event);
+    }
+
     public getTopLevelRowCount(): number {
         return this.getRowCount();
     }
@@ -280,6 +303,10 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
         if (rowCount === this.rowCount) { return; }
 
         this.rowCount = rowCount;
+
+        this.eventService.dispatchEventOnce({
+            type: Events.EVENT_ROW_COUNT_READY
+        });
 
         const event: WithoutGridCommon<ModelUpdatedEvent> = {
             type: Events.EVENT_MODEL_UPDATED,

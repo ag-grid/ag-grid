@@ -1,7 +1,5 @@
 <framework-specific-section frameworks="vue">
 |
-|## Registering Custom Components
-|
 |The pages for each component type (cell renderer, cell editor etc) contain examples on how to register and use each component type.
 |It is however useful here to step back and focus on the component registration process which is common across all component types.
 |

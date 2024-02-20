@@ -33,7 +33,7 @@ var TextCellEditorInput = /** @class */ (function () {
     };
     TextCellEditorInput.prototype.getValue = function () {
         var value = this.eInput.getValue();
-        if (!generic_1.exists(value) && !generic_1.exists(this.params.value)) {
+        if (!(0, generic_1.exists)(value) && !(0, generic_1.exists)(this.params.value)) {
             return this.params.value;
         }
         return this.params.parseValue(value);
@@ -48,7 +48,7 @@ var TextCellEditorInput = /** @class */ (function () {
         //   a) when user hits F2
         //   b) when user hits a printable character
         var value = this.eInput.getValue();
-        var len = (generic_1.exists(value) && value.length) || 0;
+        var len = ((0, generic_1.exists)(value) && value.length) || 0;
         if (len) {
             this.eInput.getInputElement().setSelectionRange(len, len);
         }

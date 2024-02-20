@@ -16,6 +16,8 @@ const context_2 = require("./context/context");
 const context_3 = require("./context/context");
 const context_4 = require("./context/context");
 const beanStub_1 = require("./context/beanStub");
+const gridApi_1 = require("./gridApi");
+const function_1 = require("./utils/function");
 let AlignedGridsService = class AlignedGridsService extends beanStub_1.BeanStub {
     constructor() {
         super(...arguments);
@@ -26,6 +28,42 @@ let AlignedGridsService = class AlignedGridsService extends beanStub_1.BeanStub 
     }
     setBeans(loggerFactory) {
         this.logger = loggerFactory.create('AlignedGridsService');
+    }
+    getAlignedGridApis() {
+        var _a;
+        let alignedGrids = (_a = this.gridOptionsService.get('alignedGrids')) !== null && _a !== void 0 ? _a : [];
+        const isCallbackConfig = typeof alignedGrids === 'function';
+        if (typeof alignedGrids === 'function') {
+            alignedGrids = alignedGrids();
+        }
+        const seeUrl = () => `See ${this.getFrameworkOverrides().getDocLink('aligned-grids')}`;
+        const apis = alignedGrids.map((alignedGrid) => {
+            var _a;
+            if (!alignedGrid) {
+                (0, function_1.errorOnce)(`alignedGrids contains an undefined option.`);
+                if (!isCallbackConfig) {
+                    (0, function_1.errorOnce)(`You may want to configure via a callback to avoid setup race conditions:
+                     "alignedGrids: () => [linkedGrid]"`);
+                }
+                (0, function_1.errorOnce)(seeUrl());
+                return;
+            }
+            if (alignedGrid instanceof gridApi_1.GridApi) {
+                return alignedGrid;
+            }
+            // Extract the GridApi from a ref or component
+            const refOrComp = alignedGrid;
+            if ('current' in refOrComp) {
+                return (_a = refOrComp.current) === null || _a === void 0 ? void 0 : _a.api;
+            }
+            else {
+                if (!refOrComp.api) {
+                    (0, function_1.errorOnce)(`alignedGrids - No api found on the linked grid. If you are passing gridOptions to alignedGrids since v31 this is no longer valid. ${seeUrl()}`);
+                }
+                return refOrComp.api;
+            }
+        }).filter(api => !!api && !api.isDestroyed());
+        return apis;
     }
     init() {
         this.addManagedListener(this.eventService, events_1.Events.EVENT_COLUMN_MOVED, this.fireColumnEvent.bind(this));
@@ -43,15 +81,10 @@ let AlignedGridsService = class AlignedGridsService extends beanStub_1.BeanStub 
             return;
         }
         // iterate through the aligned grids, and pass each aligned grid service to the callback
-        const otherGrids = this.gridOptionsService.get('alignedGrids');
-        if (otherGrids) {
-            otherGrids.forEach((otherGridOptions) => {
-                if (otherGridOptions.api) {
-                    const alignedGridService = otherGridOptions.api.__getAlignedGridService();
-                    callback(alignedGridService);
-                }
-            });
-        }
+        this.getAlignedGridApis().forEach((api) => {
+            const alignedGridService = api.__getAlignedGridService();
+            callback(alignedGridService);
+        });
     }
     // common logic across all consume methods. very little common logic, however extracting
     // guarantees consistency across the methods.
@@ -127,18 +160,19 @@ let AlignedGridsService = class AlignedGridsService extends beanStub_1.BeanStub 
         });
     }
     processGroupOpenedEvent(groupOpenedEvent) {
-        // likewise for column group
-        const masterColumnGroup = groupOpenedEvent.columnGroup;
-        let otherColumnGroup = null;
-        if (masterColumnGroup) {
-            const groupId = masterColumnGroup.getGroupId();
-            otherColumnGroup = this.columnModel.getProvidedColumnGroup(groupId);
-        }
-        if (masterColumnGroup && !otherColumnGroup) {
-            return;
-        }
-        this.logger.log('onColumnEvent-> processing ' + groupOpenedEvent + ' expanded = ' + masterColumnGroup.isExpanded());
-        this.columnModel.setColumnGroupOpened(otherColumnGroup, masterColumnGroup.isExpanded(), "alignedGridChanged");
+        groupOpenedEvent.columnGroups.forEach(masterGroup => {
+            // likewise for column group
+            let otherColumnGroup = null;
+            if (masterGroup) {
+                const groupId = masterGroup.getGroupId();
+                otherColumnGroup = this.columnModel.getProvidedColumnGroup(groupId);
+            }
+            if (masterGroup && !otherColumnGroup) {
+                return;
+            }
+            this.logger.log('onColumnEvent-> processing ' + groupOpenedEvent + ' expanded = ' + masterGroup.isExpanded());
+            this.columnModel.setColumnGroupOpened(otherColumnGroup, masterGroup.isExpanded(), "alignedGridChanged");
+        });
     }
     processColumnEvent(colEvent) {
         var _a;
@@ -164,7 +198,7 @@ let AlignedGridsService = class AlignedGridsService extends beanStub_1.BeanStub 
                 // so only way to be sure is match the order of all columns using Column State.
                 {
                     const movedEvent = colEvent;
-                    const srcColState = colEvent.columnApi.getColumnState();
+                    const srcColState = colEvent.api.getColumnState();
                     const destColState = srcColState.map(s => ({ colId: s.colId }));
                     this.columnModel.applyColumnState({ state: destColState, applyOrder: true }, "alignedGridChanged");
                     this.logger.log(`onColumnEvent-> processing ${colEvent.type} toIndex = ${movedEvent.toIndex}`);
@@ -176,7 +210,7 @@ let AlignedGridsService = class AlignedGridsService extends beanStub_1.BeanStub 
                 // so only way to be sure is match the visibility of all columns using Column State.
                 {
                     const visibleEvent = colEvent;
-                    const srcColState = colEvent.columnApi.getColumnState();
+                    const srcColState = colEvent.api.getColumnState();
                     const destColState = srcColState.map(s => ({ colId: s.colId, hide: s.hide }));
                     this.columnModel.applyColumnState({ state: destColState }, "alignedGridChanged");
                     this.logger.log(`onColumnEvent-> processing ${colEvent.type} visible = ${visibleEvent.visible}`);
@@ -185,7 +219,7 @@ let AlignedGridsService = class AlignedGridsService extends beanStub_1.BeanStub 
             case events_1.Events.EVENT_COLUMN_PINNED:
                 {
                     const pinnedEvent = colEvent;
-                    const srcColState = colEvent.columnApi.getColumnState();
+                    const srcColState = colEvent.api.getColumnState();
                     const destColState = srcColState.map(s => ({ colId: s.colId, pinned: s.pinned }));
                     this.columnModel.applyColumnState({ state: destColState }, "alignedGridChanged");
                     this.logger.log(`onColumnEvent-> processing ${colEvent.type} pinned = ${pinnedEvent.pinned}`);
@@ -209,29 +243,24 @@ let AlignedGridsService = class AlignedGridsService extends beanStub_1.BeanStub 
         }
         const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         const isVerticalScrollShowing = gridBodyCon.isVerticalScrollShowing();
-        const alignedGrids = this.gridOptionsService.get('alignedGrids');
-        if (alignedGrids) {
-            alignedGrids.forEach((grid) => {
-                if (grid.api) {
-                    grid.api.setAlwaysShowVerticalScroll(isVerticalScrollShowing);
-                }
-            });
-        }
+        this.getAlignedGridApis().forEach((api) => {
+            api.setGridOption('alwaysShowVerticalScroll', isVerticalScrollShowing);
+        });
     }
 };
 __decorate([
-    context_3.Autowired('columnModel')
+    (0, context_3.Autowired)('columnModel')
 ], AlignedGridsService.prototype, "columnModel", void 0);
 __decorate([
-    context_3.Autowired('ctrlsService')
+    (0, context_3.Autowired)('ctrlsService')
 ], AlignedGridsService.prototype, "ctrlsService", void 0);
 __decorate([
-    __param(0, context_2.Qualifier('loggerFactory'))
+    __param(0, (0, context_2.Qualifier)('loggerFactory'))
 ], AlignedGridsService.prototype, "setBeans", null);
 __decorate([
     context_4.PostConstruct
 ], AlignedGridsService.prototype, "init", null);
 AlignedGridsService = __decorate([
-    context_1.Bean('alignedGridsService')
+    (0, context_1.Bean)('alignedGridsService')
 ], AlignedGridsService);
 exports.AlignedGridsService = AlignedGridsService;

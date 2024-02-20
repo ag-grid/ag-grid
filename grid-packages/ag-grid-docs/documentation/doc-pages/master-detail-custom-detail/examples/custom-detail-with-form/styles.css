@@ -1,4 +1,12 @@
-p { font-size: 1em; margin-bottom: 1em; margin-top: 0; }
+p { font-size: 1em; margin: 0; }
+
+.cell-renderer-outer {
+    height: 80px;
+}
+
+.cell-renderer-outer form {
+    height: 100%;
+}
 
 .container {
     max-width: 960px;
@@ -8,15 +16,14 @@ p { font-size: 1em; margin-bottom: 1em; margin-top: 0; }
 }
 
 form > div {
+    height: 100%;
     display: flex;
-    background-color: #EDF6FF;
+    background-color: #99999944;
 }
 
-form > div > p {
-    min-width: 33.33%;
+form > div > div {
+    min-width: 33.3%;
 }
-
-form p { color: #0b0b18; }
 
 label {
     display: block;

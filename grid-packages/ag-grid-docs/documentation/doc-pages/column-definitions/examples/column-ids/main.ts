@@ -1,4 +1,6 @@
-import { Grid, GridOptions, GridReadyEvent } from "@ag-grid-community/core";
+import { GridApi, createGrid, GridOptions, GridReadyEvent } from "@ag-grid-community/core";
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
     columnDefs: [
@@ -18,8 +20,8 @@ const gridOptions: GridOptions = {
     ],
     rowData: createRowData(),
     onGridReady: (params: GridReadyEvent) => {
-        var cols = params.columnApi.getColumns()!;
-        cols.forEach(function (col) {
+        var cols = params.api.getColumns()!;
+        cols.forEach((col) => {
             var colDef = col.getColDef();
             console.log(colDef.headerName + ', Column ID = ' + col.getId(), JSON.stringify(colDef));
         });
@@ -41,5 +43,5 @@ function createRowData() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    new Grid(gridDiv, gridOptions);
+    gridApi = createGrid(gridDiv, gridOptions);
 });

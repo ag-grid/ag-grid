@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-community/csv-export - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.1.0
+          * @ag-grid-community/csv-export - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.1.0
           * @link https://www.ag-grid.com/
           * @license MIT
           */
@@ -20,12 +20,14 @@ var BaseCreator = /** @class */ (function () {
         if (fileName == null || !fileName.length) {
             fileName = this.getDefaultFileName();
         }
-        return fileName.indexOf('.') === -1 ? fileName + "." + extension : fileName;
+        return fileName.indexOf('.') === -1 ? "".concat(fileName, ".").concat(extension) : fileName;
     };
     BaseCreator.prototype.getData = function (params) {
         var serializingSession = this.createSerializingSession(params);
-        var data = this.beans.gridSerializer.serialize(serializingSession, params);
-        return data;
+        return this.beans.gridSerializer.serialize(serializingSession, params);
+    };
+    BaseCreator.prototype.getDefaultFileName = function () {
+        return "export.".concat(this.getDefaultFileExtension());
     };
     return BaseCreator;
 }());
@@ -53,9 +55,9 @@ var BaseGridSerializingSession = /** @class */ (function () {
     };
     BaseGridSerializingSession.prototype.extractRowCellValue = function (column, index, accumulatedRowIndex, type, node) {
         // we render the group summary text e.g. "-> Parent -> Child"...
-        var hideOpenParents = this.gridOptionsService.is('groupHideOpenParents');
+        var hideOpenParents = this.gridOptionsService.get('groupHideOpenParents');
         var value = ((!hideOpenParents || node.footer) && this.shouldRenderGroupSummaryCell(node, column, index))
-            ? this.createValueForGroupNode(node)
+            ? this.createValueForGroupNode(column, node)
             : this.valueService.getValue(column, node);
         var processedValue = this.processCell({
             accumulatedRowIndex: accumulatedRowIndex,
@@ -79,6 +81,9 @@ var BaseGridSerializingSession = /** @class */ (function () {
             if (((_a = node.groupData) === null || _a === void 0 ? void 0 : _a[column.getId()]) != null) {
                 return true;
             }
+            if (this.gridOptionsService.isRowModelType('serverSide') && node.group) {
+                return true;
+            }
             // if this is a top level footer, always render`Total` in the left-most cell
             if (node.footer && node.level === -1) {
                 var colDef = column.getColDef();
@@ -91,34 +96,39 @@ var BaseGridSerializingSession = /** @class */ (function () {
     };
     BaseGridSerializingSession.prototype.getHeaderName = function (callback, column) {
         if (callback) {
-            return callback({
-                column: column,
-                api: this.gridOptionsService.api,
-                columnApi: this.gridOptionsService.columnApi,
-                context: this.gridOptionsService.context
-            });
+            return callback(this.gridOptionsService.addGridCommonParams({ column: column }));
         }
         return this.columnModel.getDisplayNameForColumn(column, 'csv', true);
     };
-    BaseGridSerializingSession.prototype.createValueForGroupNode = function (node) {
+    BaseGridSerializingSession.prototype.createValueForGroupNode = function (column, node) {
+        var _this = this;
         if (this.processRowGroupCallback) {
-            return this.processRowGroupCallback({
-                node: node,
-                api: this.gridOptionsService.api,
-                columnApi: this.gridOptionsService.columnApi,
-                context: this.gridOptionsService.context,
-            });
+            return this.processRowGroupCallback(this.gridOptionsService.addGridCommonParams({ column: column, node: node }));
         }
+        var isTreeData = this.gridOptionsService.get('treeData');
+        var isSuppressGroupMaintainValueType = this.gridOptionsService.get('suppressGroupMaintainValueType');
+        // if not tree data and not suppressGroupMaintainValueType then we get the value from the group data
+        var getValueFromNode = function (node) {
+            var _a, _b;
+            if (isTreeData || isSuppressGroupMaintainValueType) {
+                return node.key;
+            }
+            var value = (_a = node.groupData) === null || _a === void 0 ? void 0 : _a[column.getId()];
+            if (!value || !node.rowGroupColumn || node.rowGroupColumn.getColDef().useValueFormatterForExport === false) {
+                return value;
+            }
+            return (_b = _this.valueFormatterService.formatValue(node.rowGroupColumn, node, value)) !== null && _b !== void 0 ? _b : value;
+        };
         var isFooter = node.footer;
-        var keys = [node.key];
+        var keys = [getValueFromNode(node)];
         if (!this.gridOptionsService.isGroupMultiAutoColumn()) {
             while (node.parent) {
                 node = node.parent;
-                keys.push(node.key);
+                keys.push(getValueFromNode(node));
             }
         }
         var groupValue = keys.reverse().join(' -> ');
-        return isFooter ? "Total " + groupValue : groupValue;
+        return isFooter ? "Total ".concat(groupValue) : groupValue;
     };
     BaseGridSerializingSession.prototype.processCell = function (params) {
         var _this = this;
@@ -126,21 +136,18 @@ var BaseGridSerializingSession = /** @class */ (function () {
         var accumulatedRowIndex = params.accumulatedRowIndex, rowNode = params.rowNode, column = params.column, value = params.value, processCellCallback = params.processCellCallback, type = params.type;
         if (processCellCallback) {
             return {
-                value: (_a = processCellCallback({
+                value: (_a = processCellCallback(this.gridOptionsService.addGridCommonParams({
                     accumulatedRowIndex: accumulatedRowIndex,
                     column: column,
                     node: rowNode,
                     value: value,
-                    api: this.gridOptionsService.api,
-                    columnApi: this.gridOptionsService.columnApi,
-                    context: this.gridOptionsService.context,
                     type: type,
                     parseValue: function (valueToParse) { return _this.valueParserService.parseValue(column, rowNode, valueToParse, _this.valueService.getValue(column, rowNode)); },
                     formatValue: function (valueToFormat) { var _a; return (_a = _this.valueFormatterService.formatValue(column, rowNode, valueToFormat)) !== null && _a !== void 0 ? _a : valueToFormat; }
-                })) !== null && _a !== void 0 ? _a : ''
+                }))) !== null && _a !== void 0 ? _a : ''
             };
         }
-        if (column.getColDef().useValueFormatterForExport) {
+        if (column.getColDef().useValueFormatterForExport !== false) {
             return {
                 value: value !== null && value !== void 0 ? value : '',
                 valueFormatted: this.valueFormatterService.formatValue(column, rowNode, value),
@@ -353,16 +360,18 @@ var CsvCreator = /** @class */ (function (_super) {
     CsvCreator.prototype.export = function (userParams) {
         if (this.isExportSuppressed()) {
             console.warn("AG Grid: Export cancelled. Export is not allowed as per your configuration.");
-            return '';
+            return;
         }
         var mergedParams = this.getMergedParams(userParams);
         var data = this.getData(mergedParams);
         var packagedFile = new Blob(["\ufeff", data], { type: 'text/plain' });
-        Downloader.download(this.getFileName(mergedParams.fileName), packagedFile);
-        return data;
+        var fileName = typeof mergedParams.fileName === 'function'
+            ? mergedParams.fileName(this.gridOptionsService.getGridCommonParams())
+            : mergedParams.fileName;
+        Downloader.download(this.getFileName(fileName), packagedFile);
     };
     CsvCreator.prototype.exportDataAsCsv = function (params) {
-        return this.export(params);
+        this.export(params);
     };
     CsvCreator.prototype.getDataAsCsv = function (params, skipDefaultParams) {
         if (skipDefaultParams === void 0) { skipDefaultParams = false; }
@@ -370,9 +379,6 @@ var CsvCreator = /** @class */ (function (_super) {
             ? Object.assign({}, params)
             : this.getMergedParams(params);
         return this.getData(mergedParams);
-    };
-    CsvCreator.prototype.getDefaultFileName = function () {
-        return 'export.csv';
     };
     CsvCreator.prototype.getDefaultFileExtension = function () {
         return 'csv';
@@ -395,7 +401,7 @@ var CsvCreator = /** @class */ (function (_super) {
         });
     };
     CsvCreator.prototype.isExportSuppressed = function () {
-        return this.gridOptionsService.is('suppressCsvExport');
+        return this.gridOptionsService.get('suppressCsvExport');
     };
     __decorate$1([
         core.Autowired('columnModel')
@@ -458,7 +464,8 @@ var GridSerializer = /** @class */ (function (_super) {
     }
     GridSerializer.prototype.serialize = function (gridSerializingSession, params) {
         if (params === void 0) { params = {}; }
-        var columnsToExport = this.getColumnsToExport(params.allColumns, params.columnKeys);
+        var allColumns = params.allColumns, columnKeys = params.columnKeys, skipRowGroups = params.skipRowGroups;
+        var columnsToExport = this.getColumnsToExport(allColumns, skipRowGroups, columnKeys);
         var serializeChain = core._.compose(
         // first pass, put in the header names of the cols
         this.prepareSession(columnsToExport), this.prependContent(params), this.exportColumnGroups(params, columnsToExport), this.exportHeaders(params, columnsToExport), this.processPinnedTopRows(params, columnsToExport), this.processRows(params, columnsToExport), this.processPinnedBottomRows(params, columnsToExport), this.appendContent(params));
@@ -466,24 +473,18 @@ var GridSerializer = /** @class */ (function (_super) {
     };
     GridSerializer.prototype.processRow = function (gridSerializingSession, params, columnsToExport, node) {
         var rowSkipper = params.shouldRowBeSkipped || (function () { return false; });
-        var context = this.gridOptionsService.context;
-        var api = this.gridOptionsService.api;
-        var columnApi = this.gridOptionsService.columnApi;
-        var skipSingleChildrenGroup = this.gridOptionsService.is('groupRemoveSingleChildren');
-        var skipLowestSingleChildrenGroup = this.gridOptionsService.is('groupRemoveLowestSingleChildren');
+        var skipSingleChildrenGroup = this.gridOptionsService.get('groupRemoveSingleChildren');
+        var skipLowestSingleChildrenGroup = this.gridOptionsService.get('groupRemoveLowestSingleChildren');
         // if onlySelected, we ignore groupHideOpenParents as the user has explicitly selected the rows they wish to export.
         // similarly, if specific rowNodes are provided we do the same. (the clipboard service uses rowNodes to define which rows to export)
         var isClipboardExport = params.rowPositions != null;
         var isExplicitExportSelection = isClipboardExport || !!params.onlySelected;
-        var hideOpenParents = this.gridOptionsService.is('groupHideOpenParents') && !isExplicitExportSelection;
+        var hideOpenParents = this.gridOptionsService.get('groupHideOpenParents') && !isExplicitExportSelection;
         var isLeafNode = this.columnModel.isPivotMode() ? node.leafGroup : !node.group;
         var isFooter = !!node.footer;
-        var skipRowGroups = params.skipGroups || params.skipRowGroups;
+        params.skipRowGroups;
         var shouldSkipLowestGroup = skipLowestSingleChildrenGroup && node.leafGroup;
         var shouldSkipCurrentGroup = node.allChildrenCount === 1 && (skipSingleChildrenGroup || shouldSkipLowestGroup);
-        if (skipRowGroups && params.skipGroups) {
-            core._.doOnce(function () { return console.warn('AG Grid: Since v25.2 `skipGroups` has been renamed to `skipRowGroups`.'); }, 'gridSerializer-skipGroups');
-        }
         if ((!isLeafNode && !isFooter && (params.skipRowGroups || shouldSkipCurrentGroup || hideOpenParents)) ||
             (params.onlySelected && !node.isSelected()) ||
             (params.skipPinnedTop && node.rowPinned === 'top') ||
@@ -496,7 +497,7 @@ var GridSerializer = /** @class */ (function (_super) {
         if (nodeIsRootNode && !isLeafNode && !isFooter) {
             return;
         }
-        var shouldRowBeSkipped = rowSkipper({ node: node, api: api, columnApi: columnApi, context: context });
+        var shouldRowBeSkipped = rowSkipper(this.gridOptionsService.addGridCommonParams({ node: node }));
         if (shouldRowBeSkipped) {
             return;
         }
@@ -505,7 +506,7 @@ var GridSerializer = /** @class */ (function (_super) {
             rowAccumulator.onColumn(column, index, node);
         });
         if (params.getCustomContentBelowRow) {
-            var content = params.getCustomContentBelowRow({ node: node, api: api, columnApi: columnApi, context: context });
+            var content = params.getCustomContentBelowRow(this.gridOptionsService.addGridCommonParams({ node: node }));
             if (content) {
                 gridSerializingSession.addCustomContent(content);
             }
@@ -513,11 +514,8 @@ var GridSerializer = /** @class */ (function (_super) {
     };
     GridSerializer.prototype.appendContent = function (params) {
         return function (gridSerializingSession) {
-            var appendContent = params.customFooter || params.appendContent;
+            var appendContent = params.appendContent;
             if (appendContent) {
-                if (params.customFooter) {
-                    core._.doOnce(function () { return console.warn('AG Grid: Since version 25.2.0 the `customFooter` param has been deprecated. Use `appendContent` instead.'); }, 'gridSerializer-customFooter');
-                }
                 gridSerializingSession.addCustomContent(appendContent);
             }
             return gridSerializingSession;
@@ -525,11 +523,8 @@ var GridSerializer = /** @class */ (function (_super) {
     };
     GridSerializer.prototype.prependContent = function (params) {
         return function (gridSerializingSession) {
-            var prependContent = params.customHeader || params.prependContent;
+            var prependContent = params.prependContent;
             if (prependContent) {
-                if (params.customHeader) {
-                    core._.doOnce(function () { return console.warn('AG Grid: Since version 25.2.0 the `customHeader` param has been deprecated. Use `prependContent` instead.'); }, 'gridSerializer-customHeader');
-                }
                 gridSerializingSession.addCustomContent(prependContent);
             }
             return gridSerializingSession;
@@ -549,22 +544,16 @@ var GridSerializer = /** @class */ (function (_super) {
                 var displayedGroups = _this.displayedGroupCreator.createDisplayedGroups(columnsToExport, groupInstanceIdCreator, null);
                 _this.recursivelyAddHeaderGroups(displayedGroups, gridSerializingSession, params.processGroupHeaderCallback);
             }
-            else if (params.columnGroups) {
-                core._.doOnce(function () { return console.warn('AG Grid: Since v25.2 the `columnGroups` param has deprecated, and groups are exported by default.'); }, 'gridSerializer-columnGroups');
-            }
             return gridSerializingSession;
         };
     };
     GridSerializer.prototype.exportHeaders = function (params, columnsToExport) {
         return function (gridSerializingSession) {
-            if (!params.skipHeader && !params.skipColumnHeaders) {
+            if (!params.skipColumnHeaders) {
                 var gridRowIterator_1 = gridSerializingSession.onNewHeaderRow();
                 columnsToExport.forEach(function (column, index) {
                     gridRowIterator_1.onColumn(column, index, undefined);
                 });
-            }
-            else if (params.skipHeader) {
-                core._.doOnce(function () { return console.warn('AG Grid: Since v25.2 the `skipHeader` param has been renamed to `skipColumnHeaders`.'); }, 'gridSerializer-skipHeader');
             }
             return gridSerializingSession;
         };
@@ -610,6 +599,9 @@ var GridSerializer = /** @class */ (function (_super) {
                 if (usingCsrm) {
                     rowModel.forEachPivotNode(processRow, true);
                 }
+                else if (usingSsrm) {
+                    rowModel.forEachNodeAfterFilterAndSort(processRow, true);
+                }
                 else {
                     // must be enterprise, so we can just loop through all the nodes
                     rowModel.forEachNode(processRow);
@@ -638,7 +630,7 @@ var GridSerializer = /** @class */ (function (_super) {
                         rowModel.forEachNodeAfterFilterAndSort(processRow, true);
                     }
                     else if (usingSsrm) {
-                        rowModel.forEachNodeAfterFilterAndSort(processRow);
+                        rowModel.forEachNodeAfterFilterAndSort(processRow, true);
                     }
                     else {
                         rowModel.forEachNode(processRow);
@@ -699,20 +691,25 @@ var GridSerializer = /** @class */ (function (_super) {
             return gridSerializingSession;
         };
     };
-    GridSerializer.prototype.getColumnsToExport = function (allColumns, columnKeys) {
+    GridSerializer.prototype.getColumnsToExport = function (allColumns, skipRowGroups, columnKeys) {
         if (allColumns === void 0) { allColumns = false; }
+        if (skipRowGroups === void 0) { skipRowGroups = false; }
         var isPivotMode = this.columnModel.isPivotMode();
         if (columnKeys && columnKeys.length) {
             return this.columnModel.getGridColumns(columnKeys);
         }
+        var isTreeData = this.gridOptionsService.get('treeData');
+        var columnsToExport = [];
         if (allColumns && !isPivotMode) {
-            // add auto group column for tree data
-            var columns = this.gridOptionsService.isTreeData()
-                ? this.columnModel.getGridColumns([core.GROUP_AUTO_COLUMN_ID])
-                : [];
-            return columns.concat(this.columnModel.getAllGridColumns() || []);
+            columnsToExport = this.columnModel.getAllGridColumns();
         }
-        return this.columnModel.getAllDisplayedColumns();
+        else {
+            columnsToExport = this.columnModel.getAllDisplayedColumns();
+        }
+        if (skipRowGroups && !isTreeData) {
+            columnsToExport = columnsToExport.filter(function (column) { return column.getColId() !== core.GROUP_AUTO_COLUMN_ID; });
+        }
+        return columnsToExport;
     };
     GridSerializer.prototype.recursivelyAddHeaderGroups = function (displayedGroups, gridSerializingSession, processGroupHeaderCallback) {
         var directChildrenHeaderGroups = [];
@@ -738,12 +735,9 @@ var GridSerializer = /** @class */ (function (_super) {
             var columnGroup = columnGroupChild;
             var name;
             if (processGroupHeaderCallback) {
-                name = processGroupHeaderCallback({
-                    columnGroup: columnGroup,
-                    api: _this.gridOptionsService.api,
-                    columnApi: _this.gridOptionsService.columnApi,
-                    context: _this.gridOptionsService.context
-                });
+                name = processGroupHeaderCallback(_this.gridOptionsService.addGridCommonParams({
+                    columnGroup: columnGroup
+                }));
             }
             else {
                 name = _this.columnModel.getDisplayNameForColumnGroup(columnGroup, 'header');
@@ -796,7 +790,7 @@ var GridSerializer = /** @class */ (function (_super) {
 }(core.BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '30.1.0';
+var VERSION = '31.1.0';
 
 var CsvExportModule = {
     version: VERSION,
@@ -822,8 +816,8 @@ var XmlFactory = /** @class */ (function () {
         if (headerElement.standalone) {
             keys.push('standalone');
         }
-        var att = keys.map(function (key) { return key + "=\"" + headerElement[key] + "\""; }).join(' ');
-        return headerStart + "xml " + att + " " + headerEnd;
+        var att = keys.map(function (key) { return "".concat(key, "=\"").concat(headerElement[key], "\""); }).join(' ');
+        return "".concat(headerStart, "xml ").concat(att, " ").concat(headerEnd);
     };
     XmlFactory.createXml = function (xmlElement, booleanTransformer) {
         var _this = this;
@@ -867,24 +861,63 @@ var XmlFactory = /** @class */ (function () {
                 xmlValue = booleanTransformer(value);
             }
         }
-        return " " + key + "=\"" + xmlValue + "\"";
+        return " ".concat(key, "=\"").concat(xmlValue, "\"");
     };
     return XmlFactory;
 }());
 
-var __values = (undefined && undefined.__values) || function(o) {
-    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
-    if (m) return m.call(o);
-    if (o && typeof o.length === "number") return {
-        next: function () {
-            if (o && i >= o.length) o = void 0;
-            return { value: o && o[i++], done: !o };
-        }
-    };
-    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+var convertTime = function (date) {
+    var time = date.getHours();
+    time <<= 6;
+    time = time | date.getMinutes();
+    time <<= 5;
+    time = time | date.getSeconds() / 2;
+    return time;
 };
-// table for crc calculation
-// from: https://referencesource.microsoft.com/#System/sys/System/IO/compression/Crc32Helper.cs,3b31978c7d7f7246,references
+var convertDate = function (date) {
+    var dt = date.getFullYear() - 1980;
+    dt <<= 4;
+    dt = dt | (date.getMonth() + 1);
+    dt <<= 5;
+    dt = dt | date.getDate();
+    return dt;
+};
+function convertDecToHex(number, bytes) {
+    var hex = '';
+    for (var i = 0; i < bytes; i++) {
+        hex += String.fromCharCode(number & 0xff);
+        number >>>= 8;
+    }
+    return hex;
+}
+
+var getCrcFromCrc32TableAndByteArray = function (content) {
+    if (!content.length) {
+        return 0;
+    }
+    var crc = 0 ^ (-1);
+    var j = 0;
+    var k = 0;
+    var l = 0;
+    for (var i = 0; i < content.length; i++) {
+        j = content[i];
+        k = (crc ^ j) & 0xFF;
+        l = crcTable[k];
+        crc = (crc >>> 8) ^ l;
+    }
+    return crc ^ (-1);
+};
+var getCrcFromCrc32Table = function (content) {
+    if (!content.length) {
+        return 0;
+    }
+    if (typeof content === 'string') {
+        return getCrcFromCrc32TableAndByteArray(new TextEncoder().encode(content));
+    }
+    return getCrcFromCrc32TableAndByteArray(content);
+};
+// Table for crc calculation from:
+// https://referencesource.microsoft.com/#System/sys/System/IO/compression/Crc32Helper.cs,3b31978c7d7f7246,references
 var crcTable = new Uint32Array([
     0x00000000, 0x77073096, 0xee0e612c, 0x990951ba, 0x076dc419, 0x706af48f,
     0xe963a535, 0x9e6495a3, 0x0edb8832, 0x79dcb8a4, 0xe0d5e91e, 0x97d2d988,
@@ -930,6 +963,330 @@ var crcTable = new Uint32Array([
     0x54de5729, 0x23d967bf, 0xb3667a2e, 0xc4614ab8, 0x5d681b02, 0x2a6f2b94,
     0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d
 ]);
+
+var __awaiter$2 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator$2 = (undefined && undefined.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+var compressBlob = function (data) { return __awaiter$2(void 0, void 0, void 0, function () {
+    var chunksSize, chunks, writeCompressedData, readable, compressStream;
+    return __generator$2(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                chunksSize = 0;
+                chunks = [];
+                writeCompressedData = new WritableStream({
+                    write: function (chunk) {
+                        chunks.push(chunk);
+                        chunksSize += chunk.length;
+                    }
+                });
+                readable = new ReadableStream({
+                    start: function (controller) {
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            var _a;
+                            if ((_a = e.target) === null || _a === void 0 ? void 0 : _a.result) {
+                                controller.enqueue(e.target.result);
+                            }
+                            controller.close();
+                        };
+                        reader.readAsArrayBuffer(data);
+                    }
+                });
+                compressStream = new window.CompressionStream('deflate-raw');
+                return [4 /*yield*/, readable.pipeThrough(compressStream).pipeTo(writeCompressedData)];
+            case 1:
+                _a.sent();
+                // Return the compressed data
+                return [2 /*return*/, {
+                        size: chunksSize,
+                        content: new Blob(chunks),
+                    }];
+        }
+    });
+}); };
+var deflateLocalFile = function (rawContent) { return __awaiter$2(void 0, void 0, void 0, function () {
+    var contentAsBlob, _a, compressedSize, compressedContent, compressedContentAsUint8Array, _b;
+    return __generator$2(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                contentAsBlob = new Blob([rawContent]);
+                return [4 /*yield*/, compressBlob(contentAsBlob)];
+            case 1:
+                _a = _c.sent(), compressedSize = _a.size, compressedContent = _a.content;
+                _b = Uint8Array.bind;
+                return [4 /*yield*/, compressedContent.arrayBuffer()];
+            case 2:
+                compressedContentAsUint8Array = new (_b.apply(Uint8Array, [void 0, _c.sent()]))();
+                return [2 /*return*/, {
+                        size: compressedSize,
+                        content: compressedContentAsUint8Array,
+                    }];
+        }
+    });
+}); };
+
+var __assign = (undefined && undefined.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+var __awaiter$1 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator$1 = (undefined && undefined.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+var utf8_encode = core._.utf8_encode;
+var getDeflatedHeaderAndContent = function (currentFile, offset) { return __awaiter$1(void 0, void 0, void 0, function () {
+    var content, _a, size, rawContent, deflatedContent, deflatedSize, deflationPerformed, shouldDeflate, result, headers;
+    return __generator$1(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                content = currentFile.content;
+                _a = !content
+                    ? ({ size: 0, content: Uint8Array.from([]) })
+                    : getDecodedContent(content), size = _a.size, rawContent = _a.content;
+                deflatedContent = undefined;
+                deflatedSize = undefined;
+                deflationPerformed = false;
+                shouldDeflate = currentFile.type === 'file' && rawContent && size > 0;
+                if (!shouldDeflate) return [3 /*break*/, 2];
+                return [4 /*yield*/, deflateLocalFile(rawContent)];
+            case 1:
+                result = _b.sent();
+                deflatedContent = result.content;
+                deflatedSize = result.size;
+                deflationPerformed = true;
+                _b.label = 2;
+            case 2:
+                headers = getHeaders(currentFile, deflationPerformed, offset, size, rawContent, deflatedSize);
+                return [2 /*return*/, __assign(__assign({}, headers), { content: deflatedContent || rawContent, isCompressed: deflationPerformed })];
+        }
+    });
+}); };
+var getHeaderAndContent = function (currentFile, offset) {
+    var content = currentFile.content;
+    var rawContent = (!content
+        ? ({ content: Uint8Array.from([]) })
+        : getDecodedContent(content)).content;
+    var headers = getHeaders(currentFile, false, offset, rawContent.length, rawContent, undefined);
+    return __assign(__assign({}, headers), { content: rawContent, isCompressed: false });
+};
+var getHeaders = function (currentFile, isCompressed, offset, rawSize, rawContent, deflatedSize) {
+    var content = currentFile.content, path = currentFile.path, creationDate = currentFile.created;
+    var time = convertTime(creationDate);
+    var dt = convertDate(creationDate);
+    var crcFlag = getCrcFromCrc32Table(rawContent);
+    var zipSize = deflatedSize !== undefined ? deflatedSize : rawSize;
+    var utfPath = utf8_encode(path);
+    var isUTF8 = utfPath !== path;
+    var extraFields = '';
+    if (isUTF8) {
+        var uExtraFieldPath = convertDecToHex(1, 1) + convertDecToHex(getCrcFromCrc32Table(utfPath), 4) + utfPath;
+        extraFields = "\x75\x70" + convertDecToHex(uExtraFieldPath.length, 2) + uExtraFieldPath;
+    }
+    var commonHeader = '\x14\x00' + // version needed to extract
+        (isUTF8 ? '\x00\x08' : '\x00\x00') + // Language encoding flag (EFS) (12th bit turned on)
+        convertDecToHex(isCompressed ? 8 : 0, 2) + // As per ECMA-376 Part 2 specs
+        convertDecToHex(time, 2) + // last modified time
+        convertDecToHex(dt, 2) + // last modified date
+        convertDecToHex(zipSize ? crcFlag : 0, 4) +
+        convertDecToHex(deflatedSize !== null && deflatedSize !== void 0 ? deflatedSize : rawSize, 4) + // compressed size
+        convertDecToHex(rawSize, 4) + // uncompressed size
+        convertDecToHex(utfPath.length, 2) + // file name length
+        convertDecToHex(extraFields.length, 2); // extra field length
+    var localFileHeader = 'PK\x03\x04' + commonHeader + utfPath + extraFields;
+    var centralDirectoryHeader = 'PK\x01\x02' + // central header
+        '\x14\x00' +
+        commonHeader + // file header
+        '\x00\x00' +
+        '\x00\x00' +
+        '\x00\x00' +
+        (content ? '\x00\x00\x00\x00' : '\x10\x00\x00\x00') + // external file attributes
+        convertDecToHex(offset, 4) + // relative offset of local header
+        utfPath + // file name
+        extraFields; // extra field
+    return {
+        localFileHeader: Uint8Array.from(localFileHeader, function (c) { return c.charCodeAt(0); }),
+        centralDirectoryHeader: Uint8Array.from(centralDirectoryHeader, function (c) { return c.charCodeAt(0); }),
+    };
+};
+var buildCentralDirectoryEnd = function (tLen, cLen, lLen) {
+    var str = 'PK\x05\x06' + // central folder end
+        '\x00\x00' +
+        '\x00\x00' +
+        convertDecToHex(tLen, 2) + // total number of entries in the central folder
+        convertDecToHex(tLen, 2) + // total number of entries in the central folder
+        convertDecToHex(cLen, 4) + // size of the central folder
+        convertDecToHex(lLen, 4) + // central folder start offset
+        '\x00\x00';
+    return Uint8Array.from(str, function (c) { return c.charCodeAt(0); });
+};
+var convertStringToByteArray = function (str) {
+    var bytes = new Uint8Array(str.length);
+    for (var i = 0; i < str.length; i++) {
+        bytes[i] = str.charCodeAt(i);
+    }
+    return bytes;
+};
+var getDecodedContent = function (content) {
+    var contentToUse;
+    // base64 content is passed as string
+    if (typeof content === 'string') {
+        var base64String = atob(content.split(';base64,')[1]);
+        contentToUse = convertStringToByteArray(base64String);
+    }
+    else {
+        contentToUse = content;
+    }
+    return {
+        size: contentToUse.length,
+        content: contentToUse,
+    };
+};
+
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (undefined && undefined.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+var __values = (undefined && undefined.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
+var __read = (undefined && undefined.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
+var __spreadArray = (undefined && undefined.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
 var ZipContainer = /** @class */ (function () {
     function ZipContainer() {
     }
@@ -940,7 +1297,8 @@ var ZipContainer = /** @class */ (function () {
         this.folders.push({
             path: path,
             created: new Date(),
-            isBase64: false
+            isBase64: false,
+            type: 'folder'
         });
     };
     ZipContainer.addFile = function (path, content, isBase64) {
@@ -948,150 +1306,146 @@ var ZipContainer = /** @class */ (function () {
         this.files.push({
             path: path,
             created: new Date(),
-            content: content,
-            isBase64: isBase64
+            content: isBase64 ? content : new TextEncoder().encode(content),
+            isBase64: isBase64,
+            type: 'file'
         });
     };
-    ZipContainer.getContent = function (mimeType) {
+    ZipContainer.getZipFile = function (mimeType) {
+        if (mimeType === void 0) { mimeType = 'application/zip'; }
+        return __awaiter(this, void 0, void 0, function () {
+            var textOutput;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.buildCompressedFileStream()];
+                    case 1:
+                        textOutput = _a.sent();
+                        this.clearStream();
+                        return [2 /*return*/, new Blob([textOutput], { type: mimeType })];
+                }
+            });
+        });
+    };
+    ZipContainer.getUncompressedZipFile = function (mimeType) {
         if (mimeType === void 0) { mimeType = 'application/zip'; }
         var textOutput = this.buildFileStream();
-        var uInt8Output = this.buildUint8Array(textOutput);
         this.clearStream();
-        return new Blob([uInt8Output], { type: mimeType });
+        return new Blob([textOutput], { type: mimeType });
     };
     ZipContainer.clearStream = function () {
         this.folders = [];
         this.files = [];
     };
-    ZipContainer.buildFileStream = function (fData) {
+    ZipContainer.packageFiles = function (files) {
         var e_1, _a;
-        if (fData === void 0) { fData = ''; }
-        var totalFiles = this.folders.concat(this.files);
-        var len = totalFiles.length;
-        var foData = '';
-        var lL = 0;
-        var cL = 0;
+        var fileData = new Uint8Array(0);
+        var folderData = new Uint8Array(0);
+        var filesContentAndHeaderLength = 0;
+        var folderHeadersLength = 0;
         try {
-            for (var totalFiles_1 = __values(totalFiles), totalFiles_1_1 = totalFiles_1.next(); !totalFiles_1_1.done; totalFiles_1_1 = totalFiles_1.next()) {
-                var currentFile = totalFiles_1_1.value;
-                var _b = this.getHeader(currentFile, lL), fileHeader = _b.fileHeader, folderHeader = _b.folderHeader, content = _b.content;
-                lL += fileHeader.length + content.length;
-                cL += folderHeader.length;
-                fData += fileHeader + content;
-                foData += folderHeader;
+            for (var files_1 = __values(files), files_1_1 = files_1.next(); !files_1_1.done; files_1_1 = files_1.next()) {
+                var currentFile = files_1_1.value;
+                var localFileHeader = currentFile.localFileHeader, centralDirectoryHeader = currentFile.centralDirectoryHeader, content = currentFile.content;
+                // Append fileHeader to fData
+                var dataWithHeader = new Uint8Array(fileData.length + localFileHeader.length);
+                dataWithHeader.set(fileData);
+                dataWithHeader.set(localFileHeader, fileData.length);
+                fileData = dataWithHeader;
+                // Append content to fData
+                var dataWithContent = new Uint8Array(fileData.length + content.length);
+                dataWithContent.set(fileData);
+                dataWithContent.set(content, fileData.length);
+                fileData = dataWithContent;
+                // Append folder header to foData
+                var folderDataWithFolderHeader = new Uint8Array(folderData.length + centralDirectoryHeader.length);
+                folderDataWithFolderHeader.set(folderData);
+                folderDataWithFolderHeader.set(centralDirectoryHeader, folderData.length);
+                folderData = folderDataWithFolderHeader;
+                filesContentAndHeaderLength += localFileHeader.length + content.length;
+                folderHeadersLength += centralDirectoryHeader.length;
             }
         }
         catch (e_1_1) { e_1 = { error: e_1_1 }; }
         finally {
             try {
-                if (totalFiles_1_1 && !totalFiles_1_1.done && (_a = totalFiles_1.return)) _a.call(totalFiles_1);
+                if (files_1_1 && !files_1_1.done && (_a = files_1.return)) _a.call(files_1);
             }
             finally { if (e_1) throw e_1.error; }
         }
-        var foEnd = this.buildFolderEnd(len, cL, lL);
-        return fData + foData + foEnd;
+        var folderEnd = buildCentralDirectoryEnd(files.length, folderHeadersLength, filesContentAndHeaderLength);
+        // Append folder data and file data
+        var result = new Uint8Array(fileData.length + folderData.length + folderEnd.length);
+        result.set(fileData);
+        result.set(folderData, fileData.length);
+        result.set(folderEnd, fileData.length + folderData.length);
+        return result;
     };
-    ZipContainer.getHeader = function (currentFile, offset) {
-        var content = currentFile.content, path = currentFile.path, created = currentFile.created, isBase64 = currentFile.isBase64;
-        var utf8_encode = core._.utf8_encode, decToHex = core._.decToHex;
-        var utfPath = utf8_encode(path);
-        var isUTF8 = utfPath !== path;
-        var time = this.convertTime(created);
-        var dt = this.convertDate(created);
-        var extraFields = '';
-        if (isUTF8) {
-            var uExtraFieldPath = decToHex(1, 1) + decToHex(this.getFromCrc32Table(utfPath), 4) + utfPath;
-            extraFields = "\x75\x70" + decToHex(uExtraFieldPath.length, 2) + uExtraFieldPath;
+    ZipContainer.buildCompressedFileStream = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var totalFiles, readyFiles, lL, totalFiles_1, totalFiles_1_1, currentFile, output, localFileHeader, content, e_2_1;
+            var e_2, _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        totalFiles = __spreadArray(__spreadArray([], __read(this.folders), false), __read(this.files), false);
+                        readyFiles = [];
+                        lL = 0;
+                        _b.label = 1;
+                    case 1:
+                        _b.trys.push([1, 6, 7, 8]);
+                        totalFiles_1 = __values(totalFiles), totalFiles_1_1 = totalFiles_1.next();
+                        _b.label = 2;
+                    case 2:
+                        if (!!totalFiles_1_1.done) return [3 /*break*/, 5];
+                        currentFile = totalFiles_1_1.value;
+                        return [4 /*yield*/, getDeflatedHeaderAndContent(currentFile, lL)];
+                    case 3:
+                        output = _b.sent();
+                        localFileHeader = output.localFileHeader, content = output.content;
+                        readyFiles.push(output);
+                        lL += localFileHeader.length + content.length;
+                        _b.label = 4;
+                    case 4:
+                        totalFiles_1_1 = totalFiles_1.next();
+                        return [3 /*break*/, 2];
+                    case 5: return [3 /*break*/, 8];
+                    case 6:
+                        e_2_1 = _b.sent();
+                        e_2 = { error: e_2_1 };
+                        return [3 /*break*/, 8];
+                    case 7:
+                        try {
+                            if (totalFiles_1_1 && !totalFiles_1_1.done && (_a = totalFiles_1.return)) _a.call(totalFiles_1);
+                        }
+                        finally { if (e_2) throw e_2.error; }
+                        return [7 /*endfinally*/];
+                    case 8: return [2 /*return*/, this.packageFiles(readyFiles)];
+                }
+            });
+        });
+    };
+    ZipContainer.buildFileStream = function () {
+        var e_3, _a;
+        var totalFiles = __spreadArray(__spreadArray([], __read(this.folders), false), __read(this.files), false);
+        var readyFiles = [];
+        var lL = 0;
+        try {
+            for (var totalFiles_2 = __values(totalFiles), totalFiles_2_1 = totalFiles_2.next(); !totalFiles_2_1.done; totalFiles_2_1 = totalFiles_2.next()) {
+                var currentFile = totalFiles_2_1.value;
+                var readyFile = getHeaderAndContent(currentFile, lL);
+                var localFileHeader = readyFile.localFileHeader, content = readyFile.content;
+                readyFiles.push(readyFile);
+                lL += localFileHeader.length + content.length;
+            }
         }
-        var _a = !content ? { size: 0, content: '' } : this.getConvertedContent(content, isBase64), size = _a.size, convertedContent = _a.content;
-        var header = '\x0A\x00' +
-            (isUTF8 ? '\x00\x08' : '\x00\x00') +
-            '\x00\x00' +
-            decToHex(time, 2) + // last modified time
-            decToHex(dt, 2) + // last modified date
-            decToHex(size ? this.getFromCrc32Table(convertedContent) : 0, 4) +
-            decToHex(size, 4) + // compressed size
-            decToHex(size, 4) + // uncompressed size
-            decToHex(utfPath.length, 2) + // file name length
-            decToHex(extraFields.length, 2); // extra field length
-        var fileHeader = 'PK\x03\x04' + header + utfPath + extraFields;
-        var folderHeader = 'PK\x01\x02' + // central header
-            '\x14\x00' +
-            header + // file header
-            '\x00\x00' +
-            '\x00\x00' +
-            '\x00\x00' +
-            (content ? '\x00\x00\x00\x00' : '\x10\x00\x00\x00') + // external file attributes
-            decToHex(offset, 4) + // relative offset of local header
-            utfPath + // file name
-            extraFields; // extra field
-        return { fileHeader: fileHeader, folderHeader: folderHeader, content: convertedContent || '' };
-    };
-    ZipContainer.getConvertedContent = function (content, isBase64) {
-        if (isBase64 === void 0) { isBase64 = false; }
-        if (isBase64) {
-            content = content.split(';base64,')[1];
+        catch (e_3_1) { e_3 = { error: e_3_1 }; }
+        finally {
+            try {
+                if (totalFiles_2_1 && !totalFiles_2_1.done && (_a = totalFiles_2.return)) _a.call(totalFiles_2);
+            }
+            finally { if (e_3) throw e_3.error; }
         }
-        content = isBase64 ? atob(content) : content;
-        return {
-            size: content.length,
-            content: content
-        };
-    };
-    ZipContainer.buildFolderEnd = function (tLen, cLen, lLen) {
-        var decToHex = core._.decToHex;
-        return 'PK\x05\x06' + // central folder end
-            '\x00\x00' +
-            '\x00\x00' +
-            decToHex(tLen, 2) + // total number of entries in the central folder
-            decToHex(tLen, 2) + // total number of entries in the central folder
-            decToHex(cLen, 4) + // size of the central folder
-            decToHex(lLen, 4) + // central folder start offset
-            '\x00\x00';
-    };
-    ZipContainer.buildUint8Array = function (content) {
-        var uint8 = new Uint8Array(content.length);
-        for (var i = 0; i < uint8.length; i++) {
-            uint8[i] = content.charCodeAt(i);
-        }
-        return uint8;
-    };
-    ZipContainer.getFromCrc32Table = function (content) {
-        if (!content.length) {
-            return 0;
-        }
-        var size = content.length;
-        var iterable = new Uint8Array(size);
-        for (var i = 0; i < size; i++) {
-            iterable[i] = content.charCodeAt(i);
-        }
-        var crc = 0 ^ (-1);
-        var j = 0;
-        var k = 0;
-        var l = 0;
-        for (var i = 0; i < size; i++) {
-            j = iterable[i];
-            k = (crc ^ j) & 0xFF;
-            l = crcTable[k];
-            crc = (crc >>> 8) ^ l;
-        }
-        return crc ^ (-1);
-    };
-    ZipContainer.convertTime = function (date) {
-        var time = date.getHours();
-        time <<= 6;
-        time = time | date.getMinutes();
-        time <<= 5;
-        time = time | date.getSeconds() / 2;
-        return time;
-    };
-    ZipContainer.convertDate = function (date) {
-        var dt = date.getFullYear() - 1980;
-        dt <<= 4;
-        dt = dt | (date.getMonth() + 1);
-        dt <<= 5;
-        dt = dt | date.getDate();
-        return dt;
+        return this.packageFiles(readyFiles);
     };
     ZipContainer.folders = [];
     ZipContainer.files = [];

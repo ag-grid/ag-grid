@@ -47,10 +47,14 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StickyRowFeature = void 0;
@@ -91,7 +95,7 @@ var StickyRowFeature = /** @class */ (function (_super) {
             var lastChildBottom;
             if (_this.isClientSide) {
                 var lastAncestor = stickyRow;
-                while (lastAncestor.expanded) {
+                while (lastAncestor.isExpandable() && lastAncestor.expanded) {
                     if (lastAncestor.master) {
                         lastAncestor = lastAncestor.detailNode;
                     }
@@ -101,7 +105,7 @@ var StickyRowFeature = /** @class */ (function (_super) {
                         if (lastAncestor.childrenAfterSort.length === 0) {
                             break;
                         }
-                        lastAncestor = array_1.last(lastAncestor.childrenAfterSort);
+                        lastAncestor = (0, array_1.last)(lastAncestor.childrenAfterSort);
                     }
                 }
                 lastChildBottom = lastAncestor.rowTop + lastAncestor.rowHeight;
@@ -131,6 +135,7 @@ var StickyRowFeature = /** @class */ (function (_super) {
                 }
             });
         };
+        var counter = 0;
         while (true) {
             var firstPixelAfterStickyRows = firstPixel + height;
             var firstIndex = this.rowModel.getRowIndexAtPixel(firstPixelAfterStickyRows);
@@ -140,6 +145,11 @@ var StickyRowFeature = /** @class */ (function (_super) {
             }
             // only happens when pivoting, and we are showing root node
             if (firstRow.level < 0) {
+                break;
+            }
+            // added logic to break out of the loop when the row calculation
+            // changes while rows are becoming sticky (happens with auto height)
+            if (counter++ === 100) {
                 break;
             }
             var parents = [];
@@ -207,7 +217,7 @@ var StickyRowFeature = /** @class */ (function (_super) {
             rowNode.sticky = true;
             return _this.createRowCon(rowNode, false, false);
         });
-        (_b = this.stickyRowCtrls).push.apply(_b, __spreadArray([], __read(newCtrls)));
+        (_b = this.stickyRowCtrls).push.apply(_b, __spreadArray([], __read(newCtrls), false));
         this.stickyRowCtrls.forEach(function (ctrl) { return ctrl.setRowTop(ctrl.getRowNode().stickyRowTop); });
         this.stickyRowCtrls.sort(function (a, b) { return b.getRowNode().rowIndex - a.getRowNode().rowIndex; });
         if (this.containerHeight !== height) {
@@ -218,13 +228,13 @@ var StickyRowFeature = /** @class */ (function (_super) {
         return stickyRowsChanged;
     };
     __decorate([
-        context_1.Autowired("rowModel")
+        (0, context_1.Autowired)("rowModel")
     ], StickyRowFeature.prototype, "rowModel", void 0);
     __decorate([
-        context_1.Autowired("rowRenderer")
+        (0, context_1.Autowired)("rowRenderer")
     ], StickyRowFeature.prototype, "rowRenderer", void 0);
     __decorate([
-        context_1.Autowired("ctrlsService")
+        (0, context_1.Autowired)("ctrlsService")
     ], StickyRowFeature.prototype, "ctrlsService", void 0);
     __decorate([
         context_1.PostConstruct

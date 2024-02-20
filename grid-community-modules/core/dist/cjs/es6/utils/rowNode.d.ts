@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from '../entities/rowNode';
@@ -15,4 +15,3 @@ import { RowNode } from '../entities/rowNode';
 export declare function sortRowNodesByOrder(rowNodes: RowNode[], rowNodeOrder: {
     [id: string]: number;
 }): boolean;
-export declare function traverseNodesWithKey(nodes: RowNode[] | null, callback: (node: RowNode, key: string) => void): void;

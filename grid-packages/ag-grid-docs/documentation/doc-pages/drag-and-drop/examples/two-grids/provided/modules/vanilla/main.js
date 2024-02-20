@@ -13,13 +13,11 @@ var rightColumnDefs = [
     { field: 'value1' },
     { field: 'value2' }
 ];
-
+var leftApi;
 var leftGridOptions = {
     defaultColDef: {
-        width: 80,
-        sortable: true,
+        flex: 1,
         filter: true,
-        resizable: true
     },
     rowClassRules: {
         'red-row': 'data.color == "Red"',
@@ -30,15 +28,12 @@ var leftGridOptions = {
     rowData: createLeftRowData(),
     rowDragManaged: true,
     columnDefs: leftColumnDefs,
-    animateRows: true
 };
-
+var rightApi;
 var rightGridOptions = {
     defaultColDef: {
-        width: 80,
-        sortable: true,
+        flex: 1,
         filter: true,
-        resizable: true
     },
     rowClassRules: {
         'red-row': 'data.color == "Red"',
@@ -49,7 +44,6 @@ var rightGridOptions = {
     rowData: [],
     rowDragManaged: true,
     columnDefs: rightColumnDefs,
-    animateRows: true
 };
 
 function createLeftRowData() {
@@ -89,14 +83,14 @@ function binDrop(event) {
         remove: [data]
     };
 
-    var rowIsInLeftGrid = !!leftGridOptions.api.getRowNode(data.id);
+    var rowIsInLeftGrid = !!leftApi.getRowNode(data.id);
     if (rowIsInLeftGrid) {
-        leftGridOptions.api.applyTransaction(transaction);
+        leftApi.applyTransaction(transaction);
     }
 
-    var rowIsInRightGrid = !!rightGridOptions.api.getRowNode(data.id);
+    var rowIsInRightGrid = !!rightApi.getRowNode(data.id);
     if (rowIsInRightGrid) {
-        rightGridOptions.api.applyTransaction(transaction);
+        rightApi.applyTransaction(transaction);
     }
 }
 
@@ -126,7 +120,7 @@ function gridDrop(event, grid) {
     // if data missing or data has no it, do nothing
     if (!data || data.id == null) { return; }
 
-    var gridApi = grid == 'left' ? leftGridOptions.api : rightGridOptions.api;
+    var gridApi = grid == 'left' ? leftApi : rightApi;
 
     // do nothing if row is already in the grid, otherwise we would have duplicates
     var rowAlreadyInGrid = !!gridApi.getRowNode(data.id);
@@ -144,8 +138,8 @@ function gridDrop(event, grid) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     var leftGridDiv = document.querySelector('#eLeftGrid');
-    new agGrid.Grid(leftGridDiv, leftGridOptions);
+    leftApi = agGrid.createGrid(leftGridDiv, leftGridOptions);
 
     var rightGridDiv = document.querySelector('#eRightGrid');
-    new agGrid.Grid(rightGridDiv, rightGridOptions);
+    rightApi = agGrid.createGrid(rightGridDiv, rightGridOptions);
 });

@@ -85,7 +85,7 @@ class CssClasses {
   }
 }
 
-const _tmpl$$f = /*#__PURE__*/web.template(`<div>`);
+var _tmpl$$f = /*#__PURE__*/web.template(`<div>`);
 const DetailCellRenderer = props => {
   const {
     ctrlsFactory,
@@ -127,7 +127,7 @@ const DetailCellRenderer = props => {
     context.createBean(ctrl);
     ctrl.init(compProxy, props);
     let resizeObserverDestroyFunc;
-    if (gridOptionsService.is('detailRowAutoHeight')) {
+    if (gridOptionsService.get('detailRowAutoHeight')) {
       const checkRowSizeFunc = () => {
         // when disposed, current is null, so nothing to do, and the resize observer will
         // be disposed of soon
@@ -168,11 +168,11 @@ const DetailCellRenderer = props => {
     ctrl.registerDetailWithMaster(ref.api, ref.columnApi);
   };
   return (() => {
-    const _el$ = _tmpl$$f();
-    const _ref$ = eGuiRef;
+    var _el$ = _tmpl$$f();
+    var _ref$ = eGuiRef;
     typeof _ref$ === "function" ? web.use(_ref$, _el$) : eGuiRef = _el$;
     web.insert(_el$, (() => {
-      const _c$ = web.memo(() => !!getDetailGridOptions());
+      var _c$ = web.memo(() => !!getDetailGridOptions());
       return () => _c$() && web.createComponent(AgGridSolid, web.mergeProps({
         get ["class"]() {
           return getGridCssClassesStr();
@@ -246,31 +246,31 @@ const UserComp = p => {
     return !details.componentFromFramework;
   });
   return [web.memo((() => {
-    const _c$ = web.memo(() => !!showSolidComp());
+    var _c$ = web.memo(() => !!showSolidComp());
     return () => _c$() && web.createComponent(SolidUserComp, {
       get compDetails() {
         return p.compDetails;
       },
       ref(r$) {
-        const _ref$ = p.ref;
+        var _ref$ = p.ref;
         typeof _ref$ === "function" ? _ref$(r$) : p.ref = r$;
       }
     });
   })()), web.memo((() => {
-    const _c$2 = web.memo(() => !!showJsComp());
+    var _c$2 = web.memo(() => !!showJsComp());
     return () => _c$2() && web.createComponent(JsUserComp, {
       get compDetails() {
         return p.compDetails;
       },
       ref(r$) {
-        const _ref$2 = p.ref;
+        var _ref$2 = p.ref;
         typeof _ref$2 === "function" ? _ref$2(r$) : p.ref = r$;
       }
     });
   })())];
 };
 
-const _tmpl$$e = /*#__PURE__*/web.template(`<span><span></span><span></span><span></span><span class="ag-group-value"></span><span class="ag-group-child-count">`);
+var _tmpl$$e = /*#__PURE__*/web.template(`<span><span></span><span></span><span></span><span class=ag-group-value></span><span class=ag-group-child-count>`);
 const GroupCellRenderer = props => {
   const context = solidJs.useContext(BeansContext).context;
   let eGui;
@@ -278,6 +278,7 @@ const GroupCellRenderer = props => {
   let eCheckboxRef;
   let eExpandedRef;
   let eContractedRef;
+  let role = 'gridcell';
   const [getInnerCompDetails, setInnerCompDetails] = solidJs.createSignal();
   const [getChildCount, setChildCount] = solidJs.createSignal();
   const [getValue, setValue] = solidJs.createSignal();
@@ -306,6 +307,8 @@ const GroupCellRenderer = props => {
     };
     const ctrl = context.createBean(new agGridCommunity.GroupCellRendererCtrl());
     ctrl.init(compProxy, eGui, eCheckboxRef, eExpandedRef, eContractedRef, GroupCellRenderer, props);
+    eGui.setAttribute('role', ctrl.getCellAriaRole());
+    role = ctrl.getCellAriaRole();
     return () => {
       context.destroyBean(ctrl);
     };
@@ -317,31 +320,31 @@ const GroupCellRenderer = props => {
   const isShowUserComp = () => getInnerCompDetails() != null;
   const isShowValue = () => getInnerCompDetails() == null && getValue() != null;
   return (() => {
-    const _el$ = _tmpl$$e(),
+    var _el$ = _tmpl$$e(),
       _el$2 = _el$.firstChild,
       _el$3 = _el$2.nextSibling,
       _el$4 = _el$3.nextSibling,
       _el$5 = _el$4.nextSibling,
       _el$6 = _el$5.nextSibling;
-    const _ref$ = eGui;
+    var _ref$ = eGui;
     typeof _ref$ === "function" ? web.use(_ref$, _el$) : eGui = _el$;
     web.spread(_el$, web.mergeProps({
       get ["class"]() {
         return getClassName();
       }
     }, () => !props.colDef ? {
-      role: 'gridcell'
+      role
     } : {}), false, true);
-    const _ref$2 = eExpandedRef;
+    var _ref$2 = eExpandedRef;
     typeof _ref$2 === "function" ? web.use(_ref$2, _el$2) : eExpandedRef = _el$2;
-    const _ref$3 = eContractedRef;
+    var _ref$3 = eContractedRef;
     typeof _ref$3 === "function" ? web.use(_ref$3, _el$3) : eContractedRef = _el$3;
-    const _ref$4 = eCheckboxRef;
+    var _ref$4 = eCheckboxRef;
     typeof _ref$4 === "function" ? web.use(_ref$4, _el$4) : eCheckboxRef = _el$4;
-    const _ref$5 = eValueRef;
+    var _ref$5 = eValueRef;
     typeof _ref$5 === "function" ? web.use(_ref$5, _el$5) : eValueRef = _el$5;
     web.insert(_el$5, (() => {
-      const _c$ = web.memo(() => !!isShowUserComp());
+      var _c$ = web.memo(() => !!isShowUserComp());
       return () => _c$() && web.createComponent(UserComp, {
         get compDetails() {
           return getInnerCompDetails();
@@ -349,22 +352,22 @@ const GroupCellRenderer = props => {
       });
     })(), null);
     web.insert(_el$5, (() => {
-      const _c$2 = web.memo(() => !!isShowValue());
+      var _c$2 = web.memo(() => !!isShowValue());
       return () => _c$2() && web.memo(getValue);
     })(), null);
     web.insert(_el$6, getChildCount);
     web.effect(_p$ => {
-      const _v$ = getExpandedClassName(),
+      var _v$ = getExpandedClassName(),
         _v$2 = getContractedClassName(),
         _v$3 = getCheckboxClassName();
-      _v$ !== _p$._v$ && web.className(_el$2, _p$._v$ = _v$);
-      _v$2 !== _p$._v$2 && web.className(_el$3, _p$._v$2 = _v$2);
-      _v$3 !== _p$._v$3 && web.className(_el$4, _p$._v$3 = _v$3);
+      _v$ !== _p$.e && web.className(_el$2, _p$.e = _v$);
+      _v$2 !== _p$.t && web.className(_el$3, _p$.t = _v$2);
+      _v$3 !== _p$.a && web.className(_el$4, _p$.a = _v$3);
       return _p$;
     }, {
-      _v$: undefined,
-      _v$2: undefined,
-      _v$3: undefined
+      e: undefined,
+      t: undefined,
+      a: undefined
     });
     return _el$;
   })();
@@ -372,7 +375,7 @@ const GroupCellRenderer = props => {
 
 class SolidFrameworkOverrides extends agGridCommunity.VanillaFrameworkOverrides {
   constructor() {
-    super();
+    super('solid');
   }
   frameworkComponents = {
     agGroupCellRenderer: GroupCellRenderer,
@@ -392,7 +395,7 @@ class SolidFrameworkOverrides extends agGridCommunity.VanillaFrameworkOverrides 
   }
 }
 
-const _tmpl$$d = /*#__PURE__*/web.template(`<div class="ag-header-cell" role="columnheader" tabindex="-1"><div class="ag-header-cell-resize" role="presentation"></div><div class="ag-header-cell-comp-wrapper" role="presentation">`);
+var _tmpl$$d = /*#__PURE__*/web.template(`<div class=ag-header-cell role=columnheader><div class=ag-header-cell-resize role=presentation></div><div class=ag-header-cell-comp-wrapper role=presentation>`);
 const HeaderCellComp = props => {
   const {
     ctrl
@@ -400,7 +403,6 @@ const HeaderCellComp = props => {
   const [getWidth, setWidth] = solidJs.createSignal();
   const [getColId, setColId] = solidJs.createSignal(ctrl.getColId());
   const [getAriaSort, setAriaSort] = solidJs.createSignal();
-  const [getAriaDescription, setAriaDescription] = solidJs.createSignal();
   const [getUserCompDetails, setUserCompDetails] = solidJs.createSignal();
   let eGui;
   let eResize;
@@ -414,7 +416,6 @@ const HeaderCellComp = props => {
     const compProxy = {
       setWidth: width => setWidth(width),
       addOrRemoveCssClass: (name, on) => cssClassManager.addOrRemoveCssClass(name, on),
-      setAriaDescription: description => setAriaDescription(description),
       setAriaSort: sort => setAriaSort(sort),
       setUserCompDetails: compDetails => setUserCompDetails(compDetails),
       getUserCompInstance: () => userComp
@@ -427,32 +428,18 @@ const HeaderCellComp = props => {
   const style = solidJs.createMemo(() => ({
     width: getWidth()
   }));
-  solidJs.createMemo(() => {
-    const details = getUserCompDetails();
-    if (!details) {
-      return false;
-    }
-    return details.componentFromFramework;
-  });
-  solidJs.createMemo(() => {
-    const details = getUserCompDetails();
-    if (!details) {
-      return false;
-    }
-    return !details.componentFromFramework;
-  });
   return (() => {
-    const _el$ = _tmpl$$d(),
+    var _el$ = _tmpl$$d(),
       _el$2 = _el$.firstChild,
       _el$3 = _el$2.nextSibling;
-    const _ref$ = eGui;
+    var _ref$ = eGui;
     typeof _ref$ === "function" ? web.use(_ref$, _el$) : eGui = _el$;
-    const _ref$2 = eResize;
+    var _ref$2 = eResize;
     typeof _ref$2 === "function" ? web.use(_ref$2, _el$2) : eResize = _el$2;
-    const _ref$3 = eHeaderCompWrapper;
+    var _ref$3 = eHeaderCompWrapper;
     typeof _ref$3 === "function" ? web.use(_ref$3, _el$3) : eHeaderCompWrapper = _el$3;
     web.insert(_el$3, (() => {
-      const _c$ = web.memo(() => !!getUserCompDetails());
+      var _c$ = web.memo(() => !!getUserCompDetails());
       return () => _c$() && web.createComponent(UserComp, {
         get compDetails() {
           return getUserCompDetails();
@@ -461,26 +448,23 @@ const HeaderCellComp = props => {
       });
     })());
     web.effect(_p$ => {
-      const _v$ = style(),
+      var _v$ = style(),
         _v$2 = getColId(),
-        _v$3 = getAriaSort(),
-        _v$4 = getAriaDescription();
-      _p$._v$ = web.style(_el$, _v$, _p$._v$);
-      _v$2 !== _p$._v$2 && web.setAttribute(_el$, "col-id", _p$._v$2 = _v$2);
-      _v$3 !== _p$._v$3 && web.setAttribute(_el$, "aria-sort", _p$._v$3 = _v$3);
-      _v$4 !== _p$._v$4 && web.setAttribute(_el$, "aria-description", _p$._v$4 = _v$4);
+        _v$3 = getAriaSort();
+      _p$.e = web.style(_el$, _v$, _p$.e);
+      _v$2 !== _p$.t && web.setAttribute(_el$, "col-id", _p$.t = _v$2);
+      _v$3 !== _p$.a && web.setAttribute(_el$, "aria-sort", _p$.a = _v$3);
       return _p$;
     }, {
-      _v$: undefined,
-      _v$2: undefined,
-      _v$3: undefined,
-      _v$4: undefined
+      e: undefined,
+      t: undefined,
+      a: undefined
     });
     return _el$;
   })();
 };
 
-const _tmpl$$c = /*#__PURE__*/web.template(`<div role="gridcell" tabindex="-1"><div role="presentation"></div><div role="presentation"><button type="button" class="ag-button ag-floating-filter-button-button" tabindex="-1">`);
+var _tmpl$$c = /*#__PURE__*/web.template(`<div role=gridcell><div role=presentation></div><div role=presentation><button type=button class="ag-button ag-floating-filter-button-button"tabindex=-1>`);
 const HeaderFilterCellComp = props => {
   const [getCssClasses, setCssClasses] = solidJs.createSignal(new CssClasses());
   const [getCssBodyClasses, setBodyCssClasses] = solidJs.createSignal(new CssClasses());
@@ -536,20 +520,20 @@ const HeaderFilterCellComp = props => {
   const getStyle = solidJs.createMemo(() => ({
     width: getWidth()
   }));
-  const getCssClassesString = solidJs.createMemo(() => 'ag-header-cell ag-floating-filter ' + getCssClasses.toString());
-  const getBodyCssClassesString = solidJs.createMemo(() => getCssBodyClasses.toString());
-  const getButtonWrapperCssClassesString = solidJs.createMemo(() => 'ag-floating-filter-button ' + getCssButtonWrapperClasses.toString());
+  const getCssClassesString = solidJs.createMemo(() => 'ag-header-cell ag-floating-filter ' + getCssClasses().toString());
+  const getBodyCssClassesString = solidJs.createMemo(() => getCssBodyClasses().toString());
+  const getButtonWrapperCssClassesString = solidJs.createMemo(() => 'ag-floating-filter-button ' + getCssButtonWrapperClasses().toString());
   return (() => {
-    const _el$ = _tmpl$$c(),
+    var _el$ = _tmpl$$c(),
       _el$2 = _el$.firstChild,
       _el$3 = _el$2.nextSibling,
       _el$4 = _el$3.firstChild;
-    const _ref$ = eGui;
+    var _ref$ = eGui;
     typeof _ref$ === "function" ? web.use(_ref$, _el$) : eGui = _el$;
-    const _ref$2 = eFloatingFilterBody;
+    var _ref$2 = eFloatingFilterBody;
     typeof _ref$2 === "function" ? web.use(_ref$2, _el$2) : eFloatingFilterBody = _el$2;
     web.insert(_el$2, (() => {
-      const _c$ = web.memo(() => !!getUserCompDetails());
+      var _c$ = web.memo(() => !!getUserCompDetails());
       return () => _c$() && web.createComponent(UserComp, {
         get compDetails() {
           return getUserCompDetails();
@@ -557,34 +541,34 @@ const HeaderFilterCellComp = props => {
         ref: setRef
       });
     })());
-    const _ref$3 = eButtonWrapper;
+    var _ref$3 = eButtonWrapper;
     typeof _ref$3 === "function" ? web.use(_ref$3, _el$3) : eButtonWrapper = _el$3;
-    const _ref$4 = eButtonShowMainFilter;
+    var _ref$4 = eButtonShowMainFilter;
     typeof _ref$4 === "function" ? web.use(_ref$4, _el$4) : eButtonShowMainFilter = _el$4;
     web.effect(_p$ => {
-      const _v$ = getCssClassesString(),
+      var _v$ = getCssClassesString(),
         _v$2 = getStyle(),
         _v$3 = getBodyCssClassesString(),
         _v$4 = getButtonWrapperAriaHidden(),
         _v$5 = getButtonWrapperCssClassesString();
-      _v$ !== _p$._v$ && web.className(_el$, _p$._v$ = _v$);
-      _p$._v$2 = web.style(_el$, _v$2, _p$._v$2);
-      _v$3 !== _p$._v$3 && web.className(_el$2, _p$._v$3 = _v$3);
-      _v$4 !== _p$._v$4 && web.setAttribute(_el$3, "aria-hidden", _p$._v$4 = _v$4);
-      _v$5 !== _p$._v$5 && web.className(_el$3, _p$._v$5 = _v$5);
+      _v$ !== _p$.e && web.className(_el$, _p$.e = _v$);
+      _p$.t = web.style(_el$, _v$2, _p$.t);
+      _v$3 !== _p$.a && web.className(_el$2, _p$.a = _v$3);
+      _v$4 !== _p$.o && web.setAttribute(_el$3, "aria-hidden", _p$.o = _v$4);
+      _v$5 !== _p$.i && web.className(_el$3, _p$.i = _v$5);
       return _p$;
     }, {
-      _v$: undefined,
-      _v$2: undefined,
-      _v$3: undefined,
-      _v$4: undefined,
-      _v$5: undefined
+      e: undefined,
+      t: undefined,
+      a: undefined,
+      o: undefined,
+      i: undefined
     });
     return _el$;
   })();
 };
 
-const _tmpl$$b = /*#__PURE__*/web.template(`<div role="columnheader" tabindex="-1"><div>`);
+var _tmpl$$b = /*#__PURE__*/web.template(`<div role=columnheader><div>`);
 const HeaderGroupCellComp = props => {
   const {
     ctrl
@@ -626,47 +610,47 @@ const HeaderGroupCellComp = props => {
   const getClassName = solidJs.createMemo(() => 'ag-header-group-cell ' + getCssClasses().toString());
   const getResizableClassName = solidJs.createMemo(() => 'ag-header-cell-resize ' + getCssResizableClasses().toString());
   return (() => {
-    const _el$ = _tmpl$$b(),
+    var _el$ = _tmpl$$b(),
       _el$2 = _el$.firstChild;
-    const _ref$ = eGui;
+    var _ref$ = eGui;
     typeof _ref$ === "function" ? web.use(_ref$, _el$) : eGui = _el$;
     web.insert(_el$, (() => {
-      const _c$ = web.memo(() => !!getUserCompDetails());
+      var _c$ = web.memo(() => !!getUserCompDetails());
       return () => _c$() && web.createComponent(UserComp, {
         get compDetails() {
           return getUserCompDetails();
         }
       });
     })(), _el$2);
-    const _ref$2 = eResize;
+    var _ref$2 = eResize;
     typeof _ref$2 === "function" ? web.use(_ref$2, _el$2) : eResize = _el$2;
     web.effect(_p$ => {
-      const _v$ = getClassName(),
+      var _v$ = getClassName(),
         _v$2 = style(),
         _v$3 = getColId(),
         _v$4 = getAriaExpanded(),
         _v$5 = getResizableAriaHidden(),
         _v$6 = getResizableClassName();
-      _v$ !== _p$._v$ && web.className(_el$, _p$._v$ = _v$);
-      _p$._v$2 = web.style(_el$, _v$2, _p$._v$2);
-      _v$3 !== _p$._v$3 && web.setAttribute(_el$, "col-id", _p$._v$3 = _v$3);
-      _v$4 !== _p$._v$4 && web.setAttribute(_el$, "aria-expanded", _p$._v$4 = _v$4);
-      _v$5 !== _p$._v$5 && web.setAttribute(_el$2, "aria-hidden", _p$._v$5 = _v$5);
-      _v$6 !== _p$._v$6 && web.className(_el$2, _p$._v$6 = _v$6);
+      _v$ !== _p$.e && web.className(_el$, _p$.e = _v$);
+      _p$.t = web.style(_el$, _v$2, _p$.t);
+      _v$3 !== _p$.a && web.setAttribute(_el$, "col-id", _p$.a = _v$3);
+      _v$4 !== _p$.o && web.setAttribute(_el$, "aria-expanded", _p$.o = _v$4);
+      _v$5 !== _p$.i && web.setAttribute(_el$2, "aria-hidden", _p$.i = _v$5);
+      _v$6 !== _p$.n && web.className(_el$2, _p$.n = _v$6);
       return _p$;
     }, {
-      _v$: undefined,
-      _v$2: undefined,
-      _v$3: undefined,
-      _v$4: undefined,
-      _v$5: undefined,
-      _v$6: undefined
+      e: undefined,
+      t: undefined,
+      a: undefined,
+      o: undefined,
+      i: undefined,
+      n: undefined
     });
     return _el$;
   })();
 };
 
-const _tmpl$$a = /*#__PURE__*/web.template(`<div role="row">`);
+var _tmpl$$a = /*#__PURE__*/web.template(`<div role=row>`);
 const HeaderRowComp = props => {
   const {
     gridOptionsService
@@ -674,7 +658,6 @@ const HeaderRowComp = props => {
   const {
     ctrl
   } = props;
-  const [getTransform, setTransform] = solidJs.createSignal(ctrl.getTransform());
   const [getHeight, setHeight] = solidJs.createSignal();
   const [getTop, setTop] = solidJs.createSignal();
   const [getWidth, setWidth] = solidJs.createSignal();
@@ -683,7 +666,7 @@ const HeaderRowComp = props => {
   let eGui;
   const setCellCtrlsMaintainOrder = next => {
     const prev = getCellCtrls();
-    const isEnsureDomOrder = gridOptionsService.is('ensureDomOrder');
+    const isEnsureDomOrder = gridOptionsService.get('ensureDomOrder');
     const isPrintLayout = gridOptionsService.isDomLayout('print');
 
     // if we are ensuring dom order, we set the ctrls into the dom in the same order they appear on screen
@@ -710,7 +693,6 @@ const HeaderRowComp = props => {
     ctrl.setComp(compProxy);
   });
   const style = solidJs.createMemo(() => ({
-    transform: getTransform(),
     height: getHeight(),
     top: getTop(),
     width: getWidth()
@@ -735,8 +717,8 @@ const HeaderRowComp = props => {
 
   // below, we are not doing floating filters, not yet
   return (() => {
-    const _el$ = _tmpl$$a();
-    const _ref$ = eGui;
+    var _el$ = _tmpl$$a();
+    var _ref$ = eGui;
     typeof _ref$ === "function" ? web.use(_ref$, _el$) : eGui = _el$;
     web.className(_el$, cssClasses);
     web.insert(_el$, web.createComponent(solidJs.For, {
@@ -746,21 +728,21 @@ const HeaderRowComp = props => {
       children: (cellCtrl, i) => createCellJsx(cellCtrl)
     }));
     web.effect(_p$ => {
-      const _v$ = style(),
+      var _v$ = style(),
         _v$2 = getAriaRowIndex();
-      _p$._v$ = web.style(_el$, _v$, _p$._v$);
-      _v$2 !== _p$._v$2 && web.setAttribute(_el$, "aria-rowindex", _p$._v$2 = _v$2);
+      _p$.e = web.style(_el$, _v$, _p$.e);
+      _v$2 !== _p$.t && web.setAttribute(_el$, "aria-rowindex", _p$.t = _v$2);
       return _p$;
     }, {
-      _v$: undefined,
-      _v$2: undefined
+      e: undefined,
+      t: undefined
     });
     return _el$;
   })();
 };
 
-const _tmpl$$9 = /*#__PURE__*/web.template(`<div role="presentation">`),
-  _tmpl$2$2 = /*#__PURE__*/web.template(`<div role="presentation"><div class="ag-header-container" role="rowgroup">`);
+var _tmpl$$9 = /*#__PURE__*/web.template(`<div role=rowgroup>`),
+  _tmpl$2$2 = /*#__PURE__*/web.template(`<div role=presentation><div class=ag-header-container role=rowgroup>`);
 const HeaderRowContainerComp = props => {
   const [getCssClasses, setCssClasses] = solidJs.createSignal(new CssClasses());
   const [getAriaHidden, setAriaHidden] = solidJs.createSignal(false);
@@ -796,7 +778,7 @@ const HeaderRowContainerComp = props => {
     ctrl.setComp(compProxy, eGui);
     destroyFuncs.push(() => context.destroyBean(ctrl));
   });
-  const getClassName = solidJs.createMemo(() => getCssClasses.toString());
+  const getClassName = solidJs.createMemo(() => getCssClasses().toString());
   const insertRowsJsx = () => web.createComponent(solidJs.For, {
     get each() {
       return getHeaderRowCtrls();
@@ -814,64 +796,64 @@ const HeaderRowContainerComp = props => {
     'max-width': getPinnedContainerWidth()
   }));
   return [pinnedLeft && (() => {
-    const _el$ = _tmpl$$9();
-    const _ref$ = eGui;
+    var _el$ = _tmpl$$9();
+    var _ref$ = eGui;
     typeof _ref$ === "function" ? web.use(_ref$, _el$) : eGui = _el$;
     web.insert(_el$, insertRowsJsx);
     web.effect(_p$ => {
-      const _v$ = "ag-pinned-left-header " + getClassName(),
+      var _v$ = "ag-pinned-left-header " + getClassName(),
         _v$2 = getAriaHidden(),
         _v$3 = ePinnedStyle();
-      _v$ !== _p$._v$ && web.className(_el$, _p$._v$ = _v$);
-      _v$2 !== _p$._v$2 && web.setAttribute(_el$, "aria-hidden", _p$._v$2 = _v$2);
-      _p$._v$3 = web.style(_el$, _v$3, _p$._v$3);
+      _v$ !== _p$.e && web.className(_el$, _p$.e = _v$);
+      _v$2 !== _p$.t && web.setAttribute(_el$, "aria-hidden", _p$.t = _v$2);
+      _p$.a = web.style(_el$, _v$3, _p$.a);
       return _p$;
     }, {
-      _v$: undefined,
-      _v$2: undefined,
-      _v$3: undefined
+      e: undefined,
+      t: undefined,
+      a: undefined
     });
     return _el$;
   })(), pinnedRight && (() => {
-    const _el$2 = _tmpl$$9();
-    const _ref$2 = eGui;
+    var _el$2 = _tmpl$$9();
+    var _ref$2 = eGui;
     typeof _ref$2 === "function" ? web.use(_ref$2, _el$2) : eGui = _el$2;
     web.insert(_el$2, insertRowsJsx);
     web.effect(_p$ => {
-      const _v$4 = "ag-pinned-right-header " + getClassName(),
+      var _v$4 = "ag-pinned-right-header " + getClassName(),
         _v$5 = getAriaHidden(),
         _v$6 = ePinnedStyle();
-      _v$4 !== _p$._v$4 && web.className(_el$2, _p$._v$4 = _v$4);
-      _v$5 !== _p$._v$5 && web.setAttribute(_el$2, "aria-hidden", _p$._v$5 = _v$5);
-      _p$._v$6 = web.style(_el$2, _v$6, _p$._v$6);
+      _v$4 !== _p$.e && web.className(_el$2, _p$.e = _v$4);
+      _v$5 !== _p$.t && web.setAttribute(_el$2, "aria-hidden", _p$.t = _v$5);
+      _p$.a = web.style(_el$2, _v$6, _p$.a);
       return _p$;
     }, {
-      _v$4: undefined,
-      _v$5: undefined,
-      _v$6: undefined
+      e: undefined,
+      t: undefined,
+      a: undefined
     });
     return _el$2;
   })(), centre && (() => {
-    const _el$3 = _tmpl$2$2(),
+    var _el$3 = _tmpl$2$2(),
       _el$4 = _el$3.firstChild;
-    const _ref$3 = eGui;
+    var _ref$3 = eGui;
     typeof _ref$3 === "function" ? web.use(_ref$3, _el$3) : eGui = _el$3;
     web.insert(_el$4, insertRowsJsx);
     web.effect(_p$ => {
-      const _v$7 = "ag-header-viewport " + getClassName(),
+      var _v$7 = "ag-header-viewport " + getClassName(),
         _v$8 = eCenterContainerStyle();
-      _v$7 !== _p$._v$7 && web.className(_el$3, _p$._v$7 = _v$7);
-      _p$._v$8 = web.style(_el$4, _v$8, _p$._v$8);
+      _v$7 !== _p$.e && web.className(_el$3, _p$.e = _v$7);
+      _p$.t = web.style(_el$4, _v$8, _p$.t);
       return _p$;
     }, {
-      _v$7: undefined,
-      _v$8: undefined
+      e: undefined,
+      t: undefined
     });
     return _el$3;
   })()];
 };
 
-const _tmpl$$8 = /*#__PURE__*/web.template(`<div role="presentation">`);
+var _tmpl$$8 = /*#__PURE__*/web.template(`<div role=presentation>`);
 const GridHeaderComp = () => {
   const [getCssClasses, setCssClasses] = solidJs.createSignal(new CssClasses());
   const [getHeight, setHeight] = solidJs.createSignal();
@@ -902,8 +884,8 @@ const GridHeaderComp = () => {
     'min-height': getHeight()
   }));
   return (() => {
-    const _el$ = _tmpl$$8();
-    const _ref$ = eGui;
+    var _el$ = _tmpl$$8();
+    var _ref$ = eGui;
     typeof _ref$ === "function" ? web.use(_ref$, _el$) : eGui = _el$;
     web.insert(_el$, web.createComponent(HeaderRowContainerComp, {
       pinned: 'left'
@@ -915,14 +897,14 @@ const GridHeaderComp = () => {
       pinned: 'right'
     }), null);
     web.effect(_p$ => {
-      const _v$ = className(),
+      var _v$ = className(),
         _v$2 = style();
-      _v$ !== _p$._v$ && web.className(_el$, _p$._v$ = _v$);
-      _p$._v$2 = web.style(_el$, _v$2, _p$._v$2);
+      _v$ !== _p$.e && web.className(_el$, _p$.e = _v$);
+      _p$.t = web.style(_el$, _v$2, _p$.t);
       return _p$;
     }, {
-      _v$: undefined,
-      _v$2: undefined
+      e: undefined,
+      t: undefined
     });
     return _el$;
   })();
@@ -943,7 +925,7 @@ const PopupEditorComp = props => {
   const {
     compDetails
   } = editDetails;
-  const useModelPopup = gridOptionsService.is('stopEditingWhenCellsLoseFocus');
+  const useModelPopup = gridOptionsService.get('stopEditingWhenCellsLoseFocus');
   const wrapper = context.createBean(new agGridCommunity.PopupEditorWrapper(compDetails.params));
   const ePopupGui = wrapper.getGui();
   const positionParams = {
@@ -1007,7 +989,7 @@ const ShowEditDetails = props => {
           return getCompDetails();
         },
         ref(r$) {
-          const _ref$ = props.setPopupRef;
+          var _ref$ = props.setPopupRef;
           typeof _ref$ === "function" ? _ref$(r$) : props.setPopupRef = r$;
         }
       });
@@ -1017,13 +999,13 @@ const ShowEditDetails = props => {
       return getCompDetails();
     },
     ref(r$) {
-      const _ref$2 = props.setInlineRef;
+      var _ref$2 = props.setInlineRef;
       typeof _ref$2 === "function" ? _ref$2(r$) : props.setInlineRef = r$;
     }
   })];
 };
 
-const _tmpl$$7 = /*#__PURE__*/web.template(`<span role="presentation" class="ag-cell-value">`);
+var _tmpl$$7 = /*#__PURE__*/web.template(`<span role=presentation class=ag-cell-value>`);
 const ToolsComp = props => {
   const {
     context
@@ -1037,7 +1019,7 @@ const ToolsComp = props => {
     return web.memo(() => comp.getGui());
   };
   return [web.memo((() => {
-    const _c$ = web.memo(() => !!props.includeSelection);
+    var _c$ = web.memo(() => !!props.includeSelection);
     return () => _c$() && web.createComponent(CompWrapper, {
       createFn: () => {
         const checkboxSelectionComp = props.cellCtrl.createSelectionCheckbox();
@@ -1046,12 +1028,12 @@ const ToolsComp = props => {
       }
     });
   })()), web.memo((() => {
-    const _c$2 = web.memo(() => !!props.includeDndSource);
+    var _c$2 = web.memo(() => !!props.includeDndSource);
     return () => _c$2() && web.createComponent(CompWrapper, {
       createFn: () => props.cellCtrl.createDndSource()
     });
   })()), web.memo((() => {
-    const _c$3 = web.memo(() => !!props.includeRowDrag);
+    var _c$3 = web.memo(() => !!props.includeRowDrag);
     return () => _c$3() && web.createComponent(CompWrapper, {
       createFn: () => props.cellCtrl.createRowDragComp()
     });
@@ -1069,22 +1051,22 @@ const ShowRenderDetails = props => {
     return value && value.toString ? value.toString() : value;
   };
   const bodyJsxFunc = () => [web.memo((() => {
-    const _c$4 = web.memo(() => !!isNoCompDetails());
+    var _c$4 = web.memo(() => !!isNoCompDetails());
     return () => _c$4() && web.memo(valueForNoCellRenderer);
   })()), web.memo((() => {
-    const _c$5 = web.memo(() => !!getCompDetails());
+    var _c$5 = web.memo(() => !!getCompDetails());
     return () => _c$5() && web.createComponent(UserComp, {
       get compDetails() {
         return getCompDetails();
       },
       ref(r$) {
-        const _ref$ = props.ref;
+        var _ref$ = props.ref;
         typeof _ref$ === "function" ? _ref$(r$) : props.ref = r$;
       }
     });
   })())];
   return [web.memo((() => {
-    const _c$6 = web.memo(() => !!props.showTools);
+    var _c$6 = web.memo(() => !!props.showTools);
     return () => _c$6() && web.createComponent(ToolsComp, {
       get includeDndSource() {
         return props.includeDndSource;
@@ -1103,10 +1085,10 @@ const ShowRenderDetails = props => {
       }
     });
   })()), web.memo((() => {
-    const _c$7 = web.memo(() => !!props.showCellWrapper);
+    var _c$7 = web.memo(() => !!props.showCellWrapper);
     return () => _c$7() ? (() => {
-      const _el$ = _tmpl$$7();
-      const _ref$2 = props.setECellValue;
+      var _el$ = _tmpl$$7();
+      var _ref$2 = props.setECellValue;
       typeof _ref$2 === "function" ? web.use(_ref$2, _el$) : props.setECellValue = _el$;
       web.insert(_el$, bodyJsxFunc);
       web.effect(() => web.setAttribute(_el$, "id", `cell-${props.cellInstanceId}`));
@@ -1115,8 +1097,8 @@ const ShowRenderDetails = props => {
   })())];
 };
 
-const _tmpl$$6 = /*#__PURE__*/web.template(`<div role="gridcell"> `),
-  _tmpl$2$1 = /*#__PURE__*/web.template(`<div class="ag-cell-wrapper" role="presentation">`);
+var _tmpl$$6 = /*#__PURE__*/web.template(`<div> `),
+  _tmpl$2$1 = /*#__PURE__*/web.template(`<div class=ag-cell-wrapper role=presentation>`);
 const checkCellEditorDeprecations = (popup, cellEditor, cellCtrl) => {
   const col = cellCtrl.getColumn();
 
@@ -1270,13 +1252,13 @@ const CellComp = props => {
       return renderCompVersionList();
     },
     children: () => web.memo((() => {
-      const _c$2 = web.memo(() => !!renderDetails());
+      var _c$2 = web.memo(() => !!renderDetails());
       return () => _c$2() && web.createComponent(ShowRenderDetails, {
         get showDetails() {
           return renderDetails();
         },
         ref(r$) {
-          const _ref$ = cellRenderer;
+          var _ref$ = cellRenderer;
           typeof _ref$ === "function" ? _ref$(r$) : cellRenderer = r$;
         },
         cellInstanceId: cellInstanceId,
@@ -1301,7 +1283,7 @@ const CellComp = props => {
       });
     })())
   }), web.memo((() => {
-    const _c$ = web.memo(() => !!editDetails());
+    var _c$ = web.memo(() => !!editDetails());
     return () => _c$() && web.createComponent(ShowEditDetails, {
       get editDetails() {
         return editDetails();
@@ -1313,38 +1295,41 @@ const CellComp = props => {
     });
   })())];
   return (() => {
-    const _el$ = _tmpl$$6();
+    var _el$ = _tmpl$$6();
       _el$.firstChild;
-    const _ref$2 = eGui;
+    var _ref$2 = eGui;
     typeof _ref$2 === "function" ? web.use(_ref$2, _el$) : eGui = _el$;
     web.insert(_el$, (() => {
-      const _c$3 = web.memo(() => !!showCellWrapper());
+      var _c$3 = web.memo(() => !!showCellWrapper());
       return () => _c$3() ? (() => {
-        const _el$3 = _tmpl$2$1();
-        const _ref$3 = eCellWrapper;
+        var _el$3 = _tmpl$2$1();
+        var _ref$3 = eCellWrapper;
         typeof _ref$3 === "function" ? web.use(_ref$3, _el$3) : eCellWrapper = _el$3;
         web.insert(_el$3, bodyJsxFunc);
         return _el$3;
       })() : bodyJsxFunc();
     })(), null);
     web.effect(_p$ => {
-      const _v$ = userStyles(),
+      var _v$ = userStyles(),
         _v$2 = tabIndex(),
-        _v$3 = colId();
-      _p$._v$ = web.style(_el$, _v$, _p$._v$);
-      _v$2 !== _p$._v$2 && web.setAttribute(_el$, "tabindex", _p$._v$2 = _v$2);
-      _v$3 !== _p$._v$3 && web.setAttribute(_el$, "col-id", _p$._v$3 = _v$3);
+        _v$3 = cellCtrl.getCellAriaRole(),
+        _v$4 = colId();
+      _p$.e = web.style(_el$, _v$, _p$.e);
+      _v$2 !== _p$.t && web.setAttribute(_el$, "tabindex", _p$.t = _v$2);
+      _v$3 !== _p$.a && web.setAttribute(_el$, "role", _p$.a = _v$3);
+      _v$4 !== _p$.o && web.setAttribute(_el$, "col-id", _p$.o = _v$4);
       return _p$;
     }, {
-      _v$: undefined,
-      _v$2: undefined,
-      _v$3: undefined
+      e: undefined,
+      t: undefined,
+      a: undefined,
+      o: undefined
     });
     return _el$;
   })();
 };
 
-const _tmpl$$5 = /*#__PURE__*/web.template(`<div role="row">`);
+var _tmpl$$5 = /*#__PURE__*/web.template(`<div role=row>`);
 const maintainOrderOnColumns = (prev, next, domOrder) => {
   if (domOrder) {
     const res = {
@@ -1458,7 +1443,13 @@ const RowComp = params => {
       // when cols reordered, which would stop the CSS transitions from working
       setCellCtrls: next => setCellCtrls(maintainOrderOnColumns(getCellCtrls(), next, getDomOrder())),
       showFullWidth: compDetails => setFullWidthCompDetails(compDetails),
-      getFullWidthCellRenderer: () => fullWidthCompRef
+      getFullWidthCellRenderer: () => fullWidthCompRef,
+      refreshFullWidth: getUpdatedParams => {
+        if (!fullWidthCompRef || !fullWidthCompRef.refresh) {
+          return false;
+        }
+        return fullWidthCompRef.refresh(getUpdatedParams());
+      }
     };
     rowCtrl.setComp(compProxy, eGui, containerType);
     solidJs.onCleanup(() => rowCtrl.unsetComp(containerType));
@@ -1494,43 +1485,42 @@ const RowComp = params => {
     ref: setFullWidthRef
   });
   return (() => {
-    const _el$ = _tmpl$$5();
-    const _ref$ = eGui;
+    var _el$ = _tmpl$$5();
+    var _ref$ = eGui;
     typeof _ref$ === "function" ? web.use(_ref$, _el$) : eGui = _el$;
     web.insert(_el$, (() => {
-      const _c$ = web.memo(() => !!isShowFullWidth());
+      var _c$ = web.memo(() => !!isShowFullWidth());
       return () => _c$() && showFullWidthJsx();
     })(), null);
     web.insert(_el$, (() => {
-      const _c$2 = web.memo(() => !!isShowCells());
+      var _c$2 = web.memo(() => !!isShowCells());
       return () => _c$2() && showCellsJsx();
     })(), null);
     web.effect(_p$ => {
-      const _v$ = getRowStyles(),
+      var _v$ = getRowStyles(),
         _v$2 = getRowIndex(),
         _v$3 = getRowId(),
         _v$4 = getRowBusinessKey(),
         _v$5 = getTabIndex();
-      _p$._v$ = web.style(_el$, _v$, _p$._v$);
-      _v$2 !== _p$._v$2 && web.setAttribute(_el$, "row-index", _p$._v$2 = _v$2);
-      _v$3 !== _p$._v$3 && web.setAttribute(_el$, "row-id", _p$._v$3 = _v$3);
-      _v$4 !== _p$._v$4 && web.setAttribute(_el$, "row-business-key", _p$._v$4 = _v$4);
-      _v$5 !== _p$._v$5 && web.setAttribute(_el$, "tabindex", _p$._v$5 = _v$5);
+      _p$.e = web.style(_el$, _v$, _p$.e);
+      _v$2 !== _p$.t && web.setAttribute(_el$, "row-index", _p$.t = _v$2);
+      _v$3 !== _p$.a && web.setAttribute(_el$, "row-id", _p$.a = _v$3);
+      _v$4 !== _p$.o && web.setAttribute(_el$, "row-business-key", _p$.o = _v$4);
+      _v$5 !== _p$.i && web.setAttribute(_el$, "tabindex", _p$.i = _v$5);
       return _p$;
     }, {
-      _v$: undefined,
-      _v$2: undefined,
-      _v$3: undefined,
-      _v$4: undefined,
-      _v$5: undefined
+      e: undefined,
+      t: undefined,
+      a: undefined,
+      o: undefined,
+      i: undefined
     });
     return _el$;
   })();
 };
 
-const _tmpl$$4 = /*#__PURE__*/web.template(`<div>`),
-  _tmpl$2 = /*#__PURE__*/web.template(`<div role="presentation"><div role="presentation">`),
-  _tmpl$3 = /*#__PURE__*/web.template(`<div role="presentation">`);
+var _tmpl$$4 = /*#__PURE__*/web.template(`<div role=rowgroup>`),
+  _tmpl$2 = /*#__PURE__*/web.template(`<div role=presentation>`);
 const RowContainerComp = props => {
   const {
     context
@@ -1543,18 +1533,14 @@ const RowContainerComp = props => {
     name
   } = props;
   const containerType = solidJs.createMemo(() => agGridCommunity.getRowContainerTypeForName(name));
-  let eWrapper;
   let eViewport;
   let eContainer;
   const cssClasses = solidJs.createMemo(() => agGridCommunity.RowContainerCtrl.getRowContainerCssClasses(name));
-  const wrapperClasses = solidJs.createMemo(() => classesList(cssClasses().wrapper));
   const viewportClasses = solidJs.createMemo(() => classesList(cssClasses().viewport));
   const containerClasses = solidJs.createMemo(() => classesList(cssClasses().container));
 
   // no need to useMemo for boolean types
-  const template1 = name === agGridCommunity.RowContainerName.CENTER;
-  const template2 = name === agGridCommunity.RowContainerName.TOP_CENTER || name === agGridCommunity.RowContainerName.BOTTOM_CENTER || name === agGridCommunity.RowContainerName.STICKY_TOP_CENTER;
-  const template3 = !template1 && !template2;
+  const centerTemplate = name === agGridCommunity.RowContainerName.CENTER || name === agGridCommunity.RowContainerName.TOP_CENTER || name === agGridCommunity.RowContainerName.BOTTOM_CENTER || name === agGridCommunity.RowContainerName.STICKY_TOP_CENTER;
 
   // if domOrder=true, then we just copy rowCtrls into rowCtrlsOrdered observing order,
   // however if false, then we need to keep the order as they are in the dom, otherwise rowAnimation breaks
@@ -1579,7 +1565,9 @@ const RowContainerComp = props => {
   solidJs.onMount(() => {
     const compProxy = {
       setViewportHeight: setViewportHeight,
-      setRowCtrls: rowCtrls => setRowCtrls(rowCtrls),
+      setRowCtrls: ({
+        rowCtrls
+      }) => setRowCtrls(rowCtrls),
       setDomOrder: domOrder => setDomOrder(domOrder),
       setContainerWidth: width => {
         if (eContainer) {
@@ -1589,14 +1577,14 @@ const RowContainerComp = props => {
     };
     const ctrl = context.createBean(new agGridCommunity.RowContainerCtrl(name));
     solidJs.onCleanup(() => context.destroyBean(ctrl));
-    ctrl.setComp(compProxy, eContainer, eViewport, eWrapper);
+    ctrl.setComp(compProxy, eContainer, eViewport);
   });
   const viewportStyle = solidJs.createMemo(() => ({
     height: viewportHeight()
   }));
   const buildContainer = () => (() => {
-    const _el$ = _tmpl$$4();
-    const _ref$ = eContainer;
+    var _el$ = _tmpl$$4();
+    var _ref$ = eContainer;
     typeof _ref$ === "function" ? web.use(_ref$, _el$) : eContainer = _el$;
     web.insert(_el$, web.createComponent(solidJs.For, {
       get each() {
@@ -1609,60 +1597,29 @@ const RowContainerComp = props => {
         }
       })
     }));
-    web.effect(_p$ => {
-      const _v$ = containerClasses(),
-        _v$2 = rowCtrls().length ? "rowgroup" : "presentation";
-      _v$ !== _p$._v$ && web.className(_el$, _p$._v$ = _v$);
-      _v$2 !== _p$._v$2 && web.setAttribute(_el$, "role", _p$._v$2 = _v$2);
-      return _p$;
-    }, {
-      _v$: undefined,
-      _v$2: undefined
-    });
+    web.effect(() => web.className(_el$, containerClasses()));
     return _el$;
   })();
-  return [template1 && (() => {
-    const _el$2 = _tmpl$2(),
-      _el$3 = _el$2.firstChild;
-    const _ref$2 = eWrapper;
-    typeof _ref$2 === "function" ? web.use(_ref$2, _el$2) : eWrapper = _el$2;
-    const _ref$3 = eViewport;
-    typeof _ref$3 === "function" ? web.use(_ref$3, _el$3) : eViewport = _el$3;
-    web.insert(_el$3, buildContainer);
+  return web.memo(() => centerTemplate ? (() => {
+    var _el$2 = _tmpl$2();
+    var _ref$2 = eViewport;
+    typeof _ref$2 === "function" ? web.use(_ref$2, _el$2) : eViewport = _el$2;
+    web.insert(_el$2, buildContainer);
     web.effect(_p$ => {
-      const _v$3 = wrapperClasses(),
-        _v$4 = viewportClasses(),
-        _v$5 = viewportStyle();
-      _v$3 !== _p$._v$3 && web.className(_el$2, _p$._v$3 = _v$3);
-      _v$4 !== _p$._v$4 && web.className(_el$3, _p$._v$4 = _v$4);
-      _p$._v$5 = web.style(_el$3, _v$5, _p$._v$5);
+      var _v$ = viewportClasses(),
+        _v$2 = viewportStyle();
+      _v$ !== _p$.e && web.className(_el$2, _p$.e = _v$);
+      _p$.t = web.style(_el$2, _v$2, _p$.t);
       return _p$;
     }, {
-      _v$3: undefined,
-      _v$4: undefined,
-      _v$5: undefined
+      e: undefined,
+      t: undefined
     });
     return _el$2;
-  })(), template2 && (() => {
-    const _el$4 = _tmpl$3();
-    const _ref$4 = eViewport;
-    typeof _ref$4 === "function" ? web.use(_ref$4, _el$4) : eViewport = _el$4;
-    web.insert(_el$4, buildContainer);
-    web.effect(_p$ => {
-      const _v$6 = viewportClasses(),
-        _v$7 = viewportStyle();
-      _v$6 !== _p$._v$6 && web.className(_el$4, _p$._v$6 = _v$6);
-      _p$._v$7 = web.style(_el$4, _v$7, _p$._v$7);
-      return _p$;
-    }, {
-      _v$6: undefined,
-      _v$7: undefined
-    });
-    return _el$4;
-  })(), web.memo(() => template3 && buildContainer())];
+  })() : buildContainer());
 };
 
-const _tmpl$$3 = /*#__PURE__*/web.template(`<div role="treegrid"><div role="presentation"></div><div role="presentation"><div role="presentation"><div role="presentation"></div></div></div><div role="presentation"></div><div role="presentation">`);
+var _tmpl$$3 = /*#__PURE__*/web.template(`<div role=treegrid><div role=presentation></div><div role=presentation><div role=presentation></div></div><div role=presentation></div><div role=presentation>`);
 const GridBodyComp = () => {
   const {
     context,
@@ -1746,7 +1703,6 @@ const GridBodyComp = () => {
   });
   const getRootClasses = solidJs.createMemo(() => classesList('ag-root', 'ag-unselectable', getMovingCss(), getLayoutClass()));
   const getBodyClasses = solidJs.createMemo(() => classesList('ag-body', getLayoutClass()));
-  const getBodyClipperClasses = solidJs.createMemo(() => classesList('ag-body-clipper', getLayoutClass()));
   const getBodyViewportClasses = solidJs.createMemo(() => classesList('ag-body-viewport', getRowAnimationClass(), getLayoutClass(), getForceVerticalScrollClass(), getCellSelectableCss()));
   const getTopClasses = solidJs.createMemo(() => classesList('ag-floating-top', getCellSelectableCss()));
   const getStickyTopClasses = solidJs.createMemo(() => classesList('ag-sticky-top', getCellSelectableCss()));
@@ -1772,17 +1728,16 @@ const GridBodyComp = () => {
     width: getBodyViewportWidth()
   }));
   return (() => {
-    const _el$ = _tmpl$$3(),
+    var _el$ = _tmpl$$3(),
       _el$2 = _el$.firstChild,
       _el$3 = _el$2.nextSibling,
       _el$4 = _el$3.firstChild,
-      _el$5 = _el$4.firstChild,
-      _el$6 = _el$3.nextSibling,
-      _el$7 = _el$6.nextSibling;
-    const _ref$ = eRoot;
+      _el$5 = _el$3.nextSibling,
+      _el$6 = _el$5.nextSibling;
+    var _ref$ = eRoot;
     typeof _ref$ === "function" ? web.use(_ref$, _el$) : eRoot = _el$;
     web.insert(_el$, web.createComponent(GridHeaderComp, {}), _el$2);
-    const _ref$2 = eTop;
+    var _ref$2 = eTop;
     typeof _ref$2 === "function" ? web.use(_ref$2, _el$2) : eTop = _el$2;
     web.insert(_el$2, web.createComponent(RowContainerComp, {
       get name() {
@@ -1804,128 +1759,126 @@ const GridBodyComp = () => {
         return agGridCommunity.RowContainerName.TOP_FULL_WIDTH;
       }
     }), null);
-    const _ref$3 = eBody;
+    var _ref$3 = eBody;
     typeof _ref$3 === "function" ? web.use(_ref$3, _el$3) : eBody = _el$3;
-    const _ref$4 = eBodyViewport;
-    typeof _ref$4 === "function" ? web.use(_ref$4, _el$5) : eBodyViewport = _el$5;
-    web.insert(_el$5, web.createComponent(RowContainerComp, {
+    var _ref$4 = eBodyViewport;
+    typeof _ref$4 === "function" ? web.use(_ref$4, _el$4) : eBodyViewport = _el$4;
+    web.insert(_el$4, web.createComponent(RowContainerComp, {
       get name() {
         return agGridCommunity.RowContainerName.LEFT;
       }
     }), null);
-    web.insert(_el$5, web.createComponent(RowContainerComp, {
+    web.insert(_el$4, web.createComponent(RowContainerComp, {
       get name() {
         return agGridCommunity.RowContainerName.CENTER;
       }
     }), null);
-    web.insert(_el$5, web.createComponent(RowContainerComp, {
+    web.insert(_el$4, web.createComponent(RowContainerComp, {
       get name() {
         return agGridCommunity.RowContainerName.RIGHT;
       }
     }), null);
-    web.insert(_el$5, web.createComponent(RowContainerComp, {
+    web.insert(_el$4, web.createComponent(RowContainerComp, {
       get name() {
         return agGridCommunity.RowContainerName.FULL_WIDTH;
       }
     }), null);
-    const _ref$5 = eStickyTop;
-    typeof _ref$5 === "function" ? web.use(_ref$5, _el$6) : eStickyTop = _el$6;
-    web.insert(_el$6, web.createComponent(RowContainerComp, {
+    var _ref$5 = eStickyTop;
+    typeof _ref$5 === "function" ? web.use(_ref$5, _el$5) : eStickyTop = _el$5;
+    web.insert(_el$5, web.createComponent(RowContainerComp, {
       get name() {
         return agGridCommunity.RowContainerName.STICKY_TOP_LEFT;
       }
     }), null);
-    web.insert(_el$6, web.createComponent(RowContainerComp, {
+    web.insert(_el$5, web.createComponent(RowContainerComp, {
       get name() {
         return agGridCommunity.RowContainerName.STICKY_TOP_CENTER;
       }
     }), null);
-    web.insert(_el$6, web.createComponent(RowContainerComp, {
+    web.insert(_el$5, web.createComponent(RowContainerComp, {
       get name() {
         return agGridCommunity.RowContainerName.STICKY_TOP_RIGHT;
       }
     }), null);
-    web.insert(_el$6, web.createComponent(RowContainerComp, {
+    web.insert(_el$5, web.createComponent(RowContainerComp, {
       get name() {
         return agGridCommunity.RowContainerName.STICKY_TOP_FULL_WIDTH;
       }
     }), null);
-    const _ref$6 = eBottom;
-    typeof _ref$6 === "function" ? web.use(_ref$6, _el$7) : eBottom = _el$7;
-    web.insert(_el$7, web.createComponent(RowContainerComp, {
+    var _ref$6 = eBottom;
+    typeof _ref$6 === "function" ? web.use(_ref$6, _el$6) : eBottom = _el$6;
+    web.insert(_el$6, web.createComponent(RowContainerComp, {
       get name() {
         return agGridCommunity.RowContainerName.BOTTOM_LEFT;
       }
     }), null);
-    web.insert(_el$7, web.createComponent(RowContainerComp, {
+    web.insert(_el$6, web.createComponent(RowContainerComp, {
       get name() {
         return agGridCommunity.RowContainerName.BOTTOM_CENTER;
       }
     }), null);
-    web.insert(_el$7, web.createComponent(RowContainerComp, {
+    web.insert(_el$6, web.createComponent(RowContainerComp, {
       get name() {
         return agGridCommunity.RowContainerName.BOTTOM_RIGHT;
       }
     }), null);
-    web.insert(_el$7, web.createComponent(RowContainerComp, {
+    web.insert(_el$6, web.createComponent(RowContainerComp, {
       get name() {
         return agGridCommunity.RowContainerName.BOTTOM_FULL_WIDTH;
       }
     }), null);
     web.effect(_p$ => {
-      const _v$ = getRootClasses(),
+      var _v$ = getRootClasses(),
         _v$2 = getAriaColCount(),
         _v$3 = getAriaRowCount(),
         _v$4 = getTopClasses(),
         _v$5 = getTopStyle(),
         _v$6 = getBodyClasses(),
-        _v$7 = getBodyClipperClasses(),
-        _v$8 = getBodyViewportClasses(),
-        _v$9 = getBodyViewportStyle(),
-        _v$10 = getStickyTopClasses(),
-        _v$11 = getStickyTopStyle(),
-        _v$12 = getBottomClasses(),
-        _v$13 = getBottomStyle();
-      _v$ !== _p$._v$ && web.className(_el$, _p$._v$ = _v$);
-      _v$2 !== _p$._v$2 && web.setAttribute(_el$, "aria-colcount", _p$._v$2 = _v$2);
-      _v$3 !== _p$._v$3 && web.setAttribute(_el$, "aria-rowcount", _p$._v$3 = _v$3);
-      _v$4 !== _p$._v$4 && web.className(_el$2, _p$._v$4 = _v$4);
-      _p$._v$5 = web.style(_el$2, _v$5, _p$._v$5);
-      _v$6 !== _p$._v$6 && web.className(_el$3, _p$._v$6 = _v$6);
-      _v$7 !== _p$._v$7 && web.className(_el$4, _p$._v$7 = _v$7);
-      _v$8 !== _p$._v$8 && web.className(_el$5, _p$._v$8 = _v$8);
-      _p$._v$9 = web.style(_el$5, _v$9, _p$._v$9);
-      _v$10 !== _p$._v$10 && web.className(_el$6, _p$._v$10 = _v$10);
-      _p$._v$11 = web.style(_el$6, _v$11, _p$._v$11);
-      _v$12 !== _p$._v$12 && web.className(_el$7, _p$._v$12 = _v$12);
-      _p$._v$13 = web.style(_el$7, _v$13, _p$._v$13);
+        _v$7 = getBodyViewportClasses(),
+        _v$8 = getBodyViewportStyle(),
+        _v$9 = getStickyTopClasses(),
+        _v$10 = getStickyTopStyle(),
+        _v$11 = getBottomClasses(),
+        _v$12 = getBottomStyle();
+      _v$ !== _p$.e && web.className(_el$, _p$.e = _v$);
+      _v$2 !== _p$.t && web.setAttribute(_el$, "aria-colcount", _p$.t = _v$2);
+      _v$3 !== _p$.a && web.setAttribute(_el$, "aria-rowcount", _p$.a = _v$3);
+      _v$4 !== _p$.o && web.className(_el$2, _p$.o = _v$4);
+      _p$.i = web.style(_el$2, _v$5, _p$.i);
+      _v$6 !== _p$.n && web.className(_el$3, _p$.n = _v$6);
+      _v$7 !== _p$.s && web.className(_el$4, _p$.s = _v$7);
+      _p$.h = web.style(_el$4, _v$8, _p$.h);
+      _v$9 !== _p$.r && web.className(_el$5, _p$.r = _v$9);
+      _p$.d = web.style(_el$5, _v$10, _p$.d);
+      _v$11 !== _p$.l && web.className(_el$6, _p$.l = _v$11);
+      _p$.u = web.style(_el$6, _v$12, _p$.u);
       return _p$;
     }, {
-      _v$: undefined,
-      _v$2: undefined,
-      _v$3: undefined,
-      _v$4: undefined,
-      _v$5: undefined,
-      _v$6: undefined,
-      _v$7: undefined,
-      _v$8: undefined,
-      _v$9: undefined,
-      _v$10: undefined,
-      _v$11: undefined,
-      _v$12: undefined,
-      _v$13: undefined
+      e: undefined,
+      t: undefined,
+      a: undefined,
+      o: undefined,
+      i: undefined,
+      n: undefined,
+      s: undefined,
+      h: undefined,
+      r: undefined,
+      d: undefined,
+      l: undefined,
+      u: undefined
     });
     return _el$;
   })();
 };
 
-const _tmpl$$2 = /*#__PURE__*/web.template(`<div role="presentation">`);
+var _tmpl$$2 = /*#__PURE__*/web.template(`<div role=presentation>`);
 const TabGuardComp = props => {
   const {
     children,
     eFocusableElement,
     onTabKeyDown,
-    gridCtrl
+    gridCtrl,
+    forceFocusOutWhenTabGuardsAreEmpty
   } = props;
   const [tabIndex, setTabIndex] = solidJs.createSignal();
   let eTopGuard;
@@ -1944,49 +1897,50 @@ const TabGuardComp = props => {
       eBottomGuard: eBottomGuard,
       eFocusableElement: eFocusableElement,
       onTabKeyDown: onTabKeyDown,
+      forceFocusOutWhenTabGuardsAreEmpty: forceFocusOutWhenTabGuardsAreEmpty,
       focusInnerElement: fromBottom => gridCtrl.focusInnerElement(fromBottom)
     }));
     props.ref({
-      forceFocusOutOfContainer() {
-        ctrl.forceFocusOutOfContainer();
+      forceFocusOutOfContainer(up) {
+        ctrl.forceFocusOutOfContainer(up);
       }
     });
   });
   solidJs.onCleanup(() => context.destroyBean(ctrl));
   return [(() => {
-    const _el$ = _tmpl$$2();
-    const _ref$ = eTopGuard;
+    var _el$ = _tmpl$$2();
+    var _ref$ = eTopGuard;
     typeof _ref$ === "function" ? web.use(_ref$, _el$) : eTopGuard = _el$;
     web.effect(_p$ => {
-      const _v$ = `${agGridCommunity.TabGuardClassNames.TAB_GUARD} ${agGridCommunity.TabGuardClassNames.TAB_GUARD_TOP}`,
+      var _v$ = `${agGridCommunity.TabGuardClassNames.TAB_GUARD} ${agGridCommunity.TabGuardClassNames.TAB_GUARD_TOP}`,
         _v$2 = tabIndex();
-      _v$ !== _p$._v$ && web.className(_el$, _p$._v$ = _v$);
-      _v$2 !== _p$._v$2 && web.setAttribute(_el$, "tabindex", _p$._v$2 = _v$2);
+      _v$ !== _p$.e && web.className(_el$, _p$.e = _v$);
+      _v$2 !== _p$.t && web.setAttribute(_el$, "tabindex", _p$.t = _v$2);
       return _p$;
     }, {
-      _v$: undefined,
-      _v$2: undefined
+      e: undefined,
+      t: undefined
     });
     return _el$;
   })(), children, (() => {
-    const _el$2 = _tmpl$$2();
-    const _ref$2 = eBottomGuard;
+    var _el$2 = _tmpl$$2();
+    var _ref$2 = eBottomGuard;
     typeof _ref$2 === "function" ? web.use(_ref$2, _el$2) : eBottomGuard = _el$2;
     web.effect(_p$ => {
-      const _v$3 = `${agGridCommunity.TabGuardClassNames.TAB_GUARD} ${agGridCommunity.TabGuardClassNames.TAB_GUARD_BOTTOM}`,
+      var _v$3 = `${agGridCommunity.TabGuardClassNames.TAB_GUARD} ${agGridCommunity.TabGuardClassNames.TAB_GUARD_BOTTOM}`,
         _v$4 = tabIndex();
-      _v$3 !== _p$._v$3 && web.className(_el$2, _p$._v$3 = _v$3);
-      _v$4 !== _p$._v$4 && web.setAttribute(_el$2, "tabindex", _p$._v$4 = _v$4);
+      _v$3 !== _p$.e && web.className(_el$2, _p$.e = _v$3);
+      _v$4 !== _p$.t && web.setAttribute(_el$2, "tabindex", _p$.t = _v$4);
       return _p$;
     }, {
-      _v$3: undefined,
-      _v$4: undefined
+      e: undefined,
+      t: undefined
     });
     return _el$2;
   })()];
 };
 
-const _tmpl$$1 = /*#__PURE__*/web.template(`<div><div>`);
+var _tmpl$$1 = /*#__PURE__*/web.template(`<div><div>`);
 const GridComp = props => {
   const [rtlClass, setRtlClass] = solidJs.createSignal('');
   const [keyboardFocusClass, setKeyboardFocusClass] = solidJs.createSignal('');
@@ -2077,9 +2031,8 @@ const GridComp = props => {
       destroyGridUi: () => {},
       // do nothing, as framework users destroy grid by removing the comp
       setRtlClass: setRtlClass,
-      addOrRemoveKeyboardFocusClass: addOrRemove => setKeyboardFocusClass(addOrRemove ? agGridCommunity.FocusService.AG_KEYBOARD_FOCUS : ''),
-      forceFocusOutOfContainer: () => {
-        tabGuardRef && tabGuardRef.forceFocusOutOfContainer();
+      forceFocusOutOfContainer: up => {
+        tabGuardRef && tabGuardRef.forceFocusOutOfContainer(up);
       },
       updateLayoutClasses: setLayoutClass,
       getFocusableContainers: () => {
@@ -2108,14 +2061,14 @@ const GridComp = props => {
     cursor: cursor != null ? cursor() : ''
   }));
   return (() => {
-    const _el$ = _tmpl$$1(),
+    var _el$ = _tmpl$$1(),
       _el$2 = _el$.firstChild;
-    const _ref$ = eGui;
+    var _ref$ = eGui;
     typeof _ref$ === "function" ? web.use(_ref$, _el$) : eGui = _el$;
-    const _ref$2 = eBody;
+    var _ref$2 = eBody;
     typeof _ref$2 === "function" ? web.use(_ref$2, _el$2) : eBody = _el$2;
     web.insert(_el$2, (() => {
-      const _c$ = web.memo(() => !!initialised());
+      var _c$ = web.memo(() => !!initialised());
       return () => _c$() && // we wait for initialised before rending the children, so GridComp has created and registered with it's
       // GridCtrl before we create the child GridBodyComp. Otherwise the GridBodyComp would initialise first,
       // before we have set the the Layout CSS classes, causing the GridBodyComp to render rows to a grid that
@@ -2129,6 +2082,7 @@ const GridComp = props => {
             eFocusableElement: eGui,
             onTabKeyDown: onTabKeyDown,
             gridCtrl: gridCtrl,
+            forceFocusOutWhenTabGuardsAreEmpty: true,
             get children() {
               return web.createComponent(GridBodyComp, {});
             }
@@ -2137,26 +2091,26 @@ const GridComp = props => {
       });
     })());
     web.effect(_p$ => {
-      const _v$ = cssClasses(),
+      var _v$ = cssClasses(),
         _v$2 = topStyle(),
         _v$3 = bodyCssClasses();
-      _v$ !== _p$._v$ && web.className(_el$, _p$._v$ = _v$);
-      _p$._v$2 = web.style(_el$, _v$2, _p$._v$2);
-      _v$3 !== _p$._v$3 && web.className(_el$2, _p$._v$3 = _v$3);
+      _v$ !== _p$.e && web.className(_el$, _p$.e = _v$);
+      _p$.t = web.style(_el$, _v$2, _p$.t);
+      _v$3 !== _p$.a && web.className(_el$2, _p$.a = _v$3);
       return _p$;
     }, {
-      _v$: undefined,
-      _v$2: undefined,
-      _v$3: undefined
+      e: undefined,
+      t: undefined,
+      a: undefined
     });
     return _el$;
   })();
 };
 
-const _tmpl$ = /*#__PURE__*/web.template(`<div>`);
+var _tmpl$ = /*#__PURE__*/web.template(`<div>`);
 const AgGridSolid = props => {
   let eGui;
-  let gridOptions;
+  let api;
   const [context, setContext] = solidJs.createSignal();
   const [getPortals, setPortals] = solidJs.createSignal([]);
   const destroyFuncs = [];
@@ -2180,16 +2134,13 @@ const AgGridSolid = props => {
       const currentValue = props[key];
       const previousValue = propsCopy[key];
       if (previousValue !== currentValue) {
-        changes[key] = {
-          currentValue,
-          previousValue
-        };
+        changes[key] = currentValue;
         propsCopy[key] = currentValue;
         changesExist = true;
       }
     });
     if (changesExist) {
-      agGridCommunity.ComponentUtil.processOnChange(changes, gridOptions.api);
+      agGridCommunity.ComponentUtil.processOnChange(changes, api);
     }
   });
   solidJs.onMount(() => {
@@ -2209,8 +2160,7 @@ const AgGridSolid = props => {
       modules,
       frameworkOverrides: new SolidFrameworkOverrides()
     };
-    gridOptions = props.gridOptions || {};
-    agGridCommunity.ComponentUtil.copyAttributesToGridOptions(gridOptions, props);
+    const gridOptions = agGridCommunity.ComponentUtil.combineAttributesAndGridOptions(props.gridOptions, props);
     const createUiCallback = context => {
       setContext(context);
       // because React is Async, we need to wait for the UI to be initialised before exposing the API's
@@ -2219,27 +2169,27 @@ const AgGridSolid = props => {
         const refCallback = props.ref && props.ref;
         if (refCallback) {
           const gridRef = {
-            api: gridOptions.api,
-            columnApi: gridOptions.columnApi
+            api: api,
+            columnApi: new agGridCommunity.ColumnApi(api)
           };
           refCallback(gridRef);
         }
-        destroyFuncs.push(() => gridOptions.api.destroy());
+        destroyFuncs.push(() => api.destroy());
       });
     };
     const acceptChangesCallback = () => {
       // todo, what goes here?
     };
     const gridCoreCreator = new agGridCommunity.GridCoreCreator();
-    gridCoreCreator.create(eGui, gridOptions, createUiCallback, acceptChangesCallback, gridParams);
+    api = gridCoreCreator.create(eGui, gridOptions, createUiCallback, acceptChangesCallback, gridParams);
   });
   return (() => {
-    const _el$ = _tmpl$();
-    const _ref$ = eGui;
+    var _el$ = _tmpl$();
+    var _ref$ = eGui;
     typeof _ref$ === "function" ? web.use(_ref$, _el$) : eGui = _el$;
     _el$.style.setProperty("height", "100%");
     web.insert(_el$, (() => {
-      const _c$ = web.memo(() => !!context());
+      var _c$ = web.memo(() => !!context());
       return () => _c$() && web.createComponent(GridComp, {
         get ["class"]() {
           return props.class;
@@ -2260,7 +2210,7 @@ const AgGridSolid = props => {
         get children() {
           return web.createComponent(info.SolidClass, web.mergeProps(() => info.props, {
             ref(r$) {
-              const _ref$2 = info.ref;
+              var _ref$2 = info.ref;
               typeof _ref$2 === "function" ? _ref$2(r$) : info.ref = r$;
             }
           }));

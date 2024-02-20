@@ -141,7 +141,7 @@ It is important to include the name of the theme in the rule: `.ag-theme-alpine 
 Without the theme name, your styles will not override the theme's built-in styles due to CSS selector specificity rules.
 </note>
 
-The best way to find the right class name to use in a CSS rule is using the browser's developer tools. You will notice that components often have multiple class names, some more general than others. For example, the [row grouping panel](/tool-panel-columns/#column-tool-panel-example) is a component onto which you can drag columns to group them. The internal name for this is the "column drop" component, and there are two kinds - a horizontal one at the top of the header and a vertical one in the columns tool panel. You can use the class name `ag-column-drop` to target either kind, or `ag-column-drop-vertical` / `ag-column-drop-horizontal` to target one only.
+The best way to find the right class name to use in a CSS rule is using the browser's developer tools. You will notice that components often have multiple class names, some more general than others. For example, the [row grouping panel](/tool-panel-columns/#columns-tool-panel-example) is a component onto which you can drag columns to group them. The internal name for this is the "column drop" component, and there are two kinds - a horizontal one at the top of the header and a vertical one in the columns tool panel. You can use the class name `ag-column-drop` to target either kind, or `ag-column-drop-vertical` / `ag-column-drop-horizontal` to target one only.
 
 ### Referencing parameter values in CSS rules
 

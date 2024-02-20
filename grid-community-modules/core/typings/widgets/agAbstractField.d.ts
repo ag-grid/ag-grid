@@ -6,6 +6,8 @@ export declare abstract class AgAbstractField<TValue, TConfig extends IAgLabelPa
     protected value: TValue | null | undefined;
     constructor(config?: TConfig, template?: string, className?: string | undefined);
     protected postConstruct(): void;
+    protected refreshAriaLabelledBy(): void;
+    setAriaLabel(label?: string | null): this;
     onValueChange(callbackFn: (newValue?: TValue | null) => void): this;
     getWidth(): number;
     setWidth(width: number): this;

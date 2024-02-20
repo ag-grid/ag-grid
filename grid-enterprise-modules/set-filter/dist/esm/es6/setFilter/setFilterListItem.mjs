@@ -27,10 +27,11 @@ export class SetFilterListItem extends Component {
     init() {
         this.addDestroyFunc(() => { var _a; return (_a = this.destroyCellRendererComponent) === null || _a === void 0 ? void 0 : _a.call(this); });
         this.render();
-        this.eCheckbox.setLabelEllipsis(true);
-        this.eCheckbox.setValue(this.isSelected, true);
-        this.eCheckbox.setDisabled(!!this.params.readOnly);
-        this.eCheckbox.getInputElement().setAttribute('tabindex', '-1');
+        this.eCheckbox
+            .setLabelEllipsis(true)
+            .setValue(this.isSelected, true)
+            .setDisabled(!!this.params.readOnly)
+            .getInputElement().setAttribute('tabindex', '-1');
         this.refreshVariableAriaLabels();
         if (this.isTree) {
             if (this.depth > 0) {
@@ -44,13 +45,17 @@ export class SetFilterListItem extends Component {
                     this.addCssClass('ag-set-filter-add-group-indent');
                 }
             }
-            _.setAriaLevel(this.focusWrapper, this.depth + 1);
+            _.setAriaLevel(this.getAriaElement(), this.depth + 1);
         }
+        this.refreshAriaChecked();
         if (!!this.params.readOnly) {
             // Don't add event listeners if we're read-only.
             return;
         }
         this.eCheckbox.onValueChange((value) => this.onCheckboxChanged(!!value));
+    }
+    getFocusableElement() {
+        return this.focusWrapper;
     }
     setupExpansion() {
         this.eGroupClosedIcon.appendChild(_.createIcon('setFilterGroupClosed', this.gridOptionsService, null));
@@ -82,9 +87,6 @@ export class SetFilterListItem extends Component {
             this.refreshAriaExpanded();
         }
     }
-    refreshAriaExpanded() {
-        _.setAriaExpanded(this.focusWrapper, !!this.isExpanded);
-    }
     setExpandedIcons() {
         _.setDisplayed(this.eGroupClosedIcon, this.hasIndeterminateExpandState ? this.isExpanded === false : !this.isExpanded);
         _.setDisplayed(this.eGroupOpenedIcon, this.isExpanded === true);
@@ -101,6 +103,7 @@ export class SetFilterListItem extends Component {
         };
         this.dispatchEvent(event);
         this.refreshVariableAriaLabels();
+        this.refreshAriaChecked();
     }
     toggleSelected() {
         if (!!this.params.readOnly) {
@@ -110,7 +113,8 @@ export class SetFilterListItem extends Component {
     }
     setSelected(isSelected, silent) {
         this.isSelected = isSelected;
-        this.eCheckbox.setValue(this.isSelected, silent);
+        this.eCheckbox.setValue(isSelected, silent);
+        this.refreshAriaChecked();
     }
     refreshVariableAriaLabels() {
         if (!this.isTree) {
@@ -131,8 +135,16 @@ export class SetFilterListItem extends Component {
         }
         const translate = this.localeService.getLocaleTextFunc();
         const itemLabel = translate('ariaFilterValue', 'Filter Value');
-        _.setAriaLabel(this.focusWrapper, `${value} ${itemLabel}`);
-        _.setAriaDescribedBy(this.focusWrapper, this.eCheckbox.getInputElement().id);
+        const ariaEl = this.getAriaElement();
+        _.setAriaLabel(ariaEl, `${value} ${itemLabel}`);
+        _.setAriaDescribedBy(ariaEl, this.eCheckbox.getInputElement().id);
+    }
+    refreshAriaChecked() {
+        const ariaEl = this.getAriaElement();
+        _.setAriaChecked(ariaEl, this.eCheckbox.getValue());
+    }
+    refreshAriaExpanded() {
+        _.setAriaExpanded(this.getAriaElement(), !!this.isExpanded);
     }
     refresh(item, isSelected, isExpanded) {
         var _a, _b;
@@ -184,15 +196,12 @@ export class SetFilterListItem extends Component {
             const tooltipValue = formattedValue != null ? formattedValue : _.toStringOrNull(value);
             this.setTooltip(tooltipValue);
         }
-        this.cellRendererParams = {
+        this.cellRendererParams = this.gridOptionsService.addGridCommonParams({
             value,
             valueFormatted: formattedValue,
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context,
             colDef: this.params.colDef,
             column: this.params.column,
-        };
+        });
     }
     getTooltipParams() {
         const res = super.getTooltipParams();
@@ -225,7 +234,7 @@ export class SetFilterListItem extends Component {
         var _a;
         let valueToRender = (_a = (this.cellRendererParams.valueFormatted == null ? this.cellRendererParams.value : this.cellRendererParams.valueFormatted)) !== null && _a !== void 0 ? _a : this.translate('blanks');
         if (typeof valueToRender !== 'string') {
-            _.doOnce(() => console.warn('AG Grid: Set Filter Value Formatter must return string values. Please ensure the Set Filter Value Formatter returns string values for complex objects, or set convertValuesToStrings=true in the filterParams. See https://www.ag-grid.com/javascript-data-grid/filter-set-filter-list/#filter-value-types'), 'setFilterComplexObjectsValueFormatter');
+            _.warnOnce(`Set Filter Value Formatter must return string values. Please ensure the Set Filter Value Formatter returns string values for complex objects, or set convertValuesToStrings=true in the filterParams. See ${this.getFrameworkOverrides().getDocLink('filter-set-filter-list/#filter-value-types')}`);
             valueToRender = '';
         }
         this.eCheckbox.setLabel(valueToRender);

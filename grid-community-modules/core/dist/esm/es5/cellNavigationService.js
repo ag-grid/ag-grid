@@ -35,10 +35,14 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 import { Autowired, Bean } from "./context/context";
 import { BeanStub } from "./context/beanStub";
@@ -70,7 +74,7 @@ var CellNavigationService = /** @class */ (function (_super) {
         }
         else {
             var allColumns = this.columnModel.getAllDisplayedColumns();
-            var isRtl = this.gridOptionsService.is('enableRtl');
+            var isRtl = this.gridOptionsService.get('enableRtl');
             rowIndex = focusedCell.rowIndex;
             column = leftKey !== isRtl ? allColumns[0] : last(allColumns);
         }
@@ -97,7 +101,7 @@ var CellNavigationService = /** @class */ (function (_super) {
                     pointer = this.getCellBelow(pointer);
                     break;
                 case KeyCode.RIGHT:
-                    if (this.gridOptionsService.is('enableRtl')) {
+                    if (this.gridOptionsService.get('enableRtl')) {
                         pointer = this.getCellToLeft(pointer);
                     }
                     else {
@@ -105,7 +109,7 @@ var CellNavigationService = /** @class */ (function (_super) {
                     }
                     break;
                 case KeyCode.LEFT:
-                    if (this.gridOptionsService.is('enableRtl')) {
+                    if (this.gridOptionsService.get('enableRtl')) {
                         pointer = this.getCellToRight(pointer);
                     }
                     else {
@@ -213,7 +217,7 @@ var CellNavigationService = /** @class */ (function (_super) {
         if (!this.gridOptionsService.isGroupRowsSticky() || !rowNode || !rowNode.sticky) {
             return;
         }
-        var stickyRowCtrls = __spreadArray([], __read(this.rowRenderer.getStickyTopRowCtrls())).sort(function (a, b) { return a.getRowNode().rowIndex - b.getRowNode().rowIndex; });
+        var stickyRowCtrls = __spreadArray([], __read(this.rowRenderer.getStickyTopRowCtrls()), false).sort(function (a, b) { return a.getRowNode().rowIndex - b.getRowNode().rowIndex; });
         var diff = up ? -1 : 1;
         var idx = stickyRowCtrls.findIndex(function (ctrl) { return ctrl.getRowNode().rowIndex === rowNode.rowIndex; });
         var nextCtrl = stickyRowCtrls[idx + diff];

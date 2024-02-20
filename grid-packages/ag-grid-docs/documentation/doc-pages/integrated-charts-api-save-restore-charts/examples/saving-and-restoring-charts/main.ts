@@ -1,6 +1,17 @@
-import { ChartModel, ChartRef, Grid, GridOptions, FirstDataRenderedEvent } from '@ag-grid-community/core';
-import { getData } from "./data";
+import {
+  ChartModel,
+  ChartRef,
+  createGrid,
+  FirstDataRenderedEvent,
+  GridApi,
+  GridOptions,
+  GridReadyEvent
+} from '@ag-grid-community/core';
+import {getData} from "./data";
 
+let gridApi: GridApi;
+let chartModel: ChartModel | undefined;
+let currentChartRef: ChartRef | undefined;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -11,38 +22,47 @@ const gridOptions: GridOptions = {
   ],
   defaultColDef: {
     editable: true,
-    sortable: true,
     flex: 1,
     minWidth: 100,
     filter: true,
-    resizable: true,
   },
-  rowData: getData(),
   enableRangeSelection: true,
   popupParent: document.body,
   enableCharts: true,
+  onGridReady : (params: GridReadyEvent) => {
+    getData().then(rowData => params.api.setGridOption('rowData', rowData));
+  },
+  onFirstDataRendered,
   createChartContainer,
-  onFirstDataRendered: onFirstDataRendered,
-}
-let chartModel: ChartModel | undefined;
-let currentChartRef: ChartRef | undefined;
+};
+
+
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  currentChartRef = params.api!.createRangeChart({
-    chartType: 'groupedColumn',
+  currentChartRef = params.api.createRangeChart({
+    chartContainer: document.querySelector('#myChart') as any,
     cellRange: {
       columns: ['country', 'sugar', 'fat', 'weight'],
       rowStartIndex: 0,
       rowEndIndex: 2
     },
-       
-    chartContainer: document.querySelector('#myChart') as any,
+    chartType: 'groupedColumn',
   });
 }
 
+function createChartContainer(chartRef: ChartRef) {
+  if (currentChartRef) {
+    currentChartRef.destroyChart();
+  }
+
+  const eChart = chartRef.chartElement;
+  const eParent = document.querySelector<HTMLElement>('#myChart')!;
+  eParent.appendChild(eChart);
+  currentChartRef = chartRef;
+}
 
 function saveChart() {
-  const chartModels = gridOptions.api!.getChartModels() || []
+  const chartModels = gridApi!.getChartModels() || []
   if (chartModels.length > 0) {
     chartModel = chartModels[0]
   }
@@ -57,24 +77,11 @@ function clearChart() {
 
 function restoreChart() {
   if (!chartModel) return
-  currentChartRef = gridOptions.api!.restoreChart(chartModel)!
+  currentChartRef = gridApi!.restoreChart(chartModel)!
 }
-
-function createChartContainer(chartRef: ChartRef) {
-  // destroy existing chart
-  if (currentChartRef) {
-    currentChartRef.destroyChart()
-  }
-
-  const eChart = chartRef.chartElement
-  const eParent = document.querySelector('#myChart') as any;
-  eParent.appendChild(eChart)
-  currentChartRef = chartRef
-}
-
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

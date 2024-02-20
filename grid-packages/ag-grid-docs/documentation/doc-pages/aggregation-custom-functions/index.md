@@ -70,9 +70,9 @@ const gridOptions = {
 As shown above, a custom function is registered with in the grid with the name 'mySum' and is referenced by name in 
 the column definition using the `aggFunc` property.
 
-Note that custom aggregation functions can also be registered using `gridApi.addAggFunc('mySum', mySumFunc)`.
+Note that custom aggregation functions can also be registered using `gridApi.addAggFuncs({ mySum: mySumFunc })`.
 
-<api-documentation source='grid-api/api.json' section='rowPivoting' names='["addAggFunc"]'></api-documentation>
+<api-documentation source='grid-api/api.json' section='rowPivoting' names='["addAggFuncs"]'></api-documentation>
 
 The example below uses the `aggFuncs` approach shown in the snippet above. Note the following:
 - Rows are grouped by the **Country** and **Year** columns by enabling the `rowGroup` column definition property.
@@ -100,27 +100,105 @@ The next example shows many custom aggregation functions configured in a variety
 
 The following can be noted from the example:
 
-- **Min/Max on Age Column**: The function creates an aggregation over age giving a min and a max age. The function knows whether it is working with leaf nodes (original row data items) or aggregated nodes (ie groups) by checking the type of the value. If the value is a number, it's a row data item, otherwise it's a group. This is because the result of the aggregation has two values based on one input value. <br/><br/> The min/max function is then set by placing the function directly as the `colDef.aggFunc`.
-<br/><br/>
-- **Average on Age Column**: The age columns is aggregated a second time with a custom average function. The average function also needs to know if it is working with leaf nodes or group nodes, as if it's group nodes then the average is weighted. The grid also provides an average function that works in the same way, so there is no value in providing your own average function like this, it is done in this example for demonstration purposes. <br/><br/> The average function is also set by placing the function directly as the `colDef.aggFunc`.
-<br/><br/>
-- **Rounded Average on Age Column**: This is the same as `Average on Age Column` but forcing the values to display a maximum of
-two decimal numbers.
-<br/><br/>
-- **Sum on Gold**: The gold column gets a custom `sum` aggregated function. The new sum function doesn't do anything different to the built in sum function, however it serves as a demonstration on how you can override. Maybe you want to provide a sum function that uses for example the `math.js` library.<br/><br/> The sum function is set using a `gridOptions` property.
-<br/><br/>
-- **'123' on Silver**: The '123' function ignores the inputs and always returns the value 123. Because it is registered as an aggregation function, it can be reference by name in the column definitions. Having a function return the same thing isn't very useful, however for the example it demonstrates easily where in the grid the function was used. <br/><br/> The '123' function, like 'sum', is set using a `gridOptions` property.
-<br/><br/>
-- **'xyz' on Bronze**: The 'xyz' function is another function with much use, however it demonstrates you can return anythin from an aggregation function - as long as your aggregation function can handle the result (if you have groups inside groups) and as long as your cell renderer can render the result (if using `cellRenderer`). <br/><br/> The 'xyz' function is set using the API. Note that we also set 'xyz' in the grid options as otherwise
-the grid would complain 'Function not found' as it tries to use the function before it is set via the API.
+- **Min/Max on Age Column**: The function creates an aggregation over age giving a min and a max age. The function knows whether it is working with leaf nodes (original row data items) or aggregated nodes (ie groups) by checking the type of the value. If the value is a number, it's a row data item, otherwise it's a group. This is because the result of the aggregation has two values based on one input value.
+
+  The min/max function is then set by placing the function directly as the `colDef.aggFunc`.
+- **Average on Age Column**: The age columns is aggregated a second time with a custom average function. The average function also needs to know if it is working with leaf nodes or group nodes, as if it's group nodes then the average is weighted. The grid also provides an average function that works in the same way, so there is no value in providing your own average function like this, it is done in this example for demonstration purposes.
+
+  The average function is also set by placing the function directly as the `colDef.aggFunc`.
+- **Rounded Average on Age Column**: This is the same as `Average on Age Column` but forcing the values to display a maximum of two decimal numbers.
+- **Sum on Gold**: The gold column gets a custom `sum` aggregated function. The new sum function doesn't do anything different to the built in sum function, however it serves as a demonstration on how you can override. Maybe you want to provide a sum function that uses for example the `math.js` library.
+
+  The sum function is set using a `gridOptions` property.
+- **'123' on Silver**: The '123' function ignores the inputs and always returns the value 123. Because it is registered as an aggregation function, it can be reference by name in the column definitions. Having a function return the same thing isn't very useful, however for the example it demonstrates easily where in the grid the function was used. 
+
+  The '123' function, like 'sum', is set using a `gridOptions` property.
+- **'xyz' on Bronze**: The 'xyz' function is another function with much use, however it demonstrates you can return anythin from an aggregation function - as long as your aggregation function can handle the result (if you have groups inside groups) and as long as your cell renderer can render the result (if using `cellRenderer`). 
+
+  The 'xyz' function is set using the API. Note that we also set 'xyz' in the grid options as otherwise the grid would complain 'Function not found' as it tries to use the function before it is set via the API.
 
 <grid-example title='Custom Aggregation Functions' name='custom-agg-functions' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel", "setfilter"] }'></grid-example>
 
 Note that custom aggregations will get called for the top level rows to calculate a 'Grand Total', not just for row groups. For example if you have 10 rows in the grid, the grid will still call the aggregation with 10 values to get a grand total aggregation.
 
-The grand total aggregation is normally not seen, unless the grid is configured with [Grouping Total Footers](/grouping/#grouping-footers). Total footers display the result of the aggregation for top level, for example displaying a grand total even if no row grouping is active.
+The grand total aggregation is normally not seen, unless the grid is configured with [Grouping Total Footers](/grouping-footers/#enabling-group-footers). Total footers display the result of the aggregation for top level, for example displaying a grand total even if no row grouping is active.
 
 When the grid is empty, the aggregations are still called once with an empty set. This is to calculate the grand total aggregation for the top level.
+
+## Multi-Level Custom Aggregation Functions 
+
+In row grouping situations, there are some important nuances to consider when defining custom aggregation functions. 
+Since data rows are modelled as a tree, custom aggregation functions are applied using a depth-first recursive approach.
+If you are unaware of the tree-like nature, your custom aggregation functions may behave differently to how you expect. 
+
+For example, with the simple mean average function below:
+
+<snippet>
+| const simpleAvg = (params) => {
+|   const values = params.values;
+|   const sum = values.reduce((a,b) => a + b, 0);
+|   return sum / values.length;
+| }
+</snippet>
+
+The `simpleAvg` will behave as expected with the lowest level group, averaging the values. However, with a group of groups, 
+`simpleAvg` will be the average of the averages. In the code example below, for `simpleAvg` the country average would be the average of the year group averages.
+
+To create a custom aggregation function, which is applied to all leaf rows, the function needs to behave differently when being applied to a group row versus a leaf row. An object needs to be returned containing all the information needed for the calculations for parent groups.
+
+For example, the following function would create average over all leaf rows:
+
+<snippet>
+|  const avgAggFunction = (params) => {
+|    // the average will be the sum / count
+|    let sum = 0;
+|    let count = 0;
+|
+|    params.values.forEach((value) => {
+|      const groupNode = value !== null && value !== undefined && typeof value === 'object';
+|      if (groupNode) {
+|        // we are aggregating groups, so we take the
+|        // aggregated values to calculated a weighted average
+|        sum += value.sum;
+|        count += value.count;
+|      } else {
+|        // skip values that are not numbers (ie skip empty values)
+|        if (typeof value === 'number') {
+|          sum += value;
+|          count++;
+|        }
+|      }
+|    });
+|
+|    // avoid divide by zero error
+|    let avg = null;
+|    if (count !== 0) {
+|      avg = sum / count;
+|    }
+|
+|    // the result will be an object. when this cell is rendered, only the avg is shown.
+|    // however when this cell is part of another aggregation, the count is also needed
+|    // to create a weighted average for the next level.
+|    const result = {
+|      sum: sum,
+|      count: count,
+|      value: avg,
+|    };
+|
+|    return result;
+|  }
+</snippet>
+
+Note in the snippet of `avgAggFunction` above that:
+
+- `sum`, `value` and `count` are returned wrapped as an object
+- `sum` and `count` are needed for calculations by parent groups.
+- `value` is the result value shown in the grid
+
+In the code example below, you can see how `avgAggFunction()` and `simpleAvg()` provide different values at country level but same values at the year group level:
+
+<grid-example title='Multi-Level Custom Function Aggregation' name='custom-avg-function' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel", "setfilter"] }'></grid-example>
+
 
 ## Multi-Column Aggregation
 

@@ -15,10 +15,14 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 var __values = (this && this.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
@@ -53,6 +57,15 @@ var TreeSetDisplayValueModel = /** @class */ (function () {
             children: this.allDisplayedItemsTree,
             expanded: true,
             key: iSetDisplayValueModel_1.SetFilterDisplayValue.SELECT_ALL,
+            parentTreeKeys: []
+        };
+        this.addSelectionToFilterItem = {
+            depth: 0,
+            filterPasses: true,
+            available: true,
+            treeKey: iSetDisplayValueModel_1.SetFilterDisplayValue.ADD_SELECTION_TO_FILTER,
+            expanded: true,
+            key: iSetDisplayValueModel_1.SetFilterDisplayValue.ADD_SELECTION_TO_FILTER,
             parentTreeKeys: []
         };
     }
@@ -112,7 +125,7 @@ var TreeSetDisplayValueModel = /** @class */ (function () {
                     children.push(item);
                 }
                 children = item.children;
-                parentTreeKeys = __spreadArray(__spreadArray([], __read(parentTreeKeys)), [treeKey]);
+                parentTreeKeys = __spreadArray(__spreadArray([], __read(parentTreeKeys), false), [treeKey], false);
             });
         };
         var this_1 = this;
@@ -168,7 +181,7 @@ var TreeSetDisplayValueModel = /** @class */ (function () {
         if (isDate) {
             return TreeSetDisplayValueModel.DATE_TREE_LIST_PATH_GETTER;
         }
-        core_1._.doOnce(function () { return console.warn('AG Grid: property treeList=true for Set Filter params, but you did not provide a treeListPathGetter or values of type Date.'); }, 'getTreeListPathGetter');
+        core_1._.warnOnce('property treeList=true for Set Filter params, but you did not provide a treeListPathGetter or values of type Date.');
         return function (value) { return [String(value)]; };
     };
     TreeSetDisplayValueModel.prototype.flattenItems = function () {
@@ -219,6 +232,9 @@ var TreeSetDisplayValueModel = /** @class */ (function () {
     };
     TreeSetDisplayValueModel.prototype.getSelectAllItem = function () {
         return this.selectAllItem;
+    };
+    TreeSetDisplayValueModel.prototype.getAddSelectionToFilterItem = function () {
+        return this.addSelectionToFilterItem;
     };
     TreeSetDisplayValueModel.prototype.getDisplayedKeys = function () {
         var displayedKeys = [];

@@ -11,7 +11,6 @@ const componentAnnotations_1 = require("./componentAnnotations");
 const agAbstractField_1 = require("./agAbstractField");
 const dom_1 = require("../utils/dom");
 const aria_1 = require("../utils/aria");
-const generic_1 = require("../utils/generic");
 class AgAbstractInputField extends agAbstractField_1.AgAbstractField {
     constructor(config, className, inputType = 'text', displayFieldTag = 'input') {
         super(config, /* html */ `
@@ -42,15 +41,6 @@ class AgAbstractInputField extends agAbstractField_1.AgAbstractField {
         this.addInputListeners();
         this.activateTabIndex([this.eInput]);
     }
-    refreshLabel() {
-        if (generic_1.exists(this.getLabel())) {
-            aria_1.setAriaLabelledBy(this.eInput, this.getLabelId());
-        }
-        else {
-            this.eInput.removeAttribute('aria-labelledby');
-        }
-        super.refreshLabel();
-    }
     addInputListeners() {
         this.addManagedListener(this.eInput, 'input', e => this.setValue(e.target.value));
     }
@@ -63,7 +53,7 @@ class AgAbstractInputField extends agAbstractField_1.AgAbstractField {
         return this.eInput;
     }
     setInputWidth(width) {
-        dom_1.setElementWidth(this.eWrapper, width);
+        (0, dom_1.setElementWidth)(this.eWrapper, width);
         return this;
     }
     setInputName(name) {
@@ -79,40 +69,41 @@ class AgAbstractInputField extends agAbstractField_1.AgAbstractField {
         return this;
     }
     setInputPlaceholder(placeholder) {
-        dom_1.addOrRemoveAttribute(this.eInput, 'placeholder', placeholder);
+        (0, dom_1.addOrRemoveAttribute)(this.eInput, 'placeholder', placeholder);
         return this;
     }
     setInputAriaLabel(label) {
-        aria_1.setAriaLabel(this.eInput, label);
+        (0, aria_1.setAriaLabel)(this.eInput, label);
+        this.refreshAriaLabelledBy();
         return this;
     }
     setDisabled(disabled) {
-        dom_1.setDisabled(this.eInput, disabled);
+        (0, dom_1.setDisabled)(this.eInput, disabled);
         return super.setDisabled(disabled);
     }
     setAutoComplete(value) {
         if (value === true) {
             // Remove the autocomplete attribute if the value is explicitly set to true
             // to allow the default browser autocomplete/autofill behaviour.
-            dom_1.addOrRemoveAttribute(this.eInput, 'autocomplete', null);
+            (0, dom_1.addOrRemoveAttribute)(this.eInput, 'autocomplete', null);
         }
         else {
             // When a string is provided, use it as the value of the autocomplete attribute.
             // This enables users to specify how they want to the browser to handle the autocomplete on the input, as per spec:
             // https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete#values
             const autoCompleteValue = typeof value === 'string' ? value : 'off';
-            dom_1.addOrRemoveAttribute(this.eInput, 'autocomplete', autoCompleteValue);
+            (0, dom_1.addOrRemoveAttribute)(this.eInput, 'autocomplete', autoCompleteValue);
         }
         return this;
     }
 }
 __decorate([
-    componentAnnotations_1.RefSelector('eLabel')
+    (0, componentAnnotations_1.RefSelector)('eLabel')
 ], AgAbstractInputField.prototype, "eLabel", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eWrapper')
+    (0, componentAnnotations_1.RefSelector)('eWrapper')
 ], AgAbstractInputField.prototype, "eWrapper", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eInput')
+    (0, componentAnnotations_1.RefSelector)('eInput')
 ], AgAbstractInputField.prototype, "eInput", void 0);
 exports.AgAbstractInputField = AgAbstractInputField;

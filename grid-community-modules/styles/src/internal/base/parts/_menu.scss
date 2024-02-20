@@ -3,6 +3,8 @@
 @mixin output {
     .ag-menu {
         @include ag.card();
+        background-color: var(--ag-menu-background-color);
+        border-color: var(--ag-menu-border-color);
         padding: 0;
     }
 
@@ -49,7 +51,7 @@
     }
 
     .ag-menu-option-popup-pointer, .ag-compact-menu-option-popup-pointer {
-        padding-right: var(--ag-grid-size);
+        @include ag.unthemed-rtl((padding-right: var(--ag-grid-size)));
     }
 
     ////////////////////////////////////////
@@ -60,7 +62,6 @@
     }
 
     .ag-tabs-header {
-        width: 100%;
         display: flex;
     }
 
@@ -132,22 +133,28 @@
     }
 
     .ag-set-filter-item {
-        margin: 0px var(--ag-widget-container-horizontal-padding);
-    }
-
-    .ag-set-filter-add-group-indent {
-        @include ag.unthemed-rtl((margin-left: calc(var(--ag-widget-container-horizontal-padding) + var(--ag-icon-size) + var(--ag-grid-size) * 2)));
+        padding: 0px var(--ag-widget-container-horizontal-padding);
     }
 
     @for $i from 1 to 10 {
         .ag-set-filter-indent-#{$i} {
-            @include ag.unthemed-rtl(( padding-left: calc(#{$i} * var(--ag-set-filter-indent-size)) ));
+            @include ag.unthemed-rtl(( padding-left: calc(var(--ag-widget-container-horizontal-padding) + #{$i} * var(--ag-set-filter-indent-size)) ));
         }
+    }
+
+    .ag-set-filter-add-group-indent {
+        @include ag.unthemed-rtl((margin-left: calc(var(--ag-icon-size) + var(--ag-widget-container-horizontal-padding))));
     }
 
     .ag-set-filter-group-icons {
         @include ag.unthemed-rtl((margin-right: var(--ag-widget-container-horizontal-padding)))
     }
+
+    .ag-filter-menu .ag-set-filter-list {
+        min-width: 200px;
+    }
+
+    @include ag.keyboard-focus((ag-filter-virtual-list-item), 1px);
 
     .ag-filter-apply-panel {
         padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);

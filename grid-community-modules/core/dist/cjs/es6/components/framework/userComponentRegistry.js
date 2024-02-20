@@ -40,6 +40,7 @@ const dateCellEditor_1 = require("../../rendering/cellEditors/dateCellEditor");
 const dateStringCellEditor_1 = require("../../rendering/cellEditors/dateStringCellEditor");
 const checkboxCellRenderer_1 = require("../../rendering/cellRenderers/checkboxCellRenderer");
 const checkboxCellEditor_1 = require("../../rendering/cellEditors/checkboxCellEditor");
+const agMenuItemRenderer_1 = require("../../widgets/agMenuItemRenderer");
 let UserComponentRegistry = class UserComponentRegistry extends beanStub_1.BeanStub {
     constructor() {
         super(...arguments);
@@ -79,7 +80,9 @@ let UserComponentRegistry = class UserComponentRegistry extends beanStub_1.BeanS
             agLoadingOverlay: loadingOverlayComponent_1.LoadingOverlayComponent,
             agNoRowsOverlay: noRowsOverlayComponent_1.NoRowsOverlayComponent,
             // tooltips
-            agTooltipComponent: tooltipComponent_1.TooltipComponent
+            agTooltipComponent: tooltipComponent_1.TooltipComponent,
+            // menu item
+            agMenuItem: agMenuItemRenderer_1.AgMenuItemRenderer
         };
         /** Used to provide useful error messages if a user is trying to use an enterprise component without loading the module. */
         this.enterpriseAgDefaultCompsModule = {
@@ -98,7 +101,7 @@ let UserComponentRegistry = class UserComponentRegistry extends beanStub_1.BeanS
     }
     init() {
         if (this.gridOptions.components != null) {
-            object_1.iterateObject(this.gridOptions.components, (key, component) => this.registerJsComponent(key, component));
+            (0, object_1.iterateObject)(this.gridOptions.components, (key, component) => this.registerJsComponent(key, component));
         }
     }
     registerDefaultComponent(name, component) {
@@ -134,7 +137,7 @@ let UserComponentRegistry = class UserComponentRegistry extends beanStub_1.BeanS
             moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleForComponent, `AG Grid '${propertyName}' component: ${name}`, this.context.getGridId());
         }
         else {
-            function_1.doOnce(() => { this.warnAboutMissingComponent(propertyName, name); }, "MissingComp" + name);
+            (0, function_1.doOnce)(() => { this.warnAboutMissingComponent(propertyName, name); }, "MissingComp" + name);
         }
         return null;
     }
@@ -144,21 +147,21 @@ let UserComponentRegistry = class UserComponentRegistry extends beanStub_1.BeanS
             ...Object.keys(this.agGridDefaults).filter(k => !['agCellEditor', 'agGroupRowRenderer', 'agSortIndicator'].includes(k)),
             ...Object.keys(this.jsComps)
         ];
-        const suggestions = fuzzyMatch_1.fuzzySuggestions(componentName, validComponents, true, 0.8);
+        const suggestions = (0, fuzzyMatch_1.fuzzySuggestions)(componentName, validComponents, true, 0.8).values;
         console.warn(`AG Grid: Could not find '${componentName}' component. It was configured as "${propertyName}: '${componentName}'" but it wasn't found in the list of registered components.`);
         if (suggestions.length > 0) {
             console.warn(`         Did you mean: [${suggestions.slice(0, 3)}]?`);
         }
-        console.warn(`If using a custom component check it has been registered as described in: https://ag-grid.com/javascript-data-grid/components/`);
+        console.warn(`If using a custom component check it has been registered as described in: ${this.getFrameworkOverrides().getDocLink('components/')}`);
     }
 };
 __decorate([
-    context_1.Autowired('gridOptions')
+    (0, context_1.Autowired)('gridOptions')
 ], UserComponentRegistry.prototype, "gridOptions", void 0);
 __decorate([
     context_1.PostConstruct
 ], UserComponentRegistry.prototype, "init", null);
 UserComponentRegistry = __decorate([
-    context_1.Bean('userComponentRegistry')
+    (0, context_1.Bean)('userComponentRegistry')
 ], UserComponentRegistry);
 exports.UserComponentRegistry = UserComponentRegistry;

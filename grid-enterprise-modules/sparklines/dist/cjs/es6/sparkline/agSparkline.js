@@ -10,7 +10,7 @@ const { isNumber } = ag_charts_community_1._Util;
 class AgSparkline {
     static create(options, tooltip) {
         // avoid mutating user provided options
-        options = ag_charts_community_1._Util.jsonMerge([options]);
+        options = ag_charts_community_1._Util.deepClone(options);
         const sparkline = getSparklineInstance(options.type);
         if (tooltip) {
             sparkline.tooltip = tooltip;

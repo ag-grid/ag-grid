@@ -1,5 +1,11 @@
-import { Grid, ColDef, GridOptions, ICellRendererParams, ICellRendererComp } from '@ag-grid-community/core'
-import { doc } from "prettier";
+import {
+  GridApi,
+  createGrid,
+  ColDef,
+  GridOptions,
+  ICellRendererParams,
+  ICellRendererComp,
+} from '@ag-grid-community/core';
 
 declare var AG_GRID_LOCALE_ZZZ: {
   [key: string]: string;
@@ -10,7 +16,7 @@ class NodeIdRenderer implements ICellRendererComp {
 
   init(params: ICellRendererParams) {
     this.eGui = document.createElement('div');
-    this.eGui.innerHTML = params.node!.id! + 1;
+    this.eGui.textContent = params.node!.id! + 1;
   }
 
   getGui() {
@@ -63,15 +69,15 @@ const columnDefs: ColDef[] = [
 
 var localeText = AG_GRID_LOCALE_ZZZ
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
   defaultColDef: {
     editable: true,
-    sortable: true,
     flex: 1,
     minWidth: 100,
     filter: true,
-    resizable: true,
   },
   sideBar: true,
   statusBar: {
@@ -83,17 +89,19 @@ const gridOptions: GridOptions<IOlympicData> = {
   rowGroupPanelShow: 'always',
   pagination: true,
   paginationPageSize: 500,
+  paginationPageSizeSelector: [100, 500, 1000],
   enableRangeSelection: true,
   enableCharts: true,
   localeText: localeText,
+  rowSelection: 'multiple',
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

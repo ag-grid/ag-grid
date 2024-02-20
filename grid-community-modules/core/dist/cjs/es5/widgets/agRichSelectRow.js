@@ -38,9 +38,9 @@ var RichSelectRow = /** @class */ (function (_super) {
         return _this;
     }
     RichSelectRow.prototype.postConstruct = function () {
-        this.addManagedListener(this.getGui(), 'mouseup', this.onMouseUp.bind(this));
+        this.addManagedListener(this.getGui(), 'click', this.onClick.bind(this));
     };
-    RichSelectRow.prototype.setState = function (value, selected) {
+    RichSelectRow.prototype.setState = function (value) {
         var formattedValue = '';
         if (this.params.valueFormatter) {
             formattedValue = this.params.valueFormatter(value);
@@ -51,17 +51,40 @@ var RichSelectRow = /** @class */ (function (_super) {
         }
         this.value = value;
     };
+    RichSelectRow.prototype.highlightString = function (matchString) {
+        var parsedValue = this.parsedValue;
+        if (this.params.cellRenderer || !(0, generic_1.exists)(parsedValue)) {
+            return;
+        }
+        var hasMatch = (0, generic_1.exists)(matchString);
+        if (hasMatch) {
+            var index = parsedValue === null || parsedValue === void 0 ? void 0 : parsedValue.toLocaleLowerCase().indexOf(matchString.toLocaleLowerCase());
+            if (index >= 0) {
+                var highlightEndIndex = index + matchString.length;
+                var startPart = (0, string_1.escapeString)(parsedValue.slice(0, index), true);
+                var highlightedPart = (0, string_1.escapeString)(parsedValue.slice(index, highlightEndIndex), true);
+                var endPart = (0, string_1.escapeString)(parsedValue.slice(highlightEndIndex));
+                this.renderValueWithoutRenderer("".concat(startPart, "<span class=\"ag-rich-select-row-text-highlight\">").concat(highlightedPart, "</span>").concat(endPart));
+            }
+            else {
+                hasMatch = false;
+            }
+        }
+        if (!hasMatch) {
+            this.renderValueWithoutRenderer(parsedValue);
+        }
+    };
     RichSelectRow.prototype.updateHighlighted = function (highlighted) {
         var _a;
         var eGui = this.getGui();
-        var parentId = "ag-rich-select-row-" + this.getCompId();
+        var parentId = "ag-rich-select-row-".concat(this.getCompId());
         (_a = eGui.parentElement) === null || _a === void 0 ? void 0 : _a.setAttribute('id', parentId);
         if (highlighted) {
             var parentAriaEl = this.getParentComponent().getAriaElement();
-            parentAriaEl.setAttribute('aria-activedescendant', parentId);
+            (0, aria_1.setAriaActiveDescendant)(parentAriaEl, parentId);
             this.wrapperEl.setAttribute('data-active-option', parentId);
         }
-        aria_1.setAriaSelected(eGui.parentElement, highlighted);
+        (0, aria_1.setAriaSelected)(eGui.parentElement, highlighted);
         this.addOrRemoveCssClass('ag-rich-select-row-selected', highlighted);
     };
     RichSelectRow.prototype.populateWithoutRenderer = function (value, valueFormatted) {
@@ -70,9 +93,17 @@ var RichSelectRow = /** @class */ (function (_super) {
         var span = eDocument.createElement('span');
         span.style.overflow = 'hidden';
         span.style.textOverflow = 'ellipsis';
-        var parsedValue = string_1.escapeString(generic_1.exists(valueFormatted) ? valueFormatted : value);
-        span.textContent = generic_1.exists(parsedValue) ? parsedValue : '&nbsp;';
+        var parsedValue = (0, string_1.escapeString)((0, generic_1.exists)(valueFormatted) ? valueFormatted : value, true);
+        this.parsedValue = (0, generic_1.exists)(parsedValue) ? parsedValue : null;
         eGui.appendChild(span);
+        this.renderValueWithoutRenderer(parsedValue);
+    };
+    RichSelectRow.prototype.renderValueWithoutRenderer = function (value) {
+        var span = this.getGui().querySelector('span');
+        if (!span) {
+            return;
+        }
+        span.innerHTML = (0, generic_1.exists)(value) ? value : '&nbsp;';
     };
     RichSelectRow.prototype.populateWithRenderer = function (value, valueFormatted) {
         var _this = this;
@@ -82,15 +113,14 @@ var RichSelectRow = /** @class */ (function (_super) {
         if (this.params.cellRenderer) {
             userCompDetails = this.userComponentFactory.getCellRendererDetails(this.params, {
                 value: value,
-                valueFormatted: valueFormatted,
-                api: this.gridOptionsService.api
+                valueFormatted: valueFormatted
             });
         }
         if (userCompDetails) {
             cellRendererPromise = userCompDetails.newAgStackInstance();
         }
         if (cellRendererPromise) {
-            dom_1.bindCellRendererToHtmlElement(cellRendererPromise, this.getGui());
+            (0, dom_1.bindCellRendererToHtmlElement)(cellRendererPromise, this.getGui());
         }
         if (cellRendererPromise) {
             cellRendererPromise.then(function (childComponent) {
@@ -102,7 +132,7 @@ var RichSelectRow = /** @class */ (function (_super) {
         }
         return false;
     };
-    RichSelectRow.prototype.onMouseUp = function () {
+    RichSelectRow.prototype.onClick = function () {
         var parent = this.getParentComponent();
         var event = {
             type: eventKeys_1.Events.EVENT_FIELD_PICKER_VALUE_SELECTED,
@@ -112,7 +142,7 @@ var RichSelectRow = /** @class */ (function (_super) {
         parent === null || parent === void 0 ? void 0 : parent.dispatchEvent(event);
     };
     __decorate([
-        context_1.Autowired('userComponentFactory')
+        (0, context_1.Autowired)('userComponentFactory')
     ], RichSelectRow.prototype, "userComponentFactory", void 0);
     __decorate([
         context_1.PostConstruct

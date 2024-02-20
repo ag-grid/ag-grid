@@ -1,4 +1,12 @@
-import { Grid, GridOptions, IDateFilterParams, IMultiFilterParams, ISetFilterParams, ITextFilterParams } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  GridOptions,
+  IDateFilterParams,
+  IMultiFilterParams,
+  ISetFilterParams,
+  ITextFilterParams,
+} from '@ag-grid-community/core';
 
 var dateFilterParams: IMultiFilterParams = {
   filters: [
@@ -22,6 +30,8 @@ var dateFilterParams: IMultiFilterParams = {
     },
   ],
 }
+
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -66,7 +76,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     flex: 1,
     minWidth: 200,
-    resizable: true,
     menuTabs: ['filterMenuTab'],
   },
   sideBar: {
@@ -86,9 +95,9 @@ function getDate(value: string): Date {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

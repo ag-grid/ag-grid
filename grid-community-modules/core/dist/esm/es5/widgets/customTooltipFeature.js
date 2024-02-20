@@ -34,7 +34,7 @@ import { Autowired, PostConstruct } from "../context/context";
 import { BeanStub } from "../context/beanStub";
 import { exists } from "../utils/generic";
 import { isIOSUserAgent } from "../utils/browser";
-import { doOnce } from "../utils/function";
+import { warnOnce } from "../utils/function";
 import { Events } from "../eventKeys";
 var TooltipStates;
 (function (TooltipStates) {
@@ -54,8 +54,6 @@ var CustomTooltipFeature = /** @class */ (function (_super) {
         _this.parentComp = parentComp;
         _this.tooltipShowDelayOverride = tooltipShowDelayOverride;
         _this.tooltipHideDelayOverride = tooltipHideDelayOverride;
-        _this.DEFAULT_SHOW_TOOLTIP_DELAY = 2000;
-        _this.DEFAULT_HIDE_TOOLTIP_DELAY = 10000;
         _this.SHOW_QUICK_TOOLTIP_DIFF = 1000;
         _this.FADE_OUT_TOOLTIP_TIMEOUT = 1000;
         _this.INTERACTIVE_HIDE_DELAY = 100;
@@ -70,13 +68,11 @@ var CustomTooltipFeature = /** @class */ (function (_super) {
         return _this;
     }
     CustomTooltipFeature.prototype.postConstruct = function () {
-        if (this.gridOptionsService.is('tooltipInteraction')) {
+        if (this.gridOptionsService.get('tooltipInteraction')) {
             this.interactionEnabled = true;
         }
         this.tooltipTrigger = this.getTooltipTrigger();
-        this.tooltipShowDelay = this.getTooltipDelay('show');
-        this.tooltipHideDelay = this.getTooltipDelay('hide');
-        this.tooltipMouseTrack = this.gridOptionsService.is('tooltipMouseTrack');
+        this.tooltipMouseTrack = this.gridOptionsService.get('tooltipMouseTrack');
         var el = this.parentComp.getGui();
         if (this.tooltipTrigger === TooltipTrigger.HOVER) {
             this.addManagedListener(el, 'mouseenter', this.onMouseEnter.bind(this));
@@ -93,22 +89,19 @@ var CustomTooltipFeature = /** @class */ (function (_super) {
         }
     };
     CustomTooltipFeature.prototype.getGridOptionsTooltipDelay = function (delayOption) {
-        var delay = this.gridOptionsService.getNum(delayOption);
-        if (exists(delay)) {
-            if (delay < 0) {
-                doOnce(function () { return console.warn("AG Grid: " + delayOption + " should not be lower than 0"); }, delayOption + "Warn");
-            }
-            return Math.max(200, delay);
+        var delay = this.gridOptionsService.get(delayOption);
+        if (delay < 0) {
+            warnOnce("".concat(delayOption, " should not be lower than 0"));
         }
-        return undefined;
+        return Math.max(200, delay);
     };
     CustomTooltipFeature.prototype.getTooltipDelay = function (type) {
-        var _a, _b, _c, _d;
+        var _a, _b;
         if (type === 'show') {
-            return (_b = (_a = this.getGridOptionsTooltipDelay('tooltipShowDelay')) !== null && _a !== void 0 ? _a : this.tooltipShowDelayOverride) !== null && _b !== void 0 ? _b : this.DEFAULT_SHOW_TOOLTIP_DELAY;
+            return (_a = this.tooltipShowDelayOverride) !== null && _a !== void 0 ? _a : this.getGridOptionsTooltipDelay('tooltipShowDelay');
         }
         else {
-            return (_d = (_c = this.getGridOptionsTooltipDelay('tooltipHideDelay')) !== null && _c !== void 0 ? _c : this.tooltipHideDelayOverride) !== null && _d !== void 0 ? _d : this.DEFAULT_HIDE_TOOLTIP_DELAY;
+            return (_b = this.tooltipHideDelayOverride) !== null && _b !== void 0 ? _b : this.getGridOptionsTooltipDelay('tooltipHideDelay');
         }
     };
     CustomTooltipFeature.prototype.destroy = function () {
@@ -202,7 +195,7 @@ var CustomTooltipFeature = /** @class */ (function (_super) {
         // if another tooltip was hidden very recently, we only wait 200ms to show, not the normal waiting time
         var delay = 0;
         if (mouseEvent) {
-            delay = this.isLastTooltipHiddenRecently() ? 200 : this.tooltipShowDelay;
+            delay = this.isLastTooltipHiddenRecently() ? 200 : this.getTooltipDelay('show');
         }
         this.lastMouseEvent = mouseEvent || null;
         this.showTooltipTimeoutId = window.setTimeout(this.showTooltip.bind(this), delay);
@@ -400,7 +393,7 @@ var CustomTooltipFeature = /** @class */ (function (_super) {
     };
     CustomTooltipFeature.prototype.startHideTimeout = function () {
         this.clearHideTimeout();
-        this.hideTooltipTimeoutId = window.setTimeout(this.hideTooltip.bind(this), this.tooltipHideDelay);
+        this.hideTooltipTimeoutId = window.setTimeout(this.hideTooltip.bind(this), this.getTooltipDelay('hide'));
     };
     CustomTooltipFeature.prototype.clearShowTimeout = function () {
         if (!this.showTooltipTimeoutId) {

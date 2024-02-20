@@ -95,7 +95,7 @@ export class InfiniteBlock extends RowNodeBlock {
             failCallback: this.pageLoadFailed.bind(this, this.getVersion()),
             sortModel: this.params.sortModel,
             filterModel: this.params.filterModel,
-            context: this.gridOptionsService.context
+            context: this.gridOptionsService.getGridCommonParams().context
         };
         return params;
     }
@@ -159,6 +159,7 @@ export class InfiniteBlock extends RowNodeBlock {
                 this.rowNodes[index] = new RowNode(this.beans);
                 this.rowNodes[index].setRowIndex(rowNode.rowIndex!);
                 this.rowNodes[index].setRowTop(rowNode.rowTop!);
+                this.rowNodes[index].setRowHeight(rowNode.rowHeight!);
 
                 // clean up the old row
                 rowNode.clearRowTopAndRowIndex();

@@ -1,6 +1,6 @@
-import { ModuleRegistry, ColDef, Grid, GridOptions, GridReadyEvent, ICellRendererComp, ICellRendererParams, GetRowIdParams } from "@ag-grid-community/core";
+import { ModuleRegistry, ColDef, GridOptions, GridReadyEvent, ICellRendererComp, ICellRendererParams, GetRowIdParams, createGrid, GridApi } from "@ag-grid-community/core";
 import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
@@ -13,7 +13,7 @@ class SportRenderer implements ICellRendererComp {
     init(params: ICellRendererParams) {
         this.eGui = document.createElement('i');
 
-        this.eGui.addEventListener('click', function () {
+        this.eGui.addEventListener('click', () => {
             params.api.applyTransaction({ remove: [params.node.data] });
         });
 
@@ -34,7 +34,7 @@ const leftColumnDefs: ColDef[] = [
     {
         rowDrag: true,
         maxWidth: 50,
-        suppressMenu: true,
+        suppressHeaderMenuButton: true,
         rowDragText: (params, dragItemCount) => {
             if (dragItemCount > 1) {
                 return dragItemCount + ' athletes';
@@ -46,7 +46,7 @@ const leftColumnDefs: ColDef[] = [
         colId: 'checkbox',
         maxWidth: 50,
         checkboxSelection: true,
-        suppressMenu: true,
+        suppressHeaderMenuButton: true,
         headerCheckboxSelection: true
     },
     { field: "athlete" },
@@ -57,7 +57,7 @@ const rightColumnDefs: ColDef[] = [
     {
         rowDrag: true,
         maxWidth: 50,
-        suppressMenu: true,
+        suppressHeaderMenuButton: true,
         rowDragText: (params, dragItemCount) => {
             if (dragItemCount > 1) {
                 return dragItemCount + ' athletes';
@@ -68,19 +68,17 @@ const rightColumnDefs: ColDef[] = [
     { field: "athlete" },
     { field: "sport" },
     {
-        suppressMenu: true,
+        suppressHeaderMenuButton: true,
         maxWidth: 50,
         cellRenderer: SportRenderer
     }
 ];
-
+let leftApi: GridApi;
 const leftGridOptions: GridOptions = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
-        sortable: true,
         filter: true,
-        resizable: true
     },
     rowSelection: 'multiple',
     rowDragMultiRow: true,
@@ -91,43 +89,39 @@ const leftGridOptions: GridOptions = {
     rowDragManaged: true,
     suppressMoveWhenRowDragging: true,
     columnDefs: leftColumnDefs,
-    animateRows: true,
     onGridReady: (params) => {
         addGridDropZone(params);
     }
 };
-
+let rightApi: GridApi;
 const rightGridOptions: GridOptions = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
-        sortable: true,
         filter: true,
-        resizable: true
     },
     getRowId: (params: GetRowIdParams) => {
         return params.data.athlete;
     },
     rowDragManaged: true,
     columnDefs: rightColumnDefs,
-    animateRows: true
 };
 
 function addGridDropZone(params: GridReadyEvent) {
-    const dropZoneParams = rightGridOptions.api!.getRowDropZoneParams({
+    const dropZoneParams = rightApi!.getRowDropZoneParams({
         onDragStop: (params) => {
             const deselectCheck = (document.querySelector('input#deselect') as HTMLInputElement).checked;
             const moveCheck = (document.querySelector('input#move') as HTMLInputElement).checked;
             const nodes = params.nodes;
 
             if (moveCheck) {
-                leftGridOptions.api!.applyTransaction({
+                leftApi!.applyTransaction({
                     remove: nodes.map(function (node) {
                         return node.data;
                     })
                 });
             } else if (deselectCheck) {
-                leftGridOptions.api!.setNodesSelected({ nodes, newValue: false });
+                leftApi!.setNodesSelected({ nodes, newValue: false });
             }
         }
     });
@@ -135,15 +129,13 @@ function addGridDropZone(params: GridReadyEvent) {
     params.api.addRowDropZone(dropZoneParams);
 }
 
-function loadGrid(options: GridOptions, side: string, data: any[]) {
+function loadGrid(options: GridOptions, oldApi: GridApi, side: string, data: any[]) {
     const grid = document.querySelector<HTMLElement>('#e' + side + 'Grid')!;
 
-    if (options && options.api) {
-        options.api.destroy();
-    }
+    oldApi?.destroy();
 
     options.rowData = data;
-    new Grid(grid, options);
+    return createGrid(grid, options);
 }
 
 function resetInputs() {
@@ -174,22 +166,22 @@ function loadGrids() {
                 athletes.push(data[pos]);
             }
 
-            loadGrid(leftGridOptions, 'Left', athletes);
-            loadGrid(rightGridOptions, 'Right', []);
+           leftApi = loadGrid(leftGridOptions, leftApi, 'Left', athletes);
+           rightApi = loadGrid(rightGridOptions, rightApi, 'Right', []);
         });
 }
 
 const resetBtn = document.querySelector('button.reset')!;
 const checkboxToggle = document.querySelector('#toggleCheck') as HTMLInputElement;
 
-resetBtn.addEventListener('click', function () {
+resetBtn.addEventListener('click', () => {
     resetInputs();
     loadGrids();
 });
 
-checkboxToggle.addEventListener('change', function () {
-    leftGridOptions.columnApi!.setColumnVisible('checkbox', checkboxToggle.checked);
-    leftGridOptions.api!.setSuppressRowClickSelection(checkboxToggle.checked);
+checkboxToggle.addEventListener('change', () => {
+    leftApi!.setColumnsVisible(['checkbox'], checkboxToggle.checked);
+    leftApi!.setGridOption('suppressRowClickSelection', checkboxToggle.checked);
 });
 
 loadGrids();

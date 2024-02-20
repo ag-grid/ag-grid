@@ -70,25 +70,3 @@ export function sortRowNodesByOrder(rowNodes: RowNode[], rowNodeOrder: { [id: st
     }
     return false;
 }
-
-export function traverseNodesWithKey(nodes: RowNode[] | null, callback: (node: RowNode, key: string) => void): void {
-    const keyParts: any[] = [];
-
-    recursiveSearchNodes(nodes);
-
-    function recursiveSearchNodes(currentNodes: RowNode[] | null): void {
-        if (!currentNodes) { return; }
-
-        currentNodes.forEach((node: RowNode) => {
-
-            // also checking for children for tree data
-            if (node.group || node.hasChildren()) {
-                keyParts.push(node.key);
-                const key = keyParts.join('|');
-                callback(node, key);
-                recursiveSearchNodes(node.childrenAfterGroup);
-                keyParts.pop();
-            }
-        });
-    }
-}

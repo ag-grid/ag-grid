@@ -67,15 +67,6 @@ function tsNodeIsSimpleFetchRequest(node) {
     }
 }
 
-function tsGenerateWithReplacedGridOptions(node, srcFile) {
-    return tsGenerate(node, srcFile)
-        // Handle case when api is on a new line 
-        //  gridOptions
-        //      .api.setRow()
-        .replace(/gridOptions\s*\n?\s*\.api/g, 'this.gridApi')
-        .replace(/gridOptions\s*\n?\s*\.columnApi/g, 'this.gridColumnApi')
-}
-
 function processColDefsForFunctionalReactOrVue(propertyName: string, exampleType, exampleSettings, providedExamples) {
     if (propertyName === 'columnDefs') {
         return exampleType === 'generated' ||
@@ -196,14 +187,13 @@ function internalParser(examplePath, {
         registered.push(handler);
 
         // one of the event handlers extracted earlier (onclick, onchange etc)
-        // body replaces gridOptions.api/columnApi with this.gridApi/columnApi
         tsCollectors.push({
             matches: node => tsNodeIsFunctionWithName(node, handler),
             apply: (bindings, node) => {
                 bindings.externalEventHandlers.push({
                     name: handler,
                     params: params,
-                    body: tsGenerateWithReplacedGridOptions(node, tsTree)
+                    body: tsGenerate(node, tsTree)
                 });
             }
         });
@@ -213,7 +203,7 @@ function internalParser(examplePath, {
     const unboundInstanceMethods = extractUnboundInstanceMethods(tsTree);
     tsCollectors.push({
         matches: node => tsNodeIsInScope(node, unboundInstanceMethods),
-        apply: (bindings, node) => bindings.instanceMethods.push(removeInScopeJsDoc(tsGenerateWithReplacedGridOptions(node, tsTree)))
+        apply: (bindings, node) => bindings.instanceMethods.push(removeInScopeJsDoc(tsGenerate(node, tsTree)))
     });
 
 
@@ -221,7 +211,7 @@ function internalParser(examplePath, {
     tsCollectors.push({
         matches: node => tsNodeIsUnusedFunction(node, registered, unboundInstanceMethods),
         apply: (bindings, node) => {
-            const util = tsGenerate(node, tsTree).replace(/gridOptions/g, 'gridInstance');
+            const util = tsGenerate(node, tsTree);
             bindings.utils.push(util)
         }
     });
@@ -235,7 +225,7 @@ function internalParser(examplePath, {
     });
 
     // For React we need to identify the external dependencies for callbacks to prevent stale closures
-    const GLOBAL_DEPS = new Set(['console', 'document', 'Error', 'this'])
+    const GLOBAL_DEPS = new Set(['console', 'document', 'Error', 'this', 'gridApi', 'gridOptions'])
     tsCollectors.push({
         matches: node => tsNodeIsTopLevelFunction(node),
         apply: (bindings, node: ts.SignatureDeclaration) => {
@@ -274,7 +264,7 @@ function internalParser(examplePath, {
         matches: tsNodeIsHttpOpen,
         apply: (bindings, node) => {
             const url = node.expression.arguments[1].raw;
-            const callback = '{ params.api.setRowData(data); }';
+            const callback = '{ gridApi.setGridOption(\'rowData\', data); }';
 
             bindings.data = {url, callback};
         }
@@ -331,7 +321,7 @@ function internalParser(examplePath, {
                 bindings.eventHandlers.push({
                     name: eventName,
                     handlerName: onEventName,
-                    handler: tsGenerateWithReplacedGridOptions(node, tsTree)
+                    handler: tsGenerate(node, tsTree)
                 });
             }
         });
@@ -344,7 +334,7 @@ function internalParser(examplePath, {
             matches: node => tsNodeIsPropertyWithName(node, onEventName) && onEventName !== 'onGridReady',
             apply: (bindings, node: ts.PropertyAssignment) => {
                 // Find any inline arrow functions or functions for events and convert to external function definition
-                const eventHandler = tsGenerateWithReplacedGridOptions(node.initializer, tsTree);
+                const eventHandler = tsGenerate(node.initializer, tsTree);
                 const functionHandler = ts.isArrowFunction(node.initializer)
                     ? eventHandler
                         // (event: RowEditingStoppedEvent) => {  
@@ -368,7 +358,7 @@ function internalParser(examplePath, {
         tsCollectors.push({
             matches: (node: ts.Node) => tsNodeIsFunctionWithName(node, functionName),
             apply: (bindings, node: ts.NamedDeclaration) => {
-                const methodText = tsGenerateWithReplacedGridOptions(node, tsTree);
+                const methodText = tsGenerate(node, tsTree);
                 bindings.instanceMethods.push(methodText);
                 bindings.properties.push({name: functionName, value: null, typings: gridOpsTypeLookup(functionName)});
             }
@@ -585,8 +575,8 @@ function internalParser(examplePath, {
      * components -> name value pair of component name to actual component (ie name: myCustomCell, value: CustomCellRenderer)
      * vuePropertyBindings => vue specific property bindings that can be safely parsed by the vue generators
      * parsedColDefs -> col defs with function values replaced with tokenised strings - for the functional react example generator
-     * utils -> none grid related methods/variables (or methods that don't reference the gridApi/columnApi) (i.e. non-instance)
-     * instanceMethods -> methods that are either marked as "inScope" or ones that reference the gridApi/columnApi
+     * utils -> none grid related methods/variables (or methods that don't reference the gridApi) (i.e. non-instance)
+     * instanceMethods -> methods that are either marked as "inScope" or ones that reference the gridApi
      * onGridReady -> any matching onGridReady method
      * data -> url: dataUrl, callback: callback, http calls etc
      * resizeToFit -> true if sizeColumnsToFit is used
@@ -620,7 +610,7 @@ function internalParser(examplePath, {
 
     if (inlineClass) {
         const theme = inlineClass.split(' ').filter(className => className.indexOf('ag-theme') >= 0);
-        exampleSettings.theme = theme && theme.length > 0 ? theme[0] : 'ag-theme-alpine';
+        exampleSettings.theme = theme && theme.length > 0 ? theme[0] : 'ag-theme-quartz';
     }
 
     if (parseInt(inlineHeight)) {
@@ -640,7 +630,7 @@ function internalParser(examplePath, {
     tsBindings.gridSettings = {
         width: '100%',
         height: '100%',
-        theme: 'ag-theme-alpine',
+        theme: 'ag-theme-quartz',
         ...exampleSettings
     };
 

@@ -11,7 +11,7 @@ const VueExample = {
     template: `
         <ag-grid-vue
                 style="width: 100%; height: 100%;"
-                class="ag-theme-alpine"
+                class="ag-theme-quartz"
                 :columnDefs="columnDefs"
                 :rowData="rowData">
         </ag-grid-vue>

@@ -1,5 +1,5 @@
 import { use, insert, memo, createComponent, mergeProps, effect, className, template, spread, style, setAttribute, Portal } from 'solid-js/web';
-import { BaseComponentWrapper, GroupCellRendererCtrl, _, VanillaFrameworkOverrides, CssClassManager, AgPromise, HeaderRowType, HeaderRowContainerCtrl, GridHeaderCtrl, PopupEditorWrapper, getRowContainerTypeForName, RowContainerCtrl, RowContainerName, GridBodyCtrl, TabGuardCtrl, TabGuardClassNames, GridCtrl, FocusService, ComponentUtil, GridCoreCreator, CtrlsService } from 'ag-grid-community';
+import { BaseComponentWrapper, GroupCellRendererCtrl, _, VanillaFrameworkOverrides, CssClassManager, AgPromise, HeaderRowType, HeaderRowContainerCtrl, GridHeaderCtrl, PopupEditorWrapper, getRowContainerTypeForName, RowContainerCtrl, RowContainerName, GridBodyCtrl, TabGuardCtrl, TabGuardClassNames, GridCtrl, ComponentUtil, GridCoreCreator, CtrlsService, ColumnApi } from 'ag-grid-community';
 import { createContext, useContext, createSignal, createMemo, onMount, onCleanup, createEffect, For } from 'solid-js';
 
 class SolidCompWrapper {
@@ -83,7 +83,7 @@ class CssClasses {
   }
 }
 
-const _tmpl$$f = /*#__PURE__*/template(`<div>`);
+var _tmpl$$f = /*#__PURE__*/template(`<div>`);
 const DetailCellRenderer = props => {
   const {
     ctrlsFactory,
@@ -125,7 +125,7 @@ const DetailCellRenderer = props => {
     context.createBean(ctrl);
     ctrl.init(compProxy, props);
     let resizeObserverDestroyFunc;
-    if (gridOptionsService.is('detailRowAutoHeight')) {
+    if (gridOptionsService.get('detailRowAutoHeight')) {
       const checkRowSizeFunc = () => {
         // when disposed, current is null, so nothing to do, and the resize observer will
         // be disposed of soon
@@ -166,11 +166,11 @@ const DetailCellRenderer = props => {
     ctrl.registerDetailWithMaster(ref.api, ref.columnApi);
   };
   return (() => {
-    const _el$ = _tmpl$$f();
-    const _ref$ = eGuiRef;
+    var _el$ = _tmpl$$f();
+    var _ref$ = eGuiRef;
     typeof _ref$ === "function" ? use(_ref$, _el$) : eGuiRef = _el$;
     insert(_el$, (() => {
-      const _c$ = memo(() => !!getDetailGridOptions());
+      var _c$ = memo(() => !!getDetailGridOptions());
       return () => _c$() && createComponent(AgGridSolid, mergeProps({
         get ["class"]() {
           return getGridCssClassesStr();
@@ -244,31 +244,31 @@ const UserComp = p => {
     return !details.componentFromFramework;
   });
   return [memo((() => {
-    const _c$ = memo(() => !!showSolidComp());
+    var _c$ = memo(() => !!showSolidComp());
     return () => _c$() && createComponent(SolidUserComp, {
       get compDetails() {
         return p.compDetails;
       },
       ref(r$) {
-        const _ref$ = p.ref;
+        var _ref$ = p.ref;
         typeof _ref$ === "function" ? _ref$(r$) : p.ref = r$;
       }
     });
   })()), memo((() => {
-    const _c$2 = memo(() => !!showJsComp());
+    var _c$2 = memo(() => !!showJsComp());
     return () => _c$2() && createComponent(JsUserComp, {
       get compDetails() {
         return p.compDetails;
       },
       ref(r$) {
-        const _ref$2 = p.ref;
+        var _ref$2 = p.ref;
         typeof _ref$2 === "function" ? _ref$2(r$) : p.ref = r$;
       }
     });
   })())];
 };
 
-const _tmpl$$e = /*#__PURE__*/template(`<span><span></span><span></span><span></span><span class="ag-group-value"></span><span class="ag-group-child-count">`);
+var _tmpl$$e = /*#__PURE__*/template(`<span><span></span><span></span><span></span><span class=ag-group-value></span><span class=ag-group-child-count>`);
 const GroupCellRenderer = props => {
   const context = useContext(BeansContext).context;
   let eGui;
@@ -276,6 +276,7 @@ const GroupCellRenderer = props => {
   let eCheckboxRef;
   let eExpandedRef;
   let eContractedRef;
+  let role = 'gridcell';
   const [getInnerCompDetails, setInnerCompDetails] = createSignal();
   const [getChildCount, setChildCount] = createSignal();
   const [getValue, setValue] = createSignal();
@@ -304,6 +305,8 @@ const GroupCellRenderer = props => {
     };
     const ctrl = context.createBean(new GroupCellRendererCtrl());
     ctrl.init(compProxy, eGui, eCheckboxRef, eExpandedRef, eContractedRef, GroupCellRenderer, props);
+    eGui.setAttribute('role', ctrl.getCellAriaRole());
+    role = ctrl.getCellAriaRole();
     return () => {
       context.destroyBean(ctrl);
     };
@@ -315,31 +318,31 @@ const GroupCellRenderer = props => {
   const isShowUserComp = () => getInnerCompDetails() != null;
   const isShowValue = () => getInnerCompDetails() == null && getValue() != null;
   return (() => {
-    const _el$ = _tmpl$$e(),
+    var _el$ = _tmpl$$e(),
       _el$2 = _el$.firstChild,
       _el$3 = _el$2.nextSibling,
       _el$4 = _el$3.nextSibling,
       _el$5 = _el$4.nextSibling,
       _el$6 = _el$5.nextSibling;
-    const _ref$ = eGui;
+    var _ref$ = eGui;
     typeof _ref$ === "function" ? use(_ref$, _el$) : eGui = _el$;
     spread(_el$, mergeProps({
       get ["class"]() {
         return getClassName();
       }
     }, () => !props.colDef ? {
-      role: 'gridcell'
+      role
     } : {}), false, true);
-    const _ref$2 = eExpandedRef;
+    var _ref$2 = eExpandedRef;
     typeof _ref$2 === "function" ? use(_ref$2, _el$2) : eExpandedRef = _el$2;
-    const _ref$3 = eContractedRef;
+    var _ref$3 = eContractedRef;
     typeof _ref$3 === "function" ? use(_ref$3, _el$3) : eContractedRef = _el$3;
-    const _ref$4 = eCheckboxRef;
+    var _ref$4 = eCheckboxRef;
     typeof _ref$4 === "function" ? use(_ref$4, _el$4) : eCheckboxRef = _el$4;
-    const _ref$5 = eValueRef;
+    var _ref$5 = eValueRef;
     typeof _ref$5 === "function" ? use(_ref$5, _el$5) : eValueRef = _el$5;
     insert(_el$5, (() => {
-      const _c$ = memo(() => !!isShowUserComp());
+      var _c$ = memo(() => !!isShowUserComp());
       return () => _c$() && createComponent(UserComp, {
         get compDetails() {
           return getInnerCompDetails();
@@ -347,22 +350,22 @@ const GroupCellRenderer = props => {
       });
     })(), null);
     insert(_el$5, (() => {
-      const _c$2 = memo(() => !!isShowValue());
+      var _c$2 = memo(() => !!isShowValue());
       return () => _c$2() && memo(getValue);
     })(), null);
     insert(_el$6, getChildCount);
     effect(_p$ => {
-      const _v$ = getExpandedClassName(),
+      var _v$ = getExpandedClassName(),
         _v$2 = getContractedClassName(),
         _v$3 = getCheckboxClassName();
-      _v$ !== _p$._v$ && className(_el$2, _p$._v$ = _v$);
-      _v$2 !== _p$._v$2 && className(_el$3, _p$._v$2 = _v$2);
-      _v$3 !== _p$._v$3 && className(_el$4, _p$._v$3 = _v$3);
+      _v$ !== _p$.e && className(_el$2, _p$.e = _v$);
+      _v$2 !== _p$.t && className(_el$3, _p$.t = _v$2);
+      _v$3 !== _p$.a && className(_el$4, _p$.a = _v$3);
       return _p$;
     }, {
-      _v$: undefined,
-      _v$2: undefined,
-      _v$3: undefined
+      e: undefined,
+      t: undefined,
+      a: undefined
     });
     return _el$;
   })();
@@ -370,7 +373,7 @@ const GroupCellRenderer = props => {
 
 class SolidFrameworkOverrides extends VanillaFrameworkOverrides {
   constructor() {
-    super();
+    super('solid');
   }
   frameworkComponents = {
     agGroupCellRenderer: GroupCellRenderer,
@@ -390,7 +393,7 @@ class SolidFrameworkOverrides extends VanillaFrameworkOverrides {
   }
 }
 
-const _tmpl$$d = /*#__PURE__*/template(`<div class="ag-header-cell" role="columnheader" tabindex="-1"><div class="ag-header-cell-resize" role="presentation"></div><div class="ag-header-cell-comp-wrapper" role="presentation">`);
+var _tmpl$$d = /*#__PURE__*/template(`<div class=ag-header-cell role=columnheader><div class=ag-header-cell-resize role=presentation></div><div class=ag-header-cell-comp-wrapper role=presentation>`);
 const HeaderCellComp = props => {
   const {
     ctrl
@@ -398,7 +401,6 @@ const HeaderCellComp = props => {
   const [getWidth, setWidth] = createSignal();
   const [getColId, setColId] = createSignal(ctrl.getColId());
   const [getAriaSort, setAriaSort] = createSignal();
-  const [getAriaDescription, setAriaDescription] = createSignal();
   const [getUserCompDetails, setUserCompDetails] = createSignal();
   let eGui;
   let eResize;
@@ -412,7 +414,6 @@ const HeaderCellComp = props => {
     const compProxy = {
       setWidth: width => setWidth(width),
       addOrRemoveCssClass: (name, on) => cssClassManager.addOrRemoveCssClass(name, on),
-      setAriaDescription: description => setAriaDescription(description),
       setAriaSort: sort => setAriaSort(sort),
       setUserCompDetails: compDetails => setUserCompDetails(compDetails),
       getUserCompInstance: () => userComp
@@ -425,32 +426,18 @@ const HeaderCellComp = props => {
   const style$1 = createMemo(() => ({
     width: getWidth()
   }));
-  createMemo(() => {
-    const details = getUserCompDetails();
-    if (!details) {
-      return false;
-    }
-    return details.componentFromFramework;
-  });
-  createMemo(() => {
-    const details = getUserCompDetails();
-    if (!details) {
-      return false;
-    }
-    return !details.componentFromFramework;
-  });
   return (() => {
-    const _el$ = _tmpl$$d(),
+    var _el$ = _tmpl$$d(),
       _el$2 = _el$.firstChild,
       _el$3 = _el$2.nextSibling;
-    const _ref$ = eGui;
+    var _ref$ = eGui;
     typeof _ref$ === "function" ? use(_ref$, _el$) : eGui = _el$;
-    const _ref$2 = eResize;
+    var _ref$2 = eResize;
     typeof _ref$2 === "function" ? use(_ref$2, _el$2) : eResize = _el$2;
-    const _ref$3 = eHeaderCompWrapper;
+    var _ref$3 = eHeaderCompWrapper;
     typeof _ref$3 === "function" ? use(_ref$3, _el$3) : eHeaderCompWrapper = _el$3;
     insert(_el$3, (() => {
-      const _c$ = memo(() => !!getUserCompDetails());
+      var _c$ = memo(() => !!getUserCompDetails());
       return () => _c$() && createComponent(UserComp, {
         get compDetails() {
           return getUserCompDetails();
@@ -459,26 +446,23 @@ const HeaderCellComp = props => {
       });
     })());
     effect(_p$ => {
-      const _v$ = style$1(),
+      var _v$ = style$1(),
         _v$2 = getColId(),
-        _v$3 = getAriaSort(),
-        _v$4 = getAriaDescription();
-      _p$._v$ = style(_el$, _v$, _p$._v$);
-      _v$2 !== _p$._v$2 && setAttribute(_el$, "col-id", _p$._v$2 = _v$2);
-      _v$3 !== _p$._v$3 && setAttribute(_el$, "aria-sort", _p$._v$3 = _v$3);
-      _v$4 !== _p$._v$4 && setAttribute(_el$, "aria-description", _p$._v$4 = _v$4);
+        _v$3 = getAriaSort();
+      _p$.e = style(_el$, _v$, _p$.e);
+      _v$2 !== _p$.t && setAttribute(_el$, "col-id", _p$.t = _v$2);
+      _v$3 !== _p$.a && setAttribute(_el$, "aria-sort", _p$.a = _v$3);
       return _p$;
     }, {
-      _v$: undefined,
-      _v$2: undefined,
-      _v$3: undefined,
-      _v$4: undefined
+      e: undefined,
+      t: undefined,
+      a: undefined
     });
     return _el$;
   })();
 };
 
-const _tmpl$$c = /*#__PURE__*/template(`<div role="gridcell" tabindex="-1"><div role="presentation"></div><div role="presentation"><button type="button" class="ag-button ag-floating-filter-button-button" tabindex="-1">`);
+var _tmpl$$c = /*#__PURE__*/template(`<div role=gridcell><div role=presentation></div><div role=presentation><button type=button class="ag-button ag-floating-filter-button-button"tabindex=-1>`);
 const HeaderFilterCellComp = props => {
   const [getCssClasses, setCssClasses] = createSignal(new CssClasses());
   const [getCssBodyClasses, setBodyCssClasses] = createSignal(new CssClasses());
@@ -534,20 +518,20 @@ const HeaderFilterCellComp = props => {
   const getStyle = createMemo(() => ({
     width: getWidth()
   }));
-  const getCssClassesString = createMemo(() => 'ag-header-cell ag-floating-filter ' + getCssClasses.toString());
-  const getBodyCssClassesString = createMemo(() => getCssBodyClasses.toString());
-  const getButtonWrapperCssClassesString = createMemo(() => 'ag-floating-filter-button ' + getCssButtonWrapperClasses.toString());
+  const getCssClassesString = createMemo(() => 'ag-header-cell ag-floating-filter ' + getCssClasses().toString());
+  const getBodyCssClassesString = createMemo(() => getCssBodyClasses().toString());
+  const getButtonWrapperCssClassesString = createMemo(() => 'ag-floating-filter-button ' + getCssButtonWrapperClasses().toString());
   return (() => {
-    const _el$ = _tmpl$$c(),
+    var _el$ = _tmpl$$c(),
       _el$2 = _el$.firstChild,
       _el$3 = _el$2.nextSibling,
       _el$4 = _el$3.firstChild;
-    const _ref$ = eGui;
+    var _ref$ = eGui;
     typeof _ref$ === "function" ? use(_ref$, _el$) : eGui = _el$;
-    const _ref$2 = eFloatingFilterBody;
+    var _ref$2 = eFloatingFilterBody;
     typeof _ref$2 === "function" ? use(_ref$2, _el$2) : eFloatingFilterBody = _el$2;
     insert(_el$2, (() => {
-      const _c$ = memo(() => !!getUserCompDetails());
+      var _c$ = memo(() => !!getUserCompDetails());
       return () => _c$() && createComponent(UserComp, {
         get compDetails() {
           return getUserCompDetails();
@@ -555,34 +539,34 @@ const HeaderFilterCellComp = props => {
         ref: setRef
       });
     })());
-    const _ref$3 = eButtonWrapper;
+    var _ref$3 = eButtonWrapper;
     typeof _ref$3 === "function" ? use(_ref$3, _el$3) : eButtonWrapper = _el$3;
-    const _ref$4 = eButtonShowMainFilter;
+    var _ref$4 = eButtonShowMainFilter;
     typeof _ref$4 === "function" ? use(_ref$4, _el$4) : eButtonShowMainFilter = _el$4;
     effect(_p$ => {
-      const _v$ = getCssClassesString(),
+      var _v$ = getCssClassesString(),
         _v$2 = getStyle(),
         _v$3 = getBodyCssClassesString(),
         _v$4 = getButtonWrapperAriaHidden(),
         _v$5 = getButtonWrapperCssClassesString();
-      _v$ !== _p$._v$ && className(_el$, _p$._v$ = _v$);
-      _p$._v$2 = style(_el$, _v$2, _p$._v$2);
-      _v$3 !== _p$._v$3 && className(_el$2, _p$._v$3 = _v$3);
-      _v$4 !== _p$._v$4 && setAttribute(_el$3, "aria-hidden", _p$._v$4 = _v$4);
-      _v$5 !== _p$._v$5 && className(_el$3, _p$._v$5 = _v$5);
+      _v$ !== _p$.e && className(_el$, _p$.e = _v$);
+      _p$.t = style(_el$, _v$2, _p$.t);
+      _v$3 !== _p$.a && className(_el$2, _p$.a = _v$3);
+      _v$4 !== _p$.o && setAttribute(_el$3, "aria-hidden", _p$.o = _v$4);
+      _v$5 !== _p$.i && className(_el$3, _p$.i = _v$5);
       return _p$;
     }, {
-      _v$: undefined,
-      _v$2: undefined,
-      _v$3: undefined,
-      _v$4: undefined,
-      _v$5: undefined
+      e: undefined,
+      t: undefined,
+      a: undefined,
+      o: undefined,
+      i: undefined
     });
     return _el$;
   })();
 };
 
-const _tmpl$$b = /*#__PURE__*/template(`<div role="columnheader" tabindex="-1"><div>`);
+var _tmpl$$b = /*#__PURE__*/template(`<div role=columnheader><div>`);
 const HeaderGroupCellComp = props => {
   const {
     ctrl
@@ -624,47 +608,47 @@ const HeaderGroupCellComp = props => {
   const getClassName = createMemo(() => 'ag-header-group-cell ' + getCssClasses().toString());
   const getResizableClassName = createMemo(() => 'ag-header-cell-resize ' + getCssResizableClasses().toString());
   return (() => {
-    const _el$ = _tmpl$$b(),
+    var _el$ = _tmpl$$b(),
       _el$2 = _el$.firstChild;
-    const _ref$ = eGui;
+    var _ref$ = eGui;
     typeof _ref$ === "function" ? use(_ref$, _el$) : eGui = _el$;
     insert(_el$, (() => {
-      const _c$ = memo(() => !!getUserCompDetails());
+      var _c$ = memo(() => !!getUserCompDetails());
       return () => _c$() && createComponent(UserComp, {
         get compDetails() {
           return getUserCompDetails();
         }
       });
     })(), _el$2);
-    const _ref$2 = eResize;
+    var _ref$2 = eResize;
     typeof _ref$2 === "function" ? use(_ref$2, _el$2) : eResize = _el$2;
     effect(_p$ => {
-      const _v$ = getClassName(),
+      var _v$ = getClassName(),
         _v$2 = style$1(),
         _v$3 = getColId(),
         _v$4 = getAriaExpanded(),
         _v$5 = getResizableAriaHidden(),
         _v$6 = getResizableClassName();
-      _v$ !== _p$._v$ && className(_el$, _p$._v$ = _v$);
-      _p$._v$2 = style(_el$, _v$2, _p$._v$2);
-      _v$3 !== _p$._v$3 && setAttribute(_el$, "col-id", _p$._v$3 = _v$3);
-      _v$4 !== _p$._v$4 && setAttribute(_el$, "aria-expanded", _p$._v$4 = _v$4);
-      _v$5 !== _p$._v$5 && setAttribute(_el$2, "aria-hidden", _p$._v$5 = _v$5);
-      _v$6 !== _p$._v$6 && className(_el$2, _p$._v$6 = _v$6);
+      _v$ !== _p$.e && className(_el$, _p$.e = _v$);
+      _p$.t = style(_el$, _v$2, _p$.t);
+      _v$3 !== _p$.a && setAttribute(_el$, "col-id", _p$.a = _v$3);
+      _v$4 !== _p$.o && setAttribute(_el$, "aria-expanded", _p$.o = _v$4);
+      _v$5 !== _p$.i && setAttribute(_el$2, "aria-hidden", _p$.i = _v$5);
+      _v$6 !== _p$.n && className(_el$2, _p$.n = _v$6);
       return _p$;
     }, {
-      _v$: undefined,
-      _v$2: undefined,
-      _v$3: undefined,
-      _v$4: undefined,
-      _v$5: undefined,
-      _v$6: undefined
+      e: undefined,
+      t: undefined,
+      a: undefined,
+      o: undefined,
+      i: undefined,
+      n: undefined
     });
     return _el$;
   })();
 };
 
-const _tmpl$$a = /*#__PURE__*/template(`<div role="row">`);
+var _tmpl$$a = /*#__PURE__*/template(`<div role=row>`);
 const HeaderRowComp = props => {
   const {
     gridOptionsService
@@ -672,7 +656,6 @@ const HeaderRowComp = props => {
   const {
     ctrl
   } = props;
-  const [getTransform, setTransform] = createSignal(ctrl.getTransform());
   const [getHeight, setHeight] = createSignal();
   const [getTop, setTop] = createSignal();
   const [getWidth, setWidth] = createSignal();
@@ -681,7 +664,7 @@ const HeaderRowComp = props => {
   let eGui;
   const setCellCtrlsMaintainOrder = next => {
     const prev = getCellCtrls();
-    const isEnsureDomOrder = gridOptionsService.is('ensureDomOrder');
+    const isEnsureDomOrder = gridOptionsService.get('ensureDomOrder');
     const isPrintLayout = gridOptionsService.isDomLayout('print');
 
     // if we are ensuring dom order, we set the ctrls into the dom in the same order they appear on screen
@@ -708,7 +691,6 @@ const HeaderRowComp = props => {
     ctrl.setComp(compProxy);
   });
   const style$1 = createMemo(() => ({
-    transform: getTransform(),
     height: getHeight(),
     top: getTop(),
     width: getWidth()
@@ -733,8 +715,8 @@ const HeaderRowComp = props => {
 
   // below, we are not doing floating filters, not yet
   return (() => {
-    const _el$ = _tmpl$$a();
-    const _ref$ = eGui;
+    var _el$ = _tmpl$$a();
+    var _ref$ = eGui;
     typeof _ref$ === "function" ? use(_ref$, _el$) : eGui = _el$;
     className(_el$, cssClasses);
     insert(_el$, createComponent(For, {
@@ -744,21 +726,21 @@ const HeaderRowComp = props => {
       children: (cellCtrl, i) => createCellJsx(cellCtrl)
     }));
     effect(_p$ => {
-      const _v$ = style$1(),
+      var _v$ = style$1(),
         _v$2 = getAriaRowIndex();
-      _p$._v$ = style(_el$, _v$, _p$._v$);
-      _v$2 !== _p$._v$2 && setAttribute(_el$, "aria-rowindex", _p$._v$2 = _v$2);
+      _p$.e = style(_el$, _v$, _p$.e);
+      _v$2 !== _p$.t && setAttribute(_el$, "aria-rowindex", _p$.t = _v$2);
       return _p$;
     }, {
-      _v$: undefined,
-      _v$2: undefined
+      e: undefined,
+      t: undefined
     });
     return _el$;
   })();
 };
 
-const _tmpl$$9 = /*#__PURE__*/template(`<div role="presentation">`),
-  _tmpl$2$2 = /*#__PURE__*/template(`<div role="presentation"><div class="ag-header-container" role="rowgroup">`);
+var _tmpl$$9 = /*#__PURE__*/template(`<div role=rowgroup>`),
+  _tmpl$2$2 = /*#__PURE__*/template(`<div role=presentation><div class=ag-header-container role=rowgroup>`);
 const HeaderRowContainerComp = props => {
   const [getCssClasses, setCssClasses] = createSignal(new CssClasses());
   const [getAriaHidden, setAriaHidden] = createSignal(false);
@@ -794,7 +776,7 @@ const HeaderRowContainerComp = props => {
     ctrl.setComp(compProxy, eGui);
     destroyFuncs.push(() => context.destroyBean(ctrl));
   });
-  const getClassName = createMemo(() => getCssClasses.toString());
+  const getClassName = createMemo(() => getCssClasses().toString());
   const insertRowsJsx = () => createComponent(For, {
     get each() {
       return getHeaderRowCtrls();
@@ -812,64 +794,64 @@ const HeaderRowContainerComp = props => {
     'max-width': getPinnedContainerWidth()
   }));
   return [pinnedLeft && (() => {
-    const _el$ = _tmpl$$9();
-    const _ref$ = eGui;
+    var _el$ = _tmpl$$9();
+    var _ref$ = eGui;
     typeof _ref$ === "function" ? use(_ref$, _el$) : eGui = _el$;
     insert(_el$, insertRowsJsx);
     effect(_p$ => {
-      const _v$ = "ag-pinned-left-header " + getClassName(),
+      var _v$ = "ag-pinned-left-header " + getClassName(),
         _v$2 = getAriaHidden(),
         _v$3 = ePinnedStyle();
-      _v$ !== _p$._v$ && className(_el$, _p$._v$ = _v$);
-      _v$2 !== _p$._v$2 && setAttribute(_el$, "aria-hidden", _p$._v$2 = _v$2);
-      _p$._v$3 = style(_el$, _v$3, _p$._v$3);
+      _v$ !== _p$.e && className(_el$, _p$.e = _v$);
+      _v$2 !== _p$.t && setAttribute(_el$, "aria-hidden", _p$.t = _v$2);
+      _p$.a = style(_el$, _v$3, _p$.a);
       return _p$;
     }, {
-      _v$: undefined,
-      _v$2: undefined,
-      _v$3: undefined
+      e: undefined,
+      t: undefined,
+      a: undefined
     });
     return _el$;
   })(), pinnedRight && (() => {
-    const _el$2 = _tmpl$$9();
-    const _ref$2 = eGui;
+    var _el$2 = _tmpl$$9();
+    var _ref$2 = eGui;
     typeof _ref$2 === "function" ? use(_ref$2, _el$2) : eGui = _el$2;
     insert(_el$2, insertRowsJsx);
     effect(_p$ => {
-      const _v$4 = "ag-pinned-right-header " + getClassName(),
+      var _v$4 = "ag-pinned-right-header " + getClassName(),
         _v$5 = getAriaHidden(),
         _v$6 = ePinnedStyle();
-      _v$4 !== _p$._v$4 && className(_el$2, _p$._v$4 = _v$4);
-      _v$5 !== _p$._v$5 && setAttribute(_el$2, "aria-hidden", _p$._v$5 = _v$5);
-      _p$._v$6 = style(_el$2, _v$6, _p$._v$6);
+      _v$4 !== _p$.e && className(_el$2, _p$.e = _v$4);
+      _v$5 !== _p$.t && setAttribute(_el$2, "aria-hidden", _p$.t = _v$5);
+      _p$.a = style(_el$2, _v$6, _p$.a);
       return _p$;
     }, {
-      _v$4: undefined,
-      _v$5: undefined,
-      _v$6: undefined
+      e: undefined,
+      t: undefined,
+      a: undefined
     });
     return _el$2;
   })(), centre && (() => {
-    const _el$3 = _tmpl$2$2(),
+    var _el$3 = _tmpl$2$2(),
       _el$4 = _el$3.firstChild;
-    const _ref$3 = eGui;
+    var _ref$3 = eGui;
     typeof _ref$3 === "function" ? use(_ref$3, _el$3) : eGui = _el$3;
     insert(_el$4, insertRowsJsx);
     effect(_p$ => {
-      const _v$7 = "ag-header-viewport " + getClassName(),
+      var _v$7 = "ag-header-viewport " + getClassName(),
         _v$8 = eCenterContainerStyle();
-      _v$7 !== _p$._v$7 && className(_el$3, _p$._v$7 = _v$7);
-      _p$._v$8 = style(_el$4, _v$8, _p$._v$8);
+      _v$7 !== _p$.e && className(_el$3, _p$.e = _v$7);
+      _p$.t = style(_el$4, _v$8, _p$.t);
       return _p$;
     }, {
-      _v$7: undefined,
-      _v$8: undefined
+      e: undefined,
+      t: undefined
     });
     return _el$3;
   })()];
 };
 
-const _tmpl$$8 = /*#__PURE__*/template(`<div role="presentation">`);
+var _tmpl$$8 = /*#__PURE__*/template(`<div role=presentation>`);
 const GridHeaderComp = () => {
   const [getCssClasses, setCssClasses] = createSignal(new CssClasses());
   const [getHeight, setHeight] = createSignal();
@@ -900,8 +882,8 @@ const GridHeaderComp = () => {
     'min-height': getHeight()
   }));
   return (() => {
-    const _el$ = _tmpl$$8();
-    const _ref$ = eGui;
+    var _el$ = _tmpl$$8();
+    var _ref$ = eGui;
     typeof _ref$ === "function" ? use(_ref$, _el$) : eGui = _el$;
     insert(_el$, createComponent(HeaderRowContainerComp, {
       pinned: 'left'
@@ -913,14 +895,14 @@ const GridHeaderComp = () => {
       pinned: 'right'
     }), null);
     effect(_p$ => {
-      const _v$ = className$1(),
+      var _v$ = className$1(),
         _v$2 = style$1();
-      _v$ !== _p$._v$ && className(_el$, _p$._v$ = _v$);
-      _p$._v$2 = style(_el$, _v$2, _p$._v$2);
+      _v$ !== _p$.e && className(_el$, _p$.e = _v$);
+      _p$.t = style(_el$, _v$2, _p$.t);
       return _p$;
     }, {
-      _v$: undefined,
-      _v$2: undefined
+      e: undefined,
+      t: undefined
     });
     return _el$;
   })();
@@ -941,7 +923,7 @@ const PopupEditorComp = props => {
   const {
     compDetails
   } = editDetails;
-  const useModelPopup = gridOptionsService.is('stopEditingWhenCellsLoseFocus');
+  const useModelPopup = gridOptionsService.get('stopEditingWhenCellsLoseFocus');
   const wrapper = context.createBean(new PopupEditorWrapper(compDetails.params));
   const ePopupGui = wrapper.getGui();
   const positionParams = {
@@ -1005,7 +987,7 @@ const ShowEditDetails = props => {
           return getCompDetails();
         },
         ref(r$) {
-          const _ref$ = props.setPopupRef;
+          var _ref$ = props.setPopupRef;
           typeof _ref$ === "function" ? _ref$(r$) : props.setPopupRef = r$;
         }
       });
@@ -1015,13 +997,13 @@ const ShowEditDetails = props => {
       return getCompDetails();
     },
     ref(r$) {
-      const _ref$2 = props.setInlineRef;
+      var _ref$2 = props.setInlineRef;
       typeof _ref$2 === "function" ? _ref$2(r$) : props.setInlineRef = r$;
     }
   })];
 };
 
-const _tmpl$$7 = /*#__PURE__*/template(`<span role="presentation" class="ag-cell-value">`);
+var _tmpl$$7 = /*#__PURE__*/template(`<span role=presentation class=ag-cell-value>`);
 const ToolsComp = props => {
   const {
     context
@@ -1035,7 +1017,7 @@ const ToolsComp = props => {
     return memo(() => comp.getGui());
   };
   return [memo((() => {
-    const _c$ = memo(() => !!props.includeSelection);
+    var _c$ = memo(() => !!props.includeSelection);
     return () => _c$() && createComponent(CompWrapper, {
       createFn: () => {
         const checkboxSelectionComp = props.cellCtrl.createSelectionCheckbox();
@@ -1044,12 +1026,12 @@ const ToolsComp = props => {
       }
     });
   })()), memo((() => {
-    const _c$2 = memo(() => !!props.includeDndSource);
+    var _c$2 = memo(() => !!props.includeDndSource);
     return () => _c$2() && createComponent(CompWrapper, {
       createFn: () => props.cellCtrl.createDndSource()
     });
   })()), memo((() => {
-    const _c$3 = memo(() => !!props.includeRowDrag);
+    var _c$3 = memo(() => !!props.includeRowDrag);
     return () => _c$3() && createComponent(CompWrapper, {
       createFn: () => props.cellCtrl.createRowDragComp()
     });
@@ -1067,22 +1049,22 @@ const ShowRenderDetails = props => {
     return value && value.toString ? value.toString() : value;
   };
   const bodyJsxFunc = () => [memo((() => {
-    const _c$4 = memo(() => !!isNoCompDetails());
+    var _c$4 = memo(() => !!isNoCompDetails());
     return () => _c$4() && memo(valueForNoCellRenderer);
   })()), memo((() => {
-    const _c$5 = memo(() => !!getCompDetails());
+    var _c$5 = memo(() => !!getCompDetails());
     return () => _c$5() && createComponent(UserComp, {
       get compDetails() {
         return getCompDetails();
       },
       ref(r$) {
-        const _ref$ = props.ref;
+        var _ref$ = props.ref;
         typeof _ref$ === "function" ? _ref$(r$) : props.ref = r$;
       }
     });
   })())];
   return [memo((() => {
-    const _c$6 = memo(() => !!props.showTools);
+    var _c$6 = memo(() => !!props.showTools);
     return () => _c$6() && createComponent(ToolsComp, {
       get includeDndSource() {
         return props.includeDndSource;
@@ -1101,10 +1083,10 @@ const ShowRenderDetails = props => {
       }
     });
   })()), memo((() => {
-    const _c$7 = memo(() => !!props.showCellWrapper);
+    var _c$7 = memo(() => !!props.showCellWrapper);
     return () => _c$7() ? (() => {
-      const _el$ = _tmpl$$7();
-      const _ref$2 = props.setECellValue;
+      var _el$ = _tmpl$$7();
+      var _ref$2 = props.setECellValue;
       typeof _ref$2 === "function" ? use(_ref$2, _el$) : props.setECellValue = _el$;
       insert(_el$, bodyJsxFunc);
       effect(() => setAttribute(_el$, "id", `cell-${props.cellInstanceId}`));
@@ -1113,8 +1095,8 @@ const ShowRenderDetails = props => {
   })())];
 };
 
-const _tmpl$$6 = /*#__PURE__*/template(`<div role="gridcell"> `),
-  _tmpl$2$1 = /*#__PURE__*/template(`<div class="ag-cell-wrapper" role="presentation">`);
+var _tmpl$$6 = /*#__PURE__*/template(`<div> `),
+  _tmpl$2$1 = /*#__PURE__*/template(`<div class=ag-cell-wrapper role=presentation>`);
 const checkCellEditorDeprecations = (popup, cellEditor, cellCtrl) => {
   const col = cellCtrl.getColumn();
 
@@ -1268,13 +1250,13 @@ const CellComp = props => {
       return renderCompVersionList();
     },
     children: () => memo((() => {
-      const _c$2 = memo(() => !!renderDetails());
+      var _c$2 = memo(() => !!renderDetails());
       return () => _c$2() && createComponent(ShowRenderDetails, {
         get showDetails() {
           return renderDetails();
         },
         ref(r$) {
-          const _ref$ = cellRenderer;
+          var _ref$ = cellRenderer;
           typeof _ref$ === "function" ? _ref$(r$) : cellRenderer = r$;
         },
         cellInstanceId: cellInstanceId,
@@ -1299,7 +1281,7 @@ const CellComp = props => {
       });
     })())
   }), memo((() => {
-    const _c$ = memo(() => !!editDetails());
+    var _c$ = memo(() => !!editDetails());
     return () => _c$() && createComponent(ShowEditDetails, {
       get editDetails() {
         return editDetails();
@@ -1311,38 +1293,41 @@ const CellComp = props => {
     });
   })())];
   return (() => {
-    const _el$ = _tmpl$$6();
+    var _el$ = _tmpl$$6();
       _el$.firstChild;
-    const _ref$2 = eGui;
+    var _ref$2 = eGui;
     typeof _ref$2 === "function" ? use(_ref$2, _el$) : eGui = _el$;
     insert(_el$, (() => {
-      const _c$3 = memo(() => !!showCellWrapper());
+      var _c$3 = memo(() => !!showCellWrapper());
       return () => _c$3() ? (() => {
-        const _el$3 = _tmpl$2$1();
-        const _ref$3 = eCellWrapper;
+        var _el$3 = _tmpl$2$1();
+        var _ref$3 = eCellWrapper;
         typeof _ref$3 === "function" ? use(_ref$3, _el$3) : eCellWrapper = _el$3;
         insert(_el$3, bodyJsxFunc);
         return _el$3;
       })() : bodyJsxFunc();
     })(), null);
     effect(_p$ => {
-      const _v$ = userStyles(),
+      var _v$ = userStyles(),
         _v$2 = tabIndex(),
-        _v$3 = colId();
-      _p$._v$ = style(_el$, _v$, _p$._v$);
-      _v$2 !== _p$._v$2 && setAttribute(_el$, "tabindex", _p$._v$2 = _v$2);
-      _v$3 !== _p$._v$3 && setAttribute(_el$, "col-id", _p$._v$3 = _v$3);
+        _v$3 = cellCtrl.getCellAriaRole(),
+        _v$4 = colId();
+      _p$.e = style(_el$, _v$, _p$.e);
+      _v$2 !== _p$.t && setAttribute(_el$, "tabindex", _p$.t = _v$2);
+      _v$3 !== _p$.a && setAttribute(_el$, "role", _p$.a = _v$3);
+      _v$4 !== _p$.o && setAttribute(_el$, "col-id", _p$.o = _v$4);
       return _p$;
     }, {
-      _v$: undefined,
-      _v$2: undefined,
-      _v$3: undefined
+      e: undefined,
+      t: undefined,
+      a: undefined,
+      o: undefined
     });
     return _el$;
   })();
 };
 
-const _tmpl$$5 = /*#__PURE__*/template(`<div role="row">`);
+var _tmpl$$5 = /*#__PURE__*/template(`<div role=row>`);
 const maintainOrderOnColumns = (prev, next, domOrder) => {
   if (domOrder) {
     const res = {
@@ -1456,7 +1441,13 @@ const RowComp = params => {
       // when cols reordered, which would stop the CSS transitions from working
       setCellCtrls: next => setCellCtrls(maintainOrderOnColumns(getCellCtrls(), next, getDomOrder())),
       showFullWidth: compDetails => setFullWidthCompDetails(compDetails),
-      getFullWidthCellRenderer: () => fullWidthCompRef
+      getFullWidthCellRenderer: () => fullWidthCompRef,
+      refreshFullWidth: getUpdatedParams => {
+        if (!fullWidthCompRef || !fullWidthCompRef.refresh) {
+          return false;
+        }
+        return fullWidthCompRef.refresh(getUpdatedParams());
+      }
     };
     rowCtrl.setComp(compProxy, eGui, containerType);
     onCleanup(() => rowCtrl.unsetComp(containerType));
@@ -1492,43 +1483,42 @@ const RowComp = params => {
     ref: setFullWidthRef
   });
   return (() => {
-    const _el$ = _tmpl$$5();
-    const _ref$ = eGui;
+    var _el$ = _tmpl$$5();
+    var _ref$ = eGui;
     typeof _ref$ === "function" ? use(_ref$, _el$) : eGui = _el$;
     insert(_el$, (() => {
-      const _c$ = memo(() => !!isShowFullWidth());
+      var _c$ = memo(() => !!isShowFullWidth());
       return () => _c$() && showFullWidthJsx();
     })(), null);
     insert(_el$, (() => {
-      const _c$2 = memo(() => !!isShowCells());
+      var _c$2 = memo(() => !!isShowCells());
       return () => _c$2() && showCellsJsx();
     })(), null);
     effect(_p$ => {
-      const _v$ = getRowStyles(),
+      var _v$ = getRowStyles(),
         _v$2 = getRowIndex(),
         _v$3 = getRowId(),
         _v$4 = getRowBusinessKey(),
         _v$5 = getTabIndex();
-      _p$._v$ = style(_el$, _v$, _p$._v$);
-      _v$2 !== _p$._v$2 && setAttribute(_el$, "row-index", _p$._v$2 = _v$2);
-      _v$3 !== _p$._v$3 && setAttribute(_el$, "row-id", _p$._v$3 = _v$3);
-      _v$4 !== _p$._v$4 && setAttribute(_el$, "row-business-key", _p$._v$4 = _v$4);
-      _v$5 !== _p$._v$5 && setAttribute(_el$, "tabindex", _p$._v$5 = _v$5);
+      _p$.e = style(_el$, _v$, _p$.e);
+      _v$2 !== _p$.t && setAttribute(_el$, "row-index", _p$.t = _v$2);
+      _v$3 !== _p$.a && setAttribute(_el$, "row-id", _p$.a = _v$3);
+      _v$4 !== _p$.o && setAttribute(_el$, "row-business-key", _p$.o = _v$4);
+      _v$5 !== _p$.i && setAttribute(_el$, "tabindex", _p$.i = _v$5);
       return _p$;
     }, {
-      _v$: undefined,
-      _v$2: undefined,
-      _v$3: undefined,
-      _v$4: undefined,
-      _v$5: undefined
+      e: undefined,
+      t: undefined,
+      a: undefined,
+      o: undefined,
+      i: undefined
     });
     return _el$;
   })();
 };
 
-const _tmpl$$4 = /*#__PURE__*/template(`<div>`),
-  _tmpl$2 = /*#__PURE__*/template(`<div role="presentation"><div role="presentation">`),
-  _tmpl$3 = /*#__PURE__*/template(`<div role="presentation">`);
+var _tmpl$$4 = /*#__PURE__*/template(`<div role=rowgroup>`),
+  _tmpl$2 = /*#__PURE__*/template(`<div role=presentation>`);
 const RowContainerComp = props => {
   const {
     context
@@ -1541,18 +1531,14 @@ const RowContainerComp = props => {
     name
   } = props;
   const containerType = createMemo(() => getRowContainerTypeForName(name));
-  let eWrapper;
   let eViewport;
   let eContainer;
   const cssClasses = createMemo(() => RowContainerCtrl.getRowContainerCssClasses(name));
-  const wrapperClasses = createMemo(() => classesList(cssClasses().wrapper));
   const viewportClasses = createMemo(() => classesList(cssClasses().viewport));
   const containerClasses = createMemo(() => classesList(cssClasses().container));
 
   // no need to useMemo for boolean types
-  const template1 = name === RowContainerName.CENTER;
-  const template2 = name === RowContainerName.TOP_CENTER || name === RowContainerName.BOTTOM_CENTER || name === RowContainerName.STICKY_TOP_CENTER;
-  const template3 = !template1 && !template2;
+  const centerTemplate = name === RowContainerName.CENTER || name === RowContainerName.TOP_CENTER || name === RowContainerName.BOTTOM_CENTER || name === RowContainerName.STICKY_TOP_CENTER;
 
   // if domOrder=true, then we just copy rowCtrls into rowCtrlsOrdered observing order,
   // however if false, then we need to keep the order as they are in the dom, otherwise rowAnimation breaks
@@ -1577,7 +1563,9 @@ const RowContainerComp = props => {
   onMount(() => {
     const compProxy = {
       setViewportHeight: setViewportHeight,
-      setRowCtrls: rowCtrls => setRowCtrls(rowCtrls),
+      setRowCtrls: ({
+        rowCtrls
+      }) => setRowCtrls(rowCtrls),
       setDomOrder: domOrder => setDomOrder(domOrder),
       setContainerWidth: width => {
         if (eContainer) {
@@ -1587,14 +1575,14 @@ const RowContainerComp = props => {
     };
     const ctrl = context.createBean(new RowContainerCtrl(name));
     onCleanup(() => context.destroyBean(ctrl));
-    ctrl.setComp(compProxy, eContainer, eViewport, eWrapper);
+    ctrl.setComp(compProxy, eContainer, eViewport);
   });
   const viewportStyle = createMemo(() => ({
     height: viewportHeight()
   }));
   const buildContainer = () => (() => {
-    const _el$ = _tmpl$$4();
-    const _ref$ = eContainer;
+    var _el$ = _tmpl$$4();
+    var _ref$ = eContainer;
     typeof _ref$ === "function" ? use(_ref$, _el$) : eContainer = _el$;
     insert(_el$, createComponent(For, {
       get each() {
@@ -1607,60 +1595,29 @@ const RowContainerComp = props => {
         }
       })
     }));
-    effect(_p$ => {
-      const _v$ = containerClasses(),
-        _v$2 = rowCtrls().length ? "rowgroup" : "presentation";
-      _v$ !== _p$._v$ && className(_el$, _p$._v$ = _v$);
-      _v$2 !== _p$._v$2 && setAttribute(_el$, "role", _p$._v$2 = _v$2);
-      return _p$;
-    }, {
-      _v$: undefined,
-      _v$2: undefined
-    });
+    effect(() => className(_el$, containerClasses()));
     return _el$;
   })();
-  return [template1 && (() => {
-    const _el$2 = _tmpl$2(),
-      _el$3 = _el$2.firstChild;
-    const _ref$2 = eWrapper;
-    typeof _ref$2 === "function" ? use(_ref$2, _el$2) : eWrapper = _el$2;
-    const _ref$3 = eViewport;
-    typeof _ref$3 === "function" ? use(_ref$3, _el$3) : eViewport = _el$3;
-    insert(_el$3, buildContainer);
+  return memo(() => centerTemplate ? (() => {
+    var _el$2 = _tmpl$2();
+    var _ref$2 = eViewport;
+    typeof _ref$2 === "function" ? use(_ref$2, _el$2) : eViewport = _el$2;
+    insert(_el$2, buildContainer);
     effect(_p$ => {
-      const _v$3 = wrapperClasses(),
-        _v$4 = viewportClasses(),
-        _v$5 = viewportStyle();
-      _v$3 !== _p$._v$3 && className(_el$2, _p$._v$3 = _v$3);
-      _v$4 !== _p$._v$4 && className(_el$3, _p$._v$4 = _v$4);
-      _p$._v$5 = style(_el$3, _v$5, _p$._v$5);
+      var _v$ = viewportClasses(),
+        _v$2 = viewportStyle();
+      _v$ !== _p$.e && className(_el$2, _p$.e = _v$);
+      _p$.t = style(_el$2, _v$2, _p$.t);
       return _p$;
     }, {
-      _v$3: undefined,
-      _v$4: undefined,
-      _v$5: undefined
+      e: undefined,
+      t: undefined
     });
     return _el$2;
-  })(), template2 && (() => {
-    const _el$4 = _tmpl$3();
-    const _ref$4 = eViewport;
-    typeof _ref$4 === "function" ? use(_ref$4, _el$4) : eViewport = _el$4;
-    insert(_el$4, buildContainer);
-    effect(_p$ => {
-      const _v$6 = viewportClasses(),
-        _v$7 = viewportStyle();
-      _v$6 !== _p$._v$6 && className(_el$4, _p$._v$6 = _v$6);
-      _p$._v$7 = style(_el$4, _v$7, _p$._v$7);
-      return _p$;
-    }, {
-      _v$6: undefined,
-      _v$7: undefined
-    });
-    return _el$4;
-  })(), memo(() => template3 && buildContainer())];
+  })() : buildContainer());
 };
 
-const _tmpl$$3 = /*#__PURE__*/template(`<div role="treegrid"><div role="presentation"></div><div role="presentation"><div role="presentation"><div role="presentation"></div></div></div><div role="presentation"></div><div role="presentation">`);
+var _tmpl$$3 = /*#__PURE__*/template(`<div role=treegrid><div role=presentation></div><div role=presentation><div role=presentation></div></div><div role=presentation></div><div role=presentation>`);
 const GridBodyComp = () => {
   const {
     context,
@@ -1744,7 +1701,6 @@ const GridBodyComp = () => {
   });
   const getRootClasses = createMemo(() => classesList('ag-root', 'ag-unselectable', getMovingCss(), getLayoutClass()));
   const getBodyClasses = createMemo(() => classesList('ag-body', getLayoutClass()));
-  const getBodyClipperClasses = createMemo(() => classesList('ag-body-clipper', getLayoutClass()));
   const getBodyViewportClasses = createMemo(() => classesList('ag-body-viewport', getRowAnimationClass(), getLayoutClass(), getForceVerticalScrollClass(), getCellSelectableCss()));
   const getTopClasses = createMemo(() => classesList('ag-floating-top', getCellSelectableCss()));
   const getStickyTopClasses = createMemo(() => classesList('ag-sticky-top', getCellSelectableCss()));
@@ -1770,17 +1726,16 @@ const GridBodyComp = () => {
     width: getBodyViewportWidth()
   }));
   return (() => {
-    const _el$ = _tmpl$$3(),
+    var _el$ = _tmpl$$3(),
       _el$2 = _el$.firstChild,
       _el$3 = _el$2.nextSibling,
       _el$4 = _el$3.firstChild,
-      _el$5 = _el$4.firstChild,
-      _el$6 = _el$3.nextSibling,
-      _el$7 = _el$6.nextSibling;
-    const _ref$ = eRoot;
+      _el$5 = _el$3.nextSibling,
+      _el$6 = _el$5.nextSibling;
+    var _ref$ = eRoot;
     typeof _ref$ === "function" ? use(_ref$, _el$) : eRoot = _el$;
     insert(_el$, createComponent(GridHeaderComp, {}), _el$2);
-    const _ref$2 = eTop;
+    var _ref$2 = eTop;
     typeof _ref$2 === "function" ? use(_ref$2, _el$2) : eTop = _el$2;
     insert(_el$2, createComponent(RowContainerComp, {
       get name() {
@@ -1802,128 +1757,126 @@ const GridBodyComp = () => {
         return RowContainerName.TOP_FULL_WIDTH;
       }
     }), null);
-    const _ref$3 = eBody;
+    var _ref$3 = eBody;
     typeof _ref$3 === "function" ? use(_ref$3, _el$3) : eBody = _el$3;
-    const _ref$4 = eBodyViewport;
-    typeof _ref$4 === "function" ? use(_ref$4, _el$5) : eBodyViewport = _el$5;
-    insert(_el$5, createComponent(RowContainerComp, {
+    var _ref$4 = eBodyViewport;
+    typeof _ref$4 === "function" ? use(_ref$4, _el$4) : eBodyViewport = _el$4;
+    insert(_el$4, createComponent(RowContainerComp, {
       get name() {
         return RowContainerName.LEFT;
       }
     }), null);
-    insert(_el$5, createComponent(RowContainerComp, {
+    insert(_el$4, createComponent(RowContainerComp, {
       get name() {
         return RowContainerName.CENTER;
       }
     }), null);
-    insert(_el$5, createComponent(RowContainerComp, {
+    insert(_el$4, createComponent(RowContainerComp, {
       get name() {
         return RowContainerName.RIGHT;
       }
     }), null);
-    insert(_el$5, createComponent(RowContainerComp, {
+    insert(_el$4, createComponent(RowContainerComp, {
       get name() {
         return RowContainerName.FULL_WIDTH;
       }
     }), null);
-    const _ref$5 = eStickyTop;
-    typeof _ref$5 === "function" ? use(_ref$5, _el$6) : eStickyTop = _el$6;
-    insert(_el$6, createComponent(RowContainerComp, {
+    var _ref$5 = eStickyTop;
+    typeof _ref$5 === "function" ? use(_ref$5, _el$5) : eStickyTop = _el$5;
+    insert(_el$5, createComponent(RowContainerComp, {
       get name() {
         return RowContainerName.STICKY_TOP_LEFT;
       }
     }), null);
-    insert(_el$6, createComponent(RowContainerComp, {
+    insert(_el$5, createComponent(RowContainerComp, {
       get name() {
         return RowContainerName.STICKY_TOP_CENTER;
       }
     }), null);
-    insert(_el$6, createComponent(RowContainerComp, {
+    insert(_el$5, createComponent(RowContainerComp, {
       get name() {
         return RowContainerName.STICKY_TOP_RIGHT;
       }
     }), null);
-    insert(_el$6, createComponent(RowContainerComp, {
+    insert(_el$5, createComponent(RowContainerComp, {
       get name() {
         return RowContainerName.STICKY_TOP_FULL_WIDTH;
       }
     }), null);
-    const _ref$6 = eBottom;
-    typeof _ref$6 === "function" ? use(_ref$6, _el$7) : eBottom = _el$7;
-    insert(_el$7, createComponent(RowContainerComp, {
+    var _ref$6 = eBottom;
+    typeof _ref$6 === "function" ? use(_ref$6, _el$6) : eBottom = _el$6;
+    insert(_el$6, createComponent(RowContainerComp, {
       get name() {
         return RowContainerName.BOTTOM_LEFT;
       }
     }), null);
-    insert(_el$7, createComponent(RowContainerComp, {
+    insert(_el$6, createComponent(RowContainerComp, {
       get name() {
         return RowContainerName.BOTTOM_CENTER;
       }
     }), null);
-    insert(_el$7, createComponent(RowContainerComp, {
+    insert(_el$6, createComponent(RowContainerComp, {
       get name() {
         return RowContainerName.BOTTOM_RIGHT;
       }
     }), null);
-    insert(_el$7, createComponent(RowContainerComp, {
+    insert(_el$6, createComponent(RowContainerComp, {
       get name() {
         return RowContainerName.BOTTOM_FULL_WIDTH;
       }
     }), null);
     effect(_p$ => {
-      const _v$ = getRootClasses(),
+      var _v$ = getRootClasses(),
         _v$2 = getAriaColCount(),
         _v$3 = getAriaRowCount(),
         _v$4 = getTopClasses(),
         _v$5 = getTopStyle(),
         _v$6 = getBodyClasses(),
-        _v$7 = getBodyClipperClasses(),
-        _v$8 = getBodyViewportClasses(),
-        _v$9 = getBodyViewportStyle(),
-        _v$10 = getStickyTopClasses(),
-        _v$11 = getStickyTopStyle(),
-        _v$12 = getBottomClasses(),
-        _v$13 = getBottomStyle();
-      _v$ !== _p$._v$ && className(_el$, _p$._v$ = _v$);
-      _v$2 !== _p$._v$2 && setAttribute(_el$, "aria-colcount", _p$._v$2 = _v$2);
-      _v$3 !== _p$._v$3 && setAttribute(_el$, "aria-rowcount", _p$._v$3 = _v$3);
-      _v$4 !== _p$._v$4 && className(_el$2, _p$._v$4 = _v$4);
-      _p$._v$5 = style(_el$2, _v$5, _p$._v$5);
-      _v$6 !== _p$._v$6 && className(_el$3, _p$._v$6 = _v$6);
-      _v$7 !== _p$._v$7 && className(_el$4, _p$._v$7 = _v$7);
-      _v$8 !== _p$._v$8 && className(_el$5, _p$._v$8 = _v$8);
-      _p$._v$9 = style(_el$5, _v$9, _p$._v$9);
-      _v$10 !== _p$._v$10 && className(_el$6, _p$._v$10 = _v$10);
-      _p$._v$11 = style(_el$6, _v$11, _p$._v$11);
-      _v$12 !== _p$._v$12 && className(_el$7, _p$._v$12 = _v$12);
-      _p$._v$13 = style(_el$7, _v$13, _p$._v$13);
+        _v$7 = getBodyViewportClasses(),
+        _v$8 = getBodyViewportStyle(),
+        _v$9 = getStickyTopClasses(),
+        _v$10 = getStickyTopStyle(),
+        _v$11 = getBottomClasses(),
+        _v$12 = getBottomStyle();
+      _v$ !== _p$.e && className(_el$, _p$.e = _v$);
+      _v$2 !== _p$.t && setAttribute(_el$, "aria-colcount", _p$.t = _v$2);
+      _v$3 !== _p$.a && setAttribute(_el$, "aria-rowcount", _p$.a = _v$3);
+      _v$4 !== _p$.o && className(_el$2, _p$.o = _v$4);
+      _p$.i = style(_el$2, _v$5, _p$.i);
+      _v$6 !== _p$.n && className(_el$3, _p$.n = _v$6);
+      _v$7 !== _p$.s && className(_el$4, _p$.s = _v$7);
+      _p$.h = style(_el$4, _v$8, _p$.h);
+      _v$9 !== _p$.r && className(_el$5, _p$.r = _v$9);
+      _p$.d = style(_el$5, _v$10, _p$.d);
+      _v$11 !== _p$.l && className(_el$6, _p$.l = _v$11);
+      _p$.u = style(_el$6, _v$12, _p$.u);
       return _p$;
     }, {
-      _v$: undefined,
-      _v$2: undefined,
-      _v$3: undefined,
-      _v$4: undefined,
-      _v$5: undefined,
-      _v$6: undefined,
-      _v$7: undefined,
-      _v$8: undefined,
-      _v$9: undefined,
-      _v$10: undefined,
-      _v$11: undefined,
-      _v$12: undefined,
-      _v$13: undefined
+      e: undefined,
+      t: undefined,
+      a: undefined,
+      o: undefined,
+      i: undefined,
+      n: undefined,
+      s: undefined,
+      h: undefined,
+      r: undefined,
+      d: undefined,
+      l: undefined,
+      u: undefined
     });
     return _el$;
   })();
 };
 
-const _tmpl$$2 = /*#__PURE__*/template(`<div role="presentation">`);
+var _tmpl$$2 = /*#__PURE__*/template(`<div role=presentation>`);
 const TabGuardComp = props => {
   const {
     children,
     eFocusableElement,
     onTabKeyDown,
-    gridCtrl
+    gridCtrl,
+    forceFocusOutWhenTabGuardsAreEmpty
   } = props;
   const [tabIndex, setTabIndex] = createSignal();
   let eTopGuard;
@@ -1942,49 +1895,50 @@ const TabGuardComp = props => {
       eBottomGuard: eBottomGuard,
       eFocusableElement: eFocusableElement,
       onTabKeyDown: onTabKeyDown,
+      forceFocusOutWhenTabGuardsAreEmpty: forceFocusOutWhenTabGuardsAreEmpty,
       focusInnerElement: fromBottom => gridCtrl.focusInnerElement(fromBottom)
     }));
     props.ref({
-      forceFocusOutOfContainer() {
-        ctrl.forceFocusOutOfContainer();
+      forceFocusOutOfContainer(up) {
+        ctrl.forceFocusOutOfContainer(up);
       }
     });
   });
   onCleanup(() => context.destroyBean(ctrl));
   return [(() => {
-    const _el$ = _tmpl$$2();
-    const _ref$ = eTopGuard;
+    var _el$ = _tmpl$$2();
+    var _ref$ = eTopGuard;
     typeof _ref$ === "function" ? use(_ref$, _el$) : eTopGuard = _el$;
     effect(_p$ => {
-      const _v$ = `${TabGuardClassNames.TAB_GUARD} ${TabGuardClassNames.TAB_GUARD_TOP}`,
+      var _v$ = `${TabGuardClassNames.TAB_GUARD} ${TabGuardClassNames.TAB_GUARD_TOP}`,
         _v$2 = tabIndex();
-      _v$ !== _p$._v$ && className(_el$, _p$._v$ = _v$);
-      _v$2 !== _p$._v$2 && setAttribute(_el$, "tabindex", _p$._v$2 = _v$2);
+      _v$ !== _p$.e && className(_el$, _p$.e = _v$);
+      _v$2 !== _p$.t && setAttribute(_el$, "tabindex", _p$.t = _v$2);
       return _p$;
     }, {
-      _v$: undefined,
-      _v$2: undefined
+      e: undefined,
+      t: undefined
     });
     return _el$;
   })(), children, (() => {
-    const _el$2 = _tmpl$$2();
-    const _ref$2 = eBottomGuard;
+    var _el$2 = _tmpl$$2();
+    var _ref$2 = eBottomGuard;
     typeof _ref$2 === "function" ? use(_ref$2, _el$2) : eBottomGuard = _el$2;
     effect(_p$ => {
-      const _v$3 = `${TabGuardClassNames.TAB_GUARD} ${TabGuardClassNames.TAB_GUARD_BOTTOM}`,
+      var _v$3 = `${TabGuardClassNames.TAB_GUARD} ${TabGuardClassNames.TAB_GUARD_BOTTOM}`,
         _v$4 = tabIndex();
-      _v$3 !== _p$._v$3 && className(_el$2, _p$._v$3 = _v$3);
-      _v$4 !== _p$._v$4 && setAttribute(_el$2, "tabindex", _p$._v$4 = _v$4);
+      _v$3 !== _p$.e && className(_el$2, _p$.e = _v$3);
+      _v$4 !== _p$.t && setAttribute(_el$2, "tabindex", _p$.t = _v$4);
       return _p$;
     }, {
-      _v$3: undefined,
-      _v$4: undefined
+      e: undefined,
+      t: undefined
     });
     return _el$2;
   })()];
 };
 
-const _tmpl$$1 = /*#__PURE__*/template(`<div><div>`);
+var _tmpl$$1 = /*#__PURE__*/template(`<div><div>`);
 const GridComp = props => {
   const [rtlClass, setRtlClass] = createSignal('');
   const [keyboardFocusClass, setKeyboardFocusClass] = createSignal('');
@@ -2075,9 +2029,8 @@ const GridComp = props => {
       destroyGridUi: () => {},
       // do nothing, as framework users destroy grid by removing the comp
       setRtlClass: setRtlClass,
-      addOrRemoveKeyboardFocusClass: addOrRemove => setKeyboardFocusClass(addOrRemove ? FocusService.AG_KEYBOARD_FOCUS : ''),
-      forceFocusOutOfContainer: () => {
-        tabGuardRef && tabGuardRef.forceFocusOutOfContainer();
+      forceFocusOutOfContainer: up => {
+        tabGuardRef && tabGuardRef.forceFocusOutOfContainer(up);
       },
       updateLayoutClasses: setLayoutClass,
       getFocusableContainers: () => {
@@ -2106,14 +2059,14 @@ const GridComp = props => {
     cursor: cursor != null ? cursor() : ''
   }));
   return (() => {
-    const _el$ = _tmpl$$1(),
+    var _el$ = _tmpl$$1(),
       _el$2 = _el$.firstChild;
-    const _ref$ = eGui;
+    var _ref$ = eGui;
     typeof _ref$ === "function" ? use(_ref$, _el$) : eGui = _el$;
-    const _ref$2 = eBody;
+    var _ref$2 = eBody;
     typeof _ref$2 === "function" ? use(_ref$2, _el$2) : eBody = _el$2;
     insert(_el$2, (() => {
-      const _c$ = memo(() => !!initialised());
+      var _c$ = memo(() => !!initialised());
       return () => _c$() && // we wait for initialised before rending the children, so GridComp has created and registered with it's
       // GridCtrl before we create the child GridBodyComp. Otherwise the GridBodyComp would initialise first,
       // before we have set the the Layout CSS classes, causing the GridBodyComp to render rows to a grid that
@@ -2127,6 +2080,7 @@ const GridComp = props => {
             eFocusableElement: eGui,
             onTabKeyDown: onTabKeyDown,
             gridCtrl: gridCtrl,
+            forceFocusOutWhenTabGuardsAreEmpty: true,
             get children() {
               return createComponent(GridBodyComp, {});
             }
@@ -2135,26 +2089,26 @@ const GridComp = props => {
       });
     })());
     effect(_p$ => {
-      const _v$ = cssClasses(),
+      var _v$ = cssClasses(),
         _v$2 = topStyle(),
         _v$3 = bodyCssClasses();
-      _v$ !== _p$._v$ && className(_el$, _p$._v$ = _v$);
-      _p$._v$2 = style(_el$, _v$2, _p$._v$2);
-      _v$3 !== _p$._v$3 && className(_el$2, _p$._v$3 = _v$3);
+      _v$ !== _p$.e && className(_el$, _p$.e = _v$);
+      _p$.t = style(_el$, _v$2, _p$.t);
+      _v$3 !== _p$.a && className(_el$2, _p$.a = _v$3);
       return _p$;
     }, {
-      _v$: undefined,
-      _v$2: undefined,
-      _v$3: undefined
+      e: undefined,
+      t: undefined,
+      a: undefined
     });
     return _el$;
   })();
 };
 
-const _tmpl$ = /*#__PURE__*/template(`<div>`);
+var _tmpl$ = /*#__PURE__*/template(`<div>`);
 const AgGridSolid = props => {
   let eGui;
-  let gridOptions;
+  let api;
   const [context, setContext] = createSignal();
   const [getPortals, setPortals] = createSignal([]);
   const destroyFuncs = [];
@@ -2178,16 +2132,13 @@ const AgGridSolid = props => {
       const currentValue = props[key];
       const previousValue = propsCopy[key];
       if (previousValue !== currentValue) {
-        changes[key] = {
-          currentValue,
-          previousValue
-        };
+        changes[key] = currentValue;
         propsCopy[key] = currentValue;
         changesExist = true;
       }
     });
     if (changesExist) {
-      ComponentUtil.processOnChange(changes, gridOptions.api);
+      ComponentUtil.processOnChange(changes, api);
     }
   });
   onMount(() => {
@@ -2207,8 +2158,7 @@ const AgGridSolid = props => {
       modules,
       frameworkOverrides: new SolidFrameworkOverrides()
     };
-    gridOptions = props.gridOptions || {};
-    ComponentUtil.copyAttributesToGridOptions(gridOptions, props);
+    const gridOptions = ComponentUtil.combineAttributesAndGridOptions(props.gridOptions, props);
     const createUiCallback = context => {
       setContext(context);
       // because React is Async, we need to wait for the UI to be initialised before exposing the API's
@@ -2217,27 +2167,27 @@ const AgGridSolid = props => {
         const refCallback = props.ref && props.ref;
         if (refCallback) {
           const gridRef = {
-            api: gridOptions.api,
-            columnApi: gridOptions.columnApi
+            api: api,
+            columnApi: new ColumnApi(api)
           };
           refCallback(gridRef);
         }
-        destroyFuncs.push(() => gridOptions.api.destroy());
+        destroyFuncs.push(() => api.destroy());
       });
     };
     const acceptChangesCallback = () => {
       // todo, what goes here?
     };
     const gridCoreCreator = new GridCoreCreator();
-    gridCoreCreator.create(eGui, gridOptions, createUiCallback, acceptChangesCallback, gridParams);
+    api = gridCoreCreator.create(eGui, gridOptions, createUiCallback, acceptChangesCallback, gridParams);
   });
   return (() => {
-    const _el$ = _tmpl$();
-    const _ref$ = eGui;
+    var _el$ = _tmpl$();
+    var _ref$ = eGui;
     typeof _ref$ === "function" ? use(_ref$, _el$) : eGui = _el$;
     _el$.style.setProperty("height", "100%");
     insert(_el$, (() => {
-      const _c$ = memo(() => !!context());
+      var _c$ = memo(() => !!context());
       return () => _c$() && createComponent(GridComp, {
         get ["class"]() {
           return props.class;
@@ -2258,7 +2208,7 @@ const AgGridSolid = props => {
         get children() {
           return createComponent(info.SolidClass, mergeProps(() => info.props, {
             ref(r$) {
-              const _ref$2 = info.ref;
+              var _ref$2 = info.ref;
               typeof _ref$2 === "function" ? _ref$2(r$) : info.ref = r$;
             }
           }));

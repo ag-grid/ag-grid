@@ -1,20 +1,19 @@
 {
   "name": "@ag-grid-enterprise/menu",
-  "version": "30.1.0",
+  "version": "31.1.0",
   "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
   "main": "./dist/esm/es6/main.mjs",
   "module": "./dist/esm/es6/main.mjs",
   "types": "./dist/esm/es6/main.d.ts",
   "scripts": {
-    "clean": "rimraf dist .hash",
+    "clean": "rimraf dist",
     "build-cjs": "rimraf dist/tsconfig.cjs.es5.docs.tsbuildinfo && npx tsc -p tsconfig.cjs.es5.json && npx tsc -p tsconfig.cjs.es6.json",
     "build-esm": "npx tsc -p tsconfig.esm.es5.json && npx tsc -p tsconfig.esm.es6.json",
     "build-cjs-prod": "npx tsc -p tsconfig.cjs.es5.json --sourceMap false && npx tsc -p tsconfig.cjs.es6.json --sourceMap false",
     "build-esm-prod": "npx tsc -p tsconfig.esm.es5.json --sourceMap false && npx tsc -p tsconfig.esm.es6.json --sourceMap false",
     "package": "node ../../module-build/rollup/build.js",
     "build": "npm run build-cjs && npm run build-esm && npx gulp mjs-processing",
-    "build-prod": "npm run build-cjs-prod && npm run build-esm-prod && npx gulp mjs-processing",
-    "test": "npx jest"
+    "build-prod": "npm run build-cjs-prod && npm run build-esm-prod && npx gulp mjs-processing"
   },
   "repository": {
     "type": "git",
@@ -47,16 +46,16 @@
   ],
   "homepage": "https://www.ag-grid.com/",
   "dependencies": {
-    "@ag-grid-community/core": "~30.1.0",
-    "@ag-grid-enterprise/column-tool-panel": "~30.1.0",
-    "@ag-grid-enterprise/core": "~30.1.0"
+    "@ag-grid-community/core": "~31.1.0",
+    "@ag-grid-enterprise/column-tool-panel": "~31.1.0",
+    "@ag-grid-enterprise/core": "~31.1.0"
   },
   "devDependencies": {
     "jest": "^29.5.0",
     "jest-environment-jsdom": "^29.5.0",
     "rimraf": "3.0.2",
     "ts-jest": "^29.1.0",
-    "typescript": "~4.3.5",
+    "typescript": "~4.7.4",
     "gulp": "^4.0.2",
     "gulp-replace": "^1.0.0",
     "gulp-rename": "^2.0.0",

@@ -18,7 +18,7 @@ import rowFactory from './row';
 import mergeCellFactory from './mergeCell';
 import { ExcelXlsxFactory } from '../../excelXlsxFactory';
 import { getExcelColumnName } from '../../assets/excelUtils';
-import { ExcelGridSerializingParams} from '../../baseExcelSerializingSession';
+import { ExcelGridSerializingParams } from '../../excelSerializingSession';
 
 const getMergedCellsAndAddColumnGroups = (rows: ExcelRow[], cols: ExcelColumn[], suppressColumnOutline: boolean): string[] => {
     const mergedCells: string[] = [];

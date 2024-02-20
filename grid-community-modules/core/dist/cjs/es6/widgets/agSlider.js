@@ -77,13 +77,13 @@ AgSlider.TEMPLATE = `<div class="ag-slider">
             </div>
         </div>`;
 __decorate([
-    componentAnnotations_1.RefSelector('eLabel')
+    (0, componentAnnotations_1.RefSelector)('eLabel')
 ], AgSlider.prototype, "eLabel", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eSlider')
+    (0, componentAnnotations_1.RefSelector)('eSlider')
 ], AgSlider.prototype, "eSlider", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eText')
+    (0, componentAnnotations_1.RefSelector)('eText')
 ], AgSlider.prototype, "eText", void 0);
 __decorate([
     context_1.PostConstruct

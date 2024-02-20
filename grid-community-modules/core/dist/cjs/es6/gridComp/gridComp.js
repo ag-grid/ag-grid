@@ -10,7 +10,6 @@ exports.GridComp = void 0;
 const context_1 = require("../context/context");
 const componentAnnotations_1 = require("../widgets/componentAnnotations");
 const dom_1 = require("../utils/dom");
-const focusService_1 = require("../focusService");
 const gridCtrl_1 = require("./gridCtrl");
 const layoutFeature_1 = require("../styling/layoutFeature");
 const tabGuardComp_1 = require("../widgets/tabGuardComp");
@@ -24,7 +23,6 @@ class GridComp extends tabGuardComp_1.TabGuardComp {
         const compProxy = {
             destroyGridUi: () => this.destroyBean(this),
             setRtlClass: (cssClass) => this.addCssClass(cssClass),
-            addOrRemoveKeyboardFocusClass: (addOrRemove) => this.addOrRemoveCssClass(focusService_1.FocusService.AG_KEYBOARD_FOCUS, addOrRemove),
             forceFocusOutOfContainer: this.forceFocusOutOfContainer.bind(this),
             updateLayoutClasses: this.updateLayoutClasses.bind(this),
             getFocusableContainers: this.getFocusableContainers.bind(this),
@@ -44,7 +42,8 @@ class GridComp extends tabGuardComp_1.TabGuardComp {
         this.initialiseTabGuard({
             // we want to override the default behaviour to do nothing for onTabKeyDown
             onTabKeyDown: () => undefined,
-            focusInnerElement: fromBottom => this.ctrl.focusInnerElement(fromBottom)
+            focusInnerElement: fromBottom => this.ctrl.focusInnerElement(fromBottom),
+            forceFocusOutWhenTabGuardsAreEmpty: true
         });
     }
     insertGridIntoDom() {
@@ -91,20 +90,20 @@ class GridComp extends tabGuardComp_1.TabGuardComp {
         if (this.sideBarComp) {
             focusableContainers.push(this.sideBarComp.getGui());
         }
-        return focusableContainers.filter(el => dom_1.isVisible(el));
+        return focusableContainers.filter(el => (0, dom_1.isVisible)(el));
     }
 }
 __decorate([
-    context_1.Autowired('loggerFactory')
+    (0, context_1.Autowired)('loggerFactory')
 ], GridComp.prototype, "loggerFactory", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('gridBody')
+    (0, componentAnnotations_1.RefSelector)('gridBody')
 ], GridComp.prototype, "gridBodyComp", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('sideBar')
+    (0, componentAnnotations_1.RefSelector)('sideBar')
 ], GridComp.prototype, "sideBarComp", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('rootWrapperBody')
+    (0, componentAnnotations_1.RefSelector)('rootWrapperBody')
 ], GridComp.prototype, "eRootWrapperBody", void 0);
 __decorate([
     context_1.PostConstruct

@@ -49,7 +49,7 @@ e.g. `['Argentina', '2012']`.
 
 The example below demonstrates server-side Row Grouping. Note the following:
 
-- <b>Country</b> and <b>Sport</b> columns have `rowGroup=true` defined on their column definitions. This tells the grid there are two levels of grouping, one for Country and one for Sport.
+- **Country** and **Sport** columns have `rowGroup=true` defined on their column definitions. This tells the grid there are two levels of grouping, one for Country and one for Sport.
 - The `rowGroupCols` and `groupKeys` properties in the request are used by the server to perform grouping.
 - Open the browser's dev console to view the request supplied to the datasource.
 
@@ -72,7 +72,7 @@ function isServerSideGroupOpenByDefault(params) {
 
 It may also be helpful to use the [Row Node](/row-object/) API `getRoute()` to inspect the route of a row node.
 
-<api-documentation source='row-object/resources/methods.json' section='rowNodeMethods' names='["getRoute"]' ></api-documentation>
+<api-documentation source='row-object/resources/reference.json' section='serverSide' names='["getRoute"]' ></api-documentation>
 
 Below shows `isServerSideGroupOpenByDefault()` and `getRoute` in action. Note the following:
 
@@ -84,23 +84,23 @@ Below shows `isServerSideGroupOpenByDefault()` and `getRoute` in action. Note th
 - Note **[United States, Swimming]** is not visibly open by default, as the parent group 'United States' is not open. However when 'United States' is opened, it's 'Swimming' group is opened by default.
 - Selecting a group row and clicking 'Route of Selected' will print the route to the selected node.
 
-<grid-example title='Open by Default' name='open-by-default' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
+<grid-example title='Open by Default' name='open-by-default' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
 ## Suppressing Sticky Groups
 
 By default the group nodes stick to the top of the Grid, to disable this behaviour, set the `suppressGroupRowsSticky` property to true. This behaviour applies to all row group levels.
 
-<grid-example title='Sticky Groups' name='suppress-sticky-groups' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
+<grid-example title='Sticky Groups' name='suppress-sticky-groups' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
 ## Row Group Footers
 
 To enable [Row Group Footers](/grouping-footers/), set the `groupIncludeFooter` property to true. Note that the total footer is not supported by the SSRM.
 
-<grid-example title='Group Footers' name='group-footer' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
+<grid-example title='Group Footers' name='group-footer' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside","rowgrouping"] }'></grid-example>
 
-Row group footers can also be used with `groupDisplayType='multipleColumns`, as demonstrated in the example below.
+Row group footers can also be used with `groupDisplayType='multipleColumns'`, as demonstrated in the example below.
 
-<grid-example title='Multiple Group Columns and Footers' name='group-footer-multiple-cols' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
+<grid-example title='Multiple Group Columns and Footers' name='group-footer-multiple-cols' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside","rowgrouping"] }'></grid-example>
 
 ## Expand All / Collapse All
 
@@ -108,10 +108,10 @@ It is possible to expand and collapse all group rows using the `expandAll()` and
 
 <snippet>
 | // Expand all group rows
-| gridOptions.api.expandAll();
+| api.expandAll();
 |
 | // Collapse all group rows
-| gridOptions.api.collapseAll();
+| api.collapseAll();
 </snippet>
 
 Calling `expandAll()` and `collapseAll()` will impact **all loaded group nodes**, including those not visible due to their containing group been closed. This means there could potentially be a huge number of groups expanded, so this method should be used very wisely to not create massive amount of server requests and loading a large amount of data.
@@ -122,7 +122,7 @@ To open only specific groups, e.g. only groups at the top level, then use the `f
 
 <snippet>
 | // Expand all top level row nodes
-| gridOptions.api.forEachNode(node => {
+| api.forEachNode(node => {
 |     if (node.group && node.level == 0) {
 |         node.setExpanded(true);
 |     }
@@ -136,7 +136,7 @@ The example below demonstrates these techniques. Note the following:
 - Clicking 'Collapse All' will collapse all rows.
 - Clicking 'Expand Top Level Only' will expand Years only, even if more group rows are loaded..
 
-<grid-example title='Expand All' name='expand-all' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
+<grid-example title='Expand All' name='expand-all' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside","rowgrouping"] }'></grid-example>
 
 ## Providing Child Counts
 
@@ -153,7 +153,7 @@ const gridOptions = {
 }
 </snippet>
 
-<grid-example title='Child Counts' name='child-counts' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
+<grid-example title='Child Counts' name='child-counts' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
 
 ## Group via Value Getter

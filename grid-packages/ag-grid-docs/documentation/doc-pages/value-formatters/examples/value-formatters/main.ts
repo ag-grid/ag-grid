@@ -1,4 +1,6 @@
-import { Grid, GridOptions, ValueFormatterParams } from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions, ValueFormatterParams } from '@ag-grid-community/core';
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -12,7 +14,6 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     cellClass: 'number-cell',
-    resizable: true,
   },
   rowData: createRowData(),
 }
@@ -26,11 +27,7 @@ function currencyFormatter(params: ValueFormatterParams) {
 }
 
 function formatNumber(number: number) {
-  // this puts commas into the number eg 1000 goes to 1,000,
-  // i pulled this from stack overflow, i have no idea how it works
-  return Math.floor(number)
-    .toString()
-    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+  return Math.floor(number).toLocaleString()
 }
 
 function createRowData() {
@@ -49,5 +46,5 @@ function createRowData() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

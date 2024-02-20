@@ -25,6 +25,9 @@ class ViewportSizeFeature extends beanStub_1.BeanStub {
             this.listenForResize();
         });
         this.addManagedListener(this.eventService, events_1.Events.EVENT_SCROLLBAR_WIDTH_CHANGED, this.onScrollbarWidthChanged.bind(this));
+        this.addManagedPropertyListeners(['alwaysShowHorizontalScroll', 'alwaysShowVerticalScroll'], () => {
+            this.checkViewportAndScrolls();
+        });
     }
     listenForResize() {
         const listener = () => this.onCenterViewportResized();
@@ -37,7 +40,8 @@ class ViewportSizeFeature extends beanStub_1.BeanStub {
         this.checkViewportAndScrolls();
     }
     onCenterViewportResized() {
-        if (this.centerContainerCtrl.isViewportVisible()) {
+        if (this.centerContainerCtrl.isViewportInTheDOMTree()) {
+            this.keepPinnedColumnsNarrowerThanViewport();
             this.checkViewportAndScrolls();
             const newWidth = this.centerContainerCtrl.getCenterWidth();
             if (newWidth !== this.centerWidth) {
@@ -48,6 +52,55 @@ class ViewportSizeFeature extends beanStub_1.BeanStub {
         else {
             this.bodyHeight = 0;
         }
+    }
+    keepPinnedColumnsNarrowerThanViewport() {
+        const eBodyViewport = this.gridBodyCtrl.getBodyViewportElement();
+        const bodyWidth = (0, dom_1.getInnerWidth)(eBodyViewport);
+        if (bodyWidth <= 50) {
+            return;
+        }
+        // remove 50px from the bodyWidth to give some margin
+        let columnsToRemove = this.getPinnedColumnsOverflowingViewport(bodyWidth - 50);
+        const processUnpinnedColumns = this.gridOptionsService.getCallback('processUnpinnedColumns');
+        if (!columnsToRemove.length) {
+            return;
+        }
+        if (processUnpinnedColumns) {
+            const params = {
+                columns: columnsToRemove,
+                viewportWidth: bodyWidth
+            };
+            columnsToRemove = processUnpinnedColumns(params);
+        }
+        this.columnModel.setColumnsPinned(columnsToRemove, null, 'viewportSizeFeature');
+    }
+    getPinnedColumnsOverflowingViewport(viewportWidth) {
+        const pinnedRightWidth = this.pinnedWidthService.getPinnedRightWidth();
+        const pinnedLeftWidth = this.pinnedWidthService.getPinnedLeftWidth();
+        const totalPinnedWidth = pinnedRightWidth + pinnedLeftWidth;
+        if (totalPinnedWidth < viewportWidth) {
+            return [];
+        }
+        const pinnedLeftColumns = [...this.columnModel.getDisplayedLeftColumns()];
+        const pinnedRightColumns = [...this.columnModel.getDisplayedRightColumns()];
+        let indexRight = 0;
+        let indexLeft = 0;
+        let totalWidthRemoved = 0;
+        const columnsToRemove = [];
+        let spaceNecessary = (totalPinnedWidth - totalWidthRemoved) - viewportWidth;
+        while ((indexLeft < pinnedLeftColumns.length || indexRight < pinnedRightColumns.length) && spaceNecessary > 0) {
+            if (indexRight < pinnedRightColumns.length) {
+                const currentColumn = pinnedRightColumns[indexRight++];
+                spaceNecessary -= currentColumn.getActualWidth();
+                columnsToRemove.push(currentColumn);
+            }
+            if (indexLeft < pinnedLeftColumns.length && spaceNecessary > 0) {
+                const currentColumn = pinnedLeftColumns[indexLeft++];
+                spaceNecessary -= currentColumn.getActualWidth();
+                columnsToRemove.push(currentColumn);
+            }
+        }
+        return columnsToRemove;
     }
     // gets called every time the viewport size changes. we use this to check visibility of scrollbars
     // in the grid panel, and also to check size and position of viewport for row and column virtualisation.
@@ -65,7 +118,7 @@ class ViewportSizeFeature extends beanStub_1.BeanStub {
     }
     checkBodyHeight() {
         const eBodyViewport = this.gridBodyCtrl.getBodyViewportElement();
-        const bodyHeight = dom_1.getInnerHeight(eBodyViewport);
+        const bodyHeight = (0, dom_1.getInnerHeight)(eBodyViewport);
         if (this.bodyHeight !== bodyHeight) {
             this.bodyHeight = bodyHeight;
             const event = {
@@ -104,13 +157,16 @@ class ViewportSizeFeature extends beanStub_1.BeanStub {
     }
 }
 __decorate([
-    context_1.Autowired('ctrlsService')
+    (0, context_1.Autowired)('ctrlsService')
 ], ViewportSizeFeature.prototype, "ctrlsService", void 0);
 __decorate([
-    context_1.Autowired('columnModel')
+    (0, context_1.Autowired)('pinnedWidthService')
+], ViewportSizeFeature.prototype, "pinnedWidthService", void 0);
+__decorate([
+    (0, context_1.Autowired)('columnModel')
 ], ViewportSizeFeature.prototype, "columnModel", void 0);
 __decorate([
-    context_1.Autowired('scrollVisibleService')
+    (0, context_1.Autowired)('scrollVisibleService')
 ], ViewportSizeFeature.prototype, "scrollVisibleService", void 0);
 __decorate([
     context_1.PostConstruct

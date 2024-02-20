@@ -1,4 +1,12 @@
-import { Grid, ColDef, GridOptions, ValueFormatterParams, ValueGetterParams, GetRowIdParams } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  ColDef,
+  GridOptions,
+  ValueFormatterParams,
+  ValueGetterParams,
+  GetRowIdParams,
+} from '@ag-grid-community/core';
 
 const MIN_BOOK_COUNT = 10;
 const MAX_BOOK_COUNT = 20;
@@ -269,7 +277,7 @@ function createTradeRecord(product: any, portfolio: any, book: any, batch: any) 
 function numberCellFormatter(params: ValueFormatterParams) {
   return Math.floor(params.value)
     .toString()
-    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 }
 
 function createBookName() {
@@ -282,12 +290,12 @@ function createTradeId() {
   return nextTradeId
 }
 
+let gridApi: GridApi;
+
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   defaultColDef: {
     width: 120,
-    sortable: true,
-    resizable: true,
     filter: 'agNumberColumnFilter',
   },
   autoGroupColumnDef: {
@@ -300,7 +308,6 @@ const gridOptions: GridOptions = {
   rowSelection: 'multiple',
   groupSelectsChildren: true,
   rowData: globalRowData,
-  animateRows: true,
   suppressAggFuncInHeader: true,
   suppressRowClickSelection: true,
   getRowId: (params: GetRowIdParams) => {
@@ -308,7 +315,7 @@ const gridOptions: GridOptions = {
   },
   onGridReady: (params) => {
     createRowData()
-    params.api.setRowData(globalRowData)
+    params.api.setGridOption('rowData', globalRowData)
   },
 }
 
@@ -316,7 +323,7 @@ function updateData() {
   removeSomeItems()
   addSomeItems()
   updateSomeItems()
-  gridOptions.api!.setRowData(globalRowData)
+  gridApi!.setGridOption('rowData', globalRowData)
 }
 
 function updateSomeItems() {
@@ -379,12 +386,12 @@ function updateImmutableObject(original: any, newValues: any) {
   const newObject: any = {};
 
   // copy in the old values
-  Object.keys(original).forEach(function (key) {
+  Object.keys(original).forEach((key) => {
     newObject[key] = original[key]
   })
 
   // now override with the new values
-  Object.keys(newValues).forEach(function (key) {
+  Object.keys(newValues).forEach((key) => {
     newObject[key] = newValues[key]
   })
 
@@ -394,5 +401,5 @@ function updateImmutableObject(original: any, newValues: any) {
 // after page is loaded, create the grid.
 document.addEventListener('DOMContentLoaded', function () {
   const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-  new Grid(eGridDiv, gridOptions)
+  gridApi = createGrid(eGridDiv, gridOptions);
 })

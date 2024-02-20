@@ -36,10 +36,10 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         var _this = this;
         var compProxy = {
             setInnerRenderer: function (compDetails, valueToDisplay) { return _this.setRenderDetails(compDetails, valueToDisplay); },
-            setChildCount: function (count) { return _this.eChildCount.innerHTML = count; },
+            setChildCount: function (count) { return _this.eChildCount.textContent = count; },
             addOrRemoveCssClass: function (cssClass, value) { return _this.addOrRemoveCssClass(cssClass, value); },
-            setContractedDisplayed: function (expanded) { return dom_1.setDisplayed(_this.eContracted, expanded); },
-            setExpandedDisplayed: function (expanded) { return dom_1.setDisplayed(_this.eExpanded, expanded); },
+            setContractedDisplayed: function (expanded) { return (0, dom_1.setDisplayed)(_this.eContracted, expanded); },
+            setExpandedDisplayed: function (expanded) { return (0, dom_1.setDisplayed)(_this.eExpanded, expanded); },
             setCheckboxVisible: function (visible) { return _this.eCheckbox.classList.toggle('ag-invisible', !visible); }
         };
         var ctrl = this.createManagedBean(new groupCellRendererCtrl_1.GroupCellRendererCtrl());
@@ -47,7 +47,7 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         var eGui = this.getGui();
         ctrl.init(compProxy, eGui, this.eCheckbox, this.eExpanded, this.eContracted, this.constructor, params);
         if (fullWidth) {
-            aria_1.setAriaRole(eGui, 'gridcell');
+            (0, aria_1.setAriaRole)(eGui, ctrl.getCellAriaRole());
         }
     };
     GroupCellRenderer.prototype.setRenderDetails = function (compDetails, valueToDisplay) {
@@ -86,19 +86,19 @@ var GroupCellRenderer = /** @class */ (function (_super) {
     };
     GroupCellRenderer.TEMPLATE = "<span class=\"ag-cell-wrapper\">\n            <span class=\"ag-group-expanded\" ref=\"eExpanded\"></span>\n            <span class=\"ag-group-contracted\" ref=\"eContracted\"></span>\n            <span class=\"ag-group-checkbox ag-invisible\" ref=\"eCheckbox\"></span>\n            <span class=\"ag-group-value\" ref=\"eValue\"></span>\n            <span class=\"ag-group-child-count\" ref=\"eChildCount\"></span>\n        </span>";
     __decorate([
-        componentAnnotations_1.RefSelector('eExpanded')
+        (0, componentAnnotations_1.RefSelector)('eExpanded')
     ], GroupCellRenderer.prototype, "eExpanded", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('eContracted')
+        (0, componentAnnotations_1.RefSelector)('eContracted')
     ], GroupCellRenderer.prototype, "eContracted", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('eCheckbox')
+        (0, componentAnnotations_1.RefSelector)('eCheckbox')
     ], GroupCellRenderer.prototype, "eCheckbox", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('eValue')
+        (0, componentAnnotations_1.RefSelector)('eValue')
     ], GroupCellRenderer.prototype, "eValue", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('eChildCount')
+        (0, componentAnnotations_1.RefSelector)('eChildCount')
     ], GroupCellRenderer.prototype, "eChildCount", void 0);
     return GroupCellRenderer;
 }(component_1.Component));

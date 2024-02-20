@@ -13,11 +13,11 @@ individual filters.
 <api-documentation source='grid-api/api.json' section='filter' names='["getFilterModel", "setFilterModel"]'></api-documentation>
 
 <snippet>
-| // Gets filter model via the grid API
-| const model = gridOptions.api.getFilterModel();
+|// Gets filter model via the grid API
+|const model = api.getFilterModel();
 | 
-| // Sets the filter model via the grid API
-| gridOptions.api.setFilterModel(model);
+|// Sets the filter model via the grid API
+|api.setFilterModel(model);
 </snippet>
 
 The filter model represents the state of filters for all columns and has the following structure:
@@ -45,7 +45,7 @@ This is useful if you want to save the global filter state and apply it at a lat
 You can reset all filters by doing the following:
 
 <snippet>
-gridOptions.api.setFilterModel(null);
+api.setFilterModel(null);
 </snippet>
 
 ### Example: Get / Set All Filter Models
@@ -62,63 +62,67 @@ The example below shows getting and setting all the filter models in action.
 
 <grid-example title='Filter Model' name='filter-model' type='generated' options='{ "enterprise": true, "exampleHeight": 587, "modules": ["clientside", "menu", "filterpanel", "columnpanel", "setfilter"] }'></grid-example>
 
+## Get / Set Individual Filter Model
+
+It is also possible to get or set the filter model for a specific filter, including your own custom filters.
+
+<api-documentation source='grid-api/api.json' section='filter' names='["getColumnFilterModel", "setColumnFilterModel"]'></api-documentation>
+
+### Re-running Grid Filtering
+
+After filters have been changed via their API, you must ensure the method `gridApi.onFilterChanged()` is called to tell the grid to filter the rows again. If `gridApi.onFilterChanged()` is not called, the grid will still show the data relevant to the filters before they were updated through the API.
+
+<snippet transform="false">
+|// Set a filter model
+|await api.setColumnFilterModel('name', {
+|    filterType: 'text',
+|    type: 'startsWith',
+|    filter: 'abc',
+|});
+|
+|// Tell grid to run filter operation again
+|api.onFilterChanged();
+</snippet>
+
+### Reset Individual Filters
+
+You can reset a filter to its original state by setting the model to `null`.
+
+<snippet transform="false">
+|// Set the model to null
+|await api.setColumnFilterModel('name', null);
+| 
+|// Tell grid to run filter operation again
+|api.onFilterChanged();
+</snippet>
+
+### Example: Get / Set Individual Filter Model
+
+The example below shows getting and setting an individual filter model in action.
+
+- `Save Filter Model` saves the **Athlete** filter state, which will then be displayed.
+- `Restore Saved Filter Model` restores the saved **Athlete** filter state back into the grid.
+- `Set Custom Filter Model` takes a custom hard-coded **Athlete** filter model and applies it to the grid.
+- `Reset Filter` will clear the **Athlete** filter.
+
+<grid-example title='Individual Filter Model' name='filter-model-individual' type='generated' options='{ "enterprise": true, "exampleHeight": 587, "modules": ["clientside", "menu", "filterpanel", "columnpanel", "setfilter"] }'></grid-example>
+
 ## Accessing Individual Filter Component Instances
 
-It is also possible to access the filter components directly if you want to interact with a specific filter. This also works for your own custom filters, where you can get a reference to the underlying filtering instance (i.e. what was created when AG Grid called `new` on your filter). Calling `api.getFilterInstance(colKey)` will return a reference to the filter instance for the column with key `colKey`.
+It is also possible to access the filter components directly if you want to interact with a specific filter. This also works for your own custom filters, where you can get a reference to the underlying filtering instance (i.e. what was created when AG Grid called `new` on your filter). Calling `api.getColumnFilterInstance(colKey)` will return a reference to the filter instance for the column with key `colKey`.
 
-<api-documentation source='grid-api/api.json' section='filter' names='["getFilterInstance"]'></api-documentation>
+<api-documentation source='grid-api/api.json' section='filter' names='["getColumnFilterInstance"]'></api-documentation>
 
-<snippet>
+<snippet transform="false">
 // Get a reference to the 'name' filter instance
-const filterInstance = gridOptions.api.getFilterInstance('name');
+const filterInstance = await api.getColumnFilterInstance('name');
 </snippet>
 
 All of the methods of the filter are available on the instance. If using a custom filter, any other methods you have added will also be present, allowing bespoke behaviour to be added to your filter. Both provided and custom filters implement `IFilter` and have the following common methods:
 
 <interface-documentation interfaceName='IFilter' names='["isFilterActive", "getModel", "setModel"]' config='{"description":""}'></interface-documentation>
 
-For filters that are created asynchronously, including React 16+ components, `getFilterInstance` will return `null` if the filter has not already been created. If your app uses asynchronous components, use the optional `callback` function which will be invoked with the filter instance when it is available.
-
-<snippet>
-| // Get a reference to an asynchronously created filter instance
-| gridOptions.api.getFilterInstance('name', filterInstance => {
-|     // ... use filterInstance here
-| });
-</snippet>
-
-### Re-running Grid Filtering
-
-After filters have been changed via their API, you must ensure the method `gridApi.onFilterChanged()` is called to tell the grid to filter the rows again. If `gridApi.onFilterChanged()` is not called, the grid will still show the data relevant to the filters before they were updated through the API.
-
-<snippet>
-| // Get a reference to the filter instance
-| const filterInstance = gridOptions.api.getFilterInstance('name');
-|
-| // Set the filter model
-| filterInstance.setModel({
-|    filterType: 'text',
-|    type: 'startsWith',
-|    filter: 'abc',
-| });
-|
-| // Tell grid to run filter operation again
-| gridOptions.api.onFilterChanged();
-</snippet>
-
-### Reset Individual Filters
-
-You can reset a filter to its original state by getting the filter instance and setting the model to `null`.
-
-<snippet>
-| // Get a reference to the filter instance
-| const filterInstance = gridOptions.api.getFilterInstance('name');
-| 
-| // Set the model to null
-| filterInstance.setModel(null);
-| 
-| // Tell grid to run filter operation again
-| gridOptions.api.onFilterChanged();
-</snippet>
+Note that if you call `setModel` on the filter, you will also need to call `onFilterChanged` to re-run filtering, similar to [Re-running Grid Filtering](/filter-api/#re-running-grid-filtering)
 
 ### Example: Accessing Individual Filters
 
@@ -127,7 +131,6 @@ The example below shows how you can interact with an individual filter instance,
 - `Get Mini Filter Text` will print the text from the Set Filter's Mini Filter to the console.
 - `Save Mini Filter Text` will save the Mini Filter text.
 - `Restore Mini Filter Text` will restore the Mini Filter text from the saved state.
-- `Reset Filter` will reset the filter.
 
 (Note: the example uses the Enterprise-only [Set Filter](/filter-set/)).
 
@@ -165,11 +168,27 @@ The following example demonstrates all of the Provided Filters with `readOnly: t
 
 <grid-example title='Read-only Filter UI' name='filter-api-readonly' type='generated' options='{ "enterprise": true, "exampleHeight": 624, "modules": ["clientside", "setfilter", "menu", "columnpanel", "multifilter"] }'></grid-example>
 
+## Launching Filters
+
+How filters are launched can be customised if grid option `columnMenu = 'new'`.
+
+`colDef.suppressHeaderFilterButton = true` can be used to disable the button in the header that opens the filter.
+
+The filter can also be launched via `api.showColumnFilter(columnKey)`.
+
+The following example demonstrates launching the filter:
+- The **Athlete** column has a filter button in the header to launch the filter.
+- The **Age** column has a floating filter, so the header button is automatically hidden.
+- The **Country** column has the filter button hidden via `colDef.suppressHeaderFilterButton`. The filter can still be opened via the API by clicking the `Open Country Filter` button.
+- The **Year** column has a floating filter and the header button is also suppressed, so has a slightly different display style when the filter is active.
+
+<grid-example title='Launching Filters' name='launching-filters' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
+
 ## Filter Events
 
 Filtering causes the following events to be emitted:
 
-<api-documentation source='grid-events/events.json' section='filter'></api-documentation>
+<api-documentation source='grid-events/events.json' section='filter' names='["filterOpened", "filterChanged", "filterModified"]'></api-documentation>
 
 ## Next Up
 

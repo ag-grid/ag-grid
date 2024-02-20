@@ -43,8 +43,29 @@ export class Events {
     /** The list of displayed columns has changed, can result from columns open / close, column move, pivot, group, etc */
     public static EVENT_DISPLAYED_COLUMNS_CHANGED: 'displayedColumnsChanged' = 'displayedColumnsChanged';
 
+    /** The grid option related to suppressing movable columns has changed */
+    public static EVENT_SUPPRESS_COLUMN_MOVE_CHANGED: 'suppressMovableColumns' = 'suppressMovableColumns';
+
+    /** The grid option related to suppressing column group selection has changed */
+    public static EVENT_SUPPRESS_MENU_HIDE_CHANGED: 'suppressMenuHide' = 'suppressMenuHide';
+
+    /** The grid option related to suppressing movable columns has changed */
+    public static EVENT_SUPPRESS_FIELD_DOT_NOTATION: 'suppressFieldDotNotation' = 'suppressFieldDotNotation';
+
     /** The list of virtual columns has changed, results from viewport changing */
     public static EVENT_VIRTUAL_COLUMNS_CHANGED: 'virtualColumnsChanged' = 'virtualColumnsChanged';
+
+    /** Column header mouse over */
+    public static EVENT_COLUMN_HEADER_MOUSE_OVER: 'columnHeaderMouseOver' = 'columnHeaderMouseOver';
+
+    /** Column header mouse leave */
+    public static EVENT_COLUMN_HEADER_MOUSE_LEAVE: 'columnHeaderMouseLeave' = 'columnHeaderMouseLeave';
+
+    /** Column header clicked */
+    public static EVENT_COLUMN_HEADER_CLICKED: 'columnHeaderClicked' = 'columnHeaderClicked';
+
+    /** Column header context menu event, such as right-click or context menu key press */
+    public static EVENT_COLUMN_HEADER_CONTEXT_MENU: 'columnHeaderContextMenu' = 'columnHeaderContextMenu';
 
     /** Async Transactions Executed */
     public static EVENT_ASYNC_TRANSACTIONS_FLUSHED: 'asyncTransactionsFlushed' = 'asyncTransactionsFlushed';
@@ -52,10 +73,7 @@ export class Events {
     /** A row group was opened / closed */
     public static EVENT_ROW_GROUP_OPENED: 'rowGroupOpened' = 'rowGroupOpened';
 
-    /** @deprecated v28 use EVENT_ROW_DATA_UPDATED instead */
-    public static EVENT_ROW_DATA_CHANGED: 'rowDataChanged' = 'rowDataChanged';
-
-    /** The client has updated data for the grid */
+    /** Client-Side Row Model only. The client has updated data for the grid */
     public static EVENT_ROW_DATA_UPDATED: 'rowDataUpdated' = 'rowDataUpdated';
 
     /** The client has set new floating data into the grid */
@@ -138,6 +156,8 @@ export class Events {
     public static EVENT_FILTER_MODIFIED: 'filterModified' = 'filterModified';
     public static EVENT_FILTER_OPENED: 'filterOpened' = 'filterOpened';
 
+    public static EVENT_ADVANCED_FILTER_BUILDER_VISIBLE_CHANGED: 'advancedFilterBuilderVisibleChanged' = 'advancedFilterBuilderVisibleChanged';
+
     public static EVENT_SORT_CHANGED: 'sortChanged' = 'sortChanged';
 
     /** A row was removed from the dom, for any reason. Use to clean up resources (if any) used by the row. */
@@ -148,6 +168,8 @@ export class Events {
 
     /** Gets called once after the grid has finished initialising. */
     public static EVENT_GRID_READY: 'gridReady' = 'gridReady';
+    /** Called once when the grid is about to get destroyed. */
+    public static EVENT_GRID_PRE_DESTROYED: 'gridPreDestroyed' = 'gridPreDestroyed';
     /** Width of height of the main grid div has changed. Grid listens for this and does layout of grid if it's
      * changed, so always filling the space it was given. */
     public static EVENT_GRID_SIZE_CHANGED: 'gridSizeChanged' = 'gridSizeChanged';
@@ -190,6 +212,11 @@ export class Events {
     /** Only used by the SSRM, called when the grid has no more rows to refresh */
     public static EVENT_STORE_REFRESHED: 'storeRefreshed' = 'storeRefreshed';
 
+    public static EVENT_STATE_UPDATED: 'stateUpdated' = 'stateUpdated';
+
+    /** The visibility of the column menu has changed. */
+    public static EVENT_COLUMN_MENU_VISIBLE_CHANGED: 'columnMenuVisibleChanged' = 'columnMenuVisibleChanged';
+
     /*****************************  INTERNAL EVENTS: START ******************************************* */
 
     /** Please remember to add to ComponentUtil.EXCLUDED_INTERNAL_EVENTS to not have these events exposed to framework components. */
@@ -197,6 +224,7 @@ export class Events {
     /** All items from here down are used internally by the grid, not intended for external use. */
     // not documented, either experimental, or we just don't want users using an depending on them
     public static EVENT_BODY_HEIGHT_CHANGED: 'bodyHeightChanged' = 'bodyHeightChanged';
+    public static EVENT_COLUMN_CONTAINER_WIDTH_CHANGED: 'columnContainerWidthChanged' = 'columnContainerWidthChanged';
     public static EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED: 'displayedColumnsWidthChanged' = 'displayedColumnsWidthChanged';
     public static EVENT_SCROLL_VISIBILITY_CHANGED: 'scrollVisibilityChanged' = 'scrollVisibilityChanged';
     public static EVENT_COLUMN_HOVER_CHANGED: 'columnHoverChanged' = 'columnHoverChanged';
@@ -230,14 +258,12 @@ export class Events {
     public static EVENT_COLUMN_VALUE_CHANGE_REQUEST: 'columnValueChangeRequest' = 'columnValueChangeRequest';
     public static EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST: 'columnAggFuncChangeRequest' = 'columnAggFuncChangeRequest';
 
-    public static EVENT_KEYBOARD_FOCUS: 'keyboardFocus' = 'keyboardFocus';
-    public static EVENT_MOUSE_FOCUS: 'mouseFocus' = 'mouseFocus';
-
     public static EVENT_STORE_UPDATED: 'storeUpdated' = 'storeUpdated';
 
     public static EVENT_FILTER_DESTROYED: 'filterDestroyed' = 'filterDestroyed';
 
     public static EVENT_ROW_DATA_UPDATE_STARTED: 'rowDataUpdateStarted' = 'rowDataUpdateStarted';
+    public static EVENT_ROW_COUNT_READY: 'rowCountReady' = 'rowCountReady';
 
     // Advanced Filters
     public static EVENT_ADVANCED_FILTER_ENABLED_CHANGED: 'advancedFilterEnabledChanged' = 'advancedFilterEnabledChanged';
@@ -246,6 +272,8 @@ export class Events {
     // Widgets
     public static EVENT_FIELD_VALUE_CHANGED: 'fieldValueChanged' = 'fieldValueChanged';
     public static EVENT_FIELD_PICKER_VALUE_SELECTED: 'fieldPickerValueSelected' = 'fieldPickerValueSelected';
+
+    public static EVENT_SIDE_BAR_UPDATED: 'sideBarUpdated' = 'sideBarUpdated';
 
     /*****************************  INTERNAL EVENTS: END ******************************************* */
 }

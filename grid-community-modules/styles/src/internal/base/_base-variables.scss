@@ -34,6 +34,11 @@
 
         --ag-modal-overlay-background-color: rgba(255, 255, 255, 0.66);
 
+        --ag-menu-background-color: var(--ag-background-color);
+        --ag-menu-border-color: var(--ag-border-color);
+        --ag-panel-background-color: var(--ag-background-color);
+        --ag-panel-border-color: var(--ag-border-color);
+
         --ag-row-hover-color: transparent;
 
         --ag-column-hover-color: transparent;
@@ -68,7 +73,7 @@
         --ag-value-change-delta-down-color: #e53935;
 
         --ag-chip-background-color: transparent;
-
+        --ag-chip-border-color: var(--ag-chip-background-color);
 
         --ag-borders: solid 1px;
 
@@ -97,6 +102,7 @@
         --ag-borders-side-button: var(--ag-borders);
 
         --ag-border-radius: 0px;
+        --ag-wrapper-border-radius: var(--ag-border-radius);
 
         --ag-row-border-color: var(--ag-secondary-border-color);
 
@@ -139,10 +145,12 @@
         --ag-minichart-selected-page-color: var(--ag-checkbox-checked-color);
 
 
-
         --ag-grid-size: 4px;
 
         --ag-icon-size: 12px;
+        --ag-icon-font-weight: normal;
+        --ag-icon-font-color: var(--ag-foreground-color);
+        --ag-icon-image-display: block;
 
         --ag-widget-container-horizontal-padding: calc(var(--ag-grid-size) * 1.5);
         --ag-widget-container-vertical-padding: calc(var(--ag-grid-size) * 1.5);
@@ -163,6 +171,8 @@
 
         --ag-set-filter-indent-size: calc(var(--ag-grid-size) + var(--ag-icon-size));
 
+        --ag-advanced-filter-builder-indent-size: calc(var(--ag-grid-size) * 2 + var(--ag-icon-size));
+
         --ag-row-group-indent-size: calc(var(--ag-cell-widget-spacing) + var(--ag-icon-size));
 
         --ag-filter-tool-panel-group-indent: 16px;
@@ -181,5 +191,10 @@
         --ag-card-shadow: none;
 
         --ag-popup-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+
+        --ag-advanced-filter-join-pill-color: #f08e8d;
+        --ag-advanced-filter-column-pill-color: #a6e194;
+        --ag-advanced-filter-option-pill-color: #f3c08b;
+        --ag-advanced-filter-value-pill-color: #85c0e4;
     };
 }

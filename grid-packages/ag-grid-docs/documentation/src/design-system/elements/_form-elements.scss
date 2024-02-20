@@ -1,29 +1,28 @@
-@use "sass:math";
-@use "sass:map";
-@use "../core" as *;
+@use 'sass:math';
+@use '../core' as *;
 
-fieldset {
+fieldset#{$selector-exclude-grid} {
     margin: 0;
     padding: 0;
     border: none;
 
     &:not(:last-child) {
-        margin-bottom: $size-2;
+        margin-bottom: $spacing-size-4;
     }
 }
 
-legend {
+legend#{$selector-exclude-grid} {
     padding: unset;
 }
 
-label {
+label#{$selector-exclude-grid} {
     fieldset & {
         display: block;
     }
 
-    + input,
-    + select {
-        margin-left: $size-1;
+    + input#{$selector-exclude-grid},
+    + select#{$selector-exclude-grid} {
+        margin-left: $spacing-size-2;
     }
 
     &[for*='radio'],
@@ -33,28 +32,27 @@ label {
     }
 
     .req {
-        color: var(--input-error-color);
+        color: var(--color-input-error);
     }
 }
 
-input {
-    font-size: var(--font-size);
+input#{$selector-exclude-grid} {
+    font-size: var(--text-fs-base);
 }
 
-input[type='text'],
-input[type='search'],
-input[type='email'],
-input[type='checkbox'],
-input[type='number'],
-select {
+input[type='text']#{$selector-exclude-grid},
+input[type='search']#{$selector-exclude-grid},
+input[type='email']#{$selector-exclude-grid},
+input[type='checkbox']#{$selector-exclude-grid},
+input[type='radio']#{$selector-exclude-grid},
+input[type='number']#{$selector-exclude-grid},
+select#{$selector-exclude-grid} {
+    color: var(--color-fg-primary);
+
     &:disabled,
-    &[readonly] {
-        background-color: var(--ghost-white);
-    }
-
-    &:focus:not(:disabled):not([readonly]),
-    &:focus-visible:not(:disabled):not([readonly]) {
-        box-shadow: var(--ag-input-focus-box-shadow);
+    &[disabled],
+    &.disabled {
+        background-color: var(--color-bg-disabled_subtle);
     }
 }
 
@@ -62,148 +60,221 @@ input[type='text'],
 input[type='search'],
 input[type='email'],
 input[type='number'] {
-    padding: math.div(6em, 16) math.div(12em, 16);
-    line-height: var(--line-height-normal);
-    border-radius: var(--border-radius);
-    background-color: var(--input-background-color);
-    border: 2px solid var(--border-color);
-    outline: none;
-    transition: border-color $default-transition-timing, box-shadow $default-transition-timing;
+    &#{$selector-exclude-grid} {
+        padding: math.div(6em, 16) math.div(12em, 16);
+        line-height: var(--text-lh-base);
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--color-input-border);
+        background-color: var(--color-bg-primary);
+        outline: none;
+        box-shadow:
+            0 0 0 $spacing-size-1 transparent,
+            var(--shadow-xs);
+        transition:
+            border-color $transition-default-timing,
+            box-shadow $transition-default-timing;
 
-    &::placeholder {
-        font-style: italic;
-        color: var(--secondary-text-color);
-    }
+        &::placeholder {
+            color: var(--color-fg-placeholder);
+        }
 
-    &:hover:not(:disabled):not([readonly]),
-    &:focus:not(:disabled):not([readonly]),
-    &:focus-visible:not(:disabled):not([readonly]) {
-        border-color: var(--input-focus-border-color);
+        &:hover:not(:disabled):not([readonly]),
+        &:focus:not(:disabled):not([readonly]),
+        &:focus-visible:not(:disabled):not([readonly]),
+        &.hover,
+        &.focus {
+            border-color: var(--color-input-border-hover);
+        }
+
+        &:focus:not(:disabled):not([readonly]),
+        &:focus-visible:not(:disabled):not([readonly]),
+        &.focus {
+            box-shadow:
+                0 0 0 $spacing-size-1 var(--color-input-shadow-focus),
+                var(--shadow-xs);
+        }
+
+        &:disabled,
+        &[disabled],
+        &.disabled {
+            color: var(--color-input-disabled-fg);
+            background-color: var(--color-input-disabled-bg);
+            pointer-events: none;
+            cursor: pointer;
+        }
     }
 }
 
-.ag-picker-field-wrapper {
-    transition: border-color $default-transition-timing, box-shadow $default-transition-timing;
-    &:focus:not(:disabled):not([readonly]),
-    &.ag-picker-has-focus {
-        border-color: var(--input-focus-border-color);
-    }
-}
-
-input[type='checkbox'],
-input[type='radio'] {
-    $square-size: 1.25em;
-
+input[type='checkbox']:not(.switch)#{$selector-exclude-grid},
+input[type='checkbox'].switch#{$selector-exclude-grid},
+input[type='radio']#{$selector-exclude-grid} {
     appearance: none;
-    position: relative;
-    width: $square-size;
-    height: $square-size;
-    top: math.div(4em, 16);
+    width: $spacing-size-5;
+    height: $spacing-size-5;
     outline: none;
+
+    &:focus:not(:disabled):not([readonly]),
+    &:focus-visible:not(:disabled):not([readonly]),
+    &.focus {
+        box-shadow: 0 0 0 $spacing-size-1 var(--color-input-shadow-focus);
+    }
 
     &:not(:disabled) {
         cursor: pointer;
     }
 
-    &:checked {
-        background-color: var(--input-primary-color);
+    &:disabled,
+    &[disabled],
+    &.disabled {
+        border-color: var(--color-border-tertiary);
     }
 }
 
-input[type='checkbox']:not(.switch) {
-    $svg-tick: url('data:image/svg+xml;utf8,<svg fill="none" stroke="%23fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30"><path d="m9 15 3.75 3.75L21 10.5"/></svg>');
+input[type='checkbox']:not(.switch)#{$selector-exclude-grid},
+input[type='checkbox'].switch#{$selector-exclude-grid} {
+    &:checked {
+        background-color: var(--color-input-bg-checked);
+        border-color: var(--color-input-bg-checked);
+    }
+}
 
-    border-radius: var(--border-radius);
-    border: 0.125em solid var(--input-secondary-border-color);
-    background-image: $svg-tick;
-    transition: background-color $default-transition-timing, border-color $default-transition-timing,
-        box-shadow $default-transition-timing;
+input[type='checkbox']:not(.switch)#{$selector-exclude-grid} {
+    --svg-tick: url('data:image/svg+xml;utf8,<svg fill="none" stroke="%23fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M14.6673 6.5L8.25065 12.9167L5.33398 10"/></svg>');
+
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border-primary);
+    transition:
+        background-color $transition-default-timing,
+        border-color $transition-default-timing,
+        box-shadow $transition-default-timing;
 
     &:hover:not(:disabled):not([readonly]),
-    &:focus:not(:disabled):not([readonly]),
+    &.hover,
     &:focus-visible:not(:disabled):not([readonly]),
-    &:checked {
-        border-color: var(--input-primary-color);
+    &.focus {
+        border-color: var(--color-input-border-hover);
+    }
+
+    &:checked,
+    &:disabled,
+    &[disabled],
+    &.disabled {
+        background-image: var(--svg-tick);
+    }
+
+    &:disabled,
+    &[disabled],
+    &.disabled {
+        --svg-tick: url('data:image/svg+xml;utf8,<svg fill="none" stroke="%23eaecf0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M14.6673 6.5L8.25065 12.9167L5.33398 10"/></svg>');
+
+        #{$selector-darkmode} & {
+            --svg-tick: url('data:image/svg+xml;utf8,<svg fill="none" stroke="%23344054" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M14.6673 6.5L8.25065 12.9167L5.33398 10"/></svg>');
+        }
     }
 }
 
 input[type='checkbox'].switch {
-    $height: 1.25em;
+    $height: $spacing-size-6;
 
-    width: 2em;
+    width: 44px;
     height: $height;
-    background-color: var(--input-secondary-background-color);
+    background-color: var(--color-bg-tertiary);
     border-radius: math.div($height, 2);
     background-image: radial-gradient(
-        var(--input-background-color) calc($height / 2 - 3px),
+        var(--color-bg-primary) calc($height / 2 - 3px),
         transparent calc($height / 2 - 3px)
     );
     background-repeat: no-repeat;
     background-size: $height $height;
-    transition: background-position $default-transition-timing, background-color $default-transition-timing,
-        box-shadow $default-transition-timing;
+    transition:
+        background-position $transition-default-timing,
+        background-color $transition-default-timing,
+        box-shadow $transition-default-timing;
 
     &:checked {
         background-position: right;
-        background-color: var(--input-primary-color);
+        background-color: var(--color-input-bg-checked);
     }
 }
 
-input[type='radio'] {
-    border-radius: 50%;
-    box-shadow: inset 0 0 0 0.125em var(--input-secondary-border-color),
-        inset 0 0 0 0.25em var(--input-background-color);
-    transition: background-color $default-transition-timing, box-shadow $default-transition-timing;
+input[type='radio']#{$selector-exclude-grid} {
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-border-primary);
+    transition:
+        background-color $transition-default-timing,
+        border-color $transition-default-timing,
+        box-shadow $transition-default-timing;
 
     &:hover:not(:disabled):not([readonly]),
-    &:checked {
-        box-shadow: inset 0 0 0 0.125em var(--input-primary-color), inset 0 0 0 0.25em var(--input-background-color);
+    &.hover {
+        border: 1px solid var(--color-input-border-hover);
     }
 
-    &:focus:not(:disabled):not([readonly]),
-    &:focus-visible:not(:disabled):not([readonly]) {
-        box-shadow: inset 0 0 0 0.125em var(--input-primary-color), inset 0 0 0 0.25em var(--input-background-color),
-            0 0 0 3px var(--input-focus-box-shadow-color);
+    &:checked:not(:disabled):not([readonly]) {
+        border: 6px solid var(--color-input-bg-checked);
+    }
+
+    &:disabled,
+    &[disabled],
+    &.disabled {
+        box-shadow: inset 0 0 0 1px var(--color-border-tertiary);
     }
 }
 
-select {
-    $svg-chevron-down: url('data:image/svg+xml;utf8,<svg fill="none" stroke="%23212529" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 30"><path d="m7.5 13.688 5.25 4.125L18 13.688"/></svg>');
+select#{$selector-exclude-grid} {
+    --svg-chevron-down: url('data:image/svg+xml;utf8,<svg fill="none" stroke="%23182230" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M6 9L12 15L18 9"/></svg>');
 
     appearance: none;
     padding: math.div(6em, 16) math.div(36em, 16) math.div(6em, 16) math.div(12em, 16);
-    font-size: 1rem;
-    line-height: var(--line-height-normal);
-    border-radius: var(--border-radius);
-    background-color: var(--input-background-color);
-    background-image: $svg-chevron-down;
+    font-size: var(--text-fs-base);
+    line-height: var(--text-lh-base);
+    border-radius: var(--radius-sm);
+    background-color: var(--color-bg-primary);
+    background-image: var(--svg-chevron-down);
     background-repeat: no-repeat;
-    background-position: center right;
-    border: 2px solid var(--border-color);
+    background-position: center right 4px;
+    border: 1px solid var(--color-input-border);
     outline: none;
-    transition: border-color $default-transition-timing, box-shadow $default-transition-timing;
+    transition:
+        border-color $transition-default-timing,
+        box-shadow $transition-default-timing;
+    cursor: pointer;
 
-    &:not(:disabled) {
-        cursor: pointer;
+    &:hover,
+    &.hover,
+    &:focus-visible,
+    &.focus {
+        border-color: var(--color-input-border-hover);
     }
 
-    &:invalid,
-    &[disabled] {
-        color: var(--secondary-text-color);
+    &:focus-visible,
+    &.focus {
+        box-shadow: 0 0 0 $spacing-size-1 var(--color-input-shadow-focus);
     }
 
-    &:hover:not(:disabled):not([readonly]),
-    &:focus:not(:disabled):not([readonly]),
-    &:focus-visible:not(:disabled):not([readonly]) {
-        border-color: var(--input-focus-border-color);
+    &:disabled,
+    &[disabled],
+    &.disabled {
+        --svg-chevron-down: url('data:image/svg+xml;utf8,<svg fill="none" stroke="%23667085" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M6 9L12 15L18 9"/></svg>');
+
+        color: var(--color-fg-secondary);
+        pointer-events: none;
+
+        #{$selector-darkmode} & {
+            --svg-chevron-down: url('data:image/svg+xml;utf8,<svg fill="none" stroke="%2398a2b3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M6 9L12 15L18 9"/></svg>');
+        }
+    }
+
+    #{$selector-darkmode} & {
+        --svg-chevron-down: url('data:image/svg+xml;utf8,<svg fill="none" stroke="%23eaecf0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M6 9L12 15L18 9"/></svg>');
     }
 }
 
-input[type='range'] {
+input[type='range']#{$selector-exclude-grid} {
     @mixin track {
         height: math.div(4em, 16);
-        background-color: var(--input-secondary-background-color);
-        border-radius: var(--border-radius);
+        background-color: var(--color-input-border);
+        border-radius: var(--radius-sm);
     }
 
     @mixin thumb {
@@ -213,22 +284,25 @@ input[type='range'] {
         margin-top: math.div(-6em, 16);
         border-radius: 50%;
         border: none;
-        background-color: var(--input-primary-color);
-        transition: background-color $default-transition-timing;
+        background-color: var(--color-input-bg-checked);
+        transition: background-color $transition-default-timing;
     }
 
     appearance: none;
-    min-height: $size-3;
-    border-radius: var(--border-radius);
+    min-height: $spacing-size-6;
+    border-radius: var(--radius-sm);
     background-color: transparent;
     outline: none;
     border: 2px solid transparent;
     cursor: pointer;
-    transition: border-color $default-transition-timing, box-shadow $default-transition-timing;
+    transition:
+        border-color $transition-default-timing,
+        box-shadow $transition-default-timing;
 
-    &:focus-visible:not(:disabled):not([readonly]) {
-        border-color: var(--input-focus-border-color);
-        box-shadow: 0 0 0 3px var(--input-focus-box-shadow-color);
+    &:focus-visible:not(:disabled):not([readonly]),
+    &.focus {
+        border-color: var(--color-input-border-hover);
+        box-shadow: 0 0 0 $spacing-size-1 var(--color-input-shadow-focus);
     }
 
     // Using mixins as -webkit & -moz properties cannot be used as comma seperted list
@@ -247,7 +321,7 @@ input[type='range'] {
 
     &:hover::-webkit-slider-thumb,
     &:hover::-moz-range-thumb {
-        background-color: var(--link-hover-color);
+        background-color: var(--color-link-hover);
     }
 }
 
@@ -256,7 +330,7 @@ input[type='range'] {
     flex-direction: column;
 
     label {
-        margin-bottom: $size-half;
+        margin-bottom: $spacing-size-1;
     }
 
     input,
@@ -272,7 +346,7 @@ input[type='range'] {
         flex-direction: row;
         flex-wrap: wrap;
         align-items: center;
-        gap: $size-half $size-1;
+        gap: $spacing-size-1 $spacing-size-2;
 
         label {
             display: inline-block;
@@ -289,22 +363,22 @@ input[type='range'] {
 
 .input-error {
     label {
-        color: var(--input-error-color);
+        color: var(--color-input-error);
     }
 
     input,
     select {
-        --border-color: var(--input-error-color);
-        --input-focus-border-color: var(--input-error-color);
+        --color-border-primary: var(--color-input-error);
+        --color-input-border-hover: var(--color-input-error);
     }
 
     .error {
-        margin-top: $size-half;
-        color: var(--input-error-color);
+        margin-top: $spacing-size-1;
+        color: var(--color-input-error);
     }
 }
 
 .extra-info {
-    margin-top: $size-half;
-    color: var(--secondary-text-color);
+    margin-top: $spacing-size-1;
+    color: var(--color-fg-secondary);
 }

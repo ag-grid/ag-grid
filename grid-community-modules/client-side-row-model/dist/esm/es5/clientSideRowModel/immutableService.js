@@ -42,15 +42,17 @@ var ImmutableService = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     ImmutableService.prototype.postConstruct = function () {
+        var _this = this;
         if (this.rowModel.getType() === 'clientSide') {
             this.clientSideRowModel = this.rowModel;
+            this.addManagedPropertyListener('rowData', function () { return _this.onRowDataUpdated(); });
         }
     };
     ImmutableService.prototype.isActive = function () {
         var getRowIdProvided = this.gridOptionsService.exists('getRowId');
         // this property is a backwards compatibility property, for those who want
         // the old behaviour of Row ID's but NOT Immutable Data.
-        var resetRowDataOnUpdate = this.gridOptionsService.is('resetRowDataOnUpdate');
+        var resetRowDataOnUpdate = this.gridOptionsService.get('resetRowDataOnUpdate');
         if (resetRowDataOnUpdate) {
             return false;
         }
@@ -82,7 +84,7 @@ var ImmutableService = /** @class */ (function (_super) {
             add: []
         };
         var existingNodesMap = this.clientSideRowModel.getCopyOfNodesMap();
-        var suppressSortOrder = this.gridOptionsService.is('suppressMaintainUnsortedOrder');
+        var suppressSortOrder = this.gridOptionsService.get('suppressMaintainUnsortedOrder');
         var orderMap = suppressSortOrder ? undefined : {};
         if (_.exists(rowData)) {
             // split all the new data in the following:
@@ -117,12 +119,28 @@ var ImmutableService = /** @class */ (function (_super) {
         });
         return [transaction, orderMap];
     };
+    ImmutableService.prototype.onRowDataUpdated = function () {
+        var rowData = this.gridOptionsService.get('rowData');
+        if (!rowData) {
+            return;
+        }
+        if (this.isActive()) {
+            this.setRowData(rowData);
+        }
+        else {
+            this.selectionService.reset('rowDataChanged');
+            this.clientSideRowModel.setRowData(rowData);
+        }
+    };
     __decorate([
         Autowired('rowModel')
     ], ImmutableService.prototype, "rowModel", void 0);
     __decorate([
         Autowired('rowRenderer')
     ], ImmutableService.prototype, "rowRenderer", void 0);
+    __decorate([
+        Autowired('selectionService')
+    ], ImmutableService.prototype, "selectionService", void 0);
     __decorate([
         PostConstruct
     ], ImmutableService.prototype, "postConstruct", null);

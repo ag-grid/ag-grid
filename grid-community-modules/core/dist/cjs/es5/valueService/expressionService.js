@@ -92,10 +92,10 @@ var ExpressionService = /** @class */ (function (_super) {
         }
     };
     __decorate([
-        __param(0, context_2.Qualifier('loggerFactory'))
+        __param(0, (0, context_2.Qualifier)('loggerFactory'))
     ], ExpressionService.prototype, "setBeans", null);
     ExpressionService = __decorate([
-        context_1.Bean('expressionService')
+        (0, context_1.Bean)('expressionService')
     ], ExpressionService);
     return ExpressionService;
 }(beanStub_1.BeanStub));

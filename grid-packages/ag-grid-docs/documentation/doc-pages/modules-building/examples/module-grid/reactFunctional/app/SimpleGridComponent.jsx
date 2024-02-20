@@ -9,7 +9,7 @@ import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
 ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ExcelExportModule]);
 
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 
 const App = () => {
     const [columnDefs, setColumnDefs] = useState([
@@ -24,7 +24,7 @@ const App = () => {
         { make: 'Porsche', model: 'Boxster', price: 72000 }
     ]);
 
-    return <div className='ag-theme-alpine'
+    return <div className='ag-theme-quartz'
         style={{
             width: '100%',
             height: '100%'
@@ -32,7 +32,7 @@ const App = () => {
         <AgGridReact
             columnDefs={columnDefs}
             rowData={rowData}
-            onGridReady={params => params.api.sizeColumnsToFit()} />
+        />
 
     </div>;
 };

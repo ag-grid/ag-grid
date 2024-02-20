@@ -1,7 +1,6 @@
 import { ICellRenderer } from "./iCellRenderer";
 import { Component } from "../../widgets/component";
 export declare class AnimateShowChangeCellRenderer extends Component implements ICellRenderer {
-    private static TEMPLATE;
     private lastValue;
     private eValue;
     private eDelta;
@@ -12,5 +11,5 @@ export declare class AnimateShowChangeCellRenderer extends Component implements 
     private showDelta;
     private setTimerToRemoveDelta;
     private hideDeltaValue;
-    refresh(params: any): boolean;
+    refresh(params: any, isInitialRender?: boolean): boolean;
 }

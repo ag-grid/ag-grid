@@ -4,7 +4,7 @@ exports.MiniStackedArea = void 0;
 const miniChartWithAxes_1 = require("../miniChartWithAxes");
 const ag_charts_community_1 = require("ag-charts-community");
 class MiniStackedArea extends miniChartWithAxes_1.MiniChartWithAxes {
-    constructor(container, fills, strokes, data = MiniStackedArea.data, tooltipName = "stackedAreaTooltip") {
+    constructor(container, fills, strokes, _themeTemplateParameters, _isCustomTheme, data = MiniStackedArea.data, tooltipName = "stackedAreaTooltip") {
         super(container, tooltipName);
         const size = this.size;
         const padding = this.padding;
@@ -38,7 +38,7 @@ class MiniStackedArea extends miniChartWithAxes_1.MiniChartWithAxes {
         });
         this.areas = pathData.map(points => {
             const area = new ag_charts_community_1._Scene.Path();
-            area.strokeWidth = 1;
+            area.strokeWidth = 0;
             const path = area.path;
             path.clear();
             points.forEach((point, i) => path[i > 0 ? "lineTo" : "moveTo"](point.x, point.y));

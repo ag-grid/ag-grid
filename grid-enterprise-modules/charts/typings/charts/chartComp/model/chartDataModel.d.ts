@@ -53,7 +53,7 @@ export declare class ChartDataModel extends BeanStub {
     updateData(): void;
     isGrouping(): boolean;
     getSelectedValueCols(): Column[];
-    getSelectedDimension(): ColState;
+    getSelectedDimensions(): ColState[];
     getColDisplayName(col: Column): string | null;
     isPivotMode(): boolean;
     getChartDataType(colId: string): string | undefined;
@@ -66,7 +66,7 @@ export declare class ChartDataModel extends BeanStub {
     private reorderColState;
     private setDimensionCellRange;
     private setValueCellRange;
-    private updateSelectedDimension;
+    private updateSelectedDimensions;
     private syncDimensionCellRange;
     isComboChart(): boolean;
 }

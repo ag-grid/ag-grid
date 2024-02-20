@@ -23,13 +23,11 @@ const GRID_BODY_TEMPLATE = /* html */ `<div class="ag-root ag-unselectable" role
             <ag-row-container ref="topFullWidthContainer" name="${rowContainerCtrl_1.RowContainerName.TOP_FULL_WIDTH}"></ag-row-container>
         </div>
         <div class="ag-body" ref="eBody" role="presentation">
-            <div class="ag-body-clipper" ref="eBodyClipper" role="presentation">
-                <div class="ag-body-viewport" ref="eBodyViewport" role="presentation">
-                    <ag-row-container ref="leftContainer" name="${rowContainerCtrl_1.RowContainerName.LEFT}"></ag-row-container>
-                    <ag-row-container ref="centerContainer" name="${rowContainerCtrl_1.RowContainerName.CENTER}"></ag-row-container>
-                    <ag-row-container ref="rightContainer" name="${rowContainerCtrl_1.RowContainerName.RIGHT}"></ag-row-container>
-                    <ag-row-container ref="fullWidthContainer" name="${rowContainerCtrl_1.RowContainerName.FULL_WIDTH}"></ag-row-container>
-                </div>
+            <div class="ag-body-viewport" ref="eBodyViewport" role="presentation">
+                <ag-row-container ref="leftContainer" name="${rowContainerCtrl_1.RowContainerName.LEFT}"></ag-row-container>
+                <ag-row-container ref="centerContainer" name="${rowContainerCtrl_1.RowContainerName.CENTER}"></ag-row-container>
+                <ag-row-container ref="rightContainer" name="${rowContainerCtrl_1.RowContainerName.RIGHT}"></ag-row-container>
+                <ag-row-container ref="fullWidthContainer" name="${rowContainerCtrl_1.RowContainerName.FULL_WIDTH}"></ag-row-container>
             </div>
             <ag-fake-vertical-scroll></ag-fake-vertical-scroll>
         </div>
@@ -60,8 +58,8 @@ class GridBodyComp extends component_1.Component {
         };
         const compProxy = {
             setRowAnimationCssOnBodyViewport: (cssClass, animate) => this.setRowAnimationCssOnBodyViewport(cssClass, animate),
-            setColumnCount: count => aria_1.setAriaColCount(this.getGui(), count),
-            setRowCount: count => aria_1.setAriaRowCount(this.getGui(), count),
+            setColumnCount: count => (0, aria_1.setAriaColCount)(this.getGui(), count),
+            setRowCount: count => (0, aria_1.setAriaRowCount)(this.getGui(), count),
             setTopHeight: height => setHeight(height, this.eTop),
             setBottomHeight: height => setHeight(height, this.eBottom),
             setTopDisplay: display => this.eTop.style.display = display,
@@ -73,7 +71,6 @@ class GridBodyComp extends component_1.Component {
             updateLayoutClasses: (cssClass, params) => {
                 const classLists = [
                     this.eBodyViewport.classList,
-                    this.eBodyClipper.classList,
                     this.eBody.classList
                 ];
                 classLists.forEach(classList => {
@@ -99,8 +96,8 @@ class GridBodyComp extends component_1.Component {
         };
         this.ctrl = this.createManagedBean(new gridBodyCtrl_1.GridBodyCtrl());
         this.ctrl.setComp(compProxy, this.getGui(), this.eBodyViewport, this.eTop, this.eBottom, this.eStickyTop);
-        if (this.rangeService || this.gridOptionsService.get('rowSelection') === 'multiple') {
-            aria_1.setAriaMultiSelectable(this.getGui(), true);
+        if (this.rangeService && this.gridOptionsService.get('enableRangeSelection') || this.gridOptionsService.get('rowSelection') === 'multiple') {
+            (0, aria_1.setAriaMultiSelectable)(this.getGui(), true);
         }
     }
     setRowAnimationCssOnBodyViewport(cssClass, animateRows) {
@@ -113,31 +110,28 @@ class GridBodyComp extends component_1.Component {
     }
 }
 __decorate([
-    context_1.Autowired('resizeObserverService')
+    (0, context_1.Autowired)('resizeObserverService')
 ], GridBodyComp.prototype, "resizeObserverService", void 0);
 __decorate([
-    context_1.Optional('rangeService')
+    (0, context_1.Optional)('rangeService')
 ], GridBodyComp.prototype, "rangeService", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eBodyViewport')
+    (0, componentAnnotations_1.RefSelector)('eBodyViewport')
 ], GridBodyComp.prototype, "eBodyViewport", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eStickyTop')
+    (0, componentAnnotations_1.RefSelector)('eStickyTop')
 ], GridBodyComp.prototype, "eStickyTop", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eTop')
+    (0, componentAnnotations_1.RefSelector)('eTop')
 ], GridBodyComp.prototype, "eTop", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eBottom')
+    (0, componentAnnotations_1.RefSelector)('eBottom')
 ], GridBodyComp.prototype, "eBottom", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('gridHeader')
+    (0, componentAnnotations_1.RefSelector)('gridHeader')
 ], GridBodyComp.prototype, "headerRootComp", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eBodyClipper')
-], GridBodyComp.prototype, "eBodyClipper", void 0);
-__decorate([
-    componentAnnotations_1.RefSelector('eBody')
+    (0, componentAnnotations_1.RefSelector)('eBody')
 ], GridBodyComp.prototype, "eBody", void 0);
 __decorate([
     context_1.PostConstruct

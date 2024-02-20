@@ -1,4 +1,6 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
+
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -13,27 +15,25 @@ const gridOptions: GridOptions<IOlympicData> = {
   ],
   defaultColDef: {
     width: 170,
-    sortable: true,
     filter: true,
   },
   rowDragManaged: true,
-  animateRows: true,
 }
 
 function onBtSuppressRowDrag() {
-  gridOptions.api!.setSuppressRowDrag(true)
+  gridApi!.setGridOption('suppressRowDrag', true)
 }
 
 function onBtShowRowDrag() {
-  gridOptions.api!.setSuppressRowDrag(false)
+  gridApi!.setGridOption('suppressRowDrag', false)
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

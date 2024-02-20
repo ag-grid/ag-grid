@@ -1,6 +1,6 @@
 // ARIA HELPER FUNCTIONS
 function toggleAriaAttribute(element, attribute, value) {
-    if (value == null || value == '') {
+    if (value == null || (typeof value === 'string' && value == '')) {
         removeAriaAttribute(element, attribute);
     }
     else {
@@ -47,8 +47,8 @@ export function getAriaLevel(element) {
 export function getAriaPosInSet(element) {
     return parseInt(element.getAttribute('aria-posinset'), 10);
 }
-export function getAriaDescribedBy(element) {
-    return element.getAttribute('aria-describedby') || '';
+export function getAriaLabel(element) {
+    return element.getAttribute('aria-label');
 }
 // ARIA ATTRIBUTE SETTERS
 export function setAriaLabel(element, label) {
@@ -57,14 +57,17 @@ export function setAriaLabel(element, label) {
 export function setAriaLabelledBy(element, labelledBy) {
     toggleAriaAttribute(element, 'labelledby', labelledBy);
 }
-export function setAriaDescription(element, description) {
-    toggleAriaAttribute(element, 'description', description);
-}
 export function setAriaDescribedBy(element, describedby) {
     toggleAriaAttribute(element, 'describedby', describedby);
 }
 export function setAriaLive(element, live) {
     toggleAriaAttribute(element, 'live', live);
+}
+export function setAriaAtomic(element, atomic) {
+    toggleAriaAttribute(element, 'atomic', atomic);
+}
+export function setAriaRelevant(element, relevant) {
+    toggleAriaAttribute(element, 'relevant', relevant);
 }
 export function setAriaLevel(element, level) {
     toggleAriaAttribute(element, 'level', level);
@@ -74,6 +77,9 @@ export function setAriaDisabled(element, disabled) {
 }
 export function setAriaHidden(element, hidden) {
     toggleAriaAttribute(element, 'hidden', hidden);
+}
+export function setAriaActiveDescendant(element, descendantId) {
+    toggleAriaAttribute(element, 'activedescendant', descendantId);
 }
 export function setAriaExpanded(element, expanded) {
     setAriaAttribute(element, 'expanded', expanded);

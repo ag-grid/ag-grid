@@ -17,12 +17,24 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper {
                 super.init(params);
             }
             hasMethod(name) {
-                return wrapper.getFrameworkComponentInstance()[name] != null;
+                const componentInstance = wrapper.getFrameworkComponentInstance();
+                if (!componentInstance[name]) {
+                    return componentInstance.$.setupState[name] != null;
+                }
+                else {
+                    return true;
+                }
             }
             callMethod(name, args) {
+                var _a;
                 const componentInstance = this.getFrameworkComponentInstance();
                 const frameworkComponentInstance = wrapper.getFrameworkComponentInstance();
-                return frameworkComponentInstance[name].apply(componentInstance, args);
+                if (frameworkComponentInstance[name]) {
+                    return frameworkComponentInstance[name].apply(componentInstance, args);
+                }
+                else {
+                    return (_a = frameworkComponentInstance.$.setupState[name]) === null || _a === void 0 ? void 0 : _a.apply(componentInstance, args);
+                }
             }
             addMethod(name, callback) {
                 wrapper[name] = callback;
@@ -81,11 +93,12 @@ class VueComponent {
         return this.componentInstance;
     }
     init(params) {
+        var _a;
         const { componentInstance, element, destroy: unmount } = this.createComponent(params);
         this.componentInstance = componentInstance;
         this.unmount = unmount;
         // the element is the parent div we're forced to created when dynamically creating vnodes
         // the first child is the user supplied component
-        this.element = element.firstElementChild;
+        this.element = (_a = element.firstElementChild) !== null && _a !== void 0 ? _a : element;
     }
 }

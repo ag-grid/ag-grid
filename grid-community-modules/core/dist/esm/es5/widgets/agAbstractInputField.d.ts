@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IAgLabelParams } from './agAbstractLabel';
@@ -15,7 +15,6 @@ export declare abstract class AgAbstractInputField<TElement extends FieldElement
     protected readonly eInput: TElement;
     constructor(config?: TConfig, className?: string, inputType?: string | null, displayFieldTag?: string);
     protected postConstruct(): void;
-    protected refreshLabel(): void;
     protected addInputListeners(): void;
     private setInputType;
     getInputElement(): TElement;
@@ -23,7 +22,7 @@ export declare abstract class AgAbstractInputField<TElement extends FieldElement
     setInputName(name: string): this;
     getFocusableElement(): HTMLElement;
     setMaxLength(length: number): this;
-    setInputPlaceholder(placeholder: string): this;
+    setInputPlaceholder(placeholder?: string | null): this;
     setInputAriaLabel(label?: string | null): this;
     setDisabled(disabled: boolean): this;
     setAutoComplete(value: boolean | string): this;

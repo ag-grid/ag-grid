@@ -5,9 +5,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { Autowired, PostConstruct } from '../../context/context.mjs';
-import { loadTemplate, setDisabled } from '../../utils/dom.mjs';
+import { clearElement, loadTemplate, removeFromParent, setDisabled } from '../../utils/dom.mjs';
 import { debounce } from '../../utils/function.mjs';
-import { DEFAULT_FILTER_LOCALE_TEXT } from '../filterLocaleText.mjs';
+import { FILTER_LOCALE_TEXT } from '../filterLocaleText.mjs';
 import { ManagedFocusFeature } from '../../widgets/managedFocusFeature.mjs';
 import { convertToSet } from '../../utils/set.mjs';
 import { Component } from '../../widgets/component.mjs';
@@ -35,6 +35,7 @@ export class ProvidedFilter extends Component {
         // (eg the value is missing so nothing to filter on, or for set filter all checkboxes are checked so filter
         // not active) then this appliedModel will be null/undefined.
         this.appliedModel = null;
+        this.buttonListeners = [];
     }
     postConstruct() {
         this.resetTemplate(); // do this first to create the DOM
@@ -85,15 +86,43 @@ export class ProvidedFilter extends Component {
     setParams(params) {
         this.providedFilterParams = params;
         this.applyActive = ProvidedFilter.isUseApplyButton(params);
-        this.createButtonPanel();
+        this.resetButtonsPanel();
     }
-    createButtonPanel() {
+    updateParams(params) {
+        this.providedFilterParams = params;
+        this.applyActive = ProvidedFilter.isUseApplyButton(params);
+        this.resetUiToActiveModel(this.getModel(), () => {
+            this.updateUiVisibility();
+            this.setupOnBtApplyDebounce();
+        });
+    }
+    resetButtonsPanel() {
         const { buttons } = this.providedFilterParams;
-        if (!buttons || buttons.length < 1 || this.isReadOnly()) {
+        const hasButtons = buttons && buttons.length > 0 && !this.isReadOnly();
+        if (!this.eButtonsPanel) {
+            // Only create the buttons panel if we need to
+            if (hasButtons) {
+                this.eButtonsPanel = document.createElement('div');
+                this.eButtonsPanel.classList.add('ag-filter-apply-panel');
+            }
+        }
+        else {
+            // Always empty the buttons panel before adding new buttons
+            clearElement(this.eButtonsPanel);
+            this.buttonListeners.forEach(destroyFunc => destroyFunc === null || destroyFunc === void 0 ? void 0 : destroyFunc());
+            this.buttonListeners = [];
+        }
+        if (!hasButtons) {
+            // The case when we need to hide the buttons panel because there are no buttons
+            if (this.eButtonsPanel) {
+                removeFromParent(this.eButtonsPanel);
+            }
             return;
         }
-        const eButtonsPanel = document.createElement('div');
-        eButtonsPanel.classList.add('ag-filter-apply-panel');
+        // At this point we know we have a buttons and a buttons panel has been created.
+        // Instead of appending each button to the DOM individually, we create a fragment and append that
+        // to the DOM once. This is much faster than appending each button individually.
+        const fragment = document.createDocumentFragment();
         const addButton = (type) => {
             let text;
             let clickListener;
@@ -127,11 +156,12 @@ export class ProvidedFilter extends Component {
                     class="ag-button ag-standard-button ag-filter-apply-panel-button"
                 >${text}
                 </button>`);
-            eButtonsPanel.appendChild(button);
-            this.addManagedListener(button, 'click', clickListener);
+            this.buttonListeners.push(this.addManagedListener(button, 'click', clickListener));
+            fragment.append(button);
         };
         convertToSet(buttons).forEach(type => addButton(type));
-        this.getGui().appendChild(eButtonsPanel);
+        this.eButtonsPanel.append(fragment);
+        this.getGui().appendChild(this.eButtonsPanel);
     }
     // subclasses can override this to provide alternative debounce defaults
     getDefaultDebounceMs() {
@@ -161,7 +191,7 @@ export class ProvidedFilter extends Component {
             this.updateUiVisibility();
             // we set the model from the GUI, rather than the provided model,
             // so the model is consistent, e.g. handling of null/undefined will be the same,
-            // or if model is case insensitive, then casing is removed.
+            // or if model is case-insensitive, then casing is removed.
             this.applyModel('api');
         });
     }
@@ -256,7 +286,10 @@ export class ProvidedFilter extends Component {
         this.providedFilterParams.filterModifiedCallback();
         if (this.applyActive && !this.isReadOnly()) {
             const isValid = this.isModelValid(this.getModelFromUi());
-            setDisabled(this.getRefElement('applyFilterButton'), !isValid);
+            const applyFilterButton = this.getRefElement('applyFilterButton');
+            if (applyFilterButton) {
+                setDisabled(applyFilterButton, !isValid);
+            }
         }
         if ((fromFloatingFilter && !apply) || apply === 'immediately') {
             this.onBtApply(fromFloatingFilter);
@@ -276,11 +309,11 @@ export class ProvidedFilter extends Component {
         if (!this.positionableFeature || containerType === 'toolPanel') {
             return;
         }
-        const isFloatingFilter = containerType === 'floatingFilter';
+        const isResizable = containerType === 'floatingFilter' || containerType === 'columnFilter';
         const { positionableFeature, gridOptionsService } = this;
-        if (isFloatingFilter) {
+        if (isResizable) {
             positionableFeature.restoreLastSize();
-            positionableFeature.setResizable(gridOptionsService.is('enableRtl')
+            positionableFeature.setResizable(gridOptionsService.get('enableRtl')
                 ? { bottom: true, bottomLeft: true, left: true }
                 : { bottom: true, bottomRight: true, right: true });
         }
@@ -310,6 +343,10 @@ export class ProvidedFilter extends Component {
     static isUseApplyButton(params) {
         return !!params.buttons && params.buttons.indexOf('apply') >= 0;
     }
+    refresh(newParams) {
+        this.providedFilterParams = newParams;
+        return true;
+    }
     destroy() {
         const eGui = this.getGui();
         if (eGui) {
@@ -319,24 +356,15 @@ export class ProvidedFilter extends Component {
         if (this.positionableFeature) {
             this.positionableFeature = this.destroyBean(this.positionableFeature);
         }
+        this.appliedModel = null;
         super.destroy();
     }
     translate(key) {
         const translate = this.localeService.getLocaleTextFunc();
-        return translate(key, DEFAULT_FILTER_LOCALE_TEXT[key]);
+        return translate(key, FILTER_LOCALE_TEXT[key]);
     }
     getCellValue(rowNode) {
-        const { api, colDef, column, columnApi, context } = this.providedFilterParams;
-        return this.providedFilterParams.valueGetter({
-            api,
-            colDef,
-            column,
-            columnApi,
-            context,
-            data: rowNode.data,
-            getValue: (field) => rowNode.data[field],
-            node: rowNode,
-        });
+        return this.providedFilterParams.getValue(rowNode);
     }
     // override to control positionable feature
     getPositionableElement() {

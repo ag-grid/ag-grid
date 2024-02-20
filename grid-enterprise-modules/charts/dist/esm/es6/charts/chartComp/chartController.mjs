@@ -5,15 +5,16 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { _, Autowired, BeanStub, Events, PostConstruct } from "@ag-grid-community/core";
-import { _Theme } from "ag-charts-community";
-import { getSeriesType } from "./utils/seriesTypeMapper.mjs";
+import { _Theme, _ModuleSupport } from "ag-charts-community";
+import { getSeriesType, isHierarchical } from "./utils/seriesTypeMapper.mjs";
 import { isStockTheme } from "./chartProxies/chartTheme.mjs";
 import { UpdateParamsValidator } from "./utils/UpdateParamsValidator.mjs";
-export const DEFAULT_THEMES = ['ag-default', 'ag-material', 'ag-pastel', 'ag-vivid', 'ag-solar'];
+export const DEFAULT_THEMES = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];
 export class ChartController extends BeanStub {
     constructor(model) {
         super();
         this.model = model;
+        this.isEnterprise = () => _ModuleSupport.enterpriseModule.isEnterprise;
     }
     init() {
         this.setChartRange();
@@ -35,10 +36,17 @@ export class ChartController extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.updateForDataChange.bind(this));
     }
     update(params) {
-        var _a, _b, _c, _d, _e, _f, _g;
-        if (!this.validUpdateType(params) || !UpdateParamsValidator.validateChartParams(params)) {
+        if (!this.validUpdateType(params))
             return false;
-        }
+        const validationResult = UpdateParamsValidator.validateChartParams(params);
+        if (!validationResult)
+            return false;
+        const validParams = validationResult === true ? params : validationResult;
+        this.applyValidatedChartParams(validParams);
+        return true;
+    }
+    applyValidatedChartParams(params) {
+        var _a, _b, _c, _d, _e, _f, _g;
         const { chartId, chartType, chartThemeName, unlinkChart } = params;
         // create a common base for the chart model parameters (this covers pivot chart updates)
         const common = {
@@ -51,7 +59,7 @@ export class ChartController extends BeanStub {
             aggFunc: this.model.aggFunc,
             seriesChartTypes: undefined,
             suppressChartRanges: false,
-            crossFiltering: false
+            crossFiltering: false,
         };
         let chartModelParams = Object.assign({}, common);
         // modify the chart model properties based on the type of update
@@ -73,7 +81,6 @@ export class ChartController extends BeanStub {
         // if the chart should be unlinked or chart ranges suppressed, remove all cell ranges; otherwise, set the chart range
         const removeChartCellRanges = chartModelParams.unlinkChart || chartModelParams.suppressChartRanges;
         removeChartCellRanges ? (_g = this.rangeService) === null || _g === void 0 ? void 0 : _g.setCellRanges([]) : this.setChartRange();
-        return true;
     }
     updateForGridChange() {
         if (this.model.unlinked) {
@@ -104,15 +111,15 @@ export class ChartController extends BeanStub {
         const selectedCols = this.getSelectedValueColState();
         const fields = selectedCols.map(c => ({ colId: c.colId, displayName: c.displayName }));
         const data = this.getChartData();
-        const selectedDimension = this.getSelectedDimension();
+        const selectedDimensions = this.getSelectedDimensions();
         return {
             data,
             grouping: this.isGrouping(),
-            category: {
+            categories: selectedDimensions.map((selectedDimension) => ({
                 id: selectedDimension.colId,
                 name: selectedDimension.displayName,
                 chartDataType: this.model.getChartDataType(selectedDimension.colId)
-            },
+            })),
             fields,
             chartId: this.getChartId(),
             getCrossFilteringContext: () => ({ lastSelectedChartId: 'xxx' }),
@@ -147,15 +154,30 @@ export class ChartController extends BeanStub {
         return this.model.chartType;
     }
     setChartType(chartType) {
+        // If we are changing from a multi-dimensional chart type to a single-dimensional chart type,
+        // ensure that only the first selected dimension column remains selected
+        const previousChartType = this.model.chartType;
+        if (isHierarchical(previousChartType) && !isHierarchical(chartType)) {
+            let hasSelectedDimension = false;
+            for (const colState of this.model.dimensionColState) {
+                if (!colState.selected)
+                    continue;
+                if (hasSelectedDimension)
+                    colState.selected = false;
+                hasSelectedDimension = true;
+            }
+        }
         this.model.chartType = chartType;
         this.model.comboChartModel.updateSeriesChartTypes();
         this.raiseChartModelUpdateEvent();
         this.raiseChartOptionsChangedEvent();
     }
-    setChartThemeName(chartThemeName) {
+    setChartThemeName(chartThemeName, silent) {
         this.model.chartThemeName = chartThemeName;
-        this.raiseChartModelUpdateEvent();
-        this.raiseChartOptionsChangedEvent();
+        if (!silent) {
+            this.raiseChartModelUpdateEvent();
+            this.raiseChartOptionsChangedEvent();
+        }
     }
     getChartThemeName() {
         return this.model.chartThemeName;
@@ -172,15 +194,27 @@ export class ChartController extends BeanStub {
     isCrossFilterChart() {
         return this.model.crossFiltering;
     }
-    getThemes() {
+    getThemeNames() {
         return this.gridOptionsService.get('chartThemes') || DEFAULT_THEMES;
     }
-    getPalettes() {
-        const themeNames = this.getThemes();
-        return themeNames.map(themeName => {
+    getThemes() {
+        const themeNames = this.getThemeNames();
+        return themeNames.map((themeName) => {
             const stockTheme = isStockTheme(themeName);
             const theme = stockTheme ? themeName : this.chartProxy.lookupCustomChartTheme(themeName);
-            return _Theme.getChartTheme(theme).palette;
+            return _Theme.getChartTheme(theme);
+        });
+    }
+    getPalettes() {
+        const themes = this.getThemes();
+        return themes.map((theme) => {
+            return theme.palette;
+        });
+    }
+    getThemeTemplateParameters() {
+        const themes = this.getThemes();
+        return themes.map((theme) => {
+            return theme.getTemplateParameters();
         });
     }
     getValueColState() {
@@ -189,8 +223,8 @@ export class ChartController extends BeanStub {
     getSelectedValueColState() {
         return this.getValueColState().filter(cs => cs.selected);
     }
-    getSelectedDimension() {
-        return this.model.getSelectedDimension();
+    getSelectedDimensions() {
+        return this.model.getSelectedDimensions();
     }
     displayNameMapper(col) {
         const columnNames = this.model.columnNames[col.colId];
@@ -284,7 +318,7 @@ export class ChartController extends BeanStub {
         return this.getSeriesChartTypes().filter(s => selectedColIds.includes(s.colId));
     }
     getChartSeriesTypes() {
-        const supportedComboSeriesTypes = ['line', 'column', 'area'];
+        const supportedComboSeriesTypes = ['line', 'bar', 'area'];
         return this.isComboChart() ? supportedComboSeriesTypes : [getSeriesType(this.getChartType())];
     }
     getCellRanges() {

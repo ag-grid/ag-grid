@@ -1,5 +1,13 @@
-import { Grid, GridOptions, GetRowIdParams, IServerSideDatasource, IRowNode } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  GridOptions,
+  GetRowIdParams,
+  IServerSideDatasource,
+  IRowNode,
+} from '@ag-grid-community/core';
 declare var FakeServer: any;
+let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     { field: 'country', enableRowGroup: true },
@@ -14,14 +22,12 @@ const gridOptions: GridOptions<IOlympicData> = {
     floatingFilter: true,
     flex: 1,
     minWidth: 120,
-    resizable: true,
-    sortable: true,
   },
   getRowId: (params: GetRowIdParams) => {
     if (params.data.id != null) {
       return 'leaf-' + params.data.id;
     }
-    const rowGroupCols = params.columnApi.getRowGroupColumns();
+    const rowGroupCols = params.api.getRowGroupColumns();
     const rowGroupColIds = rowGroupCols.map(col => col.getId()).join('-');
     const thisGroupCol = rowGroupCols[params.level];
     return 'group-' + rowGroupColIds + '-' + (params.parentKeys || []).join('-') + params.data[thisGroupCol.getColDef().field!];
@@ -51,7 +57,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   suppressRowClickSelection: true,
 
 
-  animateRows: true,
   suppressAggFuncInHeader: true,
 }
 
@@ -63,7 +68,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
       var response = server.getData(params.request)
 
       // adding delay to simulate real server call
-      setTimeout(function () {
+      setTimeout(() => {
         if (response.success) {
           // call the success callback
           params.success({ rowData: response.rows, rowCount: response.lastRow })
@@ -79,7 +84,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
@@ -96,6 +101,6 @@ document.addEventListener('DOMContentLoaded', function () {
       var datasource = getServerSideDatasource(fakeServer)
 
       // register the datasource with the grid
-      gridOptions.api!.setServerSideDatasource(datasource)
+      gridApi!.setGridOption('serverSideDatasource', datasource)
     })
 })

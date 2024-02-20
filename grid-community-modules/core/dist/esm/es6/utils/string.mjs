@@ -94,7 +94,7 @@ export function utf8_encode(s) {
     return byteString;
 }
 export function capitalise(str) {
-    return str[0].toUpperCase() + str.substr(1).toLowerCase();
+    return str[0].toUpperCase() + str.substring(1).toLowerCase();
 }
 export function escapeString(toEscape, skipEscapingHtmlChars) {
     if (toEscape == null) {

@@ -1,7 +1,7 @@
 import { BeanStub, ChartModel, ChartType, SeriesChartType, AgChartThemeOverrides, UpdateChartParams } from "@ag-grid-community/core";
 import { ChartDataModel, ColState } from "./model/chartDataModel";
 import { ChartProxy, UpdateParams } from "./chartProxies/chartProxy";
-import { AgChartThemePalette } from "ag-charts-community";
+import { _Theme, AgChartThemePalette } from "ag-charts-community";
 import { ChartSeriesType } from "./utils/seriesTypeMapper";
 export declare const DEFAULT_THEMES: string[];
 export declare class ChartController extends BeanStub {
@@ -16,6 +16,7 @@ export declare class ChartController extends BeanStub {
     constructor(model: ChartDataModel);
     private init;
     update(params: UpdateChartParams): boolean;
+    private applyValidatedChartParams;
     updateForGridChange(): void;
     updateForDataChange(): void;
     updateForRangeChange(): void;
@@ -26,20 +27,25 @@ export declare class ChartController extends BeanStub {
     getChartData(): any[];
     getChartType(): ChartType;
     setChartType(chartType: ChartType): void;
-    setChartThemeName(chartThemeName: string): void;
+    setChartThemeName(chartThemeName: string, silent?: boolean): void;
     getChartThemeName(): string;
     isPivotChart(): boolean;
     isPivotMode(): boolean;
     isGrouping(): boolean;
-    private isCrossFilterChart;
-    getThemes(): string[];
+    isCrossFilterChart(): boolean;
+    getThemeNames(): string[];
+    getThemes(): _Theme.ChartTheme[];
     getPalettes(): AgChartThemePalette[];
+    getThemeTemplateParameters(): {
+        extensions: Map<any, any>;
+        properties: Map<any, any>;
+    }[];
     getValueColState(): ColState[];
     getSelectedValueColState(): {
         colId: string;
         displayName: string | null;
     }[];
-    getSelectedDimension(): ColState;
+    getSelectedDimensions(): ColState[];
     private displayNameMapper;
     getColStateForMenu(): {
         dimensionCols: ColState[];
@@ -57,6 +63,7 @@ export declare class ChartController extends BeanStub {
     updateSeriesChartType(colId: string, chartType?: ChartType, secondaryAxis?: boolean): void;
     getActiveSeriesChartTypes(): SeriesChartType[];
     getChartSeriesTypes(): ChartSeriesType[];
+    isEnterprise: () => boolean;
     private getCellRanges;
     private createCellRange;
     private validUpdateType;

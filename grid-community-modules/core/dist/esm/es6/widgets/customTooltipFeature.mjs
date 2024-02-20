@@ -8,7 +8,7 @@ import { Autowired, PostConstruct } from "../context/context.mjs";
 import { BeanStub } from "../context/beanStub.mjs";
 import { exists } from "../utils/generic.mjs";
 import { isIOSUserAgent } from "../utils/browser.mjs";
-import { doOnce } from "../utils/function.mjs";
+import { warnOnce } from "../utils/function.mjs";
 import { Events } from "../eventKeys.mjs";
 var TooltipStates;
 (function (TooltipStates) {
@@ -27,8 +27,6 @@ export class CustomTooltipFeature extends BeanStub {
         this.parentComp = parentComp;
         this.tooltipShowDelayOverride = tooltipShowDelayOverride;
         this.tooltipHideDelayOverride = tooltipHideDelayOverride;
-        this.DEFAULT_SHOW_TOOLTIP_DELAY = 2000;
-        this.DEFAULT_HIDE_TOOLTIP_DELAY = 10000;
         this.SHOW_QUICK_TOOLTIP_DIFF = 1000;
         this.FADE_OUT_TOOLTIP_TIMEOUT = 1000;
         this.INTERACTIVE_HIDE_DELAY = 100;
@@ -42,13 +40,11 @@ export class CustomTooltipFeature extends BeanStub {
         this.tooltipMouseTrack = false;
     }
     postConstruct() {
-        if (this.gridOptionsService.is('tooltipInteraction')) {
+        if (this.gridOptionsService.get('tooltipInteraction')) {
             this.interactionEnabled = true;
         }
         this.tooltipTrigger = this.getTooltipTrigger();
-        this.tooltipShowDelay = this.getTooltipDelay('show');
-        this.tooltipHideDelay = this.getTooltipDelay('hide');
-        this.tooltipMouseTrack = this.gridOptionsService.is('tooltipMouseTrack');
+        this.tooltipMouseTrack = this.gridOptionsService.get('tooltipMouseTrack');
         const el = this.parentComp.getGui();
         if (this.tooltipTrigger === TooltipTrigger.HOVER) {
             this.addManagedListener(el, 'mouseenter', this.onMouseEnter.bind(this));
@@ -65,22 +61,19 @@ export class CustomTooltipFeature extends BeanStub {
         }
     }
     getGridOptionsTooltipDelay(delayOption) {
-        const delay = this.gridOptionsService.getNum(delayOption);
-        if (exists(delay)) {
-            if (delay < 0) {
-                doOnce(() => console.warn(`AG Grid: ${delayOption} should not be lower than 0`), `${delayOption}Warn`);
-            }
-            return Math.max(200, delay);
+        const delay = this.gridOptionsService.get(delayOption);
+        if (delay < 0) {
+            warnOnce(`${delayOption} should not be lower than 0`);
         }
-        return undefined;
+        return Math.max(200, delay);
     }
     getTooltipDelay(type) {
-        var _a, _b, _c, _d;
+        var _a, _b;
         if (type === 'show') {
-            return (_b = (_a = this.getGridOptionsTooltipDelay('tooltipShowDelay')) !== null && _a !== void 0 ? _a : this.tooltipShowDelayOverride) !== null && _b !== void 0 ? _b : this.DEFAULT_SHOW_TOOLTIP_DELAY;
+            return (_a = this.tooltipShowDelayOverride) !== null && _a !== void 0 ? _a : this.getGridOptionsTooltipDelay('tooltipShowDelay');
         }
         else {
-            return (_d = (_c = this.getGridOptionsTooltipDelay('tooltipHideDelay')) !== null && _c !== void 0 ? _c : this.tooltipHideDelayOverride) !== null && _d !== void 0 ? _d : this.DEFAULT_HIDE_TOOLTIP_DELAY;
+            return (_b = this.tooltipHideDelayOverride) !== null && _b !== void 0 ? _b : this.getGridOptionsTooltipDelay('tooltipHideDelay');
         }
     }
     destroy() {
@@ -173,7 +166,7 @@ export class CustomTooltipFeature extends BeanStub {
         // if another tooltip was hidden very recently, we only wait 200ms to show, not the normal waiting time
         let delay = 0;
         if (mouseEvent) {
-            delay = this.isLastTooltipHiddenRecently() ? 200 : this.tooltipShowDelay;
+            delay = this.isLastTooltipHiddenRecently() ? 200 : this.getTooltipDelay('show');
         }
         this.lastMouseEvent = mouseEvent || null;
         this.showTooltipTimeoutId = window.setTimeout(this.showTooltip.bind(this), delay);
@@ -369,7 +362,7 @@ export class CustomTooltipFeature extends BeanStub {
     }
     startHideTimeout() {
         this.clearHideTimeout();
-        this.hideTooltipTimeoutId = window.setTimeout(this.hideTooltip.bind(this), this.tooltipHideDelay);
+        this.hideTooltipTimeoutId = window.setTimeout(this.hideTooltip.bind(this), this.getTooltipDelay('hide'));
     }
     clearShowTimeout() {
         if (!this.showTooltipTimeoutId) {

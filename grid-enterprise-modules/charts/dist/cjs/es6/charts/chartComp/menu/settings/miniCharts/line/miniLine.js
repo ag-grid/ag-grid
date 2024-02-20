@@ -11,7 +11,7 @@ class MiniLine extends miniChartWithAxes_1.MiniChartWithAxes {
             [5, 6, 3, 4, 1],
             [1, 3, 4, 8, 7]
         ];
-        this.lines = miniChartHelpers_1.createLinePaths(this.root, this.data, this.size, this.padding);
+        this.lines = (0, miniChartHelpers_1.createLinePaths)(this.root, this.data, this.size, this.padding);
         this.updateColors(fills, strokes);
     }
     updateColors(fills, strokes) {

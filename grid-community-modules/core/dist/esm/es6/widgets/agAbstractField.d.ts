@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgAbstractLabel, IAgLabelParams } from './agAbstractLabel';
@@ -9,6 +9,8 @@ export declare abstract class AgAbstractField<TValue, TConfig extends IAgLabelPa
     protected value: TValue | null | undefined;
     constructor(config?: TConfig, template?: string, className?: string | undefined);
     protected postConstruct(): void;
+    protected refreshAriaLabelledBy(): void;
+    setAriaLabel(label?: string | null): this;
     onValueChange(callbackFn: (newValue?: TValue | null) => void): this;
     getWidth(): number;
     setWidth(width: number): this;

@@ -24,7 +24,7 @@ The grid will ask your application, via a datasource, for the rows in blocks. Ea
 contains a subset of rows of the entire dataset. The following diagram is a high-level overview.
 
 
-<image-caption src="infinite-scrolling/resources/high-level.png" alt="high-level" constrained="true" centered="true"></image-caption>
+<image-caption src="infinite-scrolling/resources/high-level.png" alt="high-level" constrained="true" centered="true" filterdarkmode="true"></image-caption>
 
 When the grid scrolls to a position where there is no corresponding block of rows loaded, the model
 uses the provided datasource to get the rows for the requested block. In the diagram, the datasource
@@ -40,7 +40,7 @@ gridOptions.rowModelType = 'infinite';
 gridOptions.datasource = myDataSource;
 
 // after grid initialised, you can set or change the datasource
-gridOptions.api.setDatasource(myDataSource);
+api.setGridOption('datasource', myDataSource);
 ```
 
 ## Datasource
@@ -54,7 +54,7 @@ property or using the grid API.
 gridOptions.datasource = myDatasource;
 
 // or use the api after the grid is initialised
-gridOptions.api.setDatasource(myDatasource);
+api.setGridOption('datasource', myDatasource);
 ```
 
 ### Changing the Datasource
@@ -64,12 +64,12 @@ This is useful if the context of your data changes, i.e. if you want to look at 
 
 
 <note>
-| If you call `setDatasource()` the grid will act assuming
+| If you call `setGridOption('datasource', datasource)` the grid will act assuming
 | it's a new datasource, resetting the block cache. However you can pass in the same datasource instance.
 | So your application, for example, might have one instance of a datasource that is aware of some
 | external context (e.g. the business date selected for a report, or the 'bank ATM instance' data you are
 | connecting to), and when the context changes, you want to reset, but still keep the same datasource
-| instance. In this case, just call `setDatasource()` and pass the same datasource in again.
+| instance. In this case, just call `setGridOption('datasource', datasource)` and pass the same datasource in again.
 </note>
 
 ### Datasource Interface

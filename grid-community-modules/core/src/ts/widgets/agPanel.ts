@@ -1,7 +1,7 @@
 import { RefSelector } from "./componentAnnotations";
 import { PostConstruct } from "../context/context";
 import { Component } from "./component";
-import { getInnerHeight, getInnerWidth, setDisplayed } from "../utils/dom";
+import { getInnerHeight, getInnerWidth, isVisible, setDisplayed } from "../utils/dom";
 import { createIconNoSpan } from "../utils/icon";
 import { PositionableFeature, PositionableOptions, ResizableStructure } from "../rendering/features/positionableFeature";
 
@@ -14,11 +14,10 @@ export interface PanelOptions extends PositionableOptions {
     cssIdentifier?: string | null;
 }
 
-export class AgPanel extends Component {
+export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Component {
 
     protected static CLOSE_BTN_TEMPLATE = /* html */ `<div class="ag-button"></div>`;
     protected closable = true;
-    protected config: PanelOptions | undefined;
 
     protected closeButtonComp: Component | undefined;
     protected positionableFeature: PositionableFeature;
@@ -29,13 +28,12 @@ export class AgPanel extends Component {
     @RefSelector('eTitleBarButtons') protected readonly eTitleBarButtons: HTMLElement;
     @RefSelector('eTitle') protected readonly eTitle: HTMLElement;
 
-    constructor(config?: PanelOptions) {
+    constructor(protected readonly config: TConfig) {
         super(AgPanel.getTemplate(config));
-        this.config = config;
     }
 
-    private static getTemplate(config?: PanelOptions) {
-        const cssIdentifier = (config && config.cssIdentifier) || 'default';
+    private static getTemplate(config: PanelOptions) {
+        const cssIdentifier = config.cssIdentifier || 'default';
         return /* html */ `<div class="ag-panel ag-${cssIdentifier}-panel" tabindex="-1">
             <div ref="eTitleBar" class="ag-panel-title-bar ag-${cssIdentifier}-panel-title-bar ag-unselectable">
                 <span ref="eTitle" class="ag-panel-title-bar-title ag-${cssIdentifier}-panel-title-bar-title"></span>
@@ -60,7 +58,7 @@ export class AgPanel extends Component {
             popup,
             x,
             y
-        } = this.config as PanelOptions;
+        } = this.config;
 
         this.positionableFeature = new PositionableFeature(this.getGui(), {
             minWidth, width, minHeight, height, centered, x, y, popup,
@@ -213,7 +211,7 @@ export class AgPanel extends Component {
 
         const eGui = this.getGui();
 
-        if (eGui && eGui.offsetParent) {
+        if (eGui && isVisible(eGui)) {
             this.close();
         }
 

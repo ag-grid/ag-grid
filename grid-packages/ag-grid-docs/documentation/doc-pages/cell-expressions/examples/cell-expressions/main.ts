@@ -1,12 +1,6 @@
-import { ColDef, Grid, GridOptions, NewValueParams, ValueSetterParams } from "@ag-grid-community/core"
+import { GridApi, createGrid, GridOptions } from "@ag-grid-community/core";
 
 ///// left table
-const columnDefsLeft: ColDef[] = [
-  { headerName: 'Function', field: 'function', minWidth: 150 },
-  { headerName: 'Value', field: 'value' },
-  { headerName: 'Times 10', valueGetter: 'getValue("value") * 10' },
-]
-
 interface LeftData {
   function: string;
   value: string;
@@ -19,39 +13,26 @@ const rowDataLeft: LeftData[] = [
   { function: 'Sum A', value: '=ctx.sum("a")' },
   { function: 'Sum B', value: '=ctx.sum("b")' },
 ]
-
-const gridOptionsLeft: GridOptions = {
-  columnDefs: columnDefsLeft,
+let leftGridApi: GridApi;
+const gridOptionsLeft: GridOptions<LeftData> = {
+  columnDefs: [
+    { headerName: 'Function', field: 'function', minWidth: 150 },
+    { headerName: 'Value', field: 'value' },
+    { headerName: 'Times 10', valueGetter: 'getValue("value") * 10' },
+  ],
   defaultColDef: {
     flex: 1,
+    sortable: false
   },
   enableCellExpressions: true,
   rowData: rowDataLeft,
   context: {
     theNumber: 4,
   },
+  enableCellChangeFlash: true,
 }
 
 ///// Right table
-const columnDefsRight: ColDef[] = [
-  {
-    headerName: 'A',
-    field: 'a',
-    width: 150,
-    editable: true,
-    valueSetter: numberNewValueHandler,
-    onCellValueChanged: cellValueChanged,
-  },
-  {
-    headerName: 'B',
-    field: 'b',
-    width: 150,
-    editable: true,
-    valueSetter: numberNewValueHandler,
-    onCellValueChanged: cellValueChanged,
-  },
-]
-
 interface RightData {
   a: number;
   b: number;
@@ -65,18 +46,24 @@ const rowDataRight: RightData[] = [
   { a: 6, b: 77 },
   { a: 7, b: 88 },
 ]
-
-const gridOptionsRight: GridOptions = {
-  columnDefs: columnDefsRight,
+let rightGridApi: GridApi;
+const gridOptionsRight: GridOptions<RightData> = {
+  columnDefs: [
+    { field: 'a' },
+    { field: 'b' },
+  ],
   defaultColDef: {
     flex: 1,
+    width: 150,
+    editable: true,
+    onCellValueChanged: cellValueChanged,
   },
   rowData: rowDataRight,
 }
 
 gridOptionsLeft.context.sum = function (field: keyof RightData) {
   var result = 0
-  rowDataRight.forEach(function (item) {
+  rowDataRight.forEach((item) => {
     result += item[field]
   })
   return result
@@ -85,27 +72,18 @@ gridOptionsLeft.context.sum = function (field: keyof RightData) {
 // tell Left grid to refresh when number changes
 function onNewNumber(value: string) {
   gridOptionsLeft.context.theNumber = new Number(value)
-  gridOptionsLeft.api!.redrawRows()
-}
-
-// we want to convert the strings to numbers
-function numberNewValueHandler(params: ValueSetterParams) {
-  var valueAsNumber = parseFloat(params.newValue)
-  var field = params.colDef.field!
-  var data = params.data
-  data[field] = valueAsNumber
-  return true;
+  leftGridApi!.refreshCells()
 }
 
 // we want to tell the Left grid to refresh when the Right grid values change
-function cellValueChanged(params: NewValueParams) {
-  gridOptionsLeft.api!.redrawRows()
+function cellValueChanged() {
+  leftGridApi!.refreshCells()
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDivLeft = document.querySelector<HTMLElement>('#myGridLeft')!
-  new Grid(gridDivLeft, gridOptionsLeft)
+  leftGridApi = createGrid(gridDivLeft, gridOptionsLeft);
   var gridDivRight = document.querySelector<HTMLElement>('#myGridRight')!
-  new Grid(gridDivRight, gridOptionsRight)
+  rightGridApi = createGrid(gridDivRight, gridOptionsRight);
 })

@@ -1,4 +1,4 @@
-import { ColDef, Grid, GridOptions } from '@ag-grid-community/core';
+import { ColDef, GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 import { getData } from "./data";
 import { MySimpleEditor } from './mySimpleEditor_typescript';
 
@@ -33,19 +33,19 @@ const columnDefs: ColDef[] = [
   },
 ]
 
+let gridApi: GridApi;
+
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   defaultColDef: {
     editable: true,
-    sortable: true,
     minWidth: 100,
     filter: true,
-    resizable: true,
   },
   rowData: getData(),
   onGridReady: (params) => {
     setInterval(() => {
-      const instances = gridOptions.api!.getCellEditorInstances()
+      const instances = gridApi!.getCellEditorInstances()
       if (instances.length > 0) {
         const instance = instances[0] as Partial<MySimpleEditor>;
         if (instance.myCustomFunction) {
@@ -68,5 +68,5 @@ const gridOptions: GridOptions = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

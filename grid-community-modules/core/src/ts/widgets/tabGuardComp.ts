@@ -17,13 +17,21 @@ export class TabGuardComp extends Component {
         /**
          * @return `true` to prevent the default onFocusIn behavior
          */
-        onFocusIn?: (e: FocusEvent) => boolean;
+        onFocusIn?: (e: FocusEvent) => void;
         /**
          * @return `true` to prevent the default onFocusOut behavior
          */
-        onFocusOut?: (e: FocusEvent) => boolean;
+        onFocusOut?: (e: FocusEvent) => void;
         onTabKeyDown?: (e: KeyboardEvent) => void;
         handleKeyDown?: (e: KeyboardEvent) => void;
+        /**
+         * Set to true to create a circular focus pattern when keyboard tabbing.
+         */
+        focusTrapActive?: boolean;
+        /**
+         * Set to true to find a focusable element outside of the TabGuards to focus
+         */
+        forceFocusOutWhenTabGuardsAreEmpty?: boolean;
     }) {
         this.eTopGuard = this.createTabGuard('top');
         this.eBottomGuard = this.createTabGuard('bottom');
@@ -41,6 +49,7 @@ export class TabGuardComp extends Component {
 
         this.tabGuardCtrl = this.createManagedBean(new TabGuardCtrl({
             comp: compProxy,
+            focusTrapActive: !!params.focusTrapActive,
             eTopGuard: this.eTopGuard,
             eBottomGuard: this.eBottomGuard,
             eFocusableElement: this.eFocusableElement,
@@ -49,7 +58,8 @@ export class TabGuardComp extends Component {
             focusInnerElement: params.focusInnerElement,
             handleKeyDown: params.handleKeyDown,
             onTabKeyDown: params.onTabKeyDown,
-            shouldStopEventPropagation: params.shouldStopEventPropagation
+            shouldStopEventPropagation: params.shouldStopEventPropagation,
+            forceFocusOutWhenTabGuardsAreEmpty: params.forceFocusOutWhenTabGuardsAreEmpty
         }));
     }
 

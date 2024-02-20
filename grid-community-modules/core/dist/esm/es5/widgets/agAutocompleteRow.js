@@ -43,7 +43,7 @@ var AgAutocompleteRow = /** @class */ (function (_super) {
                 var startPart = escapeString(this.value.slice(0, index));
                 var highlightedPart = escapeString(this.value.slice(index, highlightEndIndex));
                 var endPart = escapeString(this.value.slice(highlightEndIndex));
-                this.getGui().lastElementChild.innerHTML = startPart + "<b>" + highlightedPart + "</b>" + endPart;
+                this.getGui().lastElementChild.innerHTML = "".concat(startPart, "<b>").concat(highlightedPart, "</b>").concat(endPart);
             }
         }
         if (!keepHighlighting && this.hasHighlighting) {

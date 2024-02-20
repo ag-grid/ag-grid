@@ -87,7 +87,7 @@ var AgColorPanel = /** @class */ (function (_super) {
         });
     };
     AgColorPanel.prototype.initTabIndex = function () {
-        var tabIndex = this.tabIndex = (this.gridOptionsService.getNum('tabIndex') || 0).toString();
+        var tabIndex = this.tabIndex = (this.gridOptionsService.get('tabIndex')).toString();
         this.spectrumColor.setAttribute('tabindex', tabIndex);
         this.spectrumHueSlider.setAttribute('tabindex', tabIndex);
         this.spectrumAlphaSlider.setAttribute('tabindex', tabIndex);
@@ -264,7 +264,7 @@ var AgColorPanel = /** @class */ (function (_super) {
         var _this = this;
         var recentColors = AgColorPanel.recentColors;
         var innerHtml = recentColors.map(function (color, index) {
-            return ( /* html */"<div class=\"ag-recent-color\" id=" + index + " style=\"background-color: " + color + "; width: 15px; height: 15px;\" recent-color=\"" + color + "\" tabIndex=\"" + _this.tabIndex + "\"></div>");
+            return ( /* html */"<div class=\"ag-recent-color\" id=".concat(index, " style=\"background-color: ").concat(color, "; width: 15px; height: 15px;\" recent-color=\"").concat(color, "\" tabIndex=\"").concat(_this.tabIndex, "\"></div>"));
         });
         this.recentColors.innerHTML = innerHtml.join('');
     };
@@ -275,8 +275,8 @@ var AgColorPanel = /** @class */ (function (_super) {
         this.A = color.a;
         var spectrumHueRect = this.spectrumHueRect || this.refreshHueRect();
         var spectrumAlphaRect = this.spectrumAlphaRect || this.refreshAlphaRect();
-        this.spectrumHueSlider.style.left = ((this.H - 1) * -spectrumHueRect.width) + "px";
-        this.spectrumAlphaSlider.style.left = (this.A * spectrumAlphaRect.width) + "px";
+        this.spectrumHueSlider.style.left = "".concat(((this.H - 1) * -spectrumHueRect.width), "px");
+        this.spectrumAlphaSlider.style.left = "".concat((this.A * spectrumAlphaRect.width), "px");
         this.setSpectrumValue(s, b);
     };
     AgColorPanel.prototype.onRecentColorClick = function (e) {

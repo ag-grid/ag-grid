@@ -1,4 +1,4 @@
-import { Grid, GridOptions, IDetailCellRendererParams } from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions, IDetailCellRendererParams } from '@ag-grid-community/core';
 
 var rowData = [
   {
@@ -38,6 +38,8 @@ var rowData = [
     ],
   },
 ]
+
+let gridApi: GridApi;
 
 // level 1 grid options
 const gridOptions: GridOptions = {
@@ -89,5 +91,5 @@ const gridOptions: GridOptions = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

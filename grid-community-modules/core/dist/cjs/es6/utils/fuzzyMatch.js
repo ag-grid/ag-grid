@@ -5,7 +5,7 @@ function fuzzyCheckStrings(inputValues, validValues, allSuggestions) {
     const fuzzyMatches = {};
     const invalidInputs = inputValues.filter(inputValue => !validValues.some((validValue) => validValue === inputValue));
     if (invalidInputs.length > 0) {
-        invalidInputs.forEach(invalidInput => fuzzyMatches[invalidInput] = fuzzySuggestions(invalidInput, allSuggestions));
+        invalidInputs.forEach(invalidInput => fuzzyMatches[invalidInput] = fuzzySuggestions(invalidInput, allSuggestions).values);
     }
     return fuzzyMatches;
 }
@@ -16,9 +16,10 @@ exports.fuzzyCheckStrings = fuzzyCheckStrings;
  * @param allSuggestions The list of strings to be compared against
  */
 function fuzzySuggestions(inputValue, allSuggestions, hideIrrelevant, filterByPercentageOfBestMatch) {
-    let thisSuggestions = allSuggestions.map((text) => ({
+    let thisSuggestions = allSuggestions.map((text, idx) => ({
         value: text,
-        relevance: stringWeightedDistances(inputValue.toLowerCase(), text.toLocaleLowerCase())
+        relevance: stringWeightedDistances(inputValue.toLowerCase(), text.toLocaleLowerCase()),
+        idx
     }));
     thisSuggestions.sort((a, b) => b.relevance - a.relevance);
     if (hideIrrelevant) {
@@ -29,7 +30,13 @@ function fuzzySuggestions(inputValue, allSuggestions, hideIrrelevant, filterByPe
         const limit = bestMatch * filterByPercentageOfBestMatch;
         thisSuggestions = thisSuggestions.filter(suggestion => limit - suggestion.relevance < 0);
     }
-    return thisSuggestions.map(suggestion => suggestion.value);
+    const values = [];
+    const indices = [];
+    for (const suggestion of thisSuggestions) {
+        values.push(suggestion.value);
+        indices.push(suggestion.idx);
+    }
+    return { values, indices };
 }
 exports.fuzzySuggestions = fuzzySuggestions;
 function stringWeightedDistances(str1, str2) {

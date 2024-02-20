@@ -26,6 +26,8 @@ export class PrimaryColsListPanel extends Component {
     constructor() {
         super(PrimaryColsListPanel.TEMPLATE);
         this.destroyColumnItemFuncs = [];
+        this.hasLoadedInitialState = false;
+        this.isInitialState = false;
     }
     destroyColumnTree() {
         this.allColsTree = [];
@@ -53,14 +55,15 @@ export class PrimaryColsListPanel extends Component {
             this.addManagedListener(this.eventService, event, this.fireSelectionChangedEvent.bind(this));
         });
         this.expandGroupsByDefault = !this.params.contractColumnSelection;
-        const translate = this.localeService.getLocaleTextFunc();
-        const columnListName = translate('ariaColumnList', 'Column List');
         this.virtualList = this.createManagedBean(new VirtualList({
             cssIdentifier: 'column-select',
             ariaRole: 'tree',
-            listName: columnListName
         }));
         this.appendChild(this.virtualList.getGui());
+        const ariaEl = this.virtualList.getAriaElement();
+        _.setAriaLive(ariaEl, 'assertive');
+        _.setAriaAtomic(ariaEl, false);
+        _.setAriaRelevant(ariaEl, 'text');
         this.virtualList.setComponentCreator((item, listItemElement) => {
             _.setAriaLevel(listItemElement, (item.getDept() + 1));
             return this.createComponentFromItem(item, listItemElement);
@@ -68,9 +71,10 @@ export class PrimaryColsListPanel extends Component {
         if (this.columnModel.isReady()) {
             this.onColumnsChanged();
         }
-        if (!params.suppressColumnMove && !this.gridOptionsService.is('suppressMovableColumns')) {
-            this.createManagedBean(new PrimaryColsListPanelItemDragFeature(this, this.virtualList));
+        if (this.params.suppressColumnMove) {
+            return;
         }
+        this.colsListPanelItemDragFeature = this.createManagedBean(new PrimaryColsListPanelItemDragFeature(this, this.virtualList));
     }
     createComponentFromItem(item, listItemElement) {
         if (item.isGroup()) {
@@ -83,6 +87,10 @@ export class PrimaryColsListPanel extends Component {
         return columnComp;
     }
     onColumnsChanged() {
+        if (!this.hasLoadedInitialState) {
+            this.hasLoadedInitialState = true;
+            this.isInitialState = !!this.params.initialState;
+        }
         const expandedStates = this.getExpandedStates();
         const pivotModeActive = this.columnModel.isPivotMode();
         const shouldSyncColumnLayoutWithGrid = !this.params.suppressSyncLayoutWithGrid && !pivotModeActive;
@@ -95,15 +103,23 @@ export class PrimaryColsListPanel extends Component {
         this.setExpandedStates(expandedStates);
         this.markFilteredColumns();
         this.flattenAndFilterModel();
+        this.isInitialState = false;
     }
     getDisplayedColsList() {
         return this.displayedColsList;
     }
     getExpandedStates() {
+        const res = {};
+        if (this.isInitialState) {
+            const { expandedGroupIds } = this.params.initialState;
+            expandedGroupIds.forEach(id => {
+                res[id] = true;
+            });
+            return res;
+        }
         if (!this.allColsTree) {
             return {};
         }
-        const res = {};
         this.forEachItem(item => {
             if (!item.isGroup()) {
                 return;
@@ -119,6 +135,7 @@ export class PrimaryColsListPanel extends Component {
         if (!this.allColsTree) {
             return;
         }
+        const { isInitialState } = this;
         this.forEachItem(item => {
             if (!item.isGroup()) {
                 return;
@@ -127,8 +144,8 @@ export class PrimaryColsListPanel extends Component {
             if (colGroup) { // group should always exist, this is defensive
                 const expanded = states[colGroup.getId()];
                 const groupExistedLastTime = expanded != null;
-                if (groupExistedLastTime) {
-                    item.setExpanded(expanded);
+                if (groupExistedLastTime || isInitialState) {
+                    item.setExpanded(!!expanded);
                 }
             }
         });
@@ -217,6 +234,14 @@ export class PrimaryColsListPanel extends Component {
             this.focusRowIfAlive(focusedRow);
         }
         this.notifyListeners();
+        this.refreshAriaLabel();
+    }
+    refreshAriaLabel() {
+        const translate = this.localeService.getLocaleTextFunc();
+        const columnListName = translate('ariaColumnPanelList', 'Column List');
+        const localeColumns = translate('columns', 'Columns');
+        const items = this.displayedColsList.length;
+        _.setAriaLabel(this.virtualList.getAriaElement(), `${columnListName} ${items} ${localeColumns}`);
     }
     focusRowIfAlive(rowIndex) {
         window.setTimeout(() => {
@@ -234,6 +259,9 @@ export class PrimaryColsListPanel extends Component {
                 }
             });
         };
+        if (!this.allColsTree) {
+            return;
+        }
         recursiveFunc(this.allColsTree);
     }
     doSetExpandedAll(value) {
@@ -362,8 +390,23 @@ export class PrimaryColsListPanel extends Component {
         this.dispatchEvent({ type: 'groupExpanded', state: expandState });
     }
     fireSelectionChangedEvent() {
+        if (!this.allColsTree) {
+            return;
+        }
         const selectionState = this.getSelectionState();
         this.dispatchEvent({ type: 'selectionChanged', state: selectionState });
+    }
+    getExpandedGroups() {
+        const expandedGroupIds = [];
+        if (!this.allColsTree) {
+            return expandedGroupIds;
+        }
+        this.forEachItem(item => {
+            if (item.isGroup() && item.isExpanded()) {
+                expandedGroupIds.push(item.getColumnGroup().getId());
+            }
+        });
+        return expandedGroupIds;
     }
 }
 PrimaryColsListPanel.TEMPLATE = `<div class="${PRIMARY_COLS_LIST_PANEL_CLASS}" role="presentation"></div>`;

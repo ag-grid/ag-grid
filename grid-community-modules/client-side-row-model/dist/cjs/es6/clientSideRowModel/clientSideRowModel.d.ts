@@ -26,8 +26,22 @@ export declare class ClientSideRowModel extends BeanStub implements IClientSideR
     private rowDataTransactionBatch;
     private lastHighlightedRow;
     private applyAsyncTransactionsTimeout;
+    /** Has the start method been called */
+    private hasStarted;
+    /** E.g. data has been set into the node manager already */
+    private shouldSkipSettingDataOnStart;
+    /**
+     * This is to prevent refresh model being called when it's already being called.
+     * E.g. the group stage can trigger initial state filter model to be applied. This fires onFilterChanged,
+     * which then triggers the listener here that calls refresh model again but at the filter stage
+     * (which is about to be run by the original call).
+     */
+    private isRefreshingModel;
+    private rowCountReady;
     init(): void;
+    private addPropertyListeners;
     start(): void;
+    private setInitialData;
     ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean;
     private setRowTopAndRowIndex;
     private clearRowTopAndRowIndex;
@@ -70,15 +84,14 @@ export declare class ClientSideRowModel extends BeanStub implements IClientSideR
     expandOrCollapseAll(expand: boolean): void;
     private doSort;
     private doRowGrouping;
-    private restoreGroupState;
     private doFilter;
     private doPivot;
-    private getGroupState;
     getCopyOfNodesMap(): {
         [id: string]: RowNode;
     };
     getRowNode(id: string): RowNode | undefined;
     setRowData(rowData: any[]): void;
+    private dispatchUpdateEventsAndRefresh;
     batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction) => void): void;
     flushAsyncTransactions(): void;
     private executeBatchUpdateRowData;
@@ -99,4 +112,6 @@ export declare class ClientSideRowModel extends BeanStub implements IClientSideR
     resetRowHeights(): void;
     private resetRowHeightsForAllRowNodes;
     private onGridStylesChanges;
+    private onGridReady;
+    isRowDataLoaded(): boolean;
 }

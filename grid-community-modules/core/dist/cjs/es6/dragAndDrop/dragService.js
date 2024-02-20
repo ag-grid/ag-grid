@@ -43,7 +43,7 @@ let DragService = class DragService extends beanStub_1.BeanStub {
             return;
         }
         this.removeListener(dragSourceAndListener);
-        array_1.removeFromArray(this.dragSources, dragSourceAndListener);
+        (0, array_1.removeFromArray)(this.dragSources, dragSourceAndListener);
     }
     isDragging() {
         return this.dragging;
@@ -53,10 +53,10 @@ let DragService = class DragService extends beanStub_1.BeanStub {
         const { eElement, includeTouch, stopPropagationForTouch } = params;
         eElement.addEventListener('mousedown', mouseListener);
         let touchListener = null;
-        const suppressTouch = this.gridOptionsService.is('suppressTouch');
+        const suppressTouch = this.gridOptionsService.get('suppressTouch');
         if (includeTouch && !suppressTouch) {
             touchListener = (touchEvent) => {
-                if (dom_1.isFocusableFormField(touchEvent.target)) {
+                if ((0, dom_1.isFocusableFormField)(touchEvent.target)) {
                     return;
                 }
                 if (touchEvent.cancelable) {
@@ -166,8 +166,8 @@ let DragService = class DragService extends beanStub_1.BeanStub {
     isEventNearStartEvent(currentEvent, startEvent) {
         // by default, we wait 4 pixels before starting the drag
         const { dragStartPixels } = this.currentDragParams;
-        const requiredPixelDiff = generic_1.exists(dragStartPixels) ? dragStartPixels : 4;
-        return mouse_1.areEventsNear(currentEvent, startEvent, requiredPixelDiff);
+        const requiredPixelDiff = (0, generic_1.exists)(dragStartPixels) ? dragStartPixels : 4;
+        return (0, mouse_1.areEventsNear)(currentEvent, startEvent, requiredPixelDiff);
     }
     getFirstActiveTouch(touchList) {
         for (let i = 0; i < touchList.length; i++) {
@@ -212,21 +212,23 @@ let DragService = class DragService extends beanStub_1.BeanStub {
     // only gets called after a mouse down - as this is only added after mouseDown
     // and is removed when mouseUp happens
     onMouseMove(mouseEvent, el) {
+        var _a;
+        if ((0, browser_1.isBrowserSafari)()) {
+            const eDocument = this.gridOptionsService.getDocument();
+            (_a = eDocument.getSelection()) === null || _a === void 0 ? void 0 : _a.removeAllRanges();
+        }
         if (this.shouldPreventMouseEvent(mouseEvent)) {
             mouseEvent.preventDefault();
         }
         this.onCommonMove(mouseEvent, this.mouseStartEvent, el);
     }
     shouldPreventMouseEvent(mouseEvent) {
-        const isEnableCellTextSelect = this.gridOptionsService.is('enableCellTextSelection');
-        const isSafari = browser_1.isBrowserSafari();
+        const isEnableCellTextSelect = this.gridOptionsService.get('enableCellTextSelection');
         const isMouseMove = mouseEvent.type === 'mousemove';
         return (
         // when `isEnableCellTextSelect` is `true`, we need to preventDefault on mouseMove
         // to avoid the grid text being selected while dragging components.
-        // Note: Safari also has an issue, where `user-select: none` is not being respected, so also
-        // prevent it on MouseDown.
-        ((isEnableCellTextSelect && isMouseMove) || isSafari) &&
+        ((isEnableCellTextSelect && isMouseMove)) &&
             mouseEvent.cancelable &&
             this.mouseEventService.isEventFromThisGrid(mouseEvent) &&
             !this.isOverFormFieldElement(mouseEvent));
@@ -280,12 +282,12 @@ let DragService = class DragService extends beanStub_1.BeanStub {
     }
 };
 __decorate([
-    context_1.Autowired('mouseEventService')
+    (0, context_1.Autowired)('mouseEventService')
 ], DragService.prototype, "mouseEventService", void 0);
 __decorate([
     context_1.PreDestroy
 ], DragService.prototype, "removeAllListeners", null);
 DragService = __decorate([
-    context_1.Bean('dragService')
+    (0, context_1.Bean)('dragService')
 ], DragService);
 exports.DragService = DragService;

@@ -1,18 +1,34 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColDef, ColGroupDef } from "../entities/colDef";
 import { ColumnEventType } from "../events";
 import { IComponent } from "./iComponent";
 import { AgGridCommon } from "./iCommon";
-export interface IToolPanelParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+import { ColumnToolPanelState } from "./gridState";
+export interface BaseToolPanelParams<TData = any, TContext = any, TState = any> extends AgGridCommon<TData, TContext> {
+    /** The tool-panel-specific initial state as provided in grid options if applicable */
+    initialState?: TState | undefined;
 }
-export interface IToolPanel {
-    refresh(): void;
+export interface IToolPanelParams<TData = any, TContext = any, TState = any> extends BaseToolPanelParams<TData, TContext, TState> {
+    /** If tool panel is saving and restoring state, this should be called after the state is updated */
+    onStateUpdated: () => void;
 }
-export interface IToolPanelComp extends IToolPanel, IComponent<IToolPanelParams> {
+export interface IToolPanel<TData = any, TContext = any, TState = any> {
+    /**
+     * Called when `api.refreshToolPanel()` is called (with the current params).
+     * Also called when the `sideBar` grid option is updated (with the updated params).
+     * When `sideBar` is updated, if this method returns `true`,
+     * then the grid will take no further action.
+     * Otherwise, the tool panel will be destroyed and recreated.
+     */
+    refresh(params: IToolPanelParams<TData, TContext, TState>): boolean | void;
+    /** If saving and restoring state, this should return the current state */
+    getState?(): TState | undefined;
 }
-export interface ToolPanelColumnCompParams extends IToolPanelParams {
+export interface IToolPanelComp<TData = any, TContext = any, TState = any> extends IToolPanel<TData, TContext, TState>, IComponent<IToolPanelParams<TData, TContext, TState>> {
+}
+export interface ToolPanelColumnCompParams<TData = any, TContext = any> extends IToolPanelParams<TData, TContext, ColumnToolPanelState> {
     /** Suppress Column Move */
     suppressColumnMove: boolean;
     /** Suppress Row Groups section */

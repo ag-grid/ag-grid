@@ -3,7 +3,7 @@ import {ICellRendererParams} from "@ag-grid-community/core";
 import {ICellRendererAngularComp} from "@ag-grid-community/angular";
 
 @Component({
-    selector: 'simple-component',
+    standalone: true,
     template: `
         <div [class]="cssClass">
             <button (click)="clicked()">Click</button>
@@ -11,14 +11,14 @@ import {ICellRendererAngularComp} from "@ag-grid-community/angular";
         </div>`
 })
 export class FullWidthCellRenderer implements ICellRendererAngularComp {
-    private cssClass!: string;
-    private message!: string;
+    public cssClass!: string;
+    public message!: string;
 
     agInit(params: ICellRendererParams): void {
         this.cssClass = params.node.rowPinned ? 'example-full-width-pinned-row' :
             'example-full-width-row';
-        this.message = params.node.rowPinned ? `Pinned full width row at index ${params.rowIndex}` :
-            `Normal full width row at index${params.rowIndex}`;
+        this.message = params.node.rowPinned ? `Pinned full width row at index ${params.node.rowIndex}` :
+            `Normal full width row at index ${params.node.rowIndex}`;
     }
 
     clicked() {

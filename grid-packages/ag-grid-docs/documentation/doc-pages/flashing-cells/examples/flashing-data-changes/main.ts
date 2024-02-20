@@ -1,12 +1,10 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 
 function formatNumber(number: number) {
-  // this puts commas into the number eg 1000 goes to 1,000,
-  // i pulled this from stack overflow, i have no idea how it works
-  return Math.floor(number)
-    .toString()
-    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+  return Math.floor(number).toLocaleString()
 }
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -21,7 +19,6 @@ const gridOptions: GridOptions = {
     flex: 1,
     cellClass: 'align-right',
     enableCellChangeFlash: true,
-    resizable: true,
     valueFormatter: (params) => {
       return formatNumber(params.value)
     },
@@ -30,11 +27,11 @@ const gridOptions: GridOptions = {
 }
 
 function onUpdateSomeValues() {
-  var rowCount = gridOptions.api!.getDisplayedRowCount()
+  var rowCount = gridApi!.getDisplayedRowCount()
   // pick 20 cells at random to update
   for (var i = 0; i < 20; i++) {
     var row = Math.floor(Math.random() * rowCount)
-    var rowNode = gridOptions.api!.getDisplayedRowAtIndex(row)!
+    var rowNode = gridApi!.getDisplayedRowAtIndex(row)!
     var col = ['a', 'b', 'c', 'd', 'e', 'f'][i % 6]
     rowNode.setDataValue(col, Math.floor(Math.random() * 10000))
   }
@@ -42,28 +39,28 @@ function onUpdateSomeValues() {
 
 function onFlashOneCell() {
   // pick fourth row at random
-  var rowNode = gridOptions.api!.getDisplayedRowAtIndex(4)!
+  var rowNode = gridApi!.getDisplayedRowAtIndex(4)!
   // pick 'c' column
-  gridOptions.api!.flashCells({ rowNodes: [rowNode], columns: ['c'] })
+  gridApi!.flashCells({ rowNodes: [rowNode], columns: ['c'] })
 }
 
 function onFlashTwoColumns() {
   // flash whole column, so leave row selection out
-  gridOptions.api!.flashCells({ columns: ['c', 'd'] })
+  gridApi!.flashCells({ columns: ['c', 'd'] })
 }
 
 function onFlashTwoRows() {
   // pick fourth and fifth row at random
-  var rowNode1 = gridOptions.api!.getDisplayedRowAtIndex(4)!
-  var rowNode2 = gridOptions.api!.getDisplayedRowAtIndex(5)!
+  var rowNode1 = gridApi!.getDisplayedRowAtIndex(4)!
+  var rowNode2 = gridApi!.getDisplayedRowAtIndex(5)!
   // flash whole row, so leave column selection out
-  gridOptions.api!.flashCells({ rowNodes: [rowNode1, rowNode2] })
+  gridApi!.flashCells({ rowNodes: [rowNode1, rowNode2] })
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })
 
 function createRowData() {

@@ -2,6 +2,7 @@ import { ICellEditorParams } from "../../interfaces/iCellEditor";
 import { AgInputNumberField } from "../../widgets/agInputNumberField";
 import { CellEditorInput, SimpleCellEditor } from "./simpleCellEditor";
 import { exists } from "../../utils/generic";
+import { KeyCode } from "../../constants/keyCode";
 
 export interface INumberCellEditorParams<TData = any, TContext = any> extends ICellEditorParams<TData, number, TContext> {
     /** Min allowed value. */
@@ -17,8 +18,16 @@ export interface INumberCellEditorParams<TData = any, TContext = any> extends IC
      * Defaults to any value allowed.
      */
     step?: number;
-    /** Display stepper buttons in editor. Default: `false` */
+    /**
+     * Display stepper buttons in editor. Note: Does not work when `preventStepping` is `true`.
+     * @default false
+     */
     showStepperButtons?: boolean;
+    /**
+     * Set to `true` to prevent key up/down from stepping the field's value.
+     * @default false
+     */
+    preventStepping?: boolean
 }
 
 class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditorParams, AgInputNumberField> {
@@ -44,8 +53,18 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
         if (params.step != null) {
             eInput.setStep(params.step);
         }
-        if (params.showStepperButtons) {
-            eInput.getInputElement().classList.add('ag-number-field-input-stepper');
+
+        const inputEl = eInput.getInputElement();
+        if (params.preventStepping) {
+            eInput.addManagedListener(inputEl, 'keydown', this.preventStepping);
+        } else if (params.showStepperButtons) {
+            inputEl.classList.add('ag-number-field-input-stepper');
+        }
+    }
+
+    private preventStepping(e: KeyboardEvent): void {
+        if (e.key === KeyCode.UP || e.key === KeyCode.DOWN) {
+            e.preventDefault();
         }
     }
 

@@ -163,7 +163,12 @@ export class AgAutocomplete extends Component {
             // clicking on the list loses focus, so restore
             this.eAutocompleteInput.getFocusableElement().focus();
         }
-        this.eAutocompleteInput.getInputElement().setSelectionRange(position, position);
+        const eInput = this.eAutocompleteInput.getInputElement();
+        eInput.setSelectionRange(position, position);
+        if (position === eInput.value.length) {
+            // ensure the caret is visible
+            eInput.scrollLeft = eInput.scrollWidth;
+        }
     }
     forceOpenList() {
         this.onValueChanged(this.eAutocompleteInput.getValue());
@@ -200,7 +205,7 @@ export class AgAutocomplete extends Component {
             type: 'autocomplete',
             eventSource: this.getGui(),
             position: 'under',
-            alignSide: this.gridOptionsService.is('enableRtl') ? 'right' : 'left',
+            alignSide: this.gridOptionsService.get('enableRtl') ? 'right' : 'left',
             keepWithinBounds: true
         };
         const addPopupRes = this.popupService.addPopup({

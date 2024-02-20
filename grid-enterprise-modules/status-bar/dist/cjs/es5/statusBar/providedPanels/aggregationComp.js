@@ -48,13 +48,20 @@ var AggregationComp = /** @class */ (function (_super) {
     };
     AggregationComp.prototype.isValidRowModel = function () {
         // this component is only really useful with client or server side rowmodels
-        var rowModelType = this.gridApi.getModel().getType();
+        var rowModelType = this.gridApi.__getModel().getType();
         return rowModelType === 'clientSide' || rowModelType === 'serverSide';
     };
-    AggregationComp.prototype.init = function () {
+    AggregationComp.prototype.init = function (params) {
+        this.params = params;
+    };
+    AggregationComp.prototype.refresh = function (params) {
+        this.params = params;
+        this.onRangeSelectionChanged();
+        return true;
     };
     AggregationComp.prototype.setAggregationComponentValue = function (aggFuncName, value, visible) {
-        var statusBarValueComponent = this.getAggregationValueComponent(aggFuncName);
+        var _a;
+        var statusBarValueComponent = this.getAllowedAggregationValueComponent(aggFuncName);
         if (core_1._.exists(statusBarValueComponent) && statusBarValueComponent) {
             var localeTextFunc = this.localeService.getLocaleTextFunc();
             var thousandSeparator = localeTextFunc('thousandSeparator', ',');
@@ -62,31 +69,26 @@ var AggregationComp = /** @class */ (function (_super) {
             statusBarValueComponent.setValue(core_1._.formatNumberTwoDecimalPlacesAndCommas(value, thousandSeparator, decimalSeparator));
             statusBarValueComponent.setDisplayed(visible);
         }
+        else {
+            // might have previously been visible, so hide now
+            (_a = this.getAggregationValueComponent(aggFuncName)) === null || _a === void 0 ? void 0 : _a.setDisplayed(false);
+        }
     };
-    AggregationComp.prototype.getAggregationValueComponent = function (aggFuncName) {
-        // converts user supplied agg name to our reference - eg: sum => sumAggregationComp
-        var refComponentName = aggFuncName + "AggregationComp";
+    AggregationComp.prototype.getAllowedAggregationValueComponent = function (aggFuncName) {
         // if the user has specified the agAggregationPanelComp but no aggFuncs we show the all
         // if the user has specified the agAggregationPanelComp and aggFuncs, then we only show the aggFuncs listed
-        var statusBarValueComponent = null;
-        var statusBar = this.gridOptionsService.get('statusBar');
-        var aggregationPanelConfig = core_1._.exists(statusBar) && statusBar ? statusBar.statusPanels.find(function (panel) { return panel.statusPanel === 'agAggregationComponent'; }) : null;
-        if (core_1._.exists(aggregationPanelConfig) && aggregationPanelConfig) {
-            // a little defensive here - if no statusPanelParams show it, if componentParams we also expect aggFuncs
-            if (!core_1._.exists(aggregationPanelConfig.statusPanelParams) ||
-                (core_1._.exists(aggregationPanelConfig.statusPanelParams) &&
-                    core_1._.exists(aggregationPanelConfig.statusPanelParams.aggFuncs) &&
-                    core_1._.exists(aggregationPanelConfig.statusPanelParams.aggFuncs.find(function (func) { return func === aggFuncName; })))) {
-                statusBarValueComponent = this[refComponentName];
-            }
-        }
-        else {
-            // components not specified - assume we can show this component
-            statusBarValueComponent = this[refComponentName];
+        var aggFuncs = this.params.aggFuncs;
+        if (!aggFuncs || aggFuncs.includes(aggFuncName)) {
+            return this.getAggregationValueComponent(aggFuncName);
         }
         // either we can't find it (which would indicate a typo or similar user side), or the user has deliberately
         // not listed the component in aggFuncs
-        return statusBarValueComponent;
+        return null;
+    };
+    AggregationComp.prototype.getAggregationValueComponent = function (aggFuncName) {
+        // converts user supplied agg name to our reference - eg: sum => sumAggregationComp
+        var refComponentName = "".concat(aggFuncName, "AggregationComp");
+        return this[refComponentName];
     };
     AggregationComp.prototype.onRangeSelectionChanged = function () {
         var _this = this;
@@ -168,40 +170,40 @@ var AggregationComp = /** @class */ (function (_super) {
     };
     AggregationComp.TEMPLATE = "<div class=\"ag-status-panel ag-status-panel-aggregations\">\n            <ag-name-value ref=\"avgAggregationComp\"></ag-name-value>\n            <ag-name-value ref=\"countAggregationComp\"></ag-name-value>\n            <ag-name-value ref=\"minAggregationComp\"></ag-name-value>\n            <ag-name-value ref=\"maxAggregationComp\"></ag-name-value>\n            <ag-name-value ref=\"sumAggregationComp\"></ag-name-value>\n        </div>";
     __decorate([
-        core_1.Optional('rangeService')
+        (0, core_1.Optional)('rangeService')
     ], AggregationComp.prototype, "rangeService", void 0);
     __decorate([
-        core_1.Autowired('valueService')
+        (0, core_1.Autowired)('valueService')
     ], AggregationComp.prototype, "valueService", void 0);
     __decorate([
-        core_1.Autowired('cellNavigationService')
+        (0, core_1.Autowired)('cellNavigationService')
     ], AggregationComp.prototype, "cellNavigationService", void 0);
     __decorate([
-        core_1.Autowired('rowRenderer')
+        (0, core_1.Autowired)('rowRenderer')
     ], AggregationComp.prototype, "rowRenderer", void 0);
     __decorate([
-        core_1.Autowired('gridApi')
+        (0, core_1.Autowired)('gridApi')
     ], AggregationComp.prototype, "gridApi", void 0);
     __decorate([
-        core_1.Autowired('cellPositionUtils')
+        (0, core_1.Autowired)('cellPositionUtils')
     ], AggregationComp.prototype, "cellPositionUtils", void 0);
     __decorate([
-        core_1.Autowired('rowPositionUtils')
+        (0, core_1.Autowired)('rowPositionUtils')
     ], AggregationComp.prototype, "rowPositionUtils", void 0);
     __decorate([
-        core_1.RefSelector('sumAggregationComp')
+        (0, core_1.RefSelector)('sumAggregationComp')
     ], AggregationComp.prototype, "sumAggregationComp", void 0);
     __decorate([
-        core_1.RefSelector('countAggregationComp')
+        (0, core_1.RefSelector)('countAggregationComp')
     ], AggregationComp.prototype, "countAggregationComp", void 0);
     __decorate([
-        core_1.RefSelector('minAggregationComp')
+        (0, core_1.RefSelector)('minAggregationComp')
     ], AggregationComp.prototype, "minAggregationComp", void 0);
     __decorate([
-        core_1.RefSelector('maxAggregationComp')
+        (0, core_1.RefSelector)('maxAggregationComp')
     ], AggregationComp.prototype, "maxAggregationComp", void 0);
     __decorate([
-        core_1.RefSelector('avgAggregationComp')
+        (0, core_1.RefSelector)('avgAggregationComp')
     ], AggregationComp.prototype, "avgAggregationComp", void 0);
     __decorate([
         core_1.PostConstruct

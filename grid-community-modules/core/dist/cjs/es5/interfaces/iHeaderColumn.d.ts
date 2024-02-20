@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AbstractColDef } from "../entities/colDef";
@@ -11,7 +11,7 @@ export interface IHeaderColumn<TValue = any> extends IEventEmitter {
     getMinWidth(): number | null | undefined;
     getLeft(): number | null;
     getOldLeft(): number | null;
-    getDefinition(): AbstractColDef<TValue> | null;
+    getDefinition(): AbstractColDef<any, TValue> | null;
     getColumnGroupShow(): ColumnGroupShowType | undefined;
     getParent(): IHeaderColumn;
     isResizable(): boolean;

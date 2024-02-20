@@ -1,4 +1,4 @@
-// ag-grid-react v30.1.0
+// ag-grid-react v31.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -48,23 +48,27 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AgGridReact = void 0;
 var react_1 = __importStar(require("react"));
-var agGridReactLegacy_1 = require("./legacy/agGridReactLegacy");
 var agGridReactUi_1 = require("./reactUi/agGridReactUi");
 var AgGridReact = /** @class */ (function (_super) {
     __extends(AgGridReact, _super);
     function AgGridReact() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.apiListeners = [];
         _this.setGridApi = function (api, columnApi) {
             _this.api = api;
             _this.columnApi = columnApi;
+            _this.apiListeners.forEach(function (listener) { return listener(api); });
         };
         return _this;
     }
+    AgGridReact.prototype.registerApiListener = function (listener) {
+        this.apiListeners.push(listener);
+    };
+    AgGridReact.prototype.componentWillUnmount = function () {
+        this.apiListeners.length = 0;
+    };
     AgGridReact.prototype.render = function () {
-        var ReactComponentToUse = this.props.suppressReactUi ?
-            react_1.default.createElement(agGridReactLegacy_1.AgGridReactLegacy, __assign({}, this.props, { setGridApi: this.setGridApi }))
-            : react_1.default.createElement(agGridReactUi_1.AgGridReactUi, __assign({}, this.props, { setGridApi: this.setGridApi }));
-        return ReactComponentToUse;
+        return react_1.default.createElement(agGridReactUi_1.AgGridReactUi, __assign({}, this.props, { setGridApi: this.setGridApi }));
     };
     return AgGridReact;
 }(react_1.Component));

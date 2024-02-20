@@ -21,7 +21,7 @@ The example below shows configuring a Detail Grid with some additional Grid Opti
 
 - The `detailGridOptions` is provided inside the `detailCellRendererParams`.
 - The Detail Grid Options has the following properties set: `rowSelection=multiple`, `suppressRowClickSelection=true`, `enableRangeSelection=true`, `pagination=true` and `paginationAutoPageSize=true`.
-- The Detail Grid Options is provided with a Default Column Definition (`defaultColDef`) that makes all columns sortable and use Flex for sizing.
+- The Detail Grid Options is provided with a Default Column Definition (`defaultColDef`) that makes all columns use Flex for sizing.
 - The first Column Definition is configured to use Checkbox Selection.
 
 <grid-example title='Detail Grid Options' name='grid-options' type='generated' options='{ "enterprise": true, "modules": ["clientside", "masterdetail", "menu", "columnpanel", "range"] }'></grid-example>
@@ -34,7 +34,7 @@ Row data is provided to the Detail Grid by implementing the `getDetailRowData` c
 
 The `successCallback` can be called immediately in a synchronous fashion (typical if the data is already available) or asynchronously at a later time (typical if the data needs to be fetched remotely).
 
-The Master Grid in turn will call `api.setRowData(data)` on the Detail Grid with the data provided.
+The Master Grid in turn will call `api.setGridOption('rowData', data)` on the Detail Grid with the data provided.
 
 All the previous examples on Master Detail provided the result synchronously and as such another specific example is not given here.
 
@@ -63,7 +63,7 @@ md-include:changing-the-template.md
 
 The Master Grid manages all the Detail Grid instances. You can access the API of the underlying Detail Grids to call API methods directly on those grids. The Master Grid stores references to the Detail Grid API's in Detail Grid Info objects.
 
-The Detail Grid Info objects contain a reference to the underlying [Grid API](/grid-api/) and [Column API](/column-api/) for each detail grid. The interface for Detail Grid Info is as follows:
+The Detail Grid Info objects contain a reference to the underlying [Grid API](/grid-api/) for each detail grid. The interface for Detail Grid Info is as follows:
 
 <interface-documentation interfaceName='DetailGridInfo' ></interface-documentation>
 
@@ -73,7 +73,7 @@ The Detail Grid Info objects are accessed via the Master Grid's API via the foll
 
 <snippet>
 // lookup a specific DetailGridInfo by id, and then call stopEditing() on it
-const detailGridInfo = gridOptions.api.getDetailGridInfo('detail_someId');
+const detailGridInfo = api.getDetailGridInfo('detail_someId');
 detailGridInfo.api.flashCells();
 </snippet>
 
@@ -83,7 +83,7 @@ The grid generates IDs for detail grids by prefixing the parent row's ID with `d
 
 <snippet>
 // iterate over all DetailGridInfos, and call stopEditing() on each one
-| gridOptions.api.forEachDetailGridInfo(detailGridInfo => {
+| api.forEachDetailGridInfo(detailGridInfo => {
 |     detailGridInfo.api.flashCells();
 | });
 </snippet>

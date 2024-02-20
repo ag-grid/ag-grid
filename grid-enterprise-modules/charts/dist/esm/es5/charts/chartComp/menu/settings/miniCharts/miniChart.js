@@ -21,6 +21,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { Autowired, Component, PostConstruct } from "@ag-grid-community/core";
 import { _Scene } from "ag-charts-community";
+var CANVAS_CLASS = 'ag-chart-mini-thumbnail-canvas';
+var ERROR_MESSAGE = 'AG Grid - chart update failed';
 var MiniChart = /** @class */ (function (_super) {
     __extends(MiniChart, _super);
     function MiniChart(container, tooltipName) {
@@ -28,8 +30,13 @@ var MiniChart = /** @class */ (function (_super) {
         _this.size = 58;
         _this.padding = 5;
         _this.root = new _Scene.Group();
-        var scene = new _Scene.Scene({ document: window.document, width: _this.size, height: _this.size });
-        scene.canvas.element.classList.add('ag-chart-mini-thumbnail-canvas');
+        var scene = new _Scene.Scene({
+            window: window,
+            document: window.document,
+            width: _this.size,
+            height: _this.size
+        });
+        scene.canvas.element.classList.add(CANVAS_CLASS);
         scene.root = _this.root;
         scene.container = container;
         _this.scene = scene;
@@ -38,9 +45,11 @@ var MiniChart = /** @class */ (function (_super) {
     }
     MiniChart.prototype.init = function () {
         this.scene.canvas.element.title = this.chartTranslationService.translate(this.tooltipName);
-        // necessary to force scene graph render as we are not using the standalone factory!
+        // Necessary to force scene graph render as we are not using the standalone factory.
         this.scene.render()
-            .catch(function (e) { return console.error("AG Grid - chart update failed", e); });
+            .catch(function (e) {
+            console.error("".concat(ERROR_MESSAGE), e);
+        });
     };
     __decorate([
         Autowired('chartTranslationService')

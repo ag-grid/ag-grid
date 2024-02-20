@@ -37,7 +37,7 @@ class CellRangeFeature {
         this.cellComp.addOrRemoveCssClass(`${CSS_CELL_RANGE_SELECTED}-3`, this.rangeCount === 3);
         this.cellComp.addOrRemoveCssClass(`${CSS_CELL_RANGE_SELECTED}-4`, this.rangeCount >= 4);
         this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_CHART, this.hasChartRange);
-        aria_1.setAriaSelected(this.eGui, this.rangeCount > 0 ? true : undefined);
+        (0, aria_1.setAriaSelected)(this.eGui, this.rangeCount > 0 ? true : undefined);
         this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_SINGLE_CELL, this.isSingleCell());
         this.updateRangeBorders();
         this.refreshHandle();
@@ -64,7 +64,7 @@ class CellRangeFeature {
             return false;
         }
         const cellRanges = rangeService.getCellRanges();
-        return cellRanges.length > 0 && cellRanges.every(range => array_1.includes([IRangeService_1.CellRangeType.DIMENSION, IRangeService_1.CellRangeType.VALUE], range.type));
+        return cellRanges.length > 0 && cellRanges.every(range => (0, array_1.includes)([IRangeService_1.CellRangeType.DIMENSION, IRangeService_1.CellRangeType.VALUE], range.type));
     }
     updateRangeBordersIfRangeCount() {
         // we only need to update range borders if we are in a range
@@ -74,7 +74,7 @@ class CellRangeFeature {
         }
     }
     getRangeBorders() {
-        const isRtl = this.beans.gridOptionsService.is('enableRtl');
+        const isRtl = this.beans.gridOptionsService.get('enableRtl');
         let top = false;
         let right = false;
         let bottom = false;
@@ -123,7 +123,7 @@ class CellRangeFeature {
         return { top, right, bottom, left };
     }
     refreshHandle() {
-        if (!this.beans.rangeService) {
+        if (!this.beans.rangeService || this.beans.context.isDestroyed()) {
             return;
         }
         const shouldHaveSelectionHandle = this.shouldHaveSelectionHandle();
@@ -142,10 +142,10 @@ class CellRangeFeature {
         if (this.rangeCount < 1 || rangesLen < 1) {
             return false;
         }
-        const cellRange = array_1.last(cellRanges);
+        const cellRange = (0, array_1.last)(cellRanges);
         const cellPosition = this.cellCtrl.getCellPosition();
-        const isFillHandleAvailable = gridOptionsService.is('enableFillHandle') && !this.cellCtrl.isSuppressFillHandle();
-        const isRangeHandleAvailable = gridOptionsService.is('enableRangeHandle');
+        const isFillHandleAvailable = gridOptionsService.get('enableFillHandle') && !this.cellCtrl.isSuppressFillHandle();
+        const isRangeHandleAvailable = gridOptionsService.get('enableRangeHandle');
         let handleIsAvailable = rangesLen === 1 && !this.cellCtrl.isEditing() && (isFillHandleAvailable || isRangeHandleAvailable);
         if (this.hasChartRange) {
             const hasCategoryRange = cellRanges[0].type === IRangeService_1.CellRangeType.DIMENSION;
@@ -160,8 +160,8 @@ class CellRangeFeature {
     }
     addSelectionHandle() {
         const { gridOptionsService, rangeService } = this.beans;
-        const cellRangeType = array_1.last(rangeService.getCellRanges()).type;
-        const selectionHandleFill = gridOptionsService.is('enableFillHandle') && generic_1.missing(cellRangeType);
+        const cellRangeType = (0, array_1.last)(rangeService.getCellRanges()).type;
+        const selectionHandleFill = gridOptionsService.get('enableFillHandle') && (0, generic_1.missing)(cellRangeType);
         const type = selectionHandleFill ? IRangeService_1.SelectionHandleType.FILL : IRangeService_1.SelectionHandleType.RANGE;
         if (this.selectionHandle && this.selectionHandle.getType() !== type) {
             this.selectionHandle = this.beans.context.destroyBean(this.selectionHandle);

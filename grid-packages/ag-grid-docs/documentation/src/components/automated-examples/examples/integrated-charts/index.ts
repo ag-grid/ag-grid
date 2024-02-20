@@ -6,7 +6,7 @@
 // to prevent AG Grid from loading the code twice
 
 import { Easing, Group } from '@tweenjs/tween.js';
-import { ColDef, GridOptions, MenuItemDef } from 'ag-grid-community';
+import { ColDef, GridOptions, GridApi, MenuItemDef } from 'ag-grid-community';
 import { createPeopleData } from '../../data/createPeopleData';
 import { INTEGRATED_CHARTS_ID } from '../../lib/constants';
 import { createMouse } from '../../lib/createMouse';
@@ -33,6 +33,7 @@ interface CreateAutomatedIntegratedChartsParams {
     runOnce: boolean;
     scriptDebuggerManager: ScriptDebuggerManager;
     visibilityThreshold: number;
+    darkMode: boolean;
 }
 
 function numberCellFormatter(params) {
@@ -40,6 +41,35 @@ function numberCellFormatter(params) {
         .toString()
         .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 }
+
+const COUNTRY_CODES = {
+    Ireland: "ie",
+    Luxembourg: "lu",
+    Belgium: "be",
+    Spain: "es",
+    "United Kingdom": "gb",
+    France: "fr",
+    Germany: "de",
+    Sweden: "se",
+    Italy: "it",
+    Greece: "gr",
+    Iceland: "is",
+    Portugal: "pt",
+    Malta: "mt",
+    Norway: "no",
+    Brazil: "br",
+    Argentina: "ar",
+    Colombia: "co",
+    Peru: "pe",
+    Venezuela: "ve",
+    Uruguay: "uy",
+    Japan: "jp",
+    China: "cn",
+    "South Korea": "kr",
+    Philippines: "ph",
+    Malaysia: "my",
+    Vietnam: "vn",
+};
 
 const columnDefs: ColDef[] = [
     {
@@ -60,7 +90,7 @@ const columnDefs: ColDef[] = [
             }
 
             // put the value in bold
-            return `<div class='country'><span class='flag'>${params.data.flag}</span><span>${params.value}</span></div>`;
+            return `<div class='country'><span class='flag'><img border="0" width="24" height="16" alt="${params.value} flag"  src="https://flags.fmcdn.net/data/flags/mini/${COUNTRY_CODES[params.value]}.png"></span><span>${params.value}</span></div>`;
         },
     },
     { field: 'jan', type: ['measure', 'numericColumn'], enableRowGroup: true },
@@ -77,15 +107,13 @@ const columnDefs: ColDef[] = [
     { field: 'dec', type: ['measure', 'numericColumn'], enableRowGroup: true },
     { field: 'totalWinnings', type: ['measure', 'numericColumn'], enableRowGroup: true },
 ];
-
+let api: GridApi;
 const gridOptions: GridOptions = {
     columnDefs,
     defaultColDef: {
-        sortable: true,
         flex: 1,
         minWidth: 150,
         filter: true,
-        resizable: true,
     },
     autoGroupColumnDef: {
         minWidth: 280,
@@ -98,12 +126,15 @@ const gridOptions: GridOptions = {
             cellRenderer: 'agAnimateShowChangeCellRenderer',
         },
     },
-    animateRows: true,
     enableCharts: true,
     enableRangeSelection: true,
     suppressAggFuncInHeader: true,
     rowGroupPanelShow: 'always',
 };
+
+function getDarkModeChartThemes(darkMode: boolean) {
+    return darkMode ? ['ag-default-dark'] : ['ag-default'];
+}
 
 export function createAutomatedIntegratedCharts({
     gridClassname,
@@ -117,6 +148,7 @@ export function createAutomatedIntegratedCharts({
     scriptDebuggerManager,
     runOnce,
     visibilityThreshold,
+    darkMode
 }: CreateAutomatedIntegratedChartsParams): AutomatedExample {
     const gridSelector = `.${gridClassname}`;
     let gridDiv: HTMLElement;
@@ -134,10 +166,12 @@ export function createAutomatedIntegratedCharts({
             gridOptions.getContextMenuItems = () => getAdditionalContextMenuItems(additionalContextMenuItems);
         }
 
+        gridOptions.chartThemes = getDarkModeChartThemes(darkMode);
+
         gridOptions.onGridReady = () => {
             onGridReady && onGridReady();
         };
-        gridOptions.onFirstDataRendered = () => {
+        gridOptions.onFirstDataRendered = (e) => {
             if (suppressUpdates) {
                 return;
             }
@@ -162,15 +196,18 @@ export function createAutomatedIntegratedCharts({
                 mouse,
                 onStateChange,
                 tweenGroup,
-                gridOptions,
+                gridApi: e.api,
                 loop: !runOnce,
                 scriptDebugger,
                 defaultEasing: Easing.Quadratic.InOut,
             });
         };
 
-        new globalThis.agGrid.Grid(gridDiv, gridOptions);
+        api = globalThis.agGrid.createGrid(gridDiv, gridOptions);
     };
+    const updateDarkMode = (newDarkMode: boolean) => {
+        api?.setGridOption('chartThemes', getDarkModeChartThemes(newDarkMode));
+    }
 
     const loadGrid = function () {
         if (document.querySelector(gridSelector) && globalThis.agGrid) {
@@ -191,6 +228,7 @@ export function createAutomatedIntegratedCharts({
             return isInViewport({ element: gridDiv, threshold: visibilityThreshold });
         },
         getDebugger: () => scriptDebugger,
+        updateDarkMode
     };
 }
 
@@ -200,7 +238,7 @@ export function cleanUp() {
         scriptRunner.stop();
     }
 
-    gridOptions.api?.destroy();
+    api?.destroy();
 }
 
 /**

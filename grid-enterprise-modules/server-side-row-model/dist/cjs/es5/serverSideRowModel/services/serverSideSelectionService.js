@@ -54,7 +54,7 @@ var ServerSideSelectionService = /** @class */ (function (_super) {
     }
     ServerSideSelectionService.prototype.init = function () {
         var _this = this;
-        var groupSelectsChildren = this.gridOptionsService.is('groupSelectsChildren');
+        var groupSelectsChildren = this.gridOptionsService.get('groupSelectsChildren');
         this.addManagedPropertyListener('groupSelectsChildren', function (propChange) {
             _this.destroyBean(_this.selectionStrategy);
             var StrategyClazz = !propChange.currentValue ? defaultStrategy_1.DefaultStrategy : groupSelectsChildrenStrategy_1.GroupSelectsChildrenStrategy;
@@ -66,26 +66,29 @@ var ServerSideSelectionService = /** @class */ (function (_super) {
             };
             _this.eventService.dispatchEvent(event);
         });
-        this.rowSelection = this.gridOptionsService.get('rowSelection');
-        this.addManagedPropertyListener('rowSelection', function (propChange) { return _this.rowSelection = propChange.currentValue; });
+        this.addManagedPropertyListener('rowSelection', function () { return _this.deselectAllRowNodes({ source: 'api' }); });
         var StrategyClazz = !groupSelectsChildren ? defaultStrategy_1.DefaultStrategy : groupSelectsChildrenStrategy_1.GroupSelectsChildrenStrategy;
         this.selectionStrategy = this.createManagedBean(new StrategyClazz());
     };
-    ServerSideSelectionService.prototype.getServerSideSelectionState = function () {
+    ServerSideSelectionService.prototype.getSelectionState = function () {
         return this.selectionStrategy.getSelectedState();
     };
-    ServerSideSelectionService.prototype.setServerSideSelectionState = function (state) {
+    ServerSideSelectionService.prototype.setSelectionState = function (state, source) {
+        if (Array.isArray(state)) {
+            return;
+        }
         this.selectionStrategy.setSelectedState(state);
         this.shotgunResetNodeSelectionState();
         var event = {
             type: core_1.Events.EVENT_SELECTION_CHANGED,
-            source: 'api',
+            source: source,
         };
         this.eventService.dispatchEvent(event);
     };
     ServerSideSelectionService.prototype.setNodesSelected = function (params) {
         var nodes = params.nodes, otherParams = __rest(params, ["nodes"]);
-        if (nodes.length > 1 && this.rowSelection !== 'multiple') {
+        var rowSelection = this.gridOptionsService.get('rowSelection');
+        if (nodes.length > 1 && rowSelection !== 'multiple') {
             console.warn("AG Grid: cannot multi select while rowSelection='single'");
             return 0;
         }
@@ -174,6 +177,11 @@ var ServerSideSelectionService = /** @class */ (function (_super) {
     ServerSideSelectionService.prototype.isEmpty = function () {
         return this.selectionStrategy.isEmpty();
     };
+    ServerSideSelectionService.prototype.hasNodesToSelect = function (justFiltered, justCurrentPage) {
+        if (justFiltered === void 0) { justFiltered = false; }
+        if (justCurrentPage === void 0) { justCurrentPage = false; }
+        return true;
+    };
     ServerSideSelectionService.prototype.selectAllRowNodes = function (params) {
         if (params.justCurrentPage || params.justFiltered) {
             console.warn("AG Grid: selecting just filtered only works when gridOptions.rowModelType='clientSide'");
@@ -225,13 +233,13 @@ var ServerSideSelectionService = /** @class */ (function (_super) {
         return;
     };
     __decorate([
-        core_1.Autowired('rowModel')
+        (0, core_1.Autowired)('rowModel')
     ], ServerSideSelectionService.prototype, "rowModel", void 0);
     __decorate([
         core_1.PostConstruct
     ], ServerSideSelectionService.prototype, "init", null);
     ServerSideSelectionService = __decorate([
-        core_1.Bean('selectionService')
+        (0, core_1.Bean)('selectionService')
     ], ServerSideSelectionService);
     return ServerSideSelectionService;
 }(core_1.BeanStub));

@@ -4,7 +4,7 @@ import { ICellRendererAngularComp } from "@ag-grid-community/angular";
 import { ICellRendererParams } from "@ag-grid-community/core";
 
 @Component({
-    selector: 'total-value-component',
+    standalone: true,
     template: `
           <span>
               <span>{{cellValue}}</span>&nbsp;

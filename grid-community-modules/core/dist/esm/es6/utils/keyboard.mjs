@@ -32,17 +32,14 @@ export function isUserSuppressingKeyboardEvent(gridOptionsService, keyboardEvent
     if (!colDefFunc) {
         return false;
     }
-    const params = {
+    const params = gridOptionsService.addGridCommonParams({
         event: keyboardEvent,
         editing,
         column,
-        api: gridOptionsService.api,
         node: rowNode,
         data: rowNode.data,
-        colDef: column.getColDef(),
-        context: gridOptionsService.context,
-        columnApi: gridOptionsService.columnApi
-    };
+        colDef: column.getColDef()
+    });
     // colDef get first preference on suppressing events
     if (colDefFunc) {
         const colDefFuncResult = colDefFunc(params);
@@ -60,15 +57,12 @@ export function isUserSuppressingHeaderKeyboardEvent(gridOptionsService, keyboar
     if (!exists(colDefFunc)) {
         return false;
     }
-    const params = {
-        api: gridOptionsService.api,
-        columnApi: gridOptionsService.columnApi,
-        context: gridOptionsService.context,
+    const params = gridOptionsService.addGridCommonParams({
         colDef: colDef,
         column,
         headerRowIndex,
         event: keyboardEvent
-    };
+    });
     return !!colDefFunc(params);
 }
 export function normaliseQwertyAzerty(keyboardEvent) {

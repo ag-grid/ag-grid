@@ -1,16 +1,20 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "../../../context/beanStub";
 import { Column, ColumnPinnedType } from "../../../entities/column";
+import { IHeaderResizeFeature } from "../abstractCell/abstractHeaderCellCtrl";
 import { HeaderCellCtrl, IHeaderCellComp } from "./headerCellCtrl";
-export declare class ResizeFeature extends BeanStub {
+export declare class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     private horizontalResizeService;
+    private pinnedWidthService;
+    private ctrlsService;
     private columnModel;
     private pinned;
     private column;
     private eResize;
     private comp;
+    private lastResizeAmount;
     private resizeStartWidth;
     private resizeWithShiftKey;
     private ctrl;
@@ -18,5 +22,6 @@ export declare class ResizeFeature extends BeanStub {
     private postConstruct;
     private onResizing;
     private onResizeStart;
+    toggleColumnResizing(resizing: boolean): void;
     private normaliseResizeAmount;
 }

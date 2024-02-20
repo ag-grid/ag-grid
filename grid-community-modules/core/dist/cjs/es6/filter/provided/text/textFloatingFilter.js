@@ -9,7 +9,10 @@ class TextFloatingFilter extends textInputFloatingFilter_1.TextInputFloatingFilt
         this.filterModelFormatter = new textFilter_1.TextFilterModelFormatter(this.localeService, this.optionsFactory);
     }
     onParamsUpdated(params) {
-        super.onParamsUpdated(params);
+        this.refresh(params);
+    }
+    refresh(params) {
+        super.refresh(params);
         this.filterModelFormatter.updateParams({ optionsFactory: this.optionsFactory });
     }
     getDefaultFilterOptions() {

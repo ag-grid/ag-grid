@@ -48,6 +48,8 @@ export class DateFilter extends ScalarFilter {
         this.dateConditionToComps = [];
         this.minValidYear = DEFAULT_MIN_YEAR;
         this.maxValidYear = DEFAULT_MAX_YEAR;
+        this.minValidDate = null;
+        this.maxValidDate = null;
     }
     afterGuiAttached(params) {
         super.afterGuiAttached(params);
@@ -101,6 +103,21 @@ export class DateFilter extends ScalarFilter {
         if (this.minValidYear > this.maxValidYear) {
             console.warn(`AG Grid: DateFilter minValidYear should be <= maxValidYear`);
         }
+        if (params.minValidDate) {
+            this.minValidDate = params.minValidDate instanceof Date ? params.minValidDate : parseDateTimeFromString(params.minValidDate);
+        }
+        else {
+            this.minValidDate = null;
+        }
+        if (params.maxValidDate) {
+            this.maxValidDate = params.maxValidDate instanceof Date ? params.maxValidDate : parseDateTimeFromString(params.maxValidDate);
+        }
+        else {
+            this.maxValidDate = null;
+        }
+        if (this.minValidDate && this.maxValidDate && this.minValidDate > this.maxValidDate) {
+            console.warn(`AG Grid: DateFilter minValidDate should be <= maxValidDate`);
+        }
         this.filterModelFormatter = new DateFilterModelFormatter(this.dateFilterParams, this.localeService, this.optionsFactory);
     }
     createDateCompWrapper(element) {
@@ -148,19 +165,43 @@ export class DateFilter extends ScalarFilter {
         const removedComponents = this.removeItems(components, startPosition, deleteCount);
         removedComponents.forEach(comp => comp.destroy());
     }
+    isValidDateValue(value) {
+        if (value === null) {
+            return false;
+        }
+        if (this.minValidDate) {
+            if (value < this.minValidDate) {
+                return false;
+            }
+        }
+        else {
+            if (value.getUTCFullYear() < this.minValidYear) {
+                return false;
+            }
+        }
+        if (this.maxValidDate) {
+            if (value > this.maxValidDate) {
+                return false;
+            }
+        }
+        else {
+            if (value.getUTCFullYear() > this.maxValidYear) {
+                return false;
+            }
+        }
+        return true;
+    }
+    ;
     isConditionUiComplete(position) {
         if (!super.isConditionUiComplete(position)) {
             return false;
         }
-        const isValidDate = (value) => value != null
-            && value.getUTCFullYear() >= this.minValidYear
-            && value.getUTCFullYear() <= this.maxValidYear;
         let valid = true;
         this.forEachInput((element, index, elPosition, numberOfInputs) => {
             if (elPosition !== position || !valid || index >= numberOfInputs) {
                 return;
             }
-            valid = valid && isValidDate(element.getDate());
+            valid = valid && this.isValidDateValue(element.getDate());
         });
         return valid;
     }
@@ -208,6 +249,15 @@ export class DateFilter extends ScalarFilter {
         });
         return result;
     }
+    translate(key) {
+        if (key === ScalarFilter.LESS_THAN) {
+            return super.translate('before');
+        }
+        if (key === ScalarFilter.GREATER_THAN) {
+            return super.translate('after');
+        }
+        return super.translate(key);
+    }
     getModelAsString(model) {
         var _a;
         return (_a = this.filterModelFormatter.getModelAsString(model)) !== null && _a !== void 0 ? _a : '';
@@ -215,9 +265,9 @@ export class DateFilter extends ScalarFilter {
 }
 DateFilter.DEFAULT_FILTER_OPTIONS = [
     ScalarFilter.EQUALS,
-    ScalarFilter.GREATER_THAN,
-    ScalarFilter.LESS_THAN,
     ScalarFilter.NOT_EQUAL,
+    ScalarFilter.LESS_THAN,
+    ScalarFilter.GREATER_THAN,
     ScalarFilter.IN_RANGE,
     ScalarFilter.BLANK,
     ScalarFilter.NOT_BLANK,

@@ -1,4 +1,13 @@
-import { Grid, GridOptions, ISetFilterParams, KeyCreatorParams, ValueFormatterParams } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  GridOptions,
+  ISetFilterParams,
+  KeyCreatorParams,
+  ValueFormatterParams,
+} from '@ag-grid-community/core';
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -24,7 +33,6 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     minWidth: 200,
-    resizable: true,
     floatingFilter: true,
     cellDataType: false,
   },
@@ -41,11 +49,11 @@ const gridOptions: GridOptions = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: any[]) => gridOptions.api!.setRowData(data.map(row => {
+    .then((data: any[]) => gridApi!.setGridOption('rowData', data.map(row => {
       const dateParts = row.date.split('/');
       const newDate = new Date(parseInt(dateParts[2]), dateParts[1] - 1, dateParts[0]);
       return {...row, date: newDate};

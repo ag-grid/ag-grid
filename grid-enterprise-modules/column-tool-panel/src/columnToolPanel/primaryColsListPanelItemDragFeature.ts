@@ -1,156 +1,93 @@
 import {
-    AutoScrollService,
     Autowired,
     BeanStub,
     Column,
     ColumnModel,
     ColumnPanelItemDragStartEvent,
-    DragAndDropService,
-    DraggingEvent,
     DragSourceType,
-    DropTarget,
     Events,
+    GridOptionsService,
     ProvidedColumnGroup,
     PostConstruct,
     VirtualList,
-    _
+    VirtualListDragFeature,
+    _,
+    VirtualListDragItem
 } from "@ag-grid-community/core";
 
 import { PrimaryColsListPanel } from "./primaryColsListPanel";
 import { ToolPanelColumnComp } from "./toolPanelColumnComp";
 import { ToolPanelColumnGroupComp } from "./toolPanelColumnGroupComp";
-
-const PRIMARY_COLS_LIST_ITEM_HOVERED = 'ag-list-item-hovered';
-
-interface DragColumnItem {
-    rowIndex: number;
-    position: 'top' | 'bottom';
-    component: ToolPanelColumnGroupComp | ToolPanelColumnComp;
-}
-
 export class PrimaryColsListPanelItemDragFeature extends BeanStub {
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-
-    private currentDragColumn: Column | ProvidedColumnGroup | null = null;
-    private lastHoveredColumnItem: DragColumnItem | null = null;
-    private autoScrollService: AutoScrollService;
-    private moveBlocked: boolean;
+    @Autowired('gridOptionsService') protected readonly gridOptionsService: GridOptionsService;
 
     constructor(
         private readonly comp: PrimaryColsListPanel,
-        private readonly virtualList: VirtualList
+        private readonly virtualList: VirtualList,
     ) { super(); }
 
     @PostConstruct
     private postConstruct(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START, this.columnPanelItemDragStart.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PANEL_ITEM_DRAG_END, this.columnPanelItemDragEnd.bind(this));
-
-        this.createDropTarget();
-        this.createAutoScrollService();
+        this.createManagedBean(new VirtualListDragFeature<
+            PrimaryColsListPanel,
+            ToolPanelColumnGroupComp | ToolPanelColumnComp,
+            Column | ProvidedColumnGroup,
+            ColumnPanelItemDragStartEvent
+        >(
+            this.comp,
+            this.virtualList,
+            {
+                dragSourceType: DragSourceType.ToolPanel,
+                listItemDragStartEvent: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START,
+                listItemDragEndEvent: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_END,
+                eventSource: this.eventService,
+                getCurrentDragValue: (listItemDragStartEvent: ColumnPanelItemDragStartEvent) => this.getCurrentDragValue(listItemDragStartEvent),
+                isMoveBlocked: (currentDragValue: Column | ProvidedColumnGroup | null) => this.isMoveBlocked(currentDragValue),
+                getNumRows: (comp: PrimaryColsListPanel) => comp.getDisplayedColsList().length,
+                moveItem: (
+                    currentDragValue: Column | ProvidedColumnGroup | null,
+                    lastHoveredListItem: VirtualListDragItem<ToolPanelColumnGroupComp | ToolPanelColumnComp> | null
+                ) => this.moveItem(currentDragValue, lastHoveredListItem)
+            }
+        ));
     }
 
-    private columnPanelItemDragStart({ column }: ColumnPanelItemDragStartEvent): void {
-        this.currentDragColumn = column;
-        const currentColumns = this.getCurrentColumns();
+    private getCurrentDragValue(listItemDragStartEvent: ColumnPanelItemDragStartEvent): Column | ProvidedColumnGroup {
+        return listItemDragStartEvent.column;
+    }
+
+    private isMoveBlocked(currentDragValue: Column | ProvidedColumnGroup | null): boolean {
+        const preventMoving = this.gridOptionsService.get('suppressMovableColumns');
+        if (preventMoving) {
+            return true;
+        }
+
+        const currentColumns = this.getCurrentColumns(currentDragValue);
         const hasNotMovable = currentColumns.find(col => {
             const colDef = col.getColDef();
             return !!colDef.suppressMovable || !!colDef.lockPosition;
         });
 
-        if (hasNotMovable) {
-            this.moveBlocked = true;
-        }
+        return !!hasNotMovable;
     }
 
-    private columnPanelItemDragEnd(): void {
-        window.setTimeout(() => {
-            this.currentDragColumn = null;
-            this.moveBlocked = false;
-        }, 10);
-    }
+    private moveItem(
+        currentDragValue: Column | ProvidedColumnGroup | null,
+        lastHoveredListItem: VirtualListDragItem<ToolPanelColumnGroupComp | ToolPanelColumnComp> | null
+    ): void {
+        const targetIndex: number | null = this.getTargetIndex(currentDragValue, lastHoveredListItem);
 
-    private createDropTarget(): void {
-        const dropTarget: DropTarget = {
-            isInterestedIn: (type: DragSourceType) => type === DragSourceType.ToolPanel,
-            getIconName: () => DragAndDropService[this.moveBlocked ? 'ICON_NOT_ALLOWED' : 'ICON_MOVE'],
-            getContainer: () => this.comp.getGui(),
-            onDragging: (e) => this.onDragging(e),
-            onDragStop: () => this.onDragStop(),
-            onDragLeave: () => this.onDragLeave()
-        };
-
-        this.dragAndDropService.addDropTarget(dropTarget);
-    }
-
-    private createAutoScrollService(): void {
-        const virtualListGui = this.virtualList.getGui();
-        this.autoScrollService = new AutoScrollService({
-            scrollContainer: virtualListGui,
-            scrollAxis: 'y',
-            getVerticalPosition: () => virtualListGui.scrollTop,
-            setVerticalPosition: (position) => virtualListGui.scrollTop = position
-        });
-    }
-
-    private onDragging(e: DraggingEvent) {
-        if (!this.currentDragColumn || this.moveBlocked) { return; }
-
-        const hoveredColumnItem = this.getDragColumnItem(e);
-        const comp = this.virtualList.getComponentAt(hoveredColumnItem.rowIndex);
-
-        if (!comp) { return; }
-
-        const el = comp!.getGui().parentElement as HTMLElement;
-
-        if (
-            this.lastHoveredColumnItem &&
-            this.lastHoveredColumnItem.rowIndex === hoveredColumnItem.rowIndex &&
-            this.lastHoveredColumnItem.position === hoveredColumnItem.position
-        ) { return; }
-
-        this.autoScrollService.check(e.event);
-        this.clearHoveredItems();
-        this.lastHoveredColumnItem = hoveredColumnItem;
-
-        _.radioCssClass(el, `${PRIMARY_COLS_LIST_ITEM_HOVERED}`);
-        _.radioCssClass(el, `ag-item-highlight-${hoveredColumnItem.position}`);
-    }
-
-    private getDragColumnItem(e: DraggingEvent): DragColumnItem {
-        const virtualListGui = this.virtualList.getGui();
-        const paddingTop = parseFloat(window.getComputedStyle(virtualListGui).paddingTop as string);
-        const rowHeight = this.virtualList.getRowHeight();
-        const scrollTop = this.virtualList.getScrollTop();
-        const rowIndex = Math.max(0, (e.y - paddingTop + scrollTop) / rowHeight);
-        const maxLen = this.comp.getDisplayedColsList().length - 1;
-        const normalizedRowIndex = Math.min(maxLen, rowIndex) | 0;
-
-        return {
-            rowIndex: normalizedRowIndex,
-            position: (Math.round(rowIndex) > rowIndex || rowIndex > maxLen) ? 'bottom' : 'top',
-            component: this.virtualList.getComponentAt(normalizedRowIndex) as ToolPanelColumnGroupComp | ToolPanelColumnComp
-        };
-    }
-
-    private onDragStop() {
-        if (this.moveBlocked) { return; }
-
-        const targetIndex: number | null = this.getTargetIndex();
-        const columnsToMove: Column[] = this.getCurrentColumns();
+        const columnsToMove: Column[] = this.getCurrentColumns(currentDragValue);
 
         if (targetIndex != null) {
             this.columnModel.moveColumns(columnsToMove, targetIndex, 'toolPanelUi');
         }
-
-        this.clearHoveredItems();
-        this.autoScrollService.ensureCleared();
     }
 
-    private getMoveDiff(end: number): number {
+    private getMoveDiff(currentDragValue: Column | ProvidedColumnGroup | null, end: number): number {
         const allColumns = this.columnModel.getAllGridColumns();
-        const currentColumns = this.getCurrentColumns();
+        const currentColumns = this.getCurrentColumns(currentDragValue);
         const currentColumn = currentColumns[0];
         const span = currentColumns.length;
 
@@ -163,17 +100,20 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
         return 0;
     }
 
-    private getCurrentColumns(): Column[] {
-        if (this.currentDragColumn instanceof ProvidedColumnGroup) {
-            return this.currentDragColumn.getLeafColumns();
+    private getCurrentColumns(currentDragValue: Column | ProvidedColumnGroup | null): Column[] {
+        if (currentDragValue instanceof ProvidedColumnGroup) {
+            return currentDragValue.getLeafColumns();
         }
-        return [this.currentDragColumn!];
+        return [currentDragValue!];
     }
 
-    private getTargetIndex(): number | null {
-        if (!this.lastHoveredColumnItem) { return null; }
-        const columnItemComponent = this.lastHoveredColumnItem.component;
-        let isBefore = this.lastHoveredColumnItem.position === 'top';
+    private getTargetIndex(
+        currentDragValue: Column | ProvidedColumnGroup | null,
+        lastHoveredListItem: VirtualListDragItem<ToolPanelColumnGroupComp | ToolPanelColumnComp> | null
+    ): number | null {
+        if (!lastHoveredListItem) { return null; }
+        const columnItemComponent = lastHoveredListItem.component;
+        let isBefore = lastHoveredListItem.position === 'top';
 
         let targetColumn: Column;
 
@@ -185,29 +125,16 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
             targetColumn = columnItemComponent.getColumn();
         }
 
+        // if the target col is in the cols to be moved, no index to move.
+        const movingCols = this.getCurrentColumns(currentDragValue);
+        if (movingCols.indexOf(targetColumn) !== -1) {
+            return null;
+        }
+
         const targetColumnIndex = this.columnModel.getAllGridColumns().indexOf(targetColumn);
         const adjustedTarget = isBefore ? targetColumnIndex : targetColumnIndex + 1;
-        const diff = this.getMoveDiff(adjustedTarget);
+        const diff = this.getMoveDiff(currentDragValue, adjustedTarget);
 
         return adjustedTarget - diff;
-    }
-
-    private onDragLeave() {
-        this.clearHoveredItems();
-        this.autoScrollService.ensureCleared();
-    }
-
-    private clearHoveredItems(): void {
-        const virtualListGui = this.virtualList.getGui();
-        virtualListGui.querySelectorAll(`.${PRIMARY_COLS_LIST_ITEM_HOVERED}`).forEach(el => {
-            [
-                PRIMARY_COLS_LIST_ITEM_HOVERED,
-                'ag-item-highlight-top',
-                'ag-item-highlight-bottom'
-            ].forEach(cls => {
-                (el as HTMLElement).classList.remove(cls);
-            });
-        });
-        this.lastHoveredColumnItem = null;
     }
 }

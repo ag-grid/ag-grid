@@ -1,4 +1,5 @@
 import {
+    AgEventListener,
     Column,
     EventService,
     IEventEmitter,
@@ -60,11 +61,11 @@ export class ColumnModelItem implements IEventEmitter {
         this.passesFilter = passesFilter;
     }
 
-    public addEventListener(eventType: string, listener: Function): void {
+    public addEventListener(eventType: string, listener: AgEventListener): void {
         this.eventService.addEventListener(eventType, listener);
     }
 
-    public removeEventListener(eventType: string, listener: Function): void {
+    public removeEventListener(eventType: string, listener: AgEventListener): void {
         this.eventService.removeEventListener(eventType, listener);
     }
 

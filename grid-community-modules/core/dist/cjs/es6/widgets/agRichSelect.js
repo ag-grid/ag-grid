@@ -12,51 +12,93 @@ const context_1 = require("../context/context");
 const eventKeys_1 = require("../eventKeys");
 const aria_1 = require("../utils/aria");
 const dom_1 = require("../utils/dom");
+const event_1 = require("../utils/event");
 const function_1 = require("../utils/function");
 const fuzzyMatch_1 = require("../utils/fuzzyMatch");
 const generic_1 = require("../utils/generic");
 const keyboard_1 = require("../utils/keyboard");
+const string_1 = require("../utils/string");
 const agPickerField_1 = require("./agPickerField");
 const agRichSelectRow_1 = require("./agRichSelectRow");
+const componentAnnotations_1 = require("./componentAnnotations");
 const virtualList_1 = require("./virtualList");
+const TEMPLATE = /* html */ `
+    <div class="ag-picker-field" role="presentation">
+        <div ref="eLabel"></div>
+            <div ref="eWrapper" class="ag-wrapper ag-picker-field-wrapper ag-rich-select-value ag-picker-collapsed">
+            <div ref="eDisplayField" class="ag-picker-field-display"></div>
+            <ag-input-text-field ref="eInput" class="ag-rich-select-field-input"></ag-input-text-field>
+            <div ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></div>
+        </div>
+    </div>`;
 class AgRichSelect extends agPickerField_1.AgPickerField {
     constructor(config) {
-        super(Object.assign({ pickerAriaLabelKey: 'ariaLabelRichSelectField', pickerAriaLabelValue: 'Rich Select Field', pickerType: 'ag-list' }, config), 'ag-rich-select', 'smallDown', 'combobox');
+        var _a, _b;
+        super(Object.assign(Object.assign({ pickerAriaLabelKey: 'ariaLabelRichSelectField', pickerAriaLabelValue: 'Rich Select Field', pickerType: 'ag-list', className: 'ag-rich-select', pickerIcon: 'smallDown', ariaRole: 'combobox', template: (_a = config === null || config === void 0 ? void 0 : config.template) !== null && _a !== void 0 ? _a : TEMPLATE, modalPicker: false }, config), { 
+            // maxPickerHeight needs to be set after expanding `config`
+            maxPickerHeight: (_b = config === null || config === void 0 ? void 0 : config.maxPickerHeight) !== null && _b !== void 0 ? _b : 'calc(var(--ag-row-height) * 6.5)' }));
         this.searchString = '';
         this.highlightedItem = -1;
-        const { cellRowHeight, value, valueList, searchDebounceDelay } = config || {};
-        if (cellRowHeight) {
+        this.lastRowHovered = -1;
+        this.searchStringCreator = null;
+        const { cellRowHeight, value, valueList, searchStringCreator } = config || {};
+        if (cellRowHeight != null) {
             this.cellRowHeight = cellRowHeight;
         }
-        if (value != null) {
+        if (value !== undefined) {
             this.value = value;
         }
         if (valueList != null) {
-            this.setValueList(valueList);
+            this.values = valueList;
         }
-        if (searchDebounceDelay != null) {
-            this.searchDebounceDelay = searchDebounceDelay;
+        if (searchStringCreator) {
+            this.searchStringCreator = searchStringCreator;
         }
     }
     postConstruct() {
-        var _a, _b;
         super.postConstruct();
+        this.createLoadingElement();
         this.createListComponent();
-        this.eWrapper.tabIndex = (_a = this.gridOptionsService.getNum('tabIndex')) !== null && _a !== void 0 ? _a : 0;
-        this.eWrapper.classList.add('ag-rich-select-value');
-        const debounceDelay = (_b = this.searchDebounceDelay) !== null && _b !== void 0 ? _b : 300;
-        this.clearSearchString = function_1.debounce(this.clearSearchString, debounceDelay);
+        const { allowTyping, placeholder } = this.config;
+        if (allowTyping) {
+            this.eInput
+                .setAutoComplete(false)
+                .setInputPlaceholder(placeholder);
+            this.eDisplayField.classList.add('ag-hidden');
+        }
+        else {
+            this.eInput.setDisplayed(false);
+        }
+        this.eWrapper.tabIndex = this.gridOptionsService.get('tabIndex');
+        const { searchDebounceDelay = 300 } = this.config;
+        this.clearSearchString = (0, function_1.debounce)(this.clearSearchString, searchDebounceDelay);
         this.renderSelectedValue();
+        if (allowTyping) {
+            this.eInput.onValueChange(value => this.searchTextFromString(value));
+            this.addManagedListener(this.eWrapper, 'focus', this.onWrapperFocus.bind(this));
+        }
+        this.addManagedListener(this.eWrapper, 'focusout', this.onWrapperFocusOut.bind(this));
+    }
+    createLoadingElement() {
+        const eDocument = this.gridOptionsService.getDocument();
+        const translate = this.localeService.getLocaleTextFunc();
+        const el = eDocument.createElement('div');
+        el.classList.add('ag-loading-text');
+        el.innerText = translate('loadingOoo', 'Loading...');
+        this.eLoading = el;
     }
     createListComponent() {
-        this.listComponent = this.createManagedBean(new virtualList_1.VirtualList({ cssIdentifier: 'rich-select' }));
+        this.listComponent = this.createBean(new virtualList_1.VirtualList({ cssIdentifier: 'rich-select' }));
         this.listComponent.setComponentCreator(this.createRowComponent.bind(this));
+        const componentUpdater = (item, component) => { };
+        this.listComponent.setComponentUpdater(componentUpdater);
         this.listComponent.setParentComponent(this);
         this.addManagedListener(this.listComponent, eventKeys_1.Events.EVENT_FIELD_PICKER_VALUE_SELECTED, (e) => {
             this.onListValueSelected(e.value, e.fromEnterKey);
         });
-        if (this.cellRowHeight) {
-            this.listComponent.setRowHeight(this.cellRowHeight);
+        const { cellRowHeight } = this;
+        if (cellRowHeight) {
+            this.listComponent.setRowHeight(cellRowHeight);
         }
         const eListGui = this.listComponent.getGui();
         const eListAriaEl = this.listComponent.getAriaElement();
@@ -65,17 +107,24 @@ class AgRichSelect extends agPickerField_1.AgPickerField {
         eListGui.classList.add('ag-rich-select-list');
         const listId = `ag-rich-select-list-${this.listComponent.getCompId()}`;
         eListAriaEl.setAttribute('id', listId);
-        aria_1.setAriaControls(this.eWrapper, eListAriaEl);
+        const translate = this.localeService.getLocaleTextFunc();
+        const ariaLabel = translate(this.config.pickerAriaLabelKey, this.config.pickerAriaLabelValue);
+        (0, aria_1.setAriaLabel)(eListAriaEl, ariaLabel);
+        (0, aria_1.setAriaControls)(this.eWrapper, eListAriaEl);
     }
     renderSelectedValue() {
         const { value, eDisplayField, config } = this;
+        const { allowTyping, initialInputValue } = this.config;
         const valueFormatted = this.config.valueFormatter ? this.config.valueFormatter(value) : value;
+        if (allowTyping) {
+            this.eInput.setValue(initialInputValue !== null && initialInputValue !== void 0 ? initialInputValue : valueFormatted);
+            return;
+        }
         let userCompDetails;
         if (config.cellRenderer) {
             userCompDetails = this.userComponentFactory.getCellRendererDetails(this.config, {
                 value,
-                valueFormatted,
-                api: this.gridOptionsService.api
+                valueFormatted
             });
         }
         let userCompDetailsPromise;
@@ -83,50 +132,57 @@ class AgRichSelect extends agPickerField_1.AgPickerField {
             userCompDetailsPromise = userCompDetails.newAgStackInstance();
         }
         if (userCompDetailsPromise) {
-            dom_1.clearElement(eDisplayField);
-            dom_1.bindCellRendererToHtmlElement(userCompDetailsPromise, eDisplayField);
+            (0, dom_1.clearElement)(eDisplayField);
+            (0, dom_1.bindCellRendererToHtmlElement)(userCompDetailsPromise, eDisplayField);
             userCompDetailsPromise.then(renderer => {
                 this.addDestroyFunc(() => this.getContext().destroyBean(renderer));
             });
         }
         else {
-            if (generic_1.exists(this.value)) {
+            if ((0, generic_1.exists)(this.value)) {
                 eDisplayField.innerText = valueFormatted;
+                eDisplayField.classList.remove('ag-display-as-placeholder');
             }
             else {
-                dom_1.clearElement(eDisplayField);
+                const { placeholder } = config;
+                if ((0, generic_1.exists)(placeholder)) {
+                    eDisplayField.innerHTML = `${(0, string_1.escapeString)(placeholder)}`;
+                    eDisplayField.classList.add('ag-display-as-placeholder');
+                }
+                else {
+                    (0, dom_1.clearElement)(eDisplayField);
+                }
             }
         }
     }
-    setValueList(valueList) {
-        this.values = valueList;
-        this.highlightSelectedValue();
-    }
     getCurrentValueIndex() {
-        const { values, value } = this;
-        if (value == null) {
+        const { currentList, value } = this;
+        if (value == null || !currentList) {
             return -1;
         }
-        for (let i = 0; i < values.length; i++) {
-            if (values[i] === value) {
+        for (let i = 0; i < currentList.length; i++) {
+            if (currentList[i] === value) {
                 return i;
             }
         }
         return -1;
     }
+    highlightFilterMatch() {
+        var _a;
+        (_a = this.listComponent) === null || _a === void 0 ? void 0 : _a.forEachRenderedRow((cmp, idx) => {
+            cmp.highlightString(this.searchString);
+        });
+    }
     highlightSelectedValue(index) {
+        var _a;
         if (index == null) {
             index = this.getCurrentValueIndex();
         }
-        if (index === -1) {
-            return;
-        }
         this.highlightedItem = index;
-        if (this.listComponent) {
-            this.listComponent.forEachRenderedRow((cmp, idx) => {
-                cmp.updateHighlighted(this.highlightedItem === idx);
-            });
-        }
+        (_a = this.listComponent) === null || _a === void 0 ? void 0 : _a.forEachRenderedRow((cmp, idx) => {
+            const highlighted = index === -1 ? false : this.highlightedItem === idx;
+            cmp.updateHighlighted(highlighted);
+        });
     }
     setRowHeight(height) {
         if (height !== this.cellRowHeight) {
@@ -138,81 +194,222 @@ class AgRichSelect extends agPickerField_1.AgPickerField {
     }
     createPickerComponent() {
         const { values } = this;
-        this.listComponent.setModel({
-            getRowCount: () => values.length,
-            getRow: (index) => values[index]
-        });
+        if (values) {
+            this.setValueList({ valueList: values });
+        }
         // do not create the picker every time to save state
         return this.listComponent;
     }
+    setSearchStringCreator(searchStringFn) {
+        this.searchStringCreator = searchStringFn;
+    }
+    setValueList(params) {
+        const { valueList, refresh } = params;
+        if (!this.listComponent) {
+            return;
+        }
+        if (this.currentList === valueList) {
+            return;
+        }
+        this.currentList = valueList;
+        this.listComponent.setModel({
+            getRowCount: () => valueList.length,
+            getRow: (index) => valueList[index],
+            areRowsEqual: (oldRow, newRow) => oldRow === newRow,
+        });
+        if (refresh) {
+            // if `values` is not present, it means the valuesList was set asynchronously
+            if (!this.values) {
+                this.values = valueList;
+                if (this.isPickerDisplayed) {
+                    this.showCurrentValueInPicker();
+                }
+            }
+            else {
+                this.listComponent.refresh(true);
+            }
+        }
+    }
     showPicker() {
-        var _a, _b, _c;
         super.showPicker();
+        this.showCurrentValueInPicker();
+        this.displayOrHidePicker();
+    }
+    showCurrentValueInPicker() {
+        var _a, _b;
+        if (!this.listComponent) {
+            return;
+        }
+        if (!this.currentList) {
+            if (this.isPickerDisplayed && this.eLoading) {
+                this.listComponent.appendChild(this.eLoading);
+            }
+            return;
+        }
+        if ((_a = this.eLoading) === null || _a === void 0 ? void 0 : _a.offsetParent) {
+            (_b = this.eLoading.parentElement) === null || _b === void 0 ? void 0 : _b.removeChild(this.eLoading);
+        }
         const currentValueIndex = this.getCurrentValueIndex();
         if (currentValueIndex !== -1) {
             // make sure the virtual list has been sized correctly
-            (_a = this.listComponent) === null || _a === void 0 ? void 0 : _a.refresh();
-            (_b = this.listComponent) === null || _b === void 0 ? void 0 : _b.ensureIndexVisible(currentValueIndex);
+            this.listComponent.refresh();
+            this.listComponent.ensureIndexVisible(currentValueIndex);
+            // this second call to refresh is necessary to force scrolled elements
+            // to be rendered with the correct index info.
+            this.listComponent.refresh(true);
             this.highlightSelectedValue(currentValueIndex);
         }
         else {
-            (_c = this.listComponent) === null || _c === void 0 ? void 0 : _c.refresh();
+            this.listComponent.refresh();
         }
     }
     beforeHidePicker() {
         this.highlightedItem = -1;
         super.beforeHidePicker();
     }
-    searchText(searchKey) {
-        if (typeof searchKey !== 'string') {
-            let { key } = searchKey;
-            if (key === keyCode_1.KeyCode.BACKSPACE) {
-                this.searchString = this.searchString.slice(0, -1);
-                key = '';
-            }
-            else if (!keyboard_1.isEventFromPrintableCharacter(searchKey)) {
-                return;
-            }
-            searchKey.preventDefault();
-            this.searchText(key);
+    onWrapperFocus() {
+        if (!this.eInput) {
             return;
         }
-        this.searchString += searchKey;
+        const focusableEl = this.eInput.getFocusableElement();
+        focusableEl.focus();
+        focusableEl.select();
+    }
+    onWrapperFocusOut(e) {
+        if (!this.eWrapper.contains(e.relatedTarget)) {
+            this.hidePicker();
+        }
+    }
+    buildSearchStringFromKeyboardEvent(searchKey) {
+        let { key } = searchKey;
+        if (key === keyCode_1.KeyCode.BACKSPACE) {
+            this.searchString = this.searchString.slice(0, -1);
+            key = '';
+        }
+        else if (!(0, keyboard_1.isEventFromPrintableCharacter)(searchKey)) {
+            return;
+        }
+        searchKey.preventDefault();
+        this.searchTextFromCharacter(key);
+    }
+    searchTextFromCharacter(char) {
+        this.searchString += char;
         this.runSearch();
         this.clearSearchString();
     }
-    runSearch() {
-        const values = this.values;
+    searchTextFromString(str) {
+        if (str == null) {
+            str = '';
+        }
+        this.searchString = str;
+        this.runSearch();
+    }
+    buildSearchStrings(values) {
+        const { valueFormatter = (value => value) } = this.config;
         let searchStrings;
-        const { valueFormatter = (value => value), searchStringCreator } = this.config;
         if (typeof values[0] === 'number' || typeof values[0] === 'string') {
             searchStrings = values.map(v => valueFormatter(v));
         }
-        else if (typeof values[0] === 'object' && searchStringCreator) {
-            searchStrings = searchStringCreator(values);
+        else if (typeof values[0] === 'object' && this.searchStringCreator) {
+            searchStrings = this.searchStringCreator(values);
         }
+        return searchStrings;
+    }
+    getSuggestionsAndFilteredValues(searchValue, valueList) {
+        let suggestions = [];
+        let filteredValues = [];
+        if (!searchValue.length) {
+            return { suggestions, filteredValues };
+        }
+        ;
+        const { searchType = 'fuzzy', filterList } = this.config;
+        if (searchType === 'fuzzy') {
+            const fuzzySearchResult = (0, fuzzyMatch_1.fuzzySuggestions)(this.searchString, valueList, true);
+            suggestions = fuzzySearchResult.values;
+            const indices = fuzzySearchResult.indices;
+            if (filterList && indices.length) {
+                for (let i = 0; i < indices.length; i++) {
+                    filteredValues.push(this.values[indices[i]]);
+                }
+            }
+        }
+        else {
+            suggestions = valueList.filter((val, idx) => {
+                const currentValue = val.toLocaleLowerCase();
+                const valueToMatch = this.searchString.toLocaleLowerCase();
+                const isMatch = searchType === 'match' ? currentValue.startsWith(valueToMatch) : currentValue.indexOf(valueToMatch) !== -1;
+                if (filterList && isMatch) {
+                    filteredValues.push(this.values[idx]);
+                }
+                return isMatch;
+            });
+        }
+        return { suggestions, filteredValues };
+    }
+    filterListModel(filteredValues) {
+        const { filterList } = this.config;
+        if (!filterList) {
+            return;
+        }
+        this.setValueList({ valueList: filteredValues, refresh: true });
+        this.alignPickerToComponent();
+    }
+    runSearch() {
+        var _a, _b;
+        const { values } = this;
+        const searchStrings = this.buildSearchStrings(values);
         if (!searchStrings) {
+            this.highlightSelectedValue(-1);
             return;
         }
-        const topSuggestion = fuzzyMatch_1.fuzzySuggestions(this.searchString, searchStrings, true)[0];
-        if (!topSuggestion) {
-            return;
+        const { suggestions, filteredValues } = this.getSuggestionsAndFilteredValues(this.searchString, searchStrings);
+        const { filterList, highlightMatch, searchType = 'fuzzy' } = this.config;
+        const filterValueLen = filteredValues.length;
+        const shouldFilter = !!(filterList && this.searchString !== '');
+        this.filterListModel(shouldFilter ? filteredValues : values);
+        if (suggestions.length) {
+            const topSuggestionIndex = shouldFilter ? 0 : searchStrings.indexOf(suggestions[0]);
+            this.selectListItem(topSuggestionIndex);
         }
-        const topSuggestionIndex = searchStrings.indexOf(topSuggestion);
-        this.selectListItem(topSuggestionIndex);
+        else {
+            this.highlightSelectedValue(-1);
+            if (!shouldFilter || filterValueLen) {
+                (_a = this.listComponent) === null || _a === void 0 ? void 0 : _a.ensureIndexVisible(0);
+            }
+            else if (shouldFilter) {
+                this.getAriaElement().removeAttribute('data-active-option');
+                const eListAriaEl = (_b = this.listComponent) === null || _b === void 0 ? void 0 : _b.getAriaElement();
+                if (eListAriaEl) {
+                    (0, aria_1.setAriaActiveDescendant)(eListAriaEl, null);
+                }
+            }
+        }
+        if (highlightMatch && searchType !== 'fuzzy') {
+            this.highlightFilterMatch();
+        }
+        this.displayOrHidePicker();
+    }
+    displayOrHidePicker() {
+        var _a;
+        const eListGui = (_a = this.listComponent) === null || _a === void 0 ? void 0 : _a.getGui();
+        const toggleValue = this.currentList ? this.currentList.length === 0 : false;
+        eListGui === null || eListGui === void 0 ? void 0 : eListGui.classList.toggle('ag-hidden', toggleValue);
     }
     clearSearchString() {
         this.searchString = '';
     }
-    selectListItem(index) {
-        if (!this.isPickerDisplayed || !this.listComponent || index < 0 || index >= this.values.length) {
+    selectListItem(index, preventUnnecessaryScroll) {
+        if (!this.isPickerDisplayed || !this.currentList || !this.listComponent || index < 0 || index >= this.currentList.length) {
             return;
         }
-        this.listComponent.ensureIndexVisible(index);
+        const wasScrolled = this.listComponent.ensureIndexVisible(index, !preventUnnecessaryScroll);
+        if (wasScrolled && !preventUnnecessaryScroll) {
+            this.listComponent.refresh(true);
+        }
         this.highlightSelectedValue(index);
     }
     setValue(value, silent, fromPicker) {
-        const index = this.values.indexOf(value);
+        const index = this.currentList ? this.currentList.indexOf(value) : -1;
         if (index === -1) {
             return this;
         }
@@ -227,7 +424,11 @@ class AgRichSelect extends agPickerField_1.AgPickerField {
         const row = new agRichSelectRow_1.RichSelectRow(this.config, this.eWrapper);
         row.setParentComponent(this.listComponent);
         this.getContext().createBean(row);
-        row.setState(value, value === this.value);
+        row.setState(value);
+        const { highlightMatch, searchType = 'fuzzy' } = this.config;
+        if (highlightMatch && searchType !== 'fuzzy') {
+            row.highlightString(this.searchString);
+        }
         return row;
     }
     getRowForMouseEvent(e) {
@@ -246,8 +447,9 @@ class AgRichSelect extends agPickerField_1.AgPickerField {
             return;
         }
         const row = this.getRowForMouseEvent(e);
-        if (row !== -1) {
-            this.selectListItem(row);
+        if (row !== -1 && row != this.lastRowHovered) {
+            this.lastRowHovered = row;
+            this.selectListItem(row, true);
         }
     }
     onNavigationKeyDown(event, key) {
@@ -268,7 +470,15 @@ class AgRichSelect extends agPickerField_1.AgPickerField {
             return;
         }
         e.preventDefault();
-        this.onListValueSelected(this.values[this.highlightedItem], true);
+        if (this.currentList) {
+            this.onListValueSelected(this.currentList[this.highlightedItem], true);
+        }
+    }
+    onTabKeyDown() {
+        if (!this.isPickerDisplayed || !this.currentList) {
+            return;
+        }
+        this.setValue(this.currentList[this.highlightedItem], false, true);
     }
     onListValueSelected(value, fromEnterKey) {
         this.setValue(value, false, true);
@@ -283,11 +493,27 @@ class AgRichSelect extends agPickerField_1.AgPickerField {
         };
         this.dispatchEvent(event);
     }
+    getFocusableElement() {
+        const { allowTyping } = this.config;
+        if (allowTyping) {
+            return this.eInput.getFocusableElement();
+        }
+        return super.getFocusableElement();
+    }
     onKeyDown(event) {
         const key = event.key;
+        const { allowTyping } = this.config;
         switch (key) {
             case keyCode_1.KeyCode.LEFT:
             case keyCode_1.KeyCode.RIGHT:
+            case keyCode_1.KeyCode.PAGE_HOME:
+            case keyCode_1.KeyCode.PAGE_END:
+                if (!allowTyping) {
+                    event.preventDefault();
+                }
+                break;
+            case keyCode_1.KeyCode.PAGE_UP:
+            case keyCode_1.KeyCode.PAGE_DOWN:
                 event.preventDefault();
                 break;
             case keyCode_1.KeyCode.DOWN:
@@ -296,18 +522,38 @@ class AgRichSelect extends agPickerField_1.AgPickerField {
                 break;
             case keyCode_1.KeyCode.ESCAPE:
                 if (this.isPickerDisplayed) {
+                    if ((0, dom_1.isVisible)(this.listComponent.getGui())) {
+                        event.preventDefault();
+                        (0, event_1.stopPropagationForAgGrid)(event);
+                    }
                     this.hidePicker();
                 }
                 break;
             case keyCode_1.KeyCode.ENTER:
                 this.onEnterKeyDown(event);
                 break;
+            case keyCode_1.KeyCode.TAB:
+                this.onTabKeyDown();
+                break;
             default:
-                this.searchText(event);
+                if (!allowTyping) {
+                    this.buildSearchStringFromKeyboardEvent(event);
+                }
         }
+    }
+    destroy() {
+        if (this.listComponent) {
+            this.destroyBean(this.listComponent);
+            this.listComponent = undefined;
+        }
+        this.eLoading = undefined;
+        super.destroy();
     }
 }
 __decorate([
-    context_1.Autowired('userComponentFactory')
+    (0, context_1.Autowired)('userComponentFactory')
 ], AgRichSelect.prototype, "userComponentFactory", void 0);
+__decorate([
+    (0, componentAnnotations_1.RefSelector)('eInput')
+], AgRichSelect.prototype, "eInput", void 0);
 exports.AgRichSelect = AgRichSelect;

@@ -17,7 +17,7 @@ var __read = (this && this.__read) || function (o, n) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var getPropertyVal = function (name, val, children) { return ({
-    name: "a:" + name,
+    name: "a:".concat(name),
     properties: {
         rawMap: {
             val: val

@@ -188,7 +188,7 @@ The example below demonstrates entire row dragging with [Multi-Row Dragging](/ro
 
 ## Suppress Row Drag
 
-You can hide the draggable area by calling the grid API `setSuppressRowDrag()`
+You can hide the draggable area by calling the grid API `setGridOption('suppressRowDrag', suppressed)`
 or by setting the bound property `suppressRowDrag`.
 
 The example below is almost identical to the [Managed Dragging](#managed-dragging) example with the following differences:
@@ -224,7 +224,7 @@ The example below shows row dragging with [Row Grouping](/grouping/) where the f
 
 The example below shows [Tree Data](/tree-data/) and row dragging where the following can be noted:
 
-- The [auto-group column](/grouping/#auto-column-group) has row drag `true` for all rows.
+- The [auto-group column](/grouping/) has row drag `true` for all rows.
 
 -  The example registers for `onRowDragEnd` events and rearranges
    the rows when the drag completes.
@@ -333,7 +333,7 @@ The example below shows dragging with custom text and multiple column draggers. 
 
 ### Row Dragger inside Custom Cell Renderers
 
-Due to the complexity of some applications, it could be handy to render the Row Drag Component inside of a Custom Cell Renderer. This can be achieved, by using the `registerRowDragger` method in the [ICellRendererParams](/component-cell-renderer/#cell-renderer-component) as follows:
+Due to the complexity of some applications, it could be handy to render the Row Drag Component inside of a Custom Cell Renderer. This can be achieved, by using the `registerRowDragger` method in the [ICellRendererParams](/component-cell-renderer/) as follows:
 
 <framework-specific-section frameworks="javascript">
 <snippet transform={false}>

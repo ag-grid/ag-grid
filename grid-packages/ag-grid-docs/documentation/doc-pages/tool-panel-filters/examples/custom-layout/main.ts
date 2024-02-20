@@ -1,4 +1,4 @@
-import { Grid, ColDef, ColGroupDef, GridOptions, IFiltersToolPanel } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, ColGroupDef, GridOptions, IFiltersToolPanel } from '@ag-grid-community/core';
 
 const columnDefs: (ColDef | ColGroupDef)[] = [
   {
@@ -80,9 +80,10 @@ var customToolPanelColumnDefs = [
   },
 ]
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
-    sortable: true,
     filter: true,
   },
   columnDefs: columnDefs,
@@ -107,21 +108,21 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function setCustomSortLayout() {
-  var filtersToolPanel = gridOptions.api!.getToolPanelInstance('filters');
+  var filtersToolPanel = gridApi!.getToolPanelInstance('filters');
   filtersToolPanel!.setFilterLayout(sortedToolPanelColumnDefs)
 }
 
 function setCustomGroupLayout() {
-  var filtersToolPanel = gridOptions.api!.getToolPanelInstance('filters');
+  var filtersToolPanel = gridApi!.getToolPanelInstance('filters');
   filtersToolPanel!.setFilterLayout(customToolPanelColumnDefs)
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

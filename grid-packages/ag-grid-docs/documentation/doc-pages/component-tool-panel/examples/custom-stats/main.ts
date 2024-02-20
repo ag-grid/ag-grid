@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions, CellValueChangedEvent } from '@ag-grid-community/core';
 import { CustomStatsToolPanel } from './customStatsToolPanel_typescript'
 
 const columnDefs: ColDef[] = [
@@ -13,14 +13,14 @@ const columnDefs: ColDef[] = [
   { field: 'total', width: 100, filter: false },
 ]
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     editable: true,
-    sortable: true,
     flex: 1,
     minWidth: 100,
     filter: true,
-    resizable: true,
   },
   icons: {
     'custom-stats': '<span class="ag-icon ag-icon-custom-stats"></span>',
@@ -48,20 +48,26 @@ const gridOptions: GridOptions<IOlympicData> = {
         labelKey: 'customStats',
         iconKey: 'custom-stats',
         toolPanel: CustomStatsToolPanel,
+        toolPanelParams: {
+          title: 'Custom Stats'
+        },
       },
     ],
     defaultToolPanel: 'customStats',
-  }
+  },
+  onCellValueChanged: (params: CellValueChangedEvent) => {
+    params.api.refreshClientSideRowModel();
+  },
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
     .then(data => {
-      gridOptions.api!.setRowData(data)
+      gridApi!.setGridOption('rowData', data)
     })
 })

@@ -1,4 +1,6 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -17,13 +19,13 @@ const gridOptions: GridOptions = {
   ],
   defaultColDef: {
     flex: 1,
-    sortable: true,
   },
   autoGroupColumnDef: {
     minWidth: 100,
   },
   columnTypes: {
     valueColumn: {
+      minWidth: 90,
       editable: true,
       aggFunc: 'sum',
       valueParser: 'Number(newValue)',
@@ -39,7 +41,6 @@ const gridOptions: GridOptions = {
   rowData: getRowData(),
   groupDefaultExpanded: 1,
   suppressAggFuncInHeader: true,
-  animateRows: true,
 }
 
 function getRowData() {
@@ -59,5 +60,5 @@ function getRowData() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

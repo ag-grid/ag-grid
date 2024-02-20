@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getLegacyAxisType = exports.ALL_AXIS_TYPES = void 0;
-exports.ALL_AXIS_TYPES = ['number', 'category', 'groupedCategory', 'log', 'time'];
+exports.ALL_AXIS_TYPES = ['number', 'category', 'grouped-category', 'log', 'time'];
 function getLegacyAxisType(chartType) {
     switch (chartType) {
         case 'bar':
@@ -9,7 +9,7 @@ function getLegacyAxisType(chartType) {
         case 'normalizedBar':
             return ['number', 'category'];
         case 'groupedBar':
-            return ['number', 'groupedCategory'];
+            return ['number', 'grouped-category'];
         case 'column':
         case 'stackedColumn':
         case 'normalizedColumn':
@@ -20,7 +20,7 @@ function getLegacyAxisType(chartType) {
         case 'histogram':
             return ['category', 'number'];
         case 'groupedColumn':
-            return ['groupedCategory', 'number'];
+            return ['grouped-category', 'number'];
         case 'scatter':
         case 'bubble':
             return ['number', 'number'];

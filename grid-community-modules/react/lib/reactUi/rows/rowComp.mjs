@@ -1,4 +1,4 @@
-// @ag-grid-community/react v30.1.0
+// @ag-grid-community/react v31.1.0
 import React, { useEffect, useRef, useState, useMemo, memo, useContext, useLayoutEffect, useCallback } from 'react';
 import { CssClassManager } from '@ag-grid-community/core';
 import { showJsComp } from '../jsComp.mjs';
@@ -6,12 +6,15 @@ import { isComponentStateless, getNextValueIfDifferent, agFlushSync } from '../u
 import { BeansContext } from '../beansContext.mjs';
 import CellComp from '../cells/cellComp.mjs';
 const RowComp = (params) => {
-    const { context } = useContext(BeansContext);
+    const { context, gridOptionsService } = useContext(BeansContext);
     const { rowCtrl, containerType } = params;
     const tabIndex = rowCtrl.getTabIndex();
     const domOrderRef = useRef(rowCtrl.getDomOrder());
     const isFullWidth = rowCtrl.isFullWidth();
-    const [rowIndex, setRowIndex] = useState(() => rowCtrl.getRowIndex());
+    // Flag used to avoid problematic initialState setter funcs being called on a dead / non displayed row. 
+    // Due to async rendering its possible for the row to be destroyed before React has had a chance to render it.
+    const isDisplayed = rowCtrl.getRowNode().displayed;
+    const [rowIndex, setRowIndex] = useState(() => isDisplayed ? rowCtrl.getRowIndex() : null);
     const [rowId, setRowId] = useState(() => rowCtrl.getRowId());
     const [rowBusinessKey, setRowBusinessKey] = useState(() => rowCtrl.getBusinessKey());
     const [userStyles, setUserStyles] = useState(() => rowCtrl.getRowStyles());
@@ -19,8 +22,8 @@ const RowComp = (params) => {
     const [fullWidthCompDetails, setFullWidthCompDetails] = useState();
     // these styles have initial values, so element is placed into the DOM with them,
     // rather than an transition getting applied.
-    const [top, setTop] = useState(() => rowCtrl.getInitialRowTop(containerType));
-    const [transform, setTransform] = useState(() => rowCtrl.getInitialTransform(containerType));
+    const [top, setTop] = useState(() => isDisplayed ? rowCtrl.getInitialRowTop(containerType) : undefined);
+    const [transform, setTransform] = useState(() => isDisplayed ? rowCtrl.getInitialTransform(containerType) : undefined);
     const eGui = useRef(null);
     const fullWidthCompRef = useRef();
     const autoHeightSetup = useRef(false);
@@ -57,14 +60,14 @@ const RowComp = (params) => {
     }
     const setRef = useCallback((e) => {
         eGui.current = e;
+        if (!eGui.current) {
+            rowCtrl.unsetComp(containerType);
+            return;
+        }
         // because React is asynchronous, it's possible the RowCtrl is no longer a valid RowCtrl. This can
         // happen if user calls two API methods one after the other, with the second API invalidating the rows
         // the first call created. Thus the rows for the first call could still get created even though no longer needed.
         if (!rowCtrl.isAlive()) {
-            return;
-        }
-        if (!eGui.current) {
-            rowCtrl.unsetComp(containerType);
             return;
         }
         const compProxy = {
@@ -89,6 +92,18 @@ const RowComp = (params) => {
             },
             showFullWidth: compDetails => setFullWidthCompDetails(compDetails),
             getFullWidthCellRenderer: () => fullWidthCompRef.current,
+            refreshFullWidth: getUpdatedParams => {
+                if (canRefreshFullWidthRef.current) {
+                    setFullWidthCompDetails(prevFullWidthCompDetails => (Object.assign(Object.assign({}, prevFullWidthCompDetails), { params: getUpdatedParams() })));
+                    return true;
+                }
+                else {
+                    if (!fullWidthCompRef.current || !fullWidthCompRef.current.refresh) {
+                        return false;
+                    }
+                    return fullWidthCompRef.current.refresh(getUpdatedParams());
+                }
+            }
         };
         rowCtrl.setComp(compProxy, eGui.current, containerType);
     }, []);
@@ -104,6 +119,11 @@ const RowComp = (params) => {
         const res = (fullWidthCompDetails === null || fullWidthCompDetails === void 0 ? void 0 : fullWidthCompDetails.componentFromFramework) && isComponentStateless(fullWidthCompDetails.componentClass);
         return !!res;
     }, [fullWidthCompDetails]);
+    // needs to be a ref to avoid stale closure, as used in compProxy passed to row ctrl
+    const canRefreshFullWidthRef = useRef(false);
+    useEffect(() => {
+        canRefreshFullWidthRef.current = reactFullWidthCellRendererStateless && !!fullWidthCompDetails && !!gridOptionsService.get('reactiveCustomComponents');
+    }, [reactFullWidthCellRendererStateless, fullWidthCompDetails]);
     const showCellsJsx = () => cellCtrls === null || cellCtrls === void 0 ? void 0 : cellCtrls.map(cellCtrl => (React.createElement(CellComp, { cellCtrl: cellCtrl, editingRow: rowCtrl.isEditing(), printLayout: rowCtrl.isPrintLayout(), key: cellCtrl.getInstanceId() })));
     const showFullWidthFrameworkJsx = () => {
         const FullWidthComp = fullWidthCompDetails.componentClass;

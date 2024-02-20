@@ -1,4 +1,4 @@
-import { Grid, ColGroupDef, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColGroupDef, GridOptions } from '@ag-grid-community/core';
 declare var window: any;
 const columnDefs: ColGroupDef[] = [
   {
@@ -22,17 +22,18 @@ const columnDefs: ColGroupDef[] = [
   },
 ]
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     width: 150,
-    resizable: true,
   },
   columnDefs: columnDefs,
   rowData: null,
 }
 
 function saveState() {
-  window.groupState = gridOptions.columnApi!.getColumnGroupState()
+  window.groupState = gridApi!.getColumnGroupState()
   console.log('group state saved', window.groupState)
   console.log('column state saved')
 }
@@ -42,21 +43,21 @@ function restoreState() {
     console.log('no columns state to restore by, you must save state first')
     return
   }
-  gridOptions.columnApi!.setColumnGroupState(window.groupState)
+  gridApi!.setColumnGroupState(window.groupState)
   console.log('column state restored')
 }
 
 function resetState() {
-  gridOptions.columnApi!.resetColumnGroupState()
+  gridApi!.resetColumnGroupState()
   console.log('column state reset')
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

@@ -1,6 +1,7 @@
 import { RowCtrl } from "./row/rowCtrl";
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
+import { AgEventListener } from "../events";
 import { CellPosition } from "../entities/cellPositionUtils";
 import { BeanStub } from "../context/beanStub";
 import { ICellRenderer } from "./cellRenderers/iCellRenderer";
@@ -24,8 +25,14 @@ export interface RefreshCellsParams<TData = any> extends GetCellsParams<TData> {
     suppressFlash?: boolean;
 }
 export interface FlashCellsParams<TData = any> extends GetCellsParams<TData> {
+    /** @deprecated v31.1 Use `flashDuration` instead. */
     flashDelay?: number;
+    /** @deprecated v31.1 Use `fadeDuration` instead. */
     fadeDelay?: number;
+    /** The duration in milliseconds of how long a cell should remain in its "flashed" state. */
+    flashDuration?: number;
+    /** The duration in milliseconds of how long the "flashed" state animation takes to fade away after the timer set by `flashDuration` has completed. */
+    fadeDuration?: number;
 }
 export interface GetCellRendererInstancesParams<TData = any> extends GetCellsParams<TData> {
 }
@@ -71,6 +78,7 @@ export declare class RowRenderer extends BeanStub {
     private updateAllRowCtrls;
     private onCellFocusChanged;
     private registerCellEventListeners;
+    private setupRangeSelectionListeners;
     private removeGridColumnListeners;
     private refreshListenersToColumnsForCellComps;
     private onDomLayoutChanged;
@@ -96,7 +104,7 @@ export declare class RowRenderer extends BeanStub {
     stopEditing(cancel?: boolean): void;
     getAllCellCtrls(): CellCtrl[];
     private getAllRowCtrls;
-    addRenderedRowListener(eventName: string, rowIndex: number, callback: Function): void;
+    addRenderedRowListener(eventName: string, rowIndex: number, callback: AgEventListener): void;
     flashCells(params?: FlashCellsParams): void;
     refreshCells(params?: RefreshCellsParams): void;
     getCellRendererInstances(params: GetCellRendererInstancesParams): ICellRenderer[];

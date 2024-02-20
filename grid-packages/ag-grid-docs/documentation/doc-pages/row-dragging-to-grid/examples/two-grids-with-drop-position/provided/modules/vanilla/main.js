@@ -13,14 +13,12 @@ var rightColumnDefs = [
     { field: "value1" },
     { field: "value2" }
 ];
-
+var leftApi;
 var leftGridOptions = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
-        sortable: true,
         filter: true,
-        resizable: true
     },
     rowClassRules: {
         "red-row": 'data.color == "Red"',
@@ -32,20 +30,19 @@ var leftGridOptions = {
     rowDragManaged: true,
     suppressMoveWhenRowDragging: true,
     columnDefs: leftColumnDefs,
-    animateRows: true,
     onGridReady: (params) => {
         addBinZone(params);
         addGridDropZone(params, 'Right');
     }
 };
 
+var rightApi;
 var rightGridOptions = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
-        sortable: true,
         filter: true,
-        resizable: true
+        
     },
     rowClassRules: {
         "red-row": 'data.color == "Red"',
@@ -57,7 +54,6 @@ var rightGridOptions = {
     rowDragManaged: true,
     suppressMoveWhenRowDragging: true,
     columnDefs: rightColumnDefs,
-    animateRows: true,
     onGridReady: (params) => {
         addBinZone(params);
         addGridDropZone(params, 'Left');
@@ -91,7 +87,7 @@ function addRecordToGrid(side, data) {
     // if data missing or data has no it, do nothing
     if (!data || data.id == null) { return; }
 
-    var api = side === 'left' ? leftGridOptions.api : rightGridOptions.api,
+    var api = side === 'left' ? leftApi : rightApi,
         // do nothing if row is already in the grid, otherwise we would have duplicates
         rowAlreadyInGrid = !!api.getRowNode(data.id),
         transaction;
@@ -125,11 +121,11 @@ function binDrop(data) {
         remove: [data]
     };
 
-    [leftGridOptions, rightGridOptions].forEach(function (option) {
-        var rowsInGrid = !!option.api.getRowNode(data.id);
+    [leftApi, rightApi].forEach(function (gridApi) {
+        var rowsInGrid = !!gridApi.getRowNode(data.id);
 
         if (rowsInGrid) {
-            option.api.applyTransaction(transaction);
+            gridApi.applyTransaction(transaction);
         }
     });
 }
@@ -144,12 +140,12 @@ function addBinZone(params) {
                 icon.style.transform = 'scale(1.5)';
             },
             onDragLeave: () => {
-                eBin.style.color = 'black';
+                eBin.style = "";
                 icon.style.transform = 'scale(1)';
             },
             onDragStop: (params) => {
                 binDrop(params.node.data);
-                eBin.style.color = 'black';
+                eBin.style = "";
                 icon.style.transform = 'scale(1)';
             }
         };
@@ -158,7 +154,7 @@ function addBinZone(params) {
 }
 
 function addGridDropZone(params, side) {
-    var gridApi = (side === 'Left' ? leftGridOptions : rightGridOptions).api;
+    var gridApi = side === 'Left' ? leftApi : rightApi;
     var dropZone = gridApi.getRowDropZoneParams();
 
     params.api.addRowDropZone(dropZone);
@@ -166,7 +162,7 @@ function addGridDropZone(params, side) {
 
 function loadGrid(side) {
     var grid = document.querySelector('#e' + side + 'Grid');
-    new agGrid.Grid(grid, side === 'Left' ? leftGridOptions : rightGridOptions);
+    return agGrid.createGrid(grid, side === 'Left' ? leftGridOptions : rightGridOptions);
 }
 
 // setup the grid after the page has finished loading
@@ -177,6 +173,6 @@ document.addEventListener('DOMContentLoaded', function () {
         buttons[i].addEventListener('click', onFactoryButtonClick);
     }
 
-    loadGrid('Left');
-    loadGrid('Right');
+    leftApi = loadGrid('Left');
+    rightApi = loadGrid('Right');
 });

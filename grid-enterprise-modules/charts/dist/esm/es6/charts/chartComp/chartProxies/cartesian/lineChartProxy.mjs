@@ -16,10 +16,11 @@ export class LineChartProxy extends CartesianChartProxy {
         ];
     }
     getSeries(params) {
+        const [category] = params.categories;
         const series = params.fields.map(f => ({
             type: this.standaloneChartType,
-            xKey: params.category.id,
-            xName: params.category.name,
+            xKey: category.id,
+            xName: category.name,
             yKey: f.colId,
             yName: f.displayName
         }));

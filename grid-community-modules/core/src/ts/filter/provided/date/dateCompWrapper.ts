@@ -4,6 +4,7 @@ import { Context } from '../../../context/context';
 import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import { setDisplayed } from '../../../utils/dom';
 import { WithoutGridCommon } from '../../../interfaces/iCommon';
+import { warnOnce } from '../../../utils/function';
 
 /** Provides sync access to async component. Date component can be lazy created - this class encapsulates
  * this by keeping value locally until DateComp has loaded, then passing DateComp the value. */
@@ -96,8 +97,19 @@ export class DateCompWrapper {
     }
 
     public updateParams(params: IDateParams): void {
-        if (this.dateComp?.onParamsUpdated && typeof this.dateComp.onParamsUpdated === 'function') {
-            this.dateComp.onParamsUpdated(params)
+        let hasRefreshed = false;
+        if (this.dateComp?.refresh && typeof this.dateComp.refresh === 'function') {
+            const result = this.dateComp.refresh(params);
+            // framework wrapper always implements optional methods, but returns null if no underlying method
+            if (result !== null) {
+                hasRefreshed = true;
+            }
+        }
+        if (!hasRefreshed && this.dateComp?.onParamsUpdated && typeof this.dateComp.onParamsUpdated === 'function') {
+            const result = this.dateComp.onParamsUpdated(params);
+            if (result !== null) {
+                warnOnce(`Custom date component method 'onParamsUpdated' is deprecated. Use 'refresh' instead.`);
+            }
         }
     }
 

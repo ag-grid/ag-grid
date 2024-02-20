@@ -4,7 +4,9 @@ import { RowClassParams } from "../entities/gridOptions";
 export declare class StylingService extends BeanStub {
     private expressionService;
     processAllCellClasses(colDef: ColDef, params: CellClassParams, onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void): void;
-    processClassRules(classRules: {
+    processClassRules(previousClassRules: {
+        [cssClassName: string]: (Function | string);
+    } | undefined, classRules: {
         [cssClassName: string]: (Function | string);
     } | undefined, params: RowClassParams | CellClassParams, onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void): void;
     getStaticCellClasses(colDef: ColDef, params: CellClassParams): string[];

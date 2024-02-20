@@ -32,7 +32,7 @@ var TotalRowsComp = /** @class */ (function (_super) {
     TotalRowsComp.prototype.postConstruct = function () {
         this.setLabel('totalRows', 'Total Rows');
         // this component is only really useful with client side row model
-        if (this.gridApi.getModel().getType() !== 'clientSide') {
+        if (this.gridApi.__getModel().getType() !== 'clientSide') {
             console.warn("AG Grid: agTotalRowCountComponent should only be used with the client side row model.");
             return;
         }
@@ -55,13 +55,16 @@ var TotalRowsComp = /** @class */ (function (_super) {
     };
     TotalRowsComp.prototype.init = function () {
     };
+    TotalRowsComp.prototype.refresh = function () {
+        return true;
+    };
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
     TotalRowsComp.prototype.destroy = function () {
         _super.prototype.destroy.call(this);
     };
     __decorate([
-        core_1.Autowired('gridApi')
+        (0, core_1.Autowired)('gridApi')
     ], TotalRowsComp.prototype, "gridApi", void 0);
     __decorate([
         core_1.PostConstruct

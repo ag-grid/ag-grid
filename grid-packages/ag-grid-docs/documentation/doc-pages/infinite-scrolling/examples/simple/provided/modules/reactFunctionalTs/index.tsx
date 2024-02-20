@@ -2,12 +2,12 @@
 
 import React, { useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AgGridReact } from '@ag-grid-community/react';
+import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
+import { ColDef, IDatasource, GridReadyEvent, ModuleRegistry } from '@ag-grid-community/core';
 import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
 import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 
-import { ColDef, ICellRendererParams, IDatasource, GridReadyEvent, ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([InfiniteRowModelModule]);
 
@@ -24,7 +24,7 @@ const GridExample = () => {
             // it is important to have node.id here, so that when the id changes (which happens
             // when the row is loaded) then the cell is refreshed.
             valueGetter: 'node.id',
-            cellRenderer: (props: ICellRendererParams) => {
+            cellRenderer: (props: CustomCellRendererProps) => {
                 if (props.value !== undefined) {
                     return props.value;
                 } else {
@@ -46,8 +46,8 @@ const GridExample = () => {
     const defaultColDef = useMemo<ColDef>(() => {
         return {
             flex: 1,
-            resizable: true,
             minWidth: 100,
+            sortable: false,
         }
     }, []);
 
@@ -76,7 +76,7 @@ const GridExample = () => {
                         }, 500);
                     },
                 };
-                params.api.setDatasource(dataSource);
+                params.api.setGridOption('datasource', dataSource);
             });
     }, []);
 
@@ -84,7 +84,7 @@ const GridExample = () => {
     return (
         <div style={containerStyle}>
 
-            <div style={gridStyle} className="ag-theme-alpine">
+            <div style={gridStyle} className={/** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
                 <AgGridReact
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}

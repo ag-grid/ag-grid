@@ -118,17 +118,20 @@ var TextInputFloatingFilter = /** @class */ (function (_super) {
         this.applyActive = providedFilter_1.ProvidedFilter.isUseApplyButton(this.params.filterParams);
         if (!this.isReadOnly()) {
             var debounceMs = providedFilter_1.ProvidedFilter.getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
-            var toDebounce = function_1.debounce(this.syncUpWithParentFilter.bind(this), debounceMs);
+            var toDebounce = (0, function_1.debounce)(this.syncUpWithParentFilter.bind(this), debounceMs);
             this.floatingFilterInputService.setValueChangedListener(toDebounce);
         }
     };
     TextInputFloatingFilter.prototype.onParamsUpdated = function (params) {
-        _super.prototype.onParamsUpdated.call(this, params);
+        this.refresh(params);
+    };
+    TextInputFloatingFilter.prototype.refresh = function (params) {
+        _super.prototype.refresh.call(this, params);
         this.setTextInputParams(params);
     };
     TextInputFloatingFilter.prototype.recreateFloatingFilterInputService = function (params) {
         var value = this.floatingFilterInputService.getValue();
-        dom_1.clearElement(this.eFloatingFilterInputContainer);
+        (0, dom_1.clearElement)(this.eFloatingFilterInputContainer);
         this.destroyBean(this.floatingFilterInputService);
         this.setupFloatingFilterInputService(params);
         this.floatingFilterInputService.setValue(value, true);
@@ -136,7 +139,7 @@ var TextInputFloatingFilter = /** @class */ (function (_super) {
     TextInputFloatingFilter.prototype.getAriaLabel = function (params) {
         var displayName = this.columnModel.getDisplayNameForColumn(params.column, 'header', true);
         var translate = this.localeService.getLocaleTextFunc();
-        return displayName + " " + translate('ariaFilterInput', 'Filter Input');
+        return "".concat(displayName, " ").concat(translate('ariaFilterInput', 'Filter Input'));
     };
     TextInputFloatingFilter.prototype.syncUpWithParentFilter = function (e) {
         var _this = this;
@@ -160,10 +163,10 @@ var TextInputFloatingFilter = /** @class */ (function (_super) {
         this.floatingFilterInputService.setEditable(editable);
     };
     __decorate([
-        context_1.Autowired('columnModel')
+        (0, context_1.Autowired)('columnModel')
     ], TextInputFloatingFilter.prototype, "columnModel", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('eFloatingFilterInputContainer')
+        (0, componentAnnotations_1.RefSelector)('eFloatingFilterInputContainer')
     ], TextInputFloatingFilter.prototype, "eFloatingFilterInputContainer", void 0);
     __decorate([
         context_1.PostConstruct

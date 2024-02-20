@@ -1,0 +1,140 @@
+<!DOCTYPE html><html lang="en">
+	<head>
+		<title>JavaScript example</title>
+		<meta charSet="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+		<style media="only screen">  
+            html, body {
+                height: 100%;
+                width: 100%;
+                margin: 0;
+                box-sizing: border-box;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            html {
+                position: absolute;
+                top: 0;
+                left: 0;
+                padding: 0;
+                overflow: auto;
+            }
+
+            body {
+                padding: 16px;
+                overflow: auto;
+                background-color: transparent
+            }
+			.wrapper {
+				display: flex;
+				flex-direction: column;
+				height: 100%;
+			}
+
+			#myGrid {
+				flex: 1;
+				height: auto !important;
+			}
+
+			.my-chart {
+				flex: 1;
+			}
+
+			.ag-theme-quartz, .ag-theme-quartz-dark {
+				/* pink category range */
+				--ag-range-selection-chart-category-background-color: rgba(255, 0, 132, 0.1);
+
+				/* orange data range */
+				--ag-range-selection-chart-background-color: rgba(255, 115, 0, 0.1);
+			}
+
+		</style>
+		<link rel="stylesheet" href="style.css"/>
+	</head>
+	<body>
+		<div class="wrapper">
+			<div id="myGrid" class="ag-theme-quartz my-grid">
+			</div>
+			<div id="myChart" class="ag-theme-quartz my-chart">
+			</div>
+		</div>
+		<script>var __basePath = './';</script>
+		<script src="./dist/ag-grid-charts-enterprise.js">
+		</script>
+		<script>
+
+			let gridApi;
+
+			/** @type {import('ag-grid-community').GridOptions} */
+			const gridOptions = {
+				columnDefs: [
+					// different ways to define 'categories'
+					{ field: 'athlete', width: 150, chartDataType: 'category' },
+					{ field: 'age', chartDataType: 'category', sort: 'asc' },
+					{ field: 'sport' }, // inferred as category by grid
+
+					// excludes year from charts
+					{ field: 'year', chartDataType: 'excluded' },
+
+					// different ways to define 'series'
+					{ field: 'gold', chartDataType: 'series' },
+					{ field: 'silver', chartDataType: 'series' },
+					{ field: 'bronze' }, // inferred as series by grid
+				],
+				defaultColDef: {
+					flex: 1
+				},
+				enableRangeSelection: true,
+				popupParent: document.body,
+				enableCharts: true,
+				chartThemeOverrides: {
+					common: {
+						title: {
+							enabled: true,
+							text: 'Medals by Age',
+						},
+					},
+					bar: {
+						axes: {
+							category: {
+								label: {
+									rotation: 0,
+								},
+							},
+						},
+					},
+				},
+				onFirstDataRendered: onFirstDataRendered,
+			}
+
+			function onFirstDataRendered(params) {
+				params.api.createRangeChart({
+					chartContainer: document.querySelector('#myChart') ,
+					cellRange: {
+						rowStartIndex: 0,
+						rowEndIndex: 79,
+						columns: ['age', 'gold', 'silver', 'bronze'],
+					},
+					chartType: 'groupedColumn',
+					aggFunc: 'sum',
+				});
+			}
+
+			// setup the grid after the page has finished loading
+			document.addEventListener('DOMContentLoaded', function () {
+				const gridDiv = document.querySelector('#myGrid')
+				gridApi = agGrid.createGrid(gridDiv, gridOptions);
+
+				fetch('https://www.ag-grid.com/example-assets/wide-spread-of-sports.json')
+						.then(response => response.json())
+						.then(function (data) {
+							gridApi.setGridOption('rowData', data)
+						})
+			})
+
+		</script>
+	</body>
+	<link rel="stylesheet" href="style.css"/>
+</html>
+

@@ -23,7 +23,7 @@ var OptionsFactory = /** @class */ (function () {
             var requiredProperties = [['displayKey'], ['displayName'], ['predicate', 'test']];
             var propertyCheck = function (keys) {
                 if (!keys.some(function (key) { return filterOption[key] != null; })) {
-                    console.warn("AG Grid: ignoring FilterOptionDef as it doesn't contain one of '" + keys + "'");
+                    console.warn("AG Grid: ignoring FilterOptionDef as it doesn't contain one of '".concat(keys, "'"));
                     return false;
                 }
                 return true;

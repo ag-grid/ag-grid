@@ -1,18 +1,17 @@
 export default {
     template: `
         <span>
-        <img :src="imageSource">{{ value }}
+        <i :class="iconClass"> </i> {{ value }}
       </span>
     `,
     data: function () {
         return {
-            imageSource: null,
+            iconClass: null,
             value: '',
         };
     },
     beforeMount() {
-        this.image = this.params.value === 'Male' ? 'male.png' : 'female.png';
-        this.imageSource = `https://www.ag-grid.com/example-assets/genders/${this.image}`;
+        this.iconClass = this.params.value === 'Male' ? 'fa fa-male' : 'fa fa-female';
         this.value = this.params.value;
     },
 };

@@ -12,9 +12,12 @@ export declare class PrimaryColsListPanel extends Component {
     private eventType;
     private groupsExist;
     private virtualList;
+    private colsListPanelItemDragFeature;
     private allColsTree;
     private displayedColsList;
     private destroyColumnItemFuncs;
+    private hasLoadedInitialState;
+    private isInitialState;
     constructor();
     private destroyColumnTree;
     init(params: ToolPanelColumnCompParams, allowDragging: boolean, eventType: ColumnEventType): void;
@@ -29,6 +32,7 @@ export declare class PrimaryColsListPanel extends Component {
     private buildListModel;
     private onColumnExpanded;
     private flattenAndFilterModel;
+    private refreshAriaLabel;
     private focusRowIfAlive;
     private forEachItem;
     doSetExpandedAll(value: boolean): void;
@@ -41,4 +45,5 @@ export declare class PrimaryColsListPanel extends Component {
     private notifyListeners;
     private fireGroupExpandedEvent;
     private fireSelectionChangedEvent;
+    getExpandedGroups(): string[];
 }

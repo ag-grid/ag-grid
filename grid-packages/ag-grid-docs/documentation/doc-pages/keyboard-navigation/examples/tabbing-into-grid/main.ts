@@ -1,4 +1,4 @@
-import { Grid, ColDef, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
   { headerName: '#', colId: 'rowNum', valueGetter: 'node.id' },
@@ -14,16 +14,16 @@ const columnDefs: ColDef[] = [
   { field: 'total' },
 ]
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
   rowData: null,
   defaultColDef: {
     editable: true,
-    sortable: true,
     flex: 1,
     minWidth: 100,
     filter: true,
-    resizable: true,
   },
   onFirstDataRendered: onFirstDataRendered,
 }
@@ -46,7 +46,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
       params.api.ensureIndexVisible(0);
 
       // scrolls to the first column
-      var firstCol = params.columnApi.getAllDisplayedColumns()[0];
+      var firstCol = params.api.getAllDisplayedColumns()[0];
       params.api.ensureColumnVisible(firstCol);
 
       // sets focus into the first grid cell
@@ -59,9 +59,9 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

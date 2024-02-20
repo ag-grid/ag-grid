@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/side-bar - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.1.0
+          * @ag-grid-enterprise/side-bar - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.1.0
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -10,7 +10,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 var core = require('@ag-grid-community/core');
 var core$1 = require('@ag-grid-enterprise/core');
 
-var __extends$5 = (undefined && undefined.__extends) || (function () {
+var __extends$6 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -25,14 +25,14 @@ var __extends$5 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$5 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$6 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var HorizontalResizeComp = /** @class */ (function (_super) {
-    __extends$5(HorizontalResizeComp, _super);
+    __extends$6(HorizontalResizeComp, _super);
     function HorizontalResizeComp() {
         var _this = _super.call(this, /* html */ "<div class=\"ag-tool-panel-horizontal-resize\"></div>") || this;
         _this.minWidth = 100;
@@ -51,7 +51,7 @@ var HorizontalResizeComp = /** @class */ (function (_super) {
             onResizeEnd: this.onResizeEnd.bind(this)
         });
         this.addDestroyFunc(finishedWithResizeFunc);
-        this.setInverted(this.gridOptionsService.is('enableRtl'));
+        this.setInverted(this.gridOptionsService.get('enableRtl'));
     };
     HorizontalResizeComp.prototype.dispatchResizeEvent = function (start, end, width) {
         var event = {
@@ -76,7 +76,7 @@ var HorizontalResizeComp = /** @class */ (function (_super) {
         if (this.maxWidth != null) {
             newWidth = Math.min(this.maxWidth, newWidth);
         }
-        this.elementToResize.style.width = newWidth + "px";
+        this.elementToResize.style.width = "".concat(newWidth, "px");
         this.dispatchResizeEvent(false, isEnd, newWidth);
     };
     HorizontalResizeComp.prototype.setInverted = function (inverted) {
@@ -93,16 +93,16 @@ var HorizontalResizeComp = /** @class */ (function (_super) {
             this.minWidth = 100;
         }
     };
-    __decorate$5([
+    __decorate$6([
         core.Autowired('horizontalResizeService')
     ], HorizontalResizeComp.prototype, "horizontalResizeService", void 0);
-    __decorate$5([
+    __decorate$6([
         core.PostConstruct
     ], HorizontalResizeComp.prototype, "postConstruct", null);
     return HorizontalResizeComp;
 }(core.Component));
 
-var __extends$4 = (undefined && undefined.__extends) || (function () {
+var __extends$5 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -117,14 +117,14 @@ var __extends$4 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$4 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$5 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var SideBarButtonComp = /** @class */ (function (_super) {
-    __extends$4(SideBarButtonComp, _super);
+    __extends$5(SideBarButtonComp, _super);
     function SideBarButtonComp(toolPanelDef) {
         var _this = _super.call(this) || this;
         _this.toolPanelDef = toolPanelDef;
@@ -139,7 +139,7 @@ var SideBarButtonComp = /** @class */ (function (_super) {
         this.setLabel();
         this.setIcon();
         this.addManagedListener(this.eToggleButton, 'click', this.onButtonPressed.bind(this));
-        this.eToggleButton.setAttribute('id', "ag-" + this.getCompId() + "-button");
+        this.eToggleButton.setAttribute('id', "ag-".concat(this.getCompId(), "-button"));
     };
     SideBarButtonComp.prototype.createTemplate = function () {
         var res = /* html */ "<div class=\"ag-side-button\" role=\"presentation\">\n                <button type=\"button\" ref=\"eToggleButton\" tabindex=\"-1\" role=\"tab\" aria-expanded=\"false\" class=\"ag-button ag-side-button-button\">\n                    <div ref=\"eIconWrapper\" class=\"ag-side-button-icon-wrapper\" aria-hidden=\"true\"></div>\n                    <span ref =\"eLabel\" class=\"ag-side-button-label\"></span>\n                </button>\n            </div>";
@@ -165,22 +165,22 @@ var SideBarButtonComp = /** @class */ (function (_super) {
         return this.eToggleButton;
     };
     SideBarButtonComp.EVENT_TOGGLE_BUTTON_CLICKED = 'toggleButtonClicked';
-    __decorate$4([
+    __decorate$5([
         core.RefSelector('eToggleButton')
     ], SideBarButtonComp.prototype, "eToggleButton", void 0);
-    __decorate$4([
+    __decorate$5([
         core.RefSelector('eIconWrapper')
     ], SideBarButtonComp.prototype, "eIconWrapper", void 0);
-    __decorate$4([
+    __decorate$5([
         core.RefSelector('eLabel')
     ], SideBarButtonComp.prototype, "eLabel", void 0);
-    __decorate$4([
+    __decorate$5([
         core.PostConstruct
     ], SideBarButtonComp.prototype, "postConstruct", null);
     return SideBarButtonComp;
 }(core.Component));
 
-var __extends$3 = (undefined && undefined.__extends) || (function () {
+var __extends$4 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -195,14 +195,14 @@ var __extends$3 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$3 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$4 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var SideBarButtonsComp = /** @class */ (function (_super) {
-    __extends$3(SideBarButtonsComp, _super);
+    __extends$4(SideBarButtonsComp, _super);
     function SideBarButtonsComp() {
         var _this = _super.call(this, SideBarButtonsComp.TEMPLATE) || this;
         _this.buttonComps = [];
@@ -244,16 +244,16 @@ var SideBarButtonsComp = /** @class */ (function (_super) {
     };
     SideBarButtonsComp.EVENT_SIDE_BAR_BUTTON_CLICKED = 'sideBarButtonClicked';
     SideBarButtonsComp.TEMPLATE = "<div class=\"ag-side-buttons\" role=\"tablist\"></div>";
-    __decorate$3([
+    __decorate$4([
         core.Autowired('focusService')
     ], SideBarButtonsComp.prototype, "focusService", void 0);
-    __decorate$3([
+    __decorate$4([
         core.Autowired('columnModel')
     ], SideBarButtonsComp.prototype, "columnModel", void 0);
-    __decorate$3([
+    __decorate$4([
         core.PostConstruct
     ], SideBarButtonsComp.prototype, "postConstruct", null);
-    __decorate$3([
+    __decorate$4([
         core.PreDestroy
     ], SideBarButtonsComp.prototype, "clearButtons", null);
     return SideBarButtonsComp;
@@ -283,7 +283,7 @@ var SideBarDefParser = /** @class */ (function () {
             toParse.forEach(function (key) {
                 var lookupResult = SideBarDefParser.DEFAULT_BY_KEY[key];
                 if (!lookupResult) {
-                    console.warn("AG Grid: the key " + key + " is not a valid key for specifying a tool panel, valid keys are: " + Object.keys(SideBarDefParser.DEFAULT_BY_KEY).join(','));
+                    console.warn("AG Grid: the key ".concat(key, " is not a valid key for specifying a tool panel, valid keys are: ").concat(Object.keys(SideBarDefParser.DEFAULT_BY_KEY).join(',')));
                     return;
                 }
                 comps_1.push(lookupResult);
@@ -314,7 +314,7 @@ var SideBarDefParser = /** @class */ (function () {
             if (typeof it === 'string') {
                 var lookupResult = SideBarDefParser.DEFAULT_BY_KEY[it];
                 if (!lookupResult) {
-                    console.warn("AG Grid: the key " + it + " is not a valid key for specifying a tool panel, valid keys are: " + Object.keys(SideBarDefParser.DEFAULT_BY_KEY).join(','));
+                    console.warn("AG Grid: the key ".concat(it, " is not a valid key for specifying a tool panel, valid keys are: ").concat(Object.keys(SideBarDefParser.DEFAULT_BY_KEY).join(',')));
                     return;
                 }
                 toAdd = lookupResult;
@@ -347,7 +347,7 @@ var SideBarDefParser = /** @class */ (function () {
     return SideBarDefParser;
 }());
 
-var __extends$2 = (undefined && undefined.__extends) || (function () {
+var __extends$3 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -362,36 +362,36 @@ var __extends$2 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$3 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var ToolPanelWrapper = /** @class */ (function (_super) {
-    __extends$2(ToolPanelWrapper, _super);
+    __extends$3(ToolPanelWrapper, _super);
     function ToolPanelWrapper() {
         return _super.call(this, ToolPanelWrapper.TEMPLATE) || this;
     }
     ToolPanelWrapper.prototype.setupResize = function () {
         var eGui = this.getGui();
         var resizeBar = this.resizeBar = this.createManagedBean(new HorizontalResizeComp());
-        eGui.setAttribute('id', "ag-" + this.getCompId());
+        eGui.setAttribute('id', "ag-".concat(this.getCompId()));
         resizeBar.setElementToResize(eGui);
         this.appendChild(resizeBar);
     };
     ToolPanelWrapper.prototype.getToolPanelId = function () {
         return this.toolPanelId;
     };
-    ToolPanelWrapper.prototype.setToolPanelDef = function (toolPanelDef) {
+    ToolPanelWrapper.prototype.setToolPanelDef = function (toolPanelDef, params) {
         var id = toolPanelDef.id, minWidth = toolPanelDef.minWidth, maxWidth = toolPanelDef.maxWidth, width = toolPanelDef.width;
         this.toolPanelId = id;
         this.width = width;
-        var params = {};
         var compDetails = this.userComponentFactory.getToolPanelCompDetails(toolPanelDef, params);
         var componentPromise = compDetails.newAgStackInstance();
+        this.params = compDetails.params;
         if (componentPromise == null) {
-            console.warn("AG Grid: error processing tool panel component " + id + ". You need to specify 'toolPanel'");
+            console.warn("AG Grid: error processing tool panel component ".concat(id, ". You need to specify 'toolPanel'"));
             return;
         }
         componentPromise.then(this.setToolPanelComponent.bind(this));
@@ -410,32 +410,32 @@ var ToolPanelWrapper = /** @class */ (function (_super) {
             _this.destroyBean(compInstance);
         });
         if (this.width) {
-            this.getGui().style.width = this.width + "px";
+            this.getGui().style.width = "".concat(this.width, "px");
         }
     };
     ToolPanelWrapper.prototype.getToolPanelInstance = function () {
         return this.toolPanelCompInstance;
     };
     ToolPanelWrapper.prototype.setResizerSizerSide = function (side) {
-        var isRtl = this.gridOptionsService.is('enableRtl');
+        var isRtl = this.gridOptionsService.get('enableRtl');
         var isLeft = side === 'left';
         var inverted = isRtl ? isLeft : !isLeft;
         this.resizeBar.setInverted(inverted);
     };
     ToolPanelWrapper.prototype.refresh = function () {
-        this.toolPanelCompInstance.refresh();
+        this.toolPanelCompInstance.refresh(this.params);
     };
     ToolPanelWrapper.TEMPLATE = "<div class=\"ag-tool-panel-wrapper\" role=\"tabpanel\"/>";
-    __decorate$2([
+    __decorate$3([
         core.Autowired("userComponentFactory")
     ], ToolPanelWrapper.prototype, "userComponentFactory", void 0);
-    __decorate$2([
+    __decorate$3([
         core.PostConstruct
     ], ToolPanelWrapper.prototype, "setupResize", null);
     return ToolPanelWrapper;
 }(core.Component));
 
-var __extends$1 = (undefined && undefined.__extends) || (function () {
+var __extends$2 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -450,7 +450,18 @@ var __extends$1 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __assign = (undefined && undefined.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+var __decorate$2 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -468,21 +479,22 @@ var __values = (undefined && undefined.__values) || function(o) {
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 var SideBarComp = /** @class */ (function (_super) {
-    __extends$1(SideBarComp, _super);
+    __extends$2(SideBarComp, _super);
     function SideBarComp() {
         var _this = _super.call(this, SideBarComp.TEMPLATE) || this;
         _this.toolPanelWrappers = [];
         return _this;
     }
     SideBarComp.prototype.postConstruct = function () {
-        var _this = this;
+        var _a;
         this.sideBarButtonsComp.addEventListener(SideBarButtonsComp.EVENT_SIDE_BAR_BUTTON_CLICKED, this.onToolPanelButtonClicked.bind(this));
-        this.setSideBarDef();
-        this.addManagedPropertyListener('sideBar', function () {
-            _this.clearDownUi();
-            _this.setSideBarDef();
+        var sideBarState = ((_a = this.gridOptionsService.get('initialState')) !== null && _a !== void 0 ? _a : {}).sideBar;
+        this.setSideBarDef({
+            sideBarDef: SideBarDefParser.parse(this.gridOptionsService.get('sideBar')),
+            sideBarState: sideBarState
         });
-        this.gridApi.registerSideBarComp(this);
+        this.addManagedPropertyListener('sideBar', this.onSideBarUpdated.bind(this));
+        this.sideBarService.registerSideBarComp(this);
         this.createManagedBean(new core.ManagedFocusFeature(this.getFocusableElement(), {
             onTabKeyDown: this.onTabKeyDown.bind(this),
             handleKeyDown: this.handleKeyDown.bind(this)
@@ -522,7 +534,7 @@ var SideBarComp = /** @class */ (function (_super) {
         if (!nextEl) {
             nextEl = sideBarGui.querySelector('.ag-selected button');
         }
-        if (nextEl) {
+        if (nextEl && nextEl !== e.target) {
             e.preventDefault();
             nextEl.focus();
         }
@@ -571,22 +583,30 @@ var SideBarComp = /** @class */ (function (_super) {
         this.sideBarButtonsComp.clearButtons();
         this.destroyToolPanelWrappers();
     };
-    SideBarComp.prototype.setSideBarDef = function () {
+    SideBarComp.prototype.setSideBarDef = function (_a) {
+        var sideBarDef = _a.sideBarDef, sideBarState = _a.sideBarState, existingToolPanelWrappers = _a.existingToolPanelWrappers;
         // initially hide side bar
         this.setDisplayed(false);
-        var sideBarRaw = this.gridOptionsService.get('sideBar');
-        this.sideBar = SideBarDefParser.parse(sideBarRaw);
+        this.sideBar = sideBarDef;
         if (!!this.sideBar && !!this.sideBar.toolPanels) {
             var toolPanelDefs = this.sideBar.toolPanels;
-            this.createToolPanelsAndSideButtons(toolPanelDefs);
+            this.createToolPanelsAndSideButtons(toolPanelDefs, sideBarState, existingToolPanelWrappers);
             if (!this.toolPanelWrappers.length) {
                 return;
             }
-            var shouldDisplaySideBar = !this.sideBar.hiddenByDefault;
+            var shouldDisplaySideBar = sideBarState ? sideBarState.visible : !this.sideBar.hiddenByDefault;
             this.setDisplayed(shouldDisplaySideBar);
-            this.setSideBarPosition(this.sideBar.position);
-            if (!this.sideBar.hiddenByDefault) {
-                this.openToolPanel(this.sideBar.defaultToolPanel, 'sideBarInitializing');
+            this.setSideBarPosition(sideBarState ? sideBarState.position : this.sideBar.position);
+            if (shouldDisplaySideBar) {
+                if (sideBarState) {
+                    var openToolPanel = sideBarState.openToolPanel;
+                    if (openToolPanel) {
+                        this.openToolPanel(openToolPanel, 'sideBarInitializing');
+                    }
+                }
+                else {
+                    this.openToolPanel(this.sideBar.defaultToolPanel, 'sideBarInitializing');
+                }
             }
         }
     };
@@ -597,6 +617,7 @@ var SideBarComp = /** @class */ (function (_super) {
         if (!position) {
             position = 'right';
         }
+        this.position = position;
         var isLeft = position === 'left';
         var resizerSide = isLeft ? 'right' : 'left';
         this.addOrRemoveCssClass('ag-side-bar-left', isLeft);
@@ -604,14 +625,33 @@ var SideBarComp = /** @class */ (function (_super) {
         this.toolPanelWrappers.forEach(function (wrapper) {
             wrapper.setResizerSizerSide(resizerSide);
         });
+        this.eventService.dispatchEvent({ type: core.Events.EVENT_SIDE_BAR_UPDATED });
         return this;
     };
-    SideBarComp.prototype.createToolPanelsAndSideButtons = function (defs) {
+    SideBarComp.prototype.setDisplayed = function (displayed, options) {
+        _super.prototype.setDisplayed.call(this, displayed, options);
+        this.eventService.dispatchEvent({ type: core.Events.EVENT_SIDE_BAR_UPDATED });
+    };
+    SideBarComp.prototype.getState = function () {
+        var toolPanels = {};
+        this.toolPanelWrappers.forEach(function (wrapper) {
+            var _a, _b;
+            toolPanels[wrapper.getToolPanelId()] = (_b = (_a = wrapper.getToolPanelInstance()) === null || _a === void 0 ? void 0 : _a.getState) === null || _b === void 0 ? void 0 : _b.call(_a);
+        });
+        return {
+            visible: this.isDisplayed(),
+            position: this.position,
+            openToolPanel: this.openedItem(),
+            toolPanels: toolPanels
+        };
+    };
+    SideBarComp.prototype.createToolPanelsAndSideButtons = function (defs, sideBarState, existingToolPanelWrappers) {
         var e_1, _a;
+        var _b;
         try {
             for (var defs_1 = __values(defs), defs_1_1 = defs_1.next(); !defs_1_1.done; defs_1_1 = defs_1.next()) {
                 var def = defs_1_1.value;
-                this.createToolPanelAndSideButton(def);
+                this.createToolPanelAndSideButton(def, (_b = sideBarState === null || sideBarState === void 0 ? void 0 : sideBarState.toolPanels) === null || _b === void 0 ? void 0 : _b[def.id], existingToolPanelWrappers === null || existingToolPanelWrappers === void 0 ? void 0 : existingToolPanelWrappers[def.id]);
             }
         }
         catch (e_1_1) { e_1 = { error: e_1_1 }; }
@@ -640,21 +680,29 @@ var SideBarComp = /** @class */ (function (_super) {
                 return false;
             }
             if (this.filterManager.isAdvancedFilterEnabled()) {
-                core._.doOnce(function () {
-                    console.warn('AG Grid: Advanced Filter does not work with Filters Tool Panel. Filters Tool Panel has been disabled.');
-                }, 'advancedFilterToolPanel');
+                core._.warnOnce('Advanced Filter does not work with Filters Tool Panel. Filters Tool Panel has been disabled.');
                 return false;
             }
         }
         return true;
     };
-    SideBarComp.prototype.createToolPanelAndSideButton = function (def) {
+    SideBarComp.prototype.createToolPanelAndSideButton = function (def, initialState, existingToolPanelWrapper) {
+        var _this = this;
         if (!this.validateDef(def)) {
             return;
         }
         var button = this.sideBarButtonsComp.addButtonComp(def);
-        var wrapper = this.getContext().createBean(new ToolPanelWrapper());
-        wrapper.setToolPanelDef(def);
+        var wrapper;
+        if (existingToolPanelWrapper) {
+            wrapper = existingToolPanelWrapper;
+        }
+        else {
+            wrapper = this.getContext().createBean(new ToolPanelWrapper());
+            wrapper.setToolPanelDef(def, {
+                initialState: initialState,
+                onStateUpdated: function () { return _this.eventService.dispatchEvent({ type: core.Events.EVENT_SIDE_BAR_UPDATED }); }
+            });
+        }
         wrapper.setDisplayed(false);
         var wrapperGui = wrapper.getGui();
         this.appendChild(wrapperGui);
@@ -684,7 +732,7 @@ var SideBarComp = /** @class */ (function (_super) {
     SideBarComp.prototype.getToolPanelInstance = function (key) {
         var toolPanelWrapper = this.toolPanelWrappers.filter(function (toolPanel) { return toolPanel.getToolPanelId() === key; })[0];
         if (!toolPanelWrapper) {
-            console.warn("AG Grid: unable to lookup Tool Panel as invalid key supplied: " + key);
+            console.warn("AG Grid: unable to lookup Tool Panel as invalid key supplied: ".concat(key));
             return;
         }
         return toolPanelWrapper.getToolPanelInstance();
@@ -728,6 +776,40 @@ var SideBarComp = /** @class */ (function (_super) {
         });
         return activeToolPanel;
     };
+    SideBarComp.prototype.onSideBarUpdated = function () {
+        var _this = this;
+        var _a;
+        var sideBarDef = SideBarDefParser.parse(this.gridOptionsService.get('sideBar'));
+        var existingToolPanelWrappers = {};
+        if (sideBarDef && this.sideBar) {
+            (_a = sideBarDef.toolPanels) === null || _a === void 0 ? void 0 : _a.forEach(function (toolPanelDef) {
+                var _a, _b;
+                var id = toolPanelDef.id;
+                if (!id) {
+                    return;
+                }
+                var existingToolPanelDef = (_a = _this.sideBar.toolPanels) === null || _a === void 0 ? void 0 : _a.find(function (toolPanelDefToCheck) { return toolPanelDefToCheck.id === id; });
+                if (!existingToolPanelDef || toolPanelDef.toolPanel !== existingToolPanelDef.toolPanel) {
+                    return;
+                }
+                var toolPanelWrapper = _this.toolPanelWrappers.find(function (toolPanel) { return toolPanel.getToolPanelId() === id; });
+                if (!toolPanelWrapper) {
+                    return;
+                }
+                var params = _this.gridOptionsService.addGridCommonParams(__assign(__assign({}, ((_b = toolPanelDef.toolPanelParams) !== null && _b !== void 0 ? _b : {})), { onStateUpdated: function () { return _this.eventService.dispatchEvent({ type: core.Events.EVENT_SIDE_BAR_UPDATED }); } }));
+                var hasRefreshed = toolPanelWrapper.getToolPanelInstance().refresh(params);
+                if (hasRefreshed !== true) {
+                    return;
+                }
+                _this.toolPanelWrappers = _this.toolPanelWrappers.filter(function (toolPanel) { return toolPanel !== toolPanelWrapper; });
+                core._.removeFromParent(toolPanelWrapper.getGui());
+                existingToolPanelWrappers[id] = toolPanelWrapper;
+            });
+        }
+        this.clearDownUi();
+        // don't re-assign initial state
+        this.setSideBarDef({ sideBarDef: sideBarDef, existingToolPanelWrappers: existingToolPanelWrappers });
+    };
     SideBarComp.prototype.destroyToolPanelWrappers = function () {
         var _this = this;
         this.toolPanelWrappers.forEach(function (wrapper) {
@@ -741,25 +823,25 @@ var SideBarComp = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     SideBarComp.TEMPLATE = "<div class=\"ag-side-bar ag-unselectable\">\n            <ag-side-bar-buttons ref=\"sideBarButtons\"></ag-side-bar-buttons>\n        </div>";
-    __decorate$1([
-        core.Autowired('gridApi')
-    ], SideBarComp.prototype, "gridApi", void 0);
-    __decorate$1([
+    __decorate$2([
         core.Autowired('focusService')
     ], SideBarComp.prototype, "focusService", void 0);
-    __decorate$1([
+    __decorate$2([
         core.Autowired('filterManager')
     ], SideBarComp.prototype, "filterManager", void 0);
-    __decorate$1([
+    __decorate$2([
+        core.Autowired('sideBarService')
+    ], SideBarComp.prototype, "sideBarService", void 0);
+    __decorate$2([
         core.RefSelector('sideBarButtons')
     ], SideBarComp.prototype, "sideBarButtonsComp", void 0);
-    __decorate$1([
+    __decorate$2([
         core.PostConstruct
     ], SideBarComp.prototype, "postConstruct", null);
     return SideBarComp;
 }(core.Component));
 
-var __extends = (undefined && undefined.__extends) || (function () {
+var __extends$1 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -774,14 +856,14 @@ var __extends = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var ToolPanelColDefService = /** @class */ (function (_super) {
-    __extends(ToolPanelColDefService, _super);
+    __extends$1(ToolPanelColDefService, _super);
     function ToolPanelColDefService() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.isColGroupDef = function (colDef) { return colDef && typeof colDef.children !== 'undefined'; };
@@ -953,22 +1035,60 @@ var ToolPanelColDefService = /** @class */ (function (_super) {
         currentGroup.children.forEach(function (subGroup) { return _this.addChildrenToGroup(subGroup, groupId, colDef); });
         return false;
     };
-    __decorate([
+    __decorate$1([
         core.Autowired('columnModel')
     ], ToolPanelColDefService.prototype, "columnModel", void 0);
-    ToolPanelColDefService = __decorate([
+    ToolPanelColDefService = __decorate$1([
         core.Bean('toolPanelColDefService')
     ], ToolPanelColDefService);
     return ToolPanelColDefService;
 }(core.BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '30.1.0';
+var VERSION = '31.1.0';
+
+var __extends = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var SideBarService = /** @class */ (function (_super) {
+    __extends(SideBarService, _super);
+    function SideBarService() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    SideBarService.prototype.registerSideBarComp = function (sideBarComp) {
+        this.sideBarComp = sideBarComp;
+    };
+    SideBarService.prototype.getSideBarComp = function () {
+        return this.sideBarComp;
+    };
+    SideBarService = __decorate([
+        core.Bean('sideBarService')
+    ], SideBarService);
+    return SideBarService;
+}(core.BeanStub));
 
 var SideBarModule = {
     version: VERSION,
     moduleName: core.ModuleNames.SideBarModule,
-    beans: [ToolPanelColDefService],
+    beans: [ToolPanelColDefService, SideBarService],
     agStackComponents: [
         { componentName: 'AgHorizontalResize', componentClass: HorizontalResizeComp },
         { componentName: 'AgSideBar', componentClass: SideBarComp },

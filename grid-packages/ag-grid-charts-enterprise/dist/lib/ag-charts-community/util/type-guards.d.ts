@@ -1,0 +1,17 @@
+import type { PlainObject } from './types';
+export declare function isDefined<T>(val: T | undefined | null): val is T;
+export declare function isArray<T>(value: T | T[]): value is T[];
+export declare function isBoolean(value: unknown): value is boolean;
+export declare function isDate(value: unknown): value is Date;
+export declare function isValidDate(value: unknown): value is Date;
+export declare function isRegExp(value: unknown): value is RegExp;
+export declare function isFunction(value: unknown): value is Function;
+export declare function isObject(value: unknown): value is PlainObject;
+export declare function isObjectLike(value: unknown): value is PlainObject | unknown[];
+export declare function isPlainObject(value: unknown): value is PlainObject;
+export declare function isString(value: unknown): value is string;
+export declare function isNumber(value: unknown): value is number;
+export declare function isFiniteNumber(value: unknown): value is number;
+export declare function isHtmlElement(value: unknown): value is HTMLElement;
+export declare function isEnumKey<T extends object>(enumObject: T, enumKey: keyof T): enumKey is keyof T;
+export declare function isEnumValue<T extends object>(enumObject: T, enumValue: unknown): enumValue is T[keyof T];

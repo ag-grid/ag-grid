@@ -11,13 +11,16 @@ html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 
-    font-family: var(--font-family);
-    font-size: var(--font-size);
-    line-height: var(--line-height);
-    font-weight: var(--font-weight);
-    color: var(--text-color);
+    font-family: var(--text-font-family);
+    font-size: var(--text-fs-base);
+    line-height: var(--text-lh-base);
+    font-weight: var(--text-regular);
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    scroll-padding-top: var(--layout-scroll-offset);
+    color-scheme: var(--color-scheme);
 
     @media (min-width: $breakpoint-docs-nav-medium) {
-        scroll-padding-top: 92px;
+        --header-nav-height: 64px;
     }
 }

@@ -4,7 +4,7 @@ import { BeanStub } from "../../context/beanStub";
 import { Beans } from "../beans";
 import { PostConstruct } from "../../context/context";
 import { ColumnGroup } from "../../entities/columnGroup";
-import { setAriaColIndex, setAriaColSpan } from "../../utils/aria";
+import { setAriaColSpan } from "../../utils/aria";
 import { last } from "../../utils/array";
 import { exists } from "../../utils/generic";
 import { Events } from "../../eventKeys";
@@ -38,7 +38,7 @@ export class SetLeftFeature extends BeanStub {
     }
 
     public getColumnOrGroup(): IHeaderColumn {
-        if (this.beans.gridOptionsService.is('enableRtl') && this.colsSpanning) {
+        if (this.beans.gridOptionsService.get('enableRtl') && this.colsSpanning) {
             return last(this.colsSpanning);
         }
         return this.columnOrGroup;
@@ -58,7 +58,7 @@ export class SetLeftFeature extends BeanStub {
     }
 
     private setLeftFirstTime(): void {
-        const suppressMoveAnimation = this.beans.gridOptionsService.is('suppressColumnMoveAnimation');
+        const suppressMoveAnimation = this.beans.gridOptionsService.get('suppressColumnMoveAnimation');
         const oldLeftExists = exists(this.columnOrGroup.getOldLeft());
         const animateColumnMove = this.beans.columnAnimationService.isActive() && oldLeftExists && !suppressMoveAnimation;
         if (animateColumnMove) {
@@ -145,8 +145,5 @@ export class SetLeftFeature extends BeanStub {
 
             indexColumn = children[0];
         }
-
-        const index = this.beans.columnModel.getAriaColumnIndex(indexColumn);
-        setAriaColIndex(this.ariaEl, index);
     }
 }

@@ -5,6 +5,8 @@ const core_1 = require("@ag-grid-community/core");
 class ClientSideNodeManager {
     constructor(rootNode, gridOptionsService, eventService, columnModel, selectionService, beans) {
         this.nextId = 0;
+        // has row data actually been set
+        this.rowCountReady = false;
         // when user is provide the id's, we also keep a map of ids to row nodes for convenience
         this.allNodesMap = {};
         this.rootNode = rootNode;
@@ -21,16 +23,6 @@ class ClientSideNodeManager {
         this.rootNode.childrenAfterSort = [];
         this.rootNode.childrenAfterAggFilter = [];
         this.rootNode.childrenAfterFilter = [];
-        // if we make this class a bean, then can annotate postConstruct
-        this.postConstruct();
-    }
-    // @PostConstruct - this is not a bean, so postConstruct called by constructor
-    postConstruct() {
-        // func below doesn't have 'this' pointer, so need to pull out these bits
-        this.suppressParentsInRowNodes = this.gridOptionsService.is('suppressParentsInRowNodes');
-        this.isRowMasterFunc = this.gridOptionsService.get('isRowMaster');
-        this.doingTreeData = this.gridOptionsService.isTreeData();
-        this.doingMasterDetail = this.gridOptionsService.isMasterDetail();
     }
     getCopyOfNodesMap() {
         return core_1._.cloneObject(this.allNodesMap);
@@ -43,6 +35,7 @@ class ClientSideNodeManager {
             console.warn('AG Grid: rowData must be an array, however you passed in a string. If you are loading JSON, make sure you convert the JSON string to JavaScript objects first');
             return;
         }
+        this.rowCountReady = true;
         this.dispatchRowDataUpdateStartedEvent(rowData);
         const rootNode = this.rootNode;
         const sibling = this.rootNode.sibling;
@@ -74,6 +67,7 @@ class ClientSideNodeManager {
         }
     }
     updateRowData(rowDataTran, rowNodeOrder) {
+        this.rowCountReady = true;
         this.dispatchRowDataUpdateStartedEvent(rowDataTran.add);
         const rowNodeTransaction = {
             remove: [],
@@ -89,6 +83,9 @@ class ClientSideNodeManager {
             core_1._.sortRowNodesByOrder(this.rootNode.allLeafChildren, rowNodeOrder);
         }
         return rowNodeTransaction;
+    }
+    isRowCountReady() {
+        return this.rowCountReady;
     }
     dispatchRowDataUpdateStartedEvent(rowData) {
         const event = {
@@ -134,7 +131,8 @@ class ClientSideNodeManager {
             const { allLeafChildren } = this.rootNode;
             const len = allLeafChildren.length;
             let normalisedAddIndex = addIndex;
-            if (this.doingTreeData && addIndex > 0 && len > 0) {
+            const isTreeData = this.gridOptionsService.get('treeData');
+            if (isTreeData && addIndex > 0 && len > 0) {
                 for (let i = 0; i < len; i++) {
                     if (((_a = allLeafChildren[i]) === null || _a === void 0 ? void 0 : _a.rowIndex) == addIndex - 1) {
                         normalisedAddIndex = i + 1;
@@ -230,7 +228,8 @@ class ClientSideNodeManager {
         const node = new core_1.RowNode(this.beans);
         node.group = false;
         this.setMasterForRow(node, dataItem, level, true);
-        if (parent && !this.suppressParentsInRowNodes) {
+        const suppressParentsInRowNodes = this.gridOptionsService.get('suppressParentsInRowNodes');
+        if (parent && !suppressParentsInRowNodes) {
             node.parent = parent;
         }
         node.level = level;
@@ -243,19 +242,22 @@ class ClientSideNodeManager {
         return node;
     }
     setMasterForRow(rowNode, data, level, setExpanded) {
-        if (this.doingTreeData) {
+        const isTreeData = this.gridOptionsService.get('treeData');
+        if (isTreeData) {
             rowNode.setMaster(false);
             if (setExpanded) {
                 rowNode.expanded = false;
             }
         }
         else {
+            const masterDetail = this.gridOptionsService.get('masterDetail');
             // this is the default, for when doing grid data
-            if (this.doingMasterDetail) {
+            if (masterDetail) {
                 // if we are doing master detail, then the
                 // default is that everything can be a Master Row.
-                if (this.isRowMasterFunc) {
-                    rowNode.setMaster(this.isRowMasterFunc(data));
+                const isRowMasterFunc = this.gridOptionsService.get('isRowMaster');
+                if (isRowMasterFunc) {
+                    rowNode.setMaster(isRowMasterFunc(data));
                 }
                 else {
                     rowNode.setMaster(true);
@@ -274,7 +276,7 @@ class ClientSideNodeManager {
         }
     }
     isExpanded(level) {
-        const expandByDefault = this.gridOptionsService.getNum('groupDefaultExpanded');
+        const expandByDefault = this.gridOptionsService.get('groupDefaultExpanded');
         if (expandByDefault === -1) {
             return true;
         }

@@ -8,11 +8,11 @@ export type SparklineOptions = LineSparklineOptions | AreaSparklineOptions | Col
 
 export interface BaseSparklineOptions {
     /** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.
-     * Default: `'x'`
+     * @default 'x'
      */
     xKey?: string;
     /** The key to use to retrieve Y values from the data. This will only be used if the data array contains objects with key-value pairs.
-     * Default: `'y'`
+     * @default 'y'
      */
     yKey?: string;
     /** Configuration for the padding in pixels shown around the sparklines. */
@@ -40,7 +40,7 @@ export interface AreaSparklineOptions extends BaseSparklineOptions {
     /** The type of sparklines to create, in this case it would be `'area'`. */
     type?: 'area';
     /** The CSS colour value for the fill of the area.
-     * Default: `'rgba(124, 181, 236, 0.25)'`
+     * @default 'rgba(124, 181, 236, 0.25)'
      */
     fill?: string;
     /** The configuration for the line. */
@@ -55,23 +55,23 @@ export interface ColumnSparklineOptions extends BaseSparklineOptions {
     /** The type of sparklines to create, in this case it would be `'column'`. */
     type?: 'column';
     /** The CSS colour value for the fill of the columns.
-     * Default: `'rgb(124, 181, 236)'`
+     * @default 'rgb(124, 181, 236)'
      */
     fill?: string;
     /** The CSS colour value for the outline of the columns.
-     * Default: `'silver'`
+     * @default 'silver'
      */
     stroke?: string;
     /** The thickness in pixels for the stroke of the columns.
-     * Default: `0`
+     * @default 0
      */
     strokeWidth?: number;
     /** The size of the gap between the columns as a proportion, between 0 and 1. This value is a fraction of the “step”, which is the interval between the start of a band and the start of the next band.
-     * Default: `0.1`
+     * @default 0.1
      */
     paddingInner?: number;
     /** The padding on the outside i.e. left and right of the first and last columns, to leave some room for the axis. In association with `paddingInner`, this value can be between 0 and 1.
-     * Default: `0.2`
+     * @default 0.2
      */
     paddingOuter?: number;
     /** User override for the automatically determined domain (based on data min and max values). Only applied to `number` axes.
@@ -88,7 +88,7 @@ export interface BarSparklineOptions extends BaseSparklineOptions {
     /** The type of sparklines to create, in this case it would be `'bar'`. */
     type?: 'bar';
     /** The CSS colour value for the fill of the bars.
-     * Default: `'rgb(124, 181, 236)'`
+     * @default 'rgb(124, 181, 236)'
      */
     fill?: string;
     /** The CSS colour value for the outline of the bars.
@@ -96,15 +96,15 @@ export interface BarSparklineOptions extends BaseSparklineOptions {
      */
     stroke?: string;
     /** The thickness in pixels for the stroke of the bars.
-     * Default: `0`
+     * @default 0
      */
     strokeWidth?: number;
     /** The size of the gap between the bars as a proportion, between 0 and 1. This value is a fraction of the “step”, which is the interval between the start of a band and the start of the next band.
-     * Default: `0.1`
+     * @default 0.1
      */
     paddingInner?: number;
     /** The padding on the outside i.e. left and right of the first and last bars, to leave some room for the axis. In association with `paddingInner`, this value can be between 0 and 1.
-     * Default: `0.2`
+     * @default 0.2
      */
     paddingOuter?: number;
     /** User override for the automatically determined domain (based on data min and max values). Only applied to `number` axes.
@@ -120,17 +120,17 @@ export interface BarSparklineOptions extends BaseSparklineOptions {
 export interface SparklineLabelOptions {
     /**
      * Set to true to enable labels.
-     * Default: `false`
+     * @default false
      */
     enabled?: boolean;
     /**
      * Set size of the font.
-     * Default: `8`
+     * @default 8
      */
     fontSize?: number;
     /**
      * Specify the font for the label text.
-     * Default: `Verdana, sans-serif`
+     * @default Verdana, sans-serif
      */
     fontFamily?: string;
     /** Specify the font style for the label text. */
@@ -139,16 +139,17 @@ export interface SparklineLabelOptions {
     fontWeight?: 'normal' | 'bold' | 'bolder' | 'lighter' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
     /**
      * Set the color of the label text. The color can be specified by a color name, a HEX or an RGB value.
-     * Default: `rgba(70, 70, 70, 1)`
+     * @default rgba(70, 70, 70, 1)
      */
     color?: string;
     /**
      * A callback function to return the text to be displayed as the label, based on the value represented by the column or bar.
      * By default the values are simply stringified. */
     formatter?: (params: LabelFormatterParams) => string;
-    /** Where to render labels relative to the segments.
-    * Default: `insideEnd`
-    * */
+    /**
+     * Where to render labels relative to the segments.
+     * @default insideEnd
+     */
     placement?: BarColumnLabelPlacement;
 }
 
@@ -166,34 +167,34 @@ export enum BarColumnLabelPlacement {
 
 export interface PaddingOptions {
     /** The number of pixels of padding at the top of the sparkline area.
-     * Default: `3`
+     * @default 3
      */
     top?: number;
     /** The number of pixels of padding at the right of the sparkline area.
-     * Default: `3`
+     * @default 3
      */
     right?: number;
     /** The number of pixels of padding at the bottom of the sparkline area.
-     * Default: `3`
+     * @default 3
      */
     bottom?: number;
     /** The number of pixels of padding at the left of the sparkline area.
-     * Default: `3`
+     * @default 3
      */
     left?: number;
 }
 
 export interface SparklineAxisOptions {
     /** The type of axis used to plot the data.
-     * Default: `'category'`
+     * @default 'category'
      */
     type?: AxisType;
     /** The CSS colour value for the outline of the axis line.
-     * Default: `'rgb(204, 214, 235)'`
+     * @default 'rgb(204, 214, 235)'
      */
     stroke?: string;
     /** The thickness in pixels for the stroke of the axis line.
-     * Default: `1`
+     * @default 1
      */
     strokeWidth?: number;
 }
@@ -205,12 +206,14 @@ export interface SparklineTooltipOptions {
     enabled?: boolean;
     /** The element to place the tooltip into. This can be used to confine the tooltip to a specific area which may be outside of the sparkline grid cell. */
     container?: HTMLElement;
-    /** The horizontal distance in pixels between the cursor and the top left corner of the tooltip.
-     * Default: `10`
+    /**
+     * The horizontal distance in pixels between the cursor and the top left corner of the tooltip.
+     * @default 10
      */
     xOffset?: number;
-    /** The vertical distance in pixels between the cursor and the top left corner of the tooltip.
-     * Default: `0`
+    /**
+     * The vertical distance in pixels between the cursor and the top left corner of the tooltip.
+     * @default 0
      */
     yOffset?: number;
     /** A callback function used to create the content for the tooltips. This function should return an object or a HTML string used to render the tooltip. */
@@ -245,30 +248,34 @@ export interface TooltipRendererParams {
 
 export interface SparklineLineOptions {
     /** The CSS colour value for the line.
-     *  Default: `'rgb(124, 181, 236)'`
+     *  @default 'rgb(124, 181, 236)'
      */
     stroke?: string;
     /** The thickness in pixels for the stroke of the line.
-     * Default: `1`
+     * @default 1
      */
     strokeWidth?: number;
 }
 
 export interface HighlightStyleOptions {
-    /** The width in pixels of the markers when hovered over. This is only for the Line and Area sparklines as Column and Bar sparklines do not have markers.
-     * Default: `6`
+    /**
+     * The width in pixels of the markers when hovered over. This is only for the Line and Area sparklines as Column and Bar sparklines do not have markers.
+     * @default 6
      */
     size?: number;
-    /** The fill colour of the markers, columns or bars when hovered over. Use `undefined` for no highlight fill.
-     * Default: `'yellow'`
+    /**
+     * The fill colour of the markers, columns or bars when hovered over. Use `undefined` for no highlight fill.
+     * @default 'yellow'
      */
     fill?: string;
-    /** The CSS colour value for the outline of the markers, columns or bars when hovered over. Use `undefined` for no highlight stroke.
-     * Default: `'silver'`
+    /**
+     * The CSS colour value for the outline of the markers, columns or bars when hovered over. Use `undefined` for no highlight stroke.
+     * @default 'silver'
      */
     stroke?: string;
-    /** The thickness in pixels for the stroke of the markers, columns or bars when hovered over.
-     * Default: `1`
+    /**
+     * The thickness in pixels for the stroke of the markers, columns or bars when hovered over.
+     * @default 1
      */
     strokeWidth?: number;
 }
@@ -277,27 +284,31 @@ export interface SparklineCrosshairsOptions {
     yLine?: CrosshairLineOptions;
 }
 export interface CrosshairLineOptions {
-    /** Set to true to show crosshair line.
-     * Default: false
+    /**
+     * Set to true to show crosshair line.
+     * @default false
      */
     enabled?: boolean;
-    /** The CSS colour value for the crosshair line.
-     * Default: `rgba(0,0,0, 0.54)`
+    /**
+     * The CSS colour value for the crosshair line.
+     * @default rgba(0,0,0, 0.54)
      */
     stroke?: string;
-    /** The thickness in pixels for the crosshair line.
-     * Default: 1
+    /**
+     * The thickness in pixels for the crosshair line.
+     * @default 1
      */
     strokeWidth?: number;
     /**
      * Defines how the crosshair stroke is rendered. This can be one of the lineDash style options.
      * The default is `solid`, this renders a solid stroke with no gaps.
+     * @default 'solid'
      */
     lineDash?: 'dash' | 'dashDot' | 'dashDotDot' | 'dot' | 'longDash' | 'longDashDot' | 'longDashDotDot' | 'shortDash' | 'shortDashDot' | 'shortDashDotDot' | 'shortDot' | 'solid';
     /**
      * The shape used to draw the end points of the crosshair line.
      * The options include `butt` (the ends of the line are squared off at the endpoints), `round` (the ends of the line are rounded) and `square` (the ends of the line are squared off by adding a box with width equal to the line's strokeWidth and height equal to half the line's strokeWidth).
-     * Default: `butt`
+     * @default butt
      */
     lineCap?: 'round' | 'square' | 'butt';
 }
@@ -381,27 +392,27 @@ export interface BarFormat {
 
 export interface SparklineMarkerOptions {
     /** By default this is set to `true` whilst marker size is set to `0`, which means the markers are present but not visible.
-     * Default: `true`
+     * @default true
      */
     enabled?: boolean;
     /** The shape of the markers.
-     * Default: `'circle'`
+     * @default 'circle'
      */
     shape?: string;
     /** The width in pixels of markers. By default this is `0`, increase the size to make markers visible.
-     * Default: `0`
+     * @default 0
      */
     size?: number;
     /** The CSS colour value for the fill of the markers.
-     * Default: `'rgb(124, 181, 236)'`
+     * @default 'rgb(124, 181, 236)'
      */
     fill?: string;
     /** The CSS colour value for the outline of the markers.
-     * Default: `'rgb(124, 181, 236)'`
+     * @default 'rgb(124, 181, 236)'
      */
     stroke?: string;
     /** The thickness in pixels for the stroke of the markers.
-     * Default: `1`
+     * @default 1
      */
     strokeWidth?: number;
     /** A callback function to return format styles for individual markers. */

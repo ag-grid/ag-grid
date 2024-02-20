@@ -70,22 +70,19 @@ export class Sparkline {
         this.rootGroup = root;
         const element = document.createElement('div');
         element.setAttribute('class', 'ag-sparkline-wrapper');
-        const scene = new _Scene.Scene({ document });
+        // initialise scene
+        const scene = new _Scene.Scene({ window, document });
         this.scene = scene;
         this.canvasElement = scene.canvas.element;
+        // set scene properties
         scene.root = root;
         scene.container = element;
-        scene.resize(this.width, this.height);
-        this.seriesRect.width = this.width;
-        this.seriesRect.height = this.height;
+        this.resizeAndSetDimensions(this.width, this.height);
         // one style element for tooltip styles per document
-        if (Sparkline.tooltipDocuments.indexOf(document) === -1) {
-            const styleElement = document.createElement('style');
-            styleElement.innerHTML = defaultTooltipCss;
-            document.head.insertBefore(styleElement, document.head.querySelector('style'));
-            Sparkline.tooltipDocuments.push(document);
+        if (!Sparkline.tooltipDocuments.includes(document)) {
+            this.initialiseTooltipStyles();
         }
-        this.setupDomEventListeners(this.scene.canvas.element);
+        this.setupDomEventListeners(this.canvasElement);
     }
     set context(value) {
         if (this._context !== value) {
@@ -121,6 +118,17 @@ export class Sparkline {
     }
     get data() {
         return this._data;
+    }
+    resizeAndSetDimensions(width, height) {
+        this.scene.resize(width, height);
+        this.seriesRect.width = width;
+        this.seriesRect.height = height;
+    }
+    initialiseTooltipStyles() {
+        const styleElement = document.createElement('style');
+        styleElement.innerHTML = defaultTooltipCss;
+        document.head.insertBefore(styleElement, document.head.querySelector('style'));
+        Sparkline.tooltipDocuments.push(document);
     }
     set width(value) {
         if (this._width !== value) {

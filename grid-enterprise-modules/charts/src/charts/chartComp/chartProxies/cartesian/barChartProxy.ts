@@ -4,6 +4,7 @@ import { ChartProxyParams, UpdateParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { deepMerge } from "../../utils/object";
 import { hexToRGBA } from "../../utils/color";
+import { isHorizontal, isStacked } from "../../utils/seriesTypeMapper";
 
 export class BarChartProxy extends CartesianChartProxy {
 
@@ -12,15 +13,14 @@ export class BarChartProxy extends CartesianChartProxy {
     }
 
     public getAxes(params: UpdateParams): AgCartesianAxisOptions[] {
-        const isBar = this.standaloneChartType === 'bar';
         const axes: AgCartesianAxisOptions[] = [
             {
                 type: this.getXAxisType(params),
-                position: isBar ? 'left' : 'bottom',
+                position: isHorizontal(this.chartType) ? 'left' : 'bottom',
             },
             {
                 type: 'number',
-                position: isBar ? 'bottom' : 'left',
+                position: isHorizontal(this.chartType) ? 'bottom' : 'left',
             },
         ];
         // Add a default label formatter to show '%' for normalized charts if none is provided
@@ -33,17 +33,15 @@ export class BarChartProxy extends CartesianChartProxy {
     }
 
     public getSeries(params: UpdateParams): AgBarSeriesOptions[] {
-        const groupedCharts = ['groupedColumn', 'groupedBar'];
-        const isGrouped = !this.crossFiltering && _.includes(groupedCharts, this.chartType);
-
+        const [category] = params.categories;
         const series: AgBarSeriesOptions[] = params.fields.map(f => (
             {
                 type: this.standaloneChartType,
-                grouped: isGrouped,
-                stacked: ['stackedColumn', 'normalizedColumn', 'stackedBar', 'normalizedBar'].includes(this.chartType),
+                direction: isHorizontal(this.chartType) ? 'horizontal' : 'vertical',
+                stacked: this.crossFiltering || isStacked(this.chartType),
                 normalizedTo: this.isNormalised() ? 100 : undefined,
-                xKey: params.category.id,
-                xName: params.category.name,
+                xKey: category.id,
+                xName: category.name,
                 yKey: f.colId,
                 yName: f.displayName
             } as AgBarSeriesOptions

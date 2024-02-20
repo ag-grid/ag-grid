@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -87,6 +87,7 @@ export declare class PopupService extends BeanStub {
     addPopup(params: AddPopupParams): AddPopupResult;
     private initialisePopupPosition;
     private createPopupWrapper;
+    private handleThemeChange;
     private addEventListenersToPopup;
     private addPopupToPopupList;
     private getPopupIndex;
@@ -96,7 +97,6 @@ export declare class PopupService extends BeanStub {
     hasAnchoredPopup(): boolean;
     private isEventFromCurrentPopup;
     isElementWithinCustomPopup(el: HTMLElement): boolean;
-    private isEventSameChainAsOriginalEvent;
     private getWrapper;
     setAlwaysOnTop(ePopup: HTMLElement, alwaysOnTop?: boolean): void;
     bringPopupToFront(ePopup: HTMLElement): void;

@@ -79,10 +79,12 @@ export class VueComponentFactory {
         return {vNode, destroy, el}
     }
 
-    public static searchForComponentInstance(parent: any,
-                                             component: any,
-                                             maxDepth = 10,
-                                             suppressError = false) {
+    public static searchForComponentInstance(
+        parent: any,
+        component: any,
+        maxDepth = 10,
+        suppressError = false
+    ) {
         let componentInstance: any = null;
 
         let currentParent = parent.$parent;
@@ -92,7 +94,12 @@ export class VueComponentFactory {
         currentParent.$options &&
         (++depth < maxDepth)) {
             const currentParentAsThis = currentParent as any;
-            componentInstance = currentParentAsThis.$options && currentParentAsThis.$options.components ? currentParentAsThis.$options.components![component as any] : null;
+            if (currentParentAsThis.$options && currentParentAsThis.$options.components && currentParentAsThis.$options.components![component as any]) {
+                componentInstance = currentParentAsThis.$options.components![component as any];
+            } else if (currentParentAsThis[component]) {
+                componentInstance = currentParentAsThis[component];
+            }
+            // componentInstance =  : null;
             currentParent = currentParent.$parent;
         }
 

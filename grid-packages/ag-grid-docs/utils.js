@@ -18,22 +18,22 @@ const getAllModules = () => {
             // this relies on the module name within the module class to be the same as the filename
             const fullPath = `${module}`;
             const fullJsPath = fullPath.replace("/ts/", "").replace("/src/", "/dist/cjs/es5/");
-            const filename = module.substr(module.lastIndexOf('/') + 1);
+            const filename = module.substring(module.lastIndexOf('/') + 1);
             const moduleName = filename.charAt(0).toUpperCase() + filename.slice(1).replace('.ts', '');
 
             let moduleDirName = fullPath.replace(`../../${moduleRoot}/`, '');
-            moduleDirName = moduleDirName.substr(0, moduleDirName.lastIndexOf("/src"));
+            moduleDirName = moduleDirName.substring(0, moduleDirName.lastIndexOf("/src"));
 
-            const sourceDir = fullPath.substr(0, fullPath.lastIndexOf("/"));
-            const rootDir = sourceDir.substr(0, sourceDir.lastIndexOf("/"));
+            const sourceDir = fullPath.substring(0, fullPath.lastIndexOf("/"));
+            const rootDir = sourceDir.substring(0, sourceDir.lastIndexOf("/"));
             const publishedName = require(`${rootDir}/package.json`).name;
 
             const enterprise = publishedName.includes("enterprise");
             const allModules = publishedName.includes("all-modules");
 
             const realCjsFile = glob.sync(`${rootDir}/dist/*.cjs.js`)[0];
-            const realCjsRelativePath = realCjsFile ? realCjsFile.substr(realCjsFile.lastIndexOf("dist"), realCjsFile.length) : null;
-            const derivedCjsRelativePath = `dist/${publishedName.substr(publishedName.lastIndexOf("/") + 1, publishedName.length)}.cjs.js`;
+            const realCjsRelativePath = realCjsFile ? realCjsFile.substring(realCjsFile.lastIndexOf("dist")) : null;
+            const derivedCjsRelativePath = `dist/${publishedName.substring(publishedName.lastIndexOf("/") + 1)}.cjs.js`;
 
             const cjsRelativePath = realCjsRelativePath ? realCjsRelativePath : derivedCjsRelativePath;
             const cjsFilename = `${publishedName}/${allModules ? enterprise ? "dist/ag-grid-enterprise.cjs.js" : "dist/ag-grid-community.cjs.js" : cjsRelativePath}`;
@@ -86,7 +86,7 @@ const processStdio = func => async (data) => {
     let output = data.toString().trim();
 
     // trim off requests to reset the screen/scrolling position
-    if(data[0] === 27 && data[1] === 99) {
+    if (data[0] === 27 && data[1] === 99) {
         output = output.split('').splice(2).join('');
     }
 

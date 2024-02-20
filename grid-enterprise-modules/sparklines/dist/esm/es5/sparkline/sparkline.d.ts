@@ -73,6 +73,8 @@ export declare abstract class Sparkline {
     readonly axis: SparklineAxis;
     readonly highlightStyle: HighlightStyleOptions;
     protected constructor();
+    private resizeAndSetDimensions;
+    private initialiseTooltipStyles;
     private _width;
     set width(value: number);
     get width(): number;

@@ -60,10 +60,13 @@ var TransactionManager = /** @class */ (function (_super) {
         var atLeastOneTransactionApplied = false;
         this.asyncTransactions.forEach(function (txWrapper) {
             var result;
-            _this.serverSideRowModel.executeOnStore(txWrapper.transaction.route, function (cache) {
+            var hasStarted = _this.serverSideRowModel.executeOnStore(txWrapper.transaction.route, function (cache) {
                 result = cache.applyTransaction(txWrapper.transaction);
             });
-            if (result == undefined) {
+            if (!hasStarted) {
+                result = { status: core_1.ServerSideTransactionResultStatus.StoreNotStarted };
+            }
+            else if (result == undefined) {
                 result = { status: core_1.ServerSideTransactionResultStatus.StoreNotFound };
             }
             resultsForEvent.push(result);
@@ -109,10 +112,13 @@ var TransactionManager = /** @class */ (function (_super) {
     };
     TransactionManager.prototype.applyTransaction = function (transaction) {
         var res;
-        this.serverSideRowModel.executeOnStore(transaction.route, function (store) {
+        var hasStarted = this.serverSideRowModel.executeOnStore(transaction.route, function (store) {
             res = store.applyTransaction(transaction);
         });
-        if (res) {
+        if (!hasStarted) {
+            return { status: core_1.ServerSideTransactionResultStatus.StoreNotStarted };
+        }
+        else if (res) {
             this.valueCache.onDataChanged();
             if (res.remove) {
                 var removedRowIds = res.remove.map(function (row) { return row.id; });
@@ -126,25 +132,25 @@ var TransactionManager = /** @class */ (function (_super) {
         }
     };
     __decorate([
-        core_1.Autowired('rowNodeBlockLoader')
+        (0, core_1.Autowired)('rowNodeBlockLoader')
     ], TransactionManager.prototype, "rowNodeBlockLoader", void 0);
     __decorate([
-        core_1.Autowired('valueCache')
+        (0, core_1.Autowired)('valueCache')
     ], TransactionManager.prototype, "valueCache", void 0);
     __decorate([
-        core_1.Autowired('rowModel')
+        (0, core_1.Autowired)('rowModel')
     ], TransactionManager.prototype, "serverSideRowModel", void 0);
     __decorate([
-        core_1.Autowired('rowRenderer')
+        (0, core_1.Autowired)('rowRenderer')
     ], TransactionManager.prototype, "rowRenderer", void 0);
     __decorate([
-        core_1.Autowired('selectionService')
+        (0, core_1.Autowired)('selectionService')
     ], TransactionManager.prototype, "selectionService", void 0);
     __decorate([
         core_1.PostConstruct
     ], TransactionManager.prototype, "postConstruct", null);
     TransactionManager = __decorate([
-        core_1.Bean('ssrmTransactionManager')
+        (0, core_1.Bean)('ssrmTransactionManager')
     ], TransactionManager);
     return TransactionManager;
 }(core_1.BeanStub));

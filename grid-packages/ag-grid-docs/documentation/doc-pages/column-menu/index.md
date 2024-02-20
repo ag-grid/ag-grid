@@ -3,36 +3,94 @@ title: "Column Menu"
 enterprise: true
 ---
 
-The column menu appears when you click on the menu icon in the column header. For AG Grid Community, only the filter is shown. For AG Grid Enterprise, a tabbed component containing a 1) Menu, 2) Filter and 3) Column Management panel is shown.
+The column menu is launched from the grid header, and displays a list of menu items, along with the ability to select columns and display filters.
 
-## Showing the Column Menu
+<note>
+|AG Grid Community does not have a menu, but can launch [Column Filters](../filtering) if enabled (see [Launching Filters](../filter-api/#launching-filters) for configuration details).
+</note>
 
-The menu will be displayed by default and will be made up of three panels. If you want to change the order or what panels are shown, or hide them, you can specify the property `menuTabs` in the `colDef`.
+The following example shows the new-format column menu:
+- The **Athlete** column does not have filtering enabled, and only shows the main menu.
+- The **Age** column has filtering enabled, and shows an additional filter icon. Open and apply a filter to see the behaviour.
+- The **Country** column has filtering enabled with the floating filter. Open and apply a filter to see the behaviour.
+- Right-clicking on the column headers will also display the column menu.
+- Right-clicking in the empty space to the right of the column headers will display the column menu with options to choose/reset the columns.
+
+<grid-example title='Column Menu' name='column-menu' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel"] }'></grid-example>
+
+The new-format column menu is enabled by setting `columnMenu = 'new'`.
+
+## Customising the Column Menu
+
+How the column menu is launched from the header can be configured via the following column definition properties.
+
+<api-documentation source='column-properties/properties.json' section='header' names='["suppressHeaderMenuButton", "suppressHeaderFilterButton", "suppressHeaderContextMenu"]'></api-documentation>
+
+The column menu button can be hidden until moused over by the grid option `suppressMenuHide`.
+
+<api-documentation source='grid-options/properties.json' section='accessories' names='["suppressMenuHide"]'></api-documentation>
+
+The following example demonstrates different ways of customising the column menu:
+- The **Athlete** column has a filter and the menu button suppressed, but still available via right-click.
+- The **Age** column has a floating filter and the menu suppressed, but still available via right-click.
+- The **Country** column has a filter and the header filter button suppressed.
+- The **Year** column has a floating filter and the header filter button suppressed.
+- The **Sport** column has no filter and the menu suppressed on right-click.
+- The **Gold** column has no filter and the menu button suppressed, but still available via right-click
+- The **Silver** column has a filter (with the header filter button suppressed), and the menu button suppressed but still available via right-click.
+- The **Bronze** column has a floating filter and the menu button suppressed, but still available via right-click.
+- The **Total** column has the menu button, header filter button and right-click menu suppressed.
+
+<grid-example title='Customising the Column Menu' name='customising-column-menu' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel"] }'></grid-example>
+
+## Legacy Tabbed Column Menu
+
+The menu can also be displayed in a tabbed format with three panels. This is currently the default behaviour, but will be switched in the next major release. If you want to change the order or what panels are shown, or hide them, you can specify the property `menuTabs` in the `colDef`.
 
 The property `menuTabs` is an array of strings. The valid values are: `'filterMenuTab'`, `'generalMenuTab'` and `'columnsMenuTab'`.
 
 - `generalMenuTab`: Include to show the main panel.
 - `filterMenuTab`: Include to show the filter panel.
-- `columnsMenuTab`: Include to show the column selection panel.
-
-To not show the menu at all, set this property to an empty array`[]`. In addition, you can set the attribute `suppressMenu=true` to the column definition to not show the menu for a particular column.
+- `columnsMenuTab`: Include to show the column chooser panel.
 
 The order of the menu tabs shown in the menu will match the order you specify in this array.
 
 If you don't specify a `menuTabs` for a `colDef` the default is: `['generalMenuTab', 'filterMenuTab', 'columnsMenuTab']`
 
-## Customising the General Menu Tab
+The following example demonstrates the legacy tabbed menu:
+- The **Athlete** column shows the default tabs.
+- The **Age** column changes the order of the tabs to `['filterMenuTab', 'generalMenuTab', 'columnsMenuTab']`
+- The **Country** column changes the order of the tabs to `['filterMenuTab', 'columnsMenuTab']`. Note that the `'generalMenuTab'` is suppressed.
+- The **Year** column changes the tabs to `['generalMenuTab']`. Note that the `'filterMenuTab'` and `'columnsMenuTab'` are suppressed.
+- The **Sport** column hides the menu by suppressing all the menuTabs that can be shown: `[]`.
 
-The main menu panel, by default, will show a set of items. You can adjust which of these items get displayed, or you can start from scratch and provide your own items. To customise the menu, provide the `getMainMenuItems()` callback.
+<grid-example title='Column Menu' name='column-menu-legacy' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel"] }'></grid-example>
 
-The result of `getMainMenuItems()` should be a list with each item either a) a string or b) a `MenuItemDef` description. Use 'string' to pick from built in menu items (listed below) and use `MenuItemDef` descriptions for your own menu items.
+## Customising the Menu Items
 
-<api-documentation source='grid-options/properties.json' section='accessories' names='["getMainMenuItems"]'  ></api-documentation>
+The main menu list, by default, will show a set of items. You can adjust which of these items get displayed, or you can start from scratch and provide your own items. There are two ways to customise the menu items:
 
-### Built In Menu Items
+1. Set `colDef.mainMenuItems`. This can either be a list of menu items, or a callback which is passed the list of default menu items.
+2. Set the grid option `getMainMenuItems()`. This callback will be passed the list of default menu items as well as the column.
 
-The following is a list of all the default built in menu items with the rules about when they are shown.
+Note that `colDef.mainMenuItems` will take priority over `getMainMenuItems()`.
 
+The menu item list should be a list with each item either a) a string or b) a `MenuItemDef` description. Use 'string' to pick from built-in menu items (listed below) and use `MenuItemDef` descriptions for your own menu items.
+
+<api-documentation source='column-properties/properties.json' section='header' names='["mainMenuItems"]'></api-documentation>
+
+<api-documentation source='grid-options/properties.json' section='accessories' names='["getMainMenuItems"]'></api-documentation>
+
+### Built-In Menu Items
+
+The following is a list of all the default built-in menu items with the rules about when they are shown.
+
+- `sortAscending`: Sort the column in ascending order. Shown when `columnMenu = 'new'` and the column is not already sorted in ascending order.
+- `sortDescending`: Sort the column in descending order. Shown when `columnMenu = 'new'` and the column is not already sorted in descending order.
+- `sortUnSort`: Clear the sort on the column. Shown when `columnMenu = 'new'` and the column is already sorted.
+- `columnFilter`: Show the column filter. Shown when `columnMenu = 'new'`, a filter is enabled, and the header filter button and floating filter button are not displayed.
+- `columnChooser`: Show the column chooser. Shown when `columnMenu = 'new'`.
+- `pinSubMenu`: Sub-menu for pinning. Always shown.
 - `pinSubMenu`: Sub-menu for pinning. Always shown.
 - `valueAggSubMenu`: Sub-menu for value aggregation. Always shown.
 - `autoSizeThis`: Auto-size the current column. Always shown.
@@ -43,71 +101,61 @@ The following is a list of all the default built in menu items with the rules ab
 - `expandAll`: Expand all groups. Only shown if grouping by at least one column.
 - `contractAll`: Collapse all groups. Only shown if grouping by at least one column.
 
-Reading the list above it can be understood that the list `defaultItems` changes on different calls to the `getMainMenuItems()` callback, depending on, for example, what columns are current used for grouping.
+The `defaultItems` list will change on different calls, depending on, for example, which columns are currently used for grouping.
 
-If you do not provide a `getMainMenuItems()` callback, then the rules alone decides what gets shown. If you do provide a `getMainMenuItems()`, then the `defaultItems` will be filled using the rules above and you return from the callback whatever you want, using the `defaultItems` only if you want to.
+If you do not override the list of menu items, then the items displayed will be based on the rules above.
 
 ### Menu Item Separators
 
-You can add menu item separators as follows:
+Menu items can be grouped together by adding separators between groups. Separators are defined by the string value `'separator'`. For example, you could add menu item separators as follows:
 
 ```js
 menuItems.push('separator')
 ```
 
-## Repositioning the Popup
+### Custom Menu Item Components
 
-If not happy with the position of the popup, you can override its position using the `postProcessPopup(params)` callback. This gives you the popup HTML element so you can change its position should you wish to.
+In addition to the provided menu items, it is also possible to create custom menu item components.
 
-<api-documentation source='grid-options/properties.json' section='accessories' names='["postProcessPopup"]'  ></api-documentation>
+For more details, refer to the section: [Custom Menu Item Components](/component-menu-item/).
 
-## Hiding the Column Menu
+### Example: Customising the Menu Items
 
-Hide the column menu with the grid API `hidePopupMenu()`, which will hide either the [Context Menu](/context-menu/) or the column menu, whichever is showing.
+The following example demonstrates the `colDef.mainMenuItems` property:
 
-## Example Column Menu
+- The **Athlete** column shows the list of built-in items.
+- The **Age** column appends custom items to the list of built-in items.
+- The **Country** column provides custom items and adds one built-in default item.
+- The **Year** column trims down the default items by removing values.
 
-The example below shows the `getMainMenuItems()` callback in action. To demonstrate different scenarios, the callback returns something different based on the selected column as follows:
+<grid-example title='Customising the Menu Items' name='customising-menu-items' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel"] }'></grid-example>
 
-- Athlete column appends custom items to the list of built in items.
-- Athlete column contains a sub-menu.
-- Age column provides custom items and adds one built in default item.
-- Country column trims down the default items by removing values.
-- Date column changes the order of the tabs to `['filterMenuTab', 'generalMenuTab', 'columnsMenuTab']`
-- Sport column changes the order of the tabs to `['filterMenuTab', 'columnsMenuTab']`. Note that the `'generalMenuTab'` is suppressed.
-- Gold column changes the tabs to `['generalMenuTab']`. Note that the `'filterMenuTab'` and `'columnsMenuTab'` are suppressed.
-- Silver column hides the menu by suppressing all the menuTabs that can be shown: `[]`.
-- All other columns return the default list.
-- `postProcessPopup` is used on the Gold column to reposition the menu 25px lower.
+## Customising the Column Chooser
 
-<grid-example title='Column Menu' name='column-menu' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel"] }'></grid-example>
+The behaviour and appearance of the Columns Menu tab can be customised by supplying `ColumnChooserParams` to the column definition: `colDef.columnChooserParams`. Note that all of the properties are initially set to `false`.
 
-## Customising the Columns Menu Tab
+<interface-documentation interfaceName='ColumnChooserParams'></interface-documentation>
 
-The behaviour and appearance of the Columns Menu tab can be customised by supplying `ColumnsMenuParams` to the column definition: `colDef.columnsMenuParams`. Note that all of the properties are initially set to `false`.
+The following example demonstrates all of the above column chooser properties **except columnLayout** which will be covered later on. Note the following:
+- Launch the column chooser by selecing `Choose Columns` from any of the column menus.
+- The column chooser when launched from any column has been configured to ignore column moves in the grid by setting `suppressSyncLayoutWithGrid=true` on the default column definition.
+- The **Name** column chooser doesn't show the top filter section as `suppressColumnFilter`, `suppressColumnSelectAll` and `suppressColumnExpandAll` are all set to `true`.
+- The **Age** column chooser shows the group columns in a collapsed state as `contractColumnSelection` is set to `true`.
 
-<interface-documentation interfaceName='ColumnsMenuParams' ></interface-documentation>
+<grid-example title='Customising Column Chooser' name='customising-column-chooser' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel" ] }'></grid-example>
 
-The following example demonstrates all of the above columns menu tab properties **except columnLayout** which will be covered later on. Note the following:
+### Custom Column Layout
 
-- All columns menu tabs have been configured to ignore column moves in the grid by setting `suppressSyncLayoutWithGrid=true` on the default column definition.
-- The **Name** column doesn't show the top filter section as `suppressColumnFilter`, `suppressColumnSelectAll` and `suppressColumnExpandAll` are all set to `true`.
-- The **Age** column shows the group columns in a collapsed state as `contractColumnSelection` is set to `true`.
+By default the order of columns in the column chooser is derived from the `columnDefs` supplied in the grid options, and is kept in sync with the grid when columns are moved.
 
-<grid-example title='Customising Columns Menu Tab' name='customising-columns-menu-tab' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel" ] }'></grid-example>
-
-## Custom Column Layout
-
-By default the order of columns in the Columns Menu Tab is derived from the `columnDefs` supplied in the grid options, and is kept in sync with the grid when columns are moved.
-
-However, a custom column layout can be provided using the **columnLayout** property in the `colDef.columnsMenuParams`.
+However, a custom column layout can be provided using the **columnLayout** property in the `colDef.columnChooserParams`.
 
 <snippet>
 const gridOptions = {
     // original column definitions supplied to the grid
     columnDefs: [
         {
-            columnsMenuParams: {
+            columnChooserParams: {
                 columnLayout: [{
                     headerName: 'Group 1', // group doesn't appear in grid
                     children: [
@@ -124,20 +172,52 @@ const gridOptions = {
 </snippet>
 
 <note>
-When providing a custom columns layout by setting the **columnLayout** property, the `suppressSyncLayoutWithGrid` will automatically set to true. This means that reordering the columns in the grid will not reorder the columns in the list shown in columns menu tab.
+When providing a custom columns layout by setting the **columnLayout** property, the `suppressSyncLayoutWithGrid` property will automatically set to true. This means that reordering the columns in the grid will not reorder the columns in the list shown in columns menu tab.
 </note>
 
-The following example demonstrates providing custom column layouts in the column menu tab via the **columnLayout** property. Note the following:
+The following example demonstrates providing custom column layouts in the column chooser via the **columnLayout** property. Note the following:
 
-- Open the column menu for the `age` column and note it shows the actual column order shown in the grid.
-- Open the column menu for the `name` column and note it shows the custom column order as specified in its `columnLayout`.
-- Reorder columns in the grid - drag the `age` column and drop it on the left of the `name` column.
-- Open the column menu for the `age` column and note that the column layout now shows the `age` column before the `name` column.
-- Open the column menu for the `name` column and note that the column layout still shows the `name` column followed by the `age` column  (custom column layout is not synchronized with the grid column order).
+- Open the column chooser for the **Name** column and note it shows the custom column order as specified in its `columnLayout`.
+- Open the column chooser for the **Age** column and note it shows the actual column order shown in the grid.
+- Reorder columns in the grid - drag the **Age** column and drop it on the left of the **Name** column.
+- Open the column chooser for the **Age** column and note that the column layout now shows the **Age** column before the **Name** column.
+- Open the column chooser for the **Name** column and note that the column layout still shows the **Name** column followed by the **Age** column  (custom column layout is not synchronized with the grid column order).
 
 <grid-example title='Customising Columns Layout' name='customising-columns-layout' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel" ] }'></grid-example>
 
-## Popup Parent
+## Column Menu API / Events
+
+The `gridApi` has the following methods that can be used to interact with the column menu:
+
+<api-documentation source='grid-api/api.json' section='accessories' names='["showColumnChooser", "showColumnFilter", "showColumnMenu", "hidePopupMenu", "hideColumnChooser"]'></api-documentation>
+
+<br />
+
+The following column menu event is emitted by the grid:
+
+<api-documentation source='grid-events/events.json' section='accessories' names='["columnMenuVisibleChanged"]'></api-documentation>
+
+<br />
+
+The following example demonstrates the column menu API and events (by clicking the buttons outside the grid):
+
+<grid-example title='Column Menu API' name='column-menu-api' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel" ] }'></grid-example>
+
+## Menu Popup
+
+The column menu is displayed inside a popup, which can be further configured.
+
+### Repositioning the Popup
+
+If not happy with the position of the popup, you can override its position using the `postProcessPopup(params)` callback. This gives you the popup HTML element so you can change its position should you wish to.
+
+<api-documentation source='grid-options/properties.json' section='accessories' names='["postProcessPopup"]'  ></api-documentation>
+
+The following example demonstrates using `postProcessPopup()` to move the **Age** column menu down by 25 pixels.
+
+<grid-example title='Column Menu Popup' name='column-menu-popup' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel" ] }'></grid-example>
+
+### Popup Parent
 
 Under most scenarios, the menu will fit inside the grid. However if the grid is small and / or the menu is very large, then the menu will not fit inside the grid and it will be clipped. This will lead to a bad user experience.
 

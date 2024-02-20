@@ -1,4 +1,12 @@
-import { ColDef, Grid, GridOptions, IFilterPlaceholderFunctionParams, INumberFilterParams, ITextFilterParams } from '@ag-grid-community/core'
+import {
+  ColDef,
+  GridApi,
+  createGrid,
+  GridOptions,
+  IFilterPlaceholderFunctionParams,
+  INumberFilterParams,
+  ITextFilterParams,
+} from '@ag-grid-community/core';
 
 const columnDefs: ColDef<IOlympicData>[] = [
   {
@@ -33,10 +41,11 @@ const columnDefs: ColDef<IOlympicData>[] = [
   }
 ]
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     flex: 1,
-    sortable: true,
     filter: true,
   },
   columnDefs: columnDefs,
@@ -46,9 +55,9 @@ const gridOptions: GridOptions<IOlympicData> = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data) => gridOptions.api!.setRowData(data))
+    .then((data) => gridApi!.setGridOption('rowData', data))
 })

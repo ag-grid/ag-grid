@@ -1,10 +1,8 @@
 import {
-    Autowired,
     ColDef,
     ColGroupDef,
-    ColumnApi,
     Component,
-    GridApi,
+    FiltersToolPanelState,
     IFiltersToolPanel,
     IToolPanelComp,
     IToolPanelParams,
@@ -13,7 +11,7 @@ import {
 import { FiltersToolPanelHeaderPanel } from "./filtersToolPanelHeaderPanel";
 import { FiltersToolPanelListPanel } from "./filtersToolPanelListPanel";
 
-export interface ToolPanelFiltersCompParams extends IToolPanelParams {
+export interface ToolPanelFiltersCompParams<TData = any, TContext = any> extends IToolPanelParams<TData, TContext, FiltersToolPanelState> {
     /** To suppress Expand / Collapse All */
     suppressExpandAll: boolean;
     /** To suppress the Filter Search */
@@ -34,9 +32,6 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
 
     @RefSelector('filtersToolPanelListPanel') private filtersToolPanelListPanel: FiltersToolPanelListPanel;
 
-    @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-
     private initialised = false;
     private params: ToolPanelFiltersCompParams;
     private listenerDestroyFuncs: (() => void)[] = [];
@@ -54,17 +49,14 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
 
         this.initialised = true;
 
-        const defaultParams: Omit<ToolPanelFiltersCompParams, 'context'> = {
+        const defaultParams: Partial<ToolPanelFiltersCompParams> = this.gridOptionsService.addGridCommonParams({
             suppressExpandAll: false,
             suppressFilterSearch: false,
-            suppressSyncLayoutWithGrid: false,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-        };
+            suppressSyncLayoutWithGrid: false
+        });
         this.params = {
             ...defaultParams,
-            ...params,
-            context: this.gridOptionsService.context
+            ...params
         };
 
         this.filtersToolPanelHeaderPanel.init(this.params);
@@ -82,6 +74,7 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
             this.addManagedListener(this.filtersToolPanelHeaderPanel, 'expandAll', this.onExpandAll.bind(this))!,
             this.addManagedListener(this.filtersToolPanelHeaderPanel, 'collapseAll', this.onCollapseAll.bind(this))!,
             this.addManagedListener(this.filtersToolPanelHeaderPanel, 'searchChanged', this.onSearchChanged.bind(this))!,
+            this.addManagedListener(this.filtersToolPanelListPanel, 'filterExpanded', this.onFilterExpanded.bind(this))!,
             this.addManagedListener(this.filtersToolPanelListPanel, 'groupExpanded', this.onGroupExpanded.bind(this))!
         );
     }
@@ -110,8 +103,13 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
         this.filtersToolPanelListPanel.setFiltersLayout(colDefs);
     }
 
+    private onFilterExpanded(): void {
+        this.params.onStateUpdated();
+    }
+
     private onGroupExpanded(event: any): void {
         this.filtersToolPanelHeaderPanel.setExpandState(event.state);
+        this.params.onStateUpdated();
     }
 
     public expandFilterGroups(groupIds?: string[]): void {
@@ -134,8 +132,13 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
         this.filtersToolPanelListPanel.syncFilterLayout();
     }
 
-    public refresh(): void {
-        this.init(this.params);
+    public refresh(params: ToolPanelFiltersCompParams): boolean {
+        this.init(params);
+        return true;
+    }
+
+    public getState(): FiltersToolPanelState {
+        return this.filtersToolPanelListPanel.getExpandedFiltersAndGroups();
     }
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.

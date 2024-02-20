@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
   {
@@ -20,21 +20,21 @@ const columnDefs: ColDef[] = [
   { field: 'total', width: 100, pinned: 'right' },
 ]
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
-  defaultColDef: {
-    resizable: true,
-  },
+
   columnDefs: columnDefs,
   // debug: true,
   rowData: null,
 }
 
 function clearPinned() {
-  gridOptions.columnApi!.applyColumnState({ defaultState: { pinned: null } })
+  gridApi!.applyColumnState({ defaultState: { pinned: null } })
 }
 
 function resetPinned() {
-  gridOptions.columnApi!.applyColumnState({
+  gridApi!.applyColumnState({
     state: [
       { colId: 'rowNum', pinned: 'left' },
       { colId: 'athlete', pinned: 'left' },
@@ -46,7 +46,7 @@ function resetPinned() {
 }
 
 function pinCountry() {
-  gridOptions.columnApi!.applyColumnState({
+  gridApi!.applyColumnState({
     state: [{ colId: 'country', pinned: 'left' }],
     defaultState: { pinned: null },
   })
@@ -64,11 +64,11 @@ function jumpToCol() {
   }
 
   // it's actually a column the api needs, so look the column up
-  const allColumns = gridOptions.columnApi!.getColumns()
+  const allColumns = gridApi!.getColumns()
   if (allColumns) {
     const column = allColumns[index]
     if (column) {
-      gridOptions.api!.ensureColumnVisible(column)
+      gridApi!.ensureColumnVisible(column)
     }
   }
 }
@@ -77,16 +77,16 @@ function jumpToRow() {
   var value = (document.getElementById('row') as HTMLInputElement).value
   const index = Number(value)
   if (typeof index === 'number' && !isNaN(index)) {
-    gridOptions.api!.ensureIndexVisible(index)
+    gridApi!.ensureIndexVisible(index)
   }
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

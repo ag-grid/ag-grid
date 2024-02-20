@@ -70,7 +70,7 @@ var ChartColumnService = /** @class */ (function (_super) {
                     case 'excluded':
                         return;
                     default:
-                        console.warn("AG Grid: unexpected chartDataType value '" + chartDataType + "' supplied, instead use 'category', 'series' or 'excluded'");
+                        console.warn("AG Grid: unexpected chartDataType value '".concat(chartDataType, "' supplied, instead use 'category', 'series' or 'excluded'"));
                         break;
                 }
             }
@@ -118,16 +118,16 @@ var ChartColumnService = /** @class */ (function (_super) {
         return null;
     };
     __decorate([
-        core_1.Autowired('columnModel')
+        (0, core_1.Autowired)('columnModel')
     ], ChartColumnService.prototype, "columnModel", void 0);
     __decorate([
-        core_1.Autowired('valueService')
+        (0, core_1.Autowired)('valueService')
     ], ChartColumnService.prototype, "valueService", void 0);
     __decorate([
-        core_1.Autowired('rowRenderer')
+        (0, core_1.Autowired)('rowRenderer')
     ], ChartColumnService.prototype, "rowRenderer", void 0);
     ChartColumnService = __decorate([
-        core_1.Bean("chartColumnService")
+        (0, core_1.Bean)("chartColumnService")
     ], ChartColumnService);
     return ChartColumnService;
 }(core_1.BeanStub));

@@ -19,6 +19,7 @@ export declare class CellPositionFeature extends BeanStub {
     constructor(ctrl: CellCtrl, beans: Beans);
     private setupRowSpan;
     setComp(eGui: HTMLElement): void;
+    private onNewColumnsLoaded;
     private onDisplayColumnsChanged;
     private setupColSpan;
     onWidthChanged(): void;

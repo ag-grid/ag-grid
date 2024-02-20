@@ -30,13 +30,13 @@ let ChangeDetectionService = class ChangeDetectionService extends BeanStub {
         this.doChangeDetection(event.node, event.column);
     }
     doChangeDetection(rowNode, column) {
-        if (this.gridOptionsService.is('suppressChangeDetection')) {
+        if (this.gridOptionsService.get('suppressChangeDetection')) {
             return;
         }
         const nodesToRefresh = [rowNode];
         // step 1 of change detection is to update the aggregated values
         if (this.clientSideRowModel && !rowNode.isRowPinned()) {
-            const onlyChangedColumns = this.gridOptionsService.is('aggregateOnlyChangedColumns');
+            const onlyChangedColumns = this.gridOptionsService.get('aggregateOnlyChangedColumns');
             const changedPath = new ChangedPath(onlyChangedColumns, this.clientSideRowModel.getRootNode());
             changedPath.addParentNode(rowNode.parent, [column]);
             this.clientSideRowModel.doAggregate(changedPath);

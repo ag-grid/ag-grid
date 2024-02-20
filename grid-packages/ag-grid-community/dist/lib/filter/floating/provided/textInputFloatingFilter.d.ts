@@ -43,7 +43,7 @@ export interface ITextInputFloatingFilterParams extends IFloatingFilterParams<Te
      * - `false` to disable the browser autocomplete/autofill behavior by setting the `autocomplete` attribute to `off`.
      * - A **string** to be used as the [autocomplete](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete) attribute value.
      * Some browsers do not respect setting the HTML attribute `autocomplete="off"` and display the auto-fill prompts anyway.
-     * Default: `false`
+     * @default false
      */
     browserAutoComplete?: boolean | string;
 }
@@ -62,6 +62,7 @@ export declare abstract class TextInputFloatingFilter<M extends ModelUnion> exte
     private setupFloatingFilterInputService;
     private setTextInputParams;
     onParamsUpdated(params: ITextInputFloatingFilterParams): void;
+    refresh(params: ITextInputFloatingFilterParams): void;
     protected recreateFloatingFilterInputService(params: ITextInputFloatingFilterParams): void;
     private getAriaLabel;
     private syncUpWithParentFilter;

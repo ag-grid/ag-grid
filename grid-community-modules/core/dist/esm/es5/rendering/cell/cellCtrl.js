@@ -37,11 +37,12 @@ import { CellKeyboardListenerFeature } from "./cellKeyboardListenerFeature";
 import { KeyCode } from "../../constants/keyCode";
 import { CheckboxSelectionComponent } from "../checkboxSelectionComponent";
 import { DndSourceComp } from "../dndSourceComp";
-import { doOnce } from "../../utils/function";
+import { warnOnce } from "../../utils/function";
 import { RowDragComp } from "../row/rowDragComp";
 import { getValueUsingField } from "../../utils/object";
 import { getElementSize } from "../../utils/dom";
 import { setAriaColIndex } from "../../utils/aria";
+import { CssClassApplier } from "../../headerRendering/cells/cssClassApplier";
 var CSS_CELL = 'ag-cell';
 var CSS_AUTO_HEIGHT = 'ag-cell-auto-height';
 var CSS_NORMAL_HEIGHT = 'ag-cell-normal-height';
@@ -70,15 +71,13 @@ var CellCtrl = /** @class */ (function (_super) {
         _this.rowCtrl = rowCtrl;
         // unique id to this instance, including the column ID to help with debugging in React as it's used in 'key'
         _this.instanceId = column.getId() + '-' + instanceIdSequence++;
-        var colDef = _this.column.getColDef();
         _this.colIdSanitised = escapeString(_this.column.getId());
-        if (!_this.beans.gridOptionsService.is('suppressCellFocus')) {
+        if (!beans.gridOptionsService.get('suppressCellFocus')) {
             _this.tabIndex = -1;
         }
-        _this.isCellRenderer = colDef.cellRenderer != null || colDef.cellRendererSelector != null;
         _this.createCellPosition();
         _this.addFeatures();
-        _this.updateAndFormatValue(true);
+        _this.updateAndFormatValue(false);
         return _this;
     }
     CellCtrl.prototype.shouldRestoreFocus = function () {
@@ -94,16 +93,17 @@ var CellCtrl = /** @class */ (function (_super) {
         this.addDestroyFunc(function () { var _a; (_a = _this.cellMouseListenerFeature) === null || _a === void 0 ? void 0 : _a.destroy(); _this.cellMouseListenerFeature = null; });
         this.cellKeyboardListenerFeature = new CellKeyboardListenerFeature(this, this.beans, this.column, this.rowNode, this.rowCtrl);
         this.addDestroyFunc(function () { var _a; (_a = _this.cellKeyboardListenerFeature) === null || _a === void 0 ? void 0 : _a.destroy(); _this.cellKeyboardListenerFeature = null; });
-        var rangeSelectionEnabled = this.beans.rangeService && this.beans.gridOptionsService.isEnableRangeSelection();
+        if (this.column.isTooltipEnabled()) {
+            this.enableTooltipFeature();
+            this.addDestroyFunc(function () { _this.disableTooltipFeature(); });
+        }
+        var rangeSelectionEnabled = this.beans.rangeService && this.beans.gridOptionsService.get('enableRangeSelection');
         if (rangeSelectionEnabled) {
             this.cellRangeFeature = new CellRangeFeature(this.beans, this);
             this.addDestroyFunc(function () { var _a; (_a = _this.cellRangeFeature) === null || _a === void 0 ? void 0 : _a.destroy(); _this.cellRangeFeature = null; });
         }
-        if (this.column.isTooltipEnabled()) {
-            this.addTooltipFeature();
-        }
     };
-    CellCtrl.prototype.addTooltipFeature = function () {
+    CellCtrl.prototype.enableTooltipFeature = function () {
         var _this = this;
         var getTooltipValue = function () {
             var colDef = _this.column.getColDef();
@@ -113,11 +113,8 @@ var CellCtrl = /** @class */ (function (_super) {
             }
             var valueGetter = colDef.tooltipValueGetter;
             if (valueGetter) {
-                return valueGetter({
+                return valueGetter(_this.beans.gridOptionsService.addGridCommonParams({
                     location: 'cell',
-                    api: _this.beans.gridOptionsService.api,
-                    columnApi: _this.beans.gridOptionsService.columnApi,
-                    context: _this.beans.gridOptionsService.context,
                     colDef: _this.column.getColDef(),
                     column: _this.column,
                     rowIndex: _this.cellPosition.rowIndex,
@@ -125,7 +122,7 @@ var CellCtrl = /** @class */ (function (_super) {
                     data: _this.rowNode.data,
                     value: _this.value,
                     valueFormatted: _this.valueFormatted,
-                });
+                }));
             }
             return null;
         };
@@ -141,7 +138,13 @@ var CellCtrl = /** @class */ (function (_super) {
             getValueFormatted: function () { return _this.valueFormatted; }
         };
         this.tooltipFeature = new TooltipFeature(tooltipCtrl, this.beans);
-        this.addDestroyFunc(function () { var _a; (_a = _this.tooltipFeature) === null || _a === void 0 ? void 0 : _a.destroy(); _this.tooltipFeature = null; });
+    };
+    CellCtrl.prototype.disableTooltipFeature = function () {
+        if (!this.tooltipFeature) {
+            return;
+        }
+        this.tooltipFeature.destroy();
+        this.tooltipFeature = null;
     };
     CellCtrl.prototype.setComp = function (comp, eGui, eCellWrapper, printLayout, startEditing) {
         var _a, _b, _c, _d;
@@ -156,10 +159,9 @@ var CellCtrl = /** @class */ (function (_super) {
         this.onLastLeftPinnedChanged();
         this.onColumnHover();
         this.setupControlComps();
-        if (eCellWrapper) {
-            this.setupAutoHeight(eCellWrapper);
-        }
-        this.setAriaColIndex();
+        this.setupAutoHeight(eCellWrapper);
+        this.refreshFirstAndLastStyles();
+        this.refreshAriaColIndex();
         (_a = this.cellPositionFeature) === null || _a === void 0 ? void 0 : _a.setComp(eGui);
         (_b = this.cellCustomStyleFeature) === null || _b === void 0 ? void 0 : _b.setComp(comp);
         (_c = this.tooltipFeature) === null || _c === void 0 ? void 0 : _c.setComp(eGui);
@@ -180,7 +182,8 @@ var CellCtrl = /** @class */ (function (_super) {
     };
     CellCtrl.prototype.setupAutoHeight = function (eCellWrapper) {
         var _this = this;
-        if (!this.column.isAutoHeight()) {
+        this.isAutoHeight = this.column.isAutoHeight();
+        if (!this.isAutoHeight || !eCellWrapper) {
             return;
         }
         var eParentCell = eCellWrapper.parentElement;
@@ -209,7 +212,7 @@ var CellCtrl = /** @class */ (function (_super) {
                 // as a) may not be React and b) the cell could be empty anyway
                 var possiblyNoContentYet = autoHeight == 0;
                 if (notYetInDom || possiblyNoContentYet) {
-                    _this.beans.frameworkOverrides.setTimeout(function () { return measureHeight(timesCalled + 1); }, 0);
+                    window.setTimeout(function () { return measureHeight(timesCalled + 1); }, 0);
                     return;
                 }
             }
@@ -224,6 +227,10 @@ var CellCtrl = /** @class */ (function (_super) {
             destroyResizeObserver();
             _this.rowNode.setRowAutoHeight(undefined, _this.column);
         });
+    };
+    CellCtrl.prototype.getCellAriaRole = function () {
+        var _a;
+        return (_a = this.column.getColDef().cellAriaRole) !== null && _a !== void 0 ? _a : 'gridcell';
     };
     CellCtrl.prototype.getInstanceId = function () {
         return this.instanceId;
@@ -243,8 +250,9 @@ var CellCtrl = /** @class */ (function (_super) {
     CellCtrl.prototype.getTabIndex = function () {
         return this.tabIndex;
     };
-    CellCtrl.prototype.getIsCellRenderer = function () {
-        return this.isCellRenderer;
+    CellCtrl.prototype.isCellRenderer = function () {
+        var colDef = this.column.getColDef();
+        return colDef.cellRenderer != null || colDef.cellRendererSelector != null;
     };
     CellCtrl.prototype.getValueToDisplay = function () {
         return this.valueFormatted != null ? this.valueFormatted : this.value;
@@ -253,7 +261,7 @@ var CellCtrl = /** @class */ (function (_super) {
         if (forceNewCellRendererInstance === void 0) { forceNewCellRendererInstance = false; }
         var valueToDisplay = this.getValueToDisplay();
         var compDetails;
-        if (this.isCellRenderer) {
+        if (this.isCellRenderer()) {
             var params = this.createCellRendererParams();
             compDetails = this.beans.userComponentFactory.getCellRendererDetails(this.column.getColDef(), params);
         }
@@ -271,7 +279,7 @@ var CellCtrl = /** @class */ (function (_super) {
     };
     CellCtrl.prototype.isForceWrapper = function () {
         // text selection requires the value to be wrapped in another element
-        var forceWrapper = this.beans.gridOptionsService.is('enableCellTextSelection') || this.column.isAutoHeight();
+        var forceWrapper = this.beans.gridOptionsService.get('enableCellTextSelection') || this.column.isAutoHeight();
         return forceWrapper;
     };
     CellCtrl.prototype.isIncludeControl = function (value) {
@@ -305,11 +313,12 @@ var CellCtrl = /** @class */ (function (_super) {
         var editorParams = this.createCellEditorParams(key, cellStartedEdit);
         var colDef = this.column.getColDef();
         var compDetails = this.beans.userComponentFactory.getCellEditorDetails(colDef, editorParams);
+        this.editCompDetails = compDetails;
         // if cellEditorSelector was used, we give preference to popup and popupPosition from the selector
         var popup = (compDetails === null || compDetails === void 0 ? void 0 : compDetails.popupFromSelector) != null ? compDetails.popupFromSelector : !!colDef.cellEditorPopup;
         var position = (compDetails === null || compDetails === void 0 ? void 0 : compDetails.popupPositionFromSelector) != null ? compDetails.popupPositionFromSelector : colDef.cellEditorPopupPosition;
         this.setEditing(true);
-        this.cellComp.setEditDetails(compDetails, popup, position);
+        this.cellComp.setEditDetails(compDetails, popup, position, this.beans.gridOptionsService.get('reactiveCustomComponents'));
         var e = this.createEvent(event, Events.EVENT_CELL_EDITING_STARTED);
         this.beans.eventService.dispatchEvent(e);
     };
@@ -324,7 +333,7 @@ var CellCtrl = /** @class */ (function (_super) {
     CellCtrl.prototype.stopRowOrCellEdit = function (cancel) {
         if (cancel === void 0) { cancel = false; }
         if (this.beans.gridOptionsService.get('editType') === 'fullRow') {
-            this.rowCtrl.stopRowEditing(cancel);
+            this.rowCtrl.stopEditing(cancel);
         }
         else {
             this.stopEditing(cancel);
@@ -392,7 +401,8 @@ var CellCtrl = /** @class */ (function (_super) {
         }
         this.setEditing(false);
         this.cellComp.setEditDetails(); // passing nothing stops editing
-        this.updateAndFormatValue();
+        this.editCompDetails = undefined;
+        this.updateAndFormatValue(false);
         this.refreshCell({ forceRefresh: true, suppressFlash: true });
         this.dispatchEditingStoppedEvent(oldValue, newValue, !cancel && !!valueChanged);
         return valueChanged;
@@ -402,7 +412,7 @@ var CellCtrl = /** @class */ (function (_super) {
         this.beans.eventService.dispatchEvent(editingStoppedEvent);
     };
     CellCtrl.prototype.createCellEditorParams = function (key, cellStartedEdit) {
-        return {
+        return this.beans.gridOptionsService.addGridCommonParams({
             value: this.rowNode.getValueFromValueService(this.column),
             eventKey: key,
             column: this.column,
@@ -410,20 +420,17 @@ var CellCtrl = /** @class */ (function (_super) {
             rowIndex: this.getCellPosition().rowIndex,
             node: this.rowNode,
             data: this.rowNode.data,
-            api: this.beans.gridOptionsService.api,
             cellStartedEdit: cellStartedEdit,
-            columnApi: this.beans.gridOptionsService.columnApi,
-            context: this.beans.gridOptionsService.context,
             onKeyDown: this.onKeyDown.bind(this),
             stopEditing: this.stopEditingAndFocus.bind(this),
             eGridCell: this.getGui(),
             parseValue: this.parseValue.bind(this),
             formatValue: this.formatValue.bind(this)
-        };
+        });
     };
     CellCtrl.prototype.createCellRendererParams = function () {
         var _this = this;
-        var res = {
+        var res = this.beans.gridOptionsService.addGridCommonParams({
             value: this.value,
             valueFormatted: this.valueFormatted,
             getValue: function () { return _this.rowNode.getValueFromValueService(_this.column); },
@@ -435,14 +442,11 @@ var CellCtrl = /** @class */ (function (_super) {
             colDef: this.column.getColDef(),
             column: this.column,
             rowIndex: this.getCellPosition().rowIndex,
-            api: this.beans.gridOptionsService.api,
-            columnApi: this.beans.gridOptionsService.columnApi,
-            context: this.beans.gridOptionsService.context,
             refreshCell: this.refreshCell.bind(this),
             eGridCell: this.getGui(),
             eParentOfValue: this.cellComp.getParentOfValue(),
             registerRowDragger: function (rowDraggerElement, dragStartPixels, value, suppressVisibilityChange) { return _this.registerRowDragger(rowDraggerElement, dragStartPixels, suppressVisibilityChange); },
-        };
+        });
         return res;
     };
     CellCtrl.prototype.parseValue = function (newValue) {
@@ -474,14 +478,18 @@ var CellCtrl = /** @class */ (function (_super) {
         }
     };
     CellCtrl.prototype.onCellChanged = function (event) {
-        // because of async in React, the cellComp may not be set yet, if no cellComp then we are
-        // yet to initialise the cell, so no need to refresh.
-        if (!this.cellComp) {
-            return;
-        }
         var eventImpactsThisCell = event.column === this.column;
         if (eventImpactsThisCell) {
             this.refreshCell({});
+        }
+    };
+    CellCtrl.prototype.refreshOrDestroyCell = function (params) {
+        var _a;
+        if (this.refreshShouldDestroy()) {
+            (_a = this.rowCtrl) === null || _a === void 0 ? void 0 : _a.refreshCell(this);
+        }
+        else {
+            this.refreshCell(params);
         }
     };
     // + stop editing {forceRefresh: true, suppressFlash: true}
@@ -496,12 +504,6 @@ var CellCtrl = /** @class */ (function (_super) {
         if (this.suppressRefreshCell || this.editing) {
             return;
         }
-        // In React, due to async, it's possible a refresh was asked for before the CellComp
-        // has been set. If this happens, we skip the refresh, as the cell is going to be
-        // initialised anyway once the CellComp is set.
-        if (!this.cellComp) {
-            return;
-        }
         var colDef = this.column.getColDef();
         var newData = params != null && !!params.newData;
         var suppressFlash = (params != null && !!params.suppressFlash) || !!colDef.suppressCellFlash;
@@ -513,8 +515,15 @@ var CellCtrl = /** @class */ (function (_super) {
         // that cells are not updating.
         var noValueProvided = colDef.field == null && colDef.valueGetter == null && colDef.showRowGroup == null;
         var forceRefresh = (params && params.forceRefresh) || noValueProvided || newData;
-        var valuesDifferent = this.updateAndFormatValue();
+        var isCellCompReady = !!this.cellComp;
+        // Only worth comparing values if the cellComp is ready
+        var valuesDifferent = this.updateAndFormatValue(isCellCompReady);
         var dataNeedsUpdating = forceRefresh || valuesDifferent;
+        // In React, due to async, it's possible a refresh was asked for before the CellComp was created and calls setComp()
+        // So we do not run the cell comp refresh logic at this point in time.
+        if (!isCellCompReady) {
+            return;
+        }
         if (dataNeedsUpdating) {
             // if it's 'new data', then we don't refresh the cellRenderer, even if refresh method is available.
             // this is because if the whole data is new (ie we are showing stock price 'BBA' now and not 'SSD')
@@ -524,7 +533,7 @@ var CellCtrl = /** @class */ (function (_super) {
             // be to busy. see comment in FilterManager with regards processingFilterChange
             var processingFilterChange = this.beans.filterManager.isSuppressFlashingCellsBecauseFiltering();
             var flashCell = !suppressFlash && !processingFilterChange &&
-                (this.beans.gridOptionsService.is('enableCellChangeFlash') || colDef.enableCellChangeFlash);
+                (this.beans.gridOptionsService.get('enableCellChangeFlash') || colDef.enableCellChangeFlash);
             if (flashCell) {
                 this.flashCell();
             }
@@ -548,7 +557,7 @@ var CellCtrl = /** @class */ (function (_super) {
         }
     };
     CellCtrl.prototype.navigateAfterEdit = function (shiftKey) {
-        var enterNavigatesVerticallyAfterEdit = this.beans.gridOptionsService.is('enterNavigatesVerticallyAfterEdit');
+        var enterNavigatesVerticallyAfterEdit = this.beans.gridOptionsService.get('enterNavigatesVerticallyAfterEdit');
         if (enterNavigatesVerticallyAfterEdit) {
             var key = shiftKey ? KeyCode.UP : KeyCode.DOWN;
             this.beans.navigationService.navigateToNextCell(null, key, this.getCellPosition(), false);
@@ -556,45 +565,47 @@ var CellCtrl = /** @class */ (function (_super) {
     };
     // user can also call this via API
     CellCtrl.prototype.flashCell = function (delays) {
-        var flashDelay = delays && delays.flashDelay;
-        var fadeDelay = delays && delays.fadeDelay;
-        this.animateCell('data-changed', flashDelay, fadeDelay);
-    };
-    CellCtrl.prototype.animateCell = function (cssName, flashDelay, fadeDelay) {
-        var _this = this;
         var _a, _b;
+        var flashDuration = (_a = delays === null || delays === void 0 ? void 0 : delays.flashDuration) !== null && _a !== void 0 ? _a : delays === null || delays === void 0 ? void 0 : delays.flashDelay;
+        var fadeDuration = (_b = delays === null || delays === void 0 ? void 0 : delays.fadeDuration) !== null && _b !== void 0 ? _b : delays === null || delays === void 0 ? void 0 : delays.fadeDelay;
+        this.animateCell('data-changed', flashDuration, fadeDuration);
+    };
+    CellCtrl.prototype.animateCell = function (cssName, flashDuration, fadeDuration) {
+        var _this = this;
         if (!this.cellComp) {
             return;
         }
-        var fullName = "ag-cell-" + cssName;
-        var animationFullName = "ag-cell-" + cssName + "-animation";
+        var fullName = "ag-cell-".concat(cssName);
+        var animationFullName = "ag-cell-".concat(cssName, "-animation");
         var gridOptionsService = this.beans.gridOptionsService;
-        if (!flashDelay) {
-            flashDelay = (_a = gridOptionsService.getNum('cellFlashDelay')) !== null && _a !== void 0 ? _a : 500;
+        if (!flashDuration) {
+            flashDuration = gridOptionsService.get('cellFlashDuration');
         }
-        if (!exists(fadeDelay)) {
-            fadeDelay = (_b = gridOptionsService.getNum('cellFadeDelay')) !== null && _b !== void 0 ? _b : 1000;
+        if (!exists(fadeDuration)) {
+            fadeDuration = gridOptionsService.get('cellFadeDuration');
         }
         // we want to highlight the cells, without any animation
         this.cellComp.addOrRemoveCssClass(fullName, true);
         this.cellComp.addOrRemoveCssClass(animationFullName, false);
         // then once that is applied, we remove the highlight with animation
-        window.setTimeout(function () {
-            if (!_this.isAlive()) {
-                return;
-            }
-            _this.cellComp.addOrRemoveCssClass(fullName, false);
-            _this.cellComp.addOrRemoveCssClass(animationFullName, true);
-            _this.eGui.style.transition = "background-color " + fadeDelay + "ms";
+        this.beans.frameworkOverrides.wrapIncoming(function () {
             window.setTimeout(function () {
                 if (!_this.isAlive()) {
                     return;
                 }
-                // and then to leave things as we got them, we remove the animation
-                _this.cellComp.addOrRemoveCssClass(animationFullName, false);
-                _this.eGui.style.transition = '';
-            }, fadeDelay);
-        }, flashDelay);
+                _this.cellComp.addOrRemoveCssClass(fullName, false);
+                _this.cellComp.addOrRemoveCssClass(animationFullName, true);
+                _this.eGui.style.transition = "background-color ".concat(fadeDuration, "ms");
+                window.setTimeout(function () {
+                    if (!_this.isAlive()) {
+                        return;
+                    }
+                    // and then to leave things as we got them, we remove the animation
+                    _this.cellComp.addOrRemoveCssClass(animationFullName, false);
+                    _this.eGui.style.transition = '';
+                }, fadeDuration);
+            }, flashDuration);
+        });
     };
     CellCtrl.prototype.onFlashCells = function (event) {
         if (!this.cellComp) {
@@ -619,15 +630,15 @@ var CellCtrl = /** @class */ (function (_super) {
     CellCtrl.prototype.callValueFormatter = function (value) {
         return this.beans.valueFormatterService.formatValue(this.column, this.rowNode, value);
     };
-    CellCtrl.prototype.updateAndFormatValue = function (force) {
-        if (force === void 0) { force = false; }
+    CellCtrl.prototype.updateAndFormatValue = function (compareValues) {
         var oldValue = this.value;
         var oldValueFormatted = this.valueFormatted;
         this.value = this.rowNode.getValueFromValueService(this.column);
         this.valueFormatted = this.callValueFormatter(this.value);
-        var valuesDifferent = force ? true :
-            !this.valuesAreEqual(oldValue, this.value) || this.valueFormatted != oldValueFormatted;
-        return valuesDifferent;
+        if (compareValues) {
+            return !this.valuesAreEqual(oldValue, this.value) || this.valueFormatted != oldValueFormatted;
+        }
+        return true;
     };
     CellCtrl.prototype.valuesAreEqual = function (val1, val2) {
         // if the user provided an equals method, use that, otherwise do simple comparison
@@ -650,20 +661,17 @@ var CellCtrl = /** @class */ (function (_super) {
         this.addDestroyFunc(function () { return _this.beans.gridOptionsService.setDomData(element, CellCtrl.DOM_DATA_KEY_CELL_CTRL, null); });
     };
     CellCtrl.prototype.createEvent = function (domEvent, eventType) {
-        var event = {
+        var event = this.beans.gridOptionsService.addGridCommonParams({
             type: eventType,
             node: this.rowNode,
             data: this.rowNode.data,
             value: this.value,
             column: this.column,
             colDef: this.column.getColDef(),
-            context: this.beans.gridOptionsService.context,
-            api: this.beans.gridApi,
-            columnApi: this.beans.columnApi,
             rowPinned: this.rowNode.rowPinned,
             event: domEvent,
             rowIndex: this.rowNode.rowIndex
-        };
+        });
         return event;
     };
     CellCtrl.prototype.processCharacter = function (event) {
@@ -699,9 +707,14 @@ var CellCtrl = /** @class */ (function (_super) {
         if (!this.eGui) {
             return;
         }
-        this.setAriaColIndex();
+        this.refreshAriaColIndex();
+        this.refreshFirstAndLastStyles();
     };
-    CellCtrl.prototype.setAriaColIndex = function () {
+    CellCtrl.prototype.refreshFirstAndLastStyles = function () {
+        var _a = this, cellComp = _a.cellComp, column = _a.column, beans = _a.beans;
+        CssClassApplier.refreshFirstAndLastStyles(cellComp, column, beans.columnModel);
+    };
+    CellCtrl.prototype.refreshAriaColIndex = function () {
         var colIdx = this.beans.columnModel.getAriaColumnIndex(this.column);
         setAriaColIndex(this.getGui(), colIdx); // for react, we don't use JSX, as it slowed down column moving
     };
@@ -740,8 +753,12 @@ var CellCtrl = /** @class */ (function (_super) {
     };
     // called by rowRenderer when user navigates via tab key
     CellCtrl.prototype.startRowOrCellEdit = function (key, event) {
+        var _this = this;
         if (event === void 0) { event = null; }
+        // because of async in React, the cellComp may not be set yet, if no cellComp then we are
+        // yet to initialise the cell, so we re-schedule this operation for when celLComp is attached
         if (!this.cellComp) {
+            this.onCellCompAttachedFuncs.push(function () { _this.startRowOrCellEdit(key, event); });
             return;
         }
         if (this.beans.gridOptionsService.get('editType') === 'fullRow') {
@@ -814,7 +831,7 @@ var CellCtrl = /** @class */ (function (_super) {
         this.cellComp.addOrRemoveCssClass(CSS_CELL_LAST_LEFT_PINNED, lastLeftPinned);
     };
     CellCtrl.prototype.onCellFocused = function (event) {
-        if (this.beans.gridOptionsService.is('suppressCellFocus')) {
+        if (this.beans.gridOptionsService.get('suppressCellFocus')) {
             return;
         }
         var cellFocused = this.beans.focusService.isCellFocused(this.cellPosition);
@@ -839,6 +856,9 @@ var CellCtrl = /** @class */ (function (_super) {
         if (!cellFocused && !fullRowEdit && this.editing) {
             this.stopRowOrCellEdit();
         }
+        if (cellFocused) {
+            this.rowCtrl.announceDescription();
+        }
     };
     CellCtrl.prototype.createCellPosition = function () {
         this.cellPosition = {
@@ -861,19 +881,44 @@ var CellCtrl = /** @class */ (function (_super) {
         if (!this.cellComp) {
             return;
         }
-        if (!this.beans.gridOptionsService.is('columnHoverHighlight')) {
+        if (!this.beans.gridOptionsService.get('columnHoverHighlight')) {
             return;
         }
         var isHovered = this.beans.columnHoverService.isHovered(this.column);
         this.cellComp.addOrRemoveCssClass(CSS_COLUMN_HOVER, isHovered);
     };
     CellCtrl.prototype.onColDefChanged = function () {
+        var _a, _b;
         if (!this.cellComp) {
             return;
         }
+        var isAutoHeight = this.column.isAutoHeight();
+        if (isAutoHeight !== this.isAutoHeight) {
+            // auto height uses wrappers, so need to destroy
+            (_a = this.rowCtrl) === null || _a === void 0 ? void 0 : _a.refreshCell(this);
+        }
+        var isTooltipEnabled = this.column.isTooltipEnabled();
+        if (isTooltipEnabled) {
+            this.disableTooltipFeature();
+            this.enableTooltipFeature();
+            (_b = this.tooltipFeature) === null || _b === void 0 ? void 0 : _b.setComp(this.eGui);
+        }
+        else {
+            this.disableTooltipFeature();
+        }
         this.setWrapText();
         if (!this.editing) {
-            this.refreshCell({ forceRefresh: true, suppressFlash: true });
+            this.refreshOrDestroyCell({ forceRefresh: true, suppressFlash: true });
+        }
+        else {
+            var cellEditor = this.getCellEditor();
+            if (cellEditor === null || cellEditor === void 0 ? void 0 : cellEditor.refresh) {
+                var _c = this.editCompDetails.params, eventKey = _c.eventKey, cellStartedEdit = _c.cellStartedEdit;
+                var editorParams = this.createCellEditorParams(eventKey, cellStartedEdit);
+                var colDef = this.column.getColDef();
+                var compDetails = this.beans.userComponentFactory.getCellEditorDetails(colDef, editorParams);
+                cellEditor.refresh(compDetails.params);
+            }
         }
     };
     CellCtrl.prototype.setWrapText = function () {
@@ -881,12 +926,17 @@ var CellCtrl = /** @class */ (function (_super) {
         this.cellComp.addOrRemoveCssClass(CSS_CELL_WRAP_TEXT, value);
     };
     CellCtrl.prototype.dispatchCellContextMenuEvent = function (event) {
+        var _this = this;
         var colDef = this.column.getColDef();
         var cellContextMenuEvent = this.createEvent(event, Events.EVENT_CELL_CONTEXT_MENU);
         this.beans.eventService.dispatchEvent(cellContextMenuEvent);
         if (colDef.onCellContextMenu) {
             // to make the callback async, do in a timeout
-            window.setTimeout(function () { return colDef.onCellContextMenu(cellContextMenuEvent); }, 0);
+            window.setTimeout(function () {
+                _this.beans.frameworkOverrides.wrapOutgoing(function () {
+                    colDef.onCellContextMenu(cellContextMenuEvent);
+                });
+            }, 0);
         }
     };
     CellCtrl.prototype.getCellRenderer = function () {
@@ -926,17 +976,17 @@ var CellCtrl = /** @class */ (function (_super) {
     };
     CellCtrl.prototype.createRowDragComp = function (customElement, dragStartPixels, suppressVisibilityChange) {
         var _this = this;
-        var pagination = this.beans.gridOptionsService.is('pagination');
-        var rowDragManaged = this.beans.gridOptionsService.is('rowDragManaged');
+        var pagination = this.beans.gridOptionsService.get('pagination');
+        var rowDragManaged = this.beans.gridOptionsService.get('rowDragManaged');
         var clientSideRowModelActive = this.beans.gridOptionsService.isRowModelType('clientSide');
         if (rowDragManaged) {
             // row dragging only available in default row model
             if (!clientSideRowModelActive) {
-                doOnce(function () { return console.warn('AG Grid: managed row dragging is only allowed in the Client Side Row Model'); }, 'CellComp.addRowDragging');
+                warnOnce('managed row dragging is only allowed in the Client Side Row Model');
                 return;
             }
             if (pagination) {
-                doOnce(function () { return console.warn('AG Grid: managed row dragging is not possible when doing pagination'); }, 'CellComp.addRowDragging');
+                warnOnce('managed row dragging is not possible when doing pagination');
                 return;
             }
         }

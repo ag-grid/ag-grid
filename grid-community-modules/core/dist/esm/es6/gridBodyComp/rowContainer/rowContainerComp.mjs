@@ -16,19 +16,11 @@ function templateFactory() {
     const name = Component.elementGettingCreated.getAttribute('name');
     const cssClasses = RowContainerCtrl.getRowContainerCssClasses(name);
     let res;
-    const template1 = name === RowContainerName.CENTER;
-    const template2 = name === RowContainerName.TOP_CENTER
-        || name === RowContainerName.STICKY_TOP_CENTER
-        || name === RowContainerName.BOTTOM_CENTER;
-    if (template1) {
-        res = /* html */
-            `<div class="${cssClasses.wrapper}" ref="eWrapper" role="presentation">
-                <div class="${cssClasses.viewport}" ref="eViewport" role="presentation">
-                    <div class="${cssClasses.container}" ref="eContainer"></div>
-                </div>
-            </div>`;
-    }
-    else if (template2) {
+    const centerTemplate = name === RowContainerName.CENTER ||
+        name === RowContainerName.TOP_CENTER ||
+        name === RowContainerName.STICKY_TOP_CENTER ||
+        name === RowContainerName.BOTTOM_CENTER;
+    if (centerTemplate) {
         res = /* html */
             `<div class="${cssClasses.viewport}" ref="eViewport" role="presentation">
                 <div class="${cssClasses.container}" ref="eContainer"></div>
@@ -50,14 +42,14 @@ export class RowContainerComp extends Component {
     postConstruct() {
         const compProxy = {
             setViewportHeight: height => this.eViewport.style.height = height,
-            setRowCtrls: rowCtrls => this.setRowCtrls(rowCtrls),
+            setRowCtrls: ({ rowCtrls }) => this.setRowCtrls(rowCtrls),
             setDomOrder: domOrder => {
                 this.domOrder = domOrder;
             },
             setContainerWidth: width => this.eContainer.style.width = width
         };
         const ctrl = this.createManagedBean(new RowContainerCtrl(this.name));
-        ctrl.setComp(compProxy, this.eContainer, this.eViewport, this.eWrapper);
+        ctrl.setComp(compProxy, this.eContainer, this.eViewport);
     }
     preDestroy() {
         // destroys all row comps
@@ -91,7 +83,7 @@ export class RowContainerComp extends Component {
             this.eContainer.removeChild(oldRowComp.getGui());
             oldRowComp.destroy();
         });
-        setAriaRole(this.eContainer, rowCtrls.length ? "rowgroup" : "presentation");
+        setAriaRole(this.eContainer, "rowgroup");
     }
     appendRow(element) {
         if (this.domOrder) {
@@ -118,9 +110,6 @@ __decorate([
 __decorate([
     RefSelector('eContainer')
 ], RowContainerComp.prototype, "eContainer", void 0);
-__decorate([
-    RefSelector('eWrapper')
-], RowContainerComp.prototype, "eWrapper", void 0);
 __decorate([
     PostConstruct
 ], RowContainerComp.prototype, "postConstruct", null);

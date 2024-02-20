@@ -80,9 +80,13 @@ var PrimaryColsPanel = /** @class */ (function (_super) {
     };
     PrimaryColsPanel.prototype.onGroupExpanded = function (event) {
         this.primaryColsHeaderPanel.setExpandState(event.state);
+        this.params.onStateUpdated();
     };
     PrimaryColsPanel.prototype.onSelectionChange = function (event) {
         this.primaryColsHeaderPanel.setSelectionState(event.state);
+    };
+    PrimaryColsPanel.prototype.getExpandedGroups = function () {
+        return this.primaryColsListPanel.getExpandedGroups();
     };
     PrimaryColsPanel.TEMPLATE = "<div class=\"ag-column-select\">\n            <ag-primary-cols-header ref=\"primaryColsHeaderPanel\"></ag-primary-cols-header>\n            <ag-primary-cols-list ref=\"primaryColsListPanel\"></ag-primary-cols-list>\n        </div>";
     __decorate([

@@ -82,7 +82,7 @@ export var createXmlPart = function (body) {
         standalone: 'yes'
     });
     var xmlBody = XmlFactory.createXml(body);
-    return "" + header + xmlBody;
+    return "".concat(header).concat(xmlBody);
 };
 export var getExcelColumnName = function (colIdx) {
     var startCode = 65;

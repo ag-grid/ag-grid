@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
   { field: 'athlete', sortingOrder: ['asc', 'desc'] },
@@ -13,23 +13,23 @@ const columnDefs: ColDef[] = [
   { field: 'total' },
 ]
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     width: 170,
-    sortable: true,
   },
   columnDefs: columnDefs,
   rowData: null,
-  animateRows: true,
   sortingOrder: ['desc', 'asc', null],
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

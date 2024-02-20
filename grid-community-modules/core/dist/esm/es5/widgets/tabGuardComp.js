@@ -29,10 +29,14 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 import { Component } from "./component";
 import { isNodeOrElement, clearElement } from "../utils/dom";
@@ -56,6 +60,7 @@ var TabGuardComp = /** @class */ (function (_super) {
         this.addTabGuards(this.eTopGuard, this.eBottomGuard);
         this.tabGuardCtrl = this.createManagedBean(new TabGuardCtrl({
             comp: compProxy,
+            focusTrapActive: !!params.focusTrapActive,
             eTopGuard: this.eTopGuard,
             eBottomGuard: this.eBottomGuard,
             eFocusableElement: this.eFocusableElement,
@@ -64,7 +69,8 @@ var TabGuardComp = /** @class */ (function (_super) {
             focusInnerElement: params.focusInnerElement,
             handleKeyDown: params.handleKeyDown,
             onTabKeyDown: params.onTabKeyDown,
-            shouldStopEventPropagation: params.shouldStopEventPropagation
+            shouldStopEventPropagation: params.shouldStopEventPropagation,
+            forceFocusOutWhenTabGuardsAreEmpty: params.forceFocusOutWhenTabGuardsAreEmpty
         }));
     };
     TabGuardComp.prototype.createTabGuard = function (side) {
@@ -81,7 +87,7 @@ var TabGuardComp = /** @class */ (function (_super) {
     TabGuardComp.prototype.removeAllChildrenExceptTabGuards = function () {
         var tabGuards = [this.eTopGuard, this.eBottomGuard];
         clearElement(this.getFocusableElement());
-        this.addTabGuards.apply(this, __spreadArray([], __read(tabGuards)));
+        this.addTabGuards.apply(this, __spreadArray([], __read(tabGuards), false));
     };
     TabGuardComp.prototype.forceFocusOutOfContainer = function (up) {
         if (up === void 0) { up = false; }

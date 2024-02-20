@@ -97,17 +97,20 @@ class TextInputFloatingFilter extends simpleFloatingFilter_1.SimpleFloatingFilte
         this.applyActive = providedFilter_1.ProvidedFilter.isUseApplyButton(this.params.filterParams);
         if (!this.isReadOnly()) {
             const debounceMs = providedFilter_1.ProvidedFilter.getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
-            const toDebounce = function_1.debounce(this.syncUpWithParentFilter.bind(this), debounceMs);
+            const toDebounce = (0, function_1.debounce)(this.syncUpWithParentFilter.bind(this), debounceMs);
             this.floatingFilterInputService.setValueChangedListener(toDebounce);
         }
     }
     onParamsUpdated(params) {
-        super.onParamsUpdated(params);
+        this.refresh(params);
+    }
+    refresh(params) {
+        super.refresh(params);
         this.setTextInputParams(params);
     }
     recreateFloatingFilterInputService(params) {
         const value = this.floatingFilterInputService.getValue();
-        dom_1.clearElement(this.eFloatingFilterInputContainer);
+        (0, dom_1.clearElement)(this.eFloatingFilterInputContainer);
         this.destroyBean(this.floatingFilterInputService);
         this.setupFloatingFilterInputService(params);
         this.floatingFilterInputService.setValue(value, true);
@@ -139,10 +142,10 @@ class TextInputFloatingFilter extends simpleFloatingFilter_1.SimpleFloatingFilte
     }
 }
 __decorate([
-    context_1.Autowired('columnModel')
+    (0, context_1.Autowired)('columnModel')
 ], TextInputFloatingFilter.prototype, "columnModel", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eFloatingFilterInputContainer')
+    (0, componentAnnotations_1.RefSelector)('eFloatingFilterInputContainer')
 ], TextInputFloatingFilter.prototype, "eFloatingFilterInputContainer", void 0);
 __decorate([
     context_1.PostConstruct

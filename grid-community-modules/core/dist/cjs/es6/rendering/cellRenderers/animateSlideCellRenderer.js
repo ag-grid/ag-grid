@@ -13,12 +13,17 @@ const dom_1 = require("../../utils/dom");
 const generic_1 = require("../../utils/generic");
 class AnimateSlideCellRenderer extends component_1.Component {
     constructor() {
-        super(AnimateSlideCellRenderer.TEMPLATE);
+        super();
         this.refreshCount = 0;
+        const template = document.createElement('span');
+        const slide = document.createElement('span');
+        slide.setAttribute('class', 'ag-value-slide-current');
+        template.appendChild(slide);
+        this.setTemplateFromElement(template);
         this.eCurrent = this.queryForHtmlElement('.ag-value-slide-current');
     }
     init(params) {
-        this.refresh(params);
+        this.refresh(params, true);
     }
     addSlideAnimation() {
         this.refreshCount++;
@@ -30,29 +35,33 @@ class AnimateSlideCellRenderer extends component_1.Component {
         if (this.ePrevious) {
             this.getGui().removeChild(this.ePrevious);
         }
-        this.ePrevious = dom_1.loadTemplate('<span class="ag-value-slide-previous ag-value-slide-out"></span>');
-        this.ePrevious.innerHTML = this.eCurrent.innerHTML;
+        const prevElement = document.createElement('span');
+        prevElement.setAttribute('class', 'ag-value-slide-previous ag-value-slide-out');
+        this.ePrevious = prevElement;
+        this.ePrevious.textContent = this.eCurrent.textContent;
         this.getGui().insertBefore(this.ePrevious, this.eCurrent);
         // having timeout of 0 allows use to skip to the next css turn,
         // so we know the previous css classes have been applied. so the
         // complex set of setTimeout below creates the animation
-        window.setTimeout(() => {
-            if (refreshCountCopy !== this.refreshCount) {
-                return;
-            }
-            this.ePrevious.classList.add('ag-value-slide-out-end');
-        }, 50);
-        window.setTimeout(() => {
-            if (refreshCountCopy !== this.refreshCount) {
-                return;
-            }
-            this.getGui().removeChild(this.ePrevious);
-            this.ePrevious = null;
-        }, 3000);
+        this.getFrameworkOverrides().wrapIncoming(() => {
+            window.setTimeout(() => {
+                if (refreshCountCopy !== this.refreshCount) {
+                    return;
+                }
+                this.ePrevious.classList.add('ag-value-slide-out-end');
+            }, 50);
+            window.setTimeout(() => {
+                if (refreshCountCopy !== this.refreshCount) {
+                    return;
+                }
+                this.getGui().removeChild(this.ePrevious);
+                this.ePrevious = null;
+            }, 3000);
+        });
     }
-    refresh(params) {
+    refresh(params, isInitialRender = false) {
         let value = params.value;
-        if (generic_1.missing(value)) {
+        if ((0, generic_1.missing)(value)) {
             value = '';
         }
         if (value === this.lastValue) {
@@ -63,24 +72,23 @@ class AnimateSlideCellRenderer extends component_1.Component {
         if (this.filterManager.isSuppressFlashingCellsBecauseFiltering()) {
             return false;
         }
-        this.addSlideAnimation();
-        this.lastValue = value;
-        if (generic_1.exists(params.valueFormatted)) {
-            this.eCurrent.innerHTML = params.valueFormatted;
+        if (!isInitialRender) {
+            this.addSlideAnimation();
         }
-        else if (generic_1.exists(params.value)) {
-            this.eCurrent.innerHTML = value;
+        this.lastValue = value;
+        if ((0, generic_1.exists)(params.valueFormatted)) {
+            this.eCurrent.textContent = params.valueFormatted;
+        }
+        else if ((0, generic_1.exists)(params.value)) {
+            this.eCurrent.textContent = value;
         }
         else {
-            dom_1.clearElement(this.eCurrent);
+            (0, dom_1.clearElement)(this.eCurrent);
         }
         return true;
     }
 }
-AnimateSlideCellRenderer.TEMPLATE = `<span>
-            <span class="ag-value-slide-current"></span>
-        </span>`;
 __decorate([
-    context_1.Autowired('filterManager')
+    (0, context_1.Autowired)('filterManager')
 ], AnimateSlideCellRenderer.prototype, "filterManager", void 0);
 exports.AnimateSlideCellRenderer = AnimateSlideCellRenderer;

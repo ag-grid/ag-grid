@@ -1,4 +1,4 @@
-import { Grid, ColDef, ColumnApi, GridApi, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
 
 var countDownDirection = true
 
@@ -11,14 +11,14 @@ const columnDefs: ColDef[] = [
   { field: 'bronze', aggFunc: 'sum' },
 ]
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     flex: 1,
-    sortable: true,
     filter: true,
   },
   columnDefs: columnDefs,
-  animateRows: true,
   suppressAggFuncInHeader: true, // so we don't see sum() in gold, silver and bronze headers
   autoGroupColumnDef: {
     // to get 'athlete' showing in the leaf level in this column
@@ -32,16 +32,16 @@ const gridOptions: GridOptions<IOlympicData> = {
 // the code below executes an action every 2,000 milliseconds.
 // it's an interval, and each time it runs, it takes the next action
 // from the 'actions' list below
-function startInterval(api: GridApi, columnApi: ColumnApi) {
+function startInterval(api: GridApi) {
   var actionIndex = 0
 
   resetCountdown()
   executeAfterXSeconds()
 
   function executeAfterXSeconds() {
-    setTimeout(function () {
+    setTimeout(() => {
       var action = getActions()[actionIndex]
-      action(api, columnApi)
+      action(api)
       actionIndex++
       if (actionIndex >= getActions().length) {
         actionIndex = 0
@@ -87,15 +87,15 @@ function setTitleFormatted(apiName: null | string, methodName?: string, paramsNa
 
 function getActions() {
   return [
-    function (api: GridApi, columnApi: ColumnApi) {
-      columnApi.applyColumnState({
+    function (api: GridApi) {
+      api.applyColumnState({
         state: [{ colId: 'country', sort: 'asc' }],
         defaultState: { sort: null },
       })
       setTitleFormatted('api', 'applyColumnState', "country: 'asc'")
     },
-    function (api: GridApi, columnApi: ColumnApi) {
-      columnApi.applyColumnState({
+    function (api: GridApi) {
+      api.applyColumnState({
         state: [
           { colId: 'year', sort: 'asc' },
           { colId: 'country', sort: 'asc' },
@@ -104,8 +104,8 @@ function getActions() {
       })
       setTitleFormatted('api', 'applyColumnState', "year: 'asc', country 'asc'")
     },
-    function (api: GridApi, columnApi: ColumnApi) {
-      columnApi.applyColumnState({
+    function (api: GridApi) {
+      api.applyColumnState({
         state: [
           { colId: 'year', sort: 'asc' },
           { colId: 'country', sort: 'desc' },
@@ -118,13 +118,13 @@ function getActions() {
         "year: 'asc', country: 'desc'"
       )
     },
-    function (api: GridApi, columnApi: ColumnApi) {
-      columnApi.applyColumnState({
+    function (api: GridApi) {
+      api.applyColumnState({
         defaultState: { sort: null },
       })
       setTitleFormatted('api', 'applyColumnState', 'clear sort')
     },
-  ]
+  ];
 }
 
 // from actual demo page (/animation/)
@@ -133,12 +133,12 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelector<HTMLElement>('#myGrid')! ||
     document.querySelector('#animationGrid')
 
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
     .then(function (data) {
-      gridOptions.api!.setRowData(data.slice(0, 50))
-      startInterval(gridOptions.api!, gridOptions.columnApi!)
+      gridApi!.setGridOption('rowData', data.slice(0, 50))
+      startInterval(gridApi!)
     })
 })

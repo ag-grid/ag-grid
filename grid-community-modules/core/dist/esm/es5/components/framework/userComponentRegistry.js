@@ -35,10 +35,14 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 import { BeanStub } from "../../context/beanStub";
 import { Autowired, Bean, PostConstruct } from "../../context/context";
@@ -73,6 +77,7 @@ import { DateCellEditor } from "../../rendering/cellEditors/dateCellEditor";
 import { DateStringCellEditor } from "../../rendering/cellEditors/dateStringCellEditor";
 import { CheckboxCellRenderer } from "../../rendering/cellRenderers/checkboxCellRenderer";
 import { CheckboxCellEditor } from "../../rendering/cellEditors/checkboxCellEditor";
+import { AgMenuItemRenderer } from "../../widgets/agMenuItemRenderer";
 var UserComponentRegistry = /** @class */ (function (_super) {
     __extends(UserComponentRegistry, _super);
     function UserComponentRegistry() {
@@ -113,7 +118,9 @@ var UserComponentRegistry = /** @class */ (function (_super) {
             agLoadingOverlay: LoadingOverlayComponent,
             agNoRowsOverlay: NoRowsOverlayComponent,
             // tooltips
-            agTooltipComponent: TooltipComponent
+            agTooltipComponent: TooltipComponent,
+            // menu item
+            agMenuItem: AgMenuItemRenderer
         };
         /** Used to provide useful error messages if a user is trying to use an enterprise component without loading the module. */
         _this.enterpriseAgDefaultCompsModule = {
@@ -168,7 +175,7 @@ var UserComponentRegistry = /** @class */ (function (_super) {
         }
         var moduleForComponent = this.enterpriseAgDefaultCompsModule[name];
         if (moduleForComponent) {
-            ModuleRegistry.__assertRegistered(moduleForComponent, "AG Grid '" + propertyName + "' component: " + name, this.context.getGridId());
+            ModuleRegistry.__assertRegistered(moduleForComponent, "AG Grid '".concat(propertyName, "' component: ").concat(name), this.context.getGridId());
         }
         else {
             doOnce(function () { _this.warnAboutMissingComponent(propertyName, name); }, "MissingComp" + name);
@@ -176,13 +183,13 @@ var UserComponentRegistry = /** @class */ (function (_super) {
         return null;
     };
     UserComponentRegistry.prototype.warnAboutMissingComponent = function (propertyName, componentName) {
-        var validComponents = __spreadArray(__spreadArray([], __read(Object.keys(this.agGridDefaults).filter(function (k) { return !['agCellEditor', 'agGroupRowRenderer', 'agSortIndicator'].includes(k); }))), __read(Object.keys(this.jsComps)));
-        var suggestions = fuzzySuggestions(componentName, validComponents, true, 0.8);
-        console.warn("AG Grid: Could not find '" + componentName + "' component. It was configured as \"" + propertyName + ": '" + componentName + "'\" but it wasn't found in the list of registered components.");
+        var validComponents = __spreadArray(__spreadArray([], __read(Object.keys(this.agGridDefaults).filter(function (k) { return !['agCellEditor', 'agGroupRowRenderer', 'agSortIndicator'].includes(k); })), false), __read(Object.keys(this.jsComps)), false);
+        var suggestions = fuzzySuggestions(componentName, validComponents, true, 0.8).values;
+        console.warn("AG Grid: Could not find '".concat(componentName, "' component. It was configured as \"").concat(propertyName, ": '").concat(componentName, "'\" but it wasn't found in the list of registered components."));
         if (suggestions.length > 0) {
-            console.warn("         Did you mean: [" + suggestions.slice(0, 3) + "]?");
+            console.warn("         Did you mean: [".concat(suggestions.slice(0, 3), "]?"));
         }
-        console.warn("If using a custom component check it has been registered as described in: https://ag-grid.com/javascript-data-grid/components/");
+        console.warn("If using a custom component check it has been registered as described in: ".concat(this.getFrameworkOverrides().getDocLink('components/')));
     };
     __decorate([
         Autowired('gridOptions')

@@ -4,12 +4,9 @@ title: "Loading Cell Renderer"
 
 Loading cell renderers allow you to add your own loading renderers to AG Grid. Use these when the provided loading renderers do not meet your requirements.
 
-## Simple Loading Cell Renderer Component
-
-md-include:simple-renderer-javascript.md
-md-include:simple-renderer-angular.md
-md-include:simple-renderer-react.md 
-md-include:simple-renderer-vue.md
+<note>
+|The loading cell renderer is only used with the [Server-Side Row Model](../row-models/). To customise the [Loading Overlay](../overlays/) used with the Client-Side Row Model, see the [Overlay Component](../component-overlay/) section.
+</note>
  
 ## Example: Custom Loading Cell Renderer
 
@@ -22,16 +19,23 @@ The example below demonstrates how to provide custom loading cell renderer compo
 
 <grid-example title='Custom Loading Cell Renderer' name='custom-loading-cell-renderer' type='generated' options='{ "enterprise": true, "modules": ["serverside"], "extras": ["fontawesome"] }'></grid-example>
 
+## Implementing a Loading Cell Renderer Component
+
 md-include:component-interface-javascript.md
 md-include:component-interface-angular.md
 md-include:component-interface-react.md
 md-include:component-interface-vue.md
 
-<interface-documentation interfaceName='ILoadingCellRendererParams' names='["api", "columnApi", "context", "node"]' config='{"hideHeader":false, "headerLevel":3}' ></interface-documentation>
+<framework-specific-section frameworks="javascript,angular,vue">
+<interface-documentation interfaceName='ILoadingCellRendererParams' names='["api", "context", "node"]'></interface-documentation>
+</framework-specific-section>
+<framework-specific-section frameworks="react">
+<interface-documentation interfaceName='CustomLoadingCellRendererProps' names='["api", "context", "node"]'></interface-documentation>
+</framework-specific-section>
 
 ## Dynamic Cell Loading Renderer
 
-It's possible to determine what Loading Cell Renderer to use dynamically - i.e. at runtime. For this you'll make use of the
+It's possible to determine what Loading Cell Renderer to use dynamically - i.e. at runtime. This requires providing a `loadingCellRendererSelector`.
 
 <framework-specific-section frameworks="javascript,angular,react">
 md-include:component-dynamic-angular-react-js.md

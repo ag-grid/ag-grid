@@ -42,14 +42,13 @@ var HeaderRowComp = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.headerComps = {};
         _this.ctrl = ctrl;
-        _this.setTemplate(/* html */ "<div class=\"" + _this.ctrl.getHeaderRowClass() + "\" role=\"row\"></div>");
+        _this.setTemplate(/* html */ "<div class=\"".concat(_this.ctrl.getHeaderRowClass(), "\" role=\"row\"></div>"));
         return _this;
     }
     //noinspection JSUnusedLocalSymbols
     HeaderRowComp.prototype.init = function () {
         var _this = this;
-        this.getGui().style.transform = this.ctrl.getTransform();
-        aria_1.setAriaRowIndex(this.getGui(), this.ctrl.getAriaRowIndex());
+        (0, aria_1.setAriaRowIndex)(this.getGui(), this.ctrl.getAriaRowIndex());
         var compProxy = {
             setHeight: function (height) { return _this.getGui().style.height = height; },
             setTop: function (top) { return _this.getGui().style.top = top; },
@@ -78,12 +77,12 @@ var HeaderRowComp = /** @class */ (function (_super) {
             }
             _this.headerComps[id] = comp;
         });
-        object_1.iterateObject(oldComps, function (id, comp) {
+        (0, object_1.iterateObject)(oldComps, function (id, comp) {
             _this.getGui().removeChild(comp.getGui());
             _this.destroyBean(comp);
         });
         if (forceOrder) {
-            var comps = object_1.getAllValuesInObject(this.headerComps);
+            var comps = (0, object_1.getAllValuesInObject)(this.headerComps);
             // ordering the columns by left position orders them in the order they appear on the screen
             comps.sort(function (a, b) {
                 var leftA = a.getCtrl().getColumnGroupChild().getLeft();
@@ -91,7 +90,7 @@ var HeaderRowComp = /** @class */ (function (_super) {
                 return leftA - leftB;
             });
             var elementsInOrder = comps.map(function (c) { return c.getGui(); });
-            dom_1.setDomChildOrder(this.getGui(), elementsInOrder);
+            (0, dom_1.setDomChildOrder)(this.getGui(), elementsInOrder);
         }
     };
     HeaderRowComp.prototype.createHeaderComp = function (headerCtrl) {

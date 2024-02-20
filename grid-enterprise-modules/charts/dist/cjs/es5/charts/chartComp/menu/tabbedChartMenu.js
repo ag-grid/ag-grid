@@ -54,7 +54,7 @@ var TabbedChartMenu = /** @class */ (function (_super) {
     };
     TabbedChartMenu.prototype.createTab = function (name, title, TabPanelClass) {
         var eWrapperDiv = document.createElement('div');
-        eWrapperDiv.classList.add('ag-chart-tab', "ag-chart-" + title);
+        eWrapperDiv.classList.add('ag-chart-tab', "ag-chart-".concat(title));
         var comp = new TabPanelClass(this.chartController, this.chartOptionsService);
         this.getContext().createBean(comp);
         eWrapperDiv.appendChild(comp.getGui());
@@ -101,7 +101,7 @@ var TabbedChartMenu = /** @class */ (function (_super) {
     TabbedChartMenu.TAB_DATA = 'data';
     TabbedChartMenu.TAB_FORMAT = 'format';
     __decorate([
-        core_1.Autowired('chartTranslationService')
+        (0, core_1.Autowired)('chartTranslationService')
     ], TabbedChartMenu.prototype, "chartTranslationService", void 0);
     __decorate([
         core_1.PostConstruct

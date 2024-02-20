@@ -7,4 +7,10 @@ const get = (key) => exists() ? window.localStorage.getItem(prefix + key) : null
 
 export const LocalStorage = { exists, get, set };
 
+const frameworkStorageKey = 'framework';
+export const setCurrentFramework = (framework) => set(frameworkStorageKey, framework);
+export const getCurrentFramework = () => get(frameworkStorageKey) || 'react';
+
 export default LocalStorage;
+
+

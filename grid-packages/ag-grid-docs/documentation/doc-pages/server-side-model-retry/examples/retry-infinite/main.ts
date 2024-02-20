@@ -1,5 +1,6 @@
-import { Grid, GridOptions, IServerSideDatasource } from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions, IServerSideDatasource } from '@ag-grid-community/core';
 declare var FakeServer: any;
+let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     {
@@ -18,8 +19,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     flex: 1,
     minWidth: 120,
-    resizable: true,
-    sortable: true,
   },
   autoGroupColumnDef: {
     flex: 1,
@@ -36,7 +35,6 @@ const gridOptions: GridOptions<IOlympicData> = {
 
   cacheBlockSize: 20,
 
-  animateRows: true,
 }
 
 function getServerSideDatasource(server: any): IServerSideDatasource {
@@ -47,7 +45,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
       var response = server.getData(params.request)
 
       // adding delay to simulate real server call
-      setTimeout(function () {
+      setTimeout(() => {
         if (response.success) {
           // call the success callback
           params.success({ rowData: response.rows, rowCount: response.lastRow })
@@ -61,17 +59,17 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
 }
 
 function onBtRetry() {
-  gridOptions.api!.retryServerSideLoads()
+  gridApi!.retryServerSideLoads()
 }
 
 function onBtReset() {
-  gridOptions.api!.refreshServerSide({ purge: true })
+  gridApi!.refreshServerSide({ purge: true })
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
@@ -83,6 +81,6 @@ document.addEventListener('DOMContentLoaded', function () {
       var datasource = getServerSideDatasource(fakeServer)
 
       // register the datasource with the grid
-      gridOptions.api!.setServerSideDatasource(datasource)
+      gridApi!.setGridOption('serverSideDatasource', datasource)
     })
 })

@@ -55,7 +55,7 @@ var MiniBubble = /** @class */ (function (_super) {
             series.forEach(function (_a) {
                 var _b = __read(_a, 3), x = _b[0], y = _b[1], radius = _b[2];
                 var arc = new ag_charts_community_1._Scene.Arc();
-                arc.strokeWidth = 1;
+                arc.strokeWidth = 0;
                 arc.centerX = xScale.convert(x);
                 arc.centerY = yScale.convert(y);
                 arc.radius = radius;

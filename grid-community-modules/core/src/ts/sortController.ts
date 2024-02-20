@@ -37,7 +37,7 @@ export class SortController extends BeanStub {
         if (isColumnsSortingCoupledToGroup) {
             if (column.getColDef().showRowGroup) {
                 const rowGroupColumns = this.columnModel.getSourceColumnsForGroupColumn(column);
-                const sortableRowGroupColumns = rowGroupColumns?.filter(col => col.getColDef().sortable);
+                const sortableRowGroupColumns = rowGroupColumns?.filter(col => col.isSortable());
                 
                 if (sortableRowGroupColumns) {
                     columnsToUpdate = [column, ...sortableRowGroupColumns];
@@ -47,17 +47,20 @@ export class SortController extends BeanStub {
 
         columnsToUpdate.forEach(col => col.setSort(sort, source));
 
-        const doingMultiSort = (multiSort || this.gridOptionsService.is('alwaysMultiSort')) && !this.gridOptionsService.is('suppressMultiSort');
+        const doingMultiSort = (multiSort || this.gridOptionsService.get('alwaysMultiSort')) && !this.gridOptionsService.get('suppressMultiSort');
 
         // clear sort on all columns except those changed, and update the icons
+        const updatedColumns: Column[] = [];
         if (!doingMultiSort) {
-            this.clearSortBarTheseColumns(columnsToUpdate, source);
+            const clearedColumns = this.clearSortBarTheseColumns(columnsToUpdate, source);
+            updatedColumns.push(...clearedColumns);
         } 
 
         // sortIndex used for knowing order of cols when multi-col sort
         this.updateSortIndex(column);
 
-        this.dispatchSortChangedEvents(source);
+        updatedColumns.push(...columnsToUpdate);
+        this.dispatchSortChangedEvents(source, updatedColumns);
     }
 
     private updateSortIndex(lastColToChange: Column) {
@@ -69,17 +72,22 @@ export class SortController extends BeanStub {
 
         // reset sort index on everything
         this.columnModel.getPrimaryAndSecondaryAndAutoColumns().forEach(col => col.setSortIndex(null));
-        const allSortedColsWithoutChanges = allSortedCols.filter(col => col !== lastSortIndexCol);
-        const sortedColsWithIndices = !!lastSortIndexCol.getSort() ? [...allSortedColsWithoutChanges, lastSortIndexCol] : allSortedColsWithoutChanges;
-        sortedColsWithIndices.forEach((col, idx) => (
-            col.setSortIndex(idx)
-        ));
+        const allSortedColsWithoutChangesOrGroups = allSortedCols.filter(col => {
+            if (isCoupled && col.getColDef().showRowGroup) {
+                return false;
+            }
+            return col !== lastSortIndexCol;
+        });
+        const sortedColsWithIndices = !!lastSortIndexCol.getSort() ? [...allSortedColsWithoutChangesOrGroups, lastSortIndexCol] : allSortedColsWithoutChangesOrGroups;
+        sortedColsWithIndices.forEach((col, idx) => {
+            col.setSortIndex(idx);
+        });
     }
 
     // gets called by API, so if data changes, use can call this, which will end up
     // working out the sort order again of the rows.
-    public onSortChanged(source: string): void {
-        this.dispatchSortChangedEvents(source);
+    public onSortChanged(source: string, columns?: Column[]): void {
+        this.dispatchSortChangedEvents(source, columns);
     }
 
     public isSortActive(): boolean {
@@ -89,23 +97,31 @@ export class SortController extends BeanStub {
         return sortedCols && sortedCols.length > 0;
     }
 
-    public dispatchSortChangedEvents(source: string): void {
+    public dispatchSortChangedEvents(source: string, columns?: Column[]): void {
         const event: WithoutGridCommon<SortChangedEvent> = {
             type: Events.EVENT_SORT_CHANGED,
             source
         };
+
+        if (columns) { event.columns = columns; }
         this.eventService.dispatchEvent(event);
     }
 
-    private clearSortBarTheseColumns(columnsToSkip: Column[], source: ColumnEventType): void {
+    private clearSortBarTheseColumns(columnsToSkip: Column[], source: ColumnEventType): Column[] {
+        const clearedColumns: Column[] = [];
         this.columnModel.getPrimaryAndSecondaryAndAutoColumns().forEach((columnToClear: Column) => {
             // Do not clear if either holding shift, or if column in question was clicked
             if (!columnsToSkip.includes(columnToClear)) {
+                // add to list of cleared cols when sort direction is set
+                if (!!columnToClear.getSort()) { clearedColumns.push(columnToClear); }
+
                 // setting to 'undefined' as null means 'none' rather than cleared, otherwise issue will arise
                 // if sort order is: ['desc', null , 'asc'], as it will start at null rather than 'desc'.
                 columnToClear.setSort(undefined, source);
             }
         });
+
+        return clearedColumns;
     }
 
     private getNextSortDirection(column: Column): SortDirection {
@@ -145,7 +161,6 @@ export class SortController extends BeanStub {
     }
 
     /**
-     * @param includeRedundantColumns whether to include non-grouped, non-secondary, non-aggregated columns when pivot active
      * @returns a map of sort indexes for every sorted column, if groups sort primaries then they will have equivalent indices
      */
     private getIndexedSortMap(): Map<Column, number> {
@@ -224,19 +239,21 @@ export class SortController extends BeanStub {
 
     // used by server side row models, to sent sort to server
     public getSortModel(): SortModelItem[] {
-        // because this is used by the SSRM, we include redundant options and let the server decide
-        return this.getColumnsWithSortingOrdered().map(column => ({
-            sort: column.getSort()!,
-            colId: column.getId()
-        }));
+        return this.getColumnsWithSortingOrdered()
+            .filter(column => column.getSort())
+            .map(column => ({
+                sort: column.getSort()!,
+                colId: column.getId()
+            }));
     }
 
     public getSortOptions(): SortOption[] {
-        // this is used for client side sorting, as such we can ignore redundant column sorts
-        return this.getColumnsWithSortingOrdered().map(column => ({
-            sort: column.getSort()!,
-            column
-        }));
+        return this.getColumnsWithSortingOrdered()
+            .filter(column => column.getSort())
+            .map(column => ({
+                sort: column.getSort()!,
+                column
+            }));
     }
 
     public canColumnDisplayMixedSort(column: Column): boolean {

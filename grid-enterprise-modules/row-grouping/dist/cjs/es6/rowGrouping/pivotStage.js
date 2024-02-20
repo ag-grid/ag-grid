@@ -45,7 +45,17 @@ let PivotStage = class PivotStage extends core_1.BeanStub {
         const groupColumnsHash = this.columnModel.getRowGroupColumns().map((column) => column.getId()).join('#');
         const groupColumnsChanged = groupColumnsHash !== this.groupColumnsHashLastTime;
         this.groupColumnsHashLastTime = groupColumnsHash;
-        if (uniqueValuesChanged || aggregationColumnsChanged || groupColumnsChanged || aggregationFuncsChanged) {
+        const pivotRowTotals = this.gridOptionsService.get('pivotRowTotals');
+        const pivotColumnGroupTotals = this.gridOptionsService.get('pivotColumnGroupTotals');
+        const suppressExpandablePivotGroups = this.gridOptionsService.get('suppressExpandablePivotGroups');
+        const removePivotHeaderRowWhenSingleValueColumn = this.gridOptionsService.get('removePivotHeaderRowWhenSingleValueColumn');
+        const anyGridOptionsChanged = (pivotRowTotals !== this.pivotRowTotalsLastTime || pivotColumnGroupTotals !== this.pivotColumnGroupTotalsLastTime ||
+            suppressExpandablePivotGroups !== this.suppressExpandablePivotGroupsLastTime || removePivotHeaderRowWhenSingleValueColumn !== this.removePivotHeaderRowWhenSingleValueColumnLastTime);
+        this.pivotRowTotalsLastTime = pivotRowTotals;
+        this.pivotColumnGroupTotalsLastTime = pivotColumnGroupTotals;
+        this.suppressExpandablePivotGroupsLastTime = suppressExpandablePivotGroups;
+        this.removePivotHeaderRowWhenSingleValueColumnLastTime = removePivotHeaderRowWhenSingleValueColumn;
+        if (uniqueValuesChanged || aggregationColumnsChanged || groupColumnsChanged || aggregationFuncsChanged || anyGridOptionsChanged) {
             const { pivotColumnGroupDefs, pivotColumnDefs } = this.pivotColDefService.createPivotColumnDefs(this.uniqueValues);
             this.pivotColumnDefs = pivotColumnDefs;
             this.columnModel.setSecondaryColumns(pivotColumnGroupDefs, "rowModelUpdated");
@@ -137,15 +147,15 @@ let PivotStage = class PivotStage extends core_1.BeanStub {
     }
 };
 __decorate([
-    core_1.Autowired('valueService')
+    (0, core_1.Autowired)('valueService')
 ], PivotStage.prototype, "valueService", void 0);
 __decorate([
-    core_1.Autowired('columnModel')
+    (0, core_1.Autowired)('columnModel')
 ], PivotStage.prototype, "columnModel", void 0);
 __decorate([
-    core_1.Autowired('pivotColDefService')
+    (0, core_1.Autowired)('pivotColDefService')
 ], PivotStage.prototype, "pivotColDefService", void 0);
 PivotStage = __decorate([
-    core_1.Bean('pivotStage')
+    (0, core_1.Bean)('pivotStage')
 ], PivotStage);
 exports.PivotStage = PivotStage;

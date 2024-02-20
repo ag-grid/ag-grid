@@ -12,6 +12,16 @@ import {
 // @ts-ignore
 const AGBigInt = typeof BigInt === 'undefined' ? null : BigInt;
 
+const defaultAggFuncNames: { [key: string]: string } = {
+    sum: 'Sum',
+    first: 'First',
+    last: 'Last',
+    min: 'Min',
+    max: 'Max',
+    count: 'Count',
+    avg: 'Average',
+};
+
 @Bean('aggFuncService')
 export class AggFuncService extends BeanStub implements IAggFuncService {
 
@@ -54,6 +64,10 @@ export class AggFuncService extends BeanStub implements IAggFuncService {
         return allowed && funcExists;
     }
 
+    public getDefaultFuncLabel(fctName: string): string {
+        return defaultAggFuncNames[fctName] ?? fctName;
+    }
+
     public getDefaultAggFunc(column: Column): string | null {
         const defaultAgg = column.getColDef().defaultAggFunc;
 
@@ -70,12 +84,10 @@ export class AggFuncService extends BeanStub implements IAggFuncService {
     }
 
     public addAggFuncs(aggFuncs?: { [key: string]: IAggFunc; }): void {
-        _.iterateObject(aggFuncs, this.addAggFunc.bind(this));
-    }
-
-    public addAggFunc(key: string, aggFunc: IAggFunc): void {
         this.init();
-        this.aggFuncsMap[key] = aggFunc;
+        _.iterateObject(aggFuncs, (key: string, aggFunc: IAggFunc) => {
+            this.aggFuncsMap[key] = aggFunc;
+        });
     }
 
     public getAggFunc(name: string): IAggFunc {

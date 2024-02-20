@@ -15,6 +15,8 @@ export interface ITooltipFeatureCtrl {
     getRowIndex?(): number;
     getRowNode?(): RowNode;
     getValueFormatted?(): string;
+    getTooltipShowDelayOverride?(): number;
+    getTooltipHideDelayOverride?(): number;
 }
 export declare class TooltipFeature extends BeanStub {
     private readonly ctrl;

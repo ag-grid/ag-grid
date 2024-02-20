@@ -22,11 +22,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { _, Component, PostConstruct } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController";
 import { LegendPanel } from "./legend/legendPanel";
-import { AxisPanel } from "./axis/axisPanel";
+import { CartesianAxisPanel } from "./axis/cartesianAxisPanel";
+import { PolarAxisPanel } from "./axis/polarAxisPanel";
 import { NavigatorPanel } from "./navigator/navigatorPanel";
 import { ChartPanel } from "./chart/chartPanel";
 import { SeriesPanel } from "./series/seriesPanel";
-import { getSeriesType } from "../../utils/seriesTypeMapper";
+import { getSeriesType, hasGradientLegend, isPolar } from "../../utils/seriesTypeMapper";
+import { GradientLegendPanel } from './legend/gradientLegendPanel';
 export function getMaxValue(currentValue, defaultMaxValue) {
     return Math.max(currentValue, defaultMaxValue);
 }
@@ -47,13 +49,37 @@ var FormatPanel = /** @class */ (function (_super) {
         _this.chartOptionsService = chartOptionsService;
         _this.panels = [];
         _this.isGroupPanelShownInSeries = function (group, seriesType) {
+            // Determine whether the given panel group is shown depending on the active series type
+            var _a, _b;
+            // These panel groups are always shown regardless of series type
             var commonGroupPanels = ['chart', 'legend', 'series'];
             if (commonGroupPanels.includes(group)) {
                 return true;
             }
-            var cartesianOnlyGroupPanels = ['axis', 'navigator'];
-            var cartesianSeries = ['bar', 'column', 'line', 'area', 'scatter', 'histogram', 'cartesian'];
-            return !!(cartesianOnlyGroupPanels.includes(group) && cartesianSeries.includes(seriesType));
+            // These panel groups depend on the selected series type
+            var extendedGroupPanels = {
+                'bar': ['axis', 'navigator'],
+                'column': ['axis', 'navigator'],
+                'line': ['axis', 'navigator'],
+                'area': ['axis', 'navigator'],
+                'scatter': ['axis', 'navigator'],
+                'bubble': ['axis', 'navigator'],
+                'histogram': ['axis', 'navigator'],
+                'cartesian': ['axis', 'navigator'],
+                'radial-column': ['axis'],
+                'radial-bar': ['axis'],
+                'radar-line': ['axis'],
+                'radar-area': ['axis'],
+                'nightingale': ['axis'],
+                'range-bar': ['axis', 'navigator'],
+                'range-area': ['axis', 'navigator'],
+                'treemap': [],
+                'sunburst': [],
+                'heatmap': ['axis'],
+                'waterfall': ['axis', 'navigator'],
+                'box-plot': ['axis', 'navigator'],
+            };
+            return (_b = (_a = extendedGroupPanels[seriesType]) === null || _a === void 0 ? void 0 : _a.includes(group)) !== null && _b !== void 0 ? _b : false;
         };
         return _this;
     }
@@ -90,10 +116,14 @@ var FormatPanel = /** @class */ (function (_super) {
                 _this.addComponent(new ChartPanel(opts));
             }
             else if (group === 'legend') {
-                _this.addComponent(new LegendPanel(opts));
+                // Some chart types require non-standard legend options, so choose the appropriate panel
+                var panel = hasGradientLegend(chartType) ? new GradientLegendPanel(opts) : new LegendPanel(opts);
+                _this.addComponent(panel);
             }
             else if (group === 'axis') {
-                _this.addComponent(new AxisPanel(opts));
+                // Polar charts have different axis options from cartesian charts, so choose the appropriate panel
+                var panel = isPolar(chartType) ? new PolarAxisPanel(opts) : new CartesianAxisPanel(opts);
+                _this.addComponent(panel);
             }
             else if (group === 'series') {
                 _this.addComponent(new SeriesPanel(opts));
@@ -102,7 +132,7 @@ var FormatPanel = /** @class */ (function (_super) {
                 _this.addComponent(new NavigatorPanel(opts));
             }
             else {
-                console.warn("AG Grid: invalid charts format panel group name supplied: '" + groupDef.type + "'");
+                console.warn("AG Grid: invalid charts format panel group name supplied: '".concat(groupDef.type, "'"));
             }
         });
         this.chartType = chartType;
@@ -125,6 +155,7 @@ var FormatPanel = /** @class */ (function (_super) {
             _.removeFromParent(panel.getGui());
             _this.destroyBean(panel);
         });
+        this.panels = [];
     };
     FormatPanel.prototype.destroy = function () {
         this.destroyPanels();

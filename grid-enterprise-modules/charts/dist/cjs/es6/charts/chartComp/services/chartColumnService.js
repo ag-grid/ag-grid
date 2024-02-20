@@ -99,15 +99,15 @@ let ChartColumnService = class ChartColumnService extends core_1.BeanStub {
     }
 };
 __decorate([
-    core_1.Autowired('columnModel')
+    (0, core_1.Autowired)('columnModel')
 ], ChartColumnService.prototype, "columnModel", void 0);
 __decorate([
-    core_1.Autowired('valueService')
+    (0, core_1.Autowired)('valueService')
 ], ChartColumnService.prototype, "valueService", void 0);
 __decorate([
-    core_1.Autowired('rowRenderer')
+    (0, core_1.Autowired)('rowRenderer')
 ], ChartColumnService.prototype, "rowRenderer", void 0);
 ChartColumnService = __decorate([
-    core_1.Bean("chartColumnService")
+    (0, core_1.Bean)("chartColumnService")
 ], ChartColumnService);
 exports.ChartColumnService = ChartColumnService;

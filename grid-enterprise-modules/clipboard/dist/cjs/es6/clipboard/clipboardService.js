@@ -20,6 +20,11 @@ var CellClearType;
     CellClearType[CellClearType["FocusedCell"] = 2] = "FocusedCell";
 })(CellClearType || (CellClearType = {}));
 ;
+const apiError = (method) => `AG Grid: Unable to use the Clipboard API (navigator.clipboard.${method}()). ` +
+    'The reason why it could not be used has been logged in the previous line. ' +
+    'For this reason the grid has defaulted to using a workaround which doesn\'t perform as well. ' +
+    'Either fix why Clipboard API is blocked, OR stop this message from appearing by setting grid ' +
+    'property suppressClipboardApi=true (which will default the grid to using the workaround rather than the API.';
 let ClipboardService = ClipboardService_1 = class ClipboardService extends core_1.BeanStub {
     constructor() {
         super(...arguments);
@@ -38,7 +43,7 @@ let ClipboardService = ClipboardService_1 = class ClipboardService extends core_
     pasteFromClipboard() {
         this.logger.log('pasteFromClipboard');
         // Method 1 - native clipboard API, available in modern chrome browsers
-        const allowNavigator = !this.gridOptionsService.is('suppressClipboardApi');
+        const allowNavigator = !this.gridOptionsService.get('suppressClipboardApi');
         // Some browsers (Firefox) do not allow Web Applications to read from
         // the clipboard so verify if not only the ClipboardAPI is available,
         // but also if the `readText` method is public.
@@ -48,11 +53,7 @@ let ClipboardService = ClipboardService_1 = class ClipboardService extends core_
                 .catch((e) => {
                 core_1._.doOnce(() => {
                     console.warn(e);
-                    console.warn('AG Grid: Unable to use the Clipboard API (navigator.clipboard.readText()). ' +
-                        'The reason why it could not be used has been logged in the previous line. ' +
-                        'For this reason the grid has defaulted to using a workaround which doesn\'t perform as well. ' +
-                        'Either fix why Clipboard API is blocked, OR stop this message from appearing by setting grid ' +
-                        'property suppressClipboardApi=true (which will default the grid to using the workaround rather than the API');
+                    console.warn(apiError('readText'));
                 }, 'clipboardApiError');
                 this.navigatorApiFailed = true;
                 this.pasteFromClipboardLegacy();
@@ -114,7 +115,7 @@ let ClipboardService = ClipboardService_1 = class ClipboardService extends core_
         if (parsedData == null) {
             return;
         }
-        if (this.gridOptionsService.is('suppressLastEmptyLineOnPaste')) {
+        if (this.gridOptionsService.get('suppressLastEmptyLineOnPaste')) {
             this.removeLastLineIfBlank(parsedData);
         }
         const pasteOperation = (cellsToFlash, updatedRowNodes, focusedCell, changedPath) => {
@@ -198,18 +199,14 @@ let ClipboardService = ClipboardService_1 = class ClipboardService extends core_
     }
     // common code to paste operations, e.g. paste to cell, paste to range, and copy range down
     doPasteOperation(pasteOperationFunc) {
-        const api = this.gridOptionsService.api;
-        const columnApi = this.gridOptionsService.columnApi;
         const source = 'clipboard';
         this.eventService.dispatchEvent({
             type: core_1.Events.EVENT_PASTE_START,
-            api,
-            columnApi,
             source
         });
         let changedPath;
         if (this.clientSideRowModel) {
-            const onlyChangedColumns = this.gridOptionsService.is('aggregateOnlyChangedColumns');
+            const onlyChangedColumns = this.gridOptionsService.get('aggregateOnlyChangedColumns');
             changedPath = new core_1.ChangedPath(onlyChangedColumns, this.clientSideRowModel.getRootNode());
         }
         const cellsToFlash = {};
@@ -380,7 +377,7 @@ let ClipboardService = ClipboardService_1 = class ClipboardService extends core_
         let rowPointer = currentRow;
         // if doing CSRM and NOT tree data, then it means groups are aggregates, which are read only,
         // so we should skip them when doing paste operations.
-        const skipGroupRows = this.clientSideRowModel != null && !this.gridOptionsService.is('enableGroupEdit') && !this.gridOptionsService.isTreeData();
+        const skipGroupRows = this.clientSideRowModel != null && !this.gridOptionsService.get('enableGroupEdit') && !this.gridOptionsService.get('treeData');
         const getNextGoodRowNode = () => {
             while (true) {
                 if (!rowPointer) {
@@ -435,7 +432,7 @@ let ClipboardService = ClipboardService_1 = class ClipboardService extends core_
         this.copyOrCutToClipboard(params);
     }
     cutToClipboard(params = {}, source = 'api') {
-        if (this.gridOptionsService.is('suppressCutToClipboard')) {
+        if (this.gridOptionsService.get('suppressCutToClipboard')) {
             return;
         }
         const startEvent = {
@@ -455,13 +452,13 @@ let ClipboardService = ClipboardService_1 = class ClipboardService extends core_
         this.logger.log(`copyToClipboard: includeHeaders = ${includeHeaders}`);
         // don't override 'includeHeaders' if it has been explicitly set to 'false'
         if (includeHeaders == null) {
-            includeHeaders = this.gridOptionsService.is('copyHeadersToClipboard');
+            includeHeaders = this.gridOptionsService.get('copyHeadersToClipboard');
         }
         if (includeGroupHeaders == null) {
-            includeGroupHeaders = this.gridOptionsService.is('copyGroupHeadersToClipboard');
+            includeGroupHeaders = this.gridOptionsService.get('copyGroupHeadersToClipboard');
         }
         const copyParams = { includeHeaders, includeGroupHeaders };
-        const shouldCopyRows = !this.gridOptionsService.is('suppressCopyRowsToClipboard');
+        const shouldCopyRows = !this.gridOptionsService.get('suppressCopyRowsToClipboard');
         let cellClearType = null;
         // Copy priority is Range > Row > Focus
         if (this.rangeService && !this.rangeService.isEmpty() && !this.shouldSkipSingleCellRange()) {
@@ -516,7 +513,7 @@ let ClipboardService = ClipboardService_1 = class ClipboardService extends core_
         rowNode.setDataValue(column, null, 'clipboardService');
     }
     shouldSkipSingleCellRange() {
-        return this.gridOptionsService.is('suppressCopySingleCellRanges') && !this.rangeService.isMoreThanOneCell();
+        return this.gridOptionsService.get('suppressCopySingleCellRanges') && !this.rangeService.isMoreThanOneCell();
     }
     iterateActiveRanges(onlyFirst, rowCallback, columnCallback) {
         if (!this.rangeService || this.rangeService.isEmpty()) {
@@ -628,6 +625,22 @@ let ClipboardService = ClipboardService_1 = class ClipboardService extends core_
         }
         return { rowPositions, cellsToFlash };
     }
+    getCellsToFlashFromRowNodes(rowNodes) {
+        const allDisplayedColumns = this.columnModel.getAllDisplayedColumns();
+        const cellsToFlash = {};
+        for (let i = 0; i < rowNodes.length; i++) {
+            const { rowIndex, rowPinned } = rowNodes[i];
+            if (rowIndex == null) {
+                continue;
+            }
+            for (let j = 0; j < allDisplayedColumns.length; j++) {
+                const column = allDisplayedColumns[j];
+                const cellId = this.cellPositionUtils.createIdFromValues({ rowIndex, column, rowPinned });
+                cellsToFlash[cellId] = true;
+            }
+        }
+        return cellsToFlash;
+    }
     copyFocusedCellToClipboard(params = {}) {
         const focusedCell = this.focusService.getFocusedCell();
         if (focusedCell == null) {
@@ -653,6 +666,8 @@ let ClipboardService = ClipboardService_1 = class ClipboardService extends core_
             includeGroupHeaders
         });
         this.copyDataToClipboard(data);
+        const rowNodes = this.selectionService.getSelectedNodes() || [];
+        this.dispatchFlashCells(this.getCellsToFlashFromRowNodes(rowNodes));
     }
     buildExportParams(params) {
         const { columns, rowPositions, includeHeaders = false, includeGroupHeaders = false } = params;
@@ -672,13 +687,26 @@ let ClipboardService = ClipboardService_1 = class ClipboardService extends core_
         return this.csvCreator.getDataAsCsv(exportParams, true);
     }
     processRowGroupCallback(params) {
-        const { node } = params;
-        const { key } = node;
-        let value = key != null ? key : '';
+        const { node, column } = params;
+        const isTreeData = this.gridOptionsService.get('treeData');
+        const isSuppressGroupMaintainValueType = this.gridOptionsService.get('suppressGroupMaintainValueType');
+        // if not tree data and not suppressGroupMaintainValueType then we get the value from the group data
+        const getValueFromNode = () => {
+            var _a, _b;
+            if (isTreeData || isSuppressGroupMaintainValueType || !column) {
+                return node.key;
+            }
+            const value = (_a = node.groupData) === null || _a === void 0 ? void 0 : _a[column.getId()];
+            if (!value || !node.rowGroupColumn || node.rowGroupColumn.getColDef().useValueFormatterForExport === false) {
+                return value;
+            }
+            return (_b = this.valueFormatterService.formatValue(node.rowGroupColumn, node, value)) !== null && _b !== void 0 ? _b : value;
+        };
+        let value = getValueFromNode();
         if (params.node.footer) {
             let suffix = '';
-            if (key && key.length) {
-                suffix = ` ${key}`;
+            if (value && value.length) {
+                suffix = ` ${value}`;
             }
             value = `Total${suffix}`;
         }
@@ -721,10 +749,10 @@ let ClipboardService = ClipboardService_1 = class ClipboardService extends core_
             };
             return func(params);
         }
-        if (canParse && column.getColDef().useValueParserForImport) {
+        if (canParse && column.getColDef().useValueParserForImport !== false) {
             return this.valueParserService.parseValue(column, rowNode !== null && rowNode !== void 0 ? rowNode : null, value, this.valueService.getValue(column, rowNode));
         }
-        else if (canFormat && column.getColDef().useValueFormatterForExport) {
+        else if (canFormat && column.getColDef().useValueFormatterForExport !== false) {
             return (_a = this.valueFormatterService.formatValue(column, rowNode !== null && rowNode !== void 0 ? rowNode : null, value)) !== null && _a !== void 0 ? _a : value;
         }
         return value;
@@ -737,16 +765,12 @@ let ClipboardService = ClipboardService_1 = class ClipboardService extends core_
             return;
         }
         // method 2 - native clipboard API, available in modern chrome browsers
-        const allowNavigator = !this.gridOptionsService.is('suppressClipboardApi');
+        const allowNavigator = !this.gridOptionsService.get('suppressClipboardApi');
         if (allowNavigator && navigator.clipboard) {
             navigator.clipboard.writeText(data).catch((e) => {
                 core_1._.doOnce(() => {
                     console.warn(e);
-                    console.warn('AG Grid: Unable to use the Clipboard API (navigator.clipboard.writeText()). ' +
-                        'The reason why it could not be used has been logged in the previous line. ' +
-                        'For this reason the grid has defaulted to using a workaround which doesn\'t perform as well. ' +
-                        'Either fix why Clipboard API is blocked, OR stop this message from appearing by setting grid ' +
-                        'property suppressClipboardApi=true (which will default the grid to using the workaround rather than the API.');
+                    console.warn(apiError('writeText'));
                 }, 'clipboardApiError');
                 this.copyDataToClipboardLegacy(data);
             });
@@ -816,54 +840,54 @@ let ClipboardService = ClipboardService_1 = class ClipboardService extends core_
     }
 };
 __decorate([
-    core_1.Autowired('csvCreator')
+    (0, core_1.Autowired)('csvCreator')
 ], ClipboardService.prototype, "csvCreator", void 0);
 __decorate([
-    core_1.Autowired('loggerFactory')
+    (0, core_1.Autowired)('loggerFactory')
 ], ClipboardService.prototype, "loggerFactory", void 0);
 __decorate([
-    core_1.Autowired('selectionService')
+    (0, core_1.Autowired)('selectionService')
 ], ClipboardService.prototype, "selectionService", void 0);
 __decorate([
-    core_1.Optional('rangeService')
+    (0, core_1.Optional)('rangeService')
 ], ClipboardService.prototype, "rangeService", void 0);
 __decorate([
-    core_1.Autowired('rowModel')
+    (0, core_1.Autowired)('rowModel')
 ], ClipboardService.prototype, "rowModel", void 0);
 __decorate([
-    core_1.Autowired('ctrlsService')
+    (0, core_1.Autowired)('ctrlsService')
 ], ClipboardService.prototype, "ctrlsService", void 0);
 __decorate([
-    core_1.Autowired('valueService')
+    (0, core_1.Autowired)('valueService')
 ], ClipboardService.prototype, "valueService", void 0);
 __decorate([
-    core_1.Autowired('focusService')
+    (0, core_1.Autowired)('focusService')
 ], ClipboardService.prototype, "focusService", void 0);
 __decorate([
-    core_1.Autowired('rowRenderer')
+    (0, core_1.Autowired)('rowRenderer')
 ], ClipboardService.prototype, "rowRenderer", void 0);
 __decorate([
-    core_1.Autowired('columnModel')
+    (0, core_1.Autowired)('columnModel')
 ], ClipboardService.prototype, "columnModel", void 0);
 __decorate([
-    core_1.Autowired('cellNavigationService')
+    (0, core_1.Autowired)('cellNavigationService')
 ], ClipboardService.prototype, "cellNavigationService", void 0);
 __decorate([
-    core_1.Autowired('cellPositionUtils')
+    (0, core_1.Autowired)('cellPositionUtils')
 ], ClipboardService.prototype, "cellPositionUtils", void 0);
 __decorate([
-    core_1.Autowired('rowPositionUtils')
+    (0, core_1.Autowired)('rowPositionUtils')
 ], ClipboardService.prototype, "rowPositionUtils", void 0);
 __decorate([
-    core_1.Autowired('valueFormatterService')
+    (0, core_1.Autowired)('valueFormatterService')
 ], ClipboardService.prototype, "valueFormatterService", void 0);
 __decorate([
-    core_1.Autowired('valueParserService')
+    (0, core_1.Autowired)('valueParserService')
 ], ClipboardService.prototype, "valueParserService", void 0);
 __decorate([
     core_1.PostConstruct
 ], ClipboardService.prototype, "init", null);
 ClipboardService = ClipboardService_1 = __decorate([
-    core_1.Bean('clipboardService')
+    (0, core_1.Bean)('clipboardService')
 ], ClipboardService);
 exports.ClipboardService = ClipboardService;

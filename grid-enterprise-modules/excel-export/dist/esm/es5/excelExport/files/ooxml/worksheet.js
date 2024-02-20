@@ -18,7 +18,7 @@ var getMergedCellsAndAddColumnGroups = function (rows, cols, suppressColumnOutli
             if (currentCell.mergeAcross) {
                 merges += currentCell.mergeAcross;
                 var end = getExcelColumnName(cellIdx + merges + 1);
-                mergedCells.push("" + start + outputRow + ":" + end + outputRow);
+                mergedCells.push("".concat(start).concat(outputRow, ":").concat(end).concat(outputRow));
             }
             if (!cols[min - 1]) {
                 cols[min - 1] = {};
@@ -32,7 +32,7 @@ var getMergedCellsAndAddColumnGroups = function (rows, cols, suppressColumnOutli
             lastCol = cols[min - 1];
             lastCol.min = min;
             lastCol.max = min;
-            currentCell.ref = "" + start + outputRow;
+            currentCell.ref = "".concat(start).concat(outputRow);
         });
     });
     cellsWithCollapsibleGroups.sort(function (a, b) {
@@ -187,24 +187,24 @@ var applyHeaderFontStyle = function (headerString, font) {
     }
     headerString += '&quot;';
     if (font.size) {
-        headerString += "&amp;" + font.size;
+        headerString += "&amp;".concat(font.size);
     }
     if (font.strikeThrough) {
         headerString += '&amp;S';
     }
     if (font.underline) {
-        headerString += "&amp;" + (font.underline === 'Double' ? 'E' : 'U');
+        headerString += "&amp;".concat(font.underline === 'Double' ? 'E' : 'U');
     }
     if (font.color) {
-        headerString += "&amp;K" + font.color.replace('#', '').toUpperCase();
+        headerString += "&amp;K".concat(font.color.replace('#', '').toUpperCase());
     }
     return headerString;
 };
 var processHeaderFooterContent = function (content) {
     return content.reduce(function (prev, curr) {
         var pos = getHeaderPosition(curr.position);
-        var output = applyHeaderFontStyle(prev + "&amp;" + pos, curr.font);
-        return "" + output + _.escapeString(replaceHeaderFooterTokens(curr.value));
+        var output = applyHeaderFontStyle("".concat(prev, "&amp;").concat(pos), curr.font);
+        return "".concat(output).concat(_.escapeString(replaceHeaderFooterTokens(curr.value)));
     }, '');
 };
 var buildHeaderFooter = function (headerFooterConfig) {
@@ -217,10 +217,10 @@ var buildHeaderFooter = function (headerFooterConfig) {
             return;
         }
         _.iterateObject(headerFooter, function (key, value) {
-            var nameSuffix = "" + key.charAt(0).toUpperCase() + key.slice(1);
+            var nameSuffix = "".concat(key.charAt(0).toUpperCase()).concat(key.slice(1));
             if (value) {
                 headersAndFooters.push({
-                    name: "" + namePrefix + nameSuffix,
+                    name: "".concat(namePrefix).concat(nameSuffix),
                     properties: {
                         rawMap: {
                             'xml:space': 'preserve'

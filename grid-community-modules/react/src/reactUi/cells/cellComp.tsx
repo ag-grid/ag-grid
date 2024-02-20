@@ -1,10 +1,14 @@
 import { CellCtrl, Component, ICellComp, ICellEditor, ICellRendererComp, UserCompDetails, _, ICellEditorComp, CssClassManager, CellStyle } from '@ag-grid-community/core';
-import React, { MutableRefObject, useCallback, useEffect, useRef, useState, useMemo, memo, useContext, useLayoutEffect } from 'react';
+import React, { MutableRefObject, useCallback, useRef, useState, useMemo, memo, useContext, useLayoutEffect } from 'react';
 import { isComponentStateless } from '../utils';
 import PopupEditorComp from './popupEditorComp';
 import useJsCellRenderer from './showJsRenderer';
 import { BeansContext } from '../beansContext';
 import { createSyncJsComp } from '../jsComp';
+import { CellEditorComponentProxy } from '../../shared/customComp/cellEditorComponentProxy';
+import { CustomContext } from '../../shared/customComp/customContext';
+import { CustomCellEditorCallbacks } from '../../shared/customComp/interfaces';
+import { warnReactiveCustomComponents } from '../../shared/customComp/util';
 
 export enum CellCompState { ShowValue, EditValue }
 
@@ -25,6 +29,47 @@ const checkCellEditorDeprecations = (popup: boolean, cellEditor: ICellEditor, ce
     }
 }
 
+const jsxEditorProxy = (
+    editDetails: EditDetails,
+    CellEditorClass: any,
+    setRef: (cellEditor: ICellEditor | undefined) => void,
+) => {
+    const { compProxy } = editDetails;
+    setRef(compProxy);
+
+    const props = compProxy!.getProps();
+
+    const isStateless = isComponentStateless(CellEditorClass);
+
+    return (
+        <CustomContext.Provider value={{
+            setMethods: (methods: CustomCellEditorCallbacks) => compProxy!.setMethods(methods)
+        }}>
+            {isStateless && <CellEditorClass {...props}/>}
+            {!isStateless && <CellEditorClass {...props} ref={(ref: any) => compProxy!.setRef(ref)}/>}
+        </CustomContext.Provider>
+    );
+}
+
+const jsxEditor = (
+    editDetails: EditDetails,
+    CellEditorClass: any,
+    setRef: (cellEditor: ICellEditor | undefined) => void,
+) => {
+    const newFormat = editDetails.compProxy;
+
+    return (
+        <>
+            {
+                !newFormat && <CellEditorClass {...editDetails.compDetails.params} ref={ setRef } />
+            }
+            {
+                newFormat && jsxEditorProxy(editDetails, CellEditorClass, setRef)
+            }
+        </>
+    );
+}
+
 const jsxEditValue = (
         editDetails: EditDetails, 
         setInlineCellEditorRef: (cellEditor: ICellEditor | undefined)=>void,
@@ -43,7 +88,7 @@ const jsxEditValue = (
     return (
         <>
             { 
-                reactInlineEditor && <CellEditorClass { ...editDetails.compDetails.params } ref={ setInlineCellEditorRef }/> 
+                reactInlineEditor && jsxEditor(editDetails, CellEditorClass, setInlineCellEditorRef)
             }
 
             { 
@@ -53,7 +98,7 @@ const jsxEditValue = (
                     cellCtrl={cellCtrl}
                     eParentCell={eGui}
                     wrappedContent={
-                        <CellEditorClass { ...editDetails.compDetails.params } ref={ setPopupCellEditorRef }/>
+                        jsxEditor(editDetails, CellEditorClass, setPopupCellEditorRef)
                     }
                 />
             }
@@ -125,6 +170,7 @@ export interface EditDetails {
     compDetails: UserCompDetails;
     popup?: boolean;
     popupPosition?: 'over' | 'under';
+    compProxy?: CellEditorComponentProxy;
 }
 
 const CellComp = (props: {
@@ -141,7 +187,7 @@ const CellComp = (props: {
     const cellInstanceId = cellCtrl.getInstanceId();
 
     // Only provide an initial state when not using a Cell Renderer so that we do not display a raw value before the cell renderer is created.
-    const [renderDetails, setRenderDetails] = useState<RenderDetails | undefined>(() => cellCtrl.getIsCellRenderer() ? undefined : { compDetails: undefined, value: cellCtrl.getValueToDisplay(), force: false });
+    const [renderDetails, setRenderDetails] = useState<RenderDetails | undefined>(() => cellCtrl.isCellRenderer() ? undefined : { compDetails: undefined, value: cellCtrl.getValueToDisplay(), force: false });
     const [editDetails, setEditDetails ] = useState<EditDetails>();
     const [renderKey, setRenderKey] = useState<number>(1);
 
@@ -155,6 +201,7 @@ const CellComp = (props: {
 
     // useMemo as more then just accessing a boolean on the cellCtrl
     const forceWrapper = useMemo(() => cellCtrl.isForceWrapper(), [cellCtrl]);
+    const cellAriaRole = useMemo(() => cellCtrl.getCellAriaRole(), [cellCtrl]);
     const eGui = useRef<HTMLDivElement | null>(null);
     const cellRendererRef = useRef<any>(null);
     const jsCellRendererRef = useRef<ICellRendererComp>();
@@ -198,10 +245,12 @@ const CellComp = (props: {
         (cellRenderer: ICellEditor | undefined) => setCellEditorRef(false, cellRenderer), 
         [setCellEditorRef]
     );
+
     let cssClassManager = useRef<CssClassManager>();
-    if(!cssClassManager.current){
+
+    if (!cssClassManager.current) {
         cssClassManager.current = new CssClassManager(() => eGui.current);
-    }    
+    }
 
     useJsCellRenderer(renderDetails, showCellWrapper, eCellValue.current, cellValueVersion, jsCellRendererRef, eGui);
 
@@ -353,20 +402,33 @@ const CellComp = (props: {
                 });
             },
             
-            setEditDetails: (compDetails, popup, popupPosition) => {
+            setEditDetails: (compDetails, popup, popupPosition, reactiveCustomComponents) => {
                 if (compDetails) {
+                    let compProxy = undefined;
+                    if (reactiveCustomComponents) {
+                        compProxy = new CellEditorComponentProxy(compDetails.params!, () => setRenderKey( prev => prev + 1 ));
+                    } else if (compDetails.componentFromFramework) {
+                        warnReactiveCustomComponents();
+                    }
                     // start editing
                     setEditDetails({
                         compDetails: compDetails!,
                         popup,
-                        popupPosition
+                        popupPosition,
+                        compProxy
                     });
                     if (!popup) {
                         setRenderDetails(undefined);
                     }
                 } else {
                     // stop editing
-                    setEditDetails(undefined);
+                    setEditDetails(editDetails => {
+                        if (editDetails?.compProxy) {
+                            // if we're using the proxy, we have to manually clear the ref
+                            cellEditorRef.current = undefined;
+                        }
+                        return undefined;
+                    });
                 }
             }
         };
@@ -433,7 +495,7 @@ const CellComp = (props: {
             ref={setRef}
             style={ userStyles }
             tabIndex={ tabIndex }
-            role={'gridcell'}
+            role={ cellAriaRole }
             col-id={colId}
         >
             { showCellWrapper

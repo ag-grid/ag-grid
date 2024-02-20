@@ -19,10 +19,16 @@ var HeaderNavigationDirection;
     HeaderNavigationDirection[HeaderNavigationDirection["RIGHT"] = 3] = "RIGHT";
 })(HeaderNavigationDirection = exports.HeaderNavigationDirection || (exports.HeaderNavigationDirection = {}));
 let HeaderNavigationService = class HeaderNavigationService extends beanStub_1.BeanStub {
+    constructor() {
+        super(...arguments);
+        this.currentHeaderRowWithoutSpan = -1;
+    }
     postConstruct() {
         this.ctrlsService.whenReady(p => {
             this.gridBodyCon = p.gridBodyCtrl;
         });
+        const eDocument = this.gridOptionsService.getDocument();
+        this.addManagedListener(eDocument, 'mousedown', () => this.setCurrentHeaderRowWithoutSpan(-1));
     }
     getHeaderRowCount() {
         const centerHeaderContainer = this.ctrlsService.getHeaderRowContainerCtrl();
@@ -42,7 +48,7 @@ let HeaderNavigationService = class HeaderNavigationService extends beanStub_1.B
         const { headerRowIndex, column } = fromHeader;
         const rowLen = this.getHeaderRowCount();
         const isUp = direction === HeaderNavigationDirection.UP;
-        let { nextRow, nextFocusColumn } = isUp
+        let { headerRowIndex: nextRow, column: nextFocusColumn, headerRowIndexWithoutSpan } = isUp
             ? this.headerPositionUtils.getColumnVisibleParent(column, headerRowIndex)
             : this.headerPositionUtils.getColumnVisibleChild(column, headerRowIndex);
         let skipColumn = false;
@@ -53,6 +59,10 @@ let HeaderNavigationService = class HeaderNavigationService extends beanStub_1.B
         }
         if (nextRow >= rowLen) {
             nextRow = -1; // -1 indicates the focus should move to grid rows.
+            this.setCurrentHeaderRowWithoutSpan(-1);
+        }
+        else if (headerRowIndexWithoutSpan !== undefined) {
+            this.currentHeaderRowWithoutSpan = headerRowIndexWithoutSpan;
         }
         if (!skipColumn && !nextFocusColumn) {
             return false;
@@ -63,6 +73,9 @@ let HeaderNavigationService = class HeaderNavigationService extends beanStub_1.B
             event
         });
     }
+    setCurrentHeaderRowWithoutSpan(row) {
+        this.currentHeaderRowWithoutSpan = row;
+    }
     /*
      * This method navigates grid header horizontally
      * @return {boolean} true to preventDefault on the event that caused this navigation.
@@ -70,10 +83,16 @@ let HeaderNavigationService = class HeaderNavigationService extends beanStub_1.B
     navigateHorizontally(direction, fromTab = false, event) {
         const focusedHeader = this.focusService.getFocusedHeader();
         const isLeft = direction === HeaderNavigationDirection.LEFT;
-        const isRtl = this.gridOptionsService.is('enableRtl');
+        const isRtl = this.gridOptionsService.get('enableRtl');
         let nextHeader;
         let normalisedDirection;
         // either navigating to the left or isRtl (cannot be both)
+        if (this.currentHeaderRowWithoutSpan !== -1) {
+            focusedHeader.headerRowIndex = this.currentHeaderRowWithoutSpan;
+        }
+        else {
+            this.currentHeaderRowWithoutSpan = focusedHeader.headerRowIndex;
+        }
         if (isLeft !== isRtl) {
             normalisedDirection = 'Before';
             nextHeader = this.headerPositionUtils.findHeader(focusedHeader, normalisedDirection);
@@ -100,15 +119,26 @@ let HeaderNavigationService = class HeaderNavigationService extends beanStub_1.B
         if (direction === 'Before') {
             if (currentIndex > 0) {
                 nextRowIndex = currentIndex - 1;
+                this.currentHeaderRowWithoutSpan -= 1;
                 nextPosition = this.headerPositionUtils.findColAtEdgeForHeaderRow(nextRowIndex, 'end');
             }
         }
         else {
             nextRowIndex = currentIndex + 1;
+            if (this.currentHeaderRowWithoutSpan < this.getHeaderRowCount()) {
+                this.currentHeaderRowWithoutSpan += 1;
+            }
+            else {
+                this.setCurrentHeaderRowWithoutSpan(-1);
+            }
             nextPosition = this.headerPositionUtils.findColAtEdgeForHeaderRow(nextRowIndex, 'start');
         }
+        if (!nextPosition) {
+            return false;
+        }
+        const { column, headerRowIndex } = this.headerPositionUtils.getHeaderIndexToFocus(nextPosition.column, nextPosition === null || nextPosition === void 0 ? void 0 : nextPosition.headerRowIndex);
         return this.focusService.focusHeaderPosition({
-            headerPosition: nextPosition,
+            headerPosition: { column, headerRowIndex },
             direction,
             fromTab: true,
             allowUserOverride: true,
@@ -122,7 +152,7 @@ let HeaderNavigationService = class HeaderNavigationService extends beanStub_1.B
         let columnToScrollTo;
         if (column instanceof columnGroup_1.ColumnGroup) {
             const columns = column.getDisplayedLeafColumns();
-            columnToScrollTo = direction === 'Before' ? array_1.last(columns) : columns[0];
+            columnToScrollTo = direction === 'Before' ? (0, array_1.last)(columns) : columns[0];
         }
         else {
             columnToScrollTo = column;
@@ -131,18 +161,18 @@ let HeaderNavigationService = class HeaderNavigationService extends beanStub_1.B
     }
 };
 __decorate([
-    context_1.Autowired('focusService')
+    (0, context_1.Autowired)('focusService')
 ], HeaderNavigationService.prototype, "focusService", void 0);
 __decorate([
-    context_1.Autowired('headerPositionUtils')
+    (0, context_1.Autowired)('headerPositionUtils')
 ], HeaderNavigationService.prototype, "headerPositionUtils", void 0);
 __decorate([
-    context_1.Autowired('ctrlsService')
+    (0, context_1.Autowired)('ctrlsService')
 ], HeaderNavigationService.prototype, "ctrlsService", void 0);
 __decorate([
     context_1.PostConstruct
 ], HeaderNavigationService.prototype, "postConstruct", null);
 HeaderNavigationService = __decorate([
-    context_1.Bean('headerNavigationService')
+    (0, context_1.Bean)('headerNavigationService')
 ], HeaderNavigationService);
 exports.HeaderNavigationService = HeaderNavigationService;

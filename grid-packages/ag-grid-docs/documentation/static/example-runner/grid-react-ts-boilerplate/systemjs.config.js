@@ -74,9 +74,21 @@
                 main: './dist/ag-grid-enterprise.cjs.min.js',
                 defaultExtension: 'js'
             },
+            'ag-grid-charts-enterprise': {
+                main: './dist/ag-grid-charts-enterprise.cjs.js',
+                defaultExtension: 'js'
+            },
             '@ag-grid-community/react': {
                 main: './lib/main.mjs',
                 defaultExtension: 'mjs',
+            },
+            'ag-charts-community': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js'
+            },
+            'ag-charts-enterprise': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js'
             },
         },
         meta: {

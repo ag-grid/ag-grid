@@ -20,9 +20,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { Autowired, PostConstruct } from '../../context/context';
-import { loadTemplate, setDisabled } from '../../utils/dom';
+import { clearElement, loadTemplate, removeFromParent, setDisabled } from '../../utils/dom';
 import { debounce } from '../../utils/function';
-import { DEFAULT_FILTER_LOCALE_TEXT } from '../filterLocaleText';
+import { FILTER_LOCALE_TEXT } from '../filterLocaleText';
 import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
 import { convertToSet } from '../../utils/set';
 import { Component } from '../../widgets/component';
@@ -51,6 +51,7 @@ var ProvidedFilter = /** @class */ (function (_super) {
         // (eg the value is missing so nothing to filter on, or for set filter all checkboxes are checked so filter
         // not active) then this appliedModel will be null/undefined.
         _this.appliedModel = null;
+        _this.buttonListeners = [];
         return _this;
     }
     ProvidedFilter.prototype.postConstruct = function () {
@@ -77,7 +78,7 @@ var ProvidedFilter = /** @class */ (function (_super) {
         if (eGui) {
             eGui.removeEventListener('submit', this.onFormSubmit);
         }
-        var templateString = /* html */ "\n            <form class=\"ag-filter-wrapper\">\n                <div class=\"ag-filter-body-wrapper ag-" + this.getCssIdentifier() + "-body-wrapper\" ref=\"eFilterBody\">\n                    " + this.createBodyTemplate() + "\n                </div>\n            </form>";
+        var templateString = /* html */ "\n            <form class=\"ag-filter-wrapper\">\n                <div class=\"ag-filter-body-wrapper ag-".concat(this.getCssIdentifier(), "-body-wrapper\" ref=\"eFilterBody\">\n                    ").concat(this.createBodyTemplate(), "\n                </div>\n            </form>");
         this.setTemplate(templateString, paramsMap);
         eGui = this.getGui();
         if (eGui) {
@@ -98,16 +99,45 @@ var ProvidedFilter = /** @class */ (function (_super) {
     ProvidedFilter.prototype.setParams = function (params) {
         this.providedFilterParams = params;
         this.applyActive = ProvidedFilter.isUseApplyButton(params);
-        this.createButtonPanel();
+        this.resetButtonsPanel();
     };
-    ProvidedFilter.prototype.createButtonPanel = function () {
+    ProvidedFilter.prototype.updateParams = function (params) {
+        var _this = this;
+        this.providedFilterParams = params;
+        this.applyActive = ProvidedFilter.isUseApplyButton(params);
+        this.resetUiToActiveModel(this.getModel(), function () {
+            _this.updateUiVisibility();
+            _this.setupOnBtApplyDebounce();
+        });
+    };
+    ProvidedFilter.prototype.resetButtonsPanel = function () {
         var _this = this;
         var buttons = this.providedFilterParams.buttons;
-        if (!buttons || buttons.length < 1 || this.isReadOnly()) {
+        var hasButtons = buttons && buttons.length > 0 && !this.isReadOnly();
+        if (!this.eButtonsPanel) {
+            // Only create the buttons panel if we need to
+            if (hasButtons) {
+                this.eButtonsPanel = document.createElement('div');
+                this.eButtonsPanel.classList.add('ag-filter-apply-panel');
+            }
+        }
+        else {
+            // Always empty the buttons panel before adding new buttons
+            clearElement(this.eButtonsPanel);
+            this.buttonListeners.forEach(function (destroyFunc) { return destroyFunc === null || destroyFunc === void 0 ? void 0 : destroyFunc(); });
+            this.buttonListeners = [];
+        }
+        if (!hasButtons) {
+            // The case when we need to hide the buttons panel because there are no buttons
+            if (this.eButtonsPanel) {
+                removeFromParent(this.eButtonsPanel);
+            }
             return;
         }
-        var eButtonsPanel = document.createElement('div');
-        eButtonsPanel.classList.add('ag-filter-apply-panel');
+        // At this point we know we have a buttons and a buttons panel has been created.
+        // Instead of appending each button to the DOM individually, we create a fragment and append that
+        // to the DOM once. This is much faster than appending each button individually.
+        var fragment = document.createDocumentFragment();
         var addButton = function (type) {
             var text;
             var clickListener;
@@ -135,12 +165,13 @@ var ProvidedFilter = /** @class */ (function (_super) {
             var buttonType = type === 'apply' ? 'submit' : 'button';
             var button = loadTemplate(
             /* html */
-            "<button\n                    type=\"" + buttonType + "\"\n                    ref=\"" + type + "FilterButton\"\n                    class=\"ag-button ag-standard-button ag-filter-apply-panel-button\"\n                >" + text + "\n                </button>");
-            eButtonsPanel.appendChild(button);
-            _this.addManagedListener(button, 'click', clickListener);
+            "<button\n                    type=\"".concat(buttonType, "\"\n                    ref=\"").concat(type, "FilterButton\"\n                    class=\"ag-button ag-standard-button ag-filter-apply-panel-button\"\n                >").concat(text, "\n                </button>"));
+            _this.buttonListeners.push(_this.addManagedListener(button, 'click', clickListener));
+            fragment.append(button);
         };
         convertToSet(buttons).forEach(function (type) { return addButton(type); });
-        this.getGui().appendChild(eButtonsPanel);
+        this.eButtonsPanel.append(fragment);
+        this.getGui().appendChild(this.eButtonsPanel);
     };
     // subclasses can override this to provide alternative debounce defaults
     ProvidedFilter.prototype.getDefaultDebounceMs = function () {
@@ -172,7 +203,7 @@ var ProvidedFilter = /** @class */ (function (_super) {
             _this.updateUiVisibility();
             // we set the model from the GUI, rather than the provided model,
             // so the model is consistent, e.g. handling of null/undefined will be the same,
-            // or if model is case insensitive, then casing is removed.
+            // or if model is case-insensitive, then casing is removed.
             _this.applyModel('api');
         });
     };
@@ -274,7 +305,10 @@ var ProvidedFilter = /** @class */ (function (_super) {
         this.providedFilterParams.filterModifiedCallback();
         if (this.applyActive && !this.isReadOnly()) {
             var isValid = this.isModelValid(this.getModelFromUi());
-            setDisabled(this.getRefElement('applyFilterButton'), !isValid);
+            var applyFilterButton = this.getRefElement('applyFilterButton');
+            if (applyFilterButton) {
+                setDisabled(applyFilterButton, !isValid);
+            }
         }
         if ((fromFloatingFilter && !apply) || apply === 'immediately') {
             this.onBtApply(fromFloatingFilter);
@@ -294,11 +328,11 @@ var ProvidedFilter = /** @class */ (function (_super) {
         if (!this.positionableFeature || containerType === 'toolPanel') {
             return;
         }
-        var isFloatingFilter = containerType === 'floatingFilter';
+        var isResizable = containerType === 'floatingFilter' || containerType === 'columnFilter';
         var _a = this, positionableFeature = _a.positionableFeature, gridOptionsService = _a.gridOptionsService;
-        if (isFloatingFilter) {
+        if (isResizable) {
             positionableFeature.restoreLastSize();
-            positionableFeature.setResizable(gridOptionsService.is('enableRtl')
+            positionableFeature.setResizable(gridOptionsService.get('enableRtl')
                 ? { bottom: true, bottomLeft: true, left: true }
                 : { bottom: true, bottomRight: true, right: true });
         }
@@ -328,6 +362,10 @@ var ProvidedFilter = /** @class */ (function (_super) {
     ProvidedFilter.isUseApplyButton = function (params) {
         return !!params.buttons && params.buttons.indexOf('apply') >= 0;
     };
+    ProvidedFilter.prototype.refresh = function (newParams) {
+        this.providedFilterParams = newParams;
+        return true;
+    };
     ProvidedFilter.prototype.destroy = function () {
         var eGui = this.getGui();
         if (eGui) {
@@ -337,24 +375,15 @@ var ProvidedFilter = /** @class */ (function (_super) {
         if (this.positionableFeature) {
             this.positionableFeature = this.destroyBean(this.positionableFeature);
         }
+        this.appliedModel = null;
         _super.prototype.destroy.call(this);
     };
     ProvidedFilter.prototype.translate = function (key) {
         var translate = this.localeService.getLocaleTextFunc();
-        return translate(key, DEFAULT_FILTER_LOCALE_TEXT[key]);
+        return translate(key, FILTER_LOCALE_TEXT[key]);
     };
     ProvidedFilter.prototype.getCellValue = function (rowNode) {
-        var _a = this.providedFilterParams, api = _a.api, colDef = _a.colDef, column = _a.column, columnApi = _a.columnApi, context = _a.context;
-        return this.providedFilterParams.valueGetter({
-            api: api,
-            colDef: colDef,
-            column: column,
-            columnApi: columnApi,
-            context: context,
-            data: rowNode.data,
-            getValue: function (field) { return rowNode.data[field]; },
-            node: rowNode,
-        });
+        return this.providedFilterParams.getValue(rowNode);
     };
     // override to control positionable feature
     ProvidedFilter.prototype.getPositionableElement = function () {

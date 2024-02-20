@@ -1,4 +1,12 @@
-import { Grid, FirstDataRenderedEvent, GridOptions, IDetailCellRendererParams } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  FirstDataRenderedEvent,
+  GridOptions,
+  IDetailCellRendererParams,
+} from '@ag-grid-community/core';
+
+let gridApi: GridApi<IAccount>;
 
 const gridOptions: GridOptions<IAccount> = {
   columnDefs: [
@@ -31,7 +39,7 @@ const gridOptions: GridOptions<IAccount> = {
     template: (params) => {
       var personName = params.data ? params.data.name : undefined
       return (
-        '<div style="height: 100%; background-color: #EDF6FF; padding: 20px; box-sizing: border-box;">' +
+        '<div style="height: 100%; background-color: #2244CC44; padding: 20px; box-sizing: border-box;">' +
         '  <div style="height: 10%; padding: 2px; font-weight: bold;">###### Name: ' +
         personName +
         '</div>' +
@@ -45,7 +53,7 @@ const gridOptions: GridOptions<IAccount> = {
 
 function onFirstDataRendered(params: FirstDataRenderedEvent<IAccount>) {
   // arbitrarily expand a row for presentational purposes
-  setTimeout(function () {
+  setTimeout(() => {
     params.api.getDisplayedRowAtIndex(1)!.setExpanded(true)
   }, 0)
 }
@@ -53,11 +61,11 @@ function onFirstDataRendered(params: FirstDataRenderedEvent<IAccount>) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/master-detail-data.json')
     .then(response => response.json())
     .then((data: IAccount[]) => {
-      gridOptions.api!.setRowData(data)
+      gridApi!.setGridOption('rowData', data)
     })
 })

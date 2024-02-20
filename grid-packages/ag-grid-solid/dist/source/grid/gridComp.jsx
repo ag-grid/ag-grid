@@ -1,4 +1,4 @@
-import { FocusService, GridCtrl } from 'ag-grid-community';
+import { GridCtrl } from 'ag-grid-community';
 import { createMemo, createSignal, onCleanup, onMount } from "solid-js";
 import { BeansContext } from './core/beansContext';
 import { classesList } from './core/utils';
@@ -89,9 +89,8 @@ const GridComp = (props) => {
         const compProxy = {
             destroyGridUi: () => { },
             setRtlClass: setRtlClass,
-            addOrRemoveKeyboardFocusClass: (addOrRemove) => setKeyboardFocusClass(addOrRemove ? FocusService.AG_KEYBOARD_FOCUS : ''),
-            forceFocusOutOfContainer: () => {
-                tabGuardRef && tabGuardRef.forceFocusOutOfContainer();
+            forceFocusOutOfContainer: (up) => {
+                tabGuardRef && tabGuardRef.forceFocusOutOfContainer(up);
             },
             updateLayoutClasses: setLayoutClass,
             getFocusableContainers: () => {
@@ -128,7 +127,7 @@ const GridComp = (props) => {
             // doesn't have it's height specified, which would result if all the rows getting rendered (and if many rows,
             // hangs the UI)
             <BeansContext.Provider value={beans}>
-                        <TabGuardComp ref={setTabGuardRef} eFocusableElement={eGui} onTabKeyDown={onTabKeyDown} gridCtrl={gridCtrl}>
+                        <TabGuardComp ref={setTabGuardRef} eFocusableElement={eGui} onTabKeyDown={onTabKeyDown} gridCtrl={gridCtrl} forceFocusOutWhenTabGuardsAreEmpty={true}>
                             <GridBodyComp />
                         </TabGuardComp>
                     </BeansContext.Provider>}

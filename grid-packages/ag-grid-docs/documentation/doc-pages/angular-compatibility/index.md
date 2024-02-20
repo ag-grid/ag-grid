@@ -11,8 +11,8 @@ The following page provides information that is relevant when using older versio
  
  | Angular | AG Grid   | AG Grid Legacy    |
  | --------| --------- | ------------------|
- | 16+     | 28 - 30+  | N/A               |
- | 14 - 15 | 25 - 30+  | N/A               |
+ | 16 - 17+| 28 - 31+  | N/A               |
+ | 14 - 15 | 25 - 31   | N/A               |
  | 12 - 13 | 25 - 30   | N/A               |
  | 10 - 11 | 24 - 27   | 28 - 29           |
  | 9       | 23 - 27   | 28                |
@@ -21,7 +21,7 @@ The following page provides information that is relevant when using older versio
 
  ## Future Support of Angular versions
 
-AG Grid currently supports Angular v12 and above. However, in the next major release (v31) we will be aligning our support to match Angular Long-term (LTS) versions on an ongoing basis. See [Angular Support policy and schedule](https://angular.io/guide/releases#support-policy-and-schedule). 
+AG Grid currently supports Angular v14 and above. Since AG Grid v31 we are now aligned to support Angular Long-term (LTS) versions on an ongoing basis. See [Angular Support policy and schedule](https://angular.io/guide/releases#support-policy-and-schedule). 
 
 ## AG Grid Legacy
 
@@ -103,7 +103,8 @@ If you are using Angular v10-11 and have Ivy **disabled** via `enableIvy: false`
 ## Notes on Angular 10
 
 Due to a breaking change in Angular 10 you may experience the following error when building:
-`Generic type 'ModuleWithProviders<T>' requires 1 type argument(s)`<br/><br/>
+`Generic type 'ModuleWithProviders<T>' requires 1 type argument(s)`
+
 If you wish to use Angular 10 with AG Grid versions 18-23 then you need to set `"skipLibCheck": true`
 in `tsconfig.app.json` Please note however that this is a workaround and Angular 10 is only
 officially supported with AG Grid 24+.

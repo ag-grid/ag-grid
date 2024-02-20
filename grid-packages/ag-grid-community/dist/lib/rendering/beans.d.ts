@@ -11,7 +11,6 @@ import { EventService } from "../eventService";
 import { ColumnAnimationService } from "./columnAnimationService";
 import { IRangeService, ISelectionHandleFactory } from "../interfaces/IRangeService";
 import { FocusService } from "../focusService";
-import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
 import { PopupService } from "../widgets/popupService";
 import { ValueFormatterService } from "./valueFormatterService";
 import { StylingService } from "../styling/stylingService";
@@ -44,6 +43,8 @@ import { GridOptionsService } from "../gridOptionsService";
 import { LocaleService } from "../localeService";
 import { Environment } from "../environment";
 import { ValueParserService } from "../valueService/valueParserService";
+import { SyncService } from "../syncService";
+import { AriaAnnouncementService } from "./ariaAnnouncementService";
 /** Using the IoC has a slight performance consideration, which is no problem most of the
  * time, unless we are trashing objects - which is the case when scrolling and rowComp
  * and cellComp. So for performance reasons, RowComp and CellComp do not get autowired
@@ -68,7 +69,6 @@ export declare class Beans {
     columnAnimationService: ColumnAnimationService;
     rangeService: IRangeService;
     focusService: FocusService;
-    contextMenuFactory: IContextMenuFactory;
     popupService: PopupService;
     valueFormatterService: ValueFormatterService;
     stylingService: StylingService;
@@ -95,7 +95,8 @@ export declare class Beans {
     rowNodeEventThrottle: RowNodeEventThrottle;
     localeService: LocaleService;
     valueParserService: ValueParserService;
-    doingMasterDetail: boolean;
+    syncService: SyncService;
+    ariaAnnouncementService: AriaAnnouncementService;
     clientSideRowModel: IClientSideRowModel;
     serverSideRowModel: IServerSideRowModel;
     private postConstruct;

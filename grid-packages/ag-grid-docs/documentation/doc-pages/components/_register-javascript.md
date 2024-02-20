@@ -1,5 +1,4 @@
 <framework-specific-section frameworks="javascript">
-|## Registering Custom Components
 |
 |There are two ways to tell the Grid to use a custom component:
 |

@@ -1,17 +1,16 @@
-import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
 
 // specify the columns
 const columnDefs: ColDef[] = [
-    { headerName: 'Make', field: 'make' }
+    { headerName: 'Make', field: 'make', flex: 1 }
 ]
+
+let gridApi: GridApi;
 
 // let the grid know which columns and what data to use
 const gridOptions: GridOptions = {
     columnDefs: columnDefs,
     rowData: [],
-    onGridReady: (params) => {
-        params.api.sizeColumnsToFit()
-    },
 }
 
 // wait for the document to be loaded, otherwise
@@ -21,5 +20,5 @@ document.addEventListener('DOMContentLoaded', function () {
     var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
 
     // create the grid passing in the div to use together with the columns & data we want to use
-    new Grid(eGridDiv, gridOptions)
+    gridApi = createGrid(eGridDiv, gridOptions);
 })

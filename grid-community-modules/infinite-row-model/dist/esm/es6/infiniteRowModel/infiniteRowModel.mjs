@@ -28,8 +28,7 @@ let InfiniteRowModel = class InfiniteRowModel extends BeanStub {
     }
     verifyProps() {
         if (this.gridOptionsService.exists('initialGroupOrderComparator')) {
-            const message = `AG Grid: initialGroupOrderComparator cannot be used with Infinite Row Model. If using Infinite Row Model, then sorting is done on the server side, nothing to do with the client.`;
-            _.doOnce(() => console.warn(message), 'IRM.InitialGroupOrderComparator');
+            _.warnOnce('initialGroupOrderComparator cannot be used with Infinite Row Model as sorting is done on the server side');
         }
     }
     start() {
@@ -47,6 +46,13 @@ let InfiniteRowModel = class InfiniteRowModel extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnEverything.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_STORE_UPDATED, this.onCacheUpdated.bind(this));
+        this.addManagedPropertyListener('datasource', () => this.setDatasource(this.gridOptionsService.get('datasource')));
+        this.addManagedPropertyListener('cacheBlockSize', () => this.resetCache());
+        this.addManagedPropertyListener('rowHeight', () => {
+            this.rowHeight = this.gridOptionsService.getRowHeightAsNumber();
+            this.cacheParams.rowHeight = this.rowHeight;
+            this.updateRowHeights();
+        });
     }
     onFilterChanged() {
         this.reset();
@@ -105,11 +111,9 @@ let InfiniteRowModel = class InfiniteRowModel extends BeanStub {
         const getRowIdFunc = this.gridOptionsService.getCallback('getRowId');
         const userGeneratingIds = getRowIdFunc != null;
         if (!userGeneratingIds) {
-            this.selectionService.reset();
+            this.selectionService.reset('rowDataChanged');
         }
         this.resetCache();
-        const event = this.createModelUpdatedEvent();
-        this.eventService.dispatchEvent(event);
     }
     createModelUpdatedEvent() {
         return {
@@ -117,6 +121,7 @@ let InfiniteRowModel = class InfiniteRowModel extends BeanStub {
             // not sure if these should all be false - noticed if after implementing,
             // maybe they should be true?
             newPage: false,
+            newPageSize: false,
             newData: false,
             keepRenderedRows: true,
             animate: false
@@ -135,23 +140,33 @@ let InfiniteRowModel = class InfiniteRowModel extends BeanStub {
             // properties - this way we take a snapshot of them, so if user changes any, they will be
             // used next time we create a new cache, which is generally after a filter or sort change,
             // or a new datasource is set
-            initialRowCount: this.defaultIfInvalid(this.gridOptionsService.getNum('infiniteInitialRowCount'), 1),
-            maxBlocksInCache: this.gridOptionsService.getNum('maxBlocksInCache'),
+            initialRowCount: this.gridOptionsService.get('infiniteInitialRowCount'),
+            maxBlocksInCache: this.gridOptionsService.get('maxBlocksInCache'),
             rowHeight: this.gridOptionsService.getRowHeightAsNumber(),
             // if user doesn't provide overflow, we use default overflow of 1, so user can scroll past
             // the current page and request first row of next page
-            overflowSize: this.defaultIfInvalid(this.gridOptionsService.getNum('cacheOverflowSize'), 1),
+            overflowSize: this.gridOptionsService.get('cacheOverflowSize'),
             // page size needs to be 1 or greater. having it at 1 would be silly, as you would be hitting the
             // server for one page at a time. so the default if not specified is 100.
-            blockSize: this.defaultIfInvalid(this.gridOptionsService.getNum('cacheBlockSize'), 100),
+            blockSize: this.gridOptionsService.get('cacheBlockSize'),
             // the cache could create this, however it is also used by the pages, so handy to create it
             // here as the settings are also passed to the pages
             lastAccessedSequence: new NumberSequence()
         };
         this.infiniteCache = this.createBean(new InfiniteCache(this.cacheParams));
+        this.eventService.dispatchEventOnce({
+            type: Events.EVENT_ROW_COUNT_READY
+        });
+        const event = this.createModelUpdatedEvent();
+        this.eventService.dispatchEvent(event);
     }
-    defaultIfInvalid(value, defaultValue) {
-        return value > 0 ? value : defaultValue;
+    updateRowHeights() {
+        this.forEachNode(node => {
+            node.setRowHeight(this.rowHeight);
+            node.setRowTop(this.rowHeight * node.rowIndex);
+        });
+        const event = this.createModelUpdatedEvent();
+        this.eventService.dispatchEvent(event);
     }
     destroyCache() {
         if (this.infiniteCache) {

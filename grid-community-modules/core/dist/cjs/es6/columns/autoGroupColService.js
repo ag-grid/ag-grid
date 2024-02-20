@@ -16,7 +16,7 @@ exports.GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn';
 let AutoGroupColService = class AutoGroupColService extends beanStub_1.BeanStub {
     createAutoGroupColumns(rowGroupColumns) {
         const groupAutoColumns = [];
-        const doingTreeData = this.gridOptionsService.isTreeData();
+        const doingTreeData = this.gridOptionsService.get('treeData');
         let doingMultiAutoColumn = this.gridOptionsService.isGroupMultiAutoColumn();
         if (doingTreeData && doingMultiAutoColumn) {
             console.warn('AG Grid: you cannot mix groupDisplayType = "multipleColumns" with treeData, only one column can be used to display groups when doing tree data');
@@ -34,8 +34,8 @@ let AutoGroupColService = class AutoGroupColService extends beanStub_1.BeanStub 
         }
         return groupAutoColumns;
     }
-    updateAutoGroupColumns(autoGroupColumns) {
-        autoGroupColumns.forEach((column, index) => this.updateOneAutoGroupColumn(column, index));
+    updateAutoGroupColumns(autoGroupColumns, source) {
+        autoGroupColumns.forEach((column, index) => this.updateOneAutoGroupColumn(column, index, source));
     }
     // rowGroupCol and index are missing if groupDisplayType != "multipleColumns"
     createOneAutoGroupColumn(rowGroupCol, index) {
@@ -56,27 +56,27 @@ let AutoGroupColService = class AutoGroupColService extends beanStub_1.BeanStub 
     /**
      * Refreshes an auto group col to load changes from defaultColDef or autoGroupColDef
      */
-    updateOneAutoGroupColumn(colToUpdate, index) {
+    updateOneAutoGroupColumn(colToUpdate, index, source) {
         const oldColDef = colToUpdate.getColDef();
         const underlyingColId = typeof oldColDef.showRowGroup == 'string' ? oldColDef.showRowGroup : undefined;
         const underlyingColumn = underlyingColId != null ? this.columnModel.getPrimaryColumn(underlyingColId) : undefined;
         const colDef = this.createAutoGroupColDef(colToUpdate.getId(), underlyingColumn !== null && underlyingColumn !== void 0 ? underlyingColumn : undefined, index);
-        colToUpdate.setColDef(colDef, null);
-        this.columnFactory.applyColumnState(colToUpdate, colDef);
+        colToUpdate.setColDef(colDef, null, source);
+        this.columnFactory.applyColumnState(colToUpdate, colDef, source);
     }
     createAutoGroupColDef(colId, underlyingColumn, index) {
         // if one provided by user, use it, otherwise create one
         let res = this.createBaseColDef(underlyingColumn);
         const autoGroupColumnDef = this.gridOptionsService.get('autoGroupColumnDef');
-        object_1.mergeDeep(res, autoGroupColumnDef);
+        (0, object_1.mergeDeep)(res, autoGroupColumnDef);
         res = this.columnFactory.addColumnDefaultAndTypes(res, colId);
         // For tree data the filter is always allowed
-        if (!this.gridOptionsService.isTreeData()) {
+        if (!this.gridOptionsService.get('treeData')) {
             // we would only allow filter if the user has provided field or value getter. otherwise the filter
             // would not be able to work.
-            const noFieldOrValueGetter = generic_1.missing(res.field) &&
-                generic_1.missing(res.valueGetter) &&
-                generic_1.missing(res.filterValueGetter) &&
+            const noFieldOrValueGetter = (0, generic_1.missing)(res.field) &&
+                (0, generic_1.missing)(res.valueGetter) &&
+                (0, generic_1.missing)(res.filterValueGetter) &&
                 res.filter !== 'agGroupColumnFilter';
             if (noFieldOrValueGetter) {
                 res.filter = false;
@@ -134,12 +134,12 @@ let AutoGroupColService = class AutoGroupColService extends beanStub_1.BeanStub 
     }
 };
 __decorate([
-    context_1.Autowired('columnModel')
+    (0, context_1.Autowired)('columnModel')
 ], AutoGroupColService.prototype, "columnModel", void 0);
 __decorate([
-    context_1.Autowired('columnFactory')
+    (0, context_1.Autowired)('columnFactory')
 ], AutoGroupColService.prototype, "columnFactory", void 0);
 AutoGroupColService = __decorate([
-    context_1.Bean('autoGroupColService')
+    (0, context_1.Bean)('autoGroupColService')
 ], AutoGroupColService);
 exports.AutoGroupColService = AutoGroupColService;

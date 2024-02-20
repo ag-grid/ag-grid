@@ -1,4 +1,4 @@
-// ag-grid-react v30.1.0
+// ag-grid-react v31.1.0
 "use strict";
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
@@ -41,25 +41,28 @@ var utils_1 = require("../utils");
 var beansContext_1 = require("../beansContext");
 var cellComp_1 = __importDefault(require("../cells/cellComp"));
 var RowComp = function (params) {
-    var context = react_1.useContext(beansContext_1.BeansContext).context;
+    var _a = react_1.useContext(beansContext_1.BeansContext), context = _a.context, gridOptionsService = _a.gridOptionsService;
     var rowCtrl = params.rowCtrl, containerType = params.containerType;
     var tabIndex = rowCtrl.getTabIndex();
     var domOrderRef = react_1.useRef(rowCtrl.getDomOrder());
     var isFullWidth = rowCtrl.isFullWidth();
-    var _a = react_1.useState(function () { return rowCtrl.getRowIndex(); }), rowIndex = _a[0], setRowIndex = _a[1];
-    var _b = react_1.useState(function () { return rowCtrl.getRowId(); }), rowId = _b[0], setRowId = _b[1];
-    var _c = react_1.useState(function () { return rowCtrl.getBusinessKey(); }), rowBusinessKey = _c[0], setRowBusinessKey = _c[1];
-    var _d = react_1.useState(function () { return rowCtrl.getRowStyles(); }), userStyles = _d[0], setUserStyles = _d[1];
-    var _e = react_1.useState(function () { return null; }), cellCtrls = _e[0], setCellCtrls = _e[1];
-    var _f = react_1.useState(), fullWidthCompDetails = _f[0], setFullWidthCompDetails = _f[1];
+    // Flag used to avoid problematic initialState setter funcs being called on a dead / non displayed row. 
+    // Due to async rendering its possible for the row to be destroyed before React has had a chance to render it.
+    var isDisplayed = rowCtrl.getRowNode().displayed;
+    var _b = react_1.useState(function () { return isDisplayed ? rowCtrl.getRowIndex() : null; }), rowIndex = _b[0], setRowIndex = _b[1];
+    var _c = react_1.useState(function () { return rowCtrl.getRowId(); }), rowId = _c[0], setRowId = _c[1];
+    var _d = react_1.useState(function () { return rowCtrl.getBusinessKey(); }), rowBusinessKey = _d[0], setRowBusinessKey = _d[1];
+    var _e = react_1.useState(function () { return rowCtrl.getRowStyles(); }), userStyles = _e[0], setUserStyles = _e[1];
+    var _f = react_1.useState(function () { return null; }), cellCtrls = _f[0], setCellCtrls = _f[1];
+    var _g = react_1.useState(), fullWidthCompDetails = _g[0], setFullWidthCompDetails = _g[1];
     // these styles have initial values, so element is placed into the DOM with them,
     // rather than an transition getting applied.
-    var _g = react_1.useState(function () { return rowCtrl.getInitialRowTop(containerType); }), top = _g[0], setTop = _g[1];
-    var _h = react_1.useState(function () { return rowCtrl.getInitialTransform(containerType); }), transform = _h[0], setTransform = _h[1];
+    var _h = react_1.useState(function () { return isDisplayed ? rowCtrl.getInitialRowTop(containerType) : undefined; }), top = _h[0], setTop = _h[1];
+    var _j = react_1.useState(function () { return isDisplayed ? rowCtrl.getInitialTransform(containerType) : undefined; }), transform = _j[0], setTransform = _j[1];
     var eGui = react_1.useRef(null);
     var fullWidthCompRef = react_1.useRef();
     var autoHeightSetup = react_1.useRef(false);
-    var _j = react_1.useState(0), autoHeightSetupAttempt = _j[0], setAutoHeightSetupAttempt = _j[1];
+    var _k = react_1.useState(0), autoHeightSetupAttempt = _k[0], setAutoHeightSetupAttempt = _k[1];
     // puts autoHeight onto full with detail rows. this needs trickery, as we need
     // the HTMLElement for the provided Detail Cell Renderer, however the Detail Cell Renderer
     // could be a stateless React Func Comp which won't work with useRef, so we need
@@ -92,14 +95,14 @@ var RowComp = function (params) {
     }
     var setRef = react_1.useCallback(function (e) {
         eGui.current = e;
+        if (!eGui.current) {
+            rowCtrl.unsetComp(containerType);
+            return;
+        }
         // because React is asynchronous, it's possible the RowCtrl is no longer a valid RowCtrl. This can
         // happen if user calls two API methods one after the other, with the second API invalidating the rows
         // the first call created. Thus the rows for the first call could still get created even though no longer needed.
         if (!rowCtrl.isAlive()) {
-            return;
-        }
-        if (!eGui.current) {
-            rowCtrl.unsetComp(containerType);
             return;
         }
         var compProxy = {
@@ -124,6 +127,18 @@ var RowComp = function (params) {
             },
             showFullWidth: function (compDetails) { return setFullWidthCompDetails(compDetails); },
             getFullWidthCellRenderer: function () { return fullWidthCompRef.current; },
+            refreshFullWidth: function (getUpdatedParams) {
+                if (canRefreshFullWidthRef.current) {
+                    setFullWidthCompDetails(function (prevFullWidthCompDetails) { return (__assign(__assign({}, prevFullWidthCompDetails), { params: getUpdatedParams() })); });
+                    return true;
+                }
+                else {
+                    if (!fullWidthCompRef.current || !fullWidthCompRef.current.refresh) {
+                        return false;
+                    }
+                    return fullWidthCompRef.current.refresh(getUpdatedParams());
+                }
+            }
         };
         rowCtrl.setComp(compProxy, eGui.current, containerType);
     }, []);
@@ -139,6 +154,11 @@ var RowComp = function (params) {
         var res = (fullWidthCompDetails === null || fullWidthCompDetails === void 0 ? void 0 : fullWidthCompDetails.componentFromFramework) && utils_1.isComponentStateless(fullWidthCompDetails.componentClass);
         return !!res;
     }, [fullWidthCompDetails]);
+    // needs to be a ref to avoid stale closure, as used in compProxy passed to row ctrl
+    var canRefreshFullWidthRef = react_1.useRef(false);
+    react_1.useEffect(function () {
+        canRefreshFullWidthRef.current = reactFullWidthCellRendererStateless && !!fullWidthCompDetails && !!gridOptionsService.get('reactiveCustomComponents');
+    }, [reactFullWidthCellRendererStateless, fullWidthCompDetails]);
     var showCellsJsx = function () { return cellCtrls === null || cellCtrls === void 0 ? void 0 : cellCtrls.map(function (cellCtrl) { return (react_1.default.createElement(cellComp_1.default, { cellCtrl: cellCtrl, editingRow: rowCtrl.isEditing(), printLayout: rowCtrl.isPrintLayout(), key: cellCtrl.getInstanceId() })); }); };
     var showFullWidthFrameworkJsx = function () {
         var FullWidthComp = fullWidthCompDetails.componentClass;

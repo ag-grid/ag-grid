@@ -31,6 +31,7 @@ var ColumnAnimationService = /** @class */ (function (_super) {
         _this.executeNextFuncs = [];
         _this.executeLaterFuncs = [];
         _this.active = false;
+        _this.suppressAnimation = false;
         _this.animationThreadCount = 0;
         return _this;
     }
@@ -39,30 +40,33 @@ var ColumnAnimationService = /** @class */ (function (_super) {
         this.ctrlsService.whenReady(function (p) { return _this.gridBodyCtrl = p.gridBodyCtrl; });
     };
     ColumnAnimationService.prototype.isActive = function () {
-        return this.active;
+        return this.active && !this.suppressAnimation;
+    };
+    ColumnAnimationService.prototype.setSuppressAnimation = function (suppress) {
+        this.suppressAnimation = suppress;
     };
     ColumnAnimationService.prototype.start = function () {
         if (this.active) {
             return;
         }
-        if (this.gridOptionsService.is('suppressColumnMoveAnimation')) {
+        if (this.gridOptionsService.get('suppressColumnMoveAnimation')) {
             return;
         }
         // if doing RTL, we don't animate open / close as due to how the pixels are inverted,
         // the animation moves all the row the the right rather than to the left (ie it's the static
         // columns that actually get their coordinates updated)
-        if (this.gridOptionsService.is('enableRtl')) {
+        if (this.gridOptionsService.get('enableRtl')) {
             return;
         }
         this.ensureAnimationCssClassPresent();
         this.active = true;
     };
     ColumnAnimationService.prototype.finish = function () {
+        var _this = this;
         if (!this.active) {
             return;
         }
-        this.flush();
-        this.active = false;
+        this.flush(function () { _this.active = false; });
     };
     ColumnAnimationService.prototype.executeNextVMTurn = function (func) {
         if (this.active) {
@@ -94,25 +98,36 @@ var ColumnAnimationService = /** @class */ (function (_super) {
             }
         });
     };
-    ColumnAnimationService.prototype.flush = function () {
-        var nowFuncs = this.executeNextFuncs;
-        this.executeNextFuncs = [];
-        var waitFuncs = this.executeLaterFuncs;
-        this.executeLaterFuncs = [];
-        if (nowFuncs.length === 0 && waitFuncs.length === 0) {
+    ColumnAnimationService.prototype.flush = function (callback) {
+        var _this = this;
+        if (this.executeNextFuncs.length === 0 && this.executeLaterFuncs.length === 0) {
+            callback();
             return;
         }
-        window.setTimeout(function () { return nowFuncs.forEach(function (func) { return func(); }); }, 0);
-        window.setTimeout(function () { return waitFuncs.forEach(function (func) { return func(); }); }, 300);
+        var runFuncs = function (queue) {
+            while (queue.length) {
+                var func = queue.pop();
+                if (func) {
+                    func();
+                }
+            }
+        };
+        this.getFrameworkOverrides().wrapIncoming(function () {
+            window.setTimeout(function () { return runFuncs(_this.executeNextFuncs); }, 0);
+            window.setTimeout(function () {
+                runFuncs(_this.executeLaterFuncs);
+                callback();
+            }, 200);
+        });
     };
     __decorate([
-        context_1.Autowired('ctrlsService')
+        (0, context_1.Autowired)('ctrlsService')
     ], ColumnAnimationService.prototype, "ctrlsService", void 0);
     __decorate([
         context_1.PostConstruct
     ], ColumnAnimationService.prototype, "postConstruct", null);
     ColumnAnimationService = __decorate([
-        context_1.Bean('columnAnimationService')
+        (0, context_1.Bean)('columnAnimationService')
     ], ColumnAnimationService);
     return ColumnAnimationService;
 }(beanStub_1.BeanStub));

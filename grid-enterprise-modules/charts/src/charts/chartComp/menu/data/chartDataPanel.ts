@@ -25,6 +25,7 @@ import { ChartController } from "../../chartController";
 import { ColState } from "../../model/chartDataModel";
 import { ChartTranslationService } from "../../services/chartTranslationService";
 import { ChartOptionsService } from "../../services/chartOptionsService";
+import { isHierarchical } from "../../utils/seriesTypeMapper";
 
 const DefaultDataPanelDef: ChartDataPanelType = {
     groups: [
@@ -200,10 +201,23 @@ export class ChartDataPanel extends Component {
             cssIdentifier: 'charts-data'
         }));
 
-        const inputName = `chartDimension${this.getCompId()}`;
+        const inputName = `chartDimension${this.categoriesGroupComp.getCompId()}`;
+
+        // Display either radio buttons or checkboxes
+        // depending on whether the current chart type supports multiple category columns
+        const chartType = this.chartController.getChartType();
+        const supportsMultipleCategoryColumns = isHierarchical(chartType);
 
         columns.forEach(col => {
-            const comp = this.categoriesGroupComp!.createManagedBean(new AgRadioButton());
+            const comp: AgCheckbox | AgRadioButton = this.categoriesGroupComp!.createManagedBean(
+                supportsMultipleCategoryColumns
+                    ? (() => {
+                        const checkboxComp = new AgCheckbox();
+                        checkboxComp.addCssClass('ag-data-select-checkbox');
+                        return checkboxComp;
+                    })()
+                    : new AgRadioButton()
+            );
 
             comp.setLabel(_.escapeString(col.displayName)!);
             comp.setValue(col.selected);
@@ -212,9 +226,27 @@ export class ChartDataPanel extends Component {
             this.addChangeListener(comp, col);
             this.categoriesGroupComp!.addItem(comp);
             this.columnComps.set(col.colId, comp);
+
+            if (supportsMultipleCategoryColumns) this.addDragHandle(comp, col);
         });
 
         this.addComponent(this.getGui(), this.categoriesGroupComp, 'categoriesGroup');
+
+        if (supportsMultipleCategoryColumns) {
+            const categoriesGroupGui = this.categoriesGroupComp.getGui();
+            
+            const dropTarget: DropTarget = {
+                getIconName: () => DragAndDropService.ICON_MOVE,
+                getContainer: () => categoriesGroupGui,
+                onDragging: (params) => this.onDragging(params),
+                onDragLeave: () => this.onDragLeave(),
+                isInterestedIn: this.isInterestedIn.bind(this),
+                targetContainsSource: true
+            };
+
+            this.dragAndDropService.addDropTarget(dropTarget);
+            this.addDestroyFunc(() => this.dragAndDropService.removeDropTarget(dropTarget));
+        }
     }
 
     private createSeriesGroup(columns: ColState[]): void {
@@ -232,7 +264,7 @@ export class ChartDataPanel extends Component {
                 .setLabel(this.chartTranslationService.translate('paired'))
                 .setLabelAlignment('left')
                 .setLabelWidth('flex')
-                .setInputWidth(45)
+                .setInputWidth('flex')
                 .setValue(this.chartOptionsService.getPairedMode())
                 .onValueChange(newValue => {
                     this.chartOptionsService.setPairedMode(!!newValue);

@@ -96,6 +96,9 @@ var UserComponentFactory = /** @class */ (function (_super) {
     UserComponentFactory.prototype.getStatusPanelCompDetails = function (def, params) {
         return this.getCompDetails(def, componentTypes_1.StatusPanelComponent, null, params, true);
     };
+    UserComponentFactory.prototype.getMenuItemCompDetails = function (def, params) {
+        return this.getCompDetails(def, componentTypes_1.MenuItemComponent, 'agMenuItem', params, true);
+    };
     UserComponentFactory.prototype.getCompDetails = function (defObject, type, defaultName, params, mandatory) {
         var _this = this;
         if (mandatory === void 0) { mandatory = false; }
@@ -122,7 +125,7 @@ var UserComponentFactory = /** @class */ (function (_super) {
         }
         if (!jsComp && !fwComp) {
             if (mandatory) {
-                console.error("AG Grid: Could not find component " + compName + ", did you forget to configure this component?");
+                console.error("AG Grid: Could not find component ".concat(compName, ", did you forget to configure this component?"));
             }
             return;
         }
@@ -207,24 +210,20 @@ var UserComponentFactory = /** @class */ (function (_super) {
     // used by Floating Filter
     UserComponentFactory.prototype.mergeParamsWithApplicationProvidedParams = function (defObject, type, paramsFromGrid, paramsFromSelector) {
         if (paramsFromSelector === void 0) { paramsFromSelector = null; }
-        var params = {
-            context: this.gridOptionsService.context,
-            columnApi: this.gridOptionsService.columnApi,
-            api: this.gridOptionsService.api
-        };
-        object_1.mergeDeep(params, paramsFromGrid);
+        var params = this.gridOptionsService.getGridCommonParams();
+        (0, object_1.mergeDeep)(params, paramsFromGrid);
         // pull user params from either the old prop name and new prop name
         // eg either cellRendererParams and cellCompParams
         var defObjectAny = defObject;
         var userParams = defObjectAny && defObjectAny[type.propertyName + 'Params'];
         if (typeof userParams === 'function') {
             var userParamsFromFunc = userParams(paramsFromGrid);
-            object_1.mergeDeep(params, userParamsFromFunc);
+            (0, object_1.mergeDeep)(params, userParamsFromFunc);
         }
         else if (typeof userParams === 'object') {
-            object_1.mergeDeep(params, userParams);
+            (0, object_1.mergeDeep)(params, userParams);
         }
-        object_1.mergeDeep(params, paramsFromSelector);
+        (0, object_1.mergeDeep)(params, paramsFromSelector);
         return params;
     };
     UserComponentFactory.prototype.initComponent = function (component, params) {
@@ -253,22 +252,22 @@ var UserComponentFactory = /** @class */ (function (_super) {
         return defaultFloatingFilterType;
     };
     __decorate([
-        context_1.Autowired('gridOptions')
+        (0, context_1.Autowired)('gridOptions')
     ], UserComponentFactory.prototype, "gridOptions", void 0);
     __decorate([
-        context_1.Autowired('agComponentUtils')
+        (0, context_1.Autowired)('agComponentUtils')
     ], UserComponentFactory.prototype, "agComponentUtils", void 0);
     __decorate([
-        context_1.Autowired('componentMetadataProvider')
+        (0, context_1.Autowired)('componentMetadataProvider')
     ], UserComponentFactory.prototype, "componentMetadataProvider", void 0);
     __decorate([
-        context_1.Autowired('userComponentRegistry')
+        (0, context_1.Autowired)('userComponentRegistry')
     ], UserComponentFactory.prototype, "userComponentRegistry", void 0);
     __decorate([
-        context_1.Optional('frameworkComponentWrapper')
+        (0, context_1.Optional)('frameworkComponentWrapper')
     ], UserComponentFactory.prototype, "frameworkComponentWrapper", void 0);
     UserComponentFactory = __decorate([
-        context_1.Bean('userComponentFactory')
+        (0, context_1.Bean)('userComponentFactory')
     ], UserComponentFactory);
     return UserComponentFactory;
 }(beanStub_1.BeanStub));

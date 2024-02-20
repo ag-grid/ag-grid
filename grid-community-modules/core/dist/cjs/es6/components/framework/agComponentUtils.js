@@ -30,11 +30,11 @@ let AgComponentUtils = class AgComponentUtils extends beanStub_1.BeanStub {
                 const callbackResult = callback(params);
                 const type = typeof callbackResult;
                 if (type === 'string' || type === 'number' || type === 'boolean') {
-                    this.eGui = dom_1.loadTemplate('<span>' + callbackResult + '</span>');
+                    this.eGui = (0, dom_1.loadTemplate)('<span>' + callbackResult + '</span>');
                     return;
                 }
                 if (callbackResult == null) {
-                    this.eGui = dom_1.loadTemplate('<span></span>');
+                    this.eGui = (0, dom_1.loadTemplate)('<span></span>');
                     return;
                 }
                 this.eGui = callbackResult;
@@ -50,9 +50,9 @@ let AgComponentUtils = class AgComponentUtils extends beanStub_1.BeanStub {
     }
 };
 __decorate([
-    context_1.Autowired("componentMetadataProvider")
+    (0, context_1.Autowired)("componentMetadataProvider")
 ], AgComponentUtils.prototype, "componentMetadataProvider", void 0);
 AgComponentUtils = __decorate([
-    context_1.Bean("agComponentUtils")
+    (0, context_1.Bean)("agComponentUtils")
 ], AgComponentUtils);
 exports.AgComponentUtils = AgComponentUtils;

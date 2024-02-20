@@ -7,9 +7,10 @@ import { showJsComp } from '../jsComp';
 const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
 
     const { ctrl } = props;
+    const isAlive = ctrl.isAlive();
 
     const { context } = useContext(BeansContext);
-    const colId = ctrl.getColId();
+    const colId = isAlive ? ctrl.getColId() : undefined;
     const [userCompDetails, setUserCompDetails] = useState<UserCompDetails>();
 
     const eGui = useRef<HTMLDivElement | null>(null);
@@ -18,13 +19,12 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
     const userCompRef = useRef<IHeader>();
 
     let cssClassManager = useRef<CssClassManager>();
-    if(!cssClassManager.current){
+    if (isAlive && !cssClassManager.current) {
         cssClassManager.current = new CssClassManager(() => eGui.current);
     }
     const setRef = useCallback((e: HTMLDivElement) => {
         eGui.current = e;
-        if (!eGui.current) {
-            // Any clean up required?
+        if (!eGui.current || !isAlive) {
             return;
         }
 
@@ -35,11 +35,6 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
                 }
             },
             addOrRemoveCssClass: (name, on) => cssClassManager.current!.addOrRemoveCssClass(name, on),
-            setAriaDescription: label => {
-                if (eGui.current) {
-                    _.setAriaDescription(eGui.current, label)
-                }
-            },
             setAriaSort: sort => {
                 if (eGui.current) {
                     sort ? _.setAriaSort(eGui.current, sort) : _.removeAriaSort(eGui.current)
@@ -77,7 +72,6 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
             className="ag-header-cell"
             col-id={colId}
             role="columnheader"
-            tabIndex={-1}
         >
             <div ref={eResize} className="ag-header-cell-resize" role="presentation"></div>
             <div ref={eHeaderCompWrapper} className="ag-header-cell-comp-wrapper" role="presentation">

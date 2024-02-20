@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.noop = exports.callIfPresent = exports.compose = exports.waitUntil = exports.throttle = exports.debounce = exports.executeAfter = exports.executeNextVMTurn = exports.executeInAWhile = exports.isFunction = exports.getFunctionName = exports.doOnce = void 0;
+exports.noop = exports.compose = exports.waitUntil = exports.throttle = exports.debounce = exports.executeAfter = exports.executeNextVMTurn = exports.executeInAWhile = exports.isFunction = exports.getFunctionName = exports.errorOnce = exports.warnOnce = exports.doOnce = void 0;
 var doOnceFlags = {};
 /**
  * If the key was passed before, then doesn't execute the func
@@ -15,6 +15,14 @@ function doOnce(func, key) {
     doOnceFlags[key] = true;
 }
 exports.doOnce = doOnce;
+function warnOnce(msg) {
+    doOnce(function () { return console.warn("AG Grid: " + msg); }, msg);
+}
+exports.warnOnce = warnOnce;
+function errorOnce(msg) {
+    doOnce(function () { return console.error("AG Grid: " + msg); }, msg);
+}
+exports.errorOnce = errorOnce;
 function getFunctionName(funcConstructor) {
     // for every other browser in the world
     if (funcConstructor.name) {
@@ -133,11 +141,5 @@ function compose() {
     return function (arg) { return fns.reduce(function (composed, f) { return f(composed); }, arg); };
 }
 exports.compose = compose;
-function callIfPresent(func) {
-    if (func) {
-        func();
-    }
-}
-exports.callIfPresent = callIfPresent;
 var noop = function () { return; };
 exports.noop = noop;

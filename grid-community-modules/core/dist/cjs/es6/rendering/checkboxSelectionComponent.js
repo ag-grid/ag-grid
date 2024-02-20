@@ -13,7 +13,6 @@ const events_1 = require("../events");
 const componentAnnotations_1 = require("../widgets/componentAnnotations");
 const rowNode_1 = require("../entities/rowNode");
 const event_1 = require("../utils/event");
-const aria_1 = require("../utils/aria");
 class CheckboxSelectionComponent extends component_1.Component {
     constructor() {
         super(/* html*/ `
@@ -23,7 +22,6 @@ class CheckboxSelectionComponent extends component_1.Component {
     }
     postConstruct() {
         this.eCheckbox.setPassive(true);
-        aria_1.setAriaLive(this.eCheckbox.getInputElement(), 'polite');
     }
     getCheckboxId() {
         return this.eCheckbox.getInputElement().id;
@@ -37,12 +35,8 @@ class CheckboxSelectionComponent extends component_1.Component {
         this.showOrHideSelect();
     }
     onSelectionChanged() {
-        const translate = this.localeService.getLocaleTextFunc();
         const state = this.rowNode.isSelected();
-        const stateName = aria_1.getAriaCheckboxStateName(translate, state);
-        const ariaLabel = translate('ariaRowToggleSelection', 'Press Space to toggle row selection');
         this.eCheckbox.setValue(state, true);
-        this.eCheckbox.setInputAriaLabel(`${ariaLabel} (${stateName})`);
     }
     onClicked(newValue, groupSelectsFiltered, event) {
         return this.rowNode.setSelectedParams({ newValue, rangeSelect: event.shiftKey, groupSelectsFiltered, event, source: 'checkboxSelected' });
@@ -54,13 +48,13 @@ class CheckboxSelectionComponent extends component_1.Component {
         this.onSelectionChanged();
         // we don't want double click on this icon to open a group
         this.addManagedListener(this.eCheckbox.getInputElement(), 'dblclick', (event) => {
-            event_1.stopPropagationForAgGrid(event);
+            (0, event_1.stopPropagationForAgGrid)(event);
         });
         this.addManagedListener(this.eCheckbox.getInputElement(), 'click', (event) => {
             // we don't want the row clicked event to fire when selecting the checkbox, otherwise the row
             // would possibly get selected twice
-            event_1.stopPropagationForAgGrid(event);
-            const groupSelectsFiltered = this.gridOptionsService.is('groupSelectsFiltered');
+            (0, event_1.stopPropagationForAgGrid)(event);
+            const groupSelectsFiltered = this.gridOptionsService.get('groupSelectsFiltered');
             const isSelected = this.eCheckbox.getValue();
             if (this.shouldHandleIndeterminateState(isSelected, groupSelectsFiltered)) {
                 // try toggling children to determine action.
@@ -138,7 +132,7 @@ class CheckboxSelectionComponent extends component_1.Component {
     }
 }
 __decorate([
-    componentAnnotations_1.RefSelector('eCheckbox')
+    (0, componentAnnotations_1.RefSelector)('eCheckbox')
 ], CheckboxSelectionComponent.prototype, "eCheckbox", void 0);
 __decorate([
     context_1.PostConstruct

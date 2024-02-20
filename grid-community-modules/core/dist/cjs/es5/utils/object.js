@@ -27,7 +27,7 @@ var __read = (this && this.__read) || function (o, n) {
     return ar;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isNonNullObject = exports.removeAllReferences = exports.getValueUsingField = exports.set = exports.get = exports.missingOrEmptyObject = exports.mergeDeep = exports.getAllValuesInObject = exports.getAllKeysInObjects = exports.copyPropertyIfPresent = exports.copyPropertiesIfPresent = exports.setProperty = exports.getProperty = exports.deepCloneDefinition = exports.deepCloneObject = exports.cloneObject = exports.iterateObject = void 0;
+exports.isNonNullObject = exports.removeAllReferences = exports.getValueUsingField = exports.mergeDeep = exports.getAllValuesInObject = exports.deepCloneDefinition = exports.cloneObject = exports.iterateObject = void 0;
 var generic_1 = require("./generic");
 function iterateObject(object, callback) {
     var e_1, _a;
@@ -66,10 +66,6 @@ function cloneObject(object) {
     return copy;
 }
 exports.cloneObject = cloneObject;
-function deepCloneObject(object) {
-    return JSON.parse(JSON.stringify(object));
-}
-exports.deepCloneObject = deepCloneObject;
 // returns copy of an object, doing a deep clone of any objects with that object.
 // this is used for eg creating copies of Column Definitions, where we want to
 // deep copy all objects, but do not want to deep copy functions (eg when user provides
@@ -100,45 +96,6 @@ function deepCloneDefinition(object, keysToSkip) {
     return res;
 }
 exports.deepCloneDefinition = deepCloneDefinition;
-function getProperty(object, key) {
-    return object[key];
-}
-exports.getProperty = getProperty;
-function setProperty(object, key, value) {
-    object[key] = value;
-}
-exports.setProperty = setProperty;
-/**
- * Will copy the specified properties from `source` into the equivalent properties on `target`, ignoring properties with
- * a value of `undefined`.
- */
-function copyPropertiesIfPresent(source, target) {
-    var properties = [];
-    for (var _i = 2; _i < arguments.length; _i++) {
-        properties[_i - 2] = arguments[_i];
-    }
-    properties.forEach(function (p) { return copyPropertyIfPresent(source, target, p); });
-}
-exports.copyPropertiesIfPresent = copyPropertiesIfPresent;
-/**
- * Will copy the specified property from `source` into the equivalent property on `target`, unless the property has a
- * value of `undefined`. If a transformation is provided, it will be applied to the value before being set on `target`.
- */
-function copyPropertyIfPresent(source, target, property, transform) {
-    var value = getProperty(source, property);
-    if (value !== undefined) {
-        setProperty(target, property, transform ? transform(value) : value);
-    }
-}
-exports.copyPropertyIfPresent = copyPropertyIfPresent;
-function getAllKeysInObjects(objects) {
-    var allValues = {};
-    objects.filter(function (obj) { return obj != null; }).forEach(function (obj) {
-        Object.keys(obj).forEach(function (key) { return allValues[key] = null; });
-    });
-    return Object.keys(allValues);
-}
-exports.getAllKeysInObjects = getAllKeysInObjects;
 function getAllValuesInObject(obj) {
     if (!obj) {
         return [];
@@ -159,7 +116,7 @@ exports.getAllValuesInObject = getAllValuesInObject;
 function mergeDeep(dest, source, copyUndefined, makeCopyOfSimpleObjects) {
     if (copyUndefined === void 0) { copyUndefined = true; }
     if (makeCopyOfSimpleObjects === void 0) { makeCopyOfSimpleObjects = false; }
-    if (!generic_1.exists(source)) {
+    if (!(0, generic_1.exists)(source)) {
         return;
     }
     iterateObject(source, function (key, sourceValue) {
@@ -193,44 +150,6 @@ function mergeDeep(dest, source, copyUndefined, makeCopyOfSimpleObjects) {
     });
 }
 exports.mergeDeep = mergeDeep;
-function missingOrEmptyObject(value) {
-    return generic_1.missing(value) || Object.keys(value).length === 0;
-}
-exports.missingOrEmptyObject = missingOrEmptyObject;
-function get(source, expression, defaultValue) {
-    if (source == null) {
-        return defaultValue;
-    }
-    var keys = expression.split('.');
-    var objectToRead = source;
-    while (keys.length > 1) {
-        objectToRead = objectToRead[keys.shift()];
-        if (objectToRead == null) {
-            return defaultValue;
-        }
-    }
-    var value = objectToRead[keys[0]];
-    return value != null ? value : defaultValue;
-}
-exports.get = get;
-function set(target, expression, value) {
-    if (target == null) {
-        return;
-    }
-    var keys = expression.split('.');
-    var objectToUpdate = target;
-    // Create empty objects
-    keys.forEach(function (key, i) {
-        if (!objectToUpdate[key]) {
-            objectToUpdate[key] = {};
-        }
-        if (i < keys.length - 1) {
-            objectToUpdate = objectToUpdate[key];
-        }
-    });
-    objectToUpdate[keys[keys.length - 1]] = value;
-}
-exports.set = set;
 function getValueUsingField(data, field, fieldContainsDots) {
     if (!field || !data) {
         return;
@@ -251,25 +170,29 @@ function getValueUsingField(data, field, fieldContainsDots) {
     return currentObject;
 }
 exports.getValueUsingField = getValueUsingField;
-// used by ColumnAPI and GridAPI to remove all references, so keeping grid in memory resulting in a
-// memory leak if user is not disposing of the GridAPI or ColumnApi references
-function removeAllReferences(obj, objectName) {
+// used by GridAPI to remove all references, so keeping grid in memory resulting in a
+// memory leak if user is not disposing of the GridAPI references
+function removeAllReferences(obj, preserveKeys, preDestroyLink) {
+    if (preserveKeys === void 0) { preserveKeys = []; }
     Object.keys(obj).forEach(function (key) {
         var value = obj[key];
         // we want to replace all the @autowired services, which are objects. any simple types (boolean, string etc)
         // we don't care about
-        if (typeof value === 'object') {
+        if (typeof value === 'object' && !preserveKeys.includes(key)) {
             obj[key] = undefined;
         }
     });
     var proto = Object.getPrototypeOf(obj);
     var properties = {};
-    Object.keys(proto).forEach(function (key) {
+    var msgFunc = function (key) {
+        return "AG Grid: Grid API function ".concat(key, "() cannot be called as the grid has been destroyed.\n    It is recommended to remove local references to the grid api. Alternatively, check gridApi.isDestroyed() to avoid calling methods against a destroyed grid.\n    To run logic when the grid is about to be destroyed use the gridPreDestroy event. See: ").concat(preDestroyLink);
+    };
+    Object.getOwnPropertyNames(proto).forEach(function (key) {
         var value = proto[key];
-        // leave all basic types - this is needed for GridAPI to leave the "destroyed: boolean" attribute alone
-        if (typeof value === 'function') {
+        // leave all basic types and preserveKeys this is needed for GridAPI to leave the "destroyed: boolean" attribute and isDestroyed() function.
+        if (typeof value === 'function' && !preserveKeys.includes(key)) {
             var func = function () {
-                console.warn("AG Grid: " + objectName + " function " + key + "() cannot be called as the grid has been destroyed.\n                     Please don't call grid API functions on destroyed grids - as a matter of fact you shouldn't\n                     be keeping the API reference, your application has a memory leak! Remove the API reference\n                     when the grid is destroyed.");
+                console.warn(msgFunc(key));
             };
             properties[key] = { value: func, writable: true };
         }

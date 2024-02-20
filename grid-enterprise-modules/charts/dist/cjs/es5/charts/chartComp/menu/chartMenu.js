@@ -36,10 +36,14 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChartMenu = void 0;
@@ -80,7 +84,7 @@ var ChartMenu = /** @class */ (function (_super) {
             }
         });
         this.refreshMenuClasses();
-        if (!this.gridOptionsService.is('suppressChartToolPanelsButton') && this.panels.length > 0) {
+        if (!this.gridOptionsService.get('suppressChartToolPanelsButton') && this.panels.length > 0) {
             this.getGui().classList.add('ag-chart-tool-panel-button-enable');
             this.addManagedListener(this.eHideButton, 'click', this.toggleMenu.bind(this));
         }
@@ -98,7 +102,7 @@ var ChartMenu = /** @class */ (function (_super) {
             result.push('top');
         }
         if (rightItems.some(function (v) { return _this.chartToolbarOptions.includes(v); })) {
-            result.push(this.gridOptionsService.is('enableRtl') ? 'left' : 'right');
+            result.push(this.gridOptionsService.get('enableRtl') ? 'left' : 'right');
         }
         return result;
     };
@@ -119,8 +123,8 @@ var ChartMenu = /** @class */ (function (_super) {
                 ? toolbarItemsFunc(params).filter(function (option) {
                     if (!core_1.CHART_TOOLBAR_ALLOW_LIST.includes(option)) {
                         var msg = core_1.CHART_TOOL_PANEL_ALLOW_LIST.includes(option)
-                            ? "AG Grid: '" + option + "' is a Chart Tool Panel option and will be ignored since 'chartToolPanelsDef' is used. Please use 'chartToolPanelsDef.panels' grid option instead"
-                            : "AG Grid: '" + option + "' is not a valid Chart Toolbar Option";
+                            ? "AG Grid: '".concat(option, "' is a Chart Tool Panel option and will be ignored since 'chartToolPanelsDef' is used. Please use 'chartToolPanelsDef.panels' grid option instead")
+                            : "AG Grid: '".concat(option, "' is not a valid Chart Toolbar Option");
                         console.warn(msg);
                         return false;
                     }
@@ -130,7 +134,7 @@ var ChartMenu = /** @class */ (function (_super) {
             var panelsOverride = (_b = (_a = this.gridOptionsService.get('chartToolPanelsDef')) === null || _a === void 0 ? void 0 : _a.panels) === null || _b === void 0 ? void 0 : _b.map(function (panel) {
                 var menuOption = core_1.CHART_TOOL_PANEL_MENU_OPTIONS[panel];
                 if (!menuOption) {
-                    console.warn("AG Grid - invalid panel in chartToolPanelsDef.panels: '" + panel + "'");
+                    console.warn("AG Grid - invalid panel in chartToolPanelsDef.panels: '".concat(panel, "'"));
                 }
                 return menuOption;
             }).filter(function (panel) { return Boolean(panel); });
@@ -145,7 +149,7 @@ var ChartMenu = /** @class */ (function (_super) {
             this.defaultPanel = (defaultToolPanel && core_1.CHART_TOOL_PANEL_MENU_OPTIONS[defaultToolPanel]) || this.panels[0];
             return this.panels.length > 0
                 // Only one panel is required to display menu icon in toolbar
-                ? __spreadArray([this.panels[0]], __read(chartToolbarOptions)) : chartToolbarOptions;
+                ? __spreadArray([this.panels[0]], __read(chartToolbarOptions), false) : chartToolbarOptions;
         }
         else { // To be deprecated in future. Toolbar options will be different to chart tool panels.
             var tabOptions = [
@@ -157,19 +161,19 @@ var ChartMenu = /** @class */ (function (_super) {
             ];
             var toolbarItemsFunc = this.gridOptionsService.getCallback('getChartToolbarItems');
             if (toolbarItemsFunc) {
-                var isLegacyToolbar_1 = this.gridOptionsService.is('suppressChartToolPanelsButton');
+                var isLegacyToolbar_1 = this.gridOptionsService.get('suppressChartToolPanelsButton');
                 var params = {
                     defaultItems: isLegacyToolbar_1 ? tabOptions : core_1.CHART_TOOLBAR_ALLOW_LIST
                 };
                 tabOptions = toolbarItemsFunc(params).filter(function (option) {
                     if (!_this.buttons[option]) {
-                        console.warn("AG Grid: '" + option + "' is not a valid Chart Toolbar Option");
+                        console.warn("AG Grid: '".concat(option, "' is not a valid Chart Toolbar Option"));
                         return false;
                     }
                     // If not legacy, remove chart tool panel options here,
                     // and add them all in one go below
                     else if (!isLegacyToolbar_1 && core_1.CHART_TOOL_PANEL_ALLOW_LIST.includes(option)) {
-                        var msg = "AG Grid: '" + option + "' is a Chart Tool Panel option and will be ignored. Please use 'chartToolPanelsDef.panels' grid option instead";
+                        var msg = "AG Grid: '".concat(option, "' is a Chart Tool Panel option and will be ignored. Please use 'chartToolPanelsDef.panels' grid option instead");
                         console.warn(msg);
                         return false;
                     }
@@ -298,7 +302,7 @@ var ChartMenu = /** @class */ (function (_super) {
             var menuPanel = panel || this.defaultPanel;
             var tab = this.panels.indexOf(menuPanel);
             if (tab < 0) {
-                console.warn("AG Grid: '" + panel + "' is not a valid Chart Tool Panel name");
+                console.warn("AG Grid: '".concat(panel, "' is not a valid Chart Tool Panel name"));
                 tab = this.panels.indexOf(this.defaultPanel);
             }
             if (this.menuPanel) {
@@ -330,13 +334,13 @@ var ChartMenu = /** @class */ (function (_super) {
     ChartMenu.prototype.refreshMenuClasses = function () {
         this.eChartContainer.classList.toggle('ag-chart-menu-visible', this.menuVisible);
         this.eChartContainer.classList.toggle('ag-chart-menu-hidden', !this.menuVisible);
-        if (!this.gridOptionsService.is('suppressChartToolPanelsButton')) {
+        if (!this.gridOptionsService.get('suppressChartToolPanelsButton')) {
             this.eHideButtonIcon.classList.toggle('ag-icon-contracted', this.menuVisible);
             this.eHideButtonIcon.classList.toggle('ag-icon-expanded', !this.menuVisible);
         }
     };
     ChartMenu.prototype.showParent = function (width) {
-        this.eMenuPanelContainer.style.minWidth = width + "px";
+        this.eMenuPanelContainer.style.minWidth = "".concat(width, "px");
     };
     ChartMenu.prototype.hideParent = function () {
         this.eMenuPanelContainer.style.minWidth = '0';
@@ -353,16 +357,16 @@ var ChartMenu = /** @class */ (function (_super) {
     ChartMenu.EVENT_DOWNLOAD_CHART = "downloadChart";
     ChartMenu.TEMPLATE = "<div>\n        <div class=\"ag-chart-menu\" ref=\"eMenu\"></div>\n        <button class=\"ag-button ag-chart-menu-close\" ref=\"eHideButton\">\n            <span class=\"ag-icon ag-icon-contracted\" ref=\"eHideButtonIcon\"></span>\n        </button>\n    </div>";
     __decorate([
-        core_1.Autowired('chartTranslationService')
+        (0, core_1.Autowired)('chartTranslationService')
     ], ChartMenu.prototype, "chartTranslationService", void 0);
     __decorate([
-        core_1.RefSelector("eMenu")
+        (0, core_1.RefSelector)("eMenu")
     ], ChartMenu.prototype, "eMenu", void 0);
     __decorate([
-        core_1.RefSelector("eHideButton")
+        (0, core_1.RefSelector)("eHideButton")
     ], ChartMenu.prototype, "eHideButton", void 0);
     __decorate([
-        core_1.RefSelector("eHideButtonIcon")
+        (0, core_1.RefSelector)("eHideButtonIcon")
     ], ChartMenu.prototype, "eHideButtonIcon", void 0);
     __decorate([
         core_1.PostConstruct

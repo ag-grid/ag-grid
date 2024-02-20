@@ -8,6 +8,7 @@ export declare class NumberFloatingFilter extends TextInputFloatingFilter<Number
     private allowedCharPattern;
     init(params: INumberFloatingFilterParams): void;
     onParamsUpdated(params: INumberFloatingFilterParams): void;
+    refresh(params: INumberFloatingFilterParams): void;
     protected getDefaultFilterOptions(): string[];
     protected getFilterModelFormatter(): SimpleFilterModelFormatter;
     protected createFloatingFilterInputService(params: INumberFloatingFilterParams): FloatingFilterInputService;

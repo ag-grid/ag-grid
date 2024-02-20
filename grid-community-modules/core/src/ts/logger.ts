@@ -9,7 +9,7 @@ export class LoggerFactory extends BeanStub {
     private logging: boolean;
 
     private setBeans(@Qualifier('gridOptionsService') gridOptionsService: GridOptionsService): void {
-        this.logging = gridOptionsService.is('debug');
+        this.logging = gridOptionsService.get('debug');
     }
 
     public create(name: string) {

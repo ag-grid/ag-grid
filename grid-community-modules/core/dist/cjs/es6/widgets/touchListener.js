@@ -68,7 +68,7 @@ class TouchListener {
         if (!touch) {
             return;
         }
-        const eventIsFarAway = !mouse_1.areEventsNear(touch, this.touchStart, 4);
+        const eventIsFarAway = !(0, mouse_1.areEventsNear)(touch, this.touchStart, 4);
         if (eventIsFarAway) {
             this.moved = true;
         }

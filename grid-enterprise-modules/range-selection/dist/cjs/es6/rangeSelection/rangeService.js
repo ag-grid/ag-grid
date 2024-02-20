@@ -106,14 +106,14 @@ let RangeService = class RangeService extends core_1.BeanStub {
         };
     }
     setRangeToCell(cell, appendRange = false) {
-        if (!this.gridOptionsService.isEnableRangeSelection()) {
+        if (!this.gridOptionsService.get('enableRangeSelection')) {
             return;
         }
         const columns = this.calculateColumnsBetween(cell.column, cell.column);
         if (!columns) {
             return;
         }
-        const suppressMultiRangeSelections = this.gridOptionsService.is('suppressMultiRangeSelection');
+        const suppressMultiRangeSelections = this.gridOptionsService.get('suppressMultiRangeSelection');
         // if not appending, then clear previous range selections
         if (suppressMultiRangeSelections || !appendRange || core_1._.missing(this.cellRanges)) {
             this.removeAllCellRanges(true);
@@ -219,7 +219,7 @@ let RangeService = class RangeService extends core_1.BeanStub {
         return newEndCell;
     }
     setCellRange(params) {
-        if (!this.gridOptionsService.isEnableRangeSelection()) {
+        if (!this.gridOptionsService.get('enableRangeSelection')) {
             return;
         }
         this.removeAllCellRanges(true);
@@ -267,7 +267,7 @@ let RangeService = class RangeService extends core_1.BeanStub {
                 for (let i = 0; i < cellRange.columns.length; i++) {
                     const column = this.columnModel.getGridColumn(cellRange.columns[i]);
                     if (!column || !column.isCellEditable(rowNode)) {
-                        return;
+                        continue;
                     }
                     rowNode.setDataValue(column, null, cellEventSource);
                 }
@@ -317,7 +317,7 @@ let RangeService = class RangeService extends core_1.BeanStub {
         };
     }
     addCellRange(params) {
-        if (!this.gridOptionsService.isEnableRangeSelection()) {
+        if (!this.gridOptionsService.get('enableRangeSelection')) {
             return;
         }
         const newRange = this.createCellRangeFromCellRangeParams(params);
@@ -469,13 +469,13 @@ let RangeService = class RangeService extends core_1.BeanStub {
         return this.draggingRange;
     }
     onDragStart(mouseEvent) {
-        if (!this.gridOptionsService.isEnableRangeSelection()) {
+        if (!this.gridOptionsService.get('enableRangeSelection')) {
             return;
         }
         const { ctrlKey, metaKey, shiftKey } = mouseEvent;
         // ctrlKey for windows, metaKey for Apple
         const isMultiKey = ctrlKey || metaKey;
-        const allowMulti = !this.gridOptionsService.is('suppressMultiRangeSelection');
+        const allowMulti = !this.gridOptionsService.get('suppressMultiRangeSelection');
         const isMultiSelect = allowMulti ? isMultiKey : false;
         const extendRange = shiftKey && core_1._.existsAndNotEmpty(this.cellRanges);
         if (!isMultiSelect && (!extendRange || core_1._.exists(core_1._.last(this.cellRanges).type))) {
@@ -525,7 +525,7 @@ let RangeService = class RangeService extends core_1.BeanStub {
         if (fromMouseClick && this.dragging) {
             return;
         }
-        if (this.gridOptionsService.is('suppressMultiRangeSelection')) {
+        if (this.gridOptionsService.get('suppressMultiRangeSelection')) {
             return;
         }
         if (this.isEmpty()) {
@@ -681,33 +681,33 @@ let RangeService = class RangeService extends core_1.BeanStub {
     }
 };
 __decorate([
-    core_1.Autowired('rowModel')
+    (0, core_1.Autowired)('rowModel')
 ], RangeService.prototype, "rowModel", void 0);
 __decorate([
-    core_1.Autowired('dragService')
+    (0, core_1.Autowired)('dragService')
 ], RangeService.prototype, "dragService", void 0);
 __decorate([
-    core_1.Autowired('columnModel')
+    (0, core_1.Autowired)('columnModel')
 ], RangeService.prototype, "columnModel", void 0);
 __decorate([
-    core_1.Autowired('cellNavigationService')
+    (0, core_1.Autowired)('cellNavigationService')
 ], RangeService.prototype, "cellNavigationService", void 0);
 __decorate([
-    core_1.Autowired("pinnedRowModel")
+    (0, core_1.Autowired)("pinnedRowModel")
 ], RangeService.prototype, "pinnedRowModel", void 0);
 __decorate([
-    core_1.Autowired('rowPositionUtils')
+    (0, core_1.Autowired)('rowPositionUtils')
 ], RangeService.prototype, "rowPositionUtils", void 0);
 __decorate([
-    core_1.Autowired('cellPositionUtils')
+    (0, core_1.Autowired)('cellPositionUtils')
 ], RangeService.prototype, "cellPositionUtils", void 0);
 __decorate([
-    core_1.Autowired('ctrlsService')
+    (0, core_1.Autowired)('ctrlsService')
 ], RangeService.prototype, "ctrlsService", void 0);
 __decorate([
     core_1.PostConstruct
 ], RangeService.prototype, "init", null);
 RangeService = __decorate([
-    core_1.Bean('rangeService')
+    (0, core_1.Bean)('rangeService')
 ], RangeService);
 exports.RangeService = RangeService;

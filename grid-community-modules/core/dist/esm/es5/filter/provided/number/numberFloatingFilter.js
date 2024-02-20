@@ -86,11 +86,14 @@ var NumberFloatingFilter = /** @class */ (function (_super) {
         this.filterModelFormatter = new NumberFilterModelFormatter(this.localeService, this.optionsFactory, (_a = params.filterParams) === null || _a === void 0 ? void 0 : _a.numberFormatter);
     };
     NumberFloatingFilter.prototype.onParamsUpdated = function (params) {
+        this.refresh(params);
+    };
+    NumberFloatingFilter.prototype.refresh = function (params) {
         var allowedCharPattern = getAllowedCharPattern(params.filterParams);
         if (allowedCharPattern !== this.allowedCharPattern) {
             this.recreateFloatingFilterInputService(params);
         }
-        _super.prototype.onParamsUpdated.call(this, params);
+        _super.prototype.refresh.call(this, params);
         this.filterModelFormatter.updateParams({ optionsFactory: this.optionsFactory });
     };
     NumberFloatingFilter.prototype.getDefaultFilterOptions = function () {

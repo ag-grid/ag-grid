@@ -1,4 +1,12 @@
-import { Grid, GridOptions, ICellRendererComp, ICellRendererParams, IsFullWidthRowParams, RowHeightParams } from '@ag-grid-community/core';
+import {
+    GridApi,
+    createGrid,
+    GridOptions,
+    ICellRendererComp,
+    ICellRendererParams,
+    IsFullWidthRowParams,
+    RowHeightParams,
+} from '@ag-grid-community/core';
 import { getData } from "./data";
 import { FullWidthCellRenderer } from './fullWidthCellRenderer_typescript';
 
@@ -23,6 +31,8 @@ class CountryCellRenderer implements ICellRendererComp {
     }
 }
 
+let gridApi: GridApi;
+
 const gridOptions: GridOptions = {
     columnDefs: [
         { field: 'name', cellRenderer: CountryCellRenderer },
@@ -31,8 +41,6 @@ const gridOptions: GridOptions = {
     ],
     defaultColDef: {
         flex: 1,
-        sortable: true,
-        resizable: true,
         filter: true,
     },
     rowData: getData(),
@@ -57,5 +65,5 @@ function isFullWidth(data: any) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    new Grid(gridDiv, gridOptions)
+    gridApi = createGrid(gridDiv, gridOptions);
 })

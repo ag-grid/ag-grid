@@ -84,7 +84,7 @@ export class ChartMenu extends Component {
 
         this.refreshMenuClasses();
 
-        if (!this.gridOptionsService.is('suppressChartToolPanelsButton') && this.panels.length > 0) {
+        if (!this.gridOptionsService.get('suppressChartToolPanelsButton') && this.panels.length > 0) {
             this.getGui().classList.add('ag-chart-tool-panel-button-enable');
             this.addManagedListener(this.eHideButton, 'click', this.toggleMenu.bind(this));
         }
@@ -106,7 +106,7 @@ export class ChartMenu extends Component {
         }
 
         if (rightItems.some(v => this.chartToolbarOptions.includes(v))) {
-            result.push(this.gridOptionsService.is('enableRtl') ? 'left' : 'right');
+            result.push(this.gridOptionsService.get('enableRtl') ? 'left' : 'right');
         }
 
         return result;
@@ -176,7 +176,7 @@ export class ChartMenu extends Component {
             const toolbarItemsFunc = this.gridOptionsService.getCallback('getChartToolbarItems');
     
             if (toolbarItemsFunc) {
-                const isLegacyToolbar = this.gridOptionsService.is('suppressChartToolPanelsButton');
+                const isLegacyToolbar = this.gridOptionsService.get('suppressChartToolPanelsButton');
                 const params: WithoutGridCommon<GetChartToolbarItemsParams> = {
                     defaultItems: isLegacyToolbar ? tabOptions : CHART_TOOLBAR_ALLOW_LIST
                 };
@@ -388,7 +388,7 @@ export class ChartMenu extends Component {
         this.eChartContainer.classList.toggle('ag-chart-menu-visible', this.menuVisible);
         this.eChartContainer.classList.toggle('ag-chart-menu-hidden', !this.menuVisible);
 
-        if (!this.gridOptionsService.is('suppressChartToolPanelsButton')) {
+        if (!this.gridOptionsService.get('suppressChartToolPanelsButton')) {
             this.eHideButtonIcon.classList.toggle('ag-icon-contracted', this.menuVisible);
             this.eHideButtonIcon.classList.toggle('ag-icon-expanded', !this.menuVisible);
         }

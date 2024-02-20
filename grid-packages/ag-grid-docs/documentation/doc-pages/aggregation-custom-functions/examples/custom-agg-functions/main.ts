@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, IAggFuncParams } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions, IAggFuncParams } from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
   { field: 'country', rowGroup: true, hide: true },
@@ -44,14 +44,14 @@ const columnDefs: ColDef[] = [
   },
 ]
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
   defaultColDef: {
     flex: 1,
     minWidth: 150,
     filter: true,
-    sortable: true,
-    resizable: true,
   },
   autoGroupColumnDef: {
     headerName: 'Athlete',
@@ -73,7 +73,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     // however because we are providing the columns in the grid options,
     // it will be to late (eg remove 'xyz' from aggFuncs, and you will
     // see the grid complains).
-    params.api.addAggFunc('xyz', xyzFunc)
+    params.api.addAggFuncs({xyz: xyzFunc})
   },
 }
 
@@ -232,9 +232,9 @@ function max(a: any, b: any) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

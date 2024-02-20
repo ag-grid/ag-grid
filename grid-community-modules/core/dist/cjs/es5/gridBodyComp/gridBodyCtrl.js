@@ -53,13 +53,15 @@ var GridBodyCtrl = /** @class */ (function (_super) {
         return this.eBodyViewport;
     };
     GridBodyCtrl.prototype.setComp = function (comp, eGridBody, eBodyViewport, eTop, eBottom, eStickyTop) {
+        var _this = this;
         this.comp = comp;
         this.eGridBody = eGridBody;
         this.eBodyViewport = eBodyViewport;
         this.eTop = eTop;
         this.eBottom = eBottom;
         this.eStickyTop = eStickyTop;
-        this.setCellTextSelection(this.gridOptionsService.is('enableCellTextSelection'));
+        this.setCellTextSelection(this.gridOptionsService.get('enableCellTextSelection'));
+        this.addManagedPropertyListener('enableCellTextSelection', function (props) { return _this.setCellTextSelection(props.currentValue); });
         this.createManagedBean(new layoutFeature_1.LayoutFeature(this.comp));
         this.bodyScrollFeature = this.createManagedBean(new gridBodyScrollFeature_1.GridBodyScrollFeature(this.eBodyViewport));
         this.addRowDragListener();
@@ -89,14 +91,14 @@ var GridBodyCtrl = /** @class */ (function (_super) {
             _this.addManagedListener(element, 'focusin', function (e) {
                 var target = e.target;
                 // element being focused is nested?
-                var isFocusedElementNested = dom_1.isElementChildOfClass(target, 'ag-root', element);
+                var isFocusedElementNested = (0, dom_1.isElementChildOfClass)(target, 'ag-root', element);
                 element.classList.toggle('ag-has-focus', !isFocusedElementNested);
             });
             _this.addManagedListener(element, 'focusout', function (e) {
                 var target = e.target, relatedTarget = e.relatedTarget;
                 var gridContainRelatedTarget = element.contains(relatedTarget);
-                var isNestedRelatedTarget = dom_1.isElementChildOfClass(relatedTarget, 'ag-root', element);
-                var isNestedTarget = dom_1.isElementChildOfClass(target, 'ag-root', element);
+                var isNestedRelatedTarget = (0, dom_1.isElementChildOfClass)(relatedTarget, 'ag-root', element);
+                var isNestedTarget = (0, dom_1.isElementChildOfClass)(target, 'ag-root', element);
                 // element losing focus belongs to a nested grid,
                 // it should not be handled here.
                 if (isNestedTarget) {
@@ -124,13 +126,13 @@ var GridBodyCtrl = /** @class */ (function (_super) {
         this.setVerticalScrollPaddingVisible(visible);
         this.setStickyTopWidth(visible);
         var scrollbarWidth = visible ? (this.gridOptionsService.getScrollbarWidth() || 0) : 0;
-        var pad = browser_1.isInvisibleScrollbar() ? 16 : 0;
-        var width = "calc(100% + " + (scrollbarWidth + pad) + "px)";
+        var pad = (0, browser_1.isInvisibleScrollbar)() ? 16 : 0;
+        var width = "calc(100% + ".concat(scrollbarWidth + pad, "px)");
         this.animationFrameService.requestAnimationFrame(function () { return _this.comp.setBodyViewportWidth(width); });
     };
     GridBodyCtrl.prototype.onGridColumnsChanged = function () {
         var columns = this.columnModel.getAllGridColumns();
-        this.comp.setColumnCount(columns ? columns.length : 0);
+        this.comp.setColumnCount(columns.length);
     };
     // if we do not do this, then the user can select a pic in the grid (eg an image in a custom cell renderer)
     // and then that will start the browser native drag n' drop, which messes up with our own drag and drop.
@@ -144,13 +146,13 @@ var GridBodyCtrl = /** @class */ (function (_super) {
     };
     GridBodyCtrl.prototype.addStopEditingWhenGridLosesFocus = function () {
         var _this = this;
-        if (!this.gridOptionsService.is('stopEditingWhenCellsLoseFocus')) {
+        if (!this.gridOptionsService.get('stopEditingWhenCellsLoseFocus')) {
             return;
         }
         var focusOutListener = function (event) {
             // this is the element the focus is moving to
             var elementWithFocus = event.relatedTarget;
-            if (browser_1.getTabIndex(elementWithFocus) === null) {
+            if ((0, browser_1.getTabIndex)(elementWithFocus) === null) {
                 _this.rowRenderer.stopEditing();
                 return;
             }
@@ -186,11 +188,11 @@ var GridBodyCtrl = /** @class */ (function (_super) {
         this.comp.setPinnedTopBottomOverflowY(overflowY);
     };
     GridBodyCtrl.prototype.isVerticalScrollShowing = function () {
-        var show = this.gridOptionsService.is('alwaysShowVerticalScroll');
+        var show = this.gridOptionsService.get('alwaysShowVerticalScroll');
         var cssClass = show ? exports.CSS_CLASS_FORCE_VERTICAL_SCROLL : null;
         var allowVerticalScroll = this.gridOptionsService.isDomLayout('normal');
         this.comp.setAlwaysVerticalScrollClass(cssClass, show);
-        return show || (allowVerticalScroll && dom_1.isVerticalScrollShowing(this.eBodyViewport));
+        return show || (allowVerticalScroll && (0, dom_1.isVerticalScrollShowing)(this.eBodyViewport));
     };
     GridBodyCtrl.prototype.setupRowAnimationCssClass = function () {
         var _this = this;
@@ -240,27 +242,19 @@ var GridBodyCtrl = /** @class */ (function (_super) {
         if (!mouseEvent && !touchEvent) {
             return;
         }
-        if (this.gridOptionsService.is('preventDefaultOnContextMenu')) {
+        if (this.gridOptionsService.get('preventDefaultOnContextMenu')) {
             var event_1 = (mouseEvent || touchEvent);
             event_1.preventDefault();
         }
         var target = (mouseEvent || touch).target;
         if (target === this.eBodyViewport || target === this.ctrlsService.getCenterRowContainerCtrl().getViewportElement()) {
             // show it
-            if (!this.contextMenuFactory) {
-                return;
-            }
-            if (mouseEvent) {
-                this.contextMenuFactory.onContextMenu(mouseEvent, null, null, null, null, this.eGridBody);
-            }
-            else if (touchEvent) {
-                this.contextMenuFactory.onContextMenu(null, touchEvent, null, null, null, this.eGridBody);
-            }
+            this.menuService.showContextMenu({ mouseEvent: mouseEvent, touchEvent: touchEvent, value: null, anchorToElement: this.eGridBody });
         }
     };
     GridBodyCtrl.prototype.mockContextMenuForIPad = function (listener) {
         // we do NOT want this when not in iPad
-        if (!browser_1.isIOSUserAgent()) {
+        if (!(0, browser_1.isIOSUserAgent)()) {
             return;
         }
         var touchListener = new touchListener_1.TouchListener(this.eBodyViewport);
@@ -271,7 +265,7 @@ var GridBodyCtrl = /** @class */ (function (_super) {
         this.addDestroyFunc(function () { return touchListener.destroy(); });
     };
     GridBodyCtrl.prototype.onBodyViewportWheel = function (e) {
-        if (!this.gridOptionsService.is('suppressScrollWhenPopupsAreOpen')) {
+        if (!this.gridOptionsService.get('suppressScrollWhenPopupsAreOpen')) {
             return;
         }
         if (this.popupService.hasAnchoredPopup()) {
@@ -306,15 +300,7 @@ var GridBodyCtrl = /** @class */ (function (_super) {
     GridBodyCtrl.prototype.setFloatingHeights = function () {
         var pinnedRowModel = this.pinnedRowModel;
         var floatingTopHeight = pinnedRowModel.getPinnedTopTotalHeight();
-        if (floatingTopHeight) {
-            // adding 1px for cell bottom border
-            floatingTopHeight += 1;
-        }
         var floatingBottomHeight = pinnedRowModel.getPinnedBottomTotalHeight();
-        if (floatingBottomHeight) {
-            // adding 1px for cell bottom border
-            floatingBottomHeight += 1;
-        }
         this.comp.setTopHeight(floatingTopHeight);
         this.comp.setBottomHeight(floatingBottomHeight);
         this.comp.setTopDisplay(floatingTopHeight ? 'inherit' : 'none');
@@ -324,7 +310,7 @@ var GridBodyCtrl = /** @class */ (function (_super) {
     GridBodyCtrl.prototype.setStickyTopHeight = function (height) {
         if (height === void 0) { height = 0; }
         // console.log('setting sticky top height ' + height);
-        this.comp.setStickyTopHeight(height + "px");
+        this.comp.setStickyTopHeight("".concat(height, "px"));
         this.stickyTopHeight = height;
     };
     GridBodyCtrl.prototype.getStickyTopHeight = function () {
@@ -336,7 +322,7 @@ var GridBodyCtrl = /** @class */ (function (_super) {
         }
         else {
             var scrollbarWidth = this.gridOptionsService.getScrollbarWidth();
-            this.comp.setStickyTopWidth("calc(100% - " + scrollbarWidth + "px)");
+            this.comp.setStickyTopWidth("calc(100% - ".concat(scrollbarWidth, "px)"));
         }
     };
     GridBodyCtrl.prototype.onHeaderHeightChanged = function () {
@@ -353,7 +339,7 @@ var GridBodyCtrl = /** @class */ (function (_super) {
         if (pinnedTopHeight > 0) {
             height += pinnedTopHeight + 1;
         }
-        this.comp.setStickyTopTop(height + "px");
+        this.comp.setStickyTopTop("".concat(height, "px"));
     };
     // method will call itself if no available width. this covers if the grid
     // isn't visible, but is just about to be visible.
@@ -363,7 +349,7 @@ var GridBodyCtrl = /** @class */ (function (_super) {
         var scrollWidthToRemove = removeScrollWidth ? this.gridOptionsService.getScrollbarWidth() : 0;
         // bodyViewportWidth should be calculated from eGridBody, not eBodyViewport
         // because we change the width of the bodyViewport to hide the real browser scrollbar
-        var bodyViewportWidth = dom_1.getInnerWidth(this.eGridBody);
+        var bodyViewportWidth = (0, dom_1.getInnerWidth)(this.eGridBody);
         var availableWidth = bodyViewportWidth - scrollWidthToRemove;
         if (availableWidth > 0) {
             this.columnModel.sizeColumnsToFit(availableWidth, "sizeColumnsToFit", false, params);
@@ -398,46 +384,46 @@ var GridBodyCtrl = /** @class */ (function (_super) {
         this.eBodyViewport.removeEventListener('scroll', listener);
     };
     __decorate([
-        context_1.Autowired('animationFrameService')
+        (0, context_1.Autowired)('animationFrameService')
     ], GridBodyCtrl.prototype, "animationFrameService", void 0);
     __decorate([
-        context_1.Autowired('rowContainerHeightService')
+        (0, context_1.Autowired)('rowContainerHeightService')
     ], GridBodyCtrl.prototype, "rowContainerHeightService", void 0);
     __decorate([
-        context_1.Autowired('ctrlsService')
+        (0, context_1.Autowired)('ctrlsService')
     ], GridBodyCtrl.prototype, "ctrlsService", void 0);
     __decorate([
-        context_1.Autowired('columnModel')
+        (0, context_1.Autowired)('columnModel')
     ], GridBodyCtrl.prototype, "columnModel", void 0);
     __decorate([
-        context_1.Autowired('scrollVisibleService')
+        (0, context_1.Autowired)('scrollVisibleService')
     ], GridBodyCtrl.prototype, "scrollVisibleService", void 0);
     __decorate([
-        context_1.Optional('contextMenuFactory')
-    ], GridBodyCtrl.prototype, "contextMenuFactory", void 0);
+        (0, context_1.Autowired)('menuService')
+    ], GridBodyCtrl.prototype, "menuService", void 0);
     __decorate([
-        context_1.Autowired('headerNavigationService')
+        (0, context_1.Autowired)('headerNavigationService')
     ], GridBodyCtrl.prototype, "headerNavigationService", void 0);
     __decorate([
-        context_1.Autowired('dragAndDropService')
+        (0, context_1.Autowired)('dragAndDropService')
     ], GridBodyCtrl.prototype, "dragAndDropService", void 0);
     __decorate([
-        context_1.Autowired('pinnedRowModel')
+        (0, context_1.Autowired)('pinnedRowModel')
     ], GridBodyCtrl.prototype, "pinnedRowModel", void 0);
     __decorate([
-        context_1.Autowired('rowRenderer')
+        (0, context_1.Autowired)('rowRenderer')
     ], GridBodyCtrl.prototype, "rowRenderer", void 0);
     __decorate([
-        context_1.Autowired('popupService')
+        (0, context_1.Autowired)('popupService')
     ], GridBodyCtrl.prototype, "popupService", void 0);
     __decorate([
-        context_1.Autowired('mouseEventService')
+        (0, context_1.Autowired)('mouseEventService')
     ], GridBodyCtrl.prototype, "mouseEventService", void 0);
     __decorate([
-        context_1.Autowired('rowModel')
+        (0, context_1.Autowired)('rowModel')
     ], GridBodyCtrl.prototype, "rowModel", void 0);
     __decorate([
-        context_1.Autowired('filterManager')
+        (0, context_1.Autowired)('filterManager')
     ], GridBodyCtrl.prototype, "filterManager", void 0);
     return GridBodyCtrl;
 }(beanStub_1.BeanStub));

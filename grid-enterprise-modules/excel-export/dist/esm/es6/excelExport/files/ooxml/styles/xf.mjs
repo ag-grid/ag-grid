@@ -2,7 +2,7 @@ import alignmentFactory from './alignment.mjs';
 import protectionFactory from './protection.mjs';
 const xfFactory = {
     getTemplate(xf) {
-        const { alignment, borderId, fillId, fontId, numFmtId, protection, xfId } = xf;
+        const { alignment, borderId, fillId, fontId, numFmtId, protection, quotePrefix, xfId } = xf;
         const children = [];
         if (alignment) {
             children.push(alignmentFactory.getTemplate(alignment));
@@ -24,6 +24,7 @@ const xfFactory = {
                     fontId,
                     applyNumberFormat: numFmtId ? 1 : undefined,
                     numFmtId,
+                    quotePrefix: quotePrefix ? 1 : undefined,
                     xfId
                 }
             },

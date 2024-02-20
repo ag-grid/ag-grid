@@ -1,10 +1,9 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ICellRenderer } from "./iCellRenderer";
 import { Component } from "../../widgets/component";
 export declare class AnimateShowChangeCellRenderer extends Component implements ICellRenderer {
-    private static TEMPLATE;
     private lastValue;
     private eValue;
     private eDelta;
@@ -15,5 +14,5 @@ export declare class AnimateShowChangeCellRenderer extends Component implements 
     private showDelta;
     private setTimerToRemoveDelta;
     private hideDeltaValue;
-    refresh(params: any): boolean;
+    refresh(params: any, isInitialRender?: boolean): boolean;
 }

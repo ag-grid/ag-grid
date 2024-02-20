@@ -96,7 +96,7 @@ var AbstractSelectionHandle = /** @class */ (function (_super) {
         document.body.classList.add(this.getDraggingCssClass());
     };
     AbstractSelectionHandle.prototype.getDraggingCssClass = function () {
-        return "ag-dragging-" + (this.type === SelectionHandleType.FILL ? 'fill' : 'range') + "-handle";
+        return "ag-dragging-".concat(this.type === SelectionHandleType.FILL ? 'fill' : 'range', "-handle");
     };
     AbstractSelectionHandle.prototype.updateValuesOnMove = function (e) {
         var cell = this.mouseEventService.getCellPositionForEvent(e);

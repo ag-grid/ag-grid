@@ -37,7 +37,7 @@ var HeaderFilterCellComp = /** @class */ (function (_super) {
         var compProxy = {
             addOrRemoveCssClass: function (cssClassName, on) { return _this.addOrRemoveCssClass(cssClassName, on); },
             addOrRemoveBodyCssClass: function (cssClassName, on) { return _this.eFloatingFilterBody.classList.toggle(cssClassName, on); },
-            setButtonWrapperDisplayed: function (displayed) { return dom_1.setDisplayed(_this.eButtonWrapper, displayed); },
+            setButtonWrapperDisplayed: function (displayed) { return (0, dom_1.setDisplayed)(_this.eButtonWrapper, displayed); },
             setCompDetails: function (compDetails) { return _this.setCompDetails(compDetails); },
             getFloatingFilterComp: function () { return _this.compPromise; },
             setWidth: function (width) { return eGui.style.width = width; },
@@ -77,15 +77,15 @@ var HeaderFilterCellComp = /** @class */ (function (_super) {
             comp.afterGuiAttached();
         }
     };
-    HeaderFilterCellComp.TEMPLATE = "<div class=\"ag-header-cell ag-floating-filter\" role=\"gridcell\" tabindex=\"-1\">\n            <div ref=\"eFloatingFilterBody\" role=\"presentation\"></div>\n            <div class=\"ag-floating-filter-button ag-hidden\" ref=\"eButtonWrapper\" role=\"presentation\">\n                <button type=\"button\" class=\"ag-button ag-floating-filter-button-button\" ref=\"eButtonShowMainFilter\" tabindex=\"-1\"></button>\n            </div>\n        </div>";
+    HeaderFilterCellComp.TEMPLATE = "<div class=\"ag-header-cell ag-floating-filter\" role=\"gridcell\">\n            <div ref=\"eFloatingFilterBody\" role=\"presentation\"></div>\n            <div class=\"ag-floating-filter-button ag-hidden\" ref=\"eButtonWrapper\" role=\"presentation\">\n                <button type=\"button\" class=\"ag-button ag-floating-filter-button-button\" ref=\"eButtonShowMainFilter\" tabindex=\"-1\"></button>\n            </div>\n        </div>";
     __decorate([
-        componentAnnotations_1.RefSelector('eFloatingFilterBody')
+        (0, componentAnnotations_1.RefSelector)('eFloatingFilterBody')
     ], HeaderFilterCellComp.prototype, "eFloatingFilterBody", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('eButtonWrapper')
+        (0, componentAnnotations_1.RefSelector)('eButtonWrapper')
     ], HeaderFilterCellComp.prototype, "eButtonWrapper", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('eButtonShowMainFilter')
+        (0, componentAnnotations_1.RefSelector)('eButtonShowMainFilter')
     ], HeaderFilterCellComp.prototype, "eButtonShowMainFilter", void 0);
     __decorate([
         context_1.PostConstruct

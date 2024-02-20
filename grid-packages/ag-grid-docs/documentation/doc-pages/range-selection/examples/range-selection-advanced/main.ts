@@ -1,13 +1,15 @@
 import {
-  Grid,
+  createGrid,
   CellRange,
   GridOptions,
   RangeSelectionChangedEvent,
   ProcessCellForExportParams,
   RangeDeleteStartEvent,
-  RangeDeleteEndEvent 
+  RangeDeleteEndEvent, 
+  GridApi
 } from '@ag-grid-community/core'
 
+let gridApi: GridApi;
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     { field: 'athlete', minWidth: 150 },
@@ -60,7 +62,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function onAddRange() {
-  gridOptions.api!.addCellRange({
+  gridApi!.addCellRange({
     rowStartIndex: 4,
     rowEndIndex: 8,
     columnStart: 'age',
@@ -69,40 +71,38 @@ function onAddRange() {
 }
 
 function onClearRange() {
-  gridOptions.api!.clearRangeSelection()
+  gridApi!.clearRangeSelection()
 }
 
 function onRangeSelectionChanged(event: RangeSelectionChangedEvent) {
   var lbRangeCount = document.querySelector('#lbRangeCount')!
   var lbEagerSum = document.querySelector('#lbEagerSum')!
   var lbLazySum = document.querySelector('#lbLazySum')!
-  var cellRanges = gridOptions.api!.getCellRanges()
+  var cellRanges = gridApi!.getCellRanges()
 
   // if no selection, clear all the results and do nothing more
   if (!cellRanges || cellRanges.length === 0) {
-    lbRangeCount.innerHTML = '0'
-    lbEagerSum.innerHTML = '-'
-    lbLazySum.innerHTML = '-'
+    lbRangeCount.textContent = '0'
+    lbEagerSum.textContent = '-'
+    lbLazySum.textContent = '-'
     return
   }
 
   // set range count to the number of ranges selected
-  lbRangeCount.innerHTML = cellRanges.length + ''
+  lbRangeCount.textContent = cellRanges.length + ''
 
-  var sum = 0
-  var api = gridOptions.api!
+  var sum = 0;
 
   if (cellRanges) {
-    cellRanges.forEach(function (range: CellRange) {
+    cellRanges.forEach((range: CellRange) => {
       // get starting and ending row, remember rowEnd could be before rowStart
       var startRow = Math.min(range.startRow!.rowIndex, range.endRow!.rowIndex)
       var endRow = Math.max(range.startRow!.rowIndex, range.endRow!.rowIndex)
 
       for (var rowIndex = startRow; rowIndex <= endRow; rowIndex++) {
-        range.columns.forEach(function (column) {
-          var rowModel = api.getModel()
-          var rowNode = rowModel.getRow(rowIndex)!
-          var value = api.getValue(column, rowNode)
+        range.columns.forEach((column) => {
+          var rowNode = gridApi.getDisplayedRowAtIndex(rowIndex)!;
+          var value = gridApi.getValue(column, rowNode)
           if (typeof value === 'number') {
             sum += value
           }
@@ -112,22 +112,22 @@ function onRangeSelectionChanged(event: RangeSelectionChangedEvent) {
   }
 
 
-  lbEagerSum.innerHTML = sum + ''
+  lbEagerSum.textContent = sum + ''
 
   if (event.started) {
-    lbLazySum.innerHTML = '?'
+    lbLazySum.textContent = '?'
   }
   if (event.finished) {
-    lbLazySum.innerHTML = sum + ''
+    lbLazySum.textContent = sum + ''
   }
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi.setGridOption('rowData', data))
 })

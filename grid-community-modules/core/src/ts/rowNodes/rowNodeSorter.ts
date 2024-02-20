@@ -29,7 +29,7 @@ export class RowNodeSorter extends BeanStub {
 
     @PostConstruct
     public init(): void {
-        this.isAccentedSort = this.gridOptionsService.is('accentedSort');
+        this.isAccentedSort = this.gridOptionsService.get('accentedSort');
         this.primaryColumnsSortGroups = this.gridOptionsService.isColumnsSortingCoupledToGroup();
 
         this.addManagedPropertyListener('accentedSort', (propChange) => this.isAccentedSort = propChange.currentValue);
@@ -111,16 +111,9 @@ export class RowNodeSorter extends BeanStub {
         const isNodeGroupedAtLevel = node.rowGroupColumn === column;
         if (isNodeGroupedAtLevel) {
             const isGroupRows = this.gridOptionsService.isGroupUseEntireRow(this.columnModel.isPivotActive());
+            // because they're group rows, no display cols exist, so groupData never populated.
+            // instead delegate to getting value from leaf child.
             if (isGroupRows) {
-                // if the column has a provided a keyCreator, we have to use the key, as the group could be
-                // irrelevant to the column value
-                const keyCreator = column.getColDef().keyCreator;
-                if (keyCreator) {
-                    return node.key;
-                }
-
-                // if the group was generated from the column data, all the leaf children should return the same
-                // value
                 const leafChild = node.allLeafChildren?.[0];
                 if (leafChild) {
                     return this.valueService.getValue(column, leafChild, false, false);

@@ -25,7 +25,7 @@ class SelectedRowsComp extends nameValueComp_1.NameValueComp {
     }
     isValidRowModel() {
         // this component is only really useful with client or server side rowmodels
-        const rowModelType = this.gridApi.getModel().getType();
+        const rowModelType = this.gridApi.__getModel().getType();
         return rowModelType === 'clientSide' || rowModelType === 'serverSide';
     }
     onRowSelectionChanged() {
@@ -43,6 +43,9 @@ class SelectedRowsComp extends nameValueComp_1.NameValueComp {
     }
     init() {
     }
+    refresh() {
+        return true;
+    }
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
     destroy() {
@@ -50,10 +53,10 @@ class SelectedRowsComp extends nameValueComp_1.NameValueComp {
     }
 }
 __decorate([
-    core_1.Autowired('gridApi')
+    (0, core_1.Autowired)('gridApi')
 ], SelectedRowsComp.prototype, "gridApi", void 0);
 __decorate([
-    core_1.Autowired('selectionService')
+    (0, core_1.Autowired)('selectionService')
 ], SelectedRowsComp.prototype, "selectionService", void 0);
 __decorate([
     core_1.PostConstruct

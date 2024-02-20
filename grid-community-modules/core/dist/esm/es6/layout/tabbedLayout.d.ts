@@ -1,10 +1,10 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgPromise } from '../utils';
 import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
-import { Component } from '../widgets/component';
-export declare class TabbedLayout extends Component {
+import { TabGuardComp } from '../widgets/tabGuardComp';
+export declare class TabbedLayout extends TabGuardComp {
     private focusService;
     private readonly eHeader;
     private readonly eBody;
@@ -19,6 +19,9 @@ export declare class TabbedLayout extends Component {
     private static getTemplate;
     protected handleKeyDown(e: KeyboardEvent): void;
     protected onTabKeyDown(e: KeyboardEvent): void;
+    private focusInnerElement;
+    private focusHeader;
+    private focusBody;
     setAfterAttachedParams(params: IAfterGuiAttachedParams): void;
     showFirstItem(): void;
     private addItem;
@@ -29,8 +32,10 @@ export interface TabbedLayoutParams {
     items: TabbedItem[];
     cssClass?: string;
     keepScrollPosition?: boolean;
-    onItemClicked?: Function;
-    onActiveItemClicked?: Function;
+    onItemClicked?: (event: {
+        item: TabbedItem;
+    }) => void;
+    onActiveItemClicked?: () => void;
 }
 export interface TabbedItem {
     title: Element;

@@ -6,5 +6,6 @@ export declare class TotalRowsComp extends NameValueComp implements IStatusPanel
     private onDataChanged;
     private getRowCountValue;
     init(): void;
+    refresh(): boolean;
     destroy(): void;
 }

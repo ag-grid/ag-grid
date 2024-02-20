@@ -23,7 +23,7 @@ import { Autowired } from "../../../context/context";
 import { ProvidedColumnGroup } from "../../../entities/providedColumnGroup";
 import { setDisplayed } from "../../../utils/dom";
 import { isStopPropagationForAgGrid, stopPropagationForAgGrid } from "../../../utils/event";
-import { doOnce } from "../../../utils/function";
+import { warnOnce } from "../../../utils/function";
 import { exists } from "../../../utils/generic";
 import { createIconNoSpan } from "../../../utils/icon";
 import { escapeString } from "../../../utils/string";
@@ -50,8 +50,7 @@ var HeaderGroupComp = /** @class */ (function (_super) {
     HeaderGroupComp.prototype.checkWarnings = function () {
         var paramsAny = this.params;
         if (paramsAny.template) {
-            var message_1 = "AG Grid: A template was provided for Header Group Comp - templates are only supported for Header Comps (not groups)";
-            doOnce(function () { return console.warn(message_1); }, 'HeaderGroupComp.templateNotSupported');
+            warnOnce("A template was provided for Header Group Comp - templates are only supported for Header Comps (not groups)");
         }
     };
     HeaderGroupComp.prototype.setupExpandIcons = function () {
@@ -119,8 +118,8 @@ var HeaderGroupComp = /** @class */ (function (_super) {
         // no renderer, default text render
         var _b = this.params, displayName = _b.displayName, columnGroup = _b.columnGroup;
         if (exists(displayName)) {
-            var displayNameSanitised = escapeString(displayName);
-            this.getRefElement('agLabel').innerHTML = displayNameSanitised;
+            var displayNameSanitised = escapeString(displayName, true);
+            this.getRefElement('agLabel').textContent = displayNameSanitised;
         }
         this.addOrRemoveCssClass('ag-sticky-label', !((_a = columnGroup.getColGroupDef()) === null || _a === void 0 ? void 0 : _a.suppressStickyLabel));
     };

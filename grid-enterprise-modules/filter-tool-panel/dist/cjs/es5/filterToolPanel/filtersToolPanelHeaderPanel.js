@@ -39,8 +39,10 @@ var FiltersToolPanelHeaderPanel = /** @class */ (function (_super) {
     };
     FiltersToolPanelHeaderPanel.prototype.postConstruct = function () {
         var translate = this.localeService.getLocaleTextFunc();
-        this.eFilterTextField.onValueChange(this.onSearchTextChanged.bind(this));
-        this.eFilterTextField.setInputAriaLabel(translate('ariaFilterColumnsInput', 'Filter Columns Input'));
+        this.eFilterTextField
+            .setAutoComplete(false)
+            .setInputAriaLabel(translate('ariaFilterColumnsInput', 'Filter Columns Input'))
+            .onValueChange(this.onSearchTextChanged.bind(this));
         this.createExpandIcons();
         this.setExpandState(EXPAND_STATE.EXPANDED);
         this.addManagedListener(this.eExpand, 'click', this.onExpandClicked.bind(this));
@@ -88,13 +90,13 @@ var FiltersToolPanelHeaderPanel = /** @class */ (function (_super) {
         core_1._.setDisplayed(this.eExpandIndeterminate, this.currentExpandState === EXPAND_STATE.INDETERMINATE);
     };
     __decorate([
-        core_1.Autowired('columnModel')
+        (0, core_1.Autowired)('columnModel')
     ], FiltersToolPanelHeaderPanel.prototype, "columnModel", void 0);
     __decorate([
-        core_1.RefSelector('eExpand')
+        (0, core_1.RefSelector)('eExpand')
     ], FiltersToolPanelHeaderPanel.prototype, "eExpand", void 0);
     __decorate([
-        core_1.RefSelector('eFilterTextField')
+        (0, core_1.RefSelector)('eFilterTextField')
     ], FiltersToolPanelHeaderPanel.prototype, "eFilterTextField", void 0);
     __decorate([
         core_1.PreConstruct

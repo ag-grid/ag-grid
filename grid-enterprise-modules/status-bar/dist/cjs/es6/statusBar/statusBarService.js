@@ -12,16 +12,26 @@ let StatusBarService = class StatusBarService extends core_1.BeanStub {
     // tslint:disable-next-line
     constructor() {
         super();
-        this.allComponents = {};
+        this.allComponents = new Map();
     }
     registerStatusPanel(key, component) {
-        this.allComponents[key] = component;
+        this.allComponents.set(key, component);
+    }
+    unregisterStatusPanel(key) {
+        this.allComponents.delete(key);
+    }
+    unregisterAllComponents() {
+        this.allComponents.clear();
     }
     getStatusPanel(key) {
-        return this.allComponents[key];
+        return this.allComponents.get(key);
+    }
+    destroy() {
+        this.unregisterAllComponents();
+        super.destroy();
     }
 };
 StatusBarService = __decorate([
-    core_1.Bean('statusBarService')
+    (0, core_1.Bean)('statusBarService')
 ], StatusBarService);
 exports.StatusBarService = StatusBarService;

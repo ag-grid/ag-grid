@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "./component";
@@ -14,13 +14,21 @@ export declare class TabGuardComp extends Component {
         /**
          * @return `true` to prevent the default onFocusIn behavior
          */
-        onFocusIn?: (e: FocusEvent) => boolean;
+        onFocusIn?: (e: FocusEvent) => void;
         /**
          * @return `true` to prevent the default onFocusOut behavior
          */
-        onFocusOut?: (e: FocusEvent) => boolean;
+        onFocusOut?: (e: FocusEvent) => void;
         onTabKeyDown?: (e: KeyboardEvent) => void;
         handleKeyDown?: (e: KeyboardEvent) => void;
+        /**
+         * Set to true to create a circular focus pattern when keyboard tabbing.
+         */
+        focusTrapActive?: boolean;
+        /**
+         * Set to true to find a focusable element outside of the TabGuards to focus
+         */
+        forceFocusOutWhenTabGuardsAreEmpty?: boolean;
     }): void;
     private createTabGuard;
     private addTabGuards;

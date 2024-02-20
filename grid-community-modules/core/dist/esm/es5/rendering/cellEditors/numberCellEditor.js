@@ -15,6 +15,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import { SimpleCellEditor } from "./simpleCellEditor";
 import { exists } from "../../utils/generic";
+import { KeyCode } from "../../constants/keyCode";
 var NumberCellEditorInput = /** @class */ (function () {
     function NumberCellEditorInput() {
     }
@@ -36,8 +37,17 @@ var NumberCellEditorInput = /** @class */ (function () {
         if (params.step != null) {
             eInput.setStep(params.step);
         }
-        if (params.showStepperButtons) {
-            eInput.getInputElement().classList.add('ag-number-field-input-stepper');
+        var inputEl = eInput.getInputElement();
+        if (params.preventStepping) {
+            eInput.addManagedListener(inputEl, 'keydown', this.preventStepping);
+        }
+        else if (params.showStepperButtons) {
+            inputEl.classList.add('ag-number-field-input-stepper');
+        }
+    };
+    NumberCellEditorInput.prototype.preventStepping = function (e) {
+        if (e.key === KeyCode.UP || e.key === KeyCode.DOWN) {
+            e.preventDefault();
         }
     };
     NumberCellEditorInput.prototype.getValue = function () {

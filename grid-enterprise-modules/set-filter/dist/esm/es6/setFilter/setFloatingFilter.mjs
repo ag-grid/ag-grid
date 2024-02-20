@@ -35,6 +35,9 @@ export class SetFloatingFilterComp extends Component {
         this.eFloatingFilterText.setInputAriaLabel(`${displayName} ${translate('ariaFilterInput', 'Filter Input')}`);
     }
     onParamsUpdated(params) {
+        this.refresh(params);
+    }
+    refresh(params) {
         this.params = params;
         this.setParams(params);
     }

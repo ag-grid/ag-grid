@@ -49,7 +49,7 @@ var AgAutocomplete = /** @class */ (function (_super) {
         this.addGuiEventListener('focusout', function () { return _this.onFocusOut(); });
     };
     AgAutocomplete.prototype.onValueChanged = function (value) {
-        var parsedValue = generic_1.makeNull(value);
+        var parsedValue = (0, generic_1.makeNull)(value);
         this.updateValue(parsedValue);
         this.updateAutocompleteList(parsedValue);
     };
@@ -182,7 +182,12 @@ var AgAutocomplete = /** @class */ (function (_super) {
             // clicking on the list loses focus, so restore
             this.eAutocompleteInput.getFocusableElement().focus();
         }
-        this.eAutocompleteInput.getInputElement().setSelectionRange(position, position);
+        var eInput = this.eAutocompleteInput.getInputElement();
+        eInput.setSelectionRange(position, position);
+        if (position === eInput.value.length) {
+            // ensure the caret is visible
+            eInput.scrollLeft = eInput.scrollWidth;
+        }
     };
     AgAutocomplete.prototype.forceOpenList = function () {
         this.onValueChanged(this.eAutocompleteInput.getValue());
@@ -220,7 +225,7 @@ var AgAutocomplete = /** @class */ (function (_super) {
             type: 'autocomplete',
             eventSource: this.getGui(),
             position: 'under',
-            alignSide: this.gridOptionsService.is('enableRtl') ? 'right' : 'left',
+            alignSide: this.gridOptionsService.get('enableRtl') ? 'right' : 'left',
             keepWithinBounds: true
         };
         var addPopupRes = this.popupService.addPopup({
@@ -249,7 +254,7 @@ var AgAutocomplete = /** @class */ (function (_super) {
         });
     };
     AgAutocomplete.prototype.getValue = function () {
-        return generic_1.makeNull(this.eAutocompleteInput.getValue());
+        return (0, generic_1.makeNull)(this.eAutocompleteInput.getValue());
     };
     AgAutocomplete.prototype.setInputPlaceholder = function (placeholder) {
         this.eAutocompleteInput.setInputPlaceholder(placeholder);
@@ -298,10 +303,10 @@ var AgAutocomplete = /** @class */ (function (_super) {
     AgAutocomplete.EVENT_OPTION_SELECTED = 'eventOptionSelected';
     AgAutocomplete.EVENT_VALID_CHANGED = 'eventValidChanged';
     __decorate([
-        context_1.Autowired('popupService')
+        (0, context_1.Autowired)('popupService')
     ], AgAutocomplete.prototype, "popupService", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('eAutocompleteInput')
+        (0, componentAnnotations_1.RefSelector)('eAutocompleteInput')
     ], AgAutocomplete.prototype, "eAutocompleteInput", void 0);
     __decorate([
         context_1.PostConstruct

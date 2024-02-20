@@ -24,7 +24,7 @@
 |    selector: 'my-app',
 |    template: `
 |        &lt;ag-grid-angular
-|                class="ag-theme-alpine"
+|                class="ag-theme-quartz"
 |                [columnDefs]="columnDefs"
 |                ...other properties>        
 |        &lt;/ag-grid-angular>`

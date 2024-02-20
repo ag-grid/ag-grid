@@ -15,25 +15,29 @@ let ColumnAnimationService = class ColumnAnimationService extends beanStub_1.Bea
         this.executeNextFuncs = [];
         this.executeLaterFuncs = [];
         this.active = false;
+        this.suppressAnimation = false;
         this.animationThreadCount = 0;
     }
     postConstruct() {
         this.ctrlsService.whenReady(p => this.gridBodyCtrl = p.gridBodyCtrl);
     }
     isActive() {
-        return this.active;
+        return this.active && !this.suppressAnimation;
+    }
+    setSuppressAnimation(suppress) {
+        this.suppressAnimation = suppress;
     }
     start() {
         if (this.active) {
             return;
         }
-        if (this.gridOptionsService.is('suppressColumnMoveAnimation')) {
+        if (this.gridOptionsService.get('suppressColumnMoveAnimation')) {
             return;
         }
         // if doing RTL, we don't animate open / close as due to how the pixels are inverted,
         // the animation moves all the row the the right rather than to the left (ie it's the static
         // columns that actually get their coordinates updated)
-        if (this.gridOptionsService.is('enableRtl')) {
+        if (this.gridOptionsService.get('enableRtl')) {
             return;
         }
         this.ensureAnimationCssClassPresent();
@@ -43,8 +47,7 @@ let ColumnAnimationService = class ColumnAnimationService extends beanStub_1.Bea
         if (!this.active) {
             return;
         }
-        this.flush();
-        this.active = false;
+        this.flush(() => { this.active = false; });
     }
     executeNextVMTurn(func) {
         if (this.active) {
@@ -75,25 +78,35 @@ let ColumnAnimationService = class ColumnAnimationService extends beanStub_1.Bea
             }
         });
     }
-    flush() {
-        const nowFuncs = this.executeNextFuncs;
-        this.executeNextFuncs = [];
-        const waitFuncs = this.executeLaterFuncs;
-        this.executeLaterFuncs = [];
-        if (nowFuncs.length === 0 && waitFuncs.length === 0) {
+    flush(callback) {
+        if (this.executeNextFuncs.length === 0 && this.executeLaterFuncs.length === 0) {
+            callback();
             return;
         }
-        window.setTimeout(() => nowFuncs.forEach(func => func()), 0);
-        window.setTimeout(() => waitFuncs.forEach(func => func()), 300);
+        const runFuncs = (queue) => {
+            while (queue.length) {
+                const func = queue.pop();
+                if (func) {
+                    func();
+                }
+            }
+        };
+        this.getFrameworkOverrides().wrapIncoming(() => {
+            window.setTimeout(() => runFuncs(this.executeNextFuncs), 0);
+            window.setTimeout(() => {
+                runFuncs(this.executeLaterFuncs);
+                callback();
+            }, 200);
+        });
     }
 };
 __decorate([
-    context_1.Autowired('ctrlsService')
+    (0, context_1.Autowired)('ctrlsService')
 ], ColumnAnimationService.prototype, "ctrlsService", void 0);
 __decorate([
     context_1.PostConstruct
 ], ColumnAnimationService.prototype, "postConstruct", null);
 ColumnAnimationService = __decorate([
-    context_1.Bean('columnAnimationService')
+    (0, context_1.Bean)('columnAnimationService')
 ], ColumnAnimationService);
 exports.ColumnAnimationService = ColumnAnimationService;

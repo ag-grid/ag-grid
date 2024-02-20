@@ -14,11 +14,11 @@ The grid is fast. However, the grid can also be configured and extended in many 
 
 ## Setting Expectations
 
-The grid can be as fast as demonstrated in the demo application [Demo Application](../../example). You can resize the demo application to the same size as the grid in your application by resizing the browser, then navigate around the grid (scroll, filter etc) and see how fast the demo grid is compared to your own implementation. If the demo grid is going faster, then there is room for performance improvements.
+The grid can be as fast as demonstrated in the [Demo](../../example). You can resize the demo application to the same size as the grid in your application by resizing the browser, then navigate around the grid (scroll, filter, etc.) and see how fast the demo grid is compared to your own implementation. If the demo grid is going faster, then there is room for performance improvements.
 
 ## Check Cell Renderers
 
-The grid can be slowed down by custom [Cell Renderers](/component-cell-renderer/). To test this, remove all Cell Renderers from the grid and compare the speed again. If the grid does improve it's speed by removing Cell Renderers, introduce the Cell Renderers one by one to find out which ones are adding the most overhead.
+The grid can be slowed down by custom [Cell Renderers](/component-cell-renderer/). To test this, remove all Cell Renderers from the grid and compare the speed again. If the grid does improve its speed by removing Cell Renderers, introduce the Cell Renderers one by one to find out which ones are adding the most overhead.
 
 <framework-specific-section frameworks="angular">
 | 
@@ -60,18 +60,18 @@ If you are looking for ways to squeeze performance, consider turning this featur
 
 ## Configure Row Buffer
 
-The `rowBuffer` property sets the number of rows the grid renders outside of the viewable area. The default is 10. For example, if your grid is showing 50 rows (as that's all the fits on your screen without scrolling), then the grid will actually render 70 in total (10 extra above and 10 extra below). Then when you scroll the grid will already have 10 rows ready waiting to show so the user will not see a redraw (not all browsers show the redraw, only the slower ones).
+The `rowBuffer` property sets the number of rows the grid renders outside of the viewable area. The default is 10. For example, if your grid is showing 50 rows (as that's all that fits on your screen without scrolling), then the grid will actually render 70 in total (10 extra above and 10 extra below). Then when you scroll, the grid will already have 10 rows ready and waiting to show, so the user will not see a redraw (not all browsers show the redraw, only the slower ones).
 
-Setting a low row buffer will make initial draws of the grid faster (eg when data is first loaded, or after filtering, grouping etc). Setting a high row buffer will reduce the redraw visible vertically scrolling.
+Setting a low row buffer will make initial draws of the grid faster (e.g. when data is first loaded, or after filtering, grouping, etc.). Setting a high row buffer will reduce the redraw visible vertically scrolling.
 
 ## Compare Browsers
 
-Performance of the grid can vary between browsers due to their underlying implementations. At the time of writing Chromium based browsers (Google Chrome, Microsoft Edge) have the best performance. However, it may be outside of your control to recommend which browser users of your application have installed.
+Performance of the grid can vary between browsers due to their underlying implementations. At the time of writing, Chromium-based browsers (Google Chrome, Microsoft Edge) have the best performance. However, it may be outside of your control to recommend which browser users of your application have installed.
 
 ## Understand Data Updates
 
-For fast changing data, consider using [Batch Update Transactions](/data-update-high-frequency/) which allows the grid to take very large amounts of updates without bringing the browser to a crawl. This is also demonstrated in the blog
-[Streaming Updates in JavaScript Datagrids](https://medium.com/ag-grid/how-to-test-for-the-best-html5-grid-for-streaming-updates-53545bb9256a) that shows hundreds of thousands of updates per second.
+For fast changing data, consider using [Batch Update Transactions](/data-update-high-frequency/), which allow the grid to take very large amounts of updates without bringing the browser to a crawl. This is also demonstrated in the blog
+[Streaming Updates in JavaScript Datagrids](https://medium.com/ag-grid/how-to-test-for-the-best-html5-grid-for-streaming-updates-53545bb9256a), which shows hundreds of thousands of updates per second.
 
 ## Debounce Vertical Scroll
 

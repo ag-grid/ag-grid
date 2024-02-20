@@ -42,15 +42,15 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
     getIconName() {
         return this.isPotentialDndColumns() ? DragAndDropService.ICON_AGGREGATE : DragAndDropService.ICON_NOT_ALLOWED;
     }
-    isColumnDroppable(column) {
+    isColumnDroppable(column, draggingEvent) {
         // we never allow grouping of secondary columns
-        if (this.gridOptionsService.is('functionsReadOnly') || !column.isPrimary()) {
+        if (this.gridOptionsService.get('functionsReadOnly') || !column.isPrimary()) {
             return false;
         }
-        return column.isAllowValue() && !column.isValueActive();
+        return column.isAllowValue() && (!column.isValueActive() || this.isSourceEventFromTarget(draggingEvent));
     }
     updateColumns(columns) {
-        if (this.gridOptionsService.is('functionsPassive')) {
+        if (this.gridOptionsService.get('functionsPassive')) {
             const event = {
                 type: Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST,
                 columns: columns

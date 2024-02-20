@@ -1,7 +1,9 @@
-import { Grid, GridOptions, RowClassParams, RowStyle } from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions, RowClassParams, RowStyle } from '@ag-grid-community/core';
 
 var colorIndex = 0
-var colors = ['#000000', '#000066', '#006600', '#660000']
+var colors = ['#99999944', '#CC333344', '#33CC3344', '#2244CC44']
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -47,21 +49,21 @@ function progressColor() {
 
 function redrawAllRows() {
   progressColor()
-  gridOptions.api!.redrawRows()
+  gridApi!.redrawRows()
 }
 
 function redrawTopRows() {
   progressColor()
   var rows = []
   for (var i = 0; i < 6; i++) {
-    var row = gridOptions.api!.getDisplayedRowAtIndex(i)!
+    var row = gridApi!.getDisplayedRowAtIndex(i)!
     rows.push(row)
   }
-  gridOptions.api!.redrawRows({ rowNodes: rows })
+  gridApi!.redrawRows({ rowNodes: rows })
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

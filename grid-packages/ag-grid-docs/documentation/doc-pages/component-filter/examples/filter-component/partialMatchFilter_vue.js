@@ -1,6 +1,6 @@
 export default {
     template: `
-      <div style="border: 2px solid #22ff22;border-radius: 5px; background-color: #bbffbb; width: 200px; height: 50px">
+      <div style="border-radius: 5px; width: 200px; height: 50px; padding: 10px">
       <div style="margin-left: 20px">
         Partial Match Filter: <input style="height: 20px" :ref="'input'" v-model="text">
       </div>
@@ -17,18 +17,8 @@ export default {
         },
 
         doesFilterPass(params) {
-            const { api, colDef, column, columnApi, context, valueGetter } = this.params;
             const { node } = params;
-            const value = valueGetter({
-                api,
-                colDef,
-                column,
-                columnApi,
-                context,
-                data: node.data,
-                getValue: (field) => node.data[field],
-                node,
-            }).toString().toLowerCase();
+            const value = this.params.getValue(node).toString().toLowerCase();
 
             return !this.text || this.text.toLowerCase()
                 .split(" ")

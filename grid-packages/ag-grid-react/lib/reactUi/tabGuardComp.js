@@ -1,4 +1,4 @@
-// ag-grid-react v30.1.0
+// ag-grid-react v31.1.0
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -24,7 +24,7 @@ var react_1 = __importStar(require("react"));
 var ag_grid_community_1 = require("ag-grid-community");
 var beansContext_1 = require("./beansContext");
 var TabGuardCompRef = function (props, forwardRef) {
-    var children = props.children, eFocusableElement = props.eFocusableElement, onTabKeyDown = props.onTabKeyDown, gridCtrl = props.gridCtrl;
+    var children = props.children, eFocusableElement = props.eFocusableElement, onTabKeyDown = props.onTabKeyDown, gridCtrl = props.gridCtrl, forceFocusOutWhenTabGuardsAreEmpty = props.forceFocusOutWhenTabGuardsAreEmpty;
     var context = react_1.useContext(beansContext_1.BeansContext).context;
     var topTabGuardRef = react_1.useRef(null);
     var bottomTabGuardRef = react_1.useRef(null);
@@ -42,9 +42,9 @@ var TabGuardCompRef = function (props, forwardRef) {
         });
     };
     react_1.useImperativeHandle(forwardRef, function () { return ({
-        forceFocusOutOfContainer: function () {
+        forceFocusOutOfContainer: function (up) {
             var _a;
-            (_a = tabGuardCtrlRef.current) === null || _a === void 0 ? void 0 : _a.forceFocusOutOfContainer();
+            (_a = tabGuardCtrlRef.current) === null || _a === void 0 ? void 0 : _a.forceFocusOutOfContainer(up);
         }
     }); });
     var setupCtrl = react_1.useCallback(function () {
@@ -64,6 +64,7 @@ var TabGuardCompRef = function (props, forwardRef) {
                 eBottomGuard: bottomTabGuardRef.current,
                 eFocusableElement: eFocusableElement,
                 onTabKeyDown: onTabKeyDown,
+                forceFocusOutWhenTabGuardsAreEmpty: forceFocusOutWhenTabGuardsAreEmpty,
                 focusInnerElement: function (fromBottom) { return gridCtrl.focusInnerElement(fromBottom); }
             }));
         }

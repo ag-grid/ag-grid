@@ -1,4 +1,4 @@
-// ag-grid-react v30.1.0
+// ag-grid-react v31.1.0
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -69,10 +69,9 @@ var GridComp = function (_a) {
         var compProxy = {
             destroyGridUi: function () { },
             setRtlClass: setRtlClass,
-            addOrRemoveKeyboardFocusClass: function (addOrRemove) { return setKeyboardFocusClass(addOrRemove ? ag_grid_community_1.FocusService.AG_KEYBOARD_FOCUS : ''); },
-            forceFocusOutOfContainer: function () {
+            forceFocusOutOfContainer: function (up) {
                 var _a;
-                (_a = tabGuardRef.current) === null || _a === void 0 ? void 0 : _a.forceFocusOutOfContainer();
+                (_a = tabGuardRef.current) === null || _a === void 0 ? void 0 : _a.forceFocusOutOfContainer(up);
             },
             updateLayoutClasses: setLayoutClass,
             getFocusableContainers: function () {
@@ -170,7 +169,7 @@ var GridComp = function (_a) {
     return (react_1.default.createElement("div", { ref: setRef, className: rootWrapperClasses, style: topStyle, role: "presentation" },
         react_1.default.createElement("div", { className: rootWrapperBodyClasses, ref: setGridBodyParent, role: "presentation" }, initialised && eGridBodyParent && beans &&
             react_1.default.createElement(beansContext_1.BeansContext.Provider, { value: beans },
-                react_1.default.createElement(tabGuardComp_1.default, { ref: setTabGuardCompRef, eFocusableElement: eGridBodyParent, onTabKeyDown: onTabKeyDown, gridCtrl: gridCtrlRef.current }, // we wait for initialised before rending the children, so GridComp has created and registered with it's
+                react_1.default.createElement(tabGuardComp_1.default, { ref: setTabGuardCompRef, eFocusableElement: eGridBodyParent, onTabKeyDown: onTabKeyDown, gridCtrl: gridCtrlRef.current, forceFocusOutWhenTabGuardsAreEmpty: true }, // we wait for initialised before rending the children, so GridComp has created and registered with it's
                 // GridCtrl before we create the child GridBodyComp. Otherwise the GridBodyComp would initialise first,
                 // before we have set the the Layout CSS classes, causing the GridBodyComp to render rows to a grid that
                 // doesn't have it's height specified, which would result if all the rows getting rendered (and if many rows,

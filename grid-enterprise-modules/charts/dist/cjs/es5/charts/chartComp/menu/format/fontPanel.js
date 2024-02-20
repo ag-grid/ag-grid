@@ -107,7 +107,7 @@ var FontPanel = /** @class */ (function (_super) {
         var options = families.sort().map(function (value) { return ({ value: value, text: value }); });
         this.familySelect.addOptions(options)
             .setInputWidth('flex')
-            .setValue("" + initialValue)
+            .setValue("".concat(initialValue))
             .onValueChange(function (newValue) { return _this.params.setFont({ family: newValue }); });
     };
     FontPanel.prototype.initFontSizeSelect = function () {
@@ -117,10 +117,10 @@ var FontPanel = /** @class */ (function (_super) {
         if (!core_1._.includes(sizes, size)) {
             sizes.push(size);
         }
-        var options = sizes.sort(function (a, b) { return a - b; }).map(function (value) { return ({ value: "" + value, text: "" + value }); });
+        var options = sizes.sort(function (a, b) { return a - b; }).map(function (value) { return ({ value: "".concat(value), text: "".concat(value) }); });
         this.sizeSelect.addOptions(options)
             .setInputWidth('flex')
-            .setValue("" + size)
+            .setValue("".concat(size))
             .onValueChange(function (newValue) { return _this.params.setFont({ size: parseInt(newValue, 10) }); });
         this.sizeSelect.setLabel(this.chartTranslationService.translate('size'));
     };
@@ -154,8 +154,8 @@ var FontPanel = /** @class */ (function (_super) {
         var _this = this;
         this.colorPicker
             .setLabel(this.chartTranslationService.translate('color'))
-            .setInputWidth(45)
-            .setValue("" + this.params.initialFont.color)
+            .setInputWidth('flex')
+            .setValue("".concat(this.params.initialFont.color))
             .onValueChange(function (newColor) { return _this.params.setFont({ color: newColor }); });
     };
     FontPanel.prototype.addItemToPanel = function (item) {
@@ -175,22 +175,22 @@ var FontPanel = /** @class */ (function (_super) {
     };
     FontPanel.TEMPLATE = "<div class=\"ag-font-panel\">\n            <ag-group-component ref=\"fontGroup\">\n                <ag-select ref=\"familySelect\"></ag-select>\n                <ag-select ref=\"weightStyleSelect\"></ag-select>\n                <div class=\"ag-charts-font-size-color\">\n                    <ag-select ref=\"sizeSelect\"></ag-select>\n                    <ag-color-picker ref=\"colorPicker\"></ag-color-picker>\n                </div>\n            </ag-group-component>\n        </div>";
     __decorate([
-        core_1.RefSelector('fontGroup')
+        (0, core_1.RefSelector)('fontGroup')
     ], FontPanel.prototype, "fontGroup", void 0);
     __decorate([
-        core_1.RefSelector('familySelect')
+        (0, core_1.RefSelector)('familySelect')
     ], FontPanel.prototype, "familySelect", void 0);
     __decorate([
-        core_1.RefSelector('weightStyleSelect')
+        (0, core_1.RefSelector)('weightStyleSelect')
     ], FontPanel.prototype, "weightStyleSelect", void 0);
     __decorate([
-        core_1.RefSelector('sizeSelect')
+        (0, core_1.RefSelector)('sizeSelect')
     ], FontPanel.prototype, "sizeSelect", void 0);
     __decorate([
-        core_1.RefSelector('colorPicker')
+        (0, core_1.RefSelector)('colorPicker')
     ], FontPanel.prototype, "colorPicker", void 0);
     __decorate([
-        core_1.Autowired('chartTranslationService')
+        (0, core_1.Autowired)('chartTranslationService')
     ], FontPanel.prototype, "chartTranslationService", void 0);
     __decorate([
         core_1.PostConstruct

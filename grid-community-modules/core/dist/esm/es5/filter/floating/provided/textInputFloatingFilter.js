@@ -120,7 +120,10 @@ var TextInputFloatingFilter = /** @class */ (function (_super) {
         }
     };
     TextInputFloatingFilter.prototype.onParamsUpdated = function (params) {
-        _super.prototype.onParamsUpdated.call(this, params);
+        this.refresh(params);
+    };
+    TextInputFloatingFilter.prototype.refresh = function (params) {
+        _super.prototype.refresh.call(this, params);
         this.setTextInputParams(params);
     };
     TextInputFloatingFilter.prototype.recreateFloatingFilterInputService = function (params) {
@@ -133,7 +136,7 @@ var TextInputFloatingFilter = /** @class */ (function (_super) {
     TextInputFloatingFilter.prototype.getAriaLabel = function (params) {
         var displayName = this.columnModel.getDisplayNameForColumn(params.column, 'header', true);
         var translate = this.localeService.getLocaleTextFunc();
-        return displayName + " " + translate('ariaFilterInput', 'Filter Input');
+        return "".concat(displayName, " ").concat(translate('ariaFilterInput', 'Filter Input'));
     };
     TextInputFloatingFilter.prototype.syncUpWithParentFilter = function (e) {
         var _this = this;

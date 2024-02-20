@@ -2,14 +2,16 @@ import { AbstractColDef, Component } from "@ag-grid-community/core";
 import { ToolPanelFiltersCompParams } from "./filtersToolPanel";
 export declare class FiltersToolPanelListPanel extends Component {
     private static TEMPLATE;
-    private gridApi;
-    private columnApi;
     private toolPanelColDefService;
     private columnModel;
     private initialised;
+    private hasLoadedInitialState;
+    private isInitialState;
     private params;
     private filterGroupComps;
     private searchFilterText;
+    private suppressOnColumnsChanged;
+    private onColumnsChangedPending;
     constructor();
     init(params: ToolPanelFiltersCompParams): void;
     onColumnsChanged(): void;
@@ -18,6 +20,7 @@ export declare class FiltersToolPanelListPanel extends Component {
     setFiltersLayout(colDefs: AbstractColDef[]): void;
     private recreateFilters;
     private recursivelyAddComps;
+    private refreshAriaLabel;
     private recursivelyAddFilterGroupComps;
     private filtersExistInChildren;
     private shouldDisplayFilter;
@@ -27,11 +30,16 @@ export declare class FiltersToolPanelListPanel extends Component {
     expandFilterGroups(expand: boolean, groupIds?: string[]): void;
     expandFilters(expand: boolean, colIds?: string[]): void;
     private onGroupExpanded;
+    private onFilterExpanded;
     private fireExpandedEvent;
     performFilterSearch(searchText: string): void;
     private searchFilters;
     private setFirstAndLastVisible;
     private refreshFilters;
+    getExpandedFiltersAndGroups(): {
+        expandedGroupIds: string[];
+        expandedColIds: string[];
+    };
     private destroyFilters;
     protected destroy(): void;
 }

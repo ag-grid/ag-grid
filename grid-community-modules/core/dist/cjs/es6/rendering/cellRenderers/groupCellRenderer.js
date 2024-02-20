@@ -19,10 +19,10 @@ class GroupCellRenderer extends component_1.Component {
     init(params) {
         const compProxy = {
             setInnerRenderer: (compDetails, valueToDisplay) => this.setRenderDetails(compDetails, valueToDisplay),
-            setChildCount: count => this.eChildCount.innerHTML = count,
+            setChildCount: count => this.eChildCount.textContent = count,
             addOrRemoveCssClass: (cssClass, value) => this.addOrRemoveCssClass(cssClass, value),
-            setContractedDisplayed: expanded => dom_1.setDisplayed(this.eContracted, expanded),
-            setExpandedDisplayed: expanded => dom_1.setDisplayed(this.eExpanded, expanded),
+            setContractedDisplayed: expanded => (0, dom_1.setDisplayed)(this.eContracted, expanded),
+            setExpandedDisplayed: expanded => (0, dom_1.setDisplayed)(this.eExpanded, expanded),
             setCheckboxVisible: visible => this.eCheckbox.classList.toggle('ag-invisible', !visible)
         };
         const ctrl = this.createManagedBean(new groupCellRendererCtrl_1.GroupCellRendererCtrl());
@@ -30,7 +30,7 @@ class GroupCellRenderer extends component_1.Component {
         const eGui = this.getGui();
         ctrl.init(compProxy, eGui, this.eCheckbox, this.eExpanded, this.eContracted, this.constructor, params);
         if (fullWidth) {
-            aria_1.setAriaRole(eGui, 'gridcell');
+            (0, aria_1.setAriaRole)(eGui, ctrl.getCellAriaRole());
         }
     }
     setRenderDetails(compDetails, valueToDisplay) {
@@ -75,18 +75,18 @@ GroupCellRenderer.TEMPLATE = `<span class="ag-cell-wrapper">
             <span class="ag-group-child-count" ref="eChildCount"></span>
         </span>`;
 __decorate([
-    componentAnnotations_1.RefSelector('eExpanded')
+    (0, componentAnnotations_1.RefSelector)('eExpanded')
 ], GroupCellRenderer.prototype, "eExpanded", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eContracted')
+    (0, componentAnnotations_1.RefSelector)('eContracted')
 ], GroupCellRenderer.prototype, "eContracted", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eCheckbox')
+    (0, componentAnnotations_1.RefSelector)('eCheckbox')
 ], GroupCellRenderer.prototype, "eCheckbox", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eValue')
+    (0, componentAnnotations_1.RefSelector)('eValue')
 ], GroupCellRenderer.prototype, "eValue", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eChildCount')
+    (0, componentAnnotations_1.RefSelector)('eChildCount')
 ], GroupCellRenderer.prototype, "eChildCount", void 0);
 exports.GroupCellRenderer = GroupCellRenderer;

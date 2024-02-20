@@ -13,19 +13,34 @@ export class DragListenerFeature extends BeanStub {
         this.eContainer = eContainer;
     }
     postConstruct() {
-        if (!this.gridOptionsService.isEnableRangeSelection() || // no range selection if no property
-            missing(this.rangeService) // no range selection if not enterprise version
-        ) {
+        if (missing(this.rangeService)) {
             return;
         }
-        const params = {
+        this.params = {
             eElement: this.eContainer,
             onDragStart: this.rangeService.onDragStart.bind(this.rangeService),
             onDragStop: this.rangeService.onDragStop.bind(this.rangeService),
             onDragging: this.rangeService.onDragging.bind(this.rangeService)
         };
-        this.dragService.addDragSource(params);
-        this.addDestroyFunc(() => this.dragService.removeDragSource(params));
+        this.addManagedPropertyListener('enableRangeSelection', (props) => {
+            const isEnabled = props.currentValue;
+            if (isEnabled) {
+                this.enableFeature();
+                return;
+            }
+            this.disableFeature();
+        });
+        this.addDestroyFunc(() => this.disableFeature());
+        const isRangeSelection = this.gridOptionsService.get('enableRangeSelection');
+        if (isRangeSelection) {
+            this.enableFeature();
+        }
+    }
+    enableFeature() {
+        this.dragService.addDragSource(this.params);
+    }
+    disableFeature() {
+        this.dragService.removeDragSource(this.params);
     }
 }
 __decorate([

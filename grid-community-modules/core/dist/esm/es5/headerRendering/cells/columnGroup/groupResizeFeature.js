@@ -44,8 +44,8 @@ var GroupResizeFeature = /** @class */ (function (_super) {
             onResizeEnd: this.onResizing.bind(this, true)
         });
         this.addDestroyFunc(finishedWithResizeFunc);
-        if (!this.gridOptionsService.is('suppressAutoSize')) {
-            var skipHeaderOnAutoSize_1 = this.gridOptionsService.is('skipHeaderOnAutoSize');
+        if (!this.gridOptionsService.get('suppressAutoSize')) {
+            var skipHeaderOnAutoSize_1 = this.gridOptionsService.get('skipHeaderOnAutoSize');
             this.eResize.addEventListener('dblclick', function () {
                 // get list of all the column keys we are responsible for
                 var keys = [];
@@ -69,54 +69,95 @@ var GroupResizeFeature = /** @class */ (function (_super) {
         }
     };
     GroupResizeFeature.prototype.onResizeStart = function (shiftKey) {
-        var _this = this;
-        this.calculateInitialValues();
-        var takeFromGroup = null;
-        if (shiftKey) {
-            takeFromGroup = this.columnModel.getDisplayedGroupAfter(this.columnGroup);
-        }
-        if (takeFromGroup) {
-            var takeFromLeafCols = takeFromGroup.getDisplayedLeafColumns();
-            this.resizeTakeFromCols = takeFromLeafCols.filter(function (col) { return col.isResizable(); });
-            this.resizeTakeFromStartWidth = 0;
-            this.resizeTakeFromCols.forEach(function (col) { return _this.resizeTakeFromStartWidth += col.getActualWidth(); });
-            this.resizeTakeFromRatios = [];
-            this.resizeTakeFromCols.forEach(function (col) { return _this.resizeTakeFromRatios.push(col.getActualWidth() / _this.resizeTakeFromStartWidth); });
-        }
-        else {
-            this.resizeTakeFromCols = null;
-            this.resizeTakeFromStartWidth = null;
-            this.resizeTakeFromRatios = null;
-        }
-        this.comp.addOrRemoveCssClass('ag-column-resizing', true);
+        var initialValues = this.getInitialValues(shiftKey);
+        this.storeLocalValues(initialValues);
+        this.toggleColumnResizing(true);
     };
     GroupResizeFeature.prototype.onResizing = function (finished, resizeAmount, source) {
         if (source === void 0) { source = 'uiColumnResized'; }
         var resizeAmountNormalised = this.normaliseDragChange(resizeAmount);
         var width = this.resizeStartWidth + resizeAmountNormalised;
-        this.resizeColumns(width, source, finished);
+        this.resizeColumnsFromLocalValues(width, source, finished);
+    };
+    GroupResizeFeature.prototype.getInitialValues = function (shiftKey) {
+        var columnsToResize = this.getColumnsToResize();
+        var resizeStartWidth = this.getInitialSizeOfColumns(columnsToResize);
+        var resizeRatios = this.getSizeRatiosOfColumns(columnsToResize, resizeStartWidth);
+        var columnSizeAndRatios = {
+            columnsToResize: columnsToResize,
+            resizeStartWidth: resizeStartWidth,
+            resizeRatios: resizeRatios
+        };
+        var groupAfter = null;
+        if (shiftKey) {
+            groupAfter = this.columnModel.getDisplayedGroupAfter(this.columnGroup);
+        }
+        if (groupAfter) {
+            var takeFromLeafCols = groupAfter.getDisplayedLeafColumns();
+            var groupAfterColumns = columnSizeAndRatios.groupAfterColumns = takeFromLeafCols.filter(function (col) { return col.isResizable(); });
+            var groupAfterStartWidth = columnSizeAndRatios.groupAfterStartWidth = this.getInitialSizeOfColumns(groupAfterColumns);
+            columnSizeAndRatios.groupAfterRatios = this.getSizeRatiosOfColumns(groupAfterColumns, groupAfterStartWidth);
+        }
+        else {
+            columnSizeAndRatios.groupAfterColumns = undefined;
+            columnSizeAndRatios.groupAfterStartWidth = undefined;
+            columnSizeAndRatios.groupAfterRatios = undefined;
+        }
+        return columnSizeAndRatios;
+    };
+    GroupResizeFeature.prototype.storeLocalValues = function (initialValues) {
+        var columnsToResize = initialValues.columnsToResize, resizeStartWidth = initialValues.resizeStartWidth, resizeRatios = initialValues.resizeRatios, groupAfterColumns = initialValues.groupAfterColumns, groupAfterStartWidth = initialValues.groupAfterStartWidth, groupAfterRatios = initialValues.groupAfterRatios;
+        this.resizeCols = columnsToResize;
+        this.resizeStartWidth = resizeStartWidth;
+        this.resizeRatios = resizeRatios;
+        this.resizeTakeFromCols = groupAfterColumns;
+        this.resizeTakeFromStartWidth = groupAfterStartWidth;
+        this.resizeTakeFromRatios = groupAfterRatios;
+    };
+    GroupResizeFeature.prototype.clearLocalValues = function () {
+        this.resizeCols = undefined;
+        this.resizeRatios = undefined;
+        this.resizeTakeFromCols = undefined;
+        this.resizeTakeFromRatios = undefined;
     };
     GroupResizeFeature.prototype.resizeLeafColumnsToFit = function (source) {
         var preferredSize = this.autoWidthCalculator.getPreferredWidthForColumnGroup(this.columnGroup);
-        this.calculateInitialValues();
-        if (preferredSize > this.resizeStartWidth) {
-            this.resizeColumns(preferredSize, source, true);
+        var initialValues = this.getInitialValues();
+        if (preferredSize > initialValues.resizeStartWidth) {
+            this.resizeColumns(initialValues, preferredSize, source, true);
         }
     };
-    GroupResizeFeature.prototype.resizeColumns = function (totalWidth, source, finished) {
+    GroupResizeFeature.prototype.resizeColumnsFromLocalValues = function (totalWidth, source, finished) {
+        var _a, _b, _c;
         if (finished === void 0) { finished = true; }
+        if (!this.resizeCols || !this.resizeRatios) {
+            return;
+        }
+        var initialValues = {
+            columnsToResize: this.resizeCols,
+            resizeStartWidth: this.resizeStartWidth,
+            resizeRatios: this.resizeRatios,
+            groupAfterColumns: (_a = this.resizeTakeFromCols) !== null && _a !== void 0 ? _a : undefined,
+            groupAfterStartWidth: (_b = this.resizeTakeFromStartWidth) !== null && _b !== void 0 ? _b : undefined,
+            groupAfterRatios: (_c = this.resizeTakeFromRatios) !== null && _c !== void 0 ? _c : undefined
+        };
+        this.resizeColumns(initialValues, totalWidth, source, finished);
+    };
+    GroupResizeFeature.prototype.resizeColumns = function (initialValues, totalWidth, source, finished) {
+        if (finished === void 0) { finished = true; }
+        var columnsToResize = initialValues.columnsToResize, resizeStartWidth = initialValues.resizeStartWidth, resizeRatios = initialValues.resizeRatios, groupAfterColumns = initialValues.groupAfterColumns, groupAfterStartWidth = initialValues.groupAfterStartWidth, groupAfterRatios = initialValues.groupAfterRatios;
         var resizeSets = [];
         resizeSets.push({
-            columns: this.resizeCols,
-            ratios: this.resizeRatios,
+            columns: columnsToResize,
+            ratios: resizeRatios,
             width: totalWidth
         });
-        if (this.resizeTakeFromCols) {
-            var diff = totalWidth - this.resizeStartWidth;
+        if (groupAfterColumns) {
+            var diff = totalWidth - resizeStartWidth;
             resizeSets.push({
-                columns: this.resizeTakeFromCols,
-                ratios: this.resizeTakeFromRatios,
-                width: this.resizeTakeFromStartWidth - diff
+                columns: groupAfterColumns,
+                ratios: groupAfterRatios,
+                width: groupAfterStartWidth - diff
             });
         }
         this.columnModel.resizeColumnSets({
@@ -125,23 +166,27 @@ var GroupResizeFeature = /** @class */ (function (_super) {
             source: source
         });
         if (finished) {
-            this.comp.addOrRemoveCssClass('ag-column-resizing', false);
+            this.toggleColumnResizing(false);
         }
     };
-    GroupResizeFeature.prototype.calculateInitialValues = function () {
-        var _this = this;
+    GroupResizeFeature.prototype.toggleColumnResizing = function (resizing) {
+        this.comp.addOrRemoveCssClass('ag-column-resizing', resizing);
+    };
+    GroupResizeFeature.prototype.getColumnsToResize = function () {
         var leafCols = this.columnGroup.getDisplayedLeafColumns();
-        this.resizeCols = leafCols.filter(function (col) { return col.isResizable(); });
-        this.resizeStartWidth = 0;
-        this.resizeCols.forEach(function (col) { return _this.resizeStartWidth += col.getActualWidth(); });
-        this.resizeRatios = [];
-        this.resizeCols.forEach(function (col) { return _this.resizeRatios.push(col.getActualWidth() / _this.resizeStartWidth); });
+        return leafCols.filter(function (col) { return col.isResizable(); });
+    };
+    GroupResizeFeature.prototype.getInitialSizeOfColumns = function (columns) {
+        return columns.reduce(function (totalWidth, column) { return totalWidth + column.getActualWidth(); }, 0);
+    };
+    GroupResizeFeature.prototype.getSizeRatiosOfColumns = function (columns, initialSizeOfColumns) {
+        return columns.map(function (column) { return column.getActualWidth() / initialSizeOfColumns; });
     };
     // optionally inverts the drag, depending on pinned and RTL
     // note - this method is duplicated in RenderedHeaderCell - should refactor out?
     GroupResizeFeature.prototype.normaliseDragChange = function (dragChange) {
         var result = dragChange;
-        if (this.gridOptionsService.is('enableRtl')) {
+        if (this.gridOptionsService.get('enableRtl')) {
             // for RTL, dragging left makes the col bigger, except when pinning left
             if (this.pinned !== 'left') {
                 result *= -1;
@@ -152,6 +197,10 @@ var GroupResizeFeature = /** @class */ (function (_super) {
             result *= -1;
         }
         return result;
+    };
+    GroupResizeFeature.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+        this.clearLocalValues();
     };
     __decorate([
         Autowired('horizontalResizeService')

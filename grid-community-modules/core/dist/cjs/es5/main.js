@@ -1,13 +1,17 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.1.0
+ * @version v31.1.0
  * @link https://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -16,10 +20,10 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.NavigationService = exports.MouseEventService = exports.ScrollVisibleService = exports.RowAnimationCssClasses = exports.GridBodyCtrl = exports.GridBodyComp = exports.FloatingFilterMapper = exports.HeaderFilterCellComp = exports.TextFloatingFilter = exports.DateFilter = exports.TextFilter = exports.NumberFilter = exports.ScalarFilter = exports.SimpleFilter = exports.ProvidedFilter = exports.FilterManager = exports.RowHighlightPosition = exports.RowNode = exports.ProvidedColumnGroup = exports.ColumnGroup = exports.Column = exports.DragService = exports.VerticalDirection = exports.HorizontalDirection = exports.DragSourceType = exports.DragAndDropService = exports.ExcelFactoryMode = exports.RefSelector = exports.QuerySelector = exports.PreDestroy = exports.Qualifier = exports.Bean = exports.Optional = exports.PreConstruct = exports.PostConstruct = exports.Autowired = exports.Context = exports.BeanStub = exports.ColDefUtil = exports.UserComponentFactory = exports.UserComponentRegistry = exports.AgStackComponentsRegistry = exports.ComponentUtil = exports.GROUP_AUTO_COLUMN_ID = exports.GroupInstanceIdCreator = exports.DisplayedGroupCreator = exports.ColumnUtils = exports.ColumnKeyCreator = exports.ColumnModel = exports.ColumnFactory = void 0;
-exports.CssClassManager = exports.ValueFormatterService = exports.RowRenderer = exports.RowCtrl = exports.CellCtrl = exports.CellComp = exports.CheckboxSelectionComponent = exports.AutoWidthCalculator = exports.PositionableFeature = exports.SetLeftFeature = exports.GroupCellRendererCtrl = exports.GroupCellRenderer = exports.AnimateSlideCellRenderer = exports.AnimateShowChangeCellRenderer = exports.Beans = exports.CheckboxCellEditor = exports.DateStringCellEditor = exports.DateCellEditor = exports.NumberCellEditor = exports.TextCellEditor = exports.SelectCellEditor = exports.PopupEditorWrapper = exports.LargeTextCellEditor = exports.AnimationFrameService = exports.ResizeObserverService = exports.simpleHttpRequest = exports.TabbedLayout = exports.StandardMenuFactory = exports.MoveColumnFeature = exports.HorizontalResizeService = exports.HeaderRowContainerCtrl = exports.AbstractHeaderCellCtrl = exports.HeaderGroupCellCtrl = exports.HeaderFilterCellCtrl = exports.SortIndicatorComp = exports.HeaderCellCtrl = exports.HeaderRowCtrl = exports.HeaderRowType = exports.HeaderRowComp = exports.GridHeaderCtrl = exports.GridHeaderComp = exports.HeaderRowContainerComp = exports.CssClassApplier = exports.BodyDropTarget = exports.BodyDropPivotTarget = exports.getRowContainerTypeForName = exports.RowContainerType = exports.RowContainerCtrl = exports.RowContainerName = exports.RowContainerComp = void 0;
-exports.GridApi = exports.GridCoreCreator = exports.Grid = exports.KeyCode = exports.AlignedGridsService = exports.CellNavigationService = exports.VanillaFrameworkOverrides = exports.AutoScrollService = exports.SelectionHandleType = exports.CellRangeType = exports.AgAutocomplete = exports.AgPickerField = exports.AgAbstractLabel = exports.VirtualList = exports.TouchListener = exports.PopupService = exports.PopupComponent = exports.TabGuardClassNames = exports.TabGuardCtrl = exports.TabGuardComp = exports.ManagedFocusFeature = exports.Component = exports.AgPanel = exports.AgDialog = exports.AgMenuPanel = exports.AgMenuList = exports.AgMenuItemComponent = exports.AgGroupComponent = exports.AgSlider = exports.AgSelect = exports.AgRichSelect = exports.AgInputRange = exports.AgInputDateField = exports.AgInputNumberField = exports.AgInputTextArea = exports.AgInputTextField = exports.AgToggleButton = exports.AgRadioButton = exports.AgCheckbox = exports.AgAbstractField = exports.LayoutCssClasses = exports.StylingService = exports.ClientSideRowModelSteps = exports.PaginationProxy = exports.RowNodeBlockLoader = exports.RowNodeBlock = exports.ChangedPath = exports.ServerSideTransactionResultStatus = exports.PinnedRowModel = exports.CheckboxCellRenderer = void 0;
-exports.ModuleRegistry = exports.ModuleNames = exports.CustomTooltipFeature = exports.Environment = exports.BaseComponentWrapper = exports.ColumnApi = exports.DataTypeService = exports.HeaderNavigationDirection = exports.HeaderNavigationService = exports.HeaderPositionUtils = exports.RowPositionUtils = exports.CellPositionUtils = exports.ValueParserService = exports.ExpressionService = exports.ValueCache = exports.ValueService = exports.LocaleService = exports.TemplateService = exports.SortController = exports.LoggerFactory = exports.Logger = exports.GridCtrl = exports.GridComp = exports.CtrlsService = exports.RowNodeSorter = exports.SelectableService = exports.EventService = exports.GridOptionsService = exports.FocusService = exports.Events = void 0;
+exports.RowContainerComp = exports.NavigationService = exports.MouseEventService = exports.ScrollVisibleService = exports.RowAnimationCssClasses = exports.GridBodyCtrl = exports.GridBodyComp = exports.FloatingFilterMapper = exports.HeaderFilterCellComp = exports.TextFloatingFilter = exports.DateFilter = exports.TextFilter = exports.NumberFilter = exports.ScalarFilter = exports.SimpleFilter = exports.ProvidedFilter = exports.FilterManager = exports.RowHighlightPosition = exports.RowNode = exports.ProvidedColumnGroup = exports.ColumnGroup = exports.Column = exports.VirtualListDragFeature = exports.DragService = exports.DragSourceType = exports.DragAndDropService = exports.ExcelFactoryMode = exports.RefSelector = exports.QuerySelector = exports.PreDestroy = exports.Qualifier = exports.Bean = exports.Optional = exports.PreConstruct = exports.PostConstruct = exports.Autowired = exports.Context = exports.BeanStub = exports.ColDefUtil = exports.UserComponentFactory = exports.UserComponentRegistry = exports.AgStackComponentsRegistry = exports.ComponentUtil = exports.GROUP_AUTO_COLUMN_ID = exports.GroupInstanceIdCreator = exports.DisplayedGroupCreator = exports.ColumnUtils = exports.ColumnKeyCreator = exports.ColumnModel = exports.ColumnFactory = void 0;
+exports.CssClassManager = exports.ValueFormatterService = exports.RowRenderer = exports.RowCtrl = exports.CellCtrl = exports.CellComp = exports.CheckboxSelectionComponent = exports.AutoWidthCalculator = exports.PositionableFeature = exports.SetLeftFeature = exports.GroupCellRendererCtrl = exports.GroupCellRenderer = exports.AnimateSlideCellRenderer = exports.AnimateShowChangeCellRenderer = exports.Beans = exports.CheckboxCellEditor = exports.DateStringCellEditor = exports.DateCellEditor = exports.NumberCellEditor = exports.TextCellEditor = exports.SelectCellEditor = exports.PopupEditorWrapper = exports.LargeTextCellEditor = exports.MenuService = exports.ExpansionService = exports.AnimationFrameService = exports.ResizeObserverService = exports.TabbedLayout = exports.StandardMenuFactory = exports.MoveColumnFeature = exports.HorizontalResizeService = exports.HeaderRowContainerCtrl = exports.AbstractHeaderCellCtrl = exports.HeaderGroupCellCtrl = exports.HeaderFilterCellCtrl = exports.SortIndicatorComp = exports.HeaderCellCtrl = exports.HeaderRowCtrl = exports.HeaderRowType = exports.HeaderRowComp = exports.GridHeaderCtrl = exports.GridHeaderComp = exports.HeaderRowContainerComp = exports.CssClassApplier = exports.BodyDropTarget = exports.BodyDropPivotTarget = exports.getRowContainerTypeForName = exports.RowContainerType = exports.RowContainerCtrl = exports.RowContainerName = void 0;
+exports.HorizontalDirection = exports.VerticalDirection = exports.KeyCode = exports.AlignedGridsService = exports.CellNavigationService = exports.VanillaFrameworkOverrides = exports.AutoScrollService = exports.SelectionHandleType = exports.CellRangeType = exports.AgAutocomplete = exports.AgPickerField = exports.AgAbstractLabel = exports.VirtualList = exports.TouchListener = exports.PopupService = exports.PopupComponent = exports.TabGuardClassNames = exports.TabGuardCtrl = exports.TabGuardComp = exports.ManagedFocusFeature = exports.Component = exports.AgPanel = exports.AgDialog = exports.AgMenuPanel = exports.AgMenuList = exports.AgMenuItemComponent = exports.AgMenuItemRenderer = exports.AgGroupComponent = exports.AgSlider = exports.AgSelect = exports.AgRichSelect = exports.AgInputRange = exports.AgInputDateField = exports.AgInputNumberField = exports.AgInputTextArea = exports.AgInputTextField = exports.AgToggleButton = exports.AgRadioButton = exports.AgCheckbox = exports.AgAbstractField = exports.LayoutCssClasses = exports.StylingService = exports.ClientSideRowModelSteps = exports.PaginationProxy = exports.RowNodeBlockLoader = exports.RowNodeBlock = exports.ChangedPath = exports.ServerSideTransactionResultStatus = exports.PinnedRowModel = exports.CheckboxCellRenderer = void 0;
+exports.ModuleRegistry = exports.ModuleNames = exports.CustomTooltipFeature = exports.TooltipFeature = exports.Environment = exports.BaseComponentWrapper = exports.ColumnApi = exports.PropertyKeys = exports.DataTypeService = exports.HeaderNavigationDirection = exports.HeaderNavigationService = exports.HeaderPositionUtils = exports.RowPositionUtils = exports.CellPositionUtils = exports.ValueParserService = exports.ExpressionService = exports.ValueCache = exports.ValueService = exports.LocaleService = exports.TemplateService = exports.SortController = exports.LoggerFactory = exports.Logger = exports.GridCtrl = exports.GridComp = exports.CtrlsService = exports.RowNodeSorter = exports.SelectableService = exports.EventService = exports.GridOptionsService = exports.FocusService = exports.Events = exports.GridApi = exports.createGrid = exports.GridCoreCreator = exports.Grid = void 0;
 var globalObj = typeof global === 'undefined' ? {} : global;
 globalObj.HTMLElement = typeof HTMLElement === 'undefined' ? {} : HTMLElement;
 globalObj.HTMLButtonElement = typeof HTMLButtonElement === 'undefined' ? {} : HTMLButtonElement;
@@ -75,10 +79,10 @@ Object.defineProperty(exports, "ExcelFactoryMode", { enumerable: true, get: func
 var dragAndDropService_1 = require("./dragAndDrop/dragAndDropService");
 Object.defineProperty(exports, "DragAndDropService", { enumerable: true, get: function () { return dragAndDropService_1.DragAndDropService; } });
 Object.defineProperty(exports, "DragSourceType", { enumerable: true, get: function () { return dragAndDropService_1.DragSourceType; } });
-Object.defineProperty(exports, "HorizontalDirection", { enumerable: true, get: function () { return dragAndDropService_1.HorizontalDirection; } });
-Object.defineProperty(exports, "VerticalDirection", { enumerable: true, get: function () { return dragAndDropService_1.VerticalDirection; } });
 var dragService_1 = require("./dragAndDrop/dragService");
 Object.defineProperty(exports, "DragService", { enumerable: true, get: function () { return dragService_1.DragService; } });
+var virtualListDragFeature_1 = require("./dragAndDrop/virtualListDragFeature");
+Object.defineProperty(exports, "VirtualListDragFeature", { enumerable: true, get: function () { return virtualListDragFeature_1.VirtualListDragFeature; } });
 // entities
 var column_1 = require("./entities/column");
 Object.defineProperty(exports, "Column", { enumerable: true, get: function () { return column_1.Column; } });
@@ -170,12 +174,14 @@ Object.defineProperty(exports, "StandardMenuFactory", { enumerable: true, get: f
 var tabbedLayout_1 = require("./layout/tabbedLayout");
 Object.defineProperty(exports, "TabbedLayout", { enumerable: true, get: function () { return tabbedLayout_1.TabbedLayout; } });
 // misc
-var simpleHttpRequest_1 = require("./misc/simpleHttpRequest");
-Object.defineProperty(exports, "simpleHttpRequest", { enumerable: true, get: function () { return simpleHttpRequest_1.simpleHttpRequest; } });
 var resizeObserverService_1 = require("./misc/resizeObserverService");
 Object.defineProperty(exports, "ResizeObserverService", { enumerable: true, get: function () { return resizeObserverService_1.ResizeObserverService; } });
 var animationFrameService_1 = require("./misc/animationFrameService");
 Object.defineProperty(exports, "AnimationFrameService", { enumerable: true, get: function () { return animationFrameService_1.AnimationFrameService; } });
+var expansionService_1 = require("./misc/expansionService");
+Object.defineProperty(exports, "ExpansionService", { enumerable: true, get: function () { return expansionService_1.ExpansionService; } });
+var menuService_1 = require("./misc/menuService");
+Object.defineProperty(exports, "MenuService", { enumerable: true, get: function () { return menuService_1.MenuService; } });
 var largeTextCellEditor_1 = require("./rendering/cellEditors/largeTextCellEditor");
 Object.defineProperty(exports, "LargeTextCellEditor", { enumerable: true, get: function () { return largeTextCellEditor_1.LargeTextCellEditor; } });
 var popupEditorWrapper_1 = require("./rendering/cellEditors/popupEditorWrapper");
@@ -274,6 +280,8 @@ var agSlider_1 = require("./widgets/agSlider");
 Object.defineProperty(exports, "AgSlider", { enumerable: true, get: function () { return agSlider_1.AgSlider; } });
 var agGroupComponent_1 = require("./widgets/agGroupComponent");
 Object.defineProperty(exports, "AgGroupComponent", { enumerable: true, get: function () { return agGroupComponent_1.AgGroupComponent; } });
+var agMenuItemRenderer_1 = require("./widgets/agMenuItemRenderer");
+Object.defineProperty(exports, "AgMenuItemRenderer", { enumerable: true, get: function () { return agMenuItemRenderer_1.AgMenuItemRenderer; } });
 var agMenuItemComponent_1 = require("./widgets/agMenuItemComponent");
 Object.defineProperty(exports, "AgMenuItemComponent", { enumerable: true, get: function () { return agMenuItemComponent_1.AgMenuItemComponent; } });
 var agMenuList_1 = require("./widgets/agMenuList");
@@ -322,9 +330,13 @@ var alignedGridsService_1 = require("./alignedGridsService");
 Object.defineProperty(exports, "AlignedGridsService", { enumerable: true, get: function () { return alignedGridsService_1.AlignedGridsService; } });
 var keyCode_1 = require("./constants/keyCode");
 Object.defineProperty(exports, "KeyCode", { enumerable: true, get: function () { return keyCode_1.KeyCode; } });
+var direction_1 = require("./constants/direction");
+Object.defineProperty(exports, "VerticalDirection", { enumerable: true, get: function () { return direction_1.VerticalDirection; } });
+Object.defineProperty(exports, "HorizontalDirection", { enumerable: true, get: function () { return direction_1.HorizontalDirection; } });
 var grid_1 = require("./grid");
 Object.defineProperty(exports, "Grid", { enumerable: true, get: function () { return grid_1.Grid; } });
 Object.defineProperty(exports, "GridCoreCreator", { enumerable: true, get: function () { return grid_1.GridCoreCreator; } });
+Object.defineProperty(exports, "createGrid", { enumerable: true, get: function () { return grid_1.createGrid; } });
 var gridApi_1 = require("./gridApi");
 Object.defineProperty(exports, "GridApi", { enumerable: true, get: function () { return gridApi_1.GridApi; } });
 var eventKeys_1 = require("./eventKeys");
@@ -374,13 +386,16 @@ Object.defineProperty(exports, "HeaderNavigationService", { enumerable: true, ge
 Object.defineProperty(exports, "HeaderNavigationDirection", { enumerable: true, get: function () { return headerNavigationService_1.HeaderNavigationDirection; } });
 var dataTypeService_1 = require("./columns/dataTypeService");
 Object.defineProperty(exports, "DataTypeService", { enumerable: true, get: function () { return dataTypeService_1.DataTypeService; } });
-__exportStar(require("./propertyKeys"), exports);
+var propertyKeys_1 = require("./propertyKeys");
+Object.defineProperty(exports, "PropertyKeys", { enumerable: true, get: function () { return propertyKeys_1.PropertyKeys; } });
 var columnApi_1 = require("./columns/columnApi");
 Object.defineProperty(exports, "ColumnApi", { enumerable: true, get: function () { return columnApi_1.ColumnApi; } });
 var frameworkComponentWrapper_1 = require("./components/framework/frameworkComponentWrapper");
 Object.defineProperty(exports, "BaseComponentWrapper", { enumerable: true, get: function () { return frameworkComponentWrapper_1.BaseComponentWrapper; } });
 var environment_1 = require("./environment");
 Object.defineProperty(exports, "Environment", { enumerable: true, get: function () { return environment_1.Environment; } });
+var tooltipFeature_1 = require("./widgets/tooltipFeature");
+Object.defineProperty(exports, "TooltipFeature", { enumerable: true, get: function () { return tooltipFeature_1.TooltipFeature; } });
 var customTooltipFeature_1 = require("./widgets/customTooltipFeature");
 Object.defineProperty(exports, "CustomTooltipFeature", { enumerable: true, get: function () { return customTooltipFeature_1.CustomTooltipFeature; } });
 // charts

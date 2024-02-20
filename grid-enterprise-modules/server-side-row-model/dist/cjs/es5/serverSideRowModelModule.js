@@ -15,12 +15,13 @@ var storeFactory_1 = require("./serverSideRowModel/stores/storeFactory");
 var listenerUtils_1 = require("./serverSideRowModel/listeners/listenerUtils");
 var serverSideSelectionService_1 = require("./serverSideRowModel/services/serverSideSelectionService");
 var version_1 = require("./version");
+var serverSideExpansionService_1 = require("./serverSideRowModel/services/serverSideExpansionService");
 exports.ServerSideRowModelModule = {
     version: version_1.VERSION,
     moduleName: core_1.ModuleNames.ServerSideRowModelModule,
     rowModel: 'serverSide',
     beans: [serverSideRowModel_1.ServerSideRowModel, expandListener_1.ExpandListener, sortListener_1.SortListener, storeUtils_1.StoreUtils, blockUtils_1.BlockUtils, nodeManager_1.NodeManager, transactionManager_1.TransactionManager,
-        filterListener_1.FilterListener, storeFactory_1.StoreFactory, listenerUtils_1.ListenerUtils, serverSideSelectionService_1.ServerSideSelectionService],
+        filterListener_1.FilterListener, storeFactory_1.StoreFactory, listenerUtils_1.ListenerUtils, serverSideSelectionService_1.ServerSideSelectionService, serverSideExpansionService_1.ServerSideExpansionService],
     dependantModules: [
         core_2.EnterpriseCoreModule
     ]

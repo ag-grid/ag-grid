@@ -78,32 +78,29 @@ class DetailCellRenderer extends core_1.Component {
         // this is only used by Angular and Vue, as React uses native React AG Grid detail grids
         const frameworkComponentWrapper = this.context.getBean('frameworkComponentWrapper');
         const frameworkOverrides = this.getFrameworkOverrides();
-        // tslint:disable-next-line
-        new core_1.Grid(this.eDetailGrid, gridOptions, {
+        const api = (0, core_1.createGrid)(this.eDetailGrid, gridOptions, {
             frameworkOverrides,
             providedBeanInstances: {
                 agGridReact: agGridReactCloned,
-                frameworkComponentWrapper: frameworkComponentWrapper
+                frameworkComponentWrapper: frameworkComponentWrapper,
             },
-            modules: core_1.ModuleRegistry.__getGridRegisteredModules(this.params.api.getGridId())
+            modules: core_1.ModuleRegistry.__getGridRegisteredModules(this.params.api.getGridId()),
         });
-        this.detailApi = gridOptions.api;
-        this.ctrl.registerDetailWithMaster(gridOptions.api, gridOptions.columnApi);
+        this.detailApi = api;
+        this.ctrl.registerDetailWithMaster(api, new core_1.ColumnApi(api));
         this.addDestroyFunc(() => {
-            if (gridOptions.api) {
-                gridOptions.api.destroy();
-            }
+            api === null || api === void 0 ? void 0 : api.destroy();
         });
     }
     setRowData(rowData) {
         // ensure detail grid api still exists (grid may be destroyed when async call tries to set data)
-        this.detailApi && this.detailApi.setRowData(rowData);
+        this.detailApi && this.detailApi.setGridOption('rowData', rowData);
     }
 }
 DetailCellRenderer.TEMPLATE = `<div class="ag-details-row" role="gridcell">
             <div ref="eDetailGrid" class="ag-details-grid" role="presentation"></div>
         </div>`;
 __decorate([
-    core_1.RefSelector('eDetailGrid')
+    (0, core_1.RefSelector)('eDetailGrid')
 ], DetailCellRenderer.prototype, "eDetailGrid", void 0);
 exports.DetailCellRenderer = DetailCellRenderer;

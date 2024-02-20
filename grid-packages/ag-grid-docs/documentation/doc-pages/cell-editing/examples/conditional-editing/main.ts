@@ -1,10 +1,12 @@
-import { Grid, GridOptions, EditableCallbackParams, CellClassParams } from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions, EditableCallbackParams, CellClassParams } from '@ag-grid-community/core';
 
 let editableYear = 2012;
 
 function isCellEditable(params: EditableCallbackParams | CellClassParams) {
   return params.data.year === editableYear;
 }
+
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -26,7 +28,7 @@ const gridOptions: GridOptions<IOlympicData> = {
       },
       cellStyle: (params: CellClassParams<IOlympicData>) => {
         if (isCellEditable(params)) {
-          return { backgroundColor: 'lightBlue' };
+          return { backgroundColor: '#2244CC44' };
         }
       }
     }
@@ -36,17 +38,16 @@ const gridOptions: GridOptions<IOlympicData> = {
 function setEditableYear(year: number) {
   editableYear = year;
   // Redraw to re-apply the new cell style
-  gridOptions.api!.redrawRows();
+  gridApi!.redrawRows();
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
-  // do http request to get our sample data - not using any framework to keep the example self contained.
-  // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
+
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

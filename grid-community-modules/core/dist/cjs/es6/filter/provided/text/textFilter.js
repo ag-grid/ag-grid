@@ -46,7 +46,7 @@ class TextFilter extends simpleFilter_1.SimpleFilter {
     getTextMatcher() {
         const legacyComparator = this.textFilterParams.textCustomComparator;
         if (legacyComparator) {
-            utils_1._.doOnce(() => console.warn('AG Grid - textCustomComparator is deprecated, use textMatcher instead.'), 'textCustomComparator.deprecated');
+            utils_1._.warnOnce('textCustomComparator is deprecated, use textMatcher instead.');
             return ({ filterOption, value, filterText }) => legacyComparator(filterOption, value, filterText);
         }
         return this.textFilterParams.textMatcher || TextFilter.DEFAULT_MATCHER;
@@ -88,7 +88,7 @@ class TextFilter extends simpleFilter_1.SimpleFilter {
         this.forEachPositionInput(position, (element, index, _elPosition, numberOfInputs) => {
             var _a;
             if (index < numberOfInputs) {
-                let value = generic_1.makeNull(element.getValue());
+                let value = (0, generic_1.makeNull)(element.getValue());
                 if (applySideEffects && this.textFilterParams.trimInput) {
                     value = (_a = TextFilter.trimInput(value)) !== null && _a !== void 0 ? _a : null;
                     element.setValue(value, true); // ensure clean value is visible
@@ -104,7 +104,7 @@ class TextFilter extends simpleFilter_1.SimpleFilter {
     createValueElement() {
         const eCondition = document.createElement('div');
         eCondition.classList.add('ag-filter-body');
-        aria_1.setAriaRole(eCondition, 'presentation');
+        (0, aria_1.setAriaRole)(eCondition, 'presentation');
         this.createFromToElement(eCondition, this.eValuesFrom, 'from');
         this.createFromToElement(eCondition, this.eValuesTo, 'to');
         return eCondition;

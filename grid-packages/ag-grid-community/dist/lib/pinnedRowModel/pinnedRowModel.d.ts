@@ -9,8 +9,8 @@ export declare class PinnedRowModel extends BeanStub {
     isEmpty(floating: RowPinnedType): boolean;
     isRowsToRender(floating: RowPinnedType): boolean;
     getRowAtPixel(pixel: number, floating: RowPinnedType): number;
-    setPinnedTopRowData(rowData: any[] | undefined): void;
-    setPinnedBottomRowData(rowData: any[] | undefined): void;
+    private setPinnedTopRowData;
+    private setPinnedBottomRowData;
     private createNodesFromData;
     getPinnedTopRowData(): RowNode[];
     getPinnedBottomRowData(): RowNode[];

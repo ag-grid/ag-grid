@@ -16,6 +16,6 @@ let SelectionHandleFactory = class SelectionHandleFactory extends core_1.BeanStu
     }
 };
 SelectionHandleFactory = __decorate([
-    core_1.Bean('selectionHandleFactory')
+    (0, core_1.Bean)('selectionHandleFactory')
 ], SelectionHandleFactory);
 exports.SelectionHandleFactory = SelectionHandleFactory;

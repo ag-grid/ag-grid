@@ -62,19 +62,6 @@ export function attrToString(value) {
     }
     return value;
 }
-/** @deprecated */
-export function referenceCompare(left, right) {
-    if (left == null && right == null) {
-        return true;
-    }
-    if (left == null && right != null) {
-        return false;
-    }
-    if (left != null && right == null) {
-        return false;
-    }
-    return left === right;
-}
 export function jsonEquals(val1, val2) {
     var val1Json = val1 ? JSON.stringify(val1) : null;
     var val2Json = val2 ? JSON.stringify(val2) : null;

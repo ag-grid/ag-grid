@@ -22,7 +22,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { Autowired, PostConstruct } from "../context/context";
 import { RefSelector } from "../widgets/componentAnnotations";
 import { isVisible } from "../utils/dom";
-import { FocusService } from "../focusService";
 import { GridCtrl } from "./gridCtrl";
 import { LayoutCssClasses } from "../styling/layoutFeature";
 import { TabGuardComp } from "../widgets/tabGuardComp";
@@ -39,7 +38,6 @@ var GridComp = /** @class */ (function (_super) {
         var compProxy = {
             destroyGridUi: function () { return _this.destroyBean(_this); },
             setRtlClass: function (cssClass) { return _this.addCssClass(cssClass); },
-            addOrRemoveKeyboardFocusClass: function (addOrRemove) { return _this.addOrRemoveCssClass(FocusService.AG_KEYBOARD_FOCUS, addOrRemove); },
             forceFocusOutOfContainer: this.forceFocusOutOfContainer.bind(this),
             updateLayoutClasses: this.updateLayoutClasses.bind(this),
             getFocusableContainers: this.getFocusableContainers.bind(this),
@@ -59,7 +57,8 @@ var GridComp = /** @class */ (function (_super) {
         this.initialiseTabGuard({
             // we want to override the default behaviour to do nothing for onTabKeyDown
             onTabKeyDown: function () { return undefined; },
-            focusInnerElement: function (fromBottom) { return _this.ctrl.focusInnerElement(fromBottom); }
+            focusInnerElement: function (fromBottom) { return _this.ctrl.focusInnerElement(fromBottom); },
+            forceFocusOutWhenTabGuardsAreEmpty: true
         });
     };
     GridComp.prototype.insertGridIntoDom = function () {
@@ -85,7 +84,7 @@ var GridComp = /** @class */ (function (_super) {
         var sideBar = this.ctrl.showSideBar() ? '<ag-side-bar ref="sideBar"></ag-side-bar>' : '';
         var statusBar = this.ctrl.showStatusBar() ? '<ag-status-bar ref="statusBar"></ag-status-bar>' : '';
         var watermark = this.ctrl.showWatermark() ? '<ag-watermark></ag-watermark>' : '';
-        var template = /* html */ "<div class=\"ag-root-wrapper\" role=\"presentation\">\n                " + dropZones + "\n                <div class=\"ag-root-wrapper-body\" ref=\"rootWrapperBody\" role=\"presentation\">\n                    <ag-grid-body ref=\"gridBody\"></ag-grid-body>\n                    " + sideBar + "\n                </div>\n                " + statusBar + "\n                <ag-pagination></ag-pagination>\n                " + watermark + "\n            </div>";
+        var template = /* html */ "<div class=\"ag-root-wrapper\" role=\"presentation\">\n                ".concat(dropZones, "\n                <div class=\"ag-root-wrapper-body\" ref=\"rootWrapperBody\" role=\"presentation\">\n                    <ag-grid-body ref=\"gridBody\"></ag-grid-body>\n                    ").concat(sideBar, "\n                </div>\n                ").concat(statusBar, "\n                <ag-pagination></ag-pagination>\n                ").concat(watermark, "\n            </div>");
         return template;
     };
     GridComp.prototype.getFocusableElement = function () {

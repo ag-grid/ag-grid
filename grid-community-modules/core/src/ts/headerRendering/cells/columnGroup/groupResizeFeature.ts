@@ -7,21 +7,30 @@ import { ColumnGroup } from "../../../entities/columnGroup";
 import { AutoWidthCalculator } from "../../../rendering/autoWidthCalculator";
 import { HorizontalResizeService } from "../../common/horizontalResizeService";
 import { IHeaderGroupCellComp } from "./headerGroupCellCtrl";
+import { IHeaderResizeFeature } from "../abstractCell/abstractHeaderCellCtrl";
 
-export class GroupResizeFeature extends BeanStub {
+interface ColumnSizeAndRatios {
+    columnsToResize: Column[];
+    resizeStartWidth: number;
+    resizeRatios: number[];
+    groupAfterColumns?: Column[];
+    groupAfterStartWidth?: number;
+    groupAfterRatios?: number[];
+}
+export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature {
 
     private eResize: HTMLElement;
     private columnGroup: ColumnGroup;
     private comp: IHeaderGroupCellComp;
     private pinned: ColumnPinnedType;
 
-    private resizeCols: Column[];
+    private resizeCols?: Column[];
     private resizeStartWidth: number;
-    private resizeRatios: number[];
+    private resizeRatios?: number[];
 
-    private resizeTakeFromCols: Column[] | null;
-    private resizeTakeFromStartWidth: number | null;
-    private resizeTakeFromRatios: number[] | null;
+    private resizeTakeFromCols?: Column[];
+    private resizeTakeFromStartWidth?: number;
+    private resizeTakeFromRatios?: number[];
 
     @Autowired('horizontalResizeService') private readonly horizontalResizeService: HorizontalResizeService;
     @Autowired('autoWidthCalculator') private readonly autoWidthCalculator: AutoWidthCalculator;
@@ -53,8 +62,8 @@ export class GroupResizeFeature extends BeanStub {
 
         this.addDestroyFunc(finishedWithResizeFunc);
 
-        if (!this.gridOptionsService.is('suppressAutoSize')) {
-            const skipHeaderOnAutoSize = this.gridOptionsService.is('skipHeaderOnAutoSize');
+        if (!this.gridOptionsService.get('suppressAutoSize')) {
+            const skipHeaderOnAutoSize = this.gridOptionsService.get('skipHeaderOnAutoSize');
 
             this.eResize.addEventListener('dblclick', () => {
                 // get list of all the column keys we are responsible for
@@ -82,65 +91,117 @@ export class GroupResizeFeature extends BeanStub {
         }
     }
 
-    public onResizeStart(shiftKey: boolean): void {
-        this.calculateInitialValues();
-
-        let takeFromGroup: ColumnGroup | null = null;
-
-        if (shiftKey) {
-            takeFromGroup = this.columnModel.getDisplayedGroupAfter(this.columnGroup);
-        }
-
-        if (takeFromGroup) {
-            const takeFromLeafCols = takeFromGroup.getDisplayedLeafColumns();
-
-            this.resizeTakeFromCols = takeFromLeafCols.filter(col => col.isResizable());
-
-            this.resizeTakeFromStartWidth = 0;
-            this.resizeTakeFromCols.forEach(col => this.resizeTakeFromStartWidth! += col.getActualWidth());
-            this.resizeTakeFromRatios = [];
-            this.resizeTakeFromCols.forEach(col => this.resizeTakeFromRatios!.push(col.getActualWidth() / this.resizeTakeFromStartWidth!));
-        } else {
-            this.resizeTakeFromCols = null;
-            this.resizeTakeFromStartWidth = null;
-            this.resizeTakeFromRatios = null;
-        }
-
-        this.comp.addOrRemoveCssClass('ag-column-resizing', true);
-
+    private onResizeStart(shiftKey: boolean): void {
+        const initialValues = this.getInitialValues(shiftKey);
+        this.storeLocalValues(initialValues);
+        this.toggleColumnResizing(true);
     }
 
     public onResizing(finished: boolean, resizeAmount: any, source: ColumnEventType = 'uiColumnResized'): void {
         const resizeAmountNormalised = this.normaliseDragChange(resizeAmount);
         const width = this.resizeStartWidth + resizeAmountNormalised;
 
-        this.resizeColumns(width, source, finished);
+        this.resizeColumnsFromLocalValues(width, source, finished);
+    }
+
+    public getInitialValues(shiftKey?: boolean): ColumnSizeAndRatios {
+        const columnsToResize = this.getColumnsToResize();
+        const resizeStartWidth = this.getInitialSizeOfColumns(columnsToResize);
+        const resizeRatios = this.getSizeRatiosOfColumns(columnsToResize, resizeStartWidth);
+
+        const columnSizeAndRatios: ColumnSizeAndRatios = {
+            columnsToResize,
+            resizeStartWidth,
+            resizeRatios
+        };
+
+        let groupAfter: ColumnGroup | null = null;
+
+        if (shiftKey) {
+            groupAfter = this.columnModel.getDisplayedGroupAfter(this.columnGroup);
+        }
+
+        if (groupAfter) {
+            const takeFromLeafCols = groupAfter.getDisplayedLeafColumns();
+            const groupAfterColumns = columnSizeAndRatios.groupAfterColumns = takeFromLeafCols.filter(col => col.isResizable());
+            const groupAfterStartWidth = columnSizeAndRatios.groupAfterStartWidth = this.getInitialSizeOfColumns(groupAfterColumns);
+            columnSizeAndRatios.groupAfterRatios = this.getSizeRatiosOfColumns(groupAfterColumns, groupAfterStartWidth);
+        } else {
+            columnSizeAndRatios.groupAfterColumns = undefined;
+            columnSizeAndRatios.groupAfterStartWidth = undefined;
+            columnSizeAndRatios.groupAfterRatios = undefined;
+        }
+
+        return columnSizeAndRatios;
+    }
+
+    private storeLocalValues(initialValues: ColumnSizeAndRatios): void {
+        const {
+            columnsToResize, resizeStartWidth, resizeRatios,
+            groupAfterColumns, groupAfterStartWidth, groupAfterRatios
+        } = initialValues;
+
+        this.resizeCols = columnsToResize;
+        this.resizeStartWidth = resizeStartWidth;
+        this.resizeRatios = resizeRatios;
+
+        this.resizeTakeFromCols = groupAfterColumns;
+        this.resizeTakeFromStartWidth = groupAfterStartWidth;
+        this.resizeTakeFromRatios = groupAfterRatios;
+    }
+
+    private clearLocalValues(): void {
+        this.resizeCols = undefined;
+        this.resizeRatios = undefined;
+
+        this.resizeTakeFromCols = undefined;
+        this.resizeTakeFromRatios = undefined;
     }
 
     public resizeLeafColumnsToFit(source: ColumnEventType): void {
         const preferredSize = this.autoWidthCalculator.getPreferredWidthForColumnGroup(this.columnGroup);
-        this.calculateInitialValues();
+        const initialValues = this.getInitialValues();
 
-        if (preferredSize > this.resizeStartWidth) {
-            this.resizeColumns(preferredSize, source, true);
+        if (preferredSize > initialValues.resizeStartWidth) {
+            this.resizeColumns(initialValues, preferredSize, source, true);
         }
     }
 
-    public resizeColumns(totalWidth: number, source: ColumnEventType, finished: boolean = true): void {
+    private resizeColumnsFromLocalValues(totalWidth: number, source: ColumnEventType, finished: boolean = true): void {
+        if (!this.resizeCols || !this.resizeRatios) { return; }
+
+        const initialValues: ColumnSizeAndRatios = {
+            columnsToResize: this.resizeCols,
+            resizeStartWidth: this.resizeStartWidth,
+            resizeRatios: this.resizeRatios,
+            groupAfterColumns: this.resizeTakeFromCols ?? undefined,
+            groupAfterStartWidth: this.resizeTakeFromStartWidth ?? undefined,
+            groupAfterRatios: this.resizeTakeFromRatios ?? undefined
+        }
+
+        this.resizeColumns(initialValues, totalWidth, source, finished);
+    }
+
+    public resizeColumns(initialValues: ColumnSizeAndRatios, totalWidth: number, source: ColumnEventType, finished: boolean = true): void {
+        const {
+            columnsToResize, resizeStartWidth, resizeRatios,
+            groupAfterColumns, groupAfterStartWidth, groupAfterRatios
+        } = initialValues;
+
         const resizeSets: ColumnResizeSet[] = [];
 
         resizeSets.push({
-            columns: this.resizeCols,
-            ratios: this.resizeRatios,
+            columns: columnsToResize,
+            ratios: resizeRatios,
             width: totalWidth
         });
 
-        if (this.resizeTakeFromCols) {
-            const diff = totalWidth - this.resizeStartWidth;
+        if (groupAfterColumns) {
+            const diff = totalWidth - resizeStartWidth;
             resizeSets.push({
-                columns: this.resizeTakeFromCols,
-                ratios: this.resizeTakeFromRatios!,
-                width: this.resizeTakeFromStartWidth! - diff
+                columns: groupAfterColumns,
+                ratios: groupAfterRatios!,
+                width: groupAfterStartWidth! - diff
             });
         }
 
@@ -151,17 +212,27 @@ export class GroupResizeFeature extends BeanStub {
         });
 
         if (finished) {
-            this.comp.addOrRemoveCssClass('ag-column-resizing', false);
+            this.toggleColumnResizing(false);
         }
     }
 
-    private calculateInitialValues(): void {
+    public toggleColumnResizing(resizing: boolean): void {
+        this.comp.addOrRemoveCssClass('ag-column-resizing', resizing);
+    }
+
+    private getColumnsToResize(): Column[] {
         const leafCols = this.columnGroup.getDisplayedLeafColumns();
-        this.resizeCols = leafCols.filter(col => col.isResizable());
-        this.resizeStartWidth = 0;
-        this.resizeCols.forEach(col => this.resizeStartWidth += col.getActualWidth());
-        this.resizeRatios = [];
-        this.resizeCols.forEach(col => this.resizeRatios.push(col.getActualWidth() / this.resizeStartWidth));
+        return leafCols.filter(col => col.isResizable());
+    }
+
+    private getInitialSizeOfColumns(columns: Column[]): number {
+        return columns.reduce(
+            (totalWidth: number, column: Column) => totalWidth + column.getActualWidth(), 0
+        );
+    }
+
+    private getSizeRatiosOfColumns(columns: Column[], initialSizeOfColumns: number): number[] {
+        return columns.map(column => column.getActualWidth() / initialSizeOfColumns);
     }
 
     // optionally inverts the drag, depending on pinned and RTL
@@ -169,7 +240,7 @@ export class GroupResizeFeature extends BeanStub {
     private normaliseDragChange(dragChange: number): number {
         let result = dragChange;
 
-        if (this.gridOptionsService.is('enableRtl')) {
+        if (this.gridOptionsService.get('enableRtl')) {
             // for RTL, dragging left makes the col bigger, except when pinning left
             if (this.pinned !== 'left') {
                 result *= -1;
@@ -180,5 +251,10 @@ export class GroupResizeFeature extends BeanStub {
         }
 
         return result;
+    }
+
+    protected destroy(): void {
+        super.destroy();
+        this.clearLocalValues();
     }
 }

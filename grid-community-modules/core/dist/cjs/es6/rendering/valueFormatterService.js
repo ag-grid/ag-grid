@@ -22,16 +22,13 @@ let ValueFormatterService = class ValueFormatterService extends beanStub_1.BeanS
             formatter = colDef.valueFormatter;
         }
         if (formatter) {
-            const params = {
+            const params = this.gridOptionsService.addGridCommonParams({
                 value,
                 node,
                 data: node ? node.data : null,
                 colDef,
-                column,
-                api: this.gridOptionsService.api,
-                columnApi: this.gridOptionsService.columnApi,
-                context: this.gridOptionsService.context
-            };
+                column
+            });
             if (typeof formatter === 'function') {
                 result = formatter(params);
             }
@@ -50,9 +47,9 @@ let ValueFormatterService = class ValueFormatterService extends beanStub_1.BeanS
     }
 };
 __decorate([
-    context_1.Autowired('expressionService')
+    (0, context_1.Autowired)('expressionService')
 ], ValueFormatterService.prototype, "expressionService", void 0);
 ValueFormatterService = __decorate([
-    context_1.Bean('valueFormatterService')
+    (0, context_1.Bean)('valueFormatterService')
 ], ValueFormatterService);
 exports.ValueFormatterService = ValueFormatterService;

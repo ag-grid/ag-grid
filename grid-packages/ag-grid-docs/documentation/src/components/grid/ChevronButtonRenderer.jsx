@@ -1,9 +1,9 @@
 import classNames from 'classnames';
 import React, { forwardRef, useImperativeHandle, useState } from 'react';
 import { hostPrefix } from '../../utils/consts';
-import styles from './ChevronButtonRenderer.module.scss';
+import styles from '@design-system/modules/ChevronButtonRenderer.module.scss';
 
-const TreeClosed = `${hostPrefix}/theme-icons/alpine/tree-closed.svg`;
+const TreeClosed = `${hostPrefix}/theme-icons/quartz/tree-closed.svg`;
 
 const IS_SSR = typeof window === 'undefined';
 
@@ -39,7 +39,7 @@ const ChevronButtonCellRenderer = forwardRef((props, ref) => {
                         }}
                     ></input>
                 </div>
-                <span>{props.value}</span>
+                <span>{props.valueFormatted ?? props.value}</span>
             </div>
         );
     }

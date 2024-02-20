@@ -30,13 +30,13 @@ class GroupFilter extends core_1.TabGuardComp {
     validateParams() {
         const { colDef } = this.params;
         if (colDef.field) {
-            core_1._.doOnce(() => console.warn('AG Grid: Group Column Filter does not work with the colDef property "field". This property will be ignored.'), 'groupFilterFieldParam');
+            core_1._.warnOnce('Group Column Filter does not work with the colDef property "field". This property will be ignored.');
         }
         if (colDef.filterValueGetter) {
-            core_1._.doOnce(() => console.warn('AG Grid: Group Column Filter does not work with the colDef property "filterValueGetter". This property will be ignored.'), 'groupFilterFilterValueGetterParam');
+            core_1._.warnOnce('Group Column Filter does not work with the colDef property "filterValueGetter". This property will be ignored.');
         }
         if (colDef.filterParams) {
-            core_1._.doOnce(() => console.warn('AG Grid: Group Column Filter does not work with the colDef property "filterParams". This property will be ignored.'), 'groupFilterFilterParams');
+            core_1._.warnOnce('Group Column Filter does not work with the colDef property "filterParams". This property will be ignored.');
         }
     }
     updateGroups() {
@@ -45,13 +45,13 @@ class GroupFilter extends core_1.TabGuardComp {
     }
     getSourceColumns() {
         this.groupColumn = this.params.column;
-        if (this.gridOptionsService.is('treeData')) {
-            core_1._.doOnce(() => console.warn('AG Grid: Group Column Filter does not work with Tree Data enabled. Please disable Tree Data, or use a different filter.'), 'groupFilterTreeData');
+        if (this.gridOptionsService.get('treeData')) {
+            core_1._.warnOnce('Group Column Filter does not work with Tree Data enabled. Please disable Tree Data, or use a different filter.');
             return [];
         }
         const sourceColumns = this.columnModel.getSourceColumnsForGroupColumn(this.groupColumn);
         if (!sourceColumns) {
-            core_1._.doOnce(() => console.warn('AG Grid: Group Column Filter only works on group columns. Please use a different filter.'), 'groupFilterNotGroupColumn');
+            core_1._.warnOnce('Group Column Filter only works on group columns. Please use a different filter.');
             return [];
         }
         return sourceColumns;
@@ -227,16 +227,16 @@ class GroupFilter extends core_1.TabGuardComp {
 GroupFilter.EVENT_COLUMN_ROW_GROUP_CHANGED = 'columnRowGroupChanged';
 GroupFilter.EVENT_SELECTED_COLUMN_CHANGED = 'selectedColumnChanged';
 __decorate([
-    core_1.Autowired('filterManager')
+    (0, core_1.Autowired)('filterManager')
 ], GroupFilter.prototype, "filterManager", void 0);
 __decorate([
-    core_1.Autowired('columnModel')
+    (0, core_1.Autowired)('columnModel')
 ], GroupFilter.prototype, "columnModel", void 0);
 __decorate([
-    core_1.RefSelector('eGroupField')
+    (0, core_1.RefSelector)('eGroupField')
 ], GroupFilter.prototype, "eGroupField", void 0);
 __decorate([
-    core_1.RefSelector('eUnderlyingFilter')
+    (0, core_1.RefSelector)('eUnderlyingFilter')
 ], GroupFilter.prototype, "eUnderlyingFilter", void 0);
 __decorate([
     core_1.PostConstruct

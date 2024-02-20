@@ -12,11 +12,11 @@ export declare class AggFuncService extends BeanStub implements IAggFuncService 
     private init;
     private initialiseWithDefaultAggregations;
     private isAggFuncPossible;
+    getDefaultFuncLabel(fctName: string): string;
     getDefaultAggFunc(column: Column): string | null;
     addAggFuncs(aggFuncs?: {
         [key: string]: IAggFunc;
     }): void;
-    addAggFunc(key: string, aggFunc: IAggFunc): void;
     getAggFunc(name: string): IAggFunc;
     getFuncNames(column: Column): string[];
     clear(): void;

@@ -222,7 +222,7 @@ class ChartDatasource extends core_1.BeanStub {
             return;
         }
         // we don't know what the application will use for the pivot key separator (i.e. '_' or '|' ) as the
-        // secondary columns are provided to grid by the application via columnApi.setSecondaryColumns()
+        // secondary columns are provided to grid by the application via api.setSecondaryColumns()
         const pivotKeySeparator = this.extractPivotKeySeparator(secondaryColumns);
         // `pivotKeys` is not used by the SSRM for pivoting, so it is safe to reuse this colDef property. This way
         // the same logic can be used for CSRM and SSRM to extract legend names in extractRowsFromGridRowModel()
@@ -287,21 +287,21 @@ class ChartDatasource extends core_1.BeanStub {
     }
 }
 __decorate([
-    core_1.Autowired('rowModel')
+    (0, core_1.Autowired)('rowModel')
 ], ChartDatasource.prototype, "gridRowModel", void 0);
 __decorate([
-    core_1.Autowired('valueService')
+    (0, core_1.Autowired)('valueService')
 ], ChartDatasource.prototype, "valueService", void 0);
 __decorate([
-    core_1.Autowired('columnModel')
+    (0, core_1.Autowired)('columnModel')
 ], ChartDatasource.prototype, "columnModel", void 0);
 __decorate([
-    core_1.Autowired('rowNodeSorter')
+    (0, core_1.Autowired)('rowNodeSorter')
 ], ChartDatasource.prototype, "rowNodeSorter", void 0);
 __decorate([
-    core_1.Autowired('sortController')
+    (0, core_1.Autowired)('sortController')
 ], ChartDatasource.prototype, "sortController", void 0);
 __decorate([
-    core_1.Optional('aggregationStage')
+    (0, core_1.Optional)('aggregationStage')
 ], ChartDatasource.prototype, "aggregationStage", void 0);
 exports.ChartDatasource = ChartDatasource;

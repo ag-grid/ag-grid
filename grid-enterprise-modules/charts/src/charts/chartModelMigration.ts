@@ -1,7 +1,8 @@
 import { ChartModel } from '@ag-grid-community/core';
 import { AgChartThemeName } from 'ag-charts-community';
+
 // @ts-ignore
-import { getSeriesType } from './chartComp/utils/seriesTypeMapper';
+import { getCanonicalChartType, getSeriesType, isPieChartSeries } from './chartComp/utils/seriesTypeMapper';
 // @ts-ignore
 import { ALL_AXIS_TYPES, getLegacyAxisType } from './chartComp/utils/axisTypeMapper';
 // @ts-ignore
@@ -29,6 +30,7 @@ export function upgradeChartModel(model: ChartModel): ChartModel {
     model = migrateIfBefore('29.1.0', model, migrateV29_1);
     model = migrateIfBefore('29.2.0', model, migrateV29_2);
     model = migrateIfBefore('30.0.0', model, migrateV30);
+    model = migrateIfBefore('31.0.0', model, migrateV31);
     model = cleanup(model);
 
     // Bump version to latest.
@@ -67,6 +69,14 @@ function migrateV24(model: ChartModel) {
         type,
         ...(i === 0 ? xAxis : yAxis),
     }));
+
+    // Precise legacy palette fills/strokes can be found here for future reference:
+    // https://github.com/ag-grid/ag-grid/blob/b22.1.0/grid-enterprise-modules/charts/src/charts/chart/palettes.ts
+    const LEGACY_PALETTES: Record<string, AgChartThemeName> = {
+        borneo: 'ag-default',
+        material: 'ag-material',
+        bright: 'ag-vivid',
+    };
 
     return {
         chartType,
@@ -128,7 +138,7 @@ function migrateV26_2(model: ChartModel) {
     model = jsonDelete('chartOptions.xAxis', model);
     model = jsonDelete('chartOptions.yAxis', model);
     const {
-        chartType,
+        chartType: providedChartType,
         chartOptions: { axes, series, seriesDefaults, ...otherChartOptions },
         ...otherModelProps
     } = model as any;
@@ -136,10 +146,13 @@ function migrateV26_2(model: ChartModel) {
     // At 26.2.0 combination charts weren't supported, so we can safely assume a single series type.
     // We can't rely on the `series.type` field as it was incorrect (in v25.0.0 line chart has an
     // `area` series).
-    const seriesTypes = [getSeriesType(chartType)];
+    // Note that in v31.1.0, the canonical name for the 'doughnut' chart type changed to 'donut'.
+    const chartType = getCanonicalChartType(providedChartType);
+    const seriesType = getSeriesType(chartType);
+    const seriesTypes = [seriesType];
 
     const chartTypeMixin: any = {};
-    if (!seriesTypes.includes('pie')) {
+    if (!isPieChartSeries(seriesType)) {
         const minimalAxis = { top: {}, bottom: {}, left: {}, right: {} };
         const updatedAxes = axes
             .map(({ type, ...axisProps }: any) => ({
@@ -185,6 +198,11 @@ function migrateV28_2(model: ChartModel) {
     model = jsonRename('chartOptions.pie.series.label', 'calloutLabel', model);
     model = jsonRename('chartOptions.pie.series.labelKey', 'sectorLabelKey', model);
     model = jsonRename('chartOptions.pie.series.labelName', 'sectorLabelName', model);
+
+    model = jsonRename('chartOptions.donut.series.callout', 'calloutLine', model);
+    model = jsonRename('chartOptions.donut.series.label', 'calloutLabel', model);
+    model = jsonRename('chartOptions.donut.series.labelKey', 'sectorLabelKey', model);
+    model = jsonRename('chartOptions.donut.series.labelName', 'sectorLabelName', model);
 
     // series.yKeys => yKey ?
     // series.yNames => yName ?
@@ -253,6 +271,22 @@ function migrateV30(model: ChartModel) {
     model = jsonBackfill('chartOptions.common.legend.position', 'right', model);
 
     return model;
+}
+
+function migrateV31(model: ChartModel) {
+    const V30_LEGACY_PALETTES: Record<string, AgChartThemeName> = {
+        'ag-pastel': 'ag-sheets',
+        'ag-solar': 'ag-polychroma'
+    };
+
+    const updatedModel = jsonRename('chartOptions.column', 'bar', model);
+
+    const chartThemeName = V30_LEGACY_PALETTES[updatedModel.chartThemeName] || updatedModel.chartThemeName;
+
+    return {
+        ...updatedModel,
+        chartThemeName
+    };
 }
 
 function cleanup(model: ChartModel) {
@@ -478,13 +512,3 @@ function jsonMutate(path: string | string[], json: any, mutator: (v: any) => any
 }
 
 const merge = (r: {}, n: {}) => ({ ...r, ...n });
-
-// Precise legacy palette fills/strokes can be found here for future reference:
-// https://github.com/ag-grid/ag-grid/blob/b22.1.0/grid-enterprise-modules/charts/src/charts/chart/palettes.ts
-const LEGACY_PALETTES: Record<string, AgChartThemeName> = {
-    borneo: 'ag-default',
-    material: 'ag-material',
-    pastel: 'ag-pastel',
-    bright: 'ag-vivid',
-    flat: 'ag-solar',
-};

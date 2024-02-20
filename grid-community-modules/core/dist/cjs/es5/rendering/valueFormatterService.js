@@ -42,16 +42,13 @@ var ValueFormatterService = /** @class */ (function (_super) {
             formatter = colDef.valueFormatter;
         }
         if (formatter) {
-            var params = {
+            var params = this.gridOptionsService.addGridCommonParams({
                 value: value,
                 node: node,
                 data: node ? node.data : null,
                 colDef: colDef,
-                column: column,
-                api: this.gridOptionsService.api,
-                columnApi: this.gridOptionsService.columnApi,
-                context: this.gridOptionsService.context
-            };
+                column: column
+            });
             if (typeof formatter === 'function') {
                 result = formatter(params);
             }
@@ -69,10 +66,10 @@ var ValueFormatterService = /** @class */ (function (_super) {
         return result;
     };
     __decorate([
-        context_1.Autowired('expressionService')
+        (0, context_1.Autowired)('expressionService')
     ], ValueFormatterService.prototype, "expressionService", void 0);
     ValueFormatterService = __decorate([
-        context_1.Bean('valueFormatterService')
+        (0, context_1.Bean)('valueFormatterService')
     ], ValueFormatterService);
     return ValueFormatterService;
 }(beanStub_1.BeanStub));

@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, ColumnResizedEvent } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions, ColumnResizedEvent } from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
   { field: 'athlete', width: 150, suppressSizeToFit: true },
@@ -19,36 +19,35 @@ const columnDefs: ColDef[] = [
   { field: 'total', width: 100 },
 ]
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
-  defaultColDef: {
-    resizable: true,
-  },
+
   columnDefs: columnDefs,
   rowData: null,
   onColumnResized: (params: ColumnResizedEvent) => {
     console.log(params)
   },
-}
-
-function sizeToFit() {
-  gridOptions.api!.sizeColumnsToFit()
+  autoSizeStrategy: {
+    type: 'fitCellContents',
+  },
 }
 
 function autoSizeAll(skipHeader: boolean) {
   const allColumnIds: string[] = []
-  gridOptions.columnApi!.getColumns()!.forEach(column => {
+  gridApi!.getColumns()!.forEach(column => {
     allColumnIds.push(column.getId())
   })
 
-  gridOptions.columnApi!.autoSizeColumns(allColumnIds, skipHeader)
+  gridApi!.autoSizeColumns(allColumnIds, skipHeader)
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

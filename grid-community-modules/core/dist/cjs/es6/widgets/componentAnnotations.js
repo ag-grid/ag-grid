@@ -43,7 +43,7 @@ function querySelectorFunc(selector, refSelector, classPrototype, methodOrAttrib
 // }
 function addToObjectProps(target, key, value) {
     // it's an attribute on the class
-    const props = getOrCreateProps(target, function_1.getFunctionName(target.constructor));
+    const props = getOrCreateProps(target, (0, function_1.getFunctionName)(target.constructor));
     if (!props[key]) {
         props[key] = [];
     }

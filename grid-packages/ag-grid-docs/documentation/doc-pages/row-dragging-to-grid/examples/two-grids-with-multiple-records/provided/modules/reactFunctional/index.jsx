@@ -4,7 +4,9 @@ import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
 import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
+import './styles.css';
+
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
@@ -23,7 +25,7 @@ const leftColumns = [
     {
         rowDrag: true,
         maxWidth: 50,
-        suppressMenu: true,
+        suppressHeaderMenuButton: true,
         rowDragText: (params, dragItemCount) => {
             if (dragItemCount > 1) {
                 return dragItemCount + ' athletes';
@@ -35,7 +37,7 @@ const leftColumns = [
         colId: 'checkbox',
         maxWidth: 50,
         checkboxSelection: true,
-        suppressMenu: true,
+        suppressHeaderMenuButton: true,
         headerCheckboxSelection: true
     },
     { field: "athlete" },
@@ -46,7 +48,7 @@ const rightColumns = [
     {
         rowDrag: true,
         maxWidth: 50,
-        suppressMenu: true,
+        suppressHeaderMenuButton: true,
         rowDragText: (params, dragItemCount) => {
             if (dragItemCount > 1) {
                 return dragItemCount + ' athletes';
@@ -57,7 +59,7 @@ const rightColumns = [
     { field: "athlete" },
     { field: "sport" },
     {
-        suppressMenu: true,
+        suppressHeaderMenuButton: true,
         maxWidth: 50,
         cellRenderer: SportRenderer
     }
@@ -66,14 +68,11 @@ const rightColumns = [
 const defaultColDef = {
     flex: 1,
     minWidth: 100,
-    sortable: true,
     filter: true,
-    resizable: true
 };
 
 const GridExample = () => {
     const [leftApi, setLeftApi] = useState(null);
-    const [leftColumnApi, setLeftColumnApi] = useState(null);
     const [rightApi, setRightApi] = useState(null);
     const [rawData, setRawData] = useState([]);
     const [leftRowData, setLeftRowData] = useState(null);
@@ -112,11 +111,11 @@ const GridExample = () => {
     }, [rawData, loadGrids]);
 
     useEffect(() => {
-        if (leftColumnApi && leftApi) {
-            leftColumnApi.setColumnVisible('checkbox', checkBoxSelected);
-            leftApi.setSuppressRowClickSelection(checkBoxSelected);
+        if (leftApi) {
+            leftApi.setColumnsVisible(['checkbox'], checkBoxSelected);
+            leftApi.setGridOption('suppressRowClickSelection', checkBoxSelected);
         }
-    }, [leftColumnApi, leftApi, checkBoxSelected]);
+    }, [leftApi, checkBoxSelected]);
 
     const reset = () => {
         setRadioChecked(0);
@@ -158,7 +157,6 @@ const GridExample = () => {
     const onGridReady = (params, side) => {
         if (side === 0) {
             setLeftApi(params.api);
-            setLeftColumnApi(params.columnApi);
         }
 
         if (side === 1) {
@@ -197,7 +195,6 @@ const GridExample = () => {
                     defaultColDef={defaultColDef}
                     getRowId={getRowId}
                     rowDragManaged={true}
-                    animateRows={true}
                     rowSelection={id === 0 ? "multiple" : undefined}
                     rowDragMultiRow={id === 0}
                     suppressRowClickSelection={id === 0}
@@ -213,7 +210,7 @@ const GridExample = () => {
     return (
         <div className="top-container">
             {getTopToolBar()}
-            <div className="grid-wrapper ag-theme-alpine">
+            <div className={'grid-wrapper ' + /** DARK MODE START **/(document.documentElement.dataset.defaultTheme || 'ag-theme-quartz')/** DARK MODE END **/}>
                 {getGridWrapper(0)}
                 {getGridWrapper(1)}
             </div>

@@ -5,6 +5,7 @@ import {
     ColumnModel,
     ColumnRowGroupChangeRequestEvent,
     DragAndDropService,
+    DraggingEvent,
     Events,
     ITooltipParams,
     LoggerFactory,
@@ -61,15 +62,15 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
         return res;
     }
 
-    protected isColumnDroppable(column: Column): boolean {
+    protected isColumnDroppable(column: Column, draggingEvent: DraggingEvent): boolean {
         // we never allow grouping of secondary columns
-        if (this.gridOptionsService.is('functionsReadOnly') || !column.isPrimary()) { return false; }
+        if (this.gridOptionsService.get('functionsReadOnly') || !column.isPrimary()) { return false; }
 
-        return column.isAllowRowGroup() && !column.isRowGroupActive();
+        return column.isAllowRowGroup() && (!column.isRowGroupActive() || this.isSourceEventFromTarget(draggingEvent));
     }
 
     protected updateColumns(columns: Column[]) {
-        if (this.gridOptionsService.is('functionsPassive')) {
+        if (this.gridOptionsService.get('functionsPassive')) {
             const event: WithoutGridCommon<ColumnRowGroupChangeRequestEvent> = {
                 type: Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST,
                 columns: columns

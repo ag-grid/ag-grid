@@ -2,7 +2,7 @@ import { IDoesFilterPassParams, IFilterComp, IFilterParams } from "@ag-grid-comm
 
 export class WinningsFilter implements IFilterComp {
     filterChangedCallback!: (additionalEventAttributes?: any) => void;
-    params!: IFilterParams;
+    filterParams!: IFilterParams;
     eGui!: HTMLDivElement;
     cbNoFilter: any;
     cbPositive: any;
@@ -44,7 +44,7 @@ export class WinningsFilter implements IFilterComp {
         this.cbNegative.onclick = this.filterChangedCallback
         this.cbGreater50.onclick = this.filterChangedCallback
         this.cbGreater90.onclick = this.filterChangedCallback
-        this.params = params
+        this.filterParams = params
     }
 
     getGui() {
@@ -52,19 +52,9 @@ export class WinningsFilter implements IFilterComp {
     }
 
     doesFilterPass(params: IDoesFilterPassParams) {
-        var { api, colDef, column, columnApi, context } = this.params;
         var { node } = params;
 
-        var value = this.params.valueGetter({
-            api,
-            colDef,
-            column,
-            columnApi,
-            context,
-            data: node.data,
-            getValue: (field) => node.data[field],
-            node,
-        })
+        var value = this.filterParams.getValue(node)
 
         if (this.cbNoFilter.checked) {
             return true

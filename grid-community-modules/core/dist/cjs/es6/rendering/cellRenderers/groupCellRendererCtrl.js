@@ -20,6 +20,7 @@ const checkboxSelectionComponent_1 = require("../checkboxSelectionComponent");
 const rowDragComp_1 = require("../row/rowDragComp");
 class GroupCellRendererCtrl extends beanStub_1.BeanStub {
     init(comp, eGui, eCheckbox, eExpanded, eContracted, compClass, params) {
+        var _a, _b, _c, _d;
         this.params = params;
         this.eGui = eGui;
         this.eCheckbox = eCheckbox;
@@ -27,34 +28,60 @@ class GroupCellRendererCtrl extends beanStub_1.BeanStub {
         this.eContracted = eContracted;
         this.comp = comp;
         this.compClass = compClass;
+        const { node, value, colDef } = params;
         const topLevelFooter = this.isTopLevelFooter();
-        const embeddedRowMismatch = this.isEmbeddedRowMismatch();
-        // This allows for empty strings to appear as groups since
-        // it will only return for null or undefined.
-        const isNullValueAndNotMaster = params.value == null && !params.node.master;
-        let skipCell = false;
-        // if the groupCellRenderer is inside of a footer and groupHideOpenParents is true
-        // we should only display the groupCellRenderer if the current column is the rowGroupedColumn
-        if (this.gridOptionsService.is('groupIncludeFooter') && this.gridOptionsService.is('groupHideOpenParents')) {
-            const node = params.node;
-            if (node.footer) {
-                const showRowGroup = params.colDef && params.colDef.showRowGroup;
-                const rowGroupColumnId = node.rowGroupColumn && node.rowGroupColumn.getColId();
-                skipCell = showRowGroup !== rowGroupColumnId;
+        // logic for skipping cells follows, never skip top level footer cell.
+        if (!topLevelFooter) {
+            const embeddedRowMismatch = this.isEmbeddedRowMismatch();
+            if (embeddedRowMismatch) {
+                return;
             }
-        }
-        this.cellIsBlank = topLevelFooter ? false : (embeddedRowMismatch || (isNullValueAndNotMaster && !params.node.master) || skipCell);
-        if (this.cellIsBlank) {
-            return;
+            // this footer should only be non-top level. Don't need to check groupIncludeFooter
+            // as we won't have footer rows in that instance.
+            if (node.footer && this.gridOptionsService.get('groupHideOpenParents')) {
+                const showRowGroup = colDef && colDef.showRowGroup;
+                const rowGroupColumnId = node.rowGroupColumn && node.rowGroupColumn.getColId();
+                // if the groupCellRenderer is inside of a footer and groupHideOpenParents is true
+                // we should only display the groupCellRenderer if the current column is the rowGroupedColumn
+                if (showRowGroup !== rowGroupColumnId) {
+                    return;
+                }
+            }
         }
         this.setupShowingValueForOpenedParent();
         this.findDisplayedGroupNode();
-        this.addFullWidthRowDraggerIfNeeded();
+        if (!topLevelFooter) {
+            const showingFooterTotal = params.node.footer && params.node.rowGroupIndex === this.columnModel.getRowGroupColumns().findIndex(c => { var _a; return c.getColId() === ((_a = params.colDef) === null || _a === void 0 ? void 0 : _a.showRowGroup); });
+            // if we're always showing a group value
+            const isAlwaysShowing = this.gridOptionsService.get('groupDisplayType') != 'multipleColumns' || this.gridOptionsService.get('treeData');
+            // if the cell is populated with a parent value due to `showOpenedGroup`
+            const showOpenGroupValue = (isAlwaysShowing || (this.gridOptionsService.get('showOpenedGroup') && !params.node.footer && ((!params.node.group ||
+                (params.node.rowGroupIndex != null &&
+                    params.node.rowGroupIndex > this.columnModel.getRowGroupColumns().findIndex(c => { var _a; return c.getColId() === ((_a = params.colDef) === null || _a === void 0 ? void 0 : _a.showRowGroup); }))))));
+            // not showing a leaf value (field/valueGetter)
+            const leafWithValues = !node.group && (((_a = this.params.colDef) === null || _a === void 0 ? void 0 : _a.field) || ((_b = this.params.colDef) === null || _b === void 0 ? void 0 : _b.valueGetter));
+            // doesn't have expand/collapse chevron
+            const isExpandable = this.isExpandable();
+            // is showing pivot leaf cell
+            const showPivotModeLeafValue = this.columnModel.isPivotMode() && node.leafGroup && ((_c = node.rowGroupColumn) === null || _c === void 0 ? void 0 : _c.getColId()) === ((_d = params.column) === null || _d === void 0 ? void 0 : _d.getColDef().showRowGroup);
+            // if not showing any values or chevron, skip cell.
+            const canSkipRenderingCell = !this.showingValueForOpenedParent && !isExpandable && !leafWithValues && !showOpenGroupValue && !showingFooterTotal && !showPivotModeLeafValue;
+            if (canSkipRenderingCell) {
+                return;
+            }
+        }
         this.addExpandAndContract();
+        this.addFullWidthRowDraggerIfNeeded();
         this.addCheckboxIfNeeded();
         this.addValueElement();
         this.setupIndent();
         this.refreshAriaExpanded();
+    }
+    getCellAriaRole() {
+        var _a, _b;
+        const colDefAriaRole = (_a = this.params.colDef) === null || _a === void 0 ? void 0 : _a.cellAriaRole;
+        const columnColDefAriaRole = (_b = this.params.column) === null || _b === void 0 ? void 0 : _b.getColDef().cellAriaRole;
+        return colDefAriaRole || columnColDefAriaRole || 'gridcell';
     }
     destroy() {
         super.destroy();
@@ -62,23 +89,23 @@ class GroupCellRendererCtrl extends beanStub_1.BeanStub {
         this.expandListener = null;
     }
     refreshAriaExpanded() {
-        const { node, eParentOfValue } = this.params;
+        const { node, eGridCell } = this.params;
         if (this.expandListener) {
             this.expandListener = this.expandListener();
         }
         if (!this.isExpandable()) {
-            aria_1.removeAriaExpanded(eParentOfValue);
+            (0, aria_1.removeAriaExpanded)(eGridCell);
             return;
         }
         const listener = () => {
             // for react, we don't use JSX, as setting attributes via jsx is slower
-            aria_1.setAriaExpanded(eParentOfValue, !!node.expanded);
+            (0, aria_1.setAriaExpanded)(eGridCell, !!node.expanded);
         };
         this.expandListener = this.addManagedListener(node, rowNode_1.RowNode.EVENT_EXPANDED_CHANGED, listener) || null;
         listener();
     }
     isTopLevelFooter() {
-        if (!this.gridOptionsService.is('groupIncludeTotalFooter')) {
+        if (!this.gridOptionsService.get('groupIncludeTotalFooter')) {
             return false;
         }
         if (this.params.value != null || this.params.node.level != -1) {
@@ -107,13 +134,13 @@ class GroupCellRendererCtrl extends beanStub_1.BeanStub {
     // in the body, or if pinning in the pinned section, or if pinning and RTL,
     // in the right section. otherwise we would have the cell repeated in each section.
     isEmbeddedRowMismatch() {
-        if (!this.params.fullWidth || !this.gridOptionsService.is('embedFullWidthRows')) {
+        if (!this.params.fullWidth || !this.gridOptionsService.get('embedFullWidthRows')) {
             return false;
         }
         const pinnedLeftCell = this.params.pinned === 'left';
         const pinnedRightCell = this.params.pinned === 'right';
         const bodyCell = !pinnedLeftCell && !pinnedRightCell;
-        if (this.gridOptionsService.is('enableRtl')) {
+        if (this.gridOptionsService.get('enableRtl')) {
             if (this.columnModel.isPinningLeft()) {
                 return !pinnedRightCell;
             }
@@ -138,7 +165,7 @@ class GroupCellRendererCtrl extends beanStub_1.BeanStub {
             }
         }
         // if we didn't find a displayed group, set it to the row node
-        if (generic_1.missing(this.displayedGroupNode)) {
+        if ((0, generic_1.missing)(this.displayedGroupNode)) {
             this.displayedGroupNode = rowNode;
         }
     }
@@ -147,7 +174,7 @@ class GroupCellRendererCtrl extends beanStub_1.BeanStub {
         // is updated to reflect the dragged down parents
         const rowNode = this.params.node;
         const column = this.params.column;
-        if (!this.gridOptionsService.is('groupHideOpenParents')) {
+        if (!this.gridOptionsService.get('groupHideOpenParents')) {
             this.showingValueForOpenedParent = false;
             return;
         }
@@ -185,13 +212,15 @@ class GroupCellRendererCtrl extends beanStub_1.BeanStub {
         }
     }
     addGroupValue() {
+        var _a;
         // we try and use the cellRenderer of the column used for the grouping if we can
         const paramsAdjusted = this.adjustParamsWithDetailsFromRelatedColumn();
         const innerCompDetails = this.getInnerCompDetails(paramsAdjusted);
         const { valueFormatted, value } = paramsAdjusted;
         let valueWhenNoRenderer = valueFormatted;
         if (valueWhenNoRenderer == null) {
-            if (value === '' && this.params.node.group) {
+            const isGroupColForNode = (this.displayedGroupNode.rowGroupColumn && ((_a = this.params.column) === null || _a === void 0 ? void 0 : _a.isRowGroupDisplayed(this.displayedGroupNode.rowGroupColumn.getId())));
+            if (this.displayedGroupNode.key === "" && this.displayedGroupNode.group && isGroupColForNode) {
                 const localeTextFunc = this.localeService.getLocaleTextFunc();
                 valueWhenNoRenderer = localeTextFunc('blanks', '(Blanks)');
             }
@@ -228,7 +257,7 @@ class GroupCellRendererCtrl extends beanStub_1.BeanStub {
         let footerValue = '';
         if (footerValueGetter) {
             // params is same as we were given, except we set the value as the item to display
-            const paramsClone = object_1.cloneObject(this.params);
+            const paramsClone = (0, object_1.cloneObject)(this.params);
             paramsClone.value = this.params.value;
             if (typeof footerValueGetter === 'function') {
                 footerValue = footerValueGetter(paramsClone);
@@ -241,7 +270,9 @@ class GroupCellRendererCtrl extends beanStub_1.BeanStub {
             }
         }
         else {
-            footerValue = 'Total ' + (this.params.value != null ? this.params.value : '');
+            const localeTextFunc = this.localeService.getLocaleTextFunc();
+            const footerTotalPrefix = localeTextFunc('footerTotal', 'Total');
+            footerValue = footerTotalPrefix + ' ' + (this.params.value != null ? this.params.value : '');
         }
         const innerCompDetails = this.getInnerCompDetails(this.params);
         this.comp.setInnerRenderer(innerCompDetails, footerValue);
@@ -312,7 +343,7 @@ class GroupCellRendererCtrl extends beanStub_1.BeanStub {
         this.comp.setChildCount(countString);
     }
     isShowRowGroupForThisRow() {
-        if (this.gridOptionsService.isTreeData()) {
+        if (this.gridOptionsService.get('treeData')) {
             return true;
         }
         const rowGroupColumn = this.displayedGroupNode.rowGroupColumn;
@@ -327,8 +358,8 @@ class GroupCellRendererCtrl extends beanStub_1.BeanStub {
     addExpandAndContract() {
         var _a;
         const params = this.params;
-        const eExpandedIcon = icon_1.createIconNoSpan('groupExpanded', this.gridOptionsService, null);
-        const eContractedIcon = icon_1.createIconNoSpan('groupContracted', this.gridOptionsService, null);
+        const eExpandedIcon = (0, icon_1.createIconNoSpan)('groupExpanded', this.gridOptionsService, null);
+        const eContractedIcon = (0, icon_1.createIconNoSpan)('groupContracted', this.gridOptionsService, null);
         if (eExpandedIcon) {
             this.eExpanded.appendChild(eExpandedIcon);
         }
@@ -337,7 +368,7 @@ class GroupCellRendererCtrl extends beanStub_1.BeanStub {
         }
         const eGroupCell = params.eGridCell;
         // if editing groups, then double click is to start editing
-        const isDoubleClickEdit = ((_a = this.params.column) === null || _a === void 0 ? void 0 : _a.isCellEditable(params.node)) && this.gridOptionsService.is('enableGroupEdit');
+        const isDoubleClickEdit = ((_a = this.params.column) === null || _a === void 0 ? void 0 : _a.isCellEditable(params.node)) && this.gridOptionsService.get('enableGroupEdit');
         if (!isDoubleClickEdit && this.isExpandable() && !params.suppressDoubleClickExpand) {
             this.addManagedListener(eGroupCell, 'dblclick', this.onCellDblClicked.bind(this));
         }
@@ -356,11 +387,11 @@ class GroupCellRendererCtrl extends beanStub_1.BeanStub {
         this.addManagedListener(this.displayedGroupNode, rowNode_1.RowNode.EVENT_HAS_CHILDREN_CHANGED, expandableChangedListener);
     }
     onExpandClicked(mouseEvent) {
-        if (event_1.isStopPropagationForAgGrid(mouseEvent)) {
+        if ((0, event_1.isStopPropagationForAgGrid)(mouseEvent)) {
             return;
         }
         // so if we expand a node, it does not also get selected.
-        event_1.stopPropagationForAgGrid(mouseEvent);
+        (0, event_1.stopPropagationForAgGrid)(mouseEvent);
         this.onExpandOrContract(mouseEvent);
     }
     onExpandOrContract(e) {
@@ -445,14 +476,14 @@ class GroupCellRendererCtrl extends beanStub_1.BeanStub {
         }
     }
     setIndent() {
-        if (this.gridOptionsService.is('groupHideOpenParents')) {
+        if (this.gridOptionsService.get('groupHideOpenParents')) {
             return;
         }
         const params = this.params;
         const rowNode = params.node;
         // if we are only showing one group column, we don't want to be indenting based on level
         const fullWithRow = !!params.colDef;
-        const treeData = this.gridOptionsService.isTreeData();
+        const treeData = this.gridOptionsService.get('treeData');
         const manyDimensionThisColumn = !fullWithRow || treeData || params.colDef.showRowGroup === true;
         const paddingCount = manyDimensionThisColumn ? rowNode.uiLevel : 0;
         if (this.indentClass) {
@@ -487,7 +518,7 @@ class GroupCellRendererCtrl extends beanStub_1.BeanStub {
             const cbSelectionComponent = new checkboxSelectionComponent_1.CheckboxSelectionComponent();
             this.getContext().createBean(cbSelectionComponent);
             cbSelectionComponent.init({
-                rowNode: rowNode,
+                rowNode: this.params.node,
                 column: this.params.column,
                 overrides: {
                     isVisible: this.params.checkbox,
@@ -512,33 +543,33 @@ class GroupCellRendererCtrl extends beanStub_1.BeanStub {
         this.onExpandOrContract(event);
     }
     onCellDblClicked(mouseEvent) {
-        if (event_1.isStopPropagationForAgGrid(mouseEvent)) {
+        if ((0, event_1.isStopPropagationForAgGrid)(mouseEvent)) {
             return;
         }
         // we want to avoid acting on double click events on the expand / contract icon,
         // as that icons already has expand / collapse functionality on it. otherwise if
         // the icon was double clicked, we would get 'click', 'click', 'dblclick' which
         // is open->close->open, however double click should be open->close only.
-        const targetIsExpandIcon = event_1.isElementInEventPath(this.eExpanded, mouseEvent)
-            || event_1.isElementInEventPath(this.eContracted, mouseEvent);
+        const targetIsExpandIcon = (0, event_1.isElementInEventPath)(this.eExpanded, mouseEvent)
+            || (0, event_1.isElementInEventPath)(this.eContracted, mouseEvent);
         if (!targetIsExpandIcon) {
             this.onExpandOrContract(mouseEvent);
         }
     }
 }
 __decorate([
-    context_1.Autowired('expressionService')
+    (0, context_1.Autowired)('expressionService')
 ], GroupCellRendererCtrl.prototype, "expressionService", void 0);
 __decorate([
-    context_1.Autowired('valueFormatterService')
+    (0, context_1.Autowired)('valueFormatterService')
 ], GroupCellRendererCtrl.prototype, "valueFormatterService", void 0);
 __decorate([
-    context_1.Autowired('columnModel')
+    (0, context_1.Autowired)('columnModel')
 ], GroupCellRendererCtrl.prototype, "columnModel", void 0);
 __decorate([
-    context_1.Autowired('userComponentFactory')
+    (0, context_1.Autowired)('userComponentFactory')
 ], GroupCellRendererCtrl.prototype, "userComponentFactory", void 0);
 __decorate([
-    context_1.Autowired("ctrlsService")
+    (0, context_1.Autowired)("ctrlsService")
 ], GroupCellRendererCtrl.prototype, "ctrlsService", void 0);
 exports.GroupCellRendererCtrl = GroupCellRendererCtrl;

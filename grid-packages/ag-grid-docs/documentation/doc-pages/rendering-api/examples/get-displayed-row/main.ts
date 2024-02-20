@@ -1,4 +1,6 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
+
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -17,7 +19,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     flex: 1,
     minWidth: 100,
-    sortable: true,
     filter: true,
   },
   pagination: true,
@@ -25,29 +26,29 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function getDisplayedRowAtIndex() {
-  var rowNode = gridOptions.api!.getDisplayedRowAtIndex(0)!
+  var rowNode = gridApi!.getDisplayedRowAtIndex(0)!
   console.log('getDisplayedRowAtIndex(0) => ' + rowNode.data!.athlete + ' ' + rowNode.data!.year)
 }
 
 function getDisplayedRowCount() {
-  var count = gridOptions.api!.getDisplayedRowCount()
+  var count = gridApi!.getDisplayedRowCount()
   console.log('getDisplayedRowCount() => ' + count)
 }
 
 function printAllDisplayedRows() {
-  var count = gridOptions.api!.getDisplayedRowCount()
+  var count = gridApi!.getDisplayedRowCount()
   console.log('## printAllDisplayedRows')
   for (var i = 0; i < count; i++) {
-    var rowNode = gridOptions.api!.getDisplayedRowAtIndex(i)!
+    var rowNode = gridApi!.getDisplayedRowAtIndex(i)!
     console.log('row ' + i + ' is ' + rowNode.data!.athlete)
   }
 }
 
 function printPageDisplayedRows() {
-  var rowCount = gridOptions.api!.getDisplayedRowCount()
+  var rowCount = gridApi!.getDisplayedRowCount()
   var lastGridIndex = rowCount - 1
-  var currentPage = gridOptions.api!.paginationGetCurrentPage()
-  var pageSize = gridOptions.api!.paginationGetPageSize()
+  var currentPage = gridApi!.paginationGetCurrentPage()
+  var pageSize = gridApi!.paginationGetPageSize()
   var startPageIndex = currentPage * pageSize
   var endPageIndex = (currentPage + 1) * pageSize - 1
 
@@ -57,7 +58,7 @@ function printPageDisplayedRows() {
 
   console.log('## printPageDisplayedRows')
   for (var i = startPageIndex; i <= endPageIndex; i++) {
-    var rowNode = gridOptions.api!.getDisplayedRowAtIndex(i)!
+    var rowNode = gridApi!.getDisplayedRowAtIndex(i)!
     console.log('row ' + i + ' is ' + rowNode.data!.athlete)
   }
 }
@@ -65,11 +66,11 @@ function printPageDisplayedRows() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
     .then(function (data) {
-      gridOptions.api!.setRowData(data.slice(0, 100))
+      gridApi!.setGridOption('rowData', data.slice(0, 100))
     })
 })

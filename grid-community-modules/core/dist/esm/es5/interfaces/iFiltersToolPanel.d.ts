@@ -1,7 +1,8 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColDef } from "../entities/colDef";
+import { FiltersToolPanelState } from "./gridState";
 import { IToolPanel } from "./iToolPanel";
 export interface IFiltersToolPanel extends IToolPanel {
     setFilterLayout(colDefs: ColDef[]): void;
@@ -10,4 +11,5 @@ export interface IFiltersToolPanel extends IToolPanel {
     expandFilters(colIds?: string[]): void;
     collapseFilters(colIds?: string[]): void;
     syncLayoutWithGrid(): void;
+    getState(): FiltersToolPanelState;
 }

@@ -42,7 +42,7 @@ By default the grid will infer cell data types the first time that row data is p
 
 For inference to work for a column, it must contain non-null values and have the `field` property set. The resolved column definition (including the default column definition and column types) must also not have the Value Getter, Value Parser or reference data properties set, or be using [Sparklines](/sparklines-overview/). If these conditions are not met, no cell data type will be set (it will need to be defined directly on the column if desired).
 
-Data type inference can be disabled by setting `cellDataType = false` on an individual column, or for all columns on the [Default Column Definition](/column-definitions/#custom-column-types).
+Data type inference can be disabled by setting `cellDataType = false` on an individual column, or for all columns on the [Default Column Definition](/column-definitions/#default-column-definitions).
 
 Note that where inference is possible but it does not match any of the pre-defined cell data types, it will default to `object`.
 
@@ -54,15 +54,13 @@ Inferring cell data types only works for the Client-Side Row Model. For other ro
 
 Each of the pre-defined cell data types work by setting specific column definition properties with default values/callbacks. This enables the different grid features to work correctly for that data type.
 
-The column definition properties that are set based on the cell data type will override any in the [Default Column Definition](/column-definitions/#custom-column-types), but will be overridden by any [Column Type](/column-definitions/#custom-column-types) properties as well as properties set directly on individual column definitions. Note that for `filterParams`, only nested properties on the default column definition will be overridden (rather than the entire object).
+The column definition properties that are set based on the cell data type will override any in the [Default Column Definition](/column-definitions/#default-column-definitions), but will be overridden by any [Column Type](/column-definitions/#default-column-definitions) properties as well as properties set directly on individual column definitions. Note that for `filterParams`, only nested properties on the default column definition will be overridden (rather than the entire object).
 
-If you wish to override one of the properties set below for all types, you can do so by creating a [Column Type](/column-definitions/#custom-column-types), and assigning the column type to the [Default Column Definition](/column-definitions/#custom-column-types).
+If you wish to override one of the properties set below for all types, you can do so by creating a [Column Type](/column-definitions/#default-column-definitions), and assigning the column type to the [Default Column Definition](/column-definitions/#default-column-definitions).
 
 All the cell data types set the following (unless specified):
 - A [Value Parser](/value-parsers/) to convert from `string` to the relevant data type.
 - A [Value Formatter](/value-formatters/) to convert from the relevant data type to `string` (except for `'text'`).
-- `useValueParserForImport = true` to [Use the Value Parser with Other Grid Features](/value-parsers/#use-value-parser-for-import).
-- `useValueFormatterForExport = true` to [Use the Value Formatter with Other Grid Features](/value-formatters/#use-value-formatter-for-export).
 - A [Key Creator](/grouping-complex-objects/#creating-group-keys-from-complex-objects) which uses the Value Formatter to allow Row Grouping to work (except for `'number'` and `'text'`).
 
 Note that when using cell data types, the Value Formatter will not run for values in group columns (as they have already been formatted), or for aggregated values where the data type can differ. To apply custom formatting in these cases, cell data types will need to be disabled for the underlying columns.
@@ -76,11 +74,11 @@ The `'text'` cell data type is used for `string` values. As most grid functional
 The `'number'` cell data type is used for `number` values.
 
 The following properties are set:
-- The [Number Cell Editor](/provided-cell-editors/#number-cell-editor) is used for editing.
+- The [Number Cell Editor](/provided-cell-editors-number/) is used for editing.
 - For AG Grid Community, the [Number Filter](/filter-number/) is used.
 - For AG Grid Enterprise, `filterParams.comparator` is set to [Sort the Filter List](/filter-set-filter-list/#sorting-filter-lists).
 
-To show only a certain number of decimal places, you can [Override the Pre-Defined Cell Data Type Definition](#overriding-the-pre-defined-cell-data-type-definitions) and provide your own Value Formatter. It is also possible to control the number of decimal places allowed during editing, by providing a precision to the [Number Cell Editor](/provided-cell-editors/#number-cell-editor).
+To show only a certain number of decimal places, you can [Override the Pre-Defined Cell Data Type Definition](#overriding-the-pre-defined-cell-data-type-definitions) and provide your own Value Formatter. It is also possible to control the number of decimal places allowed during editing, by providing a precision to the [Number Cell Editor](/provided-cell-editors-number/).
 
 ### Boolean
 
@@ -88,8 +86,8 @@ The `'boolean'` cell data type is used for `boolean` values.
 
 The following properties are set:
 - The [Checkbox Cell Renderer](/cell-rendering/#checkbox-cell-renderer) is used for rendering, which displays a checkbox.
-- The [Checkbox Cell Editor](/provided-cell-editors/#checkbox-cell-editor) is used for editing (similar to the renderer).
-- `suppressKeyboardEvent` is set to enable the <kbd>Space</kbd> key to toggle the renderer value.
+- The [Checkbox Cell Editor](/provided-cell-editors-checkbox/) is used for editing (similar to the renderer).
+- `suppressKeyboardEvent` is set to enable the <kbd>␣ Space</kbd> key to toggle the renderer value.
 - For AG Grid Community, the [Text Filter](/filter-text/) is used, and `filterParams` is set to display a single dropdown with `'True'`/`'False'` (or equivalents with [Localisation](/localisation/)).
 - For AG Grid Enterprise, `filterParams.valueFormatter` is set to show `'True'`/`'False'` (or equivalents with [Localisation](/localisation/)).
 
@@ -100,7 +98,7 @@ The `'date'` cell data type is used for date values that are represented as `Dat
 The default Value Parser and Value Formatter use the ISO string format `'yyyy-mm-dd'`. If you wish to use a different date format, then you can [Override the Pre-Defined Cell Data Type Definition](#overriding-the-pre-defined-cell-data-type-definitions).
 
 The following properties are set:
-- The [Date Cell Editor](/provided-cell-editors/#date-cell-editor) is used for editing.
+- The [Date Cell Editor](/provided-cell-editors-date/) is used for editing.
 - For AG Grid Enterprise, the [Set Filter Tree List](/filter-set-tree-list/) is enabled, and the [Values are Formatted](/filter-set-tree-list/#formatting-values) by setting `filterParams.treeListFormatter` to convert the months to names and `filterParams.valueFormatter` to format the Floating Filter values using the Value Formatter.
 
 ### Date as String
@@ -110,7 +108,7 @@ The `'dateString'` cell data type is used for date values that are represented a
 This data type uses the ISO string format `'yyyy-mm-dd'`. If you wish to use a different date format, then you can [Override the Pre-Defined Cell Data Type Definition](#overriding-the-pre-defined-cell-data-type-definitions).
 
 The following properties are set:
-- The [Date as String Cell Editor](/provided-cell-editors/#date-as-string-cell-editor) is used for editing.
+- The [Date as String Cell Editor](/provided-cell-editors-date/#enabling-date-as-string-cell-editor) is used for editing.
 - For AG Grid Community, the [Date Filter](/filter-text/) is used, and `filterParams.comparator` is set to parse the `string` date values.
 - For AG Grid Enterprise, the [Set Filter Tree List](/filter-set-tree-list/) is enabled, with `filterParams.treeListPathGetter` set to convert the `string` date values into paths, and the [Values are Formatted](/filter-set-tree-list/#formatting-values) by setting `filterParams.treeListFormatter` to convert the months to names and `filterParams.valueFormatter` to format the Floating Filter values using the Value Formatter.
 
@@ -167,7 +165,7 @@ Each custom data type definition must have a `baseDataType` of one of the six [P
 
 Data type definitions support inheritance via the `extendsDataType` property. Each custom cell data type must either extend one of the pre-defined types, or another custom type. Any non-overridden properties are inherited from the parent definition. To prevent inheriting properties from the parent definition, `suppressDefaultProperties = true` can be set on the definition.
 
-[Column Types](/column-definitions/#custom-column-types) can be set via the `columnTypes` property to allow other column definition properties to be set for the data type. By default these will replace any column types against the parent definition. To allow these to be appended to the parent definition column types, `appendColumnTypes = true` can be set.
+[Column Types](/column-definitions/#default-column-definitions) can be set via the `columnTypes` property to allow other column definition properties to be set for the data type. By default these will replace any column types against the parent definition. To allow these to be appended to the parent definition column types, `appendColumnTypes = true` can be set.
 
 To allow [Inferring Cell Data Types](#inferring-cell-data-types) to work for custom types, the `dataTypeMatcher` property can be set. This returns `true` if the value is of the correct type. Note that the data type matchers will be called in the order they are provided in `dataTypeDefinitions` (for custom only), and then the pre-defined data type matchers will be called.
 

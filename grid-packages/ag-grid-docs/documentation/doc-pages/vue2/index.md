@@ -3,16 +3,6 @@ title: "Get Started with AG Grid"
 frameworks: ["vue"]
 version: 2
 ---
-<style>
-   .gatsby-resp-image-wrapper {
-       margin-left: 0 !important;
-       margin-right: 0 !important;
-       margin-bottom: 1rem;
-   }
-   .gatsby-resp-image-image {
-       box-shadow: none !important;
-   }
-</style>
 
 AG Grid is the industry standard for Vue Enterprise Applications. Developers using AG Grid
 are building applications that would not be possible if AG Grid did not exist.
@@ -29,7 +19,7 @@ are building applications that would not be possible if AG Grid did not exist.
 <template>
   <ag-grid-vue
     style="width: 500px; height: 200px"
-    class="ag-theme-alpine"
+    class="ag-theme-quartz"
     :columnDefs="columnDefs"
     :rowData="rowData"
   >
@@ -38,7 +28,7 @@ are building applications that would not be possible if AG Grid did not exist.
 
 <script>
 import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-alpine.css";
+import "ag-grid-community/styles/ag-theme-quartz.css";
 import { AgGridVue } from "ag-grid-vue";
 
 export default {
@@ -104,9 +94,9 @@ new Vue({
 | If you unsure what import type to use you should use the package import type
 | (i.e. `ag-grid-vue`/ `ag-grid-vue3`).
 |
-| For more information on import types please refer to the documentation [here.](/modules/)
+| For more information on import types please refer to the [Modules](../modules/) documentation.
 |
-| For the Vue 3 version of this tutorial please see the documentation [here.](/getting-started/)
+| For the Vue 3 version of this tutorial please see the [Getting Started](../getting-started/) documentation.
 |
 </note>
 
@@ -228,12 +218,12 @@ As a first step, let's add the AG Grid styles - replace the `style` block in `sr
 ```scss
 <style lang="scss">
   @import "~ag-grid-community/styles/ag-grid.css";
-  @import "~ag-grid-community/styles/ag-theme-alpine.css";
+  @import "~ag-grid-community/styles/ag-theme-quartz.css";
 </style>
 ```
 
 The code above imports the grid "structure" stylesheet (`ag-grid.css`), and one of the
-available grid themes: (`ag-theme-alpine.css`). AG Grid ships several different themes - pick one that
+available grid themes: (`ag-theme-quartz.css`). AG Grid ships several different themes - pick one that
 matches your project design.
 
 <note>
@@ -249,7 +239,7 @@ Let's add the component definition to our template. Edit `app/App.vue` and repla
 ```html
 <template>
     <ag-grid-vue style="width: 500px; height: 500px;"
-        class="ag-theme-alpine"
+        class="ag-theme-quartz"
         :columnDefs="columnDefs"
         :rowData="rowData">
     </ag-grid-vue>
@@ -257,7 +247,7 @@ Let's add the component definition to our template. Edit `app/App.vue` and repla
 ```
 
 This is the ag-grid component definition, with two property bindings - `rowData` and `columnDefs`.
-The component also accepts the standard DOM `style` and `class`. We have set the class to `ag-theme-alpine`,
+The component also accepts the standard DOM `style` and `class`. We have set the class to `ag-theme-quartz`,
 which defines the grid theme. As you may have already noticed, the CSS class matches the name of CSS file
 we imported earlier.
 
@@ -295,7 +285,7 @@ export default {
 </script>
 <style lang="scss">
    @import "~ag-grid-community/styles/ag-grid.css";
-   @import "~ag-grid-community/styles/ag-theme-alpine.css";
+   @import "~ag-grid-community/styles/ag-theme-quartz.css";
 </style>
 ```
 
@@ -311,21 +301,9 @@ If everything works as expected, you should see a simple grid like the one on th
 
 <image-caption src="step1.png" alt="AG Grid hello world" maxWidth="80%" constrained="true" centered="true"></image-caption>
 
-## Enable Sorting And Filtering
+## Sorting And Filtering
 
-So far, so good. But wouldn't it be nice to be able to sort the data to help us see which car
-is the least/most expensive? Well, enabling sorting in AG Grid is actually quite simple -
-all you need to do is set the `sortable` property to the column definitions.
-
-```js
-this.columnDefs = [
-    { field: 'make', sortable: true },
-    { field: 'model', sortable: true },
-    { field: 'price', sortable: true }
-];
-```
-
-After adding the `sortable` property you should be able to sort the grid by clicking on the column headers.
+AG Grid supports sorting out of the box with no configuration. You sort the grid by clicking on the column headers.
 Clicking on a header toggles through ascending, descending and no-sort.
 
 Our application doesn't have too many rows, so it's fairly easy to find data. But it's easy to
@@ -333,13 +311,13 @@ imagine how a real-world application may have hundreds (or even hundreds of thou
 with many columns. In a data set like this [filtering](/filtering/)
 is your friend.
 
-As with sorting, enabling filtering is as easy as setting the `filter` property:
+Enabling filtering is as easy as setting the `filter` property:
 
 ```js
 this.columnDefs = [
-    { field: 'make', sortable: true, filter: true },
-    { field: 'model', sortable: true, filter: true },
-    { field: 'price', sortable: true, filter: true }
+    { field: 'make', filter: true },
+    { field: 'model', filter: true },
+    { field: 'price', filter: true }
 ];
 ```
 
@@ -362,9 +340,9 @@ add the following fetch statement:
 ```js
 beforeMount() {
      this.columnDefs = [
-       { field: 'make', sortable: true, filter: true },
-       { field: 'model', sortable: true, filter: true },
-       { field: 'price', sortable: true, filter: true }
+       { field: 'make', filter: true },
+       { field: 'model', filter: true },
+       { field: 'price', filter: true }
      ];
 
      fetch('https://www.ag-grid.com/example-assets/small-row-data.json')
@@ -393,7 +371,7 @@ just a matter of adding and changing couple of properties.
 <template>
  <ag-grid-vue
    style="width: 500px; height: 200px"
-   class="ag-theme-alpine"
+   class="ag-theme-quartz"
    :columnDefs="columnDefs"
    :rowData="rowData"
  >
@@ -416,9 +394,9 @@ export default {
  },
  beforeMount() {
    this.columnDefs = [
-+      { field: 'make', sortable: true, filter: true, checkboxSelection: true },
-       { field: 'model', sortable: true, filter: true },
-       { field: 'price', sortable: true, filter: true }
++      { field: 'make', filter: true, checkboxSelection: true },
+       { field: 'model', filter: true },
+       { field: 'price', filter: true }
      ];
 
      fetch('https://www.ag-grid.com/example-assets/small-row-data.json')
@@ -429,7 +407,7 @@ export default {
 </script>
 <style lang="scss">
  @import "~ag-grid-community/styles/ag-grid.css";
- @import "~ag-grid-community/styles/ag-theme-alpine.css";
+ @import "~ag-grid-community/styles/ag-theme-quartz.css";
 </style>
 ```
 
@@ -452,7 +430,7 @@ Let's go ahead and make these changes:
 +     <button @click="getSelectedRows()">Get Selected Rows</button>
       <ag-grid-vue
           style="width: 500px; height: 200px"
-          class="ag-theme-alpine"
+          class="ag-theme-quartz"
           :columnDefs="columnDefs"
           :rowData="rowData"
       >
@@ -470,7 +448,6 @@ export default {
      columnDefs: null,
      rowData: null,
 +    gridApi: null,
-+    columnApi: null
    };
  },
  components: {
@@ -478,9 +455,9 @@ export default {
  },
  beforeMount() {
    this.columnDefs = [
-       { field: 'make', sortable: true, filter: true, checkboxSelection: true },
-       { field: 'model', sortable: true, filter: true },
-       { field: 'price', sortable: true, filter: true }
+       { field: 'make', filter: true, checkboxSelection: true },
+       { field: 'model', filter: true },
+       { field: 'price', filter: true }
      ];
 
      fetch('https://www.ag-grid.com/example-assets/small-row-data.json')
@@ -490,7 +467,6 @@ export default {
 + methods: {
 +    onGridReady(params) {
 +        this.gridApi = params.api;
-+        this.columnApi = params.columnApi;
 +    },
 +    getSelectedRows() {
 +        const selectedNodes = this.gridApi.getSelectedNodes();
@@ -503,7 +479,7 @@ export default {
 </script>
 <style lang="scss">
  @import "~ag-grid-community/styles/ag-grid.css";
- @import "~ag-grid-community/styles/ag-theme-alpine.css";
+ @import "~ag-grid-community/styles/ag-theme-quartz.css";
 </style>
 ```
 
@@ -561,7 +537,7 @@ the `columnDefs` with a `rowGroup`:
    <div>
        <button @click="getSelectedRows()">Get Selected Rows</button>
        <ag-grid-vue style="width: 500px; height: 500px;"
-                    class="ag-theme-alpine"
+                    class="ag-theme-quartz"
                     :columnDefs="columnDefs"
                     :rowData="rowData"
 +                   :autoGroupColumnDef="autoGroupColumnDef"
@@ -580,7 +556,6 @@ the `columnDefs` with a `rowGroup`:
                columnDefs: null,
                rowData: null,
                gridApi: null,
-               columnApi: null,
 +               autoGroupColumnDef: {
 +                   headerName: 'Model',
 +                   field: 'model',
@@ -596,9 +571,9 @@ the `columnDefs` with a `rowGroup`:
        },
        beforeMount() {
            this.columnDefs = [
-+              {field: 'make', sortable: true, filter: true, checkboxSelection: true, rowGroup: true },
-               {field: 'model', sortable: true, filter: true},
-               {field: 'price', sortable: true, filter: true}
++              {field: 'make', filter: true, checkboxSelection: true, rowGroup: true },
+               {field: 'model', filter: true},
+               {field: 'price', filter: true}
            ];
 
            fetch('https://www.ag-grid.com/example-assets/small-row-data.json')
@@ -608,7 +583,6 @@ the `columnDefs` with a `rowGroup`:
        methods: {
            onGridReady(params) {
                this.gridApi = params.api;
-               this.columnApi = params.columnApi;
            },
            getSelectedRows() {
                const selectedNodes = this.gridApi.getSelectedNodes();
@@ -621,7 +595,7 @@ the `columnDefs` with a `rowGroup`:
 </script>
 <style lang="scss">
    @import "~ag-grid-community/styles/ag-grid.css";
-   @import "~ag-grid-community/styles/ag-theme-alpine.css";
+   @import "~ag-grid-community/styles/ag-theme-quartz.css";
 </style>
 ```
 

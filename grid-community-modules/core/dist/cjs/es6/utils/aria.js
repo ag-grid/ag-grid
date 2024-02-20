@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAriaCheckboxStateName = exports.setAriaControls = exports.setAriaChecked = exports.setAriaSelected = exports.removeAriaSort = exports.setAriaSort = exports.setAriaColSpan = exports.setAriaColIndex = exports.setAriaColCount = exports.setAriaRowIndex = exports.setAriaRowCount = exports.setAriaMultiSelectable = exports.setAriaPosInSet = exports.setAriaSetSize = exports.removeAriaExpanded = exports.setAriaExpanded = exports.setAriaHidden = exports.setAriaDisabled = exports.setAriaLevel = exports.setAriaLive = exports.setAriaDescribedBy = exports.setAriaDescription = exports.setAriaLabelledBy = exports.setAriaLabel = exports.getAriaDescribedBy = exports.getAriaPosInSet = exports.getAriaLevel = exports.getAriaSortState = exports.setAriaRole = void 0;
+exports.getAriaCheckboxStateName = exports.setAriaControls = exports.setAriaChecked = exports.setAriaSelected = exports.removeAriaSort = exports.setAriaSort = exports.setAriaColSpan = exports.setAriaColIndex = exports.setAriaColCount = exports.setAriaRowIndex = exports.setAriaRowCount = exports.setAriaMultiSelectable = exports.setAriaPosInSet = exports.setAriaSetSize = exports.removeAriaExpanded = exports.setAriaExpanded = exports.setAriaActiveDescendant = exports.setAriaHidden = exports.setAriaDisabled = exports.setAriaLevel = exports.setAriaRelevant = exports.setAriaAtomic = exports.setAriaLive = exports.setAriaDescribedBy = exports.setAriaLabelledBy = exports.setAriaLabel = exports.getAriaLabel = exports.getAriaPosInSet = exports.getAriaLevel = exports.getAriaSortState = exports.setAriaRole = void 0;
 // ARIA HELPER FUNCTIONS
 function toggleAriaAttribute(element, attribute, value) {
-    if (value == null || value == '') {
+    if (value == null || (typeof value === 'string' && value == '')) {
         removeAriaAttribute(element, attribute);
     }
     else {
@@ -54,10 +54,10 @@ function getAriaPosInSet(element) {
     return parseInt(element.getAttribute('aria-posinset'), 10);
 }
 exports.getAriaPosInSet = getAriaPosInSet;
-function getAriaDescribedBy(element) {
-    return element.getAttribute('aria-describedby') || '';
+function getAriaLabel(element) {
+    return element.getAttribute('aria-label');
 }
-exports.getAriaDescribedBy = getAriaDescribedBy;
+exports.getAriaLabel = getAriaLabel;
 // ARIA ATTRIBUTE SETTERS
 function setAriaLabel(element, label) {
     toggleAriaAttribute(element, 'label', label);
@@ -67,10 +67,6 @@ function setAriaLabelledBy(element, labelledBy) {
     toggleAriaAttribute(element, 'labelledby', labelledBy);
 }
 exports.setAriaLabelledBy = setAriaLabelledBy;
-function setAriaDescription(element, description) {
-    toggleAriaAttribute(element, 'description', description);
-}
-exports.setAriaDescription = setAriaDescription;
 function setAriaDescribedBy(element, describedby) {
     toggleAriaAttribute(element, 'describedby', describedby);
 }
@@ -79,6 +75,14 @@ function setAriaLive(element, live) {
     toggleAriaAttribute(element, 'live', live);
 }
 exports.setAriaLive = setAriaLive;
+function setAriaAtomic(element, atomic) {
+    toggleAriaAttribute(element, 'atomic', atomic);
+}
+exports.setAriaAtomic = setAriaAtomic;
+function setAriaRelevant(element, relevant) {
+    toggleAriaAttribute(element, 'relevant', relevant);
+}
+exports.setAriaRelevant = setAriaRelevant;
 function setAriaLevel(element, level) {
     toggleAriaAttribute(element, 'level', level);
 }
@@ -91,6 +95,10 @@ function setAriaHidden(element, hidden) {
     toggleAriaAttribute(element, 'hidden', hidden);
 }
 exports.setAriaHidden = setAriaHidden;
+function setAriaActiveDescendant(element, descendantId) {
+    toggleAriaAttribute(element, 'activedescendant', descendantId);
+}
+exports.setAriaActiveDescendant = setAriaActiveDescendant;
 function setAriaExpanded(element, expanded) {
     setAriaAttribute(element, 'expanded', expanded);
 }

@@ -28,7 +28,7 @@ var TotalAndFilteredRowsComp = /** @class */ (function (_super) {
     }
     TotalAndFilteredRowsComp.prototype.postConstruct = function () {
         // this component is only really useful with client side row model
-        if (this.gridApi.getModel().getType() !== 'clientSide') {
+        if (this.gridApi.__getModel().getType() !== 'clientSide') {
             console.warn("AG Grid: agTotalAndFilteredRowCountComponent should only be used with the client side row model.");
             return;
         }
@@ -50,7 +50,7 @@ var TotalAndFilteredRowsComp = /** @class */ (function (_super) {
         }
         else {
             var localeTextFunc_1 = this.localeService.getLocaleTextFunc();
-            this.setValue(rowCount + " " + localeTextFunc_1('of', 'of') + " " + totalRowCount);
+            this.setValue("".concat(rowCount, " ").concat(localeTextFunc_1('of', 'of'), " ").concat(totalRowCount));
         }
     };
     TotalAndFilteredRowsComp.prototype.getFilteredRowCountValue = function () {
@@ -72,6 +72,9 @@ var TotalAndFilteredRowsComp = /** @class */ (function (_super) {
         return totalRowCount;
     };
     TotalAndFilteredRowsComp.prototype.init = function () { };
+    TotalAndFilteredRowsComp.prototype.refresh = function () {
+        return true;
+    };
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
     TotalAndFilteredRowsComp.prototype.destroy = function () {

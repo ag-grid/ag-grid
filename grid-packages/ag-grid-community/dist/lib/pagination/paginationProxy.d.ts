@@ -6,7 +6,11 @@ export declare class PaginationProxy extends BeanStub {
     private rowModel;
     private active;
     private paginateChildRows;
-    private pageSize;
+    private pageSizeAutoCalculated?;
+    private pageSizeFromPageSizeSelector?;
+    private pageSizeFromInitialState?;
+    private pageSizeFromGridOptions?;
+    private defaultPageSize;
     private totalPages;
     private currentPage;
     private topDisplayedRowIndex;
@@ -19,7 +23,8 @@ export declare class PaginationProxy extends BeanStub {
     ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean;
     private isPaginateChildRows;
     private onModelUpdated;
-    private onPaginationPageSizeChanged;
+    private onPaginationGridOptionChanged;
+    private onPageSizeGridOptionChanged;
     goToPage(page: number): void;
     getPixelOffset(): number;
     getRow(index: number): RowNode | undefined;
@@ -51,7 +56,11 @@ export declare class PaginationProxy extends BeanStub {
     goToLastPage(): void;
     getPageSize(): number;
     getTotalPages(): number;
-    private setPageSize;
+    /** This is only for state setting before data has been loaded */
+    setPage(page: number): void;
+    private get pageSize();
+    unsetAutoCalculatedPageSize(): void;
+    setPageSize(size: number, source: 'autoCalculated' | 'pageSizeSelector' | 'initialState' | 'gridOptions'): void;
     private calculatePages;
     private setPixelOffset;
     private setZeroRows;

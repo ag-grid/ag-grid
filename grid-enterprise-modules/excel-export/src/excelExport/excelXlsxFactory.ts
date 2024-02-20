@@ -21,10 +21,12 @@ import relationshipsFactory from './files/ooxml/relationships';
 
 import { setExcelImageTotalHeight, setExcelImageTotalWidth, createXmlPart } from './assets/excelUtils';
 import { ImageIdMap, ExcelCalculatedImage } from './assets/excelInterfaces';
-import { ExcelGridSerializingParams } from './baseExcelSerializingSession';
+import { ExcelGridSerializingParams } from './excelSerializingSession';
 
 /**
- * See https://www.ecma-international.org/news/TC45_current_work/OpenXML%20White%20Paper.pdf
+ * See links for more info on the Office Open XML format being used:
+ * https://www.ecma-international.org/wp-content/uploads/Office-Open-XML-White-Paper.pdf
+ * https://ecma-international.org/publications-and-standards/standards/ecma-376/
  */
 export class ExcelXlsxFactory {
 

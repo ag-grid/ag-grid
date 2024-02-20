@@ -7,9 +7,11 @@ When [Row Grouping](/grouping/), aggregation functions can be applied to any col
 
 ## Enabling Aggregation
 
-The simplest way to enable aggregations is with the built-in aggregation functions: `sum`, `min`, `max`, `count`, `avg`, `first`, and `last`. 
+There are two ways to enable aggregation. 
 
-The following snippet shows how these agg functions can be applied to columns via `colDef.aggFunc`:
+You can set `colDef.enableValue=true` to enable aggregation via the column menu and dragging in the columns tool panel. 
+
+Another way to enable aggregations is with the built-in aggregation functions: `sum`, `min`, `max`, `count`, `avg`, `first`, and `last`. The following snippet shows how these agg functions can be applied to columns via `colDef.aggFunc`:
 
 <snippet>
 const gridOptions = {
@@ -49,13 +51,13 @@ are also possible as summarised below:
 
 Aggregations can be configured using the following column property:
 
-<api-documentation source='column-properties/properties.json' section='grouping' names='["aggFunc"]'></api-documentation>
+<api-documentation source='column-properties/properties.json' section='grouping' names='["aggFunc", "defaultAggFunc", "allowedAggFuncs"]'></api-documentation>
 
-<br>
+<br />
 
 Aggregation functions can be registered with the grid using the following grid option:
 
-<api-documentation source='grid-options/properties.json' section='rowPivoting' names='["aggFuncs"]'></api-documentation>
+<api-documentation source='grid-options/properties.json' section='rowPivoting' names='["aggFuncs", "suppressAggFilteredOnly", "groupAggFiltering","suppressAggFuncInHeader"]'></api-documentation>
 
 ## Next Up
 

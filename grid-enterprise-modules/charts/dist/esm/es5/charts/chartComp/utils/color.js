@@ -3,7 +3,7 @@ export function hexToRGBA(hex, alpha) {
     var r = parseInt(hex.slice(1, 3), 16);
     var g = parseInt(hex.slice(3, 5), 16);
     var b = parseInt(hex.slice(5, 7), 16);
-    return alpha ? "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")" : "rgba(" + r + ", " + g + ", " + b + ")";
+    return alpha ? "rgba(".concat(r, ", ").concat(g, ", ").concat(b, ", ").concat(alpha, ")") : "rgba(".concat(r, ", ").concat(g, ", ").concat(b, ")");
 }
 export function changeOpacity(fills, alpha) {
     return fills.map(function (fill) {

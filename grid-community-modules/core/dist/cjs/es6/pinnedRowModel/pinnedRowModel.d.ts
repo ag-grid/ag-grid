@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../entities/rowNode";
@@ -12,8 +12,8 @@ export declare class PinnedRowModel extends BeanStub {
     isEmpty(floating: RowPinnedType): boolean;
     isRowsToRender(floating: RowPinnedType): boolean;
     getRowAtPixel(pixel: number, floating: RowPinnedType): number;
-    setPinnedTopRowData(rowData: any[] | undefined): void;
-    setPinnedBottomRowData(rowData: any[] | undefined): void;
+    private setPinnedTopRowData;
+    private setPinnedBottomRowData;
     private createNodesFromData;
     getPinnedTopRowData(): RowNode[];
     getPinnedBottomRowData(): RowNode[];

@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
 import { CustomLoadingOverlay } from './customLoadingOverlay_typescript';
 import { CustomNoRowsOverlay } from './customNoRowsOverlay_typescript';
 
@@ -15,14 +15,14 @@ const columnDefs: ColDef[] = [
   { field: 'total', width: 100 },
 ]
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     editable: true,
-    sortable: true,
     flex: 1,
     minWidth: 100,
     filter: true,
-    resizable: true,
   },
 
   // set rowData to null or undefined to show loading panel by default
@@ -35,30 +35,30 @@ const gridOptions: GridOptions<IOlympicData> = {
   },
   noRowsOverlayComponent: CustomNoRowsOverlay,
   noRowsOverlayComponentParams: {
-    noRowsMessageFunc: () => 'Sorry - no rows! at: ' + new Date(),
+    noRowsMessageFunc: () => 'No rows found at: ' + new Date().toLocaleTimeString(),
   },
 }
 
 function onBtShowLoading() {
-  gridOptions.api!.showLoadingOverlay()
+  gridApi!.showLoadingOverlay()
 }
 
 function onBtShowNoRows() {
-  gridOptions.api!.showNoRowsOverlay()
+  gridApi!.showNoRowsOverlay()
 }
 
 function onBtHide() {
-  gridOptions.api!.hideOverlay()
+  gridApi!.hideOverlay()
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
     .then(data => {
-      gridOptions.api!.setRowData(data)
+      gridApi!.setGridOption('rowData', data)
     })
 })

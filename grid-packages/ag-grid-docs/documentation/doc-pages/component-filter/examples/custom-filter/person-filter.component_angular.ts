@@ -1,50 +1,38 @@
-import { Component } from "@angular/core";
-
+import { Component, ElementRef, ViewChild } from "@angular/core";
 import { IFilterAngularComp } from "@ag-grid-community/angular";
-import { IDoesFilterPassParams, IFilterParams } from "@ag-grid-community/core";
+import { IAfterGuiAttachedParams, IDoesFilterPassParams, IFilterParams } from "@ag-grid-community/core";
+import { FormsModule } from "@angular/forms";
 
 @Component({
-    selector: 'year-component',
+    standalone: true,
+    imports: [FormsModule],
     template: `
-      <div style="padding: 4px; width: 200px;">
-      <div style="font-weight: bold;">Custom Athlete Filter</div>
-      <div>
-        <input style="margin: 4px 0 4px 0;" type="text" [(ngModel)]="filterText" (ngModelChange)="onInputChanged()" placeholder="Full name search..."/>
-      </div>
-      <div style="margin-top: 20px;">This filter does partial word search on multiple words, eg "mich phel" still brings back Michael Phelps.</div>
-      <div style="margin-top: 20px;">Just to emphasise that anything can go in here, here is an image!!</div>
-      <div>
-        <img src="https://www.ag-grid.com/images/ag-Grid2-200.png"
-             style="width: 150px; text-align: center; padding: 10px; margin: 10px; border: 1px solid lightgrey;"/>
-      </div>
-      </div>
+        <div class="person-filter">
+            <div>Custom Athlete Filter</div>
+            <div>
+                <input #eFilterText type="text" [(ngModel)]="filterText" (ngModelChange)="onInputChanged()" placeholder="Full name search..."/>
+            </div>
+            <div>This filter does partial word search on multiple words, eg "mich phel" still brings back Michael Phelps.</div>
+        </div>
     `
 })
 export class PersonFilter implements IFilterAngularComp {
-    params!: IFilterParams;
+    @ViewChild('eFilterText') eFilterText!: ElementRef;
+
+    filterParams!: IFilterParams;
     filterText = '';
 
     agInit(params: IFilterParams): void {
-        this.params = params;
+        this.filterParams = params;
     }
 
     doesFilterPass(params: IDoesFilterPassParams) {
         // make sure each word passes separately, ie search for firstname, lastname
         let passed = true;
-        const { api, colDef, column, columnApi, context } = this.params;
         const { node } = params;
 
         this.filterText.toLowerCase().split(' ').forEach(filterWord => {
-            const value = this.params.valueGetter({
-                api,
-                colDef,
-                column,
-                columnApi,
-                context,
-                data: node.data,
-                getValue: (field) => node.data[field],
-                node,
-            });
+            const value = this.filterParams.getValue(node);
 
             if (value.toString().toLowerCase().indexOf(filterWord) < 0) {
                 passed = false;
@@ -69,6 +57,13 @@ export class PersonFilter implements IFilterAngularComp {
     }
 
     onInputChanged() {
-        this.params.filterChangedCallback();
+        this.filterParams.filterChangedCallback();
+    }
+
+    afterGuiAttached(params?: IAfterGuiAttachedParams): void {
+        if (!params?.suppressFocus) {
+            // focus the input element for keyboard navigation
+            this.eFilterText!.nativeElement.focus();
+        }
     }
 }

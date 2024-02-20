@@ -41,7 +41,9 @@ var CellComp = /** @class */ (function (_super) {
         _this.rowCtrl = cellCtrl.getRowCtrl();
         _this.eRow = eRow;
         _this.cellCtrl = cellCtrl;
-        _this.setTemplate(/* html */ "<div comp-id=\"" + _this.getCompId() + "\"/>");
+        var cellDiv = document.createElement('div');
+        cellDiv.setAttribute('comp-id', "".concat(_this.getCompId()));
+        _this.setTemplateFromElement(cellDiv);
         var eGui = _this.getGui();
         _this.forceWrapper = cellCtrl.isForceWrapper();
         _this.refreshWrapper(false);
@@ -53,7 +55,7 @@ var CellComp = /** @class */ (function (_super) {
                 eGui.removeAttribute(name);
             }
         };
-        aria_1.setAriaRole(eGui, 'gridcell');
+        (0, aria_1.setAriaRole)(eGui, cellCtrl.getCellAriaRole());
         setAttribute('col-id', cellCtrl.getColumnIdSanitised());
         var tabIndex = cellCtrl.getTabIndex();
         if (tabIndex !== undefined) {
@@ -61,7 +63,7 @@ var CellComp = /** @class */ (function (_super) {
         }
         var compProxy = {
             addOrRemoveCssClass: function (cssClassName, on) { return _this.addOrRemoveCssClass(cssClassName, on); },
-            setUserStyles: function (styles) { return dom_1.addStylesToElement(eGui, styles); },
+            setUserStyles: function (styles) { return (0, dom_1.addStylesToElement)(eGui, styles); },
             getFocusableElement: function () { return _this.getFocusableElement(); },
             setIncludeSelection: function (include) { return _this.includeSelection = include; },
             setIncludeRowDrag: function (include) { return _this.includeRowDrag = include; },
@@ -135,24 +137,30 @@ var CellComp = /** @class */ (function (_super) {
         var usingWrapper = providingControls || this.forceWrapper;
         var putWrapperIn = usingWrapper && this.eCellWrapper == null;
         if (putWrapperIn) {
-            this.eCellWrapper = dom_1.loadTemplate(/* html */ "<div class=\"ag-cell-wrapper\" role=\"presentation\"></div>");
+            var wrapperDiv = document.createElement('div');
+            wrapperDiv.setAttribute('role', 'presentation');
+            wrapperDiv.setAttribute('class', 'ag-cell-wrapper');
+            this.eCellWrapper = wrapperDiv;
             this.getGui().appendChild(this.eCellWrapper);
         }
         var takeWrapperOut = !usingWrapper && this.eCellWrapper != null;
         if (takeWrapperOut) {
-            dom_1.removeFromParent(this.eCellWrapper);
+            (0, dom_1.removeFromParent)(this.eCellWrapper);
             this.eCellWrapper = undefined;
         }
         this.addOrRemoveCssClass('ag-cell-value', !usingWrapper);
         var usingCellValue = !editing && usingWrapper;
         var putCellValueIn = usingCellValue && this.eCellValue == null;
         if (putCellValueIn) {
-            this.eCellValue = dom_1.loadTemplate(/* html */ "<span class=\"ag-cell-value\" role=\"presentation\"></span>");
+            var cellSpan = document.createElement('span');
+            cellSpan.setAttribute('role', 'presentation');
+            cellSpan.setAttribute('class', 'ag-cell-value');
+            this.eCellValue = cellSpan;
             this.eCellWrapper.appendChild(this.eCellValue);
         }
         var takeCellValueOut = !usingCellValue && this.eCellValue != null;
         if (takeCellValueOut) {
-            dom_1.removeFromParent(this.eCellValue);
+            (0, dom_1.removeFromParent)(this.eCellValue);
             this.eCellValue = undefined;
         }
         var templateChanged = putWrapperIn || takeWrapperOut || putCellValueIn || takeCellValueOut;
@@ -202,17 +210,17 @@ var CellComp = /** @class */ (function (_super) {
         // if we don't do this, and editor component is async, then there will be a period
         // when the component isn't present and keyboard navigation won't work - so example
         // of user hitting tab quickly (more quickly than renderers getting created) won't work
-        var cellEditorAsync = generic_1.missing(this.cellEditor);
+        var cellEditorAsync = (0, generic_1.missing)(this.cellEditor);
         if (cellEditorAsync && params.cellStartedEdit) {
             this.cellCtrl.focusCell(true);
         }
     };
     CellComp.prototype.insertValueWithoutCellRenderer = function (valueToDisplay) {
         var eParent = this.getParentOfValue();
-        dom_1.clearElement(eParent);
-        var escapedValue = valueToDisplay != null ? string_1.escapeString(valueToDisplay) : null;
+        (0, dom_1.clearElement)(eParent);
+        var escapedValue = valueToDisplay != null ? (0, string_1.escapeString)(valueToDisplay, true) : null;
         if (escapedValue != null) {
-            eParent.innerHTML = escapedValue;
+            eParent.textContent = escapedValue;
         }
     };
     CellComp.prototype.destroyEditorAndRenderer = function () {
@@ -222,7 +230,7 @@ var CellComp = /** @class */ (function (_super) {
     CellComp.prototype.destroyRenderer = function () {
         var context = this.beans.context;
         this.cellRenderer = context.destroyBean(this.cellRenderer);
-        dom_1.removeFromParent(this.cellRendererGui);
+        (0, dom_1.removeFromParent)(this.cellRendererGui);
         this.cellRendererGui = null;
         this.rendererVersion++;
     };
@@ -234,7 +242,7 @@ var CellComp = /** @class */ (function (_super) {
         this.hideEditorPopup = undefined;
         this.cellEditor = context.destroyBean(this.cellEditor);
         this.cellEditorPopupWrapper = context.destroyBean(this.cellEditorPopupWrapper);
-        dom_1.removeFromParent(this.cellEditorGui);
+        (0, dom_1.removeFromParent)(this.cellEditorGui);
         this.cellEditorGui = null;
         this.editorVersion++;
     };
@@ -260,7 +268,7 @@ var CellComp = /** @class */ (function (_super) {
         // never use task service if animation frame service is turned off.
         // and lastly we never use it if doing auto-height, as the auto-height service checks the
         // row height directly after the cell is created, it doesn't wait around for the tasks to complete        
-        var suppressAnimationFrame = this.beans.gridOptionsService.is('suppressAnimationFrame');
+        var suppressAnimationFrame = this.beans.gridOptionsService.get('suppressAnimationFrame');
         var useTaskService = !suppressAnimationFrame;
         var displayComponentVersionCopy = this.rendererVersion;
         var componentClass = compDetails.componentClass;
@@ -310,7 +318,7 @@ var CellComp = /** @class */ (function (_super) {
         this.cellRendererGui = this.cellRenderer.getGui();
         if (this.cellRendererGui != null) {
             var eParent = this.getParentOfValue();
-            dom_1.clearElement(eParent);
+            (0, dom_1.clearElement)(eParent);
             eParent.appendChild(this.cellRendererGui);
         }
     };
@@ -330,7 +338,7 @@ var CellComp = /** @class */ (function (_super) {
             return;
         }
         if (!cellEditor.getGui) {
-            console.warn("AG Grid: cellEditor for column " + this.column.getId() + " is missing getGui() method");
+            console.warn("AG Grid: cellEditor for column ".concat(this.column.getId(), " is missing getGui() method"));
             this.beans.context.destroyBean(cellEditor);
             return;
         }
@@ -385,14 +393,14 @@ var CellComp = /** @class */ (function (_super) {
             ePopupGui.appendChild(this.cellEditorGui);
         }
         var popupService = this.beans.popupService;
-        var useModelPopup = this.beans.gridOptionsService.is('stopEditingWhenCellsLoseFocus');
+        var useModelPopup = this.beans.gridOptionsService.get('stopEditingWhenCellsLoseFocus');
         // see if position provided by colDef, if not then check old way of method on cellComp
         var positionToUse = position != null
             ? position
             : cellEditor.getPopupPosition
                 ? cellEditor.getPopupPosition()
                 : 'over';
-        var isRtl = this.beans.gridOptionsService.is('enableRtl');
+        var isRtl = this.beans.gridOptionsService.get('enableRtl');
         var positionParams = {
             ePopup: ePopupGui,
             column: this.column,
@@ -438,10 +446,10 @@ var CellComp = /** @class */ (function (_super) {
         // if focus is inside the cell, we move focus to the cell itself
         // before removing it's contents, otherwise errors could be thrown.
         var eDocument = this.beans.gridOptionsService.getDocument();
-        if (eGui.contains(eDocument.activeElement) && browser_1.browserSupportsPreventScroll()) {
+        if (eGui.contains(eDocument.activeElement) && (0, browser_1.browserSupportsPreventScroll)()) {
             eGui.focus({ preventScroll: true });
         }
-        dom_1.clearElement(this.getParentOfValue());
+        (0, dom_1.clearElement)(this.getParentOfValue());
     };
     return CellComp;
 }(component_1.Component));

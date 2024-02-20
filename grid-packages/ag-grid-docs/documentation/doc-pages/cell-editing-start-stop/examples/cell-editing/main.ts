@@ -1,5 +1,17 @@
-import { CellEditingStartedEvent, CellEditingStoppedEvent, Grid, GridOptions, RowEditingStartedEvent, RowEditingStoppedEvent, RowPinnedType } from '@ag-grid-community/core';
+import {
+  CellEditingStartedEvent,
+  CellEditingStoppedEvent,
+  GridApi,
+  createGrid,
+  GridOptions,
+  RowEditingStartedEvent,
+  RowEditingStoppedEvent,
+  RowPinnedType,
+} from '@ag-grid-community/core';
 import { getData } from "./data";
+
+
+let gridApi: GridApi;
 
 
 const gridOptions: GridOptions = {
@@ -16,7 +28,6 @@ const gridOptions: GridOptions = {
     flex: 1,
     minWidth: 110,
     editable: true,
-    resizable: true,
   },
   rowData: getData(),
   pinnedTopRowData: getPinnedTopData(),
@@ -61,13 +72,13 @@ function getPinnedBottomData() {
   ]
 }
 function onBtStopEditing() {
-  gridOptions.api!.stopEditing()
+  gridApi!.stopEditing()
 }
 
 function onBtStartEditing(key?: string, pinned?: RowPinnedType) {
-  gridOptions.api!.setFocusedCell(0, 'lastName', pinned)
+  gridApi!.setFocusedCell(0, 'lastName', pinned)
 
-  gridOptions.api!.startEditingCell({
+  gridApi!.startEditingCell({
     rowIndex: 0,
     colKey: 'lastName',
     // set to 'top', 'bottom' or undefined
@@ -77,15 +88,15 @@ function onBtStartEditing(key?: string, pinned?: RowPinnedType) {
 }
 
 function onBtNextCell() {
-  gridOptions.api!.tabToNextCell()
+  gridApi!.tabToNextCell()
 }
 
 function onBtPreviousCell() {
-  gridOptions.api!.tabToPreviousCell()
+  gridApi!.tabToPreviousCell()
 }
 
 function onBtWhich() {
-  var cellDefs = gridOptions.api!.getEditingCells()
+  var cellDefs = gridApi!.getEditingCells()
   if (cellDefs.length > 0) {
     var cellDef = cellDefs[0]
     console.log(
@@ -104,5 +115,5 @@ function onBtWhich() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

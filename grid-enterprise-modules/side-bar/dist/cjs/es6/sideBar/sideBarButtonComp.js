@@ -55,13 +55,13 @@ class SideBarButtonComp extends core_1.Component {
 }
 SideBarButtonComp.EVENT_TOGGLE_BUTTON_CLICKED = 'toggleButtonClicked';
 __decorate([
-    core_1.RefSelector('eToggleButton')
+    (0, core_1.RefSelector)('eToggleButton')
 ], SideBarButtonComp.prototype, "eToggleButton", void 0);
 __decorate([
-    core_1.RefSelector('eIconWrapper')
+    (0, core_1.RefSelector)('eIconWrapper')
 ], SideBarButtonComp.prototype, "eIconWrapper", void 0);
 __decorate([
-    core_1.RefSelector('eLabel')
+    (0, core_1.RefSelector)('eLabel')
 ], SideBarButtonComp.prototype, "eLabel", void 0);
 __decorate([
     core_1.PostConstruct

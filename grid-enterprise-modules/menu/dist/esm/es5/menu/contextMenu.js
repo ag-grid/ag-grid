@@ -46,13 +46,13 @@ var ContextMenuFactory = /** @class */ (function (_super) {
         if (_.exists(node) && ModuleRegistry.__isRegistered(ModuleNames.ClipboardModule, this.context.getGridId())) {
             if (column) {
                 // only makes sense if column exists, could have originated from a row
-                if (!this.gridOptionsService.is('suppressCutToClipboard')) {
+                if (!this.gridOptionsService.get('suppressCutToClipboard')) {
                     defaultMenuOptions.push('cut');
                 }
                 defaultMenuOptions.push('copy', 'copyWithHeaders', 'copyWithGroupHeaders', 'paste', 'separator');
             }
         }
-        if (this.gridOptionsService.is('enableCharts') && ModuleRegistry.__isRegistered(ModuleNames.GridChartsModule, this.context.getGridId())) {
+        if (this.gridOptionsService.get('enableCharts') && ModuleRegistry.__isRegistered(ModuleNames.GridChartsModule, this.context.getGridId())) {
             if (this.columnModel.isPivotMode()) {
                 defaultMenuOptions.push('pivotChart');
             }
@@ -64,59 +64,40 @@ var ContextMenuFactory = /** @class */ (function (_super) {
             // if user clicks a cell
             var csvModuleMissing = !ModuleRegistry.__isRegistered(ModuleNames.CsvExportModule, this.context.getGridId());
             var excelModuleMissing = !ModuleRegistry.__isRegistered(ModuleNames.ExcelExportModule, this.context.getGridId());
-            var suppressExcel = this.gridOptionsService.is('suppressExcelExport') || excelModuleMissing;
-            var suppressCsv = this.gridOptionsService.is('suppressCsvExport') || csvModuleMissing;
+            var suppressExcel = this.gridOptionsService.get('suppressExcelExport') || excelModuleMissing;
+            var suppressCsv = this.gridOptionsService.get('suppressCsvExport') || csvModuleMissing;
             var onIPad = _.isIOSUserAgent();
             var anyExport = !onIPad && (!suppressExcel || !suppressCsv);
             if (anyExport) {
                 defaultMenuOptions.push('export');
             }
         }
-        var userFunc = this.gridOptionsService.getCallback('getContextMenuItems');
-        if (userFunc) {
-            var params = {
-                node: node,
-                column: column,
-                value: value,
-                defaultItems: defaultMenuOptions.length ? defaultMenuOptions : undefined,
-            };
-            return userFunc(params);
+        var defaultItems = defaultMenuOptions.length ? defaultMenuOptions : undefined;
+        var columnContextMenuItems = column === null || column === void 0 ? void 0 : column.getColDef().contextMenuItems;
+        if (Array.isArray(columnContextMenuItems)) {
+            return columnContextMenuItems;
         }
-        return defaultMenuOptions;
-    };
-    ContextMenuFactory.prototype.onContextMenu = function (mouseEvent, touchEvent, rowNode, column, value, anchorToElement) {
-        // to allow us to debug in chrome, we ignore the event if ctrl is pressed.
-        // not everyone wants this, so first 'if' below allows to turn this hack off.
-        if (!this.gridOptionsService.is('allowContextMenuWithControlKey')) {
-            // then do the check
-            if (mouseEvent && (mouseEvent.ctrlKey || mouseEvent.metaKey)) {
-                return;
+        else if (typeof columnContextMenuItems === 'function') {
+            return columnContextMenuItems(this.gridOptionsService.addGridCommonParams({
+                column: column,
+                node: node,
+                value: value,
+                defaultItems: defaultItems
+            }));
+        }
+        else {
+            var userFunc = this.gridOptionsService.getCallback('getContextMenuItems');
+            if (userFunc) {
+                return userFunc({ column: column, node: node, value: value, defaultItems: defaultItems });
+            }
+            else {
+                return defaultMenuOptions;
             }
         }
-        // need to do this regardless of context menu showing or not, so doing
-        // before the isSuppressContextMenu() check
-        if (mouseEvent) {
-            this.blockMiddleClickScrollsIfNeeded(mouseEvent);
-        }
-        if (this.gridOptionsService.is('suppressContextMenu')) {
-            return;
-        }
-        var eventOrTouch = mouseEvent ? mouseEvent : touchEvent.touches[0];
-        if (this.showMenu(rowNode, column, value, eventOrTouch, anchorToElement)) {
-            var event_1 = mouseEvent ? mouseEvent : touchEvent;
-            event_1.preventDefault();
-        }
     };
-    ContextMenuFactory.prototype.blockMiddleClickScrollsIfNeeded = function (mouseEvent) {
-        // if we don't do this, then middle click will never result in a 'click' event, as 'mousedown'
-        // will be consumed by the browser to mean 'scroll' (as you can scroll with the middle mouse
-        // button in the browser). so this property allows the user to receive middle button clicks if
-        // they want.
-        var gridOptionsService = this.gridOptionsService;
-        var which = mouseEvent.which;
-        if (gridOptionsService.is('suppressMiddleClickScrolls') && which === 2) {
-            mouseEvent.preventDefault();
-        }
+    ContextMenuFactory.prototype.onContextMenu = function (mouseEvent, touchEvent, rowNode, column, value, anchorToElement) {
+        var _this = this;
+        this.menuUtils.onContextMenu(mouseEvent, touchEvent, function (eventOrTouch) { return _this.showMenu(rowNode, column, value, eventOrTouch, anchorToElement); });
     };
     ContextMenuFactory.prototype.showMenu = function (node, column, value, mouseEvent, anchorToElement) {
         var _this = this;
@@ -125,7 +106,7 @@ var ContextMenuFactory = /** @class */ (function (_super) {
         if (menuItems === undefined || _.missingOrEmpty(menuItems)) {
             return false;
         }
-        var menu = new ContextMenu(menuItems);
+        var menu = new ContextMenu(menuItems, column, node, value);
         this.createBean(menu);
         var eMenuGui = menu.getGui();
         var positionParams = {
@@ -149,7 +130,7 @@ var ContextMenuFactory = /** @class */ (function (_super) {
             },
             click: mouseEvent,
             positionCallback: function () {
-                var isRtl = _this.gridOptionsService.is('enableRtl');
+                var isRtl = _this.gridOptionsService.get('enableRtl');
                 _this.popupService.positionPopupUnderMouseEvent(__assign(__assign({}, positionParams), { nudgeX: isRtl ? (eMenuGui.offsetWidth + 1) * -1 : 1 }));
             },
             // so when browser is scrolled down, or grid is scrolled, context menu stays with cell
@@ -176,7 +157,7 @@ var ContextMenuFactory = /** @class */ (function (_super) {
         });
         // hide the popup if something gets selected
         if (addPopupRes) {
-            menu.addEventListener(AgMenuItemComponent.EVENT_MENU_ITEM_SELECTED, addPopupRes.hideFunc);
+            menu.addEventListener(AgMenuItemComponent.EVENT_CLOSE_MENU, addPopupRes.hideFunc);
         }
         return true;
     };
@@ -192,6 +173,9 @@ var ContextMenuFactory = /** @class */ (function (_super) {
     __decorate([
         Autowired('columnModel')
     ], ContextMenuFactory.prototype, "columnModel", void 0);
+    __decorate([
+        Autowired('menuUtils')
+    ], ContextMenuFactory.prototype, "menuUtils", void 0);
     ContextMenuFactory = __decorate([
         Bean('contextMenuFactory')
     ], ContextMenuFactory);
@@ -200,21 +184,28 @@ var ContextMenuFactory = /** @class */ (function (_super) {
 export { ContextMenuFactory };
 var ContextMenu = /** @class */ (function (_super) {
     __extends(ContextMenu, _super);
-    function ContextMenu(menuItems) {
-        var _this = _super.call(this, /* html */ "<div class=\"" + CSS_MENU + "\" role=\"presentation\"></div>") || this;
+    function ContextMenu(menuItems, column, node, value) {
+        var _this = _super.call(this, /* html */ "<div class=\"".concat(CSS_MENU, "\" role=\"presentation\"></div>")) || this;
+        _this.menuItems = menuItems;
+        _this.column = column;
+        _this.node = node;
+        _this.value = value;
         _this.menuList = null;
         _this.focusedCell = null;
-        _this.menuItems = menuItems;
         return _this;
     }
     ContextMenu.prototype.addMenuItems = function () {
         var _this = this;
-        var menuList = this.createManagedBean(new AgMenuList());
-        var menuItemsMapped = this.menuItemMapper.mapWithStockItems(this.menuItems, null);
+        var menuList = this.createManagedBean(new AgMenuList(0, {
+            column: this.column,
+            node: this.node,
+            value: this.value
+        }));
+        var menuItemsMapped = this.menuItemMapper.mapWithStockItems(this.menuItems, null, function () { return _this.getGui(); });
         menuList.addMenuItems(menuItemsMapped);
         this.appendChild(menuList);
         this.menuList = menuList;
-        menuList.addEventListener(AgMenuItemComponent.EVENT_MENU_ITEM_SELECTED, function (e) { return _this.dispatchEvent(e); });
+        menuList.addEventListener(AgMenuItemComponent.EVENT_CLOSE_MENU, function (e) { return _this.dispatchEvent(e); });
     };
     ContextMenu.prototype.afterGuiAttached = function (params) {
         if (params.hidePopup) {

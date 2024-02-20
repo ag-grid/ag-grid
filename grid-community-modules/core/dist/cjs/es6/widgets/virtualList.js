@@ -47,11 +47,12 @@ class VirtualList extends tabGuardComp_1.TabGuardComp {
         const translate = this.localeService.getLocaleTextFunc();
         const listName = translate('ariaDefaultListName', this.listName || 'List');
         const ariaEl = this.eContainer;
-        aria_1.setAriaRole(ariaEl, this.ariaRole);
-        aria_1.setAriaLabel(ariaEl, listName);
+        (0, aria_1.setAriaRole)(ariaEl, this.ariaRole);
+        (0, aria_1.setAriaLabel)(ariaEl, listName);
     }
     addResizeObserver() {
-        const listener = () => this.drawVirtualRows();
+        // do this in an animation frame to prevent loops
+        const listener = () => this.animationFrameService.requestAnimationFrame(() => this.drawVirtualRows());
         const destroyObserver = this.resizeObserverService.observeResize(this.getGui(), listener);
         this.addDestroyFunc(destroyObserver);
     }
@@ -61,15 +62,13 @@ class VirtualList extends tabGuardComp_1.TabGuardComp {
     onFocusIn(e) {
         const target = e.target;
         if (target.classList.contains('ag-virtual-list-item')) {
-            this.lastFocusedRowIndex = aria_1.getAriaPosInSet(target) - 1;
+            this.lastFocusedRowIndex = (0, aria_1.getAriaPosInSet)(target) - 1;
         }
-        return false;
     }
     onFocusOut(e) {
         if (!this.getFocusableElement().contains(e.relatedTarget)) {
             this.lastFocusedRowIndex = null;
         }
-        return false;
     }
     handleKeyDown(e) {
         switch (e.key) {
@@ -86,7 +85,7 @@ class VirtualList extends tabGuardComp_1.TabGuardComp {
             e.preventDefault();
         }
         else {
-            event_1.stopPropagationForAgGrid(e);
+            (0, event_1.stopPropagationForAgGrid)(e);
             this.forceFocusOutOfContainer(e.shiftKey);
         }
     }
@@ -131,11 +130,14 @@ class VirtualList extends tabGuardComp_1.TabGuardComp {
     getItemHeight() {
         return this.environment.getListItemHeight();
     }
-    ensureIndexVisible(index) {
+    /**
+     * Returns true if the view had to be scrolled, otherwise, false.
+     */
+    ensureIndexVisible(index, scrollPartialIntoView = true) {
         const lastRow = this.model.getRowCount();
         if (typeof index !== 'number' || index < 0 || index >= lastRow) {
             console.warn('AG Grid: invalid row index for ensureIndexVisible: ' + index);
-            return;
+            return false;
         }
         const rowTopPixel = index * this.rowHeight;
         const rowBottomPixel = rowTopPixel + this.rowHeight;
@@ -143,17 +145,21 @@ class VirtualList extends tabGuardComp_1.TabGuardComp {
         const viewportTopPixel = eGui.scrollTop;
         const viewportHeight = eGui.offsetHeight;
         const viewportBottomPixel = viewportTopPixel + viewportHeight;
-        const viewportScrolledPastRow = viewportTopPixel > rowTopPixel;
-        const viewportScrolledBeforeRow = viewportBottomPixel < rowBottomPixel;
+        const diff = scrollPartialIntoView ? 0 : this.rowHeight;
+        const viewportScrolledPastRow = viewportTopPixel > rowTopPixel + diff;
+        const viewportScrolledBeforeRow = viewportBottomPixel < rowBottomPixel - diff;
         if (viewportScrolledPastRow) {
             // if row is before, scroll up with row at top
             eGui.scrollTop = rowTopPixel;
+            return true;
         }
-        else if (viewportScrolledBeforeRow) {
+        if (viewportScrolledBeforeRow) {
             // if row is below, scroll down with row at bottom
             const newScrollPosition = rowBottomPixel - viewportHeight;
             eGui.scrollTop = newScrollPosition;
+            return true;
         }
+        return false;
     }
     setComponentCreator(componentCreator) {
         this.componentCreator = componentCreator;
@@ -178,7 +184,7 @@ class VirtualList extends tabGuardComp_1.TabGuardComp {
         const rowCount = this.model.getRowCount();
         this.eContainer.style.height = `${rowCount * this.rowHeight}px`;
         // ensure height is applied before attempting to redraw rows
-        function_1.waitUntil(() => this.eContainer.clientHeight >= rowCount * this.rowHeight, () => {
+        (0, function_1.waitUntil)(() => this.eContainer.clientHeight >= rowCount * this.rowHeight, () => {
             if (!this.isAlive()) {
                 return;
             }
@@ -234,15 +240,10 @@ class VirtualList extends tabGuardComp_1.TabGuardComp {
         const value = this.model.getRow(rowIndex);
         const eDiv = document.createElement('div');
         eDiv.classList.add('ag-virtual-list-item', `ag-${this.cssIdentifier}-virtual-list-item`);
-        aria_1.setAriaRole(eDiv, this.ariaRole === 'tree' ? 'treeitem' : 'option');
-        aria_1.setAriaSetSize(eDiv, this.model.getRowCount());
-        aria_1.setAriaPosInSet(eDiv, rowIndex + 1);
+        (0, aria_1.setAriaRole)(eDiv, this.ariaRole === 'tree' ? 'treeitem' : 'option');
+        (0, aria_1.setAriaSetSize)(eDiv, this.model.getRowCount());
+        (0, aria_1.setAriaPosInSet)(eDiv, rowIndex + 1);
         eDiv.setAttribute('tabindex', '-1');
-        if (typeof this.model.isRowSelected === 'function') {
-            const isSelected = this.model.isRowSelected(rowIndex);
-            aria_1.setAriaSelected(eDiv, !!isSelected);
-            aria_1.setAriaChecked(eDiv, isSelected);
-        }
         eDiv.style.height = `${this.rowHeight}px`;
         eDiv.style.top = `${this.rowHeight * rowIndex}px`;
         const rowComponent = this.componentCreator(value, eDiv);
@@ -303,10 +304,13 @@ class VirtualList extends tabGuardComp_1.TabGuardComp {
     }
 }
 __decorate([
-    context_1.Autowired('resizeObserverService')
+    (0, context_1.Autowired)('resizeObserverService')
 ], VirtualList.prototype, "resizeObserverService", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eContainer')
+    (0, context_1.Autowired)('animationFrameService')
+], VirtualList.prototype, "animationFrameService", void 0);
+__decorate([
+    (0, componentAnnotations_1.RefSelector)('eContainer')
 ], VirtualList.prototype, "eContainer", void 0);
 __decorate([
     context_1.PostConstruct

@@ -32,13 +32,13 @@ var AgPanel = /** @class */ (function (_super) {
     __extends(AgPanel, _super);
     function AgPanel(config) {
         var _this = _super.call(this, AgPanel.getTemplate(config)) || this;
-        _this.closable = true;
         _this.config = config;
+        _this.closable = true;
         return _this;
     }
     AgPanel.getTemplate = function (config) {
-        var cssIdentifier = (config && config.cssIdentifier) || 'default';
-        return /* html */ "<div class=\"ag-panel ag-" + cssIdentifier + "-panel\" tabindex=\"-1\">\n            <div ref=\"eTitleBar\" class=\"ag-panel-title-bar ag-" + cssIdentifier + "-panel-title-bar ag-unselectable\">\n                <span ref=\"eTitle\" class=\"ag-panel-title-bar-title ag-" + cssIdentifier + "-panel-title-bar-title\"></span>\n                <div ref=\"eTitleBarButtons\" class=\"ag-panel-title-bar-buttons ag-" + cssIdentifier + "-panel-title-bar-buttons\"></div>\n            </div>\n            <div ref=\"eContentWrapper\" class=\"ag-panel-content-wrapper ag-" + cssIdentifier + "-panel-content-wrapper\"></div>\n        </div>";
+        var cssIdentifier = config.cssIdentifier || 'default';
+        return /* html */ "<div class=\"ag-panel ag-".concat(cssIdentifier, "-panel\" tabindex=\"-1\">\n            <div ref=\"eTitleBar\" class=\"ag-panel-title-bar ag-").concat(cssIdentifier, "-panel-title-bar ag-unselectable\">\n                <span ref=\"eTitle\" class=\"ag-panel-title-bar-title ag-").concat(cssIdentifier, "-panel-title-bar-title\"></span>\n                <div ref=\"eTitleBarButtons\" class=\"ag-panel-title-bar-buttons ag-").concat(cssIdentifier, "-panel-title-bar-buttons\"></div>\n            </div>\n            <div ref=\"eContentWrapper\" class=\"ag-panel-content-wrapper ag-").concat(cssIdentifier, "-panel-content-wrapper\"></div>\n        </div>");
     };
     AgPanel.prototype.postConstruct = function () {
         var _this = this;
@@ -66,7 +66,7 @@ var AgPanel = /** @class */ (function (_super) {
             this.setClosable(closable != null ? closable : this.closable);
         }
         else {
-            dom_1.setDisplayed(this.eTitleBar, false);
+            (0, dom_1.setDisplayed)(this.eTitleBar, false);
         }
         this.addManagedListener(this.eTitleBar, 'mousedown', function (e) {
             var eDocument = _this.gridOptionsService.getDocument();
@@ -119,7 +119,7 @@ var AgPanel = /** @class */ (function (_super) {
             var closeButtonComp = this.closeButtonComp = new component_1.Component(AgPanel.CLOSE_BTN_TEMPLATE);
             this.getContext().createBean(closeButtonComp);
             var eGui = closeButtonComp.getGui();
-            var child = icon_1.createIconNoSpan('close', this.gridOptionsService);
+            var child = (0, icon_1.createIconNoSpan)('close', this.gridOptionsService);
             child.classList.add('ag-panel-title-bar-button-icon');
             eGui.appendChild(child);
             this.addTitleBarButton(closeButtonComp);
@@ -157,10 +157,10 @@ var AgPanel = /** @class */ (function (_super) {
         button.setParentComponent(this);
     };
     AgPanel.prototype.getBodyHeight = function () {
-        return dom_1.getInnerHeight(this.eContentWrapper);
+        return (0, dom_1.getInnerHeight)(this.eContentWrapper);
     };
     AgPanel.prototype.getBodyWidth = function () {
-        return dom_1.getInnerWidth(this.eContentWrapper);
+        return (0, dom_1.getInnerWidth)(this.eContentWrapper);
     };
     AgPanel.prototype.setTitle = function (title) {
         this.eTitle.innerText = title;
@@ -174,23 +174,23 @@ var AgPanel = /** @class */ (function (_super) {
             this.closeButtonComp = this.destroyBean(this.closeButtonComp);
         }
         var eGui = this.getGui();
-        if (eGui && eGui.offsetParent) {
+        if (eGui && (0, dom_1.isVisible)(eGui)) {
             this.close();
         }
         _super.prototype.destroy.call(this);
     };
     AgPanel.CLOSE_BTN_TEMPLATE = "<div class=\"ag-button\"></div>";
     __decorate([
-        componentAnnotations_1.RefSelector('eContentWrapper')
+        (0, componentAnnotations_1.RefSelector)('eContentWrapper')
     ], AgPanel.prototype, "eContentWrapper", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('eTitleBar')
+        (0, componentAnnotations_1.RefSelector)('eTitleBar')
     ], AgPanel.prototype, "eTitleBar", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('eTitleBarButtons')
+        (0, componentAnnotations_1.RefSelector)('eTitleBarButtons')
     ], AgPanel.prototype, "eTitleBarButtons", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('eTitle')
+        (0, componentAnnotations_1.RefSelector)('eTitle')
     ], AgPanel.prototype, "eTitle", void 0);
     __decorate([
         context_1.PostConstruct

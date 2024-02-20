@@ -4,6 +4,7 @@ import { withPrefix } from 'gatsby';
 import VanillaTemplate from './VanillaTemplate';
 import AngularTemplate from './AngularTemplate';
 import ReactTemplate from './ReactTemplate';
+import CRAReactTemplate from './CRAReactTemplate';
 import TypescriptTemplate from './TypescriptTemplate';
 import VueTemplate from './VueTemplate';
 import Vue3Template from './Vue3Template';
@@ -36,7 +37,7 @@ export const getIndexHtml = (exampleInfo, isExecuting = false) => {
     const modifiedTimeFile = exampleInfo.getFile(getEntryFile(framework, internalFramework));
     const modifiedTimeMs = modifiedTimeFile ? modifiedTimeFile.mtimeMs : new Date().getTime();
 
-    let element;
+    let element, csbElement;
 
     const templateProps = {
         isExecuting,
@@ -76,15 +77,19 @@ export const getIndexHtml = (exampleInfo, isExecuting = false) => {
         }
 
         case 'angular':
+            element = <AngularTemplate
+                boilerplatePath={boilerplatePath}
+                scriptFiles={scriptFiles}
+                {...templateProps} />;
+
+            break;
         case 'react': {
-            const frameworkTemplates = {
-                angular: AngularTemplate,
-                react: ReactTemplate,
-            };
+            element = <ReactTemplate
+                boilerplatePath={boilerplatePath}
+                scriptFiles={scriptFiles}
+                {...templateProps} />;
 
-            const FrameworkTemplate = frameworkTemplates[framework];
-
-            element = <FrameworkTemplate
+            csbElement = <CRAReactTemplate
                 boilerplatePath={boilerplatePath}
                 scriptFiles={scriptFiles}
                 {...templateProps} />;
@@ -117,12 +122,16 @@ export const getIndexHtml = (exampleInfo, isExecuting = false) => {
             break;
     }
 
-    return '<!DOCTYPE html>\n' + format(ReactDOMServer.renderToStaticMarkup(element));
+    const plunkerIndexHtml = `<!DOCTYPE html>${format(ReactDOMServer.renderToStaticMarkup(element))}`;
+    return {
+        plunkerIndexHtml,
+        codeSandBoxIndexHtml: csbElement ? `<!DOCTYPE html>${format(ReactDOMServer.renderToStaticMarkup(csbElement))}` : plunkerIndexHtml
+    };
 };
 
 const format = (html) => {
     var tab = '\t';
-    var result = '';
+    var result   = '';
     var indent = '';
 
     html.split(/>\s*</).forEach(element => {

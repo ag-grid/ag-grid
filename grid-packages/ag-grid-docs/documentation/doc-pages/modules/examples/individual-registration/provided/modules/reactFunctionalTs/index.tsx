@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client';
 import { AgGridReact } from '@ag-grid-community/react';
 
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
@@ -21,6 +21,8 @@ ModuleRegistry.registerModules([
     MenuModule,
     GridChartsModule,
 ]);
+const leftModules = [SetFilterModule, ClipboardModule];
+const rightModules = [ExcelExportModule];
 
 const columns: ColDef[] = [
     { field: 'id' },
@@ -33,7 +35,6 @@ const defaultColDef: ColDef = {
     minWidth: 80,
     filter: true,
     floatingFilter: true,
-    resizable: true,
 };
 
 const GridExample = () => {
@@ -56,13 +57,13 @@ const GridExample = () => {
     }, []);
 
     return (
-        <div className="example-wrapper ag-theme-alpine">
+        <div className={'example-wrapper ' + /** DARK MODE START **/(document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz')/** DARK MODE END **/}>
             <div className="inner-col">
                 <AgGridReact
                     defaultColDef={defaultColDef}
                     rowData={leftRowData}
-                    modules={[SetFilterModule, ClipboardModule]}
-                    columnDefs={[...columns]}
+                    modules={leftModules}
+                    columnDefs={columns}
                     enableRangeSelection
                     enableCharts
                 />
@@ -72,8 +73,8 @@ const GridExample = () => {
                 <AgGridReact
                     defaultColDef={defaultColDef}
                     rowData={rightRowData}
-                    modules={[ExcelExportModule]}
-                    columnDefs={[...columns]}
+                    modules={rightModules}
+                    columnDefs={columns}
                     enableRangeSelection
                     enableCharts
                 />

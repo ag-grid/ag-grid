@@ -1,17 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.forEachReverse = exports.toStrings = exports.pushAll = exports.flatten = exports.includes = exports.moveInArray = exports.insertArrayIntoArray = exports.insertIntoArray = exports.removeAllFromArray = exports.removeAllFromUnorderedArray = exports.removeFromArray = exports.removeFromUnorderedArray = exports.removeRepeatsFromArray = exports.sortNumerically = exports.shallowCompare = exports.areEqual = exports.last = exports.existsAndNotEmpty = exports.firstExistingValue = void 0;
+exports.forEachReverse = exports.toStrings = exports.pushAll = exports.flatten = exports.includes = exports.moveInArray = exports.insertArrayIntoArray = exports.insertIntoArray = exports.removeAllFromArray = exports.removeAllFromUnorderedArray = exports.removeFromArray = exports.removeFromUnorderedArray = exports.removeRepeatsFromArray = exports.sortNumerically = exports.shallowCompare = exports.areEqual = exports.last = exports.existsAndNotEmpty = void 0;
 const generic_1 = require("./generic");
-function firstExistingValue(...values) {
-    for (let i = 0; i < values.length; i++) {
-        const value = values[i];
-        if (generic_1.exists(value)) {
-            return value;
-        }
-    }
-    return null;
-}
-exports.firstExistingValue = firstExistingValue;
 function existsAndNotEmpty(value) {
     return value != null && value.length > 0;
 }
@@ -33,7 +23,6 @@ function areEqual(a, b, comparator) {
         a.every((value, index) => comparator ? comparator(value, b[index]) : b[index] === value);
 }
 exports.areEqual = areEqual;
-/** @deprecated */
 function shallowCompare(arr1, arr2) {
     return areEqual(arr1, arr2);
 }

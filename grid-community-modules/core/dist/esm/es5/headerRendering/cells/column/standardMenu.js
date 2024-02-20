@@ -24,6 +24,7 @@ import { BeanStub } from "../../../context/beanStub";
 import { isVisible } from '../../../utils/dom';
 import { KeyCode } from '../../../constants/keyCode';
 import { setAriaRole } from '../../../utils/aria';
+import { Events } from '../../../eventKeys';
 var StandardMenuFactory = /** @class */ (function (_super) {
     __extends(StandardMenuFactory, _super);
     function StandardMenuFactory() {
@@ -34,44 +35,59 @@ var StandardMenuFactory = /** @class */ (function (_super) {
             this.hidePopup();
         }
     };
-    StandardMenuFactory.prototype.showMenuAfterMouseEvent = function (column, mouseEvent) {
+    StandardMenuFactory.prototype.showMenuAfterMouseEvent = function (column, mouseEvent, containerType) {
         var _this = this;
         this.showPopup(column, function (eMenu) {
             _this.popupService.positionPopupUnderMouseEvent({
                 column: column,
-                type: 'columnMenu',
+                type: containerType,
                 mouseEvent: mouseEvent,
                 ePopup: eMenu
             });
-        }, 'columnMenu', mouseEvent.target);
+        }, containerType, mouseEvent.target, this.menuService.isLegacyMenuEnabled());
     };
     StandardMenuFactory.prototype.showMenuAfterButtonClick = function (column, eventSource, containerType) {
         var _this = this;
+        var multiplier = -1;
+        var alignSide = 'left';
+        var isLegacyMenuEnabled = this.menuService.isLegacyMenuEnabled();
+        if (!isLegacyMenuEnabled && this.gridOptionsService.get('enableRtl')) {
+            multiplier = 1;
+            alignSide = 'right';
+        }
+        var nudgeX = isLegacyMenuEnabled ? undefined : (4 * multiplier);
+        var nudgeY = isLegacyMenuEnabled ? undefined : 4;
         this.showPopup(column, function (eMenu) {
             _this.popupService.positionPopupByComponent({
                 type: containerType,
                 eventSource: eventSource,
                 ePopup: eMenu,
+                nudgeX: nudgeX,
+                nudgeY: nudgeY,
+                alignSide: alignSide,
                 keepWithinBounds: true,
                 position: 'under',
                 column: column,
             });
-        }, containerType, eventSource);
+        }, containerType, eventSource, isLegacyMenuEnabled);
     };
-    StandardMenuFactory.prototype.showPopup = function (column, positionCallback, containerType, eventSource) {
+    StandardMenuFactory.prototype.showPopup = function (column, positionCallback, containerType, eventSource, isLegacyMenuEnabled) {
         var _this = this;
-        var filterWrapper = this.filterManager.getOrCreateFilterWrapper(column, 'COLUMN_MENU');
-        if (!filterWrapper) {
+        var filterWrapper = column ? this.filterManager.getOrCreateFilterWrapper(column, 'COLUMN_MENU') : undefined;
+        if (!filterWrapper || !column) {
             throw new Error('AG Grid - unable to show popup filter, filter instantiation failed');
         }
         var eMenu = document.createElement('div');
         setAriaRole(eMenu, 'presentation');
         eMenu.classList.add('ag-menu');
+        if (!isLegacyMenuEnabled) {
+            eMenu.classList.add('ag-filter-menu');
+        }
         this.tabListener = this.addManagedListener(eMenu, 'keydown', function (e) { return _this.trapFocusWithin(e, eMenu); });
         filterWrapper.guiPromise.then(function (gui) { return eMenu.appendChild(gui); });
         var hidePopup;
         var afterGuiDetached = function () { var _a; return (_a = filterWrapper.filterPromise) === null || _a === void 0 ? void 0 : _a.then(function (filter) { var _a; return (_a = filter === null || filter === void 0 ? void 0 : filter.afterGuiDetached) === null || _a === void 0 ? void 0 : _a.call(filter); }); };
-        var anchorToElement = eventSource || this.ctrlsService.getGridBodyCtrl().getGui();
+        var anchorToElement = this.menuService.isColumnMenuAnchoringEnabled() ? (eventSource !== null && eventSource !== void 0 ? eventSource : this.ctrlsService.getGridBodyCtrl().getGui()) : undefined;
         var closedCallback = function (e) {
             column.setMenuVisible(false, 'contextMenu');
             var isKeyboardEvent = e instanceof KeyboardEvent;
@@ -85,8 +101,12 @@ var StandardMenuFactory = /** @class */ (function (_super) {
                 }
             }
             afterGuiDetached();
+            _this.dispatchVisibleChangedEvent(false, containerType, column);
         };
         var translate = this.localeService.getLocaleTextFunc();
+        var ariaLabel = isLegacyMenuEnabled && containerType !== 'columnFilter'
+            ? translate('ariaLabelColumnMenu', 'Column Menu')
+            : translate('ariaLabelColumnFilter', 'Column Filter');
         var addPopupRes = this.popupService.addPopup({
             modal: true,
             eChild: eMenu,
@@ -94,7 +114,7 @@ var StandardMenuFactory = /** @class */ (function (_super) {
             closedCallback: closedCallback,
             positionCallback: function () { return positionCallback(eMenu); },
             anchorToElement: anchorToElement,
-            ariaLabel: translate('ariaLabelColumnMenu', 'Column Menu')
+            ariaLabel: ariaLabel
         });
         if (addPopupRes) {
             this.hidePopup = hidePopup = addPopupRes.hideFunc;
@@ -108,6 +128,7 @@ var StandardMenuFactory = /** @class */ (function (_super) {
             }
         });
         column.setMenuVisible(true, 'contextMenu');
+        this.dispatchVisibleChangedEvent(true, containerType, column);
     };
     StandardMenuFactory.prototype.trapFocusWithin = function (e, menu) {
         if (e.key !== KeyCode.TAB ||
@@ -118,9 +139,23 @@ var StandardMenuFactory = /** @class */ (function (_super) {
         e.preventDefault();
         this.focusService.focusInto(menu, e.shiftKey);
     };
+    StandardMenuFactory.prototype.dispatchVisibleChangedEvent = function (visible, containerType, column) {
+        var displayedEvent = {
+            type: Events.EVENT_COLUMN_MENU_VISIBLE_CHANGED,
+            visible: visible,
+            switchingTab: false,
+            key: containerType,
+            column: column !== null && column !== void 0 ? column : null
+        };
+        this.eventService.dispatchEvent(displayedEvent);
+    };
     StandardMenuFactory.prototype.isMenuEnabled = function (column) {
+        var _a;
         // for standard, we show menu if filter is enabled, and the menu is not suppressed by passing an empty array
-        return column.isFilterAllowed() && column.getMenuTabs(['filterMenuTab']).includes('filterMenuTab');
+        return column.isFilterAllowed() && ((_a = column.getColDef().menuTabs) !== null && _a !== void 0 ? _a : ['filterMenuTab']).includes('filterMenuTab');
+    };
+    StandardMenuFactory.prototype.showMenuAfterContextMenuEvent = function () {
+        // not supported in standard menu
     };
     __decorate([
         Autowired('filterManager')
@@ -134,8 +169,11 @@ var StandardMenuFactory = /** @class */ (function (_super) {
     __decorate([
         Autowired('ctrlsService')
     ], StandardMenuFactory.prototype, "ctrlsService", void 0);
+    __decorate([
+        Autowired('menuService')
+    ], StandardMenuFactory.prototype, "menuService", void 0);
     StandardMenuFactory = __decorate([
-        Bean('menuFactory')
+        Bean('filterMenuFactory')
     ], StandardMenuFactory);
     return StandardMenuFactory;
 }(BeanStub));

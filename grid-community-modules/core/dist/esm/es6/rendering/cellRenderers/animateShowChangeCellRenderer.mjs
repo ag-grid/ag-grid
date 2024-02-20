@@ -12,14 +12,21 @@ const ARROW_UP = '\u2191';
 const ARROW_DOWN = '\u2193';
 export class AnimateShowChangeCellRenderer extends Component {
     constructor() {
-        super(AnimateShowChangeCellRenderer.TEMPLATE);
+        super();
         this.refreshCount = 0;
+        const template = document.createElement('span');
+        const delta = document.createElement('span');
+        delta.setAttribute('class', 'ag-value-change-delta');
+        const value = document.createElement('span');
+        value.setAttribute('class', 'ag-value-change-value');
+        template.appendChild(delta);
+        template.appendChild(value);
+        this.setTemplateFromElement(template);
     }
     init(params) {
-        // this.params = params;
         this.eValue = this.queryForHtmlElement('.ag-value-change-value');
         this.eDelta = this.queryForHtmlElement('.ag-value-change-delta');
-        this.refresh(params);
+        this.refresh(params, true);
     }
     showDelta(params, delta) {
         const absDelta = Math.abs(delta);
@@ -27,11 +34,11 @@ export class AnimateShowChangeCellRenderer extends Component {
         const valueToUse = exists(valueFormatted) ? valueFormatted : absDelta;
         const deltaUp = (delta >= 0);
         if (deltaUp) {
-            this.eDelta.innerHTML = ARROW_UP + valueToUse;
+            this.eDelta.textContent = ARROW_UP + valueToUse;
         }
         else {
             // because negative, use ABS to remove sign
-            this.eDelta.innerHTML = ARROW_DOWN + valueToUse;
+            this.eDelta.textContent = ARROW_DOWN + valueToUse;
         }
         this.eDelta.classList.toggle('ag-value-change-delta-up', deltaUp);
         this.eDelta.classList.toggle('ag-value-change-delta-down', !deltaUp);
@@ -42,26 +49,28 @@ export class AnimateShowChangeCellRenderer extends Component {
         // is not the most recent and will not try to remove the delta value.
         this.refreshCount++;
         const refreshCountCopy = this.refreshCount;
-        window.setTimeout(() => {
-            if (refreshCountCopy === this.refreshCount) {
-                this.hideDeltaValue();
-            }
-        }, 2000);
+        this.getFrameworkOverrides().wrapIncoming(() => {
+            window.setTimeout(() => {
+                if (refreshCountCopy === this.refreshCount) {
+                    this.hideDeltaValue();
+                }
+            }, 2000);
+        });
     }
     hideDeltaValue() {
         this.eValue.classList.remove('ag-value-change-value-highlight');
         clearElement(this.eDelta);
     }
-    refresh(params) {
+    refresh(params, isInitialRender = false) {
         const value = params.value;
         if (value === this.lastValue) {
             return false;
         }
         if (exists(params.valueFormatted)) {
-            this.eValue.innerHTML = params.valueFormatted;
+            this.eValue.textContent = params.valueFormatted;
         }
         else if (exists(params.value)) {
-            this.eValue.innerHTML = value;
+            this.eValue.textContent = value;
         }
         else {
             clearElement(this.eValue);
@@ -80,15 +89,13 @@ export class AnimateShowChangeCellRenderer extends Component {
         if (this.lastValue) {
             this.eValue.classList.add('ag-value-change-value-highlight');
         }
-        this.setTimerToRemoveDelta();
+        if (!isInitialRender) {
+            this.setTimerToRemoveDelta();
+        }
         this.lastValue = value;
         return true;
     }
 }
-AnimateShowChangeCellRenderer.TEMPLATE = '<span>' +
-    '<span class="ag-value-change-delta"></span>' +
-    '<span class="ag-value-change-value"></span>' +
-    '</span>';
 __decorate([
     Autowired('filterManager')
 ], AnimateShowChangeCellRenderer.prototype, "filterManager", void 0);

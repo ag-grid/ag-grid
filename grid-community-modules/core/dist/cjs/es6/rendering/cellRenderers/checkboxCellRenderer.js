@@ -21,17 +21,19 @@ class CheckboxCellRenderer extends component_1.Component {
     init(params) {
         this.params = params;
         this.updateCheckbox(params);
-        this.eCheckbox.getInputElement().setAttribute('tabindex', '-1');
-        this.addManagedListener(this.eCheckbox.getInputElement(), 'click', (event) => {
-            event_1.stopPropagationForAgGrid(event);
+        const inputEl = this.eCheckbox.getInputElement();
+        inputEl.setAttribute('tabindex', '-1');
+        (0, aria_1.setAriaLive)(inputEl, 'polite');
+        this.addManagedListener(inputEl, 'click', (event) => {
+            (0, event_1.stopPropagationForAgGrid)(event);
             if (this.eCheckbox.isDisabled()) {
                 return;
             }
             const isSelected = this.eCheckbox.getValue();
             this.onCheckboxChanged(isSelected);
         });
-        this.addManagedListener(this.eCheckbox.getInputElement(), 'dblclick', (event) => {
-            event_1.stopPropagationForAgGrid(event);
+        this.addManagedListener(inputEl, 'dblclick', (event) => {
+            (0, event_1.stopPropagationForAgGrid)(event);
         });
         const eDocument = this.gridOptionsService.getDocument();
         this.addManagedListener(this.params.eGridCell, 'keydown', (event) => {
@@ -78,7 +80,7 @@ class CheckboxCellRenderer extends component_1.Component {
         const disabled = params.disabled != null ? params.disabled : !((_c = params.column) === null || _c === void 0 ? void 0 : _c.isCellEditable(params.node));
         this.eCheckbox.setDisabled(disabled);
         const translate = this.localeService.getLocaleTextFunc();
-        const stateName = aria_1.getAriaCheckboxStateName(translate, isSelected);
+        const stateName = (0, aria_1.getAriaCheckboxStateName)(translate, isSelected);
         const ariaLabel = disabled
             ? stateName
             : `${translate('ariaToggleCellValue', 'Press SPACE to toggle cell value')} (${stateName})`;
@@ -119,6 +121,6 @@ CheckboxCellRenderer.TEMPLATE = `
             <ag-checkbox role="presentation" ref="eCheckbox"></ag-checkbox>
         </div>`;
 __decorate([
-    componentAnnotations_1.RefSelector('eCheckbox')
+    (0, componentAnnotations_1.RefSelector)('eCheckbox')
 ], CheckboxCellRenderer.prototype, "eCheckbox", void 0);
 exports.CheckboxCellRenderer = CheckboxCellRenderer;

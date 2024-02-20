@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, IDateFilterParams, IRowNode } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions, IDateFilterParams, IRowNode } from '@ag-grid-community/core';
 
 var dateFilterParams: IDateFilterParams = {
   comparator: (filterLocalDateAtMidnight: Date, cellValue: string) => {
@@ -34,6 +34,8 @@ const columnDefs: ColDef[] = [
   { field: 'bronze', filter: 'agNumberColumnFilter' },
 ]
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
   defaultColDef: {
@@ -41,7 +43,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     minWidth: 120,
     filter: true,
   },
-  animateRows: true,
   isExternalFilterPresent: isExternalFilterPresent,
   doesExternalFilterPass: doesExternalFilterPass,
 }
@@ -78,18 +79,18 @@ function asDate(dateAsString: string) {
 
 function externalFilterChanged(newValue: string) {
   ageType = newValue
-  gridOptions.api!.onFilterChanged()
+  gridApi!.onFilterChanged()
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
     .then(function (data) {
       (document.querySelector('#everyone') as HTMLInputElement).checked = true
-      gridOptions.api!.setRowData(data)
+      gridApi!.setGridOption('rowData', data)
     })
 })

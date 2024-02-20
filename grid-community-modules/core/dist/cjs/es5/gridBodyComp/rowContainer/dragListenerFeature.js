@@ -34,25 +34,40 @@ var DragListenerFeature = /** @class */ (function (_super) {
     }
     DragListenerFeature.prototype.postConstruct = function () {
         var _this = this;
-        if (!this.gridOptionsService.isEnableRangeSelection() || // no range selection if no property
-            generic_1.missing(this.rangeService) // no range selection if not enterprise version
-        ) {
+        if ((0, generic_1.missing)(this.rangeService)) {
             return;
         }
-        var params = {
+        this.params = {
             eElement: this.eContainer,
             onDragStart: this.rangeService.onDragStart.bind(this.rangeService),
             onDragStop: this.rangeService.onDragStop.bind(this.rangeService),
             onDragging: this.rangeService.onDragging.bind(this.rangeService)
         };
-        this.dragService.addDragSource(params);
-        this.addDestroyFunc(function () { return _this.dragService.removeDragSource(params); });
+        this.addManagedPropertyListener('enableRangeSelection', function (props) {
+            var isEnabled = props.currentValue;
+            if (isEnabled) {
+                _this.enableFeature();
+                return;
+            }
+            _this.disableFeature();
+        });
+        this.addDestroyFunc(function () { return _this.disableFeature(); });
+        var isRangeSelection = this.gridOptionsService.get('enableRangeSelection');
+        if (isRangeSelection) {
+            this.enableFeature();
+        }
+    };
+    DragListenerFeature.prototype.enableFeature = function () {
+        this.dragService.addDragSource(this.params);
+    };
+    DragListenerFeature.prototype.disableFeature = function () {
+        this.dragService.removeDragSource(this.params);
     };
     __decorate([
-        context_1.Optional('rangeService')
+        (0, context_1.Optional)('rangeService')
     ], DragListenerFeature.prototype, "rangeService", void 0);
     __decorate([
-        context_1.Autowired('dragService')
+        (0, context_1.Autowired)('dragService')
     ], DragListenerFeature.prototype, "dragService", void 0);
     __decorate([
         context_1.PostConstruct

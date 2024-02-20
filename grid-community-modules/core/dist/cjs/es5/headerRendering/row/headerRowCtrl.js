@@ -20,13 +20,38 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HeaderRowCtrl = void 0;
 var beanStub_1 = require("../../context/beanStub");
 var context_1 = require("../../context/context");
 var eventKeys_1 = require("../../eventKeys");
-var browser_1 = require("../../utils/browser");
-var object_1 = require("../../utils/object");
 var headerFilterCellCtrl_1 = require("../cells/floatingFilter/headerFilterCellCtrl");
 var headerCellCtrl_1 = require("../cells/column/headerCellCtrl");
 var headerGroupCellCtrl_1 = require("../cells/columnGroup/headerGroupCellCtrl");
@@ -38,18 +63,17 @@ var HeaderRowCtrl = /** @class */ (function (_super) {
     function HeaderRowCtrl(rowIndex, pinned, type) {
         var _this = _super.call(this) || this;
         _this.instanceId = instanceIdSequence++;
-        _this.headerCellCtrls = {};
         _this.rowIndex = rowIndex;
         _this.pinned = pinned;
         _this.type = type;
         var typeClass = type == headerRowComp_1.HeaderRowType.COLUMN_GROUP ? "ag-header-row-column-group" :
             type == headerRowComp_1.HeaderRowType.FLOATING_FILTER ? "ag-header-row-column-filter" : "ag-header-row-column";
-        _this.headerRowClass = "ag-header-row " + typeClass;
+        _this.headerRowClass = "ag-header-row ".concat(typeClass);
         return _this;
     }
     HeaderRowCtrl.prototype.postConstruct = function () {
         this.isPrintLayout = this.gridOptionsService.isDomLayout('print');
-        this.isEnsureDomOrder = this.gridOptionsService.is('ensureDomOrder');
+        this.isEnsureDomOrder = this.gridOptionsService.get('ensureDomOrder');
     };
     HeaderRowCtrl.prototype.getInstanceId = function () {
         return this.instanceId;
@@ -76,18 +100,11 @@ var HeaderRowCtrl = /** @class */ (function (_super) {
     HeaderRowCtrl.prototype.getAriaRowIndex = function () {
         return this.rowIndex + 1;
     };
-    HeaderRowCtrl.prototype.getTransform = function () {
-        if (browser_1.isBrowserSafari()) {
-            // fix for a Safari rendering bug that caused the header to flicker above chart panels
-            // as you move the mouse over the header
-            return 'translateZ(0)';
-        }
-    };
     HeaderRowCtrl.prototype.addEventListeners = function () {
         var _this = this;
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
-        this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
+        this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_VIRTUAL_COLUMNS_CHANGED, function (params) { return _this.onVirtualColumnsChanged(params.afterScroll); });
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED, this.onRowHeightChanged.bind(this));
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_GRID_STYLES_CHANGED, this.onRowHeightChanged.bind(this));
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED, this.onRowHeightChanged.bind(this));
@@ -101,7 +118,10 @@ var HeaderRowCtrl = /** @class */ (function (_super) {
         this.addManagedPropertyListener('floatingFiltersHeight', this.onRowHeightChanged.bind(this));
     };
     HeaderRowCtrl.prototype.getHeaderCellCtrl = function (column) {
-        return generic_1.values(this.headerCellCtrls).find(function (cellCtrl) { return cellCtrl.getColumnGroupChild() === column; });
+        if (!this.headerCellCtrls) {
+            return;
+        }
+        return (0, generic_1.values)(this.headerCellCtrls).find(function (cellCtrl) { return cellCtrl.getColumnGroupChild() === column; });
     };
     HeaderRowCtrl.prototype.onDisplayedColumnsChanged = function () {
         this.isPrintLayout = this.gridOptionsService.isDomLayout('print');
@@ -117,20 +137,21 @@ var HeaderRowCtrl = /** @class */ (function (_super) {
     };
     HeaderRowCtrl.prototype.setWidth = function () {
         var width = this.getWidthForRow();
-        this.comp.setWidth(width + "px");
+        this.comp.setWidth("".concat(width, "px"));
     };
     HeaderRowCtrl.prototype.getWidthForRow = function () {
+        var columnModel = this.beans.columnModel;
         if (this.isPrintLayout) {
             var pinned = this.pinned != null;
             if (pinned) {
                 return 0;
             }
-            return this.columnModel.getContainerWidth('right')
-                + this.columnModel.getContainerWidth('left')
-                + this.columnModel.getContainerWidth(null);
+            return columnModel.getContainerWidth('right')
+                + columnModel.getContainerWidth('left')
+                + columnModel.getContainerWidth(null);
         }
         // if not printing, just return the width as normal
-        return this.columnModel.getContainerWidth(this.pinned);
+        return columnModel.getContainerWidth(this.pinned);
     };
     HeaderRowCtrl.prototype.onRowHeightChanged = function () {
         var _a = this.getTopAndHeight(), topOffset = _a.topOffset, rowHeight = _a.rowHeight;
@@ -138,15 +159,16 @@ var HeaderRowCtrl = /** @class */ (function (_super) {
         this.comp.setHeight(rowHeight + 'px');
     };
     HeaderRowCtrl.prototype.getTopAndHeight = function () {
-        var headerRowCount = this.columnModel.getHeaderRowCount();
+        var _a = this.beans, columnModel = _a.columnModel, filterManager = _a.filterManager;
+        var headerRowCount = columnModel.getHeaderRowCount();
         var sizes = [];
         var numberOfFloating = 0;
-        if (this.filterManager.hasFloatingFilters()) {
+        if (filterManager.hasFloatingFilters()) {
             headerRowCount++;
             numberOfFloating = 1;
         }
-        var groupHeight = this.columnModel.getColumnGroupHeaderRowHeight();
-        var headerHeight = this.columnModel.getColumnHeaderRowHeight();
+        var groupHeight = columnModel.getColumnGroupHeaderRowHeight();
+        var headerHeight = columnModel.getColumnHeaderRowHeight();
         var numberOfNonGroups = 1 + numberOfFloating;
         var numberOfGroups = headerRowCount - numberOfNonGroups;
         for (var i = 0; i < numberOfGroups; i++) {
@@ -154,7 +176,7 @@ var HeaderRowCtrl = /** @class */ (function (_super) {
         }
         sizes.push(headerHeight);
         for (var i = 0; i < numberOfFloating; i++) {
-            sizes.push(this.columnModel.getFloatingFiltersHeight());
+            sizes.push(columnModel.getFloatingFiltersHeight());
         }
         var topOffset = 0;
         for (var i = 0; i < this.rowIndex; i++) {
@@ -169,86 +191,120 @@ var HeaderRowCtrl = /** @class */ (function (_super) {
     HeaderRowCtrl.prototype.getRowIndex = function () {
         return this.rowIndex;
     };
-    HeaderRowCtrl.prototype.onVirtualColumnsChanged = function () {
+    HeaderRowCtrl.prototype.onVirtualColumnsChanged = function (afterScroll) {
+        if (afterScroll === void 0) { afterScroll = false; }
         var ctrlsToDisplay = this.getHeaderCtrls();
         var forceOrder = this.isEnsureDomOrder || this.isPrintLayout;
-        this.comp.setHeaderCtrls(ctrlsToDisplay, forceOrder);
+        this.comp.setHeaderCtrls(ctrlsToDisplay, forceOrder, afterScroll);
     };
     HeaderRowCtrl.prototype.getHeaderCtrls = function () {
+        var e_1, _a, e_2, _b;
         var _this = this;
         var oldCtrls = this.headerCellCtrls;
-        this.headerCellCtrls = {};
+        this.headerCellCtrls = new Map();
         var columns = this.getColumnsInViewport();
-        columns.forEach(function (child) {
-            // skip groups that have no displayed children. this can happen when the group is broken,
-            // and this section happens to have nothing to display for the open / closed state.
-            // (a broken group is one that is split, ie columns in the group have a non-group column
-            // in between them)
-            if (child.isEmptyGroup()) {
-                return;
+        try {
+            for (var columns_1 = __values(columns), columns_1_1 = columns_1.next(); !columns_1_1.done; columns_1_1 = columns_1.next()) {
+                var child = columns_1_1.value;
+                this.recycleAndCreateHeaderCtrls(child, oldCtrls);
             }
-            var idOfChild = child.getUniqueId();
-            // if we already have this cell rendered, do nothing
-            var headerCtrl = oldCtrls[idOfChild];
-            delete oldCtrls[idOfChild];
-            // it's possible there is a new Column with the same ID, but it's for a different Column.
-            // this is common with pivoting, where the pivot cols change, but the id's are still pivot_0,
-            // pivot_1 etc. so if new col but same ID, need to remove the old col here first as we are
-            // about to replace it in the this.headerComps map.
-            var forOldColumn = headerCtrl && headerCtrl.getColumnGroupChild() != child;
-            if (forOldColumn) {
-                _this.destroyBean(headerCtrl);
-                headerCtrl = undefined;
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (columns_1_1 && !columns_1_1.done && (_a = columns_1.return)) _a.call(columns_1);
             }
-            if (headerCtrl == null) {
-                switch (_this.type) {
-                    case headerRowComp_1.HeaderRowType.FLOATING_FILTER:
-                        headerCtrl = _this.createBean(new headerFilterCellCtrl_1.HeaderFilterCellCtrl(child, _this));
-                        break;
-                    case headerRowComp_1.HeaderRowType.COLUMN_GROUP:
-                        headerCtrl = _this.createBean(new headerGroupCellCtrl_1.HeaderGroupCellCtrl(child, _this));
-                        break;
-                    default:
-                        headerCtrl = _this.createBean(new headerCellCtrl_1.HeaderCellCtrl(child, _this));
-                        break;
-                }
-            }
-            _this.headerCellCtrls[idOfChild] = headerCtrl;
-        });
+            finally { if (e_1) throw e_1.error; }
+        }
         // we want to keep columns that are focused, otherwise keyboard navigation breaks
         var isFocusedAndDisplayed = function (ctrl) {
-            var isFocused = _this.focusService.isHeaderWrapperFocused(ctrl);
+            var _a = _this.beans, focusService = _a.focusService, columnModel = _a.columnModel;
+            var isFocused = focusService.isHeaderWrapperFocused(ctrl);
             if (!isFocused) {
                 return false;
             }
-            var isDisplayed = _this.columnModel.isDisplayed(ctrl.getColumnGroupChild());
+            var isDisplayed = columnModel.isDisplayed(ctrl.getColumnGroupChild());
             return isDisplayed;
         };
-        object_1.iterateObject(oldCtrls, function (id, oldCtrl) {
-            var keepCtrl = isFocusedAndDisplayed(oldCtrl);
-            if (keepCtrl) {
-                _this.headerCellCtrls[id] = oldCtrl;
+        if (oldCtrls) {
+            try {
+                for (var oldCtrls_1 = __values(oldCtrls), oldCtrls_1_1 = oldCtrls_1.next(); !oldCtrls_1_1.done; oldCtrls_1_1 = oldCtrls_1.next()) {
+                    var _c = __read(oldCtrls_1_1.value, 2), id = _c[0], oldCtrl = _c[1];
+                    var keepCtrl = isFocusedAndDisplayed(oldCtrl);
+                    if (keepCtrl) {
+                        this.headerCellCtrls.set(id, oldCtrl);
+                    }
+                    else {
+                        this.destroyBean(oldCtrl);
+                    }
+                }
             }
-            else {
-                _this.destroyBean(oldCtrl);
+            catch (e_2_1) { e_2 = { error: e_2_1 }; }
+            finally {
+                try {
+                    if (oldCtrls_1_1 && !oldCtrls_1_1.done && (_b = oldCtrls_1.return)) _b.call(oldCtrls_1);
+                }
+                finally { if (e_2) throw e_2.error; }
             }
-        });
-        var ctrlsToDisplay = object_1.getAllValuesInObject(this.headerCellCtrls);
+        }
+        var ctrlsToDisplay = Array.from(this.headerCellCtrls.values());
         return ctrlsToDisplay;
+    };
+    HeaderRowCtrl.prototype.recycleAndCreateHeaderCtrls = function (headerColumn, oldCtrls) {
+        if (!this.headerCellCtrls) {
+            return;
+        }
+        // skip groups that have no displayed children. this can happen when the group is broken,
+        // and this section happens to have nothing to display for the open / closed state.
+        // (a broken group is one that is split, ie columns in the group have a non-group column
+        // in between them)
+        if (headerColumn.isEmptyGroup()) {
+            return;
+        }
+        var idOfChild = headerColumn.getUniqueId();
+        // if we already have this cell rendered, do nothing
+        var headerCtrl;
+        if (oldCtrls) {
+            headerCtrl = oldCtrls.get(idOfChild);
+            oldCtrls.delete(idOfChild);
+        }
+        // it's possible there is a new Column with the same ID, but it's for a different Column.
+        // this is common with pivoting, where the pivot cols change, but the id's are still pivot_0,
+        // pivot_1 etc. so if new col but same ID, need to remove the old col here first as we are
+        // about to replace it in the this.headerComps map.
+        var forOldColumn = headerCtrl && headerCtrl.getColumnGroupChild() != headerColumn;
+        if (forOldColumn) {
+            this.destroyBean(headerCtrl);
+            headerCtrl = undefined;
+        }
+        if (headerCtrl == null) {
+            switch (this.type) {
+                case headerRowComp_1.HeaderRowType.FLOATING_FILTER:
+                    headerCtrl = this.createBean(new headerFilterCellCtrl_1.HeaderFilterCellCtrl(headerColumn, this.beans, this));
+                    break;
+                case headerRowComp_1.HeaderRowType.COLUMN_GROUP:
+                    headerCtrl = this.createBean(new headerGroupCellCtrl_1.HeaderGroupCellCtrl(headerColumn, this.beans, this));
+                    break;
+                default:
+                    headerCtrl = this.createBean(new headerCellCtrl_1.HeaderCellCtrl(headerColumn, this.beans, this));
+                    break;
+            }
+        }
+        this.headerCellCtrls.set(idOfChild, headerCtrl);
     };
     HeaderRowCtrl.prototype.getColumnsInViewport = function () {
         return this.isPrintLayout ? this.getColumnsInViewportPrintLayout() : this.getColumnsInViewportNormalLayout();
     };
     HeaderRowCtrl.prototype.getColumnsInViewportPrintLayout = function () {
-        var _this = this;
         // for print layout, we add all columns into the center
         if (this.pinned != null) {
             return [];
         }
         var viewportColumns = [];
         var actualDepth = this.getActualDepth();
+        var columnModel = this.beans.columnModel;
         ['left', null, 'right'].forEach(function (pinned) {
-            var items = _this.columnModel.getVirtualHeaderGroupRow(pinned, actualDepth);
+            var items = columnModel.getVirtualHeaderGroupRow(pinned, actualDepth);
             viewportColumns = viewportColumns.concat(items);
         });
         return viewportColumns;
@@ -258,34 +314,32 @@ var HeaderRowCtrl = /** @class */ (function (_super) {
     };
     HeaderRowCtrl.prototype.getColumnsInViewportNormalLayout = function () {
         // when in normal layout, we add the columns for that container only
-        return this.columnModel.getVirtualHeaderGroupRow(this.pinned, this.getActualDepth());
+        return this.beans.columnModel.getVirtualHeaderGroupRow(this.pinned, this.getActualDepth());
     };
     HeaderRowCtrl.prototype.focusHeader = function (column, event) {
-        var allCtrls = object_1.getAllValuesInObject(this.headerCellCtrls);
+        if (!this.headerCellCtrls) {
+            return false;
+        }
+        var allCtrls = Array.from(this.headerCellCtrls.values());
         var ctrl = allCtrls.find(function (ctrl) { return ctrl.getColumnGroupChild() == column; });
         if (!ctrl) {
             return false;
         }
-        ctrl.focus(event);
-        return true;
+        return ctrl.focus(event);
     };
     HeaderRowCtrl.prototype.destroy = function () {
         var _this = this;
-        object_1.iterateObject(this.headerCellCtrls, function (key, ctrl) {
-            _this.destroyBean(ctrl);
-        });
-        this.headerCellCtrls = {};
+        if (this.headerCellCtrls) {
+            this.headerCellCtrls.forEach(function (ctrl) {
+                _this.destroyBean(ctrl);
+            });
+        }
+        this.headerCellCtrls = undefined;
         _super.prototype.destroy.call(this);
     };
     __decorate([
-        context_1.Autowired('columnModel')
-    ], HeaderRowCtrl.prototype, "columnModel", void 0);
-    __decorate([
-        context_1.Autowired('focusService')
-    ], HeaderRowCtrl.prototype, "focusService", void 0);
-    __decorate([
-        context_1.Autowired('filterManager')
-    ], HeaderRowCtrl.prototype, "filterManager", void 0);
+        (0, context_1.Autowired)('beans')
+    ], HeaderRowCtrl.prototype, "beans", void 0);
     __decorate([
         context_1.PostConstruct
     ], HeaderRowCtrl.prototype, "postConstruct", null);

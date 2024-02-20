@@ -1,4 +1,14 @@
-import { Grid, ColDef, GridOptions, IFilterOptionDef, GetLocaleTextParams, INumberFilterParams, ITextFilterParams, IDateFilterParams } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  ColDef,
+  GridOptions,
+  IFilterOptionDef,
+  GetLocaleTextParams,
+  INumberFilterParams,
+  ITextFilterParams,
+  IDateFilterParams,
+} from '@ag-grid-community/core';
 declare var window: any;
 
 var filterParams: INumberFilterParams = {
@@ -192,12 +202,13 @@ const columnDefs: ColDef[] = [
   { field: 'total', filter: false },
 ]
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
   defaultColDef: {
     flex: 1,
     minWidth: 150,
-    sortable: true,
     filter: true,
   },
   getLocaleText: (params: GetLocaleTextParams) => {
@@ -209,33 +220,33 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function printState() {
-  var filterState = gridOptions.api!.getFilterModel()
+  var filterState = gridApi!.getFilterModel()
   console.log('filterState: ', filterState)
 }
 
 function saveState() {
-  window.filterState = gridOptions.api!.getFilterModel()
+  window.filterState = gridApi!.getFilterModel()
   console.log('filter state saved')
 }
 
 function restoreState() {
-  gridOptions.api!.setFilterModel(window.filterState)
+  gridApi!.setFilterModel(window.filterState)
   console.log('filter state restored')
 }
 
 function resetState() {
-  gridOptions.api!.setFilterModel(null)
+  gridApi!.setFilterModel(null)
   console.log('column state reset')
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
     .then(response => response.json())
     .then(function (data) {
-      gridOptions.api!.setRowData(data)
+      gridApi!.setGridOption('rowData', data)
     })
 })

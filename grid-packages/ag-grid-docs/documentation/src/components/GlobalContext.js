@@ -1,22 +1,24 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { LocalStorage } from 'utils/local-storage';
 
 // bypasses local storage
 const storageOverrides = {
-    enableVue3: true       // enables Vue 3 functionality in docs
-}
+    enableVue3: true, // enables Vue 3 functionality in docs
+};
 
 const defaultContextValue = {
     exampleImportType: 'packages',
-    useFunctionalReact: true,
-    useVue3: false,         // determines whether the user is going to see vue 2 or vue 3 examples (only applicable if enableVue3 is true)
-    set: () => { },
-    ...storageOverrides
+    useVue3: false, // determines whether the user is going to see vue 2 or vue 3 examples (only applicable if enableVue3 is true)
+    darkMode: typeof window === "object" ? getComputedStyle(document.documentElement).getPropertyValue('--color-scheme') === 'dark' : false,
+    set: () => {},
+    ...storageOverrides,
 };
 
-const { Provider, Consumer } = React.createContext(defaultContextValue);
+const GlobalContext = React.createContext(defaultContextValue);
 
 const contextStorageKey = 'context';
+
+const useGlobalContext = () => useContext(GlobalContext);
 
 /**
  * This provides state which can be used across the website; for example, if the user chooses to use packages for
@@ -38,7 +40,7 @@ class GlobalContextProvider extends React.PureComponent {
                 contextValue = {
                     ...contextValue,
                     ...storedContext,
-                    ...storageOverrides
+                    ...storageOverrides,
                 };
             }
         }
@@ -49,13 +51,13 @@ class GlobalContextProvider extends React.PureComponent {
         };
     }
 
-    setData = newData => {
+    setData = (newData) => {
         this.setState(newData, () => LocalStorage.set(contextStorageKey, JSON.stringify(this.state)));
     };
 
     render() {
-        return <Provider value={this.state}>{this.props.children}</Provider>;
+        return <GlobalContext.Provider value={this.state}>{this.props.children}</GlobalContext.Provider>;
     }
 }
 
-export { Consumer as default, GlobalContextProvider };
+export { GlobalContextProvider, useGlobalContext };

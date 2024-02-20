@@ -33,16 +33,10 @@ export declare class RowDragFeature extends BeanStub implements DropTarget {
     private clientSideRowModel;
     private eContainer;
     private isMultiRowDrag;
-    private isGridSorted;
-    private isGridFiltered;
-    private isRowGroupActive;
     private lastDraggingEvent;
     private autoScrollService;
     constructor(eContainer: HTMLElement);
     private postConstruct;
-    private onSortChanged;
-    private onFilterChanged;
-    private onRowGroupChanged;
     getContainer(): HTMLElement;
     isInterestedIn(type: DragSourceType): boolean;
     getIconName(): string;

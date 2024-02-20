@@ -49,7 +49,7 @@ var Component = /** @class */ (function (_super) {
         return _this;
     }
     Component.prototype.preConstructOnComponent = function () {
-        this.usingBrowserTooltips = this.gridOptionsService.is('enableBrowserTooltips');
+        this.usingBrowserTooltips = this.gridOptionsService.get('enableBrowserTooltips');
     };
     Component.prototype.getCompId = function () {
         return this.compId;
@@ -95,7 +95,7 @@ var Component = /** @class */ (function (_super) {
         var _this = this;
         // we MUST take a copy of the list first, as the 'swapComponentForNode' adds comments into the DOM
         // which messes up the traversal order of the children.
-        var childNodeList = dom_1.copyNodeList(parentNode.childNodes);
+        var childNodeList = (0, dom_1.copyNodeList)(parentNode.childNodes);
         childNodeList.forEach(function (childNode) {
             if (!(childNode instanceof HTMLElement)) {
                 return;
@@ -137,7 +137,7 @@ var Component = /** @class */ (function (_super) {
         return null;
     };
     Component.prototype.copyAttributesFromNode = function (source, dest) {
-        dom_1.iterateNamedNodeMap(source.attributes, function (name, value) { return dest.setAttribute(name, value); });
+        (0, dom_1.iterateNamedNodeMap)(source.attributes, function (name, value) { return dest.setAttribute(name, value); });
     };
     Component.prototype.swapComponentForNode = function (newComponent, parentNode, childNode) {
         var eComponent = newComponent.getGui();
@@ -158,7 +158,7 @@ var Component = /** @class */ (function (_super) {
         var thisPrototype = Object.getPrototypeOf(this);
         while (thisPrototype != null) {
             var metaData = thisPrototype.__agComponentMetaData;
-            var currentProtoName = function_1.getFunctionName(thisPrototype.constructor);
+            var currentProtoName = (0, function_1.getFunctionName)(thisPrototype.constructor);
             if (metaData && metaData[currentProtoName] && metaData[currentProtoName].querySelectors) {
                 metaData[currentProtoName].querySelectors.forEach(function (querySelector) { return action(querySelector); });
             }
@@ -166,7 +166,7 @@ var Component = /** @class */ (function (_super) {
         }
     };
     Component.prototype.activateTabIndex = function (elements) {
-        var tabIndex = this.gridOptionsService.getNum('tabIndex') || 0;
+        var tabIndex = this.gridOptionsService.get('tabIndex');
         if (!elements) {
             elements = [];
         }
@@ -176,7 +176,7 @@ var Component = /** @class */ (function (_super) {
         elements.forEach(function (el) { return el.setAttribute('tabindex', tabIndex.toString()); });
     };
     Component.prototype.setTemplate = function (template, paramsMap) {
-        var eGui = dom_1.loadTemplate(template);
+        var eGui = (0, dom_1.loadTemplate)(template);
         this.setTemplateFromElement(eGui, paramsMap);
     };
     Component.prototype.setTemplateFromElement = function (element, paramsMap) {
@@ -226,6 +226,9 @@ var Component = /** @class */ (function (_super) {
     Component.prototype.getFocusableElement = function () {
         return this.eGui;
     };
+    Component.prototype.getAriaElement = function () {
+        return this.getFocusableElement();
+    };
     Component.prototype.setParentComponent = function (component) {
         this.parentComponent = component;
     };
@@ -250,7 +253,7 @@ var Component = /** @class */ (function (_super) {
         if (!container) {
             container = this.eGui;
         }
-        if (dom_1.isNodeOrElement(newChild)) {
+        if ((0, dom_1.isNodeOrElement)(newChild)) {
             container.appendChild(newChild);
         }
         else {
@@ -266,7 +269,7 @@ var Component = /** @class */ (function (_super) {
         if (visible !== this.visible) {
             this.visible = visible;
             var skipAriaHidden = options.skipAriaHidden;
-            dom_1.setVisible(this.eGui, visible, { skipAriaHidden: skipAriaHidden });
+            (0, dom_1.setVisible)(this.eGui, visible, { skipAriaHidden: skipAriaHidden });
         }
     };
     Component.prototype.setDisplayed = function (displayed, options) {
@@ -274,7 +277,7 @@ var Component = /** @class */ (function (_super) {
         if (displayed !== this.displayed) {
             this.displayed = displayed;
             var skipAriaHidden = options.skipAriaHidden;
-            dom_1.setDisplayed(this.eGui, displayed, { skipAriaHidden: skipAriaHidden });
+            (0, dom_1.setDisplayed)(this.eGui, displayed, { skipAriaHidden: skipAriaHidden });
             var event_1 = {
                 type: Component.EVENT_DISPLAYED_CHANGED,
                 visible: this.displayed
@@ -317,11 +320,11 @@ var Component = /** @class */ (function (_super) {
         return eGui ? eGui.getAttribute(key) : null;
     };
     Component.prototype.getRefElement = function (refName) {
-        return this.queryForHtmlElement("[ref=\"" + refName + "\"]");
+        return this.queryForHtmlElement("[ref=\"".concat(refName, "\"]"));
     };
     Component.EVENT_DISPLAYED_CHANGED = 'displayedChanged';
     __decorate([
-        context_1.Autowired('agStackComponentsRegistry')
+        (0, context_1.Autowired)('agStackComponentsRegistry')
     ], Component.prototype, "agStackComponentsRegistry", void 0);
     __decorate([
         context_1.PreConstruct

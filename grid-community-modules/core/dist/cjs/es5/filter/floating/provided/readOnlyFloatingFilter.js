@@ -44,11 +44,11 @@ var ReadOnlyFloatingFilter = /** @class */ (function (_super) {
         var translate = this.localeService.getLocaleTextFunc();
         this.eFloatingFilterText
             .setDisabled(true)
-            .setInputAriaLabel(displayName + " " + translate('ariaFilterInput', 'Filter Input'));
+            .setInputAriaLabel("".concat(displayName, " ").concat(translate('ariaFilterInput', 'Filter Input')));
     };
     ReadOnlyFloatingFilter.prototype.onParentModelChanged = function (parentModel) {
         var _this = this;
-        if (!parentModel) {
+        if (parentModel == null) {
             this.eFloatingFilterText.setValue('');
             return;
         }
@@ -64,13 +64,16 @@ var ReadOnlyFloatingFilter = /** @class */ (function (_super) {
         });
     };
     ReadOnlyFloatingFilter.prototype.onParamsUpdated = function (params) {
+        this.refresh(params);
+    };
+    ReadOnlyFloatingFilter.prototype.refresh = function (params) {
         this.init(params);
     };
     __decorate([
-        componentAnnotations_1.RefSelector('eFloatingFilterText')
+        (0, componentAnnotations_1.RefSelector)('eFloatingFilterText')
     ], ReadOnlyFloatingFilter.prototype, "eFloatingFilterText", void 0);
     __decorate([
-        context_1.Autowired('columnModel')
+        (0, context_1.Autowired)('columnModel')
     ], ReadOnlyFloatingFilter.prototype, "columnModel", void 0);
     return ReadOnlyFloatingFilter;
 }(component_1.Component));

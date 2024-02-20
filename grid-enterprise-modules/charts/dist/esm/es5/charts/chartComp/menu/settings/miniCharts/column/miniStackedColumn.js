@@ -17,7 +17,7 @@ import { MiniChartWithAxes } from "../miniChartWithAxes";
 import { createColumnRects } from "../miniChartHelpers";
 var MiniStackedColumn = /** @class */ (function (_super) {
     __extends(MiniStackedColumn, _super);
-    function MiniStackedColumn(container, fills, strokes, data, yScaleDomain, tooltipName) {
+    function MiniStackedColumn(container, fills, strokes, _themeTemplateParameters, _isCustomTheme, data, yScaleDomain, tooltipName) {
         if (data === void 0) { data = MiniStackedColumn.data; }
         if (yScaleDomain === void 0) { yScaleDomain = [0, 16]; }
         if (tooltipName === void 0) { tooltipName = "stackedColumnTooltip"; }

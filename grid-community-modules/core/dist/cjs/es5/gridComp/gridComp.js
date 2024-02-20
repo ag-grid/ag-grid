@@ -25,7 +25,6 @@ exports.GridComp = void 0;
 var context_1 = require("../context/context");
 var componentAnnotations_1 = require("../widgets/componentAnnotations");
 var dom_1 = require("../utils/dom");
-var focusService_1 = require("../focusService");
 var gridCtrl_1 = require("./gridCtrl");
 var layoutFeature_1 = require("../styling/layoutFeature");
 var tabGuardComp_1 = require("../widgets/tabGuardComp");
@@ -42,7 +41,6 @@ var GridComp = /** @class */ (function (_super) {
         var compProxy = {
             destroyGridUi: function () { return _this.destroyBean(_this); },
             setRtlClass: function (cssClass) { return _this.addCssClass(cssClass); },
-            addOrRemoveKeyboardFocusClass: function (addOrRemove) { return _this.addOrRemoveCssClass(focusService_1.FocusService.AG_KEYBOARD_FOCUS, addOrRemove); },
             forceFocusOutOfContainer: this.forceFocusOutOfContainer.bind(this),
             updateLayoutClasses: this.updateLayoutClasses.bind(this),
             getFocusableContainers: this.getFocusableContainers.bind(this),
@@ -62,7 +60,8 @@ var GridComp = /** @class */ (function (_super) {
         this.initialiseTabGuard({
             // we want to override the default behaviour to do nothing for onTabKeyDown
             onTabKeyDown: function () { return undefined; },
-            focusInnerElement: function (fromBottom) { return _this.ctrl.focusInnerElement(fromBottom); }
+            focusInnerElement: function (fromBottom) { return _this.ctrl.focusInnerElement(fromBottom); },
+            forceFocusOutWhenTabGuardsAreEmpty: true
         });
     };
     GridComp.prototype.insertGridIntoDom = function () {
@@ -88,7 +87,7 @@ var GridComp = /** @class */ (function (_super) {
         var sideBar = this.ctrl.showSideBar() ? '<ag-side-bar ref="sideBar"></ag-side-bar>' : '';
         var statusBar = this.ctrl.showStatusBar() ? '<ag-status-bar ref="statusBar"></ag-status-bar>' : '';
         var watermark = this.ctrl.showWatermark() ? '<ag-watermark></ag-watermark>' : '';
-        var template = /* html */ "<div class=\"ag-root-wrapper\" role=\"presentation\">\n                " + dropZones + "\n                <div class=\"ag-root-wrapper-body\" ref=\"rootWrapperBody\" role=\"presentation\">\n                    <ag-grid-body ref=\"gridBody\"></ag-grid-body>\n                    " + sideBar + "\n                </div>\n                " + statusBar + "\n                <ag-pagination></ag-pagination>\n                " + watermark + "\n            </div>";
+        var template = /* html */ "<div class=\"ag-root-wrapper\" role=\"presentation\">\n                ".concat(dropZones, "\n                <div class=\"ag-root-wrapper-body\" ref=\"rootWrapperBody\" role=\"presentation\">\n                    <ag-grid-body ref=\"gridBody\"></ag-grid-body>\n                    ").concat(sideBar, "\n                </div>\n                ").concat(statusBar, "\n                <ag-pagination></ag-pagination>\n                ").concat(watermark, "\n            </div>");
         return template;
     };
     GridComp.prototype.getFocusableElement = function () {
@@ -101,19 +100,19 @@ var GridComp = /** @class */ (function (_super) {
         if (this.sideBarComp) {
             focusableContainers.push(this.sideBarComp.getGui());
         }
-        return focusableContainers.filter(function (el) { return dom_1.isVisible(el); });
+        return focusableContainers.filter(function (el) { return (0, dom_1.isVisible)(el); });
     };
     __decorate([
-        context_1.Autowired('loggerFactory')
+        (0, context_1.Autowired)('loggerFactory')
     ], GridComp.prototype, "loggerFactory", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('gridBody')
+        (0, componentAnnotations_1.RefSelector)('gridBody')
     ], GridComp.prototype, "gridBodyComp", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('sideBar')
+        (0, componentAnnotations_1.RefSelector)('sideBar')
     ], GridComp.prototype, "sideBarComp", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('rootWrapperBody')
+        (0, componentAnnotations_1.RefSelector)('rootWrapperBody')
     ], GridComp.prototype, "eRootWrapperBody", void 0);
     __decorate([
         context_1.PostConstruct

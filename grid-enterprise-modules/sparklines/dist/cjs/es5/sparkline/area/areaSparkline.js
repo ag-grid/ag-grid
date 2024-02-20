@@ -97,7 +97,7 @@ var AreaSparkline = /** @class */ (function (_super) {
     }
     AreaSparkline.prototype.markerFactory = function () {
         var shape = this.marker.shape;
-        var MarkerShape = markerFactory_1.getMarker(shape);
+        var MarkerShape = (0, markerFactory_1.getMarker)(shape);
         return new MarkerShape();
     };
     AreaSparkline.prototype.getNodeData = function () {
@@ -320,7 +320,7 @@ var AreaSparkline = /** @class */ (function (_super) {
         var lineDash = xLine.lineDash;
         xCrosshairLine.lineDash = Array.isArray(lineDash)
             ? lineDash
-            : lineDash_1.getLineDash(xCrosshairLine.lineCap, xLine.lineDash);
+            : (0, lineDash_1.getLineDash)(xCrosshairLine.lineCap, xLine.lineDash);
         xCrosshairLine.translationX = highlightedDatum.point.x;
     };
     AreaSparkline.prototype.updateYCrosshairLine = function () {
@@ -339,7 +339,7 @@ var AreaSparkline = /** @class */ (function (_super) {
         var lineDash = yLine.lineDash;
         yCrosshairLine.lineDash = Array.isArray(lineDash)
             ? lineDash
-            : lineDash_1.getLineDash(yCrosshairLine.lineCap, yLine.lineDash);
+            : (0, lineDash_1.getLineDash)(yCrosshairLine.lineCap, yLine.lineDash);
         yCrosshairLine.translationY = highlightedDatum.point.y;
     };
     AreaSparkline.prototype.getTooltipHtml = function (datum) {
@@ -356,14 +356,14 @@ var AreaSparkline = /** @class */ (function (_super) {
         };
         var tooltipRenderer = (_b = (_a = this.processedOptions) === null || _a === void 0 ? void 0 : _a.tooltip) === null || _b === void 0 ? void 0 : _b.renderer;
         if (tooltipRenderer) {
-            return sparklineTooltip_1.toTooltipHtml(tooltipRenderer({
+            return (0, sparklineTooltip_1.toTooltipHtml)(tooltipRenderer({
                 context: this.context,
                 datum: seriesDatum,
                 yValue: yValue,
                 xValue: xValue,
             }), defaults);
         }
-        return sparklineTooltip_1.toTooltipHtml(defaults);
+        return (0, sparklineTooltip_1.toTooltipHtml)(defaults);
     };
     AreaSparkline.className = 'AreaSparkline';
     return AreaSparkline;

@@ -33,12 +33,12 @@ The following example shows the following features of floating filters:
 - Text filter: has out of the box read/write floating filter (Athlete and Sport columns)
 - Set filter: has out of the box read-only floating filter (Country column)
 - Date and Number filter: have out of the box read/write floating filters for all filters except when switching to in-range filtering, where the floating filter is read-only (Age and Date columns)
-- Columns with `buttons` containing `'apply'` require the user to press <kbd>Enter</kbd> on the floating filter for the filter to take effect (Gold column). (**Note:** this does not apply to floating Date Filters, which are always applied as soon as a valid date is entered.)
+- Columns with `buttons` containing `'apply'` require the user to press <kbd>↵ Enter</kbd> on the floating filter for the filter to take effect (Gold column). (**Note:** this does not apply to floating Date Filters, which are always applied as soon as a valid date is entered.)
 - Changes made directly to the main filter are reflected automatically in the floating filters (change any main filter)
 - The user can configure when to show/hide the button that shows the full filter (Silver and Bronze columns)
 - The Year column has a filter, but has the floating filter disabled
 - The Total column has no filter and therefore no floating filter either
-- Combining `suppressMenu = true` and `filter = false` lets you control where the user can access the full filter. In this example `suppressMenu = true` for all the columns except Year, Silver, Bronze and Total.
+- Combining `suppressHeaderMenuButton = true` and `filter = false` lets you control where the user can access the full filter. In this example `suppressHeaderMenuButton = true` for all the columns except Year, Silver, Bronze and Total.
 
 <grid-example title='Floating Filter' name='floating-filter' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "modules": ["clientside", "setfilter", "menu"] }'></grid-example>
 
@@ -53,16 +53,16 @@ All the default filters provided by the grid provide their own implementation of
 | Date   | Sometimes | Provides a date input field to display the filter value, or a read-only label if read-only. |
 | Set    | No        | Provides a read-only label by concatenating all selected values. |
 
-The floating filters for Text, Number and Date (the simple filters) are editable when the filter has one condition and one value. If the floating filter has a) two or more conditions or b) zero (custom option) or two ('In Range') values, the floating filter is read-only.
+The floating filters for Text, Number and Date (the simple filters) are editable when the filter has one condition and one value. If the floating filter has a) two or more conditions or b) zero (custom option) or two ('inRange') values, the floating filter is read-only.
 
 The screen shots below show example scenarios where the provided Number floating filter is editable and read-only.
 
 - **One Value and One Condition - Editable**
-    <image-caption src="floating-filters/resources/oneValueOneCondition.png" alt="One Value One Condition" width="24rem"></image-caption>
+    <image-caption src="floating-filters/resources/oneValueOneCondition.png" alt="One Value One Condition" width="24rem" toggledarkmode="true"></image-caption>
 - **One Value and Two Conditions - Read-Only**
-    <image-caption src="floating-filters/resources/oneValueTwoConditions.png" alt="One Value Two Conditions" width="24rem"></image-caption>
+    <image-caption src="floating-filters/resources/oneValueTwoConditions.png" alt="One Value Two Conditions" width="24rem" toggledarkmode="true"></image-caption>
 - **Two Values and One Condition - Read-Only**
-    <image-caption src="floating-filters/resources/twoValuesOneCondition.png" alt="Two Values One Condition" width="24rem"></image-caption>
+    <image-caption src="floating-filters/resources/twoValuesOneCondition.png" alt="Two Values One Condition" width="24rem" toggledarkmode="true"></image-caption>
 
 ### Controlling Autocomplete on Floating Filters
 

@@ -1,7 +1,7 @@
 import { MiniStackedArea } from "./miniStackedArea.mjs";
 export class MiniNormalizedArea extends MiniStackedArea {
-    constructor(container, fills, strokes, data = MiniNormalizedArea.data) {
-        super(container, fills, strokes, data, "normalizedAreaTooltip");
+    constructor(container, fills, strokes, themeTemplateParameters, isCustomTheme, data = MiniNormalizedArea.data) {
+        super(container, fills, strokes, themeTemplateParameters, isCustomTheme, data, "normalizedAreaTooltip");
     }
 }
 MiniNormalizedArea.chartType = 'normalizedArea';

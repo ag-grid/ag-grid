@@ -2,7 +2,7 @@
 title: "Updating Row Data"
 ---
 
-Update the Row Data inside the grid by updating the `rowData` grid property or by calling the grid API `setRowData()`.
+Update the Row Data inside the grid by updating the `rowData` grid property or by calling the grid API `setGridOption('rowData', data)`.
 
 The example below shows the data with two sets of data. Clicking the buttons toggles between the data sets. Some rows are common between the dataset, however if any row is selected (by clicking the row), the selection is lost between row updates.
 
@@ -40,13 +40,13 @@ Note the following:
 
 - Note that if a grid sort is applied, the grid sorting order gets preference to the order of the data in the provided list.
 
-- **Remove Selected**: Removes the selected items. Try selecting multiple rows (<kbd>Ctrl</kbd> + click for multiple, or <kbd>Shift</kbd> + click for range) and remove multiple rows at the same time. Notice how the remaining rows animate to new positions.
+- **Remove Selected**: Removes the selected items. Try selecting multiple rows (<kbd>^ Ctrl</kbd> + click for multiple, or <kbd>⇧ Shift</kbd> + click for range) and remove multiple rows at the same time. Notice how the remaining rows animate to new positions.
 
 - **Update Prices**: Updates all the prices. Try ordering by price and notice the order change as the prices change. Also try highlighting a range on prices and see the aggregations appear in the status bar. As you update the prices, the aggregation values recalculate.
 
 - **Turn Grouping On / Off**: To turn grouping by symbol on and off.
 
-- **Group Selected A / B / C**: With grouping on, hit the buttons A, B and C to move selected items to that group. Notice how the rows animate to the new position.
+- **Group Selected A / B / C**: With grouping on, hit the buttons Move to Group A, B and C to move selected items to that group. Notice how the rows animate to the new position.
  
 (Note: the example uses the Enterprise-only features [Row Grouping](/grouping/), [Range Selection](/range-selection/) and [Status Bar](/status-bar/).)
 

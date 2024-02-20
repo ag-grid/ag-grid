@@ -1,4 +1,4 @@
-import { ColDef, Grid, GridOptions } from '@ag-grid-community/core';
+import { ColDef, GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 import { getData } from "./data";
 import { PartialMatchFilter } from './partialMatchFilter_typescript';
 
@@ -11,21 +11,21 @@ const columnDefs: ColDef[] = [
     },
 ]
 
+let gridApi: GridApi;
+
 const gridOptions: GridOptions = {
     defaultColDef: {
         editable: true,
-        sortable: true,
         flex: 1,
         minWidth: 100,
         filter: true,
-        resizable: true,
     },
     columnDefs: columnDefs,
-    rowData: getData()
+    rowData: getData(),
 }
 
 function onClicked() {
-    gridOptions.api!.getFilterInstance<PartialMatchFilter>('name', function (instance) {
+    gridApi!.getColumnFilterInstance<PartialMatchFilter>('name').then(instance => {
         instance!.componentMethod('Hello World!');
     })
 }
@@ -33,6 +33,5 @@ function onClicked() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-    new Grid(gridDiv, gridOptions)
-    gridOptions.api!.sizeColumnsToFit()
+    gridApi = createGrid(gridDiv, gridOptions);
 })

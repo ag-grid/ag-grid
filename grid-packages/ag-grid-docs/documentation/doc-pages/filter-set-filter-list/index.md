@@ -117,7 +117,7 @@ const gridOptions = {
 </snippet>
 
 <note>
-A custom [Cell Renderer Component](/component-cell-renderer/#cell-renderer-component) can also be supplied to `filterParams.cellRenderer`.
+A custom [Cell Renderer Component](../component-cell-renderer/) can also be supplied to `filterParams.cellRenderer`.
 </note>
 
 
@@ -218,13 +218,16 @@ The following example demonstrates loading set filter values asynchronously. Not
 
 ### Refreshing Values
 
-By default, when values are passed to the set filter they are only loaded once when the set filter is initially created. It may be desirable to refresh the values at a later point, for example to reflect other filtering that has occurred in the grid. To achieve this, you can call `refreshFilterValues` on the relevant filter that you would like to refresh. This will cause the values used in the filter to be refreshed from the original source, whether that is by looking at the provided `values` array again, or by re-executing the `values` callback. For example, you might use something like the following:
+When values are initially passed to the set filter, they are only loaded once when the set filter is initially created. When those values are updated via `filterParams.values`, the set filter will automatically update to reflect the new values.
+
+It may be desirable to refresh the values at a later point, for example to reflect other filtering that has occurred in the grid. To achieve this, you can call `refreshFilterValues` on the relevant filter that you would like to refresh. This will cause the values used in the filter to be refreshed from the original source, whether that is by looking at the provided `values` array again, or by re-executing the `values` callback. For example, you might use something like the following:
 
 <snippet>
 const gridOptions = {
     onFilterChanged: params => {
-        const setFilter = params.api.getFilterInstance('columnName');
-        setFilter.refreshFilterValues();
+        params.api.getColumnFilterInstance('columnName').then(setFilter => {
+            setFilter.refreshFilterValues();
+        });
     }
 }
 </snippet>
@@ -280,7 +283,7 @@ const gridOptions = {
 </snippet>
 
 <note>
-The `caseSensitive` option also affects [Mini-Filter](/filter-set-mini-filter/#enabling-case-sensitive-searches) searches and [API](/filter-set-api/#enabling-case-sensitivity) behaviours.
+The `caseSensitive` option also affects [Mini-Filter](../filter-set-mini-filter/#enabling-case-sensitive-searches) searches and [API](../filter-set-api/#enabling-case-sensitivity) behaviours.
 </note>
 
 The following example demonstrates the difference in behaviour between `caseSensitive: false` (the default) and `caseSensitive: true`:

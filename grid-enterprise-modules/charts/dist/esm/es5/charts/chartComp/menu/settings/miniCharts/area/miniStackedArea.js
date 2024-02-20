@@ -17,7 +17,7 @@ import { MiniChartWithAxes } from "../miniChartWithAxes";
 import { _Scene } from "ag-charts-community";
 var MiniStackedArea = /** @class */ (function (_super) {
     __extends(MiniStackedArea, _super);
-    function MiniStackedArea(container, fills, strokes, data, tooltipName) {
+    function MiniStackedArea(container, fills, strokes, _themeTemplateParameters, _isCustomTheme, data, tooltipName) {
         if (data === void 0) { data = MiniStackedArea.data; }
         if (tooltipName === void 0) { tooltipName = "stackedAreaTooltip"; }
         var _this = _super.call(this, container, tooltipName) || this;
@@ -53,7 +53,7 @@ var MiniStackedArea = /** @class */ (function (_super) {
         });
         _this.areas = pathData.map(function (points) {
             var area = new _Scene.Path();
-            area.strokeWidth = 1;
+            area.strokeWidth = 0;
             var path = area.path;
             path.clear();
             points.forEach(function (point, i) { return path[i > 0 ? "lineTo" : "moveTo"](point.x, point.y); });

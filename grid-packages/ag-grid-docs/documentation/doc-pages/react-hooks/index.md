@@ -1,17 +1,13 @@
 ---
-title: "React Hooks"
+title: "React Best Practices"
 frameworks: ["react"]
 ---
 
 This page explains best practices for using React Hooks with AG Grid.
 
-<warning>
-| This page assumes you are using [React Hooks](https://react.dev/reference/react) and not [React Classes](https://react.dev/reference/react/Component).
-</warning>
-
 ## Row Data
 
-When setting Row Data, we recommend using `useState` or `useMemo`.
+When setting Row Data, we recommend using `useState` to maintain a consistent array reference across renders. 
 
 ```jsx
 const App = () => {
@@ -25,22 +21,16 @@ const App = () => {
 };
 ```
 
-If you do NOT use `useState` or `useMemo`, then the grid will be provided with a new set of row data each time
-the parent component is rendered. This will result in unexpected behaviour in the grid, such as row selection resetting.
+If you do NOT use `useState` and define the row data array within your component, then the grid will be provided with a new array each time
+the component is rendered. This will result in additional grid renders and may result in unexpected behaviour in the grid, such as row selection resetting.
 
-For applications that set data into the grid (as opposed to showing data statically), it makes sense to favour `useState`
-over `useMemo` as loading data usually aligns with changing state in your application.
-
-All examples in the documentation use `useState` for Row Data. However, all code snippets in the documentation leave 
-these hooks out for easier reading.
+For applications that do not update rowData then `useMemo` is a valid alternative to `useState`.
 
 ### Immutable Data
 
-If you are going to be updating Row Data then it is strongly recommended to provide the `getRowId` callback that returns a unique id for each row. The grid is then able to identify Rows between new lists of Row Data. For example, if Rows are selected, and new Row Data is provided such that some Rows are removed, the grid is able to maintain the selection across rows 
-that exist in both the old and new lists of Row Data.
+If your application updates row data then it is strongly recommended to implement the `getRowId` callback. The `getRowId` callback returns a unique id for each row enabling the grid to maintain row state between updates. For example, if rows are selected and then the row data is updated, the grid is able to use the unique ids provided to maintain the current selection.
 
 See [Updating Row Data](/data-update-row-data/) for more information and other benefits of providing the `getRowId` callback.
-
 
 ## Column Definitions
 
@@ -58,108 +48,106 @@ const App = () => {
 ```
 
 If you do NOT use `useState` or `useMemo`, then the grid will be provided with a new set of Column Definitions **every time**
-the parent component is rendered. This will result in unexpected behaviour in the grid, such as the column state 
-(column order, width etc...) getting reset.
+the component is rendered. This may result in unexpected behaviour in the grid, such as the column state 
+(column order, width etc...) getting reset to match the column definitions provided.
 
-<warning>
+<note>
 If your application changes Column Definitions use `useState`, otherwise use `useMemo`.
-</warning>
+</note>
+
+## Object Properties
+
+For all properties that are Objects, e.g. `defaultColDef`, `sideBar` and `statusBar`, we recommend `useState` or `useMemo`. If
+you do not use these hooks, then you risk resetting the grid's state each time a render occurs. 
+
+For example, when providing a `defaultColDef` property do not define this inline or as a simple object on the component as this will result in a new instance on every render.
 
 ```jsx
 const App = () => {
-    // do NOT do this, will result in extra Grid processing
-    const columnDefs = [
-        {field: 'make'},
-        {field: 'model'},
-    ];
+    // BAD - new instance on every render
+    const defaultColDef = { filter: true };
 
-    return <AgGridReact columnDefs={columnDefs} />;
+    // BAD - new instance on every render
+    return <AgGridReact defaultColDef={{filter: true}} />;
 };
 ```
 
-## Object Properties vs Simple Properties
-
-For all other properties that are Objects, e.g. `sideBar` and `statusBar`, we also recommend `useState` or `useMemo`. If
-you do not use these hooks, then you risk resetting the grid's state each time a render occurs. For example the Side Bar
-will get initialised with new configuration from `sideBar` property if a new instance of this property is created on each render.
+Instead use `useMemo` or `useState` to ensure a consistent reference is maintained across renders.
 
 ```jsx
 const App = () => {
-
     // GOOD - only one instance created
-    const sideBar = useMemo( ()=> {
-        toolPanels: ['filters','columns']
-    }, []);
+    const defaultColDef = useMemo( ()=> { filter: true }, []);
 
-    // BAD - each render could re-create the Status Bar in the grid
-    const statusBar = {
-        statusPanels: [ 
-            { statusPanel: 'agTotalAndFilteredRowCountComponent' }
-        ]
-    };
-
-    return (
-        <AgGridReact sideBar={sideBar} statusBar={statusBar} />
-    );
+    return <AgGridReact defaultColDef={defaultColDef} />;
 };
 ```
+## Simple Properties
 
-Properties of simple types (string, boolean and number) do not need to use hooks to prevent unnecessary grid state 
-changes. This is because React uses JavaScript comparisons to determine if properties have changed, and JavaScript 
-compares by value (not object references) for simple types.
+Properties of simple types (string, boolean and number) do not need to use hooks as they are compared by value across renders. 
 
 ```jsx
 const App = () => {
 
     const rowBuffer = 0;
     const rowSelection = 'multiple';
-    const animateRows = true;
 
     return (
         <AgGridReact 
-            // variables assigned, no hooks, properties
-            // only set once
+            // GOOD
             rowBuffer={rowBuffer} 
             rowSelection={rowSelection} 
-            animateRows={animateRows} 
 
-            // inline also works well, properties only set once
+            // GOOD
             rowModelType='clientSide'
-            rowHeight="50"
+            rowHeight={50}
             />
     );
 };
 ```
 
-## Callbacks
+## Callbacks 
 
-For callbacks (both [Event Listeners](/grid-events/) and [Grid Options](/grid-options/) that are functions), you can use
-`useCallback()` if you wish, or you can also just set the callback into the grid.
+For [Grid Options](/grid-options/) that accept functions, i.e `isRowSelectable` we strongly recommend you use `useCallback` to avoid resetting grid state on every render. For example, if you do not use a callback for `isRowSelectable` then on every render the grid will receive a new function and have to re-run selection logic.
 
-Not using `useCallback()` has no adverse effect on the grid, as changing such does not have any impact on the grid state
-(unlike Row Data and Column Definitions, which when changed, have immediate impact on the grid). Changing a callback 
-means the new callback will be used next time it is needed.
+When using `useCallback()`, make sure you set correct dependencies in order to avoid stale closures.
 
-If you do use `useCallback()`, make sure you set correct dependencies in order to avoid stale closures. We get many 
-support issues due to application bugs resulting from stale closures.
+```jsx
+const App = () => {
+    const [count, setCount] = useState(0);
+
+    // BAD will re-run selection logic on every render
+    const isRowSelectable = (node) => node.data.value > count;
+
+    // GOOD will only re-run selection logic when count changes
+    const isRowSelectable = useCallback((node) => node.data.value > count, [count]);
+
+    return <AgGridReact isRowSelectable={isRowSelectable} />;
+};
+```
+
+## Event Listeners
+
+For [Event Listeners](/grid-events/) there is no requirement to use `useCallback` as event handlers do not trigger updates within the grid. However, you may find it easier to be consistent with Callbacks and just always use `useCallback`.
+
+If you do use `useCallback()`, make sure you set correct dependencies in order to avoid stale closures.
 
 ```jsx
 const App = () => {
     const [clickedCount, setClickedCount] = useState(0);
 
-    // good callback, no hook, no stale data
+    // GOOD callback, no hook, no stale data
     const onCellClicked = () => setClickedRow(clickedCount++);
 
-    // bad callback - stale data, dependency missing,
-    // will ALWAYS print 0
+    // BAD callback - stale data, dependency missing, will ALWAYS print 0
     const onCellValueChanged = useCallback( ()=> {
         console.log(`number of clicks is ${clickedCount}`);
     }, []);
 
-    // good callback, no stale data
+    // GOOD callback, no stale data
     const onFilterOpened = useCallback( ()=> {
         console.log(`number of clicks is ${clickedCount}`);
-    }, [clickedRow]);
+    }, [clickedCount]);
 
     return <AgGridReact 
                 onCellClicked={onCellClicked} 
@@ -171,20 +159,7 @@ const App = () => {
 
 ## Components
 
-Custom Components can be referenced by Name or Direct Reference. This is explained in detail on the page 
-[Registering Components](/components/). However, it made sense to make reference to it here, as it's to do with 
-integrating with the wider React Rendering Engine.
-
-We recommend referencing components directly, unless you have a reason to reference by name. Reasons to reference by 
-name would include a) wanting to make Column Definitions pure JSON or b) wanting to override default components (such as
-the default Header Component) provided by the grid.
-
-We prefer Direct Reference as it results in nice looking Column Definitions.
-
-We also recommend the use of `memo` around Components, to avoid wasted component renders on your Component.
-
-Almost all of our examples, where Custom Components are used, are referenced directly. However the examples do not use
-`memo` to avoid clutter in the example.
+Custom Components can be referenced by Name or Direct Reference, see [Registering Components](/components/). When providing a Direct Reference to the component AG Grid will avoid most unnecessary renders. However, if your component is rendered more than you expect, it may help to wrap it with `memo`.
 
 ```jsx
 const MyCellRenderer = p => <span>{p.value}</span>;
@@ -198,11 +173,34 @@ const App = () => {
         // or put inline
         { field: 'model', cellRenderer: p => <span>{p.value}</span> },
 
-        // optionally for best performance, memo() the renderer, so render
-        // cycles don't occur unnecessarily
+        // optionally for best performance, memo() the renderer,
         { field: 'price', cellRenderer: memo(MyCellRenderer) }
     ]);
 
     return <AgGridReact columnDefs={columnDefs} />;
 };
 ```
+
+## Debug Mode
+
+A good way to diagnose if you are causing the grid to update on each render is to enable the `debug` flag. In debug mode the grid will log extra details to the console including when a property has changed.
+
+```jsx
+const App = () => {
+    return <AgGridReact debug />;
+};
+```
+
+For example if you have defined `defaultColDef` inline on your component then on every render you will see the following in the console with `debug` enabled.
+
+```jsx
+const App = () => {
+    return <AgGridReact defaultColDef={{ filter: true}} debug />;
+};
+```
+
+```bash
+AG Grid: Updated property defaultColDef from  {filter: true}  to   {filter: true}
+```
+
+If there is no real difference between the old and new value then you should consider using `useState`, `useMemo` or `useCallback` as detailed above.

@@ -32,8 +32,8 @@ var ValueCache = /** @class */ (function (_super) {
         return _this;
     }
     ValueCache.prototype.init = function () {
-        this.active = this.gridOptionsService.is('valueCache');
-        this.neverExpires = this.gridOptionsService.is('valueCacheNeverExpires');
+        this.active = this.gridOptionsService.get('valueCache');
+        this.neverExpires = this.gridOptionsService.get('valueCacheNeverExpires');
     };
     ValueCache.prototype.onDataChanged = function () {
         if (this.neverExpires) {
@@ -63,7 +63,7 @@ var ValueCache = /** @class */ (function (_super) {
         context_1.PostConstruct
     ], ValueCache.prototype, "init", null);
     ValueCache = __decorate([
-        context_1.Bean('valueCache')
+        (0, context_1.Bean)('valueCache')
     ], ValueCache);
     return ValueCache;
 }(beanStub_1.BeanStub));

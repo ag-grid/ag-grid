@@ -71,7 +71,7 @@ var AgInputNumberField = /** @class */ (function (_super) {
                 return value;
             }
             else if (this.precision > 0) {
-                return parts[0] + "." + parts[1].slice(0, this.precision);
+                return "".concat(parts[0], ".").concat(parts[1].slice(0, this.precision));
             }
         }
         return parts[0];

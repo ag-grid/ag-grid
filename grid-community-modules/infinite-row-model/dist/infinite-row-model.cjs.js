@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-community/infinite-row-model - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.1.0
+          * @ag-grid-community/infinite-row-model - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.1.0
           * @link https://www.ag-grid.com/
           * @license MIT
           */
@@ -95,7 +95,7 @@ var InfiniteBlock = /** @class */ (function (_super) {
             failCallback: this.pageLoadFailed.bind(this, this.getVersion()),
             sortModel: this.params.sortModel,
             filterModel: this.params.filterModel,
-            context: this.gridOptionsService.context
+            context: this.gridOptionsService.getGridCommonParams().context
         };
         return params;
     };
@@ -149,6 +149,7 @@ var InfiniteBlock = /** @class */ (function (_super) {
                 _this.rowNodes[index] = new core.RowNode(_this.beans);
                 _this.rowNodes[index].setRowIndex(rowNode.rowIndex);
                 _this.rowNodes[index].setRowTop(rowNode.rowTop);
+                _this.rowNodes[index].setRowHeight(rowNode.rowHeight);
                 // clean up the old row
                 rowNode.clearRowTopAndRowIndex();
             }
@@ -267,7 +268,7 @@ var InfiniteCache = /** @class */ (function (_super) {
         if (!this.isAlive()) {
             return;
         }
-        this.logger.log("onPageLoaded: page = " + block.getId() + ", lastRow = " + lastRow);
+        this.logger.log("onPageLoaded: page = ".concat(block.getId(), ", lastRow = ").concat(lastRow));
         this.checkRowCount(block, lastRow);
         // we fire cacheUpdated even if the row count has not changed, as some items need updating even
         // if no new rows to render. for example the pagination panel has '?' as the total rows when loading
@@ -526,8 +527,7 @@ var InfiniteRowModel = /** @class */ (function (_super) {
     };
     InfiniteRowModel.prototype.verifyProps = function () {
         if (this.gridOptionsService.exists('initialGroupOrderComparator')) {
-            var message_1 = "AG Grid: initialGroupOrderComparator cannot be used with Infinite Row Model. If using Infinite Row Model, then sorting is done on the server side, nothing to do with the client.";
-            core._.doOnce(function () { return console.warn(message_1); }, 'IRM.InitialGroupOrderComparator');
+            core._.warnOnce('initialGroupOrderComparator cannot be used with Infinite Row Model as sorting is done on the server side');
         }
     };
     InfiniteRowModel.prototype.start = function () {
@@ -541,10 +541,18 @@ var InfiniteRowModel = /** @class */ (function (_super) {
         }
     };
     InfiniteRowModel.prototype.addEventListeners = function () {
+        var _this = this;
         this.addManagedListener(this.eventService, core.Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
         this.addManagedListener(this.eventService, core.Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
         this.addManagedListener(this.eventService, core.Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnEverything.bind(this));
         this.addManagedListener(this.eventService, core.Events.EVENT_STORE_UPDATED, this.onCacheUpdated.bind(this));
+        this.addManagedPropertyListener('datasource', function () { return _this.setDatasource(_this.gridOptionsService.get('datasource')); });
+        this.addManagedPropertyListener('cacheBlockSize', function () { return _this.resetCache(); });
+        this.addManagedPropertyListener('rowHeight', function () {
+            _this.rowHeight = _this.gridOptionsService.getRowHeightAsNumber();
+            _this.cacheParams.rowHeight = _this.rowHeight;
+            _this.updateRowHeights();
+        });
     };
     InfiniteRowModel.prototype.onFilterChanged = function () {
         this.reset();
@@ -603,11 +611,9 @@ var InfiniteRowModel = /** @class */ (function (_super) {
         var getRowIdFunc = this.gridOptionsService.getCallback('getRowId');
         var userGeneratingIds = getRowIdFunc != null;
         if (!userGeneratingIds) {
-            this.selectionService.reset();
+            this.selectionService.reset('rowDataChanged');
         }
         this.resetCache();
-        var event = this.createModelUpdatedEvent();
-        this.eventService.dispatchEvent(event);
     };
     InfiniteRowModel.prototype.createModelUpdatedEvent = function () {
         return {
@@ -615,6 +621,7 @@ var InfiniteRowModel = /** @class */ (function (_super) {
             // not sure if these should all be false - noticed if after implementing,
             // maybe they should be true?
             newPage: false,
+            newPageSize: false,
             newData: false,
             keepRenderedRows: true,
             animate: false
@@ -633,23 +640,34 @@ var InfiniteRowModel = /** @class */ (function (_super) {
             // properties - this way we take a snapshot of them, so if user changes any, they will be
             // used next time we create a new cache, which is generally after a filter or sort change,
             // or a new datasource is set
-            initialRowCount: this.defaultIfInvalid(this.gridOptionsService.getNum('infiniteInitialRowCount'), 1),
-            maxBlocksInCache: this.gridOptionsService.getNum('maxBlocksInCache'),
+            initialRowCount: this.gridOptionsService.get('infiniteInitialRowCount'),
+            maxBlocksInCache: this.gridOptionsService.get('maxBlocksInCache'),
             rowHeight: this.gridOptionsService.getRowHeightAsNumber(),
             // if user doesn't provide overflow, we use default overflow of 1, so user can scroll past
             // the current page and request first row of next page
-            overflowSize: this.defaultIfInvalid(this.gridOptionsService.getNum('cacheOverflowSize'), 1),
+            overflowSize: this.gridOptionsService.get('cacheOverflowSize'),
             // page size needs to be 1 or greater. having it at 1 would be silly, as you would be hitting the
             // server for one page at a time. so the default if not specified is 100.
-            blockSize: this.defaultIfInvalid(this.gridOptionsService.getNum('cacheBlockSize'), 100),
+            blockSize: this.gridOptionsService.get('cacheBlockSize'),
             // the cache could create this, however it is also used by the pages, so handy to create it
             // here as the settings are also passed to the pages
             lastAccessedSequence: new core.NumberSequence()
         };
         this.infiniteCache = this.createBean(new InfiniteCache(this.cacheParams));
+        this.eventService.dispatchEventOnce({
+            type: core.Events.EVENT_ROW_COUNT_READY
+        });
+        var event = this.createModelUpdatedEvent();
+        this.eventService.dispatchEvent(event);
     };
-    InfiniteRowModel.prototype.defaultIfInvalid = function (value, defaultValue) {
-        return value > 0 ? value : defaultValue;
+    InfiniteRowModel.prototype.updateRowHeights = function () {
+        var _this = this;
+        this.forEachNode(function (node) {
+            node.setRowHeight(_this.rowHeight);
+            node.setRowTop(_this.rowHeight * node.rowIndex);
+        });
+        var event = this.createModelUpdatedEvent();
+        this.eventService.dispatchEvent(event);
     };
     InfiniteRowModel.prototype.destroyCache = function () {
         if (this.infiniteCache) {
@@ -757,7 +775,7 @@ var InfiniteRowModel = /** @class */ (function (_super) {
 }(core.BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '30.1.0';
+var VERSION = '31.1.0';
 
 var InfiniteRowModelModule = {
     version: VERSION,

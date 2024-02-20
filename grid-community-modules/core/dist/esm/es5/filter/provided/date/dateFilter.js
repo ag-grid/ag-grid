@@ -54,13 +54,13 @@ var DateFilterModelFormatter = /** @class */ (function (_super) {
         if (isRange) {
             var formattedFrom = dateFrom !== null ? dateToFormattedString(dateFrom, format) : 'null';
             var formattedTo = dateTo !== null ? dateToFormattedString(dateTo, format) : 'null';
-            return formattedFrom + "-" + formattedTo;
+            return "".concat(formattedFrom, "-").concat(formattedTo);
         }
         if (dateFrom != null) {
             return dateToFormattedString(dateFrom, format);
         }
         // cater for when the type doesn't need a value
-        return "" + type;
+        return "".concat(type);
     };
     DateFilterModelFormatter.prototype.updateParams = function (params) {
         _super.prototype.updateParams.call(this, params);
@@ -79,6 +79,8 @@ var DateFilter = /** @class */ (function (_super) {
         _this.dateConditionToComps = [];
         _this.minValidYear = DEFAULT_MIN_YEAR;
         _this.maxValidYear = DEFAULT_MAX_YEAR;
+        _this.minValidDate = null;
+        _this.maxValidDate = null;
         return _this;
     }
     DateFilter.prototype.afterGuiAttached = function (params) {
@@ -123,7 +125,7 @@ var DateFilter = /** @class */ (function (_super) {
                     return params[param] == null ? fallback : Number(params[param]);
                 }
                 else {
-                    console.warn("AG Grid: DateFilter " + param + " is not a number");
+                    console.warn("AG Grid: DateFilter ".concat(param, " is not a number"));
                 }
             }
             return fallback;
@@ -132,6 +134,21 @@ var DateFilter = /** @class */ (function (_super) {
         this.maxValidYear = yearParser('maxValidYear', DEFAULT_MAX_YEAR);
         if (this.minValidYear > this.maxValidYear) {
             console.warn("AG Grid: DateFilter minValidYear should be <= maxValidYear");
+        }
+        if (params.minValidDate) {
+            this.minValidDate = params.minValidDate instanceof Date ? params.minValidDate : parseDateTimeFromString(params.minValidDate);
+        }
+        else {
+            this.minValidDate = null;
+        }
+        if (params.maxValidDate) {
+            this.maxValidDate = params.maxValidDate instanceof Date ? params.maxValidDate : parseDateTimeFromString(params.maxValidDate);
+        }
+        else {
+            this.maxValidDate = null;
+        }
+        if (this.minValidDate && this.maxValidDate && this.minValidDate > this.maxValidDate) {
+            console.warn("AG Grid: DateFilter minValidDate should be <= maxValidDate");
         }
         this.filterModelFormatter = new DateFilterModelFormatter(this.dateFilterParams, this.localeService, this.optionsFactory);
     };
@@ -165,8 +182,8 @@ var DateFilter = /** @class */ (function (_super) {
     };
     DateFilter.prototype.createFromToElement = function (eCondition, eConditionPanels, dateConditionComps, fromTo) {
         var eConditionPanel = document.createElement('div');
-        eConditionPanel.classList.add("ag-filter-" + fromTo);
-        eConditionPanel.classList.add("ag-filter-date-" + fromTo);
+        eConditionPanel.classList.add("ag-filter-".concat(fromTo));
+        eConditionPanel.classList.add("ag-filter-date-".concat(fromTo));
         eConditionPanels.push(eConditionPanel);
         eCondition.appendChild(eConditionPanel);
         dateConditionComps.push(this.createDateCompWrapper(eConditionPanel));
@@ -181,20 +198,44 @@ var DateFilter = /** @class */ (function (_super) {
         var removedComponents = this.removeItems(components, startPosition, deleteCount);
         removedComponents.forEach(function (comp) { return comp.destroy(); });
     };
+    DateFilter.prototype.isValidDateValue = function (value) {
+        if (value === null) {
+            return false;
+        }
+        if (this.minValidDate) {
+            if (value < this.minValidDate) {
+                return false;
+            }
+        }
+        else {
+            if (value.getUTCFullYear() < this.minValidYear) {
+                return false;
+            }
+        }
+        if (this.maxValidDate) {
+            if (value > this.maxValidDate) {
+                return false;
+            }
+        }
+        else {
+            if (value.getUTCFullYear() > this.maxValidYear) {
+                return false;
+            }
+        }
+        return true;
+    };
+    ;
     DateFilter.prototype.isConditionUiComplete = function (position) {
         var _this = this;
         if (!_super.prototype.isConditionUiComplete.call(this, position)) {
             return false;
         }
-        var isValidDate = function (value) { return value != null
-            && value.getUTCFullYear() >= _this.minValidYear
-            && value.getUTCFullYear() <= _this.maxValidYear; };
         var valid = true;
         this.forEachInput(function (element, index, elPosition, numberOfInputs) {
             if (elPosition !== position || !valid || index >= numberOfInputs) {
                 return;
             }
-            valid = valid && isValidDate(element.getDate());
+            valid = valid && _this.isValidDateValue(element.getDate());
         });
         return valid;
     };
@@ -242,15 +283,24 @@ var DateFilter = /** @class */ (function (_super) {
         });
         return result;
     };
+    DateFilter.prototype.translate = function (key) {
+        if (key === ScalarFilter.LESS_THAN) {
+            return _super.prototype.translate.call(this, 'before');
+        }
+        if (key === ScalarFilter.GREATER_THAN) {
+            return _super.prototype.translate.call(this, 'after');
+        }
+        return _super.prototype.translate.call(this, key);
+    };
     DateFilter.prototype.getModelAsString = function (model) {
         var _a;
         return (_a = this.filterModelFormatter.getModelAsString(model)) !== null && _a !== void 0 ? _a : '';
     };
     DateFilter.DEFAULT_FILTER_OPTIONS = [
         ScalarFilter.EQUALS,
-        ScalarFilter.GREATER_THAN,
-        ScalarFilter.LESS_THAN,
         ScalarFilter.NOT_EQUAL,
+        ScalarFilter.LESS_THAN,
+        ScalarFilter.GREATER_THAN,
         ScalarFilter.IN_RANGE,
         ScalarFilter.BLANK,
         ScalarFilter.NOT_BLANK,

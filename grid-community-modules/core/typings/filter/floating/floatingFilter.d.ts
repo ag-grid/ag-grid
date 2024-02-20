@@ -23,9 +23,7 @@ export interface IFloatingFilterParams<P = InbuiltParentType, TData = any, TCont
      * For example, the provided filters use debounceMs from the parent filter params.
      * */
     filterParams: IFilterParams;
-    /**
-     * Boolean flag to indicate if the button in the floating filter that opens the parent filter in a popup should be displayed.
-     */
+    /** @deprecated v31.1 Use `colDef.suppressFloatingFilterButton` instead. */
     suppressFilterButton: boolean;
     /**
      * This is a shortcut to invoke getModel on the parent filter.
@@ -52,7 +50,15 @@ export interface IFloatingFilterParams<P = InbuiltParentType, TData = any, TCont
      */
     showParentFilter: () => void;
 }
-export interface IFloatingFilter<P = any> {
+export interface BaseFloatingFilter {
+    /**
+     * Optional: A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.
+     * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.
+     * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.
+     */
+    afterGuiAttached?(): void;
+}
+export interface IFloatingFilter<P = any> extends BaseFloatingFilter {
     /**
      * Gets called every time the parent filter changes.
      * Your floating filter would typically refresh its UI to reflect the new filter state.
@@ -60,14 +66,10 @@ export interface IFloatingFilter<P = any> {
      * The event is the FilterChangedEvent that the grid fires.
      */
     onParentModelChanged(parentModel: any, filterChangedEvent?: FilterChangedEvent | null): void;
-    /**
-     * A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.
-     * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.
-     * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.
-     */
-    afterGuiAttached?(): void;
-    /** A hook to perform any necessary operations when the column definition is updated. */
+    /** @deprecated v31.1 - Use `refresh` instead */
     onParamsUpdated?(params: IFloatingFilterParams<P>): void;
+    /** A hook to perform any necessary operations when the column definition is updated. */
+    refresh?(params: IFloatingFilterParams<P>): void;
 }
 export interface IFloatingFilterComp<P = any> extends IFloatingFilter<P>, IComponent<IFloatingFilterParams<P>> {
 }

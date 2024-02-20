@@ -3,14 +3,12 @@ import { BeansContext } from '../beansContext';
 import {
     IHeaderRowContainerComp, HeaderRowCtrl, HeaderRowContainerCtrl, ColumnPinnedType
 } from '@ag-grid-community/core';
-import { CssClasses } from '../utils';
 import HeaderRowComp from './headerRowComp';
 
 
 const HeaderRowContainerComp = (props: { pinned: ColumnPinnedType }) => {
 
-    const [cssClasses, setCssClasses] = useState<CssClasses>(() => new CssClasses());
-    const [ariaHidden, setAriaHidden] = useState<true | false>(false);
+    const [displayed, setDisplayed] = useState<true | false>(true);
     const [headerRowCtrls, setHeaderRowCtrls] = useState<HeaderRowCtrl[]>([]);
 
     const {context} = useContext(BeansContext);
@@ -31,10 +29,7 @@ const HeaderRowContainerComp = (props: { pinned: ColumnPinnedType }) => {
         }
 
         const compProxy: IHeaderRowContainerComp = {
-            setDisplayed: displayed => {
-                setCssClasses(prev => prev.setClass('ag-hidden', !displayed));
-                setAriaHidden(!displayed);
-            },
+            setDisplayed,
             setCtrls: ctrls => setHeaderRowCtrls(ctrls),
 
             // centre only
@@ -64,7 +59,7 @@ const HeaderRowContainerComp = (props: { pinned: ColumnPinnedType }) => {
 
     }, []);
 
-    const className = useMemo(() => cssClasses.toString(), [cssClasses]);
+    const className = !displayed ? 'ag-hidden' : '';
 
     const insertRowsJsx = () => headerRowCtrls.map( ctrl => <HeaderRowComp ctrl={ctrl} key={ctrl.getInstanceId()} /> );
 
@@ -72,13 +67,13 @@ const HeaderRowContainerComp = (props: { pinned: ColumnPinnedType }) => {
         <>
             {
                 pinnedLeft && 
-                <div ref={setRef} className={"ag-pinned-left-header " + className} aria-hidden={ariaHidden} role="presentation">
+                <div ref={setRef} className={"ag-pinned-left-header " + className} aria-hidden={!displayed} role="rowgroup">
                     { insertRowsJsx() }
                 </div>
             }
             { 
                 pinnedRight && 
-                <div ref={setRef} className={"ag-pinned-right-header " + className} aria-hidden={ariaHidden} role="presentation">
+                <div ref={setRef} className={"ag-pinned-right-header " + className} aria-hidden={!displayed} role="rowgroup">
                 { insertRowsJsx() }
             </div>
             }

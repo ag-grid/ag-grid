@@ -4,6 +4,7 @@ export interface ISetDisplayValueModel<V> {
     getDisplayedValueCount(): number;
     getDisplayedItem(index: number): string | SetFilterModelTreeItem | null;
     getSelectAllItem(): string | SetFilterModelTreeItem;
+    getAddSelectionToFilterItem(): string | SetFilterModelTreeItem;
     getDisplayedKeys(): (string | null)[];
     forEachDisplayedKey(func: (key: string | null) => void): void;
     someDisplayedKey(func: (key: string | null) => boolean): boolean;
@@ -12,6 +13,7 @@ export interface ISetDisplayValueModel<V> {
 }
 export declare class SetFilterDisplayValue {
     static readonly SELECT_ALL = "__AG_SELECT_ALL__";
+    static readonly ADD_SELECTION_TO_FILTER = "__AG_ADD_SELECTION_TO_FILTER__";
 }
 export interface SetFilterModelTreeItem {
     treeKey: string | null;

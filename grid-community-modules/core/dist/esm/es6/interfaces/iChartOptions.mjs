@@ -2,7 +2,7 @@ export const DEFAULT_CHART_GROUPS = {
     columnGroup: [
         'column',
         'stackedColumn',
-        'normalizedColumn'
+        'normalizedColumn',
     ],
     barGroup: [
         'bar',
@@ -11,27 +11,45 @@ export const DEFAULT_CHART_GROUPS = {
     ],
     pieGroup: [
         'pie',
-        'doughnut'
+        'donut',
     ],
     lineGroup: [
-        'line'
+        'line',
     ],
     scatterGroup: [
         'scatter',
-        'bubble'
+        'bubble',
     ],
     areaGroup: [
         'area',
         'stackedArea',
-        'normalizedArea'
+        'normalizedArea',
     ],
-    histogramGroup: [
-        'histogram'
+    polarGroup: [
+        'radarLine',
+        'radarArea',
+        'nightingale',
+        'radialColumn',
+        'radialBar',
+    ],
+    statisticalGroup: [
+        'boxPlot',
+        'histogram',
+        'rangeBar',
+        'rangeArea',
+    ],
+    hierarchicalGroup: [
+        'treemap',
+        'sunburst',
+    ],
+    specializedGroup: [
+        'heatmap',
+        'waterfall',
     ],
     combinationGroup: [
         'columnLineCombo',
         'areaColumnCombo',
-        'customCombo'
+        'customCombo',
     ]
 };
 export const CHART_TOOL_PANEL_ALLOW_LIST = [

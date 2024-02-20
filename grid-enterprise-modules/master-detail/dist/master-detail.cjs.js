@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/master-detail - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.1.0
+          * @ag-grid-enterprise/master-detail - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.1.0
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -74,7 +74,7 @@ var DetailCellRendererCtrl = /** @class */ (function (_super) {
         this.focusService.focusInto(this.comp.getGui(), e.fromBelow);
     };
     DetailCellRendererCtrl.prototype.setAutoHeightClasses = function () {
-        var autoHeight = this.gridOptionsService.is('detailRowAutoHeight');
+        var autoHeight = this.gridOptionsService.get('detailRowAutoHeight');
         var parentClass = autoHeight ? 'ag-details-row-auto-height' : 'ag-details-row-fixed-height';
         var detailClass = autoHeight ? 'ag-details-grid-auto-height' : 'ag-details-grid-fixed-height';
         this.comp.addOrRemoveCssClass(parentClass, true);
@@ -107,7 +107,7 @@ var DetailCellRendererCtrl = /** @class */ (function (_super) {
                 'please set gridOptions.detailCellRendererParams.detailGridOptions');
             return;
         }
-        var autoHeight = this.gridOptionsService.is('detailRowAutoHeight');
+        var autoHeight = this.gridOptionsService.get('detailRowAutoHeight');
         // we clone the detail grid options, as otherwise it would be shared
         // across many instances, and that would be a problem because we set
         // api and columnApi into gridOptions
@@ -142,10 +142,16 @@ var DetailCellRendererCtrl = /** @class */ (function (_super) {
     };
     DetailCellRendererCtrl.prototype.loadRowData = function () {
         var _this = this;
+        var _a, _b, _c;
         // in case a refresh happens before the last refresh completes (as we depend on async
         // application logic) we keep track on what the latest call was.
         this.loadRowDataVersion++;
         var versionThisCall = this.loadRowDataVersion;
+        if (((_a = this.params.detailGridOptions) === null || _a === void 0 ? void 0 : _a.rowModelType) === 'serverSide') {
+            var node = this.params.node;
+            (_c = (_b = node.detailGridInfo) === null || _b === void 0 ? void 0 : _b.api) === null || _c === void 0 ? void 0 : _c.refreshServerSide({ purge: true });
+            return;
+        }
         var userFunc = this.params.getDetailRowData;
         if (!userFunc) {
             console.warn('AG Grid: could not find getDetailRowData for master / detail, ' +
@@ -164,7 +170,7 @@ var DetailCellRendererCtrl = /** @class */ (function (_super) {
             // as the data could have been updated with new instance
             data: this.params.node.data,
             successCallback: successCallback,
-            context: this.gridOptionsService.context
+            context: this.gridOptionsService.getGridCommonParams().context
         };
         userFunc(funcParams);
     };
@@ -286,26 +292,23 @@ var DetailCellRenderer = /** @class */ (function (_super) {
         // this is only used by Angular and Vue, as React uses native React AG Grid detail grids
         var frameworkComponentWrapper = this.context.getBean('frameworkComponentWrapper');
         var frameworkOverrides = this.getFrameworkOverrides();
-        // tslint:disable-next-line
-        new core.Grid(this.eDetailGrid, gridOptions, {
+        var api = core.createGrid(this.eDetailGrid, gridOptions, {
             frameworkOverrides: frameworkOverrides,
             providedBeanInstances: {
                 agGridReact: agGridReactCloned,
-                frameworkComponentWrapper: frameworkComponentWrapper
+                frameworkComponentWrapper: frameworkComponentWrapper,
             },
-            modules: core.ModuleRegistry.__getGridRegisteredModules(this.params.api.getGridId())
+            modules: core.ModuleRegistry.__getGridRegisteredModules(this.params.api.getGridId()),
         });
-        this.detailApi = gridOptions.api;
-        this.ctrl.registerDetailWithMaster(gridOptions.api, gridOptions.columnApi);
+        this.detailApi = api;
+        this.ctrl.registerDetailWithMaster(api, new core.ColumnApi(api));
         this.addDestroyFunc(function () {
-            if (gridOptions.api) {
-                gridOptions.api.destroy();
-            }
+            api === null || api === void 0 ? void 0 : api.destroy();
         });
     };
     DetailCellRenderer.prototype.setRowData = function (rowData) {
         // ensure detail grid api still exists (grid may be destroyed when async call tries to set data)
-        this.detailApi && this.detailApi.setRowData(rowData);
+        this.detailApi && this.detailApi.setGridOption('rowData', rowData);
     };
     DetailCellRenderer.TEMPLATE = "<div class=\"ag-details-row\" role=\"gridcell\">\n            <div ref=\"eDetailGrid\" class=\"ag-details-grid\" role=\"presentation\"></div>\n        </div>";
     __decorate([
@@ -315,7 +318,7 @@ var DetailCellRenderer = /** @class */ (function (_super) {
 }(core.Component));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '30.1.0';
+var VERSION = '31.1.0';
 
 var MasterDetailModule = {
     version: VERSION,

@@ -1,9 +1,9 @@
-import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
 
 function changeSize(value: string) {
   const sizes = ['large', 'normal', 'compact'];
 
-  const el = document.querySelector<HTMLElement>('.ag-theme-alpine')!;
+  const el = document.querySelector<HTMLElement>('[class*="ag-theme-quartz"]')!;
 
   sizes.forEach(size => el.classList.toggle(size, size === value));
 }
@@ -21,14 +21,14 @@ const columnDefs: ColDef[] = [
   { field: 'total' },
 ]
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   rowData: null,
   columnDefs: columnDefs,
   defaultColDef: {
     editable: true,
-    sortable: true,
     filter: true,
-    resizable: true,
   },
   sideBar: 'columns'
 }
@@ -36,10 +36,10 @@ const gridOptions: GridOptions<IOlympicData> = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })
 

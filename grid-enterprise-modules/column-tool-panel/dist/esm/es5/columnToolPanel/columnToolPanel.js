@@ -24,13 +24,7 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-import { _, Autowired, Component, Events, ModuleNames, ModuleRegistry } from "@ag-grid-community/core";
+import { _, Component, Events, ModuleNames, ModuleRegistry } from "@ag-grid-community/core";
 import { PivotModePanel } from "./pivotModePanel";
 import { PivotDropZonePanel, RowGroupDropZonePanel, ValuesDropZonePanel } from "@ag-grid-enterprise/row-grouping";
 import { PrimaryColsPanel } from "./primaryColsPanel";
@@ -51,7 +45,7 @@ var ColumnToolPanel = /** @class */ (function (_super) {
     };
     ColumnToolPanel.prototype.init = function (params) {
         var _this = this;
-        var defaultParams = {
+        var defaultParams = this.gridOptionsService.addGridCommonParams({
             suppressColumnMove: false,
             suppressColumnSelectAll: false,
             suppressColumnFilter: false,
@@ -62,10 +56,8 @@ var ColumnToolPanel = /** @class */ (function (_super) {
             suppressValues: false,
             suppressPivots: false,
             suppressSyncLayoutWithGrid: false,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-        };
-        this.params = __assign(__assign(__assign({}, defaultParams), params), { context: this.gridOptionsService.context });
+        });
+        this.params = __assign(__assign({}, defaultParams), params);
         if (this.isRowGroupingModuleLoaded() && !this.params.suppressPivotMode) {
             // DO NOT CHANGE TO createManagedBean
             this.pivotModePanel = this.createBean(new PivotModePanel());
@@ -216,9 +208,15 @@ var ColumnToolPanel = /** @class */ (function (_super) {
         this.childDestroyFuncs.length = 0;
         _.clearElement(this.getGui());
     };
-    ColumnToolPanel.prototype.refresh = function () {
+    ColumnToolPanel.prototype.refresh = function (params) {
         this.destroyChildren();
-        this.init(this.params);
+        this.init(params);
+        return true;
+    };
+    ColumnToolPanel.prototype.getState = function () {
+        return {
+            expandedGroupIds: this.primaryColsPanel.getExpandedGroups()
+        };
     };
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so this must be public.
@@ -227,12 +225,6 @@ var ColumnToolPanel = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     ColumnToolPanel.TEMPLATE = "<div class=\"ag-column-panel\"></div>";
-    __decorate([
-        Autowired("gridApi")
-    ], ColumnToolPanel.prototype, "gridApi", void 0);
-    __decorate([
-        Autowired("columnApi")
-    ], ColumnToolPanel.prototype, "columnApi", void 0);
     return ColumnToolPanel;
 }(Component));
 export { ColumnToolPanel };

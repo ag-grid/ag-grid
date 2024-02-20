@@ -26,7 +26,7 @@ var beanStub_1 = require("../../context/beanStub");
 var context_1 = require("../../context/context");
 var dom_1 = require("../../utils/dom");
 var RESIZE_CONTAINER_STYLE = 'ag-resizer-wrapper';
-var RESIZE_TEMPLATE = /* html */ "<div class=\"" + RESIZE_CONTAINER_STYLE + "\">\n        <div ref=\"eTopLeftResizer\" class=\"ag-resizer ag-resizer-topLeft\"></div>\n        <div ref=\"eTopResizer\" class=\"ag-resizer ag-resizer-top\"></div>\n        <div ref=\"eTopRightResizer\" class=\"ag-resizer ag-resizer-topRight\"></div>\n        <div ref=\"eRightResizer\" class=\"ag-resizer ag-resizer-right\"></div>\n        <div ref=\"eBottomRightResizer\" class=\"ag-resizer ag-resizer-bottomRight\"></div>\n        <div ref=\"eBottomResizer\" class=\"ag-resizer ag-resizer-bottom\"></div>\n        <div ref=\"eBottomLeftResizer\" class=\"ag-resizer ag-resizer-bottomLeft\"></div>\n        <div ref=\"eLeftResizer\" class=\"ag-resizer ag-resizer-left\"></div>\n    </div>";
+var RESIZE_TEMPLATE = /* html */ "<div class=\"".concat(RESIZE_CONTAINER_STYLE, "\">\n        <div ref=\"eTopLeftResizer\" class=\"ag-resizer ag-resizer-topLeft\"></div>\n        <div ref=\"eTopResizer\" class=\"ag-resizer ag-resizer-top\"></div>\n        <div ref=\"eTopRightResizer\" class=\"ag-resizer ag-resizer-topRight\"></div>\n        <div ref=\"eRightResizer\" class=\"ag-resizer ag-resizer-right\"></div>\n        <div ref=\"eBottomRightResizer\" class=\"ag-resizer ag-resizer-bottomRight\"></div>\n        <div ref=\"eBottomResizer\" class=\"ag-resizer ag-resizer-bottom\"></div>\n        <div ref=\"eBottomLeftResizer\" class=\"ag-resizer ag-resizer-bottomLeft\"></div>\n        <div ref=\"eLeftResizer\" class=\"ag-resizer ag-resizer-left\"></div>\n    </div>");
 var PositionableFeature = /** @class */ (function (_super) {
     __extends(PositionableFeature, _super);
     function PositionableFeature(element, config) {
@@ -74,8 +74,8 @@ var PositionableFeature = /** @class */ (function (_super) {
         var computedMinWidth = 0;
         // here we don't use the main offset parent but the element's offsetParent
         // in order to calculated the minWidth and minHeight correctly
-        var isVisible = !!this.element.offsetParent;
-        if (isVisible) {
+        var isElementVisible = (0, dom_1.isVisible)(this.element);
+        if (isElementVisible) {
             var boundaryEl = this.findBoundaryElement();
             var offsetParentComputedStyles = window.getComputedStyle(boundaryEl);
             if (offsetParentComputedStyles.minWidth != null) {
@@ -104,7 +104,7 @@ var PositionableFeature = /** @class */ (function (_super) {
         else if (x || y) {
             this.offsetElement(x, y);
         }
-        else if (isVisible && forcePopupParentAsOffsetParent) {
+        else if (isElementVisible && forcePopupParentAsOffsetParent) {
             var boundaryEl = this.boundaryEl;
             var initialisedDuringPositioning = true;
             if (!boundaryEl) {
@@ -207,10 +207,10 @@ var PositionableFeature = /** @class */ (function (_super) {
         this.element.style.flex = '0 0 auto';
         var _a = this.lastSize, height = _a.height, width = _a.width;
         if (width !== -1) {
-            this.element.style.width = width + "px";
+            this.element.style.width = "".concat(width, "px");
         }
         if (height !== -1) {
-            this.element.style.height = height + "px";
+            this.element.style.height = "".concat(height, "px");
         }
     };
     PositionableFeature.prototype.getHeight = function () {
@@ -221,8 +221,8 @@ var PositionableFeature = /** @class */ (function (_super) {
         var eGui = this.element;
         var isPercent = false;
         if (typeof height === 'string' && height.indexOf('%') !== -1) {
-            dom_1.setFixedHeight(eGui, height);
-            height = dom_1.getAbsoluteHeight(eGui);
+            (0, dom_1.setFixedHeight)(eGui, height);
+            height = (0, dom_1.getAbsoluteHeight)(eGui);
             isPercent = true;
         }
         else {
@@ -239,10 +239,10 @@ var PositionableFeature = /** @class */ (function (_super) {
         }
         if (!isPercent) {
             if (popup) {
-                dom_1.setFixedHeight(eGui, height);
+                (0, dom_1.setFixedHeight)(eGui, height);
             }
             else {
-                eGui.style.height = height + "px";
+                eGui.style.height = "".concat(height, "px");
                 eGui.style.flex = '0 0 auto';
                 this.lastSize.height = typeof height === 'number' ? height : parseFloat(height);
             }
@@ -286,8 +286,8 @@ var PositionableFeature = /** @class */ (function (_super) {
         var popup = this.config.popup;
         var isPercent = false;
         if (typeof width === 'string' && width.indexOf('%') !== -1) {
-            dom_1.setFixedWidth(eGui, width);
-            width = dom_1.getAbsoluteWidth(eGui);
+            (0, dom_1.setFixedWidth)(eGui, width);
+            width = (0, dom_1.getAbsoluteWidth)(eGui);
             isPercent = true;
         }
         else if (this.positioned) {
@@ -303,10 +303,10 @@ var PositionableFeature = /** @class */ (function (_super) {
         }
         if (!isPercent) {
             if (this.config.popup) {
-                dom_1.setFixedWidth(eGui, width);
+                (0, dom_1.setFixedWidth)(eGui, width);
             }
             else {
-                eGui.style.width = width + "px";
+                eGui.style.width = "".concat(width, "px");
                 eGui.style.flex = ' unset';
                 this.lastSize.width = typeof width === 'number' ? width : parseFloat(width);
             }
@@ -339,7 +339,7 @@ var PositionableFeature = /** @class */ (function (_super) {
         }
         var applyMaxHeightToElement = function () {
             var availableHeight = _this.getAvailableHeight();
-            _this.element.style.setProperty('max-height', availableHeight + "px");
+            _this.element.style.setProperty('max-height', "".concat(availableHeight, "px"));
         };
         if (constrain) {
             this.resizeObserverSubscriber = this.resizeObserverService.observeResize(this.popupService.getPopupParent(), applyMaxHeightToElement);
@@ -469,7 +469,7 @@ var PositionableFeature = /** @class */ (function (_super) {
     };
     PositionableFeature.prototype.removeResizers = function () {
         this.resizerMap = undefined;
-        var resizerEl = this.element.querySelector("." + RESIZE_CONTAINER_STYLE);
+        var resizerEl = this.element.querySelector(".".concat(RESIZE_CONTAINER_STYLE));
         if (resizerEl) {
             this.element.removeChild(resizerEl);
         }
@@ -548,10 +548,10 @@ var PositionableFeature = /** @class */ (function (_super) {
                 continue;
             }
             if (vertical) {
-                el.style.height = el.offsetHeight + "px";
+                el.style.height = "".concat(el.offsetHeight, "px");
             }
             else {
-                el.style.width = el.offsetWidth + "px";
+                el.style.width = "".concat(el.offsetWidth, "px");
             }
             el.style.flex = '0 0 auto';
             if (el === this.element) {
@@ -632,9 +632,7 @@ var PositionableFeature = /** @class */ (function (_super) {
         this.currentResizer = null;
         this.boundaryEl = null;
         var params = {
-            type: 'resize',
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi
+            type: 'resize'
         };
         this.element.classList.remove('ag-resizing');
         this.resizerMap[side].element.classList.remove('ag-active');
@@ -717,13 +715,13 @@ var PositionableFeature = /** @class */ (function (_super) {
         this.removeResizers();
     };
     __decorate([
-        context_1.Autowired('popupService')
+        (0, context_1.Autowired)('popupService')
     ], PositionableFeature.prototype, "popupService", void 0);
     __decorate([
-        context_1.Autowired('resizeObserverService')
+        (0, context_1.Autowired)('resizeObserverService')
     ], PositionableFeature.prototype, "resizeObserverService", void 0);
     __decorate([
-        context_1.Autowired('dragService')
+        (0, context_1.Autowired)('dragService')
     ], PositionableFeature.prototype, "dragService", void 0);
     return PositionableFeature;
 }(beanStub_1.BeanStub));

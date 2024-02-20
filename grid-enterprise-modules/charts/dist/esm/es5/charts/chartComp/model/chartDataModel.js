@@ -46,15 +46,20 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 import { _, Autowired, BeanStub, CellRangeType, PostConstruct, } from "@ag-grid-community/core";
 import { ChartDatasource } from "../datasource/chartDatasource";
 import { ChartColumnService } from "../services/chartColumnService";
 import { ComboChartModel } from "./comboChartModel";
+import { isHierarchical } from "../utils/seriesTypeMapper";
 var ChartDataModel = /** @class */ (function (_super) {
     __extends(ChartDataModel, _super);
     function ChartDataModel(params) {
@@ -101,7 +106,7 @@ var ChartDataModel = /** @class */ (function (_super) {
         this.suppressChartRanges = suppressChartRanges;
         this.unlinked = !!unlinkChart;
         this.crossFiltering = !!crossFiltering;
-        this.updateSelectedDimension(cellRange === null || cellRange === void 0 ? void 0 : cellRange.columns);
+        this.updateSelectedDimensions(cellRange === null || cellRange === void 0 ? void 0 : cellRange.columns);
         this.updateCellRanges();
         var shouldUpdateComboModel = this.isComboChart() || seriesChartTypes;
         if (shouldUpdateComboModel) {
@@ -137,7 +142,7 @@ var ChartDataModel = /** @class */ (function (_super) {
         this.grouping = this.isGrouping();
         var params = {
             aggFunc: this.aggFunc,
-            dimensionCols: [this.getSelectedDimension()],
+            dimensionCols: this.getSelectedDimensions(),
             grouping: this.grouping,
             pivoting: this.isPivotActive(),
             crossFiltering: this.crossFiltering,
@@ -151,20 +156,23 @@ var ChartDataModel = /** @class */ (function (_super) {
         this.columnNames = columnNames;
     };
     ChartDataModel.prototype.isGrouping = function () {
-        var usingTreeData = this.gridOptionsService.isTreeData();
+        var usingTreeData = this.gridOptionsService.get('treeData');
         var groupedCols = usingTreeData ? null : this.chartColumnService.getRowGroupColumns();
         var isGroupActive = usingTreeData || (groupedCols && groupedCols.length > 0);
         // charts only group when the selected category is a group column
-        var colId = this.getSelectedDimension().colId;
+        var colIds = this.getSelectedDimensions().map(function (_a) {
+            var colId = _a.colId;
+            return colId;
+        });
         var displayedGroupCols = this.chartColumnService.getGroupDisplayColumns();
-        var groupDimensionSelected = displayedGroupCols.map(function (col) { return col.getColId(); }).some(function (id) { return id === colId; });
+        var groupDimensionSelected = displayedGroupCols.map(function (col) { return col.getColId(); }).some(function (id) { return colIds.includes(id); });
         return !!isGroupActive && groupDimensionSelected;
     };
     ChartDataModel.prototype.getSelectedValueCols = function () {
         return this.valueColState.filter(function (cs) { return cs.selected; }).map(function (cs) { return cs.column; });
     };
-    ChartDataModel.prototype.getSelectedDimension = function () {
-        return this.dimensionColState.filter(function (cs) { return cs.selected; })[0];
+    ChartDataModel.prototype.getSelectedDimensions = function () {
+        return this.dimensionColState.filter(function (cs) { return cs.selected; });
     };
     ChartDataModel.prototype.getColDisplayName = function (col) {
         return this.chartColumnService.getColDisplayName(col);
@@ -199,21 +207,24 @@ var ChartDataModel = /** @class */ (function (_super) {
         }
         var columns = this.dimensionCellRange || this.valueCellRange ? [] : this.referenceCellRange.columns;
         if (this.dimensionCellRange) {
-            columns.push.apply(columns, __spreadArray([], __read(this.dimensionCellRange.columns)));
+            columns.push.apply(columns, __spreadArray([], __read(this.dimensionCellRange.columns), false));
         }
         if (this.valueCellRange) {
-            columns.push.apply(columns, __spreadArray([], __read(this.valueCellRange.columns)));
+            columns.push.apply(columns, __spreadArray([], __read(this.valueCellRange.columns), false));
         }
         return _.convertToSet(columns);
     };
     ChartDataModel.prototype.getRowIndexes = function () {
         var startRow = 0, endRow = 0;
-        var _a = this, rangeService = _a.rangeService, valueCellRange = _a.valueCellRange;
-        if (rangeService && valueCellRange) {
-            startRow = rangeService.getRangeStartRow(valueCellRange).rowIndex;
+        var _a = this, rangeService = _a.rangeService, valueCellRange = _a.valueCellRange, dimensionCellRange = _a.dimensionCellRange;
+        // Not all chart types require a value series (e.g. hierarchical charts),
+        // so fall back to using the dimension cell range for inferring row indices
+        var cellRange = valueCellRange || dimensionCellRange;
+        if (rangeService && cellRange) {
+            startRow = rangeService.getRangeStartRow(cellRange).rowIndex;
             // when the last row the cell range is a pinned 'bottom' row, the `endRow` index is set to -1 which results
             // in the ChartDatasource processing all non pinned rows from the `startRow` index.
-            var endRowPosition = rangeService.getRangeEndRow(valueCellRange);
+            var endRowPosition = rangeService.getRangeEndRow(cellRange);
             endRow = endRowPosition.rowPinned === 'bottom' ? -1 : endRowPosition.rowIndex;
         }
         return { startRow: startRow, endRow: endRow };
@@ -225,6 +236,7 @@ var ChartDataModel = /** @class */ (function (_super) {
         var isInitialising = this.valueColState.length < 1;
         this.dimensionColState = [];
         this.valueColState = [];
+        var supportsMultipleDimensions = isHierarchical(this.chartType);
         var hasSelectedDimension = false;
         var order = 1;
         var aggFuncDimension = this.suppliedCellRange.columns[0]; //TODO
@@ -237,7 +249,7 @@ var ChartDataModel = /** @class */ (function (_super) {
                 }
             }
             else {
-                selected = isAutoGroupCol ? true : !hasSelectedDimension && allCols.has(column);
+                selected = isAutoGroupCol ? true : (!hasSelectedDimension || supportsMultipleDimensions) && allCols.has(column);
             }
             _this.dimensionColState.push({
                 column: column,
@@ -275,15 +287,35 @@ var ChartDataModel = /** @class */ (function (_super) {
     ChartDataModel.prototype.updateColumnState = function (updatedCol) {
         var idsMatch = function (cs) { return cs.colId === updatedCol.colId; };
         var _a = this, dimensionColState = _a.dimensionColState, valueColState = _a.valueColState;
-        if (dimensionColState.filter(idsMatch).length > 0) {
-            // only one dimension should be selected
-            dimensionColState.forEach(function (cs) { return cs.selected = idsMatch(cs); });
+        // Determine whether the specified column is a dimension or value column
+        var matchedDimensionColState = dimensionColState.find(idsMatch);
+        var matchedValueColState = valueColState.find(idsMatch);
+        if (matchedDimensionColState) {
+            // For non-hierarchical chart types, only one dimension can be selected
+            var supportsMultipleDimensions = isHierarchical(this.chartType);
+            if (!supportsMultipleDimensions) {
+                // Determine which column should end up selected, if any
+                var selectedColumnState_1 = updatedCol.selected
+                    ? matchedDimensionColState
+                    : dimensionColState
+                        .filter(function (cs) { return cs !== matchedDimensionColState; })
+                        .find(function (_a) {
+                        var selected = _a.selected;
+                        return selected;
+                    });
+                // Update the selection state of all dimension columns
+                dimensionColState.forEach(function (cs) { return cs.selected = (cs === selectedColumnState_1); });
+            }
+            else {
+                // Update the selection state of the specified dimension column
+                matchedDimensionColState.selected = updatedCol.selected;
+            }
         }
-        else {
-            // just update the selected value on the supplied value column
-            valueColState.filter(idsMatch).forEach(function (cs) { return cs.selected = updatedCol.selected; });
+        else if (matchedValueColState) {
+            // Update the selection state of the specified value column
+            matchedValueColState.selected = updatedCol.selected;
         }
-        var allColumns = __spreadArray(__spreadArray([], __read(dimensionColState)), __read(valueColState));
+        var allColumns = __spreadArray(__spreadArray([], __read(dimensionColState), false), __read(valueColState), false);
         var orderedColIds = [];
         // calculate new order
         allColumns.forEach(function (col, i) {
@@ -307,28 +339,43 @@ var ChartDataModel = /** @class */ (function (_super) {
         this.valueColState.sort(ascColStateOrder);
     };
     ChartDataModel.prototype.setDimensionCellRange = function (dimensionCols, colsInRange, updatedColState) {
-        var _this = this;
         this.dimensionCellRange = undefined;
         if (!updatedColState && !this.dimensionColState.length) {
-            // use first dimension column in range by default
+            var supportsMultipleDimensions_1 = isHierarchical(this.chartType);
+            var selectedCols_1 = new Array();
+            // use first dimension column in range by default, or all dimension columns for hierarchical charts
             dimensionCols.forEach(function (col) {
-                if (_this.dimensionCellRange || !colsInRange.has(col)) {
+                if ((selectedCols_1.length > 0 && !supportsMultipleDimensions_1) || !colsInRange.has(col)) {
                     return;
                 }
-                _this.dimensionCellRange = _this.createCellRange(CellRangeType.DIMENSION, col);
+                selectedCols_1.push(col);
             });
+            if (selectedCols_1.length > 0) {
+                this.dimensionCellRange = this.createCellRange.apply(this, __spreadArray([CellRangeType.DIMENSION], __read(selectedCols_1), false));
+            }
             return;
         }
-        var selectedDimensionColState = updatedColState;
+        var selectedDimensionColStates = updatedColState ? [updatedColState] : [];
         if (this.crossFiltering && this.aggFunc) {
             var aggFuncDimension_1 = this.suppliedCellRange.columns[0]; //TODO
-            selectedDimensionColState = this.dimensionColState.filter(function (cs) { return cs.colId === aggFuncDimension_1.getColId(); })[0];
+            selectedDimensionColStates = this.dimensionColState.filter(function (cs) { return cs.colId === aggFuncDimension_1.getColId(); });
         }
-        else if (!selectedDimensionColState || !dimensionCols.has(selectedDimensionColState.column)) {
-            selectedDimensionColState = this.dimensionColState.filter(function (cs) { return cs.selected; })[0];
+        else if (selectedDimensionColStates.length === 0 || selectedDimensionColStates.some(function (_a) {
+            var column = _a.column;
+            return !column || !dimensionCols.has(column);
+        })) {
+            selectedDimensionColStates = this.dimensionColState.filter(function (cs) { return cs.selected; });
         }
-        if (selectedDimensionColState && selectedDimensionColState.colId !== ChartDataModel.DEFAULT_CATEGORY) {
-            this.dimensionCellRange = this.createCellRange(CellRangeType.DIMENSION, selectedDimensionColState.column);
+        var isDefaultCategory = selectedDimensionColStates.length === 1
+            ? selectedDimensionColStates[0].colId === ChartDataModel.DEFAULT_CATEGORY
+            : false;
+        var selectedColumns = selectedDimensionColStates.map(function (_a) {
+            var column = _a.column;
+            return column;
+        })
+            .filter(function (value) { return value != null; });
+        if (selectedColumns.length > 0 && !isDefaultCategory) {
+            this.dimensionCellRange = this.createCellRange.apply(this, __spreadArray([CellRangeType.DIMENSION], __read(selectedColumns), false));
         }
     };
     ChartDataModel.prototype.setValueCellRange = function (valueCols, colsInRange, updatedColState) {
@@ -353,19 +400,39 @@ var ChartDataModel = /** @class */ (function (_super) {
                 colsInRange.forEach(function (c) { return orderedColIds_1.push(c.getColId()); });
             }
             selectedValueCols.sort(function (a, b) { return orderedColIds_1.indexOf(a.getColId()) - orderedColIds_1.indexOf(b.getColId()); });
-            this.valueCellRange = this.createCellRange.apply(this, __spreadArray([CellRangeType.VALUE], __read(selectedValueCols)));
+            this.valueCellRange = this.createCellRange.apply(this, __spreadArray([CellRangeType.VALUE], __read(selectedValueCols), false));
         }
     };
-    ChartDataModel.prototype.updateSelectedDimension = function (columns) {
+    ChartDataModel.prototype.updateSelectedDimensions = function (columns) {
         var colIdSet = new Set(columns.map(function (column) { return column.getColId(); }));
-        // if no dimension found in supplied columns use the default category (always index = 0)
-        var foundColState = this.dimensionColState.find(function (colState) { return colIdSet.has(colState.colId); }) || this.dimensionColState[0];
-        this.dimensionColState = this.dimensionColState.map(function (colState) { return (__assign(__assign({}, colState), { selected: colState.colId === foundColState.colId })); });
+        // For non-hierarchical chart types, only one dimension can be selected
+        var supportsMultipleDimensions = isHierarchical(this.chartType);
+        if (!supportsMultipleDimensions) {
+            // Determine which column should end up selected, if any
+            // if no dimension found in supplied columns use the default category (always index = 0)
+            var foundColState = this.dimensionColState.find(function (colState) { return colIdSet.has(colState.colId); }) || this.dimensionColState[0];
+            var selectedColumnId_1 = foundColState.colId;
+            // Update the selection state of all dimension columns
+            this.dimensionColState = this.dimensionColState.map(function (colState) { return (__assign(__assign({}, colState), { selected: colState.colId === selectedColumnId_1 })); });
+        }
+        else {
+            // Update the selection state of all dimension columns, selecting only the provided columns from the chart model
+            var foundColStates = this.dimensionColState.filter(function (colState) { return colIdSet.has(colState.colId); });
+            var selectedColumnIds_1 = new Set(foundColStates.map(function (colState) { return colState.colId; }));
+            this.dimensionColState = this.dimensionColState.map(function (colState) { return (__assign(__assign({}, colState), { selected: selectedColumnIds_1.has(colState.colId) })); });
+        }
     };
     ChartDataModel.prototype.syncDimensionCellRange = function () {
-        var selectedDimension = this.getSelectedDimension();
-        if (selectedDimension && selectedDimension.column) {
-            this.dimensionCellRange = this.createCellRange(CellRangeType.DIMENSION, selectedDimension.column);
+        var selectedDimensions = this.getSelectedDimensions();
+        if (selectedDimensions.length === 0)
+            return;
+        var selectedCols = selectedDimensions.map(function (_a) {
+            var column = _a.column;
+            return column;
+        })
+            .filter(function (value) { return value != null; });
+        if (selectedCols.length > 0) {
+            this.dimensionCellRange = this.createCellRange.apply(this, __spreadArray([CellRangeType.DIMENSION], __read(selectedCols), false));
         }
     };
     ChartDataModel.prototype.isComboChart = function () {

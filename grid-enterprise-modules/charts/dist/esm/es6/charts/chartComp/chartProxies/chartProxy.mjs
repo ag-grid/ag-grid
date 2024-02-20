@@ -1,8 +1,8 @@
-import { _ } from "@ag-grid-community/core";
-import { _Theme, AgChart } from "ag-charts-community";
+import { _Theme, AgCharts } from "ag-charts-community";
 import { getSeriesType } from "../utils/seriesTypeMapper.mjs";
 import { deproxy } from "../utils/integration.mjs";
-import { createAgChartTheme, lookupCustomChartTheme } from './chartTheme.mjs';
+import { applyThemeOverrides, createAgChartTheme, lookupCustomChartTheme } from './chartTheme.mjs';
+import { get } from "../utils/object.mjs";
 export class ChartProxy {
     constructor(chartProxyParams) {
         this.chartProxyParams = chartProxyParams;
@@ -13,7 +13,7 @@ export class ChartProxy {
         this.crossFilterCallback = chartProxyParams.crossFilterCallback;
         this.standaloneChartType = getSeriesType(this.chartType);
         if (this.chart == null) {
-            this.chart = AgChart.create(this.getCommonChartOptions());
+            this.chart = AgCharts.create(this.getCommonChartOptions());
         }
         else {
             // On chart change, reset formatting panel changes.
@@ -31,7 +31,7 @@ export class ChartProxy {
         const rawChart = deproxy(chart);
         const imageFileName = fileName || (rawChart.title ? rawChart.title.text : 'chart');
         const { width, height } = dimensions || {};
-        AgChart.download(chart, { width, height, fileName: imageFileName, fileFormat });
+        AgCharts.download(chart, { width, height, fileName: imageFileName, fileFormat });
     }
     getChartImageDataURL(type) {
         return this.getChart().scene.getDataURL(type);
@@ -53,11 +53,11 @@ export class ChartProxy {
         // the first column is used for X and every other column is treated as Y
         // (or alternates between Y and size for bubble)
         const seriesType = getSeriesType(this.chartProxyParams.chartType);
-        AgChart.updateDelta(this.chart, { theme: { overrides: { [seriesType]: { paired } } } });
+        AgCharts.updateDelta(this.chart, { theme: { overrides: { [seriesType]: { paired } } } });
     }
     isPaired() {
         const seriesType = getSeriesType(this.chartProxyParams.chartType);
-        return _.get(this.getChartThemeOverrides(), `${seriesType}.paired`, true);
+        return get(this.getChartThemeOverrides(), `${seriesType}.paired`, true);
     }
     lookupCustomChartTheme(themeName) {
         return lookupCustomChartTheme(this.chartProxyParams, themeName);
@@ -79,10 +79,23 @@ export class ChartProxy {
         var _a, _b;
         // Only apply active overrides if chart is initialised.
         const existingOptions = this.clearThemeOverrides ? {} : (_b = (_a = this.chart) === null || _a === void 0 ? void 0 : _a.getOptions()) !== null && _b !== void 0 ? _b : {};
-        const formattingPanelOverrides = this.chart != null ?
-            { overrides: this.getActiveFormattingPanelOverrides() } : {};
+        const formattingPanelOverrides = this.chart != null ? this.getActiveFormattingPanelOverrides() : undefined;
         this.clearThemeOverrides = false;
-        return Object.assign(Object.assign({}, existingOptions), { theme: Object.assign(Object.assign({}, createAgChartTheme(this.chartProxyParams, this)), (updatedOverrides ? { overrides: updatedOverrides } : formattingPanelOverrides)), container: this.chartProxyParams.parentElement, mode: 'integrated' });
+        // Create a base theme and apply the various layers of overrides.
+        const baseTheme = createAgChartTheme(this.chartProxyParams, this);
+        const chartThemeDefaults = this.getChartThemeDefaults();
+        const theme = applyThemeOverrides(baseTheme, [
+            chartThemeDefaults,
+            updatedOverrides !== null && updatedOverrides !== void 0 ? updatedOverrides : formattingPanelOverrides,
+        ]);
+        return Object.assign(Object.assign({}, existingOptions), { theme, container: this.chartProxyParams.parentElement, mode: 'integrated' });
+    }
+    /**
+     * Retrieve default theme overrides for the current chart type
+     */
+    getChartThemeDefaults() {
+        // Override this method to provide chart type specific theme overrides
+        return undefined;
     }
     getActiveFormattingPanelOverrides() {
         var _a, _b;
@@ -94,6 +107,11 @@ export class ChartProxy {
     }
     destroy({ keepChartInstance = false } = {}) {
         if (keepChartInstance) {
+            // Reset Charts animation state, so that future updates to this re-used chart instance
+            // behave as-if the chart is brand new. When switching chartTypes, this means we hide
+            // the fact we are reusing the chart instance; the user sees a new chart which behaves
+            // as-if it is a completely new and distinct chart instance.
+            this.chart.resetAnimations();
             return this.chart;
         }
         this.destroyChart();

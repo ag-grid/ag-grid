@@ -9,13 +9,14 @@ let ImmutableService = class ImmutableService extends BeanStub {
     postConstruct() {
         if (this.rowModel.getType() === 'clientSide') {
             this.clientSideRowModel = this.rowModel;
+            this.addManagedPropertyListener('rowData', () => this.onRowDataUpdated());
         }
     }
     isActive() {
         const getRowIdProvided = this.gridOptionsService.exists('getRowId');
         // this property is a backwards compatibility property, for those who want
         // the old behaviour of Row ID's but NOT Immutable Data.
-        const resetRowDataOnUpdate = this.gridOptionsService.is('resetRowDataOnUpdate');
+        const resetRowDataOnUpdate = this.gridOptionsService.get('resetRowDataOnUpdate');
         if (resetRowDataOnUpdate) {
             return false;
         }
@@ -47,7 +48,7 @@ let ImmutableService = class ImmutableService extends BeanStub {
             add: []
         };
         const existingNodesMap = this.clientSideRowModel.getCopyOfNodesMap();
-        const suppressSortOrder = this.gridOptionsService.is('suppressMaintainUnsortedOrder');
+        const suppressSortOrder = this.gridOptionsService.get('suppressMaintainUnsortedOrder');
         const orderMap = suppressSortOrder ? undefined : {};
         if (_.exists(rowData)) {
             // split all the new data in the following:
@@ -82,6 +83,19 @@ let ImmutableService = class ImmutableService extends BeanStub {
         });
         return [transaction, orderMap];
     }
+    onRowDataUpdated() {
+        const rowData = this.gridOptionsService.get('rowData');
+        if (!rowData) {
+            return;
+        }
+        if (this.isActive()) {
+            this.setRowData(rowData);
+        }
+        else {
+            this.selectionService.reset('rowDataChanged');
+            this.clientSideRowModel.setRowData(rowData);
+        }
+    }
 };
 __decorate([
     Autowired('rowModel')
@@ -89,6 +103,9 @@ __decorate([
 __decorate([
     Autowired('rowRenderer')
 ], ImmutableService.prototype, "rowRenderer", void 0);
+__decorate([
+    Autowired('selectionService')
+], ImmutableService.prototype, "selectionService", void 0);
 __decorate([
     PostConstruct
 ], ImmutableService.prototype, "postConstruct", null);

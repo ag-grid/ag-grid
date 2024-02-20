@@ -46,28 +46,29 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
-import { DragAndDropService, DragSourceType, VerticalDirection } from "../dragAndDrop/dragAndDropService";
+import { DragAndDropService, DragSourceType } from "../dragAndDrop/dragAndDropService";
 import { Autowired, Optional, PostConstruct } from "../context/context";
 import { Events } from "../eventKeys";
 import { RowHighlightPosition } from "../interfaces/iRowNode";
 import { last } from '../utils/array';
 import { BeanStub } from "../context/beanStub";
-import { missingOrEmpty } from "../utils/generic";
-import { doOnce } from "../utils/function";
+import { warnOnce } from "../utils/function";
 import { AutoScrollService } from "../autoScrollService";
+import { VerticalDirection } from "../constants/direction";
 var RowDragFeature = /** @class */ (function (_super) {
     __extends(RowDragFeature, _super);
     function RowDragFeature(eContainer) {
         var _this = _super.call(this) || this;
         _this.isMultiRowDrag = false;
-        _this.isGridSorted = false;
-        _this.isGridFiltered = false;
-        _this.isRowGroupActive = false;
         _this.eContainer = eContainer;
         return _this;
     }
@@ -76,18 +77,6 @@ var RowDragFeature = /** @class */ (function (_super) {
         if (this.gridOptionsService.isRowModelType('clientSide')) {
             this.clientSideRowModel = this.rowModel;
         }
-        var refreshStatus = function () {
-            _this.onSortChanged();
-            _this.onFilterChanged();
-            _this.onRowGroupChanged();
-        };
-        this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, function () {
-            refreshStatus();
-        });
-        refreshStatus();
         this.ctrlsService.whenReady(function () {
             var gridBodyCon = _this.ctrlsService.getGridBodyCtrl();
             _this.autoScrollService = new AutoScrollService({
@@ -99,16 +88,6 @@ var RowDragFeature = /** @class */ (function (_super) {
             });
         });
     };
-    RowDragFeature.prototype.onSortChanged = function () {
-        this.isGridSorted = this.sortController.isSortActive();
-    };
-    RowDragFeature.prototype.onFilterChanged = function () {
-        this.isGridFiltered = this.filterManager.isAnyFilterPresent();
-    };
-    RowDragFeature.prototype.onRowGroupChanged = function () {
-        var rowGroups = this.columnModel.getRowGroupColumns();
-        this.isRowGroupActive = !missingOrEmpty(rowGroups);
-    };
     RowDragFeature.prototype.getContainer = function () {
         return this.eContainer;
     };
@@ -116,22 +95,34 @@ var RowDragFeature = /** @class */ (function (_super) {
         return type === DragSourceType.RowDrag;
     };
     RowDragFeature.prototype.getIconName = function () {
-        var managedDrag = this.gridOptionsService.is('rowDragManaged');
+        var managedDrag = this.gridOptionsService.get('rowDragManaged');
         if (managedDrag && this.shouldPreventRowMove()) {
             return DragAndDropService.ICON_NOT_ALLOWED;
         }
         return DragAndDropService.ICON_MOVE;
     };
     RowDragFeature.prototype.shouldPreventRowMove = function () {
-        return this.isGridSorted || this.isGridFiltered || this.isRowGroupActive;
+        var rowGroupCols = this.columnModel.getRowGroupColumns();
+        if (rowGroupCols.length) {
+            return true;
+        }
+        var isFilterPresent = this.filterManager.isAnyFilterPresent();
+        if (isFilterPresent) {
+            return true;
+        }
+        var isSortActive = this.sortController.isSortActive();
+        if (isSortActive) {
+            return true;
+        }
+        return false;
     };
     RowDragFeature.prototype.getRowNodes = function (draggingEvent) {
         var _this = this;
         if (!this.isFromThisGrid(draggingEvent)) {
             return (draggingEvent.dragItem.rowNodes || []);
         }
-        var isRowDragMultiRow = this.gridOptionsService.is('rowDragMultiRow');
-        var selectedNodes = __spreadArray([], __read(this.selectionService.getSelectedNodes())).sort(function (a, b) {
+        var isRowDragMultiRow = this.gridOptionsService.get('rowDragMultiRow');
+        var selectedNodes = __spreadArray([], __read(this.selectionService.getSelectedNodes()), false).sort(function (a, b) {
             if (a.rowIndex == null || b.rowIndex == null) {
                 return 0;
             }
@@ -174,7 +165,7 @@ var RowDragFeature = /** @class */ (function (_super) {
         this.dispatchGridEvent(Events.EVENT_ROW_DRAG_MOVE, draggingEvent);
         this.lastDraggingEvent = draggingEvent;
         var pixel = this.mouseEventService.getNormalisedPosition(draggingEvent).y;
-        var managedDrag = this.gridOptionsService.is('rowDragManaged');
+        var managedDrag = this.gridOptionsService.get('rowDragManaged');
         if (managedDrag) {
             this.doManagedDrag(draggingEvent, pixel);
         }
@@ -182,12 +173,12 @@ var RowDragFeature = /** @class */ (function (_super) {
     };
     RowDragFeature.prototype.doManagedDrag = function (draggingEvent, pixel) {
         var isFromThisGrid = this.isFromThisGrid(draggingEvent);
-        var managedDrag = this.gridOptionsService.is('rowDragManaged');
+        var managedDrag = this.gridOptionsService.get('rowDragManaged');
         var rowNodes = draggingEvent.dragItem.rowNodes;
         if (managedDrag && this.shouldPreventRowMove()) {
             return;
         }
-        if (this.gridOptionsService.is('suppressMoveWhenRowDragging') || !isFromThisGrid) {
+        if (this.gridOptionsService.get('suppressMoveWhenRowDragging') || !isFromThisGrid) {
             if (!this.isDropZoneWithinThisGrid(draggingEvent)) {
                 this.clientSideRowModel.highlightRowAtPixel(rowNodes[0], pixel);
             }
@@ -245,7 +236,7 @@ var RowDragFeature = /** @class */ (function (_super) {
     RowDragFeature.prototype.addRowDropZone = function (params) {
         var _this = this;
         if (!params.getContainer()) {
-            doOnce(function () { return console.warn('AG Grid: addRowDropZone - A container target needs to be provided'); }, 'add-drop-zone-empty-target');
+            warnOnce('addRowDropZone - A container target needs to be provided');
             return;
         }
         if (this.dragAndDropService.findExternalZone(params)) {
@@ -343,11 +334,8 @@ var RowDragFeature = /** @class */ (function (_super) {
                 vDirectionString = null;
                 break;
         }
-        var event = {
+        var event = this.gridOptionsService.addGridCommonParams({
             type: type,
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context,
             event: draggingEvent.event,
             node: draggingEvent.dragItem.rowNode,
             nodes: draggingEvent.dragItem.rowNodes,
@@ -355,7 +343,7 @@ var RowDragFeature = /** @class */ (function (_super) {
             overNode: overNode,
             y: yNormalised,
             vDirection: vDirectionString
-        };
+        });
         return event;
     };
     RowDragFeature.prototype.dispatchGridEvent = function (type, draggingEvent) {
@@ -365,7 +353,7 @@ var RowDragFeature = /** @class */ (function (_super) {
     RowDragFeature.prototype.onDragLeave = function (draggingEvent) {
         this.dispatchGridEvent(Events.EVENT_ROW_DRAG_LEAVE, draggingEvent);
         this.stopDragging(draggingEvent);
-        if (this.gridOptionsService.is('rowDragManaged')) {
+        if (this.gridOptionsService.get('rowDragManaged')) {
             this.clearRowHighlight();
         }
         if (this.isFromThisGrid(draggingEvent)) {
@@ -375,8 +363,8 @@ var RowDragFeature = /** @class */ (function (_super) {
     RowDragFeature.prototype.onDragStop = function (draggingEvent) {
         this.dispatchGridEvent(Events.EVENT_ROW_DRAG_END, draggingEvent);
         this.stopDragging(draggingEvent);
-        if (this.gridOptionsService.is('rowDragManaged') &&
-            (this.gridOptionsService.is('suppressMoveWhenRowDragging') || !this.isFromThisGrid(draggingEvent)) &&
+        if (this.gridOptionsService.get('rowDragManaged') &&
+            (this.gridOptionsService.get('suppressMoveWhenRowDragging') || !this.isFromThisGrid(draggingEvent)) &&
             !this.isDropZoneWithinThisGrid(draggingEvent)) {
             this.moveRowAndClearHighlight(draggingEvent);
         }

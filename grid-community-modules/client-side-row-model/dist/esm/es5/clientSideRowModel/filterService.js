@@ -89,7 +89,7 @@ var FilterService = /** @class */ (function (_super) {
         }
     };
     FilterService.prototype.doingTreeDataFiltering = function () {
-        return this.gridOptionsService.isTreeData() && !this.gridOptionsService.is('excludeChildrenWhenTreeDataFiltering');
+        return this.gridOptionsService.get('treeData') && !this.gridOptionsService.get('excludeChildrenWhenTreeDataFiltering');
     };
     __decorate([
         Autowired('filterManager')

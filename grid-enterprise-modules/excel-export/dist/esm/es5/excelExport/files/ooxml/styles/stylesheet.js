@@ -9,7 +9,6 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-import { _ } from '@ag-grid-community/core';
 import numberFormatsFactory from './numberFormats';
 import fontsFactory from './fonts';
 import fillsFactory from './fills';
@@ -31,7 +30,7 @@ var registeredCellStyles;
 var currentSheet;
 var getStyleName = function (name, currentSheet) {
     if (name.indexOf('mixedStyle') !== -1 && currentSheet > 1) {
-        name += "_" + currentSheet;
+        name += "_".concat(currentSheet);
     }
     return name;
 };
@@ -65,7 +64,6 @@ var registerFill = function (fill) {
     return pos;
 };
 var registerNumberFmt = function (format) {
-    format = _.utf8_encode(format);
     if (numberFormatMap[format]) {
         return numberFormatMap[format];
     }
@@ -162,13 +160,12 @@ var registerBorders = function (borders) {
 };
 var registerFont = function (font) {
     var _a = font.fontName, name = _a === void 0 ? 'Calibri' : _a, color = font.color, size = font.size, bold = font.bold, italic = font.italic, outline = font.outline, shadow = font.shadow, strikeThrough = font.strikeThrough, underline = font.underline, family = font.family, verticalAlign = font.verticalAlign;
-    var utf8Name = name ? _.utf8_encode(name) : name;
     var convertedColor = convertLegacyColor(color);
     var familyId = getFontFamilyId(family);
     var convertedUnderline = underline ? underline.toLocaleLowerCase() : undefined;
     var convertedVerticalAlign = verticalAlign ? verticalAlign.toLocaleLowerCase() : undefined;
     var pos = registeredFonts.findIndex(function (currentFont) {
-        if (currentFont.fontName != utf8Name ||
+        if (currentFont.fontName != name ||
             currentFont.color != convertedColor ||
             currentFont.size != size ||
             currentFont.bold != bold ||
@@ -187,7 +184,7 @@ var registerFont = function (font) {
     if (pos === -1) {
         pos = registeredFonts.length;
         registeredFonts.push({
-            fontName: utf8Name,
+            fontName: name,
             color: convertedColor,
             size: size,
             bold: bold,
@@ -203,7 +200,7 @@ var registerFont = function (font) {
     return pos;
 };
 var registerStyle = function (config) {
-    var alignment = config.alignment, borders = config.borders, font = config.font, interior = config.interior, numberFormat = config.numberFormat, protection = config.protection;
+    var alignment = config.alignment, borders = config.borders, font = config.font, interior = config.interior, numberFormat = config.numberFormat, protection = config.protection, quotePrefix = config.quotePrefix;
     var id = config.id;
     var currentFill = 0;
     var currentBorder = 0;
@@ -236,6 +233,7 @@ var registerStyle = function (config) {
         fontId: currentFont || 0,
         numFmtId: currentNumberFmt || 0,
         protection: protection,
+        quotePrefix: quotePrefix,
         xfId: 0
     });
 };

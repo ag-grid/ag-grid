@@ -6,53 +6,66 @@ The grid responds to keyboard interactions from the user as well as emitting eve
 
 ## Navigation
 
-Use the arrow keys (<kbd>←</kbd> <kbd>↑</kbd> <kbd>→</kbd> <kbd>↓</kbd>) to move focus up, down, left and right. If the focused cell is already on the boundary for that position (e.g. if on the first column and the left key is pressed) then the key press has no effect. Use <kbd>Ctrl</kbd>+<kbd>←</kbd> to move to the start of the line, and <kbd>Ctrl</kbd>+<kbd>→</kbd> to move to the end.
+Use the arrow keys (<kbd>←</kbd> <kbd>↑</kbd> <kbd>→</kbd> <kbd>↓</kbd>) to move focus up, down, left and right. If the focused cell is already on the boundary for that position (e.g. if on the first column and the left key is pressed) then the key press has no effect. Use <kbd>^ Ctrl</kbd>+<kbd>←</kbd> to move to the start of the line, and <kbd>^ Ctrl</kbd>+<kbd>→</kbd> to move to the end.
 
-If a cell on the first grid row is focused and you press <kbd>↑</kbd>, the focus will be moved into the grid header. The header navigation focus navigation works the same as the grid's: arrows will move up/down/left/right, <kbd>Tab</kbd> will move the focus horizontally until the last header cell and then move on to the next row.
+If a cell on the first grid row is focused and you press <kbd>↑</kbd>, the focus will be moved into the grid header. The header navigation focus navigation works the same as the grid's: arrows will move up/down/left/right, <kbd>⇥ Tab</kbd> will move the focus horizontally until the last header cell and then move on to the next row.
 
 Use <kbd>Page Up</kbd> and <kbd>Page Down</kbd> to move the scroll up and down by one page. Use <kbd>Home</kbd> and <kbd>End</kbd> to go to the first and last rows.
 
 <note disableMarkdown='true'>
-When a header cell is focused, commands like <kbd>Page Up</kbd>, <kbd>Page Down</kbd>, <kbd>Home</kbd>, <kbd>End</kbd>, <kbd>Ctrl</kbd>+<kbd>←</kbd>/<kbd>→</kbd> will not work as they do when a grid cell is focused.
+When a header cell is focused, commands like <kbd>Page Up</kbd>, <kbd>Page Down</kbd>, <kbd>Home</kbd>, <kbd>End</kbd>, <kbd>^ Ctrl</kbd>+<kbd>←</kbd>/<kbd>→</kbd> will not work as they do when a grid cell is focused.
 </note>
 
 ## Groups
 
-If on a group element, hitting the <kbd>Enter</kbd> key will expand or collapse the group.
+If on a group element, hitting the <kbd>↵ Enter</kbd> key will expand or collapse the group.
 
 ## Editing
 
-Pressing the <kbd>Enter</kbd> key on a cell will put the cell into edit mode, if editing is allowed on the cell. This will work for the default cell editor.
+Pressing the <kbd>↵ Enter</kbd> key on a cell will put the cell into edit mode, if editing is allowed on the cell. This will work for the default cell editor.
 
 ## Selection
 
-Pressing the <kbd>Space</kbd> key on a cell will select the cells row, or deselect the row if already selected. If multi-select is enabled, then the selection will not remove any previous selections.
+Pressing the <kbd>␣ Space</kbd> key on a cell will select the cells row, or deselect the row if already selected. If multi-select is enabled, then the selection will not remove any previous selections.
+``
+## Suppress Focus
 
-## Suppress Cell Focus
+If you want keyboard navigation turned off, there are two properties that need to be turned off.
 
-If you want keyboard navigation turned off, then set `suppressCellFocus=true` in the gridOptions.
+### Suppress Cell Focus
+Set `suppressCellFocus=true` in the gridOptions, and Grid Cell Focus will be disabled.
 
-## Header Navigation
+### Suppress Header Focus
+Set `suppressHeaderFocus=true` in the gridOptions, and Grid Header Focus will be disabled.
 
-The grid header supports full keyboard navigation, however the behaviour may differ based on the type of header that is currently focused.
 
-### Grouped Headers
+## Column Header Navigation
 
-While navigating grouped headers, if the current grouped header is expandable, pressing <kbd>Enter</kbd> will toggle the expanded state of the group.
+The grid header supports full keyboard navigation, however the behaviour may differ based on the type of Column Header that is currently focused.
 
-### Normal Headers
+Column Headers can be:
 
-Regular headers may have selection checkboxes, sorting functions and menus, so to access all these functions while focusing a header, you can do the following:
+- Moved by pressing <kbd>⇧ Shift</kbd> + <kbd>←</kbd> / <kbd>→</kbd>.
+- Resized by pressing <kbd>⌥ Alt</kbd> + <kbd>←</kbd> / <kbd>→</kbd>.
 
-- Press <kbd>Space</kbd> to toggle the header checkbox selection.
-- Press <kbd>Enter</kbd> to toggle the sorting state of that column.
-- Press <kbd>Shift</kbd>+<kbd>Enter</kbd> to toggle multi-sort for that column.
-- Press <kbd>Ctrl</kbd>+<kbd>Enter</kbd> to open the menu for the focused header.
-- When a menu is open, simply press <kbd>Esc</kbd> to close it and the focus will return to the header.
+### Column Group Headers
 
-### Floating Filters
+While navigating Column Groups Headers, if the current Column Group is expandable, pressing <kbd>↵ Enter</kbd> will toggle the expanded state of the group.
 
-While navigation the floating filters header with the keyboard pressing left/right the focus will move from header cell to header cell, if you wish to navigate within the cell, press <kbd>Enter</kbd> to focus the first enabled element within the current floating filter cell, and press <kbd>Esc</kbd> to return the focus to the floating filter cell.
+### Normal Column Headers
+
+Regular Column Headers may have selection checkboxes, sorting functions and menus, so to access all these functions while focusing a Column Header, you can do the following:
+
+- Press <kbd>␣ Space</kbd> to toggle the Column Header checkbox selection.
+- Press <kbd>↵ Enter</kbd> to toggle the sorting state of that column.
+- Press <kbd>⇧ Shift</kbd>+<kbd>↵ Enter</kbd> to toggle multi-sort for that column.
+- Press <kbd>⌥ Alt</kbd>+<kbd>↓</kbd> to open the menu for the focused Column Header.
+- Press <kbd>^ Ctrl</kbd>+<kbd>↵ Enter</kbd> to either open the menu for the focused Column Header (if `columnMenu = 'legacy'`) or open the filter for the focused Column Header (if `columnMenu = 'new'`).
+- When a menu is open, simply press <kbd>⎋ Esc</kbd> to close it and the focus will return to the Column Header.
+
+### Floating Filter Headers
+
+While navigating the Floating Filter Columns Headers with the keyboard, pressing <kbd>←</kbd> <kbd>→</kbd> will move focus from one Column Header to the next. If you wish to navigate within the Floating Filter Cell, press <kbd>↵ Enter</kbd> to focus the first enabled element within the current Floating Filter Cell, and press <kbd>⎋ Esc</kbd> to return focus to the Floating Filter Column Header.
 
 ## Example
 
@@ -62,7 +75,7 @@ The example below has grouped headers, headers and floating filters to demonstra
 
 ## Custom Navigation
 
-Most people will be happy with the default navigation the grid does when you use the arrow keys and the <kbd>Tab</kbd> key. Some people will want to override this (e.g. you may want the <kbd>Tab</kbd> key to navigate to the cell below, not the cell to the right). To facilitate this, the grid offers four methods: `navigateToNextCell`, `tabToNextCell`, `navigateToNextHeader` and `tabToNextHeader`.
+Most people will be happy with the default navigation the grid does when you use the arrow keys and the <kbd>⇥ Tab</kbd> key. Some people will want to override this (e.g. you may want the <kbd>⇥ Tab</kbd> key to navigate to the cell below, not the cell to the right). To facilitate this, the grid offers four methods: `navigateToNextCell`, `tabToNextCell`, `navigateToNextHeader` and `tabToNextHeader`.
 
 ### navigateToNextCell
 
@@ -72,7 +85,7 @@ Provide a callback `navigateToNextCell` if you want to override the arrow key na
 
 ### tabToNextCell
 
-Provide a callback `tabToNextCell` if you want to override the <kbd>Tab</kbd> key navigation. 
+Provide a callback `tabToNextCell` if you want to override the <kbd>⇥ Tab</kbd> key navigation. 
 
 <api-documentation source='grid-options/properties.json' section='nav' names='["tabToNextCell"]'  ></api-documentation>
 
@@ -92,7 +105,7 @@ Provide a callback `navigateToNextHeader` if you want to override the arrow key 
 
 ### tabToNextHeader
 
-Provide a callback `tabToNextHeader` if you want to override the <kbd>Tab</kbd> key navigation. 
+Provide a callback `tabToNextHeader` if you want to override the <kbd>⇥ Tab</kbd> key navigation. 
 
 <api-documentation source='grid-options/properties.json' section='nav' names='["tabToNextHeader"]'  ></api-documentation>
 
@@ -102,7 +115,7 @@ Both `navigateToNextHeader` and `tabToNextHeader` use `HeaderPosition`. This is 
 
 <interface-documentation interfaceName='HeaderPosition' ></interface-documentation>
 
-You should return the `HeaderPosition` you want in the `navigateToNextHeader` and `tabToNextHeader` functions to have it focused. Returning `null` or `undefined` in `navigateToNextHeader` will do nothing (same as focusing the current focused cell), however, doing the same thing in `tabToNextHeader` will allow the browser default behaviour for <kbd>Tab</kbd> to happen. This is useful for tabbing outside of the grid from the last cell or <kbd>Shift</kbd> tabbing out of the grid from the first cell.
+You should return the `HeaderPosition` you want in the `navigateToNextHeader` and `tabToNextHeader` functions to have it focused. Returning `null` or `undefined` in `navigateToNextHeader` will do nothing (same as focusing the current focused cell), however, doing the same thing in `tabToNextHeader` will allow the browser default behaviour for <kbd>⇥ Tab</kbd> to happen. This is useful for tabbing outside of the grid from the last cell or <kbd>⇧ Shift</kbd> tabbing out of the grid from the first cell.
 
 <note>
 The `navigateToNextCell` and `tabToNextCell` are only called while navigating across grid cells, while
@@ -144,7 +157,7 @@ You could override this behaviour to focus the first grid cell, if that is a pre
 | // intercept key strokes within input element
 | myInput.addEventListener("keydown", event => {
 |     // ignore non tab key strokes
-|     if(event.key !== 'Tab') return;
+|     if (event.key !== 'Tab') return;
 | 
 |     // prevents tabbing into the url section
 |     event.preventDefault();
@@ -153,7 +166,7 @@ You could override this behaviour to focus the first grid cell, if that is a pre
 |     gridApi.ensureIndexVisible(0);
 | 
 |     // scrolls to the first column
-|     const firstCol = columnApi.getAllDisplayedColumns()[0];
+|     const firstCol = api.getAllDisplayedColumns()[0];
 |     gridApi.ensureColumnVisible(firstCol);
 | 
 |     // sets focus into the first grid cell
@@ -212,29 +225,29 @@ The callback is available as a [column callback](/column-properties/#reference-c
 The example below demonstrates suppressing the following keyboard events:
 
 - On the Athlete column cells only:
-    - <kbd>Enter</kbd> will not start or stop editing.
+    - <kbd>↵ Enter</kbd> will not start or stop editing.
 - On the Country column cells only:
     - <kbd>↑</kbd> <kbd>↓</kbd> arrow keys are allowed. This is the only column that allows navigation from the grid to the header.
 - On all cells (including the cells of the Athlete Column):
-    - <kbd>Ctrl</kbd>+<kbd>A</kbd> will not select all cells into a range.
-    - <kbd>Ctrl</kbd>+<kbd>C</kbd> will not copy to clipboard.
-    - <kbd>Ctrl</kbd>+<kbd>V</kbd> will not paste from clipboard.
-    - <kbd>Ctrl</kbd>+<kbd>D</kbd> will not copy range down.
+    - <kbd>^ Ctrl</kbd>+<kbd>A</kbd> will not select all cells into a range.
+    - <kbd>^ Ctrl</kbd>+<kbd>C</kbd> will not copy to clipboard.
+    - <kbd>^ Ctrl</kbd>+<kbd>V</kbd> will not paste from clipboard.
+    - <kbd>^ Ctrl</kbd>+<kbd>D</kbd> will not copy range down.
     - <kbd>Page Up</kbd> and <kbd>Page Down</kbd> will not get handled by the grid.
     - <kbd>Home</kbd> will not focus top left cell.
     - <kbd>End</kbd> will not focus bottom right cell.
     - <kbd>←</kbd> <kbd>↑</kbd> <kbd>→</kbd> <kbd>↓</kbd> Arrow keys will not navigate focused cell.
     - <kbd>F2</kbd> will not start editing.
     - <kbd>Delete</kbd> will not start editing.
-    - <kbd>Backspace</kbd> will not start editing.
-    - <kbd>Escape</kbd> will not cancel editing.
-    - <kbd>Space</kbd> will not select current row.
-    - <kbd>Tab</kbd> will not be handled by the grid.
+    - <kbd>⌫ Backspace</kbd> will not start editing.
+    - <kbd>⎋ Escape</kbd> will not cancel editing.
+    - <kbd>␣ Space</kbd> will not select current row.
+    - <kbd>⇥ Tab</kbd> will not be handled by the grid.
 - On the Country header only:
-    - Navigation is blocked from the left to right using arrows but is allowed using <kbd>Tab</kbd>.
+    - Navigation is blocked from the left to right using arrows but is allowed using <kbd>⇥ Tab</kbd>.
     - Navigation up and down is allowed. This is the only header that allows navigation from the header to the grid cells.
-    - <kbd>Enter</kbd> is blocked. This is the only header that blocks sorting / opening menu via keyboard.
+    - <kbd>↵ Enter</kbd> is blocked. This is the only header that blocks sorting / opening menu via keyboard.
 - On all headers (excluding country):
-    - Navigation is blocked up and down, but navigation left / right is allowed using arrows and <kbd>Tab</kbd>.
+    - Navigation is blocked up and down, but navigation left / right is allowed using arrows and <kbd>⇥ Tab</kbd>.
 
 <grid-example title='Suppress Keys' name='suppress-keys' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel", "filterpanel", "setfilter"] }'></grid-example>

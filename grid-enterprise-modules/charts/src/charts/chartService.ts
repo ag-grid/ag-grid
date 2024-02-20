@@ -16,14 +16,16 @@ import {
     IAggFunc,
     IChartService,
     IRangeService,
+    ModuleRegistry,
     OpenChartToolPanelParams,
     Optional,
     PreDestroy,
     SeriesChartType,
     UpdateChartParams
 } from "@ag-grid-community/core";
-import { AgChartThemeOverrides, AgChartThemePalette, VERSION as CHARTS_VERSION } from "ag-charts-community";
+import { AgChartThemeOverrides, AgChartThemePalette, VERSION as CHARTS_VERSION, _ModuleSupport} from "ag-charts-community";
 import { GridChartComp, GridChartParams } from "./chartComp/gridChartComp";
+import { getCanonicalChartType, isEnterpriseChartType } from './chartComp/utils/seriesTypeMapper';
 import { upgradeChartModel } from "./chartModelMigration";
 import { VERSION as GRID_VERSION } from "../version";
 
@@ -49,7 +51,15 @@ export class ChartService extends BeanStub implements IChartService {
         lastSelectedChartId: '',
     };
 
+    public isEnterprise = () => _ModuleSupport.enterpriseModule.isEnterprise;
+
     public updateChart(params: UpdateChartParams): void {
+        const chartType = params.chartType;
+        if (chartType && isEnterpriseChartType(chartType) && !this.isEnterprise()) {
+            ModuleRegistry.__warnEnterpriseChartDisabled(chartType);
+            return;
+        }
+
         if (this.activeChartComps.size === 0) {
             console.warn(`AG Grid - No active charts to update.`);
             return;
@@ -154,9 +164,7 @@ export class ChartService extends BeanStub implements IChartService {
 
         if (model.modelType === 'pivot') {
             // if required enter pivot mode
-            if (!this.columnModel.isPivotMode()) {
-                this.columnModel.setPivotMode(true, "pivotChart");
-            }
+            this.gridOptionsService.updateGridOptions({ options: { pivotMode: true}, source: 'pivotChart' as any });
 
             // pivot chart range contains all visible column without a row range to include all rows
             const columns = this.columnModel.getAllDisplayedColumns().map(col => col.getColId());
@@ -236,9 +244,7 @@ export class ChartService extends BeanStub implements IChartService {
 
     public createPivotChart(params: CreatePivotChartParams): ChartRef | undefined {
         // if required enter pivot mode
-        if (!this.columnModel.isPivotMode()) {
-            this.columnModel.setPivotMode(true, "pivotChart");
-        }
+        this.gridOptionsService.updateGridOptions({ options: { pivotMode: true}, source: 'pivotChart' as any });
 
         // pivot chart range contains all visible column without a row range to include all rows
         const chartAllRangeParams: CellRangeParams = {
@@ -310,6 +316,11 @@ export class ChartService extends BeanStub implements IChartService {
         chartOptionsToRestore?: AgChartThemeOverrides,
         chartPaletteToRestore?: AgChartThemePalette,
         seriesChartTypes?: SeriesChartType[]): ChartRef | undefined {
+        
+        if (isEnterpriseChartType(chartType) && !this.isEnterprise()) {
+            ModuleRegistry.__warnEnterpriseChartDisabled(chartType);
+            return undefined;
+        }
 
         const createChartContainerFunc = this.gridOptionsService.getCallback('createChartContainer');
 
@@ -317,7 +328,7 @@ export class ChartService extends BeanStub implements IChartService {
             chartId: this.generateId(),
             pivotChart,
             cellRange,
-            chartType,
+            chartType: getCanonicalChartType(chartType),
             chartThemeName,
             insideDialog: !(container || createChartContainerFunc),
             suppressChartRanges,
@@ -329,7 +340,7 @@ export class ChartService extends BeanStub implements IChartService {
             chartOptionsToRestore,
             chartPaletteToRestore,
             seriesChartTypes,
-            crossFilteringResetCallback: () => this.activeChartComps.forEach(c => c.crossFilteringReset())
+            crossFilteringResetCallback: () => this.activeChartComps.forEach(c => c.crossFilteringReset()),
         };
 
         const chartComp = new GridChartComp(params);

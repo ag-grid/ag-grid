@@ -70,15 +70,15 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
             this.setDisplayed(pivotMode);
         }
     }
-    isColumnDroppable(column) {
+    isColumnDroppable(column, draggingEvent) {
         // we never allow grouping of secondary columns
-        if (this.gridOptionsService.is('functionsReadOnly') || !column.isPrimary()) {
+        if (this.gridOptionsService.get('functionsReadOnly') || !column.isPrimary()) {
             return false;
         }
-        return column.isAllowPivot() && !column.isPivotActive();
+        return column.isAllowPivot() && (!column.isPivotActive() || this.isSourceEventFromTarget(draggingEvent));
     }
     updateColumns(columns) {
-        if (this.gridOptionsService.is('functionsPassive')) {
+        if (this.gridOptionsService.get('functionsPassive')) {
             const event = {
                 type: Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST,
                 columns: columns

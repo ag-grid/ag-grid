@@ -50,7 +50,7 @@ var AgGroupComponent = /** @class */ (function (_super) {
     AgGroupComponent.getTemplate = function (params) {
         var cssIdentifier = params.cssIdentifier || 'default';
         var direction = params.direction || 'vertical';
-        return /* html */ "<div class=\"ag-group ag-" + cssIdentifier + "-group\" role=\"presentation\">\n            <div class=\"ag-group-title-bar ag-" + cssIdentifier + "-group-title-bar ag-unselectable\" ref=\"eTitleBar\" role=\"button\">\n                <span class=\"ag-group-title-bar-icon ag-" + cssIdentifier + "-group-title-bar-icon\" ref=\"eGroupOpenedIcon\" role=\"presentation\"></span>\n                <span class=\"ag-group-title-bar-icon ag-" + cssIdentifier + "-group-title-bar-icon\" ref=\"eGroupClosedIcon\" role=\"presentation\"></span>\n                <span ref=\"eTitle\" class=\"ag-group-title ag-" + cssIdentifier + "-group-title\"></span>\n            </div>\n            <div ref=\"eToolbar\" class=\"ag-group-toolbar ag-" + cssIdentifier + "-group-toolbar\">\n                <ag-checkbox ref=\"cbGroupEnabled\"></ag-checkbox>\n            </div>\n            <div ref=\"eContainer\" class=\"ag-group-container ag-group-container-" + direction + " ag-" + cssIdentifier + "-group-container\"></div>\n        </div>";
+        return /* html */ "<div class=\"ag-group ag-".concat(cssIdentifier, "-group\" role=\"presentation\">\n            <div class=\"ag-group-title-bar ag-").concat(cssIdentifier, "-group-title-bar ag-unselectable\" ref=\"eTitleBar\" role=\"button\">\n                <span class=\"ag-group-title-bar-icon ag-").concat(cssIdentifier, "-group-title-bar-icon\" ref=\"eGroupOpenedIcon\" role=\"presentation\"></span>\n                <span class=\"ag-group-title-bar-icon ag-").concat(cssIdentifier, "-group-title-bar-icon\" ref=\"eGroupClosedIcon\" role=\"presentation\"></span>\n                <span ref=\"eTitle\" class=\"ag-group-title ag-").concat(cssIdentifier, "-group-title\"></span>\n            </div>\n            <div ref=\"eToolbar\" class=\"ag-group-toolbar ag-").concat(cssIdentifier, "-group-toolbar\">\n                <ag-checkbox ref=\"cbGroupEnabled\"></ag-checkbox>\n            </div>\n            <div ref=\"eContainer\" class=\"ag-group-container ag-group-container-").concat(direction, " ag-").concat(cssIdentifier, "-group-container\"></div>\n        </div>");
     };
     AgGroupComponent.prototype.postConstruct = function () {
         if (this.items.length) {
@@ -109,10 +109,10 @@ var AgGroupComponent = /** @class */ (function (_super) {
     };
     AgGroupComponent.prototype.setAlignItems = function (alignment) {
         if (this.alignItems !== alignment) {
-            this.removeCssClass("ag-group-item-alignment-" + this.alignItems);
+            this.removeCssClass("ag-group-item-alignment-".concat(this.alignItems));
         }
         this.alignItems = alignment;
-        var newCls = "ag-group-item-alignment-" + this.alignItems;
+        var newCls = "ag-group-item-alignment-".concat(this.alignItems);
         this.addCssClass(newCls);
         return this;
     };
@@ -138,11 +138,17 @@ var AgGroupComponent = /** @class */ (function (_super) {
         var _this = this;
         items.forEach(function (item) { return _this.addItem(item); });
     };
+    AgGroupComponent.prototype.prependItem = function (item) {
+        this.insertItem(item, this.eContainer.firstChild);
+    };
     AgGroupComponent.prototype.addItem = function (item) {
+        this.insertItem(item, null);
+    };
+    AgGroupComponent.prototype.insertItem = function (item, before) {
         var container = this.eContainer;
         var el = item instanceof Component ? item.getGui() : item;
-        el.classList.add('ag-group-item', "ag-" + this.cssIdentifier + "-group-item");
-        container.appendChild(el);
+        el.classList.add('ag-group-item', "ag-".concat(this.cssIdentifier, "-group-item"));
+        container.insertBefore(el, before);
         this.items.push(el);
     };
     AgGroupComponent.prototype.hideItem = function (hide, index) {

@@ -48,7 +48,7 @@ class AgAutocompleteList extends popupComponent_1.PopupComponent {
     }
     setSearch(searchString) {
         this.searchString = searchString;
-        if (generic_1.exists(searchString)) {
+        if ((0, generic_1.exists)(searchString)) {
             this.runSearch();
         }
         else {
@@ -89,7 +89,7 @@ class AgAutocompleteList extends popupComponent_1.PopupComponent {
         let matchingStrings;
         let topSuggestion;
         if (this.params.useFuzzySearch) {
-            matchingStrings = fuzzyMatch_1.fuzzySuggestions(this.searchString, searchStrings, true);
+            matchingStrings = (0, fuzzyMatch_1.fuzzySuggestions)(this.searchString, searchStrings, true).values;
             topSuggestion = matchingStrings.length ? matchingStrings[0] : undefined;
         }
         else {
@@ -158,7 +158,7 @@ AgAutocompleteList.TEMPLATE = `<div class="ag-autocomplete-list-popup">
             <div ref="eList" class="ag-autocomplete-list"></div>
         <div>`;
 __decorate([
-    componentAnnotations_1.RefSelector('eList')
+    (0, componentAnnotations_1.RefSelector)('eList')
 ], AgAutocompleteList.prototype, "eList", void 0);
 __decorate([
     context_1.PostConstruct

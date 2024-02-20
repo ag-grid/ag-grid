@@ -1,4 +1,4 @@
-import { BeanStub, IServerSideStore, NumberSequence, RowBounds, RowNode, ServerSideGroupLevelParams, ServerSideGroupLevelState, ServerSideTransaction, ServerSideTransactionResult, StoreRefreshAfterParams, Column, IRowNode } from "@ag-grid-community/core";
+import { BeanStub, IServerSideStore, NumberSequence, RowBounds, RowNode, ServerSideGroupLevelParams, ServerSideGroupLevelState, ServerSideTransaction, ServerSideTransactionResult, StoreRefreshAfterParams, Column, IRowNode, LoadSuccessParams } from "@ag-grid-community/core";
 import { SSRMParams } from "../../serverSideRowModel";
 export declare class LazyStore extends BeanStub implements IServerSideStore {
     private blockUtils;
@@ -23,6 +23,14 @@ export declare class LazyStore extends BeanStub implements IServerSideStore {
     constructor(ssrmParams: SSRMParams, storeParams: ServerSideGroupLevelParams, parentRowNode: RowNode);
     private init;
     private destroyRowNodes;
+    /**
+     * Given a server response, ingest the rows outside of the data source lifecycle.
+     *
+     * @param rowDataParams the server response containing the rows to ingest
+     * @param startRow the index to start ingesting rows
+     * @param expectedRows the expected number of rows in the response (used to determine if the last row index is known)
+     */
+    applyRowData(rowDataParams: LoadSuccessParams, startRow: number, expectedRows: number): void;
     /**
      * Applies a given transaction to the data set within this store
      *
@@ -86,7 +94,7 @@ export declare class LazyStore extends BeanStub implements IServerSideStore {
      *
      * For the purpose of exclusively server side filtered stores, this is the same as getNodes().forEachDeep
      */
-    forEachNodeDeepAfterFilterAndSort(callback: (rowNode: RowNode<any>, index: number) => void, sequence?: NumberSequence): void;
+    forEachNodeDeepAfterFilterAndSort(callback: (rowNode: RowNode<any>, index: number) => void, sequence?: NumberSequence, includeFooterNodes?: boolean): void;
     /**
      * Removes the failed status from all nodes, and marks them as stub to encourage reloading
      */

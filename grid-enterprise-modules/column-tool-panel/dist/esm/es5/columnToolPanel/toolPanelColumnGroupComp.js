@@ -47,9 +47,6 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
         var checkboxInput = this.cbSelect.getInputElement();
         checkboxGui.insertAdjacentElement('afterend', this.eDragHandle);
         checkboxInput.setAttribute('tabindex', '-1');
-        if (_.missing(this.displayName)) {
-            this.displayName = '>>';
-        }
         this.eLabel.innerHTML = this.displayName ? this.displayName : '';
         this.setupExpandContract();
         this.addCssClass('ag-column-select-indent-' + this.columnDept);
@@ -111,7 +108,7 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
     ToolPanelColumnGroupComp.prototype.onContextMenu = function (e) {
         var _this = this;
         var _a = this, columnGroup = _a.columnGroup, gridOptionsService = _a.gridOptionsService;
-        if (gridOptionsService.is('functionsReadOnly')) {
+        if (gridOptionsService.get('functionsReadOnly')) {
             return;
         }
         var contextMenu = this.createBean(new ToolPanelContextMenu(columnGroup, e, this.focusWrapper));
@@ -136,14 +133,15 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
             _.setDisplayed(this.eDragHandle, false);
             return;
         }
-        var hideColumnOnExit = !this.gridOptionsService.is('suppressDragLeaveHidesColumns');
+        var hideColumnOnExit = !this.gridOptionsService.get('suppressDragLeaveHidesColumns');
         var dragSource = {
             type: DragSourceType.ToolPanel,
             eElement: this.eDragHandle,
             dragItemName: this.displayName,
-            defaultIconName: hideColumnOnExit ? DragAndDropService.ICON_HIDE : DragAndDropService.ICON_NOT_ALLOWED,
+            getDefaultIconName: function () { return hideColumnOnExit ? DragAndDropService.ICON_HIDE : DragAndDropService.ICON_NOT_ALLOWED; },
             getDragItem: function () { return _this.createDragItem(); },
             onDragStarted: function () {
+                hideColumnOnExit = !_this.gridOptionsService.get('suppressDragLeaveHidesColumns');
                 var event = {
                     type: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START,
                     column: _this.columnGroup
@@ -243,8 +241,8 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
             translate('ariaIndeterminate', 'indeterminate') :
             (checkboxValue ? translate('ariaVisible', 'visible') : translate('ariaHidden', 'hidden'));
         var visibilityLabel = translate('ariaToggleVisibility', 'Press SPACE to toggle visibility');
-        _.setAriaLabel(this.focusWrapper, this.displayName + " " + columnLabel);
-        this.cbSelect.setInputAriaLabel(visibilityLabel + " (" + state + ")");
+        _.setAriaLabel(this.focusWrapper, "".concat(this.displayName, " ").concat(columnLabel));
+        this.cbSelect.setInputAriaLabel("".concat(visibilityLabel, " (").concat(state, ")"));
         _.setAriaDescribedBy(this.focusWrapper, this.cbSelect.getInputElement().id);
     };
     ToolPanelColumnGroupComp.prototype.onColumnStateChanged = function () {

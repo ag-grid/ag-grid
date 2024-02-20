@@ -4,7 +4,7 @@ import { ICellRendererParams } from "@ag-grid-community/core";
 import { ICellRendererAngularComp } from "@ag-grid-community/angular";
 
 @Component({
-    selector: 'full-width-cell',
+    standalone: true,
     template: `
         <div class="full-width-panel">
             <div class="full-width-flag">
@@ -38,7 +38,7 @@ import { ICellRendererAngularComp } from "@ag-grid-community/angular";
                 border: 2px solid grey;
                 border-style: ridge;
                 padding: 5px;
-                background-color: darkgray;
+                background-color: #99999944;
             }
             .full-width-flag {
                 float: left;
@@ -60,7 +60,7 @@ import { ICellRendererAngularComp } from "@ag-grid-community/angular";
                 padding: 2px;
                 height: 100%;
                 font-family: cursive;
-                background-color: #fafafa;
+                background-color: #99999944;
             }
             .full-width-center p {
                 margin-top: 0px;

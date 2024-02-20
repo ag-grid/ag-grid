@@ -1,15 +1,15 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { ColumnApi } from "./columns/columnApi";
 import { DomLayoutType, GridOptions } from "./entities/gridOptions";
-import { GetGroupAggFilteringParams } from "./interfaces/iCallbackParams";
+import { GetGroupAggFilteringParams, GetGroupIncludeFooterParams } from "./interfaces/iCallbackParams";
 import { AgEvent } from "./events";
-import { GridApi } from "./gridApi";
 import { AgGridCommon, WithoutGridCommon } from "./interfaces/iCommon";
 import { RowModelType } from "./interfaces/iRowModel";
 import { AnyGridOptions } from "./propertyKeys";
 import { IRowNode } from "./interfaces/iRowNode";
+import { GRID_OPTION_DEFAULTS } from "./validation/rules/gridOptionsValidations";
+import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 declare type GetKeys<T, U> = {
     [K in keyof T]: T[K] extends U | undefined ? K : never;
 }[keyof T];
@@ -19,51 +19,62 @@ declare type GetKeys<T, U> = {
  */
 export declare type KeysOfType<U> = Exclude<GetKeys<GridOptions, U>, AnyGridOptions>;
 declare type BooleanProps = Exclude<KeysOfType<boolean>, AnyGridOptions>;
-declare type NumberProps = Exclude<KeysOfType<number>, AnyGridOptions>;
 declare type NoArgFuncs = KeysOfType<() => any>;
 declare type AnyArgFuncs = KeysOfType<(arg: 'NO_MATCH') => any>;
 declare type CallbackProps = Exclude<KeysOfType<(params: AgGridCommon<any, any>) => any>, NoArgFuncs | AnyArgFuncs>;
-declare type NonPrimitiveProps = Exclude<keyof GridOptions, BooleanProps | NumberProps | CallbackProps | 'api' | 'columnApi' | 'context'>;
 declare type ExtractParamsFromCallback<TCallback> = TCallback extends (params: infer PA) => any ? PA : never;
 declare type ExtractReturnTypeFromCallback<TCallback> = TCallback extends (params: AgGridCommon<any, any>) => infer RT ? RT : never;
 declare type WrappedCallback<K extends CallbackProps, OriginalCallback extends GridOptions[K]> = undefined | ((params: WithoutGridCommon<ExtractParamsFromCallback<OriginalCallback>>) => ExtractReturnTypeFromCallback<OriginalCallback>);
-export interface PropertyChangedEvent extends AgEvent {
-    type: keyof GridOptions;
-    currentValue: any;
-    previousValue: any;
+export interface PropertyChangeSet {
+    /** Unique id which can be used to link changes of multiple properties that were updated together.
+     * i.e a user updated multiple properties at the same time.
+     */
+    id: number;
+    /** All the properties that have been updated in this change set */
+    properties: (keyof GridOptions)[];
 }
-export declare type PropertyChangedListener<T extends PropertyChangedEvent> = (event: T) => void;
+export declare type PropertyChangedSource = 'api' | 'gridOptionsUpdated';
+export interface PropertyChangedEvent extends AgEvent {
+    type: 'gridPropertyChanged';
+    changeSet: PropertyChangeSet | undefined;
+    source: PropertyChangedSource;
+}
+/**
+ * For boolean properties the changed value will have been coerced to a boolean, so we do not want the type to include the undefined value.
+ */
+declare type GridOptionsOrBooleanCoercedValue<K extends keyof GridOptions> = K extends BooleanProps ? boolean : GridOptions[K];
+export interface PropertyValueChangedEvent<K extends keyof GridOptions> extends AgEvent {
+    type: K;
+    changeSet: PropertyChangeSet | undefined;
+    currentValue: GridOptionsOrBooleanCoercedValue<K>;
+    previousValue: GridOptionsOrBooleanCoercedValue<K>;
+    source: PropertyChangedSource;
+}
+export declare type PropertyChangedListener = (event: PropertyChangedEvent) => void;
+export declare type PropertyValueChangedListener<K extends keyof GridOptions> = (event: PropertyValueChangedEvent<K>) => void;
 export declare class GridOptionsService {
     private readonly gridOptions;
     private readonly eventService;
     private readonly environment;
+    frameworkOverrides: IFrameworkOverrides;
     private eGridDiv;
+    private validationService;
     private destroyed;
     private scrollbarWidth;
     private domDataKey;
-    api: GridApi;
-    columnApi: ColumnApi;
-    get context(): any;
+    private static readonly alwaysSyncGlobalEvents;
+    private readonly api;
+    /** @deprecated v31 ColumnApi has been deprecated and all methods moved to the api. */
+    private columnApi;
+    private get context();
     private propertyEventService;
-    private gridOptionLookup;
-    private agWire;
     init(): void;
     private destroy;
-    /**
-     * Is the given GridOption property set to true.
-     * @param property GridOption property that has the type `boolean | undefined`
-     */
-    is(property: BooleanProps): boolean;
     /**
      * Get the raw value of the GridOptions property provided.
      * @param property
      */
-    get<K extends NonPrimitiveProps>(property: K): GridOptions[K];
-    /**
-     * Get the GridOption property as a number, raw value is returned via a toNumber coercion function.
-     * @param property GridOption property that has the type `number | undefined`
-     */
-    getNum<K extends NumberProps>(property: K): number | undefined;
+    get<K extends keyof GridOptions>(property: K): K extends keyof typeof GRID_OPTION_DEFAULTS ? NonNullable<GridOptions[K]> : GridOptions[K];
     /**
      * Get the GridOption callback but wrapped so that the common params of api,columnApi and context are automatically applied to the params.
      * @param property GridOption callback properties based on the fact that this property has a callback with params extending AgGridCommon
@@ -81,17 +92,22 @@ export declare class GridOptionsService {
     */
     private mergeGridCommonParams;
     /**
-     *
-     * @param key - key of the GridOption property to update
-     * @param newValue - new value for this property
-     * @param force - force the property change Event to be fired even if the value has not changed
-     * @param eventParams - additional params to merge into the property changed event
+     * Handles value coercion including validation of ranges etc. If value is invalid, undefined is set, allowing default to be used.
      */
-    set<K extends keyof GridOptions>(key: K, newValue: GridOptions[K], force?: boolean, eventParams?: object): void;
-    addEventListener<T extends PropertyChangedEvent>(key: keyof GridOptions, listener: PropertyChangedListener<T>): void;
-    removeEventListener<T extends PropertyChangedEvent>(key: keyof GridOptions, listener: PropertyChangedListener<T>): void;
-    globalEventHandler(eventName: string, event?: any): void;
-    getGridId(): string;
+    private static PROPERTY_COERCIONS;
+    private static toBoolean;
+    private static toNumber;
+    private static toConstrainedNum;
+    private static getCoercedValue;
+    static getCoercedGridOptions(gridOptions: GridOptions): GridOptions;
+    private static changeSetId;
+    updateGridOptions({ options, source }: {
+        options: Partial<GridOptions>;
+        source?: PropertyChangedSource;
+    }): void;
+    addEventListener<K extends keyof GridOptions>(key: K, listener: PropertyValueChangedListener<K>): void;
+    removeEventListener<K extends keyof GridOptions>(key: K, listener: PropertyValueChangedListener<K>): void;
+    globalEventHandlerFactory: (restrictToSyncOnly?: boolean) => (eventName: string, event?: any) => void;
     getScrollbarWidth(): number;
     isRowModelType(rowModelType: RowModelType): boolean;
     isDomLayout(domLayout: DomLayoutType): boolean;
@@ -114,12 +130,13 @@ export declare class GridOptionsService {
     getAsyncTransactionWaitMillis(): number | undefined;
     isAnimateRows(): boolean;
     isGroupRowsSticky(): boolean;
-    isTreeData(): boolean;
-    isMasterDetail(): boolean;
-    isEnableRangeSelection(): boolean;
     isColumnsSortingCoupledToGroup(): boolean;
     getGroupAggFiltering(): ((params: WithoutGridCommon<GetGroupAggFilteringParams>) => boolean) | undefined;
+    isGroupIncludeFooterTrueOrCallback(): boolean;
+    getGroupIncludeFooter(): (params: WithoutGridCommon<GetGroupIncludeFooterParams>) => boolean;
     isGroupMultiAutoColumn(): boolean;
     isGroupUseEntireRow(pivotMode: boolean): boolean;
+    getGridCommonParams<TData = any, TContext = any>(): AgGridCommon<TData, TContext>;
+    addGridCommonParams<T extends AgGridCommon<TData, TContext>, TData = any, TContext = any>(params: WithoutGridCommon<T>): T;
 }
 export {};

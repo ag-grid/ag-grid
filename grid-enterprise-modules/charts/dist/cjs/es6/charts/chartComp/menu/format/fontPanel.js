@@ -132,7 +132,7 @@ class FontPanel extends core_1.Component {
     initFontColorPicker() {
         this.colorPicker
             .setLabel(this.chartTranslationService.translate('color'))
-            .setInputWidth(45)
+            .setInputWidth('flex')
             .setValue(`${this.params.initialFont.color}`)
             .onValueChange(newColor => this.params.setFont({ color: newColor }));
     }
@@ -162,22 +162,22 @@ FontPanel.TEMPLATE = `<div class="ag-font-panel">
             </ag-group-component>
         </div>`;
 __decorate([
-    core_1.RefSelector('fontGroup')
+    (0, core_1.RefSelector)('fontGroup')
 ], FontPanel.prototype, "fontGroup", void 0);
 __decorate([
-    core_1.RefSelector('familySelect')
+    (0, core_1.RefSelector)('familySelect')
 ], FontPanel.prototype, "familySelect", void 0);
 __decorate([
-    core_1.RefSelector('weightStyleSelect')
+    (0, core_1.RefSelector)('weightStyleSelect')
 ], FontPanel.prototype, "weightStyleSelect", void 0);
 __decorate([
-    core_1.RefSelector('sizeSelect')
+    (0, core_1.RefSelector)('sizeSelect')
 ], FontPanel.prototype, "sizeSelect", void 0);
 __decorate([
-    core_1.RefSelector('colorPicker')
+    (0, core_1.RefSelector)('colorPicker')
 ], FontPanel.prototype, "colorPicker", void 0);
 __decorate([
-    core_1.Autowired('chartTranslationService')
+    (0, core_1.Autowired)('chartTranslationService')
 ], FontPanel.prototype, "chartTranslationService", void 0);
 __decorate([
     core_1.PostConstruct

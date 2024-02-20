@@ -13,9 +13,9 @@ function serialiseDate(date, includeTime = true, separator = '-') {
     if (!date) {
         return null;
     }
-    let serialised = [date.getFullYear(), date.getMonth() + 1, date.getDate()].map(part => number_1.padStartWidthZeros(part, 2)).join(separator);
+    let serialised = [date.getFullYear(), date.getMonth() + 1, date.getDate()].map(part => (0, number_1.padStartWidthZeros)(part, 2)).join(separator);
     if (includeTime) {
-        serialised += ' ' + [date.getHours(), date.getMinutes(), date.getSeconds()].map(part => number_1.padStartWidthZeros(part, 2)).join(':');
+        serialised += ' ' + [date.getHours(), date.getMinutes(), date.getSeconds()].map(part => (0, number_1.padStartWidthZeros)(part, 2)).join(':');
     }
     return serialised;
 }
@@ -38,7 +38,7 @@ const calculateOrdinal = (value) => {
  * @param format The string to format the date to, defaults to YYYY-MM-DD
  */
 function dateToFormattedString(date, format = 'YYYY-MM-DD') {
-    const fullYear = number_1.padStartWidthZeros(date.getFullYear(), 4);
+    const fullYear = (0, number_1.padStartWidthZeros)(date.getFullYear(), 4);
     const months = [
         'January', 'February', 'March', 'April', 'May', 'June',
         'July', 'August', 'September', 'October', 'November', 'December',
@@ -52,11 +52,11 @@ function dateToFormattedString(date, format = 'YYYY-MM-DD') {
         Y: () => `${date.getFullYear()}`,
         MMMM: () => months[date.getMonth()],
         MMM: () => months[date.getMonth()].slice(0, 3),
-        MM: () => number_1.padStartWidthZeros(date.getMonth() + 1, 2),
+        MM: () => (0, number_1.padStartWidthZeros)(date.getMonth() + 1, 2),
         Mo: () => `${date.getMonth() + 1}${calculateOrdinal(date.getMonth() + 1)}`,
         M: () => `${date.getMonth() + 1}`,
         Do: () => `${date.getDate()}${calculateOrdinal(date.getDate())}`,
-        DD: () => number_1.padStartWidthZeros(date.getDate(), 2),
+        DD: () => (0, number_1.padStartWidthZeros)(date.getDate(), 2),
         D: () => `${date.getDate()}`,
         dddd: () => days[date.getDay()],
         ddd: () => days[date.getDay()].slice(0, 3),

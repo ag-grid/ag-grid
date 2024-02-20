@@ -1,4 +1,12 @@
-import { Grid, ColDef, GridOptions, IDateFilterParams, ITextFilterParams, INumberFilterParams } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  ColDef,
+  GridOptions,
+  IDateFilterParams,
+  ITextFilterParams,
+  INumberFilterParams,
+} from '@ag-grid-community/core';
 
 var filterParams: IDateFilterParams = {
   maxNumConditions: 1,
@@ -58,6 +66,8 @@ const columnDefs: ColDef[] = [
   },
 ]
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
   defaultColDef: {
@@ -70,9 +80,9 @@ const gridOptions: GridOptions<IOlympicData> = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

@@ -35,10 +35,14 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 import { BeanStub } from "../../context/beanStub";
 import { Autowired } from "../../context/context";
@@ -135,7 +139,7 @@ var HeaderRowContainerCtrl = /** @class */ (function (_super) {
         this.focusService.focusHeaderPosition({ headerPosition: position });
     };
     HeaderRowContainerCtrl.prototype.getAllCtrls = function () {
-        var res = __spreadArray([], __read(this.groupsRowCtrls));
+        var res = __spreadArray([], __read(this.groupsRowCtrls), false);
         if (this.columnsRowCtrl) {
             res.push(this.columnsRowCtrl);
         }
@@ -160,7 +164,7 @@ var HeaderRowContainerCtrl = /** @class */ (function (_super) {
         if (this.pinned != null) {
             return;
         }
-        this.createManagedBean(new CenterWidthFeature(function (width) { return _this.comp.setCenterWidth(width + "px"); }, true));
+        this.createManagedBean(new CenterWidthFeature(function (width) { return _this.comp.setCenterWidth("".concat(width, "px")); }, true));
     };
     HeaderRowContainerCtrl.prototype.setHorizontalScroll = function (offset) {
         this.comp.setViewportScrollLeft(offset);
@@ -180,14 +184,14 @@ var HeaderRowContainerCtrl = /** @class */ (function (_super) {
             } // can happen at initialisation, width not yet set
             var hidden = (width == 0);
             var hiddenChanged = _this.hidden !== hidden;
-            var isRtl = _this.gridOptionsService.is('enableRtl');
+            var isRtl = _this.gridOptionsService.get('enableRtl');
             var scrollbarWidth = _this.gridOptionsService.getScrollbarWidth();
             // if there is a scroll showing (and taking up space, so Windows, and not iOS)
             // in the body, then we add extra space to keep header aligned with the body,
             // as body width fits the cols and the scrollbar
             var addPaddingForScrollbar = _this.scrollVisibleService.isVerticalScrollShowing() && ((isRtl && pinningLeft) || (!isRtl && pinningRight));
             var widthWithPadding = addPaddingForScrollbar ? width + scrollbarWidth : width;
-            _this.comp.setPinnedContainerWidth(widthWithPadding + "px");
+            _this.comp.setPinnedContainerWidth("".concat(widthWithPadding, "px"));
             _this.comp.setDisplayed(!hidden);
             if (hiddenChanged) {
                 _this.hidden = hidden;
@@ -236,6 +240,9 @@ var HeaderRowContainerCtrl = /** @class */ (function (_super) {
             return false;
         }
         return ctrl.focusHeader(column, event);
+    };
+    HeaderRowContainerCtrl.prototype.getViewport = function () {
+        return this.eViewport;
     };
     HeaderRowContainerCtrl.prototype.getRowCount = function () {
         return this.groupsRowCtrls.length + (this.columnsRowCtrl ? 1 : 0) + (this.filtersRowCtrl ? 1 : 0);

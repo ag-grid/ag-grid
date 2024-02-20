@@ -1,4 +1,5 @@
 "use strict";
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ComponentUtil = void 0;
 const events_1 = require("../events");
@@ -11,136 +12,63 @@ class ComponentUtil {
         if (!eventName || eventName.length < 2) {
             return eventName;
         }
-        return 'on' + eventName[0].toUpperCase() + eventName.substr(1);
+        return 'on' + eventName[0].toUpperCase() + eventName.substring(1);
     }
-    static getCoercionLookup() {
-        let coercionLookup = {};
-        [
-            ...ComponentUtil.ARRAY_PROPERTIES,
-            ...ComponentUtil.OBJECT_PROPERTIES,
-            ...ComponentUtil.STRING_PROPERTIES,
-            ...ComponentUtil.FUNCTION_PROPERTIES,
-            ...ComponentUtil.EVENT_CALLBACKS,
-        ]
-            .forEach((key) => coercionLookup[key] = 'none');
-        ComponentUtil.BOOLEAN_PROPERTIES
-            .forEach(key => coercionLookup[key] = 'boolean');
-        ComponentUtil.NUMBER_PROPERTIES
-            .forEach(key => coercionLookup[key] = 'number');
-        return coercionLookup;
-    }
-    static getValue(key, rawValue) {
-        const coercionStep = ComponentUtil.coercionLookup[key];
-        if (coercionStep) {
-            let newValue = rawValue;
-            switch (coercionStep) {
-                case 'number': {
-                    newValue = ComponentUtil.toNumber(rawValue);
-                    break;
-                }
-                case 'boolean': {
-                    newValue = ComponentUtil.toBoolean(rawValue);
-                    break;
-                }
-                case 'none': {
-                    // if groupAggFiltering exists and isn't a function, handle as a boolean.
-                    if (key === 'groupAggFiltering' && typeof rawValue !== 'function') {
-                        newValue = ComponentUtil.toBoolean(rawValue);
-                    }
-                    break;
-                }
-            }
-            return newValue;
-        }
-        return undefined;
-    }
-    static getGridOptionKeys(component, isVue) {
+    static getGridOptionKeys() {
         // Vue does not have keys in prod so instead need to run through all the 
         // gridOptions checking for presence of a gridOption key.
-        return isVue
-            ? Object.keys(ComponentUtil.coercionLookup)
-            : Object.keys(component);
+        return this.ALL_PROPERTIES_AND_CALLBACKS;
     }
-    static copyAttributesToGridOptions(gridOptions, component, isVue = false) {
+    /** Combines component props / attributes with the provided gridOptions returning a new combined gridOptions object */
+    static combineAttributesAndGridOptions(gridOptions, component) {
         // create empty grid options if none were passed
         if (typeof gridOptions !== 'object') {
             gridOptions = {};
         }
-        // to allow array style lookup in TypeScript, take type away from 'this' and 'gridOptions'
-        const pGridOptions = gridOptions;
-        const keys = ComponentUtil.getGridOptionKeys(component, isVue);
+        // shallow copy (so we don't change the provided object)
+        const mergedOptions = Object.assign({}, gridOptions);
+        const keys = ComponentUtil.getGridOptionKeys();
         // Loop through component props, if they are not undefined and a valid gridOption copy to gridOptions
         keys.forEach(key => {
             const value = component[key];
-            if (typeof value !== 'undefined') {
-                const coercedValue = ComponentUtil.getValue(key, value);
-                if (coercedValue !== undefined) {
-                    pGridOptions[key] = coercedValue;
-                }
+            if (typeof value !== 'undefined' && value !== ComponentUtil.VUE_OMITTED_PROPERTY) {
+                mergedOptions[key] = value;
             }
         });
-        return gridOptions;
+        return mergedOptions;
     }
     static processOnChange(changes, api) {
-        if (!changes || Object.keys(changes).length === 0) {
+        if (!changes) {
             return;
         }
-        const changesToApply = Object.assign({}, changes);
-        // We manually call these updates so that we can provide a different source of gridOptionsChanged
-        // We do not call setProperty as this will be called by the grid api methods
-        if (changesToApply.columnTypes) {
-            api.setColumnTypes(changesToApply.columnTypes.currentValue, "gridOptionsChanged");
-            delete changesToApply.columnTypes;
-        }
-        if (changesToApply.autoGroupColumnDef) {
-            api.setAutoGroupColumnDef(changesToApply.autoGroupColumnDef.currentValue, "gridOptionsChanged");
-            delete changesToApply.autoGroupColumnDef;
-        }
-        if (changesToApply.defaultColDef) {
-            api.setDefaultColDef(changesToApply.defaultColDef.currentValue, "gridOptionsChanged");
-            delete changesToApply.defaultColDef;
-        }
-        if (changesToApply.columnDefs) {
-            api.setColumnDefs(changesToApply.columnDefs.currentValue, "gridOptionsChanged");
-            delete changesToApply.columnDefs;
-        }
-        Object.keys(changesToApply).forEach(key => {
-            const gridKey = key;
-            const coercedValue = ComponentUtil.getValue(gridKey, changesToApply[gridKey].currentValue);
-            api.__setProperty(gridKey, coercedValue);
+        // Only process changes to properties that are part of the gridOptions
+        const gridChanges = {};
+        let hasChanges = false;
+        Object.keys(changes)
+            .filter((key) => ComponentUtil.ALL_PROPERTIES_AND_CALLBACKS_SET.has(key))
+            .forEach((key) => {
+            gridChanges[key] = changes[key];
+            hasChanges = true;
         });
-        // copy changes into an event for dispatch
+        if (!hasChanges) {
+            return;
+        }
+        api.__internalUpdateGridOptions(gridChanges);
+        // copy gridChanges into an event for dispatch
         const event = {
             type: events_1.Events.EVENT_COMPONENT_STATE_CHANGED
         };
-        object_1.iterateObject(changes, (key, value) => {
+        (0, object_1.iterateObject)(gridChanges, (key, value) => {
             event[key] = value;
         });
         api.dispatchEvent(event);
     }
-    static toBoolean(value) {
-        if (typeof value === 'boolean') {
-            return value;
-        }
-        if (typeof value === 'string') {
-            // for boolean, compare to empty String to allow attributes appearing with
-            // no value to be treated as 'true'
-            return value.toUpperCase() === 'TRUE' || value == '';
-        }
-        return false;
-    }
-    static toNumber(value) {
-        if (typeof value === 'number') {
-            return value;
-        }
-        if (typeof value === 'string') {
-            return Number(value);
-        }
-    }
 }
 exports.ComponentUtil = ComponentUtil;
+_a = ComponentUtil;
 // all events
-ComponentUtil.EVENTS = generic_1.values(events_1.Events);
+ComponentUtil.EVENTS = (0, generic_1.values)(events_1.Events);
+ComponentUtil.VUE_OMITTED_PROPERTY = 'AG-VUE-OMITTED-PROPERTY';
 // events that are internal to AG Grid and should not be exposed to users via documentation or generated framework components
 /** Exclude the following internal events from code generation to prevent exposing these events via framework components */
 ComponentUtil.EXCLUDED_INTERNAL_EVENTS = [
@@ -148,6 +76,7 @@ ComponentUtil.EXCLUDED_INTERNAL_EVENTS = [
     events_1.Events.EVENT_CHECKBOX_CHANGED,
     events_1.Events.EVENT_HEIGHT_SCALE_CHANGED,
     events_1.Events.EVENT_BODY_HEIGHT_CHANGED,
+    events_1.Events.EVENT_COLUMN_CONTAINER_WIDTH_CHANGED,
     events_1.Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED,
     events_1.Events.EVENT_SCROLL_VISIBILITY_CHANGED,
     events_1.Events.EVENT_COLUMN_HOVER_CHANGED,
@@ -158,8 +87,6 @@ ComponentUtil.EXCLUDED_INTERNAL_EVENTS = [
     events_1.Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED,
     events_1.Events.EVENT_ROW_CONTAINER_HEIGHT_CHANGED,
     events_1.Events.EVENT_POPUP_TO_FRONT,
-    events_1.Events.EVENT_KEYBOARD_FOCUS,
-    events_1.Events.EVENT_MOUSE_FOCUS,
     events_1.Events.EVENT_STORE_UPDATED,
     events_1.Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START,
     events_1.Events.EVENT_COLUMN_PANEL_ITEM_DRAG_END,
@@ -177,11 +104,16 @@ ComponentUtil.EXCLUDED_INTERNAL_EVENTS = [
     events_1.Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED,
     events_1.Events.EVENT_DATA_TYPES_INFERRED,
     events_1.Events.EVENT_FIELD_VALUE_CHANGED,
-    events_1.Events.EVENT_FIELD_PICKER_VALUE_SELECTED
+    events_1.Events.EVENT_FIELD_PICKER_VALUE_SELECTED,
+    events_1.Events.EVENT_SUPPRESS_COLUMN_MOVE_CHANGED,
+    events_1.Events.EVENT_SUPPRESS_MENU_HIDE_CHANGED,
+    events_1.Events.EVENT_SUPPRESS_FIELD_DOT_NOTATION,
+    events_1.Events.EVENT_ROW_COUNT_READY,
+    events_1.Events.EVENT_SIDE_BAR_UPDATED,
 ];
 // events that are available for use by users of AG Grid and so should be documented
 /** EVENTS that should be exposed via code generation for the framework components.  */
-ComponentUtil.PUBLIC_EVENTS = ComponentUtil.EVENTS.filter(e => !array_1.includes(ComponentUtil.EXCLUDED_INTERNAL_EVENTS, e));
+ComponentUtil.PUBLIC_EVENTS = ComponentUtil.EVENTS.filter(e => !(0, array_1.includes)(ComponentUtil.EXCLUDED_INTERNAL_EVENTS, e));
 // onXXX methods, based on the above events
 ComponentUtil.EVENT_CALLBACKS = ComponentUtil.EVENTS.map(event => ComponentUtil.getCallbackForEvent(event));
 ComponentUtil.STRING_PROPERTIES = propertyKeys_1.PropertyKeys.STRING_PROPERTIES;
@@ -191,5 +123,5 @@ ComponentUtil.NUMBER_PROPERTIES = propertyKeys_1.PropertyKeys.NUMBER_PROPERTIES;
 ComponentUtil.BOOLEAN_PROPERTIES = propertyKeys_1.PropertyKeys.BOOLEAN_PROPERTIES;
 ComponentUtil.FUNCTION_PROPERTIES = propertyKeys_1.PropertyKeys.FUNCTION_PROPERTIES;
 ComponentUtil.ALL_PROPERTIES = propertyKeys_1.PropertyKeys.ALL_PROPERTIES;
-ComponentUtil.ALL_PROPERTIES_SET = new Set(propertyKeys_1.PropertyKeys.ALL_PROPERTIES);
-ComponentUtil.coercionLookup = ComponentUtil.getCoercionLookup();
+ComponentUtil.ALL_PROPERTIES_AND_CALLBACKS = [..._a.ALL_PROPERTIES, ..._a.EVENT_CALLBACKS];
+ComponentUtil.ALL_PROPERTIES_AND_CALLBACKS_SET = new Set(ComponentUtil.ALL_PROPERTIES_AND_CALLBACKS);

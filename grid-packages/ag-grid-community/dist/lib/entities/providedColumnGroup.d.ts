@@ -3,6 +3,7 @@ import { ColGroupDef } from "./colDef";
 import { ColumnGroupShowType } from "./columnGroup";
 import { Column } from "./column";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
+import { AgEventListener } from "../events";
 export declare class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
     static EVENT_EXPANDED_CHANGED: string;
     static EVENT_EXPANDABLE_CHANGED: string;
@@ -41,6 +42,6 @@ export declare class ProvidedColumnGroup implements IProvidedColumn, IEventEmitt
     setExpandable(): void;
     private findChildrenRemovingPadding;
     private onColumnVisibilityChanged;
-    addEventListener(eventType: string, listener: Function): void;
-    removeEventListener(eventType: string, listener: Function): void;
+    addEventListener(eventType: string, listener: AgEventListener): void;
+    removeEventListener(eventType: string, listener: AgEventListener): void;
 }

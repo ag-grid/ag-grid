@@ -7,21 +7,19 @@ $z-index-mouse-mask: 10000; // NOTE: Above .ag-dnd-ghost z-index of 9999
 $z-index-debug-canvas: $z-index-mouse-mask + 10;
 $z-index-debug-panel: $z-index-debug-canvas + 10;
 
-:global(.automated-row-grouping-grid.ag-theme-alpine-dark) {
+:global(.automated-row-grouping-grid.ag-theme-quartz),
+:global(.automated-row-grouping-grid.ag-theme-quartz-dark) {
     position: relative;
     width: 100%;
-    background-color: #00162d;
-    border-radius: var(--border-radius);
     overflow: hidden;
     z-index: $z-index-grid;
 
     @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
         width: 200% !important;
         height: 450px !important;
-        margin-bottom: calc(500px / -2 + $size-4);
+        margin-bottom: calc(500px / -2 + $spacing-size-8);
         transform-origin: top left;
         transform: scale(0.5);
-        border-radius: calc(var(--border-radius) * 2);
         overflow: hidden;
         pointer-events: none;
     }
@@ -51,10 +49,10 @@ $z-index-debug-panel: $z-index-debug-canvas + 10;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    margin-bottom: $size-2;
+    margin-bottom: $spacing-size-12;
 
     h2 {
-        margin-bottom: $size-2;
+        margin-bottom: $spacing-size-4;
         font-weight: var(--font-weight-bold);
         line-height: var(--line-height-ultra-tight);
 
@@ -76,15 +74,15 @@ $z-index-debug-panel: $z-index-debug-canvas + 10;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: $size-6;
-    margin-top: $size-1;
+    gap: $spacing-size-12;
+    margin-top: $spacing-size-12;
 
     @media screen and (min-width: $breakpoint-automated-row-grouping-medium) {
-        margin-top: $size-3;
+        margin-top: $spacing-size-12;
     }
 
-    button {
-        margin-left: $size-1;
+    button:not([class^='ag-']) {
+        margin-left: $spacing-size-2;
     }
 }
 
@@ -106,50 +104,9 @@ $z-index-debug-panel: $z-index-debug-canvas + 10;
     > span:first-child {
         display: none;
 
-        @media screen and (min-width: $max-page-width) {
+        @media screen and (min-width: $breakpoint-site-header-large) {
             display: inline;
         }
-    }
-}
-
-.getStartedLink {
-    --icon-size: 1.25em;
-    --text-color: var(--link-color);
-
-    position: relative;
-    display: inline-block;
-    padding-right: $size-3;
-    transition: color $default-transition-timing;
-
-    &::after {
-        content: '';
-        position: absolute;
-        right: 0;
-        bottom: -3px;
-        left: 0;
-        height: 2px;
-        background-color: var(--text-color);
-        transition: background-color $default-transition-timing;
-
-        @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
-            display: none;
-        }
-    }
-
-    &:hover,
-    &:focus-visible {
-        --text-color: var(--link-hover-color);
-
-        :global(.icon) {
-            transform: translateX(4px);
-        }
-    }
-
-    :global(.icon) {
-        position: absolute;
-        bottom: 0;
-        right: -0.33em;
-        transition: transform $default-transition-timing, fill $default-transition-timing;
     }
 }
 

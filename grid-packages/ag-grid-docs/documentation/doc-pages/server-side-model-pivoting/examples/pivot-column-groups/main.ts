@@ -1,5 +1,6 @@
-import { Grid, ColDef, ColGroupDef, ColumnApi, GridOptions, IServerSideDatasource, IServerSideGetRowsRequest, ColumnGroup } from '@ag-grid-community/core'
+import { ColDef, createGrid, GridApi, GridOptions, IServerSideDatasource } from '@ag-grid-community/core';
 declare var FakeServer: any;
+let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     { field: 'country', rowGroup: true },
@@ -12,8 +13,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   ],
   defaultColDef: {
     width: 150,
-    resizable: true,
-    sortable: true,
   },
   autoGroupColumnDef: {
     minWidth: 200,
@@ -25,7 +24,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   // enable pivoting
   pivotMode: true,
 
-  animateRows: true,
 
   processPivotResultColDef: (colDef: ColDef) => {
     const pivotValueColumn = colDef.pivotValueColumn;
@@ -42,19 +40,19 @@ const gridOptions: GridOptions<IOlympicData> = {
 
 function expand(key?: string, open = false) {
   if (key) {
-    gridOptions.columnApi!.setColumnGroupState([{ groupId: key, open: open }]);
+    gridApi!.setColumnGroupState([{ groupId: key, open: open }]);
     return;
   }
 
-  const existingState = gridOptions.columnApi!.getColumnGroupState();
+  const existingState = gridApi!.getColumnGroupState();
   const expandedState = existingState.map((s: { groupId: string, open: boolean }) => ({ groupId: s.groupId, open: open }));
-  gridOptions.columnApi!.setColumnGroupState(expandedState);
+  gridApi!.setColumnGroupState(expandedState);
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
@@ -66,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var datasource = getServerSideDatasource(fakeServer)
 
       // register the datasource with the grid
-      gridOptions.api!.setServerSideDatasource(datasource)
+      gridApi!.setGridOption('serverSideDatasource', datasource)
     })
 })
 
@@ -80,7 +78,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
       var response = server.getData(request)
 
       // simulating real server call with a 500ms delay
-      setTimeout(function () {
+      setTimeout(() => {
         if (response.success) {
           // supply data to grid
           params.success({

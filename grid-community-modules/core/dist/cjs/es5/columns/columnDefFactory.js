@@ -62,14 +62,14 @@ var ColumnDefFactory = /** @class */ (function () {
         return res;
     };
     ColumnDefFactory.prototype.createDefFromGroup = function (group) {
-        var defCloned = object_1.deepCloneDefinition(group.getColGroupDef(), ['children']);
+        var defCloned = (0, object_1.deepCloneDefinition)(group.getColGroupDef(), ['children']);
         if (defCloned) {
             defCloned.groupId = group.getGroupId();
         }
         return defCloned;
     };
     ColumnDefFactory.prototype.createDefFromColumn = function (col, rowGroupColumns, pivotColumns) {
-        var colDefCloned = object_1.deepCloneDefinition(col.getColDef());
+        var colDefCloned = (0, object_1.deepCloneDefinition)(col.getColDef());
         colDefCloned.colId = col.getColId();
         colDefCloned.width = col.getActualWidth();
         colDefCloned.rowGroup = col.isRowGroupActive();
@@ -84,7 +84,7 @@ var ColumnDefFactory = /** @class */ (function () {
         return colDefCloned;
     };
     ColumnDefFactory = __decorate([
-        context_1.Bean('columnDefFactory')
+        (0, context_1.Bean)('columnDefFactory')
     ], ColumnDefFactory);
     return ColumnDefFactory;
 }());

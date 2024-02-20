@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
   { field: 'athlete', minWidth: 200 },
@@ -11,11 +11,11 @@ const columnDefs: ColDef[] = [
   { field: 'silver' },
 ]
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
-    sortable: true,
     filter: true,
-    resizable: true,
     minWidth: 100,
     flex: 1,
   },
@@ -24,51 +24,53 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function onBtExport() {
-  var sports: Record<string, boolean> = {}
+  const sports: Record<string, boolean> = {}
 
-  gridOptions.api!.forEachNode(function (node) {
+  gridApi!.forEachNode(function (node) {
     if (!sports[node.data!.sport]) {
       sports[node.data!.sport] = true
     }
   })
 
-  var spreadsheets = []
+  let spreadsheets: string[] = []
 
-  var sportFilterInstance = gridOptions.api!.getFilterInstance('sport')!
+  const performExport = async () => {
+    for (const sport in sports) {
+      await gridApi!.setColumnFilterModel('sport', { values: [sport] })
+      gridApi!.onFilterChanged()
 
-  for (var sport in sports) {
-    sportFilterInstance.setModel({ values: [sport] })
-    gridOptions.api!.onFilterChanged()
+      if (gridApi!.getColumnFilterModel('sport') == null) {
+        throw new Error('Example error: Filter not applied');
+      }
 
-    if (sportFilterInstance.getModel() == null) {
-      throw new Error('Example error: Filter not applied');
+      const sheet = gridApi!.getSheetDataForExcel({
+        sheetName: sport,
+      });
+      if (sheet) {
+        spreadsheets.push(sheet)
+      }
     }
 
-    const sheet = gridOptions.api!.getSheetDataForExcel({
-      sheetName: sport,
-    });
-    if (sheet) {
-      spreadsheets.push(sheet)
-    }
-  }
+    await gridApi!.setColumnFilterModel('sport', null)
+    gridApi!.onFilterChanged()
 
-  sportFilterInstance.setModel(null)
-  gridOptions.api!.onFilterChanged()
+    gridApi!.exportMultipleSheetsAsExcel({
+      data: spreadsheets,
+      fileName: 'ag-grid.xlsx',
+    })
 
-  gridOptions.api!.exportMultipleSheetsAsExcel({
-    data: spreadsheets,
-    fileName: 'ag-grid.xlsx',
-  })
+    spreadsheets = []
+  };
 
-  spreadsheets = []
+  performExport();
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

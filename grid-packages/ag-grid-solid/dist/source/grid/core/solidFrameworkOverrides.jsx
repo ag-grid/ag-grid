@@ -3,7 +3,7 @@ import DetailCellRenderer from "../cellRenderer/detailCellRenderer";
 import GroupCellRenderer from "../cellRenderer/groupCellRenderer";
 export class SolidFrameworkOverrides extends VanillaFrameworkOverrides {
     constructor() {
-        super();
+        super('solid');
     }
     frameworkComponents = {
         agGroupCellRenderer: GroupCellRenderer,

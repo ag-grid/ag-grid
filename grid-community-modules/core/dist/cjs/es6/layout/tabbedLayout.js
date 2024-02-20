@@ -8,14 +8,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TabbedLayout = void 0;
 const componentAnnotations_1 = require("../widgets/componentAnnotations");
-const managedFocusFeature_1 = require("../widgets/managedFocusFeature");
 const dom_1 = require("../utils/dom");
 const aria_1 = require("../utils/aria");
-const function_1 = require("../utils/function");
 const keyCode_1 = require("../constants/keyCode");
-const component_1 = require("../widgets/component");
 const context_1 = require("../context/context");
-class TabbedLayout extends component_1.Component {
+const tabGuardComp_1 = require("../widgets/tabGuardComp");
+class TabbedLayout extends tabGuardComp_1.TabGuardComp {
     constructor(params) {
         super(TabbedLayout.getTemplate(params.cssClass));
         this.items = [];
@@ -26,10 +24,12 @@ class TabbedLayout extends component_1.Component {
         }
     }
     postConstruct() {
-        this.createManagedBean(new managedFocusFeature_1.ManagedFocusFeature(this.getFocusableElement(), {
+        this.initialiseTabGuard({
             onTabKeyDown: this.onTabKeyDown.bind(this),
-            handleKeyDown: this.handleKeyDown.bind(this)
-        }));
+            handleKeyDown: this.handleKeyDown.bind(this),
+            focusInnerElement: this.focusInnerElement.bind(this),
+            focusTrapActive: true
+        });
         this.addDestroyFunc(() => { var _a, _b, _c; return (_c = (_b = (_a = this.activeItem) === null || _a === void 0 ? void 0 : _a.tabbedItem) === null || _b === void 0 ? void 0 : _b.afterDetachedCallback) === null || _c === void 0 ? void 0 : _c.call(_b); });
     }
     static getTemplate(cssClass) {
@@ -47,7 +47,7 @@ class TabbedLayout extends component_1.Component {
                     return;
                 }
                 const isRightKey = e.key === keyCode_1.KeyCode.RIGHT;
-                const isRtl = this.gridOptionsService.is('enableRtl');
+                const isRtl = this.gridOptionsService.get('enableRtl');
                 const currentPosition = this.items.indexOf(this.activeItem);
                 const nextPosition = isRightKey !== isRtl ? Math.min(currentPosition + 1, this.items.length - 1) : Math.max(currentPosition - 1, 0);
                 if (currentPosition === nextPosition) {
@@ -75,7 +75,7 @@ class TabbedLayout extends component_1.Component {
         e.preventDefault();
         if (eHeader.contains(activeElement)) {
             // focus is in header, move into body of popup
-            focusService.focusInto(eBody, e.shiftKey);
+            this.focusBody(e.shiftKey);
             return;
         }
         let nextEl = null;
@@ -90,12 +90,26 @@ class TabbedLayout extends component_1.Component {
         if (!nextEl && eBody.contains(activeElement)) {
             nextEl = focusService.findNextFocusableElement(eBody, false, e.shiftKey);
             if (!nextEl) {
-                nextEl = activeItem.eHeaderButton;
+                this.focusHeader();
             }
         }
         if (nextEl) {
             nextEl.focus();
         }
+    }
+    focusInnerElement(fromBottom) {
+        if (fromBottom) {
+            this.focusHeader();
+        }
+        else {
+            this.focusBody(true);
+        }
+    }
+    focusHeader() {
+        this.activeItem.eHeaderButton.focus();
+    }
+    focusBody(fromBottom) {
+        this.focusService.focusInto(this.eBody, fromBottom);
     }
     setAfterAttachedParams(params) {
         this.afterAttachedParams = params;
@@ -107,12 +121,12 @@ class TabbedLayout extends component_1.Component {
     }
     addItem(item) {
         const eHeaderButton = document.createElement('span');
-        aria_1.setAriaRole(eHeaderButton, 'tab');
+        (0, aria_1.setAriaRole)(eHeaderButton, 'tab');
         eHeaderButton.setAttribute('tabindex', '-1');
         eHeaderButton.appendChild(item.title);
         eHeaderButton.classList.add('ag-tab');
         this.eHeader.appendChild(eHeaderButton);
-        aria_1.setAriaLabel(eHeaderButton, item.titleLabel);
+        (0, aria_1.setAriaLabel)(eHeaderButton, item.titleLabel);
         const wrapper = {
             tabbedItem: item,
             eHeaderButton: eHeaderButton
@@ -127,19 +141,17 @@ class TabbedLayout extends component_1.Component {
         }
     }
     showItemWrapper(wrapper) {
-        var _a, _b;
+        var _a, _b, _c, _d, _e, _f;
         const { tabbedItem, eHeaderButton } = wrapper;
-        if (this.params.onItemClicked) {
-            this.params.onItemClicked({ item: tabbedItem });
-        }
+        (_b = (_a = this.params).onItemClicked) === null || _b === void 0 ? void 0 : _b.call(_a, { item: tabbedItem });
         if (this.activeItem === wrapper) {
-            function_1.callIfPresent(this.params.onActiveItemClicked);
+            (_d = (_c = this.params).onActiveItemClicked) === null || _d === void 0 ? void 0 : _d.call(_c);
             return;
         }
         if (this.lastScrollListener) {
             this.lastScrollListener = this.lastScrollListener();
         }
-        dom_1.clearElement(this.eBody);
+        (0, dom_1.clearElement)(this.eBody);
         tabbedItem.bodyPromise.then((body) => {
             this.eBody.appendChild(body);
             const onlyUnmanaged = !this.focusService.isKeyboardMode();
@@ -163,20 +175,20 @@ class TabbedLayout extends component_1.Component {
         });
         if (this.activeItem) {
             this.activeItem.eHeaderButton.classList.remove('ag-tab-selected');
-            (_b = (_a = this.activeItem.tabbedItem).afterDetachedCallback) === null || _b === void 0 ? void 0 : _b.call(_a);
+            (_f = (_e = this.activeItem.tabbedItem).afterDetachedCallback) === null || _f === void 0 ? void 0 : _f.call(_e);
         }
         eHeaderButton.classList.add('ag-tab-selected');
         this.activeItem = wrapper;
     }
 }
 __decorate([
-    context_1.Autowired('focusService')
+    (0, context_1.Autowired)('focusService')
 ], TabbedLayout.prototype, "focusService", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eHeader')
+    (0, componentAnnotations_1.RefSelector)('eHeader')
 ], TabbedLayout.prototype, "eHeader", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eBody')
+    (0, componentAnnotations_1.RefSelector)('eBody')
 ], TabbedLayout.prototype, "eBody", void 0);
 __decorate([
     context_1.PostConstruct

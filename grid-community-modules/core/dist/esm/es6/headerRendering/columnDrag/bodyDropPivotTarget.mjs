@@ -17,7 +17,7 @@ export class BodyDropPivotTarget {
     onDragEnter(draggingEvent) {
         this.clearColumnsList();
         // in pivot mode, we don't accept any drops if functions are read only
-        if (this.gridOptionsService.is('functionsReadOnly')) {
+        if (this.gridOptionsService.get('functionsReadOnly')) {
             return;
         }
         const dragColumns = draggingEvent.dragItem.columns;

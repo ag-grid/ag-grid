@@ -65,8 +65,7 @@ let AutoWidthCalculator = class AutoWidthCalculator extends beanStub_1.BeanStub 
         return dummyContainerWidth + autoSizePadding;
     }
     getAutoSizePadding() {
-        const value = this.gridOptionsService.getNum('autoSizePadding');
-        return value != null && value >= 0 ? value : 20;
+        return this.gridOptionsService.get('autoSizePadding');
     }
     getHeaderCellForColumn(column) {
         /* tslint:enable */
@@ -128,18 +127,18 @@ let AutoWidthCalculator = class AutoWidthCalculator extends beanStub_1.BeanStub 
     }
 };
 __decorate([
-    context_1.Autowired('rowRenderer')
+    (0, context_1.Autowired)('rowRenderer')
 ], AutoWidthCalculator.prototype, "rowRenderer", void 0);
 __decorate([
-    context_1.Autowired('ctrlsService')
+    (0, context_1.Autowired)('ctrlsService')
 ], AutoWidthCalculator.prototype, "ctrlsService", void 0);
 __decorate([
-    context_1.Autowired('rowCssClassCalculator')
+    (0, context_1.Autowired)('rowCssClassCalculator')
 ], AutoWidthCalculator.prototype, "rowCssClassCalculator", void 0);
 __decorate([
     context_1.PostConstruct
 ], AutoWidthCalculator.prototype, "postConstruct", null);
 AutoWidthCalculator = __decorate([
-    context_1.Bean('autoWidthCalculator')
+    (0, context_1.Bean)('autoWidthCalculator')
 ], AutoWidthCalculator);
 exports.AutoWidthCalculator = AutoWidthCalculator;

@@ -46,20 +46,22 @@ The example below shows value formatters in action.
 
 ## Use Value Formatter for Export
 
-Sometimes you may want to use the value formatter when performing other grid operations that need values in string format. This is possible by setting the column definition property `useValueFormatterForExport = true`.
+By default, the grid uses the value formatter when performing other grid operations that need values in string format.
+
+This behaviour can be prevented by setting the column definition property `useValueFormatterForExport = false` (note this does not apply to rendering).
 
 <api-documentation source='column-properties/properties.json' section="display" names='["useValueFormatterForExport"]' ></api-documentation>
 
-This applies to the following features:
+Using the value formatter for export applies to the following features:
 - [Copy/Cut](/clipboard/#processing-pasted-data)
 - [Fill Handle](/range-selection-fill-handle/)
 - [Copy Range Down](/range-selection/#copy-range-down)
 - [CSV Export](/csv-export/)
 - [Excel Export](/excel-export-customising-content/)
 
-If [Cell Editing](/cell-editing/) is enabled along with `useValueFormatterForExport`, it is recommended to also [Use a Value Parser for Import](/value-parsers/#use-value-parser-for-import), where a [Value Parser](/value-parsers/) is defined that does the reverse of the value formatter.
+Using a value formatter for export is normally used in conjunction with [Using a Value Parser for Import](/value-parsers/#use-value-parser-for-import), where a [Value Parser](/value-parsers/) is defined that does the reverse of the value formatter.
 
-The following example demonstrates using the value formatter for export with each of the supported features mentioned above. `useValueParserForImport` is also enabled to ensure the features work as expected.
+The following example demonstrates the default behaviour using the value formatter for export with each of the supported features mentioned above.
 
 <grid-example title='Use Value Formatter for Export' name='use-value-formatter-for-export' type='generated' options='{ "enterprise": true, "modules": ["clientside", "range", "clipboard", "excel", "menu"] }'></grid-example>
 
@@ -69,4 +71,4 @@ Note that if any of the following conditions are true, then `useValueFormatterFo
 - If `processCellForClipboard` is provided when using copy range down.
 - If `processCellCallback` is provided when using CSV export.
 - If `processCellCallback` or [Excel Data Types](/excel-export-data-types/) are provided when using Excel export.
-- If the underlying value is a number when using Excel export.
+- If the underlying value is a number when using Excel export. To export formatted number values to Excel, please use the [Excel Data Type](/excel-export-data-types/#strings-number-and-booleans) feature.

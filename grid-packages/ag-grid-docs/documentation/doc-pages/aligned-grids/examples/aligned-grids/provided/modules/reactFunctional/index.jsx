@@ -4,7 +4,8 @@ import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
 import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
+import './styles.css';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
@@ -16,11 +17,7 @@ const GridExample = () => {
     const bottomGrid = useRef(null);
 
     const defaultColDef = useMemo(() => ({
-        editable: true,
-        sortable: true,
-        resizable: true,
         filter: true,
-        flex: 1,
         minWidth: 100
     }));
 
@@ -28,14 +25,13 @@ const GridExample = () => {
         { field: 'athlete' },
         { field: 'age' },
         { field: 'country' },
-        { field: 'year' },
         { field: 'date' },
         { field: 'sport' },
         {
             headerName: 'Medals',
             children: [
                 {
-                    columnGroupShow: 'closed', field: "total",
+                    columnGroupShow: 'closed', colId: "total",
                     valueGetter: "data.gold + data.silver + data.bronze", width: 200
                 },
                 { columnGroupShow: 'open', field: "gold", width: 100 },
@@ -47,6 +43,10 @@ const GridExample = () => {
 
     const [rowData, setRowData] = useState();
 
+    const autoSizeStrategy = useMemo(() => ({
+        type: 'fitGridWidth'
+    }), []);
+
     const onGridReady = (params) => {
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .then(resp => resp.json())
@@ -56,21 +56,21 @@ const GridExample = () => {
     const onCbAthlete = (event) => {
         // we only need to update one grid, as the other is a slave
         if (topGrid.current) {
-            topGrid.current.columnApi.setColumnVisible('athlete', event.target.checked);
+            topGrid.current.api.setColumnsVisible(['athlete'], event.target.checked);
         }
     }
 
     const onCbAge = (event) => {
         // we only need to update one grid, as the other is a slave
-        if (topGrid.current){
-            topGrid.current.columnApi.setColumnVisible('age', event.target.checked);
+        if (topGrid.current) {
+            topGrid.current.api.setColumnsVisible(['age'], event.target.checked);
         }
     }
 
     const onCbCountry = (event) => {
         // we only need to update one grid, as the other is a slave
         if (topGrid.current) {
-            topGrid.current.columnApi.setColumnVisible('country', event.target.checked);
+            topGrid.current.api.setColumnsVisible(['country'], event.target.checked);
         }
     }
 
@@ -97,21 +97,24 @@ const GridExample = () => {
                 </label>
             </div>
 
-            <div className="grid ag-theme-alpine">
+            <div className={'grid ' + /** DARK MODE START **/(document.documentElement.dataset.defaultTheme || 'ag-theme-quartz')/** DARK MODE END **/}>
                 <AgGridReact
                     ref={topGrid}
-                    alignedGrids={bottomGrid.current ? [bottomGrid.current] : undefined}
+                    alignedGrids={[bottomGrid]}
                     rowData={rowData}
                     defaultColDef={defaultColDef}
                     columnDefs={columnDefs}
+                    autoSizeStrategy={autoSizeStrategy}
                     onGridReady={onGridReady}
                 />
             </div>
 
-            <div className="grid ag-theme-alpine">
+            <div className="divider"></div>
+
+            <div className={'grid ' + /** DARK MODE START **/(document.documentElement.dataset.defaultTheme || 'ag-theme-quartz')/** DARK MODE END **/}>
                 <AgGridReact
                     ref={bottomGrid}
-                    alignedGrids={topGrid.current ? [topGrid.current] : undefined}
+                    alignedGrids={[topGrid]}
                     rowData={rowData}
                     defaultColDef={defaultColDef}
                     columnDefs={columnDefs}

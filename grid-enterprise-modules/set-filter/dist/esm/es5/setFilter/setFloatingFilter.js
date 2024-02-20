@@ -47,9 +47,12 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
     SetFloatingFilterComp.prototype.setParams = function (params) {
         var displayName = this.columnModel.getDisplayNameForColumn(params.column, 'header', true);
         var translate = this.localeService.getLocaleTextFunc();
-        this.eFloatingFilterText.setInputAriaLabel(displayName + " " + translate('ariaFilterInput', 'Filter Input'));
+        this.eFloatingFilterText.setInputAriaLabel("".concat(displayName, " ").concat(translate('ariaFilterInput', 'Filter Input')));
     };
     SetFloatingFilterComp.prototype.onParamsUpdated = function (params) {
+        this.refresh(params);
+    };
+    SetFloatingFilterComp.prototype.refresh = function (params) {
         this.params = params;
         this.setParams(params);
     };

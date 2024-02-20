@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { BeanStub } from "../../context/beanStub.mjs";
 import { Autowired } from "../../context/context.mjs";
-import { getAbsoluteHeight, getAbsoluteWidth, setFixedHeight, setFixedWidth } from "../../utils/dom.mjs";
+import { getAbsoluteHeight, getAbsoluteWidth, isVisible, setFixedHeight, setFixedWidth } from "../../utils/dom.mjs";
 const RESIZE_CONTAINER_STYLE = 'ag-resizer-wrapper';
 const RESIZE_TEMPLATE = /* html */ `<div class="${RESIZE_CONTAINER_STYLE}">
         <div ref="eTopLeftResizer" class="ag-resizer ag-resizer-topLeft"></div>
@@ -63,8 +63,8 @@ export class PositionableFeature extends BeanStub {
         let computedMinWidth = 0;
         // here we don't use the main offset parent but the element's offsetParent
         // in order to calculated the minWidth and minHeight correctly
-        const isVisible = !!this.element.offsetParent;
-        if (isVisible) {
+        const isElementVisible = isVisible(this.element);
+        if (isElementVisible) {
             const boundaryEl = this.findBoundaryElement();
             const offsetParentComputedStyles = window.getComputedStyle(boundaryEl);
             if (offsetParentComputedStyles.minWidth != null) {
@@ -93,7 +93,7 @@ export class PositionableFeature extends BeanStub {
         else if (x || y) {
             this.offsetElement(x, y);
         }
-        else if (isVisible && forcePopupParentAsOffsetParent) {
+        else if (isElementVisible && forcePopupParentAsOffsetParent) {
             let boundaryEl = this.boundaryEl;
             let initialisedDuringPositioning = true;
             if (!boundaryEl) {
@@ -616,9 +616,7 @@ export class PositionableFeature extends BeanStub {
         this.currentResizer = null;
         this.boundaryEl = null;
         const params = {
-            type: 'resize',
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi
+            type: 'resize'
         };
         this.element.classList.remove('ag-resizing');
         this.resizerMap[side].element.classList.remove('ag-active');

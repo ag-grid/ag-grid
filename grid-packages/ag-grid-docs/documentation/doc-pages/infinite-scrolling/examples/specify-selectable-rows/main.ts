@@ -1,4 +1,14 @@
-import { Grid, GridOptions, ICellRendererParams, IDatasource, IGetRowsParams, IRowNode } from '@ag-grid-community/core'
+import {
+    GridApi,
+    createGrid,
+    GridOptions,
+    ICellRendererParams,
+    IDatasource,
+    IGetRowsParams,
+    IRowNode,
+} from '@ag-grid-community/core';
+
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
@@ -31,7 +41,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
-        resizable: true,
+        sortable: false,
     },
     rowBuffer: 0,
     // debug: true,
@@ -62,7 +72,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    new Grid(gridDiv, gridOptions)
+    gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then(response => response.json())
@@ -73,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     // console.log('asking for ' + params.startRow + ' to ' + params.endRow);
                     // At this point in your code, you would call the server.
                     // To make the demo look real, wait for 500ms before returning
-                    setTimeout(function () {
+                    setTimeout(() => {
                         // take a slice of the total rows
                         const rowsThisPage = data.slice(params.startRow, params.endRow);
                         // if on or after the last page, work out the last row.
@@ -87,6 +97,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
             };
 
-            gridOptions.api!.setDatasource(dataSource)
+            gridApi!.setGridOption('datasource', dataSource)
         })
 })

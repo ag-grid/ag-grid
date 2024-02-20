@@ -46,7 +46,7 @@ export declare class FullStore extends RowNodeBlock implements IServerSideStore 
     private createDataNode;
     private prefixId;
     protected processServerFail(): void;
-    protected processServerResult(params: LoadSuccessParams): void;
+    processServerResult(params: LoadSuccessParams): void;
     private createOrRecycleNodes;
     private flushAsyncTransactions;
     private filterAndSortNodes;
@@ -60,7 +60,7 @@ export declare class FullStore extends RowNodeBlock implements IServerSideStore 
     }): void;
     forEachStoreDeep(callback: (store: IServerSideStore, index: number) => void, sequence?: NumberSequence): void;
     forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence?: NumberSequence): void;
-    forEachNodeDeepAfterFilterAndSort(callback: (rowNode: RowNode, index: number) => void, sequence?: NumberSequence): void;
+    forEachNodeDeepAfterFilterAndSort(callback: (rowNode: RowNode, index: number) => void, sequence?: NumberSequence, includeFooterNodes?: boolean): void;
     getRowUsingDisplayIndex(displayRowIndex: number): IRowNode | undefined;
     getRowBounds(index: number): RowBounds | null;
     isPixelInRange(pixel: number): boolean;

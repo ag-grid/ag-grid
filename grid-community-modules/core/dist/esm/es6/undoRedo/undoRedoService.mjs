@@ -40,10 +40,10 @@ let UndoRedoService = class UndoRedoService extends BeanStub {
         };
     }
     init() {
-        if (!this.gridOptionsService.is('undoRedoCellEditing')) {
+        if (!this.gridOptionsService.get('undoRedoCellEditing')) {
             return;
         }
-        const undoRedoLimit = this.gridOptionsService.getNum('undoRedoCellEditingLimit');
+        const undoRedoLimit = this.gridOptionsService.get('undoRedoCellEditingLimit');
         if (undoRedoLimit <= 0) {
             return;
         }
@@ -245,7 +245,7 @@ let UndoRedoService = class UndoRedoService extends BeanStub {
         });
         this.addManagedListener(this.eventService, Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_END, () => {
             let action;
-            if (this.rangeService && this.gridOptionsService.isEnableRangeSelection()) {
+            if (this.rangeService && this.gridOptionsService.get('enableRangeSelection')) {
                 action = new RangeUndoRedoAction(this.cellValueChanges, undefined, undefined, [...this.rangeService.getCellRanges()]);
             }
             else {

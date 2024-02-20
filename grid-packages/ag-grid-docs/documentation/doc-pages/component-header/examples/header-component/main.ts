@@ -1,16 +1,16 @@
-import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
 import { CustomHeader } from './customHeader_typescript'
 
 const columnDefs: ColDef[] = [
-  { field: 'athlete', suppressMenu: true, minWidth: 120 },
+  { field: 'athlete', suppressHeaderMenuButton: true, minWidth: 120 },
   {
     field: 'age',
     sortable: false,
     headerComponentParams: { menuIcon: 'fa-external-link-alt' },
   },
-  { field: 'country', suppressMenu: true, minWidth: 120 },
+  { field: 'country', suppressHeaderMenuButton: true, minWidth: 120 },
   { field: 'year', sortable: false },
-  { field: 'date', suppressMenu: true },
+  { field: 'date', suppressHeaderMenuButton: true },
   { field: 'sport', sortable: false },
   {
     field: 'gold',
@@ -18,9 +18,11 @@ const columnDefs: ColDef[] = [
     minWidth: 120,
   },
   { field: 'silver', sortable: false },
-  { field: 'bronze', suppressMenu: true, minWidth: 120 },
+  { field: 'bronze', suppressHeaderMenuButton: true, minWidth: 120 },
   { field: 'total', sortable: false },
 ]
+
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
@@ -31,11 +33,9 @@ const gridOptions: GridOptions<IOlympicData> = {
   },
   defaultColDef: {
     editable: true,
-    sortable: true,
     flex: 1,
     minWidth: 100,
     filter: true,
-    resizable: true,
     headerComponentParams: {
       menuIcon: 'fa-bars'
     },
@@ -45,11 +45,11 @@ const gridOptions: GridOptions<IOlympicData> = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
     .then(data => {
-      gridOptions.api!.setRowData(data)
+      gridApi!.setGridOption('rowData', data)
     })
 })

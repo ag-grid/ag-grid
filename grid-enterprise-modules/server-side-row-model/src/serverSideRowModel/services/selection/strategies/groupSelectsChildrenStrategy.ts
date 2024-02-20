@@ -23,16 +23,17 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, () => this.removeRedundantState());
 
         // when the grouping changes, the state no longer makes sense, so reset the state.
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => this.selectionService.reset());
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => this.selectionService.reset('rowGroupChanged'));
     }
 
     public getSelectedState() {
+        const treeData = this.gridOptionsService.get('treeData');
         const recursivelySerializeState = (state: SelectionState, level: number, nodeId?: string) => {
             const normalisedState: IServerSideGroupSelectionState = {
                 nodeId,
             };
     
-            if (level <= this.columnModel.getRowGroupColumns().length) {
+            if (treeData || level <= this.columnModel.getRowGroupColumns().length) {
                 normalisedState.selectAllChildren = state.selectAllChildren;
             }
     
@@ -108,7 +109,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
 
         let anyStateChanged = false;
         removedNodeIds.forEach(id => {
-            if(parentState?.toggledNodes.delete(id)) {
+            if (parentState?.toggledNodes.delete(id)) {
                 anyStateChanged = true;
             }
         });
@@ -202,60 +203,55 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         if (this.filterManager.isAnyFilterPresent()) {
             return;
         }
-        
-        const recursivelyRemoveState = (
-            selectedState: SelectionState = this.selectedState,
-            store: IServerSideStore | undefined = this.serverSideRowModel.getRootStore(),
-            node?: RowNode | null,
-        ) => {
-            let allChildNodesFound = true;
-            let noIndeterminateChildren = true;
-            selectedState.toggledNodes.forEach((state, id) => {
-                const parentNode = this.rowModel.getRowNode(id);
-                if (!parentNode) {
-                    allChildNodesFound = false;
-                }
 
-                const nextStore = parentNode?.childStore;
-                if (!nextStore) {
-                    if (state.toggledNodes.size > 0) {
-                        noIndeterminateChildren = false;
-                    }
-                    return;
-                }
-
-                // if child was cleared, check if this state is still relevant
-                if(recursivelyRemoveState(state, nextStore, parentNode)) {
-                    // cleans out groups which have no toggled nodes and an equivalent default to its parent
-                    if (selectedState.selectAllChildren === state.selectAllChildren) {
-                        selectedState.toggledNodes.delete(id);
-                    }
-                }
-
-                if (state.toggledNodes.size > 0) {
-                    noIndeterminateChildren = false;
-                }
+        const forEachNodeStateDepthFirst = (state = this.selectedState, thisKey?: string, parentState?: SelectionState) => {
+            // clean up lowest level state first in order to calculate this levels state
+            // from updated child state
+            state.toggledNodes.forEach((value, key) => {
+                forEachNodeStateDepthFirst(value, key, state);
             });
 
-            if (!store || !store.isLastRowIndexKnown() || store.getRowCount() !== selectedState.toggledNodes.size) {
-                // if row count unknown, or doesn't match the size of toggledNodes, ignore.
-                return false;
+            if (thisKey) {
+                const thisRow = this.rowModel.getRowNode(thisKey);
+                const thisRowStore = thisRow?.childStore;
+                const isStoreSizeKnown = thisRowStore?.isLastRowIndexKnown();
+                if (isStoreSizeKnown) {
+                    // have to check greater than, as we may have stale state still, if so all visible rows may not be
+                    // toggled
+                    const possibleAllNodesToggled = state.toggledNodes.size >= thisRowStore!.getRowCount();
+                    if (possibleAllNodesToggled) {
+                        // more complex checks nested for performance
+                        for(const childState of state.toggledNodes.entries()) {
+                            const [key, value] = childState;
+                            // if any child has toggled rows, then this row is indeterminate
+                            // and the state is relevant.
+                            if (value.toggledNodes.size > 0) {
+                                return;
+                            }
+
+                            const rowDoesNotExist = !this.rowModel.getRowNode(key);
+                            if (rowDoesNotExist) {
+                                // if row doesn't exist, it's not toggled.
+                                return;
+                            }
+                        }
+    
+                        // no indeterminate rows, and all rows are toggled, flip this row state
+                        // and clear child states.
+                        state.selectAllChildren = !state.selectAllChildren;
+                        state.toggledNodes.clear();
+                    }
+                }
             }
 
-            if (noIndeterminateChildren && allChildNodesFound) {
-                selectedState.toggledNodes.clear();
-                selectedState.selectAllChildren = !selectedState.selectAllChildren;
-
-                // if node was indeterminate, it's not any more.
-                if (node && node?.isSelected() !== selectedState.selectAllChildren) {
-                    node.selectThisNode(selectedState.selectAllChildren, undefined, 'api');
-                } 
-                return true;
+            // if this has no toggled rows, and is identical to parent state, it's redundant and can be removed.
+            const hasNoToggledRows = state.toggledNodes.size === 0;
+            const isIdenticalToParent = parentState?.selectAllChildren === state.selectAllChildren;
+            if (hasNoToggledRows && isIdenticalToParent) {
+                parentState?.toggledNodes.delete(thisKey!);
             }
-            return false;
         }
-
-        recursivelyRemoveState();
+        forEachNodeStateDepthFirst();
     }
 
     private recursivelySelectNode([nextNode, ...nodes]: IRowNode[], selectedState: SelectionState, params: { newValue: boolean, source: SelectionEventSourceType, event?: Event, node: RowNode }) {

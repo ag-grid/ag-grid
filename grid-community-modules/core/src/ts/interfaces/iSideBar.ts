@@ -1,4 +1,9 @@
+import { SideBarState } from "./gridState";
 import { IToolPanel } from "./iToolPanel";
+
+export interface ISideBarService {
+    getSideBarComp(): ISideBar;
+}
 
 export interface ISideBar {
     refresh(): void;
@@ -11,6 +16,7 @@ export interface ISideBar {
     openedItem(): string | null;
     isDisplayed(): boolean;
     getDef(): SideBarDef | undefined;
+    getState(): SideBarState;
 }
 
 
@@ -21,11 +27,17 @@ export interface ToolPanelDef {
     labelKey: string;
     /** The default label if `labelKey` is missing or does not map to valid text through localisation. */
     labelDefault: string;
-    /** The min width of the tool panel. Default: `100` */
+    /**
+     * The min width of the tool panel.
+     * @default 100
+     */
     minWidth?: number;
-    /** The max width of the tool panel. Default: `undefined` */
+    /** The max width of the tool panel. */
     maxWidth?: number;
-    /** The initial width of the tool panel. Default: `$side-bar-panel-width (theme variable)` */
+    /**
+     * The initial width of the tool panel.
+     * @default $side-bar-panel-width (theme variable)
+     */
     width?: number;
     /** The key of the icon to be used as a graphical aid beside the label in the side bar. */
     iconKey: string;

@@ -8,6 +8,6 @@ export default {
         <span :style="{backgroundColor: color}" style="padding: 2px">{{params.value}}</span>
     `,
     beforeMount() {
-        this.color = this.params.node.group ? 'coral' : 'lightgreen'
+        this.color = this.params.node.group ? '#CC222244' : '#33CC3344'
     }
 };

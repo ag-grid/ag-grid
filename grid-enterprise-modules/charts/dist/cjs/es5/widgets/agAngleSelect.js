@@ -51,7 +51,7 @@ var AgAngleSelect = /** @class */ (function (_super) {
             .setInputWidth(45)
             .setMin(0)
             .setMax(360)
-            .setValue("" + this.degrees)
+            .setValue("".concat(this.degrees))
             .onValueChange(function (value) {
             if (value == null || value === '') {
                 value = '0';
@@ -84,8 +84,8 @@ var AgAngleSelect = /** @class */ (function (_super) {
         var eChildCircle = this.eChildCircle;
         var centerX = rect.width / 2;
         var centerY = rect.height / 2;
-        eChildCircle.style.left = centerX + Math.cos(radians) * 8 + "px";
-        eChildCircle.style.top = centerY + Math.sin(radians) * 8 + "px";
+        eChildCircle.style.left = "".concat(centerX + Math.cos(radians) * 8, "px");
+        eChildCircle.style.top = "".concat(centerY + Math.sin(radians) * 8, "px");
     };
     AgAngleSelect.prototype.calculatePolar = function () {
         var x = this.offsetX;
@@ -199,19 +199,19 @@ var AgAngleSelect = /** @class */ (function (_super) {
     };
     AgAngleSelect.TEMPLATE = "<div class=\"ag-angle-select\">\n            <div ref=\"eLabel\"></div>\n            <div class=\"ag-wrapper ag-angle-select-wrapper\">\n                <div ref=\"eAngleSelectField\" class=\"ag-angle-select-field\">\n                    <div ref=\"eParentCircle\" class=\"ag-angle-select-parent-circle\">\n                        <div ref=\"eChildCircle\" class=\"ag-angle-select-child-circle\"></div>\n                    </div>\n                </div>\n                <ag-input-number-field ref=\"eAngleValue\"></ag-input-number-field>\n            </div>\n        </div>";
     __decorate([
-        core_1.RefSelector('eLabel')
+        (0, core_1.RefSelector)('eLabel')
     ], AgAngleSelect.prototype, "eLabel", void 0);
     __decorate([
-        core_1.RefSelector('eParentCircle')
+        (0, core_1.RefSelector)('eParentCircle')
     ], AgAngleSelect.prototype, "eParentCircle", void 0);
     __decorate([
-        core_1.RefSelector('eChildCircle')
+        (0, core_1.RefSelector)('eChildCircle')
     ], AgAngleSelect.prototype, "eChildCircle", void 0);
     __decorate([
-        core_1.RefSelector('eAngleValue')
+        (0, core_1.RefSelector)('eAngleValue')
     ], AgAngleSelect.prototype, "eAngleValue", void 0);
     __decorate([
-        core_1.Autowired('dragService')
+        (0, core_1.Autowired)('dragService')
     ], AgAngleSelect.prototype, "dragService", void 0);
     return AgAngleSelect;
 }(core_1.AgAbstractLabel));

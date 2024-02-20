@@ -1,7 +1,5 @@
 <framework-specific-section frameworks="angular">
 |
-|## Registering Custom Components
-|
 |There are two ways to register custom components:
 |
 |- Direct reference.

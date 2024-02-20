@@ -27,37 +27,51 @@ var StylingService = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     StylingService.prototype.processAllCellClasses = function (colDef, params, onApplicableClass, onNotApplicableClass) {
-        this.processClassRules(colDef.cellClassRules, params, onApplicableClass, onNotApplicableClass);
+        this.processClassRules(undefined, colDef.cellClassRules, params, onApplicableClass, onNotApplicableClass);
         this.processStaticCellClasses(colDef, params, onApplicableClass);
     };
-    StylingService.prototype.processClassRules = function (classRules, params, onApplicableClass, onNotApplicableClass) {
-        if (classRules == null) {
+    StylingService.prototype.processClassRules = function (previousClassRules, classRules, params, onApplicableClass, onNotApplicableClass) {
+        if (classRules == null && previousClassRules == null) {
             return;
         }
-        var classNames = Object.keys(classRules);
         var classesToApply = {};
         var classesToRemove = {};
-        var _loop_1 = function (i) {
-            var className = classNames[i];
-            var rule = classRules[className];
-            var resultOfRule;
-            if (typeof rule === 'string') {
-                resultOfRule = this_1.expressionService.evaluate(rule, params);
-            }
-            else if (typeof rule === 'function') {
-                resultOfRule = rule(params);
-            }
+        var forEachSingleClass = function (className, callback) {
             // in case className = 'my-class1 my-class2', we need to split into individual class names
             className.split(' ').forEach(function (singleClass) {
-                if (singleClass == null || singleClass.trim() == '') {
+                if (singleClass.trim() == '')
                     return;
-                }
-                resultOfRule ? classesToApply[singleClass] = true : classesToRemove[singleClass] = true;
+                callback(singleClass);
             });
         };
-        var this_1 = this;
-        for (var i = 0; i < classNames.length; i++) {
-            _loop_1(i);
+        if (classRules) {
+            var classNames = Object.keys(classRules);
+            var _loop_1 = function (i) {
+                var className = classNames[i];
+                var rule = classRules[className];
+                var resultOfRule;
+                if (typeof rule === 'string') {
+                    resultOfRule = this_1.expressionService.evaluate(rule, params);
+                }
+                else if (typeof rule === 'function') {
+                    resultOfRule = rule(params);
+                }
+                forEachSingleClass(className, function (singleClass) {
+                    resultOfRule ? classesToApply[singleClass] = true : classesToRemove[singleClass] = true;
+                });
+            };
+            var this_1 = this;
+            for (var i = 0; i < classNames.length; i++) {
+                _loop_1(i);
+            }
+        }
+        if (previousClassRules && onNotApplicableClass) {
+            Object.keys(previousClassRules).forEach(function (className) { return forEachSingleClass(className, function (singleClass) {
+                if (!classesToApply[singleClass]) {
+                    // if we're not applying a previous class now, make sure we remove it
+                    classesToRemove[singleClass] = true;
+                }
+            }); });
         }
         // we remove all classes first, then add all classes second,
         // in case a class appears in more than one rule, this means it will be added

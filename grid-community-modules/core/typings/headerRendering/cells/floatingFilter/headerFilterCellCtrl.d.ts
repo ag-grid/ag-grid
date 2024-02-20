@@ -4,8 +4,8 @@ import { Column } from '../../../entities/column';
 import { IFloatingFilter } from '../../../filter/floating/floatingFilter';
 import { AgPromise } from '../../../utils';
 import { UserCompDetails } from "../../../components/framework/userComponentFactory";
+import { Beans } from "../../../rendering/beans";
 export interface IHeaderFilterCellComp extends IAbstractHeaderCellComp {
-    addOrRemoveCssClass(cssClassName: string, on: boolean): void;
     addOrRemoveBodyCssClass(cssClassName: string, on: boolean): void;
     setButtonWrapperDisplayed(displayed: boolean): void;
     setCompDetails(compDetails?: UserCompDetails | null): void;
@@ -13,22 +13,20 @@ export interface IHeaderFilterCellComp extends IAbstractHeaderCellComp {
     setWidth(width: string): void;
     setMenuIcon(icon: HTMLElement): void;
 }
-export declare class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
-    private readonly filterManager;
-    private readonly columnHoverService;
-    private readonly menuFactory;
-    private comp;
-    private column;
+export declare class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCellComp, Column> {
     private eButtonShowMainFilter;
     private eFloatingFilterBody;
     private suppressFilterButton;
+    private highlightFilterButtonWhenActive;
     private active;
     private iconCreated;
     private userCompDetails?;
     private destroySyncListener;
     private destroyFilterChangedListener;
-    constructor(column: Column, parentRowCtrl: HeaderRowCtrl);
+    constructor(column: Column, beans: Beans, parentRowCtrl: HeaderRowCtrl);
     setComp(comp: IHeaderFilterCellComp, eGui: HTMLElement, eButtonShowMainFilter: HTMLElement, eFloatingFilterBody: HTMLElement): void;
+    protected resizeHeader(): void;
+    protected moveHeader(): void;
     private setupActive;
     private setupUi;
     private setupFocus;
@@ -50,4 +48,5 @@ export declare class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
     private onColDefChanged;
     private updateCompDetails;
     private updateFloatingFilterParams;
+    protected destroy(): void;
 }

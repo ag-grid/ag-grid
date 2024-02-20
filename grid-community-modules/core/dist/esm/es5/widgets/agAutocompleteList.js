@@ -104,7 +104,7 @@ var AgAutocompleteList = /** @class */ (function (_super) {
         var matchingStrings;
         var topSuggestion;
         if (this.params.useFuzzySearch) {
-            matchingStrings = fuzzySuggestions(this.searchString, searchStrings, true);
+            matchingStrings = fuzzySuggestions(this.searchString, searchStrings, true).values;
             topSuggestion = matchingStrings.length ? matchingStrings[0] : undefined;
         }
         else {

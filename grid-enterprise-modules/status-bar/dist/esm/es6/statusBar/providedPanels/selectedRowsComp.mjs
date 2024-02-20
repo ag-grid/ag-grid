@@ -22,7 +22,7 @@ export class SelectedRowsComp extends NameValueComp {
     }
     isValidRowModel() {
         // this component is only really useful with client or server side rowmodels
-        const rowModelType = this.gridApi.getModel().getType();
+        const rowModelType = this.gridApi.__getModel().getType();
         return rowModelType === 'clientSide' || rowModelType === 'serverSide';
     }
     onRowSelectionChanged() {
@@ -39,6 +39,9 @@ export class SelectedRowsComp extends NameValueComp {
         this.setDisplayed(selectedRowCount > 0);
     }
     init() {
+    }
+    refresh() {
+        return true;
     }
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.

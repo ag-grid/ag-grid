@@ -44,6 +44,6 @@ let LocaleService = class LocaleService extends beanStub_1.BeanStub {
     }
 };
 LocaleService = __decorate([
-    context_1.Bean('localeService')
+    (0, context_1.Bean)('localeService')
 ], LocaleService);
 exports.LocaleService = LocaleService;

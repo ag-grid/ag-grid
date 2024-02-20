@@ -61,15 +61,15 @@ var ValuesDropZonePanel = /** @class */ (function (_super) {
     ValuesDropZonePanel.prototype.getIconName = function () {
         return this.isPotentialDndColumns() ? core_1.DragAndDropService.ICON_AGGREGATE : core_1.DragAndDropService.ICON_NOT_ALLOWED;
     };
-    ValuesDropZonePanel.prototype.isColumnDroppable = function (column) {
+    ValuesDropZonePanel.prototype.isColumnDroppable = function (column, draggingEvent) {
         // we never allow grouping of secondary columns
-        if (this.gridOptionsService.is('functionsReadOnly') || !column.isPrimary()) {
+        if (this.gridOptionsService.get('functionsReadOnly') || !column.isPrimary()) {
             return false;
         }
-        return column.isAllowValue() && !column.isValueActive();
+        return column.isAllowValue() && (!column.isValueActive() || this.isSourceEventFromTarget(draggingEvent));
     };
     ValuesDropZonePanel.prototype.updateColumns = function (columns) {
-        if (this.gridOptionsService.is('functionsPassive')) {
+        if (this.gridOptionsService.get('functionsPassive')) {
             var event_1 = {
                 type: core_1.Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST,
                 columns: columns
@@ -84,13 +84,13 @@ var ValuesDropZonePanel = /** @class */ (function (_super) {
         return this.columnModel.getValueColumns();
     };
     __decorate([
-        core_1.Autowired('columnModel')
+        (0, core_1.Autowired)('columnModel')
     ], ValuesDropZonePanel.prototype, "columnModel", void 0);
     __decorate([
-        core_1.Autowired('loggerFactory')
+        (0, core_1.Autowired)('loggerFactory')
     ], ValuesDropZonePanel.prototype, "loggerFactory", void 0);
     __decorate([
-        core_1.Autowired('dragAndDropService')
+        (0, core_1.Autowired)('dragAndDropService')
     ], ValuesDropZonePanel.prototype, "dragAndDropService", void 0);
     __decorate([
         core_1.PostConstruct

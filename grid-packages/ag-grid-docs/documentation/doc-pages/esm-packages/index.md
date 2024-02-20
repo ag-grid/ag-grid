@@ -17,7 +17,7 @@ If however you want to use ES Modules directly in the browser then you can do so
 <html>
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-enterprise/styles/ag-grid.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-enterprise/styles/ag-theme-alpine.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-enterprise/styles/ag-theme-quartz.css">
     <script type="module">
         import {
             Grid
@@ -41,8 +41,6 @@ If however you want to use ES Modules directly in the browser then you can do so
             defaultColDef: {
                 wrapText: true,
                 autoHeight: true,
-                resizable: true,
-                sortable: true,
                 filter: true
             },
             columnDefs: columnDefs,
@@ -52,13 +50,13 @@ If however you want to use ES Modules directly in the browser then you can do so
         // setup the grid after the page has finished loading
         document.addEventListener('DOMContentLoaded', () => {
             const gridDiv = document.querySelector('#myGrid');
-            new Grid(gridDiv, gridOptions);
+            const api = createGrid(gridDiv, gridOptions);
         });
     </script>
 </head>
 
 <body>
-<div id="myGrid" style="height: 200px; width:500px;" class="ag-theme-alpine"></div>
+<div id="myGrid" style="height: 200px; width:500px;" class="ag-theme-quartz"></div>
 </body>
 </html>
 ```

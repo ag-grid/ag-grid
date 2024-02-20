@@ -13,6 +13,13 @@ const applyCustomisation = (packageName, expectedVersion, customisation, provide
         return true;
     }
 
+    // nav to dirs and only build docs. bihourly build examples
+
+    // Failed to find a property named sizeColumnsToFit that we requested under section columns. Check if you passed the correct name or if the name appears in the source json file that you
+    // are using.
+
+    // warn Could not find a prop rowGroups under source grid-api/api.json and section rowGroups!
+
     const version = require(packagePath).version;
     const versionMatches = version === expectedVersion;
 
@@ -22,6 +29,7 @@ const applyCustomisation = (packageName, expectedVersion, customisation, provide
     } else {
         console.error(`✗ ${customisation.name}`);
         console.error(`Customisation failed: Expected version ${expectedVersion} of ${packageName} but found ${version}. You should test the customisation with the new version and update the expected version number if it works.`);
+        console.error(`Please run "rm -rf grid-packages/ag-grid-docs/documentation/node_modules && npm run bootstrap" and then re-run your last command.`);
     }
 
     return versionMatches;
@@ -208,7 +216,7 @@ const fixFileLoadingIssue = () => {
 const jsxErrorProcessingIssue = () => {
     // Prevents Gatsby from dying when an JSX error is introduced
 
-    return applyCustomisation('gatsby-cli', '5.11.0', {
+    return applyCustomisation('gatsby-cli', '5.13.0', {
             name: 'JSX Error Processing Issue',
             apply: () => updateFileContents(
                 './node_modules/gatsby-cli/lib/structured-errors/construct-error.js',

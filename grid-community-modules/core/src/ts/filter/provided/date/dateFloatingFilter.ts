@@ -52,12 +52,37 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
     }
 
     public onParamsUpdated(params: IFloatingFilterParams<DateFilter>): void {
-        super.onParamsUpdated(params);
+        this.refresh(params);
+    }
+
+    public refresh(params: IFloatingFilterParams<DateFilter>): void {
+        super.refresh(params);
         this.params = params;
         this.filterParams = params.filterParams;
 
         this.updateDateComponent();
         this.filterModelFormatter.updateParams({ optionsFactory: this.optionsFactory, dateFilterParams: this.filterParams })
+        this.updateCompOnModelChange(params.currentParentModel());
+    }
+
+    private updateCompOnModelChange(model: any): void {
+        // Update the read-only text field
+        const allowEditing = !this.isReadOnly() && this.canWeEditAfterModelFromParentFilter(model);
+        this.setEditable(allowEditing);
+
+        if (allowEditing) {
+            if (model) {
+                const dateModel = model as DateFilterModel;
+                this.dateComp.setDate(parseDateTimeFromString(dateModel.dateFrom));
+            } else {
+                this.dateComp.setDate(null);
+            }
+
+            this.eReadOnlyText.setValue('');
+        } else {
+            this.eReadOnlyText.setValue(this.filterModelFormatter.getModelAsString(model));
+            this.dateComp.setDate(null);
+        }
     }
 
     protected setEditable(editable: boolean): void {
@@ -73,26 +98,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         if (this.isEventFromFloatingFilter(event) || this.isEventFromDataChange(event)) { return; }
 
         super.setLastTypeFromModel(model);
-
-        const allowEditing = !this.isReadOnly() &&
-            this.canWeEditAfterModelFromParentFilter(model);
-
-        this.setEditable(allowEditing);
-
-        if (allowEditing) {
-            if (model) {
-                const dateModel = model as DateFilterModel;
-
-                this.dateComp.setDate(parseDateTimeFromString(dateModel.dateFrom));
-            } else {
-                this.dateComp.setDate(null);
-            }
-
-            this.eReadOnlyText.setValue('');
-        } else {
-            this.eReadOnlyText.setValue(this.filterModelFormatter.getModelAsString(model));
-            this.dateComp.setDate(null);
-        }
+        this.updateCompOnModelChange(model);
     }
 
     private onDateChanged(): void {
@@ -122,11 +128,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
     }
 
     private updateDateComponent(): void {
-        const params = this.getDateComponentParams() as IDateParams;
-        const { api, columnApi, context } = this.gridOptionsService;
-        params.api = api;
-        params.columnApi = columnApi;
-        params.context = context;
+        const params = this.gridOptionsService.addGridCommonParams(this.getDateComponentParams());
         this.dateComp.updateParams(params);
     }
 

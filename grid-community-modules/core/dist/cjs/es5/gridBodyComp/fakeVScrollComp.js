@@ -44,23 +44,26 @@ var FakeVScrollComp = /** @class */ (function (_super) {
         var scrollbarWidth = vScrollShowing ? (this.gridOptionsService.getScrollbarWidth() || 0) : 0;
         var adjustedScrollbarWidth = (scrollbarWidth === 0 && invisibleScrollbar) ? 16 : scrollbarWidth;
         this.addOrRemoveCssClass('ag-scrollbar-invisible', invisibleScrollbar);
-        dom_1.setFixedWidth(this.getGui(), adjustedScrollbarWidth);
-        dom_1.setFixedWidth(this.eViewport, adjustedScrollbarWidth);
-        dom_1.setFixedWidth(this.eContainer, adjustedScrollbarWidth);
+        (0, dom_1.setFixedWidth)(this.getGui(), adjustedScrollbarWidth);
+        (0, dom_1.setFixedWidth)(this.eViewport, adjustedScrollbarWidth);
+        (0, dom_1.setFixedWidth)(this.eContainer, adjustedScrollbarWidth);
         this.setDisplayed(vScrollShowing, { skipAriaHidden: true });
     };
     FakeVScrollComp.prototype.onRowContainerHeightChanged = function () {
-        var gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
+        var ctrlsService = this.ctrlsService;
+        var gridBodyCtrl = ctrlsService.getGridBodyCtrl();
         var gridBodyViewportEl = gridBodyCtrl.getBodyViewportElement();
-        if (this.eViewport.scrollTop != gridBodyViewportEl.scrollTop) {
-            this.eViewport.scrollTop = gridBodyViewportEl.scrollTop;
+        var eViewportScrollTop = this.getScrollPosition();
+        var gridBodyViewportScrollTop = gridBodyViewportEl.scrollTop;
+        if (eViewportScrollTop != gridBodyViewportScrollTop) {
+            this.setScrollPosition(gridBodyViewportScrollTop, true);
         }
     };
     FakeVScrollComp.prototype.getScrollPosition = function () {
         return this.getViewport().scrollTop;
     };
-    FakeVScrollComp.prototype.setScrollPosition = function (value) {
-        if (!dom_1.isVisible(this.getViewport())) {
+    FakeVScrollComp.prototype.setScrollPosition = function (value, force) {
+        if (!force && !(0, dom_1.isVisible)(this.getViewport())) {
             this.attemptSettingScrollPosition(value);
         }
         this.getViewport().scrollTop = value;

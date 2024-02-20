@@ -31,7 +31,7 @@ let RowContainerHeightService = class RowContainerHeightService extends beanStub
     }
     postConstruct() {
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_BODY_HEIGHT_CHANGED, this.updateOffset.bind(this));
-        this.maxDivHeight = browser_1.getMaxDivHeight();
+        this.maxDivHeight = (0, browser_1.getMaxDivHeight)();
         this.logger.log('maxDivHeight = ' + this.maxDivHeight);
     }
     isStretching() {
@@ -117,15 +117,15 @@ let RowContainerHeightService = class RowContainerHeightService extends beanStub
     }
 };
 __decorate([
-    context_1.Autowired('ctrlsService')
+    (0, context_1.Autowired)('ctrlsService')
 ], RowContainerHeightService.prototype, "ctrlsService", void 0);
 __decorate([
-    __param(0, context_1.Qualifier("loggerFactory"))
+    __param(0, (0, context_1.Qualifier)("loggerFactory"))
 ], RowContainerHeightService.prototype, "agWire", null);
 __decorate([
     context_1.PostConstruct
 ], RowContainerHeightService.prototype, "postConstruct", null);
 RowContainerHeightService = __decorate([
-    context_1.Bean('rowContainerHeightService')
+    (0, context_1.Bean)('rowContainerHeightService')
 ], RowContainerHeightService);
 exports.RowContainerHeightService = RowContainerHeightService;

@@ -7,7 +7,7 @@ const { isNumber } = _Util;
 export class AgSparkline {
     static create(options, tooltip) {
         // avoid mutating user provided options
-        options = _Util.jsonMerge([options]);
+        options = _Util.deepClone(options);
         const sparkline = getSparklineInstance(options.type);
         if (tooltip) {
             sparkline.tooltip = tooltip;

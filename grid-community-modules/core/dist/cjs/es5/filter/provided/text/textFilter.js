@@ -41,13 +41,13 @@ var TextFilterModelFormatter = /** @class */ (function (_super) {
         var numberOfInputs = (options || {}).numberOfInputs;
         var isRange = condition.type == simpleFilter_1.SimpleFilter.IN_RANGE || numberOfInputs === 2;
         if (isRange) {
-            return condition.filter + "-" + condition.filterTo;
+            return "".concat(condition.filter, "-").concat(condition.filterTo);
         }
         // cater for when the type doesn't need a value
         if (condition.filter != null) {
-            return "" + condition.filter;
+            return "".concat(condition.filter);
         }
-        return "" + condition.type;
+        return "".concat(condition.type);
     };
     return TextFilterModelFormatter;
 }(simpleFilter_1.SimpleFilterModelFormatter));
@@ -79,7 +79,7 @@ var TextFilter = /** @class */ (function (_super) {
     TextFilter.prototype.getTextMatcher = function () {
         var legacyComparator = this.textFilterParams.textCustomComparator;
         if (legacyComparator) {
-            utils_1._.doOnce(function () { return console.warn('AG Grid - textCustomComparator is deprecated, use textMatcher instead.'); }, 'textCustomComparator.deprecated');
+            utils_1._.warnOnce('textCustomComparator is deprecated, use textMatcher instead.');
             return function (_a) {
                 var filterOption = _a.filterOption, value = _a.value, filterText = _a.filterText;
                 return legacyComparator(filterOption, value, filterText);
@@ -125,7 +125,7 @@ var TextFilter = /** @class */ (function (_super) {
         this.forEachPositionInput(position, function (element, index, _elPosition, numberOfInputs) {
             var _a;
             if (index < numberOfInputs) {
-                var value = generic_1.makeNull(element.getValue());
+                var value = (0, generic_1.makeNull)(element.getValue());
                 if (applySideEffects && _this.textFilterParams.trimInput) {
                     value = (_a = TextFilter.trimInput(value)) !== null && _a !== void 0 ? _a : null;
                     element.setValue(value, true); // ensure clean value is visible
@@ -141,14 +141,14 @@ var TextFilter = /** @class */ (function (_super) {
     TextFilter.prototype.createValueElement = function () {
         var eCondition = document.createElement('div');
         eCondition.classList.add('ag-filter-body');
-        aria_1.setAriaRole(eCondition, 'presentation');
+        (0, aria_1.setAriaRole)(eCondition, 'presentation');
         this.createFromToElement(eCondition, this.eValuesFrom, 'from');
         this.createFromToElement(eCondition, this.eValuesTo, 'to');
         return eCondition;
     };
     TextFilter.prototype.createFromToElement = function (eCondition, eValues, fromTo) {
         var eValue = this.createManagedBean(new agInputTextField_1.AgInputTextField());
-        eValue.addCssClass("ag-filter-" + fromTo);
+        eValue.addCssClass("ag-filter-".concat(fromTo));
         eValue.addCssClass('ag-filter-filter');
         eValues.push(eValue);
         eCondition.appendChild(eValue.getGui());

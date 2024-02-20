@@ -7,5 +7,6 @@ export declare class TotalAndFilteredRowsComp extends NameValueComp implements I
     private getFilteredRowCountValue;
     private getTotalRowCount;
     init(): void;
+    refresh(): boolean;
     destroy(): void;
 }

@@ -26,6 +26,6 @@ let CellPositionUtils = class CellPositionUtils extends beanStub_1.BeanStub {
     }
 };
 CellPositionUtils = __decorate([
-    context_1.Bean('cellPositionUtils')
+    (0, context_1.Bean)('cellPositionUtils')
 ], CellPositionUtils);
 exports.CellPositionUtils = CellPositionUtils;

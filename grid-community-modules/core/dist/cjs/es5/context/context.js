@@ -15,10 +15,14 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Qualifier = exports.Optional = exports.Autowired = exports.Bean = exports.PreDestroy = exports.PostConstruct = exports.PreConstruct = exports.Context = void 0;
@@ -42,7 +46,7 @@ var Context = /** @class */ (function () {
         this.logger.log(">> ag-Application Context ready - component is alive");
     }
     Context.prototype.getBeanInstances = function () {
-        return generic_1.values(this.beanWrappers).map(function (beanEntry) { return beanEntry.beanInstance; });
+        return (0, generic_1.values)(this.beanWrappers).map(function (beanEntry) { return beanEntry.beanInstance; });
     };
     Context.prototype.createBean = function (bean, afterPreCreateCallback) {
         if (!bean) {
@@ -57,7 +61,7 @@ var Context = /** @class */ (function () {
         this.callLifeCycleMethods(beanInstances, 'preConstructMethods');
         // the callback sets the attributes, so the component has access to attributes
         // before postConstruct methods in the component are executed
-        if (generic_1.exists(afterPreCreateCallback)) {
+        if ((0, generic_1.exists)(afterPreCreateCallback)) {
             beanInstances.forEach(afterPreCreateCallback);
         }
         this.callLifeCycleMethods(beanInstances, 'postConstructMethods');
@@ -68,17 +72,17 @@ var Context = /** @class */ (function () {
         this.contextParams.beanClasses.forEach(this.createBeanWrapper.bind(this));
         // register override beans, these will overwrite beans above of same name
         // instantiate all beans - overridden beans will be left out
-        object_1.iterateObject(this.beanWrappers, function (key, beanEntry) {
+        (0, object_1.iterateObject)(this.beanWrappers, function (key, beanEntry) {
             var constructorParamsMeta;
             if (beanEntry.bean.__agBeanMetaData && beanEntry.bean.__agBeanMetaData.autowireMethods && beanEntry.bean.__agBeanMetaData.autowireMethods.agConstructor) {
                 constructorParamsMeta = beanEntry.bean.__agBeanMetaData.autowireMethods.agConstructor;
             }
             var constructorParams = _this.getBeansForParameters(constructorParamsMeta, beanEntry.bean.name);
-            var newInstance = new (beanEntry.bean.bind.apply(beanEntry.bean, __spreadArray([null], __read(constructorParams))));
+            var newInstance = new (beanEntry.bean.bind.apply(beanEntry.bean, __spreadArray([null], __read(constructorParams), false)));
             beanEntry.beanInstance = newInstance;
         });
         var createdBeanNames = Object.keys(this.beanWrappers).join(', ');
-        this.logger.log("created beans: " + createdBeanNames);
+        this.logger.log("created beans: ".concat(createdBeanNames));
     };
     // tslint:disable-next-line
     Context.prototype.createBeanWrapper = function (BeanClass) {
@@ -86,12 +90,12 @@ var Context = /** @class */ (function () {
         if (!metaData) {
             var beanName = void 0;
             if (BeanClass.prototype.constructor) {
-                beanName = function_1.getFunctionName(BeanClass.prototype.constructor);
+                beanName = (0, function_1.getFunctionName)(BeanClass.prototype.constructor);
             }
             else {
                 beanName = "" + BeanClass;
             }
-            console.error("Context item " + beanName + " is not a bean");
+            console.error("Context item ".concat(beanName, " is not a bean"));
             return;
         }
         var beanEntry = {
@@ -120,7 +124,7 @@ var Context = /** @class */ (function () {
         var _this = this;
         beanInstances.forEach(function (beanInstance) {
             _this.forEachMetaDataInHierarchy(beanInstance, function (metaData, beanName) {
-                object_1.iterateObject(metaData.autowireMethods, function (methodName, wireParams) {
+                (0, object_1.iterateObject)(metaData.autowireMethods, function (methodName, wireParams) {
                     // skip constructor, as this is dealt with elsewhere
                     if (methodName === "agConstructor") {
                         return;
@@ -155,7 +159,7 @@ var Context = /** @class */ (function () {
         var _this = this;
         var beansList = [];
         if (parameters) {
-            object_1.iterateObject(parameters, function (paramIndex, otherBeanName) {
+            (0, object_1.iterateObject)(parameters, function (paramIndex, otherBeanName) {
                 var otherBean = _this.lookupBeanInstance(beanName, otherBeanName);
                 beansList[Number(paramIndex)] = otherBean;
             });
@@ -165,7 +169,7 @@ var Context = /** @class */ (function () {
     Context.prototype.lookupBeanInstance = function (wiringBean, beanName, optional) {
         if (optional === void 0) { optional = false; }
         if (this.destroyed) {
-            this.logger.log("AG Grid: bean reference " + beanName + " is used after the grid is destroyed!");
+            this.logger.log("AG Grid: bean reference ".concat(beanName, " is used after the grid is destroyed!"));
             return null;
         }
         if (beanName === "context") {
@@ -179,7 +183,7 @@ var Context = /** @class */ (function () {
             return beanEntry.beanInstance;
         }
         if (!optional) {
-            console.error("AG Grid: unable to find bean reference " + beanName + " while initialising " + wiringBean);
+            console.error("AG Grid: unable to find bean reference ".concat(beanName, " while initialising ").concat(wiringBean));
         }
         return null;
     };

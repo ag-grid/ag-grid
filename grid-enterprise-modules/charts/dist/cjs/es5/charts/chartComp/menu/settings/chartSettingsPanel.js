@@ -25,6 +25,7 @@ exports.ChartSettingsPanel = void 0;
 var core_1 = require("@ag-grid-community/core");
 var miniChartsContainer_1 = require("./miniChartsContainer");
 var chartController_1 = require("../../chartController");
+var chartTheme_1 = require("../../chartProxies/chartTheme");
 var ChartSettingsPanel = /** @class */ (function (_super) {
     __extends(ChartSettingsPanel, _super);
     function ChartSettingsPanel(chartController) {
@@ -71,20 +72,24 @@ var ChartSettingsPanel = /** @class */ (function (_super) {
         var _this = this;
         var _a, _b;
         var palettes = this.chartController.getPalettes();
+        var themeTemplateParameters = this.chartController.getThemeTemplateParameters();
         var chartGroups = (_b = (_a = this.gridOptionsService.get('chartToolPanelsDef')) === null || _a === void 0 ? void 0 : _a.settingsPanel) === null || _b === void 0 ? void 0 : _b.chartGroupsDef;
         if ((core_1._.shallowCompare(palettes, this.palettes) && !forceReset) || this.isAnimating) {
             return;
         }
         this.palettes = palettes;
-        this.themes = this.chartController.getThemes();
+        this.themes = this.chartController.getThemeNames();
         this.activePaletteIndex = this.themes.findIndex(function (name) { return name === _this.chartController.getChartThemeName(); });
         this.cardItems = [];
         core_1._.clearElement(this.eCardSelector);
         this.destroyMiniCharts();
+        var themes = this.themes;
         this.palettes.forEach(function (palette, index) {
             var isActivePalette = _this.activePaletteIndex === index;
             var fills = palette.fills, strokes = palette.strokes;
-            var miniChartsContainer = _this.createBean(new miniChartsContainer_1.MiniChartsContainer(_this.chartController, fills, strokes, chartGroups));
+            var themeName = themes[index];
+            var isCustomTheme = !(0, chartTheme_1.isStockTheme)(themeName);
+            var miniChartsContainer = _this.createBean(new miniChartsContainer_1.MiniChartsContainer(_this.chartController, fills, strokes, themeTemplateParameters[index], isCustomTheme, chartGroups));
             _this.miniChartsContainers.push(miniChartsContainer);
             _this.eMiniChartsContainer.appendChild(miniChartsContainer.getGui());
             _this.addCardLink(index);
@@ -135,7 +140,7 @@ var ChartSettingsPanel = /** @class */ (function (_super) {
         currentPalette.updateSelectedMiniChart();
         futurePalette.updateSelectedMiniChart();
         var multiplier = animationDirection === 'left' ? -1 : 1;
-        var final = nextGui.style.left = (core_1._.getAbsoluteWidth(this.getGui()) * multiplier) + "px";
+        var final = nextGui.style.left = "".concat((core_1._.getAbsoluteWidth(this.getGui()) * multiplier), "px");
         this.activePaletteIndex = index;
         this.isAnimating = true;
         var animatingClass = 'ag-animating';
@@ -144,7 +149,7 @@ var ChartSettingsPanel = /** @class */ (function (_super) {
         futurePalette.addCssClass(animatingClass);
         this.chartController.setChartThemeName(this.themes[index]);
         window.setTimeout(function () {
-            currentGui.style.left = -parseFloat(final) + "px";
+            currentGui.style.left = "".concat(-parseFloat(final), "px");
             nextGui.style.left = '0px';
         }, 0);
         window.setTimeout(function () {
@@ -164,22 +169,22 @@ var ChartSettingsPanel = /** @class */ (function (_super) {
     };
     ChartSettingsPanel.TEMPLATE = "<div class=\"ag-chart-settings-wrapper\">\n            <div ref=\"eMiniChartsContainer\" class=\"ag-chart-settings-mini-charts-container ag-scrollable-container\"></div>\n            <div ref=\"eNavBar\" class=\"ag-chart-settings-nav-bar\">\n                <div ref=\"ePrevBtn\" class=\"ag-chart-settings-prev\">\n                    <button type=\"button\" class=\"ag-button ag-chart-settings-prev-button\"></button>\n                </div>\n                <div ref=\"eCardSelector\" class=\"ag-chart-settings-card-selector\"></div>\n                <div ref=\"eNextBtn\" class=\"ag-chart-settings-next\">\n                    <button type=\"button\" class=\"ag-button ag-chart-settings-next-button\"></button>\n                </div>\n            </div>\n        </div>";
     __decorate([
-        core_1.Autowired('resizeObserverService')
+        (0, core_1.Autowired)('resizeObserverService')
     ], ChartSettingsPanel.prototype, "resizeObserverService", void 0);
     __decorate([
-        core_1.RefSelector('eMiniChartsContainer')
+        (0, core_1.RefSelector)('eMiniChartsContainer')
     ], ChartSettingsPanel.prototype, "eMiniChartsContainer", void 0);
     __decorate([
-        core_1.RefSelector('eNavBar')
+        (0, core_1.RefSelector)('eNavBar')
     ], ChartSettingsPanel.prototype, "eNavBar", void 0);
     __decorate([
-        core_1.RefSelector('eCardSelector')
+        (0, core_1.RefSelector)('eCardSelector')
     ], ChartSettingsPanel.prototype, "eCardSelector", void 0);
     __decorate([
-        core_1.RefSelector('ePrevBtn')
+        (0, core_1.RefSelector)('ePrevBtn')
     ], ChartSettingsPanel.prototype, "ePrevBtn", void 0);
     __decorate([
-        core_1.RefSelector('eNextBtn')
+        (0, core_1.RefSelector)('eNextBtn')
     ], ChartSettingsPanel.prototype, "eNextBtn", void 0);
     __decorate([
         core_1.PostConstruct

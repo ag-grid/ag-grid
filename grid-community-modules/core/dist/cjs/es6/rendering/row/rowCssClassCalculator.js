@@ -13,7 +13,7 @@ const context_1 = require("../../context/context");
 let RowCssClassCalculator = class RowCssClassCalculator {
     getInitialRowClasses(params) {
         const classes = [];
-        if (generic_1.exists(params.extraCssClass)) {
+        if ((0, generic_1.exists)(params.extraCssClass)) {
             classes.push(params.extraCssClass);
         }
         classes.push('ag-row');
@@ -45,8 +45,8 @@ let RowCssClassCalculator = class RowCssClassCalculator {
         if (params.rowNode.dragging) {
             classes.push('ag-row-dragging');
         }
-        array_1.pushAll(classes, this.processClassesFromGridOptions(params.rowNode));
-        array_1.pushAll(classes, this.preProcessRowClassRules(params.rowNode));
+        (0, array_1.pushAll)(classes, this.processClassesFromGridOptions(params.rowNode));
+        (0, array_1.pushAll)(classes, this.preProcessRowClassRules(params.rowNode));
         // we use absolute position unless we are doing print layout
         classes.push(params.printLayout ? 'ag-row-position-relative' : 'ag-row-position-absolute');
         if (params.firstRowOnPage) {
@@ -108,15 +108,12 @@ let RowCssClassCalculator = class RowCssClassCalculator {
         return res;
     }
     processRowClassRules(rowNode, onApplicableClass, onNotApplicableClass) {
-        const rowClassParams = {
+        const rowClassParams = this.gridOptionsService.addGridCommonParams({
             data: rowNode.data,
             node: rowNode,
-            rowIndex: rowNode.rowIndex,
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context
-        };
-        this.stylingService.processClassRules(this.gridOptionsService.get('rowClassRules'), rowClassParams, onApplicableClass, onNotApplicableClass);
+            rowIndex: rowNode.rowIndex
+        });
+        this.stylingService.processClassRules(undefined, this.gridOptionsService.get('rowClassRules'), rowClassParams, onApplicableClass, onNotApplicableClass);
     }
     calculateRowLevel(rowNode) {
         if (rowNode.group) {
@@ -127,12 +124,12 @@ let RowCssClassCalculator = class RowCssClassCalculator {
     }
 };
 __decorate([
-    context_1.Autowired('stylingService')
+    (0, context_1.Autowired)('stylingService')
 ], RowCssClassCalculator.prototype, "stylingService", void 0);
 __decorate([
-    context_1.Autowired('gridOptionsService')
+    (0, context_1.Autowired)('gridOptionsService')
 ], RowCssClassCalculator.prototype, "gridOptionsService", void 0);
 RowCssClassCalculator = __decorate([
-    context_1.Bean('rowCssClassCalculator')
+    (0, context_1.Bean)('rowCssClassCalculator')
 ], RowCssClassCalculator);
 exports.RowCssClassCalculator = RowCssClassCalculator;

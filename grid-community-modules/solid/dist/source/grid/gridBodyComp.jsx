@@ -81,7 +81,6 @@ const GridBodyComp = () => {
     });
     const getRootClasses = createMemo(() => classesList('ag-root', 'ag-unselectable', getMovingCss(), getLayoutClass()));
     const getBodyClasses = createMemo(() => classesList('ag-body', getLayoutClass()));
-    const getBodyClipperClasses = createMemo(() => classesList('ag-body-clipper', getLayoutClass()));
     const getBodyViewportClasses = createMemo(() => classesList('ag-body-viewport', getRowAnimationClass(), getLayoutClass(), getForceVerticalScrollClass(), getCellSelectableCss()));
     const getTopClasses = createMemo(() => classesList('ag-floating-top', getCellSelectableCss()));
     const getStickyTopClasses = createMemo(() => classesList('ag-sticky-top', getCellSelectableCss()));
@@ -115,13 +114,11 @@ const GridBodyComp = () => {
                 <RowContainerComp name={RowContainerName.TOP_FULL_WIDTH}/>
             </div>
             <div class={getBodyClasses()} ref={eBody} role="presentation">
-                <div class={getBodyClipperClasses()} role="presentation">
-                    <div ref={eBodyViewport} class={getBodyViewportClasses()} role="presentation" style={getBodyViewportStyle()}>
-                        <RowContainerComp name={RowContainerName.LEFT}/>
-                        <RowContainerComp name={RowContainerName.CENTER}/>
-                        <RowContainerComp name={RowContainerName.RIGHT}/>
-                        <RowContainerComp name={RowContainerName.FULL_WIDTH}/>
-                    </div>
+                <div ref={eBodyViewport} class={getBodyViewportClasses()} role="presentation" style={getBodyViewportStyle()}>
+                    <RowContainerComp name={RowContainerName.LEFT}/>
+                    <RowContainerComp name={RowContainerName.CENTER}/>
+                    <RowContainerComp name={RowContainerName.RIGHT}/>
+                    <RowContainerComp name={RowContainerName.FULL_WIDTH}/>
                 </div>
             </div>
             <div ref={eStickyTop} class={getStickyTopClasses()} role="presentation" style={getStickyTopStyle()}>

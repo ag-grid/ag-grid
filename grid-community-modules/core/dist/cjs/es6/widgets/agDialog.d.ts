@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { PanelOptions, AgPanel } from "./agPanel";
@@ -10,8 +10,10 @@ export interface DialogOptions extends PanelOptions {
     movable?: boolean;
     alwaysOnTop?: boolean;
     maximizable?: boolean;
+    afterGuiAttached?: () => void;
+    closedCallback?: (event?: MouseEvent | TouchEvent | KeyboardEvent) => void;
 }
-export declare class AgDialog extends AgPanel {
+export declare class AgDialog extends AgPanel<DialogOptions> {
     private popupService;
     private isMaximizable;
     private isMaximized;
@@ -21,10 +23,10 @@ export declare class AgDialog extends AgPanel {
     private minimizeIcon;
     private resizeListenerDestroy;
     private lastPosition;
-    protected config: DialogOptions | undefined;
     constructor(config: DialogOptions);
     protected postConstruct(): void;
     protected renderComponent(): void;
+    private onClosed;
     private toggleMaximize;
     private refreshMaximizeIcon;
     private clearMaximizebleListeners;

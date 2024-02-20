@@ -1,1 +1,0 @@
-{"version":3,"file":"cross.d.ts","sourceRoot":"","sources":["../../../src/chart/marker/cross.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,cAAc,EAAE,MAAM,UAAU,CAAC;AAC/C,OAAO,EAAE,MAAM,EAAE,MAAM,UAAU,CAAC;AAElC,qBAAa,KAAM,SAAQ,MAAM;IAC7B,MAAM,CAAC,SAAS,SAAW;IAC3B,MAAM,CAAC,KAAK,EAAE,cAAc,EAAE,CAa5B;IAEF,UAAU;CAKb"}

@@ -55,10 +55,10 @@ var DateStringCellEditorInput = /** @class */ (function () {
         return serialiseDate((_b = this.parseDate((_a = this.params.value) !== null && _a !== void 0 ? _a : undefined)) !== null && _b !== void 0 ? _b : null, false);
     };
     DateStringCellEditorInput.prototype.parseDate = function (value) {
-        return this.getDataTypeService().getDateParserFunction()(value);
+        return this.getDataTypeService().getDateParserFunction(this.params.column)(value);
     };
     DateStringCellEditorInput.prototype.formatDate = function (value) {
-        return this.getDataTypeService().getDateFormatterFunction()(value);
+        return this.getDataTypeService().getDateFormatterFunction(this.params.column)(value);
     };
     return DateStringCellEditorInput;
 }());

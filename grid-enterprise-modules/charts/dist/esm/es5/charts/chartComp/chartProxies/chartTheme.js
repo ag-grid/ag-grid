@@ -12,7 +12,8 @@ var __assign = (this && this.__assign) || function () {
 import { _ } from '@ag-grid-community/core';
 import { _Theme, } from 'ag-charts-community';
 import { ALL_AXIS_TYPES } from '../utils/axisTypeMapper';
-import { getSeriesType } from '../utils/seriesTypeMapper';
+import { getSeriesType, isPieChartSeries } from '../utils/seriesTypeMapper';
+import { get } from '../utils/object';
 export function createAgChartTheme(chartProxyParams, proxy) {
     var _a;
     var chartOptionsToRestore = chartProxyParams.chartOptionsToRestore, chartPaletteToRestore = chartProxyParams.chartPaletteToRestore, chartThemeToRestore = chartProxyParams.chartThemeToRestore;
@@ -24,7 +25,7 @@ export function createAgChartTheme(chartProxyParams, proxy) {
     var gridOptionsThemeOverrides = chartProxyParams.getGridOptionsChartThemeOverrides();
     var apiThemeOverrides = chartProxyParams.apiChartThemeOverrides;
     var standaloneChartType = getSeriesType(chartProxyParams.chartType);
-    var crossFilterThemeOverridePoint = standaloneChartType === 'pie' ? 'polar' : 'cartesian';
+    var crossFilterThemeOverridePoint = isPieChartSeries(standaloneChartType) ? standaloneChartType : 'cartesian';
     var crossFilteringOverrides = chartProxyParams.crossFiltering
         ? createCrossFilterThemeOverrides(proxy, chartProxyParams, crossFilterThemeOverridePoint)
         : undefined;
@@ -34,7 +35,7 @@ export function createAgChartTheme(chartProxyParams, proxy) {
             if (!obj) {
                 return false;
             }
-            return Object.keys(obj).some(function (key) { return _.get(obj[key], 'title.enabled', false); });
+            return Object.keys(obj).some(function (key) { return get(obj[key], 'title.enabled', false); });
         };
         return isTitleEnabled(gridOptionsThemeOverrides) || isTitleEnabled(apiThemeOverrides);
     };
@@ -66,6 +67,16 @@ export function createAgChartTheme(chartProxyParams, proxy) {
     }
     return theme;
 }
+export function applyThemeOverrides(baseTheme, overrides) {
+    return overrides.reduce(function (baseTheme, overrides) {
+        if (!overrides)
+            return baseTheme;
+        return {
+            baseTheme: baseTheme,
+            overrides: overrides,
+        };
+    }, baseTheme);
+}
 function isIdenticalPalette(paletteA, paletteB) {
     var arrayCompare = function (arrA, arrB) {
         if (arrA.length !== arrB.length)
@@ -86,26 +97,12 @@ function createCrossFilterThemeOverrides(proxy, chartProxyParams, overrideType) 
                 var chart = proxy.getChart();
                 chart.series.forEach(function (s) {
                     s.toggleSeriesItem(e.itemId, e.enabled);
-                    s.toggleSeriesItem(e.itemId + "-filtered-out", e.enabled);
+                    s.toggleSeriesItem("".concat(e.itemId, "-filtered-out"), e.enabled);
                 });
             },
         },
     };
     var series = {};
-    if (overrideType === 'polar') {
-        series.pie = {
-            tooltip: {
-                renderer: function (_a) {
-                    var angleName = _a.angleName, datum = _a.datum, calloutLabelKey = _a.calloutLabelKey, radiusKey = _a.radiusKey, angleValue = _a.angleValue;
-                    var title = angleName;
-                    var label = datum[calloutLabelKey];
-                    var ratio = datum[radiusKey];
-                    var totalValue = angleValue;
-                    return { title: title, content: label + ": " + totalValue * ratio };
-                },
-            },
-        };
-    }
     return _a = {},
         _a[overrideType] = {
             tooltip: {
@@ -127,6 +124,9 @@ function inbuiltStockThemeOverrides(params, titleEnabled) {
     var extraPadding = params.getExtraPaddingDirections();
     return {
         common: {
+            animation: {
+                duration: 500,
+            },
             axes: STATIC_INBUILT_STOCK_THEME_AXES_OVERRIDES,
             padding: {
                 // don't add extra padding when a title is present!
@@ -137,6 +137,16 @@ function inbuiltStockThemeOverrides(params, titleEnabled) {
             },
         },
         pie: {
+            series: {
+                title: { _enabledFromTheme: true },
+                calloutLabel: { _enabledFromTheme: true },
+                sectorLabel: {
+                    enabled: false,
+                    _enabledFromTheme: true,
+                },
+            },
+        },
+        donut: {
             series: {
                 title: { _enabledFromTheme: true },
                 calloutLabel: { _enabledFromTheme: true },
@@ -160,7 +170,7 @@ export function lookupCustomChartTheme(chartProxyParams, name) {
     var customChartThemes = chartProxyParams.customChartThemes;
     var customChartTheme = customChartThemes && customChartThemes[name];
     if (!customChartTheme) {
-        console.warn("AG Grid: no stock theme exists with the name '" + name + "' and no " +
+        console.warn("AG Grid: no stock theme exists with the name '".concat(name, "' and no ") +
             "custom chart theme with that name was supplied to 'customChartThemes'");
     }
     return customChartTheme;

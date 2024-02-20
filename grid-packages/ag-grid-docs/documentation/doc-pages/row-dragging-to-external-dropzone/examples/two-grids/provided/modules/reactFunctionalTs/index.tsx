@@ -4,7 +4,9 @@ import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
 import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
+import './styles.css';
+
 
 import { ModuleRegistry, ColDef, GridApi, GridReadyEvent, GetRowIdParams, RowDropZoneParams } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
@@ -26,9 +28,7 @@ const rowClassRules = {
 const defaultColDef: ColDef = {
     flex: 1,
     minWidth: 100,
-    sortable: true,
     filter: true,
-    resizable: true
 };
 
 const GridExample = () => {
@@ -182,7 +182,6 @@ const GridExample = () => {
                     rowClassRules={rowClassRules}
                     rowDragManaged={true}
                     suppressMoveWhenRowDragging={true}
-                    animateRows={true}
                     rowData={side === 'Left' ? leftRowData : rightRowData}
                     columnDefs={[...columns]}
                     onGridReady={params => onGridReady(side, params)}
@@ -192,7 +191,7 @@ const GridExample = () => {
     )
 
     return (
-        <div className="example-wrapper ag-theme-alpine">
+        <div className={'example-wrapper ' + /** DARK MODE START **/(document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz')/** DARK MODE END **/}>
             {getInnerGridCol('Left')}
             <div className="inner-col vertical-toolbar">
                 <span className="bin" ref={eBin}>

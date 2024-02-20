@@ -2,7 +2,6 @@ import { BeanStub, RowNode, ServerSideGroupLevelParams } from "@ag-grid-communit
 import { LazyCache } from "./lazyCache";
 export declare class LazyBlockLoader extends BeanStub {
     private api;
-    private columnApi;
     private rowNodeBlockLoader;
     static DEFAULT_BLOCK_SIZE: number;
     private loadingNodes;

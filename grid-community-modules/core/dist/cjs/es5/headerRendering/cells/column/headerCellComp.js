@@ -50,8 +50,7 @@ var HeaderCellComp = /** @class */ (function (_super) {
         var compProxy = {
             setWidth: function (width) { return eGui.style.width = width; },
             addOrRemoveCssClass: function (cssClassName, on) { return _this.addOrRemoveCssClass(cssClassName, on); },
-            setAriaDescription: function (label) { return aria_1.setAriaDescription(eGui, label); },
-            setAriaSort: function (sort) { return sort ? aria_1.setAriaSort(eGui, sort) : aria_1.removeAriaSort(eGui); },
+            setAriaSort: function (sort) { return sort ? (0, aria_1.setAriaSort)(eGui, sort) : (0, aria_1.removeAriaSort)(eGui); },
             setUserCompDetails: function (compDetails) { return _this.setUserCompDetails(compDetails); },
             getUserCompInstance: function () { return _this.headerComp; }
         };
@@ -83,12 +82,12 @@ var HeaderCellComp = /** @class */ (function (_super) {
         this.eHeaderCompWrapper.appendChild(this.headerCompGui);
         this.ctrl.setDragSource(this.getGui());
     };
-    HeaderCellComp.TEMPLATE = "<div class=\"ag-header-cell\" role=\"columnheader\" tabindex=\"-1\">\n            <div ref=\"eResize\" class=\"ag-header-cell-resize\" role=\"presentation\"></div>\n            <div ref=\"eHeaderCompWrapper\" class=\"ag-header-cell-comp-wrapper\" role=\"presentation\"></div>\n        </div>";
+    HeaderCellComp.TEMPLATE = "<div class=\"ag-header-cell\" role=\"columnheader\">\n            <div ref=\"eResize\" class=\"ag-header-cell-resize\" role=\"presentation\"></div>\n            <div ref=\"eHeaderCompWrapper\" class=\"ag-header-cell-comp-wrapper\" role=\"presentation\"></div>\n        </div>";
     __decorate([
-        componentAnnotations_1.RefSelector('eResize')
+        (0, componentAnnotations_1.RefSelector)('eResize')
     ], HeaderCellComp.prototype, "eResize", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('eHeaderCompWrapper')
+        (0, componentAnnotations_1.RefSelector)('eHeaderCompWrapper')
     ], HeaderCellComp.prototype, "eHeaderCompWrapper", void 0);
     __decorate([
         context_1.PostConstruct

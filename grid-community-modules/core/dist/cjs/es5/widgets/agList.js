@@ -28,11 +28,12 @@ var string_1 = require("../utils/string");
 var keyCode_1 = require("../constants/keyCode");
 var aria_1 = require("../utils/aria");
 var eventKeys_1 = require("../eventKeys");
+var dom_1 = require("../utils/dom");
 var AgList = /** @class */ (function (_super) {
     __extends(AgList, _super);
     function AgList(cssIdentifier) {
         if (cssIdentifier === void 0) { cssIdentifier = 'default'; }
-        var _this = _super.call(this, /* html */ "<div class=\"ag-list ag-" + cssIdentifier + "-list\" role=\"listbox\"></div>") || this;
+        var _this = _super.call(this, /* html */ "<div class=\"ag-list ag-".concat(cssIdentifier, "-list\" role=\"listbox\"></div>")) || this;
         _this.cssIdentifier = cssIdentifier;
         _this.options = [];
         _this.itemEls = [];
@@ -78,7 +79,7 @@ var AgList = /** @class */ (function (_super) {
     };
     AgList.prototype.addOption = function (listOption) {
         var value = listOption.value, text = listOption.text;
-        var sanitisedText = string_1.escapeString(text || value);
+        var sanitisedText = (0, string_1.escapeString)(text || value);
         this.options.push({ value: value, text: sanitisedText });
         this.renderOption(value, sanitisedText);
         this.updateIndices();
@@ -87,16 +88,16 @@ var AgList = /** @class */ (function (_super) {
     AgList.prototype.updateIndices = function () {
         var options = this.getGui().querySelectorAll('.ag-list-item');
         options.forEach(function (option, idx) {
-            aria_1.setAriaPosInSet(option, idx + 1);
-            aria_1.setAriaSetSize(option, options.length);
+            (0, aria_1.setAriaPosInSet)(option, idx + 1);
+            (0, aria_1.setAriaSetSize)(option, options.length);
         });
     };
     AgList.prototype.renderOption = function (value, text) {
         var _this = this;
         var itemEl = document.createElement('div');
-        aria_1.setAriaRole(itemEl, 'option');
-        itemEl.classList.add('ag-list-item', "ag-" + this.cssIdentifier + "-list-item");
-        itemEl.innerHTML = "<span>" + text + "</span>";
+        (0, aria_1.setAriaRole)(itemEl, 'option');
+        itemEl.classList.add('ag-list-item', "ag-".concat(this.cssIdentifier, "-list-item"));
+        itemEl.innerHTML = "<span>".concat(text, "</span>");
         itemEl.tabIndex = -1;
         this.itemEls.push(itemEl);
         this.addManagedListener(itemEl, 'mouseover', function () { return _this.highlightItem(itemEl); });
@@ -149,21 +150,21 @@ var AgList = /** @class */ (function (_super) {
         this.fireChangeEvent();
     };
     AgList.prototype.highlightItem = function (el) {
-        if (!el.offsetParent) {
+        if (!(0, dom_1.isVisible)(el)) {
             return;
         }
         this.clearHighlighted();
         this.highlightedEl = el;
         this.highlightedEl.classList.add(AgList.ACTIVE_CLASS);
-        aria_1.setAriaSelected(this.highlightedEl, true);
+        (0, aria_1.setAriaSelected)(this.highlightedEl, true);
         this.highlightedEl.focus();
     };
     AgList.prototype.clearHighlighted = function () {
-        if (!this.highlightedEl || !this.highlightedEl.offsetParent) {
+        if (!this.highlightedEl || !(0, dom_1.isVisible)(this.highlightedEl)) {
             return;
         }
         this.highlightedEl.classList.remove(AgList.ACTIVE_CLASS);
-        aria_1.setAriaSelected(this.highlightedEl, false);
+        (0, aria_1.setAriaSelected)(this.highlightedEl, false);
         this.highlightedEl = null;
     };
     AgList.prototype.fireChangeEvent = function () {

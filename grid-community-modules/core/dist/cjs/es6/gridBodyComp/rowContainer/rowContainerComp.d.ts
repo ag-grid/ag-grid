@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../../widgets/component";
@@ -6,7 +6,6 @@ export declare class RowContainerComp extends Component {
     private beans;
     private eViewport;
     private eContainer;
-    private eWrapper;
     private readonly name;
     private readonly type;
     private rowComps;

@@ -18,7 +18,7 @@ export class FullStore extends RowNodeBlock {
         this.leafGroup = ssrmParams.rowGroupCols ? this.level === ssrmParams.rowGroupCols.length - 1 : false;
     }
     postConstruct() {
-        this.usingTreeData = this.gridOptionsService.isTreeData();
+        this.usingTreeData = this.gridOptionsService.get('treeData');
         this.nodeIdPrefix = this.blockUtils.createNodeIdPrefix(this.parentRowNode);
         if (!this.usingTreeData && this.groupLevel) {
             const groupColVo = this.ssrmParams.rowGroupCols[this.level];
@@ -28,13 +28,18 @@ export class FullStore extends RowNodeBlock {
         let initialRowCount = 1;
         const isRootStore = this.parentRowNode.level === -1;
         const userInitialRowCount = this.storeUtils.getServerSideInitialRowCount();
-        if (isRootStore && userInitialRowCount !== undefined) {
+        if (isRootStore && userInitialRowCount != null) {
             initialRowCount = userInitialRowCount;
         }
         this.initialiseRowNodes(initialRowCount);
         this.rowNodeBlockLoader.addBlock(this);
         this.addDestroyFunc(() => this.rowNodeBlockLoader.removeBlock(this));
         this.postSortFunc = this.gridOptionsService.getCallback('postSortRows');
+        if (userInitialRowCount != null) {
+            this.eventService.dispatchEventOnce({
+                type: Events.EVENT_ROW_COUNT_READY
+            });
+        }
     }
     destroyRowNodes() {
         this.blockUtils.destroyRowNodes(this.allRowNodes);
@@ -71,9 +76,7 @@ export class FullStore extends RowNodeBlock {
             parentBlock: this,
             parentNode: this.parentRowNode,
             storeParams: this.ssrmParams,
-            successCallback: this.pageLoaded.bind(this, this.getVersion()),
             success: this.success.bind(this, this.getVersion()),
-            failCallback: this.pageLoadFailed.bind(this, this.getVersion()),
             fail: this.pageLoadFailed.bind(this, this.getVersion())
         });
     }
@@ -118,7 +121,7 @@ export class FullStore extends RowNodeBlock {
         if (!this.isAlive()) {
             return;
         }
-        const info = params.storeInfo || params.groupLevelInfo;
+        const info = params.groupLevelInfo;
         if (info) {
             Object.assign(this.info, info);
         }
@@ -131,12 +134,16 @@ export class FullStore extends RowNodeBlock {
         this.nodesAfterFilter = [];
         this.allNodesMap = {};
         if (!params.rowData) {
-            const message = 'AG Grid: "params.data" is missing from Server-Side Row Model success() callback. Please use the "data" attribute. If no data is returned, set an empty list.';
-            _.doOnce(() => console.warn(message, params), 'FullStore.noData');
+            _.warnOnce('"params.data" is missing from Server-Side Row Model success() callback. Please use the "data" attribute. If no data is returned, set an empty list.');
         }
         this.createOrRecycleNodes(nodesToRecycle, params.rowData);
         if (nodesToRecycle) {
             this.blockUtils.destroyRowNodes(_.getAllValuesInObject(nodesToRecycle));
+        }
+        if (this.level === 0) {
+            this.eventService.dispatchEventOnce({
+                type: Events.EVENT_ROW_COUNT_READY
+            });
         }
         this.filterAndSortNodes();
         this.fireStoreUpdatedEvent();
@@ -271,14 +278,17 @@ export class FullStore extends RowNodeBlock {
             }
         });
     }
-    forEachNodeDeepAfterFilterAndSort(callback, sequence = new NumberSequence()) {
+    forEachNodeDeepAfterFilterAndSort(callback, sequence = new NumberSequence(), includeFooterNodes = false) {
         this.nodesAfterSort.forEach(rowNode => {
             callback(rowNode, sequence.next());
             const childCache = rowNode.childStore;
             if (childCache) {
-                childCache.forEachNodeDeepAfterFilterAndSort(callback, sequence);
+                childCache.forEachNodeDeepAfterFilterAndSort(callback, sequence, includeFooterNodes);
             }
         });
+        if (includeFooterNodes && this.parentRowNode.sibling) {
+            callback(this.parentRowNode.sibling, sequence.next());
+        }
     }
     getRowUsingDisplayIndex(displayRowIndex) {
         // this can happen if asking for a row that doesn't exist in the model,
@@ -395,7 +405,6 @@ export class FullStore extends RowNodeBlock {
             const params = {
                 transaction: transaction,
                 parentNode: this.parentRowNode,
-                storeInfo: this.info,
                 groupLevelInfo: this.info
             };
             const apply = applyCallback(params);

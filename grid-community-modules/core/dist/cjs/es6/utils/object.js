@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isNonNullObject = exports.removeAllReferences = exports.getValueUsingField = exports.set = exports.get = exports.missingOrEmptyObject = exports.mergeDeep = exports.getAllValuesInObject = exports.getAllKeysInObjects = exports.copyPropertyIfPresent = exports.copyPropertiesIfPresent = exports.setProperty = exports.getProperty = exports.deepCloneDefinition = exports.deepCloneObject = exports.cloneObject = exports.iterateObject = void 0;
+exports.isNonNullObject = exports.removeAllReferences = exports.getValueUsingField = exports.mergeDeep = exports.getAllValuesInObject = exports.deepCloneDefinition = exports.cloneObject = exports.iterateObject = void 0;
 const generic_1 = require("./generic");
 function iterateObject(object, callback) {
     if (object == null) {
@@ -28,10 +28,6 @@ function cloneObject(object) {
     return copy;
 }
 exports.cloneObject = cloneObject;
-function deepCloneObject(object) {
-    return JSON.parse(JSON.stringify(object));
-}
-exports.deepCloneObject = deepCloneObject;
 // returns copy of an object, doing a deep clone of any objects with that object.
 // this is used for eg creating copies of Column Definitions, where we want to
 // deep copy all objects, but do not want to deep copy functions (eg when user provides
@@ -62,41 +58,6 @@ function deepCloneDefinition(object, keysToSkip) {
     return res;
 }
 exports.deepCloneDefinition = deepCloneDefinition;
-function getProperty(object, key) {
-    return object[key];
-}
-exports.getProperty = getProperty;
-function setProperty(object, key, value) {
-    object[key] = value;
-}
-exports.setProperty = setProperty;
-/**
- * Will copy the specified properties from `source` into the equivalent properties on `target`, ignoring properties with
- * a value of `undefined`.
- */
-function copyPropertiesIfPresent(source, target, ...properties) {
-    properties.forEach(p => copyPropertyIfPresent(source, target, p));
-}
-exports.copyPropertiesIfPresent = copyPropertiesIfPresent;
-/**
- * Will copy the specified property from `source` into the equivalent property on `target`, unless the property has a
- * value of `undefined`. If a transformation is provided, it will be applied to the value before being set on `target`.
- */
-function copyPropertyIfPresent(source, target, property, transform) {
-    const value = getProperty(source, property);
-    if (value !== undefined) {
-        setProperty(target, property, transform ? transform(value) : value);
-    }
-}
-exports.copyPropertyIfPresent = copyPropertyIfPresent;
-function getAllKeysInObjects(objects) {
-    const allValues = {};
-    objects.filter(obj => obj != null).forEach(obj => {
-        Object.keys(obj).forEach(key => allValues[key] = null);
-    });
-    return Object.keys(allValues);
-}
-exports.getAllKeysInObjects = getAllKeysInObjects;
 function getAllValuesInObject(obj) {
     if (!obj) {
         return [];
@@ -115,7 +76,7 @@ function getAllValuesInObject(obj) {
 }
 exports.getAllValuesInObject = getAllValuesInObject;
 function mergeDeep(dest, source, copyUndefined = true, makeCopyOfSimpleObjects = false) {
-    if (!generic_1.exists(source)) {
+    if (!(0, generic_1.exists)(source)) {
         return;
     }
     iterateObject(source, (key, sourceValue) => {
@@ -149,44 +110,6 @@ function mergeDeep(dest, source, copyUndefined = true, makeCopyOfSimpleObjects =
     });
 }
 exports.mergeDeep = mergeDeep;
-function missingOrEmptyObject(value) {
-    return generic_1.missing(value) || Object.keys(value).length === 0;
-}
-exports.missingOrEmptyObject = missingOrEmptyObject;
-function get(source, expression, defaultValue) {
-    if (source == null) {
-        return defaultValue;
-    }
-    const keys = expression.split('.');
-    let objectToRead = source;
-    while (keys.length > 1) {
-        objectToRead = objectToRead[keys.shift()];
-        if (objectToRead == null) {
-            return defaultValue;
-        }
-    }
-    const value = objectToRead[keys[0]];
-    return value != null ? value : defaultValue;
-}
-exports.get = get;
-function set(target, expression, value) {
-    if (target == null) {
-        return;
-    }
-    const keys = expression.split('.');
-    let objectToUpdate = target;
-    // Create empty objects
-    keys.forEach((key, i) => {
-        if (!objectToUpdate[key]) {
-            objectToUpdate[key] = {};
-        }
-        if (i < keys.length - 1) {
-            objectToUpdate = objectToUpdate[key];
-        }
-    });
-    objectToUpdate[keys[keys.length - 1]] = value;
-}
-exports.set = set;
 function getValueUsingField(data, field, fieldContainsDots) {
     if (!field || !data) {
         return;
@@ -207,28 +130,28 @@ function getValueUsingField(data, field, fieldContainsDots) {
     return currentObject;
 }
 exports.getValueUsingField = getValueUsingField;
-// used by ColumnAPI and GridAPI to remove all references, so keeping grid in memory resulting in a
-// memory leak if user is not disposing of the GridAPI or ColumnApi references
-function removeAllReferences(obj, objectName) {
+// used by GridAPI to remove all references, so keeping grid in memory resulting in a
+// memory leak if user is not disposing of the GridAPI references
+function removeAllReferences(obj, preserveKeys = [], preDestroyLink) {
     Object.keys(obj).forEach(key => {
         const value = obj[key];
         // we want to replace all the @autowired services, which are objects. any simple types (boolean, string etc)
         // we don't care about
-        if (typeof value === 'object') {
+        if (typeof value === 'object' && !preserveKeys.includes(key)) {
             obj[key] = undefined;
         }
     });
     const proto = Object.getPrototypeOf(obj);
     const properties = {};
-    Object.keys(proto).forEach(key => {
+    const msgFunc = (key) => `AG Grid: Grid API function ${key}() cannot be called as the grid has been destroyed.
+    It is recommended to remove local references to the grid api. Alternatively, check gridApi.isDestroyed() to avoid calling methods against a destroyed grid.
+    To run logic when the grid is about to be destroyed use the gridPreDestroy event. See: ${preDestroyLink}`;
+    Object.getOwnPropertyNames(proto).forEach(key => {
         const value = proto[key];
-        // leave all basic types - this is needed for GridAPI to leave the "destroyed: boolean" attribute alone
-        if (typeof value === 'function') {
+        // leave all basic types and preserveKeys this is needed for GridAPI to leave the "destroyed: boolean" attribute and isDestroyed() function.
+        if (typeof value === 'function' && !preserveKeys.includes(key)) {
             const func = () => {
-                console.warn(`AG Grid: ${objectName} function ${key}() cannot be called as the grid has been destroyed.
-                     Please don't call grid API functions on destroyed grids - as a matter of fact you shouldn't
-                     be keeping the API reference, your application has a memory leak! Remove the API reference
-                     when the grid is destroyed.`);
+                console.warn(msgFunc(key));
             };
             properties[key] = { value: func, writable: true };
         }

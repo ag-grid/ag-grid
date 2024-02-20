@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { UserCompDetails } from "../../../components/framework/userComponentFactory";
@@ -7,39 +7,32 @@ import { ColumnSortState } from "../../../utils/aria";
 import { HeaderRowCtrl } from "../../row/headerRowCtrl";
 import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellCtrl";
 import { IHeader, IHeaderParams } from "./headerComp";
+import { ResizeFeature } from "./resizeFeature";
+import { HorizontalDirection } from "../../../constants/direction";
+import { Beans } from "../../../rendering/beans";
 export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     setWidth(width: string): void;
-    addOrRemoveCssClass(cssClassName: string, on: boolean): void;
-    setAriaDescription(description?: string): void;
     setAriaSort(sort?: ColumnSortState): void;
     setUserCompDetails(compDetails: UserCompDetails): void;
     getUserCompInstance(): IHeader | undefined;
 }
-export declare class HeaderCellCtrl extends AbstractHeaderCellCtrl {
-    private readonly columnModel;
-    private readonly columnHoverService;
-    private readonly sortController;
-    private readonly menuFactory;
-    private readonly dragAndDropService;
-    private readonly resizeObserverService;
-    private readonly gridApi;
-    private readonly columnApi;
-    private comp;
-    private column;
+declare type HeaderAriaDescriptionKey = 'filter' | 'menu' | 'sort' | 'selectAll' | 'filterButton';
+export declare class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Column, ResizeFeature> {
     private refreshFunctions;
     private selectAllFeature;
-    private moveDragSource;
     private sortable;
     private displayName;
     private draggable;
     private menuEnabled;
+    private openFilterEnabled;
     private dragSourceElement;
     private userCompDetails;
     private userHeaderClasses;
     private ariaDescriptionProperties;
-    constructor(column: Column, parentRowCtrl: HeaderRowCtrl);
+    constructor(column: Column, beans: Beans, parentRowCtrl: HeaderRowCtrl);
     setComp(comp: IHeaderCellComp, eGui: HTMLElement, eResize: HTMLElement, eHeaderCompWrapper: HTMLElement): void;
-    private addMouseDownListenerIfNeeded;
+    protected resizeHeader(delta: number, shiftKey: boolean): void;
+    protected moveHeader(hDirection: HorizontalDirection): void;
     private setupUserComp;
     private setCompDetails;
     private lookupUserCompDetails;
@@ -48,15 +41,13 @@ export declare class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     getSelectAllGui(): HTMLElement;
     protected handleKeyDown(e: KeyboardEvent): void;
     private onEnterKeyDown;
-    isMenuEnabled(): boolean;
+    private showMenuOnKeyPress;
     private onFocusIn;
     private onFocusOut;
     private setupTooltip;
     private setupClassesFromColDef;
     setDragSource(eSource: HTMLElement | undefined): void;
     private createDragItem;
-    removeDragSource(): void;
-    private onColDefChanged;
     private updateState;
     addRefreshFunction(func: () => void): void;
     private refresh;
@@ -72,19 +63,25 @@ export declare class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     private setupMovingCss;
     private setupMenuClass;
     private setupSortableClass;
+    private setupFilterClass;
     private setupWrapTextClass;
+    protected onDisplayedColumnsChanged(): void;
     private onHeaderHeightChanged;
     private refreshSpanHeaderHeight;
-    private getColumnGroupPaddingInfo;
     private setupAutoHeight;
     private refreshAriaSort;
     private refreshAriaMenu;
-    setAriaDescriptionProperty(property: string, value: string | null): void;
-    refreshAriaDescription(): void;
+    private refreshAriaFilterButton;
+    private refreshAriaFiltered;
+    setAriaDescriptionProperty(property: HeaderAriaDescriptionKey, value: string | null): void;
+    announceAriaDescription(): void;
     private refreshAria;
     private addColumnHoverListener;
-    private setupFilterCss;
     getColId(): string;
     private addActiveHeaderMouseListeners;
+    private handleMouseOverChange;
     private setActiveHeader;
+    getAnchorElementForMenu(isFilter?: boolean): HTMLElement;
+    protected destroy(): void;
 }
+export {};

@@ -1,47 +1,24 @@
 import classnames from 'classnames';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert } from '../components/alert/Alert';
-import ChevronButtonCellRenderer from '../components/grid/ChevronButtonRenderer';
+import { useGlobalContext } from '../components/GlobalContext';
 import DetailCellRenderer from '../components/grid/DetailCellRendererComponent';
 import Grid from '../components/grid/Grid';
-import IssueTypeCellRenderer from '../components/grid/IssueTypeRenderer';
-import PaddingCellRenderer from '../components/grid/PaddingCellRenderer';
 import { Icon } from '../components/Icon';
-import styles from './pipelineChangelog.module.scss';
+import { IssueColDef, IssueTypeColDef } from '../utils/grid/issueColDefs';
+import styles from '@design-system/modules/pipelineChangelog.module.scss';
 
 const COLUMN_DEFS = [
-    {
-        field: 'key',
-        headerName: 'Issue',
-        width: 140,
-        cellRendererSelector: (params) => {
-            if (
-                params.node.data.moreInformation ||
-                params.node.data.deprecationNotes ||
-                params.node.data.breakingChangesNotes
-            ) {
-                return {
-                    component: 'chevronButtonRenderer',
-                };
-            }
-            return {
-                component: 'paddingCellRenderer',
-            };
-        },
-    },
+    IssueColDef,
     {
         field: 'summary',
         tooltipField: 'summary',
         width: 300,
         minWidth: 200,
         flex: 1,
+        filter: 'agTextColumnFilter'
     },
-    {
-        field: 'issueType',
-        width: 180,
-        valueFormatter: (params) => (params.value === 'Bug' ? 'Defect' : 'Feature Request'),
-        cellRenderer: 'issueTypeCellRenderer',
-    },
+    IssueTypeColDef,
     {
         field: 'status',
         width: 135,
@@ -69,10 +46,8 @@ const COLUMN_DEFS = [
 ];
 
 const defaultColDef = {
-    resizable: true,
-    sortable: true,
-    suppressMenu: true,
     autoHeight: true,
+    filter: true,
     cellClass: styles.fontClass,
     headerClass: styles.fontClass,
     suppressKeyboardEvent: (params) => {
@@ -87,13 +62,20 @@ const defaultColDef = {
 
 const IS_SSR = typeof window === 'undefined';
 
-const isRowMaster = (row) => row.moreInformation;
+const isRowMaster = (row) => row.moreInformation || row.deprecationNotes || row.breakingChangesNotes;
+
+const newLinesToBreaks = (message) =>
+    message.replaceAll('\n\r', '<br>').replaceAll('\n', '<br>').replaceAll('\r', '<br>');
 
 const detailCellRendererParams = (params) => {
-    let message = params.data.moreInformation;
-    message = message.replaceAll('\n\r', '<br>');
-    message = message.replaceAll('\n', '<br>');
-    message = message.replaceAll('\r', '<br>');
+    const combinedMessages = [
+        params.data.moreInformation,
+        params.data.deprecationNotes,
+        params.data.breakingChangesNotes,
+    ]
+        .filter(Boolean)
+        .join('\n\n');
+    let message = newLinesToBreaks(combinedMessages);
 
     function makeLinksFunctional(message) {
         let msgArr = message.split(' ');
@@ -109,14 +91,15 @@ const detailCellRendererParams = (params) => {
                         length = endIndex - beginningIndex;
                     }
 
+                    const httpIdx = element.indexOf('http');
                     let link = length
-                        ? element.substr(element.indexOf('http'), length)
-                        : element.substr(element.indexOf('http'));
+                        ? element.substring(httpIdx, httpIdx + length)
+                        : element.substring(httpIdx);
                     let htmlLink = isEndIndex
                         ? `<a class=${styles.link} href="${link}"
-          target="_blank">${link}</a>${element.substr(endIndex)}`
+          target="_blank">${link}</a>${element.substring(endIndex)}`
                         : `<a class=${styles.link} target="_blank" href="${link}">${link}</a>`;
-                    return element.substr(0, beginningIndex) + htmlLink;
+                    return element.substring(0, beginningIndex) + htmlLink;
                 }
                 return element;
             });
@@ -140,6 +123,7 @@ const Pipeline = ({ location }) => {
     const [gridApi, setGridApi] = useState(null);
     const URLFilterSearchQuery = useState(extractFilterTerm(location))[0];
     const searchBarEl = useRef(null);
+    const { darkMode } = useGlobalContext();
 
     useEffect(() => {
         fetch('/pipeline/pipeline.json')
@@ -151,12 +135,12 @@ const Pipeline = ({ location }) => {
 
     const gridReady = (params) => {
         setGridApi(params.api);
-        params.api.setQuickFilter(URLFilterSearchQuery);
+        params.api.setGridOption('quickFilterText', URLFilterSearchQuery);
     };
 
     const onQuickFilterChange = useCallback(
         (event) => {
-            gridApi.setQuickFilter(event.target.value);
+            gridApi.setGridOption('quickFilterText', event.target.value);
         },
         [gridApi]
     );
@@ -196,19 +180,14 @@ const Pipeline = ({ location }) => {
                         columnDefs={COLUMN_DEFS}
                         isRowMaster={isRowMaster}
                         detailRowAutoHeight={true}
-                        components={{
-                            myDetailCellRenderer: DetailCellRenderer,
-                            paddingCellRenderer: PaddingCellRenderer,
-                            chevronButtonRenderer: ChevronButtonCellRenderer,
-                            issueTypeCellRenderer: IssueTypeCellRenderer,
-                        }}
                         defaultColDef={defaultColDef}
                         enableCellTextSelection={true}
                         detailCellRendererParams={detailCellRendererParams}
-                        detailCellRenderer={'myDetailCellRenderer'}
+                        detailCellRenderer={DetailCellRenderer}
                         masterDetail={true}
                         rowData={rowData}
                         onGridReady={gridReady}
+                        theme={!darkMode ? 'ag-theme-quartz' : 'ag-theme-quartz-dark'}
                     ></Grid>
                 </div>
             )}

@@ -4,7 +4,7 @@ exports.MiniStackedBar = void 0;
 const miniChartWithAxes_1 = require("../miniChartWithAxes");
 const ag_charts_community_1 = require("ag-charts-community");
 class MiniStackedBar extends miniChartWithAxes_1.MiniChartWithAxes {
-    constructor(container, fills, strokes, data = MiniStackedBar.data, xScaleDomain = [0, 16], tooltipName = "stackedBarTooltip") {
+    constructor(container, fills, strokes, _themeTemplateParameters, _isCustomTheme, data = MiniStackedBar.data, xScaleDomain = [0, 16], tooltipName = "stackedBarTooltip") {
         super(container, tooltipName);
         const size = this.size;
         const padding = this.padding;
@@ -24,7 +24,7 @@ class MiniStackedBar extends miniChartWithAxes_1.MiniChartWithAxes {
             rect.y = yScale.convert(i);
             rect.width = bottom - xScale.convert(datum);
             rect.height = height;
-            rect.strokeWidth = 1;
+            rect.strokeWidth = 0;
             rect.crisp = true;
             return rect;
         }));

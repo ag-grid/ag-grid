@@ -20,13 +20,11 @@ const GRID_BODY_TEMPLATE = /* html */ `<div class="ag-root ag-unselectable" role
             <ag-row-container ref="topFullWidthContainer" name="${RowContainerName.TOP_FULL_WIDTH}"></ag-row-container>
         </div>
         <div class="ag-body" ref="eBody" role="presentation">
-            <div class="ag-body-clipper" ref="eBodyClipper" role="presentation">
-                <div class="ag-body-viewport" ref="eBodyViewport" role="presentation">
-                    <ag-row-container ref="leftContainer" name="${RowContainerName.LEFT}"></ag-row-container>
-                    <ag-row-container ref="centerContainer" name="${RowContainerName.CENTER}"></ag-row-container>
-                    <ag-row-container ref="rightContainer" name="${RowContainerName.RIGHT}"></ag-row-container>
-                    <ag-row-container ref="fullWidthContainer" name="${RowContainerName.FULL_WIDTH}"></ag-row-container>
-                </div>
+            <div class="ag-body-viewport" ref="eBodyViewport" role="presentation">
+                <ag-row-container ref="leftContainer" name="${RowContainerName.LEFT}"></ag-row-container>
+                <ag-row-container ref="centerContainer" name="${RowContainerName.CENTER}"></ag-row-container>
+                <ag-row-container ref="rightContainer" name="${RowContainerName.RIGHT}"></ag-row-container>
+                <ag-row-container ref="fullWidthContainer" name="${RowContainerName.FULL_WIDTH}"></ag-row-container>
             </div>
             <ag-fake-vertical-scroll></ag-fake-vertical-scroll>
         </div>
@@ -70,7 +68,6 @@ export class GridBodyComp extends Component {
             updateLayoutClasses: (cssClass, params) => {
                 const classLists = [
                     this.eBodyViewport.classList,
-                    this.eBodyClipper.classList,
                     this.eBody.classList
                 ];
                 classLists.forEach(classList => {
@@ -96,7 +93,7 @@ export class GridBodyComp extends Component {
         };
         this.ctrl = this.createManagedBean(new GridBodyCtrl());
         this.ctrl.setComp(compProxy, this.getGui(), this.eBodyViewport, this.eTop, this.eBottom, this.eStickyTop);
-        if (this.rangeService || this.gridOptionsService.get('rowSelection') === 'multiple') {
+        if (this.rangeService && this.gridOptionsService.get('enableRangeSelection') || this.gridOptionsService.get('rowSelection') === 'multiple') {
             setAriaMultiSelectable(this.getGui(), true);
         }
     }
@@ -130,9 +127,6 @@ __decorate([
 __decorate([
     RefSelector('gridHeader')
 ], GridBodyComp.prototype, "headerRootComp", void 0);
-__decorate([
-    RefSelector('eBodyClipper')
-], GridBodyComp.prototype, "eBodyClipper", void 0);
 __decorate([
     RefSelector('eBody')
 ], GridBodyComp.prototype, "eBody", void 0);

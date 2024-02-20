@@ -8,7 +8,6 @@
 #top {
     flex: 1;
     display: flex;
-    background: #181d1f;
     height: 25%;
 }
 
@@ -16,8 +15,8 @@
     width: 60%;
 }
 
-#doughnutChart {
-    width: 40%;
+#donutChart {
+    width: calc(40% - 8px);
 }
 
 #areaChart {

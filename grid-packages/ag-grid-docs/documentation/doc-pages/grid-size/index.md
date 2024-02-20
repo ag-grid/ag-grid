@@ -7,22 +7,22 @@ Under normal usage, your application should set the width and height of the grid
 <framework-specific-section frameworks="javascript">
 <snippet transform={false} language="html">
 | &lt;!-- set width using percentages -->
-| &lt;div id="myGrid" class="ag-theme-alpine" style="width: 100%; height: 100%;">&lt;/div>
+| &lt;div id="myGrid" class="ag-theme-quartz" style="width: 100%; height: 100%;">&lt;/div>
 |
 | &lt;!-- OR set width using fixed pixels -->
-|&lt;div id="myGrid" class="ag-theme-alpine" style="width: 500px; height: 200px;">&lt;/div>
+|&lt;div id="myGrid" class="ag-theme-quartz" style="width: 500px; height: 200px;">&lt;/div>
 </snippet>
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
 <snippet transform={false} language="html">
 | &lt;!-- set width using percentages -->
-| &lt;div class="ag-theme-alpine">
+| &lt;div class="ag-theme-quartz">
 |     &lt;ag-grid-angular style="width: 100%; height: 100%;">&lt;/ag-grid-angular>
 | &lt;/div>
 |
 | <!-- OR set width using fixed pixels -->
-| &lt;div class="ag-theme-alpine">
+| &lt;div class="ag-theme-quartz">
 |     &lt;ag-grid-angular style="width: 500px; height: 200px">&lt;/ag-grid-angular>
 | &lt;/div>
 </snippet>
@@ -31,12 +31,12 @@ Under normal usage, your application should set the width and height of the grid
 <framework-specific-section frameworks="react">
 <snippet transform={false} language="jsx">
 | &lt;!-- set width using percentages -->
-| &lt;div class="ag-theme-alpine">
+| &lt;div class="ag-theme-quartz">
 |     &lt;AgGridReact style={{ width: '100%', height: '100%' }} />
 | &lt;/div>
 |
 | &lt;!-- OR set width using fixed pixels -->
-| &lt;div class="ag-theme-alpine">
+| &lt;div class="ag-theme-quartz">
 |     &lt;AgGridReact style={{ width: 500, height: 200 }} />
 | &lt;/div>
 </snippet>
@@ -45,12 +45,12 @@ Under normal usage, your application should set the width and height of the grid
 <framework-specific-section frameworks="vue">
 <snippet transform={false} language="html">
 | &lt;!-- set width using percentages -->
-| &lt;div class="ag-theme-alpine">
+| &lt;div class="ag-theme-quartz">
 |     &lt;ag-grid-vue style="width: 100%; height: 100%;">&lt;/ag-grid-vue>
 | &lt;/div>
 |
 | &lt;!-- OR set width using fixed pixels -->
-| &lt;div class="ag-theme-alpine">
+| &lt;div class="ag-theme-quartz">
 |     &lt;ag-grid-vue style="width: 500px; height: 200px">&lt;/ag-grid-vue>
 | &lt;/div>
 </snippet>
@@ -111,7 +111,7 @@ The example below demonstrates the autoHeight feature. Notice the following:
 - The height will also adjust as you filter, to add and remove rows.
 - If you have pinned rows, the grid will size to accommodate the pinned rows.
 - Vertical scrolling will not happen, however horizontal scrolling, including pinned columns, will work as normal.
-- It is possible to move the grid into and out of 'full height' mode by using the `api.setDomLayout()` or by changing the bound property `domLayout`.
+- It is possible to move the grid into and out of 'full height' mode by using the `api.setGridOption('domLayout', layout)` or by changing the bound property `domLayout`.
 
 <note>
 The following test is best viewed if you open it in a new tab, so it is obvious that there are no scroll bars.
@@ -120,17 +120,15 @@ Note that if you use the example inlined the scroll bars shown are for the conta
 
 <grid-example title='Auto Height' name='auto-height' type='generated' options='{ "enterprise": true, "exampleHeight": 660, "noStyle": 1, "myGridReference": 1, "modules": ["clientside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 
-When using Auto Height, there is a minimum of 150px set to the grid rows section. This is to avoid an empty grid which would look weird. To remove this minimum height, add the following CSS:
+## Min Height with Auto Height
+
+When using Auto Height, there is a minimum of 150px set to the grid rows section. This is to avoid an empty grid which would look weird. In particular, this allows room to show the 'no rows' message when no rows are in the grid, otherwise this message would be overlaying on top of the header. To remove this minimum height, add the following CSS:
 
 <snippet transform={false} language="css">
-.ag-center-cols-clipper {
+.ag-center-cols-viewport {
     min-height: unset !important;
 }
 </snippet>
-
-## Min Height with Auto Height
-
-There is a minimum height of 50px for displaying the rows for autoheight. This is for aesthetic purposes, in particular to allow room to show the 'no rows' message when no rows are in the grid otherwise this message would be overlaying on top of the header which does not look well.
 
 It is not possible to specify a max height when using auto-height.
 

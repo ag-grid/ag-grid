@@ -56,6 +56,10 @@ var GridBodyScrollFeature = /** @class */ (function (_super) {
         _this.scrollLeft = -1;
         _this.nextScrollTop = -1;
         _this.scrollTop = -1;
+        // Used to provide approximate values of scrollTop and offsetHeight
+        // without forcing the browser to recalculate styles.
+        _this.lastOffsetHeight = -1;
+        _this.lastScrollTop = -1;
         _this.eBodyViewport = eBodyViewport;
         _this.resetLastHScrollDebounced = debounce(function () { return _this.lastScrollSource[ScrollDirection.Horizontal] = null; }, 500);
         _this.resetLastVScrollDebounced = debounce(function () { return _this.lastScrollSource[ScrollDirection.Vertical] = null; }, 500);
@@ -63,7 +67,7 @@ var GridBodyScrollFeature = /** @class */ (function (_super) {
     }
     GridBodyScrollFeature.prototype.postConstruct = function () {
         var _this = this;
-        this.enableRtl = this.gridOptionsService.is('enableRtl');
+        this.enableRtl = this.gridOptionsService.get('enableRtl');
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onDisplayedColumnsWidthChanged.bind(this));
         this.ctrlsService.whenReady(function (p) {
             _this.centerRowContainerCtrl = p.centerRowContainerCtrl;
@@ -76,7 +80,7 @@ var GridBodyScrollFeature = /** @class */ (function (_super) {
         var fakeVScroll = this.ctrlsService.getFakeVScrollComp();
         this.addManagedListener(this.centerRowContainerCtrl.getViewportElement(), 'scroll', this.onHScroll.bind(this));
         fakeHScroll.onScrollCallback(this.onFakeHScroll.bind(this));
-        var isDebounce = this.gridOptionsService.is('debounceVerticalScrollbar');
+        var isDebounce = this.gridOptionsService.get('debounceVerticalScrollbar');
         var onVScroll = isDebounce ?
             debounce(this.onVScroll.bind(this), 100) : this.onVScroll.bind(this);
         var onFakeVScroll = isDebounce ?
@@ -198,7 +202,7 @@ var GridBodyScrollFeature = /** @class */ (function (_super) {
         // the `scrollGridIfNeeded` will recalculate the rows to be rendered by the grid
         // so it should only be called after `eBodyViewport` has been scrolled to the correct
         // position, otherwise the `first` and `last` row could be miscalculated.
-        if (this.gridOptionsService.is('suppressAnimationFrame')) {
+        if (this.gridOptionsService.get('suppressAnimationFrame')) {
             this.scrollGridIfNeeded();
         }
         else {
@@ -214,7 +218,7 @@ var GridBodyScrollFeature = /** @class */ (function (_super) {
         this.scrollLeft = scrollLeft;
         this.fireScrollEvent(ScrollDirection.Horizontal);
         this.horizontallyScrollHeaderCenterAndFloatingCenter(scrollLeft);
-        this.onHorizontalViewportChanged();
+        this.centerRowContainerCtrl.onHorizontalViewportChanged(true);
     };
     GridBodyScrollFeature.prototype.fireScrollEvent = function (direction) {
         var _this = this;
@@ -278,9 +282,6 @@ var GridBodyScrollFeature = /** @class */ (function (_super) {
     GridBodyScrollFeature.prototype.redrawRowsAfterScroll = function () {
         this.fireScrollEvent(ScrollDirection.Vertical);
     };
-    GridBodyScrollFeature.prototype.onHorizontalViewportChanged = function () {
-        this.centerRowContainerCtrl.onHorizontalViewportChanged();
-    };
     // this is to cater for AG-3274, where grid is removed from the dom and then inserted back in again.
     // (which happens with some implementations of tabbing). this can result in horizontal scroll getting
     // reset back to the left, however no scroll event is fired. so we need to get header to also scroll
@@ -326,11 +327,26 @@ var GridBodyScrollFeature = /** @class */ (function (_super) {
         this.eBodyViewport.scrollTop = vScrollPosition;
     };
     GridBodyScrollFeature.prototype.getVScrollPosition = function () {
+        this.lastScrollTop = this.eBodyViewport.scrollTop;
+        this.lastOffsetHeight = this.eBodyViewport.offsetHeight;
         var result = {
-            top: this.eBodyViewport.scrollTop,
-            bottom: this.eBodyViewport.scrollTop + this.eBodyViewport.offsetHeight
+            top: this.lastScrollTop,
+            bottom: this.lastScrollTop + this.lastOffsetHeight
         };
         return result;
+    };
+    /** Get an approximate scroll position that returns the last real value read.
+     * This is useful for avoiding repeated DOM reads that force the browser to recalculate styles.
+     * This can have big performance improvements but may not be 100% accurate so only use if this is acceptable.
+     */
+    GridBodyScrollFeature.prototype.getApproximateVScollPosition = function () {
+        if (this.lastScrollTop >= 0 && this.lastOffsetHeight >= 0) {
+            return {
+                top: this.scrollTop,
+                bottom: this.scrollTop + this.lastOffsetHeight
+            };
+        }
+        return this.getVScrollPosition();
     };
     GridBodyScrollFeature.prototype.getHScrollPosition = function () {
         return this.centerRowContainerCtrl.getHScrollPosition();
@@ -384,6 +400,7 @@ var GridBodyScrollFeature = /** @class */ (function (_super) {
     //    if grid needs to scroll down, it scrolls until row is on bottom,
     //    if row is already in view, grid does not scroll
     GridBodyScrollFeature.prototype.ensureIndexVisible = function (index, position) {
+        var _this = this;
         // if for print or auto height, everything is always visible
         if (this.gridOptionsService.isDomLayout('print')) {
             return;
@@ -393,67 +410,70 @@ var GridBodyScrollFeature = /** @class */ (function (_super) {
             console.warn('AG Grid: Invalid row index for ensureIndexVisible: ' + index);
             return;
         }
-        var isPaging = this.gridOptionsService.is('pagination');
-        var paginationPanelEnabled = isPaging && !this.gridOptionsService.is('suppressPaginationPanel');
-        if (!paginationPanelEnabled) {
-            this.paginationProxy.goToPageWithIndex(index);
-        }
-        var gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
-        var stickyTopHeight = gridBodyCtrl.getStickyTopHeight();
-        var rowNode = this.paginationProxy.getRow(index);
-        var rowGotShiftedDuringOperation;
-        do {
-            var startingRowTop = rowNode.rowTop;
-            var startingRowHeight = rowNode.rowHeight;
-            var paginationOffset = this.paginationProxy.getPixelOffset();
-            var rowTopPixel = rowNode.rowTop - paginationOffset;
-            var rowBottomPixel = rowTopPixel + rowNode.rowHeight;
-            var scrollPosition = this.getVScrollPosition();
-            var heightOffset = this.heightScaler.getDivStretchOffset();
-            var vScrollTop = scrollPosition.top + heightOffset;
-            var vScrollBottom = scrollPosition.bottom + heightOffset;
-            var viewportHeight = vScrollBottom - vScrollTop;
-            // work out the pixels for top, middle and bottom up front,
-            // make the if/else below easier to read
-            var pxTop = this.heightScaler.getScrollPositionForPixel(rowTopPixel);
-            var pxBottom = this.heightScaler.getScrollPositionForPixel(rowBottomPixel - viewportHeight);
-            // make sure if middle, the row is not outside the top of the grid
-            var pxMiddle = Math.min((pxTop + pxBottom) / 2, rowTopPixel);
-            var rowAboveViewport = (vScrollTop + stickyTopHeight) > rowTopPixel;
-            var rowBelowViewport = vScrollBottom < rowBottomPixel;
-            var newScrollPosition = null;
-            if (position === 'top') {
-                newScrollPosition = pxTop;
+        var isPaging = this.gridOptionsService.get('pagination');
+        var paginationPanelEnabled = isPaging && !this.gridOptionsService.get('suppressPaginationPanel');
+        this.getFrameworkOverrides().wrapIncoming(function () {
+            if (!paginationPanelEnabled) {
+                _this.paginationProxy.goToPageWithIndex(index);
             }
-            else if (position === 'bottom') {
-                newScrollPosition = pxBottom;
-            }
-            else if (position === 'middle') {
-                newScrollPosition = pxMiddle;
-            }
-            else if (rowAboveViewport) {
-                // if row is before, scroll up with row at top
-                newScrollPosition = pxTop - stickyTopHeight;
-            }
-            else if (rowBelowViewport) {
-                // if row is after, scroll down with row at bottom
-                newScrollPosition = pxBottom;
-            }
-            if (newScrollPosition !== null) {
-                this.setVerticalScrollPosition(newScrollPosition);
-                this.rowRenderer.redraw({ afterScroll: true });
-            }
-            // the row can get shifted if during the rendering (during rowRenderer.redraw()),
-            // the height of a row changes due to lazy calculation of row heights when using
-            // colDef.autoHeight or gridOptions.getRowHeight.
-            // if row was shifted, then the position we scrolled to is incorrect.
-            rowGotShiftedDuringOperation = (startingRowTop !== rowNode.rowTop)
-                || (startingRowHeight !== rowNode.rowHeight);
-        } while (rowGotShiftedDuringOperation);
-        // so when we return back to user, the cells have rendered
-        this.animationFrameService.flushAllFrames();
+            var gridBodyCtrl = _this.ctrlsService.getGridBodyCtrl();
+            var stickyTopHeight = gridBodyCtrl.getStickyTopHeight();
+            var rowNode = _this.paginationProxy.getRow(index);
+            var rowGotShiftedDuringOperation;
+            do {
+                var startingRowTop = rowNode.rowTop;
+                var startingRowHeight = rowNode.rowHeight;
+                var paginationOffset = _this.paginationProxy.getPixelOffset();
+                var rowTopPixel = rowNode.rowTop - paginationOffset;
+                var rowBottomPixel = rowTopPixel + rowNode.rowHeight;
+                var scrollPosition = _this.getVScrollPosition();
+                var heightOffset = _this.heightScaler.getDivStretchOffset();
+                var vScrollTop = scrollPosition.top + heightOffset;
+                var vScrollBottom = scrollPosition.bottom + heightOffset;
+                var viewportHeight = vScrollBottom - vScrollTop;
+                // work out the pixels for top, middle and bottom up front,
+                // make the if/else below easier to read
+                var pxTop = _this.heightScaler.getScrollPositionForPixel(rowTopPixel);
+                var pxBottom = _this.heightScaler.getScrollPositionForPixel(rowBottomPixel - viewportHeight);
+                // make sure if middle, the row is not outside the top of the grid
+                var pxMiddle = Math.min((pxTop + pxBottom) / 2, rowTopPixel);
+                var rowAboveViewport = (vScrollTop + stickyTopHeight) > rowTopPixel;
+                var rowBelowViewport = vScrollBottom < rowBottomPixel;
+                var newScrollPosition = null;
+                if (position === 'top') {
+                    newScrollPosition = pxTop;
+                }
+                else if (position === 'bottom') {
+                    newScrollPosition = pxBottom;
+                }
+                else if (position === 'middle') {
+                    newScrollPosition = pxMiddle;
+                }
+                else if (rowAboveViewport) {
+                    // if row is before, scroll up with row at top
+                    newScrollPosition = pxTop - stickyTopHeight;
+                }
+                else if (rowBelowViewport) {
+                    // if row is after, scroll down with row at bottom
+                    newScrollPosition = pxBottom;
+                }
+                if (newScrollPosition !== null) {
+                    _this.setVerticalScrollPosition(newScrollPosition);
+                    _this.rowRenderer.redraw({ afterScroll: true });
+                }
+                // the row can get shifted if during the rendering (during rowRenderer.redraw()),
+                // the height of a row changes due to lazy calculation of row heights when using
+                // colDef.autoHeight or gridOptions.getRowHeight.
+                // if row was shifted, then the position we scrolled to is incorrect.
+                rowGotShiftedDuringOperation = (startingRowTop !== rowNode.rowTop)
+                    || (startingRowHeight !== rowNode.rowHeight);
+            } while (rowGotShiftedDuringOperation);
+            // so when we return back to user, the cells have rendered
+            _this.animationFrameService.flushAllFrames();
+        });
     };
     GridBodyScrollFeature.prototype.ensureColumnVisible = function (key, position) {
+        var _this = this;
         if (position === void 0) { position = 'auto'; }
         var column = this.columnModel.getGridColumn(key);
         if (!column) {
@@ -468,16 +488,27 @@ var GridBodyScrollFeature = /** @class */ (function (_super) {
             return;
         }
         var newHorizontalScroll = this.getPositionedHorizontalScroll(column, position);
-        if (newHorizontalScroll !== null) {
-            this.centerRowContainerCtrl.setCenterViewportScrollLeft(newHorizontalScroll);
-        }
-        // this will happen anyway, as the move will cause a 'scroll' event on the body, however
-        // it is possible that the ensureColumnVisible method is called from within AG Grid and
-        // the caller will need to have the columns rendered to continue, which will be before
-        // the event has been worked on (which is the case for cell navigation).
-        this.centerRowContainerCtrl.onHorizontalViewportChanged();
-        // so when we return back to user, the cells have rendered
-        this.animationFrameService.flushAllFrames();
+        this.getFrameworkOverrides().wrapIncoming(function () {
+            if (newHorizontalScroll !== null) {
+                _this.centerRowContainerCtrl.setCenterViewportScrollLeft(newHorizontalScroll);
+            }
+            // this will happen anyway, as the move will cause a 'scroll' event on the body, however
+            // it is possible that the ensureColumnVisible method is called from within AG Grid and
+            // the caller will need to have the columns rendered to continue, which will be before
+            // the event has been worked on (which is the case for cell navigation).
+            _this.centerRowContainerCtrl.onHorizontalViewportChanged();
+            // so when we return back to user, the cells have rendered
+            _this.animationFrameService.flushAllFrames();
+        });
+    };
+    GridBodyScrollFeature.prototype.setScrollPosition = function (top, left) {
+        var _this = this;
+        this.getFrameworkOverrides().wrapIncoming(function () {
+            _this.centerRowContainerCtrl.setCenterViewportScrollLeft(left);
+            _this.setVerticalScrollPosition(top);
+            _this.rowRenderer.redraw({ afterScroll: true });
+            _this.animationFrameService.flushAllFrames();
+        });
     };
     GridBodyScrollFeature.prototype.getPositionedHorizontalScroll = function (column, position) {
         var _a = this.isColumnOutsideViewport(column), columnBeforeStart = _a.columnBeforeStart, columnAfterEnd = _a.columnAfterEnd;

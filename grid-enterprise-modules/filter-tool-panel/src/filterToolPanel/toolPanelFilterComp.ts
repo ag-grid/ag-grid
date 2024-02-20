@@ -41,7 +41,7 @@ export class ToolPanelFilterComp extends Component {
     private expanded: boolean = false;
     private underlyingFilter: IFilterComp | null;
 
-    constructor(hideHeader = false) {
+    constructor(hideHeader: boolean, private readonly expandedCallback: () => void) {
         super(ToolPanelFilterComp.TEMPLATE);
         this.hideHeader = hideHeader;
     }
@@ -112,13 +112,13 @@ export class ToolPanelFilterComp extends Component {
     private onFilterDestroyed(event: FilterDestroyedEvent): void {
         if (
             this.expanded &&
-            event.source === 'api' &&
+            (event.source === 'api' || event.source === 'paramsUpdated') &&
             event.column.getId() === this.column.getId() &&
             this.columnModel.getPrimaryColumn(this.column)
         ) {
-            // filter was visible and has been destroyed by the API. If the column still exists, need to recreate UI component
+            // filter was visible and has been destroyed by the API or params changing. If the column still exists, need to recreate UI component
             this.removeFilterElement();
-            this.addFilterElement();
+            this.addFilterElement(true);
         }
     }
 
@@ -136,9 +136,11 @@ export class ToolPanelFilterComp extends Component {
         _.setDisplayed(this.eExpandUnchecked, false);
 
         this.addFilterElement();
+
+        this.expandedCallback();
     }
 
-    private addFilterElement(): void {
+    private addFilterElement(suppressFocus?: boolean): void {
         const filterPanelWrapper = _.loadTemplate(/* html */`<div class="ag-filter-toolpanel-instance-filter"></div>`);
         const filterWrapper = this.filterManager.getOrCreateFilterWrapper(this.column, 'TOOLBAR');
 
@@ -158,7 +160,7 @@ export class ToolPanelFilterComp extends Component {
                 this.agFilterToolPanelBody.appendChild(filterPanelWrapper);
 
                 if (filter.afterGuiAttached) {
-                    filter.afterGuiAttached({ container: 'toolPanel' });
+                    filter.afterGuiAttached({ container: 'toolPanel', suppressFocus });
                 }
             });
         });
@@ -176,6 +178,8 @@ export class ToolPanelFilterComp extends Component {
         _.setDisplayed(this.eExpandUnchecked, true);
 
         this.underlyingFilter?.afterGuiDetached?.();
+
+        this.expandedCallback();
     }
 
     private removeFilterElement(): void {

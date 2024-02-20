@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var excelXlsxFactory_1 = require("../../excelXlsxFactory");
 var excelUtils_1 = require("../../assets/excelUtils");
 var getAnchor = function (name, imageAnchor) { return ({
-    name: "xdr:" + name,
+    name: "xdr:".concat(name),
     children: [{
             name: 'xdr:col',
             textNode: (imageAnchor.col).toString()
@@ -182,7 +182,7 @@ var getBlipFill = function (image, index) {
                 properties: {
                     rawMap: {
                         'cstate': 'print',
-                        'r:embed': "rId" + index,
+                        'r:embed': "rId".concat(index),
                         'xmlns:r': 'http://schemas.openxmlformats.org/officeDocument/2006/relationships'
                     }
                 },
@@ -247,17 +247,17 @@ var getImageBoxSize = function (image) {
         from: {
             row: row - 1,
             col: column - 1,
-            offsetX: excelUtils_1.pixelsToEMU(offsetX),
-            offsetY: excelUtils_1.pixelsToEMU(offsetY)
+            offsetX: (0, excelUtils_1.pixelsToEMU)(offsetX),
+            offsetY: (0, excelUtils_1.pixelsToEMU)(offsetY)
         },
         to: {
             row: (row - 1) + (fitCell ? 1 : rowSpan - 1),
             col: (column - 1) + (fitCell ? 1 : colSpan - 1),
-            offsetX: excelUtils_1.pixelsToEMU(width + offsetX),
-            offsetY: excelUtils_1.pixelsToEMU(height + offsetY)
+            offsetX: (0, excelUtils_1.pixelsToEMU)(width + offsetX),
+            offsetY: (0, excelUtils_1.pixelsToEMU)(height + offsetY)
         },
-        height: excelUtils_1.pixelsToEMU(totalHeight || height),
-        width: excelUtils_1.pixelsToEMU(totalWidth || width)
+        height: (0, excelUtils_1.pixelsToEMU)(totalHeight || height),
+        width: (0, excelUtils_1.pixelsToEMU)(totalWidth || width)
     };
 };
 var getPicture = function (image, currentIndex, worksheetImageIndex, imageBoxSize) {

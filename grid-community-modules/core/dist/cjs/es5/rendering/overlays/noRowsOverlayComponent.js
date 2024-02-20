@@ -28,13 +28,19 @@ var NoRowsOverlayComponent = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     NoRowsOverlayComponent.prototype.init = function (params) {
-        var _a;
-        var template = (_a = this.gridOptionsService.get('overlayNoRowsTemplate')) !== null && _a !== void 0 ? _a : NoRowsOverlayComponent.DEFAULT_NO_ROWS_TEMPLATE;
-        var localeTextFunc = this.localeService.getLocaleTextFunc();
-        var localisedTemplate = template.replace('[NO_ROWS_TO_SHOW]', localeTextFunc('noRowsToShow', 'No Rows To Show'));
-        this.setTemplate(localisedTemplate);
+        var _this = this;
+        var customTemplate = this.gridOptionsService.get('overlayNoRowsTemplate');
+        this.setTemplate(customTemplate !== null && customTemplate !== void 0 ? customTemplate : NoRowsOverlayComponent.DEFAULT_NO_ROWS_TEMPLATE);
+        if (!customTemplate) {
+            var localeTextFunc_1 = this.localeService.getLocaleTextFunc();
+            // setTimeout is used because some screen readers only announce `aria-live` text when
+            // there is a "text change", so we force a change from empty.
+            setTimeout(function () {
+                _this.getGui().textContent = localeTextFunc_1('noRowsToShow', 'No Rows To Show');
+            });
+        }
     };
-    NoRowsOverlayComponent.DEFAULT_NO_ROWS_TEMPLATE = '<span class="ag-overlay-no-rows-center">[NO_ROWS_TO_SHOW]</span>';
+    NoRowsOverlayComponent.DEFAULT_NO_ROWS_TEMPLATE = "<span class=\"ag-overlay-no-rows-center\"></span>";
     return NoRowsOverlayComponent;
 }(component_1.Component));
 exports.NoRowsOverlayComponent = NoRowsOverlayComponent;

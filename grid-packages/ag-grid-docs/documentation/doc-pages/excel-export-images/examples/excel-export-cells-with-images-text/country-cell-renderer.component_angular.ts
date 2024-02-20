@@ -7,7 +7,7 @@ import { FlagContext, IOlympicData } from "./interfaces";
 // be used with operations tied to the buttons. in this example, the cell renderer is just for
 // display purposes.
 @Component({
-    selector: 'simple-component',
+    standalone: true,
     template: `<div><img alt="{{params.data.country}}" src="{{params.context.base64flags[params.context.countryCodes[params.data.country]]}}"> {{params.data.country}}</div>`
 })
 export class CountryCellRenderer implements ICellRendererAngularComp {

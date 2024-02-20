@@ -37,21 +37,21 @@ var StoreFactory = /** @class */ (function () {
         }
         var maxBlocksInCache = (userStoreParams && userStoreParams.maxBlocksInCache != null)
             ? userStoreParams.maxBlocksInCache
-            : this.gridOptionsService.getNum('maxBlocksInCache');
+            : this.gridOptionsService.get('maxBlocksInCache');
         var maxBlocksActive = maxBlocksInCache != null && maxBlocksInCache >= 0;
         if (!maxBlocksActive) {
             return undefined;
         }
         if (ssrmParams.dynamicRowHeight) {
-            var message_1 = 'AG Grid: Server Side Row Model does not support Dynamic Row Height and Cache Purging. ' +
+            var message = 'Server Side Row Model does not support Dynamic Row Height and Cache Purging. ' +
                 'Either a) remove getRowHeight() callback or b) remove maxBlocksInCache property. Purging has been disabled.';
-            core_1._.doOnce(function () { return console.warn(message_1); }, 'storeFactory.maxBlocksInCache.dynamicRowHeight');
+            core_1._.warnOnce(message);
             return undefined;
         }
         if (this.columnModel.isAutoRowHeightActive()) {
-            var message_2 = 'AG Grid: Server Side Row Model does not support Auto Row Height and Cache Purging. ' +
+            var message = 'Server Side Row Model does not support Auto Row Height and Cache Purging. ' +
                 'Either a) remove colDef.autoHeight or b) remove maxBlocksInCache property. Purging has been disabled.';
-            core_1._.doOnce(function () { return console.warn(message_2); }, 'storeFactory.maxBlocksInCache.autoRowHeightActive');
+            core_1._.warnOnce(message);
             return undefined;
         }
         return maxBlocksInCache;
@@ -62,7 +62,7 @@ var StoreFactory = /** @class */ (function () {
         }
         var blockSize = (userStoreParams && userStoreParams.cacheBlockSize != null)
             ? userStoreParams.cacheBlockSize
-            : this.gridOptionsService.getNum('cacheBlockSize');
+            : this.gridOptionsService.get('cacheBlockSize');
         if (blockSize != null && blockSize > 0) {
             return blockSize;
         }
@@ -83,9 +83,6 @@ var StoreFactory = /** @class */ (function () {
             pivotMode: this.columnModel.isPivotMode()
         };
         var res = callback(params);
-        if (res.storeType != null) {
-            res.suppressInfiniteScroll = res.storeType !== "partial";
-        }
         return res;
     };
     StoreFactory.prototype.isInfiniteScroll = function (storeParams) {
@@ -95,16 +92,16 @@ var StoreFactory = /** @class */ (function () {
         return !res;
     };
     StoreFactory.prototype.isSuppressServerSideInfiniteScroll = function () {
-        return this.gridOptionsService.is('suppressServerSideInfiniteScroll');
+        return this.gridOptionsService.get('suppressServerSideInfiniteScroll');
     };
     __decorate([
-        core_1.Autowired('gridOptionsService')
+        (0, core_1.Autowired)('gridOptionsService')
     ], StoreFactory.prototype, "gridOptionsService", void 0);
     __decorate([
-        core_1.Autowired('columnModel')
+        (0, core_1.Autowired)('columnModel')
     ], StoreFactory.prototype, "columnModel", void 0);
     StoreFactory = __decorate([
-        core_1.Bean('ssrmStoreFactory')
+        (0, core_1.Bean)('ssrmStoreFactory')
     ], StoreFactory);
     return StoreFactory;
 }());

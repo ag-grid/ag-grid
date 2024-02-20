@@ -14,10 +14,20 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-import { AgPromise, TextFilter, EventService, _ } from '@ag-grid-community/core';
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
+import { _, AgPromise, TextFilter, EventService } from '@ag-grid-community/core';
 import { ClientSideValuesExtractor } from '../clientSideValueExtractor';
 import { FlatSetDisplayValueModel } from './flatSetDisplayValueModel';
 import { TreeSetDisplayValueModel } from './treeSetDisplayValueModel';
+import { SetValueModelFilteringKeys } from './filteringKeys';
 export var SetFilterModelValuesType;
 (function (SetFilterModelValuesType) {
     SetFilterModelValuesType[SetFilterModelValuesType["PROVIDED_LIST"] = 0] = "PROVIDED_LIST";
@@ -31,6 +41,8 @@ var SetValueModel = /** @class */ (function () {
         var _a;
         this.localEventService = new EventService();
         this.miniFilterText = null;
+        /** When true, in excelMode = 'windows', it adds previously selected filter items to newly checked filter selection */
+        this.addCurrentSelectionToFilter = false;
         /** Values provided to the filter for use. */
         this.providedValues = null;
         /** All possible values for the filter, sorted if required. */
@@ -40,9 +52,10 @@ var SetValueModel = /** @class */ (function () {
         /** Keys that have been selected for this filter. */
         this.selectedKeys = new Set();
         this.initialised = false;
-        var usingComplexObjects = params.usingComplexObjects, columnModel = params.columnModel, valueService = params.valueService, treeDataTreeList = params.treeDataTreeList, groupingTreeList = params.groupingTreeList, filterParams = params.filterParams, gridOptionsService = params.gridOptionsService, valueFormatterService = params.valueFormatterService, valueFormatter = params.valueFormatter;
+        var usingComplexObjects = params.usingComplexObjects, columnModel = params.columnModel, valueService = params.valueService, treeDataTreeList = params.treeDataTreeList, groupingTreeList = params.groupingTreeList, filterParams = params.filterParams, gridOptionsService = params.gridOptionsService, valueFormatterService = params.valueFormatterService, valueFormatter = params.valueFormatter, addManagedListener = params.addManagedListener;
         var column = filterParams.column, colDef = filterParams.colDef, textFormatter = filterParams.textFormatter, doesRowPassOtherFilter = filterParams.doesRowPassOtherFilter, suppressSorting = filterParams.suppressSorting, comparator = filterParams.comparator, rowModel = filterParams.rowModel, values = filterParams.values, caseSensitive = filterParams.caseSensitive, convertValuesToStrings = filterParams.convertValuesToStrings, treeList = filterParams.treeList, treeListPathGetter = filterParams.treeListPathGetter, treeListFormatter = filterParams.treeListFormatter;
         this.filterParams = filterParams;
+        this.gridOptionsService = gridOptionsService;
         this.setIsLoading = params.setIsLoading;
         this.translate = params.translate;
         this.caseFormat = params.caseFormat;
@@ -52,6 +65,7 @@ var SetValueModel = /** @class */ (function () {
         this.doesRowPassOtherFilters = doesRowPassOtherFilter;
         this.suppressSorting = suppressSorting || false;
         this.convertValuesToStrings = !!convertValuesToStrings;
+        this.filteringKeys = new SetValueModelFilteringKeys({ caseFormat: this.caseFormat });
         var keyComparator = comparator !== null && comparator !== void 0 ? comparator : colDef.comparator;
         var treeDataOrGrouping = !!treeDataTreeList || !!groupingTreeList;
         // If using complex objects and a comparator is provided, sort by values, otherwise need to sort by the string keys.
@@ -77,9 +91,9 @@ var SetValueModel = /** @class */ (function () {
         this.keyComparator = (_a = keyComparator) !== null && _a !== void 0 ? _a : _.defaultComparator;
         this.caseSensitive = !!caseSensitive;
         var getDataPath = gridOptionsService.get('getDataPath');
-        var groupAllowUnbalanced = gridOptionsService.is('groupAllowUnbalanced');
+        var groupAllowUnbalanced = gridOptionsService.get('groupAllowUnbalanced');
         if (rowModel.getType() === 'clientSide') {
-            this.clientSideValuesExtractor = new ClientSideValuesExtractor(rowModel, this.filterParams, this.createKey, this.caseFormat, columnModel, valueService, treeDataOrGrouping, !!treeDataTreeList, getDataPath, groupAllowUnbalanced);
+            this.clientSideValuesExtractor = new ClientSideValuesExtractor(rowModel, this.filterParams, this.createKey, this.caseFormat, columnModel, valueService, treeDataOrGrouping, !!treeDataTreeList, getDataPath, groupAllowUnbalanced, addManagedListener);
         }
         if (values == null) {
             this.valuesType = SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
@@ -99,16 +113,54 @@ var SetValueModel = /** @class */ (function () {
     SetValueModel.prototype.removeEventListener = function (eventType, listener, async) {
         this.localEventService.removeEventListener(eventType, listener, async);
     };
+    SetValueModel.prototype.updateOnParamsChange = function (filterParams) {
+        var _this = this;
+        return new AgPromise(function (resolve) {
+            var values = filterParams.values, textFormatter = filterParams.textFormatter, suppressSorting = filterParams.suppressSorting;
+            var currentProvidedValues = _this.providedValues;
+            var currentSuppressSorting = _this.suppressSorting;
+            _this.filterParams = filterParams;
+            _this.formatter = textFormatter || TextFilter.DEFAULT_FORMATTER;
+            _this.suppressSorting = suppressSorting || false;
+            _this.providedValues = values !== null && values !== void 0 ? values : null;
+            // Rebuild values when values or their sort order changes
+            if (_this.providedValues !== currentProvidedValues || _this.suppressSorting !== currentSuppressSorting) {
+                if (!values || values.length === 0) {
+                    _this.valuesType = SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
+                    _this.providedValues = null;
+                }
+                else {
+                    var isArrayOfCallback = Array.isArray(values) && values.length > 0 && typeof values[0] === 'function';
+                    _this.valuesType = isArrayOfCallback ?
+                        SetFilterModelValuesType.PROVIDED_CALLBACK :
+                        SetFilterModelValuesType.PROVIDED_LIST;
+                }
+                var currentModel_1 = _this.getModel();
+                _this.updateAllValues().then(function (updatedKeys) {
+                    _this.setModel(currentModel_1).then(function () { return resolve(); });
+                });
+            }
+            else {
+                resolve();
+            }
+        });
+    };
     /**
      * Re-fetches the values used in the filter from the value source.
      * If keepSelection is false, the filter selection will be reset to everything selected,
      * otherwise the current selection will be preserved.
      */
     SetValueModel.prototype.refreshValues = function () {
-        var currentModel = this.getModel();
-        this.updateAllValues();
-        // ensure model is updated for new values
-        return this.setModel(currentModel);
+        var _this = this;
+        return new AgPromise(function (resolve) {
+            // don't get the model until values are resolved, as there could be queued setModel calls
+            _this.allValuesPromise.then(function () {
+                var currentModel = _this.getModel();
+                _this.updateAllValues();
+                // ensure model is updated for new values
+                _this.setModel(currentModel).then(function () { return resolve(); });
+            });
+        });
     };
     /**
      * Overrides the current values being used for the set filter.
@@ -145,25 +197,24 @@ var SetValueModel = /** @class */ (function () {
         this.allValuesPromise = new AgPromise(function (resolve) {
             switch (_this.valuesType) {
                 case SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES:
+                    _this.getValuesFromRowsAsync(false).then(function (values) { return resolve(_this.processAllValues(values)); });
+                    break;
                 case SetFilterModelValuesType.PROVIDED_LIST: {
-                    resolve(_this.processAllKeys(_this.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES, _this.providedValues));
+                    resolve(_this.processAllValues(_this.uniqueValues(_this.validateProvidedValues(_this.providedValues))));
                     break;
                 }
                 case SetFilterModelValuesType.PROVIDED_CALLBACK: {
                     _this.setIsLoading(true);
                     var callback_1 = _this.providedValues;
-                    var _a = _this.filterParams, columnApi = _a.columnApi, api = _a.api, context = _a.context, column = _a.column, colDef = _a.colDef;
-                    var params_1 = {
+                    var _a = _this.filterParams, column = _a.column, colDef = _a.colDef;
+                    var params_1 = _this.gridOptionsService.addGridCommonParams({
                         success: function (values) {
                             _this.setIsLoading(false);
-                            resolve(_this.processAllKeys(false, values));
+                            resolve(_this.processAllValues(_this.uniqueValues(_this.validateProvidedValues(values))));
                         },
                         colDef: colDef,
-                        column: column,
-                        columnApi: columnApi,
-                        api: api,
-                        context: context,
-                    };
+                        column: column
+                    });
                     window.setTimeout(function () { return callback_1(params_1); }, 0);
                     break;
                 }
@@ -174,8 +225,7 @@ var SetValueModel = /** @class */ (function () {
         this.allValuesPromise.then(function (values) { return _this.updateAvailableKeys(values || [], 'reload'); }).then(function () { return _this.initialised = true; });
         return this.allValuesPromise;
     };
-    SetValueModel.prototype.processAllKeys = function (getFromRows, providedValues) {
-        var values = getFromRows ? this.getValuesFromRows(false) : this.uniqueValues(this.validateProvidedValues(providedValues));
+    SetValueModel.prototype.processAllValues = function (values) {
         var sortedKeys = this.sortKeys(values);
         this.allValues = values !== null && values !== void 0 ? values : new Map();
         return sortedKeys;
@@ -186,10 +236,10 @@ var SetValueModel = /** @class */ (function () {
             if (firstValue && typeof firstValue !== 'object' && typeof firstValue !== 'function') {
                 var firstKey = this.createKey(firstValue);
                 if (firstKey == null) {
-                    _.doOnce(function () { return console.warn('Set Filter Key Creator is returning null for provided values and provided values are primitives. Please provide complex objects or set convertValuesToStrings=true in the filterParams. See https://www.ag-grid.com/javascript-data-grid/filter-set-filter-list/#filter-value-types'); }, 'setFilterComplexObjectsProvidedNull');
+                    _.warnOnce('Set Filter Key Creator is returning null for provided values and provided values are primitives. Please provide complex objects or set convertValuesToStrings=true in the filterParams. See https://www.ag-grid.com/javascript-data-grid/filter-set-filter-list/#filter-value-types');
                 }
                 else {
-                    _.doOnce(function () { return console.warn('AG Grid: Set Filter has a Key Creator, but provided values are primitives. Did you mean to provide complex objects or enable convertValuesToStrings?'); }, 'setFilterComplexObjectsProvidedPrimitive');
+                    _.warnOnce('Set Filter has a Key Creator, but provided values are primitives. Did you mean to provide complex objects or enable convertValuesToStrings?');
                 }
             }
         }
@@ -235,15 +285,34 @@ var SetValueModel = /** @class */ (function () {
         }
         return sortedKeys;
     };
-    SetValueModel.prototype.getValuesFromRows = function (removeUnavailableValues) {
+    SetValueModel.prototype.getParamsForValuesFromRows = function (removeUnavailableValues) {
         var _this = this;
         if (removeUnavailableValues === void 0) { removeUnavailableValues = false; }
         if (!this.clientSideValuesExtractor) {
-            console.error('AG Grid: Set Filter cannot initialise because you are using a row model that does not contain all rows in the browser. Either use a different filter type, or configure Set Filter such that you provide it with values');
+            _.doOnce(function () {
+                console.error('AG Grid: Set Filter cannot initialise because you are using a row model that does not contain all rows in the browser. Either use a different filter type, or configure Set Filter such that you provide it with values');
+            }, 'setFilterValueNotCSRM');
             return null;
         }
         var predicate = function (node) { return (!removeUnavailableValues || _this.doesRowPassOtherFilters(node)); };
-        return this.clientSideValuesExtractor.extractUniqueValues(predicate, removeUnavailableValues && !this.caseSensitive ? this.allValues : undefined);
+        var existingValues = removeUnavailableValues && !this.caseSensitive ? this.allValues : undefined;
+        return { predicate: predicate, existingValues: existingValues };
+    };
+    SetValueModel.prototype.getValuesFromRows = function (removeUnavailableValues) {
+        if (removeUnavailableValues === void 0) { removeUnavailableValues = false; }
+        var params = this.getParamsForValuesFromRows(removeUnavailableValues);
+        if (!params) {
+            return null;
+        }
+        return this.clientSideValuesExtractor.extractUniqueValues(params.predicate, params.existingValues);
+    };
+    SetValueModel.prototype.getValuesFromRowsAsync = function (removeUnavailableValues) {
+        if (removeUnavailableValues === void 0) { removeUnavailableValues = false; }
+        var params = this.getParamsForValuesFromRows(removeUnavailableValues);
+        if (!params) {
+            return AgPromise.resolve(null);
+        }
+        return this.clientSideValuesExtractor.extractUniqueValuesAsync(params.predicate, params.existingValues);
     };
     /** Sets mini filter value. Returns true if it changed from last value, otherwise false. */
     SetValueModel.prototype.setMiniFilter = function (value) {
@@ -251,6 +320,10 @@ var SetValueModel = /** @class */ (function () {
         if (this.miniFilterText === value) {
             //do nothing if filter has not changed
             return false;
+        }
+        if (value === null) {
+            // Reset 'Add current selection to filter' checkbox when clearing mini filter
+            this.setAddCurrentSelectionToFilter(false);
         }
         this.miniFilterText = value;
         this.updateDisplayedValues('miniFilter');
@@ -288,6 +361,9 @@ var SetValueModel = /** @class */ (function () {
     SetValueModel.prototype.getSelectAllItem = function () {
         return this.displayValueModel.getSelectAllItem();
     };
+    SetValueModel.prototype.getAddSelectionToFilterItem = function () {
+        return this.displayValueModel.getAddSelectionToFilterItem();
+    };
     SetValueModel.prototype.hasSelections = function () {
         return this.filterParams.defaultToNothingSelected ?
             this.selectedKeys.size > 0 :
@@ -301,6 +377,23 @@ var SetValueModel = /** @class */ (function () {
     };
     SetValueModel.prototype.getValue = function (key) {
         return this.allValues.get(key);
+    };
+    SetValueModel.prototype.setAddCurrentSelectionToFilter = function (value) {
+        this.addCurrentSelectionToFilter = value;
+    };
+    SetValueModel.prototype.isInWindowsExcelMode = function () {
+        return this.filterParams.excelMode === 'windows';
+    };
+    SetValueModel.prototype.isAddCurrentSelectionToFilterChecked = function () {
+        return this.isInWindowsExcelMode() && this.addCurrentSelectionToFilter;
+    };
+    SetValueModel.prototype.showAddCurrentSelectionToFilter = function () {
+        // We only show the 'Add current selection to filter' option
+        // when excel mode is enabled with 'windows' mode
+        // and when the users types a value in the mini filter.
+        return (this.isInWindowsExcelMode()
+            && _.exists(this.miniFilterText)
+            && this.miniFilterText.length > 0);
     };
     SetValueModel.prototype.selectAllMatchingMiniFilter = function (clearExistingSelection) {
         var _this = this;
@@ -350,7 +443,27 @@ var SetValueModel = /** @class */ (function () {
         return !this.displayValueModel.someDisplayedKey(function (it) { return _this.isKeySelected(it); });
     };
     SetValueModel.prototype.getModel = function () {
-        return this.hasSelections() ? Array.from(this.selectedKeys) : null;
+        if (!this.hasSelections()) {
+            return null;
+        }
+        // When excelMode = 'windows' and the user has ticked 'Add current selection to filter'
+        // the filtering keys can be different from the selected keys, and they should be included
+        // in the model.
+        var filteringKeys = this.isAddCurrentSelectionToFilterChecked()
+            ? this.filteringKeys.allFilteringKeys()
+            : null;
+        if (filteringKeys && filteringKeys.size > 0) {
+            if (this.selectedKeys) {
+                // When existing filtering keys are present along with selected keys,
+                // we combine them and return the result.
+                // We use a set structure to avoid duplicates
+                var modelKeys = new Set(__spreadArray(__spreadArray([], __read(Array.from(filteringKeys)), false), __read(Array.from(this.selectedKeys).filter(function (key) { return !filteringKeys.has(key); })), false));
+                return Array.from(modelKeys);
+            }
+            return Array.from(filteringKeys);
+        }
+        // No extra filtering keys are present - so just return the selected keys
+        return Array.from(this.selectedKeys);
     };
     SetValueModel.prototype.setModel = function (model) {
         var _this = this;
@@ -425,6 +538,24 @@ var SetValueModel = /** @class */ (function () {
             }
             return 0;
         };
+    };
+    SetValueModel.prototype.setAppliedModelKeys = function (appliedModelKeys) {
+        this.filteringKeys.setFilteringKeys(appliedModelKeys);
+    };
+    SetValueModel.prototype.addToAppliedModelKeys = function (appliedModelKey) {
+        this.filteringKeys.addFilteringKey(appliedModelKey);
+    };
+    SetValueModel.prototype.getAppliedModelKeys = function () {
+        return this.filteringKeys.allFilteringKeys();
+    };
+    SetValueModel.prototype.getCaseFormattedAppliedModelKeys = function () {
+        return this.filteringKeys.allFilteringKeysCaseFormatted();
+    };
+    SetValueModel.prototype.hasAppliedModelKey = function (appliedModelKey) {
+        return this.filteringKeys.hasCaseFormattedFilteringKey(appliedModelKey);
+    };
+    SetValueModel.prototype.hasAnyAppliedModelKey = function () {
+        return !this.filteringKeys.noAppliedFilteringKeys();
     };
     SetValueModel.EVENT_AVAILABLE_VALUES_CHANGED = 'availableValuesChanged';
     return SetValueModel;

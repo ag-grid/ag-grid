@@ -1,8 +1,8 @@
-// @ag-grid-community/react v30.1.0
+// @ag-grid-community/react v31.1.0
 import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { BeansContext } from '../beansContext.mjs';
 import { showJsComp } from '../jsComp.mjs';
-import { CssClasses } from '../utils.mjs';
+import { CssClasses, isComponentStateless } from '../utils.mjs';
 const HeaderGroupCellComp = (props) => {
     const { context } = useContext(BeansContext);
     const { ctrl } = props;
@@ -14,6 +14,7 @@ const HeaderGroupCellComp = (props) => {
     const colId = useMemo(() => ctrl.getColId(), []);
     const eGui = useRef(null);
     const eResize = useRef(null);
+    const userCompRef = useRef();
     const setRef = useCallback((e) => {
         eGui.current = e;
         if (!eGui.current) {
@@ -31,7 +32,8 @@ const HeaderGroupCellComp = (props) => {
                 setResizableCssClasses(prev => prev.setClass('ag-hidden', !displayed));
                 setResizableAriaHidden(!displayed ? "true" : "false");
             },
-            setAriaExpanded: expanded => setAriaExpanded(expanded)
+            setAriaExpanded: expanded => setAriaExpanded(expanded),
+            getUserCompInstance: () => userCompRef.current || undefined,
         };
         ctrl.setComp(compProxy, eGui.current, eResize.current);
     }, []);
@@ -43,12 +45,17 @@ const HeaderGroupCellComp = (props) => {
             ctrl.setDragSource(eGui.current);
         }
     }, [userCompDetails]);
+    const userCompStateless = useMemo(() => {
+        const res = (userCompDetails === null || userCompDetails === void 0 ? void 0 : userCompDetails.componentFromFramework) && isComponentStateless(userCompDetails.componentClass);
+        return !!res;
+    }, [userCompDetails]);
     const className = useMemo(() => 'ag-header-group-cell ' + cssClasses.toString(), [cssClasses]);
     const resizableClassName = useMemo(() => 'ag-header-cell-resize ' + cssResizableClasses.toString(), [cssResizableClasses]);
     const reactUserComp = userCompDetails && userCompDetails.componentFromFramework;
     const UserCompClass = userCompDetails && userCompDetails.componentClass;
-    return (React.createElement("div", { ref: setRef, className: className, "col-id": colId, role: "columnheader", tabIndex: -1, "aria-expanded": ariaExpanded },
-        reactUserComp && React.createElement(UserCompClass, Object.assign({}, userCompDetails.params)),
+    return (React.createElement("div", { ref: setRef, className: className, "col-id": colId, role: "columnheader", "aria-expanded": ariaExpanded },
+        reactUserComp && userCompStateless && React.createElement(UserCompClass, Object.assign({}, userCompDetails.params)),
+        reactUserComp && !userCompStateless && React.createElement(UserCompClass, Object.assign({}, userCompDetails.params, { ref: userCompRef })),
         React.createElement("div", { ref: eResize, "aria-hidden": resizableAriaHidden, className: resizableClassName })));
 };
 export default memo(HeaderGroupCellComp);

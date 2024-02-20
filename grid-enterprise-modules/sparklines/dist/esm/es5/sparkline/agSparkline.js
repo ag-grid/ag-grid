@@ -9,7 +9,7 @@ var AgSparkline = /** @class */ (function () {
     }
     AgSparkline.create = function (options, tooltip) {
         // avoid mutating user provided options
-        options = _Util.jsonMerge([options]);
+        options = _Util.deepClone(options);
         var sparkline = getSparklineInstance(options.type);
         if (tooltip) {
             sparkline.tooltip = tooltip;
@@ -182,8 +182,8 @@ var offsetValidator = function (property, value, defaultOffset) {
     if (isNumber(value)) {
         return true;
     }
-    var message = "AG Charts: " + property + " must be a number, the value you provided is not a valid number. Using the default of " + defaultOffset + "px.";
-    doOnce(function () { return console.warn(message); }, property + " not a number");
+    var message = "AG Charts: ".concat(property, " must be a number, the value you provided is not a valid number. Using the default of ").concat(defaultOffset, "px.");
+    doOnce(function () { return console.warn(message); }, "".concat(property, " not a number"));
     return false;
 };
 var validators = {
@@ -201,7 +201,7 @@ function setValueIfPropertyExists(target, property, value, options) {
             }
         }
         else {
-            console.warn("Property " + property + " does not exist on the target object.");
+            console.warn("Property ".concat(property, " does not exist on the target object."));
         }
     }
 }

@@ -45,7 +45,10 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
             }
         });
         this.addManagedListener(this.eSelect.getInputElement(), 'click', this.onSelectClicked.bind(this));
-        this.eFilterTextField.onValueChange(function () { return _this.onFilterTextChanged(); });
+        this.addManagedPropertyListener('functionsReadOnly', function () { return _this.onFunctionsReadOnlyPropChanged(); });
+        this.eFilterTextField
+            .setAutoComplete(false)
+            .onValueChange(function () { return _this.onFilterTextChanged(); });
         this.addManagedListener(this.eFilterTextField.getInputElement(), 'keydown', this.onMiniFilterKeyDown.bind(this));
         this.addManagedListener(this.eventService, core_1.Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
         var translate = this.localeService.getLocaleTextFunc();
@@ -53,8 +56,16 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
         this.eFilterTextField.setInputAriaLabel(translate('ariaFilterColumnsInput', 'Filter Columns Input'));
         this.activateTabIndex([this.eExpand]);
     };
+    PrimaryColsHeaderPanel.prototype.onFunctionsReadOnlyPropChanged = function () {
+        var readOnly = this.gridOptionsService.get('functionsReadOnly');
+        this.eSelect.setReadOnly(readOnly);
+        this.eSelect.addOrRemoveCssClass('ag-column-select-column-readonly', readOnly);
+    };
     PrimaryColsHeaderPanel.prototype.init = function (params) {
         this.params = params;
+        var readOnly = this.gridOptionsService.get('functionsReadOnly');
+        this.eSelect.setReadOnly(readOnly);
+        this.eSelect.addOrRemoveCssClass('ag-column-select-column-readonly', readOnly);
         if (this.columnModel.isReady()) {
             this.showOrHideOptions();
         }
@@ -114,16 +125,16 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
     PrimaryColsHeaderPanel.DEBOUNCE_DELAY = 300;
     PrimaryColsHeaderPanel.TEMPLATE = "<div class=\"ag-column-select-header\" role=\"presentation\">\n            <div ref=\"eExpand\" class=\"ag-column-select-header-icon\"></div>\n            <ag-checkbox ref=\"eSelect\" class=\"ag-column-select-header-checkbox\"></ag-checkbox>\n            <ag-input-text-field class=\"ag-column-select-header-filter-wrapper\" ref=\"eFilterTextField\"></ag-input-text-field>\n        </div>";
     __decorate([
-        core_1.Autowired('columnModel')
+        (0, core_1.Autowired)('columnModel')
     ], PrimaryColsHeaderPanel.prototype, "columnModel", void 0);
     __decorate([
-        core_1.RefSelector('eExpand')
+        (0, core_1.RefSelector)('eExpand')
     ], PrimaryColsHeaderPanel.prototype, "eExpand", void 0);
     __decorate([
-        core_1.RefSelector('eSelect')
+        (0, core_1.RefSelector)('eSelect')
     ], PrimaryColsHeaderPanel.prototype, "eSelect", void 0);
     __decorate([
-        core_1.RefSelector('eFilterTextField')
+        (0, core_1.RefSelector)('eFilterTextField')
     ], PrimaryColsHeaderPanel.prototype, "eFilterTextField", void 0);
     __decorate([
         core_1.PostConstruct

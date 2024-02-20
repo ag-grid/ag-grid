@@ -97,7 +97,8 @@ export default class TitlePanel extends Component {
 
     private createSpacingSlicer() {
         const spacingSlider = this.createBean(new AgSlider());
-        const currentValue = this.chartOptionsService.getChartOption<number>('title.spacing');
+        const currentValue = this.chartOptionsService.getChartOption<number>('title.spacing') || 10;
+
         spacingSlider.setLabel(this.chartTranslationService.translate('spacing'))
             .setMaxValue(Math.max(currentValue, 100))
             .setValue(`${currentValue}`)

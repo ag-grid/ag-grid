@@ -33,10 +33,10 @@ var FilterStage = /** @class */ (function (_super) {
         this.filterService.filter(changedPath);
     };
     __decorate([
-        core_1.Autowired('filterService')
+        (0, core_1.Autowired)('filterService')
     ], FilterStage.prototype, "filterService", void 0);
     FilterStage = __decorate([
-        core_1.Bean('filterStage')
+        (0, core_1.Bean)('filterStage')
     ], FilterStage);
     return FilterStage;
 }(core_1.BeanStub));

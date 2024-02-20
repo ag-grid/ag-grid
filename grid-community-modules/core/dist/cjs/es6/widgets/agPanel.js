@@ -16,11 +16,11 @@ const positionableFeature_1 = require("../rendering/features/positionableFeature
 class AgPanel extends component_1.Component {
     constructor(config) {
         super(AgPanel.getTemplate(config));
-        this.closable = true;
         this.config = config;
+        this.closable = true;
     }
     static getTemplate(config) {
-        const cssIdentifier = (config && config.cssIdentifier) || 'default';
+        const cssIdentifier = config.cssIdentifier || 'default';
         return /* html */ `<div class="ag-panel ag-${cssIdentifier}-panel" tabindex="-1">
             <div ref="eTitleBar" class="ag-panel-title-bar ag-${cssIdentifier}-panel-title-bar ag-unselectable">
                 <span ref="eTitle" class="ag-panel-title-bar-title ag-${cssIdentifier}-panel-title-bar-title"></span>
@@ -47,7 +47,7 @@ class AgPanel extends component_1.Component {
             this.setClosable(closable != null ? closable : this.closable);
         }
         else {
-            dom_1.setDisplayed(this.eTitleBar, false);
+            (0, dom_1.setDisplayed)(this.eTitleBar, false);
         }
         this.addManagedListener(this.eTitleBar, 'mousedown', (e) => {
             const eDocument = this.gridOptionsService.getDocument();
@@ -99,7 +99,7 @@ class AgPanel extends component_1.Component {
             const closeButtonComp = this.closeButtonComp = new component_1.Component(AgPanel.CLOSE_BTN_TEMPLATE);
             this.getContext().createBean(closeButtonComp);
             const eGui = closeButtonComp.getGui();
-            const child = icon_1.createIconNoSpan('close', this.gridOptionsService);
+            const child = (0, icon_1.createIconNoSpan)('close', this.gridOptionsService);
             child.classList.add('ag-panel-title-bar-button-icon');
             eGui.appendChild(child);
             this.addTitleBarButton(closeButtonComp);
@@ -137,10 +137,10 @@ class AgPanel extends component_1.Component {
         button.setParentComponent(this);
     }
     getBodyHeight() {
-        return dom_1.getInnerHeight(this.eContentWrapper);
+        return (0, dom_1.getInnerHeight)(this.eContentWrapper);
     }
     getBodyWidth() {
-        return dom_1.getInnerWidth(this.eContentWrapper);
+        return (0, dom_1.getInnerWidth)(this.eContentWrapper);
     }
     setTitle(title) {
         this.eTitle.innerText = title;
@@ -154,7 +154,7 @@ class AgPanel extends component_1.Component {
             this.closeButtonComp = this.destroyBean(this.closeButtonComp);
         }
         const eGui = this.getGui();
-        if (eGui && eGui.offsetParent) {
+        if (eGui && (0, dom_1.isVisible)(eGui)) {
             this.close();
         }
         super.destroy();
@@ -162,16 +162,16 @@ class AgPanel extends component_1.Component {
 }
 AgPanel.CLOSE_BTN_TEMPLATE = `<div class="ag-button"></div>`;
 __decorate([
-    componentAnnotations_1.RefSelector('eContentWrapper')
+    (0, componentAnnotations_1.RefSelector)('eContentWrapper')
 ], AgPanel.prototype, "eContentWrapper", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eTitleBar')
+    (0, componentAnnotations_1.RefSelector)('eTitleBar')
 ], AgPanel.prototype, "eTitleBar", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eTitleBarButtons')
+    (0, componentAnnotations_1.RefSelector)('eTitleBarButtons')
 ], AgPanel.prototype, "eTitleBarButtons", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eTitle')
+    (0, componentAnnotations_1.RefSelector)('eTitle')
 ], AgPanel.prototype, "eTitle", void 0);
 __decorate([
     context_1.PostConstruct

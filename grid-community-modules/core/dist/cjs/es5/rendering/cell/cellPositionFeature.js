@@ -39,7 +39,9 @@ var CellPositionFeature = /** @class */ (function (_super) {
         return _this;
     }
     CellPositionFeature.prototype.setupRowSpan = function () {
+        var _this = this;
         this.rowSpan = this.column.getRowSpan(this.rowNode);
+        this.addManagedListener(this.beans.eventService, eventKeys_1.Events.EVENT_NEW_COLUMNS_LOADED, function () { return _this.onNewColumnsLoaded(); });
     };
     CellPositionFeature.prototype.setComp = function (eGui) {
         this.eGui = eGui;
@@ -47,9 +49,17 @@ var CellPositionFeature = /** @class */ (function (_super) {
         this.onWidthChanged();
         this.applyRowSpan();
     };
+    CellPositionFeature.prototype.onNewColumnsLoaded = function () {
+        var rowSpan = this.column.getRowSpan(this.rowNode);
+        if (this.rowSpan === rowSpan) {
+            return;
+        }
+        this.rowSpan = rowSpan;
+        this.applyRowSpan(true);
+    };
     CellPositionFeature.prototype.onDisplayColumnsChanged = function () {
         var colsSpanning = this.getColSpanningList();
-        if (!array_1.areEqual(this.colsSpanning, colsSpanning)) {
+        if (!(0, array_1.areEqual)(this.colsSpanning, colsSpanning)) {
             this.colsSpanning = colsSpanning;
             this.onWidthChanged();
             this.onLeftChanged(); // left changes when doing RTL
@@ -74,7 +84,7 @@ var CellPositionFeature = /** @class */ (function (_super) {
             return;
         }
         var width = this.getCellWidth();
-        this.eGui.style.width = width + "px";
+        this.eGui.style.width = "".concat(width, "px");
     };
     CellPositionFeature.prototype.getCellWidth = function () {
         if (!this.colsSpanning) {
@@ -95,7 +105,7 @@ var CellPositionFeature = /** @class */ (function (_super) {
             for (var i = 0; pointer && i < colSpan; i++) {
                 colsSpanning.push(pointer);
                 pointer = this.beans.columnModel.getDisplayedColAfter(pointer);
-                if (!pointer || generic_1.missing(pointer)) {
+                if (!pointer || (0, generic_1.missing)(pointer)) {
                     break;
                 }
                 // we do not allow col spanning to span outside of pinned areas
@@ -115,8 +125,8 @@ var CellPositionFeature = /** @class */ (function (_super) {
     };
     CellPositionFeature.prototype.getCellLeft = function () {
         var mostLeftCol;
-        if (this.beans.gridOptionsService.is('enableRtl') && this.colsSpanning) {
-            mostLeftCol = array_1.last(this.colsSpanning);
+        if (this.beans.gridOptionsService.get('enableRtl') && this.colsSpanning) {
+            mostLeftCol = (0, array_1.last)(this.colsSpanning);
         }
         else {
             mostLeftCol = this.column;
@@ -135,13 +145,13 @@ var CellPositionFeature = /** @class */ (function (_super) {
         // is in body
         return leftWidth + (leftPosition || 0);
     };
-    CellPositionFeature.prototype.applyRowSpan = function () {
-        if (this.rowSpan === 1) {
+    CellPositionFeature.prototype.applyRowSpan = function (force) {
+        if (this.rowSpan === 1 && !force) {
             return;
         }
         var singleRowHeight = this.beans.gridOptionsService.getRowHeightAsNumber();
         var totalRowHeight = singleRowHeight * this.rowSpan;
-        this.eGui.style.height = totalRowHeight + "px";
+        this.eGui.style.height = "".concat(totalRowHeight, "px");
         this.eGui.style.zIndex = '1';
     };
     // overriding to make public, as we don't dispose this bean via context

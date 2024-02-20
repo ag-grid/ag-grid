@@ -1,31 +1,31 @@
-import {ComponentFactoryResolver, ComponentRef, Injectable, ViewContainerRef} from "@angular/core";
-import {BaseComponentWrapper, FrameworkComponentWrapper, WrappableInterface} from '@ag-grid-community/core';
+import {ComponentRef, Injectable, NgZone, ViewContainerRef} from "@angular/core";
+import {BaseComponentWrapper, FrameworkComponentWrapper, GridApi, WrappableInterface} from '@ag-grid-community/core';
 import {AgFrameworkComponent} from "./interfaces";
+import { AngularFrameworkOverrides } from "./angularFrameworkOverrides";
 
 @Injectable()
 export class AngularFrameworkComponentWrapper extends BaseComponentWrapper<WrappableInterface> implements FrameworkComponentWrapper {
     private viewContainerRef: ViewContainerRef;
-    private componentFactoryResolver: ComponentFactoryResolver;
+    private angularFrameworkOverrides: AngularFrameworkOverrides;
 
-    public setViewContainerRef(viewContainerRef: ViewContainerRef) {
+    public setViewContainerRef(viewContainerRef: ViewContainerRef, angularFrameworkOverrides: AngularFrameworkOverrides) {
         this.viewContainerRef = viewContainerRef;
+        this.angularFrameworkOverrides = angularFrameworkOverrides;
     }
 
-    public setComponentFactoryResolver(componentFactoryResolver: ComponentFactoryResolver) {
-        this.componentFactoryResolver = componentFactoryResolver;
-    }
-
-    createWrapper(OriginalConstructor: { new(): any }): WrappableInterface {
+    createWrapper(OriginalConstructor: { new(): any }, compType: any): WrappableInterface {
+        let angularFrameworkOverrides = this.angularFrameworkOverrides;
         let that = this;
-
         class DynamicAgNg2Component extends BaseGuiComponent<any, AgFrameworkComponent<any>> implements WrappableInterface {
             init(params: any): void {
-                super.init(params);
-                this._componentRef.changeDetectorRef.detectChanges();
+                angularFrameworkOverrides.runInsideAngular(() => {
+                    super.init(params);
+                    this._componentRef.changeDetectorRef.detectChanges();
+                });
             }
 
             protected createComponent(): ComponentRef<AgFrameworkComponent<any>> {
-                return that.createComponent(OriginalConstructor);
+                return angularFrameworkOverrides.runInsideAngular(() => that.createComponent(OriginalConstructor));
             }
 
             hasMethod(name: string): boolean {
@@ -34,25 +34,19 @@ export class AngularFrameworkComponentWrapper extends BaseComponentWrapper<Wrapp
 
             callMethod(name: string, args: IArguments): void {
                 const componentRef = this.getFrameworkComponentInstance();
-                return wrapper.getFrameworkComponentInstance()[name].apply(componentRef, args)
-
+                return angularFrameworkOverrides.runInsideAngular(() => wrapper.getFrameworkComponentInstance()[name].apply(componentRef, args));
             }
 
             addMethod(name: string, callback: Function): void {
                 (wrapper as any)[name] = callback
             }
         }
-
-        let wrapper: DynamicAgNg2Component = new DynamicAgNg2Component();
+        let wrapper = new DynamicAgNg2Component();
         return wrapper;
     }
 
     public createComponent<T>(componentType: { new(...args: any[]): T; }): ComponentRef<T> {
-        // used to cache the factory, but this a) caused issues when used with either webpack/angularcli with --prod
-        // but more significantly, the underlying implementation of resolveComponentFactory uses a map too, so us
-        // caching the factory here yields no performance benefits
-        let factory = this.componentFactoryResolver.resolveComponentFactory(componentType);
-        return this.viewContainerRef.createComponent(factory);
+        return this.viewContainerRef.createComponent(componentType);
     }
 }
 
@@ -78,8 +72,14 @@ abstract class BaseGuiComponent<P, T extends AgFrameworkComponent<P>> {
         return this._eGui;
     }
 
+    /** `getGui()` returns the `ng-component` element. This returns the actual root element. */
+    public getRootElement(): HTMLElement {
+        const firstChild = this._eGui.firstChild;
+        return firstChild as HTMLElement;
+    }
+
     public destroy(): void {
-        if(this._frameworkComponentInstance && typeof this._frameworkComponentInstance.destroy === 'function') {
+        if (this._frameworkComponentInstance && typeof this._frameworkComponentInstance.destroy === 'function') {
             this._frameworkComponentInstance.destroy();
         }
         if (this._componentRef) {

@@ -15,12 +15,8 @@ Column Filters are filters that are applied to the data at the column level. Man
 Column Filters are accessed in the grid UI either through the [Column Menu](/column-menu/) or the [Tool Panel](/tool-panel/).
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="filtering/resources/open-column.gif" alt="Open Column" width="25rem" constrained="true">
-        Access via Column Menu
-    </image-caption>
-    <image-caption src="filtering/resources/open-tool-panel.gif" alt="Open Tool Panel" width="25rem" constrained="true">
-        Access via Tool Panel
-    </image-caption>
+    <image-caption src="filtering/resources/open-column.gif" alt="Open Column" width="25rem" constrained="true" toggledarkmode="true">Access via Column Menu</image-caption>
+    <image-caption src="filtering/resources/open-tool-panel.gif" alt="Open Tool Panel" width="25rem" constrained="true" toggledarkmode="true">Access via Tool Panel</image-caption>
 </div>
 
 ## Column Filter Types

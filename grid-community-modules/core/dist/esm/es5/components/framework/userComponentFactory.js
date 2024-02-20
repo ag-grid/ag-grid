@@ -23,7 +23,7 @@ import { BeanStub } from "../../context/beanStub";
 import { Autowired, Bean, Optional } from "../../context/context";
 import { AgPromise } from "../../utils";
 import { mergeDeep } from '../../utils/object';
-import { CellEditorComponent, CellRendererComponent, DateComponent, FilterComponent, FloatingFilterComponent, FullWidth, FullWidthDetail, FullWidthGroup, FullWidthLoading, HeaderComponent, HeaderGroupComponent, InnerRendererComponent, LoadingOverlayComponent, NoRowsOverlayComponent, StatusPanelComponent, ToolPanelComponent, TooltipComponent } from "./componentTypes";
+import { CellEditorComponent, CellRendererComponent, DateComponent, FilterComponent, FloatingFilterComponent, FullWidth, FullWidthDetail, FullWidthGroup, FullWidthLoading, HeaderComponent, HeaderGroupComponent, InnerRendererComponent, LoadingOverlayComponent, MenuItemComponent, NoRowsOverlayComponent, StatusPanelComponent, ToolPanelComponent, TooltipComponent } from "./componentTypes";
 import { FloatingFilterMapper } from '../../filter/floating/floatingFilterMapper';
 var UserComponentFactory = /** @class */ (function (_super) {
     __extends(UserComponentFactory, _super);
@@ -93,6 +93,9 @@ var UserComponentFactory = /** @class */ (function (_super) {
     UserComponentFactory.prototype.getStatusPanelCompDetails = function (def, params) {
         return this.getCompDetails(def, StatusPanelComponent, null, params, true);
     };
+    UserComponentFactory.prototype.getMenuItemCompDetails = function (def, params) {
+        return this.getCompDetails(def, MenuItemComponent, 'agMenuItem', params, true);
+    };
     UserComponentFactory.prototype.getCompDetails = function (defObject, type, defaultName, params, mandatory) {
         var _this = this;
         if (mandatory === void 0) { mandatory = false; }
@@ -119,7 +122,7 @@ var UserComponentFactory = /** @class */ (function (_super) {
         }
         if (!jsComp && !fwComp) {
             if (mandatory) {
-                console.error("AG Grid: Could not find component " + compName + ", did you forget to configure this component?");
+                console.error("AG Grid: Could not find component ".concat(compName, ", did you forget to configure this component?"));
             }
             return;
         }
@@ -204,11 +207,7 @@ var UserComponentFactory = /** @class */ (function (_super) {
     // used by Floating Filter
     UserComponentFactory.prototype.mergeParamsWithApplicationProvidedParams = function (defObject, type, paramsFromGrid, paramsFromSelector) {
         if (paramsFromSelector === void 0) { paramsFromSelector = null; }
-        var params = {
-            context: this.gridOptionsService.context,
-            columnApi: this.gridOptionsService.columnApi,
-            api: this.gridOptionsService.api
-        };
+        var params = this.gridOptionsService.getGridCommonParams();
         mergeDeep(params, paramsFromGrid);
         // pull user params from either the old prop name and new prop name
         // eg either cellRendererParams and cellCompParams

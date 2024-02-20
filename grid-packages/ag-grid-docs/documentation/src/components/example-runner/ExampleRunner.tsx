@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import GlobalContextConsumer from 'components/GlobalContext';
+import { useGlobalContext } from 'components/GlobalContext';
 import { Icon } from 'components/Icon';
 import fs from 'fs';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -7,9 +7,9 @@ import VisibilitySensor from 'react-visibility-sensor';
 import isServerSideRendering from 'utils/is-server-side-rendering';
 import { OpenInCTA } from '../OpenInCTA';
 import CodeViewer from './CodeViewer';
-import styles from './ExampleRunner.module.scss';
+import styles from '@design-system/modules/ExampleRunner.module.scss';
 import ExampleRunnerResult from './ExampleRunnerResult';
-import { getExampleInfo, getIndexHtmlUrl, openPlunker } from './helpers';
+import { getExampleInfo, getIndexHtmlUrl, openPlunker, openCodeSandbox } from './helpers';
 import { getIndexHtml } from './index-html-helper';
 import { trackExampleRunnerEvent } from './track-example-runner-event';
 import { useExampleFileNodes } from './use-example-file-nodes';
@@ -20,22 +20,17 @@ import { useExampleFileNodes } from './use-example-file-nodes';
  * a Plunker based on the example code.
  */
 export const ExampleRunner = (props) => {
-    return (
-        <GlobalContextConsumer>
-            {({ exampleImportType, useFunctionalReact, enableVue3, useVue3, useTypescript, set }) => {
-                const innerProps = {
-                    ...props,
-                    // Allow overriding of the global context values per example
-                    exampleImportType: props.exampleImportType ?? exampleImportType,
-                    useFunctionalReact,
-                    useVue3: enableVue3 ? useVue3 : false,
-                    useTypescript: props.useTypescript ?? useTypescript,
-                };
+    const { exampleImportType, enableVue3, useVue3, useTypescript, darkMode } = useGlobalContext();
+    const innerProps = {
+        ...props,
+        // Allow overriding of the global context values per example
+        exampleImportType: props.exampleImportType ?? exampleImportType,
+        useVue3: enableVue3 ? useVue3 : false,
+        useTypescript: props.useTypescript ?? useTypescript,
+        darkMode
+    };
 
-                return <ExampleRunnerInner {...innerProps} />;
-            }}
-        </GlobalContextConsumer>
-    );
+    return <ExampleRunnerInner {...innerProps} />;
 };
 
 const saveGridIndexHtmlPermutations = (
@@ -47,7 +42,6 @@ const saveGridIndexHtmlPermutations = (
     type,
     options,
     framework,
-    useFunctionalReact,
     useVue3,
     exampleImportType
 ) => {
@@ -66,7 +60,6 @@ const saveGridIndexHtmlPermutations = (
             type,
             options,
             framework,
-            useFunctionalReact,
             useVue3,
             false,
             alternativeImport
@@ -85,7 +78,6 @@ const saveGridIndexHtmlPermutations = (
                 type,
                 options,
                 framework,
-                !useFunctionalReact,
                 useVue3,
                 true,
                 'modules'
@@ -102,7 +94,6 @@ const saveGridIndexHtmlPermutations = (
                 type,
                 options,
                 framework,
-                !useFunctionalReact,
                 useVue3,
                 true,
                 'packages'
@@ -122,7 +113,6 @@ const saveGridIndexHtmlPermutations = (
                 type,
                 options,
                 framework,
-                !useFunctionalReact,
                 useVue3,
                 false,
                 'modules'
@@ -138,7 +128,6 @@ const saveGridIndexHtmlPermutations = (
                 type,
                 options,
                 framework,
-                !useFunctionalReact,
                 useVue3,
                 false,
                 'packages'
@@ -146,7 +135,6 @@ const saveGridIndexHtmlPermutations = (
             writeIndexHtmlFile(alternativeStylePackagesExampleInfo);
 
             // Add the typescript versions for functional
-            if (useFunctionalReact) {
                 const reactTsStyleModules = getExampleInfo(
                     nodes,
                     library,
@@ -156,7 +144,6 @@ const saveGridIndexHtmlPermutations = (
                     type,
                     options,
                     framework,
-                    useFunctionalReact,
                     useVue3,
                     true,
                     'modules'
@@ -172,13 +159,11 @@ const saveGridIndexHtmlPermutations = (
                     type,
                     options,
                     framework,
-                    useFunctionalReact,
                     useVue3,
                     true,
                     'packages'
                 );
                 writeIndexHtmlFile(reactTsStylePackages);
-            }
         }
 
         // 4. For Vue, also copy html file for Vue 3
@@ -192,7 +177,6 @@ const saveGridIndexHtmlPermutations = (
                 type,
                 options,
                 framework,
-                !useFunctionalReact,
                 true,
                 false,
                 'modules'
@@ -209,7 +193,6 @@ const saveGridIndexHtmlPermutations = (
                 type,
                 options,
                 framework,
-                !useFunctionalReact,
                 true,
                 false,
                 'packages'
@@ -228,7 +211,6 @@ const saveGridIndexHtmlPermutations = (
             type,
             options,
             framework,
-            !useFunctionalReact,
             useVue3,
             true
         );
@@ -245,14 +227,12 @@ const saveGridIndexHtmlPermutations = (
             type,
             options,
             framework,
-            !useFunctionalReact,
             useVue3,
             false
         );
         writeIndexHtmlFile(functionalExampleInfo);
 
         // Add the typescript versions for functional
-        if (useFunctionalReact) {
             const reactTsStyle = getExampleInfo(
                 nodes,
                 library,
@@ -262,12 +242,10 @@ const saveGridIndexHtmlPermutations = (
                 type,
                 options,
                 framework,
-                useFunctionalReact,
                 useVue3,
                 true
             );
             writeIndexHtmlFile(reactTsStyle);
-        }
     } else if (type === 'multi' && framework === 'vue') {
         // Also generate the alternative React style
         const functionalExampleInfo = getExampleInfo(
@@ -279,7 +257,6 @@ const saveGridIndexHtmlPermutations = (
             type,
             options,
             framework,
-            useFunctionalReact,
             !useVue3,
             false
         );
@@ -297,7 +274,6 @@ const saveChartIndexHtmlPermutations = (
     type,
     options,
     framework,
-    useFunctionalReact,
     useVue3
 ) => {
     if (isGeneratedExample(type)) {
@@ -314,7 +290,6 @@ const saveChartIndexHtmlPermutations = (
                 type,
                 options,
                 framework,
-                !useFunctionalReact,
                 true,
                 true,
                 'packages'
@@ -334,7 +309,6 @@ const saveChartIndexHtmlPermutations = (
                 type,
                 options,
                 framework,
-                !useFunctionalReact,
                 true,
                 false,
                 'packages'
@@ -354,7 +328,6 @@ const saveChartIndexHtmlPermutations = (
                 type,
                 options,
                 framework,
-                !useFunctionalReact,
                 useVue3,
                 false,
                 'packages'
@@ -362,7 +335,7 @@ const saveChartIndexHtmlPermutations = (
             writeIndexHtmlFile(alternativeStylePackagesExampleInfo);
 
             // Add the typescript versions for functional
-            if (useFunctionalReact) {
+
                 const reactTsStylePackages = getExampleInfo(
                     nodes,
                     library,
@@ -372,13 +345,11 @@ const saveChartIndexHtmlPermutations = (
                     type,
                     options,
                     framework,
-                    useFunctionalReact,
                     useVue3,
                     true,
                     'packages'
                 );
                 writeIndexHtmlFile(reactTsStylePackages);
-            }
         }
     } else if (type === 'multi' && framework === 'vue') {
         const vue3ExampleInfo = getExampleInfo(
@@ -406,7 +377,6 @@ const saveChartIndexHtmlPermutations = (
             type,
             options,
             framework,
-            !useFunctionalReact,
             true,
             true
         );
@@ -423,14 +393,12 @@ const saveChartIndexHtmlPermutations = (
             type,
             options,
             framework,
-            !useFunctionalReact,
             useVue3,
             false
         );
         writeIndexHtmlFile(functionalExampleInfo);
 
         // Add the typescript versions for functional
-        if (useFunctionalReact) {
             const reactTsStyle = getExampleInfo(
                 nodes,
                 library,
@@ -440,12 +408,10 @@ const saveChartIndexHtmlPermutations = (
                 type,
                 options,
                 framework,
-                useFunctionalReact,
                 useVue3,
                 true
             );
             writeIndexHtmlFile(reactTsStyle);
-        }
     }
 };
 
@@ -458,9 +424,9 @@ const ExampleRunnerInner = ({
     options,
     library,
     exampleImportType,
-    useFunctionalReact,
     useVue3,
     useTypescript,
+    darkMode
 }) => {
     const nodes = useExampleFileNodes();
     const [showCode, setShowCode] = useState(!!(options && options.showCode));
@@ -475,7 +441,6 @@ const ExampleRunnerInner = ({
                 type,
                 options,
                 framework,
-                useFunctionalReact,
                 useVue3,
                 useTypescript,
                 exampleImportType
@@ -489,7 +454,6 @@ const ExampleRunnerInner = ({
             type,
             options,
             framework,
-            useFunctionalReact,
             useVue3,
             useTypescript,
             exampleImportType,
@@ -522,7 +486,6 @@ const ExampleRunnerInner = ({
                 type,
                 options,
                 framework,
-                useFunctionalReact,
                 useVue3,
                 exampleImportType
             );
@@ -536,7 +499,6 @@ const ExampleRunnerInner = ({
                 type,
                 options,
                 framework,
-                useFunctionalReact,
                 useVue3
             );
         }
@@ -547,62 +509,13 @@ const ExampleRunnerInner = ({
     exampleInfo.linkId = `example-${name}`;
 
     return (
-        <div id={exampleInfo.linkId} style={{ minHeight: `${exampleHeight + 48}px` }}>
+        <div id={exampleInfo.linkId} className={styles.exampleOuter} style={{ minHeight: `${exampleHeight + 48}px` }}>
             {hasWindow && (
-                <div className={classnames('tabs-outer', styles.tabsContainer)}>
-                    <header className={classnames('tabs-header', styles.header)}>
-                        <ul className="tabs-nav-list" role="tablist">
-                            {/* eslint-disable-line */}
-                            <li className="tabs-nav-item" role="presentation">
-                                <button
-                                    className={classnames('button-style-none', 'tabs-nav-link', { active: !showCode })}
-                                    onClick={(e) => {
-                                        setShowCode(false);
-                                        e.preventDefault();
-                                    }}
-                                    role="tab"
-                                    title="Run example"
-                                    disabled={!showCode}
-                                >
-                                    Preview <Icon name="executableProgram" />
-                                </button>
-                            </li>
-                            <li className="tabs-nav-item" role="presentation">
-                                <button
-                                    className={classnames(
-                                        'button-style-none',
-                                        'tabs-nav-link',
-                                        { active: showCode },
-                                        styles.codeTabButton
-                                    )}
-                                    onClick={(e) => {
-                                        setShowCode(true);
-                                        e.preventDefault();
-                                    }}
-                                    role="tab"
-                                    title="View Example Source Code"
-                                    disabled={showCode}
-                                >
-                                    Code <Icon name="code" />
-                                </button>
-                            </li>
-                        </ul>
-
-                        <ul className={classnames('list-style-none', styles.externalLinks)}>
-                            <li>
-                                <OpenInCTA type="newTab" href={getIndexHtmlUrl(exampleInfo)} />
-                            </li>
-                            {!exampleInfo.options.noPlunker && (
-                                <li>
-                                    <OpenInCTA type="plunker" onClick={() => openPlunker(exampleInfo)} />
-                                </li>
-                            )}
-                        </ul>
-                    </header>
+                <div className={styles.tabsContainer}>
                     <div
-                        className={classnames('tabs-content', styles.content)}
+                        className={styles.content}
                         role="tabpanel"
-                        aria-labelledby={`${showCode ? 'Preview' : 'Code'} tab`}
+                        aria-labelledby={`${!showCode ? 'Preview' : 'Code'} tab`}
                         style={{ height: exampleHeight, width: '100%' }}
                     >
                         <VisibilitySensor partialVisibility={true}>
@@ -616,12 +529,49 @@ const ExampleRunnerInner = ({
                                         resultFrameIsVisible={!showCode}
                                         isOnScreen={isVisible}
                                         exampleInfo={exampleInfo}
+                                        darkMode={darkMode}
                                     />
                                 );
                             }}
                         </VisibilitySensor>
                         <CodeViewer isActive={showCode} exampleInfo={exampleInfo} />
                     </div>
+
+                    <footer className={styles.footer}>
+                        <button
+                            className={classnames(styles.previewCodeToggle, 'button-secondary')}
+                            onClick={(e) => {
+                                setShowCode(!showCode);
+                            }}
+                        >
+                            {showCode && (
+                                <span>
+                                    <Icon name="eye" /> Preview
+                                </span>
+                            )}
+                            {!showCode && (
+                                <span>
+                                    <Icon name="code" /> Code
+                                </span>
+                            )}
+                        </button>
+
+                        <ul className={classnames('list-style-none', styles.externalLinks)}>
+                            <li>
+                                <OpenInCTA type="newTab" href={getIndexHtmlUrl(exampleInfo)} />
+                            </li>
+                            {!exampleInfo.options.noCodeSandbox && (
+                                <li>
+                                    <OpenInCTA type="codesandbox" onClick={() => openCodeSandbox(exampleInfo)} />
+                                </li>
+                            )}
+                            {!exampleInfo.options.noPlunker && (
+                                <li>
+                                    <OpenInCTA type="plunker" onClick={() => openPlunker(exampleInfo)} />
+                                </li>
+                            )}
+                        </ul>
+                    </footer>
                 </div>
             )}
         </div>
@@ -632,9 +582,9 @@ const isGeneratedExample = (type) => ['generated', 'mixed', 'typescript'].includ
 
 const writeIndexHtmlFile = (exampleInfo) => {
     const { appLocation, type } = exampleInfo;
-    const indexHtml = getIndexHtml(exampleInfo, true);
+    const { plunkerIndexHtml, codesandboxIndexHtml } = getIndexHtml(exampleInfo, true);
 
-    fs.writeFileSync(`public${appLocation}index.html`, indexHtml);
+    fs.writeFileSync(`public${appLocation}index.html`, plunkerIndexHtml);
 
     const templateIndexHtmlPath = `public${appLocation}../../index.html`;
 

@@ -64,12 +64,28 @@
                 main: './dist/ag-grid-enterprise.cjs.js',
                 defaultExtension: 'js'
             },
+            'ag-grid-charts-enterprise': {
+                main: './dist/ag-grid-charts-enterprise.cjs.js',
+                defaultExtension: 'js'
+            },
             '@ag-grid-community/react': {
                 main: './lib/main.mjs',
                 defaultExtension: 'mjs'
             },
+            'ag-charts-community': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js'
+            },
+            'ag-charts-enterprise': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js'
+            },
             // these are a little different in that they're in a directory and sjs doesn't default to the index.js inside...
             '@ag-grid-community/core/dist/cjs/es5/utils': {
+                main: './index.js',
+                defaultExtension: 'js'
+            },
+            '@ag-grid-enterprise/charts-enterprise/dist/cjs/es5/charts/chartComp/menu/settings/miniCharts': {
                 main: './index.js',
                 defaultExtension: 'js'
             },
@@ -98,11 +114,6 @@
                 main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
-            'ag-charts-community': {
-                main: './dist/cjs/es5/main.js',
-                defaultExtension: 'js',
-                format: 'cjs'
-            },
             '@ag-grid-enterprise/advanced-filter': {
                 main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
@@ -112,6 +123,10 @@
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/charts': {
+                main: './dist/cjs/es5/main.js',
+                defaultExtension: 'js'
+            },
+            '@ag-grid-enterprise/charts-enterprise': {
                 main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
@@ -180,10 +195,6 @@
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/viewport-row-model': {
-                main: './dist/cjs/es5/main.js',
-                defaultExtension: 'js'
-            },
-            'ag-charts-enterprise': {
                 main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },

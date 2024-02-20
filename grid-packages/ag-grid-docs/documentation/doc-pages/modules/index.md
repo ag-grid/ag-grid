@@ -4,6 +4,12 @@ title: "AG Grid Modules"
 
 AG Grid modules allow you to cherry pick grid features resulting in a smaller application bundle size overall.
 
+<framework-specific-section frameworks="vue">
+<note>
+|Note that the following describes the setup for Vue 3. For Vue 2, use `@ag-grid-community/vue` instead of `@ag-grid-community/vue3`.
+</note>
+</framework-specific-section>
+
 ## Modules
 
 The table below summarises the modules provided in AG Grid Community and AG Grid Enterprise. See [Module Examples](/modules/#module-examples) to learn how the Example Runner can be used to determine the module required for a given feature.
@@ -42,8 +48,8 @@ be mixed with the standalone packages of `ag-grid-community` and `ag-grid-enterp
 
 <snippet transform={false}> 
 "dependencies": {
-    "ag-grid-community": "~@AG_GRID_VERSION@" <- a package dependency
-    "@ag-grid-enterprise/row-grouping": "~@AG_GRID_VERSION@"  <- a module dependency
+    "ag-grid-community": "~@AG_GRID_VERSION@" // a package dependency
+    "@ag-grid-enterprise/row-grouping": "~@AG_GRID_VERSION@"  // a module dependency
     //...other dependencies...
 }
 </snippet>
@@ -91,7 +97,7 @@ A real-world example might be that we wish to use the `Client Side Row Model` (t
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
-| Additionally we're writing a Vue application, so we need to specify the `@ag-grid-community/vue` dependency:
+| Additionally we're writing a Vue application, so we need to specify the `@ag-grid-community/vue3` dependency:
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">
@@ -139,7 +145,7 @@ A real-world example might be that we wish to use the `Client Side Row Model` (t
 |    "@ag-grid-community/csv-export": "~@AG_GRID_VERSION@",
 |    "@ag-grid-enterprise/excel-export": "~@AG_GRID_VERSION@",
 |    "@ag-grid-enterprise/master-detail": "~@AG_GRID_VERSION@",
-|    "@ag-grid-community/vue": "~@AG_GRID_VERSION@",
+|    "@ag-grid-community/vue3": "~@AG_GRID_VERSION@",
 |    //...other dependencies...
 |}
 </snippet>
@@ -158,7 +164,7 @@ A real-world example might be that we wish to use the `Client Side Row Model` (t
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
-| We now need to register the Grid modules we wish to use - note that this does not include `@ag-grid-community/vue` as the Vue support is not a Grid feature, but rather a support library:
+| We now need to register the Grid modules we wish to use - note that this does not include `@ag-grid-community/vue3` as the Vue support is not a Grid feature, but rather a support library:
 </framework-specific-section>
 
 <snippet transform={false}>
@@ -197,7 +203,7 @@ The steps required are:
 Using the same real-world example from above the `package.json` dependencies will be the same but how we register the modules is different.
 
 <framework-specific-section frameworks="javascript">
-| We pass the modules to the new grid via the `modules` property of the `GridParams`.
+| We pass the modules to createGrid via the `modules` property of the `Params`.
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">
@@ -207,7 +213,7 @@ Using the same real-world example from above the `package.json` dependencies wil
 |import { ExcelExportModule } from "@ag-grid-enterprise/excel-export";
 |import { MasterDetailModule } from "@ag-grid-enterprise/master-detail"; 
 |
-|new Grid(&lt;dom element>, gridOptions, { modules: [
+|createGrid(&lt;dom element>, gridOptions, { modules: [
 |    ClientSideRowModelModule,
 |    CsvExportModule,
 |    ExcelExportModule,
@@ -262,7 +268,7 @@ Using the same real-world example from above the `package.json` dependencies wil
 |    // ... rest of function ...
 |
 |    return (
-|        &lt;div style={{height: 400, width: 900}} className="ag-theme-alpine">
+|        &lt;div style={{height: 400, width: 900}} className="ag-theme-quartz">
 |            &lt;AgGridReact
 |                // properties
 |                columnDefs={columnDefs}
@@ -323,7 +329,7 @@ The following example shows how you can configure individual grids using a combi
  - The Right grid has options for charting and CSV and Excel export.
  - The Left grid uses the Set Filter  while the Right grid uses the Text Filter or Number Filter depending on the cell data type.
  
- <grid-example title='Grids with Individual Registration' name='individual-registration' type='mixed' exampleImportType='modules' options='{ "enterprise": true, "modules": ["clientside", "menu", "clipboard", "charts","csv", "excel", "setfilter"] }' ></grid-example>
+ <grid-example title='Grids with Individual Registration' name='individual-registration' type='mixed' exampleImportType='modules' options='{ "enterprise": true, "modules": ["clientside", "menu", "clipboard", "charts-enterprise","csv", "excel", "setfilter"] }' ></grid-example>
 
 ## Core Modules
 
@@ -344,7 +350,7 @@ If we have the following modules specified:
 We can then assume the `core` packages are available implicitly and import from them:
 
 <snippet transform={false}>
-|import { ColumnApi, GridApi } from "@ag-grid-community/core";
+|import { GridApi } from "@ag-grid-community/core";
 |import { LicenseManager } from "@ag-grid-enterprise/core";
 |
 |LicenseManager.setLicenseKey(...your key...);
@@ -354,25 +360,27 @@ We can then assume the `core` packages are available implicitly and import from 
 
 CSS & SCSS is available in the `@ag-grid-community/styles` module.
 
+CSS users should import the correct file for their theme:
+
 <snippet transform={false} language="css">
 |/* CSS Community */
 |import "@ag-grid-community/styles/ag-grid.css";
-|import "@ag-grid-community/styles/ag-theme-alpine.css";
+|import "@ag-grid-community/styles/ag-theme-quartz.css";
 </snippet>
 
-If using SCSS the theme defaults to `alpine`, so you don't have to explicitly include it.
+If using SCSS, the import is the same regardless of the theme used:
 
 <snippet transform={false} language="scss">
 |// SCSS Community
 |@use "~@ag-grid-community/styles" as ag;
 |
-|// Choose balham over default alpine
+|// Choose alpine over default quartz
 |@include ag.grid-styles((
 |    theme: balham
 |));
 </snippet>
 
-See [Choosing a Theme](/global-style-customisation-sass/#choosing-a-theme) for full details of how to select a theme.
+See [Choosing a Theme](/global-style-customisation-sass/#choosing-a-theme) for full details of how to select a theme using Sass.
 
 ## Module Examples
 
@@ -381,4 +389,4 @@ Our Example Runner enables you to view the `modules` version of an example via t
 When 'Modules' is selected, the source code includes the required modules along with the module import paths. This means
 you can copy and paste code from our examples without further tweaks.
 
-<image-caption src="module-example-runner.png" alt="Module Examples" maxWidth="90%" constrained="true" centered="true"></image-caption>
+<image-caption src="module-example-runner.png" alt="Module Examples" maxWidth="90%" constrained="true" centered="true" toggleDarkMode="true"></image-caption>

@@ -7,7 +7,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { Autowired, PostConstruct } from "../context/context.mjs";
 import { RefSelector } from "../widgets/componentAnnotations.mjs";
 import { isVisible } from "../utils/dom.mjs";
-import { FocusService } from "../focusService.mjs";
 import { GridCtrl } from "./gridCtrl.mjs";
 import { LayoutCssClasses } from "../styling/layoutFeature.mjs";
 import { TabGuardComp } from "../widgets/tabGuardComp.mjs";
@@ -21,7 +20,6 @@ export class GridComp extends TabGuardComp {
         const compProxy = {
             destroyGridUi: () => this.destroyBean(this),
             setRtlClass: (cssClass) => this.addCssClass(cssClass),
-            addOrRemoveKeyboardFocusClass: (addOrRemove) => this.addOrRemoveCssClass(FocusService.AG_KEYBOARD_FOCUS, addOrRemove),
             forceFocusOutOfContainer: this.forceFocusOutOfContainer.bind(this),
             updateLayoutClasses: this.updateLayoutClasses.bind(this),
             getFocusableContainers: this.getFocusableContainers.bind(this),
@@ -41,7 +39,8 @@ export class GridComp extends TabGuardComp {
         this.initialiseTabGuard({
             // we want to override the default behaviour to do nothing for onTabKeyDown
             onTabKeyDown: () => undefined,
-            focusInnerElement: fromBottom => this.ctrl.focusInnerElement(fromBottom)
+            focusInnerElement: fromBottom => this.ctrl.focusInnerElement(fromBottom),
+            forceFocusOutWhenTabGuardsAreEmpty: true
         });
     }
     insertGridIntoDom() {

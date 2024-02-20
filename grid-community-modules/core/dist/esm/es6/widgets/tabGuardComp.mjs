@@ -16,6 +16,7 @@ export class TabGuardComp extends Component {
         this.addTabGuards(this.eTopGuard, this.eBottomGuard);
         this.tabGuardCtrl = this.createManagedBean(new TabGuardCtrl({
             comp: compProxy,
+            focusTrapActive: !!params.focusTrapActive,
             eTopGuard: this.eTopGuard,
             eBottomGuard: this.eBottomGuard,
             eFocusableElement: this.eFocusableElement,
@@ -24,7 +25,8 @@ export class TabGuardComp extends Component {
             focusInnerElement: params.focusInnerElement,
             handleKeyDown: params.handleKeyDown,
             onTabKeyDown: params.onTabKeyDown,
-            shouldStopEventPropagation: params.shouldStopEventPropagation
+            shouldStopEventPropagation: params.shouldStopEventPropagation,
+            forceFocusOutWhenTabGuardsAreEmpty: params.forceFocusOutWhenTabGuardsAreEmpty
         }));
     }
     createTabGuard(side) {

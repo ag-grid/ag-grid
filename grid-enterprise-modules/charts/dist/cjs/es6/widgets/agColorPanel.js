@@ -56,7 +56,7 @@ class AgColorPanel extends core_1.Component {
         });
     }
     initTabIndex() {
-        const tabIndex = this.tabIndex = (this.gridOptionsService.getNum('tabIndex') || 0).toString();
+        const tabIndex = this.tabIndex = (this.gridOptionsService.get('tabIndex')).toString();
         this.spectrumColor.setAttribute('tabindex', tabIndex);
         this.spectrumHueSlider.setAttribute('tabindex', tabIndex);
         this.spectrumAlphaSlider.setAttribute('tabindex', tabIndex);
@@ -301,28 +301,28 @@ AgColorPanel.TEMPLATE = `<div class="ag-color-panel" tabindex="-1">
             </div>
         </div>`;
 __decorate([
-    core_1.RefSelector('spectrumColor')
+    (0, core_1.RefSelector)('spectrumColor')
 ], AgColorPanel.prototype, "spectrumColor", void 0);
 __decorate([
-    core_1.RefSelector('spectrumVal')
+    (0, core_1.RefSelector)('spectrumVal')
 ], AgColorPanel.prototype, "spectrumVal", void 0);
 __decorate([
-    core_1.RefSelector('spectrumDragger')
+    (0, core_1.RefSelector)('spectrumDragger')
 ], AgColorPanel.prototype, "spectrumDragger", void 0);
 __decorate([
-    core_1.RefSelector('spectrumHue')
+    (0, core_1.RefSelector)('spectrumHue')
 ], AgColorPanel.prototype, "spectrumHue", void 0);
 __decorate([
-    core_1.RefSelector('spectrumHueSlider')
+    (0, core_1.RefSelector)('spectrumHueSlider')
 ], AgColorPanel.prototype, "spectrumHueSlider", void 0);
 __decorate([
-    core_1.RefSelector('spectrumAlpha')
+    (0, core_1.RefSelector)('spectrumAlpha')
 ], AgColorPanel.prototype, "spectrumAlpha", void 0);
 __decorate([
-    core_1.RefSelector('spectrumAlphaSlider')
+    (0, core_1.RefSelector)('spectrumAlphaSlider')
 ], AgColorPanel.prototype, "spectrumAlphaSlider", void 0);
 __decorate([
-    core_1.RefSelector('recentColors')
+    (0, core_1.RefSelector)('recentColors')
 ], AgColorPanel.prototype, "recentColors", void 0);
 __decorate([
     core_1.PostConstruct

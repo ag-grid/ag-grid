@@ -5,7 +5,7 @@ import React, { useCallback, useMemo, useRef, useState, StrictMode } from 'react
 import { createRoot } from 'react-dom/client';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 import './styles.css';
 import { ColDef, GridApi, GridReadyEvent } from '@ag-grid-community/core';
 import { IOlympicData } from './interfaces'
@@ -13,7 +13,6 @@ import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
-import { Rect } from 'ag-charts-community/dist/esm/es6/integrated-charts-scene';
 
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ExcelExportModule])
@@ -62,9 +61,7 @@ const GridExample = () => {
     { field: 'total' },
 ]);
     const defaultColDef = useMemo<ColDef>(() => { return {
-        sortable: true,
         filter: true,
-        resizable: true,
         minWidth: 100,
         flex: 1,
     }}, []);
@@ -127,22 +124,22 @@ const GridExample = () => {
                                 </select>
                             </label>
                         </div>
-                        <div className="column margin-container">
-                            <div>Margins</div>
+                        <fieldset className="column margin-container">
+                            <legend>Margins</legend>
                             <label htmlFor="top">Top = <input type="number" id="top" defaultValue="0.75" min="0" step="0.05" /></label>
                             <label htmlFor="right">Right = <input type="number" id="right" defaultValue="0.7" min="0" step="0.05" /></label>
                             <label htmlFor="bottom">Bottom = <input type="number" id="bottom" defaultValue="0.75" min="0" step="0.05" /></label>
                             <label htmlFor="left">Left = <input type="number" id="left" defaultValue="0.7" min="0" step="0.05" /></label>
                             <label htmlFor="header">Header = <input type="number" id="header" defaultValue="0.3" min="0" step="0.05" /></label>
                             <label htmlFor="footer">Footer = <input type="number" id="footer" defaultValue="0.3" min="0" step="0.05" /></label>
-                        </div>
+                        </fieldset>
                     </div>
                     <div>
                         <input type="submit" style={{"margin":"5px 0px","fontWeight":"bold"}} value="Export to Excel" />
                     </div>
                 </form>
                 <div className="grid-wrapper">
-                    <div  style={gridStyle} className="ag-theme-alpine">
+                    <div  style={gridStyle} className={/** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
                         <AgGridReact<IOlympicData>
                             rowData={rowData}
                             columnDefs={columnDefs}

@@ -56,6 +56,7 @@ var MiniHistogram = /** @class */ (function (_super) {
             rect.width = right - left;
             rect.height = bottom - top;
             rect.strokeWidth = 1;
+            rect.strokeOpacity = 0.75;
             rect.crisp = true;
             return rect;
         });

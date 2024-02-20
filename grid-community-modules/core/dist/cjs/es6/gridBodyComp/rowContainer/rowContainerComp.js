@@ -19,19 +19,11 @@ function templateFactory() {
     const name = component_1.Component.elementGettingCreated.getAttribute('name');
     const cssClasses = rowContainerCtrl_1.RowContainerCtrl.getRowContainerCssClasses(name);
     let res;
-    const template1 = name === rowContainerCtrl_1.RowContainerName.CENTER;
-    const template2 = name === rowContainerCtrl_1.RowContainerName.TOP_CENTER
-        || name === rowContainerCtrl_1.RowContainerName.STICKY_TOP_CENTER
-        || name === rowContainerCtrl_1.RowContainerName.BOTTOM_CENTER;
-    if (template1) {
-        res = /* html */
-            `<div class="${cssClasses.wrapper}" ref="eWrapper" role="presentation">
-                <div class="${cssClasses.viewport}" ref="eViewport" role="presentation">
-                    <div class="${cssClasses.container}" ref="eContainer"></div>
-                </div>
-            </div>`;
-    }
-    else if (template2) {
+    const centerTemplate = name === rowContainerCtrl_1.RowContainerName.CENTER ||
+        name === rowContainerCtrl_1.RowContainerName.TOP_CENTER ||
+        name === rowContainerCtrl_1.RowContainerName.STICKY_TOP_CENTER ||
+        name === rowContainerCtrl_1.RowContainerName.BOTTOM_CENTER;
+    if (centerTemplate) {
         res = /* html */
             `<div class="${cssClasses.viewport}" ref="eViewport" role="presentation">
                 <div class="${cssClasses.container}" ref="eContainer"></div>
@@ -48,19 +40,19 @@ class RowContainerComp extends component_1.Component {
         super(templateFactory());
         this.rowComps = {};
         this.name = component_1.Component.elementGettingCreated.getAttribute('name');
-        this.type = rowContainerCtrl_1.getRowContainerTypeForName(this.name);
+        this.type = (0, rowContainerCtrl_1.getRowContainerTypeForName)(this.name);
     }
     postConstruct() {
         const compProxy = {
             setViewportHeight: height => this.eViewport.style.height = height,
-            setRowCtrls: rowCtrls => this.setRowCtrls(rowCtrls),
+            setRowCtrls: ({ rowCtrls }) => this.setRowCtrls(rowCtrls),
             setDomOrder: domOrder => {
                 this.domOrder = domOrder;
             },
             setContainerWidth: width => this.eContainer.style.width = width
         };
         const ctrl = this.createManagedBean(new rowContainerCtrl_1.RowContainerCtrl(this.name));
-        ctrl.setComp(compProxy, this.eContainer, this.eViewport, this.eWrapper);
+        ctrl.setComp(compProxy, this.eContainer, this.eViewport);
     }
     preDestroy() {
         // destroys all row comps
@@ -90,15 +82,15 @@ class RowContainerComp extends component_1.Component {
             }
         };
         rowCtrls.forEach(processRow);
-        object_1.getAllValuesInObject(oldRows).forEach(oldRowComp => {
+        (0, object_1.getAllValuesInObject)(oldRows).forEach(oldRowComp => {
             this.eContainer.removeChild(oldRowComp.getGui());
             oldRowComp.destroy();
         });
-        aria_1.setAriaRole(this.eContainer, rowCtrls.length ? "rowgroup" : "presentation");
+        (0, aria_1.setAriaRole)(this.eContainer, "rowgroup");
     }
     appendRow(element) {
         if (this.domOrder) {
-            dom_1.insertWithDomOrder(this.eContainer, element, this.lastPlacedElement);
+            (0, dom_1.insertWithDomOrder)(this.eContainer, element, this.lastPlacedElement);
         }
         else {
             this.eContainer.appendChild(element);
@@ -107,23 +99,20 @@ class RowContainerComp extends component_1.Component {
     }
     ensureDomOrder(eRow) {
         if (this.domOrder) {
-            dom_1.ensureDomOrder(this.eContainer, eRow, this.lastPlacedElement);
+            (0, dom_1.ensureDomOrder)(this.eContainer, eRow, this.lastPlacedElement);
             this.lastPlacedElement = eRow;
         }
     }
 }
 __decorate([
-    context_1.Autowired('beans')
+    (0, context_1.Autowired)('beans')
 ], RowContainerComp.prototype, "beans", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eViewport')
+    (0, componentAnnotations_1.RefSelector)('eViewport')
 ], RowContainerComp.prototype, "eViewport", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eContainer')
+    (0, componentAnnotations_1.RefSelector)('eContainer')
 ], RowContainerComp.prototype, "eContainer", void 0);
-__decorate([
-    componentAnnotations_1.RefSelector('eWrapper')
-], RowContainerComp.prototype, "eWrapper", void 0);
 __decorate([
     context_1.PostConstruct
 ], RowContainerComp.prototype, "postConstruct", null);

@@ -70,11 +70,11 @@ var ManagedFocusFeature = /** @class */ (function (_super) {
     ManagedFocusFeature.prototype.addKeyDownListeners = function (eGui) {
         var _this = this;
         this.addManagedListener(eGui, 'keydown', function (e) {
-            if (e.defaultPrevented || event_1.isStopPropagationForAgGrid(e)) {
+            if (e.defaultPrevented || (0, event_1.isStopPropagationForAgGrid)(e)) {
                 return;
             }
             if (_this.callbacks.shouldStopEventPropagation(e)) {
-                event_1.stopPropagationForAgGrid(e);
+                (0, event_1.stopPropagationForAgGrid)(e);
                 return;
             }
             if (e.key === keyCode_1.KeyCode.TAB) {
@@ -87,7 +87,7 @@ var ManagedFocusFeature = /** @class */ (function (_super) {
     };
     ManagedFocusFeature.FOCUS_MANAGED_CLASS = 'ag-focus-managed';
     __decorate([
-        context_1.Autowired('focusService')
+        (0, context_1.Autowired)('focusService')
     ], ManagedFocusFeature.prototype, "focusService", void 0);
     __decorate([
         context_1.PostConstruct

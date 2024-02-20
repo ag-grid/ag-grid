@@ -4,7 +4,7 @@ const alignment_1 = require("./alignment");
 const protection_1 = require("./protection");
 const xfFactory = {
     getTemplate(xf) {
-        const { alignment, borderId, fillId, fontId, numFmtId, protection, xfId } = xf;
+        const { alignment, borderId, fillId, fontId, numFmtId, protection, quotePrefix, xfId } = xf;
         const children = [];
         if (alignment) {
             children.push(alignment_1.default.getTemplate(alignment));
@@ -26,6 +26,7 @@ const xfFactory = {
                     fontId,
                     applyNumberFormat: numFmtId ? 1 : undefined,
                     numFmtId,
+                    quotePrefix: quotePrefix ? 1 : undefined,
                     xfId
                 }
             },

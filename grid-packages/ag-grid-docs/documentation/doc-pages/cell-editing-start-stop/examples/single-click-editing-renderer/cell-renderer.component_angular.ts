@@ -4,7 +4,7 @@ import { ICellRendererAngularComp } from "@ag-grid-community/angular";
 import { ICellRendererParams } from "@ag-grid-community/core"
 
 @Component({
-    selector: 'cell-renderer',
+    standalone: true,
     template: `<span>
         <button style="height: 30px;" (click)="onClick()">✎</button>
         <span style="padding-left: 4px;">{{this.displayValue}}</span>
@@ -21,7 +21,7 @@ export class CellRenderer implements ICellRendererAngularComp {
 
     onClick() {
         this.params.api.startEditingCell({
-          rowIndex: this.params.rowIndex,
+          rowIndex: this.params.node.rowIndex!,
           colKey: this.params.column!.getId(),
         });
     }

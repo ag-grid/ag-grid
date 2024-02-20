@@ -1,12 +1,14 @@
 import {
-  ColDef, Grid,
+  ColDef,
+  GridApi,
+  createGrid,
   GridOptions,
   ICellRendererParams,
   IServerSideDatasource,
   IServerSideGetRowsParams,
   IServerSideGetRowsRequest,
   IsServerSideGroupOpenByDefaultParams,
-} from '@ag-grid-community/core'
+} from '@ag-grid-community/core';
 const columnDefs: ColDef[] = [
   { field: 'employeeId', hide: true },
   { field: 'employeeName', hide: true },
@@ -14,10 +16,13 @@ const columnDefs: ColDef[] = [
   { field: 'employmentType' },
 ]
 
+let gridApi: GridApi;
+
 const gridOptions: GridOptions = {
   defaultColDef: {
     width: 240,
     flex: 1,
+    sortable: false,
   },
   autoGroupColumnDef: {
     field: 'employeeName',
@@ -31,7 +36,6 @@ const gridOptions: GridOptions = {
   rowModelType: 'serverSide',
   treeData: true,
   columnDefs: columnDefs,
-  animateRows: true,
   isServerSideGroupOpenByDefault: (
     params: IsServerSideGroupOpenByDefaultParams
   ) => {
@@ -51,14 +55,14 @@ const gridOptions: GridOptions = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/small-tree-data.json')
     .then(response => response.json())
     .then(function (data) {
       var fakeServer = createFakeServer(data)
       var datasource = createServerSideDatasource(fakeServer)
-      gridOptions.api!.setServerSideDatasource(datasource)
+      gridApi!.setGridOption('serverSideDatasource', datasource)
     })
 })
 
@@ -113,7 +117,7 @@ function createServerSideDatasource(fakeServer: any) {
         }
         : { rowData: allRows }
       console.log('getRows: result = ', result)
-      setTimeout(function () {
+      setTimeout(() => {
         params.success(result)
       }, 200)
     },

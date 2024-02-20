@@ -4,7 +4,7 @@ exports.ClientSideValuesExtractor = void 0;
 var core_1 = require("@ag-grid-community/core");
 /** @param V type of value in the Set Filter */
 var ClientSideValuesExtractor = /** @class */ (function () {
-    function ClientSideValuesExtractor(rowModel, filterParams, createKey, caseFormat, columnModel, valueService, treeDataOrGrouping, treeData, getDataPath, groupAllowUnbalanced) {
+    function ClientSideValuesExtractor(rowModel, filterParams, createKey, caseFormat, columnModel, valueService, treeDataOrGrouping, treeData, getDataPath, groupAllowUnbalanced, addManagedListener) {
         this.rowModel = rowModel;
         this.filterParams = filterParams;
         this.createKey = createKey;
@@ -15,7 +15,22 @@ var ClientSideValuesExtractor = /** @class */ (function () {
         this.treeData = treeData;
         this.getDataPath = getDataPath;
         this.groupAllowUnbalanced = groupAllowUnbalanced;
+        this.addManagedListener = addManagedListener;
     }
+    ClientSideValuesExtractor.prototype.extractUniqueValuesAsync = function (predicate, existingValues) {
+        var _this = this;
+        return new core_1.AgPromise(function (resolve) {
+            if (_this.rowModel.isRowDataLoaded()) {
+                resolve(_this.extractUniqueValues(predicate, existingValues));
+            }
+            else {
+                var destroyFunc_1 = _this.addManagedListener(core_1.Events.EVENT_ROW_COUNT_READY, function () {
+                    destroyFunc_1 === null || destroyFunc_1 === void 0 ? void 0 : destroyFunc_1();
+                    resolve(_this.extractUniqueValues(predicate, existingValues));
+                });
+            }
+        });
+    };
     ClientSideValuesExtractor.prototype.extractUniqueValues = function (predicate, existingValues) {
         var _this = this;
         var values = new Map();
@@ -106,17 +121,7 @@ var ClientSideValuesExtractor = /** @class */ (function () {
         addValue(this.createKey(dataPath), dataPath);
     };
     ClientSideValuesExtractor.prototype.getValue = function (node) {
-        var _a = this.filterParams, api = _a.api, colDef = _a.colDef, column = _a.column, columnApi = _a.columnApi, context = _a.context;
-        return this.filterParams.valueGetter({
-            api: api,
-            colDef: colDef,
-            column: column,
-            columnApi: columnApi,
-            context: context,
-            data: node.data,
-            getValue: function (field) { return node.data[field]; },
-            node: node,
-        });
+        return this.filterParams.getValue(node);
     };
     ClientSideValuesExtractor.prototype.extractExistingFormattedKeys = function (existingValues) {
         var _this = this;

@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React, { useEffect, useRef, useState } from 'react';
 import { addNonBreakingSpaceBetweenLastWords } from '../utils/add-non-breaking-space-between-last-words';
-import styles from './SideMenu.module.scss';
+import styles from '@design-system/modules/SideNavigation.module.scss';
 
 /**
  * This renders the right-hand menu that allows the user to navigate between different headings on a page.
@@ -52,18 +52,28 @@ const SideMenu = ({ headings = [], pageName, pageTitle, hideMenu, tracking }) =>
     }, [hideMenu]);
 
     useEffect(() => {
+        const scrollOffsetCustomProp = Number(
+            window
+            .getComputedStyle(document.body)
+            .getPropertyValue("--layout-scroll-offset")
+            .replace("px", "")
+        );
+    
         // Init scrollspy & refresh at the same time as there's no way to detect if it's already been initialised
-        $('body').scrollspy({ target: '#side-menu', offset: 120 });
-        $('body').scrollspy('refresh');
+        $("body").scrollspy({
+                target: "#side-menu",
+                offset: scrollOffsetCustomProp ? scrollOffsetCustomProp : 80,
+        });
+        $("body").scrollspy("refresh");
     }, [allHeadings]);
 
     return (
-        <nav id="side-menu" ref={menuRef} className={classNames(styles.sideNav, 'font-size-responsive')}>
+        <nav id="side-menu" ref={menuRef} className={styles.sideNav}>
             <div>
                 {allHeadings.length > 0 && (
                     <ul className="list-style-none">
                         <li className={styles.level1}>
-                            <a href="#top" className={classNames(styles.topLink, 'nav-link')}>
+                            <a href="#top" className={classNames(styles.topLink, 'nav-link', 'active')}>
                                 {pageTitle}
                             </a>
                         </li>

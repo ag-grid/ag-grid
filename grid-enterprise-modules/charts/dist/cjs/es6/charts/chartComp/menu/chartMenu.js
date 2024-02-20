@@ -41,7 +41,7 @@ class ChartMenu extends core_1.Component {
             }
         });
         this.refreshMenuClasses();
-        if (!this.gridOptionsService.is('suppressChartToolPanelsButton') && this.panels.length > 0) {
+        if (!this.gridOptionsService.get('suppressChartToolPanelsButton') && this.panels.length > 0) {
             this.getGui().classList.add('ag-chart-tool-panel-button-enable');
             this.addManagedListener(this.eHideButton, 'click', this.toggleMenu.bind(this));
         }
@@ -58,7 +58,7 @@ class ChartMenu extends core_1.Component {
             result.push('top');
         }
         if (rightItems.some(v => this.chartToolbarOptions.includes(v))) {
-            result.push(this.gridOptionsService.is('enableRtl') ? 'left' : 'right');
+            result.push(this.gridOptionsService.get('enableRtl') ? 'left' : 'right');
         }
         return result;
     }
@@ -117,7 +117,7 @@ class ChartMenu extends core_1.Component {
             ];
             const toolbarItemsFunc = this.gridOptionsService.getCallback('getChartToolbarItems');
             if (toolbarItemsFunc) {
-                const isLegacyToolbar = this.gridOptionsService.is('suppressChartToolPanelsButton');
+                const isLegacyToolbar = this.gridOptionsService.get('suppressChartToolPanelsButton');
                 const params = {
                     defaultItems: isLegacyToolbar ? tabOptions : core_1.CHART_TOOLBAR_ALLOW_LIST
                 };
@@ -283,7 +283,7 @@ class ChartMenu extends core_1.Component {
     refreshMenuClasses() {
         this.eChartContainer.classList.toggle('ag-chart-menu-visible', this.menuVisible);
         this.eChartContainer.classList.toggle('ag-chart-menu-hidden', !this.menuVisible);
-        if (!this.gridOptionsService.is('suppressChartToolPanelsButton')) {
+        if (!this.gridOptionsService.get('suppressChartToolPanelsButton')) {
             this.eHideButtonIcon.classList.toggle('ag-icon-contracted', this.menuVisible);
             this.eHideButtonIcon.classList.toggle('ag-icon-expanded', !this.menuVisible);
         }
@@ -312,16 +312,16 @@ ChartMenu.TEMPLATE = `<div>
         </button>
     </div>`;
 __decorate([
-    core_1.Autowired('chartTranslationService')
+    (0, core_1.Autowired)('chartTranslationService')
 ], ChartMenu.prototype, "chartTranslationService", void 0);
 __decorate([
-    core_1.RefSelector("eMenu")
+    (0, core_1.RefSelector)("eMenu")
 ], ChartMenu.prototype, "eMenu", void 0);
 __decorate([
-    core_1.RefSelector("eHideButton")
+    (0, core_1.RefSelector)("eHideButton")
 ], ChartMenu.prototype, "eHideButton", void 0);
 __decorate([
-    core_1.RefSelector("eHideButtonIcon")
+    (0, core_1.RefSelector)("eHideButtonIcon")
 ], ChartMenu.prototype, "eHideButtonIcon", void 0);
 __decorate([
     core_1.PostConstruct

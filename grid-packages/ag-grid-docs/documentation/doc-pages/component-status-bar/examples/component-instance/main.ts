@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
 import { ClickableStatusBarComponent } from './clickableStatusBarComponent_typescript'
 
 export interface IClickableStatusBar {
@@ -16,18 +16,18 @@ const columnDefs: ColDef[] = [
 ]
 
 function toggleStatusBarComp() {
-  const statusBarComponent = gridOptions.api!.getStatusPanel<IClickableStatusBar>('statusBarCompKey')!;
+  const statusBarComponent = gridApi!.getStatusPanel<IClickableStatusBar>('statusBarCompKey')!;
   statusBarComponent.setVisible(!statusBarComponent.isVisible())
 }
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   defaultColDef: {
     editable: true,
-    sortable: true,
     flex: 1,
     minWidth: 100,
     filter: true,
-    resizable: true,
   },
   columnDefs: columnDefs,
   rowData: [
@@ -67,6 +67,5 @@ const gridOptions: GridOptions = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
-  gridOptions.api!.sizeColumnsToFit()
+  gridApi = createGrid(gridDiv, gridOptions);
 })

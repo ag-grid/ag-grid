@@ -15,8 +15,8 @@ let ValueCache = class ValueCache extends beanStub_1.BeanStub {
         this.cacheVersion = 0;
     }
     init() {
-        this.active = this.gridOptionsService.is('valueCache');
-        this.neverExpires = this.gridOptionsService.is('valueCacheNeverExpires');
+        this.active = this.gridOptionsService.get('valueCache');
+        this.neverExpires = this.gridOptionsService.get('valueCacheNeverExpires');
     }
     onDataChanged() {
         if (this.neverExpires) {
@@ -47,6 +47,6 @@ __decorate([
     context_1.PostConstruct
 ], ValueCache.prototype, "init", null);
 ValueCache = __decorate([
-    context_1.Bean('valueCache')
+    (0, context_1.Bean)('valueCache')
 ], ValueCache);
 exports.ValueCache = ValueCache;

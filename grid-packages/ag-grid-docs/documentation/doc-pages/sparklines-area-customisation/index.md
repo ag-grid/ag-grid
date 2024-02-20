@@ -57,8 +57,8 @@ sparklineOptions: {
 The result of the above configuration is displayed here.
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/default.png" alt="Line default" width="250px" constrained="true">Default</image-caption>
-    <image-caption src="resources/custom-line.png" alt="Line customisation" width="250px" constrained="true">Custom line</image-caption>
+    <image-caption src="resources/default.png" alt="Line default" width="250px" constrained="true" filterdarkmode="true">Default</image-caption>
+    <image-caption src="resources/custom-line.png" alt="Line customisation" width="250px" constrained="true" filterdarkmode="true">Custom line</image-caption>
 </div>
 
 ## Marker Options
@@ -94,9 +94,9 @@ sparklineOptions: {
 Here is the result of the configuration shown in the above snippet.
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/default.png" alt="Marker default" width="250px" constrained="true">Default</image-caption>
-    <image-caption src="resources/custom-marker.png" alt="Marker customisation" width="250px" constrained="true">Custom marker</image-caption>
-    <image-caption src="resources/custom-highlighted-marker.png" alt="Marker customisation for highlighted state" width="250px" constrained="true">Custom highlighted marker</image-caption>
+    <image-caption src="resources/default.png" alt="Marker default" width="250px" constrained="true" filterdarkmode="true">Default</image-caption>
+    <image-caption src="resources/custom-marker.png" alt="Marker customisation" width="250px" constrained="true" filterdarkmode="true">Custom marker</image-caption>
+    <image-caption src="resources/custom-highlighted-marker.png" alt="Marker customisation for highlighted state" width="250px" constrained="true" filterdarkmode="true">Custom highlighted marker</image-caption>
 </div>
 
 ## Area Fill Options
@@ -112,8 +112,8 @@ sparklineOptions: {
 Here is the result of the configuration shown in the above snippet:
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/default.png" alt="Area fill default" width="250px" constrained="true">Default</image-caption>
-    <image-caption src="resources/custom-fill.png" alt="Area fill customisation" width="250px" constrained="true">Custom fill</image-caption>
+    <image-caption src="resources/default.png" alt="Area fill default" width="250px" constrained="true" filterdarkmode="true">Default</image-caption>
+    <image-caption src="resources/custom-fill.png" alt="Area fill customisation" width="250px" constrained="true" filterdarkmode="true">Custom fill</image-caption>
 </div>
 
 The given `fill` string can be in one of the following formats:
@@ -142,8 +142,8 @@ sparklineOptions: {
 Here is the result of the configuration shown in the above snippet:
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/default.png" alt="Axis line default" width="250px" constrained="true">Default axis line</image-caption>
-    <image-caption src="resources/custom-axis.png" alt="Axis line customisation" width="250px" constrained="true">Custom axis line</image-caption>
+    <image-caption src="resources/default.png" alt="Axis line default" width="250px" constrained="true" filterdarkmode="true">Default axis line</image-caption>
+    <image-caption src="resources/custom-axis.png" alt="Axis line customisation" width="250px" constrained="true" filterdarkmode="true">Custom axis line</image-caption>
 </div>
 
 <note>
@@ -179,12 +179,12 @@ sparklineOptions: {
         xLine: {
             enabled: true, // enabled by default
             lineDash: 'dash',
-            stroke: 'rgba(0, 0, 0, 0.5)',
+            stroke: '#999',
         },
         yLine: {
             enabled: true,
             lineDash: 'dash',
-            stroke: 'rgba(0, 0, 0, 0.5)',
+            stroke: '#999',
         },
     }
 }
@@ -220,8 +220,8 @@ Note that the `top`, `right`, `bottom` and `left` properties are all optional an
 Here is the result of the configuration shown in the above snippet:
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/default-padding.png" alt="Padding default" width="250px" constrained="true">Default padding</image-caption>
-    <image-caption src="resources/custom-padding.png" alt="Padding customisation" width="250px" constrained="true">Custom padding</image-caption>
+    <image-caption src="resources/default-padding.png" alt="Padding default" width="250px" constrained="true" filterdarkmode="true">Default padding</image-caption>
+    <image-caption src="resources/custom-padding.png" alt="Padding customisation" width="250px" constrained="true" filterdarkmode="true">Custom padding</image-caption>
 </div>
 
 ## Additional Customisations

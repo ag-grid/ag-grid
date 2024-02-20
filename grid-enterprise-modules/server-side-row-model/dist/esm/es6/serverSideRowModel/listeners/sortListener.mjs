@@ -4,7 +4,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { _, Autowired, Bean, BeanStub, GROUP_AUTO_COLUMN_ID, Events, PostConstruct } from "@ag-grid-community/core";
+import { Autowired, Bean, BeanStub, Events, PostConstruct } from "@ag-grid-community/core";
 let SortListener = class SortListener extends BeanStub {
     postConstruct() {
         // only want to be active if SSRM active, otherwise would be interfering with other row models
@@ -13,51 +13,12 @@ let SortListener = class SortListener extends BeanStub {
         }
         this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
     }
-    extractSortModel() {
-        const sortModel = this.sortController.getSortModel();
-        // when using tree data we just return the sort model with the 'ag-Grid-AutoColumn' as is, i.e not broken out
-        // into it's constitute group columns as they are not defined up front and can vary per node.
-        if (this.gridOptionsService.isTreeData()) {
-            return sortModel;
-        }
-        // it autoCol is active, we don't want to send this to the server. instead we want to
-        // send the
-        this.replaceAutoGroupColumnWithActualRowGroupColumns(sortModel);
-        this.removeMultiColumnPrefixOnColumnIds(sortModel);
-        return sortModel;
-    }
-    removeMultiColumnPrefixOnColumnIds(sortModel) {
-        if (this.gridOptionsService.isGroupMultiAutoColumn()) {
-            const multiColumnPrefix = GROUP_AUTO_COLUMN_ID + "-";
-            for (let i = 0; i < sortModel.length; ++i) {
-                if (sortModel[i].colId.indexOf(multiColumnPrefix) > -1) {
-                    sortModel[i].colId = sortModel[i].colId.substr(multiColumnPrefix.length);
-                }
-            }
-        }
-    }
-    replaceAutoGroupColumnWithActualRowGroupColumns(sortModel) {
-        // find index of auto group column in sort model
-        const autoGroupSortModel = sortModel.find(sm => sm.colId == GROUP_AUTO_COLUMN_ID);
-        // replace auto column with individual group columns
-        if (autoGroupSortModel) {
-            // remove auto group column
-            const autoGroupIndex = sortModel.indexOf(autoGroupSortModel);
-            _.removeFromArray(sortModel, autoGroupSortModel);
-            const isNotInSortModel = (col) => sortModel.filter(sm => sm.colId === col.getColId()).length == 0;
-            const mapColumnToSortModel = (col) => ({ colId: col.getId(), sort: autoGroupSortModel.sort });
-            const newModels = this.columnModel.getRowGroupColumns()
-                .filter(isNotInSortModel)
-                .map(mapColumnToSortModel);
-            _.insertArrayIntoArray(sortModel, newModels, autoGroupIndex);
-        }
-    }
     onSortChanged() {
         const storeParams = this.serverSideRowModel.getParams();
         if (!storeParams) {
             return;
         } // params is undefined if no datasource set
-        const newSortModel = this.extractSortModel();
+        const newSortModel = this.sortController.getSortModel();
         const oldSortModel = storeParams.sortModel;
         const changedColumns = this.findChangedColumnsInSort(newSortModel, oldSortModel);
         const valueColChanged = this.listenerUtils.isSortingWithValueColumn(changedColumns);
@@ -101,9 +62,6 @@ let SortListener = class SortListener extends BeanStub {
 __decorate([
     Autowired('sortController')
 ], SortListener.prototype, "sortController", void 0);
-__decorate([
-    Autowired('columnModel')
-], SortListener.prototype, "columnModel", void 0);
 __decorate([
     Autowired('rowModel')
 ], SortListener.prototype, "serverSideRowModel", void 0);

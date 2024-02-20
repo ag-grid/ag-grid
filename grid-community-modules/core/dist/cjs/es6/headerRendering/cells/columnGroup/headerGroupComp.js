@@ -37,15 +37,14 @@ class HeaderGroupComp extends component_1.Component {
     checkWarnings() {
         const paramsAny = this.params;
         if (paramsAny.template) {
-            const message = `AG Grid: A template was provided for Header Group Comp - templates are only supported for Header Comps (not groups)`;
-            function_1.doOnce(() => console.warn(message), 'HeaderGroupComp.templateNotSupported');
+            (0, function_1.warnOnce)(`A template was provided for Header Group Comp - templates are only supported for Header Comps (not groups)`);
         }
     }
     setupExpandIcons() {
         this.addInIcon("columnGroupOpened", "agOpened");
         this.addInIcon("columnGroupClosed", "agClosed");
         const expandAction = (event) => {
-            if (event_1.isStopPropagationForAgGrid(event)) {
+            if ((0, event_1.isStopPropagationForAgGrid)(event)) {
                 return;
             }
             const newExpandedValue = !this.params.columnGroup.isExpanded();
@@ -54,7 +53,7 @@ class HeaderGroupComp extends component_1.Component {
         this.addTouchAndClickListeners(this.eCloseIcon, expandAction);
         this.addTouchAndClickListeners(this.eOpenIcon, expandAction);
         const stopPropagationAction = (event) => {
-            event_1.stopPropagationForAgGrid(event);
+            (0, event_1.stopPropagationForAgGrid)(event);
         };
         // adding stopPropagation to the double click for the icons prevents double click action happening
         // when the icons are clicked. if the icons are double clicked, then the groups should open and
@@ -79,24 +78,24 @@ class HeaderGroupComp extends component_1.Component {
         const columnGroup = this.params.columnGroup;
         if (columnGroup.isExpandable()) {
             const expanded = this.params.columnGroup.isExpanded();
-            dom_1.setDisplayed(this.eOpenIcon, expanded);
-            dom_1.setDisplayed(this.eCloseIcon, !expanded);
+            (0, dom_1.setDisplayed)(this.eOpenIcon, expanded);
+            (0, dom_1.setDisplayed)(this.eCloseIcon, !expanded);
         }
         else {
-            dom_1.setDisplayed(this.eOpenIcon, false);
-            dom_1.setDisplayed(this.eCloseIcon, false);
+            (0, dom_1.setDisplayed)(this.eOpenIcon, false);
+            (0, dom_1.setDisplayed)(this.eCloseIcon, false);
         }
     }
     addInIcon(iconName, refName) {
-        const eIcon = icon_1.createIconNoSpan(iconName, this.gridOptionsService, null);
+        const eIcon = (0, icon_1.createIconNoSpan)(iconName, this.gridOptionsService, null);
         if (eIcon) {
             this.getRefElement(refName).appendChild(eIcon);
         }
     }
     addGroupExpandIcon() {
         if (!this.params.columnGroup.isExpandable()) {
-            dom_1.setDisplayed(this.eOpenIcon, false);
-            dom_1.setDisplayed(this.eCloseIcon, false);
+            (0, dom_1.setDisplayed)(this.eOpenIcon, false);
+            (0, dom_1.setDisplayed)(this.eCloseIcon, false);
             return;
         }
     }
@@ -104,9 +103,9 @@ class HeaderGroupComp extends component_1.Component {
         var _a;
         // no renderer, default text render
         const { displayName, columnGroup } = this.params;
-        if (generic_1.exists(displayName)) {
-            const displayNameSanitised = string_1.escapeString(displayName);
-            this.getRefElement('agLabel').innerHTML = displayNameSanitised;
+        if ((0, generic_1.exists)(displayName)) {
+            const displayNameSanitised = (0, string_1.escapeString)(displayName, true);
+            this.getRefElement('agLabel').textContent = displayNameSanitised;
         }
         this.addOrRemoveCssClass('ag-sticky-label', !((_a = columnGroup.getColGroupDef()) === null || _a === void 0 ? void 0 : _a.suppressStickyLabel));
     }
@@ -117,12 +116,12 @@ HeaderGroupComp.TEMPLATE = `<div class="ag-header-group-cell-label" ref="agConta
             <span ref="agClosed" class="ag-header-icon ag-header-expand-icon ag-header-expand-icon-collapsed"></span>
         </div>`;
 __decorate([
-    context_1.Autowired("columnModel")
+    (0, context_1.Autowired)("columnModel")
 ], HeaderGroupComp.prototype, "columnModel", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector("agOpened")
+    (0, componentAnnotations_1.RefSelector)("agOpened")
 ], HeaderGroupComp.prototype, "eOpenIcon", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector("agClosed")
+    (0, componentAnnotations_1.RefSelector)("agClosed")
 ], HeaderGroupComp.prototype, "eCloseIcon", void 0);
 exports.HeaderGroupComp = HeaderGroupComp;

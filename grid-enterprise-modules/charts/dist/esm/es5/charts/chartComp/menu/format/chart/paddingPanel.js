@@ -19,6 +19,31 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
 import { Autowired, Component, Events, PostConstruct, RefSelector, } from "@ag-grid-community/core";
 import { getMaxValue } from "../formatPanel";
 var PaddingPanel = /** @class */ (function (_super) {
@@ -55,7 +80,7 @@ var PaddingPanel = /** @class */ (function (_super) {
             var currentValue = _this.chartOptionsService.getChartOption('padding.' + property);
             input.setLabel(_this.chartTranslationService.translate(property))
                 .setMaxValue(getMaxValue(currentValue, 200))
-                .setValue("" + currentValue)
+                .setValue("".concat(currentValue))
                 .setTextFieldWidth(45)
                 .onValueChange(function (newValue) { return _this.chartOptionsService.setChartOption('padding.' + property, newValue); });
         };
@@ -65,10 +90,9 @@ var PaddingPanel = /** @class */ (function (_super) {
         initInput('left', this.paddingLeftSlider);
     };
     PaddingPanel.prototype.updateTopPadding = function (chartOptions) {
-        var _a, _b;
         // keep 'top' padding in sync with chart as toggling chart title on / off change the 'top' padding
-        var seriesType = this.chartController.getChartSeriesTypes()[0];
-        var topPadding = (_b = (_a = chartOptions[seriesType]) === null || _a === void 0 ? void 0 : _a.padding) === null || _b === void 0 ? void 0 : _b.top;
+        var topPadding = __spreadArray(__spreadArray([], __read(this.chartController.getChartSeriesTypes()), false), ['common'], false).map(function (seriesType) { var _a, _b; return (_b = (_a = chartOptions[seriesType]) === null || _a === void 0 ? void 0 : _a.padding) === null || _b === void 0 ? void 0 : _b.top; })
+            .find(function (value) { return value != null; });
         if (topPadding != null) {
             this.paddingTopSlider.setValue(topPadding);
         }

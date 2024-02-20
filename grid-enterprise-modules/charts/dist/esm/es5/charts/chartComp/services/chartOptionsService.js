@@ -13,10 +13,22 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import { _, BeanStub, Events } from "@ag-grid-community/core";
-import { AgChart } from "ag-charts-community";
-import { deepMerge } from "../utils/object";
-import { getSeriesType, VALID_SERIES_TYPES } from "../utils/seriesTypeMapper";
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
+import { BeanStub, Events } from "@ag-grid-community/core";
+import { AgCharts } from "ag-charts-community";
+import { flatMap } from '../utils/array';
+import { deepMerge, get, set } from "../utils/object";
+import { VALID_SERIES_TYPES } from "../utils/seriesTypeMapper";
 var ChartOptionsService = /** @class */ (function (_super) {
     __extends(ChartOptionsService, _super);
     function ChartOptionsService(chartController) {
@@ -25,15 +37,13 @@ var ChartOptionsService = /** @class */ (function (_super) {
         return _this;
     }
     ChartOptionsService.prototype.getChartOption = function (expression) {
-        // TODO: We shouldn't be reading the chart implementation directly, but right now
-        // it isn't possible to either get option defaults OR retrieve themed options.
-        return _.get(this.getChart(), expression, undefined);
+        return get(this.getChart(), expression, undefined);
     };
     ChartOptionsService.prototype.setChartOption = function (expression, value, isSilent) {
         var _this = this;
         var chartSeriesTypes = this.chartController.getChartSeriesTypes();
         if (this.chartController.isComboChart()) {
-            chartSeriesTypes.push('cartesian');
+            chartSeriesTypes.push('common');
         }
         var chartOptions = {};
         // we need to update chart options on each series type for combo charts
@@ -44,8 +54,8 @@ var ChartOptionsService = /** @class */ (function (_super) {
                 value: value
             }));
         });
-        this.updateChart(chartOptions);
         if (!isSilent) {
+            this.updateChart(chartOptions);
             this.raiseChartOptionsChangedEvent();
         }
     };
@@ -56,23 +66,54 @@ var ChartOptionsService = /** @class */ (function (_super) {
     };
     ChartOptionsService.prototype.getAxisProperty = function (expression) {
         var _a;
-        return _.get((_a = this.getChart().axes) === null || _a === void 0 ? void 0 : _a[0], expression, undefined);
+        return get((_a = this.getChart().axes) === null || _a === void 0 ? void 0 : _a[0], expression, undefined);
     };
     ChartOptionsService.prototype.setAxisProperty = function (expression, value) {
+        this.setAxisProperties([{ expression: expression, value: value }]);
+    };
+    ChartOptionsService.prototype.setAxisProperties = function (properties) {
         var _this = this;
-        var _a;
-        // update axis options
         var chart = this.getChart();
-        var chartOptions = {};
-        (_a = chart.axes) === null || _a === void 0 ? void 0 : _a.forEach(function (axis) {
-            chartOptions = deepMerge(chartOptions, _this.getUpdateAxisOptions(axis, expression, value));
-        });
-        this.updateChart(chartOptions);
-        this.raiseChartOptionsChangedEvent();
+        var chartOptions = flatMap(properties, function (_a) {
+            var _b;
+            var expression = _a.expression, value = _a.value;
+            // Only apply the property to axes that declare the property on their prototype chain
+            var relevantAxes = (_b = chart.axes) === null || _b === void 0 ? void 0 : _b.filter(function (axis) {
+                var e_1, _a;
+                var parts = expression.split('.');
+                var current = axis;
+                try {
+                    for (var parts_1 = __values(parts), parts_1_1 = parts_1.next(); !parts_1_1.done; parts_1_1 = parts_1.next()) {
+                        var part = parts_1_1.value;
+                        if (!(part in current)) {
+                            return false;
+                        }
+                        current = current[part];
+                    }
+                }
+                catch (e_1_1) { e_1 = { error: e_1_1 }; }
+                finally {
+                    try {
+                        if (parts_1_1 && !parts_1_1.done && (_a = parts_1.return)) _a.call(parts_1);
+                    }
+                    finally { if (e_1) throw e_1.error; }
+                }
+                return true;
+            });
+            if (!relevantAxes)
+                return [];
+            return relevantAxes.map(function (axis) { return _this.getUpdateAxisOptions(axis, expression, value); });
+        })
+            // Combine all property updates into a single merged object
+            .reduce(function (chartOptions, axisOptions) { return deepMerge(chartOptions, axisOptions); }, {});
+        if (Object.keys(chartOptions).length > 0) {
+            this.updateChart(chartOptions);
+            this.raiseChartOptionsChangedEvent();
+        }
     };
     ChartOptionsService.prototype.getLabelRotation = function (axisType) {
         var axis = this.getAxis(axisType);
-        return _.get(axis, 'label.rotation', undefined);
+        return get(axis, 'label.rotation', undefined);
     };
     ChartOptionsService.prototype.setLabelRotation = function (axisType, value) {
         var chartAxis = this.getAxis(axisType);
@@ -82,14 +123,17 @@ var ChartOptionsService = /** @class */ (function (_super) {
             this.raiseChartOptionsChangedEvent();
         }
     };
-    ChartOptionsService.prototype.getSeriesOption = function (expression, seriesType) {
+    ChartOptionsService.prototype.getSeriesOption = function (expression, seriesType, calculated) {
+        // N.B. 'calculated' here refers to the fact that the property exists on the internal series object itself,
+        // rather than the properties object. This is due to us needing to reach inside the chart itself to retrieve
+        // the value, and will likely be cleaned up in a future release
         var series = this.getChart().series.find(function (s) { return ChartOptionsService.isMatchingSeries(seriesType, s); });
-        return _.get(series, expression, undefined);
+        return get(calculated ? series : series === null || series === void 0 ? void 0 : series.properties.toJson(), expression, undefined);
     };
     ChartOptionsService.prototype.setSeriesOption = function (expression, value, seriesType) {
         var chartOptions = this.createChartOptions({
             seriesType: seriesType,
-            expression: "series." + expression,
+            expression: "series.".concat(expression),
             value: value
         });
         this.updateChart(chartOptions);
@@ -112,16 +156,22 @@ var ChartOptionsService = /** @class */ (function (_super) {
         return (chart.axes && chart.axes[1].direction === 'y') ? chart.axes[1] : chart.axes[0];
     };
     ChartOptionsService.prototype.getUpdateAxisOptions = function (chartAxis, expression, value) {
-        var seriesType = getSeriesType(this.getChartType());
-        var validAxisTypes = ['number', 'category', 'time', 'groupedCategory'];
+        var _this = this;
+        var chartSeriesTypes = this.chartController.getChartSeriesTypes();
+        if (this.chartController.isComboChart()) {
+            chartSeriesTypes.push('common');
+        }
+        var validAxisTypes = ['number', 'category', 'time', 'grouped-category', 'angle-category', 'angle-number', 'radius-category', 'radius-number'];
         if (!validAxisTypes.includes(chartAxis.type)) {
             return {};
         }
-        return this.createChartOptions({
+        return chartSeriesTypes
+            .map(function (seriesType) { return _this.createChartOptions({
             seriesType: seriesType,
-            expression: "axes." + chartAxis.type + "." + expression,
-            value: value
-        });
+            expression: "axes.".concat(chartAxis.type, ".").concat(expression),
+            value: value,
+        }); })
+            .reduce(function (combinedOptions, options) { return deepMerge(combinedOptions, options); });
     };
     ChartOptionsService.prototype.getChartType = function () {
         return this.chartController.getChartType();
@@ -131,7 +181,8 @@ var ChartOptionsService = /** @class */ (function (_super) {
     };
     ChartOptionsService.prototype.updateChart = function (chartOptions) {
         var chartRef = this.chartController.getChartProxy().getChartRef();
-        AgChart.updateDelta(chartRef, chartOptions);
+        chartRef.skipAnimations();
+        AgCharts.updateDelta(chartRef, chartOptions);
     };
     ChartOptionsService.prototype.createChartOptions = function (_a) {
         var seriesType = _a.seriesType, expression = _a.expression, value = _a.value;
@@ -141,7 +192,7 @@ var ChartOptionsService = /** @class */ (function (_super) {
                 overrides: overrides
             }
         };
-        _.set(overrides, seriesType + "." + expression, value);
+        set(overrides, "".concat(seriesType, ".").concat(expression), value);
         return chartOptions;
     };
     ChartOptionsService.prototype.raiseChartOptionsChangedEvent = function () {

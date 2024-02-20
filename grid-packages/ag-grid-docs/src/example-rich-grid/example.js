@@ -4110,7 +4110,7 @@ function createRowData() {
             width: 70,
             checkboxSelection: true,
             sortable: false,
-            suppressMenu: true
+            suppressHeaderMenuButton: true
         },
         {
             headerName: "Employee",
@@ -4183,10 +4183,9 @@ function createRowData() {
         }
     ];
 
+    let api;
     var gridOptions = {
         defaultColDef: {
-            sortable: true,
-            resizable: true,
             filter: true,
             minWidth: 80
         },
@@ -4194,8 +4193,6 @@ function createRowData() {
         rowSelection: "multiple",
         enableRangeSelection: true,
         suppressRowClickSelection: true,
-        animateRows: true,
-        // debug: true
     };
 
     var btBringGridBack;
@@ -4238,19 +4235,19 @@ function createRowData() {
             eGridDiv.classList.add('tall');
         }
 
-        new agGrid.Grid(eGridDiv, gridOptions);
+        api = agGrid.createGrid(eGridDiv, gridOptions);
         if (btBringGridBack) {
             btBringGridBack.disabled = true;
             btDestroyGrid.disabled = false;
         }
 
-        gridOptions.api.setRowData(createRowData());
+        api.setGridOption('rowData', createRowData());
     }
 
     function onBtDestroyGrid() {
         btBringGridBack.disabled = false;
         btDestroyGrid.disabled = true;
-        gridOptions.api.destroy();
+        api?.destroy();
     }
 
     function skillsCellRenderer(params) {
@@ -4430,19 +4427,9 @@ function createRowData() {
     };
 
     ProficiencyFilter.prototype.doesFilterPass = function (params) {
-        var {api, colDef, column, columnApi, context} = this.params;
         var {node} = params;
 
-        var value = this.params.valueGetter({
-            api,
-            colDef,
-            column,
-            columnApi,
-            context,
-            data: node.data,
-            getValue: (field) => node.data[field],
-            node,
-        });
+        var value = this.params.getValue(node);
 
         var valueAsNumber = parseFloat(value);
 

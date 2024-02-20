@@ -1,4 +1,4 @@
-import { ColDef, Grid, GridOptions } from '@ag-grid-community/core';
+import { ColDef, GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 import { getData } from "./data";
 
 
@@ -10,12 +10,12 @@ const columnDefs: ColDef[] = [
   { field: 'value2' },
 ]
 
+let gridApi: GridApi;
+
 const gridOptions: GridOptions = {
   defaultColDef: {
     width: 80,
-    sortable: true,
     filter: true,
-    resizable: true,
   },
   rowClassRules: {
     'red-row': 'data.color == "Red"',
@@ -25,7 +25,6 @@ const gridOptions: GridOptions = {
   rowData: getData(),
   rowDragManaged: true,
   columnDefs: columnDefs,
-  animateRows: true,
 }
 
 function onDragOver(event: any) {
@@ -54,5 +53,5 @@ function onDrop(event: any) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

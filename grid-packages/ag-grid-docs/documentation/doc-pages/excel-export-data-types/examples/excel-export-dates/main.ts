@@ -1,4 +1,6 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -69,7 +71,6 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     minWidth: 100,
-    resizable: true,
   },
   excelStyles: [
     {
@@ -110,11 +111,11 @@ const gridOptions: GridOptions = {
 }
 
 function onBtnExportDataAsExcel() {
-  gridOptions.api!.exportDataAsExcel()
+  gridApi!.exportDataAsExcel()
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

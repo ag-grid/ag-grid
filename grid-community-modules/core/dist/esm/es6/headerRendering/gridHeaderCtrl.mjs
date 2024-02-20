@@ -8,8 +8,10 @@ import { KeyCode } from "../constants/keyCode.mjs";
 import { BeanStub } from "../context/beanStub.mjs";
 import { Autowired } from "../context/context.mjs";
 import { Events } from "../eventKeys.mjs";
+import { isIOSUserAgent } from "../utils/browser.mjs";
 import { exists } from "../utils/generic.mjs";
 import { ManagedFocusFeature } from "../widgets/managedFocusFeature.mjs";
+import { TouchListener } from "../widgets/touchListener.mjs";
 import { HeaderNavigationDirection } from "./common/headerNavigationService.mjs";
 export class GridHeaderCtrl extends BeanStub {
     setComp(comp, eGui, eFocusableElement) {
@@ -25,6 +27,9 @@ export class GridHeaderCtrl extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.onPivotModeChanged();
         this.setupHeaderHeight();
+        const listener = this.onHeaderContextMenu.bind(this);
+        this.addManagedListener(this.eGui, 'contextmenu', listener);
+        this.mockContextMenuForIPad(listener);
         this.ctrlsService.registerGridHeaderCtrl(this);
     }
     setupHeaderHeight() {
@@ -83,7 +88,7 @@ export class GridHeaderCtrl extends BeanStub {
         this.comp.addOrRemoveCssClass('ag-header-allow-overflow', shouldAllowOverflow);
     }
     onTabKeyDown(e) {
-        const isRtl = this.gridOptionsService.is('enableRtl');
+        const isRtl = this.gridOptionsService.get('enableRtl');
         const direction = e.shiftKey !== isRtl
             ? HeaderNavigationDirection.LEFT
             : HeaderNavigationDirection.RIGHT;
@@ -127,6 +132,27 @@ export class GridHeaderCtrl extends BeanStub {
             this.focusService.clearFocusedHeader();
         }
     }
+    onHeaderContextMenu(mouseEvent, touch, touchEvent) {
+        if ((!mouseEvent && !touchEvent) || !this.menuService.isHeaderContextMenuEnabled()) {
+            return;
+        }
+        const { target } = (mouseEvent !== null && mouseEvent !== void 0 ? mouseEvent : touch);
+        if (target === this.eGui || target === this.ctrlsService.getHeaderRowContainerCtrl().getViewport()) {
+            this.menuService.showHeaderContextMenu(undefined, mouseEvent, touchEvent);
+        }
+    }
+    mockContextMenuForIPad(listener) {
+        // we do NOT want this when not in iPad
+        if (!isIOSUserAgent()) {
+            return;
+        }
+        const touchListener = new TouchListener(this.eGui);
+        const longTapListener = (event) => {
+            listener(undefined, event.touchStart, event.touchEvent);
+        };
+        this.addManagedListener(touchListener, TouchListener.EVENT_LONG_TAP, longTapListener);
+        this.addDestroyFunc(() => touchListener.destroy());
+    }
 }
 __decorate([
     Autowired('headerNavigationService')
@@ -143,3 +169,6 @@ __decorate([
 __decorate([
     Autowired('filterManager')
 ], GridHeaderCtrl.prototype, "filterManager", void 0);
+__decorate([
+    Autowired('menuService')
+], GridHeaderCtrl.prototype, "menuService", void 0);

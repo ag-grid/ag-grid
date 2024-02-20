@@ -14,8 +14,10 @@ class BaseCreator {
     }
     getData(params) {
         const serializingSession = this.createSerializingSession(params);
-        const data = this.beans.gridSerializer.serialize(serializingSession, params);
-        return data;
+        return this.beans.gridSerializer.serialize(serializingSession, params);
+    }
+    getDefaultFileName() {
+        return `export.${this.getDefaultFileExtension()}`;
     }
 }
 exports.BaseCreator = BaseCreator;

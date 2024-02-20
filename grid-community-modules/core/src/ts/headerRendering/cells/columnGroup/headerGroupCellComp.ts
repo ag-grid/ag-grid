@@ -1,5 +1,5 @@
-import { UserCompDetails, UserComponentFactory } from "../../../components/framework/userComponentFactory";
-import { Autowired, PostConstruct } from "../../../context/context";
+import { UserCompDetails } from "../../../components/framework/userComponentFactory";
+import { PostConstruct } from "../../../context/context";
 import { setDisplayed } from "../../../utils/dom";
 import { RefSelector } from "../../../widgets/componentAnnotations";
 import { AbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellComp";
@@ -9,13 +9,13 @@ import { IHeaderGroupComp } from "./headerGroupComp";
 export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellCtrl> {
 
     private static TEMPLATE = /* html */
-        `<div class="ag-header-group-cell" role="columnheader" tabindex="-1">
+        `<div class="ag-header-group-cell" role="columnheader">
             <div ref="eResize" class="ag-header-cell-resize" role="presentation"></div>
         </div>`;
 
-    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
-
     @RefSelector('eResize') private eResize: HTMLElement;
+
+    private headerGroupComp: IHeaderGroupComp | undefined;
 
     constructor(ctrl: HeaderGroupCellCtrl) {
         super(HeaderGroupCellComp.TEMPLATE, ctrl);
@@ -23,7 +23,6 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
 
     @PostConstruct
     private postConstruct(): void {
-
         const eGui = this.getGui();
 
         const setAttribute = (key: string, value: string | undefined) =>
@@ -36,7 +35,8 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
             setResizableDisplayed: (displayed) => setDisplayed(this.eResize, displayed),
             setWidth: width => eGui.style.width = width,
             setAriaExpanded: expanded => setAttribute('aria-expanded', expanded),
-            setUserCompDetails: details => this.setUserCompDetails(details)
+            setUserCompDetails: details => this.setUserCompDetails(details),
+            getUserCompInstance: () => this.headerGroupComp,
         };
 
         this.ctrl.setComp(compProxy, eGui, this.eResize);
@@ -61,6 +61,7 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
         eGui.appendChild(eHeaderGroupGui);
         this.addDestroyFunc(destroyFunc);
 
+        this.headerGroupComp = headerGroupComp;
         this.ctrl.setDragSource(eGui);
     }
 

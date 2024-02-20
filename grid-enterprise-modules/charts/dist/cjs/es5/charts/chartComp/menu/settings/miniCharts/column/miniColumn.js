@@ -24,7 +24,7 @@ var MiniColumn = /** @class */ (function (_super) {
         var _this = _super.call(this, container, "groupedColumnTooltip") || this;
         _this.columnData = [2, 3, 4];
         var _a = _this, root = _a.root, columnData = _a.columnData, size = _a.size, padding = _a.padding;
-        _this.columns = miniChartHelpers_1.createColumnRects({
+        _this.columns = (0, miniChartHelpers_1.createColumnRects)({
             stacked: false,
             root: root,
             data: columnData,

@@ -39,10 +39,10 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
         return Object.assign({}, baseParams, params);
     }
 
-    public export(userParams?: CsvExportParams): string {
+    protected export(userParams?: CsvExportParams): void {
         if (this.isExportSuppressed()) {
             console.warn(`AG Grid: Export cancelled. Export is not allowed as per your configuration.`);
-            return '';
+            return;
         }
 
         const mergedParams = this.getMergedParams(userParams);
@@ -50,13 +50,15 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
 
         const packagedFile = new Blob(["\ufeff", data], { type: 'text/plain' });
 
-        Downloader.download(this.getFileName(mergedParams.fileName), packagedFile);
+        const fileName = typeof mergedParams.fileName === 'function'
+            ? mergedParams.fileName(this.gridOptionsService.getGridCommonParams())
+            : mergedParams.fileName;
 
-        return data;
+        Downloader.download(this.getFileName(fileName), packagedFile);
     }
 
-    public exportDataAsCsv(params?: CsvExportParams): string {
-        return this.export(params);
+    public exportDataAsCsv(params?: CsvExportParams): void {
+        this.export(params);
     }
 
     public getDataAsCsv(params?: CsvExportParams, skipDefaultParams = false): string {
@@ -65,10 +67,6 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
             : this.getMergedParams(params);
 
         return this.getData(mergedParams);
-    }
-
-    public getDefaultFileName(): string {
-        return 'export.csv';
     }
 
     public getDefaultFileExtension(): string {
@@ -102,6 +100,6 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
     }
 
     public isExportSuppressed(): boolean {
-        return this.gridOptionsService.is('suppressCsvExport');
+        return this.gridOptionsService.get('suppressCsvExport');
     }
 }

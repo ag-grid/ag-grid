@@ -12,13 +12,23 @@
         flex: 1 1 auto;
     }
 
+    .top .ag-root-wrapper {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
     .bottom {
         flex: none;
         height: 60px;
     }
+
+    .bottom .ag-root-wrapper {
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+    }
 </style>
 
-<div class="example-wrapper ag-theme-alpine">
+<div class="example-wrapper ag-theme-quartz">
     <div id="myGridTop" class="top"></div>
     <div id="myGridBottom" class="bottom"></div>
 </div>

@@ -50,12 +50,6 @@ var GridCtrl = /** @class */ (function (_super) {
         this.mouseEventService.stampTopLevelGridCompWithGridInstance(eGridDiv);
         this.createManagedBean(new layoutFeature_1.LayoutFeature(this.view));
         this.addRtlSupport();
-        this.addManagedListener(this, eventKeys_1.Events.EVENT_KEYBOARD_FOCUS, function () {
-            _this.view.addOrRemoveKeyboardFocusClass(true);
-        });
-        this.addManagedListener(this, eventKeys_1.Events.EVENT_MOUSE_FOCUS, function () {
-            _this.view.addOrRemoveKeyboardFocusClass(false);
-        });
         var unsubscribeFromResize = this.resizeObserverService.observeResize(this.eGridHostDiv, this.onGridSizeChanged.bind(this));
         this.addDestroyFunc(function () { return unsubscribeFromResize(); });
         this.ctrlsService.registerGridCtrl(this);
@@ -86,7 +80,7 @@ var GridCtrl = /** @class */ (function (_super) {
         this.eventService.dispatchEvent(event);
     };
     GridCtrl.prototype.addRtlSupport = function () {
-        var cssClass = this.gridOptionsService.is('enableRtl') ? 'ag-rtl' : 'ag-ltr';
+        var cssClass = this.gridOptionsService.get('enableRtl') ? 'ag-rtl' : 'ag-ltr';
         this.view.setRtlClass(cssClass);
     };
     GridCtrl.prototype.destroyGridUi = function () {
@@ -116,15 +110,23 @@ var GridCtrl = /** @class */ (function (_super) {
         var allColumns = this.columnModel.getAllDisplayedColumns();
         if (fromBottom) {
             if (focusableContainers.length > 1) {
-                return this.focusService.focusInto(array_1.last(focusableContainers), true);
+                return this.focusService.focusInto((0, array_1.last)(focusableContainers), true);
             }
-            var lastColumn = array_1.last(allColumns);
+            var lastColumn = (0, array_1.last)(allColumns);
             if (this.focusService.focusGridView(lastColumn, true)) {
                 return true;
             }
         }
-        if (this.gridOptionsService.getNum('headerHeight') === 0) {
-            return this.focusService.focusGridView(allColumns[0]);
+        if (this.gridOptionsService.get('headerHeight') === 0 || this.gridOptionsService.get('suppressHeaderFocus')) {
+            if (this.focusService.focusGridView(allColumns[0])) {
+                return true;
+            }
+            for (var i = 1; i < focusableContainers.length; i++) {
+                if (this.focusService.focusInto(focusableContainers[i])) {
+                    return true;
+                }
+            }
+            return false;
         }
         return this.focusService.focusFirstHeader();
     };
@@ -133,22 +135,22 @@ var GridCtrl = /** @class */ (function (_super) {
         this.view.forceFocusOutOfContainer(up);
     };
     __decorate([
-        context_1.Autowired('focusService')
+        (0, context_1.Autowired)('focusService')
     ], GridCtrl.prototype, "focusService", void 0);
     __decorate([
-        context_1.Autowired('resizeObserverService')
+        (0, context_1.Autowired)('resizeObserverService')
     ], GridCtrl.prototype, "resizeObserverService", void 0);
     __decorate([
-        context_1.Autowired('columnModel')
+        (0, context_1.Autowired)('columnModel')
     ], GridCtrl.prototype, "columnModel", void 0);
     __decorate([
-        context_1.Autowired('ctrlsService')
+        (0, context_1.Autowired)('ctrlsService')
     ], GridCtrl.prototype, "ctrlsService", void 0);
     __decorate([
-        context_1.Autowired('mouseEventService')
+        (0, context_1.Autowired)('mouseEventService')
     ], GridCtrl.prototype, "mouseEventService", void 0);
     __decorate([
-        context_1.Autowired('dragAndDropService')
+        (0, context_1.Autowired)('dragAndDropService')
     ], GridCtrl.prototype, "dragAndDropService", void 0);
     return GridCtrl;
 }(beanStub_1.BeanStub));

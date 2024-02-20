@@ -43,10 +43,10 @@ let UndoRedoService = class UndoRedoService extends beanStub_1.BeanStub {
         };
     }
     init() {
-        if (!this.gridOptionsService.is('undoRedoCellEditing')) {
+        if (!this.gridOptionsService.get('undoRedoCellEditing')) {
             return;
         }
-        const undoRedoLimit = this.gridOptionsService.getNum('undoRedoCellEditingLimit');
+        const undoRedoLimit = this.gridOptionsService.get('undoRedoCellEditingLimit');
         if (undoRedoLimit <= 0) {
             return;
         }
@@ -248,7 +248,7 @@ let UndoRedoService = class UndoRedoService extends beanStub_1.BeanStub {
         });
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_END, () => {
             let action;
-            if (this.rangeService && this.gridOptionsService.isEnableRangeSelection()) {
+            if (this.rangeService && this.gridOptionsService.get('enableRangeSelection')) {
                 action = new undoRedoStack_1.RangeUndoRedoAction(this.cellValueChanges, undefined, undefined, [...this.rangeService.getCellRanges()]);
             }
             else {
@@ -275,33 +275,33 @@ let UndoRedoService = class UndoRedoService extends beanStub_1.BeanStub {
     }
 };
 __decorate([
-    context_1.Autowired('focusService')
+    (0, context_1.Autowired)('focusService')
 ], UndoRedoService.prototype, "focusService", void 0);
 __decorate([
-    context_1.Autowired('ctrlsService')
+    (0, context_1.Autowired)('ctrlsService')
 ], UndoRedoService.prototype, "ctrlsService", void 0);
 __decorate([
-    context_1.Autowired('rowModel')
+    (0, context_1.Autowired)('rowModel')
 ], UndoRedoService.prototype, "rowModel", void 0);
 __decorate([
-    context_1.Autowired('pinnedRowModel')
+    (0, context_1.Autowired)('pinnedRowModel')
 ], UndoRedoService.prototype, "pinnedRowModel", void 0);
 __decorate([
-    context_1.Autowired('cellPositionUtils')
+    (0, context_1.Autowired)('cellPositionUtils')
 ], UndoRedoService.prototype, "cellPositionUtils", void 0);
 __decorate([
-    context_1.Autowired('rowPositionUtils')
+    (0, context_1.Autowired)('rowPositionUtils')
 ], UndoRedoService.prototype, "rowPositionUtils", void 0);
 __decorate([
-    context_1.Autowired('columnModel')
+    (0, context_1.Autowired)('columnModel')
 ], UndoRedoService.prototype, "columnModel", void 0);
 __decorate([
-    context_1.Optional('rangeService')
+    (0, context_1.Optional)('rangeService')
 ], UndoRedoService.prototype, "rangeService", void 0);
 __decorate([
     context_1.PostConstruct
 ], UndoRedoService.prototype, "init", null);
 UndoRedoService = __decorate([
-    context_1.Bean('undoRedoService')
+    (0, context_1.Bean)('undoRedoService')
 ], UndoRedoService);
 exports.UndoRedoService = UndoRedoService;

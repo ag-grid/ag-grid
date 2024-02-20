@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { CellCtrl } from "./cellCtrl";
@@ -22,6 +22,7 @@ export declare class CellPositionFeature extends BeanStub {
     constructor(ctrl: CellCtrl, beans: Beans);
     private setupRowSpan;
     setComp(eGui: HTMLElement): void;
+    private onNewColumnsLoaded;
     private onDisplayColumnsChanged;
     private setupColSpan;
     onWidthChanged(): void;

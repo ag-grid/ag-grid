@@ -39,8 +39,8 @@ export declare class DataTypeService extends BeanStub {
     private checkObjectValueHandlers;
     convertColumnTypes(type: string | string[]): string[];
     private getDateStringTypeDefinition;
-    getDateParserFunction(): (value: string | undefined) => Date | undefined;
-    getDateFormatterFunction(): (value: Date | undefined) => string | undefined;
+    getDateParserFunction(column?: Column | null): (value: string | undefined) => Date | undefined;
+    getDateFormatterFunction(column?: Column | null): (value: Date | undefined) => string | undefined;
     getDataTypeDefinition(column: Column): DataTypeDefinition | CoreDataTypeDefinition | undefined;
     getBaseDataType(column: Column): BaseCellDataType | undefined;
     checkType(column: Column, value: any): boolean;

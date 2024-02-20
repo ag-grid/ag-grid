@@ -69,7 +69,7 @@ export class ToolPanelColumnComp extends Component {
     }
     onContextMenu(e) {
         const { column, gridOptionsService } = this;
-        if (gridOptionsService.is('functionsReadOnly')) {
+        if (gridOptionsService.get('functionsReadOnly')) {
             return;
         }
         const contextMenu = this.createBean(new ToolPanelContextMenu(column, e, this.focusWrapper));
@@ -88,7 +88,7 @@ export class ToolPanelColumnComp extends Component {
         }
     }
     onLabelClicked() {
-        if (this.gridOptionsService.is('functionsReadOnly')) {
+        if (this.gridOptionsService.get('functionsReadOnly')) {
             return;
         }
         const nextState = !this.cbSelect.getValue();
@@ -124,14 +124,15 @@ export class ToolPanelColumnComp extends Component {
             _.setDisplayed(this.eDragHandle, false);
             return;
         }
-        const hideColumnOnExit = !this.gridOptionsService.is('suppressDragLeaveHidesColumns');
+        let hideColumnOnExit = !this.gridOptionsService.get('suppressDragLeaveHidesColumns');
         const dragSource = {
             type: DragSourceType.ToolPanel,
             eElement: this.eDragHandle,
             dragItemName: this.displayName,
-            defaultIconName: hideColumnOnExit ? DragAndDropService.ICON_HIDE : DragAndDropService.ICON_NOT_ALLOWED,
+            getDefaultIconName: () => hideColumnOnExit ? DragAndDropService.ICON_HIDE : DragAndDropService.ICON_NOT_ALLOWED,
             getDragItem: () => this.createDragItem(),
             onDragStarted: () => {
+                hideColumnOnExit = !this.gridOptionsService.get('suppressDragLeaveHidesColumns');
                 const event = {
                     type: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START,
                     column: this.column
@@ -193,7 +194,7 @@ export class ToolPanelColumnComp extends Component {
         if (isPivotMode) {
             // when in pivot mode, the item should be read only if:
             //  a) gui is not allowed make any changes
-            const functionsReadOnly = this.gridOptionsService.is('functionsReadOnly');
+            const functionsReadOnly = this.gridOptionsService.get('functionsReadOnly');
             //  b) column is not allow any functions on it
             const noFunctionsAllowed = !this.column.isAnyFunctionAllowed();
             canBeToggled = !functionsReadOnly && !noFunctionsAllowed;
@@ -209,7 +210,7 @@ export class ToolPanelColumnComp extends Component {
         this.cbSelect.setReadOnly(!canBeToggled);
         this.eDragHandle.classList.toggle('ag-column-select-column-readonly', !canBeDragged);
         this.addOrRemoveCssClass('ag-column-select-column-readonly', !canBeDragged && !canBeToggled);
-        const checkboxPassive = isPivotMode && this.gridOptionsService.is('functionsPassive');
+        const checkboxPassive = isPivotMode && this.gridOptionsService.get('functionsPassive');
         this.cbSelect.setPassive(checkboxPassive);
         this.processingColumnStateChange = false;
     }

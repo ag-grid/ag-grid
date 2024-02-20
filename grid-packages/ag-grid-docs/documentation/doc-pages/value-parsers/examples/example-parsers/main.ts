@@ -1,5 +1,8 @@
-import { CellValueChangedEvent, Grid, GridOptions, ValueParserParams } from '@ag-grid-community/core';
+import { CellValueChangedEvent, GridApi, createGrid, GridOptions, ValueParserParams } from '@ag-grid-community/core';
 import { getData } from "./data";
+
+
+let gridApi: GridApi;
 
 
 const gridOptions: GridOptions = {
@@ -15,7 +18,6 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     editable: true,
-    resizable: true,
     cellDataType: false,
   },
   rowData: getData(),
@@ -33,6 +35,5 @@ function numberParser(params: ValueParserParams) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
-  gridOptions.api!.sizeColumnsToFit()
+  gridApi = createGrid(gridDiv, gridOptions);
 })

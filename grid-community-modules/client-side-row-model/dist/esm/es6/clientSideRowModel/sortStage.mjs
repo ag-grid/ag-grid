@@ -15,8 +15,14 @@ let SortStage = class SortStage extends BeanStub {
             // on if transactions are present. it's off for now so that we can
             // selectively turn it on and test it with some select users before
             // rolling out to everyone.
-            && this.gridOptionsService.is('deltaSort');
-        const sortContainsGroupColumns = sortOptions.some(opt => !!this.columnModel.getGroupDisplayColumnForGroup(opt.column.getId()));
+            && this.gridOptionsService.get('deltaSort');
+        const sortContainsGroupColumns = sortOptions.some(opt => {
+            const isSortingCoupled = this.gridOptionsService.isColumnsSortingCoupledToGroup();
+            if (isSortingCoupled) {
+                return opt.column.isPrimary() && opt.column.isRowGroupActive();
+            }
+            return !!opt.column.getColDef().showRowGroup;
+        });
         this.sortService.sort(sortOptions, sortActive, deltaSort, params.rowNodeTransactions, params.changedPath, sortContainsGroupColumns);
     }
 };
@@ -26,9 +32,6 @@ __decorate([
 __decorate([
     Autowired('sortController')
 ], SortStage.prototype, "sortController", void 0);
-__decorate([
-    Autowired('columnModel')
-], SortStage.prototype, "columnModel", void 0);
 SortStage = __decorate([
     Bean('sortStage')
 ], SortStage);

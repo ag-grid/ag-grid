@@ -16,8 +16,8 @@ var XmlFactory = /** @class */ (function () {
         if (headerElement.standalone) {
             keys.push('standalone');
         }
-        var att = keys.map(function (key) { return key + "=\"" + headerElement[key] + "\""; }).join(' ');
-        return headerStart + "xml " + att + " " + headerEnd;
+        var att = keys.map(function (key) { return "".concat(key, "=\"").concat(headerElement[key], "\""); }).join(' ');
+        return "".concat(headerStart, "xml ").concat(att, " ").concat(headerEnd);
     };
     XmlFactory.createXml = function (xmlElement, booleanTransformer) {
         var _this = this;
@@ -61,7 +61,7 @@ var XmlFactory = /** @class */ (function () {
                 xmlValue = booleanTransformer(value);
             }
         }
-        return " " + key + "=\"" + xmlValue + "\"";
+        return " ".concat(key, "=\"").concat(xmlValue, "\"");
     };
     return XmlFactory;
 }());

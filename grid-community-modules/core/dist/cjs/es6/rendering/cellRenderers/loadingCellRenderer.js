@@ -22,7 +22,7 @@ class LoadingCellRenderer extends component_1.Component {
         this.eLoadingText.innerText = localeTextFunc('loadingError', 'ERR');
     }
     setupLoading() {
-        const eLoadingIcon = icon_1.createIconNoSpan('groupLoading', this.gridOptionsService, null);
+        const eLoadingIcon = (0, icon_1.createIconNoSpan)('groupLoading', this.gridOptionsService, null);
         if (eLoadingIcon) {
             this.eLoadingIcon.appendChild(eLoadingIcon);
         }
@@ -43,9 +43,9 @@ LoadingCellRenderer.TEMPLATE = `<div class="ag-loading">
             <span class="ag-loading-text" ref="eLoadingText"></span>
         </div>`;
 __decorate([
-    componentAnnotations_1.RefSelector('eLoadingIcon')
+    (0, componentAnnotations_1.RefSelector)('eLoadingIcon')
 ], LoadingCellRenderer.prototype, "eLoadingIcon", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eLoadingText')
+    (0, componentAnnotations_1.RefSelector)('eLoadingText')
 ], LoadingCellRenderer.prototype, "eLoadingText", void 0);
 exports.LoadingCellRenderer = LoadingCellRenderer;

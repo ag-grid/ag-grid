@@ -108,9 +108,14 @@ export class PrimaryColsPanel extends Component implements IPrimaryColsPanel {
 
     private onGroupExpanded(event: any): void {
         this.primaryColsHeaderPanel.setExpandState(event.state);
+        this.params.onStateUpdated();
     }
 
     private onSelectionChange(event: any): void {
         this.primaryColsHeaderPanel.setSelectionState(event.state);
+    }
+
+    public getExpandedGroups(): string[] {
+        return this.primaryColsListPanel.getExpandedGroups();
     }
 }

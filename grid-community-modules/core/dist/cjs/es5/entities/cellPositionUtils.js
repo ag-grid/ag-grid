@@ -35,7 +35,7 @@ var CellPositionUtils = /** @class */ (function (_super) {
     };
     CellPositionUtils.prototype.createIdFromValues = function (cellPosition) {
         var rowIndex = cellPosition.rowIndex, rowPinned = cellPosition.rowPinned, column = cellPosition.column;
-        return rowIndex + "." + (rowPinned == null ? 'null' : rowPinned) + "." + column.getId();
+        return "".concat(rowIndex, ".").concat(rowPinned == null ? 'null' : rowPinned, ".").concat(column.getId());
     };
     CellPositionUtils.prototype.equals = function (cellA, cellB) {
         var colsMatch = cellA.column === cellB.column;
@@ -44,7 +44,7 @@ var CellPositionUtils = /** @class */ (function (_super) {
         return colsMatch && floatingMatch && indexMatch;
     };
     CellPositionUtils = __decorate([
-        context_1.Bean('cellPositionUtils')
+        (0, context_1.Bean)('cellPositionUtils')
     ], CellPositionUtils);
     return CellPositionUtils;
 }(beanStub_1.BeanStub));

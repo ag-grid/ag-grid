@@ -35,51 +35,12 @@ var SortListener = /** @class */ (function (_super) {
         }
         this.addManagedListener(this.eventService, core_1.Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
     };
-    SortListener.prototype.extractSortModel = function () {
-        var sortModel = this.sortController.getSortModel();
-        // when using tree data we just return the sort model with the 'ag-Grid-AutoColumn' as is, i.e not broken out
-        // into it's constitute group columns as they are not defined up front and can vary per node.
-        if (this.gridOptionsService.isTreeData()) {
-            return sortModel;
-        }
-        // it autoCol is active, we don't want to send this to the server. instead we want to
-        // send the
-        this.replaceAutoGroupColumnWithActualRowGroupColumns(sortModel);
-        this.removeMultiColumnPrefixOnColumnIds(sortModel);
-        return sortModel;
-    };
-    SortListener.prototype.removeMultiColumnPrefixOnColumnIds = function (sortModel) {
-        if (this.gridOptionsService.isGroupMultiAutoColumn()) {
-            var multiColumnPrefix = core_1.GROUP_AUTO_COLUMN_ID + "-";
-            for (var i = 0; i < sortModel.length; ++i) {
-                if (sortModel[i].colId.indexOf(multiColumnPrefix) > -1) {
-                    sortModel[i].colId = sortModel[i].colId.substr(multiColumnPrefix.length);
-                }
-            }
-        }
-    };
-    SortListener.prototype.replaceAutoGroupColumnWithActualRowGroupColumns = function (sortModel) {
-        // find index of auto group column in sort model
-        var autoGroupSortModel = sortModel.find(function (sm) { return sm.colId == core_1.GROUP_AUTO_COLUMN_ID; });
-        // replace auto column with individual group columns
-        if (autoGroupSortModel) {
-            // remove auto group column
-            var autoGroupIndex = sortModel.indexOf(autoGroupSortModel);
-            core_1._.removeFromArray(sortModel, autoGroupSortModel);
-            var isNotInSortModel = function (col) { return sortModel.filter(function (sm) { return sm.colId === col.getColId(); }).length == 0; };
-            var mapColumnToSortModel = function (col) { return ({ colId: col.getId(), sort: autoGroupSortModel.sort }); };
-            var newModels = this.columnModel.getRowGroupColumns()
-                .filter(isNotInSortModel)
-                .map(mapColumnToSortModel);
-            core_1._.insertArrayIntoArray(sortModel, newModels, autoGroupIndex);
-        }
-    };
     SortListener.prototype.onSortChanged = function () {
         var storeParams = this.serverSideRowModel.getParams();
         if (!storeParams) {
             return;
         } // params is undefined if no datasource set
-        var newSortModel = this.extractSortModel();
+        var newSortModel = this.sortController.getSortModel();
         var oldSortModel = storeParams.sortModel;
         var changedColumns = this.findChangedColumnsInSort(newSortModel, oldSortModel);
         var valueColChanged = this.listenerUtils.isSortingWithValueColumn(changedColumns);
@@ -120,22 +81,19 @@ var SortListener = /** @class */ (function (_super) {
         });
     };
     __decorate([
-        core_1.Autowired('sortController')
+        (0, core_1.Autowired)('sortController')
     ], SortListener.prototype, "sortController", void 0);
     __decorate([
-        core_1.Autowired('columnModel')
-    ], SortListener.prototype, "columnModel", void 0);
-    __decorate([
-        core_1.Autowired('rowModel')
+        (0, core_1.Autowired)('rowModel')
     ], SortListener.prototype, "serverSideRowModel", void 0);
     __decorate([
-        core_1.Autowired('ssrmListenerUtils')
+        (0, core_1.Autowired)('ssrmListenerUtils')
     ], SortListener.prototype, "listenerUtils", void 0);
     __decorate([
         core_1.PostConstruct
     ], SortListener.prototype, "postConstruct", null);
     SortListener = __decorate([
-        core_1.Bean('ssrmSortService')
+        (0, core_1.Bean)('ssrmSortService')
     ], SortListener);
     return SortListener;
 }(core_1.BeanStub));

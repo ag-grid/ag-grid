@@ -15,4 +15,4 @@ The different parts of the grid concerned with cell values are as follows:
 
 It is helpful to understand how value getters, formatters and cell renderers work together to  provide the end result.
 
-<image-caption src="cell-content/resources/valueGetterFlow.svg" alt="Value Getter Flow" width="46rem" centered="true"></image-caption>
+<image-caption src="cell-content/resources/valueGetterFlow.svg" alt="Value Getter Flow" width="46rem" centered="true" filterdarkmode="true"></image-caption>

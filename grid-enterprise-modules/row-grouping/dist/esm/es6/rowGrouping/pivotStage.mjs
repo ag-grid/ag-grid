@@ -42,7 +42,17 @@ let PivotStage = class PivotStage extends BeanStub {
         const groupColumnsHash = this.columnModel.getRowGroupColumns().map((column) => column.getId()).join('#');
         const groupColumnsChanged = groupColumnsHash !== this.groupColumnsHashLastTime;
         this.groupColumnsHashLastTime = groupColumnsHash;
-        if (uniqueValuesChanged || aggregationColumnsChanged || groupColumnsChanged || aggregationFuncsChanged) {
+        const pivotRowTotals = this.gridOptionsService.get('pivotRowTotals');
+        const pivotColumnGroupTotals = this.gridOptionsService.get('pivotColumnGroupTotals');
+        const suppressExpandablePivotGroups = this.gridOptionsService.get('suppressExpandablePivotGroups');
+        const removePivotHeaderRowWhenSingleValueColumn = this.gridOptionsService.get('removePivotHeaderRowWhenSingleValueColumn');
+        const anyGridOptionsChanged = (pivotRowTotals !== this.pivotRowTotalsLastTime || pivotColumnGroupTotals !== this.pivotColumnGroupTotalsLastTime ||
+            suppressExpandablePivotGroups !== this.suppressExpandablePivotGroupsLastTime || removePivotHeaderRowWhenSingleValueColumn !== this.removePivotHeaderRowWhenSingleValueColumnLastTime);
+        this.pivotRowTotalsLastTime = pivotRowTotals;
+        this.pivotColumnGroupTotalsLastTime = pivotColumnGroupTotals;
+        this.suppressExpandablePivotGroupsLastTime = suppressExpandablePivotGroups;
+        this.removePivotHeaderRowWhenSingleValueColumnLastTime = removePivotHeaderRowWhenSingleValueColumn;
+        if (uniqueValuesChanged || aggregationColumnsChanged || groupColumnsChanged || aggregationFuncsChanged || anyGridOptionsChanged) {
             const { pivotColumnGroupDefs, pivotColumnDefs } = this.pivotColDefService.createPivotColumnDefs(this.uniqueValues);
             this.pivotColumnDefs = pivotColumnDefs;
             this.columnModel.setSecondaryColumns(pivotColumnGroupDefs, "rowModelUpdated");

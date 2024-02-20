@@ -1,4 +1,4 @@
-import { missing, exists, values } from './generic';
+import { exists } from './generic';
 
 export function iterateObject<T>(object: { [p: string]: T; } | T[] | null | undefined, callback: (key: string, value: T) => void) {
     if (object == null) { return; }
@@ -26,10 +26,6 @@ export function cloneObject<T extends {}>(object: T): T {
     }
 
     return copy;
-}
-
-export function deepCloneObject<T>(object: T): T {
-    return JSON.parse(JSON.stringify(object));
 }
 
 // returns copy of an object, doing a deep clone of any objects with that object.
@@ -62,44 +58,6 @@ export function deepCloneDefinition<T>(object: T, keysToSkip?: string[]): T | un
     });
 
     return res;
-}
-
-export function getProperty<T, K extends keyof T>(object: T, key: K): any {
-    return object[key];
-}
-
-export function setProperty<T, K extends keyof T>(object: T, key: K, value: any): void {
-    object[key] = value;
-}
-
-/**
- * Will copy the specified properties from `source` into the equivalent properties on `target`, ignoring properties with
- * a value of `undefined`.
- */
-export function copyPropertiesIfPresent<S, T extends S, K extends keyof S>(source: S, target: T, ...properties: K[]) {
-    properties.forEach(p => copyPropertyIfPresent(source, target, p));
-}
-
-/**
- * Will copy the specified property from `source` into the equivalent property on `target`, unless the property has a
- * value of `undefined`. If a transformation is provided, it will be applied to the value before being set on `target`.
- */
-export function copyPropertyIfPresent<S, T extends S, K extends keyof S>(source: S, target: T, property: K, transform?: (value: S[K]) => any) {
-    const value = getProperty(source, property);
-
-    if (value !== undefined) {
-        setProperty(target, property, transform ? transform(value) : value);
-    }
-}
-
-export function getAllKeysInObjects(objects: any[]): string[] {
-    const allValues: any = {};
-
-    objects.filter(obj => obj != null).forEach(obj => {
-        Object.keys(obj).forEach(key => allValues[key] = null);
-    });
-
-    return Object.keys(allValues);
 }
 
 export function getAllValuesInObject<T extends Object>(obj: T): any[] {
@@ -155,49 +113,6 @@ export function mergeDeep(dest: any, source: any, copyUndefined = true, makeCopy
     });
 }
 
-export function missingOrEmptyObject(value: any): boolean {
-    return missing(value) || Object.keys(value).length === 0;
-}
-
-export function get(source: any, expression: string, defaultValue: any): any {
-    if (source == null) { return defaultValue; }
-
-    const keys = expression.split('.');
-    let objectToRead = source;
-
-    while (keys.length > 1) {
-        objectToRead = objectToRead[keys.shift()!];
-
-        if (objectToRead == null) {
-            return defaultValue;
-        }
-    }
-
-    const value = objectToRead[keys[0]];
-
-    return value != null ? value : defaultValue;
-}
-
-export function set(target: any, expression: string, value: any) {
-    if (target == null) { return; }
-
-    const keys = expression.split('.');
-    
-    let objectToUpdate = target;
-    // Create empty objects
-    keys.forEach((key, i) => {
-        if (!objectToUpdate[key]) {
-            objectToUpdate[key] = {};
-        }
-
-        if (i < keys.length - 1) {
-            objectToUpdate = objectToUpdate[key];
-        }
-    });
-
-    objectToUpdate[keys[keys.length - 1]] = value;
-}
-
 export function getValueUsingField(data: any, field: string, fieldContainsDots: boolean): any {
     if (!field || !data) { return; }
 
@@ -220,31 +135,31 @@ export function getValueUsingField(data: any, field: string, fieldContainsDots: 
     return currentObject;
 }
 
-// used by ColumnAPI and GridAPI to remove all references, so keeping grid in memory resulting in a
-// memory leak if user is not disposing of the GridAPI or ColumnApi references
-export function removeAllReferences(obj: any, objectName: string): void {
+// used by GridAPI to remove all references, so keeping grid in memory resulting in a
+// memory leak if user is not disposing of the GridAPI references
+export function removeAllReferences<T>(obj: any, preserveKeys: (keyof T)[] = [], preDestroyLink: string): void {
     Object.keys(obj).forEach(key => {
         const value = obj[key];
         // we want to replace all the @autowired services, which are objects. any simple types (boolean, string etc)
         // we don't care about
-        if (typeof value === 'object') {
+        if (typeof value === 'object' && !preserveKeys.includes(key as any)) {
             obj[key] = undefined;
         }
     });
     const proto = Object.getPrototypeOf(obj);
     const properties: any = {};
 
-    Object.keys(proto).forEach(key => {
+    const msgFunc = (key: string) =>  
+    `AG Grid: Grid API function ${key}() cannot be called as the grid has been destroyed.
+    It is recommended to remove local references to the grid api. Alternatively, check gridApi.isDestroyed() to avoid calling methods against a destroyed grid.
+    To run logic when the grid is about to be destroyed use the gridPreDestroy event. See: ${preDestroyLink}`;
+
+    Object.getOwnPropertyNames(proto).forEach(key => {
         const value = proto[key];
-        // leave all basic types - this is needed for GridAPI to leave the "destroyed: boolean" attribute alone
-        if (typeof value === 'function') {
+        // leave all basic types and preserveKeys this is needed for GridAPI to leave the "destroyed: boolean" attribute and isDestroyed() function.
+        if (typeof value === 'function' && !preserveKeys.includes(key as any)) {
             const func = () => {
-                console.warn(
-                    `AG Grid: ${objectName} function ${key}() cannot be called as the grid has been destroyed.
-                     Please don't call grid API functions on destroyed grids - as a matter of fact you shouldn't
-                     be keeping the API reference, your application has a memory leak! Remove the API reference
-                     when the grid is destroyed.`
-                );
+                console.warn(msgFunc(key));
             };
             properties[key] = { value: func, writable: true };
         }

@@ -32,21 +32,21 @@ let StoreFactory = class StoreFactory {
         }
         const maxBlocksInCache = (userStoreParams && userStoreParams.maxBlocksInCache != null)
             ? userStoreParams.maxBlocksInCache
-            : this.gridOptionsService.getNum('maxBlocksInCache');
+            : this.gridOptionsService.get('maxBlocksInCache');
         const maxBlocksActive = maxBlocksInCache != null && maxBlocksInCache >= 0;
         if (!maxBlocksActive) {
             return undefined;
         }
         if (ssrmParams.dynamicRowHeight) {
-            const message = 'AG Grid: Server Side Row Model does not support Dynamic Row Height and Cache Purging. ' +
+            const message = 'Server Side Row Model does not support Dynamic Row Height and Cache Purging. ' +
                 'Either a) remove getRowHeight() callback or b) remove maxBlocksInCache property. Purging has been disabled.';
-            _.doOnce(() => console.warn(message), 'storeFactory.maxBlocksInCache.dynamicRowHeight');
+            _.warnOnce(message);
             return undefined;
         }
         if (this.columnModel.isAutoRowHeightActive()) {
-            const message = 'AG Grid: Server Side Row Model does not support Auto Row Height and Cache Purging. ' +
+            const message = 'Server Side Row Model does not support Auto Row Height and Cache Purging. ' +
                 'Either a) remove colDef.autoHeight or b) remove maxBlocksInCache property. Purging has been disabled.';
-            _.doOnce(() => console.warn(message), 'storeFactory.maxBlocksInCache.autoRowHeightActive');
+            _.warnOnce(message);
             return undefined;
         }
         return maxBlocksInCache;
@@ -57,7 +57,7 @@ let StoreFactory = class StoreFactory {
         }
         const blockSize = (userStoreParams && userStoreParams.cacheBlockSize != null)
             ? userStoreParams.cacheBlockSize
-            : this.gridOptionsService.getNum('cacheBlockSize');
+            : this.gridOptionsService.get('cacheBlockSize');
         if (blockSize != null && blockSize > 0) {
             return blockSize;
         }
@@ -78,9 +78,6 @@ let StoreFactory = class StoreFactory {
             pivotMode: this.columnModel.isPivotMode()
         };
         const res = callback(params);
-        if (res.storeType != null) {
-            res.suppressInfiniteScroll = res.storeType !== "partial";
-        }
         return res;
     }
     isInfiniteScroll(storeParams) {
@@ -90,7 +87,7 @@ let StoreFactory = class StoreFactory {
         return !res;
     }
     isSuppressServerSideInfiniteScroll() {
-        return this.gridOptionsService.is('suppressServerSideInfiniteScroll');
+        return this.gridOptionsService.get('suppressServerSideInfiniteScroll');
     }
 };
 __decorate([

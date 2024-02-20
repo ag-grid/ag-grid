@@ -30,10 +30,11 @@ class SetFilterListItem extends core_1.Component {
     init() {
         this.addDestroyFunc(() => { var _a; return (_a = this.destroyCellRendererComponent) === null || _a === void 0 ? void 0 : _a.call(this); });
         this.render();
-        this.eCheckbox.setLabelEllipsis(true);
-        this.eCheckbox.setValue(this.isSelected, true);
-        this.eCheckbox.setDisabled(!!this.params.readOnly);
-        this.eCheckbox.getInputElement().setAttribute('tabindex', '-1');
+        this.eCheckbox
+            .setLabelEllipsis(true)
+            .setValue(this.isSelected, true)
+            .setDisabled(!!this.params.readOnly)
+            .getInputElement().setAttribute('tabindex', '-1');
         this.refreshVariableAriaLabels();
         if (this.isTree) {
             if (this.depth > 0) {
@@ -47,13 +48,17 @@ class SetFilterListItem extends core_1.Component {
                     this.addCssClass('ag-set-filter-add-group-indent');
                 }
             }
-            core_1._.setAriaLevel(this.focusWrapper, this.depth + 1);
+            core_1._.setAriaLevel(this.getAriaElement(), this.depth + 1);
         }
+        this.refreshAriaChecked();
         if (!!this.params.readOnly) {
             // Don't add event listeners if we're read-only.
             return;
         }
         this.eCheckbox.onValueChange((value) => this.onCheckboxChanged(!!value));
+    }
+    getFocusableElement() {
+        return this.focusWrapper;
     }
     setupExpansion() {
         this.eGroupClosedIcon.appendChild(core_1._.createIcon('setFilterGroupClosed', this.gridOptionsService, null));
@@ -85,9 +90,6 @@ class SetFilterListItem extends core_1.Component {
             this.refreshAriaExpanded();
         }
     }
-    refreshAriaExpanded() {
-        core_1._.setAriaExpanded(this.focusWrapper, !!this.isExpanded);
-    }
     setExpandedIcons() {
         core_1._.setDisplayed(this.eGroupClosedIcon, this.hasIndeterminateExpandState ? this.isExpanded === false : !this.isExpanded);
         core_1._.setDisplayed(this.eGroupOpenedIcon, this.isExpanded === true);
@@ -104,6 +106,7 @@ class SetFilterListItem extends core_1.Component {
         };
         this.dispatchEvent(event);
         this.refreshVariableAriaLabels();
+        this.refreshAriaChecked();
     }
     toggleSelected() {
         if (!!this.params.readOnly) {
@@ -113,7 +116,8 @@ class SetFilterListItem extends core_1.Component {
     }
     setSelected(isSelected, silent) {
         this.isSelected = isSelected;
-        this.eCheckbox.setValue(this.isSelected, silent);
+        this.eCheckbox.setValue(isSelected, silent);
+        this.refreshAriaChecked();
     }
     refreshVariableAriaLabels() {
         if (!this.isTree) {
@@ -134,8 +138,16 @@ class SetFilterListItem extends core_1.Component {
         }
         const translate = this.localeService.getLocaleTextFunc();
         const itemLabel = translate('ariaFilterValue', 'Filter Value');
-        core_1._.setAriaLabel(this.focusWrapper, `${value} ${itemLabel}`);
-        core_1._.setAriaDescribedBy(this.focusWrapper, this.eCheckbox.getInputElement().id);
+        const ariaEl = this.getAriaElement();
+        core_1._.setAriaLabel(ariaEl, `${value} ${itemLabel}`);
+        core_1._.setAriaDescribedBy(ariaEl, this.eCheckbox.getInputElement().id);
+    }
+    refreshAriaChecked() {
+        const ariaEl = this.getAriaElement();
+        core_1._.setAriaChecked(ariaEl, this.eCheckbox.getValue());
+    }
+    refreshAriaExpanded() {
+        core_1._.setAriaExpanded(this.getAriaElement(), !!this.isExpanded);
     }
     refresh(item, isSelected, isExpanded) {
         var _a, _b;
@@ -187,15 +199,12 @@ class SetFilterListItem extends core_1.Component {
             const tooltipValue = formattedValue != null ? formattedValue : core_1._.toStringOrNull(value);
             this.setTooltip(tooltipValue);
         }
-        this.cellRendererParams = {
+        this.cellRendererParams = this.gridOptionsService.addGridCommonParams({
             value,
             valueFormatted: formattedValue,
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context,
             colDef: this.params.colDef,
             column: this.params.column,
-        };
+        });
     }
     getTooltipParams() {
         const res = super.getTooltipParams();
@@ -228,7 +237,7 @@ class SetFilterListItem extends core_1.Component {
         var _a;
         let valueToRender = (_a = (this.cellRendererParams.valueFormatted == null ? this.cellRendererParams.value : this.cellRendererParams.valueFormatted)) !== null && _a !== void 0 ? _a : this.translate('blanks');
         if (typeof valueToRender !== 'string') {
-            core_1._.doOnce(() => console.warn('AG Grid: Set Filter Value Formatter must return string values. Please ensure the Set Filter Value Formatter returns string values for complex objects, or set convertValuesToStrings=true in the filterParams. See https://www.ag-grid.com/javascript-data-grid/filter-set-filter-list/#filter-value-types'), 'setFilterComplexObjectsValueFormatter');
+            core_1._.warnOnce(`Set Filter Value Formatter must return string values. Please ensure the Set Filter Value Formatter returns string values for complex objects, or set convertValuesToStrings=true in the filterParams. See ${this.getFrameworkOverrides().getDocLink('filter-set-filter-list/#filter-value-types')}`);
             valueToRender = '';
         }
         this.eCheckbox.setLabel(valueToRender);
@@ -254,22 +263,22 @@ SetFilterListItem.TEMPLATE = `
             <ag-checkbox ref="eCheckbox" class="ag-set-filter-item-checkbox"></ag-checkbox>
         </div>`;
 __decorate([
-    core_1.Autowired('valueFormatterService')
+    (0, core_1.Autowired)('valueFormatterService')
 ], SetFilterListItem.prototype, "valueFormatterService", void 0);
 __decorate([
-    core_1.Autowired('userComponentFactory')
+    (0, core_1.Autowired)('userComponentFactory')
 ], SetFilterListItem.prototype, "userComponentFactory", void 0);
 __decorate([
-    core_1.RefSelector('eCheckbox')
+    (0, core_1.RefSelector)('eCheckbox')
 ], SetFilterListItem.prototype, "eCheckbox", void 0);
 __decorate([
-    core_1.RefSelector('eGroupOpenedIcon')
+    (0, core_1.RefSelector)('eGroupOpenedIcon')
 ], SetFilterListItem.prototype, "eGroupOpenedIcon", void 0);
 __decorate([
-    core_1.RefSelector('eGroupClosedIcon')
+    (0, core_1.RefSelector)('eGroupClosedIcon')
 ], SetFilterListItem.prototype, "eGroupClosedIcon", void 0);
 __decorate([
-    core_1.RefSelector('eGroupIndeterminateIcon')
+    (0, core_1.RefSelector)('eGroupIndeterminateIcon')
 ], SetFilterListItem.prototype, "eGroupIndeterminateIcon", void 0);
 __decorate([
     core_1.PostConstruct

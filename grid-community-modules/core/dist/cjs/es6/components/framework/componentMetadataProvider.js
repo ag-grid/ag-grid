@@ -14,7 +14,7 @@ let ComponentMetadataProvider = class ComponentMetadataProvider extends beanStub
         this.componentMetaData = {
             dateComponent: {
                 mandatoryMethodList: ['getDate', 'setDate'],
-                optionalMethodList: ['afterGuiAttached', 'setInputPlaceholder', 'setInputAriaLabel']
+                optionalMethodList: ['afterGuiAttached', 'setInputPlaceholder', 'setInputAriaLabel', 'setDisabled', 'onParamsUpdated', 'refresh']
             },
             detailCellRenderer: {
                 mandatoryMethodList: [],
@@ -35,19 +35,15 @@ let ComponentMetadataProvider = class ComponentMetadataProvider extends beanStub
             },
             loadingOverlayComponent: {
                 mandatoryMethodList: [],
-                optionalMethodList: []
+                optionalMethodList: ['refresh']
             },
             noRowsOverlayComponent: {
                 mandatoryMethodList: [],
-                optionalMethodList: []
+                optionalMethodList: ['refresh']
             },
             floatingFilterComponent: {
                 mandatoryMethodList: ['onParentModelChanged'],
-                optionalMethodList: ['afterGuiAttached']
-            },
-            floatingFilterWrapperComponent: {
-                mandatoryMethodList: [],
-                optionalMethodList: []
+                optionalMethodList: ['afterGuiAttached', 'onParamsUpdated', 'refresh']
             },
             cellRenderer: {
                 mandatoryMethodList: [],
@@ -56,7 +52,7 @@ let ComponentMetadataProvider = class ComponentMetadataProvider extends beanStub
             },
             cellEditor: {
                 mandatoryMethodList: ['getValue'],
-                optionalMethodList: ['isPopup', 'isCancelBeforeStart', 'isCancelAfterEnd', 'getPopupPosition', 'focusIn', 'focusOut', 'afterGuiAttached']
+                optionalMethodList: ['isPopup', 'isCancelBeforeStart', 'isCancelAfterEnd', 'getPopupPosition', 'focusIn', 'focusOut', 'afterGuiAttached', 'refresh']
             },
             innerRenderer: {
                 mandatoryMethodList: [],
@@ -75,24 +71,24 @@ let ComponentMetadataProvider = class ComponentMetadataProvider extends beanStub
             },
             filter: {
                 mandatoryMethodList: ['isFilterActive', 'doesFilterPass', 'getModel', 'setModel'],
-                optionalMethodList: ['afterGuiAttached', 'afterGuiDetached', 'onNewRowsLoaded', 'getModelAsString', 'onFloatingFilterChanged', 'onAnyFilterChanged']
-            },
-            filterComponent: {
-                mandatoryMethodList: ['isFilterActive', 'doesFilterPass', 'getModel', 'setModel'],
-                optionalMethodList: ['afterGuiAttached', 'afterGuiDetached', 'onNewRowsLoaded', 'getModelAsString', 'onFloatingFilterChanged', 'onAnyFilterChanged']
+                optionalMethodList: ['afterGuiAttached', 'afterGuiDetached', 'onNewRowsLoaded', 'getModelAsString', 'onFloatingFilterChanged', 'onAnyFilterChanged', 'refresh']
             },
             statusPanel: {
                 mandatoryMethodList: [],
-                optionalMethodList: ['afterGuiAttached'],
+                optionalMethodList: ['refresh'],
             },
             toolPanel: {
                 mandatoryMethodList: [],
-                optionalMethodList: ['refresh', 'afterGuiAttached']
+                optionalMethodList: ['refresh', 'getState']
             },
             tooltipComponent: {
                 mandatoryMethodList: [],
                 optionalMethodList: []
-            }
+            },
+            menuItem: {
+                mandatoryMethodList: [],
+                optionalMethodList: ['setActive', 'select', 'setExpanded', 'configureDefaults']
+            },
         };
     }
     retrieve(name) {
@@ -100,12 +96,12 @@ let ComponentMetadataProvider = class ComponentMetadataProvider extends beanStub
     }
 };
 __decorate([
-    context_1.Autowired("agComponentUtils")
+    (0, context_1.Autowired)("agComponentUtils")
 ], ComponentMetadataProvider.prototype, "agComponentUtils", void 0);
 __decorate([
     context_1.PostConstruct
 ], ComponentMetadataProvider.prototype, "postConstruct", null);
 ComponentMetadataProvider = __decorate([
-    context_1.Bean("componentMetadataProvider")
+    (0, context_1.Bean)("componentMetadataProvider")
 ], ComponentMetadataProvider);
 exports.ComponentMetadataProvider = ComponentMetadataProvider;

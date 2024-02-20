@@ -41,21 +41,24 @@ var PaginationComp = /** @class */ (function (_super) {
         return _this;
     }
     PaginationComp.prototype.postConstruct = function () {
-        var isRtl = this.gridOptionsService.is('enableRtl');
+        var _this = this;
+        var isRtl = this.gridOptionsService.get('enableRtl');
         this.setTemplate(this.getTemplate());
-        var _a = this, btFirst = _a.btFirst, btPrevious = _a.btPrevious, btNext = _a.btNext, btLast = _a.btLast;
+        var _a = this, btFirst = _a.btFirst, btPrevious = _a.btPrevious, btNext = _a.btNext, btLast = _a.btLast, pageSizeComp = _a.pageSizeComp;
         this.activateTabIndex([btFirst, btPrevious, btNext, btLast]);
-        btFirst.insertAdjacentElement('afterbegin', icon_1.createIconNoSpan(isRtl ? 'last' : 'first', this.gridOptionsService));
-        btPrevious.insertAdjacentElement('afterbegin', icon_1.createIconNoSpan(isRtl ? 'next' : 'previous', this.gridOptionsService));
-        btNext.insertAdjacentElement('afterbegin', icon_1.createIconNoSpan(isRtl ? 'previous' : 'next', this.gridOptionsService));
-        btLast.insertAdjacentElement('afterbegin', icon_1.createIconNoSpan(isRtl ? 'first' : 'last', this.gridOptionsService));
+        btFirst.insertAdjacentElement('afterbegin', (0, icon_1.createIconNoSpan)(isRtl ? 'last' : 'first', this.gridOptionsService));
+        btPrevious.insertAdjacentElement('afterbegin', (0, icon_1.createIconNoSpan)(isRtl ? 'next' : 'previous', this.gridOptionsService));
+        btNext.insertAdjacentElement('afterbegin', (0, icon_1.createIconNoSpan)(isRtl ? 'previous' : 'next', this.gridOptionsService));
+        btLast.insertAdjacentElement('afterbegin', (0, icon_1.createIconNoSpan)(isRtl ? 'first' : 'last', this.gridOptionsService));
         this.addManagedPropertyListener('pagination', this.onPaginationChanged.bind(this));
         this.addManagedPropertyListener('suppressPaginationPanel', this.onPaginationChanged.bind(this));
+        this.addManagedPropertyListeners(['paginationPageSizeSelector', 'paginationAutoPageSize', 'suppressPaginationPanel'], function () { return _this.onPageSizeRelatedOptionsChange(); });
+        this.pageSizeComp.toggleSelectDisplay(this.pageSizeComp.shouldShowPageSizeSelector());
         this.onPaginationChanged();
     };
     PaginationComp.prototype.onPaginationChanged = function () {
-        var isPaging = this.gridOptionsService.is('pagination');
-        var paginationPanelEnabled = isPaging && !this.gridOptionsService.is('suppressPaginationPanel');
+        var isPaging = this.gridOptionsService.get('pagination');
+        var paginationPanelEnabled = isPaging && !this.gridOptionsService.get('suppressPaginationPanel');
         this.setDisplayed(paginationPanelEnabled);
         if (!paginationPanelEnabled) {
             return;
@@ -65,6 +68,10 @@ var PaginationComp = /** @class */ (function (_super) {
         this.updateRowLabels();
         this.setCurrentPageLabel();
         this.setTotalLabels();
+        this.onPageSizeRelatedOptionsChange();
+    };
+    PaginationComp.prototype.onPageSizeRelatedOptionsChange = function () {
+        this.pageSizeComp.toggleSelectDisplay(this.pageSizeComp.shouldShowPageSizeSelector());
     };
     PaginationComp.prototype.setupListeners = function () {
         var _this = this;
@@ -97,7 +104,7 @@ var PaginationComp = /** @class */ (function (_super) {
         var pagesExist = this.paginationProxy.getTotalPages() > 0;
         var currentPage = this.paginationProxy.getCurrentPage();
         var toDisplay = pagesExist ? currentPage + 1 : 0;
-        this.lbCurrent.innerHTML = this.formatNumber(toDisplay);
+        this.lbCurrent.textContent = this.formatNumber(toDisplay);
     };
     PaginationComp.prototype.formatNumber = function (value) {
         var userFunc = this.gridOptionsService.getCallback('paginationNumberFormatter');
@@ -108,7 +115,7 @@ var PaginationComp = /** @class */ (function (_super) {
         var localeTextFunc = this.localeService.getLocaleTextFunc();
         var thousandSeparator = localeTextFunc('thousandSeparator', ',');
         var decimalSeparator = localeTextFunc('decimalSeparator', '.');
-        return number_1.formatNumberCommas(value, thousandSeparator, decimalSeparator);
+        return (0, number_1.formatNumberCommas)(value, thousandSeparator, decimalSeparator);
     };
     PaginationComp.prototype.getTemplate = function () {
         var localeTextFunc = this.localeService.getLocaleTextFunc();
@@ -120,7 +127,7 @@ var PaginationComp = /** @class */ (function (_super) {
         var strNext = localeTextFunc('nextPage', 'Next Page');
         var strLast = localeTextFunc('lastPage', 'Last Page');
         var compId = this.getCompId();
-        return /* html */ "<div class=\"ag-paging-panel ag-unselectable\" id=\"ag-" + compId + "\">\n                <span class=\"ag-paging-row-summary-panel\" role=\"status\">\n                    <span id=\"ag-" + compId + "-first-row\" ref=\"lbFirstRowOnPage\" class=\"ag-paging-row-summary-panel-number\"></span>\n                    <span id=\"ag-" + compId + "-to\">" + strTo + "</span>\n                    <span id=\"ag-" + compId + "-last-row\" ref=\"lbLastRowOnPage\" class=\"ag-paging-row-summary-panel-number\"></span>\n                    <span id=\"ag-" + compId + "-of\">" + strOf + "</span>\n                    <span id=\"ag-" + compId + "-row-count\" ref=\"lbRecordCount\" class=\"ag-paging-row-summary-panel-number\"></span>\n                </span>\n                <span class=\"ag-paging-page-summary-panel\" role=\"presentation\">\n                    <div ref=\"btFirst\" class=\"ag-button ag-paging-button\" role=\"button\" aria-label=\"" + strFirst + "\"></div>\n                    <div ref=\"btPrevious\" class=\"ag-button ag-paging-button\" role=\"button\" aria-label=\"" + strPrevious + "\"></div>\n                    <span class=\"ag-paging-description\" role=\"status\">\n                        <span id=\"ag-" + compId + "-start-page\">" + strPage + "</span>\n                        <span id=\"ag-" + compId + "-start-page-number\" ref=\"lbCurrent\" class=\"ag-paging-number\"></span>\n                        <span id=\"ag-" + compId + "-of-page\">" + strOf + "</span>\n                        <span id=\"ag-" + compId + "-of-page-number\" ref=\"lbTotal\" class=\"ag-paging-number\"></span>\n                    </span>\n                    <div ref=\"btNext\" class=\"ag-button ag-paging-button\" role=\"button\" aria-label=\"" + strNext + "\"></div>\n                    <div ref=\"btLast\" class=\"ag-button ag-paging-button\" role=\"button\" aria-label=\"" + strLast + "\"></div>\n                </span>\n            </div>";
+        return /* html */ "<div class=\"ag-paging-panel ag-unselectable\" id=\"ag-".concat(compId, "\">\n                <ag-page-size-selector ref=\"pageSizeComp\"></ag-page-size-selector>\n                <span class=\"ag-paging-row-summary-panel\" role=\"status\">\n                    <span id=\"ag-").concat(compId, "-first-row\" ref=\"lbFirstRowOnPage\" class=\"ag-paging-row-summary-panel-number\"></span>\n                    <span id=\"ag-").concat(compId, "-to\">").concat(strTo, "</span>\n                    <span id=\"ag-").concat(compId, "-last-row\" ref=\"lbLastRowOnPage\" class=\"ag-paging-row-summary-panel-number\"></span>\n                    <span id=\"ag-").concat(compId, "-of\">").concat(strOf, "</span>\n                    <span id=\"ag-").concat(compId, "-row-count\" ref=\"lbRecordCount\" class=\"ag-paging-row-summary-panel-number\"></span>\n                </span>\n                <span class=\"ag-paging-page-summary-panel\" role=\"presentation\">\n                    <div ref=\"btFirst\" class=\"ag-button ag-paging-button\" role=\"button\" aria-label=\"").concat(strFirst, "\"></div>\n                    <div ref=\"btPrevious\" class=\"ag-button ag-paging-button\" role=\"button\" aria-label=\"").concat(strPrevious, "\"></div>\n                    <span class=\"ag-paging-description\" role=\"status\">\n                        <span id=\"ag-").concat(compId, "-start-page\">").concat(strPage, "</span>\n                        <span id=\"ag-").concat(compId, "-start-page-number\" ref=\"lbCurrent\" class=\"ag-paging-number\"></span>\n                        <span id=\"ag-").concat(compId, "-of-page\">").concat(strOf, "</span>\n                        <span id=\"ag-").concat(compId, "-of-page-number\" ref=\"lbTotal\" class=\"ag-paging-number\"></span>\n                    </span>\n                    <div ref=\"btNext\" class=\"ag-button ag-paging-button\" role=\"button\" aria-label=\"").concat(strNext, "\"></div>\n                    <div ref=\"btLast\" class=\"ag-button ag-paging-button\" role=\"button\" aria-label=\"").concat(strLast, "\"></div>\n                </span>\n            </div>");
     };
     PaginationComp.prototype.onBtNext = function () {
         if (!this.nextButtonDisabled) {
@@ -145,14 +152,14 @@ var PaginationComp = /** @class */ (function (_super) {
         this.toggleButtonDisabled(this.btFirst, this.previousAndFirstButtonsDisabled);
         this.toggleButtonDisabled(this.btPrevious, this.previousAndFirstButtonsDisabled);
         var zeroPagesToDisplay = this.isZeroPagesToDisplay();
-        var onLastPage = maxRowFound && currentPage === (totalPages - 1);
+        var onLastPage = currentPage === (totalPages - 1);
         this.nextButtonDisabled = onLastPage || zeroPagesToDisplay;
         this.lastButtonDisabled = !maxRowFound || zeroPagesToDisplay || currentPage === (totalPages - 1);
         this.toggleButtonDisabled(this.btNext, this.nextButtonDisabled);
         this.toggleButtonDisabled(this.btLast, this.lastButtonDisabled);
     };
     PaginationComp.prototype.toggleButtonDisabled = function (button, disabled) {
-        aria_1.setAriaDisabled(button, disabled);
+        (0, aria_1.setAriaDisabled)(button, disabled);
         button.classList.toggle('ag-disabled', disabled);
     };
     PaginationComp.prototype.updateRowLabels = function () {
@@ -173,13 +180,13 @@ var PaginationComp = /** @class */ (function (_super) {
                 endRow = rowCount;
             }
         }
-        this.lbFirstRowOnPage.innerHTML = this.formatNumber(startRow);
+        this.lbFirstRowOnPage.textContent = this.formatNumber(startRow);
         if (this.rowNodeBlockLoader.isLoading()) {
             var translate = this.localeService.getLocaleTextFunc();
             this.lbLastRowOnPage.innerHTML = translate('pageLastRowUnknown', '?');
         }
         else {
-            this.lbLastRowOnPage.innerHTML = this.formatNumber(endRow);
+            this.lbLastRowOnPage.textContent = this.formatNumber(endRow);
         }
     };
     PaginationComp.prototype.isZeroPagesToDisplay = function () {
@@ -204,8 +211,8 @@ var PaginationComp = /** @class */ (function (_super) {
             }
         }
         if (lastPageFound) {
-            this.lbTotal.innerHTML = this.formatNumber(totalPages);
-            this.lbRecordCount.innerHTML = this.formatNumber(rowCount);
+            this.lbTotal.textContent = this.formatNumber(totalPages);
+            this.lbRecordCount.textContent = this.formatNumber(rowCount);
         }
         else {
             var moreText = this.localeService.getLocaleTextFunc()('more', 'more');
@@ -214,45 +221,48 @@ var PaginationComp = /** @class */ (function (_super) {
         }
     };
     PaginationComp.prototype.setTotalLabelsToZero = function () {
-        this.lbFirstRowOnPage.innerHTML = this.formatNumber(0);
-        this.lbCurrent.innerHTML = this.formatNumber(0);
-        this.lbLastRowOnPage.innerHTML = this.formatNumber(0);
-        this.lbTotal.innerHTML = this.formatNumber(0);
-        this.lbRecordCount.innerHTML = this.formatNumber(0);
+        this.lbFirstRowOnPage.textContent = this.formatNumber(0);
+        this.lbCurrent.textContent = this.formatNumber(0);
+        this.lbLastRowOnPage.textContent = this.formatNumber(0);
+        this.lbTotal.textContent = this.formatNumber(0);
+        this.lbRecordCount.textContent = this.formatNumber(0);
     };
     __decorate([
-        context_1.Autowired('paginationProxy')
+        (0, context_1.Autowired)('paginationProxy')
     ], PaginationComp.prototype, "paginationProxy", void 0);
     __decorate([
-        context_1.Autowired('rowNodeBlockLoader')
+        (0, context_1.Autowired)('rowNodeBlockLoader')
     ], PaginationComp.prototype, "rowNodeBlockLoader", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('btFirst')
+        (0, componentAnnotations_1.RefSelector)('btFirst')
     ], PaginationComp.prototype, "btFirst", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('btPrevious')
+        (0, componentAnnotations_1.RefSelector)('btPrevious')
     ], PaginationComp.prototype, "btPrevious", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('btNext')
+        (0, componentAnnotations_1.RefSelector)('btNext')
     ], PaginationComp.prototype, "btNext", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('btLast')
+        (0, componentAnnotations_1.RefSelector)('btLast')
     ], PaginationComp.prototype, "btLast", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('lbRecordCount')
+        (0, componentAnnotations_1.RefSelector)('lbRecordCount')
     ], PaginationComp.prototype, "lbRecordCount", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('lbFirstRowOnPage')
+        (0, componentAnnotations_1.RefSelector)('lbFirstRowOnPage')
     ], PaginationComp.prototype, "lbFirstRowOnPage", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('lbLastRowOnPage')
+        (0, componentAnnotations_1.RefSelector)('lbLastRowOnPage')
     ], PaginationComp.prototype, "lbLastRowOnPage", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('lbCurrent')
+        (0, componentAnnotations_1.RefSelector)('lbCurrent')
     ], PaginationComp.prototype, "lbCurrent", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('lbTotal')
+        (0, componentAnnotations_1.RefSelector)('lbTotal')
     ], PaginationComp.prototype, "lbTotal", void 0);
+    __decorate([
+        (0, componentAnnotations_1.RefSelector)('pageSizeComp')
+    ], PaginationComp.prototype, "pageSizeComp", void 0);
     __decorate([
         context_1.PostConstruct
     ], PaginationComp.prototype, "postConstruct", null);

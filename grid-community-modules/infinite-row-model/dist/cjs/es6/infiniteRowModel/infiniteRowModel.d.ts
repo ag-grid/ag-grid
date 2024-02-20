@@ -28,7 +28,7 @@ export declare class InfiniteRowModel extends BeanStub implements IInfiniteRowMo
     private reset;
     private createModelUpdatedEvent;
     private resetCache;
-    private defaultIfInvalid;
+    private updateRowHeights;
     private destroyCache;
     private onCacheUpdated;
     getRow(rowIndex: number): RowNode | undefined;

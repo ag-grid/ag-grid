@@ -100,10 +100,10 @@ var TitlePanel = /** @class */ (function (_super) {
     TitlePanel.prototype.createSpacingSlicer = function () {
         var _this = this;
         var spacingSlider = this.createBean(new AgSlider());
-        var currentValue = this.chartOptionsService.getChartOption('title.spacing');
+        var currentValue = this.chartOptionsService.getChartOption('title.spacing') || 10;
         spacingSlider.setLabel(this.chartTranslationService.translate('spacing'))
             .setMaxValue(Math.max(currentValue, 100))
-            .setValue("" + currentValue)
+            .setValue("".concat(currentValue))
             .setTextFieldWidth(45)
             .onValueChange(function (newValue) { return _this.chartOptionsService.setChartOption('title.spacing', newValue); });
         return spacingSlider;

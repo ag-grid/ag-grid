@@ -2,15 +2,15 @@
 declare function getCountries(): string[];
 import React, { useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AgGridReact } from '@ag-grid-community/react';
+import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
+import { ColDef, GetRowIdParams, GridReadyEvent, IDatasource, ModuleRegistry } from '@ag-grid-community/core';
 import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 
-import { ColDef, GetRowIdParams, GridReadyEvent, ICellRendererParams, IDatasource, ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([InfiniteRowModelModule, SetFilterModule, MenuModule, ColumnsToolPanelModule]);
 
@@ -104,7 +104,7 @@ const GridExample = () => {
             headerName: 'ID',
             maxWidth: 100,
             valueGetter: 'node.id',
-            cellRenderer: (props: ICellRendererParams) => {
+            cellRenderer: (props: CustomCellRendererProps) => {
                 if (props.value !== undefined) {
                     return props.value;
                 } else {
@@ -114,9 +114,9 @@ const GridExample = () => {
             // we don't want to sort by the row index, this doesn't make sense as the point
             // of the row index is to know the row index in what came back from the server
             sortable: false,
-            suppressMenu: true,
+            suppressHeaderMenuButton: true,
         },
-        { field: 'athlete', suppressMenu: true },
+        { field: 'athlete', suppressHeaderMenuButton: true },
         {
             field: 'age',
             filter: 'agNumberColumnFilter',
@@ -136,18 +136,16 @@ const GridExample = () => {
             filterParams: { values: ['2000', '2004', '2008', '2012'] },
         },
         { field: 'date' },
-        { field: 'sport', suppressMenu: true },
-        { field: 'gold', suppressMenu: true },
-        { field: 'silver', suppressMenu: true },
-        { field: 'bronze', suppressMenu: true },
-        { field: 'total', suppressMenu: true },
+        { field: 'sport', suppressHeaderMenuButton: true },
+        { field: 'gold', suppressHeaderMenuButton: true },
+        { field: 'silver', suppressHeaderMenuButton: true },
+        { field: 'bronze', suppressHeaderMenuButton: true },
+        { field: 'total', suppressHeaderMenuButton: true },
     ]);
     const defaultColDef = useMemo<ColDef>(() => {
         return {
             flex: 1,
             minWidth: 150,
-            sortable: true,
-            resizable: true,
             floatingFilter: true,
         }
     }, []);
@@ -185,7 +183,7 @@ const GridExample = () => {
                         }, 500);
                     },
                 };
-                params.api.setDatasource(dataSource);
+                params.api.setGridOption('datasource', dataSource);
             });
     }, []);
 
@@ -193,7 +191,7 @@ const GridExample = () => {
     return (
         <div style={containerStyle}>
 
-            <div style={gridStyle} className="ag-theme-alpine">
+            <div style={gridStyle} className={/** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
                 <AgGridReact
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}

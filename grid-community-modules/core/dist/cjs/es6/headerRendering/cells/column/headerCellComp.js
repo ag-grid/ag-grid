@@ -32,8 +32,7 @@ class HeaderCellComp extends abstractHeaderCellComp_1.AbstractHeaderCellComp {
         const compProxy = {
             setWidth: width => eGui.style.width = width,
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
-            setAriaDescription: label => aria_1.setAriaDescription(eGui, label),
-            setAriaSort: sort => sort ? aria_1.setAriaSort(eGui, sort) : aria_1.removeAriaSort(eGui),
+            setAriaSort: sort => sort ? (0, aria_1.setAriaSort)(eGui, sort) : (0, aria_1.removeAriaSort)(eGui),
             setUserCompDetails: compDetails => this.setUserCompDetails(compDetails),
             getUserCompInstance: () => this.headerComp
         };
@@ -65,15 +64,15 @@ class HeaderCellComp extends abstractHeaderCellComp_1.AbstractHeaderCellComp {
         this.ctrl.setDragSource(this.getGui());
     }
 }
-HeaderCellComp.TEMPLATE = `<div class="ag-header-cell" role="columnheader" tabindex="-1">
+HeaderCellComp.TEMPLATE = `<div class="ag-header-cell" role="columnheader">
             <div ref="eResize" class="ag-header-cell-resize" role="presentation"></div>
             <div ref="eHeaderCompWrapper" class="ag-header-cell-comp-wrapper" role="presentation"></div>
         </div>`;
 __decorate([
-    componentAnnotations_1.RefSelector('eResize')
+    (0, componentAnnotations_1.RefSelector)('eResize')
 ], HeaderCellComp.prototype, "eResize", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eHeaderCompWrapper')
+    (0, componentAnnotations_1.RefSelector)('eHeaderCompWrapper')
 ], HeaderCellComp.prototype, "eHeaderCompWrapper", void 0);
 __decorate([
     context_1.PostConstruct

@@ -68,10 +68,10 @@ var SideBarButtonsComp = /** @class */ (function (_super) {
     SideBarButtonsComp.EVENT_SIDE_BAR_BUTTON_CLICKED = 'sideBarButtonClicked';
     SideBarButtonsComp.TEMPLATE = "<div class=\"ag-side-buttons\" role=\"tablist\"></div>";
     __decorate([
-        core_1.Autowired('focusService')
+        (0, core_1.Autowired)('focusService')
     ], SideBarButtonsComp.prototype, "focusService", void 0);
     __decorate([
-        core_1.Autowired('columnModel')
+        (0, core_1.Autowired)('columnModel')
     ], SideBarButtonsComp.prototype, "columnModel", void 0);
     __decorate([
         core_1.PostConstruct

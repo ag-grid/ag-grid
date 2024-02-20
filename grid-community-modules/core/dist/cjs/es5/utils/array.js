@@ -1,21 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.forEachReverse = exports.toStrings = exports.pushAll = exports.flatten = exports.includes = exports.moveInArray = exports.insertArrayIntoArray = exports.insertIntoArray = exports.removeAllFromArray = exports.removeAllFromUnorderedArray = exports.removeFromArray = exports.removeFromUnorderedArray = exports.removeRepeatsFromArray = exports.sortNumerically = exports.shallowCompare = exports.areEqual = exports.last = exports.existsAndNotEmpty = exports.firstExistingValue = void 0;
+exports.forEachReverse = exports.toStrings = exports.pushAll = exports.flatten = exports.includes = exports.moveInArray = exports.insertArrayIntoArray = exports.insertIntoArray = exports.removeAllFromArray = exports.removeAllFromUnorderedArray = exports.removeFromArray = exports.removeFromUnorderedArray = exports.removeRepeatsFromArray = exports.sortNumerically = exports.shallowCompare = exports.areEqual = exports.last = exports.existsAndNotEmpty = void 0;
 var generic_1 = require("./generic");
-function firstExistingValue() {
-    var values = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-        values[_i] = arguments[_i];
-    }
-    for (var i = 0; i < values.length; i++) {
-        var value = values[i];
-        if (generic_1.exists(value)) {
-            return value;
-        }
-    }
-    return null;
-}
-exports.firstExistingValue = firstExistingValue;
 function existsAndNotEmpty(value) {
     return value != null && value.length > 0;
 }
@@ -37,7 +23,6 @@ function areEqual(a, b, comparator) {
         a.every(function (value, index) { return comparator ? comparator(value, b[index]) : b[index] === value; });
 }
 exports.areEqual = areEqual;
-/** @deprecated */
 function shallowCompare(arr1, arr2) {
     return areEqual(arr1, arr2);
 }

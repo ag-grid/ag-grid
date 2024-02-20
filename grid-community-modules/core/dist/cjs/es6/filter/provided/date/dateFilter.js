@@ -23,16 +23,16 @@ class DateFilterModelFormatter extends simpleFilter_1.SimpleFilterModelFormatter
         const { type } = condition;
         const { numberOfInputs } = options || {};
         const isRange = type == simpleFilter_1.SimpleFilter.IN_RANGE || numberOfInputs === 2;
-        const dateFrom = date_1.parseDateTimeFromString(condition.dateFrom);
-        const dateTo = date_1.parseDateTimeFromString(condition.dateTo);
+        const dateFrom = (0, date_1.parseDateTimeFromString)(condition.dateFrom);
+        const dateTo = (0, date_1.parseDateTimeFromString)(condition.dateTo);
         const format = this.dateFilterParams.inRangeFloatingFilterDateFormat;
         if (isRange) {
-            const formattedFrom = dateFrom !== null ? date_1.dateToFormattedString(dateFrom, format) : 'null';
-            const formattedTo = dateTo !== null ? date_1.dateToFormattedString(dateTo, format) : 'null';
+            const formattedFrom = dateFrom !== null ? (0, date_1.dateToFormattedString)(dateFrom, format) : 'null';
+            const formattedTo = dateTo !== null ? (0, date_1.dateToFormattedString)(dateTo, format) : 'null';
             return `${formattedFrom}-${formattedTo}`;
         }
         if (dateFrom != null) {
-            return date_1.dateToFormattedString(dateFrom, format);
+            return (0, date_1.dateToFormattedString)(dateFrom, format);
         }
         // cater for when the type doesn't need a value
         return `${type}`;
@@ -52,6 +52,8 @@ class DateFilter extends scalarFilter_1.ScalarFilter {
         this.dateConditionToComps = [];
         this.minValidYear = DEFAULT_MIN_YEAR;
         this.maxValidYear = DEFAULT_MAX_YEAR;
+        this.minValidDate = null;
+        this.maxValidDate = null;
     }
     afterGuiAttached(params) {
         super.afterGuiAttached(params);
@@ -68,8 +70,8 @@ class DateFilter extends scalarFilter_1.ScalarFilter {
         //       the model. When we recreate the date again here, it's without a timezone.
         const { dateFrom, dateTo, type } = filterModel || {};
         return [
-            dateFrom && date_1.parseDateTimeFromString(dateFrom) || null,
-            dateTo && date_1.parseDateTimeFromString(dateTo) || null,
+            dateFrom && (0, date_1.parseDateTimeFromString)(dateFrom) || null,
+            dateTo && (0, date_1.parseDateTimeFromString)(dateTo) || null,
         ].slice(0, this.getNumberOfInputs(type));
     }
     comparator() {
@@ -104,6 +106,21 @@ class DateFilter extends scalarFilter_1.ScalarFilter {
         this.maxValidYear = yearParser('maxValidYear', DEFAULT_MAX_YEAR);
         if (this.minValidYear > this.maxValidYear) {
             console.warn(`AG Grid: DateFilter minValidYear should be <= maxValidYear`);
+        }
+        if (params.minValidDate) {
+            this.minValidDate = params.minValidDate instanceof Date ? params.minValidDate : (0, date_1.parseDateTimeFromString)(params.minValidDate);
+        }
+        else {
+            this.minValidDate = null;
+        }
+        if (params.maxValidDate) {
+            this.maxValidDate = params.maxValidDate instanceof Date ? params.maxValidDate : (0, date_1.parseDateTimeFromString)(params.maxValidDate);
+        }
+        else {
+            this.maxValidDate = null;
+        }
+        if (this.minValidDate && this.maxValidDate && this.minValidDate > this.maxValidDate) {
+            console.warn(`AG Grid: DateFilter minValidDate should be <= maxValidDate`);
         }
         this.filterModelFormatter = new DateFilterModelFormatter(this.dateFilterParams, this.localeService, this.optionsFactory);
     }
@@ -152,19 +169,43 @@ class DateFilter extends scalarFilter_1.ScalarFilter {
         const removedComponents = this.removeItems(components, startPosition, deleteCount);
         removedComponents.forEach(comp => comp.destroy());
     }
+    isValidDateValue(value) {
+        if (value === null) {
+            return false;
+        }
+        if (this.minValidDate) {
+            if (value < this.minValidDate) {
+                return false;
+            }
+        }
+        else {
+            if (value.getUTCFullYear() < this.minValidYear) {
+                return false;
+            }
+        }
+        if (this.maxValidDate) {
+            if (value > this.maxValidDate) {
+                return false;
+            }
+        }
+        else {
+            if (value.getUTCFullYear() > this.maxValidYear) {
+                return false;
+            }
+        }
+        return true;
+    }
+    ;
     isConditionUiComplete(position) {
         if (!super.isConditionUiComplete(position)) {
             return false;
         }
-        const isValidDate = (value) => value != null
-            && value.getUTCFullYear() >= this.minValidYear
-            && value.getUTCFullYear() <= this.maxValidYear;
         let valid = true;
         this.forEachInput((element, index, elPosition, numberOfInputs) => {
             if (elPosition !== position || !valid || index >= numberOfInputs) {
                 return;
             }
-            valid = valid && isValidDate(element.getDate());
+            valid = valid && this.isValidDateValue(element.getDate());
         });
         return valid;
     }
@@ -181,10 +222,10 @@ class DateFilter extends scalarFilter_1.ScalarFilter {
         const model = {};
         const values = this.getValues(position);
         if (values.length > 0) {
-            model.dateFrom = date_1.serialiseDate(values[0]);
+            model.dateFrom = (0, date_1.serialiseDate)(values[0]);
         }
         if (values.length > 1) {
-            model.dateTo = date_1.serialiseDate(values[1]);
+            model.dateTo = (0, date_1.serialiseDate)(values[1]);
         }
         return Object.assign({ dateFrom: null, dateTo: null, filterType: this.getFilterType(), type }, model);
     }
@@ -212,6 +253,15 @@ class DateFilter extends scalarFilter_1.ScalarFilter {
         });
         return result;
     }
+    translate(key) {
+        if (key === scalarFilter_1.ScalarFilter.LESS_THAN) {
+            return super.translate('before');
+        }
+        if (key === scalarFilter_1.ScalarFilter.GREATER_THAN) {
+            return super.translate('after');
+        }
+        return super.translate(key);
+    }
     getModelAsString(model) {
         var _a;
         return (_a = this.filterModelFormatter.getModelAsString(model)) !== null && _a !== void 0 ? _a : '';
@@ -219,14 +269,14 @@ class DateFilter extends scalarFilter_1.ScalarFilter {
 }
 DateFilter.DEFAULT_FILTER_OPTIONS = [
     scalarFilter_1.ScalarFilter.EQUALS,
-    scalarFilter_1.ScalarFilter.GREATER_THAN,
-    scalarFilter_1.ScalarFilter.LESS_THAN,
     scalarFilter_1.ScalarFilter.NOT_EQUAL,
+    scalarFilter_1.ScalarFilter.LESS_THAN,
+    scalarFilter_1.ScalarFilter.GREATER_THAN,
     scalarFilter_1.ScalarFilter.IN_RANGE,
     scalarFilter_1.ScalarFilter.BLANK,
     scalarFilter_1.ScalarFilter.NOT_BLANK,
 ];
 __decorate([
-    context_1.Autowired('userComponentFactory')
+    (0, context_1.Autowired)('userComponentFactory')
 ], DateFilter.prototype, "userComponentFactory", void 0);
 exports.DateFilter = DateFilter;

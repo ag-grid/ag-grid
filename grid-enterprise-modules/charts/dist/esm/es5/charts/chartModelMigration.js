@@ -48,7 +48,7 @@ var __values = (this && this.__values) || function(o) {
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 // @ts-ignore
-import { getSeriesType } from './chartComp/utils/seriesTypeMapper';
+import { getCanonicalChartType, getSeriesType, isPieChartSeries } from './chartComp/utils/seriesTypeMapper';
 // @ts-ignore
 import { ALL_AXIS_TYPES, getLegacyAxisType } from './chartComp/utils/axisTypeMapper';
 // @ts-ignore
@@ -73,6 +73,7 @@ export function upgradeChartModel(model) {
     model = migrateIfBefore('29.1.0', model, migrateV29_1);
     model = migrateIfBefore('29.2.0', model, migrateV29_2);
     model = migrateIfBefore('30.0.0', model, migrateV30);
+    model = migrateIfBefore('31.0.0', model, migrateV31);
     model = cleanup(model);
     // Bump version to latest.
     model = migrateIfBefore(VERSION, model, function (m) { return m; });
@@ -97,6 +98,13 @@ function migrateV24(model) {
     _c = _b.chartOptions, xAxis = _c.xAxis, yAxis = _c.yAxis, chartOptions = __rest(_c, ["xAxis", "yAxis"]), chartModel = __rest(_b, ["chartType", "chartPalette", "chartOptions"]);
     var axesTypes = getLegacyAxisType(chartType);
     var axes = axesTypes === null || axesTypes === void 0 ? void 0 : axesTypes.map(function (type, i) { return (__assign({ type: type }, (i === 0 ? xAxis : yAxis))); });
+    // Precise legacy palette fills/strokes can be found here for future reference:
+    // https://github.com/ag-grid/ag-grid/blob/b22.1.0/grid-enterprise-modules/charts/src/charts/chart/palettes.ts
+    var LEGACY_PALETTES = {
+        borneo: 'ag-default',
+        material: 'ag-material',
+        bright: 'ag-vivid',
+    };
     return __assign({ chartType: chartType, chartThemeName: (_a = LEGACY_PALETTES[chartPalette]) !== null && _a !== void 0 ? _a : 'ag-default', chartOptions: __assign(__assign({}, chartOptions), { axes: axes, xAxis: xAxis, yAxis: yAxis }) }, chartModel);
 }
 function migrateV25_1(model) {
@@ -140,13 +148,16 @@ function migrateV26_2(model) {
     model = jsonDelete('chartOptions.seriesDefaults.callout.colors', model);
     model = jsonDelete('chartOptions.xAxis', model);
     model = jsonDelete('chartOptions.yAxis', model);
-    var _a = model, chartType = _a.chartType, _b = _a.chartOptions, axes = _b.axes, series = _b.series, seriesDefaults = _b.seriesDefaults, otherChartOptions = __rest(_b, ["axes", "series", "seriesDefaults"]), otherModelProps = __rest(_a, ["chartType", "chartOptions"]);
+    var _a = model, providedChartType = _a.chartType, _b = _a.chartOptions, axes = _b.axes, series = _b.series, seriesDefaults = _b.seriesDefaults, otherChartOptions = __rest(_b, ["axes", "series", "seriesDefaults"]), otherModelProps = __rest(_a, ["chartType", "chartOptions"]);
     // At 26.2.0 combination charts weren't supported, so we can safely assume a single series type.
     // We can't rely on the `series.type` field as it was incorrect (in v25.0.0 line chart has an
     // `area` series).
-    var seriesTypes = [getSeriesType(chartType)];
+    // Note that in v31.1.0, the canonical name for the 'doughnut' chart type changed to 'donut'.
+    var chartType = getCanonicalChartType(providedChartType);
+    var seriesType = getSeriesType(chartType);
+    var seriesTypes = [seriesType];
     var chartTypeMixin = {};
-    if (!seriesTypes.includes('pie')) {
+    if (!isPieChartSeries(seriesType)) {
         var minimalAxis_1 = { top: {}, bottom: {}, left: {}, right: {} };
         var updatedAxes_1 = axes
             .map(function (_a) {
@@ -185,6 +196,10 @@ function migrateV28_2(model) {
     model = jsonRename('chartOptions.pie.series.label', 'calloutLabel', model);
     model = jsonRename('chartOptions.pie.series.labelKey', 'sectorLabelKey', model);
     model = jsonRename('chartOptions.pie.series.labelName', 'sectorLabelName', model);
+    model = jsonRename('chartOptions.donut.series.callout', 'calloutLine', model);
+    model = jsonRename('chartOptions.donut.series.label', 'calloutLabel', model);
+    model = jsonRename('chartOptions.donut.series.labelKey', 'sectorLabelKey', model);
+    model = jsonRename('chartOptions.donut.series.labelName', 'sectorLabelName', model);
     // series.yKeys => yKey ?
     // series.yNames => yName ?
     return model;
@@ -233,6 +248,15 @@ function migrateV30(model) {
     model = jsonAdd('chartOptions.common.legend.enabled', true, model);
     model = jsonBackfill('chartOptions.common.legend.position', 'right', model);
     return model;
+}
+function migrateV31(model) {
+    var V30_LEGACY_PALETTES = {
+        'ag-pastel': 'ag-sheets',
+        'ag-solar': 'ag-polychroma'
+    };
+    var updatedModel = jsonRename('chartOptions.column', 'bar', model);
+    var chartThemeName = V30_LEGACY_PALETTES[updatedModel.chartThemeName] || updatedModel.chartThemeName;
+    return __assign(__assign({}, updatedModel), { chartThemeName: chartThemeName });
 }
 function cleanup(model) {
     // Remove fixed width/height - this has never been supported via UI configuration.
@@ -440,12 +464,3 @@ function jsonMutate(path, json, mutator) {
     return json;
 }
 var merge = function (r, n) { return (__assign(__assign({}, r), n)); };
-// Precise legacy palette fills/strokes can be found here for future reference:
-// https://github.com/ag-grid/ag-grid/blob/b22.1.0/grid-enterprise-modules/charts/src/charts/chart/palettes.ts
-var LEGACY_PALETTES = {
-    borneo: 'ag-default',
-    material: 'ag-material',
-    pastel: 'ag-pastel',
-    bright: 'ag-vivid',
-    flat: 'ag-solar',
-};

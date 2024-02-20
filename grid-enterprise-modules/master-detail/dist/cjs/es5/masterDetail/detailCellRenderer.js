@@ -99,30 +99,27 @@ var DetailCellRenderer = /** @class */ (function (_super) {
         // this is only used by Angular and Vue, as React uses native React AG Grid detail grids
         var frameworkComponentWrapper = this.context.getBean('frameworkComponentWrapper');
         var frameworkOverrides = this.getFrameworkOverrides();
-        // tslint:disable-next-line
-        new core_1.Grid(this.eDetailGrid, gridOptions, {
+        var api = (0, core_1.createGrid)(this.eDetailGrid, gridOptions, {
             frameworkOverrides: frameworkOverrides,
             providedBeanInstances: {
                 agGridReact: agGridReactCloned,
-                frameworkComponentWrapper: frameworkComponentWrapper
+                frameworkComponentWrapper: frameworkComponentWrapper,
             },
-            modules: core_1.ModuleRegistry.__getGridRegisteredModules(this.params.api.getGridId())
+            modules: core_1.ModuleRegistry.__getGridRegisteredModules(this.params.api.getGridId()),
         });
-        this.detailApi = gridOptions.api;
-        this.ctrl.registerDetailWithMaster(gridOptions.api, gridOptions.columnApi);
+        this.detailApi = api;
+        this.ctrl.registerDetailWithMaster(api, new core_1.ColumnApi(api));
         this.addDestroyFunc(function () {
-            if (gridOptions.api) {
-                gridOptions.api.destroy();
-            }
+            api === null || api === void 0 ? void 0 : api.destroy();
         });
     };
     DetailCellRenderer.prototype.setRowData = function (rowData) {
         // ensure detail grid api still exists (grid may be destroyed when async call tries to set data)
-        this.detailApi && this.detailApi.setRowData(rowData);
+        this.detailApi && this.detailApi.setGridOption('rowData', rowData);
     };
     DetailCellRenderer.TEMPLATE = "<div class=\"ag-details-row\" role=\"gridcell\">\n            <div ref=\"eDetailGrid\" class=\"ag-details-grid\" role=\"presentation\"></div>\n        </div>";
     __decorate([
-        core_1.RefSelector('eDetailGrid')
+        (0, core_1.RefSelector)('eDetailGrid')
     ], DetailCellRenderer.prototype, "eDetailGrid", void 0);
     return DetailCellRenderer;
 }(core_1.Component));

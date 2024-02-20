@@ -9,7 +9,7 @@ import { MenuModule } from '@ag-grid-enterprise/menu';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
 import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 
 import FileCellRenderer from './FileCellRenderer.jsx';
 
@@ -18,6 +18,7 @@ import { ModuleRegistry } from '@ag-grid-community/core';
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule, MenuModule]);
 
 class FileBrowser extends Component {
+  defaultColDef = { flex: 1 };
 
   colDefs = [{ field: "dateModified" }, { field: "size" }];
 
@@ -34,15 +35,15 @@ class FileBrowser extends Component {
 
   render() {
     return (
-      <div style={{ height: '100%' }} className="ag-theme-alpine">
+      <div style={{ height: '100%' }} className="ag-theme-quartz">
         <AgGridReact
+          defaultColDef={this.defaultColDef}
           columnDefs={this.colDefs}
           rowData={this.props.files}
           treeData={true}
           groupDefaultExpanded={-1}
           getDataPath={data => data.filePath}
           autoGroupColumnDef={this.autoGroupColumnDef}
-          onGridReady={params => params.api.sizeColumnsToFit()}
           getContextMenuItems={this.getContextMenuItems}
           getRowId={params => params.data.id}
           onRowDragEnd={this.onRowDragEnd}

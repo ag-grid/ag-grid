@@ -2,12 +2,16 @@ import { Component } from "@angular/core";
 import { IToolPanelParams, IRowNode } from "@ag-grid-community/core";
 import { IToolPanelAngularComp } from "@ag-grid-community/angular";
 
+export interface CustomStatsToolPanelParams extends IToolPanelParams {
+    title: string;
+}
+
 @Component({
-    selector: 'custom-stats',
+    standalone: true,
     template: `
       <div style="text-align: center">
       <span>
-                <h2><i class="fa fa-calculator"></i> Custom Stats</h2>
+                <h2><i class="fa fa-calculator"></i> {{ title }}</h2>
                 <dl style="font-size: large; padding: 30px 40px 10px 30px">
                     <dt class="totalStyle">Total Medals: <b>{{ numMedals }}</b></dt>
                     <dt class="totalStyle">Total Gold: <b>{{ numGold }}</b></dt>
@@ -23,20 +27,22 @@ import { IToolPanelAngularComp } from "@ag-grid-community/angular";
     `]
 })
 export class CustomStatsToolPanel implements IToolPanelAngularComp {
-    private params!: IToolPanelParams;
+    private params!: CustomStatsToolPanelParams;
 
     public numMedals!: number;
     public numGold!: number;
     public numSilver!: number;
     public numBronze!: number;
+    public title!: string;
 
-    agInit(params: IToolPanelParams): void {
+    agInit(params: CustomStatsToolPanelParams): void {
         this.params = params;
 
         this.numMedals = 0;
         this.numGold = 0;
         this.numSilver = 0;
         this.numBronze = 0;
+        this.title = params.title;
 
         // calculate stats when new rows loaded, i.e. onModelUpdated
         this.params.api.addEventListener('modelUpdated', this.updateTotals.bind(this));

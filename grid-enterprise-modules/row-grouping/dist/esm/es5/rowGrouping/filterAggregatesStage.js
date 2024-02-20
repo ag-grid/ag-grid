@@ -105,7 +105,7 @@ var FilterAggregatesStage = /** @class */ (function (_super) {
             rowNode.setAllChildrenCount(null);
             return;
         }
-        if (this.gridOptionsService.isTreeData()) {
+        if (this.gridOptionsService.get('treeData')) {
             this.setAllChildrenCountTreeData(rowNode);
         }
         else {

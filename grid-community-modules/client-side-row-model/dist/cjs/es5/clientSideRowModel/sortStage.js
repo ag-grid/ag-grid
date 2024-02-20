@@ -38,21 +38,24 @@ var SortStage = /** @class */ (function (_super) {
             // on if transactions are present. it's off for now so that we can
             // selectively turn it on and test it with some select users before
             // rolling out to everyone.
-            && this.gridOptionsService.is('deltaSort');
-        var sortContainsGroupColumns = sortOptions.some(function (opt) { return !!_this.columnModel.getGroupDisplayColumnForGroup(opt.column.getId()); });
+            && this.gridOptionsService.get('deltaSort');
+        var sortContainsGroupColumns = sortOptions.some(function (opt) {
+            var isSortingCoupled = _this.gridOptionsService.isColumnsSortingCoupledToGroup();
+            if (isSortingCoupled) {
+                return opt.column.isPrimary() && opt.column.isRowGroupActive();
+            }
+            return !!opt.column.getColDef().showRowGroup;
+        });
         this.sortService.sort(sortOptions, sortActive, deltaSort, params.rowNodeTransactions, params.changedPath, sortContainsGroupColumns);
     };
     __decorate([
-        core_1.Autowired('sortService')
+        (0, core_1.Autowired)('sortService')
     ], SortStage.prototype, "sortService", void 0);
     __decorate([
-        core_1.Autowired('sortController')
+        (0, core_1.Autowired)('sortController')
     ], SortStage.prototype, "sortController", void 0);
-    __decorate([
-        core_1.Autowired('columnModel')
-    ], SortStage.prototype, "columnModel", void 0);
     SortStage = __decorate([
-        core_1.Bean('sortStage')
+        (0, core_1.Bean)('sortStage')
     ], SortStage);
     return SortStage;
 }(core_1.BeanStub));

@@ -37,7 +37,8 @@ var CheckboxCellEditor = /** @class */ (function (_super) {
         this.params = params;
         var isSelected = (_a = params.value) !== null && _a !== void 0 ? _a : undefined;
         this.eCheckbox.setValue(isSelected);
-        this.eCheckbox.getInputElement().setAttribute('tabindex', '-1');
+        var inputEl = this.eCheckbox.getInputElement();
+        inputEl.setAttribute('tabindex', '-1');
         this.setAriaLabel(isSelected);
         this.addManagedListener(this.eCheckbox, eventKeys_1.Events.EVENT_FIELD_VALUE_CHANGED, function (event) { return _this.setAriaLabel(event.selected); });
     };
@@ -57,12 +58,12 @@ var CheckboxCellEditor = /** @class */ (function (_super) {
     };
     CheckboxCellEditor.prototype.setAriaLabel = function (isSelected) {
         var translate = this.localeService.getLocaleTextFunc();
-        var stateName = aria_1.getAriaCheckboxStateName(translate, isSelected);
+        var stateName = (0, aria_1.getAriaCheckboxStateName)(translate, isSelected);
         var ariaLabel = translate('ariaToggleCellValue', 'Press SPACE to toggle cell value');
-        this.eCheckbox.setInputAriaLabel(ariaLabel + " (" + stateName + ")");
+        this.eCheckbox.setInputAriaLabel("".concat(ariaLabel, " (").concat(stateName, ")"));
     };
     __decorate([
-        componentAnnotations_1.RefSelector('eCheckbox')
+        (0, componentAnnotations_1.RefSelector)('eCheckbox')
     ], CheckboxCellEditor.prototype, "eCheckbox", void 0);
     return CheckboxCellEditor;
 }(popupComponent_1.PopupComponent));

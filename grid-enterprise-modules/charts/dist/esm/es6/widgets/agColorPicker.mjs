@@ -2,7 +2,7 @@ import { AgColorPanel } from "./agColorPanel.mjs";
 import { AgPickerField, AgDialog } from "@ag-grid-community/core";
 export class AgColorPicker extends AgPickerField {
     constructor(config) {
-        super(Object.assign({ pickerAriaLabelKey: 'ariaLabelColorPicker', pickerAriaLabelValue: 'Color Picker', pickerType: 'ag-list' }, config), 'ag-color-picker', 'colorPicker');
+        super(Object.assign({ pickerAriaLabelKey: 'ariaLabelColorPicker', pickerAriaLabelValue: 'Color Picker', pickerType: 'ag-list', className: 'ag-color-picker', pickerIcon: 'colorPicker' }, config));
         if (config && config.color) {
             this.value = config.color;
         }

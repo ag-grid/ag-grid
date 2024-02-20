@@ -26,8 +26,14 @@ import { initFontPanelParams } from "./fontPanelParams";
 import { getMaxValue } from "../formatPanel";
 import { MarkersPanel } from "./markersPanel";
 import { ChartController } from "../../../chartController";
-import { getSeriesType } from "../../../utils/seriesTypeMapper";
+import { getSeriesType, isPieChartSeries } from "../../../utils/seriesTypeMapper";
+import { AgColorPicker } from '../../../../../widgets/agColorPicker';
 import { CalloutPanel } from "./calloutPanel";
+import { CapsPanel } from "./capsPanel";
+import { ConnectorLinePanel } from "./connectorLinePanel";
+import { WhiskersPanel } from "./whiskersPanel";
+import { SeriesItemsPanel } from "./seriesItemsPanel";
+import { TileSpacingPanel } from "./tileSpacingPanel";
 var SeriesPanel = /** @class */ (function (_super) {
     __extends(SeriesPanel, _super);
     function SeriesPanel(_a) {
@@ -35,8 +41,9 @@ var SeriesPanel = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.activePanels = [];
         _this.widgetFuncs = {
-            'lineWidth': function () { return _this.initLineWidth(); },
-            'strokeWidth': function () { return _this.initStrokeWidth(); },
+            'lineWidth': function () { return _this.initStrokeWidth('lineWidth'); },
+            'strokeWidth': function () { return _this.initStrokeWidth('strokeWidth'); },
+            'lineColor': function () { return _this.initLineColor(); },
             'lineDash': function () { return _this.initLineDash(); },
             'lineOpacity': function () { return _this.initLineOpacity(); },
             'fillOpacity': function () { return _this.initFillOpacity(); },
@@ -45,15 +52,34 @@ var SeriesPanel = /** @class */ (function (_super) {
             'shadow': function () { return _this.initShadow(); },
             'tooltips': function () { return _this.initTooltips(); },
             'bins': function () { return _this.initBins(); },
+            'whiskers': function () { return _this.initWhiskers(); },
+            'caps': function () { return _this.initCaps(); },
+            'connectorLine': function () { return _this.initConnectorLine(); },
+            'seriesItems': function () { return _this.initSeriesItemsPanel(); },
+            'tileSpacing': function () { return _this.initTileSpacingPanel(); },
         };
         _this.seriesWidgetMappings = {
-            'area': ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels', 'shadow'],
-            'bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
             'column': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
-            'line': ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'markers', 'labels'],
-            'histogram': ['tooltips', 'bins', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
-            'scatter': ['tooltips', 'markers', 'labels'],
+            'bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
             'pie': ['tooltips', 'strokeWidth', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
+            'donut': ['tooltips', 'strokeWidth', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
+            'line': ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'markers', 'labels'],
+            'scatter': ['tooltips', 'markers', 'labels'],
+            'bubble': ['tooltips', 'markers', 'labels'],
+            'area': ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels', 'shadow'],
+            'histogram': ['tooltips', 'bins', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
+            'radial-column': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
+            'radial-bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
+            'radar-line': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'markers', 'labels'],
+            'radar-area': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels'],
+            'nightingale': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
+            'box-plot': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'whiskers', 'caps'],
+            'range-bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
+            'range-area': ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels', 'shadow'],
+            'treemap': ['tooltips', 'tileSpacing'],
+            'sunburst': ['tooltips'],
+            'heatmap': ['tooltips', 'labels', 'lineColor', 'lineWidth', 'lineOpacity'],
+            'waterfall': ['tooltips', 'connectorLine', 'seriesItems'],
         };
         _this.chartController = chartController;
         _this.chartOptionsService = chartOptionsService;
@@ -79,11 +105,18 @@ var SeriesPanel = /** @class */ (function (_super) {
         this.destroyActivePanels();
         var chart = this.chartController.getChartProxy().getChart();
         chart.waitForUpdate().then(function () {
+            var _a;
+            var componentWasRemoved = !_this.isAlive();
+            if (componentWasRemoved) {
+                // It's possible that the component was unmounted during the async delay in updating the chart.
+                // If this is the case we want to bail out to avoid operating on stale UI components.
+                return;
+            }
             if (_this.chartController.isComboChart()) {
                 _this.updateSeriesType();
                 _this.initSeriesSelect();
             }
-            _this.seriesWidgetMappings[_this.seriesType].forEach(function (w) { return _this.widgetFuncs[w](); });
+            ((_a = _this.seriesWidgetMappings[_this.seriesType]) !== null && _a !== void 0 ? _a : []).forEach(function (w) { return _this.widgetFuncs[w](); });
         })
             .catch(function (e) { return console.error("AG Grid - chart rendering failed", e); });
     };
@@ -94,9 +127,9 @@ var SeriesPanel = /** @class */ (function (_super) {
             .setLabel(this.translate('seriesType'))
             .setLabelAlignment("left")
             .setLabelWidth('flex')
-            .setInputWidth(100)
+            .setInputWidth('flex')
             .addOptions(this.getSeriesSelectOptions())
-            .setValue("" + this.seriesType)
+            .setValue("".concat(this.seriesType))
             .onValueChange(function (newValue) {
             _this.seriesType = newValue;
             _this.refreshWidgets();
@@ -111,34 +144,35 @@ var SeriesPanel = /** @class */ (function (_super) {
             .setLabel(this.translate("tooltips"))
             .setLabelAlignment("left")
             .setLabelWidth("flex")
-            .setInputWidth(45)
+            .setInputWidth('flex')
             .setValue(this.getSeriesOption("tooltip.enabled") || false)
             .onValueChange(function (newValue) { return _this.setSeriesOption("tooltip.enabled", newValue); });
         this.addWidget(seriesTooltipsToggle);
     };
-    SeriesPanel.prototype.initStrokeWidth = function () {
+    SeriesPanel.prototype.initLineColor = function () {
         var _this = this;
-        var currentValue = this.getSeriesOption("strokeWidth");
+        var currentValue = this.getSeriesOption("stroke");
+        var seriesLineColorPicker = this.createBean(new AgColorPicker());
+        seriesLineColorPicker
+            .setLabel(this.translate("strokeColor"))
+            .setLabelWidth('flex')
+            .onValueChange(function (newValue) { return _this.setSeriesOption("stroke", newValue); });
+        if (currentValue)
+            seriesLineColorPicker.setValue(currentValue);
+        this.addWidget(seriesLineColorPicker);
+    };
+    SeriesPanel.prototype.initStrokeWidth = function (label) {
+        var _this = this;
+        var _a;
+        var currentValue = (_a = this.getSeriesOption("strokeWidth")) !== null && _a !== void 0 ? _a : 0;
         var seriesStrokeWidthSlider = this.createBean(new AgSlider());
         seriesStrokeWidthSlider
-            .setLabel(this.translate("strokeWidth"))
+            .setLabel(this.translate(label))
             .setMaxValue(getMaxValue(currentValue, 10))
             .setTextFieldWidth(45)
-            .setValue("" + currentValue)
+            .setValue("".concat(currentValue))
             .onValueChange(function (newValue) { return _this.setSeriesOption("strokeWidth", newValue); });
         this.addWidget(seriesStrokeWidthSlider);
-    };
-    SeriesPanel.prototype.initLineWidth = function () {
-        var _this = this;
-        var currentValue = this.getSeriesOption("strokeWidth");
-        var seriesLineWidthSlider = this.createBean(new AgSlider());
-        seriesLineWidthSlider
-            .setLabel(this.translate('lineWidth'))
-            .setMaxValue(getMaxValue(currentValue, 10))
-            .setTextFieldWidth(45)
-            .setValue("" + currentValue)
-            .onValueChange(function (newValue) { return _this.setSeriesOption("strokeWidth", newValue); });
-        this.addWidget(seriesLineWidthSlider);
     };
     SeriesPanel.prototype.initLineDash = function () {
         var _this = this;
@@ -149,40 +183,43 @@ var SeriesPanel = /** @class */ (function (_super) {
             .setLabel(this.translate('lineDash'))
             .setMaxValue(getMaxValue(currentValue, 30))
             .setTextFieldWidth(45)
-            .setValue("" + currentValue)
+            .setValue("".concat(currentValue))
             .onValueChange(function (newValue) { return _this.setSeriesOption("lineDash", [newValue]); });
         this.addWidget(seriesLineDashSlider);
     };
     SeriesPanel.prototype.initLineOpacity = function () {
         var _this = this;
-        var currentValue = this.getSeriesOption("strokeOpacity");
+        var _a;
+        var currentValue = (_a = this.getSeriesOption("strokeOpacity")) !== null && _a !== void 0 ? _a : 0;
         var seriesLineOpacitySlider = this.createBean(new AgSlider());
         seriesLineOpacitySlider
             .setLabel(this.translate("strokeOpacity"))
             .setStep(0.05)
             .setMaxValue(getMaxValue(currentValue, 1))
             .setTextFieldWidth(45)
-            .setValue("" + currentValue)
+            .setValue("".concat(currentValue))
             .onValueChange(function (newValue) { return _this.setSeriesOption("strokeOpacity", newValue); });
         this.addWidget(seriesLineOpacitySlider);
     };
     SeriesPanel.prototype.initFillOpacity = function () {
         var _this = this;
-        var currentValue = this.getSeriesOption("fillOpacity");
+        var _a;
+        var currentValue = (_a = this.getSeriesOption("fillOpacity")) !== null && _a !== void 0 ? _a : 0;
         var seriesFillOpacitySlider = this.createBean(new AgSlider());
         seriesFillOpacitySlider
             .setLabel(this.translate("fillOpacity"))
             .setStep(0.05)
             .setMaxValue(getMaxValue(currentValue, 1))
             .setTextFieldWidth(45)
-            .setValue("" + currentValue)
+            .setValue("".concat(currentValue))
             .onValueChange(function (newValue) { return _this.setSeriesOption("fillOpacity", newValue); });
         this.addWidget(seriesFillOpacitySlider);
     };
     SeriesPanel.prototype.initLabels = function () {
         var _this = this;
-        var seriesOptionLabelProperty = this.seriesType === 'pie' ? 'calloutLabel' : 'label';
-        var labelName = this.seriesType === 'pie'
+        var isPieChart = isPieChartSeries(this.seriesType);
+        var seriesOptionLabelProperty = isPieChart ? 'calloutLabel' : 'label';
+        var labelName = isPieChart
             ? this.chartTranslationService.translate('calloutLabels')
             : this.chartTranslationService.translate('labels');
         var labelParams = initFontPanelParams({
@@ -192,13 +229,13 @@ var SeriesPanel = /** @class */ (function (_super) {
             seriesOptionLabelProperty: seriesOptionLabelProperty
         });
         var labelPanelComp = this.createBean(new FontPanel(labelParams));
-        if (this.seriesType === 'pie') {
+        if (isPieChart) {
             var calloutPanelComp = this.createBean(new CalloutPanel(this.chartOptionsService, function () { return _this.seriesType; }));
             labelPanelComp.addCompToPanel(calloutPanelComp);
             this.activePanels.push(calloutPanelComp);
         }
         this.addWidget(labelPanelComp);
-        if (this.seriesType === 'pie') {
+        if (isPieChart) {
             var sectorParams = initFontPanelParams({
                 labelName: this.chartTranslationService.translate('sectorLabels'),
                 chartOptionsService: this.chartOptionsService,
@@ -209,6 +246,35 @@ var SeriesPanel = /** @class */ (function (_super) {
             var positionRatioComp = this.getSectorLabelPositionRatio();
             sectorPanelComp.addCompToPanel(positionRatioComp);
             this.addWidget(sectorPanelComp);
+        }
+        if (this.seriesType === 'range-bar') {
+            // Add label placement dropdown
+            var options = [
+                { value: 'inside', text: this.translate('inside') },
+                { value: 'outside', text: this.translate('outside') },
+            ];
+            var placementValue = this.chartOptionsService.getSeriesOption('label.placement', this.seriesType);
+            var placementSelect = labelPanelComp.createManagedBean(new AgSelect());
+            placementSelect
+                .setLabel(this.translate('labelPlacement'))
+                .setLabelAlignment('left')
+                .setLabelWidth('flex')
+                .setInputWidth('flex')
+                .addOptions(options)
+                .setValue(placementValue)
+                .onValueChange(function (newValue) { return _this.chartOptionsService.setSeriesOption('label.placement', newValue, _this.seriesType); });
+            labelPanelComp.addCompToPanel(placementSelect);
+            this.activePanels.push(placementSelect);
+            // Add padding slider
+            var paddingValue = this.chartOptionsService.getSeriesOption('label.padding', this.seriesType);
+            var paddingSlider = labelPanelComp.createManagedBean(new AgSlider());
+            paddingSlider.setLabel(this.chartTranslationService.translate('padding'))
+                .setMaxValue(getMaxValue(paddingValue, 200))
+                .setValue("".concat(paddingValue))
+                .setTextFieldWidth(45)
+                .onValueChange(function (newValue) { return _this.chartOptionsService.setSeriesOption('label.padding', newValue, _this.seriesType); });
+            labelPanelComp.addCompToPanel(paddingSlider);
+            this.activePanels.push(paddingSlider);
         }
     };
     SeriesPanel.prototype.getSectorLabelPositionRatio = function () {
@@ -221,7 +287,7 @@ var SeriesPanel = /** @class */ (function (_super) {
             .setStep(0.05)
             .setMaxValue(getMaxValue(currentValue, 1))
             .setTextFieldWidth(45)
-            .setValue("" + currentValue)
+            .setValue("".concat(currentValue))
             .onValueChange(function (newValue) { return _this.chartOptionsService.setSeriesOption(expression, newValue, _this.seriesType); });
     };
     SeriesPanel.prototype.initShadow = function () {
@@ -237,35 +303,63 @@ var SeriesPanel = /** @class */ (function (_super) {
     SeriesPanel.prototype.initBins = function () {
         var _this = this;
         var _a;
-        var currentValue = ((_a = this.getSeriesOption("bins")) !== null && _a !== void 0 ? _a : this.getSeriesOption("calculatedBins")).length;
+        var currentValue = ((_a = this.getSeriesOption("bins")) !== null && _a !== void 0 ? _a : this.getSeriesOption("calculatedBins", true)).length;
         var seriesBinCountSlider = this.createBean(new AgSlider());
         seriesBinCountSlider
             .setLabel(this.translate("histogramBinCount"))
             .setMinValue(0)
             .setMaxValue(getMaxValue(currentValue, 20))
             .setTextFieldWidth(45)
-            .setValue("" + currentValue)
+            .setValue("".concat(currentValue))
             .onValueChange(function (newValue) { return _this.setSeriesOption("binCount", newValue); });
         this.addWidget(seriesBinCountSlider);
+    };
+    SeriesPanel.prototype.initWhiskers = function () {
+        var _this = this;
+        var whiskersPanelComp = this.createBean(new WhiskersPanel(this.chartOptionsService, function () { return _this.seriesType; }));
+        this.addWidget(whiskersPanelComp);
+    };
+    SeriesPanel.prototype.initCaps = function () {
+        var _this = this;
+        var capsPanelComp = this.createBean(new CapsPanel(this.chartOptionsService, function () { return _this.seriesType; }));
+        this.addWidget(capsPanelComp);
+    };
+    SeriesPanel.prototype.initConnectorLine = function () {
+        var _this = this;
+        var connectorLinePanelComp = this.createBean(new ConnectorLinePanel(this.chartOptionsService, function () { return _this.seriesType; }));
+        this.addWidget(connectorLinePanelComp);
+    };
+    SeriesPanel.prototype.initSeriesItemsPanel = function () {
+        var _this = this;
+        var seriesItemsPanelComp = this.createBean(new SeriesItemsPanel(this.chartOptionsService, function () { return _this.seriesType; }));
+        this.addWidget(seriesItemsPanelComp);
+    };
+    SeriesPanel.prototype.initTileSpacingPanel = function () {
+        var _this = this;
+        var tileSpacingPanelComp = this.createBean(new TileSpacingPanel(this.chartOptionsService, function () { return _this.seriesType; }));
+        this.addWidget(tileSpacingPanelComp);
     };
     SeriesPanel.prototype.addWidget = function (widget) {
         this.seriesGroup.addItem(widget);
         this.activePanels.push(widget);
     };
-    SeriesPanel.prototype.getSeriesOption = function (expression) {
-        return this.chartOptionsService.getSeriesOption(expression, this.seriesType);
+    SeriesPanel.prototype.getSeriesOption = function (expression, calculated) {
+        return this.chartOptionsService.getSeriesOption(expression, this.seriesType, calculated);
     };
     SeriesPanel.prototype.setSeriesOption = function (expression, newValue) {
         this.chartOptionsService.setSeriesOption(expression, newValue, this.seriesType);
     };
     SeriesPanel.prototype.getChartSeriesType = function () {
-        if (this.chartController.getSeriesChartTypes().length === 0)
+        if (this.chartController.getSeriesChartTypes().length === 0) {
             return 'column';
+        }
         var ct = this.chartController.getSeriesChartTypes()[0].chartType;
-        if (ct === 'columnLineCombo')
+        if (ct === 'columnLineCombo') {
             return 'column';
-        if (ct === 'areaColumnCombo')
+        }
+        if (ct === 'areaColumnCombo') {
             return 'area';
+        }
         return getSeriesType(ct);
     };
     SeriesPanel.prototype.getSeriesSelectOptions = function () {
@@ -279,7 +373,19 @@ var SeriesPanel = /** @class */ (function (_super) {
                 ['line', { value: 'line', text: this.translate('line', 'Line') }],
                 ['scatter', { value: 'scatter', text: this.translate('scatter', 'Scatter') }],
                 ['histogram', { value: 'histogram', text: this.translate('histogram', 'Histogram') }],
+                ['radial-column', { value: 'radial-column', text: this.translate('radialColumn', 'Radial Column') }],
+                ['radial-bar', { value: 'radial-bar', text: this.translate('radialBar', 'Radial Bar') }],
+                ['radar-line', { value: 'radar-line', text: this.translate('radarLine', 'Radar Line') }],
+                ['radar-area', { value: 'radar-area', text: this.translate('radarArea', 'Radar Area') }],
+                ['nightingale', { value: 'nightingale', text: this.translate('nightingale', 'Nightingale') }],
+                ['range-bar', { value: 'range-bar', text: this.translate('rangeBar', 'Range Bar') }],
+                ['range-area', { value: 'range-area', text: this.translate('rangeArea', 'Range Area') }],
+                ['treemap', { value: 'treemap', text: this.translate('treemap', 'Treemap') }],
+                ['sunburst', { value: 'sunburst', text: this.translate('sunburst', 'Sunburst') }],
+                ['waterfall', { value: 'waterfall', text: this.translate('waterfall', 'Waterfall') }],
+                ['box-plot', { value: 'box-plot', text: this.translate('boxPlot', 'Box Plot') }],
                 ['pie', { value: 'pie', text: this.translate('pie', 'Pie') }],
+                ['donut', { value: 'donut', text: this.translate('donut', 'Donut') }],
             ]);
         }
         var seriesSelectOptions = new Set();

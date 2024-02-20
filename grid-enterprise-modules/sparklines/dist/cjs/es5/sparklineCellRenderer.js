@@ -81,13 +81,13 @@ var SparklineCellRenderer = /** @class */ (function (_super) {
     };
     SparklineCellRenderer.TEMPLATE /* html */ = "<div class=\"ag-sparkline-wrapper\">\n            <span ref=\"eSparkline\"></span>\n        </div>";
     __decorate([
-        core_1.RefSelector('eSparkline')
+        (0, core_1.RefSelector)('eSparkline')
     ], SparklineCellRenderer.prototype, "eSparkline", void 0);
     __decorate([
-        core_1.Autowired('resizeObserverService')
+        (0, core_1.Autowired)('resizeObserverService')
     ], SparklineCellRenderer.prototype, "resizeObserverService", void 0);
     __decorate([
-        core_1.Autowired('sparklineTooltipSingleton')
+        (0, core_1.Autowired)('sparklineTooltipSingleton')
     ], SparklineCellRenderer.prototype, "sparklineTooltipSingleton", void 0);
     return SparklineCellRenderer;
 }(core_1.Component));

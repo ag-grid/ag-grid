@@ -1,5 +1,7 @@
-import { Grid, GridOptions } from '@ag-grid-community/core';
+import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 import { getData } from "./data";
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -18,7 +20,6 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     minWidth: 100,
-    resizable: true,
   },
   rowData: getData(),
   rowHeight: 50,
@@ -33,7 +34,7 @@ function start() {
 
   const updateData = () => {
     const itemsToUpdate: any[] = []
-    gridOptions.api!.forEachNodeAfterFilterAndSort(function (rowNode) {
+    gridApi!.forEachNodeAfterFilterAndSort(function (rowNode) {
       const data = rowNode.data
       if (!data) {
         return;
@@ -44,7 +45,7 @@ function start() {
       data.change = [...data.change.slice(1, n), v]
       itemsToUpdate.push(data)
     })
-    gridOptions.api!.applyTransaction({ update: itemsToUpdate })
+    gridApi!.applyTransaction({ update: itemsToUpdate })
   };
 
   intervalId = setInterval(updateData, 300)
@@ -62,5 +63,5 @@ function stop() {
 
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

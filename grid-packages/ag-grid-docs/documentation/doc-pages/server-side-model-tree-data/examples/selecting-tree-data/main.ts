@@ -1,4 +1,15 @@
-import { Grid, ColDef, GridApi, GridOptions, IServerSideDatasource, IServerSideGetRowsParams, IServerSideGetRowsRequest, IsServerSideGroupOpenByDefaultParams, IRowNode, GetRowIdParams } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  ColDef,
+  GridOptions,
+  IServerSideDatasource,
+  IServerSideGetRowsParams,
+  IServerSideGetRowsRequest,
+  IsServerSideGroupOpenByDefaultParams,
+  IRowNode,
+  GetRowIdParams,
+} from '@ag-grid-community/core';
 
 var fakeServer: {
   getData: (request: IServerSideGetRowsRequest) => void,
@@ -15,11 +26,13 @@ const columnDefs: ColDef[] = [
   { field: 'startDate' },
 ];
 
+let gridApi: GridApi;
+
 const gridOptions: GridOptions = {
   defaultColDef: {
     width: 235,
-    resizable: true,
     flex: 1,
+    sortable: false,
   },
   autoGroupColumnDef: {
     headerCheckboxSelection: true,
@@ -31,7 +44,6 @@ const gridOptions: GridOptions = {
   rowModelType: 'serverSide',
   treeData: true,
   columnDefs: columnDefs,
-  animateRows: true,
   cacheBlockSize: 10,
   rowSelection: 'multiple',
   groupSelectsChildren: true,
@@ -51,7 +63,7 @@ const gridOptions: GridOptions = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/tree-data.json')
     .then(response => response.json())
@@ -66,13 +78,13 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         ...data,
       ];
-      var fakeServer = createFakeServer(adjustedData, gridOptions.api!)
+      var fakeServer = createFakeServer(adjustedData, gridApi!)
       var datasource = createServerSideDatasource(fakeServer)
-      gridOptions.api!.setServerSideDatasource(datasource)
+      gridApi!.setGridOption('serverSideDatasource', datasource)
     })
 })
 
-function createFakeServer(fakeServerData: any[], gridApi: GridApi) {
+function createFakeServer(fakeServerData: any[], api: GridApi) {
   const getDataAtRoute = (route: string[]) => {
     let mutableRoute = [...route];
     let target: any = { underlings: fakeServerData };
@@ -120,7 +132,7 @@ function createFakeServer(fakeServerData: any[], gridApi: GridApi) {
         target.underlings = [newRow];
 
         // update the parent row via transaction
-        gridApi.applyServerSideTransaction({
+        api.applyServerSideTransaction({
           route: route.slice(0, route.length - 1),
           update: [sanitizeRowForGrid(target)],
         });
@@ -128,7 +140,7 @@ function createFakeServer(fakeServerData: any[], gridApi: GridApi) {
         target.underlings.push(newRow);
 
         // add the child row via transaction
-        gridApi.applyServerSideTransaction({
+        api.applyServerSideTransaction({
           route,
           add: [sanitizeRowForGrid(newRow)],
         });
@@ -140,7 +152,7 @@ function createFakeServer(fakeServerData: any[], gridApi: GridApi) {
       target.employmentType = target.employmentType === 'Contract' ? 'Permanent' : 'Contract';
 
       // inform the grid of the changes
-      gridApi.applyServerSideTransaction({
+      api.applyServerSideTransaction({
         route: route.slice(0, route.length - 1),
         update: [sanitizeRowForGrid(target)],
       });
@@ -152,13 +164,13 @@ function createFakeServer(fakeServerData: any[], gridApi: GridApi) {
       parent.underlings = parent.underlings.filter((child: any) => child.employeeName !== target.employeeName);
       if (parent.underlings.length === 0) {
         // update the parent row via transaction, as it's no longer a group
-        gridApi.applyServerSideTransaction({
+        api.applyServerSideTransaction({
           route: route.slice(0, route.length - 2),
           update: [sanitizeRowForGrid(parent)],
         });
       } else {
         // inform the grid of the changes
-        gridApi.applyServerSideTransaction({
+        api.applyServerSideTransaction({
           route: route.slice(0, route.length - 1),
           remove: [sanitizeRowForGrid(target)],
         });
@@ -192,7 +204,7 @@ function createServerSideDatasource(fakeServer: any) {
         }
         : { rowData: allRows }
       console.log('getRows: result = ', result)
-      setTimeout(function () {
+      setTimeout(() => {
         params.success(result)
       }, 500)
     }

@@ -7,10 +7,10 @@ This page contains information for troubleshooting and advanced use of CSS
 As described in [Customising Global Styles](/global-style-customisation/), you can set CSS variables and write CSS rules that target the grid's CSS class names:
 
 ```css
-.ag-theme-alpine {
+.ag-theme-quartz {
     --ag-background-color: #ddd;
 }
-.ag-theme-alpine .ag-header-cell-label {
+.ag-theme-quartz .ag-header-cell-label {
     font-style: italic;
 }
 ```
@@ -31,7 +31,7 @@ provided by the grid, you can do this by passing a CSS `var()` value to a CSS va
 
 
 ```css
-.ag-theme-alpine {
+.ag-theme-quartz {
     --ag-foreground-color: var(--appMainTextColor);
 }
 ```
@@ -53,12 +53,18 @@ This is implemented by setting default values for variables that reference other
 --ag-grid-size: 4px;
 --ag-cell-horizontal-padding: calc(var(--ag-grid-size) * 3);
 --ag-header-height: var(--ag-row-height);
+
+// blending cascades for colours (Quartz theme only)
+--ag-selected-row-background-color:
+    color-mix(in srgb, transparent, var(--ag-active-color) 8%);
 ```
 
-In this example, if you provide a value for `--ag-grid-size` of 10px then `--ag-cell-horizontal-padding` will default to 30px and --ag-header-height to 10px. However it is still possible to override these defaults with your own values.
+If you provide a value for `--ag-grid-size` of "10px" then `--ag-cell-horizontal-padding` will default to "30px" and `--ag-header-height` to "10px". However it is still possible to override these defaults with your own values.
+
+Likewise, if you provide a value for `--ag-active-color` of red "rgb(255,0,0)" then --ag-selected-row-background-color will default to an 8% semi-transparent red "rgba(255,0,0,0.08)".
 
 <note>
-The Sass Styling API additionally implements [Colour Blending](/global-style-customisation-sass/#colour-blending), where for example if you set `range-selection-border-color` to red then `range-selection-background-color` will automatically default to a semi-transparent red. This is not possible in pure CSS, so it's necessary to set both `--ag-range-selection-border-color` and `--ag-range-selection-background-color`. See [Theme Colour Variables](#theme-colour-variables) for instructions on how to manually recreate this in CSS.
+Colour Blending on CSS variables is currently only implemented in the Quartz theme. Other themes need to specify their own colours for each variable, or use the Sass Styling API which implements [Colour Blending](../global-style-customisation-sass/#colour-blending) for all themes.
 </note>
 
 ## Customising Themes using CSS Rules
@@ -68,19 +74,19 @@ Some design effects can't be achieved through CSS variables alone. For example, 
 It is important to include the name of the theme in the rule. Without the theme name, your styles will not override the theme's built-in styles due to CSS selector specificity rules:
 
 ```css
-.ag-theme-alpine .ag-header-cell-label {
+.ag-theme-quartz .ag-header-cell-label {
     font-style: italic;
 }
 ```
 
-The best way to find the right class name to use in a CSS rule is using the browser's developer tools. You will notice that components often have multiple class names, some more general than others. For example, the [row grouping panel](/tool-panel-columns/#example-simple) is a component onto which you can drag columns to group them. The internal name for this is the "column drop" component, and there are two kinds - a horizontal one at the top of the header and a vertical one in the columns tool panel. You can use the class name `ag-column-drop` to target either kind, or `ag-column-drop-vertical` / `ag-column-drop-horizontal` to target one only.
+The best way to find the right class name to use in a CSS rule is using the browser's developer tools. You will notice that components often have multiple class names, some more general than others. For example, the [row grouping panel](/tool-panel-columns/#example) is a component onto which you can drag columns to group them. The internal name for this is the "column drop" component, and there are two kinds - a horizontal one at the top of the header and a vertical one in the columns tool panel. You can use the class name `ag-column-drop` to target either kind, or `ag-column-drop-vertical` / `ag-column-drop-horizontal` to target one only.
 
 ### Referencing Variable Values in CSS Rules
 
 You can reference CSS variables in your own CSS rules:
 
 ```css
-.ag-theme-alpine .ag-header-cell-label {
+.ag-theme-quartz .ag-header-cell-label {
     /* invert colours in header cells */
     background-color: var(--ag-foreground-color);
     foreground-color: var(--ag-background-color);
@@ -90,7 +96,7 @@ You can reference CSS variables in your own CSS rules:
 You can use `calc()` expressions to perform real-time calculations on size values:
 
 ```css
-.ag-theme-alpine .ag-header-cell-label {
+.ag-theme-quartz .ag-header-cell-label {
     padding-left: calc(var(--ag-grid-size) * 2)
 }
 ```

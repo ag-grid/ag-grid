@@ -4,7 +4,7 @@
 
 | Module              | Info |
 | --------------------|------------------:|
-| @ag-grid-enterprise/core  | [![npm](https://img.shields.io/npm/dm/@ag-grid-enterprise/core)](https://www.npmjs.com/package/@ag-grid-enterprise/core) <br> [![Bundle Phobia](https://badgen.net/bundlephobia/minzip/@ag-grid-enterprise/core)](https://bundlephobia.com/result?p=@ag-grid-enterprise/core) <br> [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ag-grid-enterprise&metric=alert_status)](https://sonarcloud.io/dashboard?id=ag-grid-enterprise) |
+| @ag-grid-enterprise/core  | [![npm](https://img.shields.io/npm/dm/@ag-grid-enterprise/core)](https://www.npmjs.com/package/@ag-grid-enterprise/core) <br> [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ag-grid-enterprise&metric=alert_status)](https://sonarcloud.io/dashboard?id=ag-grid-enterprise) |
 
 # AG Grid Enterprise
 ------

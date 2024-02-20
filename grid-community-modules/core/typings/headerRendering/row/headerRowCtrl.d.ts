@@ -9,13 +9,11 @@ import { HeaderRowType } from "./headerRowComp";
 export interface IHeaderRowComp {
     setTop(top: string): void;
     setHeight(height: string): void;
-    setHeaderCtrls(ctrls: AbstractHeaderCellCtrl[], forceOrder: boolean): void;
+    setHeaderCtrls(ctrls: AbstractHeaderCellCtrl[], forceOrder: boolean, afterScroll: boolean): void;
     setWidth(width: string): void;
 }
 export declare class HeaderRowCtrl extends BeanStub {
-    private columnModel;
-    private focusService;
-    private filterManager;
+    private beans;
     private comp;
     private rowIndex;
     private pinned;
@@ -36,7 +34,6 @@ export declare class HeaderRowCtrl extends BeanStub {
     setComp(comp: IHeaderRowComp, initCompState?: boolean): void;
     getHeaderRowClass(): string;
     getAriaRowIndex(): number;
-    getTransform(): string | undefined;
     private addEventListeners;
     getHeaderCellCtrl(column: ColumnGroup): HeaderGroupCellCtrl | undefined;
     getHeaderCellCtrl(column: Column): HeaderCellCtrl | undefined;
@@ -53,7 +50,8 @@ export declare class HeaderRowCtrl extends BeanStub {
     getPinned(): ColumnPinnedType;
     getRowIndex(): number;
     private onVirtualColumnsChanged;
-    getHeaderCtrls(): any[];
+    getHeaderCtrls(): AbstractHeaderCellCtrl<any, any, any>[];
+    private recycleAndCreateHeaderCtrls;
     private getColumnsInViewport;
     private getColumnsInViewportPrintLayout;
     private getActualDepth;

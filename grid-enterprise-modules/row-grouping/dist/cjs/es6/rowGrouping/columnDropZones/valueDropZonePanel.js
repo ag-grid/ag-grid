@@ -45,15 +45,15 @@ class ValuesDropZonePanel extends baseDropZonePanel_1.BaseDropZonePanel {
     getIconName() {
         return this.isPotentialDndColumns() ? core_1.DragAndDropService.ICON_AGGREGATE : core_1.DragAndDropService.ICON_NOT_ALLOWED;
     }
-    isColumnDroppable(column) {
+    isColumnDroppable(column, draggingEvent) {
         // we never allow grouping of secondary columns
-        if (this.gridOptionsService.is('functionsReadOnly') || !column.isPrimary()) {
+        if (this.gridOptionsService.get('functionsReadOnly') || !column.isPrimary()) {
             return false;
         }
-        return column.isAllowValue() && !column.isValueActive();
+        return column.isAllowValue() && (!column.isValueActive() || this.isSourceEventFromTarget(draggingEvent));
     }
     updateColumns(columns) {
-        if (this.gridOptionsService.is('functionsPassive')) {
+        if (this.gridOptionsService.get('functionsPassive')) {
             const event = {
                 type: core_1.Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST,
                 columns: columns
@@ -69,13 +69,13 @@ class ValuesDropZonePanel extends baseDropZonePanel_1.BaseDropZonePanel {
     }
 }
 __decorate([
-    core_1.Autowired('columnModel')
+    (0, core_1.Autowired)('columnModel')
 ], ValuesDropZonePanel.prototype, "columnModel", void 0);
 __decorate([
-    core_1.Autowired('loggerFactory')
+    (0, core_1.Autowired)('loggerFactory')
 ], ValuesDropZonePanel.prototype, "loggerFactory", void 0);
 __decorate([
-    core_1.Autowired('dragAndDropService')
+    (0, core_1.Autowired)('dragAndDropService')
 ], ValuesDropZonePanel.prototype, "dragAndDropService", void 0);
 __decorate([
     core_1.PostConstruct

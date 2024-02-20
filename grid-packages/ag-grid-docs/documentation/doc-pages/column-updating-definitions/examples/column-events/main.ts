@@ -1,4 +1,17 @@
-import { Grid, ColDef, ColumnMovedEvent, ColumnPinnedEvent, ColumnPivotChangedEvent, ColumnResizedEvent, ColumnRowGroupChangedEvent, ColumnValueChangedEvent, ColumnVisibleEvent, GridOptions, SortChangedEvent } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  ColDef,
+  ColumnMovedEvent,
+  ColumnPinnedEvent,
+  ColumnPivotChangedEvent,
+  ColumnResizedEvent,
+  ColumnRowGroupChangedEvent,
+  ColumnValueChangedEvent,
+  ColumnVisibleEvent,
+  GridOptions,
+  SortChangedEvent,
+} from '@ag-grid-community/core';
 
 function getColumnDefs(): ColDef[] {
   return [
@@ -44,10 +57,10 @@ function onColumnPinned(e: ColumnPinnedEvent) {
   console.log('Event Column Pinned', e)
 }
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
-    sortable: true,
-    resizable: true,
     width: 150,
     enableRowGroup: true,
     enablePivot: true,
@@ -67,7 +80,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 
 function onBtSortOn() {
   const columnDefs: ColDef[] = getColumnDefs()
-  columnDefs.forEach(function (colDef) {
+  columnDefs.forEach((colDef) => {
     if (colDef.field === 'age') {
       colDef.sort = 'desc'
     }
@@ -75,96 +88,96 @@ function onBtSortOn() {
       colDef.sort = 'asc'
     }
   })
-  gridOptions.api!.setColumnDefs(columnDefs)
+  gridApi!.setGridOption('columnDefs', columnDefs)
 }
 
 function onBtSortOff() {
   const columnDefs: ColDef[] = getColumnDefs()
-  columnDefs.forEach(function (colDef) {
+  columnDefs.forEach((colDef) => {
     colDef.sort = null
   })
-  gridOptions.api!.setColumnDefs(columnDefs)
+  gridApi!.setGridOption('columnDefs', columnDefs)
 }
 
 function onBtWidthNarrow() {
   const columnDefs: ColDef[] = getColumnDefs()
-  columnDefs.forEach(function (colDef) {
+  columnDefs.forEach((colDef) => {
     if (colDef.field === 'age' || colDef.field === 'athlete') {
       colDef.width = 100
     }
   })
-  gridOptions.api!.setColumnDefs(columnDefs)
+  gridApi!.setGridOption('columnDefs', columnDefs)
 }
 
 function onBtWidthNormal() {
   const columnDefs: ColDef[] = getColumnDefs()
-  columnDefs.forEach(function (colDef) {
+  columnDefs.forEach((colDef) => {
     colDef.width = 200
   })
-  gridOptions.api!.setColumnDefs(columnDefs)
+  gridApi!.setGridOption('columnDefs', columnDefs)
 }
 
 function onBtHide() {
   const columnDefs: ColDef[] = getColumnDefs()
-  columnDefs.forEach(function (colDef) {
+  columnDefs.forEach((colDef) => {
     if (colDef.field === 'age' || colDef.field === 'athlete') {
       colDef.hide = true
     }
   })
-  gridOptions.api!.setColumnDefs(columnDefs)
+  gridApi!.setGridOption('columnDefs', columnDefs)
 }
 
 function onBtShow() {
   const columnDefs: ColDef[] = getColumnDefs()
-  columnDefs.forEach(function (colDef) {
+  columnDefs.forEach((colDef) => {
     colDef.hide = false
   })
-  gridOptions.api!.setColumnDefs(columnDefs)
+  gridApi!.setGridOption('columnDefs', columnDefs)
 }
 
 function onBtPivotOn() {
-  gridOptions.columnApi!.setPivotMode(true)
+  gridApi!.setGridOption('pivotMode', true)
 
   const columnDefs: ColDef[] = getColumnDefs()
-  columnDefs.forEach(function (colDef) {
+  columnDefs.forEach((colDef) => {
     if (colDef.field === 'country') {
       colDef.pivot = true
     }
   })
-  gridOptions.api!.setColumnDefs(columnDefs)
+  gridApi!.setGridOption('columnDefs', columnDefs)
 }
 
 function onBtPivotOff() {
-  gridOptions.columnApi!.setPivotMode(false)
+  gridApi!.setGridOption('pivotMode', false)
 
   const columnDefs: ColDef[] = getColumnDefs()
-  columnDefs.forEach(function (colDef) {
+  columnDefs.forEach((colDef) => {
     colDef.pivot = false
   })
-  gridOptions.api!.setColumnDefs(columnDefs)
+  gridApi!.setGridOption('columnDefs', columnDefs)
 }
 
 function onBtRowGroupOn() {
   const columnDefs: ColDef[] = getColumnDefs()
-  columnDefs.forEach(function (colDef) {
+  columnDefs.forEach((colDef) => {
     if (colDef.field === 'sport') {
       colDef.rowGroup = true
     }
   })
-  gridOptions.api!.setColumnDefs(columnDefs)
+  gridApi!.setGridOption('columnDefs', columnDefs)
 }
 
 function onBtRowGroupOff() {
   const columnDefs: ColDef[] = getColumnDefs()
-  columnDefs.forEach(function (colDef) {
+  columnDefs.forEach((colDef) => {
     colDef.rowGroup = false
   })
-  gridOptions.api!.setColumnDefs(columnDefs)
+  gridApi!.setGridOption('columnDefs', columnDefs)
 }
 
 function onBtAggFuncOn() {
   const columnDefs: ColDef[] = getColumnDefs()
-  columnDefs.forEach(function (colDef) {
+  columnDefs.forEach((colDef) => {
     if (
       colDef.field === 'gold' ||
       colDef.field === 'silver' ||
@@ -173,20 +186,20 @@ function onBtAggFuncOn() {
       colDef.aggFunc = 'sum'
     }
   })
-  gridOptions.api!.setColumnDefs(columnDefs)
+  gridApi!.setGridOption('columnDefs', columnDefs)
 }
 
 function onBtAggFuncOff() {
   const columnDefs: ColDef[] = getColumnDefs()
-  columnDefs.forEach(function (colDef) {
+  columnDefs.forEach((colDef) => {
     colDef.aggFunc = null
   })
-  gridOptions.api!.setColumnDefs(columnDefs)
+  gridApi!.setGridOption('columnDefs', columnDefs)
 }
 
 function onBtPinnedOn() {
   const columnDefs: ColDef[] = getColumnDefs()
-  columnDefs.forEach(function (colDef) {
+  columnDefs.forEach((colDef) => {
     if (colDef.field === 'athlete') {
       colDef.pinned = 'left'
     }
@@ -194,23 +207,23 @@ function onBtPinnedOn() {
       colDef.pinned = 'right'
     }
   })
-  gridOptions.api!.setColumnDefs(columnDefs)
+  gridApi!.setGridOption('columnDefs', columnDefs)
 }
 
 function onBtPinnedOff() {
   const columnDefs: ColDef[] = getColumnDefs()
-  columnDefs.forEach(function (colDef) {
+  columnDefs.forEach((colDef) => {
     colDef.pinned = null
   })
-  gridOptions.api!.setColumnDefs(columnDefs)
+  gridApi!.setGridOption('columnDefs', columnDefs)
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

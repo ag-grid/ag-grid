@@ -54,12 +54,12 @@ let HorizontalResizeService = class HorizontalResizeService extends beanStub_1.B
     }
 };
 __decorate([
-    context_1.Autowired('dragService')
+    (0, context_1.Autowired)('dragService')
 ], HorizontalResizeService.prototype, "dragService", void 0);
 __decorate([
-    context_1.Autowired('ctrlsService')
+    (0, context_1.Autowired)('ctrlsService')
 ], HorizontalResizeService.prototype, "ctrlsService", void 0);
 HorizontalResizeService = __decorate([
-    context_1.Bean('horizontalResizeService')
+    (0, context_1.Bean)('horizontalResizeService')
 ], HorizontalResizeService);
 exports.HorizontalResizeService = HorizontalResizeService;

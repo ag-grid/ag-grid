@@ -12,5 +12,3 @@ export declare function formatNumberTwoDecimalPlacesAndCommas(value: number, tho
  */
 export declare function formatNumberCommas(value: number, thousandSeparator: string, decimalSeparator: string): string;
 export declare function sum(values: number[] | null): number | null;
-export declare function zeroOrGreater(value: any, defaultValue: number): number;
-export declare function oneOrGreater(value: any, defaultValue?: number): number | undefined;

@@ -31,11 +31,11 @@ export interface FieldDefinition {
 export interface UpdateParams {
     data: any[];
     grouping: boolean;
-    category: {
+    categories: {
         id: string;
         name: string;
         chartDataType?: string;
-    };
+    }[];
     fields: FieldDefinition[];
     chartId?: string;
     getCrossFilteringContext: () => CrossFilteringContext;
@@ -68,6 +68,10 @@ export declare abstract class ChartProxy {
     lookupCustomChartTheme(themeName: string): AgChartTheme;
     protected transformData(data: any[], categoryKey: string, categoryAxis?: boolean): any[];
     protected getCommonChartOptions(updatedOverrides?: AgChartThemeOverrides): any;
+    /**
+     * Retrieve default theme overrides for the current chart type
+     */
+    protected getChartThemeDefaults(): AgChartThemeOverrides | undefined;
     private getActiveFormattingPanelOverrides;
     destroy({ keepChartInstance }?: {
         keepChartInstance?: boolean | undefined;

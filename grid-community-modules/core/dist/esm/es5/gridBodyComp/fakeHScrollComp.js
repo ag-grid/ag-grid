@@ -40,13 +40,14 @@ var FakeHScrollComp = /** @class */ (function (_super) {
         this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onPinnedRowDataChanged.bind(this));
         this.addManagedPropertyListener('domLayout', spacerWidthsListener);
         this.ctrlsService.registerFakeHScrollComp(this);
-        this.createManagedBean(new CenterWidthFeature(function (width) { return _this.eContainer.style.width = width + "px"; }));
+        this.createManagedBean(new CenterWidthFeature(function (width) { return _this.eContainer.style.width = "".concat(width, "px"); }));
+        this.addManagedPropertyListeners(['suppressHorizontalScroll'], this.onScrollVisibilityChanged.bind(this));
     };
     FakeHScrollComp.prototype.initialiseInvisibleScrollbar = function () {
         if (this.invisibleScrollbar !== undefined) {
             return;
         }
-        this.enableRtl = this.gridOptionsService.is('enableRtl');
+        this.enableRtl = this.gridOptionsService.get('enableRtl');
         _super.prototype.initialiseInvisibleScrollbar.call(this);
         if (this.invisibleScrollbar) {
             this.refreshCompBottom();
@@ -60,7 +61,7 @@ var FakeHScrollComp = /** @class */ (function (_super) {
             return;
         }
         var bottomPinnedHeight = this.pinnedRowModel.getPinnedBottomTotalHeight();
-        this.getGui().style.bottom = bottomPinnedHeight + "px";
+        this.getGui().style.bottom = "".concat(bottomPinnedHeight, "px");
     };
     FakeHScrollComp.prototype.onScrollVisibilityChanged = function () {
         _super.prototype.onScrollVisibilityChanged.call(this);
@@ -91,7 +92,7 @@ var FakeHScrollComp = /** @class */ (function (_super) {
     FakeHScrollComp.prototype.setScrollVisible = function () {
         var hScrollShowing = this.scrollVisibleService.isHorizontalScrollShowing();
         var invisibleScrollbar = this.invisibleScrollbar;
-        var isSuppressHorizontalScroll = this.gridOptionsService.is('suppressHorizontalScroll');
+        var isSuppressHorizontalScroll = this.gridOptionsService.get('suppressHorizontalScroll');
         var scrollbarWidth = hScrollShowing ? (this.gridOptionsService.getScrollbarWidth() || 0) : 0;
         var adjustedScrollbarWidth = (scrollbarWidth === 0 && invisibleScrollbar) ? 16 : scrollbarWidth;
         var scrollContainerSize = !isSuppressHorizontalScroll ? adjustedScrollbarWidth : 0;

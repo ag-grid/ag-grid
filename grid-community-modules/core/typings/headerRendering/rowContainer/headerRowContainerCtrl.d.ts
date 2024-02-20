@@ -47,6 +47,7 @@ export declare class HeaderRowContainerCtrl extends BeanStub {
     getHtmlElementForColumnHeader(column: Column): HTMLElement | null;
     getRowType(rowIndex: number): HeaderRowType | undefined;
     focusHeader(rowIndex: number, column: IHeaderColumn, event?: KeyboardEvent): boolean;
+    getViewport(): HTMLElement;
     getRowCount(): number;
     protected destroy(): void;
 }

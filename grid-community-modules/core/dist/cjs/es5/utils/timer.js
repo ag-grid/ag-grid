@@ -10,7 +10,7 @@ var Timer = /** @class */ (function () {
     }
     Timer.prototype.print = function (msg) {
         var duration = (new Date().getTime()) - this.timestamp;
-        console.info(msg + " = " + duration);
+        console.info("".concat(msg, " = ").concat(duration));
         this.timestamp = new Date().getTime();
     };
     return Timer;

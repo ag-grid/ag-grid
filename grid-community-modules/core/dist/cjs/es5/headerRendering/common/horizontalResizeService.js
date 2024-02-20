@@ -73,13 +73,13 @@ var HorizontalResizeService = /** @class */ (function (_super) {
         params.onResizing(this.resizeAmount);
     };
     __decorate([
-        context_1.Autowired('dragService')
+        (0, context_1.Autowired)('dragService')
     ], HorizontalResizeService.prototype, "dragService", void 0);
     __decorate([
-        context_1.Autowired('ctrlsService')
+        (0, context_1.Autowired)('ctrlsService')
     ], HorizontalResizeService.prototype, "ctrlsService", void 0);
     HorizontalResizeService = __decorate([
-        context_1.Bean('horizontalResizeService')
+        (0, context_1.Bean)('horizontalResizeService')
     ], HorizontalResizeService);
     return HorizontalResizeService;
 }(beanStub_1.BeanStub));

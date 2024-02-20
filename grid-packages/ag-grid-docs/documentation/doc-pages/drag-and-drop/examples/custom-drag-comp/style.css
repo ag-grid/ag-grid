@@ -15,7 +15,6 @@
 
 .drop-target {
     border: 1px solid #888;
-    background-color: #88cc88;
     padding: 10px;
 }
 
@@ -24,7 +23,7 @@
     box-sizing: border-box;
     flex: 1 1 auto;
     border: 1px solid #888;
-    background-color: #f8f8f8;
+    background-color: #99999944;
     overflow: auto;
 }
 
@@ -40,16 +39,16 @@
     height: 100%;
 }
 
-.green-row {
-    background-color: #ddffdd !important;
+.red-row {
+    background-color: #CC222244;
 }
 
-.red-row {
-    background-color: #ffdddd !important;
+.green-row {
+    background-color: #33CC3344;
 }
 
 .blue-row {
-    background-color: #ddddff !important;
+    background-color: #2244CC44;
 }
 
 #myGrid {

@@ -33,7 +33,7 @@ var HoverFeature = /** @class */ (function (_super) {
         return _this;
     }
     HoverFeature.prototype.postConstruct = function () {
-        if (this.gridOptionsService.is('columnHoverHighlight')) {
+        if (this.gridOptionsService.get('columnHoverHighlight')) {
             this.addMouseHoverListeners();
         }
     };
@@ -48,7 +48,7 @@ var HoverFeature = /** @class */ (function (_super) {
         this.columnHoverService.setMouseOver(this.columns);
     };
     __decorate([
-        context_1.Autowired('columnHoverService')
+        (0, context_1.Autowired)('columnHoverService')
     ], HoverFeature.prototype, "columnHoverService", void 0);
     __decorate([
         context_1.PostConstruct

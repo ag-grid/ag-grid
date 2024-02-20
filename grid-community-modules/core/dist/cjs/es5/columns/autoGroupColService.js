@@ -36,7 +36,7 @@ var AutoGroupColService = /** @class */ (function (_super) {
     AutoGroupColService.prototype.createAutoGroupColumns = function (rowGroupColumns) {
         var _this = this;
         var groupAutoColumns = [];
-        var doingTreeData = this.gridOptionsService.isTreeData();
+        var doingTreeData = this.gridOptionsService.get('treeData');
         var doingMultiAutoColumn = this.gridOptionsService.isGroupMultiAutoColumn();
         if (doingTreeData && doingMultiAutoColumn) {
             console.warn('AG Grid: you cannot mix groupDisplayType = "multipleColumns" with treeData, only one column can be used to display groups when doing tree data');
@@ -54,16 +54,16 @@ var AutoGroupColService = /** @class */ (function (_super) {
         }
         return groupAutoColumns;
     };
-    AutoGroupColService.prototype.updateAutoGroupColumns = function (autoGroupColumns) {
+    AutoGroupColService.prototype.updateAutoGroupColumns = function (autoGroupColumns, source) {
         var _this = this;
-        autoGroupColumns.forEach(function (column, index) { return _this.updateOneAutoGroupColumn(column, index); });
+        autoGroupColumns.forEach(function (column, index) { return _this.updateOneAutoGroupColumn(column, index, source); });
     };
     // rowGroupCol and index are missing if groupDisplayType != "multipleColumns"
     AutoGroupColService.prototype.createOneAutoGroupColumn = function (rowGroupCol, index) {
         // if doing multi, set the field
         var colId;
         if (rowGroupCol) {
-            colId = exports.GROUP_AUTO_COLUMN_ID + "-" + rowGroupCol.getId();
+            colId = "".concat(exports.GROUP_AUTO_COLUMN_ID, "-").concat(rowGroupCol.getId());
         }
         else {
             colId = exports.GROUP_AUTO_COLUMN_ID;
@@ -77,27 +77,27 @@ var AutoGroupColService = /** @class */ (function (_super) {
     /**
      * Refreshes an auto group col to load changes from defaultColDef or autoGroupColDef
      */
-    AutoGroupColService.prototype.updateOneAutoGroupColumn = function (colToUpdate, index) {
+    AutoGroupColService.prototype.updateOneAutoGroupColumn = function (colToUpdate, index, source) {
         var oldColDef = colToUpdate.getColDef();
         var underlyingColId = typeof oldColDef.showRowGroup == 'string' ? oldColDef.showRowGroup : undefined;
         var underlyingColumn = underlyingColId != null ? this.columnModel.getPrimaryColumn(underlyingColId) : undefined;
         var colDef = this.createAutoGroupColDef(colToUpdate.getId(), underlyingColumn !== null && underlyingColumn !== void 0 ? underlyingColumn : undefined, index);
-        colToUpdate.setColDef(colDef, null);
-        this.columnFactory.applyColumnState(colToUpdate, colDef);
+        colToUpdate.setColDef(colDef, null, source);
+        this.columnFactory.applyColumnState(colToUpdate, colDef, source);
     };
     AutoGroupColService.prototype.createAutoGroupColDef = function (colId, underlyingColumn, index) {
         // if one provided by user, use it, otherwise create one
         var res = this.createBaseColDef(underlyingColumn);
         var autoGroupColumnDef = this.gridOptionsService.get('autoGroupColumnDef');
-        object_1.mergeDeep(res, autoGroupColumnDef);
+        (0, object_1.mergeDeep)(res, autoGroupColumnDef);
         res = this.columnFactory.addColumnDefaultAndTypes(res, colId);
         // For tree data the filter is always allowed
-        if (!this.gridOptionsService.isTreeData()) {
+        if (!this.gridOptionsService.get('treeData')) {
             // we would only allow filter if the user has provided field or value getter. otherwise the filter
             // would not be able to work.
-            var noFieldOrValueGetter = generic_1.missing(res.field) &&
-                generic_1.missing(res.valueGetter) &&
-                generic_1.missing(res.filterValueGetter) &&
+            var noFieldOrValueGetter = (0, generic_1.missing)(res.field) &&
+                (0, generic_1.missing)(res.valueGetter) &&
+                (0, generic_1.missing)(res.filterValueGetter) &&
                 res.filter !== 'agGroupColumnFilter';
             if (noFieldOrValueGetter) {
                 res.filter = false;
@@ -154,13 +154,13 @@ var AutoGroupColService = /** @class */ (function (_super) {
         return res;
     };
     __decorate([
-        context_1.Autowired('columnModel')
+        (0, context_1.Autowired)('columnModel')
     ], AutoGroupColService.prototype, "columnModel", void 0);
     __decorate([
-        context_1.Autowired('columnFactory')
+        (0, context_1.Autowired)('columnFactory')
     ], AutoGroupColService.prototype, "columnFactory", void 0);
     AutoGroupColService = __decorate([
-        context_1.Bean('autoGroupColService')
+        (0, context_1.Bean)('autoGroupColService')
     ], AutoGroupColService);
     return AutoGroupColService;
 }(beanStub_1.BeanStub));

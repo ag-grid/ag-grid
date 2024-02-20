@@ -6,6 +6,7 @@ export declare class MultiFilter extends TabGuardComp implements IFilterComp, IM
     private filterDefs;
     private filters;
     private guiDestroyFuncs;
+    private filterGuis;
     private column;
     private filterChangedCallback;
     private lastOpenedInContainer?;
@@ -37,10 +38,11 @@ export declare class MultiFilter extends TabGuardComp implements IFilterComp, IM
     onNewRowsLoaded(): void;
     destroy(): void;
     private executeFunctionIfExists;
+    private executeFunctionIfExistsOnFilter;
     private createFilter;
     private executeWhenAllFiltersReady;
     private updateActiveList;
     private filterChanged;
-    protected onFocusIn(e: FocusEvent): boolean;
+    protected onFocusIn(e: FocusEvent): void;
     getModelAsString(model: IMultiFilterModel): string;
 }

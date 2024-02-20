@@ -24,21 +24,23 @@ class PaginationComp extends component_1.Component {
         this.areListenersSetup = false;
     }
     postConstruct() {
-        const isRtl = this.gridOptionsService.is('enableRtl');
+        const isRtl = this.gridOptionsService.get('enableRtl');
         this.setTemplate(this.getTemplate());
-        const { btFirst, btPrevious, btNext, btLast } = this;
+        const { btFirst, btPrevious, btNext, btLast, pageSizeComp } = this;
         this.activateTabIndex([btFirst, btPrevious, btNext, btLast]);
-        btFirst.insertAdjacentElement('afterbegin', icon_1.createIconNoSpan(isRtl ? 'last' : 'first', this.gridOptionsService));
-        btPrevious.insertAdjacentElement('afterbegin', icon_1.createIconNoSpan(isRtl ? 'next' : 'previous', this.gridOptionsService));
-        btNext.insertAdjacentElement('afterbegin', icon_1.createIconNoSpan(isRtl ? 'previous' : 'next', this.gridOptionsService));
-        btLast.insertAdjacentElement('afterbegin', icon_1.createIconNoSpan(isRtl ? 'first' : 'last', this.gridOptionsService));
+        btFirst.insertAdjacentElement('afterbegin', (0, icon_1.createIconNoSpan)(isRtl ? 'last' : 'first', this.gridOptionsService));
+        btPrevious.insertAdjacentElement('afterbegin', (0, icon_1.createIconNoSpan)(isRtl ? 'next' : 'previous', this.gridOptionsService));
+        btNext.insertAdjacentElement('afterbegin', (0, icon_1.createIconNoSpan)(isRtl ? 'previous' : 'next', this.gridOptionsService));
+        btLast.insertAdjacentElement('afterbegin', (0, icon_1.createIconNoSpan)(isRtl ? 'first' : 'last', this.gridOptionsService));
         this.addManagedPropertyListener('pagination', this.onPaginationChanged.bind(this));
         this.addManagedPropertyListener('suppressPaginationPanel', this.onPaginationChanged.bind(this));
+        this.addManagedPropertyListeners(['paginationPageSizeSelector', 'paginationAutoPageSize', 'suppressPaginationPanel'], () => this.onPageSizeRelatedOptionsChange());
+        this.pageSizeComp.toggleSelectDisplay(this.pageSizeComp.shouldShowPageSizeSelector());
         this.onPaginationChanged();
     }
     onPaginationChanged() {
-        const isPaging = this.gridOptionsService.is('pagination');
-        const paginationPanelEnabled = isPaging && !this.gridOptionsService.is('suppressPaginationPanel');
+        const isPaging = this.gridOptionsService.get('pagination');
+        const paginationPanelEnabled = isPaging && !this.gridOptionsService.get('suppressPaginationPanel');
         this.setDisplayed(paginationPanelEnabled);
         if (!paginationPanelEnabled) {
             return;
@@ -48,6 +50,10 @@ class PaginationComp extends component_1.Component {
         this.updateRowLabels();
         this.setCurrentPageLabel();
         this.setTotalLabels();
+        this.onPageSizeRelatedOptionsChange();
+    }
+    onPageSizeRelatedOptionsChange() {
+        this.pageSizeComp.toggleSelectDisplay(this.pageSizeComp.shouldShowPageSizeSelector());
     }
     setupListeners() {
         if (!this.areListenersSetup) {
@@ -79,7 +85,7 @@ class PaginationComp extends component_1.Component {
         const pagesExist = this.paginationProxy.getTotalPages() > 0;
         const currentPage = this.paginationProxy.getCurrentPage();
         const toDisplay = pagesExist ? currentPage + 1 : 0;
-        this.lbCurrent.innerHTML = this.formatNumber(toDisplay);
+        this.lbCurrent.textContent = this.formatNumber(toDisplay);
     }
     formatNumber(value) {
         const userFunc = this.gridOptionsService.getCallback('paginationNumberFormatter');
@@ -90,7 +96,7 @@ class PaginationComp extends component_1.Component {
         const localeTextFunc = this.localeService.getLocaleTextFunc();
         const thousandSeparator = localeTextFunc('thousandSeparator', ',');
         const decimalSeparator = localeTextFunc('decimalSeparator', '.');
-        return number_1.formatNumberCommas(value, thousandSeparator, decimalSeparator);
+        return (0, number_1.formatNumberCommas)(value, thousandSeparator, decimalSeparator);
     }
     getTemplate() {
         const localeTextFunc = this.localeService.getLocaleTextFunc();
@@ -103,6 +109,7 @@ class PaginationComp extends component_1.Component {
         const strLast = localeTextFunc('lastPage', 'Last Page');
         const compId = this.getCompId();
         return /* html */ `<div class="ag-paging-panel ag-unselectable" id="ag-${compId}">
+                <ag-page-size-selector ref="pageSizeComp"></ag-page-size-selector>
                 <span class="ag-paging-row-summary-panel" role="status">
                     <span id="ag-${compId}-first-row" ref="lbFirstRowOnPage" class="ag-paging-row-summary-panel-number"></span>
                     <span id="ag-${compId}-to">${strTo}</span>
@@ -147,14 +154,14 @@ class PaginationComp extends component_1.Component {
         this.toggleButtonDisabled(this.btFirst, this.previousAndFirstButtonsDisabled);
         this.toggleButtonDisabled(this.btPrevious, this.previousAndFirstButtonsDisabled);
         const zeroPagesToDisplay = this.isZeroPagesToDisplay();
-        const onLastPage = maxRowFound && currentPage === (totalPages - 1);
+        const onLastPage = currentPage === (totalPages - 1);
         this.nextButtonDisabled = onLastPage || zeroPagesToDisplay;
         this.lastButtonDisabled = !maxRowFound || zeroPagesToDisplay || currentPage === (totalPages - 1);
         this.toggleButtonDisabled(this.btNext, this.nextButtonDisabled);
         this.toggleButtonDisabled(this.btLast, this.lastButtonDisabled);
     }
     toggleButtonDisabled(button, disabled) {
-        aria_1.setAriaDisabled(button, disabled);
+        (0, aria_1.setAriaDisabled)(button, disabled);
         button.classList.toggle('ag-disabled', disabled);
     }
     updateRowLabels() {
@@ -175,13 +182,13 @@ class PaginationComp extends component_1.Component {
                 endRow = rowCount;
             }
         }
-        this.lbFirstRowOnPage.innerHTML = this.formatNumber(startRow);
+        this.lbFirstRowOnPage.textContent = this.formatNumber(startRow);
         if (this.rowNodeBlockLoader.isLoading()) {
             const translate = this.localeService.getLocaleTextFunc();
             this.lbLastRowOnPage.innerHTML = translate('pageLastRowUnknown', '?');
         }
         else {
-            this.lbLastRowOnPage.innerHTML = this.formatNumber(endRow);
+            this.lbLastRowOnPage.textContent = this.formatNumber(endRow);
         }
     }
     isZeroPagesToDisplay() {
@@ -206,8 +213,8 @@ class PaginationComp extends component_1.Component {
             }
         }
         if (lastPageFound) {
-            this.lbTotal.innerHTML = this.formatNumber(totalPages);
-            this.lbRecordCount.innerHTML = this.formatNumber(rowCount);
+            this.lbTotal.textContent = this.formatNumber(totalPages);
+            this.lbRecordCount.textContent = this.formatNumber(rowCount);
         }
         else {
             const moreText = this.localeService.getLocaleTextFunc()('more', 'more');
@@ -216,46 +223,49 @@ class PaginationComp extends component_1.Component {
         }
     }
     setTotalLabelsToZero() {
-        this.lbFirstRowOnPage.innerHTML = this.formatNumber(0);
-        this.lbCurrent.innerHTML = this.formatNumber(0);
-        this.lbLastRowOnPage.innerHTML = this.formatNumber(0);
-        this.lbTotal.innerHTML = this.formatNumber(0);
-        this.lbRecordCount.innerHTML = this.formatNumber(0);
+        this.lbFirstRowOnPage.textContent = this.formatNumber(0);
+        this.lbCurrent.textContent = this.formatNumber(0);
+        this.lbLastRowOnPage.textContent = this.formatNumber(0);
+        this.lbTotal.textContent = this.formatNumber(0);
+        this.lbRecordCount.textContent = this.formatNumber(0);
     }
 }
 __decorate([
-    context_1.Autowired('paginationProxy')
+    (0, context_1.Autowired)('paginationProxy')
 ], PaginationComp.prototype, "paginationProxy", void 0);
 __decorate([
-    context_1.Autowired('rowNodeBlockLoader')
+    (0, context_1.Autowired)('rowNodeBlockLoader')
 ], PaginationComp.prototype, "rowNodeBlockLoader", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('btFirst')
+    (0, componentAnnotations_1.RefSelector)('btFirst')
 ], PaginationComp.prototype, "btFirst", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('btPrevious')
+    (0, componentAnnotations_1.RefSelector)('btPrevious')
 ], PaginationComp.prototype, "btPrevious", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('btNext')
+    (0, componentAnnotations_1.RefSelector)('btNext')
 ], PaginationComp.prototype, "btNext", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('btLast')
+    (0, componentAnnotations_1.RefSelector)('btLast')
 ], PaginationComp.prototype, "btLast", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('lbRecordCount')
+    (0, componentAnnotations_1.RefSelector)('lbRecordCount')
 ], PaginationComp.prototype, "lbRecordCount", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('lbFirstRowOnPage')
+    (0, componentAnnotations_1.RefSelector)('lbFirstRowOnPage')
 ], PaginationComp.prototype, "lbFirstRowOnPage", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('lbLastRowOnPage')
+    (0, componentAnnotations_1.RefSelector)('lbLastRowOnPage')
 ], PaginationComp.prototype, "lbLastRowOnPage", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('lbCurrent')
+    (0, componentAnnotations_1.RefSelector)('lbCurrent')
 ], PaginationComp.prototype, "lbCurrent", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('lbTotal')
+    (0, componentAnnotations_1.RefSelector)('lbTotal')
 ], PaginationComp.prototype, "lbTotal", void 0);
+__decorate([
+    (0, componentAnnotations_1.RefSelector)('pageSizeComp')
+], PaginationComp.prototype, "pageSizeComp", void 0);
 __decorate([
     context_1.PostConstruct
 ], PaginationComp.prototype, "postConstruct", null);

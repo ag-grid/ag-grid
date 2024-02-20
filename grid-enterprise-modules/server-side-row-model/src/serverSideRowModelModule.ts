@@ -12,13 +12,14 @@ import { StoreFactory } from "./serverSideRowModel/stores/storeFactory";
 import { ListenerUtils } from "./serverSideRowModel/listeners/listenerUtils";
 import { ServerSideSelectionService } from "./serverSideRowModel/services/serverSideSelectionService";
 import { VERSION } from "./version";
+import { ServerSideExpansionService } from "./serverSideRowModel/services/serverSideExpansionService";
 
 export const ServerSideRowModelModule: Module = {
     version: VERSION,
     moduleName: ModuleNames.ServerSideRowModelModule,
     rowModel: 'serverSide',
     beans: [ServerSideRowModel, ExpandListener, SortListener, StoreUtils, BlockUtils, NodeManager, TransactionManager,
-        FilterListener, StoreFactory, ListenerUtils, ServerSideSelectionService],
+        FilterListener, StoreFactory, ListenerUtils, ServerSideSelectionService, ServerSideExpansionService],
     dependantModules: [
         EnterpriseCoreModule
     ]

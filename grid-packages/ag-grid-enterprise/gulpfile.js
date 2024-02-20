@@ -61,10 +61,20 @@ const tscMainTask = () => {
 
     const newExports = `export { ${exports.join(',\n')} } from "ag-grid-community";`
 
-    const mainTsFilename = './src/main.ts';
-    const mainTsFileContents = fs.readFileSync(mainTsFilename, 'UTF-8');
+    let mainTsFilename = './src/main.ts';
+    let mainTsFileContents = fs.readFileSync(mainTsFilename, 'UTF-8');
 
-    const updatedUtilFileContents = updateBetweenStrings(mainTsFileContents,
+    let updatedUtilFileContents = updateBetweenStrings(mainTsFileContents,
+        '/* COMMUNITY_EXPORTS_START_DO_NOT_DELETE */',
+        '/* COMMUNITY_EXPORTS_END_DO_NOT_DELETE */',
+        newExports);
+
+    fs.writeFileSync(mainTsFilename, updatedUtilFileContents, 'UTF-8');
+
+    mainTsFilename = './src/main-charts.ts';
+    mainTsFileContents = fs.readFileSync(mainTsFilename, 'UTF-8');
+
+    updatedUtilFileContents = updateBetweenStrings(mainTsFileContents,
         '/* COMMUNITY_EXPORTS_START_DO_NOT_DELETE */',
         '/* COMMUNITY_EXPORTS_END_DO_NOT_DELETE */',
         newExports);
@@ -106,7 +116,6 @@ const copyGridCoreStyles = (done) => {
 
 const copyAndConcatMainTypings = () => {
     const typingsDirs = exportedEnterpriseModules
-        .filter(exportedEnterpriseModule => exportedEnterpriseModule !== "@ag-grid-enterprise/charts")
         .map(exportedEnterpriseModule => `./node_modules/${exportedEnterpriseModule}/typings/main.*`);
 
     return gulp.src([
@@ -114,8 +123,42 @@ const copyAndConcatMainTypings = () => {
         ...typingsDirs,
         './dist/lib/agGridCoreExtension.d.ts'
     ])
-         // the next line is specifically for AgChartThemeOverrides etc
-        .pipe(replace("import * as agCharts from 'ag-charts-community';", 'import * as agCharts from "./chart/agChartOptions";'))
+        .pipe(replace('import { time, AgChart } from "ag-charts-community";', 'import * as AgCharts from "ag-charts-community"'))
+        .pipe(replace(`export declare const agCharts: {
+    time: typeof time;
+    AgChart: typeof AgChart;
+};`,
+            `export declare const agCharts: {
+    time: typeof AgCharts.time;
+    AgChart: typeof AgCharts.AgChart;
+};`))
+        .pipe(replace(`import * as agCharts from 'ag-charts-community';
+declare module 'ag-grid-community' {
+    interface AgChartThemeOverrides extends agCharts.AgChartThemeOverrides {
+    }
+    interface AgChartThemePalette extends agCharts.AgChartThemePalette {
+    }
+    interface AgChartThemeDefinition extends agCharts.AgChartTheme {
+    }
+}
+`, `
+declare module 'ag-grid-community' {
+    interface AgChartThemeOverrides extends AgCharts.AgChartThemeOverrides {
+    }
+    interface AgChartThemePalette extends AgCharts.AgChartThemePalette {
+    }
+    interface AgChartThemeDefinition extends AgCharts.AgChartTheme {
+    }
+}
+`))
+        .pipe(replace("export * from './agGridCoreExtension';", ''))
+        .pipe(replace('export { EnterpriseCoreModule } from "./agGridEnterpriseModule";', ''))
+        .pipe(replace('export { ExcelExportModule } from "./excelExportModule";', ''))
+        .pipe(replace("export { SetFilterModule } from './setFilterModule';", ''))
+        .pipe(replace('export { GridChartsModule } from "./gridChartsModule";', ''))
+        .pipe(replace('export * from "ag-charts-community";', 'export * from "./ag-charts-community/main";'))
+        .pipe(replace("\"ag-charts-community\"", '"./ag-charts-community/main"'))
+        .pipe(replace("'ag-charts-community'", "'./ag-charts-community/main'"))
         .pipe(concat('main.d.ts'))
         .pipe(gulp.dest('./dist/lib'));
 };
@@ -125,13 +168,13 @@ const copyGridCoreTypings = (done) => {
         done("node_modules/@ag-grid-enterprise/core/typings doesn't exist - exiting")
     }
 
-    exportedEnterpriseModules.concat(exportedChartsModules).forEach(exportedEnterpriseModule => {
+    exportedEnterpriseModules.forEach(exportedEnterpriseModule => {
         if (!fs.existsSync(`./node_modules/${exportedEnterpriseModule}/typings`)) {
             done(`./node_modules/${exportedEnterpriseModule}/typings doesn't exist - exiting`)
         }
     })
 
-    const typingsDirs = exportedEnterpriseModules.concat(exportedChartsModules).map(exportedEnterpriseModule =>
+    const typingsDirs = exportedEnterpriseModules.map(exportedEnterpriseModule =>
         [
             `./node_modules/${exportedEnterpriseModule}/typings/**/*`,
             `!./node_modules/${exportedEnterpriseModule}/typings/main.*`,
@@ -146,7 +189,10 @@ const copyGridCoreTypings = (done) => {
 
     exportedCommunityModules.forEach(exportedCommunityModule => result = result.pipe(replace(exportedCommunityModule, "ag-grid-community")));
 
-    return result.pipe(gulp.dest('./dist/lib'));
+    return merge([
+        gulp.src(['./node_modules/ag-charts-community/dist/types/src/**']).pipe(gulp.dest('./dist/lib/ag-charts-community')),
+        result.pipe(gulp.dest('./dist/lib'))
+    ]);
 };
 
 const copyGridAllUmdFiles = (done) => {
@@ -156,6 +202,7 @@ const copyGridAllUmdFiles = (done) => {
 
     return gulp.src([
         './node_modules/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise*.*js',
+        './node_modules/@ag-grid-enterprise/all-modules/dist/ag-grid-charts-enterprise*.*js',
         '!./node_modules/@ag-grid-enterprise/all-modules/dist/**/*.cjs*.js'])
         .pipe(gulp.dest('./dist/'));
 };

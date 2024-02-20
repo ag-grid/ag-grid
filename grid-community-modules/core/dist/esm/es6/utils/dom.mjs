@@ -1,5 +1,4 @@
-import { browserSupportsPreventScroll, isBrowserChrome, isBrowserSafari } from './browser.mjs';
-import { exists } from './generic.mjs';
+import { isBrowserChrome, isBrowserSafari } from './browser.mjs';
 import { setAriaHidden } from './aria.mjs';
 import { camelCaseToHyphenated } from './string.mjs';
 let rtlNegativeScroll;
@@ -24,7 +23,7 @@ export function radioCssClass(element, elementClass, otherElementClass) {
     }
 }
 export const FOCUSABLE_SELECTOR = '[tabindex], input, select, button, textarea, [href]';
-export const FOCUSABLE_EXCLUDE = '.ag-hidden, .ag-hidden *, [disabled], .ag-disabled:not(.ag-button), .ag-disabled *.mjs';
+export const FOCUSABLE_EXCLUDE = '[disabled], .ag-disabled:not(.ag-button), .ag-disabled *';
 export function isFocusableFormField(element) {
     const matches = Element.prototype.matches || Element.prototype.msMatchesSelector;
     const inputSelector = 'input, select, button, textarea';
@@ -81,20 +80,20 @@ export function isElementChildOfClass(element, cls, maxNest) {
 export function getElementSize(el) {
     const { height, width, borderTopWidth, borderRightWidth, borderBottomWidth, borderLeftWidth, paddingTop, paddingRight, paddingBottom, paddingLeft, marginTop, marginRight, marginBottom, marginLeft, boxSizing } = window.getComputedStyle(el);
     return {
-        height: parseFloat(height),
-        width: parseFloat(width),
-        borderTopWidth: parseFloat(borderTopWidth),
-        borderRightWidth: parseFloat(borderRightWidth),
-        borderBottomWidth: parseFloat(borderBottomWidth),
-        borderLeftWidth: parseFloat(borderLeftWidth),
-        paddingTop: parseFloat(paddingTop),
-        paddingRight: parseFloat(paddingRight),
-        paddingBottom: parseFloat(paddingBottom),
-        paddingLeft: parseFloat(paddingLeft),
-        marginTop: parseFloat(marginTop),
-        marginRight: parseFloat(marginRight),
-        marginBottom: parseFloat(marginBottom),
-        marginLeft: parseFloat(marginLeft),
+        height: parseFloat(height || '0'),
+        width: parseFloat(width || '0'),
+        borderTopWidth: parseFloat(borderTopWidth || '0'),
+        borderRightWidth: parseFloat(borderRightWidth || '0'),
+        borderBottomWidth: parseFloat(borderBottomWidth || '0'),
+        borderLeftWidth: parseFloat(borderLeftWidth || '0'),
+        paddingTop: parseFloat(paddingTop || '0'),
+        paddingRight: parseFloat(paddingRight || '0'),
+        paddingBottom: parseFloat(paddingBottom || '0'),
+        paddingLeft: parseFloat(paddingLeft || '0'),
+        marginTop: parseFloat(marginTop || '0'),
+        marginRight: parseFloat(marginRight || '0'),
+        marginBottom: parseFloat(marginBottom || '0'),
+        marginLeft: parseFloat(marginLeft || '0'),
         boxSizing
     };
 }
@@ -183,17 +182,21 @@ export function clearElement(el) {
         el.removeChild(el.firstChild);
     }
 }
-/** @deprecated */
-export function removeElement(parent, cssSelector) {
-    removeFromParent(parent.querySelector(cssSelector));
-}
 export function removeFromParent(node) {
     if (node && node.parentNode) {
         node.parentNode.removeChild(node);
     }
 }
+export function isInDOM(element) {
+    return !!element.offsetParent;
+}
 export function isVisible(element) {
-    return element.offsetParent !== null;
+    const el = element;
+    if (el.checkVisibility) {
+        return el.checkVisibility({ checkVisibilityCSS: true });
+    }
+    const isHidden = !isInDOM(element) || window.getComputedStyle(element).visibility !== 'visible';
+    return !isHidden;
 }
 /**
  * Loads the template and returns it as an element. makes up for no simple way in
@@ -206,39 +209,11 @@ export function loadTemplate(template) {
     tempDiv.innerHTML = (template || '').trim();
     return tempDiv.firstChild;
 }
-export function appendHtml(eContainer, htmlTemplate) {
-    if (eContainer.lastChild) {
-        // https://developer.mozilla.org/en-US/docs/Web/API/Element/insertAdjacentHTML
-        // we put the items at the start, so new items appear underneath old items,
-        // so when expanding/collapsing groups, the new rows don't go on top of the
-        // rows below that are moving our of the way
-        eContainer.insertAdjacentHTML('afterbegin', htmlTemplate);
-    }
-    else {
-        eContainer.innerHTML = htmlTemplate;
-    }
-}
-/** @deprecated */
-export function getElementAttribute(element, attributeName) {
-    if (element.attributes && element.attributes[attributeName]) {
-        const attribute = element.attributes[attributeName];
-        return attribute.value;
-    }
-    return null;
-}
-export function offsetHeight(element) {
-    return element && element.clientHeight ? element.clientHeight : 0;
-}
-export function offsetWidth(element) {
-    return element && element.clientWidth ? element.clientWidth : 0;
-}
 export function ensureDomOrder(eContainer, eChild, eChildBefore) {
     // if already in right order, do nothing
     if (eChildBefore && eChildBefore.nextSibling === eChild) {
         return;
     }
-    const focusedEl = document.activeElement;
-    const eChildHasFocus = eChild.contains(focusedEl);
     if (eChildBefore) {
         if (eChildBefore.nextSibling) {
             // insert between the eRowBefore and the row after it
@@ -255,9 +230,6 @@ export function ensureDomOrder(eContainer, eChild, eChildBefore) {
             // insert it at the first location
             eContainer.insertAdjacentElement('afterbegin', eChild);
         }
-    }
-    if (eChildHasFocus && focusedEl && browserSupportsPreventScroll()) {
-        focusedEl.focus({ preventScroll: true });
     }
 }
 export function setDomChildOrder(eContainer, orderedChildren) {
@@ -283,15 +255,6 @@ export function insertWithDomOrder(eContainer, eToInsert, eChildBefore) {
             // otherwise eContainer is empty, so just append it
             eContainer.appendChild(eToInsert);
         }
-    }
-}
-/** @deprecated */
-export function prependDC(parent, documentFragment) {
-    if (exists(parent.firstChild)) {
-        parent.insertBefore(documentFragment, parent.firstChild);
-    }
-    else {
-        parent.appendChild(documentFragment);
     }
 }
 export function addStylesToElement(eElement, styles) {

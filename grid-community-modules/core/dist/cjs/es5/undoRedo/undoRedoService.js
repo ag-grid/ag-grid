@@ -47,10 +47,14 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UndoRedoService = void 0;
@@ -93,10 +97,10 @@ var UndoRedoService = /** @class */ (function (_super) {
     }
     UndoRedoService.prototype.init = function () {
         var _this = this;
-        if (!this.gridOptionsService.is('undoRedoCellEditing')) {
+        if (!this.gridOptionsService.get('undoRedoCellEditing')) {
             return;
         }
-        var undoRedoLimit = this.gridOptionsService.getNum('undoRedoCellEditingLimit');
+        var undoRedoLimit = this.gridOptionsService.get('undoRedoCellEditingLimit');
         if (undoRedoLimit <= 0) {
             return;
         }
@@ -305,8 +309,8 @@ var UndoRedoService = /** @class */ (function (_super) {
         });
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_END, function () {
             var action;
-            if (_this.rangeService && _this.gridOptionsService.isEnableRangeSelection()) {
-                action = new undoRedoStack_1.RangeUndoRedoAction(_this.cellValueChanges, undefined, undefined, __spreadArray([], __read(_this.rangeService.getCellRanges())));
+            if (_this.rangeService && _this.gridOptionsService.get('enableRangeSelection')) {
+                action = new undoRedoStack_1.RangeUndoRedoAction(_this.cellValueChanges, undefined, undefined, __spreadArray([], __read(_this.rangeService.getCellRanges()), false));
             }
             else {
                 action = new undoRedoStack_1.UndoRedoAction(_this.cellValueChanges);
@@ -331,34 +335,34 @@ var UndoRedoService = /** @class */ (function (_super) {
         }
     };
     __decorate([
-        context_1.Autowired('focusService')
+        (0, context_1.Autowired)('focusService')
     ], UndoRedoService.prototype, "focusService", void 0);
     __decorate([
-        context_1.Autowired('ctrlsService')
+        (0, context_1.Autowired)('ctrlsService')
     ], UndoRedoService.prototype, "ctrlsService", void 0);
     __decorate([
-        context_1.Autowired('rowModel')
+        (0, context_1.Autowired)('rowModel')
     ], UndoRedoService.prototype, "rowModel", void 0);
     __decorate([
-        context_1.Autowired('pinnedRowModel')
+        (0, context_1.Autowired)('pinnedRowModel')
     ], UndoRedoService.prototype, "pinnedRowModel", void 0);
     __decorate([
-        context_1.Autowired('cellPositionUtils')
+        (0, context_1.Autowired)('cellPositionUtils')
     ], UndoRedoService.prototype, "cellPositionUtils", void 0);
     __decorate([
-        context_1.Autowired('rowPositionUtils')
+        (0, context_1.Autowired)('rowPositionUtils')
     ], UndoRedoService.prototype, "rowPositionUtils", void 0);
     __decorate([
-        context_1.Autowired('columnModel')
+        (0, context_1.Autowired)('columnModel')
     ], UndoRedoService.prototype, "columnModel", void 0);
     __decorate([
-        context_1.Optional('rangeService')
+        (0, context_1.Optional)('rangeService')
     ], UndoRedoService.prototype, "rangeService", void 0);
     __decorate([
         context_1.PostConstruct
     ], UndoRedoService.prototype, "init", null);
     UndoRedoService = __decorate([
-        context_1.Bean('undoRedoService')
+        (0, context_1.Bean)('undoRedoService')
     ], UndoRedoService);
     return UndoRedoService;
 }(beanStub_1.BeanStub));

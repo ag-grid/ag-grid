@@ -74,7 +74,7 @@ var AgInputNumberField = /** @class */ (function (_super) {
                 return value;
             }
             else if (this.precision > 0) {
-                return parts[0] + "." + parts[1].slice(0, this.precision);
+                return "".concat(parts[0], ".").concat(parts[1].slice(0, this.precision));
             }
         }
         return parts[0];
@@ -84,7 +84,7 @@ var AgInputNumberField = /** @class */ (function (_super) {
             return this;
         }
         this.min = min;
-        dom_1.addOrRemoveAttribute(this.eInput, 'min', min);
+        (0, dom_1.addOrRemoveAttribute)(this.eInput, 'min', min);
         return this;
     };
     AgInputNumberField.prototype.setMax = function (max) {
@@ -92,7 +92,7 @@ var AgInputNumberField = /** @class */ (function (_super) {
             return this;
         }
         this.max = max;
-        dom_1.addOrRemoveAttribute(this.eInput, 'max', max);
+        (0, dom_1.addOrRemoveAttribute)(this.eInput, 'max', max);
         return this;
     };
     AgInputNumberField.prototype.setPrecision = function (precision) {
@@ -104,7 +104,7 @@ var AgInputNumberField = /** @class */ (function (_super) {
             return this;
         }
         this.step = step;
-        dom_1.addOrRemoveAttribute(this.eInput, 'step', step);
+        (0, dom_1.addOrRemoveAttribute)(this.eInput, 'step', step);
         return this;
     };
     AgInputNumberField.prototype.setValue = function (value, silent) {
@@ -116,7 +116,7 @@ var AgInputNumberField = /** @class */ (function (_super) {
         return this.setValueOrInputValue(function (v) { return _super.prototype.setValue.call(_this, v, true); }, function (v) { _this.eInput.value = v; }, value);
     };
     AgInputNumberField.prototype.setValueOrInputValue = function (setValueFunc, setInputValueOnlyFunc, value) {
-        if (generic_1.exists(value)) {
+        if ((0, generic_1.exists)(value)) {
             // need to maintain the scientific notation format whilst typing (e.g. 1e10)
             var setInputValueOnly = this.isScientificNotation(value);
             if (setInputValueOnly && this.eInput.validity.valid) {

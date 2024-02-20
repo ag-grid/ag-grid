@@ -2,7 +2,7 @@ import { createApp } from 'vue';
 import { AgGridVue } from '@ag-grid-community/vue3';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 import ChildMessageRenderer from './childMessageRendererVue.js';
 import CubeRenderer from './cubeRendererVue.js';
 import CurrencyRenderer from './currencyRendererVue.js';
@@ -22,7 +22,7 @@ const VueExample = {
             </button>
             <ag-grid-vue
                     style="width: 100%; height: 100%;"
-                    class="ag-theme-alpine"
+                    :class="themeClass"
                     id="myGrid"
                     @grid-ready="onGridReady"
                     :columnDefs="columnDefs"
@@ -43,7 +43,6 @@ const VueExample = {
     data: function () {
         return {
             gridApi: null,
-            columnApi: null,
             columnDefs: [
                 {
                     headerName: "Row",
@@ -73,7 +72,7 @@ const VueExample = {
                     width: 150
                 },
                 {
-                    headerName: "Currency (Pipe)",
+                    headerName: "Currency",
                     field: "currency",
                     cellRenderer: "currencyRenderer",
                     colId: "currency",
@@ -92,12 +91,11 @@ const VueExample = {
             context: null,
             defaultColDef: {
                 editable: true,
-                sortable: true,
                 flex: 1,
                 minWidth: 100,
                 filter: true,
-                resizable: true
-            }
+            },
+            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
         }
     },
     beforeMount() {

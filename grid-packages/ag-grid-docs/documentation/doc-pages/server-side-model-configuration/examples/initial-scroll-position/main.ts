@@ -1,4 +1,12 @@
-import { Grid, GridOptions, IServerSideDatasource, IServerSideGetRowsRequest } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  GridOptions,
+  IServerSideDatasource,
+  IServerSideGetRowsRequest,
+} from '@ag-grid-community/core';
+
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -15,6 +23,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     flex: 1,
     minWidth: 80,
+    sortable: false,
   },
 
   rowModelType: 'serverSide',
@@ -24,7 +33,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
@@ -36,10 +45,10 @@ document.addEventListener('DOMContentLoaded', function () {
       var datasource = createServerSideDatasource(fakeServer);
 
       // register the datasource with the grid
-      gridOptions.api!.setServerSideDatasource(datasource);
+      gridApi!.setGridOption('serverSideDatasource', datasource);
 
       // scroll the grid down until row 5000 is at the top of the viewport
-      gridOptions.api!.ensureIndexVisible(5000, 'top');
+      gridApi!.ensureIndexVisible(5000, 'top');
     })
 })
 
@@ -57,7 +66,7 @@ function createServerSideDatasource(server: any): IServerSideDatasource {
       var response = server.getData(params.request)
 
       // simulating real server call with a 500ms delay
-      setTimeout(function () {
+      setTimeout(() => {
         if (response.success) {
           // supply rows for requested block to grid
           params.success({ rowData: response.rows, rowCount: response.lastRow })

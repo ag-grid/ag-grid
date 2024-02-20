@@ -39,16 +39,13 @@ var ValueFormatterService = /** @class */ (function (_super) {
             formatter = colDef.valueFormatter;
         }
         if (formatter) {
-            var params = {
+            var params = this.gridOptionsService.addGridCommonParams({
                 value: value,
                 node: node,
                 data: node ? node.data : null,
                 colDef: colDef,
-                column: column,
-                api: this.gridOptionsService.api,
-                columnApi: this.gridOptionsService.columnApi,
-                context: this.gridOptionsService.context
-            };
+                column: column
+            });
             if (typeof formatter === 'function') {
                 result = formatter(params);
             }

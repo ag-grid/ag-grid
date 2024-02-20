@@ -1,7 +1,6 @@
 const os = require('os');
 const fs = require('fs-extra');
 const cp = require('child_process');
-const glob = require('glob');
 const resolve = require('path').resolve;
 const https = require('https');
 const express = require('express');
@@ -10,8 +9,8 @@ const webpackMiddleware = require('webpack-dev-middleware');
 const chokidar = require('chokidar');
 const tcpPortUsed = require('tcp-port-used');
 const {generateDocumentationExamples} = require('./example-generator-documentation');
-const {watchValidateExampleTypes} = require('./example-validator');
 const {updateBetweenStrings, getAllModules, processStdio} = require('./utils');
+const {watchValidateExampleTypes} = require('./example-validator');
 const {EOL} = os;
 
 const key = fs.readFileSync(process.env.AG_DOCS_KEY || './selfsigned.key', 'utf8');
@@ -213,23 +212,6 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
             });
         });
 
-    chartCommunityModules
-        .forEach(module => {
-            lnk(module.rootDir, '_dev/', {
-                force: true,
-                type: linkType,
-                rename: module.publishedName
-            });
-        });
-    chartEnterpriseModules
-        .forEach(module => {
-            lnk(module.rootDir, '_dev/', {
-                force: true,
-                type: linkType,
-                rename: module.publishedName
-            });
-        });
-
     lnk('../../grid-community-modules/styles/', '_dev/@ag-grid-community', {
         force: true,
         type: linkType,
@@ -237,22 +219,32 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
     });
 
 
-    lnk('../../charts-community-modules/ag-charts-react/', '_dev/', {
+    lnk('./node_modules/ag-charts-community/', '_dev/', {
+        force: true,
+        type: linkType,
+        rename: 'ag-charts-community'
+    });
+    lnk('./node_modules/ag-charts-enterprise/', '_dev/', {
+        force: true,
+        type: linkType,
+        rename: 'ag-charts-enterprise'
+    });
+    lnk('./node_modules/ag-charts-react/', '_dev/', {
         force: true,
         type: linkType,
         rename: 'ag-charts-react'
     });
-    lnk('../../charts-community-modules/ag-charts-angular/', '_dev/', {
+    lnk('./node_modules/ag-charts-angular/', '_dev/', {
         force: true,
         type: linkType,
         rename: 'ag-charts-angular'
     });
-    lnk('../../charts-community-modules/ag-charts-vue/', '_dev/', {
+    lnk('./node_modules/ag-charts-vue/', '_dev/', {
         force: true,
         type: linkType,
         rename: 'ag-charts-vue'
     });
-    lnk('../../charts-community-modules/ag-charts-vue3/', '_dev/', {
+    lnk('./node_modules/ag-charts-vue3/', '_dev/', {
         force: true,
         type: linkType,
         rename: 'ag-charts-vue3'
@@ -268,6 +260,11 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
         force: true,
         type: linkType,
         rename: 'ag-grid-enterprise'
+    });
+    lnk('../../grid-packages/ag-grid-charts-enterprise/', '_dev/', {
+        force: true,
+        type: linkType,
+        rename: 'ag-grid-charts-enterprise'
     });
     lnk('../../grid-packages/ag-grid-angular/', '_dev/', {
         force: true,
@@ -293,7 +290,7 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
 
 const exampleDirMatch = new RegExp('src/([\-\\w]+)/');
 
-async function regenerateDocumentationExamplesForFileChange(file, chartsOnly) {
+async function regenerateDocumentationExamplesForFileChange(file) {
     let scope;
 
     try {
@@ -303,27 +300,23 @@ async function regenerateDocumentationExamplesForFileChange(file, chartsOnly) {
     }
 
     if (scope) {
-        await generateDocumentationExamples(chartsOnly, scope, file);
+        await generateDocumentationExamples(scope, file);
     }
 }
 
-async function watchAndGenerateExamples(chartsOnly) {
-    if (moduleChanged('.')) {
-        await generateDocumentationExamples(chartsOnly);
+async function watchAndGenerateExamples() {
+    await generateDocumentationExamples();
 
-        const npm = 'npm';
-        cp.spawnSync(npm, ['run', 'hash']);
-    } else {
-        console.log("Docs contents haven't changed - skipping example generation");
-    }
+    const npm = 'npm';
+    cp.spawnSync(npm, ['run', 'hash']);
 
     chokidar
         .watch([`./documentation/doc-pages/**/examples/**/*.{html,css,js,jsx,ts}`], {ignored: ['**/_gen/**/*']})
-        .on('change', debounceByPath((path) => regenerateDocumentationExamplesForFileChange(path, chartsOnly)));
+        .on('change', debounceByPath((path) => regenerateDocumentationExamplesForFileChange(path)));
 
     chokidar
         .watch([`./documentation/doc-pages/**/*.md`], {ignoreInitial: true})
-        .on('add', debounceByPath((path) => regenerateDocumentationExamplesForFileChange(path, chartsOnly)));
+        .on('add', debounceByPath((path) => regenerateDocumentationExamplesForFileChange(path)));
 }
 
 const updateWebpackSourceFiles = (gridCommunityModules, gridEnterpriseModules) => {
@@ -340,11 +333,13 @@ const updateWebpackSourceFiles = (gridCommunityModules, gridEnterpriseModules) =
     const enterpriseModulesEntries = gridEnterpriseModules
         .filter(module => module.moduleDirName !== 'core')
         .filter(module => module.moduleDirName !== 'all-modules')
+        .filter(module => !module.moduleDirName.includes('charts'))
         .map(module => `const ${module.moduleName} = require("../../../${module.fullJsPath.replace('.ts', '')}").${module.moduleName};`);
 
     const enterpriseRegisterModuleLines = gridEnterpriseModules
         .filter(module => module.moduleDirName !== 'core')
         .filter(module => module.moduleDirName !== 'all-modules')
+        .filter(module => !module.moduleDirName.includes('charts'))
         .map(module => `ModuleRegistry.register(${module.moduleName});`);
     const moduleIsUmdLine = `ModuleRegistry.__setIsBundled();`
 
@@ -360,8 +355,29 @@ const updateWebpackSourceFiles = (gridCommunityModules, gridEnterpriseModules) =
             newEnterpriseBundleLines.push(line);
         }
     });
-    const newEnterpriseBundleContent = newEnterpriseBundleLines.concat(enterpriseModulesEntries).concat(communityModulesEntries);
-    fs.writeFileSync(enterpriseBundleFilename, newEnterpriseBundleContent.concat(enterpriseRegisterModuleLines).concat(communityRegisterModuleLines).concat(moduleIsUmdLine).join(EOL), 'UTF-8');
+
+    const newEnterpriseBundleContent = newEnterpriseBundleLines
+        .concat(enterpriseModulesEntries)
+        .concat('const GridChartsModule = require("../../../../../grid-enterprise-modules/charts/dist/cjs/es5/gridChartsModule").GridChartsModule;')
+        .concat(communityModulesEntries);
+    fs.writeFileSync(enterpriseBundleFilename, newEnterpriseBundleContent
+        .concat(enterpriseRegisterModuleLines)
+        .concat('ModuleRegistry.register(GridChartsModule);')
+        .concat(communityRegisterModuleLines)
+        .concat(moduleIsUmdLine)
+        .join(EOL), 'UTF-8');
+
+    const newGridChartsEnterpriseBundleContent = newEnterpriseBundleLines
+        .concat(enterpriseModulesEntries)
+        .concat('const GridChartsModule = require("../../../../../grid-enterprise-modules/charts-enterprise/dist/cjs/es5/gridChartsModule").GridChartsModule;')
+        .concat(communityModulesEntries);
+
+    fs.writeFileSync('./src/_assets/ts/enterprise-grid-charts-all-modules-umd-beta.js', newGridChartsEnterpriseBundleContent
+        .concat(enterpriseRegisterModuleLines)
+        .concat('ModuleRegistry.register(GridChartsModule);')
+        .concat(communityRegisterModuleLines)
+        .concat(moduleIsUmdLine)
+        .join(EOL), 'UTF-8');
 
     const existingCommunityLines = fs.readFileSync(communityFilename).toString().split(EOL);
     modulesLineFound = false;
@@ -432,7 +448,7 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
     fs.writeFileSync(utilityFilename, updatedUtilFileContents, 'UTF-8');
 }
 
-const watchCoreModules = async (skipFrameworks, chartsOnly) => {
+const watchCoreModules = async (skipFrameworks) => {
     console.log("Watching TS files only...");
     const tsc = getTscPath();
     const tsWatch = cp.spawn(tsc, ["--build", "--preserveWatchOutput", '--watch'], {
@@ -444,7 +460,7 @@ const watchCoreModules = async (skipFrameworks, chartsOnly) => {
     tsWatch.stdout.on('data', await processStdio(async (output) => {
         console.log("Core Typescript: " + output);
         if (output.includes("Found 0 errors. Watching for file changes.")) {
-            if (!chartsOnly && !skipFrameworks) {
+            if (!skipFrameworks) {
                 cp.spawnSync('npx', ['nx', 'run-many', "--target=build-docs", (process.env.AG_SERVE_FRAMEWORK ? `--projects=@ag-grid-community/${process.env.AG_SERVE_FRAMEWORK}` : '')], {
                     cwd: '../../',
                     stdio: 'inherit',
@@ -474,7 +490,7 @@ const watchCoreModules = async (skipFrameworks, chartsOnly) => {
     });
 };
 
-const buildCoreModules = async (exitOnError, skipFrameworks, chartsOnly) => {
+const buildCoreModules = async (exitOnError, skipFrameworks) => {
     console.log("Building Core Modules...");
     const tsc = getTscPath();
     let result = cp.spawnSync(tsc, ['--build'], {
@@ -516,7 +532,7 @@ const buildCoreModules = async (exitOnError, skipFrameworks, chartsOnly) => {
     });
     console.log("Core Modules Built");
 
-    if (!chartsOnly && !skipFrameworks) {
+    if (!skipFrameworks) {
         result = cp.spawnSync('npx', ['nx', 'run-many', "--target=build-docs", (process.env.AG_SERVE_FRAMEWORK ? `--projects=@ag-grid-community/${process.env.AG_SERVE_FRAMEWORK}` : '')], {
             stdio: 'inherit',
             cwd: '../../'
@@ -549,23 +565,6 @@ const buildCoreModules = async (exitOnError, skipFrameworks, chartsOnly) => {
         console.log("Changed Packages Rebuilt");
     }
 };
-
-function moduleChanged(moduleRoot) {
-    let changed = true;
-
-    const resolvedPath = resolve(moduleRoot);
-
-    const checkResult = cp.spawnSync('sh', ['../../scripts/hashChanged.sh', resolvedPath], {
-        stdio: 'pipe',
-        encoding: 'utf-8'
-    });
-
-    if (checkResult && checkResult.status !== 1) {
-        changed = checkResult.output[1].trim() === '1';
-    }
-
-    return changed;
-}
 
 function updateSystemJsBoilerplateMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartsCommunityModules, chartEnterpriseModules) {
     console.log("Updating framework SystemJS boilerplate config with modules...");
@@ -601,30 +600,28 @@ function updateSystemJsBoilerplateMappingsForFrameworks(gridCommunityModules, gr
     });
 }
 
-const performInitialBuild = async (skipFrameworks, chartsOnly) => {
+const performInitialBuild = async (skipFrameworks) => {
     // if we encounter a build failure on startup we exit
     // prevents the need to have to CTRL+C several times for certain types of error
-    await buildCoreModules(true, skipFrameworks, chartsOnly);
+    await buildCoreModules(true, skipFrameworks);
 };
 
-const addWebpackMiddleware = (app, chartsOnly) => {
-    if (!chartsOnly) {
-        // for js examples that just require community functionality (landing pages, vanilla community examples etc)
-        // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-community/all-modules/dist/ag-grid-community.js
-        addWebpackMiddlewareForConfig(app, 'webpack.community-grid-all-umd.beta.config.js', '/dev/@ag-grid-community/all-modules/dist', 'ag-grid-community.js');
+const addWebpackMiddleware = (app) => {
+    console.log("Adding webpack middleware");
+    // for js examples that just require community functionality (landing pages, vanilla community examples etc (not main demo))
+    // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-community/all-modules/dist/ag-grid-community.js
+    addWebpackMiddlewareForConfig(app, 'webpack.community-grid-all-umd.beta.config.js', '/dev/@ag-grid-community/all-modules/dist', 'ag-grid-community.js');
 
-        // for js examples that just require enterprise functionality (landing pages, vanilla enterprise examples etc)
-        // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js
-        addWebpackMiddlewareForConfig(app, 'webpack.enterprise-grid-all-umd.beta.config.js', '/dev/@ag-grid-enterprise/all-modules/dist', 'ag-grid-enterprise.js');
-    }
+    // for js examples that just require enterprise functionality (landing pages, vanilla enterprise examples etc (not main demo))
+    // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js
+    addWebpackMiddlewareForConfig(app, 'webpack.enterprise-grid-all-umd.beta.config.js', '/dev/@ag-grid-enterprise/all-modules/dist', 'ag-grid-enterprise.js');
 
-    // for js examples that just require charts community functionality (landing pages, vanilla charts examples etc)
-    // webpack.charts-community-umd.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/ag-charts-community/dist/ag-charts-community.js
-    addWebpackMiddlewareForConfig(app, 'webpack.charts-community-umd.config.js', '/dev/ag-charts-community/dist', 'ag-charts-community.js');
-    addWebpackMiddlewareForConfig(app, 'webpack.charts-enterprise-umd.config.js', '/dev/ag-charts-enterprise/dist', 'ag-charts-enterprise.js');
+    // for js examples that just require grid & charts enterprise functionality (vanilla integrated charts examples etc (not main demo))
+    // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js
+    addWebpackMiddlewareForConfig(app, 'webpack.grid-charts-enterprise-grid-all-umd.beta.config.js', '/dev/@ag-grid-enterprise/all-modules/dist', 'ag-grid-charts-enterprise.js');
 };
 
-const watchCoreModulesAndCss = async (skipFrameworks, chartsOnly) => {
+const watchCoreModulesAndCss = async (skipFrameworks) => {
     const buildCss = () => {
         const result = cp.spawnSync('npx', ['nx', 'run-many', "--target=build-css"], {
             cwd: '../../',
@@ -652,7 +649,7 @@ const watchCoreModulesAndCss = async (skipFrameworks, chartsOnly) => {
         .on("unlink", path => buildCss(path, 'removed'))
 
 
-    await watchCoreModules(skipFrameworks, chartsOnly);
+    await watchCoreModules(skipFrameworks);
 };
 
 const watchFrameworkModules = async () => {
@@ -714,9 +711,7 @@ const watchAutoDocFiles = async () => {
         '../../grid-enterprise-modules/filter-tool-panel/src/**/*.ts',
         '../../grid-enterprise-modules/multi-filter/src/**/*.ts',
         '../../grid-community-modules/angular/projects/ag-grid-angular/src/lib/**/*.ts',
-        '../../grid-community-modules/react/src/shared/**/*.ts',
-        '../../charts-community-modules/ag-charts-community/src/**/*.ts',
-        '../../charts-enterprise-modules/ag-charts-enterprise/src/**/*.ts',
+        '../../grid-community-modules/react/src/shared/**/*.ts'
     ];
 
     const ignoredFolders = [...defaultIgnoreFolders];
@@ -740,40 +735,22 @@ const serveModuleAndPackages = (app, gridCommunityModules, gridEnterpriseModules
     servePackage(app, '@ag-grid-community/vue');
     servePackage(app, '@ag-grid-community/vue3');
     servePackage(app, '@ag-grid-community/react');
+    servePackage(app, 'ag-charts-community');
+    servePackage(app, 'ag-charts-enterprise');
     servePackage(app, 'ag-charts-react');
     servePackage(app, 'ag-charts-angular');
     servePackage(app, 'ag-charts-vue');
     servePackage(app, 'ag-charts-vue3');
     servePackage(app, 'ag-grid-community');
     servePackage(app, 'ag-grid-enterprise');
+    servePackage(app, 'ag-grid-charts-enterprise');
     servePackage(app, 'ag-grid-angular');
     servePackage(app, 'ag-grid-vue');
     servePackage(app, 'ag-grid-vue3');
     servePackage(app, 'ag-grid-react');
 };
 
-const readModulesState = () => {
-    const moduleRootNames = ['grid-packages', 'grid-community-modules', 'grid-enterprise-modules', 'charts-community-modules'];
-    const exclusions = ['ag-grid-dev', 'ag-grid-docs', 'ag-grid-documentation'];
-    const modulesState = {};
-
-    moduleRootNames.forEach(moduleRootName => {
-        const moduleRootDirectory = `../../${moduleRootName}/`;
-
-        fs.readdirSync(moduleRootDirectory, {withFileTypes: true})
-            .filter(d => d.isDirectory())
-            .filter(d => !exclusions.includes(d.name))
-            .map(d => `../../${moduleRootName}/${d.name}`)
-            .map(d => {
-                const packageName = require(`${d}/package.json`).name;
-                modulesState[packageName] = {moduleChanged: moduleChanged(d)};
-            });
-    });
-
-    return modulesState;
-};
-
-module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, skipExampleGeneration, skipAutoDocGeneration, done) => {
+module.exports = async (skipFrameworks, skipExampleFormatting, skipExampleGeneration, skipAutoDocGeneration, done) => {
     tcpPortUsed.check(EXPRESS_HTTPS_PORT)
         .then(async (inUse) => {
             if (inUse) {
@@ -795,17 +772,12 @@ module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, skipE
             console.log("Config", {
                 skipFrameworks,
                 skipExampleFormatting,
-                chartsOnly,
                 skipExampleGeneration,
                 skipAutoDocGeneration,
                 AG_SERVE_FRAMEWORK: process.env.AG_SERVE_FRAMEWORK,
                 AG_FW_EXAMPLES_TO_GENERATE: process.env.AG_FW_EXAMPLES_TO_GENERATE,
                 AG_SKIP_PACKAGE_EXAMPLES: process.env.AG_SKIP_PACKAGE_EXAMPLES
             });
-
-            if (chartsOnly) {
-                console.log("Build & Watching Charts Only");
-            }
 
             // Formatting code when generating examples takes ages, so disable it for local development.
             if (skipExampleFormatting) {
@@ -839,15 +811,13 @@ module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, skipE
                 return next();
             });
 
-            if (!chartsOnly) {
-                updateWebpackConfigWithBundles(gridCommunityModules, gridEnterpriseModules);
-            }
+            updateWebpackConfigWithBundles(gridCommunityModules, gridEnterpriseModules);
 
             console.log("Performing Initial Build");
-            await performInitialBuild(skipFrameworks, chartsOnly);
+            await performInitialBuild(skipFrameworks);
 
             console.log("Watch Core Modules & CSS");
-            await watchCoreModulesAndCss(skipFrameworks, chartsOnly);
+            await watchCoreModulesAndCss(skipFrameworks);
 
             if (!skipAutoDocGeneration) {
                 console.log("Watching Auto Doc Files");
@@ -859,7 +829,7 @@ module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, skipE
                 await watchFrameworkModules();
             }
 
-            addWebpackMiddleware(app, chartsOnly);
+            addWebpackMiddleware(app);
             symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules);
 
             updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules);
@@ -874,7 +844,7 @@ module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, skipE
 
                 // regenerate examples and then watch them
                 console.log("Watch and Generate Examples");
-                await watchAndGenerateExamples(chartsOnly);
+                await watchAndGenerateExamples();
                 console.log("Examples Generated");
 
                 console.log("Watch Typescript examples...");
@@ -932,10 +902,10 @@ module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, skipE
 };
 
 // *** Don't remove these unused vars! ***
-//     node dev-server.js generate-examples [src directory]
-// eg: node dev-server.js generate-examples javascript-grid-accessing-data
+//     node new-dev-server.js generate-examples [src directory]
+// eg: node new-dev-server.js generate-examples javascript-grid-accessing-data
 const [cmd, script, execFunc, exampleDir, watch] = process.argv;
 
 if (process.argv.length >= 3 && execFunc === 'generate-examples') {
-    generateDocumentationExamples(false, exampleDir);
+    generateDocumentationExamples(exampleDir);
 }

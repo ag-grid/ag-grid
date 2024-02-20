@@ -29,10 +29,10 @@ var CellRangeFeature = /** @class */ (function () {
         this.rangeCount = this.beans.rangeService.getCellRangeCount(this.cellCtrl.getCellPosition());
         this.hasChartRange = this.getHasChartRange();
         this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_SELECTED, this.rangeCount !== 0);
-        this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_SELECTED + "-1", this.rangeCount === 1);
-        this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_SELECTED + "-2", this.rangeCount === 2);
-        this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_SELECTED + "-3", this.rangeCount === 3);
-        this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_SELECTED + "-4", this.rangeCount >= 4);
+        this.cellComp.addOrRemoveCssClass("".concat(CSS_CELL_RANGE_SELECTED, "-1"), this.rangeCount === 1);
+        this.cellComp.addOrRemoveCssClass("".concat(CSS_CELL_RANGE_SELECTED, "-2"), this.rangeCount === 2);
+        this.cellComp.addOrRemoveCssClass("".concat(CSS_CELL_RANGE_SELECTED, "-3"), this.rangeCount === 3);
+        this.cellComp.addOrRemoveCssClass("".concat(CSS_CELL_RANGE_SELECTED, "-4"), this.rangeCount >= 4);
         this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_CHART, this.hasChartRange);
         setAriaSelected(this.eGui, this.rangeCount > 0 ? true : undefined);
         this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_SINGLE_CELL, this.isSingleCell());
@@ -72,7 +72,7 @@ var CellRangeFeature = /** @class */ (function () {
     };
     CellRangeFeature.prototype.getRangeBorders = function () {
         var _this = this;
-        var isRtl = this.beans.gridOptionsService.is('enableRtl');
+        var isRtl = this.beans.gridOptionsService.get('enableRtl');
         var top = false;
         var right = false;
         var bottom = false;
@@ -121,7 +121,7 @@ var CellRangeFeature = /** @class */ (function () {
         return { top: top, right: right, bottom: bottom, left: left };
     };
     CellRangeFeature.prototype.refreshHandle = function () {
-        if (!this.beans.rangeService) {
+        if (!this.beans.rangeService || this.beans.context.isDestroyed()) {
             return;
         }
         var shouldHaveSelectionHandle = this.shouldHaveSelectionHandle();
@@ -142,8 +142,8 @@ var CellRangeFeature = /** @class */ (function () {
         }
         var cellRange = last(cellRanges);
         var cellPosition = this.cellCtrl.getCellPosition();
-        var isFillHandleAvailable = gridOptionsService.is('enableFillHandle') && !this.cellCtrl.isSuppressFillHandle();
-        var isRangeHandleAvailable = gridOptionsService.is('enableRangeHandle');
+        var isFillHandleAvailable = gridOptionsService.get('enableFillHandle') && !this.cellCtrl.isSuppressFillHandle();
+        var isRangeHandleAvailable = gridOptionsService.get('enableRangeHandle');
         var handleIsAvailable = rangesLen === 1 && !this.cellCtrl.isEditing() && (isFillHandleAvailable || isRangeHandleAvailable);
         if (this.hasChartRange) {
             var hasCategoryRange = cellRanges[0].type === CellRangeType.DIMENSION;
@@ -159,7 +159,7 @@ var CellRangeFeature = /** @class */ (function () {
     CellRangeFeature.prototype.addSelectionHandle = function () {
         var _a = this.beans, gridOptionsService = _a.gridOptionsService, rangeService = _a.rangeService;
         var cellRangeType = last(rangeService.getCellRanges()).type;
-        var selectionHandleFill = gridOptionsService.is('enableFillHandle') && missing(cellRangeType);
+        var selectionHandleFill = gridOptionsService.get('enableFillHandle') && missing(cellRangeType);
         var type = selectionHandleFill ? SelectionHandleType.FILL : SelectionHandleType.RANGE;
         if (this.selectionHandle && this.selectionHandle.getType() !== type) {
             this.selectionHandle = this.beans.context.destroyBean(this.selectionHandle);

@@ -24,17 +24,6 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-var __values = (this && this.__values) || function(o) {
-    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
-    if (m) return m.call(o);
-    if (o && typeof o.length === "number") return {
-        next: function () {
-            if (o && i >= o.length) o = void 0;
-            return { value: o && o[i++], done: !o };
-        }
-    };
-    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
-};
 var __read = (this && this.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
@@ -51,10 +40,25 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { ChartDataModel } from "../../model/chartDataModel";
@@ -76,29 +80,46 @@ var ScatterChartProxy = /** @class */ (function (_super) {
         ];
     };
     ScatterChartProxy.prototype.getSeries = function (params) {
-        var _this = this;
+        var _a = __read(params.categories, 1), category = _a[0];
         var paired = this.isPaired();
         var seriesDefinitions = this.getSeriesDefinitions(params.fields, paired);
-        var labelFieldDefinition = params.category.id === ChartDataModel.DEFAULT_CATEGORY ? undefined : params.category;
-        var series = seriesDefinitions.map(function (seriesDefinition) { return ({
-            type: _this.standaloneChartType,
-            xKey: seriesDefinition.xField.colId,
-            xName: seriesDefinition.xField.displayName,
-            yKey: seriesDefinition.yField.colId,
-            yName: seriesDefinition.yField.displayName,
-            title: seriesDefinition.yField.displayName + " vs " + seriesDefinition.xField.displayName,
-            sizeKey: seriesDefinition.sizeField ? seriesDefinition.sizeField.colId : undefined,
-            sizeName: seriesDefinition.sizeField ? seriesDefinition.sizeField.displayName : undefined,
-            labelKey: labelFieldDefinition ? labelFieldDefinition.id : seriesDefinition.yField.colId,
-            labelName: labelFieldDefinition ? labelFieldDefinition.name : undefined,
-        }); });
+        var labelFieldDefinition = category.id === ChartDataModel.DEFAULT_CATEGORY ? undefined : category;
+        var series = seriesDefinitions.map(function (seriesDefinition) {
+            var _a, _b, _c, _d, _e;
+            if (seriesDefinition === null || seriesDefinition === void 0 ? void 0 : seriesDefinition.sizeField) {
+                var opts_1 = {
+                    type: 'bubble',
+                    xKey: seriesDefinition.xField.colId,
+                    xName: (_a = seriesDefinition.xField.displayName) !== null && _a !== void 0 ? _a : undefined,
+                    yKey: seriesDefinition.yField.colId,
+                    yName: (_b = seriesDefinition.yField.displayName) !== null && _b !== void 0 ? _b : undefined,
+                    title: "".concat(seriesDefinition.yField.displayName, " vs ").concat(seriesDefinition.xField.displayName),
+                    sizeKey: seriesDefinition.sizeField.colId,
+                    sizeName: (_c = seriesDefinition.sizeField.displayName) !== null && _c !== void 0 ? _c : '',
+                    labelKey: labelFieldDefinition ? labelFieldDefinition.id : seriesDefinition.yField.colId,
+                    labelName: labelFieldDefinition ? labelFieldDefinition.name : undefined,
+                };
+                return opts_1;
+            }
+            var opts = {
+                type: 'scatter',
+                xKey: seriesDefinition.xField.colId,
+                xName: (_d = seriesDefinition.xField.displayName) !== null && _d !== void 0 ? _d : undefined,
+                yKey: seriesDefinition.yField.colId,
+                yName: (_e = seriesDefinition.yField.displayName) !== null && _e !== void 0 ? _e : undefined,
+                title: "".concat(seriesDefinition.yField.displayName, " vs ").concat(seriesDefinition.xField.displayName),
+                labelKey: labelFieldDefinition ? labelFieldDefinition.id : seriesDefinition.yField.colId,
+                labelName: labelFieldDefinition ? labelFieldDefinition.name : undefined,
+            };
+            return opts;
+        });
         return this.crossFiltering ? this.extractCrossFilterSeries(series, params) : series;
     };
     ScatterChartProxy.prototype.extractCrossFilterSeries = function (series, params) {
         var _this = this;
         var data = params.data;
         var palette = this.getChartPalette();
-        var filteredOutKey = function (key) { return key + "-filtered-out"; };
+        var filteredOutKey = function (key) { return "".concat(key, "-filtered-out"); };
         var calcMarkerDomain = function (data, sizeKey) {
             var e_1, _a;
             var _b;
@@ -130,19 +151,23 @@ var ScatterChartProxy = /** @class */ (function (_super) {
             return undefined;
         };
         var updatePrimarySeries = function (series, idx) {
-            var sizeKey = series.sizeKey;
             var fill = palette === null || palette === void 0 ? void 0 : palette.fills[idx];
             var stroke = palette === null || palette === void 0 ? void 0 : palette.strokes[idx];
-            var markerDomain = calcMarkerDomain(data, sizeKey);
+            var markerDomain = undefined;
+            if (series.type === 'bubble') {
+                var sizeKey = series.sizeKey;
+                markerDomain = calcMarkerDomain(data, sizeKey);
+            }
             var marker = __assign(__assign({}, series.marker), { fill: fill, stroke: stroke, domain: markerDomain });
             return __assign(__assign({}, series), { marker: marker, highlightStyle: { item: { fill: 'yellow' } }, listeners: __assign(__assign({}, series.listeners), { nodeClick: _this.crossFilterCallback }) });
         };
         var updateFilteredOutSeries = function (series) {
-            var sizeKey = series.sizeKey, yKey = series.yKey, xKey = series.xKey;
-            if (sizeKey != null) {
-                sizeKey = filteredOutKey(sizeKey);
+            var yKey = series.yKey, xKey = series.xKey;
+            var alteredSizeKey = {};
+            if (series.type === 'bubble') {
+                alteredSizeKey = { sizeKey: filteredOutKey(series.sizeKey) };
             }
-            return __assign(__assign({}, series), { yKey: filteredOutKey(yKey), xKey: filteredOutKey(xKey), marker: __assign(__assign({}, series.marker), { fillOpacity: 0.3, strokeOpacity: 0.3 }), sizeKey: sizeKey, showInLegend: false, listeners: __assign(__assign({}, series.listeners), { nodeClick: function (e) {
+            return __assign(__assign(__assign({}, series), alteredSizeKey), { yKey: filteredOutKey(yKey), xKey: filteredOutKey(xKey), marker: __assign(__assign({}, series.marker), { fillOpacity: 0.3, strokeOpacity: 0.3 }), showInLegend: false, listeners: __assign(__assign({}, series.listeners), { nodeClick: function (e) {
                         var _a;
                         var value = e.datum[filteredOutKey(xKey)];
                         // Need to remove the `-filtered-out` suffixes from the event so that
@@ -152,7 +177,7 @@ var ScatterChartProxy = /** @class */ (function (_super) {
                     } }) });
         };
         var updatedSeries = series.map(updatePrimarySeries);
-        return __spreadArray(__spreadArray([], __read(updatedSeries)), __read(updatedSeries.map(updateFilteredOutSeries)));
+        return __spreadArray(__spreadArray([], __read(updatedSeries), false), __read(updatedSeries.map(updateFilteredOutSeries)), false);
     };
     ScatterChartProxy.prototype.getSeriesDefinitions = function (fields, paired) {
         if (fields.length < 2) {

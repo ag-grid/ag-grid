@@ -5,11 +5,11 @@ const webfontsGenerator = require('@vusion/webfonts-generator');
 const fontDataFolder = path.join(__dirname, "../src/internal/ag/generated");
 const iconMapFolder = path.join(__dirname, "..");
 
-const fonts = fs.readdirSync(path.join(__dirname, 'fonts'));
+const fonts = fs.readdirSync(path.join(__dirname, 'fonts')).filter(f => !f.startsWith("."));
 
 // NOTE: this map of icon names to codepoints is documented and customers may
 // depend on it not changing. Add new codepoints but don't alter existing ones.
-const codepoints = {
+const nameToCodepoint = {
     "aggregation": 0xf101,
     "arrows": 0xf102,
     "asc": 0xf103,
@@ -61,14 +61,17 @@ const codepoints = {
     "tree-indeterminate": 0xf131,
     "tree-open": 0xf132,
     "unlinked": 0xf133,
+    "up": 0xf134,
+    "down": 0xf135,
+    "plus": 0xf136,
+    "minus": 0xf137,
+    "menu-alt": 0xf138,
 }
 
 
 function generateFontFile(fontName) {
     const sourceFolder = path.join(__dirname, `fonts/${fontName}`);
-    const files = fs.readdirSync(sourceFolder)
-        .filter(file => file.endsWith(".svg"))
-        .map(file => path.join(sourceFolder, file));
+    const files = Object.keys(nameToCodepoint).map(name => path.join(sourceFolder, name + '.svg'))
         
     webfontsGenerator(
         {
@@ -78,9 +81,9 @@ function generateFontFile(fontName) {
             fontHeight: 1000,
             types: ["woff2"],
             css: false,
-            fixedWidth: false,
+            fixedWidth: true,
             dest: path.join(__dirname, ".."),
-            codepoints
+            codepoints: nameToCodepoint
         },
         (err, res) => {
             if (err) {
@@ -93,6 +96,24 @@ function generateFontFile(fontName) {
         }
     );
 }
+
+// This can be used to generate embedded SVG versions of each icon font
+// function generateScssFile(fontName) {
+//     const fontClass = fontName.replace("agGrid", "").toLowerCase();
+//     const sourceFolder = path.join(__dirname, `fonts/${fontName}`);
+//     let scssContent = `// THIS FILE IS GENERATED, DO NOT EDIT IT!\n\n[class*="ag-theme-${fontClass}"] {\n`;
+//     for (const name of Object.keys(nameToCodepoint)) {
+//         let content = fs.readFileSync(path.join(sourceFolder, name + '.svg'), "utf8");
+//         content = encodeURIComponent(content);
+//         // content = content.replaceAll(/>\s+</g, "><").replaceAll(/\s+/g, "+").replaceAll(/[/#\s"']/g, encodeURIComponent)
+//         scssContent += `\t--ag-icon-image-${name}: url("data:image/svg+xml;charset=utf-8,${content}");\n`;
+//     }
+//     scssContent += "}\n";
+//     const scssFile = path.join(fontDataFolder,  `_${kebabCase(fontName)}-embedded-svg.scss`);
+//     fs.writeFileSync(scssFile, scssContent, "utf8");
+// }
+
+// const kebabCase = (camelCase) => camelCase.replaceAll(/[A-Z]/g, (letter) => '-' + letter.toLowerCase());
 
 const getIconDataFileContent = (buffer) => `
 // THIS FILE IS GENERATED, DO NOT EDIT IT!
@@ -110,8 +131,8 @@ const getIconFontCodeScss = () => `
 @use "sass:string";
 $icon-font-codes: (
 ${
-    Object.keys(codepoints).map(iconName =>
-        `    ${iconName}: string.unquote("\\"\\\\") + string.unquote("${codepoints[iconName].toString(16)}\\""),`
+    Object.keys(nameToCodepoint).map(iconName =>
+        `    ${iconName}: string.unquote("\\"\\\\") + string.unquote("${nameToCodepoint[iconName].toString(16)}\\""),`
     ).join("\n")
 }
 )
@@ -123,3 +144,4 @@ if (!fs.existsSync(fontDataFolder)) {
 
 generateScssIconMap();
 fonts.forEach(generateFontFile);
+// fonts.forEach(generateScssFile);

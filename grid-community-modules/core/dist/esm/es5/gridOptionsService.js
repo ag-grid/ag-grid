@@ -1,22 +1,8 @@
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
 };
 var __read = (this && this.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
@@ -34,38 +20,56 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
+import { ColumnApi } from "./columns/columnApi";
 import { ComponentUtil } from "./components/componentUtil";
-import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from "./context/context";
+import { Autowired, Bean, PostConstruct, PreDestroy } from "./context/context";
 import { Events } from "./events";
 import { EventService } from "./eventService";
-import { doOnce } from "./utils/function";
+import { INITIAL_GRID_OPTION_KEYS, PropertyKeys } from "./propertyKeys";
+import { warnOnce } from "./utils/function";
 import { exists, missing } from "./utils/generic";
 import { getScrollbarWidth } from './utils/browser';
-import { ModuleRegistry } from "./modules/moduleRegistry";
-import { ModuleNames } from "./modules/moduleNames";
-import { matchesGroupDisplayType } from "./gridOptionsValidator";
-function toNumber(value) {
-    if (typeof value == 'number') {
-        return value;
-    }
-    if (typeof value == 'string') {
-        return parseInt(value, 10);
-    }
-}
-function isTrue(value) {
-    return value === true || value === 'true';
-}
+import { GRID_OPTION_DEFAULTS } from "./validation/rules/gridOptionsValidations";
 var GridOptionsService = /** @class */ (function () {
     function GridOptionsService() {
+        var _this = this;
         this.destroyed = false;
         this.domDataKey = '__AG_' + Math.random().toString();
         this.propertyEventService = new EventService();
+        // responsible for calling the onXXX functions on gridOptions
+        // It forces events defined in GridOptionsService.alwaysSyncGlobalEvents to be fired synchronously.
+        // This is required for events such as GridPreDestroyed.
+        // Other events can be fired asynchronously or synchronously depending on config.
+        this.globalEventHandlerFactory = function (restrictToSyncOnly) {
+            return function (eventName, event) {
+                // prevent events from being fired _after_ the grid has been destroyed
+                if (_this.destroyed) {
+                    return;
+                }
+                var alwaysSync = GridOptionsService_1.alwaysSyncGlobalEvents.has(eventName);
+                if ((alwaysSync && !restrictToSyncOnly) || (!alwaysSync && restrictToSyncOnly)) {
+                    return;
+                }
+                var eventHandlerName = ComponentUtil.getCallbackForEvent(eventName);
+                var eventHandler = _this.gridOptions[eventHandlerName];
+                if (typeof eventHandler === 'function') {
+                    _this.frameworkOverrides.wrapOutgoing(function () {
+                        eventHandler(event);
+                    });
+                }
+            };
+        };
     }
+    GridOptionsService_1 = GridOptionsService;
     Object.defineProperty(GridOptionsService.prototype, "context", {
         // This is quicker then having code call gridOptionsService.get('context')
         get: function () {
@@ -74,47 +78,27 @@ var GridOptionsService = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
-    GridOptionsService.prototype.agWire = function (gridApi, columnApi) {
-        this.gridOptions.api = gridApi;
-        this.gridOptions.columnApi = columnApi;
-        this.api = gridApi;
-        this.columnApi = columnApi;
-    };
     GridOptionsService.prototype.init = function () {
-        this.gridOptionLookup = new Set(__spreadArray(__spreadArray([], __read(ComponentUtil.ALL_PROPERTIES)), __read(ComponentUtil.EVENT_CALLBACKS)));
-        var async = !this.is('suppressAsyncEvents');
-        this.eventService.addGlobalListener(this.globalEventHandler.bind(this), async);
+        this.columnApi = new ColumnApi(this.api);
+        var async = !this.get('suppressAsyncEvents');
+        this.eventService.addGlobalListener(this.globalEventHandlerFactory().bind(this), async);
+        this.eventService.addGlobalListener(this.globalEventHandlerFactory(true).bind(this), false);
+        // Ensure the propertyEventService has framework overrides set so that it can fire events outside of angular
+        this.propertyEventService.setFrameworkOverrides(this.frameworkOverrides);
         // sets an initial calculation for the scrollbar width
         this.getScrollbarWidth();
     };
     GridOptionsService.prototype.destroy = function () {
-        // need to remove these, as we don't own the lifecycle of the gridOptions, we need to
-        // remove the references in case the user keeps the grid options, we want the rest
-        // of the grid to be picked up by the garbage collector
-        this.gridOptions.api = null;
-        this.gridOptions.columnApi = null;
         this.destroyed = true;
-    };
-    /**
-     * Is the given GridOption property set to true.
-     * @param property GridOption property that has the type `boolean | undefined`
-     */
-    GridOptionsService.prototype.is = function (property) {
-        return isTrue(this.gridOptions[property]);
+        this.columnApi = undefined;
     };
     /**
      * Get the raw value of the GridOptions property provided.
      * @param property
      */
     GridOptionsService.prototype.get = function (property) {
-        return this.gridOptions[property];
-    };
-    /**
-     * Get the GridOption property as a number, raw value is returned via a toNumber coercion function.
-     * @param property GridOption property that has the type `number | undefined`
-     */
-    GridOptionsService.prototype.getNum = function (property) {
-        return toNumber(this.gridOptions[property]);
+        var _a;
+        return (_a = this.gridOptions[property]) !== null && _a !== void 0 ? _a : GRID_OPTION_DEFAULTS[property];
     };
     /**
      * Get the GridOption callback but wrapped so that the common params of api,columnApi and context are automatically applied to the params.
@@ -149,24 +133,90 @@ var GridOptionsService = /** @class */ (function () {
         }
         return callback;
     };
-    /**
-     *
-     * @param key - key of the GridOption property to update
-     * @param newValue - new value for this property
-     * @param force - force the property change Event to be fired even if the value has not changed
-     * @param eventParams - additional params to merge into the property changed event
-     */
-    GridOptionsService.prototype.set = function (key, newValue, force, eventParams) {
-        if (force === void 0) { force = false; }
-        if (eventParams === void 0) { eventParams = {}; }
-        if (this.gridOptionLookup.has(key)) {
-            var previousValue = this.gridOptions[key];
-            if (force || previousValue !== newValue) {
-                this.gridOptions[key] = newValue;
-                var event_1 = __assign({ type: key, currentValue: newValue, previousValue: previousValue }, eventParams);
-                this.propertyEventService.dispatchEvent(event_1);
-            }
+    GridOptionsService.toBoolean = function (value) {
+        if (typeof value === 'boolean') {
+            return value;
         }
+        if (typeof value === 'string') {
+            // for boolean, compare to empty String to allow attributes appearing with
+            // no value to be treated as 'true'
+            return value.toUpperCase() === 'TRUE' || value == '';
+        }
+        return false;
+    };
+    GridOptionsService.toNumber = function (value) {
+        if (typeof value === 'number') {
+            return value;
+        }
+        if (typeof value === 'string') {
+            var parsed = parseInt(value);
+            if (isNaN(parsed)) {
+                return undefined;
+            }
+            return parsed;
+        }
+        return undefined;
+    };
+    GridOptionsService.toConstrainedNum = function (min, max) {
+        return function (value) {
+            var num = GridOptionsService_1.toNumber(value);
+            if (num == null || num < min || num > max) {
+                return undefined; // return undefined if outside bounds, this will then be coerced to the default value.
+            }
+            return num;
+        };
+    };
+    GridOptionsService.getCoercedValue = function (key, value) {
+        var coerceFunc = GridOptionsService_1.PROPERTY_COERCIONS.get(key);
+        if (!coerceFunc) {
+            return value;
+        }
+        return coerceFunc(value);
+    };
+    GridOptionsService.getCoercedGridOptions = function (gridOptions) {
+        var newGo = {};
+        Object.entries(gridOptions).forEach(function (_a) {
+            var _b = __read(_a, 2), key = _b[0], value = _b[1];
+            var coercedValue = GridOptionsService_1.getCoercedValue(key, value);
+            newGo[key] = coercedValue;
+        });
+        return newGo;
+    };
+    GridOptionsService.prototype.updateGridOptions = function (_a) {
+        var _this = this;
+        var options = _a.options, _b = _a.source, source = _b === void 0 ? 'api' : _b;
+        var changeSet = { id: GridOptionsService_1.changeSetId++, properties: [] };
+        // all events are fired after grid options has finished updating.
+        var events = [];
+        Object.entries(options).forEach(function (_a) {
+            var _b = __read(_a, 2), key = _b[0], value = _b[1];
+            if (source === 'api' && INITIAL_GRID_OPTION_KEYS[key]) {
+                warnOnce("".concat(key, " is an initial property and cannot be updated."));
+            }
+            var coercedValue = GridOptionsService_1.getCoercedValue(key, value);
+            var shouldForce = (typeof coercedValue) === 'object' && source === 'api'; // force objects as they could have been mutated.
+            var previousValue = _this.gridOptions[key];
+            if (shouldForce || previousValue !== coercedValue) {
+                _this.gridOptions[key] = coercedValue;
+                var event_1 = {
+                    type: key,
+                    currentValue: coercedValue,
+                    previousValue: previousValue,
+                    changeSet: changeSet,
+                    source: source
+                };
+                events.push(event_1);
+            }
+        });
+        this.validationService.processGridOptions(this.gridOptions);
+        // changeSet should just include the properties that have changed.
+        changeSet.properties = events.map(function (event) { return event.type; });
+        events.forEach(function (event) {
+            if (_this.gridOptions.debug) {
+                console.log("AG Grid: Updated property ".concat(event.type, " from "), event.previousValue, ' to  ', event.currentValue);
+            }
+            _this.propertyEventService.dispatchEvent(event);
+        });
     };
     GridOptionsService.prototype.addEventListener = function (key, listener) {
         this.propertyEventService.addEventListener(key, listener);
@@ -174,22 +224,8 @@ var GridOptionsService = /** @class */ (function () {
     GridOptionsService.prototype.removeEventListener = function (key, listener) {
         this.propertyEventService.removeEventListener(key, listener);
     };
-    // responsible for calling the onXXX functions on gridOptions
-    GridOptionsService.prototype.globalEventHandler = function (eventName, event) {
-        // prevent events from being fired _after_ the grid has been destroyed
-        if (this.destroyed) {
-            return;
-        }
-        var callbackMethodName = ComponentUtil.getCallbackForEvent(eventName);
-        if (typeof this.gridOptions[callbackMethodName] === 'function') {
-            this.gridOptions[callbackMethodName](event);
-        }
-    };
     // *************** Helper methods ************************** //
     // Methods to share common GridOptions related logic that goes above accessing a single property
-    GridOptionsService.prototype.getGridId = function () {
-        return this.api.getGridId();
-    };
     // the user might be using some non-standard scrollbar, eg a scrollbar that has zero
     // width and overlays (like the Safari scrollbar, but presented in Chrome). so we
     // allow the user to provide the scroll width before we work it out.
@@ -219,7 +255,7 @@ var GridOptionsService = /** @class */ (function () {
         return this.gridOptions.rowSelection === 'single' || this.gridOptions.rowSelection === 'multiple';
     };
     GridOptionsService.prototype.useAsyncEvents = function () {
-        return !this.is('suppressAsyncEvents');
+        return !this.get('suppressAsyncEvents');
     };
     GridOptionsService.prototype.isGetRowHeightFunction = function () {
         return typeof this.gridOptions.getRowHeight === 'function';
@@ -243,12 +279,12 @@ var GridOptionsService = /** @class */ (function () {
             var height = this.getCallback('getRowHeight')(params);
             if (this.isNumeric(height)) {
                 if (height === 0) {
-                    doOnce(function () { return console.warn('AG Grid: The return of `getRowHeight` cannot be zero. If the intention is to hide rows, use a filter instead.'); }, 'invalidRowHeight');
+                    warnOnce('The return of `getRowHeight` cannot be zero. If the intention is to hide rows, use a filter instead.');
                 }
                 return { height: Math.max(1, height), estimated: false };
             }
         }
-        if (rowNode.detail && this.is('masterDetail')) {
+        if (rowNode.detail && this.get('masterDetail')) {
             return this.getMasterDetailRowHeight();
         }
         var rowHeight = this.gridOptions.rowHeight && this.isNumeric(this.gridOptions.rowHeight) ? this.gridOptions.rowHeight : defaultRowHeight;
@@ -258,7 +294,7 @@ var GridOptionsService = /** @class */ (function () {
         // if autoHeight, we want the height to grow to the new height starting at 1, as otherwise a flicker would happen,
         // as the detail goes to the default (eg 200px) and then immediately shrink up/down to the new measured height
         // (due to auto height) which looks bad, especially if doing row animation.
-        if (this.is('detailRowAutoHeight')) {
+        if (this.get('detailRowAutoHeight')) {
             return { height: 1, estimated: false };
         }
         if (this.isNumeric(this.gridOptions.detailRowHeight)) {
@@ -271,9 +307,8 @@ var GridOptionsService = /** @class */ (function () {
         if (!this.gridOptions.rowHeight || missing(this.gridOptions.rowHeight)) {
             return this.environment.getDefaultRowHeight();
         }
-        var rowHeight = this.gridOptions.rowHeight;
-        if (rowHeight && this.isNumeric(rowHeight)) {
-            this.environment.setRowHeightVariable(rowHeight);
+        var rowHeight = this.environment.refreshRowHeightVariable();
+        if (rowHeight !== -1) {
             return rowHeight;
         }
         console.warn('AG Grid row height must be a number if not using standard row model');
@@ -326,57 +361,95 @@ var GridOptionsService = /** @class */ (function () {
     };
     GridOptionsService.prototype.isAnimateRows = function () {
         // never allow animating if enforcing the row order
-        if (this.is('ensureDomOrder')) {
+        if (this.get('ensureDomOrder')) {
             return false;
         }
-        return this.is('animateRows');
+        return this.get('animateRows');
     };
     GridOptionsService.prototype.isGroupRowsSticky = function () {
-        if (this.is('suppressGroupRowsSticky') ||
-            this.is('paginateChildRows') ||
-            this.is('groupHideOpenParents')) {
+        if (this.get('suppressGroupRowsSticky') ||
+            this.get('paginateChildRows') ||
+            this.get('groupHideOpenParents') ||
+            this.isDomLayout('print')) {
             return false;
         }
         return true;
     };
-    GridOptionsService.prototype.isTreeData = function () {
-        return this.is('treeData') && ModuleRegistry.__assertRegistered(ModuleNames.RowGroupingModule, 'Tree Data', this.api.getGridId());
-    };
-    GridOptionsService.prototype.isMasterDetail = function () {
-        return this.is('masterDetail') && ModuleRegistry.__assertRegistered(ModuleNames.MasterDetailModule, 'masterDetail', this.api.getGridId());
-    };
-    GridOptionsService.prototype.isEnableRangeSelection = function () {
-        return this.is('enableRangeSelection') && ModuleRegistry.__isRegistered(ModuleNames.RangeSelectionModule, this.api.getGridId());
-    };
     GridOptionsService.prototype.isColumnsSortingCoupledToGroup = function () {
         var autoGroupColumnDef = this.gridOptions.autoGroupColumnDef;
-        var isClientSideRowModel = this.isRowModelType('clientSide');
-        return isClientSideRowModel && !(autoGroupColumnDef === null || autoGroupColumnDef === void 0 ? void 0 : autoGroupColumnDef.comparator) && !this.isTreeData();
+        return !(autoGroupColumnDef === null || autoGroupColumnDef === void 0 ? void 0 : autoGroupColumnDef.comparator) && !this.get('treeData');
     };
     GridOptionsService.prototype.getGroupAggFiltering = function () {
         var userValue = this.gridOptions.groupAggFiltering;
         if (typeof userValue === 'function') {
             return this.getCallback('groupAggFiltering');
         }
-        if (isTrue(userValue)) {
+        if (userValue === true) {
             return function () { return true; };
         }
         return undefined;
     };
+    GridOptionsService.prototype.isGroupIncludeFooterTrueOrCallback = function () {
+        var userValue = this.gridOptions.groupIncludeFooter;
+        return userValue === true || typeof userValue === 'function';
+    };
+    GridOptionsService.prototype.getGroupIncludeFooter = function () {
+        var userValue = this.gridOptions.groupIncludeFooter;
+        if (typeof userValue === 'function') {
+            return this.getCallback('groupIncludeFooter');
+        }
+        if (userValue === true) {
+            return function () { return true; };
+        }
+        return function () { return false; };
+    };
     GridOptionsService.prototype.isGroupMultiAutoColumn = function () {
         if (this.gridOptions.groupDisplayType) {
-            return matchesGroupDisplayType('multipleColumns', this.gridOptions.groupDisplayType);
+            return this.gridOptions.groupDisplayType === 'multipleColumns';
         }
         // if we are doing hideOpenParents we also show multiple columns, otherwise hideOpenParents would not work
-        return this.is('groupHideOpenParents');
+        return this.get('groupHideOpenParents');
     };
     GridOptionsService.prototype.isGroupUseEntireRow = function (pivotMode) {
         // we never allow groupDisplayType = 'groupRows' if in pivot mode, otherwise we won't see the pivot values.
         if (pivotMode) {
             return false;
         }
-        return this.gridOptions.groupDisplayType ? matchesGroupDisplayType('groupRows', this.gridOptions.groupDisplayType) : false;
+        return this.gridOptions.groupDisplayType === 'groupRows';
     };
+    GridOptionsService.prototype.getGridCommonParams = function () {
+        return {
+            api: this.api,
+            columnApi: this.columnApi,
+            context: this.context
+        };
+    };
+    GridOptionsService.prototype.addGridCommonParams = function (params) {
+        var updatedParams = params;
+        updatedParams.api = this.api;
+        updatedParams.columnApi = this.columnApi;
+        updatedParams.context = this.context;
+        return updatedParams;
+    };
+    var GridOptionsService_1;
+    GridOptionsService.alwaysSyncGlobalEvents = new Set([Events.EVENT_GRID_PRE_DESTROYED]);
+    /**
+     * Handles value coercion including validation of ranges etc. If value is invalid, undefined is set, allowing default to be used.
+     */
+    GridOptionsService.PROPERTY_COERCIONS = new Map(__spreadArray(__spreadArray(__spreadArray([], __read(PropertyKeys.BOOLEAN_PROPERTIES.map(function (key) { return [key, GridOptionsService_1.toBoolean]; })), false), __read(PropertyKeys.NUMBER_PROPERTIES.map(function (key) { return [key, GridOptionsService_1.toNumber]; })), false), [
+        ['groupAggFiltering', function (val) { return typeof val === 'function' ? val : GridOptionsService_1.toBoolean(val); }],
+        ['pageSize', GridOptionsService_1.toConstrainedNum(1, Number.MAX_VALUE)],
+        ['autoSizePadding', GridOptionsService_1.toConstrainedNum(0, Number.MAX_VALUE)],
+        ['keepDetailRowsCount', GridOptionsService_1.toConstrainedNum(1, Number.MAX_VALUE)],
+        ['rowBuffer', GridOptionsService_1.toConstrainedNum(0, Number.MAX_VALUE)],
+        ['infiniteInitialRowCount', GridOptionsService_1.toConstrainedNum(1, Number.MAX_VALUE)],
+        ['cacheOverflowSize', GridOptionsService_1.toConstrainedNum(1, Number.MAX_VALUE)],
+        ['cacheBlockSize', GridOptionsService_1.toConstrainedNum(1, Number.MAX_VALUE)],
+        ['serverSideInitialRowCount', GridOptionsService_1.toConstrainedNum(1, Number.MAX_VALUE)],
+        ['viewportRowModelPageSize', GridOptionsService_1.toConstrainedNum(1, Number.MAX_VALUE)],
+        ['viewportRowModelBufferSize', GridOptionsService_1.toConstrainedNum(0, Number.MAX_VALUE)],
+    ], false));
+    GridOptionsService.changeSetId = 0;
     __decorate([
         Autowired('gridOptions')
     ], GridOptionsService.prototype, "gridOptions", void 0);
@@ -387,19 +460,24 @@ var GridOptionsService = /** @class */ (function () {
         Autowired('environment')
     ], GridOptionsService.prototype, "environment", void 0);
     __decorate([
+        Autowired('frameworkOverrides')
+    ], GridOptionsService.prototype, "frameworkOverrides", void 0);
+    __decorate([
         Autowired('eGridDiv')
     ], GridOptionsService.prototype, "eGridDiv", void 0);
     __decorate([
-        __param(0, Qualifier('gridApi')),
-        __param(1, Qualifier('columnApi'))
-    ], GridOptionsService.prototype, "agWire", null);
+        Autowired('validationService')
+    ], GridOptionsService.prototype, "validationService", void 0);
+    __decorate([
+        Autowired('gridApi')
+    ], GridOptionsService.prototype, "api", void 0);
     __decorate([
         PostConstruct
     ], GridOptionsService.prototype, "init", null);
     __decorate([
         PreDestroy
     ], GridOptionsService.prototype, "destroy", null);
-    GridOptionsService = __decorate([
+    GridOptionsService = GridOptionsService_1 = __decorate([
         Bean('gridOptionsService')
     ], GridOptionsService);
     return GridOptionsService;

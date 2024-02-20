@@ -91,7 +91,7 @@ var InfiniteCache = /** @class */ (function (_super) {
         if (!this.isAlive()) {
             return;
         }
-        this.logger.log("onPageLoaded: page = " + block.getId() + ", lastRow = " + lastRow);
+        this.logger.log("onPageLoaded: page = ".concat(block.getId(), ", lastRow = ").concat(lastRow));
         this.checkRowCount(block, lastRow);
         // we fire cacheUpdated even if the row count has not changed, as some items need updating even
         // if no new rows to render. for example the pagination panel has '?' as the total rows when loading

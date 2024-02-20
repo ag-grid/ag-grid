@@ -2,7 +2,7 @@
 import { createApp, onBeforeMount, ref } from 'vue';
 import { AgGridVue } from '@ag-grid-community/vue3';
 import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 import './styles.css';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
@@ -57,15 +57,15 @@ const VueExample = {
                                 </select>
                             </label>
                         </div>
-                        <div class="column margin-container">
-                            <div>Margins</div>
+                        <fieldset class="column margin-container">
+                            <legend>Margins</legend>
                             <label for="top">Top = <input type="number" id="top" value="0.75" min="0" step="0.05"></label>
                             <label for="right">Right = <input type="number" id="right" value="0.7" min="0" step="0.05"></label>
                             <label for="bottom">Bottom = <input type="number" id="bottom" value="0.75" min="0" step="0.05"></label>
                             <label for="left">Left = <input type="number" id="left" value="0.7" min="0" step="0.05"></label>
                             <label for="header">Header = <input type="number" id="header" value="0.3" min="0" step="0.05"></label>
                             <label for="footer">Footer = <input type="number" id="footer" value="0.3" min="0" step="0.05"></label>
-                        </div>
+                        </fieldset>
                     </div>
                     <div>
                         <input type="submit" style="margin: 5px 0px; font-weight: bold;" value="Export to Excel">
@@ -75,7 +75,7 @@ const VueExample = {
                     <ag-grid-vue
                 
                 style="width: 100%; height: 100%;"
-                class="ag-theme-alpine"
+                :class="themeClass"
                 :columnDefs="columnDefs"
                 @grid-ready="onGridReady"
                 :defaultColDef="defaultColDef"
@@ -117,11 +117,8 @@ const VueExample = {
         ]);
 
         const gridApi = ref();
-        const gridColumnApi = ref();
         const defaultColDef = ref({
-            sortable: true,
             filter: true,
-            resizable: true,
             minWidth: 100,
             flex: 1,
         });
@@ -135,9 +132,8 @@ const VueExample = {
 
         const onGridReady = (params) => {
             gridApi.value = params.api;
-            gridColumnApi.value = params.columnApi;
 
-            const updateData = (data) => params.api.setRowData(data.filter((rec) => rec.country != null));
+            const updateData = (data) => params.api.setGridOption('rowData', data.filter((rec) => rec.country != null));
 
             fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
                 .then(resp => resp.json())
@@ -153,12 +149,13 @@ const VueExample = {
         return {
             columnDefs,
             gridApi,
-            gridColumnApi,
             defaultColDef,
             popupParent,
             rowData,
             onGridReady,
-            onFormSubmit
+            onFormSubmit,
+            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
+            
         }
     }
 }

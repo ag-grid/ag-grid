@@ -1,10 +1,10 @@
-// @ag-grid-community/react v30.1.0
+// @ag-grid-community/react v31.1.0
 import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { AgGridReactUi } from './reactUi/agGridReactUi.mjs';
+import { AgGridReact } from './agGridReact.mjs';
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 const App = () => {
     const [rowData, setRowData] = useState([
         { make: 'Toyota', model: 'Celica', price: 35000 },
@@ -20,13 +20,11 @@ const App = () => {
         setTimeout(() => setRowData([...rowData, ...rowData]), 2000);
     };
     return (React.createElement("div", { style: { display: 'flex' } },
-        React.createElement("div", { className: "ag-theme-alpine", style: { height: 400, width: 600, margin: 10 } },
-            React.createElement(AgGridReactUi, { defaultColDef: {
-                    resizable: true,
+        React.createElement("div", { className: "ag-theme-quartz", style: { height: 400, width: 600, margin: 10 } },
+            React.createElement(AgGridReact, { defaultColDef: {
                     filter: true,
                     flex: 1,
-                    sortable: true
-                }, rowSelection: "multiple", animateRows: true, onGridReady: onGridReady, rowData: rowData, columnDefs: colDefs, modules: [ClientSideRowModelModule] }))));
+                }, rowSelection: "multiple", onGridReady: onGridReady, rowData: rowData, columnDefs: colDefs, modules: [ClientSideRowModelModule] }))));
 };
 const root = createRoot(document.getElementById('root'));
 root.render(React.createElement(App, null));

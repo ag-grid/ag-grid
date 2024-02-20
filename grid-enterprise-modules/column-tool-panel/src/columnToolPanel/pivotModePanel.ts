@@ -4,6 +4,7 @@ import {
     ColumnModel,
     Component,
     Events,
+    GridApi,
     PreConstruct,
     RefSelector
 } from "@ag-grid-community/core";
@@ -11,6 +12,7 @@ import {
 export class PivotModePanel extends Component {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('gridApi') private api: GridApi;
 
     @RefSelector('cbPivotMode') private cbPivotMode: AgCheckbox;
 
@@ -36,8 +38,8 @@ export class PivotModePanel extends Component {
     private onBtPivotMode(): void {
         const newValue = !!this.cbPivotMode.getValue();
         if (newValue !== this.columnModel.isPivotMode()) {
-            this.columnModel.setPivotMode(newValue, "toolPanelUi");
-            const api = this.gridOptionsService.api;
+            this.gridOptionsService.updateGridOptions({ options: { pivotMode: newValue}, source: 'toolPanelUi' as any });
+            const { api } = this;
             if (api) {
                 api.refreshHeader();
             }

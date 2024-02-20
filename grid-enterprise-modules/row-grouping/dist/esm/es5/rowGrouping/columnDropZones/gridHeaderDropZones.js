@@ -28,15 +28,17 @@ var GridHeaderDropZones = /** @class */ (function (_super) {
         return _super.call(this) || this;
     }
     GridHeaderDropZones.prototype.postConstruct = function () {
+        var _this = this;
         this.setGui(this.createNorthPanel());
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onRowGroupChanged.bind(this));
-        this.addManagedPropertyListener('rowGroupPanelShow', this.onRowGroupChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, function () { return _this.onRowGroupChanged(); });
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, function () { return _this.onRowGroupChanged(); });
+        this.addManagedPropertyListener('rowGroupPanelShow', function () { return _this.onRowGroupChanged(); });
+        this.addManagedPropertyListener('pivotPanelShow', function () { return _this.onPivotPanelShow(); });
         this.onRowGroupChanged();
     };
     GridHeaderDropZones.prototype.createNorthPanel = function () {
+        var _this = this;
         var topPanelGui = document.createElement('div');
-        var dropPanelVisibleListener = this.onDropPanelVisible.bind(this);
         topPanelGui.classList.add('ag-column-drop-wrapper');
         _.setAriaRole(topPanelGui, 'presentation');
         this.rowGroupComp = new RowGroupDropZonePanel(true);
@@ -45,8 +47,8 @@ var GridHeaderDropZones = /** @class */ (function (_super) {
         this.createManagedBean(this.pivotComp);
         topPanelGui.appendChild(this.rowGroupComp.getGui());
         topPanelGui.appendChild(this.pivotComp.getGui());
-        this.addManagedListener(this.rowGroupComp, Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
-        this.addManagedListener(this.pivotComp, Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
+        this.addManagedListener(this.rowGroupComp, Component.EVENT_DISPLAYED_CHANGED, function () { return _this.onDropPanelVisible(); });
+        this.addManagedListener(this.pivotComp, Component.EVENT_DISPLAYED_CHANGED, function () { return _this.onDropPanelVisible(); });
         this.onDropPanelVisible();
         return topPanelGui;
     };
@@ -69,6 +71,22 @@ var GridHeaderDropZones = /** @class */ (function (_super) {
         }
         else {
             this.rowGroupComp.setDisplayed(false);
+        }
+    };
+    GridHeaderDropZones.prototype.onPivotPanelShow = function () {
+        if (!this.pivotComp) {
+            return;
+        }
+        var pivotPanelShow = this.gridOptionsService.get('pivotPanelShow');
+        if (pivotPanelShow === 'always') {
+            this.pivotComp.setDisplayed(true);
+        }
+        else if (pivotPanelShow === 'onlyWhenPivoting') {
+            var pivoting = this.columnModel.isPivotActive();
+            this.pivotComp.setDisplayed(pivoting);
+        }
+        else {
+            this.pivotComp.setDisplayed(false);
         }
     };
     __decorate([

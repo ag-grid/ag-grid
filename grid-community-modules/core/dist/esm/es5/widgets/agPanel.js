@@ -22,20 +22,20 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { RefSelector } from "./componentAnnotations";
 import { PostConstruct } from "../context/context";
 import { Component } from "./component";
-import { getInnerHeight, getInnerWidth, setDisplayed } from "../utils/dom";
+import { getInnerHeight, getInnerWidth, isVisible, setDisplayed } from "../utils/dom";
 import { createIconNoSpan } from "../utils/icon";
 import { PositionableFeature } from "../rendering/features/positionableFeature";
 var AgPanel = /** @class */ (function (_super) {
     __extends(AgPanel, _super);
     function AgPanel(config) {
         var _this = _super.call(this, AgPanel.getTemplate(config)) || this;
-        _this.closable = true;
         _this.config = config;
+        _this.closable = true;
         return _this;
     }
     AgPanel.getTemplate = function (config) {
-        var cssIdentifier = (config && config.cssIdentifier) || 'default';
-        return /* html */ "<div class=\"ag-panel ag-" + cssIdentifier + "-panel\" tabindex=\"-1\">\n            <div ref=\"eTitleBar\" class=\"ag-panel-title-bar ag-" + cssIdentifier + "-panel-title-bar ag-unselectable\">\n                <span ref=\"eTitle\" class=\"ag-panel-title-bar-title ag-" + cssIdentifier + "-panel-title-bar-title\"></span>\n                <div ref=\"eTitleBarButtons\" class=\"ag-panel-title-bar-buttons ag-" + cssIdentifier + "-panel-title-bar-buttons\"></div>\n            </div>\n            <div ref=\"eContentWrapper\" class=\"ag-panel-content-wrapper ag-" + cssIdentifier + "-panel-content-wrapper\"></div>\n        </div>";
+        var cssIdentifier = config.cssIdentifier || 'default';
+        return /* html */ "<div class=\"ag-panel ag-".concat(cssIdentifier, "-panel\" tabindex=\"-1\">\n            <div ref=\"eTitleBar\" class=\"ag-panel-title-bar ag-").concat(cssIdentifier, "-panel-title-bar ag-unselectable\">\n                <span ref=\"eTitle\" class=\"ag-panel-title-bar-title ag-").concat(cssIdentifier, "-panel-title-bar-title\"></span>\n                <div ref=\"eTitleBarButtons\" class=\"ag-panel-title-bar-buttons ag-").concat(cssIdentifier, "-panel-title-bar-buttons\"></div>\n            </div>\n            <div ref=\"eContentWrapper\" class=\"ag-panel-content-wrapper ag-").concat(cssIdentifier, "-panel-content-wrapper\"></div>\n        </div>");
     };
     AgPanel.prototype.postConstruct = function () {
         var _this = this;
@@ -171,7 +171,7 @@ var AgPanel = /** @class */ (function (_super) {
             this.closeButtonComp = this.destroyBean(this.closeButtonComp);
         }
         var eGui = this.getGui();
-        if (eGui && eGui.offsetParent) {
+        if (eGui && isVisible(eGui)) {
             this.close();
         }
         _super.prototype.destroy.call(this);

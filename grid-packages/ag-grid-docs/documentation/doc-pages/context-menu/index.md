@@ -9,7 +9,7 @@ The user can bring up the context menu by right clicking on a cell. By default, 
 The 'paste' operation in the context menu is not possible and hence always disabled.
 It is not possible because of a browser security restriction that JavaScript cannot
 take data from the clipboard without the user explicitly doing a paste command from the browser
-(e.g. <kbd>Ctrl</kbd>+<kbd>V</kbd> or from the browser menu). If JavaScript could do this, then websites could steal
+(e.g. <kbd>^ Ctrl</kbd>+<kbd>V</kbd> or from the browser menu). If JavaScript could do this, then websites could steal
 data from the client by accessing the clipboard maliciously. The reason why the grid keeps
 the disabled paste option in the menu is to indicate to the user that paste is possible and it provides
 the keyboard shortcut as a hint to the user.
@@ -17,9 +17,16 @@ the keyboard shortcut as a hint to the user.
 
 ## Configuring the Context Menu
 
-You can customise the context menu by providing a `getContextMenuItems()` callback. Each time the context menu is to be shown, the callback is called to retrieve the menu items. This allows the client application to display a menu individually customised to each cell.
+You can customise the context menu in one of two ways:
 
-The result of `getContextMenuItems(params)` should be a list with each item either a) a string or b) a `MenuItemDef`. Use 'string' to pick from built in menu items and use `MenuItemDef` descriptions for your own menu items.
+1. Set `colDef.contextMenuItems`. This can either be a list of menu items, or a callback which is passed the list of default menu items.
+2. Set the grid option `getContextMenuItems()`. This callback will be passed the list of default menu items as well as the column.
+
+Note that `colDef.contextMenuItems` will take priority over `getContextMenuItems()`.
+
+The menu item list should be a list with each item either a) a string or b) a `MenuItemDef` description. Use 'string' to pick from built-in menu items (listed below) and use `MenuItemDef` descriptions for your own menu items.
+
+<api-documentation source='column-properties/properties.json' section='columns' names='["contextMenuItems"]'></api-documentation>
 
 <api-documentation source='grid-options/properties.json' section='accessories' names='["getContextMenuItems"]' ></api-documentation>
 
@@ -50,7 +57,7 @@ The following is a list of all the default built in menu items with the rules ab
 
 ## Default Context Menu
 
-One drawback of using the AG Grid context menu is that you may want to show the browser's context menu when debugging, for example in order to access your browser's dev tools. If you want the grid to do nothing (and hence allow the browser to display its context menu) then hold down the <kbd>Ctrl</kbd> key while clicking for the context menu. If you always want the grid's context menu, even when <kbd>Ctrl</kbd> is pressed, then set `allowContextMenuWithControlKey=true`.
+One drawback of using the AG Grid context menu is that you may want to show the browser's context menu when debugging, for example in order to access your browser's dev tools. If you want the grid to do nothing (and hence allow the browser to display its context menu) then hold down the <kbd>^ Ctrl</kbd> key while clicking for the context menu. If you always want the grid's context menu, even when <kbd>^ Ctrl</kbd> is pressed, then set `allowContextMenuWithControlKey=true`.
 
 ## Hiding the Context Menu
 
@@ -66,7 +73,7 @@ Below shows a configured context menu in action demonstrating a customised menu 
 - The top menu item has CSS classes applied to it.
 - The 'Always Disabled' menu item has a tooltip.
 
-<grid-example title='Context Menu Example' name='context-menu' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "excel", "range", "clipboard", "charts"] }'></grid-example>
+<grid-example title='Context Menu Example' name='context-menu' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "excel", "range", "clipboard", "charts-enterprise"] }'></grid-example>
 
 ## Popup Parent
 
@@ -79,10 +86,9 @@ This will lead to a bad user experience which is demonstrated in the following e
 
 <grid-example title='Small Grid Problem' name='popup-parent-problem' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "excel", "clipboard"], "exampleHeight": 400 }'></grid-example>
 
-The solution is to set the `popupParent` element which can be set in the following ways:
+The solution is to set the `popupParent` element:
 
 <api-documentation source='grid-options/properties.json' section='accessories' names='["popupParent"]' config='{"overrideBottomMargin":"0rem"}' ></api-documentation>
-<api-documentation source='grid-api/api.json' section='accessories' names='["setPopupParent"]'></api-documentation>
 
 Each mechanism allows you to set the popup parent to any HTML DOM element. The element must:
 

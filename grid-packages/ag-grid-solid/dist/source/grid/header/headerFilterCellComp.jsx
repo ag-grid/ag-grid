@@ -55,10 +55,10 @@ const HeaderFilterCellComp = (props) => {
     const getStyle = createMemo(() => ({
         width: getWidth()
     }));
-    const getCssClassesString = createMemo(() => 'ag-header-cell ag-floating-filter ' + getCssClasses.toString());
-    const getBodyCssClassesString = createMemo(() => getCssBodyClasses.toString());
-    const getButtonWrapperCssClassesString = createMemo(() => 'ag-floating-filter-button ' + getCssButtonWrapperClasses.toString());
-    return (<div ref={eGui} class={getCssClassesString()} style={getStyle()} role="gridcell" tabIndex={-1}>
+    const getCssClassesString = createMemo(() => 'ag-header-cell ag-floating-filter ' + getCssClasses().toString());
+    const getBodyCssClassesString = createMemo(() => getCssBodyClasses().toString());
+    const getButtonWrapperCssClassesString = createMemo(() => 'ag-floating-filter-button ' + getCssButtonWrapperClasses().toString());
+    return (<div ref={eGui} class={getCssClassesString()} style={getStyle()} role="gridcell">
             <div ref={eFloatingFilterBody} class={getBodyCssClassesString()} role="presentation">
                 {getUserCompDetails() && <UserComp compDetails={getUserCompDetails()} ref={setRef}/>}
             </div>

@@ -21,8 +21,8 @@ The Y values supplied in the sparkline data will always be plotted using the [Nu
 Here's an illustration showing how sparklines can look visually different when different axis types are configured.
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/time-axis.png" alt="Time axis" width="250px" constrained="true">Time Axis</image-caption>
-    <image-caption src="resources/category-axis.png" alt="Category axis" width="250px" constrained="true">Category Axis</image-caption>
+    <image-caption src="resources/time-axis.png" alt="Time axis" width="250px" constrained="true" filterdarkmode="true">Time Axis</image-caption>
+    <image-caption src="resources/category-axis.png" alt="Category axis" width="250px" constrained="true" filterdarkmode="true">Category Axis</image-caption>
 </div>
 
 - Note that the same data is used for both sparklines.

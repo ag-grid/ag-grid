@@ -17,7 +17,7 @@ The SSRM Transaction API allows rows to be added, removed or updated in the grid
 These operations are shown in the snippet below:
 
 <snippet>
-| gridOptions.api.applyServerSideTransaction({ 
+| api.applyServerSideTransaction({ 
 |     add: [ 
 |         { tradeId: 101, portfolio: 'Aggressive', product: 'Aluminium', book: 'GL-62472', current: 57969 }
 |     ],
@@ -47,13 +47,13 @@ The snippet below demonstrates creating a group row transaction for rows which a
 
 <snippet>
 | // create the group row at the root level (only if it's the first row for this group)
-| gridOptions.api.applyServerSideTransaction({
+| api.applyServerSideTransaction({
 | 	route: [],
 | 	add: [{ portfolio: 'Aggressive' }]
 | });
 | 
 | // otherwise, create the leaf node inside of the 'Aggressive' group
-| gridOptions.api.applyServerSideTransaction({
+| api.applyServerSideTransaction({
 | 	route: ['Aggressive'],
 | 	add: [row]
 | });
@@ -79,15 +79,15 @@ The snippet below demonstrates three asynchronous transactions applied sequentia
 
 <snippet>
 | // due to asynchronous batching, the following transactions are applied together preventing unnecessary DOM updates
-| gridOptions.api.applyServerSideTransactionAsync({ 
+| api.applyServerSideTransactionAsync({ 
 |     add: [{ tradeId: 101, portfolio: 'Aggressive', product: 'Aluminium', book: 'GL-62472', current: 57969 }],
 | });
 |
-| gridOptions.api.applyServerSideTransactionAsync({ 
+| api.applyServerSideTransactionAsync({ 
 |     update: [{ tradeId: 102,  portfolio: 'Aggressive', product: 'Aluminium', book: 'GL-624723', current: 58927 }],
 | });
 |
-| gridOptions.api.applyServerSideTransactionAsync({ 
+| api.applyServerSideTransactionAsync({ 
 |     remove: [{ tradeId: 103 }],
 | });
 </snippet>
@@ -108,7 +108,7 @@ In the example below, note the following:
  - The group panel has been enabled, allowing a dynamic configuration of groups.
  - The group child counts and aggregations update in sync with changes to the leaf rows.
 
-<grid-example title='Showcase Example' name='transactions-showcase' type='generated' options='{ "enterprise": true, "exampleHeight": 670, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
+<grid-example title='Showcase Example' name='transactions-showcase' type='generated' options='{ "enterprise": true, "exampleHeight": 670, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
 ## Tree Data
 

@@ -2,12 +2,12 @@
 
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AgGridReact } from '@ag-grid-community/react';
+import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
+import { ColDef, GetRowIdParams, GridReadyEvent, IDatasource, ModuleRegistry, RowClassParams, ValueFormatterParams } from '@ag-grid-community/core';
 import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
 import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 
-import { ColDef, GetRowIdParams, GridReadyEvent, ICellRendererParams, IDatasource, ModuleRegistry, RowClassParams, ValueFormatterParams } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([InfiniteRowModelModule]);
 
@@ -63,7 +63,7 @@ const GridExample = () => {
             headerName: 'Item ID',
             field: 'id',
             valueGetter: 'node.id',
-            cellRenderer: (props: ICellRendererParams) => {
+            cellRenderer: (props: CustomCellRendererProps) => {
                 if (props.value !== undefined) {
                     return props.value;
                 } else {
@@ -108,7 +108,8 @@ const GridExample = () => {
     }, []);
     const defaultColDef = useMemo<ColDef>(() => {
         return {
-            resizable: true,
+            flex: 1,
+            sortable: false,
         }
     }, []);
     const getRowId = useCallback(function (params: GetRowIdParams) {
@@ -217,7 +218,7 @@ const GridExample = () => {
                 </div>
                 <div style={{ "flexGrow": "1" }}>
 
-                    <div style={gridStyle} className="ag-theme-alpine">
+                    <div style={gridStyle} className={/** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
                         <AgGridReact
                             ref={gridRef}
                             columnDefs={columnDefs}

@@ -42,22 +42,8 @@ export function formatNumberCommas(value, thousandSeparator, decimalSeparator) {
     if (typeof value !== 'number') {
         return '';
     }
-    return value.toString().replace('.', decimalSeparator).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1" + thousandSeparator);
+    return value.toString().replace('.', decimalSeparator).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1".concat(thousandSeparator));
 }
 export function sum(values) {
     return values == null ? null : values.reduce(function (total, value) { return total + value; }, 0);
-}
-export function zeroOrGreater(value, defaultValue) {
-    if (value >= 0) {
-        return value;
-    }
-    // zero gets returned if number is missing or the wrong type
-    return defaultValue;
-}
-export function oneOrGreater(value, defaultValue) {
-    var valueNumber = parseInt(value, 10);
-    if (!isNaN(valueNumber) && isFinite(valueNumber) && valueNumber > 0) {
-        return valueNumber;
-    }
-    return defaultValue;
 }

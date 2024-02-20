@@ -29,7 +29,7 @@ let CellNavigationService = class CellNavigationService extends BeanStub {
         }
         else {
             const allColumns = this.columnModel.getAllDisplayedColumns();
-            const isRtl = this.gridOptionsService.is('enableRtl');
+            const isRtl = this.gridOptionsService.get('enableRtl');
             rowIndex = focusedCell.rowIndex;
             column = leftKey !== isRtl ? allColumns[0] : last(allColumns);
         }
@@ -56,7 +56,7 @@ let CellNavigationService = class CellNavigationService extends BeanStub {
                     pointer = this.getCellBelow(pointer);
                     break;
                 case KeyCode.RIGHT:
-                    if (this.gridOptionsService.is('enableRtl')) {
+                    if (this.gridOptionsService.get('enableRtl')) {
                         pointer = this.getCellToLeft(pointer);
                     }
                     else {
@@ -64,7 +64,7 @@ let CellNavigationService = class CellNavigationService extends BeanStub {
                     }
                     break;
                 case KeyCode.LEFT:
-                    if (this.gridOptionsService.is('enableRtl')) {
+                    if (this.gridOptionsService.get('enableRtl')) {
                         pointer = this.getCellToRight(pointer);
                     }
                     else {

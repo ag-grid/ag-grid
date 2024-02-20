@@ -1,6 +1,6 @@
 import { BeanStub } from "../context/beanStub";
 import { CtrlsService } from "../ctrlsService";
-import { IRowNode } from "../interfaces/iRowNode";
+import { IRowNode, VerticalScrollPosition } from "../interfaces/iRowNode";
 export declare class GridBodyScrollFeature extends BeanStub {
     ctrlsService: CtrlsService;
     private animationFrameService;
@@ -15,6 +15,8 @@ export declare class GridBodyScrollFeature extends BeanStub {
     private scrollLeft;
     private nextScrollTop;
     private scrollTop;
+    private lastOffsetHeight;
+    private lastScrollTop;
     private scrollTimer;
     private readonly resetLastHScrollDebounced;
     private readonly resetLastVScrollDebounced;
@@ -37,15 +39,16 @@ export declare class GridBodyScrollFeature extends BeanStub {
     private shouldBlockVerticalScroll;
     private shouldBlockHorizontalScroll;
     private redrawRowsAfterScroll;
-    private onHorizontalViewportChanged;
     checkScrollLeft(): void;
     scrollGridIfNeeded(): boolean;
     setHorizontalScrollPosition(hScrollPosition: number, fromAlignedGridsService?: boolean): void;
     setVerticalScrollPosition(vScrollPosition: number): void;
-    getVScrollPosition(): {
-        top: number;
-        bottom: number;
-    };
+    getVScrollPosition(): VerticalScrollPosition;
+    /** Get an approximate scroll position that returns the last real value read.
+     * This is useful for avoiding repeated DOM reads that force the browser to recalculate styles.
+     * This can have big performance improvements but may not be 100% accurate so only use if this is acceptable.
+     */
+    getApproximateVScollPosition(): VerticalScrollPosition;
     getHScrollPosition(): {
         left: number;
         right: number;
@@ -56,6 +59,7 @@ export declare class GridBodyScrollFeature extends BeanStub {
     ensureNodeVisible<TData = any>(comparator: TData | IRowNode<TData> | ((row: IRowNode<TData>) => boolean), position?: 'top' | 'bottom' | 'middle' | null): void;
     ensureIndexVisible(index: number, position?: 'top' | 'bottom' | 'middle' | null): void;
     ensureColumnVisible(key: any, position?: 'auto' | 'start' | 'middle' | 'end'): void;
+    setScrollPosition(top: number, left: number): void;
     private getPositionedHorizontalScroll;
     private isColumnOutsideViewport;
     private getColumnBounds;

@@ -39,14 +39,14 @@ var SetPinnedLeftWidthFeature = /** @class */ (function (_super) {
     SetPinnedLeftWidthFeature.prototype.onPinnedLeftWidthChanged = function () {
         var leftWidth = this.pinnedWidthService.getPinnedLeftWidth();
         var displayed = leftWidth > 0;
-        dom_1.setDisplayed(this.element, displayed);
-        dom_1.setFixedWidth(this.element, leftWidth);
+        (0, dom_1.setDisplayed)(this.element, displayed);
+        (0, dom_1.setFixedWidth)(this.element, leftWidth);
     };
     SetPinnedLeftWidthFeature.prototype.getWidth = function () {
         return this.pinnedWidthService.getPinnedLeftWidth();
     };
     __decorate([
-        context_1.Autowired('pinnedWidthService')
+        (0, context_1.Autowired)('pinnedWidthService')
     ], SetPinnedLeftWidthFeature.prototype, "pinnedWidthService", void 0);
     __decorate([
         context_1.PostConstruct

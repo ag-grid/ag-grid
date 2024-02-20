@@ -31,13 +31,13 @@ var NumberFilterModelFormatter = /** @class */ (function (_super) {
         var numberOfInputs = (options || {}).numberOfInputs;
         var isRange = condition.type == simpleFilter_1.SimpleFilter.IN_RANGE || numberOfInputs === 2;
         if (isRange) {
-            return this.formatValue(condition.filter) + "-" + this.formatValue(condition.filterTo);
+            return "".concat(this.formatValue(condition.filter), "-").concat(this.formatValue(condition.filterTo));
         }
         // cater for when the type doesn't need a value
         if (condition.filter != null) {
             return this.formatValue(condition.filter);
         }
-        return "" + condition.type;
+        return "".concat(condition.type);
     };
     return NumberFilterModelFormatter;
 }(simpleFilter_1.SimpleFilterModelFormatter));
@@ -55,6 +55,12 @@ var NumberFilter = /** @class */ (function (_super) {
         _this.eValuesTo = [];
         return _this;
     }
+    NumberFilter.prototype.refresh = function (params) {
+        if (this.numberFilterParams.allowedCharPattern !== params.allowedCharPattern) {
+            return false;
+        }
+        return _super.prototype.refresh.call(this, params);
+    };
     NumberFilter.prototype.mapValuesFromModel = function (filterModel) {
         var _a = filterModel || {}, filter = _a.filter, filterTo = _a.filterTo, type = _a.type;
         return [
@@ -81,8 +87,9 @@ var NumberFilter = /** @class */ (function (_super) {
     NumberFilter.prototype.getDefaultFilterOptions = function () {
         return NumberFilter.DEFAULT_FILTER_OPTIONS;
     };
-    NumberFilter.prototype.setElementValue = function (element, value) {
-        var valueToSet = this.numberFilterParams.numberFormatter
+    NumberFilter.prototype.setElementValue = function (element, value, fromFloatingFilter) {
+        // values from floating filter are directly from the input, not from the model
+        var valueToSet = !fromFloatingFilter && this.numberFilterParams.numberFormatter
             ? this.numberFilterParams.numberFormatter(value !== null && value !== void 0 ? value : null)
             : value;
         _super.prototype.setElementValue.call(this, element, valueToSet);
@@ -91,14 +98,14 @@ var NumberFilter = /** @class */ (function (_super) {
         var allowedCharPattern = getAllowedCharPattern(this.numberFilterParams);
         var eCondition = document.createElement('div');
         eCondition.classList.add('ag-filter-body');
-        aria_1.setAriaRole(eCondition, 'presentation');
+        (0, aria_1.setAriaRole)(eCondition, 'presentation');
         this.createFromToElement(eCondition, this.eValuesFrom, 'from', allowedCharPattern);
         this.createFromToElement(eCondition, this.eValuesTo, 'to', allowedCharPattern);
         return eCondition;
     };
     NumberFilter.prototype.createFromToElement = function (eCondition, eValues, fromTo, allowedCharPattern) {
         var eValue = this.createManagedBean(allowedCharPattern ? new agInputTextField_1.AgInputTextField({ allowedCharPattern: allowedCharPattern }) : new agInputNumberField_1.AgInputNumberField());
-        eValue.addCssClass("ag-filter-" + fromTo);
+        eValue.addCssClass("ag-filter-".concat(fromTo));
         eValue.addCssClass('ag-filter-filter');
         eValues.push(eValue);
         eCondition.appendChild(eValue.getGui());
@@ -135,7 +142,7 @@ var NumberFilter = /** @class */ (function (_super) {
         if (typeof value === 'number') {
             return value;
         }
-        var filterText = generic_1.makeNull(value);
+        var filterText = (0, generic_1.makeNull)(value);
         if (filterText != null && filterText.trim() === '') {
             filterText = null;
         }
@@ -182,10 +189,10 @@ var NumberFilter = /** @class */ (function (_super) {
     NumberFilter.DEFAULT_FILTER_OPTIONS = [
         scalarFilter_1.ScalarFilter.EQUALS,
         scalarFilter_1.ScalarFilter.NOT_EQUAL,
-        scalarFilter_1.ScalarFilter.LESS_THAN,
-        scalarFilter_1.ScalarFilter.LESS_THAN_OR_EQUAL,
         scalarFilter_1.ScalarFilter.GREATER_THAN,
         scalarFilter_1.ScalarFilter.GREATER_THAN_OR_EQUAL,
+        scalarFilter_1.ScalarFilter.LESS_THAN,
+        scalarFilter_1.ScalarFilter.LESS_THAN_OR_EQUAL,
         scalarFilter_1.ScalarFilter.IN_RANGE,
         scalarFilter_1.ScalarFilter.BLANK,
         scalarFilter_1.ScalarFilter.NOT_BLANK,

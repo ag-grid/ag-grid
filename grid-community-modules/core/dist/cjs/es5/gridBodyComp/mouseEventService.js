@@ -44,7 +44,7 @@ var MouseEventService = /** @class */ (function (_super) {
         eGridDiv[MouseEventService_1.GRID_DOM_KEY] = this.gridInstanceId;
     };
     MouseEventService.prototype.getRenderedCellForEvent = function (event) {
-        return event_1.getCtrlForEventTarget(this.gridOptionsService, event.target, cellCtrl_1.CellCtrl.DOM_DATA_KEY_CELL_CTRL);
+        return (0, event_1.getCtrlForEventTarget)(this.gridOptionsService, event.target, cellCtrl_1.CellCtrl.DOM_DATA_KEY_CELL_CTRL);
     };
     // walks the path of the event, and returns true if this grid is the first one that it finds. if doing
     // master / detail grids, and a child grid is found, then it returns false. this stops things like copy/paste
@@ -57,7 +57,7 @@ var MouseEventService = /** @class */ (function (_super) {
         var pointer = element;
         while (pointer) {
             var instanceId = pointer[MouseEventService_1.GRID_DOM_KEY];
-            if (generic_1.exists(instanceId)) {
+            if ((0, generic_1.exists)(instanceId)) {
                 var eventFromThisGrid = instanceId === this.gridInstanceId;
                 return eventFromThisGrid;
             }
@@ -95,10 +95,10 @@ var MouseEventService = /** @class */ (function (_super) {
     MouseEventService.gridInstanceSequence = new utils_1.NumberSequence();
     MouseEventService.GRID_DOM_KEY = '__ag_grid_instance';
     __decorate([
-        context_2.Autowired('ctrlsService')
+        (0, context_2.Autowired)('ctrlsService')
     ], MouseEventService.prototype, "ctrlsService", void 0);
     MouseEventService = MouseEventService_1 = __decorate([
-        context_1.Bean('mouseEventService')
+        (0, context_1.Bean)('mouseEventService')
     ], MouseEventService);
     return MouseEventService;
 }(beanStub_1.BeanStub));

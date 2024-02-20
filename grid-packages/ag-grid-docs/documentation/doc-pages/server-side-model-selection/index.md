@@ -7,7 +7,7 @@ Selecting rows and groups in the Server-Side Row Model is supported.
 Just set the property `rowSelection` to either `'single'` or `'multiple'` as with any other row model.
 
 <note>
-Server-Side Row Selection requires [Row ID's](../server-side-model-configuration/#providing-row-ids) to be supplied to grid.
+Server-Side Row Selection requires [Row IDs](../server-side-model-configuration/#providing-row-ids) to be supplied to grid.
 </note>
 
 ## Enabling Row Selection
@@ -15,7 +15,7 @@ Server-Side Row Selection requires [Row ID's](../server-side-model-configuration
 Row selection can be enabled in the grid by setting the `rowSelection` property to `single` or `multiple`. The below example demonstrates this property configured as `multiple`, note the following:
 
 - Selecting a single row can be achieved by clicking it. Clicking another row selects it and de-selects any other rows.
-- Selecting multiple rows can be achieved by holding down <kbd>Ctrl</kbd> and mouse clicking the rows. A range of fully loaded rows can be selected by using <kbd>Shift</kbd>.
+- Selecting multiple rows can be achieved by holding down <kbd>^ Ctrl</kbd> and mouse clicking the rows. A range of fully loaded rows can be selected by using <kbd>⇧ Shift</kbd>.
 - The selected rows are preserved when the grid is sorted or filtered and are displayed as selected when scrolled into view.  Select a row, apply a column filter so that the selected row is in the filter results and it will appear as selected in the filter results. If a selected row doesn’t match the applied filter, it will still be selected when the filter is removed.
 
 <grid-example title='Click Selection' name='click-selection' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
@@ -23,7 +23,7 @@ Row selection can be enabled in the grid by setting the `rowSelection` property 
 ## Checkbox Selection
 
 Checkboxes can be enabled on any column by setting `checkboxSelection: true` in the column defs. To enable a checkbox on a group column,
-see the snippet on the [Row Selection](/javascript-data-grid/row-selection/#example-groups--checkbox-selection-with-unselectable-leaf-nodes) page.
+see the snippet on the [Row Selection](/row-selection/#groups--checkbox-selection-with-unselectable-leaf-nodes) page.
 
 The following example demonstrates checkbox selection with the SSRM. Note the following;
 
@@ -71,7 +71,7 @@ When adding a new row via transaction, the new row will be treated as if it conf
 
 - When clicking the `Add new Aggressive` button, the new row is unselected
 - After selecting the `Aggressive` group, new rows created by the `Add new Aggressive` button will be selected.
-- After toggling one of the child rows of the `Aggressive` group, new rows follow the groups previous selection state.
+- After toggling one of the child rows of the `Aggressive` group, new rows follow the group's previous selection state.
 
 <grid-example title='Transactions Example' name='group-selects-children-transactions' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
@@ -90,7 +90,7 @@ When using selection where all selected rows may not have been loaded, it is ins
 The below snippet demonstrates how to set all nodes as selected, except for the row which has the ID `United States`, and the row with the ID `United States2004`.
 
 <snippet spaceBetweenProperties="true">
-| gridOptions.api.setServerSideSelectionState({
+| api.setServerSideSelectionState({
 |     selectAll: true,
 |     toggledNodes: ['United States', 'United States2004'],
 | });

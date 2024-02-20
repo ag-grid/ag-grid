@@ -25,6 +25,22 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CartesianChartProxy = void 0;
 var chartProxy_1 = require("../chartProxy");
@@ -40,23 +56,22 @@ var CartesianChartProxy = /** @class */ (function (_super) {
     CartesianChartProxy.prototype.update = function (params) {
         var axes = this.getAxes(params);
         var options = __assign(__assign({}, this.getCommonChartOptions(params.updatedOverrides)), { data: this.getData(params, axes), axes: axes, series: this.getSeries(params) });
-        ag_charts_community_1.AgChart.update(this.getChartRef(), options);
+        ag_charts_community_1.AgCharts.update(this.getChartRef(), options);
     };
     CartesianChartProxy.prototype.getData = function (params, axes) {
-        var _a;
         var supportsCrossFiltering = ['area', 'line'].includes(this.standaloneChartType);
-        var xPosition = this.standaloneChartType === 'bar' ? 'left' : 'bottom';
-        var xAxisIsCategory = ((_a = axes.find(function (o) { return o.position === xPosition; })) === null || _a === void 0 ? void 0 : _a.type) === 'category';
+        var xAxisIsCategory = axes.some(function (axes) { return (axes === null || axes === void 0 ? void 0 : axes.type) === 'category'; });
         return this.crossFiltering && supportsCrossFiltering ?
             this.getCrossFilterData(params) :
             this.getDataTransformedData(params, xAxisIsCategory);
     };
     CartesianChartProxy.prototype.getDataTransformedData = function (params, isCategoryAxis) {
-        return this.transformData(params.data, params.category.id, isCategoryAxis);
+        var _a = __read(params.categories, 1), category = _a[0];
+        return this.transformData(params.data, category.id, isCategoryAxis);
     };
     CartesianChartProxy.prototype.getXAxisType = function (params) {
         if (params.grouping) {
-            return 'groupedCategory';
+            return 'grouped-category';
         }
         else if (CartesianChartProxy.isTimeAxis(params)) {
             return 'time';
@@ -64,11 +79,12 @@ var CartesianChartProxy = /** @class */ (function (_super) {
         return 'category';
     };
     CartesianChartProxy.isTimeAxis = function (params) {
-        if (params.category && params.category.chartDataType) {
-            return params.category.chartDataType === 'time';
+        var _a = __read(params.categories, 1), category = _a[0];
+        if (category && category.chartDataType) {
+            return category.chartDataType === 'time';
         }
         var testDatum = params.data[0];
-        return (testDatum && testDatum[params.category.id]) instanceof Date;
+        return (testDatum && testDatum[category.id]) instanceof Date;
     };
     CartesianChartProxy.prototype.crossFilteringReset = function () {
         this.crossFilteringSelectedPoints = [];
@@ -83,6 +99,7 @@ var CartesianChartProxy = /** @class */ (function (_super) {
     };
     CartesianChartProxy.prototype.extractLineAreaCrossFilterSeries = function (series, params) {
         var _this = this;
+        var _a = __read(params.categories, 1), category = _a[0];
         var getYKey = function (yKey) {
             if (_this.standaloneChartType === 'area') {
                 var lastSelectedChartId = params.getCrossFilteringContext().lastSelectedChartId;
@@ -102,10 +119,10 @@ var CartesianChartProxy = /** @class */ (function (_super) {
             };
             s.marker = {
                 formatter: function (p) {
-                    var category = p.datum[params.category.id];
+                    var value = p.datum[category.id];
                     return {
                         fill: p.highlighted ? 'yellow' : p.fill,
-                        size: p.highlighted ? 14 : _this.crossFilteringPointSelected(category) ? 8 : 0,
+                        size: p.highlighted ? 14 : _this.crossFilteringPointSelected(value) ? 8 : 0,
                     };
                 }
             };
@@ -121,18 +138,19 @@ var CartesianChartProxy = /** @class */ (function (_super) {
     CartesianChartProxy.prototype.getCrossFilterData = function (params) {
         var _this = this;
         this.crossFilteringAllPoints.clear();
+        var _a = __read(params.categories, 1), category = _a[0];
         var colId = params.fields[0].colId;
-        var filteredOutColId = colId + "-filtered-out";
+        var filteredOutColId = "".concat(colId, "-filtered-out");
         var lastSelectedChartId = params.getCrossFilteringContext().lastSelectedChartId;
         return params.data.map(function (d) {
-            var category = d[params.category.id];
-            _this.crossFilteringAllPoints.add(category);
-            var pointSelected = _this.crossFilteringPointSelected(category);
+            var value = d[category.id];
+            _this.crossFilteringAllPoints.add(value);
+            var pointSelected = _this.crossFilteringPointSelected(value);
             if (_this.standaloneChartType === 'area' && lastSelectedChartId === params.chartId) {
-                d[colId + "-total"] = pointSelected ? d[colId] : d[colId] + d[filteredOutColId];
+                d["".concat(colId, "-total")] = pointSelected ? d[colId] : d[colId] + d[filteredOutColId];
             }
             if (_this.standaloneChartType === 'line') {
-                d[colId + "-total"] = pointSelected ? d[colId] : d[colId] + d[filteredOutColId];
+                d["".concat(colId, "-total")] = pointSelected ? d[colId] : d[colId] + d[filteredOutColId];
             }
             return d;
         });

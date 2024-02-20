@@ -34,12 +34,15 @@ var TabGuardCtrl = /** @class */ (function (_super) {
     function TabGuardCtrl(params) {
         var _this = _super.call(this) || this;
         _this.skipTabGuardFocus = false;
-        var comp = params.comp, eTopGuard = params.eTopGuard, eBottomGuard = params.eBottomGuard, focusInnerElement = params.focusInnerElement, onFocusIn = params.onFocusIn, onFocusOut = params.onFocusOut, shouldStopEventPropagation = params.shouldStopEventPropagation, onTabKeyDown = params.onTabKeyDown, handleKeyDown = params.handleKeyDown, eFocusableElement = params.eFocusableElement;
+        _this.forcingFocusOut = false;
+        var comp = params.comp, eTopGuard = params.eTopGuard, eBottomGuard = params.eBottomGuard, focusTrapActive = params.focusTrapActive, forceFocusOutWhenTabGuardsAreEmpty = params.forceFocusOutWhenTabGuardsAreEmpty, focusInnerElement = params.focusInnerElement, onFocusIn = params.onFocusIn, onFocusOut = params.onFocusOut, shouldStopEventPropagation = params.shouldStopEventPropagation, onTabKeyDown = params.onTabKeyDown, handleKeyDown = params.handleKeyDown, eFocusableElement = params.eFocusableElement;
         _this.comp = comp;
         _this.eTopGuard = eTopGuard;
         _this.eBottomGuard = eBottomGuard;
         _this.providedFocusInnerElement = focusInnerElement;
         _this.eFocusableElement = eFocusableElement;
+        _this.focusTrapActive = !!focusTrapActive;
+        _this.forceFocusOutWhenTabGuardsAreEmpty = !!forceFocusOutWhenTabGuardsAreEmpty;
         _this.providedFocusIn = onFocusIn;
         _this.providedFocusOut = onFocusOut;
         _this.providedShouldStopEventPropagation = shouldStopEventPropagation;
@@ -74,7 +77,11 @@ var TabGuardCtrl = /** @class */ (function (_super) {
         return false;
     };
     TabGuardCtrl.prototype.activateTabGuards = function () {
-        var tabIndex = this.gridOptionsService.getNum('tabIndex') || 0;
+        // Do not activate tabs while focus is being forced out
+        if (this.forcingFocusOut) {
+            return;
+        }
+        var tabIndex = this.gridOptionsService.get('tabIndex');
         this.comp.setTabIndex(tabIndex.toString());
     };
     TabGuardCtrl.prototype.deactivateTabGuards = function () {
@@ -85,6 +92,16 @@ var TabGuardCtrl = /** @class */ (function (_super) {
             this.skipTabGuardFocus = false;
             return;
         }
+        // when there are no focusable items within the TabGuard, focus gets stuck
+        // in the TabGuard itself and has nowhere to go, so we need to manually find
+        // the closest element to focus by calling `forceFocusOutWhenTabGuardAreEmpty`.
+        if (this.forceFocusOutWhenTabGuardsAreEmpty) {
+            var isEmpty = this.focusService.findFocusableElements(this.eFocusableElement, '.ag-tab-guard').length === 0;
+            if (isEmpty) {
+                this.findNextElementOutsideAndFocus(e.target === this.eBottomGuard);
+                return;
+            }
+        }
         var fromBottom = e.target === this.eBottomGuard;
         if (this.providedFocusInnerElement) {
             this.providedFocusInnerElement(fromBottom);
@@ -93,15 +110,59 @@ var TabGuardCtrl = /** @class */ (function (_super) {
             this.focusInnerElement(fromBottom);
         }
     };
-    TabGuardCtrl.prototype.onFocusIn = function (e) {
-        if (this.providedFocusIn && this.providedFocusIn(e)) {
+    TabGuardCtrl.prototype.findNextElementOutsideAndFocus = function (up) {
+        var eDocument = this.gridOptionsService.getDocument();
+        var focusableEls = this.focusService.findFocusableElements(eDocument.body, null, true);
+        var index = focusableEls.indexOf(up ? this.eTopGuard : this.eBottomGuard);
+        if (index === -1) {
             return;
+        }
+        var start;
+        var end;
+        if (up) {
+            start = 0;
+            end = index;
+        }
+        else {
+            start = index + 1;
+            end = focusableEls.length;
+        }
+        var focusableRange = focusableEls.slice(start, end);
+        var targetTabIndex = this.gridOptionsService.get('tabIndex');
+        focusableRange.sort(function (a, b) {
+            var indexA = parseInt(a.getAttribute('tabindex') || '0');
+            var indexB = parseInt(b.getAttribute('tabindex') || '0');
+            if (indexB === targetTabIndex) {
+                return 1;
+            }
+            if (indexA === targetTabIndex) {
+                return -1;
+            }
+            if (indexA === 0) {
+                return 1;
+            }
+            if (indexB === 0) {
+                return -1;
+            }
+            return indexA - indexB;
+        });
+        focusableRange[up ? (focusableRange.length - 1) : 0].focus();
+    };
+    TabGuardCtrl.prototype.onFocusIn = function (e) {
+        if (this.focusTrapActive) {
+            return;
+        }
+        if (this.providedFocusIn) {
+            this.providedFocusIn(e);
         }
         this.deactivateTabGuards();
     };
     TabGuardCtrl.prototype.onFocusOut = function (e) {
-        if (this.providedFocusOut && this.providedFocusOut(e)) {
+        if (this.focusTrapActive) {
             return;
+        }
+        if (this.providedFocusOut) {
+            this.providedFocusOut(e);
         }
         if (!this.eFocusableElement.contains(e.relatedTarget)) {
             this.activateTabGuards();
@@ -111,6 +172,9 @@ var TabGuardCtrl = /** @class */ (function (_super) {
         var _this = this;
         if (this.providedOnTabKeyDown) {
             this.providedOnTabKeyDown(e);
+            return;
+        }
+        if (this.focusTrapActive) {
             return;
         }
         if (e.defaultPrevented) {
@@ -149,11 +213,25 @@ var TabGuardCtrl = /** @class */ (function (_super) {
         return this.focusService.findNextFocusableElement(this.eFocusableElement, false, backwards);
     };
     TabGuardCtrl.prototype.forceFocusOutOfContainer = function (up) {
+        var _this = this;
         if (up === void 0) { up = false; }
+        // avoid multiple calls to `forceFocusOutOfContainer`
+        if (this.forcingFocusOut) {
+            return;
+        }
         var tabGuardToFocus = up ? this.eTopGuard : this.eBottomGuard;
         this.activateTabGuards();
         this.skipTabGuardFocus = true;
+        this.forcingFocusOut = true;
+        // this focus will set `this.skipTabGuardFocus` to false;
         tabGuardToFocus.focus();
+        window.setTimeout(function () {
+            _this.forcingFocusOut = false;
+            _this.activateTabGuards();
+        });
+    };
+    TabGuardCtrl.prototype.isTabGuard = function (element) {
+        return element === this.eTopGuard || element === this.eBottomGuard;
     };
     __decorate([
         Autowired('focusService')

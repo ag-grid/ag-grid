@@ -74,9 +74,9 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         node: RowNode
     ): { value: any, valueFormatted?: string | null } {
         // we render the group summary text e.g. "-> Parent -> Child"...
-        const hideOpenParents = this.gridOptionsService.is('groupHideOpenParents');
+        const hideOpenParents = this.gridOptionsService.get('groupHideOpenParents');
         const value = ((!hideOpenParents || node.footer) && this.shouldRenderGroupSummaryCell(node, column, index))
-            ? this.createValueForGroupNode(node)
+            ? this.createValueForGroupNode(column, node)
             : this.valueService.getValue(column, node);
 
         const processedValue = this.processCell({
@@ -101,6 +101,10 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         if (currentColumnGroupIndex !== -1) {
             if (node.groupData?.[column.getId()] != null) { return true; }
 
+            if (this.gridOptionsService.isRowModelType('serverSide') && node.group) {
+                return true;
+            }
+
             // if this is a top level footer, always render`Total` in the left-most cell
             if (node.footer && node.level === -1) {
                 const colDef = column.getColDef();
@@ -117,33 +121,38 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
 
     private getHeaderName(callback: ((params: ProcessHeaderForExportParams) => string) | undefined, column: Column): string | null {
         if (callback) {
-            return callback({
-                column: column,
-                api: this.gridOptionsService.api,
-                columnApi: this.gridOptionsService.columnApi,
-                context: this.gridOptionsService.context
-            });
+            return callback(this.gridOptionsService.addGridCommonParams({ column }));
         }
 
         return this.columnModel.getDisplayNameForColumn(column, 'csv', true);
     }
 
-    private createValueForGroupNode(node: RowNode): string {
+    private createValueForGroupNode(column: Column, node: RowNode): string {
         if (this.processRowGroupCallback) {
-            return this.processRowGroupCallback({
-                node: node,
-                api: this.gridOptionsService.api,
-                columnApi: this.gridOptionsService.columnApi,
-                context: this.gridOptionsService.context,
-            });
+            return this.processRowGroupCallback(this.gridOptionsService.addGridCommonParams({ column, node }));
         }
+
+        const isTreeData = this.gridOptionsService.get('treeData');
+        const isSuppressGroupMaintainValueType = this.gridOptionsService.get('suppressGroupMaintainValueType');
+
+        // if not tree data and not suppressGroupMaintainValueType then we get the value from the group data
+        const getValueFromNode = (node: RowNode) => {
+            if (isTreeData || isSuppressGroupMaintainValueType) {
+                return node.key;
+            }
+            const value = node.groupData?.[column.getId()];
+            if (!value || !node.rowGroupColumn || node.rowGroupColumn.getColDef().useValueFormatterForExport === false) { return value; }
+            return this.valueFormatterService.formatValue(node.rowGroupColumn, node, value) ?? value;
+        }
+
+        
         const isFooter = node.footer;
-        const keys = [node.key];
+        const keys = [getValueFromNode(node)];
 
         if (!this.gridOptionsService.isGroupMultiAutoColumn()) {
             while (node.parent) {
                 node = node.parent;
-                keys.push(node.key);
+                keys.push(getValueFromNode(node));
             }
         }
 
@@ -159,22 +168,19 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
 
         if (processCellCallback) {
             return {
-                value: processCellCallback({
+                value: processCellCallback(this.gridOptionsService.addGridCommonParams({
                     accumulatedRowIndex,
                     column: column,
                     node: rowNode,
                     value: value,
-                    api: this.gridOptionsService.api,
-                    columnApi: this.gridOptionsService.columnApi,
-                    context: this.gridOptionsService.context,
                     type: type,
                     parseValue: (valueToParse: string) => this.valueParserService.parseValue(column, rowNode, valueToParse, this.valueService.getValue(column, rowNode)),
                     formatValue: (valueToFormat: any) => this.valueFormatterService.formatValue(column, rowNode, valueToFormat) ?? valueToFormat
-                }) ?? ''
+                })) ?? ''
             };
         }
 
-        if (column.getColDef().useValueFormatterForExport) {
+        if (column.getColDef().useValueFormatterForExport !== false) {
             return {
                 value: value ?? '', 
                 valueFormatted: this.valueFormatterService.formatValue(column, rowNode, value),

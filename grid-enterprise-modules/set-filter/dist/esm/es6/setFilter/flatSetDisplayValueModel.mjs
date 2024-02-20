@@ -38,6 +38,9 @@ export class FlatSetDisplayValueModel {
     getSelectAllItem() {
         return SetFilterDisplayValue.SELECT_ALL;
     }
+    getAddSelectionToFilterItem() {
+        return SetFilterDisplayValue.ADD_SELECTION_TO_FILTER;
+    }
     getDisplayedKeys() {
         return this.displayedKeys;
     }

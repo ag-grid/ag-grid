@@ -13,10 +13,13 @@ var MultiIndexMap = /** @class */ (function () {
         this.indexes = indexes;
         this.maps = new Map(this.indexes.map(function (index) { return [index, new Map()]; }));
     }
+    MultiIndexMap.prototype.getSize = function () {
+        return this.maps.get(this.indexes[0]).size;
+    };
     MultiIndexMap.prototype.getBy = function (index, key) {
         var map = this.maps.get(index);
         if (!map) {
-            throw new Error("AG Grid: " + String(index) + " not found");
+            throw new Error("AG Grid: ".concat(String(index), " not found"));
         }
         return map.get(key);
     };
@@ -25,7 +28,7 @@ var MultiIndexMap = /** @class */ (function () {
         this.indexes.forEach(function (index) {
             var map = _this.maps.get(index);
             if (!map) {
-                throw new Error("AG Grid: " + String(index) + " not found");
+                throw new Error("AG Grid: ".concat(String(index), " not found"));
             }
             map.set(item[index], item);
         });
@@ -35,7 +38,7 @@ var MultiIndexMap = /** @class */ (function () {
         this.indexes.forEach(function (index) {
             var map = _this.maps.get(index);
             if (!map) {
-                throw new Error("AG Grid: " + String(index) + " not found");
+                throw new Error("AG Grid: ".concat(String(index), " not found"));
             }
             map.delete(item[index]);
         });
@@ -46,7 +49,7 @@ var MultiIndexMap = /** @class */ (function () {
     MultiIndexMap.prototype.getIterator = function (index) {
         var map = this.maps.get(index);
         if (!map) {
-            throw new Error("AG Grid: " + String(index) + " not found");
+            throw new Error("AG Grid: ".concat(String(index), " not found"));
         }
         return map.values();
     };

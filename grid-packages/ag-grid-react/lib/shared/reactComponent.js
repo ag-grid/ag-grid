@@ -1,40 +1,49 @@
-// ag-grid-react v30.1.0
+// ag-grid-react v31.1.0
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-        return extendStatics(d, b);
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
     };
-    return function (d, b) {
-        if (typeof b !== "function" && b !== null)
-            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
+    return __assign.apply(this, arguments);
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ReactComponent = void 0;
-var BaseReactComponent = /** @class */ (function () {
-    function BaseReactComponent() {
-    }
-    return BaseReactComponent;
-}());
-var ReactComponent = /** @class */ (function (_super) {
-    __extends(ReactComponent, _super);
-    function ReactComponent(reactComponent, portalManager, componentType) {
-        var _this = _super.call(this) || this;
-        _this.portal = null;
-        _this.reactComponent = reactComponent;
-        _this.portalManager = portalManager;
-        _this.componentType = componentType;
-        _this.statelessComponent = _this.isStateless(_this.reactComponent);
-        return _this;
+var react_1 = require("react");
+var ag_grid_community_1 = require("ag-grid-community");
+var keyGenerator_1 = __importDefault(require("./keyGenerator"));
+var react_dom_1 = require("react-dom");
+var server_1 = require("react-dom/server");
+var ReactComponent = /** @class */ (function () {
+    function ReactComponent(reactComponent, portalManager, componentType, suppressFallbackMethods) {
+        var _this = this;
+        this.portal = null;
+        this.oldPortal = null;
+        this.reactComponent = reactComponent;
+        this.portalManager = portalManager;
+        this.componentType = componentType;
+        this.suppressFallbackMethods = !!suppressFallbackMethods;
+        this.statelessComponent = this.isStateless(this.reactComponent);
+        this.key = keyGenerator_1.default();
+        this.portalKey = keyGenerator_1.default();
+        this.instanceCreated = this.isStatelessComponent() ? ag_grid_community_1.AgPromise.resolve(false) : new ag_grid_community_1.AgPromise(function (resolve) {
+            _this.resolveInstanceCreated = resolve;
+        });
     }
     ReactComponent.prototype.getGui = function () {
         return this.eParentElement;
+    };
+    /** `getGui()` returns the parent element. This returns the actual root element. */
+    ReactComponent.prototype.getRootElement = function () {
+        var firstChild = this.eParentElement.firstChild;
+        return firstChild;
     };
     ReactComponent.prototype.destroy = function () {
         if (this.componentInstance && typeof this.componentInstance.destroy == 'function') {
@@ -46,8 +55,7 @@ var ReactComponent = /** @class */ (function (_super) {
         var componentWrappingElement = this.portalManager.getComponentWrappingElement();
         var eParentElement = document.createElement(componentWrappingElement || 'div');
         eParentElement.classList.add('ag-react-container');
-        // DEPRECATED - use componentInstance.getReactContainerStyle or componentInstance.getReactContainerClasses instead
-        // so user can have access to the react container, to add css class or style
+        /** @deprecated v21.2 */
         params.reactContainer = eParentElement;
         return eParentElement;
     };
@@ -57,9 +65,11 @@ var ReactComponent = /** @class */ (function (_super) {
             return;
         }
         if (this.componentInstance.getReactContainerStyle && this.componentInstance.getReactContainerStyle()) {
+            ag_grid_community_1._.warnOnce('Since v31.1 "getReactContainerStyle" is deprecated. Apply styling directly to ".ag-react-container" if needed.');
             Object.assign(this.eParentElement.style, this.componentInstance.getReactContainerStyle());
         }
         if (this.componentInstance.getReactContainerClasses && this.componentInstance.getReactContainerClasses()) {
+            ag_grid_community_1._.warnOnce('Since v31.1 "getReactContainerClasses" is deprecated. Apply styling directly to ".ag-react-container" if needed.');
             var parentContainerClasses = this.componentInstance.getReactContainerClasses();
             parentContainerClasses.forEach(function (className) { return _this.eParentElement.classList.add(className); });
         }
@@ -89,7 +99,7 @@ var ReactComponent = /** @class */ (function (_super) {
     };
     ReactComponent.prototype.hasMethod = function (name) {
         var frameworkComponentInstance = this.getFrameworkComponentInstance();
-        return (!!frameworkComponentInstance && frameworkComponentInstance[name] !== null) ||
+        return (!!frameworkComponentInstance && frameworkComponentInstance[name] != null) ||
             this.fallbackMethodAvailable(name);
     };
     ReactComponent.prototype.callMethod = function (name, args) {
@@ -114,6 +124,95 @@ var ReactComponent = /** @class */ (function (_super) {
     ReactComponent.prototype.addMethod = function (name, callback) {
         this[name] = callback;
     };
+    ReactComponent.prototype.init = function (params) {
+        var _this = this;
+        this.eParentElement = this.createParentElement(params);
+        this.params = params;
+        this.createOrUpdatePortal(params);
+        return new ag_grid_community_1.AgPromise(function (resolve) { return _this.createReactComponent(resolve); });
+    };
+    ReactComponent.prototype.createOrUpdatePortal = function (params) {
+        var _this = this;
+        if (!this.isStatelessComponent()) {
+            // grab hold of the actual instance created
+            this.ref = function (element) {
+                var _a;
+                _this.componentInstance = element;
+                _this.addParentContainerStyleAndClasses();
+                (_a = _this.resolveInstanceCreated) === null || _a === void 0 ? void 0 : _a.call(_this, true);
+                _this.resolveInstanceCreated = undefined;
+            };
+            params.ref = this.ref;
+        }
+        this.reactElement = this.createElement(this.reactComponent, __assign(__assign({}, params), { key: this.key }));
+        this.portal = react_dom_1.createPortal(this.reactElement, this.eParentElement, this.portalKey // fixed deltaRowModeRefreshCompRenderer
+        );
+    };
+    ReactComponent.prototype.createElement = function (reactComponent, props) {
+        return react_1.createElement(reactComponent, props);
+    };
+    ReactComponent.prototype.createReactComponent = function (resolve) {
+        this.portalManager.mountReactPortal(this.portal, this, function (value) {
+            resolve(value);
+        });
+    };
+    ReactComponent.prototype.isNullValue = function () {
+        return this.valueRenderedIsNull(this.params);
+    };
+    ReactComponent.prototype.rendered = function () {
+        return (this.isStatelessComponent() && this.statelessComponentRendered()) ||
+            !!(!this.isStatelessComponent() && this.getFrameworkComponentInstance());
+    };
+    ReactComponent.prototype.valueRenderedIsNull = function (params) {
+        // we only do this for cellRenderers
+        if (!this.componentType.cellRenderer) {
+            return false;
+        }
+        // we've no way of knowing if a component returns null without rendering it first
+        // so we render it to markup and check the output - if it'll be null we know and won't timeout
+        // waiting for a component that will never be created
+        var originalConsoleError = console.error;
+        try {
+            // if a user is doing anything that uses useLayoutEffect (like material ui) then it will throw and we
+            // can't do anything to stop it; this is just a warning and has no effect on anything so just suppress it
+            // for this single operation
+            console.error = function () {
+            };
+            var staticMarkup = server_1.renderToStaticMarkup(react_1.createElement(this.reactComponent, params));
+            return staticMarkup === '';
+        }
+        catch (ignore) {
+        }
+        finally {
+            console.error = originalConsoleError;
+        }
+        return false;
+    };
+    /*
+    * fallback methods - these will be invoked if a corresponding instance method is not present
+    * for example if refresh is called and is not available on the component instance, then refreshComponent on this
+    * class will be invoked instead
+    *
+    * Currently only refresh is supported
+    */
+    ReactComponent.prototype.refreshComponent = function (args) {
+        this.oldPortal = this.portal;
+        this.createOrUpdatePortal(args);
+        this.portalManager.updateReactPortal(this.oldPortal, this.portal);
+    };
+    ReactComponent.prototype.fallbackMethod = function (name, params) {
+        var method = this[name + "Component"];
+        if (!this.suppressFallbackMethods && !!method) {
+            return method.bind(this)(params);
+        }
+    };
+    ReactComponent.prototype.fallbackMethodAvailable = function (name) {
+        if (this.suppressFallbackMethods) {
+            return false;
+        }
+        var method = this[name + "Component"];
+        return !!method;
+    };
     return ReactComponent;
-}(BaseReactComponent));
+}());
 exports.ReactComponent = ReactComponent;

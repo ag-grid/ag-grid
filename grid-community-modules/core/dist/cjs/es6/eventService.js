@@ -31,13 +31,19 @@ let EventService = class EventService {
     //
     // the times when this class is used outside of the context (eg RowNode has an instance of this
     // class) then it is not a bean, and this setBeans method is not called.
-    setBeans(loggerFactory, gridOptionsService, frameworkOverrides, globalEventListener = null) {
+    setBeans(gridOptionsService, frameworkOverrides, globalEventListener = null, globalSyncEventListener = null) {
         this.frameworkOverrides = frameworkOverrides;
         this.gridOptionsService = gridOptionsService;
         if (globalEventListener) {
             const async = gridOptionsService.useAsyncEvents();
             this.addGlobalListener(globalEventListener, async);
         }
+        if (globalSyncEventListener) {
+            this.addGlobalListener(globalSyncEventListener, false);
+        }
+    }
+    setFrameworkOverrides(frameworkOverrides) {
+        this.frameworkOverrides = frameworkOverrides;
     }
     getListeners(eventType, async, autoCreateListenerCollection) {
         const listenerMap = async ? this.allAsyncListeners : this.allSyncListeners;
@@ -81,10 +87,7 @@ let EventService = class EventService {
         if (this.gridOptionsService) {
             // Apply common properties to all dispatched events if this event service has had its beans set with gridOptionsService.
             // Note there are multiple instances of EventService that are used local to components which do not set gridOptionsService.
-            const { api, columnApi, context } = this.gridOptionsService;
-            agEvent.api = api;
-            agEvent.columnApi = columnApi;
-            agEvent.context = context;
+            this.gridOptionsService.addGridCommonParams(agEvent);
         }
         this.dispatchToListeners(agEvent, true);
         this.dispatchToListeners(agEvent, false);
@@ -96,6 +99,7 @@ let EventService = class EventService {
         }
     }
     dispatchToListeners(event, async) {
+        var _a;
         const eventType = event.type;
         if (async && 'event' in event) {
             const browserEvent = event.event;
@@ -105,26 +109,37 @@ let EventService = class EventService {
                 event.eventPath = browserEvent.composedPath();
             }
         }
-        const processEventListeners = (listeners) => listeners.forEach(listener => {
+        const processEventListeners = (listeners, originalListeners) => listeners.forEach(listener => {
+            if (!originalListeners.has(listener)) {
+                // A listener could have been removed by a previously processed listener. In this case we don't want to call 
+                return;
+            }
+            const callback = this.frameworkOverrides
+                ? () => this.frameworkOverrides.wrapIncoming(() => listener(event))
+                : () => listener(event);
             if (async) {
-                this.dispatchAsync(() => listener(event));
+                this.dispatchAsync(callback);
             }
             else {
-                listener(event);
+                callback();
             }
         });
+        const originalListeners = (_a = this.getListeners(eventType, async, false)) !== null && _a !== void 0 ? _a : new Set();
         // create a shallow copy to prevent listeners cyclically adding more listeners to capture this event
-        const listeners = new Set(this.getListeners(eventType, async, false));
-        if (listeners) {
-            processEventListeners(listeners);
+        const listeners = new Set(originalListeners);
+        if (listeners.size > 0) {
+            processEventListeners(listeners, originalListeners);
         }
         const globalListeners = new Set(async ? this.globalAsyncListeners : this.globalSyncListeners);
-        globalListeners.forEach(listener => {
+        globalListeners.forEach((listener) => {
+            const callback = this.frameworkOverrides
+                ? () => this.frameworkOverrides.wrapIncoming(() => listener(eventType, event))
+                : () => listener(eventType, event);
             if (async) {
-                this.dispatchAsync(() => this.frameworkOverrides.dispatchEvent(eventType, () => listener(eventType, event), true));
+                this.dispatchAsync(callback);
             }
             else {
-                this.frameworkOverrides.dispatchEvent(eventType, () => listener(eventType, event), true);
+                callback();
             }
         });
     }
@@ -141,7 +156,9 @@ let EventService = class EventService {
         // set to 'true' so it will know it's already scheduled for subsequent calls.
         if (!this.scheduled) {
             // if not scheduled, schedule one
-            window.setTimeout(this.flushAsyncQueue.bind(this), 0);
+            this.frameworkOverrides.wrapIncoming(() => {
+                window.setTimeout(this.flushAsyncQueue.bind(this), 0);
+            });
             // mark that it is scheduled
             this.scheduled = true;
         }
@@ -161,12 +178,12 @@ let EventService = class EventService {
     }
 };
 __decorate([
-    __param(0, context_1.Qualifier('loggerFactory')),
-    __param(1, context_1.Qualifier('gridOptionsService')),
-    __param(2, context_1.Qualifier('frameworkOverrides')),
-    __param(3, context_1.Qualifier('globalEventListener'))
+    __param(0, (0, context_1.Qualifier)('gridOptionsService')),
+    __param(1, (0, context_1.Qualifier)('frameworkOverrides')),
+    __param(2, (0, context_1.Qualifier)('globalEventListener')),
+    __param(3, (0, context_1.Qualifier)('globalSyncEventListener'))
 ], EventService.prototype, "setBeans", null);
 EventService = __decorate([
-    context_1.Bean('eventService')
+    (0, context_1.Bean)('eventService')
 ], EventService);
 exports.EventService = EventService;

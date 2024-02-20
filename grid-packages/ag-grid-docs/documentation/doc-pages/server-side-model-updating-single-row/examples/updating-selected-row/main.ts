@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, IServerSideDatasource } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions, IServerSideDatasource } from '@ag-grid-community/core';
 declare var FakeServer: any;
 
 let versionCounter: number = 0;
@@ -9,17 +9,18 @@ const columnDefs: ColDef[] = [
   { field: 'version' },
 ]
 
+let gridApi: GridApi;
+
 const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
-    resizable: true,
+    sortable: false,
   },
   columnDefs: columnDefs,
   rowSelection: 'multiple',
   // use the enterprise row model
   rowModelType: 'serverSide',
   cacheBlockSize: 75,
-  animateRows: true,
   enableCellChangeFlash: true,
   getRowId: (params) => `${params.data.athlete}-${params.data.date}`,
 }
@@ -56,7 +57,7 @@ const getServerSideDatasource = (server: any): IServerSideDatasource => {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
@@ -68,14 +69,14 @@ document.addEventListener('DOMContentLoaded', function () {
       var datasource = getServerSideDatasource(fakeServer)
 
       // register the datasource with the grid
-      gridOptions.api!.setServerSideDatasource(datasource)
+      gridApi!.setGridOption('serverSideDatasource', datasource)
     })
 })
 
 function updateSelectedRows() {
   versionCounter += 1;
   const version = versionCounter + ' - ' + versionCounter + ' - ' + versionCounter;
-  let nodesToUpdate = gridOptions.api!.getSelectedNodes();
+  let nodesToUpdate = gridApi!.getSelectedNodes();
   nodesToUpdate.forEach(node => {
     node.updateData({ ...node.data, version })
   });

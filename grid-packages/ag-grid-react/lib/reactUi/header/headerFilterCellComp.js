@@ -1,4 +1,4 @@
-// ag-grid-react v30.1.0
+// ag-grid-react v31.1.0
 "use strict";
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
@@ -36,13 +36,17 @@ var beansContext_1 = require("../beansContext");
 var ag_grid_community_1 = require("ag-grid-community");
 var utils_1 = require("../utils");
 var jsComp_1 = require("../jsComp");
+var floatingFilterComponentProxy_1 = require("../../shared/customComp/floatingFilterComponentProxy");
+var customContext_1 = require("../../shared/customComp/customContext");
+var util_1 = require("../../shared/customComp/util");
 var HeaderFilterCellComp = function (props) {
-    var context = react_1.useContext(beansContext_1.BeansContext).context;
-    var _a = react_1.useState(function () { return new utils_1.CssClasses('ag-header-cell', 'ag-floating-filter'); }), cssClasses = _a[0], setCssClasses = _a[1];
-    var _b = react_1.useState(function () { return new utils_1.CssClasses(); }), cssBodyClasses = _b[0], setBodyCssClasses = _b[1];
-    var _c = react_1.useState(function () { return new utils_1.CssClasses('ag-floating-filter-button', 'ag-hidden'); }), cssButtonWrapperClasses = _c[0], setButtonWrapperCssClasses = _c[1];
-    var _d = react_1.useState("false"), buttonWrapperAriaHidden = _d[0], setButtonWrapperAriaHidden = _d[1];
-    var _e = react_1.useState(), userCompDetails = _e[0], setUserCompDetails = _e[1];
+    var _a = react_1.useContext(beansContext_1.BeansContext), context = _a.context, gridOptionsService = _a.gridOptionsService;
+    var _b = react_1.useState(function () { return new utils_1.CssClasses('ag-header-cell', 'ag-floating-filter'); }), cssClasses = _b[0], setCssClasses = _b[1];
+    var _c = react_1.useState(function () { return new utils_1.CssClasses(); }), cssBodyClasses = _c[0], setBodyCssClasses = _c[1];
+    var _d = react_1.useState(function () { return new utils_1.CssClasses('ag-floating-filter-button', 'ag-hidden'); }), cssButtonWrapperClasses = _d[0], setButtonWrapperCssClasses = _d[1];
+    var _e = react_1.useState("false"), buttonWrapperAriaHidden = _e[0], setButtonWrapperAriaHidden = _e[1];
+    var _f = react_1.useState(), userCompDetails = _f[0], setUserCompDetails = _f[1];
+    var _g = react_1.useState(1), renderKey = _g[0], setRenderKey = _g[1];
     var eGui = react_1.useRef(null);
     var eFloatingFilterBody = react_1.useRef(null);
     var eButtonWrapper = react_1.useRef(null);
@@ -94,12 +98,30 @@ var HeaderFilterCellComp = function (props) {
             && utils_1.isComponentStateless(userCompDetails.componentClass);
         return !!res;
     }, [userCompDetails]);
+    var reactiveCustomComponents = react_1.useMemo(function () { return gridOptionsService.get('reactiveCustomComponents'); }, []);
+    var floatingFilterCompProxy = react_1.useMemo(function () {
+        if (userCompDetails) {
+            if (reactiveCustomComponents) {
+                var compProxy = new floatingFilterComponentProxy_1.FloatingFilterComponentProxy(userCompDetails.params, function () { return setRenderKey(function (prev) { return prev + 1; }); });
+                userCompRef(compProxy);
+                return compProxy;
+            }
+            else if (userCompDetails.componentFromFramework) {
+                util_1.warnReactiveCustomComponents();
+            }
+        }
+        return undefined;
+    }, [userCompDetails]);
+    var floatingFilterProps = floatingFilterCompProxy === null || floatingFilterCompProxy === void 0 ? void 0 : floatingFilterCompProxy.getProps();
     var reactUserComp = userCompDetails && userCompDetails.componentFromFramework;
     var UserCompClass = userCompDetails && userCompDetails.componentClass;
-    return (react_1.default.createElement("div", { ref: setRef, className: className, role: "gridcell", tabIndex: -1 },
+    return (react_1.default.createElement("div", { ref: setRef, className: className, role: "gridcell" },
         react_1.default.createElement("div", { ref: eFloatingFilterBody, className: bodyClassName, role: "presentation" },
-            reactUserComp && userCompStateless && react_1.default.createElement(UserCompClass, __assign({}, userCompDetails.params)),
-            reactUserComp && !userCompStateless && react_1.default.createElement(UserCompClass, __assign({}, userCompDetails.params, { ref: userCompRef }))),
+            reactUserComp && !reactiveCustomComponents && react_1.default.createElement(UserCompClass, __assign({}, userCompDetails.params, { ref: userCompStateless ? function () { } : userCompRef })),
+            reactUserComp && reactiveCustomComponents && react_1.default.createElement(customContext_1.CustomContext.Provider, { value: {
+                    setMethods: function (methods) { return floatingFilterCompProxy.setMethods(methods); }
+                } },
+                react_1.default.createElement(UserCompClass, __assign({}, floatingFilterProps)))),
         react_1.default.createElement("div", { ref: eButtonWrapper, "aria-hidden": buttonWrapperAriaHidden, className: buttonWrapperClassName, role: "presentation" },
             react_1.default.createElement("button", { ref: eButtonShowMainFilter, type: "button", className: "ag-button ag-floating-filter-button-button", tabIndex: -1 }))));
 };

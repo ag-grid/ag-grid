@@ -21,9 +21,9 @@ class RichSelectRow extends component_1.Component {
         this.wrapperEl = wrapperEl;
     }
     postConstruct() {
-        this.addManagedListener(this.getGui(), 'mouseup', this.onMouseUp.bind(this));
+        this.addManagedListener(this.getGui(), 'click', this.onClick.bind(this));
     }
-    setState(value, selected) {
+    setState(value) {
         let formattedValue = '';
         if (this.params.valueFormatter) {
             formattedValue = this.params.valueFormatter(value);
@@ -34,6 +34,29 @@ class RichSelectRow extends component_1.Component {
         }
         this.value = value;
     }
+    highlightString(matchString) {
+        const { parsedValue } = this;
+        if (this.params.cellRenderer || !(0, generic_1.exists)(parsedValue)) {
+            return;
+        }
+        let hasMatch = (0, generic_1.exists)(matchString);
+        if (hasMatch) {
+            const index = parsedValue === null || parsedValue === void 0 ? void 0 : parsedValue.toLocaleLowerCase().indexOf(matchString.toLocaleLowerCase());
+            if (index >= 0) {
+                const highlightEndIndex = index + matchString.length;
+                const startPart = (0, string_1.escapeString)(parsedValue.slice(0, index), true);
+                const highlightedPart = (0, string_1.escapeString)(parsedValue.slice(index, highlightEndIndex), true);
+                const endPart = (0, string_1.escapeString)(parsedValue.slice(highlightEndIndex));
+                this.renderValueWithoutRenderer(`${startPart}<span class="ag-rich-select-row-text-highlight">${highlightedPart}</span>${endPart}`);
+            }
+            else {
+                hasMatch = false;
+            }
+        }
+        if (!hasMatch) {
+            this.renderValueWithoutRenderer(parsedValue);
+        }
+    }
     updateHighlighted(highlighted) {
         var _a;
         const eGui = this.getGui();
@@ -41,10 +64,10 @@ class RichSelectRow extends component_1.Component {
         (_a = eGui.parentElement) === null || _a === void 0 ? void 0 : _a.setAttribute('id', parentId);
         if (highlighted) {
             const parentAriaEl = this.getParentComponent().getAriaElement();
-            parentAriaEl.setAttribute('aria-activedescendant', parentId);
+            (0, aria_1.setAriaActiveDescendant)(parentAriaEl, parentId);
             this.wrapperEl.setAttribute('data-active-option', parentId);
         }
-        aria_1.setAriaSelected(eGui.parentElement, highlighted);
+        (0, aria_1.setAriaSelected)(eGui.parentElement, highlighted);
         this.addOrRemoveCssClass('ag-rich-select-row-selected', highlighted);
     }
     populateWithoutRenderer(value, valueFormatted) {
@@ -53,9 +76,17 @@ class RichSelectRow extends component_1.Component {
         const span = eDocument.createElement('span');
         span.style.overflow = 'hidden';
         span.style.textOverflow = 'ellipsis';
-        const parsedValue = string_1.escapeString(generic_1.exists(valueFormatted) ? valueFormatted : value);
-        span.textContent = generic_1.exists(parsedValue) ? parsedValue : '&nbsp;';
+        const parsedValue = (0, string_1.escapeString)((0, generic_1.exists)(valueFormatted) ? valueFormatted : value, true);
+        this.parsedValue = (0, generic_1.exists)(parsedValue) ? parsedValue : null;
         eGui.appendChild(span);
+        this.renderValueWithoutRenderer(parsedValue);
+    }
+    renderValueWithoutRenderer(value) {
+        const span = this.getGui().querySelector('span');
+        if (!span) {
+            return;
+        }
+        span.innerHTML = (0, generic_1.exists)(value) ? value : '&nbsp;';
     }
     populateWithRenderer(value, valueFormatted) {
         // bad coder here - we are not populating all values of the cellRendererParams
@@ -64,15 +95,14 @@ class RichSelectRow extends component_1.Component {
         if (this.params.cellRenderer) {
             userCompDetails = this.userComponentFactory.getCellRendererDetails(this.params, {
                 value,
-                valueFormatted,
-                api: this.gridOptionsService.api
+                valueFormatted
             });
         }
         if (userCompDetails) {
             cellRendererPromise = userCompDetails.newAgStackInstance();
         }
         if (cellRendererPromise) {
-            dom_1.bindCellRendererToHtmlElement(cellRendererPromise, this.getGui());
+            (0, dom_1.bindCellRendererToHtmlElement)(cellRendererPromise, this.getGui());
         }
         if (cellRendererPromise) {
             cellRendererPromise.then(childComponent => {
@@ -84,7 +114,7 @@ class RichSelectRow extends component_1.Component {
         }
         return false;
     }
-    onMouseUp() {
+    onClick() {
         const parent = this.getParentComponent();
         const event = {
             type: eventKeys_1.Events.EVENT_FIELD_PICKER_VALUE_SELECTED,
@@ -95,7 +125,7 @@ class RichSelectRow extends component_1.Component {
     }
 }
 __decorate([
-    context_1.Autowired('userComponentFactory')
+    (0, context_1.Autowired)('userComponentFactory')
 ], RichSelectRow.prototype, "userComponentFactory", void 0);
 __decorate([
     context_1.PostConstruct

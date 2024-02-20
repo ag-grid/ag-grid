@@ -36,7 +36,6 @@ import { Events } from '../events';
 import { RefSelector } from '../widgets/componentAnnotations';
 import { RowNode } from '../entities/rowNode';
 import { stopPropagationForAgGrid } from '../utils/event';
-import { getAriaCheckboxStateName, setAriaLive } from '../utils/aria';
 var CheckboxSelectionComponent = /** @class */ (function (_super) {
     __extends(CheckboxSelectionComponent, _super);
     function CheckboxSelectionComponent() {
@@ -44,7 +43,6 @@ var CheckboxSelectionComponent = /** @class */ (function (_super) {
     }
     CheckboxSelectionComponent.prototype.postConstruct = function () {
         this.eCheckbox.setPassive(true);
-        setAriaLive(this.eCheckbox.getInputElement(), 'polite');
     };
     CheckboxSelectionComponent.prototype.getCheckboxId = function () {
         return this.eCheckbox.getInputElement().id;
@@ -58,12 +56,8 @@ var CheckboxSelectionComponent = /** @class */ (function (_super) {
         this.showOrHideSelect();
     };
     CheckboxSelectionComponent.prototype.onSelectionChanged = function () {
-        var translate = this.localeService.getLocaleTextFunc();
         var state = this.rowNode.isSelected();
-        var stateName = getAriaCheckboxStateName(translate, state);
-        var ariaLabel = translate('ariaRowToggleSelection', 'Press Space to toggle row selection');
         this.eCheckbox.setValue(state, true);
-        this.eCheckbox.setInputAriaLabel(ariaLabel + " (" + stateName + ")");
     };
     CheckboxSelectionComponent.prototype.onClicked = function (newValue, groupSelectsFiltered, event) {
         return this.rowNode.setSelectedParams({ newValue: newValue, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered, event: event, source: 'checkboxSelected' });
@@ -82,7 +76,7 @@ var CheckboxSelectionComponent = /** @class */ (function (_super) {
             // we don't want the row clicked event to fire when selecting the checkbox, otherwise the row
             // would possibly get selected twice
             stopPropagationForAgGrid(event);
-            var groupSelectsFiltered = _this.gridOptionsService.is('groupSelectsFiltered');
+            var groupSelectsFiltered = _this.gridOptionsService.get('groupSelectsFiltered');
             var isSelected = _this.eCheckbox.getValue();
             if (_this.shouldHandleIndeterminateState(isSelected, groupSelectsFiltered)) {
                 // try toggling children to determine action.

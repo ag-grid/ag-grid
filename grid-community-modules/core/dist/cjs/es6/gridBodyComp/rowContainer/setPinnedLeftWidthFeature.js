@@ -22,15 +22,15 @@ class SetPinnedLeftWidthFeature extends beanStub_1.BeanStub {
     onPinnedLeftWidthChanged() {
         const leftWidth = this.pinnedWidthService.getPinnedLeftWidth();
         const displayed = leftWidth > 0;
-        dom_1.setDisplayed(this.element, displayed);
-        dom_1.setFixedWidth(this.element, leftWidth);
+        (0, dom_1.setDisplayed)(this.element, displayed);
+        (0, dom_1.setFixedWidth)(this.element, leftWidth);
     }
     getWidth() {
         return this.pinnedWidthService.getPinnedLeftWidth();
     }
 }
 __decorate([
-    context_1.Autowired('pinnedWidthService')
+    (0, context_1.Autowired)('pinnedWidthService')
 ], SetPinnedLeftWidthFeature.prototype, "pinnedWidthService", void 0);
 __decorate([
     context_1.PostConstruct

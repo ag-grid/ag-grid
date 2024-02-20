@@ -1,4 +1,12 @@
-import { Grid, ColDef, ColGroupDef, GridOptions, ICellRendererParams, IGroupCellRendererParams } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  ColDef,
+  ColGroupDef,
+  GridOptions,
+  ICellRendererParams,
+  IGroupCellRendererParams,
+} from '@ag-grid-community/core';
 
 var monthValueGetter =
   '(ctx.month < ctx.months.indexOf(colDef.field)) ? data[colDef.field + "_bud"] : data[colDef.field + "_act"]'
@@ -87,20 +95,36 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
         cellClass: 'cell-figure',
         cellRenderer: accountingCellRenderer,
         valueGetter: yearToDateValueGetter,
-        cellStyle: { 'font-weight': 'bold' },
         aggFunc: 'sum',
       },
     ],
   },
 ]
 
+let gridApi: GridApi;
+const context ={
+  month: 0,
+  months: [
+    'jan',
+    'feb',
+    'mar',
+    'apr',
+    'may',
+    'jun',
+    'jul',
+    'aug',
+    'sep',
+    'oct',
+    'nov',
+    'dec',
+  ],
+};
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
+  suppressMovableColumns: true,
   defaultColDef: {
     flex: 1,
     minWidth: 120,
-    sortable: true,
-    resizable: true,
   },
   autoGroupColumnDef: {
     headerName: 'Location',
@@ -111,26 +135,9 @@ const gridOptions: GridOptions = {
       checkbox: true,
     } as IGroupCellRendererParams,
   },
-  animateRows: true,
   rowSelection: 'multiple',
   groupSelectsChildren: true,
-  context: {
-    month: 0,
-    months: [
-      'jan',
-      'feb',
-      'mar',
-      'apr',
-      'may',
-      'jun',
-      'jul',
-      'aug',
-      'sep',
-      'oct',
-      'nov',
-      'dec',
-    ],
-  },
+  context: context
 }
 
 var monthNames = [
@@ -150,7 +157,7 @@ var monthNames = [
 ]
 
 function onChangeMonth(i: number) {
-  var newMonth = (gridOptions.context.month += i)
+  var newMonth = (context.month += i)
 
   if (newMonth < -1) {
     newMonth = -1
@@ -158,26 +165,29 @@ function onChangeMonth(i: number) {
   if (newMonth > 5) {
     newMonth = 5
   }
-
-  gridOptions.context.month = newMonth
-  document.querySelector('#monthName')!.innerHTML = monthNames[newMonth + 1]
-  gridOptions.api!.refreshClientSideRowModel('aggregate')
-  gridOptions.api!.refreshCells()
+  // Mutate the context object in place
+  context.month = newMonth
+  document.querySelector('#monthName')!.textContent = monthNames[newMonth + 1]
+  gridApi!.refreshClientSideRowModel('aggregate')
+  gridApi!.refreshCells()
 }
 
-function onQuickFilterChanged(value: any) {
-  gridOptions.api!.setQuickFilter(value)
+function onQuickFilterChanged() {
+  gridApi!.setGridOption(
+    'quickFilterText',
+    (document.getElementById('filter-text-box') as HTMLInputElement).value
+  )
 }
 
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/monthly-sales.json')
     .then(response => response.json())
     .then(function (data) {
-      gridOptions.api!.setRowData(data)
+      gridApi!.setGridOption('rowData', data)
     })
 })

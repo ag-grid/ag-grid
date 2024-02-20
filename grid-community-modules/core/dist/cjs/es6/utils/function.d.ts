@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 /**
@@ -7,6 +7,8 @@
  * @param {string} key
  */
 export declare function doOnce(func: () => void, key: string): void;
+export declare function warnOnce(msg: string): void;
+export declare function errorOnce(msg: string): void;
 export declare function getFunctionName(funcConstructor: any): any;
 export declare function isFunction(val: any): boolean;
 export declare function executeInAWhile(funcs: Function[]): void;
@@ -26,5 +28,4 @@ export declare function debounce(func: (...args: any[]) => void, delay: number):
 export declare function throttle(func: (...args: any[]) => void, wait: number): (...args: any[]) => void;
 export declare function waitUntil(condition: () => boolean, callback: () => void, timeout?: number, timeoutMessage?: string): void;
 export declare function compose(...fns: Function[]): (arg: any) => any;
-export declare function callIfPresent(func: Function): void;
 export declare const noop: () => void;

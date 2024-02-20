@@ -71,7 +71,7 @@ import { AgGridVue } from "@ag-grid-community/vue3";
 
 ```ts
 import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 ```
 
 ### Set the grid's configuration in the parent component
@@ -104,7 +104,7 @@ export default {
 ```html
   <ag-grid-vue
     style="width: 500px; height: 200px"
-    class="ag-theme-alpine"
+    class="ag-theme-quartz"
     :columnDefs="columnDefs"
     :rowData="rowData">
   </ag-grid-vue>
@@ -116,7 +116,7 @@ export default {
 <template>
   <ag-grid-vue
     style="width: 500px; height: 200px"
-    class="ag-theme-alpine"
+    class="ag-theme-quartz"
     :columnDefs="columnDefs"
     :rowData="rowData"
   >
@@ -125,7 +125,7 @@ export default {
 
 <script>
 import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 import { AgGridVue } from "@ag-grid-community/vue3";
 
 export default {

@@ -68,7 +68,7 @@ export var convertLegacyColor = function (color) {
         return color;
     }
     if (color.charAt(0) === '#') {
-        color = color.substr(1);
+        color = color.substring(1);
     }
     return color.length === 6 ? 'FF' + color : color;
 };
@@ -86,9 +86,9 @@ export var convertLegacyBorder = function (type, weight) {
         return namedWeight;
     }
     if (namedWeight === 'medium' && mediumBorders.indexOf(mappedName) !== -1) {
-        return "medium" + mappedName;
+        return "medium".concat(mappedName);
     }
-    return mappedName.charAt(0).toLowerCase() + mappedName.substr(1);
+    return mappedName.charAt(0).toLowerCase() + mappedName.substring(1);
 };
 export var convertLegacyHorizontalAlignment = function (alignment) {
     return horizontalAlignmentMap[alignment] || 'general';

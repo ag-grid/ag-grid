@@ -2,7 +2,7 @@ import { createApp, ref } from 'vue';
 import { AgGridVue } from '@ag-grid-community/vue3';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 import MedalCellRenderer from './medalCellRendererVue.js';
 import TotalValueRenderer from './totalValueRendererVue.js';
 
@@ -15,7 +15,7 @@ const VueExample = {
         <div style="height: 100%">
             <ag-grid-vue
                     style="width: 100%; height: 100%;"
-                    class="ag-theme-alpine"
+                    :class="themeClass"
                     id="myGrid"
                     :columnDefs="columnDefs"
                     @grid-ready="onGridReady"
@@ -35,33 +35,35 @@ const VueExample = {
         return {
             columnDefs: [
                 { field: "athlete" },
-                { field: "year" },
+                { field: "year", minWidth: 60 },
                 {
-                    field: "gold",
-                    cellRenderer: "medalCellRenderer"
+                  field: "gold",
+                  cellRenderer: "medalCellRenderer",
                 },
                 {
-                    field: "silver",
-                    cellRenderer: "medalCellRenderer"
+                  field: "silver",
+                  cellRenderer: "medalCellRenderer",
                 },
                 {
-                    field: "bronze",
-                    cellRenderer: "medalCellRenderer"
-                }, {
-                    field: "total",
-                    minWidth: 175,
-                    cellRenderer: "totalValueRenderer"
-                }
+                  field: "bronze",
+                  cellRenderer: "medalCellRenderer",
+                },
+                {
+                    field: 'total',
+                    minWidth: 190,
+                    editable: false,
+                    valueGetter: (params) => params.data.gold + params.data.silver + params.data.bronze,
+                    cellRenderer: 'totalValueRenderer',
+                },
             ],
             defaultColDef: {
                 editable: true,
-                sortable: true,
                 flex: 1,
                 minWidth: 100,
                 filter: true,
-                resizable: true
             },
-            rowData
+            rowData,
+            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
         }
     },
     methods: {

@@ -4,9 +4,10 @@ import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
 import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
+import './styles.css';
 
-import { ModuleRegistry, GridOptions, ColDef, GridReadyEvent } from '@ag-grid-community/core';
+import { ModuleRegistry, ColDef, GridReadyEvent, SizeColumnsToContentStrategy } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -29,10 +30,7 @@ const GridExample = () => {
     const topGrid = useRef<AgGridReact>(null);
     const bottomGrid = useRef<AgGridReact>(null);
 
-    const defaultColDef: ColDef = useMemo(() => ({
-        editable: true,
-        sortable: true,
-        resizable: true,
+    const defaultColDef: ColDef = useMemo(() => ({        
         filter: true,
         flex: 1,
         minWidth: 100
@@ -45,12 +43,9 @@ const GridExample = () => {
         { field: 'year', width: 120 },
         { field: 'date', width: 150 },
         { field: 'sport', width: 150 },
-        // in the total col, we have a value getter, which usually means we don't need to provide a field
-        // however the master/slave depends on the column id (which is derived from the field if provided) in
-        // order ot match up the columns
         {
             headerName: 'Total',
-            field: 'total',
+            colId: 'total',
             valueGetter: 'data.gold + data.silver + data.bronze',
             width: 200
         },
@@ -59,34 +54,47 @@ const GridExample = () => {
         { field: 'bronze', width: 100 }
     ]), []);
 
+    const autoSizeStrategy = useMemo<SizeColumnsToContentStrategy>(() => ({
+        type: 'fitCellContents'
+    }), []);
+
     const onGridReady = (params: GridReadyEvent) => {
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .then(resp => resp.json())
             .then(data => setRowData(data));
     }
 
+    const baseClassName = 'example-container'
+    const themeClassName = /** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/;
+
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }} className="ag-theme-alpine">
+        <div
+            style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
+            className={`${baseClassName} ${themeClassName}`}
+        >
             <div style={{ flex: '1 1 auto' }} >
                 <AgGridReact
                     ref={topGrid}
-                    alignedGrids={bottomGrid.current ? [bottomGrid.current] : undefined}
+                    alignedGrids={[bottomGrid]}
                     rowData={rowData}
                     defaultColDef={defaultColDef}
                     columnDefs={columnDefs}
                     onGridReady={onGridReady}
                     suppressHorizontalScroll
+                    alwaysShowVerticalScroll
+                    autoSizeStrategy={autoSizeStrategy}
                 />
             </div>
 
             <div style={{ flex: 'none', height: '60px' }}>
                 <AgGridReact
                     ref={bottomGrid}
-                    alignedGrids={topGrid.current ? [topGrid.current] : undefined}
+                    alignedGrids={[topGrid]}
                     rowData={bottomData}
                     defaultColDef={defaultColDef}
                     columnDefs={columnDefs}
                     headerHeight={0}
+                    alwaysShowVerticalScroll
                     rowStyle={{ fontWeight: 'bold' }}
                 />
             </div>

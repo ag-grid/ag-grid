@@ -21,7 +21,7 @@ class FullStore extends core_1.RowNodeBlock {
         this.leafGroup = ssrmParams.rowGroupCols ? this.level === ssrmParams.rowGroupCols.length - 1 : false;
     }
     postConstruct() {
-        this.usingTreeData = this.gridOptionsService.isTreeData();
+        this.usingTreeData = this.gridOptionsService.get('treeData');
         this.nodeIdPrefix = this.blockUtils.createNodeIdPrefix(this.parentRowNode);
         if (!this.usingTreeData && this.groupLevel) {
             const groupColVo = this.ssrmParams.rowGroupCols[this.level];
@@ -31,13 +31,18 @@ class FullStore extends core_1.RowNodeBlock {
         let initialRowCount = 1;
         const isRootStore = this.parentRowNode.level === -1;
         const userInitialRowCount = this.storeUtils.getServerSideInitialRowCount();
-        if (isRootStore && userInitialRowCount !== undefined) {
+        if (isRootStore && userInitialRowCount != null) {
             initialRowCount = userInitialRowCount;
         }
         this.initialiseRowNodes(initialRowCount);
         this.rowNodeBlockLoader.addBlock(this);
         this.addDestroyFunc(() => this.rowNodeBlockLoader.removeBlock(this));
         this.postSortFunc = this.gridOptionsService.getCallback('postSortRows');
+        if (userInitialRowCount != null) {
+            this.eventService.dispatchEventOnce({
+                type: core_1.Events.EVENT_ROW_COUNT_READY
+            });
+        }
     }
     destroyRowNodes() {
         this.blockUtils.destroyRowNodes(this.allRowNodes);
@@ -74,9 +79,7 @@ class FullStore extends core_1.RowNodeBlock {
             parentBlock: this,
             parentNode: this.parentRowNode,
             storeParams: this.ssrmParams,
-            successCallback: this.pageLoaded.bind(this, this.getVersion()),
             success: this.success.bind(this, this.getVersion()),
-            failCallback: this.pageLoadFailed.bind(this, this.getVersion()),
             fail: this.pageLoadFailed.bind(this, this.getVersion())
         });
     }
@@ -121,7 +124,7 @@ class FullStore extends core_1.RowNodeBlock {
         if (!this.isAlive()) {
             return;
         }
-        const info = params.storeInfo || params.groupLevelInfo;
+        const info = params.groupLevelInfo;
         if (info) {
             Object.assign(this.info, info);
         }
@@ -134,12 +137,16 @@ class FullStore extends core_1.RowNodeBlock {
         this.nodesAfterFilter = [];
         this.allNodesMap = {};
         if (!params.rowData) {
-            const message = 'AG Grid: "params.data" is missing from Server-Side Row Model success() callback. Please use the "data" attribute. If no data is returned, set an empty list.';
-            core_1._.doOnce(() => console.warn(message, params), 'FullStore.noData');
+            core_1._.warnOnce('"params.data" is missing from Server-Side Row Model success() callback. Please use the "data" attribute. If no data is returned, set an empty list.');
         }
         this.createOrRecycleNodes(nodesToRecycle, params.rowData);
         if (nodesToRecycle) {
             this.blockUtils.destroyRowNodes(core_1._.getAllValuesInObject(nodesToRecycle));
+        }
+        if (this.level === 0) {
+            this.eventService.dispatchEventOnce({
+                type: core_1.Events.EVENT_ROW_COUNT_READY
+            });
         }
         this.filterAndSortNodes();
         this.fireStoreUpdatedEvent();
@@ -274,14 +281,17 @@ class FullStore extends core_1.RowNodeBlock {
             }
         });
     }
-    forEachNodeDeepAfterFilterAndSort(callback, sequence = new core_1.NumberSequence()) {
+    forEachNodeDeepAfterFilterAndSort(callback, sequence = new core_1.NumberSequence(), includeFooterNodes = false) {
         this.nodesAfterSort.forEach(rowNode => {
             callback(rowNode, sequence.next());
             const childCache = rowNode.childStore;
             if (childCache) {
-                childCache.forEachNodeDeepAfterFilterAndSort(callback, sequence);
+                childCache.forEachNodeDeepAfterFilterAndSort(callback, sequence, includeFooterNodes);
             }
         });
+        if (includeFooterNodes && this.parentRowNode.sibling) {
+            callback(this.parentRowNode.sibling, sequence.next());
+        }
     }
     getRowUsingDisplayIndex(displayRowIndex) {
         // this can happen if asking for a row that doesn't exist in the model,
@@ -398,7 +408,6 @@ class FullStore extends core_1.RowNodeBlock {
             const params = {
                 transaction: transaction,
                 parentNode: this.parentRowNode,
-                storeInfo: this.info,
                 groupLevelInfo: this.info
             };
             const apply = applyCallback(params);
@@ -605,37 +614,37 @@ class FullStore extends core_1.RowNodeBlock {
     }
 }
 __decorate([
-    core_1.Autowired('ssrmStoreUtils')
+    (0, core_1.Autowired)('ssrmStoreUtils')
 ], FullStore.prototype, "storeUtils", void 0);
 __decorate([
-    core_1.Autowired('ssrmBlockUtils')
+    (0, core_1.Autowired)('ssrmBlockUtils')
 ], FullStore.prototype, "blockUtils", void 0);
 __decorate([
-    core_1.Autowired('columnModel')
+    (0, core_1.Autowired)('columnModel')
 ], FullStore.prototype, "columnModel", void 0);
 __decorate([
-    core_1.Autowired('rowNodeBlockLoader')
+    (0, core_1.Autowired)('rowNodeBlockLoader')
 ], FullStore.prototype, "rowNodeBlockLoader", void 0);
 __decorate([
-    core_1.Autowired('rowNodeSorter')
+    (0, core_1.Autowired)('rowNodeSorter')
 ], FullStore.prototype, "rowNodeSorter", void 0);
 __decorate([
-    core_1.Autowired('sortController')
+    (0, core_1.Autowired)('sortController')
 ], FullStore.prototype, "sortController", void 0);
 __decorate([
-    core_1.Autowired('selectionService')
+    (0, core_1.Autowired)('selectionService')
 ], FullStore.prototype, "selectionService", void 0);
 __decorate([
-    core_1.Autowired('ssrmNodeManager')
+    (0, core_1.Autowired)('ssrmNodeManager')
 ], FullStore.prototype, "nodeManager", void 0);
 __decorate([
-    core_1.Autowired('filterManager')
+    (0, core_1.Autowired)('filterManager')
 ], FullStore.prototype, "filterManager", void 0);
 __decorate([
-    core_1.Autowired('ssrmTransactionManager')
+    (0, core_1.Autowired)('ssrmTransactionManager')
 ], FullStore.prototype, "transactionManager", void 0);
 __decorate([
-    core_1.Autowired('rowModel')
+    (0, core_1.Autowired)('rowModel')
 ], FullStore.prototype, "serverSideRowModel", void 0);
 __decorate([
     core_1.PostConstruct

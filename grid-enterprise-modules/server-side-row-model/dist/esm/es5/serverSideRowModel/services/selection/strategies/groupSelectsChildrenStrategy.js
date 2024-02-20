@@ -57,10 +57,25 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 import { Autowired, BeanStub, PostConstruct, Events } from "@ag-grid-community/core";
 var GroupSelectsChildrenStrategy = /** @class */ (function (_super) {
@@ -76,15 +91,16 @@ var GroupSelectsChildrenStrategy = /** @class */ (function (_super) {
         // if model has updated, a store may now be fully loaded to clean up indeterminate states
         this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, function () { return _this.removeRedundantState(); });
         // when the grouping changes, the state no longer makes sense, so reset the state.
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, function () { return _this.selectionService.reset(); });
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, function () { return _this.selectionService.reset('rowGroupChanged'); });
     };
     GroupSelectsChildrenStrategy.prototype.getSelectedState = function () {
         var _this = this;
+        var treeData = this.gridOptionsService.get('treeData');
         var recursivelySerializeState = function (state, level, nodeId) {
             var normalisedState = {
                 nodeId: nodeId,
             };
-            if (level <= _this.columnModel.getRowGroupColumns().length) {
+            if (treeData || level <= _this.columnModel.getRowGroupColumns().length) {
                 normalisedState.selectAllChildren = state.selectAllChildren;
             }
             // omit toggledNodes if empty
@@ -141,7 +157,7 @@ var GroupSelectsChildrenStrategy = /** @class */ (function (_super) {
     };
     GroupSelectsChildrenStrategy.prototype.deleteSelectionStateFromParent = function (parentRoute, removedNodeIds) {
         var parentState = this.selectedState;
-        var remainingRoute = __spreadArray([], __read(parentRoute));
+        var remainingRoute = __spreadArray([], __read(parentRoute), false);
         while (parentState && remainingRoute.length) {
             parentState = parentState.toggledNodes.get(remainingRoute.pop());
         }
@@ -235,50 +251,62 @@ var GroupSelectsChildrenStrategy = /** @class */ (function (_super) {
         if (this.filterManager.isAnyFilterPresent()) {
             return;
         }
-        var recursivelyRemoveState = function (selectedState, store, node) {
-            if (selectedState === void 0) { selectedState = _this.selectedState; }
-            if (store === void 0) { store = _this.serverSideRowModel.getRootStore(); }
-            var allChildNodesFound = true;
-            var noIndeterminateChildren = true;
-            selectedState.toggledNodes.forEach(function (state, id) {
-                var parentNode = _this.rowModel.getRowNode(id);
-                if (!parentNode) {
-                    allChildNodesFound = false;
-                }
-                var nextStore = parentNode === null || parentNode === void 0 ? void 0 : parentNode.childStore;
-                if (!nextStore) {
-                    if (state.toggledNodes.size > 0) {
-                        noIndeterminateChildren = false;
-                    }
-                    return;
-                }
-                // if child was cleared, check if this state is still relevant
-                if (recursivelyRemoveState(state, nextStore, parentNode)) {
-                    // cleans out groups which have no toggled nodes and an equivalent default to its parent
-                    if (selectedState.selectAllChildren === state.selectAllChildren) {
-                        selectedState.toggledNodes.delete(id);
-                    }
-                }
-                if (state.toggledNodes.size > 0) {
-                    noIndeterminateChildren = false;
-                }
+        var forEachNodeStateDepthFirst = function (state, thisKey, parentState) {
+            var e_1, _a;
+            if (state === void 0) { state = _this.selectedState; }
+            // clean up lowest level state first in order to calculate this levels state
+            // from updated child state
+            state.toggledNodes.forEach(function (value, key) {
+                forEachNodeStateDepthFirst(value, key, state);
             });
-            if (!store || !store.isLastRowIndexKnown() || store.getRowCount() !== selectedState.toggledNodes.size) {
-                // if row count unknown, or doesn't match the size of toggledNodes, ignore.
-                return false;
-            }
-            if (noIndeterminateChildren && allChildNodesFound) {
-                selectedState.toggledNodes.clear();
-                selectedState.selectAllChildren = !selectedState.selectAllChildren;
-                // if node was indeterminate, it's not any more.
-                if (node && (node === null || node === void 0 ? void 0 : node.isSelected()) !== selectedState.selectAllChildren) {
-                    node.selectThisNode(selectedState.selectAllChildren, undefined, 'api');
+            if (thisKey) {
+                var thisRow = _this.rowModel.getRowNode(thisKey);
+                var thisRowStore = thisRow === null || thisRow === void 0 ? void 0 : thisRow.childStore;
+                var isStoreSizeKnown = thisRowStore === null || thisRowStore === void 0 ? void 0 : thisRowStore.isLastRowIndexKnown();
+                if (isStoreSizeKnown) {
+                    // have to check greater than, as we may have stale state still, if so all visible rows may not be
+                    // toggled
+                    var possibleAllNodesToggled = state.toggledNodes.size >= thisRowStore.getRowCount();
+                    if (possibleAllNodesToggled) {
+                        try {
+                            // more complex checks nested for performance
+                            for (var _b = __values(state.toggledNodes.entries()), _c = _b.next(); !_c.done; _c = _b.next()) {
+                                var childState = _c.value;
+                                var _d = __read(childState, 2), key = _d[0], value = _d[1];
+                                // if any child has toggled rows, then this row is indeterminate
+                                // and the state is relevant.
+                                if (value.toggledNodes.size > 0) {
+                                    return;
+                                }
+                                var rowDoesNotExist = !_this.rowModel.getRowNode(key);
+                                if (rowDoesNotExist) {
+                                    // if row doesn't exist, it's not toggled.
+                                    return;
+                                }
+                            }
+                        }
+                        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+                        finally {
+                            try {
+                                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+                            }
+                            finally { if (e_1) throw e_1.error; }
+                        }
+                        // no indeterminate rows, and all rows are toggled, flip this row state
+                        // and clear child states.
+                        state.selectAllChildren = !state.selectAllChildren;
+                        state.toggledNodes.clear();
+                    }
                 }
-                return true;
             }
-            return false;
+            // if this has no toggled rows, and is identical to parent state, it's redundant and can be removed.
+            var hasNoToggledRows = state.toggledNodes.size === 0;
+            var isIdenticalToParent = (parentState === null || parentState === void 0 ? void 0 : parentState.selectAllChildren) === state.selectAllChildren;
+            if (hasNoToggledRows && isIdenticalToParent) {
+                parentState === null || parentState === void 0 ? void 0 : parentState.toggledNodes.delete(thisKey);
+            }
         };
-        recursivelyRemoveState();
+        forEachNodeStateDepthFirst();
     };
     GroupSelectsChildrenStrategy.prototype.recursivelySelectNode = function (_a, selectedState, params) {
         var _b = __read(_a), nextNode = _b[0], nodes = _b.slice(1);

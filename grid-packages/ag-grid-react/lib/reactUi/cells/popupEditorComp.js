@@ -1,4 +1,4 @@
-// ag-grid-react v30.1.0
+// ag-grid-react v31.1.0
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -31,7 +31,7 @@ var PopupEditorComp = function (props) {
     useEffectOnce_1.useEffectOnce(function () {
         var editDetails = props.editDetails, cellCtrl = props.cellCtrl, eParentCell = props.eParentCell;
         var compDetails = editDetails.compDetails;
-        var useModelPopup = gridOptionsService.is('stopEditingWhenCellsLoseFocus');
+        var useModelPopup = gridOptionsService.get('stopEditingWhenCellsLoseFocus');
         var wrapper = context.createBean(new ag_grid_community_1.PopupEditorWrapper(compDetails.params));
         var ePopupGui = wrapper.getGui();
         if (props.jsChildComp) {

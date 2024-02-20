@@ -3,7 +3,7 @@ title: "Group Cell Renderer"
 enterprise: true
 ---
 
-If you are grouping in the grid, then you will need to provide a group cell renderer as the group cell renderer is what provides the user with the expand and collapse functionality.
+When using row grouping, the grid displays group cell renderers in the group column to allow expanding and collapsing the group rows. This section describes how the group cell renderer can be configured.
 
 ## Group Cell Renderer Configuration
 
@@ -66,7 +66,7 @@ The example is built up as follows:
 <grid-example title='Group Cell Renderer Configuration' name='group-renderer' type='mixed' options='{"enterprise": true, "modules": ["clientside", "rowgrouping"]}'></grid-example>
 
 <note>
-If you require functionality that is not provided by the `agGroupCellRenderer`, you can use a [Custom Cell Renderer](/component-cell-renderer/#custom-group-cell-renderer-example) to provide your own extended functionality.
+If you require functionality that is not provided by the `agGroupCellRenderer`, you can use a [Custom Cell Renderer](../component-cell-renderer/#custom-group-cell-renderer-example) to provide your own extended functionality.
 </note>
 
 ## Conditionally Hide Group Cell Renderer

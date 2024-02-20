@@ -7,13 +7,16 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Column = exports.getNextColInstanceId = void 0;
-const eventService_1 = require("../eventService");
 const context_1 = require("../context/context");
-const moduleNames_1 = require("../modules/moduleNames");
-const moduleRegistry_1 = require("../modules/moduleRegistry");
+const eventService_1 = require("../eventService");
+const frameworkEventListenerService_1 = require("../misc/frameworkEventListenerService");
 const generic_1 = require("../utils/generic");
-const function_1 = require("../utils/function");
 const object_1 = require("../utils/object");
+const function_1 = require("../utils/function");
+const COL_DEF_DEFAULTS = {
+    resizable: true,
+    sortable: true
+};
 let instanceIdSequence = 0;
 function getNextColInstanceId() {
     return instanceIdSequence++;
@@ -64,8 +67,8 @@ class Column {
             }
         }
         // sortIndex
-        const sortIndex = generic_1.attrToNumber(colDef.sortIndex);
-        const initialSortIndex = generic_1.attrToNumber(colDef.initialSortIndex);
+        const sortIndex = colDef.sortIndex;
+        const initialSortIndex = colDef.initialSortIndex;
         if (sortIndex !== undefined) {
             if (sortIndex !== null) {
                 this.sortIndex = sortIndex;
@@ -77,8 +80,8 @@ class Column {
             }
         }
         // hide
-        const hide = generic_1.attrToBoolean(colDef.hide);
-        const initialHide = generic_1.attrToBoolean(colDef.initialHide);
+        const hide = colDef.hide;
+        const initialHide = colDef.initialHide;
         if (hide !== undefined) {
             this.visible = !hide;
         }
@@ -93,8 +96,8 @@ class Column {
             this.setPinned(colDef.initialPinned);
         }
         // flex
-        const flex = generic_1.attrToNumber(colDef.flex);
-        const initialFlex = generic_1.attrToNumber(colDef.initialFlex);
+        const flex = colDef.flex;
+        const initialFlex = colDef.initialFlex;
         if (flex !== undefined) {
             this.flex = flex;
         }
@@ -103,12 +106,13 @@ class Column {
         }
     }
     // gets called when user provides an alternative colDef, eg
-    setColDef(colDef, userProvidedColDef) {
+    setColDef(colDef, userProvidedColDef, source) {
         this.colDef = colDef;
         this.userProvidedColDef = userProvidedColDef;
         this.initMinAndMaxWidths();
         this.initDotNotation();
-        this.eventService.dispatchEvent(this.createColumnEvent('colDefChanged', "api"));
+        this.initTooltip();
+        this.eventService.dispatchEvent(this.createColumnEvent('colDefChanged', source));
     }
     /**
      * Returns the column definition provided by the application.
@@ -142,12 +146,11 @@ class Column {
         this.resetActualWidth('gridInitializing');
         this.initDotNotation();
         this.initTooltip();
-        this.validate();
     }
     initDotNotation() {
-        const suppressDotNotation = this.gridOptionsService.is('suppressFieldDotNotation');
-        this.fieldContainsDots = generic_1.exists(this.colDef.field) && this.colDef.field.indexOf('.') >= 0 && !suppressDotNotation;
-        this.tooltipFieldContainsDots = generic_1.exists(this.colDef.tooltipField) && this.colDef.tooltipField.indexOf('.') >= 0 && !suppressDotNotation;
+        const suppressDotNotation = this.gridOptionsService.get('suppressFieldDotNotation');
+        this.fieldContainsDots = (0, generic_1.exists)(this.colDef.field) && this.colDef.field.indexOf('.') >= 0 && !suppressDotNotation;
+        this.tooltipFieldContainsDots = (0, generic_1.exists)(this.colDef.tooltipField) && this.colDef.tooltipField.indexOf('.') >= 0 && !suppressDotNotation;
     }
     initMinAndMaxWidths() {
         const colDef = this.colDef;
@@ -155,11 +158,11 @@ class Column {
         this.maxWidth = this.columnUtils.calculateColMaxWidth(colDef);
     }
     initTooltip() {
-        this.tooltipEnabled = generic_1.exists(this.colDef.tooltipField) ||
-            generic_1.exists(this.colDef.tooltipValueGetter) ||
-            generic_1.exists(this.colDef.tooltipComponent);
+        this.tooltipEnabled = (0, generic_1.exists)(this.colDef.tooltipField) ||
+            (0, generic_1.exists)(this.colDef.tooltipValueGetter) ||
+            (0, generic_1.exists)(this.colDef.tooltipComponent);
     }
-    resetActualWidth(source = 'api') {
+    resetActualWidth(source) {
         const initialWidth = this.columnUtils.calculateColInitialWidth(this.colDef);
         this.setActualWidth(initialWidth, source, true);
     }
@@ -167,7 +170,7 @@ class Column {
         return false;
     }
     isRowGroupDisplayed(colId) {
-        if (generic_1.missing(this.colDef) || generic_1.missing(this.colDef.showRowGroup)) {
+        if ((0, generic_1.missing)(this.colDef) || (0, generic_1.missing)(this.colDef.showRowGroup)) {
             return false;
         }
         const showingAllGroups = this.colDef.showRowGroup === true;
@@ -194,85 +197,30 @@ class Column {
     isTooltipFieldContainsDots() {
         return this.tooltipFieldContainsDots;
     }
-    validate() {
-        const colDefAny = this.colDef;
-        function warnOnce(msg, key, obj) {
-            function_1.doOnce(() => {
-                if (obj) {
-                    console.warn(msg, obj);
-                }
-                else {
-                    function_1.doOnce(() => console.warn(msg), key);
-                }
-            }, key);
-        }
-        const usingCSRM = this.gridOptionsService.isRowModelType('clientSide');
-        if (usingCSRM && !moduleRegistry_1.ModuleRegistry.__isRegistered(moduleNames_1.ModuleNames.RowGroupingModule, this.gridOptionsService.getGridId())) {
-            const rowGroupingItems = ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'enableValue', 'pivot', 'pivotIndex', 'aggFunc'];
-            const itemsUsed = rowGroupingItems.filter(x => generic_1.exists(colDefAny[x]));
-            if (itemsUsed.length > 0) {
-                moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.RowGroupingModule, itemsUsed.map(i => 'colDef.' + i).join(', '), this.gridOptionsService.getGridId());
-            }
-        }
-        if (this.colDef.cellEditor === 'agRichSelect' || this.colDef.cellEditor === 'agRichSelectCellEditor') {
-            moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.RichSelectModule, this.colDef.cellEditor, this.gridOptionsService.getGridId());
-        }
-        if (this.gridOptionsService.isTreeData()) {
-            const itemsNotAllowedWithTreeData = ['rowGroup', 'rowGroupIndex', 'pivot', 'pivotIndex'];
-            const itemsUsed = itemsNotAllowedWithTreeData.filter(x => generic_1.exists(colDefAny[x]));
-            if (itemsUsed.length > 0) {
-                warnOnce(`AG Grid: ${itemsUsed.join()} is not possible when doing tree data, your column definition should not have ${itemsUsed.join()}`, 'TreeDataCannotRowGroup');
-            }
-        }
-        if (generic_1.exists(colDefAny.menuTabs)) {
-            if (Array.isArray(colDefAny.menuTabs)) {
-                const communityMenuTabs = ['filterMenuTab'];
-                const enterpriseMenuTabs = ['columnsMenuTab', 'generalMenuTab'];
-                const itemsUsed = enterpriseMenuTabs.filter(x => colDefAny.menuTabs.includes(x));
-                if (itemsUsed.length > 0) {
-                    moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.MenuModule, `menuTab(s): ${itemsUsed.map(t => `'${t}'`).join()}`, this.gridOptionsService.getGridId());
-                }
-                colDefAny.menuTabs.forEach((tab) => {
-                    if (!enterpriseMenuTabs.includes(tab) && !communityMenuTabs.includes(tab)) {
-                        warnOnce(`AG Grid: '${tab}' is not valid for 'colDef.menuTabs'. Valid values are: ${[...communityMenuTabs, ...enterpriseMenuTabs].map(t => `'${t}'`).join()}.`, 'wrongValue_menuTabs_' + tab);
-                    }
-                });
-            }
-            else {
-                warnOnce(`AG Grid: The typeof 'colDef.menuTabs' should be an array not:` + typeof colDefAny.menuTabs, 'wrongType_menuTabs');
-            }
-        }
-        if (generic_1.exists(colDefAny.columnsMenuParams)) {
-            moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.MenuModule, 'columnsMenuParams', this.gridOptionsService.getGridId());
-        }
-        if (generic_1.exists(colDefAny.columnsMenuParams)) {
-            moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.ColumnsToolPanelModule, 'columnsMenuParams', this.gridOptionsService.getGridId());
-        }
-        if (generic_1.exists(this.colDef.width) && typeof this.colDef.width !== 'number') {
-            warnOnce('AG Grid: colDef.width should be a number, not ' + typeof this.colDef.width, 'ColumnCheck');
-        }
-        if (generic_1.exists(colDefAny.columnGroupShow) && colDefAny.columnGroupShow !== 'closed' && colDefAny.columnGroupShow !== 'open') {
-            warnOnce(`AG Grid: '${colDefAny.columnGroupShow}' is not valid for columnGroupShow. Valid values are 'open', 'closed', undefined, null`, 'columnGroupShow_invalid');
-        }
-    }
     /** Add an event listener to the column. */
-    addEventListener(eventType, listener) {
+    addEventListener(eventType, userListener) {
+        var _a, _b;
+        if (this.frameworkOverrides.shouldWrapOutgoing && !this.frameworkEventListenerService) {
+            // Only construct if we need it, as it's an overhead for column construction
+            this.eventService.setFrameworkOverrides(this.frameworkOverrides);
+            this.frameworkEventListenerService = new frameworkEventListenerService_1.FrameworkEventListenerService(this.frameworkOverrides);
+        }
+        const listener = (_b = (_a = this.frameworkEventListenerService) === null || _a === void 0 ? void 0 : _a.wrap(userListener)) !== null && _b !== void 0 ? _b : userListener;
         this.eventService.addEventListener(eventType, listener);
     }
     /** Remove event listener from the column. */
-    removeEventListener(eventType, listener) {
+    removeEventListener(eventType, userListener) {
+        var _a, _b;
+        const listener = (_b = (_a = this.frameworkEventListenerService) === null || _a === void 0 ? void 0 : _a.unwrap(userListener)) !== null && _b !== void 0 ? _b : userListener;
         this.eventService.removeEventListener(eventType, listener);
     }
     createColumnFunctionCallbackParams(rowNode) {
-        return {
+        return this.gridOptionsService.addGridCommonParams({
             node: rowNode,
             data: rowNode.data,
             column: this,
-            colDef: this.colDef,
-            context: this.gridOptionsService.context,
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi
-        };
+            colDef: this.colDef
+        });
     }
     isSuppressNavigable(rowNode) {
         // if boolean set, then just use it
@@ -292,19 +240,19 @@ class Column {
      */
     isCellEditable(rowNode) {
         // only allow editing of groups if the user has this option enabled
-        if (rowNode.group && !this.gridOptionsService.is('enableGroupEdit')) {
+        if (rowNode.group && !this.gridOptionsService.get('enableGroupEdit')) {
             return false;
         }
         return this.isColumnFunc(rowNode, this.colDef.editable);
     }
     isSuppressFillHandle() {
-        return !!generic_1.attrToBoolean(this.colDef.suppressFillHandle);
+        return !!this.colDef.suppressFillHandle;
     }
     isAutoHeight() {
-        return !!generic_1.attrToBoolean(this.colDef.autoHeight);
+        return !!this.colDef.autoHeight;
     }
     isAutoHeaderHeight() {
-        return !!generic_1.attrToBoolean(this.colDef.autoHeaderHeight);
+        return !!this.colDef.autoHeaderHeight;
     }
     isRowDrag(rowNode) {
         return this.isColumnFunc(rowNode, this.colDef.rowDrag);
@@ -319,7 +267,12 @@ class Column {
         return this.isColumnFunc(rowNode, this.colDef ? this.colDef.suppressPaste : null);
     }
     isResizable() {
-        return !!generic_1.attrToBoolean(this.colDef.resizable);
+        return !!this.getColDefValue('resizable');
+    }
+    /** Get value from ColDef or default if it exists. */
+    getColDefValue(key) {
+        var _a;
+        return (_a = this.colDef[key]) !== null && _a !== void 0 ? _a : COL_DEF_DEFAULTS[key];
     }
     isColumnFunc(rowNode, value) {
         // if boolean set, then just use it
@@ -334,20 +287,17 @@ class Column {
         }
         return false;
     }
-    setMoving(moving, source = "api") {
+    setMoving(moving, source) {
         this.moving = moving;
         this.eventService.dispatchEvent(this.createColumnEvent('movingChanged', source));
     }
     createColumnEvent(type, source) {
-        return {
+        return this.gridOptionsService.addGridCommonParams({
             type: type,
             column: this,
             columns: [this],
-            source: source,
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context
-        };
+            source: source
+        });
     }
     isMoving() {
         return this.moving;
@@ -356,14 +306,14 @@ class Column {
     getSort() {
         return this.sort;
     }
-    setSort(sort, source = "api") {
+    setSort(sort, source) {
         if (this.sort !== sort) {
             this.sort = sort;
             this.eventService.dispatchEvent(this.createColumnEvent('sortChanged', source));
         }
         this.dispatchStateUpdatedEvent('sort');
     }
-    setMenuVisible(visible, source = "api") {
+    setMenuVisible(visible, source) {
         if (this.menuVisible !== visible) {
             this.menuVisible = visible;
             this.eventService.dispatchEvent(this.createColumnEvent('menuVisibleChanged', source));
@@ -372,6 +322,9 @@ class Column {
     isMenuVisible() {
         return this.menuVisible;
     }
+    isSortable() {
+        return !!this.getColDefValue('sortable');
+    }
     isSortAscending() {
         return this.sort === 'asc';
     }
@@ -379,10 +332,10 @@ class Column {
         return this.sort === 'desc';
     }
     isSortNone() {
-        return generic_1.missing(this.sort);
+        return (0, generic_1.missing)(this.sort);
     }
     isSorting() {
-        return generic_1.exists(this.sort);
+        return (0, generic_1.exists)(this.sort);
     }
     getSortIndex() {
         return this.sortIndex;
@@ -408,7 +361,7 @@ class Column {
     getRight() {
         return this.left + this.actualWidth;
     }
-    setLeft(left, source = "api") {
+    setLeft(left, source) {
         this.oldLeft = this.left;
         if (this.left !== left) {
             this.left = left;
@@ -420,14 +373,14 @@ class Column {
         return this.filterActive;
     }
     // additionalEventAttributes is used by provided simple floating filter, so it can add 'floatingFilter=true' to the event
-    setFilterActive(active, source = "api", additionalEventAttributes) {
+    setFilterActive(active, source, additionalEventAttributes) {
         if (this.filterActive !== active) {
             this.filterActive = active;
             this.eventService.dispatchEvent(this.createColumnEvent('filterActiveChanged', source));
         }
         const filterChangedEvent = this.createColumnEvent('filterChanged', source);
         if (additionalEventAttributes) {
-            object_1.mergeDeep(filterChangedEvent, additionalEventAttributes);
+            (0, object_1.mergeDeep)(filterChangedEvent, additionalEventAttributes);
         }
         this.eventService.dispatchEvent(filterChangedEvent);
     }
@@ -447,13 +400,13 @@ class Column {
         }
         this.dispatchStateUpdatedEvent('pinned');
     }
-    setFirstRightPinned(firstRightPinned, source = "api") {
+    setFirstRightPinned(firstRightPinned, source) {
         if (this.firstRightPinned !== firstRightPinned) {
             this.firstRightPinned = firstRightPinned;
             this.eventService.dispatchEvent(this.createColumnEvent('firstRightPinnedChanged', source));
         }
     }
-    setLastLeftPinned(lastLeftPinned, source = "api") {
+    setLastLeftPinned(lastLeftPinned, source) {
         if (this.lastLeftPinned !== lastLeftPinned) {
             this.lastLeftPinned = lastLeftPinned;
             this.eventService.dispatchEvent(this.createColumnEvent('lastLeftPinnedChanged', source));
@@ -477,7 +430,7 @@ class Column {
     getPinned() {
         return this.pinned;
     }
-    setVisible(visible, source = "api") {
+    setVisible(visible, source) {
         const newValue = visible === true;
         if (this.visible !== newValue) {
             this.visible = newValue;
@@ -491,6 +444,22 @@ class Column {
     isSpanHeaderHeight() {
         const colDef = this.getColDef();
         return !colDef.suppressSpanHeaderHeight && !colDef.autoHeaderHeight;
+    }
+    getColumnGroupPaddingInfo() {
+        let parent = this.getParent();
+        if (!parent || !parent.isPadding()) {
+            return { numberOfParents: 0, isSpanningTotal: false };
+        }
+        const numberOfParents = parent.getPaddingLevel() + 1;
+        let isSpanningTotal = true;
+        while (parent) {
+            if (!parent.isPadding()) {
+                isSpanningTotal = false;
+                break;
+            }
+            parent = parent.getParent();
+        }
+        return { numberOfParents, isSpanningTotal };
     }
     /** Returns the column definition for this column.
      * The column definition will be the result of merging the application provided column definition with any provided defaults
@@ -541,19 +510,16 @@ class Column {
         return changed;
     }
     createBaseColDefParams(rowNode) {
-        const params = {
+        const params = this.gridOptionsService.addGridCommonParams({
             node: rowNode,
             data: rowNode.data,
             colDef: this.colDef,
-            column: this,
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context
-        };
+            column: this
+        });
         return params;
     }
     getColSpan(rowNode) {
-        if (generic_1.missing(this.colDef.colSpan)) {
+        if ((0, generic_1.missing)(this.colDef.colSpan)) {
             return 1;
         }
         const params = this.createBaseColDefParams(rowNode);
@@ -562,7 +528,7 @@ class Column {
         return Math.max(colSpan, 1);
     }
     getRowSpan(rowNode) {
-        if (generic_1.missing(this.colDef.rowSpan)) {
+        if ((0, generic_1.missing)(this.colDef.rowSpan)) {
             return 1;
         }
         const params = this.createBaseColDefParams(rowNode);
@@ -570,7 +536,7 @@ class Column {
         // rowSpan must be number equal to or greater than 1
         return Math.max(rowSpan, 1);
     }
-    setActualWidth(actualWidth, source = "api", silent = false) {
+    setActualWidth(actualWidth, source, silent = false) {
         if (this.minWidth != null) {
             actualWidth = Math.max(actualWidth, this.minWidth);
         }
@@ -615,12 +581,12 @@ class Column {
         }
         this.dispatchStateUpdatedEvent('flex');
     }
-    setMinimum(source = "api") {
-        if (generic_1.exists(this.minWidth)) {
+    setMinimum(source) {
+        if ((0, generic_1.exists)(this.minWidth)) {
             this.setActualWidth(this.minWidth, source);
         }
     }
-    setRowGroupActive(rowGroup, source = "api") {
+    setRowGroupActive(rowGroup, source) {
         if (this.rowGroupActive !== rowGroup) {
             this.rowGroupActive = rowGroup;
             this.eventService.dispatchEvent(this.createColumnEvent('columnRowGroupChanged', source));
@@ -631,7 +597,7 @@ class Column {
     isRowGroupActive() {
         return this.rowGroupActive;
     }
-    setPivotActive(pivot, source = "api") {
+    setPivotActive(pivot, source) {
         if (this.pivotActive !== pivot) {
             this.pivotActive = pivot;
             this.eventService.dispatchEvent(this.createColumnEvent('columnPivotChanged', source));
@@ -648,7 +614,7 @@ class Column {
     isAnyFunctionAllowed() {
         return this.isAllowPivot() || this.isAllowRowGroup() || this.isAllowValue();
     }
-    setValueActive(value, source = "api") {
+    setValueActive(value, source) {
         if (this.aggregationActive !== value) {
             this.aggregationActive = value;
             this.eventService.dispatchEvent(this.createColumnEvent('columnValueChanged', source));
@@ -667,7 +633,11 @@ class Column {
     isAllowRowGroup() {
         return this.colDef.enableRowGroup === true;
     }
+    /**
+     * @deprecated v31.1 Use `getColDef().menuTabs ?? defaultValues` instead.
+     */
     getMenuTabs(defaultValues) {
+        (0, function_1.warnOnce)(`As of v31.1, 'getMenuTabs' is deprecated. Use 'getColDef().menuTabs ?? defaultValues' instead.`);
         let menuTabs = this.getColDef().menuTabs;
         if (menuTabs == null) {
             menuTabs = defaultValues;
@@ -710,14 +680,17 @@ Column.EVENT_VALUE_CHANGED = 'columnValueChanged';
 // + dataTypeService - when waiting to infer cell data types
 Column.EVENT_STATE_UPDATED = 'columnStateUpdated';
 __decorate([
-    context_1.Autowired('gridOptionsService')
+    (0, context_1.Autowired)('gridOptionsService')
 ], Column.prototype, "gridOptionsService", void 0);
 __decorate([
-    context_1.Autowired('columnUtils')
+    (0, context_1.Autowired)('columnUtils')
 ], Column.prototype, "columnUtils", void 0);
 __decorate([
-    context_1.Autowired('columnHoverService')
+    (0, context_1.Autowired)('columnHoverService')
 ], Column.prototype, "columnHoverService", void 0);
+__decorate([
+    (0, context_1.Autowired)('frameworkOverrides')
+], Column.prototype, "frameworkOverrides", void 0);
 __decorate([
     context_1.PostConstruct
 ], Column.prototype, "initialise", null);

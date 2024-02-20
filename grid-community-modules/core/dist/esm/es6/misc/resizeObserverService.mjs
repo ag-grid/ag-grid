@@ -6,7 +6,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { Bean } from "../context/context.mjs";
 import { BeanStub } from "../context/beanStub.mjs";
-import { offsetHeight, offsetWidth } from "../utils/dom.mjs";
 const DEBOUNCE_DELAY = 50;
 let ResizeObserverService = class ResizeObserverService extends BeanStub {
     constructor() {
@@ -21,15 +20,17 @@ let ResizeObserverService = class ResizeObserverService extends BeanStub {
             return () => resizeObserver.disconnect();
         };
         const usePolyfill = () => {
+            var _a, _b;
             // initialise to the current width and height, so first call will have no changes
-            let widthLastTime = offsetWidth(element);
-            let heightLastTime = offsetHeight(element);
+            let widthLastTime = (_a = element === null || element === void 0 ? void 0 : element.clientWidth) !== null && _a !== void 0 ? _a : 0;
+            let heightLastTime = (_b = element === null || element === void 0 ? void 0 : element.clientHeight) !== null && _b !== void 0 ? _b : 0;
             // when finished, this gets turned to false.
             let running = true;
             const periodicallyCheckWidthAndHeight = () => {
+                var _a, _b;
                 if (running) {
-                    const newWidth = offsetWidth(element);
-                    const newHeight = offsetHeight(element);
+                    const newWidth = (_a = element === null || element === void 0 ? void 0 : element.clientWidth) !== null && _a !== void 0 ? _a : 0;
+                    const newHeight = (_b = element === null || element === void 0 ? void 0 : element.clientHeight) !== null && _b !== void 0 ? _b : 0;
                     const changed = newWidth !== widthLastTime || newHeight !== heightLastTime;
                     if (changed) {
                         widthLastTime = newWidth;
@@ -43,12 +44,12 @@ let ResizeObserverService = class ResizeObserverService extends BeanStub {
             // the callback function we return sets running to false
             return () => running = false;
         };
-        const suppressResize = this.gridOptionsService.is('suppressBrowserResizeObserver');
+        const suppressResize = this.gridOptionsService.get('suppressBrowserResizeObserver');
         const resizeObserverExists = !!win.ResizeObserver;
         if (resizeObserverExists && !suppressResize) {
             return useBrowserResizeObserver();
         }
-        return usePolyfill();
+        return this.getFrameworkOverrides().wrapIncoming(() => usePolyfill(), 'resize-observer');
     }
     doNextPolyfillTurn(func) {
         this.polyfillFunctions.push(func);
@@ -67,7 +68,7 @@ let ResizeObserverService = class ResizeObserverService extends BeanStub {
             funcs.forEach(f => f());
         };
         this.polyfillScheduled = true;
-        this.getFrameworkOverrides().setTimeout(executeAllFuncs, DEBOUNCE_DELAY);
+        window.setTimeout(executeAllFuncs, DEBOUNCE_DELAY);
     }
 };
 ResizeObserverService = __decorate([

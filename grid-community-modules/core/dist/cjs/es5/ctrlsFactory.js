@@ -42,7 +42,7 @@ var CtrlsFactory = /** @class */ (function (_super) {
         return new ControllerClass();
     };
     CtrlsFactory = __decorate([
-        context_1.Bean('ctrlsFactory')
+        (0, context_1.Bean)('ctrlsFactory')
     ], CtrlsFactory);
     return CtrlsFactory;
 }(beanStub_1.BeanStub));

@@ -23,6 +23,7 @@ export declare abstract class SimpleFloatingFilter extends Component implements 
     init(params: IFloatingFilterParams): void;
     private setSimpleParams;
     onParamsUpdated(params: IFloatingFilterParams): void;
+    refresh(params: IFloatingFilterParams): void;
     private doesFilterHaveSingleInput;
     private isTypeEditable;
 }

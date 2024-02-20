@@ -1,8 +1,8 @@
 import classNames from 'classnames';
 import React from 'react';
 import { addNonBreakingSpaceBetweenLastWords } from '../../utils/add-non-breaking-space-between-last-words';
-import styles from './Quotes.module.scss';
-import { QuotesData, QuotesDataItem } from './QuotesData';
+import styles from '@design-system/modules/Quotes.module.scss';
+import { QuotesData, QuotesDataItem } from './quotesData';
 
 function filterAndSortByKey(data: QuotesData, sortKey: keyof QuotesDataItem) {
     return Object.values(data)
@@ -37,13 +37,13 @@ const QuoteItems = ({ quotes }: { quotes: QuotesDataItem[] }) => {
                             </blockquote>
                             <figcaption>
                                 <img className={styles.avatar} title={name} src={avatarUrl} alt={name} />
-                                <span className={classNames(styles.name, 'font-size-extra-large', 'bold-text')}>
+                                <span className={classNames(styles.name, 'text-xl', 'bold-text')}>
                                     {name}
                                 </span>
                                 <div className={styles.orgContainer}>
-                                    <span className="font-size-extra-small text-secondary">{orgRole}</span>
+                                    <span className="text-xs text-secondary">{orgRole}</span>
                                     <img className={styles.orgIcon} title={orgName} src={orgIconUrl} alt={orgName} />
-                                    <span className="font-size-extra-small">{orgName}</span>
+                                    <span className="text-xs">{orgName}</span>
                                 </div>
                             </figcaption>
                         </figure>

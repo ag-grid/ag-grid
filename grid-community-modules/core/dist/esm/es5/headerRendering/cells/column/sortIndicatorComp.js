@@ -47,13 +47,14 @@ var SortIndicatorComp = /** @class */ (function (_super) {
         this.column = column;
         this.suppressOrder = suppressOrder;
         this.setupMultiSortIndicator();
-        var canSort = !!this.column.getColDef().sortable;
-        if (!canSort) {
+        if (!this.column.isSortable()) {
             return;
         }
         this.addInIcon('sortAscending', this.eSortAsc, column);
         this.addInIcon('sortDescending', this.eSortDesc, column);
         this.addInIcon('sortUnSort', this.eSortNone, column);
+        this.addManagedPropertyListener('unSortIcon', function () { return _this.updateIcons(); });
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, function () { return _this.updateIcons(); });
         // Watch global events, as row group columns can effect their display column.
         this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, function () { return _this.onSortChanged(); });
         // when grouping changes so can sort indexes and icons
@@ -86,7 +87,7 @@ var SortIndicatorComp = /** @class */ (function (_super) {
             setDisplayed(this.eSortDesc, isDescending, { skipAriaHidden: true });
         }
         if (this.eSortNone) {
-            var alwaysHideNoSort = !this.column.getColDef().unSortIcon && !this.gridOptionsService.is('unSortIcon');
+            var alwaysHideNoSort = !this.column.getColDef().unSortIcon && !this.gridOptionsService.get('unSortIcon');
             var isNone = sortDirection === null || sortDirection === undefined;
             setDisplayed(this.eSortNone, !alwaysHideNoSort && isNone, { skipAriaHidden: true });
         }
@@ -125,7 +126,7 @@ var SortIndicatorComp = /** @class */ (function (_super) {
         var showIndex = indexThisCol >= 0 && moreThanOneColSorting;
         setDisplayed(this.eSortOrder, showIndex, { skipAriaHidden: true });
         if (indexThisCol >= 0) {
-            this.eSortOrder.innerHTML = (indexThisCol + 1).toString();
+            this.eSortOrder.textContent = (indexThisCol + 1).toString();
         }
         else {
             clearElement(this.eSortOrder);

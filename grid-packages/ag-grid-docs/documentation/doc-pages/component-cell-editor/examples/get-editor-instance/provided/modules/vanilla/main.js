@@ -64,21 +64,19 @@ const columnDefs = [
         cellEditor: MySimpleEditor
     }
 ];
-
+let api;
 const gridOptions = {
     columnDefs: columnDefs,
     defaultColDef: {
         editable: true,
-        sortable: true,
         flex: 1,
         minWidth: 100,
-        filter: true,
-        resizable: true
+        filter: true,    
     },
     rowData: createRowData(),
-    onGridReady: () => {
+    onGridReady: (params) => {
         setInterval(() => {
-            const instances = gridOptions.api.getCellEditorInstances();
+            const instances = params.api.getCellEditorInstances();
             if (instances.length > 0) {
                 const instance = instances[0];
                 if (instance.myCustomFunction) {
@@ -99,6 +97,6 @@ const gridOptions = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
     const gridDiv = document.querySelector('#myGrid');
-    new agGrid.Grid(gridDiv, gridOptions);
+    api = agGrid.createGrid(gridDiv, gridOptions);
 });
 

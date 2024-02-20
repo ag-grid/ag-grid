@@ -46,11 +46,11 @@ var ToolPanelFilterGroupComp = /** @class */ (function (_super) {
         var _this = this;
         this.setGroupTitle();
         this.filterGroupComp.setAlignItems('stretch');
-        this.filterGroupComp.addCssClass("ag-filter-toolpanel-group-level-" + this.depth);
-        this.filterGroupComp.addCssClassToTitleBar("ag-filter-toolpanel-group-level-" + this.depth + "-header");
+        this.filterGroupComp.addCssClass("ag-filter-toolpanel-group-level-".concat(this.depth));
+        this.filterGroupComp.addCssClassToTitleBar("ag-filter-toolpanel-group-level-".concat(this.depth, "-header"));
         this.childFilterComps.forEach(function (filterComp) {
             _this.filterGroupComp.addItem(filterComp);
-            filterComp.addCssClassToTitleBar("ag-filter-toolpanel-group-level-" + (_this.depth + 1) + "-header");
+            filterComp.addCssClassToTitleBar("ag-filter-toolpanel-group-level-".concat(_this.depth + 1, "-header"));
         });
         this.refreshFilterClass();
         this.addExpandCollapseListeners();
@@ -191,10 +191,10 @@ var ToolPanelFilterGroupComp = /** @class */ (function (_super) {
     };
     ToolPanelFilterGroupComp.TEMPLATE = "<div class=\"ag-filter-toolpanel-group-wrapper\">\n            <ag-group-component ref=\"filterGroupComp\"></ag-group-component>\n        </div>";
     __decorate([
-        core_1.RefSelector('filterGroupComp')
+        (0, core_1.RefSelector)('filterGroupComp')
     ], ToolPanelFilterGroupComp.prototype, "filterGroupComp", void 0);
     __decorate([
-        core_1.Autowired('columnModel')
+        (0, core_1.Autowired)('columnModel')
     ], ToolPanelFilterGroupComp.prototype, "columnModel", void 0);
     __decorate([
         core_1.PreConstruct

@@ -222,14 +222,14 @@ var BarColumnSparkline = /** @class */ (function (_super) {
         };
         var tooltipRenderer = (_b = (_a = this.processedOptions) === null || _a === void 0 ? void 0 : _a.tooltip) === null || _b === void 0 ? void 0 : _b.renderer;
         if (tooltipRenderer) {
-            return sparklineTooltip_1.toTooltipHtml(tooltipRenderer({
+            return (0, sparklineTooltip_1.toTooltipHtml)(tooltipRenderer({
                 context: this.context,
                 datum: seriesDatum,
                 yValue: yValue,
                 xValue: xValue,
             }), defaults);
         }
-        return sparklineTooltip_1.toTooltipHtml(defaults);
+        return (0, sparklineTooltip_1.toTooltipHtml)(defaults);
     };
     BarColumnSparkline.prototype.formatLabelValue = function (value) {
         return value % 1 !== 0 ? value.toFixed(1) : value.toFixed(0);

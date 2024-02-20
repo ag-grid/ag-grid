@@ -1,4 +1,6 @@
-import { Grid, GetContextMenuItemsParams, GridOptions, MenuItemDef } from '@ag-grid-community/core'
+import { GridApi, createGrid, GetContextMenuItemsParams, GridOptions, MenuItemDef } from '@ag-grid-community/core';
+
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -16,7 +18,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     flex: 1,
     minWidth: 100,
-    resizable: true,
   },
   enableRangeSelection: true,
   allowContextMenuWithControlKey: true,
@@ -39,7 +40,7 @@ function getContextMenuItems(params: GetContextMenuItemsParams): (string | MenuI
       action: () => {
         window.alert('Alerting about ' + params.value)
       },
-      cssClasses: ['redFont', 'bold'],
+      cssClasses: ['red', 'bold'],
     },
     {
       // custom item
@@ -176,9 +177,9 @@ function getContextMenuItems(params: GetContextMenuItemsParams): (string | MenuI
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

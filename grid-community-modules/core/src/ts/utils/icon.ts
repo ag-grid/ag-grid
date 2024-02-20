@@ -6,7 +6,7 @@ import { GridOptionsService } from '../gridOptionsService';
 //
 // IMPORTANT NOTE!
 //
-// If you change the list below, copy/paste the new content into the docs page javascript-grid-icons
+// If you change the list below, copy/paste the new content into the docs page custom-icons
 //
 export const iconNameClassMap: { [key: string]: string; } = {
     // header column group shown when expanded (click to contract)
@@ -76,6 +76,7 @@ export const iconNameClassMap: { [key: string]: string; } = {
     groupLoading: 'loading',
     // button to launch enterprise column menu
     menu: 'menu',
+    menuAlt: 'menu-alt',
     // filter tool panel tab
     filter: 'filter',
     // column tool panel tab
@@ -126,7 +127,21 @@ export const iconNameClassMap: { [key: string]: string; } = {
     // show on column header when column is sorted descending
     sortDescending: 'desc',
     // show on column header when column has no sort, only when enabled with gridOptions.unSortIcon=true
-    sortUnSort: 'none'
+    sortUnSort: 'none',
+    // Builder button in Advanced Filter
+    advancedFilterBuilder: 'group',
+    // drag handle used to pick up Advanced Filter Builder rows
+    advancedFilterBuilderDrag: 'grip',
+    // Advanced Filter Builder row validation error
+    advancedFilterBuilderInvalid: 'not-allowed',
+    // shown on Advanced Filter Builder rows to move them up
+    advancedFilterBuilderMoveUp: 'up',
+    // shown on Advanced Filter Builder rows to move them down
+    advancedFilterBuilderMoveDown: 'down',
+    // shown on Advanced Filter Builder rows to add new rows
+    advancedFilterBuilderAdd: 'plus',
+    // shown on Advanced Filter Builder rows to remove row
+    advancedFilterBuilderRemove: 'minus',
 };
 
 /**

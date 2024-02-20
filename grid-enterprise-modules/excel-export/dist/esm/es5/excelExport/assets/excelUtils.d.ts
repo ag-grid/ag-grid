@@ -3,7 +3,7 @@ import { ExcelCalculatedImage } from "./excelInterfaces";
 export declare const pixelsToPoint: (pixels: number) => number;
 export declare const pointsToPixel: (points: number) => number;
 export declare const pixelsToEMU: (value: number) => number;
-export declare const getFontFamilyId: (name?: string | undefined) => number | undefined;
+export declare const getFontFamilyId: (name?: string) => number | undefined;
 export declare const getHeightFromProperty: (rowIndex: number, height?: number | ((params: RowHeightCallbackParams) => number) | undefined) => number | undefined;
 export declare const setExcelImageTotalWidth: (image: ExcelCalculatedImage, columnsToExport: Column[]) => void;
 export declare const setExcelImageTotalHeight: (image: ExcelCalculatedImage, rowHeight?: number | ((params: RowHeightCallbackParams) => number) | undefined) => void;

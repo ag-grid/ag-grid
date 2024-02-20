@@ -27,9 +27,8 @@ var __read = (this && this.__read) || function (o, n) {
     return ar;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.bindCellRendererToHtmlElement = exports.nodeListForEach = exports.addOrRemoveAttribute = exports.iterateNamedNodeMap = exports.copyNodeList = exports.isNodeOrElement = exports.formatSize = exports.setFixedHeight = exports.setElementHeight = exports.setFixedWidth = exports.setElementWidth = exports.isVerticalScrollShowing = exports.isHorizontalScrollShowing = exports.addStylesToElement = exports.prependDC = exports.insertWithDomOrder = exports.setDomChildOrder = exports.ensureDomOrder = exports.offsetWidth = exports.offsetHeight = exports.getElementAttribute = exports.appendHtml = exports.loadTemplate = exports.isVisible = exports.removeFromParent = exports.removeElement = exports.clearElement = exports.setScrollLeft = exports.getScrollLeft = exports.isRtlNegativeScroll = exports.getElementRectWithOffset = exports.getAbsoluteWidth = exports.getAbsoluteHeight = exports.getInnerWidth = exports.getInnerHeight = exports.getElementSize = exports.isElementChildOfClass = exports.setDisabled = exports.setVisible = exports.setDisplayed = exports.isFocusableFormField = exports.FOCUSABLE_EXCLUDE = exports.FOCUSABLE_SELECTOR = exports.radioCssClass = void 0;
+exports.bindCellRendererToHtmlElement = exports.nodeListForEach = exports.addOrRemoveAttribute = exports.iterateNamedNodeMap = exports.copyNodeList = exports.isNodeOrElement = exports.formatSize = exports.setFixedHeight = exports.setElementHeight = exports.setFixedWidth = exports.setElementWidth = exports.isVerticalScrollShowing = exports.isHorizontalScrollShowing = exports.addStylesToElement = exports.insertWithDomOrder = exports.setDomChildOrder = exports.ensureDomOrder = exports.loadTemplate = exports.isVisible = exports.isInDOM = exports.removeFromParent = exports.clearElement = exports.setScrollLeft = exports.getScrollLeft = exports.isRtlNegativeScroll = exports.getElementRectWithOffset = exports.getAbsoluteWidth = exports.getAbsoluteHeight = exports.getInnerWidth = exports.getInnerHeight = exports.getElementSize = exports.isElementChildOfClass = exports.setDisabled = exports.setVisible = exports.setDisplayed = exports.isFocusableFormField = exports.FOCUSABLE_EXCLUDE = exports.FOCUSABLE_SELECTOR = exports.radioCssClass = void 0;
 var browser_1 = require("./browser");
-var generic_1 = require("./generic");
 var aria_1 = require("./aria");
 var string_1 = require("./string");
 var rtlNegativeScroll;
@@ -55,7 +54,7 @@ function radioCssClass(element, elementClass, otherElementClass) {
 }
 exports.radioCssClass = radioCssClass;
 exports.FOCUSABLE_SELECTOR = '[tabindex], input, select, button, textarea, [href]';
-exports.FOCUSABLE_EXCLUDE = '.ag-hidden, .ag-hidden *, [disabled], .ag-disabled:not(.ag-button), .ag-disabled *';
+exports.FOCUSABLE_EXCLUDE = '[disabled], .ag-disabled:not(.ag-button), .ag-disabled *';
 function isFocusableFormField(element) {
     var matches = Element.prototype.matches || Element.prototype.msMatchesSelector;
     var inputSelector = 'input, select, button, textarea';
@@ -71,7 +70,7 @@ function setDisplayed(element, displayed, options) {
     var skipAriaHidden = options.skipAriaHidden;
     element.classList.toggle('ag-hidden', !displayed);
     if (!skipAriaHidden) {
-        aria_1.setAriaHidden(element, !displayed);
+        (0, aria_1.setAriaHidden)(element, !displayed);
     }
 }
 exports.setDisplayed = setDisplayed;
@@ -80,7 +79,7 @@ function setVisible(element, visible, options) {
     var skipAriaHidden = options.skipAriaHidden;
     element.classList.toggle('ag-invisible', !visible);
     if (!skipAriaHidden) {
-        aria_1.setAriaHidden(element, !visible);
+        (0, aria_1.setAriaHidden)(element, !visible);
     }
 }
 exports.setVisible = setVisible;
@@ -119,20 +118,20 @@ exports.isElementChildOfClass = isElementChildOfClass;
 function getElementSize(el) {
     var _a = window.getComputedStyle(el), height = _a.height, width = _a.width, borderTopWidth = _a.borderTopWidth, borderRightWidth = _a.borderRightWidth, borderBottomWidth = _a.borderBottomWidth, borderLeftWidth = _a.borderLeftWidth, paddingTop = _a.paddingTop, paddingRight = _a.paddingRight, paddingBottom = _a.paddingBottom, paddingLeft = _a.paddingLeft, marginTop = _a.marginTop, marginRight = _a.marginRight, marginBottom = _a.marginBottom, marginLeft = _a.marginLeft, boxSizing = _a.boxSizing;
     return {
-        height: parseFloat(height),
-        width: parseFloat(width),
-        borderTopWidth: parseFloat(borderTopWidth),
-        borderRightWidth: parseFloat(borderRightWidth),
-        borderBottomWidth: parseFloat(borderBottomWidth),
-        borderLeftWidth: parseFloat(borderLeftWidth),
-        paddingTop: parseFloat(paddingTop),
-        paddingRight: parseFloat(paddingRight),
-        paddingBottom: parseFloat(paddingBottom),
-        paddingLeft: parseFloat(paddingLeft),
-        marginTop: parseFloat(marginTop),
-        marginRight: parseFloat(marginRight),
-        marginBottom: parseFloat(marginBottom),
-        marginLeft: parseFloat(marginLeft),
+        height: parseFloat(height || '0'),
+        width: parseFloat(width || '0'),
+        borderTopWidth: parseFloat(borderTopWidth || '0'),
+        borderRightWidth: parseFloat(borderRightWidth || '0'),
+        borderBottomWidth: parseFloat(borderBottomWidth || '0'),
+        borderLeftWidth: parseFloat(borderLeftWidth || '0'),
+        paddingTop: parseFloat(paddingTop || '0'),
+        paddingRight: parseFloat(paddingRight || '0'),
+        paddingBottom: parseFloat(paddingBottom || '0'),
+        paddingLeft: parseFloat(paddingLeft || '0'),
+        marginTop: parseFloat(marginTop || '0'),
+        marginRight: parseFloat(marginRight || '0'),
+        marginBottom: parseFloat(marginBottom || '0'),
+        marginLeft: parseFloat(marginLeft || '0'),
         boxSizing: boxSizing
     };
 }
@@ -202,7 +201,7 @@ function getScrollLeft(element, rtl) {
     if (rtl) {
         // Absolute value - for FF that reports RTL scrolls in negative numbers
         scrollLeft = Math.abs(scrollLeft);
-        if (browser_1.isBrowserChrome() && !isRtlNegativeScroll()) {
+        if ((0, browser_1.isBrowserChrome)() && !isRtlNegativeScroll()) {
             scrollLeft = element.scrollWidth - element.clientWidth - scrollLeft;
         }
     }
@@ -215,7 +214,7 @@ function setScrollLeft(element, value, rtl) {
         if (isRtlNegativeScroll()) {
             value *= -1;
         }
-        else if (browser_1.isBrowserSafari() || browser_1.isBrowserChrome()) {
+        else if ((0, browser_1.isBrowserSafari)() || (0, browser_1.isBrowserChrome)()) {
             value = element.scrollWidth - element.clientWidth - value;
         }
     }
@@ -228,19 +227,23 @@ function clearElement(el) {
     }
 }
 exports.clearElement = clearElement;
-/** @deprecated */
-function removeElement(parent, cssSelector) {
-    removeFromParent(parent.querySelector(cssSelector));
-}
-exports.removeElement = removeElement;
 function removeFromParent(node) {
     if (node && node.parentNode) {
         node.parentNode.removeChild(node);
     }
 }
 exports.removeFromParent = removeFromParent;
+function isInDOM(element) {
+    return !!element.offsetParent;
+}
+exports.isInDOM = isInDOM;
 function isVisible(element) {
-    return element.offsetParent !== null;
+    var el = element;
+    if (el.checkVisibility) {
+        return el.checkVisibility({ checkVisibilityCSS: true });
+    }
+    var isHidden = !isInDOM(element) || window.getComputedStyle(element).visibility !== 'visible';
+    return !isHidden;
 }
 exports.isVisible = isVisible;
 /**
@@ -255,43 +258,11 @@ function loadTemplate(template) {
     return tempDiv.firstChild;
 }
 exports.loadTemplate = loadTemplate;
-function appendHtml(eContainer, htmlTemplate) {
-    if (eContainer.lastChild) {
-        // https://developer.mozilla.org/en-US/docs/Web/API/Element/insertAdjacentHTML
-        // we put the items at the start, so new items appear underneath old items,
-        // so when expanding/collapsing groups, the new rows don't go on top of the
-        // rows below that are moving our of the way
-        eContainer.insertAdjacentHTML('afterbegin', htmlTemplate);
-    }
-    else {
-        eContainer.innerHTML = htmlTemplate;
-    }
-}
-exports.appendHtml = appendHtml;
-/** @deprecated */
-function getElementAttribute(element, attributeName) {
-    if (element.attributes && element.attributes[attributeName]) {
-        var attribute = element.attributes[attributeName];
-        return attribute.value;
-    }
-    return null;
-}
-exports.getElementAttribute = getElementAttribute;
-function offsetHeight(element) {
-    return element && element.clientHeight ? element.clientHeight : 0;
-}
-exports.offsetHeight = offsetHeight;
-function offsetWidth(element) {
-    return element && element.clientWidth ? element.clientWidth : 0;
-}
-exports.offsetWidth = offsetWidth;
 function ensureDomOrder(eContainer, eChild, eChildBefore) {
     // if already in right order, do nothing
     if (eChildBefore && eChildBefore.nextSibling === eChild) {
         return;
     }
-    var focusedEl = document.activeElement;
-    var eChildHasFocus = eChild.contains(focusedEl);
     if (eChildBefore) {
         if (eChildBefore.nextSibling) {
             // insert between the eRowBefore and the row after it
@@ -308,9 +279,6 @@ function ensureDomOrder(eContainer, eChild, eChildBefore) {
             // insert it at the first location
             eContainer.insertAdjacentElement('afterbegin', eChild);
         }
-    }
-    if (eChildHasFocus && focusedEl && browser_1.browserSupportsPreventScroll()) {
-        focusedEl.focus({ preventScroll: true });
     }
 }
 exports.ensureDomOrder = ensureDomOrder;
@@ -341,16 +309,6 @@ function insertWithDomOrder(eContainer, eToInsert, eChildBefore) {
     }
 }
 exports.insertWithDomOrder = insertWithDomOrder;
-/** @deprecated */
-function prependDC(parent, documentFragment) {
-    if (generic_1.exists(parent.firstChild)) {
-        parent.insertBefore(documentFragment, parent.firstChild);
-    }
-    else {
-        parent.appendChild(documentFragment);
-    }
-}
-exports.prependDC = prependDC;
 function addStylesToElement(eElement, styles) {
     var e_1, _a;
     if (!styles) {
@@ -363,7 +321,7 @@ function addStylesToElement(eElement, styles) {
                 continue;
             }
             // changes the key from camelCase into a hyphenated-string
-            var parsedKey = string_1.camelCaseToHyphenated(key);
+            var parsedKey = (0, string_1.camelCaseToHyphenated)(key);
             var valueAsString = value.toString();
             var parsedValue = valueAsString.replace(/\s*!important/g, '');
             var priority = parsedValue.length != valueAsString.length ? 'important' : undefined;
@@ -427,7 +385,7 @@ function setFixedHeight(element, height) {
 exports.setFixedHeight = setFixedHeight;
 function formatSize(size) {
     if (typeof size === 'number') {
-        return size + "px";
+        return "".concat(size, "px");
     }
     return size;
 }

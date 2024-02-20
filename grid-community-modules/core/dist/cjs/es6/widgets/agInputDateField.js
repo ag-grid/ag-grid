@@ -14,7 +14,7 @@ class AgInputDateField extends agInputTextField_1.AgInputTextField {
         this.addManagedListener(this.eInput, 'wheel', this.onWheel.bind(this));
         // ensures that the input element is focussed when a clear button is clicked,
         // unless using safari as there is no clear button and focus does not work properly
-        const usingSafari = browser_1.isBrowserSafari();
+        const usingSafari = (0, browser_1.isBrowserSafari)();
         this.addManagedListener(this.eInput, 'mousedown', () => {
             if (this.isDisabled() || usingSafari) {
                 return;
@@ -31,22 +31,22 @@ class AgInputDateField extends agInputTextField_1.AgInputTextField {
     }
     setMin(minDate) {
         var _a;
-        const min = minDate instanceof Date ? (_a = date_1.serialiseDate(minDate !== null && minDate !== void 0 ? minDate : null, false)) !== null && _a !== void 0 ? _a : undefined : minDate;
+        const min = minDate instanceof Date ? (_a = (0, date_1.serialiseDate)(minDate !== null && minDate !== void 0 ? minDate : null, false)) !== null && _a !== void 0 ? _a : undefined : minDate;
         if (this.min === min) {
             return this;
         }
         this.min = min;
-        dom_1.addOrRemoveAttribute(this.eInput, 'min', min);
+        (0, dom_1.addOrRemoveAttribute)(this.eInput, 'min', min);
         return this;
     }
     setMax(maxDate) {
         var _a;
-        const max = maxDate instanceof Date ? (_a = date_1.serialiseDate(maxDate !== null && maxDate !== void 0 ? maxDate : null, false)) !== null && _a !== void 0 ? _a : undefined : maxDate;
+        const max = maxDate instanceof Date ? (_a = (0, date_1.serialiseDate)(maxDate !== null && maxDate !== void 0 ? maxDate : null, false)) !== null && _a !== void 0 ? _a : undefined : maxDate;
         if (this.max === max) {
             return this;
         }
         this.max = max;
-        dom_1.addOrRemoveAttribute(this.eInput, 'max', max);
+        (0, dom_1.addOrRemoveAttribute)(this.eInput, 'max', max);
         return this;
     }
     setStep(step) {
@@ -54,7 +54,7 @@ class AgInputDateField extends agInputTextField_1.AgInputTextField {
             return this;
         }
         this.step = step;
-        dom_1.addOrRemoveAttribute(this.eInput, 'step', step);
+        (0, dom_1.addOrRemoveAttribute)(this.eInput, 'step', step);
         return this;
     }
     getDate() {
@@ -62,10 +62,10 @@ class AgInputDateField extends agInputTextField_1.AgInputTextField {
         if (!this.eInput.validity.valid) {
             return undefined;
         }
-        return (_a = date_1.parseDateTimeFromString(this.getValue())) !== null && _a !== void 0 ? _a : undefined;
+        return (_a = (0, date_1.parseDateTimeFromString)(this.getValue())) !== null && _a !== void 0 ? _a : undefined;
     }
     setDate(date, silent) {
-        this.setValue(date_1.serialiseDate(date !== null && date !== void 0 ? date : null, false), silent);
+        this.setValue((0, date_1.serialiseDate)(date !== null && date !== void 0 ? date : null, false), silent);
     }
 }
 exports.AgInputDateField = AgInputDateField;

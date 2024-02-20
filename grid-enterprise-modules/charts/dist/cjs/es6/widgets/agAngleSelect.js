@@ -191,18 +191,18 @@ AgAngleSelect.TEMPLATE = `<div class="ag-angle-select">
             </div>
         </div>`;
 __decorate([
-    core_1.RefSelector('eLabel')
+    (0, core_1.RefSelector)('eLabel')
 ], AgAngleSelect.prototype, "eLabel", void 0);
 __decorate([
-    core_1.RefSelector('eParentCircle')
+    (0, core_1.RefSelector)('eParentCircle')
 ], AgAngleSelect.prototype, "eParentCircle", void 0);
 __decorate([
-    core_1.RefSelector('eChildCircle')
+    (0, core_1.RefSelector)('eChildCircle')
 ], AgAngleSelect.prototype, "eChildCircle", void 0);
 __decorate([
-    core_1.RefSelector('eAngleValue')
+    (0, core_1.RefSelector)('eAngleValue')
 ], AgAngleSelect.prototype, "eAngleValue", void 0);
 __decorate([
-    core_1.Autowired('dragService')
+    (0, core_1.Autowired)('dragService')
 ], AgAngleSelect.prototype, "dragService", void 0);
 exports.AgAngleSelect = AgAngleSelect;

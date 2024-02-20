@@ -50,7 +50,7 @@ var SparklineTooltipSingleton = /** @class */ (function (_super) {
         core_1.PreDestroy
     ], SparklineTooltipSingleton.prototype, "destroyTooltip", null);
     SparklineTooltipSingleton = __decorate([
-        core_1.Bean('sparklineTooltipSingleton')
+        (0, core_1.Bean)('sparklineTooltipSingleton')
     ], SparklineTooltipSingleton);
     return SparklineTooltipSingleton;
 }(core_1.BeanStub));

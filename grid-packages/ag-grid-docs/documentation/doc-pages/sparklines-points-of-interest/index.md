@@ -12,9 +12,9 @@ Some data points in the sparklines are special and can be emphasised to allow fo
 - Positive and Negative
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/line-sparkline.png" alt="Line sparkline" width="250px" constrained="true">First and last</image-caption>
-    <image-caption src="resources/area-sparkline.png" alt="Area sparkline" width="250px" constrained="true">Minimum and Maximum</image-caption>
-    <image-caption src="resources/column-sparkline.png" alt="Column sparkline" width="250px" constrained="true">Negative and positive</image-caption>
+    <image-caption src="resources/line-sparkline.png" alt="Line sparkline" width="250px" constrained="true" filterdarkmode="true">First and last</image-caption>
+    <image-caption src="resources/area-sparkline.png" alt="Area sparkline" width="250px" constrained="true" filterdarkmode="true">Minimum and Maximum</image-caption>
+    <image-caption src="resources/column-sparkline.png" alt="Column sparkline" width="250px" constrained="true" filterdarkmode="true">Negative and positive</image-caption>
 </div>
 
 These special points can be customised via the `formatter` callback function to make them stand out from the rest of the data points which are using the global styles.
@@ -79,13 +79,13 @@ const markerFormatter = (params) => {
 See the result of adding this formatter in the sparklines on the right below, compared with the ones on the left which are using global styles in `marker` options:
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/global-area-marker.png" alt="Global styles" width="250px" constrained="true">Global marker styles</image-caption>
-    <image-caption src="resources/custom-area-marker-first-last.png" alt="Area first and last marker customisation" width="250px" constrained="true">Formatted first and last points</image-caption>
+    <image-caption src="resources/global-area-marker.png" alt="Global styles" width="250px" constrained="true" filterdarkmode="true">Global marker styles</image-caption>
+    <image-caption src="resources/custom-area-marker-first-last.png" alt="Area first and last marker customisation" width="250px" constrained="true" filterdarkmode="true">Formatted first and last points</image-caption>
 </div>
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/global-line-marker.png" alt="Global styles" width="250px" constrained="true">Global marker styles</image-caption>
-    <image-caption src="resources/custom-line-marker-first-last.png" alt="Line first and last marker customisation" width="250px" constrained="true">Formatted first and last points</image-caption>
+    <image-caption src="resources/global-line-marker.png" alt="Global styles" width="250px" constrained="true" filterdarkmode="true">Global marker styles</image-caption>
+    <image-caption src="resources/custom-line-marker-first-last.png" alt="Line first and last marker customisation" width="250px" constrained="true" filterdarkmode="true">Formatted first and last points</image-caption>
 </div>
 
 ### Min and Max
@@ -110,14 +110,14 @@ const markerFormatter = (params) => {
 See the result of adding this formatter in the sparklines on the right below, compared with the ones on the left which are using global styles in `marker` options:
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/global-area-marker.png" alt="Global styles" width="250px" constrained="true">Global marker styles</image-caption>
-    <image-caption src="resources/custom-area-marker-min-max.png" alt="Area min and max marker customisation" width="250px" constrained="true">Formatted min and max points</image-caption>
+    <image-caption src="resources/global-area-marker.png" alt="Global styles" width="250px" constrained="true" filterdarkmode="true">Global marker styles</image-caption>
+    <image-caption src="resources/custom-area-marker-min-max.png" alt="Area min and max marker customisation" width="250px" constrained="true" filterdarkmode="true">Formatted min and max points</image-caption>
 </div>
 
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/global-line-marker.png" alt="Global styles" width="250px" constrained="true">Global marker styles</image-caption>
-    <image-caption src="resources/custom-line-marker-min-max.png" alt="Line min and max marker customisation" width="250px" constrained="true">Formatted min and max points</image-caption>
+    <image-caption src="resources/global-line-marker.png" alt="Global styles" width="250px" constrained="true" filterdarkmode="true">Global marker styles</image-caption>
+    <image-caption src="resources/custom-line-marker-min-max.png" alt="Line min and max marker customisation" width="250px" constrained="true" filterdarkmode="true">Formatted min and max points</image-caption>
 </div>
 
 
@@ -142,14 +142,14 @@ const markerFormatter = (params) => {
 See the result of adding this formatter in the sparklines on the right below, compared with the ones on the left which are using global styles in `marker` options:
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/global-area-marker.png" alt="Global styles" width="250px" constrained="true">Global marker styles</image-caption>
-    <image-caption src="resources/custom-area-marker-positive-negative.png" alt="Area positive and negative marker customisation" width="250px" constrained="true">Formatted positive and negative points</image-caption>
+    <image-caption src="resources/global-area-marker.png" alt="Global styles" width="250px" constrained="true" filterdarkmode="true">Global marker styles</image-caption>
+    <image-caption src="resources/custom-area-marker-positive-negative.png" alt="Area positive and negative marker customisation" width="250px" constrained="true" filterdarkmode="true">Formatted positive and negative points</image-caption>
 </div>
 
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/global-line-marker.png" alt="Global styles" width="250px" constrained="true">Global marker styles</image-caption>
-    <image-caption src="resources/custom-line-marker-positive-negative.png" alt="Line positive and negative marker customisation" width="250px" constrained="true">Formatted positive and negative points</image-caption>
+    <image-caption src="resources/global-line-marker.png" alt="Global styles" width="250px" constrained="true" filterdarkmode="true">Global marker styles</image-caption>
+    <image-caption src="resources/custom-line-marker-positive-negative.png" alt="Line positive and negative marker customisation" width="250px" constrained="true" filterdarkmode="true">Formatted positive and negative points</image-caption>
 </div>
 
 
@@ -200,8 +200,8 @@ const columnFormatter = (params) => {
 Here is the result of  adding this formatter compared with setting global styles in `sparklineOptions`:
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/global-column.png" alt="Global styles" width="250px" constrained="true">Global column styles</image-caption>
-    <image-caption src="resources/custom-column-first-last.png" alt="Column first and last customisation" width="250px" constrained="true">Formatted first and last points</image-caption>
+    <image-caption src="resources/global-column.png" alt="Global styles" width="250px" constrained="true" filterdarkmode="true">Global column styles</image-caption>
+    <image-caption src="resources/custom-column-first-last.png" alt="Column first and last customisation" width="250px" constrained="true" filterdarkmode="true">Formatted first and last points</image-caption>
 </div>
 
 
@@ -223,8 +223,8 @@ const columnFormatter = (params) => {
 Here is the result of adding this formatter compared with setting global styles in `sparklineOptions`:
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/global-column.png" alt="Global styles" width="250px" constrained="true">Global column styles</image-caption>
-    <image-caption src="resources/custom-column-min-max.png" alt="Column minimum and maximum customisation" width="250px" constrained="true">Formatted minimum and maximum points</image-caption>
+    <image-caption src="resources/global-column.png" alt="Global styles" width="250px" constrained="true" filterdarkmode="true">Global column styles</image-caption>
+    <image-caption src="resources/custom-column-min-max.png" alt="Column minimum and maximum customisation" width="250px" constrained="true" filterdarkmode="true">Formatted minimum and maximum points</image-caption>
 </div>
 
 ### Positive and Negative
@@ -248,8 +248,8 @@ const columnFormatter = (params) => {
 Here is the result of adding this formatter compared with setting global styles in `sparklineOptions`:
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/global-column.png" alt="Global styles" width="250px" constrained="true">Global column styles</image-caption>
-    <image-caption src="resources/custom-column-positive-negative.png" alt="Column positive and negative customisation" width="250px" constrained="true">Formatted positive and negative points</image-caption>
+    <image-caption src="resources/global-column.png" alt="Global styles" width="250px" constrained="true" filterdarkmode="true">Global column styles</image-caption>
+    <image-caption src="resources/custom-column-positive-negative.png" alt="Column positive and negative customisation" width="250px" constrained="true" filterdarkmode="true">Formatted positive and negative points</image-caption>
 </div>
 
 

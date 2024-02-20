@@ -23,12 +23,14 @@ export declare class DropZoneColumnComp extends Component {
     private popupShowing;
     constructor(column: Column, dragSourceDropTarget: DropTarget, ghost: boolean, dropZonePurpose: TDropZone, horizontal: boolean);
     init(): void;
+    getColumn(): Column;
     private setupAria;
     private setupTooltip;
     setupSort(): void;
     private addDragSource;
     private createDragItem;
     private setupComponents;
+    private isGroupingAndLocked;
     private setupRemove;
     private getColumnAndAggFuncName;
     private setTextValue;
@@ -37,4 +39,5 @@ export declare class DropZoneColumnComp extends Component {
     private addElementClasses;
     private isAggregationZone;
     private isGroupingZone;
+    protected destroy(): void;
 }

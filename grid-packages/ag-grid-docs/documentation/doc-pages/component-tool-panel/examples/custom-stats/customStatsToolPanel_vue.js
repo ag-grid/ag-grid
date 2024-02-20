@@ -2,7 +2,7 @@ export default {
     template: `
       <div style="text-align: center">
       <span>
-           <h2><i class="fa fa-calculator"></i> Custom Stats</h2>
+           <h2><i class="fa fa-calculator"></i> {{ title }}</h2>
            <dl style="font-size: large; padding: 30px 40px 10px 30px">
              <dt style="padding-bottom: 15px">Total Medals: <b>{{ numGold + numSilver + numBronze }}</b></dt>
              <dt style="padding-bottom: 15px">Total Gold: <b>{{ numGold }}</b></dt>
@@ -16,7 +16,8 @@ export default {
         return {
             numGold: 0,
             numSilver: 0,
-            numBronze: 0
+            numBronze: 0,
+            title: undefined
         };
     },
     methods: {
@@ -24,6 +25,7 @@ export default {
             this.numGold = 0;
             this.numSilver = 0;
             this.numBronze = 0;
+            this.title = this.params.title;
             this.params.api.forEachNode((rowNode) => {
                 const data = rowNode.data;
                 if (data.gold) this.numGold += data.gold;

@@ -1,57 +1,39 @@
-import { CreateRangeChartParams, Grid, GridOptions } from '@ag-grid-community/core';
-import { getData } from "./data";
+import {createGrid, GridApi, GridOptions, GridReadyEvent} from '@ag-grid-community/core';
+import {getData} from "./data";
 
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'country', width: 150, chartDataType: 'category' },
     { field: 'gold', chartDataType: 'series', sort: 'desc' },
     { field: 'silver', chartDataType: 'series', sort: 'desc' },
-    { field: 'bronze', chartDataType: 'series' },
-    {
-      headerName: 'A',
-      valueGetter: 'Math.floor(Math.random()*1000)',
-      chartDataType: 'series',
-    },
-    {
-      headerName: 'B',
-      valueGetter: 'Math.floor(Math.random()*1000)',
-      chartDataType: 'series',
-    },
-    {
-      headerName: 'C',
-      valueGetter: 'Math.floor(Math.random()*1000)',
-      chartDataType: 'series',
-    },
-    {
-      headerName: 'D',
-      valueGetter: 'Math.floor(Math.random()*1000)',
-      chartDataType: 'series',
-    },
+    { field: 'bronze', chartDataType: 'series' }
   ],
   defaultColDef: {
     editable: true,
-    sortable: true,
     flex: 1,
     minWidth: 100,
     filter: true,
-    resizable: true,
   },
-  rowData: getData(),
   enableRangeSelection: true,
   enableCharts: true,
   popupParent: document.body,
-}
+  onGridReady : (params: GridReadyEvent) => {
+    getData().then(rowData => params.api.setGridOption('rowData', rowData));
+  },
+};
+
+
 
 function onChart1() {
-  var params: CreateRangeChartParams = {
+  gridApi.createRangeChart({
     cellRange: {
       rowStartIndex: 0,
       rowEndIndex: 4,
       columns: ['country', 'gold', 'silver'],
     },
     chartType: 'groupedColumn',
-    chartThemeName: 'ag-vivid',
     chartThemeOverrides: {
       common: {
         title: {
@@ -60,18 +42,15 @@ function onChart1() {
         },
       },
     },
-  }
-
-  gridOptions.api!.createRangeChart(params)
+  });
 }
 
 function onChart2() {
-  var params: CreateRangeChartParams = {
+  gridApi.createRangeChart({
     cellRange: {
       columns: ['country', 'bronze'],
     },
     chartType: 'groupedBar',
-    chartThemeName: 'ag-pastel',
     chartThemeOverrides: {
       common: {
         title: {
@@ -81,14 +60,11 @@ function onChart2() {
       },
     },
     unlinkChart: true,
-  }
-
-  gridOptions.api!.createRangeChart(params)
+  });
 }
-
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  gridApi = createGrid(gridDiv, gridOptions);
 })

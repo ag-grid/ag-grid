@@ -69,7 +69,7 @@ class HeaderRowContainerComp extends component_1.Component {
                 this.eRowContainer.appendChild(eGui);
             }
             if (prevGui) {
-                dom_1.ensureDomOrder(this.eRowContainer, eGui, prevGui);
+                (0, dom_1.ensureDomOrder)(this.eRowContainer, eGui, prevGui);
             }
             prevGui = eGui;
         };
@@ -82,16 +82,16 @@ class HeaderRowContainerComp extends component_1.Component {
             this.rowCompsList.push(rowComp);
             appendEnsuringDomOrder(rowComp);
         });
-        object_1.getAllValuesInObject(oldRowComps).forEach(c => this.destroyRowComp(c));
+        (0, object_1.getAllValuesInObject)(oldRowComps).forEach(c => this.destroyRowComp(c));
     }
 }
-HeaderRowContainerComp.PINNED_LEFT_TEMPLATE = `<div class="ag-pinned-left-header" role="presentation"></div>`;
-HeaderRowContainerComp.PINNED_RIGHT_TEMPLATE = `<div class="ag-pinned-right-header" role="presentation"></div>`;
+HeaderRowContainerComp.PINNED_LEFT_TEMPLATE = `<div class="ag-pinned-left-header" role="rowgroup"></div>`;
+HeaderRowContainerComp.PINNED_RIGHT_TEMPLATE = `<div class="ag-pinned-right-header" role="rowgroup"></div>`;
 HeaderRowContainerComp.CENTER_TEMPLATE = `<div class="ag-header-viewport" role="presentation">
             <div class="ag-header-container" ref="eCenterContainer" role="rowgroup"></div>
         </div>`;
 __decorate([
-    componentAnnotations_1.RefSelector('eCenterContainer')
+    (0, componentAnnotations_1.RefSelector)('eCenterContainer')
 ], HeaderRowContainerComp.prototype, "eCenterContainer", void 0);
 __decorate([
     context_1.PostConstruct

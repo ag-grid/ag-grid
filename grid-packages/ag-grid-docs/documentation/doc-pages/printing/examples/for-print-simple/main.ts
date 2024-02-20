@@ -1,4 +1,4 @@
-import { ColDef, Grid, GridOptions } from '@ag-grid-community/core';
+import { ColDef, GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 import { getData } from "./data";
 
 
@@ -10,6 +10,8 @@ const columnDefs: ColDef[] = [
   { field: 'year' },
   { field: 'country' },
 ]
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
@@ -24,7 +26,7 @@ function onBtPrinterFriendly() {
   eGridDiv.style.width = ''
   eGridDiv.style.height = ''
 
-  gridOptions.api!.setDomLayout('print')
+  gridApi!.setGridOption('domLayout', 'print')
 }
 
 function onBtNormal() {
@@ -33,11 +35,11 @@ function onBtNormal() {
   eGridDiv.style.height = '200px'
 
   // Same as setting to 'normal' as it is the default
-  gridOptions.api!.setDomLayout()
+  gridApi!.setGridOption('domLayout', undefined);
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

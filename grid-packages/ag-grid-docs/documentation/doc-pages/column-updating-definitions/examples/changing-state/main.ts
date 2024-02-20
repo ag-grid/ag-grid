@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
 
 function getColumnDefs(): ColDef[] {
   return [
@@ -15,11 +15,11 @@ function getColumnDefs(): ColDef[] {
   ]
 }
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     width: 100, // resets col widths if manually resized
-    sortable: true,
-    resizable: true,
     pinned: null, // important - clears pinned if not specified in col def
     sort: null, // important - clears sort if not specified in col def
   },
@@ -27,19 +27,19 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function onBtWithState() {
-  gridOptions.api!.setColumnDefs(getColumnDefs())
+  gridApi!.setGridOption('columnDefs', getColumnDefs())
 }
 
 function onBtRemove() {
-  gridOptions.api!.setColumnDefs([])
+  gridApi!.setGridOption('columnDefs', [])
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

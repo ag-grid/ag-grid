@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgEvent } from "../events";
@@ -44,6 +44,7 @@ export declare class Component extends BeanStub {
     protected wireQuerySelectors(): void;
     getGui(): HTMLElement;
     getFocusableElement(): HTMLElement;
+    getAriaElement(): Element;
     setParentComponent(component: Component): void;
     getParentComponent(): Component | undefined;
     protected setGui(eGui: HTMLElement): void;

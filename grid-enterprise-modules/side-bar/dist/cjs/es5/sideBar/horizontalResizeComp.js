@@ -43,7 +43,7 @@ var HorizontalResizeComp = /** @class */ (function (_super) {
             onResizeEnd: this.onResizeEnd.bind(this)
         });
         this.addDestroyFunc(finishedWithResizeFunc);
-        this.setInverted(this.gridOptionsService.is('enableRtl'));
+        this.setInverted(this.gridOptionsService.get('enableRtl'));
     };
     HorizontalResizeComp.prototype.dispatchResizeEvent = function (start, end, width) {
         var event = {
@@ -68,7 +68,7 @@ var HorizontalResizeComp = /** @class */ (function (_super) {
         if (this.maxWidth != null) {
             newWidth = Math.min(this.maxWidth, newWidth);
         }
-        this.elementToResize.style.width = newWidth + "px";
+        this.elementToResize.style.width = "".concat(newWidth, "px");
         this.dispatchResizeEvent(false, isEnd, newWidth);
     };
     HorizontalResizeComp.prototype.setInverted = function (inverted) {
@@ -86,7 +86,7 @@ var HorizontalResizeComp = /** @class */ (function (_super) {
         }
     };
     __decorate([
-        core_1.Autowired('horizontalResizeService')
+        (0, core_1.Autowired)('horizontalResizeService')
     ], HorizontalResizeComp.prototype, "horizontalResizeService", void 0);
     __decorate([
         core_1.PostConstruct

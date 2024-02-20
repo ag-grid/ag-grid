@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/viewport-row-model - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.1.0
+          * @ag-grid-enterprise/viewport-row-model - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.1.0
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -11,7 +11,7 @@ var core = require('@ag-grid-community/core');
 var core$1 = require('@ag-grid-enterprise/core');
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '30.1.0';
+var VERSION = '31.1.0';
 
 var __extends = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -34,8 +34,6 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
-var DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE = 5;
 var ViewportRowModel = /** @class */ (function (_super) {
     __extends(ViewportRowModel, _super);
     function ViewportRowModel() {
@@ -51,13 +49,17 @@ var ViewportRowModel = /** @class */ (function (_super) {
     // we don't implement as lazy row heights is not supported in this row model
     ViewportRowModel.prototype.ensureRowHeightsValid = function (startPixel, endPixel, startLimitIndex, endLimitIndex) { return false; };
     ViewportRowModel.prototype.init = function () {
+        var _this = this;
         this.rowHeight = this.gridOptionsService.getRowHeightAsNumber();
         this.addManagedListener(this.eventService, core.Events.EVENT_VIEWPORT_CHANGED, this.onViewportChanged.bind(this));
+        this.addManagedPropertyListener('viewportDatasource', function () { return _this.updateDatasource(); });
+        this.addManagedPropertyListener('rowHeight', function () {
+            _this.rowHeight = _this.gridOptionsService.getRowHeightAsNumber();
+            _this.updateRowHeights();
+        });
     };
     ViewportRowModel.prototype.start = function () {
-        if (this.gridOptionsService.get('viewportDatasource')) {
-            this.setViewportDatasource(this.gridOptionsService.get('viewportDatasource'));
-        }
+        this.updateDatasource();
     };
     ViewportRowModel.prototype.isLastRowIndexKnown = function () {
         return true;
@@ -73,11 +75,17 @@ var ViewportRowModel = /** @class */ (function (_super) {
         this.firstRow = -1;
         this.lastRow = -1;
     };
+    ViewportRowModel.prototype.updateDatasource = function () {
+        var datasource = this.gridOptionsService.get('viewportDatasource');
+        if (datasource) {
+            this.setViewportDatasource(datasource);
+        }
+    };
     ViewportRowModel.prototype.getViewportRowModelPageSize = function () {
-        return core._.oneOrGreater(this.gridOptionsService.getNum('viewportRowModelPageSize'), DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE);
+        return this.gridOptionsService.get('viewportRowModelPageSize');
     };
     ViewportRowModel.prototype.getViewportRowModelBufferSize = function () {
-        return core._.zeroOrGreater(this.gridOptionsService.getNum('viewportRowModelBufferSize'), DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE);
+        return this.gridOptionsService.get('viewportRowModelBufferSize');
     };
     ViewportRowModel.prototype.calculateFirstRow = function (firstRenderedRow) {
         var bufferSize = this.getViewportRowModelBufferSize();
@@ -182,6 +190,21 @@ var ViewportRowModel = /** @class */ (function (_super) {
             rowTop: this.rowHeight * index
         };
     };
+    ViewportRowModel.prototype.updateRowHeights = function () {
+        var _this = this;
+        this.forEachNode(function (node) {
+            node.setRowHeight(_this.rowHeight);
+            node.setRowTop(_this.rowHeight * node.rowIndex);
+        });
+        var event = {
+            type: core.Events.EVENT_MODEL_UPDATED,
+            newData: false,
+            newPage: false,
+            keepRenderedRows: true,
+            animate: false,
+        };
+        this.eventService.dispatchEvent(event);
+    };
     ViewportRowModel.prototype.getTopLevelRowCount = function () {
         return this.getRowCount();
     };
@@ -255,6 +278,9 @@ var ViewportRowModel = /** @class */ (function (_super) {
             return;
         }
         this.rowCount = rowCount;
+        this.eventService.dispatchEventOnce({
+            type: core.Events.EVENT_ROW_COUNT_READY
+        });
         var event = {
             type: core.Events.EVENT_MODEL_UPDATED,
             newData: false,

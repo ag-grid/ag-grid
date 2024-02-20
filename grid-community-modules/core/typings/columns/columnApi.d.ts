@@ -1,186 +1,155 @@
 import { ColDef, ColGroupDef, HeaderLocation, IAggFunc } from "../entities/colDef";
-import { IHeaderColumn } from "../interfaces/iHeaderColumn";
-import { ColumnState, ApplyColumnStateParams } from "./columnModel";
-import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
-import { ColumnGroup } from "../entities/columnGroup";
 import { Column, ColumnPinnedType } from "../entities/column";
+import { ColumnGroup } from "../entities/columnGroup";
+import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
 import { ColumnEventType } from "../events";
+import { GridApi } from "../gridApi";
+import { IHeaderColumn } from "../interfaces/iHeaderColumn";
+import { ApplyColumnStateParams, ColumnState } from "./columnModel";
+/** @deprecated Use methods via the grid api instead. */
 export declare class ColumnApi {
-    private columnModel;
-    /**
-     * Gets the grid to size the columns to the specified width in pixels, e.g. `sizeColumnsToFit(900)`.
-     * To have the grid fit the columns to the grid's width, use the Grid API `gridApi.sizeColumnsToFit()` instead.
-     * If inferring cell data types with custom column types and row data is provided asynchronously,
-     * the column sizing will happen asynchronously when row data is added.
-     * To always perform this synchronously, set `cellDataType = false` on the default column definition.
-     */
+    private api;
+    constructor(gridAp: GridApi);
+    private viaApi;
+    /** @deprecated v31 use `api.sizeColumnsToFit()` instead.   */
     sizeColumnsToFit(gridWidth: number): void;
-    /** Call this if you want to open or close a column group. */
+    /** @deprecated v31 use `api.setColumnGroupOpened() instead. */
     setColumnGroupOpened(group: ProvidedColumnGroup | string, newValue: boolean): void;
-    /** Returns the column group with the given name. */
+    /** @deprecated v31 use `api.getColumnGroup() instead. */
     getColumnGroup(name: string, instanceId?: number): ColumnGroup | null;
-    /** Returns the provided column group with the given name. */
+    /** @deprecated v31 use `api.getProvidedColumnGroup() instead. */
     getProvidedColumnGroup(name: string): ProvidedColumnGroup | null;
-    /** Returns the display name for a column. Useful if you are doing your own header rendering and want the grid to work out if `headerValueGetter` is used, or if you are doing your own column management GUI, to know what to show as the column name. */
+    /** @deprecated v31 use `api.getDisplayNameForColumn() instead. */
     getDisplayNameForColumn(column: Column, location: HeaderLocation): string;
-    /** Returns the display name for a column group (when grouping columns). */
+    /** @deprecated v31 use `api.getDisplayNameForColumnGroup() instead. */
     getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: HeaderLocation): string;
-    /** Returns the column with the given `colKey`, which can either be the `colId` (a string) or the `colDef` (an object). */
-    getColumn(key: any): Column | null;
-    /** Returns all the columns, regardless of visible or not. */
+    /** @deprecated v31 use `api.getColumn() instead. */
+    getColumn(key: string | ColDef | Column): Column | null;
+    /** @deprecated v31 use `api.getColumns() instead. */
     getColumns(): Column[] | null;
-    /** Applies the state of the columns from a previous state. Returns `false` if one or more columns could not be found. */
+    /** @deprecated v31 use `api.applyColumnState() instead. */
     applyColumnState(params: ApplyColumnStateParams): boolean;
-    /** Gets the state of the columns. Typically used when saving column state. */
+    /** @deprecated v31 use `api.getColumnState() instead. */
     getColumnState(): ColumnState[];
-    /** Sets the state back to match the originally provided column definitions. */
+    /** @deprecated v31 use `api.resetColumnState() instead. */
     resetColumnState(): void;
-    /** Gets the state of the column groups. Typically used when saving column group state. */
+    /** @deprecated v31 use `api.getColumnGroupState() instead. */
     getColumnGroupState(): {
         groupId: string;
         open: boolean;
     }[];
-    /** Sets the state of the column group state from a previous state. */
+    /** @deprecated v31 use `api.setColumnGroupState() instead. */
     setColumnGroupState(stateItems: ({
         groupId: string;
         open: boolean;
     })[]): void;
-    /** Sets the state back to match the originally provided column definitions. */
+    /** @deprecated v31 use `api.resetColumnGroupState() instead. */
     resetColumnGroupState(): void;
-    /** Returns `true` if pinning left or right, otherwise `false`. */
+    /** @deprecated v31 use `api.isPinning() instead. */
     isPinning(): boolean;
-    /** Returns `true` if pinning left, otherwise `false`. */
+    /** @deprecated v31 use `api.isPinningLeft() instead. */
     isPinningLeft(): boolean;
-    /** Returns `true` if pinning right, otherwise `false`. */
+    /** @deprecated v31 use `api.isPinningRight() instead. */
     isPinningRight(): boolean;
-    /** Returns the column to the right of the provided column, taking into consideration open / closed column groups and visible columns. This is useful if you need to know what column is beside yours e.g. if implementing your own cell navigation. */
+    /** @deprecated v31 use `api.getDisplayedColAfter() instead. */
     getDisplayedColAfter(col: Column): Column | null;
-    /** Same as `getVisibleColAfter` except gives column to the left. */
+    /** @deprecated v31 use `api.getDisplayedColBefore() instead. */
     getDisplayedColBefore(col: Column): Column | null;
-    /** Sets the visibility of a column. Key can be the column ID or `Column` object. */
+    /** @deprecated v31 use `api.setColumnVisible() instead. */
     setColumnVisible(key: string | Column, visible: boolean): void;
-    /** Same as `setColumnVisible`, but provide a list of column keys. */
+    /** @deprecated v31 use `api.setColumnsVisible() instead. */
     setColumnsVisible(keys: (string | Column)[], visible: boolean): void;
-    /** Sets the column pinned / unpinned. Key can be the column ID, field, `ColDef` object or `Column` object. */
-    setColumnPinned(key: string | Column, pinned: ColumnPinnedType): void;
-    /** Same as `setColumnPinned`, but provide a list of column keys. */
-    setColumnsPinned(keys: (string | Column)[], pinned: ColumnPinnedType): void;
-    /**
-     * Returns all the grid columns, same as `getColumns()`, except
-     *
-     *  a) it has the order of the columns that are presented in the grid
-     *
-     *  b) it's after the 'pivot' step, so if pivoting, has the value columns for the pivot.
-     */
+    /** @deprecated v31 use `api.setColumnPinned() instead. */
+    setColumnPinned(key: string | ColDef | Column, pinned: ColumnPinnedType): void;
+    /** @deprecated v31 use `api.setColumnsPinned() instead. */
+    setColumnsPinned(keys: (string | ColDef | Column)[], pinned: ColumnPinnedType): void;
+    /** @deprecated v31 use `api.getAllGridColumns() instead. */
     getAllGridColumns(): Column[];
-    /** Same as `getAllDisplayedColumns` but just for the pinned left portion of the grid. */
+    /** @deprecated v31 use `api.getDisplayedLeftColumns() instead. */
     getDisplayedLeftColumns(): Column[];
-    /** Same as `getAllDisplayedColumns` but just for the center portion of the grid. */
+    /** @deprecated v31 use `api.getDisplayedCenterColumns() instead. */
     getDisplayedCenterColumns(): Column[];
-    /** Same as `getAllDisplayedColumns` but just for the pinned right portion of the grid. */
+    /** @deprecated v31 use `api.getDisplayedRightColumns() instead. */
     getDisplayedRightColumns(): Column[];
-    /** Returns all columns currently displayed (e.g. are visible and if in a group, the group is showing the columns) for the pinned left, centre and pinned right portions of the grid. */
+    /** @deprecated v31 use `api.getAllDisplayedColumns() instead. */
     getAllDisplayedColumns(): Column[];
-    /** Same as `getAllGridColumns()`, except only returns rendered columns, i.e. columns that are not within the viewport and therefore not rendered, due to column virtualisation, are not displayed. */
+    /** @deprecated v31 use `api.getAllDisplayedVirtualColumns() instead. */
     getAllDisplayedVirtualColumns(): Column[];
-    /** Moves a column to `toIndex`. The column is first removed, then added at the `toIndex` location, thus index locations will change to the right of the column after the removal. */
-    moveColumn(key: string | Column, toIndex: number): void;
-    /** Same as `moveColumn` but works on index locations. */
+    /** @deprecated v31 use `api.moveColumn() instead. */
+    moveColumn(key: string | ColDef | Column, toIndex: number): void;
+    /** @deprecated v31 use `api.moveColumnByIndex() instead. */
     moveColumnByIndex(fromIndex: number, toIndex: number): void;
-    /** Same as `moveColumn` but works on list. */
-    moveColumns(columnsToMoveKeys: (string | Column)[], toIndex: number): void;
-    /** Move the column to a new position in the row grouping order. */
+    /** @deprecated v31 use `api.moveColumns() instead. */
+    moveColumns(columnsToMoveKeys: (string | ColDef | Column)[], toIndex: number): void;
+    /** @deprecated v31 use `api.moveRowGroupColumn() instead. */
     moveRowGroupColumn(fromIndex: number, toIndex: number): void;
-    /** Sets the agg function for a column. `aggFunc` can be one of the built-in aggregations or a custom aggregation by name or direct function. */
-    setColumnAggFunc(key: string | Column, aggFunc: string | IAggFunc | null | undefined): void;
-    /** Sets the column width on a single column. The finished flag gets included in the resulting event and not used internally by the grid. The finished flag is intended for dragging, where a dragging action will produce many `columnWidth` events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to `true`. */
-    setColumnWidth(key: string | Column, newWidth: number, finished?: boolean, source?: ColumnEventType): void;
-    /** Sets the column widths on multiple columns. This method offers better performance than calling `setColumnWidth` multiple times. The finished flag gets included in the resulting event and not used internally by the grid. The finished flag is intended for dragging, where a dragging action will produce many `columnWidth` events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to `true`. */
+    /** @deprecated v31 use `api.setColumnAggFunc() instead. */
+    setColumnAggFunc(key: string | ColDef | Column, aggFunc: string | IAggFunc | null | undefined): void;
+    /** @deprecated v31 use `api.setColumnWidth() instead. */
+    setColumnWidth(key: string | ColDef | Column, newWidth: number, finished?: boolean, source?: ColumnEventType): void;
+    /** @deprecated v31 use `api.setColumnWidths() instead. */
     setColumnWidths(columnWidths: {
-        key: string | Column;
+        key: string | ColDef | Column;
         newWidth: number;
     }[], finished?: boolean, source?: ColumnEventType): void;
-    /** Set the pivot mode. */
+    /** @deprecated v31 use `api.setPivotMode() instead. */
     setPivotMode(pivotMode: boolean): void;
-    /** Get the pivot mode. */
+    /** @deprecated v31 use `api.isPivotMode() instead. */
     isPivotMode(): boolean;
-    /** Returns the pivot result column for the given `pivotKeys` and `valueColId`. Useful to then call operations on the pivot column. */
-    getPivotResultColumn(pivotKeys: string[], valueColKey: string | Column): Column | null;
-    /** Set the value columns to the provided list of columns. */
-    setValueColumns(colKeys: (string | Column)[]): void;
-    /** Get a list of the existing value columns. */
+    /** @deprecated v31 use `api.getPivotResultColumn() instead. */
+    getPivotResultColumn(pivotKeys: string[], valueColKey: string | ColDef | Column): Column | null;
+    /** @deprecated v31 use `api.setValueColumns() instead. */
+    setValueColumns(colKeys: (string | ColDef | Column)[]): void;
+    /** @deprecated v31 use `api.getValueColumns() instead. */
     getValueColumns(): Column[];
-    /** Remove the given column from the existing set of value columns. */
-    removeValueColumn(colKey: (string | Column)): void;
-    /** Like `removeValueColumn` but remove the given list of columns from the existing set of value columns. */
-    removeValueColumns(colKeys: (string | Column)[]): void;
-    /** Add the given column to the set of existing value columns. */
-    addValueColumn(colKey: (string | Column)): void;
-    /** Like `addValueColumn` but add the given list of columns to the existing set of value columns. */
-    addValueColumns(colKeys: (string | Column)[]): void;
-    /** Set the row group columns. */
-    setRowGroupColumns(colKeys: (string | Column)[]): void;
-    /** Remove a column from the row groups. */
-    removeRowGroupColumn(colKey: string | Column): void;
-    /** Same as `removeRowGroupColumn` but provide a list of columns. */
-    removeRowGroupColumns(colKeys: (string | Column)[]): void;
-    /** Add a column to the row groups. */
-    addRowGroupColumn(colKey: string | Column): void;
-    /** Same as `addRowGroupColumn` but provide a list of columns. */
-    addRowGroupColumns(colKeys: (string | Column)[]): void;
-    /** Get row group columns. */
+    /** @deprecated v31 use `api.removeValueColumn() instead. */
+    removeValueColumn(colKey: (string | ColDef | Column)): void;
+    /** @deprecated v31 use `api.removeValueColumns() instead. */
+    removeValueColumns(colKeys: (string | ColDef | Column)[]): void;
+    /** @deprecated v31 use `api.addValueColumn() instead. */
+    addValueColumn(colKey: (string | ColDef | Column)): void;
+    /** @deprecated v31 use `api.addValueColumns() instead. */
+    addValueColumns(colKeys: (string | ColDef | Column)[]): void;
+    /** @deprecated v31 use `api.setRowGroupColumns() instead. */
+    setRowGroupColumns(colKeys: (string | ColDef | Column)[]): void;
+    /** @deprecated v31 use `api.removeRowGroupColumn() instead. */
+    removeRowGroupColumn(colKey: string | ColDef | Column): void;
+    /** @deprecated v31 use `api.removeRowGroupColumns() instead. */
+    removeRowGroupColumns(colKeys: (string | ColDef | Column)[]): void;
+    /** @deprecated v31 use `api.addRowGroupColumn() instead. */
+    addRowGroupColumn(colKey: string | ColDef | Column): void;
+    /** @deprecated v31 use `api.addRowGroupColumns() instead. */
+    addRowGroupColumns(colKeys: (string | ColDef | Column)[]): void;
+    /** @deprecated v31 use `api.getRowGroupColumns() instead. */
     getRowGroupColumns(): Column[];
-    /** Set the pivot columns. */
-    setPivotColumns(colKeys: (string | Column)[]): void;
-    /** Remove a pivot column. */
-    removePivotColumn(colKey: string | Column): void;
-    /** Same as `removePivotColumn` but provide a list of columns. */
-    removePivotColumns(colKeys: (string | Column)[]): void;
-    /** Add a pivot column. */
-    addPivotColumn(colKey: string | Column): void;
-    /** Same as `addPivotColumn` but provide a list of columns. */
-    addPivotColumns(colKeys: (string | Column)[]): void;
-    /** Get the pivot columns. */
+    /** @deprecated v31 use `api.setPivotColumns() instead. */
+    setPivotColumns(colKeys: (string | ColDef | Column)[]): void;
+    /** @deprecated v31 use `api.removePivotColumn() instead. */
+    removePivotColumn(colKey: string | ColDef | Column): void;
+    /** @deprecated v31 use `api.removePivotColumns() instead. */
+    removePivotColumns(colKeys: (string | ColDef | Column)[]): void;
+    /** @deprecated v31 use `api.addPivotColumn() instead. */
+    addPivotColumn(colKey: string | ColDef | Column): void;
+    /** @deprecated v31 use `api.addPivotColumns() instead. */
+    addPivotColumns(colKeys: (string | ColDef | Column)[]): void;
+    /** @deprecated v31 use `api.getPivotColumns() instead. */
     getPivotColumns(): Column[];
-    /** Same as `getAllDisplayedColumnGroups` but just for the pinned left portion of the grid. */
+    /** @deprecated v31 use `api.getLeftDisplayedColumnGroups() instead. */
     getLeftDisplayedColumnGroups(): IHeaderColumn[];
-    /** Same as `getAllDisplayedColumnGroups` but just for the center portion of the grid. */
+    /** @deprecated v31 use `api.getCenterDisplayedColumnGroups() instead. */
     getCenterDisplayedColumnGroups(): IHeaderColumn[];
-    /** Same as `getAllDisplayedColumnGroups` but just for the pinned right portion of the grid. */
+    /** @deprecated v31 use `api.getRightDisplayedColumnGroups() instead. */
     getRightDisplayedColumnGroups(): IHeaderColumn[];
-    /** Returns all 'root' column headers. If you are not grouping columns, these return the columns. If you are grouping, these return the top level groups - you can navigate down through each one to get the other lower level headers and finally the columns at the bottom. */
+    /** @deprecated v31 use `api.getAllDisplayedColumnGroups() instead. */
     getAllDisplayedColumnGroups(): IHeaderColumn[] | null;
-    /**
-     * Auto-sizes a column based on its contents. If inferring cell data types with custom column types and row data is provided asynchronously,
-     * the column sizing will happen asynchronously when row data is added. To always perform this synchronously,
-     * set `cellDataType = false` on the default column definition.
-     */
-    autoSizeColumn(key: string | Column, skipHeader?: boolean): void;
-    /**
-     * Same as `autoSizeColumn`, but provide a list of column keys. If inferring cell data types with custom column types
-     * and row data is provided asynchronously, the column sizing will happen asynchronously when row data is added.
-     * To always perform this synchronously, set `cellDataType = false` on the default column definition.
-     */
-    autoSizeColumns(keys: (string | Column)[], skipHeader?: boolean): void;
-    /**
-     * Calls `autoSizeColumns` on all displayed columns. If inferring cell data types with custom column types
-     * and row data is provided asynchronously, the column sizing will happen asynchronously when row data is added.
-     * To always perform this synchronously, set `cellDataType = false` on the default column definition.
-     */
+    /** @deprecated v31 use `api.autoSizeColumn() instead. */
+    autoSizeColumn(key: string | ColDef | Column, skipHeader?: boolean): void;
+    /** @deprecated v31 use `api.autoSizeColumns() instead. */
+    autoSizeColumns(keys: (string | ColDef | Column)[], skipHeader?: boolean): void;
+    /** @deprecated v31 use `api.autoSizeAllColumns() instead. */
     autoSizeAllColumns(skipHeader?: boolean): void;
-    /** Set the pivot result columns. */
+    /** @deprecated v31 use `api.setPivotResultColumns() instead. */
     setPivotResultColumns(colDefs: (ColDef | ColGroupDef)[]): void;
-    /** Returns the grid's pivot result columns. */
+    /** @deprecated v31 use `api.getPivotResultColumns() instead. */
     getPivotResultColumns(): Column[] | null;
-    private cleanDownReferencesToAvoidMemoryLeakInCaseApplicationIsKeepingReferenceToDestroyedGrid;
-    /** @deprecated v28 Use `getColumns` instead */
-    getAllColumns(): Column[] | null;
-    /** @deprecated v28 Use `getColumns` instead. */
-    getPrimaryColumns(): Column[] | null;
-    /** @deprecated v28 Use `getPivotResultColumns` instead. */
-    getSecondaryColumns(): Column[] | null;
-    /** @deprecated v28 Use `setPivotResultColumns` instead. */
-    setSecondaryColumns(colDefs: (ColDef | ColGroupDef)[]): void;
-    /** @deprecated v28 Use `getPivotResultColumn` instead */
-    getSecondaryPivotColumn(pivotKeys: string[], valueColKey: string | Column): Column | null;
 }

@@ -35,10 +35,14 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 var __values = (this && this.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
@@ -73,7 +77,11 @@ var ToolPanelContextMenu = /** @class */ (function (_super) {
         }
         if (this.isActive()) {
             this.mouseEvent.preventDefault();
-            this.displayContextMenu();
+            var menuItemsMapped = this.getMappedMenuItems();
+            if (menuItemsMapped.length === 0) {
+                return;
+            }
+            this.displayContextMenu(menuItemsMapped);
         }
     };
     ToolPanelContextMenu.prototype.initializeProperties = function (column) {
@@ -92,10 +100,10 @@ var ToolPanelContextMenu = /** @class */ (function (_super) {
         var localeTextFunc = this.localeService.getLocaleTextFunc();
         this.menuItemMap = new Map();
         this.menuItemMap.set('rowGroup', {
-            allowedFunction: function (col) { return col.isPrimary() && col.isAllowRowGroup(); },
+            allowedFunction: function (col) { return col.isPrimary() && col.isAllowRowGroup() && !_this.columnModel.isColumnGroupingLocked(col); },
             activeFunction: function (col) { return col.isRowGroupActive(); },
-            activateLabel: function () { return localeTextFunc('groupBy', 'Group by') + " " + _this.displayName; },
-            deactivateLabel: function () { return localeTextFunc('ungroupBy', 'Un-Group by') + " " + _this.displayName; },
+            activateLabel: function () { return "".concat(localeTextFunc('groupBy', 'Group by'), " ").concat(_this.displayName); },
+            deactivateLabel: function () { return "".concat(localeTextFunc('ungroupBy', 'Un-Group by'), " ").concat(_this.displayName); },
             activateFunction: function () {
                 var groupedColumns = _this.columnModel.getRowGroupColumns();
                 _this.columnModel.setRowGroupColumns(_this.addColumnsToList(groupedColumns), "toolPanelUi");
@@ -110,8 +118,8 @@ var ToolPanelContextMenu = /** @class */ (function (_super) {
         this.menuItemMap.set('value', {
             allowedFunction: function (col) { return col.isPrimary() && col.isAllowValue(); },
             activeFunction: function (col) { return col.isValueActive(); },
-            activateLabel: function () { return localeTextFunc('addToValues', "Add " + _this.displayName + " to values", [_this.displayName]); },
-            deactivateLabel: function () { return localeTextFunc('removeFromValues', "Remove " + _this.displayName + " from values", [_this.displayName]); },
+            activateLabel: function () { return localeTextFunc('addToValues', "Add ".concat(_this.displayName, " to values"), [_this.displayName]); },
+            deactivateLabel: function () { return localeTextFunc('removeFromValues', "Remove ".concat(_this.displayName, " from values"), [_this.displayName]); },
             activateFunction: function () {
                 var valueColumns = _this.columnModel.getValueColumns();
                 _this.columnModel.setValueColumns(_this.addColumnsToList(valueColumns), "toolPanelUi");
@@ -126,8 +134,8 @@ var ToolPanelContextMenu = /** @class */ (function (_super) {
         this.menuItemMap.set('pivot', {
             allowedFunction: function (col) { return _this.columnModel.isPivotMode() && col.isPrimary() && col.isAllowPivot(); },
             activeFunction: function (col) { return col.isPivotActive(); },
-            activateLabel: function () { return localeTextFunc('addToLabels', "Add " + _this.displayName + " to labels", [_this.displayName]); },
-            deactivateLabel: function () { return localeTextFunc('removeFromLabels', "Remove " + _this.displayName + " from labels", [_this.displayName]); },
+            activateLabel: function () { return localeTextFunc('addToLabels', "Add ".concat(_this.displayName, " to labels"), [_this.displayName]); },
+            deactivateLabel: function () { return localeTextFunc('removeFromLabels', "Remove ".concat(_this.displayName, " from labels"), [_this.displayName]); },
             activateFunction: function () {
                 var pivotColumns = _this.columnModel.getPivotColumns();
                 _this.columnModel.setPivotColumns(_this.addColumnsToList(pivotColumns), "toolPanelUi");
@@ -141,22 +149,21 @@ var ToolPanelContextMenu = /** @class */ (function (_super) {
         });
     };
     ToolPanelContextMenu.prototype.addColumnsToList = function (columnList) {
-        return __spreadArray([], __read(columnList)).concat(this.columns.filter(function (col) { return columnList.indexOf(col) === -1; }));
+        return __spreadArray([], __read(columnList), false).concat(this.columns.filter(function (col) { return columnList.indexOf(col) === -1; }));
     };
     ToolPanelContextMenu.prototype.removeColumnsFromList = function (columnList) {
         var _this = this;
         return columnList.filter(function (col) { return _this.columns.indexOf(col) === -1; });
     };
-    ToolPanelContextMenu.prototype.displayContextMenu = function () {
+    ToolPanelContextMenu.prototype.displayContextMenu = function (menuItemsMapped) {
         var _this = this;
         var eGui = this.getGui();
         var menuList = this.createBean(new AgMenuList());
-        var menuItemsMapped = this.getMappedMenuItems();
         var localeTextFunc = this.localeService.getLocaleTextFunc();
         var hideFunc = function () { };
         eGui.appendChild(menuList.getGui());
         menuList.addMenuItems(menuItemsMapped);
-        menuList.addManagedListener(menuList, AgMenuItemComponent.EVENT_MENU_ITEM_SELECTED, function () {
+        menuList.addManagedListener(menuList, AgMenuItemComponent.EVENT_CLOSE_MENU, function () {
             _this.parentEl.focus();
             hideFunc();
         });

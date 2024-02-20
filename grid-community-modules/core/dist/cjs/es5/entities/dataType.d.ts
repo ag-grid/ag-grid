@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BaseColDefOptionalDataParams, ValueFormatterParams, ValueParserParams } from "./colDef";
@@ -75,13 +75,13 @@ interface BaseDataTypeDefinition<TValueType extends BaseCellDataType, TData = an
     /**
      * If `true`, this data type will append any specified column types to those of the data type that this extends.
      * If `false`, the column types for this data type will replace any of the data type that this extends.
-     * Default: `false`.
+     * @default false
      */
     appendColumnTypes?: boolean;
     /**
      * By default, certain column definition properties are set based on the base data type.
      * If this is set to `true`, these properties will not be set.
-     * Default: `false`.
+     * @default false
      */
     suppressDefaultProperties?: boolean;
 }

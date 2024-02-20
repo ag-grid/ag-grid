@@ -7,6 +7,7 @@ import {
     FilterManager,
     RowNode,
     ColumnModel,
+    GridOptions,
 } from "@ag-grid-community/core";
 
 @Bean('filterAggregatesStage')
@@ -106,7 +107,7 @@ export class FilterAggregatesStage extends BeanStub implements IRowNodeStage {
             return;
         }
 
-        if (this.gridOptionsService.isTreeData()) {
+        if (this.gridOptionsService.get('treeData')) {
             this.setAllChildrenCountTreeData(rowNode);
         } else {
             this.setAllChildrenCountGridGrouping(rowNode);

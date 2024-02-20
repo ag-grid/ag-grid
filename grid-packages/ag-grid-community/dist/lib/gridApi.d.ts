@@ -1,11 +1,11 @@
 import { AlignedGridsService } from "./alignedGridsService";
 import { ColumnApi } from "./columns/columnApi";
-import { ISizeColumnsToFitParams } from "./columns/columnModel";
+import { ApplyColumnStateParams, ColumnState, ISizeColumnsToFitParams } from "./columns/columnModel";
 import { Context } from "./context/context";
 import { CellPosition } from "./entities/cellPositionUtils";
-import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
-import { Column } from "./entities/column";
-import { ChartRef, DomLayoutType, GetChartToolbarItems, GetContextMenuItems, GetMainMenuItems, GetRowIdFunc, GetServerSideGroupKey, GridOptions, IsApplyServerSideTransaction, IsRowMaster, IsRowSelectable, IsServerSideGroup, RowClassParams, RowGroupingDisplayType, ServerSideGroupLevelParams } from "./entities/gridOptions";
+import { ColDef, ColGroupDef, ColumnChooserParams, HeaderLocation, IAggFunc } from "./entities/colDef";
+import { Column, ColumnPinnedType } from "./entities/column";
+import { ChartRef, DomLayoutType, GetChartToolbarItems, GetContextMenuItems, GetMainMenuItems, GetRowIdFunc, GetServerSideGroupKey, GridOptions, IsApplyServerSideTransaction, IsRowMaster, IsRowSelectable, IsServerSideGroup, RowClassParams, RowGroupingDisplayType, ServerSideGroupLevelParams, UseGroupFooter } from "./entities/gridOptions";
 import { GetGroupRowAggParams, GetServerSideGroupLevelParamsParams, InitialGroupOrderComparatorParams, IsFullWidthRowParams, IsServerSideGroupOpenByDefaultParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, PostSortRowsParams, ProcessRowParams, RowHeightParams, TabToNextCellParams, TabToNextHeaderParams } from "./interfaces/iCallbackParams";
 import { IRowNode, RowPinnedType } from "./interfaces/iRowNode";
 import { AgEvent, ColumnEventType, FilterChangedEventSourceType, SelectionEventSourceType } from "./events";
@@ -19,14 +19,14 @@ import { IClipboardCopyParams, IClipboardCopyRowsParams } from "./interfaces/iCl
 import { IColumnToolPanel } from "./interfaces/iColumnToolPanel";
 import { IDatasource } from "./interfaces/iDatasource";
 import { ExcelExportMultipleSheetParams, ExcelExportParams } from "./interfaces/iExcelCreator";
-import { IFilter } from "./interfaces/iFilter";
+import { FilterModel, IFilter } from "./interfaces/iFilter";
 import { IFiltersToolPanel } from "./interfaces/iFiltersToolPanel";
 import { CellRange, CellRangeParams } from "./interfaces/IRangeService";
 import { IRowModel } from "./interfaces/iRowModel";
 import { IServerSideDatasource } from "./interfaces/iServerSideDatasource";
 import { RefreshServerSideParams } from "./interfaces/iServerSideRowModel";
 import { ServerSideGroupLevelState } from "./interfaces/IServerSideStore";
-import { ISideBar, SideBarDef } from "./interfaces/iSideBar";
+import { SideBarDef } from "./interfaces/iSideBar";
 import { IStatusPanel } from "./interfaces/iStatusPanel";
 import { IToolPanel } from "./interfaces/iToolPanel";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
@@ -34,11 +34,17 @@ import { RowDataTransaction } from "./interfaces/rowDataTransaction";
 import { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
 import { ServerSideTransaction, ServerSideTransactionResult } from "./interfaces/serverSideTransaction";
 import { ICellRenderer } from "./rendering/cellRenderers/iCellRenderer";
-import { OverlayWrapperComponent } from "./rendering/overlays/overlayWrapperComponent";
 import { FlashCellsParams, GetCellEditorInstancesParams, GetCellRendererInstancesParams, RedrawRowsParams, RefreshCellsParams } from "./rendering/rowRenderer";
 import { IServerSideGroupSelectionState, IServerSideSelectionState } from "./interfaces/iServerSideSelection";
 import { DataTypeDefinition } from "./entities/dataType";
 import { AdvancedFilterModel } from "./interfaces/advancedFilterModel";
+import { LoadSuccessParams } from "./rowNodeCache/rowNodeBlock";
+import { IAdvancedFilterBuilderParams } from "./interfaces/iAdvancedFilterBuilderParams";
+import { IHeaderColumn } from "./interfaces/iHeaderColumn";
+import { ProvidedColumnGroup } from "./entities/providedColumnGroup";
+import { ColumnGroup } from "./entities/columnGroup";
+import { GridState } from "./interfaces/gridState";
+import { ManagedGridOptionKey, ManagedGridOptions } from "./propertyKeys";
 export interface DetailGridInfo {
     /**
      * Id of the detail grid, the format is `detail_{ROW-ID}`,
@@ -47,7 +53,7 @@ export interface DetailGridInfo {
     id: string;
     /** Grid api of the detail grid. */
     api?: GridApi;
-    /** Column api of the detail grid. */
+    /** @deprecated v31 ColumnApi has been deprecated and all methods moved to the api. */
     columnApi?: ColumnApi;
 }
 export interface StartEditingCellParams {
@@ -62,7 +68,6 @@ export interface StartEditingCellParams {
 }
 export declare function unwrapUserComp<T>(comp: T): T;
 export declare class GridApi<TData = any> {
-    private immutableService;
     private csvCreator;
     private excelCreator;
     private rowRenderer;
@@ -84,8 +89,7 @@ export declare class GridApi<TData = any> {
     private rangeService;
     private clipboardService;
     private aggFuncService;
-    private menuFactory;
-    private contextMenuFactory;
+    private menuService;
     private valueCache;
     private animationFrameService;
     private statusBarService;
@@ -94,24 +98,25 @@ export declare class GridApi<TData = any> {
     private rowNodeBlockLoader;
     private serverSideTransactionManager;
     private ctrlsService;
-    private overlayWrapperComp;
+    private overlayService;
+    private sideBarService?;
+    private stateService;
+    private expansionService;
+    private apiEventService;
+    private frameworkOverrides;
     private gridBodyCtrl;
-    private sideBarComp;
     private clientSideRowModel;
     private infiniteRowModel;
     private serverSideRowModel;
     private detailGridInfoMap;
     private destroyCalled;
-    registerOverlayWrapperComp(overlayWrapperComp: OverlayWrapperComponent): void;
-    registerSideBarComp(sideBarComp: ISideBar): void;
     private init;
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
     __getAlignedGridService(): AlignedGridsService;
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
     __getContext(): Context;
-    private getSetterMethod;
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
-    __setProperty<K extends keyof GridOptions>(propertyName: K, value: GridOptions[K]): void;
+    __getModel(): IRowModel;
     /** Returns the `gridId` for the current grid as specified via the gridOptions property `gridId` or the auto assigned grid id if none was provided. */
     getGridId(): string;
     /** Register a detail grid with the master grid when it is created. */
@@ -126,7 +131,6 @@ export declare class GridApi<TData = any> {
     getDataAsCsv(params?: CsvExportParams): string | undefined;
     /** Downloads a CSV export of the grid's data. */
     exportDataAsCsv(params?: CsvExportParams): void;
-    private getExcelExportMode;
     private assertNotExcelMultiSheet;
     /** Similar to `exportDataAsExcel`, except instead of downloading a file, it will return a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) to be processed by the user. */
     getDataAsExcel(params?: ExcelExportParams): string | Blob | undefined;
@@ -147,24 +151,7 @@ export declare class GridApi<TData = any> {
      */
     setGridAriaProperty(property: string, value: string | null): void;
     private logMissingRowModel;
-    /** Set new datasource for Server-Side Row Model. */
-    setServerSideDatasource(datasource: IServerSideDatasource): void;
-    /**
-     * Updates the `cacheBlockSize` when requesting data from the server if `suppressServerSideInfiniteScroll` is not enabled.
-     *
-     * Note this purges all the cached data and reloads all the rows of the grid.
-     * */
-    setCacheBlockSize(blockSize: number): void;
-    /** Set new datasource for Infinite Row Model. */
-    setDatasource(datasource: IDatasource): void;
-    /** Set new datasource for Viewport Row Model. */
-    setViewportDatasource(viewportDatasource: IViewportDatasource): void;
-    /** Set the row data. */
-    setRowData(rowData: TData[]): void;
-    /** Set the top pinned rows. Call with no rows / undefined to clear top pinned rows. */
-    setPinnedTopRowData(rows?: any[]): void;
-    /** Set the bottom pinned rows. Call with no rows / undefined to clear bottom pinned rows. */
-    setPinnedBottomRowData(rows?: any[]): void;
+    private logDeprecation;
     /** Gets the number of top pinned rows. */
     getPinnedTopRowCount(): number;
     /** Gets the number of bottom pinned rows. */
@@ -173,18 +160,6 @@ export declare class GridApi<TData = any> {
     getPinnedTopRow(index: number): IRowNode | undefined;
     /** Gets the bottom pinned row with the specified index. */
     getPinnedBottomRow(index: number): IRowNode | undefined;
-    /**
-     * Call to set new column definitions. The grid will redraw all the column headers, and then redraw all of the rows.
-     */
-    setColumnDefs(colDefs: (ColDef<TData> | ColGroupDef<TData>)[], source?: ColumnEventType): void;
-    /** Call to set new auto group column definition. The grid will recreate any auto-group columns if present. */
-    setAutoGroupColumnDef(colDef: ColDef<TData>, source?: ColumnEventType): void;
-    /** Call to set new Default Column Definition. */
-    setDefaultColDef(colDef: ColDef<TData>, source?: ColumnEventType): void;
-    /** Call to set new Column Types. */
-    setColumnTypes(columnTypes: {
-        string: ColDef<TData>;
-    }, source?: ColumnEventType): void;
     expireValueCache(): void;
     /**
      * Returns an object with two properties:
@@ -204,17 +179,12 @@ export declare class GridApi<TData = any> {
         left: number;
         right: number;
     };
-    /** If `true`, the horizontal scrollbar will always be present, even if not required. Otherwise, it will only be displayed when necessary. */
-    setAlwaysShowHorizontalScroll(show: boolean): void;
-    /** If `true`, the vertical scrollbar will always be present, even if not required. Otherwise it will only be displayed when necessary. */
-    setAlwaysShowVerticalScroll(show: boolean): void;
     /** Performs change detection on all cells, refreshing cells where required. */
     refreshCells(params?: RefreshCellsParams<TData>): void;
     /** Flash rows, columns or individual cells. */
     flashCells(params?: FlashCellsParams<TData>): void;
     /** Remove row(s) from the DOM and recreate them again from scratch. */
     redrawRows(params?: RedrawRowsParams<TData>): void;
-    setFunctionsReadOnly(readOnly: boolean): void;
     /** Redraws the header. Useful if a column name changes, or something else that changes how the column header is displayed. */
     refreshHeader(): void;
     /** Returns `true` if any filter is set. This includes quick filter, column filter, external filter or advanced filter. */
@@ -227,6 +197,9 @@ export declare class GridApi<TData = any> {
      * Returns the row model inside the table.
      * From here you can see the original rows, rows after filter has been applied,
      * rows after aggregation has been applied, and the final set of 'to be displayed' rows.
+     *
+     * @deprecated As of v31.1, getModel() is deprecated and will not be available in future versions.
+     * Please use the appropriate grid API methods instead
      */
     getModel(): IRowModel;
     /** Expand or collapse a specific row node, optionally expanding/collapsing all of its parent nodes. */
@@ -274,35 +247,12 @@ export declare class GridApi<TData = any> {
     addRenderedRowListener(eventName: string, rowIndex: number, callback: Function): void;
     /** Get the current Quick Filter text from the grid, or `undefined` if none is set. */
     getQuickFilter(): string | undefined;
-    /** Pass a Quick Filter text into the grid for filtering. */
-    setQuickFilter(newFilter: string): void;
-    /**
-     * @deprecated As of v30, hidden columns are excluded from the Quick Filter by default. To include hidden columns, use `setIncludeHiddenColumnsInQuickFilter` instead.
-     */
-    setExcludeHiddenColumnsFromQuickFilter(value: boolean): void;
-    /**
-     * Updates the `includeHiddenColumnsInQuickFilter` grid option.
-     * By default hidden columns are excluded from the Quick Filter.
-     * Set to `true` to include them.
-     */
-    setIncludeHiddenColumnsInQuickFilter(value: boolean): void;
     /** Get the state of the Advanced Filter. Used for saving Advanced Filter state */
     getAdvancedFilterModel(): AdvancedFilterModel | null;
     /** Set the state of the Advanced Filter. Used for restoring Advanced Filter state */
     setAdvancedFilterModel(advancedFilterModel: AdvancedFilterModel | null): void;
-    /** Enable/disable the Advanced Filter */
-    setEnableAdvancedFilter(enabled: boolean): void;
-    /**
-     * Updates the `includeHiddenColumnsInAdvancedFilter` grid option.
-     * By default hidden columns are excluded from the Advanced Filter.
-     * Set to `true` to include them.
-     */
-    setIncludeHiddenColumnsInAdvancedFilter(value: boolean): void;
-    /**
-     * DOM element to use as the parent for the Advanced Filter, to allow it to appear outside of the grid.
-     * Set to `null` to appear inside the grid.
-     */
-    setAdvancedFilterParent(advancedFilterParent: HTMLElement | null): void;
+    /** Open the Advanced Filter Builder dialog (if enabled). */
+    showAdvancedFilterBuilder(): void;
     /**
      * Set all of the provided nodes selection state to the provided value.
      */
@@ -335,7 +285,7 @@ export declare class GridApi<TData = any> {
      * Returns an object containing rules matching the selected rows in the SSRM.
      *
      * If `groupSelectsChildren=false` the returned object will be flat, and will conform to IServerSideSelectionState.
-     * If `groupSelectsChildren=true` the retuned object will be hierarchical, and will conform to IServerSideGroupSelectionState.
+     * If `groupSelectsChildren=true` the returned object will be hierarchical, and will conform to IServerSideGroupSelectionState.
      */
     getServerSideSelectionState(): IServerSideSelectionState | IServerSideGroupSelectionState | null;
     /**
@@ -355,12 +305,6 @@ export declare class GridApi<TData = any> {
      * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllCurrentPage'`
      */
     deselectAllOnCurrentPage(source?: SelectionEventSourceType): void;
-    /**
-     * Sets columns to adjust in size to fit the grid horizontally. If inferring cell data types with custom column types
-     * and row data is provided asynchronously, the column sizing will happen asynchronously when row data is added.
-     * To always perform this synchronously, set `cellDataType = false` on the default column definition.
-     **/
-    sizeColumnsToFit(params?: ISizeColumnsToFitParams): void;
     /** Show the 'loading' overlay. */
     showLoadingOverlay(): void;
     /** Show the 'no rows' overlay. */
@@ -427,11 +371,16 @@ export declare class GridApi<TData = any> {
     /** Similar to `forEachNodeAfterFilter`, except the callbacks are called in the order the rows are displayed in the grid. */
     forEachNodeAfterFilterAndSort(callback: (rowNode: IRowNode<TData>, index: number) => void): void;
     /**
-     * Returns the filter component instance for a column.
-     * `key` can be a string field name or a ColDef object (matches on object reference, useful if field names are not unique).
-     * If your filter is created asynchronously, `getFilterInstance` will return `null` so you will need to use the `callback` to access the filter instance instead.
+     * @deprecated v31.1 To get/set individual filter models, use `getColumnFilterModel` or `setColumnFilterModel` instead.
+     * To get hold of the filter instance, use `getColumnFilterInstance` which returns the instance asynchronously.
      */
     getFilterInstance<TFilter extends IFilter>(key: string | Column, callback?: (filter: TFilter | null) => void): TFilter | null | undefined;
+    /**
+     * Returns the filter component instance for a column.
+     * For getting/setting models for individual column filters, use `getColumnFilterModel` and `setColumnFilterModel` instead of this.
+     * `key` can be a column ID or a `Column` object.
+     */
+    getColumnFilterInstance<TFilter extends IFilter>(key: string | Column): Promise<TFilter | null | undefined>;
     /** Destroys a filter. Useful to force a particular filter to be created from scratch again. */
     destroyFilter(key: string | Column): void;
     /** Gets the status panel instance corresponding to the supplied `id`. */
@@ -458,94 +407,32 @@ export declare class GridApi<TData = any> {
      * To always perform this synchronously, set `cellDataType = false` on the default column definition,
      * or provide cell data types for every column.
      */
-    setFilterModel(model: any): void;
+    setFilterModel(model: FilterModel | null): void;
     /** Gets the current state of all the column filters. Used for saving filter state. */
-    getFilterModel(): {
-        [key: string]: any;
-    };
+    getFilterModel(): FilterModel;
+    /**
+     * Gets the current filter model for the specified column.
+     * Will return `null` if no active filter.
+     */
+    getColumnFilterModel<TModel>(column: string | Column): TModel | null;
+    /**
+     * Sets the filter model for the specified column.
+     * Setting a `model` of `null` will reset the filter (make inactive).
+     * Must wait on the response before calling `api.onFilterChanged()`.
+     */
+    setColumnFilterModel<TModel>(column: string | Column, model: TModel | null): Promise<void>;
     /** Returns the focused cell (or the last focused cell if the grid lost focus). */
     getFocusedCell(): CellPosition | null;
     /** Clears the focused cell. */
     clearFocusedCell(): void;
     /** Sets the focus to the specified cell. `rowPinned` can be either 'top', 'bottom' or null (for not pinned). */
     setFocusedCell(rowIndex: number, colKey: string | Column, rowPinned?: RowPinnedType): void;
-    /** Sets the `suppressRowDrag` property. */
-    setSuppressRowDrag(value: boolean): void;
-    /** Sets the `suppressMoveWhenRowDragging` property. */
-    setSuppressMoveWhenRowDragging(value: boolean): void;
-    /** Sets the `suppressRowClickSelection` property. */
-    setSuppressRowClickSelection(value: boolean): void;
     /** Adds a drop zone outside of the grid where rows can be dropped. */
     addRowDropZone(params: RowDropZoneParams): void;
     /** Removes an external drop zone added by `addRowDropZone`. */
     removeRowDropZone(params: RowDropZoneParams): void;
     /** Returns the `RowDropZoneParams` to be used by another grid's `addRowDropZone` method. */
     getRowDropZoneParams(events?: RowDropZoneEvents): RowDropZoneParams;
-    /** Sets the height in pixels for the row containing the column label header. */
-    setHeaderHeight(headerHeight?: number): void;
-    /**
-     * Switch between layout options: `normal`, `autoHeight`, `print`.
-     * Defaults to `normal` if no domLayout provided.
-     */
-    setDomLayout(domLayout?: DomLayoutType): void;
-    /** Sets the `enableCellTextSelection` property. */
-    setEnableCellTextSelection(selectable: boolean): void;
-    /** Sets the preferred direction for the selection fill handle. */
-    setFillHandleDirection(direction: 'x' | 'y' | 'xy'): void;
-    /** Sets the height in pixels for the rows containing header column groups. */
-    setGroupHeaderHeight(headerHeight?: number): void;
-    /** Sets the height in pixels for the row containing the floating filters. */
-    setFloatingFiltersHeight(headerHeight?: number): void;
-    /** Sets the height in pixels for the row containing the columns when in pivot mode. */
-    setPivotHeaderHeight(headerHeight?: number): void;
-    /** Sets the height in pixels for the row containing header column groups when in pivot mode. */
-    setPivotGroupHeaderHeight(headerHeight?: number): void;
-    setPivotMode(pivotMode: boolean): void;
-    setAnimateRows(animateRows: boolean): void;
-    setIsExternalFilterPresent(isExternalFilterPresentFunc: () => boolean): void;
-    setDoesExternalFilterPass(doesExternalFilterPassFunc: (node: IRowNode) => boolean): void;
-    setNavigateToNextCell(navigateToNextCellFunc: (params: NavigateToNextCellParams) => (CellPosition | null)): void;
-    setTabToNextCell(tabToNextCellFunc: (params: TabToNextCellParams) => (CellPosition | null)): void;
-    setTabToNextHeader(tabToNextHeaderFunc: (params: TabToNextHeaderParams) => (HeaderPosition | null)): void;
-    setNavigateToNextHeader(navigateToNextHeaderFunc: (params: NavigateToNextHeaderParams) => (HeaderPosition | null)): void;
-    setRowGroupPanelShow(rowGroupPanelShow: 'always' | 'onlyWhenGrouping' | 'never'): void;
-    setGetGroupRowAgg(getGroupRowAggFunc: (params: GetGroupRowAggParams) => any): void;
-    setGetBusinessKeyForNode(getBusinessKeyForNodeFunc: (nodes: IRowNode) => string): void;
-    setGetChildCount(getChildCountFunc: (dataItem: any) => number): void;
-    setProcessRowPostCreate(processRowPostCreateFunc: (params: ProcessRowParams) => void): void;
-    setGetRowId(getRowIdFunc: GetRowIdFunc): void;
-    setGetRowClass(rowClassFunc: (params: RowClassParams) => string | string[]): void;
-    setIsFullWidthRow(isFullWidthRowFunc: (params: IsFullWidthRowParams) => boolean): void;
-    setIsRowSelectable(isRowSelectableFunc: IsRowSelectable): void;
-    setIsRowMaster(isRowMasterFunc: IsRowMaster): void;
-    setPostSortRows(postSortRowsFunc: (params: PostSortRowsParams) => void): void;
-    setGetDocument(getDocumentFunc: () => Document): void;
-    setGetContextMenuItems(getContextMenuItemsFunc: GetContextMenuItems): void;
-    setGetMainMenuItems(getMainMenuItemsFunc: GetMainMenuItems): void;
-    setProcessCellForClipboard(processCellForClipboardFunc: (params: ProcessCellForExportParams) => any): void;
-    setSendToClipboard(sendToClipboardFunc: (params: {
-        data: string;
-    }) => void): void;
-    setProcessCellFromClipboard(processCellFromClipboardFunc: (params: ProcessCellForExportParams) => any): void;
-    /** @deprecated v28 use `setProcessPivotResultColDef` instead */
-    setProcessSecondaryColDef(processSecondaryColDefFunc: (colDef: ColDef) => void): void;
-    /** @deprecated v28 use `setProcessPivotResultColGroupDef` instead */
-    setProcessSecondaryColGroupDef(processSecondaryColGroupDefFunc: (colDef: ColDef) => void): void;
-    setProcessPivotResultColDef(processPivotResultColDefFunc: (colDef: ColDef) => void): void;
-    setProcessPivotResultColGroupDef(processPivotResultColGroupDefFunc: (colDef: ColDef) => void): void;
-    setPostProcessPopup(postProcessPopupFunc: (params: PostProcessPopupParams) => void): void;
-    setInitialGroupOrderComparator(initialGroupOrderComparatorFunc: (params: InitialGroupOrderComparatorParams) => number): void;
-    setGetChartToolbarItems(getChartToolbarItemsFunc: GetChartToolbarItems): void;
-    setPaginationNumberFormatter(paginationNumberFormatterFunc: (params: PaginationNumberFormatterParams) => string): void;
-    /** @deprecated v28 use setGetServerSideGroupLevelParams instead */
-    setGetServerSideStoreParams(getServerSideStoreParamsFunc: (params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams): void;
-    setGetServerSideGroupLevelParams(getServerSideGroupLevelParamsFunc: (params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams): void;
-    setIsServerSideGroupOpenByDefault(isServerSideGroupOpenByDefaultFunc: (params: IsServerSideGroupOpenByDefaultParams) => boolean): void;
-    setIsApplyServerSideTransaction(isApplyServerSideTransactionFunc: IsApplyServerSideTransaction): void;
-    setIsServerSideGroup(isServerSideGroupFunc: IsServerSideGroup): void;
-    setGetServerSideGroupKey(getServerSideGroupKeyFunc: GetServerSideGroupKey): void;
-    setGetRowStyle(rowStyleFunc: (params: RowClassParams) => {}): void;
-    setGetRowHeight(rowHeightFunc: (params: RowHeightParams) => number): void;
     private assertSideBarLoaded;
     /** Returns `true` if the side bar is visible. */
     isSideBarVisible(): boolean;
@@ -568,17 +455,8 @@ export declare class GridApi<TData = any> {
     getToolPanelInstance<TToolPanel = IToolPanel>(id: string): TToolPanel | undefined;
     /** Returns the current side bar configuration. If a shortcut was used, returns the detailed long form. */
     getSideBar(): SideBarDef | undefined;
-    /** Resets the side bar to the provided configuration. The parameter is the same as the sideBar grid property. The side bar is re-created from scratch with the new config. */
-    setSideBar(def: SideBarDef | string | string[] | boolean): void;
-    setSuppressClipboardPaste(value: boolean): void;
     /** Tells the grid to recalculate the row heights. */
     resetRowHeights(): void;
-    setGroupRemoveSingleChildren(value: boolean): void;
-    setGroupRemoveLowestSingleChildren(value: boolean): void;
-    setGroupDisplayType(value: RowGroupingDisplayType): void;
-    setRowClass(className: string | undefined): void;
-    /** Sets the `deltaSort` property */
-    setDeltaSort(enable: boolean): void;
     /**
      * Sets the `rowCount` and `maxRowFound` properties.
      * The second parameter, `maxRowFound`, is optional and if left out, only `rowCount` is set.
@@ -594,9 +472,16 @@ export declare class GridApi<TData = any> {
      * This is useful if you want the raw value of a cell e.g. if implementing your own CSV export.
      */
     getValue<TValue = any>(colKey: string | Column<TValue>, rowNode: IRowNode): TValue | null | undefined;
-    /** Add an event listener for the specified `eventType`. Works similar to `addEventListener` for a browser DOM element. */
+    /**
+     * Add an event listener for the specified `eventType`.
+     * Works similar to `addEventListener` for a browser DOM element.
+     * Listeners will be automatically removed when the grid is destroyed.
+     */
     addEventListener(eventType: string, listener: Function): void;
-    /** Add an event listener for all event types coming from the grid. */
+    /**
+     * Add an event listener for all event types coming from the grid.
+     * Listeners will be automatically removed when the grid is destroyed.
+     */
     addGlobalListener(listener: Function): void;
     /** Remove an event listener. */
     removeEventListener(eventType: string, listener: Function): void;
@@ -605,8 +490,8 @@ export declare class GridApi<TData = any> {
     dispatchEvent(event: AgEvent): void;
     /** Will destroy the grid and release resources. If you are using a framework you do not need to call this, as the grid links in with the framework lifecycle. However if you are using Web Components or native JavaScript, you do need to call this, to avoid a memory leak in your application. */
     destroy(): void;
-    private cleanDownReferencesToAvoidMemoryLeakInCaseApplicationIsKeepingReferenceToDestroyedGrid;
-    private warnIfDestroyed;
+    /** Returns `true` if the grid has been destroyed. */
+    isDestroyed(): boolean;
     /** Reset the Quick Filter cache text on every rowNode. */
     resetQuickFilter(): void;
     /** Returns the list of selected cell ranges. */
@@ -623,6 +508,7 @@ export declare class GridApi<TData = any> {
     getCurrentUndoSize(): number;
     /** Returns current number of available cell edit redo operations. */
     getCurrentRedoSize(): number;
+    private assertChart;
     /** Returns a list of models with information about the charts that are currently rendered from the grid. */
     getChartModels(): ChartModel[] | undefined;
     /** Returns the `ChartRef` using the supplied `chartId`. */
@@ -630,11 +516,11 @@ export declare class GridApi<TData = any> {
     /** Returns a base64-encoded image data URL for the referenced chartId. */
     getChartImageDataURL(params: GetChartImageDataUrlParams): string | undefined;
     /** Starts a browser-based image download for the referenced chartId. */
-    downloadChart(params: ChartDownloadParams): void;
+    downloadChart(params: ChartDownloadParams): void | undefined;
     /** Open the Chart Tool Panel. */
-    openChartToolPanel(params: OpenChartToolPanelParams): void;
+    openChartToolPanel(params: OpenChartToolPanelParams): void | undefined;
     /** Close the Chart Tool Panel. */
-    closeChartToolPanel(params: CloseChartToolPanelParams): void;
+    closeChartToolPanel(params: CloseChartToolPanelParams): void | undefined;
     /** Used to programmatically create charts from a range. */
     createRangeChart(params: CreateRangeChartParams): ChartRef | undefined;
     /** Used to programmatically create pivot charts from a grid. */
@@ -645,6 +531,7 @@ export declare class GridApi<TData = any> {
     updateChart(params: UpdateChartParams): void;
     /** Restores a chart using the `ChartModel` that was previously obtained from `getChartModels()`. */
     restoreChart(chartModel: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined;
+    private assertClipboard;
     /** Copies data to clipboard by following the same rules as pressing Ctrl+C. */
     copyToClipboard(params?: IClipboardCopyParams): void;
     /** Cuts data to clipboard by following the same rules as pressing Ctrl+X. */
@@ -657,14 +544,20 @@ export declare class GridApi<TData = any> {
     copySelectedRangeDown(): void;
     /** Pastes the data from the Clipboard into the focused cell of the grid. If no grid cell is focused, calling this method has no effect. */
     pasteFromClipboard(): void;
-    /** Shows the column menu after and positions it relative to the provided button element. Use in conjunction with your own header template. */
+    /** @deprecated v31.1 Use `IHeaderParams.showColumnMenu` within a header component, or `api.showColumnMenu` elsewhere. */
     showColumnMenuAfterButtonClick(colKey: string | Column, buttonElement: HTMLElement): void;
-    /** Shows the column menu after and positions it relative to the mouse event. Use in conjunction with your own header template. */
+    /** @deprecated v31.1 Use `IHeaderParams.showColumnMenuAfterMouseClick` within a header component, or `api.showColumnMenu` elsewhere. */
     showColumnMenuAfterMouseClick(colKey: string | Column, mouseEvent: MouseEvent | Touch): void;
+    /** Show the column chooser. */
+    showColumnChooser(params?: ColumnChooserParams): void;
+    /** Show the filter for the provided column. */
+    showColumnFilter(colKey: string | Column): void;
+    /** Show the column menu for the provided column. */
+    showColumnMenu(colKey: string | Column): void;
     /** Hides any visible context menu or column menu. */
     hidePopupMenu(): void;
-    /** DOM element to use as the popup parent for grid popups (context menu, column menu etc). */
-    setPopupParent(ePopupParent: HTMLElement): void;
+    /** Hide the column chooser if visible. */
+    hideColumnChooser(): void;
     /** Navigates the grid focus to the next cell, as if tabbing. */
     tabToNextCell(event?: KeyboardEvent): boolean;
     /** Navigates the grid focus to the previous cell, as if shift-tabbing. */
@@ -679,7 +572,7 @@ export declare class GridApi<TData = any> {
     stopEditing(cancel?: boolean): void;
     /** Start editing the provided cell. If another cell is editing, the editing will be stopped in that other cell. */
     startEditingCell(params: StartEditingCellParams): void;
-    /** Add an aggregation function with the specified key. */
+    /** @deprecated v31.1 addAggFunc(key, func) is  deprecated, please use addAggFuncs({ key: func }) instead. */
     addAggFunc(key: string, aggFunc: IAggFunc): void;
     /** Add aggregations function with the specified keys. */
     addAggFuncs(aggFuncs: {
@@ -691,6 +584,15 @@ export declare class GridApi<TData = any> {
     applyServerSideTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult | undefined;
     /** Batch apply transactions to the server side row model. */
     applyServerSideTransactionAsync(transaction: ServerSideTransaction, callback?: (res: ServerSideTransactionResult) => void): void;
+    /**
+     * Applies row data to a server side store.
+     * New rows will overwrite rows at the same index in the same way as if provided by a datasource success callback.
+    */
+    applyServerSideRowData(params: {
+        successParams: LoadSuccessParams;
+        route?: string[];
+        startRow?: number;
+    }): void;
     /** Gets all failed server side loads to retry. */
     retryServerSideLoads(): void;
     flushServerSideAsyncTransactions(): void;
@@ -700,7 +602,6 @@ export declare class GridApi<TData = any> {
     applyTransactionAsync(rowDataTransaction: RowDataTransaction<TData>, callback?: (res: RowNodeTransaction<TData>) => void): void;
     /** Executes any remaining asynchronous grid transactions, if any are waiting to be executed. */
     flushAsyncTransactions(): void;
-    setSuppressModelUpdateAfterUpdateTransaction(value: boolean): void;
     /**
      * Marks all the currently loaded blocks in the cache for reload.
      * If you have 10 blocks in the cache, all 10 will be marked for reload.
@@ -721,10 +622,6 @@ export declare class GridApi<TData = any> {
      * Once the store refresh is complete, the storeRefreshed event is fired.
      */
     refreshServerSide(params?: RefreshServerSideParams): void;
-    /** @deprecated v28 use `refreshServerSide` instead */
-    refreshServerSideStore(params?: RefreshServerSideParams): void;
-    /** @deprecated v28 use `getServerSideGroupLevelState` instead */
-    getServerSideStoreState(): ServerSideGroupLevelState[];
     /** Returns info on all server side group levels. */
     getServerSideGroupLevelState(): ServerSideGroupLevelState[];
     /** The row count defines how many rows the grid allows scrolling to. */
@@ -735,24 +632,18 @@ export declare class GridApi<TData = any> {
      * Returns an object representing the state of the cache. This is useful for debugging and understanding how the cache is working.
      */
     getCacheBlockState(): any;
-    /** Get the index of the first displayed row due to scrolling (includes invisible rendered rows in the buffer). */
+    /** @deprecated v31.1 `getFirstDisplayedRow` is deprecated. Please use `getFirstDisplayedRowIndex` instead. */
     getFirstDisplayedRow(): number;
-    /** Get the index of the last displayed row due to scrolling (includes invisible rendered rows in the buffer). */
+    /** Get the index of the first displayed row due to scrolling (includes invisible rendered rows in the buffer). */
+    getFirstDisplayedRowIndex(): number;
+    /** @deprecated v31.1 `getLastDisplayedRow` is deprecated. Please use `getLastDisplayedRowIndex` instead. */
     getLastDisplayedRow(): number;
+    /** Get the index of the last displayed row due to scrolling (includes invisible rendered rows in the buffer). */
+    getLastDisplayedRowIndex(): number;
     /** Returns the displayed `RowNode` at the given `index`. */
     getDisplayedRowAtIndex(index: number): IRowNode<TData> | undefined;
     /** Returns the total number of displayed rows. */
     getDisplayedRowCount(): number;
-    /** Resets the data type definitions. This will update the columns in the grid. */
-    setDataTypeDefinitions(dataTypeDefinitions: {
-        [cellDataType: string]: DataTypeDefinition<TData>;
-    }): void;
-    /**
-     * Set whether the grid paginates the data or not.
-     *  - `true` to enable pagination
-     *  - `false` to disable pagination
-     */
-    setPagination(value: boolean): void;
     /**
      * Returns `true` when the last page is known.
      * This will always be `true` if you are using the Client-Side Row Model for pagination.
@@ -761,8 +652,6 @@ export declare class GridApi<TData = any> {
     paginationIsLastPageFound(): boolean;
     /** Returns how many rows are being shown per page. */
     paginationGetPageSize(): number;
-    /** Sets the `paginationPageSize`, then re-paginates the grid so the changes are applied immediately. */
-    paginationSetPageSize(size?: number): void;
     /** Returns the 0-based index of the page which is showing. */
     paginationGetCurrentPage(): number;
     /** Returns the total number of pages. Returns `null` if `paginationIsLastPageFound() === false`. */
@@ -779,4 +668,589 @@ export declare class GridApi<TData = any> {
     paginationGoToLastPage(): void;
     /** Goes to the specified page. If the page requested doesn't exist, it will go to the last page. */
     paginationGoToPage(page: number): void;
+    /**
+     * Adjusts the size of columns to fit the available horizontal space.
+     *
+     * Note: it is not recommended to call this method rapidly e.g. in response
+     * to window resize events or as the container size is animated. This can
+     * cause the scrollbar to flicker. Use column flex for smoother results.
+     *
+     * If inferring cell data types with custom column types
+     * and row data is provided asynchronously, the column sizing will happen asynchronously when row data is added.
+     * To always perform this synchronously, set `cellDataType = false` on the default column definition.
+     **/
+    sizeColumnsToFit(paramsOrGridWidth?: ISizeColumnsToFitParams | number): void;
+    /** Call this if you want to open or close a column group. */
+    setColumnGroupOpened(group: ProvidedColumnGroup | string, newValue: boolean): void;
+    /** Returns the column group with the given name. */
+    getColumnGroup(name: string, instanceId?: number): ColumnGroup | null;
+    /** Returns the provided column group with the given name. */
+    getProvidedColumnGroup(name: string): ProvidedColumnGroup | null;
+    /** Returns the display name for a column. Useful if you are doing your own header rendering and want the grid to work out if `headerValueGetter` is used, or if you are doing your own column management GUI, to know what to show as the column name. */
+    getDisplayNameForColumn(column: Column, location: HeaderLocation): string;
+    /** Returns the display name for a column group (when grouping columns). */
+    getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: HeaderLocation): string;
+    /** Returns the column with the given `colKey`, which can either be the `colId` (a string) or the `colDef` (an object). */
+    getColumn<TValue = any>(key: string | ColDef<TData, TValue> | Column<TValue>): Column<TValue> | null;
+    /** Returns all the columns, regardless of visible or not. */
+    getColumns(): Column[] | null;
+    /** Applies the state of the columns from a previous state. Returns `false` if one or more columns could not be found. */
+    applyColumnState(params: ApplyColumnStateParams): boolean;
+    /** Gets the state of the columns. Typically used when saving column state. */
+    getColumnState(): ColumnState[];
+    /** Sets the state back to match the originally provided column definitions. */
+    resetColumnState(): void;
+    /** Gets the state of the column groups. Typically used when saving column group state. */
+    getColumnGroupState(): {
+        groupId: string;
+        open: boolean;
+    }[];
+    /** Sets the state of the column group state from a previous state. */
+    setColumnGroupState(stateItems: ({
+        groupId: string;
+        open: boolean;
+    })[]): void;
+    /** Sets the state back to match the originally provided column definitions. */
+    resetColumnGroupState(): void;
+    /** Returns `true` if pinning left or right, otherwise `false`. */
+    isPinning(): boolean;
+    /** Returns `true` if pinning left, otherwise `false`. */
+    isPinningLeft(): boolean;
+    /** Returns `true` if pinning right, otherwise `false`. */
+    isPinningRight(): boolean;
+    /** Returns the column to the right of the provided column, taking into consideration open / closed column groups and visible columns. This is useful if you need to know what column is beside yours e.g. if implementing your own cell navigation. */
+    getDisplayedColAfter(col: Column): Column | null;
+    /** Same as `getVisibleColAfter` except gives column to the left. */
+    getDisplayedColBefore(col: Column): Column | null;
+    /** @deprecated v31.1 setColumnVisible(key, visible) deprecated, please use setColumnsVisible([key], visible) instead. */
+    setColumnVisible(key: string | Column, visible: boolean): void;
+    /** Sets the visibility of columns. Key can be the column ID or `Column` object. */
+    setColumnsVisible(keys: (string | Column)[], visible: boolean): void;
+    /** @deprecated v31.1 setColumnPinned(key, pinned) deprecated, please use setColumnsPinned([key], pinned) instead. */
+    setColumnPinned(key: string | ColDef | Column, pinned: ColumnPinnedType): void;
+    /** Set a column's pinned / unpinned state. Key can be the column ID, field, `ColDef` object or `Column` object. */
+    setColumnsPinned(keys: (string | ColDef | Column)[], pinned: ColumnPinnedType): void;
+    /**
+     * Returns all the grid columns, same as `getColumns()`, except
+     *
+     *  a) it has the order of the columns that are presented in the grid
+     *
+     *  b) it's after the 'pivot' step, so if pivoting, has the value columns for the pivot.
+     */
+    getAllGridColumns(): Column[];
+    /** Same as `getAllDisplayedColumns` but just for the pinned left portion of the grid. */
+    getDisplayedLeftColumns(): Column[];
+    /** Same as `getAllDisplayedColumns` but just for the center portion of the grid. */
+    getDisplayedCenterColumns(): Column[];
+    /** Same as `getAllDisplayedColumns` but just for the pinned right portion of the grid. */
+    getDisplayedRightColumns(): Column[];
+    /** Returns all columns currently displayed (e.g. are visible and if in a group, the group is showing the columns) for the pinned left, centre and pinned right portions of the grid. */
+    getAllDisplayedColumns(): Column[];
+    /** Same as `getAllGridColumns()`, except only returns rendered columns, i.e. columns that are not within the viewport and therefore not rendered, due to column virtualisation, are not displayed. */
+    getAllDisplayedVirtualColumns(): Column[];
+    /** @deprecated v31.1 moveColumn(key, toIndex) deprecated, please use moveColumns([key], toIndex) instead. */
+    moveColumn(key: string | ColDef | Column, toIndex: number): void;
+    /** Moves the column at `fromIdex` to `toIndex`. The column is first removed, then added at the `toIndex` location, thus index locations will change to the right of the column after the removal. */
+    moveColumnByIndex(fromIndex: number, toIndex: number): void;
+    /** Moves columns to `toIndex`. The columns are first removed, then added at the `toIndex` location, thus index locations will change to the right of the column after the removal. */
+    moveColumns(columnsToMoveKeys: (string | ColDef | Column)[], toIndex: number): void;
+    /** Move the column to a new position in the row grouping order. */
+    moveRowGroupColumn(fromIndex: number, toIndex: number): void;
+    /** Sets the agg function for a column. `aggFunc` can be one of the built-in aggregations or a custom aggregation by name or direct function. */
+    setColumnAggFunc(key: string | ColDef | Column, aggFunc: string | IAggFunc | null | undefined): void;
+    /** @deprecated v31.1 setColumnWidths(key, newWidth) deprecated, please use setColumnWidths( [{key: newWidth}] ) instead. */
+    setColumnWidth(key: string | ColDef | Column, newWidth: number, finished?: boolean, source?: ColumnEventType): void;
+    /** Sets the column widths of the columns provided. The finished flag gets included in the resulting event and not used internally by the grid. The finished flag is intended for dragging, where a dragging action will produce many `columnWidth` events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to `true`. */
+    setColumnWidths(columnWidths: {
+        key: string | ColDef | Column;
+        newWidth: number;
+    }[], finished?: boolean, source?: ColumnEventType): void;
+    /** Get the pivot mode. */
+    isPivotMode(): boolean;
+    /** Returns the pivot result column for the given `pivotKeys` and `valueColId`. Useful to then call operations on the pivot column. */
+    getPivotResultColumn<TValue = any>(pivotKeys: string[], valueColKey: string | ColDef<TData, TValue> | Column<TValue>): Column<TValue> | null;
+    /** Set the value columns to the provided list of columns. */
+    setValueColumns(colKeys: (string | ColDef | Column)[]): void;
+    /** Get a list of the existing value columns. */
+    getValueColumns(): Column[];
+    /** @deprecated v31.1 removeValueColumn(colKey) deprecated, please use removeValueColumns([colKey]) instead. */
+    removeValueColumn(colKey: (string | ColDef | Column)): void;
+    /** Remove the given list of columns from the existing set of value columns. */
+    removeValueColumns(colKeys: (string | ColDef | Column)[]): void;
+    /** @deprecated v31.1 addValueColumn(colKey) deprecated, please use addValueColumns([colKey]) instead. */
+    addValueColumn(colKey: (string | ColDef | Column)): void;
+    /** Add the given list of columns to the existing set of value columns. */
+    addValueColumns(colKeys: (string | ColDef | Column)[]): void;
+    /** Set the row group columns. */
+    setRowGroupColumns(colKeys: (string | ColDef | Column)[]): void;
+    /** @deprecated v31.1 removeRowGroupColumn(colKey) deprecated, please use removeRowGroupColumns([colKey]) instead. */
+    removeRowGroupColumn(colKey: string | ColDef | Column): void;
+    /** Remove columns from the row groups. */
+    removeRowGroupColumns(colKeys: (string | ColDef | Column)[]): void;
+    /** @deprecated v31.1 addRowGroupColumn(colKey) deprecated, please use addRowGroupColumns([colKey]) instead. */
+    addRowGroupColumn(colKey: string | ColDef | Column): void;
+    /** Add columns to the row groups. */
+    addRowGroupColumns(colKeys: (string | ColDef | Column)[]): void;
+    /** Get row group columns. */
+    getRowGroupColumns(): Column[];
+    /** Set the pivot columns. */
+    setPivotColumns(colKeys: (string | ColDef | Column)[]): void;
+    /** @deprecated v31.1 removePivotColumn(colKey) deprecated, please use removePivotColumns([colKey]) instead. */
+    removePivotColumn(colKey: string | ColDef | Column): void;
+    /** Remove pivot columns. */
+    removePivotColumns(colKeys: (string | ColDef | Column)[]): void;
+    /** @deprecated v31.1 addPivotColumn(colKey) deprecated, please use addPivotColumns([colKey]) instead. */
+    addPivotColumn(colKey: string | ColDef | Column): void;
+    /** Add pivot columns. */
+    addPivotColumns(colKeys: (string | ColDef | Column)[]): void;
+    /** Get the pivot columns. */
+    getPivotColumns(): Column[];
+    /** Same as `getAllDisplayedColumnGroups` but just for the pinned left portion of the grid. */
+    getLeftDisplayedColumnGroups(): IHeaderColumn[];
+    /** Same as `getAllDisplayedColumnGroups` but just for the center portion of the grid. */
+    getCenterDisplayedColumnGroups(): IHeaderColumn[];
+    /** Same as `getAllDisplayedColumnGroups` but just for the pinned right portion of the grid. */
+    getRightDisplayedColumnGroups(): IHeaderColumn[];
+    /** Returns all 'root' column headers. If you are not grouping columns, these return the columns. If you are grouping, these return the top level groups - you can navigate down through each one to get the other lower level headers and finally the columns at the bottom. */
+    getAllDisplayedColumnGroups(): IHeaderColumn[] | null;
+    /** @deprecated v31.1 autoSizeColumn(key) deprecated, please use autoSizeColumns([colKey]) instead. */
+    autoSizeColumn(key: string | ColDef | Column, skipHeader?: boolean): void;
+    /**
+     * Auto-sizes columns based on their contents. If inferring cell data types with custom column types
+     * and row data is provided asynchronously, the column sizing will happen asynchronously when row data is added.
+     * To always perform this synchronously, set `cellDataType = false` on the default column definition.
+     */
+    autoSizeColumns(keys: (string | ColDef | Column)[], skipHeader?: boolean): void;
+    /**
+     * Calls `autoSizeColumns` on all displayed columns. If inferring cell data types with custom column types
+     * and row data is provided asynchronously, the column sizing will happen asynchronously when row data is added.
+     * To always perform this synchronously, set `cellDataType = false` on the default column definition.
+     */
+    autoSizeAllColumns(skipHeader?: boolean): void;
+    /** Set the pivot result columns. */
+    setPivotResultColumns(colDefs: (ColDef | ColGroupDef)[]): void;
+    /** Returns the grid's pivot result columns. */
+    getPivotResultColumns(): Column[] | null;
+    /** Get the current state of the grid. Can be used in conjunction with the `initialState` grid option to save and restore grid state. */
+    getState(): GridState;
+    /**
+     * Returns the grid option value for a provided key.
+     */
+    getGridOption<Key extends keyof GridOptions<TData>>(key: Key): GridOptions<TData>[Key];
+    /**
+     * Updates a single gridOption to the new value provided. (Cannot be used on `Initial` properties.)
+     * If updating multiple options, it is recommended to instead use `api.updateGridOptions()` which batches update logic.
+     */
+    setGridOption<Key extends ManagedGridOptionKey>(key: Key, value: GridOptions<TData>[Key]): void;
+    /**
+     * Updates the provided subset of gridOptions with the provided values. (Cannot be used on `Initial` properties.)
+     */
+    updateGridOptions<TDataUpdate extends TData>(options: ManagedGridOptions<TDataUpdate>): void;
+    /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
+    __internalUpdateGridOptions(options: GridOptions): void;
+    private deprecatedUpdateGridOption;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Set the top pinned rows. Call with no rows / undefined to clear top pinned rows.
+     **/
+    setPivotMode(pivotMode: boolean): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Set the top pinned rows. Call with no rows / undefined to clear top pinned rows.
+     **/
+    setPinnedTopRowData(rows?: any[]): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Set the bottom pinned rows. Call with no rows / undefined to clear bottom pinned rows.
+     * */
+    setPinnedBottomRowData(rows?: any[]): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * DOM element to use as the popup parent for grid popups (context menu, column menu etc).
+     * */
+    setPopupParent(ePopupParent: HTMLElement): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     */
+    setSuppressModelUpdateAfterUpdateTransaction(value: boolean): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Resets the data type definitions. This will update the columns in the grid.
+     * */
+    setDataTypeDefinitions(dataTypeDefinitions: {
+        [cellDataType: string]: DataTypeDefinition<TData>;
+    }): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Set whether the grid paginates the data or not.
+     *  - `true` to enable pagination
+     *  - `false` to disable pagination
+     */
+    setPagination(value: boolean): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Sets the `paginationPageSize`, then re-paginates the grid so the changes are applied immediately.
+     * */
+    paginationSetPageSize(size?: number): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Resets the side bar to the provided configuration. The parameter is the same as the sideBar grid property. The side bar is re-created from scratch with the new config.
+     * */
+    setSideBar(def: SideBarDef | string | string[] | boolean): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     */
+    setSuppressClipboardPaste(value: boolean): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     */
+    setGroupRemoveSingleChildren(value: boolean): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     */
+    setGroupRemoveLowestSingleChildren(value: boolean): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     */
+    setGroupDisplayType(value: RowGroupingDisplayType): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Sets the `groupIncludeFooter` property
+     */
+    setGroupIncludeFooter(value: boolean | UseGroupFooter<TData>): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Sets the `groupIncludeTotalFooter` property
+     */
+    setGroupIncludeTotalFooter(value: boolean): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     */
+    setRowClass(className: string | undefined): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Sets the `deltaSort` property
+     * */
+    setDeltaSort(enable: boolean): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Sets the `suppressRowDrag` property.
+     * */
+    setSuppressRowDrag(value: boolean): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Sets the `suppressMoveWhenRowDragging` property.
+     * */
+    setSuppressMoveWhenRowDragging(value: boolean): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Sets the `suppressRowClickSelection` property.
+     * */
+    setSuppressRowClickSelection(value: boolean): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Enable/disable the Advanced Filter
+     * */
+    setEnableAdvancedFilter(enabled: boolean): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Updates the `includeHiddenColumnsInAdvancedFilter` grid option.
+     * By default hidden columns are excluded from the Advanced Filter.
+     * Set to `true` to include them.
+     */
+    setIncludeHiddenColumnsInAdvancedFilter(value: boolean): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * DOM element to use as the parent for the Advanced Filter, to allow it to appear outside of the grid.
+     * Set to `null` to appear inside the grid.
+     */
+    setAdvancedFilterParent(advancedFilterParent: HTMLElement | null): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Updates the Advanced Filter Builder parameters.
+     * */
+    setAdvancedFilterBuilderParams(params?: IAdvancedFilterBuilderParams): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Pass a Quick Filter text into the grid for filtering.
+     * */
+    setQuickFilter(newFilter: string): void;
+    /**
+     * @deprecated As of v30, hidden columns are excluded from the Quick Filter by default. To include hidden columns, use `setIncludeHiddenColumnsInQuickFilter` instead.
+     */
+    setExcludeHiddenColumnsFromQuickFilter(value: boolean): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Updates the `includeHiddenColumnsInQuickFilter` grid option.
+     * By default hidden columns are excluded from the Quick Filter.
+     * Set to `true` to include them.
+     */
+    setIncludeHiddenColumnsInQuickFilter(value: boolean): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Updates the `quickFilterParser` grid option,
+     * which changes how the Quick Filter splits the Quick Filter text into search terms.
+     */
+    setQuickFilterParser(quickFilterParser?: (quickFilter: string) => string[]): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Updates the `quickFilterMatcher` grid option,
+     * which changes the matching logic for whether a row passes the Quick Filter.
+     */
+    setQuickFilterMatcher(quickFilterMatcher?: (quickFilterParts: string[], rowQuickFilterAggregateText: string) => boolean): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * If `true`, the horizontal scrollbar will always be present, even if not required. Otherwise, it will only be displayed when necessary.
+     * */
+    setAlwaysShowHorizontalScroll(show: boolean): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * If `true`, the vertical scrollbar will always be present, even if not required. Otherwise it will only be displayed when necessary.
+     * */
+    setAlwaysShowVerticalScroll(show: boolean): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     */
+    setFunctionsReadOnly(readOnly: boolean): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Call to set new column definitions. The grid will redraw all the column headers, and then redraw all of the rows.
+     */
+    setColumnDefs(colDefs: (ColDef<TData> | ColGroupDef<TData>)[], source?: ColumnEventType): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Call to set new auto group column definition. The grid will recreate any auto-group columns if present.
+     * */
+    setAutoGroupColumnDef(colDef: ColDef<TData>, source?: ColumnEventType): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Call to set new Default Column Definition.
+     * */
+    setDefaultColDef(colDef: ColDef<TData>, source?: ColumnEventType): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Call to set new Column Types.
+     * */
+    setColumnTypes(columnTypes: {
+        string: ColDef<TData>;
+    }, source?: ColumnEventType): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Sets the `treeData` property.
+     * */
+    setTreeData(newTreeData: boolean): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Set new datasource for Server-Side Row Model.
+     * */
+    setServerSideDatasource(datasource: IServerSideDatasource): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *
+     * Note this purges all the cached data and reloads all the rows of the grid.
+     * */
+    setCacheBlockSize(blockSize: number): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Set new datasource for Infinite Row Model.
+     * */
+    setDatasource(datasource: IDatasource): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Set new datasource for Viewport Row Model.
+     * */
+    setViewportDatasource(viewportDatasource: IViewportDatasource): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Set the row data.
+     * */
+    setRowData(rowData: TData[]): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Sets the `enableCellTextSelection` property.
+     * */
+    setEnableCellTextSelection(selectable: boolean): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Sets the height in pixels for the row containing the column label header.
+     * */
+    setHeaderHeight(headerHeight?: number): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Switch between layout options: `normal`, `autoHeight`, `print`.
+     * Defaults to `normal` if no domLayout provided.
+     */
+    setDomLayout(domLayout?: DomLayoutType): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Sets the preferred direction for the selection fill handle.
+     * */
+    setFillHandleDirection(direction: 'x' | 'y' | 'xy'): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Sets the height in pixels for the rows containing header column groups.
+     * */
+    setGroupHeaderHeight(headerHeight?: number): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Sets the height in pixels for the row containing the floating filters.
+     * */
+    setFloatingFiltersHeight(headerHeight?: number): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Sets the height in pixels for the row containing the columns when in pivot mode.
+     * */
+    setPivotHeaderHeight(headerHeight?: number): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Sets the height in pixels for the row containing header column groups when in pivot mode.
+     * */
+    setPivotGroupHeaderHeight(headerHeight?: number): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    setAnimateRows(animateRows: boolean): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    setIsExternalFilterPresent(isExternalFilterPresentFunc: () => boolean): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    setDoesExternalFilterPass(doesExternalFilterPassFunc: (node: IRowNode) => boolean): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    setNavigateToNextCell(navigateToNextCellFunc: (params: NavigateToNextCellParams) => (CellPosition | null)): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    setTabToNextCell(tabToNextCellFunc: (params: TabToNextCellParams) => (CellPosition | null)): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    setTabToNextHeader(tabToNextHeaderFunc: (params: TabToNextHeaderParams) => (HeaderPosition | null)): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    setNavigateToNextHeader(navigateToNextHeaderFunc: (params: NavigateToNextHeaderParams) => (HeaderPosition | null)): void;
+    setRowGroupPanelShow(rowGroupPanelShow: 'always' | 'onlyWhenGrouping' | 'never'): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    setGetGroupRowAgg(getGroupRowAggFunc: (params: GetGroupRowAggParams) => any): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    setGetBusinessKeyForNode(getBusinessKeyForNodeFunc: (nodes: IRowNode) => string): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    setGetChildCount(getChildCountFunc: (dataItem: any) => number): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    setProcessRowPostCreate(processRowPostCreateFunc: (params: ProcessRowParams) => void): void;
+    /**
+     * @deprecated v31 `getRowId` is a static property and cannot be updated.
+     *  */
+    setGetRowId(getRowIdFunc: GetRowIdFunc): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    setGetRowClass(rowClassFunc: (params: RowClassParams) => string | string[]): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    setIsFullWidthRow(isFullWidthRowFunc: (params: IsFullWidthRowParams) => boolean): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    setIsRowSelectable(isRowSelectableFunc: IsRowSelectable): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    setIsRowMaster(isRowMasterFunc: IsRowMaster): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    setPostSortRows(postSortRowsFunc: (params: PostSortRowsParams) => void): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    setGetDocument(getDocumentFunc: () => Document): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    setGetContextMenuItems(getContextMenuItemsFunc: GetContextMenuItems): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    setGetMainMenuItems(getMainMenuItemsFunc: GetMainMenuItems): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    setProcessCellForClipboard(processCellForClipboardFunc: (params: ProcessCellForExportParams) => any): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    setSendToClipboard(sendToClipboardFunc: (params: {
+        data: string;
+    }) => void): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    setProcessCellFromClipboard(processCellFromClipboardFunc: (params: ProcessCellForExportParams) => any): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    setProcessPivotResultColDef(processPivotResultColDefFunc: (colDef: ColDef) => void): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    setProcessPivotResultColGroupDef(processPivotResultColGroupDefFunc: (colDef: ColDef) => void): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    setPostProcessPopup(postProcessPopupFunc: (params: PostProcessPopupParams) => void): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    setInitialGroupOrderComparator(initialGroupOrderComparatorFunc: (params: InitialGroupOrderComparatorParams) => number): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    setGetChartToolbarItems(getChartToolbarItemsFunc: GetChartToolbarItems): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    setPaginationNumberFormatter(paginationNumberFormatterFunc: (params: PaginationNumberFormatterParams) => string): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    setGetServerSideGroupLevelParams(getServerSideGroupLevelParamsFunc: (params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    setIsServerSideGroupOpenByDefault(isServerSideGroupOpenByDefaultFunc: (params: IsServerSideGroupOpenByDefaultParams) => boolean): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    setIsApplyServerSideTransaction(isApplyServerSideTransactionFunc: IsApplyServerSideTransaction): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    setIsServerSideGroup(isServerSideGroupFunc: IsServerSideGroup): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    setGetServerSideGroupKey(getServerSideGroupKeyFunc: GetServerSideGroupKey): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    setGetRowStyle(rowStyleFunc: (params: RowClassParams) => {}): void;
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    setGetRowHeight(rowHeightFunc: (params: RowHeightParams) => number): void;
 }

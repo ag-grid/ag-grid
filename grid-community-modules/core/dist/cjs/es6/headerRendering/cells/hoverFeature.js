@@ -16,7 +16,7 @@ class HoverFeature extends beanStub_1.BeanStub {
         this.element = element;
     }
     postConstruct() {
-        if (this.gridOptionsService.is('columnHoverHighlight')) {
+        if (this.gridOptionsService.get('columnHoverHighlight')) {
             this.addMouseHoverListeners();
         }
     }
@@ -32,7 +32,7 @@ class HoverFeature extends beanStub_1.BeanStub {
     }
 }
 __decorate([
-    context_1.Autowired('columnHoverService')
+    (0, context_1.Autowired)('columnHoverService')
 ], HoverFeature.prototype, "columnHoverService", void 0);
 __decorate([
     context_1.PostConstruct

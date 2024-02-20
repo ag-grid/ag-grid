@@ -1,4 +1,4 @@
-// ag-grid-react v30.1.0
+// ag-grid-react v31.1.0
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -28,9 +28,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = __importStar(require("react"));
 var client_1 = require("react-dom/client");
 var client_side_row_model_1 = require("@ag-grid-community/client-side-row-model");
-var agGridReactUi_1 = require("./reactUi/agGridReactUi");
+var agGridReact_1 = require("./agGridReact");
 require("@ag-grid-community/styles/ag-grid.css");
-require("@ag-grid-community/styles/ag-theme-alpine.css");
+require("@ag-grid-community/styles/ag-theme-quartz.css");
 var App = function () {
     var _a = react_1.useState([
         { make: 'Toyota', model: 'Celica', price: 35000 },
@@ -46,13 +46,11 @@ var App = function () {
         setTimeout(function () { return setRowData(__spreadArray(__spreadArray([], rowData), rowData)); }, 2000);
     };
     return (react_1.default.createElement("div", { style: { display: 'flex' } },
-        react_1.default.createElement("div", { className: "ag-theme-alpine", style: { height: 400, width: 600, margin: 10 } },
-            react_1.default.createElement(agGridReactUi_1.AgGridReactUi, { defaultColDef: {
-                    resizable: true,
+        react_1.default.createElement("div", { className: "ag-theme-quartz", style: { height: 400, width: 600, margin: 10 } },
+            react_1.default.createElement(agGridReact_1.AgGridReact, { defaultColDef: {
                     filter: true,
                     flex: 1,
-                    sortable: true
-                }, rowSelection: "multiple", animateRows: true, onGridReady: onGridReady, rowData: rowData, columnDefs: colDefs, modules: [client_side_row_model_1.ClientSideRowModelModule] }))));
+                }, rowSelection: "multiple", onGridReady: onGridReady, rowData: rowData, columnDefs: colDefs, modules: [client_side_row_model_1.ClientSideRowModelModule] }))));
 };
 var root = client_1.createRoot(document.getElementById('root'));
 root.render(react_1.default.createElement(App, null));

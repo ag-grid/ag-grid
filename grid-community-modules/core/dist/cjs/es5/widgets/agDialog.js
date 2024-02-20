@@ -78,19 +78,25 @@ var AgDialog = /** @class */ (function (_super) {
     };
     AgDialog.prototype.renderComponent = function () {
         var eGui = this.getGui();
-        var _a = this.config, alwaysOnTop = _a.alwaysOnTop, modal = _a.modal, title = _a.title;
+        var _a = this.config, alwaysOnTop = _a.alwaysOnTop, modal = _a.modal, title = _a.title, afterGuiAttached = _a.afterGuiAttached;
         var translate = this.localeService.getLocaleTextFunc();
         var addPopupRes = this.popupService.addPopup({
             modal: modal,
             eChild: eGui,
             closeOnEsc: true,
-            closedCallback: this.destroy.bind(this),
+            closedCallback: this.onClosed.bind(this),
             alwaysOnTop: alwaysOnTop,
-            ariaLabel: title || translate('ariaLabelDialog', 'Dialog')
+            ariaLabel: title || translate('ariaLabelDialog', 'Dialog'),
+            afterGuiAttached: afterGuiAttached
         });
         if (addPopupRes) {
             this.close = addPopupRes.hideFunc;
         }
+    };
+    AgDialog.prototype.onClosed = function (event) {
+        var _a, _b;
+        this.destroy();
+        (_b = (_a = this.config).closedCallback) === null || _b === void 0 ? void 0 : _b.call(_a, event);
     };
     AgDialog.prototype.toggleMaximize = function () {
         var position = this.positionableFeature.getPosition();
@@ -113,8 +119,8 @@ var AgDialog = /** @class */ (function (_super) {
         this.refreshMaximizeIcon();
     };
     AgDialog.prototype.refreshMaximizeIcon = function () {
-        dom_1.setDisplayed(this.maximizeIcon, !this.isMaximized);
-        dom_1.setDisplayed(this.minimizeIcon, this.isMaximized);
+        (0, dom_1.setDisplayed)(this.maximizeIcon, !this.isMaximized);
+        (0, dom_1.setDisplayed)(this.minimizeIcon, this.isMaximized);
     };
     AgDialog.prototype.clearMaximizebleListeners = function () {
         if (this.maximizeListeners.length) {
@@ -165,16 +171,16 @@ var AgDialog = /** @class */ (function (_super) {
         var maximizeButtonComp = this.maximizeButtonComp =
             this.createBean(new component_1.Component(/* html */ "<div class=\"ag-dialog-button\"></span>"));
         var eGui = maximizeButtonComp.getGui();
-        this.maximizeIcon = icon_1.createIconNoSpan('maximize', this.gridOptionsService);
+        this.maximizeIcon = (0, icon_1.createIconNoSpan)('maximize', this.gridOptionsService);
         eGui.appendChild(this.maximizeIcon);
         this.maximizeIcon.classList.add('ag-panel-title-bar-button-icon');
-        this.minimizeIcon = icon_1.createIconNoSpan('minimize', this.gridOptionsService);
+        this.minimizeIcon = (0, icon_1.createIconNoSpan)('minimize', this.gridOptionsService);
         eGui.appendChild(this.minimizeIcon);
         this.minimizeIcon.classList.add('ag-panel-title-bar-button-icon');
         return maximizeButtonComp;
     };
     __decorate([
-        context_1.Autowired('popupService')
+        (0, context_1.Autowired)('popupService')
     ], AgDialog.prototype, "popupService", void 0);
     return AgDialog;
 }(agPanel_1.AgPanel));

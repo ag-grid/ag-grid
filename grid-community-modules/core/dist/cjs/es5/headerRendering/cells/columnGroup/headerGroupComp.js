@@ -53,8 +53,7 @@ var HeaderGroupComp = /** @class */ (function (_super) {
     HeaderGroupComp.prototype.checkWarnings = function () {
         var paramsAny = this.params;
         if (paramsAny.template) {
-            var message_1 = "AG Grid: A template was provided for Header Group Comp - templates are only supported for Header Comps (not groups)";
-            function_1.doOnce(function () { return console.warn(message_1); }, 'HeaderGroupComp.templateNotSupported');
+            (0, function_1.warnOnce)("A template was provided for Header Group Comp - templates are only supported for Header Comps (not groups)");
         }
     };
     HeaderGroupComp.prototype.setupExpandIcons = function () {
@@ -62,7 +61,7 @@ var HeaderGroupComp = /** @class */ (function (_super) {
         this.addInIcon("columnGroupOpened", "agOpened");
         this.addInIcon("columnGroupClosed", "agClosed");
         var expandAction = function (event) {
-            if (event_1.isStopPropagationForAgGrid(event)) {
+            if ((0, event_1.isStopPropagationForAgGrid)(event)) {
                 return;
             }
             var newExpandedValue = !_this.params.columnGroup.isExpanded();
@@ -71,7 +70,7 @@ var HeaderGroupComp = /** @class */ (function (_super) {
         this.addTouchAndClickListeners(this.eCloseIcon, expandAction);
         this.addTouchAndClickListeners(this.eOpenIcon, expandAction);
         var stopPropagationAction = function (event) {
-            event_1.stopPropagationForAgGrid(event);
+            (0, event_1.stopPropagationForAgGrid)(event);
         };
         // adding stopPropagation to the double click for the icons prevents double click action happening
         // when the icons are clicked. if the icons are double clicked, then the groups should open and
@@ -96,24 +95,24 @@ var HeaderGroupComp = /** @class */ (function (_super) {
         var columnGroup = this.params.columnGroup;
         if (columnGroup.isExpandable()) {
             var expanded = this.params.columnGroup.isExpanded();
-            dom_1.setDisplayed(this.eOpenIcon, expanded);
-            dom_1.setDisplayed(this.eCloseIcon, !expanded);
+            (0, dom_1.setDisplayed)(this.eOpenIcon, expanded);
+            (0, dom_1.setDisplayed)(this.eCloseIcon, !expanded);
         }
         else {
-            dom_1.setDisplayed(this.eOpenIcon, false);
-            dom_1.setDisplayed(this.eCloseIcon, false);
+            (0, dom_1.setDisplayed)(this.eOpenIcon, false);
+            (0, dom_1.setDisplayed)(this.eCloseIcon, false);
         }
     };
     HeaderGroupComp.prototype.addInIcon = function (iconName, refName) {
-        var eIcon = icon_1.createIconNoSpan(iconName, this.gridOptionsService, null);
+        var eIcon = (0, icon_1.createIconNoSpan)(iconName, this.gridOptionsService, null);
         if (eIcon) {
             this.getRefElement(refName).appendChild(eIcon);
         }
     };
     HeaderGroupComp.prototype.addGroupExpandIcon = function () {
         if (!this.params.columnGroup.isExpandable()) {
-            dom_1.setDisplayed(this.eOpenIcon, false);
-            dom_1.setDisplayed(this.eCloseIcon, false);
+            (0, dom_1.setDisplayed)(this.eOpenIcon, false);
+            (0, dom_1.setDisplayed)(this.eCloseIcon, false);
             return;
         }
     };
@@ -121,21 +120,21 @@ var HeaderGroupComp = /** @class */ (function (_super) {
         var _a;
         // no renderer, default text render
         var _b = this.params, displayName = _b.displayName, columnGroup = _b.columnGroup;
-        if (generic_1.exists(displayName)) {
-            var displayNameSanitised = string_1.escapeString(displayName);
-            this.getRefElement('agLabel').innerHTML = displayNameSanitised;
+        if ((0, generic_1.exists)(displayName)) {
+            var displayNameSanitised = (0, string_1.escapeString)(displayName, true);
+            this.getRefElement('agLabel').textContent = displayNameSanitised;
         }
         this.addOrRemoveCssClass('ag-sticky-label', !((_a = columnGroup.getColGroupDef()) === null || _a === void 0 ? void 0 : _a.suppressStickyLabel));
     };
     HeaderGroupComp.TEMPLATE = "<div class=\"ag-header-group-cell-label\" ref=\"agContainer\" role=\"presentation\">\n            <span ref=\"agLabel\" class=\"ag-header-group-text\" role=\"presentation\"></span>\n            <span ref=\"agOpened\" class=\"ag-header-icon ag-header-expand-icon ag-header-expand-icon-expanded\"></span>\n            <span ref=\"agClosed\" class=\"ag-header-icon ag-header-expand-icon ag-header-expand-icon-collapsed\"></span>\n        </div>";
     __decorate([
-        context_1.Autowired("columnModel")
+        (0, context_1.Autowired)("columnModel")
     ], HeaderGroupComp.prototype, "columnModel", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector("agOpened")
+        (0, componentAnnotations_1.RefSelector)("agOpened")
     ], HeaderGroupComp.prototype, "eOpenIcon", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector("agClosed")
+        (0, componentAnnotations_1.RefSelector)("agClosed")
     ], HeaderGroupComp.prototype, "eCloseIcon", void 0);
     return HeaderGroupComp;
 }(component_1.Component));

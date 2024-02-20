@@ -10,7 +10,6 @@ import { Events } from '../events.mjs';
 import { RefSelector } from '../widgets/componentAnnotations.mjs';
 import { RowNode } from '../entities/rowNode.mjs';
 import { stopPropagationForAgGrid } from '../utils/event.mjs';
-import { getAriaCheckboxStateName, setAriaLive } from '../utils/aria.mjs';
 export class CheckboxSelectionComponent extends Component {
     constructor() {
         super(/* html*/ `
@@ -20,7 +19,6 @@ export class CheckboxSelectionComponent extends Component {
     }
     postConstruct() {
         this.eCheckbox.setPassive(true);
-        setAriaLive(this.eCheckbox.getInputElement(), 'polite');
     }
     getCheckboxId() {
         return this.eCheckbox.getInputElement().id;
@@ -34,12 +32,8 @@ export class CheckboxSelectionComponent extends Component {
         this.showOrHideSelect();
     }
     onSelectionChanged() {
-        const translate = this.localeService.getLocaleTextFunc();
         const state = this.rowNode.isSelected();
-        const stateName = getAriaCheckboxStateName(translate, state);
-        const ariaLabel = translate('ariaRowToggleSelection', 'Press Space to toggle row selection');
         this.eCheckbox.setValue(state, true);
-        this.eCheckbox.setInputAriaLabel(`${ariaLabel} (${stateName})`);
     }
     onClicked(newValue, groupSelectsFiltered, event) {
         return this.rowNode.setSelectedParams({ newValue, rangeSelect: event.shiftKey, groupSelectsFiltered, event, source: 'checkboxSelected' });
@@ -57,7 +51,7 @@ export class CheckboxSelectionComponent extends Component {
             // we don't want the row clicked event to fire when selecting the checkbox, otherwise the row
             // would possibly get selected twice
             stopPropagationForAgGrid(event);
-            const groupSelectsFiltered = this.gridOptionsService.is('groupSelectsFiltered');
+            const groupSelectsFiltered = this.gridOptionsService.get('groupSelectsFiltered');
             const isSelected = this.eCheckbox.getValue();
             if (this.shouldHandleIndeterminateState(isSelected, groupSelectsFiltered)) {
                 // try toggling children to determine action.

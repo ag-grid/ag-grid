@@ -7,17 +7,17 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { RefSelector } from "./componentAnnotations.mjs";
 import { PostConstruct } from "../context/context.mjs";
 import { Component } from "./component.mjs";
-import { getInnerHeight, getInnerWidth, setDisplayed } from "../utils/dom.mjs";
+import { getInnerHeight, getInnerWidth, isVisible, setDisplayed } from "../utils/dom.mjs";
 import { createIconNoSpan } from "../utils/icon.mjs";
 import { PositionableFeature } from "../rendering/features/positionableFeature.mjs";
 export class AgPanel extends Component {
     constructor(config) {
         super(AgPanel.getTemplate(config));
-        this.closable = true;
         this.config = config;
+        this.closable = true;
     }
     static getTemplate(config) {
-        const cssIdentifier = (config && config.cssIdentifier) || 'default';
+        const cssIdentifier = config.cssIdentifier || 'default';
         return /* html */ `<div class="ag-panel ag-${cssIdentifier}-panel" tabindex="-1">
             <div ref="eTitleBar" class="ag-panel-title-bar ag-${cssIdentifier}-panel-title-bar ag-unselectable">
                 <span ref="eTitle" class="ag-panel-title-bar-title ag-${cssIdentifier}-panel-title-bar-title"></span>
@@ -151,7 +151,7 @@ export class AgPanel extends Component {
             this.closeButtonComp = this.destroyBean(this.closeButtonComp);
         }
         const eGui = this.getGui();
-        if (eGui && eGui.offsetParent) {
+        if (eGui && isVisible(eGui)) {
             this.close();
         }
         super.destroy();

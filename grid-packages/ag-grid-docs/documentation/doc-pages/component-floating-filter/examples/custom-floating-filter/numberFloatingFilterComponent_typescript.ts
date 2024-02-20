@@ -1,7 +1,6 @@
 import { IFloatingFilterComp, IFloatingFilterParams } from "@ag-grid-community/core";
 
 export interface CustomParams {
-    suppressFilterButton: boolean;
     color: string
 }
 
@@ -15,7 +14,7 @@ export class NumberFloatingFilterComponent implements IFloatingFilterComp {
         this.eGui.innerHTML = '&gt; <input style="width: 30px" type="number" min="0" />';
         this.currentValue = null;
         this.eFilterInput = this.eGui.querySelector('input')!;
-        this.eFilterInput.style.color = params.color;
+        this.eFilterInput.style.borderColor = params.color;
 
         const onInputBoxChanged = () => {
             if (this.eFilterInput.value === '') {

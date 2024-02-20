@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
-import { AgGridReact } from "@ag-grid-community/react";
-import { ColDef, DetailGridInfo, GridReadyEvent, ICellRendererParams } from '@ag-grid-community/core';
+import { AgGridReact, CustomCellRendererProps } from "@ag-grid-community/react";
+import { ColDef, DetailGridInfo, GridReadyEvent } from '@ag-grid-community/core';
 
-const DetailCellRenderer = ({ data, node, api }: ICellRendererParams) => {
+const DetailCellRenderer = ({ data, node, api }: CustomCellRendererProps) => {
   const rowId = node.id!;
 
   useEffect(() => {
@@ -46,7 +46,7 @@ const DetailCellRenderer = ({ data, node, api }: ICellRendererParams) => {
     </div>
     <AgGridReact
       data-id="detailGrid"
-      className="full-width-grid ag-theme-alpine"
+      className={"full-width-grid " +  /** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}
       columnDefs={colDefs}
       defaultColDef={defaultColDef}
       rowData={data.callRecords}

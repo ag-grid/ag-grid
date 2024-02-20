@@ -16,7 +16,7 @@ var events_1 = require("../events");
 var eventService_1 = require("../eventService");
 var function_1 = require("../utils/function");
 var generic_1 = require("../utils/generic");
-var object_1 = require("../utils/object");
+var frameworkEventListenerService_1 = require("../misc/frameworkEventListenerService");
 var RowNode = /** @class */ (function () {
     function RowNode(beans) {
         /** The current row index. If the row is filtered out or in a collapsed group, this value will be `null`. */
@@ -121,7 +121,7 @@ var RowNode = /** @class */ (function () {
         return oldNode;
     };
     RowNode.prototype.setDataAndId = function (data, id) {
-        var oldNode = generic_1.exists(this.id) ? this.createDaemonNode() : null;
+        var oldNode = (0, generic_1.exists)(this.id) ? this.createDaemonNode() : null;
         var oldData = this.data;
         this.data = data;
         this.updateDataOnDetailNode();
@@ -135,17 +135,28 @@ var RowNode = /** @class */ (function () {
         var isRowSelectableFunc = this.beans.gridOptionsService.get('isRowSelectable');
         this.setRowSelectable(isRowSelectableFunc ? isRowSelectableFunc(this) : true);
     };
-    RowNode.prototype.setRowSelectable = function (newVal) {
+    RowNode.prototype.setRowSelectable = function (newVal, suppressSelectionUpdate) {
         if (this.selectable !== newVal) {
             this.selectable = newVal;
             if (this.eventService) {
                 this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_SELECTABLE_CHANGED));
             }
-            var isGroupSelectsChildren = this.beans.gridOptionsService.is('groupSelectsChildren');
+            if (suppressSelectionUpdate) {
+                return;
+            }
+            var isGroupSelectsChildren = this.beans.gridOptionsService.get('groupSelectsChildren');
             if (isGroupSelectsChildren) {
                 var selected = this.calculateSelectedFromChildren();
                 this.setSelectedParams({
                     newValue: selected !== null && selected !== void 0 ? selected : false,
+                    source: 'selectableChanged',
+                });
+                return;
+            }
+            // if row is selected but shouldn't be selectable, then deselect.
+            if (this.isSelected() && !this.selectable) {
+                this.setSelectedParams({
+                    newValue: false,
                     source: 'selectableChanged',
                 });
             }
@@ -171,7 +182,7 @@ var RowNode = /** @class */ (function () {
                 // make sure id provided doesn't start with 'row-group-' as this is reserved. also check that
                 // it has 'startsWith' in case the user provided a number.
                 if (this.id !== null && typeof this.id === 'string' && this.id.startsWith(RowNode.ID_PREFIX_ROW_GROUP)) {
-                    console.error("AG Grid: Row IDs cannot start with " + RowNode.ID_PREFIX_ROW_GROUP + ", this is a reserved prefix for AG Grid's row grouping feature.");
+                    console.error("AG Grid: Row IDs cannot start with ".concat(RowNode.ID_PREFIX_ROW_GROUP, ", this is a reserved prefix for AG Grid's row grouping feature."));
                 }
                 // force id to be a string
                 if (this.id !== null && typeof this.id !== 'string') {
@@ -204,7 +215,7 @@ var RowNode = /** @class */ (function () {
         return keys;
     };
     RowNode.prototype.isPixelInRange = function (pixel) {
-        if (!generic_1.exists(this.rowTop) || !generic_1.exists(this.rowHeight)) {
+        if (!(0, generic_1.exists)(this.rowTop) || !(0, generic_1.exists)(this.rowHeight)) {
             return false;
         }
         return pixel >= this.rowTop && pixel < (this.rowTop + this.rowHeight);
@@ -344,7 +355,7 @@ var RowNode = /** @class */ (function () {
         this.__autoHeights[column.getId()] = cellHeight;
         if (cellHeight != null) {
             if (this.checkAutoHeightsDebounced == null) {
-                this.checkAutoHeightsDebounced = function_1.debounce(this.checkAutoHeights.bind(this), 1);
+                this.checkAutoHeightsDebounced = (0, function_1.debounce)(this.checkAutoHeights.bind(this), 1);
             }
             this.checkAutoHeightsDebounced();
         }
@@ -454,21 +465,18 @@ var RowNode = /** @class */ (function () {
         this.beans.rowNodeEventThrottle.dispatchExpanded(event);
         // when using footers we need to refresh the group row, as the aggregation
         // values jump between group and footer
-        if (this.beans.gridOptionsService.is('groupIncludeFooter')) {
+        if (this.sibling) {
             this.beans.rowRenderer.refreshCells({ rowNodes: [this] });
         }
     };
     RowNode.prototype.createGlobalRowEvent = function (type) {
-        return {
+        return this.beans.gridOptionsService.addGridCommonParams({
             type: type,
             node: this,
             data: this.data,
             rowIndex: this.rowIndex,
-            rowPinned: this.rowPinned,
-            context: this.beans.gridOptionsService.context,
-            api: this.beans.gridOptionsService.api,
-            columnApi: this.beans.gridOptionsService.columnApi
-        };
+            rowPinned: this.rowPinned
+        });
     };
     RowNode.prototype.dispatchLocalEvent = function (event) {
         if (this.eventService) {
@@ -501,7 +509,7 @@ var RowNode = /** @class */ (function () {
         // event, and also flashes the cell when the change occurs.
         var column = getColumnFromKey();
         var oldValue = this.getValueFromValueService(column);
-        if (this.beans.gridOptionsService.is('readOnlyEdit')) {
+        if (this.beans.gridOptionsService.get('readOnlyEdit')) {
             this.dispatchEventForSaveValueReadOnly(column, oldValue, newValue, eventSource);
             return false;
         }
@@ -518,9 +526,10 @@ var RowNode = /** @class */ (function () {
         var lockedClosedGroup = this.leafGroup && this.beans.columnModel.isPivotMode();
         var isOpenGroup = this.group && this.expanded && !this.footer && !lockedClosedGroup;
         // are we showing group footers
-        var groupFootersEnabled = this.beans.gridOptionsService.is('groupIncludeFooter');
+        var getGroupIncludeFooter = this.beans.gridOptionsService.getGroupIncludeFooter();
+        var groupFootersEnabled = getGroupIncludeFooter({ node: this });
         // if doing footers, we normally don't show agg data at group level when group is open
-        var groupAlwaysShowAggData = this.beans.gridOptionsService.is('groupSuppressBlankHeader');
+        var groupAlwaysShowAggData = this.beans.gridOptionsService.get('groupSuppressBlankHeader');
         // if doing grouping and footers, we don't want to include the agg value
         // in the header when the group is open
         var ignoreAggData = (isOpenGroup && groupFootersEnabled) && !groupAlwaysShowAggData;
@@ -528,28 +537,25 @@ var RowNode = /** @class */ (function () {
         return value;
     };
     RowNode.prototype.dispatchEventForSaveValueReadOnly = function (column, oldValue, newValue, eventSource) {
-        var event = {
+        var event = this.beans.gridOptionsService.addGridCommonParams({
             type: events_1.Events.EVENT_CELL_EDIT_REQUEST,
             event: null,
             rowIndex: this.rowIndex,
             rowPinned: this.rowPinned,
             column: column,
             colDef: column.getColDef(),
-            context: this.beans.gridOptionsService.context,
-            api: this.beans.gridOptionsService.api,
-            columnApi: this.beans.gridOptionsService.columnApi,
             data: this.data,
             node: this,
             oldValue: oldValue,
             newValue: newValue,
             value: newValue,
             source: eventSource
-        };
+        });
         this.beans.eventService.dispatchEvent(event);
     };
     RowNode.prototype.setGroupValue = function (colKey, newValue) {
         var column = this.beans.columnModel.getGridColumn(colKey);
-        if (generic_1.missing(this.groupData)) {
+        if ((0, generic_1.missing)(this.groupData)) {
             this.groupData = {};
         }
         var columnId = column.getColId();
@@ -563,18 +569,32 @@ var RowNode = /** @class */ (function () {
     // sets the data for an aggregation
     RowNode.prototype.setAggData = function (newAggData) {
         var _this = this;
-        // find out all keys that could potentially change
-        var colIds = object_1.getAllKeysInObjects([this.aggData, newAggData]);
         var oldAggData = this.aggData;
         this.aggData = newAggData;
         // if no event service, nobody has registered for events, so no need fire event
         if (this.eventService) {
-            colIds.forEach(function (colId) {
-                var column = _this.beans.columnModel.getGridColumn(colId);
+            var eventFunc = function (colId) {
                 var value = _this.aggData ? _this.aggData[colId] : undefined;
                 var oldValue = oldAggData ? oldAggData[colId] : undefined;
+                if (value === oldValue) {
+                    return;
+                }
+                // do a quick lookup - despite the event it's possible the column no longer exists
+                var column = _this.beans.columnModel.lookupGridColumn(colId);
+                if (!column) {
+                    return;
+                }
                 _this.dispatchCellChangedEvent(column, value, oldValue);
-            });
+            };
+            for (var key in this.aggData) {
+                eventFunc(key);
+            }
+            for (var key in newAggData) {
+                if (key in this.aggData) {
+                    continue;
+                } // skip if already fired an event.
+                eventFunc(key);
+            }
         }
     };
     RowNode.prototype.updateHasChildren = function () {
@@ -582,7 +602,7 @@ var RowNode = /** @class */ (function () {
         var newValue = (this.group && !this.footer) || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
         var isSsrm = this.beans.gridOptionsService.isRowModelType('serverSide');
         if (isSsrm) {
-            var isTreeData = this.beans.gridOptionsService.isTreeData();
+            var isTreeData = this.beans.gridOptionsService.get('treeData');
             var isGroupFunc = this.beans.gridOptionsService.get('isServerSideGroup');
             // stubs and footers can never have children, as they're grid rows. if tree data the presence of children
             // is determined by the isServerSideGroup callback, if not tree data then the rows group property will be set.
@@ -602,7 +622,7 @@ var RowNode = /** @class */ (function () {
         return this.__hasChildren;
     };
     RowNode.prototype.isEmptyRowGroupNode = function () {
-        return this.group && generic_1.missingOrEmpty(this.childrenAfterGroup);
+        return this.group && (0, generic_1.missingOrEmpty)(this.childrenAfterGroup);
     };
     RowNode.prototype.dispatchCellChangedEvent = function (column, newValue, oldValue) {
         var cellChangedEvent = {
@@ -628,7 +648,14 @@ var RowNode = /** @class */ (function () {
     * - `false` if the node cannot be expanded
     */
     RowNode.prototype.isExpandable = function () {
-        return (this.hasChildren() && !this.footer) || this.master ? true : false;
+        if (this.footer) {
+            return false;
+        }
+        if (this.beans.columnModel.isPivotMode()) {
+            // master detail and leaf groups aren't expandable in pivot mode.
+            return this.hasChildren() && !this.leafGroup;
+        }
+        return this.hasChildren() || !!this.master;
     };
     /** Returns:
      * - `true` if node is selected,
@@ -709,6 +736,10 @@ var RowNode = /** @class */ (function () {
         this.selected = newValue;
         if (this.eventService) {
             this.dispatchLocalEvent(this.createLocalRowEvent(RowNode.EVENT_ROW_SELECTED));
+            var sibling = this.sibling;
+            if (sibling && sibling.footer) {
+                sibling.dispatchLocalEvent(sibling.createLocalRowEvent(RowNode.EVENT_ROW_SELECTED));
+            }
         }
         var event = __assign(__assign({}, this.createGlobalRowEvent(events_1.Events.EVENT_ROW_SELECTED)), { event: e || null, source: source });
         this.beans.eventService.dispatchEvent(event);
@@ -765,17 +796,25 @@ var RowNode = /** @class */ (function () {
         return false;
     };
     /** Add an event listener. */
-    RowNode.prototype.addEventListener = function (eventType, listener) {
+    RowNode.prototype.addEventListener = function (eventType, userListener) {
+        var _a, _b;
         if (!this.eventService) {
             this.eventService = new eventService_1.EventService();
         }
+        if (this.beans.frameworkOverrides.shouldWrapOutgoing && !this.frameworkEventListenerService) {
+            this.eventService.setFrameworkOverrides(this.beans.frameworkOverrides);
+            this.frameworkEventListenerService = new frameworkEventListenerService_1.FrameworkEventListenerService(this.beans.frameworkOverrides);
+        }
+        var listener = (_b = (_a = this.frameworkEventListenerService) === null || _a === void 0 ? void 0 : _a.wrap(userListener)) !== null && _b !== void 0 ? _b : userListener;
         this.eventService.addEventListener(eventType, listener);
     };
     /** Remove event listener. */
-    RowNode.prototype.removeEventListener = function (eventType, listener) {
+    RowNode.prototype.removeEventListener = function (eventType, userListener) {
+        var _a, _b;
         if (!this.eventService) {
             return;
         }
+        var listener = (_b = (_a = this.frameworkEventListenerService) === null || _a === void 0 ? void 0 : _a.unwrap(userListener)) !== null && _b !== void 0 ? _b : userListener;
         this.eventService.removeEventListener(eventType, listener);
         if (this.eventService.noRegisteredListenersExist()) {
             this.eventService = null;
@@ -796,7 +835,7 @@ var RowNode = /** @class */ (function () {
         // all the way up to the column we are interested in, then we show the group cell.
         while (isCandidate && !foundFirstChildPath) {
             var parentRowNode = currentRowNode.parent;
-            var firstChild = generic_1.exists(parentRowNode) && currentRowNode.firstChild;
+            var firstChild = (0, generic_1.exists)(parentRowNode) && currentRowNode.firstChild;
             if (firstChild) {
                 if (parentRowNode.rowGroupColumn === rowGroupColumn) {
                     foundFirstChildPath = true;
@@ -816,6 +855,9 @@ var RowNode = /** @class */ (function () {
      * - `false` if the node is not a full width cell
      */
     RowNode.prototype.isFullWidthCell = function () {
+        if (this.detail) {
+            return true;
+        }
         var isFullWidthCellFunc = this.beans.gridOptionsService.getCallback('isFullWidthRow');
         return isFullWidthCellFunc ? isFullWidthCellFunc({ rowNode: this }) : false;
     };
@@ -842,8 +884,18 @@ var RowNode = /** @class */ (function () {
         if (this.sibling) {
             return;
         }
+        // we don't copy these properties as they cause the footer node
+        // to have properties which should be unique to the row.
+        var ignoredProperties = new Set([
+            'eventService',
+            '__objectId',
+            'sticky',
+        ]);
         var footerNode = new RowNode(this.beans);
         Object.keys(this).forEach(function (key) {
+            if (ignoredProperties.has(key)) {
+                return;
+            }
             footerNode[key] = _this[key];
         });
         footerNode.footer = true;
@@ -858,6 +910,17 @@ var RowNode = /** @class */ (function () {
         // sibling - but that's fine, as we can ignore this if the header is contracted.
         footerNode.sibling = this;
         this.sibling = footerNode;
+    };
+    // Only used by SSRM. In CSRM this is never used as footers should always be present for
+    // the purpose of exporting collapsed groups. In SSRM it is not possible to export collapsed
+    // groups anyway, so can destroy footers.
+    RowNode.prototype.destroyFooter = function () {
+        if (!this.sibling) {
+            return;
+        }
+        this.sibling.setRowTop(null);
+        this.sibling.setRowIndex(null);
+        this.sibling = undefined;
     };
     RowNode.ID_PREFIX_ROW_GROUP = 'row-group-';
     RowNode.ID_PREFIX_TOP_PINNED = 't-';

@@ -41,7 +41,7 @@ var PopupEditorWrapper = /** @class */ (function (_super) {
         var eGui = this.getGui();
         var params = this.params;
         var listener = function (event) {
-            if (!keyboard_1.isUserSuppressingKeyboardEvent(_this.gridOptionsService, event, params.node, params.column, true)) {
+            if (!(0, keyboard_1.isUserSuppressingKeyboardEvent)(_this.gridOptionsService, event, params.node, params.column, true)) {
                 params.onKeyDown(event);
             }
         };

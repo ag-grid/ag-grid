@@ -32,9 +32,9 @@ let CellNavigationService = class CellNavigationService extends beanStub_1.BeanS
         }
         else {
             const allColumns = this.columnModel.getAllDisplayedColumns();
-            const isRtl = this.gridOptionsService.is('enableRtl');
+            const isRtl = this.gridOptionsService.get('enableRtl');
             rowIndex = focusedCell.rowIndex;
-            column = leftKey !== isRtl ? allColumns[0] : array_1.last(allColumns);
+            column = leftKey !== isRtl ? allColumns[0] : (0, array_1.last)(allColumns);
         }
         return {
             rowIndex,
@@ -59,7 +59,7 @@ let CellNavigationService = class CellNavigationService extends beanStub_1.BeanS
                     pointer = this.getCellBelow(pointer);
                     break;
                 case keyCode_1.KeyCode.RIGHT:
-                    if (this.gridOptionsService.is('enableRtl')) {
+                    if (this.gridOptionsService.get('enableRtl')) {
                         pointer = this.getCellToLeft(pointer);
                     }
                     else {
@@ -67,7 +67,7 @@ let CellNavigationService = class CellNavigationService extends beanStub_1.BeanS
                     }
                     break;
                 case keyCode_1.KeyCode.LEFT:
-                    if (this.gridOptionsService.is('enableRtl')) {
+                    if (this.gridOptionsService.get('enableRtl')) {
                         pointer = this.getCellToRight(pointer);
                     }
                     else {
@@ -281,7 +281,7 @@ let CellNavigationService = class CellNavigationService extends beanStub_1.BeanS
         if (!newColumn) {
             newColumn = displayedColumns[0];
             const rowBelow = this.getRowBelow(gridCell);
-            if (generic_1.missing(rowBelow)) {
+            if ((0, generic_1.missing)(rowBelow)) {
                 return null;
             }
             // If we are tabbing and there is a paging panel present, tabbing should go
@@ -302,9 +302,9 @@ let CellNavigationService = class CellNavigationService extends beanStub_1.BeanS
         let newColumn = this.columnModel.getDisplayedColBefore(gridCell.column);
         // check if end of the row, and if so, go forward a row
         if (!newColumn) {
-            newColumn = array_1.last(displayedColumns);
+            newColumn = (0, array_1.last)(displayedColumns);
             const rowAbove = this.getRowAbove({ rowIndex: gridCell.rowIndex, rowPinned: gridCell.rowPinned });
-            if (generic_1.missing(rowAbove)) {
+            if ((0, generic_1.missing)(rowAbove)) {
                 return null;
             }
             // If we are tabbing and there is a paging panel present, tabbing should go
@@ -319,21 +319,21 @@ let CellNavigationService = class CellNavigationService extends beanStub_1.BeanS
     }
 };
 __decorate([
-    context_1.Autowired('columnModel')
+    (0, context_1.Autowired)('columnModel')
 ], CellNavigationService.prototype, "columnModel", void 0);
 __decorate([
-    context_1.Autowired('rowModel')
+    (0, context_1.Autowired)('rowModel')
 ], CellNavigationService.prototype, "rowModel", void 0);
 __decorate([
-    context_1.Autowired('rowRenderer')
+    (0, context_1.Autowired)('rowRenderer')
 ], CellNavigationService.prototype, "rowRenderer", void 0);
 __decorate([
-    context_1.Autowired('pinnedRowModel')
+    (0, context_1.Autowired)('pinnedRowModel')
 ], CellNavigationService.prototype, "pinnedRowModel", void 0);
 __decorate([
-    context_1.Autowired('paginationProxy')
+    (0, context_1.Autowired)('paginationProxy')
 ], CellNavigationService.prototype, "paginationProxy", void 0);
 CellNavigationService = __decorate([
-    context_1.Bean('cellNavigationService')
+    (0, context_1.Bean)('cellNavigationService')
 ], CellNavigationService);
 exports.CellNavigationService = CellNavigationService;

@@ -3,7 +3,7 @@ import { Bean, BeanStub, IStatusPanelComp, IStatusBarService } from '@ag-grid-co
 @Bean('statusBarService')
 export class StatusBarService extends BeanStub implements IStatusBarService {
 
-    private allComponents: { [p: string]: IStatusPanelComp } = {};
+    private allComponents: Map<string, IStatusPanelComp> = new Map();
 
     // tslint:disable-next-line
     constructor() {
@@ -11,10 +11,23 @@ export class StatusBarService extends BeanStub implements IStatusBarService {
     }
 
     public registerStatusPanel(key: string, component: IStatusPanelComp): void {
-        this.allComponents[key] = component;
+        this.allComponents.set(key, component);
+    }
+
+    public unregisterStatusPanel(key: string): void {
+        this.allComponents.delete(key);
+    }
+
+    public unregisterAllComponents(): void {
+        this.allComponents.clear();
     }
 
     public getStatusPanel(key: string): IStatusPanelComp {
-        return this.allComponents[key];
+        return this.allComponents.get(key)!;
+    }
+
+    protected destroy(): void {
+        this.unregisterAllComponents();
+        super.destroy();
     }
 }

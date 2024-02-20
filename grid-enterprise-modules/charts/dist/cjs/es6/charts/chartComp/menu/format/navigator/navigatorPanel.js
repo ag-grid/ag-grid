@@ -38,7 +38,7 @@ class NavigatorPanel extends core_1.Component {
         this.navigatorHeightSlider
             .setLabel(chartTranslationService.translate("height"))
             .setMinValue(10)
-            .setMaxValue(formatPanel_1.getMaxValue(currentValue, 60))
+            .setMaxValue((0, formatPanel_1.getMaxValue)(currentValue, 60))
             .setTextFieldWidth(45)
             .setValue(`${currentValue || 30}`)
             .onValueChange(height => this.chartOptionsService.setChartOption("navigator.height", height));
@@ -53,13 +53,13 @@ NavigatorPanel.TEMPLATE = `<div>
             </ag-group-component>
         </div>`;
 __decorate([
-    core_1.RefSelector('navigatorGroup')
+    (0, core_1.RefSelector)('navigatorGroup')
 ], NavigatorPanel.prototype, "navigatorGroup", void 0);
 __decorate([
-    core_1.RefSelector('navigatorHeightSlider')
+    (0, core_1.RefSelector)('navigatorHeightSlider')
 ], NavigatorPanel.prototype, "navigatorHeightSlider", void 0);
 __decorate([
-    core_1.Autowired('chartTranslationService')
+    (0, core_1.Autowired)('chartTranslationService')
 ], NavigatorPanel.prototype, "chartTranslationService", void 0);
 __decorate([
     core_1.PostConstruct

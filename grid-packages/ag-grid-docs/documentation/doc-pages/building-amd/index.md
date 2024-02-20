@@ -56,7 +56,7 @@ requirejs(['agGrid'], function (agGrid) {
     };
 
     var gridDiv = document.querySelector('#myGrid');
-    new agGrid.Grid(gridDiv, gridOptions);
+    var api = agGrid.createGrid(gridDiv, gridOptions);
 });
 ```
 
@@ -67,14 +67,12 @@ requirejs(['agGrid'], function (agGrid) {
     <script data-main="app" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.js"></script>
 </head>
 <body>
-    <div id="myGrid" style="height: 200px;width: 600px" class="ag-theme-alpine"></div>
+    <div id="myGrid" style="height: 200px;width: 600px" class="ag-theme-quartz"></div>
 </body>
 </html>
 ```
 
-Now we can serve the HTML file above which will result in the following grid.
-
-<image-caption src="building-amd/resources/ts-grid.png" alt="Datagrid" width="40rem" centered="true" constrained="true"></image-caption>
+Now we can serve the HTML file above which will result the grid being displayed.
 
 ## Example Code
 

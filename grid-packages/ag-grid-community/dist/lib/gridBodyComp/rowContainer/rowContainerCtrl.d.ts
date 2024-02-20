@@ -29,7 +29,10 @@ export declare enum RowContainerType {
 export declare function getRowContainerTypeForName(name: RowContainerName): RowContainerType;
 export interface IRowContainerComp {
     setViewportHeight(height: string): void;
-    setRowCtrls(rowCtrls: RowCtrl[], useFlushSync: boolean): void;
+    setRowCtrls(params: {
+        rowCtrls: RowCtrl[];
+        useFlushSync?: boolean;
+    }): void;
     setDomOrder(domOrder: boolean): void;
     setContainerWidth(width: string): void;
 }
@@ -37,24 +40,19 @@ export declare class RowContainerCtrl extends BeanStub {
     static getRowContainerCssClasses(name: RowContainerName): {
         container?: string;
         viewport?: string;
-        wrapper?: string;
     };
     static getPinned(name: RowContainerName): ColumnPinnedType;
-    private scrollVisibleService;
     private dragService;
     private ctrlsService;
     private columnModel;
     private resizeObserverService;
-    private animationFrameService;
     private rowRenderer;
     private readonly name;
     private readonly isFullWithContainer;
     private comp;
     private eContainer;
     private eViewport;
-    private eWrapper;
     private enableRtl;
-    private embedFullWidthRows;
     private viewportSizeFeature;
     private pinnedWidthFeature;
     private visible;
@@ -65,20 +63,18 @@ export declare class RowContainerCtrl extends BeanStub {
     private forContainers;
     getContainerElement(): HTMLElement;
     getViewportSizeFeature(): ViewportSizeFeature | undefined;
-    setComp(view: IRowContainerComp, eContainer: HTMLElement, eViewport: HTMLElement, eWrapper: HTMLElement): void;
-    private refreshPaddingForFakeScrollbar;
+    setComp(view: IRowContainerComp, eContainer: HTMLElement, eViewport: HTMLElement): void;
     private addListeners;
     private listenOnDomOrder;
     private stopHScrollOnPinnedRows;
     onDisplayedColumnsChanged(): void;
     private onDisplayedColumnsWidthChanged;
-    private onScrollVisibilityChanged;
     private addPreventScrollWhileDragging;
-    onHorizontalViewportChanged(): void;
+    onHorizontalViewportChanged(afterScroll?: boolean): void;
     getCenterWidth(): number;
     getCenterViewportScrollLeft(): number;
     registerViewportResizeListener(listener: (() => void)): void;
-    isViewportVisible(): boolean;
+    isViewportInTheDOMTree(): boolean;
     getViewportScrollLeft(): number;
     isHorizontalScrollShowing(): boolean;
     getViewportElement(): HTMLElement;

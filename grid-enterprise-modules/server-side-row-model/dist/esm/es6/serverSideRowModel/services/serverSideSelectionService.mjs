@@ -20,7 +20,7 @@ import { DefaultStrategy } from "./selection/strategies/defaultStrategy.mjs";
 import { GroupSelectsChildrenStrategy } from "./selection/strategies/groupSelectsChildrenStrategy.mjs";
 let ServerSideSelectionService = class ServerSideSelectionService extends BeanStub {
     init() {
-        const groupSelectsChildren = this.gridOptionsService.is('groupSelectsChildren');
+        const groupSelectsChildren = this.gridOptionsService.get('groupSelectsChildren');
         this.addManagedPropertyListener('groupSelectsChildren', (propChange) => {
             this.destroyBean(this.selectionStrategy);
             const StrategyClazz = !propChange.currentValue ? DefaultStrategy : GroupSelectsChildrenStrategy;
@@ -32,26 +32,29 @@ let ServerSideSelectionService = class ServerSideSelectionService extends BeanSt
             };
             this.eventService.dispatchEvent(event);
         });
-        this.rowSelection = this.gridOptionsService.get('rowSelection');
-        this.addManagedPropertyListener('rowSelection', (propChange) => this.rowSelection = propChange.currentValue);
+        this.addManagedPropertyListener('rowSelection', () => this.deselectAllRowNodes({ source: 'api' }));
         const StrategyClazz = !groupSelectsChildren ? DefaultStrategy : GroupSelectsChildrenStrategy;
         this.selectionStrategy = this.createManagedBean(new StrategyClazz());
     }
-    getServerSideSelectionState() {
+    getSelectionState() {
         return this.selectionStrategy.getSelectedState();
     }
-    setServerSideSelectionState(state) {
+    setSelectionState(state, source) {
+        if (Array.isArray(state)) {
+            return;
+        }
         this.selectionStrategy.setSelectedState(state);
         this.shotgunResetNodeSelectionState();
         const event = {
             type: Events.EVENT_SELECTION_CHANGED,
-            source: 'api',
+            source,
         };
         this.eventService.dispatchEvent(event);
     }
     setNodesSelected(params) {
         const { nodes } = params, otherParams = __rest(params, ["nodes"]);
-        if (nodes.length > 1 && this.rowSelection !== 'multiple') {
+        const rowSelection = this.gridOptionsService.get('rowSelection');
+        if (nodes.length > 1 && rowSelection !== 'multiple') {
             console.warn(`AG Grid: cannot multi select while rowSelection='single'`);
             return 0;
         }
@@ -138,6 +141,9 @@ let ServerSideSelectionService = class ServerSideSelectionService extends BeanSt
     }
     isEmpty() {
         return this.selectionStrategy.isEmpty();
+    }
+    hasNodesToSelect(justFiltered = false, justCurrentPage = false) {
+        return true;
     }
     selectAllRowNodes(params) {
         if (params.justCurrentPage || params.justFiltered) {

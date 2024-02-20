@@ -73,7 +73,7 @@ If you move columns so that columns in a group are no longer adjacent, then the 
 
 If you grab the group resize bar, it resizes each child in the group evenly distributing the new additional width. If you grab the child resize bar, only that one column will be resized.
 
-<image-caption src="column-groups/resources/header-resize.jpg" maxwidth="35rem" alt="Header Resize" centered="true"></image-caption>
+<image-caption src="column-groups/resources/header-resize.png" width="30rem" centered="true" alt="Header Resize" constrained="true" toggledarkmode="true"></image-caption>
 
 ## Colouring Groups
 
@@ -94,7 +94,7 @@ const gridOptions = {
 The labels in the grouping headers are positioned with `display: flex`. To make the group headers right-aligned, add the following rule set in your application, after the grid's stylesheets. Change the theme class to the one you use.
 
 ```css
-.ag-theme-alpine .ag-header-group-cell-label {
+.ag-theme-quartz .ag-header-group-cell-label {
     flex-direction: row-reverse;
 }
 ```

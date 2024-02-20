@@ -28,10 +28,10 @@ class WatermarkComp extends core_1.Component {
     }
 }
 __decorate([
-    core_1.Autowired('licenseManager')
+    (0, core_1.Autowired)('licenseManager')
 ], WatermarkComp.prototype, "licenseManager", void 0);
 __decorate([
-    core_1.RefSelector('eLicenseTextRef')
+    (0, core_1.RefSelector)('eLicenseTextRef')
 ], WatermarkComp.prototype, "eLicenseTextRef", void 0);
 __decorate([
     core_1.PostConstruct

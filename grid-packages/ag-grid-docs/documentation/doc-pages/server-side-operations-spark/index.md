@@ -12,12 +12,9 @@ This guide will show how to combine Apache Spark's powerful server side transfor
 
 We will develop an Olympic Medals application that demonstrates how data can be lazy-loaded as required, even when performing group, filter, sort and pivot operations.
 
-
-<image-caption src="server-side-operations-spark/resources/spark-enterprise-app.png" alt="Spark" constrained="true"></image-caption>
-
-<note>
+<warning>
 The reference implementation covered in this guide is for demonstration purposes only. If you use this in production it comes with no warranty or support.
-</note>
+</warning>
 
 The source code can be found here: [https://github.com/ag-grid/ag-grid-server-side-apache-spark-example](https://github.com/ag-grid/ag-grid-server-side-apache-spark-example)
 
@@ -42,7 +39,7 @@ With our application data loaded into a DataFrame we can then use API calls to p
 
 The following diagram illustrates the pipeline of transformations we will be performing in our application:
 
-<image-caption src="server-side-operations-spark/resources/spark-transformations.png" alt="Spark" constrained="true"></image-caption>
+<image-caption src="server-side-operations-spark/resources/spark-transformations.png" alt="Spark" constrained="true" filterdarkmode="true"></image-caption>
 
 Each of these individual transformations will be described in detail throughout this guide.
 
@@ -87,7 +84,7 @@ mvn clean install
 
 To confirm all went well you should see the following maven output:
 
-<image-caption src="server-side-operations-spark/resources/mvn-success.png" alt="MVN" constrained="true"></image-caption>
+<image-caption src="server-side-operations-spark/resources/mvn-success.png" alt="MVN" constrained="true" filterdarkmode="true"></image-caption>
 
 ## Spark Configuration
 
@@ -141,7 +138,7 @@ mvn spring-boot:run
 
 If successful you should see something like this:
 
-<image-caption src="server-side-operations-spark/resources/tomcat-started.png" alt="Tomcat" constrained="true"></image-caption>
+<image-caption src="server-side-operations-spark/resources/tomcat-started.png" alt="Tomcat" constrained="true" filterdarkmode="true"></image-caption>
 
 To test the application point your browser to [http://localhost:9090](http://localhost:9090)
 
@@ -437,7 +434,7 @@ In order for the grid to show these newly created columns an explicit API call i
 
 
 ```js
-gridOptions.columnApi.setPivotResultColumns(pivotResultColumns);
+api.setPivotResultColumns(pivotResultColumns);
 ```
 
 ## Aggregation

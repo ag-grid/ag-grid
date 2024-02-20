@@ -34,11 +34,20 @@ var PaginationAutoPageSizeService = /** @class */ (function (_super) {
             _this.centerRowContainerCon = p.centerRowContainerCtrl;
             _this.addManagedListener(_this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, _this.checkPageSize.bind(_this));
             _this.addManagedListener(_this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, _this.checkPageSize.bind(_this));
+            _this.addManagedPropertyListener('paginationAutoPageSize', _this.onPaginationAutoSizeChanged.bind(_this));
             _this.checkPageSize();
         });
     };
     PaginationAutoPageSizeService.prototype.notActive = function () {
-        return !this.gridOptionsService.is('paginationAutoPageSize') || this.centerRowContainerCon == null;
+        return !this.gridOptionsService.get('paginationAutoPageSize') || this.centerRowContainerCon == null;
+    };
+    PaginationAutoPageSizeService.prototype.onPaginationAutoSizeChanged = function () {
+        if (this.notActive()) {
+            this.paginationProxy.unsetAutoCalculatedPageSize();
+        }
+        else {
+            this.checkPageSize();
+        }
     };
     PaginationAutoPageSizeService.prototype.checkPageSize = function () {
         var _this = this;
@@ -50,7 +59,7 @@ var PaginationAutoPageSizeService = /** @class */ (function (_super) {
             var update_1 = function () {
                 var rowHeight = _this.gridOptionsService.getRowHeightAsNumber();
                 var newPageSize = Math.floor(bodyHeight / rowHeight);
-                _this.gridOptionsService.set('paginationPageSize', newPageSize);
+                _this.paginationProxy.setPageSize(newPageSize, 'autoCalculated');
             };
             if (!this.isBodyRendered) {
                 update_1();
@@ -67,6 +76,9 @@ var PaginationAutoPageSizeService = /** @class */ (function (_super) {
     __decorate([
         Autowired('ctrlsService')
     ], PaginationAutoPageSizeService.prototype, "ctrlsService", void 0);
+    __decorate([
+        Autowired('paginationProxy')
+    ], PaginationAutoPageSizeService.prototype, "paginationProxy", void 0);
     __decorate([
         PostConstruct
     ], PaginationAutoPageSizeService.prototype, "postConstruct", null);

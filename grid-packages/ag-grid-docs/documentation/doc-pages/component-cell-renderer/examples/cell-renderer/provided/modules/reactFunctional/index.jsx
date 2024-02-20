@@ -1,11 +1,13 @@
 'use strict';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
+import './styles.css';
+
 import DaysFrostRenderer from './daysFrostRenderer.jsx';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
@@ -70,12 +72,14 @@ class RainPerTenMmRenderer {
 const GridExample = () => {
     const [rowData, setRowData] = useState();
 
-    const [columnDefs] = useState([
+    const [frostPrefix, setFrostPrefix] = useState(false);
+
+    const columnDefs = useMemo(() => [
         {
             headerName: "Month",
             field: "Month",
             width: 75,
-            cellStyle: { color: "darkred" }
+            cellStyle: { backgroundColor: "#CC222244" }
         },
         {
             headerName: "Max Temp (\u02DAC)",
@@ -94,7 +98,7 @@ const GridExample = () => {
             field: "Days of air frost (days)",
             width: 233,
             cellRenderer: DaysFrostRenderer,
-            cellRendererParams: { rendererImage: "frost.png" }
+            cellRendererParams: { rendererImage: "frost.png", showPrefix: frostPrefix }
         },
         {
             headerName: "Days Sunshine",
@@ -110,7 +114,7 @@ const GridExample = () => {
             cellRenderer: RainPerTenMmRenderer,
             cellRendererParams: { rendererImage: "rain.png" }
         }
-    ]);
+    ], [frostPrefix]);
 
     const gridRef = useRef(null);
 
@@ -133,12 +137,19 @@ const GridExample = () => {
         });
     }
 
+    const defaultColDef = useMemo(() => ({
+        editable: true,
+        flex: 1,
+        minWidth: 100,
+        filter: true,
+    }), []);
+
     return (
         <div style={{ width: '100%', height: '100%' }}>
             <div className="example-wrapper">
                 <div style={{ "marginBottom": "5px" }}>
-                    <input type="button" value="Frostier Year"
-                        onClick={() => frostierYear(Math.floor(Math.random() * 2) + 1)} />
+                    <button onClick={frostierYear}>Frostier Year</button>
+                    <button style={{ marginLeft: '5px' }} onClick={() => setFrostPrefix(oldFrostPrefix => !oldFrostPrefix)}>Toggle Frost Prefix</button>
                 </div>
 
                 <div
@@ -147,19 +158,13 @@ const GridExample = () => {
                         height: '100%',
                         width: '100%'
                     }}
-                    className="ag-theme-alpine">
+                    className={/** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
                     <AgGridReact
                         ref={gridRef}
                         rowData={rowData}
                         columnDefs={columnDefs}
-                        defaultColDef={{
-                            editable: true,
-                            sortable: true,
-                            flex: 1,
-                            minWidth: 100,
-                            filter: true,
-                            resizable: true
-                        }}
+                        defaultColDef={defaultColDef}
+                        reactiveCustomComponents
                         onGridReady={onGridReady}
                     />
                 </div>

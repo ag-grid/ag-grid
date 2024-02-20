@@ -20,21 +20,36 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { BeanStub } from "../../../context/beanStub";
-import { Autowired } from "../../../context/context";
+import { Autowired, PostConstruct } from "../../../context/context";
 import { isUserSuppressingHeaderKeyboardEvent } from "../../../utils/keyboard";
 import { KeyCode } from "../.././../constants/keyCode";
+import { Column } from "../../../entities/column";
+import { HorizontalDirection } from "../../../constants/direction";
+import { CssClassApplier } from "../cssClassApplier";
+import { setAriaColIndex } from "../../../utils/aria";
+import { Events } from "../../../eventKeys";
+import { getInnerWidth } from "../../../utils/dom";
 var instanceIdSequence = 0;
 var AbstractHeaderCellCtrl = /** @class */ (function (_super) {
     __extends(AbstractHeaderCellCtrl, _super);
-    function AbstractHeaderCellCtrl(columnGroupChild, parentRowCtrl) {
+    function AbstractHeaderCellCtrl(columnGroupChild, beans, parentRowCtrl) {
         var _this = _super.call(this) || this;
+        _this.resizeToggleTimeout = 0;
+        _this.resizeMultiplier = 1;
+        _this.resizeFeature = null;
         _this.lastFocusEvent = null;
+        _this.dragSource = null;
         _this.columnGroupChild = columnGroupChild;
         _this.parentRowCtrl = parentRowCtrl;
+        _this.beans = beans;
         // unique id to this instance, including the column ID to help with debugging in React as it's used in 'key'
         _this.instanceId = columnGroupChild.getUniqueId() + '-' + instanceIdSequence++;
         return _this;
     }
+    AbstractHeaderCellCtrl.prototype.postConstruct = function () {
+        var _this = this;
+        this.addManagedPropertyListeners(['suppressHeaderFocus'], function () { return _this.refreshTabIndex(); });
+    };
     AbstractHeaderCellCtrl.prototype.shouldStopEventPropagation = function (e) {
         var _a = this.focusService.getFocusedHeader(), headerRowIndex = _a.headerRowIndex, column = _a.column;
         return isUserSuppressingHeaderKeyboardEvent(this.gridOptionsService, e, headerRowIndex, column);
@@ -47,6 +62,123 @@ var AbstractHeaderCellCtrl = /** @class */ (function (_super) {
     AbstractHeaderCellCtrl.prototype.setGui = function (eGui) {
         this.eGui = eGui;
         this.addDomData();
+        this.addManagedListener(this.beans.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.onDisplayedColumnsChanged();
+        this.refreshTabIndex();
+    };
+    AbstractHeaderCellCtrl.prototype.onDisplayedColumnsChanged = function () {
+        if (!this.comp || !this.column) {
+            return;
+        }
+        this.refreshFirstAndLastStyles();
+        this.refreshAriaColIndex();
+    };
+    AbstractHeaderCellCtrl.prototype.refreshFirstAndLastStyles = function () {
+        var _a = this, comp = _a.comp, column = _a.column, beans = _a.beans;
+        CssClassApplier.refreshFirstAndLastStyles(comp, column, beans.columnModel);
+    };
+    AbstractHeaderCellCtrl.prototype.refreshAriaColIndex = function () {
+        var _a = this, beans = _a.beans, column = _a.column;
+        var colIdx = beans.columnModel.getAriaColumnIndex(column);
+        setAriaColIndex(this.eGui, colIdx); // for react, we don't use JSX, as it slowed down column moving
+    };
+    AbstractHeaderCellCtrl.prototype.addResizeAndMoveKeyboardListeners = function () {
+        if (!this.resizeFeature) {
+            return;
+        }
+        this.addManagedListener(this.eGui, 'keydown', this.onGuiKeyDown.bind(this));
+        this.addManagedListener(this.eGui, 'keyup', this.onGuiKeyUp.bind(this));
+    };
+    AbstractHeaderCellCtrl.prototype.refreshTabIndex = function () {
+        var suppressHeaderFocus = this.gridOptionsService.get('suppressHeaderFocus');
+        if (suppressHeaderFocus) {
+            this.eGui.removeAttribute('tabindex');
+        }
+        else {
+            this.eGui.setAttribute('tabindex', '-1');
+        }
+    };
+    AbstractHeaderCellCtrl.prototype.onGuiKeyDown = function (e) {
+        var _a;
+        var eDocument = this.gridOptionsService.getDocument();
+        var activeEl = eDocument.activeElement;
+        var isLeftOrRight = e.key === KeyCode.LEFT || e.key === KeyCode.RIGHT;
+        if (this.isResizing) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+        }
+        if (
+        // if elements within the header are focused, we don't process the event
+        activeEl !== this.eGui ||
+            // if shiftKey and altKey are not pressed, it's cell navigation so we don't process the event
+            (!e.shiftKey && !e.altKey)) {
+            return;
+        }
+        if (this.isResizing || isLeftOrRight) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+        }
+        if (!isLeftOrRight) {
+            return;
+        }
+        var isLeft = (e.key === KeyCode.LEFT) !== this.gridOptionsService.get('enableRtl');
+        var direction = HorizontalDirection[isLeft ? 'Left' : 'Right'];
+        if (e.altKey) {
+            this.isResizing = true;
+            this.resizeMultiplier += 1;
+            var diff = this.getViewportAdjustedResizeDiff(e);
+            this.resizeHeader(diff, e.shiftKey);
+            (_a = this.resizeFeature) === null || _a === void 0 ? void 0 : _a.toggleColumnResizing(true);
+        }
+        else {
+            this.moveHeader(direction);
+        }
+    };
+    AbstractHeaderCellCtrl.prototype.getViewportAdjustedResizeDiff = function (e) {
+        var diff = this.getResizeDiff(e);
+        var pinned = this.column.getPinned();
+        if (pinned) {
+            var leftWidth = this.pinnedWidthService.getPinnedLeftWidth();
+            var rightWidth = this.pinnedWidthService.getPinnedRightWidth();
+            var bodyWidth = getInnerWidth(this.ctrlsService.getGridBodyCtrl().getBodyViewportElement()) - 50;
+            if (leftWidth + rightWidth + diff > bodyWidth) {
+                if (bodyWidth > leftWidth + rightWidth) {
+                    // allow body width to ignore resize multiplier and fill space for last tick
+                    diff = bodyWidth - leftWidth - rightWidth;
+                }
+                else {
+                    return 0;
+                }
+            }
+        }
+        return diff;
+    };
+    AbstractHeaderCellCtrl.prototype.getResizeDiff = function (e) {
+        var isLeft = (e.key === KeyCode.LEFT) !== this.gridOptionsService.get('enableRtl');
+        var pinned = this.column.getPinned();
+        var isRtl = this.gridOptionsService.get('enableRtl');
+        if (pinned) {
+            if (isRtl !== (pinned === 'right')) {
+                isLeft = !isLeft;
+            }
+        }
+        return (isLeft ? -1 : 1) * this.resizeMultiplier;
+    };
+    AbstractHeaderCellCtrl.prototype.onGuiKeyUp = function () {
+        var _this = this;
+        if (!this.isResizing) {
+            return;
+        }
+        if (this.resizeToggleTimeout) {
+            window.clearTimeout(this.resizeToggleTimeout);
+            this.resizeToggleTimeout = 0;
+        }
+        this.isResizing = false;
+        this.resizeMultiplier = 1;
+        this.resizeToggleTimeout = setTimeout(function () {
+            var _a;
+            (_a = _this.resizeFeature) === null || _a === void 0 ? void 0 : _a.toggleColumnResizing(false);
+        }, 150);
     };
     AbstractHeaderCellCtrl.prototype.handleKeyDown = function (e) {
         var wrapperHasFocus = this.getWrapperHasFocus();
@@ -92,16 +224,63 @@ var AbstractHeaderCellCtrl = /** @class */ (function (_super) {
     AbstractHeaderCellCtrl.prototype.getColumnGroupChild = function () {
         return this.columnGroupChild;
     };
+    AbstractHeaderCellCtrl.prototype.removeDragSource = function () {
+        if (this.dragSource) {
+            this.dragAndDropService.removeDragSource(this.dragSource);
+            this.dragSource = null;
+        }
+    };
+    AbstractHeaderCellCtrl.prototype.handleContextMenuMouseEvent = function (mouseEvent, touchEvent, column) {
+        var event = mouseEvent !== null && mouseEvent !== void 0 ? mouseEvent : touchEvent;
+        if (this.gridOptionsService.get('preventDefaultOnContextMenu')) {
+            event.preventDefault();
+        }
+        var columnToUse = column instanceof Column ? column : undefined;
+        if (this.menuService.isHeaderContextMenuEnabled(columnToUse)) {
+            this.menuService.showHeaderContextMenu(columnToUse, mouseEvent, touchEvent);
+        }
+        this.dispatchColumnMouseEvent(Events.EVENT_COLUMN_HEADER_CONTEXT_MENU, column);
+    };
+    AbstractHeaderCellCtrl.prototype.dispatchColumnMouseEvent = function (eventType, column) {
+        var event = {
+            type: eventType,
+            column: column,
+        };
+        this.eventService.dispatchEvent(event);
+    };
+    AbstractHeaderCellCtrl.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+        this.removeDragSource();
+        this.comp = null;
+        this.column = null;
+        this.resizeFeature = null;
+        this.lastFocusEvent = null;
+        this.columnGroupChild = null;
+        this.parentRowCtrl = null;
+        this.eGui = null;
+    };
     AbstractHeaderCellCtrl.DOM_DATA_KEY_HEADER_CTRL = 'headerCtrl';
+    __decorate([
+        Autowired('pinnedWidthService')
+    ], AbstractHeaderCellCtrl.prototype, "pinnedWidthService", void 0);
     __decorate([
         Autowired('focusService')
     ], AbstractHeaderCellCtrl.prototype, "focusService", void 0);
     __decorate([
-        Autowired('beans')
-    ], AbstractHeaderCellCtrl.prototype, "beans", void 0);
-    __decorate([
         Autowired('userComponentFactory')
     ], AbstractHeaderCellCtrl.prototype, "userComponentFactory", void 0);
+    __decorate([
+        Autowired('ctrlsService')
+    ], AbstractHeaderCellCtrl.prototype, "ctrlsService", void 0);
+    __decorate([
+        Autowired('dragAndDropService')
+    ], AbstractHeaderCellCtrl.prototype, "dragAndDropService", void 0);
+    __decorate([
+        Autowired('menuService')
+    ], AbstractHeaderCellCtrl.prototype, "menuService", void 0);
+    __decorate([
+        PostConstruct
+    ], AbstractHeaderCellCtrl.prototype, "postConstruct", null);
     return AbstractHeaderCellCtrl;
 }(BeanStub));
 export { AbstractHeaderCellCtrl };

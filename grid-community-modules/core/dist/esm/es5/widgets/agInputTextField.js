@@ -41,7 +41,7 @@ var AgInputTextField = /** @class */ (function (_super) {
         this.setValue(value, true);
     };
     AgInputTextField.prototype.preventDisallowedCharacters = function () {
-        var pattern = new RegExp("[" + this.config.allowedCharPattern + "]");
+        var pattern = new RegExp("[".concat(this.config.allowedCharPattern, "]"));
         var preventCharacters = function (event) {
             if (!isEventFromPrintableCharacter(event)) {
                 return;

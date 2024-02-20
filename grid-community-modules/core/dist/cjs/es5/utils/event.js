@@ -91,7 +91,7 @@ function getEventPath(event) {
 }
 exports.getEventPath = getEventPath;
 function addSafePassiveEventListener(frameworkOverrides, eElement, event, listener) {
-    var isPassive = array_1.includes(PASSIVE_EVENTS, event);
+    var isPassive = (0, array_1.includes)(PASSIVE_EVENTS, event);
     var options = isPassive ? { passive: true } : undefined;
     // this check is here for certain scenarios where I believe the user must be destroying
     // the grid somehow but continuing for it to be used

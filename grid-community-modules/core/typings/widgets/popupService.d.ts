@@ -84,6 +84,7 @@ export declare class PopupService extends BeanStub {
     addPopup(params: AddPopupParams): AddPopupResult;
     private initialisePopupPosition;
     private createPopupWrapper;
+    private handleThemeChange;
     private addEventListenersToPopup;
     private addPopupToPopupList;
     private getPopupIndex;
@@ -93,7 +94,6 @@ export declare class PopupService extends BeanStub {
     hasAnchoredPopup(): boolean;
     private isEventFromCurrentPopup;
     isElementWithinCustomPopup(el: HTMLElement): boolean;
-    private isEventSameChainAsOriginalEvent;
     private getWrapper;
     setAlwaysOnTop(ePopup: HTMLElement, alwaysOnTop?: boolean): void;
     bringPopupToFront(ePopup: HTMLElement): void;

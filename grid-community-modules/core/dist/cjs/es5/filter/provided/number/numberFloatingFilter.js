@@ -89,11 +89,14 @@ var NumberFloatingFilter = /** @class */ (function (_super) {
         this.filterModelFormatter = new numberFilter_1.NumberFilterModelFormatter(this.localeService, this.optionsFactory, (_a = params.filterParams) === null || _a === void 0 ? void 0 : _a.numberFormatter);
     };
     NumberFloatingFilter.prototype.onParamsUpdated = function (params) {
-        var allowedCharPattern = numberFilter_1.getAllowedCharPattern(params.filterParams);
+        this.refresh(params);
+    };
+    NumberFloatingFilter.prototype.refresh = function (params) {
+        var allowedCharPattern = (0, numberFilter_1.getAllowedCharPattern)(params.filterParams);
         if (allowedCharPattern !== this.allowedCharPattern) {
             this.recreateFloatingFilterInputService(params);
         }
-        _super.prototype.onParamsUpdated.call(this, params);
+        _super.prototype.refresh.call(this, params);
         this.filterModelFormatter.updateParams({ optionsFactory: this.optionsFactory });
     };
     NumberFloatingFilter.prototype.getDefaultFilterOptions = function () {
@@ -103,7 +106,7 @@ var NumberFloatingFilter = /** @class */ (function (_super) {
         return this.filterModelFormatter;
     };
     NumberFloatingFilter.prototype.createFloatingFilterInputService = function (params) {
-        this.allowedCharPattern = numberFilter_1.getAllowedCharPattern(params.filterParams);
+        this.allowedCharPattern = (0, numberFilter_1.getAllowedCharPattern)(params.filterParams);
         if (this.allowedCharPattern) {
             // need to use text input
             return this.createManagedBean(new textInputFloatingFilter_1.FloatingFilterTextInputService({

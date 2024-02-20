@@ -1,4 +1,37 @@
-import { Grid, GridOptions, AdvancedFilterModel } from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions, AdvancedFilterModel } from '@ag-grid-community/core';
+
+const initialAdvancedFilterModel: AdvancedFilterModel =  {
+  filterType: 'join',
+  type: 'AND',
+  conditions: [
+    {
+      filterType: 'join',
+      type: 'OR',
+      conditions: [
+        {
+          filterType: 'number',
+          colId: 'age',
+          type: 'greaterThan',
+          filter: 23,
+        },
+        {
+          filterType: 'text',
+          colId: 'sport',
+          type: 'endsWith',
+          filter: 'ing',
+        }
+      ]
+    },
+    {
+      filterType: 'text',
+      colId: 'country',
+      type: 'contains',
+      filter: 'united',
+    }
+  ]
+};
+
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -14,54 +47,27 @@ const gridOptions: GridOptions<IOlympicData> = {
     flex: 1,
     minWidth: 180,
     filter: true,
-    sortable: true,
-    resizable: true,
   },
   enableAdvancedFilter: true,
-  advancedFilterModel: {
-    filterType: 'join',
-    type: 'AND',
-    conditions: [
-      {
-        filterType: 'join',
-        type: 'OR',
-        conditions: [
-          {
-            filterType: 'number',
-            colId: 'age',
-            type: 'greaterThan',
-            filter: 23,
-          },
-          {
-            filterType: 'text',
-            colId: 'sport',
-            type: 'endsWith',
-            filter: 'ing',
-          }
-        ]
-      },
-      {
-        filterType: 'text',
-        colId: 'country',
-        type: 'contains',
-        filter: 'united',
-      }
-    ]
+  initialState: {
+    filter: {
+      advancedFilterModel: initialAdvancedFilterModel,
+    },
   },
 }
 
 var savedFilterModel: AdvancedFilterModel | null = null;
 
 function saveFilterModel() {
-  savedFilterModel = gridOptions.api!.getAdvancedFilterModel();
+  savedFilterModel = gridApi!.getAdvancedFilterModel();
 }
 
 function restoreFilterModel() {
-  gridOptions.api!.setAdvancedFilterModel(savedFilterModel);
+  gridApi!.setAdvancedFilterModel(savedFilterModel);
 }
 
 function restoreFromHardCoded() {
-  gridOptions.api!.setAdvancedFilterModel({
+  gridApi!.setAdvancedFilterModel({
     filterType: 'number',
     colId: 'gold',
     type: 'greaterThanOrEqual',
@@ -70,15 +76,15 @@ function restoreFromHardCoded() {
 }
 
 function clearFilter() {
-  gridOptions.api!.setAdvancedFilterModel(null);
+  gridApi!.setAdvancedFilterModel(null);
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

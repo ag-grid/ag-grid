@@ -20,12 +20,21 @@ export class CellPositionFeature extends BeanStub {
     }
     setupRowSpan() {
         this.rowSpan = this.column.getRowSpan(this.rowNode);
+        this.addManagedListener(this.beans.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.onNewColumnsLoaded());
     }
     setComp(eGui) {
         this.eGui = eGui;
         this.onLeftChanged();
         this.onWidthChanged();
         this.applyRowSpan();
+    }
+    onNewColumnsLoaded() {
+        const rowSpan = this.column.getRowSpan(this.rowNode);
+        if (this.rowSpan === rowSpan) {
+            return;
+        }
+        this.rowSpan = rowSpan;
+        this.applyRowSpan(true);
     }
     onDisplayColumnsChanged() {
         const colsSpanning = this.getColSpanningList();
@@ -95,7 +104,7 @@ export class CellPositionFeature extends BeanStub {
     }
     getCellLeft() {
         let mostLeftCol;
-        if (this.beans.gridOptionsService.is('enableRtl') && this.colsSpanning) {
+        if (this.beans.gridOptionsService.get('enableRtl') && this.colsSpanning) {
             mostLeftCol = last(this.colsSpanning);
         }
         else {
@@ -115,8 +124,8 @@ export class CellPositionFeature extends BeanStub {
         // is in body
         return leftWidth + (leftPosition || 0);
     }
-    applyRowSpan() {
-        if (this.rowSpan === 1) {
+    applyRowSpan(force) {
+        if (this.rowSpan === 1 && !force) {
             return;
         }
         const singleRowHeight = this.beans.gridOptionsService.getRowHeightAsNumber();

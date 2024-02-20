@@ -35,6 +35,6 @@ __decorate([
     core_1.PreDestroy
 ], NodeManager.prototype, "clear", null);
 NodeManager = __decorate([
-    core_1.Bean('ssrmNodeManager')
+    (0, core_1.Bean)('ssrmNodeManager')
 ], NodeManager);
 exports.NodeManager = NodeManager;

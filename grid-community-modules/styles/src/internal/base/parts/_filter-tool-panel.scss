@@ -7,7 +7,7 @@
 
     .ag-filter-toolpanel-header,
     .ag-filter-toolpanel-search {
-        @include ag.unthemed-rtl(( padding-left: var(--ag-grid-size) ));
+        padding: 0 var(--ag-grid-size);
     }
 
     @include ag.keyboard-focus((ag-filter-toolpanel-header), 4px);

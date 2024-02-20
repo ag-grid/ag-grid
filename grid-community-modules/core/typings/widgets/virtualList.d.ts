@@ -3,7 +3,6 @@ import { TabGuardComp } from './tabGuardComp';
 export interface VirtualListModel {
     getRowCount(): number;
     getRow(index: number): any;
-    isRowSelected?(index: number): boolean | undefined;
     /** Required if using soft refresh. If rows are equal, componentUpdater will be called instead of remove/create */
     areRowsEqual?(oldRow: any, newRow: any): boolean;
 }
@@ -12,7 +11,7 @@ interface VirtualListParams {
     ariaRole?: string;
     listName?: string;
 }
-export declare class VirtualList extends TabGuardComp {
+export declare class VirtualList<C extends Component = Component> extends TabGuardComp {
     private readonly cssIdentifier;
     private readonly ariaRole;
     private listName?;
@@ -23,6 +22,7 @@ export declare class VirtualList extends TabGuardComp {
     private rowHeight;
     private lastFocusedRowIndex;
     private readonly resizeObserverService;
+    private readonly animationFrameService;
     private readonly eContainer;
     constructor(params?: VirtualListParams);
     private postConstruct;
@@ -30,20 +30,23 @@ export declare class VirtualList extends TabGuardComp {
     private setAriaProperties;
     private addResizeObserver;
     protected focusInnerElement(fromBottom: boolean): void;
-    protected onFocusIn(e: FocusEvent): boolean;
-    protected onFocusOut(e: FocusEvent): boolean;
+    protected onFocusIn(e: FocusEvent): void;
+    protected onFocusOut(e: FocusEvent): void;
     protected handleKeyDown(e: KeyboardEvent): void;
     protected onTabKeyDown(e: KeyboardEvent): void;
     private navigate;
     getLastFocusedRow(): number | null;
     focusRow(rowNumber: number): void;
-    getComponentAt(rowIndex: number): Component | undefined;
-    forEachRenderedRow(func: (comp: Component, idx: number) => void): void;
+    getComponentAt(rowIndex: number): C | undefined;
+    forEachRenderedRow(func: (comp: C, idx: number) => void): void;
     private static getTemplate;
     private getItemHeight;
-    ensureIndexVisible(index: number): void;
-    setComponentCreator(componentCreator: (value: any, listItemElement: HTMLElement) => Component): void;
-    setComponentUpdater(componentUpdater: (value: any, component: Component) => void): void;
+    /**
+     * Returns true if the view had to be scrolled, otherwise, false.
+     */
+    ensureIndexVisible(index: number, scrollPartialIntoView?: boolean): boolean;
+    setComponentCreator(componentCreator: (value: any, listItemElement: HTMLElement) => C): void;
+    setComponentUpdater(componentUpdater: (value: any, component: C) => void): void;
     getRowHeight(): number;
     getScrollTop(): number;
     setRowHeight(rowHeight: number): void;

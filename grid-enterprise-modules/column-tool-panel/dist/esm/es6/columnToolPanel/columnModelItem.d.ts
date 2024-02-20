@@ -1,4 +1,4 @@
-import { Column, IEventEmitter, ProvidedColumnGroup } from "@ag-grid-community/core";
+import { AgEventListener, Column, IEventEmitter, ProvidedColumnGroup } from "@ag-grid-community/core";
 export declare class ColumnModelItem implements IEventEmitter {
     private eventService;
     static EVENT_EXPANDED_CHANGED: string;
@@ -21,6 +21,6 @@ export declare class ColumnModelItem implements IEventEmitter {
     isPassesFilter(): boolean;
     setExpanded(expanded: boolean): void;
     setPassesFilter(passesFilter: boolean): void;
-    addEventListener(eventType: string, listener: Function): void;
-    removeEventListener(eventType: string, listener: Function): void;
+    addEventListener(eventType: string, listener: AgEventListener): void;
+    removeEventListener(eventType: string, listener: AgEventListener): void;
 }

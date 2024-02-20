@@ -53,7 +53,8 @@ In order to give screen readers the contextual information they require to inter
 
 When inspecting the DOM you'll notice the following roles and properties have been added:
 
-- **role="treegrid"** - marks the enclosing element of the grid.<br>
+- **role="treegrid"** - marks the enclosing element of the grid.
+
     **Note:** You can set any aria property in the panel (role="treegrid") by using the `setGridAriaProperty` method in the [Grid Api](/grid-api/).
     - **aria-rowcount** - announces the number of rows.
     - **aria-colcount** - announces the number of rows.
@@ -114,6 +115,19 @@ const gridOptions = {
 }
 </snippet>
 
+### Disable Group Sticky Rows
+
+By default, when grouping, the current parent of rows becomes "sticky" to the top of the grid while scrolling. This causes the rows to be in 'incorrect order' and result in inconsistent
+announcements for row indices when parsed by screen readers.
+
+To disable Group Sticky Rows, set `suppressGroupRowsSticky={true}` the gridOptions like so:
+
+<snippet>
+const gridOptions = {
+    suppressGroupRowsSticky: true,
+}
+</snippet>
+
 <note>
 Animations won't work properly when the DOM order is forced, so ensure they are not enabled.
 </note>
@@ -157,7 +171,7 @@ The example below presents a simple grid layout with the following properties en
 
 The grid has default ARIA labels for areas like `rows`, `group cells`, `filters`, `search fields` and so on. If there is a need to
 customise these labels, this could be achieved by changing the [localisation variables](/localisation/#creating-a-locale) for ARIA.
-See the [localisation example](/localisation/#example--localisation), inspect the items or use a screen reader to see the
+See the [localisation example](/localisation/#installing-a-locale), inspect the items or use a screen reader to see the
 customisation in action.
 
 ## Known Limitations
@@ -166,6 +180,9 @@ Using advanced functionality in AG Grid makes the DOM structure incompatible wit
 
 - ### Navigation to pinned rows/columns
     Screen readers assume that the visual and DOM element order are identical. Specifically, when you pin a row/column, it  causes elements to be rendered in different containers. This is why you cannot use screen readers to navigate into a  pinned row/column cells, as in fact, this means they're rendered in a different element from the rest of the columns/rows which are scrollable.
+
+- ### Full Width Rows
+    Full Width Rows are rendered in a different container, therefore screen readers have trouble announcing them for the same reason as `Pinned Rows/Columns`. This also includes Row Grouping, when `groupDisplayType="groupRows"`
 
 - ### Limitations announcing the correct column name in grouped columns
     Even though all aria tags have been applied to the necessary elements, some screen readers have trouble navigating the tags when the structure of the grid gets more complex (eg. grouped columns). This is the reason why there are some limitations announcing the correct column names.

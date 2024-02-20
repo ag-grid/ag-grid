@@ -59,14 +59,14 @@ let ColumnDefFactory = class ColumnDefFactory {
         return res;
     }
     createDefFromGroup(group) {
-        const defCloned = object_1.deepCloneDefinition(group.getColGroupDef(), ['children']);
+        const defCloned = (0, object_1.deepCloneDefinition)(group.getColGroupDef(), ['children']);
         if (defCloned) {
             defCloned.groupId = group.getGroupId();
         }
         return defCloned;
     }
     createDefFromColumn(col, rowGroupColumns, pivotColumns) {
-        const colDefCloned = object_1.deepCloneDefinition(col.getColDef());
+        const colDefCloned = (0, object_1.deepCloneDefinition)(col.getColDef());
         colDefCloned.colId = col.getColId();
         colDefCloned.width = col.getActualWidth();
         colDefCloned.rowGroup = col.isRowGroupActive();
@@ -82,6 +82,6 @@ let ColumnDefFactory = class ColumnDefFactory {
     }
 };
 ColumnDefFactory = __decorate([
-    context_1.Bean('columnDefFactory')
+    (0, context_1.Bean)('columnDefFactory')
 ], ColumnDefFactory);
 exports.ColumnDefFactory = ColumnDefFactory;

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -76,21 +76,6 @@ export interface CellRangeParams {
     columnEnd?: string | Column;
     /** Specify Columns to include instead of using `columnStart` and `columnEnd` */
     columns?: (string | Column)[];
-}
-/** @deprecated */
-export interface RangeSelection {
-    start: CellPosition;
-    end: CellPosition;
-    columns: Column[] | null;
-}
-/** @deprecated */
-export interface AddRangeSelectionParams {
-    rowStart: number;
-    floatingStart: string;
-    rowEnd: number;
-    floatingEnd: string;
-    columnStart: string | Column;
-    columnEnd: string | Column;
 }
 export interface ClearCellRangeParams {
     cellRanges?: CellRange[];

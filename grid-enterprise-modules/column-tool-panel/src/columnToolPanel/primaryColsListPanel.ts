@@ -13,7 +13,8 @@ import {
     ToolPanelColumnCompParams,
     VirtualList,
     VirtualListModel,
-    PreDestroy
+    PreDestroy,
+    ColumnToolPanelState
 } from "@ag-grid-community/core";
 import { PrimaryColsListPanelItemDragFeature } from './primaryColsListPanelItemDragFeature';
 import { ToolPanelColumnGroupComp } from "./toolPanelColumnGroupComp";
@@ -59,10 +60,13 @@ export class PrimaryColsListPanel extends Component {
     private groupsExist: boolean;
 
     private virtualList: VirtualList;
+    private colsListPanelItemDragFeature: PrimaryColsListPanelItemDragFeature;
 
     private allColsTree: ColumnModelItem[];
     private displayedColsList: ColumnModelItem[];
     private destroyColumnItemFuncs: (() => void)[] = [];
+    private hasLoadedInitialState: boolean = false;
+    private isInitialState: boolean = false;
 
     constructor() {
         super(PrimaryColsListPanel.TEMPLATE);
@@ -106,16 +110,17 @@ export class PrimaryColsListPanel extends Component {
 
         this.expandGroupsByDefault = !this.params.contractColumnSelection;
 
-        const translate = this.localeService.getLocaleTextFunc();
-        const columnListName = translate('ariaColumnList', 'Column List');
-
         this.virtualList = this.createManagedBean(new VirtualList({
             cssIdentifier: 'column-select',
             ariaRole: 'tree',
-            listName: columnListName
         }));
 
         this.appendChild(this.virtualList.getGui());
+
+        const ariaEl = this.virtualList.getAriaElement() 
+        _.setAriaLive(ariaEl, 'assertive');
+        _.setAriaAtomic(ariaEl, false);
+        _.setAriaRelevant(ariaEl, 'text');
 
         this.virtualList.setComponentCreator(
             (item: ColumnModelItem, listItemElement: HTMLElement) => {
@@ -128,9 +133,11 @@ export class PrimaryColsListPanel extends Component {
             this.onColumnsChanged();
         }
 
-        if (!params.suppressColumnMove && !this.gridOptionsService.is('suppressMovableColumns')) {
-            this.createManagedBean(new PrimaryColsListPanelItemDragFeature(this, this.virtualList));
-        }
+        if (this.params.suppressColumnMove) { return; }
+        
+        this.colsListPanelItemDragFeature = this.createManagedBean(
+            new PrimaryColsListPanelItemDragFeature(this, this.virtualList)
+        );
     }
 
     private createComponentFromItem(item: ColumnModelItem, listItemElement: HTMLElement): Component {
@@ -148,6 +155,11 @@ export class PrimaryColsListPanel extends Component {
     }
 
     public onColumnsChanged(): void {
+        if (!this.hasLoadedInitialState) {
+            this.hasLoadedInitialState = true;
+            this.isInitialState = !!this.params.initialState;
+        }
+
         const expandedStates = this.getExpandedStates();
 
         const pivotModeActive = this.columnModel.isPivotMode();
@@ -163,6 +175,8 @@ export class PrimaryColsListPanel extends Component {
 
         this.markFilteredColumns();
         this.flattenAndFilterModel();
+
+        this.isInitialState = false;
     }
 
     public getDisplayedColsList(): ColumnModelItem[] {
@@ -170,9 +184,18 @@ export class PrimaryColsListPanel extends Component {
     }
 
     private getExpandedStates(): {[key:string]:boolean} {
+        const res: {[id:string]:boolean} = {};
+        
+        if (this.isInitialState) {
+            const { expandedGroupIds } = this.params.initialState as ColumnToolPanelState;
+            expandedGroupIds.forEach(id => {
+                res[id] = true;
+            });
+            return res;
+        }
+
         if (!this.allColsTree) { return {}; }
 
-        const res: {[id:string]:boolean} = {};
         this.forEachItem(item => {
             if (!item.isGroup()) { return; }
             const colGroup = item.getColumnGroup();
@@ -187,14 +210,15 @@ export class PrimaryColsListPanel extends Component {
     private setExpandedStates(states: {[key:string]:boolean}): void {
         if (!this.allColsTree) { return; }
 
+        const { isInitialState } = this;
         this.forEachItem(item => {
             if (!item.isGroup()) { return; }
             const colGroup = item.getColumnGroup();
             if (colGroup) { // group should always exist, this is defensive
                 const expanded = states[colGroup.getId()];
                 const groupExistedLastTime = expanded != null;
-                if (groupExistedLastTime) {
-                    item.setExpanded(expanded);
+                if (groupExistedLastTime || isInitialState) {
+                    item.setExpanded(!!expanded);
                 }
             }
         });
@@ -300,6 +324,17 @@ export class PrimaryColsListPanel extends Component {
         }
 
         this.notifyListeners();
+
+        this.refreshAriaLabel();
+    }
+
+    private refreshAriaLabel(): void {
+        const translate = this.localeService.getLocaleTextFunc();
+        const columnListName = translate('ariaColumnPanelList', 'Column List');
+        const localeColumns = translate('columns', 'Columns');
+        const items = this.displayedColsList.length;
+
+        _.setAriaLabel(this.virtualList.getAriaElement(), `${columnListName} ${items} ${localeColumns}`);
     }
 
     private focusRowIfAlive(rowIndex: number): void {
@@ -319,6 +354,9 @@ export class PrimaryColsListPanel extends Component {
                 }
             });
         };
+
+        if (!this.allColsTree) { return; }
+
         recursiveFunc(this.allColsTree);
     }
 
@@ -466,8 +504,22 @@ export class PrimaryColsListPanel extends Component {
     }
 
     private fireSelectionChangedEvent(): void {
+        if (!this.allColsTree) { return; }
         const selectionState = this.getSelectionState();
         this.dispatchEvent({ type: 'selectionChanged', state: selectionState });
     }
 
+    public getExpandedGroups(): string[] {
+        const expandedGroupIds: string[] = [];
+
+        if (!this.allColsTree) { return expandedGroupIds; }
+
+        this.forEachItem(item => {
+            if (item.isGroup() && item.isExpanded()) {
+                expandedGroupIds.push(item.getColumnGroup().getId());
+            }
+        });
+
+        return expandedGroupIds;
+    }
 }

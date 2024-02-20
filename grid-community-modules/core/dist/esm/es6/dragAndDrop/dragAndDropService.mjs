@@ -13,23 +13,15 @@ import { flatten, removeFromArray } from "../utils/array.mjs";
 import { getBodyHeight, getBodyWidth } from "../utils/browser.mjs";
 import { loadTemplate, clearElement, getElementRectWithOffset } from "../utils/dom.mjs";
 import { isFunction } from "../utils/function.mjs";
+import { HorizontalDirection, VerticalDirection } from "../constants/direction.mjs";
 export var DragSourceType;
 (function (DragSourceType) {
     DragSourceType[DragSourceType["ToolPanel"] = 0] = "ToolPanel";
     DragSourceType[DragSourceType["HeaderCell"] = 1] = "HeaderCell";
     DragSourceType[DragSourceType["RowDrag"] = 2] = "RowDrag";
     DragSourceType[DragSourceType["ChartPanel"] = 3] = "ChartPanel";
+    DragSourceType[DragSourceType["AdvancedFilterBuilder"] = 4] = "AdvancedFilterBuilder";
 })(DragSourceType || (DragSourceType = {}));
-export var VerticalDirection;
-(function (VerticalDirection) {
-    VerticalDirection[VerticalDirection["Up"] = 0] = "Up";
-    VerticalDirection[VerticalDirection["Down"] = 1] = "Down";
-})(VerticalDirection || (VerticalDirection = {}));
-export var HorizontalDirection;
-(function (HorizontalDirection) {
-    HorizontalDirection[HorizontalDirection["Left"] = 0] = "Left";
-    HorizontalDirection[HorizontalDirection["Right"] = 1] = "Right";
-})(HorizontalDirection || (HorizontalDirection = {}));
 let DragAndDropService = DragAndDropService_1 = class DragAndDropService extends BeanStub {
     constructor() {
         super(...arguments);
@@ -81,7 +73,6 @@ let DragAndDropService = DragAndDropService_1 = class DragAndDropService extends
         this.dragSource = dragSource;
         this.eventLastTime = mouseEvent;
         this.dragItem = this.dragSource.getDragItem();
-        this.lastDropTarget = this.dragSource.dragSourceDropTarget;
         if (this.dragSource.onDragStarted) {
             this.dragSource.onDragStarted();
         }
@@ -302,27 +293,31 @@ let DragAndDropService = DragAndDropService_1 = class DragAndDropService extends
         this.eGhost.style.top = '20px';
         this.eGhost.style.left = '20px';
         const eDocument = this.gridOptionsService.getDocument();
+        let rootNode = null;
         let targetEl = null;
         try {
-            targetEl = eDocument.fullscreenElement;
+            rootNode = eDocument.fullscreenElement;
         }
         catch (e) {
             // some environments like SalesForce will throw errors
             // simply by trying to read the fullscreenElement property
         }
         finally {
-            if (!targetEl) {
-                const rootNode = this.gridOptionsService.getRootNode();
-                const body = rootNode.querySelector('body');
-                if (body) {
-                    targetEl = body;
-                }
-                else if (rootNode instanceof ShadowRoot) {
-                    targetEl = rootNode;
-                }
-                else {
-                    targetEl = rootNode === null || rootNode === void 0 ? void 0 : rootNode.documentElement;
-                }
+            if (!rootNode) {
+                rootNode = this.gridOptionsService.getRootNode();
+            }
+            const body = rootNode.querySelector('body');
+            if (body) {
+                targetEl = body;
+            }
+            else if (rootNode instanceof ShadowRoot) {
+                targetEl = rootNode;
+            }
+            else if (rootNode instanceof Document) {
+                targetEl = rootNode === null || rootNode === void 0 ? void 0 : rootNode.documentElement;
+            }
+            else {
+                targetEl = rootNode;
             }
         }
         this.eGhostParent = targetEl;
@@ -337,7 +332,7 @@ let DragAndDropService = DragAndDropService_1 = class DragAndDropService extends
         clearElement(this.eGhostIcon);
         let eIcon = null;
         if (!iconName) {
-            iconName = this.dragSource.defaultIconName || DragAndDropService_1.ICON_NOT_ALLOWED;
+            iconName = this.dragSource.getDefaultIconName ? this.dragSource.getDefaultIconName() : DragAndDropService_1.ICON_NOT_ALLOWED;
         }
         switch (iconName) {
             case DragAndDropService_1.ICON_PINNED:
@@ -369,7 +364,7 @@ let DragAndDropService = DragAndDropService_1 = class DragAndDropService extends
                 break;
         }
         this.eGhostIcon.classList.toggle('ag-shake-left-to-right', shake);
-        if (eIcon === this.eHideIcon && this.gridOptionsService.is('suppressDragLeaveHidesColumns')) {
+        if (eIcon === this.eHideIcon && this.gridOptionsService.get('suppressDragLeaveHidesColumns')) {
             return;
         }
         if (eIcon) {

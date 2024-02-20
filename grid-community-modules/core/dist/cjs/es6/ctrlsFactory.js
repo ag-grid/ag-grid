@@ -26,6 +26,6 @@ let CtrlsFactory = class CtrlsFactory extends beanStub_1.BeanStub {
     }
 };
 CtrlsFactory = __decorate([
-    context_1.Bean('ctrlsFactory')
+    (0, context_1.Bean)('ctrlsFactory')
 ], CtrlsFactory);
 exports.CtrlsFactory = CtrlsFactory;

@@ -1,7 +1,7 @@
 import { MiniChartWithAxes } from "../miniChartWithAxes.mjs";
 import { createColumnRects } from "../miniChartHelpers.mjs";
 export class MiniStackedColumn extends MiniChartWithAxes {
-    constructor(container, fills, strokes, data = MiniStackedColumn.data, yScaleDomain = [0, 16], tooltipName = "stackedColumnTooltip") {
+    constructor(container, fills, strokes, _themeTemplateParameters, _isCustomTheme, data = MiniStackedColumn.data, yScaleDomain = [0, 16], tooltipName = "stackedColumnTooltip") {
         super(container, tooltipName);
         const { root, size, padding } = this;
         this.stackedColumns = createColumnRects({

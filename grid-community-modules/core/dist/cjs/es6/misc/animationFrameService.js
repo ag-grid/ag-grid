@@ -31,7 +31,7 @@ let AnimationFrameService = class AnimationFrameService extends beanStub_1.BeanS
         this.cancelledTasks = new Set();
     }
     setScrollTop(scrollTop) {
-        const isPaginationActive = this.gridOptionsService.is('pagination');
+        const isPaginationActive = this.gridOptionsService.get('pagination');
         this.scrollGoingDown = scrollTop >= this.lastScrollTop;
         if (isPaginationActive && scrollTop === 0) {
             const currentPage = this.paginationProxy.getCurrentPage();
@@ -43,7 +43,7 @@ let AnimationFrameService = class AnimationFrameService extends beanStub_1.BeanS
         this.lastScrollTop = scrollTop;
     }
     init() {
-        this.useAnimationFrame = !this.gridOptionsService.is('suppressAnimationFrame');
+        this.useAnimationFrame = !this.gridOptionsService.get('suppressAnimationFrame');
     }
     isOn() {
         return this.useAnimationFrame;
@@ -176,7 +176,7 @@ let AnimationFrameService = class AnimationFrameService extends beanStub_1.BeanS
         let pending = false;
         return () => {
             if (!this.isOn()) {
-                this.getFrameworkOverrides().setTimeout(func, 0);
+                window.setTimeout(func, 0);
                 return;
             }
             if (pending) {
@@ -191,15 +191,15 @@ let AnimationFrameService = class AnimationFrameService extends beanStub_1.BeanS
     }
 };
 __decorate([
-    context_1.Autowired('ctrlsService')
+    (0, context_1.Autowired)('ctrlsService')
 ], AnimationFrameService.prototype, "ctrlsService", void 0);
 __decorate([
-    context_1.Autowired('paginationProxy')
+    (0, context_1.Autowired)('paginationProxy')
 ], AnimationFrameService.prototype, "paginationProxy", void 0);
 __decorate([
     context_1.PostConstruct
 ], AnimationFrameService.prototype, "init", null);
 AnimationFrameService = __decorate([
-    context_1.Bean('animationFrameService')
+    (0, context_1.Bean)('animationFrameService')
 ], AnimationFrameService);
 exports.AnimationFrameService = AnimationFrameService;

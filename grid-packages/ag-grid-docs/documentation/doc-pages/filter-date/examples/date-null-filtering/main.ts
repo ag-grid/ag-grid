@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, IDateFilterParams } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions, IDateFilterParams } from '@ag-grid-community/core';
 
 var filterParams: IDateFilterParams = {
   comparator: (filterLocalDateAtMidnight: Date, cellValue: string) => {
@@ -44,13 +44,14 @@ const columnDefs: ColDef[] = [
   },
 ]
 
+let gridApi: GridApi;
+
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   defaultColDef: {
     flex: 1,
     minWidth: 100,
     filter: true,
-    resizable: true,
   },
 }
 
@@ -70,19 +71,19 @@ function changeNull(toChange: string, value: boolean) {
       break
   }
 
-  var filterModel = gridOptions.api!.getFilterModel()
+  var filterModel = gridApi!.getFilterModel()
 
-  gridOptions.api!.setColumnDefs(columnDefs)
-  gridOptions.api!.destroyFilter('date')
-  gridOptions.api!.setFilterModel(filterModel)
+  gridApi!.setGridOption('columnDefs', columnDefs)
+  gridApi!.destroyFilter('date')
+  gridApi!.setFilterModel(filterModel)
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
-  gridOptions.api!.setRowData([
+  gridApi!.setGridOption('rowData', [
     {
       athlete: 'Alberto Gutierrez',
       date: null,

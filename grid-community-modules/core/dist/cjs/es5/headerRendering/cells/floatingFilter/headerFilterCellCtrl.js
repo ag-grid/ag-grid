@@ -14,17 +14,10 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HeaderFilterCellCtrl = void 0;
 var abstractHeaderCellCtrl_1 = require("../abstractCell/abstractHeaderCellCtrl");
 var keyCode_1 = require("../../../constants/keyCode");
-var context_1 = require("../../../context/context");
 var column_1 = require("../../../entities/column");
 var events_1 = require("../../../events");
 var setLeftFeature_1 = require("../../../rendering/features/setLeftFeature");
@@ -33,19 +26,20 @@ var icon_1 = require("../../../utils/icon");
 var managedFocusFeature_1 = require("../../../widgets/managedFocusFeature");
 var hoverFeature_1 = require("../hoverFeature");
 var aria_1 = require("../../../utils/aria");
+var function_1 = require("../../../utils/function");
 var HeaderFilterCellCtrl = /** @class */ (function (_super) {
     __extends(HeaderFilterCellCtrl, _super);
-    function HeaderFilterCellCtrl(column, parentRowCtrl) {
-        var _this = _super.call(this, column, parentRowCtrl) || this;
+    function HeaderFilterCellCtrl(column, beans, parentRowCtrl) {
+        var _this = _super.call(this, column, beans, parentRowCtrl) || this;
         _this.iconCreated = false;
         _this.column = column;
         return _this;
     }
     HeaderFilterCellCtrl.prototype.setComp = function (comp, eGui, eButtonShowMainFilter, eFloatingFilterBody) {
-        _super.prototype.setGui.call(this, eGui);
         this.comp = comp;
         this.eButtonShowMainFilter = eButtonShowMainFilter;
         this.eFloatingFilterBody = eFloatingFilterBody;
+        this.setGui(eGui);
         this.setupActive();
         this.setupWidth();
         this.setupLeft();
@@ -60,6 +54,10 @@ var HeaderFilterCellCtrl = /** @class */ (function (_super) {
         this.setupFilterChangedListener();
         this.addManagedListener(this.column, column_1.Column.EVENT_COL_DEF_CHANGED, this.onColDefChanged.bind(this));
     };
+    // empty abstract method
+    HeaderFilterCellCtrl.prototype.resizeHeader = function () { };
+    // empty abstract method
+    HeaderFilterCellCtrl.prototype.moveHeader = function () { };
     HeaderFilterCellCtrl.prototype.setupActive = function () {
         var colDef = this.column.getColDef();
         var filterExists = !!colDef.filter;
@@ -73,7 +71,7 @@ var HeaderFilterCellCtrl = /** @class */ (function (_super) {
         if (!this.active || this.iconCreated) {
             return;
         }
-        var eMenuIcon = icon_1.createIconNoSpan('filter', this.gridOptionsService, this.column);
+        var eMenuIcon = (0, icon_1.createIconNoSpan)('filter', this.gridOptionsService, this.column);
         if (eMenuIcon) {
             this.iconCreated = true;
             this.eButtonShowMainFilter.appendChild(eMenuIcon);
@@ -89,7 +87,7 @@ var HeaderFilterCellCtrl = /** @class */ (function (_super) {
     };
     HeaderFilterCellCtrl.prototype.setupAria = function () {
         var localeTextFunc = this.localeService.getLocaleTextFunc();
-        aria_1.setAriaLabel(this.eButtonShowMainFilter, localeTextFunc('ariaFilterMenuOpen', 'Open Filter Menu'));
+        (0, aria_1.setAriaLabel)(this.eButtonShowMainFilter, localeTextFunc('ariaFilterMenuOpen', 'Open Filter Menu'));
     };
     HeaderFilterCellCtrl.prototype.onTabKeyDown = function (e) {
         var eDocument = this.gridOptionsService.getDocument();
@@ -120,12 +118,12 @@ var HeaderFilterCellCtrl = /** @class */ (function (_super) {
         }
     };
     HeaderFilterCellCtrl.prototype.findNextColumnWithFloatingFilter = function (backwards) {
-        var columModel = this.beans.columnModel;
+        var columnModel = this.beans.columnModel;
         var nextCol = this.column;
         do {
             nextCol = backwards
-                ? columModel.getDisplayedColBefore(nextCol)
-                : columModel.getDisplayedColAfter(nextCol);
+                ? columnModel.getDisplayedColBefore(nextCol)
+                : columnModel.getDisplayedColAfter(nextCol);
             if (!nextCol) {
                 break;
             }
@@ -168,7 +166,7 @@ var HeaderFilterCellCtrl = /** @class */ (function (_super) {
             return;
         }
         var notFromHeaderWrapper = !!e.relatedTarget && !e.relatedTarget.classList.contains('ag-floating-filter');
-        var fromWithinHeader = !!e.relatedTarget && dom_1.isElementChildOfClass(e.relatedTarget, 'ag-floating-filter');
+        var fromWithinHeader = !!e.relatedTarget && (0, dom_1.isElementChildOfClass)(e.relatedTarget, 'ag-floating-filter');
         if (notFromHeaderWrapper && fromWithinHeader && e.target === this.eGui) {
             var lastFocusEvent = this.lastFocusEvent;
             var fromTab = !!(lastFocusEvent && lastFocusEvent.key === keyCode_1.KeyCode.TAB);
@@ -184,10 +182,10 @@ var HeaderFilterCellCtrl = /** @class */ (function (_super) {
         var _this = this;
         this.createManagedBean(new hoverFeature_1.HoverFeature([this.column], this.eGui));
         var listener = function () {
-            if (!_this.gridOptionsService.is('columnHoverHighlight')) {
+            if (!_this.gridOptionsService.get('columnHoverHighlight')) {
                 return;
             }
-            var hovered = _this.columnHoverService.isHovered(_this.column);
+            var hovered = _this.beans.columnHoverService.isHovered(_this.column);
             _this.comp.addOrRemoveCssClass('ag-column-hover', hovered);
         };
         this.addManagedListener(this.eventService, events_1.Events.EVENT_COLUMN_HOVER_CHANGED, listener);
@@ -198,17 +196,15 @@ var HeaderFilterCellCtrl = /** @class */ (function (_super) {
         this.createManagedBean(setLeftFeature);
     };
     HeaderFilterCellCtrl.prototype.setupFilterButton = function () {
-        var colDef = this.column.getColDef();
-        // this is unusual - we need a params value OUTSIDE the component the params are for.
-        // the params are for the floating filter component, but this property is actually for the wrapper.
-        this.suppressFilterButton = colDef.floatingFilterComponentParams ? !!colDef.floatingFilterComponentParams.suppressFilterButton : false;
+        this.suppressFilterButton = !this.menuService.isFloatingFilterButtonEnabled(this.column);
+        this.highlightFilterButtonWhenActive = !this.menuService.isLegacyMenuEnabled();
     };
     HeaderFilterCellCtrl.prototype.setupUserComp = function () {
         var _this = this;
         if (!this.active) {
             return;
         }
-        var compDetails = this.filterManager.getFloatingFilterCompDetails(this.column, function () { return _this.showParentFilter(); });
+        var compDetails = this.beans.filterManager.getFloatingFilterCompDetails(this.column, function () { return _this.showParentFilter(); });
         if (compDetails) {
             this.setCompDetails(compDetails);
         }
@@ -219,13 +215,19 @@ var HeaderFilterCellCtrl = /** @class */ (function (_super) {
     };
     HeaderFilterCellCtrl.prototype.showParentFilter = function () {
         var eventSource = this.suppressFilterButton ? this.eFloatingFilterBody : this.eButtonShowMainFilter;
-        this.menuFactory.showMenuAfterButtonClick(this.column, eventSource, 'floatingFilter', 'filterMenuTab', ['filterMenuTab']);
+        this.menuService.showFilterMenu({
+            column: this.column,
+            buttonElement: eventSource,
+            containerType: 'floatingFilter',
+            positionBy: 'button'
+        });
     };
     HeaderFilterCellCtrl.prototype.setupSyncWithFilter = function () {
         var _this = this;
         if (!this.active) {
             return;
         }
+        var filterManager = this.beans.filterManager;
         var syncWithFilter = function (filterChangedEvent) {
             var compPromise = _this.comp.getFloatingFilterComp();
             if (!compPromise) {
@@ -233,20 +235,20 @@ var HeaderFilterCellCtrl = /** @class */ (function (_super) {
             }
             compPromise.then(function (comp) {
                 if (comp) {
-                    var parentModel = _this.filterManager.getCurrentFloatingFilterParentModel(_this.column);
+                    var parentModel = filterManager.getCurrentFloatingFilterParentModel(_this.column);
                     comp.onParentModelChanged(parentModel, filterChangedEvent);
                 }
             });
         };
         this.destroySyncListener = this.addManagedListener(this.column, column_1.Column.EVENT_FILTER_CHANGED, syncWithFilter);
-        if (this.filterManager.isFilterActive(this.column)) {
+        if (filterManager.isFilterActive(this.column)) {
             syncWithFilter(null);
         }
     };
     HeaderFilterCellCtrl.prototype.setupWidth = function () {
         var _this = this;
         var listener = function () {
-            var width = _this.column.getActualWidth() + "px";
+            var width = "".concat(_this.column.getActualWidth(), "px");
             _this.comp.setWidth(width);
         };
         this.addManagedListener(this.column, column_1.Column.EVENT_WIDTH_CHANGED, listener);
@@ -255,11 +257,16 @@ var HeaderFilterCellCtrl = /** @class */ (function (_super) {
     HeaderFilterCellCtrl.prototype.setupFilterChangedListener = function () {
         if (this.active) {
             this.destroyFilterChangedListener = this.addManagedListener(this.column, column_1.Column.EVENT_FILTER_CHANGED, this.updateFilterButton.bind(this));
+            this.updateFilterButton();
         }
     };
     HeaderFilterCellCtrl.prototype.updateFilterButton = function () {
         if (!this.suppressFilterButton && this.comp) {
-            this.comp.setButtonWrapperDisplayed(this.filterManager.isFilterAllowed(this.column));
+            var isFilterAllowed = this.beans.filterManager.isFilterAllowed(this.column);
+            this.comp.setButtonWrapperDisplayed(isFilterAllowed);
+            if (this.highlightFilterButtonWhenActive && isFilterAllowed) {
+                this.eButtonShowMainFilter.classList.toggle('ag-filter-active', this.column.isFilterActive());
+            }
         }
     };
     HeaderFilterCellCtrl.prototype.onColDefChanged = function () {
@@ -273,7 +280,7 @@ var HeaderFilterCellCtrl = /** @class */ (function (_super) {
             (_b = this.destroyFilterChangedListener) === null || _b === void 0 ? void 0 : _b.call(this);
         }
         var newCompDetails = this.active
-            ? this.filterManager.getFloatingFilterCompDetails(this.column, function () { return _this.showParentFilter(); })
+            ? this.beans.filterManager.getFloatingFilterCompDetails(this.column, function () { return _this.showParentFilter(); })
             : null;
         var compPromise = this.comp.getFloatingFilterComp();
         if (!compPromise || !newCompDetails) {
@@ -282,7 +289,7 @@ var HeaderFilterCellCtrl = /** @class */ (function (_super) {
         else {
             compPromise.then(function (compInstance) {
                 var _a;
-                if (!compInstance || _this.filterManager.areFilterCompsDifferent((_a = _this.userCompDetails) !== null && _a !== void 0 ? _a : null, newCompDetails)) {
+                if (!compInstance || _this.beans.filterManager.areFilterCompsDifferent((_a = _this.userCompDetails) !== null && _a !== void 0 ? _a : null, newCompDetails)) {
                     _this.updateCompDetails(newCompDetails, becomeActive);
                 }
                 else {
@@ -292,6 +299,9 @@ var HeaderFilterCellCtrl = /** @class */ (function (_super) {
         }
     };
     HeaderFilterCellCtrl.prototype.updateCompDetails = function (compDetails, becomeActive) {
+        if (!this.isAlive()) {
+            return;
+        }
         this.setCompDetails(compDetails);
         // filter button and UI can change based on params, so always want to update
         this.setupFilterButton();
@@ -308,20 +318,30 @@ var HeaderFilterCellCtrl = /** @class */ (function (_super) {
         }
         var params = userCompDetails.params;
         (_a = this.comp.getFloatingFilterComp()) === null || _a === void 0 ? void 0 : _a.then(function (floatingFilter) {
-            if ((floatingFilter === null || floatingFilter === void 0 ? void 0 : floatingFilter.onParamsUpdated) && typeof floatingFilter.onParamsUpdated === 'function') {
-                floatingFilter.onParamsUpdated(params);
+            var hasRefreshed = false;
+            if ((floatingFilter === null || floatingFilter === void 0 ? void 0 : floatingFilter.refresh) && typeof floatingFilter.refresh === 'function') {
+                var result = floatingFilter.refresh(params);
+                // framework wrapper always implements optional methods, but returns null if no underlying method
+                if (result !== null) {
+                    hasRefreshed = true;
+                }
+            }
+            if (!hasRefreshed && (floatingFilter === null || floatingFilter === void 0 ? void 0 : floatingFilter.onParamsUpdated) && typeof floatingFilter.onParamsUpdated === 'function') {
+                var result = floatingFilter.onParamsUpdated(params);
+                if (result !== null) {
+                    (0, function_1.warnOnce)("Custom floating filter method 'onParamsUpdated' is deprecated. Use 'refresh' instead.");
+                }
             }
         });
     };
-    __decorate([
-        context_1.Autowired('filterManager')
-    ], HeaderFilterCellCtrl.prototype, "filterManager", void 0);
-    __decorate([
-        context_1.Autowired('columnHoverService')
-    ], HeaderFilterCellCtrl.prototype, "columnHoverService", void 0);
-    __decorate([
-        context_1.Autowired('menuFactory')
-    ], HeaderFilterCellCtrl.prototype, "menuFactory", void 0);
+    HeaderFilterCellCtrl.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+        this.eButtonShowMainFilter = null;
+        this.eFloatingFilterBody = null;
+        this.userCompDetails = null;
+        this.destroySyncListener = null;
+        this.destroyFilterChangedListener = null;
+    };
     return HeaderFilterCellCtrl;
 }(abstractHeaderCellCtrl_1.AbstractHeaderCellCtrl));
 exports.HeaderFilterCellCtrl = HeaderFilterCellCtrl;

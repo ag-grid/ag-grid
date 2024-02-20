@@ -19,25 +19,24 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { _, Autowired, Bean, PostConstruct, BeanStub } from "@ag-grid-community/core";
+import { _, Autowired, Bean, BeanStub } from "@ag-grid-community/core";
 var SortService = /** @class */ (function (_super) {
     __extends(SortService, _super);
     function SortService() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    SortService.prototype.init = function () {
-        this.postSortFunc = this.gridOptionsService.getCallback('postSortRows');
-    };
     SortService.prototype.sort = function (sortOptions, sortActive, useDeltaSort, rowNodeTransactions, changedPath, sortContainsGroupColumns) {
         var _this = this;
-        var groupMaintainOrder = this.gridOptionsService.is('groupMaintainOrder');
+        var groupMaintainOrder = this.gridOptionsService.get('groupMaintainOrder');
         var groupColumnsPresent = this.columnModel.getAllGridColumns().some(function (c) { return c.isRowGroupActive(); });
         var allDirtyNodes = {};
         if (useDeltaSort && rowNodeTransactions) {
             allDirtyNodes = this.calculateDirtyNodes(rowNodeTransactions);
         }
         var isPivotMode = this.columnModel.isPivotMode();
+        var postSortFunc = this.gridOptionsService.getCallback('postSortRows');
         var callback = function (rowNode) {
+            var _a;
             // we clear out the 'pull down open parents' first, as the values mix up the sorting
             _this.pullDownGroupDataForHideOpenParents(rowNode.childrenAfterAggFilter, true);
             // It's pointless to sort rows which aren't being displayed. in pivot mode we don't need to sort the leaf group children.
@@ -47,8 +46,11 @@ var SortService = /** @class */ (function (_super) {
             // are going to inspect the original array position. This is what sortedRowNodes is for.
             var skipSortingGroups = groupMaintainOrder && groupColumnsPresent && !rowNode.leafGroup && !sortContainsGroupColumns;
             if (skipSortingGroups) {
+                var nextGroup = (_a = _this.columnModel.getRowGroupColumns()) === null || _a === void 0 ? void 0 : _a[rowNode.level + 1];
+                // if the sort is null, then sort was explicitly removed, so remove sort from this group.
+                var wasSortExplicitlyRemoved = (nextGroup === null || nextGroup === void 0 ? void 0 : nextGroup.getSort()) === null;
                 var childrenToBeSorted = rowNode.childrenAfterAggFilter.slice(0);
-                if (rowNode.childrenAfterSort) {
+                if (rowNode.childrenAfterSort && !wasSortExplicitlyRemoved) {
                     var indexedOrders_1 = {};
                     rowNode.childrenAfterSort.forEach(function (node, idx) {
                         indexedOrders_1[node.id] = idx;
@@ -71,9 +73,9 @@ var SortService = /** @class */ (function (_super) {
                 rowNode.sibling.childrenAfterSort = rowNode.childrenAfterSort;
             }
             _this.updateChildIndexes(rowNode);
-            if (_this.postSortFunc) {
+            if (postSortFunc) {
                 var params = { nodes: rowNode.childrenAfterSort };
-                _this.postSortFunc(params);
+                postSortFunc(params);
             }
         };
         if (changedPath) {
@@ -171,12 +173,11 @@ var SortService = /** @class */ (function (_super) {
     };
     SortService.prototype.updateGroupDataForHideOpenParents = function (changedPath) {
         var _this = this;
-        if (!this.gridOptionsService.is('groupHideOpenParents')) {
+        if (!this.gridOptionsService.get('groupHideOpenParents')) {
             return;
         }
-        if (this.gridOptionsService.isTreeData()) {
-            var msg_1 = "AG Grid: The property hideOpenParents dose not work with Tree Data. This is because Tree Data has values at the group level, it doesn't make sense to hide them (as opposed to Row Grouping, which only has Aggregated Values at the group level).";
-            _.doOnce(function () { return console.warn(msg_1); }, 'sortService.hideOpenParentsWithTreeData');
+        if (this.gridOptionsService.get('treeData')) {
+            _.warnOnce("The property hideOpenParents dose not work with Tree Data. This is because Tree Data has values at the group level, it doesn't make sense to hide them.");
             return false;
         }
         // recurse breadth first over group nodes after sort to 'pull down' group data to child groups
@@ -194,7 +195,7 @@ var SortService = /** @class */ (function (_super) {
     };
     SortService.prototype.pullDownGroupDataForHideOpenParents = function (rowNodes, clearOperation) {
         var _this = this;
-        if (!this.gridOptionsService.is('groupHideOpenParents') || _.missing(rowNodes)) {
+        if (!this.gridOptionsService.get('groupHideOpenParents') || _.missing(rowNodes)) {
             return;
         }
         rowNodes.forEach(function (childRowNode) {
@@ -231,9 +232,6 @@ var SortService = /** @class */ (function (_super) {
     __decorate([
         Autowired('rowNodeSorter')
     ], SortService.prototype, "rowNodeSorter", void 0);
-    __decorate([
-        PostConstruct
-    ], SortService.prototype, "init", null);
     SortService = __decorate([
         Bean('sortService')
     ], SortService);

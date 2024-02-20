@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "../../context/beanStub";
@@ -10,19 +10,17 @@ export interface HeaderPosition {
     /** The grid column or column group */
     column: Column | ColumnGroup;
 }
+export interface HeaderFuturePosition extends HeaderPosition {
+    headerRowIndexWithoutSpan?: number;
+}
 export declare class HeaderPositionUtils extends BeanStub {
     private columnModel;
     private ctrlsService;
     findHeader(focusedHeader: HeaderPosition, direction: 'Before' | 'After'): HeaderPosition | undefined;
+    getHeaderIndexToFocus(column: Column | ColumnGroup, currentIndex: number): HeaderPosition;
     private isAnyChildSpanningHeaderHeight;
-    getColumnVisibleParent(currentColumn: Column | ColumnGroup, currentIndex: number): {
-        nextFocusColumn: Column | ColumnGroup | null;
-        nextRow: number;
-    };
-    getColumnVisibleChild(column: Column | ColumnGroup, currentIndex: number, direction?: 'Before' | 'After'): {
-        nextFocusColumn: Column | ColumnGroup | null;
-        nextRow: number;
-    };
+    getColumnVisibleParent(currentColumn: Column | ColumnGroup, currentIndex: number): HeaderFuturePosition;
+    getColumnVisibleChild(column: Column | ColumnGroup, currentIndex: number, direction?: 'Before' | 'After'): HeaderFuturePosition;
     private getHeaderRowType;
     findColAtEdgeForHeaderRow(level: number, position: 'start' | 'end'): HeaderPosition | undefined;
 }

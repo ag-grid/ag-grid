@@ -2,7 +2,7 @@
 
 @use "./alpine-variables";
 
-.ag-theme-alpine, .ag-theme-alpine-dark {
+.ag-theme-alpine, .ag-theme-alpine-dark, .ag-theme-alpine-auto-dark {
     .ag-filter-toolpanel-header,
     .ag-filter-toolpanel-search,
     .ag-status-bar,
@@ -36,6 +36,10 @@
     }
 
     .ag-menu {
+        background-color: var(--ag-control-panel-background-color);
+    }
+
+    .ag-panel-content-wrapper .ag-column-select {
         background-color: var(--ag-control-panel-background-color);
     }
 
@@ -104,6 +108,7 @@
     }
 
     .ag-standard-button {
+        font-family: inherit;
         appearance: none;
         -webkit-appearance: none;
         border-radius: var(--ag-border-radius);
@@ -175,7 +180,13 @@
         }
     }
 
+    .ag-column-select-column-readonly.ag-icon-grip,
+    .ag-column-select-column-readonly .ag-icon-grip {
+        opacity: 0.35;
+    }
+
     .ag-header-cell-menu-button,
+    .ag-header-cell-filter-button,
     .ag-side-button-button,
     .ag-tab,
     .ag-panel-title-bar-button,
@@ -195,6 +206,18 @@
         &:hover {
             color: var(--ag-alpine-active-color);
         }
+    }
+
+    .ag-header-cell-menu-button:hover .ag-icon,
+    .ag-header-cell-filter-button:hover .ag-icon,
+    .ag-side-button-button:hover .ag-icon,
+    .ag-panel-title-bar-button:hover .ag-icon,
+    .ag-floating-filter-button-button:hover .ag-icon {
+        color: inherit;
+    }
+
+    .ag-filter-active .ag-icon-filter {
+        color: var(--ag-alpine-active-color);
     }
 
     .ag-chart-menu-close {
@@ -242,7 +265,7 @@
     }
 
     .ag-layout-auto-height, .ag-layout-print {
-        .ag-center-cols-clipper, .ag-center-cols-container {
+        .ag-center-cols-viewport, .ag-center-cols-container {
             min-height: 150px;
         }
     }
@@ -254,8 +277,9 @@
     .ag-date-time-list-page-entry-is-current {
         background-color: var(--ag-alpine-active-color);
     }
-}
 
-.ag-theme-alpine-dark {
-    color-scheme: dark;
+    .ag-advanced-filter-builder-button {
+        padding: var(--ag-grid-size);
+        font-weight: 600;
+    }
 }

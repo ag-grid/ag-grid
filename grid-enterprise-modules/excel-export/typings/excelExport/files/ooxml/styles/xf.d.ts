@@ -7,6 +7,7 @@ export interface Xf {
     fillId: number;
     fontId: number;
     numFmtId: number;
+    quotePrefix?: number;
     xfId?: number;
     protection?: ExcelProtection;
 }

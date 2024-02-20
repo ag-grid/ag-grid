@@ -35,7 +35,7 @@ class BackgroundPanel extends core_1.Component {
         this.colorPicker
             .setLabel(this.chartTranslationService.translate('color'))
             .setLabelWidth('flex')
-            .setInputWidth(45)
+            .setInputWidth('flex')
             .setValue(this.chartOptionsService.getChartOption('background.fill'))
             .onValueChange(newColor => this.chartOptionsService.setChartOption('background.fill', newColor));
     }
@@ -46,13 +46,13 @@ BackgroundPanel.TEMPLATE = `<div>
             </ag-group-component>
         <div>`;
 __decorate([
-    core_1.RefSelector('chartBackgroundGroup')
+    (0, core_1.RefSelector)('chartBackgroundGroup')
 ], BackgroundPanel.prototype, "group", void 0);
 __decorate([
-    core_1.RefSelector('colorPicker')
+    (0, core_1.RefSelector)('colorPicker')
 ], BackgroundPanel.prototype, "colorPicker", void 0);
 __decorate([
-    core_1.Autowired('chartTranslationService')
+    (0, core_1.Autowired)('chartTranslationService')
 ], BackgroundPanel.prototype, "chartTranslationService", void 0);
 __decorate([
     core_1.PostConstruct

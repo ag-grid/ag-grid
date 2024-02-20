@@ -4,7 +4,7 @@ import {
     ISimpleFilterModel,
     ISimpleFilterModelType,
     Tuple,
-    SimpleFilterModelFormatter
+    SimpleFilterModelFormatter,
 } from '../simpleFilter';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { makeNull } from '../../../utils/generic';
@@ -19,13 +19,13 @@ export interface TextFilterModel extends ISimpleFilterModel {
     /**
      * The text value associated with the filter.
      * It's optional as custom filters may not have a text value.
-     * */
+     */
     filter?: string | null;
     /**
      * The 2nd text value associated with the filter, if supported.
-     * */
-     filterTo?: string | null;
-    }
+     */
+    filterTo?: string | null;
+}
 
 export interface TextMatcherParams extends BaseColDefParams {
     /**
@@ -77,7 +77,7 @@ export interface ITextFilterParams extends ISimpleFilterParams {
     textMatcher?: TextMatcher;
     /**
      * By default, text filtering is case-insensitive. Set this to `true` to make text filtering case-sensitive.
-     * Default: `false`
+     * @default false
      */
     caseSensitive?: boolean;
     /**
@@ -89,7 +89,7 @@ export interface ITextFilterParams extends ISimpleFilterParams {
      * If `true`, the input that the user enters will be trimmed when the filter is applied, so any leading or trailing whitespace will be removed.
      * If only whitespace is entered, it will be left as-is.
      * If you enable `trimInput`, it is best to also increase the `debounceMs` to give users more time to enter text.
-     * Default: `false`
+     * @default false
      */
     trimInput?: boolean;
 }
@@ -188,7 +188,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
     private getTextMatcher(): TextMatcher {
         const legacyComparator = (this.textFilterParams as any).textCustomComparator;
         if (legacyComparator) {
-            _.doOnce(() => console.warn('AG Grid - textCustomComparator is deprecated, use textMatcher instead.'), 'textCustomComparator.deprecated');
+            _.warnOnce('textCustomComparator is deprecated, use textMatcher instead.');
             return ({ filterOption, value, filterText }) => legacyComparator(filterOption, value, filterText);
         }
         return this.textFilterParams.textMatcher || TextFilter.DEFAULT_MATCHER

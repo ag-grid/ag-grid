@@ -8,33 +8,47 @@ import { Autowired, Bean } from "../context/context.mjs";
 import { BeanStub } from "../context/beanStub.mjs";
 let StylingService = class StylingService extends BeanStub {
     processAllCellClasses(colDef, params, onApplicableClass, onNotApplicableClass) {
-        this.processClassRules(colDef.cellClassRules, params, onApplicableClass, onNotApplicableClass);
+        this.processClassRules(undefined, colDef.cellClassRules, params, onApplicableClass, onNotApplicableClass);
         this.processStaticCellClasses(colDef, params, onApplicableClass);
     }
-    processClassRules(classRules, params, onApplicableClass, onNotApplicableClass) {
-        if (classRules == null) {
+    processClassRules(previousClassRules, classRules, params, onApplicableClass, onNotApplicableClass) {
+        if (classRules == null && previousClassRules == null) {
             return;
         }
-        const classNames = Object.keys(classRules);
         const classesToApply = {};
         const classesToRemove = {};
-        for (let i = 0; i < classNames.length; i++) {
-            const className = classNames[i];
-            const rule = classRules[className];
-            let resultOfRule;
-            if (typeof rule === 'string') {
-                resultOfRule = this.expressionService.evaluate(rule, params);
-            }
-            else if (typeof rule === 'function') {
-                resultOfRule = rule(params);
-            }
+        const forEachSingleClass = (className, callback) => {
             // in case className = 'my-class1 my-class2', we need to split into individual class names
             className.split(' ').forEach(singleClass => {
-                if (singleClass == null || singleClass.trim() == '') {
+                if (singleClass.trim() == '')
                     return;
-                }
-                resultOfRule ? classesToApply[singleClass] = true : classesToRemove[singleClass] = true;
+                callback(singleClass);
             });
+        };
+        if (classRules) {
+            const classNames = Object.keys(classRules);
+            for (let i = 0; i < classNames.length; i++) {
+                const className = classNames[i];
+                const rule = classRules[className];
+                let resultOfRule;
+                if (typeof rule === 'string') {
+                    resultOfRule = this.expressionService.evaluate(rule, params);
+                }
+                else if (typeof rule === 'function') {
+                    resultOfRule = rule(params);
+                }
+                forEachSingleClass(className, singleClass => {
+                    resultOfRule ? classesToApply[singleClass] = true : classesToRemove[singleClass] = true;
+                });
+            }
+        }
+        if (previousClassRules && onNotApplicableClass) {
+            Object.keys(previousClassRules).forEach(className => forEachSingleClass(className, singleClass => {
+                if (!classesToApply[singleClass]) {
+                    // if we're not applying a previous class now, make sure we remove it
+                    classesToRemove[singleClass] = true;
+                }
+            }));
         }
         // we remove all classes first, then add all classes second,
         // in case a class appears in more than one rule, this means it will be added

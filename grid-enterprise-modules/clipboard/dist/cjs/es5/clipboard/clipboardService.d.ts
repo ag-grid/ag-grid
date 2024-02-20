@@ -51,6 +51,7 @@ export declare class ClipboardService extends BeanStub implements IClipboardServ
     private buildDataFromMergedRanges;
     private buildDataFromRanges;
     private getRangeRowPositionsAndCellsToFlash;
+    private getCellsToFlashFromRowNodes;
     private copyFocusedCellToClipboard;
     copySelectedRowsToClipboard(params?: IClipboardCopyRowsParams): void;
     private buildExportParams;

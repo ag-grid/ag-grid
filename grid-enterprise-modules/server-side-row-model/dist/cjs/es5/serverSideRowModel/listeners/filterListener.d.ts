@@ -6,4 +6,5 @@ export declare class FilterListener extends BeanStub {
     private postConstruct;
     private onFilterChanged;
     private findChangedColumns;
+    private getAdvancedFilterColumns;
 }

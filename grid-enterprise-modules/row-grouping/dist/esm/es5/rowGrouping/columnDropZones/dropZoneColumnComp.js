@@ -36,7 +36,7 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
         var _this = this;
         this.setTemplate(DropZoneColumnComp.TEMPLATE);
         var eGui = this.getGui();
-        var isFunctionsReadOnly = this.gridOptionsService.is('functionsReadOnly');
+        var isFunctionsReadOnly = this.gridOptionsService.get('functionsReadOnly');
         this.addElementClasses(eGui);
         this.addElementClasses(this.eDragHandle, 'drag-handle');
         this.addElementClasses(this.eText, 'text');
@@ -55,6 +55,19 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
         });
         this.setupTooltip();
         this.activateTabIndex();
+        var checkColumnLock = function () {
+            var isLocked = _this.isGroupingAndLocked();
+            _.setDisplayed(_this.eButton, !isLocked && !_this.gridOptionsService.get('functionsReadOnly'));
+            _this.eDragHandle.classList.toggle('ag-column-select-column-readonly', isLocked);
+            _this.setupAria();
+        };
+        checkColumnLock();
+        if (this.isGroupingZone()) {
+            this.addManagedPropertyListener('groupLockGroupColumns', function () { return checkColumnLock(); });
+        }
+    };
+    DropZoneColumnComp.prototype.getColumn = function () {
+        return this.column;
     };
     DropZoneColumnComp.prototype.setupAria = function () {
         var translate = this.localeService.getLocaleTextFunc();
@@ -65,25 +78,27 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
             desc: translate('ariaDropZoneColumnComponentSortDescending', 'descending'),
         };
         var columnSort = this.column.getSort();
-        var isSortSuppressed = this.gridOptionsService.is('rowGroupPanelSuppressSort');
+        var isSortSuppressed = this.gridOptionsService.get('rowGroupPanelSuppressSort');
         var ariaInstructions = [
             [
-                aggFuncName && "" + aggFuncName + aggSeparator,
+                aggFuncName && "".concat(aggFuncName).concat(aggSeparator),
                 name,
-                this.isGroupingZone() && !isSortSuppressed && columnSort && ", " + sortDirection[columnSort]
+                this.isGroupingZone() && !isSortSuppressed && columnSort && ", ".concat(sortDirection[columnSort])
             ].filter(function (part) { return !!part; }).join(''),
         ];
-        var isFunctionsReadOnly = this.gridOptionsService.is('functionsReadOnly');
+        var isFunctionsReadOnly = this.gridOptionsService.get('functionsReadOnly');
         if (this.isAggregationZone() && !isFunctionsReadOnly) {
             var aggregationMenuAria = translate('ariaDropZoneColumnValueItemDescription', 'Press ENTER to change the aggregation type');
             ariaInstructions.push(aggregationMenuAria);
         }
-        if (this.isGroupingZone() && this.column.getColDef().sortable && !isSortSuppressed) {
+        if (this.isGroupingZone() && this.column.isSortable() && !isSortSuppressed) {
             var sortProgressAria = translate('ariaDropZoneColumnGroupItemDescription', 'Press ENTER to sort');
             ariaInstructions.push(sortProgressAria);
         }
-        var deleteAria = translate('ariaDropZoneColumnComponentDescription', 'Press DELETE to remove');
-        ariaInstructions.push(deleteAria);
+        if (!this.isGroupingAndLocked()) {
+            var deleteAria = translate('ariaDropZoneColumnComponentDescription', 'Press DELETE to remove');
+            ariaInstructions.push(deleteAria);
+        }
         _.setAriaLabel(this.getGui(), ariaInstructions.join('. '));
     };
     DropZoneColumnComp.prototype.setupTooltip = function () {
@@ -97,12 +112,12 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
     };
     DropZoneColumnComp.prototype.setupSort = function () {
         var _this = this;
-        var canSort = this.column.getColDef().sortable;
+        var canSort = this.column.isSortable();
         var isGroupingZone = this.isGroupingZone();
         if (!canSort || !isGroupingZone) {
             return;
         }
-        if (!this.gridOptionsService.is('rowGroupPanelSuppressSort')) {
+        if (!this.gridOptionsService.get('rowGroupPanelSuppressSort')) {
             this.eSortIndicator.setupSort(this.column, true);
             var performSort_1 = function (event) {
                 event.preventDefault();
@@ -121,22 +136,22 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
     };
     DropZoneColumnComp.prototype.addDragSource = function () {
         var _this = this;
+        var _a = this, dragAndDropService = _a.dragAndDropService, displayName = _a.displayName, eDragHandle = _a.eDragHandle, column = _a.column;
         var dragSource = {
             type: DragSourceType.ToolPanel,
-            eElement: this.eDragHandle,
-            defaultIconName: DragAndDropService.ICON_HIDE,
-            getDragItem: function () { return _this.createDragItem(); },
-            dragItemName: this.displayName,
-            dragSourceDropTarget: this.dragSourceDropTarget
+            eElement: eDragHandle,
+            getDefaultIconName: function () { return DragAndDropService.ICON_HIDE; },
+            getDragItem: function () { return _this.createDragItem(column); },
+            dragItemName: displayName
         };
-        this.dragAndDropService.addDragSource(dragSource, true);
-        this.addDestroyFunc(function () { return _this.dragAndDropService.removeDragSource(dragSource); });
+        dragAndDropService.addDragSource(dragSource, true);
+        this.addDestroyFunc(function () { return dragAndDropService.removeDragSource(dragSource); });
     };
-    DropZoneColumnComp.prototype.createDragItem = function () {
+    DropZoneColumnComp.prototype.createDragItem = function (column) {
         var visibleState = {};
-        visibleState[this.column.getId()] = this.column.isVisible();
+        visibleState[column.getId()] = column.isVisible();
         return {
-            columns: [this.column],
+            columns: [column],
             visibleState: visibleState
         };
     };
@@ -146,22 +161,27 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
         if (this.ghost) {
             this.addCssClass('ag-column-drop-cell-ghost');
         }
-        if (this.isAggregationZone() && !this.gridOptionsService.is('functionsReadOnly')) {
+        if (this.isAggregationZone() && !this.gridOptionsService.get('functionsReadOnly')) {
             this.addGuiEventListener('click', this.onShowAggFuncSelection.bind(this));
         }
     };
+    DropZoneColumnComp.prototype.isGroupingAndLocked = function () {
+        return this.isGroupingZone() && this.columnModel.isColumnGroupingLocked(this.column);
+    };
     DropZoneColumnComp.prototype.setupRemove = function () {
         var _this = this;
-        _.setDisplayed(this.eButton, !this.gridOptionsService.is('functionsReadOnly'));
+        _.setDisplayed(this.eButton, !this.isGroupingAndLocked() && !this.gridOptionsService.get('functionsReadOnly'));
         var agEvent = { type: DropZoneColumnComp.EVENT_COLUMN_REMOVE };
         this.addGuiEventListener('keydown', function (e) {
             var isEnter = e.key === KeyCode.ENTER;
             var isDelete = e.key === KeyCode.DELETE;
             if (isDelete) {
-                e.preventDefault();
-                _this.dispatchEvent(agEvent);
+                if (!_this.isGroupingAndLocked()) {
+                    e.preventDefault();
+                    _this.dispatchEvent(agEvent);
+                }
             }
-            if (isEnter && _this.isAggregationZone() && !_this.gridOptionsService.is('functionsReadOnly')) {
+            if (isEnter && _this.isAggregationZone() && !_this.gridOptionsService.get('functionsReadOnly')) {
                 e.preventDefault();
                 _this.onShowAggFuncSelection();
             }
@@ -190,7 +210,7 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
     };
     DropZoneColumnComp.prototype.setTextValue = function () {
         var _a = this.getColumnAndAggFuncName(), name = _a.name, aggFuncName = _a.aggFuncName;
-        var displayValue = this.isAggregationZone() ? aggFuncName + "(" + name + ")" : name;
+        var displayValue = this.isAggregationZone() ? "".concat(aggFuncName, "(").concat(name, ")") : name;
         var displayValueSanitised = _.escapeString(displayValue);
         this.eText.innerHTML = displayValueSanitised;
     };
@@ -213,7 +233,7 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
         ePopup.style.top = '0px';
         ePopup.style.left = '0px';
         ePopup.appendChild(virtualListGui);
-        ePopup.style.width = eGui.clientWidth + "px";
+        ePopup.style.width = "".concat(eGui.clientWidth, "px");
         var focusoutListener = this.addManagedListener(ePopup, 'focusout', function (e) {
             if (!ePopup.contains(e.relatedTarget) && addPopupRes) {
                 addPopupRes.hideFunc();
@@ -271,7 +291,7 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
         var _this = this;
         var itemSelected = function () {
             hidePopup();
-            if (_this.gridOptionsService.is('functionsPassive')) {
+            if (_this.gridOptionsService.get('functionsPassive')) {
                 var event_1 = {
                     type: Events.EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST,
                     columns: [_this.column],
@@ -290,15 +310,20 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
         return comp;
     };
     DropZoneColumnComp.prototype.addElementClasses = function (el, suffix) {
-        suffix = suffix ? "-" + suffix : '';
+        suffix = suffix ? "-".concat(suffix) : '';
         var direction = this.horizontal ? 'horizontal' : 'vertical';
-        el.classList.add("ag-column-drop-cell" + suffix, "ag-column-drop-" + direction + "-cell" + suffix);
+        el.classList.add("ag-column-drop-cell".concat(suffix), "ag-column-drop-".concat(direction, "-cell").concat(suffix));
     };
     DropZoneColumnComp.prototype.isAggregationZone = function () {
         return this.dropZonePurpose === 'aggregation';
     };
     DropZoneColumnComp.prototype.isGroupingZone = function () {
         return this.dropZonePurpose === 'rowGroup';
+    };
+    DropZoneColumnComp.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+        this.column = null;
+        this.dragSourceDropTarget = null;
     };
     DropZoneColumnComp.EVENT_COLUMN_REMOVE = 'columnRemove';
     DropZoneColumnComp.TEMPLATE = "<span role=\"option\">\n          <span ref=\"eDragHandle\" class=\"ag-drag-handle ag-column-drop-cell-drag-handle\" role=\"presentation\"></span>\n          <span ref=\"eText\" class=\"ag-column-drop-cell-text\" aria-hidden=\"true\"></span>\n          <ag-sort-indicator ref=\"eSortIndicator\"></ag-sort-indicator>\n          <span ref=\"eButton\" class=\"ag-column-drop-cell-button\" role=\"presentation\"></span>\n        </span>";

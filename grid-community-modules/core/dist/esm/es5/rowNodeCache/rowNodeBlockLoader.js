@@ -38,7 +38,7 @@ var RowNodeBlockLoader = /** @class */ (function (_super) {
     RowNodeBlockLoader_1 = RowNodeBlockLoader;
     RowNodeBlockLoader.prototype.postConstruct = function () {
         this.maxConcurrentRequests = this.getMaxConcurrentDatasourceRequests();
-        var blockLoadDebounceMillis = this.gridOptionsService.getNum('blockLoadDebounceMillis');
+        var blockLoadDebounceMillis = this.gridOptionsService.get('blockLoadDebounceMillis');
         if (blockLoadDebounceMillis && blockLoadDebounceMillis > 0) {
             this.checkBlockToLoadDebounce = _.debounce(this.performCheckBlocksToLoad.bind(this), blockLoadDebounceMillis);
         }
@@ -47,7 +47,7 @@ var RowNodeBlockLoader = /** @class */ (function (_super) {
         this.logger = loggerFactory.create('RowNodeBlockLoader');
     };
     RowNodeBlockLoader.prototype.getMaxConcurrentDatasourceRequests = function () {
-        var res = this.gridOptionsService.getNum('maxConcurrentDatasourceRequests');
+        var res = this.gridOptionsService.get('maxConcurrentDatasourceRequests');
         if (res == null) {
             return 2;
         } // 2 is the default
@@ -116,8 +116,8 @@ var RowNodeBlockLoader = /** @class */ (function (_super) {
     };
     RowNodeBlockLoader.prototype.printCacheStatus = function () {
         if (this.logger.isLogging()) {
-            this.logger.log("printCacheStatus: activePageLoadsCount = " + this.activeBlockLoadsCount + ","
-                + (" blocks = " + JSON.stringify(this.getBlockState())));
+            this.logger.log("printCacheStatus: activePageLoadsCount = ".concat(this.activeBlockLoadsCount, ",")
+                + " blocks = ".concat(JSON.stringify(this.getBlockState())));
         }
     };
     RowNodeBlockLoader.prototype.isLoading = function () {

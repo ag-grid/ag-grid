@@ -15,26 +15,33 @@ const ARROW_UP = '\u2191';
 const ARROW_DOWN = '\u2193';
 class AnimateShowChangeCellRenderer extends component_1.Component {
     constructor() {
-        super(AnimateShowChangeCellRenderer.TEMPLATE);
+        super();
         this.refreshCount = 0;
+        const template = document.createElement('span');
+        const delta = document.createElement('span');
+        delta.setAttribute('class', 'ag-value-change-delta');
+        const value = document.createElement('span');
+        value.setAttribute('class', 'ag-value-change-value');
+        template.appendChild(delta);
+        template.appendChild(value);
+        this.setTemplateFromElement(template);
     }
     init(params) {
-        // this.params = params;
         this.eValue = this.queryForHtmlElement('.ag-value-change-value');
         this.eDelta = this.queryForHtmlElement('.ag-value-change-delta');
-        this.refresh(params);
+        this.refresh(params, true);
     }
     showDelta(params, delta) {
         const absDelta = Math.abs(delta);
         const valueFormatted = params.formatValue(absDelta);
-        const valueToUse = generic_1.exists(valueFormatted) ? valueFormatted : absDelta;
+        const valueToUse = (0, generic_1.exists)(valueFormatted) ? valueFormatted : absDelta;
         const deltaUp = (delta >= 0);
         if (deltaUp) {
-            this.eDelta.innerHTML = ARROW_UP + valueToUse;
+            this.eDelta.textContent = ARROW_UP + valueToUse;
         }
         else {
             // because negative, use ABS to remove sign
-            this.eDelta.innerHTML = ARROW_DOWN + valueToUse;
+            this.eDelta.textContent = ARROW_DOWN + valueToUse;
         }
         this.eDelta.classList.toggle('ag-value-change-delta-up', deltaUp);
         this.eDelta.classList.toggle('ag-value-change-delta-down', !deltaUp);
@@ -45,29 +52,31 @@ class AnimateShowChangeCellRenderer extends component_1.Component {
         // is not the most recent and will not try to remove the delta value.
         this.refreshCount++;
         const refreshCountCopy = this.refreshCount;
-        window.setTimeout(() => {
-            if (refreshCountCopy === this.refreshCount) {
-                this.hideDeltaValue();
-            }
-        }, 2000);
+        this.getFrameworkOverrides().wrapIncoming(() => {
+            window.setTimeout(() => {
+                if (refreshCountCopy === this.refreshCount) {
+                    this.hideDeltaValue();
+                }
+            }, 2000);
+        });
     }
     hideDeltaValue() {
         this.eValue.classList.remove('ag-value-change-value-highlight');
-        dom_1.clearElement(this.eDelta);
+        (0, dom_1.clearElement)(this.eDelta);
     }
-    refresh(params) {
+    refresh(params, isInitialRender = false) {
         const value = params.value;
         if (value === this.lastValue) {
             return false;
         }
-        if (generic_1.exists(params.valueFormatted)) {
-            this.eValue.innerHTML = params.valueFormatted;
+        if ((0, generic_1.exists)(params.valueFormatted)) {
+            this.eValue.textContent = params.valueFormatted;
         }
-        else if (generic_1.exists(params.value)) {
-            this.eValue.innerHTML = value;
+        else if ((0, generic_1.exists)(params.value)) {
+            this.eValue.textContent = value;
         }
         else {
-            dom_1.clearElement(this.eValue);
+            (0, dom_1.clearElement)(this.eValue);
         }
         // we don't show the delta if we are in the middle of a filter. see comment on FilterManager
         // with regards processingFilterChange
@@ -83,16 +92,14 @@ class AnimateShowChangeCellRenderer extends component_1.Component {
         if (this.lastValue) {
             this.eValue.classList.add('ag-value-change-value-highlight');
         }
-        this.setTimerToRemoveDelta();
+        if (!isInitialRender) {
+            this.setTimerToRemoveDelta();
+        }
         this.lastValue = value;
         return true;
     }
 }
-AnimateShowChangeCellRenderer.TEMPLATE = '<span>' +
-    '<span class="ag-value-change-delta"></span>' +
-    '<span class="ag-value-change-value"></span>' +
-    '</span>';
 __decorate([
-    context_1.Autowired('filterManager')
+    (0, context_1.Autowired)('filterManager')
 ], AnimateShowChangeCellRenderer.prototype, "filterManager", void 0);
 exports.AnimateShowChangeCellRenderer = AnimateShowChangeCellRenderer;

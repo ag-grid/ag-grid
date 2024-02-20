@@ -1,4 +1,12 @@
-import { Grid, GridOptions, HeaderValueGetterParams, ValueGetterParams } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  GridOptions,
+  HeaderValueGetterParams,
+  ValueGetterParams,
+} from '@ag-grid-community/core';
+
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -51,8 +59,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     flex: 1,
     minWidth: 180,
     filter: true,
-    sortable: true,
-    resizable: true,
   },
   groupDefaultExpanded: 1,
   enableAdvancedFilter: true,
@@ -66,16 +72,16 @@ var includeHiddenColumns = false;
 
 function onIncludeHiddenColumnsToggled() {
   includeHiddenColumns = !includeHiddenColumns;
-  gridOptions.api!.setIncludeHiddenColumnsInAdvancedFilter(includeHiddenColumns);
-  document.querySelector('#includeHiddenColumns')!.innerHTML = `${includeHiddenColumns ? 'Exclude' : 'Include'} Hidden Columns`;
+  gridApi!.setGridOption('includeHiddenColumnsInAdvancedFilter', includeHiddenColumns);
+  document.querySelector('#includeHiddenColumns')!.textContent = `${includeHiddenColumns ? 'Exclude' : 'Include'} Hidden Columns`;
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

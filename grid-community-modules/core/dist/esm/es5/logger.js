@@ -31,7 +31,7 @@ var LoggerFactory = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     LoggerFactory.prototype.setBeans = function (gridOptionsService) {
-        this.logging = gridOptionsService.is('debug');
+        this.logging = gridOptionsService.get('debug');
     };
     LoggerFactory.prototype.create = function (name) {
         return new Logger(name, this.isLogging.bind(this));

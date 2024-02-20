@@ -30,11 +30,13 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
 
     @PostConstruct
     public init(): void {
-        this.fieldSeparator = this.gos.get('serverSidePivotResultFieldSeparator') ?? '_';
-        this.addManagedPropertyListener('serverSidePivotResultFieldSeparator', (propChange) => this.fieldSeparator = propChange.currentValue);
+        const getFieldSeparator = () => this.gos.get('serverSidePivotResultFieldSeparator') ?? '_';
+        this.fieldSeparator = getFieldSeparator();
+        this.addManagedPropertyListener('serverSidePivotResultFieldSeparator', () => {this.fieldSeparator = getFieldSeparator();});
 
-        this.pivotDefaultExpanded = this.gos.getNum('pivotDefaultExpanded') ?? 0;
-        this.addManagedPropertyListener('pivotDefaultExpanded', (propChange) => this.pivotDefaultExpanded = propChange.currentValue);
+        const getPivotDefaultExpanded = () => this.gos.get('pivotDefaultExpanded');
+        this.pivotDefaultExpanded = getPivotDefaultExpanded();
+        this.addManagedPropertyListener('pivotDefaultExpanded', () => {this.pivotDefaultExpanded = getPivotDefaultExpanded();});
     }
 
     public createPivotColumnDefs(uniqueValues: any): PivotColDefServiceResult {
@@ -99,7 +101,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
         const comparator = this.headerNameComparator.bind(this, primaryPivotColumnDefs.pivotComparator);
 
         // Base case for the compact layout, instead of recursing build the last layer of groups as measure columns instead
-        if (measureColumns.length === 1 && this.gridOptionsService.is('removePivotHeaderRowWhenSingleValueColumn') && index === maxDepth - 1) {
+        if (measureColumns.length === 1 && this.gridOptionsService.get('removePivotHeaderRowWhenSingleValueColumn') && index === maxDepth - 1) {
             const leafCols: ColDef[] = [];
 
             _.iterateObject(uniqueValue, (key) => {
@@ -155,7 +157,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
         pivotColumnDefs: ColDef[],
     ) {
         if (
-            this.gridOptionsService.is('suppressExpandablePivotGroups') ||
+            this.gridOptionsService.get('suppressExpandablePivotGroups') ||
             this.gridOptionsService.get('pivotColumnGroupTotals')
         ) {
             return;
@@ -296,7 +298,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
                 colIds = colIds.concat(this.extractColIdsForValueColumn(groupDef, valueCol));
             });
 
-            const withGroup = valueCols.length > 1 || !this.gridOptionsService.is('removePivotHeaderRowWhenSingleValueColumn');
+            const withGroup = valueCols.length > 1 || !this.gridOptionsService.get('removePivotHeaderRowWhenSingleValueColumn');
             this.createRowGroupTotal(pivotColumnGroupDefs, pivotColumnDefs, valueCol, colIds, insertAfter, withGroup);
         }
     }
@@ -375,7 +377,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
 
         colDef.pivotKeys = pivotKeys;
         colDef.pivotValueColumn = valueColumn;
-        if(colDef.filter === true) {
+        if (colDef.filter === true) {
             colDef.filter = 'agNumberColumnFilter';
         }
 
@@ -473,6 +475,16 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
             }
 
             if (children.length === 0) {
+                const potentialAggCol = this.columnModel.getPrimaryColumn(key);
+                if (potentialAggCol) {
+                    const headerName = this.columnModel.getDisplayNameForColumn(potentialAggCol, 'header') ?? key;
+                    const colDef = this.createColDef(potentialAggCol, headerName, undefined, false);
+                    colDef.colId = id;
+                    colDef.aggFunc = potentialAggCol.getAggFunc();
+                    colDef.valueGetter = (params) => params.data?.[id];
+                    return colDef;
+                }
+
                 const col: ColDef = {
                     colId: id,
                     headerName: key,
@@ -480,20 +492,12 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
                     // however pinned rows still access the data object by field, this prevents values with dots from being treated as complex objects
                     valueGetter: (params) => params.data?.[id],
                 };
-
-                const potentialAggCol = this.columnModel.getPrimaryColumn(key);
-                if (potentialAggCol) {
-                    col.headerName = this.columnModel.getDisplayNameForColumn(potentialAggCol, 'header') ?? key;
-                    col.aggFunc = potentialAggCol.getAggFunc();
-                    col.pivotValueColumn= potentialAggCol;
-                }
-
                 return col;
             }
 
             // this is a bit sketchy. As the fields can be anything we just build groups as deep as the fields go.
             // nothing says user has to give us groups the same depth.
-            const collapseSingleChildren = this.gridOptionsService.is('removePivotHeaderRowWhenSingleValueColumn');
+            const collapseSingleChildren = this.gridOptionsService.get('removePivotHeaderRowWhenSingleValueColumn');
             if (collapseSingleChildren && children.length === 1 && 'colId' in children[0]) {
                 children[0].headerName = key;
                 return children[0];

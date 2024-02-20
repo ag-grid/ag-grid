@@ -15,16 +15,11 @@
     margin-bottom: 5px;
 }
 
-.label {
-    color: #0f0f0f;
-}
-
 .value {
     margin-right: 20px;
-    border: 1px solid lightgrey;
+    font-weight: bold;
     width: 50px;
     display: inline-block;
     text-align: right;
     padding-right: 2px;
-    background: #eee;
 }

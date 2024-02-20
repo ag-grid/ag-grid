@@ -23,7 +23,8 @@ import {
     SelectionChangedEvent,
     IRowNode,
     StoreRefreshedEvent,
-    ISelectionService
+    ISelectionService,
+    LoadSuccessParams
 } from "@ag-grid-community/core";
 import { SSRMParams } from "../../serverSideRowModel";
 import { StoreUtils } from "../storeUtils";
@@ -75,11 +76,15 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     private init() {
         let numberOfRows = 1;
         if (this.level === 0) {
-            numberOfRows = this.storeUtils.getServerSideInitialRowCount();
+            numberOfRows = this.storeUtils.getServerSideInitialRowCount() ?? 1;
+
+            this.eventService.dispatchEventOnce({
+                type: Events.EVENT_ROW_COUNT_READY
+            });
         }
         this.cache = this.createManagedBean(new LazyCache(this, numberOfRows, this.storeParams));
 
-        const usingTreeData = this.gridOptionsService.isTreeData();
+        const usingTreeData = this.gridOptionsService.get('treeData');
 
         if (!usingTreeData && this.group) {
             const groupColVo = this.ssrmParams.rowGroupCols[this.level];
@@ -93,6 +98,17 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         this.displayIndexStart = undefined;
         this.displayIndexEnd = undefined;
         this.destroyBean(this.cache);
+    }
+
+    /**
+     * Given a server response, ingest the rows outside of the data source lifecycle.
+     * 
+     * @param rowDataParams the server response containing the rows to ingest
+     * @param startRow the index to start ingesting rows
+     * @param expectedRows the expected number of rows in the response (used to determine if the last row index is known)
+     */
+    applyRowData(rowDataParams: LoadSuccessParams, startRow: number, expectedRows: number) {
+        this.cache.onLoadSuccess(startRow, expectedRows, rowDataParams);
     }
 
     /**
@@ -115,7 +131,6 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             const params: WithoutGridCommon<IsApplyServerSideTransactionParams> = {
                 transaction: transaction,
                 parentNode: this.parentRowNode,
-                storeInfo: this.info,
                 groupLevelInfo: this.info
             };
             const apply = applyCallback(params);
@@ -123,6 +138,10 @@ export class LazyStore extends BeanStub implements IServerSideStore {
                 return { status: ServerSideTransactionResultStatus.Cancelled };
             }
         }
+
+        // needs checked before transactions are applied, as rows won't be contiguous immediately
+        // after
+        const allRowsLoaded = this.cache.isStoreFullyLoaded();
 
         let updatedNodes: RowNode[] | undefined = undefined;
         if (transaction.update?.length) {
@@ -145,6 +164,15 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             ));
             const allUniqueIdsToRemove = [...new Set(allIdsToRemove)];
             removedNodes = this.cache.removeRowNodes(allUniqueIdsToRemove);
+        }
+
+        const isClientSideSortingEnabled = this.gridOptionsService.get('serverSideEnableClientSideSort');
+        
+        const isUpdateOrAdd = updatedNodes?.length || insertedNodes?.length;
+        const isClientSideSort = allRowsLoaded && isClientSideSortingEnabled;
+        if (isClientSideSort && isUpdateOrAdd) {
+            // if client side sorting, we need to sort the rows after the transaction
+            this.cache.clientSideSortRows();
         }
 
         this.updateSelectionAfterTransaction(updatedNodes, removedNodes);
@@ -295,15 +323,19 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * 
      * For the purpose of exclusively server side filtered stores, this is the same as getNodes().forEachDeep
      */
-    forEachNodeDeepAfterFilterAndSort(callback: (rowNode: RowNode<any>, index: number) => void, sequence = new NumberSequence()): void {
+    forEachNodeDeepAfterFilterAndSort(callback: (rowNode: RowNode<any>, index: number) => void, sequence = new NumberSequence(), includeFooterNodes = false): void {
         const orderedNodes = this.cache.getOrderedNodeMap();
         for (let key in orderedNodes) {
             const lazyNode = orderedNodes[key];
             callback(lazyNode.node, sequence.next());
             const childCache = lazyNode.node.childStore;
             if (childCache) {
-                childCache.forEachNodeDeepAfterFilterAndSort(callback, sequence);
+                childCache.forEachNodeDeepAfterFilterAndSort(callback, sequence, includeFooterNodes);
             }
+        }
+
+        if (includeFooterNodes && this.parentRowNode.sibling) {
+            callback(this.parentRowNode.sibling, sequence.next());
         }
     }
 
@@ -496,11 +528,20 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     refreshAfterSort(params: StoreRefreshAfterParams) {
         const serverSortsAllLevels = this.storeUtils.isServerSideSortAllLevels();
         if (serverSortsAllLevels || this.storeUtils.isServerRefreshNeeded(this.parentRowNode, this.ssrmParams.rowGroupCols, params)) {
-            const oldCount = this.cache.getRowCount();
-            this.destroyBean(this.cache);
-            this.cache = this.createManagedBean(new LazyCache(this, oldCount, this.storeParams));
-            this.fireStoreUpdatedEvent();
-            return;
+            const allRowsLoaded = this.cache.isStoreFullyLoaded();
+            const isClientSideSortingEnabled = this.gridOptionsService.get('serverSideEnableClientSideSort');
+            
+            const isClientSideSort = allRowsLoaded && isClientSideSortingEnabled;
+            if (!isClientSideSort) {
+                const oldCount = this.cache.getRowCount();
+                this.destroyBean(this.cache);
+                this.cache = this.createManagedBean(new LazyCache(this, oldCount, this.storeParams));
+                return;
+            }
+
+            // client side sorting only handles one level, so allow it to pass through
+            // to recursive sort.
+            this.cache.clientSideSortRows();
         }
 
         // call refreshAfterSort on children, as we did not purge.
@@ -522,7 +563,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             return;
         }
 
-        // call refreshAfterSort on children, as we did not purge.
+        // call refreshAfterFilter on children, as we did not purge.
         // if we did purge, no need to do this as all children were destroyed
         this.forEachChildStoreShallow(store => store.refreshAfterFilter(params));
     }

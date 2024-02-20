@@ -1,9 +1,17 @@
-import { FirstDataRenderedEvent, Grid, GridApi, GridOptions, GridReadyEvent, GridSizeChangedEvent, RowHeightParams } from '@ag-grid-community/core';
+import {
+  createGrid, FirstDataRenderedEvent,
+  GridApi, GridOptions,
+  GridReadyEvent,
+  GridSizeChangedEvent,
+  RowHeightParams
+} from '@ag-grid-community/core';
 import { getData } from "./data";
 
 
 var minRowHeight = 25
 var currentRowHeight: number;
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -19,15 +27,14 @@ const gridOptions: GridOptions = {
     { field: 'total', minWidth: 80 },
   ],
 
-  defaultColDef: {
-    resizable: true,
-  },
 
   rowData: getData(),
+  autoSizeStrategy: {
+    type: 'fitGridWidth'
+  },
   onGridReady: (params: GridReadyEvent) => {
     minRowHeight = params.api.getSizesForCurrentTheme().rowHeight
     currentRowHeight = minRowHeight
-    params.api.sizeColumnsToFit()
   },
   onFirstDataRendered: onFirstDataRendered,
   onGridSizeChanged: onGridSizeChanged,
@@ -72,5 +79,5 @@ const updateRowHeight = (params: { api: GridApi }) => {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

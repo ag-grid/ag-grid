@@ -19,10 +19,27 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
 import { Component } from '../../../widgets/component';
 import { RefSelector } from '../../../widgets/componentAnnotations';
-import { serialiseDate, parseDateTimeFromString } from '../../../utils/date';
+import { serialiseDate, parseDateTimeFromString, dateToFormattedString } from '../../../utils/date';
 import { getSafariVersion, isBrowserChrome, isBrowserFirefox, isBrowserSafari } from '../../../utils/browser';
+import { warnOnce } from '../../../utils/function';
 var DefaultDateComponent = /** @class */ (function (_super) {
     __extends(DefaultDateComponent, _super);
     function DefaultDateComponent() {
@@ -62,15 +79,51 @@ var DefaultDateComponent = /** @class */ (function (_super) {
         var shouldUseBrowserDatePicker = this.shouldUseBrowserDatePicker(params);
         this.usingSafariDatePicker = shouldUseBrowserDatePicker && isBrowserSafari();
         inputElement.type = shouldUseBrowserDatePicker ? 'date' : 'text';
-        var _a = params.filterParams || {}, minValidYear = _a.minValidYear, maxValidYear = _a.maxValidYear;
-        if (minValidYear) {
-            inputElement.min = minValidYear + "-01-01";
+        var _a = params.filterParams || {}, minValidYear = _a.minValidYear, maxValidYear = _a.maxValidYear, minValidDate = _a.minValidDate, maxValidDate = _a.maxValidDate;
+        if (minValidDate && minValidYear) {
+            warnOnce('DateFilter should not have both minValidDate and minValidYear parameters set at the same time! minValidYear will be ignored.');
         }
-        if (maxValidYear) {
-            inputElement.max = maxValidYear + "-12-31";
+        if (maxValidDate && maxValidYear) {
+            warnOnce('DateFilter should not have both maxValidDate and maxValidYear parameters set at the same time! maxValidYear will be ignored.');
+        }
+        if (minValidDate && maxValidDate) {
+            var _b = __read([minValidDate, maxValidDate]
+                .map(function (v) { return v instanceof Date ? v : parseDateTimeFromString(v); }), 2), parsedMinValidDate = _b[0], parsedMaxValidDate = _b[1];
+            if (parsedMinValidDate && parsedMaxValidDate && parsedMinValidDate.getTime() > parsedMaxValidDate.getTime()) {
+                warnOnce('DateFilter parameter minValidDate should always be lower than or equal to parameter maxValidDate.');
+            }
+        }
+        if (minValidDate) {
+            if (minValidDate instanceof Date) {
+                inputElement.min = dateToFormattedString(minValidDate);
+            }
+            else {
+                inputElement.min = minValidDate;
+            }
+        }
+        else {
+            if (minValidYear) {
+                inputElement.min = "".concat(minValidYear, "-01-01");
+            }
+        }
+        if (maxValidDate) {
+            if (maxValidDate instanceof Date) {
+                inputElement.max = dateToFormattedString(maxValidDate);
+            }
+            else {
+                inputElement.max = maxValidDate;
+            }
+        }
+        else {
+            if (maxValidYear) {
+                inputElement.max = "".concat(maxValidYear, "-12-31");
+            }
         }
     };
     DefaultDateComponent.prototype.onParamsUpdated = function (params) {
+        this.refresh(params);
+    };
+    DefaultDateComponent.prototype.refresh = function (params) {
         this.params = params;
         this.setParams(params);
     };

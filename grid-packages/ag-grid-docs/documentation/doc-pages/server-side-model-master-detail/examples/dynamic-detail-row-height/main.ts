@@ -1,5 +1,15 @@
-import { GetDetailRowDataParams, Grid, GridOptions, GridReadyEvent, IDetailCellRendererParams, IServerSideDatasource, RowHeightParams } from '@ag-grid-community/core'
+import {
+  GetDetailRowDataParams,
+  GridApi,
+  createGrid,
+  GridOptions,
+  GridReadyEvent,
+  IDetailCellRendererParams,
+  IServerSideDatasource,
+  RowHeightParams,
+} from '@ag-grid-community/core';
 declare var FakeServer: any;
+let gridApi: GridApi;
 const gridOptions: GridOptions = {
   columnDefs: [
     // group cell renderer needed for expand / collapse icons
@@ -12,7 +22,6 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
   },
-  animateRows: true,
 
   // use the server-side row model
   rowModelType: 'serverSide',
@@ -49,7 +58,7 @@ const gridOptions: GridOptions = {
     }
   },
   onGridReady: (params: GridReadyEvent) => {
-    setTimeout(function () {
+    setTimeout(() => {
       // expand some master row
       var someRow = params.api.getRowNode('1')
       if (someRow) {
@@ -67,7 +76,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
       var response = server.getData(params.request)
 
       // adding delay to simulate real server call
-      setTimeout(function () {
+      setTimeout(() => {
         if (response.success) {
           // call the success callback
           params.success({ rowData: response.rows, rowCount: response.lastRow })
@@ -83,7 +92,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/call-data.json')
     .then(response => response.json())
@@ -95,6 +104,6 @@ document.addEventListener('DOMContentLoaded', function () {
       var datasource = getServerSideDatasource(fakeServer)
 
       // register the datasource with the grid
-      gridOptions.api!.setServerSideDatasource(datasource)
+      gridApi!.setGridOption('serverSideDatasource', datasource)
     })
 })

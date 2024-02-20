@@ -1,4 +1,13 @@
-import { Grid, ColDef, GridOptions, GetRowIdParams, GridReadyEvent, IServerSideGetRowsParams, ServerSideTransaction } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  ColDef,
+  GridOptions,
+  GetRowIdParams,
+  GridReadyEvent,
+  IServerSideGetRowsParams,
+  ServerSideTransaction,
+} from '@ag-grid-community/core';
 
 declare var FakeServer: any;
 declare var dataObservers: any;
@@ -27,12 +36,13 @@ const columnDefs: ColDef[] = [
     { field: 'updateCount' },
 ];
 
+let gridApi: GridApi;
+
 const gridOptions: GridOptions = {
   columnDefs,
   defaultColDef: {
     flex: 1,
-    minWidth: 100,
-    resizable: true,  
+    minWidth: 100,  
   },
   autoGroupColumnDef: {
     minWidth: 220,
@@ -43,7 +53,7 @@ const gridOptions: GridOptions = {
     if (params.parentKeys && params.parentKeys.length) {
       rowId += params.parentKeys.join('-') + '-';
     }
-    const groupCols = params.columnApi.getRowGroupColumns();
+    const groupCols = params.api.getRowGroupColumns();
     if (groupCols.length > params.level) {
       const thisGroupCol = groupCols[params.level];
       rowId += params.data[thisGroupCol.getColDef().field!] + '-';
@@ -63,7 +73,7 @@ const gridOptions: GridOptions = {
     const datasource = getServerSideDatasource(server);
   
     // register the datasource with the grid
-    params.api.setServerSideDatasource(datasource);
+    params.api.setGridOption('serverSideDatasource', datasource);
   
     // register interest in data changes
     dataObservers.push((t: ServerSideTransaction) => {
@@ -80,7 +90,7 @@ function getServerSideDatasource(server: any) {
       const response = server.getData(params.request);
 
       // adding delay to simulate real server call
-      setTimeout(function () {
+      setTimeout(() => {
         if (response.success) {
           // call the success callback
           params.success({
@@ -96,7 +106,7 @@ function getServerSideDatasource(server: any) {
   };
 }
 
-let interval: number;
+let interval: any;
 
 function startUpdates() {
   interval = setInterval(() => randomUpdates({ numUpdate: 10, numAdd: 1, numRemove: 1 }), 10);
@@ -119,5 +129,5 @@ function disable(id: string, disabled: boolean) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-  new Grid(gridDiv, gridOptions);
+  gridApi = createGrid(gridDiv, gridOptions);
 });

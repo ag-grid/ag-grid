@@ -6,8 +6,24 @@
         "meta": {
             "displayName": "Accessories"
         },
-        "toolPanelVisibleChanged": {},
-        "toolPanelSizeChanged": {}
+        "toolPanelVisibleChanged": {
+            "more": {
+                "name": "Tool Panel Events",
+                "url": "/tool-panel/#events"
+            }
+        },
+        "toolPanelSizeChanged": {
+            "more": {
+                "name": "Tool Panel Events",
+                "url": "/tool-panel/#events"
+            }
+        },
+        "columnMenuVisibleChanged": {
+            "more": {
+                "name": "Column Menu API / Events",
+                "url": "/column-menu/#column-menu-api--events"
+            }
+        }
     },
     "clipboard": {
         "meta": {
@@ -68,10 +84,25 @@
         "cellMouseDown": {},
         "rowClicked": {},
         "rowDoubleClicked": {},
-        "rowSelected": {},
-        "selectionChanged": {},
+        "rowSelected": {
+            "more": {
+                "name": "Selection Events",
+                "url": "/row-selection/#selection-events"
+            }
+        },
+        "selectionChanged": {
+            "more": {
+                "name": "Selection Events",
+                "url": "/row-selection/#selection-events"
+            }
+        },
         "cellContextMenu": {},
-        "rangeSelectionChanged": {}
+        "rangeSelectionChanged": {
+            "more": {
+                "name": "Range Selection Changed Event",
+                "url": "/range-selection/#range-selection-changed-event"
+            }
+        }
     },
     "charts": {
         "meta": {
@@ -81,9 +112,23 @@
                 "url": "/integrated-charts-events/"
             }
         },
-        "chartCreated": {},
-        "chartRangeSelectionChanged": {},
+        "chartCreated": {
+            "more": {
+                "name": "Chart Created",
+                "url": "/integrated-charts-events/#chartcreated"
+            }
+        },
+        "chartRangeSelectionChanged": {
+            "more": {
+                "name": "Chart Range Selection Changed",
+                "url": "/integrated-charts-events/#chartrangeselectionchanged"
+            }
+        },
         "chartOptionsChanged": {
+            "more": {
+                "name": "Chart Options Changed",
+                "url": "/integrated-charts-events/#chartoptionschanged"
+            },
             "interfaceHierarchyOverrides": {
                 "exclude": [
                     "ChartOptions"
@@ -91,7 +136,12 @@
                 "include": []
             }
         },
-        "chartDestroyed": {}
+        "chartDestroyed": {
+            "more": {
+                "name": "Chart Destroyed",
+                "url": "/integrated-charts-events/#chartdestroyed"
+            }
+        }
     },
     "editing": {
         "meta": {
@@ -101,7 +151,12 @@
                 "url": "/cell-editing/"
             }
         },
-        "cellValueChanged": {},
+        "cellValueChanged": {
+            "more": {
+                "name": "Editing Events",
+                "url": "/cell-editing/#editing-events"
+            }
+        },
         "cellEditRequest": {
             "more": {
                 "name": "Read Only Edit",
@@ -114,8 +169,18 @@
                 "url": "/cell-editing-full-row/"
             }
         },
-        "cellEditingStarted": {},
-        "cellEditingStopped": {},
+        "cellEditingStarted": {
+            "more": {
+                "name": "Editing Events",
+                "url": "/cell-editing/#editing-events"
+            }
+        },
+        "cellEditingStopped": {
+            "more": {
+                "name": "Editing Events",
+                "url": "/cell-editing/#editing-events"
+            }
+        },
         "rowEditingStarted": {
             "more": {
                 "name": "Full Row Editing",
@@ -173,9 +238,30 @@
                 "url": "/filtering-overview/"
             }
         },
-        "filterOpened": {},
-        "filterChanged": {},
-        "filterModified": {}
+        "filterOpened": {
+            "more": {
+                "name": "Filter Events",
+                "url": "/filter-api/#filter-events"
+            }
+        },
+        "filterChanged": {
+            "more": {
+                "name": "Filter Events",
+                "url": "/filter-api/#filter-events"
+            }
+        },
+        "filterModified": {
+            "more": {
+                "name": "Filter Events",
+                "url": "/filter-api/#filter-events"
+            }
+        },
+        "advancedFilterBuilderVisibleChanged": {
+            "more": {
+                "name": "Advanced Filter",
+                "url": "/filter-advanced/#configuring-advanced-filter-builder"
+            }
+        }
     },
     "sort": {
         "meta": {
@@ -195,10 +281,30 @@
                 "url": "/row-dragging/"
             }
         },
-        "rowDragEnter": {},
-        "rowDragMove": {},
-        "rowDragLeave": {},
-        "rowDragEnd": {}
+        "rowDragEnter": {
+            "more": {
+                "name": "Row Drag Events",
+                "url": "/row-dragging/#row-drag-events"
+            }
+        },
+        "rowDragMove": {
+            "more": {
+                "name": "Row Drag Events",
+                "url": "/row-dragging/#row-drag-events"
+            }
+        },
+        "rowDragLeave": {
+            "more": {
+                "name": "Row Drag Events",
+                "url": "/row-dragging/#row-drag-events"
+            }
+        },
+        "rowDragEnd": {
+            "more": {
+                "name": "Row Drag Events",
+                "url": "/row-dragging/#row-drag-events"
+            }
+        }
     },
     "columns": {
         "meta": {
@@ -216,7 +322,11 @@
         "gridColumnsChanged": {},
         "displayedColumnsChanged": {},
         "virtualColumnsChanged": {},
-        "columnEverythingChanged": {}
+        "columnEverythingChanged": {},
+        "columnHeaderMouseOver": {},
+        "columnHeaderMouseLeave": {},
+        "columnHeaderClicked": {},
+        "columnHeaderContextMenu": {}
     },
     "rowGrouping": {
         "meta": {
@@ -234,16 +344,43 @@
         "meta": {
             "displayName": "Miscellaneous"
         },
-        "gridReady": {},
-        "firstDataRendered": {},
-        "gridSizeChanged": {},
+        "gridReady": {
+            "more": {
+                "name": "Grid Ready",
+                "url": "/grid-lifecycle/#grid-ready"
+            }
+        },
+        "gridPreDestroyed": {
+            "more": {
+                "name": "Grid Pre-Destroyed",
+                "url": "/grid-lifecycle/#grid-pre-destroyed"
+            }
+        },
+        "firstDataRendered": {
+            "more": {
+                "name": "First Data Rendered",
+                "url": "/grid-lifecycle/#first-data-rendered"
+            }
+        },
+        "gridSizeChanged": {
+            "more": {
+                "name": "Grid Size",
+                "url": "/grid-size/"
+            }
+        },
         "modelUpdated": {},
         "virtualRowRemoved": {},
         "viewportChanged": {},
         "bodyScroll": {},
         "bodyScrollEnd": {},
         "dragStarted": {},
-        "dragStopped": {}
+        "dragStopped": {},
+        "stateUpdated": {
+            "more": {
+                "name": "Grid State",
+                "url": "/grid-state/"
+            }
+        }
     },
     "clientRowModel": {
         "meta": {
@@ -253,8 +390,18 @@
                 "url": "/client-side-model/"
             }
         },
-        "rowDataUpdated": {},
-        "asyncTransactionsFlushed": {}
+        "rowDataUpdated": {
+            "more": {
+                "name": "Row Data Updated",
+                "url": "/grid-lifecycle/#row-data-updated"
+            }
+        },
+        "asyncTransactionsFlushed": {
+            "more": {
+                "name": "Flush Async Transactions",
+                "url": "/data-update-high-frequency/#flush-async-transactions"
+            }
+        }
     },
     "serverSideRowModel": {
         "meta": {
@@ -264,7 +411,12 @@
                 "url": "/server-side-model/"
             }
         },
-        "storeRefreshed": {}
+        "storeRefreshed": {
+            "more": {
+                "name": "SSRM Refresh",
+                "url": "/server-side-model-updating-refresh/"
+            }
+        }
     },
     "navigation": {
         "meta": {

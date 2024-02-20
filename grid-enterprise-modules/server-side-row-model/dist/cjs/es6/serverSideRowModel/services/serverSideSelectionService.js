@@ -23,7 +23,7 @@ const defaultStrategy_1 = require("./selection/strategies/defaultStrategy");
 const groupSelectsChildrenStrategy_1 = require("./selection/strategies/groupSelectsChildrenStrategy");
 let ServerSideSelectionService = class ServerSideSelectionService extends core_1.BeanStub {
     init() {
-        const groupSelectsChildren = this.gridOptionsService.is('groupSelectsChildren');
+        const groupSelectsChildren = this.gridOptionsService.get('groupSelectsChildren');
         this.addManagedPropertyListener('groupSelectsChildren', (propChange) => {
             this.destroyBean(this.selectionStrategy);
             const StrategyClazz = !propChange.currentValue ? defaultStrategy_1.DefaultStrategy : groupSelectsChildrenStrategy_1.GroupSelectsChildrenStrategy;
@@ -35,26 +35,29 @@ let ServerSideSelectionService = class ServerSideSelectionService extends core_1
             };
             this.eventService.dispatchEvent(event);
         });
-        this.rowSelection = this.gridOptionsService.get('rowSelection');
-        this.addManagedPropertyListener('rowSelection', (propChange) => this.rowSelection = propChange.currentValue);
+        this.addManagedPropertyListener('rowSelection', () => this.deselectAllRowNodes({ source: 'api' }));
         const StrategyClazz = !groupSelectsChildren ? defaultStrategy_1.DefaultStrategy : groupSelectsChildrenStrategy_1.GroupSelectsChildrenStrategy;
         this.selectionStrategy = this.createManagedBean(new StrategyClazz());
     }
-    getServerSideSelectionState() {
+    getSelectionState() {
         return this.selectionStrategy.getSelectedState();
     }
-    setServerSideSelectionState(state) {
+    setSelectionState(state, source) {
+        if (Array.isArray(state)) {
+            return;
+        }
         this.selectionStrategy.setSelectedState(state);
         this.shotgunResetNodeSelectionState();
         const event = {
             type: core_1.Events.EVENT_SELECTION_CHANGED,
-            source: 'api',
+            source,
         };
         this.eventService.dispatchEvent(event);
     }
     setNodesSelected(params) {
         const { nodes } = params, otherParams = __rest(params, ["nodes"]);
-        if (nodes.length > 1 && this.rowSelection !== 'multiple') {
+        const rowSelection = this.gridOptionsService.get('rowSelection');
+        if (nodes.length > 1 && rowSelection !== 'multiple') {
             console.warn(`AG Grid: cannot multi select while rowSelection='single'`);
             return 0;
         }
@@ -142,6 +145,9 @@ let ServerSideSelectionService = class ServerSideSelectionService extends core_1
     isEmpty() {
         return this.selectionStrategy.isEmpty();
     }
+    hasNodesToSelect(justFiltered = false, justCurrentPage = false) {
+        return true;
+    }
     selectAllRowNodes(params) {
         if (params.justCurrentPage || params.justFiltered) {
             console.warn("AG Grid: selecting just filtered only works when gridOptions.rowModelType='clientSide'");
@@ -194,12 +200,12 @@ let ServerSideSelectionService = class ServerSideSelectionService extends core_1
     }
 };
 __decorate([
-    core_1.Autowired('rowModel')
+    (0, core_1.Autowired)('rowModel')
 ], ServerSideSelectionService.prototype, "rowModel", void 0);
 __decorate([
     core_1.PostConstruct
 ], ServerSideSelectionService.prototype, "init", null);
 ServerSideSelectionService = __decorate([
-    core_1.Bean('selectionService')
+    (0, core_1.Bean)('selectionService')
 ], ServerSideSelectionService);
 exports.ServerSideSelectionService = ServerSideSelectionService;

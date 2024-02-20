@@ -1,41 +1,76 @@
-import { ColDef, Grid, GridOptions, ICellRendererFunc, ICellRendererParams, ValueGetterParams } from '@ag-grid-community/core';
+import {
+  ColDef,
+  GridApi,
+  createGrid,
+  GridOptions,
+  ICellRendererParams,
+  ValueGetterParams,
+} from '@ag-grid-community/core';
+
+const gbpFormatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'GBP',
+  minimumFractionDigits: 2,
+})
+const eurFormatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'EUR',
+  minimumFractionDigits: 2,
+})
+const usdFormatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  minimumFractionDigits: 2,
+})
+
+const currencyCellRenderer = (params: ICellRendererParams) => {
+  switch (params.value.currency) {
+    case 'EUR':
+      return eurFormatter.format(params.value.amount)
+    case 'USD':
+      return usdFormatter.format(params.value.amount)
+    case 'GBP':
+      return gbpFormatter.format(params.value.amount)
+  }
+  return params.value.amount;
+}
 
 const columnDefs: ColDef[] = [
-  { headerName: 'Product', field: 'product' },
+  { field: 'product' },
   { headerName: 'Currency', field: 'price.currency' },
   {
     headerName: 'Price Local',
     field: 'price',
-    cellStyle: { 'text-align': 'right' },
-    cellRenderer: getCurrencyCellRenderer(),
+    cellRenderer: currencyCellRenderer,
     cellDataType: false,
   },
   {
     headerName: 'Report Price',
     field: 'price',
-    cellStyle: { 'text-align': 'right' },
-    cellRenderer: getCurrencyCellRenderer(),
+    cellRenderer: currencyCellRenderer,
     valueGetter: reportingCurrencyValueGetter,
     headerValueGetter: 'ctx.reportingCurrency',
   },
 ]
 
+let gridApi: GridApi;
+
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   defaultColDef: {
     flex: 1,
-    resizable: true,
   },
   rowData: getData(),
   context: {
     reportingCurrency: 'EUR',
-  }
+  },
+  enableCellChangeFlash: true,
 }
 
 
 function reportingCurrencyValueGetter(params: ValueGetterParams) {
   // Rates taken from google at time of writing
-  var exchangeRates: Record<string, any> = {
+  const exchangeRates: Record<string, any> = {
     EUR: {
       GBP: 0.72,
       USD: 1.08,
@@ -50,18 +85,18 @@ function reportingCurrencyValueGetter(params: ValueGetterParams) {
     },
   }
 
-  var price = params.data[params.colDef.field!]
-  var reportingCurrency = params.context.reportingCurrency
-  var fxRateSet = exchangeRates[reportingCurrency]
-  var fxRate = fxRateSet[price.currency]
-  var priceInReportingCurrency
+  const price = params.data[params.colDef.field!]
+  const reportingCurrency = params.context.reportingCurrency
+  const fxRateSet = exchangeRates[reportingCurrency]
+  const fxRate = fxRateSet[price.currency]
+  let priceInReportingCurrency;
   if (fxRate) {
     priceInReportingCurrency = price.amount * fxRate
   } else {
     priceInReportingCurrency = price.amount
   }
 
-  var result = {
+  const result = {
     currency: reportingCurrency,
     amount: priceInReportingCurrency,
   }
@@ -69,43 +104,13 @@ function reportingCurrencyValueGetter(params: ValueGetterParams) {
   return result
 }
 
-function getCurrencyCellRenderer(): ICellRendererFunc {
-  var gbpFormatter = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'GBP',
-    minimumFractionDigits: 2,
-  })
-  var eurFormatter = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'EUR',
-    minimumFractionDigits: 2,
-  })
-  var usdFormatter = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 2,
-  })
 
-  function currencyCellRenderer(params: ICellRendererParams) {
-    switch (params.value.currency) {
-      case 'EUR':
-        return eurFormatter.format(params.value.amount)
-      case 'USD':
-        return usdFormatter.format(params.value.amount)
-      case 'GBP':
-        return gbpFormatter.format(params.value.amount)
-    }
-    return params.value.amount;
-  }
-
-  return currencyCellRenderer
-}
 
 function currencyChanged() {
-  var value = (document.getElementById('currency') as any).value
-  gridOptions.context = { reportingCurrency: value }
-  gridOptions.api!.refreshCells()
-  gridOptions.api!.refreshHeader()
+  const value = (document.getElementById('currency') as any).value
+  gridApi.setGridOption('context', { reportingCurrency: value }); 
+  gridApi!.refreshCells()
+  gridApi!.refreshHeader()
 }
 
 function getData() {
@@ -123,6 +128,6 @@ function getData() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  gridApi = createGrid(gridDiv, gridOptions);
 })

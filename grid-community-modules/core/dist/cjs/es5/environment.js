@@ -36,10 +36,14 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Environment = void 0;
@@ -53,6 +57,9 @@ var MAT_GRID_SIZE = 8;
 var BASE_GRID_SIZE = 4;
 var BALHAM_GRID_SIZE = 4;
 var ALPINE_GRID_SIZE = 6;
+var QUARTZ_ICON_SIZE = 16;
+var QUARTZ_FONT_SIZE = 14;
+var QUARTZ_GRID_SIZE = 8;
 var HARD_CODED_SIZES = {
     // this item is required for custom themes
     'ag-theme-custom': {
@@ -82,6 +89,13 @@ var HARD_CODED_SIZES = {
         listItemHeight: ALPINE_GRID_SIZE * 4,
         rowHeight: ALPINE_GRID_SIZE * 7,
         chartMenuPanelWidth: 240
+    },
+    'ag-theme-quartz': {
+        headerHeight: QUARTZ_FONT_SIZE + QUARTZ_GRID_SIZE * 4.25,
+        headerCellMinWidth: 36,
+        listItemHeight: QUARTZ_ICON_SIZE + QUARTZ_GRID_SIZE,
+        rowHeight: QUARTZ_FONT_SIZE + QUARTZ_GRID_SIZE * 3.5,
+        chartMenuPanelWidth: 260
     }
 };
 /**
@@ -112,6 +126,7 @@ var Environment = /** @class */ (function (_super) {
         var _this = this;
         var _a;
         var el = (_a = this.getTheme().el) !== null && _a !== void 0 ? _a : this.eGridDiv;
+        this.addManagedPropertyListener('rowHeight', function () { return _this.refreshRowHeightVariable(); });
         this.mutationObserver = new MutationObserver(function () {
             _this.calculatedSizes = {};
             _this.fireGridStylesChangedEvent();
@@ -160,7 +175,7 @@ var Environment = /** @class */ (function (_super) {
         var div = eDocument.createElement('div');
         // this will apply SASS variables that were manually added to the current theme
         var classesFromThemeElement = Array.from(themeElement.classList);
-        (_a = div.classList).add.apply(_a, __spreadArray([theme], __read(classesFromThemeElement)));
+        (_a = div.classList).add.apply(_a, __spreadArray([theme], __read(classesFromThemeElement), false));
         div.style.position = 'absolute';
         var el = classList.reduce(function (prevEl, currentClass) {
             var currentDiv = eDocument.createElement('div');
@@ -219,16 +234,25 @@ var Environment = /** @class */ (function (_super) {
     Environment.prototype.getListItemHeight = function () {
         return this.getFromTheme(20, 'listItemHeight');
     };
-    Environment.prototype.setRowHeightVariable = function (height) {
+    Environment.prototype.refreshRowHeightVariable = function () {
         var oldRowHeight = this.eGridDiv.style.getPropertyValue('--ag-line-height').trim();
-        var newRowHeight = height + "px";
+        var height = this.gridOptionsService.get('rowHeight');
+        if (height == null || isNaN(height) || !isFinite(height)) {
+            if (oldRowHeight !== null) {
+                this.eGridDiv.style.setProperty('--ag-line-height', null);
+            }
+            return -1;
+        }
+        var newRowHeight = "".concat(height, "px");
         if (oldRowHeight != newRowHeight) {
             this.eGridDiv.style.setProperty('--ag-line-height', newRowHeight);
+            return height;
         }
+        return oldRowHeight != '' ? parseFloat(oldRowHeight) : -1;
     };
     Environment.prototype.getMinColWidth = function () {
         var measuredMin = this.getFromTheme(null, 'headerCellMinWidth');
-        return generic_1.exists(measuredMin) ? Math.max(measuredMin, MIN_COL_WIDTH) : MIN_COL_WIDTH;
+        return (0, generic_1.exists)(measuredMin) ? Math.max(measuredMin, MIN_COL_WIDTH) : MIN_COL_WIDTH;
     };
     Environment.prototype.destroy = function () {
         this.calculatedSizes = null;
@@ -238,13 +262,13 @@ var Environment = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     __decorate([
-        context_1.Autowired('eGridDiv')
+        (0, context_1.Autowired)('eGridDiv')
     ], Environment.prototype, "eGridDiv", void 0);
     __decorate([
         context_1.PostConstruct
     ], Environment.prototype, "postConstruct", null);
     Environment = __decorate([
-        context_1.Bean('environment')
+        (0, context_1.Bean)('environment')
     ], Environment);
     return Environment;
 }(beanStub_1.BeanStub));

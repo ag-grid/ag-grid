@@ -21,9 +21,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { BeanStub } from "../../context/beanStub";
 import { Autowired } from "../../context/context";
-import { getAbsoluteHeight, getAbsoluteWidth, setFixedHeight, setFixedWidth } from "../../utils/dom";
+import { getAbsoluteHeight, getAbsoluteWidth, isVisible, setFixedHeight, setFixedWidth } from "../../utils/dom";
 var RESIZE_CONTAINER_STYLE = 'ag-resizer-wrapper';
-var RESIZE_TEMPLATE = /* html */ "<div class=\"" + RESIZE_CONTAINER_STYLE + "\">\n        <div ref=\"eTopLeftResizer\" class=\"ag-resizer ag-resizer-topLeft\"></div>\n        <div ref=\"eTopResizer\" class=\"ag-resizer ag-resizer-top\"></div>\n        <div ref=\"eTopRightResizer\" class=\"ag-resizer ag-resizer-topRight\"></div>\n        <div ref=\"eRightResizer\" class=\"ag-resizer ag-resizer-right\"></div>\n        <div ref=\"eBottomRightResizer\" class=\"ag-resizer ag-resizer-bottomRight\"></div>\n        <div ref=\"eBottomResizer\" class=\"ag-resizer ag-resizer-bottom\"></div>\n        <div ref=\"eBottomLeftResizer\" class=\"ag-resizer ag-resizer-bottomLeft\"></div>\n        <div ref=\"eLeftResizer\" class=\"ag-resizer ag-resizer-left\"></div>\n    </div>";
+var RESIZE_TEMPLATE = /* html */ "<div class=\"".concat(RESIZE_CONTAINER_STYLE, "\">\n        <div ref=\"eTopLeftResizer\" class=\"ag-resizer ag-resizer-topLeft\"></div>\n        <div ref=\"eTopResizer\" class=\"ag-resizer ag-resizer-top\"></div>\n        <div ref=\"eTopRightResizer\" class=\"ag-resizer ag-resizer-topRight\"></div>\n        <div ref=\"eRightResizer\" class=\"ag-resizer ag-resizer-right\"></div>\n        <div ref=\"eBottomRightResizer\" class=\"ag-resizer ag-resizer-bottomRight\"></div>\n        <div ref=\"eBottomResizer\" class=\"ag-resizer ag-resizer-bottom\"></div>\n        <div ref=\"eBottomLeftResizer\" class=\"ag-resizer ag-resizer-bottomLeft\"></div>\n        <div ref=\"eLeftResizer\" class=\"ag-resizer ag-resizer-left\"></div>\n    </div>");
 var PositionableFeature = /** @class */ (function (_super) {
     __extends(PositionableFeature, _super);
     function PositionableFeature(element, config) {
@@ -71,8 +71,8 @@ var PositionableFeature = /** @class */ (function (_super) {
         var computedMinWidth = 0;
         // here we don't use the main offset parent but the element's offsetParent
         // in order to calculated the minWidth and minHeight correctly
-        var isVisible = !!this.element.offsetParent;
-        if (isVisible) {
+        var isElementVisible = isVisible(this.element);
+        if (isElementVisible) {
             var boundaryEl = this.findBoundaryElement();
             var offsetParentComputedStyles = window.getComputedStyle(boundaryEl);
             if (offsetParentComputedStyles.minWidth != null) {
@@ -101,7 +101,7 @@ var PositionableFeature = /** @class */ (function (_super) {
         else if (x || y) {
             this.offsetElement(x, y);
         }
-        else if (isVisible && forcePopupParentAsOffsetParent) {
+        else if (isElementVisible && forcePopupParentAsOffsetParent) {
             var boundaryEl = this.boundaryEl;
             var initialisedDuringPositioning = true;
             if (!boundaryEl) {
@@ -204,10 +204,10 @@ var PositionableFeature = /** @class */ (function (_super) {
         this.element.style.flex = '0 0 auto';
         var _a = this.lastSize, height = _a.height, width = _a.width;
         if (width !== -1) {
-            this.element.style.width = width + "px";
+            this.element.style.width = "".concat(width, "px");
         }
         if (height !== -1) {
-            this.element.style.height = height + "px";
+            this.element.style.height = "".concat(height, "px");
         }
     };
     PositionableFeature.prototype.getHeight = function () {
@@ -239,7 +239,7 @@ var PositionableFeature = /** @class */ (function (_super) {
                 setFixedHeight(eGui, height);
             }
             else {
-                eGui.style.height = height + "px";
+                eGui.style.height = "".concat(height, "px");
                 eGui.style.flex = '0 0 auto';
                 this.lastSize.height = typeof height === 'number' ? height : parseFloat(height);
             }
@@ -303,7 +303,7 @@ var PositionableFeature = /** @class */ (function (_super) {
                 setFixedWidth(eGui, width);
             }
             else {
-                eGui.style.width = width + "px";
+                eGui.style.width = "".concat(width, "px");
                 eGui.style.flex = ' unset';
                 this.lastSize.width = typeof width === 'number' ? width : parseFloat(width);
             }
@@ -336,7 +336,7 @@ var PositionableFeature = /** @class */ (function (_super) {
         }
         var applyMaxHeightToElement = function () {
             var availableHeight = _this.getAvailableHeight();
-            _this.element.style.setProperty('max-height', availableHeight + "px");
+            _this.element.style.setProperty('max-height', "".concat(availableHeight, "px"));
         };
         if (constrain) {
             this.resizeObserverSubscriber = this.resizeObserverService.observeResize(this.popupService.getPopupParent(), applyMaxHeightToElement);
@@ -466,7 +466,7 @@ var PositionableFeature = /** @class */ (function (_super) {
     };
     PositionableFeature.prototype.removeResizers = function () {
         this.resizerMap = undefined;
-        var resizerEl = this.element.querySelector("." + RESIZE_CONTAINER_STYLE);
+        var resizerEl = this.element.querySelector(".".concat(RESIZE_CONTAINER_STYLE));
         if (resizerEl) {
             this.element.removeChild(resizerEl);
         }
@@ -545,10 +545,10 @@ var PositionableFeature = /** @class */ (function (_super) {
                 continue;
             }
             if (vertical) {
-                el.style.height = el.offsetHeight + "px";
+                el.style.height = "".concat(el.offsetHeight, "px");
             }
             else {
-                el.style.width = el.offsetWidth + "px";
+                el.style.width = "".concat(el.offsetWidth, "px");
             }
             el.style.flex = '0 0 auto';
             if (el === this.element) {
@@ -629,9 +629,7 @@ var PositionableFeature = /** @class */ (function (_super) {
         this.currentResizer = null;
         this.boundaryEl = null;
         var params = {
-            type: 'resize',
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi
+            type: 'resize'
         };
         this.element.classList.remove('ag-resizing');
         this.resizerMap[side].element.classList.remove('ag-active');

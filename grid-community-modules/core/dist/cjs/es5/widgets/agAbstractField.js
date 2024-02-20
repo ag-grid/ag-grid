@@ -19,6 +19,7 @@ exports.AgAbstractField = void 0;
 var agAbstractLabel_1 = require("./agAbstractLabel");
 var dom_1 = require("../utils/dom");
 var eventKeys_1 = require("../eventKeys");
+var aria_1 = require("../utils/aria");
 var AgAbstractField = /** @class */ (function (_super) {
     __extends(AgAbstractField, _super);
     function AgAbstractField(config, template, className) {
@@ -31,6 +32,22 @@ var AgAbstractField = /** @class */ (function (_super) {
         if (this.className) {
             this.addCssClass(this.className);
         }
+        this.refreshAriaLabelledBy();
+    };
+    AgAbstractField.prototype.refreshAriaLabelledBy = function () {
+        var ariaEl = this.getAriaElement();
+        var labelId = this.getLabelId();
+        if ((0, aria_1.getAriaLabel)(ariaEl) !== null) {
+            (0, aria_1.setAriaLabelledBy)(ariaEl, '');
+        }
+        else {
+            (0, aria_1.setAriaLabelledBy)(ariaEl, labelId !== null && labelId !== void 0 ? labelId : '');
+        }
+    };
+    AgAbstractField.prototype.setAriaLabel = function (label) {
+        (0, aria_1.setAriaLabel)(this.getAriaElement(), label);
+        this.refreshAriaLabelledBy();
+        return this;
     };
     AgAbstractField.prototype.onValueChange = function (callbackFn) {
         var _this = this;
@@ -41,7 +58,7 @@ var AgAbstractField = /** @class */ (function (_super) {
         return this.getGui().clientWidth;
     };
     AgAbstractField.prototype.setWidth = function (width) {
-        dom_1.setFixedWidth(this.getGui(), width);
+        (0, dom_1.setFixedWidth)(this.getGui(), width);
         return this;
     };
     AgAbstractField.prototype.getPreviousValue = function () {

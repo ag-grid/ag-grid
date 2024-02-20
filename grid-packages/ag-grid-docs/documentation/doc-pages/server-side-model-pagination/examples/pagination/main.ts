@@ -1,5 +1,6 @@
-import { Grid, GridOptions, IServerSideDatasource } from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions, IServerSideDatasource } from '@ag-grid-community/core';
 declare var FakeServer: any;
+let gridApi: GridApi<IOlympicDataWithId>;
 const gridOptions: GridOptions<IOlympicDataWithId> = {
   columnDefs: [
     { field: 'id', maxWidth: 75 },
@@ -14,7 +15,6 @@ const gridOptions: GridOptions<IOlympicDataWithId> = {
   defaultColDef: {
     flex: 1,
     minWidth: 90,
-    resizable: true,
   },
 
   // use the server-side row model
@@ -23,19 +23,18 @@ const gridOptions: GridOptions<IOlympicDataWithId> = {
   // enable pagination
   pagination: true,
 
-  // 10 rows per page (default is 100)
-  paginationPageSize: 10,
+  // 20 rows per page (default is 100)
+  paginationPageSize: 20,
 
   // fetch 10 rows per block as page size is 10 (default is 100)
   cacheBlockSize: 10,
 
-  animateRows: true,
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
@@ -53,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var datasource = getServerSideDatasource(fakeServer)
 
       // register the datasource with the grid
-      gridOptions.api!.setServerSideDatasource(datasource)
+      gridApi!.setGridOption('serverSideDatasource', datasource)
     })
 })
 
@@ -65,7 +64,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
       var response = server.getData(params.request)
 
       // adding delay to simulate real server call
-      setTimeout(function () {
+      setTimeout(() => {
         if (response.success) {
           // call the success callback
           params.success({ rowData: response.rows, rowCount: response.lastRow })

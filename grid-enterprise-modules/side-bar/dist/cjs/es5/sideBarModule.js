@@ -8,10 +8,11 @@ var sideBarComp_1 = require("./sideBar/sideBarComp");
 var sideBarButtonsComp_1 = require("./sideBar/sideBarButtonsComp");
 var toolPanelColDefService_1 = require("./sideBar/common/toolPanelColDefService");
 var version_1 = require("./version");
+var sideBarService_1 = require("./sideBar/sideBarService");
 exports.SideBarModule = {
     version: version_1.VERSION,
     moduleName: core_1.ModuleNames.SideBarModule,
-    beans: [toolPanelColDefService_1.ToolPanelColDefService],
+    beans: [toolPanelColDefService_1.ToolPanelColDefService, sideBarService_1.SideBarService],
     agStackComponents: [
         { componentName: 'AgHorizontalResize', componentClass: horizontalResizeComp_1.HorizontalResizeComp },
         { componentName: 'AgSideBar', componentClass: sideBarComp_1.SideBarComp },

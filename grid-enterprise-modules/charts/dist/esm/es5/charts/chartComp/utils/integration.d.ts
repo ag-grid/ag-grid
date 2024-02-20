@@ -1,4 +1,4 @@
-import { _Scene, AgCartesianAxisType, AgChartInstance } from "ag-charts-community";
+import { _Scene, AgCartesianAxisType, AgChartInstance, AgPolarAxisOptions } from "ag-charts-community";
 export declare function deproxy(chartOrProxy: AgChartInstance): AgChartActual;
 export interface AgChartActual extends AgChartInstance {
     title?: _Scene.Caption;
@@ -7,9 +7,13 @@ export interface AgChartActual extends AgChartInstance {
     series: {
         type: string;
         toggleSeriesItem(itemId: string, enabled: boolean): void;
+        properties: {
+            [key: string]: any;
+            toJson(): any;
+        };
     }[];
     axes?: {
-        type: AgCartesianAxisType;
+        type: AgCartesianAxisType | AgPolarAxisOptions['type'];
         direction: 'x' | 'y';
     }[];
     scene: {
@@ -21,3 +25,5 @@ export interface AgChartActual extends AgChartInstance {
     addEventListener(type: 'click', cb: (even: any) => void): void;
     waitForUpdate(): Promise<void>;
 }
+export declare type AgChartAxis = NonNullable<AgChartActual['axes']>[number];
+export declare type AgChartAxisType = AgChartAxis['type'];

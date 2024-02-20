@@ -68,7 +68,7 @@ var DragService = /** @class */ (function (_super) {
         var eElement = params.eElement, includeTouch = params.includeTouch, stopPropagationForTouch = params.stopPropagationForTouch;
         eElement.addEventListener('mousedown', mouseListener);
         var touchListener = null;
-        var suppressTouch = this.gridOptionsService.is('suppressTouch');
+        var suppressTouch = this.gridOptionsService.get('suppressTouch');
         if (includeTouch && !suppressTouch) {
             touchListener = function (touchEvent) {
                 if (isFocusableFormField(touchEvent.target)) {
@@ -229,21 +229,23 @@ var DragService = /** @class */ (function (_super) {
     // only gets called after a mouse down - as this is only added after mouseDown
     // and is removed when mouseUp happens
     DragService.prototype.onMouseMove = function (mouseEvent, el) {
+        var _a;
+        if (isBrowserSafari()) {
+            var eDocument = this.gridOptionsService.getDocument();
+            (_a = eDocument.getSelection()) === null || _a === void 0 ? void 0 : _a.removeAllRanges();
+        }
         if (this.shouldPreventMouseEvent(mouseEvent)) {
             mouseEvent.preventDefault();
         }
         this.onCommonMove(mouseEvent, this.mouseStartEvent, el);
     };
     DragService.prototype.shouldPreventMouseEvent = function (mouseEvent) {
-        var isEnableCellTextSelect = this.gridOptionsService.is('enableCellTextSelection');
-        var isSafari = isBrowserSafari();
+        var isEnableCellTextSelect = this.gridOptionsService.get('enableCellTextSelection');
         var isMouseMove = mouseEvent.type === 'mousemove';
         return (
         // when `isEnableCellTextSelect` is `true`, we need to preventDefault on mouseMove
         // to avoid the grid text being selected while dragging components.
-        // Note: Safari also has an issue, where `user-select: none` is not being respected, so also
-        // prevent it on MouseDown.
-        ((isEnableCellTextSelect && isMouseMove) || isSafari) &&
+        ((isEnableCellTextSelect && isMouseMove)) &&
             mouseEvent.cancelable &&
             this.mouseEventService.isEventFromThisGrid(mouseEvent) &&
             !this.isOverFormFieldElement(mouseEvent));

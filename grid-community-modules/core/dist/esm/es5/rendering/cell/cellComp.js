@@ -18,7 +18,7 @@ import { PopupEditorWrapper } from "./../cellEditors/popupEditorWrapper";
 import { setAriaRole } from "../../utils/aria";
 import { escapeString } from "../../utils/string";
 import { missing } from "../../utils/generic";
-import { addStylesToElement, clearElement, loadTemplate, removeFromParent } from "../../utils/dom";
+import { addStylesToElement, clearElement, removeFromParent } from "../../utils/dom";
 import { browserSupportsPreventScroll } from "../../utils/browser";
 var CellComp = /** @class */ (function (_super) {
     __extends(CellComp, _super);
@@ -38,7 +38,9 @@ var CellComp = /** @class */ (function (_super) {
         _this.rowCtrl = cellCtrl.getRowCtrl();
         _this.eRow = eRow;
         _this.cellCtrl = cellCtrl;
-        _this.setTemplate(/* html */ "<div comp-id=\"" + _this.getCompId() + "\"/>");
+        var cellDiv = document.createElement('div');
+        cellDiv.setAttribute('comp-id', "".concat(_this.getCompId()));
+        _this.setTemplateFromElement(cellDiv);
         var eGui = _this.getGui();
         _this.forceWrapper = cellCtrl.isForceWrapper();
         _this.refreshWrapper(false);
@@ -50,7 +52,7 @@ var CellComp = /** @class */ (function (_super) {
                 eGui.removeAttribute(name);
             }
         };
-        setAriaRole(eGui, 'gridcell');
+        setAriaRole(eGui, cellCtrl.getCellAriaRole());
         setAttribute('col-id', cellCtrl.getColumnIdSanitised());
         var tabIndex = cellCtrl.getTabIndex();
         if (tabIndex !== undefined) {
@@ -132,7 +134,10 @@ var CellComp = /** @class */ (function (_super) {
         var usingWrapper = providingControls || this.forceWrapper;
         var putWrapperIn = usingWrapper && this.eCellWrapper == null;
         if (putWrapperIn) {
-            this.eCellWrapper = loadTemplate(/* html */ "<div class=\"ag-cell-wrapper\" role=\"presentation\"></div>");
+            var wrapperDiv = document.createElement('div');
+            wrapperDiv.setAttribute('role', 'presentation');
+            wrapperDiv.setAttribute('class', 'ag-cell-wrapper');
+            this.eCellWrapper = wrapperDiv;
             this.getGui().appendChild(this.eCellWrapper);
         }
         var takeWrapperOut = !usingWrapper && this.eCellWrapper != null;
@@ -144,7 +149,10 @@ var CellComp = /** @class */ (function (_super) {
         var usingCellValue = !editing && usingWrapper;
         var putCellValueIn = usingCellValue && this.eCellValue == null;
         if (putCellValueIn) {
-            this.eCellValue = loadTemplate(/* html */ "<span class=\"ag-cell-value\" role=\"presentation\"></span>");
+            var cellSpan = document.createElement('span');
+            cellSpan.setAttribute('role', 'presentation');
+            cellSpan.setAttribute('class', 'ag-cell-value');
+            this.eCellValue = cellSpan;
             this.eCellWrapper.appendChild(this.eCellValue);
         }
         var takeCellValueOut = !usingCellValue && this.eCellValue != null;
@@ -207,9 +215,9 @@ var CellComp = /** @class */ (function (_super) {
     CellComp.prototype.insertValueWithoutCellRenderer = function (valueToDisplay) {
         var eParent = this.getParentOfValue();
         clearElement(eParent);
-        var escapedValue = valueToDisplay != null ? escapeString(valueToDisplay) : null;
+        var escapedValue = valueToDisplay != null ? escapeString(valueToDisplay, true) : null;
         if (escapedValue != null) {
-            eParent.innerHTML = escapedValue;
+            eParent.textContent = escapedValue;
         }
     };
     CellComp.prototype.destroyEditorAndRenderer = function () {
@@ -257,7 +265,7 @@ var CellComp = /** @class */ (function (_super) {
         // never use task service if animation frame service is turned off.
         // and lastly we never use it if doing auto-height, as the auto-height service checks the
         // row height directly after the cell is created, it doesn't wait around for the tasks to complete        
-        var suppressAnimationFrame = this.beans.gridOptionsService.is('suppressAnimationFrame');
+        var suppressAnimationFrame = this.beans.gridOptionsService.get('suppressAnimationFrame');
         var useTaskService = !suppressAnimationFrame;
         var displayComponentVersionCopy = this.rendererVersion;
         var componentClass = compDetails.componentClass;
@@ -327,7 +335,7 @@ var CellComp = /** @class */ (function (_super) {
             return;
         }
         if (!cellEditor.getGui) {
-            console.warn("AG Grid: cellEditor for column " + this.column.getId() + " is missing getGui() method");
+            console.warn("AG Grid: cellEditor for column ".concat(this.column.getId(), " is missing getGui() method"));
             this.beans.context.destroyBean(cellEditor);
             return;
         }
@@ -382,14 +390,14 @@ var CellComp = /** @class */ (function (_super) {
             ePopupGui.appendChild(this.cellEditorGui);
         }
         var popupService = this.beans.popupService;
-        var useModelPopup = this.beans.gridOptionsService.is('stopEditingWhenCellsLoseFocus');
+        var useModelPopup = this.beans.gridOptionsService.get('stopEditingWhenCellsLoseFocus');
         // see if position provided by colDef, if not then check old way of method on cellComp
         var positionToUse = position != null
             ? position
             : cellEditor.getPopupPosition
                 ? cellEditor.getPopupPosition()
                 : 'over';
-        var isRtl = this.beans.gridOptionsService.is('enableRtl');
+        var isRtl = this.beans.gridOptionsService.get('enableRtl');
         var positionParams = {
             ePopup: ePopupGui,
             column: this.column,

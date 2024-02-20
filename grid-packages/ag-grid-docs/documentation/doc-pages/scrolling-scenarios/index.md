@@ -6,7 +6,19 @@ Here we show examples of some unusual use cases of scrolling and the grid.
 
 ## Make scrollbars always visible
 
-It is possible to show scrollbars even when there is not enough data to need scrolling. This voids visual table 'jumps' when toggling short and long data sets. To make that work, use the [alwaysShowHorizontalScroll](/grid-options/#reference-scrolling-alwaysShowHorizontalScroll) and [alwaysShowVerticalScroll](/grid-options/#reference-scrolling-alwaysShowVerticalScroll) properties of the Grid.
+It is possible to show scrollbars even when there is not enough data to need scrolling. This avoids visual table 'jumps' when toggling short and long data sets. To make that work, use the [alwaysShowHorizontalScroll](/grid-options/#reference-scrolling-alwaysShowHorizontalScroll) and [alwaysShowVerticalScroll](/grid-options/#reference-scrolling-alwaysShowVerticalScroll) properties of the Grid.
+
+<note>
+| Windows and Mac OS both have settings to control scrollbar visibility. Some browsers respect these operating system scrollbar settings while others don’t. This is why you may need to adjust the scrollbar settings in your OS to have the above properties take effect.
+| 
+| Scrollbar visibility settings can be changed as follows:
+|
+| For Windows 10, go to `Settings ▸ Ease of Access ▸ Display`. 
+| 
+| For Windows 11, go to `Settings ▸ Accessibility ▸ Visual Effect`. 
+|
+| For Mac OS, go to `System Settings ▸ Appearance`.
+</note>
 
 <grid-example title='Always visible scrollbars' name='scrollbars' type='generated'></grid-example>
 

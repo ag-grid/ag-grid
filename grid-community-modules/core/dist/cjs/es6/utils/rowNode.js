@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.traverseNodesWithKey = exports.sortRowNodesByOrder = void 0;
+exports.sortRowNodesByOrder = void 0;
 /**
  * Gets called by: a) ClientSideNodeManager and b) GroupStage to do sorting.
  * when in ClientSideNodeManager we always have indexes (as this sorts the items the
@@ -63,23 +63,3 @@ function sortRowNodesByOrder(rowNodes, rowNodeOrder) {
     return false;
 }
 exports.sortRowNodesByOrder = sortRowNodesByOrder;
-function traverseNodesWithKey(nodes, callback) {
-    const keyParts = [];
-    recursiveSearchNodes(nodes);
-    function recursiveSearchNodes(currentNodes) {
-        if (!currentNodes) {
-            return;
-        }
-        currentNodes.forEach((node) => {
-            // also checking for children for tree data
-            if (node.group || node.hasChildren()) {
-                keyParts.push(node.key);
-                const key = keyParts.join('|');
-                callback(node, key);
-                recursiveSearchNodes(node.childrenAfterGroup);
-                keyParts.pop();
-            }
-        });
-    }
-}
-exports.traverseNodesWithKey = traverseNodesWithKey;

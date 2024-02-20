@@ -38,7 +38,7 @@ const HeaderGroupCellComp = (props) => {
     }));
     const getClassName = createMemo(() => 'ag-header-group-cell ' + getCssClasses().toString());
     const getResizableClassName = createMemo(() => 'ag-header-cell-resize ' + getCssResizableClasses().toString());
-    return (<div ref={eGui} class={getClassName()} style={style()} col-id={getColId()} role="columnheader" tabIndex={-1} aria-expanded={getAriaExpanded()}>
+    return (<div ref={eGui} class={getClassName()} style={style()} col-id={getColId()} role="columnheader" aria-expanded={getAriaExpanded()}>
 
             {getUserCompDetails()
             && <UserComp compDetails={getUserCompDetails()}/>}

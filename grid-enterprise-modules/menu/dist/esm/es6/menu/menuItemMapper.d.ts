@@ -7,7 +7,9 @@ export declare class MenuItemMapper extends BeanStub {
     private readonly focusService;
     private readonly rowPositionUtils;
     private readonly chartMenuItemMapper;
-    mapWithStockItems(originalList: (MenuItemDef | string)[], column: Column | null): (MenuItemDef | string)[];
+    private readonly menuService;
+    private readonly sortController;
+    mapWithStockItems(originalList: (MenuItemDef | string)[], column: Column | null, sourceElement: () => HTMLElement): (MenuItemDef | string)[];
     private getStockMenuItem;
     private createAggregationSubMenu;
 }

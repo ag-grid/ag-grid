@@ -34,7 +34,7 @@ class ReadOnlyFloatingFilter extends component_1.Component {
             .setInputAriaLabel(`${displayName} ${translate('ariaFilterInput', 'Filter Input')}`);
     }
     onParentModelChanged(parentModel) {
-        if (!parentModel) {
+        if (parentModel == null) {
             this.eFloatingFilterText.setValue('');
             return;
         }
@@ -50,13 +50,16 @@ class ReadOnlyFloatingFilter extends component_1.Component {
         });
     }
     onParamsUpdated(params) {
+        this.refresh(params);
+    }
+    refresh(params) {
         this.init(params);
     }
 }
 __decorate([
-    componentAnnotations_1.RefSelector('eFloatingFilterText')
+    (0, componentAnnotations_1.RefSelector)('eFloatingFilterText')
 ], ReadOnlyFloatingFilter.prototype, "eFloatingFilterText", void 0);
 __decorate([
-    context_1.Autowired('columnModel')
+    (0, context_1.Autowired)('columnModel')
 ], ReadOnlyFloatingFilter.prototype, "columnModel", void 0);
 exports.ReadOnlyFloatingFilter = ReadOnlyFloatingFilter;

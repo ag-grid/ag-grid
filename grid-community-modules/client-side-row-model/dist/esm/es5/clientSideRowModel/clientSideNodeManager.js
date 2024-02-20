@@ -14,15 +14,21 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 import { Events, RowNode, _ } from "@ag-grid-community/core";
 var ClientSideNodeManager = /** @class */ (function () {
     function ClientSideNodeManager(rootNode, gridOptionsService, eventService, columnModel, selectionService, beans) {
         this.nextId = 0;
+        // has row data actually been set
+        this.rowCountReady = false;
         // when user is provide the id's, we also keep a map of ids to row nodes for convenience
         this.allNodesMap = {};
         this.rootNode = rootNode;
@@ -39,17 +45,7 @@ var ClientSideNodeManager = /** @class */ (function () {
         this.rootNode.childrenAfterSort = [];
         this.rootNode.childrenAfterAggFilter = [];
         this.rootNode.childrenAfterFilter = [];
-        // if we make this class a bean, then can annotate postConstruct
-        this.postConstruct();
     }
-    // @PostConstruct - this is not a bean, so postConstruct called by constructor
-    ClientSideNodeManager.prototype.postConstruct = function () {
-        // func below doesn't have 'this' pointer, so need to pull out these bits
-        this.suppressParentsInRowNodes = this.gridOptionsService.is('suppressParentsInRowNodes');
-        this.isRowMasterFunc = this.gridOptionsService.get('isRowMaster');
-        this.doingTreeData = this.gridOptionsService.isTreeData();
-        this.doingMasterDetail = this.gridOptionsService.isMasterDetail();
-    };
     ClientSideNodeManager.prototype.getCopyOfNodesMap = function () {
         return _.cloneObject(this.allNodesMap);
     };
@@ -62,6 +58,7 @@ var ClientSideNodeManager = /** @class */ (function () {
             console.warn('AG Grid: rowData must be an array, however you passed in a string. If you are loading JSON, make sure you convert the JSON string to JavaScript objects first');
             return;
         }
+        this.rowCountReady = true;
         this.dispatchRowDataUpdateStartedEvent(rowData);
         var rootNode = this.rootNode;
         var sibling = this.rootNode.sibling;
@@ -93,6 +90,7 @@ var ClientSideNodeManager = /** @class */ (function () {
         }
     };
     ClientSideNodeManager.prototype.updateRowData = function (rowDataTran, rowNodeOrder) {
+        this.rowCountReady = true;
         this.dispatchRowDataUpdateStartedEvent(rowDataTran.add);
         var rowNodeTransaction = {
             remove: [],
@@ -108,6 +106,9 @@ var ClientSideNodeManager = /** @class */ (function () {
             _.sortRowNodesByOrder(this.rootNode.allLeafChildren, rowNodeOrder);
         }
         return rowNodeTransaction;
+    };
+    ClientSideNodeManager.prototype.isRowCountReady = function () {
+        return this.rowCountReady;
     };
     ClientSideNodeManager.prototype.dispatchRowDataUpdateStartedEvent = function (rowData) {
         var event = {
@@ -154,7 +155,8 @@ var ClientSideNodeManager = /** @class */ (function () {
             var allLeafChildren = this.rootNode.allLeafChildren;
             var len = allLeafChildren.length;
             var normalisedAddIndex = addIndex;
-            if (this.doingTreeData && addIndex > 0 && len > 0) {
+            var isTreeData = this.gridOptionsService.get('treeData');
+            if (isTreeData && addIndex > 0 && len > 0) {
                 for (var i = 0; i < len; i++) {
                     if (((_a = allLeafChildren[i]) === null || _a === void 0 ? void 0 : _a.rowIndex) == addIndex - 1) {
                         normalisedAddIndex = i + 1;
@@ -164,10 +166,10 @@ var ClientSideNodeManager = /** @class */ (function () {
             }
             var nodesBeforeIndex = allLeafChildren.slice(0, normalisedAddIndex);
             var nodesAfterIndex = allLeafChildren.slice(normalisedAddIndex, allLeafChildren.length);
-            this.rootNode.allLeafChildren = __spreadArray(__spreadArray(__spreadArray([], __read(nodesBeforeIndex)), __read(newNodes)), __read(nodesAfterIndex));
+            this.rootNode.allLeafChildren = __spreadArray(__spreadArray(__spreadArray([], __read(nodesBeforeIndex), false), __read(newNodes), false), __read(nodesAfterIndex), false);
         }
         else {
-            this.rootNode.allLeafChildren = __spreadArray(__spreadArray([], __read(this.rootNode.allLeafChildren)), __read(newNodes));
+            this.rootNode.allLeafChildren = __spreadArray(__spreadArray([], __read(this.rootNode.allLeafChildren), false), __read(newNodes), false);
         }
         if (this.rootNode.sibling) {
             this.rootNode.sibling.allLeafChildren = this.rootNode.allLeafChildren;
@@ -233,7 +235,7 @@ var ClientSideNodeManager = /** @class */ (function () {
             var id = getRowIdFunc({ data: data, level: 0 });
             rowNode = this.allNodesMap[id];
             if (!rowNode) {
-                console.error("AG Grid: could not find row id=" + id + ", data item was not found for this id");
+                console.error("AG Grid: could not find row id=".concat(id, ", data item was not found for this id"));
                 return null;
             }
         }
@@ -252,32 +254,36 @@ var ClientSideNodeManager = /** @class */ (function () {
         var node = new RowNode(this.beans);
         node.group = false;
         this.setMasterForRow(node, dataItem, level, true);
-        if (parent && !this.suppressParentsInRowNodes) {
+        var suppressParentsInRowNodes = this.gridOptionsService.get('suppressParentsInRowNodes');
+        if (parent && !suppressParentsInRowNodes) {
             node.parent = parent;
         }
         node.level = level;
         node.setDataAndId(dataItem, this.nextId.toString());
         if (this.allNodesMap[node.id]) {
-            console.warn("AG Grid: duplicate node id '" + node.id + "' detected from getRowId callback, this could cause issues in your grid.");
+            console.warn("AG Grid: duplicate node id '".concat(node.id, "' detected from getRowId callback, this could cause issues in your grid."));
         }
         this.allNodesMap[node.id] = node;
         this.nextId++;
         return node;
     };
     ClientSideNodeManager.prototype.setMasterForRow = function (rowNode, data, level, setExpanded) {
-        if (this.doingTreeData) {
+        var isTreeData = this.gridOptionsService.get('treeData');
+        if (isTreeData) {
             rowNode.setMaster(false);
             if (setExpanded) {
                 rowNode.expanded = false;
             }
         }
         else {
+            var masterDetail = this.gridOptionsService.get('masterDetail');
             // this is the default, for when doing grid data
-            if (this.doingMasterDetail) {
+            if (masterDetail) {
                 // if we are doing master detail, then the
                 // default is that everything can be a Master Row.
-                if (this.isRowMasterFunc) {
-                    rowNode.setMaster(this.isRowMasterFunc(data));
+                var isRowMasterFunc = this.gridOptionsService.get('isRowMaster');
+                if (isRowMasterFunc) {
+                    rowNode.setMaster(isRowMasterFunc(data));
                 }
                 else {
                     rowNode.setMaster(true);
@@ -296,7 +302,7 @@ var ClientSideNodeManager = /** @class */ (function () {
         }
     };
     ClientSideNodeManager.prototype.isExpanded = function (level) {
-        var expandByDefault = this.gridOptionsService.getNum('groupDefaultExpanded');
+        var expandByDefault = this.gridOptionsService.get('groupDefaultExpanded');
         if (expandByDefault === -1) {
             return true;
         }

@@ -86,15 +86,15 @@ var PivotDropZonePanel = /** @class */ (function (_super) {
             this.setDisplayed(pivotMode);
         }
     };
-    PivotDropZonePanel.prototype.isColumnDroppable = function (column) {
+    PivotDropZonePanel.prototype.isColumnDroppable = function (column, draggingEvent) {
         // we never allow grouping of secondary columns
-        if (this.gridOptionsService.is('functionsReadOnly') || !column.isPrimary()) {
+        if (this.gridOptionsService.get('functionsReadOnly') || !column.isPrimary()) {
             return false;
         }
-        return column.isAllowPivot() && !column.isPivotActive();
+        return column.isAllowPivot() && (!column.isPivotActive() || this.isSourceEventFromTarget(draggingEvent));
     };
     PivotDropZonePanel.prototype.updateColumns = function (columns) {
-        if (this.gridOptionsService.is('functionsPassive')) {
+        if (this.gridOptionsService.get('functionsPassive')) {
             var event_1 = {
                 type: Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST,
                 columns: columns

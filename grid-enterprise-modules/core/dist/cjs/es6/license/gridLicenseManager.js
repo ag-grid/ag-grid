@@ -26,11 +26,14 @@ let GridLicenseManager = class GridLicenseManager extends core_1.BeanStub {
     static setLicenseKey(licenseKey) {
         licenseManager_1.LicenseManager.setLicenseKey(licenseKey);
     }
+    static setChartsLicenseManager(chartsLicenseManager) {
+        licenseManager_1.LicenseManager.setChartsLicenseManager(chartsLicenseManager);
+    }
 };
 __decorate([
     core_1.PreConstruct
 ], GridLicenseManager.prototype, "validateLicense", null);
 GridLicenseManager = __decorate([
-    core_1.Bean('licenseManager')
+    (0, core_1.Bean)('licenseManager')
 ], GridLicenseManager);
 exports.GridLicenseManager = GridLicenseManager;

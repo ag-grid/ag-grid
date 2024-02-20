@@ -13,9 +13,11 @@ export declare class HeaderNavigationService extends BeanStub {
     private headerPositionUtils;
     private ctrlsService;
     private gridBodyCon;
+    private currentHeaderRowWithoutSpan;
     private postConstruct;
     getHeaderRowCount(): number;
     navigateVertically(direction: HeaderNavigationDirection, fromHeader: HeaderPosition | null, event: KeyboardEvent): boolean;
+    setCurrentHeaderRowWithoutSpan(row: number): void;
     navigateHorizontally(direction: HeaderNavigationDirection, fromTab: boolean | undefined, event: KeyboardEvent): boolean;
     private focusNextHeaderRow;
     scrollToColumn(column: Column | ColumnGroup, direction?: 'Before' | 'After' | null): void;

@@ -1,7 +1,7 @@
-import { BeanStub, Column, ColumnVO, IServerSideDatasource, IServerSideRowModel, IServerSideStore, NumberSequence, RowBounds, RowNode, StoreRefreshAfterParams, RefreshServerSideParams, ServerSideGroupLevelState, SortModelItem, RowModelType } from "@ag-grid-community/core";
+import { BeanStub, Column, ColumnVO, IServerSideDatasource, IServerSideRowModel, IServerSideStore, NumberSequence, RowBounds, RowNode, StoreRefreshAfterParams, RefreshServerSideParams, ServerSideGroupLevelState, SortModelItem, RowModelType, LoadSuccessParams, FilterModel, AdvancedFilterModel } from "@ag-grid-community/core";
 export interface SSRMParams {
     sortModel: SortModelItem[];
-    filterModel: any;
+    filterModel: FilterModel | AdvancedFilterModel | null;
     lastAccessedSequence: NumberSequence;
     dynamicRowHeight: boolean;
     rowGroupCols: ColumnVO[];
@@ -13,6 +13,7 @@ export interface SSRMParams {
 export declare class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
     private columnModel;
     private filterManager;
+    private sortController;
     private rowRenderer;
     private sortListener;
     private nodeManager;
@@ -30,13 +31,17 @@ export declare class ServerSideRowModel extends BeanStub implements IServerSideR
     start(): void;
     private destroyDatasource;
     private addEventListeners;
+    private updateDatasource;
     private verifyProps;
     setDatasource(datasource: IServerSideDatasource): void;
+    applyRowData(rowDataParams: LoadSuccessParams, startRow: number, route: string[]): void;
     isLastRowIndexKnown(): boolean;
     private onColumnEverything;
     private destroyRootStore;
     refreshAfterSort(newSortModel: SortModelItem[], params: StoreRefreshAfterParams): void;
     generateSecondaryColumns(pivotFields: string[]): void;
+    resetRowHeights(): void;
+    private resetRowHeightsForAllRowNodes;
     resetRootStore(): void;
     columnsToValueObjects(columns: Column[]): ColumnVO[];
     private createStoreParams;
@@ -55,7 +60,7 @@ export declare class ServerSideRowModel extends BeanStub implements IServerSideR
     retryLoads(): void;
     getRow(index: number): RowNode | undefined;
     expandAll(value: boolean): void;
-    refreshAfterFilter(newFilterModel: any, params: StoreRefreshAfterParams): void;
+    refreshAfterFilter(newFilterModel: FilterModel | AdvancedFilterModel | null, params: StoreRefreshAfterParams): void;
     getRootStore(): IServerSideStore | undefined;
     getRowCount(): number;
     getTopLevelRowCount(): number;
@@ -67,8 +72,9 @@ export declare class ServerSideRowModel extends BeanStub implements IServerSideR
     isRowsToRender(): boolean;
     getType(): RowModelType;
     forEachNode(callback: (rowNode: RowNode, index: number) => void): void;
-    forEachNodeAfterFilterAndSort(callback: (node: RowNode, index: number) => void): void;
-    executeOnStore(route: string[], callback: (cache: IServerSideStore) => void): void;
+    forEachNodeAfterFilterAndSort(callback: (node: RowNode, index: number) => void, includeFooterNodes?: boolean): void;
+    /** @return false if store hasn't started */
+    executeOnStore(route: string[], callback: (cache: IServerSideStore) => void): boolean;
     refreshStore(params?: RefreshServerSideParams): void;
     getStoreState(): ServerSideGroupLevelState[];
     getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode | null): RowNode[];

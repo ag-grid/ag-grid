@@ -31,7 +31,7 @@ export class ReadOnlyFloatingFilter extends Component {
             .setInputAriaLabel(`${displayName} ${translate('ariaFilterInput', 'Filter Input')}`);
     }
     onParentModelChanged(parentModel) {
-        if (!parentModel) {
+        if (parentModel == null) {
             this.eFloatingFilterText.setValue('');
             return;
         }
@@ -47,6 +47,9 @@ export class ReadOnlyFloatingFilter extends Component {
         });
     }
     onParamsUpdated(params) {
+        this.refresh(params);
+    }
+    refresh(params) {
         this.init(params);
     }
 }

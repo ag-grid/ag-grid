@@ -10,6 +10,7 @@ export declare class ChartService extends BeanStub implements IChartService {
     private activeCharts;
     private activeChartComps;
     private crossFilteringContext;
+    isEnterprise: () => boolean;
     updateChart(params: UpdateChartParams): void;
     getChartModels(): ChartModel[];
     getChartRef(chartId: string): ChartRef | undefined;

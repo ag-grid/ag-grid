@@ -1,4 +1,15 @@
-import { Grid, GridOptions, ISetFilter, ISetFilterParams, KeyCreatorParams, ValueFormatterParams } from '@ag-grid-community/core'
+import {
+    GridApi,
+    createGrid,
+    GridOptions,
+    ISetFilter,
+    ISetFilterParams,
+    KeyCreatorParams,
+    ValueFormatterParams,
+    FirstDataRenderedEvent,
+} from '@ag-grid-community/core';
+
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
@@ -27,7 +38,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 160,
         filter: true,
-        resizable: true,
     },
     sideBar: 'filters',
     onFirstDataRendered: onFirstDataRendered,
@@ -39,7 +49,7 @@ function countryKeyCreator(params: KeyCreatorParams) {
 
 function patchData(data: any[]) {
     // hack the data, replace each country with an object of country name and code
-    data.forEach(function (row) {
+    data.forEach((row) => {
         const countryName = row.country
         const countryCode = countryName.substring(0, 2).toUpperCase()
         row.country = {
@@ -50,59 +60,61 @@ function patchData(data: any[]) {
 }
 
 function selectJohnAndKenny() {
-    const instance = gridOptions.api!.getFilterInstance('athlete')!
-    instance.setModel({ values: ['John Joe Nevin', 'Kenny Egan'] })
-    gridOptions.api!.onFilterChanged()
+    gridApi!.setColumnFilterModel('athlete', { values: ['John Joe Nevin', 'Kenny Egan'] }).then(() => {
+        gridApi!.onFilterChanged();
+    });
 }
 
 function selectEverything() {
-    const instance = gridOptions.api!.getFilterInstance('athlete')!
-    instance.setModel(null)
-    gridOptions.api!.onFilterChanged()
+    gridApi!.setColumnFilterModel('athlete', null).then(() => {
+        gridApi!.onFilterChanged();
+    });
 }
 
 function selectNothing() {
-    const instance = gridOptions.api!.getFilterInstance('athlete')!
-    instance.setModel({ values: [] })
-    gridOptions.api!.onFilterChanged()
+    gridApi!.setColumnFilterModel('athlete', { values: [] }).then(() => {
+        gridApi!.onFilterChanged();
+    });
 }
 
 function setCountriesToFranceAustralia() {
-    const instance = gridOptions.api!.getFilterInstance<ISetFilter<{ name: string, code: string }>>('country')!;
-    instance.setFilterValues([
-        {
-            name: 'France',
-            code: 'FR',
-        },
-        {
-            name: 'Australia',
-            code: 'AU'
-        }
-    ])
-    instance.applyModel()
-    gridOptions.api!.onFilterChanged()
+    gridApi!.getColumnFilterInstance<ISetFilter<{ name: string, code: string }>>('country').then(instance => {
+        instance!.setFilterValues([
+            {
+                name: 'France',
+                code: 'FR',
+            },
+            {
+                name: 'Australia',
+                code: 'AU'
+            }
+        ])
+        instance!.applyModel()
+        gridApi!.onFilterChanged()
+    });
 }
 
 function setCountriesToAll() {
-    const instance = gridOptions.api!.getFilterInstance<ISetFilter<{ name: string, code: string }>>('country')!;
-    instance.resetFilterValues()
-    instance.applyModel()
-    gridOptions.api!.onFilterChanged()
+    gridApi!.getColumnFilterInstance<ISetFilter<{ name: string, code: string }>>('country').then(instance => {
+        instance!.resetFilterValues()
+        instance!.applyModel()
+        gridApi!.onFilterChanged()
+    });
 }
 
-function onFirstDataRendered() {
-    gridOptions.api!.getToolPanelInstance('filters')!.expandFilters()
+function onFirstDataRendered(params: FirstDataRenderedEvent) {
+    params.api.getToolPanelInstance('filters')!.expandFilters()
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-    new Grid(gridDiv, gridOptions)
+    gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then(response => response.json())
         .then(function (data) {
             patchData(data)
-            gridOptions.api!.setRowData(data)
+            gridApi!.setGridOption('rowData', data)
         })
 })

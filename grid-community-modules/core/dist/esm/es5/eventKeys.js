@@ -30,15 +30,27 @@ var Events = /** @class */ (function () {
     Events.EVENT_COLUMN_RESIZED = 'columnResized';
     /** The list of displayed columns has changed, can result from columns open / close, column move, pivot, group, etc */
     Events.EVENT_DISPLAYED_COLUMNS_CHANGED = 'displayedColumnsChanged';
+    /** The grid option related to suppressing movable columns has changed */
+    Events.EVENT_SUPPRESS_COLUMN_MOVE_CHANGED = 'suppressMovableColumns';
+    /** The grid option related to suppressing column group selection has changed */
+    Events.EVENT_SUPPRESS_MENU_HIDE_CHANGED = 'suppressMenuHide';
+    /** The grid option related to suppressing movable columns has changed */
+    Events.EVENT_SUPPRESS_FIELD_DOT_NOTATION = 'suppressFieldDotNotation';
     /** The list of virtual columns has changed, results from viewport changing */
     Events.EVENT_VIRTUAL_COLUMNS_CHANGED = 'virtualColumnsChanged';
+    /** Column header mouse over */
+    Events.EVENT_COLUMN_HEADER_MOUSE_OVER = 'columnHeaderMouseOver';
+    /** Column header mouse leave */
+    Events.EVENT_COLUMN_HEADER_MOUSE_LEAVE = 'columnHeaderMouseLeave';
+    /** Column header clicked */
+    Events.EVENT_COLUMN_HEADER_CLICKED = 'columnHeaderClicked';
+    /** Column header context menu event, such as right-click or context menu key press */
+    Events.EVENT_COLUMN_HEADER_CONTEXT_MENU = 'columnHeaderContextMenu';
     /** Async Transactions Executed */
     Events.EVENT_ASYNC_TRANSACTIONS_FLUSHED = 'asyncTransactionsFlushed';
     /** A row group was opened / closed */
     Events.EVENT_ROW_GROUP_OPENED = 'rowGroupOpened';
-    /** @deprecated v28 use EVENT_ROW_DATA_UPDATED instead */
-    Events.EVENT_ROW_DATA_CHANGED = 'rowDataChanged';
-    /** The client has updated data for the grid */
+    /** Client-Side Row Model only. The client has updated data for the grid */
     Events.EVENT_ROW_DATA_UPDATED = 'rowDataUpdated';
     /** The client has set new floating data into the grid */
     Events.EVENT_PINNED_ROW_DATA_CHANGED = 'pinnedRowDataChanged';
@@ -99,6 +111,7 @@ var Events = /** @class */ (function () {
     /** Filter was change but not applied. Only useful if apply buttons are used in filters. */
     Events.EVENT_FILTER_MODIFIED = 'filterModified';
     Events.EVENT_FILTER_OPENED = 'filterOpened';
+    Events.EVENT_ADVANCED_FILTER_BUILDER_VISIBLE_CHANGED = 'advancedFilterBuilderVisibleChanged';
     Events.EVENT_SORT_CHANGED = 'sortChanged';
     /** A row was removed from the dom, for any reason. Use to clean up resources (if any) used by the row. */
     Events.EVENT_VIRTUAL_ROW_REMOVED = 'virtualRowRemoved';
@@ -106,6 +119,8 @@ var Events = /** @class */ (function () {
     Events.EVENT_ROW_DOUBLE_CLICKED = 'rowDoubleClicked';
     /** Gets called once after the grid has finished initialising. */
     Events.EVENT_GRID_READY = 'gridReady';
+    /** Called once when the grid is about to get destroyed. */
+    Events.EVENT_GRID_PRE_DESTROYED = 'gridPreDestroyed';
     /** Width of height of the main grid div has changed. Grid listens for this and does layout of grid if it's
      * changed, so always filling the space it was given. */
     Events.EVENT_GRID_SIZE_CHANGED = 'gridSizeChanged';
@@ -138,11 +153,15 @@ var Events = /** @class */ (function () {
     Events.EVENT_COMPONENT_STATE_CHANGED = 'componentStateChanged';
     /** Only used by the SSRM, called when the grid has no more rows to refresh */
     Events.EVENT_STORE_REFRESHED = 'storeRefreshed';
+    Events.EVENT_STATE_UPDATED = 'stateUpdated';
+    /** The visibility of the column menu has changed. */
+    Events.EVENT_COLUMN_MENU_VISIBLE_CHANGED = 'columnMenuVisibleChanged';
     /*****************************  INTERNAL EVENTS: START ******************************************* */
     /** Please remember to add to ComponentUtil.EXCLUDED_INTERNAL_EVENTS to not have these events exposed to framework components. */
     /** All items from here down are used internally by the grid, not intended for external use. */
     // not documented, either experimental, or we just don't want users using an depending on them
     Events.EVENT_BODY_HEIGHT_CHANGED = 'bodyHeightChanged';
+    Events.EVENT_COLUMN_CONTAINER_WIDTH_CHANGED = 'columnContainerWidthChanged';
     Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED = 'displayedColumnsWidthChanged';
     Events.EVENT_SCROLL_VISIBILITY_CHANGED = 'scrollVisibilityChanged';
     Events.EVENT_COLUMN_HOVER_CHANGED = 'columnHoverChanged';
@@ -169,17 +188,17 @@ var Events = /** @class */ (function () {
     Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST = 'columnPivotChangeRequest';
     Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST = 'columnValueChangeRequest';
     Events.EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST = 'columnAggFuncChangeRequest';
-    Events.EVENT_KEYBOARD_FOCUS = 'keyboardFocus';
-    Events.EVENT_MOUSE_FOCUS = 'mouseFocus';
     Events.EVENT_STORE_UPDATED = 'storeUpdated';
     Events.EVENT_FILTER_DESTROYED = 'filterDestroyed';
     Events.EVENT_ROW_DATA_UPDATE_STARTED = 'rowDataUpdateStarted';
+    Events.EVENT_ROW_COUNT_READY = 'rowCountReady';
     // Advanced Filters
     Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED = 'advancedFilterEnabledChanged';
     Events.EVENT_DATA_TYPES_INFERRED = 'dataTypesInferred';
     // Widgets
     Events.EVENT_FIELD_VALUE_CHANGED = 'fieldValueChanged';
     Events.EVENT_FIELD_PICKER_VALUE_SELECTED = 'fieldPickerValueSelected';
+    Events.EVENT_SIDE_BAR_UPDATED = 'sideBarUpdated';
     return Events;
 }());
 export { Events };

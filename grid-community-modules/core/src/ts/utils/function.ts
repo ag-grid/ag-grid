@@ -12,6 +12,13 @@ export function doOnce(func: () => void, key: string) {
     doOnceFlags[key] = true;
 }
 
+export function warnOnce(msg: string) {
+    doOnce(() => console.warn("AG Grid: " + msg), msg);
+}
+export function errorOnce(msg: string) {
+    doOnce(() => console.error("AG Grid: " + msg), msg);
+}
+
 export function getFunctionName(funcConstructor: any) {
     // for every other browser in the world
     if (funcConstructor.name) {
@@ -125,10 +132,6 @@ export function waitUntil(condition: () => boolean, callback: () => void, timeou
 
 export function compose(...fns: Function[]) {
     return (arg: any) => fns.reduce((composed, f) => f(composed), arg);
-}
-
-export function callIfPresent(func: Function): void {
-    if (func) { func(); }
 }
 
 export const noop = () => { return; };

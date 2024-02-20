@@ -1,7 +1,41 @@
-import { getModuleRegistration, ImportType } from './parser-utils';
+import { getActiveTheme, getIntegratedDarkModeCode, getModuleRegistration, ImportType, preferParamsApi, replaceGridReadyRowData } from './parser-utils';
 import { getImport, toOutput } from './vue-utils';
-import { convertDefaultColDef, getAllMethods, getColumnDefs, getOnGridReadyCode, getPropertyBindings, getTemplate } from "./grid-vanilla-to-vue-common";
+import { convertDefaultColDef, getAllMethods, getColumnDefs, getPropertyBindings, getTemplate } from "./grid-vanilla-to-vue-common";
+import {integratedChartsUsesChartsEnterprise} from "./consts";
 const path = require('path');
+
+function getOnGridReadyCode(bindings: any): string {
+    const { onGridReady, resizeToFit, data } = bindings;
+    const additionalLines = [];
+
+    if (onGridReady) {
+        additionalLines.push(onGridReady.trim().replace(/^\{|\}$/g, ''));
+    }
+
+    if (resizeToFit) {
+        additionalLines.push('params.api.sizeColumnsToFit();');
+    }
+
+    if (data) {
+        const { url, callback } = data;
+
+        const setRowDataBlock = replaceGridReadyRowData(callback, 'this.rowData');
+
+        additionalLines.push(`
+            const updateData = (data) => ${setRowDataBlock};
+            
+            fetch(${url})
+                .then(resp => resp.json())
+                .then(data => updateData(data));`
+        );
+    }
+    const additional = preferParamsApi(additionalLines.length > 0 ? `\n\n        ${additionalLines.join('\n        ')}` : '')
+    return `onGridReady(params) {
+        ${getIntegratedDarkModeCode(bindings.exampleName)}
+        this.gridApi = params.api;
+        ${additional}
+    }`;
+}
 
 function getModuleImports(bindings: any, componentFileNames: string[], allStylesheets: string[]): string[] {
     const { gridSettings } = bindings;
@@ -14,18 +48,18 @@ function getModuleImports(bindings: any, componentFileNames: string[], allStyles
     if (bindings.gridSettings.enableChartApi) {
         imports.push("import { AgChart } from 'ag-charts-community'");
     }
-    if(bindings.gridSettings.licenseKey) {
+    if (bindings.gridSettings.licenseKey) {
         imports.push("import { LicenseManager } from '@ag-grid-enterprise/core';");
     }
 
     imports.push("import '@ag-grid-community/styles/ag-grid.css';");
-    // to account for the (rare) example that has more than one class...just default to alpine if it does
+    // to account for the (rare) example that has more than one class...just default to quartz if it does
     // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
     // "source" non dark version
-    const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-alpine';
+    const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-quartz';
     imports.push(`import "@ag-grid-community/styles/${theme}.css";`);
 
-    if(allStylesheets && allStylesheets.length > 0) {
+    if (allStylesheets && allStylesheets.length > 0) {
         allStylesheets.forEach(styleSheet => imports.push(`import './${path.basename(styleSheet)}';`));
     }
 
@@ -47,24 +81,24 @@ function getPackageImports(bindings: any, componentFileNames: string[], allStyle
     ];
 
     if (gridSettings.enterprise) {
-        imports.push("import 'ag-grid-enterprise';");
+        imports.push(`import 'ag-grid-${integratedChartsUsesChartsEnterprise && bindings.gridSettings.modules.includes('charts-enterprise') ? 'charts-' : ''}enterprise';`);
     }
     if (bindings.gridSettings.enableChartApi) {
         imports.push("import { AgChart } from 'ag-charts-community'");
     }
-    if(bindings.gridSettings.licenseKey) {
+    if (bindings.gridSettings.licenseKey) {
         imports.push("import { LicenseManager } from 'ag-grid-enterprise';");
     }
 
     imports.push("import 'ag-grid-community/styles/ag-grid.css';");
 
-    // to account for the (rare) example that has more than one class...just default to alpine if it does
+    // to account for the (rare) example that has more than one class...just default to quartz if it does
     // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
     // "source" non dark version
-    const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-alpine';
+    const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-quartz';
     imports.push(`import 'ag-grid-community/styles/${theme}.css';`);
 
-    if(allStylesheets && allStylesheets.length > 0) {
+    if (allStylesheets && allStylesheets.length > 0) {
         allStylesheets.forEach(styleSheet => imports.push(`import './${path.basename(styleSheet)}';`));
     }
 
@@ -118,13 +152,13 @@ const VueExample = {
         return {
             columnDefs: ${columnDefs},
             gridApi: null,
-            columnApi: null,
+            themeClass: ${getActiveTheme(bindings.gridSettings.theme, false)},
             ${defaultColDef ? `defaultColDef: ${defaultColDef},` : ''}
             ${propertyVars.join(',\n')}
         }
     },
     created() {
-        ${propertyAssignments.join(';\n')}
+        ${propertyAssignments.join(';\n')}        
     },
     methods: {
         ${eventHandlers
@@ -132,7 +166,8 @@ const VueExample = {
                 .concat(onGridReady)
                 .concat(instanceMethods)
                 .map(snippet => `${snippet.trim()},`)
-                .join('\n')}
+                .join('\n')            
+                .replace(/(?<!this.)gridApi(\??)(!?)/g, 'this.gridApi')}
     }
 }
 

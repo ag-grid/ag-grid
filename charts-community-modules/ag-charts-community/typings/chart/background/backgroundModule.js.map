@@ -1,1 +1,0 @@
-{"version":3,"file":"backgroundModule.js","sourceRoot":"","sources":["../../../src/chart/background/backgroundModule.ts"],"names":[],"mappings":";;;AAAA,2CAA0C;AAE1C,4CAAmD;AAEtC,QAAA,uBAAuB,GAAW;IAC3C,IAAI,EAAE,MAAM;IACZ,UAAU,EAAE,YAAY;IACxB,WAAW,EAAE,WAAW;IACxB,UAAU,EAAE,CAAC,WAAW,EAAE,OAAO,EAAE,WAAW,CAAC;IAC/C,mBAAmB,EAAE,uBAAU;CAClC,CAAC;AAEF,uBAAc,CAAC,+BAAuB,CAAC,CAAC"}

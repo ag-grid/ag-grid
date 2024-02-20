@@ -58,15 +58,15 @@ var ValuesDropZonePanel = /** @class */ (function (_super) {
     ValuesDropZonePanel.prototype.getIconName = function () {
         return this.isPotentialDndColumns() ? DragAndDropService.ICON_AGGREGATE : DragAndDropService.ICON_NOT_ALLOWED;
     };
-    ValuesDropZonePanel.prototype.isColumnDroppable = function (column) {
+    ValuesDropZonePanel.prototype.isColumnDroppable = function (column, draggingEvent) {
         // we never allow grouping of secondary columns
-        if (this.gridOptionsService.is('functionsReadOnly') || !column.isPrimary()) {
+        if (this.gridOptionsService.get('functionsReadOnly') || !column.isPrimary()) {
             return false;
         }
-        return column.isAllowValue() && !column.isValueActive();
+        return column.isAllowValue() && (!column.isValueActive() || this.isSourceEventFromTarget(draggingEvent));
     };
     ValuesDropZonePanel.prototype.updateColumns = function (columns) {
-        if (this.gridOptionsService.is('functionsPassive')) {
+        if (this.gridOptionsService.get('functionsPassive')) {
             var event_1 = {
                 type: Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST,
                 columns: columns

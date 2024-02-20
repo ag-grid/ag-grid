@@ -1,4 +1,10 @@
-import { GetRowIdParams, Grid, GridApi, GridOptions, GridReadyEvent, IRowNode, ValueGetterParams } from '@ag-grid-community/core'
+import {
+  createGrid, GetRowIdParams,
+  GridApi, GridOptions,
+  GridReadyEvent,
+  IRowNode,
+  ValueGetterParams
+} from '@ag-grid-community/core';
 
 interface Student {
   student: number;
@@ -7,6 +13,8 @@ interface Student {
   course: string;
   points: number;
 }
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -24,15 +32,12 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     minWidth: 150,
-    sortable: true,
-    resizable: true,
     cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   rowData: getRowData(),
   pivotMode: true,
   groupDefaultExpanded: 1,
   // enableCellChangeFlash: true,
-  animateRows: true,
   getRowId: (params: GetRowIdParams) => {
     return params.data.student
   },
@@ -87,9 +92,9 @@ function createRow() {
 function pivotMode() {
   var pivotModeOn = (document.getElementById('pivot-mode') as HTMLInputElement).checked
 
-  gridOptions.columnApi!.setPivotMode(pivotModeOn)
+  gridApi!.setGridOption('pivotMode', pivotModeOn);
 
-  gridOptions.columnApi!.applyColumnState({
+  gridApi!.applyColumnState({
     state: [
       { colId: 'yearGroup', rowGroup: pivotModeOn },
       { colId: 'course', pivot: pivotModeOn, pivotIndex: 1 },
@@ -99,7 +104,7 @@ function pivotMode() {
 }
 
 function updateOneRecord() {
-  var rowNodeToUpdate = pickExistingRowNodeAtRandom(gridOptions.api!)
+  var rowNodeToUpdate = pickExistingRowNodeAtRandom(gridApi!)
   if (!rowNodeToUpdate) return;
 
   var randomValue = createNewRandomScore(rowNodeToUpdate.data)
@@ -123,9 +128,9 @@ function createRandomNumber() {
   return Math.floor(Math.random() * 100)
 }
 
-function pickExistingRowNodeAtRandom(gridApi: GridApi) {
+function pickExistingRowNodeAtRandom(api: GridApi) {
   var allItems: IRowNode[] = []
-  gridApi.forEachLeafNode(function (rowNode) {
+  api.forEachLeafNode(function (rowNode) {
     allItems.push(rowNode)
   })
 
@@ -137,13 +142,13 @@ function pickExistingRowNodeAtRandom(gridApi: GridApi) {
   return result
 }
 
-function pickExistingRowItemAtRandom(gridApi: GridApi): Student | null {
-  var rowNode = pickExistingRowNodeAtRandom(gridApi)
+function pickExistingRowItemAtRandom(api: GridApi): Student | null {
+  var rowNode = pickExistingRowNodeAtRandom(api)
   return rowNode ? rowNode.data : null
 }
 
 function updateUsingTransaction() {
-  var itemToUpdate = pickExistingRowItemAtRandom(gridOptions.api!)
+  var itemToUpdate = pickExistingRowItemAtRandom(gridApi!)
   if (!itemToUpdate) {
     return
   }
@@ -154,7 +159,7 @@ function updateUsingTransaction() {
     update: [itemToUpdate],
   }
   console.log('updating - after', itemToUpdate)
-  gridOptions.api!.applyTransaction(transaction)
+  gridApi!.applyTransaction(transaction)
 }
 
 function addNewGroupUsingTransaction() {
@@ -167,7 +172,7 @@ function addNewGroupUsingTransaction() {
   }
   console.log('add - ', item1)
   console.log('add - ', item2)
-  gridOptions.api!.applyTransaction(transaction)
+  gridApi!.applyTransaction(transaction)
 }
 
 function addNewCourse() {
@@ -177,12 +182,12 @@ function addNewCourse() {
     add: [item1],
   }
   console.log('add - ', item1)
-  gridOptions.api!.applyTransaction(transaction)
+  gridApi!.applyTransaction(transaction)
 }
 
 function removePhysics() {
   var allPhysics: any = []
-  gridOptions.api!.forEachLeafNode(function (rowNode) {
+  gridApi!.forEachLeafNode(function (rowNode) {
     if (rowNode.data.course === 'Physics') {
       allPhysics.push(rowNode.data)
     }
@@ -191,11 +196,11 @@ function removePhysics() {
     remove: allPhysics,
   }
   console.log('removing ' + allPhysics.length + ' physics items.')
-  gridOptions.api!.applyTransaction(transaction)
+  gridApi!.applyTransaction(transaction)
 }
 
 function moveCourse() {
-  var item = pickExistingRowItemAtRandom(gridOptions.api!)
+  var item = pickExistingRowItemAtRandom(gridApi!)
   if (!item) {
     return
   }
@@ -204,11 +209,11 @@ function moveCourse() {
     update: [item],
   }
   console.log('moving ' + item)
-  gridOptions.api!.applyTransaction(transaction)
+  gridApi!.applyTransaction(transaction)
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

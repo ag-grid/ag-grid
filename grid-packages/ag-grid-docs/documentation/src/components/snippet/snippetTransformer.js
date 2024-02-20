@@ -52,7 +52,7 @@ class SnippetTransformer {
         if (Array.isArray(tree)) {
             return tree.map(node => this.parse(node, depth + 1)).join('');
 
-        } else if(isProperty(tree)) {
+        } else if (isProperty(tree)) {
             return this.addComment(tree, depth) + this.parseProperty(tree, depth);
 
         } else if (isExprStatement(tree)) {
@@ -140,8 +140,7 @@ class AngularTransformer extends SnippetTransformer {
         const exprPostfix = variableExpression ? '; ' : '';
         const [start, end] = expression.range;
         return `\n${comment}${exprPrefix}${this.snippet.slice(start, end)}${exprPostfix}`
-            .replace('gridOptions.api', 'this.gridApi')
-            .replace('gridOptions.columnApi', 'this.gridColumnApi');
+            .replace('api', 'this.gridApi');
     }
 
     addFrameworkContext(result) {
@@ -201,8 +200,7 @@ class ReactTransformer extends SnippetTransformer {
         const exprPostfix = variableExpression ? '; ' : '';
         const [start, end] = expression.range;
         return `\n${comment}${exprPrefix}${this.snippet.slice(start, end)}${exprPostfix}`
-            .replace('gridOptions.api', 'gridApi')
-            .replace('gridOptions.columnApi', 'gridColumnApi');
+            .replace('api', 'gridApi');
     }
 
     extractExternalProperty(property) {
@@ -217,7 +215,7 @@ class ReactTransformer extends SnippetTransformer {
         }
 
         if (isUseMemoProp(propName)) {
-            return `const [${propName}, ${setterPropName}] = useMemo(() => { \n\treturn ${value};\n}, []);`;
+            return `const ${propName} = useMemo(() => { \n\treturn ${value};\n}, []);`;
         }
 
         return `const ${getName(property)} = ${decreaseIndent(value)};`;
@@ -327,7 +325,7 @@ const getReactValue = node => {
     return (typeof value === 'string') ? `"${value}"` : `{${value}}`;
 }
 
-const capitalise = str => str[0].toUpperCase() + str.substr(1);
+const capitalise = str => str[0].toUpperCase() + str.substring(1);
 const isProperty = node => node.type === 'Property';
 const isObjectProperty = node => isProperty(node) && node.value.type === 'ObjectExpression';
 const isObjectExpr = node => node.type === 'ObjectExpression';

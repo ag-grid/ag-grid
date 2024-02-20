@@ -2,9 +2,10 @@ import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { Component } from '../../../widgets/component';
 import { IDateComp, IDateParams } from '../../../rendering/dateComponent';
 import { RefSelector } from '../../../widgets/componentAnnotations';
-import { serialiseDate, parseDateTimeFromString } from '../../../utils/date';
+import { serialiseDate, parseDateTimeFromString, dateToFormattedString } from '../../../utils/date';
 import { getSafariVersion, isBrowserChrome, isBrowserFirefox, isBrowserSafari } from '../../../utils/browser';
 import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
+import { warnOnce } from '../../../utils/function';
 
 export class DefaultDateComponent extends Component implements IDateComp {
     @RefSelector('eDateInput') private readonly eDateInput: AgInputTextField;
@@ -57,16 +58,60 @@ export class DefaultDateComponent extends Component implements IDateComp {
 
         inputElement.type = shouldUseBrowserDatePicker ? 'date' : 'text';
 
-        const { minValidYear, maxValidYear } = params.filterParams || {};
-        if (minValidYear) {
-            inputElement.min = `${minValidYear}-01-01`;
+        const {
+            minValidYear,
+            maxValidYear,
+            minValidDate,
+            maxValidDate,
+        } = params.filterParams || {};
+
+        if (minValidDate && minValidYear) {
+            warnOnce('DateFilter should not have both minValidDate and minValidYear parameters set at the same time! minValidYear will be ignored.');
         }
-        if (maxValidYear) {
-            inputElement.max = `${maxValidYear}-12-31`;
+
+        if (maxValidDate && maxValidYear) {
+            warnOnce('DateFilter should not have both maxValidDate and maxValidYear parameters set at the same time! maxValidYear will be ignored.');
+        }
+
+        if (minValidDate && maxValidDate) {
+            const [parsedMinValidDate, parsedMaxValidDate] = [minValidDate, maxValidDate]
+                .map(v => v instanceof Date ? v : parseDateTimeFromString(v));
+
+            if (parsedMinValidDate && parsedMaxValidDate && parsedMinValidDate.getTime() > parsedMaxValidDate.getTime()) {
+                warnOnce('DateFilter parameter minValidDate should always be lower than or equal to parameter maxValidDate.');
+            }
+        }
+
+        if (minValidDate) {
+            if (minValidDate instanceof Date) {
+                inputElement.min = dateToFormattedString(minValidDate);
+            } else {
+                inputElement.min = minValidDate;
+            }
+        } else {
+            if (minValidYear) {
+                inputElement.min = `${minValidYear}-01-01`;
+            }
+        }
+
+        if (maxValidDate) {
+            if (maxValidDate instanceof Date) {
+                inputElement.max = dateToFormattedString(maxValidDate);
+            } else {
+                inputElement.max = maxValidDate;
+            }
+        } else {
+            if (maxValidYear) {
+                inputElement.max = `${maxValidYear}-12-31`;
+            }
         }
     }
 
     public onParamsUpdated(params: IDateParams): void {
+        this.refresh(params);
+    }
+
+    public refresh(params: IDateParams): void {
         this.params = params;
         this.setParams(params);
     }

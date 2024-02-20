@@ -62,8 +62,8 @@ var LazyBlockLoader = /** @class */ (function (_super) {
     LazyBlockLoader.prototype.getBlockToLoad = function () {
         var _this = this;
         var _a;
-        var firstRowInViewport = this.api.getFirstDisplayedRow();
-        var lastRowInViewport = this.api.getLastDisplayedRow();
+        var firstRowInViewport = this.api.getFirstDisplayedRowIndex();
+        var lastRowInViewport = this.api.getLastDisplayedRowIndex();
         // quick look-up for priority rows needing loading in viewport.
         for (var i = firstRowInViewport; i <= lastRowInViewport; i++) {
             var node = this.cache.getNodeCachedByDisplayIndex(i);
@@ -150,17 +150,12 @@ var LazyBlockLoader = /** @class */ (function (_super) {
             removeNodesFromLoadingMap();
             _this.queueLoadAction();
         };
-        var params = {
+        var params = this.gridOptionsService.addGridCommonParams({
             request: request,
-            successCallback: function (rowData, rowCount) { return success({ rowData: rowData, rowCount: rowCount }); },
             success: success,
-            failCallback: fail,
             fail: fail,
-            parentNode: this.parentNode,
-            api: this.api,
-            columnApi: this.columnApi,
-            context: this.gridOptionsService.context
-        };
+            parentNode: this.parentNode
+        });
         addNodesToLoadingMap();
         (_a = this.cache.getSsrmParams().datasource) === null || _a === void 0 ? void 0 : _a.getRows(params);
     };
@@ -185,7 +180,6 @@ var LazyBlockLoader = /** @class */ (function (_super) {
     };
     LazyBlockLoader.prototype.queueLoadAction = function () {
         var _this = this;
-        var _a;
         var nextBlockToLoad = this.getNextBlockToLoad();
         if (!nextBlockToLoad) {
             // there's no block we should be loading right now, clear the timeouts
@@ -198,7 +192,7 @@ var LazyBlockLoader = /** @class */ (function (_super) {
         if (!this.nextBlockToLoad || (this.nextBlockToLoad[0] !== nextBlockToLoad[0] && this.nextBlockToLoad[1] !== nextBlockToLoad[1])) {
             this.nextBlockToLoad = nextBlockToLoad;
             window.clearTimeout(this.loaderTimeout);
-            var _b = __read(this.nextBlockToLoad, 2), startRowString = _b[0], endRow_1 = _b[1];
+            var _a = __read(this.nextBlockToLoad, 2), startRowString = _a[0], endRow_1 = _a[1];
             var startRow_1 = Number(startRowString);
             this.loaderTimeout = window.setTimeout(function () {
                 if (!_this.cache.isAlive()) {
@@ -207,7 +201,7 @@ var LazyBlockLoader = /** @class */ (function (_super) {
                 _this.loaderTimeout = undefined;
                 _this.attemptLoad(startRow_1, endRow_1);
                 _this.nextBlockToLoad = undefined;
-            }, (_a = this.gridOptionsService.getNum('blockLoadDebounceMillis')) !== null && _a !== void 0 ? _a : 0);
+            }, this.gridOptionsService.get('blockLoadDebounceMillis'));
         }
     };
     LazyBlockLoader.prototype.attemptLoad = function (start, end) {
@@ -234,13 +228,10 @@ var LazyBlockLoader = /** @class */ (function (_super) {
     };
     LazyBlockLoader.DEFAULT_BLOCK_SIZE = 100;
     __decorate([
-        core_1.Autowired('gridApi')
+        (0, core_1.Autowired)('gridApi')
     ], LazyBlockLoader.prototype, "api", void 0);
     __decorate([
-        core_1.Autowired('columnApi')
-    ], LazyBlockLoader.prototype, "columnApi", void 0);
-    __decorate([
-        core_1.Autowired('rowNodeBlockLoader')
+        (0, core_1.Autowired)('rowNodeBlockLoader')
     ], LazyBlockLoader.prototype, "rowNodeBlockLoader", void 0);
     __decorate([
         core_1.PostConstruct

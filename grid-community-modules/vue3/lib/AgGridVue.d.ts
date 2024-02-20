@@ -1,5 +1,6 @@
 import { PropType } from 'vue';
-import { GridOptions, Module } from '@ag-grid-community/core';
+import { GridApi, GridOptions, Module } from '@ag-grid-community/core';
+import { Properties } from './Utils';
 export declare const AgGridVue: import("vue").DefineComponent<{
     gridOptions: {
         type: PropType<GridOptions<any>>;
@@ -24,12 +25,13 @@ export declare const AgGridVue: import("vue").DefineComponent<{
         required: false;
     };
 }, unknown, {
+    api: GridApi | undefined;
     gridCreated: boolean;
     isDestroyed: boolean;
     gridReadyFired: boolean;
-    emitRowModel: (() => void | null) | undefined;
-}, {}, {
-    globalEventListener(eventType: string, event: any): void;
+    emitRowModel?: (() => void | null) | undefined;
+}, Properties, {
+    globalEventListenerFactory(restrictToSyncOnly?: boolean): (eventType: string, event: any) => void;
     processChanges(propertyName: string, currentValue: any, previousValue: any): void;
     checkForBindingConflicts(): void;
     getRowData(): any[];
@@ -38,7 +40,7 @@ export declare const AgGridVue: import("vue").DefineComponent<{
     getProvides(): {};
     skipChange(propertyName: string, currentValue: any, previousValue: any): boolean;
     debounce(func: () => void, delay: number): () => void;
-}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").VNodeProps & import("vue").AllowedComponentProps & import("vue").ComponentCustomProps, Readonly<import("vue").ExtractPropTypes<{
+}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<import("vue").ExtractPropTypes<{
     gridOptions: {
         type: PropType<GridOptions<any>>;
         default: () => GridOptions<any>;
@@ -62,9 +64,9 @@ export declare const AgGridVue: import("vue").DefineComponent<{
         required: false;
     };
 }>>, {
+    modelValue: unknown[];
     gridOptions: GridOptions<any>;
     autoParamsRefresh: boolean;
     componentDependencies: String[];
     modules: Module[];
-    modelValue: unknown[];
 }, {}>;

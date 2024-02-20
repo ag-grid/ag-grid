@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
@@ -6,8 +6,19 @@ import { PopupComponent } from "../../widgets/popupComponent";
 export interface ISelectCellEditorParams<TValue = any> {
     /** List of values to display */
     values: TValue[];
-    /** The space in pixels between the value display and the list of items. Default: `4` */
+    /**
+     * The space in pixels between the value display and the list of items.
+     * @default 4
+     */
     valueListGap?: number;
+    /** The maximum height of the list of items. If the value is a `number` it will be
+     * treated as pixels, otherwise it should be a valid CSS size string. Default: Height of Popup Parent.
+     */
+    valueListMaxHeight?: number | string;
+    /** The maximum width of the list of items. If the value is a `number` it will be
+     * treated as pixels, otherwise it should be a valid CSS size string. Default: Width of the cell being edited.
+     */
+    valueListMaxWidth?: number | string;
 }
 interface SelectCellEditorParams<TData = any, TValue = any, TContext = any> extends ISelectCellEditorParams<TValue>, ICellEditorParams<TData, TValue, TContext> {
 }

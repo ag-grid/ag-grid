@@ -1,19 +1,25 @@
 export interface ChartGroupsDef {
+    // community chart groups
     columnGroup?: ('column' | 'stackedColumn' | 'normalizedColumn')[];
     barGroup?: ('bar' | 'stackedBar' | 'normalizedBar')[],
-    pieGroup?: ('pie' | 'doughnut')[],
+    pieGroup?: ('pie' | 'donut' | 'doughnut')[],
     lineGroup?: ('line')[],
     scatterGroup?: ('scatter' | 'bubble')[],
     areaGroup?: ('area' | 'stackedArea' | 'normalizedArea')[],
-    histogramGroup?: ('histogram')[],
     combinationGroup?: ('columnLineCombo' | 'areaColumnCombo' | 'customCombo')[]
+
+    // enterprise chart groups
+    polarGroup?: ('radarLine' | 'radarArea' | 'nightingale' | 'radialColumn' | 'radialBar')[],
+    statisticalGroup?: ('boxPlot' | 'histogram' | 'rangeBar' | 'rangeArea')[],
+    hierarchicalGroup?: ('treemap' | 'sunburst')[],
+    specializedGroup?: ('heatmap' | 'waterfall')[],
 }
 
 export const DEFAULT_CHART_GROUPS: ChartGroupsDef = {
     columnGroup: [
         'column',
         'stackedColumn',
-        'normalizedColumn'
+        'normalizedColumn',
     ],
     barGroup: [
         'bar',
@@ -22,27 +28,45 @@ export const DEFAULT_CHART_GROUPS: ChartGroupsDef = {
     ],
     pieGroup: [
         'pie',
-        'doughnut'
+        'donut',
     ],
     lineGroup: [
-        'line'
+        'line',
     ],
     scatterGroup: [
         'scatter',
-        'bubble'
+        'bubble',
     ],
     areaGroup: [
         'area',
         'stackedArea',
-        'normalizedArea'
+        'normalizedArea',
     ],
-    histogramGroup: [
-        'histogram'
+    polarGroup: [
+        'radarLine',
+        'radarArea',
+        'nightingale',
+        'radialColumn',
+        'radialBar',
+    ],
+    statisticalGroup: [
+        'boxPlot',
+        'histogram',
+        'rangeBar',
+        'rangeArea',
+    ],
+    hierarchicalGroup: [
+        'treemap',
+        'sunburst',
+    ],
+    specializedGroup: [
+        'heatmap',
+        'waterfall',
     ],
     combinationGroup: [
         'columnLineCombo',
         'areaColumnCombo',
-        'customCombo'
+        'customCombo',
     ]
 }
 
@@ -100,11 +124,25 @@ export type ChartType =
     | 'scatter'
     | 'bubble'
     | 'pie'
+    | 'donut'
     | 'doughnut'
     | 'area'
     | 'stackedArea'
     | 'normalizedArea'
     | 'histogram'
+    | 'radarLine'
+    | 'radarArea'
+    | 'nightingale'
+    | 'radialColumn'
+    | 'radialBar'
+    | 'sunburst'
+    | 'rangeBar'
+    | 'rangeArea'
+    | 'boxPlot'
+    | 'treemap'
+    | 'sunburst'
+    | 'heatmap'
+    | 'waterfall'
     | 'columnLineCombo'
     | 'areaColumnCombo'
     | 'customCombo';
@@ -116,6 +154,7 @@ export type CrossFilterChartType =
     | 'scatter'
     | 'bubble'
     | 'pie'
+    | 'donut'
     | 'doughnut'
     | 'area';
 

@@ -5,10 +5,13 @@ import { ContextMenuFactory } from "./menu/contextMenu.mjs";
 import { MenuItemMapper } from "./menu/menuItemMapper.mjs";
 import { VERSION } from "./version.mjs";
 import { ChartMenuItemMapper } from "./menu/chartMenuItemMapper.mjs";
+import { ColumnChooserFactory } from "./menu/columnChooserFactory.mjs";
+import { ColumnMenuFactory } from "./menu/columnMenuFactory.mjs";
+import { MenuUtils } from "./menu/menuUtils.mjs";
 export const MenuModule = {
     version: VERSION,
     moduleName: ModuleNames.MenuModule,
-    beans: [EnterpriseMenuFactory, ContextMenuFactory, MenuItemMapper, ChartMenuItemMapper],
+    beans: [EnterpriseMenuFactory, ContextMenuFactory, MenuItemMapper, ChartMenuItemMapper, ColumnChooserFactory, ColumnMenuFactory, MenuUtils],
     dependantModules: [
         EnterpriseCoreModule
     ]

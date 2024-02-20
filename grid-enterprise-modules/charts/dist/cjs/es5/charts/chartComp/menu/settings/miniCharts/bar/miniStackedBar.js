@@ -20,7 +20,7 @@ var miniChartWithAxes_1 = require("../miniChartWithAxes");
 var ag_charts_community_1 = require("ag-charts-community");
 var MiniStackedBar = /** @class */ (function (_super) {
     __extends(MiniStackedBar, _super);
-    function MiniStackedBar(container, fills, strokes, data, xScaleDomain, tooltipName) {
+    function MiniStackedBar(container, fills, strokes, _themeTemplateParameters, _isCustomTheme, data, xScaleDomain, tooltipName) {
         if (data === void 0) { data = MiniStackedBar.data; }
         if (xScaleDomain === void 0) { xScaleDomain = [0, 16]; }
         if (tooltipName === void 0) { tooltipName = "stackedBarTooltip"; }
@@ -44,7 +44,7 @@ var MiniStackedBar = /** @class */ (function (_super) {
                 rect.y = yScale.convert(i);
                 rect.width = bottom - xScale.convert(datum);
                 rect.height = height;
-                rect.strokeWidth = 1;
+                rect.strokeWidth = 0;
                 rect.crisp = true;
                 return rect;
             });

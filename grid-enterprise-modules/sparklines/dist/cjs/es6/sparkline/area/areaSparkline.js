@@ -77,7 +77,7 @@ class AreaSparkline extends sparkline_1.Sparkline {
     }
     markerFactory() {
         const { shape } = this.marker;
-        const MarkerShape = markerFactory_1.getMarker(shape);
+        const MarkerShape = (0, markerFactory_1.getMarker)(shape);
         return new MarkerShape();
     }
     getNodeData() {
@@ -299,7 +299,7 @@ class AreaSparkline extends sparkline_1.Sparkline {
         const { lineDash } = xLine;
         xCrosshairLine.lineDash = Array.isArray(lineDash)
             ? lineDash
-            : lineDash_1.getLineDash(xCrosshairLine.lineCap, xLine.lineDash);
+            : (0, lineDash_1.getLineDash)(xCrosshairLine.lineCap, xLine.lineDash);
         xCrosshairLine.translationX = highlightedDatum.point.x;
     }
     updateYCrosshairLine() {
@@ -318,7 +318,7 @@ class AreaSparkline extends sparkline_1.Sparkline {
         const { lineDash } = yLine;
         yCrosshairLine.lineDash = Array.isArray(lineDash)
             ? lineDash
-            : lineDash_1.getLineDash(yCrosshairLine.lineCap, yLine.lineDash);
+            : (0, lineDash_1.getLineDash)(yCrosshairLine.lineCap, yLine.lineDash);
         yCrosshairLine.translationY = highlightedDatum.point.y;
     }
     getTooltipHtml(datum) {
@@ -335,14 +335,14 @@ class AreaSparkline extends sparkline_1.Sparkline {
         };
         const tooltipRenderer = (_b = (_a = this.processedOptions) === null || _a === void 0 ? void 0 : _a.tooltip) === null || _b === void 0 ? void 0 : _b.renderer;
         if (tooltipRenderer) {
-            return sparklineTooltip_1.toTooltipHtml(tooltipRenderer({
+            return (0, sparklineTooltip_1.toTooltipHtml)(tooltipRenderer({
                 context: this.context,
                 datum: seriesDatum,
                 yValue,
                 xValue,
             }), defaults);
         }
-        return sparklineTooltip_1.toTooltipHtml(defaults);
+        return (0, sparklineTooltip_1.toTooltipHtml)(defaults);
     }
 }
 exports.AreaSparkline = AreaSparkline;

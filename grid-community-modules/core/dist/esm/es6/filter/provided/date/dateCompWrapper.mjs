@@ -1,4 +1,5 @@
 import { setDisplayed } from '../../../utils/dom.mjs';
+import { warnOnce } from '../../../utils/function.mjs';
 /** Provides sync access to async component. Date component can be lazy created - this class encapsulates
  * this by keeping value locally until DateComp has loaded, then passing DateComp the value. */
 export class DateCompWrapper {
@@ -72,9 +73,20 @@ export class DateCompWrapper {
         }
     }
     updateParams(params) {
-        var _a;
-        if (((_a = this.dateComp) === null || _a === void 0 ? void 0 : _a.onParamsUpdated) && typeof this.dateComp.onParamsUpdated === 'function') {
-            this.dateComp.onParamsUpdated(params);
+        var _a, _b;
+        let hasRefreshed = false;
+        if (((_a = this.dateComp) === null || _a === void 0 ? void 0 : _a.refresh) && typeof this.dateComp.refresh === 'function') {
+            const result = this.dateComp.refresh(params);
+            // framework wrapper always implements optional methods, but returns null if no underlying method
+            if (result !== null) {
+                hasRefreshed = true;
+            }
+        }
+        if (!hasRefreshed && ((_b = this.dateComp) === null || _b === void 0 ? void 0 : _b.onParamsUpdated) && typeof this.dateComp.onParamsUpdated === 'function') {
+            const result = this.dateComp.onParamsUpdated(params);
+            if (result !== null) {
+                warnOnce(`Custom date component method 'onParamsUpdated' is deprecated. Use 'refresh' instead.`);
+            }
         }
     }
     setDateCompDisabled(disabled) {

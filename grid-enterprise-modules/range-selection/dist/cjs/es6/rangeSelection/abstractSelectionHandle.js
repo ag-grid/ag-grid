@@ -146,34 +146,34 @@ class AbstractSelectionHandle extends core_1.Component {
     }
 }
 __decorate([
-    core_1.Autowired("rowRenderer")
+    (0, core_1.Autowired)("rowRenderer")
 ], AbstractSelectionHandle.prototype, "rowRenderer", void 0);
 __decorate([
-    core_1.Autowired("dragService")
+    (0, core_1.Autowired)("dragService")
 ], AbstractSelectionHandle.prototype, "dragService", void 0);
 __decorate([
-    core_1.Autowired("rangeService")
+    (0, core_1.Autowired)("rangeService")
 ], AbstractSelectionHandle.prototype, "rangeService", void 0);
 __decorate([
-    core_1.Autowired("mouseEventService")
+    (0, core_1.Autowired)("mouseEventService")
 ], AbstractSelectionHandle.prototype, "mouseEventService", void 0);
 __decorate([
-    core_1.Autowired("columnModel")
+    (0, core_1.Autowired)("columnModel")
 ], AbstractSelectionHandle.prototype, "columnModel", void 0);
 __decorate([
-    core_1.Autowired("cellNavigationService")
+    (0, core_1.Autowired)("cellNavigationService")
 ], AbstractSelectionHandle.prototype, "cellNavigationService", void 0);
 __decorate([
-    core_1.Autowired("navigationService")
+    (0, core_1.Autowired)("navigationService")
 ], AbstractSelectionHandle.prototype, "navigationService", void 0);
 __decorate([
-    core_1.Autowired('rowPositionUtils')
+    (0, core_1.Autowired)('rowPositionUtils')
 ], AbstractSelectionHandle.prototype, "rowPositionUtils", void 0);
 __decorate([
-    core_1.Autowired('cellPositionUtils')
+    (0, core_1.Autowired)('cellPositionUtils')
 ], AbstractSelectionHandle.prototype, "cellPositionUtils", void 0);
 __decorate([
-    core_1.Autowired('ctrlsService')
+    (0, core_1.Autowired)('ctrlsService')
 ], AbstractSelectionHandle.prototype, "ctrlsService", void 0);
 __decorate([
     core_1.PostConstruct

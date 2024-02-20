@@ -1,9 +1,6 @@
-export interface IServerSideSelectionState {
-    selectAll: boolean;
-    toggledNodes: string[];
+import { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from "./selectionState";
+export interface IServerSideSelectionState extends ServerSideRowSelectionState {
 }
-export interface IServerSideGroupSelectionState {
-    nodeId?: string;
-    selectAllChildren?: boolean;
+export interface IServerSideGroupSelectionState extends ServerSideRowGroupSelectionState {
     toggledNodes?: IServerSideGroupSelectionState[];
 }

@@ -59,32 +59,41 @@ var ChartMenuItemMapper = /** @class */ (function (_super) {
     ChartMenuItemMapper.prototype.getChartItems = function (key) {
         var _a, _b;
         if (!this.chartService) {
-            core_1.ModuleRegistry.__assertRegistered(core_1.ModuleNames.GridChartsModule, "the Context Menu key \"" + key + "\"", this.context.getGridId());
+            core_1.ModuleRegistry.__assertRegistered(core_1.ModuleNames.GridChartsModule, "the Context Menu key \"".concat(key, "\""), this.context.getGridId());
             return undefined;
         }
         var builder = key === 'pivotChart'
             ? new PivotMenuItemMapper(this.gridOptionsService, this.chartService, this.localeService)
             : new RangeMenuItemMapper(this.gridOptionsService, this.chartService, this.localeService);
+        var isEnterprise = this.chartService.isEnterprise();
         var topLevelMenuItem = builder.getMenuItem();
+        if (topLevelMenuItem && topLevelMenuItem.subMenu && !isEnterprise) {
+            // Filter out enterprise-only menu items if 'Community Integrated'
+            var filterEnterpriseItems_1 = function (m) {
+                var _a;
+                return (__assign(__assign({}, m), { subMenu: (_a = m.subMenu) === null || _a === void 0 ? void 0 : _a.filter(function (menu) { return !menu._enterprise; }).map(function (menu) { return filterEnterpriseItems_1(menu); }) }));
+            };
+            topLevelMenuItem = filterEnterpriseItems_1(topLevelMenuItem);
+        }
         var chartGroupsDef = (_b = (_a = this.gridOptionsService.get('chartToolPanelsDef')) === null || _a === void 0 ? void 0 : _a.settingsPanel) === null || _b === void 0 ? void 0 : _b.chartGroupsDef;
         if (chartGroupsDef) {
-            // Apply filtering and ordering if chartGroupsDef provided
             topLevelMenuItem = ChartMenuItemMapper_1.filterAndOrderChartMenu(topLevelMenuItem, chartGroupsDef, builder.getConfigLookup());
         }
         return this.cleanInternals(topLevelMenuItem);
     };
-    // Remove our internal _key properties so this does not leak out of the class on the menu items.
+    // Remove our internal _key and _enterprise properties so this does not leak out of the class on the menu items.
     ChartMenuItemMapper.prototype.cleanInternals = function (menuItem) {
         if (!menuItem) {
             return menuItem;
         }
-        var removeKey = function (m) {
+        var removeKeys = function (m) {
             var _a;
             m === null || m === void 0 ? true : delete m._key;
-            (_a = m === null || m === void 0 ? void 0 : m.subMenu) === null || _a === void 0 ? void 0 : _a.forEach(function (s) { return removeKey(s); });
+            m === null || m === void 0 ? true : delete m._enterprise;
+            (_a = m === null || m === void 0 ? void 0 : m.subMenu) === null || _a === void 0 ? void 0 : _a.forEach(function (s) { return removeKeys(s); });
             return m;
         };
-        return removeKey(menuItem);
+        return removeKeys(menuItem);
     };
     ChartMenuItemMapper.buildLookup = function (menuItem) {
         var itemLookup = {};
@@ -108,8 +117,11 @@ var ChartMenuItemMapper = /** @class */ (function (_super) {
             var _b, _c;
             var _d = __read(_a, 2), group = _d[0], chartTypes = _d[1];
             var chartConfigGroup = configLookup[group];
+            // Skip any context panels that are not enabled for the current chart type
+            if (chartConfigGroup === null)
+                return;
             if (chartConfigGroup == undefined) {
-                core_1._.doOnce(function () { return console.warn("AG Grid - invalid chartGroupsDef config '" + group + "'"); }, "invalid_chartGroupsDef" + group);
+                core_1._.warnOnce("invalid chartGroupsDef config '".concat(group, "'"));
                 return undefined;
             }
             var menuItem = menuItemLookup[chartConfigGroup._key];
@@ -118,7 +130,7 @@ var ChartMenuItemMapper = /** @class */ (function (_super) {
                     var subMenus = chartTypes.map(function (chartType) {
                         var itemKey = chartConfigGroup[chartType];
                         if (itemKey == undefined) {
-                            core_1._.doOnce(function () { return console.warn("AG Grid - invalid chartGroupsDef config '" + group + "." + chartType + "'"); }, "invalid_chartGroupsDef" + chartType + "_" + group);
+                            core_1._.warnOnce("invalid chartGroupsDef config '".concat(group, ".").concat(chartType, "'"));
                             return undefined;
                         }
                         return menuItemLookup[itemKey];
@@ -141,10 +153,10 @@ var ChartMenuItemMapper = /** @class */ (function (_super) {
     };
     var ChartMenuItemMapper_1;
     __decorate([
-        core_1.Optional('chartService')
+        (0, core_1.Optional)('chartService')
     ], ChartMenuItemMapper.prototype, "chartService", void 0);
     ChartMenuItemMapper = ChartMenuItemMapper_1 = __decorate([
-        core_1.Bean('chartMenuItemMapper')
+        (0, core_1.Bean)('chartMenuItemMapper')
     ], ChartMenuItemMapper);
     return ChartMenuItemMapper;
 }(core_1.BeanStub));
@@ -158,11 +170,13 @@ var PivotMenuItemMapper = /** @class */ (function () {
     PivotMenuItemMapper.prototype.getMenuItem = function () {
         var _this = this;
         var localeTextFunc = this.localeService.getLocaleTextFunc();
-        var getMenuItem = function (localeKey, defaultText, chartType, key) {
+        var getMenuItem = function (localeKey, defaultText, chartType, key, enterprise) {
+            if (enterprise === void 0) { enterprise = false; }
             return {
                 name: localeTextFunc(localeKey, defaultText),
                 action: function () { return _this.chartService.createPivotChart({ chartType: chartType }); },
-                _key: key
+                _key: key,
+                _enterprise: enterprise
             };
         };
         return {
@@ -192,7 +206,7 @@ var PivotMenuItemMapper = /** @class */ (function () {
                     name: localeTextFunc('pieChart', 'Pie'),
                     subMenu: [
                         getMenuItem('pie', 'Pie&lrm;', 'pie', 'pivotPie'),
-                        getMenuItem('doughnut', 'Doughnut&lrm;', 'doughnut', 'pivotDoughnut')
+                        getMenuItem('donut', 'Donut&lrm;', 'donut', 'pivotDonut')
                     ]
                 },
                 getMenuItem('line', 'Line&lrm;', 'line', 'pivotLineChart'),
@@ -213,7 +227,23 @@ var PivotMenuItemMapper = /** @class */ (function () {
                         getMenuItem('normalizedArea', '100% Stacked&lrm;', 'normalizedArea', 'pivotNormalizedArea')
                     ]
                 },
-                getMenuItem('histogramChart', 'Histogram&lrm;', 'histogram', 'pivotHistogramChart'),
+                {
+                    _key: 'pivotStatisticalChart',
+                    _enterprise: false,
+                    name: localeTextFunc('statisticalChart', 'Statistical'),
+                    subMenu: [
+                        getMenuItem('histogramChart', 'Histogram&lrm;', 'histogram', 'pivotHistogram', false),
+                    ],
+                },
+                {
+                    _key: 'pivotHierarchicalChart',
+                    _enterprise: true,
+                    name: localeTextFunc('hierarchicalChart', 'Hierarchical'),
+                    subMenu: [
+                        getMenuItem('treemapChart', 'Treemap&lrm;', 'treemap', 'pivotTreemap', true),
+                        getMenuItem('sunburstChart', 'Sunburst&lrm;', 'sunburst', 'pivotSunburst', true),
+                    ],
+                },
                 {
                     _key: 'pivotCombinationChart',
                     name: localeTextFunc('combinationChart', 'Combination'),
@@ -243,7 +273,8 @@ var PivotMenuItemMapper = /** @class */ (function () {
             pieGroup: {
                 _key: 'pivotPieChart',
                 pie: 'pivotPie',
-                doughnut: 'pivotDoughnut',
+                donut: 'pivotDonut',
+                doughnut: 'pivotDonut',
             },
             lineGroup: {
                 _key: 'pivotLineChart',
@@ -260,16 +291,29 @@ var PivotMenuItemMapper = /** @class */ (function () {
                 stackedArea: 'pivotStackedArea',
                 normalizedArea: 'pivotNormalizedArea',
             },
-            histogramGroup: {
-                _key: 'pivotHistogramChart',
-                histogram: 'pivotHistogramChart',
-            },
             combinationGroup: {
                 _key: 'pivotCombinationChart',
                 columnLineCombo: 'pivotColumnLineCombo',
                 areaColumnCombo: 'pivotAreaColumnCombo',
-                customCombo: '' // Not currently supported but needs a value to separate from a missing value
-            }
+                customCombo: null, // Not currently supported
+            },
+            hierarchicalGroup: {
+                _key: 'pivotHierarchicalChart',
+                treemap: 'pivotTreemap',
+                sunburst: 'pivotSunburst',
+            },
+            statisticalGroup: {
+                _key: 'pivotStatisticalChart',
+                histogram: 'pivotHistogram',
+                // Some statistical charts do not currently support pivot mode
+                rangeBar: null,
+                rangeArea: null,
+                boxPlot: null,
+            },
+            // Polar charts do not support pivot mode
+            polarGroup: null,
+            // Specialized charts do not currently support pivot mode
+            specializedGroup: null,
         };
     };
     return PivotMenuItemMapper;
@@ -283,11 +327,13 @@ var RangeMenuItemMapper = /** @class */ (function () {
     RangeMenuItemMapper.prototype.getMenuItem = function () {
         var _this = this;
         var localeTextFunc = this.localeService.getLocaleTextFunc();
-        var getMenuItem = function (localeKey, defaultText, chartType, key) {
+        var getMenuItem = function (localeKey, defaultText, chartType, key, enterprise) {
+            if (enterprise === void 0) { enterprise = false; }
             return {
                 name: localeTextFunc(localeKey, defaultText),
                 action: function () { return _this.chartService.createChartFromCurrentRange(chartType); },
-                _key: key
+                _key: key,
+                _enterprise: enterprise
             };
         };
         return {
@@ -316,7 +362,7 @@ var RangeMenuItemMapper = /** @class */ (function () {
                     name: localeTextFunc('pieChart', 'Pie'),
                     subMenu: [
                         getMenuItem('pie', 'Pie&lrm;', 'pie', 'rangePie'),
-                        getMenuItem('doughnut', 'Doughnut&lrm;', 'doughnut', 'rangeDoughnut')
+                        getMenuItem('donut', 'Donut&lrm;', 'donut', 'rangeDonut')
                     ],
                     _key: 'rangePieChart'
                 },
@@ -338,7 +384,47 @@ var RangeMenuItemMapper = /** @class */ (function () {
                     ],
                     _key: 'rangeAreaChart'
                 },
-                getMenuItem('histogramChart', 'Histogram&lrm;', 'histogram', 'rangeHistogramChart'),
+                {
+                    name: localeTextFunc('polarChart', 'Polar'),
+                    subMenu: [
+                        getMenuItem('radarLine', 'Radar Line&lrm;', 'radarLine', 'rangeRadarLine'),
+                        getMenuItem('radarArea', 'Radar Area&lrm;', 'radarArea', 'rangeRadarArea'),
+                        getMenuItem('nightingale', 'Nightingale&lrm;', 'nightingale', 'rangeNightingale'),
+                        getMenuItem('radialColumn', 'Radial Column&lrm;', 'radialColumn', 'rangeRadialColumn'),
+                        getMenuItem('radialBar', 'Radial Bar&lrm;', 'radialBar', 'rangeRadialBar'),
+                    ],
+                    _key: 'rangePolarChart',
+                    _enterprise: true,
+                },
+                {
+                    name: localeTextFunc('statisticalChart', 'Statistical'),
+                    subMenu: [
+                        getMenuItem('boxPlot', 'Box Plot&lrm;', 'boxPlot', 'rangeBoxPlot', true),
+                        getMenuItem('histogramChart', 'Histogram&lrm;', 'histogram', 'rangeHistogram', false),
+                        getMenuItem('rangeBar', 'Range Bar&lrm;', 'rangeBar', 'rangeRangeBar', true),
+                        getMenuItem('rangeArea', 'Range Area&lrm;', 'rangeArea', 'rangeRangeArea', true),
+                    ],
+                    _key: 'rangeStatisticalChart',
+                    _enterprise: false, // histogram chart is available in both community and enterprise distributions
+                },
+                {
+                    name: localeTextFunc('hierarchicalChart', 'Hierarchical'),
+                    subMenu: [
+                        getMenuItem('treemap', 'Treemap&lrm;', 'treemap', 'rangeTreemap'),
+                        getMenuItem('sunburst', 'Sunburst&lrm;', 'sunburst', 'rangeSunburst'),
+                    ],
+                    _key: 'rangeHierarchicalChart',
+                    _enterprise: true,
+                },
+                {
+                    name: localeTextFunc('specializedChart', 'Specialized'),
+                    subMenu: [
+                        getMenuItem('heatmap', 'Heatmap&lrm;', 'heatmap', 'rangeHeatmap'),
+                        getMenuItem('waterfall', 'Waterfall&lrm;', 'waterfall', 'rangeWaterfall'),
+                    ],
+                    _key: 'rangeSpecializedChart',
+                    _enterprise: true,
+                },
                 {
                     name: localeTextFunc('combinationChart', 'Combination'),
                     subMenu: [
@@ -368,7 +454,8 @@ var RangeMenuItemMapper = /** @class */ (function () {
             pieGroup: {
                 _key: 'rangePieChart',
                 pie: 'rangePie',
-                doughnut: 'rangeDoughnut',
+                donut: 'rangeDonut',
+                doughnut: 'rangeDonut',
             },
             lineGroup: {
                 _key: 'rangeLineChart',
@@ -385,15 +472,36 @@ var RangeMenuItemMapper = /** @class */ (function () {
                 stackedArea: 'rangeStackedArea',
                 normalizedArea: 'rangeNormalizedArea',
             },
-            histogramGroup: {
-                _key: 'rangeHistogramChart',
-                histogram: 'rangeHistogramChart',
+            polarGroup: {
+                _key: 'rangePolarChart',
+                radarLine: 'rangeRadarLine',
+                radarArea: 'rangeRadarArea',
+                nightingale: 'rangeNightingale',
+                radialColumn: 'rangeRadialColumn',
+                radialBar: 'rangeRadialBar',
+            },
+            statisticalGroup: {
+                _key: 'rangeStatisticalChart',
+                boxPlot: 'rangeBoxPlot',
+                histogram: 'rangeHistogram',
+                rangeBar: 'rangeRangeBar',
+                rangeArea: 'rangeRangeArea',
+            },
+            hierarchicalGroup: {
+                _key: 'rangeHierarchicalChart',
+                treemap: 'rangeTreemap',
+                sunburst: 'rangeSunburst',
+            },
+            specializedGroup: {
+                _key: 'rangeSpecializedChart',
+                heatmap: 'rangeHeatmap',
+                waterfall: 'rangeWaterfall',
             },
             combinationGroup: {
                 _key: 'rangeCombinationChart',
                 columnLineCombo: 'rangeColumnLineCombo',
                 areaColumnCombo: 'rangeAreaColumnCombo',
-                customCombo: '' // Not currently supported but needs a value to separate from a missing value
+                customCombo: null // Not currently supported
             }
         };
     };

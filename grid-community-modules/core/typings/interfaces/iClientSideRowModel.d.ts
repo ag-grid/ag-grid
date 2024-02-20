@@ -4,7 +4,7 @@ import { RowDataTransaction } from './rowDataTransaction';
 import { RowNode } from '../entities/rowNode';
 import { RowHighlightPosition } from '../interfaces/iRowNode';
 import { ChangedPath } from '../utils/changedPath';
-export declare type ClientSideRowModelStep = 'everything' | 'group' | 'filter' | 'pivot' | 'aggregate' | 'sort' | 'map';
+export declare type ClientSideRowModelStep = `${ClientSideRowModelSteps}`;
 export declare enum ClientSideRowModelSteps {
     EVERYTHING = "group",
     FILTER = "filter",
@@ -39,10 +39,10 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
     highlightRowAtPixel(rowNode: RowNode | null, pixel?: number): void;
     getHighlightPosition(pixel: number, rowNode?: RowNode): RowHighlightPosition;
     getLastHighlightedRowNode(): RowNode | null;
+    isRowDataLoaded(): boolean;
 }
 export interface RefreshModelParams<TData = any> {
     step: ClientSideRowModelSteps;
-    groupState?: any;
     keepRenderedRows?: boolean;
     animate?: boolean;
     keepEditingRows?: boolean;

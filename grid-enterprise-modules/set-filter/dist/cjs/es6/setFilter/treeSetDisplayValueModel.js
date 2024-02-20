@@ -23,6 +23,15 @@ class TreeSetDisplayValueModel {
             key: iSetDisplayValueModel_1.SetFilterDisplayValue.SELECT_ALL,
             parentTreeKeys: []
         };
+        this.addSelectionToFilterItem = {
+            depth: 0,
+            filterPasses: true,
+            available: true,
+            treeKey: iSetDisplayValueModel_1.SetFilterDisplayValue.ADD_SELECTION_TO_FILTER,
+            expanded: true,
+            key: iSetDisplayValueModel_1.SetFilterDisplayValue.ADD_SELECTION_TO_FILTER,
+            parentTreeKeys: []
+        };
     }
     ;
     updateDisplayedValuesToAllAvailable(getValue, allKeys, availableKeys, source) {
@@ -110,7 +119,7 @@ class TreeSetDisplayValueModel {
         if (isDate) {
             return TreeSetDisplayValueModel.DATE_TREE_LIST_PATH_GETTER;
         }
-        core_1._.doOnce(() => console.warn('AG Grid: property treeList=true for Set Filter params, but you did not provide a treeListPathGetter or values of type Date.'), 'getTreeListPathGetter');
+        core_1._.warnOnce('property treeList=true for Set Filter params, but you did not provide a treeListPathGetter or values of type Date.');
         return value => [String(value)];
     }
     flattenItems() {
@@ -159,6 +168,9 @@ class TreeSetDisplayValueModel {
     }
     getSelectAllItem() {
         return this.selectAllItem;
+    }
+    getAddSelectionToFilterItem() {
+        return this.addSelectionToFilterItem;
     }
     getDisplayedKeys() {
         const displayedKeys = [];

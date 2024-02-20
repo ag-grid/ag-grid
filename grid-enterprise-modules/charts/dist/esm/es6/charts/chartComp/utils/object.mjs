@@ -96,49 +96,35 @@ export function deepMerge(target, source, options) {
     }
 }
 // END - deep merge
-export function mergeDeep(dest, source, copyUndefined = true, objectsThatNeedCopy = [], iteration = 0) {
-    if (!exists(source)) {
+export function get(source, expression, defaultValue) {
+    if (source == null) {
+        return defaultValue;
+    }
+    const keys = expression.split('.');
+    let objectToRead = source;
+    while (keys.length > 1) {
+        objectToRead = objectToRead[keys.shift()];
+        if (objectToRead == null) {
+            return defaultValue;
+        }
+    }
+    const value = objectToRead[keys[0]];
+    return value != null ? value : defaultValue;
+}
+export function set(target, expression, value) {
+    if (target == null) {
         return;
     }
-    iterateObject(source, (key, sourceValue) => {
-        let destValue = dest[key];
-        if (destValue === sourceValue) {
-            return;
+    const keys = expression.split('.');
+    let objectToUpdate = target;
+    // Create empty objects
+    keys.forEach((key, i) => {
+        if (!objectToUpdate[key]) {
+            objectToUpdate[key] = {};
         }
-        const dontCopyOverSourceObject = iteration == 0 && destValue == null && sourceValue != null && objectsThatNeedCopy.indexOf(key) >= 0;
-        if (dontCopyOverSourceObject) {
-            // by putting an empty value into destValue first, it means we end up copying over values from
-            // the source object, rather than just copying in the source object in it's entirety.
-            destValue = {};
-            dest[key] = destValue;
-        }
-        if (typeof destValue === 'object' && typeof sourceValue === 'object' && !Array.isArray(destValue)) {
-            mergeDeep(destValue, sourceValue, copyUndefined, objectsThatNeedCopy, iteration++);
-        }
-        else if (copyUndefined || sourceValue !== undefined) {
-            dest[key] = sourceValue;
+        if (i < keys.length - 1) {
+            objectToUpdate = objectToUpdate[key];
         }
     });
-}
-function iterateObject(object, callback) {
-    if (object == null) {
-        return;
-    }
-    if (Array.isArray(object)) {
-        forEach(object, (value, index) => callback(`${index}`, value));
-    }
-    else {
-        forEach(Object.keys(object), key => callback(key, object[key]));
-    }
-}
-export function exists(value, allowEmptyString = false) {
-    return value != null && (allowEmptyString || value !== '');
-}
-function forEach(list, action) {
-    if (list == null) {
-        return;
-    }
-    for (let i = 0; i < list.length; i++) {
-        action(list[i], i);
-    }
+    objectToUpdate[keys[keys.length - 1]] = value;
 }

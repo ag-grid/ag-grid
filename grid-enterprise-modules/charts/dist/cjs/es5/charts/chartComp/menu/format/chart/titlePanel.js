@@ -102,10 +102,10 @@ var TitlePanel = /** @class */ (function (_super) {
     TitlePanel.prototype.createSpacingSlicer = function () {
         var _this = this;
         var spacingSlider = this.createBean(new core_1.AgSlider());
-        var currentValue = this.chartOptionsService.getChartOption('title.spacing');
+        var currentValue = this.chartOptionsService.getChartOption('title.spacing') || 10;
         spacingSlider.setLabel(this.chartTranslationService.translate('spacing'))
             .setMaxValue(Math.max(currentValue, 100))
-            .setValue("" + currentValue)
+            .setValue("".concat(currentValue))
             .setTextFieldWidth(45)
             .onValueChange(function (newValue) { return _this.chartOptionsService.setChartOption('title.spacing', newValue); });
         return spacingSlider;
@@ -140,7 +140,7 @@ var TitlePanel = /** @class */ (function (_super) {
     };
     TitlePanel.TEMPLATE = "<div></div>";
     __decorate([
-        core_1.Autowired('chartTranslationService')
+        (0, core_1.Autowired)('chartTranslationService')
     ], TitlePanel.prototype, "chartTranslationService", void 0);
     __decorate([
         core_1.PostConstruct

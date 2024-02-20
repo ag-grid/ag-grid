@@ -1,5 +1,5 @@
-import { ColDef, ColGroupDef, Component, IFiltersToolPanel, IToolPanelComp, IToolPanelParams } from "@ag-grid-community/core";
-export interface ToolPanelFiltersCompParams extends IToolPanelParams {
+import { ColDef, ColGroupDef, Component, FiltersToolPanelState, IFiltersToolPanel, IToolPanelComp, IToolPanelParams } from "@ag-grid-community/core";
+export interface ToolPanelFiltersCompParams<TData = any, TContext = any> extends IToolPanelParams<TData, TContext, FiltersToolPanelState> {
     /** To suppress Expand / Collapse All */
     suppressExpandAll: boolean;
     /** To suppress the Filter Search */
@@ -11,8 +11,6 @@ export declare class FiltersToolPanel extends Component implements IFiltersToolP
     private static TEMPLATE;
     private filtersToolPanelHeaderPanel;
     private filtersToolPanelListPanel;
-    private gridApi;
-    private columnApi;
     private initialised;
     private params;
     private listenerDestroyFuncs;
@@ -23,12 +21,14 @@ export declare class FiltersToolPanel extends Component implements IFiltersToolP
     onCollapseAll(): void;
     private onSearchChanged;
     setFilterLayout(colDefs: (ColDef | ColGroupDef)[]): void;
+    private onFilterExpanded;
     private onGroupExpanded;
     expandFilterGroups(groupIds?: string[]): void;
     collapseFilterGroups(groupIds?: string[]): void;
     expandFilters(colIds?: string[]): void;
     collapseFilters(colIds?: string[]): void;
     syncLayoutWithGrid(): void;
-    refresh(): void;
+    refresh(params: ToolPanelFiltersCompParams): boolean;
+    getState(): FiltersToolPanelState;
     destroy(): void;
 }

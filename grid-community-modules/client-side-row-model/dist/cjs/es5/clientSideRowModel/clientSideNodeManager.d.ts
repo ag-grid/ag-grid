@@ -9,13 +9,9 @@ export declare class ClientSideNodeManager {
     private beans;
     private nextId;
     private static ROOT_NODE_ID;
-    private isRowMasterFunc?;
-    private suppressParentsInRowNodes;
-    private doingTreeData;
-    private doingMasterDetail;
+    private rowCountReady;
     private allNodesMap;
     constructor(rootNode: RowNode, gridOptionsService: GridOptionsService, eventService: EventService, columnModel: ColumnModel, selectionService: ISelectionService, beans: Beans);
-    postConstruct(): void;
     getCopyOfNodesMap(): {
         [id: string]: RowNode;
     };
@@ -24,6 +20,7 @@ export declare class ClientSideNodeManager {
     updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder: {
         [id: string]: number;
     } | null | undefined): RowNodeTransaction;
+    isRowCountReady(): boolean;
     private dispatchRowDataUpdateStartedEvent;
     private updateSelection;
     private executeAdd;

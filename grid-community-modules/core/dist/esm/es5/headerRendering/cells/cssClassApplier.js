@@ -14,12 +14,18 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 import { missing } from "../../utils/generic";
+var CSS_FIRST_COLUMN = 'ag-column-first';
+var CSS_LAST_COLUMN = 'ag-column-last';
 var CssClassApplier = /** @class */ (function () {
     function CssClassApplier() {
     }
@@ -35,18 +41,19 @@ var CssClassApplier = /** @class */ (function () {
         }
         return this.getColumnClassesFromCollDef(abstractColDef.toolPanelClass, abstractColDef, gridOptionsService, column, columnGroup);
     };
+    CssClassApplier.refreshFirstAndLastStyles = function (comp, column, columnModel) {
+        comp.addOrRemoveCssClass(CSS_FIRST_COLUMN, columnModel.isColumnAtEdge(column, 'first'));
+        comp.addOrRemoveCssClass(CSS_LAST_COLUMN, columnModel.isColumnAtEdge(column, 'last'));
+    };
     CssClassApplier.getClassParams = function (abstractColDef, gridOptionsService, column, columnGroup) {
-        return {
+        return gridOptionsService.addGridCommonParams({
             // bad naming, as colDef here can be a group or a column,
             // however most people won't appreciate the difference,
             // so keeping it as colDef to avoid confusion.
             colDef: abstractColDef,
             column: column,
-            columnGroup: columnGroup,
-            api: gridOptionsService.api,
-            columnApi: gridOptionsService.columnApi,
-            context: gridOptionsService.context
-        };
+            columnGroup: columnGroup
+        });
     };
     CssClassApplier.getColumnClassesFromCollDef = function (classesOrFunc, abstractColDef, gridOptionsService, column, columnGroup) {
         if (missing(classesOrFunc)) {
@@ -64,7 +71,7 @@ var CssClassApplier = /** @class */ (function () {
             return [classToUse];
         }
         if (Array.isArray(classToUse)) {
-            return __spreadArray([], __read(classToUse));
+            return __spreadArray([], __read(classToUse), false);
         }
         return [];
     };

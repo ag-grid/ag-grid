@@ -1,12 +1,11 @@
 import { BeanStub } from "../context/beanStub";
-import { Autowired, Optional } from "../context/context";
+import { Autowired } from "../context/context";
 import { LayoutFeature, LayoutView } from "../styling/layoutFeature";
 import { Events } from "../eventKeys";
 import { RowContainerHeightService } from "../rendering/rowContainerHeightService";
 import { CtrlsService } from "../ctrlsService";
 import { ColumnModel, ISizeColumnsToFitParams } from "../columns/columnModel";
 import { ScrollVisibleService } from "./scrollVisibleService";
-import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
 import { GridBodyScrollFeature } from "./gridBodyScrollFeature";
 import { getInnerWidth, isElementChildOfClass, isVerticalScrollShowing } from "../utils/dom";
 import { HeaderNavigationService } from "../headerRendering/common/headerNavigationService";
@@ -21,6 +20,7 @@ import { IRowModel } from "../interfaces/iRowModel";
 import { TouchListener, LongTapEvent } from "../widgets/touchListener";
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { FilterManager } from "../filter/filterManager";
+import { MenuService, ShowContextMenuParams } from "../misc/menuService";
 
 export enum RowAnimationCssClasses {
     ANIMATION_ON = 'ag-row-animation',
@@ -58,7 +58,7 @@ export class GridBodyCtrl extends BeanStub {
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
-    @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
+    @Autowired('menuService') private menuService: MenuService;
     @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
@@ -102,7 +102,8 @@ export class GridBodyCtrl extends BeanStub {
         this.eBottom = eBottom;
         this.eStickyTop = eStickyTop;
 
-        this.setCellTextSelection(this.gridOptionsService.is('enableCellTextSelection'));
+        this.setCellTextSelection(this.gridOptionsService.get('enableCellTextSelection'));
+        this.addManagedPropertyListener('enableCellTextSelection', (props) => this.setCellTextSelection(props.currentValue));
 
         this.createManagedBean(new LayoutFeature(this.comp));
         this.bodyScrollFeature = this.createManagedBean(new GridBodyScrollFeature(this.eBodyViewport));
@@ -186,7 +187,7 @@ export class GridBodyCtrl extends BeanStub {
 
     private onGridColumnsChanged(): void {
         const columns = this.columnModel.getAllGridColumns();
-        this.comp.setColumnCount(columns ? columns.length : 0);
+        this.comp.setColumnCount(columns.length);
     }
 
     // if we do not do this, then the user can select a pic in the grid (eg an image in a custom cell renderer)
@@ -201,7 +202,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private addStopEditingWhenGridLosesFocus(): void {
-        if (!this.gridOptionsService.is('stopEditingWhenCellsLoseFocus')) { return; }
+        if (!this.gridOptionsService.get('stopEditingWhenCellsLoseFocus')) { return; }
 
         const focusOutListener = (event: FocusEvent): void => {
             // this is the element the focus is moving to
@@ -255,7 +256,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     public isVerticalScrollShowing(): boolean {
-        const show = this.gridOptionsService.is('alwaysShowVerticalScroll');
+        const show = this.gridOptionsService.get('alwaysShowVerticalScroll');
         const cssClass = show ? CSS_CLASS_FORCE_VERTICAL_SCROLL : null;
         const allowVerticalScroll = this.gridOptionsService.isDomLayout('normal');
         this.comp.setAlwaysVerticalScrollClass(cssClass, show);
@@ -318,7 +319,7 @@ export class GridBodyCtrl extends BeanStub {
     private onBodyViewportContextMenu(mouseEvent?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent): void {
         if (!mouseEvent && !touchEvent) { return; }
 
-        if (this.gridOptionsService.is('preventDefaultOnContextMenu')) {
+        if (this.gridOptionsService.get('preventDefaultOnContextMenu')) {
             const event = (mouseEvent || touchEvent)!;
             event.preventDefault();
         }
@@ -327,13 +328,7 @@ export class GridBodyCtrl extends BeanStub {
 
         if (target === this.eBodyViewport || target === this.ctrlsService.getCenterRowContainerCtrl().getViewportElement()) {
             // show it
-            if (!this.contextMenuFactory) { return; }
-
-            if (mouseEvent) {
-                this.contextMenuFactory.onContextMenu(mouseEvent, null, null, null, null, this.eGridBody);
-            } else if (touchEvent) {
-                this.contextMenuFactory.onContextMenu(null, touchEvent, null, null, null, this.eGridBody);
-            }
+            this.menuService.showContextMenu({ mouseEvent, touchEvent, value: null, anchorToElement: this.eGridBody } as ShowContextMenuParams);
         }
     }
 
@@ -351,7 +346,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private onBodyViewportWheel(e: WheelEvent): void {
-        if (!this.gridOptionsService.is('suppressScrollWhenPopupsAreOpen')) { return; }
+        if (!this.gridOptionsService.get('suppressScrollWhenPopupsAreOpen')) { return; }
 
         if (this.popupService.hasAnchoredPopup()) {
             e.preventDefault();
@@ -395,22 +390,9 @@ export class GridBodyCtrl extends BeanStub {
         const { pinnedRowModel } = this;
 
         let floatingTopHeight = pinnedRowModel.getPinnedTopTotalHeight();
-
-        if (floatingTopHeight) {
-            // adding 1px for cell bottom border
-            floatingTopHeight += 1;
-        }
-
         let floatingBottomHeight = pinnedRowModel.getPinnedBottomTotalHeight();
-
-        if (floatingBottomHeight) {
-            // adding 1px for cell bottom border
-            floatingBottomHeight += 1;
-        }
-
         this.comp.setTopHeight(floatingTopHeight);
         this.comp.setBottomHeight(floatingBottomHeight);
-
         this.comp.setTopDisplay(floatingTopHeight ? 'inherit' : 'none');
         this.comp.setBottomDisplay(floatingBottomHeight ? 'inherit' : 'none');
         this.setStickyTopOffsetTop();

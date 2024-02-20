@@ -57,10 +57,13 @@ var TransactionManager = /** @class */ (function (_super) {
         var atLeastOneTransactionApplied = false;
         this.asyncTransactions.forEach(function (txWrapper) {
             var result;
-            _this.serverSideRowModel.executeOnStore(txWrapper.transaction.route, function (cache) {
+            var hasStarted = _this.serverSideRowModel.executeOnStore(txWrapper.transaction.route, function (cache) {
                 result = cache.applyTransaction(txWrapper.transaction);
             });
-            if (result == undefined) {
+            if (!hasStarted) {
+                result = { status: ServerSideTransactionResultStatus.StoreNotStarted };
+            }
+            else if (result == undefined) {
                 result = { status: ServerSideTransactionResultStatus.StoreNotFound };
             }
             resultsForEvent.push(result);
@@ -106,10 +109,13 @@ var TransactionManager = /** @class */ (function (_super) {
     };
     TransactionManager.prototype.applyTransaction = function (transaction) {
         var res;
-        this.serverSideRowModel.executeOnStore(transaction.route, function (store) {
+        var hasStarted = this.serverSideRowModel.executeOnStore(transaction.route, function (store) {
             res = store.applyTransaction(transaction);
         });
-        if (res) {
+        if (!hasStarted) {
+            return { status: ServerSideTransactionResultStatus.StoreNotStarted };
+        }
+        else if (res) {
             this.valueCache.onDataChanged();
             if (res.remove) {
                 var removedRowIds = res.remove.map(function (row) { return row.id; });

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 /**
@@ -15,8 +15,6 @@ export declare function toStringOrNull(value: any): string | null;
 export declare function attrToNumber(value?: number | string | null): number | null | undefined;
 export declare function attrToBoolean(value?: boolean | string | null): boolean | undefined;
 export declare function attrToString(value?: string): string | undefined;
-/** @deprecated */
-export declare function referenceCompare<T>(left: T, right: T): boolean;
 export declare function jsonEquals<T1, T2>(val1: T1, val2: T2): boolean;
 export declare function defaultComparator(valueA: any, valueB: any, accentedCompare?: boolean): number;
 export declare function values<T>(object: {

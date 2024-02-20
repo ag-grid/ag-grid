@@ -9,17 +9,17 @@ const CHANGELOG_BAK_FILE = "/var/www/html/changelog/changelog.bak.json";
 
 try {
     logger("Changelog Data Download Started", CHANGELOG_LOG);
-    const changelogData = executeJiraRequest(CHANGELOG_URL);
+    const changelogData = executeJiraRequest(CHANGELOG_URL, 'Grid');
     logger("Changelog Data Downloaded", CHANGELOG_LOG);
 
     saveDataToFile(changelogData, CHANGELOG_TMP_FILE);
     logger("Changelog Data Saved", CHANGELOG_LOG);
 
     // check we've not downloaded an empty data set (it's very unlikely the changelog will ever be empty)
-    if(changelogData.length > 1) {
+    if (changelogData.length > 1) {
         logger("Updating Existing Changelog Data", CHANGELOG_LOG);
         // if we've data switch it over to the "live" set, backing up the previous data set - just in case
-        if(fs.existsSync(CHANGELOG_FILE)) {
+        if (fs.existsSync(CHANGELOG_FILE)) {
             fs.renameSync(CHANGELOG_FILE, CHANGELOG_BAK_FILE);
         }
         fs.renameSync(CHANGELOG_TMP_FILE, CHANGELOG_FILE);

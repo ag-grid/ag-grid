@@ -42,7 +42,10 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
             }
         });
         this.addManagedListener(this.eSelect.getInputElement(), 'click', this.onSelectClicked.bind(this));
-        this.eFilterTextField.onValueChange(function () { return _this.onFilterTextChanged(); });
+        this.addManagedPropertyListener('functionsReadOnly', function () { return _this.onFunctionsReadOnlyPropChanged(); });
+        this.eFilterTextField
+            .setAutoComplete(false)
+            .onValueChange(function () { return _this.onFilterTextChanged(); });
         this.addManagedListener(this.eFilterTextField.getInputElement(), 'keydown', this.onMiniFilterKeyDown.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
         var translate = this.localeService.getLocaleTextFunc();
@@ -50,8 +53,16 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
         this.eFilterTextField.setInputAriaLabel(translate('ariaFilterColumnsInput', 'Filter Columns Input'));
         this.activateTabIndex([this.eExpand]);
     };
+    PrimaryColsHeaderPanel.prototype.onFunctionsReadOnlyPropChanged = function () {
+        var readOnly = this.gridOptionsService.get('functionsReadOnly');
+        this.eSelect.setReadOnly(readOnly);
+        this.eSelect.addOrRemoveCssClass('ag-column-select-column-readonly', readOnly);
+    };
     PrimaryColsHeaderPanel.prototype.init = function (params) {
         this.params = params;
+        var readOnly = this.gridOptionsService.get('functionsReadOnly');
+        this.eSelect.setReadOnly(readOnly);
+        this.eSelect.addOrRemoveCssClass('ag-column-select-column-readonly', readOnly);
         if (this.columnModel.isReady()) {
             this.showOrHideOptions();
         }

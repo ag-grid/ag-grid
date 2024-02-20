@@ -6,7 +6,7 @@ enterprise: true
 This section covers the Group Rows display type, where group rows are automatically added by the grid containing the 
 row groups instead of group columns. This can be preferred if you have a lot of information you want to say about the group.
 
-<image-caption src="grouping-group-rows/resources/group-rows.png" alt="Group Rows" maxWidth="80%" constrained="true" centered="true"></image-caption>
+<image-caption src="grouping-display-types/resources/group-rows.png" alt="Group Rows" maxWidth="80%" constrained="true" centered="true" toggledarkmode="true"></image-caption>
 
 ## Enabling Group Rows
 
@@ -137,7 +137,7 @@ functionality. Note the following:
 To sort a group row, you can apply a sort to the underlying column. In the example below the [Row Group Panel](/grouping-group-panel/) is enabled to demonstrate this. Note the following:
 
 - Clicking on `country` in the row group panel applies a sort to the country row groups.
-- Holding the <kbd>Shift</kbd> key down while clicking `year` in the row group panel applies a sort to the year row groups, while maintaining the sort on the country row groups.
+- Holding the <kbd>⇧ Shift</kbd> key down while clicking `year` in the row group panel applies a sort to the year row groups, while maintaining the sort on the country row groups.
 
 <grid-example title='Sorting Group Rows' name='sorting-group-rows' type='mixed' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 

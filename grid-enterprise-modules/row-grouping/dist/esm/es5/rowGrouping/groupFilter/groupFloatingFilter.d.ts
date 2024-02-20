@@ -14,6 +14,7 @@ export declare class GroupFloatingFilterComp extends Component implements IFloat
     constructor();
     init(params: IFloatingFilterParams<GroupFilter>): AgPromise<void>;
     onParamsUpdated(params: IFloatingFilterParams<GroupFilter>): void;
+    refresh(params: IFloatingFilterParams<GroupFilter>): void;
     private setParams;
     private setupReadOnlyFloatingFilterElement;
     private setupUnderlyingFloatingFilterElement;

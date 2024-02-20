@@ -10,7 +10,7 @@ export interface IServerSideStore {
     setDisplayIndexes(displayIndexSeq: NumberSequence, nextRowTop: { value: number }): void;
     forEachStoreDeep(callback: (rowNode: IServerSideStore, index: number) => void, sequence?: NumberSequence): void;
     forEachNodeDeep(callback: (rowNode: IRowNode, index: number) => void, sequence?: NumberSequence): void;
-    forEachNodeDeepAfterFilterAndSort(callback: (rowNode: IRowNode, index: number) => void, sequence?: NumberSequence): void;
+    forEachNodeDeepAfterFilterAndSort(callback: (rowNode: IRowNode, index: number) => void, sequence?: NumberSequence, includeFooterNodes?: boolean): void;
     retryLoads(): void;
     getRowUsingDisplayIndex(displayRowIndex: number, dontCreateBlock?: boolean): IRowNode | undefined;
     getRowBounds(index: number): RowBounds | null;
@@ -60,6 +60,3 @@ export interface ServerSideGroupLevelState {
      */
     cacheBlockSize?: number;
 }
-
-/** @deprecated use ServerSideGroupLevelState instead  */
-export interface ServerSideGroupState extends ServerSideGroupLevelState {}

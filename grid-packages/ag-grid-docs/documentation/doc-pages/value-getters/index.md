@@ -78,7 +78,7 @@ This value cache is for advanced users who have time-consuming value getters and
 |recomputed the aggregations, resulting in all the value getters getting called again, causing the grid to
 |stall for around 1,000ms as rows were added.
 |
-|Introducing the value cache meant the value getters were execute once when the initial data was loaded, so
+|Introducing the value cache meant the value getters were executed once when the initial data was loaded, so
 |the 1,000ms happened once. Then when delta changes came in, the value getters were only executed on the
 |new records, giving an almost seamless experience to the user.
 </note>
@@ -112,8 +112,8 @@ The following are the grid properties related to the value cache.
 
 The value cache starts empty. Then as value getters execute, their results are stored and the value cache fills up. Certain events trigger the value cache to be emptied. This is called expiring the value cache. Once expired, every value getter will get executed again next time the value is needed. The events that cause the value cache to expire are the following:
 
-- New row data is set into the grid via `setRowData(newData)` API or changing the `rowData` framework bound property*.
-- New columns are set into the grid via `setColumnDefs()` API or changing the `columnDefs` framework bound property*.
+- New row data is set into the grid via `setGridOption('rowData', newData)` API or changing the `rowData` framework bound property*.
+- New columns are set into the grid via `setGridOption('columnDefs', columnDefs)` API or changing the `columnDefs` framework bound property*.
 - Data is modified using the `rowNode.setData(data)` or `rowNode.setDataValue(col,value)` node API methods.
 - A value is modified in the grid using the grid's UI editing feature, e.g. the user double clicks a cell and enters a new value.
 - The `expireValueCache()` grid API method gets called by the application.
@@ -165,12 +165,12 @@ If you have `valueCacheNeverExpires=true`, then the only event that will expire 
 This example is again almost identical to the example above. The difference here is the value cache is turned on but
 to never invalidate. Note the following:
 
-- When the grid initialises, there are 10 value getter calls. The values are getting cached.<p/>
+- When the grid initialises, there are 10 value getter calls. The values are getting cached.
 
 - After you edit a cell, either through the UI or through the API by pressing **'Update One Value'**,
   the value getters are not called again, so the **Total** and **Total x 10** columns are not correctly refreshed.
   The grid already executed the value getters for this column, it will not do it again,
-  it will instead take values from the value cache.<p/>
+  it will instead take values from the value cache.
 
 - To get the total column to update after edits, press **'Expire Value Cache'**
   (calls grid API `expireValueCache()`) and then press **'Aggregate Data & Refresh Cells'**

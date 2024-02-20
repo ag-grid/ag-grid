@@ -75,7 +75,7 @@ export const convertLegacyColor = (color?: string): string | undefined => {
     if (color == undefined) { return color; }
 
     if (color.charAt(0) === '#') {
-        color = color.substr(1);
+        color = color.substring(1);
     }
 
     return color.length === 6 ? 'FF' + color : color;
@@ -95,7 +95,7 @@ export const convertLegacyBorder = (type?: string, weight?: number): string => {
     if (type === 'Continuous') { return namedWeight; }
     if (namedWeight === 'medium' && mediumBorders.indexOf(mappedName) !== -1) { return `medium${mappedName}`; }
 
-    return mappedName.charAt(0).toLowerCase() + mappedName.substr(1);
+    return mappedName.charAt(0).toLowerCase() + mappedName.substring(1);
 };
 
 export const convertLegacyHorizontalAlignment = (alignment: string): string => {

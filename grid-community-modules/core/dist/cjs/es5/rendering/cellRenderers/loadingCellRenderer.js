@@ -38,7 +38,7 @@ var LoadingCellRenderer = /** @class */ (function (_super) {
         this.eLoadingText.innerText = localeTextFunc('loadingError', 'ERR');
     };
     LoadingCellRenderer.prototype.setupLoading = function () {
-        var eLoadingIcon = icon_1.createIconNoSpan('groupLoading', this.gridOptionsService, null);
+        var eLoadingIcon = (0, icon_1.createIconNoSpan)('groupLoading', this.gridOptionsService, null);
         if (eLoadingIcon) {
             this.eLoadingIcon.appendChild(eLoadingIcon);
         }
@@ -55,10 +55,10 @@ var LoadingCellRenderer = /** @class */ (function (_super) {
     };
     LoadingCellRenderer.TEMPLATE = "<div class=\"ag-loading\">\n            <span class=\"ag-loading-icon\" ref=\"eLoadingIcon\"></span>\n            <span class=\"ag-loading-text\" ref=\"eLoadingText\"></span>\n        </div>";
     __decorate([
-        componentAnnotations_1.RefSelector('eLoadingIcon')
+        (0, componentAnnotations_1.RefSelector)('eLoadingIcon')
     ], LoadingCellRenderer.prototype, "eLoadingIcon", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('eLoadingText')
+        (0, componentAnnotations_1.RefSelector)('eLoadingText')
     ], LoadingCellRenderer.prototype, "eLoadingText", void 0);
     return LoadingCellRenderer;
 }(component_1.Component));

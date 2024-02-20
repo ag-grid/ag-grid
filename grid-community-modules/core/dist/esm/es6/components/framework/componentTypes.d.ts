@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export interface ComponentType {
@@ -22,3 +22,4 @@ export declare const FullWidth: ComponentType;
 export declare const FullWidthLoading: ComponentType;
 export declare const FullWidthGroup: ComponentType;
 export declare const FullWidthDetail: ComponentType;
+export declare const MenuItemComponent: ComponentType;

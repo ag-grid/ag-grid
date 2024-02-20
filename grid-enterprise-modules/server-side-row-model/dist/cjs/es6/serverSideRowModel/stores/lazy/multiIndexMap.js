@@ -9,6 +9,9 @@ class MultiIndexMap {
         this.indexes = indexes;
         this.maps = new Map(this.indexes.map(index => [index, new Map()]));
     }
+    getSize() {
+        return this.maps.get(this.indexes[0]).size;
+    }
     getBy(index, key) {
         const map = this.maps.get(index);
         if (!map) {

@@ -16,7 +16,7 @@
 
 .filename {
     padding: 5px;
-    color: black;
+    color: var(--ag-foreground-color);
     font-size: 16px;
     font-family: 'Courier New', Courier, monospace;
 }

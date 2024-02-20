@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, IServerSideDatasource } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions, IServerSideDatasource } from '@ag-grid-community/core';
 import { getData } from "./data";
 
 declare var FakeServer: any;
@@ -23,12 +23,12 @@ const columnDefs: ColDef[] = [
   },
 ]
 
+let gridApi: GridApi;
+
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   defaultColDef: {
     flex: 1,
-    resizable: true,
-    sortable: true,
   },
   autoGroupColumnDef: {
     flex: 1,
@@ -37,7 +37,6 @@ const gridOptions: GridOptions = {
   // use the server-side row model
   rowModelType: 'serverSide',
 
-  animateRows: true,
   suppressAggFuncInHeader: true,
 
   onGridReady: (params) => {
@@ -51,7 +50,7 @@ const gridOptions: GridOptions = {
     var datasource = getServerSideDatasource(fakeServer)
 
     // register the datasource with the grid
-    gridOptions.api!.setServerSideDatasource(datasource)
+    params.api.setGridOption('serverSideDatasource', datasource)
   },
 
 }
@@ -59,7 +58,7 @@ const gridOptions: GridOptions = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })
 
 function getServerSideDatasource(server: any): IServerSideDatasource {
@@ -70,7 +69,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
       var response = server.getData(params.request)
 
       // adding delay to simulate real server call
-      setTimeout(function () {
+      setTimeout(() => {
         if (response.success) {
           // call the success callback
           params.success({ rowData: response.rows, rowCount: response.lastRow })

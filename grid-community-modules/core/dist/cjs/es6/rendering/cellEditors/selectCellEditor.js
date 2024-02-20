@@ -22,8 +22,9 @@ class SelectCellEditor extends popupComponent_1.PopupComponent {
     }
     init(params) {
         this.focusAfterAttached = params.cellStartedEdit;
+        const { eSelect, valueFormatterService, gridOptionsService } = this;
         const { values, value, eventKey } = params;
-        if (generic_1.missing(values)) {
+        if ((0, generic_1.missing)(values)) {
             console.warn('AG Grid: no values found for select cellEditor');
             return;
         }
@@ -31,24 +32,31 @@ class SelectCellEditor extends popupComponent_1.PopupComponent {
         let hasValue = false;
         values.forEach((currentValue) => {
             const option = { value: currentValue };
-            const valueFormatted = this.valueFormatterService.formatValue(params.column, null, currentValue);
+            const valueFormatted = valueFormatterService.formatValue(params.column, null, currentValue);
             const valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
             option.text = valueFormattedExits ? valueFormatted : currentValue;
-            this.eSelect.addOption(option);
+            eSelect.addOption(option);
             hasValue = hasValue || value === currentValue;
         });
         if (hasValue) {
-            this.eSelect.setValue(params.value, true);
+            eSelect.setValue(params.value, true);
         }
         else if (params.values.length) {
-            this.eSelect.setValue(params.values[0], true);
+            eSelect.setValue(params.values[0], true);
         }
-        if (params.valueListGap != null) {
-            this.eSelect.setPickerGap(params.valueListGap);
+        const { valueListGap, valueListMaxWidth, valueListMaxHeight } = params;
+        if (valueListGap != null) {
+            eSelect.setPickerGap(valueListGap);
+        }
+        if (valueListMaxHeight != null) {
+            eSelect.setPickerMaxHeight(valueListMaxHeight);
+        }
+        if (valueListMaxWidth != null) {
+            eSelect.setPickerMaxWidth(valueListMaxWidth);
         }
         // we don't want to add this if full row editing, otherwise selecting will stop the
         // full row editing.
-        if (this.gridOptionsService.get('editType') !== 'fullRow') {
+        if (gridOptionsService.get('editType') !== 'fullRow') {
             this.addManagedListener(this.eSelect, agSelect_1.AgSelect.EVENT_ITEM_SELECTED, () => params.stopEditing());
         }
     }
@@ -75,9 +83,9 @@ class SelectCellEditor extends popupComponent_1.PopupComponent {
     }
 }
 __decorate([
-    context_1.Autowired('valueFormatterService')
+    (0, context_1.Autowired)('valueFormatterService')
 ], SelectCellEditor.prototype, "valueFormatterService", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eSelect')
+    (0, componentAnnotations_1.RefSelector)('eSelect')
 ], SelectCellEditor.prototype, "eSelect", void 0);
 exports.SelectCellEditor = SelectCellEditor;

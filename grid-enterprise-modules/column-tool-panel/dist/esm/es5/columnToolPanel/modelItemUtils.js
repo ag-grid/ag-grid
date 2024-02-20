@@ -59,7 +59,7 @@ var ModelItemUtils = /** @class */ (function () {
         }
     };
     ModelItemUtils.prototype.setAllPivot = function (columns, value, eventType) {
-        if (this.gridOptionsService.is('functionsPassive')) {
+        if (this.gridOptionsService.get('functionsPassive')) {
             this.setAllPivotPassive(columns, value);
         }
         else {

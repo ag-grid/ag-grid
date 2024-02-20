@@ -30,6 +30,6 @@ let ColumnHoverService = class ColumnHoverService extends beanStub_1.BeanStub {
     }
 };
 ColumnHoverService = __decorate([
-    context_1.Bean('columnHoverService')
+    (0, context_1.Bean)('columnHoverService')
 ], ColumnHoverService);
 exports.ColumnHoverService = ColumnHoverService;

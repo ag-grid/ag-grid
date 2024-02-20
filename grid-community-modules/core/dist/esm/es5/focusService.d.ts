@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "./context/beanStub";
@@ -8,7 +8,6 @@ import { CellPosition } from "./entities/cellPositionUtils";
 import { RowNode } from "./entities/rowNode";
 import { HeaderPosition } from "./headerRendering/common/headerPosition";
 import { ColumnGroup } from "./entities/columnGroup";
-import { GridCtrl } from "./gridComp/gridCtrl";
 import { NavigationService } from "./gridBodyComp/navigationService";
 import { CtrlsService } from "./ctrlsService";
 import { HeaderCellCtrl } from "./headerRendering/cells/column/headerCellCtrl";
@@ -18,6 +17,7 @@ export declare class FocusService extends BeanStub {
     private eGridDiv;
     private readonly columnModel;
     private readonly headerNavigationService;
+    private headerPositionUtils;
     private readonly rowRenderer;
     private readonly rowPositionUtils;
     private readonly cellPositionUtils;
@@ -26,7 +26,6 @@ export declare class FocusService extends BeanStub {
     ctrlsService: CtrlsService;
     filterManager: FilterManager;
     advancedFilterService: IAdvancedFilterService;
-    static AG_KEYBOARD_FOCUS: string;
     private gridCtrl;
     private focusedCellPosition;
     private restoredFocusedCellPosition;
@@ -34,33 +33,13 @@ export declare class FocusService extends BeanStub {
     /** the column that had focus before it moved into the advanced filter */
     private advancedFilterFocusColumn;
     private static keyboardModeActive;
-    private static instancesMonitored;
-    /**
-     * Adds a gridCore to the list of the gridCores monitoring Keyboard Mode
-     * in a specific HTMLDocument.
-     *
-     * @param doc {Document} - The Document containing the gridCore.
-     * @param gridCore {GridComp} - The GridCore to be monitored.
-     */
+    private static instanceCount;
     private static addKeyboardModeEvents;
-    /**
-     * Removes a gridCore from the list of the gridCores monitoring Keyboard Mode
-     * in a specific HTMLDocument.
-     *
-     * @param doc {Document} - The Document containing the gridCore.
-     * @param gridCore {GridComp} - The GridCore to be removed.
-     */
     private static removeKeyboardModeEvents;
-    /**
-     * This method will be called by `keydown` and `mousedown` events on all Documents monitoring
-     * KeyboardMode. It will then fire a KEYBOARD_FOCUS, MOUSE_FOCUS on each gridCore present in
-     * the Document allowing each gridCore to maintain a state for KeyboardMode.
-     *
-     * @param event {KeyboardEvent | MouseEvent | TouchEvent} - The event triggered.
-     */
-    static toggleKeyboardMode(event: KeyboardEvent | MouseEvent | TouchEvent): void;
+    private static toggleKeyboardMode;
+    private static unregisterGridCompController;
     private init;
-    unregisterGridCompController(gridCompController: GridCtrl): void;
+    private registerKeyboardFocusEvents;
     onColumnEverythingChanged(): void;
     isKeyboardMode(): boolean;
     getFocusCellToUseAfterRefresh(): CellPosition | null;
@@ -86,6 +65,7 @@ export declare class FocusService extends BeanStub {
         allowUserOverride?: boolean;
         event?: KeyboardEvent;
         fromCell?: boolean;
+        rowWithoutSpanValue?: number;
     }): boolean;
     focusFirstHeader(): boolean;
     focusLastHeader(event?: KeyboardEvent): boolean;

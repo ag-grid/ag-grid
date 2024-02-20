@@ -44,7 +44,7 @@ export class BodyDropTarget extends BeanStub {
     }
     isInterestedIn(type) {
         return type === DragSourceType.HeaderCell ||
-            (type === DragSourceType.ToolPanel && this.gridOptionsService.is('allowDragFromColumnsToolPanel'));
+            (type === DragSourceType.ToolPanel && this.gridOptionsService.get('allowDragFromColumnsToolPanel'));
     }
     getSecondaryContainers() {
         return this.eSecondaryContainers;

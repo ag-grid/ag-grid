@@ -19,7 +19,7 @@ export interface TextAdvancedFilterModel {
     colId: string;
     /** The filter option that is being applied. */
     type: TextAdvancedFilterModelType;
-    /** The value to filter on. */
+    /** The value to filter on. This is the same value as displayed in the input. */
     filter?: string;
 }
 /** Represents a single filter condition for a number column */
@@ -39,7 +39,7 @@ export interface DateAdvancedFilterModel {
     colId: string;
     /** The filter option that is being applied. */
     type: ScalarAdvancedFilterModelType;
-    /** The value to filter on. */
+    /** The value to filter on. This is in format `YYYY-MM-DD`. */
     filter?: string;
 }
 /** Represents a single filter condition for a date string column */
@@ -49,7 +49,7 @@ export interface DateStringAdvancedFilterModel {
     colId: string;
     /** The filter option that is being applied. */
     type: ScalarAdvancedFilterModelType;
-    /** The value to filter on. */
+    /** The value to filter on. This is in format `YYYY-MM-DD`. */
     filter?: string;
 }
 /** Represents a single filter condition for a boolean column */
@@ -67,6 +67,6 @@ export interface ObjectAdvancedFilterModel {
     colId: string;
     /** The filter option that is being applied. */
     type: TextAdvancedFilterModelType;
-    /** The value to filter on. */
+    /** The value to filter on. This is the same value as displayed in the input. */
     filter?: string;
 }

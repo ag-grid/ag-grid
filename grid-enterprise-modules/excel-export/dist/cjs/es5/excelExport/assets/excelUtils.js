@@ -36,7 +36,7 @@ var getHeightFromProperty = function (rowIndex, height) {
         var heightFunc = height;
         finalHeight = heightFunc({ rowIndex: rowIndex });
     }
-    return exports.pixelsToPoint(finalHeight);
+    return (0, exports.pixelsToPoint)(finalHeight);
 };
 exports.getHeightFromProperty = getHeightFromProperty;
 var setExcelImageTotalWidth = function (image, columnsToExport) {
@@ -69,7 +69,7 @@ var setExcelImageTotalHeight = function (image, rowHeight) {
             var totalHeight = 0;
             var counter = 0;
             for (var i = row; i < row + rowSpan; i++) {
-                var nextRowHeight = exports.pointsToPixel(exports.getHeightFromProperty(i, rowHeight) || 20);
+                var nextRowHeight = (0, exports.pointsToPixel)((0, exports.getHeightFromProperty)(i, rowHeight) || 20);
                 if (image.height < totalHeight + nextRowHeight) {
                     image.position.rowSpan = counter + 1;
                     image.totalHeight = image.height;
@@ -92,7 +92,7 @@ var createXmlPart = function (body) {
         standalone: 'yes'
     });
     var xmlBody = csv_export_1.XmlFactory.createXml(body);
-    return "" + header + xmlBody;
+    return "".concat(header).concat(xmlBody);
 };
 exports.createXmlPart = createXmlPart;
 var getExcelColumnName = function (colIdx) {
@@ -105,11 +105,11 @@ var getExcelColumnName = function (colIdx) {
         return fromCharCode(startCode + colIdx - 1);
     }
     if (!tableIdx) {
-        return exports.getExcelColumnName(pos - 1) + 'Z';
+        return (0, exports.getExcelColumnName)(pos - 1) + 'Z';
     }
     if (pos < tableWidth) {
         return fromCharCode(startCode + pos - 1) + fromCharCode(startCode + tableIdx - 1);
     }
-    return exports.getExcelColumnName(pos) + fromCharCode(startCode + tableIdx - 1);
+    return (0, exports.getExcelColumnName)(pos) + fromCharCode(startCode + tableIdx - 1);
 };
 exports.getExcelColumnName = getExcelColumnName;

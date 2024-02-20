@@ -22,14 +22,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { RefSelector } from './componentAnnotations';
 import { AgAbstractField } from './agAbstractField';
 import { setDisabled, setElementWidth, addOrRemoveAttribute } from '../utils/dom';
-import { setAriaLabelledBy, setAriaLabel } from '../utils/aria';
-import { exists } from '../utils/generic';
+import { setAriaLabel } from '../utils/aria';
 var AgAbstractInputField = /** @class */ (function (_super) {
     __extends(AgAbstractInputField, _super);
     function AgAbstractInputField(config, className, inputType, displayFieldTag) {
         if (inputType === void 0) { inputType = 'text'; }
         if (displayFieldTag === void 0) { displayFieldTag = 'input'; }
-        var _this = _super.call(this, config, /* html */ "\n            <div role=\"presentation\">\n                <div ref=\"eLabel\" class=\"ag-input-field-label\"></div>\n                <div ref=\"eWrapper\" class=\"ag-wrapper ag-input-wrapper\" role=\"presentation\">\n                    <" + displayFieldTag + " ref=\"eInput\" class=\"ag-input-field-input\"></" + displayFieldTag + ">\n                </div>\n            </div>", className) || this;
+        var _this = _super.call(this, config, /* html */ "\n            <div role=\"presentation\">\n                <div ref=\"eLabel\" class=\"ag-input-field-label\"></div>\n                <div ref=\"eWrapper\" class=\"ag-wrapper ag-input-wrapper\" role=\"presentation\">\n                    <".concat(displayFieldTag, " ref=\"eInput\" class=\"ag-input-field-input\"></").concat(displayFieldTag, ">\n                </div>\n            </div>"), className) || this;
         _this.inputType = inputType;
         _this.displayFieldTag = displayFieldTag;
         return _this;
@@ -37,11 +36,11 @@ var AgAbstractInputField = /** @class */ (function (_super) {
     AgAbstractInputField.prototype.postConstruct = function () {
         _super.prototype.postConstruct.call(this);
         this.setInputType();
-        this.eLabel.classList.add(this.className + "-label");
-        this.eWrapper.classList.add(this.className + "-input-wrapper");
-        this.eInput.classList.add(this.className + "-input");
+        this.eLabel.classList.add("".concat(this.className, "-label"));
+        this.eWrapper.classList.add("".concat(this.className, "-input-wrapper"));
+        this.eInput.classList.add("".concat(this.className, "-input"));
         this.addCssClass('ag-input-field');
-        this.eInput.id = this.eInput.id || "ag-" + this.getCompId() + "-input";
+        this.eInput.id = this.eInput.id || "ag-".concat(this.getCompId(), "-input");
         var _a = this.config, width = _a.width, value = _a.value;
         if (width != null) {
             this.setWidth(width);
@@ -51,15 +50,6 @@ var AgAbstractInputField = /** @class */ (function (_super) {
         }
         this.addInputListeners();
         this.activateTabIndex([this.eInput]);
-    };
-    AgAbstractInputField.prototype.refreshLabel = function () {
-        if (exists(this.getLabel())) {
-            setAriaLabelledBy(this.eInput, this.getLabelId());
-        }
-        else {
-            this.eInput.removeAttribute('aria-labelledby');
-        }
-        _super.prototype.refreshLabel.call(this);
     };
     AgAbstractInputField.prototype.addInputListeners = function () {
         var _this = this;
@@ -95,6 +85,7 @@ var AgAbstractInputField = /** @class */ (function (_super) {
     };
     AgAbstractInputField.prototype.setInputAriaLabel = function (label) {
         setAriaLabel(this.eInput, label);
+        this.refreshAriaLabelledBy();
         return this;
     };
     AgAbstractInputField.prototype.setDisabled = function (disabled) {

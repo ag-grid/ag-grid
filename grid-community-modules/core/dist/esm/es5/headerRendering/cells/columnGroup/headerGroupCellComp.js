@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, PostConstruct } from "../../../context/context";
+import { PostConstruct } from "../../../context/context";
 import { setDisplayed } from "../../../utils/dom";
 import { RefSelector } from "../../../widgets/componentAnnotations";
 import { AbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellComp";
@@ -40,7 +40,8 @@ var HeaderGroupCellComp = /** @class */ (function (_super) {
             setResizableDisplayed: function (displayed) { return setDisplayed(_this.eResize, displayed); },
             setWidth: function (width) { return eGui.style.width = width; },
             setAriaExpanded: function (expanded) { return setAttribute('aria-expanded', expanded); },
-            setUserCompDetails: function (details) { return _this.setUserCompDetails(details); }
+            setUserCompDetails: function (details) { return _this.setUserCompDetails(details); },
+            getUserCompInstance: function () { return _this.headerGroupComp; },
         };
         this.ctrl.setComp(compProxy, eGui, this.eResize);
     };
@@ -59,12 +60,10 @@ var HeaderGroupCellComp = /** @class */ (function (_super) {
         var eHeaderGroupGui = headerGroupComp.getGui();
         eGui.appendChild(eHeaderGroupGui);
         this.addDestroyFunc(destroyFunc);
+        this.headerGroupComp = headerGroupComp;
         this.ctrl.setDragSource(eGui);
     };
-    HeaderGroupCellComp.TEMPLATE = "<div class=\"ag-header-group-cell\" role=\"columnheader\" tabindex=\"-1\">\n            <div ref=\"eResize\" class=\"ag-header-cell-resize\" role=\"presentation\"></div>\n        </div>";
-    __decorate([
-        Autowired('userComponentFactory')
-    ], HeaderGroupCellComp.prototype, "userComponentFactory", void 0);
+    HeaderGroupCellComp.TEMPLATE = "<div class=\"ag-header-group-cell\" role=\"columnheader\">\n            <div ref=\"eResize\" class=\"ag-header-cell-resize\" role=\"presentation\"></div>\n        </div>";
     __decorate([
         RefSelector('eResize')
     ], HeaderGroupCellComp.prototype, "eResize", void 0);

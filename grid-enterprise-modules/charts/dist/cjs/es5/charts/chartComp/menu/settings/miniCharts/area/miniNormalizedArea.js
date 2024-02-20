@@ -19,9 +19,9 @@ exports.MiniNormalizedArea = void 0;
 var miniStackedArea_1 = require("./miniStackedArea");
 var MiniNormalizedArea = /** @class */ (function (_super) {
     __extends(MiniNormalizedArea, _super);
-    function MiniNormalizedArea(container, fills, strokes, data) {
+    function MiniNormalizedArea(container, fills, strokes, themeTemplateParameters, isCustomTheme, data) {
         if (data === void 0) { data = MiniNormalizedArea.data; }
-        return _super.call(this, container, fills, strokes, data, "normalizedAreaTooltip") || this;
+        return _super.call(this, container, fills, strokes, themeTemplateParameters, isCustomTheme, data, "normalizedAreaTooltip") || this;
     }
     MiniNormalizedArea.chartType = 'normalizedArea';
     MiniNormalizedArea.data = miniStackedArea_1.MiniStackedArea.data.map(function (stack) {

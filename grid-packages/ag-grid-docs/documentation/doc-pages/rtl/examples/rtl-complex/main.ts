@@ -4,15 +4,16 @@ import {
     ColDef,
     ColGroupDef,
     GetContextMenuItemsParams,
-    Grid,
+    GridApi,
+    createGrid,
     GridOptions,
     ICellRendererParams,
     IGroupCellRendererParams,
     MenuItemDef,
     RowSelectedEvent,
     SelectionChangedEvent,
-    ValueSetterParams
-} from '@ag-grid-community/core'
+    ValueSetterParams,
+} from '@ag-grid-community/core';
 
 import { PersonFilter } from './person-filter_typescript'
 import { WinningsFilter } from './winnings-filter_typescript'
@@ -211,20 +212,19 @@ const autoGroupColumnDef: ColDef = {
     } as IGroupCellRendererParams,
 };
 
+let gridApi: GridApi;
+
 const gridOptions: GridOptions = {
     defaultColDef: {
         editable: true,
-        sortable: true,
         minWidth: 100,
         filter: true,
         floatingFilter: true,
-        resizable: true,
     },
     sideBar: true,
     rowGroupPanelShow: 'always', // on of ['always','onlyWhenGrouping']
     pivotPanelShow: 'always', // on of ['always','onlyWhenPivoting']
     enableRtl: true,
-    animateRows: true,
     statusBar: {
         statusPanels: [{ statusPanel: 'agAggregationComponent' }],
     },
@@ -272,11 +272,11 @@ const firstColumn: ColDef = {
     filter: PersonFilter,
     checkboxSelection: (params) => {
         // we put checkbox on the name if we are not doing no grouping
-        return params.columnApi.getRowGroupColumns().length === 0
+        return params.api.getRowGroupColumns().length === 0
     },
     headerCheckboxSelection: (params) => {
         // we put checkbox on the name if we are not doing grouping
-        return params.columnApi.getRowGroupColumns().length === 0
+        return params.api.getRowGroupColumns().length === 0
     },
     headerCheckboxSelectionFilteredOnly: true,
     icons: {
@@ -433,7 +433,7 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
                 width: 150,
                 editable: false,
                 sortable: false,
-                suppressMenu: true,
+                suppressHeaderMenuButton: true,
                 cellStyle: { 'text-align': 'right' },
                 cellRenderer: () => {
                     return 'Abra...'
@@ -445,7 +445,7 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
                 width: 150,
                 editable: false,
                 sortable: false,
-                suppressMenu: true,
+                suppressHeaderMenuButton: true,
                 cellStyle: { 'text-align': 'left' },
                 cellRenderer: () => {
                     return '...cadabra!'
@@ -485,7 +485,7 @@ const monthGroup: ColGroupDef = {
     children: [],
 };
 defaultCols.push(monthGroup);
-months.forEach(function (month) {
+months.forEach((month) => {
     const child: ColDef = {
         headerName: month,
         field: month.toLocaleLowerCase(),
@@ -556,7 +556,7 @@ function createData() {
     loadInstance++
 
     const loadInstanceCopy = loadInstance;
-    gridOptions.api!.showLoadingOverlay()
+    gridApi!.showLoadingOverlay()
 
     const colDefs = createCols();
 
@@ -566,7 +566,7 @@ function createData() {
     let row = 0;
     const data: any[] = [];
 
-    const intervalId = setInterval(function () {
+    const intervalId = setInterval(() => {
         if (loadInstanceCopy != loadInstance) {
             clearInterval(intervalId)
             return
@@ -582,9 +582,9 @@ function createData() {
 
         if (row >= rowCount) {
             clearInterval(intervalId)
-            setTimeout(function () {
-                gridOptions.api!.setColumnDefs(colDefs)
-                gridOptions.api!.setRowData(data)
+            setTimeout(() => {
+                gridApi!.setGridOption('columnDefs', colDefs)
+                gridApi!.setGridOption('rowData', data)
             }, 0)
         }
     }, 0);
@@ -613,7 +613,7 @@ function createRowItem(row: number, colCount: number) {
     rowItem.rating = Math.round(pseudoRandom() * 5)
 
     let totalWinnings = 0;
-    months.forEach(function (month) {
+    months.forEach((month) => {
         const value = Math.round(pseudoRandom() * 10000000) / 100 - 20;
         rowItem[month.toLocaleLowerCase()] = value
         totalWinnings += value
@@ -652,7 +652,7 @@ function pseudoRandom() {
 function selectionChanged(event: SelectionChangedEvent) {
     console.log(
         'Callback selectionChanged: selection count = ' +
-        gridOptions.api!.getSelectedNodes().length
+        gridApi!.getSelectedNodes().length
     )
 }
 
@@ -729,12 +729,9 @@ function currencyRenderer(params: ICellRendererParams) {
         if (params.node.group && params.column!.getAggFunc() === 'count') {
             return params.value
         } else {
-            return (
-                '&pound;' +
-                Math.floor(params.value)
-                    .toString()
-                    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-            )
+            return ('&pound;' + Math.floor(params.value)
+                .toString()
+                .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,'));
         }
     }
 }
@@ -808,6 +805,6 @@ function languageCellRenderer(params: ICellRendererParams) {
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
 
-    new Grid(gridDiv, gridOptions)
+    gridApi = createGrid(gridDiv, gridOptions);
     createData()
 })

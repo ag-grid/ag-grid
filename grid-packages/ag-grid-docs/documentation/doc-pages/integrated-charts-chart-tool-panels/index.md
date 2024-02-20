@@ -7,20 +7,20 @@ The Chart Tool Panels allow users to change the selected chart type and customis
 
 <div style="display: flex; margin-bottom: 25px; margin-top: 25px; margin-left: 35px">
     <figure style="flex: 3; margin: 0;">
-        <image-caption src="integrated-charts-chart-tool-panels/resources/chart-tool-panels.png" alt="Open Chart Tool Panels with button to close it on the middle left of the panels" constrained="true" centered="true"></image-caption>
+        <image-caption src="integrated-charts-chart-tool-panels/resources/chart-tool-panels.png" alt="Open Chart Tool Panels with button to close it on the middle left of the panels" constrained="true" centered="true" maxWidth="40%" toggledarkmode="true"></image-caption>
         <figcaption style="text-align: center; font-size: 0.85rem; margin-top: 10px;">Accessing Chart Tool Panels</figcaption>
     </figure>
 </div>
 
 The Chart Tool Panels are accessed by clicking on the button highlighted above. Note they can also be opened 
-via configuration (see examples in this section) or programmatically through the Grid API, see [Open / Close Chart Tool Panels](/integrated-charts-api-chart-tool-panel/#opening-and-closing-the-chart-tool-panel-via-grid-api/).
+via configuration (see examples in this section) or programmatically through the Grid API, see [Open / Close Chart Tool Panels](#chart-tool-panel-api).
 
 ## Settings Tool Panel
 
 The Settings Panel can be used to change the chart type and chart theme.
 
 <figure style="flex: 3;">
-    <image-caption src="integrated-charts-chart-tool-panels/resources/settings-panel.png" alt="Chart Settings Panel"  constrained="true" centered="true"></image-caption>
+    <image-caption src="integrated-charts-chart-tool-panels/resources/settings-panel.png" alt="Chart Settings Panel"  constrained="true" centered="true" maxWidth="30%" toggledarkmode="true"></image-caption>
     <figcaption style="text-align: center; font-size: 0.85rem; margin-top: 10px;">Chart Settings Panel</figcaption>
 </figure>
 
@@ -43,14 +43,14 @@ The example below shows a subset of the provided chart groups with the chart typ
 * Note the order of the chart groups and their chart types matches the order they are specified in `chartGroupsDef`.
 * The Settings Panel is configured to be open by default via `defaultToolPanel: 'settings'`.
 
-<grid-example title='Settings Tool Panel Customisation' name='settings-panel-customisation' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
+<grid-example title='Settings Tool Panel Customisation' name='settings-panel-customisation' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
 
 ## Data Tool Panel
 
 The Data Panel can be used to change the chart category and series.
 
 <figure style="flex: 3;">
-    <image-caption src="integrated-charts-chart-tool-panels/resources/data-panel.png" alt="Chart Data Panel" maxWidth="90%" constrained="true" centered="true"></image-caption>
+    <image-caption src="integrated-charts-chart-tool-panels/resources/data-panel.png" alt="Chart Data Panel" maxWidth="30%" constrained="true" centered="true" toggledarkmode="true"></image-caption>
     <figcaption style="text-align: center; font-size: 0.85rem; margin-top: 10px;">Chart Data Panel</figcaption>
 </figure>
 
@@ -75,7 +75,7 @@ const gridOptions = {
 </snippet>
 
 <note>
-The `seriesChartType` group is only shown in [Combination Charts](../integrated-charts-api-range-chart/#combination-charts/).
+The `seriesChartType` group is only shown in [Combination Charts](../integrated-charts-api-range-chart/#combination-charts).
 </note>
 
 The following example shows some Data Panel customisations. Note the following:
@@ -84,14 +84,14 @@ The following example shows some Data Panel customisations. Note the following:
 * The **Series** group is closed by default.
 * The Data Panel is configured to be open by default via `defaultToolPanel: 'data'`.
 
-<grid-example title='Data Tool Panel Customisation' name='data-panel-customisation' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
+<grid-example title='Data Tool Panel Customisation' name='data-panel-customisation' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
 
 ## Format Tool Panel
 
 The Format Panel allows users to format the chart where the available formatting options differ between chart types.
 
 <figure style="flex: 3;">
-    <image-caption src="integrated-charts-chart-tool-panels/resources/format-panel.png" alt="Chart Format Panel" maxWidth="90%" constrained="true" centered="true"></image-caption>
+    <image-caption src="integrated-charts-chart-tool-panels/resources/format-panel.png" alt="Chart Format Panel" maxWidth="30%" constrained="true" centered="true" toggledarkmode="true"></image-caption>
     <figcaption style="text-align: center; font-size: 0.85rem; margin-top: 10px;">Chart Format Panel</figcaption>
 </figure>
 
@@ -128,7 +128,7 @@ The following example shows some Format Panel customisations. Note the following
 * The **Navigator** group has been omitted.
 * The Format Panel is configured to be open by default via `defaultToolPanel: 'format'`.
 
-<grid-example title='Format Tool Panel Customisation' name='format-panel-customisation' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
+<grid-example title='Format Tool Panel Customisation' name='format-panel-customisation' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
 
 ## Omitting & Ordering Tool Panels 
 
@@ -158,7 +158,7 @@ The following example shows how the Chart Tool Panels can be omitted and ordered
 * The **Data** Tool Panel appears before the **Settings** Tool Panel.
 * The Data Panel is configured to be open by default via `defaultToolPanel: 'data'`.
 
-<grid-example title='Omitting & Ordering Tool Panels' name='omitting-ordering-tool-panels' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
+<grid-example title='Omitting & Ordering Tool Panels' name='omitting-ordering-tool-panels' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
 
 ## Chart Tool Panel API
 
@@ -172,7 +172,7 @@ The example below demonstrates how you can open and close the Chart Tool Panels.
 - Click **Open Chart Tool Panel Format tab** to open the `Format` tab via `openChartToolPanel()`
 - Click **Close Chart Tool Panel** to close via `closeChartToolPanel()`
 
-<grid-example title='Open/Close Chart Tool Panel' name='chart-tool-panel-api' type='generated' options='{ "exampleHeight": 800, "enterprise": true, "modules": ["clientside", "menu", "charts"], "myGridReference": 1 }'></grid-example>
+<grid-example title='Open/Close Chart Tool Panel' name='chart-tool-panel-api' type='generated' options='{ "exampleHeight": 800, "enterprise": true, "modules": ["clientside", "menu", "charts-enterprise"], "myGridReference": 1 }'></grid-example>
 
 ## Next Up
 

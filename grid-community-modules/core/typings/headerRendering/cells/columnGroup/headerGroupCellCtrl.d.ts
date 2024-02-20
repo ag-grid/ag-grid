@@ -4,36 +4,40 @@ import { ColumnEventType } from "../../../events";
 import { ColumnGroup } from "../../../entities/columnGroup";
 import { HeaderRowCtrl } from "../../row/headerRowCtrl";
 import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellCtrl";
+import { GroupResizeFeature } from "./groupResizeFeature";
+import { IHeaderGroupComp } from "./headerGroupComp";
+import { HorizontalDirection } from "../../../constants/direction";
+import { Beans } from "../../../rendering/beans";
 export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp {
-    addOrRemoveCssClass(cssClassName: string, on: boolean): void;
     setResizableDisplayed(displayed: boolean): void;
     setWidth(width: string): void;
     setAriaExpanded(expanded: 'true' | 'false' | undefined): void;
     setUserCompDetails(compDetails: UserCompDetails): void;
+    getUserCompInstance(): IHeaderGroupComp | undefined;
 }
-export declare class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
-    private readonly columnModel;
-    private readonly dragAndDropService;
-    private readonly gridApi;
-    private columnApi;
-    private columnGroup;
-    private comp;
+export declare class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCellComp, ColumnGroup, GroupResizeFeature> {
     private expandable;
     private displayName;
-    private groupResizeFeature;
-    constructor(columnGroup: ColumnGroup, parentRowCtrl: HeaderRowCtrl);
+    constructor(columnGroup: ColumnGroup, beans: Beans, parentRowCtrl: HeaderRowCtrl);
     setComp(comp: IHeaderGroupCellComp, eGui: HTMLElement, eResize: HTMLElement): void;
+    protected resizeHeader(delta: number, shiftKey: boolean): void;
+    protected moveHeader(hDirection: HorizontalDirection): void;
+    private restoreFocus;
+    private findGroupWidthId;
     resizeLeafColumnsToFit(source: ColumnEventType): void;
     private setupUserComp;
+    private addHeaderMouseListeners;
+    private handleMouseOverChange;
     private setupTooltip;
     private setupExpandable;
     private refreshExpanded;
     getColId(): string;
     private addClasses;
     private setupMovingCss;
+    private onSuppressColMoveChange;
     private onFocusIn;
     protected handleKeyDown(e: KeyboardEvent): void;
     setDragSource(eHeaderGroup: HTMLElement): void;
-    getDragItemForGroup(): DragItem;
+    getDragItemForGroup(columnGroup: ColumnGroup): DragItem;
     private isSuppressMoving;
 }

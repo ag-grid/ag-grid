@@ -1,4 +1,18 @@
-import { Grid, ColDef, ColGroupDef, GridOptions, HeaderPosition, NavigateToNextCellParams, NavigateToNextHeaderParams, TabToNextCellParams, TabToNextHeaderParams, CellPosition } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  ColDef,
+  ColGroupDef,
+  GridOptions,
+  HeaderPosition,
+  NavigateToNextCellParams,
+  NavigateToNextHeaderParams,
+  TabToNextCellParams,
+  TabToNextHeaderParams,
+  CellPosition,
+  Column,
+  ColumnGroup
+} from '@ag-grid-community/core';
 
 const columnDefs: (ColDef | ColGroupDef)[] = [
   {
@@ -29,15 +43,15 @@ const KEY_UP = 'ArrowUp';
 const KEY_RIGHT = 'ArrowRight';
 const KEY_DOWN = 'ArrowDown';
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   // make all cols editable
   defaultColDef: {
     editable: true,
-    sortable: true,
     flex: 1,
     minWidth: 100,
     filter: true,
-    resizable: true,
   },
 
   navigateToNextCell: navigateToNextCell,
@@ -49,7 +63,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
 }
 
-function navigateToNextHeader(params: NavigateToNextHeaderParams): (HeaderPosition | null) {
+function navigateToNextHeader(params: NavigateToNextHeaderParams): HeaderPosition | null {
   const nextHeader = params.nextHeaderPosition;
 
   if (params.key !== 'ArrowDown' && params.key !== 'ArrowUp') {
@@ -60,9 +74,9 @@ function navigateToNextHeader(params: NavigateToNextHeaderParams): (HeaderPositi
     params.previousHeaderPosition!,
     params.headerRowCount,
     params.key === 'ArrowDown'
-  )
+  );
 
-  return processedNextHeader === nextHeader ? null : processedNextHeader
+  return processedNextHeader;
 }
 
 function tabToNextHeader(params: TabToNextHeaderParams): (HeaderPosition | null) {
@@ -73,44 +87,55 @@ function tabToNextHeader(params: TabToNextHeaderParams): (HeaderPosition | null)
   )
 }
 
-function moveHeaderFocusUpDown(previousHeader: HeaderPosition, headerRowCount: number, isUp: boolean) {
+function moveHeaderFocusUpDown(previousHeader: HeaderPosition, headerRowCount: number, isUp: boolean): HeaderPosition {
   const previousColumn = previousHeader.column;
+  const isSpanHeaderHeight = !!(previousColumn as Column).isSpanHeaderHeight && (previousColumn as Column).isSpanHeaderHeight();
+
   const lastRowIndex = previousHeader.headerRowIndex;
   let nextRowIndex = isUp ? lastRowIndex - 1 : lastRowIndex + 1;
   let nextColumn;
 
   if (nextRowIndex === -1) {
-    return previousHeader
+    return previousHeader;
   }
+
   if (nextRowIndex === headerRowCount) {
-    nextRowIndex = -1
+    nextRowIndex = -1;
   }
 
-  const parentColumn = previousColumn.getParent()
-
+  let parentColumn = previousColumn.getParent();
   if (isUp) {
-    nextColumn = parentColumn || previousColumn
+    if (isSpanHeaderHeight) {
+      while (parentColumn && parentColumn.isPadding()) {
+        parentColumn = parentColumn.getParent();
+      }
+    }
+
+    if (!parentColumn) { return previousHeader; }
+
+    nextColumn = parentColumn;
   } else {
-    nextColumn = (previousColumn as any).children
-      ? (previousColumn as any).children[0]
-      : previousColumn
+      const children = ((previousColumn as ColumnGroup).getChildren && (previousColumn as ColumnGroup).getChildren()) || [];
+      nextColumn = children.length > 0 ? children[0] : previousColumn;
   }
 
   return {
     headerRowIndex: nextRowIndex,
-    column: nextColumn,
-  }
+    column: nextColumn as Column,
+  };
 }
 
 function tabToNextCell(params: TabToNextCellParams): (CellPosition | null) {
-  const previousCell = params.previousCellPosition;
+  const previousCell = params.previousCellPosition
+  const renderedRowCount = params.api!.getDisplayedRowCount();
   const lastRowIndex = previousCell.rowIndex;
+
   let nextRowIndex = params.backwards ? lastRowIndex - 1 : lastRowIndex + 1;
-  const renderedRowCount = params.api!.getModel().getRowCount();
 
   if (nextRowIndex < 0) {
     nextRowIndex = -1
   }
+
   if (nextRowIndex >= renderedRowCount) {
     nextRowIndex = renderedRowCount - 1
   }
@@ -146,7 +171,7 @@ function navigateToNextCell(params: NavigateToNextCellParams): (CellPosition | n
     case KEY_UP:
       // return the cell below
       nextRowIndex = previousCell.rowIndex + 1
-      renderedRowCount = params.api!.getModel().getRowCount()
+      renderedRowCount = params.api!.getDisplayedRowCount();
       if (nextRowIndex >= renderedRowCount) {
         return null
       } // returning null means don't navigate
@@ -167,9 +192,9 @@ function navigateToNextCell(params: NavigateToNextCellParams): (CellPosition | n
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

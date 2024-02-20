@@ -7,11 +7,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { _, Component, PostConstruct } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController.mjs";
 import { LegendPanel } from "./legend/legendPanel.mjs";
-import { AxisPanel } from "./axis/axisPanel.mjs";
+import { CartesianAxisPanel } from "./axis/cartesianAxisPanel.mjs";
+import { PolarAxisPanel } from "./axis/polarAxisPanel.mjs";
 import { NavigatorPanel } from "./navigator/navigatorPanel.mjs";
 import { ChartPanel } from "./chart/chartPanel.mjs";
 import { SeriesPanel } from "./series/seriesPanel.mjs";
-import { getSeriesType } from "../../utils/seriesTypeMapper.mjs";
+import { getSeriesType, hasGradientLegend, isPolar } from "../../utils/seriesTypeMapper.mjs";
+import { GradientLegendPanel } from './legend/gradientLegendPanel.mjs';
 export function getMaxValue(currentValue, defaultMaxValue) {
     return Math.max(currentValue, defaultMaxValue);
 }
@@ -31,13 +33,37 @@ export class FormatPanel extends Component {
         this.chartOptionsService = chartOptionsService;
         this.panels = [];
         this.isGroupPanelShownInSeries = (group, seriesType) => {
+            // Determine whether the given panel group is shown depending on the active series type
+            var _a, _b;
+            // These panel groups are always shown regardless of series type
             const commonGroupPanels = ['chart', 'legend', 'series'];
             if (commonGroupPanels.includes(group)) {
                 return true;
             }
-            const cartesianOnlyGroupPanels = ['axis', 'navigator'];
-            const cartesianSeries = ['bar', 'column', 'line', 'area', 'scatter', 'histogram', 'cartesian'];
-            return !!(cartesianOnlyGroupPanels.includes(group) && cartesianSeries.includes(seriesType));
+            // These panel groups depend on the selected series type
+            const extendedGroupPanels = {
+                'bar': ['axis', 'navigator'],
+                'column': ['axis', 'navigator'],
+                'line': ['axis', 'navigator'],
+                'area': ['axis', 'navigator'],
+                'scatter': ['axis', 'navigator'],
+                'bubble': ['axis', 'navigator'],
+                'histogram': ['axis', 'navigator'],
+                'cartesian': ['axis', 'navigator'],
+                'radial-column': ['axis'],
+                'radial-bar': ['axis'],
+                'radar-line': ['axis'],
+                'radar-area': ['axis'],
+                'nightingale': ['axis'],
+                'range-bar': ['axis', 'navigator'],
+                'range-area': ['axis', 'navigator'],
+                'treemap': [],
+                'sunburst': [],
+                'heatmap': ['axis'],
+                'waterfall': ['axis', 'navigator'],
+                'box-plot': ['axis', 'navigator'],
+            };
+            return (_b = (_a = extendedGroupPanels[seriesType]) === null || _a === void 0 ? void 0 : _a.includes(group)) !== null && _b !== void 0 ? _b : false;
         };
     }
     init() {
@@ -71,10 +97,14 @@ export class FormatPanel extends Component {
                 this.addComponent(new ChartPanel(opts));
             }
             else if (group === 'legend') {
-                this.addComponent(new LegendPanel(opts));
+                // Some chart types require non-standard legend options, so choose the appropriate panel
+                const panel = hasGradientLegend(chartType) ? new GradientLegendPanel(opts) : new LegendPanel(opts);
+                this.addComponent(panel);
             }
             else if (group === 'axis') {
-                this.addComponent(new AxisPanel(opts));
+                // Polar charts have different axis options from cartesian charts, so choose the appropriate panel
+                const panel = isPolar(chartType) ? new PolarAxisPanel(opts) : new CartesianAxisPanel(opts);
+                this.addComponent(panel);
             }
             else if (group === 'series') {
                 this.addComponent(new SeriesPanel(opts));
@@ -105,6 +135,7 @@ export class FormatPanel extends Component {
             _.removeFromParent(panel.getGui());
             this.destroyBean(panel);
         });
+        this.panels = [];
     }
     destroy() {
         this.destroyPanels();

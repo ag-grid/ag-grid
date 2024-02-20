@@ -78,23 +78,6 @@ export function attrToString(value?: string): string | undefined {
     return value;
 }
 
-/** @deprecated */
-export function referenceCompare<T>(left: T, right: T): boolean {
-    if (left == null && right == null) {
-        return true;
-    }
-
-    if (left == null && right != null) {
-        return false;
-    }
-
-    if (left != null && right == null) {
-        return false;
-    }
-
-    return left === right;
-}
-
 export function jsonEquals<T1, T2>(val1: T1, val2: T2): boolean {
     const val1Json = val1 ? JSON.stringify(val1) : null;
     const val2Json = val2 ? JSON.stringify(val2) : null;

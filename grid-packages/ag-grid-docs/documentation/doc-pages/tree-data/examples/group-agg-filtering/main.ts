@@ -1,7 +1,17 @@
-import { GetRowIdParams, Grid, GridOptions, ICellRendererComp, ICellRendererParams, IRowNode } from '@ag-grid-community/core';
+import {
+  GetRowIdParams,
+  GridApi,
+  createGrid,
+  GridOptions,
+  ICellRendererComp,
+  ICellRendererParams,
+  IRowNode,
+} from '@ag-grid-community/core';
 import { getData } from "./data";
 
 declare var window: any
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -27,8 +37,6 @@ const gridOptions: GridOptions = {
     flex: 1,
     filter: true,
     floatingFilter: true,
-    sortable: true,
-    resizable: true,
   },
   autoGroupColumnDef: {
     headerName: 'Files',
@@ -41,7 +49,6 @@ const gridOptions: GridOptions = {
   },
   rowData: getData(),
   treeData: true,
-  animateRows: true,
   groupDefaultExpanded: -1,
   getDataPath: (data: any) => {
     return data.filePath
@@ -111,5 +118,5 @@ document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
 
   // create the grid passing in the div to use together with the columns & data we want to use
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

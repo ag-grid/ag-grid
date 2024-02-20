@@ -14,6 +14,7 @@ export declare class ViewportRowModel extends BeanStub implements IRowModel {
     start(): void;
     isLastRowIndexKnown(): boolean;
     private destroyDatasource;
+    private updateDatasource;
     private getViewportRowModelPageSize;
     private getViewportRowModelBufferSize;
     private calculateFirstRow;
@@ -28,6 +29,7 @@ export declare class ViewportRowModel extends BeanStub implements IRowModel {
     getRowCount(): number;
     getRowIndexAtPixel(pixel: number): number;
     getRowBounds(index: number): RowBounds;
+    private updateRowHeights;
     getTopLevelRowCount(): number;
     getTopLevelRowDisplayedIndex(topLevelIndex: number): number;
     isEmpty(): boolean;

@@ -20,7 +20,8 @@ import { AgPromise } from "../../utils";
 import { ComponentType } from "./componentTypes";
 import { WithoutGridCommon } from "../../interfaces/iCommon";
 import { RichSelectParams } from "../../widgets/agRichSelect";
-export declare type DefinitionObject = GridOptions | ColDef | ColGroupDef | IFilterDef | SetFilterParams | RichSelectParams | ToolPanelDef | StatusPanelDef;
+import { IMenuItemParams, MenuItemDef } from "../../interfaces/menuItem";
+export declare type DefinitionObject = GridOptions | ColDef | ColGroupDef | IFilterDef | SetFilterParams | RichSelectParams | ToolPanelDef | StatusPanelDef | MenuItemDef;
 export interface UserCompDetails {
     componentClass: any;
     componentFromFramework: boolean;
@@ -55,6 +56,7 @@ export declare class UserComponentFactory extends BeanStub {
     getFloatingFilterCompDetails(def: IFilterDef, params: WithoutGridCommon<IFloatingFilterParams<any>>, defaultFloatingFilter: string | null): UserCompDetails | undefined;
     getToolPanelCompDetails(toolPanelDef: ToolPanelDef, params: WithoutGridCommon<IToolPanelParams>): UserCompDetails;
     getStatusPanelCompDetails(def: StatusPanelDef, params: WithoutGridCommon<IStatusPanelParams>): UserCompDetails;
+    getMenuItemCompDetails(def: MenuItemDef, params: WithoutGridCommon<IMenuItemParams>): UserCompDetails;
     private getCompDetails;
     private getCompKeys;
     private newAgStackInstance;

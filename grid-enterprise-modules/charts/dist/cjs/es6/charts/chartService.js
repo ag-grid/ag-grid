@@ -10,6 +10,7 @@ exports.ChartService = void 0;
 const core_1 = require("@ag-grid-community/core");
 const ag_charts_community_1 = require("ag-charts-community");
 const gridChartComp_1 = require("./chartComp/gridChartComp");
+const seriesTypeMapper_1 = require("./chartComp/utils/seriesTypeMapper");
 const chartModelMigration_1 = require("./chartModelMigration");
 const version_1 = require("../version");
 let ChartService = class ChartService extends core_1.BeanStub {
@@ -23,8 +24,14 @@ let ChartService = class ChartService extends core_1.BeanStub {
         this.crossFilteringContext = {
             lastSelectedChartId: '',
         };
+        this.isEnterprise = () => ag_charts_community_1._ModuleSupport.enterpriseModule.isEnterprise;
     }
     updateChart(params) {
+        const chartType = params.chartType;
+        if (chartType && (0, seriesTypeMapper_1.isEnterpriseChartType)(chartType) && !this.isEnterprise()) {
+            core_1.ModuleRegistry.__warnEnterpriseChartDisabled(chartType);
+            return;
+        }
         if (this.activeChartComps.size === 0) {
             console.warn(`AG Grid - No active charts to update.`);
             return;
@@ -93,7 +100,7 @@ let ChartService = class ChartService extends core_1.BeanStub {
             return;
         }
         if (model.version !== version_1.VERSION) {
-            model = chartModelMigration_1.upgradeChartModel(model);
+            model = (0, chartModelMigration_1.upgradeChartModel)(model);
         }
         const params = {
             cellRange: model.cellRange,
@@ -112,9 +119,7 @@ let ChartService = class ChartService extends core_1.BeanStub {
         };
         if (model.modelType === 'pivot') {
             // if required enter pivot mode
-            if (!this.columnModel.isPivotMode()) {
-                this.columnModel.setPivotMode(true, "pivotChart");
-            }
+            this.gridOptionsService.updateGridOptions({ options: { pivotMode: true }, source: 'pivotChart' });
             // pivot chart range contains all visible column without a row range to include all rows
             const columns = this.columnModel.getAllDisplayedColumns().map(col => col.getColId());
             const chartAllRangeParams = {
@@ -149,9 +154,7 @@ let ChartService = class ChartService extends core_1.BeanStub {
     }
     createPivotChart(params) {
         // if required enter pivot mode
-        if (!this.columnModel.isPivotMode()) {
-            this.columnModel.setPivotMode(true, "pivotChart");
-        }
+        this.gridOptionsService.updateGridOptions({ options: { pivotMode: true }, source: 'pivotChart' });
         // pivot chart range contains all visible column without a row range to include all rows
         const chartAllRangeParams = {
             rowStartIndex: null,
@@ -182,12 +185,16 @@ let ChartService = class ChartService extends core_1.BeanStub {
         return this.createChart(cellRange, params.chartType, params.chartThemeName, false, suppressChartRanges, params.chartContainer, params.aggFunc, params.chartThemeOverrides, params.unlinkChart, crossFiltering);
     }
     createChart(cellRange, chartType, chartThemeName, pivotChart = false, suppressChartRanges = false, container, aggFunc, chartThemeOverrides, unlinkChart = false, crossFiltering = false, chartOptionsToRestore, chartPaletteToRestore, seriesChartTypes) {
+        if ((0, seriesTypeMapper_1.isEnterpriseChartType)(chartType) && !this.isEnterprise()) {
+            core_1.ModuleRegistry.__warnEnterpriseChartDisabled(chartType);
+            return undefined;
+        }
         const createChartContainerFunc = this.gridOptionsService.getCallback('createChartContainer');
         const params = {
             chartId: this.generateId(),
             pivotChart,
             cellRange,
-            chartType,
+            chartType: (0, seriesTypeMapper_1.getCanonicalChartType)(chartType),
             chartThemeName,
             insideDialog: !(container || createChartContainerFunc),
             suppressChartRanges,
@@ -199,7 +206,7 @@ let ChartService = class ChartService extends core_1.BeanStub {
             chartOptionsToRestore,
             chartPaletteToRestore,
             seriesChartTypes,
-            crossFilteringResetCallback: () => this.activeChartComps.forEach(c => c.crossFilteringReset())
+            crossFilteringResetCallback: () => this.activeChartComps.forEach(c => c.crossFilteringReset()),
         };
         const chartComp = new gridChartComp_1.GridChartComp(params);
         this.context.createBean(chartComp);
@@ -259,15 +266,15 @@ let ChartService = class ChartService extends core_1.BeanStub {
 };
 ChartService.CHARTS_VERSION = ag_charts_community_1.VERSION;
 __decorate([
-    core_1.Optional('rangeService')
+    (0, core_1.Optional)('rangeService')
 ], ChartService.prototype, "rangeService", void 0);
 __decorate([
-    core_1.Autowired('columnModel')
+    (0, core_1.Autowired)('columnModel')
 ], ChartService.prototype, "columnModel", void 0);
 __decorate([
     core_1.PreDestroy
 ], ChartService.prototype, "destroyAllActiveCharts", null);
 ChartService = __decorate([
-    core_1.Bean('chartService')
+    (0, core_1.Bean)('chartService')
 ], ChartService);
 exports.ChartService = ChartService;

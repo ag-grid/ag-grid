@@ -6,7 +6,7 @@ enterprise: true
 The chart toolbar allows users to unlink charts from the grid and download the current chart.   
 
 <figure>
-    <image-caption src="integrated-charts-toolbar/resources/chart-toolbar.png" alt="Chart Toolbar" constrained="true" centered="true"></image-caption>
+    <image-caption src="integrated-charts-toolbar/resources/chart-toolbar.png" alt="Chart Toolbar" constrained="true" centered="true" toggledarkmode="true"></image-caption>
     <figcaption style="text-align: center; font-size: 0.85rem; margin-top: 10px;">Chart Toolbar</figcaption>
 </figure>
 
@@ -18,11 +18,11 @@ Unlinking a chart is achieved through the 'Unlink Chart' toolbar item highlighte
 
 <div style="display: flex; margin-bottom: 25px; margin-top: 25px; margin-left: 40px; gap: 40px">
     <figure style="flex: 1; margin: 0;">
-        <image-caption src="integrated-charts-toolbar/resources/chart-toolbar-link-chart.png" alt="Chart Toolbar Link button with linked data" constrained="true" centered="true"></image-caption>
+        <image-caption src="integrated-charts-toolbar/resources/chart-toolbar-link-chart.png" alt="Chart Toolbar Link button with linked data" constrained="true" centered="true" toggledarkmode="true"></image-caption>
         <figcaption style="text-align: center; font-size: 0.85rem; margin-top: 10px;">Chart Toolbar Link button with linked data</figcaption>
     </figure>
     <figure style="flex: 1; margin: 0;">
-        <image-caption src="integrated-charts-toolbar/resources/chart-toolbar-unlink-chart.png" alt="Chart Toolbar Link button with unlinked data" constrained="true" centered="true"></image-caption>
+        <image-caption src="integrated-charts-toolbar/resources/chart-toolbar-unlink-chart.png" alt="Chart Toolbar Link button with unlinked data" constrained="true" centered="true" toggledarkmode="true"></image-caption>
         <figcaption style="text-align: center; font-size: 0.85rem; margin-top: 10px;">Chart Toolbar Link button with unlinked data</figcaption>
     </figure>
 </div>
@@ -34,7 +34,7 @@ Notice that the chart range disappears from the grid when the chart has been unl
 The 'Download Chart' toolbar item will download the chart as a `PNG` file. Note that the chart is drawn using Canvas in the browser and as such the user can also right click on the chart and save just like any other image on a web page.
 
 <figure>
-    <image-caption src="integrated-charts-toolbar/resources/chart-toolbar-download.png" alt="Chart Toolbar Download Chart button" constrained="true" centered="true"></image-caption>
+    <image-caption src="integrated-charts-toolbar/resources/chart-toolbar-download.png" alt="Chart Toolbar Download Chart button" constrained="true" centered="true" toggledarkmode="true"></image-caption>
     <figcaption style="text-align: center; font-size: 0.85rem; margin-top: 10px;">Chart Toolbar Download Chart button</figcaption>
 </figure>
 
@@ -53,7 +53,7 @@ which toolbar items should be shown and the order in which they appear:
 
 The example below shows how the toolbar can be customised to only show the 'Download Chart' toolbar item.
 
-<grid-example title='Toolbar Customisation' name='toolbar-customisation' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
+<grid-example title='Toolbar Customisation' name='toolbar-customisation' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
 
 ## Next Up
 

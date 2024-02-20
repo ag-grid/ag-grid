@@ -45,7 +45,7 @@ class LegendPanel extends core_1.Component {
         this.legendPositionSelect
             .setLabel(this.chartTranslationService.translate("position"))
             .setLabelWidth("flex")
-            .setInputWidth(80)
+            .setInputWidth('flex')
             .addOptions(positions.map(position => ({
             value: position,
             text: this.chartTranslationService.translate(position)
@@ -57,16 +57,17 @@ class LegendPanel extends core_1.Component {
         const currentValue = this.chartOptionsService.getChartOption("legend.spacing");
         this.legendPaddingSlider
             .setLabel(this.chartTranslationService.translate("spacing"))
-            .setMaxValue(formatPanel_1.getMaxValue(currentValue, 200))
+            .setMaxValue((0, formatPanel_1.getMaxValue)(currentValue, 200))
             .setValue(`${currentValue}`)
             .setTextFieldWidth(45)
             .onValueChange(newValue => this.chartOptionsService.setChartOption("legend.spacing", newValue));
     }
     initLegendItems() {
         const initSlider = (expression, labelKey, input, defaultMaxValue) => {
-            const currentValue = this.chartOptionsService.getChartOption(`legend.${expression}`);
+            var _a;
+            const currentValue = (_a = this.chartOptionsService.getChartOption(`legend.${expression}`)) !== null && _a !== void 0 ? _a : 0;
             input.setLabel(this.chartTranslationService.translate(labelKey))
-                .setMaxValue(formatPanel_1.getMaxValue(currentValue, defaultMaxValue))
+                .setMaxValue((0, formatPanel_1.getMaxValue)(currentValue, defaultMaxValue))
                 .setValue(`${currentValue}`)
                 .setTextFieldWidth(45)
                 .onValueChange(newValue => {
@@ -139,31 +140,31 @@ LegendPanel.TEMPLATE = `<div>
             </ag-group-component>
         </div>`;
 __decorate([
-    core_1.RefSelector('legendGroup')
+    (0, core_1.RefSelector)('legendGroup')
 ], LegendPanel.prototype, "legendGroup", void 0);
 __decorate([
-    core_1.RefSelector('legendPositionSelect')
+    (0, core_1.RefSelector)('legendPositionSelect')
 ], LegendPanel.prototype, "legendPositionSelect", void 0);
 __decorate([
-    core_1.RefSelector('legendPaddingSlider')
+    (0, core_1.RefSelector)('legendPaddingSlider')
 ], LegendPanel.prototype, "legendPaddingSlider", void 0);
 __decorate([
-    core_1.RefSelector('markerSizeSlider')
+    (0, core_1.RefSelector)('markerSizeSlider')
 ], LegendPanel.prototype, "markerSizeSlider", void 0);
 __decorate([
-    core_1.RefSelector('markerStrokeSlider')
+    (0, core_1.RefSelector)('markerStrokeSlider')
 ], LegendPanel.prototype, "markerStrokeSlider", void 0);
 __decorate([
-    core_1.RefSelector('markerPaddingSlider')
+    (0, core_1.RefSelector)('markerPaddingSlider')
 ], LegendPanel.prototype, "markerPaddingSlider", void 0);
 __decorate([
-    core_1.RefSelector('itemPaddingXSlider')
+    (0, core_1.RefSelector)('itemPaddingXSlider')
 ], LegendPanel.prototype, "itemPaddingXSlider", void 0);
 __decorate([
-    core_1.RefSelector('itemPaddingYSlider')
+    (0, core_1.RefSelector)('itemPaddingYSlider')
 ], LegendPanel.prototype, "itemPaddingYSlider", void 0);
 __decorate([
-    core_1.Autowired('chartTranslationService')
+    (0, core_1.Autowired)('chartTranslationService')
 ], LegendPanel.prototype, "chartTranslationService", void 0);
 __decorate([
     core_1.PostConstruct

@@ -1,10 +1,12 @@
 import { Component } from "@angular/core";
+import { FormsModule } from "@angular/forms";
 
 import { IFilterAngularComp } from "@ag-grid-community/angular";
 import { IDoesFilterPassParams, IFilterParams } from "@ag-grid-community/core";
 
 @Component({
-    selector: 'number-component',
+    standalone: true,
+    imports: [FormsModule],
     template: `
       <div style="padding: 4px">
       <div style="font-weight: bold;">Greater than:</div>
@@ -15,29 +17,19 @@ import { IDoesFilterPassParams, IFilterParams } from "@ag-grid-community/core";
     `
 })
 export class NumberFilterComponent implements IFilterAngularComp {
-    params!: IFilterParams;
+    filterParams!: IFilterParams;
     filterText: number | null | string = null;
 
     agInit(params: IFilterParams): void {
-        this.params = params;
+        this.filterParams = params;
     }
 
     doesFilterPass(params: IDoesFilterPassParams) {
         if (!this.isFilterActive()) { return true; }
 
-        var { api, colDef, column, columnApi, context, valueGetter } = this.params;
         var { node } = params;
 
-        var value = valueGetter({
-            api,
-            colDef,
-            column,
-            columnApi,
-            context,
-            data: node.data,
-            getValue: (field) => node.data[field],
-            node,
-        });
+        var value = this.filterParams.getValue(node);
 
         if (value == null) return false;
         return Number(value) > Number(this.filterText);
@@ -60,15 +52,15 @@ export class NumberFilterComponent implements IFilterAngularComp {
 
     setModel(model: any) {
         this.filterText = model;
-        this.params.filterChangedCallback();
+        this.filterParams.filterChangedCallback();
     }
 
     myMethodForTakingValueFromFloatingFilter(value: any) {
         this.filterText = value;
-        this.params.filterChangedCallback();
+        this.filterParams.filterChangedCallback();
     }
 
     onInputBoxChanged() {
-        this.params.filterChangedCallback();
+        this.filterParams.filterChangedCallback();
     }
 }

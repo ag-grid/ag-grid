@@ -46,10 +46,14 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 import { Autowired, Events, SelectionHandleType, _ } from '@ag-grid-community/core';
 import { AbstractSelectionHandle } from "./abstractSelectionHandle";
@@ -147,7 +151,7 @@ var FillHandle = /** @class */ (function (_super) {
             return 'xy';
         }
         if (direction !== 'x' && direction !== 'y' && direction !== 'xy') {
-            _.doOnce(function () { return console.warn("AG Grid: valid values for fillHandleDirection are 'x', 'y' and 'xy'. Default to 'xy'."); }, 'warn invalid fill direction');
+            _.warnOnce("valid values for fillHandleDirection are 'x', 'y' and 'xy'. Default to 'xy'.");
             return 'xy';
         }
         return direction;
@@ -175,7 +179,7 @@ var FillHandle = /** @class */ (function (_super) {
         var isVertical = this.dragAxis === 'y';
         // if the range is being reduced in size, all we need to do is
         // clear the cells that are no longer part of the range
-        if (this.isReduce && !this.gridOptionsService.is('suppressClearOnFillReduction')) {
+        if (this.isReduce && !this.gridOptionsService.get('suppressClearOnFillReduction')) {
             var columns = isVertical
                 ? initialRange.columns
                 : initialRange.columns.filter(function (col) { return finalRange.columns.indexOf(col) < 0; });
@@ -185,13 +189,17 @@ var FillHandle = /** @class */ (function (_super) {
             }
             return;
         }
-        var withinInitialRange = true;
         var values = [];
         var initialValues = [];
+        var initialNonAggregatedValues = [];
+        var initialFormattedValues = [];
+        var withinInitialRange = true;
         var idx = 0;
         var resetValues = function () {
             values.length = 0;
             initialValues.length = 0;
+            initialNonAggregatedValues.length = 0;
+            initialFormattedValues.length = 0;
             idx = 0;
         };
         var iterateAcrossCells = function (column, columns) {
@@ -234,18 +242,29 @@ var FillHandle = /** @class */ (function (_super) {
             if (withinInitialRange) {
                 currentValue = _this.valueService.getValue(col, rowNode);
                 initialValues.push(currentValue);
+                initialNonAggregatedValues.push(_this.valueService.getValue(col, rowNode, undefined, true));
+                initialFormattedValues.push(_this.valueFormatterService.formatValue(col, rowNode, currentValue));
                 withinInitialRange = updateInitialSet();
             }
             else {
-                var _c = _this.processValues(e, currentValues, initialValues, col, rowNode, idx++), value = _c.value, fromUserFunction = _c.fromUserFunction, sourceCol = _c.sourceCol, sourceRowNode = _c.sourceRowNode;
+                var _c = _this.processValues({
+                    event: e,
+                    values: currentValues,
+                    initialValues: initialValues,
+                    initialNonAggregatedValues: initialNonAggregatedValues,
+                    initialFormattedValues: initialFormattedValues,
+                    col: col,
+                    rowNode: rowNode,
+                    idx: idx++
+                }), value = _c.value, fromUserFunction = _c.fromUserFunction, sourceCol = _c.sourceCol, sourceRowNode = _c.sourceRowNode;
                 currentValue = value;
                 if (col.isCellEditable(rowNode)) {
                     var cellValue = _this.valueService.getValue(col, rowNode);
                     if (!fromUserFunction) {
-                        if ((_a = sourceCol === null || sourceCol === void 0 ? void 0 : sourceCol.getColDef()) === null || _a === void 0 ? void 0 : _a.useValueFormatterForExport) {
+                        if (sourceCol && ((_a = sourceCol.getColDef()) === null || _a === void 0 ? void 0 : _a.useValueFormatterForExport) !== false) {
                             currentValue = (_b = _this.valueFormatterService.formatValue(sourceCol, sourceRowNode, currentValue)) !== null && _b !== void 0 ? _b : currentValue;
                         }
-                        if (col.getColDef().useValueParserForImport) {
+                        if (col.getColDef().useValueParserForImport !== false) {
                             currentValue = _this.valueParserService.parseValue(col, rowNode, 
                             // if no sourceCol, then currentValue is a number
                             sourceCol ? currentValue : _.toStringOrNull(currentValue), cellValue);
@@ -273,7 +292,7 @@ var FillHandle = /** @class */ (function (_super) {
             });
         }
         else {
-            var columns = this.isLeft ? __spreadArray([], __read(finalRange.columns)).reverse() : finalRange.columns;
+            var columns = this.isLeft ? __spreadArray([], __read(finalRange.columns), false).reverse() : finalRange.columns;
             iterateAcrossCells(undefined, columns);
         }
     };
@@ -286,7 +305,8 @@ var FillHandle = /** @class */ (function (_super) {
         };
         this.rangeService.clearCellRangeCellValues({ cellRanges: [cellRange] });
     };
-    FillHandle.prototype.processValues = function (event, values, initialValues, col, rowNode, idx) {
+    FillHandle.prototype.processValues = function (params) {
+        var event = params.event, values = params.values, initialValues = params.initialValues, initialNonAggregatedValues = params.initialNonAggregatedValues, initialFormattedValues = params.initialFormattedValues, col = params.col, rowNode = params.rowNode, idx = params.idx;
         var userFillOperation = this.gridOptionsService.getCallback('fillOperation');
         var isVertical = this.dragAxis === 'y';
         var direction;
@@ -297,20 +317,22 @@ var FillHandle = /** @class */ (function (_super) {
             direction = this.isLeft ? 'left' : 'right';
         }
         if (userFillOperation) {
-            var params = {
+            var params_1 = {
                 event: event,
                 values: values.map(function (_a) {
                     var value = _a.value;
                     return value;
                 }),
                 initialValues: initialValues,
+                initialNonAggregatedValues: initialNonAggregatedValues,
+                initialFormattedValues: initialFormattedValues,
                 currentIndex: idx,
                 currentCellValue: this.valueService.getValue(col, rowNode),
                 direction: direction,
                 column: col,
                 rowNode: rowNode
             };
-            var userResult = userFillOperation(params);
+            var userResult = userFillOperation(params_1);
             if (userResult !== false) {
                 return { value: userResult, fromUserFunction: true };
             }

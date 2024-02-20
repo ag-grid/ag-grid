@@ -34,7 +34,7 @@ var LoggerFactory = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     LoggerFactory.prototype.setBeans = function (gridOptionsService) {
-        this.logging = gridOptionsService.is('debug');
+        this.logging = gridOptionsService.get('debug');
     };
     LoggerFactory.prototype.create = function (name) {
         return new Logger(name, this.isLogging.bind(this));
@@ -43,10 +43,10 @@ var LoggerFactory = /** @class */ (function (_super) {
         return this.logging;
     };
     __decorate([
-        __param(0, context_2.Qualifier('gridOptionsService'))
+        __param(0, (0, context_2.Qualifier)('gridOptionsService'))
     ], LoggerFactory.prototype, "setBeans", null);
     LoggerFactory = __decorate([
-        context_1.Bean('loggerFactory')
+        (0, context_1.Bean)('loggerFactory')
     ], LoggerFactory);
     return LoggerFactory;
 }(beanStub_1.BeanStub));

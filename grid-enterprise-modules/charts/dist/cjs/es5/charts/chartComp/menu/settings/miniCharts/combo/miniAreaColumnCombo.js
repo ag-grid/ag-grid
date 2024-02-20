@@ -28,7 +28,7 @@ var MiniAreaColumnCombo = /** @class */ (function (_super) {
             [5, 4, 6, 5, 4],
         ];
         var _a = _this, root = _a.root, columnData = _a.columnData, areaData = _a.areaData, size = _a.size, padding = _a.padding;
-        _this.columns = miniChartHelpers_1.createColumnRects({
+        _this.columns = (0, miniChartHelpers_1.createColumnRects)({
             stacked: false,
             root: root,
             data: columnData,
@@ -70,7 +70,7 @@ var MiniAreaColumnCombo = /** @class */ (function (_super) {
         });
         _this.areas = pathData.map(function (points) {
             var area = new ag_charts_community_1._Scene.Path();
-            area.strokeWidth = 1;
+            area.strokeWidth = 0;
             area.fillOpacity = 0.8;
             var path = area.path;
             points.forEach(function (point, i) { return path[i > 0 ? 'lineTo' : 'moveTo'](point.x, point.y); });

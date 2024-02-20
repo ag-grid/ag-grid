@@ -64,20 +64,20 @@ export function dateToFormattedString(date, format) {
     var replace = {
         YYYY: function () { return fullYear.slice(fullYear.length - 4, fullYear.length); },
         YY: function () { return fullYear.slice(fullYear.length - 2, fullYear.length); },
-        Y: function () { return "" + date.getFullYear(); },
+        Y: function () { return "".concat(date.getFullYear()); },
         MMMM: function () { return months[date.getMonth()]; },
         MMM: function () { return months[date.getMonth()].slice(0, 3); },
         MM: function () { return padStartWidthZeros(date.getMonth() + 1, 2); },
-        Mo: function () { return "" + (date.getMonth() + 1) + calculateOrdinal(date.getMonth() + 1); },
-        M: function () { return "" + (date.getMonth() + 1); },
-        Do: function () { return "" + date.getDate() + calculateOrdinal(date.getDate()); },
+        Mo: function () { return "".concat(date.getMonth() + 1).concat(calculateOrdinal(date.getMonth() + 1)); },
+        M: function () { return "".concat(date.getMonth() + 1); },
+        Do: function () { return "".concat(date.getDate()).concat(calculateOrdinal(date.getDate())); },
         DD: function () { return padStartWidthZeros(date.getDate(), 2); },
-        D: function () { return "" + date.getDate(); },
+        D: function () { return "".concat(date.getDate()); },
         dddd: function () { return days[date.getDay()]; },
         ddd: function () { return days[date.getDay()].slice(0, 3); },
         dd: function () { return days[date.getDay()].slice(0, 2); },
-        do: function () { return "" + date.getDay() + calculateOrdinal(date.getDay()); },
-        d: function () { return "" + date.getDay(); },
+        do: function () { return "".concat(date.getDay()).concat(calculateOrdinal(date.getDay())); },
+        d: function () { return "".concat(date.getDay()); },
     };
     var regexp = new RegExp(Object.keys(replace).join('|'), 'g');
     return format.replace(regexp, function (match) {

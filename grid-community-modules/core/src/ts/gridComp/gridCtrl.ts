@@ -18,7 +18,6 @@ export interface IGridComp extends LayoutView {
     setRtlClass(cssClass: string): void;
     destroyGridUi(): void;
     forceFocusOutOfContainer(up: boolean): void;
-    addOrRemoveKeyboardFocusClass(value: boolean): void;
     getFocusableContainers(): HTMLElement[];
     setCursor(value: string | null): void;
     setUserSelect(value: string | null): void;
@@ -56,14 +55,6 @@ export class GridCtrl extends BeanStub {
         this.createManagedBean(new LayoutFeature(this.view));
 
         this.addRtlSupport();
-
-        this.addManagedListener(this, Events.EVENT_KEYBOARD_FOCUS, () => {
-            this.view.addOrRemoveKeyboardFocusClass(true);
-        });
-
-        this.addManagedListener(this, Events.EVENT_MOUSE_FOCUS, () => {
-            this.view.addOrRemoveKeyboardFocusClass(false);
-        });
 
         const unsubscribeFromResize = this.resizeObserverService.observeResize(
             this.eGridHostDiv, this.onGridSizeChanged.bind(this));
@@ -104,7 +95,7 @@ export class GridCtrl extends BeanStub {
     }
 
     private addRtlSupport(): void {
-        const cssClass = this.gridOptionsService.is('enableRtl') ? 'ag-rtl' : 'ag-ltr';
+        const cssClass = this.gridOptionsService.get('enableRtl') ? 'ag-rtl' : 'ag-ltr';
         this.view.setRtlClass(cssClass);
     }
 
@@ -137,7 +128,7 @@ export class GridCtrl extends BeanStub {
         return this.focusService.focusInto(focusableContainers[nextIdx]);
     }
 
-    public focusInnerElement(fromBottom?: boolean) {
+    public focusInnerElement(fromBottom?: boolean): boolean {
         const focusableContainers = this.view.getFocusableContainers();
         const allColumns = this.columnModel.getAllDisplayedColumns();
 
@@ -146,13 +137,21 @@ export class GridCtrl extends BeanStub {
                 return this.focusService.focusInto(last(focusableContainers), true);
             }
 
-
             const lastColumn = last(allColumns);
             if (this.focusService.focusGridView(lastColumn, true)) { return true; }
         }
-        
-        if (this.gridOptionsService.getNum('headerHeight') === 0) {
-            return this.focusService.focusGridView(allColumns[0]);
+
+        if (this.gridOptionsService.get('headerHeight') === 0 || this.gridOptionsService.get('suppressHeaderFocus')) {
+            if (this.focusService.focusGridView(allColumns[0])) {
+                return true;
+            }
+
+            for (let i = 1; i < focusableContainers.length; i++) {
+                if (this.focusService.focusInto(focusableContainers[i])) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         return this.focusService.focusFirstHeader();
@@ -161,5 +160,4 @@ export class GridCtrl extends BeanStub {
     public forceFocusOutOfContainer(up = false): void {
         this.view.forceFocusOutOfContainer(up);
     }
-
 }

@@ -52,13 +52,13 @@ var ChangeDetectionService = /** @class */ (function (_super) {
         this.doChangeDetection(event.node, event.column);
     };
     ChangeDetectionService.prototype.doChangeDetection = function (rowNode, column) {
-        if (this.gridOptionsService.is('suppressChangeDetection')) {
+        if (this.gridOptionsService.get('suppressChangeDetection')) {
             return;
         }
         var nodesToRefresh = [rowNode];
         // step 1 of change detection is to update the aggregated values
         if (this.clientSideRowModel && !rowNode.isRowPinned()) {
-            var onlyChangedColumns = this.gridOptionsService.is('aggregateOnlyChangedColumns');
+            var onlyChangedColumns = this.gridOptionsService.get('aggregateOnlyChangedColumns');
             var changedPath = new changedPath_1.ChangedPath(onlyChangedColumns, this.clientSideRowModel.getRootNode());
             changedPath.addParentNode(rowNode.parent, [column]);
             this.clientSideRowModel.doAggregate(changedPath);
@@ -71,16 +71,16 @@ var ChangeDetectionService = /** @class */ (function (_super) {
         this.rowRenderer.refreshCells({ rowNodes: nodesToRefresh });
     };
     __decorate([
-        context_1.Autowired('rowModel')
+        (0, context_1.Autowired)('rowModel')
     ], ChangeDetectionService.prototype, "rowModel", void 0);
     __decorate([
-        context_1.Autowired('rowRenderer')
+        (0, context_1.Autowired)('rowRenderer')
     ], ChangeDetectionService.prototype, "rowRenderer", void 0);
     __decorate([
         context_1.PostConstruct
     ], ChangeDetectionService.prototype, "init", null);
     ChangeDetectionService = __decorate([
-        context_1.Bean('changeDetectionService')
+        (0, context_1.Bean)('changeDetectionService')
     ], ChangeDetectionService);
     return ChangeDetectionService;
 }(beanStub_1.BeanStub));

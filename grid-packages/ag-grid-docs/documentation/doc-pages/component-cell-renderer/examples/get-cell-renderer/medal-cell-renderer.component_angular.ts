@@ -4,7 +4,7 @@ import { ICellRendererAngularComp } from "@ag-grid-community/angular";
 import { ICellRendererParams } from "@ag-grid-community/core"
 
 @Component({
-    selector: 'medal-component',
+    standalone: true,
     template: `<span>{{this.displayValue}}</span>`
 })
 export class MedalCellRenderer implements ICellRendererAngularComp {
@@ -17,7 +17,7 @@ export class MedalCellRenderer implements ICellRendererAngularComp {
     }
 
     medalUserFunction() {
-        console.log(`user function called for medal column: row = ${this.params.rowIndex}, column = ${this.params.column!.getId()}`);
+        console.log(`user function called for medal column: row = ${this.params.node.rowIndex}, column = ${this.params.column!.getId()}`);
     }
     refresh(params: ICellRendererParams) {
         return false;

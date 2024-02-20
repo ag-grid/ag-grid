@@ -78,13 +78,13 @@ const gridOptions = {
 Alternatively, the datasource can be registered via the grid API:
 
 <snippet>
-gridOptions.api.setServerSideDatasource(myDatasource);
+api.setGridOption('serverSideDatasource', myDatasource);
 </snippet>
 
 The example below demonstrates loading rows using a simple SSRM Datasource. Note the following:
 
 - The Server-Side Row Model is selected using the grid options property: `rowModelType = 'serverSide'`.
-- The datasource is registered with the grid using: `api.setServerSideDatasource(datasource)`.
+- The datasource is registered with the grid using: `api.setGridOption('serverSideDatasource', datasource)`.
 - The `getRows(params)` defines the request parameters, with `params` containing a `startRow` and `endRow` that determines the range of rows to return. For example, if the `getRows` function is called with `startRow: 0` and `endRow: 100`, then the grid will expect a result with 100 rows (rows 0 to 99).
 - When scrolling down there is a delay as more rows are fetched from the server.
 - Open the browser's dev console to view the contents of the request made by the grid for rows.

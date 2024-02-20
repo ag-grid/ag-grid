@@ -2,7 +2,7 @@ import classnames from 'classnames';
 import { Link } from 'gatsby';
 import React from 'react';
 import { connectStateResults, Highlight, Index, InfiniteHits, Snippet } from 'react-instantsearch-dom';
-import styles from './SearchResult.module.scss';
+import styles from '@design-system/modules/SearchResult.module.scss';
 
 const HitCount = connectStateResults(({ searchResults, hasResults }) => {
     const hitCount = searchResults && searchResults.nbHits;
@@ -16,7 +16,7 @@ const HitCount = connectStateResults(({ searchResults, hasResults }) => {
 
 const PageHit = ({ hit, onResultClicked }) => (
     <Link to={hit.path} onClick={onResultClicked}>
-        <div className={classnames(styles.breadcrumb, 'font-size-small')}>{hit.breadcrumb}</div>
+        <div className={classnames(styles.breadcrumb, 'text-sm')}>{hit.breadcrumb}</div>
         <h4>
             <Highlight attribute="title" hit={hit} tagName="mark" />
             {hit.heading && (
@@ -26,7 +26,7 @@ const PageHit = ({ hit, onResultClicked }) => (
                 </>
             )}
         </h4>
-        <Snippet className="font-size-small" attribute="text" hit={hit} tagName="mark" />
+        <Snippet className="text-sm" attribute="text" hit={hit} tagName="mark" />
     </Link>
 );
 

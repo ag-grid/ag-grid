@@ -3,11 +3,13 @@ import { ExcelOOXMLTemplate, XmlElement, _ } from '@ag-grid-community/core';
 const buildSharedString = (strMap: Map<string, number>): XmlElement[] => {
     const ret: XmlElement[] = [];
 
-    strMap.forEach((val, key) => {
+    for (const key of strMap.keys()) {
         const textNode = key.toString();
+
+
         const child: XmlElement = {
             name: 't',
-            textNode: _.utf8_encode(_.escapeString(textNode))
+            textNode: _.escapeString(textNode)
         };
 
         // if we have leading or trailing spaces, instruct Excel not to trim them
@@ -24,7 +26,7 @@ const buildSharedString = (strMap: Map<string, number>): XmlElement[] => {
             name: 'si',
             children: [child]
         });
-    });
+    }
 
     return ret;
 };

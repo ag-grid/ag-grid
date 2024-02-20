@@ -19,6 +19,7 @@ class TabGuardComp extends component_1.Component {
         this.addTabGuards(this.eTopGuard, this.eBottomGuard);
         this.tabGuardCtrl = this.createManagedBean(new tabGuardCtrl_1.TabGuardCtrl({
             comp: compProxy,
+            focusTrapActive: !!params.focusTrapActive,
             eTopGuard: this.eTopGuard,
             eBottomGuard: this.eBottomGuard,
             eFocusableElement: this.eFocusableElement,
@@ -27,14 +28,15 @@ class TabGuardComp extends component_1.Component {
             focusInnerElement: params.focusInnerElement,
             handleKeyDown: params.handleKeyDown,
             onTabKeyDown: params.onTabKeyDown,
-            shouldStopEventPropagation: params.shouldStopEventPropagation
+            shouldStopEventPropagation: params.shouldStopEventPropagation,
+            forceFocusOutWhenTabGuardsAreEmpty: params.forceFocusOutWhenTabGuardsAreEmpty
         }));
     }
     createTabGuard(side) {
         const tabGuard = document.createElement('div');
         const cls = side === 'top' ? tabGuardCtrl_1.TabGuardClassNames.TAB_GUARD_TOP : tabGuardCtrl_1.TabGuardClassNames.TAB_GUARD_BOTTOM;
         tabGuard.classList.add(tabGuardCtrl_1.TabGuardClassNames.TAB_GUARD, cls);
-        aria_1.setAriaRole(tabGuard, 'presentation');
+        (0, aria_1.setAriaRole)(tabGuard, 'presentation');
         return tabGuard;
     }
     addTabGuards(topTabGuard, bottomTabGuard) {
@@ -43,14 +45,14 @@ class TabGuardComp extends component_1.Component {
     }
     removeAllChildrenExceptTabGuards() {
         const tabGuards = [this.eTopGuard, this.eBottomGuard];
-        dom_1.clearElement(this.getFocusableElement());
+        (0, dom_1.clearElement)(this.getFocusableElement());
         this.addTabGuards(...tabGuards);
     }
     forceFocusOutOfContainer(up = false) {
         this.tabGuardCtrl.forceFocusOutOfContainer(up);
     }
     appendChild(newChild, container) {
-        if (!dom_1.isNodeOrElement(newChild)) {
+        if (!(0, dom_1.isNodeOrElement)(newChild)) {
             newChild = newChild.getGui();
         }
         const { eBottomGuard: bottomTabGuard } = this;

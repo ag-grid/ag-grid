@@ -35,7 +35,7 @@ export declare class GridBodyCtrl extends BeanStub {
     private ctrlsService;
     private columnModel;
     private scrollVisibleService;
-    private contextMenuFactory;
+    private menuService;
     private headerNavigationService;
     private dragAndDropService;
     private pinnedRowModel;

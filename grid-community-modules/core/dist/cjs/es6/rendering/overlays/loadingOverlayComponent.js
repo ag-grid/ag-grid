@@ -12,12 +12,17 @@ class LoadingOverlayComponent extends component_1.Component {
         super.destroy();
     }
     init(params) {
-        var _a;
-        const template = (_a = this.gridOptionsService.get('overlayLoadingTemplate')) !== null && _a !== void 0 ? _a : LoadingOverlayComponent.DEFAULT_LOADING_OVERLAY_TEMPLATE;
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
-        const localisedTemplate = template.replace('[LOADING...]', localeTextFunc('loadingOoo', 'Loading...'));
-        this.setTemplate(localisedTemplate);
+        const customTemplate = this.gridOptionsService.get('overlayLoadingTemplate');
+        this.setTemplate(customTemplate !== null && customTemplate !== void 0 ? customTemplate : LoadingOverlayComponent.DEFAULT_LOADING_OVERLAY_TEMPLATE);
+        if (!customTemplate) {
+            const localeTextFunc = this.localeService.getLocaleTextFunc();
+            // setTimeout is used because some screen readers only announce `aria-live` text when
+            // there is a "text change", so we force a change from empty.
+            setTimeout(() => {
+                this.getGui().textContent = localeTextFunc('loadingOoo', 'Loading...');
+            });
+        }
     }
 }
 exports.LoadingOverlayComponent = LoadingOverlayComponent;
-LoadingOverlayComponent.DEFAULT_LOADING_OVERLAY_TEMPLATE = '<span class="ag-overlay-loading-center">[LOADING...]</span>';
+LoadingOverlayComponent.DEFAULT_LOADING_OVERLAY_TEMPLATE = `<span aria-live="polite" aria-atomic="true" class="ag-overlay-loading-center"></span>`;

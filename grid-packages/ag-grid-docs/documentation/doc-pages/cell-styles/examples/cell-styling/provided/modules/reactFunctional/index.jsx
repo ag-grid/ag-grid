@@ -5,7 +5,7 @@ import { createRoot } from 'react-dom/client';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
@@ -13,7 +13,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const ragCellClassRules = {
     'rag-green-outer': params => params.value === 2008,
-    'rag-amber-outer': params => params.value === 2004,
+    'rag-blue-outer': params => params.value === 2004,
     'rag-red-outer': params => params.value === 2000,
 };
 
@@ -25,7 +25,7 @@ const cellStyle = (params) => {
 }
 
 const cellClass = (params) => {
-    return params.value === 'Swimming' ? 'rag-green' : 'rag-amber';
+    return params.value === 'Swimming' ? 'rag-green' : 'rag-blue';
 }
 
 const numberToColor = (val) => {
@@ -67,7 +67,7 @@ const GridExample = () => {
             valueParser: numberParser,
             cellClassRules: {
                 'rag-green': 'x < 20',
-                'rag-amber': 'x >= 20 && x < 25',
+                'rag-blue': 'x >= 20 && x < 25',
                 'rag-red': 'x >= 25',
             },
         },
@@ -79,7 +79,7 @@ const GridExample = () => {
             cellClassRules: ragCellClassRules,
             cellRenderer: ragRenderer,
         },
-        { field: 'date', cellClass: 'rag-amber' },
+        { field: 'date', cellClass: 'rag-blue' },
         {
             field: 'sport',
             cellClass: cellClass,
@@ -126,7 +126,7 @@ const GridExample = () => {
     return (
         <div style={containerStyle}>
 
-            <div style={gridStyle} className="ag-theme-alpine">
+            <div style={gridStyle} className={/** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
                 <AgGridReact
 
                     rowData={rowData}

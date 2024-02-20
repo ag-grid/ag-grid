@@ -23,7 +23,7 @@ const cellFactory = {
                 rawMap: {
                     r: ref,
                     t: convertedType === 'empty' ? undefined : convertedType,
-                    s: styleId ? stylesheet_1.getStyleId(styleId, currentSheet) : undefined
+                    s: styleId ? (0, stylesheet_1.getStyleId)(styleId, currentSheet) : undefined
                 }
             }
         };
@@ -34,7 +34,7 @@ const cellFactory = {
         if (convertedType === 'str' && type === 'f') {
             children = [{
                     name: 'f',
-                    textNode: core_1._.escapeString(core_1._.utf8_encode(value))
+                    textNode: core_1._.escapeString(value)
                 }];
         }
         else if (convertedType === 'inlineStr') {
@@ -42,14 +42,14 @@ const cellFactory = {
                     name: 'is',
                     children: [{
                             name: 't',
-                            textNode: core_1._.escapeString(core_1._.utf8_encode(value))
+                            textNode: core_1._.escapeString(value)
                         }]
                 }];
         }
         else {
             children = [{
                     name: 'v',
-                    textNode: value
+                    textNode: value,
                 }];
         }
         return Object.assign({}, obj, { children });

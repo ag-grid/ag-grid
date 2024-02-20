@@ -7,11 +7,11 @@ This section describes the behaviour of the Mini Filter and shows how it can be 
 
 The Mini Filter allows the user to search for particular values in the Filter List. Entering text into the Mini Filter will narrow down the presented list of values shown inside the Set Filter, but by default will not filter the data inside the grid.
 
-<image-caption src="filter-set-mini-filter/resources/mini-filter.gif" alt="Mini Filter" constrained="true" centered="true"></image-caption>
+<image-caption src="filter-set-mini-filter/resources/mini-filter.gif" alt="Mini Filter" constrained="true" centered="true" toggledarkmode="true"></image-caption>
 
 ## Keyboard Shortcuts
 
-When the <kbd>Enter</kbd> key is pressed while on the Mini Filter, the Set Filter will exclusively select all values in the Filter List that pass the Mini Filter and apply the filter immediately (note that even if an Apply Button is used, hitting <kbd>Enter</kbd> applies the filter).
+When the <kbd>↵ Enter</kbd> key is pressed while on the Mini Filter, the Set Filter will exclusively select all values in the Filter List that pass the Mini Filter and apply the filter immediately (note that even if an Apply Button is used, hitting <kbd>↵ Enter</kbd> applies the filter).
 
 Alternatively, you can choose to have the Mini Filter applied as the user is typing, i.e. as the Filter List is filtered, the Set Filter will be applied as described above so that the results in the grid will also be filtered at the same time. To enable this behaviour, use the following:
 
@@ -31,7 +31,7 @@ const gridOptions = {
 
 The following example demonstrates this behaviour. Note the following:
 
-- The Athlete column's Set Filter shows the Mini Filter with default behaviour. Try typing in the Mini Filter to search the Filter List, and then hit the <kbd>Enter</kbd> key and notice how the grid is filtered using the displayed values.
+- The Athlete column's Set Filter shows the Mini Filter with default behaviour. Try typing in the Mini Filter to search the Filter List, and then hit the <kbd>↵ Enter</kbd> key and notice how the grid is filtered using the displayed values.
 - The Country column's Set Filter applies the Mini Filter as you type because `filterParams.applyMiniFilterWhileTyping = true`.
 
 <grid-example title='Mini Filter Keyboard Shortcuts' name='mini-filter-keyboard-shortcuts' type='generated' options='{ "enterprise": true, "exampleHeight": 565, "modules": ["clientside", "setfilter", "menu"] }'></grid-example>
@@ -98,10 +98,10 @@ const gridOptions = {
 </snippet>
 
 <note>
-The `caseSensitive` option also affects the values presented in the [Filter List](/filter-set-filter-list/#enabling-value-case-sensitivity) and [API](/filter-set-api/#enabling-case-sensitivity) behaviours.
+The `caseSensitive` option also affects the values presented in the [Filter List](../filter-set-filter-list/#enabling-value-case-sensitivity) and [API](../filter-set-api/#enabling-case-sensitivity) behaviours.
 </note>
 
-See [Example: Filter List Case-Sensitivity](/filter-set-filter-list/#example-case-sensitive-set-filter-list) for a demonstration of the change in behaviour.
+See [Example: Filter List Case-Sensitivity](/filter-set-filter-list/#enabling-value-case-sensitivity) for a demonstration of the change in behaviour.
 
 ## Text Customisation
 

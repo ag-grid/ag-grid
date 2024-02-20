@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 // @ts-ignore
 import { hostPrefix } from '../utils/consts';
 // @ts-ignore
-import styles from './LearningVideos.module.scss';
+import styles from '@design-system/modules/LearningVideos.module.scss';
 
 type VideoData = {
     title: string;
@@ -22,9 +22,10 @@ const Video = ({ title, url, thumbnail, keyPoints, runningTime }: VideoData) => 
             <img alt={thumbnail.altText} src={`${hostPrefix}/videos/${thumbnail.image}`} />
 
             <div className={styles.body}>
-                <h2>
-                    {title} ({runningTime})
-                </h2>
+                <div className={styles.titleDurationWrapper}>
+                    <span className={styles.title}>{title}</span>
+                    <span className={styles.duration}>{runningTime}</span>
+                </div>
                 <ul>
                     {keyPoints?.map((keyPoint: string) => (
                         <li key={keyPoint}>{keyPoint}</li>
@@ -34,6 +35,8 @@ const Video = ({ title, url, thumbnail, keyPoints, runningTime }: VideoData) => 
         </a>
     );
 };
+
+
 const LearningVideos = ({ framework }: { framework: string }) => {
     const [videos, setVideos] = useState<{ [framework: string]: VideoData[] }>({});
     useEffect(() => {

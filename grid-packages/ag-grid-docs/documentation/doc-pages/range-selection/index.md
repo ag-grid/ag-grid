@@ -12,21 +12,21 @@ When enabled, ranges can be selected in the following ways:
 
 - **Mouse Drag:** Click the mouse down on a cell and drag and release the mouse over another cell. A range will be created between the two cells and clear any existing ranges.
 
-- **Ctrl & Mouse Drag:** Holding <kbd>Ctrl</kbd> key while creating a range using mouse drag <b>outside an existing range</b> will create a new range selection and keep any existing ranges.
+- **Ctrl & Mouse Drag:** Holding <kbd>^ Ctrl</kbd> key while creating a range using mouse drag **outside an existing range** will create a new range selection and keep any existing ranges.
 
-- **Shift & Click:** Clicking on one cell to focus that cell, then holding down <kbd>Shift</kbd> while clicking another cell, will create a range between both cells.
+- **Shift & Click:** Clicking on one cell to focus that cell, then holding down <kbd>⇧ Shift</kbd> while clicking another cell, will create a range between both cells.
 
-- **Shift & Arrow Keys:** Focusing a cell and then holding down <kbd>Shift</kbd> and using the arrow keys will create a range starting from the focused cell.
+- **Shift & Arrow Keys:** Focusing a cell and then holding down <kbd>⇧ Shift</kbd> and using the arrow keys will create a range starting from the focused cell.
 
-- **Ctrl & Shift & Arrow Keys:** Focusing a cell and then holding down <kbd>Ctrl</kbd> + <kbd>Shift</kbd> and using the arrow keys will create a range starting from the focused cell to the last cell in the direction of the Arrow pressed.
+- **Ctrl & Shift & Arrow Keys:** Focusing a cell and then holding down <kbd>^ Ctrl</kbd> + <kbd>⇧ Shift</kbd> and using the arrow keys will create a range starting from the focused cell to the last cell in the direction of the Arrow pressed.
 
 ### Range Deselection
 
 It is possible to deselect part of existing ranges in the following ways:
 
-- **Ctrl & Mouse Drag:** Holding <kbd>Ctrl</kbd> and dragging a range starting <b>within an existing range</b> will cause any cells covered by the new range to be deselected.
+- **Ctrl & Mouse Drag:** Holding <kbd>^ Ctrl</kbd> and dragging a range starting **within an existing range** will cause any cells covered by the new range to be deselected.
 
-- **Ctrl & Click:**  Holding <kbd>Ctrl</kbd> and clicking a cell will deselect just that cell.
+- **Ctrl & Click:**  Holding <kbd>^ Ctrl</kbd> and clicking a cell will deselect just that cell.
 
 Note that deselecting part of a range can split the range into multiple ranges, since individual ranges have the limitation of being rectangular.
 
@@ -36,7 +36,7 @@ The example below demonstrates simple range selection. Ranges can be selected in
 
 ## Suppress Multi Range Selection
 
-By default multiple ranges can be selected. To restrict range selection to a single range, even if the <kbd>Ctrl</kbd> key is held down, enable the following grid options property: `suppressMultiRangeSelection=true`.
+By default multiple ranges can be selected. To restrict range selection to a single range, even if the <kbd>^ Ctrl</kbd> key is held down, enable the following grid options property: `suppressMultiRangeSelection=true`.
 
 The following example demonstrates single range selection:
 
@@ -52,7 +52,9 @@ The above two (pinning and floating) can be thought of as follows: if you have a
 
 ## Range Selection Changed Event
 
-The `rangeSelectionChanged` event tells you that the range selection has changed. The event has two properties, `started` and `finished`, which are `true` when the selection is starting or finishing. For example, if selecting a range of 10 cells in a row, the user will click the first cell and drag to the last cell. This will result in up to 11 events. The first event will have `started=true`, the last will have `finished=true`, and all the intermediary events will have both of these values as `false`.
+The `rangeSelectionChanged` event tells you that the range selection has changed. The event has two properties, `started` and `finished`, which are `true` when the selection is starting or finishing. 
+
+For example, if selecting a range of 5 cells in a row, the user will click the first cell and drag to the last cell. This will result in up to 7 events. The first and last cell in the range will cause two events each. This is due to the first cell firing an event with `started=true, finished=true` upon mousedown with an additional event `started=true, finished=false` while in the range, and the last cell firing an event `started=false, finished=false` as soon as it is in the range and then again `started=false, finished=true` upon the end of range selection. All the intermediary events will have one event with both `started` and `finished` as `false`. 
 
 <api-documentation source='grid-events/events.json' section='selection' names='["rangeSelectionChanged"]' ></api-documentation>
 
@@ -86,9 +88,9 @@ Ranges are defined by a list of columns. Pass in either a) a list of columns or 
 
 ## Copy Range Down
 
-When you have more than one row selected in a range, pressing keys <kbd>Ctrl</kbd>+<kbd>D</kbd> will copy the top row values to all other rows in the selected range.
+When you have more than one row selected in a range, pressing keys <kbd>^ Ctrl</kbd>+<kbd>D</kbd> will copy the top row values to all other rows in the selected range.
 
-The Value Formatter and Value Parser can be used whilst copying the range by setting the [Use Value Formatter For Export](/value-formatters/#use-value-formatter-for-export) and [Use Value Parser for Import](/value-parsers/#use-value-parser-for-import) properties.
+By default, the Value Formatter and Value Parser will be used whilst copying the range via the [Use Value Formatter For Export](/value-formatters/#use-value-formatter-for-export) and [Use Value Parser for Import](/value-parsers/#use-value-parser-for-import) features.
 
 ## Delete Range
 
@@ -98,10 +100,10 @@ This will also emit the following events, which can be seen in the [Advanced Ran
 
 <api-documentation source='grid-events/events.json' section='editing' names='["rangeDeleteStart","rangeDeleteEnd"]' ></api-documentation>
 
-## Example: Advanced Range Selection
+## Advanced Range Selection
 
 The example below demonstrates a more complex range selection scenario. The example listens for the `rangeSelectionChanged` event and creates a sum of all the number values that are in the range (it ignores all non-number values). The `finished` flag is used to update the eager and lazy figures separately.
 
-The example also shows use of the `processCellForClipboard` and `processCellFromClipboard` [callbacks](/clipboard/#processing-clipboard-data) by making all the athlete names uppercase when copying into the clipboard and lowercase when copying from the clipboard.
+The example also shows use of the `processCellForClipboard` and `processCellFromClipboard` [callbacks](/clipboard/#processing-pasted-data) by making all the athlete names uppercase when copying into the clipboard and lowercase when copying from the clipboard.
 
 <grid-example title='Advanced Range Selection' name='range-selection-advanced' type='generated' options='{ "enterprise": true, "exampleHeight": 700, "modules": ["clientside", "range", "menu", "clipboard"] }'></grid-example>

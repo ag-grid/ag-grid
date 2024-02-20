@@ -37,7 +37,7 @@ var FullStore = /** @class */ (function (_super) {
     }
     FullStore.prototype.postConstruct = function () {
         var _this = this;
-        this.usingTreeData = this.gridOptionsService.isTreeData();
+        this.usingTreeData = this.gridOptionsService.get('treeData');
         this.nodeIdPrefix = this.blockUtils.createNodeIdPrefix(this.parentRowNode);
         if (!this.usingTreeData && this.groupLevel) {
             var groupColVo = this.ssrmParams.rowGroupCols[this.level];
@@ -47,13 +47,18 @@ var FullStore = /** @class */ (function (_super) {
         var initialRowCount = 1;
         var isRootStore = this.parentRowNode.level === -1;
         var userInitialRowCount = this.storeUtils.getServerSideInitialRowCount();
-        if (isRootStore && userInitialRowCount !== undefined) {
+        if (isRootStore && userInitialRowCount != null) {
             initialRowCount = userInitialRowCount;
         }
         this.initialiseRowNodes(initialRowCount);
         this.rowNodeBlockLoader.addBlock(this);
         this.addDestroyFunc(function () { return _this.rowNodeBlockLoader.removeBlock(_this); });
         this.postSortFunc = this.gridOptionsService.getCallback('postSortRows');
+        if (userInitialRowCount != null) {
+            this.eventService.dispatchEventOnce({
+                type: Events.EVENT_ROW_COUNT_READY
+            });
+        }
     };
     FullStore.prototype.destroyRowNodes = function () {
         this.blockUtils.destroyRowNodes(this.allRowNodes);
@@ -91,9 +96,7 @@ var FullStore = /** @class */ (function (_super) {
             parentBlock: this,
             parentNode: this.parentRowNode,
             storeParams: this.ssrmParams,
-            successCallback: this.pageLoaded.bind(this, this.getVersion()),
             success: this.success.bind(this, this.getVersion()),
-            failCallback: this.pageLoadFailed.bind(this, this.getVersion()),
             fail: this.pageLoadFailed.bind(this, this.getVersion())
         });
     };
@@ -138,7 +141,7 @@ var FullStore = /** @class */ (function (_super) {
         if (!this.isAlive()) {
             return;
         }
-        var info = params.storeInfo || params.groupLevelInfo;
+        var info = params.groupLevelInfo;
         if (info) {
             Object.assign(this.info, info);
         }
@@ -151,12 +154,16 @@ var FullStore = /** @class */ (function (_super) {
         this.nodesAfterFilter = [];
         this.allNodesMap = {};
         if (!params.rowData) {
-            var message_1 = 'AG Grid: "params.data" is missing from Server-Side Row Model success() callback. Please use the "data" attribute. If no data is returned, set an empty list.';
-            _.doOnce(function () { return console.warn(message_1, params); }, 'FullStore.noData');
+            _.warnOnce('"params.data" is missing from Server-Side Row Model success() callback. Please use the "data" attribute. If no data is returned, set an empty list.');
         }
         this.createOrRecycleNodes(nodesToRecycle, params.rowData);
         if (nodesToRecycle) {
             this.blockUtils.destroyRowNodes(_.getAllValuesInObject(nodesToRecycle));
+        }
+        if (this.level === 0) {
+            this.eventService.dispatchEventOnce({
+                type: Events.EVENT_ROW_COUNT_READY
+            });
         }
         this.filterAndSortNodes();
         this.fireStoreUpdatedEvent();
@@ -298,15 +305,19 @@ var FullStore = /** @class */ (function (_super) {
             }
         });
     };
-    FullStore.prototype.forEachNodeDeepAfterFilterAndSort = function (callback, sequence) {
+    FullStore.prototype.forEachNodeDeepAfterFilterAndSort = function (callback, sequence, includeFooterNodes) {
         if (sequence === void 0) { sequence = new NumberSequence(); }
+        if (includeFooterNodes === void 0) { includeFooterNodes = false; }
         this.nodesAfterSort.forEach(function (rowNode) {
             callback(rowNode, sequence.next());
             var childCache = rowNode.childStore;
             if (childCache) {
-                childCache.forEachNodeDeepAfterFilterAndSort(callback, sequence);
+                childCache.forEachNodeDeepAfterFilterAndSort(callback, sequence, includeFooterNodes);
             }
         });
+        if (includeFooterNodes && this.parentRowNode.sibling) {
+            callback(this.parentRowNode.sibling, sequence.next());
+        }
     };
     FullStore.prototype.getRowUsingDisplayIndex = function (displayRowIndex) {
         // this can happen if asking for a row that doesn't exist in the model,
@@ -425,7 +436,6 @@ var FullStore = /** @class */ (function (_super) {
             var params = {
                 transaction: transaction,
                 parentNode: this.parentRowNode,
-                storeInfo: this.info,
                 groupLevelInfo: this.info
             };
             var apply = applyCallback(params);
@@ -546,7 +556,7 @@ var FullStore = /** @class */ (function (_super) {
             });
             rowNode = this.allNodesMap[id];
             if (!rowNode) {
-                console.error("AG Grid: could not find row id=" + id + ", data item was not found for this id");
+                console.error("AG Grid: could not find row id=".concat(id, ", data item was not found for this id"));
                 return null;
             }
         }

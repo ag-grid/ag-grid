@@ -51,11 +51,11 @@ var AgComponentUtils = /** @class */ (function (_super) {
                 var callbackResult = callback(params);
                 var type = typeof callbackResult;
                 if (type === 'string' || type === 'number' || type === 'boolean') {
-                    this.eGui = dom_1.loadTemplate('<span>' + callbackResult + '</span>');
+                    this.eGui = (0, dom_1.loadTemplate)('<span>' + callbackResult + '</span>');
                     return;
                 }
                 if (callbackResult == null) {
-                    this.eGui = dom_1.loadTemplate('<span></span>');
+                    this.eGui = (0, dom_1.loadTemplate)('<span></span>');
                     return;
                 }
                 this.eGui = callbackResult;
@@ -71,10 +71,10 @@ var AgComponentUtils = /** @class */ (function (_super) {
         return candidate.prototype && 'getGui' in candidate.prototype;
     };
     __decorate([
-        context_1.Autowired("componentMetadataProvider")
+        (0, context_1.Autowired)("componentMetadataProvider")
     ], AgComponentUtils.prototype, "componentMetadataProvider", void 0);
     AgComponentUtils = __decorate([
-        context_1.Bean("agComponentUtils")
+        (0, context_1.Bean)("agComponentUtils")
     ], AgComponentUtils);
     return AgComponentUtils;
 }(beanStub_1.BeanStub));

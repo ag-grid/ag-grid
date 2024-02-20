@@ -1,16 +1,14 @@
 import { AgPromise } from '../utils';
 import { RefSelector } from '../widgets/componentAnnotations';
-import { ManagedFocusFeature } from '../widgets/managedFocusFeature';
 import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
 import { clearElement } from '../utils/dom';
 import { setAriaLabel, setAriaRole } from '../utils/aria';
-import { callIfPresent } from '../utils/function';
 import { KeyCode } from '../constants/keyCode';
-import { Component } from '../widgets/component';
 import { PostConstruct, Autowired } from '../context/context';
 import { FocusService } from '../focusService';
+import { TabGuardComp } from '../widgets/tabGuardComp';
 
-export class TabbedLayout extends Component {
+export class TabbedLayout extends TabGuardComp {
 
     @Autowired('focusService') private focusService: FocusService;
 
@@ -35,13 +33,12 @@ export class TabbedLayout extends Component {
 
     @PostConstruct
     private postConstruct() {
-        this.createManagedBean(new ManagedFocusFeature(
-            this.getFocusableElement(),
-            {
-                onTabKeyDown: this.onTabKeyDown.bind(this),
-                handleKeyDown: this.handleKeyDown.bind(this)
-            }
-        ));
+        this.initialiseTabGuard({
+            onTabKeyDown: this.onTabKeyDown.bind(this),
+            handleKeyDown: this.handleKeyDown.bind(this),
+            focusInnerElement: this.focusInnerElement.bind(this),
+            focusTrapActive: true
+        });
 
         this.addDestroyFunc(() => this.activeItem?.tabbedItem?.afterDetachedCallback?.());
     }
@@ -60,7 +57,7 @@ export class TabbedLayout extends Component {
             case KeyCode.LEFT:
                 if (!this.eHeader.contains(eDocument.activeElement)) { return; }
                 const isRightKey = e.key === KeyCode.RIGHT;
-                const isRtl = this.gridOptionsService.is('enableRtl');
+                const isRtl = this.gridOptionsService.get('enableRtl');
                 const currentPosition = this.items.indexOf(this.activeItem);
                 const nextPosition = isRightKey !== isRtl ? Math.min(currentPosition + 1, this.items.length - 1) : Math.max(currentPosition - 1, 0);
 
@@ -92,7 +89,7 @@ export class TabbedLayout extends Component {
 
         if (eHeader.contains(activeElement)) {
             // focus is in header, move into body of popup
-            focusService.focusInto(eBody, e.shiftKey);
+            this.focusBody(e.shiftKey);
             return;
         }
 
@@ -112,13 +109,29 @@ export class TabbedLayout extends Component {
             nextEl = focusService.findNextFocusableElement(eBody, false, e.shiftKey);
 
             if (!nextEl) {
-                nextEl = activeItem.eHeaderButton;
+                this.focusHeader();
             }
         }
 
         if (nextEl) {
             nextEl.focus();
         }
+    }
+
+    private focusInnerElement(fromBottom?: boolean): void {
+        if (fromBottom) {
+            this.focusHeader();
+        } else {
+            this.focusBody(true);
+        }
+    }
+
+    private focusHeader(): void {
+        this.activeItem.eHeaderButton.focus();
+    }
+
+    private focusBody(fromBottom?: boolean): void {
+        this.focusService.focusInto(this.eBody, fromBottom);
     }
 
     public setAfterAttachedParams(params: IAfterGuiAttachedParams): void {
@@ -162,12 +175,10 @@ export class TabbedLayout extends Component {
     private showItemWrapper(wrapper: TabbedItemWrapper): void {
         const { tabbedItem, eHeaderButton } = wrapper;
 
-        if (this.params.onItemClicked) {
-            this.params.onItemClicked({ item: tabbedItem });
-        }
+        this.params.onItemClicked?.({ item: tabbedItem });
 
         if (this.activeItem === wrapper) {
-            callIfPresent(this.params.onActiveItemClicked!);
+            this.params.onActiveItemClicked?.()
             return;
         }
 
@@ -217,8 +228,8 @@ export interface TabbedLayoutParams {
     items: TabbedItem[];
     cssClass?: string;
     keepScrollPosition?: boolean;
-    onItemClicked?: Function;
-    onActiveItemClicked?: Function;
+    onItemClicked?: (event: { item: TabbedItem }) => void;
+    onActiveItemClicked?: () => void;
 }
 
 export interface TabbedItem {

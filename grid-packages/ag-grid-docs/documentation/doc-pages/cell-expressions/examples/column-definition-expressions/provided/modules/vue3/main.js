@@ -2,7 +2,7 @@ import { createApp } from 'vue';
 import { AgGridVue } from '@ag-grid-community/vue3';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import "@ag-grid-community/styles/ag-grid.css";
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
@@ -13,7 +13,7 @@ const VueExample = {
       <div style="height: 100%">
       <ag-grid-vue
           style="width: 100%; height: 100%;"
-          class="ag-theme-alpine-dark"
+          :class="themeClass"
           id="myGrid"
           :gridOptions="gridOptions"
           @grid-ready="onGridReady"
@@ -30,7 +30,6 @@ const VueExample = {
         return {
             gridOptions: {},
             gridApi: null,
-            columnApi: null,
             columnDefs: [
                 {
                     headerName: "String (editable)",
@@ -38,16 +37,10 @@ const VueExample = {
                     editable: true,
                 },
                 {
-                    headerName: "Bad Number (editable)",
-                    field: "numberBad",
-                    editable: true,
-                },
-                {
-                    headerName: "Good Number (editable)",
-                    field: "numberGood",
+                    headerName: "Number (editable)",
+                    field: "number",
                     editable: true,
                     valueFormatter: `"£" + Math.floor(value).toString().replace(/(\\d)(?=(\\d{3})+(?!\\d))/g, "$1,")`,
-                    valueParser: 'Number(newValue)'
                 },
                 {
                     headerName: "Name (editable)",
@@ -66,28 +59,27 @@ const VueExample = {
                             return false;
                         }`
                 },
-                { headerName: "A", field: 'a', maxWidth: 120 },
-                { headerName: "B", field: 'b', maxWidth: 120 },
+                { headerName: "A", field: 'a', minWidth: 100 },
+                { headerName: "B", field: 'b', minWidth: 100 },
                 { headerName: "A + B", valueGetter: 'data.a + data.b', maxWidth: 120 }
             ],
             defaultColDef: {
                 flex: 1,
-                minWidth: 200,
-                resizable: true,
+                minWidth: 150,
+                sortable: false
             },
             rowData: this.createRowData(),
+            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
         };
     },
     mounted() {
-        this.gridApi = this.gridOptions.api;
-        this.gridColumnApi = this.gridOptions.columnApi;
     },
     methods: {
         onCellValueChanged(event) {
             console.log('data after changes is: ', event.data);
         },
         onGridReady(params) {
-            params.api.sizeColumnsToFit();
+            this.gridApi = params.api;
         },
         createRowData() {
             const rowData = [];
@@ -120,8 +112,7 @@ const VueExample = {
                     words[i % words.length] + ' ' + words[(i * 17) % words.length];
                 rowData.push({
                     simple: randomWords,
-                    numberBad: Math.floor(((i + 2) * 173456) % 10000),
-                    numberGood: Math.floor(((i + 2) * 476321) % 10000),
+                    number: Math.floor(((i + 2) * 476321) % 10000),
                     a: Math.floor(i % 4),
                     b: Math.floor(i % 7),
                     firstName: firstNames[i % firstNames.length],

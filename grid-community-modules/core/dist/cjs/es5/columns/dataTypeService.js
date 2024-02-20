@@ -47,16 +47,21 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DataTypeService = void 0;
 var context_1 = require("../context/context");
 var beanStub_1 = require("../context/beanStub");
 var eventKeys_1 = require("../eventKeys");
+var columnModel_1 = require("./columnModel");
 var object_1 = require("../utils/object");
 var moduleRegistry_1 = require("../modules/moduleRegistry");
 var moduleNames_1 = require("../modules/moduleNames");
@@ -94,14 +99,14 @@ var DataTypeService = /** @class */ (function (_super) {
     }
     DataTypeService.prototype.init = function () {
         var _this = this;
-        this.groupHideOpenParents = this.gridOptionsService.is('groupHideOpenParents');
+        this.groupHideOpenParents = this.gridOptionsService.get('groupHideOpenParents');
         this.addManagedPropertyListener('groupHideOpenParents', function () {
-            _this.groupHideOpenParents = _this.gridOptionsService.is('groupHideOpenParents');
+            _this.groupHideOpenParents = _this.gridOptionsService.get('groupHideOpenParents');
         });
         this.processDataTypeDefinitions();
-        this.addManagedPropertyListener('dataTypeDefinitions', function () {
+        this.addManagedPropertyListener('dataTypeDefinitions', function (event) {
             _this.processDataTypeDefinitions();
-            _this.columnModel.recreateColumnDefs('gridOptionsChanged');
+            _this.columnModel.recreateColumnDefs((0, columnModel_1.convertSourceType)(event.source));
         });
     };
     DataTypeService.prototype.processDataTypeDefinitions = function () {
@@ -140,7 +145,7 @@ var DataTypeService = /** @class */ (function (_super) {
         if (parentDataTypeDefinition.columnTypes &&
             childDataTypeDefinition.columnTypes &&
             childDataTypeDefinition.appendColumnTypes) {
-            mergedDataTypeDefinition.columnTypes = __spreadArray(__spreadArray([], __read(this.convertColumnTypes(parentDataTypeDefinition.columnTypes))), __read(this.convertColumnTypes(childDataTypeDefinition.columnTypes)));
+            mergedDataTypeDefinition.columnTypes = __spreadArray(__spreadArray([], __read(this.convertColumnTypes(parentDataTypeDefinition.columnTypes)), false), __read(this.convertColumnTypes(childDataTypeDefinition.columnTypes)), false);
         }
         return mergedDataTypeDefinition;
     };
@@ -152,6 +157,11 @@ var DataTypeService = /** @class */ (function (_super) {
         }
         if (dataTypeDefinition.extendsDataType === dataTypeDefinition.baseDataType) {
             var baseDataTypeDefinition = defaultDataTypes[extendsCellDataType];
+            var overriddenBaseDataTypeDefinition = dataTypeDefinitions[extendsCellDataType];
+            if (baseDataTypeDefinition && overriddenBaseDataTypeDefinition) {
+                // only if it's valid do we override with a provided one
+                baseDataTypeDefinition = overriddenBaseDataTypeDefinition;
+            }
             if (!this.validateDataTypeDefinition(dataTypeDefinition, baseDataTypeDefinition, extendsCellDataType)) {
                 return undefined;
             }
@@ -159,14 +169,14 @@ var DataTypeService = /** @class */ (function (_super) {
         }
         else {
             if (alreadyProcessedDataTypes.includes(extendsCellDataType)) {
-                function_1.doOnce(function () { return console.warn('AG Grid: Data type definition hierarchies (via the "extendsDataType" property) cannot contain circular references.'); }, 'dataTypeExtendsCircularRef');
+                (0, function_1.warnOnce)('Data type definition hierarchies (via the "extendsDataType" property) cannot contain circular references.');
                 return undefined;
             }
             var extendedDataTypeDefinition = dataTypeDefinitions[extendsCellDataType];
             if (!this.validateDataTypeDefinition(dataTypeDefinition, extendedDataTypeDefinition, extendsCellDataType)) {
                 return undefined;
             }
-            var mergedExtendedDataTypeDefinition = this.processDataTypeDefinition(extendedDataTypeDefinition, dataTypeDefinitions, __spreadArray(__spreadArray([], __read(alreadyProcessedDataTypes)), [extendsCellDataType]), defaultDataTypes);
+            var mergedExtendedDataTypeDefinition = this.processDataTypeDefinition(extendedDataTypeDefinition, dataTypeDefinitions, __spreadArray(__spreadArray([], __read(alreadyProcessedDataTypes), false), [extendsCellDataType], false), defaultDataTypes);
             if (!mergedExtendedDataTypeDefinition) {
                 return undefined;
             }
@@ -176,11 +186,11 @@ var DataTypeService = /** @class */ (function (_super) {
     };
     DataTypeService.prototype.validateDataTypeDefinition = function (dataTypeDefinition, parentDataTypeDefinition, parentCellDataType) {
         if (!parentDataTypeDefinition) {
-            function_1.doOnce(function () { return console.warn("AG Grid: The data type definition " + parentCellDataType + " does not exist."); }, 'dataTypeDefMissing' + parentCellDataType);
+            (0, function_1.warnOnce)("The data type definition ".concat(parentCellDataType, " does not exist."));
             return false;
         }
         if (parentDataTypeDefinition.baseDataType !== dataTypeDefinition.baseDataType) {
-            function_1.doOnce(function () { return console.warn('AG Grid: The "baseDataType" property of a data type definition must match that of its parent.'); }, 'dataTypeBaseTypesMatch');
+            (0, function_1.warnOnce)('The "baseDataType" property of a data type definition must match that of its parent.');
             return false;
         }
         return true;
@@ -216,7 +226,11 @@ var DataTypeService = /** @class */ (function (_super) {
                         }
                     }
                 }
-                return undefined;
+                // we don't want to double format the value
+                // as this is already formatted by using the valueFormatter as the keyCreator
+                if (!_this.gridOptionsService.get('suppressGroupMaintainValueType')) {
+                    return undefined;
+                }
             }
             else if (_this.groupHideOpenParents && params.column.isRowGroupActive()) {
                 // `groupHideOpenParents` passes leaf values in the group column, so need to format still.
@@ -224,7 +238,11 @@ var DataTypeService = /** @class */ (function (_super) {
                 if (typeof params.value !== 'string' || ((_b = dataTypeDefinition.dataTypeMatcher) === null || _b === void 0 ? void 0 : _b.call(dataTypeDefinition, params.value))) {
                     return dataTypeDefinition.valueFormatter(params);
                 }
-                return undefined;
+                // we don't want to double format the value
+                // as this is already formatted by using the valueFormatter as the keyCreator
+                if (!_this.gridOptionsService.get('suppressGroupMaintainValueType')) {
+                    return undefined;
+                }
             }
             return dataTypeDefinition.valueFormatter(params);
         };
@@ -244,7 +262,7 @@ var DataTypeService = /** @class */ (function (_super) {
         }
         var dataTypeDefinition = this.dataTypeDefinitions[cellDataType];
         if (!dataTypeDefinition) {
-            function_1.doOnce(function () { return console.warn("AG Grid: Missing data type definition - \"" + cellDataType + "\""); }, 'dataTypeMissing' + cellDataType);
+            (0, function_1.warnOnce)("Missing data type definition - \"".concat(cellDataType, "\""));
             return undefined;
         }
         colDef.cellDataType = cellDataType;
@@ -333,8 +351,8 @@ var DataTypeService = /** @class */ (function (_super) {
         var value;
         var initialData = this.getInitialData();
         if (initialData) {
-            var fieldContainsDots = field.indexOf('.') >= 0 && !this.gridOptionsService.is('suppressFieldDotNotation');
-            value = object_1.getValueUsingField(initialData, field, fieldContainsDots);
+            var fieldContainsDots = field.indexOf('.') >= 0 && !this.gridOptionsService.get('suppressFieldDotNotation');
+            value = (0, object_1.getValueUsingField)(initialData, field, fieldContainsDots);
         }
         else {
             this.initWaitForRowData(colId);
@@ -413,7 +431,7 @@ var DataTypeService = /** @class */ (function (_super) {
                 return;
             }
             var oldColDef = column.getColDef();
-            if (!_this.columnModel.resetColumnDefIntoColumn(column)) {
+            if (!_this.columnModel.resetColumnDefIntoColumn(column, 'cellDataTypeInferred')) {
                 return;
             }
             var newColDef = column.getColDef();
@@ -429,7 +447,7 @@ var DataTypeService = /** @class */ (function (_super) {
             }
         });
         if (columnTypeOverridesExist) {
-            state.push.apply(state, __spreadArray([], __read(this.columnModel.generateColumnStateForRowGroupAndPivotIndexes(newRowGroupColumnStateWithoutIndex, newPivotColumnStateWithoutIndex))));
+            state.push.apply(state, __spreadArray([], __read(this.columnModel.generateColumnStateForRowGroupAndPivotIndexes(newRowGroupColumnStateWithoutIndex, newPivotColumnStateWithoutIndex)), false));
         }
         if (state.length) {
             this.columnModel.applyColumnState({ state: state }, 'cellDataTypeInferred');
@@ -461,7 +479,7 @@ var DataTypeService = /** @class */ (function (_super) {
         if (type instanceof Array) {
             var invalidArray = type.some(function (a) { return typeof a !== 'string'; });
             if (invalidArray) {
-                console.warn("AG Grid: if colDef.type is supplied an array it should be of type 'string[]'");
+                console.warn("if colDef.type is supplied an array it should be of type 'string[]'");
             }
             else {
                 typeKeys = type;
@@ -471,18 +489,22 @@ var DataTypeService = /** @class */ (function (_super) {
             typeKeys = type.split(',');
         }
         else {
-            console.warn("AG Grid: colDef.type should be of type 'string' | 'string[]'");
+            console.warn("colDef.type should be of type 'string' | 'string[]'");
         }
         return typeKeys;
     };
-    DataTypeService.prototype.getDateStringTypeDefinition = function () {
-        return this.dataTypeDefinitions.dateString;
+    DataTypeService.prototype.getDateStringTypeDefinition = function (column) {
+        var _a;
+        if (!column) {
+            return this.dataTypeDefinitions.dateString;
+        }
+        return ((_a = this.getDataTypeDefinition(column)) !== null && _a !== void 0 ? _a : this.dataTypeDefinitions.dateString);
     };
-    DataTypeService.prototype.getDateParserFunction = function () {
-        return this.getDateStringTypeDefinition().dateParser;
+    DataTypeService.prototype.getDateParserFunction = function (column) {
+        return this.getDateStringTypeDefinition(column).dateParser;
     };
-    DataTypeService.prototype.getDateFormatterFunction = function () {
-        return this.getDateStringTypeDefinition().dateFormatter;
+    DataTypeService.prototype.getDateFormatterFunction = function (column) {
+        return this.getDateStringTypeDefinition(column).dateFormatter;
     };
     DataTypeService.prototype.getDataTypeDefinition = function (column) {
         var colDef = column.getColDef();
@@ -509,10 +531,10 @@ var DataTypeService = /** @class */ (function (_super) {
     DataTypeService.prototype.validateColDef = function (colDef) {
         if (colDef.cellDataType === 'object') {
             if (colDef.valueFormatter === this.dataTypeDefinitions.object.groupSafeValueFormatter && !this.hasObjectValueFormatter) {
-                function_1.doOnce(function () { return console.warn('AG Grid: Cell data type is "object" but no value formatter has been provided. Please either provide an object data type definition with a value formatter, or set "colDef.valueFormatter"'); }, 'dataTypeObjectValueFormatter');
+                (0, function_1.warnOnce)('Cell data type is "object" but no value formatter has been provided. Please either provide an object data type definition with a value formatter, or set "colDef.valueFormatter"');
             }
             if (colDef.editable && colDef.valueParser === this.dataTypeDefinitions.object.valueParser && !this.hasObjectValueParser) {
-                function_1.doOnce(function () { return console.warn('AG Grid: Cell data type is "object" but no value parser has been provided. Please either provide an object data type definition with a value parser, or set "colDef.valueParser"'); }, 'dataTypeObjectValueParser');
+                (0, function_1.warnOnce)('Cell data type is "object" but no value parser has been provided. Please either provide an object data type definition with a value parser, or set "colDef.valueParser"');
             }
         }
     };
@@ -531,8 +553,6 @@ var DataTypeService = /** @class */ (function (_super) {
             var filterParams = colDef.filterParams;
             colDef.filterParams = typeof filterParams === 'object' ? __assign(__assign({}, filterParams), params) : params;
         };
-        colDef.useValueFormatterForExport = true;
-        colDef.useValueParserForImport = true;
         switch (dataTypeDefinition.baseDataType) {
             case 'number': {
                 colDef.cellEditor = 'agNumberCellEditor';
@@ -556,7 +576,7 @@ var DataTypeService = /** @class */ (function (_super) {
                 if (usingSetFilter) {
                     mergeFilterParams({
                         valueFormatter: function (params) {
-                            if (!generic_1.exists(params.value)) {
+                            if (!(0, generic_1.exists)(params.value)) {
                                 return translate('blanks', '(Blanks)');
                             }
                             return translate(String(params.value), params.value ? 'True' : 'False');
@@ -566,6 +586,7 @@ var DataTypeService = /** @class */ (function (_super) {
                 else {
                     mergeFilterParams({
                         maxNumConditions: 1,
+                        debounceMs: 0,
                         filterOptions: [
                             'empty',
                             {
@@ -592,7 +613,7 @@ var DataTypeService = /** @class */ (function (_super) {
                     mergeFilterParams({
                         valueFormatter: function (params) {
                             var valueFormatted = formatValue(params.column, params.node, params.value);
-                            return generic_1.exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
+                            return (0, generic_1.exists)(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
                         },
                         treeList: true,
                         treeListFormatter: function (pathKey, level) {
@@ -609,12 +630,12 @@ var DataTypeService = /** @class */ (function (_super) {
             case 'dateString': {
                 colDef.cellEditor = 'agDateStringCellEditor';
                 colDef.keyCreator = function (params) { return formatValue(params.column, params.node, params.value); };
-                var convertToDate_1 = this.getDateParserFunction();
+                var convertToDate_1 = dataTypeDefinition.dateParser;
                 if (usingSetFilter) {
                     mergeFilterParams({
                         valueFormatter: function (params) {
                             var valueFormatted = formatValue(params.column, params.node, params.value);
-                            return generic_1.exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
+                            return (0, generic_1.exists)(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
                         },
                         treeList: true,
                         treeListPathGetter: function (value) {
@@ -667,7 +688,7 @@ var DataTypeService = /** @class */ (function (_super) {
                     mergeFilterParams({
                         valueFormatter: function (params) {
                             var valueFormatted = formatValue(params.column, params.node, params.value);
-                            return generic_1.exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
+                            return (0, generic_1.exists)(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
                         }
                     });
                 }
@@ -684,7 +705,13 @@ var DataTypeService = /** @class */ (function (_super) {
         return {
             number: {
                 baseDataType: 'number',
-                valueParser: function (params) { return params.newValue === '' ? null : Number(params.newValue); },
+                // can be empty space with legacy copy
+                valueParser: function (params) {
+                    var _a, _b;
+                    return ((_b = (_a = params.newValue) === null || _a === void 0 ? void 0 : _a.trim) === null || _b === void 0 ? void 0 : _b.call(_a)) === ''
+                        ? null
+                        : Number(params.newValue);
+                },
                 valueFormatter: function (params) {
                     if (params.value == null) {
                         return '';
@@ -698,18 +725,27 @@ var DataTypeService = /** @class */ (function (_super) {
             },
             text: {
                 baseDataType: 'text',
-                valueParser: function (params) { return params.newValue === '' ? null : generic_1.toStringOrNull(params.newValue); },
+                valueParser: function (params) { return params.newValue === '' ? null : (0, generic_1.toStringOrNull)(params.newValue); },
                 dataTypeMatcher: function (value) { return typeof value === 'string'; },
             },
             boolean: {
                 baseDataType: 'boolean',
-                valueParser: function (params) { return params.newValue === '' ? null : String(params.newValue).toLowerCase() === 'true'; },
+                valueParser: function (params) {
+                    var _a, _b;
+                    if (params.newValue == null) {
+                        return params.newValue;
+                    }
+                    // can be empty space with legacy copy
+                    return ((_b = (_a = params.newValue) === null || _a === void 0 ? void 0 : _a.trim) === null || _b === void 0 ? void 0 : _b.call(_a)) === ''
+                        ? null
+                        : String(params.newValue).toLowerCase() === 'true';
+                },
                 valueFormatter: function (params) { return params.value == null ? '' : String(params.value); },
                 dataTypeMatcher: function (value) { return typeof value === 'boolean'; },
             },
             date: {
                 baseDataType: 'date',
-                valueParser: function (params) { return date_1.parseDateTimeFromString(params.newValue == null ? null : String(params.newValue)); },
+                valueParser: function (params) { return (0, date_1.parseDateTimeFromString)(params.newValue == null ? null : String(params.newValue)); },
                 valueFormatter: function (params) {
                     var _a;
                     if (params.value == null) {
@@ -718,14 +754,14 @@ var DataTypeService = /** @class */ (function (_super) {
                     if (!(params.value instanceof Date) || isNaN(params.value.getTime())) {
                         return translate('invalidDate', 'Invalid Date');
                     }
-                    return (_a = date_1.serialiseDate(params.value, false)) !== null && _a !== void 0 ? _a : '';
+                    return (_a = (0, date_1.serialiseDate)(params.value, false)) !== null && _a !== void 0 ? _a : '';
                 },
                 dataTypeMatcher: function (value) { return value instanceof Date; },
             },
             dateString: {
                 baseDataType: 'dateString',
-                dateParser: function (value) { var _a; return (_a = date_1.parseDateTimeFromString(value)) !== null && _a !== void 0 ? _a : undefined; },
-                dateFormatter: function (value) { var _a; return (_a = date_1.serialiseDate(value !== null && value !== void 0 ? value : null, false)) !== null && _a !== void 0 ? _a : undefined; },
+                dateParser: function (value) { var _a; return (_a = (0, date_1.parseDateTimeFromString)(value)) !== null && _a !== void 0 ? _a : undefined; },
+                dateFormatter: function (value) { var _a; return (_a = (0, date_1.serialiseDate)(value !== null && value !== void 0 ? value : null, false)) !== null && _a !== void 0 ? _a : undefined; },
                 valueParser: function (params) { return defaultDateFormatMatcher(String(params.newValue)) ? params.newValue : null; },
                 valueFormatter: function (params) { return defaultDateFormatMatcher(String(params.value)) ? params.value : ''; },
                 dataTypeMatcher: function (value) { return typeof value === 'string' && defaultDateFormatMatcher(value); },
@@ -733,30 +769,30 @@ var DataTypeService = /** @class */ (function (_super) {
             object: {
                 baseDataType: 'object',
                 valueParser: function () { return null; },
-                valueFormatter: function (params) { var _a; return (_a = generic_1.toStringOrNull(params.value)) !== null && _a !== void 0 ? _a : ''; },
+                valueFormatter: function (params) { var _a; return (_a = (0, generic_1.toStringOrNull)(params.value)) !== null && _a !== void 0 ? _a : ''; },
             }
         };
     };
     __decorate([
-        context_1.Autowired('rowModel')
+        (0, context_1.Autowired)('rowModel')
     ], DataTypeService.prototype, "rowModel", void 0);
     __decorate([
-        context_1.Autowired('columnModel')
+        (0, context_1.Autowired)('columnModel')
     ], DataTypeService.prototype, "columnModel", void 0);
     __decorate([
-        context_1.Autowired('columnUtils')
+        (0, context_1.Autowired)('columnUtils')
     ], DataTypeService.prototype, "columnUtils", void 0);
     __decorate([
-        context_1.Autowired('valueService')
+        (0, context_1.Autowired)('valueService')
     ], DataTypeService.prototype, "valueService", void 0);
     __decorate([
-        context_1.Autowired('valueFormatterService')
+        (0, context_1.Autowired)('valueFormatterService')
     ], DataTypeService.prototype, "valueFormatterService", void 0);
     __decorate([
         context_1.PostConstruct
     ], DataTypeService.prototype, "init", null);
     DataTypeService = __decorate([
-        context_1.Bean('dataTypeService')
+        (0, context_1.Bean)('dataTypeService')
     ], DataTypeService);
     return DataTypeService;
 }(beanStub_1.BeanStub));

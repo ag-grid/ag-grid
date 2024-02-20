@@ -1,13 +1,13 @@
 @use '../core' as *;
 
 .card {
-    --card-color: var(--border-color);
-    --header-tint: 0.775;
-    --content-tint: 0.95;
+    --card-color: var(--color-border-primary);
+    --header-tint: 77.5%;
+    --content-tint: 95%;
 
     display: flex;
     flex-direction: column;
-    border-radius: calc(var(--border-radius) * 2);
+    border-radius: var(--radius-md);
     border: 3px solid var(--card-color);
     background-color: var(--card-color);
     overflow: hidden;
@@ -15,27 +15,15 @@
     header,
     .header,
     .top {
-        padding: $size-1 $size-2;
-        background-color: rgba(255, 255, 255, var(--header-tint));
+        padding: $spacing-size-2 $spacing-size-4;
+        background-color: color-mix(in srgb, var(--color-bg-primary) var(--header-tint), var(--card-color));
     }
 
     .content,
     .bottom {
         flex-grow: 1;
-        padding: $size-2;
-        background-color: rgba(255, 255, 255, var(--content-tint));
-    }
-
-    &.single-application {
-        --card-color: #0f5bce;
-        --header-tint: 0.9;
-        --content-tint: 0.96;
-    }
-
-    &.multiple-application {
-        --card-color: #2aaa33;
-        --header-tint: 0.91;
-        --content-tint: 0.97;
+        padding: $spacing-size-4;
+        background-color: color-mix(in srgb, var(--color-bg-primary) var(--content-tint), var(--card-color));
     }
 }
 
@@ -43,92 +31,22 @@
     header,
     .tabs-header {
         display: flex;
-        gap: 0 $size-4;
+        gap: 0 $spacing-size-8;
         width: 100%;
-        border-top-right-radius: var(--border-radius);
-        border-top-left-radius: var(--border-radius);
-        border-top: 2px solid var(--border-color);
-        border-right: 2px solid var(--border-color);
-        border-left: 2px solid var(--border-color);
-        box-shadow: inset 0 -2px 0 0 var(--bright-blue-gray);
+        border-top-right-radius: var(--radius-sm);
+        border-top-left-radius: var(--radius-sm);
+        border-top: 1px solid var(--color-border-secondary);
+        border-right: 1px solid var(--color-border-secondary);
+        border-left: 1px solid var(--color-border-secondary);
+        box-shadow: inset 0 -1px 0 0 var(--color-border-secondary);
         overflow-x: auto;
-    }
 
-    .tabs-nav-list {
-        display: flex;
-        flex-shrink: 0;
-        margin: 0;
-        padding-left: $size-half;
-        list-style-type: none;
-        border-bottom: none;
-    }
-
-    .tabs-nav-item {
-        margin-bottom: 0;
-        padding-left: $size-1;
-        padding-right: $size-1;
-    }
-
-    .tabs-nav-link {
-        --button-text-color: var(--secondary-text-color);
-
-        position: relative;
-        display: inline-block;
-        padding: ($size-1 + $size-half) $size-half;
-        line-height: var(--line-height-tight);
-        transition: color $default-transition-timing;
-        cursor: pointer;
-
-        &:hover {
-            --button-text-color: var(--link-color);
+        #{$selector-darkmode} & {
+            border-top-right-radius: 8px;
+            border-top-left-radius: 8px;
+            box-shadow: inset 0 0px 0 0;
+            border: 1px solid var(--color-border-secondary);
         }
-
-        &::after {
-            content: '';
-            position: absolute;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            height: 2px;
-            opacity: 0;
-            background-color: var(--link-color);
-            transition: opacity 0.3s ease-in-out;
-        }
-
-        &:hover::after {
-            opacity: 0.6666;
-        }
-
-        svg {
-            --icon-size: #{$size-3};
-
-            margin: -0.125em 0 0;
-            transition: fill $default-transition-timing;
-        }
-    }
-
-    .tabs-nav-link.active {
-        --button-text-color: var(--text-color);
-
-        pointer-events: none;
-
-        &::after {
-            opacity: 1;
-        }
-
-        svg {
-            transition: none;
-        }
-    }
-
-    .tabs-content {
-        position: relative;
-        border-bottom-right-radius: var(--border-radius);
-        border-bottom-left-radius: var(--border-radius);
-        border-right: 2px solid var(--border-color);
-        border-bottom: 2px solid var(--border-color);
-        border-left: 2px solid var(--border-color);
-        padding: $size-2;
     }
 
     pre.code {
@@ -137,7 +55,86 @@
 
     // If the only item in a tab is a code snippet ignore padding & remove border
     div[tab-label] pre.code:only-child {
-        margin: -$size-2;
+        margin: -$spacing-size-4;
         border: none;
+    }
+}
+
+.tabs-nav-list {
+    display: flex;
+    flex-shrink: 0;
+    margin: 0;
+    padding-left: 0px;
+    list-style-type: none;
+    border-bottom: none;
+}
+
+.tabs-nav-item {
+    margin-bottom: 0;
+    padding-left: $spacing-size-2;
+    padding-right: $spacing-size-2;
+}
+
+.tabs-nav-link {
+    position: relative;
+    display: inline-block;
+    padding: ($spacing-size-2 + $spacing-size-1) $spacing-size-1;
+    line-height: var(--text-lh-tight);
+    color: var(--color-fg-tertiary);
+    transition: color $transition-default-timing;
+    cursor: pointer;
+
+    &:hover {
+        color: var(--color-link);
+    }
+
+    &::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        height: 2px;
+        opacity: 0;
+        background-color: var(--color-link);
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    &:hover::after {
+        opacity: 0.6666;
+    }
+
+    svg {
+        --icon-size: #{$spacing-size-6};
+
+        margin: -0.125em 0 0;
+        transition: fill $transition-default-timing;
+    }
+}
+
+.tabs-nav-link.active {
+    color: var(--color-fg-primary);
+    pointer-events: none;
+
+    &::after {
+        opacity: 1;
+    }
+
+    svg {
+        transition: none;
+    }
+}
+
+.tabs-content {
+    position: relative;
+    border-bottom-right-radius: var(--radius-sm);
+    border-bottom-left-radius: var(--radius-sm);
+    border-right: 1px solid var(--color-border-secondary);
+    border-bottom: 1px solid var(--color-border-secondary);
+    border-left: 1px solid var(--color-border-secondary);
+    padding: $spacing-size-4;
+
+    pre {
+        border-radius: var(--radius-none);
     }
 }

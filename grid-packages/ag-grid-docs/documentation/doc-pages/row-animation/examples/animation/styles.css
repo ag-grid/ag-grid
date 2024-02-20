@@ -12,7 +12,9 @@
 .example-header {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 13px;
-    padding: 5px;
+    padding: 8px;
+    margin-bottom: 10px;
+    border-radius: 8px;
     background-color: #0f0f0f;
 }
 

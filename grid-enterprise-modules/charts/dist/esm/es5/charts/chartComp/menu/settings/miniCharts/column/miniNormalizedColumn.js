@@ -16,8 +16,8 @@ var __extends = (this && this.__extends) || (function () {
 import { MiniStackedColumn } from "./miniStackedColumn";
 var MiniNormalizedColumn = /** @class */ (function (_super) {
     __extends(MiniNormalizedColumn, _super);
-    function MiniNormalizedColumn(container, fills, strokes) {
-        return _super.call(this, container, fills, strokes, MiniNormalizedColumn.data, [0, 10], "normalizedColumnTooltip") || this;
+    function MiniNormalizedColumn(container, fills, strokes, themeTemplateParameters, isCustomTheme) {
+        return _super.call(this, container, fills, strokes, themeTemplateParameters, isCustomTheme, MiniNormalizedColumn.data, [0, 10], "normalizedColumnTooltip") || this;
     }
     MiniNormalizedColumn.chartType = 'normalizedColumn';
     MiniNormalizedColumn.data = [

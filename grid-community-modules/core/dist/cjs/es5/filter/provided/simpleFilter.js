@@ -30,10 +30,14 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SimpleFilter = exports.SimpleFilterModelFormatter = void 0;
@@ -73,7 +77,7 @@ var SimpleFilterModelFormatter = /** @class */ (function () {
             }
             var customOptions = conditions.map(function (condition) { return _this.getModelAsString(condition); });
             var joinOperatorTranslateKey = combinedModel.operator === 'AND' ? 'andCondition' : 'orCondition';
-            return customOptions.join(" " + translate(joinOperatorTranslateKey, filterLocaleText_1.DEFAULT_FILTER_LOCALE_TEXT[joinOperatorTranslateKey]) + " ");
+            return customOptions.join(" ".concat(translate(joinOperatorTranslateKey, filterLocaleText_1.FILTER_LOCALE_TEXT[joinOperatorTranslateKey]), " "));
         }
         else if (model.type === SimpleFilter.BLANK || model.type === SimpleFilter.NOT_BLANK) {
             return translate(model.type, model.type);
@@ -212,9 +216,41 @@ var SimpleFilter = /** @class */ (function (_super) {
             var aCombined = a;
             var bCombined = b;
             res = aCombined.operator === bCombined.operator
-                && array_1.areEqual(aCombined.conditions, bCombined.conditions, function (aModel, bModel) { return _this.areSimpleModelsEqual(aModel, bModel); });
+                && (0, array_1.areEqual)(aCombined.conditions, bCombined.conditions, function (aModel, bModel) { return _this.areSimpleModelsEqual(aModel, bModel); });
         }
         return res;
+    };
+    SimpleFilter.prototype.shouldRefresh = function (newParams) {
+        var _a, _b, _c;
+        var model = this.getModel();
+        var conditions = model ? ((_a = model.conditions) !== null && _a !== void 0 ? _a : [model]) : null;
+        // Do Not refresh when one of the existing condition options is not in new options list
+        var newOptionsList = (_c = (_b = newParams.filterOptions) === null || _b === void 0 ? void 0 : _b.map(function (option) { return typeof option === 'string' ? option : option.displayKey; })) !== null && _c !== void 0 ? _c : this.getDefaultFilterOptions();
+        var allConditionsExistInNewOptionsList = !conditions || conditions.every(function (condition) {
+            return newOptionsList.find(function (option) { return option === condition.type; }) !== undefined;
+        });
+        if (!allConditionsExistInNewOptionsList) {
+            return false;
+        }
+        // Check number of conditions vs maxNumConditions
+        if (typeof newParams.maxNumConditions === 'number' && conditions && conditions.length > newParams.maxNumConditions) {
+            return false;
+        }
+        return true;
+    };
+    SimpleFilter.prototype.refresh = function (newParams) {
+        if (!this.shouldRefresh(newParams)) {
+            return false;
+        }
+        var parentRefreshed = _super.prototype.refresh.call(this, newParams);
+        if (!parentRefreshed) {
+            return false;
+        }
+        this.setParams(newParams);
+        this.removeConditionsAndOperators(0);
+        this.createOption();
+        this.setModel(this.getModel());
+        return true;
     };
     SimpleFilter.prototype.setModelIntoUi = function (model) {
         var _this = this;
@@ -263,7 +299,7 @@ var SimpleFilter = /** @class */ (function (_super) {
         var numConditions = conditions.length;
         if (numConditions > this.maxNumConditions) {
             conditions.splice(this.maxNumConditions);
-            function_1.doOnce(function () { return console.warn('AG Grid: Filter Model contains more conditions than "filterParams.maxNumConditions". Additional conditions have been ignored.'); }, 'simpleFilterSetModelMaxNumConditions');
+            (0, function_1.warnOnce)('Filter Model contains more conditions than "filterParams.maxNumConditions". Additional conditions have been ignored.');
             numConditions = this.maxNumConditions;
         }
         return numConditions;
@@ -279,7 +315,7 @@ var SimpleFilter = /** @class */ (function (_super) {
         var models = [];
         if (operator) {
             var combinedModel = model;
-            models.push.apply(models, __spreadArray([], __read(((_a = combinedModel.conditions) !== null && _a !== void 0 ? _a : []))));
+            models.push.apply(models, __spreadArray([], __read(((_a = combinedModel.conditions) !== null && _a !== void 0 ? _a : [])), false));
         }
         else {
             models.push(model);
@@ -306,23 +342,23 @@ var SimpleFilter = /** @class */ (function (_super) {
     SimpleFilter.prototype.setNumConditions = function (params) {
         var _a, _b;
         if (params.suppressAndOrCondition != null) {
-            function_1.doOnce(function () { return console.warn('AG Grid: Since v29.2 "filterParams.suppressAndOrCondition" is deprecated. Use "filterParams.maxNumConditions = 1" instead.'); }, 'simpleFilterSuppressAndOrCondition');
+            (0, function_1.warnOnce)('Since v29.2 "filterParams.suppressAndOrCondition" is deprecated. Use "filterParams.maxNumConditions = 1" instead.');
         }
         if (params.alwaysShowBothConditions != null) {
-            function_1.doOnce(function () { return console.warn('AG Grid: Since v29.2 "filterParams.alwaysShowBothConditions" is deprecated. Use "filterParams.numAlwaysVisibleConditions = 2" instead.'); }, 'simpleFilterAlwaysShowBothConditions');
+            (0, function_1.warnOnce)('Since v29.2 "filterParams.alwaysShowBothConditions" is deprecated. Use "filterParams.numAlwaysVisibleConditions = 2" instead.');
         }
         this.maxNumConditions = (_a = params.maxNumConditions) !== null && _a !== void 0 ? _a : (params.suppressAndOrCondition ? 1 : 2);
         if (this.maxNumConditions < 1) {
-            function_1.doOnce(function () { return console.warn('AG Grid: "filterParams.maxNumConditions" must be greater than or equal to zero.'); }, 'simpleFilterMaxNumConditions');
+            (0, function_1.warnOnce)('"filterParams.maxNumConditions" must be greater than or equal to zero.');
             this.maxNumConditions = 1;
         }
         this.numAlwaysVisibleConditions = (_b = params.numAlwaysVisibleConditions) !== null && _b !== void 0 ? _b : (params.alwaysShowBothConditions ? 2 : 1);
         if (this.numAlwaysVisibleConditions < 1) {
-            function_1.doOnce(function () { return console.warn('AG Grid: "filterParams.numAlwaysVisibleConditions" must be greater than or equal to zero.'); }, 'simpleFilterNumAlwaysVisibleConditions');
+            (0, function_1.warnOnce)('"filterParams.numAlwaysVisibleConditions" must be greater than or equal to zero.');
             this.numAlwaysVisibleConditions = 1;
         }
         if (this.numAlwaysVisibleConditions > this.maxNumConditions) {
-            function_1.doOnce(function () { return console.warn('AG Grid: "filterParams.numAlwaysVisibleConditions" cannot be greater than "filterParams.maxNumConditions".'); }, 'simpleFilterNumAlwaysVisibleGreaterThanMaxNumConditions');
+            (0, function_1.warnOnce)('"filterParams.numAlwaysVisibleConditions" cannot be greater than "filterParams.maxNumConditions".');
             this.numAlwaysVisibleConditions = this.maxNumConditions;
         }
     };
@@ -361,7 +397,7 @@ var SimpleFilter = /** @class */ (function (_super) {
         var eJoinOperator = this.createManagedBean(new agRadioButton_1.AgRadioButton());
         eJoinOperators.push(eJoinOperator);
         eJoinOperator.addCssClass('ag-filter-condition-operator');
-        eJoinOperator.addCssClass("ag-filter-condition-operator-" + andOr);
+        eJoinOperator.addCssClass("ag-filter-condition-operator-".concat(andOr));
         eJoinOperatorPanel.appendChild(eJoinOperator.getGui());
         return eJoinOperator;
     };
@@ -455,13 +491,13 @@ var SimpleFilter = /** @class */ (function (_super) {
             var disabled = _this.isConditionDisabled(position, lastUiCompletePosition);
             eType.setDisabled(disabled || _this.filterListOptions.length <= 1);
             if (position === 1) {
-                dom_1.setDisabled(_this.eJoinOperatorPanels[0], disabled);
+                (0, dom_1.setDisabled)(_this.eJoinOperatorPanels[0], disabled);
                 _this.eJoinOperatorsAnd[0].setDisabled(disabled);
                 _this.eJoinOperatorsOr[0].setDisabled(disabled);
             }
         });
         this.eConditionBodies.forEach(function (element, index) {
-            dom_1.setDisplayed(element, _this.isConditionBodyVisible(index));
+            (0, dom_1.setDisplayed)(element, _this.isConditionBodyVisible(index));
         });
         var orChecked = (joinOperator !== null && joinOperator !== void 0 ? joinOperator : this.getJoinOperator()) === 'OR';
         this.eJoinOperatorsAnd.forEach(function (eJoinOperatorAnd, index) {
@@ -493,13 +529,13 @@ var SimpleFilter = /** @class */ (function (_super) {
     };
     SimpleFilter.prototype.removeElements = function (elements, startPosition, deleteCount) {
         var removedElements = this.removeItems(elements, startPosition, deleteCount);
-        removedElements.forEach(function (element) { return dom_1.removeFromParent(element); });
+        removedElements.forEach(function (element) { return (0, dom_1.removeFromParent)(element); });
     };
     SimpleFilter.prototype.removeComponents = function (components, startPosition, deleteCount) {
         var _this = this;
         var removedComponents = this.removeItems(components, startPosition, deleteCount);
         removedComponents.forEach(function (comp) {
-            dom_1.removeFromParent(comp.getGui());
+            (0, dom_1.removeFromParent)(comp.getGui());
             _this.destroyBean(comp);
         });
     };
@@ -528,9 +564,8 @@ var SimpleFilter = /** @class */ (function (_super) {
     SimpleFilter.prototype.afterGuiDetached = function () {
         _super.prototype.afterGuiDetached.call(this);
         var appliedModel = this.getModel();
-        if (!this.areModelsEqual(appliedModel, this.getModelFromUi()) || this.hasInvalidInputs()) {
-            this.resetUiToActiveModel(appliedModel);
-        }
+        // Reset temporary UI state that was applied to the DOM but not committed to the model
+        this.resetUiToActiveModel(appliedModel);
         // remove incomplete positions
         var lastUiCompletePosition = -1;
         // as we remove incomplete positions, the last UI complete position will change
@@ -577,7 +612,7 @@ var SimpleFilter = /** @class */ (function (_super) {
     };
     SimpleFilter.prototype.getPlaceholderText = function (defaultPlaceholder, position) {
         var placeholder = this.translate(defaultPlaceholder);
-        if (function_1.isFunction(this.filterPlaceholder)) {
+        if ((0, function_1.isFunction)(this.filterPlaceholder)) {
             var filterPlaceholderFn = this.filterPlaceholder;
             var filterOptionKey = this.eTypes[position].getValue();
             var filterOption = this.translate(filterOptionKey);
@@ -610,19 +645,19 @@ var SimpleFilter = /** @class */ (function (_super) {
             element.setInputAriaLabel(ariaLabel);
         });
     };
-    SimpleFilter.prototype.setElementValue = function (element, value) {
+    SimpleFilter.prototype.setElementValue = function (element, value, fromFloatingFilter) {
         if (element instanceof agAbstractInputField_1.AgAbstractInputField) {
             element.setValue(value != null ? String(value) : null, true);
         }
     };
     SimpleFilter.prototype.setElementDisplayed = function (element, displayed) {
         if (element instanceof component_1.Component) {
-            dom_1.setDisplayed(element.getGui(), displayed);
+            (0, dom_1.setDisplayed)(element.getGui(), displayed);
         }
     };
     SimpleFilter.prototype.setElementDisabled = function (element, disabled) {
         if (element instanceof component_1.Component) {
-            dom_1.setDisabled(element.getGui(), disabled);
+            (0, dom_1.setDisabled)(element.getGui(), disabled);
         }
     };
     SimpleFilter.prototype.attachElementOnChange = function (element, listener) {
@@ -735,7 +770,7 @@ var SimpleFilter = /** @class */ (function (_super) {
     SimpleFilter.prototype.resetJoinOperator = function (eJoinOperator, index, value, label, uniqueGroupId) {
         this.updateJoinOperatorDisabled(eJoinOperator
             .setValue(value, true)
-            .setName("ag-simple-filter-and-or-" + this.getCompId() + "-" + uniqueGroupId)
+            .setName("ag-simple-filter-and-or-".concat(this.getCompId(), "-").concat(uniqueGroupId))
             .setLabel(label), index);
     };
     SimpleFilter.prototype.updateJoinOperatorsDisabled = function () {
@@ -766,7 +801,7 @@ var SimpleFilter = /** @class */ (function (_super) {
     SimpleFilter.prototype.setValueFromFloatingFilter = function (value) {
         var _this = this;
         this.forEachInput(function (element, index, position, _) {
-            _this.setElementValue(element, index === 0 && position === 0 ? value : null);
+            _this.setElementValue(element, index === 0 && position === 0 ? value : null, true);
         });
     };
     SimpleFilter.prototype.isDefaultOperator = function (operator) {

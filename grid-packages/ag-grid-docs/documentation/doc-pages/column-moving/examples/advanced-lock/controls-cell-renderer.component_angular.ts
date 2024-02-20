@@ -6,11 +6,9 @@ import {ICellRendererAngularComp} from "@ag-grid-community/angular";
 // be used with operations tied to the buttons. in this example, the cell renderer is just for
 // display purposes.
 @Component({
-    selector: 'simple-component',
+    standalone: true,
     template: `
-        <button>A</button>
-        <button>B</button>
-        <button>C</button>
+        <button>Action</button>
     `
 })
 export class ControlsCellRenderer implements ICellRendererAngularComp {

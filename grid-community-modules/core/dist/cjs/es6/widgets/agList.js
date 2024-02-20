@@ -13,6 +13,7 @@ const string_1 = require("../utils/string");
 const keyCode_1 = require("../constants/keyCode");
 const aria_1 = require("../utils/aria");
 const eventKeys_1 = require("../eventKeys");
+const dom_1 = require("../utils/dom");
 class AgList extends component_1.Component {
     constructor(cssIdentifier = 'default') {
         super(/* html */ `<div class="ag-list ag-${cssIdentifier}-list" role="listbox"></div>`);
@@ -59,7 +60,7 @@ class AgList extends component_1.Component {
     }
     addOption(listOption) {
         const { value, text } = listOption;
-        const sanitisedText = string_1.escapeString(text || value);
+        const sanitisedText = (0, string_1.escapeString)(text || value);
         this.options.push({ value, text: sanitisedText });
         this.renderOption(value, sanitisedText);
         this.updateIndices();
@@ -68,13 +69,13 @@ class AgList extends component_1.Component {
     updateIndices() {
         const options = this.getGui().querySelectorAll('.ag-list-item');
         options.forEach((option, idx) => {
-            aria_1.setAriaPosInSet(option, idx + 1);
-            aria_1.setAriaSetSize(option, options.length);
+            (0, aria_1.setAriaPosInSet)(option, idx + 1);
+            (0, aria_1.setAriaSetSize)(option, options.length);
         });
     }
     renderOption(value, text) {
         const itemEl = document.createElement('div');
-        aria_1.setAriaRole(itemEl, 'option');
+        (0, aria_1.setAriaRole)(itemEl, 'option');
         itemEl.classList.add('ag-list-item', `ag-${this.cssIdentifier}-list-item`);
         itemEl.innerHTML = `<span>${text}</span>`;
         itemEl.tabIndex = -1;
@@ -128,21 +129,21 @@ class AgList extends component_1.Component {
         this.fireChangeEvent();
     }
     highlightItem(el) {
-        if (!el.offsetParent) {
+        if (!(0, dom_1.isVisible)(el)) {
             return;
         }
         this.clearHighlighted();
         this.highlightedEl = el;
         this.highlightedEl.classList.add(AgList.ACTIVE_CLASS);
-        aria_1.setAriaSelected(this.highlightedEl, true);
+        (0, aria_1.setAriaSelected)(this.highlightedEl, true);
         this.highlightedEl.focus();
     }
     clearHighlighted() {
-        if (!this.highlightedEl || !this.highlightedEl.offsetParent) {
+        if (!this.highlightedEl || !(0, dom_1.isVisible)(this.highlightedEl)) {
             return;
         }
         this.highlightedEl.classList.remove(AgList.ACTIVE_CLASS);
-        aria_1.setAriaSelected(this.highlightedEl, false);
+        (0, aria_1.setAriaSelected)(this.highlightedEl, false);
         this.highlightedEl = null;
     }
     fireChangeEvent() {

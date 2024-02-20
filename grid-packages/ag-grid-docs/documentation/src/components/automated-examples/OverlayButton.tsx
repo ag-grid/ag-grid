@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React, { forwardRef, FunctionComponent, useEffect } from 'react';
 import { initForwardMouseEventsThroughElement } from './lib/initForwardMouseEventsThroughElement';
-import styles from './OverlayButton.module.scss';
+import styles from '@design-system/modules/OverlayButton.module.scss';
 
 interface Props {
     ariaLabel: string;

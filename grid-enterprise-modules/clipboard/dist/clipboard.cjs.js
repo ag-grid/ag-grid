@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/clipboard - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.1.0
+          * @ag-grid-enterprise/clipboard - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.1.0
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -48,10 +48,14 @@ var __read = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (undefined && undefined.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (undefined && undefined.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 var __values = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
@@ -74,6 +78,11 @@ var CellClearType;
     CellClearType[CellClearType["SelectedRows"] = 1] = "SelectedRows";
     CellClearType[CellClearType["FocusedCell"] = 2] = "FocusedCell";
 })(CellClearType || (CellClearType = {}));
+var apiError = function (method) { return "AG Grid: Unable to use the Clipboard API (navigator.clipboard.".concat(method, "()). ") +
+    'The reason why it could not be used has been logged in the previous line. ' +
+    'For this reason the grid has defaulted to using a workaround which doesn\'t perform as well. ' +
+    'Either fix why Clipboard API is blocked, OR stop this message from appearing by setting grid ' +
+    'property suppressClipboardApi=true (which will default the grid to using the workaround rather than the API.'; };
 var ClipboardService = /** @class */ (function (_super) {
     __extends(ClipboardService, _super);
     function ClipboardService() {
@@ -97,7 +106,7 @@ var ClipboardService = /** @class */ (function (_super) {
         var _this = this;
         this.logger.log('pasteFromClipboard');
         // Method 1 - native clipboard API, available in modern chrome browsers
-        var allowNavigator = !this.gridOptionsService.is('suppressClipboardApi');
+        var allowNavigator = !this.gridOptionsService.get('suppressClipboardApi');
         // Some browsers (Firefox) do not allow Web Applications to read from
         // the clipboard so verify if not only the ClipboardAPI is available,
         // but also if the `readText` method is public.
@@ -107,11 +116,7 @@ var ClipboardService = /** @class */ (function (_super) {
                 .catch(function (e) {
                 core._.doOnce(function () {
                     console.warn(e);
-                    console.warn('AG Grid: Unable to use the Clipboard API (navigator.clipboard.readText()). ' +
-                        'The reason why it could not be used has been logged in the previous line. ' +
-                        'For this reason the grid has defaulted to using a workaround which doesn\'t perform as well. ' +
-                        'Either fix why Clipboard API is blocked, OR stop this message from appearing by setting grid ' +
-                        'property suppressClipboardApi=true (which will default the grid to using the workaround rather than the API');
+                    console.warn(apiError('readText'));
                 }, 'clipboardApiError');
                 _this.navigatorApiFailed = true;
                 _this.pasteFromClipboardLegacy();
@@ -175,7 +180,7 @@ var ClipboardService = /** @class */ (function (_super) {
         if (parsedData == null) {
             return;
         }
-        if (this.gridOptionsService.is('suppressLastEmptyLineOnPaste')) {
+        if (this.gridOptionsService.get('suppressLastEmptyLineOnPaste')) {
             this.removeLastLineIfBlank(parsedData);
         }
         var pasteOperation = function (cellsToFlash, updatedRowNodes, focusedCell, changedPath) {
@@ -270,25 +275,21 @@ var ClipboardService = /** @class */ (function (_super) {
     };
     // common code to paste operations, e.g. paste to cell, paste to range, and copy range down
     ClipboardService.prototype.doPasteOperation = function (pasteOperationFunc) {
-        var api = this.gridOptionsService.api;
-        var columnApi = this.gridOptionsService.columnApi;
         var source = 'clipboard';
         this.eventService.dispatchEvent({
             type: core.Events.EVENT_PASTE_START,
-            api: api,
-            columnApi: columnApi,
             source: source
         });
         var changedPath;
         if (this.clientSideRowModel) {
-            var onlyChangedColumns = this.gridOptionsService.is('aggregateOnlyChangedColumns');
+            var onlyChangedColumns = this.gridOptionsService.get('aggregateOnlyChangedColumns');
             changedPath = new core.ChangedPath(onlyChangedColumns, this.clientSideRowModel.getRootNode());
         }
         var cellsToFlash = {};
         var updatedRowNodes = [];
         var focusedCell = this.focusService.getFocusedCell();
         pasteOperationFunc(cellsToFlash, updatedRowNodes, focusedCell, changedPath);
-        var nodesToRefresh = __spreadArray([], __read(updatedRowNodes));
+        var nodesToRefresh = __spreadArray([], __read(updatedRowNodes), false);
         if (changedPath) {
             this.clientSideRowModel.doAggregate(changedPath);
             // add all nodes impacted by aggregation, as they need refreshed also.
@@ -459,7 +460,7 @@ var ClipboardService = /** @class */ (function (_super) {
         var rowPointer = currentRow;
         // if doing CSRM and NOT tree data, then it means groups are aggregates, which are read only,
         // so we should skip them when doing paste operations.
-        var skipGroupRows = this.clientSideRowModel != null && !this.gridOptionsService.is('enableGroupEdit') && !this.gridOptionsService.isTreeData();
+        var skipGroupRows = this.clientSideRowModel != null && !this.gridOptionsService.get('enableGroupEdit') && !this.gridOptionsService.get('treeData');
         var getNextGoodRowNode = function () {
             while (true) {
                 if (!rowPointer) {
@@ -519,7 +520,7 @@ var ClipboardService = /** @class */ (function (_super) {
     ClipboardService.prototype.cutToClipboard = function (params, source) {
         if (params === void 0) { params = {}; }
         if (source === void 0) { source = 'api'; }
-        if (this.gridOptionsService.is('suppressCutToClipboard')) {
+        if (this.gridOptionsService.get('suppressCutToClipboard')) {
             return;
         }
         var startEvent = {
@@ -536,16 +537,16 @@ var ClipboardService = /** @class */ (function (_super) {
     };
     ClipboardService.prototype.copyOrCutToClipboard = function (params, cut) {
         var includeHeaders = params.includeHeaders, includeGroupHeaders = params.includeGroupHeaders;
-        this.logger.log("copyToClipboard: includeHeaders = " + includeHeaders);
+        this.logger.log("copyToClipboard: includeHeaders = ".concat(includeHeaders));
         // don't override 'includeHeaders' if it has been explicitly set to 'false'
         if (includeHeaders == null) {
-            includeHeaders = this.gridOptionsService.is('copyHeadersToClipboard');
+            includeHeaders = this.gridOptionsService.get('copyHeadersToClipboard');
         }
         if (includeGroupHeaders == null) {
-            includeGroupHeaders = this.gridOptionsService.is('copyGroupHeadersToClipboard');
+            includeGroupHeaders = this.gridOptionsService.get('copyGroupHeadersToClipboard');
         }
         var copyParams = { includeHeaders: includeHeaders, includeGroupHeaders: includeGroupHeaders };
-        var shouldCopyRows = !this.gridOptionsService.is('suppressCopyRowsToClipboard');
+        var shouldCopyRows = !this.gridOptionsService.get('suppressCopyRowsToClipboard');
         var cellClearType = null;
         // Copy priority is Range > Row > Focus
         if (this.rangeService && !this.rangeService.isEmpty() && !this.shouldSkipSingleCellRange()) {
@@ -621,7 +622,7 @@ var ClipboardService = /** @class */ (function (_super) {
         rowNode.setDataValue(column, null, 'clipboardService');
     };
     ClipboardService.prototype.shouldSkipSingleCellRange = function () {
-        return this.gridOptionsService.is('suppressCopySingleCellRanges') && !this.rangeService.isMoreThanOneCell();
+        return this.gridOptionsService.get('suppressCopySingleCellRanges') && !this.rangeService.isMoreThanOneCell();
     };
     ClipboardService.prototype.iterateActiveRanges = function (onlyFirst, rowCallback, columnCallback) {
         var _this = this;
@@ -677,7 +678,7 @@ var ClipboardService = /** @class */ (function (_super) {
             range.columns.forEach(function (col) { return columnsSet.add(col); });
             var _a = _this.getRangeRowPositionsAndCellsToFlash(range), rowPositions = _a.rowPositions, cellsToFlash = _a.cellsToFlash;
             rowPositions.forEach(function (rowPosition) {
-                var rowPositionAsString = rowPosition.rowIndex + "-" + (rowPosition.rowPinned || 'null');
+                var rowPositionAsString = "".concat(rowPosition.rowIndex, "-").concat(rowPosition.rowPinned || 'null');
                 if (!rowPositionsMap.get(rowPositionAsString)) {
                     rowPositionsMap.set(rowPositionAsString, true);
                     allRowPositions.push(rowPosition);
@@ -738,6 +739,22 @@ var ClipboardService = /** @class */ (function (_super) {
         }
         return { rowPositions: rowPositions, cellsToFlash: cellsToFlash };
     };
+    ClipboardService.prototype.getCellsToFlashFromRowNodes = function (rowNodes) {
+        var allDisplayedColumns = this.columnModel.getAllDisplayedColumns();
+        var cellsToFlash = {};
+        for (var i = 0; i < rowNodes.length; i++) {
+            var _a = rowNodes[i], rowIndex = _a.rowIndex, rowPinned = _a.rowPinned;
+            if (rowIndex == null) {
+                continue;
+            }
+            for (var j = 0; j < allDisplayedColumns.length; j++) {
+                var column = allDisplayedColumns[j];
+                var cellId = this.cellPositionUtils.createIdFromValues({ rowIndex: rowIndex, column: column, rowPinned: rowPinned });
+                cellsToFlash[cellId] = true;
+            }
+        }
+        return cellsToFlash;
+    };
     ClipboardService.prototype.copyFocusedCellToClipboard = function (params) {
         var _a;
         if (params === void 0) { params = {}; }
@@ -766,6 +783,8 @@ var ClipboardService = /** @class */ (function (_super) {
             includeGroupHeaders: includeGroupHeaders
         });
         this.copyDataToClipboard(data);
+        var rowNodes = this.selectionService.getSelectedNodes() || [];
+        this.dispatchFlashCells(this.getCellsToFlashFromRowNodes(rowNodes));
     };
     ClipboardService.prototype.buildExportParams = function (params) {
         var _this = this;
@@ -787,15 +806,28 @@ var ClipboardService = /** @class */ (function (_super) {
     };
     ClipboardService.prototype.processRowGroupCallback = function (params) {
         var _this = this;
-        var node = params.node;
-        var key = node.key;
-        var value = key != null ? key : '';
+        var node = params.node, column = params.column;
+        var isTreeData = this.gridOptionsService.get('treeData');
+        var isSuppressGroupMaintainValueType = this.gridOptionsService.get('suppressGroupMaintainValueType');
+        // if not tree data and not suppressGroupMaintainValueType then we get the value from the group data
+        var getValueFromNode = function () {
+            var _a, _b;
+            if (isTreeData || isSuppressGroupMaintainValueType || !column) {
+                return node.key;
+            }
+            var value = (_a = node.groupData) === null || _a === void 0 ? void 0 : _a[column.getId()];
+            if (!value || !node.rowGroupColumn || node.rowGroupColumn.getColDef().useValueFormatterForExport === false) {
+                return value;
+            }
+            return (_b = _this.valueFormatterService.formatValue(node.rowGroupColumn, node, value)) !== null && _b !== void 0 ? _b : value;
+        };
+        var value = getValueFromNode();
         if (params.node.footer) {
             var suffix = '';
-            if (key && key.length) {
-                suffix = " " + key;
+            if (value && value.length) {
+                suffix = " ".concat(value);
             }
-            value = "Total" + suffix;
+            value = "Total".concat(suffix);
         }
         var processCellForClipboard = this.gridOptionsService.getCallback('processCellForClipboard');
         if (processCellForClipboard) {
@@ -838,10 +870,10 @@ var ClipboardService = /** @class */ (function (_super) {
             };
             return func(params);
         }
-        if (canParse && column.getColDef().useValueParserForImport) {
+        if (canParse && column.getColDef().useValueParserForImport !== false) {
             return this.valueParserService.parseValue(column, rowNode !== null && rowNode !== void 0 ? rowNode : null, value, this.valueService.getValue(column, rowNode));
         }
-        else if (canFormat && column.getColDef().useValueFormatterForExport) {
+        else if (canFormat && column.getColDef().useValueFormatterForExport !== false) {
             return (_a = this.valueFormatterService.formatValue(column, rowNode !== null && rowNode !== void 0 ? rowNode : null, value)) !== null && _a !== void 0 ? _a : value;
         }
         return value;
@@ -855,16 +887,12 @@ var ClipboardService = /** @class */ (function (_super) {
             return;
         }
         // method 2 - native clipboard API, available in modern chrome browsers
-        var allowNavigator = !this.gridOptionsService.is('suppressClipboardApi');
+        var allowNavigator = !this.gridOptionsService.get('suppressClipboardApi');
         if (allowNavigator && navigator.clipboard) {
             navigator.clipboard.writeText(data).catch(function (e) {
                 core._.doOnce(function () {
                     console.warn(e);
-                    console.warn('AG Grid: Unable to use the Clipboard API (navigator.clipboard.writeText()). ' +
-                        'The reason why it could not be used has been logged in the previous line. ' +
-                        'For this reason the grid has defaulted to using a workaround which doesn\'t perform as well. ' +
-                        'Either fix why Clipboard API is blocked, OR stop this message from appearing by setting grid ' +
-                        'property suppressClipboardApi=true (which will default the grid to using the workaround rather than the API.');
+                    console.warn(apiError('writeText'));
                 }, 'clipboardApiError');
                 _this.copyDataToClipboardLegacy(data);
             });
@@ -989,7 +1017,7 @@ var ClipboardService = /** @class */ (function (_super) {
 }(core.BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '30.1.0';
+var VERSION = '31.1.0';
 
 var ClipboardModule = {
     version: VERSION,

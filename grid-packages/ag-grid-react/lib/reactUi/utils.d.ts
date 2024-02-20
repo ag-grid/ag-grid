@@ -1,4 +1,4 @@
-// ag-grid-react v30.1.0
+// ag-grid-react v31.1.0
 export declare const classesList: (...list: (string | null | undefined)[]) => string;
 export declare class CssClasses {
     private classesMap;
@@ -7,6 +7,10 @@ export declare class CssClasses {
     toString(): string;
 }
 export declare const isComponentStateless: (Component: any) => boolean;
+/** Enable flushSync to be disabled for the callback and the next frame (via setTimeout 0) to prevent flushSync during an existing render.
+ * Provides an alternative to the more fine grained useFlushSync boolean param to agFlushSync.
+ */
+export declare function runWithoutFlushSync<T>(func: () => T): T;
 /**
  * Wrapper around flushSync to provide backwards compatibility with React 16-17
  * Also allows us to control via the `useFlushSync` param whether we want to use flushSync or not

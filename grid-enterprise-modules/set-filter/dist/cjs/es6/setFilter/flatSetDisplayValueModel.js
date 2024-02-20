@@ -41,6 +41,9 @@ class FlatSetDisplayValueModel {
     getSelectAllItem() {
         return iSetDisplayValueModel_1.SetFilterDisplayValue.SELECT_ALL;
     }
+    getAddSelectionToFilterItem() {
+        return iSetDisplayValueModel_1.SetFilterDisplayValue.ADD_SELECTION_TO_FILTER;
+    }
     getDisplayedKeys() {
         return this.displayedKeys;
     }

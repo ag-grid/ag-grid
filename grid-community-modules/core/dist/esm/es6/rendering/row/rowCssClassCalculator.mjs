@@ -105,15 +105,12 @@ let RowCssClassCalculator = class RowCssClassCalculator {
         return res;
     }
     processRowClassRules(rowNode, onApplicableClass, onNotApplicableClass) {
-        const rowClassParams = {
+        const rowClassParams = this.gridOptionsService.addGridCommonParams({
             data: rowNode.data,
             node: rowNode,
-            rowIndex: rowNode.rowIndex,
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context
-        };
-        this.stylingService.processClassRules(this.gridOptionsService.get('rowClassRules'), rowClassParams, onApplicableClass, onNotApplicableClass);
+            rowIndex: rowNode.rowIndex
+        });
+        this.stylingService.processClassRules(undefined, this.gridOptionsService.get('rowClassRules'), rowClassParams, onApplicableClass, onNotApplicableClass);
     }
     calculateRowLevel(rowNode) {
         if (rowNode.group) {

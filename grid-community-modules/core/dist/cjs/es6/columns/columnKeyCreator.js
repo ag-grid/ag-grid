@@ -17,7 +17,7 @@ class ColumnKeyCreator {
     }
     getUniqueKey(colId, colField) {
         // in case user passed in number for colId, convert to string
-        colId = generic_1.toStringOrNull(colId);
+        colId = (0, generic_1.toStringOrNull)(colId);
         let count = 0;
         while (true) {
             let idToTry;

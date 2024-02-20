@@ -141,7 +141,7 @@ class HeaderRowContainerCtrl extends beanStub_1.BeanStub {
             } // can happen at initialisation, width not yet set
             const hidden = (width == 0);
             const hiddenChanged = this.hidden !== hidden;
-            const isRtl = this.gridOptionsService.is('enableRtl');
+            const isRtl = this.gridOptionsService.get('enableRtl');
             const scrollbarWidth = this.gridOptionsService.getScrollbarWidth();
             // if there is a scroll showing (and taking up space, so Windows, and not iOS)
             // in the body, then we add extra space to keep header aligned with the body,
@@ -198,6 +198,9 @@ class HeaderRowContainerCtrl extends beanStub_1.BeanStub {
         }
         return ctrl.focusHeader(column, event);
     }
+    getViewport() {
+        return this.eViewport;
+    }
     getRowCount() {
         return this.groupsRowCtrls.length + (this.columnsRowCtrl ? 1 : 0) + (this.filtersRowCtrl ? 1 : 0);
     }
@@ -215,21 +218,21 @@ class HeaderRowContainerCtrl extends beanStub_1.BeanStub {
     }
 }
 __decorate([
-    context_1.Autowired('ctrlsService')
+    (0, context_1.Autowired)('ctrlsService')
 ], HeaderRowContainerCtrl.prototype, "ctrlsService", void 0);
 __decorate([
-    context_1.Autowired('scrollVisibleService')
+    (0, context_1.Autowired)('scrollVisibleService')
 ], HeaderRowContainerCtrl.prototype, "scrollVisibleService", void 0);
 __decorate([
-    context_1.Autowired('pinnedWidthService')
+    (0, context_1.Autowired)('pinnedWidthService')
 ], HeaderRowContainerCtrl.prototype, "pinnedWidthService", void 0);
 __decorate([
-    context_1.Autowired('columnModel')
+    (0, context_1.Autowired)('columnModel')
 ], HeaderRowContainerCtrl.prototype, "columnModel", void 0);
 __decorate([
-    context_1.Autowired('focusService')
+    (0, context_1.Autowired)('focusService')
 ], HeaderRowContainerCtrl.prototype, "focusService", void 0);
 __decorate([
-    context_1.Autowired('filterManager')
+    (0, context_1.Autowired)('filterManager')
 ], HeaderRowContainerCtrl.prototype, "filterManager", void 0);
 exports.HeaderRowContainerCtrl = HeaderRowContainerCtrl;

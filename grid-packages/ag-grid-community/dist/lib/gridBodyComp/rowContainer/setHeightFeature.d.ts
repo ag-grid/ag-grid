@@ -2,8 +2,8 @@ import { BeanStub } from "../../context/beanStub";
 export declare class SetHeightFeature extends BeanStub {
     private maxDivHeightScaler;
     private eContainer;
-    private eWrapper;
-    constructor(eContainer: HTMLElement, eWrapper?: HTMLElement);
+    private eViewport;
+    constructor(eContainer: HTMLElement, eViewport?: HTMLElement);
     private postConstruct;
     private onHeightChanged;
 }

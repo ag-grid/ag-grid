@@ -15,11 +15,11 @@ const getMergedCellsAndAddColumnGroups = (rows, cols, suppressColumnOutline) => 
         let lastCol;
         cells.forEach((currentCell, cellIdx) => {
             const min = cellIdx + merges + 1;
-            const start = excelUtils_1.getExcelColumnName(min);
+            const start = (0, excelUtils_1.getExcelColumnName)(min);
             const outputRow = rowIdx + 1;
             if (currentCell.mergeAcross) {
                 merges += currentCell.mergeAcross;
-                const end = excelUtils_1.getExcelColumnName(cellIdx + merges + 1);
+                const end = (0, excelUtils_1.getExcelColumnName)(cellIdx + merges + 1);
                 mergedCells.push(`${start}${outputRow}:${end}${outputRow}`);
             }
             if (!cols[min - 1]) {

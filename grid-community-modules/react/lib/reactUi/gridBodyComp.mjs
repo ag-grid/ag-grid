@@ -1,4 +1,4 @@
-// @ag-grid-community/react v30.1.0
+// @ag-grid-community/react v31.1.0
 import { CssClassManager, GridBodyCtrl, RowContainerName, _ } from '@ag-grid-community/core';
 import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { BeansContext } from './beansContext.mjs';
@@ -115,7 +115,6 @@ const GridBodyComp = () => {
     const rootClasses = useMemo(() => classesList('ag-root', 'ag-unselectable', layoutClass), [layoutClass]);
     const bodyViewportClasses = useMemo(() => classesList('ag-body-viewport', rowAnimationClass, layoutClass, forceVerticalScrollClass, cellSelectableCss), [rowAnimationClass, layoutClass, forceVerticalScrollClass, cellSelectableCss]);
     const bodyClasses = useMemo(() => classesList('ag-body', layoutClass), [layoutClass]);
-    const bodyClipperClasses = useMemo(() => classesList('ag-body-clipper', layoutClass), [layoutClass]);
     const topClasses = useMemo(() => classesList('ag-floating-top', cellSelectableCss), [cellSelectableCss]);
     const stickyTopClasses = useMemo(() => classesList('ag-sticky-top', cellSelectableCss), [cellSelectableCss]);
     const bottomClasses = useMemo(() => classesList('ag-floating-bottom', cellSelectableCss), [cellSelectableCss]);
@@ -146,14 +145,13 @@ const GridBodyComp = () => {
                 RowContainerName.TOP_RIGHT,
                 RowContainerName.TOP_FULL_WIDTH,
             ] }),
-        React.createElement("div", { className: bodyClasses, ref: eBody, role: "presentation" },
-            React.createElement("div", { className: bodyClipperClasses, role: "presentation" }, createSection({ section: eBodyViewport, className: bodyViewportClasses,
-                children: [
-                    RowContainerName.LEFT,
-                    RowContainerName.CENTER,
-                    RowContainerName.RIGHT,
-                    RowContainerName.FULL_WIDTH,
-                ] }))),
+        React.createElement("div", { className: bodyClasses, ref: eBody, role: "presentation" }, createSection({ section: eBodyViewport, className: bodyViewportClasses,
+            children: [
+                RowContainerName.LEFT,
+                RowContainerName.CENTER,
+                RowContainerName.RIGHT,
+                RowContainerName.FULL_WIDTH,
+            ] })),
         createSection({ section: eStickyTop, className: stickyTopClasses, style: stickyTopStyle, children: [
                 RowContainerName.STICKY_TOP_LEFT,
                 RowContainerName.STICKY_TOP_CENTER,

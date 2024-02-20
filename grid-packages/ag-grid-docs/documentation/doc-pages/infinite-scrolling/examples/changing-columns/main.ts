@@ -1,4 +1,6 @@
-import { Grid, GridOptions, IDatasource, SortModelItem } from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions, IDatasource, SortModelItem } from '@ag-grid-community/core';
+
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -10,15 +12,13 @@ const gridOptions: GridOptions<IOlympicData> = {
   ],
   defaultColDef: {
     flex: 1,
-    sortable: true,
-    resizable: true,
     filter: true,
   },
   rowModelType: 'infinite',
 }
 
 function onBtShowYearColumn() {
-  gridOptions.api!.setColumnDefs([
+  gridApi!.setGridOption('columnDefs', [
     { field: 'athlete', colId: 'athlete' },
     { field: 'age', colId: 'age' },
     { field: 'country', colId: 'country' },
@@ -28,7 +28,7 @@ function onBtShowYearColumn() {
 }
 
 function onBtHideYearColumn() {
-  gridOptions.api!.setColumnDefs([
+  gridApi!.setGridOption('columnDefs', [
     { field: 'athlete', colId: 'athlete' },
     { field: 'age', colId: 'age' },
     { field: 'country', colId: 'country' },
@@ -82,7 +82,7 @@ function filterData(filterModel: any, data: any[]) {
     var filterFails = false
 
     var filterKeys = Object.keys(filterModel)
-    filterKeys.forEach(function (filterKey) {
+    filterKeys.forEach((filterKey) => {
       var filterValue = filterModel[filterKey].filter
 
       var valueForRow = item[filterKey]
@@ -113,7 +113,7 @@ function filterData(filterModel: any, data: any[]) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function () {
           console.log('asking for ' + params.startRow + ' to ' + params.endRow)
           // At this point in your code, you would call the server.
           // To make the demo look real, wait for 500ms before returning
-          setTimeout(function () {
+          setTimeout(() => {
             // take a slice of the total rows
             var dataAfterSortingAndFiltering = sortAndFilter(
               data,
@@ -151,6 +151,6 @@ document.addEventListener('DOMContentLoaded', function () {
         },
       }
 
-      gridOptions.api!.setDatasource(dataSource)
+      gridApi!.setGridOption('datasource', dataSource)
     })
 })

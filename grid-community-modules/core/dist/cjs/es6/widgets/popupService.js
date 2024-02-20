@@ -15,7 +15,6 @@ const dom_1 = require("../utils/dom");
 const array_1 = require("../utils/array");
 const event_1 = require("../utils/event");
 const keyCode_1 = require("../constants/keyCode");
-const focusService_1 = require("../focusService");
 const utils_1 = require("../utils");
 const aria_1 = require("../utils/aria");
 const generic_1 = require("../utils/generic");
@@ -33,13 +32,8 @@ let PopupService = PopupService_1 = class PopupService extends beanStub_1.BeanSt
     postConstruct() {
         this.ctrlsService.whenReady(p => {
             this.gridCtrl = p.gridCtrl;
-            this.addManagedListener(this.gridCtrl, events_1.Events.EVENT_KEYBOARD_FOCUS, () => {
-                this.popupList.forEach(popup => popup.element.classList.add(focusService_1.FocusService.AG_KEYBOARD_FOCUS));
-            });
-            this.addManagedListener(this.gridCtrl, events_1.Events.EVENT_MOUSE_FOCUS, () => {
-                this.popupList.forEach(popup => popup.element.classList.remove(focusService_1.FocusService.AG_KEYBOARD_FOCUS));
-            });
         });
+        this.addManagedListener(this.eventService, events_1.Events.EVENT_GRID_STYLES_CHANGED, this.handleThemeChange.bind(this));
     }
     getPopupParent() {
         const ePopupParent = this.gridOptionsService.get('popupParent');
@@ -66,7 +60,7 @@ let PopupService = PopupService_1 = class PopupService extends beanStub_1.BeanSt
         // to the right, unless it doesn't fit and we then put it to the left. for RTL it's the other way around,
         // we try place it first to the left, and then if not to the right.
         let x;
-        if (this.gridOptionsService.is('enableRtl')) {
+        if (this.gridOptionsService.get('enableRtl')) {
             // for RTL, try left first
             x = xLeftPosition();
             if (x < 0) {
@@ -263,7 +257,7 @@ let PopupService = PopupService_1 = class PopupService extends beanStub_1.BeanSt
         else if (getComputedStyle(popupParent).position === 'static') {
             popupParent = popupParent.offsetParent;
         }
-        return dom_1.getElementRectWithOffset(popupParent);
+        return (0, dom_1.getElementRectWithOffset)(popupParent);
     }
     keepXYWithinBounds(ePopup, position, direction) {
         const isVertical = direction === DIRECTION.vertical;
@@ -312,10 +306,10 @@ let PopupService = PopupService_1 = class PopupService extends beanStub_1.BeanSt
     initialisePopupPosition(element) {
         const ePopupParent = this.getPopupParent();
         const ePopupParentRect = ePopupParent.getBoundingClientRect();
-        if (!generic_1.exists(element.style.top)) {
+        if (!(0, generic_1.exists)(element.style.top)) {
             element.style.top = `${ePopupParentRect.top * -1}px`;
         }
-        if (!generic_1.exists(element.style.left)) {
+        if (!(0, generic_1.exists)(element.style.left)) {
             element.style.left = `${ePopupParentRect.left * -1}px`;
         }
     }
@@ -329,14 +323,11 @@ let PopupService = PopupService_1 = class PopupService extends beanStub_1.BeanSt
             eWrapper.classList.add(...allThemes);
         }
         eWrapper.classList.add('ag-popup');
-        element.classList.add(this.gridOptionsService.is('enableRtl') ? 'ag-rtl' : 'ag-ltr', 'ag-popup-child');
+        element.classList.add(this.gridOptionsService.get('enableRtl') ? 'ag-rtl' : 'ag-ltr', 'ag-popup-child');
         if (!element.hasAttribute('role')) {
-            aria_1.setAriaRole(element, 'dialog');
+            (0, aria_1.setAriaRole)(element, 'dialog');
         }
-        aria_1.setAriaLabel(element, ariaLabel);
-        if (this.focusService.isKeyboardMode()) {
-            element.classList.add(focusService_1.FocusService.AG_KEYBOARD_FOCUS);
-        }
+        (0, aria_1.setAriaLabel)(element, ariaLabel);
         eWrapper.appendChild(element);
         ePopupParent.appendChild(eWrapper);
         if (alwaysOnTop) {
@@ -346,6 +337,19 @@ let PopupService = PopupService_1 = class PopupService extends beanStub_1.BeanSt
             this.bringPopupToFront(element);
         }
         return eWrapper;
+    }
+    handleThemeChange() {
+        const { allThemes } = this.environment.getTheme();
+        for (const popup of this.popupList) {
+            for (const className of Array.from(popup.wrapper.classList)) {
+                if (className.startsWith("ag-theme-")) {
+                    popup.wrapper.classList.remove(className);
+                }
+            }
+            if (allThemes.length) {
+                popup.wrapper.classList.add(...allThemes);
+            }
+        }
     }
     addEventListenersToPopup(params) {
         const eDocument = this.gridOptionsService.getDocument();
@@ -357,7 +361,7 @@ let PopupService = PopupService_1 = class PopupService extends beanStub_1.BeanSt
                 return;
             }
             const key = event.key;
-            if (key === keyCode_1.KeyCode.ESCAPE) {
+            if (key === keyCode_1.KeyCode.ESCAPE && !(0, event_1.isStopPropagationForAgGrid)(event)) {
                 removeListeners({ keyboardEvent: event });
             }
         };
@@ -369,8 +373,6 @@ let PopupService = PopupService_1 = class PopupService extends beanStub_1.BeanSt
             // we don't hide popup if the event was on the child, or any
             // children of this child
             this.isEventFromCurrentPopup({ mouseEvent, touchEvent }, popupEl) ||
-                // if the event to close is actually the open event, then ignore it
-                this.isEventSameChainAsOriginalEvent({ originalMouseEvent: pointerEvent, mouseEvent, touchEvent }) ||
                 // this method should only be called once. the client can have different
                 // paths, each one wanting to close, so this method may be called multiple times.
                 popupHidden) {
@@ -510,7 +512,7 @@ let PopupService = PopupService_1 = class PopupService extends beanStub_1.BeanSt
         }
         for (let i = indexOfThisChild; i < this.popupList.length; i++) {
             const popup = this.popupList[i];
-            if (event_1.isElementInEventPath(popup.element, event)) {
+            if ((0, event_1.isElementInEventPath)(popup.element, event)) {
                 return true;
             }
         }
@@ -526,36 +528,6 @@ let PopupService = PopupService_1 = class PopupService extends beanStub_1.BeanSt
                 return true;
             }
             el = el.parentElement;
-        }
-        return false;
-    }
-    // in some browsers, the context menu event can be fired before the click event, which means
-    // the context menu event could open the popup, but then the click event closes it straight away.
-    isEventSameChainAsOriginalEvent(params) {
-        const { originalMouseEvent, mouseEvent, touchEvent } = params;
-        // we check the coordinates of the event, to see if it's the same event. there is a 1 / 1000 chance that
-        // the event is a different event, however that is an edge case that is not very relevant (the user clicking
-        // twice on the same location isn't a normal path).
-        // event could be mouse event or touch event.
-        let mouseEventOrTouch = null;
-        if (mouseEvent) {
-            // mouse event can be used direction, it has coordinates
-            mouseEventOrTouch = mouseEvent;
-        }
-        else if (touchEvent) {
-            // touch event doesn't have coordinates, need it's touch object
-            mouseEventOrTouch = touchEvent.touches[0];
-        }
-        if (mouseEventOrTouch && originalMouseEvent) {
-            // for x, allow 4px margin, to cover iPads, where touch (which opens menu) is followed
-            // by browser click (when you finger up, touch is interrupted as click in browser)
-            const screenX = mouseEvent ? mouseEvent.screenX : 0;
-            const screenY = mouseEvent ? mouseEvent.screenY : 0;
-            const xMatch = Math.abs(originalMouseEvent.screenX - screenX) < 5;
-            const yMatch = Math.abs(originalMouseEvent.screenY - screenY) < 5;
-            if (xMatch && yMatch) {
-                return true;
-            }
         }
         return false;
     }
@@ -597,7 +569,7 @@ let PopupService = PopupService_1 = class PopupService extends beanStub_1.BeanSt
             const isPopupAlwaysOnTop = eWrapper.classList.contains('ag-always-on-top');
             if (isPopupAlwaysOnTop) {
                 if (pos !== popupLen - 1) {
-                    array_1.last(alwaysOnTopList).insertAdjacentElement('afterend', eWrapper);
+                    (0, array_1.last)(alwaysOnTopList).insertAdjacentElement('afterend', eWrapper);
                 }
             }
             else if (pos !== popupLen - onTopLength - 1) {
@@ -605,7 +577,7 @@ let PopupService = PopupService_1 = class PopupService extends beanStub_1.BeanSt
             }
         }
         else if (pos !== popupLen - 1) {
-            array_1.last(popupList).insertAdjacentElement('afterend', eWrapper);
+            (0, array_1.last)(popupList).insertAdjacentElement('afterend', eWrapper);
         }
         while (innerElsScrollMap.length) {
             const currentEl = innerElsScrollMap.pop();
@@ -613,8 +585,6 @@ let PopupService = PopupService_1 = class PopupService extends beanStub_1.BeanSt
         }
         const params = {
             type: 'popupToFront',
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
             eWrapper
         };
         this.eventService.dispatchEvent(params);
@@ -622,18 +592,18 @@ let PopupService = PopupService_1 = class PopupService extends beanStub_1.BeanSt
 };
 PopupService.WAIT_FOR_POPUP_CONTENT_RESIZE = 200;
 __decorate([
-    context_1.Autowired('focusService')
+    (0, context_1.Autowired)('focusService')
 ], PopupService.prototype, "focusService", void 0);
 __decorate([
-    context_1.Autowired('ctrlsService')
+    (0, context_1.Autowired)('ctrlsService')
 ], PopupService.prototype, "ctrlsService", void 0);
 __decorate([
-    context_1.Autowired('resizeObserverService')
+    (0, context_1.Autowired)('resizeObserverService')
 ], PopupService.prototype, "resizeObserverService", void 0);
 __decorate([
     context_1.PostConstruct
 ], PopupService.prototype, "postConstruct", null);
 PopupService = PopupService_1 = __decorate([
-    context_1.Bean('popupService')
+    (0, context_1.Bean)('popupService')
 ], PopupService);
 exports.PopupService = PopupService;

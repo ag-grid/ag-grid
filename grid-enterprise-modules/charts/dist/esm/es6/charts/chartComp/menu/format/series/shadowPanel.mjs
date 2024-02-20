@@ -7,10 +7,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { Autowired, Component, PostConstruct, RefSelector, } from "@ag-grid-community/core";
 import { getMaxValue } from "../formatPanel.mjs";
 export class ShadowPanel extends Component {
-    constructor(chartOptionsService, getSelectedSeries) {
+    constructor(chartOptionsService, getSelectedSeries, propertyKey = "shadow") {
         super();
         this.chartOptionsService = chartOptionsService;
         this.getSelectedSeries = getSelectedSeries;
+        this.propertyKey = propertyKey;
     }
     init() {
         const groupParams = {
@@ -25,25 +26,27 @@ export class ShadowPanel extends Component {
         this.initSeriesShadow();
     }
     initSeriesShadow() {
+        // Determine the path within the series options object to get/set the individual shadow options
+        const propertyNamespace = this.propertyKey;
         this.shadowGroup
             .setTitle(this.chartTranslationService.translate("shadow"))
-            .setEnabled(this.chartOptionsService.getSeriesOption("shadow.enabled", this.getSelectedSeries()))
+            .setEnabled(this.chartOptionsService.getSeriesOption(`${propertyNamespace}.enabled`, this.getSelectedSeries()))
             .hideOpenCloseIcons(true)
             .hideEnabledCheckbox(false)
-            .onEnableChange(newValue => this.chartOptionsService.setSeriesOption("shadow.enabled", newValue, this.getSelectedSeries()));
+            .onEnableChange(newValue => this.chartOptionsService.setSeriesOption(`${propertyNamespace}.enabled`, newValue, this.getSelectedSeries()));
         this.shadowColorPicker
             .setLabel(this.chartTranslationService.translate("color"))
             .setLabelWidth("flex")
-            .setInputWidth(45)
-            .setValue(this.chartOptionsService.getSeriesOption("shadow.color", this.getSelectedSeries()))
-            .onValueChange(newValue => this.chartOptionsService.setSeriesOption("shadow.color", newValue, this.getSelectedSeries()));
+            .setInputWidth('flex')
+            .setValue(this.chartOptionsService.getSeriesOption(`${propertyNamespace}.color`, this.getSelectedSeries()))
+            .onValueChange(newValue => this.chartOptionsService.setSeriesOption(`${propertyNamespace}.color`, newValue, this.getSelectedSeries()));
         const initInput = (input, property, minValue, defaultMaxValue) => {
-            const currentValue = this.chartOptionsService.getSeriesOption(`shadow.${property}`, this.getSelectedSeries());
+            const currentValue = this.chartOptionsService.getSeriesOption(`${propertyNamespace}.${property}`, this.getSelectedSeries());
             input.setLabel(this.chartTranslationService.translate(property))
                 .setMinValue(minValue)
                 .setMaxValue(getMaxValue(currentValue, defaultMaxValue))
                 .setValue(`${currentValue}`)
-                .onValueChange(newValue => this.chartOptionsService.setSeriesOption(`shadow.${property}`, newValue, this.getSelectedSeries()));
+                .onValueChange(newValue => this.chartOptionsService.setSeriesOption(`${propertyNamespace}.${property}`, newValue, this.getSelectedSeries()));
         };
         initInput(this.shadowBlurSlider, "blur", 0, 20);
         initInput(this.shadowXOffsetSlider, "xOffset", -10, 10);

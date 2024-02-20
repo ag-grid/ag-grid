@@ -1,7 +1,9 @@
-import { Grid, GridOptions, GetRowIdParams, RowDragMoveEvent } from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions, GetRowIdParams, RowDragMoveEvent } from '@ag-grid-community/core';
 import { getData } from "./data";
 
 var immutableStore: any[] = getData();
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -16,22 +18,20 @@ const gridOptions: GridOptions = {
   ],
   defaultColDef: {
     width: 170,
-    sortable: true,
     filter: true,
   },
   // this tells the grid we are doing updates when setting new data
-  animateRows: true,
   onRowDragMove: onRowDragMove,
   getRowId: getRowId,
   onSortChanged: onSortChanged,
   onFilterChanged: onFilterChanged,
-  onGridReady: function onGridReady() {
+  onGridReady: (params) => {
     // add id to each item, needed for immutable store to work
     immutableStore.forEach(function (data, index) {
       data.id = index
     })
 
-    gridOptions.api!.setRowData(immutableStore)
+    params.api.setGridOption('rowData', immutableStore)
   },
 }
 
@@ -40,7 +40,7 @@ var filterActive = false
 
 // listen for change on sort changed
 function onSortChanged() {
-  var colState = gridOptions.columnApi!.getColumnState() || [];
+  var colState = gridApi!.getColumnState() || [];
   sortActive = colState.some(c => c.sort)
   // suppress row drag if either sort or filter is active
   var suppressRowDrag = sortActive || filterActive
@@ -52,12 +52,12 @@ function onSortChanged() {
     ', allowRowDrag = ' +
     suppressRowDrag
   )
-  gridOptions.api!.setSuppressRowDrag(suppressRowDrag)
+  gridApi!.setGridOption('suppressRowDrag', suppressRowDrag)
 }
 
 // listen for changes on filter changed
 function onFilterChanged() {
-  filterActive = gridOptions.api!.isAnyFilterPresent()
+  filterActive = gridApi!.isAnyFilterPresent()
   // suppress row drag if either sort or filter is active
   var suppressRowDrag = sortActive || filterActive
   console.log(
@@ -68,7 +68,7 @@ function onFilterChanged() {
     ', allowRowDrag = ' +
     suppressRowDrag
   )
-  gridOptions.api!.setSuppressRowDrag(suppressRowDrag)
+  gridApi!.setGridOption('suppressRowDrag', suppressRowDrag)
 }
 
 function getRowId(params: GetRowIdParams) {
@@ -93,9 +93,9 @@ function onRowDragMove(event: RowDragMoveEvent) {
     moveInArray(newStore, fromIndex, toIndex)
 
     immutableStore = newStore
-    gridOptions.api!.setRowData(newStore)
+    gridApi!.setGridOption('rowData', newStore)
 
-    gridOptions.api!.clearFocusedCell()
+    gridApi!.clearFocusedCell()
   }
 
   function moveInArray(arr: any[], fromIndex: number, toIndex: number) {
@@ -108,5 +108,5 @@ function onRowDragMove(event: RowDragMoveEvent) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

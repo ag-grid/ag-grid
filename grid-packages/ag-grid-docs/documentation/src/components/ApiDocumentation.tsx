@@ -2,7 +2,7 @@ import classnames from 'classnames';
 import { Icon } from 'components/Icon';
 import React, { useEffect, useRef, useState } from 'react';
 import { trackApiDocumentation } from '../utils/analytics';
-import styles from './ApiDocumentation.module.scss';
+import styles from '@design-system/modules/ApiReference.module.scss';
 import {
     ApiProps,
     ChildDocEntry,
@@ -212,7 +212,7 @@ export const ApiDocumentation: React.FC<ApiProps> = ({
     let codeSrcProvided = [];
     configs.forEach((c) => {
         if (c == undefined) {
-            console.warn(`_config_ property missing from source ${source || (sources || []).join()}.`);
+            console.warn(`<api-documentation>: _config_ property missing from source ${source || (sources || []).join()}.`);
             return;
         }
         if (c.codeSrc) {
@@ -254,8 +254,8 @@ export const ApiDocumentation: React.FC<ApiProps> = ({
             current.map((x) => {
                 const prop = x[key];
                 if (!prop) {
-                    //console.warn(`Could not find a prop ${key} under source ${source} and section ${section}!`)
-                    throw new Error(`Could not find a prop ${key} under source ${source} and section ${section}!`);
+                    console.warn(`<api-documentation>: Could not find a prop ${key} under source ${source} and section ${section}!`)
+                    throw new Error(`<api-documentation>: Could not find a prop ${key} under source ${source} and section ${section}!`); //spl todo
                 }
                 return prop;
             }),
@@ -392,7 +392,7 @@ const Section: React.FC<SectionProps> = ({
         names.forEach((n) => {
             if (!processed.has(n)) {
                 throw new Error(
-                    `Failed to find a property named ${n} that we requested under section ${title}. Check if you passed the correct name or if the name appears in the source json file that you are using.`
+                    `<api-documentation>: Failed to find a property named ${n} that we requested under section ${title}. Check if you passed the correct name or if the name appears in the source json file that you are using.`
                 );
             }
         });
@@ -404,7 +404,7 @@ const Section: React.FC<SectionProps> = ({
         <div className={styles.apiReferenceOuter}>
             {header}
             <table
-                className={classnames(styles.reference, styles.apiReference)}
+                className={classnames(styles.reference, styles.apiReference, 'no-zebra')}
                 style={config.overrideBottomMargin ? { marginBottom: config.overrideBottomMargin } : {}}
             >
                 <colgroup>
@@ -454,7 +454,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
         );
     }
 
-    let propDescription = definition.description || (gridParams && gridParams.description) || undefined;
+    let propDescription = definition.description || (gridParams && gridParams.meta.comment) || undefined;
     if (propDescription) {
         propDescription = formatJsDocString(propDescription);
         // process property object
@@ -469,11 +469,10 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
     }
 
     // Default may or may not be on a new line in JsDoc but in both cases we want the default to be on the next line
-    let defaultValue = definition.default;
-    if (description != null && !defaultValue) {
-        const defaultReg = / Default: <code>(.*)<\/code>/;
-        defaultValue = description.match(defaultReg)?.length === 2 ? description.match(defaultReg)[1] : undefined;
-    }
+    const tags = gridParams?.meta?.tags ?? definition?.tags ?? [];
+    const jsdocDefault = tags.find((t) => t.name === 'default');
+    const defaultValue = definition.default ?? jsdocDefault?.comment;
+    const isInitial = tags.some(t => t.name === 'initial') ?? false;
 
     let displayName = name;
     if (!!definition.isRequired) {
@@ -492,9 +491,10 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
         if (gridParams && gridParams.type) {
             type = gridParams.type;
 
-            if (gridParams.description && gridParams.description.includes('@deprecated')) {
-                console.warn(`Docs include a property: ${name} that has been marked as deprecated.`);
-                console.warn(gridParams.description);
+            const isDeprecated = gridParams.meta?.tags?.some((t) => t.name === 'deprecated');
+            if (isDeprecated) {
+                console.warn(`<api-documentation>: Docs include a property: ${name} that has been marked as deprecated.`);
+                console.warn('<api-documentation>: ' + gridParams.meta?.all);
             }
 
             const anyInterfaces = extractInterfaces(
@@ -549,11 +549,11 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
         displayNameSplit = displayName;
     } else {
         displayNameSplit = displayName
-        .split(/(?=[A-Z])/)
-        .reverse()
-        .reduce((acc, cv) => {
-            return `${cv}<wbr />` + acc;
-        });
+            .split(/(?=[A-Z])/)
+            .reverse()
+            .reduce((acc, cv) => {
+                return `${cv}<wbr />` + acc;
+            });
     }
 
     const formattedDefaultValue = Array.isArray(defaultValue)
@@ -565,6 +565,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
         : defaultValue;
 
     return (
+        <>
         <tr ref={propertyRef}>
             <td role="presentation" className={styles.leftColumn}>
                 <h6 id={idName} className={classnames(styles.name, 'side-menu-exclude')}>
@@ -603,6 +604,20 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
                             <span className={styles.metaValue}>{formattedDefaultValue}</span>
                         </div>
                     )}
+                    {isInitial && (
+                        <div className={styles.metaItem}>
+                            {config.initialLink ? (
+                                <a
+                                    className={styles.metaLabel}
+                                    href={config.initialLink}
+                                >
+                                    Initial
+                                </a>
+                            ) : (
+                                <span className={styles.metaLabel}>Initial</span>
+                            )}
+                        </div>
+                    )}
                 </div>
             </td>
             <td className={styles.rightColumn}>
@@ -617,6 +632,10 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
                         See <a href={`#reference-${id}.${name}`}>{name}</a> for more details.
                     </div>
                 )}
+                {isInitial && config.showInitialDescription && (<div
+                    onClick={() => setExpanded(!isExpanded)}
+                    className={styles.description} 
+                >This property will only be read on initialisation.</div>)}
 
                 {definition.options != null && (
                     <div>
@@ -632,7 +651,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
                 <div className={styles.actions}>
                     {showAdditionalDetails && (
                         <button
-                            className={classnames(styles.seeMore, 'button-style-none')}
+                            className={classnames(styles.seeMore, 'button-as-link')}
                             onClick={() => {
                                 setExpanded(!isExpanded);
                                 trackApiDocumentation({
@@ -645,7 +664,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
                             role="presentation"
                         >
                             {!isExpanded ? 'More' : 'Hide'} details{' '}
-                            <Icon name={isExpanded ? 'chevronUp' : 'chevronDown'} />
+                            <Icon name={isExpanded ? 'chevronDown' : 'chevronRight'} />
                         </button>
                     )}
                     {more != null && more.url && !config.hideMore && (
@@ -668,9 +687,15 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
                         </span>
                     )}
                 </div>
-                {showAdditionalDetails && isExpanded && <div>{codeSection}</div>}
             </td>
         </tr>
+            {showAdditionalDetails && isExpanded &&
+                <tr className={classnames(styles.expandedContent)}>
+                    <td colSpan={2}>
+                        <div >{codeSection}</div>
+                    </td>
+                </tr>}
+        </>
     );
 };
 
@@ -772,7 +797,7 @@ const ObjectCodeSample: React.FC<ObjectCode> = ({ framework, id, breadcrumbs, pr
     return <Code code={escapedLines} keepMarkup={true} />;
 };
 
-const getInterfaceName = (name) => `${name.substr(0, 1).toUpperCase()}${name.substr(1)}`;
+const getInterfaceName = (name) => `${name.substring(0, 1).toUpperCase()}${name.substring(1)}`;
 
 function isGridOptionEvent(gridProp: InterfaceEntry): gridProp is IEvent {
     return gridProp && gridProp.meta && gridProp.meta.isEvent;
@@ -783,7 +808,7 @@ function isCallSig(gridProp: InterfaceEntry): gridProp is ICallSignature {
 
 const FunctionCodeSample: React.FC<FunctionCode> = ({ framework, name, type, config }) => {
     if (typeof type == 'string') {
-        console.log('type is a string!', type);
+        console.log('<api-documentation>: type is a string!', type);
     }
 
     type = type || {};

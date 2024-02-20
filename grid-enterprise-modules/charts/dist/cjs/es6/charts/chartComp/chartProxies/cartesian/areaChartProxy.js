@@ -25,10 +25,11 @@ class AreaChartProxy extends cartesianChartProxy_1.CartesianChartProxy {
         return axes;
     }
     getSeries(params) {
+        const [category] = params.categories;
         const series = params.fields.map(f => ({
             type: this.standaloneChartType,
-            xKey: params.category.id,
-            xName: params.category.name,
+            xKey: category.id,
+            xName: category.name,
             yKey: f.colId,
             yName: f.displayName,
             normalizedTo: this.chartType === 'normalizedArea' ? 100 : undefined,

@@ -11,6 +11,7 @@ const component_1 = require("../../../widgets/component");
 const componentAnnotations_1 = require("../../../widgets/componentAnnotations");
 const date_1 = require("../../../utils/date");
 const browser_1 = require("../../../utils/browser");
+const function_1 = require("../../../utils/function");
 class DefaultDateComponent extends component_1.Component {
     constructor() {
         super(/* html */ `
@@ -49,25 +50,61 @@ class DefaultDateComponent extends component_1.Component {
     setParams(params) {
         const inputElement = this.eDateInput.getInputElement();
         const shouldUseBrowserDatePicker = this.shouldUseBrowserDatePicker(params);
-        this.usingSafariDatePicker = shouldUseBrowserDatePicker && browser_1.isBrowserSafari();
+        this.usingSafariDatePicker = shouldUseBrowserDatePicker && (0, browser_1.isBrowserSafari)();
         inputElement.type = shouldUseBrowserDatePicker ? 'date' : 'text';
-        const { minValidYear, maxValidYear } = params.filterParams || {};
-        if (minValidYear) {
-            inputElement.min = `${minValidYear}-01-01`;
+        const { minValidYear, maxValidYear, minValidDate, maxValidDate, } = params.filterParams || {};
+        if (minValidDate && minValidYear) {
+            (0, function_1.warnOnce)('DateFilter should not have both minValidDate and minValidYear parameters set at the same time! minValidYear will be ignored.');
         }
-        if (maxValidYear) {
-            inputElement.max = `${maxValidYear}-12-31`;
+        if (maxValidDate && maxValidYear) {
+            (0, function_1.warnOnce)('DateFilter should not have both maxValidDate and maxValidYear parameters set at the same time! maxValidYear will be ignored.');
+        }
+        if (minValidDate && maxValidDate) {
+            const [parsedMinValidDate, parsedMaxValidDate] = [minValidDate, maxValidDate]
+                .map(v => v instanceof Date ? v : (0, date_1.parseDateTimeFromString)(v));
+            if (parsedMinValidDate && parsedMaxValidDate && parsedMinValidDate.getTime() > parsedMaxValidDate.getTime()) {
+                (0, function_1.warnOnce)('DateFilter parameter minValidDate should always be lower than or equal to parameter maxValidDate.');
+            }
+        }
+        if (minValidDate) {
+            if (minValidDate instanceof Date) {
+                inputElement.min = (0, date_1.dateToFormattedString)(minValidDate);
+            }
+            else {
+                inputElement.min = minValidDate;
+            }
+        }
+        else {
+            if (minValidYear) {
+                inputElement.min = `${minValidYear}-01-01`;
+            }
+        }
+        if (maxValidDate) {
+            if (maxValidDate instanceof Date) {
+                inputElement.max = (0, date_1.dateToFormattedString)(maxValidDate);
+            }
+            else {
+                inputElement.max = maxValidDate;
+            }
+        }
+        else {
+            if (maxValidYear) {
+                inputElement.max = `${maxValidYear}-12-31`;
+            }
         }
     }
     onParamsUpdated(params) {
+        this.refresh(params);
+    }
+    refresh(params) {
         this.params = params;
         this.setParams(params);
     }
     getDate() {
-        return date_1.parseDateTimeFromString(this.eDateInput.getValue());
+        return (0, date_1.parseDateTimeFromString)(this.eDateInput.getValue());
     }
     setDate(date) {
-        this.eDateInput.setValue(date_1.serialiseDate(date, false));
+        this.eDateInput.setValue((0, date_1.serialiseDate)(date, false));
     }
     setInputPlaceholder(placeholder) {
         this.eDateInput.setInputPlaceholder(placeholder);
@@ -84,10 +121,10 @@ class DefaultDateComponent extends component_1.Component {
         if (params.filterParams && params.filterParams.browserDatePicker != null) {
             return params.filterParams.browserDatePicker;
         }
-        return browser_1.isBrowserChrome() || browser_1.isBrowserFirefox() || (browser_1.isBrowserSafari() && browser_1.getSafariVersion() >= 14.1);
+        return (0, browser_1.isBrowserChrome)() || (0, browser_1.isBrowserFirefox)() || ((0, browser_1.isBrowserSafari)() && (0, browser_1.getSafariVersion)() >= 14.1);
     }
 }
 __decorate([
-    componentAnnotations_1.RefSelector('eDateInput')
+    (0, componentAnnotations_1.RefSelector)('eDateInput')
 ], DefaultDateComponent.prototype, "eDateInput", void 0);
 exports.DefaultDateComponent = DefaultDateComponent;

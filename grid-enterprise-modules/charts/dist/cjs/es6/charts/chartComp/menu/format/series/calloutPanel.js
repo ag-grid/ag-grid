@@ -32,7 +32,7 @@ class CalloutPanel extends core_1.Component {
         const initInput = (expression, input, labelKey, defaultMaxValue) => {
             const currentValue = this.chartOptionsService.getSeriesOption(expression, this.getSelectedSeries());
             input.setLabel(this.chartTranslationService.translate(labelKey))
-                .setMaxValue(formatPanel_1.getMaxValue(currentValue, defaultMaxValue))
+                .setMaxValue((0, formatPanel_1.getMaxValue)(currentValue, defaultMaxValue))
                 .setValue(`${currentValue}`)
                 .setTextFieldWidth(45)
                 .onValueChange(newValue => this.chartOptionsService.setSeriesOption(expression, newValue, this.getSelectedSeries()));
@@ -50,19 +50,19 @@ CalloutPanel.TEMPLATE = `<div>
             </ag-group-component>
         </div>`;
 __decorate([
-    core_1.RefSelector('calloutGroup')
+    (0, core_1.RefSelector)('calloutGroup')
 ], CalloutPanel.prototype, "calloutGroup", void 0);
 __decorate([
-    core_1.RefSelector('calloutLengthSlider')
+    (0, core_1.RefSelector)('calloutLengthSlider')
 ], CalloutPanel.prototype, "calloutLengthSlider", void 0);
 __decorate([
-    core_1.RefSelector('calloutStrokeWidthSlider')
+    (0, core_1.RefSelector)('calloutStrokeWidthSlider')
 ], CalloutPanel.prototype, "calloutStrokeWidthSlider", void 0);
 __decorate([
-    core_1.RefSelector('labelOffsetSlider')
+    (0, core_1.RefSelector)('labelOffsetSlider')
 ], CalloutPanel.prototype, "labelOffsetSlider", void 0);
 __decorate([
-    core_1.Autowired('chartTranslationService')
+    (0, core_1.Autowired)('chartTranslationService')
 ], CalloutPanel.prototype, "chartTranslationService", void 0);
 __decorate([
     core_1.PostConstruct

@@ -1,4 +1,4 @@
-import { AgEvent } from "../events";
+import { AgEvent, AgEventListener } from "../events";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 export interface TapEvent extends AgEvent {
     touchStart: Touch;
@@ -22,8 +22,8 @@ export declare class TouchListener implements IEventEmitter {
     private preventMouseClick;
     constructor(eElement: Element, preventMouseClick?: boolean);
     private getActiveTouch;
-    addEventListener(eventType: string, listener: Function): void;
-    removeEventListener(eventType: string, listener: Function): void;
+    addEventListener(eventType: string, listener: AgEventListener): void;
+    removeEventListener(eventType: string, listener: AgEventListener): void;
     private onTouchStart;
     private onTouchMove;
     private onTouchEnd;

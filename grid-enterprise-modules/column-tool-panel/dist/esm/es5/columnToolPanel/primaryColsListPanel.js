@@ -43,6 +43,8 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
     function PrimaryColsListPanel() {
         var _this = _super.call(this, PrimaryColsListPanel.TEMPLATE) || this;
         _this.destroyColumnItemFuncs = [];
+        _this.hasLoadedInitialState = false;
+        _this.isInitialState = false;
         return _this;
     }
     PrimaryColsListPanel.prototype.destroyColumnTree = function () {
@@ -72,14 +74,15 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
             _this.addManagedListener(_this.eventService, event, _this.fireSelectionChangedEvent.bind(_this));
         });
         this.expandGroupsByDefault = !this.params.contractColumnSelection;
-        var translate = this.localeService.getLocaleTextFunc();
-        var columnListName = translate('ariaColumnList', 'Column List');
         this.virtualList = this.createManagedBean(new VirtualList({
             cssIdentifier: 'column-select',
             ariaRole: 'tree',
-            listName: columnListName
         }));
         this.appendChild(this.virtualList.getGui());
+        var ariaEl = this.virtualList.getAriaElement();
+        _.setAriaLive(ariaEl, 'assertive');
+        _.setAriaAtomic(ariaEl, false);
+        _.setAriaRelevant(ariaEl, 'text');
         this.virtualList.setComponentCreator(function (item, listItemElement) {
             _.setAriaLevel(listItemElement, (item.getDept() + 1));
             return _this.createComponentFromItem(item, listItemElement);
@@ -87,9 +90,10 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         if (this.columnModel.isReady()) {
             this.onColumnsChanged();
         }
-        if (!params.suppressColumnMove && !this.gridOptionsService.is('suppressMovableColumns')) {
-            this.createManagedBean(new PrimaryColsListPanelItemDragFeature(this, this.virtualList));
+        if (this.params.suppressColumnMove) {
+            return;
         }
+        this.colsListPanelItemDragFeature = this.createManagedBean(new PrimaryColsListPanelItemDragFeature(this, this.virtualList));
     };
     PrimaryColsListPanel.prototype.createComponentFromItem = function (item, listItemElement) {
         if (item.isGroup()) {
@@ -102,6 +106,10 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         return columnComp;
     };
     PrimaryColsListPanel.prototype.onColumnsChanged = function () {
+        if (!this.hasLoadedInitialState) {
+            this.hasLoadedInitialState = true;
+            this.isInitialState = !!this.params.initialState;
+        }
         var expandedStates = this.getExpandedStates();
         var pivotModeActive = this.columnModel.isPivotMode();
         var shouldSyncColumnLayoutWithGrid = !this.params.suppressSyncLayoutWithGrid && !pivotModeActive;
@@ -114,15 +122,23 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         this.setExpandedStates(expandedStates);
         this.markFilteredColumns();
         this.flattenAndFilterModel();
+        this.isInitialState = false;
     };
     PrimaryColsListPanel.prototype.getDisplayedColsList = function () {
         return this.displayedColsList;
     };
     PrimaryColsListPanel.prototype.getExpandedStates = function () {
+        var res = {};
+        if (this.isInitialState) {
+            var expandedGroupIds = this.params.initialState.expandedGroupIds;
+            expandedGroupIds.forEach(function (id) {
+                res[id] = true;
+            });
+            return res;
+        }
         if (!this.allColsTree) {
             return {};
         }
-        var res = {};
         this.forEachItem(function (item) {
             if (!item.isGroup()) {
                 return;
@@ -138,6 +154,7 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         if (!this.allColsTree) {
             return;
         }
+        var isInitialState = this.isInitialState;
         this.forEachItem(function (item) {
             if (!item.isGroup()) {
                 return;
@@ -146,8 +163,8 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
             if (colGroup) { // group should always exist, this is defensive
                 var expanded = states[colGroup.getId()];
                 var groupExistedLastTime = expanded != null;
-                if (groupExistedLastTime) {
-                    item.setExpanded(expanded);
+                if (groupExistedLastTime || isInitialState) {
+                    item.setExpanded(!!expanded);
                 }
             }
         });
@@ -238,6 +255,14 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
             this.focusRowIfAlive(focusedRow);
         }
         this.notifyListeners();
+        this.refreshAriaLabel();
+    };
+    PrimaryColsListPanel.prototype.refreshAriaLabel = function () {
+        var translate = this.localeService.getLocaleTextFunc();
+        var columnListName = translate('ariaColumnPanelList', 'Column List');
+        var localeColumns = translate('columns', 'Columns');
+        var items = this.displayedColsList.length;
+        _.setAriaLabel(this.virtualList.getAriaElement(), "".concat(columnListName, " ").concat(items, " ").concat(localeColumns));
     };
     PrimaryColsListPanel.prototype.focusRowIfAlive = function (rowIndex) {
         var _this = this;
@@ -256,6 +281,9 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
                 }
             });
         };
+        if (!this.allColsTree) {
+            return;
+        }
         recursiveFunc(this.allColsTree);
     };
     PrimaryColsListPanel.prototype.doSetExpandedAll = function (value) {
@@ -385,10 +413,25 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         this.dispatchEvent({ type: 'groupExpanded', state: expandState });
     };
     PrimaryColsListPanel.prototype.fireSelectionChangedEvent = function () {
+        if (!this.allColsTree) {
+            return;
+        }
         var selectionState = this.getSelectionState();
         this.dispatchEvent({ type: 'selectionChanged', state: selectionState });
     };
-    PrimaryColsListPanel.TEMPLATE = "<div class=\"" + PRIMARY_COLS_LIST_PANEL_CLASS + "\" role=\"presentation\"></div>";
+    PrimaryColsListPanel.prototype.getExpandedGroups = function () {
+        var expandedGroupIds = [];
+        if (!this.allColsTree) {
+            return expandedGroupIds;
+        }
+        this.forEachItem(function (item) {
+            if (item.isGroup() && item.isExpanded()) {
+                expandedGroupIds.push(item.getColumnGroup().getId());
+            }
+        });
+        return expandedGroupIds;
+    };
+    PrimaryColsListPanel.TEMPLATE = "<div class=\"".concat(PRIMARY_COLS_LIST_PANEL_CLASS, "\" role=\"presentation\"></div>");
     __decorate([
         Autowired('columnModel')
     ], PrimaryColsListPanel.prototype, "columnModel", void 0);

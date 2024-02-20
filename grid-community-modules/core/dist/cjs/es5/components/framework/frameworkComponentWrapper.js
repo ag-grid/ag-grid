@@ -30,6 +30,8 @@ var BaseComponentWrapper = /** @class */ (function () {
             if (mandatory) {
                 console.warn('AG Grid: Framework component is missing the method ' + methodName + '()');
             }
+            // multiple features rely on this returning `null` rather than `undefined`,
+            // so that they can differentiate whether the underlying component has implemented a void method or not
             return null;
         };
     };

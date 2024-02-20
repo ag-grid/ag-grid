@@ -33,10 +33,10 @@ var ListenerUtils = /** @class */ (function () {
         return false;
     };
     __decorate([
-        core_1.Autowired('columnModel')
+        (0, core_1.Autowired)('columnModel')
     ], ListenerUtils.prototype, "columnModel", void 0);
     ListenerUtils = __decorate([
-        core_1.Bean('ssrmListenerUtils')
+        (0, core_1.Bean)('ssrmListenerUtils')
     ], ListenerUtils);
     return ListenerUtils;
 }());

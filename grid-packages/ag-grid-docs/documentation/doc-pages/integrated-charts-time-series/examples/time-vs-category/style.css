@@ -1,7 +1,7 @@
 .wrapper {
     display: flex;
     flex-direction: column;
-    height: 95%;
+    height: calc(100% - 50px);
     margin-top: 5px;
 }
 
@@ -15,6 +15,4 @@
 
 .my-chart {
     flex: 1;
-    margin-top: 0.5rem;
-    border: 1px solid var(--ag-border-color);
 }

@@ -4,6 +4,13 @@ import { ColumnGroup } from "../../entities/columnGroup";
 import { Column } from "../../entities/column";
 import { ProvidedColumnGroup } from "../../entities/providedColumnGroup";
 import { missing } from "../../utils/generic";
+import { IAbstractHeaderCellComp } from "./abstractCell/abstractHeaderCellCtrl";
+import { ICellComp } from "../../rendering/cell/cellCtrl";
+import { ColumnModel } from "../../columns/columnModel";
+import { WithoutGridCommon } from "../../interfaces/iCommon";
+
+const CSS_FIRST_COLUMN = 'ag-column-first';
+const CSS_LAST_COLUMN = 'ag-column-last';
 
 export class CssClassApplier {
 
@@ -41,21 +48,23 @@ export class CssClassApplier {
         );
     }
 
+    public static refreshFirstAndLastStyles(comp: IAbstractHeaderCellComp | ICellComp, column: Column | ColumnGroup, columnModel: ColumnModel) {
+        comp.addOrRemoveCssClass(CSS_FIRST_COLUMN, columnModel.isColumnAtEdge(column, 'first'));
+        comp.addOrRemoveCssClass(CSS_LAST_COLUMN, columnModel.isColumnAtEdge(column, 'last'));
+    }
+
     private static getClassParams<T extends HeaderClassParams | ToolPanelClassParams>(abstractColDef: AbstractColDef,
         gridOptionsService: GridOptionsService,
         column: Column | null,
         columnGroup: T['columnGroup']): T {
-        return {
+        return gridOptionsService.addGridCommonParams({
             // bad naming, as colDef here can be a group or a column,
             // however most people won't appreciate the difference,
             // so keeping it as colDef to avoid confusion.
             colDef: abstractColDef,
             column: column,
-            columnGroup: columnGroup,
-            api: gridOptionsService.api,
-            columnApi: gridOptionsService.columnApi,
-            context: gridOptionsService.context
-        } as T;
+            columnGroup: columnGroup
+        } as WithoutGridCommon<T>);
     }
 
     private static getColumnClassesFromCollDef<T extends HeaderClassParams | ToolPanelClassParams>(

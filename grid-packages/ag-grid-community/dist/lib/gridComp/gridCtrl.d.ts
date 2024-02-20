@@ -5,7 +5,6 @@ export interface IGridComp extends LayoutView {
     setRtlClass(cssClass: string): void;
     destroyGridUi(): void;
     forceFocusOutOfContainer(up: boolean): void;
-    addOrRemoveKeyboardFocusClass(value: boolean): void;
     getFocusableContainers(): HTMLElement[];
     setCursor(value: string | null): void;
     setUserSelect(value: string | null): void;

@@ -41,16 +41,18 @@ var CsvCreator = /** @class */ (function (_super) {
     CsvCreator.prototype.export = function (userParams) {
         if (this.isExportSuppressed()) {
             console.warn("AG Grid: Export cancelled. Export is not allowed as per your configuration.");
-            return '';
+            return;
         }
         var mergedParams = this.getMergedParams(userParams);
         var data = this.getData(mergedParams);
         var packagedFile = new Blob(["\ufeff", data], { type: 'text/plain' });
-        Downloader.download(this.getFileName(mergedParams.fileName), packagedFile);
-        return data;
+        var fileName = typeof mergedParams.fileName === 'function'
+            ? mergedParams.fileName(this.gridOptionsService.getGridCommonParams())
+            : mergedParams.fileName;
+        Downloader.download(this.getFileName(fileName), packagedFile);
     };
     CsvCreator.prototype.exportDataAsCsv = function (params) {
-        return this.export(params);
+        this.export(params);
     };
     CsvCreator.prototype.getDataAsCsv = function (params, skipDefaultParams) {
         if (skipDefaultParams === void 0) { skipDefaultParams = false; }
@@ -58,9 +60,6 @@ var CsvCreator = /** @class */ (function (_super) {
             ? Object.assign({}, params)
             : this.getMergedParams(params);
         return this.getData(mergedParams);
-    };
-    CsvCreator.prototype.getDefaultFileName = function () {
-        return 'export.csv';
     };
     CsvCreator.prototype.getDefaultFileExtension = function () {
         return 'csv';
@@ -83,7 +82,7 @@ var CsvCreator = /** @class */ (function (_super) {
         });
     };
     CsvCreator.prototype.isExportSuppressed = function () {
-        return this.gridOptionsService.is('suppressCsvExport');
+        return this.gridOptionsService.get('suppressCsvExport');
     };
     __decorate([
         Autowired('columnModel')

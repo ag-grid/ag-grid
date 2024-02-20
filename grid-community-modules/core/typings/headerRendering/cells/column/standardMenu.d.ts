@@ -7,12 +7,15 @@ export declare class StandardMenuFactory extends BeanStub implements IMenuFactor
     private popupService;
     private focusService;
     private ctrlsService;
+    private menuService;
     private hidePopup;
     private tabListener;
     hideActiveMenu(): void;
-    showMenuAfterMouseEvent(column: Column, mouseEvent: MouseEvent | Touch): void;
-    showMenuAfterButtonClick(column: Column, eventSource: HTMLElement, containerType: ContainerType): void;
+    showMenuAfterMouseEvent(column: Column | undefined, mouseEvent: MouseEvent | Touch, containerType: ContainerType): void;
+    showMenuAfterButtonClick(column: Column | undefined, eventSource: HTMLElement, containerType: ContainerType): void;
     private showPopup;
     private trapFocusWithin;
+    private dispatchVisibleChangedEvent;
     isMenuEnabled(column: Column): boolean;
+    showMenuAfterContextMenuEvent(): void;
 }

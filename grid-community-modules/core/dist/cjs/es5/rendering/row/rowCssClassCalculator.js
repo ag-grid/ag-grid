@@ -15,7 +15,7 @@ var RowCssClassCalculator = /** @class */ (function () {
     }
     RowCssClassCalculator.prototype.getInitialRowClasses = function (params) {
         var classes = [];
-        if (generic_1.exists(params.extraCssClass)) {
+        if ((0, generic_1.exists)(params.extraCssClass)) {
             classes.push(params.extraCssClass);
         }
         classes.push('ag-row');
@@ -47,8 +47,8 @@ var RowCssClassCalculator = /** @class */ (function () {
         if (params.rowNode.dragging) {
             classes.push('ag-row-dragging');
         }
-        array_1.pushAll(classes, this.processClassesFromGridOptions(params.rowNode));
-        array_1.pushAll(classes, this.preProcessRowClassRules(params.rowNode));
+        (0, array_1.pushAll)(classes, this.processClassesFromGridOptions(params.rowNode));
+        (0, array_1.pushAll)(classes, this.preProcessRowClassRules(params.rowNode));
         // we use absolute position unless we are doing print layout
         classes.push(params.printLayout ? 'ag-row-position-relative' : 'ag-row-position-absolute');
         if (params.firstRowOnPage) {
@@ -110,15 +110,12 @@ var RowCssClassCalculator = /** @class */ (function () {
         return res;
     };
     RowCssClassCalculator.prototype.processRowClassRules = function (rowNode, onApplicableClass, onNotApplicableClass) {
-        var rowClassParams = {
+        var rowClassParams = this.gridOptionsService.addGridCommonParams({
             data: rowNode.data,
             node: rowNode,
-            rowIndex: rowNode.rowIndex,
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context
-        };
-        this.stylingService.processClassRules(this.gridOptionsService.get('rowClassRules'), rowClassParams, onApplicableClass, onNotApplicableClass);
+            rowIndex: rowNode.rowIndex
+        });
+        this.stylingService.processClassRules(undefined, this.gridOptionsService.get('rowClassRules'), rowClassParams, onApplicableClass, onNotApplicableClass);
     };
     RowCssClassCalculator.prototype.calculateRowLevel = function (rowNode) {
         if (rowNode.group) {
@@ -128,13 +125,13 @@ var RowCssClassCalculator = /** @class */ (function () {
         return rowNode.parent ? (rowNode.parent.level + 1) : 0;
     };
     __decorate([
-        context_1.Autowired('stylingService')
+        (0, context_1.Autowired)('stylingService')
     ], RowCssClassCalculator.prototype, "stylingService", void 0);
     __decorate([
-        context_1.Autowired('gridOptionsService')
+        (0, context_1.Autowired)('gridOptionsService')
     ], RowCssClassCalculator.prototype, "gridOptionsService", void 0);
     RowCssClassCalculator = __decorate([
-        context_1.Bean('rowCssClassCalculator')
+        (0, context_1.Bean)('rowCssClassCalculator')
     ], RowCssClassCalculator);
     return RowCssClassCalculator;
 }());

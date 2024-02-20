@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { CellClassParams, ColDef } from "../entities/colDef";
@@ -7,7 +7,9 @@ import { RowClassParams } from "../entities/gridOptions";
 export declare class StylingService extends BeanStub {
     private expressionService;
     processAllCellClasses(colDef: ColDef, params: CellClassParams, onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void): void;
-    processClassRules(classRules: {
+    processClassRules(previousClassRules: {
+        [cssClassName: string]: (Function | string);
+    } | undefined, classRules: {
         [cssClassName: string]: (Function | string);
     } | undefined, params: RowClassParams | CellClassParams, onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void): void;
     getStaticCellClasses(colDef: ColDef, params: CellClassParams): string[];

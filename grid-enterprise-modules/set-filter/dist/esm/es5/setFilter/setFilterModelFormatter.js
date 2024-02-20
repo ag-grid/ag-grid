@@ -10,7 +10,7 @@ var SetFilterModelFormatter = /** @class */ (function () {
         var availableKeys = values.filter(function (v) { return valueModel.isKeyAvailable(v); });
         var numValues = availableKeys.length;
         var formattedValues = availableKeys.slice(0, 10).map(function (key) { return setFilter.getFormattedValue(key); });
-        return "(" + numValues + ") " + formattedValues.join(',') + (numValues > 10 ? ',...' : '');
+        return "(".concat(numValues, ") ").concat(formattedValues.join(',')).concat(numValues > 10 ? ',...' : '');
     };
     return SetFilterModelFormatter;
 }());

@@ -1,5 +1,7 @@
 import {
-  ColDef, Grid,
+  ColDef,
+  GridApi,
+  createGrid,
   GridOptions,
   IServerSideDatasource,
   ISetFilterParams,
@@ -8,7 +10,7 @@ import {
   SetFilterValuesFuncParams,
   ValueFormatterParams,
   ValueGetterParams,
-} from '@ag-grid-community/core'
+} from '@ag-grid-community/core';
 declare var FakeServer: any;
 const columnDefs: ColDef[] = [
   { field: 'employeeId', hide: true },
@@ -29,12 +31,15 @@ const columnDefs: ColDef[] = [
   },
 ]
 
+let gridApi: GridApi;
+
 const gridOptions: GridOptions = {
   defaultColDef: {
     width: 240,
     filter: 'agTextColumnFilter',
     floatingFilter: true,
     flex: 1,
+    sortable: false,
   },
   autoGroupColumnDef: {
     field: 'employeeName',
@@ -49,7 +54,6 @@ const gridOptions: GridOptions = {
   rowModelType: 'serverSide',
   treeData: true,
   columnDefs: columnDefs,
-  animateRows: true,
   isServerSideGroupOpenByDefault: (
     params: IsServerSideGroupOpenByDefaultParams
   ) => {
@@ -98,7 +102,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
       console.log('[Datasource] - rows requested by grid: ', params.request)
 
       // simulating real server call with a 500ms delay
-      setTimeout(function () {
+      setTimeout(() => {
         // get data for request from our fake server
         var response = server.getData(params.request)
         if (response.success) {
@@ -126,10 +130,10 @@ function getDatesAsync(params: SetFilterValuesFuncParams<any, Date>) {
   }
 
   // simulating real server call with a 500ms delay
-  setTimeout(function () {
+  setTimeout(() => {
     params.success(dates)
   }, 500)
-} 
+}
 
 function getEmployeesAsync(params: SetFilterValuesFuncParams<any, string[]>) {
   if (!fakeServer) {
@@ -140,7 +144,7 @@ function getEmployeesAsync(params: SetFilterValuesFuncParams<any, string[]>) {
   var employees = fakeServer.getEmployees()
 
   // simulating real server call with a 500ms delay
-  setTimeout(function () {
+  setTimeout(() => {
     params.success(employees)
   }, 500)
 }
@@ -148,7 +152,7 @@ function getEmployeesAsync(params: SetFilterValuesFuncParams<any, string[]>) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/tree-data.json')
     .then(response => response.json())
@@ -160,6 +164,6 @@ document.addEventListener('DOMContentLoaded', function () {
       var datasource = getServerSideDatasource(fakeServer)
 
       // register the datasource with the grid
-      gridOptions.api!.setServerSideDatasource(datasource)
+      gridApi!.setGridOption('serverSideDatasource', datasource)
     })
 })

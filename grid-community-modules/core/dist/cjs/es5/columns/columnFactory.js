@@ -33,7 +33,7 @@ var defaultColumnTypes_1 = require("../entities/defaultColumnTypes");
 var beanStub_1 = require("../context/beanStub");
 var object_1 = require("../utils/object");
 var generic_1 = require("../utils/generic");
-var array_1 = require("../utils/array");
+var function_1 = require("../utils/function");
 // takes ColDefs and ColGroupDefs and turns them into Columns and OriginalGroups
 var ColumnFactory = /** @class */ (function (_super) {
     __extends(ColumnFactory, _super);
@@ -43,7 +43,7 @@ var ColumnFactory = /** @class */ (function (_super) {
     ColumnFactory.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('ColumnFactory');
     };
-    ColumnFactory.prototype.createColumnTree = function (defs, primaryColumns, existingTree) {
+    ColumnFactory.prototype.createColumnTree = function (defs, primaryColumns, existingTree, source) {
         // column key creator dishes out unique column id's in a deterministic way,
         // so if we have two grids (that could be master/slave) with same column definitions,
         // then this ensures the two grids use identical id's.
@@ -51,7 +51,7 @@ var ColumnFactory = /** @class */ (function (_super) {
         var _a = this.extractExistingTreeData(existingTree), existingCols = _a.existingCols, existingGroups = _a.existingGroups, existingColKeys = _a.existingColKeys;
         columnKeyCreator.addExistingKeys(existingColKeys);
         // create am unbalanced tree that maps the provided definitions
-        var unbalancedTree = this.recursivelyCreateColumns(defs, 0, primaryColumns, existingCols, columnKeyCreator, existingGroups);
+        var unbalancedTree = this.recursivelyCreateColumns(defs, 0, primaryColumns, existingCols, columnKeyCreator, existingGroups, source);
         var treeDept = this.findMaxDept(unbalancedTree, 0);
         this.logger.log('Number of levels for grouped columns is ' + treeDept);
         var columnTree = this.balanceColumnTree(unbalancedTree, 0, treeDept, columnKeyCreator);
@@ -97,7 +97,7 @@ var ColumnFactory = /** @class */ (function (_super) {
         // at the end, this will be the top of the tree item.
         var nextChild = column;
         for (var i = dept - 1; i >= 0; i--) {
-            var autoGroup = new providedColumnGroup_1.ProvidedColumnGroup(null, "FAKE_PATH_" + column.getId() + "}_" + i, true, i);
+            var autoGroup = new providedColumnGroup_1.ProvidedColumnGroup(null, "FAKE_PATH_".concat(column.getId(), "}_").concat(i), true, i);
             this.createBean(autoGroup);
             autoGroup.setChildren([nextChild]);
             nextChild.setOriginalParent(autoGroup);
@@ -181,36 +181,37 @@ var ColumnFactory = /** @class */ (function (_super) {
         }
         return maxDeptThisLevel;
     };
-    ColumnFactory.prototype.recursivelyCreateColumns = function (defs, level, primaryColumns, existingColsCopy, columnKeyCreator, existingGroups) {
+    ColumnFactory.prototype.recursivelyCreateColumns = function (defs, level, primaryColumns, existingColsCopy, columnKeyCreator, existingGroups, source) {
         if (!defs)
             return [];
         var result = new Array(defs.length);
         for (var i = 0; i < result.length; i++) {
             var def = defs[i];
             if (this.isColumnGroup(def)) {
-                result[i] = this.createColumnGroup(primaryColumns, def, level, existingColsCopy, columnKeyCreator, existingGroups);
+                result[i] = this.createColumnGroup(primaryColumns, def, level, existingColsCopy, columnKeyCreator, existingGroups, source);
             }
             else {
-                result[i] = this.createColumn(primaryColumns, def, existingColsCopy, columnKeyCreator);
+                result[i] = this.createColumn(primaryColumns, def, existingColsCopy, columnKeyCreator, source);
             }
         }
         return result;
     };
-    ColumnFactory.prototype.createColumnGroup = function (primaryColumns, colGroupDef, level, existingColumns, columnKeyCreator, existingGroups) {
+    ColumnFactory.prototype.createColumnGroup = function (primaryColumns, colGroupDef, level, existingColumns, columnKeyCreator, existingGroups, source) {
         var colGroupDefMerged = this.createMergedColGroupDef(colGroupDef);
         var groupId = columnKeyCreator.getUniqueKey(colGroupDefMerged.groupId || null, null);
         var providedGroup = new providedColumnGroup_1.ProvidedColumnGroup(colGroupDefMerged, groupId, false, level);
         this.createBean(providedGroup);
-        var existingGroup = this.findExistingGroup(colGroupDef, existingGroups);
+        var existingGroupAndIndex = this.findExistingGroup(colGroupDef, existingGroups);
         // make sure we remove, so if user provided duplicate id, then we don't have more than
         // one column instance for colDef with common id
+        if (existingGroupAndIndex) {
+            existingGroups.splice(existingGroupAndIndex.idx, 1);
+        }
+        var existingGroup = existingGroupAndIndex === null || existingGroupAndIndex === void 0 ? void 0 : existingGroupAndIndex.group;
         if (existingGroup) {
-            array_1.removeFromArray(existingGroups, existingGroup);
+            providedGroup.setExpanded(existingGroup.isExpanded());
         }
-        if (existingGroup && existingGroup.isExpanded()) {
-            providedGroup.setExpanded(true);
-        }
-        var children = this.recursivelyCreateColumns(colGroupDefMerged.children, level + 1, primaryColumns, existingColumns, columnKeyCreator, existingGroups);
+        var children = this.recursivelyCreateColumns(colGroupDefMerged.children, level + 1, primaryColumns, existingColumns, columnKeyCreator, existingGroups, source);
         providedGroup.setChildren(children);
         return providedGroup;
     };
@@ -220,14 +221,15 @@ var ColumnFactory = /** @class */ (function (_super) {
         Object.assign(colGroupDefMerged, colGroupDef);
         return colGroupDefMerged;
     };
-    ColumnFactory.prototype.createColumn = function (primaryColumns, colDef, existingColsCopy, columnKeyCreator) {
+    ColumnFactory.prototype.createColumn = function (primaryColumns, colDef, existingColsCopy, columnKeyCreator, source) {
         // see if column already exists
-        var column = this.findExistingColumn(colDef, existingColsCopy);
+        var existingColAndIndex = this.findExistingColumn(colDef, existingColsCopy);
         // make sure we remove, so if user provided duplicate id, then we don't have more than
         // one column instance for colDef with common id
-        if (existingColsCopy && column) {
-            array_1.removeFromArray(existingColsCopy, column);
+        if (existingColAndIndex) {
+            existingColsCopy === null || existingColsCopy === void 0 ? void 0 : existingColsCopy.splice(existingColAndIndex.idx, 1);
         }
+        var column = existingColAndIndex === null || existingColAndIndex === void 0 ? void 0 : existingColAndIndex.column;
         if (!column) {
             // no existing column, need to create one
             var colId = columnKeyCreator.getUniqueKey(colDef.colId, colDef.field);
@@ -237,15 +239,15 @@ var ColumnFactory = /** @class */ (function (_super) {
         }
         else {
             var colDefMerged = this.addColumnDefaultAndTypes(colDef, column.getColId());
-            column.setColDef(colDefMerged, colDef);
-            this.applyColumnState(column, colDefMerged);
+            column.setColDef(colDefMerged, colDef, source);
+            this.applyColumnState(column, colDefMerged, source);
         }
         this.dataTypeService.addColumnListeners(column);
         return column;
     };
-    ColumnFactory.prototype.applyColumnState = function (column, colDef) {
+    ColumnFactory.prototype.applyColumnState = function (column, colDef, source) {
         // flex
-        var flex = generic_1.attrToNumber(colDef.flex);
+        var flex = (0, generic_1.attrToNumber)(colDef.flex);
         if (flex !== undefined) {
             column.setFlex(flex);
         }
@@ -253,35 +255,35 @@ var ColumnFactory = /** @class */ (function (_super) {
         var noFlexThisCol = column.getFlex() <= 0;
         if (noFlexThisCol) {
             // both null and undefined means we skip, as it's not possible to 'clear' width (a column must have a width)
-            var width = generic_1.attrToNumber(colDef.width);
+            var width = (0, generic_1.attrToNumber)(colDef.width);
             if (width != null) {
-                column.setActualWidth(width);
+                column.setActualWidth(width, source);
             }
             else {
                 // otherwise set the width again, in case min or max width has changed,
                 // and width needs to be adjusted.
                 var widthBeforeUpdate = column.getActualWidth();
-                column.setActualWidth(widthBeforeUpdate);
+                column.setActualWidth(widthBeforeUpdate, source);
             }
         }
         // sort - anything but undefined will set sort, thus null or empty string will clear the sort
         if (colDef.sort !== undefined) {
             if (colDef.sort == 'asc' || colDef.sort == 'desc') {
-                column.setSort(colDef.sort);
+                column.setSort(colDef.sort, source);
             }
             else {
-                column.setSort(undefined);
+                column.setSort(undefined, source);
             }
         }
         // sorted at - anything but undefined, thus null will clear the sortIndex
-        var sortIndex = generic_1.attrToNumber(colDef.sortIndex);
+        var sortIndex = (0, generic_1.attrToNumber)(colDef.sortIndex);
         if (sortIndex !== undefined) {
             column.setSortIndex(sortIndex);
         }
         // hide - anything but undefined, thus null will clear the hide
-        var hide = generic_1.attrToBoolean(colDef.hide);
+        var hide = (0, generic_1.attrToBoolean)(colDef.hide);
         if (hide !== undefined) {
-            column.setVisible(!hide);
+            column.setVisible(!hide, source);
         }
         // pinned - anything but undefined, thus null or empty string will remove pinned
         if (colDef.pinned !== undefined) {
@@ -298,53 +300,57 @@ var ColumnFactory = /** @class */ (function (_super) {
             var newHasId = newColDef.colId != null;
             if (newHasId) {
                 if (existingColsCopy[i].getId() === newColDef.colId) {
-                    return existingColsCopy[i];
+                    return { idx: i, column: existingColsCopy[i] };
                 }
                 continue;
             }
             var newHasField = newColDef.field != null;
             if (newHasField) {
                 if (def.field === newColDef.field) {
-                    return existingColsCopy[i];
+                    return { idx: i, column: existingColsCopy[i] };
                 }
                 continue;
             }
             if (def === newColDef) {
-                return existingColsCopy[i];
+                return { idx: i, column: existingColsCopy[i] };
             }
         }
         return undefined;
     };
     ColumnFactory.prototype.findExistingGroup = function (newGroupDef, existingGroups) {
-        return existingGroups.find(function (existingGroup) {
+        var newHasId = newGroupDef.groupId != null;
+        if (!newHasId) {
+            return undefined;
+        }
+        for (var i = 0; i < existingGroups.length; i++) {
+            var existingGroup = existingGroups[i];
             var existingDef = existingGroup.getColGroupDef();
             if (!existingDef) {
-                return false;
+                continue;
             }
-            var newHasId = newGroupDef.groupId != null;
-            if (newHasId) {
-                return existingGroup.getId() === newGroupDef.groupId;
+            if (existingGroup.getId() === newGroupDef.groupId) {
+                return { idx: i, group: existingGroup };
             }
-            return false;
-        });
+        }
+        return undefined;
     };
     ColumnFactory.prototype.addColumnDefaultAndTypes = function (colDef, colId) {
         // start with empty merged definition
         var res = {};
         // merge properties from default column definitions
         var defaultColDef = this.gridOptionsService.get('defaultColDef');
-        object_1.mergeDeep(res, defaultColDef, false, true);
+        (0, object_1.mergeDeep)(res, defaultColDef, false, true);
         var columnType = this.dataTypeService.updateColDefAndGetColumnType(res, colDef, colId);
         if (columnType) {
             this.assignColumnTypes(columnType, res);
         }
         // merge properties from column definitions
-        object_1.mergeDeep(res, colDef, false, true);
+        (0, object_1.mergeDeep)(res, colDef, false, true);
         var autoGroupColDef = this.gridOptionsService.get('autoGroupColumnDef');
         var isSortingCoupled = this.gridOptionsService.isColumnsSortingCoupledToGroup();
         if (colDef.rowGroup && autoGroupColDef && isSortingCoupled) {
             // override the sort for row group columns where the autoGroupColDef defines these values.
-            object_1.mergeDeep(res, { sort: autoGroupColDef.sort, initialSort: autoGroupColDef.initialSort }, false, true);
+            (0, object_1.mergeDeep)(res, { sort: autoGroupColDef.sort, initialSort: autoGroupColDef.initialSort }, false, true);
         }
         this.dataTypeService.validateColDef(res);
         return res;
@@ -356,18 +362,24 @@ var ColumnFactory = /** @class */ (function (_super) {
         // merge user defined with default column types
         var allColumnTypes = Object.assign({}, defaultColumnTypes_1.DefaultColumnTypes);
         var userTypes = this.gridOptionsService.get('columnTypes') || {};
-        object_1.iterateObject(userTypes, function (key, value) {
+        (0, object_1.iterateObject)(userTypes, function (key, value) {
             if (key in allColumnTypes) {
-                console.warn("AG Grid: the column type '" + key + "' is a default column type and cannot be overridden.");
+                console.warn("AG Grid: the column type '".concat(key, "' is a default column type and cannot be overridden."));
             }
             else {
+                var colType = value;
+                if (colType.type) {
+                    (0, function_1.warnOnce)("Column type definitions 'columnTypes' with a 'type' attribute are not supported " +
+                        "because a column type cannot refer to another column type. Only column definitions " +
+                        "'columnDefs' can use the 'type' attribute to refer to a column type.");
+                }
                 allColumnTypes[key] = value;
             }
         });
         typeKeys.forEach(function (t) {
             var typeColDef = allColumnTypes[t.trim()];
             if (typeColDef) {
-                object_1.mergeDeep(colDefMerged, typeColDef, false, true);
+                (0, object_1.mergeDeep)(colDefMerged, typeColDef, false, true);
             }
             else {
                 console.warn("AG Grid: colDef.type '" + t + "' does not correspond to defined gridOptions.columnTypes");
@@ -379,16 +391,16 @@ var ColumnFactory = /** @class */ (function (_super) {
         return abstractColDef.children !== undefined;
     };
     __decorate([
-        context_1.Autowired('columnUtils')
+        (0, context_1.Autowired)('columnUtils')
     ], ColumnFactory.prototype, "columnUtils", void 0);
     __decorate([
-        context_1.Autowired('dataTypeService')
+        (0, context_1.Autowired)('dataTypeService')
     ], ColumnFactory.prototype, "dataTypeService", void 0);
     __decorate([
-        __param(0, context_1.Qualifier('loggerFactory'))
+        __param(0, (0, context_1.Qualifier)('loggerFactory'))
     ], ColumnFactory.prototype, "setBeans", null);
     ColumnFactory = __decorate([
-        context_1.Bean('columnFactory')
+        (0, context_1.Bean)('columnFactory')
     ], ColumnFactory);
     return ColumnFactory;
 }(beanStub_1.BeanStub));

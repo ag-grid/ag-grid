@@ -51,7 +51,7 @@ var AgStackComponentsRegistry = /** @class */ (function (_super) {
         return this.componentsMappedByName[htmlTag];
     };
     AgStackComponentsRegistry = __decorate([
-        context_1.Bean('agStackComponentsRegistry')
+        (0, context_1.Bean)('agStackComponentsRegistry')
     ], AgStackComponentsRegistry);
     return AgStackComponentsRegistry;
 }(beanStub_1.BeanStub));

@@ -18,13 +18,13 @@ const defaultColumnTypes_1 = require("../entities/defaultColumnTypes");
 const beanStub_1 = require("../context/beanStub");
 const object_1 = require("../utils/object");
 const generic_1 = require("../utils/generic");
-const array_1 = require("../utils/array");
+const function_1 = require("../utils/function");
 // takes ColDefs and ColGroupDefs and turns them into Columns and OriginalGroups
 let ColumnFactory = class ColumnFactory extends beanStub_1.BeanStub {
     setBeans(loggerFactory) {
         this.logger = loggerFactory.create('ColumnFactory');
     }
-    createColumnTree(defs, primaryColumns, existingTree) {
+    createColumnTree(defs, primaryColumns, existingTree, source) {
         // column key creator dishes out unique column id's in a deterministic way,
         // so if we have two grids (that could be master/slave) with same column definitions,
         // then this ensures the two grids use identical id's.
@@ -32,7 +32,7 @@ let ColumnFactory = class ColumnFactory extends beanStub_1.BeanStub {
         const { existingCols, existingGroups, existingColKeys } = this.extractExistingTreeData(existingTree);
         columnKeyCreator.addExistingKeys(existingColKeys);
         // create am unbalanced tree that maps the provided definitions
-        const unbalancedTree = this.recursivelyCreateColumns(defs, 0, primaryColumns, existingCols, columnKeyCreator, existingGroups);
+        const unbalancedTree = this.recursivelyCreateColumns(defs, 0, primaryColumns, existingCols, columnKeyCreator, existingGroups, source);
         const treeDept = this.findMaxDept(unbalancedTree, 0);
         this.logger.log('Number of levels for grouped columns is ' + treeDept);
         const columnTree = this.balanceColumnTree(unbalancedTree, 0, treeDept, columnKeyCreator);
@@ -161,36 +161,37 @@ let ColumnFactory = class ColumnFactory extends beanStub_1.BeanStub {
         }
         return maxDeptThisLevel;
     }
-    recursivelyCreateColumns(defs, level, primaryColumns, existingColsCopy, columnKeyCreator, existingGroups) {
+    recursivelyCreateColumns(defs, level, primaryColumns, existingColsCopy, columnKeyCreator, existingGroups, source) {
         if (!defs)
             return [];
         const result = new Array(defs.length);
         for (let i = 0; i < result.length; i++) {
             const def = defs[i];
             if (this.isColumnGroup(def)) {
-                result[i] = this.createColumnGroup(primaryColumns, def, level, existingColsCopy, columnKeyCreator, existingGroups);
+                result[i] = this.createColumnGroup(primaryColumns, def, level, existingColsCopy, columnKeyCreator, existingGroups, source);
             }
             else {
-                result[i] = this.createColumn(primaryColumns, def, existingColsCopy, columnKeyCreator);
+                result[i] = this.createColumn(primaryColumns, def, existingColsCopy, columnKeyCreator, source);
             }
         }
         return result;
     }
-    createColumnGroup(primaryColumns, colGroupDef, level, existingColumns, columnKeyCreator, existingGroups) {
+    createColumnGroup(primaryColumns, colGroupDef, level, existingColumns, columnKeyCreator, existingGroups, source) {
         const colGroupDefMerged = this.createMergedColGroupDef(colGroupDef);
         const groupId = columnKeyCreator.getUniqueKey(colGroupDefMerged.groupId || null, null);
         const providedGroup = new providedColumnGroup_1.ProvidedColumnGroup(colGroupDefMerged, groupId, false, level);
         this.createBean(providedGroup);
-        const existingGroup = this.findExistingGroup(colGroupDef, existingGroups);
+        const existingGroupAndIndex = this.findExistingGroup(colGroupDef, existingGroups);
         // make sure we remove, so if user provided duplicate id, then we don't have more than
         // one column instance for colDef with common id
+        if (existingGroupAndIndex) {
+            existingGroups.splice(existingGroupAndIndex.idx, 1);
+        }
+        let existingGroup = existingGroupAndIndex === null || existingGroupAndIndex === void 0 ? void 0 : existingGroupAndIndex.group;
         if (existingGroup) {
-            array_1.removeFromArray(existingGroups, existingGroup);
+            providedGroup.setExpanded(existingGroup.isExpanded());
         }
-        if (existingGroup && existingGroup.isExpanded()) {
-            providedGroup.setExpanded(true);
-        }
-        const children = this.recursivelyCreateColumns(colGroupDefMerged.children, level + 1, primaryColumns, existingColumns, columnKeyCreator, existingGroups);
+        const children = this.recursivelyCreateColumns(colGroupDefMerged.children, level + 1, primaryColumns, existingColumns, columnKeyCreator, existingGroups, source);
         providedGroup.setChildren(children);
         return providedGroup;
     }
@@ -200,14 +201,15 @@ let ColumnFactory = class ColumnFactory extends beanStub_1.BeanStub {
         Object.assign(colGroupDefMerged, colGroupDef);
         return colGroupDefMerged;
     }
-    createColumn(primaryColumns, colDef, existingColsCopy, columnKeyCreator) {
+    createColumn(primaryColumns, colDef, existingColsCopy, columnKeyCreator, source) {
         // see if column already exists
-        let column = this.findExistingColumn(colDef, existingColsCopy);
+        const existingColAndIndex = this.findExistingColumn(colDef, existingColsCopy);
         // make sure we remove, so if user provided duplicate id, then we don't have more than
         // one column instance for colDef with common id
-        if (existingColsCopy && column) {
-            array_1.removeFromArray(existingColsCopy, column);
+        if (existingColAndIndex) {
+            existingColsCopy === null || existingColsCopy === void 0 ? void 0 : existingColsCopy.splice(existingColAndIndex.idx, 1);
         }
+        let column = existingColAndIndex === null || existingColAndIndex === void 0 ? void 0 : existingColAndIndex.column;
         if (!column) {
             // no existing column, need to create one
             const colId = columnKeyCreator.getUniqueKey(colDef.colId, colDef.field);
@@ -217,15 +219,15 @@ let ColumnFactory = class ColumnFactory extends beanStub_1.BeanStub {
         }
         else {
             const colDefMerged = this.addColumnDefaultAndTypes(colDef, column.getColId());
-            column.setColDef(colDefMerged, colDef);
-            this.applyColumnState(column, colDefMerged);
+            column.setColDef(colDefMerged, colDef, source);
+            this.applyColumnState(column, colDefMerged, source);
         }
         this.dataTypeService.addColumnListeners(column);
         return column;
     }
-    applyColumnState(column, colDef) {
+    applyColumnState(column, colDef, source) {
         // flex
-        const flex = generic_1.attrToNumber(colDef.flex);
+        const flex = (0, generic_1.attrToNumber)(colDef.flex);
         if (flex !== undefined) {
             column.setFlex(flex);
         }
@@ -233,35 +235,35 @@ let ColumnFactory = class ColumnFactory extends beanStub_1.BeanStub {
         const noFlexThisCol = column.getFlex() <= 0;
         if (noFlexThisCol) {
             // both null and undefined means we skip, as it's not possible to 'clear' width (a column must have a width)
-            const width = generic_1.attrToNumber(colDef.width);
+            const width = (0, generic_1.attrToNumber)(colDef.width);
             if (width != null) {
-                column.setActualWidth(width);
+                column.setActualWidth(width, source);
             }
             else {
                 // otherwise set the width again, in case min or max width has changed,
                 // and width needs to be adjusted.
                 const widthBeforeUpdate = column.getActualWidth();
-                column.setActualWidth(widthBeforeUpdate);
+                column.setActualWidth(widthBeforeUpdate, source);
             }
         }
         // sort - anything but undefined will set sort, thus null or empty string will clear the sort
         if (colDef.sort !== undefined) {
             if (colDef.sort == 'asc' || colDef.sort == 'desc') {
-                column.setSort(colDef.sort);
+                column.setSort(colDef.sort, source);
             }
             else {
-                column.setSort(undefined);
+                column.setSort(undefined, source);
             }
         }
         // sorted at - anything but undefined, thus null will clear the sortIndex
-        const sortIndex = generic_1.attrToNumber(colDef.sortIndex);
+        const sortIndex = (0, generic_1.attrToNumber)(colDef.sortIndex);
         if (sortIndex !== undefined) {
             column.setSortIndex(sortIndex);
         }
         // hide - anything but undefined, thus null will clear the hide
-        const hide = generic_1.attrToBoolean(colDef.hide);
+        const hide = (0, generic_1.attrToBoolean)(colDef.hide);
         if (hide !== undefined) {
-            column.setVisible(!hide);
+            column.setVisible(!hide, source);
         }
         // pinned - anything but undefined, thus null or empty string will remove pinned
         if (colDef.pinned !== undefined) {
@@ -278,53 +280,57 @@ let ColumnFactory = class ColumnFactory extends beanStub_1.BeanStub {
             const newHasId = newColDef.colId != null;
             if (newHasId) {
                 if (existingColsCopy[i].getId() === newColDef.colId) {
-                    return existingColsCopy[i];
+                    return { idx: i, column: existingColsCopy[i] };
                 }
                 continue;
             }
             const newHasField = newColDef.field != null;
             if (newHasField) {
                 if (def.field === newColDef.field) {
-                    return existingColsCopy[i];
+                    return { idx: i, column: existingColsCopy[i] };
                 }
                 continue;
             }
             if (def === newColDef) {
-                return existingColsCopy[i];
+                return { idx: i, column: existingColsCopy[i] };
             }
         }
         return undefined;
     }
     findExistingGroup(newGroupDef, existingGroups) {
-        return existingGroups.find(existingGroup => {
+        const newHasId = newGroupDef.groupId != null;
+        if (!newHasId) {
+            return undefined;
+        }
+        for (let i = 0; i < existingGroups.length; i++) {
+            const existingGroup = existingGroups[i];
             const existingDef = existingGroup.getColGroupDef();
             if (!existingDef) {
-                return false;
+                continue;
             }
-            const newHasId = newGroupDef.groupId != null;
-            if (newHasId) {
-                return existingGroup.getId() === newGroupDef.groupId;
+            if (existingGroup.getId() === newGroupDef.groupId) {
+                return { idx: i, group: existingGroup };
             }
-            return false;
-        });
+        }
+        return undefined;
     }
     addColumnDefaultAndTypes(colDef, colId) {
         // start with empty merged definition
         const res = {};
         // merge properties from default column definitions
         const defaultColDef = this.gridOptionsService.get('defaultColDef');
-        object_1.mergeDeep(res, defaultColDef, false, true);
+        (0, object_1.mergeDeep)(res, defaultColDef, false, true);
         const columnType = this.dataTypeService.updateColDefAndGetColumnType(res, colDef, colId);
         if (columnType) {
             this.assignColumnTypes(columnType, res);
         }
         // merge properties from column definitions
-        object_1.mergeDeep(res, colDef, false, true);
+        (0, object_1.mergeDeep)(res, colDef, false, true);
         const autoGroupColDef = this.gridOptionsService.get('autoGroupColumnDef');
         const isSortingCoupled = this.gridOptionsService.isColumnsSortingCoupledToGroup();
         if (colDef.rowGroup && autoGroupColDef && isSortingCoupled) {
             // override the sort for row group columns where the autoGroupColDef defines these values.
-            object_1.mergeDeep(res, { sort: autoGroupColDef.sort, initialSort: autoGroupColDef.initialSort }, false, true);
+            (0, object_1.mergeDeep)(res, { sort: autoGroupColDef.sort, initialSort: autoGroupColDef.initialSort }, false, true);
         }
         this.dataTypeService.validateColDef(res);
         return res;
@@ -336,18 +342,24 @@ let ColumnFactory = class ColumnFactory extends beanStub_1.BeanStub {
         // merge user defined with default column types
         const allColumnTypes = Object.assign({}, defaultColumnTypes_1.DefaultColumnTypes);
         const userTypes = this.gridOptionsService.get('columnTypes') || {};
-        object_1.iterateObject(userTypes, (key, value) => {
+        (0, object_1.iterateObject)(userTypes, (key, value) => {
             if (key in allColumnTypes) {
                 console.warn(`AG Grid: the column type '${key}' is a default column type and cannot be overridden.`);
             }
             else {
+                const colType = value;
+                if (colType.type) {
+                    (0, function_1.warnOnce)(`Column type definitions 'columnTypes' with a 'type' attribute are not supported ` +
+                        `because a column type cannot refer to another column type. Only column definitions ` +
+                        `'columnDefs' can use the 'type' attribute to refer to a column type.`);
+                }
                 allColumnTypes[key] = value;
             }
         });
         typeKeys.forEach((t) => {
             const typeColDef = allColumnTypes[t.trim()];
             if (typeColDef) {
-                object_1.mergeDeep(colDefMerged, typeColDef, false, true);
+                (0, object_1.mergeDeep)(colDefMerged, typeColDef, false, true);
             }
             else {
                 console.warn("AG Grid: colDef.type '" + t + "' does not correspond to defined gridOptions.columnTypes");
@@ -360,15 +372,15 @@ let ColumnFactory = class ColumnFactory extends beanStub_1.BeanStub {
     }
 };
 __decorate([
-    context_1.Autowired('columnUtils')
+    (0, context_1.Autowired)('columnUtils')
 ], ColumnFactory.prototype, "columnUtils", void 0);
 __decorate([
-    context_1.Autowired('dataTypeService')
+    (0, context_1.Autowired)('dataTypeService')
 ], ColumnFactory.prototype, "dataTypeService", void 0);
 __decorate([
-    __param(0, context_1.Qualifier('loggerFactory'))
+    __param(0, (0, context_1.Qualifier)('loggerFactory'))
 ], ColumnFactory.prototype, "setBeans", null);
 ColumnFactory = __decorate([
-    context_1.Bean('columnFactory')
+    (0, context_1.Bean)('columnFactory')
 ], ColumnFactory);
 exports.ColumnFactory = ColumnFactory;

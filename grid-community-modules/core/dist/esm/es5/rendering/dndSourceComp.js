@@ -60,12 +60,9 @@ var DndSourceComp = /** @class */ (function (_super) {
             }
         };
         if (providedOnRowDrag) {
-            var params = {
-                rowNode: this.rowNode, dragEvent: dragEvent,
-                api: this.gridOptionsService.api,
-                columnApi: this.gridOptionsService.columnApi,
-                context: this.gridOptionsService.context
-            };
+            var params = this.gridOptionsService.addGridCommonParams({
+                rowNode: this.rowNode, dragEvent: dragEvent
+            });
             providedOnRowDrag(params);
         }
         else {

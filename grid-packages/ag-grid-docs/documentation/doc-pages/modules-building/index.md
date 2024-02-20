@@ -111,7 +111,7 @@ In this section we demonstrate how you can cherry pick modules to provide the fe
 | Next we need to include the modules in the bundle we're going to create. We also need to ensure we include the relevant `core` packages - in our case we need both `@ag-grid-community/core` and
 | `@ag-grid-enterprise/core` as we're using both Community and Enterprise features. If you were only using the Community bundle you could omit the `@ag-grid-enterprise/core` entry here.
 |
-| Additionally we can include the theme(s) we want to include in our bundle - for our example we're going to specify the Alpine theme.
+| Additionally we can include the theme(s) we want to include in our bundle - for our example we're going to specify the Quartz theme.
 |
 | Let's create a file called `main.js` that will serve as our entry point:
 |
@@ -135,7 +135,7 @@ In this section we demonstrate how you can cherry pick modules to provide the fe
 | ModuleRegistry.register(ExcelExportModule);
 |
 | import '@ag-grid-community/styles/ag-grid.css';
-| import '@ag-grid-community/styles/ag-theme-alpine.css';
+| import '@ag-grid-community/styles/ag-theme-quartz.css';
 </snippet>
 </framework-specific-section>
 
@@ -211,12 +211,12 @@ In this section we demonstrate how you can cherry pick modules to provide the fe
 |         // setup the grid after the page has finished loading
 |         document.addEventListener('DOMContentLoaded', function () {
 |             var gridDiv = document.querySelector('#myGrid');
-|             new agGrid.Grid(gridDiv, gridOptions);
+|             var api = agGrid.createGrid(gridDiv, gridOptions);
 |         });
 |     &lt;/script>
 | &lt;/head>
 | &lt;body>
-|     &lt;div id="myGrid" style="height: 200px; width:500px;" class="ag-theme-alpine">&lt;/div>
+|     &lt;div id="myGrid" style="height: 200px; width:500px;" class="ag-theme-quartz">&lt;/div>
 | &lt;/body>
 | &lt;/html>
 </snippet>

@@ -34,7 +34,7 @@ class AgAutocomplete extends component_1.Component {
         this.addGuiEventListener('focusout', () => this.onFocusOut());
     }
     onValueChanged(value) {
-        const parsedValue = generic_1.makeNull(value);
+        const parsedValue = (0, generic_1.makeNull)(value);
         this.updateValue(parsedValue);
         this.updateAutocompleteList(parsedValue);
     }
@@ -166,7 +166,12 @@ class AgAutocomplete extends component_1.Component {
             // clicking on the list loses focus, so restore
             this.eAutocompleteInput.getFocusableElement().focus();
         }
-        this.eAutocompleteInput.getInputElement().setSelectionRange(position, position);
+        const eInput = this.eAutocompleteInput.getInputElement();
+        eInput.setSelectionRange(position, position);
+        if (position === eInput.value.length) {
+            // ensure the caret is visible
+            eInput.scrollLeft = eInput.scrollWidth;
+        }
     }
     forceOpenList() {
         this.onValueChanged(this.eAutocompleteInput.getValue());
@@ -203,7 +208,7 @@ class AgAutocomplete extends component_1.Component {
             type: 'autocomplete',
             eventSource: this.getGui(),
             position: 'under',
-            alignSide: this.gridOptionsService.is('enableRtl') ? 'right' : 'left',
+            alignSide: this.gridOptionsService.get('enableRtl') ? 'right' : 'left',
             keepWithinBounds: true
         };
         const addPopupRes = this.popupService.addPopup({
@@ -232,7 +237,7 @@ class AgAutocomplete extends component_1.Component {
         });
     }
     getValue() {
-        return generic_1.makeNull(this.eAutocompleteInput.getValue());
+        return (0, generic_1.makeNull)(this.eAutocompleteInput.getValue());
     }
     setInputPlaceholder(placeholder) {
         this.eAutocompleteInput.setInputPlaceholder(placeholder);
@@ -282,10 +287,10 @@ AgAutocomplete.EVENT_VALUE_CONFIRMED = 'eventValueConfirmed';
 AgAutocomplete.EVENT_OPTION_SELECTED = 'eventOptionSelected';
 AgAutocomplete.EVENT_VALID_CHANGED = 'eventValidChanged';
 __decorate([
-    context_1.Autowired('popupService')
+    (0, context_1.Autowired)('popupService')
 ], AgAutocomplete.prototype, "popupService", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eAutocompleteInput')
+    (0, componentAnnotations_1.RefSelector)('eAutocompleteInput')
 ], AgAutocomplete.prototype, "eAutocompleteInput", void 0);
 __decorate([
     context_1.PostConstruct

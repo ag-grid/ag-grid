@@ -1,4 +1,13 @@
-import { Grid, FirstDataRenderedEvent, GridOptions, IDetailCellRendererParams, GetRowIdParams } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  FirstDataRenderedEvent,
+  GridOptions,
+  IDetailCellRendererParams,
+  GetRowIdParams,
+} from '@ag-grid-community/core';
+
+let gridApi: GridApi<IAccount>;
 
 const gridOptions: GridOptions<IAccount> = {
   columnDefs: [
@@ -45,12 +54,12 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 function onBtExport() {
   var spreadsheets = []
 
-  const mainSheet = gridOptions.api!.getSheetDataForExcel();
+  const mainSheet = gridApi!.getSheetDataForExcel();
   if (mainSheet) {
     spreadsheets.push(mainSheet);
   }
 
-  gridOptions.api!.forEachDetailGridInfo(function (node) {
+  gridApi!.forEachDetailGridInfo(function (node) {
     const sheet = node.api!.getSheetDataForExcel({
       sheetName: node.id.replace('detail_', ''),
     });
@@ -59,7 +68,7 @@ function onBtExport() {
     }
   })
 
-  gridOptions.api!.exportMultipleSheetsAsExcel({
+  gridApi!.exportMultipleSheetsAsExcel({
     data: spreadsheets,
     fileName: 'ag-grid.xlsx',
   })
@@ -68,11 +77,11 @@ function onBtExport() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/master-detail-data.json')
     .then(response => response.json())
     .then((data: IAccount[]) => {
-      gridOptions.api!.setRowData(data)
+      gridApi!.setGridOption('rowData', data)
     })
 })

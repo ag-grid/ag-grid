@@ -6,7 +6,10 @@ export class TextFloatingFilter extends TextInputFloatingFilter {
         this.filterModelFormatter = new TextFilterModelFormatter(this.localeService, this.optionsFactory);
     }
     onParamsUpdated(params) {
-        super.onParamsUpdated(params);
+        this.refresh(params);
+    }
+    refresh(params) {
+        super.refresh(params);
         this.filterModelFormatter.updateParams({ optionsFactory: this.optionsFactory });
     }
     getDefaultFilterOptions() {

@@ -75,10 +75,10 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
     public static DEFAULT_FILTER_OPTIONS = [
         ScalarFilter.EQUALS,
         ScalarFilter.NOT_EQUAL,
-        ScalarFilter.LESS_THAN,
-        ScalarFilter.LESS_THAN_OR_EQUAL,
         ScalarFilter.GREATER_THAN,
         ScalarFilter.GREATER_THAN_OR_EQUAL,
+        ScalarFilter.LESS_THAN,
+        ScalarFilter.LESS_THAN_OR_EQUAL,
         ScalarFilter.IN_RANGE,
         ScalarFilter.BLANK,
         ScalarFilter.NOT_BLANK,
@@ -92,6 +92,14 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
 
     constructor() {
         super('numberFilter');
+    }
+
+    refresh(params: NumberFilterParams): boolean {
+        if (this.numberFilterParams.allowedCharPattern !== params.allowedCharPattern) {
+            return false;
+        }
+
+        return super.refresh(params);
     }
 
     protected mapValuesFromModel(filterModel: NumberFilterModel | null): Tuple<number> {
@@ -125,8 +133,9 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         return NumberFilter.DEFAULT_FILTER_OPTIONS;
     }
 
-    protected setElementValue(element: AgInputTextField | AgInputNumberField, value: number | null): void {
-        const valueToSet = this.numberFilterParams.numberFormatter
+    protected setElementValue(element: AgInputTextField | AgInputNumberField, value: number | null, fromFloatingFilter?: boolean): void {
+        // values from floating filter are directly from the input, not from the model
+        const valueToSet = !fromFloatingFilter && this.numberFilterParams.numberFormatter
             ? this.numberFilterParams.numberFormatter(value ?? null)
             : value;
         super.setElementValue(element, valueToSet as any);

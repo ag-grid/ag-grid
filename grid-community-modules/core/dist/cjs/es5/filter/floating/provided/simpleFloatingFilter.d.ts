@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from '../../../widgets/component';
@@ -26,6 +26,7 @@ export declare abstract class SimpleFloatingFilter extends Component implements 
     init(params: IFloatingFilterParams): void;
     private setSimpleParams;
     onParamsUpdated(params: IFloatingFilterParams): void;
+    refresh(params: IFloatingFilterParams): void;
     private doesFilterHaveSingleInput;
     private isTypeEditable;
 }

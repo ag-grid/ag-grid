@@ -23,7 +23,7 @@ var TooltipComponent = /** @class */ (function (_super) {
     // will need to type params
     TooltipComponent.prototype.init = function (params) {
         var value = params.value;
-        this.getGui().innerHTML = escapeString(value);
+        this.getGui().textContent = escapeString(value, true);
     };
     return TooltipComponent;
 }(PopupComponent));

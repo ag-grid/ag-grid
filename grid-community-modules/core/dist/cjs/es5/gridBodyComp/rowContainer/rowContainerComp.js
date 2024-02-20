@@ -45,21 +45,17 @@ function templateFactory() {
     var name = component_1.Component.elementGettingCreated.getAttribute('name');
     var cssClasses = rowContainerCtrl_1.RowContainerCtrl.getRowContainerCssClasses(name);
     var res;
-    var template1 = name === rowContainerCtrl_1.RowContainerName.CENTER;
-    var template2 = name === rowContainerCtrl_1.RowContainerName.TOP_CENTER
-        || name === rowContainerCtrl_1.RowContainerName.STICKY_TOP_CENTER
-        || name === rowContainerCtrl_1.RowContainerName.BOTTOM_CENTER;
-    if (template1) {
+    var centerTemplate = name === rowContainerCtrl_1.RowContainerName.CENTER ||
+        name === rowContainerCtrl_1.RowContainerName.TOP_CENTER ||
+        name === rowContainerCtrl_1.RowContainerName.STICKY_TOP_CENTER ||
+        name === rowContainerCtrl_1.RowContainerName.BOTTOM_CENTER;
+    if (centerTemplate) {
         res = /* html */
-            "<div class=\"" + cssClasses.wrapper + "\" ref=\"eWrapper\" role=\"presentation\">\n                <div class=\"" + cssClasses.viewport + "\" ref=\"eViewport\" role=\"presentation\">\n                    <div class=\"" + cssClasses.container + "\" ref=\"eContainer\"></div>\n                </div>\n            </div>";
-    }
-    else if (template2) {
-        res = /* html */
-            "<div class=\"" + cssClasses.viewport + "\" ref=\"eViewport\" role=\"presentation\">\n                <div class=\"" + cssClasses.container + "\" ref=\"eContainer\"></div>\n            </div>";
+            "<div class=\"".concat(cssClasses.viewport, "\" ref=\"eViewport\" role=\"presentation\">\n                <div class=\"").concat(cssClasses.container, "\" ref=\"eContainer\"></div>\n            </div>");
     }
     else {
         res = /* html */
-            "<div class=\"" + cssClasses.container + "\" ref=\"eContainer\"></div>";
+            "<div class=\"".concat(cssClasses.container, "\" ref=\"eContainer\"></div>");
     }
     return res;
 }
@@ -69,21 +65,24 @@ var RowContainerComp = /** @class */ (function (_super) {
         var _this = _super.call(this, templateFactory()) || this;
         _this.rowComps = {};
         _this.name = component_1.Component.elementGettingCreated.getAttribute('name');
-        _this.type = rowContainerCtrl_1.getRowContainerTypeForName(_this.name);
+        _this.type = (0, rowContainerCtrl_1.getRowContainerTypeForName)(_this.name);
         return _this;
     }
     RowContainerComp.prototype.postConstruct = function () {
         var _this = this;
         var compProxy = {
             setViewportHeight: function (height) { return _this.eViewport.style.height = height; },
-            setRowCtrls: function (rowCtrls) { return _this.setRowCtrls(rowCtrls); },
+            setRowCtrls: function (_a) {
+                var rowCtrls = _a.rowCtrls;
+                return _this.setRowCtrls(rowCtrls);
+            },
             setDomOrder: function (domOrder) {
                 _this.domOrder = domOrder;
             },
             setContainerWidth: function (width) { return _this.eContainer.style.width = width; }
         };
         var ctrl = this.createManagedBean(new rowContainerCtrl_1.RowContainerCtrl(this.name));
-        ctrl.setComp(compProxy, this.eContainer, this.eViewport, this.eWrapper);
+        ctrl.setComp(compProxy, this.eContainer, this.eViewport);
     };
     RowContainerComp.prototype.preDestroy = function () {
         // destroys all row comps
@@ -114,15 +113,15 @@ var RowContainerComp = /** @class */ (function (_super) {
             }
         };
         rowCtrls.forEach(processRow);
-        object_1.getAllValuesInObject(oldRows).forEach(function (oldRowComp) {
+        (0, object_1.getAllValuesInObject)(oldRows).forEach(function (oldRowComp) {
             _this.eContainer.removeChild(oldRowComp.getGui());
             oldRowComp.destroy();
         });
-        aria_1.setAriaRole(this.eContainer, rowCtrls.length ? "rowgroup" : "presentation");
+        (0, aria_1.setAriaRole)(this.eContainer, "rowgroup");
     };
     RowContainerComp.prototype.appendRow = function (element) {
         if (this.domOrder) {
-            dom_1.insertWithDomOrder(this.eContainer, element, this.lastPlacedElement);
+            (0, dom_1.insertWithDomOrder)(this.eContainer, element, this.lastPlacedElement);
         }
         else {
             this.eContainer.appendChild(element);
@@ -131,22 +130,19 @@ var RowContainerComp = /** @class */ (function (_super) {
     };
     RowContainerComp.prototype.ensureDomOrder = function (eRow) {
         if (this.domOrder) {
-            dom_1.ensureDomOrder(this.eContainer, eRow, this.lastPlacedElement);
+            (0, dom_1.ensureDomOrder)(this.eContainer, eRow, this.lastPlacedElement);
             this.lastPlacedElement = eRow;
         }
     };
     __decorate([
-        context_1.Autowired('beans')
+        (0, context_1.Autowired)('beans')
     ], RowContainerComp.prototype, "beans", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('eViewport')
+        (0, componentAnnotations_1.RefSelector)('eViewport')
     ], RowContainerComp.prototype, "eViewport", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('eContainer')
+        (0, componentAnnotations_1.RefSelector)('eContainer')
     ], RowContainerComp.prototype, "eContainer", void 0);
-    __decorate([
-        componentAnnotations_1.RefSelector('eWrapper')
-    ], RowContainerComp.prototype, "eWrapper", void 0);
     __decorate([
         context_1.PostConstruct
     ], RowContainerComp.prototype, "postConstruct", null);

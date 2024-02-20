@@ -47,17 +47,3 @@ export function formatNumberCommas(value, thousandSeparator, decimalSeparator) {
 export function sum(values) {
     return values == null ? null : values.reduce((total, value) => total + value, 0);
 }
-export function zeroOrGreater(value, defaultValue) {
-    if (value >= 0) {
-        return value;
-    }
-    // zero gets returned if number is missing or the wrong type
-    return defaultValue;
-}
-export function oneOrGreater(value, defaultValue) {
-    const valueNumber = parseInt(value, 10);
-    if (!isNaN(valueNumber) && isFinite(valueNumber) && valueNumber > 0) {
-        return valueNumber;
-    }
-    return defaultValue;
-}

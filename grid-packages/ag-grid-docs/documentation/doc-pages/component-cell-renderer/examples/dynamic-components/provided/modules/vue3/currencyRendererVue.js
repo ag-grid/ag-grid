@@ -12,7 +12,7 @@ export default {
     },
     methods: {
         formatValueToCurrency(currency, value) {
-            return `${currency}${value.toFixed(2)}`
+            return `${currency} ${value.toFixed(2)}`
         },
         refresh(params) {
             this.formattedValue = this.formatValueToCurrency('EUR', params.value);

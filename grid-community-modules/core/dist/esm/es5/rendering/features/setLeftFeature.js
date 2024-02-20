@@ -22,7 +22,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { Column } from "../../entities/column";
 import { BeanStub } from "../../context/beanStub";
 import { PostConstruct } from "../../context/context";
-import { setAriaColIndex, setAriaColSpan } from "../../utils/aria";
+import { setAriaColSpan } from "../../utils/aria";
 import { last } from "../../utils/array";
 import { exists } from "../../utils/generic";
 import { Events } from "../../eventKeys";
@@ -42,7 +42,7 @@ var SetLeftFeature = /** @class */ (function (_super) {
         this.onLeftChanged();
     };
     SetLeftFeature.prototype.getColumnOrGroup = function () {
-        if (this.beans.gridOptionsService.is('enableRtl') && this.colsSpanning) {
+        if (this.beans.gridOptionsService.get('enableRtl') && this.colsSpanning) {
             return last(this.colsSpanning);
         }
         return this.columnOrGroup;
@@ -57,7 +57,7 @@ var SetLeftFeature = /** @class */ (function (_super) {
         this.addManagedPropertyListener('domLayout', this.onLeftChanged.bind(this));
     };
     SetLeftFeature.prototype.setLeftFirstTime = function () {
-        var suppressMoveAnimation = this.beans.gridOptionsService.is('suppressColumnMoveAnimation');
+        var suppressMoveAnimation = this.beans.gridOptionsService.get('suppressColumnMoveAnimation');
         var oldLeftExists = exists(this.columnOrGroup.getOldLeft());
         var animateColumnMove = this.beans.columnAnimationService.isActive() && oldLeftExists && !suppressMoveAnimation;
         if (animateColumnMove) {
@@ -115,7 +115,7 @@ var SetLeftFeature = /** @class */ (function (_super) {
         // displayed. there is logic in the rendering to fade these columns
         // out, so we don't try and change their left positions.
         if (exists(value)) {
-            this.eCell.style.left = value + "px";
+            this.eCell.style.left = "".concat(value, "px");
         }
         var indexColumn;
         if (this.columnOrGroup instanceof Column) {
@@ -132,8 +132,6 @@ var SetLeftFeature = /** @class */ (function (_super) {
             }
             indexColumn = children[0];
         }
-        var index = this.beans.columnModel.getAriaColumnIndex(indexColumn);
-        setAriaColIndex(this.ariaEl, index);
     };
     __decorate([
         PostConstruct

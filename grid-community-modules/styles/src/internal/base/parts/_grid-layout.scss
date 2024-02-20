@@ -6,6 +6,7 @@
     }
 
     .ag-root-wrapper {
+        border-radius: var(--ag-wrapper-border-radius);
         border: var(--ag-borders) var(--ag-border-color);
     }
 
@@ -220,7 +221,7 @@
     }
 
     .ag-layout-auto-height, .ag-layout-print {
-        .ag-center-cols-clipper, .ag-center-cols-container {
+        .ag-center-cols-viewport, .ag-center-cols-container {
             min-height: 50px;
         }
     }

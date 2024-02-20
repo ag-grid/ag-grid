@@ -1,7 +1,7 @@
 import { createApp } from 'vue';
 import { AgGridVue } from '@ag-grid-community/vue3';
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
@@ -10,17 +10,17 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const VueExample = {
     template: /* html */ `
-        <div class="outer ag-theme-alpine">
+        <div class="outer">
             <div style="height: 100%" class="inner-col" v-on:dragover="gridDragOver($event)" v-on:drop="gridDrop($event, 'left')">
                 <ag-grid-vue
                     style="height: 100%; width: 100%;"
-                    id="eLeftGrid"
+                    :class="themeClass"
+                    ref="leftGrid"
                     :gridOptions="leftGridOptions"
                     :columnDefs="leftColumnDefs"
                     :rowClassRules="rowClassRules"
                     :rowData="leftRowData"
-                    :rowDragManaged="true"
-                    :animateRows="true">
+                    :rowDragManaged="true">
                 </ag-grid-vue>
             </div>
             <div class="inner-col factory-panel">
@@ -44,13 +44,13 @@ const VueExample = {
             <div style="height: 100%" class="inner-col" v-on:dragover="gridDragOver($event)" v-on:drop="gridDrop($event, 'right')">
                 <ag-grid-vue
                     style="height: 100%; width: 100%"
-                    id="eRightGrid"
+                    :class="themeClass"
+                    ref="rightGrid"
                     :gridOptions="rightGridOptions"
                     :columnDefs ="rightColumnDefs"
                     :rowClassRules="rowClassRules"
                     :rowData="rightRowData"
-                    :rowDragManaged="true"
-                    :animateRows="true">
+                    :rowDragManaged="true">
                 </ag-grid-vue>
             </div>
         </div>
@@ -64,28 +64,24 @@ const VueExample = {
             rightGridOptions: null,
             leftGridApi: null,
             rightGridApi: null,
-            leftColumnApi: null,
-            rightColumnApi: null,
             leftColumnDefs: null,
             rightColumnDefs: null,
             rowClassRules: null,
             leftRowData: null,
             rightRowData: null,
-            rowIdSequence: 100
+            rowIdSequence: 100,
+            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
         }
     },
     beforeMount() {
         const baseDefaultColDef = {
-            width: 80,
-            sortable: true,
+            flex: 1,
             filter: true,
-            resizable: true
         };
 
         const baseGridOptions = {
             getRowId: (params) => { return params.data.id; },
             rowDragManaged: true,
-            animateRows: true
         }
 
         const baseColumnDefs = [
@@ -124,10 +120,8 @@ const VueExample = {
     },
 
     mounted() {
-        this.leftGridApi = this.leftGridOptions.api;
-        this.rightGridApi = this.rightGridOptions.api;
-        this.leftColumnApi = this.leftGridOptions.columnApi;
-        this.rightColumnApi = this.rightGridOptions.columnApi;
+        this.leftGridApi = this.$refs.leftGrid.api;
+        this.rightGridApi = this.$refs.rightGrid.api;
     },
 
     methods: {

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgEvent, ColumnEvent } from "./events";
@@ -10,6 +10,7 @@ export declare class AlignedGridsService extends BeanStub {
     private logger;
     private consuming;
     private setBeans;
+    private getAlignedGridApis;
     private init;
     private fireEvent;
     private onEvent;

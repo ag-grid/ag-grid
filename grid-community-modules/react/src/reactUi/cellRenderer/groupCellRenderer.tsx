@@ -68,8 +68,9 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
     const useValue = innerCompDetails == null && value != null;
     const escapedValue = _.escapeString(value, true);
 
+    // if there is no ColDef, it means this is a Full Width Group, then we need to add `role="gridcell"`.
     return (
-        <span className={className} ref={setRef} {...(!props.colDef ? { role: 'gridcell' } : {})}>
+        <span className={className} ref={setRef} {...(!props.colDef ? { role: ctrlRef.current?.getCellAriaRole() } : {})}>
             <span className={expandedClassName} ref={eExpandedRef}></span>
             <span className={contractedClassName} ref={eContractedRef}></span>
             <span className={checkboxClassName} ref={eCheckboxRef}></span>

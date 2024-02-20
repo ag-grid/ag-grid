@@ -10,6 +10,7 @@ export declare class DefaultDateComponent extends Component implements IDateComp
     init(params: IDateParams): void;
     private setParams;
     onParamsUpdated(params: IDateParams): void;
+    refresh(params: IDateParams): void;
     getDate(): Date | null;
     setDate(date: Date): void;
     setInputPlaceholder(placeholder: string): void;

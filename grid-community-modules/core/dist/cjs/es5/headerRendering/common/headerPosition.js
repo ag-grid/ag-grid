@@ -37,31 +37,45 @@ var HeaderPositionUtils = /** @class */ (function (_super) {
         var getGroupMethod;
         var getColMethod;
         if (focusedHeader.column instanceof columnGroup_1.ColumnGroup) {
-            getGroupMethod = "getDisplayedGroup" + direction;
+            getGroupMethod = "getDisplayedGroup".concat(direction);
             nextColumn = this.columnModel[getGroupMethod](focusedHeader.column);
         }
         else {
-            getColMethod = "getDisplayedCol" + direction;
+            getColMethod = "getDisplayedCol".concat(direction);
             nextColumn = this.columnModel[getColMethod](focusedHeader.column);
         }
         if (!nextColumn) {
             return;
         }
         var headerRowIndex = focusedHeader.headerRowIndex;
-        var currentRowType = this.getHeaderRowType(headerRowIndex);
-        if (currentRowType === headerRowComp_1.HeaderRowType.COLUMN_GROUP) {
-            var columnGroup = nextColumn;
-            if (columnGroup.isPadding() && this.isAnyChildSpanningHeaderHeight(columnGroup)) {
-                var _a = this.getColumnVisibleChild(columnGroup, headerRowIndex, direction), nextFocusColumn = _a.nextFocusColumn, nextRow = _a.nextRow;
-                if (nextFocusColumn) {
-                    nextColumn = nextFocusColumn;
-                    headerRowIndex = nextRow;
-                }
+        if (this.getHeaderRowType(headerRowIndex) !== headerRowComp_1.HeaderRowType.FLOATING_FILTER) {
+            var columnsInPath = [nextColumn];
+            while (nextColumn.getParent()) {
+                nextColumn = nextColumn.getParent();
+                columnsInPath.push(nextColumn);
+            }
+            nextColumn = columnsInPath[columnsInPath.length - 1 - headerRowIndex];
+        }
+        var _a = this.getHeaderIndexToFocus(nextColumn, headerRowIndex), column = _a.column, indexToFocus = _a.headerRowIndex;
+        return {
+            column: column,
+            headerRowIndex: indexToFocus
+        };
+    };
+    HeaderPositionUtils.prototype.getHeaderIndexToFocus = function (column, currentIndex) {
+        var nextColumn;
+        if (column instanceof columnGroup_1.ColumnGroup && this.isAnyChildSpanningHeaderHeight(column) && column.isPadding()) {
+            var targetColumn = column;
+            nextColumn = targetColumn.getLeafColumns()[0];
+            var col = nextColumn;
+            while (col !== targetColumn) {
+                currentIndex++;
+                col = col.getParent();
             }
         }
         return {
-            column: nextColumn,
-            headerRowIndex: headerRowIndex
+            column: nextColumn || column,
+            headerRowIndex: currentIndex
         };
     };
     HeaderPositionUtils.prototype.isAnyChildSpanningHeaderHeight = function (columnGroup) {
@@ -76,39 +90,55 @@ var HeaderPositionUtils = /** @class */ (function (_super) {
         var isColumn = currentRowType === headerRowComp_1.HeaderRowType.COLUMN;
         var nextFocusColumn = isFloatingFilter ? currentColumn : currentColumn.getParent();
         var nextRow = currentIndex - 1;
+        var headerRowIndexWithoutSpan = nextRow;
         if (isColumn && this.isAnyChildSpanningHeaderHeight(currentColumn.getParent())) {
             while (nextFocusColumn && nextFocusColumn.isPadding()) {
                 nextFocusColumn = nextFocusColumn.getParent();
                 nextRow--;
             }
+            headerRowIndexWithoutSpan = nextRow;
             if (nextRow < 0) {
                 nextFocusColumn = currentColumn;
                 nextRow = currentIndex;
+                headerRowIndexWithoutSpan = undefined;
             }
         }
-        return { nextFocusColumn: nextFocusColumn, nextRow: nextRow };
+        return { column: nextFocusColumn, headerRowIndex: nextRow, headerRowIndexWithoutSpan: headerRowIndexWithoutSpan };
     };
     HeaderPositionUtils.prototype.getColumnVisibleChild = function (column, currentIndex, direction) {
         if (direction === void 0) { direction = 'After'; }
         var currentRowType = this.getHeaderRowType(currentIndex);
         var nextFocusColumn = column;
         var nextRow = currentIndex + 1;
+        var headerRowIndexWithoutSpan = nextRow;
         if (currentRowType === headerRowComp_1.HeaderRowType.COLUMN_GROUP) {
-            var leafColumns = column.getLeafColumns();
-            var leafChild = direction === 'After' ? leafColumns[0] : array_1.last(leafColumns);
-            if (this.isAnyChildSpanningHeaderHeight(leafChild.getParent())) {
-                nextFocusColumn = leafChild;
-                var currentColumn = leafChild.getParent();
-                while (currentColumn && currentColumn !== column) {
-                    currentColumn = currentColumn.getParent();
+            var leafColumns = column.getDisplayedLeafColumns();
+            var leafColumn = direction === 'After' ? leafColumns[0] : (0, array_1.last)(leafColumns);
+            var columnsInTheWay = [];
+            var currentColumn = leafColumn;
+            while (currentColumn.getParent() !== column) {
+                currentColumn = currentColumn.getParent();
+                columnsInTheWay.push(currentColumn);
+            }
+            nextFocusColumn = leafColumn;
+            if (leafColumn.isSpanHeaderHeight()) {
+                for (var i = columnsInTheWay.length - 1; i >= 0; i--) {
+                    var colToFocus = columnsInTheWay[i];
+                    if (!colToFocus.isPadding()) {
+                        nextFocusColumn = colToFocus;
+                        break;
+                    }
                     nextRow++;
                 }
             }
             else {
-                nextFocusColumn = column.getDisplayedChildren()[0];
+                nextFocusColumn = (0, array_1.last)(columnsInTheWay);
+                if (!nextFocusColumn) {
+                    nextFocusColumn = leafColumn;
+                }
             }
         }
-        return { nextFocusColumn: nextFocusColumn, nextRow: nextRow };
+        return { column: nextFocusColumn, headerRowIndex: nextRow, headerRowIndexWithoutSpan: headerRowIndexWithoutSpan };
     };
     HeaderPositionUtils.prototype.getHeaderRowType = function (rowIndex) {
         var centerHeaderContainer = this.ctrlsService.getHeaderRowContainerCtrl();
@@ -138,13 +168,13 @@ var HeaderPositionUtils = /** @class */ (function (_super) {
         };
     };
     __decorate([
-        context_1.Autowired('columnModel')
+        (0, context_1.Autowired)('columnModel')
     ], HeaderPositionUtils.prototype, "columnModel", void 0);
     __decorate([
-        context_1.Autowired('ctrlsService')
+        (0, context_1.Autowired)('ctrlsService')
     ], HeaderPositionUtils.prototype, "ctrlsService", void 0);
     HeaderPositionUtils = __decorate([
-        context_1.Bean('headerPositionUtils')
+        (0, context_1.Bean)('headerPositionUtils')
     ], HeaderPositionUtils);
     return HeaderPositionUtils;
 }(beanStub_1.BeanStub));

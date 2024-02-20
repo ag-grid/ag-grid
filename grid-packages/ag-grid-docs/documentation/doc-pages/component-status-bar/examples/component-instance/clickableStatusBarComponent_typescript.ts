@@ -22,7 +22,7 @@ export class ClickableStatusBarComponent implements IStatusPanelComp {
 
         this.buttonListener = this.onButtonClicked.bind(this);
         this.eButton.addEventListener("click", this.buttonListener);
-        this.eButton.innerHTML = 'Click Me';
+        this.eButton.textContent = 'Click Me';
 
         this.eGui.appendChild(this.eButton);
     }

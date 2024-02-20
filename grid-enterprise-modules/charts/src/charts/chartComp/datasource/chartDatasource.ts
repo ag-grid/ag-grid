@@ -301,7 +301,7 @@ export class ChartDatasource extends BeanStub {
         if (!secondaryColumns) { return; }
 
         // we don't know what the application will use for the pivot key separator (i.e. '_' or '|' ) as the
-        // secondary columns are provided to grid by the application via columnApi.setSecondaryColumns()
+        // secondary columns are provided to grid by the application via api.setSecondaryColumns()
         const pivotKeySeparator = this.extractPivotKeySeparator(secondaryColumns);
 
         // `pivotKeys` is not used by the SSRM for pivoting, so it is safe to reuse this colDef property. This way

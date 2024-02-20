@@ -8,7 +8,7 @@ export interface IHeaderColumn<TValue = any> extends IEventEmitter {
     getMinWidth(): number | null | undefined;
     getLeft(): number | null;
     getOldLeft(): number | null;
-    getDefinition(): AbstractColDef<TValue> | null;
+    getDefinition(): AbstractColDef<any, TValue> | null;
     getColumnGroupShow(): ColumnGroupShowType | undefined;
     getParent(): IHeaderColumn;
     isResizable(): boolean;

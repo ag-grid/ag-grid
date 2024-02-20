@@ -20,13 +20,13 @@ var miniChartWithAxes_1 = require("../miniChartWithAxes");
 var miniChartHelpers_1 = require("../miniChartHelpers");
 var MiniStackedColumn = /** @class */ (function (_super) {
     __extends(MiniStackedColumn, _super);
-    function MiniStackedColumn(container, fills, strokes, data, yScaleDomain, tooltipName) {
+    function MiniStackedColumn(container, fills, strokes, _themeTemplateParameters, _isCustomTheme, data, yScaleDomain, tooltipName) {
         if (data === void 0) { data = MiniStackedColumn.data; }
         if (yScaleDomain === void 0) { yScaleDomain = [0, 16]; }
         if (tooltipName === void 0) { tooltipName = "stackedColumnTooltip"; }
         var _this = _super.call(this, container, tooltipName) || this;
         var _a = _this, root = _a.root, size = _a.size, padding = _a.padding;
-        _this.stackedColumns = miniChartHelpers_1.createColumnRects({
+        _this.stackedColumns = (0, miniChartHelpers_1.createColumnRects)({
             stacked: true,
             root: root,
             data: data,

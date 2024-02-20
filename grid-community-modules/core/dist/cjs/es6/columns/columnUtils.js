@@ -24,8 +24,8 @@ let ColumnUtils = class ColumnUtils extends beanStub_1.BeanStub {
         const minColWidth = this.calculateColMinWidth(colDef);
         const maxColWidth = this.calculateColMaxWidth(colDef);
         let width;
-        const colDefWidth = generic_1.attrToNumber(colDef.width);
-        const colDefInitialWidth = generic_1.attrToNumber(colDef.initialWidth);
+        const colDefWidth = (0, generic_1.attrToNumber)(colDef.width);
+        const colDefInitialWidth = (0, generic_1.attrToNumber)(colDef.initialWidth);
         if (colDefWidth != null) {
             width = colDefWidth;
         }
@@ -97,6 +97,6 @@ let ColumnUtils = class ColumnUtils extends beanStub_1.BeanStub {
     }
 };
 ColumnUtils = __decorate([
-    context_1.Bean('columnUtils')
+    (0, context_1.Bean)('columnUtils')
 ], ColumnUtils);
 exports.ColumnUtils = ColumnUtils;

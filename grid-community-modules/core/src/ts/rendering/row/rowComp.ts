@@ -1,5 +1,5 @@
 import { Component } from "../../widgets/component";
-import { ICellRendererComp } from "../cellRenderers/iCellRenderer";
+import { ICellRendererComp, ICellRendererParams } from "../cellRenderers/iCellRenderer";
 import { Beans } from "../beans";
 import { addStylesToElement, setDomChildOrder } from "../../utils/dom";
 import { IRowComp, RowCtrl } from "./rowCtrl";
@@ -28,7 +28,10 @@ export class RowComp extends Component {
         this.beans = beans;
         this.rowCtrl = ctrl;
 
-        this.setTemplate(/* html */`<div comp-id="${this.getCompId()}" style="${this.getInitialStyle(containerType)}"/>`);
+        const rowDiv = document.createElement('div');
+        rowDiv.setAttribute('comp-id', `${this.getCompId()}`);
+        rowDiv.setAttribute('style', this.getInitialStyle(containerType));
+        this.setTemplateFromElement(rowDiv);
 
         const eGui = this.getGui();
         const style = eGui.style;
@@ -51,6 +54,7 @@ export class RowComp extends Component {
             setRowIndex: rowIndex => eGui.setAttribute('row-index', rowIndex),
             setRowId: (rowId: string) => eGui.setAttribute('row-id', rowId),
             setRowBusinessKey: businessKey => eGui.setAttribute('row-business-key', businessKey),
+            refreshFullWidth: getUpdatedParams => this.refreshFullWidth(getUpdatedParams)
         };
 
         ctrl.setComp(compProxy, this.getGui(), containerType);
@@ -61,8 +65,7 @@ export class RowComp extends Component {
 
     private getInitialStyle(containerType: RowContainerType): string {
         const transform = this.rowCtrl.getInitialTransform(containerType);
-        const top = this.rowCtrl.getInitialRowTop(containerType);
-        return transform ? `transform: ${transform}` : `top: ${top}`;
+        return transform ? `transform: ${transform}` : `top: ${this.rowCtrl.getInitialRowTop(containerType)}`;
     }
 
     private showFullWidth(compDetails: UserCompDetails): void {
@@ -166,5 +169,16 @@ export class RowComp extends Component {
             cellComp.destroy();
             this.cellComps[instanceId] = null;
         });
+    }
+
+    private refreshFullWidth(getUpdatedParams: () => ICellRendererParams): boolean {
+        const { fullWidthCellRenderer } = this;
+        if (!fullWidthCellRenderer || !fullWidthCellRenderer.refresh) {
+            return false;
+        }
+
+        const params = getUpdatedParams();
+
+        return fullWidthCellRenderer.refresh(params);
     }
 }

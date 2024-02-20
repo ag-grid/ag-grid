@@ -39,12 +39,15 @@ var ValueService = /** @class */ (function (_super) {
     ValueService.prototype.init = function () {
         var _this = this;
         this.isSsrm = this.gridOptionsService.isRowModelType('serverSide');
-        this.cellExpressions = this.gridOptionsService.is('enableCellExpressions');
-        this.isTreeData = this.gridOptionsService.is('treeData');
+        this.cellExpressions = this.gridOptionsService.get('enableCellExpressions');
+        this.isTreeData = this.gridOptionsService.get('treeData');
         this.initialised = true;
         // We listen to our own event and use it to call the columnSpecific callback,
         // this way the handler calls are correctly interleaved with other global events
-        this.eventService.addEventListener(events_1.Events.EVENT_CELL_VALUE_CHANGED, function (event) { return _this.callColumnCellValueChangedHandler(event); }, this.gridOptionsService.useAsyncEvents());
+        var listener = function (event) { return _this.callColumnCellValueChangedHandler(event); };
+        var async = this.gridOptionsService.useAsyncEvents();
+        this.eventService.addEventListener(events_1.Events.EVENT_CELL_VALUE_CHANGED, listener, async);
+        this.addDestroyFunc(function () { return _this.eventService.removeEventListener(events_1.Events.EVENT_CELL_VALUE_CHANGED, listener, async); });
         this.addManagedPropertyListener('treeData', function (propChange) { return _this.isTreeData = propChange.currentValue; });
     };
     ValueService.prototype.getValue = function (column, rowNode, forFilter, ignoreAggData) {
@@ -80,7 +83,7 @@ var ValueService = /** @class */ (function (_super) {
             result = this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
         }
         else if (this.isTreeData && (field && data)) {
-            result = object_1.getValueUsingField(data, field, column.isFieldContainsDots());
+            result = (0, object_1.getValueUsingField)(data, field, column.isFieldContainsDots());
         }
         else if (groupDataExists) {
             result = rowNode.groupData[colId];
@@ -94,10 +97,10 @@ var ValueService = /** @class */ (function (_super) {
         else if (ssrmFooterGroupCol) {
             // this is for group footers in SSRM, as the SSRM row won't have groupData, need to extract
             // the group value from the data using the row field
-            result = object_1.getValueUsingField(data, rowNode.field, column.isFieldContainsDots());
+            result = (0, object_1.getValueUsingField)(data, rowNode.field, column.isFieldContainsDots());
         }
         else if (field && data && !ignoreSsrmAggData) {
-            result = object_1.getValueUsingField(data, field, column.isFieldContainsDots());
+            result = (0, object_1.getValueUsingField)(data, field, column.isFieldContainsDots());
         }
         // the result could be an expression itself, if we are allowing cell values to be expressions
         if (this.cellExpressions && (typeof result === 'string') && result.indexOf('=') === 0) {
@@ -113,7 +116,7 @@ var ValueService = /** @class */ (function (_super) {
         return result;
     };
     ValueService.prototype.getOpenedGroup = function (rowNode, column) {
-        if (!this.gridOptionsService.is('showOpenedGroup')) {
+        if (!this.gridOptionsService.get('showOpenedGroup')) {
             return;
         }
         var colDef = column.getColDef();
@@ -145,11 +148,11 @@ var ValueService = /** @class */ (function (_super) {
         }
         // this will only happen if user is trying to paste into a group row, which doesn't make sense
         // the user should not be trying to paste into group rows
-        if (generic_1.missing(rowNode.data)) {
+        if ((0, generic_1.missing)(rowNode.data)) {
             rowNode.data = {};
         }
         var _a = column.getColDef(), field = _a.field, valueSetter = _a.valueSetter;
-        if (generic_1.missing(field) && generic_1.missing(valueSetter)) {
+        if ((0, generic_1.missing)(field) && (0, generic_1.missing)(valueSetter)) {
             console.warn("AG Grid: you need either field or valueSetter set on colDef for editing to work");
             return false;
         }
@@ -157,20 +160,17 @@ var ValueService = /** @class */ (function (_super) {
             console.warn("AG Grid: Data type of the new value does not match the cell data type of the column");
             return false;
         }
-        var params = {
+        var params = this.gridOptionsService.addGridCommonParams({
             node: rowNode,
             data: rowNode.data,
             oldValue: this.getValue(column, rowNode),
             newValue: newValue,
             colDef: column.getColDef(),
-            column: column,
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context
-        };
+            column: column
+        });
         params.newValue = newValue;
         var valueWasDifferent;
-        if (generic_1.exists(valueSetter)) {
+        if ((0, generic_1.exists)(valueSetter)) {
             if (typeof valueSetter === 'function') {
                 valueWasDifferent = valueSetter(params);
             }
@@ -219,16 +219,18 @@ var ValueService = /** @class */ (function (_super) {
     ValueService.prototype.callColumnCellValueChangedHandler = function (event) {
         var onCellValueChanged = event.colDef.onCellValueChanged;
         if (typeof onCellValueChanged === 'function') {
-            onCellValueChanged({
-                node: event.node,
-                data: event.data,
-                oldValue: event.oldValue,
-                newValue: event.newValue,
-                colDef: event.colDef,
-                column: event.column,
-                api: event.api,
-                columnApi: event.columnApi,
-                context: event.context
+            this.getFrameworkOverrides().wrapOutgoing(function () {
+                onCellValueChanged({
+                    node: event.node,
+                    data: event.data,
+                    oldValue: event.oldValue,
+                    newValue: event.newValue,
+                    colDef: event.colDef,
+                    column: event.column,
+                    api: event.api,
+                    columnApi: event.columnApi,
+                    context: event.context
+                });
             });
         }
     };
@@ -239,8 +241,7 @@ var ValueService = /** @class */ (function (_super) {
         // if no '.', then it's not a deep value
         var valuesAreSame = false;
         if (!isFieldContainsDots) {
-            // soft comparison to match strings and numbers
-            valuesAreSame = data[field] == newValue;
+            valuesAreSame = data[field] === newValue;
             if (!valuesAreSame) {
                 data[field] = newValue;
             }
@@ -252,8 +253,7 @@ var ValueService = /** @class */ (function (_super) {
             while (fieldPieces.length > 0 && currentObject) {
                 var fieldPiece = fieldPieces.shift();
                 if (fieldPieces.length === 0) {
-                    // soft comparison to match strings and numbers
-                    valuesAreSame = currentObject[fieldPiece] == newValue;
+                    valuesAreSame = currentObject[fieldPiece] === newValue;
                     if (!valuesAreSame) {
                         currentObject[fieldPiece] = newValue;
                     }
@@ -266,16 +266,13 @@ var ValueService = /** @class */ (function (_super) {
         return !valuesAreSame;
     };
     ValueService.prototype.executeFilterValueGetter = function (valueGetter, data, column, rowNode) {
-        var params = {
+        var params = this.gridOptionsService.addGridCommonParams({
             data: data,
             node: rowNode,
             column: column,
             colDef: column.getColDef(),
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context,
             getValue: this.getValueCallback.bind(this, rowNode)
-        };
+        });
         if (typeof valueGetter === 'function') {
             return valueGetter(params);
         }
@@ -288,16 +285,13 @@ var ValueService = /** @class */ (function (_super) {
         if (valueFromCache !== undefined) {
             return valueFromCache;
         }
-        var params = {
+        var params = this.gridOptionsService.addGridCommonParams({
             data: data,
             node: rowNode,
             column: column,
             colDef: column.getColDef(),
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context,
             getValue: this.getValueCallback.bind(this, rowNode)
-        };
+        });
         var result;
         if (typeof valueGetter === 'function') {
             result = valueGetter(params);
@@ -322,16 +316,13 @@ var ValueService = /** @class */ (function (_super) {
         var keyCreator = col.getColDef().keyCreator;
         var result = value;
         if (keyCreator) {
-            var keyParams = {
+            var keyParams = this.gridOptionsService.addGridCommonParams({
                 value: value,
                 colDef: col.getColDef(),
                 column: col,
                 node: rowNode,
-                data: rowNode.data,
-                api: this.gridOptionsService.api,
-                columnApi: this.gridOptionsService.columnApi,
-                context: this.gridOptionsService.context
-            };
+                data: rowNode.data
+            });
             result = keyCreator(keyParams);
         }
         // if already a string, or missing, just return it
@@ -340,29 +331,27 @@ var ValueService = /** @class */ (function (_super) {
         }
         result = String(result);
         if (result === '[object Object]') {
-            function_1.doOnce(function () {
-                console.warn('AG Grid: a column you are grouping or pivoting by has objects as values. If you want to group by complex objects then either a) use a colDef.keyCreator (se AG Grid docs) or b) to toString() on the object to return a key');
-            }, 'getKeyForNode - warn about [object,object]');
+            (0, function_1.warnOnce)('a column you are grouping or pivoting by has objects as values. If you want to group by complex objects then either a) use a colDef.keyCreator (se AG Grid docs) or b) to toString() on the object to return a key');
         }
         return result;
     };
     __decorate([
-        context_1.Autowired('expressionService')
+        (0, context_1.Autowired)('expressionService')
     ], ValueService.prototype, "expressionService", void 0);
     __decorate([
-        context_1.Autowired('columnModel')
+        (0, context_1.Autowired)('columnModel')
     ], ValueService.prototype, "columnModel", void 0);
     __decorate([
-        context_1.Autowired('valueCache')
+        (0, context_1.Autowired)('valueCache')
     ], ValueService.prototype, "valueCache", void 0);
     __decorate([
-        context_1.Autowired('dataTypeService')
+        (0, context_1.Autowired)('dataTypeService')
     ], ValueService.prototype, "dataTypeService", void 0);
     __decorate([
         context_1.PostConstruct
     ], ValueService.prototype, "init", null);
     ValueService = __decorate([
-        context_1.Bean('valueService')
+        (0, context_1.Bean)('valueService')
     ], ValueService);
     return ValueService;
 }(beanStub_1.BeanStub));

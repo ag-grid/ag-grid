@@ -14,6 +14,7 @@ export class ColumnAnimationService extends BeanStub {
     private executeLaterFuncs: Function[] = [];
 
     private active = false;
+    private suppressAnimation = false;
 
     private animationThreadCount = 0;
 
@@ -23,18 +24,22 @@ export class ColumnAnimationService extends BeanStub {
     }
 
     public isActive(): boolean {
-        return this.active;
+        return this.active && !this.suppressAnimation;
+    }
+
+    public setSuppressAnimation(suppress: boolean): void {
+        this.suppressAnimation = suppress;
     }
 
     public start(): void {
         if (this.active) { return; }
 
-        if (this.gridOptionsService.is('suppressColumnMoveAnimation')) { return; }
+        if (this.gridOptionsService.get('suppressColumnMoveAnimation')) { return; }
 
         // if doing RTL, we don't animate open / close as due to how the pixels are inverted,
         // the animation moves all the row the the right rather than to the left (ie it's the static
         // columns that actually get their coordinates updated)
-        if (this.gridOptionsService.is('enableRtl')) { return; }
+        if (this.gridOptionsService.get('enableRtl')) { return; }
 
         this.ensureAnimationCssClassPresent();
 
@@ -43,8 +48,7 @@ export class ColumnAnimationService extends BeanStub {
 
     public finish(): void {
         if (!this.active) { return; }
-        this.flush();
-        this.active = false;
+        this.flush(() => { this.active = false });
     }
 
     public executeNextVMTurn(func: Function): void {
@@ -78,17 +82,25 @@ export class ColumnAnimationService extends BeanStub {
         });
     }
 
-    public flush(): void {
+    private flush(callback: () => void): void {
+        if (this.executeNextFuncs.length === 0 && this.executeLaterFuncs.length === 0) { 
+            callback();
+            return; 
+        }
 
-        const nowFuncs = this.executeNextFuncs;
-        this.executeNextFuncs = [];
+        const runFuncs = (queue: Function[]) => {
+            while (queue.length) {
+                const func = queue.pop();
+                if (func) { func(); }
+            }
+        }
 
-        const waitFuncs = this.executeLaterFuncs;
-        this.executeLaterFuncs = [];
-
-        if (nowFuncs.length === 0 && waitFuncs.length === 0) { return; }
-
-        window.setTimeout(() => nowFuncs.forEach(func => func()), 0);
-        window.setTimeout(() => waitFuncs.forEach(func => func()), 300);
+        this.getFrameworkOverrides().wrapIncoming(() => {
+            window.setTimeout(() => runFuncs(this.executeNextFuncs), 0);
+            window.setTimeout(() => {
+                runFuncs(this.executeLaterFuncs);
+                callback();
+            }, 200);
+        });
     }
 }

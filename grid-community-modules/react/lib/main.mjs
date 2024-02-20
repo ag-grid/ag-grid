@@ -1,5 +1,5 @@
-// @ag-grid-community/react v30.1.0
+// @ag-grid-community/react v31.1.0
 export { AgGridReact } from './agGridReact.mjs';
-export { AgGridReactLegacy } from './legacy/agGridReactLegacy.mjs';
-export { AgGridReactUi as AgGridReactFire } from './reactUi/agGridReactUi.mjs';
 export * from './shared/interfaces.mjs';
+export * from './shared/customComp/interfaces.mjs';
+export * from './shared/customComp/util.mjs';

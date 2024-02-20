@@ -31,17 +31,20 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
         this.setDisplayed(vScrollShowing, { skipAriaHidden: true });
     }
     onRowContainerHeightChanged() {
-        const gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
+        const { ctrlsService } = this;
+        const gridBodyCtrl = ctrlsService.getGridBodyCtrl();
         const gridBodyViewportEl = gridBodyCtrl.getBodyViewportElement();
-        if (this.eViewport.scrollTop != gridBodyViewportEl.scrollTop) {
-            this.eViewport.scrollTop = gridBodyViewportEl.scrollTop;
+        const eViewportScrollTop = this.getScrollPosition();
+        const gridBodyViewportScrollTop = gridBodyViewportEl.scrollTop;
+        if (eViewportScrollTop != gridBodyViewportScrollTop) {
+            this.setScrollPosition(gridBodyViewportScrollTop, true);
         }
     }
     getScrollPosition() {
         return this.getViewport().scrollTop;
     }
-    setScrollPosition(value) {
-        if (!isVisible(this.getViewport())) {
+    setScrollPosition(value, force) {
+        if (!force && !isVisible(this.getViewport())) {
             this.attemptSettingScrollPosition(value);
         }
         this.getViewport().scrollTop = value;

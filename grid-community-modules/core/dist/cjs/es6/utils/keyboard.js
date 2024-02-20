@@ -36,17 +36,14 @@ function isUserSuppressingKeyboardEvent(gridOptionsService, keyboardEvent, rowNo
     if (!colDefFunc) {
         return false;
     }
-    const params = {
+    const params = gridOptionsService.addGridCommonParams({
         event: keyboardEvent,
         editing,
         column,
-        api: gridOptionsService.api,
         node: rowNode,
         data: rowNode.data,
-        colDef: column.getColDef(),
-        context: gridOptionsService.context,
-        columnApi: gridOptionsService.columnApi
-    };
+        colDef: column.getColDef()
+    });
     // colDef get first preference on suppressing events
     if (colDefFunc) {
         const colDefFuncResult = colDefFunc(params);
@@ -62,18 +59,15 @@ exports.isUserSuppressingKeyboardEvent = isUserSuppressingKeyboardEvent;
 function isUserSuppressingHeaderKeyboardEvent(gridOptionsService, keyboardEvent, headerRowIndex, column) {
     const colDef = column.getDefinition();
     const colDefFunc = colDef && colDef.suppressHeaderKeyboardEvent;
-    if (!generic_1.exists(colDefFunc)) {
+    if (!(0, generic_1.exists)(colDefFunc)) {
         return false;
     }
-    const params = {
-        api: gridOptionsService.api,
-        columnApi: gridOptionsService.columnApi,
-        context: gridOptionsService.context,
+    const params = gridOptionsService.addGridCommonParams({
         colDef: colDef,
         column,
         headerRowIndex,
         event: keyboardEvent
-    };
+    });
     return !!colDefFunc(params);
 }
 exports.isUserSuppressingHeaderKeyboardEvent = isUserSuppressingHeaderKeyboardEvent;
@@ -110,7 +104,7 @@ function isDeleteKey(key, alwaysReturnFalseOnBackspace = false) {
         return true;
     }
     if (!alwaysReturnFalseOnBackspace && key === keyCode_1.KeyCode.BACKSPACE) {
-        return browser_1.isMacOsUserAgent();
+        return (0, browser_1.isMacOsUserAgent)();
     }
     return false;
 }

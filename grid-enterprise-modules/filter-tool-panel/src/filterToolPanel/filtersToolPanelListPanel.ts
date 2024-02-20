@@ -3,13 +3,12 @@ import {
     AbstractColDef,
     Autowired,
     Column,
-    ColumnApi,
     ColumnModel,
     Component,
     Events,
-    GridApi,
     ProvidedColumnGroup,
-    IProvidedColumn
+    IProvidedColumn,
+    FiltersToolPanelState
 } from "@ag-grid-community/core";
 
 import { ToolPanelFilterComp } from "./toolPanelFilterComp";
@@ -22,18 +21,22 @@ export class FiltersToolPanelListPanel extends Component {
 
     private static TEMPLATE = /* html */ `<div class="ag-filter-list-panel"></div>`;
 
-    @Autowired("gridApi") private gridApi: GridApi;
-    @Autowired("columnApi") private columnApi: ColumnApi;
     @Autowired('toolPanelColDefService') private toolPanelColDefService: ToolPanelColDefService;
     @Autowired('columnModel') private columnModel: ColumnModel;
 
     private initialised = false;
+    private hasLoadedInitialState = false;
+    private isInitialState = false;
 
     private params: ToolPanelFiltersCompParams;
     private filterGroupComps: ToolPanelFilterGroupComp[] = [];
 
     // null is used to check if we should search filters when new cols are loaded
     private searchFilterText: string | null;
+
+    // If a column drag is happening, we suppress handling the event until it has completed
+    private suppressOnColumnsChanged: boolean = false;
+    private onColumnsChangedPending: boolean = false;
 
     constructor() {
         super(FiltersToolPanelListPanel.TEMPLATE);
@@ -42,16 +45,13 @@ export class FiltersToolPanelListPanel extends Component {
     public init(params: ToolPanelFiltersCompParams): void {
         this.initialised = true;
 
-        const defaultParams: ToolPanelFiltersCompParams = {
+        const defaultParams: Partial<ToolPanelFiltersCompParams> = this.gridOptionsService.addGridCommonParams({
             suppressExpandAll: false,
             suppressFilterSearch: false,
-            suppressSyncLayoutWithGrid: false,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-            context: this.gridOptionsService.context
-        };
+            suppressSyncLayoutWithGrid: false
+        });
         _.mergeDeep(defaultParams, params);
-        this.params = defaultParams;
+        this.params = defaultParams as ToolPanelFiltersCompParams;
 
         if (!this.params.suppressSyncLayoutWithGrid) {
             this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, () => this.onColumnsChanged());
@@ -67,19 +67,41 @@ export class FiltersToolPanelListPanel extends Component {
             }
         });
 
+        this.addManagedListener(this.eventService, Events.EVENT_DRAG_STARTED, () => {
+            this.suppressOnColumnsChanged = true;
+        });
+        this.addManagedListener(this.eventService, Events.EVENT_DRAG_STOPPED, () => {
+            this.suppressOnColumnsChanged = false;
+            if (this.onColumnsChangedPending) {
+                this.onColumnsChangedPending = false;
+                this.onColumnsChanged();
+            }
+        });
+
         if (this.columnModel.isReady()) {
             this.onColumnsChanged();
         }
+
+        const ariaEl = this.getAriaElement() 
+        _.setAriaLive(ariaEl, 'assertive');
+        _.setAriaAtomic(ariaEl, false);
+        _.setAriaRelevant(ariaEl, 'text');
     }
 
     public onColumnsChanged(): void {
+        if (this.suppressOnColumnsChanged) {
+            this.onColumnsChangedPending = true;
+            return;
+        }
         const pivotModeActive = this.columnModel.isPivotMode();
         const shouldSyncColumnLayoutWithGrid = !this.params.suppressSyncLayoutWithGrid && !pivotModeActive;
         shouldSyncColumnLayoutWithGrid ? this.syncFilterLayout() : this.buildTreeFromProvidedColumnDefs();
+        this.refreshAriaLabel();
     }
 
     public syncFilterLayout(): void {
         this.toolPanelColDefService.syncLayoutWithGrid(this.setFiltersLayout.bind(this));
+        this.refreshAriaLabel();
     }
 
     private buildTreeFromProvidedColumnDefs(): void {
@@ -97,12 +119,17 @@ export class FiltersToolPanelListPanel extends Component {
         // We can therefore restore focus if an element in the filter tool panel was focused.
         const activeElement = this.gridOptionsService.getDocument().activeElement as HTMLElement;
 
+        if (!this.hasLoadedInitialState) {
+            this.hasLoadedInitialState = true;
+            this.isInitialState = !!this.params.initialState;
+        }
+
         // Want to restore the expansion state where possible.
         const expansionState = this.getExpansionState();
 
         this.destroyFilters();
 
-        this.filterGroupComps = this.recursivelyAddComps(columnTree, 0, expansionState);
+        this.filterGroupComps = this.recursivelyAddComps(columnTree, 0, expansionState) as ToolPanelFilterGroupComp[];
 
         const len = this.filterGroupComps.length;
 
@@ -125,9 +152,12 @@ export class FiltersToolPanelListPanel extends Component {
         if (this.getGui().contains(activeElement)) {
             activeElement.focus();
         }
+
+        this.isInitialState = false;
+        this.refreshAriaLabel();
     }
 
-    private recursivelyAddComps(tree: IProvidedColumn[], depth: number, expansionState: Map<string, boolean>): ToolPanelFilterGroupComp[] {
+    private recursivelyAddComps(tree: IProvidedColumn[], depth: number, expansionState: Map<string, boolean>): (ToolPanelFilterGroupComp | ToolPanelFilterComp)[] {
         return _.flatten(tree.map(child => {
             if (child instanceof ProvidedColumnGroup) {
                 return _.flatten(this.recursivelyAddFilterGroupComps(child, depth, expansionState)!);
@@ -138,7 +168,7 @@ export class FiltersToolPanelListPanel extends Component {
             if (!this.shouldDisplayFilter(column)) { return []; }
 
             const hideFilterCompHeader = depth === 0;
-            const filterComp = new ToolPanelFilterComp(hideFilterCompHeader);
+            const filterComp = new ToolPanelFilterComp(hideFilterCompHeader, () => this.onFilterExpanded());
             this.createBean(filterComp);
 
             filterComp.setColumn(column);
@@ -159,11 +189,28 @@ export class FiltersToolPanelListPanel extends Component {
         }));
     }
 
+    private refreshAriaLabel(): void {
+        const translate = this.localeService.getLocaleTextFunc();
+        const filterListName = translate('ariaFilterPanelList', 'Filter List');
+        const localeFilters = translate('filters', 'Filters');
+
+        const eGui = this.getGui();
+        const groupSelector = '.ag-filter-toolpanel-group-wrapper';
+        const itemSelector = '.ag-filter-toolpanel-group-item';
+        const hiddenSelector = '.ag-hidden';
+        const visibleItems = eGui.querySelectorAll(`${itemSelector}:not(${groupSelector}, ${hiddenSelector})`);
+
+        const totalVisibleItems = visibleItems.length;
+
+        _.setAriaLabel(this.getAriaElement(), `${filterListName} ${totalVisibleItems} ${localeFilters}`);
+
+    }
+
     private recursivelyAddFilterGroupComps(
         columnGroup: ProvidedColumnGroup,
         depth: number,
         expansionState: Map<string, boolean>
-    ): ToolPanelFilterGroupComp[] | undefined {
+    ): (ToolPanelFilterGroupComp | ToolPanelFilterComp)[] | undefined {
         if (!this.filtersExistInChildren(columnGroup.getChildren())) { return; }
 
         const colGroupDef = columnGroup.getColGroupDef();
@@ -179,8 +226,9 @@ export class FiltersToolPanelListPanel extends Component {
 
         this.createBean(filterGroupComp);
         filterGroupComp.addCssClassToTitleBar('ag-filter-toolpanel-header');
-        if (expansionState.get(filterGroupComp.getFilterGroupId()) === false) {
-            // Default state on creation is expanded. Desired initial state is expanded. Only collapse if collapsed before.
+        const expansionStateValue = expansionState.get(filterGroupComp.getFilterGroupId());
+        if ((this.isInitialState && !expansionStateValue) || expansionStateValue === false) {
+            // Default state on creation is expanded. Desired initial state is expanded. Only collapse if collapsed before or using initial state.
             filterGroupComp.collapse();
         }
         return [filterGroupComp];
@@ -203,6 +251,13 @@ export class FiltersToolPanelListPanel extends Component {
 
     private getExpansionState(): Map<string, boolean> {
         const expansionState: Map<string, boolean> = new Map();
+
+        if (this.isInitialState) {
+            const { expandedColIds, expandedGroupIds } = this.params.initialState as FiltersToolPanelState;
+            expandedColIds.forEach(id => expansionState.set(id, true));
+            expandedGroupIds.forEach(id => expansionState.set(id, true));
+            return expansionState;
+        }
 
         const recursiveGetExpansionState = (filterGroupComp: ToolPanelFilterGroupComp) => {
             expansionState.set(filterGroupComp.getFilterGroupId(), filterGroupComp.isExpanded());
@@ -317,6 +372,10 @@ export class FiltersToolPanelListPanel extends Component {
         this.fireExpandedEvent();
     }
 
+    private onFilterExpanded(): void {
+        this.dispatchEvent({ type: 'filterExpanded' });
+    }
+
     private fireExpandedEvent(): void {
         let expandedCount = 0;
         let notExpandedCount = 0;
@@ -363,7 +422,6 @@ export class FiltersToolPanelListPanel extends Component {
             }
 
             const children = filterItem.getChildren();
-
             const groupNamePasses = passesFilter(filterItem.getFilterGroupName());
 
             // if group or parent already passed - ensure this group and all children are visible
@@ -411,6 +469,7 @@ export class FiltersToolPanelListPanel extends Component {
         });
 
         this.setFirstAndLastVisible(firstVisible, lastVisible);
+        this.refreshAriaLabel();
     }
 
     private setFirstAndLastVisible(firstIdx?: number, lastIdx?: number) {
@@ -429,6 +488,29 @@ export class FiltersToolPanelListPanel extends Component {
 
     private refreshFilters(isDisplayed: boolean) {
         this.filterGroupComps.forEach(filterGroupComp => filterGroupComp.refreshFilters(isDisplayed));
+    }
+
+    public getExpandedFiltersAndGroups(): { expandedGroupIds: string[], expandedColIds: string[] } {
+        const expandedGroupIds: string[] = [];
+        const expandedColIds: Set<string> = new Set();
+
+        const getExpandedFiltersAndGroups = (filterComp: ToolPanelFilterGroupComp | ToolPanelFilterComp) => {
+            if (filterComp instanceof ToolPanelFilterGroupComp) {
+                filterComp.getChildren().forEach(child => getExpandedFiltersAndGroups(child));
+                const groupId = filterComp.getFilterGroupId();
+                if (filterComp.isExpanded() && !expandedColIds.has(groupId)) {
+                    expandedGroupIds.push(groupId);
+                }
+            } else {
+                if (filterComp.isExpanded()) {
+                    expandedColIds.add(filterComp.getColumn().getColId());
+                }
+            }
+        };
+
+        this.filterGroupComps.forEach(getExpandedFiltersAndGroups);
+
+        return { expandedGroupIds, expandedColIds: Array.from(expandedColIds) };
     }
 
     private destroyFilters() {

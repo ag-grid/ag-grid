@@ -25,13 +25,19 @@ var LoadingOverlayComponent = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     LoadingOverlayComponent.prototype.init = function (params) {
-        var _a;
-        var template = (_a = this.gridOptionsService.get('overlayLoadingTemplate')) !== null && _a !== void 0 ? _a : LoadingOverlayComponent.DEFAULT_LOADING_OVERLAY_TEMPLATE;
-        var localeTextFunc = this.localeService.getLocaleTextFunc();
-        var localisedTemplate = template.replace('[LOADING...]', localeTextFunc('loadingOoo', 'Loading...'));
-        this.setTemplate(localisedTemplate);
+        var _this = this;
+        var customTemplate = this.gridOptionsService.get('overlayLoadingTemplate');
+        this.setTemplate(customTemplate !== null && customTemplate !== void 0 ? customTemplate : LoadingOverlayComponent.DEFAULT_LOADING_OVERLAY_TEMPLATE);
+        if (!customTemplate) {
+            var localeTextFunc_1 = this.localeService.getLocaleTextFunc();
+            // setTimeout is used because some screen readers only announce `aria-live` text when
+            // there is a "text change", so we force a change from empty.
+            setTimeout(function () {
+                _this.getGui().textContent = localeTextFunc_1('loadingOoo', 'Loading...');
+            });
+        }
     };
-    LoadingOverlayComponent.DEFAULT_LOADING_OVERLAY_TEMPLATE = '<span class="ag-overlay-loading-center">[LOADING...]</span>';
+    LoadingOverlayComponent.DEFAULT_LOADING_OVERLAY_TEMPLATE = "<span aria-live=\"polite\" aria-atomic=\"true\" class=\"ag-overlay-loading-center\"></span>";
     return LoadingOverlayComponent;
 }(Component));
 export { LoadingOverlayComponent };

@@ -1,4 +1,4 @@
-export declare type ContainerType = 'columnMenu' | 'contextMenu' | 'toolPanel' | 'floatingFilter';
+export declare type ContainerType = 'columnMenu' | 'contextMenu' | 'toolPanel' | 'floatingFilter' | 'columnFilter';
 export interface IAfterGuiAttachedParams {
     /** Where this component is attached to. */
     container?: ContainerType;

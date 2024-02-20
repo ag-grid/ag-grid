@@ -64,16 +64,16 @@ All stateful attributes of Column Definitions are as follows:
 
 <note>
 | If you are interested in changing Column State only and not the other parts of the column definitions, then consider
-| working with the [Column State](/column-state/) API instead.
+| working with the [Column State](../column-state/) API instead.
 |
 | Column State is provided as part of Column Definitions to enable these properties to be reactive. Some developers wish
 | to update Column Definitions and expect the grid to respond. Other developers may find this non-intuitive and will
-| prefer interacting with [Column State](/column-state/) directly.
+| prefer interacting with [Column State](../column-state/) directly.
 </note>
 
 The **Initial Attribute** will be used only when the **Column is Created**. The **Stateful Attribute** will be used when the **Column is Created or Updated**.
 
-<snippet suppressFrameworkContext=true>
+<snippet suppressFrameworkContext="true">
 const gridOptions = {
     columnDefs: [
         // using initial values, get applied when Column is created
@@ -100,7 +100,7 @@ The following example shows Column Definitions using **stateful attributes**. No
 
 <grid-example title='Updating Column State' name='changing-state' type='mixed' options='{ "modules": true }'></grid-example>
 
-## **null** vs **undefined**
+## null vs undefined
 
 When a stateful attribute is set to `undefined` the grid ignores the attribute.
 
@@ -209,7 +209,7 @@ The current column definitions can be retrieved with `getColumnDefs`:
 
 <framework-specific-section frameworks="javascript">
 <snippet transform={false}>
-| gridOptions.api.getColumnDefs();
+| api.getColumnDefs();
 </snippet>
 </framework-specific-section>
 
@@ -230,7 +230,7 @@ The current column definitions can be retrieved with `getColumnDefs`:
 Column Groups can be updated in the same way as Columns, you just update the Column Group Definition. For expandable
 groups, to have open / closed state to be maintained, you need to assign `groupId` in the Column Group Definition.
 
-<snippet suppressFrameworkContext=true>
+<snippet suppressFrameworkContext="true">
 const gridOptions = {
     columnDefs: [
         {

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { DateCompWrapper } from './dateCompWrapper';
@@ -8,6 +8,7 @@ import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedPa
 import { IFilterOptionDef, IFilterParams } from '../../../interfaces/iFilter';
 import { LocaleService } from '../../../localeService';
 import { OptionsFactory } from '../optionsFactory';
+import { FILTER_LOCALE_TEXT } from '../../filterLocaleText';
 export interface DateFilterModel extends ISimpleFilterModel {
     /** Filter type is always `'date'` */
     filterType?: 'date';
@@ -38,18 +39,33 @@ export interface IDateFilterParams extends IScalarFilterParams {
      *  - `true`: Force the browser date picker to be used.
      *  - `false`: Force a plain text box to be used.
      *
-     * Default: `undefined` - If a date component is not provided, then the grid will use the browser date picker
+     * If a date component is not provided, then the grid will use the browser date picker
      * for all supported browsers and a plain text box for other browsers.
      */
     browserDatePicker?: boolean;
-    /** This is the minimum year that may be entered in a date field for the value to be considered valid. Default: `1000` */
+    /**
+     * This is the minimum year that may be entered in a date field for the value to be considered valid.
+     * @default 1000
+     * */
     minValidYear?: number;
     /** This is the maximum year that may be entered in a date field for the value to be considered valid. Default is no restriction. */
     maxValidYear?: number;
     /**
-     * Defines the date format for the floating filter text when an in range filter has been applied.
+     * The minimum valid date that can be entered in the filter.
+     * It can be a Date object or a string in the format `YYYY-MM-DD`.
+     * If set, this will override `minValidYear` - the minimum valid year setting.
+     */
+    minValidDate?: Date | string;
+    /**
+     * The maximum valid date that can be entered in the filter.
+     * It can be a Date object or a string in the format `YYYY-MM-DD`.
+     * If set, this will override `maxValidYear` - the maximum valid year setting.
+     */
+    maxValidDate?: Date | string;
+    /**
+     * Defines the date format for the floating filter text when an `inRange` filter has been applied.
      *
-     * Default: `YYYY-MM-DD`
+     * @default YYYY-MM-DD
      */
     inRangeFloatingFilterDateFormat?: string;
 }
@@ -75,6 +91,8 @@ export declare class DateFilter extends ScalarFilter<DateFilterModel, Date, Date
     private dateFilterParams;
     private minValidYear;
     private maxValidYear;
+    private minValidDate;
+    private maxValidDate;
     private filterModelFormatter;
     constructor();
     afterGuiAttached(params?: IAfterGuiAttachedParams): void;
@@ -91,6 +109,7 @@ export declare class DateFilter extends ScalarFilter<DateFilterModel, Date, Date
     private createFromToElement;
     protected removeValueElements(startPosition: number, deleteCount?: number): void;
     protected removeDateComps(components: DateCompWrapper[], startPosition: number, deleteCount?: number): void;
+    private isValidDateValue;
     protected isConditionUiComplete(position: number): boolean;
     protected areSimpleModelsEqual(aSimple: DateFilterModel, bSimple: DateFilterModel): boolean;
     protected getFilterType(): 'date';
@@ -98,5 +117,6 @@ export declare class DateFilter extends ScalarFilter<DateFilterModel, Date, Date
     protected resetPlaceholder(): void;
     protected getInputs(position: number): Tuple<DateCompWrapper>;
     protected getValues(position: number): Tuple<Date>;
+    protected translate(key: keyof typeof FILTER_LOCALE_TEXT): string;
     getModelAsString(model: ISimpleFilterModel): string;
 }

@@ -40,7 +40,7 @@ var TooltipFeature = /** @class */ (function (_super) {
         }
     };
     TooltipFeature.prototype.setupTooltip = function () {
-        this.browserTooltips = this.beans.gridOptionsService.is('enableBrowserTooltips');
+        this.browserTooltips = this.beans.gridOptionsService.get('enableBrowserTooltips');
         this.updateTooltipText();
         if (this.browserTooltips) {
             this.setBrowserTooltip(this.tooltip);
@@ -54,6 +54,7 @@ var TooltipFeature = /** @class */ (function (_super) {
     };
     TooltipFeature.prototype.createTooltipFeatureIfNeeded = function () {
         var _this = this;
+        var _a, _b, _c, _d;
         if (this.genericTooltipFeature != null) {
             return;
         }
@@ -61,7 +62,7 @@ var TooltipFeature = /** @class */ (function (_super) {
             getTooltipParams: function () { return _this.getTooltipParams(); },
             getGui: function () { return _this.ctrl.getGui(); }
         };
-        this.genericTooltipFeature = this.createManagedBean(new customTooltipFeature_1.CustomTooltipFeature(parent), this.beans.context);
+        this.genericTooltipFeature = this.createManagedBean(new customTooltipFeature_1.CustomTooltipFeature(parent, (_b = (_a = this.ctrl).getTooltipShowDelayOverride) === null || _b === void 0 ? void 0 : _b.call(_a), (_d = (_c = this.ctrl).getTooltipHideDelayOverride) === null || _d === void 0 ? void 0 : _d.call(_c)), this.beans.context);
     };
     TooltipFeature.prototype.refreshToolTip = function () {
         this.updateTooltipText();

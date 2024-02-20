@@ -1,13 +1,4 @@
-import { exists, toStringOrNull } from './generic.mjs';
-export function firstExistingValue(...values) {
-    for (let i = 0; i < values.length; i++) {
-        const value = values[i];
-        if (exists(value)) {
-            return value;
-        }
-    }
-    return null;
-}
+import { toStringOrNull } from './generic.mjs';
 export function existsAndNotEmpty(value) {
     return value != null && value.length > 0;
 }
@@ -26,7 +17,6 @@ export function areEqual(a, b, comparator) {
         a.length === b.length &&
         a.every((value, index) => comparator ? comparator(value, b[index]) : b[index] === value);
 }
-/** @deprecated */
 export function shallowCompare(arr1, arr2) {
     return areEqual(arr1, arr2);
 }

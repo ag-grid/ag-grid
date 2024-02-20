@@ -1,4 +1,13 @@
-import { Grid, GridOptions, ISetFilterParams, KeyCreatorParams, ValueFormatterParams } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  GridOptions,
+  ISetFilterParams,
+  KeyCreatorParams,
+  ValueFormatterParams,
+} from '@ag-grid-community/core';
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -20,7 +29,6 @@ const gridOptions: GridOptions = {
   ],
   defaultColDef: {
     flex: 1,
-    resizable: true,
     floatingFilter: true,
     cellDataType: false,
   },
@@ -38,11 +46,11 @@ const gridOptions: GridOptions = {
 
 function dateCellValueFormatter(params: ValueFormatterParams) {
   return params.value ? params.value.toLocaleDateString() : '';
-} 
+}
 
 function dateFloatingFilterValueFormatter(params: ValueFormatterParams) {
   return params.value ? params.value.toLocaleDateString() : '(Blanks)';
-} 
+}
 
 function treeListFormatter(pathKey: string | null, level: number, _parentPathKeys: (string | null)[]): string {
   if (level === 1) {
@@ -63,12 +71,12 @@ function groupTreeListFormatter(pathKey: string | null, level: number, _parentPa
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
   .then(response => response.json())
   .then((data: any[]) => {
       const randomDays = [1, 4, 10, 15, 18];
-      gridOptions.api!.setRowData([
+      gridApi!.setGridOption('rowData', [
         {},
         ...data.map(row => {
           // generate pseudo-random dates

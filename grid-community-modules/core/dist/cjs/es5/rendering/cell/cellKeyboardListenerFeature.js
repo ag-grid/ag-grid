@@ -92,8 +92,8 @@ var CellKeyboardListenerFeature = /** @class */ (function (_super) {
             return;
         }
         eventService.dispatchEvent({ type: eventKeys_1.Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_START });
-        if (keyboard_1.isDeleteKey(key, gridOptionsService.is('enableCellEditingOnBackspace'))) {
-            if (rangeService && gridOptionsService.isEnableRangeSelection()) {
+        if ((0, keyboard_1.isDeleteKey)(key, gridOptionsService.get('enableCellEditingOnBackspace'))) {
+            if (rangeService && gridOptionsService.get('enableRangeSelection')) {
                 rangeService.clearCellRangeCellValues({ dispatchWrapperEvents: true, wrapperEventSource: 'deleteKey' });
             }
             else if (cellCtrl.isCellEditable()) {
@@ -110,7 +110,7 @@ var CellKeyboardListenerFeature = /** @class */ (function (_super) {
             this.cellCtrl.stopEditingAndFocus(false, e.shiftKey);
         }
         else {
-            if (this.beans.gridOptionsService.is('enterNavigatesVertically')) {
+            if (this.beans.gridOptionsService.get('enterNavigatesVertically')) {
                 var key = e.shiftKey ? keyCode_1.KeyCode.UP : keyCode_1.KeyCode.DOWN;
                 this.beans.navigationService.navigateToNextCell(null, key, this.cellCtrl.getCellPosition(), false);
             }
@@ -164,8 +164,8 @@ var CellKeyboardListenerFeature = /** @class */ (function (_super) {
         if (!this.cellCtrl.isEditing() && gridOptionsService.isRowSelection()) {
             var currentSelection = this.rowNode.isSelected();
             var newSelection = !currentSelection;
-            if (newSelection || !gridOptionsService.is('suppressRowDeselection')) {
-                var groupSelectsFiltered = this.beans.gridOptionsService.is('groupSelectsFiltered');
+            if (newSelection || !gridOptionsService.get('suppressRowDeselection')) {
+                var groupSelectsFiltered = this.beans.gridOptionsService.get('groupSelectsFiltered');
                 var updatedCount = this.rowNode.setSelectedParams({
                     newValue: newSelection,
                     rangeSelect: event.shiftKey,

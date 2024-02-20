@@ -1,12 +1,23 @@
-import { Grid, CheckboxSelectionCallbackParams, ColDef, FirstDataRenderedEvent, GridOptions, HeaderCheckboxSelectionCallbackParams, IGroupCellRendererParams, ValueGetterParams, PaginationNumberFormatterParams } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  CheckboxSelectionCallbackParams,
+  ColDef,
+  FirstDataRenderedEvent,
+  GridOptions,
+  HeaderCheckboxSelectionCallbackParams,
+  IGroupCellRendererParams,
+  ValueGetterParams,
+  PaginationNumberFormatterParams,
+} from '@ag-grid-community/core';
 
 var checkboxSelection = function (params: CheckboxSelectionCallbackParams) {
   // we put checkbox on the name if we are not doing grouping
-  return params.columnApi.getRowGroupColumns().length === 0
+  return params.api.getRowGroupColumns().length === 0
 }
 var headerCheckboxSelection = function (params: HeaderCheckboxSelectionCallbackParams) {
   // we put checkbox on the name if we are not doing grouping
-  return params.columnApi.getRowGroupColumns().length === 0
+  return params.api.getRowGroupColumns().length === 0
 }
 const columnDefs: ColDef[] = [
   {
@@ -45,14 +56,14 @@ var autoGroupColumnDef: ColDef = {
   } as IGroupCellRendererParams,
 }
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     editable: true,
     enableRowGroup: true,
     enablePivot: true,
     enableValue: true,
-    sortable: true,
-    resizable: true,
     filter: true,
     flex: 1,
     minWidth: 100,
@@ -65,7 +76,8 @@ const gridOptions: GridOptions<IOlympicData> = {
   pivotPanelShow: 'always',
   columnDefs: columnDefs,
   pagination: true,
-  paginationPageSize: 10,
+  paginationPageSize: 500,
+  paginationPageSizeSelector: [200, 500, 1000],
   autoGroupColumnDef: autoGroupColumnDef,
   onFirstDataRendered: onFirstDataRendered,
   paginationNumberFormatter: (params: PaginationNumberFormatterParams) => {
@@ -77,19 +89,14 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
   params.api.paginationGoToPage(4)
 }
 
-function onPageSizeChanged() {
-  var value = (document.getElementById('page-size') as HTMLInputElement).value
-  gridOptions.api!.paginationSetPageSize(Number(value))
-}
-
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
     .then(function (data) {
-      gridOptions.api!.setRowData(data)
+      gridApi!.setGridOption('rowData', data)
     })
 })

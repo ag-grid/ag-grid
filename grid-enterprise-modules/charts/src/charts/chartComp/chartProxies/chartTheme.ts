@@ -6,12 +6,11 @@ import {
     AgChartThemeName,
     AgChartThemeOverrides,
     AgChartThemePalette,
-    AgPieSeriesTooltipRendererParams,
-    AgPolarSeriesTheme,
 } from 'ag-charts-community';
 import { ALL_AXIS_TYPES } from '../utils/axisTypeMapper';
-import { getSeriesType } from '../utils/seriesTypeMapper';
+import { ChartSeriesType, getSeriesType, isPieChartSeries } from '../utils/seriesTypeMapper';
 import { ChartProxy, ChartProxyParams } from './chartProxy';
+import { get } from '../utils/object';
 
 export function createAgChartTheme(chartProxyParams: ChartProxyParams, proxy: ChartProxy): AgChartTheme {
     const { chartOptionsToRestore, chartPaletteToRestore, chartThemeToRestore } = chartProxyParams;
@@ -26,7 +25,7 @@ export function createAgChartTheme(chartProxyParams: ChartProxyParams, proxy: Ch
     const apiThemeOverrides = chartProxyParams.apiChartThemeOverrides;
 
     const standaloneChartType = getSeriesType(chartProxyParams.chartType);
-    const crossFilterThemeOverridePoint = standaloneChartType === 'pie' ? 'polar' : 'cartesian';
+    const crossFilterThemeOverridePoint = isPieChartSeries(standaloneChartType) ? standaloneChartType : 'cartesian';
     const crossFilteringOverrides = chartProxyParams.crossFiltering
         ? createCrossFilterThemeOverrides(proxy, chartProxyParams, crossFilterThemeOverridePoint)
         : undefined;
@@ -37,7 +36,7 @@ export function createAgChartTheme(chartProxyParams: ChartProxyParams, proxy: Ch
     const isTitleEnabled = () => {
         const isTitleEnabled = (obj: any) => {
             if (!obj) { return false; }
-            return Object.keys(obj).some(key => _.get(obj[key], 'title.enabled', false));
+            return Object.keys(obj).some(key => get(obj[key], 'title.enabled', false));
         }
         return isTitleEnabled(gridOptionsThemeOverrides) || isTitleEnabled(apiThemeOverrides);
     }
@@ -77,6 +76,22 @@ export function createAgChartTheme(chartProxyParams: ChartProxyParams, proxy: Ch
     return theme;
 }
 
+export function applyThemeOverrides(
+    baseTheme: AgChartTheme,
+    overrides: Array<AgChartThemeOverrides | null | undefined>
+): AgChartTheme {
+    return overrides.reduce(
+        (baseTheme, overrides) => {
+            if (!overrides) return baseTheme;
+            return {
+                baseTheme: baseTheme as any,
+                overrides,
+            };
+        },
+        baseTheme,
+    );
+}
+
 function isIdenticalPalette(paletteA: AgChartThemePalette, paletteB: AgChartThemePalette) {
     const arrayCompare = (arrA: any[], arrB: any[]) => {
         if (arrA.length !== arrB.length) return false;
@@ -95,7 +110,7 @@ export function isStockTheme(themeName: string): boolean {
 function createCrossFilterThemeOverrides(
     proxy: ChartProxy,
     chartProxyParams: ChartProxyParams,
-    overrideType: 'cartesian' | 'polar'
+    overrideType: Extract<ChartSeriesType, 'cartesian' | 'pie' | 'donut'>,
 ): AgChartThemeOverrides {
     const legend = {
         listeners: {
@@ -109,27 +124,7 @@ function createCrossFilterThemeOverrides(
         },
     };
 
-    const series: AgPolarSeriesTheme = {};
-    if (overrideType === 'polar') {
-        series.pie = {
-            tooltip: {
-                renderer: ({
-                    angleName,
-                    datum,
-                    calloutLabelKey,
-                    radiusKey,
-                    angleValue,
-                }: AgPieSeriesTooltipRendererParams) => {
-                    const title = angleName;
-                    const label = datum[calloutLabelKey as string];
-                    const ratio = datum[radiusKey as string];
-                    const totalValue = angleValue;
-                    return { title, content: `${label}: ${totalValue * ratio}` };
-                },
-            },
-        };
-    }
-
+    const series: AgChartThemeOverrides = {};
     return {
         [overrideType]: {
             tooltip: {
@@ -153,6 +148,9 @@ function inbuiltStockThemeOverrides(params: ChartProxyParams, titleEnabled: bool
     const extraPadding = params.getExtraPaddingDirections();
     return {
         common: {
+            animation: {
+                duration: 500,
+            },
             axes: STATIC_INBUILT_STOCK_THEME_AXES_OVERRIDES,
             padding: {
                 // don't add extra padding when a title is present!
@@ -163,6 +161,16 @@ function inbuiltStockThemeOverrides(params: ChartProxyParams, titleEnabled: bool
             },
         },
         pie: {
+            series: {
+                title: { _enabledFromTheme: true },
+                calloutLabel: { _enabledFromTheme: true },
+                sectorLabel: {
+                    enabled: false,
+                    _enabledFromTheme: true,
+                },
+            } as any,
+        },
+        donut: {
             series: {
                 title: { _enabledFromTheme: true },
                 calloutLabel: { _enabledFromTheme: true },

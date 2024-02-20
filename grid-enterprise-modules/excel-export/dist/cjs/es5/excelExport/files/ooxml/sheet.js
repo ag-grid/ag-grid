@@ -9,7 +9,7 @@ var sheetFactory = {
                 rawMap: {
                     "name": name,
                     "sheetId": sheetId,
-                    "r:id": "rId" + sheetId
+                    "r:id": "rId".concat(sheetId)
                 }
             }
         };

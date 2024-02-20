@@ -54,23 +54,29 @@ export class SimpleFloatingFilter extends Component {
         return this.isTypeEditable(simpleModel.type);
     }
     init(params) {
-        this.setSimpleParams(params);
+        this.setSimpleParams(params, false);
     }
-    setSimpleParams(params) {
+    setSimpleParams(params, update = true) {
         this.optionsFactory = new OptionsFactory();
         this.optionsFactory.init(params.filterParams, this.getDefaultFilterOptions());
-        this.lastType = this.optionsFactory.getDefaultOption();
+        // Initial call
+        if (!update) {
+            this.lastType = this.optionsFactory.getDefaultOption();
+        }
         // readOnly is a property of ProvidedFilterParams - we need to find a better (type-safe)
         // way to support reading this in the future.
         this.readOnly = !!params.filterParams.readOnly;
         // we are editable if:
         // 1) there is a type (user has configured filter wrong if not type)
         //  AND
-        // 2) the default type is not 'in range'
-        const editable = this.isTypeEditable(this.lastType);
+        // 2) the default type is not 'inRange'
+        const editable = this.isTypeEditable(this.optionsFactory.getDefaultOption());
         this.setEditable(editable);
     }
     onParamsUpdated(params) {
+        this.refresh(params);
+    }
+    refresh(params) {
         this.setSimpleParams(params);
     }
     doesFilterHaveSingleInput(filterType) {

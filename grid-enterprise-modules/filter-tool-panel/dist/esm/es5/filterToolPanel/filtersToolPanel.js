@@ -30,7 +30,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, Component, RefSelector } from "@ag-grid-community/core";
+import { Component, RefSelector } from "@ag-grid-community/core";
 var FiltersToolPanel = /** @class */ (function (_super) {
     __extends(FiltersToolPanel, _super);
     function FiltersToolPanel() {
@@ -46,14 +46,12 @@ var FiltersToolPanel = /** @class */ (function (_super) {
             this.listenerDestroyFuncs = [];
         }
         this.initialised = true;
-        var defaultParams = {
+        var defaultParams = this.gridOptionsService.addGridCommonParams({
             suppressExpandAll: false,
             suppressFilterSearch: false,
-            suppressSyncLayoutWithGrid: false,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-        };
-        this.params = __assign(__assign(__assign({}, defaultParams), params), { context: this.gridOptionsService.context });
+            suppressSyncLayoutWithGrid: false
+        });
+        this.params = __assign(__assign({}, defaultParams), params);
         this.filtersToolPanelHeaderPanel.init(this.params);
         this.filtersToolPanelListPanel.init(this.params);
         var hideExpand = this.params.suppressExpandAll;
@@ -62,7 +60,7 @@ var FiltersToolPanel = /** @class */ (function (_super) {
             this.filtersToolPanelHeaderPanel.setDisplayed(false);
         }
         // this is necessary to prevent a memory leak while refreshing the tool panel
-        this.listenerDestroyFuncs.push(this.addManagedListener(this.filtersToolPanelHeaderPanel, 'expandAll', this.onExpandAll.bind(this)), this.addManagedListener(this.filtersToolPanelHeaderPanel, 'collapseAll', this.onCollapseAll.bind(this)), this.addManagedListener(this.filtersToolPanelHeaderPanel, 'searchChanged', this.onSearchChanged.bind(this)), this.addManagedListener(this.filtersToolPanelListPanel, 'groupExpanded', this.onGroupExpanded.bind(this)));
+        this.listenerDestroyFuncs.push(this.addManagedListener(this.filtersToolPanelHeaderPanel, 'expandAll', this.onExpandAll.bind(this)), this.addManagedListener(this.filtersToolPanelHeaderPanel, 'collapseAll', this.onCollapseAll.bind(this)), this.addManagedListener(this.filtersToolPanelHeaderPanel, 'searchChanged', this.onSearchChanged.bind(this)), this.addManagedListener(this.filtersToolPanelListPanel, 'filterExpanded', this.onFilterExpanded.bind(this)), this.addManagedListener(this.filtersToolPanelListPanel, 'groupExpanded', this.onGroupExpanded.bind(this)));
     };
     // lazy initialise the panel
     FiltersToolPanel.prototype.setVisible = function (visible) {
@@ -83,8 +81,12 @@ var FiltersToolPanel = /** @class */ (function (_super) {
     FiltersToolPanel.prototype.setFilterLayout = function (colDefs) {
         this.filtersToolPanelListPanel.setFiltersLayout(colDefs);
     };
+    FiltersToolPanel.prototype.onFilterExpanded = function () {
+        this.params.onStateUpdated();
+    };
     FiltersToolPanel.prototype.onGroupExpanded = function (event) {
         this.filtersToolPanelHeaderPanel.setExpandState(event.state);
+        this.params.onStateUpdated();
     };
     FiltersToolPanel.prototype.expandFilterGroups = function (groupIds) {
         this.filtersToolPanelListPanel.expandFilterGroups(true, groupIds);
@@ -101,8 +103,12 @@ var FiltersToolPanel = /** @class */ (function (_super) {
     FiltersToolPanel.prototype.syncLayoutWithGrid = function () {
         this.filtersToolPanelListPanel.syncFilterLayout();
     };
-    FiltersToolPanel.prototype.refresh = function () {
-        this.init(this.params);
+    FiltersToolPanel.prototype.refresh = function (params) {
+        this.init(params);
+        return true;
+    };
+    FiltersToolPanel.prototype.getState = function () {
+        return this.filtersToolPanelListPanel.getExpandedFiltersAndGroups();
     };
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
@@ -116,12 +122,6 @@ var FiltersToolPanel = /** @class */ (function (_super) {
     __decorate([
         RefSelector('filtersToolPanelListPanel')
     ], FiltersToolPanel.prototype, "filtersToolPanelListPanel", void 0);
-    __decorate([
-        Autowired('gridApi')
-    ], FiltersToolPanel.prototype, "gridApi", void 0);
-    __decorate([
-        Autowired('columnApi')
-    ], FiltersToolPanel.prototype, "columnApi", void 0);
     return FiltersToolPanel;
 }(Component));
 export { FiltersToolPanel };

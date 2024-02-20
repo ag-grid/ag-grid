@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IRowModel } from './iRowModel';
@@ -7,7 +7,7 @@ import { RowDataTransaction } from './rowDataTransaction';
 import { RowNode } from '../entities/rowNode';
 import { RowHighlightPosition } from '../interfaces/iRowNode';
 import { ChangedPath } from '../utils/changedPath';
-export declare type ClientSideRowModelStep = 'everything' | 'group' | 'filter' | 'pivot' | 'aggregate' | 'sort' | 'map';
+export declare type ClientSideRowModelStep = `${ClientSideRowModelSteps}`;
 export declare enum ClientSideRowModelSteps {
     EVERYTHING = "group",
     FILTER = "filter",
@@ -42,10 +42,10 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
     highlightRowAtPixel(rowNode: RowNode | null, pixel?: number): void;
     getHighlightPosition(pixel: number, rowNode?: RowNode): RowHighlightPosition;
     getLastHighlightedRowNode(): RowNode | null;
+    isRowDataLoaded(): boolean;
 }
 export interface RefreshModelParams<TData = any> {
     step: ClientSideRowModelSteps;
-    groupState?: any;
     keepRenderedRows?: boolean;
     animate?: boolean;
     keepEditingRows?: boolean;

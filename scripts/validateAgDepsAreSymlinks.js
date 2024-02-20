@@ -10,10 +10,7 @@ packageNames.forEach(packageName => {
     const agPackage = allPackages[packageName];
     const {projectRoot} = agPackage;
 
-    const agDependencies = Object.keys(agPackage.agGridDeps)
-        .concat(Object.keys(agPackage.agChartDeps));
-
-    agDependencies.forEach(agDependency => {
+    Object.keys(agPackage.agGridDeps).forEach(agDependency => {
         const nodeModuleDirPath = `${projectRoot}/node_modules/${agDependency}`;
         if (!fs.existsSync(nodeModuleDirPath)) {
             console.log(`${agDependency} is listed as a dependency of ${packageName} (${projectRoot}) but isn't under node_modules`);
@@ -25,5 +22,11 @@ packageNames.forEach(packageName => {
         }
     })
 
+    Object.keys(agPackage.agChartDeps).forEach(agDependency => {
+        const nodeModuleDirPath = `${projectRoot}/node_modules/${agDependency}`;
+        if (!fs.existsSync(nodeModuleDirPath)) {
+            console.log(`${agDependency} is listed as a dependency of ${packageName} (${projectRoot}) but isn't under node_modules`);
+        }
+    })
 });
 

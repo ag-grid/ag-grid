@@ -1,6 +1,6 @@
 {
   "name": "@ag-grid-community/core",
-  "version": "30.1.0",
+  "version": "31.1.0",
   "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
   "main": "./dist/esm/es6/main.mjs",
   "module": "./dist/esm/es6/main.mjs",
@@ -13,7 +13,7 @@
     "build-prod": "npm run precheck && npx gulp prod && npx tsc -p tsconfig.typings.json --sourceMap false",
     "test": "npx jest && npm run check-grid-options && npm run check-grid-api-exports",
     "package": "node ../../module-build/rollup/build.js",
-    "clean": "npx rimraf dist typings .hash",
+    "clean": "npx rimraf dist typings",
     "check-grid-options": "npx ts-node -P tsconfig.cjs.es5.json scripts/check-gridOptions-propertyKeys.ts",
     "check-grid-api-exports": "node scripts/check-gridApi-interfaces-exported.js"
   },
@@ -55,7 +55,7 @@
   "devDependencies": {
     "@types/jest": "^29.5.0",
     "@babel/types": "7.12.7",
-    "@types/node": "12.20.20",
+    "@types/node": "18.19.10",
     "cache-loader": "^4.1.0",
     "del": "^5.1.0",
     "eslint": "^6.3.0",
@@ -88,7 +88,7 @@
     "ts-morph": "^14.0.0",
     "ts-node": "^8.5.4",
     "tslint": "^5.19.0",
-    "typescript": "~4.3.5",
+    "typescript": "~4.7.4",
     "url-loader": "^2.1.0",
     "vinyl-buffer": "^1.0.0",
     "webpack": "4.46.0"

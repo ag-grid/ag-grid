@@ -1,4 +1,14 @@
-import { Grid, ColDef, GridOptions, IServerSideDatasource, ISetFilter, SetFilterValuesFuncParams, KeyCreatorParams, ValueFormatterParams } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  ColDef,
+  GridOptions,
+  IServerSideDatasource,
+  ISetFilter,
+  SetFilterValuesFuncParams,
+  KeyCreatorParams,
+  ValueFormatterParams,
+} from '@ag-grid-community/core';
 
 declare var FakeServer: any;
 const columnDefs: ColDef[] = [
@@ -43,13 +53,13 @@ function countryComparator(a: { name: string, code: string }, b:  { name: string
   return 0;
 }
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
   defaultColDef: {
     flex: 1,
     minWidth: 150,
-    sortable: true,
-    resizable: true,
   },
   // use the server-side row model
   rowModelType: 'serverSide',
@@ -60,7 +70,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   // only keep 10 blocks of rows
   maxBlocksInCache: 10,
 
-  animateRows: true,
 
   onFilterChanged: onFilterChanged,
 }
@@ -69,15 +78,16 @@ var fakeServer: any;
 var selectedCountries: string[] | null = null
 
 function onFilterChanged() {
-  var countryFilterModel = gridOptions.api!.getFilterModel()['country']
+  var countryFilterModel = gridApi!.getFilterModel()['country']
   var selected = countryFilterModel && countryFilterModel.values
 
   if (!areEqual(selectedCountries, selected)) {
     selectedCountries = selected
 
     console.log('Refreshing sports filter')
-    var sportFilter = gridOptions.api!.getFilterInstance<ISetFilter>('sport');
-    sportFilter!.refreshFilterValues()
+    gridApi!.getColumnFilterInstance<ISetFilter>('sport').then(sportFilter => {
+      sportFilter!.refreshFilterValues()
+    });
   }
 }
 
@@ -101,7 +111,7 @@ function getCountryValuesAsync(params: SetFilterValuesFuncParams) {
   var countries = fakeServer.getCountries()
 
   // simulating real server call with a 500ms delay
-  setTimeout(function () {
+  setTimeout(() => {
     params.success(countries)
   }, 500)
 }
@@ -110,7 +120,7 @@ function getSportValuesAsync(params: SetFilterValuesFuncParams) {
   var sports = fakeServer.getSports(selectedCountries)
 
   // simulating real server call with a 500ms delay
-  setTimeout(function () {
+  setTimeout(() => {
     params.success(sports)
   }, 500)
 }
@@ -124,7 +134,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
       var response = server.getData(params.request)
 
       // simulating real server call with a 500ms delay
-      setTimeout(function () {
+      setTimeout(() => {
         if (response.success) {
           // supply rows for requested block to grid
           params.success({ rowData: response.rows, rowCount: response.lastRow })
@@ -139,7 +149,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
@@ -171,6 +181,6 @@ document.addEventListener('DOMContentLoaded', function () {
       var datasource = getServerSideDatasource(fakeServer)
 
       // register the datasource with the grid
-      gridOptions.api!.setServerSideDatasource(datasource)
+      gridApi!.setGridOption('serverSideDatasource', datasource)
     })
 })

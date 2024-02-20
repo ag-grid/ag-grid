@@ -2,8 +2,8 @@ import { EventService } from "../eventService";
 import { areEventsNear } from "../utils/mouse";
 var TouchListener = /** @class */ (function () {
     function TouchListener(eElement, preventMouseClick) {
-        var _this = this;
         if (preventMouseClick === void 0) { preventMouseClick = false; }
+        var _this = this;
         this.destroyFuncs = [];
         this.touching = false;
         this.eventService = new EventService();

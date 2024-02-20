@@ -5,4 +5,4 @@ export { CsvExportModule } from './csvExportModule';
 export { Downloader } from './csvExport/downloader';
 export { GridSerializer, RowType } from './csvExport/gridSerializer';
 export { XmlFactory } from './csvExport/xmlFactory';
-export { ZipContainer } from './csvExport/zipContainer';
+export { ZipContainer } from './csvExport/zipContainer/zipContainer';

@@ -222,7 +222,7 @@ var ChartDatasource = /** @class */ (function (_super) {
                         var aggResult = _this.aggregationStage.aggregateValues(dataToAgg, params.aggFunc);
                         groupItem[valueCol.getId()] = aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
                         // filtered out data
-                        var filteredOutColId = colId + "-filtered-out";
+                        var filteredOutColId = "".concat(colId, "-filtered-out");
                         var dataToAggFiltered = groupItem.__children
                             .filter(function (child) { return typeof child[filteredOutColId] !== 'undefined'; })
                             .map(function (child) { return child[filteredOutColId]; });
@@ -248,7 +248,7 @@ var ChartDatasource = /** @class */ (function (_super) {
             return;
         }
         // we don't know what the application will use for the pivot key separator (i.e. '_' or '|' ) as the
-        // secondary columns are provided to grid by the application via columnApi.setSecondaryColumns()
+        // secondary columns are provided to grid by the application via api.setSecondaryColumns()
         var pivotKeySeparator = this.extractPivotKeySeparator(secondaryColumns);
         // `pivotKeys` is not used by the SSRM for pivoting, so it is safe to reuse this colDef property. This way
         // the same logic can be used for CSRM and SSRM to extract legend names in extractRowsFromGridRowModel()
@@ -312,22 +312,22 @@ var ChartDatasource = /** @class */ (function (_super) {
         return this.rowNodeSorter.doFullSort(rowNodes, sortOptions);
     };
     __decorate([
-        core_1.Autowired('rowModel')
+        (0, core_1.Autowired)('rowModel')
     ], ChartDatasource.prototype, "gridRowModel", void 0);
     __decorate([
-        core_1.Autowired('valueService')
+        (0, core_1.Autowired)('valueService')
     ], ChartDatasource.prototype, "valueService", void 0);
     __decorate([
-        core_1.Autowired('columnModel')
+        (0, core_1.Autowired)('columnModel')
     ], ChartDatasource.prototype, "columnModel", void 0);
     __decorate([
-        core_1.Autowired('rowNodeSorter')
+        (0, core_1.Autowired)('rowNodeSorter')
     ], ChartDatasource.prototype, "rowNodeSorter", void 0);
     __decorate([
-        core_1.Autowired('sortController')
+        (0, core_1.Autowired)('sortController')
     ], ChartDatasource.prototype, "sortController", void 0);
     __decorate([
-        core_1.Optional('aggregationStage')
+        (0, core_1.Optional)('aggregationStage')
     ], ChartDatasource.prototype, "aggregationStage", void 0);
     return ChartDatasource;
 }(core_1.BeanStub));

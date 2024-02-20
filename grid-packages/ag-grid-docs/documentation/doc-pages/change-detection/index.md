@@ -112,7 +112,7 @@ The following operations will **automatically** trigger aggregation change detec
 1. Using the `rowNode.setDataValue(col,value)` Row Node method.
 1. Using the `api.applyTransaction(transaction)` API method.
 
-To **manually** run aggregation change detection to re-compute the aggregated values, then call [api.refreshClientSideRowModel('aggregate')](/client-side-model/#refreshing-the-client-side-model).
+To **manually** run aggregation change detection to re-compute the aggregated values, then call [api.refreshClientSideRowModel('aggregate')](/grid-api/#reference-data-refreshClientSideRowModel).
 
 ## Change Detection and Sorting, Filtering, Grouping
 
@@ -129,7 +129,7 @@ The grid will **not**:
 
 The reason why sorting, filtering and grouping is not done automatically is that it would be considered bad user experience in most use cases to change the displayed rows while editing. For example, if a user edits a cell, then the row should not jump location (due to sorting and grouping) or even worse, disappear altogether (if the filter removes the row due to the new value failing the filter).
 
-For this reason, if you want to update the sorting, filtering or group grouping after an update, you should listen for the event `cellValueChanged` and call [api.applyTransaction(transaction)](/client-side-model/#refreshing-the-client-side-model) with the rows that were updated.
+For this reason, if you want to update the sorting, filtering or group grouping after an update, you should listen for the event `cellValueChanged` and call [api.applyTransaction(transaction)](/data-update-transactions/#transaction-update-api) with the rows that were updated.
 
 ### Example: Change Detection and Filter / Sort / Group
 
@@ -198,7 +198,7 @@ From the example, you can observe:
 
 - Button '**Update Points**' updates one record using `api.applyTransaction(transaction)`. The grid aggregates the new value for display.
 
-- Button '**Add New Group**' adds one record for 'Year 5' using `api.applyTransaction(transaction)`. The grid does a delta change and adds one more row to represent this group while not touching the DOM with the remaining rows.
+- Button '**Add Year 5**' adds one record for 'Year 5' using `api.applyTransaction(transaction)`. The grid does a delta change and adds one more row to represent this group while not touching the DOM with the remaining rows.
 
 - Button '**Add Physics Row**' adds one record with subject 'Physics' using `api.applyTransaction(transaction)`. This impacts the columns in the grid as we are pivoting on 'course', so a new column is added for 'Physics'. Again this is all done without touching the remaining columns or rows in the grid.
 

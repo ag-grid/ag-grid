@@ -5,7 +5,7 @@ import { MasterDetailModule } from '@ag-grid-enterprise/master-detail';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 import DetailCellRenderer from './detailCellRendererVue.js';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
@@ -22,7 +22,7 @@ const VueExample = {
                 </div>
                 <ag-grid-vue
                         style="width: 100%; height: 100%;"
-                        class="ag-theme-alpine"
+                        :class="themeClass"
                         id="myGrid"
                         :columnDefs="columnDefs"
                         @grid-ready="onGridReady"
@@ -49,11 +49,11 @@ const VueExample = {
                 valueFormatter: "x.toLocaleString() + 'm'"
             }],
             gridApi: null,
-            columnApi: null,
             defaultColDef: { flex: 1 },
             detailRowHeight: null,
             detailCellRenderer: null,
-            rowData: null
+            rowData: null,
+            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
         }
     },
     beforeMount() {
@@ -81,7 +81,6 @@ const VueExample = {
         },
         onGridReady(params) {
             this.gridApi = params.api;
-            this.gridColumnApi = params.columnApi;
 
 
             const updateData = (data) => {

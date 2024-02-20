@@ -59,22 +59,3 @@ export function sortRowNodesByOrder(rowNodes, rowNodeOrder) {
     }
     return false;
 }
-export function traverseNodesWithKey(nodes, callback) {
-    const keyParts = [];
-    recursiveSearchNodes(nodes);
-    function recursiveSearchNodes(currentNodes) {
-        if (!currentNodes) {
-            return;
-        }
-        currentNodes.forEach((node) => {
-            // also checking for children for tree data
-            if (node.group || node.hasChildren()) {
-                keyParts.push(node.key);
-                const key = keyParts.join('|');
-                callback(node, key);
-                recursiveSearchNodes(node.childrenAfterGroup);
-                keyParts.pop();
-            }
-        });
-    }
-}

@@ -89,8 +89,8 @@ var MarkersPanel = /** @class */ (function (_super) {
         var initInput = function (expression, input, labelKey, defaultMaxValue) {
             var currentValue = _this.getSeriesOption(expression);
             input.setLabel(_this.chartTranslationService.translate(labelKey))
-                .setMaxValue(formatPanel_1.getMaxValue(currentValue, defaultMaxValue))
-                .setValue("" + currentValue)
+                .setMaxValue((0, formatPanel_1.getMaxValue)(currentValue, defaultMaxValue))
+                .setValue("".concat(currentValue))
                 .setTextFieldWidth(45)
                 .onValueChange(function (newValue) { return _this.setSeriesOption(expression, newValue); });
         };
@@ -112,22 +112,22 @@ var MarkersPanel = /** @class */ (function (_super) {
     };
     MarkersPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"seriesMarkersGroup\">\n                <ag-select ref=\"seriesMarkerShapeSelect\"></ag-select>\n                <ag-slider ref=\"seriesMarkerMinSizeSlider\"></ag-slider>\n                <ag-slider ref=\"seriesMarkerSizeSlider\"></ag-slider>\n                <ag-slider ref=\"seriesMarkerStrokeWidthSlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
     __decorate([
-        core_1.RefSelector('seriesMarkersGroup')
+        (0, core_1.RefSelector)('seriesMarkersGroup')
     ], MarkersPanel.prototype, "seriesMarkersGroup", void 0);
     __decorate([
-        core_1.RefSelector('seriesMarkerShapeSelect')
+        (0, core_1.RefSelector)('seriesMarkerShapeSelect')
     ], MarkersPanel.prototype, "seriesMarkerShapeSelect", void 0);
     __decorate([
-        core_1.RefSelector('seriesMarkerSizeSlider')
+        (0, core_1.RefSelector)('seriesMarkerSizeSlider')
     ], MarkersPanel.prototype, "seriesMarkerSizeSlider", void 0);
     __decorate([
-        core_1.RefSelector('seriesMarkerMinSizeSlider')
+        (0, core_1.RefSelector)('seriesMarkerMinSizeSlider')
     ], MarkersPanel.prototype, "seriesMarkerMinSizeSlider", void 0);
     __decorate([
-        core_1.RefSelector('seriesMarkerStrokeWidthSlider')
+        (0, core_1.RefSelector)('seriesMarkerStrokeWidthSlider')
     ], MarkersPanel.prototype, "seriesMarkerStrokeWidthSlider", void 0);
     __decorate([
-        core_1.Autowired('chartTranslationService')
+        (0, core_1.Autowired)('chartTranslationService')
     ], MarkersPanel.prototype, "chartTranslationService", void 0);
     __decorate([
         core_1.PostConstruct

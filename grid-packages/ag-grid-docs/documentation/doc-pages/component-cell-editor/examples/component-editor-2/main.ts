@@ -1,4 +1,16 @@
-import { CellEditingStartedEvent, CellEditingStoppedEvent, ColDef, Grid, GridOptions, ICellRendererComp, ICellRendererParams, KeyCreatorParams, RowEditingStartedEvent, RowEditingStoppedEvent } from '@ag-grid-community/core';
+import {
+    CellEditingStartedEvent,
+    CellEditingStoppedEvent,
+    ColDef,
+    GridApi,
+    createGrid,
+    GridOptions,
+    ICellRendererComp,
+    ICellRendererParams,
+    KeyCreatorParams,
+    RowEditingStartedEvent,
+    RowEditingStoppedEvent,
+} from '@ag-grid-community/core';
 import { getData } from "./data";
 import { GenderRenderer } from './genderRenderer_typescript';
 import { MoodEditor } from './moodEditor_typescript';
@@ -82,16 +94,16 @@ const columnDefs: ColDef[] = [
     },
 ]
 
+let gridApi: GridApi;
+
 const gridOptions: GridOptions = {
     columnDefs: columnDefs,
     rowData: getData(),
     defaultColDef: {
         editable: true,
-        sortable: true,
         flex: 1,
         minWidth: 100,
         filter: true,
-        resizable: true,
     },
     onRowEditingStarted: (event: RowEditingStartedEvent) => {
         console.log('never called - not doing row editing')
@@ -110,5 +122,5 @@ const gridOptions: GridOptions = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-    new Grid(gridDiv, gridOptions)
+    gridApi = createGrid(gridDiv, gridOptions);
 })

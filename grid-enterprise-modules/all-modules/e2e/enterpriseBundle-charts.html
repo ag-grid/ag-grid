@@ -36,10 +36,10 @@
     var eGridDiv = document.querySelector('#myGrid');
 
     // create the grid passing in the div to use together with the columns & data we want to use
-    new agGrid.Grid(eGridDiv, gridOptions);
+    const api = agGrid.createGrid(eGridDiv, gridOptions);
 
     function createRangeChart() {
-        gridOptions.api.createRangeChart({
+        api.createRangeChart({
             cellRange: {
                 rowStartIndex: 1,
                 rowEndIndex: 3,

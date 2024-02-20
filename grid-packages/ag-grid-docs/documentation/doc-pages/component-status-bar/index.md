@@ -1,27 +1,29 @@
 ---
-title: "Status Bar Panels (Components)"
+title: "Status Bar Panel"
 enterprise: true
 ---
 
-Status Bar Panels allow you to add your own components to the grid's Status Bar. Use this when the provided status bar components do not meet your requirements.
+The Status Bar Panel allows you to add your own components to the grid's Status Bar. Use this when the provided status bar components do not meet your requirements.
 
-## Simple Status Bar Component
+<grid-example title='Status Bar Panel' name='simple-component' type='mixed' options='{ "enterprise": true, "modules": ["clientside", "statusbar", "range"] }'></grid-example>
 
-md-include:simple-status-bar-javascript.md
-md-include:simple-status-bar-angular.md
-md-include:simple-status-bar-react.md
-md-include:simple-status-bar-vue.md
-
-<grid-example title='Status Bar Panel' name='simple-component' type='generated' options='{ "enterprise": true, "modules": ["clientside", "statusbar", "range"] }'></grid-example>
+## Implementing a Status Bar Panel Component
 
 md-include:component-interface-javascript.md
 md-include:component-interface-angular.md
 md-include:component-interface-react.md
 md-include:component-interface-vue.md
 
-## Status Panel Parameters
+<framework-specific-section frameworks="javascript,angular,vue">
+<interface-documentation interfaceName='IStatusPanelParams'></interface-documentation>
+</framework-specific-section>
+<framework-specific-section frameworks="react">
+<interface-documentation interfaceName='CustomStatusPanelProps'></interface-documentation>
+</framework-specific-section>
 
-<interface-documentation interfaceName='IStatusPanelParams' ></interface-documentation>
+<framework-specific-section frameworks="react">
+<note>Enabling `reactiveCustomComponents` affects all custom components. If you have custom components built in an imperative way instead of setting the `reactiveCustomComponents` option, they may need to be rebuilt to take advantage of the new features that `reactiveCustomComponents` offers. Using custom components built in an imperative way is now deprecated, and in AG Grid v32 the `reactiveCustomComponents` option will be `true` by default. See [Migrating to Use reactiveCustomComponents](../upgrading-to-ag-grid-31-1/#migrating-to-use-reactivecustomcomponents).</note>
+</framework-specific-section>
 
 ## Configuring Status Bar Panels
 
@@ -34,7 +36,7 @@ md-include:configure-vue.md
 
 Order is important here - the order of the components provided will determine the order in which they're rendered, from left to right.
 
-<grid-example title='Status Bar Panel' name='custom-component' type='generated' options='{ "enterprise": true, "modules": ["clientside", "statusbar", "range"] }'></grid-example>
+<grid-example title='Status Bar Panel' name='custom-component' type='mixed' options='{ "enterprise": true, "modules": ["clientside", "statusbar", "range"] }'></grid-example>
 
 ## Initialisation of Status Bar Components
 
@@ -55,6 +57,10 @@ After the grid has created an instance of a status bar component it is possible 
 
 <api-documentation source='grid-api/api.json' section='accessories' names='["getStatusPanel"]'></api-documentation>
 
+<framework-specific-section frameworks="react">
+|The instances returned by the grid will be wrapper components that match the provided grid status bar panel components. To get the React custom status bar panel component, the helper function `getInstance` can be used with this.
+</framework-specific-section>
+
 The example below shows using `getStatusPanel`:
 
-<grid-example title='Get Status Bar Panel Instance' name='component-instance' type='generated' options='{ "enterprise": true, "modules": ["clientside", "statusbar", "range"] }'></grid-example>
+<grid-example title='Get Status Bar Panel Instance' name='component-instance' type='mixed' options='{ "enterprise": true, "modules": ["clientside", "statusbar", "range"] }'></grid-example>

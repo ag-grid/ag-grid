@@ -20,7 +20,7 @@ class HeaderFilterCellComp extends abstractHeaderCellComp_1.AbstractHeaderCellCo
         const compProxy = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             addOrRemoveBodyCssClass: (cssClassName, on) => this.eFloatingFilterBody.classList.toggle(cssClassName, on),
-            setButtonWrapperDisplayed: (displayed) => dom_1.setDisplayed(this.eButtonWrapper, displayed),
+            setButtonWrapperDisplayed: (displayed) => (0, dom_1.setDisplayed)(this.eButtonWrapper, displayed),
             setCompDetails: compDetails => this.setCompDetails(compDetails),
             getFloatingFilterComp: () => this.compPromise,
             setWidth: width => eGui.style.width = width,
@@ -60,20 +60,20 @@ class HeaderFilterCellComp extends abstractHeaderCellComp_1.AbstractHeaderCellCo
         }
     }
 }
-HeaderFilterCellComp.TEMPLATE = `<div class="ag-header-cell ag-floating-filter" role="gridcell" tabindex="-1">
+HeaderFilterCellComp.TEMPLATE = `<div class="ag-header-cell ag-floating-filter" role="gridcell">
             <div ref="eFloatingFilterBody" role="presentation"></div>
             <div class="ag-floating-filter-button ag-hidden" ref="eButtonWrapper" role="presentation">
                 <button type="button" class="ag-button ag-floating-filter-button-button" ref="eButtonShowMainFilter" tabindex="-1"></button>
             </div>
         </div>`;
 __decorate([
-    componentAnnotations_1.RefSelector('eFloatingFilterBody')
+    (0, componentAnnotations_1.RefSelector)('eFloatingFilterBody')
 ], HeaderFilterCellComp.prototype, "eFloatingFilterBody", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eButtonWrapper')
+    (0, componentAnnotations_1.RefSelector)('eButtonWrapper')
 ], HeaderFilterCellComp.prototype, "eButtonWrapper", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eButtonShowMainFilter')
+    (0, componentAnnotations_1.RefSelector)('eButtonShowMainFilter')
 ], HeaderFilterCellComp.prototype, "eButtonShowMainFilter", void 0);
 __decorate([
     context_1.PostConstruct

@@ -29,7 +29,7 @@ var component_1 = require("../widgets/component");
 var componentAnnotations_1 = require("../widgets/componentAnnotations");
 var gridBodyCtrl_1 = require("./gridBodyCtrl");
 var rowContainerCtrl_1 = require("./rowContainer/rowContainerCtrl");
-var GRID_BODY_TEMPLATE = /* html */ "<div class=\"ag-root ag-unselectable\" role=\"treegrid\">\n        <ag-header-root ref=\"gridHeader\"></ag-header-root>\n        <div class=\"ag-floating-top\" ref=\"eTop\" role=\"presentation\">\n            <ag-row-container ref=\"topLeftContainer\" name=\"" + rowContainerCtrl_1.RowContainerName.TOP_LEFT + "\"></ag-row-container>\n            <ag-row-container ref=\"topCenterContainer\" name=\"" + rowContainerCtrl_1.RowContainerName.TOP_CENTER + "\"></ag-row-container>\n            <ag-row-container ref=\"topRightContainer\" name=\"" + rowContainerCtrl_1.RowContainerName.TOP_RIGHT + "\"></ag-row-container>\n            <ag-row-container ref=\"topFullWidthContainer\" name=\"" + rowContainerCtrl_1.RowContainerName.TOP_FULL_WIDTH + "\"></ag-row-container>\n        </div>\n        <div class=\"ag-body\" ref=\"eBody\" role=\"presentation\">\n            <div class=\"ag-body-clipper\" ref=\"eBodyClipper\" role=\"presentation\">\n                <div class=\"ag-body-viewport\" ref=\"eBodyViewport\" role=\"presentation\">\n                    <ag-row-container ref=\"leftContainer\" name=\"" + rowContainerCtrl_1.RowContainerName.LEFT + "\"></ag-row-container>\n                    <ag-row-container ref=\"centerContainer\" name=\"" + rowContainerCtrl_1.RowContainerName.CENTER + "\"></ag-row-container>\n                    <ag-row-container ref=\"rightContainer\" name=\"" + rowContainerCtrl_1.RowContainerName.RIGHT + "\"></ag-row-container>\n                    <ag-row-container ref=\"fullWidthContainer\" name=\"" + rowContainerCtrl_1.RowContainerName.FULL_WIDTH + "\"></ag-row-container>\n                </div>\n            </div>\n            <ag-fake-vertical-scroll></ag-fake-vertical-scroll>\n        </div>\n        <div class=\"ag-sticky-top\" ref=\"eStickyTop\" role=\"presentation\">\n            <ag-row-container ref=\"stickyTopLeftContainer\" name=\"" + rowContainerCtrl_1.RowContainerName.STICKY_TOP_LEFT + "\"></ag-row-container>\n            <ag-row-container ref=\"stickyTopCenterContainer\" name=\"" + rowContainerCtrl_1.RowContainerName.STICKY_TOP_CENTER + "\"></ag-row-container>\n            <ag-row-container ref=\"stickyTopRightContainer\" name=\"" + rowContainerCtrl_1.RowContainerName.STICKY_TOP_RIGHT + "\"></ag-row-container>\n            <ag-row-container ref=\"stickyTopFullWidthContainer\" name=\"" + rowContainerCtrl_1.RowContainerName.STICKY_TOP_FULL_WIDTH + "\"></ag-row-container>\n        </div>\n        <div class=\"ag-floating-bottom\" ref=\"eBottom\" role=\"presentation\">\n            <ag-row-container ref=\"bottomLeftContainer\" name=\"" + rowContainerCtrl_1.RowContainerName.BOTTOM_LEFT + "\"></ag-row-container>\n            <ag-row-container ref=\"bottomCenterContainer\" name=\"" + rowContainerCtrl_1.RowContainerName.BOTTOM_CENTER + "\"></ag-row-container>\n            <ag-row-container ref=\"bottomRightContainer\" name=\"" + rowContainerCtrl_1.RowContainerName.BOTTOM_RIGHT + "\"></ag-row-container>\n            <ag-row-container ref=\"bottomFullWidthContainer\" name=\"" + rowContainerCtrl_1.RowContainerName.BOTTOM_FULL_WIDTH + "\"></ag-row-container>\n        </div>\n        <ag-fake-horizontal-scroll></ag-fake-horizontal-scroll>\n        <ag-overlay-wrapper></ag-overlay-wrapper>\n    </div>";
+var GRID_BODY_TEMPLATE = /* html */ "<div class=\"ag-root ag-unselectable\" role=\"treegrid\">\n        <ag-header-root ref=\"gridHeader\"></ag-header-root>\n        <div class=\"ag-floating-top\" ref=\"eTop\" role=\"presentation\">\n            <ag-row-container ref=\"topLeftContainer\" name=\"".concat(rowContainerCtrl_1.RowContainerName.TOP_LEFT, "\"></ag-row-container>\n            <ag-row-container ref=\"topCenterContainer\" name=\"").concat(rowContainerCtrl_1.RowContainerName.TOP_CENTER, "\"></ag-row-container>\n            <ag-row-container ref=\"topRightContainer\" name=\"").concat(rowContainerCtrl_1.RowContainerName.TOP_RIGHT, "\"></ag-row-container>\n            <ag-row-container ref=\"topFullWidthContainer\" name=\"").concat(rowContainerCtrl_1.RowContainerName.TOP_FULL_WIDTH, "\"></ag-row-container>\n        </div>\n        <div class=\"ag-body\" ref=\"eBody\" role=\"presentation\">\n            <div class=\"ag-body-viewport\" ref=\"eBodyViewport\" role=\"presentation\">\n                <ag-row-container ref=\"leftContainer\" name=\"").concat(rowContainerCtrl_1.RowContainerName.LEFT, "\"></ag-row-container>\n                <ag-row-container ref=\"centerContainer\" name=\"").concat(rowContainerCtrl_1.RowContainerName.CENTER, "\"></ag-row-container>\n                <ag-row-container ref=\"rightContainer\" name=\"").concat(rowContainerCtrl_1.RowContainerName.RIGHT, "\"></ag-row-container>\n                <ag-row-container ref=\"fullWidthContainer\" name=\"").concat(rowContainerCtrl_1.RowContainerName.FULL_WIDTH, "\"></ag-row-container>\n            </div>\n            <ag-fake-vertical-scroll></ag-fake-vertical-scroll>\n        </div>\n        <div class=\"ag-sticky-top\" ref=\"eStickyTop\" role=\"presentation\">\n            <ag-row-container ref=\"stickyTopLeftContainer\" name=\"").concat(rowContainerCtrl_1.RowContainerName.STICKY_TOP_LEFT, "\"></ag-row-container>\n            <ag-row-container ref=\"stickyTopCenterContainer\" name=\"").concat(rowContainerCtrl_1.RowContainerName.STICKY_TOP_CENTER, "\"></ag-row-container>\n            <ag-row-container ref=\"stickyTopRightContainer\" name=\"").concat(rowContainerCtrl_1.RowContainerName.STICKY_TOP_RIGHT, "\"></ag-row-container>\n            <ag-row-container ref=\"stickyTopFullWidthContainer\" name=\"").concat(rowContainerCtrl_1.RowContainerName.STICKY_TOP_FULL_WIDTH, "\"></ag-row-container>\n        </div>\n        <div class=\"ag-floating-bottom\" ref=\"eBottom\" role=\"presentation\">\n            <ag-row-container ref=\"bottomLeftContainer\" name=\"").concat(rowContainerCtrl_1.RowContainerName.BOTTOM_LEFT, "\"></ag-row-container>\n            <ag-row-container ref=\"bottomCenterContainer\" name=\"").concat(rowContainerCtrl_1.RowContainerName.BOTTOM_CENTER, "\"></ag-row-container>\n            <ag-row-container ref=\"bottomRightContainer\" name=\"").concat(rowContainerCtrl_1.RowContainerName.BOTTOM_RIGHT, "\"></ag-row-container>\n            <ag-row-container ref=\"bottomFullWidthContainer\" name=\"").concat(rowContainerCtrl_1.RowContainerName.BOTTOM_FULL_WIDTH, "\"></ag-row-container>\n        </div>\n        <ag-fake-horizontal-scroll></ag-fake-horizontal-scroll>\n        <ag-overlay-wrapper></ag-overlay-wrapper>\n    </div>");
 var GridBodyComp = /** @class */ (function (_super) {
     __extends(GridBodyComp, _super);
     function GridBodyComp() {
@@ -38,14 +38,14 @@ var GridBodyComp = /** @class */ (function (_super) {
     GridBodyComp.prototype.init = function () {
         var _this = this;
         var setHeight = function (height, element) {
-            var heightString = height + "px";
+            var heightString = "".concat(height, "px");
             element.style.minHeight = heightString;
             element.style.height = heightString;
         };
         var compProxy = {
             setRowAnimationCssOnBodyViewport: function (cssClass, animate) { return _this.setRowAnimationCssOnBodyViewport(cssClass, animate); },
-            setColumnCount: function (count) { return aria_1.setAriaColCount(_this.getGui(), count); },
-            setRowCount: function (count) { return aria_1.setAriaRowCount(_this.getGui(), count); },
+            setColumnCount: function (count) { return (0, aria_1.setAriaColCount)(_this.getGui(), count); },
+            setRowCount: function (count) { return (0, aria_1.setAriaRowCount)(_this.getGui(), count); },
             setTopHeight: function (height) { return setHeight(height, _this.eTop); },
             setBottomHeight: function (height) { return setHeight(height, _this.eBottom); },
             setTopDisplay: function (display) { return _this.eTop.style.display = display; },
@@ -57,7 +57,6 @@ var GridBodyComp = /** @class */ (function (_super) {
             updateLayoutClasses: function (cssClass, params) {
                 var classLists = [
                     _this.eBodyViewport.classList,
-                    _this.eBodyClipper.classList,
                     _this.eBody.classList
                 ];
                 classLists.forEach(function (classList) {
@@ -85,8 +84,8 @@ var GridBodyComp = /** @class */ (function (_super) {
         };
         this.ctrl = this.createManagedBean(new gridBodyCtrl_1.GridBodyCtrl());
         this.ctrl.setComp(compProxy, this.getGui(), this.eBodyViewport, this.eTop, this.eBottom, this.eStickyTop);
-        if (this.rangeService || this.gridOptionsService.get('rowSelection') === 'multiple') {
-            aria_1.setAriaMultiSelectable(this.getGui(), true);
+        if (this.rangeService && this.gridOptionsService.get('enableRangeSelection') || this.gridOptionsService.get('rowSelection') === 'multiple') {
+            (0, aria_1.setAriaMultiSelectable)(this.getGui(), true);
         }
     };
     GridBodyComp.prototype.setRowAnimationCssOnBodyViewport = function (cssClass, animateRows) {
@@ -98,31 +97,28 @@ var GridBodyComp = /** @class */ (function (_super) {
         return [this.eTop, this.eBottom];
     };
     __decorate([
-        context_1.Autowired('resizeObserverService')
+        (0, context_1.Autowired)('resizeObserverService')
     ], GridBodyComp.prototype, "resizeObserverService", void 0);
     __decorate([
-        context_1.Optional('rangeService')
+        (0, context_1.Optional)('rangeService')
     ], GridBodyComp.prototype, "rangeService", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('eBodyViewport')
+        (0, componentAnnotations_1.RefSelector)('eBodyViewport')
     ], GridBodyComp.prototype, "eBodyViewport", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('eStickyTop')
+        (0, componentAnnotations_1.RefSelector)('eStickyTop')
     ], GridBodyComp.prototype, "eStickyTop", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('eTop')
+        (0, componentAnnotations_1.RefSelector)('eTop')
     ], GridBodyComp.prototype, "eTop", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('eBottom')
+        (0, componentAnnotations_1.RefSelector)('eBottom')
     ], GridBodyComp.prototype, "eBottom", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('gridHeader')
+        (0, componentAnnotations_1.RefSelector)('gridHeader')
     ], GridBodyComp.prototype, "headerRootComp", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('eBodyClipper')
-    ], GridBodyComp.prototype, "eBodyClipper", void 0);
-    __decorate([
-        componentAnnotations_1.RefSelector('eBody')
+        (0, componentAnnotations_1.RefSelector)('eBody')
     ], GridBodyComp.prototype, "eBody", void 0);
     __decorate([
         context_1.PostConstruct

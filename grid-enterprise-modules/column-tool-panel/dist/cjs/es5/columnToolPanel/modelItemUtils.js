@@ -62,7 +62,7 @@ var ModelItemUtils = /** @class */ (function () {
         }
     };
     ModelItemUtils.prototype.setAllPivot = function (columns, value, eventType) {
-        if (this.gridOptionsService.is('functionsPassive')) {
+        if (this.gridOptionsService.get('functionsPassive')) {
             this.setAllPivotPassive(columns, value);
         }
         else {
@@ -213,19 +213,19 @@ var ModelItemUtils = /** @class */ (function () {
         };
     };
     __decorate([
-        core_1.Autowired('aggFuncService')
+        (0, core_1.Autowired)('aggFuncService')
     ], ModelItemUtils.prototype, "aggFuncService", void 0);
     __decorate([
-        core_1.Autowired('columnModel')
+        (0, core_1.Autowired)('columnModel')
     ], ModelItemUtils.prototype, "columnModel", void 0);
     __decorate([
-        core_1.Autowired('gridOptionsService')
+        (0, core_1.Autowired)('gridOptionsService')
     ], ModelItemUtils.prototype, "gridOptionsService", void 0);
     __decorate([
-        core_1.Autowired('eventService')
+        (0, core_1.Autowired)('eventService')
     ], ModelItemUtils.prototype, "eventService", void 0);
     ModelItemUtils = __decorate([
-        core_1.Bean('modelItemUtils')
+        (0, core_1.Bean)('modelItemUtils')
     ], ModelItemUtils);
     return ModelItemUtils;
 }());

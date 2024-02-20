@@ -1,0 +1,138 @@
+@use "sass:color";
+
+.ag-theme-quartz, .ag-theme-quartz-dark, .ag-theme-quartz-auto-dark {
+    // COLOURS
+    
+    // main colours (overridden by dark mode)
+    --ag-active-color: #2196f3;
+    --ag-background-color: #fff;
+    --ag-foreground-color: #181d1f;
+    --ag-border-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 15%);
+    --ag-secondary-border-color: var(--ag-border-color);
+    --ag-header-background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 2%);
+    --ag-tooltip-background-color: var(--ag-header-background-color);
+    --ag-control-panel-background-color: var(--ag-header-background-color);
+    --ag-subheader-background-color: transparent;
+    --ag-invalid-color: #e02525;
+    --ag-checkbox-unchecked-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 30%);
+    --ag-advanced-filter-join-pill-color: #f08e8d;
+    --ag-advanced-filter-column-pill-color: #a6e194;
+    --ag-advanced-filter-option-pill-color: #f3c08b;
+    --ag-advanced-filter-value-pill-color: #85c0e4;
+    --ag-header-column-resize-handle-color: var(--ag-secondary-border-color);
+    --ag-icon-font-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 90%);
+
+    --ag-panel-background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 3%);
+    --ag-panel-border-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 20%);
+    --ag-menu-background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 3%);
+    --ag-menu-border-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 20%);
+    
+    // derived colours (no color blending - these are shared by dark mode)
+    --ag-selected-row-background-color: color-mix(in srgb, transparent, var(--ag-active-color) 8%);
+    --ag-row-hover-color: color-mix(in srgb, transparent, var(--ag-active-color) 12%);
+    --ag-column-hover-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 5%);
+    --ag-input-focus-border-color: var(--ag-active-color);
+    --ag-input-focus-box-shadow: 0 0 0 3px color-mix(in srgb, transparent, var(--ag-input-focus-border-color) 47%);
+    --ag-range-selection-background-color: color-mix(in srgb, transparent, var(--ag-active-color) 20%);
+    --ag-range-selection-background-color-2: color-mix(in srgb, transparent, var(--ag-active-color) 36%);
+    --ag-range-selection-background-color-3: color-mix(in srgb, transparent, var(--ag-active-color) 49%);
+    --ag-range-selection-background-color-4: color-mix(in srgb, transparent, var(--ag-active-color) 59%);
+    --ag-checkbox-background-color: var(--ag-background-color);
+    --ag-checkbox-checked-color: var(--ag-active-color);
+    --ag-range-selection-border-color: var(--ag-active-color);
+    --ag-secondary-foreground-color: var(--ag-foreground-color);
+    --ag-input-border-color: var(--ag-border-color);
+    --ag-input-border-color-invalid: var(--ag-invalid-color);
+    --ag-disabled-foreground-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 50%);
+    --ag-chip-background-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 7%);
+    --ag-chip-border-color: color-mix(in srgb, var(--ag-header-background-color), var(--ag-foreground-color) 13%);
+    --ag-input-disabled-border-color: var(--ag-border-color);
+    --ag-input-disabled-background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 6%);
+    --ag-modal-overlay-background-color: color-mix(in srgb, transparent, var(--ag-background-color) 66%);
+
+    // BORDERS
+    --ag-borders: solid 1px;
+    --ag-border-radius: 4px;
+    --ag-wrapper-border-radius: 8px;
+    --ag-borders-side-button: none;
+    --ag-side-button-selected-background-color: transparent;
+    --ag-header-column-resize-handle-display: block;
+    --ag-header-column-resize-handle-width: 2px;
+    --ag-header-column-resize-handle-height: 30%;
+
+    // SIZING
+    --ag-grid-size: 8px;
+    --ag-icon-size: 16px;
+    --ag-header-height: calc(var(--ag-font-size) + var(--ag-grid-size) * 4.25);       // if changed, update environment.ts
+    --ag-row-height: calc(var(--ag-font-size) + var(--ag-grid-size) * 3.5);          // if changed, update environment.ts
+    --ag-list-item-height: calc(var(--ag-icon-size) + var(--ag-widget-vertical-spacing)); // if changed, update environment.ts
+    --ag-column-select-indent-size: var(--ag-icon-size);
+    --ag-set-filter-indent-size: var(--ag-icon-size);
+    --ag-advanced-filter-builder-indent-size: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2);
+    --ag-cell-horizontal-padding: calc(var(--ag-grid-size) * 2);
+    --ag-cell-widget-spacing: calc(var(--ag-grid-size) * 1.5);
+    
+    --ag-widget-container-vertical-padding: calc(var(--ag-grid-size) * 1.5);
+    --ag-widget-container-horizontal-padding: calc(var(--ag-grid-size) * 1.5);
+    --ag-widget-horizontal-spacing: calc(var(--ag-grid-size) * 1.5);
+    --ag-widget-vertical-spacing: calc(var(--ag-grid-size) * 1);
+
+    --ag-toggle-button-height: 18px;
+    --ag-toggle-button-width: 28px;
+    --ag-toggle-button-border-width: 2px;
+
+    // FONTS
+    --ag-font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+    --ag-font-size: 14px;
+    --ag-icon-font-family: agGridQuartz;
+
+    // MISC
+    --ag-tab-min-width: 0;
+
+    --ag-card-shadow: 0 1px 4px 1px rgba(186, 191, 199, 0.4);
+    --ag-popup-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.15);
+    --ag-side-bar-panel-width: 250px;
+};
+
+
+@mixin -dark-vars {
+    --ag-background-color: color-mix(in srgb, #fff, #182230 97%);
+    --ag-foreground-color: #fff;
+    --ag-border-color: rgba(255,255,255,0.16);
+    --ag-secondary-border-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 10%);
+    --ag-header-background-color: color-mix(in srgb, #fff, #182230 93%);
+    --ag-tooltip-background-color: color-mix(in srgb, #fff, #182230 96%);
+    --ag-control-panel-background-color: color-mix(in srgb, #fff, #182230 93%);
+    --ag-input-disabled-background-color: #68686e12;
+    --ag-card-shadow: 0 1px 20px 1px black;
+    --ag-input-border-color: var(--ag-border-color);
+    --ag-input-disabled-border-color: rgba(255,255,255,0.07);
+    --ag-checkbox-unchecked-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 40%);
+    --ag-row-hover-color: color-mix(in srgb, transparent, var(--ag-active-color) 20%);
+    --ag-selected-row-background-color: var(--ag-row-hover-color);
+    
+    --ag-panel-background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 10%);
+    --ag-panel-border-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 10%);
+    --ag-menu-background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 10%);
+    --ag-menu-border-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 10%);
+
+    --ag-advanced-filter-join-pill-color: #7a3a37;
+    --ag-advanced-filter-column-pill-color: #355f2d;
+    --ag-advanced-filter-option-pill-color: #5a3168;
+    --ag-advanced-filter-value-pill-color: #374c86;
+
+    --ag-popup-shadow: 0 0px 20px rgba(0, 0, 0, 0.30);
+
+    color-scheme: dark;
+}
+
+.ag-theme-quartz-dark {
+    @include -dark-vars();
+}
+
+@media (prefers-color-scheme: dark) {
+    .ag-theme-quartz-auto-dark {
+        @include -dark-vars();
+    }
+}
+

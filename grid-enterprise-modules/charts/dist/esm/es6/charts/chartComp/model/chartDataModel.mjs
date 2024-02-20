@@ -8,6 +8,7 @@ import { _, Autowired, BeanStub, CellRangeType, PostConstruct, } from "@ag-grid-
 import { ChartDatasource } from "../datasource/chartDatasource.mjs";
 import { ChartColumnService } from "../services/chartColumnService.mjs";
 import { ComboChartModel } from "./comboChartModel.mjs";
+import { isHierarchical } from "../utils/seriesTypeMapper.mjs";
 export class ChartDataModel extends BeanStub {
     constructor(params) {
         super();
@@ -52,7 +53,7 @@ export class ChartDataModel extends BeanStub {
         this.suppressChartRanges = suppressChartRanges;
         this.unlinked = !!unlinkChart;
         this.crossFiltering = !!crossFiltering;
-        this.updateSelectedDimension(cellRange === null || cellRange === void 0 ? void 0 : cellRange.columns);
+        this.updateSelectedDimensions(cellRange === null || cellRange === void 0 ? void 0 : cellRange.columns);
         this.updateCellRanges();
         const shouldUpdateComboModel = this.isComboChart() || seriesChartTypes;
         if (shouldUpdateComboModel) {
@@ -88,7 +89,7 @@ export class ChartDataModel extends BeanStub {
         this.grouping = this.isGrouping();
         const params = {
             aggFunc: this.aggFunc,
-            dimensionCols: [this.getSelectedDimension()],
+            dimensionCols: this.getSelectedDimensions(),
             grouping: this.grouping,
             pivoting: this.isPivotActive(),
             crossFiltering: this.crossFiltering,
@@ -102,20 +103,20 @@ export class ChartDataModel extends BeanStub {
         this.columnNames = columnNames;
     }
     isGrouping() {
-        const usingTreeData = this.gridOptionsService.isTreeData();
+        const usingTreeData = this.gridOptionsService.get('treeData');
         const groupedCols = usingTreeData ? null : this.chartColumnService.getRowGroupColumns();
         const isGroupActive = usingTreeData || (groupedCols && groupedCols.length > 0);
         // charts only group when the selected category is a group column
-        const colId = this.getSelectedDimension().colId;
+        const colIds = this.getSelectedDimensions().map(({ colId }) => colId);
         const displayedGroupCols = this.chartColumnService.getGroupDisplayColumns();
-        const groupDimensionSelected = displayedGroupCols.map(col => col.getColId()).some(id => id === colId);
+        const groupDimensionSelected = displayedGroupCols.map(col => col.getColId()).some(id => colIds.includes(id));
         return !!isGroupActive && groupDimensionSelected;
     }
     getSelectedValueCols() {
         return this.valueColState.filter(cs => cs.selected).map(cs => cs.column);
     }
-    getSelectedDimension() {
-        return this.dimensionColState.filter(cs => cs.selected)[0];
+    getSelectedDimensions() {
+        return this.dimensionColState.filter(cs => cs.selected);
     }
     getColDisplayName(col) {
         return this.chartColumnService.getColDisplayName(col);
@@ -155,12 +156,15 @@ export class ChartDataModel extends BeanStub {
     }
     getRowIndexes() {
         let startRow = 0, endRow = 0;
-        const { rangeService, valueCellRange } = this;
-        if (rangeService && valueCellRange) {
-            startRow = rangeService.getRangeStartRow(valueCellRange).rowIndex;
+        const { rangeService, valueCellRange, dimensionCellRange } = this;
+        // Not all chart types require a value series (e.g. hierarchical charts),
+        // so fall back to using the dimension cell range for inferring row indices
+        const cellRange = valueCellRange || dimensionCellRange;
+        if (rangeService && cellRange) {
+            startRow = rangeService.getRangeStartRow(cellRange).rowIndex;
             // when the last row the cell range is a pinned 'bottom' row, the `endRow` index is set to -1 which results
             // in the ChartDatasource processing all non pinned rows from the `startRow` index.
-            const endRowPosition = rangeService.getRangeEndRow(valueCellRange);
+            const endRowPosition = rangeService.getRangeEndRow(cellRange);
             endRow = endRowPosition.rowPinned === 'bottom' ? -1 : endRowPosition.rowIndex;
         }
         return { startRow, endRow };
@@ -171,6 +175,7 @@ export class ChartDataModel extends BeanStub {
         const isInitialising = this.valueColState.length < 1;
         this.dimensionColState = [];
         this.valueColState = [];
+        const supportsMultipleDimensions = isHierarchical(this.chartType);
         let hasSelectedDimension = false;
         let order = 1;
         const aggFuncDimension = this.suppliedCellRange.columns[0]; //TODO
@@ -183,7 +188,7 @@ export class ChartDataModel extends BeanStub {
                 }
             }
             else {
-                selected = isAutoGroupCol ? true : !hasSelectedDimension && allCols.has(column);
+                selected = isAutoGroupCol ? true : (!hasSelectedDimension || supportsMultipleDimensions) && allCols.has(column);
             }
             this.dimensionColState.push({
                 column,
@@ -221,13 +226,30 @@ export class ChartDataModel extends BeanStub {
     updateColumnState(updatedCol) {
         const idsMatch = (cs) => cs.colId === updatedCol.colId;
         const { dimensionColState, valueColState } = this;
-        if (dimensionColState.filter(idsMatch).length > 0) {
-            // only one dimension should be selected
-            dimensionColState.forEach(cs => cs.selected = idsMatch(cs));
+        // Determine whether the specified column is a dimension or value column
+        const matchedDimensionColState = dimensionColState.find(idsMatch);
+        const matchedValueColState = valueColState.find(idsMatch);
+        if (matchedDimensionColState) {
+            // For non-hierarchical chart types, only one dimension can be selected
+            const supportsMultipleDimensions = isHierarchical(this.chartType);
+            if (!supportsMultipleDimensions) {
+                // Determine which column should end up selected, if any
+                const selectedColumnState = updatedCol.selected
+                    ? matchedDimensionColState
+                    : dimensionColState
+                        .filter((cs) => cs !== matchedDimensionColState)
+                        .find(({ selected }) => selected);
+                // Update the selection state of all dimension columns
+                dimensionColState.forEach(cs => cs.selected = (cs === selectedColumnState));
+            }
+            else {
+                // Update the selection state of the specified dimension column
+                matchedDimensionColState.selected = updatedCol.selected;
+            }
         }
-        else {
-            // just update the selected value on the supplied value column
-            valueColState.filter(idsMatch).forEach(cs => cs.selected = updatedCol.selected);
+        else if (matchedValueColState) {
+            // Update the selection state of the specified value column
+            matchedValueColState.selected = updatedCol.selected;
         }
         const allColumns = [...dimensionColState, ...valueColState];
         const orderedColIds = [];
@@ -255,25 +277,35 @@ export class ChartDataModel extends BeanStub {
     setDimensionCellRange(dimensionCols, colsInRange, updatedColState) {
         this.dimensionCellRange = undefined;
         if (!updatedColState && !this.dimensionColState.length) {
-            // use first dimension column in range by default
+            const supportsMultipleDimensions = isHierarchical(this.chartType);
+            const selectedCols = new Array();
+            // use first dimension column in range by default, or all dimension columns for hierarchical charts
             dimensionCols.forEach(col => {
-                if (this.dimensionCellRange || !colsInRange.has(col)) {
+                if ((selectedCols.length > 0 && !supportsMultipleDimensions) || !colsInRange.has(col)) {
                     return;
                 }
-                this.dimensionCellRange = this.createCellRange(CellRangeType.DIMENSION, col);
+                selectedCols.push(col);
             });
+            if (selectedCols.length > 0) {
+                this.dimensionCellRange = this.createCellRange(CellRangeType.DIMENSION, ...selectedCols);
+            }
             return;
         }
-        let selectedDimensionColState = updatedColState;
+        let selectedDimensionColStates = updatedColState ? [updatedColState] : [];
         if (this.crossFiltering && this.aggFunc) {
             const aggFuncDimension = this.suppliedCellRange.columns[0]; //TODO
-            selectedDimensionColState = this.dimensionColState.filter(cs => cs.colId === aggFuncDimension.getColId())[0];
+            selectedDimensionColStates = this.dimensionColState.filter(cs => cs.colId === aggFuncDimension.getColId());
         }
-        else if (!selectedDimensionColState || !dimensionCols.has(selectedDimensionColState.column)) {
-            selectedDimensionColState = this.dimensionColState.filter(cs => cs.selected)[0];
+        else if (selectedDimensionColStates.length === 0 || selectedDimensionColStates.some(({ column }) => !column || !dimensionCols.has(column))) {
+            selectedDimensionColStates = this.dimensionColState.filter(cs => cs.selected);
         }
-        if (selectedDimensionColState && selectedDimensionColState.colId !== ChartDataModel.DEFAULT_CATEGORY) {
-            this.dimensionCellRange = this.createCellRange(CellRangeType.DIMENSION, selectedDimensionColState.column);
+        const isDefaultCategory = selectedDimensionColStates.length === 1
+            ? selectedDimensionColStates[0].colId === ChartDataModel.DEFAULT_CATEGORY
+            : false;
+        const selectedColumns = selectedDimensionColStates.map(({ column }) => column)
+            .filter((value) => value != null);
+        if (selectedColumns.length > 0 && !isDefaultCategory) {
+            this.dimensionCellRange = this.createCellRange(CellRangeType.DIMENSION, ...selectedColumns);
         }
     }
     setValueCellRange(valueCols, colsInRange, updatedColState) {
@@ -301,16 +333,33 @@ export class ChartDataModel extends BeanStub {
             this.valueCellRange = this.createCellRange(CellRangeType.VALUE, ...selectedValueCols);
         }
     }
-    updateSelectedDimension(columns) {
+    updateSelectedDimensions(columns) {
         const colIdSet = new Set(columns.map((column) => column.getColId()));
-        // if no dimension found in supplied columns use the default category (always index = 0)
-        const foundColState = this.dimensionColState.find((colState) => colIdSet.has(colState.colId)) || this.dimensionColState[0];
-        this.dimensionColState = this.dimensionColState.map((colState) => (Object.assign(Object.assign({}, colState), { selected: colState.colId === foundColState.colId })));
+        // For non-hierarchical chart types, only one dimension can be selected
+        const supportsMultipleDimensions = isHierarchical(this.chartType);
+        if (!supportsMultipleDimensions) {
+            // Determine which column should end up selected, if any
+            // if no dimension found in supplied columns use the default category (always index = 0)
+            const foundColState = this.dimensionColState.find((colState) => colIdSet.has(colState.colId)) || this.dimensionColState[0];
+            const selectedColumnId = foundColState.colId;
+            // Update the selection state of all dimension columns
+            this.dimensionColState = this.dimensionColState.map((colState) => (Object.assign(Object.assign({}, colState), { selected: colState.colId === selectedColumnId })));
+        }
+        else {
+            // Update the selection state of all dimension columns, selecting only the provided columns from the chart model
+            const foundColStates = this.dimensionColState.filter((colState) => colIdSet.has(colState.colId));
+            const selectedColumnIds = new Set(foundColStates.map((colState) => colState.colId));
+            this.dimensionColState = this.dimensionColState.map((colState) => (Object.assign(Object.assign({}, colState), { selected: selectedColumnIds.has(colState.colId) })));
+        }
     }
     syncDimensionCellRange() {
-        const selectedDimension = this.getSelectedDimension();
-        if (selectedDimension && selectedDimension.column) {
-            this.dimensionCellRange = this.createCellRange(CellRangeType.DIMENSION, selectedDimension.column);
+        const selectedDimensions = this.getSelectedDimensions();
+        if (selectedDimensions.length === 0)
+            return;
+        const selectedCols = selectedDimensions.map(({ column }) => column)
+            .filter((value) => value != null);
+        if (selectedCols.length > 0) {
+            this.dimensionCellRange = this.createCellRange(CellRangeType.DIMENSION, ...selectedCols);
         }
     }
     isComboChart() {

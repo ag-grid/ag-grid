@@ -63,7 +63,7 @@ export class Component extends BeanStub {
 
     @PreConstruct
     private preConstructOnComponent(): void {
-        this.usingBrowserTooltips = this.gridOptionsService.is('enableBrowserTooltips');
+        this.usingBrowserTooltips = this.gridOptionsService.get('enableBrowserTooltips');
     }
 
     public getCompId(): number {
@@ -206,7 +206,7 @@ export class Component extends BeanStub {
     }
 
     protected activateTabIndex(elements?: Element[]): void {
-        const tabIndex = this.gridOptionsService.getNum('tabIndex') || 0;
+        const tabIndex = this.gridOptionsService.get('tabIndex');
 
         if (!elements) {
             elements = [];
@@ -278,6 +278,10 @@ export class Component extends BeanStub {
 
     public getFocusableElement(): HTMLElement {
         return this.eGui;
+    }
+
+    public getAriaElement(): Element {
+        return this.getFocusableElement();
     }
 
     public setParentComponent(component: Component) {

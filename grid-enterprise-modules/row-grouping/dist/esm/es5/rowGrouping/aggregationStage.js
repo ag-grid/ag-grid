@@ -19,19 +19,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Bean, BeanStub, Autowired, _, PostConstruct, } from "@ag-grid-community/core";
+import { Bean, BeanStub, Autowired, _, } from "@ag-grid-community/core";
 var AggregationStage = /** @class */ (function (_super) {
     __extends(AggregationStage, _super);
     function AggregationStage() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    AggregationStage.prototype.init = function () {
-        var _this = this;
-        this.alwaysAggregateAtRootLevel = this.gridOptionsService.is('alwaysAggregateAtRootLevel');
-        this.addManagedPropertyListener('alwaysAggregateAtRootLevel', function (propChange) { return _this.alwaysAggregateAtRootLevel = propChange.currentValue; });
-        this.groupIncludeTotalFooter = this.gridOptionsService.is('groupIncludeTotalFooter');
-        this.addManagedPropertyListener('groupIncludeTotalFooter', function (propChange) { return _this.groupIncludeTotalFooter = propChange.currentValue; });
-    };
     // it's possible to recompute the aggregate without doing the other parts
     // + api.refreshClientSideRowModel('aggregate')
     AggregationStage.prototype.execute = function (params) {
@@ -54,20 +47,22 @@ var AggregationStage = /** @class */ (function (_super) {
         var measureColumns = this.columnModel.getValueColumns();
         var pivotColumns = pivotActive ? this.columnModel.getPivotColumns() : [];
         var aggDetails = {
+            alwaysAggregateAtRootLevel: this.gridOptionsService.get('alwaysAggregateAtRootLevel'),
+            groupIncludeTotalFooter: this.gridOptionsService.get('groupIncludeTotalFooter'),
             changedPath: params.changedPath,
             valueColumns: measureColumns,
-            pivotColumns: pivotColumns
+            pivotColumns: pivotColumns,
+            filteredOnly: !this.isSuppressAggFilteredOnly(),
+            userAggFunc: this.gridOptionsService.getCallback('getGroupRowAgg'),
         };
         return aggDetails;
     };
     AggregationStage.prototype.isSuppressAggFilteredOnly = function () {
         var isGroupAggFiltering = this.gridOptionsService.getGroupAggFiltering() !== undefined;
-        return isGroupAggFiltering || this.gridOptionsService.is('suppressAggFilteredOnly');
+        return isGroupAggFiltering || this.gridOptionsService.get('suppressAggFilteredOnly');
     };
     AggregationStage.prototype.recursivelyCreateAggData = function (aggDetails) {
         var _this = this;
-        // update prop, in case changed since last time
-        this.filteredOnly = !this.isSuppressAggFilteredOnly();
         var callback = function (rowNode) {
             var hasNoChildren = !rowNode.hasChildren();
             if (hasNoChildren) {
@@ -82,9 +77,10 @@ var AggregationStage = /** @class */ (function (_super) {
             //Optionally enable the aggregation at the root Node
             var isRootNode = rowNode.level === -1;
             // if total footer is displayed, the value is in use
-            if (isRootNode && !_this.groupIncludeTotalFooter) {
+            if (isRootNode && !aggDetails.groupIncludeTotalFooter) {
                 var notPivoting = !_this.columnModel.isPivotMode();
-                if (!_this.alwaysAggregateAtRootLevel && notPivoting) {
+                if (!aggDetails.alwaysAggregateAtRootLevel && notPivoting) {
+                    rowNode.setAggData(null);
                     return;
                 }
             }
@@ -95,11 +91,9 @@ var AggregationStage = /** @class */ (function (_super) {
     AggregationStage.prototype.aggregateRowNode = function (rowNode, aggDetails) {
         var measureColumnsMissing = aggDetails.valueColumns.length === 0;
         var pivotColumnsMissing = aggDetails.pivotColumns.length === 0;
-        var userFunc = this.gridOptionsService.getCallback('getGroupRowAgg');
         var aggResult;
-        if (userFunc) {
-            var params = { nodes: rowNode.childrenAfterFilter };
-            aggResult = userFunc(params);
+        if (aggDetails.userAggFunc) {
+            aggResult = aggDetails.userAggFunc({ nodes: rowNode.childrenAfterFilter });
         }
         else if (measureColumnsMissing) {
             aggResult = null;
@@ -118,42 +112,42 @@ var AggregationStage = /** @class */ (function (_super) {
         }
     };
     AggregationStage.prototype.aggregateRowNodeUsingValuesAndPivot = function (rowNode) {
-        var _this = this;
-        var _a;
+        var _a, _b;
         var result = {};
         var secondaryColumns = (_a = this.columnModel.getSecondaryColumns()) !== null && _a !== void 0 ? _a : [];
-        secondaryColumns.forEach(function (secondaryCol) {
-            var _a = secondaryCol.getColDef(), pivotValueColumn = _a.pivotValueColumn, pivotTotalColumnIds = _a.pivotTotalColumnIds, colId = _a.colId, pivotKeys = _a.pivotKeys;
-            if (_.exists(pivotTotalColumnIds)) {
-                return;
+        var canSkipTotalColumns = true;
+        for (var i = 0; i < secondaryColumns.length; i++) {
+            var secondaryCol = secondaryColumns[i];
+            var colDef = secondaryCol.getColDef();
+            if (colDef.pivotTotalColumnIds != null) {
+                canSkipTotalColumns = false;
+                continue;
             }
-            var keys = pivotKeys !== null && pivotKeys !== void 0 ? pivotKeys : [];
-            var values;
+            var keys = (_b = colDef.pivotKeys) !== null && _b !== void 0 ? _b : [];
+            var values = void 0;
             if (rowNode.leafGroup) {
                 // lowest level group, get the values from the mapped set
-                values = _this.getValuesFromMappedSet(rowNode.childrenMapped, keys, pivotValueColumn);
+                values = this.getValuesFromMappedSet(rowNode.childrenMapped, keys, colDef.pivotValueColumn);
             }
             else {
                 // value columns and pivot columns, non-leaf group
-                values = _this.getValuesPivotNonLeaf(rowNode, colId);
+                values = this.getValuesPivotNonLeaf(rowNode, colDef.colId);
             }
-            result[colId] = _this.aggregateValues(values, pivotValueColumn.getAggFunc(), pivotValueColumn, rowNode, secondaryCol);
-        });
-        secondaryColumns.forEach(function (secondaryCol) {
-            var _a = secondaryCol.getColDef(), pivotValueColumn = _a.pivotValueColumn, pivotTotalColumnIds = _a.pivotTotalColumnIds, colId = _a.colId;
-            if (!_.exists(pivotTotalColumnIds)) {
-                return;
+            // bit of a memory drain storing null/undefined, but seems to speed up performance.
+            result[colDef.colId] = this.aggregateValues(values, colDef.pivotValueColumn.getAggFunc(), colDef.pivotValueColumn, rowNode, secondaryCol);
+        }
+        if (!canSkipTotalColumns) {
+            for (var i = 0; i < secondaryColumns.length; i++) {
+                var secondaryCol = secondaryColumns[i];
+                var colDef = secondaryCol.getColDef();
+                if (colDef.pivotTotalColumnIds == null || !colDef.pivotTotalColumnIds.length) {
+                    continue;
+                }
+                var aggResults = colDef.pivotTotalColumnIds.map(function (currentColId) { return result[currentColId]; });
+                // bit of a memory drain storing null/undefined, but seems to speed up performance.
+                result[colDef.colId] = this.aggregateValues(aggResults, colDef.pivotValueColumn.getAggFunc(), colDef.pivotValueColumn, rowNode, secondaryCol);
             }
-            var aggResults = [];
-            //retrieve results for colIds associated with this pivot total column
-            if (!pivotTotalColumnIds || !pivotTotalColumnIds.length) {
-                return;
-            }
-            pivotTotalColumnIds.forEach(function (currentColId) {
-                aggResults.push(result[currentColId]);
-            });
-            result[colId] = _this.aggregateValues(aggResults, pivotValueColumn.getAggFunc(), pivotValueColumn, rowNode, secondaryCol);
-        });
+        }
         return result;
     };
     AggregationStage.prototype.aggregateRowNodeUsingValuesOnly = function (rowNode, aggDetails) {
@@ -165,7 +159,7 @@ var AggregationStage = /** @class */ (function (_super) {
         var notChangedValueColumns = aggDetails.changedPath.isActive() ?
             aggDetails.changedPath.getNotValueColumnsForNode(rowNode, aggDetails.valueColumns)
             : null;
-        var values2d = this.getValuesNormal(rowNode, changedValueColumns);
+        var values2d = this.getValuesNormal(rowNode, changedValueColumns, aggDetails.filteredOnly);
         var oldValues = rowNode.aggData;
         changedValueColumns.forEach(function (valueColumn, index) {
             result[valueColumn.getId()] = _this.aggregateValues(values2d[index], valueColumn.getAggFunc(), valueColumn, rowNode);
@@ -178,33 +172,26 @@ var AggregationStage = /** @class */ (function (_super) {
         return result;
     };
     AggregationStage.prototype.getValuesPivotNonLeaf = function (rowNode, colId) {
-        var values = [];
-        rowNode.childrenAfterFilter.forEach(function (node) {
-            var value = node.aggData[colId];
-            values.push(value);
-        });
-        return values;
+        return rowNode.childrenAfterFilter.map(function (childNode) { return childNode.aggData[colId]; });
     };
     AggregationStage.prototype.getValuesFromMappedSet = function (mappedSet, keys, valueColumn) {
         var _this = this;
         var mapPointer = mappedSet;
-        keys.forEach(function (key) { return (mapPointer = mapPointer ? mapPointer[key] : null); });
+        for (var i = 0; i < keys.length; i++) {
+            var key = keys[i];
+            mapPointer = mapPointer ? mapPointer[key] : null;
+        }
         if (!mapPointer) {
             return [];
         }
-        var values = [];
-        mapPointer.forEach(function (rowNode) {
-            var value = _this.valueService.getValue(valueColumn, rowNode);
-            values.push(value);
-        });
-        return values;
+        return mapPointer.map(function (rowNode) { return _this.valueService.getValue(valueColumn, rowNode); });
     };
-    AggregationStage.prototype.getValuesNormal = function (rowNode, valueColumns) {
+    AggregationStage.prototype.getValuesNormal = function (rowNode, valueColumns, filteredOnly) {
         // create 2d array, of all values for all valueColumns
         var values = [];
         valueColumns.forEach(function () { return values.push([]); });
         var valueColumnCount = valueColumns.length;
-        var nodeList = this.filteredOnly ? rowNode.childrenAfterFilter : rowNode.childrenAfterGroup;
+        var nodeList = filteredOnly ? rowNode.childrenAfterFilter : rowNode.childrenAfterGroup;
         var rowCount = nodeList.length;
         for (var i = 0; i < rowCount; i++) {
             var childNode = nodeList[i];
@@ -223,21 +210,18 @@ var AggregationStage = /** @class */ (function (_super) {
             this.aggFuncService.getAggFunc(aggFuncOrString) :
             aggFuncOrString;
         if (typeof aggFunc !== 'function') {
-            console.error("AG Grid: unrecognised aggregation function " + aggFuncOrString);
+            console.error("AG Grid: unrecognised aggregation function ".concat(aggFuncOrString));
             return null;
         }
         var aggFuncAny = aggFunc;
-        var params = {
+        var params = this.gridOptionsService.addGridCommonParams({
             values: values,
             column: column,
             colDef: column ? column.getColDef() : undefined,
             pivotResultColumn: pivotResultColumn,
             rowNode: rowNode,
-            data: rowNode ? rowNode.data : undefined,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-            context: this.gridOptionsService.context,
-        }; // the "as any" is needed to allow the deprecation warning messages
+            data: rowNode ? rowNode.data : undefined
+        }); // the "as any" is needed to allow the deprecation warning messages
         return aggFuncAny(params);
     };
     __decorate([
@@ -249,15 +233,6 @@ var AggregationStage = /** @class */ (function (_super) {
     __decorate([
         Autowired('aggFuncService')
     ], AggregationStage.prototype, "aggFuncService", void 0);
-    __decorate([
-        Autowired('gridApi')
-    ], AggregationStage.prototype, "gridApi", void 0);
-    __decorate([
-        Autowired('columnApi')
-    ], AggregationStage.prototype, "columnApi", void 0);
-    __decorate([
-        PostConstruct
-    ], AggregationStage.prototype, "init", null);
     AggregationStage = __decorate([
         Bean('aggregationStage')
     ], AggregationStage);

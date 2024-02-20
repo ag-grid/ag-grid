@@ -42,7 +42,7 @@ export class LegendPanel extends Component {
         this.legendPositionSelect
             .setLabel(this.chartTranslationService.translate("position"))
             .setLabelWidth("flex")
-            .setInputWidth(80)
+            .setInputWidth('flex')
             .addOptions(positions.map(position => ({
             value: position,
             text: this.chartTranslationService.translate(position)
@@ -61,7 +61,8 @@ export class LegendPanel extends Component {
     }
     initLegendItems() {
         const initSlider = (expression, labelKey, input, defaultMaxValue) => {
-            const currentValue = this.chartOptionsService.getChartOption(`legend.${expression}`);
+            var _a;
+            const currentValue = (_a = this.chartOptionsService.getChartOption(`legend.${expression}`)) !== null && _a !== void 0 ? _a : 0;
             input.setLabel(this.chartTranslationService.translate(labelKey))
                 .setMaxValue(getMaxValue(currentValue, defaultMaxValue))
                 .setValue(`${currentValue}`)

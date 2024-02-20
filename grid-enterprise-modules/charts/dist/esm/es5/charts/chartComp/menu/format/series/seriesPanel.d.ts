@@ -17,8 +17,8 @@ export declare class SeriesPanel extends Component {
     private refreshWidgets;
     private initSeriesSelect;
     private initTooltips;
+    private initLineColor;
     private initStrokeWidth;
-    private initLineWidth;
     private initLineDash;
     private initLineOpacity;
     private initFillOpacity;
@@ -27,6 +27,11 @@ export declare class SeriesPanel extends Component {
     private initShadow;
     private initMarkers;
     private initBins;
+    private initWhiskers;
+    private initCaps;
+    private initConnectorLine;
+    private initSeriesItemsPanel;
+    private initTileSpacingPanel;
     private addWidget;
     private getSeriesOption;
     private setSeriesOption;

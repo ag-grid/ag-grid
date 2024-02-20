@@ -1,7 +1,8 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
+import { AgEventListener } from "../events";
 export interface IEventEmitter {
-    addEventListener(eventType: string, listener: EventListener, async?: boolean, options?: AddEventListenerOptions): void;
-    removeEventListener(eventType: string, listener: EventListener, async?: boolean, options?: AddEventListenerOptions): void;
+    addEventListener(eventType: string, listener: AgEventListener, async?: boolean, options?: AddEventListenerOptions): void;
+    removeEventListener(eventType: string, listener: AgEventListener, async?: boolean, options?: AddEventListenerOptions): void;
 }

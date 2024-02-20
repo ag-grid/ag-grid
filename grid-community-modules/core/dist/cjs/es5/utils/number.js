@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.oneOrGreater = exports.zeroOrGreater = exports.sum = exports.formatNumberCommas = exports.formatNumberTwoDecimalPlacesAndCommas = exports.decToHex = exports.cleanNumber = exports.createArrayOfNumbers = exports.padStartWidthZeros = void 0;
+exports.sum = exports.formatNumberCommas = exports.formatNumberTwoDecimalPlacesAndCommas = exports.decToHex = exports.cleanNumber = exports.createArrayOfNumbers = exports.padStartWidthZeros = void 0;
 function padStartWidthZeros(value, totalStringSize) {
     return value.toString().padStart(totalStringSize, '0');
 }
@@ -50,26 +50,10 @@ function formatNumberCommas(value, thousandSeparator, decimalSeparator) {
     if (typeof value !== 'number') {
         return '';
     }
-    return value.toString().replace('.', decimalSeparator).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1" + thousandSeparator);
+    return value.toString().replace('.', decimalSeparator).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1".concat(thousandSeparator));
 }
 exports.formatNumberCommas = formatNumberCommas;
 function sum(values) {
     return values == null ? null : values.reduce(function (total, value) { return total + value; }, 0);
 }
 exports.sum = sum;
-function zeroOrGreater(value, defaultValue) {
-    if (value >= 0) {
-        return value;
-    }
-    // zero gets returned if number is missing or the wrong type
-    return defaultValue;
-}
-exports.zeroOrGreater = zeroOrGreater;
-function oneOrGreater(value, defaultValue) {
-    var valueNumber = parseInt(value, 10);
-    if (!isNaN(valueNumber) && isFinite(valueNumber) && valueNumber > 0) {
-        return valueNumber;
-    }
-    return defaultValue;
-}
-exports.oneOrGreater = oneOrGreater;

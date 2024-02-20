@@ -8,13 +8,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GridApi = exports.unwrapUserComp = void 0;
 var context_1 = require("./context/context");
-var gridOptionsValidator_1 = require("./gridOptionsValidator");
-var iClientSideRowModel_1 = require("./interfaces/iClientSideRowModel");
 var iExcelCreator_1 = require("./interfaces/iExcelCreator");
 var moduleNames_1 = require("./modules/moduleNames");
 var moduleRegistry_1 = require("./modules/moduleRegistry");
 var generic_1 = require("./utils/generic");
 var object_1 = require("./utils/object");
+var eventKeys_1 = require("./eventKeys");
+var function_1 = require("./utils/function");
 function unwrapUserComp(comp) {
     var compAsAny = comp;
     var isProxy = compAsAny != null && compAsAny.getFrameworkComponentInstance != null;
@@ -26,12 +26,6 @@ var GridApi = /** @class */ (function () {
         this.detailGridInfoMap = {};
         this.destroyCalled = false;
     }
-    GridApi.prototype.registerOverlayWrapperComp = function (overlayWrapperComp) {
-        this.overlayWrapperComp = overlayWrapperComp;
-    };
-    GridApi.prototype.registerSideBarComp = function (sideBarComp) {
-        this.sideBarComp = sideBarComp;
-    };
     GridApi.prototype.init = function () {
         var _this = this;
         switch (this.rowModel.getType()) {
@@ -57,21 +51,9 @@ var GridApi = /** @class */ (function () {
     GridApi.prototype.__getContext = function () {
         return this.context;
     };
-    GridApi.prototype.getSetterMethod = function (key) {
-        return "set" + key.charAt(0).toUpperCase() + key.substring(1);
-    };
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
-    GridApi.prototype.__setProperty = function (propertyName, value) {
-        // Ensure the GridOptions property gets updated and fires the change event as we
-        // cannot assume that the dynamic Api call will updated GridOptions.
-        this.gos.set(propertyName, value);
-        // If the dynamic api does update GridOptions then change detection in the 
-        // GridOptionsService will prevent the event being fired twice.
-        var setterName = this.getSetterMethod(propertyName);
-        var dynamicApi = this;
-        if (dynamicApi[setterName]) {
-            dynamicApi[setterName](value);
-        }
+    GridApi.prototype.__getModel = function () {
+        return this.rowModel;
     };
     /** Returns the `gridId` for the current grid as specified via the gridOptions property `gridId` or the auto assigned grid id if none was provided. */
     GridApi.prototype.getGridId = function () {
@@ -92,9 +74,9 @@ var GridApi = /** @class */ (function () {
     /** Iterates through each `DetailGridInfo` in the grid and calls the supplied callback on each. */
     GridApi.prototype.forEachDetailGridInfo = function (callback) {
         var index = 0;
-        object_1.iterateObject(this.detailGridInfoMap, function (id, gridInfo) {
+        (0, object_1.iterateObject)(this.detailGridInfoMap, function (id, gridInfo) {
             // check for undefined, as old references will still be lying around
-            if (generic_1.exists(gridInfo)) {
+            if ((0, generic_1.exists)(gridInfo)) {
                 callback(gridInfo, index);
                 index++;
             }
@@ -112,17 +94,11 @@ var GridApi = /** @class */ (function () {
             this.csvCreator.exportDataAsCsv(params);
         }
     };
-    GridApi.prototype.getExcelExportMode = function (params) {
-        var baseParams = this.gos.get('defaultExcelExportParams');
-        var mergedParams = Object.assign({ exportMode: 'xlsx' }, baseParams, params);
-        return mergedParams.exportMode;
-    };
     GridApi.prototype.assertNotExcelMultiSheet = function (method, params) {
         if (!moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.ExcelExportModule, 'api.' + method, this.context.getGridId())) {
             return false;
         }
-        var exportMode = this.getExcelExportMode(params);
-        if (this.excelCreator.getFactoryMode(exportMode) === iExcelCreator_1.ExcelFactoryMode.MULTI_SHEET) {
+        if (this.excelCreator.getFactoryMode() === iExcelCreator_1.ExcelFactoryMode.MULTI_SHEET) {
             console.warn("AG Grid: The Excel Exporter is currently on Multi Sheet mode. End that operation by calling 'api.getMultipleSheetAsExcel()' or 'api.exportMultipleSheetsAsExcel()'");
             return false;
         }
@@ -145,8 +121,7 @@ var GridApi = /** @class */ (function () {
         if (!moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.ExcelExportModule, 'api.getSheetDataForExcel', this.context.getGridId())) {
             return;
         }
-        var exportMode = this.getExcelExportMode(params);
-        this.excelCreator.setFactoryMode(iExcelCreator_1.ExcelFactoryMode.MULTI_SHEET, exportMode);
+        this.excelCreator.setFactoryMode(iExcelCreator_1.ExcelFactoryMode.MULTI_SHEET);
         return this.excelCreator.getSheetDataForExcel(params);
     };
     /** Similar to `exportMultipleSheetsAsExcel`, except instead of downloading a file, it will return a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) to be processed by the user. */
@@ -158,7 +133,7 @@ var GridApi = /** @class */ (function () {
     /** Downloads an Excel export of multiple sheets in one file. */
     GridApi.prototype.exportMultipleSheetsAsExcel = function (params) {
         if (moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.ExcelExportModule, 'api.exportMultipleSheetsAsExcel', this.context.getGridId())) {
-            return this.excelCreator.exportMultipleSheetsAsExcel(params);
+            this.excelCreator.exportMultipleSheetsAsExcel(params);
         }
     };
     /**
@@ -173,7 +148,7 @@ var GridApi = /** @class */ (function () {
             return;
         }
         var eGrid = this.ctrlsService.getGridBodyCtrl().getGui();
-        var ariaProperty = "aria-" + property;
+        var ariaProperty = "aria-".concat(property);
         if (value === null) {
             eGrid.removeAttribute(ariaProperty);
         }
@@ -186,76 +161,10 @@ var GridApi = /** @class */ (function () {
         for (var _i = 1; _i < arguments.length; _i++) {
             requiredRowModels[_i - 1] = arguments[_i];
         }
-        console.error("AG Grid: api." + apiMethod + " can only be called when gridOptions.rowModelType is " + requiredRowModels.join(' or '));
+        console.error("AG Grid: api.".concat(apiMethod, " can only be called when gridOptions.rowModelType is ").concat(requiredRowModels.join(' or ')));
     };
-    /** Set new datasource for Server-Side Row Model. */
-    GridApi.prototype.setServerSideDatasource = function (datasource) {
-        if (this.serverSideRowModel) {
-            this.serverSideRowModel.setDatasource(datasource);
-        }
-        else {
-            this.logMissingRowModel('setServerSideDatasource', 'serverSide');
-        }
-    };
-    /**
-     * Updates the `cacheBlockSize` when requesting data from the server if `suppressServerSideInfiniteScroll` is not enabled.
-     *
-     * Note this purges all the cached data and reloads all the rows of the grid.
-     * */
-    GridApi.prototype.setCacheBlockSize = function (blockSize) {
-        if (this.serverSideRowModel) {
-            this.gos.set('cacheBlockSize', blockSize);
-            this.serverSideRowModel.resetRootStore();
-        }
-        else {
-            this.logMissingRowModel('setCacheBlockSize', 'serverSide');
-        }
-    };
-    /** Set new datasource for Infinite Row Model. */
-    GridApi.prototype.setDatasource = function (datasource) {
-        if (this.gos.isRowModelType('infinite')) {
-            this.rowModel.setDatasource(datasource);
-        }
-        else {
-            this.logMissingRowModel('setDatasource', 'infinite');
-        }
-    };
-    /** Set new datasource for Viewport Row Model. */
-    GridApi.prototype.setViewportDatasource = function (viewportDatasource) {
-        if (this.gos.isRowModelType('viewport')) {
-            // this is bad coding, because it's using an interface that's exposed in the enterprise.
-            // really we should create an interface in the core for viewportDatasource and let
-            // the enterprise implement it, rather than casting to 'any' here
-            this.rowModel.setViewportDatasource(viewportDatasource);
-        }
-        else {
-            this.logMissingRowModel('setViewportDatasource', 'viewport');
-        }
-    };
-    /** Set the row data. */
-    GridApi.prototype.setRowData = function (rowData) {
-        // immutable service is part of the CSRM module, if missing, no CSRM
-        var missingImmutableService = this.immutableService == null;
-        if (missingImmutableService) {
-            this.logMissingRowModel('setRowData', 'clientSide');
-            return;
-        }
-        // if no keys provided provided for rows, then we can tread the operation as Immutable
-        if (this.immutableService.isActive()) {
-            this.immutableService.setRowData(rowData);
-        }
-        else {
-            this.selectionService.reset();
-            this.clientSideRowModel.setRowData(rowData);
-        }
-    };
-    /** Set the top pinned rows. Call with no rows / undefined to clear top pinned rows. */
-    GridApi.prototype.setPinnedTopRowData = function (rows) {
-        this.pinnedRowModel.setPinnedTopRowData(rows);
-    };
-    /** Set the bottom pinned rows. Call with no rows / undefined to clear bottom pinned rows. */
-    GridApi.prototype.setPinnedBottomRowData = function (rows) {
-        this.pinnedRowModel.setPinnedBottomRowData(rows);
+    GridApi.prototype.logDeprecation = function (version, apiMethod, replacement, message) {
+        (0, function_1.warnOnce)("Since ".concat(version, " api.").concat(apiMethod, " is deprecated. Please use ").concat(replacement, " instead. ").concat(message));
     };
     /** Gets the number of top pinned rows. */
     GridApi.prototype.getPinnedTopRowCount = function () {
@@ -272,30 +181,6 @@ var GridApi = /** @class */ (function () {
     /** Gets the bottom pinned row with the specified index. */
     GridApi.prototype.getPinnedBottomRow = function (index) {
         return this.pinnedRowModel.getPinnedBottomRow(index);
-    };
-    /**
-     * Call to set new column definitions. The grid will redraw all the column headers, and then redraw all of the rows.
-     */
-    GridApi.prototype.setColumnDefs = function (colDefs, source) {
-        if (source === void 0) { source = "api"; }
-        this.columnModel.setColumnDefs(colDefs, source);
-        // Keep gridOptions.columnDefs in sync
-        this.gos.set('columnDefs', colDefs, true, { source: source });
-    };
-    /** Call to set new auto group column definition. The grid will recreate any auto-group columns if present. */
-    GridApi.prototype.setAutoGroupColumnDef = function (colDef, source) {
-        if (source === void 0) { source = "api"; }
-        this.gos.set('autoGroupColumnDef', colDef, true, { source: source });
-    };
-    /** Call to set new Default Column Definition. */
-    GridApi.prototype.setDefaultColDef = function (colDef, source) {
-        if (source === void 0) { source = "api"; }
-        this.gos.set('defaultColDef', colDef, true, { source: source });
-    };
-    /** Call to set new Column Types. */
-    GridApi.prototype.setColumnTypes = function (columnTypes, source) {
-        if (source === void 0) { source = "api"; }
-        this.gos.set('columnTypes', columnTypes, true, { source: source });
     };
     GridApi.prototype.expireValueCache = function () {
         this.valueCache.expire();
@@ -316,36 +201,36 @@ var GridApi = /** @class */ (function () {
     GridApi.prototype.getHorizontalPixelRange = function () {
         return this.gridBodyCtrl.getScrollFeature().getHScrollPosition();
     };
-    /** If `true`, the horizontal scrollbar will always be present, even if not required. Otherwise, it will only be displayed when necessary. */
-    GridApi.prototype.setAlwaysShowHorizontalScroll = function (show) {
-        this.gos.set('alwaysShowHorizontalScroll', show);
-    };
-    /** If `true`, the vertical scrollbar will always be present, even if not required. Otherwise it will only be displayed when necessary. */
-    GridApi.prototype.setAlwaysShowVerticalScroll = function (show) {
-        this.gos.set('alwaysShowVerticalScroll', show);
-    };
     /** Performs change detection on all cells, refreshing cells where required. */
     GridApi.prototype.refreshCells = function (params) {
+        var _this = this;
         if (params === void 0) { params = {}; }
-        this.rowRenderer.refreshCells(params);
+        this.frameworkOverrides.wrapIncoming(function () { return _this.rowRenderer.refreshCells(params); });
     };
     /** Flash rows, columns or individual cells. */
     GridApi.prototype.flashCells = function (params) {
+        var _this = this;
         if (params === void 0) { params = {}; }
-        this.rowRenderer.flashCells(params);
+        var warning = function (prop) { return (0, function_1.warnOnce)("Since v31.1 api.flashCells parameter '".concat(prop, "Delay' is deprecated. Please use '").concat(prop, "Duration' instead.")); };
+        if ((0, generic_1.exists)(params.fadeDelay)) {
+            warning('fade');
+        }
+        if ((0, generic_1.exists)(params.flashDelay)) {
+            warning('flash');
+        }
+        this.frameworkOverrides.wrapIncoming(function () { return _this.rowRenderer.flashCells(params); });
     };
     /** Remove row(s) from the DOM and recreate them again from scratch. */
     GridApi.prototype.redrawRows = function (params) {
+        var _this = this;
         if (params === void 0) { params = {}; }
         var rowNodes = params ? params.rowNodes : undefined;
-        this.rowRenderer.redrawRows(rowNodes);
-    };
-    GridApi.prototype.setFunctionsReadOnly = function (readOnly) {
-        this.gos.set('functionsReadOnly', readOnly);
+        this.frameworkOverrides.wrapIncoming(function () { return _this.rowRenderer.redrawRows(rowNodes); });
     };
     /** Redraws the header. Useful if a column name changes, or something else that changes how the column header is displayed. */
     GridApi.prototype.refreshHeader = function () {
-        this.ctrlsService.getHeaderRowContainerCtrls().forEach(function (c) { return c.refresh(); });
+        var _this = this;
+        this.frameworkOverrides.wrapIncoming(function () { return _this.ctrlsService.getHeaderRowContainerCtrls().forEach(function (c) { return c.refresh(); }); });
     };
     /** Returns `true` if any filter is set. This includes quick filter, column filter, external filter or advanced filter. */
     GridApi.prototype.isAnyFilterPresent = function () {
@@ -363,19 +248,17 @@ var GridApi = /** @class */ (function () {
      * Returns the row model inside the table.
      * From here you can see the original rows, rows after filter has been applied,
      * rows after aggregation has been applied, and the final set of 'to be displayed' rows.
+     *
+     * @deprecated As of v31.1, getModel() is deprecated and will not be available in future versions.
+     * Please use the appropriate grid API methods instead
      */
     GridApi.prototype.getModel = function () {
+        (0, function_1.warnOnce)('Since v31.1 getModel() is deprecated. Please use the appropriate grid API methods instead.');
         return this.rowModel;
     };
     /** Expand or collapse a specific row node, optionally expanding/collapsing all of its parent nodes. */
     GridApi.prototype.setRowNodeExpanded = function (rowNode, expanded, expandParents) {
-        if (rowNode) {
-            // expand all parents recursively, except root node.
-            if (expandParents && rowNode.parent && rowNode.parent.level !== -1) {
-                this.setRowNodeExpanded(rowNode.parent, expanded, expandParents);
-            }
-            rowNode.setExpanded(expanded);
-        }
+        this.expansionService.setRowNodeExpanded(rowNode, expanded, expandParents);
     };
     /**
      * Informs the grid that row group expanded state has changed and it needs to rerender the group nodes.
@@ -383,22 +266,18 @@ var GridApi = /** @class */ (function () {
      * across multiple groups and you want to update the grid view in a single rerender instead of on every group change.
      */
     GridApi.prototype.onGroupExpandedOrCollapsed = function () {
-        if (generic_1.missing(this.clientSideRowModel)) {
+        if ((0, generic_1.missing)(this.clientSideRowModel)) {
             this.logMissingRowModel('onGroupExpandedOrCollapsed', 'clientSide');
             return;
         }
-        // we don't really want the user calling this if only one rowNode was expanded, instead they should be
-        // calling rowNode.setExpanded(boolean) - this way we do a 'keepRenderedRows=false' so that the whole
-        // grid gets refreshed again - otherwise the row with the rowNodes that were changed won't get updated,
-        // and thus the expand icon in the group cell won't get 'opened' or 'closed'.
-        this.clientSideRowModel.refreshModel({ step: iClientSideRowModel_1.ClientSideRowModelSteps.MAP });
+        this.expansionService.onGroupExpandedOrCollapsed();
     };
     /**
      * Refresh the Client-Side Row Model, executing the grouping, filtering and sorting again.
      * Optionally provide the step you wish the refresh to apply from. Defaults to `everything`.
      */
     GridApi.prototype.refreshClientSideRowModel = function (step) {
-        if (generic_1.missing(this.clientSideRowModel)) {
+        if ((0, generic_1.missing)(this.clientSideRowModel)) {
             this.logMissingRowModel('refreshClientSideRowModel', 'clientSide');
             return;
         }
@@ -432,11 +311,8 @@ var GridApi = /** @class */ (function () {
     };
     /** Expand all groups. */
     GridApi.prototype.expandAll = function () {
-        if (this.clientSideRowModel) {
-            this.clientSideRowModel.expandOrCollapseAll(true);
-        }
-        else if (this.serverSideRowModel) {
-            this.serverSideRowModel.expandAll(true);
+        if (this.clientSideRowModel || this.serverSideRowModel) {
+            this.expansionService.expandAll(true);
         }
         else {
             this.logMissingRowModel('expandAll', 'clientSide', 'serverSide');
@@ -444,14 +320,11 @@ var GridApi = /** @class */ (function () {
     };
     /** Collapse all groups. */
     GridApi.prototype.collapseAll = function () {
-        if (this.clientSideRowModel) {
-            this.clientSideRowModel.expandOrCollapseAll(false);
-        }
-        else if (this.serverSideRowModel) {
-            this.serverSideRowModel.expandAll(false);
+        if (this.clientSideRowModel || this.serverSideRowModel) {
+            this.expansionService.expandAll(false);
         }
         else {
-            this.logMissingRowModel('expandAll', 'clientSide', 'serverSide');
+            this.logMissingRowModel('collapseAll', 'clientSide', 'serverSide');
         }
     };
     /**
@@ -468,25 +341,6 @@ var GridApi = /** @class */ (function () {
     GridApi.prototype.getQuickFilter = function () {
         return this.gos.get('quickFilterText');
     };
-    /** Pass a Quick Filter text into the grid for filtering. */
-    GridApi.prototype.setQuickFilter = function (newFilter) {
-        this.gos.set('quickFilterText', newFilter);
-    };
-    /**
-     * @deprecated As of v30, hidden columns are excluded from the Quick Filter by default. To include hidden columns, use `setIncludeHiddenColumnsInQuickFilter` instead.
-     */
-    GridApi.prototype.setExcludeHiddenColumnsFromQuickFilter = function (value) {
-        gridOptionsValidator_1.logDeprecation('30', 'setExcludeHiddenColumnsFromQuickFilter', undefined, 'Hidden columns are now excluded from the Quick Filter by default. This can be toggled using `setIncludeHiddenColumnsInQuickFilter`');
-        this.setIncludeHiddenColumnsInQuickFilter(!value);
-    };
-    /**
-     * Updates the `includeHiddenColumnsInQuickFilter` grid option.
-     * By default hidden columns are excluded from the Quick Filter.
-     * Set to `true` to include them.
-     */
-    GridApi.prototype.setIncludeHiddenColumnsInQuickFilter = function (value) {
-        this.gos.set('includeHiddenColumnsInQuickFilter', value);
-    };
     /** Get the state of the Advanced Filter. Used for saving Advanced Filter state */
     GridApi.prototype.getAdvancedFilterModel = function () {
         if (moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.AdvancedFilterModule, 'api.getAdvancedFilterModel', this.context.getGridId())) {
@@ -496,28 +350,13 @@ var GridApi = /** @class */ (function () {
     };
     /** Set the state of the Advanced Filter. Used for restoring Advanced Filter state */
     GridApi.prototype.setAdvancedFilterModel = function (advancedFilterModel) {
+        this.filterManager.setAdvancedFilterModel(advancedFilterModel);
+    };
+    /** Open the Advanced Filter Builder dialog (if enabled). */
+    GridApi.prototype.showAdvancedFilterBuilder = function () {
         if (moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.AdvancedFilterModule, 'api.setAdvancedFilterModel', this.context.getGridId())) {
-            this.filterManager.setAdvancedFilterModel(advancedFilterModel);
+            this.filterManager.showAdvancedFilterBuilder('api');
         }
-    };
-    /** Enable/disable the Advanced Filter */
-    GridApi.prototype.setEnableAdvancedFilter = function (enabled) {
-        this.gos.set('enableAdvancedFilter', enabled);
-    };
-    /**
-     * Updates the `includeHiddenColumnsInAdvancedFilter` grid option.
-     * By default hidden columns are excluded from the Advanced Filter.
-     * Set to `true` to include them.
-     */
-    GridApi.prototype.setIncludeHiddenColumnsInAdvancedFilter = function (value) {
-        this.gos.set('includeHiddenColumnsInAdvancedFilter', value);
-    };
-    /**
-     * DOM element to use as the parent for the Advanced Filter, to allow it to appear outside of the grid.
-     * Set to `null` to appear inside the grid.
-     */
-    GridApi.prototype.setAdvancedFilterParent = function (advancedFilterParent) {
-        this.gos.set('advancedFilterParent', advancedFilterParent);
     };
     /**
      * Set all of the provided nodes selection state to the provided value.
@@ -577,14 +416,14 @@ var GridApi = /** @class */ (function () {
      * Returns an object containing rules matching the selected rows in the SSRM.
      *
      * If `groupSelectsChildren=false` the returned object will be flat, and will conform to IServerSideSelectionState.
-     * If `groupSelectsChildren=true` the retuned object will be hierarchical, and will conform to IServerSideGroupSelectionState.
+     * If `groupSelectsChildren=true` the returned object will be hierarchical, and will conform to IServerSideGroupSelectionState.
      */
     GridApi.prototype.getServerSideSelectionState = function () {
-        if (generic_1.missing(this.serverSideRowModel)) {
+        if ((0, generic_1.missing)(this.serverSideRowModel)) {
             this.logMissingRowModel('getServerSideSelectionState', 'serverSide');
             return null;
         }
-        return this.selectionService.getServerSideSelectionState();
+        return this.selectionService.getSelectionState();
     };
     /**
      * Set the rules matching the selected rows in the SSRM.
@@ -593,11 +432,11 @@ var GridApi = /** @class */ (function () {
      * If `groupSelectsChildren=true` the param will be hierarchical, and should conform to IServerSideGroupSelectionState.
      */
     GridApi.prototype.setServerSideSelectionState = function (state) {
-        if (generic_1.missing(this.serverSideRowModel)) {
+        if ((0, generic_1.missing)(this.serverSideRowModel)) {
             this.logMissingRowModel('setServerSideSelectionState', 'serverSide');
             return;
         }
-        this.selectionService.setServerSideSelectionState(state);
+        this.selectionService.setSelectionState(state, 'api');
     };
     /**
      * Select all rows on the current page.
@@ -615,25 +454,17 @@ var GridApi = /** @class */ (function () {
         if (source === void 0) { source = 'apiSelectAllCurrentPage'; }
         this.selectionService.deselectAllRowNodes({ source: source, justCurrentPage: true });
     };
-    /**
-     * Sets columns to adjust in size to fit the grid horizontally. If inferring cell data types with custom column types
-     * and row data is provided asynchronously, the column sizing will happen asynchronously when row data is added.
-     * To always perform this synchronously, set `cellDataType = false` on the default column definition.
-     **/
-    GridApi.prototype.sizeColumnsToFit = function (params) {
-        this.gridBodyCtrl.sizeColumnsToFit(params);
-    };
     /** Show the 'loading' overlay. */
     GridApi.prototype.showLoadingOverlay = function () {
-        this.overlayWrapperComp.showLoadingOverlay();
+        this.overlayService.showLoadingOverlay();
     };
     /** Show the 'no rows' overlay. */
     GridApi.prototype.showNoRowsOverlay = function () {
-        this.overlayWrapperComp.showNoRowsOverlay();
+        this.overlayService.showNoRowsOverlay();
     };
     /** Hides the overlay if showing. */
     GridApi.prototype.hideOverlay = function () {
-        this.overlayWrapperComp.hideOverlay();
+        this.overlayService.hideOverlay();
     };
     /**
      * Returns an unsorted list of selected nodes.
@@ -653,7 +484,7 @@ var GridApi = /** @class */ (function () {
      * Designed for use with `'children'` as the group selection type, where groups don't actually appear in the selection normally.
      */
     GridApi.prototype.getBestCostNodeSelection = function () {
-        if (generic_1.missing(this.clientSideRowModel)) {
+        if ((0, generic_1.missing)(this.clientSideRowModel)) {
             this.logMissingRowModel('getBestCostNodeSelection', 'clientSide');
             return;
         }
@@ -676,8 +507,9 @@ var GridApi = /** @class */ (function () {
      * - `end` - Scrolls the column to the end of the viewport.
     */
     GridApi.prototype.ensureColumnVisible = function (key, position) {
+        var _this = this;
         if (position === void 0) { position = 'auto'; }
-        this.gridBodyCtrl.getScrollFeature().ensureColumnVisible(key, position);
+        this.frameworkOverrides.wrapIncoming(function () { return _this.gridBodyCtrl.getScrollFeature().ensureColumnVisible(key, position); }, 'ensureVisible');
     };
     /**
      * Vertically scrolls the grid until the provided row index is inside the visible viewport.
@@ -685,7 +517,8 @@ var GridApi = /** @class */ (function () {
      * This will have no effect before the firstDataRendered event has fired.
      */
     GridApi.prototype.ensureIndexVisible = function (index, position) {
-        this.gridBodyCtrl.getScrollFeature().ensureIndexVisible(index, position);
+        var _this = this;
+        this.frameworkOverrides.wrapIncoming(function () { return _this.gridBodyCtrl.getScrollFeature().ensureIndexVisible(index, position); }, 'ensureVisible');
     };
     /**
      * Vertically scrolls the grid until the provided row (or a row matching the provided comparator) is inside the visible viewport.
@@ -693,8 +526,9 @@ var GridApi = /** @class */ (function () {
      * This will have no effect before the firstDataRendered event has fired.
      */
     GridApi.prototype.ensureNodeVisible = function (nodeSelector, position) {
+        var _this = this;
         if (position === void 0) { position = null; }
-        this.gridBodyCtrl.getScrollFeature().ensureNodeVisible(nodeSelector, position);
+        this.frameworkOverrides.wrapIncoming(function () { return _this.gridBodyCtrl.getScrollFeature().ensureNodeVisible(nodeSelector, position); }, 'ensureVisible');
     };
     /**
      * Similar to `forEachNode`, except lists all the leaf nodes.
@@ -703,7 +537,7 @@ var GridApi = /** @class */ (function () {
      * but excluding groups the grid created where gaps were missing in the hierarchy.
      */
     GridApi.prototype.forEachLeafNode = function (callback) {
-        if (generic_1.missing(this.clientSideRowModel)) {
+        if ((0, generic_1.missing)(this.clientSideRowModel)) {
             this.logMissingRowModel('forEachLeafNode', 'clientSide');
             return;
         }
@@ -720,7 +554,7 @@ var GridApi = /** @class */ (function () {
     };
     /** Similar to `forEachNode`, except skips any filtered out data. */
     GridApi.prototype.forEachNodeAfterFilter = function (callback) {
-        if (generic_1.missing(this.clientSideRowModel)) {
+        if ((0, generic_1.missing)(this.clientSideRowModel)) {
             this.logMissingRowModel('forEachNodeAfterFilter', 'clientSide');
             return;
         }
@@ -728,19 +562,27 @@ var GridApi = /** @class */ (function () {
     };
     /** Similar to `forEachNodeAfterFilter`, except the callbacks are called in the order the rows are displayed in the grid. */
     GridApi.prototype.forEachNodeAfterFilterAndSort = function (callback) {
-        if (generic_1.missing(this.clientSideRowModel)) {
+        if ((0, generic_1.missing)(this.clientSideRowModel)) {
             this.logMissingRowModel('forEachNodeAfterFilterAndSort', 'clientSide');
             return;
         }
         this.clientSideRowModel.forEachNodeAfterFilterAndSort(callback);
     };
     /**
-     * Returns the filter component instance for a column.
-     * `key` can be a string field name or a ColDef object (matches on object reference, useful if field names are not unique).
-     * If your filter is created asynchronously, `getFilterInstance` will return `null` so you will need to use the `callback` to access the filter instance instead.
+     * @deprecated v31.1 To get/set individual filter models, use `getColumnFilterModel` or `setColumnFilterModel` instead.
+     * To get hold of the filter instance, use `getColumnFilterInstance` which returns the instance asynchronously.
      */
     GridApi.prototype.getFilterInstance = function (key, callback) {
+        (0, function_1.warnOnce)("'getFilterInstance' is deprecated. To get/set individual filter models, use 'getColumnFilterModel' or 'setColumnFilterModel' instead. To get hold of the filter instance, use 'getColumnFilterInstance' which returns the instance asynchronously.");
         return this.filterManager.getFilterInstance(key, callback);
+    };
+    /**
+     * Returns the filter component instance for a column.
+     * For getting/setting models for individual column filters, use `getColumnFilterModel` and `setColumnFilterModel` instead of this.
+     * `key` can be a column ID or a `Column` object.
+     */
+    GridApi.prototype.getColumnFilterInstance = function (key) {
+        return this.filterManager.getColumnFilterInstance(key);
     };
     /** Destroys a filter. Useful to force a particular filter to be created from scratch again. */
     GridApi.prototype.destroyFilter = function (key) {
@@ -791,11 +633,27 @@ var GridApi = /** @class */ (function () {
      * or provide cell data types for every column.
      */
     GridApi.prototype.setFilterModel = function (model) {
-        this.filterManager.setFilterModel(model);
+        var _this = this;
+        this.frameworkOverrides.wrapIncoming(function () { return _this.filterManager.setFilterModel(model); });
     };
     /** Gets the current state of all the column filters. Used for saving filter state. */
     GridApi.prototype.getFilterModel = function () {
         return this.filterManager.getFilterModel();
+    };
+    /**
+     * Gets the current filter model for the specified column.
+     * Will return `null` if no active filter.
+     */
+    GridApi.prototype.getColumnFilterModel = function (column) {
+        return this.filterManager.getColumnFilterModel(column);
+    };
+    /**
+     * Sets the filter model for the specified column.
+     * Setting a `model` of `null` will reset the filter (make inactive).
+     * Must wait on the response before calling `api.onFilterChanged()`.
+     */
+    GridApi.prototype.setColumnFilterModel = function (column, model) {
+        return this.filterManager.setColumnFilterModel(column, model);
     };
     /** Returns the focused cell (or the last focused cell if the grid lost focus). */
     GridApi.prototype.getFocusedCell = function () {
@@ -808,18 +666,6 @@ var GridApi = /** @class */ (function () {
     /** Sets the focus to the specified cell. `rowPinned` can be either 'top', 'bottom' or null (for not pinned). */
     GridApi.prototype.setFocusedCell = function (rowIndex, colKey, rowPinned) {
         this.focusService.setFocusedCell({ rowIndex: rowIndex, column: colKey, rowPinned: rowPinned, forceBrowserFocus: true });
-    };
-    /** Sets the `suppressRowDrag` property. */
-    GridApi.prototype.setSuppressRowDrag = function (value) {
-        this.gos.set('suppressRowDrag', value);
-    };
-    /** Sets the `suppressMoveWhenRowDragging` property. */
-    GridApi.prototype.setSuppressMoveWhenRowDragging = function (value) {
-        this.gos.set('suppressMoveWhenRowDragging', value);
-    };
-    /** Sets the `suppressRowClickSelection` property. */
-    GridApi.prototype.setSuppressRowClickSelection = function (value) {
-        this.gos.set('suppressRowClickSelection', value);
     };
     /** Adds a drop zone outside of the grid where rows can be dropped. */
     GridApi.prototype.addRowDropZone = function (params) {
@@ -836,264 +682,77 @@ var GridApi = /** @class */ (function () {
     GridApi.prototype.getRowDropZoneParams = function (events) {
         return this.gridBodyCtrl.getRowDragFeature().getRowDropZone(events);
     };
-    /** Sets the height in pixels for the row containing the column label header. */
-    GridApi.prototype.setHeaderHeight = function (headerHeight) {
-        this.gos.set('headerHeight', headerHeight);
-    };
-    /**
-     * Switch between layout options: `normal`, `autoHeight`, `print`.
-     * Defaults to `normal` if no domLayout provided.
-     */
-    GridApi.prototype.setDomLayout = function (domLayout) {
-        this.gos.set('domLayout', domLayout);
-    };
-    /** Sets the `enableCellTextSelection` property. */
-    GridApi.prototype.setEnableCellTextSelection = function (selectable) {
-        this.gridBodyCtrl.setCellTextSelection(selectable);
-    };
-    /** Sets the preferred direction for the selection fill handle. */
-    GridApi.prototype.setFillHandleDirection = function (direction) {
-        this.gos.set('fillHandleDirection', direction);
-    };
-    /** Sets the height in pixels for the rows containing header column groups. */
-    GridApi.prototype.setGroupHeaderHeight = function (headerHeight) {
-        this.gos.set('groupHeaderHeight', headerHeight);
-    };
-    /** Sets the height in pixels for the row containing the floating filters. */
-    GridApi.prototype.setFloatingFiltersHeight = function (headerHeight) {
-        this.gos.set('floatingFiltersHeight', headerHeight);
-    };
-    /** Sets the height in pixels for the row containing the columns when in pivot mode. */
-    GridApi.prototype.setPivotHeaderHeight = function (headerHeight) {
-        this.gos.set('pivotHeaderHeight', headerHeight);
-    };
-    /** Sets the height in pixels for the row containing header column groups when in pivot mode. */
-    GridApi.prototype.setPivotGroupHeaderHeight = function (headerHeight) {
-        this.gos.set('pivotGroupHeaderHeight', headerHeight);
-    };
-    GridApi.prototype.setPivotMode = function (pivotMode) {
-        this.columnModel.setPivotMode(pivotMode);
-    };
-    GridApi.prototype.setAnimateRows = function (animateRows) {
-        this.gos.set('animateRows', animateRows);
-    };
-    GridApi.prototype.setIsExternalFilterPresent = function (isExternalFilterPresentFunc) {
-        this.gos.set('isExternalFilterPresent', isExternalFilterPresentFunc);
-    };
-    GridApi.prototype.setDoesExternalFilterPass = function (doesExternalFilterPassFunc) {
-        this.gos.set('doesExternalFilterPass', doesExternalFilterPassFunc);
-    };
-    GridApi.prototype.setNavigateToNextCell = function (navigateToNextCellFunc) {
-        this.gos.set('navigateToNextCell', navigateToNextCellFunc);
-    };
-    GridApi.prototype.setTabToNextCell = function (tabToNextCellFunc) {
-        this.gos.set('tabToNextCell', tabToNextCellFunc);
-    };
-    GridApi.prototype.setTabToNextHeader = function (tabToNextHeaderFunc) {
-        this.gos.set('tabToNextHeader', tabToNextHeaderFunc);
-    };
-    GridApi.prototype.setNavigateToNextHeader = function (navigateToNextHeaderFunc) {
-        this.gos.set('navigateToNextHeader', navigateToNextHeaderFunc);
-    };
-    GridApi.prototype.setRowGroupPanelShow = function (rowGroupPanelShow) {
-        this.gos.set('rowGroupPanelShow', rowGroupPanelShow);
-    };
-    GridApi.prototype.setGetGroupRowAgg = function (getGroupRowAggFunc) {
-        this.gos.set('getGroupRowAgg', getGroupRowAggFunc);
-    };
-    GridApi.prototype.setGetBusinessKeyForNode = function (getBusinessKeyForNodeFunc) {
-        this.gos.set('getBusinessKeyForNode', getBusinessKeyForNodeFunc);
-    };
-    GridApi.prototype.setGetChildCount = function (getChildCountFunc) {
-        this.gos.set('getChildCount', getChildCountFunc);
-    };
-    GridApi.prototype.setProcessRowPostCreate = function (processRowPostCreateFunc) {
-        this.gos.set('processRowPostCreate', processRowPostCreateFunc);
-    };
-    GridApi.prototype.setGetRowId = function (getRowIdFunc) {
-        this.gos.set('getRowId', getRowIdFunc);
-    };
-    GridApi.prototype.setGetRowClass = function (rowClassFunc) {
-        this.gos.set('getRowClass', rowClassFunc);
-    };
-    GridApi.prototype.setIsFullWidthRow = function (isFullWidthRowFunc) {
-        this.gos.set('isFullWidthRow', isFullWidthRowFunc);
-    };
-    GridApi.prototype.setIsRowSelectable = function (isRowSelectableFunc) {
-        this.gos.set('isRowSelectable', isRowSelectableFunc);
-    };
-    GridApi.prototype.setIsRowMaster = function (isRowMasterFunc) {
-        this.gos.set('isRowMaster', isRowMasterFunc);
-    };
-    GridApi.prototype.setPostSortRows = function (postSortRowsFunc) {
-        this.gos.set('postSortRows', postSortRowsFunc);
-    };
-    GridApi.prototype.setGetDocument = function (getDocumentFunc) {
-        this.gos.set('getDocument', getDocumentFunc);
-    };
-    GridApi.prototype.setGetContextMenuItems = function (getContextMenuItemsFunc) {
-        this.gos.set('getContextMenuItems', getContextMenuItemsFunc);
-    };
-    GridApi.prototype.setGetMainMenuItems = function (getMainMenuItemsFunc) {
-        this.gos.set('getMainMenuItems', getMainMenuItemsFunc);
-    };
-    GridApi.prototype.setProcessCellForClipboard = function (processCellForClipboardFunc) {
-        this.gos.set('processCellForClipboard', processCellForClipboardFunc);
-    };
-    GridApi.prototype.setSendToClipboard = function (sendToClipboardFunc) {
-        this.gos.set('sendToClipboard', sendToClipboardFunc);
-    };
-    GridApi.prototype.setProcessCellFromClipboard = function (processCellFromClipboardFunc) {
-        this.gos.set('processCellFromClipboard', processCellFromClipboardFunc);
-    };
-    /** @deprecated v28 use `setProcessPivotResultColDef` instead */
-    GridApi.prototype.setProcessSecondaryColDef = function (processSecondaryColDefFunc) {
-        gridOptionsValidator_1.logDeprecation('28.0', 'setProcessSecondaryColDef', 'setProcessPivotResultColDef');
-        this.setProcessPivotResultColDef(processSecondaryColDefFunc);
-    };
-    /** @deprecated v28 use `setProcessPivotResultColGroupDef` instead */
-    GridApi.prototype.setProcessSecondaryColGroupDef = function (processSecondaryColGroupDefFunc) {
-        gridOptionsValidator_1.logDeprecation('28.0', 'setProcessSecondaryColGroupDef', 'setProcessPivotResultColGroupDef');
-        this.setProcessPivotResultColGroupDef(processSecondaryColGroupDefFunc);
-    };
-    GridApi.prototype.setProcessPivotResultColDef = function (processPivotResultColDefFunc) {
-        this.gos.set('processPivotResultColDef', processPivotResultColDefFunc);
-    };
-    GridApi.prototype.setProcessPivotResultColGroupDef = function (processPivotResultColGroupDefFunc) {
-        this.gos.set('processPivotResultColGroupDef', processPivotResultColGroupDefFunc);
-    };
-    GridApi.prototype.setPostProcessPopup = function (postProcessPopupFunc) {
-        this.gos.set('postProcessPopup', postProcessPopupFunc);
-    };
-    GridApi.prototype.setInitialGroupOrderComparator = function (initialGroupOrderComparatorFunc) {
-        this.gos.set('initialGroupOrderComparator', initialGroupOrderComparatorFunc);
-    };
-    GridApi.prototype.setGetChartToolbarItems = function (getChartToolbarItemsFunc) {
-        this.gos.set('getChartToolbarItems', getChartToolbarItemsFunc);
-    };
-    GridApi.prototype.setPaginationNumberFormatter = function (paginationNumberFormatterFunc) {
-        this.gos.set('paginationNumberFormatter', paginationNumberFormatterFunc);
-    };
-    /** @deprecated v28 use setGetServerSideGroupLevelParams instead */
-    GridApi.prototype.setGetServerSideStoreParams = function (getServerSideStoreParamsFunc) {
-        gridOptionsValidator_1.logDeprecation('28.0', 'setGetServerSideStoreParams', 'setGetServerSideGroupLevelParams');
-        this.setGetServerSideGroupLevelParams(getServerSideStoreParamsFunc);
-    };
-    GridApi.prototype.setGetServerSideGroupLevelParams = function (getServerSideGroupLevelParamsFunc) {
-        this.gos.set('getServerSideGroupLevelParams', getServerSideGroupLevelParamsFunc);
-    };
-    GridApi.prototype.setIsServerSideGroupOpenByDefault = function (isServerSideGroupOpenByDefaultFunc) {
-        this.gos.set('isServerSideGroupOpenByDefault', isServerSideGroupOpenByDefaultFunc);
-    };
-    GridApi.prototype.setIsApplyServerSideTransaction = function (isApplyServerSideTransactionFunc) {
-        this.gos.set('isApplyServerSideTransaction', isApplyServerSideTransactionFunc);
-    };
-    GridApi.prototype.setIsServerSideGroup = function (isServerSideGroupFunc) {
-        this.gos.set('isServerSideGroup', isServerSideGroupFunc);
-    };
-    GridApi.prototype.setGetServerSideGroupKey = function (getServerSideGroupKeyFunc) {
-        this.gos.set('getServerSideGroupKey', getServerSideGroupKeyFunc);
-    };
-    GridApi.prototype.setGetRowStyle = function (rowStyleFunc) {
-        this.gos.set('getRowStyle', rowStyleFunc);
-    };
-    GridApi.prototype.setGetRowHeight = function (rowHeightFunc) {
-        this.gos.set('getRowHeight', rowHeightFunc);
-    };
     GridApi.prototype.assertSideBarLoaded = function (apiMethod) {
         return moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.SideBarModule, 'api.' + apiMethod, this.context.getGridId());
     };
     /** Returns `true` if the side bar is visible. */
     GridApi.prototype.isSideBarVisible = function () {
-        return this.assertSideBarLoaded('isSideBarVisible') && this.sideBarComp.isDisplayed();
+        return this.assertSideBarLoaded('isSideBarVisible') && this.sideBarService.getSideBarComp().isDisplayed();
     };
     /** Show/hide the entire side bar, including any visible panel and the tab buttons. */
     GridApi.prototype.setSideBarVisible = function (show) {
         if (this.assertSideBarLoaded('setSideBarVisible')) {
-            this.sideBarComp.setDisplayed(show);
+            this.sideBarService.getSideBarComp().setDisplayed(show);
         }
     };
     /** Sets the side bar position relative to the grid. Possible values are `'left'` or `'right'`. */
     GridApi.prototype.setSideBarPosition = function (position) {
         if (this.assertSideBarLoaded('setSideBarPosition')) {
-            this.sideBarComp.setSideBarPosition(position);
+            this.sideBarService.getSideBarComp().setSideBarPosition(position);
         }
     };
     /** Opens a particular tool panel. Provide the ID of the tool panel to open. */
     GridApi.prototype.openToolPanel = function (key) {
         if (this.assertSideBarLoaded('openToolPanel')) {
-            this.sideBarComp.openToolPanel(key, 'api');
+            this.sideBarService.getSideBarComp().openToolPanel(key, 'api');
         }
     };
     /** Closes the currently open tool panel (if any). */
     GridApi.prototype.closeToolPanel = function () {
         if (this.assertSideBarLoaded('closeToolPanel')) {
-            this.sideBarComp.close('api');
+            this.sideBarService.getSideBarComp().close('api');
         }
     };
     /** Returns the ID of the currently shown tool panel if any, otherwise `null`. */
     GridApi.prototype.getOpenedToolPanel = function () {
         if (this.assertSideBarLoaded('getOpenedToolPanel')) {
-            return this.sideBarComp.openedItem();
+            return this.sideBarService.getSideBarComp().openedItem();
         }
         return null;
     };
     /** Force refresh all tool panels by calling their `refresh` method. */
     GridApi.prototype.refreshToolPanel = function () {
         if (this.assertSideBarLoaded('refreshToolPanel')) {
-            this.sideBarComp.refresh();
+            this.sideBarService.getSideBarComp().refresh();
         }
     };
     /** Returns `true` if the tool panel is showing, otherwise `false`. */
     GridApi.prototype.isToolPanelShowing = function () {
-        return this.assertSideBarLoaded('isToolPanelShowing') && this.sideBarComp.isToolPanelShowing();
+        return this.assertSideBarLoaded('isToolPanelShowing') && this.sideBarService.getSideBarComp().isToolPanelShowing();
     };
     /** Gets the tool panel instance corresponding to the supplied `id`. */
     GridApi.prototype.getToolPanelInstance = function (id) {
         if (this.assertSideBarLoaded('getToolPanelInstance')) {
-            var comp = this.sideBarComp.getToolPanelInstance(id);
+            var comp = this.sideBarService.getSideBarComp().getToolPanelInstance(id);
             return unwrapUserComp(comp);
         }
     };
     /** Returns the current side bar configuration. If a shortcut was used, returns the detailed long form. */
     GridApi.prototype.getSideBar = function () {
         if (this.assertSideBarLoaded('getSideBar')) {
-            return this.sideBarComp.getDef();
+            return this.sideBarService.getSideBarComp().getDef();
         }
         return undefined;
     };
-    /** Resets the side bar to the provided configuration. The parameter is the same as the sideBar grid property. The side bar is re-created from scratch with the new config. */
-    GridApi.prototype.setSideBar = function (def) {
-        this.gos.set('sideBar', def);
-    };
-    GridApi.prototype.setSuppressClipboardPaste = function (value) {
-        this.gos.set('suppressClipboardPaste', value);
-    };
     /** Tells the grid to recalculate the row heights. */
     GridApi.prototype.resetRowHeights = function () {
-        if (generic_1.exists(this.clientSideRowModel)) {
+        if ((0, generic_1.exists)(this.clientSideRowModel)) {
             if (this.columnModel.isAutoRowHeightActive()) {
                 console.warn('AG Grid: calling gridApi.resetRowHeights() makes no sense when using Auto Row Height.');
                 return;
             }
             this.clientSideRowModel.resetRowHeights();
         }
-    };
-    GridApi.prototype.setGroupRemoveSingleChildren = function (value) {
-        this.gos.set('groupRemoveSingleChildren', value);
-    };
-    GridApi.prototype.setGroupRemoveLowestSingleChildren = function (value) {
-        this.gos.set('groupRemoveLowestSingleChildren', value);
-    };
-    GridApi.prototype.setGroupDisplayType = function (value) {
-        this.gos.set('groupDisplayType', value);
-    };
-    GridApi.prototype.setRowClass = function (className) {
-        this.gos.set('rowClass', className);
-    };
-    /** Sets the `deltaSort` property */
-    GridApi.prototype.setDeltaSort = function (enable) {
-        this.gos.set('deltaSort', enable);
     };
     /**
      * Sets the `rowCount` and `maxRowFound` properties.
@@ -1132,44 +791,55 @@ var GridApi = /** @class */ (function () {
      */
     GridApi.prototype.getValue = function (colKey, rowNode) {
         var column = this.columnModel.getPrimaryColumn(colKey);
-        if (generic_1.missing(column)) {
+        if ((0, generic_1.missing)(column)) {
             column = this.columnModel.getGridColumn(colKey);
         }
-        if (generic_1.missing(column)) {
+        if ((0, generic_1.missing)(column)) {
             return null;
         }
         return this.valueService.getValue(column, rowNode);
     };
-    /** Add an event listener for the specified `eventType`. Works similar to `addEventListener` for a browser DOM element. */
+    /**
+     * Add an event listener for the specified `eventType`.
+     * Works similar to `addEventListener` for a browser DOM element.
+     * Listeners will be automatically removed when the grid is destroyed.
+     */
     GridApi.prototype.addEventListener = function (eventType, listener) {
-        var async = this.gos.useAsyncEvents();
-        this.eventService.addEventListener(eventType, listener, async);
+        this.apiEventService.addEventListener(eventType, listener);
     };
-    /** Add an event listener for all event types coming from the grid. */
+    /**
+     * Add an event listener for all event types coming from the grid.
+     * Listeners will be automatically removed when the grid is destroyed.
+     */
     GridApi.prototype.addGlobalListener = function (listener) {
-        var async = this.gos.useAsyncEvents();
-        this.eventService.addGlobalListener(listener, async);
+        this.apiEventService.addGlobalListener(listener);
     };
     /** Remove an event listener. */
     GridApi.prototype.removeEventListener = function (eventType, listener) {
-        var async = this.gos.useAsyncEvents();
-        this.eventService.removeEventListener(eventType, listener, async);
+        this.apiEventService.removeEventListener(eventType, listener);
     };
     /** Remove a global event listener. */
     GridApi.prototype.removeGlobalListener = function (listener) {
-        var async = this.gos.useAsyncEvents();
-        this.eventService.removeGlobalListener(listener, async);
+        this.apiEventService.removeGlobalListener(listener);
     };
     GridApi.prototype.dispatchEvent = function (event) {
         this.eventService.dispatchEvent(event);
     };
     /** Will destroy the grid and release resources. If you are using a framework you do not need to call this, as the grid links in with the framework lifecycle. However if you are using Web Components or native JavaScript, you do need to call this, to avoid a memory leak in your application. */
     GridApi.prototype.destroy = function () {
+        // Get framework link before this is destroyed
+        var preDestroyLink = "See ".concat(this.frameworkOverrides.getDocLink('grid-lifecycle/#grid-pre-destroyed'));
         // this is needed as GridAPI is a bean, and GridAPI.destroy() is called as part
         // of context.destroy(). so we need to stop the infinite loop.
         if (this.destroyCalled) {
             return;
         }
+        var event = {
+            type: eventKeys_1.Events.EVENT_GRID_PRE_DESTROYED,
+            state: this.getState()
+        };
+        this.dispatchEvent(event);
+        // Set after pre-destroy so user can still use the api in pre-destroy event and it is not marked as destroyed yet.
         this.destroyCalled = true;
         // destroy the UI first (as they use the services)
         var gridCtrl = this.ctrlsService.getGridCtrl();
@@ -1178,27 +848,17 @@ var GridApi = /** @class */ (function () {
         }
         // destroy the services
         this.context.destroy();
-    };
-    GridApi.prototype.cleanDownReferencesToAvoidMemoryLeakInCaseApplicationIsKeepingReferenceToDestroyedGrid = function () {
         // some users were raising support issues with regards memory leaks. the problem was the customers applications
         // were keeping references to the API. trying to educate them all would be difficult, easier to just remove
         // all references in the API so at least the core grid can be garbage collected.
-        //
-        // wait about 100ms before clearing down the references, in case user has some cleanup to do,
-        // and needs to deference the API first
-        setTimeout(object_1.removeAllReferences.bind(window, this, 'Grid API'), 100);
+        (0, object_1.removeAllReferences)(this, ['isDestroyed'], preDestroyLink);
     };
-    GridApi.prototype.warnIfDestroyed = function (methodName) {
-        if (this.destroyCalled) {
-            console.warn("AG Grid: Grid API method " + methodName + " was called on a grid that was destroyed.");
-        }
+    /** Returns `true` if the grid has been destroyed. */
+    GridApi.prototype.isDestroyed = function () {
         return this.destroyCalled;
     };
     /** Reset the Quick Filter cache text on every rowNode. */
     GridApi.prototype.resetQuickFilter = function () {
-        if (this.warnIfDestroyed('resetQuickFilter')) {
-            return;
-        }
         this.filterManager.resetQuickFilterCache();
     };
     /** Returns the list of selected cell ranges. */
@@ -1240,139 +900,166 @@ var GridApi = /** @class */ (function () {
     GridApi.prototype.getCurrentRedoSize = function () {
         return this.undoRedoService.getCurrentRedoStackSize();
     };
+    GridApi.prototype.assertChart = function (methodName, func) {
+        if (moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.GridChartsModule, 'api.' + methodName, this.context.getGridId())) {
+            return this.frameworkOverrides.wrapIncoming(function () { return func(); });
+        }
+    };
     /** Returns a list of models with information about the charts that are currently rendered from the grid. */
     GridApi.prototype.getChartModels = function () {
-        if (moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.GridChartsModule, 'api.getChartModels', this.context.getGridId())) {
-            return this.chartService.getChartModels();
-        }
+        var _this = this;
+        return this.assertChart('getChartModels', function () { return _this.chartService.getChartModels(); });
     };
     /** Returns the `ChartRef` using the supplied `chartId`. */
     GridApi.prototype.getChartRef = function (chartId) {
-        if (moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.GridChartsModule, 'api.getChartRef', this.context.getGridId())) {
-            return this.chartService.getChartRef(chartId);
-        }
+        var _this = this;
+        return this.assertChart('getChartRef', function () { return _this.chartService.getChartRef(chartId); });
     };
     /** Returns a base64-encoded image data URL for the referenced chartId. */
     GridApi.prototype.getChartImageDataURL = function (params) {
-        if (moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.GridChartsModule, 'api.getChartImageDataURL', this.context.getGridId())) {
-            return this.chartService.getChartImageDataURL(params);
-        }
+        var _this = this;
+        return this.assertChart('getChartImageDataURL', function () { return _this.chartService.getChartImageDataURL(params); });
     };
     /** Starts a browser-based image download for the referenced chartId. */
     GridApi.prototype.downloadChart = function (params) {
-        if (moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.GridChartsModule, 'api.downloadChart', this.context.getGridId())) {
-            return this.chartService.downloadChart(params);
-        }
+        var _this = this;
+        return this.assertChart('downloadChart', function () { return _this.chartService.downloadChart(params); });
     };
     /** Open the Chart Tool Panel. */
     GridApi.prototype.openChartToolPanel = function (params) {
-        if (moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.GridChartsModule, 'api.openChartToolPanel', this.context.getGridId())) {
-            return this.chartService.openChartToolPanel(params);
-        }
+        var _this = this;
+        return this.assertChart('openChartToolPanel', function () { return _this.chartService.openChartToolPanel(params); });
     };
     /** Close the Chart Tool Panel. */
     GridApi.prototype.closeChartToolPanel = function (params) {
-        if (moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.GridChartsModule, 'api.closeChartToolPanel', this.context.getGridId())) {
-            return this.chartService.closeChartToolPanel(params.chartId);
-        }
+        var _this = this;
+        return this.assertChart('closeChartToolPanel', function () { return _this.chartService.closeChartToolPanel(params.chartId); });
     };
     /** Used to programmatically create charts from a range. */
     GridApi.prototype.createRangeChart = function (params) {
-        if (moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.GridChartsModule, 'api.createRangeChart', this.context.getGridId())) {
-            return this.chartService.createRangeChart(params);
-        }
+        var _this = this;
+        return this.assertChart('createRangeChart', function () { return _this.chartService.createRangeChart(params); });
     };
     /** Used to programmatically create pivot charts from a grid. */
     GridApi.prototype.createPivotChart = function (params) {
-        if (moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.GridChartsModule, 'api.createPivotChart', this.context.getGridId())) {
-            return this.chartService.createPivotChart(params);
-        }
+        var _this = this;
+        return this.assertChart('createPivotChart', function () { return _this.chartService.createPivotChart(params); });
     };
     /** Used to programmatically create cross filter charts from a range. */
     GridApi.prototype.createCrossFilterChart = function (params) {
-        if (moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.GridChartsModule, 'api.createCrossFilterChart', this.context.getGridId())) {
-            return this.chartService.createCrossFilterChart(params);
-        }
+        var _this = this;
+        return this.assertChart('createCrossFilterChart', function () { return _this.chartService.createCrossFilterChart(params); });
     };
     /** Used to programmatically update a chart. */
     GridApi.prototype.updateChart = function (params) {
-        if (moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.GridChartsModule, 'api.updateChart', this.context.getGridId())) {
-            this.chartService.updateChart(params);
-        }
+        var _this = this;
+        return this.assertChart('updateChart', function () { return _this.chartService.updateChart(params); });
     };
     /** Restores a chart using the `ChartModel` that was previously obtained from `getChartModels()`. */
     GridApi.prototype.restoreChart = function (chartModel, chartContainer) {
-        if (moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.GridChartsModule, 'api.restoreChart', this.context.getGridId())) {
-            return this.chartService.restoreChart(chartModel, chartContainer);
+        var _this = this;
+        return this.assertChart('restoreChart', function () { return _this.chartService.restoreChart(chartModel, chartContainer); });
+    };
+    GridApi.prototype.assertClipboard = function (methodName, func) {
+        if (moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.ClipboardModule, 'api' + methodName, this.context.getGridId())) {
+            func();
         }
     };
     /** Copies data to clipboard by following the same rules as pressing Ctrl+C. */
     GridApi.prototype.copyToClipboard = function (params) {
-        if (moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.ClipboardModule, 'api.copyToClipboard', this.context.getGridId())) {
-            this.clipboardService.copyToClipboard(params);
-        }
+        var _this = this;
+        this.assertClipboard('copyToClipboard', function () { return _this.clipboardService.copyToClipboard(params); });
     };
     /** Cuts data to clipboard by following the same rules as pressing Ctrl+X. */
     GridApi.prototype.cutToClipboard = function (params) {
-        if (moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.ClipboardModule, 'api.cutToClipboard', this.context.getGridId())) {
-            this.clipboardService.cutToClipboard(params, 'api');
-        }
+        var _this = this;
+        this.assertClipboard('cutToClipboard', function () { return _this.clipboardService.cutToClipboard(params); });
     };
     /** Copies the selected rows to the clipboard. */
     GridApi.prototype.copySelectedRowsToClipboard = function (params) {
-        if (moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.ClipboardModule, 'api.copySelectedRowsToClipboard', this.context.getGridId())) {
-            this.clipboardService.copySelectedRowsToClipboard(params);
-        }
+        var _this = this;
+        this.assertClipboard('copySelectedRowsToClipboard', function () { return _this.clipboardService.copySelectedRowsToClipboard(params); });
     };
     /** Copies the selected ranges to the clipboard. */
     GridApi.prototype.copySelectedRangeToClipboard = function (params) {
-        if (moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.ClipboardModule, 'api.copySelectedRangeToClipboard', this.context.getGridId())) {
-            this.clipboardService.copySelectedRangeToClipboard(params);
-        }
+        var _this = this;
+        this.assertClipboard('copySelectedRangeToClipboard', function () { return _this.clipboardService.copySelectedRangeToClipboard(params); });
     };
     /** Copies the selected range down, similar to `Ctrl + D` in Excel. */
     GridApi.prototype.copySelectedRangeDown = function () {
-        if (moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.ClipboardModule, 'api.copySelectedRangeDown', this.context.getGridId())) {
-            this.clipboardService.copyRangeDown();
-        }
+        var _this = this;
+        this.assertClipboard('copySelectedRangeDown', function () { return _this.clipboardService.copyRangeDown(); });
     };
     /** Pastes the data from the Clipboard into the focused cell of the grid. If no grid cell is focused, calling this method has no effect. */
     GridApi.prototype.pasteFromClipboard = function () {
-        if (moduleRegistry_1.ModuleRegistry.__assertRegistered(moduleNames_1.ModuleNames.ClipboardModule, 'api.pasteFromClipboard', this.context.getGridId())) {
-            this.clipboardService.pasteFromClipboard();
-        }
+        var _this = this;
+        this.assertClipboard('pasteFromClipboard', function () { return _this.clipboardService.pasteFromClipboard(); });
     };
-    /** Shows the column menu after and positions it relative to the provided button element. Use in conjunction with your own header template. */
+    /** @deprecated v31.1 Use `IHeaderParams.showColumnMenu` within a header component, or `api.showColumnMenu` elsewhere. */
     GridApi.prototype.showColumnMenuAfterButtonClick = function (colKey, buttonElement) {
+        (0, function_1.warnOnce)("'showColumnMenuAfterButtonClick' is deprecated. Use 'IHeaderParams.showColumnMenu' within a header component, or 'api.showColumnMenu' elsewhere.");
         // use grid column so works with pivot mode
         var column = this.columnModel.getGridColumn(colKey);
-        this.menuFactory.showMenuAfterButtonClick(column, buttonElement, 'columnMenu');
+        this.menuService.showColumnMenu({
+            column: column,
+            buttonElement: buttonElement,
+            positionBy: 'button'
+        });
     };
-    /** Shows the column menu after and positions it relative to the mouse event. Use in conjunction with your own header template. */
+    /** @deprecated v31.1 Use `IHeaderParams.showColumnMenuAfterMouseClick` within a header component, or `api.showColumnMenu` elsewhere. */
     GridApi.prototype.showColumnMenuAfterMouseClick = function (colKey, mouseEvent) {
+        (0, function_1.warnOnce)("'showColumnMenuAfterMouseClick' is deprecated. Use 'IHeaderParams.showColumnMenuAfterMouseClick' within a header component, or 'api.showColumnMenu' elsewhere.");
         // use grid column so works with pivot mode
         var column = this.columnModel.getGridColumn(colKey);
         if (!column) {
             column = this.columnModel.getPrimaryColumn(colKey);
         }
         if (!column) {
-            console.error("AG Grid: column '" + colKey + "' not found");
+            console.error("AG Grid: column '".concat(colKey, "' not found"));
             return;
         }
-        this.menuFactory.showMenuAfterMouseEvent(column, mouseEvent);
+        this.menuService.showColumnMenu({
+            column: column,
+            mouseEvent: mouseEvent,
+            positionBy: 'mouse'
+        });
+    };
+    /** Show the column chooser. */
+    GridApi.prototype.showColumnChooser = function (params) {
+        this.menuService.showColumnChooser({ chooserParams: params });
+    };
+    /** Show the filter for the provided column. */
+    GridApi.prototype.showColumnFilter = function (colKey) {
+        var column = this.columnModel.getGridColumn(colKey);
+        if (!column) {
+            console.error("AG Grid: column '".concat(colKey, "' not found"));
+            return;
+        }
+        this.menuService.showFilterMenu({
+            column: column,
+            containerType: 'columnFilter',
+            positionBy: 'auto'
+        });
+    };
+    /** Show the column menu for the provided column. */
+    GridApi.prototype.showColumnMenu = function (colKey) {
+        var column = this.columnModel.getGridColumn(colKey);
+        if (!column) {
+            console.error("AG Grid: column '".concat(colKey, "' not found"));
+            return;
+        }
+        this.menuService.showColumnMenu({
+            column: column,
+            positionBy: 'auto'
+        });
     };
     /** Hides any visible context menu or column menu. */
     GridApi.prototype.hidePopupMenu = function () {
-        // hide the context menu if in enterprise
-        if (this.contextMenuFactory) {
-            this.contextMenuFactory.hideActiveMenu();
-        }
-        // and hide the column menu always
-        this.menuFactory.hideActiveMenu();
+        this.menuService.hidePopupMenu();
     };
-    /** DOM element to use as the popup parent for grid popups (context menu, column menu etc). */
-    GridApi.prototype.setPopupParent = function (ePopupParent) {
-        this.gos.set('popupParent', ePopupParent);
+    /** Hide the column chooser if visible. */
+    GridApi.prototype.hideColumnChooser = function () {
+        this.menuService.hideColumnChooser();
     };
     /** Navigates the grid focus to the next cell, as if tabbing. */
     GridApi.prototype.tabToNextCell = function (event) {
@@ -1409,7 +1096,7 @@ var GridApi = /** @class */ (function () {
     GridApi.prototype.startEditingCell = function (params) {
         var column = this.columnModel.getGridColumn(params.colKey);
         if (!column) {
-            console.warn("AG Grid: no column found for " + params.colKey);
+            console.warn("AG Grid: no column found for ".concat(params.colKey));
             return;
         }
         var cellPosition = {
@@ -1419,8 +1106,9 @@ var GridApi = /** @class */ (function () {
         };
         var notPinned = params.rowPinned == null;
         if (notPinned) {
-            this.gridBodyCtrl.getScrollFeature().ensureIndexVisible(params.rowIndex);
+            this.ensureIndexVisible(params.rowIndex);
         }
+        this.ensureColumnVisible(params.colKey);
         var cell = this.navigationService.getCellByPosition(cellPosition);
         if (!cell) {
             return;
@@ -1430,10 +1118,11 @@ var GridApi = /** @class */ (function () {
         }
         cell.startRowOrCellEdit(params.key);
     };
-    /** Add an aggregation function with the specified key. */
+    /** @deprecated v31.1 addAggFunc(key, func) is  deprecated, please use addAggFuncs({ key: func }) instead. */
     GridApi.prototype.addAggFunc = function (key, aggFunc) {
+        this.logDeprecation('v31.1', 'addAggFunc(key, func)', 'addAggFuncs({ key: func })');
         if (this.aggFuncService) {
-            this.aggFuncService.addAggFunc(key, aggFunc);
+            this.aggFuncService.addAggFuncs({ key: aggFunc });
         }
     };
     /** Add aggregations function with the specified keys. */
@@ -1464,6 +1153,25 @@ var GridApi = /** @class */ (function () {
         }
         return this.serverSideTransactionManager.applyTransactionAsync(transaction, callback);
     };
+    /**
+     * Applies row data to a server side store.
+     * New rows will overwrite rows at the same index in the same way as if provided by a datasource success callback.
+    */
+    GridApi.prototype.applyServerSideRowData = function (params) {
+        var _a, _b;
+        var startRow = (_a = params.startRow) !== null && _a !== void 0 ? _a : 0;
+        var route = (_b = params.route) !== null && _b !== void 0 ? _b : [];
+        if (startRow < 0) {
+            console.warn("AG Grid: invalid value ".concat(params.startRow, " for startRow, the value should be >= 0"));
+            return;
+        }
+        if (this.serverSideRowModel) {
+            this.serverSideRowModel.applyRowData(params.successParams, startRow, route);
+        }
+        else {
+            this.logMissingRowModel('setServerSideDatasource', 'serverSide');
+        }
+    };
     /** Gets all failed server side loads to retry. */
     GridApi.prototype.retryServerSideLoads = function () {
         if (!this.serverSideRowModel) {
@@ -1481,30 +1189,30 @@ var GridApi = /** @class */ (function () {
     };
     /** Update row data. Pass a transaction object with lists for `add`, `remove` and `update`. */
     GridApi.prototype.applyTransaction = function (rowDataTransaction) {
+        var _this = this;
         if (!this.clientSideRowModel) {
             this.logMissingRowModel('applyTransaction', 'clientSide');
             return;
         }
-        return this.clientSideRowModel.updateRowData(rowDataTransaction);
+        return this.frameworkOverrides.wrapIncoming(function () { return _this.clientSideRowModel.updateRowData(rowDataTransaction); });
     };
     /** Same as `applyTransaction` except executes asynchronously for efficiency. */
     GridApi.prototype.applyTransactionAsync = function (rowDataTransaction, callback) {
+        var _this = this;
         if (!this.clientSideRowModel) {
             this.logMissingRowModel('applyTransactionAsync', 'clientSide');
             return;
         }
-        this.clientSideRowModel.batchUpdateRowData(rowDataTransaction, callback);
+        this.frameworkOverrides.wrapIncoming(function () { return _this.clientSideRowModel.batchUpdateRowData(rowDataTransaction, callback); });
     };
     /** Executes any remaining asynchronous grid transactions, if any are waiting to be executed. */
     GridApi.prototype.flushAsyncTransactions = function () {
+        var _this = this;
         if (!this.clientSideRowModel) {
             this.logMissingRowModel('flushAsyncTransactions', 'clientSide');
             return;
         }
-        this.clientSideRowModel.flushAsyncTransactions();
-    };
-    GridApi.prototype.setSuppressModelUpdateAfterUpdateTransaction = function (value) {
-        this.gos.set('suppressModelUpdateAfterUpdateTransaction', value);
+        this.frameworkOverrides.wrapIncoming(function () { return _this.clientSideRowModel.flushAsyncTransactions(); });
     };
     /**
      * Marks all the currently loaded blocks in the cache for reload.
@@ -1546,16 +1254,6 @@ var GridApi = /** @class */ (function () {
         }
         this.serverSideRowModel.refreshStore(params);
     };
-    /** @deprecated v28 use `refreshServerSide` instead */
-    GridApi.prototype.refreshServerSideStore = function (params) {
-        gridOptionsValidator_1.logDeprecation('28.0', 'refreshServerSideStore', 'refreshServerSide');
-        return this.refreshServerSide(params);
-    };
-    /** @deprecated v28 use `getServerSideGroupLevelState` instead */
-    GridApi.prototype.getServerSideStoreState = function () {
-        gridOptionsValidator_1.logDeprecation('28.0', 'getServerSideStoreState', 'getServerSideGroupLevelState');
-        return this.getServerSideGroupLevelState();
-    };
     /** Returns info on all server side group levels. */
     GridApi.prototype.getServerSideGroupLevelState = function () {
         if (!this.serverSideRowModel) {
@@ -1588,12 +1286,22 @@ var GridApi = /** @class */ (function () {
     GridApi.prototype.getCacheBlockState = function () {
         return this.rowNodeBlockLoader.getBlockState();
     };
-    /** Get the index of the first displayed row due to scrolling (includes invisible rendered rows in the buffer). */
+    /** @deprecated v31.1 `getFirstDisplayedRow` is deprecated. Please use `getFirstDisplayedRowIndex` instead. */
     GridApi.prototype.getFirstDisplayedRow = function () {
+        this.logDeprecation('v31.1', 'getFirstDisplayedRow', 'getFirstDisplayedRowIndex');
+        return this.getFirstDisplayedRowIndex();
+    };
+    /** Get the index of the first displayed row due to scrolling (includes invisible rendered rows in the buffer). */
+    GridApi.prototype.getFirstDisplayedRowIndex = function () {
         return this.rowRenderer.getFirstVirtualRenderedRow();
     };
-    /** Get the index of the last displayed row due to scrolling (includes invisible rendered rows in the buffer). */
+    /** @deprecated v31.1 `getLastDisplayedRow` is deprecated. Please use `getLastDisplayedRowIndex` instead. */
     GridApi.prototype.getLastDisplayedRow = function () {
+        this.logDeprecation('v31.1', 'getLastDisplayedRow', 'getLastDisplayedRowIndex');
+        return this.getLastDisplayedRowIndex();
+    };
+    /** Get the index of the last displayed row due to scrolling (includes invisible rendered rows in the buffer). */
+    GridApi.prototype.getLastDisplayedRowIndex = function () {
         return this.rowRenderer.getLastVirtualRenderedRow();
     };
     /** Returns the displayed `RowNode` at the given `index`. */
@@ -1603,18 +1311,6 @@ var GridApi = /** @class */ (function () {
     /** Returns the total number of displayed rows. */
     GridApi.prototype.getDisplayedRowCount = function () {
         return this.rowModel.getRowCount();
-    };
-    /** Resets the data type definitions. This will update the columns in the grid. */
-    GridApi.prototype.setDataTypeDefinitions = function (dataTypeDefinitions) {
-        this.gos.set('dataTypeDefinitions', dataTypeDefinitions);
-    };
-    /**
-     * Set whether the grid paginates the data or not.
-     *  - `true` to enable pagination
-     *  - `false` to disable pagination
-     */
-    GridApi.prototype.setPagination = function (value) {
-        this.gos.set('pagination', value);
     };
     /**
      * Returns `true` when the last page is known.
@@ -1627,10 +1323,6 @@ var GridApi = /** @class */ (function () {
     /** Returns how many rows are being shown per page. */
     GridApi.prototype.paginationGetPageSize = function () {
         return this.paginationProxy.getPageSize();
-    };
-    /** Sets the `paginationPageSize`, then re-paginates the grid so the changes are applied immediately. */
-    GridApi.prototype.paginationSetPageSize = function (size) {
-        this.gos.set('paginationPageSize', size);
     };
     /** Returns the 0-based index of the page which is showing. */
     GridApi.prototype.paginationGetCurrentPage = function () {
@@ -1664,110 +1356,949 @@ var GridApi = /** @class */ (function () {
     GridApi.prototype.paginationGoToPage = function (page) {
         this.paginationProxy.goToPage(page);
     };
+    // Methods migrated from old ColumnApi
+    /**
+     * Adjusts the size of columns to fit the available horizontal space.
+     *
+     * Note: it is not recommended to call this method rapidly e.g. in response
+     * to window resize events or as the container size is animated. This can
+     * cause the scrollbar to flicker. Use column flex for smoother results.
+     *
+     * If inferring cell data types with custom column types
+     * and row data is provided asynchronously, the column sizing will happen asynchronously when row data is added.
+     * To always perform this synchronously, set `cellDataType = false` on the default column definition.
+     **/
+    GridApi.prototype.sizeColumnsToFit = function (paramsOrGridWidth) {
+        if (typeof paramsOrGridWidth === 'number') {
+            this.columnModel.sizeColumnsToFit(paramsOrGridWidth, 'api');
+        }
+        else {
+            this.gridBodyCtrl.sizeColumnsToFit(paramsOrGridWidth);
+        }
+    };
+    /** Call this if you want to open or close a column group. */
+    GridApi.prototype.setColumnGroupOpened = function (group, newValue) { this.columnModel.setColumnGroupOpened(group, newValue, 'api'); };
+    /** Returns the column group with the given name. */
+    GridApi.prototype.getColumnGroup = function (name, instanceId) { return this.columnModel.getColumnGroup(name, instanceId); };
+    /** Returns the provided column group with the given name. */
+    GridApi.prototype.getProvidedColumnGroup = function (name) { return this.columnModel.getProvidedColumnGroup(name); };
+    /** Returns the display name for a column. Useful if you are doing your own header rendering and want the grid to work out if `headerValueGetter` is used, or if you are doing your own column management GUI, to know what to show as the column name. */
+    GridApi.prototype.getDisplayNameForColumn = function (column, location) { return this.columnModel.getDisplayNameForColumn(column, location) || ''; };
+    /** Returns the display name for a column group (when grouping columns). */
+    GridApi.prototype.getDisplayNameForColumnGroup = function (columnGroup, location) { return this.columnModel.getDisplayNameForColumnGroup(columnGroup, location) || ''; };
+    /** Returns the column with the given `colKey`, which can either be the `colId` (a string) or the `colDef` (an object). */
+    GridApi.prototype.getColumn = function (key) { return this.columnModel.getPrimaryColumn(key); };
+    /** Returns all the columns, regardless of visible or not. */
+    GridApi.prototype.getColumns = function () { return this.columnModel.getAllPrimaryColumns(); };
+    /** Applies the state of the columns from a previous state. Returns `false` if one or more columns could not be found. */
+    GridApi.prototype.applyColumnState = function (params) { return this.columnModel.applyColumnState(params, 'api'); };
+    /** Gets the state of the columns. Typically used when saving column state. */
+    GridApi.prototype.getColumnState = function () { return this.columnModel.getColumnState(); };
+    /** Sets the state back to match the originally provided column definitions. */
+    GridApi.prototype.resetColumnState = function () { this.columnModel.resetColumnState('api'); };
+    /** Gets the state of the column groups. Typically used when saving column group state. */
+    GridApi.prototype.getColumnGroupState = function () { return this.columnModel.getColumnGroupState(); };
+    /** Sets the state of the column group state from a previous state. */
+    GridApi.prototype.setColumnGroupState = function (stateItems) { this.columnModel.setColumnGroupState(stateItems, 'api'); };
+    /** Sets the state back to match the originally provided column definitions. */
+    GridApi.prototype.resetColumnGroupState = function () { this.columnModel.resetColumnGroupState('api'); };
+    /** Returns `true` if pinning left or right, otherwise `false`. */
+    GridApi.prototype.isPinning = function () { return this.columnModel.isPinningLeft() || this.columnModel.isPinningRight(); };
+    /** Returns `true` if pinning left, otherwise `false`. */
+    GridApi.prototype.isPinningLeft = function () { return this.columnModel.isPinningLeft(); };
+    /** Returns `true` if pinning right, otherwise `false`. */
+    GridApi.prototype.isPinningRight = function () { return this.columnModel.isPinningRight(); };
+    /** Returns the column to the right of the provided column, taking into consideration open / closed column groups and visible columns. This is useful if you need to know what column is beside yours e.g. if implementing your own cell navigation. */
+    GridApi.prototype.getDisplayedColAfter = function (col) { return this.columnModel.getDisplayedColAfter(col); };
+    /** Same as `getVisibleColAfter` except gives column to the left. */
+    GridApi.prototype.getDisplayedColBefore = function (col) { return this.columnModel.getDisplayedColBefore(col); };
+    /** @deprecated v31.1 setColumnVisible(key, visible) deprecated, please use setColumnsVisible([key], visible) instead. */
+    GridApi.prototype.setColumnVisible = function (key, visible) {
+        this.logDeprecation('v31.1', 'setColumnVisible(key,visible)', 'setColumnsVisible([key],visible)');
+        this.columnModel.setColumnsVisible([key], visible, 'api');
+    };
+    /** Sets the visibility of columns. Key can be the column ID or `Column` object. */
+    GridApi.prototype.setColumnsVisible = function (keys, visible) { this.columnModel.setColumnsVisible(keys, visible, 'api'); };
+    /** @deprecated v31.1 setColumnPinned(key, pinned) deprecated, please use setColumnsPinned([key], pinned) instead. */
+    GridApi.prototype.setColumnPinned = function (key, pinned) {
+        this.logDeprecation('v31.1', 'setColumnPinned(key,pinned)', 'setColumnsPinned([key],pinned)');
+        this.columnModel.setColumnsPinned([key], pinned, 'api');
+    };
+    /** Set a column's pinned / unpinned state. Key can be the column ID, field, `ColDef` object or `Column` object. */
+    GridApi.prototype.setColumnsPinned = function (keys, pinned) { this.columnModel.setColumnsPinned(keys, pinned, 'api'); };
+    /**
+     * Returns all the grid columns, same as `getColumns()`, except
+     *
+     *  a) it has the order of the columns that are presented in the grid
+     *
+     *  b) it's after the 'pivot' step, so if pivoting, has the value columns for the pivot.
+     */
+    GridApi.prototype.getAllGridColumns = function () { return this.columnModel.getAllGridColumns(); };
+    /** Same as `getAllDisplayedColumns` but just for the pinned left portion of the grid. */
+    GridApi.prototype.getDisplayedLeftColumns = function () { return this.columnModel.getDisplayedLeftColumns(); };
+    /** Same as `getAllDisplayedColumns` but just for the center portion of the grid. */
+    GridApi.prototype.getDisplayedCenterColumns = function () { return this.columnModel.getDisplayedCenterColumns(); };
+    /** Same as `getAllDisplayedColumns` but just for the pinned right portion of the grid. */
+    GridApi.prototype.getDisplayedRightColumns = function () { return this.columnModel.getDisplayedRightColumns(); };
+    /** Returns all columns currently displayed (e.g. are visible and if in a group, the group is showing the columns) for the pinned left, centre and pinned right portions of the grid. */
+    GridApi.prototype.getAllDisplayedColumns = function () { return this.columnModel.getAllDisplayedColumns(); };
+    /** Same as `getAllGridColumns()`, except only returns rendered columns, i.e. columns that are not within the viewport and therefore not rendered, due to column virtualisation, are not displayed. */
+    GridApi.prototype.getAllDisplayedVirtualColumns = function () { return this.columnModel.getViewportColumns(); };
+    /** @deprecated v31.1 moveColumn(key, toIndex) deprecated, please use moveColumns([key], toIndex) instead. */
+    GridApi.prototype.moveColumn = function (key, toIndex) {
+        this.logDeprecation('v31.1', 'moveColumn(key, toIndex)', 'moveColumns([key], toIndex)');
+        this.columnModel.moveColumns([key], toIndex, 'api');
+    };
+    /** Moves the column at `fromIdex` to `toIndex`. The column is first removed, then added at the `toIndex` location, thus index locations will change to the right of the column after the removal. */
+    GridApi.prototype.moveColumnByIndex = function (fromIndex, toIndex) { this.columnModel.moveColumnByIndex(fromIndex, toIndex, 'api'); };
+    /** Moves columns to `toIndex`. The columns are first removed, then added at the `toIndex` location, thus index locations will change to the right of the column after the removal. */
+    GridApi.prototype.moveColumns = function (columnsToMoveKeys, toIndex) { this.columnModel.moveColumns(columnsToMoveKeys, toIndex, 'api'); };
+    /** Move the column to a new position in the row grouping order. */
+    GridApi.prototype.moveRowGroupColumn = function (fromIndex, toIndex) { this.columnModel.moveRowGroupColumn(fromIndex, toIndex, 'api'); };
+    /** Sets the agg function for a column. `aggFunc` can be one of the built-in aggregations or a custom aggregation by name or direct function. */
+    GridApi.prototype.setColumnAggFunc = function (key, aggFunc) { this.columnModel.setColumnAggFunc(key, aggFunc, 'api'); };
+    /** @deprecated v31.1 setColumnWidths(key, newWidth) deprecated, please use setColumnWidths( [{key: newWidth}] ) instead. */
+    GridApi.prototype.setColumnWidth = function (key, newWidth, finished, source) {
+        if (finished === void 0) { finished = true; }
+        if (source === void 0) { source = 'api'; }
+        this.logDeprecation('v31.1', 'setColumnWidth(col, width)', 'setColumnWidths([{key: col, newWidth: width}])');
+        this.columnModel.setColumnWidths([{ key: key, newWidth: newWidth }], false, finished, source);
+    };
+    /** Sets the column widths of the columns provided. The finished flag gets included in the resulting event and not used internally by the grid. The finished flag is intended for dragging, where a dragging action will produce many `columnWidth` events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to `true`. */
+    GridApi.prototype.setColumnWidths = function (columnWidths, finished, source) {
+        if (finished === void 0) { finished = true; }
+        if (source === void 0) { source = 'api'; }
+        this.columnModel.setColumnWidths(columnWidths, false, finished, source);
+    };
+    /** Get the pivot mode. */
+    GridApi.prototype.isPivotMode = function () { return this.columnModel.isPivotMode(); };
+    /** Returns the pivot result column for the given `pivotKeys` and `valueColId`. Useful to then call operations on the pivot column. */
+    GridApi.prototype.getPivotResultColumn = function (pivotKeys, valueColKey) { return this.columnModel.getSecondaryPivotColumn(pivotKeys, valueColKey); };
+    /** Set the value columns to the provided list of columns. */
+    GridApi.prototype.setValueColumns = function (colKeys) { this.columnModel.setValueColumns(colKeys, 'api'); };
+    /** Get a list of the existing value columns. */
+    GridApi.prototype.getValueColumns = function () { return this.columnModel.getValueColumns(); };
+    /** @deprecated v31.1 removeValueColumn(colKey) deprecated, please use removeValueColumns([colKey]) instead. */
+    GridApi.prototype.removeValueColumn = function (colKey) {
+        this.logDeprecation('v31.1', 'removeValueColumn(colKey)', 'removeValueColumns([colKey])');
+        this.columnModel.removeValueColumns([colKey], 'api');
+    };
+    /** Remove the given list of columns from the existing set of value columns. */
+    GridApi.prototype.removeValueColumns = function (colKeys) { this.columnModel.removeValueColumns(colKeys, 'api'); };
+    /** @deprecated v31.1 addValueColumn(colKey) deprecated, please use addValueColumns([colKey]) instead. */
+    GridApi.prototype.addValueColumn = function (colKey) {
+        this.logDeprecation('v31.1', 'addValueColumn(colKey)', 'addValueColumns([colKey])');
+        this.columnModel.addValueColumns([colKey], 'api');
+    };
+    /** Add the given list of columns to the existing set of value columns. */
+    GridApi.prototype.addValueColumns = function (colKeys) { this.columnModel.addValueColumns(colKeys, 'api'); };
+    /** Set the row group columns. */
+    GridApi.prototype.setRowGroupColumns = function (colKeys) { this.columnModel.setRowGroupColumns(colKeys, 'api'); };
+    /** @deprecated v31.1 removeRowGroupColumn(colKey) deprecated, please use removeRowGroupColumns([colKey]) instead. */
+    GridApi.prototype.removeRowGroupColumn = function (colKey) {
+        this.logDeprecation('v31.1', 'removeRowGroupColumn(colKey)', 'removeRowGroupColumns([colKey])');
+        this.columnModel.removeRowGroupColumns([colKey], 'api');
+    };
+    /** Remove columns from the row groups. */
+    GridApi.prototype.removeRowGroupColumns = function (colKeys) { this.columnModel.removeRowGroupColumns(colKeys, 'api'); };
+    /** @deprecated v31.1 addRowGroupColumn(colKey) deprecated, please use addRowGroupColumns([colKey]) instead. */
+    GridApi.prototype.addRowGroupColumn = function (colKey) {
+        this.logDeprecation('v31.1', 'addRowGroupColumn(colKey)', 'addRowGroupColumns([colKey])');
+        this.columnModel.addRowGroupColumns([colKey], 'api');
+    };
+    /** Add columns to the row groups. */
+    GridApi.prototype.addRowGroupColumns = function (colKeys) { this.columnModel.addRowGroupColumns(colKeys, 'api'); };
+    /** Get row group columns. */
+    GridApi.prototype.getRowGroupColumns = function () { return this.columnModel.getRowGroupColumns(); };
+    /** Set the pivot columns. */
+    GridApi.prototype.setPivotColumns = function (colKeys) { this.columnModel.setPivotColumns(colKeys, 'api'); };
+    /** @deprecated v31.1 removePivotColumn(colKey) deprecated, please use removePivotColumns([colKey]) instead. */
+    GridApi.prototype.removePivotColumn = function (colKey) {
+        this.logDeprecation('v31.1', 'removePivotColumn(colKey)', 'removePivotColumns([colKey])');
+        this.columnModel.removePivotColumns([colKey], 'api');
+    };
+    /** Remove pivot columns. */
+    GridApi.prototype.removePivotColumns = function (colKeys) { this.columnModel.removePivotColumns(colKeys, 'api'); };
+    /** @deprecated v31.1 addPivotColumn(colKey) deprecated, please use addPivotColumns([colKey]) instead. */
+    GridApi.prototype.addPivotColumn = function (colKey) {
+        this.logDeprecation('v31.1', 'addPivotColumn(colKey)', 'addPivotColumns([colKey])');
+        this.columnModel.addPivotColumns([colKey], 'api');
+    };
+    /** Add pivot columns. */
+    GridApi.prototype.addPivotColumns = function (colKeys) { this.columnModel.addPivotColumns(colKeys, 'api'); };
+    /** Get the pivot columns. */
+    GridApi.prototype.getPivotColumns = function () { return this.columnModel.getPivotColumns(); };
+    /** Same as `getAllDisplayedColumnGroups` but just for the pinned left portion of the grid. */
+    GridApi.prototype.getLeftDisplayedColumnGroups = function () { return this.columnModel.getDisplayedTreeLeft(); };
+    /** Same as `getAllDisplayedColumnGroups` but just for the center portion of the grid. */
+    GridApi.prototype.getCenterDisplayedColumnGroups = function () { return this.columnModel.getDisplayedTreeCentre(); };
+    /** Same as `getAllDisplayedColumnGroups` but just for the pinned right portion of the grid. */
+    GridApi.prototype.getRightDisplayedColumnGroups = function () { return this.columnModel.getDisplayedTreeRight(); };
+    /** Returns all 'root' column headers. If you are not grouping columns, these return the columns. If you are grouping, these return the top level groups - you can navigate down through each one to get the other lower level headers and finally the columns at the bottom. */
+    GridApi.prototype.getAllDisplayedColumnGroups = function () { return this.columnModel.getAllDisplayedTrees(); };
+    /** @deprecated v31.1 autoSizeColumn(key) deprecated, please use autoSizeColumns([colKey]) instead. */
+    GridApi.prototype.autoSizeColumn = function (key, skipHeader) {
+        this.logDeprecation('v31.1', 'autoSizeColumn(key, skipHeader)', 'autoSizeColumns([key], skipHeader)');
+        return this.columnModel.autoSizeColumns({ columns: [key], skipHeader: skipHeader, source: 'api' });
+    };
+    /**
+     * Auto-sizes columns based on their contents. If inferring cell data types with custom column types
+     * and row data is provided asynchronously, the column sizing will happen asynchronously when row data is added.
+     * To always perform this synchronously, set `cellDataType = false` on the default column definition.
+     */
+    GridApi.prototype.autoSizeColumns = function (keys, skipHeader) {
+        this.columnModel.autoSizeColumns({ columns: keys, skipHeader: skipHeader, source: 'api' });
+    };
+    /**
+     * Calls `autoSizeColumns` on all displayed columns. If inferring cell data types with custom column types
+     * and row data is provided asynchronously, the column sizing will happen asynchronously when row data is added.
+     * To always perform this synchronously, set `cellDataType = false` on the default column definition.
+     */
+    GridApi.prototype.autoSizeAllColumns = function (skipHeader) { this.columnModel.autoSizeAllColumns('api', skipHeader); };
+    /** Set the pivot result columns. */
+    GridApi.prototype.setPivotResultColumns = function (colDefs) { this.columnModel.setSecondaryColumns(colDefs, 'api'); };
+    /** Returns the grid's pivot result columns. */
+    GridApi.prototype.getPivotResultColumns = function () { return this.columnModel.getSecondaryColumns(); };
+    /** Get the current state of the grid. Can be used in conjunction with the `initialState` grid option to save and restore grid state. */
+    GridApi.prototype.getState = function () {
+        return this.stateService.getState();
+    };
+    /**
+     * Returns the grid option value for a provided key.
+     */
+    GridApi.prototype.getGridOption = function (key) {
+        return this.gos.get(key);
+    };
+    /**
+     * Updates a single gridOption to the new value provided. (Cannot be used on `Initial` properties.)
+     * If updating multiple options, it is recommended to instead use `api.updateGridOptions()` which batches update logic.
+     */
+    GridApi.prototype.setGridOption = function (key, value) {
+        var _a;
+        this.updateGridOptions((_a = {}, _a[key] = value, _a));
+    };
+    /**
+     * Updates the provided subset of gridOptions with the provided values. (Cannot be used on `Initial` properties.)
+     */
+    GridApi.prototype.updateGridOptions = function (options) {
+        // NOTE: The TDataUpdate generic is used to ensure that the update options match the generic passed into the GridApi above as TData.
+        // This is required because if we just use TData directly then Typescript will get into an infinite loop due to callbacks which recursively include the GridApi.
+        this.gos.updateGridOptions({ options: options });
+    };
+    /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
+    GridApi.prototype.__internalUpdateGridOptions = function (options) {
+        this.gos.updateGridOptions({ options: options, source: 'gridOptionsUpdated' });
+    };
+    GridApi.prototype.deprecatedUpdateGridOption = function (key, value) {
+        (0, function_1.warnOnce)("set".concat(key.charAt(0).toUpperCase()).concat(key.slice(1, key.length), " is deprecated. Please use 'api.setGridOption('").concat(key, "', newValue)' or 'api.updateGridOptions({ ").concat(key, ": newValue })' instead."));
+        this.setGridOption(key, value);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Set the top pinned rows. Call with no rows / undefined to clear top pinned rows.
+     **/
+    GridApi.prototype.setPivotMode = function (pivotMode) {
+        this.deprecatedUpdateGridOption('pivotMode', pivotMode);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Set the top pinned rows. Call with no rows / undefined to clear top pinned rows.
+     **/
+    GridApi.prototype.setPinnedTopRowData = function (rows) {
+        this.deprecatedUpdateGridOption('pinnedTopRowData', rows);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Set the bottom pinned rows. Call with no rows / undefined to clear bottom pinned rows.
+     * */
+    GridApi.prototype.setPinnedBottomRowData = function (rows) {
+        this.deprecatedUpdateGridOption('pinnedBottomRowData', rows);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * DOM element to use as the popup parent for grid popups (context menu, column menu etc).
+     * */
+    GridApi.prototype.setPopupParent = function (ePopupParent) {
+        this.deprecatedUpdateGridOption('popupParent', ePopupParent);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     */
+    GridApi.prototype.setSuppressModelUpdateAfterUpdateTransaction = function (value) {
+        this.deprecatedUpdateGridOption('suppressModelUpdateAfterUpdateTransaction', value);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Resets the data type definitions. This will update the columns in the grid.
+     * */
+    GridApi.prototype.setDataTypeDefinitions = function (dataTypeDefinitions) {
+        this.deprecatedUpdateGridOption('dataTypeDefinitions', dataTypeDefinitions);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Set whether the grid paginates the data or not.
+     *  - `true` to enable pagination
+     *  - `false` to disable pagination
+     */
+    GridApi.prototype.setPagination = function (value) {
+        this.deprecatedUpdateGridOption('pagination', value);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Sets the `paginationPageSize`, then re-paginates the grid so the changes are applied immediately.
+     * */
+    GridApi.prototype.paginationSetPageSize = function (size) {
+        this.deprecatedUpdateGridOption('paginationPageSize', size);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Resets the side bar to the provided configuration. The parameter is the same as the sideBar grid property. The side bar is re-created from scratch with the new config.
+     * */
+    GridApi.prototype.setSideBar = function (def) {
+        this.deprecatedUpdateGridOption('sideBar', def);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     */
+    GridApi.prototype.setSuppressClipboardPaste = function (value) {
+        this.deprecatedUpdateGridOption('suppressClipboardPaste', value);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     */
+    GridApi.prototype.setGroupRemoveSingleChildren = function (value) {
+        this.deprecatedUpdateGridOption('groupRemoveSingleChildren', value);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     */
+    GridApi.prototype.setGroupRemoveLowestSingleChildren = function (value) {
+        this.deprecatedUpdateGridOption('groupRemoveLowestSingleChildren', value);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     */
+    GridApi.prototype.setGroupDisplayType = function (value) {
+        this.deprecatedUpdateGridOption('groupDisplayType', value);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Sets the `groupIncludeFooter` property
+     */
+    GridApi.prototype.setGroupIncludeFooter = function (value) {
+        this.deprecatedUpdateGridOption('groupIncludeFooter', value);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Sets the `groupIncludeTotalFooter` property
+     */
+    GridApi.prototype.setGroupIncludeTotalFooter = function (value) {
+        this.deprecatedUpdateGridOption('groupIncludeTotalFooter', value);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     */
+    GridApi.prototype.setRowClass = function (className) {
+        this.deprecatedUpdateGridOption('rowClass', className);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Sets the `deltaSort` property
+     * */
+    GridApi.prototype.setDeltaSort = function (enable) {
+        this.deprecatedUpdateGridOption('deltaSort', enable);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Sets the `suppressRowDrag` property.
+     * */
+    GridApi.prototype.setSuppressRowDrag = function (value) {
+        this.deprecatedUpdateGridOption('suppressRowDrag', value);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Sets the `suppressMoveWhenRowDragging` property.
+     * */
+    GridApi.prototype.setSuppressMoveWhenRowDragging = function (value) {
+        this.deprecatedUpdateGridOption('suppressMoveWhenRowDragging', value);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Sets the `suppressRowClickSelection` property.
+     * */
+    GridApi.prototype.setSuppressRowClickSelection = function (value) {
+        this.deprecatedUpdateGridOption('suppressRowClickSelection', value);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Enable/disable the Advanced Filter
+     * */
+    GridApi.prototype.setEnableAdvancedFilter = function (enabled) {
+        this.deprecatedUpdateGridOption('enableAdvancedFilter', enabled);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Updates the `includeHiddenColumnsInAdvancedFilter` grid option.
+     * By default hidden columns are excluded from the Advanced Filter.
+     * Set to `true` to include them.
+     */
+    GridApi.prototype.setIncludeHiddenColumnsInAdvancedFilter = function (value) {
+        this.deprecatedUpdateGridOption('includeHiddenColumnsInAdvancedFilter', value);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * DOM element to use as the parent for the Advanced Filter, to allow it to appear outside of the grid.
+     * Set to `null` to appear inside the grid.
+     */
+    GridApi.prototype.setAdvancedFilterParent = function (advancedFilterParent) {
+        this.deprecatedUpdateGridOption('advancedFilterParent', advancedFilterParent);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Updates the Advanced Filter Builder parameters.
+     * */
+    GridApi.prototype.setAdvancedFilterBuilderParams = function (params) {
+        this.deprecatedUpdateGridOption('advancedFilterBuilderParams', params);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Pass a Quick Filter text into the grid for filtering.
+     * */
+    GridApi.prototype.setQuickFilter = function (newFilter) {
+        (0, function_1.warnOnce)("setQuickFilter is deprecated. Please use 'api.setGridOption('quickFilterText', newValue)' or 'api.updateGridOptions({ quickFilterText: newValue })' instead.");
+        this.gos.updateGridOptions({ options: { quickFilterText: newFilter } });
+    };
+    /**
+     * @deprecated As of v30, hidden columns are excluded from the Quick Filter by default. To include hidden columns, use `setIncludeHiddenColumnsInQuickFilter` instead.
+     */
+    GridApi.prototype.setExcludeHiddenColumnsFromQuickFilter = function (value) {
+        this.deprecatedUpdateGridOption('includeHiddenColumnsInQuickFilter', !value);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Updates the `includeHiddenColumnsInQuickFilter` grid option.
+     * By default hidden columns are excluded from the Quick Filter.
+     * Set to `true` to include them.
+     */
+    GridApi.prototype.setIncludeHiddenColumnsInQuickFilter = function (value) {
+        this.deprecatedUpdateGridOption('includeHiddenColumnsInQuickFilter', value);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Updates the `quickFilterParser` grid option,
+     * which changes how the Quick Filter splits the Quick Filter text into search terms.
+     */
+    GridApi.prototype.setQuickFilterParser = function (quickFilterParser) {
+        this.deprecatedUpdateGridOption('quickFilterParser', quickFilterParser);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Updates the `quickFilterMatcher` grid option,
+     * which changes the matching logic for whether a row passes the Quick Filter.
+     */
+    GridApi.prototype.setQuickFilterMatcher = function (quickFilterMatcher) {
+        this.deprecatedUpdateGridOption('quickFilterMatcher', quickFilterMatcher);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * If `true`, the horizontal scrollbar will always be present, even if not required. Otherwise, it will only be displayed when necessary.
+     * */
+    GridApi.prototype.setAlwaysShowHorizontalScroll = function (show) {
+        this.deprecatedUpdateGridOption('alwaysShowHorizontalScroll', show);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * If `true`, the vertical scrollbar will always be present, even if not required. Otherwise it will only be displayed when necessary.
+     * */
+    GridApi.prototype.setAlwaysShowVerticalScroll = function (show) {
+        this.deprecatedUpdateGridOption('alwaysShowVerticalScroll', show);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     */
+    GridApi.prototype.setFunctionsReadOnly = function (readOnly) {
+        this.deprecatedUpdateGridOption('functionsReadOnly', readOnly);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Call to set new column definitions. The grid will redraw all the column headers, and then redraw all of the rows.
+     */
+    GridApi.prototype.setColumnDefs = function (colDefs, source) {
+        if (source === void 0) { source = "api"; }
+        (0, function_1.warnOnce)("setColumnDefs is deprecated. Please use 'api.setGridOption('columnDefs', newValue)' or 'api.updateGridOptions({ columnDefs: newValue })' instead.");
+        this.gos.updateGridOptions({
+            options: { columnDefs: colDefs },
+            source: source,
+        });
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Call to set new auto group column definition. The grid will recreate any auto-group columns if present.
+     * */
+    GridApi.prototype.setAutoGroupColumnDef = function (colDef, source) {
+        if (source === void 0) { source = "api"; }
+        (0, function_1.warnOnce)("setAutoGroupColumnDef is deprecated. Please use 'api.setGridOption('autoGroupColumnDef', newValue)' or 'api.updateGridOptions({ autoGroupColumnDef: newValue })' instead.");
+        this.gos.updateGridOptions({
+            options: { autoGroupColumnDef: colDef },
+            source: source,
+        });
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Call to set new Default Column Definition.
+     * */
+    GridApi.prototype.setDefaultColDef = function (colDef, source) {
+        if (source === void 0) { source = "api"; }
+        (0, function_1.warnOnce)("setDefaultColDef is deprecated. Please use 'api.setGridOption('defaultColDef', newValue)' or 'api.updateGridOptions({ defaultColDef: newValue })' instead.");
+        this.gos.updateGridOptions({
+            options: { defaultColDef: colDef },
+            source: source,
+        });
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Call to set new Column Types.
+     * */
+    GridApi.prototype.setColumnTypes = function (columnTypes, source) {
+        if (source === void 0) { source = "api"; }
+        (0, function_1.warnOnce)("setColumnTypes is deprecated. Please use 'api.setGridOption('columnTypes', newValue)' or 'api.updateGridOptions({ columnTypes: newValue })' instead.");
+        this.gos.updateGridOptions({
+            options: { columnTypes: columnTypes },
+            source: source,
+        });
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Sets the `treeData` property.
+     * */
+    GridApi.prototype.setTreeData = function (newTreeData) {
+        this.deprecatedUpdateGridOption('treeData', newTreeData);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Set new datasource for Server-Side Row Model.
+     * */
+    GridApi.prototype.setServerSideDatasource = function (datasource) {
+        this.deprecatedUpdateGridOption('serverSideDatasource', datasource);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *
+     * Note this purges all the cached data and reloads all the rows of the grid.
+     * */
+    GridApi.prototype.setCacheBlockSize = function (blockSize) {
+        this.deprecatedUpdateGridOption('cacheBlockSize', blockSize);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Set new datasource for Infinite Row Model.
+     * */
+    GridApi.prototype.setDatasource = function (datasource) {
+        this.deprecatedUpdateGridOption('datasource', datasource);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Set new datasource for Viewport Row Model.
+     * */
+    GridApi.prototype.setViewportDatasource = function (viewportDatasource) {
+        this.deprecatedUpdateGridOption('viewportDatasource', viewportDatasource);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Set the row data.
+     * */
+    GridApi.prototype.setRowData = function (rowData) {
+        this.deprecatedUpdateGridOption('rowData', rowData);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Sets the `enableCellTextSelection` property.
+     * */
+    GridApi.prototype.setEnableCellTextSelection = function (selectable) {
+        this.deprecatedUpdateGridOption('enableCellTextSelection', selectable);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Sets the height in pixels for the row containing the column label header.
+     * */
+    GridApi.prototype.setHeaderHeight = function (headerHeight) {
+        this.deprecatedUpdateGridOption('headerHeight', headerHeight);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Switch between layout options: `normal`, `autoHeight`, `print`.
+     * Defaults to `normal` if no domLayout provided.
+     */
+    GridApi.prototype.setDomLayout = function (domLayout) {
+        this.deprecatedUpdateGridOption('domLayout', domLayout);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Sets the preferred direction for the selection fill handle.
+     * */
+    GridApi.prototype.setFillHandleDirection = function (direction) {
+        this.deprecatedUpdateGridOption('fillHandleDirection', direction);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Sets the height in pixels for the rows containing header column groups.
+     * */
+    GridApi.prototype.setGroupHeaderHeight = function (headerHeight) {
+        this.deprecatedUpdateGridOption('groupHeaderHeight', headerHeight);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Sets the height in pixels for the row containing the floating filters.
+     * */
+    GridApi.prototype.setFloatingFiltersHeight = function (headerHeight) {
+        this.deprecatedUpdateGridOption('floatingFiltersHeight', headerHeight);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Sets the height in pixels for the row containing the columns when in pivot mode.
+     * */
+    GridApi.prototype.setPivotHeaderHeight = function (headerHeight) {
+        this.deprecatedUpdateGridOption('pivotHeaderHeight', headerHeight);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * Sets the height in pixels for the row containing header column groups when in pivot mode.
+     * */
+    GridApi.prototype.setPivotGroupHeaderHeight = function (headerHeight) {
+        this.deprecatedUpdateGridOption('pivotGroupHeaderHeight', headerHeight);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    GridApi.prototype.setAnimateRows = function (animateRows) {
+        this.deprecatedUpdateGridOption('animateRows', animateRows);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    GridApi.prototype.setIsExternalFilterPresent = function (isExternalFilterPresentFunc) {
+        this.deprecatedUpdateGridOption('isExternalFilterPresent', isExternalFilterPresentFunc);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    GridApi.prototype.setDoesExternalFilterPass = function (doesExternalFilterPassFunc) {
+        this.deprecatedUpdateGridOption('doesExternalFilterPass', doesExternalFilterPassFunc);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    GridApi.prototype.setNavigateToNextCell = function (navigateToNextCellFunc) {
+        this.deprecatedUpdateGridOption('navigateToNextCell', navigateToNextCellFunc);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    GridApi.prototype.setTabToNextCell = function (tabToNextCellFunc) {
+        this.deprecatedUpdateGridOption('tabToNextCell', tabToNextCellFunc);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    GridApi.prototype.setTabToNextHeader = function (tabToNextHeaderFunc) {
+        this.deprecatedUpdateGridOption('tabToNextHeader', tabToNextHeaderFunc);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    GridApi.prototype.setNavigateToNextHeader = function (navigateToNextHeaderFunc) {
+        this.deprecatedUpdateGridOption('navigateToNextHeader', navigateToNextHeaderFunc);
+    };
+    GridApi.prototype.setRowGroupPanelShow = function (rowGroupPanelShow) {
+        this.deprecatedUpdateGridOption('rowGroupPanelShow', rowGroupPanelShow);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    GridApi.prototype.setGetGroupRowAgg = function (getGroupRowAggFunc) {
+        this.deprecatedUpdateGridOption('getGroupRowAgg', getGroupRowAggFunc);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    GridApi.prototype.setGetBusinessKeyForNode = function (getBusinessKeyForNodeFunc) {
+        this.deprecatedUpdateGridOption('getBusinessKeyForNode', getBusinessKeyForNodeFunc);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    GridApi.prototype.setGetChildCount = function (getChildCountFunc) {
+        this.deprecatedUpdateGridOption('getChildCount', getChildCountFunc);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    GridApi.prototype.setProcessRowPostCreate = function (processRowPostCreateFunc) {
+        this.deprecatedUpdateGridOption('processRowPostCreate', processRowPostCreateFunc);
+    };
+    /**
+     * @deprecated v31 `getRowId` is a static property and cannot be updated.
+     *  */
+    GridApi.prototype.setGetRowId = function (getRowIdFunc) {
+        (0, function_1.warnOnce)("getRowId is a static property and can no longer be updated.");
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    GridApi.prototype.setGetRowClass = function (rowClassFunc) {
+        this.deprecatedUpdateGridOption('getRowClass', rowClassFunc);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    GridApi.prototype.setIsFullWidthRow = function (isFullWidthRowFunc) {
+        this.deprecatedUpdateGridOption('isFullWidthRow', isFullWidthRowFunc);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    GridApi.prototype.setIsRowSelectable = function (isRowSelectableFunc) {
+        this.deprecatedUpdateGridOption('isRowSelectable', isRowSelectableFunc);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    GridApi.prototype.setIsRowMaster = function (isRowMasterFunc) {
+        this.deprecatedUpdateGridOption('isRowMaster', isRowMasterFunc);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    GridApi.prototype.setPostSortRows = function (postSortRowsFunc) {
+        this.deprecatedUpdateGridOption('postSortRows', postSortRowsFunc);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    GridApi.prototype.setGetDocument = function (getDocumentFunc) {
+        this.deprecatedUpdateGridOption('getDocument', getDocumentFunc);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    GridApi.prototype.setGetContextMenuItems = function (getContextMenuItemsFunc) {
+        this.deprecatedUpdateGridOption('getContextMenuItems', getContextMenuItemsFunc);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    GridApi.prototype.setGetMainMenuItems = function (getMainMenuItemsFunc) {
+        this.deprecatedUpdateGridOption('getMainMenuItems', getMainMenuItemsFunc);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    GridApi.prototype.setProcessCellForClipboard = function (processCellForClipboardFunc) {
+        this.deprecatedUpdateGridOption('processCellForClipboard', processCellForClipboardFunc);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    GridApi.prototype.setSendToClipboard = function (sendToClipboardFunc) {
+        this.deprecatedUpdateGridOption('sendToClipboard', sendToClipboardFunc);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    GridApi.prototype.setProcessCellFromClipboard = function (processCellFromClipboardFunc) {
+        this.deprecatedUpdateGridOption('processCellFromClipboard', processCellFromClipboardFunc);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    GridApi.prototype.setProcessPivotResultColDef = function (processPivotResultColDefFunc) {
+        this.deprecatedUpdateGridOption('processPivotResultColDef', processPivotResultColDefFunc);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    GridApi.prototype.setProcessPivotResultColGroupDef = function (processPivotResultColGroupDefFunc) {
+        this.deprecatedUpdateGridOption('processPivotResultColGroupDef', processPivotResultColGroupDefFunc);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    GridApi.prototype.setPostProcessPopup = function (postProcessPopupFunc) {
+        this.deprecatedUpdateGridOption('postProcessPopup', postProcessPopupFunc);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    GridApi.prototype.setInitialGroupOrderComparator = function (initialGroupOrderComparatorFunc) {
+        this.deprecatedUpdateGridOption('initialGroupOrderComparator', initialGroupOrderComparatorFunc);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    GridApi.prototype.setGetChartToolbarItems = function (getChartToolbarItemsFunc) {
+        this.deprecatedUpdateGridOption('getChartToolbarItems', getChartToolbarItemsFunc);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    GridApi.prototype.setPaginationNumberFormatter = function (paginationNumberFormatterFunc) {
+        this.deprecatedUpdateGridOption('paginationNumberFormatter', paginationNumberFormatterFunc);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    GridApi.prototype.setGetServerSideGroupLevelParams = function (getServerSideGroupLevelParamsFunc) {
+        this.deprecatedUpdateGridOption('getServerSideGroupLevelParams', getServerSideGroupLevelParamsFunc);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    GridApi.prototype.setIsServerSideGroupOpenByDefault = function (isServerSideGroupOpenByDefaultFunc) {
+        this.deprecatedUpdateGridOption('isServerSideGroupOpenByDefault', isServerSideGroupOpenByDefaultFunc);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    GridApi.prototype.setIsApplyServerSideTransaction = function (isApplyServerSideTransactionFunc) {
+        this.deprecatedUpdateGridOption('isApplyServerSideTransaction', isApplyServerSideTransactionFunc);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    GridApi.prototype.setIsServerSideGroup = function (isServerSideGroupFunc) {
+        this.deprecatedUpdateGridOption('isServerSideGroup', isServerSideGroupFunc);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    GridApi.prototype.setGetServerSideGroupKey = function (getServerSideGroupKeyFunc) {
+        this.deprecatedUpdateGridOption('getServerSideGroupKey', getServerSideGroupKeyFunc);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    GridApi.prototype.setGetRowStyle = function (rowStyleFunc) {
+        this.deprecatedUpdateGridOption('getRowStyle', rowStyleFunc);
+    };
+    /**
+     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     *  */
+    GridApi.prototype.setGetRowHeight = function (rowHeightFunc) {
+        this.deprecatedUpdateGridOption('getRowHeight', rowHeightFunc);
+    };
     __decorate([
-        context_1.Optional('immutableService')
-    ], GridApi.prototype, "immutableService", void 0);
-    __decorate([
-        context_1.Optional('csvCreator')
+        (0, context_1.Optional)('csvCreator')
     ], GridApi.prototype, "csvCreator", void 0);
     __decorate([
-        context_1.Optional('excelCreator')
+        (0, context_1.Optional)('excelCreator')
     ], GridApi.prototype, "excelCreator", void 0);
     __decorate([
-        context_1.Autowired('rowRenderer')
+        (0, context_1.Autowired)('rowRenderer')
     ], GridApi.prototype, "rowRenderer", void 0);
     __decorate([
-        context_1.Autowired('navigationService')
+        (0, context_1.Autowired)('navigationService')
     ], GridApi.prototype, "navigationService", void 0);
     __decorate([
-        context_1.Autowired('filterManager')
+        (0, context_1.Autowired)('filterManager')
     ], GridApi.prototype, "filterManager", void 0);
     __decorate([
-        context_1.Autowired('columnModel')
+        (0, context_1.Autowired)('columnModel')
     ], GridApi.prototype, "columnModel", void 0);
     __decorate([
-        context_1.Autowired('selectionService')
+        (0, context_1.Autowired)('selectionService')
     ], GridApi.prototype, "selectionService", void 0);
     __decorate([
-        context_1.Autowired('gridOptionsService')
+        (0, context_1.Autowired)('gridOptionsService')
     ], GridApi.prototype, "gos", void 0);
     __decorate([
-        context_1.Autowired('valueService')
+        (0, context_1.Autowired)('valueService')
     ], GridApi.prototype, "valueService", void 0);
     __decorate([
-        context_1.Autowired('alignedGridsService')
+        (0, context_1.Autowired)('alignedGridsService')
     ], GridApi.prototype, "alignedGridsService", void 0);
     __decorate([
-        context_1.Autowired('eventService')
+        (0, context_1.Autowired)('eventService')
     ], GridApi.prototype, "eventService", void 0);
     __decorate([
-        context_1.Autowired('pinnedRowModel')
+        (0, context_1.Autowired)('pinnedRowModel')
     ], GridApi.prototype, "pinnedRowModel", void 0);
     __decorate([
-        context_1.Autowired('context')
+        (0, context_1.Autowired)('context')
     ], GridApi.prototype, "context", void 0);
     __decorate([
-        context_1.Autowired('rowModel')
+        (0, context_1.Autowired)('rowModel')
     ], GridApi.prototype, "rowModel", void 0);
     __decorate([
-        context_1.Autowired('sortController')
+        (0, context_1.Autowired)('sortController')
     ], GridApi.prototype, "sortController", void 0);
     __decorate([
-        context_1.Autowired('paginationProxy')
+        (0, context_1.Autowired)('paginationProxy')
     ], GridApi.prototype, "paginationProxy", void 0);
     __decorate([
-        context_1.Autowired('focusService')
+        (0, context_1.Autowired)('focusService')
     ], GridApi.prototype, "focusService", void 0);
     __decorate([
-        context_1.Autowired('dragAndDropService')
+        (0, context_1.Autowired)('dragAndDropService')
     ], GridApi.prototype, "dragAndDropService", void 0);
     __decorate([
-        context_1.Optional('rangeService')
+        (0, context_1.Optional)('rangeService')
     ], GridApi.prototype, "rangeService", void 0);
     __decorate([
-        context_1.Optional('clipboardService')
+        (0, context_1.Optional)('clipboardService')
     ], GridApi.prototype, "clipboardService", void 0);
     __decorate([
-        context_1.Optional('aggFuncService')
+        (0, context_1.Optional)('aggFuncService')
     ], GridApi.prototype, "aggFuncService", void 0);
     __decorate([
-        context_1.Autowired('menuFactory')
-    ], GridApi.prototype, "menuFactory", void 0);
+        (0, context_1.Autowired)('menuService')
+    ], GridApi.prototype, "menuService", void 0);
     __decorate([
-        context_1.Optional('contextMenuFactory')
-    ], GridApi.prototype, "contextMenuFactory", void 0);
-    __decorate([
-        context_1.Autowired('valueCache')
+        (0, context_1.Autowired)('valueCache')
     ], GridApi.prototype, "valueCache", void 0);
     __decorate([
-        context_1.Autowired('animationFrameService')
+        (0, context_1.Autowired)('animationFrameService')
     ], GridApi.prototype, "animationFrameService", void 0);
     __decorate([
-        context_1.Optional('statusBarService')
+        (0, context_1.Optional)('statusBarService')
     ], GridApi.prototype, "statusBarService", void 0);
     __decorate([
-        context_1.Optional('chartService')
+        (0, context_1.Optional)('chartService')
     ], GridApi.prototype, "chartService", void 0);
     __decorate([
-        context_1.Optional('undoRedoService')
+        (0, context_1.Optional)('undoRedoService')
     ], GridApi.prototype, "undoRedoService", void 0);
     __decorate([
-        context_1.Optional('rowNodeBlockLoader')
+        (0, context_1.Optional)('rowNodeBlockLoader')
     ], GridApi.prototype, "rowNodeBlockLoader", void 0);
     __decorate([
-        context_1.Optional('ssrmTransactionManager')
+        (0, context_1.Optional)('ssrmTransactionManager')
     ], GridApi.prototype, "serverSideTransactionManager", void 0);
     __decorate([
-        context_1.Autowired('ctrlsService')
+        (0, context_1.Autowired)('ctrlsService')
     ], GridApi.prototype, "ctrlsService", void 0);
+    __decorate([
+        (0, context_1.Autowired)('overlayService')
+    ], GridApi.prototype, "overlayService", void 0);
+    __decorate([
+        (0, context_1.Optional)('sideBarService')
+    ], GridApi.prototype, "sideBarService", void 0);
+    __decorate([
+        (0, context_1.Autowired)('stateService')
+    ], GridApi.prototype, "stateService", void 0);
+    __decorate([
+        (0, context_1.Autowired)('expansionService')
+    ], GridApi.prototype, "expansionService", void 0);
+    __decorate([
+        (0, context_1.Autowired)('apiEventService')
+    ], GridApi.prototype, "apiEventService", void 0);
+    __decorate([
+        (0, context_1.Autowired)('frameworkOverrides')
+    ], GridApi.prototype, "frameworkOverrides", void 0);
     __decorate([
         context_1.PostConstruct
     ], GridApi.prototype, "init", null);
-    __decorate([
-        context_1.PreDestroy
-    ], GridApi.prototype, "cleanDownReferencesToAvoidMemoryLeakInCaseApplicationIsKeepingReferenceToDestroyedGrid", null);
     GridApi = __decorate([
-        context_1.Bean('gridApi')
+        (0, context_1.Bean)('gridApi')
     ], GridApi);
     return GridApi;
 }());

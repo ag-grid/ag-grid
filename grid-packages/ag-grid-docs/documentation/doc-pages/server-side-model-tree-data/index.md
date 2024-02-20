@@ -93,12 +93,12 @@ The example below shows this in action where the following can be noted:
 ## Refreshing Tree Data
 
 Tree Data can be refreshed in the same way as groups are refreshed when not using Tree Data. This is
-explained in the [SSRM Refresh](/server-side-model-refresh/).
+explained in the [SSRM Refresh](/server-side-model-updating-refresh/).
 
 The example below shows this in action where the following can be noted:
 
-- Click **Refresh Everything** to clear all caches by calling `gridOptions.api.refreshServerSide({ route: [], purge: true })`.
-- Click **Refresh ['Kathryn Powers','Mabel Ward']** to clear a single cache by calling `gridOptions.api.refreshServerSide({ route: ['Kathryn Powers','Mabel Ward'], purge: true })`.
+- Click **Refresh Everything** to clear all caches by calling `api.refreshServerSide({ route: [], purge: true })`.
+- Click **Refresh ['Kathryn Powers','Mabel Ward']** to clear a single cache by calling `api.refreshServerSide({ route: ['Kathryn Powers','Mabel Ward'], purge: true })`.
 
 <grid-example title='Purging Tree Data' name='purging-tree-data' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 
@@ -145,3 +145,9 @@ The following example demonstrates Server-Side Tree Data Filtering using the [Se
 - The **Group** and **Date** columns both have `filterParams.excelMode = 'windows'`, which allows changes to the tree filter to be applied in batches.
 
 <grid-example title='Filtering Tree Data' name='filtering-tree-data' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping", "menu", "columnpanel", "setfilter"] }'></grid-example>
+
+## Providing Hierarchical Data via API
+
+Below is an example of utilising `api.applyServerSideRowData` to populate data. The datasource is only used to provide root level rows, and when these are loaded the grid is provided the child row data via the API.
+
+<grid-example title='Hierarchical Data' name='supplying-hierarchy' type='generated' options='{ "enterprise": true, "modules": ["serverside", "menu", "columnpanel"] }'></grid-example>

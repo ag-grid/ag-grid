@@ -40,10 +40,11 @@ var HeaderGroupCellComp = /** @class */ (function (_super) {
         eGui.setAttribute("col-id", this.ctrl.getColId());
         var compProxy = {
             addOrRemoveCssClass: function (cssClassName, on) { return _this.addOrRemoveCssClass(cssClassName, on); },
-            setResizableDisplayed: function (displayed) { return dom_1.setDisplayed(_this.eResize, displayed); },
+            setResizableDisplayed: function (displayed) { return (0, dom_1.setDisplayed)(_this.eResize, displayed); },
             setWidth: function (width) { return eGui.style.width = width; },
             setAriaExpanded: function (expanded) { return setAttribute('aria-expanded', expanded); },
-            setUserCompDetails: function (details) { return _this.setUserCompDetails(details); }
+            setUserCompDetails: function (details) { return _this.setUserCompDetails(details); },
+            getUserCompInstance: function () { return _this.headerGroupComp; },
         };
         this.ctrl.setComp(compProxy, eGui, this.eResize);
     };
@@ -62,14 +63,12 @@ var HeaderGroupCellComp = /** @class */ (function (_super) {
         var eHeaderGroupGui = headerGroupComp.getGui();
         eGui.appendChild(eHeaderGroupGui);
         this.addDestroyFunc(destroyFunc);
+        this.headerGroupComp = headerGroupComp;
         this.ctrl.setDragSource(eGui);
     };
-    HeaderGroupCellComp.TEMPLATE = "<div class=\"ag-header-group-cell\" role=\"columnheader\" tabindex=\"-1\">\n            <div ref=\"eResize\" class=\"ag-header-cell-resize\" role=\"presentation\"></div>\n        </div>";
+    HeaderGroupCellComp.TEMPLATE = "<div class=\"ag-header-group-cell\" role=\"columnheader\">\n            <div ref=\"eResize\" class=\"ag-header-cell-resize\" role=\"presentation\"></div>\n        </div>";
     __decorate([
-        context_1.Autowired('userComponentFactory')
-    ], HeaderGroupCellComp.prototype, "userComponentFactory", void 0);
-    __decorate([
-        componentAnnotations_1.RefSelector('eResize')
+        (0, componentAnnotations_1.RefSelector)('eResize')
     ], HeaderGroupCellComp.prototype, "eResize", void 0);
     __decorate([
         context_1.PostConstruct

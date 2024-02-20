@@ -10,6 +10,7 @@ exports.ChartSettingsPanel = void 0;
 const core_1 = require("@ag-grid-community/core");
 const miniChartsContainer_1 = require("./miniChartsContainer");
 const chartController_1 = require("../../chartController");
+const chartTheme_1 = require("../../chartProxies/chartTheme");
 class ChartSettingsPanel extends core_1.Component {
     constructor(chartController) {
         super(ChartSettingsPanel.TEMPLATE);
@@ -51,20 +52,24 @@ class ChartSettingsPanel extends core_1.Component {
     resetPalettes(forceReset) {
         var _a, _b;
         const palettes = this.chartController.getPalettes();
+        const themeTemplateParameters = this.chartController.getThemeTemplateParameters();
         const chartGroups = (_b = (_a = this.gridOptionsService.get('chartToolPanelsDef')) === null || _a === void 0 ? void 0 : _a.settingsPanel) === null || _b === void 0 ? void 0 : _b.chartGroupsDef;
         if ((core_1._.shallowCompare(palettes, this.palettes) && !forceReset) || this.isAnimating) {
             return;
         }
         this.palettes = palettes;
-        this.themes = this.chartController.getThemes();
+        this.themes = this.chartController.getThemeNames();
         this.activePaletteIndex = this.themes.findIndex(name => name === this.chartController.getChartThemeName());
         this.cardItems = [];
         core_1._.clearElement(this.eCardSelector);
         this.destroyMiniCharts();
+        const { themes } = this;
         this.palettes.forEach((palette, index) => {
             const isActivePalette = this.activePaletteIndex === index;
             const { fills, strokes } = palette;
-            const miniChartsContainer = this.createBean(new miniChartsContainer_1.MiniChartsContainer(this.chartController, fills, strokes, chartGroups));
+            const themeName = themes[index];
+            const isCustomTheme = !(0, chartTheme_1.isStockTheme)(themeName);
+            const miniChartsContainer = this.createBean(new miniChartsContainer_1.MiniChartsContainer(this.chartController, fills, strokes, themeTemplateParameters[index], isCustomTheme, chartGroups));
             this.miniChartsContainers.push(miniChartsContainer);
             this.eMiniChartsContainer.appendChild(miniChartsContainer.getGui());
             this.addCardLink(index);
@@ -154,22 +159,22 @@ ChartSettingsPanel.TEMPLATE = `<div class="ag-chart-settings-wrapper">
             </div>
         </div>`;
 __decorate([
-    core_1.Autowired('resizeObserverService')
+    (0, core_1.Autowired)('resizeObserverService')
 ], ChartSettingsPanel.prototype, "resizeObserverService", void 0);
 __decorate([
-    core_1.RefSelector('eMiniChartsContainer')
+    (0, core_1.RefSelector)('eMiniChartsContainer')
 ], ChartSettingsPanel.prototype, "eMiniChartsContainer", void 0);
 __decorate([
-    core_1.RefSelector('eNavBar')
+    (0, core_1.RefSelector)('eNavBar')
 ], ChartSettingsPanel.prototype, "eNavBar", void 0);
 __decorate([
-    core_1.RefSelector('eCardSelector')
+    (0, core_1.RefSelector)('eCardSelector')
 ], ChartSettingsPanel.prototype, "eCardSelector", void 0);
 __decorate([
-    core_1.RefSelector('ePrevBtn')
+    (0, core_1.RefSelector)('ePrevBtn')
 ], ChartSettingsPanel.prototype, "ePrevBtn", void 0);
 __decorate([
-    core_1.RefSelector('eNextBtn')
+    (0, core_1.RefSelector)('eNextBtn')
 ], ChartSettingsPanel.prototype, "eNextBtn", void 0);
 __decorate([
     core_1.PostConstruct

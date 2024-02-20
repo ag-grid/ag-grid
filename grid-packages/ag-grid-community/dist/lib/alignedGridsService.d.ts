@@ -7,6 +7,7 @@ export declare class AlignedGridsService extends BeanStub {
     private logger;
     private consuming;
     private setBeans;
+    private getAlignedGridApis;
     private init;
     private fireEvent;
     private onEvent;

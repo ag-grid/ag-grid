@@ -15,10 +15,14 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ExcelXlsxFactory = void 0;
@@ -34,14 +38,16 @@ var worksheet_1 = require("./files/ooxml/worksheet");
 var relationships_1 = require("./files/ooxml/relationships");
 var excelUtils_1 = require("./assets/excelUtils");
 /**
- * See https://www.ecma-international.org/news/TC45_current_work/OpenXML%20White%20Paper.pdf
+ * See links for more info on the Office Open XML format being used:
+ * https://www.ecma-international.org/wp-content/uploads/Office-Open-XML-White-Paper.pdf
+ * https://ecma-international.org/publications-and-standards/standards/ecma-376/
  */
 var ExcelXlsxFactory = /** @class */ (function () {
     function ExcelXlsxFactory() {
     }
     ExcelXlsxFactory.createExcel = function (styles, worksheet, config) {
         this.addSheetName(worksheet);
-        stylesheet_1.registerStyles(styles, this.sheetNames.length);
+        (0, stylesheet_1.registerStyles)(styles, this.sheetNames.length);
         return this.createWorksheet(worksheet, config);
     };
     ExcelXlsxFactory.buildImageMap = function (image, rowIndex, col, columnsToExport, rowHeight) {
@@ -57,8 +63,8 @@ var ExcelXlsxFactory = /** @class */ (function () {
             });
         }
         var calculatedImage = image;
-        excelUtils_1.setExcelImageTotalWidth(calculatedImage, columnsToExport);
-        excelUtils_1.setExcelImageTotalHeight(calculatedImage, rowHeight);
+        (0, excelUtils_1.setExcelImageTotalWidth)(calculatedImage, columnsToExport);
+        (0, excelUtils_1.setExcelImageTotalHeight)(calculatedImage, rowHeight);
         if (registeredImage) {
             var currentSheetImages = registeredImage.find(function (currentImage) { return currentImage.sheetId === currentSheetIndex; });
             if (currentSheetImages) {
@@ -98,16 +104,16 @@ var ExcelXlsxFactory = /** @class */ (function () {
     ExcelXlsxFactory.addSheetName = function (worksheet) {
         var name = core_1._.escapeString(worksheet.name) || '';
         var append = '';
-        while (this.sheetNames.indexOf("" + name + append) !== -1) {
+        while (this.sheetNames.indexOf("".concat(name).concat(append)) !== -1) {
             if (append === '') {
                 append = '_1';
             }
             else {
                 var curr = parseInt(append.slice(1), 10);
-                append = "_" + (curr + 1);
+                append = "_".concat(curr + 1);
             }
         }
-        worksheet.name = "" + name + append;
+        worksheet.name = "".concat(name).concat(append);
         this.sheetNames.push(worksheet.name);
     };
     ExcelXlsxFactory.getStringPosition = function (str) {
@@ -127,19 +133,19 @@ var ExcelXlsxFactory = /** @class */ (function () {
         this.factoryMode = core_1.ExcelFactoryMode.SINGLE_SHEET;
     };
     ExcelXlsxFactory.createWorkbook = function () {
-        return excelUtils_1.createXmlPart(workbook_1.default.getTemplate(this.sheetNames));
+        return (0, excelUtils_1.createXmlPart)(workbook_1.default.getTemplate(this.sheetNames));
     };
     ExcelXlsxFactory.createStylesheet = function (defaultFontSize) {
-        return excelUtils_1.createXmlPart(stylesheet_1.default.getTemplate(defaultFontSize));
+        return (0, excelUtils_1.createXmlPart)(stylesheet_1.default.getTemplate(defaultFontSize));
     };
     ExcelXlsxFactory.createSharedStrings = function () {
-        return excelUtils_1.createXmlPart(sharedStrings_1.default.getTemplate(this.sharedStrings));
+        return (0, excelUtils_1.createXmlPart)(sharedStrings_1.default.getTemplate(this.sharedStrings));
     };
     ExcelXlsxFactory.createCore = function (author) {
-        return excelUtils_1.createXmlPart(core_2.default.getTemplate(author));
+        return (0, excelUtils_1.createXmlPart)(core_2.default.getTemplate(author));
     };
     ExcelXlsxFactory.createContentTypes = function (sheetLen) {
-        return excelUtils_1.createXmlPart(contentTypes_1.default.getTemplate(sheetLen));
+        return (0, excelUtils_1.createXmlPart)(contentTypes_1.default.getTemplate(sheetLen));
     };
     ExcelXlsxFactory.createRels = function () {
         var rs = relationships_1.default.getTemplate([{
@@ -151,36 +157,36 @@ var ExcelXlsxFactory = /** @class */ (function () {
                 Type: 'http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties',
                 Target: 'docProps/core.xml'
             }]);
-        return excelUtils_1.createXmlPart(rs);
+        return (0, excelUtils_1.createXmlPart)(rs);
     };
     ExcelXlsxFactory.createTheme = function () {
-        return excelUtils_1.createXmlPart(office_1.default.getTemplate());
+        return (0, excelUtils_1.createXmlPart)(office_1.default.getTemplate());
     };
     ExcelXlsxFactory.createWorkbookRels = function (sheetLen) {
         var worksheets = new Array(sheetLen).fill(undefined).map(function (v, i) { return ({
-            Id: "rId" + (i + 1),
+            Id: "rId".concat(i + 1),
             Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet',
-            Target: "worksheets/sheet" + (i + 1) + ".xml"
+            Target: "worksheets/sheet".concat(i + 1, ".xml")
         }); });
-        var rs = relationships_1.default.getTemplate(__spreadArray(__spreadArray([], __read(worksheets)), [
+        var rs = relationships_1.default.getTemplate(__spreadArray(__spreadArray([], __read(worksheets), false), [
             {
-                Id: "rId" + (sheetLen + 1),
+                Id: "rId".concat(sheetLen + 1),
                 Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme',
                 Target: 'theme/theme1.xml'
             }, {
-                Id: "rId" + (sheetLen + 2),
+                Id: "rId".concat(sheetLen + 2),
                 Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles',
                 Target: 'styles.xml'
             }, {
-                Id: "rId" + (sheetLen + 3),
+                Id: "rId".concat(sheetLen + 3),
                 Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings',
                 Target: 'sharedStrings.xml'
             }
-        ]));
-        return excelUtils_1.createXmlPart(rs);
+        ], false));
+        return (0, excelUtils_1.createXmlPart)(rs);
     };
     ExcelXlsxFactory.createDrawing = function (sheetIndex) {
-        return excelUtils_1.createXmlPart(drawing_1.default.getTemplate({ sheetIndex: sheetIndex }));
+        return (0, excelUtils_1.createXmlPart)(drawing_1.default.getTemplate({ sheetIndex: sheetIndex }));
     };
     ExcelXlsxFactory.createDrawingRel = function (sheetIndex) {
         var _this = this;
@@ -188,23 +194,23 @@ var ExcelXlsxFactory = /** @class */ (function () {
         var XMLArr = [];
         worksheetImageIds.forEach(function (value, key) {
             XMLArr.push({
-                Id: "rId" + (value.index + 1),
+                Id: "rId".concat(value.index + 1),
                 Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image',
-                Target: "../media/image" + (_this.workbookImageIds.get(key).index + 1) + "." + value.type
+                Target: "../media/image".concat(_this.workbookImageIds.get(key).index + 1, ".").concat(value.type)
             });
         });
-        return excelUtils_1.createXmlPart(relationships_1.default.getTemplate(XMLArr));
+        return (0, excelUtils_1.createXmlPart)(relationships_1.default.getTemplate(XMLArr));
     };
     ExcelXlsxFactory.createWorksheetDrawingRel = function (currentRelationIndex) {
         var rs = relationships_1.default.getTemplate([{
                 Id: 'rId1',
                 Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing',
-                Target: "../drawings/drawing" + (currentRelationIndex + 1) + ".xml"
+                Target: "../drawings/drawing".concat(currentRelationIndex + 1, ".xml")
             }]);
-        return excelUtils_1.createXmlPart(rs);
+        return (0, excelUtils_1.createXmlPart)(rs);
     };
     ExcelXlsxFactory.createWorksheet = function (worksheet, config) {
-        return excelUtils_1.createXmlPart(worksheet_1.default.getTemplate({
+        return (0, excelUtils_1.createXmlPart)(worksheet_1.default.getTemplate({
             worksheet: worksheet,
             currentSheet: this.sheetNames.length - 1,
             config: config

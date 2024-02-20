@@ -5,229 +5,195 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ColumnApi = void 0;
 var context_1 = require("../context/context");
-var utils_1 = require("../utils");
-var gridOptionsValidator_1 = require("../gridOptionsValidator");
+var function_1 = require("../utils/function");
+/** @deprecated Use methods via the grid api instead. */
 var ColumnApi = /** @class */ (function () {
-    function ColumnApi() {
+    function ColumnApi(gridAp) {
+        var _this = this;
+        this.viaApi = function (funcName) {
+            var _a;
+            var args = [];
+            for (var _i = 1; _i < arguments.length; _i++) {
+                args[_i - 1] = arguments[_i];
+            }
+            (0, function_1.warnOnce)("Since v31, 'columnApi.".concat(funcName, "' is deprecated and moved to 'api.").concat(funcName, "'."));
+            return (_a = _this.api)[funcName].apply(_a, __spreadArray([], __read(args), false));
+        };
+        this.api = gridAp;
     }
-    /**
-     * Gets the grid to size the columns to the specified width in pixels, e.g. `sizeColumnsToFit(900)`.
-     * To have the grid fit the columns to the grid's width, use the Grid API `gridApi.sizeColumnsToFit()` instead.
-     * If inferring cell data types with custom column types and row data is provided asynchronously,
-     * the column sizing will happen asynchronously when row data is added.
-     * To always perform this synchronously, set `cellDataType = false` on the default column definition.
-     */
-    ColumnApi.prototype.sizeColumnsToFit = function (gridWidth) {
-        // AG-3403 validate that gridWidth is provided because this method has the same name as
-        // a method on the grid API that takes no arguments, and it's easy to confuse the two
-        if (typeof gridWidth === "undefined") {
-            console.error('AG Grid: missing parameter to columnApi.sizeColumnsToFit(gridWidth)');
-        }
-        this.columnModel.sizeColumnsToFit(gridWidth, 'api');
-    };
-    /** Call this if you want to open or close a column group. */
-    ColumnApi.prototype.setColumnGroupOpened = function (group, newValue) { this.columnModel.setColumnGroupOpened(group, newValue, 'api'); };
-    /** Returns the column group with the given name. */
-    ColumnApi.prototype.getColumnGroup = function (name, instanceId) { return this.columnModel.getColumnGroup(name, instanceId); };
-    /** Returns the provided column group with the given name. */
-    ColumnApi.prototype.getProvidedColumnGroup = function (name) { return this.columnModel.getProvidedColumnGroup(name); };
-    /** Returns the display name for a column. Useful if you are doing your own header rendering and want the grid to work out if `headerValueGetter` is used, or if you are doing your own column management GUI, to know what to show as the column name. */
-    ColumnApi.prototype.getDisplayNameForColumn = function (column, location) { return this.columnModel.getDisplayNameForColumn(column, location) || ''; };
-    /** Returns the display name for a column group (when grouping columns). */
-    ColumnApi.prototype.getDisplayNameForColumnGroup = function (columnGroup, location) { return this.columnModel.getDisplayNameForColumnGroup(columnGroup, location) || ''; };
-    /** Returns the column with the given `colKey`, which can either be the `colId` (a string) or the `colDef` (an object). */
-    ColumnApi.prototype.getColumn = function (key) { return this.columnModel.getPrimaryColumn(key); };
-    /** Returns all the columns, regardless of visible or not. */
-    ColumnApi.prototype.getColumns = function () { return this.columnModel.getAllPrimaryColumns(); };
-    /** Applies the state of the columns from a previous state. Returns `false` if one or more columns could not be found. */
-    ColumnApi.prototype.applyColumnState = function (params) { return this.columnModel.applyColumnState(params, 'api'); };
-    /** Gets the state of the columns. Typically used when saving column state. */
-    ColumnApi.prototype.getColumnState = function () { return this.columnModel.getColumnState(); };
-    /** Sets the state back to match the originally provided column definitions. */
-    ColumnApi.prototype.resetColumnState = function () { this.columnModel.resetColumnState('api'); };
-    /** Gets the state of the column groups. Typically used when saving column group state. */
-    ColumnApi.prototype.getColumnGroupState = function () { return this.columnModel.getColumnGroupState(); };
-    /** Sets the state of the column group state from a previous state. */
-    ColumnApi.prototype.setColumnGroupState = function (stateItems) { this.columnModel.setColumnGroupState(stateItems, 'api'); };
-    /** Sets the state back to match the originally provided column definitions. */
-    ColumnApi.prototype.resetColumnGroupState = function () { this.columnModel.resetColumnGroupState('api'); };
-    /** Returns `true` if pinning left or right, otherwise `false`. */
-    ColumnApi.prototype.isPinning = function () { return this.columnModel.isPinningLeft() || this.columnModel.isPinningRight(); };
-    /** Returns `true` if pinning left, otherwise `false`. */
-    ColumnApi.prototype.isPinningLeft = function () { return this.columnModel.isPinningLeft(); };
-    /** Returns `true` if pinning right, otherwise `false`. */
-    ColumnApi.prototype.isPinningRight = function () { return this.columnModel.isPinningRight(); };
-    /** Returns the column to the right of the provided column, taking into consideration open / closed column groups and visible columns. This is useful if you need to know what column is beside yours e.g. if implementing your own cell navigation. */
-    ColumnApi.prototype.getDisplayedColAfter = function (col) { return this.columnModel.getDisplayedColAfter(col); };
-    /** Same as `getVisibleColAfter` except gives column to the left. */
-    ColumnApi.prototype.getDisplayedColBefore = function (col) { return this.columnModel.getDisplayedColBefore(col); };
-    /** Sets the visibility of a column. Key can be the column ID or `Column` object. */
-    ColumnApi.prototype.setColumnVisible = function (key, visible) { this.columnModel.setColumnVisible(key, visible, 'api'); };
-    /** Same as `setColumnVisible`, but provide a list of column keys. */
-    ColumnApi.prototype.setColumnsVisible = function (keys, visible) { this.columnModel.setColumnsVisible(keys, visible, 'api'); };
-    /** Sets the column pinned / unpinned. Key can be the column ID, field, `ColDef` object or `Column` object. */
-    ColumnApi.prototype.setColumnPinned = function (key, pinned) { this.columnModel.setColumnPinned(key, pinned, 'api'); };
-    /** Same as `setColumnPinned`, but provide a list of column keys. */
-    ColumnApi.prototype.setColumnsPinned = function (keys, pinned) { this.columnModel.setColumnsPinned(keys, pinned, 'api'); };
-    /**
-     * Returns all the grid columns, same as `getColumns()`, except
-     *
-     *  a) it has the order of the columns that are presented in the grid
-     *
-     *  b) it's after the 'pivot' step, so if pivoting, has the value columns for the pivot.
-     */
-    ColumnApi.prototype.getAllGridColumns = function () { return this.columnModel.getAllGridColumns(); };
-    /** Same as `getAllDisplayedColumns` but just for the pinned left portion of the grid. */
-    ColumnApi.prototype.getDisplayedLeftColumns = function () { return this.columnModel.getDisplayedLeftColumns(); };
-    /** Same as `getAllDisplayedColumns` but just for the center portion of the grid. */
-    ColumnApi.prototype.getDisplayedCenterColumns = function () { return this.columnModel.getDisplayedCenterColumns(); };
-    /** Same as `getAllDisplayedColumns` but just for the pinned right portion of the grid. */
-    ColumnApi.prototype.getDisplayedRightColumns = function () { return this.columnModel.getDisplayedRightColumns(); };
-    /** Returns all columns currently displayed (e.g. are visible and if in a group, the group is showing the columns) for the pinned left, centre and pinned right portions of the grid. */
-    ColumnApi.prototype.getAllDisplayedColumns = function () { return this.columnModel.getAllDisplayedColumns(); };
-    /** Same as `getAllGridColumns()`, except only returns rendered columns, i.e. columns that are not within the viewport and therefore not rendered, due to column virtualisation, are not displayed. */
-    ColumnApi.prototype.getAllDisplayedVirtualColumns = function () { return this.columnModel.getViewportColumns(); };
-    /** Moves a column to `toIndex`. The column is first removed, then added at the `toIndex` location, thus index locations will change to the right of the column after the removal. */
-    ColumnApi.prototype.moveColumn = function (key, toIndex) {
-        this.columnModel.moveColumn(key, toIndex, 'api');
-    };
-    /** Same as `moveColumn` but works on index locations. */
-    ColumnApi.prototype.moveColumnByIndex = function (fromIndex, toIndex) { this.columnModel.moveColumnByIndex(fromIndex, toIndex, 'api'); };
-    /** Same as `moveColumn` but works on list. */
-    ColumnApi.prototype.moveColumns = function (columnsToMoveKeys, toIndex) { this.columnModel.moveColumns(columnsToMoveKeys, toIndex, 'api'); };
-    /** Move the column to a new position in the row grouping order. */
-    ColumnApi.prototype.moveRowGroupColumn = function (fromIndex, toIndex) { this.columnModel.moveRowGroupColumn(fromIndex, toIndex); };
-    /** Sets the agg function for a column. `aggFunc` can be one of the built-in aggregations or a custom aggregation by name or direct function. */
-    ColumnApi.prototype.setColumnAggFunc = function (key, aggFunc) { this.columnModel.setColumnAggFunc(key, aggFunc); };
-    /** Sets the column width on a single column. The finished flag gets included in the resulting event and not used internally by the grid. The finished flag is intended for dragging, where a dragging action will produce many `columnWidth` events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to `true`. */
+    /** @deprecated v31 use `api.sizeColumnsToFit()` instead.   */
+    ColumnApi.prototype.sizeColumnsToFit = function (gridWidth) { this.viaApi('sizeColumnsToFit', gridWidth); };
+    /** @deprecated v31 use `api.setColumnGroupOpened() instead. */
+    ColumnApi.prototype.setColumnGroupOpened = function (group, newValue) { this.viaApi('setColumnGroupOpened', group, newValue); };
+    /** @deprecated v31 use `api.getColumnGroup() instead. */
+    ColumnApi.prototype.getColumnGroup = function (name, instanceId) { return this.viaApi('getColumnGroup', name, instanceId); };
+    /** @deprecated v31 use `api.getProvidedColumnGroup() instead. */
+    ColumnApi.prototype.getProvidedColumnGroup = function (name) { return this.viaApi('getProvidedColumnGroup', name); };
+    /** @deprecated v31 use `api.getDisplayNameForColumn() instead. */
+    ColumnApi.prototype.getDisplayNameForColumn = function (column, location) { return this.viaApi('getDisplayNameForColumn', column, location); };
+    /** @deprecated v31 use `api.getDisplayNameForColumnGroup() instead. */
+    ColumnApi.prototype.getDisplayNameForColumnGroup = function (columnGroup, location) { return this.viaApi('getDisplayNameForColumnGroup', columnGroup, location); };
+    /** @deprecated v31 use `api.getColumn() instead. */
+    ColumnApi.prototype.getColumn = function (key) { return this.viaApi('getColumn', key); };
+    /** @deprecated v31 use `api.getColumns() instead. */
+    ColumnApi.prototype.getColumns = function () { return this.viaApi('getColumns'); };
+    /** @deprecated v31 use `api.applyColumnState() instead. */
+    ColumnApi.prototype.applyColumnState = function (params) { return this.viaApi('applyColumnState', params); };
+    /** @deprecated v31 use `api.getColumnState() instead. */
+    ColumnApi.prototype.getColumnState = function () { return this.viaApi('getColumnState'); };
+    /** @deprecated v31 use `api.resetColumnState() instead. */
+    ColumnApi.prototype.resetColumnState = function () { this.viaApi('resetColumnState'); };
+    /** @deprecated v31 use `api.getColumnGroupState() instead. */
+    ColumnApi.prototype.getColumnGroupState = function () { return this.viaApi('getColumnGroupState'); };
+    /** @deprecated v31 use `api.setColumnGroupState() instead. */
+    ColumnApi.prototype.setColumnGroupState = function (stateItems) { this.viaApi('setColumnGroupState', stateItems); };
+    /** @deprecated v31 use `api.resetColumnGroupState() instead. */
+    ColumnApi.prototype.resetColumnGroupState = function () { this.viaApi('resetColumnGroupState'); };
+    /** @deprecated v31 use `api.isPinning() instead. */
+    ColumnApi.prototype.isPinning = function () { return this.viaApi('isPinning'); };
+    /** @deprecated v31 use `api.isPinningLeft() instead. */
+    ColumnApi.prototype.isPinningLeft = function () { return this.viaApi('isPinningLeft'); };
+    /** @deprecated v31 use `api.isPinningRight() instead. */
+    ColumnApi.prototype.isPinningRight = function () { return this.viaApi('isPinningRight'); };
+    /** @deprecated v31 use `api.getDisplayedColAfter() instead. */
+    ColumnApi.prototype.getDisplayedColAfter = function (col) { return this.viaApi('getDisplayedColAfter', col); };
+    /** @deprecated v31 use `api.getDisplayedColBefore() instead. */
+    ColumnApi.prototype.getDisplayedColBefore = function (col) { return this.viaApi('getDisplayedColBefore', col); };
+    /** @deprecated v31 use `api.setColumnVisible() instead. */
+    ColumnApi.prototype.setColumnVisible = function (key, visible) { this.viaApi('setColumnVisible', key, visible); };
+    /** @deprecated v31 use `api.setColumnsVisible() instead. */
+    ColumnApi.prototype.setColumnsVisible = function (keys, visible) { this.viaApi('setColumnsVisible', keys, visible); };
+    /** @deprecated v31 use `api.setColumnPinned() instead. */
+    ColumnApi.prototype.setColumnPinned = function (key, pinned) { this.viaApi('setColumnPinned', key, pinned); };
+    /** @deprecated v31 use `api.setColumnsPinned() instead. */
+    ColumnApi.prototype.setColumnsPinned = function (keys, pinned) { this.viaApi('setColumnsPinned', keys, pinned); };
+    /** @deprecated v31 use `api.getAllGridColumns() instead. */
+    ColumnApi.prototype.getAllGridColumns = function () { return this.viaApi('getAllGridColumns'); };
+    /** @deprecated v31 use `api.getDisplayedLeftColumns() instead. */
+    ColumnApi.prototype.getDisplayedLeftColumns = function () { return this.viaApi('getDisplayedLeftColumns'); };
+    /** @deprecated v31 use `api.getDisplayedCenterColumns() instead. */
+    ColumnApi.prototype.getDisplayedCenterColumns = function () { return this.viaApi('getDisplayedCenterColumns'); };
+    /** @deprecated v31 use `api.getDisplayedRightColumns() instead. */
+    ColumnApi.prototype.getDisplayedRightColumns = function () { return this.viaApi('getDisplayedRightColumns'); };
+    /** @deprecated v31 use `api.getAllDisplayedColumns() instead. */
+    ColumnApi.prototype.getAllDisplayedColumns = function () { return this.viaApi('getAllDisplayedColumns'); };
+    /** @deprecated v31 use `api.getAllDisplayedVirtualColumns() instead. */
+    ColumnApi.prototype.getAllDisplayedVirtualColumns = function () { return this.viaApi('getAllDisplayedVirtualColumns'); };
+    /** @deprecated v31 use `api.moveColumn() instead. */
+    ColumnApi.prototype.moveColumn = function (key, toIndex) { this.viaApi('moveColumn', key, toIndex); };
+    /** @deprecated v31 use `api.moveColumnByIndex() instead. */
+    ColumnApi.prototype.moveColumnByIndex = function (fromIndex, toIndex) { this.viaApi('moveColumnByIndex', fromIndex, toIndex); };
+    /** @deprecated v31 use `api.moveColumns() instead. */
+    ColumnApi.prototype.moveColumns = function (columnsToMoveKeys, toIndex) { this.viaApi('moveColumns', columnsToMoveKeys, toIndex); };
+    /** @deprecated v31 use `api.moveRowGroupColumn() instead. */
+    ColumnApi.prototype.moveRowGroupColumn = function (fromIndex, toIndex) { this.viaApi('moveRowGroupColumn', fromIndex, toIndex); };
+    /** @deprecated v31 use `api.setColumnAggFunc() instead. */
+    ColumnApi.prototype.setColumnAggFunc = function (key, aggFunc) { this.viaApi('setColumnAggFunc', key, aggFunc); };
+    /** @deprecated v31 use `api.setColumnWidth() instead. */
     ColumnApi.prototype.setColumnWidth = function (key, newWidth, finished, source) {
         if (finished === void 0) { finished = true; }
-        this.columnModel.setColumnWidths([{ key: key, newWidth: newWidth }], false, finished, source);
+        this.viaApi('setColumnWidth', key, newWidth, finished, source);
     };
-    /** Sets the column widths on multiple columns. This method offers better performance than calling `setColumnWidth` multiple times. The finished flag gets included in the resulting event and not used internally by the grid. The finished flag is intended for dragging, where a dragging action will produce many `columnWidth` events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to `true`. */
+    /** @deprecated v31 use `api.setColumnWidths() instead. */
     ColumnApi.prototype.setColumnWidths = function (columnWidths, finished, source) {
         if (finished === void 0) { finished = true; }
-        this.columnModel.setColumnWidths(columnWidths, false, finished, source);
+        this.viaApi('setColumnWidths', columnWidths, finished, source);
     };
-    /** Set the pivot mode. */
-    ColumnApi.prototype.setPivotMode = function (pivotMode) { this.columnModel.setPivotMode(pivotMode); };
-    /** Get the pivot mode. */
-    ColumnApi.prototype.isPivotMode = function () { return this.columnModel.isPivotMode(); };
-    /** Returns the pivot result column for the given `pivotKeys` and `valueColId`. Useful to then call operations on the pivot column. */
-    ColumnApi.prototype.getPivotResultColumn = function (pivotKeys, valueColKey) { return this.columnModel.getSecondaryPivotColumn(pivotKeys, valueColKey); };
-    /** Set the value columns to the provided list of columns. */
-    ColumnApi.prototype.setValueColumns = function (colKeys) { this.columnModel.setValueColumns(colKeys, 'api'); };
-    /** Get a list of the existing value columns. */
-    ColumnApi.prototype.getValueColumns = function () { return this.columnModel.getValueColumns(); };
-    /** Remove the given column from the existing set of value columns. */
-    ColumnApi.prototype.removeValueColumn = function (colKey) { this.columnModel.removeValueColumn(colKey, 'api'); };
-    /** Like `removeValueColumn` but remove the given list of columns from the existing set of value columns. */
-    ColumnApi.prototype.removeValueColumns = function (colKeys) { this.columnModel.removeValueColumns(colKeys, 'api'); };
-    /** Add the given column to the set of existing value columns. */
-    ColumnApi.prototype.addValueColumn = function (colKey) { this.columnModel.addValueColumn(colKey, 'api'); };
-    /** Like `addValueColumn` but add the given list of columns to the existing set of value columns. */
-    ColumnApi.prototype.addValueColumns = function (colKeys) { this.columnModel.addValueColumns(colKeys, 'api'); };
-    /** Set the row group columns. */
-    ColumnApi.prototype.setRowGroupColumns = function (colKeys) { this.columnModel.setRowGroupColumns(colKeys, 'api'); };
-    /** Remove a column from the row groups. */
-    ColumnApi.prototype.removeRowGroupColumn = function (colKey) { this.columnModel.removeRowGroupColumn(colKey, 'api'); };
-    /** Same as `removeRowGroupColumn` but provide a list of columns. */
-    ColumnApi.prototype.removeRowGroupColumns = function (colKeys) { this.columnModel.removeRowGroupColumns(colKeys, 'api'); };
-    /** Add a column to the row groups. */
-    ColumnApi.prototype.addRowGroupColumn = function (colKey) { this.columnModel.addRowGroupColumn(colKey, 'api'); };
-    /** Same as `addRowGroupColumn` but provide a list of columns. */
-    ColumnApi.prototype.addRowGroupColumns = function (colKeys) { this.columnModel.addRowGroupColumns(colKeys, 'api'); };
-    /** Get row group columns. */
-    ColumnApi.prototype.getRowGroupColumns = function () { return this.columnModel.getRowGroupColumns(); };
-    /** Set the pivot columns. */
-    ColumnApi.prototype.setPivotColumns = function (colKeys) { this.columnModel.setPivotColumns(colKeys, 'api'); };
-    /** Remove a pivot column. */
-    ColumnApi.prototype.removePivotColumn = function (colKey) { this.columnModel.removePivotColumn(colKey, 'api'); };
-    /** Same as `removePivotColumn` but provide a list of columns. */
-    ColumnApi.prototype.removePivotColumns = function (colKeys) { this.columnModel.removePivotColumns(colKeys, 'api'); };
-    /** Add a pivot column. */
-    ColumnApi.prototype.addPivotColumn = function (colKey) { this.columnModel.addPivotColumn(colKey, 'api'); };
-    /** Same as `addPivotColumn` but provide a list of columns. */
-    ColumnApi.prototype.addPivotColumns = function (colKeys) { this.columnModel.addPivotColumns(colKeys, 'api'); };
-    /** Get the pivot columns. */
-    ColumnApi.prototype.getPivotColumns = function () { return this.columnModel.getPivotColumns(); };
-    /** Same as `getAllDisplayedColumnGroups` but just for the pinned left portion of the grid. */
-    ColumnApi.prototype.getLeftDisplayedColumnGroups = function () { return this.columnModel.getDisplayedTreeLeft(); };
-    /** Same as `getAllDisplayedColumnGroups` but just for the center portion of the grid. */
-    ColumnApi.prototype.getCenterDisplayedColumnGroups = function () { return this.columnModel.getDisplayedTreeCentre(); };
-    /** Same as `getAllDisplayedColumnGroups` but just for the pinned right portion of the grid. */
-    ColumnApi.prototype.getRightDisplayedColumnGroups = function () { return this.columnModel.getDisplayedTreeRight(); };
-    /** Returns all 'root' column headers. If you are not grouping columns, these return the columns. If you are grouping, these return the top level groups - you can navigate down through each one to get the other lower level headers and finally the columns at the bottom. */
-    ColumnApi.prototype.getAllDisplayedColumnGroups = function () { return this.columnModel.getAllDisplayedTrees(); };
-    /**
-     * Auto-sizes a column based on its contents. If inferring cell data types with custom column types and row data is provided asynchronously,
-     * the column sizing will happen asynchronously when row data is added. To always perform this synchronously,
-     * set `cellDataType = false` on the default column definition.
-     */
-    ColumnApi.prototype.autoSizeColumn = function (key, skipHeader) { return this.columnModel.autoSizeColumn(key, skipHeader, 'api'); };
-    /**
-     * Same as `autoSizeColumn`, but provide a list of column keys. If inferring cell data types with custom column types
-     * and row data is provided asynchronously, the column sizing will happen asynchronously when row data is added.
-     * To always perform this synchronously, set `cellDataType = false` on the default column definition.
-     */
+    /** @deprecated v31 use `api.setPivotMode() instead. */
+    ColumnApi.prototype.setPivotMode = function (pivotMode) { this.viaApi('setPivotMode', pivotMode); };
+    /** @deprecated v31 use `api.isPivotMode() instead. */
+    ColumnApi.prototype.isPivotMode = function () { return this.viaApi('isPivotMode'); };
+    /** @deprecated v31 use `api.getPivotResultColumn() instead. */
+    ColumnApi.prototype.getPivotResultColumn = function (pivotKeys, valueColKey) { return this.viaApi('getPivotResultColumn', pivotKeys, valueColKey); };
+    /** @deprecated v31 use `api.setValueColumns() instead. */
+    ColumnApi.prototype.setValueColumns = function (colKeys) { this.viaApi('setValueColumns', colKeys); };
+    /** @deprecated v31 use `api.getValueColumns() instead. */
+    ColumnApi.prototype.getValueColumns = function () { return this.viaApi('getValueColumns'); };
+    /** @deprecated v31 use `api.removeValueColumn() instead. */
+    ColumnApi.prototype.removeValueColumn = function (colKey) { this.viaApi('removeValueColumn', colKey); };
+    /** @deprecated v31 use `api.removeValueColumns() instead. */
+    ColumnApi.prototype.removeValueColumns = function (colKeys) { this.viaApi('removeValueColumns', colKeys); };
+    /** @deprecated v31 use `api.addValueColumn() instead. */
+    ColumnApi.prototype.addValueColumn = function (colKey) { this.viaApi('addValueColumn', colKey); };
+    /** @deprecated v31 use `api.addValueColumns() instead. */
+    ColumnApi.prototype.addValueColumns = function (colKeys) { this.viaApi('addValueColumns', colKeys); };
+    /** @deprecated v31 use `api.setRowGroupColumns() instead. */
+    ColumnApi.prototype.setRowGroupColumns = function (colKeys) { this.viaApi('setRowGroupColumns', colKeys); };
+    /** @deprecated v31 use `api.removeRowGroupColumn() instead. */
+    ColumnApi.prototype.removeRowGroupColumn = function (colKey) { this.viaApi('removeRowGroupColumn', colKey); };
+    /** @deprecated v31 use `api.removeRowGroupColumns() instead. */
+    ColumnApi.prototype.removeRowGroupColumns = function (colKeys) { this.viaApi('removeRowGroupColumns', colKeys); };
+    /** @deprecated v31 use `api.addRowGroupColumn() instead. */
+    ColumnApi.prototype.addRowGroupColumn = function (colKey) { this.viaApi('addRowGroupColumn', colKey); };
+    /** @deprecated v31 use `api.addRowGroupColumns() instead. */
+    ColumnApi.prototype.addRowGroupColumns = function (colKeys) { this.viaApi('addRowGroupColumns', colKeys); };
+    /** @deprecated v31 use `api.getRowGroupColumns() instead. */
+    ColumnApi.prototype.getRowGroupColumns = function () { return this.viaApi('getRowGroupColumns'); };
+    /** @deprecated v31 use `api.setPivotColumns() instead. */
+    ColumnApi.prototype.setPivotColumns = function (colKeys) { this.viaApi('setPivotColumns', colKeys); };
+    /** @deprecated v31 use `api.removePivotColumn() instead. */
+    ColumnApi.prototype.removePivotColumn = function (colKey) { this.viaApi('removePivotColumn', colKey); };
+    /** @deprecated v31 use `api.removePivotColumns() instead. */
+    ColumnApi.prototype.removePivotColumns = function (colKeys) { this.viaApi('removePivotColumns', colKeys); };
+    /** @deprecated v31 use `api.addPivotColumn() instead. */
+    ColumnApi.prototype.addPivotColumn = function (colKey) { this.viaApi('addPivotColumn', colKey); };
+    /** @deprecated v31 use `api.addPivotColumns() instead. */
+    ColumnApi.prototype.addPivotColumns = function (colKeys) { this.viaApi('addPivotColumns', colKeys); };
+    /** @deprecated v31 use `api.getPivotColumns() instead. */
+    ColumnApi.prototype.getPivotColumns = function () { return this.viaApi('getPivotColumns'); };
+    /** @deprecated v31 use `api.getLeftDisplayedColumnGroups() instead. */
+    ColumnApi.prototype.getLeftDisplayedColumnGroups = function () { return this.viaApi('getLeftDisplayedColumnGroups'); };
+    /** @deprecated v31 use `api.getCenterDisplayedColumnGroups() instead. */
+    ColumnApi.prototype.getCenterDisplayedColumnGroups = function () { return this.viaApi('getCenterDisplayedColumnGroups'); };
+    /** @deprecated v31 use `api.getRightDisplayedColumnGroups() instead. */
+    ColumnApi.prototype.getRightDisplayedColumnGroups = function () { return this.viaApi('getRightDisplayedColumnGroups'); };
+    /** @deprecated v31 use `api.getAllDisplayedColumnGroups() instead. */
+    ColumnApi.prototype.getAllDisplayedColumnGroups = function () { return this.viaApi('getAllDisplayedColumnGroups'); };
+    /** @deprecated v31 use `api.autoSizeColumn() instead. */
+    ColumnApi.prototype.autoSizeColumn = function (key, skipHeader) { return this.viaApi('autoSizeColumn', key, skipHeader); };
+    /** @deprecated v31 use `api.autoSizeColumns() instead. */
     ColumnApi.prototype.autoSizeColumns = function (keys, skipHeader) {
-        this.columnModel.autoSizeColumns({ columns: keys, skipHeader: skipHeader });
+        this.viaApi('autoSizeColumns', keys, skipHeader);
     };
-    /**
-     * Calls `autoSizeColumns` on all displayed columns. If inferring cell data types with custom column types
-     * and row data is provided asynchronously, the column sizing will happen asynchronously when row data is added.
-     * To always perform this synchronously, set `cellDataType = false` on the default column definition.
-     */
-    ColumnApi.prototype.autoSizeAllColumns = function (skipHeader) { this.columnModel.autoSizeAllColumns(skipHeader, 'api'); };
-    /** Set the pivot result columns. */
-    ColumnApi.prototype.setPivotResultColumns = function (colDefs) { this.columnModel.setSecondaryColumns(colDefs, 'api'); };
-    /** Returns the grid's pivot result columns. */
-    ColumnApi.prototype.getPivotResultColumns = function () { return this.columnModel.getSecondaryColumns(); };
-    ColumnApi.prototype.cleanDownReferencesToAvoidMemoryLeakInCaseApplicationIsKeepingReferenceToDestroyedGrid = function () {
-        // some users were raising support issues with regards memory leaks. the problem was the customers applications
-        // were keeping references to the API. trying to educate them all would be difficult, easier to just remove
-        // all references in the API so at least the core grid can be garbage collected.
-        //
-        // wait about 100ms before clearing down the references, in case user has some cleanup to do,
-        // and needs to deference the API first
-        setTimeout(utils_1._.removeAllReferences.bind(window, this, 'Column API'), 100);
-    };
-    /** @deprecated v28 Use `getColumns` instead */
-    ColumnApi.prototype.getAllColumns = function () {
-        gridOptionsValidator_1.logDeprecation('28.0', 'getAllColumns', 'getColumns');
-        return this.getColumns();
-    };
-    /** @deprecated v28 Use `getColumns` instead. */
-    ColumnApi.prototype.getPrimaryColumns = function () {
-        gridOptionsValidator_1.logDeprecation('28.0', 'getPrimaryColumns', 'getColumns');
-        return this.getColumns();
-    };
-    /** @deprecated v28 Use `getPivotResultColumns` instead. */
-    ColumnApi.prototype.getSecondaryColumns = function () {
-        gridOptionsValidator_1.logDeprecation('28.0', 'getSecondaryColumns', 'getPivotResultColumns');
-        return this.getPivotResultColumns();
-    };
-    /** @deprecated v28 Use `setPivotResultColumns` instead. */
-    ColumnApi.prototype.setSecondaryColumns = function (colDefs) {
-        gridOptionsValidator_1.logDeprecation('28.0', 'setSecondaryColumns', 'setPivotResultColumns');
-        this.setPivotResultColumns(colDefs);
-    };
-    /** @deprecated v28 Use `getPivotResultColumn` instead */
-    ColumnApi.prototype.getSecondaryPivotColumn = function (pivotKeys, valueColKey) {
-        gridOptionsValidator_1.logDeprecation('28.0', 'getSecondaryPivotColumn', 'getPivotResultColumn');
-        return this.getPivotResultColumn(pivotKeys, valueColKey);
-    };
+    /** @deprecated v31 use `api.autoSizeAllColumns() instead. */
+    ColumnApi.prototype.autoSizeAllColumns = function (skipHeader) { this.viaApi('autoSizeAllColumns', skipHeader); };
+    /** @deprecated v31 use `api.setPivotResultColumns() instead. */
+    ColumnApi.prototype.setPivotResultColumns = function (colDefs) { this.viaApi('setPivotResultColumns', colDefs); };
+    /** @deprecated v31 use `api.getPivotResultColumns() instead. */
+    ColumnApi.prototype.getPivotResultColumns = function () { return this.viaApi('getPivotResultColumns'); };
     __decorate([
-        context_1.Autowired('columnModel')
-    ], ColumnApi.prototype, "columnModel", void 0);
-    __decorate([
-        context_1.PreDestroy
-    ], ColumnApi.prototype, "cleanDownReferencesToAvoidMemoryLeakInCaseApplicationIsKeepingReferenceToDestroyedGrid", null);
+        (0, context_1.Autowired)('gridApi')
+    ], ColumnApi.prototype, "api", void 0);
     ColumnApi = __decorate([
-        context_1.Bean('columnApi')
+        (0, context_1.Bean)('columnApi')
     ], ColumnApi);
     return ColumnApi;
 }());

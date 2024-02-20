@@ -215,7 +215,7 @@ var CtrlsService = /** @class */ (function (_super) {
     var CtrlsService_1;
     CtrlsService.NAME = 'ctrlsService';
     CtrlsService = CtrlsService_1 = __decorate([
-        context_1.Bean(CtrlsService_1.NAME)
+        (0, context_1.Bean)(CtrlsService_1.NAME)
     ], CtrlsService);
     return CtrlsService;
 }(beanStub_1.BeanStub));

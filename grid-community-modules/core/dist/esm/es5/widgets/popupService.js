@@ -46,19 +46,33 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { Events } from '../events';
 import { BeanStub } from "../context/beanStub";
 import { getAbsoluteHeight, getAbsoluteWidth, getElementRectWithOffset } from '../utils/dom';
 import { last } from '../utils/array';
-import { isElementInEventPath } from '../utils/event';
+import { isElementInEventPath, isStopPropagationForAgGrid } from '../utils/event';
 import { KeyCode } from '../constants/keyCode';
-import { FocusService } from "../focusService";
 import { AgPromise } from "../utils";
 import { setAriaLabel, setAriaRole } from "../utils/aria";
 import { exists } from "../utils/generic";
@@ -80,13 +94,8 @@ var PopupService = /** @class */ (function (_super) {
         var _this = this;
         this.ctrlsService.whenReady(function (p) {
             _this.gridCtrl = p.gridCtrl;
-            _this.addManagedListener(_this.gridCtrl, Events.EVENT_KEYBOARD_FOCUS, function () {
-                _this.popupList.forEach(function (popup) { return popup.element.classList.add(FocusService.AG_KEYBOARD_FOCUS); });
-            });
-            _this.addManagedListener(_this.gridCtrl, Events.EVENT_MOUSE_FOCUS, function () {
-                _this.popupList.forEach(function (popup) { return popup.element.classList.remove(FocusService.AG_KEYBOARD_FOCUS); });
-            });
         });
+        this.addManagedListener(this.eventService, Events.EVENT_GRID_STYLES_CHANGED, this.handleThemeChange.bind(this));
     };
     PopupService.prototype.getPopupParent = function () {
         var ePopupParent = this.gridOptionsService.get('popupParent');
@@ -106,14 +115,14 @@ var PopupService = /** @class */ (function (_super) {
         var parentRect = this.getParentRect();
         var y = this.keepXYWithinBounds(ePopup, sourceRect.top - parentRect.top, DIRECTION.vertical);
         var minWidth = (ePopup.clientWidth > 0) ? ePopup.clientWidth : 200;
-        ePopup.style.minWidth = minWidth + "px";
+        ePopup.style.minWidth = "".concat(minWidth, "px");
         var widthOfParent = parentRect.right - parentRect.left;
         var maxX = widthOfParent - minWidth;
         // the x position of the popup depends on RTL or LTR. for normal cases, LTR, we put the child popup
         // to the right, unless it doesn't fit and we then put it to the left. for RTL it's the other way around,
         // we try place it first to the left, and then if not to the right.
         var x;
-        if (this.gridOptionsService.is('enableRtl')) {
+        if (this.gridOptionsService.get('enableRtl')) {
             // for RTL, try left first
             x = xLeftPosition();
             if (x < 0) {
@@ -137,8 +146,8 @@ var PopupService = /** @class */ (function (_super) {
                 this.setAlignedStyles(ePopup, 'left');
             }
         }
-        ePopup.style.left = x + "px";
-        ePopup.style.top = y + "px";
+        ePopup.style.left = "".concat(x, "px");
+        ePopup.style.top = "".concat(y, "px");
         function xRightPosition() {
             return sourceRect.right - parentRect.left - 2;
         }
@@ -231,14 +240,14 @@ var PopupService = /** @class */ (function (_super) {
         }
         var positions = ['right', 'left', 'over', 'above', 'under'];
         positions.forEach(function (position) {
-            alignedToElement.classList.remove("ag-has-popup-positioned-" + position);
-            ePopup.classList.remove("ag-popup-positioned-" + position);
+            alignedToElement.classList.remove("ag-has-popup-positioned-".concat(position));
+            ePopup.classList.remove("ag-popup-positioned-".concat(position));
         });
         if (!positioned) {
             return;
         }
-        alignedToElement.classList.add("ag-has-popup-positioned-" + positioned);
-        ePopup.classList.add("ag-popup-positioned-" + positioned);
+        alignedToElement.classList.add("ag-has-popup-positioned-".concat(positioned));
+        ePopup.classList.add("ag-popup-positioned-".concat(positioned));
     };
     PopupService.prototype.callPostProcessPopup = function (type, ePopup, eventSource, mouseEvent, column, rowNode) {
         var callback = this.gridOptionsService.getCallback('postProcessPopup');
@@ -279,8 +288,8 @@ var PopupService = /** @class */ (function (_super) {
                 x = _this.keepXYWithinBounds(ePopup, x, DIRECTION.horizontal);
                 y = _this.keepXYWithinBounds(ePopup, y, DIRECTION.vertical);
             }
-            ePopup.style.left = x + "px";
-            ePopup.style.top = y + "px";
+            ePopup.style.left = "".concat(x, "px");
+            ePopup.style.top = "".concat(y, "px");
             if (params.postProcessCallback) {
                 params.postProcessCallback();
             }
@@ -364,10 +373,10 @@ var PopupService = /** @class */ (function (_super) {
         var ePopupParent = this.getPopupParent();
         var ePopupParentRect = ePopupParent.getBoundingClientRect();
         if (!exists(element.style.top)) {
-            element.style.top = ePopupParentRect.top * -1 + "px";
+            element.style.top = "".concat(ePopupParentRect.top * -1, "px");
         }
         if (!exists(element.style.left)) {
-            element.style.left = ePopupParentRect.left * -1 + "px";
+            element.style.left = "".concat(ePopupParentRect.left * -1, "px");
         }
     };
     PopupService.prototype.createPopupWrapper = function (element, ariaLabel, alwaysOnTop) {
@@ -378,17 +387,14 @@ var PopupService = /** @class */ (function (_super) {
         var eWrapper = document.createElement('div');
         var allThemes = this.environment.getTheme().allThemes;
         if (allThemes.length) {
-            (_a = eWrapper.classList).add.apply(_a, __spreadArray([], __read(allThemes)));
+            (_a = eWrapper.classList).add.apply(_a, __spreadArray([], __read(allThemes), false));
         }
         eWrapper.classList.add('ag-popup');
-        element.classList.add(this.gridOptionsService.is('enableRtl') ? 'ag-rtl' : 'ag-ltr', 'ag-popup-child');
+        element.classList.add(this.gridOptionsService.get('enableRtl') ? 'ag-rtl' : 'ag-ltr', 'ag-popup-child');
         if (!element.hasAttribute('role')) {
             setAriaRole(element, 'dialog');
         }
         setAriaLabel(element, ariaLabel);
-        if (this.focusService.isKeyboardMode()) {
-            element.classList.add(FocusService.AG_KEYBOARD_FOCUS);
-        }
         eWrapper.appendChild(element);
         ePopupParent.appendChild(eWrapper);
         if (alwaysOnTop) {
@@ -398,6 +404,40 @@ var PopupService = /** @class */ (function (_super) {
             this.bringPopupToFront(element);
         }
         return eWrapper;
+    };
+    PopupService.prototype.handleThemeChange = function () {
+        var e_1, _a, e_2, _b, _c;
+        var allThemes = this.environment.getTheme().allThemes;
+        try {
+            for (var _d = __values(this.popupList), _e = _d.next(); !_e.done; _e = _d.next()) {
+                var popup = _e.value;
+                try {
+                    for (var _f = (e_2 = void 0, __values(Array.from(popup.wrapper.classList))), _g = _f.next(); !_g.done; _g = _f.next()) {
+                        var className = _g.value;
+                        if (className.startsWith("ag-theme-")) {
+                            popup.wrapper.classList.remove(className);
+                        }
+                    }
+                }
+                catch (e_2_1) { e_2 = { error: e_2_1 }; }
+                finally {
+                    try {
+                        if (_g && !_g.done && (_b = _f.return)) _b.call(_f);
+                    }
+                    finally { if (e_2) throw e_2.error; }
+                }
+                if (allThemes.length) {
+                    (_c = popup.wrapper.classList).add.apply(_c, __spreadArray([], __read(allThemes), false));
+                }
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (_e && !_e.done && (_a = _d.return)) _a.call(_d);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
     };
     PopupService.prototype.addEventListenersToPopup = function (params) {
         var _this = this;
@@ -410,7 +450,7 @@ var PopupService = /** @class */ (function (_super) {
                 return;
             }
             var key = event.key;
-            if (key === KeyCode.ESCAPE) {
+            if (key === KeyCode.ESCAPE && !isStopPropagationForAgGrid(event)) {
                 removeListeners({ keyboardEvent: event });
             }
         };
@@ -423,8 +463,6 @@ var PopupService = /** @class */ (function (_super) {
             // we don't hide popup if the event was on the child, or any
             // children of this child
             _this.isEventFromCurrentPopup({ mouseEvent: mouseEvent, touchEvent: touchEvent }, popupEl) ||
-                // if the event to close is actually the open event, then ignore it
-                _this.isEventSameChainAsOriginalEvent({ originalMouseEvent: pointerEvent, mouseEvent: mouseEvent, touchEvent: touchEvent }) ||
                 // this method should only be called once. the client can have different
                 // paths, each one wanting to close, so this method may be called multiple times.
                 popupHidden) {
@@ -531,13 +569,13 @@ var PopupService = /** @class */ (function (_super) {
                 var currentDiffTop = pRect.top - sRect.top;
                 if (currentDiffTop != lastDiffTop) {
                     var newTop = _this.keepXYWithinBounds(ePopup, top + initialDiffTop - currentDiffTop, DIRECTION.vertical);
-                    ePopup.style.top = newTop + "px";
+                    ePopup.style.top = "".concat(newTop, "px");
                 }
                 lastDiffTop = currentDiffTop;
                 var currentDiffLeft = pRect.left - sRect.left;
                 if (currentDiffLeft != lastDiffLeft) {
                     var newLeft = _this.keepXYWithinBounds(ePopup, left + initialDiffLeft - currentDiffLeft, DIRECTION.horizontal);
-                    ePopup.style.left = newLeft + "px";
+                    ePopup.style.left = "".concat(newLeft, "px");
                 }
                 lastDiffLeft = currentDiffLeft;
             }, 200).then(function (intervalId) {
@@ -581,36 +619,6 @@ var PopupService = /** @class */ (function (_super) {
                 return true;
             }
             el = el.parentElement;
-        }
-        return false;
-    };
-    // in some browsers, the context menu event can be fired before the click event, which means
-    // the context menu event could open the popup, but then the click event closes it straight away.
-    PopupService.prototype.isEventSameChainAsOriginalEvent = function (params) {
-        var originalMouseEvent = params.originalMouseEvent, mouseEvent = params.mouseEvent, touchEvent = params.touchEvent;
-        // we check the coordinates of the event, to see if it's the same event. there is a 1 / 1000 chance that
-        // the event is a different event, however that is an edge case that is not very relevant (the user clicking
-        // twice on the same location isn't a normal path).
-        // event could be mouse event or touch event.
-        var mouseEventOrTouch = null;
-        if (mouseEvent) {
-            // mouse event can be used direction, it has coordinates
-            mouseEventOrTouch = mouseEvent;
-        }
-        else if (touchEvent) {
-            // touch event doesn't have coordinates, need it's touch object
-            mouseEventOrTouch = touchEvent.touches[0];
-        }
-        if (mouseEventOrTouch && originalMouseEvent) {
-            // for x, allow 4px margin, to cover iPads, where touch (which opens menu) is followed
-            // by browser click (when you finger up, touch is interrupted as click in browser)
-            var screenX_1 = mouseEvent ? mouseEvent.screenX : 0;
-            var screenY_1 = mouseEvent ? mouseEvent.screenY : 0;
-            var xMatch = Math.abs(originalMouseEvent.screenX - screenX_1) < 5;
-            var yMatch = Math.abs(originalMouseEvent.screenY - screenY_1) < 5;
-            if (xMatch && yMatch) {
-                return true;
-            }
         }
         return false;
     };
@@ -668,8 +676,6 @@ var PopupService = /** @class */ (function (_super) {
         }
         var params = {
             type: 'popupToFront',
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
             eWrapper: eWrapper
         };
         this.eventService.dispatchEvent(params);

@@ -6,7 +6,7 @@ enterprise: true
 This section covers the Multiple Group Columns display type, where a group column is automatically added by the grid for 
 each row group.
 
-<image-caption src="grouping-multiple-group-columns/resources/multiple-group-columns.png" alt="Multiple Group Columns" maxWidth="80%" constrained="true" centered="true"></image-caption>
+<image-caption src="grouping-display-types/resources/multiple-group-columns.png" alt="Multiple Group Columns" maxWidth="80%" constrained="true" centered="true" toggledarkmode="true"></image-caption>
 
 ## Enabling Multiple Group Columns
 

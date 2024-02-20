@@ -3,20 +3,19 @@ import { ICellRendererParams } from "@ag-grid-community/core";
 import { ICellRendererAngularComp } from "@ag-grid-community/angular";
 
 @Component({
-    selector: 'app-gender-renderer',
+    standalone: true,
     template: `
         <span>
-                <img [src]="imageSource">{{ value }}
-            </span>
+            <i [class]="iconClass"> </i> {{ value }}
+        </span>
     `
 })
 export class GenderRenderer implements ICellRendererAngularComp {
-    public imageSource!: string;
+    public iconClass!: string;
     public value: any;
 
     agInit(params: ICellRendererParams): void {
-        const image = params.value === 'Male' ? 'male.png' : 'female.png';
-        this.imageSource = `https://www.ag-grid.com/example-assets/genders/${image}`;
+        this.iconClass = params.value === 'Male' ? 'fa fa-male' : 'fa fa-female';
         this.value = params.value;
     }
 

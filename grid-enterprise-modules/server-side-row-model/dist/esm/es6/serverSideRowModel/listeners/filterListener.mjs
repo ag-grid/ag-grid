@@ -11,16 +11,37 @@ let FilterListener = class FilterListener extends BeanStub {
         if (!this.gridOptionsService.isRowModelType('serverSide')) {
             return;
         }
-        this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED, () => this.onFilterChanged(true));
+        this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, () => this.onFilterChanged());
     }
-    onFilterChanged() {
+    onFilterChanged(advancedFilterEnabledChanged) {
         const storeParams = this.serverSideRowModel.getParams();
         if (!storeParams) {
             return;
         } // params is undefined if no datasource set
-        const newModel = this.filterManager.getFilterModel();
-        const oldModel = storeParams ? storeParams.filterModel : {};
-        const changedColumns = this.findChangedColumns(newModel, oldModel);
+        const oldModel = storeParams.filterModel;
+        let newModel;
+        let changedColumns;
+        if (this.filterManager.isAdvancedFilterEnabled()) {
+            newModel = this.filterManager.getAdvancedFilterModel();
+            // if advancedFilterEnabledChanged, old model is of type `FilterModel`
+            const oldColumns = advancedFilterEnabledChanged ? Object.keys(oldModel !== null && oldModel !== void 0 ? oldModel : {}) : this.getAdvancedFilterColumns(oldModel);
+            const newColumns = this.getAdvancedFilterColumns(newModel);
+            oldColumns.forEach(column => newColumns.add(column));
+            changedColumns = Array.from(newColumns);
+        }
+        else {
+            newModel = this.filterManager.getFilterModel();
+            if (advancedFilterEnabledChanged) {
+                // old model is of type `AdvancedFilterModel | null`
+                const oldColumns = this.getAdvancedFilterColumns(oldModel);
+                Object.keys(newModel).forEach(column => oldColumns.add(column));
+                changedColumns = Array.from(oldColumns);
+            }
+            else {
+                changedColumns = this.findChangedColumns(oldModel, newModel);
+            }
+        }
         const valueColChanged = this.listenerUtils.isSortingWithValueColumn(changedColumns);
         const secondaryColChanged = this.listenerUtils.isSortingWithSecondaryColumn(changedColumns);
         const params = {
@@ -44,6 +65,22 @@ let FilterListener = class FilterListener extends BeanStub {
             }
         });
         return res;
+    }
+    getAdvancedFilterColumns(model) {
+        const columns = new Set();
+        if (!model) {
+            return columns;
+        }
+        const processAdvancedFilterModel = (filterModel) => {
+            if (filterModel.filterType === 'join') {
+                filterModel.conditions.forEach(condition => processAdvancedFilterModel(condition));
+            }
+            else {
+                columns.add(filterModel.colId);
+            }
+        };
+        processAdvancedFilterModel(model);
+        return columns;
     }
 };
 __decorate([

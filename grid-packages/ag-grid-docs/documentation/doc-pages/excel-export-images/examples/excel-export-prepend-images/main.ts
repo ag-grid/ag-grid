@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
 declare var logos: any;
 
 const columnDefs: ColDef[] = [
@@ -14,11 +14,12 @@ const columnDefs: ColDef[] = [
   { field: 'total' },
 ]
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
   defaultColDef: {
     width: 150,
-    resizable: true,
   },
   defaultExcelExportParams: {
     prependContent: [
@@ -55,16 +56,16 @@ const gridOptions: GridOptions<IOlympicData> = {
   onGridReady: params => {
     fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
       .then(response => response.json())
-      .then(data => params.api.setRowData(data))
+      .then(data => params.api.setGridOption('rowData', data))
   },
 }
 
 function onBtExport() {
-  gridOptions.api!.exportDataAsExcel()
+  gridApi!.exportDataAsExcel()
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

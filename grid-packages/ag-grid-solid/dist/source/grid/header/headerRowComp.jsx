@@ -7,7 +7,6 @@ import HeaderGroupCellComp from './headerGroupCellComp';
 const HeaderRowComp = (props) => {
     const { gridOptionsService } = useContext(BeansContext);
     const { ctrl } = props;
-    const [getTransform, setTransform] = createSignal(ctrl.getTransform());
     const [getHeight, setHeight] = createSignal();
     const [getTop, setTop] = createSignal();
     const [getWidth, setWidth] = createSignal();
@@ -16,7 +15,7 @@ const HeaderRowComp = (props) => {
     let eGui;
     const setCellCtrlsMaintainOrder = (next) => {
         const prev = getCellCtrls();
-        const isEnsureDomOrder = gridOptionsService.is('ensureDomOrder');
+        const isEnsureDomOrder = gridOptionsService.get('ensureDomOrder');
         const isPrintLayout = gridOptionsService.isDomLayout('print');
         // if we are ensuring dom order, we set the ctrls into the dom in the same order they appear on screen
         if (isEnsureDomOrder || isPrintLayout) {
@@ -41,7 +40,6 @@ const HeaderRowComp = (props) => {
         ctrl.setComp(compProxy);
     });
     const style = createMemo(() => ({
-        transform: getTransform(),
         height: getHeight(),
         top: getTop(),
         width: getWidth()

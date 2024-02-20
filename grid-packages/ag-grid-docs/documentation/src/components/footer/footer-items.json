@@ -24,6 +24,10 @@
         "title": "Support & Community",
         "links": [
             {
+                "name": "Blog",
+                "url": "https://blog.ag-grid.com/?_ga=2.213149716.106872681.1607518091-965402545.1605286673"
+            },
+            {
                 "name": "Stack Overflow",
                 "url": "https://stackoverflow.com/questions/tagged/ag-grid",
                 "newTab": true
@@ -43,12 +47,12 @@
         "title": "The Company",
         "links": [
             {
-                "name": "About",
-                "url": "/about"
+                "name": "AG Charts",
+                "url": "https://charts.ag-grid.com"
             },
             {
-                "name": "Blog",
-                "url": "https://blog.ag-grid.com/?_ga=2.213149716.106872681.1607518091-965402545.1605286673"
+                "name": "About",
+                "url": "/about"
             },
             {
                 "name": "Privacy Policy",

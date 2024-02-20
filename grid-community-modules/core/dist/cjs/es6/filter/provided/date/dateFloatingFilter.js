@@ -39,32 +39,24 @@ class DateFloatingFilter extends simpleFloatingFilter_1.SimpleFloatingFilter {
             .setInputAriaLabel(translate('ariaDateFilterInput', 'Date Filter Input'));
     }
     onParamsUpdated(params) {
-        super.onParamsUpdated(params);
+        this.refresh(params);
+    }
+    refresh(params) {
+        super.refresh(params);
         this.params = params;
         this.filterParams = params.filterParams;
         this.updateDateComponent();
         this.filterModelFormatter.updateParams({ optionsFactory: this.optionsFactory, dateFilterParams: this.filterParams });
+        this.updateCompOnModelChange(params.currentParentModel());
     }
-    setEditable(editable) {
-        dom_1.setDisplayed(this.eDateWrapper, editable);
-        dom_1.setDisplayed(this.eReadOnlyText.getGui(), !editable);
-    }
-    onParentModelChanged(model, event) {
-        // We don't want to update the floating filter if the floating filter caused the change,
-        // because the UI is already in sync. if we didn't do this, the UI would behave strangely
-        // as it would be updating as the user is typing.
-        // This is similar for data changes, which don't affect provided date floating filters
-        if (this.isEventFromFloatingFilter(event) || this.isEventFromDataChange(event)) {
-            return;
-        }
-        super.setLastTypeFromModel(model);
-        const allowEditing = !this.isReadOnly() &&
-            this.canWeEditAfterModelFromParentFilter(model);
+    updateCompOnModelChange(model) {
+        // Update the read-only text field
+        const allowEditing = !this.isReadOnly() && this.canWeEditAfterModelFromParentFilter(model);
         this.setEditable(allowEditing);
         if (allowEditing) {
             if (model) {
                 const dateModel = model;
-                this.dateComp.setDate(date_1.parseDateTimeFromString(dateModel.dateFrom));
+                this.dateComp.setDate((0, date_1.parseDateTimeFromString)(dateModel.dateFrom));
             }
             else {
                 this.dateComp.setDate(null);
@@ -76,12 +68,27 @@ class DateFloatingFilter extends simpleFloatingFilter_1.SimpleFloatingFilter {
             this.dateComp.setDate(null);
         }
     }
+    setEditable(editable) {
+        (0, dom_1.setDisplayed)(this.eDateWrapper, editable);
+        (0, dom_1.setDisplayed)(this.eReadOnlyText.getGui(), !editable);
+    }
+    onParentModelChanged(model, event) {
+        // We don't want to update the floating filter if the floating filter caused the change,
+        // because the UI is already in sync. if we didn't do this, the UI would behave strangely
+        // as it would be updating as the user is typing.
+        // This is similar for data changes, which don't affect provided date floating filters
+        if (this.isEventFromFloatingFilter(event) || this.isEventFromDataChange(event)) {
+            return;
+        }
+        super.setLastTypeFromModel(model);
+        this.updateCompOnModelChange(model);
+    }
     onDateChanged() {
         const filterValueDate = this.dateComp.getDate();
-        const filterValueText = date_1.serialiseDate(filterValueDate);
+        const filterValueText = (0, date_1.serialiseDate)(filterValueDate);
         this.params.parentFilterInstance(filterInstance => {
             if (filterInstance) {
-                const date = date_1.parseDateTimeFromString(filterValueText);
+                const date = (0, date_1.parseDateTimeFromString)(filterValueText);
                 filterInstance.onFloatingFilterChanged(this.getLastType() || null, date);
             }
         });
@@ -89,7 +96,7 @@ class DateFloatingFilter extends simpleFloatingFilter_1.SimpleFloatingFilter {
     getDateComponentParams() {
         const debounceMs = providedFilter_1.ProvidedFilter.getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
         return {
-            onDateChanged: function_1.debounce(this.onDateChanged.bind(this), debounceMs),
+            onDateChanged: (0, function_1.debounce)(this.onDateChanged.bind(this), debounceMs),
             filterParams: this.params.column.getColDef().filterParams
         };
     }
@@ -98,11 +105,7 @@ class DateFloatingFilter extends simpleFloatingFilter_1.SimpleFloatingFilter {
         this.addDestroyFunc(() => this.dateComp.destroy());
     }
     updateDateComponent() {
-        const params = this.getDateComponentParams();
-        const { api, columnApi, context } = this.gridOptionsService;
-        params.api = api;
-        params.columnApi = columnApi;
-        params.context = context;
+        const params = this.gridOptionsService.addGridCommonParams(this.getDateComponentParams());
         this.dateComp.updateParams(params);
     }
     getFilterModelFormatter() {
@@ -110,12 +113,12 @@ class DateFloatingFilter extends simpleFloatingFilter_1.SimpleFloatingFilter {
     }
 }
 __decorate([
-    context_1.Autowired('userComponentFactory')
+    (0, context_1.Autowired)('userComponentFactory')
 ], DateFloatingFilter.prototype, "userComponentFactory", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eReadOnlyText')
+    (0, componentAnnotations_1.RefSelector)('eReadOnlyText')
 ], DateFloatingFilter.prototype, "eReadOnlyText", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eDateWrapper')
+    (0, componentAnnotations_1.RefSelector)('eDateWrapper')
 ], DateFloatingFilter.prototype, "eDateWrapper", void 0);
 exports.DateFloatingFilter = DateFloatingFilter;

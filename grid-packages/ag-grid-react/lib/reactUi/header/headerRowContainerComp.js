@@ -1,4 +1,4 @@
-// ag-grid-react v30.1.0
+// ag-grid-react v31.1.0
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -26,12 +26,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = __importStar(require("react"));
 var beansContext_1 = require("../beansContext");
 var ag_grid_community_1 = require("ag-grid-community");
-var utils_1 = require("../utils");
 var headerRowComp_1 = __importDefault(require("./headerRowComp"));
 var HeaderRowContainerComp = function (props) {
-    var _a = react_1.useState(function () { return new utils_1.CssClasses(); }), cssClasses = _a[0], setCssClasses = _a[1];
-    var _b = react_1.useState(false), ariaHidden = _b[0], setAriaHidden = _b[1];
-    var _c = react_1.useState([]), headerRowCtrls = _c[0], setHeaderRowCtrls = _c[1];
+    var _a = react_1.useState(true), displayed = _a[0], setDisplayed = _a[1];
+    var _b = react_1.useState([]), headerRowCtrls = _b[0], setHeaderRowCtrls = _b[1];
     var context = react_1.useContext(beansContext_1.BeansContext).context;
     var eGui = react_1.useRef(null);
     var eCenterContainer = react_1.useRef(null);
@@ -47,10 +45,7 @@ var HeaderRowContainerComp = function (props) {
             return;
         }
         var compProxy = {
-            setDisplayed: function (displayed) {
-                setCssClasses(function (prev) { return prev.setClass('ag-hidden', !displayed); });
-                setAriaHidden(!displayed);
-            },
+            setDisplayed: setDisplayed,
             setCtrls: function (ctrls) { return setHeaderRowCtrls(ctrls); },
             // centre only
             setCenterWidth: function (width) {
@@ -75,13 +70,13 @@ var HeaderRowContainerComp = function (props) {
         headerRowCtrlRef.current = context.createBean(new ag_grid_community_1.HeaderRowContainerCtrl(props.pinned));
         headerRowCtrlRef.current.setComp(compProxy, eGui.current);
     }, []);
-    var className = react_1.useMemo(function () { return cssClasses.toString(); }, [cssClasses]);
+    var className = !displayed ? 'ag-hidden' : '';
     var insertRowsJsx = function () { return headerRowCtrls.map(function (ctrl) { return react_1.default.createElement(headerRowComp_1.default, { ctrl: ctrl, key: ctrl.getInstanceId() }); }); };
     return (react_1.default.createElement(react_1.default.Fragment, null,
         pinnedLeft &&
-            react_1.default.createElement("div", { ref: setRef, className: "ag-pinned-left-header " + className, "aria-hidden": ariaHidden, role: "presentation" }, insertRowsJsx()),
+            react_1.default.createElement("div", { ref: setRef, className: "ag-pinned-left-header " + className, "aria-hidden": !displayed, role: "rowgroup" }, insertRowsJsx()),
         pinnedRight &&
-            react_1.default.createElement("div", { ref: setRef, className: "ag-pinned-right-header " + className, "aria-hidden": ariaHidden, role: "presentation" }, insertRowsJsx()),
+            react_1.default.createElement("div", { ref: setRef, className: "ag-pinned-right-header " + className, "aria-hidden": !displayed, role: "rowgroup" }, insertRowsJsx()),
         centre &&
             react_1.default.createElement("div", { ref: setRef, className: "ag-header-viewport " + className, role: "presentation" },
                 react_1.default.createElement("div", { ref: eCenterContainer, className: "ag-header-container", role: "rowgroup" }, insertRowsJsx()))));

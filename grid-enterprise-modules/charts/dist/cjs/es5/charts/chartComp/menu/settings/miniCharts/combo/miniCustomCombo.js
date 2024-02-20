@@ -26,7 +26,7 @@ var MiniCustomCombo = /** @class */ (function (_super) {
         _this.columnData = [3, 4];
         _this.lineData = [[5, 4, 6, 5, 4]];
         var _a = _this, root = _a.root, columnData = _a.columnData, lineData = _a.lineData, size = _a.size, padding = _a.padding;
-        _this.columns = miniChartHelpers_1.createColumnRects({
+        _this.columns = (0, miniChartHelpers_1.createColumnRects)({
             stacked: false,
             root: root,
             data: columnData,
@@ -37,7 +37,7 @@ var MiniCustomCombo = /** @class */ (function (_super) {
             xScalePadding: 0.5,
         });
         root.append(_this.columns);
-        _this.lines = miniChartHelpers_1.createLinePaths(root, lineData, size, padding);
+        _this.lines = (0, miniChartHelpers_1.createLinePaths)(root, lineData, size, padding);
         var axisStroke = 'grey';
         var axisOvershoot = 3;
         var leftAxis = new ag_charts_community_1._Scene.Line();

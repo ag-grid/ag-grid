@@ -23,8 +23,8 @@ export class PivotModePanel extends Component {
     onBtPivotMode() {
         const newValue = !!this.cbPivotMode.getValue();
         if (newValue !== this.columnModel.isPivotMode()) {
-            this.columnModel.setPivotMode(newValue, "toolPanelUi");
-            const api = this.gridOptionsService.api;
+            this.gridOptionsService.updateGridOptions({ options: { pivotMode: newValue }, source: 'toolPanelUi' });
+            const { api } = this;
             if (api) {
                 api.refreshHeader();
             }
@@ -38,6 +38,9 @@ export class PivotModePanel extends Component {
 __decorate([
     Autowired('columnModel')
 ], PivotModePanel.prototype, "columnModel", void 0);
+__decorate([
+    Autowired('gridApi')
+], PivotModePanel.prototype, "api", void 0);
 __decorate([
     RefSelector('cbPivotMode')
 ], PivotModePanel.prototype, "cbPivotMode", void 0);

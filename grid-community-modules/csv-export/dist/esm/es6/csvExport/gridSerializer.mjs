@@ -13,7 +13,8 @@ export var RowType;
 })(RowType || (RowType = {}));
 let GridSerializer = class GridSerializer extends BeanStub {
     serialize(gridSerializingSession, params = {}) {
-        const columnsToExport = this.getColumnsToExport(params.allColumns, params.columnKeys);
+        const { allColumns, columnKeys, skipRowGroups } = params;
+        const columnsToExport = this.getColumnsToExport(allColumns, skipRowGroups, columnKeys);
         const serializeChain = _.compose(
         // first pass, put in the header names of the cols
         this.prepareSession(columnsToExport), this.prependContent(params), this.exportColumnGroups(params, columnsToExport), this.exportHeaders(params, columnsToExport), this.processPinnedTopRows(params, columnsToExport), this.processRows(params, columnsToExport), this.processPinnedBottomRows(params, columnsToExport), this.appendContent(params));
@@ -21,24 +22,18 @@ let GridSerializer = class GridSerializer extends BeanStub {
     }
     processRow(gridSerializingSession, params, columnsToExport, node) {
         const rowSkipper = params.shouldRowBeSkipped || (() => false);
-        const context = this.gridOptionsService.context;
-        const api = this.gridOptionsService.api;
-        const columnApi = this.gridOptionsService.columnApi;
-        const skipSingleChildrenGroup = this.gridOptionsService.is('groupRemoveSingleChildren');
-        const skipLowestSingleChildrenGroup = this.gridOptionsService.is('groupRemoveLowestSingleChildren');
+        const skipSingleChildrenGroup = this.gridOptionsService.get('groupRemoveSingleChildren');
+        const skipLowestSingleChildrenGroup = this.gridOptionsService.get('groupRemoveLowestSingleChildren');
         // if onlySelected, we ignore groupHideOpenParents as the user has explicitly selected the rows they wish to export.
         // similarly, if specific rowNodes are provided we do the same. (the clipboard service uses rowNodes to define which rows to export)
         const isClipboardExport = params.rowPositions != null;
         const isExplicitExportSelection = isClipboardExport || !!params.onlySelected;
-        const hideOpenParents = this.gridOptionsService.is('groupHideOpenParents') && !isExplicitExportSelection;
+        const hideOpenParents = this.gridOptionsService.get('groupHideOpenParents') && !isExplicitExportSelection;
         const isLeafNode = this.columnModel.isPivotMode() ? node.leafGroup : !node.group;
         const isFooter = !!node.footer;
-        const skipRowGroups = params.skipGroups || params.skipRowGroups;
+        const skipRowGroups = params.skipRowGroups;
         const shouldSkipLowestGroup = skipLowestSingleChildrenGroup && node.leafGroup;
         const shouldSkipCurrentGroup = node.allChildrenCount === 1 && (skipSingleChildrenGroup || shouldSkipLowestGroup);
-        if (skipRowGroups && params.skipGroups) {
-            _.doOnce(() => console.warn('AG Grid: Since v25.2 `skipGroups` has been renamed to `skipRowGroups`.'), 'gridSerializer-skipGroups');
-        }
         if ((!isLeafNode && !isFooter && (params.skipRowGroups || shouldSkipCurrentGroup || hideOpenParents)) ||
             (params.onlySelected && !node.isSelected()) ||
             (params.skipPinnedTop && node.rowPinned === 'top') ||
@@ -51,7 +46,7 @@ let GridSerializer = class GridSerializer extends BeanStub {
         if (nodeIsRootNode && !isLeafNode && !isFooter) {
             return;
         }
-        const shouldRowBeSkipped = rowSkipper({ node, api, columnApi, context });
+        const shouldRowBeSkipped = rowSkipper(this.gridOptionsService.addGridCommonParams({ node }));
         if (shouldRowBeSkipped) {
             return;
         }
@@ -60,7 +55,7 @@ let GridSerializer = class GridSerializer extends BeanStub {
             rowAccumulator.onColumn(column, index, node);
         });
         if (params.getCustomContentBelowRow) {
-            const content = params.getCustomContentBelowRow({ node, api, columnApi, context });
+            const content = params.getCustomContentBelowRow(this.gridOptionsService.addGridCommonParams({ node }));
             if (content) {
                 gridSerializingSession.addCustomContent(content);
             }
@@ -68,11 +63,8 @@ let GridSerializer = class GridSerializer extends BeanStub {
     }
     appendContent(params) {
         return (gridSerializingSession) => {
-            const appendContent = params.customFooter || params.appendContent;
+            const appendContent = params.appendContent;
             if (appendContent) {
-                if (params.customFooter) {
-                    _.doOnce(() => console.warn('AG Grid: Since version 25.2.0 the `customFooter` param has been deprecated. Use `appendContent` instead.'), 'gridSerializer-customFooter');
-                }
                 gridSerializingSession.addCustomContent(appendContent);
             }
             return gridSerializingSession;
@@ -80,11 +72,8 @@ let GridSerializer = class GridSerializer extends BeanStub {
     }
     prependContent(params) {
         return (gridSerializingSession) => {
-            const prependContent = params.customHeader || params.prependContent;
+            const prependContent = params.prependContent;
             if (prependContent) {
-                if (params.customHeader) {
-                    _.doOnce(() => console.warn('AG Grid: Since version 25.2.0 the `customHeader` param has been deprecated. Use `prependContent` instead.'), 'gridSerializer-customHeader');
-                }
                 gridSerializingSession.addCustomContent(prependContent);
             }
             return gridSerializingSession;
@@ -103,22 +92,16 @@ let GridSerializer = class GridSerializer extends BeanStub {
                 const displayedGroups = this.displayedGroupCreator.createDisplayedGroups(columnsToExport, groupInstanceIdCreator, null);
                 this.recursivelyAddHeaderGroups(displayedGroups, gridSerializingSession, params.processGroupHeaderCallback);
             }
-            else if (params.columnGroups) {
-                _.doOnce(() => console.warn('AG Grid: Since v25.2 the `columnGroups` param has deprecated, and groups are exported by default.'), 'gridSerializer-columnGroups');
-            }
             return gridSerializingSession;
         };
     }
     exportHeaders(params, columnsToExport) {
         return (gridSerializingSession) => {
-            if (!params.skipHeader && !params.skipColumnHeaders) {
+            if (!params.skipColumnHeaders) {
                 const gridRowIterator = gridSerializingSession.onNewHeaderRow();
                 columnsToExport.forEach((column, index) => {
                     gridRowIterator.onColumn(column, index, undefined);
                 });
-            }
-            else if (params.skipHeader) {
-                _.doOnce(() => console.warn('AG Grid: Since v25.2 the `skipHeader` param has been renamed to `skipColumnHeaders`.'), 'gridSerializer-skipHeader');
             }
             return gridSerializingSession;
         };
@@ -162,6 +145,9 @@ let GridSerializer = class GridSerializer extends BeanStub {
                 if (usingCsrm) {
                     rowModel.forEachPivotNode(processRow, true);
                 }
+                else if (usingSsrm) {
+                    rowModel.forEachNodeAfterFilterAndSort(processRow, true);
+                }
                 else {
                     // must be enterprise, so we can just loop through all the nodes
                     rowModel.forEachNode(processRow);
@@ -190,7 +176,7 @@ let GridSerializer = class GridSerializer extends BeanStub {
                         rowModel.forEachNodeAfterFilterAndSort(processRow, true);
                     }
                     else if (usingSsrm) {
-                        rowModel.forEachNodeAfterFilterAndSort(processRow);
+                        rowModel.forEachNodeAfterFilterAndSort(processRow, true);
                     }
                     else {
                         rowModel.forEachNode(processRow);
@@ -249,19 +235,23 @@ let GridSerializer = class GridSerializer extends BeanStub {
             return gridSerializingSession;
         };
     }
-    getColumnsToExport(allColumns = false, columnKeys) {
+    getColumnsToExport(allColumns = false, skipRowGroups = false, columnKeys) {
         const isPivotMode = this.columnModel.isPivotMode();
         if (columnKeys && columnKeys.length) {
             return this.columnModel.getGridColumns(columnKeys);
         }
+        const isTreeData = this.gridOptionsService.get('treeData');
+        let columnsToExport = [];
         if (allColumns && !isPivotMode) {
-            // add auto group column for tree data
-            const columns = this.gridOptionsService.isTreeData()
-                ? this.columnModel.getGridColumns([GROUP_AUTO_COLUMN_ID])
-                : [];
-            return columns.concat(this.columnModel.getAllGridColumns() || []);
+            columnsToExport = this.columnModel.getAllGridColumns();
         }
-        return this.columnModel.getAllDisplayedColumns();
+        else {
+            columnsToExport = this.columnModel.getAllDisplayedColumns();
+        }
+        if (skipRowGroups && !isTreeData) {
+            columnsToExport = columnsToExport.filter(column => column.getColId() !== GROUP_AUTO_COLUMN_ID);
+        }
+        return columnsToExport;
     }
     recursivelyAddHeaderGroups(displayedGroups, gridSerializingSession, processGroupHeaderCallback) {
         const directChildrenHeaderGroups = [];
@@ -286,12 +276,9 @@ let GridSerializer = class GridSerializer extends BeanStub {
             const columnGroup = columnGroupChild;
             let name;
             if (processGroupHeaderCallback) {
-                name = processGroupHeaderCallback({
-                    columnGroup: columnGroup,
-                    api: this.gridOptionsService.api,
-                    columnApi: this.gridOptionsService.columnApi,
-                    context: this.gridOptionsService.context
-                });
+                name = processGroupHeaderCallback(this.gridOptionsService.addGridCommonParams({
+                    columnGroup: columnGroup
+                }));
             }
             else {
                 name = this.columnModel.getDisplayNameForColumnGroup(columnGroup, 'header');

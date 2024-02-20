@@ -6,8 +6,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { Autowired } from "../../../context/context.mjs";
 import { Column } from "../../../entities/column.mjs";
-import { firstExistingValue } from "../../../utils/array.mjs";
-import { isIOSUserAgent } from "../../../utils/browser.mjs";
 import { removeFromParent, setDisplayed } from "../../../utils/dom.mjs";
 import { exists } from "../../../utils/generic.mjs";
 import { createIconNoSpan } from "../../../utils/icon.mjs";
@@ -40,11 +38,15 @@ export class HeaderComp extends Component {
         if (this.workOutSort() != this.currentSort) {
             return false;
         }
+        if (this.shouldSuppressMenuHide() != this.currentSuppressMenuHide) {
+            return false;
+        }
         this.setDisplayName(params);
         return true;
     }
     workOutTemplate() {
-        let template = firstExistingValue(this.params.template, HeaderComp.TEMPLATE);
+        var _a;
+        let template = (_a = this.params.template) !== null && _a !== void 0 ? _a : HeaderComp.TEMPLATE;
         // take account of any newlines & whitespace before/after the actual template
         template = template && template.trim ? template.trim() : template;
         return template;
@@ -54,24 +56,20 @@ export class HeaderComp extends Component {
         this.currentTemplate = this.workOutTemplate();
         this.setTemplate(this.currentTemplate);
         this.setupTap();
-        this.setupIcons(params.column);
         this.setMenu();
         this.setupSort();
         this.setupFilterIcon();
+        this.setupFilterButton();
         this.setDisplayName(params);
     }
     setDisplayName(params) {
         if (this.currentDisplayName != params.displayName) {
             this.currentDisplayName = params.displayName;
-            const displayNameSanitised = escapeString(this.currentDisplayName);
+            const displayNameSanitised = escapeString(this.currentDisplayName, true);
             if (this.eText) {
-                this.eText.innerHTML = displayNameSanitised;
+                this.eText.textContent = displayNameSanitised;
             }
         }
-    }
-    setupIcons(column) {
-        this.addInIcon('menu', this.eMenu, column);
-        this.addInIcon('filter', this.eFilter, column);
     }
     addInIcon(iconName, eParent, column) {
         if (eParent == null) {
@@ -84,31 +82,35 @@ export class HeaderComp extends Component {
     }
     setupTap() {
         const { gridOptionsService } = this;
-        if (gridOptionsService.is('suppressTouch')) {
+        if (gridOptionsService.get('suppressTouch')) {
             return;
         }
         const touchListener = new TouchListener(this.getGui(), true);
-        const suppressMenuHide = gridOptionsService.is('suppressMenuHide');
+        const suppressMenuHide = this.shouldSuppressMenuHide();
         const tapMenuButton = suppressMenuHide && exists(this.eMenu);
         const menuTouchListener = tapMenuButton ? new TouchListener(this.eMenu, true) : touchListener;
         if (this.params.enableMenu) {
             const eventType = tapMenuButton ? 'EVENT_TAP' : 'EVENT_LONG_TAP';
-            const showMenuFn = (event) => {
-                gridOptionsService.api.showColumnMenuAfterMouseClick(this.params.column, event.touchStart);
-            };
+            const showMenuFn = (event) => this.params.showColumnMenuAfterMouseClick(event.touchStart);
             this.addManagedListener(menuTouchListener, TouchListener[eventType], showMenuFn);
         }
         if (this.params.enableSorting) {
             const tapListener = (event) => {
+                var _a, _b;
                 const target = event.touchStart.target;
-                // When suppressMenuHide is true, a tap on the menu icon will bubble up
+                // When suppressMenuHide is true, a tap on the menu icon or filter button will bubble up
                 // to the header container, in that case we should not sort
-                if (suppressMenuHide && this.eMenu.contains(target)) {
+                if (suppressMenuHide && (((_a = this.eMenu) === null || _a === void 0 ? void 0 : _a.contains(target)) || ((_b = this.eFilterButton) === null || _b === void 0 ? void 0 : _b.contains(target)))) {
                     return;
                 }
                 this.sortController.progressSort(this.params.column, false, "uiColumnSorted");
             };
             this.addManagedListener(touchListener, TouchListener.EVENT_TAP, tapListener);
+        }
+        if (this.params.enableFilterButton) {
+            const filterButtonTouchListener = new TouchListener(this.eFilterButton, true);
+            this.addManagedListener(filterButtonTouchListener, 'tap', () => this.params.showFilter(this.eFilterButton));
+            this.addDestroyFunc(() => filterButtonTouchListener.destroy());
         }
         // if tapMenuButton is true `touchListener` and `menuTouchListener` are different
         // so we need to make sure to destroy both listeners here
@@ -118,14 +120,10 @@ export class HeaderComp extends Component {
         }
     }
     workOutShowMenu() {
-        // we don't show the menu if on an iPad/iPhone, as the user cannot have a pointer device/
-        // However if suppressMenuHide is set to true the menu will be displayed alwasys, so it's ok
-        // to show it on iPad in this case (as hover isn't needed). If suppressMenuHide
-        // is false (default) user will need to use longpress to display the menu.
-        const menuHides = !this.gridOptionsService.is('suppressMenuHide');
-        const onIpadAndMenuHides = isIOSUserAgent() && menuHides;
-        const showMenu = this.params.enableMenu && !onIpadAndMenuHides;
-        return showMenu;
+        return this.params.enableMenu && this.menuService.isHeaderMenuButtonEnabled();
+    }
+    shouldSuppressMenuHide() {
+        return this.menuService.isHeaderMenuButtonAlwaysShowEnabled();
     }
     setMenu() {
         // if no menu provided in template, do nothing
@@ -135,17 +133,31 @@ export class HeaderComp extends Component {
         this.currentShowMenu = this.workOutShowMenu();
         if (!this.currentShowMenu) {
             removeFromParent(this.eMenu);
+            this.eMenu = undefined;
             return;
         }
-        const suppressMenuHide = this.gridOptionsService.is('suppressMenuHide');
-        this.addManagedListener(this.eMenu, 'click', () => this.showMenu(this.eMenu));
-        this.eMenu.classList.toggle('ag-header-menu-always-show', suppressMenuHide);
+        const isLegacyMenu = this.menuService.isLegacyMenuEnabled();
+        this.addInIcon(isLegacyMenu ? 'menu' : 'menuAlt', this.eMenu, this.params.column);
+        this.eMenu.classList.toggle('ag-header-menu-icon', !isLegacyMenu);
+        this.currentSuppressMenuHide = this.shouldSuppressMenuHide();
+        this.addManagedListener(this.eMenu, 'click', () => this.params.showColumnMenu(this.eMenu));
+        this.eMenu.classList.toggle('ag-header-menu-always-show', this.currentSuppressMenuHide);
     }
-    showMenu(eventSource) {
-        if (!eventSource) {
-            eventSource = this.eMenu;
+    onMenuKeyboardShortcut(isFilterShortcut) {
+        var _a, _b, _c, _d;
+        const { column } = this.params;
+        const isLegacyMenuEnabled = this.menuService.isLegacyMenuEnabled();
+        if (isFilterShortcut && !isLegacyMenuEnabled) {
+            if (this.menuService.isFilterMenuInHeaderEnabled(column)) {
+                this.params.showFilter((_b = (_a = this.eFilterButton) !== null && _a !== void 0 ? _a : this.eMenu) !== null && _b !== void 0 ? _b : this.getGui());
+                return true;
+            }
         }
-        this.menuFactory.showMenuAfterButtonClick(this.params.column, eventSource, 'columnMenu');
+        else if (this.params.enableMenu) {
+            this.params.showColumnMenu((_d = (_c = this.eMenu) !== null && _c !== void 0 ? _c : this.eFilterButton) !== null && _d !== void 0 ? _d : this.getGui());
+            return true;
+        }
+        return false;
     }
     workOutSort() {
         return this.params.enableSorting;
@@ -166,7 +178,6 @@ export class HeaderComp extends Component {
         if (!this.currentSort) {
             return;
         }
-        const sortUsingCtrl = this.gridOptionsService.get('multiSortKey') === 'ctrl';
         // keep track of last time the moving changed flag was set
         this.addManagedListener(this.params.column, Column.EVENT_MOVING_CHANGED, () => {
             this.lastMovingChanged = new Date().getTime();
@@ -183,6 +194,7 @@ export class HeaderComp extends Component {
                 const movedRecently = (nowTime - this.lastMovingChanged) < 50;
                 const columnMoving = moving || movedRecently;
                 if (!columnMoving) {
+                    const sortUsingCtrl = this.gridOptionsService.get('multiSortKey') === 'ctrl';
                     const multiSort = sortUsingCtrl ? (event.ctrlKey || event.metaKey) : event.shiftKey;
                     this.params.progressSort(multiSort);
                 }
@@ -207,16 +219,50 @@ export class HeaderComp extends Component {
         if (!this.eFilter) {
             return;
         }
-        this.addManagedListener(this.params.column, Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
-        this.onFilterChanged();
+        this.configureFilter(this.params.enableFilterIcon, this.eFilter, this.onFilterChangedIcon.bind(this));
     }
-    onFilterChanged() {
+    setupFilterButton() {
+        if (!this.eFilterButton) {
+            return;
+        }
+        const configured = this.configureFilter(this.params.enableFilterButton, this.eFilterButton, this.onFilterChangedButton.bind(this));
+        if (configured) {
+            this.addManagedListener(this.eFilterButton, 'click', () => this.params.showFilter(this.eFilterButton));
+        }
+        else {
+            this.eFilterButton = undefined;
+        }
+    }
+    configureFilter(enabled, element, filterChangedCallback) {
+        if (!enabled) {
+            removeFromParent(element);
+            return false;
+        }
+        const { column } = this.params;
+        this.addInIcon('filter', element, column);
+        this.addManagedListener(column, Column.EVENT_FILTER_CHANGED, filterChangedCallback);
+        filterChangedCallback();
+        return true;
+    }
+    onFilterChangedIcon() {
         const filterPresent = this.params.column.isFilterActive();
         setDisplayed(this.eFilter, filterPresent, { skipAriaHidden: true });
+    }
+    onFilterChangedButton() {
+        const filterPresent = this.params.column.isFilterActive();
+        this.eFilterButton.classList.toggle('ag-filter-active', filterPresent);
+    }
+    getAnchorElementForMenu(isFilter) {
+        var _a, _b, _c, _d;
+        if (isFilter) {
+            return (_b = (_a = this.eFilterButton) !== null && _a !== void 0 ? _a : this.eMenu) !== null && _b !== void 0 ? _b : this.getGui();
+        }
+        return (_d = (_c = this.eMenu) !== null && _c !== void 0 ? _c : this.eFilterButton) !== null && _d !== void 0 ? _d : this.getGui();
     }
 }
 HeaderComp.TEMPLATE = `<div class="ag-cell-label-container" role="presentation">
             <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button" aria-hidden="true"></span>
+            <span ref="eFilterButton" class="ag-header-icon ag-header-cell-filter-button" aria-hidden="true"></span>
             <div ref="eLabel" class="ag-header-cell-label" role="presentation">
                 <span ref="eText" class="ag-header-cell-text"></span>
                 <span ref="eFilter" class="ag-header-icon ag-header-label-icon ag-filter-icon" aria-hidden="true"></span>
@@ -227,14 +273,17 @@ __decorate([
     Autowired('sortController')
 ], HeaderComp.prototype, "sortController", void 0);
 __decorate([
-    Autowired('menuFactory')
-], HeaderComp.prototype, "menuFactory", void 0);
+    Autowired('menuService')
+], HeaderComp.prototype, "menuService", void 0);
 __decorate([
     Autowired('columnModel')
 ], HeaderComp.prototype, "columnModel", void 0);
 __decorate([
     RefSelector('eFilter')
 ], HeaderComp.prototype, "eFilter", void 0);
+__decorate([
+    RefSelector('eFilterButton')
+], HeaderComp.prototype, "eFilterButton", void 0);
 __decorate([
     RefSelector('eSortIndicator')
 ], HeaderComp.prototype, "eSortIndicator", void 0);

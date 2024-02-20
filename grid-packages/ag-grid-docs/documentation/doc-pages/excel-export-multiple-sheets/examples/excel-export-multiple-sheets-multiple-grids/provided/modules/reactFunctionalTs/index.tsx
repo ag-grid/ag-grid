@@ -1,18 +1,20 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AgGridReact } from '@ag-grid-community/react';
+import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { CsvExportModule } from '@ag-grid-community/csv-export';
 import { ExcelExportModule, exportMultipleSheetsAsExcel } from '@ag-grid-enterprise/excel-export';
+import { ColDef, GetRowIdParams, GridApi, GridReadyEvent, ModuleRegistry, RowDragEndEvent } from '@ag-grid-community/core';
 
 import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
+import './styles.css';
 
-import { ColDef, ColumnApi, GetRowIdParams, GridApi, GridReadyEvent, ICellRendererParams, ModuleRegistry, RowDragEndEvent } from '@ag-grid-community/core';
+
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule, CsvExportModule, ExcelExportModule]);
 
-const SportRenderer = (props: ICellRendererParams) => {
+const SportRenderer = (props: CustomCellRendererProps) => {
     return (
         <i className="far fa-trash-alt"
             style={{ cursor: 'pointer' }}
@@ -25,7 +27,7 @@ const leftColumns: ColDef[] = [
     {
         rowDrag: true,
         maxWidth: 50,
-        suppressMenu: true,
+        suppressHeaderMenuButton: true,
         rowDragText: (params, dragItemCount) => {
             if (dragItemCount > 1) {
                 return dragItemCount + ' athletes';
@@ -41,7 +43,7 @@ const rightColumns: ColDef[] = [
     {
         rowDrag: true,
         maxWidth: 50,
-        suppressMenu: true,
+        suppressHeaderMenuButton: true,
         rowDragText: (params, dragItemCount) => {
             if (dragItemCount > 1) {
                 return dragItemCount + ' athletes';
@@ -52,7 +54,7 @@ const rightColumns: ColDef[] = [
     { field: "athlete" },
     { field: "sport" },
     {
-        suppressMenu: true,
+        suppressHeaderMenuButton: true,
         maxWidth: 50,
         cellRenderer: SportRenderer
     }
@@ -61,9 +63,7 @@ const rightColumns: ColDef[] = [
 const defaultColDef: ColDef = {
     flex: 1,
     minWidth: 100,
-    sortable: true,
     filter: true,
-    resizable: true
 };
 
 const GridExample = () => {
@@ -168,7 +168,6 @@ const GridExample = () => {
                     defaultColDef={defaultColDef}
                     getRowId={getRowId}
                     rowDragManaged={true}
-                    animateRows={true}
                     rowSelection={id === 0 ? "multiple" : undefined}
                     rowDragMultiRow={id === 0}
                     suppressMoveWhenRowDragging={id === 0}
@@ -184,7 +183,7 @@ const GridExample = () => {
     return (
         <div className="top-container">
             {getTopToolBar()}
-            <div className="grid-wrapper ag-theme-alpine">
+            <div className={'grid-wrapper ' + /** DARK MODE START **/(document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz')/** DARK MODE END **/}>
                 {getGridWrapper(0)}
                 {getGridWrapper(1)}
             </div>

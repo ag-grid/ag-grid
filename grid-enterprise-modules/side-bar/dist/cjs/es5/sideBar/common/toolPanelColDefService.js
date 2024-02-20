@@ -197,10 +197,10 @@ var ToolPanelColDefService = /** @class */ (function (_super) {
         return false;
     };
     __decorate([
-        core_1.Autowired('columnModel')
+        (0, core_1.Autowired)('columnModel')
     ], ToolPanelColDefService.prototype, "columnModel", void 0);
     ToolPanelColDefService = __decorate([
-        core_1.Bean('toolPanelColDefService')
+        (0, core_1.Bean)('toolPanelColDefService')
     ], ToolPanelColDefService);
     return ToolPanelColDefService;
 }(core_1.BeanStub));

@@ -11,15 +11,15 @@ Here the top-level grid is referred to as the 'master grid' and the nested grid 
 Master / Details is configured the same way for the Server-Side Row Model and the Client-Side Row Model.
 For a comprehensive look at Master / Detail configurations, see: [Client-Side Master / Detail](/master-detail/).
 
-Because the configuation is already discussed in [Client-Side Master / Detail](/master-detail/),
-this pages focuses on areas that are of particular interest to this Server-Side version.
+Because the configuration is already discussed in [Client-Side Master / Detail](/master-detail/),
+this page focuses on areas that are of particular interest to this Server-Side version.
 
 ## Enabling Master / Detail
 
 To enable Master / Detail, you should set the following grid options:
 
 - **masterDetail:** Set to `true` to inform the grid you want to allow expanding of rows to reveal detail grids.
-- **detailGridOptions:** The grid options to set for the detail grid. The detail grid is a fully featured instance of AG Grid, so any configuration can be set on the detail grid that you would set any other grid.
+- **detailGridOptions:** The grid options to set for the detail grid. The detail grid is a fully featured instance of AG Grid, so any configuration can be set on it that you would set on any other grid.
 - **getDetailRowData:** A function you implement to provide the grid with rows for display in the detail grids.
 
 These grid options are illustrated below:

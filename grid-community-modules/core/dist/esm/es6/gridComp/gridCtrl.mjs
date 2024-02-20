@@ -27,12 +27,6 @@ export class GridCtrl extends BeanStub {
         this.mouseEventService.stampTopLevelGridCompWithGridInstance(eGridDiv);
         this.createManagedBean(new LayoutFeature(this.view));
         this.addRtlSupport();
-        this.addManagedListener(this, Events.EVENT_KEYBOARD_FOCUS, () => {
-            this.view.addOrRemoveKeyboardFocusClass(true);
-        });
-        this.addManagedListener(this, Events.EVENT_MOUSE_FOCUS, () => {
-            this.view.addOrRemoveKeyboardFocusClass(false);
-        });
         const unsubscribeFromResize = this.resizeObserverService.observeResize(this.eGridHostDiv, this.onGridSizeChanged.bind(this));
         this.addDestroyFunc(() => unsubscribeFromResize());
         this.ctrlsService.registerGridCtrl(this);
@@ -63,7 +57,7 @@ export class GridCtrl extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
     addRtlSupport() {
-        const cssClass = this.gridOptionsService.is('enableRtl') ? 'ag-rtl' : 'ag-ltr';
+        const cssClass = this.gridOptionsService.get('enableRtl') ? 'ag-rtl' : 'ag-ltr';
         this.view.setRtlClass(cssClass);
     }
     destroyGridUi() {
@@ -100,8 +94,16 @@ export class GridCtrl extends BeanStub {
                 return true;
             }
         }
-        if (this.gridOptionsService.getNum('headerHeight') === 0) {
-            return this.focusService.focusGridView(allColumns[0]);
+        if (this.gridOptionsService.get('headerHeight') === 0 || this.gridOptionsService.get('suppressHeaderFocus')) {
+            if (this.focusService.focusGridView(allColumns[0])) {
+                return true;
+            }
+            for (let i = 1; i < focusableContainers.length; i++) {
+                if (this.focusService.focusInto(focusableContainers[i])) {
+                    return true;
+                }
+            }
+            return false;
         }
         return this.focusService.focusFirstHeader();
     }

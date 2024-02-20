@@ -62,8 +62,7 @@ let AutoWidthCalculator = class AutoWidthCalculator extends BeanStub {
         return dummyContainerWidth + autoSizePadding;
     }
     getAutoSizePadding() {
-        const value = this.gridOptionsService.getNum('autoSizePadding');
-        return value != null && value >= 0 ? value : 20;
+        return this.gridOptionsService.get('autoSizePadding');
     }
     getHeaderCellForColumn(column) {
         /* tslint:enable */

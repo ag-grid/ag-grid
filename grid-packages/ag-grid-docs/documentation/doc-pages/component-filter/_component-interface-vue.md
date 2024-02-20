@@ -1,6 +1,4 @@
 <framework-specific-section frameworks="vue">
-|## Custom Filter Interface
-|
 |When a Vue component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell &
 |row values available to you via `this.params`.
 |
@@ -41,6 +39,20 @@
 |    // Called whenever any filter is changed.
 |    onAnyFilterChanged?(): void;
 |
+|   // When defined, this method is called whenever the parameters provided in colDef.filterParams
+|   // change. The result returned by this method will determine if the filter should be 
+|   // refreshed and reused, or if a new filter instance should be created.
+|   // 
+|   // When true is returned, the existing filter instance should be refreshed and reused instead
+|   // of being destroyed. This is useful if the new params passed are compatible with the
+|   // existing filter instance. When false is returned, the existing filter will be destroyed 
+|   // and a new filter instance will be created. This should be done if you do not wish to reuse
+|   // the existing filter instance.
+|   // 
+|   // When this method is not provided, the default behaviour is to destroy and recreate the
+|   // filter instance everytime colDef.filterParams changes.
+|   refresh?(newParams: IFilterParams): boolean;
+|
 |    // Gets called when the column is destroyed. If your custom filter needs to do
 |    // any resource cleaning up, do it here. A filter is NOT destroyed when it is
 |    // made 'not visible', as the GUI is kept to be shown again if the user selects
@@ -71,14 +83,4 @@
 |    afterGuiDetached?(): void;
 |}
 </snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
-|### Custom Filter Parameters
-|
-|When a Vue component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell and 
-|row values available to you via `this.params` - the interface for what is provided is documented below.  
-|
-|If custom params are provided via the `colDef.filterParams` property, these
-|will be additionally added to the params object, overriding items of the same name if a name clash exists.
 </framework-specific-section>

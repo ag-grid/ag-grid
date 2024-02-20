@@ -46,10 +46,14 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 var __values = (this && this.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
@@ -166,14 +170,14 @@ var RangeService = /** @class */ (function (_super) {
     };
     RangeService.prototype.setRangeToCell = function (cell, appendRange) {
         if (appendRange === void 0) { appendRange = false; }
-        if (!this.gridOptionsService.isEnableRangeSelection()) {
+        if (!this.gridOptionsService.get('enableRangeSelection')) {
             return;
         }
         var columns = this.calculateColumnsBetween(cell.column, cell.column);
         if (!columns) {
             return;
         }
-        var suppressMultiRangeSelections = this.gridOptionsService.is('suppressMultiRangeSelection');
+        var suppressMultiRangeSelections = this.gridOptionsService.get('suppressMultiRangeSelection');
         // if not appending, then clear previous range selections
         if (suppressMultiRangeSelections || !appendRange || _.missing(this.cellRanges)) {
             this.removeAllCellRanges(true);
@@ -219,7 +223,7 @@ var RangeService = /** @class */ (function (_super) {
             var otherCols = cellRange.columns.filter(function (col) { return col !== colToMove; });
             if (colToMove) {
                 cellRange.startColumn = colToMove;
-                cellRange.columns = moveToFront ? __spreadArray([colToMove], __read(otherCols)) : __spreadArray(__spreadArray([], __read(otherCols)), [colToMove]);
+                cellRange.columns = moveToFront ? __spreadArray([colToMove], __read(otherCols), false) : __spreadArray(__spreadArray([], __read(otherCols), false), [colToMove], false);
             }
             else {
                 cellRange.columns = otherCols;
@@ -280,7 +284,7 @@ var RangeService = /** @class */ (function (_super) {
         return newEndCell;
     };
     RangeService.prototype.setCellRange = function (params) {
-        if (!this.gridOptionsService.isEnableRangeSelection()) {
+        if (!this.gridOptionsService.get('enableRangeSelection')) {
             return;
         }
         this.removeAllCellRanges(true);
@@ -330,7 +334,7 @@ var RangeService = /** @class */ (function (_super) {
                 for (var i = 0; i < cellRange.columns.length; i++) {
                     var column = _this.columnModel.getGridColumn(cellRange.columns[i]);
                     if (!column || !column.isCellEditable(rowNode)) {
-                        return;
+                        continue;
                     }
                     rowNode.setDataValue(column, null, cellEventSource);
                 }
@@ -381,7 +385,7 @@ var RangeService = /** @class */ (function (_super) {
         };
     };
     RangeService.prototype.addCellRange = function (params) {
-        if (!this.gridOptionsService.isEnableRangeSelection()) {
+        if (!this.gridOptionsService.get('enableRangeSelection')) {
             return;
         }
         var newRange = this.createCellRangeFromCellRangeParams(params);
@@ -428,12 +432,12 @@ var RangeService = /** @class */ (function (_super) {
             return true;
         this.cellRanges.forEach(function (range) {
             _this.forEachRowInRange(range, function (row) {
-                var rowName = (row.rowPinned || 'normal') + "_" + row.rowIndex;
+                var rowName = "".concat(row.rowPinned || 'normal', "_").concat(row.rowIndex);
                 var columns = rowToColumnMap.get(rowName);
                 var currentRangeColIds = range.columns.map(function (col) { return col.getId(); });
                 if (columns) {
                     var filteredColumns = currentRangeColIds.filter(function (col) { return columns.indexOf(col) === -1; });
-                    columns.push.apply(columns, __spreadArray([], __read(filteredColumns)));
+                    columns.push.apply(columns, __spreadArray([], __read(filteredColumns), false));
                 }
                 else {
                     rowToColumnMap.set(rowName, currentRangeColIds);
@@ -546,13 +550,13 @@ var RangeService = /** @class */ (function (_super) {
         return this.draggingRange;
     };
     RangeService.prototype.onDragStart = function (mouseEvent) {
-        if (!this.gridOptionsService.isEnableRangeSelection()) {
+        if (!this.gridOptionsService.get('enableRangeSelection')) {
             return;
         }
         var ctrlKey = mouseEvent.ctrlKey, metaKey = mouseEvent.metaKey, shiftKey = mouseEvent.shiftKey;
         // ctrlKey for windows, metaKey for Apple
         var isMultiKey = ctrlKey || metaKey;
-        var allowMulti = !this.gridOptionsService.is('suppressMultiRangeSelection');
+        var allowMulti = !this.gridOptionsService.get('suppressMultiRangeSelection');
         var isMultiSelect = allowMulti ? isMultiKey : false;
         var extendRange = shiftKey && _.existsAndNotEmpty(this.cellRanges);
         if (!isMultiSelect && (!extendRange || _.exists(_.last(this.cellRanges).type))) {
@@ -603,7 +607,7 @@ var RangeService = /** @class */ (function (_super) {
         if (fromMouseClick && this.dragging) {
             return;
         }
-        if (this.gridOptionsService.is('suppressMultiRangeSelection')) {
+        if (this.gridOptionsService.get('suppressMultiRangeSelection')) {
             return;
         }
         if (this.isEmpty()) {
@@ -632,7 +636,7 @@ var RangeService = /** @class */ (function (_super) {
             // Top
             if (_this.rowPositionUtils.before(startRow, intersectionStartRow)) {
                 var top_1 = {
-                    columns: __spreadArray([], __read(cols)),
+                    columns: __spreadArray([], __read(cols), false),
                     startColumn: lastRange.startColumn,
                     startRow: __assign({}, startRow),
                     endRow: _this.cellNavigationService.getRowAbove(intersectionStartRow),
@@ -652,7 +656,7 @@ var RangeService = /** @class */ (function (_super) {
             // Bottom
             if (_this.rowPositionUtils.before(intersectionEndRow, endRow)) {
                 newRanges.push({
-                    columns: __spreadArray([], __read(cols)),
+                    columns: __spreadArray([], __read(cols), false),
                     startColumn: lastRange.startColumn,
                     startRow: _this.cellNavigationService.getRowBelow(intersectionEndRow),
                     endRow: __assign({}, endRow),
@@ -741,12 +745,12 @@ var RangeService = /** @class */ (function (_super) {
         var isSameColumn = columnFrom === columnTo;
         var fromIndex = allColumns.indexOf(columnFrom);
         if (fromIndex < 0) {
-            console.warn("AG Grid: column " + columnFrom.getId() + " is not visible");
+            console.warn("AG Grid: column ".concat(columnFrom.getId(), " is not visible"));
             return;
         }
         var toIndex = isSameColumn ? fromIndex : allColumns.indexOf(columnTo);
         if (toIndex < 0) {
-            console.warn("AG Grid: column " + columnTo.getId() + " is not visible");
+            console.warn("AG Grid: column ".concat(columnTo.getId(), " is not visible"));
             return;
         }
         if (isSameColumn) {

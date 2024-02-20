@@ -2,14 +2,16 @@
 .api-panel {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 13px;
 }
 
 .api-column {
-    flex-grow: 1;
     padding: 0px 5px 5px;
     text-align: center;
+    width: 215px;
+    max-height: 200px;
 }
 
 .api-column button {
@@ -25,13 +27,12 @@
 }
 
 .grid-div {
-    flex-grow: 1;
-    height: 1px;
-    min-height: 1px;
+    height: 100%;
+
 }
 
 .parent-div {
-    display: flex;
-    flex-direction: column;
     height: 100%;
+    display: grid;
+    grid-template-rows: auto 1fr;
 }

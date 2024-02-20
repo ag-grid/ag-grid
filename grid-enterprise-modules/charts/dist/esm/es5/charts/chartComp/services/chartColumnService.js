@@ -67,7 +67,7 @@ var ChartColumnService = /** @class */ (function (_super) {
                     case 'excluded':
                         return;
                     default:
-                        console.warn("AG Grid: unexpected chartDataType value '" + chartDataType + "' supplied, instead use 'category', 'series' or 'excluded'");
+                        console.warn("AG Grid: unexpected chartDataType value '".concat(chartDataType, "' supplied, instead use 'category', 'series' or 'excluded'"));
                         break;
                 }
             }

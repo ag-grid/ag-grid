@@ -1,16 +1,17 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColDef, ColGroupDef } from "../entities/colDef";
 import { IProvidedColumn } from "../interfaces/iProvidedColumn";
 import { Column } from "../entities/column";
 import { BeanStub } from "../context/beanStub";
+import { ColumnEventType } from '../events';
 export declare class ColumnFactory extends BeanStub {
     private columnUtils;
     private dataTypeService;
     private logger;
     private setBeans;
-    createColumnTree(defs: (ColDef | ColGroupDef)[] | null, primaryColumns: boolean, existingTree?: IProvidedColumn[]): {
+    createColumnTree(defs: (ColDef | ColGroupDef)[] | null, primaryColumns: boolean, existingTree: IProvidedColumn[] | undefined, source: ColumnEventType): {
         columnTree: IProvidedColumn[];
         treeDept: number;
     };
@@ -24,7 +25,7 @@ export declare class ColumnFactory extends BeanStub {
     private createColumnGroup;
     private createMergedColGroupDef;
     private createColumn;
-    applyColumnState(column: Column, colDef: ColDef): void;
+    applyColumnState(column: Column, colDef: ColDef, source: ColumnEventType): void;
     private findExistingColumn;
     private findExistingGroup;
     addColumnDefaultAndTypes(colDef: ColDef, colId: string): ColDef;

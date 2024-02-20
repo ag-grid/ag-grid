@@ -17,6 +17,9 @@ const MAT_GRID_SIZE = 8;
 const BASE_GRID_SIZE = 4;
 const BALHAM_GRID_SIZE = 4;
 const ALPINE_GRID_SIZE = 6;
+const QUARTZ_ICON_SIZE = 16;
+const QUARTZ_FONT_SIZE = 14;
+const QUARTZ_GRID_SIZE = 8;
 const HARD_CODED_SIZES = {
     // this item is required for custom themes
     'ag-theme-custom': {
@@ -46,6 +49,13 @@ const HARD_CODED_SIZES = {
         listItemHeight: ALPINE_GRID_SIZE * 4,
         rowHeight: ALPINE_GRID_SIZE * 7,
         chartMenuPanelWidth: 240
+    },
+    'ag-theme-quartz': {
+        headerHeight: QUARTZ_FONT_SIZE + QUARTZ_GRID_SIZE * 4.25,
+        headerCellMinWidth: 36,
+        listItemHeight: QUARTZ_ICON_SIZE + QUARTZ_GRID_SIZE,
+        rowHeight: QUARTZ_FONT_SIZE + QUARTZ_GRID_SIZE * 3.5,
+        chartMenuPanelWidth: 260
     }
 };
 /**
@@ -73,6 +83,7 @@ let Environment = class Environment extends beanStub_1.BeanStub {
     postConstruct() {
         var _a;
         const el = (_a = this.getTheme().el) !== null && _a !== void 0 ? _a : this.eGridDiv;
+        this.addManagedPropertyListener('rowHeight', () => this.refreshRowHeightVariable());
         this.mutationObserver = new MutationObserver(() => {
             this.calculatedSizes = {};
             this.fireGridStylesChangedEvent();
@@ -179,16 +190,25 @@ let Environment = class Environment extends beanStub_1.BeanStub {
     getListItemHeight() {
         return this.getFromTheme(20, 'listItemHeight');
     }
-    setRowHeightVariable(height) {
+    refreshRowHeightVariable() {
         const oldRowHeight = this.eGridDiv.style.getPropertyValue('--ag-line-height').trim();
+        const height = this.gridOptionsService.get('rowHeight');
+        if (height == null || isNaN(height) || !isFinite(height)) {
+            if (oldRowHeight !== null) {
+                this.eGridDiv.style.setProperty('--ag-line-height', null);
+            }
+            return -1;
+        }
         const newRowHeight = `${height}px`;
         if (oldRowHeight != newRowHeight) {
             this.eGridDiv.style.setProperty('--ag-line-height', newRowHeight);
+            return height;
         }
+        return oldRowHeight != '' ? parseFloat(oldRowHeight) : -1;
     }
     getMinColWidth() {
         const measuredMin = this.getFromTheme(null, 'headerCellMinWidth');
-        return generic_1.exists(measuredMin) ? Math.max(measuredMin, MIN_COL_WIDTH) : MIN_COL_WIDTH;
+        return (0, generic_1.exists)(measuredMin) ? Math.max(measuredMin, MIN_COL_WIDTH) : MIN_COL_WIDTH;
     }
     destroy() {
         this.calculatedSizes = null;
@@ -199,12 +219,12 @@ let Environment = class Environment extends beanStub_1.BeanStub {
     }
 };
 __decorate([
-    context_1.Autowired('eGridDiv')
+    (0, context_1.Autowired)('eGridDiv')
 ], Environment.prototype, "eGridDiv", void 0);
 __decorate([
     context_1.PostConstruct
 ], Environment.prototype, "postConstruct", null);
 Environment = __decorate([
-    context_1.Bean('environment')
+    (0, context_1.Bean)('environment')
 ], Environment);
 exports.Environment = Environment;

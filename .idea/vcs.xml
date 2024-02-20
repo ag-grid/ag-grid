@@ -2,11 +2,6 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/charts-examples/ag-charts-angular-example" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/charts-examples/ag-charts-enterprise-example" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/charts-examples/ag-charts-react-example" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/charts-examples/ag-charts-vue-example" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/charts-examples/ag-charts-vue3-example" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/grid-examples/ag-grid-angular-cli-example" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/grid-examples/ag-grid-angular-cli-package-example" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/grid-examples/ag-grid-react-example" vcs="Git" />

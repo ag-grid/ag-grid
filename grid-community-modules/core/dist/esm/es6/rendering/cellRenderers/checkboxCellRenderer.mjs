@@ -9,7 +9,7 @@ import { RefSelector } from "../../widgets/componentAnnotations.mjs";
 import { stopPropagationForAgGrid } from "../../utils/event.mjs";
 import { Events } from "../../events.mjs";
 import { KeyCode } from "../../constants/keyCode.mjs";
-import { getAriaCheckboxStateName } from "../../utils/aria.mjs";
+import { getAriaCheckboxStateName, setAriaLive } from "../../utils/aria.mjs";
 import { GROUP_AUTO_COLUMN_ID } from "../../columns/autoGroupColService.mjs";
 export class CheckboxCellRenderer extends Component {
     constructor() {
@@ -18,8 +18,10 @@ export class CheckboxCellRenderer extends Component {
     init(params) {
         this.params = params;
         this.updateCheckbox(params);
-        this.eCheckbox.getInputElement().setAttribute('tabindex', '-1');
-        this.addManagedListener(this.eCheckbox.getInputElement(), 'click', (event) => {
+        const inputEl = this.eCheckbox.getInputElement();
+        inputEl.setAttribute('tabindex', '-1');
+        setAriaLive(inputEl, 'polite');
+        this.addManagedListener(inputEl, 'click', (event) => {
             stopPropagationForAgGrid(event);
             if (this.eCheckbox.isDisabled()) {
                 return;
@@ -27,7 +29,7 @@ export class CheckboxCellRenderer extends Component {
             const isSelected = this.eCheckbox.getValue();
             this.onCheckboxChanged(isSelected);
         });
-        this.addManagedListener(this.eCheckbox.getInputElement(), 'dblclick', (event) => {
+        this.addManagedListener(inputEl, 'dblclick', (event) => {
             stopPropagationForAgGrid(event);
         });
         const eDocument = this.gridOptionsService.getDocument();

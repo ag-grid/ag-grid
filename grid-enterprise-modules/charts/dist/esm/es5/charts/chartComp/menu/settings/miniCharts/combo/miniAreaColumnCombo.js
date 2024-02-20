@@ -67,7 +67,7 @@ var MiniAreaColumnCombo = /** @class */ (function (_super) {
         });
         _this.areas = pathData.map(function (points) {
             var area = new _Scene.Path();
-            area.strokeWidth = 1;
+            area.strokeWidth = 0;
             area.fillOpacity = 0.8;
             var path = area.path;
             points.forEach(function (point, i) { return path[i > 0 ? 'lineTo' : 'moveTo'](point.x, point.y); });

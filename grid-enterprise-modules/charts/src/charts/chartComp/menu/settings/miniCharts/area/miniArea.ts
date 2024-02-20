@@ -1,6 +1,7 @@
 import { MiniChartWithAxes } from "../miniChartWithAxes";
 import { _Scene } from "ag-charts-community";
 import { ChartType } from "@ag-grid-community/core";
+import { ThemeTemplateParameters } from "../../miniChartsContainer";
 
 export interface ICoordinate {
     x: number;
@@ -18,7 +19,7 @@ export class MiniArea extends MiniChartWithAxes {
         [5, 3, 1]
     ];
 
-    constructor(container: HTMLElement, fills: string[], strokes: string[], data: number[][] = MiniArea.data) {
+    constructor(container: HTMLElement, fills: string[], strokes: string[], _themeTemplateParameters: ThemeTemplateParameters, _isCustomTheme: boolean, data: number[][] = MiniArea.data) {
         super(container, "groupedAreaTooltip");
 
         const size = this.size;
@@ -61,6 +62,7 @@ export class MiniArea extends MiniChartWithAxes {
         this.areas = pathData.reverse().map(points => {
             const area = new _Scene.Path();
             area.strokeWidth = 1;
+            area.strokeOpacity = 0.75;
             area.fillOpacity = 0.7;
 
             const path = area.path;

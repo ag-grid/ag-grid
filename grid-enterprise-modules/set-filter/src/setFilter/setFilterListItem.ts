@@ -124,10 +124,11 @@ export class SetFilterListItem<V> extends Component {
 
         this.render();
 
-        this.eCheckbox.setLabelEllipsis(true);
-        this.eCheckbox.setValue(this.isSelected, true);
-        this.eCheckbox.setDisabled(!!this.params.readOnly);
-        this.eCheckbox.getInputElement().setAttribute('tabindex', '-1');
+        this.eCheckbox
+            .setLabelEllipsis(true)
+            .setValue(this.isSelected, true)
+            .setDisabled(!!this.params.readOnly)
+            .getInputElement().setAttribute('tabindex', '-1');
 
         this.refreshVariableAriaLabels();
 
@@ -143,8 +144,10 @@ export class SetFilterListItem<V> extends Component {
                 }
             }
 
-            _.setAriaLevel(this.focusWrapper, this.depth + 1)
+            _.setAriaLevel(this.getAriaElement(), this.depth + 1)
         }
+
+        this.refreshAriaChecked();
 
         if (!!this.params.readOnly) {
             // Don't add event listeners if we're read-only.
@@ -152,6 +155,10 @@ export class SetFilterListItem<V> extends Component {
         }
 
         this.eCheckbox.onValueChange((value) => this.onCheckboxChanged(!!value));
+    }
+
+    public getFocusableElement(): HTMLElement {
+        return this.focusWrapper;
     }
 
     private setupExpansion(): void {
@@ -192,10 +199,6 @@ export class SetFilterListItem<V> extends Component {
         }
     }
 
-    private refreshAriaExpanded(): void {
-        _.setAriaExpanded(this.focusWrapper, !!this.isExpanded);
-    }
-
     private setExpandedIcons(): void {
         _.setDisplayed(this.eGroupClosedIcon, this.hasIndeterminateExpandState ? this.isExpanded === false : !this.isExpanded);
         _.setDisplayed(this.eGroupOpenedIcon, this.isExpanded === true);
@@ -214,8 +217,8 @@ export class SetFilterListItem<V> extends Component {
         };
 
         this.dispatchEvent(event);
-
         this.refreshVariableAriaLabels();
+        this.refreshAriaChecked();
     }
 
     public toggleSelected(): void {
@@ -226,7 +229,8 @@ export class SetFilterListItem<V> extends Component {
     
     private setSelected(isSelected: boolean | undefined, silent?: boolean) {
         this.isSelected = isSelected;
-        this.eCheckbox.setValue(this.isSelected, silent);
+        this.eCheckbox.setValue(isSelected, silent);
+        this.refreshAriaChecked();
     }
 
     private refreshVariableAriaLabels(): void {
@@ -245,8 +249,19 @@ export class SetFilterListItem<V> extends Component {
         if (!this.isTree) { return; }
         const translate = this.localeService.getLocaleTextFunc();
         const itemLabel = translate('ariaFilterValue', 'Filter Value');
-        _.setAriaLabel(this.focusWrapper, `${value} ${itemLabel}`);
-        _.setAriaDescribedBy(this.focusWrapper, this.eCheckbox.getInputElement().id);
+        const ariaEl = this.getAriaElement();
+        _.setAriaLabel(ariaEl, `${value} ${itemLabel}`);
+        _.setAriaDescribedBy(ariaEl, this.eCheckbox.getInputElement().id);
+    }
+
+    private refreshAriaChecked(): void {
+        const ariaEl = this.getAriaElement();
+
+        _.setAriaChecked(ariaEl, this.eCheckbox.getValue());
+    }
+
+    private refreshAriaExpanded(): void {
+        _.setAriaExpanded(this.getAriaElement(), !!this.isExpanded);
     }
 
     public refresh(item: SetFilterModelTreeItem | string | null, isSelected: boolean | undefined, isExpanded: boolean | undefined): void {
@@ -303,15 +318,12 @@ export class SetFilterListItem<V> extends Component {
             this.setTooltip(tooltipValue);
         }
 
-        this.cellRendererParams = {
+        this.cellRendererParams = this.gridOptionsService.addGridCommonParams({
             value,
             valueFormatted: formattedValue,
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context,
             colDef: this.params.colDef,
             column: this.params.column,
-        };
+        });
     }
 
     public getTooltipParams(): WithoutGridCommon<ITooltipParams> {
@@ -349,10 +361,7 @@ export class SetFilterListItem<V> extends Component {
     private renderCellWithoutCellRenderer(): void {
         let valueToRender = (this.cellRendererParams.valueFormatted == null ? this.cellRendererParams.value : this.cellRendererParams.valueFormatted) ?? this.translate('blanks');
         if (typeof valueToRender !== 'string') {
-            _.doOnce(() => console.warn(
-                    'AG Grid: Set Filter Value Formatter must return string values. Please ensure the Set Filter Value Formatter returns string values for complex objects, or set convertValuesToStrings=true in the filterParams. See https://www.ag-grid.com/javascript-data-grid/filter-set-filter-list/#filter-value-types'
-                ), 'setFilterComplexObjectsValueFormatter'
-            );
+            _.warnOnce(`Set Filter Value Formatter must return string values. Please ensure the Set Filter Value Formatter returns string values for complex objects, or set convertValuesToStrings=true in the filterParams. See ${this.getFrameworkOverrides().getDocLink('filter-set-filter-list/#filter-value-types')}`);
             valueToRender = '';
         }
 

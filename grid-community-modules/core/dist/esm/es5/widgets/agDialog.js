@@ -75,19 +75,25 @@ var AgDialog = /** @class */ (function (_super) {
     };
     AgDialog.prototype.renderComponent = function () {
         var eGui = this.getGui();
-        var _a = this.config, alwaysOnTop = _a.alwaysOnTop, modal = _a.modal, title = _a.title;
+        var _a = this.config, alwaysOnTop = _a.alwaysOnTop, modal = _a.modal, title = _a.title, afterGuiAttached = _a.afterGuiAttached;
         var translate = this.localeService.getLocaleTextFunc();
         var addPopupRes = this.popupService.addPopup({
             modal: modal,
             eChild: eGui,
             closeOnEsc: true,
-            closedCallback: this.destroy.bind(this),
+            closedCallback: this.onClosed.bind(this),
             alwaysOnTop: alwaysOnTop,
-            ariaLabel: title || translate('ariaLabelDialog', 'Dialog')
+            ariaLabel: title || translate('ariaLabelDialog', 'Dialog'),
+            afterGuiAttached: afterGuiAttached
         });
         if (addPopupRes) {
             this.close = addPopupRes.hideFunc;
         }
+    };
+    AgDialog.prototype.onClosed = function (event) {
+        var _a, _b;
+        this.destroy();
+        (_b = (_a = this.config).closedCallback) === null || _b === void 0 ? void 0 : _b.call(_a, event);
     };
     AgDialog.prototype.toggleMaximize = function () {
         var position = this.positionableFeature.getPosition();

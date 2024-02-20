@@ -6,7 +6,9 @@ import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
+import './styles.css';
+
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
@@ -86,7 +88,6 @@ const GridExample = () => {
         return {
             flex: 1,
             minWidth: 150,
-            resizable: true,
         }
     }, []);
     const autoGroupColumnDef = useMemo(() => {
@@ -115,7 +116,7 @@ const GridExample = () => {
         <div style={containerStyle}>
 
 
-            <div style={gridStyle} className="ag-theme-alpine">
+            <div style={gridStyle} className={/** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
                 <AgGridReact
                     groupAllowUnbalanced
                     rowData={rowData}
@@ -125,7 +126,6 @@ const GridExample = () => {
                     columnTypes={columnTypes}
                     groupDefaultExpanded={-1}
                     rowGroupPanelShow={'always'}
-                    animateRows={true}
                 />
             </div>
         </div>

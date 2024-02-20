@@ -1,7 +1,7 @@
-import { _ } from '@ag-grid-community/core';
+import { AgPromise, Events, _ } from '@ag-grid-community/core';
 /** @param V type of value in the Set Filter */
 export class ClientSideValuesExtractor {
-    constructor(rowModel, filterParams, createKey, caseFormat, columnModel, valueService, treeDataOrGrouping, treeData, getDataPath, groupAllowUnbalanced) {
+    constructor(rowModel, filterParams, createKey, caseFormat, columnModel, valueService, treeDataOrGrouping, treeData, getDataPath, groupAllowUnbalanced, addManagedListener) {
         this.rowModel = rowModel;
         this.filterParams = filterParams;
         this.createKey = createKey;
@@ -12,6 +12,20 @@ export class ClientSideValuesExtractor {
         this.treeData = treeData;
         this.getDataPath = getDataPath;
         this.groupAllowUnbalanced = groupAllowUnbalanced;
+        this.addManagedListener = addManagedListener;
+    }
+    extractUniqueValuesAsync(predicate, existingValues) {
+        return new AgPromise(resolve => {
+            if (this.rowModel.isRowDataLoaded()) {
+                resolve(this.extractUniqueValues(predicate, existingValues));
+            }
+            else {
+                const destroyFunc = this.addManagedListener(Events.EVENT_ROW_COUNT_READY, () => {
+                    destroyFunc === null || destroyFunc === void 0 ? void 0 : destroyFunc();
+                    resolve(this.extractUniqueValues(predicate, existingValues));
+                });
+            }
+        });
     }
     extractUniqueValues(predicate, existingValues) {
         const values = new Map();
@@ -101,17 +115,7 @@ export class ClientSideValuesExtractor {
         addValue(this.createKey(dataPath), dataPath);
     }
     getValue(node) {
-        const { api, colDef, column, columnApi, context } = this.filterParams;
-        return this.filterParams.valueGetter({
-            api,
-            colDef,
-            column,
-            columnApi,
-            context,
-            data: node.data,
-            getValue: (field) => node.data[field],
-            node,
-        });
+        return this.filterParams.getValue(node);
     }
     extractExistingFormattedKeys(existingValues) {
         if (!existingValues) {

@@ -1,4 +1,4 @@
-import { SimpleFilter, SimpleFilterModelFormatter } from '../simpleFilter.mjs';
+import { SimpleFilter, SimpleFilterModelFormatter, } from '../simpleFilter.mjs';
 import { AgInputTextField } from '../../../widgets/agInputTextField.mjs';
 import { makeNull } from '../../../utils/generic.mjs';
 import { _ } from '../../../utils/index.mjs';
@@ -42,7 +42,7 @@ export class TextFilter extends SimpleFilter {
     getTextMatcher() {
         const legacyComparator = this.textFilterParams.textCustomComparator;
         if (legacyComparator) {
-            _.doOnce(() => console.warn('AG Grid - textCustomComparator is deprecated, use textMatcher instead.'), 'textCustomComparator.deprecated');
+            _.warnOnce('textCustomComparator is deprecated, use textMatcher instead.');
             return ({ filterOption, value, filterText }) => legacyComparator(filterOption, value, filterText);
         }
         return this.textFilterParams.textMatcher || TextFilter.DEFAULT_MATCHER;

@@ -25,7 +25,6 @@ import { SortController } from "./sortController.mjs";
 import { FocusService } from "./focusService.mjs";
 import { MouseEventService } from "./gridBodyComp/mouseEventService.mjs";
 import { CellNavigationService } from "./cellNavigationService.mjs";
-import { Events } from "./events.mjs";
 import { ValueFormatterService } from "./rendering/valueFormatterService.mjs";
 import { AgCheckbox } from "./widgets/agCheckbox.mjs";
 import { AgRadioButton } from "./widgets/agRadioButton.mjs";
@@ -54,8 +53,6 @@ import { PaginationComp } from "./pagination/paginationComp.mjs";
 import { ResizeObserverService } from "./misc/resizeObserverService.mjs";
 import { OverlayWrapperComponent } from "./rendering/overlays/overlayWrapperComponent.mjs";
 import { AgGroupComponent } from "./widgets/agGroupComponent.mjs";
-import { AgDialog } from "./widgets/agDialog.mjs";
-import { AgPanel } from "./widgets/agPanel.mjs";
 import { AgInputTextField } from "./widgets/agInputTextField.mjs";
 import { AgInputTextArea } from "./widgets/agInputTextArea.mjs";
 import { AgSlider } from "./widgets/agSlider.mjs";
@@ -88,53 +85,120 @@ import { StandardMenuFactory } from "./headerRendering/cells/column/standardMenu
 import { SortIndicatorComp } from "./headerRendering/cells/column/sortIndicatorComp.mjs";
 import { GridOptionsService } from "./gridOptionsService.mjs";
 import { LocaleService } from "./localeService.mjs";
-import { GridOptionsValidator } from "./gridOptionsValidator.mjs";
 import { FakeVScrollComp } from "./gridBodyComp/fakeVScrollComp.mjs";
 import { DataTypeService } from "./columns/dataTypeService.mjs";
 import { AgInputDateField } from "./widgets/agInputDateField.mjs";
 import { ValueParserService } from "./valueService/valueParserService.mjs";
 import { AgAutocomplete } from "./widgets/agAutocomplete.mjs";
-// creates JavaScript vanilla Grid, including JavaScript (ag-stack) components, which can
-// be wrapped by the framework wrappers
+import { QuickFilterService } from "./filter/quickFilterService.mjs";
+import { warnOnce, errorOnce } from "./utils/function.mjs";
+import { SyncService } from "./syncService.mjs";
+import { OverlayService } from "./rendering/overlays/overlayService.mjs";
+import { StateService } from "./misc/stateService.mjs";
+import { ExpansionService } from "./misc/expansionService.mjs";
+import { ValidationService } from "./validation/validationService.mjs";
+import { ApiEventService } from "./misc/apiEventService.mjs";
+import { PageSizeSelectorComp } from "./pagination/pageSizeSelector/pageSizeSelectorComp.mjs";
+import { AriaAnnouncementService } from "./rendering/ariaAnnouncementService.mjs";
+import { MenuService } from "./misc/menuService.mjs";
+/**
+ * Creates a grid inside the provided HTML element.
+ * @param eGridDiv Parent element to contain the grid.
+ * @param gridOptions Configuration for the grid.
+ * @param params Individually register AG Grid Modules to this grid.
+ * @returns api to be used to interact with the grid.
+ */
+export function createGrid(eGridDiv, gridOptions, params) {
+    if (!gridOptions) {
+        errorOnce('No gridOptions provided to createGrid');
+        return {};
+    }
+    // Ensure we do not mutate the provided gridOptions
+    const shallowCopy = GridOptionsService.getCoercedGridOptions(gridOptions);
+    const api = new GridCoreCreator().create(eGridDiv, shallowCopy, context => {
+        const gridComp = new GridComp(eGridDiv);
+        context.createBean(gridComp);
+    }, undefined, params);
+    // @deprecated v31 api / columnApi no longer mutated onto the provided gridOptions
+    // Instead we place a getter that will log an error when accessed and direct users to the docs
+    // Only apply for direct usages of createGrid, not for frameworks
+    if (!Object.isFrozen(gridOptions) && !(params === null || params === void 0 ? void 0 : params.frameworkOverrides)) {
+        const apiUrl = 'https://ag-grid.com/javascript-data-grid/grid-interface/#grid-api';
+        Object.defineProperty(gridOptions, 'api', {
+            get: () => {
+                errorOnce(`gridOptions.api is no longer supported. See ${apiUrl}.`);
+                return undefined;
+            },
+            configurable: true,
+        });
+        Object.defineProperty(gridOptions, 'columnApi', {
+            get: () => {
+                errorOnce(`gridOptions.columnApi is no longer supported and all methods moved to the grid api. See ${apiUrl}.`);
+                return undefined;
+            },
+            configurable: true,
+        });
+    }
+    return api;
+}
+/**
+ * @deprecated v31 use createGrid() instead
+ */
 export class Grid {
     constructor(eGridDiv, gridOptions, params) {
+        warnOnce('Since v31 new Grid(...) is deprecated. Use createGrid instead: `const gridApi = createGrid(...)`. The grid api is returned from createGrid and will not be available on gridOptions.');
         if (!gridOptions) {
-            console.error('AG Grid: no gridOptions provided to the grid');
+            errorOnce('No gridOptions provided to the grid');
             return;
         }
         this.gridOptions = gridOptions;
-        new GridCoreCreator().create(eGridDiv, gridOptions, context => {
+        const api = new GridCoreCreator().create(eGridDiv, gridOptions, (context) => {
             const gridComp = new GridComp(eGridDiv);
-            context.createBean(gridComp);
+            const bean = context.createBean(gridComp);
+            bean.addDestroyFunc(() => {
+                this.destroy();
+            });
         }, undefined, params);
+        // Maintain existing behaviour by mutating gridOptions with the apis for deprecated new Grid()
+        this.gridOptions.api = api;
+        this.gridOptions.columnApi = new ColumnApi(api);
     }
     destroy() {
-        if (this.gridOptions && this.gridOptions.api) {
-            this.gridOptions.api.destroy();
+        var _a;
+        if (this.gridOptions) {
+            (_a = this.gridOptions.api) === null || _a === void 0 ? void 0 : _a.destroy();
+            // need to remove these, as we don't own the lifecycle of the gridOptions, we need to
+            // remove the references in case the user keeps the grid options, we want the rest
+            // of the grid to be picked up by the garbage collector
+            delete this.gridOptions.api;
+            delete this.gridOptions.columnApi;
         }
     }
 }
 let nextGridId = 1;
-// created services of grid only, no UI, so frameworks can use this if providing
+// creates services of grid only, no UI, so frameworks can use this if providing
 // their own UI
 export class GridCoreCreator {
     create(eGridDiv, gridOptions, createUi, acceptChanges, params) {
         var _a;
+        // Shallow copy to prevent user provided gridOptions from being mutated.
         const debug = !!gridOptions.debug;
         const gridId = (_a = gridOptions.gridId) !== null && _a !== void 0 ? _a : String(nextGridId++);
         const registeredModules = this.getRegisteredModules(params, gridId);
         const beanClasses = this.createBeansList(gridOptions.rowModelType, registeredModules, gridId);
         const providedBeanInstances = this.createProvidedBeans(eGridDiv, gridOptions, params);
         if (!beanClasses) {
-            return;
-        } // happens when no row model found
+            // Detailed error message will have been printed by createBeansList
+            errorOnce('Failed to create grid.');
+            // Break typing so that the normal return type does not have to handle undefined.
+            return undefined;
+        }
         const contextParams = {
             providedBeanInstances: providedBeanInstances,
             beanClasses: beanClasses,
             debug: debug,
             gridId: gridId,
         };
-        const logger = new Logger('AG Grid', () => gridOptions.debug);
         const contextLogger = new Logger('Context', () => contextParams.debug);
         const context = new Context(contextParams, contextLogger);
         const beans = context.getBean('beans');
@@ -142,16 +206,11 @@ export class GridCoreCreator {
         this.registerStackComponents(beans, registeredModules);
         this.registerControllers(beans, registeredModules);
         createUi(context);
-        // we wait until the UI has finished initialising before setting in columns and rows
-        beans.ctrlsService.whenReady(() => {
-            this.setColumnsAndData(beans);
-            this.dispatchGridReadyEvent(beans);
-            const isEnterprise = ModuleRegistry.__isRegistered(ModuleNames.EnterpriseCoreModule, gridId);
-            logger.log(`initialised successfully, enterprise = ${isEnterprise}`);
-        });
+        beans.syncService.start();
         if (acceptChanges) {
             acceptChanges(context);
         }
+        return beans.gridApi;
     }
     registerControllers(beans, registeredModules) {
         registeredModules.forEach(module => {
@@ -206,6 +265,7 @@ export class GridCoreCreator {
             gridOptions: gridOptions,
             eGridDiv: eGridDiv,
             globalEventListener: params ? params.globalEventListener : null,
+            globalSyncEventListener: params ? params.globalSyncEventListener : null,
             frameworkOverrides: frameworkOverrides
         };
         if (params && params.providedBeanInstances) {
@@ -230,10 +290,9 @@ export class GridCoreCreator {
             { componentName: 'AgHeaderRoot', componentClass: GridHeaderComp },
             { componentName: 'AgSortIndicator', componentClass: SortIndicatorComp },
             { componentName: 'AgPagination', componentClass: PaginationComp },
+            { componentName: 'AgPageSizeSelector', componentClass: PageSizeSelectorComp },
             { componentName: 'AgOverlayWrapper', componentClass: OverlayWrapperComponent },
             { componentName: 'AgGroupComponent', componentClass: AgGroupComponent },
-            { componentName: 'AgPanel', componentClass: AgPanel },
-            { componentName: 'AgDialog', componentClass: AgDialog },
             { componentName: 'AgRowContainer', componentClass: RowContainerComp },
             { componentName: 'AgFakeHorizontalScroll', componentClass: FakeHScrollComp },
             { componentName: 'AgFakeVerticalScroll', componentClass: FakeVScrollComp },
@@ -254,7 +313,7 @@ export class GridCoreCreator {
             viewport: ModuleNames.ViewportRowModelModule
         };
         if (!rowModelModuleNames[rowModelType]) {
-            console.error('AG Grid: could not find row model for rowModelType = ' + rowModelType);
+            errorOnce('Could not find row model for rowModelType = ' + rowModelType);
             return;
         }
         if (!ModuleRegistry.__assertRegistered(rowModelModuleNames[rowModelType], `rowModelType = '${rowModelType}'`, gridId)) {
@@ -265,7 +324,7 @@ export class GridCoreCreator {
             Beans, RowPositionUtils, CellPositionUtils, HeaderPositionUtils,
             PaginationAutoPageSizeService, GridApi, UserComponentRegistry, AgComponentUtils,
             ComponentMetadataProvider, ResizeObserverService, UserComponentFactory,
-            RowContainerHeightService, HorizontalResizeService, LocaleService, GridOptionsValidator,
+            RowContainerHeightService, HorizontalResizeService, LocaleService, ValidationService,
             PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsService,
             PopupService, SelectionService, FilterManager, ColumnModel, HeaderNavigationService,
             PaginationProxy, RowRenderer, ExpressionService, ColumnFactory, TemplateService,
@@ -276,7 +335,9 @@ export class GridCoreCreator {
             SelectableService, AutoGroupColService, ChangeDetectionService, AnimationFrameService,
             UndoRedoService, AgStackComponentsRegistry, ColumnDefFactory,
             RowCssClassCalculator, RowNodeBlockLoader, RowNodeSorter, CtrlsService,
-            PinnedWidthService, RowNodeEventThrottle, CtrlsFactory, DataTypeService, ValueParserService
+            PinnedWidthService, RowNodeEventThrottle, CtrlsFactory, DataTypeService, ValueParserService,
+            QuickFilterService, SyncService, OverlayService, StateService, ExpansionService,
+            ApiEventService, AriaAnnouncementService, MenuService
         ];
         const moduleBeans = this.extractModuleEntity(rowModelModules, (module) => module.beans ? module.beans : []);
         beans.push(...moduleBeans);
@@ -292,16 +353,5 @@ export class GridCoreCreator {
     }
     extractModuleEntity(moduleEntities, extractor) {
         return [].concat(...moduleEntities.map(extractor));
-    }
-    setColumnsAndData(beans) {
-        const columnDefs = beans.gridOptionsService.get('columnDefs');
-        beans.columnModel.setColumnDefs(columnDefs || [], "gridInitializing");
-        beans.rowModel.start();
-    }
-    dispatchGridReadyEvent(beans) {
-        const readyEvent = {
-            type: Events.EVENT_GRID_READY,
-        };
-        beans.eventService.dispatchEvent(readyEvent);
     }
 }

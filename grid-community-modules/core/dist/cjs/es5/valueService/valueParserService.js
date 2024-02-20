@@ -32,19 +32,16 @@ var ValueParserService = /** @class */ (function (_super) {
     }
     ValueParserService.prototype.parseValue = function (column, rowNode, newValue, oldValue) {
         var colDef = column.getColDef();
-        var params = {
+        var params = this.gridOptionsService.addGridCommonParams({
             node: rowNode,
             data: rowNode === null || rowNode === void 0 ? void 0 : rowNode.data,
             oldValue: oldValue,
             newValue: newValue,
             colDef: colDef,
-            column: column,
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context
-        };
+            column: column
+        });
         var valueParser = colDef.valueParser;
-        if (generic_1.exists(valueParser)) {
+        if ((0, generic_1.exists)(valueParser)) {
             if (typeof valueParser === 'function') {
                 return valueParser(params);
             }
@@ -53,10 +50,10 @@ var ValueParserService = /** @class */ (function (_super) {
         return newValue;
     };
     __decorate([
-        context_1.Autowired('expressionService')
+        (0, context_1.Autowired)('expressionService')
     ], ValueParserService.prototype, "expressionService", void 0);
     ValueParserService = __decorate([
-        context_1.Bean('valueParserService')
+        (0, context_1.Bean)('valueParserService')
     ], ValueParserService);
     return ValueParserService;
 }(beanStub_1.BeanStub));

@@ -9,18 +9,17 @@
 }
 
 .greenBackground {
-    background-color: #b5e6b5;
+    background-color: #33CC3344;
 }
 
 .redFont {
-    color: red;
+    color: #BB0000;
     font-style: italic;
     text-decoration: underline;
 }
 
 .darkGreyBackground {
-    background-color: #888888;
-    color: #fff;
+    background-color: #99999944;
 }
 
 .notInExcel {

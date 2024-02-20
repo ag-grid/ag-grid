@@ -1,7 +1,20 @@
-import { CellEditingStartedEvent, CellEditingStoppedEvent, Grid, GridOptions, ICellEditorParams, RowEditingStartedEvent, RowEditingStoppedEvent, CellEditorSelectorResult } from '@ag-grid-community/core';
+import {
+  CellEditingStartedEvent,
+  CellEditingStoppedEvent,
+  GridApi,
+  createGrid,
+  GridOptions,
+  ICellEditorParams,
+  RowEditingStartedEvent,
+  RowEditingStoppedEvent,
+  CellEditorSelectorResult,
+} from '@ag-grid-community/core';
 import { getData, IRow } from "./data";
 import { MoodEditor } from './moodEditor_typescript';
 import { NumericCellEditor } from './numericCellEditor_typescript';
+
+
+let gridApi: GridApi<IRow>;
 
 
 const gridOptions: GridOptions<IRow> = {
@@ -73,5 +86,5 @@ function cellEditorSelector(params: ICellEditorParams<IRow>): CellEditorSelector
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

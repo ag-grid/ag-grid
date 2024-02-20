@@ -1,5 +1,5 @@
 import { Group } from '@tweenjs/tween.js';
-import { ApplyColumnStateParams, CreateRangeChartParams, GridOptions } from 'ag-grid-community';
+import { ApplyColumnStateParams, CreateRangeChartParams, GridApi, GridOptions } from 'ag-grid-community';
 import { AgElementFinder } from './agElements';
 import { AgElementName } from './agElements/agElementsConfig';
 import { Mouse } from './createMouse';
@@ -127,6 +127,7 @@ interface MoveToElementAndClickAction {
     actionParams: {
         target: AgElementName;
         targetParams?: any;
+        useMouseDown?: boolean;
         speed?: number;
         duration?: number;
         easing?: EasingFunction;
@@ -153,7 +154,7 @@ export type AGCreatorAction =
 
 export function createAGActionCreator({
     getOverlay,
-    gridOptions,
+    gridApi,
     agElementFinder,
     mouse,
     tweenGroup,
@@ -161,7 +162,7 @@ export function createAGActionCreator({
     scriptDebugger,
 }: {
     getOverlay: () => HTMLElement;
-    gridOptions: GridOptions;
+    gridApi: GridApi;
     agElementFinder: AgElementFinder;
     mouse: Mouse;
     tweenGroup: Group;
@@ -174,12 +175,12 @@ export function createAGActionCreator({
         if (actionType === 'reset') {
             const action = agAction as ResetAction;
             return resetGrid({
-                gridOptions,
+                gridApi,
                 scrollRow: action.actionParams?.scrollRow,
                 scrollColumn: action.actionParams?.scrollColumn,
             });
         } else if (actionType === 'resetColumnState') {
-            gridOptions?.columnApi?.resetColumnState();
+            gridApi.resetColumnState();
         } else if (actionType === 'dragColumnToRowGroupPanel') {
             const action = agAction as DragColumnToRowGroupPanelAction;
 
@@ -189,19 +190,19 @@ export function createAGActionCreator({
             const action = agAction as ToggleGroupCellAction;
             const expandParents = !action.actionParams.skipParents;
 
-            gridOptions?.api?.forEachNode((node) => {
+            gridApi.forEachNode((node) => {
                 if (node.key === action.actionParams.key) {
-                    gridOptions?.api?.setRowNodeExpanded(node, action.actionParams.expand, expandParents);
+                    gridApi.setRowNodeExpanded(node, action.actionParams.expand, expandParents);
                 }
             });
         } else if (actionType === 'focusCell') {
             const action = agAction as FocusCellAction;
-            const firstCol = gridOptions?.columnApi?.getAllDisplayedColumns()[action.actionParams.colIndex];
+            const firstCol = gridApi.getAllDisplayedColumns()[action.actionParams.colIndex];
             if (!firstCol) {
                 return;
             }
-            gridOptions?.api?.ensureColumnVisible(firstCol);
-            gridOptions?.api?.setFocusedCell(action.actionParams.rowIndex, firstCol);
+            gridApi.ensureColumnVisible(firstCol);
+            gridApi.setFocusedCell(action.actionParams.rowIndex, firstCol);
         } else if (actionType === 'selectSingleCell') {
             const action = agAction as SelectSingleCellAction;
             selectSingleCell({ agElementFinder, ...action.actionParams });
@@ -211,19 +212,19 @@ export function createAGActionCreator({
         } else if (actionType === 'clearAllSingleCellSelections') {
             clearAllSingleCellSelections();
         } else if (actionType === 'clearRangeSelection') {
-            gridOptions.api!.clearRangeSelection();
+            gridApi.clearRangeSelection();
         } else if (actionType === 'openToolPanel') {
             const action = agAction as OpenToolPanelAction;
-            gridOptions?.api?.openToolPanel(action.actionParams.toolPanelKey);
+            gridApi.openToolPanel(action.actionParams.toolPanelKey);
         } else if (actionType === 'closeToolPanel') {
-            gridOptions?.api?.closeToolPanel();
+            gridApi.closeToolPanel();
         } else if (actionType === 'applyColumnState') {
             const action = agAction as ApplyColumnStateAction;
-            gridOptions?.columnApi?.applyColumnState(action.actionParams);
+            gridApi.applyColumnState(action.actionParams);
         } else if (actionType === 'addCellRange') {
             const action = agAction as AddCellRangeAction;
             addCellRange({
-                gridOptions,
+                gridApi,
                 rowStartIndex: action.actionParams.rowStartIndex,
                 rowEndIndex: action.actionParams.rowEndIndex,
                 columnStartIndex: action.actionParams.columnStartIndex,
@@ -231,7 +232,7 @@ export function createAGActionCreator({
             });
         } else if (actionType === 'createRangeChart') {
             const action = agAction as CreateRangeChartAction;
-            gridOptions?.api?.createRangeChart(action.actionParams);
+            gridApi.createRangeChart(action.actionParams);
         } else if (actionType === 'clickOnContextMenuItem') {
             const action = agAction as ClickOnContextMenuItemAction;
             // NOTE: Need to return promise, so that it gets resolved downstream
@@ -245,6 +246,7 @@ export function createAGActionCreator({
                 agElementFinder,
                 target: action.actionParams.target,
                 targetParams: action.actionParams.targetParams,
+                useMouseDown: action.actionParams.useMouseDown,
                 easing: action.actionParams.easing || defaultEasing,
                 speed: action.actionParams.speed,
                 duration: action.actionParams.duration,

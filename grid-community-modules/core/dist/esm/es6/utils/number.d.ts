@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare function padStartWidthZeros(value: number, totalStringSize: number): string;
@@ -15,5 +15,3 @@ export declare function formatNumberTwoDecimalPlacesAndCommas(value: number, tho
  */
 export declare function formatNumberCommas(value: number, thousandSeparator: string, decimalSeparator: string): string;
 export declare function sum(values: number[] | null): number | null;
-export declare function zeroOrGreater(value: any, defaultValue: number): number;
-export declare function oneOrGreater(value: any, defaultValue?: number): number | undefined;

@@ -36,14 +36,14 @@ function gridChartVersion(gridVersion) {
         return undefined;
     }
     var _a = __read(gridVersion.split('.') || [], 2), gridMajor = _a[0], gridMinor = _a[1];
-    var gridMajorMinor = gridMajor + "." + gridMinor + ".x";
+    var gridMajorMinor = "".concat(gridMajor, ".").concat(gridMinor, ".x");
     var gridMajorNumber = parseInt(gridMajor, 10);
     var chartsMajor = (gridMajorNumber - VERSION_CHECKING_FIRST_GRID_MAJOR_VERSION) + VERSION_CHECKING_FIRST_CHARTS_MAJOR_VERSION;
     if (chartsMajor < 0) {
         return undefined;
     }
     var chartsMinor = gridMinor;
-    var chartsMajorMinor = chartsMajor + "." + chartsMinor + ".x";
+    var chartsMajorMinor = "".concat(chartsMajor, ".").concat(chartsMinor, ".x");
     return {
         gridMajorMinor: gridMajorMinor,
         chartsMajorMinor: chartsMajorMinor
@@ -62,10 +62,10 @@ function validGridChartsVersionErrorMessage(_a) {
     }
     var gridMajorMinor = version.gridMajorMinor, chartsMajorMinor = version.chartsMajorMinor;
     if (type === 'incompatible') {
-        return "AG Grid version " + gridVersion + " and AG Charts version " + chartsVersion + " is not supported. AG Grid version " + gridMajorMinor + " should be used with AG Chart " + chartsMajorMinor + ". Please see https://www.ag-grid.com/javascript-data-grid/modules/ for more information.";
+        return "AG Grid version ".concat(gridVersion, " and AG Charts version ").concat(chartsVersion, " is not supported. AG Grid version ").concat(gridMajorMinor, " should be used with AG Chart ").concat(chartsMajorMinor, ". Please see https://www.ag-grid.com/javascript-data-grid/modules/ for more information.");
     }
     else if (type === 'invalidCharts') {
-        return "AG Grid version " + gridMajorMinor + " should be used with AG Chart " + chartsMajorMinor + ". Please see https://www.ag-grid.com/javascript-data-grid/modules/ for more information.";
+        return "AG Grid version ".concat(gridMajorMinor, " should be used with AG Chart ").concat(chartsMajorMinor, ". Please see https://www.ag-grid.com/javascript-data-grid/modules/ for more information.");
     }
     return invalidMessage;
 }

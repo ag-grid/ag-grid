@@ -1,14 +1,14 @@
-import { ComponentFactoryResolver, ComponentRef, ViewContainerRef } from "@angular/core";
+import { ComponentRef, ViewContainerRef } from "@angular/core";
 import { BaseComponentWrapper, FrameworkComponentWrapper, WrappableInterface } from 'ag-grid-community';
+import { AngularFrameworkOverrides } from "./angularFrameworkOverrides";
 import * as i0 from "@angular/core";
 export declare class AngularFrameworkComponentWrapper extends BaseComponentWrapper<WrappableInterface> implements FrameworkComponentWrapper {
     private viewContainerRef;
-    private componentFactoryResolver;
-    setViewContainerRef(viewContainerRef: ViewContainerRef): void;
-    setComponentFactoryResolver(componentFactoryResolver: ComponentFactoryResolver): void;
+    private angularFrameworkOverrides;
+    setViewContainerRef(viewContainerRef: ViewContainerRef, angularFrameworkOverrides: AngularFrameworkOverrides): void;
     createWrapper(OriginalConstructor: {
         new (): any;
-    }): WrappableInterface;
+    }, compType: any): WrappableInterface;
     createComponent<T>(componentType: {
         new (...args: any[]): T;
     }): ComponentRef<T>;

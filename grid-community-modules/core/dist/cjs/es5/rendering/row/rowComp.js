@@ -28,11 +28,14 @@ var RowComp = /** @class */ (function (_super) {
         _this.cellComps = {};
         _this.beans = beans;
         _this.rowCtrl = ctrl;
-        _this.setTemplate(/* html */ "<div comp-id=\"" + _this.getCompId() + "\" style=\"" + _this.getInitialStyle(containerType) + "\"/>");
+        var rowDiv = document.createElement('div');
+        rowDiv.setAttribute('comp-id', "".concat(_this.getCompId()));
+        rowDiv.setAttribute('style', _this.getInitialStyle(containerType));
+        _this.setTemplateFromElement(rowDiv);
         var eGui = _this.getGui();
         var style = eGui.style;
         _this.domOrder = _this.rowCtrl.getDomOrder();
-        aria_1.setAriaRole(eGui, 'row');
+        (0, aria_1.setAriaRole)(eGui, 'row');
         var tabIndex = _this.rowCtrl.getTabIndex();
         if (tabIndex != null) {
             eGui.setAttribute('tabindex', tabIndex.toString());
@@ -43,12 +46,13 @@ var RowComp = /** @class */ (function (_super) {
             showFullWidth: function (compDetails) { return _this.showFullWidth(compDetails); },
             getFullWidthCellRenderer: function () { return _this.getFullWidthCellRenderer(); },
             addOrRemoveCssClass: function (name, on) { return _this.addOrRemoveCssClass(name, on); },
-            setUserStyles: function (styles) { return dom_1.addStylesToElement(eGui, styles); },
+            setUserStyles: function (styles) { return (0, dom_1.addStylesToElement)(eGui, styles); },
             setTop: function (top) { return style.top = top; },
             setTransform: function (transform) { return style.transform = transform; },
             setRowIndex: function (rowIndex) { return eGui.setAttribute('row-index', rowIndex); },
             setRowId: function (rowId) { return eGui.setAttribute('row-id', rowId); },
             setRowBusinessKey: function (businessKey) { return eGui.setAttribute('row-business-key', businessKey); },
+            refreshFullWidth: function (getUpdatedParams) { return _this.refreshFullWidth(getUpdatedParams); }
         };
         ctrl.setComp(compProxy, _this.getGui(), containerType);
         _this.addDestroyFunc(function () {
@@ -58,8 +62,7 @@ var RowComp = /** @class */ (function (_super) {
     }
     RowComp.prototype.getInitialStyle = function (containerType) {
         var transform = this.rowCtrl.getInitialTransform(containerType);
-        var top = this.rowCtrl.getInitialRowTop(containerType);
-        return transform ? "transform: " + transform : "top: " + top;
+        return transform ? "transform: ".concat(transform) : "top: ".concat(this.rowCtrl.getInitialRowTop(containerType));
     };
     RowComp.prototype.showFullWidth = function (compDetails) {
         var _this = this;
@@ -94,7 +97,7 @@ var RowComp = /** @class */ (function (_super) {
                 cellsToRemove[key] = null;
             }
         });
-        var cellCompsToRemove = object_1.getAllValuesInObject(cellsToRemove)
+        var cellCompsToRemove = (0, object_1.getAllValuesInObject)(cellsToRemove)
             .filter(function (cellComp) { return cellComp != null; });
         this.destroyCells(cellCompsToRemove);
         this.ensureDomOrder(cellCtrls);
@@ -111,7 +114,7 @@ var RowComp = /** @class */ (function (_super) {
                 elementsInOrder.push(cellComp.getGui());
             }
         });
-        dom_1.setDomChildOrder(this.getGui(), elementsInOrder);
+        (0, dom_1.setDomChildOrder)(this.getGui(), elementsInOrder);
     };
     RowComp.prototype.newCellComp = function (cellCtrl) {
         var cellComp = new cellComp_1.CellComp(this.beans, cellCtrl, this.rowCtrl.isPrintLayout(), this.getGui(), this.rowCtrl.isEditing());
@@ -123,7 +126,7 @@ var RowComp = /** @class */ (function (_super) {
         this.destroyAllCells();
     };
     RowComp.prototype.destroyAllCells = function () {
-        var cellsToDestroy = object_1.getAllValuesInObject(this.cellComps).filter(function (cp) { return cp != null; });
+        var cellsToDestroy = (0, object_1.getAllValuesInObject)(this.cellComps).filter(function (cp) { return cp != null; });
         this.destroyCells(cellsToDestroy);
     };
     RowComp.prototype.setFullWidthRowComp = function (fullWidthRowComponent) {
@@ -155,6 +158,14 @@ var RowComp = /** @class */ (function (_super) {
             cellComp.destroy();
             _this.cellComps[instanceId] = null;
         });
+    };
+    RowComp.prototype.refreshFullWidth = function (getUpdatedParams) {
+        var fullWidthCellRenderer = this.fullWidthCellRenderer;
+        if (!fullWidthCellRenderer || !fullWidthCellRenderer.refresh) {
+            return false;
+        }
+        var params = getUpdatedParams();
+        return fullWidthCellRenderer.refresh(params);
     };
     return RowComp;
 }(component_1.Component));

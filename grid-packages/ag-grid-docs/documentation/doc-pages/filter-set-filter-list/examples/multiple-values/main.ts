@@ -1,10 +1,11 @@
 import {
-  Grid,
+  GridApi,
+  createGrid,
   GridOptions,
   ISetFilterParams,
   KeyCreatorParams,
   ValueFormatterParams,
-  ValueGetterParams
+  ValueGetterParams,
 } from '@ag-grid-community/core';
 import { getData } from "./data";
 
@@ -20,6 +21,8 @@ var valueFormatter = function (params: ValueFormatterParams) {
     })
     .join(', ')
 }
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -55,5 +58,5 @@ const gridOptions: GridOptions = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

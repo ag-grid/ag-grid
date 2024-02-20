@@ -1,10 +1,12 @@
-import { Grid, GridOptions, SuppressKeyboardEventParams } from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions, SuppressKeyboardEventParams } from '@ag-grid-community/core';
 
 const data = Array.from(Array(10).keys()).map( (_val: any, index: number) => ({
   value1: !!(index % 2),
   value2: !!(index % 2),
   value3: !!(index % 2),
 }) );
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -40,5 +42,5 @@ const gridOptions: GridOptions = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

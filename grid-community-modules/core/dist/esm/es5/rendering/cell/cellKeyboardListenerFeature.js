@@ -89,8 +89,8 @@ var CellKeyboardListenerFeature = /** @class */ (function (_super) {
             return;
         }
         eventService.dispatchEvent({ type: Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_START });
-        if (isDeleteKey(key, gridOptionsService.is('enableCellEditingOnBackspace'))) {
-            if (rangeService && gridOptionsService.isEnableRangeSelection()) {
+        if (isDeleteKey(key, gridOptionsService.get('enableCellEditingOnBackspace'))) {
+            if (rangeService && gridOptionsService.get('enableRangeSelection')) {
                 rangeService.clearCellRangeCellValues({ dispatchWrapperEvents: true, wrapperEventSource: 'deleteKey' });
             }
             else if (cellCtrl.isCellEditable()) {
@@ -107,7 +107,7 @@ var CellKeyboardListenerFeature = /** @class */ (function (_super) {
             this.cellCtrl.stopEditingAndFocus(false, e.shiftKey);
         }
         else {
-            if (this.beans.gridOptionsService.is('enterNavigatesVertically')) {
+            if (this.beans.gridOptionsService.get('enterNavigatesVertically')) {
                 var key = e.shiftKey ? KeyCode.UP : KeyCode.DOWN;
                 this.beans.navigationService.navigateToNextCell(null, key, this.cellCtrl.getCellPosition(), false);
             }
@@ -161,8 +161,8 @@ var CellKeyboardListenerFeature = /** @class */ (function (_super) {
         if (!this.cellCtrl.isEditing() && gridOptionsService.isRowSelection()) {
             var currentSelection = this.rowNode.isSelected();
             var newSelection = !currentSelection;
-            if (newSelection || !gridOptionsService.is('suppressRowDeselection')) {
-                var groupSelectsFiltered = this.beans.gridOptionsService.is('groupSelectsFiltered');
+            if (newSelection || !gridOptionsService.get('suppressRowDeselection')) {
+                var groupSelectsFiltered = this.beans.gridOptionsService.get('groupSelectsFiltered');
                 var updatedCount = this.rowNode.setSelectedParams({
                     newValue: newSelection,
                     rangeSelect: event.shiftKey,

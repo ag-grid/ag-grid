@@ -83,7 +83,7 @@ class TitlePanel extends core_1.Component {
     }
     createSpacingSlicer() {
         const spacingSlider = this.createBean(new core_1.AgSlider());
-        const currentValue = this.chartOptionsService.getChartOption('title.spacing');
+        const currentValue = this.chartOptionsService.getChartOption('title.spacing') || 10;
         spacingSlider.setLabel(this.chartTranslationService.translate('spacing'))
             .setMaxValue(Math.max(currentValue, 100))
             .setValue(`${currentValue}`)
@@ -121,7 +121,7 @@ class TitlePanel extends core_1.Component {
 }
 TitlePanel.TEMPLATE = `<div></div>`;
 __decorate([
-    core_1.Autowired('chartTranslationService')
+    (0, core_1.Autowired)('chartTranslationService')
 ], TitlePanel.prototype, "chartTranslationService", void 0);
 __decorate([
     core_1.PostConstruct

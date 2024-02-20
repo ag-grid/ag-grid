@@ -7,7 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { Column } from "../../entities/column.mjs";
 import { BeanStub } from "../../context/beanStub.mjs";
 import { PostConstruct } from "../../context/context.mjs";
-import { setAriaColIndex, setAriaColSpan } from "../../utils/aria.mjs";
+import { setAriaColSpan } from "../../utils/aria.mjs";
 import { last } from "../../utils/array.mjs";
 import { exists } from "../../utils/generic.mjs";
 import { Events } from "../../eventKeys.mjs";
@@ -25,7 +25,7 @@ export class SetLeftFeature extends BeanStub {
         this.onLeftChanged();
     }
     getColumnOrGroup() {
-        if (this.beans.gridOptionsService.is('enableRtl') && this.colsSpanning) {
+        if (this.beans.gridOptionsService.get('enableRtl') && this.colsSpanning) {
             return last(this.colsSpanning);
         }
         return this.columnOrGroup;
@@ -40,7 +40,7 @@ export class SetLeftFeature extends BeanStub {
         this.addManagedPropertyListener('domLayout', this.onLeftChanged.bind(this));
     }
     setLeftFirstTime() {
-        const suppressMoveAnimation = this.beans.gridOptionsService.is('suppressColumnMoveAnimation');
+        const suppressMoveAnimation = this.beans.gridOptionsService.get('suppressColumnMoveAnimation');
         const oldLeftExists = exists(this.columnOrGroup.getOldLeft());
         const animateColumnMove = this.beans.columnAnimationService.isActive() && oldLeftExists && !suppressMoveAnimation;
         if (animateColumnMove) {
@@ -114,8 +114,6 @@ export class SetLeftFeature extends BeanStub {
             }
             indexColumn = children[0];
         }
-        const index = this.beans.columnModel.getAriaColumnIndex(indexColumn);
-        setAriaColIndex(this.ariaEl, index);
     }
 }
 __decorate([

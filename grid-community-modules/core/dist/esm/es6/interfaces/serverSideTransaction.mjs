@@ -28,4 +28,8 @@ export var ServerSideTransactionResultStatus;
      * Callback isApplyServerSideTransaction() returning false
      */
     ServerSideTransactionResultStatus["Cancelled"] = "Cancelled";
+    /**
+     * Store has not started yet, transaction not applied
+     */
+    ServerSideTransactionResultStatus["StoreNotStarted"] = "StoreNotStarted";
 })(ServerSideTransactionResultStatus || (ServerSideTransactionResultStatus = {}));

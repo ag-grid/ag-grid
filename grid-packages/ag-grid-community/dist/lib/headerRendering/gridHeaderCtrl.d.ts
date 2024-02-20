@@ -9,6 +9,7 @@ export declare class GridHeaderCtrl extends BeanStub {
     private columnModel;
     private ctrlsService;
     private filterManager;
+    private menuService;
     private comp;
     private eGui;
     private headerHeight;
@@ -21,4 +22,6 @@ export declare class GridHeaderCtrl extends BeanStub {
     protected onTabKeyDown(e: KeyboardEvent): void;
     protected handleKeyDown(e: KeyboardEvent): void;
     protected onFocusOut(e: FocusEvent): void;
+    private onHeaderContextMenu;
+    private mockContextMenuForIPad;
 }

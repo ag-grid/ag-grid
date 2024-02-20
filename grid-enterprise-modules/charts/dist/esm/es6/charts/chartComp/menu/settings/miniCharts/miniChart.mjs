@@ -6,14 +6,21 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { Autowired, Component, PostConstruct } from "@ag-grid-community/core";
 import { _Scene } from "ag-charts-community";
+const CANVAS_CLASS = 'ag-chart-mini-thumbnail-canvas';
+const ERROR_MESSAGE = 'AG Grid - chart update failed';
 export class MiniChart extends Component {
     constructor(container, tooltipName) {
         super();
         this.size = 58;
         this.padding = 5;
         this.root = new _Scene.Group();
-        const scene = new _Scene.Scene({ document: window.document, width: this.size, height: this.size });
-        scene.canvas.element.classList.add('ag-chart-mini-thumbnail-canvas');
+        const scene = new _Scene.Scene({
+            window: window,
+            document: window.document,
+            width: this.size,
+            height: this.size
+        });
+        scene.canvas.element.classList.add(CANVAS_CLASS);
         scene.root = this.root;
         scene.container = container;
         this.scene = scene;
@@ -21,9 +28,11 @@ export class MiniChart extends Component {
     }
     init() {
         this.scene.canvas.element.title = this.chartTranslationService.translate(this.tooltipName);
-        // necessary to force scene graph render as we are not using the standalone factory!
+        // Necessary to force scene graph render as we are not using the standalone factory.
         this.scene.render()
-            .catch((e) => console.error(`AG Grid - chart update failed`, e));
+            .catch((e) => {
+            console.error(`${ERROR_MESSAGE}`, e);
+        });
     }
 }
 __decorate([

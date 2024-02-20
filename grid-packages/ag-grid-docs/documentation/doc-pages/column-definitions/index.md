@@ -87,9 +87,10 @@ In addition to the above, the grid provides additional ways to help simplify and
 
 - `defaultColDef`: contains properties that all columns will inherit.
 - `defaultColGroupDef`: contains properties that all column groups will inherit.
-- `columnTypes`: specific column types containing properties that column definitions can inherit.
+- `columnTypes`: contains a set of properties that can be reused by referencing them in the `type` property of a column definition.
 
-Default columns and column types can specify any of the [column properties](/column-properties/) available on a column.
+Default columns can specify any of the [column properties](/column-properties/) available on a column.
+Column types can specify any of the [column properties](/column-properties/) except `type`.
 
 <note>
 Column Types are designed to work on Columns only, i.e. they won't be applied to Column Groups.
@@ -128,7 +129,7 @@ const gridOptions = {
         dateColumn: {
             filter: 'agDateColumnFilter',
             filterParams: { comparator: myDateComparator },
-            suppressMenu: true
+            suppressHeaderMenuButton: true
         }
     }
 }

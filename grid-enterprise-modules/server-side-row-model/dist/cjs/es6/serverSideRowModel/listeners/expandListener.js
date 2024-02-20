@@ -27,7 +27,7 @@ let ExpandListener = class ExpandListener extends core_1.BeanStub {
                 rowNode.childStore = this.createBean(this.storeFactory.createStore(storeParams, rowNode));
             }
         }
-        else if (this.gridOptionsService.is('purgeClosedRowNodes') && core_1._.exists(rowNode.childStore)) {
+        else if (this.gridOptionsService.get('purgeClosedRowNodes') && core_1._.exists(rowNode.childStore)) {
             rowNode.childStore = this.destroyBean(rowNode.childStore);
         }
         const storeUpdatedEvent = { type: core_1.Events.EVENT_STORE_UPDATED };
@@ -54,18 +54,18 @@ let ExpandListener = class ExpandListener extends core_1.BeanStub {
     }
 };
 __decorate([
-    core_1.Autowired('rowModel')
+    (0, core_1.Autowired)('rowModel')
 ], ExpandListener.prototype, "serverSideRowModel", void 0);
 __decorate([
-    core_1.Autowired('ssrmStoreFactory')
+    (0, core_1.Autowired)('ssrmStoreFactory')
 ], ExpandListener.prototype, "storeFactory", void 0);
 __decorate([
-    core_1.Autowired('beans')
+    (0, core_1.Autowired)('beans')
 ], ExpandListener.prototype, "beans", void 0);
 __decorate([
     core_1.PostConstruct
 ], ExpandListener.prototype, "postConstruct", null);
 ExpandListener = __decorate([
-    core_1.Bean('ssrmExpandListener')
+    (0, core_1.Bean)('ssrmExpandListener')
 ], ExpandListener);
 exports.ExpandListener = ExpandListener;

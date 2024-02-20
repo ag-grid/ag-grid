@@ -4,9 +4,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, Bean, BeanStub, Optional, PreDestroy } from "@ag-grid-community/core";
-import { VERSION as CHARTS_VERSION } from "ag-charts-community";
+import { Autowired, Bean, BeanStub, ModuleRegistry, Optional, PreDestroy } from "@ag-grid-community/core";
+import { VERSION as CHARTS_VERSION, _ModuleSupport } from "ag-charts-community";
 import { GridChartComp } from "./chartComp/gridChartComp.mjs";
+import { getCanonicalChartType, isEnterpriseChartType } from './chartComp/utils/seriesTypeMapper.mjs';
 import { upgradeChartModel } from "./chartModelMigration.mjs";
 import { VERSION as GRID_VERSION } from "../version.mjs";
 let ChartService = class ChartService extends BeanStub {
@@ -20,8 +21,14 @@ let ChartService = class ChartService extends BeanStub {
         this.crossFilteringContext = {
             lastSelectedChartId: '',
         };
+        this.isEnterprise = () => _ModuleSupport.enterpriseModule.isEnterprise;
     }
     updateChart(params) {
+        const chartType = params.chartType;
+        if (chartType && isEnterpriseChartType(chartType) && !this.isEnterprise()) {
+            ModuleRegistry.__warnEnterpriseChartDisabled(chartType);
+            return;
+        }
         if (this.activeChartComps.size === 0) {
             console.warn(`AG Grid - No active charts to update.`);
             return;
@@ -109,9 +116,7 @@ let ChartService = class ChartService extends BeanStub {
         };
         if (model.modelType === 'pivot') {
             // if required enter pivot mode
-            if (!this.columnModel.isPivotMode()) {
-                this.columnModel.setPivotMode(true, "pivotChart");
-            }
+            this.gridOptionsService.updateGridOptions({ options: { pivotMode: true }, source: 'pivotChart' });
             // pivot chart range contains all visible column without a row range to include all rows
             const columns = this.columnModel.getAllDisplayedColumns().map(col => col.getColId());
             const chartAllRangeParams = {
@@ -146,9 +151,7 @@ let ChartService = class ChartService extends BeanStub {
     }
     createPivotChart(params) {
         // if required enter pivot mode
-        if (!this.columnModel.isPivotMode()) {
-            this.columnModel.setPivotMode(true, "pivotChart");
-        }
+        this.gridOptionsService.updateGridOptions({ options: { pivotMode: true }, source: 'pivotChart' });
         // pivot chart range contains all visible column without a row range to include all rows
         const chartAllRangeParams = {
             rowStartIndex: null,
@@ -179,12 +182,16 @@ let ChartService = class ChartService extends BeanStub {
         return this.createChart(cellRange, params.chartType, params.chartThemeName, false, suppressChartRanges, params.chartContainer, params.aggFunc, params.chartThemeOverrides, params.unlinkChart, crossFiltering);
     }
     createChart(cellRange, chartType, chartThemeName, pivotChart = false, suppressChartRanges = false, container, aggFunc, chartThemeOverrides, unlinkChart = false, crossFiltering = false, chartOptionsToRestore, chartPaletteToRestore, seriesChartTypes) {
+        if (isEnterpriseChartType(chartType) && !this.isEnterprise()) {
+            ModuleRegistry.__warnEnterpriseChartDisabled(chartType);
+            return undefined;
+        }
         const createChartContainerFunc = this.gridOptionsService.getCallback('createChartContainer');
         const params = {
             chartId: this.generateId(),
             pivotChart,
             cellRange,
-            chartType,
+            chartType: getCanonicalChartType(chartType),
             chartThemeName,
             insideDialog: !(container || createChartContainerFunc),
             suppressChartRanges,
@@ -196,7 +203,7 @@ let ChartService = class ChartService extends BeanStub {
             chartOptionsToRestore,
             chartPaletteToRestore,
             seriesChartTypes,
-            crossFilteringResetCallback: () => this.activeChartComps.forEach(c => c.crossFilteringReset())
+            crossFilteringResetCallback: () => this.activeChartComps.forEach(c => c.crossFilteringReset()),
         };
         const chartComp = new GridChartComp(params);
         this.context.createBean(chartComp);

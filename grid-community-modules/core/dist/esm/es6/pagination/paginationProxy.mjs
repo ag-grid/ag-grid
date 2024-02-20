@@ -18,11 +18,12 @@ let PaginationProxy = class PaginationProxy extends BeanStub {
         this.masterRowCount = 0;
     }
     postConstruct() {
-        this.active = this.gridOptionsService.is('pagination');
+        this.active = this.gridOptionsService.get('pagination');
+        this.pageSizeFromGridOptions = this.gridOptionsService.get('paginationPageSize');
         this.paginateChildRows = this.isPaginateChildRows();
         this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
-        this.addManagedPropertyListener('pagination', this.onPaginationPageSizeChanged.bind(this));
-        this.addManagedPropertyListener('paginationPageSize', this.onPaginationPageSizeChanged.bind(this));
+        this.addManagedPropertyListener('pagination', this.onPaginationGridOptionChanged.bind(this));
+        this.addManagedPropertyListener('paginationPageSize', this.onPageSizeGridOptionChanged.bind(this));
         this.onModelUpdated();
     }
     ensureRowHeightsValid(startPixel, endPixel, startLimitIndex, endLimitIndex) {
@@ -33,11 +34,11 @@ let PaginationProxy = class PaginationProxy extends BeanStub {
         return res;
     }
     isPaginateChildRows() {
-        const shouldPaginate = this.gridOptionsService.is('groupRemoveSingleChildren') || this.gridOptionsService.is('groupRemoveLowestSingleChildren');
+        const shouldPaginate = this.gridOptionsService.get('groupRemoveSingleChildren') || this.gridOptionsService.get('groupRemoveLowestSingleChildren');
         if (shouldPaginate) {
             return true;
         }
-        return this.gridOptionsService.is('paginateChildRows');
+        return this.gridOptionsService.get('paginateChildRows');
     }
     onModelUpdated(modelUpdatedEvent) {
         this.calculatePages();
@@ -46,23 +47,28 @@ let PaginationProxy = class PaginationProxy extends BeanStub {
             animate: modelUpdatedEvent ? modelUpdatedEvent.animate : false,
             newData: modelUpdatedEvent ? modelUpdatedEvent.newData : false,
             newPage: modelUpdatedEvent ? modelUpdatedEvent.newPage : false,
+            newPageSize: modelUpdatedEvent ? modelUpdatedEvent.newPageSize : false,
             keepRenderedRows: modelUpdatedEvent ? modelUpdatedEvent.keepRenderedRows : false
         };
         this.eventService.dispatchEvent(paginationChangedEvent);
     }
-    onPaginationPageSizeChanged() {
-        this.active = this.gridOptionsService.is('pagination');
+    onPaginationGridOptionChanged() {
+        this.active = this.gridOptionsService.get('pagination');
         this.calculatePages();
         const paginationChangedEvent = {
             type: Events.EVENT_PAGINATION_CHANGED,
             animate: false,
             newData: false,
             newPage: false,
+            newPageSize: false,
             // important to keep rendered rows, otherwise every time grid is resized,
             // we would destroy all the rows.
             keepRenderedRows: true
         };
         this.eventService.dispatchEvent(paginationChangedEvent);
+    }
+    onPageSizeGridOptionChanged() {
+        this.setPageSize(this.gridOptionsService.get('paginationPageSize'), 'gridOptions');
     }
     goToPage(page) {
         if (!this.active || this.currentPage === page || typeof this.currentPage !== 'number') {
@@ -74,7 +80,8 @@ let PaginationProxy = class PaginationProxy extends BeanStub {
             animate: false,
             keepRenderedRows: false,
             newData: false,
-            newPage: true
+            newPage: true,
+            newPageSize: false
         };
         this.onModelUpdated(event);
     }
@@ -187,16 +194,81 @@ let PaginationProxy = class PaginationProxy extends BeanStub {
     getTotalPages() {
         return this.totalPages;
     }
-    setPageSize() {
-        // show put this into super class
-        this.pageSize = this.gridOptionsService.getNum('paginationPageSize');
-        if (this.pageSize == null || this.pageSize < 1) {
-            this.pageSize = 100;
+    /** This is only for state setting before data has been loaded */
+    setPage(page) {
+        this.currentPage = page;
+    }
+    get pageSize() {
+        if (exists(this.pageSizeAutoCalculated)) {
+            return this.pageSizeAutoCalculated;
+        }
+        if (exists(this.pageSizeFromPageSizeSelector)) {
+            return this.pageSizeFromPageSizeSelector;
+        }
+        if (exists(this.pageSizeFromInitialState)) {
+            return this.pageSizeFromInitialState;
+        }
+        if (exists(this.pageSizeFromGridOptions)) {
+            return this.pageSizeFromGridOptions;
+        }
+        return this.defaultPageSize;
+    }
+    unsetAutoCalculatedPageSize() {
+        if (this.pageSizeAutoCalculated === undefined) {
+            return;
+        }
+        const oldPageSize = this.pageSizeAutoCalculated;
+        this.pageSizeAutoCalculated = undefined;
+        if (this.pageSize === oldPageSize) {
+            return;
+        }
+        this.onModelUpdated({
+            type: Events.EVENT_MODEL_UPDATED,
+            animate: false,
+            keepRenderedRows: false,
+            newData: false,
+            newPage: false,
+            newPageSize: true,
+        });
+    }
+    setPageSize(size, source) {
+        const currentSize = this.pageSize;
+        switch (source) {
+            case 'autoCalculated':
+                this.pageSizeAutoCalculated = size;
+                break;
+            case 'pageSizeSelector':
+                this.pageSizeFromPageSizeSelector = size;
+                if (this.currentPage !== 0) {
+                    this.goToFirstPage();
+                }
+                break;
+            case 'initialState':
+                this.pageSizeFromInitialState = size;
+                break;
+            case 'gridOptions':
+                this.pageSizeFromGridOptions = size;
+                this.pageSizeFromInitialState = undefined;
+                this.pageSizeFromPageSizeSelector = undefined;
+                if (this.currentPage !== 0) {
+                    this.goToFirstPage();
+                }
+                break;
+        }
+        if (currentSize !== this.pageSize) {
+            const event = {
+                type: Events.EVENT_MODEL_UPDATED,
+                animate: false,
+                keepRenderedRows: false,
+                newData: false,
+                newPage: false,
+                newPageSize: true,
+            };
+            this.onModelUpdated(event);
         }
     }
     calculatePages() {
         if (this.active) {
-            this.setPageSize();
             if (this.paginateChildRows) {
                 this.calculatePagesAllRows();
             }
@@ -290,7 +362,7 @@ let PaginationProxy = class PaginationProxy extends BeanStub {
         }
     }
     calculatedPagesNotActive() {
-        this.pageSize = this.rowModel.getRowCount();
+        this.setPageSize(this.masterRowCount, 'autoCalculated');
         this.totalPages = 1;
         this.currentPage = 0;
         this.topDisplayedRowIndex = 0;

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GridCoreCreator = exports.Grid = void 0;
+exports.GridCoreCreator = exports.Grid = exports.createGrid = void 0;
 const selectionService_1 = require("./selectionService");
 const columnApi_1 = require("./columns/columnApi");
 const columnModel_1 = require("./columns/columnModel");
@@ -28,7 +28,6 @@ const sortController_1 = require("./sortController");
 const focusService_1 = require("./focusService");
 const mouseEventService_1 = require("./gridBodyComp/mouseEventService");
 const cellNavigationService_1 = require("./cellNavigationService");
-const events_1 = require("./events");
 const valueFormatterService_1 = require("./rendering/valueFormatterService");
 const agCheckbox_1 = require("./widgets/agCheckbox");
 const agRadioButton_1 = require("./widgets/agRadioButton");
@@ -57,8 +56,6 @@ const paginationComp_1 = require("./pagination/paginationComp");
 const resizeObserverService_1 = require("./misc/resizeObserverService");
 const overlayWrapperComponent_1 = require("./rendering/overlays/overlayWrapperComponent");
 const agGroupComponent_1 = require("./widgets/agGroupComponent");
-const agDialog_1 = require("./widgets/agDialog");
-const agPanel_1 = require("./widgets/agPanel");
 const agInputTextField_1 = require("./widgets/agInputTextField");
 const agInputTextArea_1 = require("./widgets/agInputTextArea");
 const agSlider_1 = require("./widgets/agSlider");
@@ -91,54 +88,122 @@ const standardMenu_1 = require("./headerRendering/cells/column/standardMenu");
 const sortIndicatorComp_1 = require("./headerRendering/cells/column/sortIndicatorComp");
 const gridOptionsService_1 = require("./gridOptionsService");
 const localeService_1 = require("./localeService");
-const gridOptionsValidator_1 = require("./gridOptionsValidator");
 const fakeVScrollComp_1 = require("./gridBodyComp/fakeVScrollComp");
 const dataTypeService_1 = require("./columns/dataTypeService");
 const agInputDateField_1 = require("./widgets/agInputDateField");
 const valueParserService_1 = require("./valueService/valueParserService");
 const agAutocomplete_1 = require("./widgets/agAutocomplete");
-// creates JavaScript vanilla Grid, including JavaScript (ag-stack) components, which can
-// be wrapped by the framework wrappers
+const quickFilterService_1 = require("./filter/quickFilterService");
+const function_1 = require("./utils/function");
+const syncService_1 = require("./syncService");
+const overlayService_1 = require("./rendering/overlays/overlayService");
+const stateService_1 = require("./misc/stateService");
+const expansionService_1 = require("./misc/expansionService");
+const validationService_1 = require("./validation/validationService");
+const apiEventService_1 = require("./misc/apiEventService");
+const pageSizeSelectorComp_1 = require("./pagination/pageSizeSelector/pageSizeSelectorComp");
+const ariaAnnouncementService_1 = require("./rendering/ariaAnnouncementService");
+const menuService_1 = require("./misc/menuService");
+/**
+ * Creates a grid inside the provided HTML element.
+ * @param eGridDiv Parent element to contain the grid.
+ * @param gridOptions Configuration for the grid.
+ * @param params Individually register AG Grid Modules to this grid.
+ * @returns api to be used to interact with the grid.
+ */
+function createGrid(eGridDiv, gridOptions, params) {
+    if (!gridOptions) {
+        (0, function_1.errorOnce)('No gridOptions provided to createGrid');
+        return {};
+    }
+    // Ensure we do not mutate the provided gridOptions
+    const shallowCopy = gridOptionsService_1.GridOptionsService.getCoercedGridOptions(gridOptions);
+    const api = new GridCoreCreator().create(eGridDiv, shallowCopy, context => {
+        const gridComp = new gridComp_1.GridComp(eGridDiv);
+        context.createBean(gridComp);
+    }, undefined, params);
+    // @deprecated v31 api / columnApi no longer mutated onto the provided gridOptions
+    // Instead we place a getter that will log an error when accessed and direct users to the docs
+    // Only apply for direct usages of createGrid, not for frameworks
+    if (!Object.isFrozen(gridOptions) && !(params === null || params === void 0 ? void 0 : params.frameworkOverrides)) {
+        const apiUrl = 'https://ag-grid.com/javascript-data-grid/grid-interface/#grid-api';
+        Object.defineProperty(gridOptions, 'api', {
+            get: () => {
+                (0, function_1.errorOnce)(`gridOptions.api is no longer supported. See ${apiUrl}.`);
+                return undefined;
+            },
+            configurable: true,
+        });
+        Object.defineProperty(gridOptions, 'columnApi', {
+            get: () => {
+                (0, function_1.errorOnce)(`gridOptions.columnApi is no longer supported and all methods moved to the grid api. See ${apiUrl}.`);
+                return undefined;
+            },
+            configurable: true,
+        });
+    }
+    return api;
+}
+exports.createGrid = createGrid;
+/**
+ * @deprecated v31 use createGrid() instead
+ */
 class Grid {
     constructor(eGridDiv, gridOptions, params) {
+        (0, function_1.warnOnce)('Since v31 new Grid(...) is deprecated. Use createGrid instead: `const gridApi = createGrid(...)`. The grid api is returned from createGrid and will not be available on gridOptions.');
         if (!gridOptions) {
-            console.error('AG Grid: no gridOptions provided to the grid');
+            (0, function_1.errorOnce)('No gridOptions provided to the grid');
             return;
         }
         this.gridOptions = gridOptions;
-        new GridCoreCreator().create(eGridDiv, gridOptions, context => {
+        const api = new GridCoreCreator().create(eGridDiv, gridOptions, (context) => {
             const gridComp = new gridComp_1.GridComp(eGridDiv);
-            context.createBean(gridComp);
+            const bean = context.createBean(gridComp);
+            bean.addDestroyFunc(() => {
+                this.destroy();
+            });
         }, undefined, params);
+        // Maintain existing behaviour by mutating gridOptions with the apis for deprecated new Grid()
+        this.gridOptions.api = api;
+        this.gridOptions.columnApi = new columnApi_1.ColumnApi(api);
     }
     destroy() {
-        if (this.gridOptions && this.gridOptions.api) {
-            this.gridOptions.api.destroy();
+        var _a;
+        if (this.gridOptions) {
+            (_a = this.gridOptions.api) === null || _a === void 0 ? void 0 : _a.destroy();
+            // need to remove these, as we don't own the lifecycle of the gridOptions, we need to
+            // remove the references in case the user keeps the grid options, we want the rest
+            // of the grid to be picked up by the garbage collector
+            delete this.gridOptions.api;
+            delete this.gridOptions.columnApi;
         }
     }
 }
 exports.Grid = Grid;
 let nextGridId = 1;
-// created services of grid only, no UI, so frameworks can use this if providing
+// creates services of grid only, no UI, so frameworks can use this if providing
 // their own UI
 class GridCoreCreator {
     create(eGridDiv, gridOptions, createUi, acceptChanges, params) {
         var _a;
+        // Shallow copy to prevent user provided gridOptions from being mutated.
         const debug = !!gridOptions.debug;
         const gridId = (_a = gridOptions.gridId) !== null && _a !== void 0 ? _a : String(nextGridId++);
         const registeredModules = this.getRegisteredModules(params, gridId);
         const beanClasses = this.createBeansList(gridOptions.rowModelType, registeredModules, gridId);
         const providedBeanInstances = this.createProvidedBeans(eGridDiv, gridOptions, params);
         if (!beanClasses) {
-            return;
-        } // happens when no row model found
+            // Detailed error message will have been printed by createBeansList
+            (0, function_1.errorOnce)('Failed to create grid.');
+            // Break typing so that the normal return type does not have to handle undefined.
+            return undefined;
+        }
         const contextParams = {
             providedBeanInstances: providedBeanInstances,
             beanClasses: beanClasses,
             debug: debug,
             gridId: gridId,
         };
-        const logger = new logger_1.Logger('AG Grid', () => gridOptions.debug);
         const contextLogger = new logger_1.Logger('Context', () => contextParams.debug);
         const context = new context_1.Context(contextParams, contextLogger);
         const beans = context.getBean('beans');
@@ -146,16 +211,11 @@ class GridCoreCreator {
         this.registerStackComponents(beans, registeredModules);
         this.registerControllers(beans, registeredModules);
         createUi(context);
-        // we wait until the UI has finished initialising before setting in columns and rows
-        beans.ctrlsService.whenReady(() => {
-            this.setColumnsAndData(beans);
-            this.dispatchGridReadyEvent(beans);
-            const isEnterprise = moduleRegistry_1.ModuleRegistry.__isRegistered(moduleNames_1.ModuleNames.EnterpriseCoreModule, gridId);
-            logger.log(`initialised successfully, enterprise = ${isEnterprise}`);
-        });
+        beans.syncService.start();
         if (acceptChanges) {
             acceptChanges(context);
         }
+        return beans.gridApi;
     }
     registerControllers(beans, registeredModules) {
         registeredModules.forEach(module => {
@@ -203,13 +263,14 @@ class GridCoreCreator {
     }
     createProvidedBeans(eGridDiv, gridOptions, params) {
         let frameworkOverrides = params ? params.frameworkOverrides : null;
-        if (generic_1.missing(frameworkOverrides)) {
+        if ((0, generic_1.missing)(frameworkOverrides)) {
             frameworkOverrides = new vanillaFrameworkOverrides_1.VanillaFrameworkOverrides();
         }
         const seed = {
             gridOptions: gridOptions,
             eGridDiv: eGridDiv,
             globalEventListener: params ? params.globalEventListener : null,
+            globalSyncEventListener: params ? params.globalSyncEventListener : null,
             frameworkOverrides: frameworkOverrides
         };
         if (params && params.providedBeanInstances) {
@@ -234,10 +295,9 @@ class GridCoreCreator {
             { componentName: 'AgHeaderRoot', componentClass: gridHeaderComp_1.GridHeaderComp },
             { componentName: 'AgSortIndicator', componentClass: sortIndicatorComp_1.SortIndicatorComp },
             { componentName: 'AgPagination', componentClass: paginationComp_1.PaginationComp },
+            { componentName: 'AgPageSizeSelector', componentClass: pageSizeSelectorComp_1.PageSizeSelectorComp },
             { componentName: 'AgOverlayWrapper', componentClass: overlayWrapperComponent_1.OverlayWrapperComponent },
             { componentName: 'AgGroupComponent', componentClass: agGroupComponent_1.AgGroupComponent },
-            { componentName: 'AgPanel', componentClass: agPanel_1.AgPanel },
-            { componentName: 'AgDialog', componentClass: agDialog_1.AgDialog },
             { componentName: 'AgRowContainer', componentClass: rowContainerComp_1.RowContainerComp },
             { componentName: 'AgFakeHorizontalScroll', componentClass: fakeHScrollComp_1.FakeHScrollComp },
             { componentName: 'AgFakeVerticalScroll', componentClass: fakeVScrollComp_1.FakeVScrollComp },
@@ -258,7 +318,7 @@ class GridCoreCreator {
             viewport: moduleNames_1.ModuleNames.ViewportRowModelModule
         };
         if (!rowModelModuleNames[rowModelType]) {
-            console.error('AG Grid: could not find row model for rowModelType = ' + rowModelType);
+            (0, function_1.errorOnce)('Could not find row model for rowModelType = ' + rowModelType);
             return;
         }
         if (!moduleRegistry_1.ModuleRegistry.__assertRegistered(rowModelModuleNames[rowModelType], `rowModelType = '${rowModelType}'`, gridId)) {
@@ -269,7 +329,7 @@ class GridCoreCreator {
             beans_1.Beans, rowPositionUtils_1.RowPositionUtils, cellPositionUtils_1.CellPositionUtils, headerPosition_1.HeaderPositionUtils,
             paginationAutoPageSizeService_1.PaginationAutoPageSizeService, gridApi_1.GridApi, userComponentRegistry_1.UserComponentRegistry, agComponentUtils_1.AgComponentUtils,
             componentMetadataProvider_1.ComponentMetadataProvider, resizeObserverService_1.ResizeObserverService, userComponentFactory_1.UserComponentFactory,
-            rowContainerHeightService_1.RowContainerHeightService, horizontalResizeService_1.HorizontalResizeService, localeService_1.LocaleService, gridOptionsValidator_1.GridOptionsValidator,
+            rowContainerHeightService_1.RowContainerHeightService, horizontalResizeService_1.HorizontalResizeService, localeService_1.LocaleService, validationService_1.ValidationService,
             pinnedRowModel_1.PinnedRowModel, dragService_1.DragService, displayedGroupCreator_1.DisplayedGroupCreator, eventService_1.EventService, gridOptionsService_1.GridOptionsService,
             popupService_1.PopupService, selectionService_1.SelectionService, filterManager_1.FilterManager, columnModel_1.ColumnModel, headerNavigationService_1.HeaderNavigationService,
             paginationProxy_1.PaginationProxy, rowRenderer_1.RowRenderer, expressionService_1.ExpressionService, columnFactory_1.ColumnFactory, templateService_1.TemplateService,
@@ -280,7 +340,9 @@ class GridCoreCreator {
             selectableService_1.SelectableService, autoGroupColService_1.AutoGroupColService, changeDetectionService_1.ChangeDetectionService, animationFrameService_1.AnimationFrameService,
             undoRedoService_1.UndoRedoService, agStackComponentsRegistry_1.AgStackComponentsRegistry, columnDefFactory_1.ColumnDefFactory,
             rowCssClassCalculator_1.RowCssClassCalculator, rowNodeBlockLoader_1.RowNodeBlockLoader, rowNodeSorter_1.RowNodeSorter, ctrlsService_1.CtrlsService,
-            pinnedWidthService_1.PinnedWidthService, rowNodeEventThrottle_1.RowNodeEventThrottle, ctrlsFactory_1.CtrlsFactory, dataTypeService_1.DataTypeService, valueParserService_1.ValueParserService
+            pinnedWidthService_1.PinnedWidthService, rowNodeEventThrottle_1.RowNodeEventThrottle, ctrlsFactory_1.CtrlsFactory, dataTypeService_1.DataTypeService, valueParserService_1.ValueParserService,
+            quickFilterService_1.QuickFilterService, syncService_1.SyncService, overlayService_1.OverlayService, stateService_1.StateService, expansionService_1.ExpansionService,
+            apiEventService_1.ApiEventService, ariaAnnouncementService_1.AriaAnnouncementService, menuService_1.MenuService
         ];
         const moduleBeans = this.extractModuleEntity(rowModelModules, (module) => module.beans ? module.beans : []);
         beans.push(...moduleBeans);
@@ -296,17 +358,6 @@ class GridCoreCreator {
     }
     extractModuleEntity(moduleEntities, extractor) {
         return [].concat(...moduleEntities.map(extractor));
-    }
-    setColumnsAndData(beans) {
-        const columnDefs = beans.gridOptionsService.get('columnDefs');
-        beans.columnModel.setColumnDefs(columnDefs || [], "gridInitializing");
-        beans.rowModel.start();
-    }
-    dispatchGridReadyEvent(beans) {
-        const readyEvent = {
-            type: events_1.Events.EVENT_GRID_READY,
-        };
-        beans.eventService.dispatchEvent(readyEvent);
     }
 }
 exports.GridCoreCreator = GridCoreCreator;

@@ -1,8 +1,10 @@
 import { Column, ExcelFactoryMode, ExcelImage, ExcelStyle, ExcelWorksheet, RowHeightCallbackParams } from '@ag-grid-community/core';
 import { ImageIdMap, ExcelCalculatedImage } from './assets/excelInterfaces';
-import { ExcelGridSerializingParams } from './baseExcelSerializingSession';
+import { ExcelGridSerializingParams } from './excelSerializingSession';
 /**
- * See https://www.ecma-international.org/news/TC45_current_work/OpenXML%20White%20Paper.pdf
+ * See links for more info on the Office Open XML format being used:
+ * https://www.ecma-international.org/wp-content/uploads/Office-Open-XML-White-Paper.pdf
+ * https://ecma-international.org/publications-and-standards/standards/ecma-376/
  */
 export declare class ExcelXlsxFactory {
     private static sharedStrings;

@@ -12,6 +12,7 @@ export declare class TreeSetDisplayValueModel<V> implements ISetDisplayValueMode
     private activeDisplayedItemsFlat;
     private groupsExist;
     private readonly selectAllItem;
+    private readonly addSelectionToFilterItem;
     constructor(formatter: TextFormatter, treeListPathGetter?: ((value: V | null) => string[] | null) | undefined, treeListFormatter?: ((pathKey: string | null, level: number, parentPathKeys: (string | null)[]) => string) | undefined, treeDataOrGrouping?: boolean | undefined);
     updateDisplayedValuesToAllAvailable(getValue: (key: string | null) => V | null, allKeys: Iterable<string | null> | undefined, availableKeys: Set<string | null>, source: 'reload' | 'otherFilter' | 'miniFilter'): void;
     updateDisplayedValuesToMatchMiniFilter(getValue: (key: string | null) => V | null, allKeys: Iterable<string | null> | undefined, availableKeys: Set<string | null>, matchesFilter: (valueToCheck: string | null) => boolean, nullMatchesFilter: boolean, source: 'reload' | 'otherFilter' | 'miniFilter'): void;
@@ -23,6 +24,7 @@ export declare class TreeSetDisplayValueModel<V> implements ISetDisplayValueMode
     getDisplayedValueCount(): number;
     getDisplayedItem(index: number): SetFilterModelTreeItem | null;
     getSelectAllItem(): SetFilterModelTreeItem;
+    getAddSelectionToFilterItem(): string | SetFilterModelTreeItem;
     getDisplayedKeys(): (string | null)[];
     forEachDisplayedKey(func: (key: string | null) => void): void;
     someDisplayedKey(func: (key: string | null) => boolean): boolean;

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IRowModel } from "./iRowModel";
@@ -6,6 +6,7 @@ import { ServerSideTransaction, ServerSideTransactionResult } from "./serverSide
 import { ServerSideGroupLevelState } from "./IServerSideStore";
 import { IServerSideDatasource } from "./iServerSideDatasource";
 import { IRowNode } from "./iRowNode";
+import { LoadSuccessParams } from "../rowNodeCache/rowNodeBlock";
 export interface IServerSideRowModel extends IRowModel {
     refreshStore(params?: RefreshServerSideParams): void;
     onRowHeightChanged(): void;
@@ -14,10 +15,11 @@ export interface IServerSideRowModel extends IRowModel {
     retryLoads(): void;
     expandAll(value: boolean): void;
     setDatasource(datasource: IServerSideDatasource): void;
-    forEachNodeAfterFilterAndSort(callback: (node: IRowNode, index: number) => void): void;
+    forEachNodeAfterFilterAndSort(callback: (node: IRowNode, index: number) => void, includeFooterNodes?: boolean): void;
     resetRootStore(): void;
     getBlockStates(): void;
     setRowCount(rowCount: number, isLastRowIndexKnown?: boolean): void;
+    applyRowData(rowDataParams: LoadSuccessParams, startRow: number, route: string[]): void;
 }
 export interface IServerSideTransactionManager {
     applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult | undefined;
@@ -36,7 +38,4 @@ export interface RefreshServerSideParams {
      * If false, then all rows at the level getting refreshed are kept until rows are loaded (no 'loading' rows appear).
      */
     purge?: boolean;
-}
-/** @deprecated use RefreshServerSideParams instead  */
-export interface RefreshStoreParams extends RefreshServerSideParams {
 }

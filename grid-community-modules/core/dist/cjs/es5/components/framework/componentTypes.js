@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FullWidthDetail = exports.FullWidthGroup = exports.FullWidthLoading = exports.FullWidth = exports.StatusPanelComponent = exports.ToolPanelComponent = exports.FloatingFilterComponent = exports.FilterComponent = exports.TooltipComponent = exports.NoRowsOverlayComponent = exports.LoadingOverlayComponent = exports.InnerRendererComponent = exports.CellEditorComponent = exports.CellRendererComponent = exports.HeaderGroupComponent = exports.HeaderComponent = exports.DateComponent = void 0;
+exports.MenuItemComponent = exports.FullWidthDetail = exports.FullWidthGroup = exports.FullWidthLoading = exports.FullWidth = exports.StatusPanelComponent = exports.ToolPanelComponent = exports.FloatingFilterComponent = exports.FilterComponent = exports.TooltipComponent = exports.NoRowsOverlayComponent = exports.LoadingOverlayComponent = exports.InnerRendererComponent = exports.CellEditorComponent = exports.CellRendererComponent = exports.HeaderGroupComponent = exports.HeaderComponent = exports.DateComponent = void 0;
 exports.DateComponent = {
     propertyName: 'dateComponent',
     cellRenderer: false
@@ -68,4 +68,8 @@ exports.FullWidthGroup = {
 exports.FullWidthDetail = {
     propertyName: 'detailCellRenderer',
     cellRenderer: true
+};
+exports.MenuItemComponent = {
+    propertyName: 'menuItem',
+    cellRenderer: false
 };

@@ -12,11 +12,14 @@ class RowComp extends component_1.Component {
         this.cellComps = {};
         this.beans = beans;
         this.rowCtrl = ctrl;
-        this.setTemplate(/* html */ `<div comp-id="${this.getCompId()}" style="${this.getInitialStyle(containerType)}"/>`);
+        const rowDiv = document.createElement('div');
+        rowDiv.setAttribute('comp-id', `${this.getCompId()}`);
+        rowDiv.setAttribute('style', this.getInitialStyle(containerType));
+        this.setTemplateFromElement(rowDiv);
         const eGui = this.getGui();
         const style = eGui.style;
         this.domOrder = this.rowCtrl.getDomOrder();
-        aria_1.setAriaRole(eGui, 'row');
+        (0, aria_1.setAriaRole)(eGui, 'row');
         const tabIndex = this.rowCtrl.getTabIndex();
         if (tabIndex != null) {
             eGui.setAttribute('tabindex', tabIndex.toString());
@@ -27,12 +30,13 @@ class RowComp extends component_1.Component {
             showFullWidth: compDetails => this.showFullWidth(compDetails),
             getFullWidthCellRenderer: () => this.getFullWidthCellRenderer(),
             addOrRemoveCssClass: (name, on) => this.addOrRemoveCssClass(name, on),
-            setUserStyles: (styles) => dom_1.addStylesToElement(eGui, styles),
+            setUserStyles: (styles) => (0, dom_1.addStylesToElement)(eGui, styles),
             setTop: top => style.top = top,
             setTransform: transform => style.transform = transform,
             setRowIndex: rowIndex => eGui.setAttribute('row-index', rowIndex),
             setRowId: (rowId) => eGui.setAttribute('row-id', rowId),
             setRowBusinessKey: businessKey => eGui.setAttribute('row-business-key', businessKey),
+            refreshFullWidth: getUpdatedParams => this.refreshFullWidth(getUpdatedParams)
         };
         ctrl.setComp(compProxy, this.getGui(), containerType);
         this.addDestroyFunc(() => {
@@ -41,8 +45,7 @@ class RowComp extends component_1.Component {
     }
     getInitialStyle(containerType) {
         const transform = this.rowCtrl.getInitialTransform(containerType);
-        const top = this.rowCtrl.getInitialRowTop(containerType);
-        return transform ? `transform: ${transform}` : `top: ${top}`;
+        return transform ? `transform: ${transform}` : `top: ${this.rowCtrl.getInitialRowTop(containerType)}`;
     }
     showFullWidth(compDetails) {
         const callback = (cellRenderer) => {
@@ -75,7 +78,7 @@ class RowComp extends component_1.Component {
                 cellsToRemove[key] = null;
             }
         });
-        const cellCompsToRemove = object_1.getAllValuesInObject(cellsToRemove)
+        const cellCompsToRemove = (0, object_1.getAllValuesInObject)(cellsToRemove)
             .filter(cellComp => cellComp != null);
         this.destroyCells(cellCompsToRemove);
         this.ensureDomOrder(cellCtrls);
@@ -91,7 +94,7 @@ class RowComp extends component_1.Component {
                 elementsInOrder.push(cellComp.getGui());
             }
         });
-        dom_1.setDomChildOrder(this.getGui(), elementsInOrder);
+        (0, dom_1.setDomChildOrder)(this.getGui(), elementsInOrder);
     }
     newCellComp(cellCtrl) {
         const cellComp = new cellComp_1.CellComp(this.beans, cellCtrl, this.rowCtrl.isPrintLayout(), this.getGui(), this.rowCtrl.isEditing());
@@ -103,7 +106,7 @@ class RowComp extends component_1.Component {
         this.destroyAllCells();
     }
     destroyAllCells() {
-        const cellsToDestroy = object_1.getAllValuesInObject(this.cellComps).filter(cp => cp != null);
+        const cellsToDestroy = (0, object_1.getAllValuesInObject)(this.cellComps).filter(cp => cp != null);
         this.destroyCells(cellsToDestroy);
     }
     setFullWidthRowComp(fullWidthRowComponent) {
@@ -133,6 +136,14 @@ class RowComp extends component_1.Component {
             cellComp.destroy();
             this.cellComps[instanceId] = null;
         });
+    }
+    refreshFullWidth(getUpdatedParams) {
+        const { fullWidthCellRenderer } = this;
+        if (!fullWidthCellRenderer || !fullWidthCellRenderer.refresh) {
+            return false;
+        }
+        const params = getUpdatedParams();
+        return fullWidthCellRenderer.refresh(params);
     }
 }
 exports.RowComp = RowComp;

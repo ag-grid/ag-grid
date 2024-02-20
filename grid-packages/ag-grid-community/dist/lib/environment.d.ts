@@ -20,7 +20,7 @@ export declare class Environment extends BeanStub {
     getFromTheme(defaultValue: null, sassVariableName: SASS_PROPERTIES): number | null | undefined;
     getDefaultRowHeight(): number;
     getListItemHeight(): number;
-    setRowHeightVariable(height: number): void;
+    refreshRowHeightVariable(): number;
     getMinColWidth(): number;
     protected destroy(): void;
 }

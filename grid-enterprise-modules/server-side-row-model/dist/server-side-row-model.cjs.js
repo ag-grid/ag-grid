@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/server-side-row-model - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.1.0
+          * @ag-grid-enterprise/server-side-row-model - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.1.0
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -10,7 +10,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 var core = require('@ag-grid-community/core');
 var core$1 = require('@ag-grid-enterprise/core');
 
-var __extends$d = (undefined && undefined.__extends) || (function () {
+var __extends$e = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -25,14 +25,14 @@ var __extends$d = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$g = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$h = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var FullStore = /** @class */ (function (_super) {
-    __extends$d(FullStore, _super);
+    __extends$e(FullStore, _super);
     function FullStore(ssrmParams, storeParams, parentRowNode) {
         var _this = 
         // finite block represents a cache with just one block, thus 0 is the id, it's the first block
@@ -48,7 +48,7 @@ var FullStore = /** @class */ (function (_super) {
     }
     FullStore.prototype.postConstruct = function () {
         var _this = this;
-        this.usingTreeData = this.gridOptionsService.isTreeData();
+        this.usingTreeData = this.gridOptionsService.get('treeData');
         this.nodeIdPrefix = this.blockUtils.createNodeIdPrefix(this.parentRowNode);
         if (!this.usingTreeData && this.groupLevel) {
             var groupColVo = this.ssrmParams.rowGroupCols[this.level];
@@ -58,13 +58,18 @@ var FullStore = /** @class */ (function (_super) {
         var initialRowCount = 1;
         var isRootStore = this.parentRowNode.level === -1;
         var userInitialRowCount = this.storeUtils.getServerSideInitialRowCount();
-        if (isRootStore && userInitialRowCount !== undefined) {
+        if (isRootStore && userInitialRowCount != null) {
             initialRowCount = userInitialRowCount;
         }
         this.initialiseRowNodes(initialRowCount);
         this.rowNodeBlockLoader.addBlock(this);
         this.addDestroyFunc(function () { return _this.rowNodeBlockLoader.removeBlock(_this); });
         this.postSortFunc = this.gridOptionsService.getCallback('postSortRows');
+        if (userInitialRowCount != null) {
+            this.eventService.dispatchEventOnce({
+                type: core.Events.EVENT_ROW_COUNT_READY
+            });
+        }
     };
     FullStore.prototype.destroyRowNodes = function () {
         this.blockUtils.destroyRowNodes(this.allRowNodes);
@@ -102,9 +107,7 @@ var FullStore = /** @class */ (function (_super) {
             parentBlock: this,
             parentNode: this.parentRowNode,
             storeParams: this.ssrmParams,
-            successCallback: this.pageLoaded.bind(this, this.getVersion()),
             success: this.success.bind(this, this.getVersion()),
-            failCallback: this.pageLoadFailed.bind(this, this.getVersion()),
             fail: this.pageLoadFailed.bind(this, this.getVersion())
         });
     };
@@ -149,7 +152,7 @@ var FullStore = /** @class */ (function (_super) {
         if (!this.isAlive()) {
             return;
         }
-        var info = params.storeInfo || params.groupLevelInfo;
+        var info = params.groupLevelInfo;
         if (info) {
             Object.assign(this.info, info);
         }
@@ -162,12 +165,16 @@ var FullStore = /** @class */ (function (_super) {
         this.nodesAfterFilter = [];
         this.allNodesMap = {};
         if (!params.rowData) {
-            var message_1 = 'AG Grid: "params.data" is missing from Server-Side Row Model success() callback. Please use the "data" attribute. If no data is returned, set an empty list.';
-            core._.doOnce(function () { return console.warn(message_1, params); }, 'FullStore.noData');
+            core._.warnOnce('"params.data" is missing from Server-Side Row Model success() callback. Please use the "data" attribute. If no data is returned, set an empty list.');
         }
         this.createOrRecycleNodes(nodesToRecycle, params.rowData);
         if (nodesToRecycle) {
             this.blockUtils.destroyRowNodes(core._.getAllValuesInObject(nodesToRecycle));
+        }
+        if (this.level === 0) {
+            this.eventService.dispatchEventOnce({
+                type: core.Events.EVENT_ROW_COUNT_READY
+            });
         }
         this.filterAndSortNodes();
         this.fireStoreUpdatedEvent();
@@ -309,15 +316,19 @@ var FullStore = /** @class */ (function (_super) {
             }
         });
     };
-    FullStore.prototype.forEachNodeDeepAfterFilterAndSort = function (callback, sequence) {
+    FullStore.prototype.forEachNodeDeepAfterFilterAndSort = function (callback, sequence, includeFooterNodes) {
         if (sequence === void 0) { sequence = new core.NumberSequence(); }
+        if (includeFooterNodes === void 0) { includeFooterNodes = false; }
         this.nodesAfterSort.forEach(function (rowNode) {
             callback(rowNode, sequence.next());
             var childCache = rowNode.childStore;
             if (childCache) {
-                childCache.forEachNodeDeepAfterFilterAndSort(callback, sequence);
+                childCache.forEachNodeDeepAfterFilterAndSort(callback, sequence, includeFooterNodes);
             }
         });
+        if (includeFooterNodes && this.parentRowNode.sibling) {
+            callback(this.parentRowNode.sibling, sequence.next());
+        }
     };
     FullStore.prototype.getRowUsingDisplayIndex = function (displayRowIndex) {
         // this can happen if asking for a row that doesn't exist in the model,
@@ -436,7 +447,6 @@ var FullStore = /** @class */ (function (_super) {
             var params = {
                 transaction: transaction,
                 parentNode: this.parentRowNode,
-                storeInfo: this.info,
                 groupLevelInfo: this.info
             };
             var apply = applyCallback(params);
@@ -557,7 +567,7 @@ var FullStore = /** @class */ (function (_super) {
             });
             rowNode = this.allNodesMap[id];
             if (!rowNode) {
-                console.error("AG Grid: could not find row id=" + id + ", data item was not found for this id");
+                console.error("AG Grid: could not find row id=".concat(id, ", data item was not found for this id"));
                 return null;
             }
         }
@@ -644,49 +654,49 @@ var FullStore = /** @class */ (function (_super) {
             heightPx: this.heightPx,
         };
     };
-    __decorate$g([
+    __decorate$h([
         core.Autowired('ssrmStoreUtils')
     ], FullStore.prototype, "storeUtils", void 0);
-    __decorate$g([
+    __decorate$h([
         core.Autowired('ssrmBlockUtils')
     ], FullStore.prototype, "blockUtils", void 0);
-    __decorate$g([
+    __decorate$h([
         core.Autowired('columnModel')
     ], FullStore.prototype, "columnModel", void 0);
-    __decorate$g([
+    __decorate$h([
         core.Autowired('rowNodeBlockLoader')
     ], FullStore.prototype, "rowNodeBlockLoader", void 0);
-    __decorate$g([
+    __decorate$h([
         core.Autowired('rowNodeSorter')
     ], FullStore.prototype, "rowNodeSorter", void 0);
-    __decorate$g([
+    __decorate$h([
         core.Autowired('sortController')
     ], FullStore.prototype, "sortController", void 0);
-    __decorate$g([
+    __decorate$h([
         core.Autowired('selectionService')
     ], FullStore.prototype, "selectionService", void 0);
-    __decorate$g([
+    __decorate$h([
         core.Autowired('ssrmNodeManager')
     ], FullStore.prototype, "nodeManager", void 0);
-    __decorate$g([
+    __decorate$h([
         core.Autowired('filterManager')
     ], FullStore.prototype, "filterManager", void 0);
-    __decorate$g([
+    __decorate$h([
         core.Autowired('ssrmTransactionManager')
     ], FullStore.prototype, "transactionManager", void 0);
-    __decorate$g([
+    __decorate$h([
         core.Autowired('rowModel')
     ], FullStore.prototype, "serverSideRowModel", void 0);
-    __decorate$g([
+    __decorate$h([
         core.PostConstruct
     ], FullStore.prototype, "postConstruct", null);
-    __decorate$g([
+    __decorate$h([
         core.PreDestroy
     ], FullStore.prototype, "destroyRowNodes", null);
     return FullStore;
 }(core.RowNodeBlock));
 
-var __extends$c = (undefined && undefined.__extends) || (function () {
+var __extends$d = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -701,7 +711,7 @@ var __extends$c = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$f = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$g = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -724,7 +734,7 @@ var __read$5 = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 var LazyBlockLoader = /** @class */ (function (_super) {
-    __extends$c(LazyBlockLoader, _super);
+    __extends$d(LazyBlockLoader, _super);
     function LazyBlockLoader(cache, parentNode, storeParams) {
         var _this = _super.call(this) || this;
         _this.loadingNodes = new Set();
@@ -746,8 +756,8 @@ var LazyBlockLoader = /** @class */ (function (_super) {
     LazyBlockLoader.prototype.getBlockToLoad = function () {
         var _this = this;
         var _a;
-        var firstRowInViewport = this.api.getFirstDisplayedRow();
-        var lastRowInViewport = this.api.getLastDisplayedRow();
+        var firstRowInViewport = this.api.getFirstDisplayedRowIndex();
+        var lastRowInViewport = this.api.getLastDisplayedRowIndex();
         // quick look-up for priority rows needing loading in viewport.
         for (var i = firstRowInViewport; i <= lastRowInViewport; i++) {
             var node = this.cache.getNodeCachedByDisplayIndex(i);
@@ -834,17 +844,12 @@ var LazyBlockLoader = /** @class */ (function (_super) {
             removeNodesFromLoadingMap();
             _this.queueLoadAction();
         };
-        var params = {
+        var params = this.gridOptionsService.addGridCommonParams({
             request: request,
-            successCallback: function (rowData, rowCount) { return success({ rowData: rowData, rowCount: rowCount }); },
             success: success,
-            failCallback: fail,
             fail: fail,
-            parentNode: this.parentNode,
-            api: this.api,
-            columnApi: this.columnApi,
-            context: this.gridOptionsService.context
-        };
+            parentNode: this.parentNode
+        });
         addNodesToLoadingMap();
         (_a = this.cache.getSsrmParams().datasource) === null || _a === void 0 ? void 0 : _a.getRows(params);
     };
@@ -869,7 +874,6 @@ var LazyBlockLoader = /** @class */ (function (_super) {
     };
     LazyBlockLoader.prototype.queueLoadAction = function () {
         var _this = this;
-        var _a;
         var nextBlockToLoad = this.getNextBlockToLoad();
         if (!nextBlockToLoad) {
             // there's no block we should be loading right now, clear the timeouts
@@ -882,7 +886,7 @@ var LazyBlockLoader = /** @class */ (function (_super) {
         if (!this.nextBlockToLoad || (this.nextBlockToLoad[0] !== nextBlockToLoad[0] && this.nextBlockToLoad[1] !== nextBlockToLoad[1])) {
             this.nextBlockToLoad = nextBlockToLoad;
             window.clearTimeout(this.loaderTimeout);
-            var _b = __read$5(this.nextBlockToLoad, 2), startRowString = _b[0], endRow_1 = _b[1];
+            var _a = __read$5(this.nextBlockToLoad, 2), startRowString = _a[0], endRow_1 = _a[1];
             var startRow_1 = Number(startRowString);
             this.loaderTimeout = window.setTimeout(function () {
                 if (!_this.cache.isAlive()) {
@@ -891,7 +895,7 @@ var LazyBlockLoader = /** @class */ (function (_super) {
                 _this.loaderTimeout = undefined;
                 _this.attemptLoad(startRow_1, endRow_1);
                 _this.nextBlockToLoad = undefined;
-            }, (_a = this.gridOptionsService.getNum('blockLoadDebounceMillis')) !== null && _a !== void 0 ? _a : 0);
+            }, this.gridOptionsService.get('blockLoadDebounceMillis'));
         }
     };
     LazyBlockLoader.prototype.attemptLoad = function (start, end) {
@@ -917,16 +921,13 @@ var LazyBlockLoader = /** @class */ (function (_super) {
         return [startOfBlock, startOfBlock + blockSize];
     };
     LazyBlockLoader.DEFAULT_BLOCK_SIZE = 100;
-    __decorate$f([
+    __decorate$g([
         core.Autowired('gridApi')
     ], LazyBlockLoader.prototype, "api", void 0);
-    __decorate$f([
-        core.Autowired('columnApi')
-    ], LazyBlockLoader.prototype, "columnApi", void 0);
-    __decorate$f([
+    __decorate$g([
         core.Autowired('rowNodeBlockLoader')
     ], LazyBlockLoader.prototype, "rowNodeBlockLoader", void 0);
-    __decorate$f([
+    __decorate$g([
         core.PostConstruct
     ], LazyBlockLoader.prototype, "init", null);
     return LazyBlockLoader;
@@ -944,10 +945,13 @@ var MultiIndexMap = /** @class */ (function () {
         this.indexes = indexes;
         this.maps = new Map(this.indexes.map(function (index) { return [index, new Map()]; }));
     }
+    MultiIndexMap.prototype.getSize = function () {
+        return this.maps.get(this.indexes[0]).size;
+    };
     MultiIndexMap.prototype.getBy = function (index, key) {
         var map = this.maps.get(index);
         if (!map) {
-            throw new Error("AG Grid: " + String(index) + " not found");
+            throw new Error("AG Grid: ".concat(String(index), " not found"));
         }
         return map.get(key);
     };
@@ -956,7 +960,7 @@ var MultiIndexMap = /** @class */ (function () {
         this.indexes.forEach(function (index) {
             var map = _this.maps.get(index);
             if (!map) {
-                throw new Error("AG Grid: " + String(index) + " not found");
+                throw new Error("AG Grid: ".concat(String(index), " not found"));
             }
             map.set(item[index], item);
         });
@@ -966,7 +970,7 @@ var MultiIndexMap = /** @class */ (function () {
         this.indexes.forEach(function (index) {
             var map = _this.maps.get(index);
             if (!map) {
-                throw new Error("AG Grid: " + String(index) + " not found");
+                throw new Error("AG Grid: ".concat(String(index), " not found"));
             }
             map.delete(item[index]);
         });
@@ -977,7 +981,7 @@ var MultiIndexMap = /** @class */ (function () {
     MultiIndexMap.prototype.getIterator = function (index) {
         var map = this.maps.get(index);
         if (!map) {
-            throw new Error("AG Grid: " + String(index) + " not found");
+            throw new Error("AG Grid: ".concat(String(index), " not found"));
         }
         return map.values();
     };
@@ -1017,7 +1021,7 @@ var MultiIndexMap = /** @class */ (function () {
     return MultiIndexMap;
 }());
 
-var __extends$b = (undefined && undefined.__extends) || (function () {
+var __extends$c = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -1032,7 +1036,7 @@ var __extends$b = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$e = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$f = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -1054,13 +1058,17 @@ var __read$4 = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray$3 = (undefined && undefined.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray$3 = (undefined && undefined.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 var LazyCache = /** @class */ (function (_super) {
-    __extends$b(LazyCache, _super);
+    __extends$c(LazyCache, _super);
     function LazyCache(store, numberOfRows, storeParams) {
         var _this = _super.call(this) || this;
         /**
@@ -1089,7 +1097,7 @@ var LazyCache = /** @class */ (function (_super) {
         this.defaultNodeIdPrefix = this.blockUtils.createNodeIdPrefix(this.store.getParentNode());
         this.rowLoader = this.createManagedBean(new LazyBlockLoader(this, this.store.getParentNode(), this.storeParams));
         this.getRowIdFunc = this.gridOptionsService.getCallback('getRowId');
-        this.isMasterDetail = this.gridOptionsService.isMasterDetail();
+        this.isMasterDetail = this.gridOptionsService.get('masterDetail');
     };
     LazyCache.prototype.destroyRowNodes = function () {
         var _this = this;
@@ -1337,15 +1345,17 @@ var LazyCache = /** @class */ (function (_super) {
         // if node already exists, update it or destroy it
         if (lazyNode) {
             var node = lazyNode.node;
-            this.nodesToRefresh.delete(node);
             node.__needsRefreshWhenVisible = false;
             // if the node is the same, just update the content
             if (this.doesNodeMatch(data, node)) {
                 this.blockUtils.updateDataIntoRowNode(node, data);
+                this.nodesToRefresh.delete(node);
                 return node;
             }
             // if there's no id and this is an open group, protect this node from changes
-            if (this.getRowIdFunc == null && node.group && node.expanded) {
+            // hasChildren also checks for tree data and master detail
+            if (this.getRowIdFunc == null && node.hasChildren() && node.expanded) {
+                this.nodesToRefresh.delete(node);
                 return node;
             }
             // destroy the old node, might be worth caching state here
@@ -1446,10 +1456,10 @@ var LazyCache = /** @class */ (function (_super) {
         Object.entries(blockStates).forEach(function (_a) {
             var _b;
             var _c = __read$4(_a, 2), blockStart = _c[0], uniqueStates = _c[1];
-            var sortedStates = __spreadArray$3([], __read$4(uniqueStates)).sort(function (a, b) { var _a, _b; return ((_a = statePriorityMap[a]) !== null && _a !== void 0 ? _a : 0) - ((_b = statePriorityMap[b]) !== null && _b !== void 0 ? _b : 0); });
+            var sortedStates = __spreadArray$3([], __read$4(uniqueStates), false).sort(function (a, b) { var _a, _b; return ((_a = statePriorityMap[a]) !== null && _a !== void 0 ? _a : 0) - ((_b = statePriorityMap[b]) !== null && _b !== void 0 ? _b : 0); });
             var priorityState = sortedStates[0];
             var blockNumber = Number(blockStart) / _this.rowLoader.getBlockSize();
-            var blockId = blockPrefix ? blockPrefix + "-" + blockNumber : String(blockNumber);
+            var blockId = blockPrefix ? "".concat(blockPrefix, "-").concat(blockNumber) : String(blockNumber);
             results[blockId] = {
                 blockNumber: blockNumber,
                 startRow: Number(blockStart),
@@ -1467,8 +1477,7 @@ var LazyCache = /** @class */ (function (_super) {
         }
         this.nodeMap.delete(lazyNode);
         this.nodeDisplayIndexMap.delete(lazyNode.node.rowIndex);
-        this.nodesToRefresh.delete(lazyNode.node);
-        if (lazyNode.node.group && this.nodesToRefresh.size > 0) {
+        if (this.nodesToRefresh.size > 0) {
             // while refreshing, we retain the group nodes so they can be moved
             // without losing state
             this.removedNodeCache.set(lazyNode.node.id, lazyNode.node);
@@ -1476,6 +1485,7 @@ var LazyCache = /** @class */ (function (_super) {
         else {
             this.blockUtils.destroyRowNode(lazyNode.node);
         }
+        this.nodesToRefresh.delete(lazyNode.node);
     };
     LazyCache.prototype.getSsrmParams = function () {
         return this.store.getSsrmParams();
@@ -1515,8 +1525,8 @@ var LazyCache = /** @class */ (function (_super) {
      */
     LazyCache.prototype.purgeStubsOutsideOfViewport = function () {
         var _this = this;
-        var firstRow = this.api.getFirstDisplayedRow();
-        var lastRow = this.api.getLastDisplayedRow();
+        var firstRow = this.api.getFirstDisplayedRowIndex();
+        var lastRow = this.api.getLastDisplayedRowIndex();
         var firstRowBlockStart = this.rowLoader.getBlockStartIndexForIndex(firstRow);
         var _a = __read$4(this.rowLoader.getBlockBoundsForIndex(lastRow), 2); _a[0]; var lastRowBlockEnd = _a[1];
         this.nodeMap.forEach(function (lazyNode) {
@@ -1558,8 +1568,8 @@ var LazyCache = /** @class */ (function (_super) {
             // if group is collapsed, or max blocks missing, ignore the event
             return;
         }
-        var firstRowInViewport = this.api.getFirstDisplayedRow();
-        var lastRowInViewport = this.api.getLastDisplayedRow();
+        var firstRowInViewport = this.api.getFirstDisplayedRowIndex();
+        var lastRowInViewport = this.api.getLastDisplayedRowIndex();
         // the start storeIndex of every block in this store
         var allLoadedBlocks = new Set();
         // the start storeIndex of every displayed block in this store
@@ -1635,7 +1645,7 @@ var LazyCache = /** @class */ (function (_super) {
     };
     LazyCache.prototype.extractDuplicateIds = function (rows) {
         var _this = this;
-        if (this.getRowIdFunc != null) {
+        if (this.getRowIdFunc == null) {
             return [];
         }
         var newIds = new Set();
@@ -1648,20 +1658,19 @@ var LazyCache = /** @class */ (function (_super) {
             }
             newIds.add(id);
         });
-        return __spreadArray$3([], __read$4(duplicates));
+        return __spreadArray$3([], __read$4(duplicates), false);
     };
     LazyCache.prototype.onLoadSuccess = function (firstRowIndex, numberOfRowsExpected, response) {
         var _this = this;
-        var _a;
         if (!this.live)
             return;
-        var info = (_a = response.groupLevelInfo) !== null && _a !== void 0 ? _a : response.storeInfo;
+        var info = response.groupLevelInfo;
         this.store.setStoreInfo(info);
         if (this.getRowIdFunc != null) {
             var duplicates = this.extractDuplicateIds(response.rowData);
             if (duplicates.length > 0) {
                 var duplicateIdText = duplicates.join(', ');
-                console.warn("AG Grid: Unable to display rows as duplicate row ids (" + duplicateIdText + ") were returned by the getRowId callback. Please modify the getRowId callback to provide unique ids.");
+                console.warn("AG Grid: Unable to display rows as duplicate row ids (".concat(duplicateIdText, ") were returned by the getRowId callback. Please modify the getRowId callback to provide unique ids."));
                 this.onLoadFailed(firstRowIndex, numberOfRowsExpected);
                 return;
             }
@@ -1689,10 +1698,6 @@ var LazyCache = /** @class */ (function (_super) {
             // create row will handle deleting the overwritten row
             _this.createRowAtIndex(rowIndex, data);
         });
-        var finishedRefreshing = this.nodesToRefresh.size === 0;
-        if (wasRefreshing && finishedRefreshing) {
-            this.fireRefreshFinishedEvent();
-        }
         if (response.rowCount != undefined && response.rowCount !== -1) {
             // if the rowCount has been provided, set the row count
             this.numberOfRows = response.rowCount;
@@ -1716,6 +1721,11 @@ var LazyCache = /** @class */ (function (_super) {
             lazyNodesAfterStoreEnd.forEach(function (lazyNode) { return _this.destroyRowAtIndex(lazyNode.index); });
         }
         this.fireStoreUpdatedEvent();
+        // Happens after store updated, as store updating can clear our excess rows.
+        var finishedRefreshing = this.nodesToRefresh.size === 0;
+        if (wasRefreshing && finishedRefreshing) {
+            this.fireRefreshFinishedEvent();
+        }
     };
     LazyCache.prototype.fireRefreshFinishedEvent = function () {
         var _this = this;
@@ -1731,6 +1741,39 @@ var LazyCache = /** @class */ (function (_super) {
         });
         this.removedNodeCache = new Map();
         this.store.fireRefreshFinishedEvent();
+    };
+    /**
+     * @returns true if all rows are loaded
+     */
+    LazyCache.prototype.isStoreFullyLoaded = function () {
+        var knowsSize = this.isLastRowKnown;
+        var hasCorrectRowCount = this.nodeMap.getSize() === this.numberOfRows;
+        if (!knowsSize || !hasCorrectRowCount) {
+            return;
+        }
+        if (this.nodesToRefresh.size > 0) {
+            return;
+        }
+        // nodeMap find cancels early when it finds a matching record.
+        // better to use this than forEach
+        var index = -1;
+        var firstOutOfPlaceNode = this.nodeMap.find(function (lazyNode) {
+            index += 1;
+            // node not contiguous, nodes must be missing
+            if (lazyNode.index !== index) {
+                return true;
+            }
+            // node data is out of date
+            if (lazyNode.node.__needsRefreshWhenVisible) {
+                return true;
+            }
+            // node not yet loaded
+            if (lazyNode.node.stub) {
+                return true;
+            }
+            return false;
+        });
+        return firstOutOfPlaceNode == null;
     };
     LazyCache.prototype.isLastRowIndexKnown = function () {
         return this.isLastRowKnown;
@@ -1801,11 +1844,45 @@ var LazyCache = /** @class */ (function (_super) {
         });
         return String(id);
     };
+    LazyCache.prototype.getOrderedNodeMap = function () {
+        var obj = {};
+        this.nodeMap.forEach(function (node) { return obj[node.index] = node; });
+        return obj;
+    };
+    LazyCache.prototype.clearDisplayIndexes = function () {
+        this.nodeDisplayIndexMap.clear();
+    };
+    /**
+     * Client side sorting
+     */
+    LazyCache.prototype.clientSideSortRows = function () {
+        var _this = this;
+        var sortOptions = this.sortController.getSortOptions();
+        var isAnySort = sortOptions.some(function (opt) { return opt.sort != null; });
+        if (!isAnySort) {
+            return;
+        }
+        // the node map does not need entirely recreated, only the indexes need updated.
+        var allNodes = new Array(this.nodeMap.getSize());
+        this.nodeMap.forEach(function (lazyNode) { return allNodes[lazyNode.index] = lazyNode.node; });
+        this.nodeMap.clear();
+        var sortedNodes = this.rowNodeSorter.doFullSort(allNodes, sortOptions);
+        sortedNodes.forEach(function (node, index) {
+            _this.nodeMap.set({
+                id: node.id,
+                node: node,
+                index: index,
+            });
+        });
+    };
+    /**
+     * Transaction Support here
+     */
     LazyCache.prototype.updateRowNodes = function (updates) {
         var _this = this;
         if (this.getRowIdFunc == null) {
             // throw error, as this is type checked in the store. User likely abusing internal apis if here.
-            throw new Error('AG Grid: Insert transactions can only be applied when row ids are supplied.');
+            throw new Error('AG Grid: Transactions can only be applied when row ids are supplied.');
         }
         var updatedNodes = [];
         updates.forEach(function (data) {
@@ -1820,15 +1897,17 @@ var LazyCache = /** @class */ (function (_super) {
     };
     LazyCache.prototype.insertRowNodes = function (inserts, indexToAdd) {
         var _this = this;
+        // adjust row count to allow for footer row
+        var realRowCount = this.store.getRowCount() - (this.store.getParentNode().sibling ? 1 : 0);
         // if missing and we know the last row, we're inserting at the end
-        var addIndex = indexToAdd == null && this.isLastRowKnown ? this.store.getRowCount() : indexToAdd;
+        var addIndex = indexToAdd == null && this.isLastRowKnown ? realRowCount : indexToAdd;
         // can't insert nodes past the end of the store
-        if (addIndex == null || this.store.getRowCount() < addIndex) {
+        if (addIndex == null || realRowCount < addIndex) {
             return [];
         }
         if (this.getRowIdFunc == null) {
             // throw error, as this is type checked in the store. User likely abusing internal apis if here.
-            throw new Error('AG Grid: Insert transactions can only be applied when row ids are supplied.');
+            throw new Error('AG Grid: Transactions can only be applied when row ids are supplied.');
         }
         var uniqueInsertsMap = {};
         inserts.forEach(function (data) {
@@ -1859,24 +1938,16 @@ var LazyCache = /** @class */ (function (_super) {
         // finally insert the new rows
         return uniqueInserts.map(function (data, uniqueInsertOffset) { return _this.createRowAtIndex(addIndex + uniqueInsertOffset, data); });
     };
-    LazyCache.prototype.getOrderedNodeMap = function () {
-        var obj = {};
-        this.nodeMap.forEach(function (node) { return obj[node.index] = node; });
-        return obj;
-    };
-    LazyCache.prototype.clearDisplayIndexes = function () {
-        this.nodeDisplayIndexMap.clear();
-    };
     LazyCache.prototype.removeRowNodes = function (idsToRemove) {
         if (this.getRowIdFunc == null) {
             // throw error, as this is type checked in the store. User likely abusing internal apis if here.
-            throw new Error('AG Grid: Insert transactions can only be applied when row ids are supplied.');
+            throw new Error('AG Grid: Transactions can only be applied when row ids are supplied.');
         }
         var removedNodes = [];
         var nodesToVerify = [];
         // track how many nodes have been deleted, as when we pass other nodes we need to shift them up
         var deletedNodeCount = 0;
-        var remainingIdsToRemove = __spreadArray$3([], __read$4(idsToRemove));
+        var remainingIdsToRemove = __spreadArray$3([], __read$4(idsToRemove), false);
         var allNodes = this.getOrderedNodeMap();
         var contiguousIndex = -1;
         var _loop_1 = function (stringIndex) {
@@ -1919,31 +1990,37 @@ var LazyCache = /** @class */ (function (_super) {
         }
         return removedNodes;
     };
-    __decorate$e([
+    __decorate$f([
         core.Autowired('gridApi')
     ], LazyCache.prototype, "api", void 0);
-    __decorate$e([
+    __decorate$f([
         core.Autowired('ssrmBlockUtils')
     ], LazyCache.prototype, "blockUtils", void 0);
-    __decorate$e([
+    __decorate$f([
         core.Autowired('focusService')
     ], LazyCache.prototype, "focusService", void 0);
-    __decorate$e([
+    __decorate$f([
         core.Autowired('ssrmNodeManager')
     ], LazyCache.prototype, "nodeManager", void 0);
-    __decorate$e([
+    __decorate$f([
         core.Autowired('rowModel')
     ], LazyCache.prototype, "serverSideRowModel", void 0);
-    __decorate$e([
+    __decorate$f([
+        core.Autowired('rowNodeSorter')
+    ], LazyCache.prototype, "rowNodeSorter", void 0);
+    __decorate$f([
+        core.Autowired('sortController')
+    ], LazyCache.prototype, "sortController", void 0);
+    __decorate$f([
         core.PostConstruct
     ], LazyCache.prototype, "init", null);
-    __decorate$e([
+    __decorate$f([
         core.PreDestroy
     ], LazyCache.prototype, "destroyRowNodes", null);
     return LazyCache;
 }(core.BeanStub));
 
-var __extends$a = (undefined && undefined.__extends) || (function () {
+var __extends$b = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -1958,7 +2035,7 @@ var __extends$a = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$d = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$e = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -1980,13 +2057,17 @@ var __read$3 = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray$2 = (undefined && undefined.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray$2 = (undefined && undefined.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 var LazyStore = /** @class */ (function (_super) {
-    __extends$a(LazyStore, _super);
+    __extends$b(LazyStore, _super);
     function LazyStore(ssrmParams, storeParams, parentRowNode) {
         var _this = _super.call(this) || this;
         _this.idSequence = new core.NumberSequence();
@@ -2000,12 +2081,16 @@ var LazyStore = /** @class */ (function (_super) {
         return _this;
     }
     LazyStore.prototype.init = function () {
+        var _a;
         var numberOfRows = 1;
         if (this.level === 0) {
-            numberOfRows = this.storeUtils.getServerSideInitialRowCount();
+            numberOfRows = (_a = this.storeUtils.getServerSideInitialRowCount()) !== null && _a !== void 0 ? _a : 1;
+            this.eventService.dispatchEventOnce({
+                type: core.Events.EVENT_ROW_COUNT_READY
+            });
         }
         this.cache = this.createManagedBean(new LazyCache(this, numberOfRows, this.storeParams));
-        var usingTreeData = this.gridOptionsService.isTreeData();
+        var usingTreeData = this.gridOptionsService.get('treeData');
         if (!usingTreeData && this.group) {
             var groupColVo = this.ssrmParams.rowGroupCols[this.level];
             this.groupField = groupColVo.field;
@@ -2016,6 +2101,16 @@ var LazyStore = /** @class */ (function (_super) {
         this.displayIndexStart = undefined;
         this.displayIndexEnd = undefined;
         this.destroyBean(this.cache);
+    };
+    /**
+     * Given a server response, ingest the rows outside of the data source lifecycle.
+     *
+     * @param rowDataParams the server response containing the rows to ingest
+     * @param startRow the index to start ingesting rows
+     * @param expectedRows the expected number of rows in the response (used to determine if the last row index is known)
+     */
+    LazyStore.prototype.applyRowData = function (rowDataParams, startRow, expectedRows) {
+        this.cache.onLoadSuccess(startRow, expectedRows, rowDataParams);
     };
     /**
      * Applies a given transaction to the data set within this store
@@ -2038,7 +2133,6 @@ var LazyStore = /** @class */ (function (_super) {
             var params = {
                 transaction: transaction,
                 parentNode: this.parentRowNode,
-                storeInfo: this.info,
                 groupLevelInfo: this.info
             };
             var apply = applyCallback(params);
@@ -2046,6 +2140,9 @@ var LazyStore = /** @class */ (function (_super) {
                 return { status: core.ServerSideTransactionResultStatus.Cancelled };
             }
         }
+        // needs checked before transactions are applied, as rows won't be contiguous immediately
+        // after
+        var allRowsLoaded = this.cache.isStoreFullyLoaded();
         var updatedNodes = undefined;
         if ((_a = transaction.update) === null || _a === void 0 ? void 0 : _a.length) {
             updatedNodes = this.cache.updateRowNodes(transaction.update);
@@ -2061,8 +2158,15 @@ var LazyStore = /** @class */ (function (_super) {
         var removedNodes = undefined;
         if ((_c = transaction.remove) === null || _c === void 0 ? void 0 : _c.length) {
             var allIdsToRemove = transaction.remove.map(function (data) { return (idFunc({ level: _this.level, parentKeys: _this.parentRowNode.getGroupKeys(), data: data })); });
-            var allUniqueIdsToRemove = __spreadArray$2([], __read$3(new Set(allIdsToRemove)));
+            var allUniqueIdsToRemove = __spreadArray$2([], __read$3(new Set(allIdsToRemove)), false);
             removedNodes = this.cache.removeRowNodes(allUniqueIdsToRemove);
+        }
+        var isClientSideSortingEnabled = this.gridOptionsService.get('serverSideEnableClientSideSort');
+        var isUpdateOrAdd = (updatedNodes === null || updatedNodes === void 0 ? void 0 : updatedNodes.length) || (insertedNodes === null || insertedNodes === void 0 ? void 0 : insertedNodes.length);
+        var isClientSideSort = allRowsLoaded && isClientSideSortingEnabled;
+        if (isClientSideSort && isUpdateOrAdd) {
+            // if client side sorting, we need to sort the rows after the transaction
+            this.cache.clientSideSortRows();
         }
         this.updateSelectionAfterTransaction(updatedNodes, removedNodes);
         return {
@@ -2198,16 +2302,20 @@ var LazyStore = /** @class */ (function (_super) {
      *
      * For the purpose of exclusively server side filtered stores, this is the same as getNodes().forEachDeep
      */
-    LazyStore.prototype.forEachNodeDeepAfterFilterAndSort = function (callback, sequence) {
+    LazyStore.prototype.forEachNodeDeepAfterFilterAndSort = function (callback, sequence, includeFooterNodes) {
         if (sequence === void 0) { sequence = new core.NumberSequence(); }
+        if (includeFooterNodes === void 0) { includeFooterNodes = false; }
         var orderedNodes = this.cache.getOrderedNodeMap();
         for (var key in orderedNodes) {
             var lazyNode = orderedNodes[key];
             callback(lazyNode.node, sequence.next());
             var childCache = lazyNode.node.childStore;
             if (childCache) {
-                childCache.forEachNodeDeepAfterFilterAndSort(callback, sequence);
+                childCache.forEachNodeDeepAfterFilterAndSort(callback, sequence, includeFooterNodes);
             }
+        }
+        if (includeFooterNodes && this.parentRowNode.sibling) {
+            callback(this.parentRowNode.sibling, sequence.next());
         }
     };
     /**
@@ -2384,11 +2492,18 @@ var LazyStore = /** @class */ (function (_super) {
     LazyStore.prototype.refreshAfterSort = function (params) {
         var serverSortsAllLevels = this.storeUtils.isServerSideSortAllLevels();
         if (serverSortsAllLevels || this.storeUtils.isServerRefreshNeeded(this.parentRowNode, this.ssrmParams.rowGroupCols, params)) {
-            var oldCount = this.cache.getRowCount();
-            this.destroyBean(this.cache);
-            this.cache = this.createManagedBean(new LazyCache(this, oldCount, this.storeParams));
-            this.fireStoreUpdatedEvent();
-            return;
+            var allRowsLoaded = this.cache.isStoreFullyLoaded();
+            var isClientSideSortingEnabled = this.gridOptionsService.get('serverSideEnableClientSideSort');
+            var isClientSideSort = allRowsLoaded && isClientSideSortingEnabled;
+            if (!isClientSideSort) {
+                var oldCount = this.cache.getRowCount();
+                this.destroyBean(this.cache);
+                this.cache = this.createManagedBean(new LazyCache(this, oldCount, this.storeParams));
+                return;
+            }
+            // client side sorting only handles one level, so allow it to pass through
+            // to recursive sort.
+            this.cache.clientSideSortRows();
         }
         // call refreshAfterSort on children, as we did not purge.
         // if we did purge, no need to do this as all children were destroyed
@@ -2407,7 +2522,7 @@ var LazyStore = /** @class */ (function (_super) {
             this.refreshStore(true);
             return;
         }
-        // call refreshAfterSort on children, as we did not purge.
+        // call refreshAfterFilter on children, as we did not purge.
         // if we did purge, no need to do this as all children were destroyed
         this.forEachChildStoreShallow(function (store) { return store.refreshAfterFilter(params); });
     };
@@ -2528,28 +2643,28 @@ var LazyStore = /** @class */ (function (_super) {
             heightPx: this.heightPx,
         };
     };
-    __decorate$d([
+    __decorate$e([
         core.Autowired('ssrmBlockUtils')
     ], LazyStore.prototype, "blockUtils", void 0);
-    __decorate$d([
+    __decorate$e([
         core.Autowired('ssrmStoreUtils')
     ], LazyStore.prototype, "storeUtils", void 0);
-    __decorate$d([
+    __decorate$e([
         core.Autowired('columnModel')
     ], LazyStore.prototype, "columnModel", void 0);
-    __decorate$d([
+    __decorate$e([
         core.Autowired('selectionService')
     ], LazyStore.prototype, "selectionService", void 0);
-    __decorate$d([
+    __decorate$e([
         core.PostConstruct
     ], LazyStore.prototype, "init", null);
-    __decorate$d([
+    __decorate$e([
         core.PreDestroy
     ], LazyStore.prototype, "destroyRowNodes", null);
     return LazyStore;
 }(core.BeanStub));
 
-var __extends$9 = (undefined && undefined.__extends) || (function () {
+var __extends$a = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -2564,7 +2679,7 @@ var __extends$9 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$c = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$d = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -2587,7 +2702,7 @@ var __read$2 = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 var ServerSideRowModel = /** @class */ (function (_super) {
-    __extends$9(ServerSideRowModel, _super);
+    __extends$a(ServerSideRowModel, _super);
     function ServerSideRowModel() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.onRowHeightChanged_debounced = core._.debounce(_this.onRowHeightChanged.bind(_this), 100);
@@ -2600,10 +2715,7 @@ var ServerSideRowModel = /** @class */ (function (_super) {
     ServerSideRowModel.prototype.ensureRowHeightsValid = function () { return false; };
     ServerSideRowModel.prototype.start = function () {
         this.started = true;
-        var datasource = this.gridOptionsService.get('serverSideDatasource');
-        if (datasource) {
-            this.setDatasource(datasource);
-        }
+        this.updateDatasource();
     };
     ServerSideRowModel.prototype.destroyDatasource = function () {
         if (!this.datasource) {
@@ -2616,6 +2728,7 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         this.datasource = undefined;
     };
     ServerSideRowModel.prototype.addEventListeners = function () {
+        var _this = this;
         this.addManagedListener(this.eventService, core.Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnEverything.bind(this));
         this.addManagedListener(this.eventService, core.Events.EVENT_STORE_UPDATED, this.onStoreUpdated.bind(this));
         var resetListener = this.resetRootStore.bind(this);
@@ -2623,16 +2736,30 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         this.addManagedListener(this.eventService, core.Events.EVENT_COLUMN_PIVOT_CHANGED, resetListener);
         this.addManagedListener(this.eventService, core.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, resetListener);
         this.addManagedListener(this.eventService, core.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, resetListener);
+        this.addManagedPropertyListeners([
+            /**
+             * Following properties omitted as they are likely to come with undesired  side effects.
+             * 'getRowId', 'isRowMaster', 'getRowHeight', 'isServerSideGroup', 'getServerSideGroupKey',
+             * */
+            'masterDetail', 'treeData', 'removePivotHeaderRowWhenSingleValueColumn',
+            'suppressServerSideInfiniteScroll', 'cacheBlockSize',
+        ], resetListener);
+        this.addManagedPropertyListener('rowHeight', function () { return _this.resetRowHeights(); });
         this.verifyProps();
+        this.addManagedPropertyListener('serverSideDatasource', function () { return _this.updateDatasource(); });
+    };
+    ServerSideRowModel.prototype.updateDatasource = function () {
+        var datasource = this.gridOptionsService.get('serverSideDatasource');
+        if (datasource) {
+            this.setDatasource(datasource);
+        }
     };
     ServerSideRowModel.prototype.verifyProps = function () {
         if (this.gridOptionsService.exists('initialGroupOrderComparator')) {
-            var message_1 = "AG Grid: initialGroupOrderComparator cannot be used with Server Side Row Model. If using Full Store, then provide the rows to the grid in the desired sort order. If using Infinite Scroll, then sorting is done on the server side, nothing to do with the client.";
-            core._.doOnce(function () { return console.warn(message_1); }, 'SSRM.InitialGroupOrderComparator');
+            core._.warnOnce("initialGroupOrderComparator cannot be used with Server Side Row Model.");
         }
         if (this.gridOptionsService.isRowSelection() && !this.gridOptionsService.exists('getRowId')) {
-            var message_2 = "AG Grid: getRowId callback must be provided for Server Side Row Model selection to work correctly.";
-            core._.doOnce(function () { return console.warn(message_2); }, 'SSRM.SelectionNeedsRowNodeIdFunc');
+            core._.warnOnce("getRowId callback must be provided for Server Side Row Model selection to work correctly.");
         }
     };
     ServerSideRowModel.prototype.setDatasource = function (datasource) {
@@ -2647,6 +2774,22 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         this.destroyDatasource();
         this.datasource = datasource;
         this.resetRootStore();
+    };
+    ServerSideRowModel.prototype.applyRowData = function (rowDataParams, startRow, route) {
+        var rootStore = this.getRootStore();
+        if (!rootStore) {
+            return;
+        }
+        var storeToExecuteOn = rootStore.getChildStore(route);
+        if (!storeToExecuteOn) {
+            return;
+        }
+        if (storeToExecuteOn instanceof LazyStore) {
+            storeToExecuteOn.applyRowData(rowDataParams, startRow, rowDataParams.rowData.length);
+        }
+        else if (storeToExecuteOn instanceof FullStore) {
+            storeToExecuteOn.processServerResult(rowDataParams);
+        }
     };
     ServerSideRowModel.prototype.isLastRowIndexKnown = function () {
         var cache = this.getRootStore();
@@ -2681,7 +2824,7 @@ var ServerSideRowModel = /** @class */ (function (_super) {
             var missingCols = !params.allowRemovedColumns && !!Object.values(oldColsMap).length;
             return allColsUnchanged && !missingCols;
         };
-        var sortModelDifferent = !core._.jsonEquals(this.storeParams.sortModel, this.sortListener.extractSortModel());
+        var sortModelDifferent = !core._.jsonEquals(this.storeParams.sortModel, this.sortController.getSortModel());
         var rowGroupDifferent = !areColsSame({
             oldCols: this.storeParams.rowGroupCols,
             newCols: rowGroupColumnVos,
@@ -2731,6 +2874,42 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         this.managingPivotResultColumns = true;
         this.columnModel.setSecondaryColumns(pivotColumnGroupDefs, "rowModelUpdated");
     };
+    ServerSideRowModel.prototype.resetRowHeights = function () {
+        var atLeastOne = this.resetRowHeightsForAllRowNodes();
+        var rootNodeHeight = this.gridOptionsService.getRowHeightForNode(this.rootNode);
+        this.rootNode.setRowHeight(rootNodeHeight.height, rootNodeHeight.estimated);
+        if (this.rootNode.sibling) {
+            var rootNodeSibling = this.gridOptionsService.getRowHeightForNode(this.rootNode.sibling);
+            this.rootNode.sibling.setRowHeight(rootNodeSibling.height, rootNodeSibling.estimated);
+        }
+        // when pivotMode but pivot not active, root node is displayed on its own
+        // because it's only ever displayed alone, refreshing the model (onRowHeightChanged) is not required
+        if (atLeastOne) {
+            this.onRowHeightChanged();
+        }
+    };
+    ServerSideRowModel.prototype.resetRowHeightsForAllRowNodes = function () {
+        var _this = this;
+        var atLeastOne = false;
+        this.forEachNode(function (rowNode) {
+            var rowHeightForNode = _this.gridOptionsService.getRowHeightForNode(rowNode);
+            rowNode.setRowHeight(rowHeightForNode.height, rowHeightForNode.estimated);
+            // we keep the height each row is at, however we set estimated=true rather than clear the height.
+            // this means the grid will not reset the row heights back to defaults, rather it will re-calc
+            // the height for each row as the row is displayed. otherwise the scroll will jump when heights are reset.
+            var detailNode = rowNode.detailNode;
+            if (detailNode) {
+                var detailRowHeight = _this.gridOptionsService.getRowHeightForNode(detailNode);
+                detailNode.setRowHeight(detailRowHeight.height, detailRowHeight.estimated);
+            }
+            if (rowNode.sibling) {
+                var siblingRowHeight = _this.gridOptionsService.getRowHeightForNode(rowNode.sibling);
+                detailNode.setRowHeight(siblingRowHeight.height, siblingRowHeight.estimated);
+            }
+            atLeastOne = true;
+        });
+        return atLeastOne;
+    };
     ServerSideRowModel.prototype.resetRootStore = function () {
         this.destroyRootStore();
         this.rootNode = new core.RowNode(this.beans);
@@ -2743,14 +2922,9 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         }
         if (this.managingPivotResultColumns) {
             // if managing pivot columns, also reset secondary columns.
-            this.columnModel.setSecondaryColumns(null);
+            this.columnModel.setSecondaryColumns(null, 'api');
             this.managingPivotResultColumns = false;
         }
-        // this event shows/hides 'no rows' overlay
-        var rowDataChangedEvent = {
-            type: core.Events.EVENT_ROW_DATA_UPDATED
-        };
-        this.eventService.dispatchEvent(rowDataChangedEvent);
         // this gets the row to render rows (or remove the previously rendered rows, as it's blank to start).
         // important to NOT pass in an event with keepRenderedRows or animate, as we want the renderer
         // to treat the rows as new rows, as it's all new data
@@ -2777,8 +2951,10 @@ var ServerSideRowModel = /** @class */ (function (_super) {
             pivotCols: pivotColumnVos,
             pivotMode: this.columnModel.isPivotMode(),
             // sort and filter model
-            filterModel: this.filterManager.getFilterModel(),
-            sortModel: this.sortListener.extractSortModel(),
+            filterModel: this.filterManager.isAdvancedFilterEnabled()
+                ? this.filterManager.getAdvancedFilterModel()
+                : this.filterManager.getFilterModel(),
+            sortModel: this.sortController.getSortModel(),
             datasource: this.datasource,
             lastAccessedSequence: new core.NumberSequence(),
             // blockSize: blockSize == null ? 100 : blockSize,
@@ -2954,22 +3130,28 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         }
         rootStore.forEachNodeDeep(callback);
     };
-    ServerSideRowModel.prototype.forEachNodeAfterFilterAndSort = function (callback) {
+    ServerSideRowModel.prototype.forEachNodeAfterFilterAndSort = function (callback, includeFooterNodes) {
+        if (includeFooterNodes === void 0) { includeFooterNodes = false; }
         var rootStore = this.getRootStore();
         if (!rootStore) {
             return;
         }
-        rootStore.forEachNodeDeepAfterFilterAndSort(callback);
+        rootStore.forEachNodeDeepAfterFilterAndSort(callback, undefined, includeFooterNodes);
     };
+    /** @return false if store hasn't started */
     ServerSideRowModel.prototype.executeOnStore = function (route, callback) {
+        if (!this.started) {
+            return false;
+        }
         var rootStore = this.getRootStore();
         if (!rootStore) {
-            return;
+            return true;
         }
         var storeToExecuteOn = rootStore.getChildStore(route);
         if (storeToExecuteOn) {
             callback(storeToExecuteOn);
         }
+        return true;
     };
     ServerSideRowModel.prototype.refreshStore = function (params) {
         if (params === void 0) { params = {}; }
@@ -3039,46 +3221,49 @@ var ServerSideRowModel = /** @class */ (function (_super) {
             console.error('AG Grid: Infinite scrolling must be enabled in order to set the row count.');
         }
     };
-    __decorate$c([
+    __decorate$d([
         core.Autowired('columnModel')
     ], ServerSideRowModel.prototype, "columnModel", void 0);
-    __decorate$c([
+    __decorate$d([
         core.Autowired('filterManager')
     ], ServerSideRowModel.prototype, "filterManager", void 0);
-    __decorate$c([
+    __decorate$d([
+        core.Autowired('sortController')
+    ], ServerSideRowModel.prototype, "sortController", void 0);
+    __decorate$d([
         core.Autowired('rowRenderer')
     ], ServerSideRowModel.prototype, "rowRenderer", void 0);
-    __decorate$c([
+    __decorate$d([
         core.Autowired('ssrmSortService')
     ], ServerSideRowModel.prototype, "sortListener", void 0);
-    __decorate$c([
+    __decorate$d([
         core.Autowired('ssrmNodeManager')
     ], ServerSideRowModel.prototype, "nodeManager", void 0);
-    __decorate$c([
+    __decorate$d([
         core.Autowired('ssrmStoreFactory')
     ], ServerSideRowModel.prototype, "storeFactory", void 0);
-    __decorate$c([
+    __decorate$d([
         core.Autowired('beans')
     ], ServerSideRowModel.prototype, "beans", void 0);
-    __decorate$c([
+    __decorate$d([
         core.Optional('pivotColDefService')
     ], ServerSideRowModel.prototype, "pivotColDefService", void 0);
-    __decorate$c([
+    __decorate$d([
         core.PreDestroy
     ], ServerSideRowModel.prototype, "destroyDatasource", null);
-    __decorate$c([
+    __decorate$d([
         core.PostConstruct
     ], ServerSideRowModel.prototype, "addEventListeners", null);
-    __decorate$c([
+    __decorate$d([
         core.PreDestroy
     ], ServerSideRowModel.prototype, "destroyRootStore", null);
-    ServerSideRowModel = __decorate$c([
+    ServerSideRowModel = __decorate$d([
         core.Bean('rowModel')
     ], ServerSideRowModel);
     return ServerSideRowModel;
 }(core.BeanStub));
 
-var __extends$8 = (undefined && undefined.__extends) || (function () {
+var __extends$9 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -3093,14 +3278,14 @@ var __extends$8 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$b = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$c = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var StoreUtils = /** @class */ (function (_super) {
-    __extends$8(StoreUtils, _super);
+    __extends$9(StoreUtils, _super);
     function StoreUtils() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -3121,21 +3306,16 @@ var StoreUtils = /** @class */ (function (_super) {
             filterModel: storeParams.filterModel,
             sortModel: storeParams.sortModel
         };
-        var getRowsParams = {
-            successCallback: p.successCallback,
+        var getRowsParams = this.gridOptionsService.addGridCommonParams({
             success: p.success,
-            failCallback: p.failCallback,
             fail: p.fail,
             request: request,
-            parentNode: p.parentNode,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-            context: this.gridOptionsService.context
-        };
+            parentNode: p.parentNode
+        });
         window.setTimeout(function () {
             if (!storeParams.datasource || !parentBlock.isAlive()) {
                 // failCallback() is important, to reduce the 'RowNodeBlockLoader.activeBlockLoadsCount' count
-                p.failCallback();
+                p.fail();
                 return;
             }
             storeParams.datasource.getRows(getRowsParams);
@@ -3148,6 +3328,12 @@ var StoreUtils = /** @class */ (function (_super) {
         var nextKey = keys[0];
         var nextNode = findNodeFunc(nextKey);
         if (nextNode) {
+            // if we have the final node, but not the final store, we create it to allow
+            // early population of data
+            if (keys.length === 1 && !nextNode.childStore) {
+                var storeParams = this.serverSideRowModel.getParams();
+                nextNode.childStore = this.createBean(this.storeFactory.createStore(storeParams, nextNode));
+            }
             var keyListForNextLevel = keys.slice(1, keys.length);
             var nextStore = nextNode.childStore;
             return nextStore ? nextStore.getChildStore(keyListForNextLevel) : null;
@@ -3179,54 +3365,50 @@ var StoreUtils = /** @class */ (function (_super) {
         return affectedGroupCols;
     };
     StoreUtils.prototype.getServerSideInitialRowCount = function () {
-        var rowCount = this.gridOptionsService.getNum('serverSideInitialRowCount');
-        if (typeof rowCount === 'number' && rowCount > 0) {
-            return rowCount;
-        }
-        return 1;
+        return this.gridOptionsService.get('serverSideInitialRowCount');
     };
     StoreUtils.prototype.assertRowModelIsServerSide = function (key) {
         if (!this.gridOptionsService.isRowModelType('serverSide')) {
-            core._.doOnce(function () { return console.warn("AG Grid: The '" + key + "' property can only be used with the Server Side Row Model."); }, key);
+            core._.warnOnce("The '".concat(key, "' property can only be used with the Server Side Row Model."));
             return false;
         }
         return true;
     };
     StoreUtils.prototype.assertNotTreeData = function (key) {
-        if (this.gridOptionsService.is('treeData')) {
-            core._.doOnce(function () { return console.warn("AG Grid: The '" + key + "' property cannot be used while using tree data."); }, key + '_TreeData');
+        if (this.gridOptionsService.get('treeData')) {
+            core._.warnOnce("The '".concat(key, "' property cannot be used while using tree data."));
             return false;
         }
         return true;
     };
     StoreUtils.prototype.isServerSideSortAllLevels = function () {
-        return this.gridOptionsService.is('serverSideSortAllLevels') && this.assertRowModelIsServerSide('serverSideSortAllLevels');
+        return this.gridOptionsService.get('serverSideSortAllLevels') && this.assertRowModelIsServerSide('serverSideSortAllLevels');
     };
     StoreUtils.prototype.isServerSideOnlyRefreshFilteredGroups = function () {
-        return this.gridOptionsService.is('serverSideOnlyRefreshFilteredGroups') && this.assertRowModelIsServerSide('serverSideOnlyRefreshFilteredGroups');
+        return this.gridOptionsService.get('serverSideOnlyRefreshFilteredGroups') && this.assertRowModelIsServerSide('serverSideOnlyRefreshFilteredGroups');
     };
     StoreUtils.prototype.isServerSideSortOnServer = function () {
-        return this.gridOptionsService.is('serverSideSortOnServer') && this.assertRowModelIsServerSide('serverSideSortOnServer') && this.assertNotTreeData('serverSideSortOnServer');
+        return this.gridOptionsService.get('serverSideSortOnServer') && this.assertRowModelIsServerSide('serverSideSortOnServer') && this.assertNotTreeData('serverSideSortOnServer');
     };
     StoreUtils.prototype.isServerSideFilterOnServer = function () {
-        return this.gridOptionsService.is('serverSideFilterOnServer') && this.assertRowModelIsServerSide('serverSideFilterOnServer') && this.assertNotTreeData('serverSideFilterOnServer');
+        return this.gridOptionsService.get('serverSideFilterOnServer') && this.assertRowModelIsServerSide('serverSideFilterOnServer') && this.assertNotTreeData('serverSideFilterOnServer');
     };
-    __decorate$b([
-        core.Autowired('columnApi')
-    ], StoreUtils.prototype, "columnApi", void 0);
-    __decorate$b([
+    __decorate$c([
         core.Autowired('columnModel')
     ], StoreUtils.prototype, "columnModel", void 0);
-    __decorate$b([
-        core.Autowired('gridApi')
-    ], StoreUtils.prototype, "gridApi", void 0);
-    StoreUtils = __decorate$b([
+    __decorate$c([
+        core.Autowired('rowModel')
+    ], StoreUtils.prototype, "serverSideRowModel", void 0);
+    __decorate$c([
+        core.Autowired('ssrmStoreFactory')
+    ], StoreUtils.prototype, "storeFactory", void 0);
+    StoreUtils = __decorate$c([
         core.Bean('ssrmStoreUtils')
     ], StoreUtils);
     return StoreUtils;
 }(core.BeanStub));
 
-var __extends$7 = (undefined && undefined.__extends) || (function () {
+var __extends$8 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -3241,7 +3423,7 @@ var __extends$7 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$a = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$b = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -3249,18 +3431,13 @@ var __decorate$a = (undefined && undefined.__decorate) || function (decorators, 
 };
 var GROUP_MISSING_KEY_ID = 'ag-Grid-MissingKey';
 var BlockUtils = /** @class */ (function (_super) {
-    __extends$7(BlockUtils, _super);
+    __extends$8(BlockUtils, _super);
     function BlockUtils() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    BlockUtils.prototype.postConstruct = function () {
-        this.rowHeight = this.gridOptionsService.getRowHeightAsNumber();
-        this.usingTreeData = this.gridOptionsService.isTreeData();
-        this.usingMasterDetail = this.gridOptionsService.isMasterDetail();
-    };
     BlockUtils.prototype.createRowNode = function (params) {
         var rowNode = new core.RowNode(this.beans);
-        var rowHeight = params.rowHeight != null ? params.rowHeight : this.rowHeight;
+        var rowHeight = params.rowHeight != null ? params.rowHeight : this.gridOptionsService.getRowHeightAsNumber();
         rowNode.setRowHeight(rowHeight);
         rowNode.group = params.group;
         rowNode.leafGroup = params.leafGroup;
@@ -3289,7 +3466,8 @@ var BlockUtils = /** @class */ (function (_super) {
             this.destroyBean(rowNode.childStore);
             rowNode.childStore = null;
         }
-        if (rowNode.sibling) {
+        // if this has a footer, destroy that too
+        if (rowNode.sibling && !rowNode.footer) {
             this.destroyRowNode(rowNode.sibling, false);
         }
         // this is needed, so row render knows to fade out the row, otherwise it
@@ -3318,12 +3496,14 @@ var BlockUtils = /** @class */ (function (_super) {
             core._.doOnce(function () {
                 console.warn("AG Grid: null and undefined values are not allowed for server side row model keys");
                 if (rowNode.rowGroupColumn) {
-                    console.warn("column = " + rowNode.rowGroupColumn.getId());
+                    console.warn("column = ".concat(rowNode.rowGroupColumn.getId()));
                 }
                 console.warn("data is ", rowNode.data);
             }, 'ServerSideBlock-CannotHaveNullOrUndefinedForKey');
         }
-        if (this.beans.gridOptionsService.is('groupIncludeFooter')) {
+        var getGroupIncludeFooter = this.beans.gridOptionsService.getGroupIncludeFooter();
+        var doesRowShowFooter = getGroupIncludeFooter({ node: rowNode });
+        if (doesRowShowFooter) {
             rowNode.createFooter();
             if (rowNode.sibling) {
                 rowNode.sibling.uiLevel = rowNode.uiLevel + 1;
@@ -3341,30 +3521,46 @@ var BlockUtils = /** @class */ (function (_super) {
     };
     BlockUtils.prototype.updateDataIntoRowNode = function (rowNode, data) {
         rowNode.updateData(data);
-        if (this.usingTreeData) {
+        if (this.gridOptionsService.get('treeData')) {
             this.setTreeGroupInfo(rowNode);
             this.setChildCountIntoRowNode(rowNode);
         }
         else if (rowNode.group) {
             this.setChildCountIntoRowNode(rowNode);
+            if (!rowNode.footer) {
+                var getGroupIncludeFooter = this.beans.gridOptionsService.getGroupIncludeFooter();
+                var doesRowShowFooter = getGroupIncludeFooter({ node: rowNode });
+                if (doesRowShowFooter) {
+                    if (rowNode.sibling) {
+                        rowNode.sibling.updateData(data);
+                    }
+                    else {
+                        rowNode.createFooter();
+                    }
+                }
+                else if (rowNode.sibling) {
+                    rowNode.destroyFooter();
+                }
+            }
             // it's not possible for a node to change whether it's a group or not
             // when doing row grouping (as only rows at certain levels are groups),
             // so nothing to do here
         }
-        else if (this.usingMasterDetail) ;
+        else if (this.gridOptionsService.get('masterDetail')) ;
     };
     BlockUtils.prototype.setDataIntoRowNode = function (rowNode, data, defaultId, cachedRowHeight) {
         var _a;
         rowNode.stub = false;
+        var treeData = this.gridOptionsService.get('treeData');
         if (core._.exists(data)) {
             rowNode.setDataAndId(data, defaultId);
-            if (this.usingTreeData) {
+            if (treeData) {
                 this.setTreeGroupInfo(rowNode);
             }
             else if (rowNode.group) {
                 this.setRowGroupInfo(rowNode);
             }
-            else if (this.usingMasterDetail) {
+            else if (this.gridOptionsService.get('masterDetail')) {
                 this.setMasterDetailInfo(rowNode);
             }
         }
@@ -3372,7 +3568,7 @@ var BlockUtils = /** @class */ (function (_super) {
             rowNode.setDataAndId(undefined, undefined);
             rowNode.key = null;
         }
-        if (this.usingTreeData || rowNode.group) {
+        if (treeData || rowNode.group) {
             this.setGroupDataIntoRowNode(rowNode);
             this.setChildCountIntoRowNode(rowNode);
         }
@@ -3392,7 +3588,7 @@ var BlockUtils = /** @class */ (function (_super) {
     BlockUtils.prototype.setGroupDataIntoRowNode = function (rowNode) {
         var _this = this;
         var groupDisplayCols = this.columnModel.getGroupDisplayColumns();
-        var usingTreeData = this.gridOptionsService.isTreeData();
+        var usingTreeData = this.gridOptionsService.get('treeData');
         groupDisplayCols.forEach(function (col) {
             if (rowNode.groupData == null) {
                 rowNode.groupData = {};
@@ -3423,6 +3619,9 @@ var BlockUtils = /** @class */ (function (_super) {
         rowNode.setRowIndex(displayIndexSeq.next());
         rowNode.setRowTop(nextRowTop.value);
         nextRowTop.value += rowNode.rowHeight;
+        if (rowNode.footer) {
+            return;
+        }
         // set child for master / detail
         var hasDetailRow = rowNode.master;
         if (hasDetailRow) {
@@ -3453,7 +3652,7 @@ var BlockUtils = /** @class */ (function (_super) {
         var bottomPointer = 0;
         var topPointer = rowNodes.length - 1;
         if (core._.missing(topPointer) || core._.missing(bottomPointer)) {
-            console.warn("AG Grid: error: topPointer = " + topPointer + ", bottomPointer = " + bottomPointer);
+            console.warn("AG Grid: error: topPointer = ".concat(topPointer, ", bottomPointer = ").concat(bottomPointer));
             return undefined;
         }
         while (true) {
@@ -3482,7 +3681,7 @@ var BlockUtils = /** @class */ (function (_super) {
                 topPointer = midPointer - 1;
             }
             else {
-                console.warn("AG Grid: error: unable to locate rowIndex = " + displayRowIndex + " in cache");
+                console.warn("AG Grid: error: unable to locate rowIndex = ".concat(displayRowIndex, " in cache"));
                 return undefined;
             }
         }
@@ -3548,50 +3747,30 @@ var BlockUtils = /** @class */ (function (_super) {
         return undefined;
     };
     BlockUtils.prototype.checkOpenByDefault = function (rowNode) {
-        if (!rowNode.isExpandable()) {
-            return;
-        }
-        var userFunc = this.gridOptionsService.getCallback('isServerSideGroupOpenByDefault');
-        if (!userFunc) {
-            return;
-        }
-        var params = {
-            data: rowNode.data,
-            rowNode: rowNode
-        };
-        var userFuncRes = userFunc(params);
-        if (userFuncRes) {
-            // we do this in a timeout, so that we don't expand a row node while in the middle
-            // of setting up rows, setting up rows is complex enough without another chunk of work
-            // getting added to the call stack. this is also helpful as openByDefault may or may
-            // not happen (so makes setting up rows more deterministic by expands never happening)
-            // and also checkOpenByDefault is shard with both store types, so easier control how it
-            // impacts things by keeping it in new VM turn.
-            window.setTimeout(function () { return rowNode.setExpanded(true); }, 0);
-        }
+        return this.expansionService.checkOpenByDefault(rowNode);
     };
-    __decorate$a([
+    __decorate$b([
         core.Autowired('valueService')
     ], BlockUtils.prototype, "valueService", void 0);
-    __decorate$a([
+    __decorate$b([
         core.Autowired('columnModel')
     ], BlockUtils.prototype, "columnModel", void 0);
-    __decorate$a([
+    __decorate$b([
         core.Autowired('ssrmNodeManager')
     ], BlockUtils.prototype, "nodeManager", void 0);
-    __decorate$a([
+    __decorate$b([
         core.Autowired('beans')
     ], BlockUtils.prototype, "beans", void 0);
-    __decorate$a([
-        core.PostConstruct
-    ], BlockUtils.prototype, "postConstruct", null);
-    BlockUtils = __decorate$a([
+    __decorate$b([
+        core.Autowired('expansionService')
+    ], BlockUtils.prototype, "expansionService", void 0);
+    BlockUtils = __decorate$b([
         core.Bean('ssrmBlockUtils')
     ], BlockUtils);
     return BlockUtils;
 }(core.BeanStub));
 
-var __decorate$9 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$a = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -3604,7 +3783,7 @@ var NodeManager = /** @class */ (function () {
     NodeManager.prototype.addRowNode = function (rowNode) {
         var id = rowNode.id;
         if (this.rowNodes[id]) {
-            console.warn("AG Grid: Duplicate node id " + rowNode.id + ". Row ID's are provided via the getRowId() callback. Please modify the getRowId() callback code to provide unique row id values.");
+            console.warn("AG Grid: Duplicate node id ".concat(rowNode.id, ". Row ID's are provided via the getRowId() callback. Please modify the getRowId() callback code to provide unique row id values."));
             console.warn('first instance', this.rowNodes[id].data);
             console.warn('second instance', rowNode.data);
         }
@@ -3619,16 +3798,16 @@ var NodeManager = /** @class */ (function () {
     NodeManager.prototype.clear = function () {
         this.rowNodes = {};
     };
-    __decorate$9([
+    __decorate$a([
         core.PreDestroy
     ], NodeManager.prototype, "clear", null);
-    NodeManager = __decorate$9([
+    NodeManager = __decorate$a([
         core.Bean('ssrmNodeManager')
     ], NodeManager);
     return NodeManager;
 }());
 
-var __extends$6 = (undefined && undefined.__extends) || (function () {
+var __extends$7 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -3643,14 +3822,14 @@ var __extends$6 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$8 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$9 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var TransactionManager = /** @class */ (function (_super) {
-    __extends$6(TransactionManager, _super);
+    __extends$7(TransactionManager, _super);
     function TransactionManager() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.asyncTransactions = [];
@@ -3686,10 +3865,13 @@ var TransactionManager = /** @class */ (function (_super) {
         var atLeastOneTransactionApplied = false;
         this.asyncTransactions.forEach(function (txWrapper) {
             var result;
-            _this.serverSideRowModel.executeOnStore(txWrapper.transaction.route, function (cache) {
+            var hasStarted = _this.serverSideRowModel.executeOnStore(txWrapper.transaction.route, function (cache) {
                 result = cache.applyTransaction(txWrapper.transaction);
             });
-            if (result == undefined) {
+            if (!hasStarted) {
+                result = { status: core.ServerSideTransactionResultStatus.StoreNotStarted };
+            }
+            else if (result == undefined) {
                 result = { status: core.ServerSideTransactionResultStatus.StoreNotFound };
             }
             resultsForEvent.push(result);
@@ -3735,10 +3917,13 @@ var TransactionManager = /** @class */ (function (_super) {
     };
     TransactionManager.prototype.applyTransaction = function (transaction) {
         var res;
-        this.serverSideRowModel.executeOnStore(transaction.route, function (store) {
+        var hasStarted = this.serverSideRowModel.executeOnStore(transaction.route, function (store) {
             res = store.applyTransaction(transaction);
         });
-        if (res) {
+        if (!hasStarted) {
+            return { status: core.ServerSideTransactionResultStatus.StoreNotStarted };
+        }
+        else if (res) {
             this.valueCache.onDataChanged();
             if (res.remove) {
                 var removedRowIds = res.remove.map(function (row) { return row.id; });
@@ -3751,31 +3936,31 @@ var TransactionManager = /** @class */ (function (_super) {
             return { status: core.ServerSideTransactionResultStatus.StoreNotFound };
         }
     };
-    __decorate$8([
+    __decorate$9([
         core.Autowired('rowNodeBlockLoader')
     ], TransactionManager.prototype, "rowNodeBlockLoader", void 0);
-    __decorate$8([
+    __decorate$9([
         core.Autowired('valueCache')
     ], TransactionManager.prototype, "valueCache", void 0);
-    __decorate$8([
+    __decorate$9([
         core.Autowired('rowModel')
     ], TransactionManager.prototype, "serverSideRowModel", void 0);
-    __decorate$8([
+    __decorate$9([
         core.Autowired('rowRenderer')
     ], TransactionManager.prototype, "rowRenderer", void 0);
-    __decorate$8([
+    __decorate$9([
         core.Autowired('selectionService')
     ], TransactionManager.prototype, "selectionService", void 0);
-    __decorate$8([
+    __decorate$9([
         core.PostConstruct
     ], TransactionManager.prototype, "postConstruct", null);
-    TransactionManager = __decorate$8([
+    TransactionManager = __decorate$9([
         core.Bean('ssrmTransactionManager')
     ], TransactionManager);
     return TransactionManager;
 }(core.BeanStub));
 
-var __extends$5 = (undefined && undefined.__extends) || (function () {
+var __extends$6 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -3790,14 +3975,14 @@ var __extends$5 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$7 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$8 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var ExpandListener = /** @class */ (function (_super) {
-    __extends$5(ExpandListener, _super);
+    __extends$6(ExpandListener, _super);
     function ExpandListener() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -3819,7 +4004,7 @@ var ExpandListener = /** @class */ (function (_super) {
                 rowNode.childStore = this.createBean(this.storeFactory.createStore(storeParams, rowNode));
             }
         }
-        else if (this.gridOptionsService.is('purgeClosedRowNodes') && core._.exists(rowNode.childStore)) {
+        else if (this.gridOptionsService.get('purgeClosedRowNodes') && core._.exists(rowNode.childStore)) {
             rowNode.childStore = this.destroyBean(rowNode.childStore);
         }
         var storeUpdatedEvent = { type: core.Events.EVENT_STORE_UPDATED };
@@ -3844,25 +4029,25 @@ var ExpandListener = /** @class */ (function (_super) {
         masterNode.detailNode = detailNode;
         return detailNode;
     };
-    __decorate$7([
+    __decorate$8([
         core.Autowired('rowModel')
     ], ExpandListener.prototype, "serverSideRowModel", void 0);
-    __decorate$7([
+    __decorate$8([
         core.Autowired('ssrmStoreFactory')
     ], ExpandListener.prototype, "storeFactory", void 0);
-    __decorate$7([
+    __decorate$8([
         core.Autowired('beans')
     ], ExpandListener.prototype, "beans", void 0);
-    __decorate$7([
+    __decorate$8([
         core.PostConstruct
     ], ExpandListener.prototype, "postConstruct", null);
-    ExpandListener = __decorate$7([
+    ExpandListener = __decorate$8([
         core.Bean('ssrmExpandListener')
     ], ExpandListener);
     return ExpandListener;
 }(core.BeanStub));
 
-var __extends$4 = (undefined && undefined.__extends) || (function () {
+var __extends$5 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -3877,14 +4062,14 @@ var __extends$4 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$6 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$7 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var SortListener = /** @class */ (function (_super) {
-    __extends$4(SortListener, _super);
+    __extends$5(SortListener, _super);
     function SortListener() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -3895,51 +4080,12 @@ var SortListener = /** @class */ (function (_super) {
         }
         this.addManagedListener(this.eventService, core.Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
     };
-    SortListener.prototype.extractSortModel = function () {
-        var sortModel = this.sortController.getSortModel();
-        // when using tree data we just return the sort model with the 'ag-Grid-AutoColumn' as is, i.e not broken out
-        // into it's constitute group columns as they are not defined up front and can vary per node.
-        if (this.gridOptionsService.isTreeData()) {
-            return sortModel;
-        }
-        // it autoCol is active, we don't want to send this to the server. instead we want to
-        // send the
-        this.replaceAutoGroupColumnWithActualRowGroupColumns(sortModel);
-        this.removeMultiColumnPrefixOnColumnIds(sortModel);
-        return sortModel;
-    };
-    SortListener.prototype.removeMultiColumnPrefixOnColumnIds = function (sortModel) {
-        if (this.gridOptionsService.isGroupMultiAutoColumn()) {
-            var multiColumnPrefix = core.GROUP_AUTO_COLUMN_ID + "-";
-            for (var i = 0; i < sortModel.length; ++i) {
-                if (sortModel[i].colId.indexOf(multiColumnPrefix) > -1) {
-                    sortModel[i].colId = sortModel[i].colId.substr(multiColumnPrefix.length);
-                }
-            }
-        }
-    };
-    SortListener.prototype.replaceAutoGroupColumnWithActualRowGroupColumns = function (sortModel) {
-        // find index of auto group column in sort model
-        var autoGroupSortModel = sortModel.find(function (sm) { return sm.colId == core.GROUP_AUTO_COLUMN_ID; });
-        // replace auto column with individual group columns
-        if (autoGroupSortModel) {
-            // remove auto group column
-            var autoGroupIndex = sortModel.indexOf(autoGroupSortModel);
-            core._.removeFromArray(sortModel, autoGroupSortModel);
-            var isNotInSortModel = function (col) { return sortModel.filter(function (sm) { return sm.colId === col.getColId(); }).length == 0; };
-            var mapColumnToSortModel = function (col) { return ({ colId: col.getId(), sort: autoGroupSortModel.sort }); };
-            var newModels = this.columnModel.getRowGroupColumns()
-                .filter(isNotInSortModel)
-                .map(mapColumnToSortModel);
-            core._.insertArrayIntoArray(sortModel, newModels, autoGroupIndex);
-        }
-    };
     SortListener.prototype.onSortChanged = function () {
         var storeParams = this.serverSideRowModel.getParams();
         if (!storeParams) {
             return;
         } // params is undefined if no datasource set
-        var newSortModel = this.extractSortModel();
+        var newSortModel = this.sortController.getSortModel();
         var oldSortModel = storeParams.sortModel;
         var changedColumns = this.findChangedColumnsInSort(newSortModel, oldSortModel);
         var valueColChanged = this.listenerUtils.isSortingWithValueColumn(changedColumns);
@@ -3979,28 +4125,25 @@ var SortListener = /** @class */ (function (_super) {
             return differentSorts(oldSortItem, newSortItem) || differentIndexes(oldSortItem, newSortItem);
         });
     };
-    __decorate$6([
+    __decorate$7([
         core.Autowired('sortController')
     ], SortListener.prototype, "sortController", void 0);
-    __decorate$6([
-        core.Autowired('columnModel')
-    ], SortListener.prototype, "columnModel", void 0);
-    __decorate$6([
+    __decorate$7([
         core.Autowired('rowModel')
     ], SortListener.prototype, "serverSideRowModel", void 0);
-    __decorate$6([
+    __decorate$7([
         core.Autowired('ssrmListenerUtils')
     ], SortListener.prototype, "listenerUtils", void 0);
-    __decorate$6([
+    __decorate$7([
         core.PostConstruct
     ], SortListener.prototype, "postConstruct", null);
-    SortListener = __decorate$6([
+    SortListener = __decorate$7([
         core.Bean('ssrmSortService')
     ], SortListener);
     return SortListener;
 }(core.BeanStub));
 
-var __extends$3 = (undefined && undefined.__extends) || (function () {
+var __extends$4 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -4015,32 +4158,54 @@ var __extends$3 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$5 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$6 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var FilterListener = /** @class */ (function (_super) {
-    __extends$3(FilterListener, _super);
+    __extends$4(FilterListener, _super);
     function FilterListener() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     FilterListener.prototype.postConstruct = function () {
+        var _this = this;
         // only want to be active if SSRM active, otherwise would be interfering with other row models
         if (!this.gridOptionsService.isRowModelType('serverSide')) {
             return;
         }
-        this.addManagedListener(this.eventService, core.Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
+        this.addManagedListener(this.eventService, core.Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED, function () { return _this.onFilterChanged(true); });
+        this.addManagedListener(this.eventService, core.Events.EVENT_FILTER_CHANGED, function () { return _this.onFilterChanged(); });
     };
-    FilterListener.prototype.onFilterChanged = function () {
+    FilterListener.prototype.onFilterChanged = function (advancedFilterEnabledChanged) {
         var storeParams = this.serverSideRowModel.getParams();
         if (!storeParams) {
             return;
         } // params is undefined if no datasource set
-        var newModel = this.filterManager.getFilterModel();
-        var oldModel = storeParams ? storeParams.filterModel : {};
-        var changedColumns = this.findChangedColumns(newModel, oldModel);
+        var oldModel = storeParams.filterModel;
+        var newModel;
+        var changedColumns;
+        if (this.filterManager.isAdvancedFilterEnabled()) {
+            newModel = this.filterManager.getAdvancedFilterModel();
+            // if advancedFilterEnabledChanged, old model is of type `FilterModel`
+            var oldColumns = advancedFilterEnabledChanged ? Object.keys(oldModel !== null && oldModel !== void 0 ? oldModel : {}) : this.getAdvancedFilterColumns(oldModel);
+            var newColumns_1 = this.getAdvancedFilterColumns(newModel);
+            oldColumns.forEach(function (column) { return newColumns_1.add(column); });
+            changedColumns = Array.from(newColumns_1);
+        }
+        else {
+            newModel = this.filterManager.getFilterModel();
+            if (advancedFilterEnabledChanged) {
+                // old model is of type `AdvancedFilterModel | null`
+                var oldColumns_1 = this.getAdvancedFilterColumns(oldModel);
+                Object.keys(newModel).forEach(function (column) { return oldColumns_1.add(column); });
+                changedColumns = Array.from(oldColumns_1);
+            }
+            else {
+                changedColumns = this.findChangedColumns(oldModel, newModel);
+            }
+        }
         var valueColChanged = this.listenerUtils.isSortingWithValueColumn(changedColumns);
         var secondaryColChanged = this.listenerUtils.isSortingWithSecondaryColumn(changedColumns);
         var params = {
@@ -4065,25 +4230,41 @@ var FilterListener = /** @class */ (function (_super) {
         });
         return res;
     };
-    __decorate$5([
+    FilterListener.prototype.getAdvancedFilterColumns = function (model) {
+        var columns = new Set();
+        if (!model) {
+            return columns;
+        }
+        var processAdvancedFilterModel = function (filterModel) {
+            if (filterModel.filterType === 'join') {
+                filterModel.conditions.forEach(function (condition) { return processAdvancedFilterModel(condition); });
+            }
+            else {
+                columns.add(filterModel.colId);
+            }
+        };
+        processAdvancedFilterModel(model);
+        return columns;
+    };
+    __decorate$6([
         core.Autowired('rowModel')
     ], FilterListener.prototype, "serverSideRowModel", void 0);
-    __decorate$5([
+    __decorate$6([
         core.Autowired('filterManager')
     ], FilterListener.prototype, "filterManager", void 0);
-    __decorate$5([
+    __decorate$6([
         core.Autowired('ssrmListenerUtils')
     ], FilterListener.prototype, "listenerUtils", void 0);
-    __decorate$5([
+    __decorate$6([
         core.PostConstruct
     ], FilterListener.prototype, "postConstruct", null);
-    FilterListener = __decorate$5([
+    FilterListener = __decorate$6([
         core.Bean('ssrmFilterListener')
     ], FilterListener);
     return FilterListener;
 }(core.BeanStub));
 
-var __decorate$4 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$5 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -4116,21 +4297,21 @@ var StoreFactory = /** @class */ (function () {
         }
         var maxBlocksInCache = (userStoreParams && userStoreParams.maxBlocksInCache != null)
             ? userStoreParams.maxBlocksInCache
-            : this.gridOptionsService.getNum('maxBlocksInCache');
+            : this.gridOptionsService.get('maxBlocksInCache');
         var maxBlocksActive = maxBlocksInCache != null && maxBlocksInCache >= 0;
         if (!maxBlocksActive) {
             return undefined;
         }
         if (ssrmParams.dynamicRowHeight) {
-            var message_1 = 'AG Grid: Server Side Row Model does not support Dynamic Row Height and Cache Purging. ' +
+            var message = 'Server Side Row Model does not support Dynamic Row Height and Cache Purging. ' +
                 'Either a) remove getRowHeight() callback or b) remove maxBlocksInCache property. Purging has been disabled.';
-            core._.doOnce(function () { return console.warn(message_1); }, 'storeFactory.maxBlocksInCache.dynamicRowHeight');
+            core._.warnOnce(message);
             return undefined;
         }
         if (this.columnModel.isAutoRowHeightActive()) {
-            var message_2 = 'AG Grid: Server Side Row Model does not support Auto Row Height and Cache Purging. ' +
+            var message = 'Server Side Row Model does not support Auto Row Height and Cache Purging. ' +
                 'Either a) remove colDef.autoHeight or b) remove maxBlocksInCache property. Purging has been disabled.';
-            core._.doOnce(function () { return console.warn(message_2); }, 'storeFactory.maxBlocksInCache.autoRowHeightActive');
+            core._.warnOnce(message);
             return undefined;
         }
         return maxBlocksInCache;
@@ -4141,7 +4322,7 @@ var StoreFactory = /** @class */ (function () {
         }
         var blockSize = (userStoreParams && userStoreParams.cacheBlockSize != null)
             ? userStoreParams.cacheBlockSize
-            : this.gridOptionsService.getNum('cacheBlockSize');
+            : this.gridOptionsService.get('cacheBlockSize');
         if (blockSize != null && blockSize > 0) {
             return blockSize;
         }
@@ -4162,9 +4343,6 @@ var StoreFactory = /** @class */ (function () {
             pivotMode: this.columnModel.isPivotMode()
         };
         var res = callback(params);
-        if (res.storeType != null) {
-            res.suppressInfiniteScroll = res.storeType !== "partial";
-        }
         return res;
     };
     StoreFactory.prototype.isInfiniteScroll = function (storeParams) {
@@ -4174,21 +4352,21 @@ var StoreFactory = /** @class */ (function () {
         return !res;
     };
     StoreFactory.prototype.isSuppressServerSideInfiniteScroll = function () {
-        return this.gridOptionsService.is('suppressServerSideInfiniteScroll');
+        return this.gridOptionsService.get('suppressServerSideInfiniteScroll');
     };
-    __decorate$4([
+    __decorate$5([
         core.Autowired('gridOptionsService')
     ], StoreFactory.prototype, "gridOptionsService", void 0);
-    __decorate$4([
+    __decorate$5([
         core.Autowired('columnModel')
     ], StoreFactory.prototype, "columnModel", void 0);
-    StoreFactory = __decorate$4([
+    StoreFactory = __decorate$5([
         core.Bean('ssrmStoreFactory')
     ], StoreFactory);
     return StoreFactory;
 }());
 
-var __decorate$3 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$4 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -4218,16 +4396,16 @@ var ListenerUtils = /** @class */ (function () {
         }
         return false;
     };
-    __decorate$3([
+    __decorate$4([
         core.Autowired('columnModel')
     ], ListenerUtils.prototype, "columnModel", void 0);
-    ListenerUtils = __decorate$3([
+    ListenerUtils = __decorate$4([
         core.Bean('ssrmListenerUtils')
     ], ListenerUtils);
     return ListenerUtils;
 }());
 
-var __extends$2 = (undefined && undefined.__extends) || (function () {
+var __extends$3 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -4242,7 +4420,7 @@ var __extends$2 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$3 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -4264,13 +4442,17 @@ var __read$1 = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray$1 = (undefined && undefined.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray$1 = (undefined && undefined.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 var DefaultStrategy = /** @class */ (function (_super) {
-    __extends$2(DefaultStrategy, _super);
+    __extends$3(DefaultStrategy, _super);
     function DefaultStrategy() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.selectedState = { selectAll: false, toggledNodes: new Set() };
@@ -4290,7 +4472,7 @@ var DefaultStrategy = /** @class */ (function (_super) {
     DefaultStrategy.prototype.getSelectedState = function () {
         return {
             selectAll: this.selectedState.selectAll,
-            toggledNodes: __spreadArray$1([], __read$1(this.selectedState.toggledNodes)),
+            toggledNodes: __spreadArray$1([], __read$1(this.selectedState.toggledNodes), false),
         };
     };
     DefaultStrategy.prototype.setSelectedState = function (state) {
@@ -4316,7 +4498,7 @@ var DefaultStrategy = /** @class */ (function (_super) {
                     newState.toggledNodes.add(key);
                 }
                 else {
-                    console.warn("AG Grid: Provided ids must be of string type. Invalid id provided: " + key);
+                    console.warn("AG Grid: Provided ids must be of string type. Invalid id provided: ".concat(key));
                 }
             });
         }
@@ -4463,16 +4645,16 @@ var DefaultStrategy = /** @class */ (function (_super) {
         }
         return false;
     };
-    __decorate$2([
+    __decorate$3([
         core.Autowired('rowModel')
     ], DefaultStrategy.prototype, "rowModel", void 0);
-    __decorate$2([
+    __decorate$3([
         core.PostConstruct
     ], DefaultStrategy.prototype, "init", null);
     return DefaultStrategy;
 }(core.BeanStub));
 
-var __extends$1 = (undefined && undefined.__extends) || (function () {
+var __extends$2 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -4498,7 +4680,7 @@ var __assign$1 = (undefined && undefined.__assign) || function () {
     };
     return __assign$1.apply(this, arguments);
 };
-var __decorate$1 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -4531,13 +4713,28 @@ var __read = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (undefined && undefined.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (undefined && undefined.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
+var __values = (undefined && undefined.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 var GroupSelectsChildrenStrategy = /** @class */ (function (_super) {
-    __extends$1(GroupSelectsChildrenStrategy, _super);
+    __extends$2(GroupSelectsChildrenStrategy, _super);
     function GroupSelectsChildrenStrategy() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.selectedState = { selectAllChildren: false, toggledNodes: new Map() };
@@ -4549,15 +4746,16 @@ var GroupSelectsChildrenStrategy = /** @class */ (function (_super) {
         // if model has updated, a store may now be fully loaded to clean up indeterminate states
         this.addManagedListener(this.eventService, core.Events.EVENT_MODEL_UPDATED, function () { return _this.removeRedundantState(); });
         // when the grouping changes, the state no longer makes sense, so reset the state.
-        this.addManagedListener(this.eventService, core.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, function () { return _this.selectionService.reset(); });
+        this.addManagedListener(this.eventService, core.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, function () { return _this.selectionService.reset('rowGroupChanged'); });
     };
     GroupSelectsChildrenStrategy.prototype.getSelectedState = function () {
         var _this = this;
+        var treeData = this.gridOptionsService.get('treeData');
         var recursivelySerializeState = function (state, level, nodeId) {
             var normalisedState = {
                 nodeId: nodeId,
             };
-            if (level <= _this.columnModel.getRowGroupColumns().length) {
+            if (treeData || level <= _this.columnModel.getRowGroupColumns().length) {
                 normalisedState.selectAllChildren = state.selectAllChildren;
             }
             // omit toggledNodes if empty
@@ -4614,7 +4812,7 @@ var GroupSelectsChildrenStrategy = /** @class */ (function (_super) {
     };
     GroupSelectsChildrenStrategy.prototype.deleteSelectionStateFromParent = function (parentRoute, removedNodeIds) {
         var parentState = this.selectedState;
-        var remainingRoute = __spreadArray([], __read(parentRoute));
+        var remainingRoute = __spreadArray([], __read(parentRoute), false);
         while (parentState && remainingRoute.length) {
             parentState = parentState.toggledNodes.get(remainingRoute.pop());
         }
@@ -4708,50 +4906,62 @@ var GroupSelectsChildrenStrategy = /** @class */ (function (_super) {
         if (this.filterManager.isAnyFilterPresent()) {
             return;
         }
-        var recursivelyRemoveState = function (selectedState, store, node) {
-            if (selectedState === void 0) { selectedState = _this.selectedState; }
-            if (store === void 0) { store = _this.serverSideRowModel.getRootStore(); }
-            var allChildNodesFound = true;
-            var noIndeterminateChildren = true;
-            selectedState.toggledNodes.forEach(function (state, id) {
-                var parentNode = _this.rowModel.getRowNode(id);
-                if (!parentNode) {
-                    allChildNodesFound = false;
-                }
-                var nextStore = parentNode === null || parentNode === void 0 ? void 0 : parentNode.childStore;
-                if (!nextStore) {
-                    if (state.toggledNodes.size > 0) {
-                        noIndeterminateChildren = false;
-                    }
-                    return;
-                }
-                // if child was cleared, check if this state is still relevant
-                if (recursivelyRemoveState(state, nextStore, parentNode)) {
-                    // cleans out groups which have no toggled nodes and an equivalent default to its parent
-                    if (selectedState.selectAllChildren === state.selectAllChildren) {
-                        selectedState.toggledNodes.delete(id);
-                    }
-                }
-                if (state.toggledNodes.size > 0) {
-                    noIndeterminateChildren = false;
-                }
+        var forEachNodeStateDepthFirst = function (state, thisKey, parentState) {
+            var e_1, _a;
+            if (state === void 0) { state = _this.selectedState; }
+            // clean up lowest level state first in order to calculate this levels state
+            // from updated child state
+            state.toggledNodes.forEach(function (value, key) {
+                forEachNodeStateDepthFirst(value, key, state);
             });
-            if (!store || !store.isLastRowIndexKnown() || store.getRowCount() !== selectedState.toggledNodes.size) {
-                // if row count unknown, or doesn't match the size of toggledNodes, ignore.
-                return false;
-            }
-            if (noIndeterminateChildren && allChildNodesFound) {
-                selectedState.toggledNodes.clear();
-                selectedState.selectAllChildren = !selectedState.selectAllChildren;
-                // if node was indeterminate, it's not any more.
-                if (node && (node === null || node === void 0 ? void 0 : node.isSelected()) !== selectedState.selectAllChildren) {
-                    node.selectThisNode(selectedState.selectAllChildren, undefined, 'api');
+            if (thisKey) {
+                var thisRow = _this.rowModel.getRowNode(thisKey);
+                var thisRowStore = thisRow === null || thisRow === void 0 ? void 0 : thisRow.childStore;
+                var isStoreSizeKnown = thisRowStore === null || thisRowStore === void 0 ? void 0 : thisRowStore.isLastRowIndexKnown();
+                if (isStoreSizeKnown) {
+                    // have to check greater than, as we may have stale state still, if so all visible rows may not be
+                    // toggled
+                    var possibleAllNodesToggled = state.toggledNodes.size >= thisRowStore.getRowCount();
+                    if (possibleAllNodesToggled) {
+                        try {
+                            // more complex checks nested for performance
+                            for (var _b = __values(state.toggledNodes.entries()), _c = _b.next(); !_c.done; _c = _b.next()) {
+                                var childState = _c.value;
+                                var _d = __read(childState, 2), key = _d[0], value = _d[1];
+                                // if any child has toggled rows, then this row is indeterminate
+                                // and the state is relevant.
+                                if (value.toggledNodes.size > 0) {
+                                    return;
+                                }
+                                var rowDoesNotExist = !_this.rowModel.getRowNode(key);
+                                if (rowDoesNotExist) {
+                                    // if row doesn't exist, it's not toggled.
+                                    return;
+                                }
+                            }
+                        }
+                        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+                        finally {
+                            try {
+                                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+                            }
+                            finally { if (e_1) throw e_1.error; }
+                        }
+                        // no indeterminate rows, and all rows are toggled, flip this row state
+                        // and clear child states.
+                        state.selectAllChildren = !state.selectAllChildren;
+                        state.toggledNodes.clear();
+                    }
                 }
-                return true;
             }
-            return false;
+            // if this has no toggled rows, and is identical to parent state, it's redundant and can be removed.
+            var hasNoToggledRows = state.toggledNodes.size === 0;
+            var isIdenticalToParent = (parentState === null || parentState === void 0 ? void 0 : parentState.selectAllChildren) === state.selectAllChildren;
+            if (hasNoToggledRows && isIdenticalToParent) {
+                parentState === null || parentState === void 0 ? void 0 : parentState.toggledNodes.delete(thisKey);
+            }
         };
-        recursivelyRemoveState();
+        forEachNodeStateDepthFirst();
     };
     GroupSelectsChildrenStrategy.prototype.recursivelySelectNode = function (_a, selectedState, params) {
         var _b = __read(_a), nextNode = _b[0], nodes = _b.slice(1);
@@ -4830,28 +5040,28 @@ var GroupSelectsChildrenStrategy = /** @class */ (function (_super) {
         }
         return false;
     };
-    __decorate$1([
+    __decorate$2([
         core.Autowired('rowModel')
     ], GroupSelectsChildrenStrategy.prototype, "rowModel", void 0);
-    __decorate$1([
+    __decorate$2([
         core.Autowired('columnModel')
     ], GroupSelectsChildrenStrategy.prototype, "columnModel", void 0);
-    __decorate$1([
+    __decorate$2([
         core.Autowired('filterManager')
     ], GroupSelectsChildrenStrategy.prototype, "filterManager", void 0);
-    __decorate$1([
+    __decorate$2([
         core.Autowired('rowModel')
     ], GroupSelectsChildrenStrategy.prototype, "serverSideRowModel", void 0);
-    __decorate$1([
+    __decorate$2([
         core.Autowired('selectionService')
     ], GroupSelectsChildrenStrategy.prototype, "selectionService", void 0);
-    __decorate$1([
+    __decorate$2([
         core.PostConstruct
     ], GroupSelectsChildrenStrategy.prototype, "init", null);
     return GroupSelectsChildrenStrategy;
 }(core.BeanStub));
 
-var __extends = (undefined && undefined.__extends) || (function () {
+var __extends$1 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -4877,7 +5087,7 @@ var __assign = (undefined && undefined.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -4895,13 +5105,13 @@ var __rest = (undefined && undefined.__rest) || function (s, e) {
     return t;
 };
 var ServerSideSelectionService = /** @class */ (function (_super) {
-    __extends(ServerSideSelectionService, _super);
+    __extends$1(ServerSideSelectionService, _super);
     function ServerSideSelectionService() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     ServerSideSelectionService.prototype.init = function () {
         var _this = this;
-        var groupSelectsChildren = this.gridOptionsService.is('groupSelectsChildren');
+        var groupSelectsChildren = this.gridOptionsService.get('groupSelectsChildren');
         this.addManagedPropertyListener('groupSelectsChildren', function (propChange) {
             _this.destroyBean(_this.selectionStrategy);
             var StrategyClazz = !propChange.currentValue ? DefaultStrategy : GroupSelectsChildrenStrategy;
@@ -4913,26 +5123,29 @@ var ServerSideSelectionService = /** @class */ (function (_super) {
             };
             _this.eventService.dispatchEvent(event);
         });
-        this.rowSelection = this.gridOptionsService.get('rowSelection');
-        this.addManagedPropertyListener('rowSelection', function (propChange) { return _this.rowSelection = propChange.currentValue; });
+        this.addManagedPropertyListener('rowSelection', function () { return _this.deselectAllRowNodes({ source: 'api' }); });
         var StrategyClazz = !groupSelectsChildren ? DefaultStrategy : GroupSelectsChildrenStrategy;
         this.selectionStrategy = this.createManagedBean(new StrategyClazz());
     };
-    ServerSideSelectionService.prototype.getServerSideSelectionState = function () {
+    ServerSideSelectionService.prototype.getSelectionState = function () {
         return this.selectionStrategy.getSelectedState();
     };
-    ServerSideSelectionService.prototype.setServerSideSelectionState = function (state) {
+    ServerSideSelectionService.prototype.setSelectionState = function (state, source) {
+        if (Array.isArray(state)) {
+            return;
+        }
         this.selectionStrategy.setSelectedState(state);
         this.shotgunResetNodeSelectionState();
         var event = {
             type: core.Events.EVENT_SELECTION_CHANGED,
-            source: 'api',
+            source: source,
         };
         this.eventService.dispatchEvent(event);
     };
     ServerSideSelectionService.prototype.setNodesSelected = function (params) {
         var nodes = params.nodes, otherParams = __rest(params, ["nodes"]);
-        if (nodes.length > 1 && this.rowSelection !== 'multiple') {
+        var rowSelection = this.gridOptionsService.get('rowSelection');
+        if (nodes.length > 1 && rowSelection !== 'multiple') {
             console.warn("AG Grid: cannot multi select while rowSelection='single'");
             return 0;
         }
@@ -5021,6 +5234,9 @@ var ServerSideSelectionService = /** @class */ (function (_super) {
     ServerSideSelectionService.prototype.isEmpty = function () {
         return this.selectionStrategy.isEmpty();
     };
+    ServerSideSelectionService.prototype.hasNodesToSelect = function (justFiltered, justCurrentPage) {
+        return true;
+    };
     ServerSideSelectionService.prototype.selectAllRowNodes = function (params) {
         if (params.justCurrentPage || params.justFiltered) {
             console.warn("AG Grid: selecting just filtered only works when gridOptions.rowModelType='clientSide'");
@@ -5071,27 +5287,120 @@ var ServerSideSelectionService = /** @class */ (function (_super) {
     ServerSideSelectionService.prototype.filterFromSelection = function () {
         return;
     };
-    __decorate([
+    __decorate$1([
         core.Autowired('rowModel')
     ], ServerSideSelectionService.prototype, "rowModel", void 0);
-    __decorate([
+    __decorate$1([
         core.PostConstruct
     ], ServerSideSelectionService.prototype, "init", null);
-    ServerSideSelectionService = __decorate([
+    ServerSideSelectionService = __decorate$1([
         core.Bean('selectionService')
     ], ServerSideSelectionService);
     return ServerSideSelectionService;
 }(core.BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '30.1.0';
+var VERSION = '31.1.0';
+
+var __extends = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var ServerSideExpansionService = /** @class */ (function (_super) {
+    __extends(ServerSideExpansionService, _super);
+    function ServerSideExpansionService() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.queuedRowIds = new Set();
+        return _this;
+    }
+    ServerSideExpansionService.prototype.postConstruct = function () {
+        var _this = this;
+        _super.prototype.postConstruct.call(this);
+        this.addManagedListener(this.eventService, core.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, function () {
+            _this.queuedRowIds.clear();
+        });
+    };
+    ServerSideExpansionService.prototype.checkOpenByDefault = function (rowNode) {
+        if (!rowNode.isExpandable()) {
+            return;
+        }
+        var expandRowNode = function () {
+            // we do this in a timeout, so that we don't expand a row node while in the middle
+            // of setting up rows, setting up rows is complex enough without another chunk of work
+            // getting added to the call stack. this is also helpful as openByDefault may or may
+            // not happen (so makes setting up rows more deterministic by expands never happening)
+            // and also checkOpenByDefault is shard with both store types, so easier control how it
+            // impacts things by keeping it in new VM turn.
+            window.setTimeout(function () { return rowNode.setExpanded(true); }, 0);
+        };
+        if (this.queuedRowIds.has(rowNode.id)) {
+            this.queuedRowIds.delete(rowNode.id);
+            expandRowNode();
+            return;
+        }
+        var userFunc = this.gridOptionsService.getCallback('isServerSideGroupOpenByDefault');
+        if (!userFunc) {
+            return;
+        }
+        var params = {
+            data: rowNode.data,
+            rowNode: rowNode
+        };
+        var userFuncRes = userFunc(params);
+        if (userFuncRes) {
+            expandRowNode();
+        }
+    };
+    ServerSideExpansionService.prototype.expandRows = function (rowIds) {
+        var _this = this;
+        rowIds.forEach(function (rowId) {
+            var rowNode = _this.serverSideRowModel.getRowNode(rowId);
+            if (rowNode) {
+                rowNode.setExpanded(true);
+            }
+            else {
+                _this.queuedRowIds.add(rowId);
+            }
+        });
+    };
+    ServerSideExpansionService.prototype.expandAll = function (value) {
+        this.serverSideRowModel.expandAll(value);
+    };
+    ServerSideExpansionService.prototype.onGroupExpandedOrCollapsed = function () {
+        // do nothing
+    };
+    __decorate([
+        core.Autowired('rowModel')
+    ], ServerSideExpansionService.prototype, "serverSideRowModel", void 0);
+    ServerSideExpansionService = __decorate([
+        core.Bean('expansionService')
+    ], ServerSideExpansionService);
+    return ServerSideExpansionService;
+}(core.ExpansionService));
 
 var ServerSideRowModelModule = {
     version: VERSION,
     moduleName: core.ModuleNames.ServerSideRowModelModule,
     rowModel: 'serverSide',
     beans: [ServerSideRowModel, ExpandListener, SortListener, StoreUtils, BlockUtils, NodeManager, TransactionManager,
-        FilterListener, StoreFactory, ListenerUtils, ServerSideSelectionService],
+        FilterListener, StoreFactory, ListenerUtils, ServerSideSelectionService, ServerSideExpansionService],
     dependantModules: [
         core$1.EnterpriseCoreModule
     ]

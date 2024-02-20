@@ -3,7 +3,6 @@ export declare class RowContainerComp extends Component {
     private beans;
     private eViewport;
     private eContainer;
-    private eWrapper;
     private readonly name;
     private readonly type;
     private rowComps;

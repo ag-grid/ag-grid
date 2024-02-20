@@ -16,10 +16,16 @@ export var HeaderNavigationDirection;
     HeaderNavigationDirection[HeaderNavigationDirection["RIGHT"] = 3] = "RIGHT";
 })(HeaderNavigationDirection || (HeaderNavigationDirection = {}));
 let HeaderNavigationService = class HeaderNavigationService extends BeanStub {
+    constructor() {
+        super(...arguments);
+        this.currentHeaderRowWithoutSpan = -1;
+    }
     postConstruct() {
         this.ctrlsService.whenReady(p => {
             this.gridBodyCon = p.gridBodyCtrl;
         });
+        const eDocument = this.gridOptionsService.getDocument();
+        this.addManagedListener(eDocument, 'mousedown', () => this.setCurrentHeaderRowWithoutSpan(-1));
     }
     getHeaderRowCount() {
         const centerHeaderContainer = this.ctrlsService.getHeaderRowContainerCtrl();
@@ -39,7 +45,7 @@ let HeaderNavigationService = class HeaderNavigationService extends BeanStub {
         const { headerRowIndex, column } = fromHeader;
         const rowLen = this.getHeaderRowCount();
         const isUp = direction === HeaderNavigationDirection.UP;
-        let { nextRow, nextFocusColumn } = isUp
+        let { headerRowIndex: nextRow, column: nextFocusColumn, headerRowIndexWithoutSpan } = isUp
             ? this.headerPositionUtils.getColumnVisibleParent(column, headerRowIndex)
             : this.headerPositionUtils.getColumnVisibleChild(column, headerRowIndex);
         let skipColumn = false;
@@ -50,6 +56,10 @@ let HeaderNavigationService = class HeaderNavigationService extends BeanStub {
         }
         if (nextRow >= rowLen) {
             nextRow = -1; // -1 indicates the focus should move to grid rows.
+            this.setCurrentHeaderRowWithoutSpan(-1);
+        }
+        else if (headerRowIndexWithoutSpan !== undefined) {
+            this.currentHeaderRowWithoutSpan = headerRowIndexWithoutSpan;
         }
         if (!skipColumn && !nextFocusColumn) {
             return false;
@@ -60,6 +70,9 @@ let HeaderNavigationService = class HeaderNavigationService extends BeanStub {
             event
         });
     }
+    setCurrentHeaderRowWithoutSpan(row) {
+        this.currentHeaderRowWithoutSpan = row;
+    }
     /*
      * This method navigates grid header horizontally
      * @return {boolean} true to preventDefault on the event that caused this navigation.
@@ -67,10 +80,16 @@ let HeaderNavigationService = class HeaderNavigationService extends BeanStub {
     navigateHorizontally(direction, fromTab = false, event) {
         const focusedHeader = this.focusService.getFocusedHeader();
         const isLeft = direction === HeaderNavigationDirection.LEFT;
-        const isRtl = this.gridOptionsService.is('enableRtl');
+        const isRtl = this.gridOptionsService.get('enableRtl');
         let nextHeader;
         let normalisedDirection;
         // either navigating to the left or isRtl (cannot be both)
+        if (this.currentHeaderRowWithoutSpan !== -1) {
+            focusedHeader.headerRowIndex = this.currentHeaderRowWithoutSpan;
+        }
+        else {
+            this.currentHeaderRowWithoutSpan = focusedHeader.headerRowIndex;
+        }
         if (isLeft !== isRtl) {
             normalisedDirection = 'Before';
             nextHeader = this.headerPositionUtils.findHeader(focusedHeader, normalisedDirection);
@@ -97,15 +116,26 @@ let HeaderNavigationService = class HeaderNavigationService extends BeanStub {
         if (direction === 'Before') {
             if (currentIndex > 0) {
                 nextRowIndex = currentIndex - 1;
+                this.currentHeaderRowWithoutSpan -= 1;
                 nextPosition = this.headerPositionUtils.findColAtEdgeForHeaderRow(nextRowIndex, 'end');
             }
         }
         else {
             nextRowIndex = currentIndex + 1;
+            if (this.currentHeaderRowWithoutSpan < this.getHeaderRowCount()) {
+                this.currentHeaderRowWithoutSpan += 1;
+            }
+            else {
+                this.setCurrentHeaderRowWithoutSpan(-1);
+            }
             nextPosition = this.headerPositionUtils.findColAtEdgeForHeaderRow(nextRowIndex, 'start');
         }
+        if (!nextPosition) {
+            return false;
+        }
+        const { column, headerRowIndex } = this.headerPositionUtils.getHeaderIndexToFocus(nextPosition.column, nextPosition === null || nextPosition === void 0 ? void 0 : nextPosition.headerRowIndex);
         return this.focusService.focusHeaderPosition({
-            headerPosition: nextPosition,
+            headerPosition: { column, headerRowIndex },
             direction,
             fromTab: true,
             allowUserOverride: true,

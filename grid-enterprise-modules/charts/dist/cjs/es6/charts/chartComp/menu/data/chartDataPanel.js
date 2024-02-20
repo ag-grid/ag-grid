@@ -9,6 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChartDataPanel = void 0;
 const core_1 = require("@ag-grid-community/core");
 const chartController_1 = require("../../chartController");
+const seriesTypeMapper_1 = require("../../utils/seriesTypeMapper");
 const DefaultDataPanelDef = {
     groups: [
         { type: 'categories', isOpen: true },
@@ -146,17 +147,42 @@ class ChartDataPanel extends core_1.Component {
             suppressOpenCloseIcons: false,
             cssIdentifier: 'charts-data'
         }));
-        const inputName = `chartDimension${this.getCompId()}`;
+        const inputName = `chartDimension${this.categoriesGroupComp.getCompId()}`;
+        // Display either radio buttons or checkboxes
+        // depending on whether the current chart type supports multiple category columns
+        const chartType = this.chartController.getChartType();
+        const supportsMultipleCategoryColumns = (0, seriesTypeMapper_1.isHierarchical)(chartType);
         columns.forEach(col => {
-            const comp = this.categoriesGroupComp.createManagedBean(new core_1.AgRadioButton());
+            const comp = this.categoriesGroupComp.createManagedBean(supportsMultipleCategoryColumns
+                ? (() => {
+                    const checkboxComp = new core_1.AgCheckbox();
+                    checkboxComp.addCssClass('ag-data-select-checkbox');
+                    return checkboxComp;
+                })()
+                : new core_1.AgRadioButton());
             comp.setLabel(core_1._.escapeString(col.displayName));
             comp.setValue(col.selected);
             comp.setInputName(inputName);
             this.addChangeListener(comp, col);
             this.categoriesGroupComp.addItem(comp);
             this.columnComps.set(col.colId, comp);
+            if (supportsMultipleCategoryColumns)
+                this.addDragHandle(comp, col);
         });
         this.addComponent(this.getGui(), this.categoriesGroupComp, 'categoriesGroup');
+        if (supportsMultipleCategoryColumns) {
+            const categoriesGroupGui = this.categoriesGroupComp.getGui();
+            const dropTarget = {
+                getIconName: () => core_1.DragAndDropService.ICON_MOVE,
+                getContainer: () => categoriesGroupGui,
+                onDragging: (params) => this.onDragging(params),
+                onDragLeave: () => this.onDragLeave(),
+                isInterestedIn: this.isInterestedIn.bind(this),
+                targetContainsSource: true
+            };
+            this.dragAndDropService.addDropTarget(dropTarget);
+            this.addDestroyFunc(() => this.dragAndDropService.removeDropTarget(dropTarget));
+        }
     }
     createSeriesGroup(columns) {
         this.seriesGroupComp = this.createManagedBean(new core_1.AgGroupComponent({
@@ -172,7 +198,7 @@ class ChartDataPanel extends core_1.Component {
                 .setLabel(this.chartTranslationService.translate('paired'))
                 .setLabelAlignment('left')
                 .setLabelWidth('flex')
-                .setInputWidth(45)
+                .setInputWidth('flex')
                 .setValue(this.chartOptionsService.getPairedMode())
                 .onValueChange(newValue => {
                 this.chartOptionsService.setPairedMode(!!newValue);
@@ -405,10 +431,10 @@ class ChartDataPanel extends core_1.Component {
 }
 ChartDataPanel.TEMPLATE = `<div class="ag-chart-data-wrapper ag-scrollable-container"></div>`;
 __decorate([
-    core_1.Autowired('dragAndDropService')
+    (0, core_1.Autowired)('dragAndDropService')
 ], ChartDataPanel.prototype, "dragAndDropService", void 0);
 __decorate([
-    core_1.Autowired('chartTranslationService')
+    (0, core_1.Autowired)('chartTranslationService')
 ], ChartDataPanel.prototype, "chartTranslationService", void 0);
 __decorate([
     core_1.PostConstruct

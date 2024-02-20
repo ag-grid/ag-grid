@@ -40,9 +40,7 @@
 
     .ag-chart-menu {
         position: absolute;
-        top: 10px;
-        width: 24px;
-        overflow: hidden;
+        top: 16px;
         display: flex;
         flex-direction: column;
 
@@ -198,6 +196,7 @@
         flex-direction: column;
         position: relative;
         @include ag.selectable(none);
+        padding-bottom: 16px;
     }
 
     .ag-chart-data-wrapper {
@@ -218,6 +217,7 @@
         height: 100%;
         align-items: center;
         justify-content: center;
+        background-color: var(--ag-background-color);
     }
 
     .ag-chart .ag-chart-menu {
@@ -231,9 +231,8 @@
     .ag-chart .ag-chart-tool-panel-button-enable .ag-chart-menu {
         display: flex;
         flex-direction: row;
-        overflow: auto;
-        top: 5px;
-        gap: calc(var(--ag-grid-size) * 3 - 8px);
+        top: 8px;
+        gap: 20px;
         width: auto;
 
         @include ag.unthemed-rtl((
@@ -260,6 +259,8 @@
 
             .ag-icon {
                 padding: 14px 5px 14px 2px;
+                width: auto;
+                height: auto;
             }
 
             &:before {
@@ -331,10 +332,6 @@
 
     .ag-chart-menu-icon {
         opacity: 0.5;
-        line-height: 24px;
-        font-size: 24px;
-        width: 24px;
-        height: 24px;
         margin: 2px 0;
         cursor: pointer;
         border-radius: var(--ag-card-radius);
@@ -348,22 +345,6 @@
     .ag-chart-mini-thumbnail {
         border: 1px solid var(--ag-secondary-border-color);
         border-radius: 5px;
-        margin: 5px;
-
-        // specific style to apply when there are 3 items in the row
-        &:nth-last-child(3),
-        &:nth-last-child(3) ~ .ag-chart-mini-thumbnail {
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        &:first-child {
-            @include ag.unthemed-rtl((margin-left: 0));
-        }
-
-        &:last-child {
-            @include ag.unthemed-rtl((margin-right: 0));
-        }
 
         &.ag-selected {
             border-color: var(--ag-minichart-selected-chart-color);
@@ -391,10 +372,6 @@
         border-top: var(--ag-borders-secondary) var(--ag-secondary-border-color);
     }
 
-    .ag-charts-settings-group-container {
-        padding: var(--ag-grid-size);
-    }
-
     .ag-charts-data-group-container {
         padding: calc(var(--ag-widget-container-vertical-padding) * 0.5) var(--ag-widget-container-horizontal-padding);
 
@@ -418,8 +395,22 @@
         @include ag.vertical-widget-container();
     }
 
-    .ag-charts-group-container.ag-group-container-horizontal {
+    .ag-charts-settings-group-container {
         padding: var(--ag-grid-size);
+        row-gap: 8px;
+
+        display: grid;
+        grid-template-columns: 60px 1fr 60px 1fr 60px;
+
+        .ag-chart-mini-thumbnail:nth-child(3n+1) {
+            grid-column: 1;
+        }
+        .ag-chart-mini-thumbnail:nth-child(3n+2) {
+            grid-column: 3;
+        }
+        .ag-chart-mini-thumbnail:nth-child(3n+3) {
+            grid-column: 5;
+        }
     }
 
     .ag-chart-data-section,

@@ -46,7 +46,7 @@ var Component = /** @class */ (function (_super) {
         return _this;
     }
     Component.prototype.preConstructOnComponent = function () {
-        this.usingBrowserTooltips = this.gridOptionsService.is('enableBrowserTooltips');
+        this.usingBrowserTooltips = this.gridOptionsService.get('enableBrowserTooltips');
     };
     Component.prototype.getCompId = function () {
         return this.compId;
@@ -163,7 +163,7 @@ var Component = /** @class */ (function (_super) {
         }
     };
     Component.prototype.activateTabIndex = function (elements) {
-        var tabIndex = this.gridOptionsService.getNum('tabIndex') || 0;
+        var tabIndex = this.gridOptionsService.get('tabIndex');
         if (!elements) {
             elements = [];
         }
@@ -222,6 +222,9 @@ var Component = /** @class */ (function (_super) {
     };
     Component.prototype.getFocusableElement = function () {
         return this.eGui;
+    };
+    Component.prototype.getAriaElement = function () {
+        return this.getFocusableElement();
     };
     Component.prototype.setParentComponent = function (component) {
         this.parentComponent = component;
@@ -314,7 +317,7 @@ var Component = /** @class */ (function (_super) {
         return eGui ? eGui.getAttribute(key) : null;
     };
     Component.prototype.getRefElement = function (refName) {
-        return this.queryForHtmlElement("[ref=\"" + refName + "\"]");
+        return this.queryForHtmlElement("[ref=\"".concat(refName, "\"]"));
     };
     Component.EVENT_DISPLAYED_CHANGED = 'displayedChanged';
     __decorate([

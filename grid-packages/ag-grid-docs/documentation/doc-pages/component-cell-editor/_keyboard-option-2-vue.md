@@ -6,7 +6,7 @@
 |const MyGrid = {
 |    template: `
 |       &lt;ag-grid-vue
-|           class="ag-theme-alpine"
+|           class="ag-theme-quartz"
 |           :columnDefs="columnDefs">
 |       &lt;/ag-grid-vue>
 |    `,

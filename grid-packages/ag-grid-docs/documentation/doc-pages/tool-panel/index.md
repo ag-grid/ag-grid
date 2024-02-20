@@ -7,9 +7,9 @@ This section covers Tool Panels, available via the grid's Side Bar, which allow 
 
 ## Overview
 
-Tool Panels are panels that sit in the Side Bar to the right of the grid. The Side Bar allows access to the tool panels via buttons that work like tabs. The Side Bar and a Tool Panel are highlighted in the screenshot below.
+Tool Panels are panels that sit in the Side Bar to the right of the grid. The Side Bar allows access to the tool panels via buttons that work like tabs. The Side Bar and a Tool Panel are shown in the screenshot below.
 
-<image-caption src="tool-panel/resources/sideBar.png" maxwidth="52rem" alt="Side Bar" constrained="true" centered="true"></image-caption>
+<image-caption src="tool-panel/resources/sideBar.png" maxwidth="52rem" alt="Side Bar" constrained="true" centered="true" toggledarkmode="true"></image-caption>
 
 ## Provided Tool Panels
 

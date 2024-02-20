@@ -200,7 +200,7 @@ var TitleEdit = /** @class */ (function (_super) {
     };
     TitleEdit.TEMPLATE = "<textarea\n             class=\"ag-chart-title-edit\"\n             style=\"padding:0; border:none; border-radius: 0; min-height: 0; text-align: center; resize: none;\" />\n        ";
     __decorate([
-        core_1.Autowired('chartTranslationService')
+        (0, core_1.Autowired)('chartTranslationService')
     ], TitleEdit.prototype, "chartTranslationService", void 0);
     __decorate([
         core_1.PostConstruct

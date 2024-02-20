@@ -52,12 +52,13 @@ export declare class NumberFilter extends ScalarFilter<NumberFilterModel, number
     private numberFilterParams;
     private filterModelFormatter;
     constructor();
+    refresh(params: NumberFilterParams): boolean;
     protected mapValuesFromModel(filterModel: NumberFilterModel | null): Tuple<number>;
     protected getDefaultDebounceMs(): number;
     protected comparator(): Comparator<number>;
     protected setParams(params: NumberFilterParams): void;
     protected getDefaultFilterOptions(): string[];
-    protected setElementValue(element: AgInputTextField | AgInputNumberField, value: number | null): void;
+    protected setElementValue(element: AgInputTextField | AgInputNumberField, value: number | null, fromFloatingFilter?: boolean): void;
     protected createValueElement(): HTMLElement;
     private createFromToElement;
     protected removeValueElements(startPosition: number, deleteCount?: number): void;

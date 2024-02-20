@@ -1,14 +1,19 @@
-import { FirstDataRenderedEvent, Grid, GridOptions, ValueParserParams, } from '@ag-grid-community/core';
-import { AgAxisCaptionFormatterParams, AgCartesianSeriesTooltipRendererParams } from 'ag-charts-community';
-import { getData } from "./data";
+import {
+  createGrid,
+  FirstDataRenderedEvent,
+  GridApi,
+  GridOptions,
+  GridReadyEvent,
+  ValueParserParams,
+} from '@ag-grid-community/core';
+import {
+  AgAxisCaptionFormatterParams,
+  AgCartesianSeriesTooltipRendererParams,
+  AgCrosshairLabelRendererParams,
+} from 'ag-charts-community';
+import {getData} from "./data";
 
-function formatDate(date: Date | number) {
-  return Intl.DateTimeFormat("en-GB", {
-    day: "2-digit",
-    month: "short",
-    year: undefined,
-  }).format(new Date(date))
-}
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -17,20 +22,10 @@ const gridOptions: GridOptions = {
     { field: 'pressure', chartDataType: 'series', valueParser: numberParser },
     { field: 'temp', chartDataType: 'series', valueParser: numberParser },
   ],
-  defaultColDef: {
-    flex: 1,
-    minWidth: 100,
-    editable: true,
-    sortable: true,
-    filter: true,
-    resizable: true,
-  },
-  rowData: getData(),
-  onFirstDataRendered: onFirstDataRendered,
+  defaultColDef: { flex: 1 },
   enableRangeSelection: true,
-  chartThemes: ['ag-pastel', 'ag-vivid'],
-  enableCharts: true,
   popupParent: document.body,
+  enableCharts: true,
   chartThemeOverrides: {
     common: {
       padding: {
@@ -43,11 +38,20 @@ const gridOptions: GridOptions = {
             formatter: (params: AgAxisCaptionFormatterParams)  => {
               return params.boundSeries.map(s => s.name).join(' / ');
             }
-          }
+          },
+        },
+        time: {
+          crosshair: {
+            label: {
+              renderer: (params: AgCrosshairLabelRendererParams) => ({
+                text: formatDate(params.value),
+              }),
+            },
+          },
         },
       },
     },
-    column: {
+    bar: {
       series: {
         strokeWidth: 2,
         fillOpacity: 0.8,
@@ -66,22 +70,28 @@ const gridOptions: GridOptions = {
       },
     },
   },
+  onGridReady : (params: GridReadyEvent) => {
+    getData().then(rowData => params.api.setGridOption('rowData', rowData));
+  },
+  onFirstDataRendered,
 };
 
+
+
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  params.api!.createRangeChart({
-    chartType: 'customCombo',
+  params.api.createRangeChart({
+    chartContainer: document.querySelector('#myChart') as HTMLElement,
     cellRange: {
       columns: ['date', 'rain', 'pressure', 'temp'],
     },
+    suppressChartRanges: true,
     seriesChartTypes: [
       { colId: 'rain', chartType: 'groupedColumn', secondaryAxis: false },
       { colId: 'pressure', chartType: 'line', secondaryAxis: true },
       { colId: 'temp', chartType: 'line', secondaryAxis: true },
     ],
+    chartType: 'customCombo',
     aggFunc: 'sum',
-    suppressChartRanges: true,
-    chartContainer: document.querySelector('#myChart') as HTMLElement,
   });
 }
 
@@ -93,15 +103,21 @@ function numberParser(params: ValueParserParams) {
   return parseFloat(value);
 }
 
-function chartTooltipRenderer({ xValue, yValue }: AgCartesianSeriesTooltipRendererParams) {
-  xValue = xValue instanceof Date ? xValue : new Date(xValue);
+function chartTooltipRenderer({ datum, xKey, yKey }: AgCartesianSeriesTooltipRendererParams) {
   return {
-    content: `${formatDate(xValue)}: ${yValue}`,
+    content: `${formatDate(datum[xKey])}: ${datum[yKey]}`,
   };
+}
+
+function formatDate(date: Date | number) {
+  return Intl.DateTimeFormat("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: undefined,
+  }).format(new Date(date))
 }
 
 // set up the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-  new Grid(gridDiv, gridOptions);
+  gridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
 });

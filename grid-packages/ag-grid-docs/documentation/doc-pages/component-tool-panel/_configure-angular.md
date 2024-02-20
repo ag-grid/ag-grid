@@ -8,6 +8,9 @@
 |                labelKey: 'customStats',
 |                iconKey: 'custom-stats',
 |                toolPanel: CustomStatsComponent,
+|                toolPanelParams: {
+|                    // can pass any custom params here
+|                },
 |            }
 |        ]
 |    }

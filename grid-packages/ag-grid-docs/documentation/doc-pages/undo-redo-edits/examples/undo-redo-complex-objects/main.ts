@@ -1,4 +1,17 @@
-import { Grid, CellValueChangedEvent, GridOptions, ValueGetterParams, ValueParserParams, ValueSetterParams, ValueFormatterParams, ProcessCellForExportParams, ICellEditorParams } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  CellValueChangedEvent,
+  GridOptions,
+  ValueGetterParams,
+  ValueParserParams,
+  ValueSetterParams,
+  ValueFormatterParams,
+  ProcessCellForExportParams,
+  ICellEditorParams,
+} from '@ag-grid-community/core';
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -46,7 +59,7 @@ function valueFormatterA(params: ValueFormatterParams) {
 function valueGetterA(params: ValueGetterParams) {
   // Create complex object from underlying data
   return createValueA(params.data[params.colDef.field!], params.data);
-};
+}
 
 function valueParserA(params: ValueParserParams) {
   // Convert string `newValue` back into complex object (reverse of `valueFormatterA`). `newValue` is string.
@@ -84,11 +97,11 @@ function valueParserB(params: ValueParserParams) {
 }
 
 function undo() {
-  gridOptions.api!.undoCellEditing()
+  gridApi!.undoCellEditing()
 }
 
 function redo() {
-  gridOptions.api!.redoCellEditing()
+  gridApi!.redoCellEditing()
 }
 
 function onFirstDataRendered() {
@@ -135,5 +148,5 @@ function getRows() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

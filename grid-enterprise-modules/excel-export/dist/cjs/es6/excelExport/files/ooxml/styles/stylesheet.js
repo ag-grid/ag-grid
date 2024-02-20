@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.registerStyles = exports.getStyleId = void 0;
-const core_1 = require("@ag-grid-community/core");
 const numberFormats_1 = require("./numberFormats");
 const fonts_1 = require("./fonts");
 const fills_1 = require("./fills");
@@ -38,9 +37,9 @@ const resetStylesheetValues = () => {
     registeredCellStyles = [{ builtinId: 0, name: 'Normal', xfId: 0 }];
 };
 const registerFill = (fill) => {
-    const convertedPattern = excelLegacyConvert_1.convertLegacyPattern(fill.pattern);
-    const convertedFillColor = excelLegacyConvert_1.convertLegacyColor(fill.color);
-    const convertedPatternColor = excelLegacyConvert_1.convertLegacyColor(fill.patternColor);
+    const convertedPattern = (0, excelLegacyConvert_1.convertLegacyPattern)(fill.pattern);
+    const convertedFillColor = (0, excelLegacyConvert_1.convertLegacyColor)(fill.color);
+    const convertedPatternColor = (0, excelLegacyConvert_1.convertLegacyColor)(fill.patternColor);
     let pos = registeredFills.findIndex(currentFill => {
         const { patternType, fgRgb, bgRgb } = currentFill;
         if (patternType != convertedPattern ||
@@ -57,7 +56,6 @@ const registerFill = (fill) => {
     return pos;
 };
 const registerNumberFmt = (format) => {
-    format = core_1._.utf8_encode(format);
     if (excelConstants_1.numberFormatMap[format]) {
         return excelConstants_1.numberFormatMap[format];
     }
@@ -82,20 +80,20 @@ const registerBorders = (borders) => {
     let leftColor;
     let rightColor;
     if (borderLeft) {
-        leftStyle = excelLegacyConvert_1.convertLegacyBorder(borderLeft.lineStyle, borderLeft.weight);
-        leftColor = excelLegacyConvert_1.convertLegacyColor(borderLeft.color);
+        leftStyle = (0, excelLegacyConvert_1.convertLegacyBorder)(borderLeft.lineStyle, borderLeft.weight);
+        leftColor = (0, excelLegacyConvert_1.convertLegacyColor)(borderLeft.color);
     }
     if (borderRight) {
-        rightStyle = excelLegacyConvert_1.convertLegacyBorder(borderRight.lineStyle, borderRight.weight);
-        rightColor = excelLegacyConvert_1.convertLegacyColor(borderRight.color);
+        rightStyle = (0, excelLegacyConvert_1.convertLegacyBorder)(borderRight.lineStyle, borderRight.weight);
+        rightColor = (0, excelLegacyConvert_1.convertLegacyColor)(borderRight.color);
     }
     if (borderBottom) {
-        bottomStyle = excelLegacyConvert_1.convertLegacyBorder(borderBottom.lineStyle, borderBottom.weight);
-        bottomColor = excelLegacyConvert_1.convertLegacyColor(borderBottom.color);
+        bottomStyle = (0, excelLegacyConvert_1.convertLegacyBorder)(borderBottom.lineStyle, borderBottom.weight);
+        bottomColor = (0, excelLegacyConvert_1.convertLegacyColor)(borderBottom.color);
     }
     if (borderTop) {
-        topStyle = excelLegacyConvert_1.convertLegacyBorder(borderTop.lineStyle, borderTop.weight);
-        topColor = excelLegacyConvert_1.convertLegacyColor(borderTop.color);
+        topStyle = (0, excelLegacyConvert_1.convertLegacyBorder)(borderTop.lineStyle, borderTop.weight);
+        topColor = (0, excelLegacyConvert_1.convertLegacyColor)(borderTop.color);
     }
     let pos = registeredBorders.findIndex(currentBorder => {
         const { left, right, top, bottom } = currentBorder;
@@ -154,13 +152,12 @@ const registerBorders = (borders) => {
 };
 const registerFont = (font) => {
     const { fontName: name = 'Calibri', color, size, bold, italic, outline, shadow, strikeThrough, underline, family, verticalAlign } = font;
-    const utf8Name = name ? core_1._.utf8_encode(name) : name;
-    const convertedColor = excelLegacyConvert_1.convertLegacyColor(color);
-    const familyId = excelUtils_1.getFontFamilyId(family);
+    const convertedColor = (0, excelLegacyConvert_1.convertLegacyColor)(color);
+    const familyId = (0, excelUtils_1.getFontFamilyId)(family);
     const convertedUnderline = underline ? underline.toLocaleLowerCase() : undefined;
     const convertedVerticalAlign = verticalAlign ? verticalAlign.toLocaleLowerCase() : undefined;
     let pos = registeredFonts.findIndex(currentFont => {
-        if (currentFont.fontName != utf8Name ||
+        if (currentFont.fontName != name ||
             currentFont.color != convertedColor ||
             currentFont.size != size ||
             currentFont.bold != bold ||
@@ -179,7 +176,7 @@ const registerFont = (font) => {
     if (pos === -1) {
         pos = registeredFonts.length;
         registeredFonts.push({
-            fontName: utf8Name,
+            fontName: name,
             color: convertedColor,
             size,
             bold,
@@ -195,7 +192,7 @@ const registerFont = (font) => {
     return pos;
 };
 const registerStyle = (config) => {
-    const { alignment, borders, font, interior, numberFormat, protection } = config;
+    const { alignment, borders, font, interior, numberFormat, protection, quotePrefix } = config;
     let { id } = config;
     let currentFill = 0;
     let currentBorder = 0;
@@ -228,6 +225,7 @@ const registerStyle = (config) => {
         fontId: currentFont || 0,
         numFmtId: currentNumberFmt || 0,
         protection,
+        quotePrefix: quotePrefix,
         xfId: 0
     });
 };

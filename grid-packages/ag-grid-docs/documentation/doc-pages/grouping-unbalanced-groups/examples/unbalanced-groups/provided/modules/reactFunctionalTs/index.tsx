@@ -2,14 +2,16 @@
 
 import React, { useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AgGridReact } from '@ag-grid-community/react';
+import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
+import './styles.css';
+
 import { getData } from "./data";
 
-import { ColDef, ICellRendererParams, ModuleRegistry, ValueParserParams } from '@ag-grid-community/core';
+import { ColDef, ModuleRegistry, ValueParserParams } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
@@ -23,7 +25,7 @@ function numberParser(params: ValueParserParams) {
     return parseInt(params.newValue);
 }
 
-function countryCellRenderer(params: ICellRendererParams) {
+function countryCellRenderer(params: CustomCellRendererProps) {
     if (params.value === undefined || params.value === null) {
         return null;
     } else {
@@ -35,7 +37,7 @@ function countryCellRenderer(params: ICellRendererParams) {
     }
 }
 
-function stateCellRenderer(params: ICellRendererParams) {
+function stateCellRenderer(params: CustomCellRendererProps) {
     if (params.value === undefined || params.value === null) {
         return null;
     } else {
@@ -48,7 +50,7 @@ function stateCellRenderer(params: ICellRendererParams) {
     }
 }
 
-function cityCellRenderer(params: ICellRendererParams) {
+function cityCellRenderer(params: CustomCellRendererProps) {
     if (params.value === undefined || params.value === null) {
         return null;
     } else {
@@ -87,7 +89,6 @@ const GridExample = () => {
         return {
             flex: 1,
             minWidth: 150,
-            resizable: true,
         }
     }, []);
     const autoGroupColumnDef = useMemo<ColDef>(() => {
@@ -116,7 +117,7 @@ const GridExample = () => {
         <div style={containerStyle}>
 
 
-            <div style={gridStyle} className="ag-theme-alpine">
+            <div style={gridStyle} className={/** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
                 <AgGridReact
                     groupAllowUnbalanced
                     rowData={rowData}
@@ -126,7 +127,6 @@ const GridExample = () => {
                     columnTypes={columnTypes}
                     groupDefaultExpanded={-1}
                     rowGroupPanelShow={'always'}
-                    animateRows={true}
                 />
             </div>
         </div>

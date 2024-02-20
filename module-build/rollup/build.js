@@ -38,7 +38,7 @@ function build(builds) {
             if (built < total) {
                 next()
             }
-        }).catch(console.log)
+        })
     };
 
     next()

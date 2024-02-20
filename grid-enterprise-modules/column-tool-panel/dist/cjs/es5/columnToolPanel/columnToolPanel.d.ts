@@ -1,8 +1,6 @@
-import { ColDef, ColGroupDef, Component, IColumnToolPanel, IToolPanelComp, ToolPanelColumnCompParams } from "@ag-grid-community/core";
+import { ColDef, ColGroupDef, Component, IColumnToolPanel, IToolPanelComp, ToolPanelColumnCompParams, ColumnToolPanelState } from "@ag-grid-community/core";
 export declare class ColumnToolPanel extends Component implements IColumnToolPanel, IToolPanelComp {
     private static TEMPLATE;
-    private gridApi;
-    private columnApi;
     private initialised;
     private params;
     private childDestroyFuncs;
@@ -27,6 +25,7 @@ export declare class ColumnToolPanel extends Component implements IColumnToolPan
     setColumnLayout(colDefs: (ColDef | ColGroupDef)[]): void;
     syncLayoutWithGrid(): void;
     destroyChildren(): void;
-    refresh(): void;
+    refresh(params: ToolPanelColumnCompParams): boolean;
+    getState(): ColumnToolPanelState;
     destroy(): void;
 }

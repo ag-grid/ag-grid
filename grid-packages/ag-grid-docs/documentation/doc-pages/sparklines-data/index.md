@@ -119,18 +119,18 @@ const data = [
 When a data point has a missing or invalid Y value, it will be rendered as a gap, this is illustrated in the images below:
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/line-sparkline.png" alt="Line sparkline." width="250px" constrained="true">No missing Y values</image-caption>
-    <image-caption src="resources/line-sparkline-invalid-y-values.png" alt="Line sparkline with gaps for invalid Y values." width="250px" constrained="true">Missing Y values</image-caption>
+    <image-caption src="resources/line-sparkline.png" alt="Line sparkline." width="250px" constrained="true" filterdarkmode="true">No missing Y values</image-caption>
+    <image-caption src="resources/line-sparkline-invalid-y-values.png" alt="Line sparkline with gaps for invalid Y values." width="250px" constrained="true" filterdarkmode="true">Missing Y values</image-caption>
 </div>
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/column-sparkline.png" alt="Column Sparkline" width="250px" constrained="true">No missing Y values</image-caption>
-    <image-caption src="resources/column-sparkline-invalid-y-values.png" alt="Column sparkline with gaps for invalid Y values" width="250px" constrained="true">Missing Y values</image-caption>
+    <image-caption src="resources/column-sparkline.png" alt="Column Sparkline" width="250px" constrained="true" filterdarkmode="true">No missing Y values</image-caption>
+    <image-caption src="resources/column-sparkline-invalid-y-values.png" alt="Column sparkline with gaps for invalid Y values" width="250px" constrained="true" filterdarkmode="true">Missing Y values</image-caption>
 </div>
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/area-sparkline.png" alt="Area Sparkline" width="250px" constrained="true">No missing Y values</image-caption>
-    <image-caption src="resources/area-sparkline-invalid-y-values.png" alt="Area sparkline with gaps for invalid Y values" width="250px" constrained="true">Missing Y values</image-caption>
+    <image-caption src="resources/area-sparkline.png" alt="Area Sparkline" width="250px" constrained="true" filterdarkmode="true">No missing Y values</image-caption>
+    <image-caption src="resources/area-sparkline-invalid-y-values.png" alt="Area sparkline with gaps for invalid Y values" width="250px" constrained="true" filterdarkmode="true">Missing Y values</image-caption>
 </div>
 
 
@@ -163,16 +163,16 @@ The following images show the line, column and area sparklines with 8 complete d
 right, with 6 valid X values and 2 invalid X values:
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/line-sparkline.png" alt="Line sparkline." width="250px" constrained="true">No missing X values</image-caption>
-    <image-caption src="resources/line-sparkline-invalid-x-values.png" alt="Line sparkline with gaps for invalid Y values." width="250px" constrained="true">Missing X values</image-caption>
+    <image-caption src="resources/line-sparkline.png" alt="Line sparkline." width="250px" constrained="true" filterdarkmode="true">No missing X values</image-caption>
+    <image-caption src="resources/line-sparkline-invalid-x-values.png" alt="Line sparkline with gaps for invalid Y values." width="250px" constrained="true" filterdarkmode="true">Missing X values</image-caption>
 </div>
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/column-sparkline.png" alt="Column Sparkline" width="250px" constrained="true">No missing X values</image-caption>
-    <image-caption src="resources/column-sparkline-invalid-x-values.png" alt="Column sparkline with gaps for invalid Y values" width="250px" constrained="true">Missing X values</image-caption>
+    <image-caption src="resources/column-sparkline.png" alt="Column Sparkline" width="250px" constrained="true" filterdarkmode="true">No missing X values</image-caption>
+    <image-caption src="resources/column-sparkline-invalid-x-values.png" alt="Column sparkline with gaps for invalid Y values" width="250px" constrained="true" filterdarkmode="true">Missing X values</image-caption>
 </div>
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/area-sparkline.png" alt="Area Sparkline" width="250px" constrained="true">No missing X values</image-caption>
-    <image-caption src="resources/area-sparkline-invalid-x-values.png" alt="Area sparkline with gaps for invalid Y values" width="250px" constrained="true">Missing X values</image-caption>
+    <image-caption src="resources/area-sparkline.png" alt="Area Sparkline" width="250px" constrained="true" filterdarkmode="true">No missing X values</image-caption>
+    <image-caption src="resources/area-sparkline-invalid-x-values.png" alt="Area sparkline with gaps for invalid Y values" width="250px" constrained="true" filterdarkmode="true">Missing X values</image-caption>
 </div>
 
 ## Updating Sparkline Data

@@ -1,4 +1,7 @@
-import { Grid, ColDef, GridApi, GridOptions, ValueFormatterParams, GetRowIdParams, AsyncTransactionsFlushed } from '@ag-grid-community/core'
+import {
+  AsyncTransactionsFlushed, ColDef, createGrid, GetRowIdParams, GridApi, GridOptions,
+  ValueFormatterParams
+} from '@ag-grid-community/core';
 import { getData, globalRowData } from "./data";
 
 var UPDATE_COUNT = 20
@@ -141,13 +144,14 @@ const columnDefs: ColDef[] = [
 function numberCellFormatter(params: ValueFormatterParams) {
   return Math.floor(params.value)
     .toString()
-    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 }
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   suppressAggFuncInHeader: true,
-  animateRows: true,
   rowGroupPanelShow: 'always',
   pivotPanelShow: 'always',
   asyncTransactionWaitMillis: 4000,
@@ -156,15 +160,13 @@ const gridOptions: GridOptions = {
   },
   defaultColDef: {
     width: 120,
-    sortable: true,
-    resizable: true,
   },
   autoGroupColumnDef: {
     width: 250,
   },
   onGridReady: (params) => {
     getData()
-    params.api.setRowData(globalRowData)
+    params.api.setGridOption('rowData', globalRowData)
     startFeed(params.api)
   },
   onAsyncTransactionsFlushed: (e: AsyncTransactionsFlushed) => {
@@ -177,13 +179,13 @@ const gridOptions: GridOptions = {
 }
 
 function onFlushTransactions() {
-  gridOptions.api!.flushAsyncTransactions()
+  gridApi!.flushAsyncTransactions()
 }
 
 function startFeed(api: GridApi) {
   var count = 1
 
-  setInterval(function () {
+  setInterval(() => {
     var thisCount = count++
     var updatedIndexes: any = {}
     var newItems: any[] = []
@@ -202,7 +204,7 @@ function startFeed(api: GridApi) {
       newItem.current = Math.floor(Math.random() * 100000) + 100
       newItems.push(newItem)
     }
-    var resultCallback = function () {
+    var resultCallback = () => {
       console.log('transactionApplied() - ' + thisCount)
     }
     api.applyTransactionAsync({ update: newItems }, resultCallback)
@@ -216,7 +218,7 @@ function copyObject(object: any) {
   var newObject: any = {}
 
   // copy in the old values
-  Object.keys(object).forEach(function (key) {
+  Object.keys(object).forEach((key) => {
     newObject[key] = object[key]
   })
 
@@ -226,5 +228,5 @@ function copyObject(object: any) {
 // after page is loaded, create the grid.
 document.addEventListener('DOMContentLoaded', function () {
   var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(eGridDiv, gridOptions)
+  gridApi = createGrid(eGridDiv, gridOptions);
 })

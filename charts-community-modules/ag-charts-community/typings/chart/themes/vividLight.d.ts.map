@@ -1,1 +1,0 @@
-{"version":3,"file":"vividLight.d.ts","sourceRoot":"","sources":["../../../src/chart/themes/vividLight.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,UAAU,EAAE,MAAM,cAAc,CAAC;AAC1C,OAAO,KAAK,EAAE,mBAAmB,EAAE,MAAM,mBAAmB,CAAC;AAO7D,qBAAa,UAAW,SAAQ,UAAU;IACtC,SAAS,CAAC,UAAU,IAAI,mBAAmB;CAG9C"}

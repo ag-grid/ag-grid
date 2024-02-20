@@ -51,15 +51,15 @@ let RowNodeEventThrottle = class RowNodeEventThrottle extends beanStub_1.BeanStu
     }
 };
 __decorate([
-    context_1.Autowired('animationFrameService')
+    (0, context_1.Autowired)('animationFrameService')
 ], RowNodeEventThrottle.prototype, "animationFrameService", void 0);
 __decorate([
-    context_1.Autowired('rowModel')
+    (0, context_1.Autowired)('rowModel')
 ], RowNodeEventThrottle.prototype, "rowModel", void 0);
 __decorate([
     context_1.PostConstruct
 ], RowNodeEventThrottle.prototype, "postConstruct", null);
 RowNodeEventThrottle = __decorate([
-    context_1.Bean('rowNodeEventThrottle')
+    (0, context_1.Bean)('rowNodeEventThrottle')
 ], RowNodeEventThrottle);
 exports.RowNodeEventThrottle = RowNodeEventThrottle;

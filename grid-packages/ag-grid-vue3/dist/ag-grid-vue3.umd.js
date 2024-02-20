@@ -119,6 +119,9 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__8bd4__;
 /* unused harmony export NO */
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return NOOP; });
 /* unused harmony export PatchFlagNames */
+/* unused harmony export PatchFlags */
+/* unused harmony export ShapeFlags */
+/* unused harmony export SlotFlags */
 /* unused harmony export camelize */
 /* unused harmony export capitalize */
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return def; });
@@ -138,18 +141,21 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__8bd4__;
 /* unused harmony export isBuiltInDirective */
 /* unused harmony export isDate */
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "g", function() { return isFunction; });
+/* unused harmony export isGloballyAllowed */
 /* unused harmony export isGloballyWhitelisted */
 /* unused harmony export isHTMLTag */
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "h", function() { return isIntegerKey; });
 /* unused harmony export isKnownHtmlAttr */
 /* unused harmony export isKnownSvgAttr */
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "i", function() { return isMap; });
+/* unused harmony export isMathMLTag */
 /* unused harmony export isModelListener */
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "j", function() { return isObject; });
 /* unused harmony export isOn */
 /* unused harmony export isPlainObject */
 /* unused harmony export isPromise */
 /* unused harmony export isRegExp */
+/* unused harmony export isRenderableAttrValue */
 /* unused harmony export isReservedProp */
 /* unused harmony export isSSRSafeAttrName */
 /* unused harmony export isSVGTag */
@@ -176,13 +182,14 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__8bd4__;
 /* unused harmony export toNumber */
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "m", function() { return toRawType; });
 /* unused harmony export toTypeString */
+/**
+* @vue/shared v3.4.19
+* (c) 2018-present Yuxi (Evan) You and Vue contributors
+* @license MIT
+**/
 function makeMap(str, expectsLowerCase) {
-  const map = /* @__PURE__ */ Object.create(null);
-  const list = str.split(",");
-  for (let i = 0; i < list.length; i++) {
-    map[list[i]] = true;
-  }
-  return expectsLowerCase ? (val) => !!map[val.toLowerCase()] : (val) => !!map[val];
+  const set = new Set(str.split(","));
+  return expectsLowerCase ? (val) => set.has(val.toLowerCase()) : (val) => set.has(val);
 }
 
 const EMPTY_OBJ =  false ? undefined : {};
@@ -190,8 +197,8 @@ const EMPTY_ARR =  false ? undefined : [];
 const NOOP = () => {
 };
 const NO = () => false;
-const onRE = /^on[^a-z]/;
-const isOn = (key) => onRE.test(key);
+const isOn = (key) => key.charCodeAt(0) === 111 && key.charCodeAt(1) === 110 && // uppercase letter
+(key.charCodeAt(2) > 122 || key.charCodeAt(2) < 97);
 const isModelListener = (key) => key.startsWith("onUpdate:");
 const extend = Object.assign;
 const remove = (arr, el) => {
@@ -212,7 +219,7 @@ const isString = (val) => typeof val === "string";
 const isSymbol = (val) => typeof val === "symbol";
 const isObject = (val) => val !== null && typeof val === "object";
 const isPromise = (val) => {
-  return isObject(val) && isFunction(val.then) && isFunction(val.catch);
+  return (isObject(val) || isFunction(val)) && isFunction(val.then) && isFunction(val.catch);
 };
 const objectToString = Object.prototype.toString;
 const toTypeString = (value) => objectToString.call(value);
@@ -243,12 +250,13 @@ const hyphenateRE = /\B([A-Z])/g;
 const hyphenate = cacheStringFunction(
   (str) => str.replace(hyphenateRE, "-$1").toLowerCase()
 );
-const capitalize = cacheStringFunction(
-  (str) => str.charAt(0).toUpperCase() + str.slice(1)
-);
-const toHandlerKey = cacheStringFunction(
-  (str) => str ? `on${capitalize(str)}` : ``
-);
+const capitalize = cacheStringFunction((str) => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+});
+const toHandlerKey = cacheStringFunction((str) => {
+  const s = str ? `on${capitalize(str)}` : ``;
+  return s;
+});
 const hasChanged = (value, oldValue) => !Object.is(value, oldValue);
 const invokeArrayFns = (fns, arg) => {
   for (let i = 0; i < fns.length; i++) {
@@ -279,13 +287,43 @@ function genPropsAccessExp(name) {
   return identRE.test(name) ? `__props.${name}` : `__props[${JSON.stringify(name)}]`;
 }
 
+const PatchFlags = {
+  "TEXT": 1,
+  "1": "TEXT",
+  "CLASS": 2,
+  "2": "CLASS",
+  "STYLE": 4,
+  "4": "STYLE",
+  "PROPS": 8,
+  "8": "PROPS",
+  "FULL_PROPS": 16,
+  "16": "FULL_PROPS",
+  "NEED_HYDRATION": 32,
+  "32": "NEED_HYDRATION",
+  "STABLE_FRAGMENT": 64,
+  "64": "STABLE_FRAGMENT",
+  "KEYED_FRAGMENT": 128,
+  "128": "KEYED_FRAGMENT",
+  "UNKEYED_FRAGMENT": 256,
+  "256": "UNKEYED_FRAGMENT",
+  "NEED_PATCH": 512,
+  "512": "NEED_PATCH",
+  "DYNAMIC_SLOTS": 1024,
+  "1024": "DYNAMIC_SLOTS",
+  "DEV_ROOT_FRAGMENT": 2048,
+  "2048": "DEV_ROOT_FRAGMENT",
+  "HOISTED": -1,
+  "-1": "HOISTED",
+  "BAIL": -2,
+  "-2": "BAIL"
+};
 const PatchFlagNames = {
   [1]: `TEXT`,
   [2]: `CLASS`,
   [4]: `STYLE`,
   [8]: `PROPS`,
   [16]: `FULL_PROPS`,
-  [32]: `HYDRATE_EVENTS`,
+  [32]: `NEED_HYDRATION`,
   [64]: `STABLE_FRAGMENT`,
   [128]: `KEYED_FRAGMENT`,
   [256]: `UNKEYED_FRAGMENT`,
@@ -296,14 +334,48 @@ const PatchFlagNames = {
   [-2]: `BAIL`
 };
 
+const ShapeFlags = {
+  "ELEMENT": 1,
+  "1": "ELEMENT",
+  "FUNCTIONAL_COMPONENT": 2,
+  "2": "FUNCTIONAL_COMPONENT",
+  "STATEFUL_COMPONENT": 4,
+  "4": "STATEFUL_COMPONENT",
+  "TEXT_CHILDREN": 8,
+  "8": "TEXT_CHILDREN",
+  "ARRAY_CHILDREN": 16,
+  "16": "ARRAY_CHILDREN",
+  "SLOTS_CHILDREN": 32,
+  "32": "SLOTS_CHILDREN",
+  "TELEPORT": 64,
+  "64": "TELEPORT",
+  "SUSPENSE": 128,
+  "128": "SUSPENSE",
+  "COMPONENT_SHOULD_KEEP_ALIVE": 256,
+  "256": "COMPONENT_SHOULD_KEEP_ALIVE",
+  "COMPONENT_KEPT_ALIVE": 512,
+  "512": "COMPONENT_KEPT_ALIVE",
+  "COMPONENT": 6,
+  "6": "COMPONENT"
+};
+
+const SlotFlags = {
+  "STABLE": 1,
+  "1": "STABLE",
+  "DYNAMIC": 2,
+  "2": "DYNAMIC",
+  "FORWARDED": 3,
+  "3": "FORWARDED"
+};
 const slotFlagsText = {
   [1]: "STABLE",
   [2]: "DYNAMIC",
   [3]: "FORWARDED"
 };
 
-const GLOBALS_WHITE_LISTED = "Infinity,undefined,NaN,isFinite,isNaN,parseFloat,parseInt,decodeURI,decodeURIComponent,encodeURI,encodeURIComponent,Math,Number,Date,Array,Object,Boolean,String,RegExp,Map,Set,JSON,Intl,BigInt,console";
-const isGloballyWhitelisted = /* @__PURE__ */ makeMap(GLOBALS_WHITE_LISTED);
+const GLOBALS_ALLOWED = "Infinity,undefined,NaN,isFinite,isNaN,parseFloat,parseInt,decodeURI,decodeURIComponent,encodeURI,encodeURIComponent,Math,Number,Date,Array,Object,Boolean,String,RegExp,Map,Set,JSON,Intl,BigInt,console,Error";
+const isGloballyAllowed = /* @__PURE__ */ makeMap(GLOBALS_ALLOWED);
+const isGloballyWhitelisted = isGloballyAllowed;
 
 const range = 2;
 function generateCodeFrame(source, start = 0, end = source.length) {
@@ -358,9 +430,7 @@ function normalizeStyle(value) {
       }
     }
     return res;
-  } else if (isString(value)) {
-    return value;
-  } else if (isObject(value)) {
+  } else if (isString(value) || isObject(value)) {
     return value;
   }
 }
@@ -426,9 +496,11 @@ function normalizeProps(props) {
 
 const HTML_TAGS = "html,body,base,head,link,meta,style,title,address,article,aside,footer,header,hgroup,h1,h2,h3,h4,h5,h6,nav,section,div,dd,dl,dt,figcaption,figure,picture,hr,img,li,main,ol,p,pre,ul,a,b,abbr,bdi,bdo,br,cite,code,data,dfn,em,i,kbd,mark,q,rp,rt,ruby,s,samp,small,span,strong,sub,sup,time,u,var,wbr,area,audio,map,track,video,embed,object,param,source,canvas,script,noscript,del,ins,caption,col,colgroup,table,thead,tbody,td,th,tr,button,datalist,fieldset,form,input,label,legend,meter,optgroup,option,output,progress,select,textarea,details,dialog,menu,summary,template,blockquote,iframe,tfoot";
 const SVG_TAGS = "svg,animate,animateMotion,animateTransform,circle,clipPath,color-profile,defs,desc,discard,ellipse,feBlend,feColorMatrix,feComponentTransfer,feComposite,feConvolveMatrix,feDiffuseLighting,feDisplacementMap,feDistantLight,feDropShadow,feFlood,feFuncA,feFuncB,feFuncG,feFuncR,feGaussianBlur,feImage,feMerge,feMergeNode,feMorphology,feOffset,fePointLight,feSpecularLighting,feSpotLight,feTile,feTurbulence,filter,foreignObject,g,hatch,hatchpath,image,line,linearGradient,marker,mask,mesh,meshgradient,meshpatch,meshrow,metadata,mpath,path,pattern,polygon,polyline,radialGradient,rect,set,solidcolor,stop,switch,symbol,text,textPath,title,tspan,unknown,use,view";
+const MATH_TAGS = "annotation,annotation-xml,maction,maligngroup,malignmark,math,menclose,merror,mfenced,mfrac,mfraction,mglyph,mi,mlabeledtr,mlongdiv,mmultiscripts,mn,mo,mover,mpadded,mphantom,mprescripts,mroot,mrow,ms,mscarries,mscarry,msgroup,msline,mspace,msqrt,msrow,mstack,mstyle,msub,msubsup,msup,mtable,mtd,mtext,mtr,munder,munderover,none,semantics";
 const VOID_TAGS = "area,base,br,col,embed,hr,img,input,link,meta,param,source,track,wbr";
 const isHTMLTag = /* @__PURE__ */ makeMap(HTML_TAGS);
 const isSVGTag = /* @__PURE__ */ makeMap(SVG_TAGS);
+const isMathMLTag = /* @__PURE__ */ makeMap(MATH_TAGS);
 const isVoidTag = /* @__PURE__ */ makeMap(VOID_TAGS);
 
 const specialBooleanAttrs = `itemscope,allowfullscreen,formnovalidate,ismap,nomodule,novalidate,readonly`;
@@ -461,8 +533,15 @@ const isKnownHtmlAttr = /* @__PURE__ */ makeMap(
   `accept,accept-charset,accesskey,action,align,allow,alt,async,autocapitalize,autocomplete,autofocus,autoplay,background,bgcolor,border,buffered,capture,challenge,charset,checked,cite,class,code,codebase,color,cols,colspan,content,contenteditable,contextmenu,controls,coords,crossorigin,csp,data,datetime,decoding,default,defer,dir,dirname,disabled,download,draggable,dropzone,enctype,enterkeyhint,for,form,formaction,formenctype,formmethod,formnovalidate,formtarget,headers,height,hidden,high,href,hreflang,http-equiv,icon,id,importance,inert,integrity,ismap,itemprop,keytype,kind,label,lang,language,loading,list,loop,low,manifest,max,maxlength,minlength,media,min,multiple,muted,name,novalidate,open,optimum,pattern,ping,placeholder,poster,preload,radiogroup,readonly,referrerpolicy,rel,required,reversed,rows,rowspan,sandbox,scope,scoped,selected,shape,size,sizes,slot,span,spellcheck,src,srcdoc,srclang,srcset,start,step,style,summary,tabindex,target,title,translate,type,usemap,value,width,wrap`
 );
 const isKnownSvgAttr = /* @__PURE__ */ makeMap(
-  `xmlns,accent-height,accumulate,additive,alignment-baseline,alphabetic,amplitude,arabic-form,ascent,attributeName,attributeType,azimuth,baseFrequency,baseline-shift,baseProfile,bbox,begin,bias,by,calcMode,cap-height,class,clip,clipPathUnits,clip-path,clip-rule,color,color-interpolation,color-interpolation-filters,color-profile,color-rendering,contentScriptType,contentStyleType,crossorigin,cursor,cx,cy,d,decelerate,descent,diffuseConstant,direction,display,divisor,dominant-baseline,dur,dx,dy,edgeMode,elevation,enable-background,end,exponent,fill,fill-opacity,fill-rule,filter,filterRes,filterUnits,flood-color,flood-opacity,font-family,font-size,font-size-adjust,font-stretch,font-style,font-variant,font-weight,format,from,fr,fx,fy,g1,g2,glyph-name,glyph-orientation-horizontal,glyph-orientation-vertical,glyphRef,gradientTransform,gradientUnits,hanging,height,href,hreflang,horiz-adv-x,horiz-origin-x,id,ideographic,image-rendering,in,in2,intercept,k,k1,k2,k3,k4,kernelMatrix,kernelUnitLength,kerning,keyPoints,keySplines,keyTimes,lang,lengthAdjust,letter-spacing,lighting-color,limitingConeAngle,local,marker-end,marker-mid,marker-start,markerHeight,markerUnits,markerWidth,mask,maskContentUnits,maskUnits,mathematical,max,media,method,min,mode,name,numOctaves,offset,opacity,operator,order,orient,orientation,origin,overflow,overline-position,overline-thickness,panose-1,paint-order,path,pathLength,patternContentUnits,patternTransform,patternUnits,ping,pointer-events,points,pointsAtX,pointsAtY,pointsAtZ,preserveAlpha,preserveAspectRatio,primitiveUnits,r,radius,referrerPolicy,refX,refY,rel,rendering-intent,repeatCount,repeatDur,requiredExtensions,requiredFeatures,restart,result,rotate,rx,ry,scale,seed,shape-rendering,slope,spacing,specularConstant,specularExponent,speed,spreadMethod,startOffset,stdDeviation,stemh,stemv,stitchTiles,stop-color,stop-opacity,strikethrough-position,strikethrough-thickness,string,stroke,stroke-dasharray,stroke-dashoffset,stroke-linecap,stroke-linejoin,stroke-miterlimit,stroke-opacity,stroke-width,style,surfaceScale,systemLanguage,tabindex,tableValues,target,targetX,targetY,text-anchor,text-decoration,text-rendering,textLength,to,transform,transform-origin,type,u1,u2,underline-position,underline-thickness,unicode,unicode-bidi,unicode-range,units-per-em,v-alphabetic,v-hanging,v-ideographic,v-mathematical,values,vector-effect,version,vert-adv-y,vert-origin-x,vert-origin-y,viewBox,viewTarget,visibility,width,widths,word-spacing,writing-mode,x,x-height,x1,x2,xChannelSelector,xlink:actuate,xlink:arcrole,xlink:href,xlink:role,xlink:show,xlink:title,xlink:type,xml:base,xml:lang,xml:space,y,y1,y2,yChannelSelector,z,zoomAndPan`
+  `xmlns,accent-height,accumulate,additive,alignment-baseline,alphabetic,amplitude,arabic-form,ascent,attributeName,attributeType,azimuth,baseFrequency,baseline-shift,baseProfile,bbox,begin,bias,by,calcMode,cap-height,class,clip,clipPathUnits,clip-path,clip-rule,color,color-interpolation,color-interpolation-filters,color-profile,color-rendering,contentScriptType,contentStyleType,crossorigin,cursor,cx,cy,d,decelerate,descent,diffuseConstant,direction,display,divisor,dominant-baseline,dur,dx,dy,edgeMode,elevation,enable-background,end,exponent,fill,fill-opacity,fill-rule,filter,filterRes,filterUnits,flood-color,flood-opacity,font-family,font-size,font-size-adjust,font-stretch,font-style,font-variant,font-weight,format,from,fr,fx,fy,g1,g2,glyph-name,glyph-orientation-horizontal,glyph-orientation-vertical,glyphRef,gradientTransform,gradientUnits,hanging,height,href,hreflang,horiz-adv-x,horiz-origin-x,id,ideographic,image-rendering,in,in2,intercept,k,k1,k2,k3,k4,kernelMatrix,kernelUnitLength,kerning,keyPoints,keySplines,keyTimes,lang,lengthAdjust,letter-spacing,lighting-color,limitingConeAngle,local,marker-end,marker-mid,marker-start,markerHeight,markerUnits,markerWidth,mask,maskContentUnits,maskUnits,mathematical,max,media,method,min,mode,name,numOctaves,offset,opacity,operator,order,orient,orientation,origin,overflow,overline-position,overline-thickness,panose-1,paint-order,path,pathLength,patternContentUnits,patternTransform,patternUnits,ping,pointer-events,points,pointsAtX,pointsAtY,pointsAtZ,preserveAlpha,preserveAspectRatio,primitiveUnits,r,radius,referrerPolicy,refX,refY,rel,rendering-intent,repeatCount,repeatDur,requiredExtensions,requiredFeatures,restart,result,rotate,rx,ry,scale,seed,shape-rendering,slope,spacing,specularConstant,specularExponent,speed,spreadMethod,startOffset,stdDeviation,stemh,stemv,stitchTiles,stop-color,stop-opacity,strikethrough-position,strikethrough-thickness,string,stroke,stroke-dasharray,stroke-dashoffset,stroke-linecap,stroke-linejoin,stroke-miterlimit,stroke-opacity,stroke-width,style,surfaceScale,systemLanguage,tabindex,tableValues,target,targetX,targetY,text-anchor,text-decoration,text-rendering,textLength,to,transform,transform-origin,type,u1,u2,underline-position,underline-thickness,unicode,unicode-bidi,unicode-range,units-per-em,v-alphabetic,v-hanging,v-ideographic,v-mathematical,values,vector-effect,version,vert-adv-y,vert-origin-x,vert-origin-y,viewBox,viewTarget,visibility,width,widths,word-spacing,writing-mode,x,x-height,x1,x2,xChannelSelector,xlink:actuate,xlink:arcrole,xlink:href,xlink:role,xlink:show,xlink:title,xlink:type,xmlns:xlink,xml:base,xml:lang,xml:space,y,y1,y2,yChannelSelector,z,zoomAndPan`
 );
+function isRenderableAttrValue(value) {
+  if (value == null) {
+    return false;
+  }
+  const type = typeof value;
+  return type === "string" || type === "number" || type === "boolean";
+}
 
 const escapeRE = /["'&<>]/;
 function escapeHtml(string) {
@@ -568,19 +647,28 @@ const replacer = (_key, val) => {
     return replacer(_key, val.value);
   } else if (isMap(val)) {
     return {
-      [`Map(${val.size})`]: [...val.entries()].reduce((entries, [key, val2]) => {
-        entries[`${key} =>`] = val2;
-        return entries;
-      }, {})
+      [`Map(${val.size})`]: [...val.entries()].reduce(
+        (entries, [key, val2], i) => {
+          entries[stringifySymbol(key, i) + " =>"] = val2;
+          return entries;
+        },
+        {}
+      )
     };
   } else if (isSet(val)) {
     return {
-      [`Set(${val.size})`]: [...val.values()]
+      [`Set(${val.size})`]: [...val.values()].map((v) => stringifySymbol(v))
     };
+  } else if (isSymbol(val)) {
+    return stringifySymbol(val);
   } else if (isObject(val) && !isArray(val) && !isPlainObject(val)) {
     return String(val);
   }
   return val;
+};
+const stringifySymbol = (v, i = "") => {
+  var _a;
+  return isSymbol(v) ? `Symbol(${(_a = v.description) != null ? _a : i})` : v;
 };
 
 
@@ -649,6 +737,11 @@ var external_commonjs_vue_commonjs2_vue_root_Vue_ = __webpack_require__("8bbf");
 var shared_esm_bundler = __webpack_require__("9ff4");
 
 // CONCATENATED MODULE: ./node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js
+/**
+* @vue/reactivity v3.4.19
+* (c) 2018-present Yuxi (Evan) You and Vue contributors
+* @license MIT
+**/
 
 
 function warn(msg, ...args) {
@@ -749,117 +842,122 @@ function onScopeDispose(fn) {
   } else if (false) {}
 }
 
-const createDep = (effects) => {
-  const dep = new Set(effects);
-  dep.w = 0;
-  dep.n = 0;
-  return dep;
-};
-const wasTracked = (dep) => (dep.w & trackOpBit) > 0;
-const newTracked = (dep) => (dep.n & trackOpBit) > 0;
-const initDepMarkers = ({ deps }) => {
-  if (deps.length) {
-    for (let i = 0; i < deps.length; i++) {
-      deps[i].w |= trackOpBit;
-    }
-  }
-};
-const finalizeDepMarkers = (effect) => {
-  const { deps } = effect;
-  if (deps.length) {
-    let ptr = 0;
-    for (let i = 0; i < deps.length; i++) {
-      const dep = deps[i];
-      if (wasTracked(dep) && !newTracked(dep)) {
-        dep.delete(effect);
-      } else {
-        deps[ptr++] = dep;
-      }
-      dep.w &= ~trackOpBit;
-      dep.n &= ~trackOpBit;
-    }
-    deps.length = ptr;
-  }
-};
-
-const targetMap = /* @__PURE__ */ new WeakMap();
-let effectTrackDepth = 0;
-let trackOpBit = 1;
-const maxMarkerBits = 30;
 let activeEffect;
-const ITERATE_KEY = Symbol( false ? undefined : "");
-const MAP_KEY_ITERATE_KEY = Symbol( false ? undefined : "");
 class ReactiveEffect {
-  constructor(fn, scheduler = null, scope) {
+  constructor(fn, trigger, scheduler, scope) {
     this.fn = fn;
+    this.trigger = trigger;
     this.scheduler = scheduler;
     this.active = true;
     this.deps = [];
-    this.parent = void 0;
+    /**
+     * @internal
+     */
+    this._dirtyLevel = 4;
+    /**
+     * @internal
+     */
+    this._trackId = 0;
+    /**
+     * @internal
+     */
+    this._runnings = 0;
+    /**
+     * @internal
+     */
+    this._shouldSchedule = false;
+    /**
+     * @internal
+     */
+    this._depsLength = 0;
     recordEffectScope(this, scope);
   }
+  get dirty() {
+    if (this._dirtyLevel === 2 || this._dirtyLevel === 3) {
+      this._dirtyLevel = 1;
+      pauseTracking();
+      for (let i = 0; i < this._depsLength; i++) {
+        const dep = this.deps[i];
+        if (dep.computed) {
+          triggerComputed(dep.computed);
+          if (this._dirtyLevel >= 4) {
+            break;
+          }
+        }
+      }
+      if (this._dirtyLevel === 1) {
+        this._dirtyLevel = 0;
+      }
+      resetTracking();
+    }
+    return this._dirtyLevel >= 4;
+  }
+  set dirty(v) {
+    this._dirtyLevel = v ? 4 : 0;
+  }
   run() {
+    this._dirtyLevel = 0;
     if (!this.active) {
       return this.fn();
     }
-    let parent = activeEffect;
     let lastShouldTrack = shouldTrack;
-    while (parent) {
-      if (parent === this) {
-        return;
-      }
-      parent = parent.parent;
-    }
+    let lastEffect = activeEffect;
     try {
-      this.parent = activeEffect;
-      activeEffect = this;
       shouldTrack = true;
-      trackOpBit = 1 << ++effectTrackDepth;
-      if (effectTrackDepth <= maxMarkerBits) {
-        initDepMarkers(this);
-      } else {
-        cleanupEffect(this);
-      }
+      activeEffect = this;
+      this._runnings++;
+      preCleanupEffect(this);
       return this.fn();
     } finally {
-      if (effectTrackDepth <= maxMarkerBits) {
-        finalizeDepMarkers(this);
-      }
-      trackOpBit = 1 << --effectTrackDepth;
-      activeEffect = this.parent;
+      postCleanupEffect(this);
+      this._runnings--;
+      activeEffect = lastEffect;
       shouldTrack = lastShouldTrack;
-      this.parent = void 0;
-      if (this.deferStop) {
-        this.stop();
-      }
     }
   }
   stop() {
-    if (activeEffect === this) {
-      this.deferStop = true;
-    } else if (this.active) {
-      cleanupEffect(this);
-      if (this.onStop) {
-        this.onStop();
-      }
+    var _a;
+    if (this.active) {
+      preCleanupEffect(this);
+      postCleanupEffect(this);
+      (_a = this.onStop) == null ? void 0 : _a.call(this);
       this.active = false;
     }
   }
 }
-function cleanupEffect(effect2) {
-  const { deps } = effect2;
-  if (deps.length) {
-    for (let i = 0; i < deps.length; i++) {
-      deps[i].delete(effect2);
+function triggerComputed(computed) {
+  return computed.value;
+}
+function preCleanupEffect(effect2) {
+  effect2._trackId++;
+  effect2._depsLength = 0;
+}
+function postCleanupEffect(effect2) {
+  if (effect2.deps.length > effect2._depsLength) {
+    for (let i = effect2._depsLength; i < effect2.deps.length; i++) {
+      cleanupDepEffect(effect2.deps[i], effect2);
     }
-    deps.length = 0;
+    effect2.deps.length = effect2._depsLength;
+  }
+}
+function cleanupDepEffect(dep, effect2) {
+  const trackId = dep.get(effect2);
+  if (trackId !== void 0 && effect2._trackId !== trackId) {
+    dep.delete(effect2);
+    if (dep.size === 0) {
+      dep.cleanup();
+    }
   }
 }
 function effect(fn, options) {
-  if (fn.effect) {
+  if (fn.effect instanceof ReactiveEffect) {
     fn = fn.effect.fn;
   }
-  const _effect = new ReactiveEffect(fn);
+  const _effect = new ReactiveEffect(fn, shared_esm_bundler["a" /* NOOP */], () => {
+    if (_effect.dirty) {
+      _effect.run();
+    }
+  });
   if (options) {
     Object(shared_esm_bundler["c" /* extend */])(_effect, options);
     if (options.scope)
@@ -876,6 +974,7 @@ function stop(runner) {
   runner.effect.stop();
 }
 let shouldTrack = true;
+let pauseScheduleStack = 0;
 const trackStack = [];
 function pauseTracking() {
   trackStack.push(shouldTrack);
@@ -889,6 +988,65 @@ function resetTracking() {
   const last = trackStack.pop();
   shouldTrack = last === void 0 ? true : last;
 }
+function pauseScheduling() {
+  pauseScheduleStack++;
+}
+function resetScheduling() {
+  pauseScheduleStack--;
+  while (!pauseScheduleStack && queueEffectSchedulers.length) {
+    queueEffectSchedulers.shift()();
+  }
+}
+function trackEffect(effect2, dep, debuggerEventExtraInfo) {
+  var _a;
+  if (dep.get(effect2) !== effect2._trackId) {
+    dep.set(effect2, effect2._trackId);
+    const oldDep = effect2.deps[effect2._depsLength];
+    if (oldDep !== dep) {
+      if (oldDep) {
+        cleanupDepEffect(oldDep, effect2);
+      }
+      effect2.deps[effect2._depsLength++] = dep;
+    } else {
+      effect2._depsLength++;
+    }
+    if (false) {}
+  }
+}
+const queueEffectSchedulers = [];
+function triggerEffects(dep, dirtyLevel, debuggerEventExtraInfo) {
+  var _a;
+  pauseScheduling();
+  for (const effect2 of dep.keys()) {
+    let tracking;
+    if (effect2._dirtyLevel < dirtyLevel && (tracking != null ? tracking : tracking = dep.get(effect2) === effect2._trackId)) {
+      effect2._shouldSchedule || (effect2._shouldSchedule = effect2._dirtyLevel === 0);
+      effect2._dirtyLevel = dirtyLevel;
+    }
+    if (effect2._shouldSchedule && (tracking != null ? tracking : tracking = dep.get(effect2) === effect2._trackId)) {
+      if (false) {}
+      effect2.trigger();
+      if ((!effect2._runnings || effect2.allowRecurse) && effect2._dirtyLevel !== 2) {
+        effect2._shouldSchedule = false;
+        if (effect2.scheduler) {
+          queueEffectSchedulers.push(effect2.scheduler);
+        }
+      }
+    }
+  }
+  resetScheduling();
+}
+
+const createDep = (cleanup, computed) => {
+  const dep = /* @__PURE__ */ new Map();
+  dep.cleanup = cleanup;
+  dep.computed = computed;
+  return dep;
+};
+
+const targetMap = /* @__PURE__ */ new WeakMap();
+const ITERATE_KEY = Symbol( false ? undefined : "");
+const MAP_KEY_ITERATE_KEY = Symbol( false ? undefined : "");
 function track(target, type, key) {
   if (shouldTrack && activeEffect) {
     let depsMap = targetMap.get(target);
@@ -897,26 +1055,13 @@ function track(target, type, key) {
     }
     let dep = depsMap.get(key);
     if (!dep) {
-      depsMap.set(key, dep = createDep());
+      depsMap.set(key, dep = createDep(() => depsMap.delete(key)));
     }
-    const eventInfo =  false ? undefined : void 0;
-    trackEffects(dep, eventInfo);
-  }
-}
-function trackEffects(dep, debuggerEventExtraInfo) {
-  let shouldTrack2 = false;
-  if (effectTrackDepth <= maxMarkerBits) {
-    if (!newTracked(dep)) {
-      dep.n |= trackOpBit;
-      shouldTrack2 = !wasTracked(dep);
-    }
-  } else {
-    shouldTrack2 = !dep.has(activeEffect);
-  }
-  if (shouldTrack2) {
-    dep.add(activeEffect);
-    activeEffect.deps.push(dep);
-    if (false) {}
+    trackEffect(
+      activeEffect,
+      dep,
+       false ? undefined : void 0
+    );
   }
 }
 function trigger(target, type, key, newValue, oldValue, oldTarget) {
@@ -930,7 +1075,7 @@ function trigger(target, type, key, newValue, oldValue, oldTarget) {
   } else if (key === "length" && Object(shared_esm_bundler["f" /* isArray */])(target)) {
     const newLength = Number(newValue);
     depsMap.forEach((dep, key2) => {
-      if (key2 === "length" || key2 >= newLength) {
+      if (key2 === "length" || !Object(shared_esm_bundler["k" /* isSymbol */])(key2) && key2 >= newLength) {
         deps.push(dep);
       }
     });
@@ -964,47 +1109,17 @@ function trigger(target, type, key, newValue, oldValue, oldTarget) {
         break;
     }
   }
-  const eventInfo =  false ? undefined : void 0;
-  if (deps.length === 1) {
-    if (deps[0]) {
-      if (false) {} else {
-        triggerEffects(deps[0]);
-      }
-    }
-  } else {
-    const effects = [];
-    for (const dep of deps) {
-      if (dep) {
-        effects.push(...dep);
-      }
-    }
-    if (false) {} else {
-      triggerEffects(createDep(effects));
+  pauseScheduling();
+  for (const dep of deps) {
+    if (dep) {
+      triggerEffects(
+        dep,
+        4,
+         false ? undefined : void 0
+      );
     }
   }
-}
-function triggerEffects(dep, debuggerEventExtraInfo) {
-  const effects = Object(shared_esm_bundler["f" /* isArray */])(dep) ? dep : [...dep];
-  for (const effect2 of effects) {
-    if (effect2.computed) {
-      triggerEffect(effect2, debuggerEventExtraInfo);
-    }
-  }
-  for (const effect2 of effects) {
-    if (!effect2.computed) {
-      triggerEffect(effect2, debuggerEventExtraInfo);
-    }
-  }
-}
-function triggerEffect(effect2, debuggerEventExtraInfo) {
-  if (effect2 !== activeEffect || effect2.allowRecurse) {
-    if (false) {}
-    if (effect2.scheduler) {
-      effect2.scheduler();
-    } else {
-      effect2.run();
-    }
-  }
+  resetScheduling();
 }
 function getDepFromReactive(object, key) {
   var _a;
@@ -1015,10 +1130,6 @@ const isNonTrackableKeys = /* @__PURE__ */ Object(shared_esm_bundler["l" /* make
 const builtInSymbols = new Set(
   /* @__PURE__ */ Object.getOwnPropertyNames(Symbol).filter((key) => key !== "arguments" && key !== "caller").map((key) => Symbol[key]).filter(shared_esm_bundler["k" /* isSymbol */])
 );
-const get$1 = /* @__PURE__ */ createGetter();
-const shallowGet = /* @__PURE__ */ createGetter(false, true);
-const readonlyGet = /* @__PURE__ */ createGetter(true);
-const shallowReadonlyGet = /* @__PURE__ */ createGetter(true, true);
 const arrayInstrumentations = /* @__PURE__ */ createArrayInstrumentations();
 function createArrayInstrumentations() {
   const instrumentations = {};
@@ -1039,7 +1150,9 @@ function createArrayInstrumentations() {
   ["push", "pop", "shift", "unshift", "splice"].forEach((key) => {
     instrumentations[key] = function(...args) {
       pauseTracking();
+      pauseScheduling();
       const res = toRaw(this)[key].apply(this, args);
+      resetScheduling();
       resetTracking();
       return res;
     };
@@ -1051,16 +1164,26 @@ function reactivity_esm_bundler_hasOwnProperty(key) {
   track(obj, "has", key);
   return obj.hasOwnProperty(key);
 }
-function createGetter(isReadonly2 = false, shallow = false) {
-  return function get2(target, key, receiver) {
+class reactivity_esm_bundler_BaseReactiveHandler {
+  constructor(_isReadonly = false, _shallow = false) {
+    this._isReadonly = _isReadonly;
+    this._shallow = _shallow;
+  }
+  get(target, key, receiver) {
+    const isReadonly2 = this._isReadonly, shallow = this._shallow;
     if (key === "__v_isReactive") {
       return !isReadonly2;
     } else if (key === "__v_isReadonly") {
       return isReadonly2;
     } else if (key === "__v_isShallow") {
       return shallow;
-    } else if (key === "__v_raw" && receiver === (isReadonly2 ? shallow ? shallowReadonlyMap : readonlyMap : shallow ? shallowReactiveMap : reactiveMap).get(target)) {
-      return target;
+    } else if (key === "__v_raw") {
+      if (receiver === (isReadonly2 ? shallow ? shallowReadonlyMap : readonlyMap : shallow ? shallowReactiveMap : reactiveMap).get(target) || // receiver is not the reactive proxy, but has the same prototype
+      // this means the reciever is a user proxy of the reactive proxy
+      Object.getPrototypeOf(target) === Object.getPrototypeOf(receiver)) {
+        return target;
+      }
+      return;
     }
     const targetIsArray = Object(shared_esm_bundler["f" /* isArray */])(target);
     if (!isReadonly2) {
@@ -1088,24 +1211,27 @@ function createGetter(isReadonly2 = false, shallow = false) {
       return isReadonly2 ? readonly(res) : reactive(res);
     }
     return res;
-  };
+  }
 }
-const set$1 = /* @__PURE__ */ createSetter();
-const shallowSet = /* @__PURE__ */ createSetter(true);
-function createSetter(shallow = false) {
-  return function set2(target, key, value, receiver) {
+class reactivity_esm_bundler_MutableReactiveHandler extends reactivity_esm_bundler_BaseReactiveHandler {
+  constructor(shallow = false) {
+    super(false, shallow);
+  }
+  set(target, key, value, receiver) {
     let oldValue = target[key];
-    if (reactivity_esm_bundler_isReadonly(oldValue) && isRef(oldValue) && !isRef(value)) {
-      return false;
-    }
-    if (!shallow) {
+    if (!this._shallow) {
+      const isOldValueReadonly = reactivity_esm_bundler_isReadonly(oldValue);
       if (!reactivity_esm_bundler_isShallow(value) && !reactivity_esm_bundler_isReadonly(value)) {
         oldValue = toRaw(oldValue);
         value = toRaw(value);
       }
       if (!Object(shared_esm_bundler["f" /* isArray */])(target) && isRef(oldValue) && !isRef(value)) {
-        oldValue.value = value;
-        return true;
+        if (isOldValueReadonly) {
+          return false;
+        } else {
+          oldValue.value = value;
+          return true;
+        }
       }
     }
     const hadKey = Object(shared_esm_bundler["f" /* isArray */])(target) && Object(shared_esm_bundler["h" /* isIntegerKey */])(key) ? Number(key) < target.length : Object(shared_esm_bundler["e" /* hasOwn */])(target, key);
@@ -1118,61 +1244,51 @@ function createSetter(shallow = false) {
       }
     }
     return result;
-  };
-}
-function deleteProperty(target, key) {
-  const hadKey = Object(shared_esm_bundler["e" /* hasOwn */])(target, key);
-  const oldValue = target[key];
-  const result = Reflect.deleteProperty(target, key);
-  if (result && hadKey) {
-    trigger(target, "delete", key, void 0, oldValue);
   }
-  return result;
-}
-function has$1(target, key) {
-  const result = Reflect.has(target, key);
-  if (!Object(shared_esm_bundler["k" /* isSymbol */])(key) || !builtInSymbols.has(key)) {
-    track(target, "has", key);
+  deleteProperty(target, key) {
+    const hadKey = Object(shared_esm_bundler["e" /* hasOwn */])(target, key);
+    const oldValue = target[key];
+    const result = Reflect.deleteProperty(target, key);
+    if (result && hadKey) {
+      trigger(target, "delete", key, void 0, oldValue);
+    }
+    return result;
   }
-  return result;
+  has(target, key) {
+    const result = Reflect.has(target, key);
+    if (!Object(shared_esm_bundler["k" /* isSymbol */])(key) || !builtInSymbols.has(key)) {
+      track(target, "has", key);
+    }
+    return result;
+  }
+  ownKeys(target) {
+    track(
+      target,
+      "iterate",
+      Object(shared_esm_bundler["f" /* isArray */])(target) ? "length" : ITERATE_KEY
+    );
+    return Reflect.ownKeys(target);
+  }
 }
-function ownKeys(target) {
-  track(target, "iterate", Object(shared_esm_bundler["f" /* isArray */])(target) ? "length" : ITERATE_KEY);
-  return Reflect.ownKeys(target);
-}
-const mutableHandlers = {
-  get: get$1,
-  set: set$1,
-  deleteProperty,
-  has: has$1,
-  ownKeys
-};
-const readonlyHandlers = {
-  get: readonlyGet,
+class ReadonlyReactiveHandler extends reactivity_esm_bundler_BaseReactiveHandler {
+  constructor(shallow = false) {
+    super(true, shallow);
+  }
   set(target, key) {
     if (false) {}
     return true;
-  },
+  }
   deleteProperty(target, key) {
     if (false) {}
     return true;
   }
-};
-const shallowReactiveHandlers = /* @__PURE__ */ Object(shared_esm_bundler["c" /* extend */])(
-  {},
-  mutableHandlers,
-  {
-    get: shallowGet,
-    set: shallowSet
-  }
+}
+const mutableHandlers = /* @__PURE__ */ new reactivity_esm_bundler_MutableReactiveHandler();
+const readonlyHandlers = /* @__PURE__ */ new ReadonlyReactiveHandler();
+const shallowReactiveHandlers = /* @__PURE__ */ new reactivity_esm_bundler_MutableReactiveHandler(
+  true
 );
-const shallowReadonlyHandlers = /* @__PURE__ */ Object(shared_esm_bundler["c" /* extend */])(
-  {},
-  readonlyHandlers,
-  {
-    get: shallowReadonlyGet
-  }
-);
+const shallowReadonlyHandlers = /* @__PURE__ */ new ReadonlyReactiveHandler(true);
 
 const toShallow = (value) => value;
 const getProto = (v) => Reflect.getPrototypeOf(v);
@@ -1181,7 +1297,7 @@ function get(target, key, isReadonly = false, isShallow = false) {
   const rawTarget = toRaw(target);
   const rawKey = toRaw(key);
   if (!isReadonly) {
-    if (key !== rawKey) {
+    if (Object(shared_esm_bundler["d" /* hasChanged */])(key, rawKey)) {
       track(rawTarget, "get", key);
     }
     track(rawTarget, "get", rawKey);
@@ -1201,7 +1317,7 @@ function has(key, isReadonly = false) {
   const rawTarget = toRaw(target);
   const rawKey = toRaw(key);
   if (!isReadonly) {
-    if (key !== rawKey) {
+    if (Object(shared_esm_bundler["d" /* hasChanged */])(key, rawKey)) {
       track(rawTarget, "has", key);
     }
     track(rawTarget, "has", rawKey);
@@ -1312,7 +1428,7 @@ function createIterableMethod(method, isReadonly, isShallow) {
 function createReadonlyMethod(type) {
   return function(...args) {
     if (false) {}
-    return type === "delete" ? false : this;
+    return type === "delete" ? false : type === "clear" ? void 0 : this;
   };
 }
 function createInstrumentations() {
@@ -1554,27 +1670,95 @@ function toRaw(observed) {
   return raw ? toRaw(raw) : observed;
 }
 function markRaw(value) {
-  Object(shared_esm_bundler["b" /* def */])(value, "__v_skip", true);
+  if (Object.isExtensible(value)) {
+    Object(shared_esm_bundler["b" /* def */])(value, "__v_skip", true);
+  }
   return value;
 }
 const toReactive = (value) => Object(shared_esm_bundler["j" /* isObject */])(value) ? reactive(value) : value;
 const toReadonly = (value) => Object(shared_esm_bundler["j" /* isObject */])(value) ? readonly(value) : value;
 
+const COMPUTED_SIDE_EFFECT_WARN = `Computed is still dirty after getter evaluation, likely because a computed is mutating its own dependency in its getter. State mutations in computed getters should be avoided.  Check the docs for more details: https://vuejs.org/guide/essentials/computed.html#getters-should-be-side-effect-free`;
+class reactivity_esm_bundler_ComputedRefImpl {
+  constructor(getter, _setter, isReadonly, isSSR) {
+    this._setter = _setter;
+    this.dep = void 0;
+    this.__v_isRef = true;
+    this["__v_isReadonly"] = false;
+    this.effect = new ReactiveEffect(
+      () => getter(this._value),
+      () => triggerRefValue(
+        this,
+        this.effect._dirtyLevel === 2 ? 2 : 3
+      )
+    );
+    this.effect.computed = this;
+    this.effect.active = this._cacheable = !isSSR;
+    this["__v_isReadonly"] = isReadonly;
+  }
+  get value() {
+    const self = toRaw(this);
+    if ((!self._cacheable || self.effect.dirty) && Object(shared_esm_bundler["d" /* hasChanged */])(self._value, self._value = self.effect.run())) {
+      triggerRefValue(self, 4);
+    }
+    trackRefValue(self);
+    if (self.effect._dirtyLevel >= 2) {
+       false && false;
+      triggerRefValue(self, 2);
+    }
+    return self._value;
+  }
+  set value(newValue) {
+    this._setter(newValue);
+  }
+  // #region polyfill _dirty for backward compatibility third party code for Vue <= 3.3.x
+  get _dirty() {
+    return this.effect.dirty;
+  }
+  set _dirty(v) {
+    this.effect.dirty = v;
+  }
+  // #endregion
+}
+function reactivity_esm_bundler_computed(getterOrOptions, debugOptions, isSSR = false) {
+  let getter;
+  let setter;
+  const onlyGetter = Object(shared_esm_bundler["g" /* isFunction */])(getterOrOptions);
+  if (onlyGetter) {
+    getter = getterOrOptions;
+    setter =  false ? undefined : shared_esm_bundler["a" /* NOOP */];
+  } else {
+    getter = getterOrOptions.get;
+    setter = getterOrOptions.set;
+  }
+  const cRef = new reactivity_esm_bundler_ComputedRefImpl(getter, setter, onlyGetter || !setter, isSSR);
+  if (false) {}
+  return cRef;
+}
+
 function trackRefValue(ref2) {
+  var _a;
   if (shouldTrack && activeEffect) {
     ref2 = toRaw(ref2);
-    if (false) {} else {
-      trackEffects(ref2.dep || (ref2.dep = createDep()));
-    }
+    trackEffect(
+      activeEffect,
+      (_a = ref2.dep) != null ? _a : ref2.dep = createDep(
+        () => ref2.dep = void 0,
+        ref2 instanceof reactivity_esm_bundler_ComputedRefImpl ? ref2 : void 0
+      ),
+       false ? undefined : void 0
+    );
   }
 }
-function triggerRefValue(ref2, newVal) {
+function triggerRefValue(ref2, dirtyLevel = 4, newVal) {
   ref2 = toRaw(ref2);
   const dep = ref2.dep;
   if (dep) {
-    if (false) {} else {
-      triggerEffects(dep);
-    }
+    triggerEffects(
+      dep,
+      dirtyLevel,
+       false ? undefined : void 0
+    );
   }
 }
 function isRef(r) {
@@ -1610,12 +1794,12 @@ class reactivity_esm_bundler_RefImpl {
     if (Object(shared_esm_bundler["d" /* hasChanged */])(newVal, this._rawValue)) {
       this._rawValue = newVal;
       this._value = useDirectValue ? newVal : toReactive(newVal);
-      triggerRefValue(this, newVal);
+      triggerRefValue(this, 4, newVal);
     }
   }
 }
 function triggerRef(ref2) {
-  triggerRefValue(ref2,  false ? undefined : void 0);
+  triggerRefValue(ref2, 4,  false ? undefined : void 0);
 }
 function unref(ref2) {
   return isRef(ref2) ? ref2.value : ref2;
@@ -1708,134 +1892,114 @@ function toRef(source, key, defaultValue) {
 }
 function propertyToRef(source, key, defaultValue) {
   const val = source[key];
-  return isRef(val) ? val : new ObjectRefImpl(
-    source,
-    key,
-    defaultValue
-  );
+  return isRef(val) ? val : new ObjectRefImpl(source, key, defaultValue);
 }
 
-class ComputedRefImpl {
-  constructor(getter, _setter, isReadonly, isSSR) {
-    this._setter = _setter;
-    this.dep = void 0;
-    this.__v_isRef = true;
-    this["__v_isReadonly"] = false;
-    this._dirty = true;
-    this.effect = new ReactiveEffect(getter, () => {
-      if (!this._dirty) {
-        this._dirty = true;
-        triggerRefValue(this);
-      }
-    });
-    this.effect.computed = this;
-    this.effect.active = this._cacheable = !isSSR;
-    this["__v_isReadonly"] = isReadonly;
-  }
-  get value() {
-    const self = toRaw(this);
-    trackRefValue(self);
-    if (self._dirty || !self._cacheable) {
-      self._dirty = false;
-      self._value = self.effect.run();
-    }
-    return self._value;
-  }
-  set value(newValue) {
-    this._setter(newValue);
-  }
-}
-function computed(getterOrOptions, debugOptions, isSSR = false) {
-  let getter;
-  let setter;
-  const onlyGetter = Object(shared_esm_bundler["g" /* isFunction */])(getterOrOptions);
-  if (onlyGetter) {
-    getter = getterOrOptions;
-    setter =  false ? undefined : shared_esm_bundler["a" /* NOOP */];
-  } else {
-    getter = getterOrOptions.get;
-    setter = getterOrOptions.set;
-  }
-  const cRef = new ComputedRefImpl(getter, setter, onlyGetter || !setter, isSSR);
-  if (false) {}
-  return cRef;
-}
+const deferredComputed = reactivity_esm_bundler_computed;
 
-const tick = /* @__PURE__ */ Promise.resolve();
-const queue = [];
-let queued = false;
-const scheduler = (fn) => {
-  queue.push(fn);
-  if (!queued) {
-    queued = true;
-    tick.then(flush);
-  }
+const TrackOpTypes = {
+  "GET": "get",
+  "HAS": "has",
+  "ITERATE": "iterate"
 };
-const flush = () => {
-  for (let i = 0; i < queue.length; i++) {
-    queue[i]();
-  }
-  queue.length = 0;
-  queued = false;
+const TriggerOpTypes = {
+  "SET": "set",
+  "ADD": "add",
+  "DELETE": "delete",
+  "CLEAR": "clear"
 };
-class DeferredComputedRefImpl {
-  constructor(getter) {
-    this.dep = void 0;
-    this._dirty = true;
-    this.__v_isRef = true;
-    this["__v_isReadonly"] = true;
-    let compareTarget;
-    let hasCompareTarget = false;
-    let scheduled = false;
-    this.effect = new ReactiveEffect(getter, (computedTrigger) => {
-      if (this.dep) {
-        if (computedTrigger) {
-          compareTarget = this._value;
-          hasCompareTarget = true;
-        } else if (!scheduled) {
-          const valueToCompare = hasCompareTarget ? compareTarget : this._value;
-          scheduled = true;
-          hasCompareTarget = false;
-          scheduler(() => {
-            if (this.effect.active && this._get() !== valueToCompare) {
-              triggerRefValue(this);
-            }
-            scheduled = false;
-          });
-        }
-        for (const e of this.dep) {
-          if (e.computed instanceof DeferredComputedRefImpl) {
-            e.scheduler(
-              true
-              /* computedTrigger */
-            );
-          }
-        }
-      }
-      this._dirty = true;
-    });
-    this.effect.computed = this;
-  }
-  _get() {
-    if (this._dirty) {
-      this._dirty = false;
-      return this._value = this.effect.run();
-    }
-    return this._value;
-  }
-  get value() {
-    trackRefValue(this);
-    return toRaw(this)._get();
-  }
-}
-function deferredComputed(getter) {
-  return new DeferredComputedRefImpl(getter);
-}
+const ReactiveFlags = {
+  "SKIP": "__v_skip",
+  "IS_REACTIVE": "__v_isReactive",
+  "IS_READONLY": "__v_isReadonly",
+  "IS_SHALLOW": "__v_isShallow",
+  "RAW": "__v_raw"
+};
 
 
 
 // EXTERNAL MODULE: external "agGrid"
 var external_agGrid_ = __webpack_require__("8bd4");
+
+// CONCATENATED MODULE: ./src/Utils.ts
+
+const kebabProperty = (property) => {
+    return property.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+};
+const kebabNameToAttrEventName = (kebabName) => {
+    // grid-ready for example would become onGrid-ready in Vue
+    return `on${kebabName.charAt(0).toUpperCase()}${kebabName.substring(1, kebabName.length)}`;
+};
+const getAgGridProperties = () => {
+    const props = {};
+    // for example, 'grid-ready' would become 'onGrid-ready': undefined
+    // without this emitting events results in a warning
+    // and adding 'grid-ready' (and variations of this to the emits option in AgGridVue doesn't help either)
+    const eventNameAsProps = external_agGrid_["ComponentUtil"].PUBLIC_EVENTS.map((eventName) => kebabNameToAttrEventName(kebabProperty(eventName)));
+    eventNameAsProps.forEach((eventName) => props[eventName] = undefined);
+    const computed = {
+        props() {
+            const options = {};
+            external_agGrid_["ComponentUtil"].ALL_PROPERTIES.forEach((propertyName) => {
+                var _a;
+                if (this[propertyName] === external_agGrid_["ComponentUtil"].VUE_OMITTED_PROPERTY) {
+                    return;
+                }
+                if (propertyName in this || propertyName in this.gridOptions) {
+                    options[propertyName] = (_a = this[propertyName]) !== null && _a !== void 0 ? _a : this.gridOptions[propertyName];
+                }
+            });
+            return options;
+        },
+    };
+    const watch = {
+        modelValue: {
+            handler(currentValue, previousValue) {
+                if (!this.gridCreated || !this.api) {
+                    return;
+                }
+                /*
+                 * Prevents an infinite loop when using v-model for the rowData
+                 */
+                if (currentValue === previousValue) {
+                    return;
+                }
+                if (currentValue && previousValue) {
+                    if (currentValue.length === previousValue.length) {
+                        if (currentValue.every((item, index) => item === previousValue[index])) {
+                            return;
+                        }
+                    }
+                }
+                external_agGrid_["ComponentUtil"].processOnChange({ rowData: currentValue }, this.api);
+            },
+            deep: true
+        },
+        props: {
+            handler(currentValue, previousValue) {
+                if (!this.gridCreated || !this.api) {
+                    return;
+                }
+                const changes = {};
+                Object.entries(currentValue).forEach(([key, value]) => {
+                    if (previousValue[key] === value)
+                        return;
+                    changes[key] = value;
+                });
+                external_agGrid_["ComponentUtil"].processOnChange(changes, this.api);
+            },
+            deep: true,
+        },
+    };
+    external_agGrid_["ComponentUtil"].ALL_PROPERTIES
+        .filter((propertyName) => propertyName != 'gridOptions') // dealt with in AgGridVue itself
+        .forEach((propertyName) => {
+        props[propertyName] = {
+            default: external_agGrid_["ComponentUtil"].VUE_OMITTED_PROPERTY,
+        };
+    });
+    return [props, computed, watch];
+};
 
 // CONCATENATED MODULE: ./src/VueComponentFactory.ts
 
@@ -1913,7 +2077,13 @@ class VueComponentFactory_VueComponentFactory {
             currentParent.$options &&
             (++depth < maxDepth)) {
             const currentParentAsThis = currentParent;
-            componentInstance = currentParentAsThis.$options && currentParentAsThis.$options.components ? currentParentAsThis.$options.components[component] : null;
+            if (currentParentAsThis.$options && currentParentAsThis.$options.components && currentParentAsThis.$options.components[component]) {
+                componentInstance = currentParentAsThis.$options.components[component];
+            }
+            else if (currentParentAsThis[component]) {
+                componentInstance = currentParentAsThis[component];
+            }
+            // componentInstance =  : null;
             currentParent = currentParent.$parent;
         }
         // then search in globally registered components of app
@@ -1951,12 +2121,24 @@ class VueFrameworkComponentWrapper_VueFrameworkComponentWrapper extends external
                 super.init(params);
             }
             hasMethod(name) {
-                return wrapper.getFrameworkComponentInstance()[name] != null;
+                const componentInstance = wrapper.getFrameworkComponentInstance();
+                if (!componentInstance[name]) {
+                    return componentInstance.$.setupState[name] != null;
+                }
+                else {
+                    return true;
+                }
             }
             callMethod(name, args) {
+                var _a;
                 const componentInstance = this.getFrameworkComponentInstance();
                 const frameworkComponentInstance = wrapper.getFrameworkComponentInstance();
-                return frameworkComponentInstance[name].apply(componentInstance, args);
+                if (frameworkComponentInstance[name]) {
+                    return frameworkComponentInstance[name].apply(componentInstance, args);
+                }
+                else {
+                    return (_a = frameworkComponentInstance.$.setupState[name]) === null || _a === void 0 ? void 0 : _a.apply(componentInstance, args);
+                }
             }
             addMethod(name, callback) {
                 wrapper[name] = callback;
@@ -2015,52 +2197,22 @@ class VueComponent {
         return this.componentInstance;
     }
     init(params) {
+        var _a;
         const { componentInstance, element, destroy: unmount } = this.createComponent(params);
         this.componentInstance = componentInstance;
         this.unmount = unmount;
         // the element is the parent div we're forced to created when dynamically creating vnodes
         // the first child is the user supplied component
-        this.element = element.firstElementChild;
+        this.element = (_a = element.firstElementChild) !== null && _a !== void 0 ? _a : element;
     }
 }
-
-// CONCATENATED MODULE: ./src/Utils.ts
-
-const kebabProperty = (property) => {
-    return property.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
-};
-const kebabNameToAttrEventName = (kebabName) => {
-    // grid-ready for example would become onGrid-ready in Vue
-    return `on${kebabName.charAt(0).toUpperCase()}${kebabName.substring(1, kebabName.length)}`;
-};
-const getAgGridProperties = () => {
-    const props = {};
-    // for example, 'grid-ready' would become 'onGrid-ready': undefined
-    // without this emitting events results in a warning
-    // and adding 'grid-ready' (and variations of this to the emits option in AgGridVue doesn't help either)
-    const eventNameAsProps = external_agGrid_["ComponentUtil"].PUBLIC_EVENTS.map((eventName) => kebabNameToAttrEventName(kebabProperty(eventName)));
-    eventNameAsProps.forEach((eventName) => props[eventName] = undefined);
-    const watch = {};
-    external_agGrid_["ComponentUtil"].ALL_PROPERTIES
-        .filter((propertyName) => propertyName != 'gridOptions') // dealt with in AgGridVue itself
-        .forEach((propertyName) => {
-        props[propertyName] = {};
-        watch[propertyName] = {
-            handler(currentValue, previousValue) {
-                this.processChanges(propertyName, currentValue, previousValue);
-            },
-            deep: propertyName !== 'popupParent' && propertyName !== 'context'
-        };
-    });
-    return [props, watch];
-};
 
 // CONCATENATED MODULE: ./src/VueFrameworkOverrides.ts
 
 
 class VueFrameworkOverrides_VueFrameworkOverrides extends external_agGrid_["VanillaFrameworkOverrides"] {
     constructor(parent) {
-        super();
+        super('vue');
         this.parent = parent;
     }
     /*
@@ -2088,10 +2240,11 @@ class VueFrameworkOverrides_VueFrameworkOverrides extends external_agGrid_["Vani
 
 
 
-const ROW_DATA_EVENTS = ['rowDataChanged', 'rowDataUpdated', 'cellValueChanged', 'rowValueChanged'];
+const ROW_DATA_EVENTS = new Set(['rowDataUpdated', 'cellValueChanged', 'rowValueChanged']);
+const ALWAYS_SYNC_GLOBAL_EVENTS = new Set([external_agGrid_["Events"].EVENT_GRID_PRE_DESTROYED]);
 const DATA_MODEL_ATTR_NAME = 'onUpdate:modelValue'; // emit name would be update:ModelValue
 const DATA_MODEL_EMIT_NAME = 'update:modelValue';
-const [AgGridVue_props, AgGridVue_watch] = getAgGridProperties();
+const [AgGridVue_props, AgGridVue_computed, AgGridVue_watch] = getAgGridProperties();
 const AgGridVue = Object(external_commonjs_vue_commonjs2_vue_root_Vue_["defineComponent"])({
     render() {
         return Object(external_commonjs_vue_commonjs2_vue_root_Vue_["h"])('div');
@@ -2115,41 +2268,42 @@ const AgGridVue = Object(external_commonjs_vue_commonjs2_vue_root_Vue_["defineCo
         } }, AgGridVue_props),
     data() {
         return {
+            api: undefined,
             gridCreated: false,
             isDestroyed: false,
             gridReadyFired: false,
             emitRowModel: undefined
         };
     },
-    watch: Object.assign({ modelValue: {
-            handler(currentValue, previousValue) {
-                this.processChanges('rowData', currentValue, previousValue);
-            },
-            deep: true
-        } }, AgGridVue_watch),
+    computed: AgGridVue_computed,
+    watch: AgGridVue_watch,
     methods: {
-        globalEventListener(eventType, event) {
-            if (this.isDestroyed) {
-                return;
-            }
-            if (eventType === 'gridReady') {
-                this.gridReadyFired = true;
-            }
-            this.updateModelIfUsed(eventType);
+        globalEventListenerFactory(restrictToSyncOnly) {
+            return (eventType, event) => {
+                if (this.isDestroyed) {
+                    return;
+                }
+                if (eventType === 'gridReady') {
+                    this.gridReadyFired = true;
+                }
+                const alwaysSync = ALWAYS_SYNC_GLOBAL_EVENTS.has(eventType);
+                if ((alwaysSync && !restrictToSyncOnly) || (!alwaysSync && restrictToSyncOnly)) {
+                    return;
+                }
+                this.updateModelIfUsed(eventType);
+            };
         },
         processChanges(propertyName, currentValue, previousValue) {
             if (this.gridCreated) {
                 if (this.skipChange(propertyName, currentValue, previousValue)) {
                     return;
                 }
-                const changes = {};
-                changes[propertyName] = {
-                    // decouple the row data - if we don't when the grid changes row data directly that'll trigger this component to react to rowData changes,
-                    // which can reset grid state (ie row selection)
-                    currentValue: propertyName === 'rowData' ? (Object.isFrozen(currentValue) ? currentValue : markRaw(toRaw(currentValue))) : currentValue,
-                    previousValue,
+                const options = {
+                    [propertyName]: propertyName === 'rowData' ? (Object.isFrozen(currentValue) ? currentValue : markRaw(toRaw(currentValue))) : currentValue,
                 };
-                external_agGrid_["ComponentUtil"].processOnChange(changes, this.gridOptions.api);
+                // decouple the row data - if we don't when the grid changes row data directly that'll trigger this component to react to rowData changes,
+                // which can reset grid state (ie row selection)
+                external_agGrid_["ComponentUtil"].processOnChange(options, this.api);
             }
         },
         checkForBindingConflicts() {
@@ -2160,8 +2314,9 @@ const AgGridVue = Object(external_commonjs_vue_commonjs2_vue_root_Vue_["defineCo
             }
         },
         getRowData() {
+            var _a;
             const rowData = [];
-            this.gridOptions.api.forEachNode((rowNode) => {
+            (_a = this.api) === null || _a === void 0 ? void 0 : _a.forEachNode((rowNode) => {
                 rowData.push(rowNode.data);
             });
             return rowData;
@@ -2169,7 +2324,7 @@ const AgGridVue = Object(external_commonjs_vue_commonjs2_vue_root_Vue_["defineCo
         updateModelIfUsed(eventType) {
             if (this.gridReadyFired &&
                 this.$attrs[DATA_MODEL_ATTR_NAME] &&
-                ROW_DATA_EVENTS.indexOf(eventType) !== -1) {
+                ROW_DATA_EVENTS.has(eventType)) {
                 if (this.emitRowModel) {
                     this.emitRowModel();
                 }
@@ -2238,26 +2393,28 @@ const AgGridVue = Object(external_commonjs_vue_commonjs2_vue_root_Vue_["defineCo
         const frameworkComponentWrapper = new VueFrameworkComponentWrapper_VueFrameworkComponentWrapper(this, provides);
         // the gridOptions we pass to the grid don't need to be reactive (and shouldn't be - it'll cause issues
         // with mergeDeep for example
-        const gridOptions = markRaw(external_agGrid_["ComponentUtil"].copyAttributesToGridOptions(toRaw(this.gridOptions), this, true));
+        const gridOptions = markRaw(external_agGrid_["ComponentUtil"].combineAttributesAndGridOptions(toRaw(this.gridOptions), this));
         this.checkForBindingConflicts();
         const rowData = this.getRowDataBasedOnBindings();
-        gridOptions.rowData = rowData ? (Object.isFrozen(rowData) ? rowData : markRaw(toRaw(rowData))) : rowData;
+        if (rowData !== external_agGrid_["ComponentUtil"].VUE_OMITTED_PROPERTY) {
+            gridOptions.rowData = rowData ? (Object.isFrozen(rowData) ? rowData : markRaw(toRaw(rowData))) : rowData;
+        }
         const gridParams = {
-            globalEventListener: this.globalEventListener.bind(this),
+            globalEventListener: this.globalEventListenerFactory().bind(this),
+            globalSyncEventListener: this.globalEventListenerFactory(true).bind(this),
             frameworkOverrides: new VueFrameworkOverrides_VueFrameworkOverrides(this),
             providedBeanInstances: {
                 frameworkComponentWrapper,
             },
             modules: this.modules,
         };
-        new external_agGrid_["Grid"](this.$el, gridOptions, gridParams);
+        this.api = Object(external_agGrid_["createGrid"])(this.$el, gridOptions, gridParams);
         this.gridCreated = true;
     },
     unmounted() {
+        var _a;
         if (this.gridCreated) {
-            if (this.gridOptions.api) {
-                this.gridOptions.api.destroy();
-            }
+            (_a = this.api) === null || _a === void 0 ? void 0 : _a.destroy();
             this.isDestroyed = true;
         }
     }

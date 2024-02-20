@@ -56,13 +56,13 @@ var PinnedWidthService = /** @class */ (function (_super) {
         return this.leftWidth;
     };
     __decorate([
-        context_1.Autowired('columnModel')
+        (0, context_1.Autowired)('columnModel')
     ], PinnedWidthService.prototype, "columnModel", void 0);
     __decorate([
         context_1.PostConstruct
     ], PinnedWidthService.prototype, "postConstruct", null);
     PinnedWidthService = __decorate([
-        context_1.Bean('pinnedWidthService')
+        (0, context_1.Bean)('pinnedWidthService')
     ], PinnedWidthService);
     return PinnedWidthService;
 }(beanStub_1.BeanStub));

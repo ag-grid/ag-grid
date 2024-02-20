@@ -12,7 +12,7 @@ import { Qualifier } from "./context/context.mjs";
 import { BeanStub } from "./context/beanStub.mjs";
 let LoggerFactory = class LoggerFactory extends BeanStub {
     setBeans(gridOptionsService) {
-        this.logging = gridOptionsService.is('debug');
+        this.logging = gridOptionsService.get('debug');
     }
     create(name) {
         return new Logger(name, this.isLogging.bind(this));

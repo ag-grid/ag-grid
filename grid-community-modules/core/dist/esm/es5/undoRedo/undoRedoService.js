@@ -46,10 +46,14 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 import { Autowired, Bean, Optional, PostConstruct } from "../context/context";
 import { Events } from "../eventKeys";
@@ -90,10 +94,10 @@ var UndoRedoService = /** @class */ (function (_super) {
     }
     UndoRedoService.prototype.init = function () {
         var _this = this;
-        if (!this.gridOptionsService.is('undoRedoCellEditing')) {
+        if (!this.gridOptionsService.get('undoRedoCellEditing')) {
             return;
         }
-        var undoRedoLimit = this.gridOptionsService.getNum('undoRedoCellEditingLimit');
+        var undoRedoLimit = this.gridOptionsService.get('undoRedoCellEditingLimit');
         if (undoRedoLimit <= 0) {
             return;
         }
@@ -302,8 +306,8 @@ var UndoRedoService = /** @class */ (function (_super) {
         });
         this.addManagedListener(this.eventService, Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_END, function () {
             var action;
-            if (_this.rangeService && _this.gridOptionsService.isEnableRangeSelection()) {
-                action = new RangeUndoRedoAction(_this.cellValueChanges, undefined, undefined, __spreadArray([], __read(_this.rangeService.getCellRanges())));
+            if (_this.rangeService && _this.gridOptionsService.get('enableRangeSelection')) {
+                action = new RangeUndoRedoAction(_this.cellValueChanges, undefined, undefined, __spreadArray([], __read(_this.rangeService.getCellRanges()), false));
             }
             else {
                 action = new UndoRedoAction(_this.cellValueChanges);

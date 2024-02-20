@@ -312,7 +312,7 @@ const [columnDefs, setColumnDefs] = useState([
     { headerName: 'C', field: 'c' },
 ]);
 // object property
-const [defaultColDef, setDefaultColDef] = useMemo(() => { 
+const defaultColDef = useMemo(() => { 
 	return {
         // set every column width
         width: 100,
@@ -356,7 +356,7 @@ const [columnDefs, setColumnDefs] = useState([
 ]);
 
 // object property
-const [defaultColDef, setDefaultColDef] = useMemo(() => { 
+const defaultColDef = useMemo(() => { 
 	return {
         // set every column width
         width: 100,
@@ -403,7 +403,7 @@ const [columnDefs, setColumnDefs] = useState([
     { headerName: 'C', field: 'c' },
 ]);
 // object property
-const [defaultColDef, setDefaultColDef] = useMemo(() => { 
+const defaultColDef = useMemo(() => { 
 	return {
         // set every column width
         width: 100,
@@ -447,7 +447,7 @@ const [columnDefs, setColumnDefs] = useState([
 ]);
 
 // object property
-const [defaultColDef, setDefaultColDef] = useMemo(() => { 
+const defaultColDef = useMemo(() => { 
 	return {
         // set every column width
         width: 100,
@@ -646,10 +646,10 @@ this.postSort = rowNodes => {
 
 exports[`Snippet Component given api statements it should create 'angular' snippets 1`] = `
 "// save the columns state
-const savedState = this.gridColumnApi.getColumnState(); 
+const savedState = this.gridApi.getColumnState(); 
 
 // restore the column state
-this.gridColumnApi.applyColumnState({ state: savedState });
+this.gridApi.applyColumnState({ state: savedState });
 
 // get the row node with ID 55
 const rowNode = this.gridApi.getRowNode('55');"
@@ -657,10 +657,10 @@ const rowNode = this.gridApi.getRowNode('55');"
 
 exports[`Snippet Component given api statements it should create 'angular' snippets with space between properties 1`] = `
 "// save the columns state
-const savedState = this.gridColumnApi.getColumnState(); 
+const savedState = this.gridApi.getColumnState(); 
 
 // restore the column state
-this.gridColumnApi.applyColumnState({ state: savedState });
+this.gridApi.applyColumnState({ state: savedState });
 
 // get the row node with ID 55
 const rowNode = this.gridApi.getRowNode('55');"
@@ -668,10 +668,10 @@ const rowNode = this.gridApi.getRowNode('55');"
 
 exports[`Snippet Component given api statements it should create 'angular' snippets without framework context 1`] = `
 "// save the columns state
-const savedState = this.gridColumnApi.getColumnState(); 
+const savedState = this.gridApi.getColumnState(); 
 
 // restore the column state
-this.gridColumnApi.applyColumnState({ state: savedState });
+this.gridApi.applyColumnState({ state: savedState });
 
 // get the row node with ID 55
 const rowNode = this.gridApi.getRowNode('55');"
@@ -679,10 +679,10 @@ const rowNode = this.gridApi.getRowNode('55');"
 
 exports[`Snippet Component given api statements it should create 'angular' snippets without framework context and space between properties 1`] = `
 "// save the columns state
-const savedState = this.gridColumnApi.getColumnState(); 
+const savedState = this.gridApi.getColumnState(); 
 
 // restore the column state
-this.gridColumnApi.applyColumnState({ state: savedState });
+this.gridApi.applyColumnState({ state: savedState });
 
 // get the row node with ID 55
 const rowNode = this.gridApi.getRowNode('55');"
@@ -690,54 +690,54 @@ const rowNode = this.gridApi.getRowNode('55');"
 
 exports[`Snippet Component given api statements it should create 'javascript' snippets 1`] = `
 "// save the columns state
-const savedState = gridOptions.columnApi.getColumnState(); 
+const savedState = api.getColumnState(); 
 
 // restore the column state
-gridOptions.columnApi.applyColumnState({ state: savedState });
+api.applyColumnState({ state: savedState });
 
 // get the row node with ID 55
-const rowNode = gridOptions.api.getRowNode('55');"
+const rowNode = api.getRowNode('55');"
 `;
 
 exports[`Snippet Component given api statements it should create 'javascript' snippets with space between properties 1`] = `
 "// save the columns state
-const savedState = gridOptions.columnApi.getColumnState(); 
+const savedState = api.getColumnState(); 
 
 // restore the column state
-gridOptions.columnApi.applyColumnState({ state: savedState });
+api.applyColumnState({ state: savedState });
 
 // get the row node with ID 55
-const rowNode = gridOptions.api.getRowNode('55');"
+const rowNode = api.getRowNode('55');"
 `;
 
 exports[`Snippet Component given api statements it should create 'javascript' snippets without framework context 1`] = `
 "// save the columns state
-const savedState = gridOptions.columnApi.getColumnState(); 
+const savedState = api.getColumnState(); 
 
 // restore the column state
-gridOptions.columnApi.applyColumnState({ state: savedState });
+api.applyColumnState({ state: savedState });
 
 // get the row node with ID 55
-const rowNode = gridOptions.api.getRowNode('55');"
+const rowNode = api.getRowNode('55');"
 `;
 
 exports[`Snippet Component given api statements it should create 'javascript' snippets without framework context and space between properties 1`] = `
 "// save the columns state
-const savedState = gridOptions.columnApi.getColumnState(); 
+const savedState = api.getColumnState(); 
 
 // restore the column state
-gridOptions.columnApi.applyColumnState({ state: savedState });
+api.applyColumnState({ state: savedState });
 
 // get the row node with ID 55
-const rowNode = gridOptions.api.getRowNode('55');"
+const rowNode = api.getRowNode('55');"
 `;
 
 exports[`Snippet Component given api statements it should create 'react' snippets 1`] = `
 "// save the columns state
-const savedState = gridColumnApi.getColumnState(); 
+const savedState = gridApi.getColumnState(); 
 
 // restore the column state
-gridColumnApi.applyColumnState({ state: savedState });
+gridApi.applyColumnState({ state: savedState });
 
 // get the row node with ID 55
 const rowNode = gridApi.getRowNode('55');"
@@ -745,10 +745,10 @@ const rowNode = gridApi.getRowNode('55');"
 
 exports[`Snippet Component given api statements it should create 'react' snippets with space between properties 1`] = `
 "// save the columns state
-const savedState = gridColumnApi.getColumnState(); 
+const savedState = gridApi.getColumnState(); 
 
 // restore the column state
-gridColumnApi.applyColumnState({ state: savedState });
+gridApi.applyColumnState({ state: savedState });
 
 // get the row node with ID 55
 const rowNode = gridApi.getRowNode('55');"
@@ -756,10 +756,10 @@ const rowNode = gridApi.getRowNode('55');"
 
 exports[`Snippet Component given api statements it should create 'react' snippets without framework context 1`] = `
 "// save the columns state
-const savedState = gridColumnApi.getColumnState(); 
+const savedState = gridApi.getColumnState(); 
 
 // restore the column state
-gridColumnApi.applyColumnState({ state: savedState });
+gridApi.applyColumnState({ state: savedState });
 
 // get the row node with ID 55
 const rowNode = gridApi.getRowNode('55');"
@@ -767,10 +767,10 @@ const rowNode = gridApi.getRowNode('55');"
 
 exports[`Snippet Component given api statements it should create 'react' snippets without framework context and space between properties 1`] = `
 "// save the columns state
-const savedState = gridColumnApi.getColumnState(); 
+const savedState = gridApi.getColumnState(); 
 
 // restore the column state
-gridColumnApi.applyColumnState({ state: savedState });
+gridApi.applyColumnState({ state: savedState });
 
 // get the row node with ID 55
 const rowNode = gridApi.getRowNode('55');"
@@ -778,10 +778,10 @@ const rowNode = gridApi.getRowNode('55');"
 
 exports[`Snippet Component given api statements it should create 'vue' snippets 1`] = `
 "// save the columns state
-const savedState = this.gridColumnApi.getColumnState(); 
+const savedState = this.gridApi.getColumnState(); 
 
 // restore the column state
-this.gridColumnApi.applyColumnState({ state: savedState });
+this.gridApi.applyColumnState({ state: savedState });
 
 // get the row node with ID 55
 const rowNode = this.gridApi.getRowNode('55');"
@@ -789,10 +789,10 @@ const rowNode = this.gridApi.getRowNode('55');"
 
 exports[`Snippet Component given api statements it should create 'vue' snippets with space between properties 1`] = `
 "// save the columns state
-const savedState = this.gridColumnApi.getColumnState(); 
+const savedState = this.gridApi.getColumnState(); 
 
 // restore the column state
-this.gridColumnApi.applyColumnState({ state: savedState });
+this.gridApi.applyColumnState({ state: savedState });
 
 // get the row node with ID 55
 const rowNode = this.gridApi.getRowNode('55');"
@@ -800,10 +800,10 @@ const rowNode = this.gridApi.getRowNode('55');"
 
 exports[`Snippet Component given api statements it should create 'vue' snippets without framework context 1`] = `
 "// save the columns state
-const savedState = this.gridColumnApi.getColumnState(); 
+const savedState = this.gridApi.getColumnState(); 
 
 // restore the column state
-this.gridColumnApi.applyColumnState({ state: savedState });
+this.gridApi.applyColumnState({ state: savedState });
 
 // get the row node with ID 55
 const rowNode = this.gridApi.getRowNode('55');"
@@ -811,10 +811,10 @@ const rowNode = this.gridApi.getRowNode('55');"
 
 exports[`Snippet Component given api statements it should create 'vue' snippets without framework context and space between properties 1`] = `
 "// save the columns state
-const savedState = this.gridColumnApi.getColumnState(); 
+const savedState = this.gridApi.getColumnState(); 
 
 // restore the column state
-this.gridColumnApi.applyColumnState({ state: savedState });
+this.gridApi.applyColumnState({ state: savedState });
 
 // get the row node with ID 55
 const rowNode = this.gridApi.getRowNode('55');"

@@ -62,7 +62,7 @@ var TemplateService = /** @class */ (function (_super) {
     };
     TemplateService.prototype.handleHttpResult = function (httpResult, url) {
         if (httpResult.status !== 200 || httpResult.response === null) {
-            console.warn("AG Grid: Unable to get template error " + httpResult.status + " - " + url);
+            console.warn("AG Grid: Unable to get template error ".concat(httpResult.status, " - ").concat(url));
             return;
         }
         // response success, so process it
@@ -79,7 +79,7 @@ var TemplateService = /** @class */ (function (_super) {
         }
     };
     TemplateService = __decorate([
-        context_1.Bean('templateService')
+        (0, context_1.Bean)('templateService')
     ], TemplateService);
     return TemplateService;
 }(beanStub_1.BeanStub));

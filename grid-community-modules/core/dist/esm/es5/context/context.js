@@ -14,10 +14,14 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 import { exists, values } from "../utils/generic";
 import { iterateObject } from "../utils/object";
@@ -71,11 +75,11 @@ var Context = /** @class */ (function () {
                 constructorParamsMeta = beanEntry.bean.__agBeanMetaData.autowireMethods.agConstructor;
             }
             var constructorParams = _this.getBeansForParameters(constructorParamsMeta, beanEntry.bean.name);
-            var newInstance = new (beanEntry.bean.bind.apply(beanEntry.bean, __spreadArray([null], __read(constructorParams))));
+            var newInstance = new (beanEntry.bean.bind.apply(beanEntry.bean, __spreadArray([null], __read(constructorParams), false)));
             beanEntry.beanInstance = newInstance;
         });
         var createdBeanNames = Object.keys(this.beanWrappers).join(', ');
-        this.logger.log("created beans: " + createdBeanNames);
+        this.logger.log("created beans: ".concat(createdBeanNames));
     };
     // tslint:disable-next-line
     Context.prototype.createBeanWrapper = function (BeanClass) {
@@ -88,7 +92,7 @@ var Context = /** @class */ (function () {
             else {
                 beanName = "" + BeanClass;
             }
-            console.error("Context item " + beanName + " is not a bean");
+            console.error("Context item ".concat(beanName, " is not a bean"));
             return;
         }
         var beanEntry = {
@@ -162,7 +166,7 @@ var Context = /** @class */ (function () {
     Context.prototype.lookupBeanInstance = function (wiringBean, beanName, optional) {
         if (optional === void 0) { optional = false; }
         if (this.destroyed) {
-            this.logger.log("AG Grid: bean reference " + beanName + " is used after the grid is destroyed!");
+            this.logger.log("AG Grid: bean reference ".concat(beanName, " is used after the grid is destroyed!"));
             return null;
         }
         if (beanName === "context") {
@@ -176,7 +180,7 @@ var Context = /** @class */ (function () {
             return beanEntry.beanInstance;
         }
         if (!optional) {
-            console.error("AG Grid: unable to find bean reference " + beanName + " while initialising " + wiringBean);
+            console.error("AG Grid: unable to find bean reference ".concat(beanName, " while initialising ").concat(wiringBean));
         }
         return null;
     };

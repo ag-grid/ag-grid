@@ -3,6 +3,7 @@
 const merge = require('webpack-merge');
 const common = require('./webpack.common.beta.config.js');
 const glob = require('glob');
+const path = require("path");
 
 const moduleDirectories = glob.sync('../../grid-community-modules/*', {
     ignore: [

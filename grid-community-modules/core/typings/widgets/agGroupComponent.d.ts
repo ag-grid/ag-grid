@@ -40,7 +40,9 @@ export declare class AgGroupComponent extends Component {
     setAlignItems(alignment: AgGroupComponentParams['alignItems']): this;
     toggleGroupExpand(expanded?: boolean): this;
     addItems(items: GroupItem[]): void;
+    prependItem(item: GroupItem): void;
     addItem(item: GroupItem): void;
+    private insertItem;
     hideItem(hide: boolean, index: number): void;
     setTitle(title: string): this;
     addCssClassToTitleBar(cssClass: string): void;

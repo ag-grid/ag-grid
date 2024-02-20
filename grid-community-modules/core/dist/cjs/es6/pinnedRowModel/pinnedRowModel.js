@@ -15,19 +15,21 @@ const generic_1 = require("../utils/generic");
 const array_1 = require("../utils/array");
 let PinnedRowModel = class PinnedRowModel extends beanStub_1.BeanStub {
     init() {
-        this.setPinnedTopRowData(this.gridOptionsService.get('pinnedTopRowData'));
-        this.setPinnedBottomRowData(this.gridOptionsService.get('pinnedBottomRowData'));
+        this.setPinnedTopRowData();
+        this.setPinnedBottomRowData();
+        this.addManagedPropertyListener('pinnedTopRowData', () => this.setPinnedTopRowData());
+        this.addManagedPropertyListener('pinnedBottomRowData', () => this.setPinnedBottomRowData());
     }
     isEmpty(floating) {
         const rows = floating === 'top' ? this.pinnedTopRows : this.pinnedBottomRows;
-        return generic_1.missingOrEmpty(rows);
+        return (0, generic_1.missingOrEmpty)(rows);
     }
     isRowsToRender(floating) {
         return !this.isEmpty(floating);
     }
     getRowAtPixel(pixel, floating) {
         const rows = floating === 'top' ? this.pinnedTopRows : this.pinnedBottomRows;
-        if (generic_1.missingOrEmpty(rows)) {
+        if ((0, generic_1.missingOrEmpty)(rows)) {
             return 0; // this should never happen, just in case, 0 is graceful failure
         }
         for (let i = 0; i < rows.length; i++) {
@@ -41,14 +43,16 @@ let PinnedRowModel = class PinnedRowModel extends beanStub_1.BeanStub {
         }
         return rows.length - 1;
     }
-    setPinnedTopRowData(rowData) {
+    setPinnedTopRowData() {
+        const rowData = this.gridOptionsService.get('pinnedTopRowData');
         this.pinnedTopRows = this.createNodesFromData(rowData, true);
         const event = {
             type: events_1.Events.EVENT_PINNED_ROW_DATA_CHANGED
         };
         this.eventService.dispatchEvent(event);
     }
-    setPinnedBottomRowData(rowData) {
+    setPinnedBottomRowData() {
+        const rowData = this.gridOptionsService.get('pinnedBottomRowData');
         this.pinnedBottomRows = this.createNodesFromData(rowData, false);
         const event = {
             type: events_1.Events.EVENT_PINNED_ROW_DATA_CHANGED
@@ -96,13 +100,13 @@ let PinnedRowModel = class PinnedRowModel extends beanStub_1.BeanStub {
         return this.pinnedBottomRows[index];
     }
     forEachPinnedTopRow(callback) {
-        if (generic_1.missingOrEmpty(this.pinnedTopRows)) {
+        if ((0, generic_1.missingOrEmpty)(this.pinnedTopRows)) {
             return;
         }
         this.pinnedTopRows.forEach(callback);
     }
     forEachPinnedBottomRow(callback) {
-        if (generic_1.missingOrEmpty(this.pinnedBottomRows)) {
+        if ((0, generic_1.missingOrEmpty)(this.pinnedBottomRows)) {
             return;
         }
         this.pinnedBottomRows.forEach(callback);
@@ -114,17 +118,17 @@ let PinnedRowModel = class PinnedRowModel extends beanStub_1.BeanStub {
         if (!rowNodes || rowNodes.length === 0) {
             return 0;
         }
-        const lastNode = array_1.last(rowNodes);
+        const lastNode = (0, array_1.last)(rowNodes);
         return lastNode.rowTop + lastNode.rowHeight;
     }
 };
 __decorate([
-    context_1.Autowired('beans')
+    (0, context_1.Autowired)('beans')
 ], PinnedRowModel.prototype, "beans", void 0);
 __decorate([
     context_1.PostConstruct
 ], PinnedRowModel.prototype, "init", null);
 PinnedRowModel = __decorate([
-    context_1.Bean('pinnedRowModel')
+    (0, context_1.Bean)('pinnedRowModel')
 ], PinnedRowModel);
 exports.PinnedRowModel = PinnedRowModel;

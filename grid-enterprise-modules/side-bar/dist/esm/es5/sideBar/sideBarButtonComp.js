@@ -36,7 +36,7 @@ var SideBarButtonComp = /** @class */ (function (_super) {
         this.setLabel();
         this.setIcon();
         this.addManagedListener(this.eToggleButton, 'click', this.onButtonPressed.bind(this));
-        this.eToggleButton.setAttribute('id', "ag-" + this.getCompId() + "-button");
+        this.eToggleButton.setAttribute('id', "ag-".concat(this.getCompId(), "-button"));
     };
     SideBarButtonComp.prototype.createTemplate = function () {
         var res = /* html */ "<div class=\"ag-side-button\" role=\"presentation\">\n                <button type=\"button\" ref=\"eToggleButton\" tabindex=\"-1\" role=\"tab\" aria-expanded=\"false\" class=\"ag-button ag-side-button-button\">\n                    <div ref=\"eIconWrapper\" class=\"ag-side-button-icon-wrapper\" aria-hidden=\"true\"></div>\n                    <span ref =\"eLabel\" class=\"ag-side-button-label\"></span>\n                </button>\n            </div>";

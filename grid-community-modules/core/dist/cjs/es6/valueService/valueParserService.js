@@ -13,19 +13,16 @@ const generic_1 = require("../utils/generic");
 let ValueParserService = class ValueParserService extends beanStub_1.BeanStub {
     parseValue(column, rowNode, newValue, oldValue) {
         const colDef = column.getColDef();
-        const params = {
+        const params = this.gridOptionsService.addGridCommonParams({
             node: rowNode,
             data: rowNode === null || rowNode === void 0 ? void 0 : rowNode.data,
             oldValue,
             newValue,
             colDef,
-            column,
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context
-        };
+            column
+        });
         const valueParser = colDef.valueParser;
-        if (generic_1.exists(valueParser)) {
+        if ((0, generic_1.exists)(valueParser)) {
             if (typeof valueParser === 'function') {
                 return valueParser(params);
             }
@@ -35,9 +32,9 @@ let ValueParserService = class ValueParserService extends beanStub_1.BeanStub {
     }
 };
 __decorate([
-    context_1.Autowired('expressionService')
+    (0, context_1.Autowired)('expressionService')
 ], ValueParserService.prototype, "expressionService", void 0);
 ValueParserService = __decorate([
-    context_1.Bean('valueParserService')
+    (0, context_1.Bean)('valueParserService')
 ], ValueParserService);
 exports.ValueParserService = ValueParserService;

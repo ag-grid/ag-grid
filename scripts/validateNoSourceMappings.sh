@@ -1,5 +1,5 @@
-COMMUNITY_ROOTS=("grid-community-modules" "charts-community-modules")
-ENTERPRISE_ROOTS=("grid-enterprise-modules" "charts-enterprise-modules")
+COMMUNITY_ROOTS=("grid-community-modules")
+ENTERPRISE_ROOTS=("grid-enterprise-modules")
 PACKAGES_ROOTS=("grid-packages")
 
 function forEachDirectory {
@@ -15,7 +15,7 @@ function forEachDirectory {
         echo "Checking $RELATIVE_PATH..."
 
         # exclude bundles (umd, umd etc)
-        COUNT=`grep -R sourceMappingURL "$RELATIVE_PATH" | grep -Ev 'ag-grid-community|ag-grid-enterprise' | wc -l`
+        COUNT=`grep -R sourceMappingURL "$RELATIVE_PATH" | grep -Ev 'ag-grid-community|ag-grid-enterprise|ag-grid-charts-enterprise' | wc -l`
         if [ "$COUNT" -ne "0" ]; then
           echo "**************************************************************"
           echo "$RELATIVE_PATH has references to sourceMappingURL";

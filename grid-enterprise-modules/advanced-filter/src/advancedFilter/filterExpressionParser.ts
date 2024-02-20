@@ -1,6 +1,6 @@
 import { AdvancedFilterModel, AutocompleteEntry, AutocompleteListParams } from "@ag-grid-community/core";
 import { JoinFilterExpressionParser } from "./joinFilterExpressionParser";
-import { AutocompleteUpdate, FilterExpression, FilterExpressionParserParams } from "./filterExpressionUtils";
+import { AutocompleteUpdate, FilterExpression, FilterExpressionFunctionParams, FilterExpressionParserParams } from "./filterExpressionUtils";
 
 export class FilterExpressionParser {
     private joinExpressionParser: JoinFilterExpressionParser;
@@ -24,16 +24,22 @@ export class FilterExpressionParser {
         if (!error) { return null; }
         const { message, startPosition, endPosition } = error;
         return startPosition < this.params.expression.length
-            ? this.params.translate('advancedFilterValidationMessage', [message, this.params.expression.slice(startPosition, endPosition + 1).trim()])
-            : this.params.translate('advancedFilterValidationMessageAtEnd', [message]);
+            ? this.params.advancedFilterExpressionService.translate('advancedFilterValidationMessage', [
+                message, this.params.expression.slice(startPosition, endPosition + 1).trim()
+            ])
+            : this.params.advancedFilterExpressionService.translate('advancedFilterValidationMessageAtEnd', [message]);
     }
 
     public getFunction(): FilterExpression {
-        const args: any[] = [];
-        const functionBody = `return ${this.joinExpressionParser.getFunction(args)};`;
+        const params: FilterExpressionFunctionParams = {
+            operands: [],
+            operators: [],
+            evaluatorParams: []
+        };
+        const functionBody = `return ${this.joinExpressionParser.getFunction(params)};`;
         return {
             functionBody,
-            args
+            params
         };
     }
 
@@ -42,7 +48,7 @@ export class FilterExpressionParser {
     }
 
     public updateExpression(position: number, updateEntry: AutocompleteEntry, type?: string): AutocompleteUpdate {
-        return this.joinExpressionParser.updateExpression(position, updateEntry, type);
+        return this.joinExpressionParser.updateExpression(position, updateEntry, type)!;
     }
 
     public getModel(): AdvancedFilterModel | null {

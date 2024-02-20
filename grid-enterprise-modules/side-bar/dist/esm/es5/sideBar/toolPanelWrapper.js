@@ -29,22 +29,22 @@ var ToolPanelWrapper = /** @class */ (function (_super) {
     ToolPanelWrapper.prototype.setupResize = function () {
         var eGui = this.getGui();
         var resizeBar = this.resizeBar = this.createManagedBean(new HorizontalResizeComp());
-        eGui.setAttribute('id', "ag-" + this.getCompId());
+        eGui.setAttribute('id', "ag-".concat(this.getCompId()));
         resizeBar.setElementToResize(eGui);
         this.appendChild(resizeBar);
     };
     ToolPanelWrapper.prototype.getToolPanelId = function () {
         return this.toolPanelId;
     };
-    ToolPanelWrapper.prototype.setToolPanelDef = function (toolPanelDef) {
+    ToolPanelWrapper.prototype.setToolPanelDef = function (toolPanelDef, params) {
         var id = toolPanelDef.id, minWidth = toolPanelDef.minWidth, maxWidth = toolPanelDef.maxWidth, width = toolPanelDef.width;
         this.toolPanelId = id;
         this.width = width;
-        var params = {};
         var compDetails = this.userComponentFactory.getToolPanelCompDetails(toolPanelDef, params);
         var componentPromise = compDetails.newAgStackInstance();
+        this.params = compDetails.params;
         if (componentPromise == null) {
-            console.warn("AG Grid: error processing tool panel component " + id + ". You need to specify 'toolPanel'");
+            console.warn("AG Grid: error processing tool panel component ".concat(id, ". You need to specify 'toolPanel'"));
             return;
         }
         componentPromise.then(this.setToolPanelComponent.bind(this));
@@ -63,20 +63,20 @@ var ToolPanelWrapper = /** @class */ (function (_super) {
             _this.destroyBean(compInstance);
         });
         if (this.width) {
-            this.getGui().style.width = this.width + "px";
+            this.getGui().style.width = "".concat(this.width, "px");
         }
     };
     ToolPanelWrapper.prototype.getToolPanelInstance = function () {
         return this.toolPanelCompInstance;
     };
     ToolPanelWrapper.prototype.setResizerSizerSide = function (side) {
-        var isRtl = this.gridOptionsService.is('enableRtl');
+        var isRtl = this.gridOptionsService.get('enableRtl');
         var isLeft = side === 'left';
         var inverted = isRtl ? isLeft : !isLeft;
         this.resizeBar.setInverted(inverted);
     };
     ToolPanelWrapper.prototype.refresh = function () {
-        this.toolPanelCompInstance.refresh();
+        this.toolPanelCompInstance.refresh(this.params);
     };
     ToolPanelWrapper.TEMPLATE = "<div class=\"ag-tool-panel-wrapper\" role=\"tabpanel\"/>";
     __decorate([

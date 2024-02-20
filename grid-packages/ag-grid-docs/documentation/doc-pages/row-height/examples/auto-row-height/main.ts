@@ -1,5 +1,7 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 import { getData } from "./data";
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -22,15 +24,11 @@ const gridOptions: GridOptions = {
       headerName: 'B) Normal Height',
     },
   ],
-  defaultColDef: {
-    sortable: true,
-    resizable: true,
-  },
   onGridReady: (params) => {
     // in this example, the CSS styles are loaded AFTER the grid is created,
     // so we put this in a timeout, so height is calculated after styles are applied.
-    setTimeout(function () {
-      params.api.setRowData(getData())
+    setTimeout(() => {
+      params.api.setGridOption('rowData', getData())
     }, 500)
   },
   sideBar: {
@@ -60,7 +58,7 @@ const gridOptions: GridOptions = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })
 
 

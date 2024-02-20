@@ -93,7 +93,7 @@ let DisplayedGroupCreator = class DisplayedGroupCreator extends beanStub_1.BeanS
         if (columnGroup && columnGroup.getProvidedColumnGroup() !== providedGroup) {
             columnGroup = null;
         }
-        if (generic_1.exists(columnGroup)) {
+        if ((0, generic_1.exists)(columnGroup)) {
             // clean out the old column group here, as we will be adding children into it again
             columnGroup.reset();
         }
@@ -131,6 +131,6 @@ let DisplayedGroupCreator = class DisplayedGroupCreator extends beanStub_1.BeanS
     }
 };
 DisplayedGroupCreator = __decorate([
-    context_1.Bean('displayedGroupCreator')
+    (0, context_1.Bean)('displayedGroupCreator')
 ], DisplayedGroupCreator);
 exports.DisplayedGroupCreator = DisplayedGroupCreator;

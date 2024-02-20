@@ -2,14 +2,14 @@ import { IDoesFilterPassParams, IFilterComp, IFilterParams } from "@ag-grid-comm
 
 export class CustomNumberFilter implements IFilterComp {
     filterText!: string | null;
-    params!: IFilterParams;
+    filterParams!: IFilterParams;
     gui!: HTMLDivElement;
     eFilterText: any;
     onFilterChanged!: () => void;
 
     init(params: IFilterParams) {
         this.filterText = null
-        this.params = params
+        this.filterParams = params
         this.setupGui()
     }
 
@@ -24,7 +24,7 @@ export class CustomNumberFilter implements IFilterComp {
 
         this.onFilterChanged = () => {
             this.extractFilterText()
-            this.params.filterChangedCallback()
+            this.filterParams.filterChangedCallback()
         }
 
         this.eFilterText = this.gui.querySelector('#filterText')
@@ -44,19 +44,9 @@ export class CustomNumberFilter implements IFilterComp {
             return true;
         }
 
-        var { api, colDef, column, columnApi, context, valueGetter } = this.params;
         var { node } = params;
 
-        var value = valueGetter({
-            api,
-            colDef,
-            column,
-            columnApi,
-            context,
-            data: node.data,
-            getValue: (field) => node.data[field],
-            node,
-        });
+        var value = this.filterParams.getValue(node);
 
         var filterValue = this.filterText;
 

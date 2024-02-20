@@ -8,6 +8,7 @@ export declare class CellCustomStyleFeature extends BeanStub {
     private readonly beans;
     private staticClasses;
     private cellComp;
+    private cellClassRules?;
     constructor(ctrl: CellCtrl, beans: Beans);
     setComp(comp: ICellComp): void;
     applyCellClassRules(): void;

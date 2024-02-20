@@ -24,13 +24,14 @@ const jiraRequest = (url) => {
     return issueData.issues;
 }
 
-const executeJiraRequest = (url) => {
+const executeJiraRequest = (url, componentSelector) => {
     const result = jiraRequest(url)
         .map(issue => {
             const {
                 key,
                 fields: {
                     summary,
+                    components,
                     fixVersions,
                     customfield_10536: features,
                     customfield_10522: moreInformation = "",
@@ -49,9 +50,12 @@ const executeJiraRequest = (url) => {
                 versions = fixVersions.map(fixVersion => fixVersion.name);
             }
 
+            const componentsByName = components ? components.map(component => component.name) : [];
+
             return {
                 key,
                 issueType,
+                componentsByName,
                 summary,
                 versions,
                 status,
@@ -62,7 +66,8 @@ const executeJiraRequest = (url) => {
                 breakingChangesNotes,
                 documentationUrl
             }
-        });
+        })
+        .filter(result => result.componentsByName.some(component => component === componentSelector));
     return JSON.stringify(result);
 }
 

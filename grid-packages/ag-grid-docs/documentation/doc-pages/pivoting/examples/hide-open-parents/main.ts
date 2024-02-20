@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
   // row group columns
@@ -20,6 +20,8 @@ const columnDefs: ColDef[] = [
   { field: 'total', aggFunc: 'sum' },
 ]
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
   defaultColDef: {
@@ -29,8 +31,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     enablePivot: true,
     enableValue: true,
     filter: true,
-    resizable: true,
-    sortable: true,
   },
   autoGroupColumnDef: {
     minWidth: 250,
@@ -39,20 +39,18 @@ const gridOptions: GridOptions<IOlympicData> = {
   groupDefaultExpanded: 9,
   groupHideOpenParents: true,
   groupDisplayType: 'multipleColumns',
-  animateRows: true,
   sideBar: true,
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
-  // do http request to get our sample data - not using any framework to keep the example self contained.
-  // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
+
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
     .then(function (data) {
-      gridOptions.api!.setRowData(data)
+      gridApi!.setGridOption('rowData', data)
     })
 })

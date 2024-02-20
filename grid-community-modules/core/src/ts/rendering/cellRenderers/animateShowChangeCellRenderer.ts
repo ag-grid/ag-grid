@@ -10,13 +10,6 @@ const ARROW_DOWN = '\u2193';
 
 export class AnimateShowChangeCellRenderer extends Component implements ICellRenderer {
 
-    private static TEMPLATE =
-        '<span>' +
-        '<span class="ag-value-change-delta"></span>' +
-        '<span class="ag-value-change-value"></span>' +
-        '</span>';
-
-    // private params: any;
     private lastValue: number;
 
     private eValue: HTMLElement;
@@ -27,16 +20,26 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
     @Autowired('filterManager') private filterManager: FilterManager;
 
     constructor() {
-        super(AnimateShowChangeCellRenderer.TEMPLATE);
+        super();
+
+        const template = document.createElement('span');
+        const delta = document.createElement('span');
+        delta.setAttribute('class', 'ag-value-change-delta');
+        
+        const value = document.createElement('span');
+        value.setAttribute('class', 'ag-value-change-value');
+        
+        template.appendChild(delta);
+        template.appendChild(value);
+
+        this.setTemplateFromElement(template);
     }
 
     public init(params: any): void {
-        // this.params = params;
-
         this.eValue = this.queryForHtmlElement('.ag-value-change-value');
         this.eDelta = this.queryForHtmlElement('.ag-value-change-delta');
 
-        this.refresh(params);
+        this.refresh(params, true);
     }
 
     private showDelta(params: any, delta: number): void {
@@ -49,10 +52,10 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
         const deltaUp = (delta >= 0);
 
         if (deltaUp) {
-            this.eDelta.innerHTML = ARROW_UP + valueToUse;
+            this.eDelta.textContent = ARROW_UP + valueToUse;
         } else {
             // because negative, use ABS to remove sign
-            this.eDelta.innerHTML = ARROW_DOWN + valueToUse;
+            this.eDelta.textContent = ARROW_DOWN + valueToUse;
         }
 
         this.eDelta.classList.toggle('ag-value-change-delta-up', deltaUp);
@@ -65,11 +68,13 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
         // is not the most recent and will not try to remove the delta value.
         this.refreshCount++;
         const refreshCountCopy = this.refreshCount;
-        window.setTimeout(() => {
-            if (refreshCountCopy === this.refreshCount) {
-                this.hideDeltaValue();
-            }
-        }, 2000);
+        this.getFrameworkOverrides().wrapIncoming(() => {
+            window.setTimeout(() => {
+                if (refreshCountCopy === this.refreshCount) {
+                    this.hideDeltaValue();
+                }
+            }, 2000);
+        });
     }
 
     private hideDeltaValue(): void {
@@ -77,7 +82,7 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
         clearElement(this.eDelta);
     }
 
-    public refresh(params: any): boolean {
+    public refresh(params: any, isInitialRender: boolean = false): boolean {
         const value = params.value;
 
         if (value === this.lastValue) {
@@ -85,9 +90,9 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
         }
 
         if (exists(params.valueFormatted)) {
-            this.eValue.innerHTML = params.valueFormatted;
+            this.eValue.textContent = params.valueFormatted;
         } else if (exists(params.value)) {
-            this.eValue.innerHTML = value;
+            this.eValue.textContent = value;
         } else {
             clearElement(this.eValue);
         }
@@ -109,7 +114,9 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
             this.eValue.classList.add('ag-value-change-value-highlight');
         }
 
-        this.setTimerToRemoveDelta();
+        if(!isInitialRender){
+            this.setTimerToRemoveDelta();
+        }
 
         this.lastValue = value;
 

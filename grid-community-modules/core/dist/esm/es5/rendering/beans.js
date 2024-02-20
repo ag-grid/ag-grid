@@ -14,7 +14,6 @@ var Beans = /** @class */ (function () {
     function Beans() {
     }
     Beans.prototype.postConstruct = function () {
-        this.doingMasterDetail = this.gridOptionsService.isMasterDetail();
         if (this.gridOptionsService.isRowModelType('clientSide')) {
             this.clientSideRowModel = this.rowModel;
         }
@@ -76,9 +75,6 @@ var Beans = /** @class */ (function () {
     __decorate([
         Autowired('focusService')
     ], Beans.prototype, "focusService", void 0);
-    __decorate([
-        Optional('contextMenuFactory')
-    ], Beans.prototype, "contextMenuFactory", void 0);
     __decorate([
         Autowired('popupService')
     ], Beans.prototype, "popupService", void 0);
@@ -157,6 +153,12 @@ var Beans = /** @class */ (function () {
     __decorate([
         Autowired('valueParserService')
     ], Beans.prototype, "valueParserService", void 0);
+    __decorate([
+        Autowired('syncService')
+    ], Beans.prototype, "syncService", void 0);
+    __decorate([
+        Autowired('ariaAnnouncementService')
+    ], Beans.prototype, "ariaAnnouncementService", void 0);
     __decorate([
         PostConstruct
     ], Beans.prototype, "postConstruct", null);

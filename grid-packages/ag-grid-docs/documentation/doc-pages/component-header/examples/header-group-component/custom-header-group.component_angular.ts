@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
+import { NgClass } from '@angular/common';
 import { IHeaderGroupAngularComp } from "@ag-grid-community/angular";
 import { IHeaderGroupParams } from '@ag-grid-community/core';
 @Component({
-    selector: 'app-custom-header-group',
+    standalone: true,
+    imports: [NgClass],
     template: `
         <div class="ag-header-group-cell-label">
             <div class="customHeaderLabel">{{params.displayName}}</div>
@@ -25,8 +27,11 @@ import { IHeaderGroupParams } from '@ag-grid-community/core';
                 transform: rotate(180deg);
             }
 
-            .collapsed {
+            .fa-arrow-right {
                 color: cornflowerblue;
+            }
+
+            .collapsed {
                 animation-name: toCollapsed;
                 animation-duration: 1s;
                 -webkit-transform: rotate(0deg); /* Chrome, Safari, Opera */
@@ -57,18 +62,12 @@ import { IHeaderGroupParams } from '@ag-grid-community/core';
                 font-size: 11px;
             }
 
-            .active {
-                color: cornflowerblue;
-            }
-
             @keyframes toExpanded {
                 from {
-                    color: cornflowerblue;
                     -webkit-transform: rotate(0deg); /* Chrome, Safari, Opera */
                     transform: rotate(0deg);
                 }
                 to {
-                    color: black;
                     -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */
                     transform: rotate(180deg);
                 }
@@ -76,12 +75,10 @@ import { IHeaderGroupParams } from '@ag-grid-community/core';
 
             @keyframes toCollapsed {
                 from {
-                    color: black;
                     -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */
                     transform: rotate(180deg);
                 }
                 to {
-                    color: cornflowerblue;
                     -webkit-transform: rotate(0deg); /* Chrome, Safari, Opera */
                     transform: rotate(0deg);
                 }

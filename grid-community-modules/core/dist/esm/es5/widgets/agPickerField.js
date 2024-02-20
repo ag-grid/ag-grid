@@ -21,66 +21,82 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { AgAbstractField } from "./agAbstractField";
 import { RefSelector } from "./componentAnnotations";
-import { setAriaLabelledBy, setAriaLabel, setAriaDescribedBy, setAriaExpanded } from "../utils/aria";
+import { setAriaExpanded, setAriaRole } from "../utils/aria";
 import { createIconNoSpan } from "../utils/icon";
-import { exists } from "../utils/generic";
-import { setElementWidth, isVisible, getAbsoluteWidth } from "../utils/dom";
+import { setElementWidth, getAbsoluteWidth, getInnerHeight, formatSize } from "../utils/dom";
 import { KeyCode } from '../constants/keyCode';
 import { Autowired } from "../context/context";
+import { Events } from "../eventKeys";
+var TEMPLATE = /* html */ "\n    <div class=\"ag-picker-field\" role=\"presentation\">\n        <div ref=\"eLabel\"></div>\n            <div ref=\"eWrapper\" class=\"ag-wrapper ag-picker-field-wrapper ag-picker-collapsed\">\n            <div ref=\"eDisplayField\" class=\"ag-picker-field-display\"></div>\n            <div ref=\"eIcon\" class=\"ag-picker-field-icon\" aria-hidden=\"true\"></div>\n        </div>\n    </div>";
 var AgPickerField = /** @class */ (function (_super) {
     __extends(AgPickerField, _super);
-    function AgPickerField(config, className, pickerIcon, ariaRole) {
-        var _this = _super.call(this, config, 
-        /* html */ "<div class=\"ag-picker-field\" role=\"presentation\">\n                <div ref=\"eLabel\"></div>\n                <div ref=\"eWrapper\"\n                    class=\"ag-wrapper ag-picker-field-wrapper ag-picker-collapsed\"\n                    tabIndex=\"-1\"\n                    aria-expanded=\"false\"\n                    " + (ariaRole ? "role=\"" + ariaRole + "\"" : '') + "\n                >\n                    <div ref=\"eDisplayField\" class=\"ag-picker-field-display\"></div>\n                    <div ref=\"eIcon\" class=\"ag-picker-field-icon\" aria-hidden=\"true\"></div>\n                </div>\n            </div>", className) || this;
-        _this.pickerIcon = pickerIcon;
+    function AgPickerField(config) {
+        var _this = _super.call(this, config, (config === null || config === void 0 ? void 0 : config.template) || TEMPLATE, config === null || config === void 0 ? void 0 : config.className) || this;
         _this.isPickerDisplayed = false;
         _this.skipClick = false;
         _this.pickerGap = 4;
         _this.hideCurrentPicker = null;
+        _this.ariaRole = config === null || config === void 0 ? void 0 : config.ariaRole;
         _this.onPickerFocusIn = _this.onPickerFocusIn.bind(_this);
         _this.onPickerFocusOut = _this.onPickerFocusOut.bind(_this);
-        if ((config === null || config === void 0 ? void 0 : config.pickerGap) != null) {
-            _this.pickerGap = config.pickerGap;
+        if (!config) {
+            return _this;
+        }
+        var pickerGap = config.pickerGap, maxPickerHeight = config.maxPickerHeight, variableWidth = config.variableWidth, minPickerWidth = config.minPickerWidth, maxPickerWidth = config.maxPickerWidth;
+        if (pickerGap != null) {
+            _this.pickerGap = pickerGap;
+        }
+        _this.variableWidth = !!variableWidth;
+        if (maxPickerHeight != null) {
+            _this.setPickerMaxHeight(maxPickerHeight);
+        }
+        if (minPickerWidth != null) {
+            _this.setPickerMinWidth(minPickerWidth);
+        }
+        if (maxPickerWidth != null) {
+            _this.setPickerMaxWidth(maxPickerWidth);
         }
         return _this;
     }
     AgPickerField.prototype.postConstruct = function () {
-        var _this = this;
         _super.prototype.postConstruct.call(this);
-        var displayId = "ag-" + this.getCompId() + "-display";
+        this.setupAria();
+        var displayId = "ag-".concat(this.getCompId(), "-display");
         this.eDisplayField.setAttribute('id', displayId);
-        setAriaDescribedBy(this.eWrapper, displayId);
-        var eGui = this.getGui();
-        this.addManagedListener(eGui, 'mousedown', function (e) {
-            var _a;
-            if (!_this.skipClick &&
-                ((_a = _this.pickerComponent) === null || _a === void 0 ? void 0 : _a.isAlive()) &&
-                isVisible(_this.pickerComponent.getGui()) &&
-                eGui.contains(e.target)) {
-                _this.skipClick = true;
-            }
-        });
-        var focusEl = this.getFocusableElement();
-        this.addManagedListener(eGui, 'keydown', this.onKeyDown.bind(this));
-        this.addManagedListener(this.eLabel, 'click', this.clickHandler.bind(this));
-        this.addManagedListener(focusEl, 'click', this.clickHandler.bind(this));
-        if (this.pickerIcon) {
-            var icon = createIconNoSpan(this.pickerIcon, this.gridOptionsService);
+        var ariaEl = this.getAriaElement();
+        this.addManagedListener(ariaEl, 'keydown', this.onKeyDown.bind(this));
+        this.addManagedListener(this.eLabel, 'mousedown', this.onLabelOrWrapperMouseDown.bind(this));
+        this.addManagedListener(this.eWrapper, 'mousedown', this.onLabelOrWrapperMouseDown.bind(this));
+        var pickerIcon = this.config.pickerIcon;
+        if (pickerIcon) {
+            var icon = createIconNoSpan(pickerIcon, this.gridOptionsService);
             if (icon) {
                 this.eIcon.appendChild(icon);
             }
         }
     };
-    AgPickerField.prototype.refreshLabel = function () {
-        if (exists(this.getLabel())) {
-            setAriaLabelledBy(this.eWrapper, this.getLabelId());
+    AgPickerField.prototype.setupAria = function () {
+        var ariaEl = this.getAriaElement();
+        ariaEl.setAttribute('tabindex', (this.gridOptionsService.get('tabIndex')).toString());
+        setAriaExpanded(ariaEl, false);
+        if (this.ariaRole) {
+            setAriaRole(ariaEl, this.ariaRole);
         }
-        else {
-            this.eWrapper.removeAttribute('aria-labelledby');
-        }
-        _super.prototype.refreshLabel.call(this);
     };
-    AgPickerField.prototype.clickHandler = function () {
+    AgPickerField.prototype.onLabelOrWrapperMouseDown = function (e) {
+        if (e) {
+            var focusableEl = this.getFocusableElement();
+            // if the focusableEl is not the wrapper and the mousedown
+            // targets the focusableEl, we should not expand/collapse the picker.
+            // Note: this will happen when AgRichSelect is set with `allowTyping=true`
+            if (focusableEl !== this.eWrapper && (e === null || e === void 0 ? void 0 : e.target) === focusableEl) {
+                return;
+            }
+            // this prevents a BUG where MouseDown causes the element to be focused
+            // after the picker is shown and focus ends up being lost.
+            e.preventDefault();
+            this.getFocusableElement().focus();
+        }
         if (this.skipClick) {
             this.skipClick = false;
             return;
@@ -88,7 +104,12 @@ var AgPickerField = /** @class */ (function (_super) {
         if (this.isDisabled()) {
             return;
         }
-        this.showPicker();
+        if (this.isPickerDisplayed) {
+            this.hidePicker();
+        }
+        else {
+            this.showPicker();
+        }
     };
     AgPickerField.prototype.onKeyDown = function (e) {
         switch (e.key) {
@@ -97,7 +118,7 @@ var AgPickerField = /** @class */ (function (_super) {
             case KeyCode.ENTER:
             case KeyCode.SPACE:
                 e.preventDefault();
-                this.clickHandler();
+                this.onLabelOrWrapperMouseDown();
                 break;
             case KeyCode.ESCAPE:
                 if (this.isPickerDisplayed) {
@@ -125,17 +146,15 @@ var AgPickerField = /** @class */ (function (_super) {
         var _this = this;
         var eDocument = this.gridOptionsService.getDocument();
         var ePicker = this.pickerComponent.getGui();
-        if (!this.gridOptionsService.is('suppressScrollWhenPopupsAreOpen')) {
-            this.destroyMouseWheelFunc = this.addManagedListener(eDocument.body, 'wheel', function (e) {
-                if (!ePicker.contains(e.target)) {
-                    _this.hidePicker();
-                }
+        if (!this.gridOptionsService.get('suppressScrollWhenPopupsAreOpen')) {
+            this.destroyMouseWheelFunc = this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL, function () {
+                _this.hidePicker();
             });
         }
         var translate = this.localeService.getLocaleTextFunc();
-        var _a = this.config, pickerType = _a.pickerType, pickerAriaLabelKey = _a.pickerAriaLabelKey, pickerAriaLabelValue = _a.pickerAriaLabelValue;
+        var _a = this.config, pickerAriaLabelKey = _a.pickerAriaLabelKey, pickerAriaLabelValue = _a.pickerAriaLabelValue, _b = _a.modalPicker, modalPicker = _b === void 0 ? true : _b;
         var popupParams = {
-            modal: true,
+            modal: modalPicker,
             eChild: ePicker,
             closeOnEsc: true,
             closedCallback: function () {
@@ -148,17 +167,41 @@ var AgPickerField = /** @class */ (function (_super) {
             ariaLabel: translate(pickerAriaLabelKey, pickerAriaLabelValue),
         };
         var addPopupRes = this.popupService.addPopup(popupParams);
-        setElementWidth(ePicker, getAbsoluteWidth(this.eWrapper));
+        var _c = this, maxPickerHeight = _c.maxPickerHeight, minPickerWidth = _c.minPickerWidth, maxPickerWidth = _c.maxPickerWidth, variableWidth = _c.variableWidth;
+        if (variableWidth) {
+            if (minPickerWidth) {
+                ePicker.style.minWidth = minPickerWidth;
+            }
+            ePicker.style.width = formatSize(getAbsoluteWidth(this.eWrapper));
+            if (maxPickerWidth) {
+                ePicker.style.maxWidth = maxPickerWidth;
+            }
+        }
+        else {
+            setElementWidth(ePicker, maxPickerWidth !== null && maxPickerWidth !== void 0 ? maxPickerWidth : getAbsoluteWidth(this.eWrapper));
+        }
+        var maxHeight = maxPickerHeight !== null && maxPickerHeight !== void 0 ? maxPickerHeight : "".concat(getInnerHeight(this.popupService.getPopupParent()), "px");
+        ePicker.style.setProperty('max-height', maxHeight);
         ePicker.style.position = 'absolute';
+        this.alignPickerToComponent();
+        return addPopupRes.hideFunc;
+    };
+    AgPickerField.prototype.alignPickerToComponent = function () {
+        if (!this.pickerComponent) {
+            return;
+        }
+        var pickerType = this.config.pickerType;
+        var pickerGap = this.pickerGap;
+        var alignSide = this.gridOptionsService.get('enableRtl') ? 'right' : 'left';
         this.popupService.positionPopupByComponent({
             type: pickerType,
             eventSource: this.eWrapper,
-            ePopup: ePicker,
+            ePopup: this.pickerComponent.getGui(),
             position: 'under',
+            alignSide: alignSide,
             keepWithinBounds: true,
-            nudgeY: this.pickerGap
+            nudgeY: pickerGap
         });
-        return addPopupRes.hideFunc;
     };
     AgPickerField.prototype.beforeHidePicker = function () {
         if (this.destroyMouseWheelFunc) {
@@ -177,7 +220,8 @@ var AgPickerField = /** @class */ (function (_super) {
         if (!this.isAlive()) {
             return;
         }
-        setAriaExpanded(this.eWrapper, expanded);
+        var ariaEl = this.getAriaElement();
+        setAriaExpanded(ariaEl, expanded);
         this.eWrapper.classList.toggle('ag-picker-expanded', expanded);
         this.eWrapper.classList.toggle('ag-picker-collapsed', !expanded);
     };
@@ -201,10 +245,6 @@ var AgPickerField = /** @class */ (function (_super) {
             this.hideCurrentPicker();
         }
     };
-    AgPickerField.prototype.setAriaLabel = function (label) {
-        setAriaLabel(this.eWrapper, label);
-        return this;
-    };
     AgPickerField.prototype.setInputWidth = function (width) {
         setElementWidth(this.eWrapper, width);
         return this;
@@ -214,6 +254,27 @@ var AgPickerField = /** @class */ (function (_super) {
     };
     AgPickerField.prototype.setPickerGap = function (gap) {
         this.pickerGap = gap;
+        return this;
+    };
+    AgPickerField.prototype.setPickerMinWidth = function (width) {
+        if (typeof width === 'number') {
+            width = "".concat(width, "px");
+        }
+        this.minPickerWidth = width == null ? undefined : width;
+        return this;
+    };
+    AgPickerField.prototype.setPickerMaxWidth = function (width) {
+        if (typeof width === 'number') {
+            width = "".concat(width, "px");
+        }
+        this.maxPickerWidth = width == null ? undefined : width;
+        return this;
+    };
+    AgPickerField.prototype.setPickerMaxHeight = function (height) {
+        if (typeof height === 'number') {
+            height = "".concat(height, "px");
+        }
+        this.maxPickerHeight = height == null ? undefined : height;
         return this;
     };
     AgPickerField.prototype.destroy = function () {

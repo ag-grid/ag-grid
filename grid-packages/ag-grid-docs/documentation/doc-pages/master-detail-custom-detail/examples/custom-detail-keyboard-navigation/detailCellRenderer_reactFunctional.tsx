@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { ICellRendererParams } from '@ag-grid-community/core';
+import { CustomCellRendererProps } from '@ag-grid-community/react';
 
 const findRowForEl = (el: HTMLElement): HTMLElement | null => {
   let rowEl: HTMLElement | null = el;
@@ -11,7 +11,7 @@ const findRowForEl = (el: HTMLElement): HTMLElement | null => {
   return null;
 }
 
-const DetailCellRenderer = ({ data, eParentOfValue }: ICellRendererParams) => {
+const DetailCellRenderer = ({ data, eParentOfValue }: CustomCellRendererProps) => {
   const firstRecord = data.callRecords[0];
   const [callId, setCallId] = useState(firstRecord.callId);
   const [number, setNumber] = useState(firstRecord.number);
@@ -24,7 +24,15 @@ const DetailCellRenderer = ({ data, eParentOfValue }: ICellRendererParams) => {
     const currentRow = currentEl && parseInt(currentEl.getAttribute('row-index')!, 10);
     const previousRow = previousRowEl && parseInt(previousRowEl.getAttribute('row-index')!, 10);
 
-    const inputs = currentEl.querySelectorAll('input');
+    const inputs = Array.from(currentEl.querySelectorAll('input')).filter((el: any) => {
+      if (el.checkVisibility) {
+          return el.checkVisibility({
+              checkOpacity: true,
+              checkVisibilityCSS: true
+          });
+      }
+      return !!el.offsetParent && window.getComputedStyle(el).visibility === 'visible';
+  });
   
     // Navigating forward, or unknown previous row
     if (!previousRow || currentRow >= previousRow) {

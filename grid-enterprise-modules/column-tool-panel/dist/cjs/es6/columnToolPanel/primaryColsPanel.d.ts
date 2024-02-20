@@ -21,4 +21,5 @@ export declare class PrimaryColsPanel extends Component implements IPrimaryColsP
     private onUnselectAll;
     private onGroupExpanded;
     private onSelectionChange;
+    getExpandedGroups(): string[];
 }

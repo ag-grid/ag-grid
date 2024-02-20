@@ -11,6 +11,15 @@ exports.AggFuncService = void 0;
 const core_1 = require("@ag-grid-community/core");
 // @ts-ignore
 const AGBigInt = typeof BigInt === 'undefined' ? null : BigInt;
+const defaultAggFuncNames = {
+    sum: 'Sum',
+    first: 'First',
+    last: 'Last',
+    min: 'Min',
+    max: 'Max',
+    count: 'Count',
+    avg: 'Average',
+};
 let AggFuncService = AggFuncService_1 = class AggFuncService extends core_1.BeanStub {
     constructor() {
         super(...arguments);
@@ -40,6 +49,10 @@ let AggFuncService = AggFuncService_1 = class AggFuncService extends core_1.Bean
         const funcExists = core_1._.exists(this.aggFuncsMap[func]);
         return allowed && funcExists;
     }
+    getDefaultFuncLabel(fctName) {
+        var _a;
+        return (_a = defaultAggFuncNames[fctName]) !== null && _a !== void 0 ? _a : fctName;
+    }
     getDefaultAggFunc(column) {
         const defaultAgg = column.getColDef().defaultAggFunc;
         if (core_1._.exists(defaultAgg) && this.isAggFuncPossible(column, defaultAgg)) {
@@ -52,11 +65,10 @@ let AggFuncService = AggFuncService_1 = class AggFuncService extends core_1.Bean
         return core_1._.existsAndNotEmpty(allKeys) ? allKeys[0] : null;
     }
     addAggFuncs(aggFuncs) {
-        core_1._.iterateObject(aggFuncs, this.addAggFunc.bind(this));
-    }
-    addAggFunc(key, aggFunc) {
         this.init();
-        this.aggFuncsMap[key] = aggFunc;
+        core_1._.iterateObject(aggFuncs, (key, aggFunc) => {
+            this.aggFuncsMap[key] = aggFunc;
+        });
     }
     getAggFunc(name) {
         this.init();
@@ -81,7 +93,7 @@ __decorate([
     core_1.PostConstruct
 ], AggFuncService.prototype, "init", null);
 AggFuncService = AggFuncService_1 = __decorate([
-    core_1.Bean('aggFuncService')
+    (0, core_1.Bean)('aggFuncService')
 ], AggFuncService);
 exports.AggFuncService = AggFuncService;
 function aggSum(params) {

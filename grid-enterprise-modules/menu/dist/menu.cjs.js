@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/menu - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.1.0
+          * @ag-grid-enterprise/menu - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.1.0
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -11,7 +11,7 @@ var core = require('@ag-grid-community/core');
 var core$1 = require('@ag-grid-enterprise/core');
 var columnToolPanel = require('@ag-grid-enterprise/column-tool-panel');
 
-var __extends$3 = (undefined && undefined.__extends) || (function () {
+var __extends$6 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -26,44 +26,53 @@ var __extends$3 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$3 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$6 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var EnterpriseMenuFactory = /** @class */ (function (_super) {
-    __extends$3(EnterpriseMenuFactory, _super);
+    __extends$6(EnterpriseMenuFactory, _super);
     function EnterpriseMenuFactory() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     EnterpriseMenuFactory.prototype.hideActiveMenu = function () {
         this.destroyBean(this.activeMenu);
     };
-    EnterpriseMenuFactory.prototype.showMenuAfterMouseEvent = function (column, mouseEvent, defaultTab) {
+    EnterpriseMenuFactory.prototype.showMenuAfterMouseEvent = function (column, mouseEvent, containerType, filtersOnly) {
         var _this = this;
+        var defaultTab = filtersOnly ? 'filterMenuTab' : undefined;
         this.showMenu(column, function (menu) {
+            var _a;
             var ePopup = menu.getGui();
             _this.popupService.positionPopupUnderMouseEvent({
-                type: 'columnMenu',
+                type: containerType,
                 column: column,
                 mouseEvent: mouseEvent,
                 ePopup: ePopup
             });
             if (defaultTab) {
-                menu.showTab(defaultTab);
+                (_a = menu.showTab) === null || _a === void 0 ? void 0 : _a.call(menu, defaultTab);
             }
-        }, 'columnMenu', defaultTab, undefined, mouseEvent.target);
+            _this.dispatchVisibleChangedEvent(true, false, column, defaultTab);
+        }, containerType, defaultTab, undefined, mouseEvent.target);
     };
-    EnterpriseMenuFactory.prototype.showMenuAfterButtonClick = function (column, eventSource, containerType, defaultTab, restrictToTabs) {
+    EnterpriseMenuFactory.prototype.showMenuAfterButtonClick = function (column, eventSource, containerType, filtersOnly) {
         var _this = this;
         var multiplier = -1;
         var alignSide = 'left';
-        if (this.gridOptionsService.is('enableRtl')) {
+        if (this.gridOptionsService.get('enableRtl')) {
             multiplier = 1;
             alignSide = 'right';
         }
+        var defaultTab = filtersOnly ? 'filterMenuTab' : undefined;
+        var restrictToTabs = defaultTab ? [defaultTab] : undefined;
+        var isLegacyMenuEnabled = this.menuService.isLegacyMenuEnabled();
+        var nudgeX = (isLegacyMenuEnabled ? 9 : 4) * multiplier;
+        var nudgeY = isLegacyMenuEnabled ? -23 : 4;
         this.showMenu(column, function (menu) {
+            var _a;
             var ePopup = menu.getGui();
             _this.popupService.positionPopupByComponent({
                 type: containerType,
@@ -71,21 +80,31 @@ var EnterpriseMenuFactory = /** @class */ (function (_super) {
                 eventSource: eventSource,
                 ePopup: ePopup,
                 alignSide: alignSide,
-                nudgeX: 9 * multiplier,
-                nudgeY: -23,
+                nudgeX: nudgeX,
+                nudgeY: nudgeY,
                 position: 'under',
                 keepWithinBounds: true,
             });
             if (defaultTab) {
-                menu.showTab(defaultTab);
+                (_a = menu.showTab) === null || _a === void 0 ? void 0 : _a.call(menu, defaultTab);
             }
+            _this.dispatchVisibleChangedEvent(true, false, column, defaultTab);
         }, containerType, defaultTab, restrictToTabs, eventSource);
     };
     EnterpriseMenuFactory.prototype.showMenu = function (column, positionCallback, containerType, defaultTab, restrictToTabs, eventSource) {
         var _this = this;
-        var _a = this.getMenuParams(column, restrictToTabs, eventSource), menu = _a.menu, eMenuGui = _a.eMenuGui, currentHeaderPosition = _a.currentHeaderPosition, currentColumnIndex = _a.currentColumnIndex, anchorToElement = _a.anchorToElement;
+        var _a;
+        var _b = this.getMenuParams(column, restrictToTabs, eventSource), menu = _b.menu, eMenuGui = _b.eMenuGui, anchorToElement = _b.anchorToElement, restoreFocusParams = _b.restoreFocusParams;
         var closedFuncs = [];
-        closedFuncs.push(this.getClosedCallback(column, menu, currentHeaderPosition, currentColumnIndex, eventSource));
+        if (column) {
+            // if we don't have a column, then the menu wasn't launched via keyboard navigation
+            closedFuncs.push(function (e) {
+                var eComp = menu.getGui();
+                _this.destroyBean(menu);
+                column === null || column === void 0 ? void 0 : column.setMenuVisible(false, 'contextMenu');
+                _this.menuUtils.restoreFocusOnClose(restoreFocusParams, eComp, e);
+            });
+        }
         var translate = this.localeService.getLocaleTextFunc();
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
@@ -95,6 +114,7 @@ var EnterpriseMenuFactory = /** @class */ (function (_super) {
             closeOnEsc: true,
             closedCallback: function (e) {
                 closedFuncs.forEach(function (f) { return f(e); });
+                _this.dispatchVisibleChangedEvent(false, false, column, defaultTab);
             },
             afterGuiAttached: function (params) { return menu.afterGuiAttached(Object.assign({}, { container: containerType }, params)); },
             // if defaultTab is not present, positionCallback will be called
@@ -103,22 +123,26 @@ var EnterpriseMenuFactory = /** @class */ (function (_super) {
             ariaLabel: translate('ariaLabelColumnMenu', 'Column Menu')
         });
         if (!defaultTab) {
-            menu.showTabBasedOnPreviousSelection();
+            (_a = menu.showTabBasedOnPreviousSelection) === null || _a === void 0 ? void 0 : _a.call(menu);
             // reposition the menu because the method above could load
             // an element that is bigger than enterpriseMenu header.
             positionCallback(menu);
         }
-        // if user starts showing / hiding columns, or otherwise move the underlying column
-        // for this menu, we want to stop tracking the menu with the column position. otherwise
-        // the menu would move as the user is using the columns tab inside the menu.
-        var stopAnchoringPromise = this.popupService.setPopupPositionRelatedToElement(eMenuGui, anchorToElement);
-        if (stopAnchoringPromise) {
-            this.addStopAnchoring(stopAnchoringPromise, column, closedFuncs);
+        if (this.menuService.isColumnMenuAnchoringEnabled()) {
+            // if user starts showing / hiding columns, or otherwise move the underlying column
+            // for this menu, we want to stop tracking the menu with the column position. otherwise
+            // the menu would move as the user is using the columns tab inside the menu.
+            var stopAnchoringPromise = this.popupService.setPopupPositionRelatedToElement(eMenuGui, anchorToElement);
+            if (stopAnchoringPromise && column) {
+                this.addStopAnchoring(stopAnchoringPromise, column, closedFuncs);
+            }
         }
-        menu.addEventListener(EnterpriseMenu.EVENT_TAB_SELECTED, function (event) {
+        menu.addEventListener(TabbedColumnMenu.EVENT_TAB_SELECTED, function (event) {
+            _this.dispatchVisibleChangedEvent(false, true, column);
             _this.lastSelectedTab = event.key;
+            _this.dispatchVisibleChangedEvent(true, true, column);
         });
-        column.setMenuVisible(true, 'contextMenu');
+        column === null || column === void 0 ? void 0 : column.setMenuVisible(true, 'contextMenu');
         this.activeMenu = menu;
         menu.addEventListener(core.BeanStub.EVENT_DESTROYED, function () {
             if (_this.activeMenu === menu) {
@@ -136,92 +160,106 @@ var EnterpriseMenuFactory = /** @class */ (function (_super) {
             });
         });
     };
-    EnterpriseMenuFactory.prototype.getClosedCallback = function (column, menu, headerPosition, columnIndex, eventSource) {
-        var _this = this;
-        return function (e) {
-            _this.destroyBean(menu);
-            column.setMenuVisible(false, 'contextMenu');
-            var isKeyboardEvent = e instanceof KeyboardEvent;
-            if (!isKeyboardEvent || !eventSource) {
-                return;
-            }
-            var isColumnStillVisible = _this.columnModel.getAllDisplayedColumns().some(function (col) { return col === column; });
-            if (isColumnStillVisible && core._.isVisible(eventSource)) {
-                var focusableEl = _this.focusService.findTabbableParent(eventSource);
-                if (focusableEl) {
-                    if (column) {
-                        _this.headerNavigationService.scrollToColumn(column);
-                    }
-                    focusableEl.focus();
-                }
-            }
-            // if the focusEl is no longer in the DOM, we try to focus
-            // the header that is closest to the previous header position
-            else if (headerPosition && columnIndex !== -1) {
-                var allColumns = _this.columnModel.getAllDisplayedColumns();
-                var columnToFocus = allColumns[columnIndex] || core._.last(allColumns);
-                if (columnToFocus) {
-                    _this.focusService.focusHeaderPosition({
-                        headerPosition: {
-                            headerRowIndex: headerPosition.headerRowIndex,
-                            column: columnToFocus
-                        }
-                    });
-                }
-            }
-        };
-    };
     EnterpriseMenuFactory.prototype.getMenuParams = function (column, restrictToTabs, eventSource) {
-        var menu = this.createBean(new EnterpriseMenu(column, this.lastSelectedTab, restrictToTabs));
+        var restoreFocusParams = {
+            column: column,
+            headerPosition: this.focusService.getFocusedHeader(),
+            columnIndex: this.columnModel.getAllDisplayedColumns().indexOf(column),
+            eventSource: eventSource
+        };
+        var menu = this.createMenu(column, restoreFocusParams, restrictToTabs, eventSource);
         return {
             menu: menu,
             eMenuGui: menu.getGui(),
-            currentHeaderPosition: this.focusService.getFocusedHeader(),
-            currentColumnIndex: this.columnModel.getAllDisplayedColumns().indexOf(column),
-            anchorToElement: eventSource || this.ctrlsService.getGridBodyCtrl().getGui()
+            anchorToElement: eventSource || this.ctrlsService.getGridBodyCtrl().getGui(),
+            restoreFocusParams: restoreFocusParams
         };
     };
-    EnterpriseMenuFactory.prototype.isMenuEnabled = function (column) {
-        return column.getMenuTabs(EnterpriseMenu.TABS_DEFAULT).length > 0;
+    EnterpriseMenuFactory.prototype.createMenu = function (column, restoreFocusParams, restrictToTabs, eventSource) {
+        if (this.menuService.isLegacyMenuEnabled()) {
+            return this.createBean(new TabbedColumnMenu(column, restoreFocusParams, this.lastSelectedTab, restrictToTabs, eventSource));
+        }
+        else {
+            return this.createBean(new ColumnContextMenu(column, restoreFocusParams, eventSource));
+        }
     };
-    __decorate$3([
+    EnterpriseMenuFactory.prototype.dispatchVisibleChangedEvent = function (visible, switchingTab, column, defaultTab) {
+        var _a, _b;
+        var event = {
+            type: core.Events.EVENT_COLUMN_MENU_VISIBLE_CHANGED,
+            visible: visible,
+            switchingTab: switchingTab,
+            key: ((_b = (_a = this.lastSelectedTab) !== null && _a !== void 0 ? _a : defaultTab) !== null && _b !== void 0 ? _b : (this.menuService.isLegacyMenuEnabled() ? TabbedColumnMenu.TAB_GENERAL : 'columnMenu')),
+            column: column !== null && column !== void 0 ? column : null
+        };
+        this.eventService.dispatchEvent(event);
+    };
+    EnterpriseMenuFactory.prototype.isMenuEnabled = function (column) {
+        var _a;
+        if (!this.menuService.isLegacyMenuEnabled()) {
+            return true;
+        }
+        // Determine whether there are any tabs to show in the menu, given that the filter tab may be hidden
+        var isFilterDisabled = !this.filterManager.isFilterAllowed(column);
+        var tabs = (_a = column.getColDef().menuTabs) !== null && _a !== void 0 ? _a : TabbedColumnMenu.TABS_DEFAULT;
+        var numActiveTabs = isFilterDisabled && tabs.includes(TabbedColumnMenu.TAB_FILTER)
+            ? tabs.length - 1
+            : tabs.length;
+        return numActiveTabs > 0;
+    };
+    EnterpriseMenuFactory.prototype.showMenuAfterContextMenuEvent = function (column, mouseEvent, touchEvent) {
+        var _this = this;
+        this.menuUtils.onContextMenu(mouseEvent, touchEvent, function (eventOrTouch) {
+            _this.showMenuAfterMouseEvent(column, eventOrTouch, 'columnMenu');
+            return true;
+        });
+    };
+    __decorate$6([
         core.Autowired('popupService')
     ], EnterpriseMenuFactory.prototype, "popupService", void 0);
-    __decorate$3([
+    __decorate$6([
         core.Autowired('focusService')
     ], EnterpriseMenuFactory.prototype, "focusService", void 0);
-    __decorate$3([
-        core.Autowired('headerNavigationService')
-    ], EnterpriseMenuFactory.prototype, "headerNavigationService", void 0);
-    __decorate$3([
+    __decorate$6([
         core.Autowired('ctrlsService')
     ], EnterpriseMenuFactory.prototype, "ctrlsService", void 0);
-    __decorate$3([
+    __decorate$6([
         core.Autowired('columnModel')
     ], EnterpriseMenuFactory.prototype, "columnModel", void 0);
-    EnterpriseMenuFactory = __decorate$3([
-        core.Bean('menuFactory')
+    __decorate$6([
+        core.Autowired('filterManager')
+    ], EnterpriseMenuFactory.prototype, "filterManager", void 0);
+    __decorate$6([
+        core.Autowired('menuUtils')
+    ], EnterpriseMenuFactory.prototype, "menuUtils", void 0);
+    __decorate$6([
+        core.Autowired('menuService')
+    ], EnterpriseMenuFactory.prototype, "menuService", void 0);
+    EnterpriseMenuFactory = __decorate$6([
+        core.Bean('enterpriseMenuFactory')
     ], EnterpriseMenuFactory);
     return EnterpriseMenuFactory;
 }(core.BeanStub));
-var EnterpriseMenu = /** @class */ (function (_super) {
-    __extends$3(EnterpriseMenu, _super);
-    function EnterpriseMenu(column, initialSelection, restrictTo) {
+var TabbedColumnMenu = /** @class */ (function (_super) {
+    __extends$6(TabbedColumnMenu, _super);
+    function TabbedColumnMenu(column, restoreFocusParams, initialSelection, restrictTo, sourceElement) {
         var _this = _super.call(this) || this;
+        _this.column = column;
+        _this.restoreFocusParams = restoreFocusParams;
+        _this.initialSelection = initialSelection;
+        _this.restrictTo = restrictTo;
+        _this.sourceElement = sourceElement;
         _this.tabFactories = {};
         _this.includeChecks = {};
-        _this.column = column;
-        _this.initialSelection = initialSelection;
-        _this.tabFactories[EnterpriseMenu.TAB_GENERAL] = _this.createMainPanel.bind(_this);
-        _this.tabFactories[EnterpriseMenu.TAB_FILTER] = _this.createFilterPanel.bind(_this);
-        _this.tabFactories[EnterpriseMenu.TAB_COLUMNS] = _this.createColumnsPanel.bind(_this);
-        _this.includeChecks[EnterpriseMenu.TAB_GENERAL] = function () { return true; };
-        _this.includeChecks[EnterpriseMenu.TAB_FILTER] = function () { return _this.filterManager.isFilterAllowed(column); };
-        _this.includeChecks[EnterpriseMenu.TAB_COLUMNS] = function () { return true; };
-        _this.restrictTo = restrictTo;
+        _this.tabFactories[TabbedColumnMenu.TAB_GENERAL] = _this.createMainPanel.bind(_this);
+        _this.tabFactories[TabbedColumnMenu.TAB_FILTER] = _this.createFilterPanel.bind(_this);
+        _this.tabFactories[TabbedColumnMenu.TAB_COLUMNS] = _this.createColumnsPanel.bind(_this);
+        _this.includeChecks[TabbedColumnMenu.TAB_GENERAL] = function () { return true; };
+        _this.includeChecks[TabbedColumnMenu.TAB_FILTER] = function () { return column ? _this.filterManager.isFilterAllowed(column) : false; };
+        _this.includeChecks[TabbedColumnMenu.TAB_COLUMNS] = function () { return true; };
         return _this;
     }
-    EnterpriseMenu.prototype.init = function () {
+    TabbedColumnMenu.prototype.init = function () {
         var _this = this;
         var tabs = this.getTabsToCreate().map(function (name) { return _this.createTab(name); });
         this.tabbedLayout = new core.TabbedLayout({
@@ -236,185 +274,101 @@ var EnterpriseMenu = /** @class */ (function (_super) {
         }
         this.addDestroyFunc(function () { return _this.destroyBean(_this.tabbedLayout); });
     };
-    EnterpriseMenu.prototype.getTabsToCreate = function () {
+    TabbedColumnMenu.prototype.getTabsToCreate = function () {
         var _this = this;
+        var _a, _b;
         if (this.restrictTo) {
             return this.restrictTo;
         }
-        return this.column.getMenuTabs(EnterpriseMenu.TABS_DEFAULT)
+        return ((_b = (_a = this.column) === null || _a === void 0 ? void 0 : _a.getColDef().menuTabs) !== null && _b !== void 0 ? _b : TabbedColumnMenu.TABS_DEFAULT)
             .filter(function (tabName) { return _this.isValidMenuTabItem(tabName); })
             .filter(function (tabName) { return _this.isNotSuppressed(tabName); })
             .filter(function (tabName) { return _this.isModuleLoaded(tabName); });
     };
-    EnterpriseMenu.prototype.isModuleLoaded = function (menuTabName) {
-        if (menuTabName === EnterpriseMenu.TAB_COLUMNS) {
+    TabbedColumnMenu.prototype.isModuleLoaded = function (menuTabName) {
+        if (menuTabName === TabbedColumnMenu.TAB_COLUMNS) {
             return core.ModuleRegistry.__isRegistered(core.ModuleNames.ColumnsToolPanelModule, this.context.getGridId());
         }
         return true;
     };
-    EnterpriseMenu.prototype.isValidMenuTabItem = function (menuTabName) {
+    TabbedColumnMenu.prototype.isValidMenuTabItem = function (menuTabName) {
         var isValid = true;
-        var itemsToConsider = EnterpriseMenu.TABS_DEFAULT;
+        var itemsToConsider = TabbedColumnMenu.TABS_DEFAULT;
         if (this.restrictTo != null) {
             isValid = this.restrictTo.indexOf(menuTabName) > -1;
             itemsToConsider = this.restrictTo;
         }
-        isValid = isValid && EnterpriseMenu.TABS_DEFAULT.indexOf(menuTabName) > -1;
+        isValid = isValid && TabbedColumnMenu.TABS_DEFAULT.indexOf(menuTabName) > -1;
         if (!isValid) {
-            console.warn("AG Grid: Trying to render an invalid menu item '" + menuTabName + "'. Check that your 'menuTabs' contains one of [" + itemsToConsider + "]");
+            console.warn("AG Grid: Trying to render an invalid menu item '".concat(menuTabName, "'. Check that your 'menuTabs' contains one of [").concat(itemsToConsider, "]"));
         }
         return isValid;
     };
-    EnterpriseMenu.prototype.isNotSuppressed = function (menuTabName) {
+    TabbedColumnMenu.prototype.isNotSuppressed = function (menuTabName) {
         return this.includeChecks[menuTabName]();
     };
-    EnterpriseMenu.prototype.createTab = function (name) {
+    TabbedColumnMenu.prototype.createTab = function (name) {
         return this.tabFactories[name]();
     };
-    EnterpriseMenu.prototype.showTabBasedOnPreviousSelection = function () {
+    TabbedColumnMenu.prototype.showTabBasedOnPreviousSelection = function () {
         // show the tab the user was on last time they had a menu open
         this.showTab(this.initialSelection);
     };
-    EnterpriseMenu.prototype.showTab = function (toShow) {
-        if (this.tabItemColumns && toShow === EnterpriseMenu.TAB_COLUMNS) {
+    TabbedColumnMenu.prototype.showTab = function (toShow) {
+        if (this.tabItemColumns && toShow === TabbedColumnMenu.TAB_COLUMNS) {
             this.tabbedLayout.showItem(this.tabItemColumns);
         }
-        else if (this.tabItemFilter && toShow === EnterpriseMenu.TAB_FILTER) {
+        else if (this.tabItemFilter && toShow === TabbedColumnMenu.TAB_FILTER) {
             this.tabbedLayout.showItem(this.tabItemFilter);
         }
-        else if (this.tabItemGeneral && toShow === EnterpriseMenu.TAB_GENERAL) {
+        else if (this.tabItemGeneral && toShow === TabbedColumnMenu.TAB_GENERAL) {
             this.tabbedLayout.showItem(this.tabItemGeneral);
         }
         else {
             this.tabbedLayout.showFirstItem();
         }
     };
-    EnterpriseMenu.prototype.onTabItemClicked = function (event) {
+    TabbedColumnMenu.prototype.onTabItemClicked = function (event) {
         var key = null;
         switch (event.item) {
             case this.tabItemColumns:
-                key = EnterpriseMenu.TAB_COLUMNS;
+                key = TabbedColumnMenu.TAB_COLUMNS;
                 break;
             case this.tabItemFilter:
-                key = EnterpriseMenu.TAB_FILTER;
+                key = TabbedColumnMenu.TAB_FILTER;
                 break;
             case this.tabItemGeneral:
-                key = EnterpriseMenu.TAB_GENERAL;
+                key = TabbedColumnMenu.TAB_GENERAL;
                 break;
         }
         if (key) {
             this.activateTab(key);
         }
     };
-    EnterpriseMenu.prototype.activateTab = function (tab) {
+    TabbedColumnMenu.prototype.activateTab = function (tab) {
         var ev = {
-            type: EnterpriseMenu.EVENT_TAB_SELECTED,
+            type: TabbedColumnMenu.EVENT_TAB_SELECTED,
             key: tab
         };
         this.dispatchEvent(ev);
     };
-    EnterpriseMenu.prototype.getMenuItems = function () {
-        var defaultMenuOptions = this.getDefaultMenuOptions();
-        var result;
-        var userFunc = this.gridOptionsService.getCallback('getMainMenuItems');
-        if (userFunc) {
-            result = userFunc({
-                column: this.column,
-                defaultItems: defaultMenuOptions
-            });
-        }
-        else {
-            result = defaultMenuOptions;
-        }
-        // GUI looks weird when two separators are side by side. this can happen accidentally
-        // if we remove items from the menu then two separators can edit up adjacent.
-        core._.removeRepeatsFromArray(result, EnterpriseMenu.MENU_ITEM_SEPARATOR);
-        return result;
-    };
-    EnterpriseMenu.prototype.getDefaultMenuOptions = function () {
-        var result = [];
-        var allowPinning = !this.column.getColDef().lockPinned;
-        var rowGroupCount = this.columnModel.getRowGroupColumns().length;
-        var doingGrouping = rowGroupCount > 0;
-        var groupedByThisColumn = this.columnModel.getRowGroupColumns().indexOf(this.column) >= 0;
-        var allowValue = this.column.isAllowValue();
-        var allowRowGroup = this.column.isAllowRowGroup();
-        var isPrimary = this.column.isPrimary();
-        var pivotModeOn = this.columnModel.isPivotMode();
-        var isInMemoryRowModel = this.rowModel.getType() === 'clientSide';
-        var usingTreeData = this.gridOptionsService.isTreeData();
-        var allowValueAgg = 
-        // if primary, then only allow aggValue if grouping and it's a value columns
-        (isPrimary && doingGrouping && allowValue)
-            // secondary columns can always have aggValue, as it means it's a pivot value column
-            || !isPrimary;
-        if (allowPinning) {
-            result.push('pinSubMenu');
-        }
-        if (allowValueAgg) {
-            result.push('valueAggSubMenu');
-        }
-        if (allowPinning || allowValueAgg) {
-            result.push(EnterpriseMenu.MENU_ITEM_SEPARATOR);
-        }
-        result.push('autoSizeThis');
-        result.push('autoSizeAll');
-        result.push(EnterpriseMenu.MENU_ITEM_SEPARATOR);
-        if (!!this.column.getColDef().showRowGroup) {
-            result.push('rowUnGroup');
-        }
-        if (allowRowGroup && this.column.isPrimary()) {
-            if (groupedByThisColumn) {
-                result.push('rowUnGroup');
-            }
-            else {
-                result.push('rowGroup');
-            }
-        }
-        result.push(EnterpriseMenu.MENU_ITEM_SEPARATOR);
-        result.push('resetColumns');
-        // only add grouping expand/collapse if grouping in the InMemoryRowModel
-        // if pivoting, we only have expandable groups if grouping by 2 or more columns
-        // as the lowest level group is not expandable while pivoting.
-        // if not pivoting, then any active row group can be expanded.
-        var allowExpandAndContract = isInMemoryRowModel && (usingTreeData || rowGroupCount > (pivotModeOn ? 1 : 0));
-        if (allowExpandAndContract) {
-            result.push('expandAll');
-            result.push('contractAll');
-        }
-        return result;
-    };
-    EnterpriseMenu.prototype.createMainPanel = function () {
-        this.mainMenuList = this.createManagedBean(new core.AgMenuList());
-        var menuItems = this.getMenuItems();
-        var menuItemsMapped = this.menuItemMapper.mapWithStockItems(menuItems, this.column);
-        this.mainMenuList.addMenuItems(menuItemsMapped);
-        this.mainMenuList.addEventListener(core.AgMenuItemComponent.EVENT_MENU_ITEM_SELECTED, this.onHidePopup.bind(this));
+    TabbedColumnMenu.prototype.createMainPanel = function () {
+        var _this = this;
+        this.mainMenuList = this.columnMenuFactory.createMenu(this, this.column, function () { var _a; return (_a = _this.sourceElement) !== null && _a !== void 0 ? _a : _this.getGui(); });
+        this.mainMenuList.addEventListener(core.AgMenuItemComponent.EVENT_CLOSE_MENU, this.onHidePopup.bind(this));
         this.tabItemGeneral = {
             title: core._.createIconNoSpan('menu', this.gridOptionsService, this.column),
-            titleLabel: EnterpriseMenu.TAB_GENERAL.replace('MenuTab', ''),
+            titleLabel: TabbedColumnMenu.TAB_GENERAL.replace('MenuTab', ''),
             bodyPromise: core.AgPromise.resolve(this.mainMenuList.getGui()),
-            name: EnterpriseMenu.TAB_GENERAL
+            name: TabbedColumnMenu.TAB_GENERAL
         };
         return this.tabItemGeneral;
     };
-    EnterpriseMenu.prototype.onHidePopup = function (event) {
-        var keyboardEvent;
-        if (event && event.event && event.event instanceof KeyboardEvent) {
-            keyboardEvent = event.event;
-        }
-        this.hidePopupFunc(keyboardEvent && { keyboardEvent: keyboardEvent });
-        // this method only gets called when the menu was closed by selection an option
-        // in this case we highlight the cell that was previously highlighted
-        var focusedCell = this.focusService.getFocusedCell();
-        var eDocument = this.gridOptionsService.getDocument();
-        if (eDocument.activeElement === eDocument.body && focusedCell) {
-            var rowIndex = focusedCell.rowIndex, rowPinned = focusedCell.rowPinned, column = focusedCell.column;
-            this.focusService.setFocusedCell({ rowIndex: rowIndex, column: column, rowPinned: rowPinned, forceBrowserFocus: true, preventScrollOnBrowserFocus: true });
-        }
+    TabbedColumnMenu.prototype.onHidePopup = function (event) {
+        this.menuUtils.closePopupAndRestoreFocusOnSelect(this.hidePopupFunc, this.restoreFocusParams, event);
     };
-    EnterpriseMenu.prototype.createFilterPanel = function () {
-        var filterWrapper = this.filterManager.getOrCreateFilterWrapper(this.column, 'COLUMN_MENU');
+    TabbedColumnMenu.prototype.createFilterPanel = function () {
+        var filterWrapper = this.column ? this.filterManager.getOrCreateFilterWrapper(this.column, 'COLUMN_MENU') : null;
         if (!filterWrapper) {
             throw new Error('AG Grid - Unable to instantiate filter');
         }
@@ -436,53 +390,30 @@ var EnterpriseMenu = /** @class */ (function (_super) {
         var afterDetachedCallback = function () { var _a; return (_a = filterWrapper === null || filterWrapper === void 0 ? void 0 : filterWrapper.filterPromise) === null || _a === void 0 ? void 0 : _a.then(function (filter) { var _a; return (_a = filter === null || filter === void 0 ? void 0 : filter.afterGuiDetached) === null || _a === void 0 ? void 0 : _a.call(filter); }); };
         this.tabItemFilter = {
             title: core._.createIconNoSpan('filter', this.gridOptionsService, this.column),
-            titleLabel: EnterpriseMenu.TAB_FILTER.replace('MenuTab', ''),
+            titleLabel: TabbedColumnMenu.TAB_FILTER.replace('MenuTab', ''),
             bodyPromise: filterWrapper === null || filterWrapper === void 0 ? void 0 : filterWrapper.guiPromise,
             afterAttachedCallback: afterFilterAttachedCallback,
             afterDetachedCallback: afterDetachedCallback,
-            name: EnterpriseMenu.TAB_FILTER
+            name: TabbedColumnMenu.TAB_FILTER
         };
         return this.tabItemFilter;
     };
-    EnterpriseMenu.prototype.createColumnsPanel = function () {
+    TabbedColumnMenu.prototype.createColumnsPanel = function () {
         var eWrapperDiv = document.createElement('div');
         eWrapperDiv.classList.add('ag-menu-column-select-wrapper');
-        var columnSelectPanel = this.createManagedBean(new columnToolPanel.PrimaryColsPanel());
-        var columnsMenuParams = this.column.getColDef().columnsMenuParams;
-        if (!columnsMenuParams) {
-            columnsMenuParams = {};
-        }
-        var contractColumnSelection = columnsMenuParams.contractColumnSelection, suppressColumnExpandAll = columnsMenuParams.suppressColumnExpandAll, suppressColumnFilter = columnsMenuParams.suppressColumnFilter, suppressColumnSelectAll = columnsMenuParams.suppressColumnSelectAll, suppressSyncLayoutWithGrid = columnsMenuParams.suppressSyncLayoutWithGrid, columnLayout = columnsMenuParams.columnLayout;
-        columnSelectPanel.init(false, {
-            suppressColumnMove: false,
-            suppressValues: false,
-            suppressPivots: false,
-            suppressRowGroups: false,
-            suppressPivotMode: false,
-            contractColumnSelection: !!contractColumnSelection,
-            suppressColumnExpandAll: !!suppressColumnExpandAll,
-            suppressColumnFilter: !!suppressColumnFilter,
-            suppressColumnSelectAll: !!suppressColumnSelectAll,
-            suppressSyncLayoutWithGrid: !!columnLayout || !!suppressSyncLayoutWithGrid,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-            context: this.gridOptionsService.context
-        }, 'columnMenu');
-        if (columnLayout) {
-            columnSelectPanel.setColumnLayout(columnLayout);
-        }
+        var columnSelectPanel = this.columnChooserFactory.createColumnSelectPanel(this, this.column);
         var columnSelectPanelGui = columnSelectPanel.getGui();
         columnSelectPanelGui.classList.add('ag-menu-column-select');
         eWrapperDiv.appendChild(columnSelectPanelGui);
         this.tabItemColumns = {
             title: core._.createIconNoSpan('columns', this.gridOptionsService, this.column),
-            titleLabel: EnterpriseMenu.TAB_COLUMNS.replace('MenuTab', ''),
+            titleLabel: TabbedColumnMenu.TAB_COLUMNS.replace('MenuTab', ''),
             bodyPromise: core.AgPromise.resolve(eWrapperDiv),
-            name: EnterpriseMenu.TAB_COLUMNS
+            name: TabbedColumnMenu.TAB_COLUMNS
         };
         return this.tabItemColumns;
     };
-    EnterpriseMenu.prototype.afterGuiAttached = function (params) {
+    TabbedColumnMenu.prototype.afterGuiAttached = function (params) {
         var container = params.container, hidePopup = params.hidePopup;
         this.tabbedLayout.setAfterAttachedParams({ container: container, hidePopup: hidePopup });
         if (hidePopup) {
@@ -490,43 +421,76 @@ var EnterpriseMenu = /** @class */ (function (_super) {
             this.addDestroyFunc(hidePopup);
         }
     };
-    EnterpriseMenu.prototype.getGui = function () {
+    TabbedColumnMenu.prototype.getGui = function () {
         return this.tabbedLayout.getGui();
     };
-    EnterpriseMenu.EVENT_TAB_SELECTED = 'tabSelected';
-    EnterpriseMenu.TAB_FILTER = 'filterMenuTab';
-    EnterpriseMenu.TAB_GENERAL = 'generalMenuTab';
-    EnterpriseMenu.TAB_COLUMNS = 'columnsMenuTab';
-    EnterpriseMenu.TABS_DEFAULT = [EnterpriseMenu.TAB_GENERAL, EnterpriseMenu.TAB_FILTER, EnterpriseMenu.TAB_COLUMNS];
-    EnterpriseMenu.MENU_ITEM_SEPARATOR = 'separator';
-    __decorate$3([
-        core.Autowired('columnModel')
-    ], EnterpriseMenu.prototype, "columnModel", void 0);
-    __decorate$3([
+    TabbedColumnMenu.EVENT_TAB_SELECTED = 'tabSelected';
+    TabbedColumnMenu.TAB_FILTER = 'filterMenuTab';
+    TabbedColumnMenu.TAB_GENERAL = 'generalMenuTab';
+    TabbedColumnMenu.TAB_COLUMNS = 'columnsMenuTab';
+    TabbedColumnMenu.TABS_DEFAULT = [TabbedColumnMenu.TAB_GENERAL, TabbedColumnMenu.TAB_FILTER, TabbedColumnMenu.TAB_COLUMNS];
+    __decorate$6([
         core.Autowired('filterManager')
-    ], EnterpriseMenu.prototype, "filterManager", void 0);
-    __decorate$3([
-        core.Autowired('gridApi')
-    ], EnterpriseMenu.prototype, "gridApi", void 0);
-    __decorate$3([
-        core.Autowired('columnApi')
-    ], EnterpriseMenu.prototype, "columnApi", void 0);
-    __decorate$3([
-        core.Autowired('menuItemMapper')
-    ], EnterpriseMenu.prototype, "menuItemMapper", void 0);
-    __decorate$3([
-        core.Autowired('rowModel')
-    ], EnterpriseMenu.prototype, "rowModel", void 0);
-    __decorate$3([
-        core.Autowired('focusService')
-    ], EnterpriseMenu.prototype, "focusService", void 0);
-    __decorate$3([
+    ], TabbedColumnMenu.prototype, "filterManager", void 0);
+    __decorate$6([
+        core.Autowired('columnChooserFactory')
+    ], TabbedColumnMenu.prototype, "columnChooserFactory", void 0);
+    __decorate$6([
+        core.Autowired('columnMenuFactory')
+    ], TabbedColumnMenu.prototype, "columnMenuFactory", void 0);
+    __decorate$6([
+        core.Autowired('menuUtils')
+    ], TabbedColumnMenu.prototype, "menuUtils", void 0);
+    __decorate$6([
         core.PostConstruct
-    ], EnterpriseMenu.prototype, "init", null);
-    return EnterpriseMenu;
+    ], TabbedColumnMenu.prototype, "init", null);
+    return TabbedColumnMenu;
 }(core.BeanStub));
+var ColumnContextMenu = /** @class */ (function (_super) {
+    __extends$6(ColumnContextMenu, _super);
+    function ColumnContextMenu(column, restoreFocusParams, sourceElement) {
+        var _this = _super.call(this, /* html */ "\n            <div ref=\"eColumnMenu\" role=\"presentation\" class=\"ag-menu ag-column-menu\"></div>\n        ") || this;
+        _this.column = column;
+        _this.restoreFocusParams = restoreFocusParams;
+        _this.sourceElement = sourceElement;
+        return _this;
+    }
+    ColumnContextMenu.prototype.init = function () {
+        var _this = this;
+        this.mainMenuList = this.columnMenuFactory.createMenu(this, this.column, function () { var _a; return (_a = _this.sourceElement) !== null && _a !== void 0 ? _a : _this.getGui(); });
+        this.mainMenuList.addEventListener(core.AgMenuItemComponent.EVENT_CLOSE_MENU, this.onHidePopup.bind(this));
+        this.eColumnMenu.appendChild(this.mainMenuList.getGui());
+    };
+    ColumnContextMenu.prototype.onHidePopup = function (event) {
+        this.menuUtils.closePopupAndRestoreFocusOnSelect(this.hidePopupFunc, this.restoreFocusParams, event);
+    };
+    ColumnContextMenu.prototype.afterGuiAttached = function (_a) {
+        var hidePopup = _a.hidePopup;
+        if (hidePopup) {
+            this.hidePopupFunc = hidePopup;
+            this.addDestroyFunc(hidePopup);
+        }
+        this.focusService.focusInto(this.mainMenuList.getGui());
+    };
+    __decorate$6([
+        core.Autowired('columnMenuFactory')
+    ], ColumnContextMenu.prototype, "columnMenuFactory", void 0);
+    __decorate$6([
+        core.Autowired('menuUtils')
+    ], ColumnContextMenu.prototype, "menuUtils", void 0);
+    __decorate$6([
+        core.Autowired('focusService')
+    ], ColumnContextMenu.prototype, "focusService", void 0);
+    __decorate$6([
+        core.RefSelector('eColumnMenu')
+    ], ColumnContextMenu.prototype, "eColumnMenu", void 0);
+    __decorate$6([
+        core.PostConstruct
+    ], ColumnContextMenu.prototype, "init", null);
+    return ColumnContextMenu;
+}(core.Component));
 
-var __extends$2 = (undefined && undefined.__extends) || (function () {
+var __extends$5 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -552,7 +516,7 @@ var __assign$2 = (undefined && undefined.__assign) || function () {
     };
     return __assign$2.apply(this, arguments);
 };
-var __decorate$2 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$5 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -561,7 +525,7 @@ var __decorate$2 = (undefined && undefined.__decorate) || function (decorators, 
 var CSS_MENU = 'ag-menu';
 var CSS_CONTEXT_MENU_OPEN = 'ag-context-menu-open';
 var ContextMenuFactory = /** @class */ (function (_super) {
-    __extends$2(ContextMenuFactory, _super);
+    __extends$5(ContextMenuFactory, _super);
     function ContextMenuFactory() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -573,13 +537,13 @@ var ContextMenuFactory = /** @class */ (function (_super) {
         if (core._.exists(node) && core.ModuleRegistry.__isRegistered(core.ModuleNames.ClipboardModule, this.context.getGridId())) {
             if (column) {
                 // only makes sense if column exists, could have originated from a row
-                if (!this.gridOptionsService.is('suppressCutToClipboard')) {
+                if (!this.gridOptionsService.get('suppressCutToClipboard')) {
                     defaultMenuOptions.push('cut');
                 }
                 defaultMenuOptions.push('copy', 'copyWithHeaders', 'copyWithGroupHeaders', 'paste', 'separator');
             }
         }
-        if (this.gridOptionsService.is('enableCharts') && core.ModuleRegistry.__isRegistered(core.ModuleNames.GridChartsModule, this.context.getGridId())) {
+        if (this.gridOptionsService.get('enableCharts') && core.ModuleRegistry.__isRegistered(core.ModuleNames.GridChartsModule, this.context.getGridId())) {
             if (this.columnModel.isPivotMode()) {
                 defaultMenuOptions.push('pivotChart');
             }
@@ -591,59 +555,40 @@ var ContextMenuFactory = /** @class */ (function (_super) {
             // if user clicks a cell
             var csvModuleMissing = !core.ModuleRegistry.__isRegistered(core.ModuleNames.CsvExportModule, this.context.getGridId());
             var excelModuleMissing = !core.ModuleRegistry.__isRegistered(core.ModuleNames.ExcelExportModule, this.context.getGridId());
-            var suppressExcel = this.gridOptionsService.is('suppressExcelExport') || excelModuleMissing;
-            var suppressCsv = this.gridOptionsService.is('suppressCsvExport') || csvModuleMissing;
+            var suppressExcel = this.gridOptionsService.get('suppressExcelExport') || excelModuleMissing;
+            var suppressCsv = this.gridOptionsService.get('suppressCsvExport') || csvModuleMissing;
             var onIPad = core._.isIOSUserAgent();
             var anyExport = !onIPad && (!suppressExcel || !suppressCsv);
             if (anyExport) {
                 defaultMenuOptions.push('export');
             }
         }
-        var userFunc = this.gridOptionsService.getCallback('getContextMenuItems');
-        if (userFunc) {
-            var params = {
-                node: node,
-                column: column,
-                value: value,
-                defaultItems: defaultMenuOptions.length ? defaultMenuOptions : undefined,
-            };
-            return userFunc(params);
+        var defaultItems = defaultMenuOptions.length ? defaultMenuOptions : undefined;
+        var columnContextMenuItems = column === null || column === void 0 ? void 0 : column.getColDef().contextMenuItems;
+        if (Array.isArray(columnContextMenuItems)) {
+            return columnContextMenuItems;
         }
-        return defaultMenuOptions;
-    };
-    ContextMenuFactory.prototype.onContextMenu = function (mouseEvent, touchEvent, rowNode, column, value, anchorToElement) {
-        // to allow us to debug in chrome, we ignore the event if ctrl is pressed.
-        // not everyone wants this, so first 'if' below allows to turn this hack off.
-        if (!this.gridOptionsService.is('allowContextMenuWithControlKey')) {
-            // then do the check
-            if (mouseEvent && (mouseEvent.ctrlKey || mouseEvent.metaKey)) {
-                return;
+        else if (typeof columnContextMenuItems === 'function') {
+            return columnContextMenuItems(this.gridOptionsService.addGridCommonParams({
+                column: column,
+                node: node,
+                value: value,
+                defaultItems: defaultItems
+            }));
+        }
+        else {
+            var userFunc = this.gridOptionsService.getCallback('getContextMenuItems');
+            if (userFunc) {
+                return userFunc({ column: column, node: node, value: value, defaultItems: defaultItems });
+            }
+            else {
+                return defaultMenuOptions;
             }
         }
-        // need to do this regardless of context menu showing or not, so doing
-        // before the isSuppressContextMenu() check
-        if (mouseEvent) {
-            this.blockMiddleClickScrollsIfNeeded(mouseEvent);
-        }
-        if (this.gridOptionsService.is('suppressContextMenu')) {
-            return;
-        }
-        var eventOrTouch = mouseEvent ? mouseEvent : touchEvent.touches[0];
-        if (this.showMenu(rowNode, column, value, eventOrTouch, anchorToElement)) {
-            var event_1 = mouseEvent ? mouseEvent : touchEvent;
-            event_1.preventDefault();
-        }
     };
-    ContextMenuFactory.prototype.blockMiddleClickScrollsIfNeeded = function (mouseEvent) {
-        // if we don't do this, then middle click will never result in a 'click' event, as 'mousedown'
-        // will be consumed by the browser to mean 'scroll' (as you can scroll with the middle mouse
-        // button in the browser). so this property allows the user to receive middle button clicks if
-        // they want.
-        var gridOptionsService = this.gridOptionsService;
-        var which = mouseEvent.which;
-        if (gridOptionsService.is('suppressMiddleClickScrolls') && which === 2) {
-            mouseEvent.preventDefault();
-        }
+    ContextMenuFactory.prototype.onContextMenu = function (mouseEvent, touchEvent, rowNode, column, value, anchorToElement) {
+        var _this = this;
+        this.menuUtils.onContextMenu(mouseEvent, touchEvent, function (eventOrTouch) { return _this.showMenu(rowNode, column, value, eventOrTouch, anchorToElement); });
     };
     ContextMenuFactory.prototype.showMenu = function (node, column, value, mouseEvent, anchorToElement) {
         var _this = this;
@@ -652,7 +597,7 @@ var ContextMenuFactory = /** @class */ (function (_super) {
         if (menuItems === undefined || core._.missingOrEmpty(menuItems)) {
             return false;
         }
-        var menu = new ContextMenu(menuItems);
+        var menu = new ContextMenu(menuItems, column, node, value);
         this.createBean(menu);
         var eMenuGui = menu.getGui();
         var positionParams = {
@@ -676,7 +621,7 @@ var ContextMenuFactory = /** @class */ (function (_super) {
             },
             click: mouseEvent,
             positionCallback: function () {
-                var isRtl = _this.gridOptionsService.is('enableRtl');
+                var isRtl = _this.gridOptionsService.get('enableRtl');
                 _this.popupService.positionPopupUnderMouseEvent(__assign$2(__assign$2({}, positionParams), { nudgeX: isRtl ? (eMenuGui.offsetWidth + 1) * -1 : 1 }));
             },
             // so when browser is scrolled down, or grid is scrolled, context menu stays with cell
@@ -703,44 +648,54 @@ var ContextMenuFactory = /** @class */ (function (_super) {
         });
         // hide the popup if something gets selected
         if (addPopupRes) {
-            menu.addEventListener(core.AgMenuItemComponent.EVENT_MENU_ITEM_SELECTED, addPopupRes.hideFunc);
+            menu.addEventListener(core.AgMenuItemComponent.EVENT_CLOSE_MENU, addPopupRes.hideFunc);
         }
         return true;
     };
-    __decorate$2([
+    __decorate$5([
         core.Autowired('popupService')
     ], ContextMenuFactory.prototype, "popupService", void 0);
-    __decorate$2([
+    __decorate$5([
         core.Optional('rangeService')
     ], ContextMenuFactory.prototype, "rangeService", void 0);
-    __decorate$2([
+    __decorate$5([
         core.Autowired('ctrlsService')
     ], ContextMenuFactory.prototype, "ctrlsService", void 0);
-    __decorate$2([
+    __decorate$5([
         core.Autowired('columnModel')
     ], ContextMenuFactory.prototype, "columnModel", void 0);
-    ContextMenuFactory = __decorate$2([
+    __decorate$5([
+        core.Autowired('menuUtils')
+    ], ContextMenuFactory.prototype, "menuUtils", void 0);
+    ContextMenuFactory = __decorate$5([
         core.Bean('contextMenuFactory')
     ], ContextMenuFactory);
     return ContextMenuFactory;
 }(core.BeanStub));
 var ContextMenu = /** @class */ (function (_super) {
-    __extends$2(ContextMenu, _super);
-    function ContextMenu(menuItems) {
-        var _this = _super.call(this, /* html */ "<div class=\"" + CSS_MENU + "\" role=\"presentation\"></div>") || this;
+    __extends$5(ContextMenu, _super);
+    function ContextMenu(menuItems, column, node, value) {
+        var _this = _super.call(this, /* html */ "<div class=\"".concat(CSS_MENU, "\" role=\"presentation\"></div>")) || this;
+        _this.menuItems = menuItems;
+        _this.column = column;
+        _this.node = node;
+        _this.value = value;
         _this.menuList = null;
         _this.focusedCell = null;
-        _this.menuItems = menuItems;
         return _this;
     }
     ContextMenu.prototype.addMenuItems = function () {
         var _this = this;
-        var menuList = this.createManagedBean(new core.AgMenuList());
-        var menuItemsMapped = this.menuItemMapper.mapWithStockItems(this.menuItems, null);
+        var menuList = this.createManagedBean(new core.AgMenuList(0, {
+            column: this.column,
+            node: this.node,
+            value: this.value
+        }));
+        var menuItemsMapped = this.menuItemMapper.mapWithStockItems(this.menuItems, null, function () { return _this.getGui(); });
         menuList.addMenuItems(menuItemsMapped);
         this.appendChild(menuList);
         this.menuList = menuList;
-        menuList.addEventListener(core.AgMenuItemComponent.EVENT_MENU_ITEM_SELECTED, function (e) { return _this.dispatchEvent(e); });
+        menuList.addEventListener(core.AgMenuItemComponent.EVENT_CLOSE_MENU, function (e) { return _this.dispatchEvent(e); });
     };
     ContextMenu.prototype.afterGuiAttached = function (params) {
         if (params.hidePopup) {
@@ -765,22 +720,22 @@ var ContextMenu = /** @class */ (function (_super) {
         this.restoreFocusedCell();
         _super.prototype.destroy.call(this);
     };
-    __decorate$2([
+    __decorate$5([
         core.Autowired('menuItemMapper')
     ], ContextMenu.prototype, "menuItemMapper", void 0);
-    __decorate$2([
+    __decorate$5([
         core.Autowired('focusService')
     ], ContextMenu.prototype, "focusService", void 0);
-    __decorate$2([
+    __decorate$5([
         core.Autowired('cellPositionUtils')
     ], ContextMenu.prototype, "cellPositionUtils", void 0);
-    __decorate$2([
+    __decorate$5([
         core.PostConstruct
     ], ContextMenu.prototype, "addMenuItems", null);
     return ContextMenu;
 }(core.Component));
 
-var __extends$1 = (undefined && undefined.__extends) || (function () {
+var __extends$4 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -806,18 +761,18 @@ var __assign$1 = (undefined && undefined.__assign) || function () {
     };
     return __assign$1.apply(this, arguments);
 };
-var __decorate$1 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$4 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var MenuItemMapper = /** @class */ (function (_super) {
-    __extends$1(MenuItemMapper, _super);
+    __extends$4(MenuItemMapper, _super);
     function MenuItemMapper() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    MenuItemMapper.prototype.mapWithStockItems = function (originalList, column) {
+    MenuItemMapper.prototype.mapWithStockItems = function (originalList, column, sourceElement) {
         var _this = this;
         if (!originalList) {
             return [];
@@ -826,7 +781,7 @@ var MenuItemMapper = /** @class */ (function (_super) {
         originalList.forEach(function (menuItemOrString) {
             var result;
             if (typeof menuItemOrString === 'string') {
-                result = _this.getStockMenuItem(menuItemOrString, column);
+                result = _this.getStockMenuItem(menuItemOrString, column, sourceElement);
             }
             else {
                 // Spread to prevent leaking mapped subMenus back into the original menuItem
@@ -839,7 +794,7 @@ var MenuItemMapper = /** @class */ (function (_super) {
             var resultDef = result;
             var subMenu = resultDef.subMenu;
             if (subMenu && subMenu instanceof Array) {
-                resultDef.subMenu = _this.mapWithStockItems(subMenu, column);
+                resultDef.subMenu = _this.mapWithStockItems(subMenu, column, sourceElement);
             }
             if (result != null) {
                 resultList.push(result);
@@ -847,11 +802,11 @@ var MenuItemMapper = /** @class */ (function (_super) {
         });
         return resultList;
     };
-    MenuItemMapper.prototype.getStockMenuItem = function (key, column) {
+    MenuItemMapper.prototype.getStockMenuItem = function (key, column, sourceElement) {
         var _this = this;
-        var _a, _b;
+        var _a;
         var localeTextFunc = this.localeService.getLocaleTextFunc();
-        var skipHeaderOnAutoSize = this.gridOptionsService.is('skipHeaderOnAutoSize');
+        var skipHeaderOnAutoSize = this.gridOptionsService.get('skipHeaderOnAutoSize');
         switch (key) {
             case 'pinSubMenu':
                 return {
@@ -862,19 +817,19 @@ var MenuItemMapper = /** @class */ (function (_super) {
             case 'pinLeft':
                 return {
                     name: localeTextFunc('pinLeft', 'Pin Left'),
-                    action: function () { return _this.columnModel.setColumnPinned(column, 'left', "contextMenu"); },
+                    action: function () { return _this.columnModel.setColumnsPinned([column], 'left', "contextMenu"); },
                     checked: !!column && column.isPinnedLeft()
                 };
             case 'pinRight':
                 return {
                     name: localeTextFunc('pinRight', 'Pin Right'),
-                    action: function () { return _this.columnModel.setColumnPinned(column, 'right', "contextMenu"); },
+                    action: function () { return _this.columnModel.setColumnsPinned([column], 'right', "contextMenu"); },
                     checked: !!column && column.isPinnedRight()
                 };
             case 'clearPinned':
                 return {
                     name: localeTextFunc('noPin', 'No Pin'),
-                    action: function () { return _this.columnModel.setColumnPinned(column, null, "contextMenu"); },
+                    action: function () { return _this.columnModel.setColumnsPinned([column], null, "contextMenu"); },
                     checked: !!column && !column.isPinned()
                 };
             case 'valueAggSubMenu':
@@ -894,48 +849,49 @@ var MenuItemMapper = /** @class */ (function (_super) {
             case 'autoSizeThis':
                 return {
                     name: localeTextFunc('autosizeThiscolumn', 'Autosize This Column'),
-                    action: function () { return _this.columnModel.autoSizeColumn(column, skipHeaderOnAutoSize, "contextMenu"); }
+                    action: function () { return _this.columnModel.autoSizeColumn(column, "contextMenu", skipHeaderOnAutoSize); }
                 };
             case 'autoSizeAll':
                 return {
                     name: localeTextFunc('autosizeAllColumns', 'Autosize All Columns'),
-                    action: function () { return _this.columnModel.autoSizeAllColumns(skipHeaderOnAutoSize, "contextMenu"); }
+                    action: function () { return _this.columnModel.autoSizeAllColumns("contextMenu", skipHeaderOnAutoSize); }
                 };
             case 'rowGroup':
                 return {
                     name: localeTextFunc('groupBy', 'Group by') + ' ' + core._.escapeString(this.columnModel.getDisplayNameForColumn(column, 'header')),
                     disabled: (column === null || column === void 0 ? void 0 : column.isRowGroupActive()) || !(column === null || column === void 0 ? void 0 : column.getColDef().enableRowGroup),
-                    action: function () { return _this.columnModel.addRowGroupColumn(column, "contextMenu"); },
+                    action: function () { return _this.columnModel.addRowGroupColumns([column], "contextMenu"); },
                     icon: core._.createIconNoSpan('menuAddRowGroup', this.gridOptionsService, null)
                 };
             case 'rowUnGroup':
                 var icon = core._.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsService, null);
                 var showRowGroup_1 = column === null || column === void 0 ? void 0 : column.getColDef().showRowGroup;
+                var lockedGroups_1 = this.gridOptionsService.get('groupLockGroupColumns');
                 // Handle single auto group column
                 if (showRowGroup_1 === true) {
                     return {
                         name: localeTextFunc('ungroupAll', 'Un-Group All'),
-                        disabled: !(column === null || column === void 0 ? void 0 : column.getColDef().showRowGroup),
-                        action: function () { return _this.columnModel.setRowGroupColumns([], "contextMenu"); },
+                        disabled: lockedGroups_1 === -1 || lockedGroups_1 >= this.columnModel.getRowGroupColumns().length,
+                        action: function () { return _this.columnModel.setRowGroupColumns(_this.columnModel.getRowGroupColumns().slice(0, lockedGroups_1), "contextMenu"); },
                         icon: icon
                     };
                 }
                 // Handle multiple auto group columns
                 if (typeof showRowGroup_1 === 'string') {
-                    var underlyingColumn = (_a = this.columnModel.getSourceColumnsForGroupColumn(column)) === null || _a === void 0 ? void 0 : _a[0];
+                    var underlyingColumn = this.columnModel.getPrimaryColumn(showRowGroup_1);
                     var ungroupByName = (underlyingColumn != null) ? core._.escapeString(this.columnModel.getDisplayNameForColumn(underlyingColumn, 'header')) : showRowGroup_1;
                     return {
                         name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + ungroupByName,
-                        disabled: !(column === null || column === void 0 ? void 0 : column.getColDef().showRowGroup),
-                        action: function () { return _this.columnModel.removeRowGroupColumn(showRowGroup_1, "contextMenu"); },
+                        disabled: underlyingColumn != null && this.columnModel.isColumnGroupingLocked(underlyingColumn),
+                        action: function () { return _this.columnModel.removeRowGroupColumns([showRowGroup_1], "contextMenu"); },
                         icon: icon
                     };
                 }
                 // Handle primary column
                 return {
                     name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + core._.escapeString(this.columnModel.getDisplayNameForColumn(column, 'header')),
-                    disabled: !(column === null || column === void 0 ? void 0 : column.isRowGroupActive()) || !(column === null || column === void 0 ? void 0 : column.getColDef().enableRowGroup),
-                    action: function () { return _this.columnModel.removeRowGroupColumn(column, "contextMenu"); },
+                    disabled: !(column === null || column === void 0 ? void 0 : column.isRowGroupActive()) || !(column === null || column === void 0 ? void 0 : column.getColDef().enableRowGroup) || this.columnModel.isColumnGroupingLocked(column),
+                    action: function () { return _this.columnModel.removeRowGroupColumns([column], "contextMenu"); },
                     icon: icon
                 };
             case 'resetColumns':
@@ -998,7 +954,7 @@ var MenuItemMapper = /** @class */ (function (_super) {
                         name: localeTextFunc('cut', 'Cut'),
                         shortcut: localeTextFunc('ctrlX', 'Ctrl+X'),
                         icon: core._.createIconNoSpan('clipboardCut', this.gridOptionsService, null),
-                        disabled: !isEditable || this.gridOptionsService.is('suppressCutToClipboard'),
+                        disabled: !isEditable || this.gridOptionsService.get('suppressCutToClipboard'),
                         action: function () { return _this.clipboardService.cutToClipboard(undefined, 'contextMenu'); }
                     };
                 }
@@ -1022,10 +978,10 @@ var MenuItemMapper = /** @class */ (function (_super) {
                 var exportSubMenuItems = [];
                 var csvModuleLoaded = core.ModuleRegistry.__isRegistered(core.ModuleNames.CsvExportModule, this.context.getGridId());
                 var excelModuleLoaded = core.ModuleRegistry.__isRegistered(core.ModuleNames.ExcelExportModule, this.context.getGridId());
-                if (!this.gridOptionsService.is('suppressCsvExport') && csvModuleLoaded) {
+                if (!this.gridOptionsService.get('suppressCsvExport') && csvModuleLoaded) {
                     exportSubMenuItems.push('csvExport');
                 }
-                if (!this.gridOptionsService.is('suppressExcelExport') && excelModuleLoaded) {
+                if (!this.gridOptionsService.get('suppressExcelExport') && excelModuleLoaded) {
                     exportSubMenuItems.push('excelExport');
                 }
                 return {
@@ -1049,9 +1005,52 @@ var MenuItemMapper = /** @class */ (function (_super) {
                 return 'separator';
             case 'pivotChart':
             case 'chartRange':
-                return (_b = this.chartMenuItemMapper.getChartItems(key)) !== null && _b !== void 0 ? _b : null;
+                return (_a = this.chartMenuItemMapper.getChartItems(key)) !== null && _a !== void 0 ? _a : null;
+            case 'columnFilter':
+                if (column) {
+                    return {
+                        name: localeTextFunc('columnFilter', 'Column Filter'),
+                        icon: core._.createIconNoSpan('filter', this.gridOptionsService, null),
+                        action: function () { return _this.menuService.showFilterMenu({
+                            column: column,
+                            buttonElement: sourceElement(), containerType: 'columnFilter', positionBy: 'button'
+                        }); }
+                    };
+                }
+                else {
+                    return null;
+                }
+            case 'columnChooser':
+                if (core.ModuleRegistry.__isRegistered(core.ModuleNames.ColumnsToolPanelModule, this.context.getGridId())) {
+                    return {
+                        name: localeTextFunc('columnChooser', 'Choose Columns'),
+                        icon: core._.createIconNoSpan('columns', this.gridOptionsService, null),
+                        action: function () { return _this.menuService.showColumnChooser({ column: column, eventSource: sourceElement() }); }
+                    };
+                }
+                else {
+                    return null;
+                }
+            case 'sortAscending':
+                return {
+                    name: localeTextFunc('sortAscending', 'Sort Ascending'),
+                    icon: core._.createIconNoSpan('sortAscending', this.gridOptionsService, null),
+                    action: function () { return _this.sortController.setSortForColumn(column, 'asc', false, 'columnMenu'); }
+                };
+            case 'sortDescending':
+                return {
+                    name: localeTextFunc('sortDescending', 'Sort Descending'),
+                    icon: core._.createIconNoSpan('sortDescending', this.gridOptionsService, null),
+                    action: function () { return _this.sortController.setSortForColumn(column, 'desc', false, 'columnMenu'); }
+                };
+            case 'sortUnSort':
+                return {
+                    name: localeTextFunc('sortUnSort', 'Clear Sort'),
+                    icon: core._.createIconNoSpan('sortUnSort', this.gridOptionsService, null),
+                    action: function () { return _this.sortController.setSortForColumn(column, null, false, 'columnMenu'); }
+                };
             default: {
-                console.warn("AG Grid: unknown menu item type " + key);
+                console.warn("AG Grid: unknown menu item type ".concat(key));
                 return null;
             }
         }
@@ -1074,17 +1073,17 @@ var MenuItemMapper = /** @class */ (function (_super) {
             result.push({
                 name: localeTextFunc('noAggregation', 'None'),
                 action: function () {
-                    _this.columnModel.removeValueColumn(columnToUse, "contextMenu");
+                    _this.columnModel.removeValueColumns([columnToUse], "contextMenu");
                     _this.columnModel.setColumnAggFunc(columnToUse, undefined, "contextMenu");
                 },
                 checked: !columnIsAlreadyAggValue_1
             });
             funcNames.forEach(function (funcName) {
                 result.push({
-                    name: localeTextFunc(funcName, core._.capitalise(funcName)),
+                    name: localeTextFunc(funcName, _this.aggFuncService.getDefaultFuncLabel(funcName)),
                     action: function () {
                         _this.columnModel.setColumnAggFunc(columnToUse, funcName, "contextMenu");
-                        _this.columnModel.addValueColumn(columnToUse, "contextMenu");
+                        _this.columnModel.addValueColumns([columnToUse], "contextMenu");
                     },
                     checked: columnIsAlreadyAggValue_1 && columnToUse.getAggFunc() === funcName
                 });
@@ -1092,37 +1091,43 @@ var MenuItemMapper = /** @class */ (function (_super) {
         }
         return result;
     };
-    __decorate$1([
+    __decorate$4([
         core.Autowired('columnModel')
     ], MenuItemMapper.prototype, "columnModel", void 0);
-    __decorate$1([
+    __decorate$4([
         core.Autowired('gridApi')
     ], MenuItemMapper.prototype, "gridApi", void 0);
-    __decorate$1([
+    __decorate$4([
         core.Optional('clipboardService')
     ], MenuItemMapper.prototype, "clipboardService", void 0);
-    __decorate$1([
+    __decorate$4([
         core.Optional('aggFuncService')
     ], MenuItemMapper.prototype, "aggFuncService", void 0);
-    __decorate$1([
+    __decorate$4([
         core.Autowired('focusService')
     ], MenuItemMapper.prototype, "focusService", void 0);
-    __decorate$1([
+    __decorate$4([
         core.Autowired('rowPositionUtils')
     ], MenuItemMapper.prototype, "rowPositionUtils", void 0);
-    __decorate$1([
+    __decorate$4([
         core.Autowired('chartMenuItemMapper')
     ], MenuItemMapper.prototype, "chartMenuItemMapper", void 0);
-    MenuItemMapper = __decorate$1([
+    __decorate$4([
+        core.Autowired('menuService')
+    ], MenuItemMapper.prototype, "menuService", void 0);
+    __decorate$4([
+        core.Autowired('sortController')
+    ], MenuItemMapper.prototype, "sortController", void 0);
+    MenuItemMapper = __decorate$4([
         core.Bean('menuItemMapper')
     ], MenuItemMapper);
     return MenuItemMapper;
 }(core.BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '30.1.0';
+var VERSION = '31.1.0';
 
-var __extends = (undefined && undefined.__extends) || (function () {
+var __extends$3 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -1148,7 +1153,7 @@ var __assign = (undefined && undefined.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$3 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -1171,7 +1176,7 @@ var __read = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 var ChartMenuItemMapper = /** @class */ (function (_super) {
-    __extends(ChartMenuItemMapper, _super);
+    __extends$3(ChartMenuItemMapper, _super);
     function ChartMenuItemMapper() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -1179,32 +1184,41 @@ var ChartMenuItemMapper = /** @class */ (function (_super) {
     ChartMenuItemMapper.prototype.getChartItems = function (key) {
         var _a, _b;
         if (!this.chartService) {
-            core.ModuleRegistry.__assertRegistered(core.ModuleNames.GridChartsModule, "the Context Menu key \"" + key + "\"", this.context.getGridId());
+            core.ModuleRegistry.__assertRegistered(core.ModuleNames.GridChartsModule, "the Context Menu key \"".concat(key, "\""), this.context.getGridId());
             return undefined;
         }
         var builder = key === 'pivotChart'
             ? new PivotMenuItemMapper(this.gridOptionsService, this.chartService, this.localeService)
             : new RangeMenuItemMapper(this.gridOptionsService, this.chartService, this.localeService);
+        var isEnterprise = this.chartService.isEnterprise();
         var topLevelMenuItem = builder.getMenuItem();
+        if (topLevelMenuItem && topLevelMenuItem.subMenu && !isEnterprise) {
+            // Filter out enterprise-only menu items if 'Community Integrated'
+            var filterEnterpriseItems_1 = function (m) {
+                var _a;
+                return (__assign(__assign({}, m), { subMenu: (_a = m.subMenu) === null || _a === void 0 ? void 0 : _a.filter(function (menu) { return !menu._enterprise; }).map(function (menu) { return filterEnterpriseItems_1(menu); }) }));
+            };
+            topLevelMenuItem = filterEnterpriseItems_1(topLevelMenuItem);
+        }
         var chartGroupsDef = (_b = (_a = this.gridOptionsService.get('chartToolPanelsDef')) === null || _a === void 0 ? void 0 : _a.settingsPanel) === null || _b === void 0 ? void 0 : _b.chartGroupsDef;
         if (chartGroupsDef) {
-            // Apply filtering and ordering if chartGroupsDef provided
             topLevelMenuItem = ChartMenuItemMapper_1.filterAndOrderChartMenu(topLevelMenuItem, chartGroupsDef, builder.getConfigLookup());
         }
         return this.cleanInternals(topLevelMenuItem);
     };
-    // Remove our internal _key properties so this does not leak out of the class on the menu items.
+    // Remove our internal _key and _enterprise properties so this does not leak out of the class on the menu items.
     ChartMenuItemMapper.prototype.cleanInternals = function (menuItem) {
         if (!menuItem) {
             return menuItem;
         }
-        var removeKey = function (m) {
+        var removeKeys = function (m) {
             var _a;
             m === null || m === void 0 ? true : delete m._key;
-            (_a = m === null || m === void 0 ? void 0 : m.subMenu) === null || _a === void 0 ? void 0 : _a.forEach(function (s) { return removeKey(s); });
+            m === null || m === void 0 ? true : delete m._enterprise;
+            (_a = m === null || m === void 0 ? void 0 : m.subMenu) === null || _a === void 0 ? void 0 : _a.forEach(function (s) { return removeKeys(s); });
             return m;
         };
-        return removeKey(menuItem);
+        return removeKeys(menuItem);
     };
     ChartMenuItemMapper.buildLookup = function (menuItem) {
         var itemLookup = {};
@@ -1228,8 +1242,11 @@ var ChartMenuItemMapper = /** @class */ (function (_super) {
             var _b, _c;
             var _d = __read(_a, 2), group = _d[0], chartTypes = _d[1];
             var chartConfigGroup = configLookup[group];
+            // Skip any context panels that are not enabled for the current chart type
+            if (chartConfigGroup === null)
+                return;
             if (chartConfigGroup == undefined) {
-                core._.doOnce(function () { return console.warn("AG Grid - invalid chartGroupsDef config '" + group + "'"); }, "invalid_chartGroupsDef" + group);
+                core._.warnOnce("invalid chartGroupsDef config '".concat(group, "'"));
                 return undefined;
             }
             var menuItem = menuItemLookup[chartConfigGroup._key];
@@ -1238,7 +1255,7 @@ var ChartMenuItemMapper = /** @class */ (function (_super) {
                     var subMenus = chartTypes.map(function (chartType) {
                         var itemKey = chartConfigGroup[chartType];
                         if (itemKey == undefined) {
-                            core._.doOnce(function () { return console.warn("AG Grid - invalid chartGroupsDef config '" + group + "." + chartType + "'"); }, "invalid_chartGroupsDef" + chartType + "_" + group);
+                            core._.warnOnce("invalid chartGroupsDef config '".concat(group, ".").concat(chartType, "'"));
                             return undefined;
                         }
                         return menuItemLookup[itemKey];
@@ -1260,10 +1277,10 @@ var ChartMenuItemMapper = /** @class */ (function (_super) {
         return orderedAndFiltered;
     };
     var ChartMenuItemMapper_1;
-    __decorate([
+    __decorate$3([
         core.Optional('chartService')
     ], ChartMenuItemMapper.prototype, "chartService", void 0);
-    ChartMenuItemMapper = ChartMenuItemMapper_1 = __decorate([
+    ChartMenuItemMapper = ChartMenuItemMapper_1 = __decorate$3([
         core.Bean('chartMenuItemMapper')
     ], ChartMenuItemMapper);
     return ChartMenuItemMapper;
@@ -1277,11 +1294,13 @@ var PivotMenuItemMapper = /** @class */ (function () {
     PivotMenuItemMapper.prototype.getMenuItem = function () {
         var _this = this;
         var localeTextFunc = this.localeService.getLocaleTextFunc();
-        var getMenuItem = function (localeKey, defaultText, chartType, key) {
+        var getMenuItem = function (localeKey, defaultText, chartType, key, enterprise) {
+            if (enterprise === void 0) { enterprise = false; }
             return {
                 name: localeTextFunc(localeKey, defaultText),
                 action: function () { return _this.chartService.createPivotChart({ chartType: chartType }); },
-                _key: key
+                _key: key,
+                _enterprise: enterprise
             };
         };
         return {
@@ -1311,7 +1330,7 @@ var PivotMenuItemMapper = /** @class */ (function () {
                     name: localeTextFunc('pieChart', 'Pie'),
                     subMenu: [
                         getMenuItem('pie', 'Pie&lrm;', 'pie', 'pivotPie'),
-                        getMenuItem('doughnut', 'Doughnut&lrm;', 'doughnut', 'pivotDoughnut')
+                        getMenuItem('donut', 'Donut&lrm;', 'donut', 'pivotDonut')
                     ]
                 },
                 getMenuItem('line', 'Line&lrm;', 'line', 'pivotLineChart'),
@@ -1332,7 +1351,23 @@ var PivotMenuItemMapper = /** @class */ (function () {
                         getMenuItem('normalizedArea', '100% Stacked&lrm;', 'normalizedArea', 'pivotNormalizedArea')
                     ]
                 },
-                getMenuItem('histogramChart', 'Histogram&lrm;', 'histogram', 'pivotHistogramChart'),
+                {
+                    _key: 'pivotStatisticalChart',
+                    _enterprise: false,
+                    name: localeTextFunc('statisticalChart', 'Statistical'),
+                    subMenu: [
+                        getMenuItem('histogramChart', 'Histogram&lrm;', 'histogram', 'pivotHistogram', false),
+                    ],
+                },
+                {
+                    _key: 'pivotHierarchicalChart',
+                    _enterprise: true,
+                    name: localeTextFunc('hierarchicalChart', 'Hierarchical'),
+                    subMenu: [
+                        getMenuItem('treemapChart', 'Treemap&lrm;', 'treemap', 'pivotTreemap', true),
+                        getMenuItem('sunburstChart', 'Sunburst&lrm;', 'sunburst', 'pivotSunburst', true),
+                    ],
+                },
                 {
                     _key: 'pivotCombinationChart',
                     name: localeTextFunc('combinationChart', 'Combination'),
@@ -1362,7 +1397,8 @@ var PivotMenuItemMapper = /** @class */ (function () {
             pieGroup: {
                 _key: 'pivotPieChart',
                 pie: 'pivotPie',
-                doughnut: 'pivotDoughnut',
+                donut: 'pivotDonut',
+                doughnut: 'pivotDonut',
             },
             lineGroup: {
                 _key: 'pivotLineChart',
@@ -1379,16 +1415,29 @@ var PivotMenuItemMapper = /** @class */ (function () {
                 stackedArea: 'pivotStackedArea',
                 normalizedArea: 'pivotNormalizedArea',
             },
-            histogramGroup: {
-                _key: 'pivotHistogramChart',
-                histogram: 'pivotHistogramChart',
-            },
             combinationGroup: {
                 _key: 'pivotCombinationChart',
                 columnLineCombo: 'pivotColumnLineCombo',
                 areaColumnCombo: 'pivotAreaColumnCombo',
-                customCombo: '' // Not currently supported but needs a value to separate from a missing value
-            }
+                customCombo: null, // Not currently supported
+            },
+            hierarchicalGroup: {
+                _key: 'pivotHierarchicalChart',
+                treemap: 'pivotTreemap',
+                sunburst: 'pivotSunburst',
+            },
+            statisticalGroup: {
+                _key: 'pivotStatisticalChart',
+                histogram: 'pivotHistogram',
+                // Some statistical charts do not currently support pivot mode
+                rangeBar: null,
+                rangeArea: null,
+                boxPlot: null,
+            },
+            // Polar charts do not support pivot mode
+            polarGroup: null,
+            // Specialized charts do not currently support pivot mode
+            specializedGroup: null,
         };
     };
     return PivotMenuItemMapper;
@@ -1402,11 +1451,13 @@ var RangeMenuItemMapper = /** @class */ (function () {
     RangeMenuItemMapper.prototype.getMenuItem = function () {
         var _this = this;
         var localeTextFunc = this.localeService.getLocaleTextFunc();
-        var getMenuItem = function (localeKey, defaultText, chartType, key) {
+        var getMenuItem = function (localeKey, defaultText, chartType, key, enterprise) {
+            if (enterprise === void 0) { enterprise = false; }
             return {
                 name: localeTextFunc(localeKey, defaultText),
                 action: function () { return _this.chartService.createChartFromCurrentRange(chartType); },
-                _key: key
+                _key: key,
+                _enterprise: enterprise
             };
         };
         return {
@@ -1435,7 +1486,7 @@ var RangeMenuItemMapper = /** @class */ (function () {
                     name: localeTextFunc('pieChart', 'Pie'),
                     subMenu: [
                         getMenuItem('pie', 'Pie&lrm;', 'pie', 'rangePie'),
-                        getMenuItem('doughnut', 'Doughnut&lrm;', 'doughnut', 'rangeDoughnut')
+                        getMenuItem('donut', 'Donut&lrm;', 'donut', 'rangeDonut')
                     ],
                     _key: 'rangePieChart'
                 },
@@ -1457,7 +1508,47 @@ var RangeMenuItemMapper = /** @class */ (function () {
                     ],
                     _key: 'rangeAreaChart'
                 },
-                getMenuItem('histogramChart', 'Histogram&lrm;', 'histogram', 'rangeHistogramChart'),
+                {
+                    name: localeTextFunc('polarChart', 'Polar'),
+                    subMenu: [
+                        getMenuItem('radarLine', 'Radar Line&lrm;', 'radarLine', 'rangeRadarLine'),
+                        getMenuItem('radarArea', 'Radar Area&lrm;', 'radarArea', 'rangeRadarArea'),
+                        getMenuItem('nightingale', 'Nightingale&lrm;', 'nightingale', 'rangeNightingale'),
+                        getMenuItem('radialColumn', 'Radial Column&lrm;', 'radialColumn', 'rangeRadialColumn'),
+                        getMenuItem('radialBar', 'Radial Bar&lrm;', 'radialBar', 'rangeRadialBar'),
+                    ],
+                    _key: 'rangePolarChart',
+                    _enterprise: true,
+                },
+                {
+                    name: localeTextFunc('statisticalChart', 'Statistical'),
+                    subMenu: [
+                        getMenuItem('boxPlot', 'Box Plot&lrm;', 'boxPlot', 'rangeBoxPlot', true),
+                        getMenuItem('histogramChart', 'Histogram&lrm;', 'histogram', 'rangeHistogram', false),
+                        getMenuItem('rangeBar', 'Range Bar&lrm;', 'rangeBar', 'rangeRangeBar', true),
+                        getMenuItem('rangeArea', 'Range Area&lrm;', 'rangeArea', 'rangeRangeArea', true),
+                    ],
+                    _key: 'rangeStatisticalChart',
+                    _enterprise: false, // histogram chart is available in both community and enterprise distributions
+                },
+                {
+                    name: localeTextFunc('hierarchicalChart', 'Hierarchical'),
+                    subMenu: [
+                        getMenuItem('treemap', 'Treemap&lrm;', 'treemap', 'rangeTreemap'),
+                        getMenuItem('sunburst', 'Sunburst&lrm;', 'sunburst', 'rangeSunburst'),
+                    ],
+                    _key: 'rangeHierarchicalChart',
+                    _enterprise: true,
+                },
+                {
+                    name: localeTextFunc('specializedChart', 'Specialized'),
+                    subMenu: [
+                        getMenuItem('heatmap', 'Heatmap&lrm;', 'heatmap', 'rangeHeatmap'),
+                        getMenuItem('waterfall', 'Waterfall&lrm;', 'waterfall', 'rangeWaterfall'),
+                    ],
+                    _key: 'rangeSpecializedChart',
+                    _enterprise: true,
+                },
                 {
                     name: localeTextFunc('combinationChart', 'Combination'),
                     subMenu: [
@@ -1487,7 +1578,8 @@ var RangeMenuItemMapper = /** @class */ (function () {
             pieGroup: {
                 _key: 'rangePieChart',
                 pie: 'rangePie',
-                doughnut: 'rangeDoughnut',
+                donut: 'rangeDonut',
+                doughnut: 'rangeDonut',
             },
             lineGroup: {
                 _key: 'rangeLineChart',
@@ -1504,25 +1596,470 @@ var RangeMenuItemMapper = /** @class */ (function () {
                 stackedArea: 'rangeStackedArea',
                 normalizedArea: 'rangeNormalizedArea',
             },
-            histogramGroup: {
-                _key: 'rangeHistogramChart',
-                histogram: 'rangeHistogramChart',
+            polarGroup: {
+                _key: 'rangePolarChart',
+                radarLine: 'rangeRadarLine',
+                radarArea: 'rangeRadarArea',
+                nightingale: 'rangeNightingale',
+                radialColumn: 'rangeRadialColumn',
+                radialBar: 'rangeRadialBar',
+            },
+            statisticalGroup: {
+                _key: 'rangeStatisticalChart',
+                boxPlot: 'rangeBoxPlot',
+                histogram: 'rangeHistogram',
+                rangeBar: 'rangeRangeBar',
+                rangeArea: 'rangeRangeArea',
+            },
+            hierarchicalGroup: {
+                _key: 'rangeHierarchicalChart',
+                treemap: 'rangeTreemap',
+                sunburst: 'rangeSunburst',
+            },
+            specializedGroup: {
+                _key: 'rangeSpecializedChart',
+                heatmap: 'rangeHeatmap',
+                waterfall: 'rangeWaterfall',
             },
             combinationGroup: {
                 _key: 'rangeCombinationChart',
                 columnLineCombo: 'rangeColumnLineCombo',
                 areaColumnCombo: 'rangeAreaColumnCombo',
-                customCombo: '' // Not currently supported but needs a value to separate from a missing value
+                customCombo: null // Not currently supported
             }
         };
     };
     return RangeMenuItemMapper;
 }());
 
+var __extends$2 = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$2 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var ColumnChooserFactory = /** @class */ (function (_super) {
+    __extends$2(ColumnChooserFactory, _super);
+    function ColumnChooserFactory() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    ColumnChooserFactory.prototype.createColumnSelectPanel = function (parent, column, draggable, params) {
+        var _a, _b;
+        var columnSelectPanel = parent.createManagedBean(new columnToolPanel.PrimaryColsPanel());
+        var columnChooserParams = (_b = (_a = params !== null && params !== void 0 ? params : column === null || column === void 0 ? void 0 : column.getColDef().columnChooserParams) !== null && _a !== void 0 ? _a : column === null || column === void 0 ? void 0 : column.getColDef().columnsMenuParams) !== null && _b !== void 0 ? _b : {};
+        var contractColumnSelection = columnChooserParams.contractColumnSelection, suppressColumnExpandAll = columnChooserParams.suppressColumnExpandAll, suppressColumnFilter = columnChooserParams.suppressColumnFilter, suppressColumnSelectAll = columnChooserParams.suppressColumnSelectAll, suppressSyncLayoutWithGrid = columnChooserParams.suppressSyncLayoutWithGrid, columnLayout = columnChooserParams.columnLayout;
+        columnSelectPanel.init(!!draggable, this.gridOptionsService.addGridCommonParams({
+            suppressColumnMove: false,
+            suppressValues: false,
+            suppressPivots: false,
+            suppressRowGroups: false,
+            suppressPivotMode: false,
+            contractColumnSelection: !!contractColumnSelection,
+            suppressColumnExpandAll: !!suppressColumnExpandAll,
+            suppressColumnFilter: !!suppressColumnFilter,
+            suppressColumnSelectAll: !!suppressColumnSelectAll,
+            suppressSyncLayoutWithGrid: !!columnLayout || !!suppressSyncLayoutWithGrid,
+            onStateUpdated: function () { }
+        }), 'columnMenu');
+        if (columnLayout) {
+            columnSelectPanel.setColumnLayout(columnLayout);
+        }
+        return columnSelectPanel;
+    };
+    ColumnChooserFactory.prototype.showColumnChooser = function (_a) {
+        var _this = this;
+        var column = _a.column, chooserParams = _a.chooserParams, eventSource = _a.eventSource;
+        this.hideActiveColumnChooser();
+        var columnSelectPanel = this.createColumnSelectPanel(this, column, true, chooserParams);
+        var translate = this.localeService.getLocaleTextFunc();
+        var columnIndex = this.columnModel.getAllDisplayedColumns().indexOf(column);
+        var headerPosition = column ? this.focusService.getFocusedHeader() : null;
+        this.activeColumnChooserDialog = this.createBean(new core.AgDialog({
+            title: translate('chooseColumns', 'Choose Columns'),
+            component: columnSelectPanel,
+            width: 300,
+            height: 300,
+            resizable: true,
+            movable: true,
+            centered: true,
+            closable: true,
+            afterGuiAttached: function () {
+                var _a;
+                (_a = _this.focusService.findNextFocusableElement(columnSelectPanel.getGui())) === null || _a === void 0 ? void 0 : _a.focus();
+                _this.dispatchVisibleChangedEvent(true, column);
+            },
+            closedCallback: function (event) {
+                var eComp = _this.activeColumnChooser.getGui();
+                _this.destroyBean(_this.activeColumnChooser);
+                _this.activeColumnChooser = undefined;
+                _this.activeColumnChooserDialog = undefined;
+                _this.dispatchVisibleChangedEvent(false, column);
+                if (column) {
+                    _this.menuUtils.restoreFocusOnClose({ column: column, headerPosition: headerPosition, columnIndex: columnIndex, eventSource: eventSource }, eComp, event, true);
+                }
+            }
+        }));
+        this.activeColumnChooser = columnSelectPanel;
+    };
+    ColumnChooserFactory.prototype.hideActiveColumnChooser = function () {
+        if (this.activeColumnChooserDialog) {
+            this.destroyBean(this.activeColumnChooserDialog);
+        }
+    };
+    ColumnChooserFactory.prototype.dispatchVisibleChangedEvent = function (visible, column) {
+        var event = {
+            type: core.Events.EVENT_COLUMN_MENU_VISIBLE_CHANGED,
+            visible: visible,
+            switchingTab: false,
+            key: 'columnChooser',
+            column: column !== null && column !== void 0 ? column : null
+        };
+        this.eventService.dispatchEvent(event);
+    };
+    __decorate$2([
+        core.Autowired('focusService')
+    ], ColumnChooserFactory.prototype, "focusService", void 0);
+    __decorate$2([
+        core.Autowired('menuUtils')
+    ], ColumnChooserFactory.prototype, "menuUtils", void 0);
+    __decorate$2([
+        core.Autowired('columnModel')
+    ], ColumnChooserFactory.prototype, "columnModel", void 0);
+    ColumnChooserFactory = __decorate$2([
+        core.Bean('columnChooserFactory')
+    ], ColumnChooserFactory);
+    return ColumnChooserFactory;
+}(core.BeanStub));
+
+var __extends$1 = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$1 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var ColumnMenuFactory = /** @class */ (function (_super) {
+    __extends$1(ColumnMenuFactory, _super);
+    function ColumnMenuFactory() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    ColumnMenuFactory_1 = ColumnMenuFactory;
+    ColumnMenuFactory.prototype.createMenu = function (parent, column, sourceElement) {
+        var menuList = parent.createManagedBean(new core.AgMenuList(0, {
+            column: column !== null && column !== void 0 ? column : null,
+            node: null,
+            value: null
+        }));
+        var menuItems = this.getMenuItems(column);
+        var menuItemsMapped = this.menuItemMapper.mapWithStockItems(menuItems, column !== null && column !== void 0 ? column : null, sourceElement);
+        menuList.addMenuItems(menuItemsMapped);
+        return menuList;
+    };
+    ColumnMenuFactory.prototype.getMenuItems = function (column) {
+        var defaultItems = this.getDefaultMenuOptions(column);
+        var result;
+        var columnMainMenuItems = column === null || column === void 0 ? void 0 : column.getColDef().mainMenuItems;
+        if (Array.isArray(columnMainMenuItems)) {
+            result = columnMainMenuItems;
+        }
+        else if (typeof columnMainMenuItems === 'function') {
+            result = columnMainMenuItems(this.gridOptionsService.addGridCommonParams({
+                column: column,
+                defaultItems: defaultItems
+            }));
+        }
+        else {
+            var userFunc = this.gridOptionsService.getCallback('getMainMenuItems');
+            if (userFunc && column) {
+                result = userFunc({
+                    column: column,
+                    defaultItems: defaultItems
+                });
+            }
+            else {
+                result = defaultItems;
+            }
+        }
+        // GUI looks weird when two separators are side by side. this can happen accidentally
+        // if we remove items from the menu then two separators can edit up adjacent.
+        core._.removeRepeatsFromArray(result, ColumnMenuFactory_1.MENU_ITEM_SEPARATOR);
+        return result;
+    };
+    ColumnMenuFactory.prototype.getDefaultMenuOptions = function (column) {
+        var result = [];
+        var isLegacyMenuEnabled = this.menuService.isLegacyMenuEnabled();
+        if (!column) {
+            if (!isLegacyMenuEnabled) {
+                result.push('columnChooser');
+            }
+            result.push('resetColumns');
+            return result;
+        }
+        var allowPinning = !column.getColDef().lockPinned;
+        var rowGroupCount = this.columnModel.getRowGroupColumns().length;
+        var doingGrouping = rowGroupCount > 0;
+        var allowValue = column.isAllowValue();
+        var allowRowGroup = column.isAllowRowGroup();
+        var isPrimary = column.isPrimary();
+        var pivotModeOn = this.columnModel.isPivotMode();
+        var isInMemoryRowModel = this.rowModel.getType() === 'clientSide';
+        var usingTreeData = this.gridOptionsService.get('treeData');
+        var allowValueAgg = 
+        // if primary, then only allow aggValue if grouping and it's a value columns
+        (isPrimary && doingGrouping && allowValue)
+            // secondary columns can always have aggValue, as it means it's a pivot value column
+            || !isPrimary;
+        if (!isLegacyMenuEnabled && column.isSortable()) {
+            var sort = column.getSort();
+            if (sort !== 'asc') {
+                result.push('sortAscending');
+            }
+            if (sort !== 'desc') {
+                result.push('sortDescending');
+            }
+            if (sort) {
+                result.push('sortUnSort');
+            }
+            result.push(ColumnMenuFactory_1.MENU_ITEM_SEPARATOR);
+        }
+        if (this.menuService.isFilterMenuItemEnabled(column)) {
+            result.push('columnFilter');
+            result.push(ColumnMenuFactory_1.MENU_ITEM_SEPARATOR);
+        }
+        if (allowPinning) {
+            result.push('pinSubMenu');
+        }
+        if (allowValueAgg) {
+            result.push('valueAggSubMenu');
+        }
+        if (allowPinning || allowValueAgg) {
+            result.push(ColumnMenuFactory_1.MENU_ITEM_SEPARATOR);
+        }
+        result.push('autoSizeThis');
+        result.push('autoSizeAll');
+        result.push(ColumnMenuFactory_1.MENU_ITEM_SEPARATOR);
+        var showRowGroup = column.getColDef().showRowGroup;
+        if (showRowGroup) {
+            result.push('rowUnGroup');
+        }
+        else if (allowRowGroup && column.isPrimary()) {
+            if (column.isRowGroupActive()) {
+                var groupLocked = this.columnModel.isColumnGroupingLocked(column);
+                if (!groupLocked) {
+                    result.push('rowUnGroup');
+                }
+            }
+            else {
+                result.push('rowGroup');
+            }
+        }
+        result.push(ColumnMenuFactory_1.MENU_ITEM_SEPARATOR);
+        if (!isLegacyMenuEnabled) {
+            result.push('columnChooser');
+        }
+        result.push('resetColumns');
+        // only add grouping expand/collapse if grouping in the InMemoryRowModel
+        // if pivoting, we only have expandable groups if grouping by 2 or more columns
+        // as the lowest level group is not expandable while pivoting.
+        // if not pivoting, then any active row group can be expanded.
+        var allowExpandAndContract = isInMemoryRowModel && (usingTreeData || rowGroupCount > (pivotModeOn ? 1 : 0));
+        if (allowExpandAndContract) {
+            result.push('expandAll');
+            result.push('contractAll');
+        }
+        return result;
+    };
+    var ColumnMenuFactory_1;
+    ColumnMenuFactory.MENU_ITEM_SEPARATOR = 'separator';
+    __decorate$1([
+        core.Autowired('menuItemMapper')
+    ], ColumnMenuFactory.prototype, "menuItemMapper", void 0);
+    __decorate$1([
+        core.Autowired('columnModel')
+    ], ColumnMenuFactory.prototype, "columnModel", void 0);
+    __decorate$1([
+        core.Autowired('rowModel')
+    ], ColumnMenuFactory.prototype, "rowModel", void 0);
+    __decorate$1([
+        core.Autowired('filterManager')
+    ], ColumnMenuFactory.prototype, "filterManager", void 0);
+    __decorate$1([
+        core.Autowired('menuService')
+    ], ColumnMenuFactory.prototype, "menuService", void 0);
+    ColumnMenuFactory = ColumnMenuFactory_1 = __decorate$1([
+        core.Bean('columnMenuFactory')
+    ], ColumnMenuFactory);
+    return ColumnMenuFactory;
+}(core.BeanStub));
+
+var __extends = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var MenuUtils = /** @class */ (function (_super) {
+    __extends(MenuUtils, _super);
+    function MenuUtils() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    MenuUtils.prototype.restoreFocusOnClose = function (restoreFocusParams, eComp, e, restoreIfMouseEvent) {
+        var eventSource = restoreFocusParams.eventSource;
+        var isKeyboardEvent = e instanceof KeyboardEvent;
+        if ((!restoreIfMouseEvent && !isKeyboardEvent) || !eventSource) {
+            return;
+        }
+        var eDocument = this.gridOptionsService.getDocument();
+        if (!eComp.contains(eDocument.activeElement) && eDocument.activeElement !== eDocument.body) {
+            // something else has focus, so don't return focus to the header
+            return;
+        }
+        this.focusHeaderCell(restoreFocusParams);
+    };
+    MenuUtils.prototype.closePopupAndRestoreFocusOnSelect = function (hidePopupFunc, restoreFocusParams, event) {
+        var keyboardEvent;
+        if (event && event.event && event.event instanceof KeyboardEvent) {
+            keyboardEvent = event.event;
+        }
+        hidePopupFunc(keyboardEvent && { keyboardEvent: keyboardEvent });
+        // this method only gets called when the menu was closed by selecting an option
+        // in this case we focus the cell that was previously focused, otherwise the header
+        var focusedCell = this.focusService.getFocusedCell();
+        var eDocument = this.gridOptionsService.getDocument();
+        if (eDocument.activeElement === eDocument.body) {
+            if (focusedCell) {
+                var rowIndex = focusedCell.rowIndex, rowPinned = focusedCell.rowPinned, column = focusedCell.column;
+                this.focusService.setFocusedCell({ rowIndex: rowIndex, column: column, rowPinned: rowPinned, forceBrowserFocus: true, preventScrollOnBrowserFocus: true });
+            }
+            else {
+                this.focusHeaderCell(restoreFocusParams);
+            }
+        }
+    };
+    MenuUtils.prototype.onContextMenu = function (mouseEvent, touchEvent, showMenuCallback) {
+        // to allow us to debug in chrome, we ignore the event if ctrl is pressed.
+        // not everyone wants this, so first 'if' below allows to turn this hack off.
+        if (!this.gridOptionsService.get('allowContextMenuWithControlKey')) {
+            // then do the check
+            if (mouseEvent && (mouseEvent.ctrlKey || mouseEvent.metaKey)) {
+                return;
+            }
+        }
+        // need to do this regardless of context menu showing or not, so doing
+        // before the isSuppressContextMenu() check
+        if (mouseEvent) {
+            this.blockMiddleClickScrollsIfNeeded(mouseEvent);
+        }
+        if (this.gridOptionsService.get('suppressContextMenu')) {
+            return;
+        }
+        var eventOrTouch = mouseEvent !== null && mouseEvent !== void 0 ? mouseEvent : touchEvent.touches[0];
+        if (showMenuCallback(eventOrTouch)) {
+            var event_1 = mouseEvent !== null && mouseEvent !== void 0 ? mouseEvent : touchEvent;
+            event_1.preventDefault();
+        }
+    };
+    MenuUtils.prototype.focusHeaderCell = function (restoreFocusParams) {
+        var column = restoreFocusParams.column, columnIndex = restoreFocusParams.columnIndex, headerPosition = restoreFocusParams.headerPosition, eventSource = restoreFocusParams.eventSource;
+        var isColumnStillVisible = this.columnModel.getAllDisplayedColumns().some(function (col) { return col === column; });
+        if (isColumnStillVisible && eventSource && core._.isVisible(eventSource)) {
+            var focusableEl = this.focusService.findTabbableParent(eventSource);
+            if (focusableEl) {
+                if (column) {
+                    this.headerNavigationService.scrollToColumn(column);
+                }
+                focusableEl.focus();
+            }
+        }
+        // if the focusEl is no longer in the DOM, we try to focus
+        // the header that is closest to the previous header position
+        else if (headerPosition && columnIndex !== -1) {
+            var allColumns = this.columnModel.getAllDisplayedColumns();
+            var columnToFocus = allColumns[columnIndex] || core._.last(allColumns);
+            if (columnToFocus) {
+                this.focusService.focusHeaderPosition({
+                    headerPosition: {
+                        headerRowIndex: headerPosition.headerRowIndex,
+                        column: columnToFocus
+                    }
+                });
+            }
+        }
+    };
+    MenuUtils.prototype.blockMiddleClickScrollsIfNeeded = function (mouseEvent) {
+        // if we don't do this, then middle click will never result in a 'click' event, as 'mousedown'
+        // will be consumed by the browser to mean 'scroll' (as you can scroll with the middle mouse
+        // button in the browser). so this property allows the user to receive middle button clicks if
+        // they want.
+        var gridOptionsService = this.gridOptionsService;
+        var which = mouseEvent.which;
+        if (gridOptionsService.get('suppressMiddleClickScrolls') && which === 2) {
+            mouseEvent.preventDefault();
+        }
+    };
+    __decorate([
+        core.Autowired('focusService')
+    ], MenuUtils.prototype, "focusService", void 0);
+    __decorate([
+        core.Autowired('headerNavigationService')
+    ], MenuUtils.prototype, "headerNavigationService", void 0);
+    __decorate([
+        core.Autowired('columnModel')
+    ], MenuUtils.prototype, "columnModel", void 0);
+    MenuUtils = __decorate([
+        core.Bean('menuUtils')
+    ], MenuUtils);
+    return MenuUtils;
+}(core.BeanStub));
+
 var MenuModule = {
     version: VERSION,
     moduleName: core.ModuleNames.MenuModule,
-    beans: [EnterpriseMenuFactory, ContextMenuFactory, MenuItemMapper, ChartMenuItemMapper],
+    beans: [EnterpriseMenuFactory, ContextMenuFactory, MenuItemMapper, ChartMenuItemMapper, ColumnChooserFactory, ColumnMenuFactory, MenuUtils],
     dependantModules: [
         core$1.EnterpriseCoreModule
     ]

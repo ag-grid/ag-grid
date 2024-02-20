@@ -26,7 +26,7 @@ export default {
         },
 
         doesFilterPass(params) {
-            const value = this.params.valueGetter(params);
+            const value = this.params.getValue(params.node);
 
             if (this.isFilterActive()) {
                 if (value == null) return false;

@@ -9,14 +9,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MiniChart = void 0;
 const core_1 = require("@ag-grid-community/core");
 const ag_charts_community_1 = require("ag-charts-community");
+const CANVAS_CLASS = 'ag-chart-mini-thumbnail-canvas';
+const ERROR_MESSAGE = 'AG Grid - chart update failed';
 class MiniChart extends core_1.Component {
     constructor(container, tooltipName) {
         super();
         this.size = 58;
         this.padding = 5;
         this.root = new ag_charts_community_1._Scene.Group();
-        const scene = new ag_charts_community_1._Scene.Scene({ document: window.document, width: this.size, height: this.size });
-        scene.canvas.element.classList.add('ag-chart-mini-thumbnail-canvas');
+        const scene = new ag_charts_community_1._Scene.Scene({
+            window: window,
+            document: window.document,
+            width: this.size,
+            height: this.size
+        });
+        scene.canvas.element.classList.add(CANVAS_CLASS);
         scene.root = this.root;
         scene.container = container;
         this.scene = scene;
@@ -24,13 +31,15 @@ class MiniChart extends core_1.Component {
     }
     init() {
         this.scene.canvas.element.title = this.chartTranslationService.translate(this.tooltipName);
-        // necessary to force scene graph render as we are not using the standalone factory!
+        // Necessary to force scene graph render as we are not using the standalone factory.
         this.scene.render()
-            .catch((e) => console.error(`AG Grid - chart update failed`, e));
+            .catch((e) => {
+            console.error(`${ERROR_MESSAGE}`, e);
+        });
     }
 }
 __decorate([
-    core_1.Autowired('chartTranslationService')
+    (0, core_1.Autowired)('chartTranslationService')
 ], MiniChart.prototype, "chartTranslationService", void 0);
 __decorate([
     core_1.PostConstruct

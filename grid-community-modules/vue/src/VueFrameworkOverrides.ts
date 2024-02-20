@@ -6,7 +6,7 @@ export class VueFrameworkOverrides extends VanillaFrameworkOverrides {
     private readonly parent: AgGridVue;
 
     constructor(parent: AgGridVue) {
-        super();
+        super('vue');
 
         this.parent = parent;
     }

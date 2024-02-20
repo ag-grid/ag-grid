@@ -54,7 +54,6 @@ const detailId = params.node.id;
 const detailGridInfo = {
     id: detailId,
     api: params.api,
-    columnApi: params.columnApi
 };
 
 this.masterGridApi.addDetailGridInfo(detailId, detailGridInfo);
@@ -66,19 +65,24 @@ this.masterGridApi.removeDetailGridInfo(detailId);
 
 ## Refreshing
 
-When data is updated in the grid using [Transaction Updates](/data-update-transactions/), the grid will call refresh on all Detail Cell Renderers.
+<framework-specific-section frameworks="javascript,angular,vue">
+|When data is updated in the grid using [Transaction Updates](/data-update-transactions/), the grid will call refresh on all Detail Cell Renderers.
+|
+|It is up to the Detail Cell Renderer whether it wants to act on the refresh or not. If the `refresh()` method returns `true`, the grid will assume the Detail Cell Renderer has refreshed successfully and nothing more will happen. However if `false` is returned, the grid will destroy the Detail Cell Renderer and re-create it again.
+|
+|This pattern is similar to how refresh works for normal grid Cell Renderers.
+|
+|The example below shows how components can refresh on updates. The example refreshes the first row every one second. The `refresh()` method gets called on the corresponding Detail Cell Renderer after the transaction is applied. The Detail Cell Renderer refresh method reads the latest call count from the params, and the last updated time is also changed.
+</framework-specific-section>
+<framework-specific-section frameworks="react">
+|If the grid option `reactiveCustomComponents` is enabled, when data is updated in the grid using [Transaction Updates](/data-update-transactions/), Detail Cell Renderers will be refreshed with updated props.
+|
+|If `reactiveCustomComponents` is not enabled, Detail Cell Renderers will be destroyed and recreated on update, unless the `refresh()` method is implemented (via `useImperativeHandle`) and returns `true`. This behaviour is deprecated, and in v32, `reactiveCustomComponents` will default to true.
+|
+|The example below demonstrates Detail Cell Renderers refreshing when `reactiveCustomComponents` is enabled.
+</framework-specific-section>
 
-It is up to the Detail Cell Renderer whether it wants to act on the refresh or not. If the `refresh()` method returns `true`, the grid will assume the Detail Cell Renderer has refreshed successfully and nothing more will happen. However if `false` is returned, the grid will destroy the Detail Cell Renderer and re-create it again.
-
-This pattern is similar to how refresh works for normal grid Cell Renderers.
-
-The example below shows how components can optionally refresh on updates. The example refreshes the first row every one second. The `refresh()` method gets called on all Detail Cell Renderers after the transaction is applied. Only the first Detail Cell Renderer returns `false` so it is the only one that updates.
-
-The creation time is printed to each Detail Cell Renderer so it can be noted when it was last created.
-
-In this simple example, it would be possible for the components to just update themselves and not rely on the grid destroying and re-creating the components. However the example is contrived to demonstrate returning `true` vs `false` from the refresh method.
-
-<grid-example title='Custom Detail with Refresh' name='custom-detail-with-refresh' type='generated' options='{ "enterprise": true, "exampleHeight": 545, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
+<grid-example title='Custom Detail with Refresh' name='custom-detail-with-refresh' type='mixed' options='{ "enterprise": true, "exampleHeight": 545, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
 
 ## Keyboard Navigation
 
@@ -90,8 +94,8 @@ To add keyboard navigation to custom detail panels, it must be implemented in th
 
 The following example shows an implementation of keyboard navigation in a custom detail panel: 
 
-* Click a cell in the `Mila Smith` master row and press <kbd>Tab</kbd> key to move focus to the custom detail panel inputs of the `Mila Smith` master row.
-* Click a cell in the `Evelyn Taylor` master row and press <kbd>Shift</kbd>+<kbd>Tab</kbd> to focus the inputs in the custom detail panel of the `Mila Smith` master row.
+* Click a cell in the `Mila Smith` master row and press <kbd>⇥ Tab</kbd> key to move focus to the custom detail panel inputs of the `Mila Smith` master row.
+* Click a cell in the `Evelyn Taylor` master row and press <kbd>⇧ Shift</kbd>+<kbd>⇥ Tab</kbd> to focus the inputs in the custom detail panel of the `Mila Smith` master row.
 
 <note>
 This example is illustrative of the main concepts, but the actual implementation of custom keyboard navigation will vary based on the specific custom detail panel.

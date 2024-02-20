@@ -1,6 +1,7 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
+import { ChartType } from '../interfaces/iChartOptions';
 import { Module } from "../interfaces/iModule";
 import { ModuleNames } from "./moduleNames";
 export declare class ModuleRegistry {
@@ -35,6 +36,10 @@ export declare class ModuleRegistry {
     static __setIsBundled(): void;
     /** AG GRID INTERNAL - Assert a given module has been register, globally or individually with this grid. */
     static __assertRegistered(moduleName: ModuleNames, reason: string, gridId: string): boolean;
+    /**
+     * AG GRID INTERNAL - Warn that a given integrated chart type is not supported under the community distribution.
+     */
+    static __warnEnterpriseChartDisabled(chartType: ChartType): void;
     /** AG GRID INTERNAL - Is the given module registered, globally or individually with this grid. */
     static __isRegistered(moduleName: ModuleNames, gridId: string): boolean;
     /** AG GRID INTERNAL - Get all registered modules globally / individually for this grid. */

@@ -36,8 +36,10 @@ var FiltersToolPanelHeaderPanel = /** @class */ (function (_super) {
     };
     FiltersToolPanelHeaderPanel.prototype.postConstruct = function () {
         var translate = this.localeService.getLocaleTextFunc();
-        this.eFilterTextField.onValueChange(this.onSearchTextChanged.bind(this));
-        this.eFilterTextField.setInputAriaLabel(translate('ariaFilterColumnsInput', 'Filter Columns Input'));
+        this.eFilterTextField
+            .setAutoComplete(false)
+            .setInputAriaLabel(translate('ariaFilterColumnsInput', 'Filter Columns Input'))
+            .onValueChange(this.onSearchTextChanged.bind(this));
         this.createExpandIcons();
         this.setExpandState(EXPAND_STATE.EXPANDED);
         this.addManagedListener(this.eExpand, 'click', this.onExpandClicked.bind(this));

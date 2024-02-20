@@ -8,6 +8,10 @@ export declare class PivotStage extends BeanStub implements IRowNodeStage {
     private aggregationColumnsHashLastTime;
     private aggregationFuncsHashLastTime;
     private groupColumnsHashLastTime;
+    private pivotRowTotalsLastTime;
+    private pivotColumnGroupTotalsLastTime;
+    private suppressExpandablePivotGroupsLastTime;
+    private removePivotHeaderRowWhenSingleValueColumnLastTime;
     execute(params: StageExecuteParams): void;
     private executePivotOff;
     private executePivotOn;

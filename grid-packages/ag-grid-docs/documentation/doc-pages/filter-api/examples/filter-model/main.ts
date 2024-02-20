@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, IDateFilterParams } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions, IDateFilterParams } from '@ag-grid-community/core';
 
 var filterParams: IDateFilterParams = {
   comparator: (filterLocalDateAtMidnight: Date, cellValue: string) => {
@@ -43,13 +43,14 @@ const columnDefs: ColDef[] = [
   { field: 'total', filter: 'agNumberColumnFilter' },
 ]
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
   defaultColDef: {
     flex: 1,
     minWidth: 150,
     filter: true,
-    sortable: true,
   },
   sideBar: 'filters',
   onGridReady: (params) => {
@@ -60,20 +61,20 @@ const gridOptions: GridOptions<IOlympicData> = {
 var savedFilterModel: any = null
 
 function clearFilters() {
-  gridOptions.api!.setFilterModel(null)
+  gridApi!.setFilterModel(null)
 }
 
 function saveFilterModel() {
-  savedFilterModel = gridOptions.api!.getFilterModel()
+  savedFilterModel = gridApi!.getFilterModel()
 
   var keys = Object.keys(savedFilterModel)
   var savedFilters: string = keys.length > 0 ? keys.join(', ') : '(none)';
 
-  (document.querySelector('#savedFilters') as any).innerHTML = savedFilters
+  (document.querySelector('#savedFilters') as any).textContent = savedFilters
 }
 
 function restoreFilterModel() {
-  gridOptions.api!.setFilterModel(savedFilterModel)
+  gridApi!.setFilterModel(savedFilterModel)
 }
 
 function restoreFromHardCoded() {
@@ -87,19 +88,19 @@ function restoreFromHardCoded() {
     date: { type: 'lessThan', dateFrom: '2010-01-01' },
   }
 
-  gridOptions.api!.setFilterModel(hardcodedFilter)
+  gridApi!.setFilterModel(hardcodedFilter)
 }
 
 function destroyFilter() {
-  gridOptions.api!.destroyFilter('athlete');
+  gridApi!.destroyFilter('athlete');
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

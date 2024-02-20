@@ -70,7 +70,7 @@ var gridOptions = {
 var eGridDiv = document.querySelector('#myGrid');
 
 // create the grid passing in the div to use together with the columns & data we want to use
-new Grid(eGridDiv, gridOptions);
+var api = createGrid(eGridDiv, gridOptions);
 ```
 
 ```html
@@ -79,7 +79,7 @@ new Grid(eGridDiv, gridOptions);
 <head>
 </head>
 <body>
-<div id="myGrid" style="height: 200px;width:500px;" class="ag-theme-alpine"></div>
+<div id="myGrid" style="height: 200px;width:500px;" class="ag-theme-quartz"></div>
 
 <script src="./dist/ag-bundle.js"></script>
 </body>
@@ -126,6 +126,4 @@ rollup -c rollup.ag-grid.config.js
 
 The resulting bundle will be available in `./dist/ag-bundle.js`
 
-If we now serve `index-ag-grid.html` our grid will be rendered as expected:
-
-<image-caption src="building-rollup/resources/bundled-grid.png" width="33rem" alt="Bundled Grid" centered="true" constrained="true"></image-caption>
+If we now serve `index-ag-grid.html` our grid will be rendered as expected.

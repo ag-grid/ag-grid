@@ -1,6 +1,7 @@
-import { convertFunctionToConstProperty, getFunctionName, getModuleRegistration, ImportType, isInstanceMethod } from './parser-utils';
+import { convertFunctionToConstProperty, getActiveTheme, getFunctionName, getIntegratedDarkModeCode, getModuleRegistration, ImportType, isInstanceMethod, preferParamsApi } from './parser-utils';
 import { convertFunctionalTemplate, convertFunctionToConstCallback, getImport, getValueType } from './react-utils';
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
+import {integratedChartsUsesChartsEnterprise} from "./consts";
 const path = require('path');
 
 function getModuleImports(bindings: any, componentFilenames: string[], allStylesheets: string[]): string[] {
@@ -13,18 +14,18 @@ function getModuleImports(bindings: any, componentFilenames: string[], allStyles
     if (bindings.gridSettings.enableChartApi) {
         imports.push("import { AgChart } from 'ag-charts-community'");
     }
-    if(bindings.gridSettings.licenseKey) {
+    if (bindings.gridSettings.licenseKey) {
         imports.push("import { LicenseManager } from '@ag-grid-enterprise/core';");
     }
 
     imports.push("import '@ag-grid-community/styles/ag-grid.css';");
-    // to account for the (rare) example that has more than one class...just default to alpine if it does
+    // to account for the (rare) example that has more than one class...just default to quartz if it does
     // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
     // "source" non dark version
-    const theme = bindings.gridSettings.theme ? bindings.gridSettings.theme.replace('-dark', '') : 'ag-theme-alpine';
+    const theme = bindings.gridSettings.theme ? bindings.gridSettings.theme.replace('-dark', '') : 'ag-theme-quartz';
     imports.push(`import '@ag-grid-community/styles/${theme}.css';`);
 
-    if(allStylesheets && allStylesheets.length > 0) {
+    if (allStylesheets && allStylesheets.length > 0) {
         allStylesheets.forEach(styleSheet => imports.push(`import './${path.basename(styleSheet)}';`));
     }
 
@@ -47,24 +48,24 @@ function getPackageImports(bindings: any, componentFilenames: string[], allStyle
     ];
 
     if (gridSettings.enterprise) {
-        imports.push("import 'ag-grid-enterprise';");
+        imports.push(`import 'ag-grid-${integratedChartsUsesChartsEnterprise && bindings.gridSettings.modules.includes('charts-enterprise') ? 'charts-' : ''}enterprise';`);
     }
     if (bindings.gridSettings.enableChartApi) {
         imports.push("import { AgChart } from 'ag-charts-community'");
     }
-    if(bindings.gridSettings.licenseKey) {
+    if (bindings.gridSettings.licenseKey) {
         imports.push("import { LicenseManager } from 'ag-grid-enterprise';");
     }
 
     imports.push("import 'ag-grid-community/styles/ag-grid.css';");
 
-    // to account for the (rare) example that has more than one class...just default to alpine if it does
+    // to account for the (rare) example that has more than one class...just default to quartz if it does
     // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
     // "source" non dark version
-    const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-alpine';
+    const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-quartz';
     imports.push(`import 'ag-grid-community/styles/${theme}.css';`);
 
-    if(allStylesheets && allStylesheets.length > 0) {
+    if (allStylesheets && allStylesheets.length > 0) {
         allStylesheets.forEach(styleSheet => imports.push(`import './${path.basename(styleSheet)}';`));
     }
 
@@ -86,7 +87,7 @@ function getImports(bindings: any, componentFileNames: string[], importType: Imp
 function getTemplate(bindings: any, componentAttributes: string[]): string {
     const { gridSettings } = bindings;
     const agGridTag = `
-        <div ${gridSettings.myGridReference ? 'id="myGrid"' : ''} style={gridStyle} className="${gridSettings.theme}">             
+        <div ${gridSettings.myGridReference ? 'id="myGrid"' : ''} style={gridStyle} className={${getActiveTheme(gridSettings.theme, false)}}>
             <AgGridReact
                 ref={gridRef}
                 ${componentAttributes.join('\n')}
@@ -132,7 +133,7 @@ function getEventAndCallbackNames() {
         const isEvent = v.meta?.isEvent && !k.startsWith('on');
         return isCallback || isCallSigInterface || isEvent;
     }).map(([k, v]) => k);
-    return callbacksAndEvents;;
+    return callbacksAndEvents;
 }
 
 export function vanillaToReactFunctional(bindings: any, componentFilenames: string[], allStylesheets: string[]): (importType: ImportType) => string {
@@ -142,7 +143,6 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
     const utilMethodNames = bindings.utils.map(getFunctionName);
     const callbackDependencies = Object.keys(bindings.callbackDependencies).reduce((acc, callbackName) => {
         acc[callbackName] = bindings.callbackDependencies[callbackName].filter(dependency => !utilMethodNames.includes(dependency))
-            .filter(dependency => dependency !== 'gridOptions')
             .filter(dependency => !global[dependency]) // exclude things like Number, isNaN etc
         return acc;
     }, {})
@@ -167,8 +167,11 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
 
         const additionalInReady = [];
         if (data) {
-            const setRowDataBlock = data.callback.replace('params.api.setRowData', 'setRowData');
+            additionalInReady.push(
+                `${getIntegratedDarkModeCode(bindings.exampleName)}`
+            );
 
+            const setRowDataBlock = data.callback.replace('gridApi.setGridOption(\'rowData\',', 'setRowData(');
             additionalInReady.push(`
                 fetch(${data.url})
                 .then(resp => resp.json())
@@ -177,8 +180,11 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
         }
 
         if (onGridReady) {
+            additionalInReady.push(
+                `${getIntegratedDarkModeCode(bindings.exampleName)}`
+            );
             const hackedHandler = onGridReady.replace(/^{|}$/g, '')
-                .replace('params.api.setRowData', 'setRowData');
+                .replace('gridApi.setGridOption(\'rowData\',', 'setRowData(');
             additionalInReady.push(hackedHandler);
         }
 
@@ -255,18 +261,11 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
         const thisReferenceConverter = content => content.replace(/this\./g, "");
 
         const gridInstanceConverter = content => content
-            .replace(/params\.api\.setRowData(data)/g, 'setRowData(data)')
-            .replace(/params\.api\./g, 'gridRef.current.api.')
-            .replace(/params\.columnApi\./g, "gridRef.current.columnApi.")
-            .replace(/gridInstance\.api\./g, "gridRef.current.api.")
-            .replace(/gridInstance\.columnApi\./g, "gridRef.current.columnApi.")
+            .replace(/params\.api(!?)\.setGridOption\('rowData', data\)/g, 'setRowData(data)')
             .replace(/gridApi\./g, "gridRef.current.api.")
-            .replace(/(\s+)columnApi\./g, "$1gridRef.current.columnApi.")
             .replace(/gridApi;/g, "gridRef.current.api;")
-            .replace(/columnApi;/g, "gridRef.current.columnApi;")
-            .replace(/gridColumnApi\./g, "gridRef.current.columnApi.")
-            .replace("gridRef.current.api.setRowData", "setRowData")
-            .replace("gridApi", "gridRef.current.api")
+            .replace("gridRef.current.api.setGridOption('rowData',", "setRowData(")
+            .replace(/gridApi/g, "gridRef.current.api");
 
         const template = getTemplate(bindings, componentProps.map(thisReferenceConverter));
         const eventHandlers = bindings.eventHandlers.map(event => convertFunctionToConstCallback(event.handler, callbackDependencies)).map(thisReferenceConverter).map(gridInstanceConverter);
@@ -276,7 +275,7 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
 
         const gridReady = additionalInReady.length > 0 ? `
             const onGridReady = useCallback((params) => {
-                ${additionalInReady.join('\n')}
+                ${preferParamsApi(additionalInReady.join('\n'))}
             }, []);` : '';
 
 
@@ -298,7 +297,6 @@ const GridExample = () => {
 ${gridReady}
 
 ${[].concat(eventHandlers, externalEventHandlers, instanceMethods).join('\n\n   ')}
-
 
     return  (
             <div ${containerStyle}>

@@ -1,6 +1,7 @@
-import { FirstDataRenderedEvent, Grid, GridOptions } from '@ag-grid-community/core';
-import { getData } from "./data";
+import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent} from '@ag-grid-community/core';
+import {getData} from "./data";
 
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -11,16 +12,17 @@ const gridOptions: GridOptions = {
   ],
   defaultColDef: {
     flex: 1,
-    sortable: true,
     filter: 'agSetColumnFilter',
     floatingFilter: true,
-    resizable: true,
   },
-  rowData: getData(),
   enableCharts: true,
-  chartThemes: ['ag-default-dark'],
-  onFirstDataRendered: onFirstDataRendered,
+  onGridReady : (params: GridReadyEvent) => {
+    getData().then(rowData => params.api.setGridOption('rowData', rowData));
+  },
+  onFirstDataRendered,
 }
+
+
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
   params.api.createCrossFilterChart({
@@ -51,11 +53,10 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
       },
     },
     chartContainer: document.querySelector('#pieChart') as any,
-  })
+  });
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
 })

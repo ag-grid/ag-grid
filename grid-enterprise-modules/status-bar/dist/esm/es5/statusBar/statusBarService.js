@@ -25,14 +25,24 @@ var StatusBarService = /** @class */ (function (_super) {
     // tslint:disable-next-line
     function StatusBarService() {
         var _this = _super.call(this) || this;
-        _this.allComponents = {};
+        _this.allComponents = new Map();
         return _this;
     }
     StatusBarService.prototype.registerStatusPanel = function (key, component) {
-        this.allComponents[key] = component;
+        this.allComponents.set(key, component);
+    };
+    StatusBarService.prototype.unregisterStatusPanel = function (key) {
+        this.allComponents.delete(key);
+    };
+    StatusBarService.prototype.unregisterAllComponents = function () {
+        this.allComponents.clear();
     };
     StatusBarService.prototype.getStatusPanel = function (key) {
-        return this.allComponents[key];
+        return this.allComponents.get(key);
+    };
+    StatusBarService.prototype.destroy = function () {
+        this.unregisterAllComponents();
+        _super.prototype.destroy.call(this);
     };
     StatusBarService = __decorate([
         Bean('statusBarService')

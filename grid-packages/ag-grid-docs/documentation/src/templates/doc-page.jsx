@@ -1,7 +1,5 @@
 import classnames from 'classnames';
 import { ApiDocumentation, InterfaceDocumentation } from 'components/ApiDocumentation';
-import ChartGallery from 'components/chart-gallery/ChartGallery';
-import ChartsApiExplorer from 'components/charts-api-explorer/ChartsApiExplorer';
 import ExampleRunner from 'components/example-runner/ExampleRunner';
 import { ExpandableSnippet } from 'components/expandable-snippet/ExpandableSnippet';
 import FrameworkSpecificSection from 'components/FrameworkSpecificSection';
@@ -24,18 +22,18 @@ import rehypeReact from 'rehype-react';
 import { getProductType } from 'utils/page-header';
 import stripHtml from 'utils/strip-html';
 import DocumentationLink from '../components/DocumentationLink';
+import DownloadDSButton from 'components/DownloadDSButton';
 import LearningVideos from '../components/LearningVideos';
 import { trackApiDocumentation } from '../utils/analytics';
-import styles from './doc-page.module.scss';
+import styles from '@design-system/modules/GridDocs.module.scss';
+import FrameworkSelectorInsideDocs from "../components/FrameworkSelectorInsideDocs";
 
 /**
  * This template is used for documentation pages, i.e. those generated from Markdown files.
  */
-const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pageName } }) => {
+const DocPageTemplate = ({ data, path, pageContext: { framework, frameworks, exampleIndexData, pageName } }) => {
     const { markdownRemark: page } = data;
-    const [showSideMenu, setShowSideMenu] = useState(
-        page.frontmatter.sideMenu === null ? true : page.frontmatter.sideMenu
-    );
+    const [showSideMenu, setShowSideMenu] = useState(true);
 
     if (!page) {
         return null;
@@ -47,7 +45,7 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
         if (!!value) {
             return value === 'true';
         }
-        return undefined
+        return undefined;
     };
 
     const getExampleRunnerProps = (props, library) => ({
@@ -70,7 +68,6 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
             gif: (props) =>
                 Gif({ ...props, pageName, autoPlay: props.autoPlay != null ? JSON.parse(props.autoPlay) : false }),
             'grid-example': (props) => <ExampleRunner {...getExampleRunnerProps(props, 'grid')} />,
-            'chart-example': (props) => <ExampleRunner {...getExampleRunnerProps(props, 'charts')} />,
             'api-documentation': (props) =>
                 ApiDocumentation({
                     ...props,
@@ -117,16 +114,13 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
             warning: Warning,
             'framework-specific-section': (props) =>
                 FrameworkSpecificSection({ ...props, currentFramework: framework }),
-            'chart-gallery': (props) => <ChartGallery {...props} />,
-            'charts-api-explorer': (props) => (
-                <ChartsApiExplorer {...props} framework={framework} exampleIndexData={exampleIndexData} />
-            ),
             'open-in-cta': OpenInCTA,
             pre: ({ children, className, ...otherProps }) => (
                 <pre className={classnames('code', className)} {...otherProps}>
                     {children}
                 </pre>
             ),
+            'download-ds-button': DownloadDSButton,
         },
     }).Compiler;
 
@@ -143,29 +137,28 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
         }
     }
 
-    // solidjs is still tactical and "lives" under react - make a bit of an exception here so the title makes sense
-    const pageTitle = (
-        <>
-            {pageName === 'solidjs' ? (
-                <span className={styles.headerFramework}>SolidJS Data Grid:</span>
-            ) : (
-                <span className={styles.headerFramework}>
-                    {getProductType(framework, pageName.startsWith('charts-'), version)}
-                </span>
-            )}
-            <span>{title}</span>
-        </>
-    );
-
     return (
         <div id="doc-page-wrapper" className={styles['doc-page-wrapper']}>
-            <div id="doc-content" className={classnames(styles['doc-page'], { [styles.noSideMenu]: !showSideMenu })}>
+            <div id="doc-content" className={classnames("doc-content", styles['doc-page'], { [styles.noSideMenu]: !showSideMenu })}>
                 {/*eslint-disable-next-line react/jsx-pascal-case*/}
                 <SEO title={title} description={description} framework={framework} pageName={pageName} />
 
                 <header className={styles.docsPageHeader}>
                     <h1 id="top" className={styles.docsPageTitle}>
-                        {pageTitle}
+
+                        <div className={styles.pageTitleContainer}>
+                            <div className={styles.pageTitleGroup}>
+                                <span className={styles.headerFramework}>
+                                    {getProductType(framework, false, version)}
+                                </span>
+                                <span>{title}</span>
+                            </div>
+                            <FrameworkSelectorInsideDocs
+                                currentFramework={framework}
+                                path={path}
+                            />
+                        </div>
+
                         {page.frontmatter.enterprise && (
                             <span className={styles.enterpriseLabel}>
                                 Enterprise
@@ -205,7 +198,6 @@ export const pageQuery = graphql`
                 title
                 version
                 enterprise
-                sideMenu
                 description
             }
             headings {

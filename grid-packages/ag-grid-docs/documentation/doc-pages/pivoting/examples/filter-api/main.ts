@@ -1,4 +1,5 @@
-import { Grid, GridOptions, ColDef } from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions, ColDef } from '@ag-grid-community/core';
+let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     { field: 'country', rowGroup: true, enableRowGroup: true },
@@ -14,8 +15,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     minWidth: 150,
     filter: true,
     floatingFilter: true,
-    sortable: true,
-    resizable: true,
   },
   processPivotResultColDef: (colDef: ColDef) => {
     colDef.filter = 'agNumberColumnFilter';
@@ -26,12 +25,12 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function clearFilter() {
-  gridOptions.api!.setFilterModel(null)
+  gridApi!.setFilterModel(null)
 }
 
 function filterUsRussiaAustralia() {
-  gridOptions.api!.setFilterModel({
-    ...gridOptions.api!.getFilterModel(),
+  gridApi!.setFilterModel({
+    ...gridApi!.getFilterModel(),
     country: {
       type: 'set',
       values: ['United States', 'Russia', 'Australia'],
@@ -40,8 +39,8 @@ function filterUsRussiaAustralia() {
 }
 
 function filterCanadaNorwayChinaZimbabweNetherlands() {
-  gridOptions.api!.setFilterModel({
-    ...gridOptions.api!.getFilterModel(),
+  gridApi!.setFilterModel({
+    ...gridApi!.getFilterModel(),
     country: {
       type: 'set',
       values: ['Canada', 'Norway', 'China', 'Zimbabwe', 'Netherlands'],
@@ -50,8 +49,8 @@ function filterCanadaNorwayChinaZimbabweNetherlands() {
 }
 
 function filter20042006() {
-  gridOptions.api!.setFilterModel({
-    ...gridOptions.api!.getFilterModel(),
+  gridApi!.setFilterModel({
+    ...gridApi!.getFilterModel(),
     year: {
       type: 'set',
       values: ['2004', '2006'],
@@ -60,8 +59,8 @@ function filter20042006() {
 }
 
 function filter200820102012() {
-  gridOptions.api!.setFilterModel({
-    ...gridOptions.api!.getFilterModel(),
+  gridApi!.setFilterModel({
+    ...gridApi!.getFilterModel(),
     year: {
       type: 'set',
       values: ['2008', '2010', '2012'],
@@ -70,15 +69,15 @@ function filter200820102012() {
 }
 
 function filterClearYears() {
-  gridOptions.api!.setFilterModel({
-    ...gridOptions.api!.getFilterModel(),
+  gridApi!.setFilterModel({
+    ...gridApi!.getFilterModel(),
     year: undefined,
   })
 }
 
 function filterSwimmingHockey() {
-  gridOptions.api!.setFilterModel({
-    ...gridOptions.api!.getFilterModel(),
+  gridApi!.setFilterModel({
+    ...gridApi!.getFilterModel(),
     sport: {
       type: 'set',
       values: ['Swimming', 'Hockey'],
@@ -87,8 +86,8 @@ function filterSwimmingHockey() {
 }
 
 function filterHockeyIceHockey() {
-  gridOptions.api!.setFilterModel({
-    ...gridOptions.api!.getFilterModel(),
+  gridApi!.setFilterModel({
+    ...gridApi!.getFilterModel(),
     sport: {
       type: 'set',
       values: ['Hockey', 'Ice Hockey'],
@@ -97,7 +96,7 @@ function filterHockeyIceHockey() {
 }
 
 function filterEveryYearGold() {
-  const goldPivotCols = gridOptions.columnApi!.getPivotResultColumns()!.filter(col => col.getColDef().pivotValueColumn!.getColId() === 'gold');
+  const goldPivotCols = gridApi!.getPivotResultColumns()!.filter(col => col.getColDef().pivotValueColumn!.getColId() === 'gold');
   if (goldPivotCols) {
     const newOpts = goldPivotCols.reduce((acc, col) => {
       acc[col.getId()] = {
@@ -106,16 +105,16 @@ function filterEveryYearGold() {
         type: 'greaterThan',
       }
       return acc;
-    }, gridOptions.api!.getFilterModel() || {})
-    gridOptions.api!.setFilterModel(newOpts)
+    }, gridApi!.getFilterModel() || {})
+    gridApi!.setFilterModel(newOpts)
   }
 }
 
 function filter2000Silver() {
-  const targetCol = gridOptions.columnApi!.getPivotResultColumn(['2000'], 'silver');
+  const targetCol = gridApi!.getPivotResultColumn(['2000'], 'silver');
   if (targetCol) {
-    gridOptions.api!.setFilterModel({
-      ...gridOptions.api!.getFilterModel(),
+    gridApi!.setFilterModel({
+      ...gridApi!.getFilterModel(),
       [targetCol.getId()]: {
         filterType: 'number',
         type: 'notBlank'
@@ -127,9 +126,9 @@ function filter2000Silver() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 }) 

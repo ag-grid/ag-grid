@@ -1,4 +1,11 @@
-import { ColGroupDef, Grid, GridOptions, ICellRendererParams, IsFullWidthRowParams } from '@ag-grid-community/core';
+import {
+    ColGroupDef,
+    GridApi,
+    createGrid,
+    GridOptions,
+    ICellRendererParams,
+    IsFullWidthRowParams,
+} from '@ag-grid-community/core';
 
 const columnDefs: ColGroupDef[] = [
     {
@@ -33,14 +40,14 @@ const columnDefs: ColGroupDef[] = [
 
 const makes = ['Toyota', 'Ford', 'BMW', 'Phantom', 'Porsche'];
 
+let gridApi: GridApi;
+
 const gridOptions: GridOptions = {
     defaultColDef: {
         enableRowGroup: true,
         enablePivot: true,
         enableValue: true,
         width: 100,
-        sortable: true,
-        resizable: true,
         filter: true,
         flex: 1,
         minWidth: 100,
@@ -49,7 +56,8 @@ const gridOptions: GridOptions = {
     isFullWidthRow: isFullWidthRow,
     fullWidthCellRenderer: fullWidthCellRenderer,
     pagination: true,
-    paginationPageSize: 10,
+    paginationPageSize: 20,
+    paginationPageSizeSelector: [10, 20, 50],
     columnDefs: columnDefs,
     domLayout: 'autoHeight',
 }
@@ -65,17 +73,17 @@ function fullWidthCellRenderer(params: ICellRendererParams) {
 
     if (params.node.rowPinned) {
         cssClass = 'example-full-width-floating-row'
-        message = 'Floating full width row at index ' + params.rowIndex
+        message = 'Floating full width row at index ' + params.node.rowIndex
     } else {
         cssClass = 'example-full-width-row'
-        message = 'Normal full width row at index' + params.rowIndex
+        message = 'Normal full width row at index ' + params.node.rowIndex
     }
 
     const eDiv = document.createElement('div');
     eDiv.innerHTML = `<div class="${cssClass}"><button>Click</button> ${message}</div>`
 
     const eButton = eDiv.querySelector('button')!;
-    eButton.addEventListener('click', function () {
+    eButton.addEventListener('click', () => {
         alert('button clicked')
     })
 
@@ -113,5 +121,5 @@ function createRowData() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    new Grid(gridDiv, gridOptions)
+    gridApi = createGrid(gridDiv, gridOptions);
 })

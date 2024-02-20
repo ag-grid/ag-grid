@@ -1,5 +1,7 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 declare var XLSX: any;
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -16,7 +18,6 @@ const gridOptions: GridOptions = {
   ],
 
   defaultColDef: {
-    resizable: true,
     minWidth: 80,
     flex: 1,
   },
@@ -84,7 +85,7 @@ function populateGrid(workbook: any) {
   // iterate over the worksheet pulling out the columns we're expecting
   while (worksheet['A' + rowIndex]) {
     var row: any = {}
-    Object.keys(columns).forEach(function (column) {
+    Object.keys(columns).forEach((column) => {
       row[columns[column]] = worksheet[column + rowIndex].w
     })
 
@@ -94,7 +95,7 @@ function populateGrid(workbook: any) {
   }
 
   // finally, set the imported rowData into the grid
-  gridOptions.api!.setRowData(rowData)
+  gridApi!.setGridOption('rowData', rowData)
 }
 
 function importExcel() {
@@ -121,5 +122,5 @@ document.addEventListener('DOMContentLoaded', function () {
   var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
 
   // create the grid passing in the div to use together with the columns & data we want to use
-  new Grid(eGridDiv, gridOptions)
+  gridApi = createGrid(eGridDiv, gridOptions);
 })

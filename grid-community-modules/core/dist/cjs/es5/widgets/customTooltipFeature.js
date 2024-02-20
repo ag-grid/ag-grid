@@ -57,8 +57,6 @@ var CustomTooltipFeature = /** @class */ (function (_super) {
         _this.parentComp = parentComp;
         _this.tooltipShowDelayOverride = tooltipShowDelayOverride;
         _this.tooltipHideDelayOverride = tooltipHideDelayOverride;
-        _this.DEFAULT_SHOW_TOOLTIP_DELAY = 2000;
-        _this.DEFAULT_HIDE_TOOLTIP_DELAY = 10000;
         _this.SHOW_QUICK_TOOLTIP_DIFF = 1000;
         _this.FADE_OUT_TOOLTIP_TIMEOUT = 1000;
         _this.INTERACTIVE_HIDE_DELAY = 100;
@@ -73,13 +71,11 @@ var CustomTooltipFeature = /** @class */ (function (_super) {
         return _this;
     }
     CustomTooltipFeature.prototype.postConstruct = function () {
-        if (this.gridOptionsService.is('tooltipInteraction')) {
+        if (this.gridOptionsService.get('tooltipInteraction')) {
             this.interactionEnabled = true;
         }
         this.tooltipTrigger = this.getTooltipTrigger();
-        this.tooltipShowDelay = this.getTooltipDelay('show');
-        this.tooltipHideDelay = this.getTooltipDelay('hide');
-        this.tooltipMouseTrack = this.gridOptionsService.is('tooltipMouseTrack');
+        this.tooltipMouseTrack = this.gridOptionsService.get('tooltipMouseTrack');
         var el = this.parentComp.getGui();
         if (this.tooltipTrigger === TooltipTrigger.HOVER) {
             this.addManagedListener(el, 'mouseenter', this.onMouseEnter.bind(this));
@@ -96,22 +92,19 @@ var CustomTooltipFeature = /** @class */ (function (_super) {
         }
     };
     CustomTooltipFeature.prototype.getGridOptionsTooltipDelay = function (delayOption) {
-        var delay = this.gridOptionsService.getNum(delayOption);
-        if (generic_1.exists(delay)) {
-            if (delay < 0) {
-                function_1.doOnce(function () { return console.warn("AG Grid: " + delayOption + " should not be lower than 0"); }, delayOption + "Warn");
-            }
-            return Math.max(200, delay);
+        var delay = this.gridOptionsService.get(delayOption);
+        if (delay < 0) {
+            (0, function_1.warnOnce)("".concat(delayOption, " should not be lower than 0"));
         }
-        return undefined;
+        return Math.max(200, delay);
     };
     CustomTooltipFeature.prototype.getTooltipDelay = function (type) {
-        var _a, _b, _c, _d;
+        var _a, _b;
         if (type === 'show') {
-            return (_b = (_a = this.getGridOptionsTooltipDelay('tooltipShowDelay')) !== null && _a !== void 0 ? _a : this.tooltipShowDelayOverride) !== null && _b !== void 0 ? _b : this.DEFAULT_SHOW_TOOLTIP_DELAY;
+            return (_a = this.tooltipShowDelayOverride) !== null && _a !== void 0 ? _a : this.getGridOptionsTooltipDelay('tooltipShowDelay');
         }
         else {
-            return (_d = (_c = this.getGridOptionsTooltipDelay('tooltipHideDelay')) !== null && _c !== void 0 ? _c : this.tooltipHideDelayOverride) !== null && _d !== void 0 ? _d : this.DEFAULT_HIDE_TOOLTIP_DELAY;
+            return (_b = this.tooltipHideDelayOverride) !== null && _b !== void 0 ? _b : this.getGridOptionsTooltipDelay('tooltipHideDelay');
         }
     };
     CustomTooltipFeature.prototype.destroy = function () {
@@ -136,7 +129,7 @@ var CustomTooltipFeature = /** @class */ (function (_super) {
             this.unlockService();
             this.startHideTimeout();
         }
-        if (browser_1.isIOSUserAgent()) {
+        if ((0, browser_1.isIOSUserAgent)()) {
             return;
         }
         if (CustomTooltipFeature.isLocked) {
@@ -205,7 +198,7 @@ var CustomTooltipFeature = /** @class */ (function (_super) {
         // if another tooltip was hidden very recently, we only wait 200ms to show, not the normal waiting time
         var delay = 0;
         if (mouseEvent) {
-            delay = this.isLastTooltipHiddenRecently() ? 200 : this.tooltipShowDelay;
+            delay = this.isLastTooltipHiddenRecently() ? 200 : this.getTooltipDelay('show');
         }
         this.lastMouseEvent = mouseEvent || null;
         this.showTooltipTimeoutId = window.setTimeout(this.showTooltip.bind(this), delay);
@@ -236,7 +229,7 @@ var CustomTooltipFeature = /** @class */ (function (_super) {
     };
     CustomTooltipFeature.prototype.showTooltip = function () {
         var params = __assign({}, this.parentComp.getTooltipParams());
-        if (!generic_1.exists(params.value)) {
+        if (!(0, generic_1.exists)(params.value)) {
             this.setToDoNothing();
             return;
         }
@@ -403,7 +396,7 @@ var CustomTooltipFeature = /** @class */ (function (_super) {
     };
     CustomTooltipFeature.prototype.startHideTimeout = function () {
         this.clearHideTimeout();
-        this.hideTooltipTimeoutId = window.setTimeout(this.hideTooltip.bind(this), this.tooltipHideDelay);
+        this.hideTooltipTimeoutId = window.setTimeout(this.hideTooltip.bind(this), this.getTooltipDelay('hide'));
     };
     CustomTooltipFeature.prototype.clearShowTimeout = function () {
         if (!this.showTooltipTimeoutId) {
@@ -433,10 +426,10 @@ var CustomTooltipFeature = /** @class */ (function (_super) {
     };
     CustomTooltipFeature.isLocked = false;
     __decorate([
-        context_1.Autowired('popupService')
+        (0, context_1.Autowired)('popupService')
     ], CustomTooltipFeature.prototype, "popupService", void 0);
     __decorate([
-        context_1.Autowired('userComponentFactory')
+        (0, context_1.Autowired)('userComponentFactory')
     ], CustomTooltipFeature.prototype, "userComponentFactory", void 0);
     __decorate([
         context_1.PostConstruct

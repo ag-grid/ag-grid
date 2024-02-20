@@ -27,6 +27,7 @@ import {
     WithoutGridCommon
 } from "@ag-grid-community/core";
 import { MenuItemMapper } from "./menuItemMapper";
+import { MenuUtils } from "./menuUtils";
 
 const CSS_MENU = 'ag-menu';
 const CSS_CONTEXT_MENU_OPEN = 'ag-context-menu-open';
@@ -38,6 +39,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
     @Optional('rangeService') private rangeService: IRangeService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('menuUtils') private menuUtils: MenuUtils;
 
     private activeMenu: ContextMenu | null;
 
@@ -51,14 +53,14 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
         if (_.exists(node) && ModuleRegistry.__isRegistered(ModuleNames.ClipboardModule, this.context.getGridId())) {
             if (column) {
                 // only makes sense if column exists, could have originated from a row
-                if (!this.gridOptionsService.is('suppressCutToClipboard')) {
+                if (!this.gridOptionsService.get('suppressCutToClipboard')) {
                     defaultMenuOptions.push('cut');
                 }
                 defaultMenuOptions.push('copy', 'copyWithHeaders', 'copyWithGroupHeaders', 'paste', 'separator');
             }
         }
 
-        if (this.gridOptionsService.is('enableCharts') && ModuleRegistry.__isRegistered(ModuleNames.GridChartsModule, this.context.getGridId())) {
+        if (this.gridOptionsService.get('enableCharts') && ModuleRegistry.__isRegistered(ModuleNames.GridChartsModule, this.context.getGridId())) {
             if (this.columnModel.isPivotMode()) {
                 defaultMenuOptions.push('pivotChart');
             }
@@ -72,8 +74,8 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             // if user clicks a cell
             const csvModuleMissing = !ModuleRegistry.__isRegistered(ModuleNames.CsvExportModule, this.context.getGridId());
             const excelModuleMissing = !ModuleRegistry.__isRegistered(ModuleNames.ExcelExportModule, this.context.getGridId());
-            const suppressExcel = this.gridOptionsService.is('suppressExcelExport') || excelModuleMissing;
-            const suppressCsv = this.gridOptionsService.is('suppressCsvExport') || csvModuleMissing;
+            const suppressExcel = this.gridOptionsService.get('suppressExcelExport') || excelModuleMissing;
+            const suppressCsv = this.gridOptionsService.get('suppressCsvExport') || csvModuleMissing;
             const onIPad = _.isIOSUserAgent();
             const anyExport: boolean = !onIPad && (!suppressExcel || !suppressCsv);
             if (anyExport) {
@@ -81,55 +83,26 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             }
         }
 
-        const userFunc = this.gridOptionsService.getCallback('getContextMenuItems');
-        if (userFunc) {
-            const params: WithoutGridCommon<GetContextMenuItemsParams> = {
-                node: node,
-                column: column,
-                value: value,
-                defaultItems: defaultMenuOptions.length ? defaultMenuOptions : undefined,
-            };
-
-            return userFunc(params);
+        const defaultItems = defaultMenuOptions.length ? defaultMenuOptions : undefined;
+        const columnContextMenuItems = column?.getColDef().contextMenuItems;
+        if (Array.isArray(columnContextMenuItems)) {
+            return columnContextMenuItems;
+        } else if (typeof columnContextMenuItems === 'function') {
+            return columnContextMenuItems(this.gridOptionsService.addGridCommonParams({
+                column, node, value, defaultItems
+            }));
+        } else {
+            const userFunc = this.gridOptionsService.getCallback('getContextMenuItems');
+            if (userFunc) {
+                return userFunc({ column, node, value, defaultItems });
+            } else {
+                return defaultMenuOptions;
+            }
         }
-
-        return defaultMenuOptions;
     }
 
     public onContextMenu(mouseEvent: MouseEvent | null, touchEvent: TouchEvent | null, rowNode: RowNode | null, column: Column | null, value: any, anchorToElement: HTMLElement): void {
-        // to allow us to debug in chrome, we ignore the event if ctrl is pressed.
-        // not everyone wants this, so first 'if' below allows to turn this hack off.
-        if (!this.gridOptionsService.is('allowContextMenuWithControlKey')) {
-            // then do the check
-            if (mouseEvent && (mouseEvent.ctrlKey || mouseEvent.metaKey)) { return; }
-        }
-
-        // need to do this regardless of context menu showing or not, so doing
-        // before the isSuppressContextMenu() check
-        if (mouseEvent) {
-            this.blockMiddleClickScrollsIfNeeded(mouseEvent);
-        }
-
-        if (this.gridOptionsService.is('suppressContextMenu')) { return; }
-
-        const eventOrTouch: (MouseEvent | Touch) = mouseEvent ? mouseEvent : touchEvent!.touches[0];
-        if (this.showMenu(rowNode, column, value, eventOrTouch, anchorToElement)) {
-            const event = mouseEvent ? mouseEvent : touchEvent;
-            event!.preventDefault();
-        }
-    }
-
-    private blockMiddleClickScrollsIfNeeded(mouseEvent: MouseEvent): void {
-        // if we don't do this, then middle click will never result in a 'click' event, as 'mousedown'
-        // will be consumed by the browser to mean 'scroll' (as you can scroll with the middle mouse
-        // button in the browser). so this property allows the user to receive middle button clicks if
-        // they want.
-        const { gridOptionsService } = this;
-        const { which } = mouseEvent;
-
-        if (gridOptionsService.is('suppressMiddleClickScrolls') && which === 2) {
-            mouseEvent.preventDefault();
-        }
+        this.menuUtils.onContextMenu(mouseEvent, touchEvent, (eventOrTouch) => this.showMenu(rowNode, column, value, eventOrTouch, anchorToElement));
     }
 
     public showMenu(node: RowNode | null, column: Column | null, value: any, mouseEvent: MouseEvent | Touch, anchorToElement: HTMLElement): boolean {
@@ -138,7 +111,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
 
         if (menuItems === undefined || _.missingOrEmpty(menuItems)) { return false; }
 
-        const menu = new ContextMenu(menuItems);
+        const menu = new ContextMenu(menuItems, column, node, value);
         this.createBean(menu);
 
         const eMenuGui = menu.getGui();
@@ -166,7 +139,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             },
             click: mouseEvent,
             positionCallback: () => {
-                const isRtl = this.gridOptionsService.is('enableRtl');
+                const isRtl = this.gridOptionsService.get('enableRtl');
                 this.popupService.positionPopupUnderMouseEvent({
                     ...positionParams,
                     nudgeX: isRtl ? (eMenuGui.offsetWidth + 1) * -1 : 1
@@ -201,7 +174,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
 
         // hide the popup if something gets selected
         if (addPopupRes) {
-            menu.addEventListener(AgMenuItemComponent.EVENT_MENU_ITEM_SELECTED, addPopupRes.hideFunc);
+            menu.addEventListener(AgMenuItemComponent.EVENT_CLOSE_MENU, addPopupRes.hideFunc);
         }
 
         return true;
@@ -214,26 +187,33 @@ class ContextMenu extends Component {
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('cellPositionUtils') private cellPositionUtils: CellPositionUtils;
 
-    private menuItems: (MenuItemDef | string)[];
     private menuList: AgMenuList | null = null;
     private focusedCell: CellPosition | null = null;
 
-    constructor(menuItems: (MenuItemDef | string)[]) {
+    constructor(
+        private readonly menuItems: (MenuItemDef | string)[],
+        private readonly column: Column | null,
+        private readonly node: RowNode | null,
+        private readonly value: any
+    ) {
         super(/* html */`<div class="${CSS_MENU}" role="presentation"></div>`);
-        this.menuItems = menuItems;
     }
 
     @PostConstruct
     private addMenuItems(): void {
-        const menuList = this.createManagedBean(new AgMenuList());
-        const menuItemsMapped = this.menuItemMapper.mapWithStockItems(this.menuItems, null);
+        const menuList = this.createManagedBean(new AgMenuList(0, {
+            column: this.column,
+            node: this.node,
+            value: this.value
+        }));
+        const menuItemsMapped = this.menuItemMapper.mapWithStockItems(this.menuItems, null, () => this.getGui());
 
         menuList.addMenuItems(menuItemsMapped);
 
         this.appendChild(menuList);
         this.menuList = menuList;
 
-        menuList.addEventListener(AgMenuItemComponent.EVENT_MENU_ITEM_SELECTED, (e: AgEvent) => this.dispatchEvent(e));
+        menuList.addEventListener(AgMenuItemComponent.EVENT_CLOSE_MENU, (e: AgEvent) => this.dispatchEvent(e));
     }
 
     public afterGuiAttached(params: IAfterGuiAttachedParams): void {

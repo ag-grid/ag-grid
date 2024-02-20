@@ -51,7 +51,7 @@ export class MiniAreaColumnCombo extends MiniChartWithAxes {
         });
         this.areas = pathData.map((points) => {
             const area = new _Scene.Path();
-            area.strokeWidth = 1;
+            area.strokeWidth = 0;
             area.fillOpacity = 0.8;
             const path = area.path;
             points.forEach((point, i) => path[i > 0 ? 'lineTo' : 'moveTo'](point.x, point.y));

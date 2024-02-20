@@ -1,4 +1,5 @@
 import ts = require("typescript");
+import {integratedChartsUsesChartsEnterprise} from "./consts";
 const sucrase = require("sucrase");
 
 export type ImportType = 'packages' | 'modules';
@@ -107,14 +108,14 @@ export function tsCollect(tsTree, tsBindings, collectors, recurse = true) {
     ts.forEachChild(tsTree, (node: ts.Node) => {
 
         collectors.filter(c => {
-            let res = false;
-            try {
-                res = c.matches(node)
-            } catch (error) {
-                return false;
+                let res = false;
+                try {
+                    res = c.matches(node)
+                } catch (error) {
+                    return false;
+                }
+                return res;
             }
-            return res;
-        }
         ).forEach(c => {
             try {
                 c.apply(tsBindings, node)
@@ -160,7 +161,9 @@ export function tsNodeIsTopLevelVariable(node: ts.Node, registered: string[] = [
         // Is not just a type declaration i.e declare function getData: () => any[];
         if (node.declarations.length > 0) {
             const declaration = node.declarations[0];
-            return !isDeclareStatement(node.parent) && registered.indexOf(declaration.name.getText()) < 0 && ts.isSourceFile(node.parent.parent);
+            // Don't include api declarations as these are handled separately
+            const isLetApi = declaration.name.getText() === 'gridApi';
+            return !isLetApi && !isDeclareStatement(node.parent) && registered.indexOf(declaration.name.getText()) < 0 && ts.isSourceFile(node.parent.parent);
         }
     }
 }
@@ -206,7 +209,7 @@ export function tsNodeIsFunctionCall(node: any): boolean {
 }
 
 export function tsNodeIsGlobalFunctionCall(node: ts.Node) {
-    // Get top level function calls like 
+    // Get top level function calls like
     // setInterval(callback, 500)
     // but don't match things like
     // AgChart.create(options)
@@ -397,10 +400,10 @@ export function findAllVariables(node) {
         allVariables.push(node.name.getText());
     }
     if (ts.isVariableDeclaration(node)) {
-        if(ts.isObjectBindingPattern(node.name)){
+        if (ts.isObjectBindingPattern(node.name)) {
             // Code like this:  const { pageSetup, margins } = getSheetConfig();
             node.name.elements.forEach(n => allVariables.push(n.getText()))
-        }else{
+        } else {
             allVariables.push(node.name.getText());
         }
     }
@@ -437,7 +440,7 @@ function getLowestExpression(exp: any) {
 }
 
 /**
- * Find all the properties accessed in this node. 
+ * Find all the properties accessed in this node.
  */
 export function findAllAccessedProperties(node) {
     let properties = [];
@@ -449,7 +452,7 @@ export function findAllAccessedProperties(node) {
     } else if (ts.isCallExpression(node) || ts.isPropertyAccessExpression(node)) {
         // When there are chained accesses we need to recurse to the lowest identifier as this is the first in the statement,
         // and will be the true accessed variable.
-        // i.e gridOptions.api!.getModel().getRowCount() we need to recurse down the tree to extract gridOptions
+        // i.e api!.getDisplayedRowCount() we need to recurse down the tree to extract gridOptions
         const exp = getLowestExpression(node.expression);
 
         if (ts.isArrayLiteralExpression(exp)) {
@@ -468,7 +471,7 @@ export function findAllAccessedProperties(node) {
         // so for binary expressions we only check the right hand branch
         // function setSwimmingHeight(height: number) {
         //      swimmingHeight = height
-        //      gridOptions.api!.resetRowHeights()
+        //      api!.resetRowHeights()
         // }
         const rightProps = findAllAccessedProperties(node.right);
         if (rightProps.length > 0) {
@@ -477,7 +480,7 @@ export function findAllAccessedProperties(node) {
     }
     else if (ts.isVariableDeclaration(node)) {
         // get lowest identifier as this is the first in the statement
-        // i.e var nextHeader = params.nextHeaderPosition 
+        // i.e var nextHeader = params.nextHeaderPosition
         // we need to recurse down the initializer tree to extract params and not nextHeaderPosition
         let init = node.initializer as any;
         if (init) {
@@ -525,7 +528,7 @@ export function findAllAccessedProperties(node) {
 
 /** Convert import paths to their package equivalent when the docs are in Packages mode
  * i.e import { GridOptions } from '@ag-grid-community/core';
- * to 
+ * to
  * import { GridOptions } from '@ag-grid-community';
  */
 export function convertImportPath(modulePackage: string, convertToPackage: boolean) {
@@ -618,7 +621,7 @@ export function addBindingImports(bindingImports: any, imports: string[], conver
 
         if (convertToPackage && k.includes('ag-grid')) {
             // Remove module related imports
-            unique = unique.filter(i => !i.includes('Module') || i == 'AgGridModule');
+            unique = unique.filter(i => !i.includes('Module'));
             hasEnterpriseModules = hasEnterpriseModules || k.includes('enterprise');
         }
         if (unique.length > 0 || v.namedImport) {
@@ -647,6 +650,8 @@ export function getModuleRegistration({ gridSettings, enterprise, exampleName })
 
     let gridSuppliedModules;
     let exampleModules = Array.isArray(modules) ? modules : ['clientside'];
+    exampleModules = exampleModules.map(module => module === 'charts-enterprise' && !integratedChartsUsesChartsEnterprise ? 'charts' : module)
+
     const { moduleImports, suppliedModules } = modulesProcessor(exampleModules);
     moduleRegistration.push(...moduleImports);
     gridSuppliedModules = `[${suppliedModules.join(', ')}]`;
@@ -674,3 +679,110 @@ export function addGenericInterfaceImport(imports: string[], tData: string, bind
         imports.push(`import { ${tData} } from './interfaces'`)
     }
 }
+
+export function replaceGridReadyRowData(callback: string, rowDataSetter: string) {
+    return callback
+        // replace gridApi.setGridOption('rowData', data) with this.rowData = data
+        .replace(/gridApi(!?)\.setGridOption\('rowData', data\)/, `${rowDataSetter} = data`)
+        // replace gridApi.setGridOption('rowData', data.map(...)) with this.rowData = data.map(...)
+        .replace(/gridApi(!?)\.setGridOption\('rowData', data/, `${rowDataSetter} = (data`);
+}
+
+export function preferParamsApi(code: string): string {
+    // use params.api instead of gridApi.api when we have access to the params object
+    return code.replace(/([\s\(!])gridApi(\W)/g, '$1params.api$2');
+}
+
+export const DARK_MODE_START = '/** DARK MODE START **/';
+export const DARK_MODE_END = '/** DARK MODE END **/';
+export const DARK_INTEGRATED_START = '/** DARK INTEGRATED START **/';
+export const DARK_INTEGRATED_END = '/** DARK INTEGRATED END **/';
+
+export function getActiveTheme(theme: string, typescript: boolean) {
+    return `${DARK_MODE_START}document.documentElement${typescript ? '?' : ''}.dataset.defaultTheme || '${theme}'${DARK_MODE_END}`;
+}
+
+// TODO detecting "enableCharts" in the example source would do this more reliably
+const chartsExamplePathSubstrings = [
+    '/integrated-charts-',
+    '/custom-icons/examples/icons-images',
+    '/modules/examples/individual-registration',
+    '/localisation/examples/callback',
+    '/localisation/examples/localisation',
+];
+
+export function getIntegratedDarkModeCode(exampleName: string, typescript?: boolean, apiName = 'params.api'): string {
+    if (!chartsExamplePathSubstrings.find(s => exampleName.includes(s))) {
+        return '';
+    }
+    return `${DARK_INTEGRATED_START}${(typescript ? darkModeTs : darkModeJS).replace(/params\.api/g, apiName)}${DARK_INTEGRATED_END}`;
+}
+
+const darkModeTs = `
+        const isInitialModeDark = (): boolean => {
+            const attr: string | null = document.documentElement.getAttribute('data-default-theme');
+            return attr ? attr.endsWith('-dark') : false;
+        };
+                  
+        // update chart themes based on dark mode status
+        const updateChartThemes = (isDark: boolean): void => {
+            const themes: string[] = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];            
+            const currentThemes = params.api.getGridOption('chartThemes');    
+            const customTheme = currentThemes && currentThemes.some(theme => theme.startsWith('my-custom-theme'));
+            
+            let modifiedThemes: string[] = customTheme
+                ? (isDark ? ['my-custom-theme-dark', 'my-custom-theme-light'] : ['my-custom-theme-light', 'my-custom-theme-dark'])
+                : Array.from(new Set(themes.map((theme) => theme + (isDark ? '-dark' : ''))));                      
+
+            // updating the 'chartThemes' grid option will cause the chart to reactively update!
+            params.api.setGridOption('chartThemes', modifiedThemes);
+        };
+        
+        // update chart themes when example first loads
+        updateChartThemes(isInitialModeDark());
+                      
+        interface ColorSchemeChangeEventDetail {
+            darkMode: boolean;
+        }
+        
+        // event handler for color scheme changes
+        const handleColorSchemeChange = (event: CustomEvent<ColorSchemeChangeEventDetail>): void => {
+            const { darkMode } = event.detail;
+            updateChartThemes(darkMode);
+        }
+        
+        // listen for user-triggered dark mode changes (not removing listener is fine here!)
+        document.addEventListener('color-scheme-change', handleColorSchemeChange as EventListener);                
+    `;
+
+
+const darkModeJS = `
+    const isInitialModeDark = () => {
+            const attr = document.documentElement.getAttribute('data-default-theme');
+            return attr ? attr.endsWith('-dark') : false;
+        };
+      
+        const updateChartThemes = (isDark) => {           
+            const themes = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];            
+            const currentThemes = params.api.getGridOption('chartThemes');                    
+            const customTheme = currentThemes && currentThemes.some(theme => theme.startsWith('my-custom-theme'));
+            
+            let modifiedThemes = customTheme
+                ? (isDark ? ['my-custom-theme-dark', 'my-custom-theme-light'] : ['my-custom-theme-light', 'my-custom-theme-dark'])
+                : Array.from(new Set(themes.map((theme) => theme + (isDark ? '-dark' : ''))));                      
+
+            // updating the 'chartThemes' grid option will cause the chart to reactively update!
+            params.api.setGridOption('chartThemes', modifiedThemes);
+        };
+
+        // update chart themes when example first loads
+        updateChartThemes(isInitialModeDark());
+
+        const handleColorSchemeChange = (event) => {
+            const { darkMode } = event.detail;
+            updateChartThemes(darkMode);
+        }
+
+        // listen for user-triggered dark mode changes (not removing listener is fine here!)
+        document.addEventListener('color-scheme-change', handleColorSchemeChange);
+    `;

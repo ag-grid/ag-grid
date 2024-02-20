@@ -28,7 +28,7 @@ let AnimationFrameService = class AnimationFrameService extends BeanStub {
         this.cancelledTasks = new Set();
     }
     setScrollTop(scrollTop) {
-        const isPaginationActive = this.gridOptionsService.is('pagination');
+        const isPaginationActive = this.gridOptionsService.get('pagination');
         this.scrollGoingDown = scrollTop >= this.lastScrollTop;
         if (isPaginationActive && scrollTop === 0) {
             const currentPage = this.paginationProxy.getCurrentPage();
@@ -40,7 +40,7 @@ let AnimationFrameService = class AnimationFrameService extends BeanStub {
         this.lastScrollTop = scrollTop;
     }
     init() {
-        this.useAnimationFrame = !this.gridOptionsService.is('suppressAnimationFrame');
+        this.useAnimationFrame = !this.gridOptionsService.get('suppressAnimationFrame');
     }
     isOn() {
         return this.useAnimationFrame;
@@ -173,7 +173,7 @@ let AnimationFrameService = class AnimationFrameService extends BeanStub {
         let pending = false;
         return () => {
             if (!this.isOn()) {
-                this.getFrameworkOverrides().setTimeout(func, 0);
+                window.setTimeout(func, 0);
                 return;
             }
             if (pending) {

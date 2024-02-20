@@ -28,20 +28,22 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
     function FiltersToolPanelListPanel() {
         var _this = _super.call(this, FiltersToolPanelListPanel.TEMPLATE) || this;
         _this.initialised = false;
+        _this.hasLoadedInitialState = false;
+        _this.isInitialState = false;
         _this.filterGroupComps = [];
+        // If a column drag is happening, we suppress handling the event until it has completed
+        _this.suppressOnColumnsChanged = false;
+        _this.onColumnsChangedPending = false;
         return _this;
     }
     FiltersToolPanelListPanel.prototype.init = function (params) {
         var _this = this;
         this.initialised = true;
-        var defaultParams = {
+        var defaultParams = this.gridOptionsService.addGridCommonParams({
             suppressExpandAll: false,
             suppressFilterSearch: false,
-            suppressSyncLayoutWithGrid: false,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-            context: this.gridOptionsService.context
-        };
+            suppressSyncLayoutWithGrid: false
+        });
         _.mergeDeep(defaultParams, params);
         this.params = defaultParams;
         if (!this.params.suppressSyncLayoutWithGrid) {
@@ -55,17 +57,37 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
                 _this.refreshFilters(event.visible);
             }
         });
+        this.addManagedListener(this.eventService, Events.EVENT_DRAG_STARTED, function () {
+            _this.suppressOnColumnsChanged = true;
+        });
+        this.addManagedListener(this.eventService, Events.EVENT_DRAG_STOPPED, function () {
+            _this.suppressOnColumnsChanged = false;
+            if (_this.onColumnsChangedPending) {
+                _this.onColumnsChangedPending = false;
+                _this.onColumnsChanged();
+            }
+        });
         if (this.columnModel.isReady()) {
             this.onColumnsChanged();
         }
+        var ariaEl = this.getAriaElement();
+        _.setAriaLive(ariaEl, 'assertive');
+        _.setAriaAtomic(ariaEl, false);
+        _.setAriaRelevant(ariaEl, 'text');
     };
     FiltersToolPanelListPanel.prototype.onColumnsChanged = function () {
+        if (this.suppressOnColumnsChanged) {
+            this.onColumnsChangedPending = true;
+            return;
+        }
         var pivotModeActive = this.columnModel.isPivotMode();
         var shouldSyncColumnLayoutWithGrid = !this.params.suppressSyncLayoutWithGrid && !pivotModeActive;
         shouldSyncColumnLayoutWithGrid ? this.syncFilterLayout() : this.buildTreeFromProvidedColumnDefs();
+        this.refreshAriaLabel();
     };
     FiltersToolPanelListPanel.prototype.syncFilterLayout = function () {
         this.toolPanelColDefService.syncLayoutWithGrid(this.setFiltersLayout.bind(this));
+        this.refreshAriaLabel();
     };
     FiltersToolPanelListPanel.prototype.buildTreeFromProvidedColumnDefs = function () {
         var columnTree = this.columnModel.getPrimaryColumnTree();
@@ -80,6 +102,10 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
         // Underlying filter comp/element won't get recreated if the column still exists (the element just gets detached/re-attached).
         // We can therefore restore focus if an element in the filter tool panel was focused.
         var activeElement = this.gridOptionsService.getDocument().activeElement;
+        if (!this.hasLoadedInitialState) {
+            this.hasLoadedInitialState = true;
+            this.isInitialState = !!this.params.initialState;
+        }
         // Want to restore the expansion state where possible.
         var expansionState = this.getExpansionState();
         this.destroyFilters();
@@ -101,6 +127,8 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
         if (this.getGui().contains(activeElement)) {
             activeElement.focus();
         }
+        this.isInitialState = false;
+        this.refreshAriaLabel();
     };
     FiltersToolPanelListPanel.prototype.recursivelyAddComps = function (tree, depth, expansionState) {
         var _this = this;
@@ -113,7 +141,7 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
                 return [];
             }
             var hideFilterCompHeader = depth === 0;
-            var filterComp = new ToolPanelFilterComp(hideFilterCompHeader);
+            var filterComp = new ToolPanelFilterComp(hideFilterCompHeader, function () { return _this.onFilterExpanded(); });
             _this.createBean(filterComp);
             filterComp.setColumn(column);
             if (expansionState.get(column.getId())) {
@@ -132,6 +160,18 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
             return filterGroupComp;
         }));
     };
+    FiltersToolPanelListPanel.prototype.refreshAriaLabel = function () {
+        var translate = this.localeService.getLocaleTextFunc();
+        var filterListName = translate('ariaFilterPanelList', 'Filter List');
+        var localeFilters = translate('filters', 'Filters');
+        var eGui = this.getGui();
+        var groupSelector = '.ag-filter-toolpanel-group-wrapper';
+        var itemSelector = '.ag-filter-toolpanel-group-item';
+        var hiddenSelector = '.ag-hidden';
+        var visibleItems = eGui.querySelectorAll("".concat(itemSelector, ":not(").concat(groupSelector, ", ").concat(hiddenSelector, ")"));
+        var totalVisibleItems = visibleItems.length;
+        _.setAriaLabel(this.getAriaElement(), "".concat(filterListName, " ").concat(totalVisibleItems, " ").concat(localeFilters));
+    };
     FiltersToolPanelListPanel.prototype.recursivelyAddFilterGroupComps = function (columnGroup, depth, expansionState) {
         if (!this.filtersExistInChildren(columnGroup.getChildren())) {
             return;
@@ -148,8 +188,9 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
         var filterGroupComp = new ToolPanelFilterGroupComp(columnGroup, childFilterComps, this.onGroupExpanded.bind(this), depth, false);
         this.createBean(filterGroupComp);
         filterGroupComp.addCssClassToTitleBar('ag-filter-toolpanel-header');
-        if (expansionState.get(filterGroupComp.getFilterGroupId()) === false) {
-            // Default state on creation is expanded. Desired initial state is expanded. Only collapse if collapsed before.
+        var expansionStateValue = expansionState.get(filterGroupComp.getFilterGroupId());
+        if ((this.isInitialState && !expansionStateValue) || expansionStateValue === false) {
+            // Default state on creation is expanded. Desired initial state is expanded. Only collapse if collapsed before or using initial state.
             filterGroupComp.collapse();
         }
         return [filterGroupComp];
@@ -169,6 +210,12 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
     };
     FiltersToolPanelListPanel.prototype.getExpansionState = function () {
         var expansionState = new Map();
+        if (this.isInitialState) {
+            var _a = this.params.initialState, expandedColIds = _a.expandedColIds, expandedGroupIds = _a.expandedGroupIds;
+            expandedColIds.forEach(function (id) { return expansionState.set(id, true); });
+            expandedGroupIds.forEach(function (id) { return expansionState.set(id, true); });
+            return expansionState;
+        }
         var recursiveGetExpansionState = function (filterGroupComp) {
             expansionState.set(filterGroupComp.getFilterGroupId(), filterGroupComp.isExpanded());
             filterGroupComp.getChildren().forEach(function (child) {
@@ -265,6 +312,9 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
     FiltersToolPanelListPanel.prototype.onGroupExpanded = function () {
         this.fireExpandedEvent();
     };
+    FiltersToolPanelListPanel.prototype.onFilterExpanded = function () {
+        this.dispatchEvent({ type: 'filterExpanded' });
+    };
     FiltersToolPanelListPanel.prototype.fireExpandedEvent = function () {
         var expandedCount = 0;
         var notExpandedCount = 0;
@@ -346,6 +396,7 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
             }
         });
         this.setFirstAndLastVisible(firstVisible, lastVisible);
+        this.refreshAriaLabel();
     };
     FiltersToolPanelListPanel.prototype.setFirstAndLastVisible = function (firstIdx, lastIdx) {
         this.filterGroupComps.forEach(function (filterGroup, idx) {
@@ -362,6 +413,26 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
     FiltersToolPanelListPanel.prototype.refreshFilters = function (isDisplayed) {
         this.filterGroupComps.forEach(function (filterGroupComp) { return filterGroupComp.refreshFilters(isDisplayed); });
     };
+    FiltersToolPanelListPanel.prototype.getExpandedFiltersAndGroups = function () {
+        var expandedGroupIds = [];
+        var expandedColIds = new Set();
+        var getExpandedFiltersAndGroups = function (filterComp) {
+            if (filterComp instanceof ToolPanelFilterGroupComp) {
+                filterComp.getChildren().forEach(function (child) { return getExpandedFiltersAndGroups(child); });
+                var groupId = filterComp.getFilterGroupId();
+                if (filterComp.isExpanded() && !expandedColIds.has(groupId)) {
+                    expandedGroupIds.push(groupId);
+                }
+            }
+            else {
+                if (filterComp.isExpanded()) {
+                    expandedColIds.add(filterComp.getColumn().getColId());
+                }
+            }
+        };
+        this.filterGroupComps.forEach(getExpandedFiltersAndGroups);
+        return { expandedGroupIds: expandedGroupIds, expandedColIds: Array.from(expandedColIds) };
+    };
     FiltersToolPanelListPanel.prototype.destroyFilters = function () {
         this.filterGroupComps = this.destroyBeans(this.filterGroupComps);
         _.clearElement(this.getGui());
@@ -371,12 +442,6 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     FiltersToolPanelListPanel.TEMPLATE = "<div class=\"ag-filter-list-panel\"></div>";
-    __decorate([
-        Autowired("gridApi")
-    ], FiltersToolPanelListPanel.prototype, "gridApi", void 0);
-    __decorate([
-        Autowired("columnApi")
-    ], FiltersToolPanelListPanel.prototype, "columnApi", void 0);
     __decorate([
         Autowired('toolPanelColDefService')
     ], FiltersToolPanelListPanel.prototype, "toolPanelColDefService", void 0);

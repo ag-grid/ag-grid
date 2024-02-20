@@ -192,7 +192,7 @@ Here is a full example.
 - `colDef.cellRendererSelector` is a function that selects the renderer based on the row data.
 - The column 'Rendered Value' show the data rendered applying the component and params specified by `colDef.cellRendererSelector`
 
-<grid-example title='Dynamic Rendering Component' name='dynamic-rendering-component' type='mixed' options='{ "exampleHeight": 335 }'></grid-example>
+<grid-example title='Dynamic Rendering Component' name='dynamic-rendering-component' type='mixed' options='{ "exampleHeight": 335, "extras": ["fontawesome"] }'></grid-example>
 
 ## Provided Cell Renderers
 
@@ -208,7 +208,7 @@ The grid comes with some provided cell renderers out of the box. These cell rend
 
 Simple renderer for boolean values that uses the standard HTML checkbox `input`. The renderer also allows editing.
 
-If editing is enabled, then it is recommended to also use the [Checkbox Cell Editor](/provided-cell-editors/#checkbox-cell-editor) so that the UI matches when in edit mode.
+If editing is enabled, then it is recommended to also use the [Checkbox Cell Editor](/provided-cell-editors-checkbox/) so that the UI matches when in edit mode.
 
 Specified with `agCheckboxCellRenderer` and configured with `ICheckboxCellRendererParams`.
 
@@ -229,4 +229,4 @@ columnDefs: [
 <grid-example title='Checkbox Cell Renderer' name='checkbox-cell-renderer' type='generated'></grid-example>
 
 
-Note that if [Row Selection](/row-selection/) is enabled, it is recommended to set `suppressKeyboardEvent` on the column definition to prevent the <kbd>Space</kbd> key from triggering both row selection and toggling the checkbox. This is shown in the example above.
+Note that if [Row Selection](/row-selection/) is enabled, it is recommended to set `suppressKeyboardEvent` on the column definition to prevent the <kbd>␣ Space</kbd> key from triggering both row selection and toggling the checkbox. This is shown in the example above.

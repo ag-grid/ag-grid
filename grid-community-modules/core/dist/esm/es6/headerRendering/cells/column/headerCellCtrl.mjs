@@ -1,11 +1,4 @@
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
 import { KeyCode } from '../../../constants/keyCode.mjs';
-import { Autowired, PreDestroy } from "../../../context/context.mjs";
 import { DragAndDropService, DragSourceType } from "../../../dragAndDrop/dragAndDropService.mjs";
 import { Column } from "../../../entities/column.mjs";
 import { Events } from "../../../eventKeys.mjs";
@@ -16,22 +9,23 @@ import { TooltipFeature } from "../../../widgets/tooltipFeature.mjs";
 import { AbstractHeaderCellCtrl } from "../abstractCell/abstractHeaderCellCtrl.mjs";
 import { CssClassApplier } from "../cssClassApplier.mjs";
 import { HoverFeature } from "../hoverFeature.mjs";
+import { HeaderComp } from "./headerComp.mjs";
 import { ResizeFeature } from "./resizeFeature.mjs";
 import { SelectAllFeature } from "./selectAllFeature.mjs";
 import { getElementSize } from "../../../utils/dom.mjs";
-import { isBrowserSafari } from "../../../utils/browser.mjs";
-import { FocusService } from "../../../focusService.mjs";
+import { ColumnMoveHelper } from "../../columnMoveHelper.mjs";
+import { HorizontalDirection } from "../../../constants/direction.mjs";
 export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
-    constructor(column, parentRowCtrl) {
-        super(column, parentRowCtrl);
+    constructor(column, beans, parentRowCtrl) {
+        super(column, beans, parentRowCtrl);
         this.refreshFunctions = [];
         this.userHeaderClasses = new Set();
         this.ariaDescriptionProperties = new Map();
         this.column = column;
     }
     setComp(comp, eGui, eResize, eHeaderCompWrapper) {
-        super.setGui(eGui);
         this.comp = comp;
+        this.setGui(eGui);
         this.updateState();
         this.setupWidth();
         this.setupMovingCss();
@@ -41,14 +35,14 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.refreshSpanHeaderHeight();
         this.setupAutoHeight(eHeaderCompWrapper);
         this.addColumnHoverListener();
-        this.setupFilterCss();
+        this.setupFilterClass();
         this.setupClassesFromColDef();
         this.setupTooltip();
         this.addActiveHeaderMouseListeners();
         this.setupSelectAll();
         this.setupUserComp();
         this.refreshAria();
-        this.createManagedBean(new ResizeFeature(this.getPinned(), this.column, eResize, comp, this));
+        this.resizeFeature = this.createManagedBean(new ResizeFeature(this.getPinned(), this.column, eResize, comp, this));
         this.createManagedBean(new HoverFeature([this.column], eGui));
         this.createManagedBean(new SetLeftFeature(this.column, eGui, this.beans));
         this.createManagedBean(new ManagedFocusFeature(eGui, {
@@ -58,31 +52,45 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
             onFocusIn: this.onFocusIn.bind(this),
             onFocusOut: this.onFocusOut.bind(this)
         }));
-        this.addMouseDownListenerIfNeeded(eGui);
-        this.addManagedListener(this.column, Column.EVENT_COL_DEF_CHANGED, this.onColDefChanged.bind(this));
+        this.addResizeAndMoveKeyboardListeners();
+        this.addManagedPropertyListeners(['suppressMovableColumns', 'suppressMenuHide', 'suppressAggFuncInHeader'], this.refresh.bind(this));
+        this.addManagedListener(this.column, Column.EVENT_COL_DEF_CHANGED, this.refresh.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_HEADER_HEIGHT_CHANGED, this.onHeaderHeightChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onHeaderHeightChanged.bind(this));
     }
-    addMouseDownListenerIfNeeded(eGui) {
-        // we add a preventDefault in the DragService for Safari only
-        // so we need to make sure we don't prevent focus on mousedown
-        if (!isBrowserSafari()) {
+    resizeHeader(delta, shiftKey) {
+        var _a, _b;
+        if (!this.column.isResizable()) {
             return;
         }
-        const events = ['mousedown', 'touchstart'];
-        const eDocument = this.gridOptionsService.getDocument();
-        events.forEach(eventName => {
-            this.addManagedListener(eGui, eventName, (e) => {
-                const activeEl = eDocument.activeElement;
-                if (activeEl !== eGui && !eGui.contains(activeEl)) {
-                    eGui.focus();
-                    FocusService.toggleKeyboardMode(e);
-                }
-            });
+        const actualWidth = this.column.getActualWidth();
+        const minWidth = (_a = this.column.getMinWidth()) !== null && _a !== void 0 ? _a : 0;
+        const maxWidth = (_b = this.column.getMaxWidth()) !== null && _b !== void 0 ? _b : Number.MAX_SAFE_INTEGER;
+        const newWidth = Math.min(Math.max(actualWidth + delta, minWidth), maxWidth);
+        this.beans.columnModel.setColumnWidths([{ key: this.column, newWidth }], shiftKey, true, 'uiColumnResized');
+    }
+    moveHeader(hDirection) {
+        const { eGui, column, gridOptionsService, ctrlsService } = this;
+        const pinned = this.getPinned();
+        const left = eGui.getBoundingClientRect().left;
+        const width = column.getActualWidth();
+        const isRtl = gridOptionsService.get('enableRtl');
+        const isLeft = hDirection === HorizontalDirection.Left !== isRtl;
+        const xPosition = ColumnMoveHelper.normaliseX(isLeft ? (left - 20) : (left + width + 20), pinned, true, gridOptionsService, ctrlsService);
+        ColumnMoveHelper.attemptMoveColumns({
+            allMovingColumns: [column],
+            isFromHeader: true,
+            hDirection,
+            xPosition,
+            pinned,
+            fromEnter: false,
+            fakeEvent: false,
+            gridOptionsService,
+            columnModel: this.beans.columnModel
         });
+        ctrlsService.getGridBodyCtrl().getScrollFeature().ensureColumnVisible(column, 'auto');
     }
     setupUserComp() {
         const compDetails = this.lookupUserCompDetails();
@@ -98,26 +106,43 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         return this.userComponentFactory.getHeaderCompDetails(colDef, params);
     }
     createParams() {
-        const colDef = this.column.getColDef();
-        const params = {
+        const params = this.gridOptionsService.addGridCommonParams({
             column: this.column,
             displayName: this.displayName,
-            enableSorting: colDef.sortable,
+            enableSorting: this.column.isSortable(),
             enableMenu: this.menuEnabled,
-            showColumnMenu: (source) => {
-                this.gridApi.showColumnMenuAfterButtonClick(this.column, source);
+            enableFilterButton: this.openFilterEnabled && this.menuService.isHeaderFilterButtonEnabled(this.column),
+            enableFilterIcon: !this.openFilterEnabled || this.menuService.isLegacyMenuEnabled(),
+            showColumnMenu: (buttonElement) => {
+                this.menuService.showColumnMenu({
+                    column: this.column,
+                    buttonElement,
+                    positionBy: 'button'
+                });
+            },
+            showColumnMenuAfterMouseClick: (mouseEvent) => {
+                this.menuService.showColumnMenu({
+                    column: this.column,
+                    mouseEvent,
+                    positionBy: 'mouse'
+                });
+            },
+            showFilter: (buttonElement) => {
+                this.menuService.showFilterMenu({
+                    column: this.column,
+                    buttonElement: buttonElement,
+                    containerType: 'columnFilter',
+                    positionBy: 'button'
+                });
             },
             progressSort: (multiSort) => {
-                this.sortController.progressSort(this.column, !!multiSort, "uiColumnSorted");
+                this.beans.sortController.progressSort(this.column, !!multiSort, "uiColumnSorted");
             },
             setSort: (sort, multiSort) => {
-                this.sortController.setSortForColumn(this.column, sort, !!multiSort, "uiColumnSorted");
+                this.beans.sortController.setSortForColumn(this.column, sort, !!multiSort, "uiColumnSorted");
             },
-            api: this.gridApi,
-            columnApi: this.columnApi,
-            context: this.gridOptionsService.context,
             eGridHeader: this.getGui()
-        };
+        });
         return params;
     }
     setupSelectAll() {
@@ -135,33 +160,38 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         if (e.key === KeyCode.ENTER) {
             this.onEnterKeyDown(e);
         }
+        if (e.key === KeyCode.DOWN && e.altKey) {
+            this.showMenuOnKeyPress(e, false);
+        }
     }
     onEnterKeyDown(e) {
-        /// THIS IS BAD - we are assuming the header is not a user provided comp
-        const headerComp = this.comp.getUserCompInstance();
-        if (!headerComp) {
-            return;
-        }
         if (e.ctrlKey || e.metaKey) {
-            if (this.menuEnabled && headerComp.showMenu) {
-                e.preventDefault();
-                headerComp.showMenu();
-            }
+            this.showMenuOnKeyPress(e, true);
         }
         else if (this.sortable) {
             const multiSort = e.shiftKey;
-            this.sortController.progressSort(this.column, multiSort, "uiColumnSorted");
+            this.beans.sortController.progressSort(this.column, multiSort, "uiColumnSorted");
         }
     }
-    isMenuEnabled() {
-        return this.menuEnabled;
+    showMenuOnKeyPress(e, isFilterShortcut) {
+        const headerComp = this.comp.getUserCompInstance();
+        if (!headerComp || !(headerComp instanceof HeaderComp)) {
+            return;
+        }
+        // the header comp knows what features are enabled, so let it handle the shortcut
+        if (headerComp.onMenuKeyboardShortcut(isFilterShortcut)) {
+            e.preventDefault();
+        }
     }
     onFocusIn(e) {
         if (!this.getGui().contains(e.relatedTarget)) {
             const rowIndex = this.getRowIndex();
             this.focusService.setFocusedHeader(rowIndex, this.column);
+            this.announceAriaDescription();
         }
-        this.setActiveHeader(true);
+        if (this.focusService.isKeyboardMode()) {
+            this.setActiveHeader(true);
+        }
     }
     onFocusOut(e) {
         if (this.getGui().contains(e.relatedTarget)) {
@@ -209,59 +239,52 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     setDragSource(eSource) {
         this.dragSourceElement = eSource;
         this.removeDragSource();
-        if (!eSource) {
+        if (!eSource || !this.draggable) {
             return;
         }
-        if (!this.draggable) {
-            return;
-        }
-        const hideColumnOnExit = !this.gridOptionsService.is('suppressDragLeaveHidesColumns');
-        this.moveDragSource = {
+        const { column, beans, displayName, dragAndDropService, gridOptionsService } = this;
+        const { columnModel } = beans;
+        let hideColumnOnExit = !this.gridOptionsService.get('suppressDragLeaveHidesColumns');
+        const dragSource = this.dragSource = {
             type: DragSourceType.HeaderCell,
             eElement: eSource,
-            defaultIconName: hideColumnOnExit ? DragAndDropService.ICON_HIDE : DragAndDropService.ICON_NOT_ALLOWED,
-            getDragItem: () => this.createDragItem(),
-            dragItemName: this.displayName,
-            onDragStarted: () => this.column.setMoving(true, "uiColumnMoved"),
-            onDragStopped: () => this.column.setMoving(false, "uiColumnMoved"),
+            getDefaultIconName: () => hideColumnOnExit ? DragAndDropService.ICON_HIDE : DragAndDropService.ICON_NOT_ALLOWED,
+            getDragItem: () => this.createDragItem(column),
+            dragItemName: displayName,
+            onDragStarted: () => {
+                hideColumnOnExit = !gridOptionsService.get('suppressDragLeaveHidesColumns');
+                column.setMoving(true, "uiColumnMoved");
+            },
+            onDragStopped: () => column.setMoving(false, "uiColumnMoved"),
             onGridEnter: (dragItem) => {
                 var _a;
                 if (hideColumnOnExit) {
                     const unlockedColumns = ((_a = dragItem === null || dragItem === void 0 ? void 0 : dragItem.columns) === null || _a === void 0 ? void 0 : _a.filter(col => !col.getColDef().lockVisible)) || [];
-                    this.columnModel.setColumnsVisible(unlockedColumns, true, "uiColumnMoved");
+                    columnModel.setColumnsVisible(unlockedColumns, true, "uiColumnMoved");
                 }
             },
             onGridExit: (dragItem) => {
                 var _a;
                 if (hideColumnOnExit) {
                     const unlockedColumns = ((_a = dragItem === null || dragItem === void 0 ? void 0 : dragItem.columns) === null || _a === void 0 ? void 0 : _a.filter(col => !col.getColDef().lockVisible)) || [];
-                    this.columnModel.setColumnsVisible(unlockedColumns, false, "uiColumnMoved");
+                    columnModel.setColumnsVisible(unlockedColumns, false, "uiColumnMoved");
                 }
             },
         };
-        this.dragAndDropService.addDragSource(this.moveDragSource, true);
+        dragAndDropService.addDragSource(dragSource, true);
     }
-    createDragItem() {
+    createDragItem(column) {
         const visibleState = {};
-        visibleState[this.column.getId()] = this.column.isVisible();
+        visibleState[column.getId()] = column.isVisible();
         return {
-            columns: [this.column],
+            columns: [column],
             visibleState: visibleState
         };
     }
-    removeDragSource() {
-        if (this.moveDragSource) {
-            this.dragAndDropService.removeDragSource(this.moveDragSource);
-            this.moveDragSource = undefined;
-        }
-    }
-    onColDefChanged() {
-        this.refresh();
-    }
     updateState() {
-        const colDef = this.column.getColDef();
-        this.menuEnabled = this.menuFactory.isMenuEnabled(this.column) && !colDef.suppressMenu;
-        this.sortable = colDef.sortable;
+        this.menuEnabled = this.menuService.isColumnMenuInHeaderEnabled(this.column);
+        this.openFilterEnabled = this.menuService.isFilterMenuInHeaderEnabled(this.column);
+        this.sortable = this.column.isSortable();
         this.displayName = this.calculateDisplayName();
         this.draggable = this.workOutDraggable();
     }
@@ -303,7 +326,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         return res;
     }
     calculateDisplayName() {
-        return this.columnModel.getDisplayNameForColumn(this.column, 'header', true);
+        return this.beans.columnModel.getDisplayNameForColumn(this.column, 'header', true);
     }
     checkDisplayName() {
         // display name can change if aggFunc different, eg sum(Gold) is now max(Gold)
@@ -313,7 +336,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     }
     workOutDraggable() {
         const colDef = this.column.getColDef();
-        const isSuppressMovableColumns = this.gridOptionsService.is('suppressMovableColumns');
+        const isSuppressMovableColumns = this.gridOptionsService.get('suppressMovableColumns');
         const colCanMove = !isSuppressMovableColumns && !colDef.suppressMovable && !colDef.lockPosition;
         // we should still be allowed drag the column, even if it can't be moved, if the column
         // can be dragged to a rowGroup or pivot drop zone
@@ -360,6 +383,15 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.addRefreshFunction(updateSortableCssClass);
         this.addManagedListener(this.eventService, Column.EVENT_SORT_CHANGED, this.refreshAriaSort.bind(this));
     }
+    setupFilterClass() {
+        const listener = () => {
+            const isFilterActive = this.column.isFilterActive();
+            this.comp.addOrRemoveCssClass('ag-header-cell-filtered', isFilterActive);
+            this.refreshAria();
+        };
+        this.addManagedListener(this.column, Column.EVENT_FILTER_ACTIVE_CHANGED, listener);
+        listener();
+    }
     setupWrapTextClass() {
         const listener = () => {
             const wrapText = !!this.column.getColDef().wrapHeaderText;
@@ -368,16 +400,28 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         listener();
         this.addRefreshFunction(listener);
     }
+    onDisplayedColumnsChanged() {
+        super.onDisplayedColumnsChanged();
+        if (!this.isAlive()) {
+            return;
+        }
+        this.onHeaderHeightChanged();
+    }
     onHeaderHeightChanged() {
         this.refreshSpanHeaderHeight();
     }
     refreshSpanHeaderHeight() {
-        const { eGui, column, comp, columnModel, gridOptionsService } = this;
+        const { eGui, column, comp, beans } = this;
         if (!column.isSpanHeaderHeight()) {
+            eGui.style.removeProperty('top');
+            eGui.style.removeProperty('height');
+            comp.addOrRemoveCssClass('ag-header-span-height', false);
+            comp.addOrRemoveCssClass('ag-header-span-total', false);
             return;
         }
-        const { numberOfParents, isSpanningTotal } = this.getColumnGroupPaddingInfo();
+        const { numberOfParents, isSpanningTotal } = this.column.getColumnGroupPaddingInfo();
         comp.addOrRemoveCssClass('ag-header-span-height', numberOfParents > 0);
+        const { columnModel } = beans;
         const headerHeight = columnModel.getColumnHeaderRowHeight();
         if (numberOfParents === 0) {
             // if spanning has stopped then need to reset these values.
@@ -387,7 +431,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
             return;
         }
         comp.addOrRemoveCssClass('ag-header-span-total', isSpanningTotal);
-        const pivotMode = gridOptionsService.is('pivotMode');
+        const pivotMode = columnModel.isPivotMode();
         const groupHeaderHeight = pivotMode
             ? columnModel.getPivotGroupHeaderHeight()
             : columnModel.getGroupHeaderHeight();
@@ -395,23 +439,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         eGui.style.setProperty('top', `${-extraHeight}px`);
         eGui.style.setProperty('height', `${headerHeight + extraHeight}px`);
     }
-    getColumnGroupPaddingInfo() {
-        let parent = this.column.getParent();
-        if (!parent || !parent.isPadding()) {
-            return { numberOfParents: 0, isSpanningTotal: false };
-        }
-        const numberOfParents = parent.getPaddingLevel() + 1;
-        let isSpanningTotal = true;
-        while (parent) {
-            if (!parent.isPadding()) {
-                isSpanningTotal = false;
-                break;
-            }
-            parent = parent.getParent();
-        }
-        return { numberOfParents, isSpanningTotal };
-    }
     setupAutoHeight(wrapperElement) {
+        const { columnModel, resizeObserverService } = this.beans;
         const measureHeight = (timesCalled) => {
             if (!this.isAlive()) {
                 return;
@@ -429,11 +458,11 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
                 // as a) may not be React and b) the cell could be empty anyway
                 const possiblyNoContentYet = autoHeight == 0;
                 if (notYetInDom || possiblyNoContentYet) {
-                    this.beans.frameworkOverrides.setTimeout(() => measureHeight(timesCalled + 1), 0);
+                    window.setTimeout(() => measureHeight(timesCalled + 1), 0);
                     return;
                 }
             }
-            this.columnModel.setColumnHeaderHeight(this.column, autoHeight);
+            columnModel.setColumnHeaderHeight(this.column, autoHeight);
         };
         let isMeasuring = false;
         let stopResizeObserver;
@@ -450,7 +479,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
             isMeasuring = true;
             measureHeight(0);
             this.comp.addOrRemoveCssClass('ag-header-cell-auto-height', true);
-            stopResizeObserver = this.resizeObserverService.observeResize(wrapperElement, () => measureHeight(0));
+            stopResizeObserver = resizeObserverService.observeResize(wrapperElement, () => measureHeight(0));
         };
         const stopMeasuring = () => {
             isMeasuring = false;
@@ -470,7 +499,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.addManagedListener(this.eventService, Column.EVENT_SORT_CHANGED, () => {
             // Rendering changes for sort, happen after the event... not ideal
             if (isMeasuring) {
-                this.beans.frameworkOverrides.setTimeout(() => measureHeight(0));
+                window.setTimeout(() => measureHeight(0));
             }
         });
         this.addRefreshFunction(checkMeasuring);
@@ -478,9 +507,9 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     refreshAriaSort() {
         if (this.sortable) {
             const translate = this.localeService.getLocaleTextFunc();
-            const sort = this.sortController.getDisplaySortForColumn(this.column) || null;
+            const sort = this.beans.sortController.getDisplaySortForColumn(this.column) || null;
             this.comp.setAriaSort(getAriaSortState(sort));
-            this.setAriaDescriptionProperty('sort', translate('ariaSortableColumn', 'Press ENTER to sort.'));
+            this.setAriaDescriptionProperty('sort', translate('ariaSortableColumn', 'Press ENTER to sort'));
         }
         else {
             this.comp.setAriaSort();
@@ -490,10 +519,29 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     refreshAriaMenu() {
         if (this.menuEnabled) {
             const translate = this.localeService.getLocaleTextFunc();
-            this.setAriaDescriptionProperty('menu', translate('ariaMenuColumn', 'Press CTRL ENTER to open column menu.'));
+            this.setAriaDescriptionProperty('menu', translate('ariaMenuColumn', 'Press ALT DOWN to open column menu'));
         }
         else {
             this.setAriaDescriptionProperty('menu', null);
+        }
+    }
+    refreshAriaFilterButton() {
+        if (this.openFilterEnabled && !this.menuService.isLegacyMenuEnabled()) {
+            const translate = this.localeService.getLocaleTextFunc();
+            this.setAriaDescriptionProperty('filterButton', translate('ariaFilterColumn', 'Press CTRL ENTER to open filter'));
+        }
+        else {
+            this.setAriaDescriptionProperty('filterButton', null);
+        }
+    }
+    refreshAriaFiltered() {
+        const translate = this.localeService.getLocaleTextFunc();
+        const isFilterActive = this.column.isFilterActive();
+        if (isFilterActive) {
+            this.setAriaDescriptionProperty('filter', translate('ariaColumnFiltered', 'Column Filtered'));
+        }
+        else {
+            this.setAriaDescriptionProperty('filter', null);
         }
     }
     setAriaDescriptionProperty(property, value) {
@@ -504,69 +552,75 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
             this.ariaDescriptionProperties.delete(property);
         }
     }
-    refreshAriaDescription() {
-        const descriptionArray = Array.from(this.ariaDescriptionProperties.values());
-        this.comp.setAriaDescription(descriptionArray.length ? descriptionArray.join(' ') : undefined);
+    announceAriaDescription() {
+        const eDocument = this.beans.gridOptionsService.getDocument();
+        if (!this.eGui.contains(eDocument.activeElement)) {
+            return;
+        }
+        const ariaDescription = Array.from(this.ariaDescriptionProperties.keys())
+            // always announce the filter description first
+            .sort((a, b) => a === 'filter' ? -1 : (b.charCodeAt(0) - a.charCodeAt(0)))
+            .map((key) => this.ariaDescriptionProperties.get(key))
+            .join('. ');
+        this.beans.ariaAnnouncementService.announceValue(ariaDescription);
     }
     refreshAria() {
         this.refreshAriaSort();
         this.refreshAriaMenu();
-        this.refreshAriaDescription();
+        this.refreshAriaFilterButton();
+        this.refreshAriaFiltered();
     }
     addColumnHoverListener() {
         const listener = () => {
-            if (!this.gridOptionsService.is('columnHoverHighlight')) {
+            if (!this.gridOptionsService.get('columnHoverHighlight')) {
                 return;
             }
-            const isHovered = this.columnHoverService.isHovered(this.column);
+            const isHovered = this.beans.columnHoverService.isHovered(this.column);
             this.comp.addOrRemoveCssClass('ag-column-hover', isHovered);
         };
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, listener);
-        listener();
-    }
-    setupFilterCss() {
-        const listener = () => {
-            this.comp.addOrRemoveCssClass('ag-header-cell-filtered', this.column.isFilterActive());
-        };
-        this.addManagedListener(this.column, Column.EVENT_FILTER_ACTIVE_CHANGED, listener);
         listener();
     }
     getColId() {
         return this.column.getColId();
     }
     addActiveHeaderMouseListeners() {
-        const listener = (e) => this.setActiveHeader(e.type === 'mouseenter');
+        const listener = (e) => this.handleMouseOverChange(e.type === 'mouseenter');
+        const clickListener = () => this.dispatchColumnMouseEvent(Events.EVENT_COLUMN_HEADER_CLICKED, this.column);
+        const contextMenuListener = (event) => this.handleContextMenuMouseEvent(event, undefined, this.column);
         this.addManagedListener(this.getGui(), 'mouseenter', listener);
         this.addManagedListener(this.getGui(), 'mouseleave', listener);
+        this.addManagedListener(this.getGui(), 'click', clickListener);
+        this.addManagedListener(this.getGui(), 'contextmenu', contextMenuListener);
+    }
+    handleMouseOverChange(isMouseOver) {
+        this.setActiveHeader(isMouseOver);
+        const eventType = isMouseOver ?
+            Events.EVENT_COLUMN_HEADER_MOUSE_OVER :
+            Events.EVENT_COLUMN_HEADER_MOUSE_LEAVE;
+        const event = {
+            type: eventType,
+            column: this.column,
+        };
+        this.eventService.dispatchEvent(event);
     }
     setActiveHeader(active) {
         this.comp.addOrRemoveCssClass('ag-header-active', active);
     }
+    getAnchorElementForMenu(isFilter) {
+        const headerComp = this.comp.getUserCompInstance();
+        if (headerComp instanceof HeaderComp) {
+            return headerComp.getAnchorElementForMenu(isFilter);
+        }
+        return this.getGui();
+    }
+    destroy() {
+        super.destroy();
+        this.refreshFunctions = null;
+        this.selectAllFeature = null;
+        this.dragSourceElement = null;
+        this.userCompDetails = null;
+        this.userHeaderClasses = null;
+        this.ariaDescriptionProperties = null;
+    }
 }
-__decorate([
-    Autowired('columnModel')
-], HeaderCellCtrl.prototype, "columnModel", void 0);
-__decorate([
-    Autowired('columnHoverService')
-], HeaderCellCtrl.prototype, "columnHoverService", void 0);
-__decorate([
-    Autowired('sortController')
-], HeaderCellCtrl.prototype, "sortController", void 0);
-__decorate([
-    Autowired('menuFactory')
-], HeaderCellCtrl.prototype, "menuFactory", void 0);
-__decorate([
-    Autowired('dragAndDropService')
-], HeaderCellCtrl.prototype, "dragAndDropService", void 0);
-__decorate([
-    Autowired('resizeObserverService')
-], HeaderCellCtrl.prototype, "resizeObserverService", void 0);
-__decorate([
-    Autowired('gridApi')
-], HeaderCellCtrl.prototype, "gridApi", void 0);
-__decorate([
-    Autowired('columnApi')
-], HeaderCellCtrl.prototype, "columnApi", void 0);
-__decorate([
-    PreDestroy
-], HeaderCellCtrl.prototype, "removeDragSource", null);

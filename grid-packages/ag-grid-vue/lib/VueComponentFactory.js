@@ -6,7 +6,7 @@ var VueComponentFactory = /** @class */ (function () {
         if (typeof component === 'string') {
             var componentInstance = this.searchForComponentInstance(parent, component);
             if (!componentInstance) {
-                console.error("Could not find component with name of " + component + ". Is it in Vue.components?");
+                console.error("Could not find component with name of ".concat(component, ". Is it in Vue.components?"));
                 return null;
             }
             return Vue.extend(componentInstance);
@@ -46,7 +46,7 @@ var VueComponentFactory = /** @class */ (function () {
             currentParent = currentParent.$parent;
         }
         if (!componentInstance && !suppressError) {
-            console.error("Could not find component with name of " + component + ". Is it in Vue.components?");
+            console.error("Could not find component with name of ".concat(component, ". Is it in Vue.components?"));
             return null;
         }
         return componentInstance;

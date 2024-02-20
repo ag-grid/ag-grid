@@ -5,14 +5,14 @@ enterprise: true
 
 This section shows how the Group Column Filter can be used when row groups are displayed under group columns.
 
-<image-caption src="grouping-column-filter/resources/group-filter.png" alt="Group Column Filter" width="28rem" centered="true"></image-caption>
+<image-caption src="grouping-column-filter/resources/group-filter.png" alt="Group Column Filter" constrained="true" width="18rem" centered="true" toggledarkmode="true"></image-caption>
 
 The Group Column Filter contains the [Column Filters](/filtering/) (Provided Filters or [Custom Filters](/component-filter/))
 defined on the underlying columns directly in the group columns. When there are multiple underlying columns in the group 
 column, a dropdown is provided to switch between the different column filters.
 
 <note>
-The Group Column Filter will not work with the [Group Rows](/grouping-group-rows/) display type as there are no group columns.
+The Group Column Filter will not work with the [Group Rows](../grouping-group-rows/) display type as there are no group columns.
 </note>
 
 ## Enabling Group Column Filter

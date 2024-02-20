@@ -19,7 +19,6 @@ import { ListenerUtils } from "./listenerUtils";
 export class SortListener extends BeanStub {
 
     @Autowired('sortController') private sortController: SortController;
-    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
     @Autowired('ssrmListenerUtils') private listenerUtils: ListenerUtils;
 
@@ -31,61 +30,11 @@ export class SortListener extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
     }
 
-    public extractSortModel(): SortModelItem[] {
-        const sortModel = this.sortController.getSortModel();
-
-        // when using tree data we just return the sort model with the 'ag-Grid-AutoColumn' as is, i.e not broken out
-        // into it's constitute group columns as they are not defined up front and can vary per node.
-        if (this.gridOptionsService.isTreeData()) {
-            return sortModel;
-        }
-
-        // it autoCol is active, we don't want to send this to the server. instead we want to
-        // send the
-        this.replaceAutoGroupColumnWithActualRowGroupColumns(sortModel);
-        this.removeMultiColumnPrefixOnColumnIds(sortModel);
-
-        return sortModel;
-    }
-
-    private removeMultiColumnPrefixOnColumnIds(sortModel: SortModelItem[]): void {
-        if (this.gridOptionsService.isGroupMultiAutoColumn()) {
-            const multiColumnPrefix = GROUP_AUTO_COLUMN_ID + "-";
-
-            for (let i = 0; i < sortModel.length; ++i) {
-                if (sortModel[i].colId.indexOf(multiColumnPrefix) > -1) {
-                    sortModel[i].colId = sortModel[i].colId.substr(multiColumnPrefix.length);
-                }
-            }
-        }
-    }
-
-    private replaceAutoGroupColumnWithActualRowGroupColumns(sortModel: SortModelItem[]): void {
-        // find index of auto group column in sort model
-        const autoGroupSortModel = sortModel.find(sm => sm.colId == GROUP_AUTO_COLUMN_ID);
-
-        // replace auto column with individual group columns
-        if (autoGroupSortModel) {
-            // remove auto group column
-            const autoGroupIndex = sortModel.indexOf(autoGroupSortModel);
-            _.removeFromArray(sortModel, autoGroupSortModel);
-
-            const isNotInSortModel = (col: Column) => sortModel.filter(sm => sm.colId === col.getColId()).length == 0;
-            const mapColumnToSortModel = (col: Column): SortModelItem => ({ colId: col.getId(), sort: autoGroupSortModel.sort });
-
-            const newModels = this.columnModel.getRowGroupColumns()
-                .filter(isNotInSortModel)
-                .map(mapColumnToSortModel);
-
-            _.insertArrayIntoArray(sortModel, newModels, autoGroupIndex);
-        }
-    }
-
     private onSortChanged(): void {
         const storeParams = this.serverSideRowModel.getParams();
         if (!storeParams) { return; } // params is undefined if no datasource set
 
-        const newSortModel = this.extractSortModel();
+        const newSortModel = this.sortController.getSortModel();
         const oldSortModel = storeParams.sortModel;
 
         const changedColumns = this.findChangedColumnsInSort(newSortModel, oldSortModel);

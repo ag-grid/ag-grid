@@ -73,7 +73,7 @@ The following points should be noted:
 
 - The example is showing a flat list of data. There is no grouping or parent / child relationships between the full width and normal rows.
 
-<grid-example title='Basic Full Width' name='basic-full-width' type='generated' options=' { "exampleHeight" : 595 }'></grid-example>
+<grid-example title='Basic Full Width' name='basic-full-width' type='generated' options=' { "exampleHeight": 595 }'></grid-example>
 
 ## Embedded Full Width Rows
 
@@ -88,7 +88,7 @@ The example below demonstrates the behaviour when Full Width Rows are embedded i
 - Full Width Rows in the **non pinned** section take the whole width of the section and scroll horizontally.
 - Full Width Rows in the **pinned** sections take the whole width of the section.
 
-<grid-example title='Embedded Full Width Rows' name='embedded-full-width' type='generated' options=' { "exampleHeight" : 595 }'></grid-example>
+<grid-example title='Embedded Full Width Rows' name='embedded-full-width' type='generated' options=' { "exampleHeight": 595 }'></grid-example>
 
 ## Full Width Keyboard Navigation
 
@@ -96,10 +96,10 @@ When using full width rows, the full width cell renderer is responsible for impl
 
 Adding support for keyboard navigation and focus requires a custom `suppressKeyboardEvent` function in grid options. See [Suppress Keyboard Events](/keyboard-navigation/#suppress-keyboard-events).
 
-An example of this is shown below, enabling keyboard navigation through the full width cell elements when pressing <kbd>Tab</kbd> and <kbd>Shift</kbd>+<kbd>Tab</kbd>:
+An example of this is shown below, enabling keyboard navigation through the full width cell elements when pressing <kbd>⇥ Tab</kbd> and <kbd>⇧ Shift</kbd>+<kbd>⇥ Tab</kbd>:
 
-- Click on the `United Kingdom` row, press the <kbd>Tab</kbd> a few times and notice that the full width `France` row can be tabbed into, along with the button, link and textbox. At the end of the cell elements, the tab focus moves to the next cell in the next row
-- Use <kbd>Shift</kbd>+<kbd>Tab</kbd> to navigate in the reverse direction
+- Click on the `United Kingdom` row, press the <kbd>⇥ Tab</kbd> a few times and notice that the full width `France` row can be tabbed into, along with the button, link and textbox. At the end of the cell elements, the tab focus moves to the next cell in the next row
+- Use <kbd>⇧ Shift</kbd>+<kbd>⇥ Tab</kbd> to navigate in the reverse direction
 
 The `suppressKeyboardEvent` callback is used to capture tab events and determine if the user is tabbing forward or backwards. It also suppresses the default behaviour of moving to the next cell if tabbing within the child elements. 
 

@@ -1,15 +1,16 @@
 import { Component } from "@angular/core";
+import { FormsModule } from "@angular/forms";
 
 import { IFloatingFilterAngularComp } from "@ag-grid-community/angular";
 import { IFloatingFilterParams, ISimpleFilter } from "@ag-grid-community/core";
 
 export interface CustomParams {
-    suppressFilterButton: boolean;
     color: string
 }
 @Component({
-    selector: 'number-component',
-    template: `&gt; <input [style.color]="params.color" style="width: 30px" type="number" min="0" [(ngModel)]="currentValue"
+    standalone: true,
+    imports: [FormsModule],
+    template: `&gt; <input [style.borderColor]="params.color" style="width: 30px;" type="number" min="0" [(ngModel)]="currentValue"
                            (input)="onInputBoxChanged($event)"/>`
 })
 export class NumberFloatingFilterComponent implements IFloatingFilterAngularComp {

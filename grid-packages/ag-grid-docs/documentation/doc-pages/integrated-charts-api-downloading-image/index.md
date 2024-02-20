@@ -12,7 +12,7 @@ chart in the browser.
 
 <div style="display: flex; margin-bottom: 25px; margin-top: 25px; margin-left: 40px;">
     <div style="flex: 1 1 0">
-        <image-caption src="integrated-charts-api-downloading-image/resources/chart-toolbar-download.png" alt="Chart Toolbar Download button" constrained="true" centered="true"></image-caption>
+        <image-caption src="integrated-charts-api-downloading-image/resources/chart-toolbar-download.png" alt="Chart Toolbar Download button" constrained="true" centered="true" toggledarkmode="true"></image-caption>
     </div>
 </div>
 
@@ -36,7 +36,7 @@ The example below demonstrates how you can retrieve images rendered from the cha
 - Click **Download Chart Image (JPG 800x500)** to download a custom size image via `downloadChart()`
 - Click **Open Chart Image (JPG)** to open a JPEG format image in a new window via `getChartImageDataURL()`
 
-<grid-example title='Downloading Chart Image' name='downloading-chart-image' type='generated' options='{ "exampleHeight": 800, "enterprise": true, "modules": ["clientside", "menu", "charts"], "myGridReference": 1 }'></grid-example>
+<grid-example title='Downloading Chart Image' name='downloading-chart-image' type='generated' options='{ "exampleHeight": 800, "enterprise": true, "modules": ["clientside", "menu", "charts-enterprise"], "myGridReference": 1 }'></grid-example>
 
 
 

@@ -3,16 +3,13 @@ const columnDefs = [
     { field: "age" },
     { field: "country" },
     { field: "year" },
-    { field: "date" },
     { field: "sport" },
-    // in the total col, we have a value getter, which usually means we don't need to provide a field
-    // however the master/slave depends on the column id (which is derived from the field if provided) in
-    // order to match up the columns
     {
         headerName: 'Medals',
         children: [
             {
-                columnGroupShow: 'closed', field: "total",
+                colId: 'total',
+                columnGroupShow: 'closed',
                 valueGetter: "data.gold + data.silver + data.bronze"
             },
             { columnGroupShow: 'open', field: "gold" },
@@ -21,70 +18,62 @@ const columnDefs = [
         ]
     }
 ];
+const defaultColDef = {
+    filter: true,
+    minWidth: 100
+}
 
 // this is the grid options for the top grid
+let topApi;
 const gridOptionsTop = {
-    defaultColDef: {
-        editable: true,
-        sortable: true,
-        resizable: true,
-        filter: true,
-        flex: 1,
-        minWidth: 100
-    },
-    columnDefs: columnDefs,
+    defaultColDef,
+    columnDefs,
     rowData: null,
-    // debug: true,
-    alignedGrids: []
+    alignedGrids: () => [bottomApi],
+    autoSizeStrategy: {
+        type: 'fitGridWidth'
+    },
 };
 
 // this is the grid options for the bottom grid
+let bottomApi;
 const gridOptionsBottom = {
-    defaultColDef: {
-        editable: true,
-        sortable: true,
-        resizable: true,
-        filter: true,
-        flex: 1,
-        minWidth: 100
-    },
-    columnDefs: columnDefs,
+    defaultColDef,
+    columnDefs,
     rowData: null,
-    // debug: true,
-    alignedGrids: []
+    alignedGrids: () => [topApi],
+    autoSizeStrategy: {
+        type: 'fitGridWidth'
+    },
 };
-
-gridOptionsTop.alignedGrids.push(gridOptionsBottom);
-gridOptionsBottom.alignedGrids.push(gridOptionsTop);
 
 function onCbAthlete(value) {
     // we only need to update one grid, as the other is a slave
-    gridOptionsTop.columnApi.setColumnVisible('athlete', value);
+    topApi.setColumnsVisible(['athlete'], value);
 }
 
 function onCbAge(value) {
     // we only need to update one grid, as the other is a slave
-    gridOptionsTop.columnApi.setColumnVisible('age', value);
+    topApi.setColumnsVisible(['age'], value);
 }
 
 function onCbCountry(value) {
     // we only need to update one grid, as the other is a slave
-    gridOptionsTop.columnApi.setColumnVisible('country', value);
+    topApi.setColumnsVisible(['country'], value);
 }
 
 function setData(rowData) {
-    gridOptionsTop.api.setRowData(rowData);
-    gridOptionsBottom.api.setRowData(rowData);
-    gridOptionsTop.api.sizeColumnsToFit();
+    topApi.setGridOption('rowData', rowData);
+    bottomApi.setGridOption('rowData', rowData);
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
     const gridDivTop = document.querySelector('#myGridTop');
-    new agGrid.Grid(gridDivTop, gridOptionsTop);
+    topApi = agGrid.createGrid(gridDivTop, gridOptionsTop);
 
     const gridDivBottom = document.querySelector('#myGridBottom');
-    new agGrid.Grid(gridDivBottom, gridOptionsBottom);
+    bottomApi = agGrid.createGrid(gridDivBottom, gridOptionsBottom);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then(response => response.json())

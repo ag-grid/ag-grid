@@ -60,7 +60,7 @@ export function utf8_encode(s) {
         if ((point >= 0 && point <= 31 && point !== 10)) {
             var convertedCode = point.toString(16).toUpperCase();
             var paddedCode = convertedCode.padStart(4, '0');
-            return "_x" + paddedCode + "_";
+            return "_x".concat(paddedCode, "_");
         }
         if ((point & 0xFFFFFF80) == 0) { // 1-byte sequence
             return stringFromCharCode(point);
@@ -94,7 +94,7 @@ export function utf8_encode(s) {
     return byteString;
 }
 export function capitalise(str) {
-    return str[0].toUpperCase() + str.substr(1).toLowerCase();
+    return str[0].toUpperCase() + str.substring(1).toLowerCase();
 }
 export function escapeString(toEscape, skipEscapingHtmlChars) {
     if (toEscape == null) {
@@ -136,5 +136,5 @@ export function camelCaseToHumanText(camelCase) {
  * @return {string}
  */
 export function camelCaseToHyphenated(camelCase) {
-    return camelCase.replace(/[A-Z]/g, function (s) { return "-" + s.toLocaleLowerCase(); });
+    return camelCase.replace(/[A-Z]/g, function (s) { return "-".concat(s.toLocaleLowerCase()); });
 }

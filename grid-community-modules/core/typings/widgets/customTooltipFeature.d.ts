@@ -9,8 +9,6 @@ export declare class CustomTooltipFeature extends BeanStub {
     private parentComp;
     private tooltipShowDelayOverride?;
     private tooltipHideDelayOverride?;
-    private readonly DEFAULT_SHOW_TOOLTIP_DELAY;
-    private readonly DEFAULT_HIDE_TOOLTIP_DELAY;
     private readonly SHOW_QUICK_TOOLTIP_DIFF;
     private readonly FADE_OUT_TOOLTIP_TIMEOUT;
     private readonly INTERACTIVE_HIDE_DELAY;
@@ -18,8 +16,6 @@ export declare class CustomTooltipFeature extends BeanStub {
     private static isLocked;
     private popupService;
     private userComponentFactory;
-    private tooltipShowDelay;
-    private tooltipHideDelay;
     private showTooltipTimeoutId;
     private hideTooltipTimeoutId;
     private interactiveTooltipTimeoutId;

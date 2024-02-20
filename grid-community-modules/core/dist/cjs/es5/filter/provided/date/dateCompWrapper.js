@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DateCompWrapper = void 0;
 var dom_1 = require("../../../utils/dom");
+var function_1 = require("../../../utils/function");
 /** Provides sync access to async component. Date component can be lazy created - this class encapsulates
  * this by keeping value locally until DateComp has loaded, then passing DateComp the value. */
 var DateCompWrapper = /** @class */ (function () {
@@ -58,7 +59,7 @@ var DateCompWrapper = /** @class */ (function () {
         }
     };
     DateCompWrapper.prototype.setDisplayed = function (displayed) {
-        dom_1.setDisplayed(this.eParent, displayed);
+        (0, dom_1.setDisplayed)(this.eParent, displayed);
     };
     DateCompWrapper.prototype.setInputPlaceholder = function (placeholder) {
         if (this.dateComp && this.dateComp.setInputPlaceholder) {
@@ -76,9 +77,20 @@ var DateCompWrapper = /** @class */ (function () {
         }
     };
     DateCompWrapper.prototype.updateParams = function (params) {
-        var _a;
-        if (((_a = this.dateComp) === null || _a === void 0 ? void 0 : _a.onParamsUpdated) && typeof this.dateComp.onParamsUpdated === 'function') {
-            this.dateComp.onParamsUpdated(params);
+        var _a, _b;
+        var hasRefreshed = false;
+        if (((_a = this.dateComp) === null || _a === void 0 ? void 0 : _a.refresh) && typeof this.dateComp.refresh === 'function') {
+            var result = this.dateComp.refresh(params);
+            // framework wrapper always implements optional methods, but returns null if no underlying method
+            if (result !== null) {
+                hasRefreshed = true;
+            }
+        }
+        if (!hasRefreshed && ((_b = this.dateComp) === null || _b === void 0 ? void 0 : _b.onParamsUpdated) && typeof this.dateComp.onParamsUpdated === 'function') {
+            var result = this.dateComp.onParamsUpdated(params);
+            if (result !== null) {
+                (0, function_1.warnOnce)("Custom date component method 'onParamsUpdated' is deprecated. Use 'refresh' instead.");
+            }
         }
     };
     DateCompWrapper.prototype.setDateCompDisabled = function (disabled) {

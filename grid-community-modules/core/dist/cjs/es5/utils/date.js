@@ -31,9 +31,9 @@ function serialiseDate(date, includeTime, separator) {
     if (!date) {
         return null;
     }
-    var serialised = [date.getFullYear(), date.getMonth() + 1, date.getDate()].map(function (part) { return number_1.padStartWidthZeros(part, 2); }).join(separator);
+    var serialised = [date.getFullYear(), date.getMonth() + 1, date.getDate()].map(function (part) { return (0, number_1.padStartWidthZeros)(part, 2); }).join(separator);
     if (includeTime) {
-        serialised += ' ' + [date.getHours(), date.getMinutes(), date.getSeconds()].map(function (part) { return number_1.padStartWidthZeros(part, 2); }).join(':');
+        serialised += ' ' + [date.getHours(), date.getMinutes(), date.getSeconds()].map(function (part) { return (0, number_1.padStartWidthZeros)(part, 2); }).join(':');
     }
     return serialised;
 }
@@ -57,7 +57,7 @@ var calculateOrdinal = function (value) {
  */
 function dateToFormattedString(date, format) {
     if (format === void 0) { format = 'YYYY-MM-DD'; }
-    var fullYear = number_1.padStartWidthZeros(date.getFullYear(), 4);
+    var fullYear = (0, number_1.padStartWidthZeros)(date.getFullYear(), 4);
     var months = [
         'January', 'February', 'March', 'April', 'May', 'June',
         'July', 'August', 'September', 'October', 'November', 'December',
@@ -68,20 +68,20 @@ function dateToFormattedString(date, format) {
     var replace = {
         YYYY: function () { return fullYear.slice(fullYear.length - 4, fullYear.length); },
         YY: function () { return fullYear.slice(fullYear.length - 2, fullYear.length); },
-        Y: function () { return "" + date.getFullYear(); },
+        Y: function () { return "".concat(date.getFullYear()); },
         MMMM: function () { return months[date.getMonth()]; },
         MMM: function () { return months[date.getMonth()].slice(0, 3); },
-        MM: function () { return number_1.padStartWidthZeros(date.getMonth() + 1, 2); },
-        Mo: function () { return "" + (date.getMonth() + 1) + calculateOrdinal(date.getMonth() + 1); },
-        M: function () { return "" + (date.getMonth() + 1); },
-        Do: function () { return "" + date.getDate() + calculateOrdinal(date.getDate()); },
-        DD: function () { return number_1.padStartWidthZeros(date.getDate(), 2); },
-        D: function () { return "" + date.getDate(); },
+        MM: function () { return (0, number_1.padStartWidthZeros)(date.getMonth() + 1, 2); },
+        Mo: function () { return "".concat(date.getMonth() + 1).concat(calculateOrdinal(date.getMonth() + 1)); },
+        M: function () { return "".concat(date.getMonth() + 1); },
+        Do: function () { return "".concat(date.getDate()).concat(calculateOrdinal(date.getDate())); },
+        DD: function () { return (0, number_1.padStartWidthZeros)(date.getDate(), 2); },
+        D: function () { return "".concat(date.getDate()); },
         dddd: function () { return days[date.getDay()]; },
         ddd: function () { return days[date.getDay()].slice(0, 3); },
         dd: function () { return days[date.getDay()].slice(0, 2); },
-        do: function () { return "" + date.getDay() + calculateOrdinal(date.getDay()); },
-        d: function () { return "" + date.getDay(); },
+        do: function () { return "".concat(date.getDay()).concat(calculateOrdinal(date.getDay())); },
+        d: function () { return "".concat(date.getDay()); },
     };
     var regexp = new RegExp(Object.keys(replace).join('|'), 'g');
     return format.replace(regexp, function (match) {

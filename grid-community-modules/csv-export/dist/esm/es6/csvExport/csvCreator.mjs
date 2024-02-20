@@ -22,25 +22,24 @@ let CsvCreator = class CsvCreator extends BaseCreator {
     export(userParams) {
         if (this.isExportSuppressed()) {
             console.warn(`AG Grid: Export cancelled. Export is not allowed as per your configuration.`);
-            return '';
+            return;
         }
         const mergedParams = this.getMergedParams(userParams);
         const data = this.getData(mergedParams);
         const packagedFile = new Blob(["\ufeff", data], { type: 'text/plain' });
-        Downloader.download(this.getFileName(mergedParams.fileName), packagedFile);
-        return data;
+        const fileName = typeof mergedParams.fileName === 'function'
+            ? mergedParams.fileName(this.gridOptionsService.getGridCommonParams())
+            : mergedParams.fileName;
+        Downloader.download(this.getFileName(fileName), packagedFile);
     }
     exportDataAsCsv(params) {
-        return this.export(params);
+        this.export(params);
     }
     getDataAsCsv(params, skipDefaultParams = false) {
         const mergedParams = skipDefaultParams
             ? Object.assign({}, params)
             : this.getMergedParams(params);
         return this.getData(mergedParams);
-    }
-    getDefaultFileName() {
-        return 'export.csv';
     }
     getDefaultFileExtension() {
         return 'csv';
@@ -63,7 +62,7 @@ let CsvCreator = class CsvCreator extends BaseCreator {
         });
     }
     isExportSuppressed() {
-        return this.gridOptionsService.is('suppressCsvExport');
+        return this.gridOptionsService.get('suppressCsvExport');
     }
 };
 __decorate([

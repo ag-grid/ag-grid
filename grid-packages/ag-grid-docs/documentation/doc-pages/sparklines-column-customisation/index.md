@@ -48,8 +48,8 @@ sparklineOptions: {
 ```
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/default.png" alt="Column fill default" width="250px" constrained="true">Default</image-caption>
-    <image-caption src="resources/custom-fill.png" alt="Column fill customisation" width="250px" constrained="true">Custom fill</image-caption>
+    <image-caption src="resources/default.png" alt="Column fill default" width="250px" constrained="true" filterdarkmode="true">Default</image-caption>
+    <image-caption src="resources/custom-fill.png" alt="Column fill customisation" width="250px" constrained="true" filterdarkmode="true">Custom fill</image-caption>
 </div>
 
 It is possible to set the fill for the highlighted state of the column by adding `fill` in `highlightStyle` options as follows:
@@ -64,8 +64,8 @@ sparklineOptions: {
 ```
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/default-highlighted.png" alt="Highlighted Column fill default" width="250px" constrained="true">Default highlighted fill</image-caption>
-    <image-caption src="resources/custom-highlighted-fill.png" alt="Highlighted Column fill customisation" width="250px" constrained="true">Custom highlighted fill</image-caption>
+    <image-caption src="resources/default-highlighted.png" alt="Highlighted Column fill default" width="250px" constrained="true" filterdarkmode="true">Default highlighted fill</image-caption>
+    <image-caption src="resources/custom-highlighted-fill.png" alt="Highlighted Column fill customisation" width="250px" constrained="true" filterdarkmode="true">Custom highlighted fill</image-caption>
 </div>
 
 The given `fill` string can be in one of the following formats:
@@ -99,9 +99,9 @@ sparklineOptions: {
 Here is the result of the configuration shown in the above snippet.
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/default.png" alt="Stroke default" width="250px" constrained="true">Default</image-caption>
-    <image-caption src="resources/custom-stroke.png" alt="Stroke customisation" width="250px" constrained="true">Custom stroke</image-caption>
-    <image-caption src="resources/custom-highlighted-stroke.png" alt="Stroke customisation for highlighted state" width="250px" constrained="true">Custom highlighted stroke</image-caption>
+    <image-caption src="resources/default.png" alt="Stroke default" width="250px" constrained="true" filterdarkmode="true">Default</image-caption>
+    <image-caption src="resources/custom-stroke.png" alt="Stroke customisation" width="250px" constrained="true" filterdarkmode="true">Custom stroke</image-caption>
+    <image-caption src="resources/custom-highlighted-stroke.png" alt="Stroke customisation for highlighted state" width="250px" constrained="true" filterdarkmode="true">Custom highlighted stroke</image-caption>
 </div>
 
 <note>
@@ -124,8 +124,8 @@ sparklineOptions: {
 ```
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/default.png" alt="Column padding default" width="250px" constrained="true">Default</image-caption>
-    <image-caption src="resources/custom-padding-inner.png" alt="PaddingInner customisation" width="250px" constrained="true">Custom paddingInner</image-caption>
+    <image-caption src="resources/default.png" alt="Column padding default" width="250px" constrained="true" filterdarkmode="true">Default</image-caption>
+    <image-caption src="resources/custom-padding-inner.png" alt="PaddingInner customisation" width="250px" constrained="true" filterdarkmode="true">Custom paddingInner</image-caption>
 </div>
 
 The padding on the outer edges of the first and last columns can also be adjusted. As with `paddingInner`, this value can be between 0 and 1.
@@ -145,9 +145,9 @@ In this case there will be no gap on either end of the sparkline, i.e. between t
 This is demonstrated below in the middle sparkline.
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/default.png" alt="column padding default" width="250px" constrained="true">Default</image-caption>
-    <image-caption src="resources/custom-padding-outer.png" alt="PaddingOuter customisation" width="250px" constrained="true">No paddingOuter</image-caption>
-    <image-caption src="resources/custom-padding-outer-2.png" alt="PaddingOuter customisation" width="250px" constrained="true">Increased paddingOuter</image-caption>
+    <image-caption src="resources/default.png" alt="column padding default" width="250px" constrained="true" filterdarkmode="true">Default</image-caption>
+    <image-caption src="resources/custom-padding-outer.png" alt="PaddingOuter customisation" width="250px" constrained="true" filterdarkmode="true">No paddingOuter</image-caption>
+    <image-caption src="resources/custom-padding-outer-2.png" alt="PaddingOuter customisation" width="250px" constrained="true" filterdarkmode="true">Increased paddingOuter</image-caption>
 </div>
 
 ## Column Label Options
@@ -164,8 +164,8 @@ sparklineOptions: {
 ```
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/default.png" alt="Column default" width="250px" constrained="true">Default</image-caption>
-    <image-caption src="resources/default-label.png" alt="Column labels enabled" width="250px" constrained="true">Label enabled</image-caption>
+    <image-caption src="resources/default.png" alt="Column default" width="250px" constrained="true" filterdarkmode="true">Default</image-caption>
+    <image-caption src="resources/default-label.png" alt="Column labels enabled" width="250px" constrained="true" filterdarkmode="true">Label enabled</image-caption>
 </div>
 
 <grid-example title='Column Sparkline Labels' name='column-sparkline-labels' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
@@ -187,8 +187,8 @@ function labelFormatter({ value }) {
 ```
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/default.png" alt="Column default" width="250px" constrained="true">Default</image-caption>
-    <image-caption src="resources/custom-label-formatter.png" alt="Column label text customisation" width="250px" constrained="true">Custom label text</image-caption>
+    <image-caption src="resources/default.png" alt="Column default" width="250px" constrained="true" filterdarkmode="true">Default</image-caption>
+    <image-caption src="resources/custom-label-formatter.png" alt="Column label text customisation" width="250px" constrained="true" filterdarkmode="true">Custom label text</image-caption>
 </div>
 
 To customise the label text style, set the style attributes in `label` options as follows:
@@ -208,8 +208,8 @@ sparklineOptions: {
 ```
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/default.png" alt="Column default" width="250px" constrained="true">Default</image-caption>
-    <image-caption src="resources/custom-label-styles.png" alt="Column label text style customisation" width="250px" constrained="true">Custom label text styles</image-caption>
+    <image-caption src="resources/default.png" alt="Column default" width="250px" constrained="true" filterdarkmode="true">Default</image-caption>
+    <image-caption src="resources/custom-label-styles.png" alt="Column label text style customisation" width="250px" constrained="true" filterdarkmode="true">Custom label text styles</image-caption>
 </div>
 
 The position of the labels can be specified by setting the `placement` property in `label` options. By default, the labels are positioned at the end of the columns on the inside, i.e. `placement` is set to `insideEnd `. The snippet below shows how the positioning of the label can be modified:
@@ -227,12 +227,12 @@ sparklineOptions: {
 Label `placement` options include `insideBase`, `center`, `insideEnd` and `outsideEnd`. These are shown in the screenshots below.
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/custom-label-placement-insideBase.png" alt="Column label insideBase placement" width="250px" constrained="true">insideBase</image-caption>
-    <image-caption src="resources/custom-label-placement-center.png" alt="Column label center placement" width="250px" constrained="true">center</image-caption>
+    <image-caption src="resources/custom-label-placement-insideBase.png" alt="Column label insideBase placement" width="250px" constrained="true" filterdarkmode="true">insideBase</image-caption>
+    <image-caption src="resources/custom-label-placement-center.png" alt="Column label center placement" width="250px" constrained="true" filterdarkmode="true">center</image-caption>
 </div>
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/custom-label-placement-insideEnd.png" alt="Column label insideEnd placement" width="250px" constrained="true">insideEnd</image-caption>
-    <image-caption src="resources/custom-label-placement-outsideEnd.png" alt="Column label placement default" width="250px" constrained="true">outsideEnd</image-caption>
+    <image-caption src="resources/custom-label-placement-insideEnd.png" alt="Column label insideEnd placement" width="250px" constrained="true" filterdarkmode="true">insideEnd</image-caption>
+    <image-caption src="resources/custom-label-placement-outsideEnd.png" alt="Column label placement default" width="250px" constrained="true" filterdarkmode="true">outsideEnd</image-caption>
 </div>
 
 <note>
@@ -256,8 +256,8 @@ sparklineOptions: {
 ```
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/default.png" alt="Axis line default" width="250px" constrained="true">Default axis line</image-caption>
-    <image-caption src="resources/custom-axis.png" alt="Axis line customisation" width="250px" constrained="true">Custom axis line</image-caption>
+    <image-caption src="resources/default.png" alt="Axis line default" width="250px" constrained="true" filterdarkmode="true">Default axis line</image-caption>
+    <image-caption src="resources/custom-axis.png" alt="Axis line customisation" width="250px" constrained="true" filterdarkmode="true">Custom axis line</image-caption>
 </div>
 
 <note>
@@ -284,8 +284,8 @@ sparklineOptions: {
 - The `top`, `right`, `bottom` and `left` properties are all optional and can be modified independently.
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/default-padding.png" alt="Padding customisation" width="250px" constrained="true">Default padding</image-caption>
-    <image-caption src="resources/custom-padding.png" alt="Padding customisation" width="250px" constrained="true">Custom padding</image-caption>
+    <image-caption src="resources/default-padding.png" alt="Padding customisation" width="250px" constrained="true" filterdarkmode="true">Default padding</image-caption>
+    <image-caption src="resources/custom-padding.png" alt="Padding customisation" width="250px" constrained="true" filterdarkmode="true">Custom padding</image-caption>
 </div>
 
 ## Additional Customisations

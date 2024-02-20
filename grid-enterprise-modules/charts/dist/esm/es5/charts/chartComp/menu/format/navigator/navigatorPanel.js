@@ -56,7 +56,7 @@ var NavigatorPanel = /** @class */ (function (_super) {
             .setMinValue(10)
             .setMaxValue(getMaxValue(currentValue, 60))
             .setTextFieldWidth(45)
-            .setValue("" + (currentValue || 30))
+            .setValue("".concat(currentValue || 30))
             .onValueChange(function (height) { return _this.chartOptionsService.setChartOption("navigator.height", height); });
     };
     NavigatorPanel.prototype.destroy = function () {

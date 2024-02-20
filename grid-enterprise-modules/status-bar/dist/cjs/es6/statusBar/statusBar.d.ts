@@ -6,7 +6,12 @@ export declare class StatusBar extends Component {
     private eStatusBarLeft;
     private eStatusBarCenter;
     private eStatusBarRight;
+    private compDestroyFunctions;
     constructor();
     private postConstruct;
+    private processStatusPanels;
+    private handleStatusBarChanged;
+    resetStatusBar(): void;
+    private destroyComponents;
     private createAndRenderComponents;
 }

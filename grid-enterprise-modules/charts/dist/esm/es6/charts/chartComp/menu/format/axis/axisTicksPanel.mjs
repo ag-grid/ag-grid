@@ -23,12 +23,14 @@ export class AxisTicksPanel extends Component {
     initAxisTicks() {
         this.axisTicksGroup
             .setTitle(this.chartTranslationService.translate("ticks"))
+            .setEnabled(this.chartOptionsService.getAxisProperty("tick.enabled"))
             .hideOpenCloseIcons(true)
-            .hideEnabledCheckbox(true);
+            .hideEnabledCheckbox(false)
+            .onEnableChange(newValue => this.chartOptionsService.setAxisProperty("tick.enabled", newValue));
         this.axisTicksColorPicker
             .setLabel(this.chartTranslationService.translate("color"))
             .setLabelWidth("flex")
-            .setInputWidth(45)
+            .setInputWidth('flex')
             .setValue(this.chartOptionsService.getAxisProperty("tick.color"))
             .onValueChange(newColor => this.chartOptionsService.setAxisProperty("tick.color", newColor));
         const initInput = (expression, input, label, defaultMaxValue) => {

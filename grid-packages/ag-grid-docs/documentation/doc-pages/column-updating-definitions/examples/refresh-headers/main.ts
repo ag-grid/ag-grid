@@ -1,5 +1,7 @@
-import { ColDef, Grid, GridOptions } from '@ag-grid-community/core'
+import { ColDef, GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 import { CustomHeader } from './customHeader_typescript'
+
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
@@ -33,10 +35,10 @@ function onBtUpperNames() {
         { field: 'bronze' },
         { field: 'total' },
     ]
-    columnDefs.forEach(function (c) {
+    columnDefs.forEach((c) => {
         c.headerName = c.field!.toUpperCase()
     })
-    gridOptions.api!.setColumnDefs(columnDefs)
+    gridApi!.setGridOption('columnDefs', columnDefs)
 }
 
 function onBtLowerNames() {
@@ -52,10 +54,10 @@ function onBtLowerNames() {
         { field: 'bronze' },
         { field: 'total' },
     ]
-    columnDefs.forEach(function (c) {
+    columnDefs.forEach((c) => {
         c.headerName = c.field
     })
-    gridOptions.api!.setColumnDefs(columnDefs)
+    gridApi!.setGridOption('columnDefs', columnDefs)
 }
 
 function onBtFilterOn() {
@@ -71,10 +73,10 @@ function onBtFilterOn() {
         { field: 'bronze' },
         { field: 'total' },
     ]
-    columnDefs.forEach(function (c) {
+    columnDefs.forEach((c) => {
         c.filter = true
     })
-    gridOptions.api!.setColumnDefs(columnDefs)
+    gridApi!.setGridOption('columnDefs', columnDefs)
 }
 
 function onBtFilterOff() {
@@ -90,10 +92,10 @@ function onBtFilterOff() {
         { field: 'bronze' },
         { field: 'total' },
     ]
-    columnDefs.forEach(function (c) {
+    columnDefs.forEach((c) => {
         c.filter = false
     })
-    gridOptions.api!.setColumnDefs(columnDefs)
+    gridApi!.setGridOption('columnDefs', columnDefs)
 }
 
 function onBtResizeOn() {
@@ -109,10 +111,10 @@ function onBtResizeOn() {
         { field: 'bronze' },
         { field: 'total' },
     ]
-    columnDefs.forEach(function (c) {
+    columnDefs.forEach((c) => {
         c.resizable = true
     })
-    gridOptions.api!.setColumnDefs(columnDefs)
+    gridApi!.setGridOption('columnDefs', columnDefs)
 }
 
 function onBtResizeOff() {
@@ -128,20 +130,20 @@ function onBtResizeOff() {
         { field: 'bronze' },
         { field: 'total' },
     ]
-    columnDefs.forEach(function (c) {
+    columnDefs.forEach((c) => {
         c.resizable = false
     })
-    gridOptions.api!.setColumnDefs(columnDefs)
+    gridApi!.setGridOption('columnDefs', columnDefs)
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-    new Grid(gridDiv, gridOptions)
+    gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then(response => response.json())
         .then(function (data) {
-            gridOptions.api!.setRowData(data)
+            gridApi!.setGridOption('rowData', data)
         })
 })

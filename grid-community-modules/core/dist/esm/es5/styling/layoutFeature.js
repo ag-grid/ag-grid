@@ -21,7 +21,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { PostConstruct } from "../context/context";
 import { BeanStub } from "../context/beanStub";
-import { doOnce } from "../utils/function";
+import { warnOnce } from "../utils/function";
 export var LayoutCssClasses;
 (function (LayoutCssClasses) {
     LayoutCssClasses["AUTO_HEIGHT"] = "ag-layout-auto-height";
@@ -56,9 +56,7 @@ var LayoutFeature = /** @class */ (function (_super) {
         var domLayout = (_a = this.gridOptionsService.get('domLayout')) !== null && _a !== void 0 ? _a : 'normal';
         var validLayouts = ['normal', 'print', 'autoHeight'];
         if (validLayouts.indexOf(domLayout) === -1) {
-            doOnce(function () {
-                return console.warn("AG Grid: " + domLayout + " is not valid for DOM Layout, valid values are 'normal', 'autoHeight', 'print'.");
-            }, 'warn about dom layout values');
+            warnOnce("".concat(domLayout, " is not valid for DOM Layout, valid values are 'normal', 'autoHeight', 'print'."));
             return 'normal';
         }
         return domLayout;

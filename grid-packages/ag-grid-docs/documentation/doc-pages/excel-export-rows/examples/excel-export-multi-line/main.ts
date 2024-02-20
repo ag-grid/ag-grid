@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, ICellRendererParams } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions, ICellRendererParams } from '@ag-grid-community/core';
 import { MultilineCellRenderer } from './multilineCellRenderer_typescript'
 
 const columnDefs: ColDef[] = [
@@ -13,11 +13,11 @@ const columnDefs: ColDef[] = [
     },
 ]
 
+let gridApi: GridApi;
+
 const gridOptions: GridOptions = {
     defaultColDef: {
-        sortable: true,
         cellClass: 'multiline',
-        resizable: true,
         minWidth: 100,
         flex: 1,
     },
@@ -62,11 +62,11 @@ const gridOptions: GridOptions = {
 }
 
 function onBtExport() {
-    gridOptions.api!.exportDataAsExcel()
+    gridApi!.exportDataAsExcel()
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-    new Grid(gridDiv, gridOptions)
+    gridApi = createGrid(gridDiv, gridOptions);
 })

@@ -48,20 +48,20 @@ var DateStringCellEditorInput = /** @class */ (function () {
     };
     DateStringCellEditorInput.prototype.getValue = function () {
         var value = this.formatDate(this.eInput.getDate());
-        if (!generic_1.exists(value) && !generic_1.exists(this.params.value)) {
+        if (!(0, generic_1.exists)(value) && !(0, generic_1.exists)(this.params.value)) {
             return this.params.value;
         }
         return this.params.parseValue(value !== null && value !== void 0 ? value : '');
     };
     DateStringCellEditorInput.prototype.getStartValue = function () {
         var _a, _b;
-        return date_1.serialiseDate((_b = this.parseDate((_a = this.params.value) !== null && _a !== void 0 ? _a : undefined)) !== null && _b !== void 0 ? _b : null, false);
+        return (0, date_1.serialiseDate)((_b = this.parseDate((_a = this.params.value) !== null && _a !== void 0 ? _a : undefined)) !== null && _b !== void 0 ? _b : null, false);
     };
     DateStringCellEditorInput.prototype.parseDate = function (value) {
-        return this.getDataTypeService().getDateParserFunction()(value);
+        return this.getDataTypeService().getDateParserFunction(this.params.column)(value);
     };
     DateStringCellEditorInput.prototype.formatDate = function (value) {
-        return this.getDataTypeService().getDateFormatterFunction()(value);
+        return this.getDataTypeService().getDateFormatterFunction(this.params.column)(value);
     };
     return DateStringCellEditorInput;
 }());
@@ -72,7 +72,7 @@ var DateStringCellEditor = /** @class */ (function (_super) {
         return _this;
     }
     __decorate([
-        context_1.Autowired('dataTypeService')
+        (0, context_1.Autowired)('dataTypeService')
     ], DateStringCellEditor.prototype, "dataTypeService", void 0);
     return DateStringCellEditor;
 }(simpleCellEditor_1.SimpleCellEditor));

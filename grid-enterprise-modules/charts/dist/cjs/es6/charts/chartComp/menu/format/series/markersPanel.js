@@ -71,7 +71,7 @@ class MarkersPanel extends core_1.Component {
         const initInput = (expression, input, labelKey, defaultMaxValue) => {
             const currentValue = this.getSeriesOption(expression);
             input.setLabel(this.chartTranslationService.translate(labelKey))
-                .setMaxValue(formatPanel_1.getMaxValue(currentValue, defaultMaxValue))
+                .setMaxValue((0, formatPanel_1.getMaxValue)(currentValue, defaultMaxValue))
                 .setValue(`${currentValue}`)
                 .setTextFieldWidth(45)
                 .onValueChange(newValue => this.setSeriesOption(expression, newValue));
@@ -102,22 +102,22 @@ MarkersPanel.TEMPLATE = `<div>
             </ag-group-component>
         </div>`;
 __decorate([
-    core_1.RefSelector('seriesMarkersGroup')
+    (0, core_1.RefSelector)('seriesMarkersGroup')
 ], MarkersPanel.prototype, "seriesMarkersGroup", void 0);
 __decorate([
-    core_1.RefSelector('seriesMarkerShapeSelect')
+    (0, core_1.RefSelector)('seriesMarkerShapeSelect')
 ], MarkersPanel.prototype, "seriesMarkerShapeSelect", void 0);
 __decorate([
-    core_1.RefSelector('seriesMarkerSizeSlider')
+    (0, core_1.RefSelector)('seriesMarkerSizeSlider')
 ], MarkersPanel.prototype, "seriesMarkerSizeSlider", void 0);
 __decorate([
-    core_1.RefSelector('seriesMarkerMinSizeSlider')
+    (0, core_1.RefSelector)('seriesMarkerMinSizeSlider')
 ], MarkersPanel.prototype, "seriesMarkerMinSizeSlider", void 0);
 __decorate([
-    core_1.RefSelector('seriesMarkerStrokeWidthSlider')
+    (0, core_1.RefSelector)('seriesMarkerStrokeWidthSlider')
 ], MarkersPanel.prototype, "seriesMarkerStrokeWidthSlider", void 0);
 __decorate([
-    core_1.Autowired('chartTranslationService')
+    (0, core_1.Autowired)('chartTranslationService')
 ], MarkersPanel.prototype, "chartTranslationService", void 0);
 __decorate([
     core_1.PostConstruct

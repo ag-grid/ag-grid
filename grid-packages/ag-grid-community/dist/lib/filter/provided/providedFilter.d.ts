@@ -2,7 +2,7 @@ import { IDoesFilterPassParams, IFilter, IFilterComp, IFilterParams } from '../.
 import { IRowModel } from '../../interfaces/iRowModel';
 import { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
 import { AgPromise } from '../../utils/promise';
-import { IFilterLocaleText, IFilterTitleLocaleText } from '../filterLocaleText';
+import { FILTER_LOCALE_TEXT } from '../filterLocaleText';
 import { Component } from '../../widgets/component';
 import { IRowNode } from '../../interfaces/iRowNode';
 declare type FilterButtonType = 'apply' | 'clear' | 'reset' | 'cancel';
@@ -29,7 +29,7 @@ export interface IProvidedFilterParams {
      * If the Apply button is present, the filter popup will be closed immediately when the Apply
      * or Reset button is clicked if this is set to `true`.
      *
-     * Default: `false`
+     * @default false
      */
     closeOnApply?: boolean;
     /**
@@ -42,7 +42,7 @@ export interface IProvidedFilterParams {
      * If set to `true`, disables controls in the filter to mutate its state. Normally this would
      * be used in conjunction with the Filter API.
      *
-     * Default: `false`
+     * @default false
      */
     readOnly?: boolean;
 }
@@ -79,7 +79,9 @@ export declare abstract class ProvidedFilter<M, V> extends Component implements 
     private positionableFeature;
     protected readonly rowModel: IRowModel;
     protected readonly eFilterBody: HTMLElement;
-    constructor(filterNameKey: keyof IFilterTitleLocaleText);
+    private eButtonsPanel;
+    private buttonListeners;
+    constructor(filterNameKey: keyof typeof FILTER_LOCALE_TEXT);
     abstract doesFilterPass(params: IDoesFilterPassParams): boolean;
     protected abstract updateUiVisibility(): void;
     protected abstract createBodyTemplate(): string;
@@ -98,7 +100,8 @@ export declare abstract class ProvidedFilter<M, V> extends Component implements 
     protected isReadOnly(): boolean;
     init(params: ProvidedFilterParams): void;
     protected setParams(params: ProvidedFilterParams): void;
-    private createButtonPanel;
+    protected updateParams(params: ProvidedFilterParams): void;
+    private resetButtonsPanel;
     protected getDefaultDebounceMs(): number;
     private setupOnBtApplyDebounce;
     private checkApplyDebounce;
@@ -129,9 +132,10 @@ export declare abstract class ProvidedFilter<M, V> extends Component implements 
     afterGuiDetached(): void;
     static getDebounceMs(params: ProvidedFilterParams, debounceDefault: number): number;
     static isUseApplyButton(params: ProvidedFilterParams): boolean;
+    refresh(newParams: ProvidedFilterParams): boolean;
     destroy(): void;
-    protected translate(key: keyof IFilterLocaleText | keyof IFilterTitleLocaleText): string;
-    protected getCellValue(rowNode: IRowNode): V;
+    protected translate(key: keyof typeof FILTER_LOCALE_TEXT): string;
+    protected getCellValue(rowNode: IRowNode): V | null | undefined;
     protected getPositionableElement(): HTMLElement;
 }
 export {};

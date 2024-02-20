@@ -36,7 +36,7 @@ class RowContainerEventsFeature extends beanStub_1.BeanStub {
         this.addManagedListener(this.element, eventName, listener);
     }
     addMouseListeners() {
-        const mouseDownEvent = event_1.isEventSupported('touchstart') ? 'touchstart' : 'mousedown';
+        const mouseDownEvent = (0, event_1.isEventSupported)('touchstart') ? 'touchstart' : 'mousedown';
         const eventNames = ['dblclick', 'contextmenu', 'mouseover', 'mouseout', 'click', mouseDownEvent];
         eventNames.forEach(eventName => {
             const listener = this.processMouseEvent.bind(this, eventName);
@@ -45,13 +45,13 @@ class RowContainerEventsFeature extends beanStub_1.BeanStub {
     }
     processMouseEvent(eventName, mouseEvent) {
         if (!this.mouseEventService.isEventFromThisGrid(mouseEvent) ||
-            event_1.isStopPropagationForAgGrid(mouseEvent)) {
+            (0, event_1.isStopPropagationForAgGrid)(mouseEvent)) {
             return;
         }
         const rowComp = this.getRowForEvent(mouseEvent);
         const cellCtrl = this.mouseEventService.getRenderedCellForEvent(mouseEvent);
         if (eventName === "contextmenu") {
-            this.handleContextMenuMouseEvent(mouseEvent, null, rowComp, cellCtrl);
+            this.handleContextMenuMouseEvent(mouseEvent, undefined, rowComp, cellCtrl);
         }
         else {
             if (cellCtrl) {
@@ -64,14 +64,14 @@ class RowContainerEventsFeature extends beanStub_1.BeanStub {
     }
     mockContextMenuForIPad() {
         // we do NOT want this when not in iPad, otherwise we will be doing
-        if (!browser_1.isIOSUserAgent()) {
+        if (!(0, browser_1.isIOSUserAgent)()) {
             return;
         }
         const touchListener = new touchListener_1.TouchListener(this.element);
         const longTapListener = (event) => {
             const rowComp = this.getRowForEvent(event.touchEvent);
             const cellComp = this.mouseEventService.getRenderedCellForEvent(event.touchEvent);
-            this.handleContextMenuMouseEvent(null, event.touchEvent, rowComp, cellComp);
+            this.handleContextMenuMouseEvent(undefined, event.touchEvent, rowComp, cellComp);
         };
         this.addManagedListener(touchListener, touchListener_1.TouchListener.EVENT_LONG_TAP, longTapListener);
         this.addDestroyFunc(() => touchListener.destroy());
@@ -93,20 +93,18 @@ class RowContainerEventsFeature extends beanStub_1.BeanStub {
         let value = null;
         if (column) {
             const event = mouseEvent ? mouseEvent : touchEvent;
-            cellCtrl.dispatchCellContextMenuEvent(event);
+            cellCtrl.dispatchCellContextMenuEvent(event !== null && event !== void 0 ? event : null);
             value = this.valueService.getValue(column, rowNode);
         }
         // if user clicked on a cell, anchor to that cell, otherwise anchor to the grid panel
         const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         const anchorToElement = cellCtrl ? cellCtrl.getGui() : gridBodyCon.getGridBodyElement();
-        if (this.contextMenuFactory) {
-            this.contextMenuFactory.onContextMenu(mouseEvent, touchEvent, rowNode, column, value, anchorToElement);
-        }
+        this.menuService.showContextMenu({ mouseEvent, touchEvent, rowNode, column, value, anchorToElement });
     }
     getControlsForEventTarget(target) {
         return {
-            cellCtrl: event_1.getCtrlForEventTarget(this.gridOptionsService, target, cellCtrl_1.CellCtrl.DOM_DATA_KEY_CELL_CTRL),
-            rowCtrl: event_1.getCtrlForEventTarget(this.gridOptionsService, target, rowCtrl_1.RowCtrl.DOM_DATA_KEY_ROW_CTRL)
+            cellCtrl: (0, event_1.getCtrlForEventTarget)(this.gridOptionsService, target, cellCtrl_1.CellCtrl.DOM_DATA_KEY_CELL_CTRL),
+            rowCtrl: (0, event_1.getCtrlForEventTarget)(this.gridOptionsService, target, rowCtrl_1.RowCtrl.DOM_DATA_KEY_ROW_CTRL)
         };
     }
     processKeyboardEvent(eventName, keyboardEvent) {
@@ -125,7 +123,7 @@ class RowContainerEventsFeature extends beanStub_1.BeanStub {
         const rowNode = cellCtrl.getRowNode();
         const column = cellCtrl.getColumn();
         const editing = cellCtrl.isEditing();
-        const gridProcessingAllowed = !keyboard_1.isUserSuppressingKeyboardEvent(this.gridOptionsService, keyboardEvent, rowNode, column, editing);
+        const gridProcessingAllowed = !(0, keyboard_1.isUserSuppressingKeyboardEvent)(this.gridOptionsService, keyboardEvent, rowNode, column, editing);
         if (gridProcessingAllowed) {
             if (eventName === 'keydown') {
                 // first see if it's a scroll key, page up / down, home / end etc
@@ -136,7 +134,7 @@ class RowContainerEventsFeature extends beanStub_1.BeanStub {
                 }
                 // perform clipboard and undo / redo operations
                 this.doGridOperations(keyboardEvent, cellCtrl.isEditing());
-                if (keyboard_1.isEventFromPrintableCharacter(keyboardEvent)) {
+                if ((0, keyboard_1.isEventFromPrintableCharacter)(keyboardEvent)) {
                     cellCtrl.processCharacter(keyboardEvent);
                 }
             }
@@ -150,7 +148,7 @@ class RowContainerEventsFeature extends beanStub_1.BeanStub {
         const rowNode = rowComp.getRowNode();
         const focusedCell = this.focusService.getFocusedCell();
         const column = (focusedCell && focusedCell.column);
-        const gridProcessingAllowed = !keyboard_1.isUserSuppressingKeyboardEvent(this.gridOptionsService, keyboardEvent, rowNode, column, false);
+        const gridProcessingAllowed = !(0, keyboard_1.isUserSuppressingKeyboardEvent)(this.gridOptionsService, keyboardEvent, rowNode, column, false);
         if (gridProcessingAllowed) {
             const key = keyboardEvent.key;
             if (eventName === 'keydown') {
@@ -193,7 +191,7 @@ class RowContainerEventsFeature extends beanStub_1.BeanStub {
         if (!this.mouseEventService.isEventFromThisGrid(keyboardEvent)) {
             return;
         }
-        const keyCode = keyboard_2.normaliseQwertyAzerty(keyboardEvent);
+        const keyCode = (0, keyboard_2.normaliseQwertyAzerty)(keyboardEvent);
         if (keyCode === keyCode_1.KeyCode.A) {
             return this.onCtrlAndA(keyboardEvent);
         }
@@ -235,7 +233,7 @@ class RowContainerEventsFeature extends beanStub_1.BeanStub {
                 rowEnd = pinnedRowModel.getPinnedBottomRowData().length - 1;
             }
             const allDisplayedColumns = this.columnModel.getAllDisplayedColumns();
-            if (generic_1.missingOrEmpty(allDisplayedColumns)) {
+            if ((0, generic_1.missingOrEmpty)(allDisplayedColumns)) {
                 return;
             }
             rangeService.setCellRange({
@@ -244,13 +242,13 @@ class RowContainerEventsFeature extends beanStub_1.BeanStub {
                 rowEndIndex: rowEnd,
                 rowEndPinned: floatingEnd,
                 columnStart: allDisplayedColumns[0],
-                columnEnd: array_1.last(allDisplayedColumns)
+                columnEnd: (0, array_1.last)(allDisplayedColumns)
             });
         }
         event.preventDefault();
     }
     onCtrlAndC(event) {
-        if (!this.clipboardService || this.gridOptionsService.is('enableCellTextSelection')) {
+        if (!this.clipboardService || this.gridOptionsService.get('enableCellTextSelection')) {
             return;
         }
         const { cellCtrl, rowCtrl } = this.getControlsForEventTarget(event.target);
@@ -262,8 +260,8 @@ class RowContainerEventsFeature extends beanStub_1.BeanStub {
     }
     onCtrlAndX(event) {
         if (!this.clipboardService ||
-            this.gridOptionsService.is('enableCellTextSelection') ||
-            this.gridOptionsService.is('suppressCutToClipboard')) {
+            this.gridOptionsService.get('enableCellTextSelection') ||
+            this.gridOptionsService.get('suppressCutToClipboard')) {
             return;
         }
         const { cellCtrl, rowCtrl } = this.getControlsForEventTarget(event.target);
@@ -278,18 +276,18 @@ class RowContainerEventsFeature extends beanStub_1.BeanStub {
         if ((cellCtrl === null || cellCtrl === void 0 ? void 0 : cellCtrl.isEditing()) || (rowCtrl === null || rowCtrl === void 0 ? void 0 : rowCtrl.isEditing())) {
             return;
         }
-        if (this.clipboardService && !this.gridOptionsService.is('suppressClipboardPaste')) {
+        if (this.clipboardService && !this.gridOptionsService.get('suppressClipboardPaste')) {
             this.clipboardService.pasteFromClipboard();
         }
     }
     onCtrlAndD(event) {
-        if (this.clipboardService && !this.gridOptionsService.is('suppressClipboardPaste')) {
+        if (this.clipboardService && !this.gridOptionsService.get('suppressClipboardPaste')) {
             this.clipboardService.copyRangeDown();
         }
         event.preventDefault();
     }
     onCtrlAndZ(event) {
-        if (!this.gridOptionsService.is('undoRedoCellEditing')) {
+        if (!this.gridOptionsService.get('undoRedoCellEditing')) {
             return;
         }
         event.preventDefault();
@@ -305,40 +303,40 @@ class RowContainerEventsFeature extends beanStub_1.BeanStub {
     }
 }
 __decorate([
-    context_1.Autowired('mouseEventService')
+    (0, context_1.Autowired)('mouseEventService')
 ], RowContainerEventsFeature.prototype, "mouseEventService", void 0);
 __decorate([
-    context_1.Autowired('valueService')
+    (0, context_1.Autowired)('valueService')
 ], RowContainerEventsFeature.prototype, "valueService", void 0);
 __decorate([
-    context_1.Optional('contextMenuFactory')
-], RowContainerEventsFeature.prototype, "contextMenuFactory", void 0);
+    (0, context_1.Autowired)('menuService')
+], RowContainerEventsFeature.prototype, "menuService", void 0);
 __decorate([
-    context_1.Autowired('ctrlsService')
+    (0, context_1.Autowired)('ctrlsService')
 ], RowContainerEventsFeature.prototype, "ctrlsService", void 0);
 __decorate([
-    context_1.Autowired('navigationService')
+    (0, context_1.Autowired)('navigationService')
 ], RowContainerEventsFeature.prototype, "navigationService", void 0);
 __decorate([
-    context_1.Autowired('focusService')
+    (0, context_1.Autowired)('focusService')
 ], RowContainerEventsFeature.prototype, "focusService", void 0);
 __decorate([
-    context_1.Autowired('undoRedoService')
+    (0, context_1.Autowired)('undoRedoService')
 ], RowContainerEventsFeature.prototype, "undoRedoService", void 0);
 __decorate([
-    context_1.Autowired('columnModel')
+    (0, context_1.Autowired)('columnModel')
 ], RowContainerEventsFeature.prototype, "columnModel", void 0);
 __decorate([
-    context_1.Autowired('paginationProxy')
+    (0, context_1.Autowired)('paginationProxy')
 ], RowContainerEventsFeature.prototype, "paginationProxy", void 0);
 __decorate([
-    context_1.Autowired('pinnedRowModel')
+    (0, context_1.Autowired)('pinnedRowModel')
 ], RowContainerEventsFeature.prototype, "pinnedRowModel", void 0);
 __decorate([
-    context_1.Optional('rangeService')
+    (0, context_1.Optional)('rangeService')
 ], RowContainerEventsFeature.prototype, "rangeService", void 0);
 __decorate([
-    context_1.Optional('clipboardService')
+    (0, context_1.Optional)('clipboardService')
 ], RowContainerEventsFeature.prototype, "clipboardService", void 0);
 __decorate([
     context_1.PostConstruct

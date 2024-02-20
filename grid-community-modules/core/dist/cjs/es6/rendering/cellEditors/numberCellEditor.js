@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.NumberCellEditor = void 0;
 const simpleCellEditor_1 = require("./simpleCellEditor");
 const generic_1 = require("../../utils/generic");
+const keyCode_1 = require("../../constants/keyCode");
 class NumberCellEditorInput {
     getTemplate() {
         return /* html */ `<ag-input-number-field class="ag-cell-editor" ref="eInput"></ag-input-number-field>`;
@@ -22,13 +23,22 @@ class NumberCellEditorInput {
         if (params.step != null) {
             eInput.setStep(params.step);
         }
-        if (params.showStepperButtons) {
-            eInput.getInputElement().classList.add('ag-number-field-input-stepper');
+        const inputEl = eInput.getInputElement();
+        if (params.preventStepping) {
+            eInput.addManagedListener(inputEl, 'keydown', this.preventStepping);
+        }
+        else if (params.showStepperButtons) {
+            inputEl.classList.add('ag-number-field-input-stepper');
+        }
+    }
+    preventStepping(e) {
+        if (e.key === keyCode_1.KeyCode.UP || e.key === keyCode_1.KeyCode.DOWN) {
+            e.preventDefault();
         }
     }
     getValue() {
         const value = this.eInput.getValue();
-        if (!generic_1.exists(value) && !generic_1.exists(this.params.value)) {
+        if (!(0, generic_1.exists)(value) && !(0, generic_1.exists)(this.params.value)) {
             return this.params.value;
         }
         let parsedValue = this.params.parseValue(value);

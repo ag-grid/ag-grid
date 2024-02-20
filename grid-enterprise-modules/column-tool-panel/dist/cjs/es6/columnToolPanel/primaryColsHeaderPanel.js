@@ -28,7 +28,10 @@ class PrimaryColsHeaderPanel extends core_1.Component {
             }
         });
         this.addManagedListener(this.eSelect.getInputElement(), 'click', this.onSelectClicked.bind(this));
-        this.eFilterTextField.onValueChange(() => this.onFilterTextChanged());
+        this.addManagedPropertyListener('functionsReadOnly', () => this.onFunctionsReadOnlyPropChanged());
+        this.eFilterTextField
+            .setAutoComplete(false)
+            .onValueChange(() => this.onFilterTextChanged());
         this.addManagedListener(this.eFilterTextField.getInputElement(), 'keydown', this.onMiniFilterKeyDown.bind(this));
         this.addManagedListener(this.eventService, core_1.Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
         const translate = this.localeService.getLocaleTextFunc();
@@ -36,8 +39,16 @@ class PrimaryColsHeaderPanel extends core_1.Component {
         this.eFilterTextField.setInputAriaLabel(translate('ariaFilterColumnsInput', 'Filter Columns Input'));
         this.activateTabIndex([this.eExpand]);
     }
+    onFunctionsReadOnlyPropChanged() {
+        const readOnly = this.gridOptionsService.get('functionsReadOnly');
+        this.eSelect.setReadOnly(readOnly);
+        this.eSelect.addOrRemoveCssClass('ag-column-select-column-readonly', readOnly);
+    }
     init(params) {
         this.params = params;
+        const readOnly = this.gridOptionsService.get('functionsReadOnly');
+        this.eSelect.setReadOnly(readOnly);
+        this.eSelect.addOrRemoveCssClass('ag-column-select-column-readonly', readOnly);
         if (this.columnModel.isReady()) {
             this.showOrHideOptions();
         }
@@ -100,16 +111,16 @@ PrimaryColsHeaderPanel.TEMPLATE = `<div class="ag-column-select-header" role="pr
             <ag-input-text-field class="ag-column-select-header-filter-wrapper" ref="eFilterTextField"></ag-input-text-field>
         </div>`;
 __decorate([
-    core_1.Autowired('columnModel')
+    (0, core_1.Autowired)('columnModel')
 ], PrimaryColsHeaderPanel.prototype, "columnModel", void 0);
 __decorate([
-    core_1.RefSelector('eExpand')
+    (0, core_1.RefSelector)('eExpand')
 ], PrimaryColsHeaderPanel.prototype, "eExpand", void 0);
 __decorate([
-    core_1.RefSelector('eSelect')
+    (0, core_1.RefSelector)('eSelect')
 ], PrimaryColsHeaderPanel.prototype, "eSelect", void 0);
 __decorate([
-    core_1.RefSelector('eFilterTextField')
+    (0, core_1.RefSelector)('eFilterTextField')
 ], PrimaryColsHeaderPanel.prototype, "eFilterTextField", void 0);
 __decorate([
     core_1.PostConstruct

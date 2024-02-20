@@ -1,6 +1,6 @@
 import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-alpine.css";
-import { ColDef, ColGroupDef, Grid, GridOptions } from '@ag-grid-community/core';
+import "@ag-grid-community/styles/ag-theme-quartz.css";
+import { ColDef, ColGroupDef, createGrid, GridOptions } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
@@ -12,16 +12,13 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
     { field: "age" },
     { field: "country" },
     { field: "year" },
-    { field: "date" },
     { field: "sport" },
-    // in the total col, we have a value getter, which usually means we don't need to provide a field
-    // however the master/slave depends on the column id (which is derived from the field if provided) in
-    // order to match up the columns
     {
         headerName: 'Medals',
         children: [
             {
-                columnGroupShow: 'closed', field: "total",
+                colId: "total",
+                columnGroupShow: 'closed', 
                 valueGetter: "data.gold + data.silver + data.bronze"
             },
             { columnGroupShow: 'open', field: "gold" },
@@ -30,68 +27,52 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
         ]
     }
 ];
-
+const defaultColDef: ColDef = {
+    filter: true,
+    minWidth: 100
+};
 // this is the grid options for the top grid
 const gridOptionsTop: GridOptions = {
-    defaultColDef: {
-        editable: true,
-        sortable: true,
-        resizable: true,
-        filter: true,
-        flex: 1,
-        minWidth: 100
-    },
-    columnDefs: columnDefs,
+    defaultColDef,
+    columnDefs,
     rowData: null,
-    // debug: true,
-    alignedGrids: []
+    alignedGrids: () => [bottomApi],
+    autoSizeStrategy: {
+        type: 'fitGridWidth'
+    },
 };
+const gridDivTop = document.querySelector<HTMLElement>('#myGridTop')!;
+const topApi = createGrid(gridDivTop, gridOptionsTop);
 
 // this is the grid options for the bottom grid
 const gridOptionsBottom: GridOptions = {
-    defaultColDef: {
-        editable: true,
-        sortable: true,
-        resizable: true,
-        filter: true,
-        flex: 1,
-        minWidth: 100
-    },
-    columnDefs: columnDefs,
+    defaultColDef,
+    columnDefs,
     rowData: null,
-    // debug: true,
-    alignedGrids: []
+    alignedGrids: () => [topApi],
 };
-
-gridOptionsTop.alignedGrids!.push(gridOptionsBottom);
-gridOptionsBottom.alignedGrids!.push(gridOptionsTop);
+const gridDivBottom = document.querySelector<HTMLElement>('#myGridBottom')!;
+const bottomApi = createGrid(gridDivBottom, gridOptionsBottom);
 
 function onCbAthlete(value: boolean) {
     // we only need to update one grid, as the other is a slave
-    gridOptionsTop.columnApi!.setColumnVisible('athlete', value);
+    topApi!.setColumnsVisible(['athlete'], value);
 }
 
 function onCbAge(value: boolean) {
     // we only need to update one grid, as the other is a slave
-    gridOptionsTop.columnApi!.setColumnVisible('age', value);
+    topApi!.setColumnsVisible(['age'], value);
 }
 
 function onCbCountry(value: boolean) {
     // we only need to update one grid, as the other is a slave
-    gridOptionsTop.columnApi!.setColumnVisible('country', value);
+    topApi!.setColumnsVisible(['country'], value);
 }
 
 function setData(rowData: any[]) {
-    gridOptionsTop.api!.setRowData(rowData);
-    gridOptionsBottom.api!.setRowData(rowData);
-    gridOptionsTop.api!.sizeColumnsToFit();
+    topApi!.setGridOption('rowData', rowData);
+    bottomApi!.setGridOption('rowData', rowData);
 }
-
-const gridDivTop = document.querySelector<HTMLElement>('#myGridTop')!;
-new Grid(gridDivTop, gridOptionsTop);
-
-const gridDivBottom = document.querySelector<HTMLElement>('#myGridBottom')!;
-new Grid(gridDivBottom, gridOptionsBottom);
 
 fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

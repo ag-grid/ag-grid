@@ -11,7 +11,7 @@ class MiniColumnLineCombo extends miniChartWithAxes_1.MiniChartWithAxes {
             [5, 4, 6, 5, 4]
         ];
         const { root, columnData, lineData, size, padding } = this;
-        this.columns = miniChartHelpers_1.createColumnRects({
+        this.columns = (0, miniChartHelpers_1.createColumnRects)({
             stacked: false,
             root,
             data: columnData,
@@ -22,7 +22,7 @@ class MiniColumnLineCombo extends miniChartWithAxes_1.MiniChartWithAxes {
             xScalePadding: 0.5
         });
         root.append(this.columns);
-        this.lines = miniChartHelpers_1.createLinePaths(root, lineData, size, padding);
+        this.lines = (0, miniChartHelpers_1.createLinePaths)(root, lineData, size, padding);
         this.updateColors(fills, strokes);
     }
     updateColors(fills, strokes) {

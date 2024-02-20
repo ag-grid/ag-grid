@@ -1,6 +1,6 @@
 import { getData } from "./data";
 
-import { Grid, ColDef, GridOptions, ProcessDataFromClipboardParams } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions, ProcessDataFromClipboardParams } from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
   { field: 'a' },
@@ -10,6 +10,8 @@ const columnDefs: ColDef[] = [
   { field: 'e' }
 ]
 
+let gridApi: GridApi;
+
 const gridOptions: GridOptions = {
   rowData: getData(),
   columnDefs: columnDefs,
@@ -18,7 +20,6 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     editable: true,
     minWidth: 120,
-    resizable: true,
     flex: 1,
 
     cellClassRules: {
@@ -26,8 +27,6 @@ const gridOptions: GridOptions = {
       'cell-blue': 'value.startsWith("Blue")',
       'cell-red': 'value.startsWith("Red")',
       'cell-yellow': 'value.startsWith("Yellow")',
-      'cell-orange': 'value.startsWith("Orange")',
-      'cell-grey': 'value.startsWith("Grey")',
     },
   },
 
@@ -56,8 +55,8 @@ function processDataFromClipboard(params: ProcessDataFromClipboardParams): strin
   if (containsRed) {
     // replace the paste request with another
     return [
-      ['Orange', 'Orange'],
-      ['Grey', 'Grey'],
+      ['Custom 1', 'Custom 2'],
+      ['Custom 3', 'Custom 4'],
     ]
   }
 
@@ -72,5 +71,5 @@ function processDataFromClipboard(params: ProcessDataFromClipboardParams): strin
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

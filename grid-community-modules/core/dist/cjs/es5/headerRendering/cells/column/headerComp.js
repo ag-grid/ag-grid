@@ -24,8 +24,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.HeaderComp = void 0;
 var context_1 = require("../../../context/context");
 var column_1 = require("../../../entities/column");
-var array_1 = require("../../../utils/array");
-var browser_1 = require("../../../utils/browser");
 var dom_1 = require("../../../utils/dom");
 var generic_1 = require("../../../utils/generic");
 var icon_1 = require("../../../utils/icon");
@@ -60,11 +58,15 @@ var HeaderComp = /** @class */ (function (_super) {
         if (this.workOutSort() != this.currentSort) {
             return false;
         }
+        if (this.shouldSuppressMenuHide() != this.currentSuppressMenuHide) {
+            return false;
+        }
         this.setDisplayName(params);
         return true;
     };
     HeaderComp.prototype.workOutTemplate = function () {
-        var template = array_1.firstExistingValue(this.params.template, HeaderComp.TEMPLATE);
+        var _a;
+        var template = (_a = this.params.template) !== null && _a !== void 0 ? _a : HeaderComp.TEMPLATE;
         // take account of any newlines & whitespace before/after the actual template
         template = template && template.trim ? template.trim() : template;
         return template;
@@ -74,30 +76,26 @@ var HeaderComp = /** @class */ (function (_super) {
         this.currentTemplate = this.workOutTemplate();
         this.setTemplate(this.currentTemplate);
         this.setupTap();
-        this.setupIcons(params.column);
         this.setMenu();
         this.setupSort();
         this.setupFilterIcon();
+        this.setupFilterButton();
         this.setDisplayName(params);
     };
     HeaderComp.prototype.setDisplayName = function (params) {
         if (this.currentDisplayName != params.displayName) {
             this.currentDisplayName = params.displayName;
-            var displayNameSanitised = string_1.escapeString(this.currentDisplayName);
+            var displayNameSanitised = (0, string_1.escapeString)(this.currentDisplayName, true);
             if (this.eText) {
-                this.eText.innerHTML = displayNameSanitised;
+                this.eText.textContent = displayNameSanitised;
             }
         }
-    };
-    HeaderComp.prototype.setupIcons = function (column) {
-        this.addInIcon('menu', this.eMenu, column);
-        this.addInIcon('filter', this.eFilter, column);
     };
     HeaderComp.prototype.addInIcon = function (iconName, eParent, column) {
         if (eParent == null) {
             return;
         }
-        var eIcon = icon_1.createIconNoSpan(iconName, this.gridOptionsService, column);
+        var eIcon = (0, icon_1.createIconNoSpan)(iconName, this.gridOptionsService, column);
         if (eIcon) {
             eParent.appendChild(eIcon);
         }
@@ -105,31 +103,35 @@ var HeaderComp = /** @class */ (function (_super) {
     HeaderComp.prototype.setupTap = function () {
         var _this = this;
         var gridOptionsService = this.gridOptionsService;
-        if (gridOptionsService.is('suppressTouch')) {
+        if (gridOptionsService.get('suppressTouch')) {
             return;
         }
         var touchListener = new touchListener_1.TouchListener(this.getGui(), true);
-        var suppressMenuHide = gridOptionsService.is('suppressMenuHide');
-        var tapMenuButton = suppressMenuHide && generic_1.exists(this.eMenu);
+        var suppressMenuHide = this.shouldSuppressMenuHide();
+        var tapMenuButton = suppressMenuHide && (0, generic_1.exists)(this.eMenu);
         var menuTouchListener = tapMenuButton ? new touchListener_1.TouchListener(this.eMenu, true) : touchListener;
         if (this.params.enableMenu) {
             var eventType = tapMenuButton ? 'EVENT_TAP' : 'EVENT_LONG_TAP';
-            var showMenuFn = function (event) {
-                gridOptionsService.api.showColumnMenuAfterMouseClick(_this.params.column, event.touchStart);
-            };
+            var showMenuFn = function (event) { return _this.params.showColumnMenuAfterMouseClick(event.touchStart); };
             this.addManagedListener(menuTouchListener, touchListener_1.TouchListener[eventType], showMenuFn);
         }
         if (this.params.enableSorting) {
             var tapListener = function (event) {
+                var _a, _b;
                 var target = event.touchStart.target;
-                // When suppressMenuHide is true, a tap on the menu icon will bubble up
+                // When suppressMenuHide is true, a tap on the menu icon or filter button will bubble up
                 // to the header container, in that case we should not sort
-                if (suppressMenuHide && _this.eMenu.contains(target)) {
+                if (suppressMenuHide && (((_a = _this.eMenu) === null || _a === void 0 ? void 0 : _a.contains(target)) || ((_b = _this.eFilterButton) === null || _b === void 0 ? void 0 : _b.contains(target)))) {
                     return;
                 }
                 _this.sortController.progressSort(_this.params.column, false, "uiColumnSorted");
             };
             this.addManagedListener(touchListener, touchListener_1.TouchListener.EVENT_TAP, tapListener);
+        }
+        if (this.params.enableFilterButton) {
+            var filterButtonTouchListener_1 = new touchListener_1.TouchListener(this.eFilterButton, true);
+            this.addManagedListener(filterButtonTouchListener_1, 'tap', function () { return _this.params.showFilter(_this.eFilterButton); });
+            this.addDestroyFunc(function () { return filterButtonTouchListener_1.destroy(); });
         }
         // if tapMenuButton is true `touchListener` and `menuTouchListener` are different
         // so we need to make sure to destroy both listeners here
@@ -139,14 +141,10 @@ var HeaderComp = /** @class */ (function (_super) {
         }
     };
     HeaderComp.prototype.workOutShowMenu = function () {
-        // we don't show the menu if on an iPad/iPhone, as the user cannot have a pointer device/
-        // However if suppressMenuHide is set to true the menu will be displayed alwasys, so it's ok
-        // to show it on iPad in this case (as hover isn't needed). If suppressMenuHide
-        // is false (default) user will need to use longpress to display the menu.
-        var menuHides = !this.gridOptionsService.is('suppressMenuHide');
-        var onIpadAndMenuHides = browser_1.isIOSUserAgent() && menuHides;
-        var showMenu = this.params.enableMenu && !onIpadAndMenuHides;
-        return showMenu;
+        return this.params.enableMenu && this.menuService.isHeaderMenuButtonEnabled();
+    };
+    HeaderComp.prototype.shouldSuppressMenuHide = function () {
+        return this.menuService.isHeaderMenuButtonAlwaysShowEnabled();
     };
     HeaderComp.prototype.setMenu = function () {
         var _this = this;
@@ -156,18 +154,32 @@ var HeaderComp = /** @class */ (function (_super) {
         }
         this.currentShowMenu = this.workOutShowMenu();
         if (!this.currentShowMenu) {
-            dom_1.removeFromParent(this.eMenu);
+            (0, dom_1.removeFromParent)(this.eMenu);
+            this.eMenu = undefined;
             return;
         }
-        var suppressMenuHide = this.gridOptionsService.is('suppressMenuHide');
-        this.addManagedListener(this.eMenu, 'click', function () { return _this.showMenu(_this.eMenu); });
-        this.eMenu.classList.toggle('ag-header-menu-always-show', suppressMenuHide);
+        var isLegacyMenu = this.menuService.isLegacyMenuEnabled();
+        this.addInIcon(isLegacyMenu ? 'menu' : 'menuAlt', this.eMenu, this.params.column);
+        this.eMenu.classList.toggle('ag-header-menu-icon', !isLegacyMenu);
+        this.currentSuppressMenuHide = this.shouldSuppressMenuHide();
+        this.addManagedListener(this.eMenu, 'click', function () { return _this.params.showColumnMenu(_this.eMenu); });
+        this.eMenu.classList.toggle('ag-header-menu-always-show', this.currentSuppressMenuHide);
     };
-    HeaderComp.prototype.showMenu = function (eventSource) {
-        if (!eventSource) {
-            eventSource = this.eMenu;
+    HeaderComp.prototype.onMenuKeyboardShortcut = function (isFilterShortcut) {
+        var _a, _b, _c, _d;
+        var column = this.params.column;
+        var isLegacyMenuEnabled = this.menuService.isLegacyMenuEnabled();
+        if (isFilterShortcut && !isLegacyMenuEnabled) {
+            if (this.menuService.isFilterMenuInHeaderEnabled(column)) {
+                this.params.showFilter((_b = (_a = this.eFilterButton) !== null && _a !== void 0 ? _a : this.eMenu) !== null && _b !== void 0 ? _b : this.getGui());
+                return true;
+            }
         }
-        this.menuFactory.showMenuAfterButtonClick(this.params.column, eventSource, 'columnMenu');
+        else if (this.params.enableMenu) {
+            this.params.showColumnMenu((_d = (_c = this.eMenu) !== null && _c !== void 0 ? _c : this.eFilterButton) !== null && _d !== void 0 ? _d : this.getGui());
+            return true;
+        }
+        return false;
     };
     HeaderComp.prototype.workOutSort = function () {
         return this.params.enableSorting;
@@ -189,7 +201,6 @@ var HeaderComp = /** @class */ (function (_super) {
         if (!this.currentSort) {
             return;
         }
-        var sortUsingCtrl = this.gridOptionsService.get('multiSortKey') === 'ctrl';
         // keep track of last time the moving changed flag was set
         this.addManagedListener(this.params.column, column_1.Column.EVENT_MOVING_CHANGED, function () {
             _this.lastMovingChanged = new Date().getTime();
@@ -206,6 +217,7 @@ var HeaderComp = /** @class */ (function (_super) {
                 var movedRecently = (nowTime - _this.lastMovingChanged) < 50;
                 var columnMoving = moving || movedRecently;
                 if (!columnMoving) {
+                    var sortUsingCtrl = _this.gridOptionsService.get('multiSortKey') === 'ctrl';
                     var multiSort = sortUsingCtrl ? (event.ctrlKey || event.metaKey) : event.shiftKey;
                     _this.params.progressSort(multiSort);
                 }
@@ -230,52 +242,89 @@ var HeaderComp = /** @class */ (function (_super) {
         if (!this.eFilter) {
             return;
         }
-        this.addManagedListener(this.params.column, column_1.Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
-        this.onFilterChanged();
+        this.configureFilter(this.params.enableFilterIcon, this.eFilter, this.onFilterChangedIcon.bind(this));
     };
-    HeaderComp.prototype.onFilterChanged = function () {
+    HeaderComp.prototype.setupFilterButton = function () {
+        var _this = this;
+        if (!this.eFilterButton) {
+            return;
+        }
+        var configured = this.configureFilter(this.params.enableFilterButton, this.eFilterButton, this.onFilterChangedButton.bind(this));
+        if (configured) {
+            this.addManagedListener(this.eFilterButton, 'click', function () { return _this.params.showFilter(_this.eFilterButton); });
+        }
+        else {
+            this.eFilterButton = undefined;
+        }
+    };
+    HeaderComp.prototype.configureFilter = function (enabled, element, filterChangedCallback) {
+        if (!enabled) {
+            (0, dom_1.removeFromParent)(element);
+            return false;
+        }
+        var column = this.params.column;
+        this.addInIcon('filter', element, column);
+        this.addManagedListener(column, column_1.Column.EVENT_FILTER_CHANGED, filterChangedCallback);
+        filterChangedCallback();
+        return true;
+    };
+    HeaderComp.prototype.onFilterChangedIcon = function () {
         var filterPresent = this.params.column.isFilterActive();
-        dom_1.setDisplayed(this.eFilter, filterPresent, { skipAriaHidden: true });
+        (0, dom_1.setDisplayed)(this.eFilter, filterPresent, { skipAriaHidden: true });
     };
-    HeaderComp.TEMPLATE = "<div class=\"ag-cell-label-container\" role=\"presentation\">\n            <span ref=\"eMenu\" class=\"ag-header-icon ag-header-cell-menu-button\" aria-hidden=\"true\"></span>\n            <div ref=\"eLabel\" class=\"ag-header-cell-label\" role=\"presentation\">\n                <span ref=\"eText\" class=\"ag-header-cell-text\"></span>\n                <span ref=\"eFilter\" class=\"ag-header-icon ag-header-label-icon ag-filter-icon\" aria-hidden=\"true\"></span>\n                <ag-sort-indicator ref=\"eSortIndicator\"></ag-sort-indicator>\n            </div>\n        </div>";
+    HeaderComp.prototype.onFilterChangedButton = function () {
+        var filterPresent = this.params.column.isFilterActive();
+        this.eFilterButton.classList.toggle('ag-filter-active', filterPresent);
+    };
+    HeaderComp.prototype.getAnchorElementForMenu = function (isFilter) {
+        var _a, _b, _c, _d;
+        if (isFilter) {
+            return (_b = (_a = this.eFilterButton) !== null && _a !== void 0 ? _a : this.eMenu) !== null && _b !== void 0 ? _b : this.getGui();
+        }
+        return (_d = (_c = this.eMenu) !== null && _c !== void 0 ? _c : this.eFilterButton) !== null && _d !== void 0 ? _d : this.getGui();
+    };
+    HeaderComp.TEMPLATE = "<div class=\"ag-cell-label-container\" role=\"presentation\">\n            <span ref=\"eMenu\" class=\"ag-header-icon ag-header-cell-menu-button\" aria-hidden=\"true\"></span>\n            <span ref=\"eFilterButton\" class=\"ag-header-icon ag-header-cell-filter-button\" aria-hidden=\"true\"></span>\n            <div ref=\"eLabel\" class=\"ag-header-cell-label\" role=\"presentation\">\n                <span ref=\"eText\" class=\"ag-header-cell-text\"></span>\n                <span ref=\"eFilter\" class=\"ag-header-icon ag-header-label-icon ag-filter-icon\" aria-hidden=\"true\"></span>\n                <ag-sort-indicator ref=\"eSortIndicator\"></ag-sort-indicator>\n            </div>\n        </div>";
     __decorate([
-        context_1.Autowired('sortController')
+        (0, context_1.Autowired)('sortController')
     ], HeaderComp.prototype, "sortController", void 0);
     __decorate([
-        context_1.Autowired('menuFactory')
-    ], HeaderComp.prototype, "menuFactory", void 0);
+        (0, context_1.Autowired)('menuService')
+    ], HeaderComp.prototype, "menuService", void 0);
     __decorate([
-        context_1.Autowired('columnModel')
+        (0, context_1.Autowired)('columnModel')
     ], HeaderComp.prototype, "columnModel", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('eFilter')
+        (0, componentAnnotations_1.RefSelector)('eFilter')
     ], HeaderComp.prototype, "eFilter", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('eSortIndicator')
+        (0, componentAnnotations_1.RefSelector)('eFilterButton')
+    ], HeaderComp.prototype, "eFilterButton", void 0);
+    __decorate([
+        (0, componentAnnotations_1.RefSelector)('eSortIndicator')
     ], HeaderComp.prototype, "eSortIndicator", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('eMenu')
+        (0, componentAnnotations_1.RefSelector)('eMenu')
     ], HeaderComp.prototype, "eMenu", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('eLabel')
+        (0, componentAnnotations_1.RefSelector)('eLabel')
     ], HeaderComp.prototype, "eLabel", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('eText')
+        (0, componentAnnotations_1.RefSelector)('eText')
     ], HeaderComp.prototype, "eText", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('eSortOrder')
+        (0, componentAnnotations_1.RefSelector)('eSortOrder')
     ], HeaderComp.prototype, "eSortOrder", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('eSortAsc')
+        (0, componentAnnotations_1.RefSelector)('eSortAsc')
     ], HeaderComp.prototype, "eSortAsc", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('eSortDesc')
+        (0, componentAnnotations_1.RefSelector)('eSortDesc')
     ], HeaderComp.prototype, "eSortDesc", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('eSortMixed')
+        (0, componentAnnotations_1.RefSelector)('eSortMixed')
     ], HeaderComp.prototype, "eSortMixed", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('eSortNone')
+        (0, componentAnnotations_1.RefSelector)('eSortNone')
     ], HeaderComp.prototype, "eSortNone", void 0);
     return HeaderComp;
 }(component_1.Component));

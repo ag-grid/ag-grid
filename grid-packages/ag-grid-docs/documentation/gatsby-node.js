@@ -13,7 +13,6 @@ const fs = require('fs-extra');
 const publicIp = require('public-ip');
 const gifFrames = require('gif-frames');
 const supportedFrameworks = require('./src/utils/supported-frameworks.js');
-const chartGallery = require('./doc-pages/charts-overview/gallery.json');
 const toKebabCase = require('./src/utils/to-kebab-case');
 const isDevelopment = require('./src/utils/is-development');
 const convertToFrameworkUrl = require('./src/utils/convert-to-framework-url');
@@ -185,36 +184,41 @@ exports.onCreateNode = async ({node, loadNodeContent, getNode, actions: {createN
     }
 };
 
-const FULL_SCREEN_PAGES = ['example'];
+const FULL_SCREEN_PAGES = ['example', 'theme-builder'];
 
 const FULL_SCREEN_WITH_FOOTER_PAGES = [
     'license-pricing',
     'about',
     'cookies',
-    'changelog',
-    'pipeline',
     'privacy',
     'style-guide',
 ];
 
-const isFullScreenPage = path => path === '/' || FULL_SCREEN_PAGES.some(page => {
+const BARE_PAGES = [
+    'license-pricing-bare'
+]
+
+const SUPPRESS_FRAMEWORK_SELECTOR_PAGES = [
+    'pipeline',
+    'changelog'
+];
+
+function matchesPath(page, path) {
     const regex = new RegExp(page, 'g');
     return path.match(regex)
-});
+}
 
-const isFullScreenPageWithFooter = path => FULL_SCREEN_WITH_FOOTER_PAGES.some(page => {
-    const regex = new RegExp(page, 'g');
-    return path.match(regex)
-});
-
+const isFullScreenPage = path => path === '/' || FULL_SCREEN_PAGES.some(page => matchesPath(page, path));
+const isFullScreenPageWithFooter = path => FULL_SCREEN_WITH_FOOTER_PAGES.some(page => matchesPath(page, path));
+const isBarePage = path => BARE_PAGES.some(page => matchesPath(page, path));
+const isSuppressFrameworkSelector = path => SUPPRESS_FRAMEWORK_SELECTOR_PAGES.some(page => matchesPath(page, path));
 
 /**
  * This is called when pages are created. We override the default layout for certain pages e.g. the example-runner page.
  */
 exports.onCreatePage = ({page, actions: {createPage}}) => {
-    // spl todo: refactor next week!
     // used in layouts/index.js
-    if (page.path.match(/example-runner/)) {
+    if (page.path.match(/example-runner/) || isBarePage(page.path)) {
         page.context.layout = 'bare';
         createPage(page);
     } else if (isFullScreenPage(page.path)) {
@@ -222,6 +226,9 @@ exports.onCreatePage = ({page, actions: {createPage}}) => {
         createPage(page);
     } else if (isFullScreenPageWithFooter(page.path)) {
         page.context.layout = 'fullScreenPageWithFooter';
+        createPage(page);
+    } else if (isSuppressFrameworkSelector(page.path)) {
+        page.context.layout = 'suppressFrameworkSelector';
         createPage(page);
     }
 };
@@ -245,16 +252,6 @@ const getInternalIPAddress = () => {
 };
 
 const createHomePages = createPage => {
-    const homePage = path.resolve('src/templates/home.jsx');
-
-    supportedFrameworks.forEach(framework => {
-        createPage({
-            path: `/${framework}-data-grid/`,
-            component: homePage,
-            context: {frameworks: supportedFrameworks, framework, pageName: `${framework}-data-grid`}
-        });
-    });
-
     createPage({
         path: `/documentation/`,
         component: path.resolve('src/pages/loading.jsx'),
@@ -306,48 +303,6 @@ const createDocPages = async (createPage, graphql, reporter) => {
 };
 
 /**
- * This creates pages for each of the charts in the chart gallery.
- */
-const createChartGalleryPages = createPage => {
-    const chartGalleryPageTemplate = path.resolve(`src/templates/chart-gallery-page.jsx`);
-    const filter = (c) => !c.startsWith('_');
-    const categories = Object.keys(chartGallery).filter(filter);
-
-    const namesByCategory = categories.reduce(
-        (names, c) => {
-            return names.concat(
-                Object.keys(chartGallery[c])
-                    .filter(filter)
-                    .map(k => ({category: c, name: k}))
-            );
-        },
-        []);
-
-    namesByCategory.forEach(({category, name}, i) => {
-        const {description} = chartGallery[category][name];
-
-        let previous = i > 0 ? namesByCategory[i - 1].name : null;
-        let next = i < namesByCategory.length - 1 ? namesByCategory[i + 1].name : null;
-
-        supportedFrameworks.forEach(framework => {
-            createPage({
-                path: `/${framework}-charts/gallery/${toKebabCase(name)}/`,
-                component: chartGalleryPageTemplate,
-                context: {
-                    frameworks: supportedFrameworks,
-                    framework,
-                    name,
-                    description,
-                    previous,
-                    next,
-                    pageName: 'charts-overview'
-                }
-            });
-        });
-    });
-};
-
-/**
  * This allows us to generate pages for the website.
  */
 exports.createPages = async ({actions: {createPage}, graphql, reporter}) => {
@@ -358,7 +313,6 @@ exports.createPages = async ({actions: {createPage}, graphql, reporter}) => {
 
     createHomePages(createPage);
     await createDocPages(createPage, graphql, reporter);
-    createChartGalleryPages(createPage);
 };
 
 /**
@@ -380,7 +334,7 @@ exports.onCreateWebpackConfig = ({actions, getConfig}) => {
             var target = resolver.ensureHook(this.target);
             resolver.getHook(this.source).tapAsync('AgEs5CjsResolver', function (request, resolveContext, callback) {
                 const req = request.request;
-                if ((req.startsWith('@ag-grid') || req === 'ag-charts-community') &&
+                if (req.startsWith('@ag-grid') &&
                     !req.includes('css') &&
                     !frameworkRequest(req)) {
 
@@ -409,6 +363,10 @@ exports.onCreateWebpackConfig = ({actions, getConfig}) => {
         resolve: {
             // add src folder as default root for imports
             modules: [path.resolve(__dirname, 'src'), 'node_modules'],
+            alias: {
+                // ensure all requests go to the same ag-charts-community
+                "ag-charts-community": path.resolve(__dirname, 'node_modules/@ag-grid-enterprise/charts-enterprise/node_modules/ag-charts-community')
+            }
         }
     };
     if (isDevelopment()) {

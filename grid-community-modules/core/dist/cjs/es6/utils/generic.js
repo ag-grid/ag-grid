@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.values = exports.defaultComparator = exports.jsonEquals = exports.referenceCompare = exports.attrToString = exports.attrToBoolean = exports.attrToNumber = exports.toStringOrNull = exports.missingOrEmpty = exports.missing = exports.exists = exports.makeNull = void 0;
+exports.values = exports.defaultComparator = exports.jsonEquals = exports.attrToString = exports.attrToBoolean = exports.attrToNumber = exports.toStringOrNull = exports.missingOrEmpty = exports.missing = exports.exists = exports.makeNull = void 0;
 /**
  * If value is undefined, null or blank, returns null, otherwise returns the value
  * @param {T} value
@@ -72,20 +72,6 @@ function attrToString(value) {
     return value;
 }
 exports.attrToString = attrToString;
-/** @deprecated */
-function referenceCompare(left, right) {
-    if (left == null && right == null) {
-        return true;
-    }
-    if (left == null && right != null) {
-        return false;
-    }
-    if (left != null && right == null) {
-        return false;
-    }
-    return left === right;
-}
-exports.referenceCompare = referenceCompare;
 function jsonEquals(val1, val2) {
     const val1Json = val1 ? JSON.stringify(val1) : null;
     const val2Json = val2 ? JSON.stringify(val2) : null;

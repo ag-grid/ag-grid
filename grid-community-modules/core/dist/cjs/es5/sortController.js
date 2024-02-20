@@ -36,10 +36,14 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SortController = void 0;
@@ -66,21 +70,24 @@ var SortController = /** @class */ (function (_super) {
         if (isColumnsSortingCoupledToGroup) {
             if (column.getColDef().showRowGroup) {
                 var rowGroupColumns = this.columnModel.getSourceColumnsForGroupColumn(column);
-                var sortableRowGroupColumns = rowGroupColumns === null || rowGroupColumns === void 0 ? void 0 : rowGroupColumns.filter(function (col) { return col.getColDef().sortable; });
+                var sortableRowGroupColumns = rowGroupColumns === null || rowGroupColumns === void 0 ? void 0 : rowGroupColumns.filter(function (col) { return col.isSortable(); });
                 if (sortableRowGroupColumns) {
-                    columnsToUpdate = __spreadArray([column], __read(sortableRowGroupColumns));
+                    columnsToUpdate = __spreadArray([column], __read(sortableRowGroupColumns), false);
                 }
             }
         }
         columnsToUpdate.forEach(function (col) { return col.setSort(sort, source); });
-        var doingMultiSort = (multiSort || this.gridOptionsService.is('alwaysMultiSort')) && !this.gridOptionsService.is('suppressMultiSort');
+        var doingMultiSort = (multiSort || this.gridOptionsService.get('alwaysMultiSort')) && !this.gridOptionsService.get('suppressMultiSort');
         // clear sort on all columns except those changed, and update the icons
+        var updatedColumns = [];
         if (!doingMultiSort) {
-            this.clearSortBarTheseColumns(columnsToUpdate, source);
+            var clearedColumns = this.clearSortBarTheseColumns(columnsToUpdate, source);
+            updatedColumns.push.apply(updatedColumns, __spreadArray([], __read(clearedColumns), false));
         }
         // sortIndex used for knowing order of cols when multi-col sort
         this.updateSortIndex(column);
-        this.dispatchSortChangedEvents(source);
+        updatedColumns.push.apply(updatedColumns, __spreadArray([], __read(columnsToUpdate), false));
+        this.dispatchSortChangedEvents(source, updatedColumns);
     };
     SortController.prototype.updateSortIndex = function (lastColToChange) {
         var isCoupled = this.gridOptionsService.isColumnsSortingCoupledToGroup();
@@ -89,14 +96,21 @@ var SortController = /** @class */ (function (_super) {
         var allSortedCols = this.getColumnsWithSortingOrdered();
         // reset sort index on everything
         this.columnModel.getPrimaryAndSecondaryAndAutoColumns().forEach(function (col) { return col.setSortIndex(null); });
-        var allSortedColsWithoutChanges = allSortedCols.filter(function (col) { return col !== lastSortIndexCol; });
-        var sortedColsWithIndices = !!lastSortIndexCol.getSort() ? __spreadArray(__spreadArray([], __read(allSortedColsWithoutChanges)), [lastSortIndexCol]) : allSortedColsWithoutChanges;
-        sortedColsWithIndices.forEach(function (col, idx) { return (col.setSortIndex(idx)); });
+        var allSortedColsWithoutChangesOrGroups = allSortedCols.filter(function (col) {
+            if (isCoupled && col.getColDef().showRowGroup) {
+                return false;
+            }
+            return col !== lastSortIndexCol;
+        });
+        var sortedColsWithIndices = !!lastSortIndexCol.getSort() ? __spreadArray(__spreadArray([], __read(allSortedColsWithoutChangesOrGroups), false), [lastSortIndexCol], false) : allSortedColsWithoutChangesOrGroups;
+        sortedColsWithIndices.forEach(function (col, idx) {
+            col.setSortIndex(idx);
+        });
     };
     // gets called by API, so if data changes, use can call this, which will end up
     // working out the sort order again of the rows.
-    SortController.prototype.onSortChanged = function (source) {
-        this.dispatchSortChangedEvents(source);
+    SortController.prototype.onSortChanged = function (source, columns) {
+        this.dispatchSortChangedEvents(source, columns);
     };
     SortController.prototype.isSortActive = function () {
         // pull out all the columns that have sorting set
@@ -104,22 +118,31 @@ var SortController = /** @class */ (function (_super) {
         var sortedCols = allCols.filter(function (column) { return !!column.getSort(); });
         return sortedCols && sortedCols.length > 0;
     };
-    SortController.prototype.dispatchSortChangedEvents = function (source) {
+    SortController.prototype.dispatchSortChangedEvents = function (source, columns) {
         var event = {
             type: events_1.Events.EVENT_SORT_CHANGED,
             source: source
         };
+        if (columns) {
+            event.columns = columns;
+        }
         this.eventService.dispatchEvent(event);
     };
     SortController.prototype.clearSortBarTheseColumns = function (columnsToSkip, source) {
+        var clearedColumns = [];
         this.columnModel.getPrimaryAndSecondaryAndAutoColumns().forEach(function (columnToClear) {
             // Do not clear if either holding shift, or if column in question was clicked
             if (!columnsToSkip.includes(columnToClear)) {
+                // add to list of cleared cols when sort direction is set
+                if (!!columnToClear.getSort()) {
+                    clearedColumns.push(columnToClear);
+                }
                 // setting to 'undefined' as null means 'none' rather than cleared, otherwise issue will arise
                 // if sort order is: ['desc', null , 'asc'], as it will start at null rather than 'desc'.
                 columnToClear.setSort(undefined, source);
             }
         });
+        return clearedColumns;
     };
     SortController.prototype.getNextSortDirection = function (column) {
         var sortingOrder;
@@ -133,7 +156,7 @@ var SortController = /** @class */ (function (_super) {
             sortingOrder = SortController_1.DEFAULT_SORTING_ORDER;
         }
         if (!Array.isArray(sortingOrder) || sortingOrder.length <= 0) {
-            console.warn("AG Grid: sortingOrder must be an array with at least one element, currently it's " + sortingOrder);
+            console.warn("AG Grid: sortingOrder must be an array with at least one element, currently it's ".concat(sortingOrder));
             return null;
         }
         var currentIndex = sortingOrder.indexOf(column.getSort());
@@ -154,7 +177,6 @@ var SortController = /** @class */ (function (_super) {
         return result;
     };
     /**
-     * @param includeRedundantColumns whether to include non-grouped, non-secondary, non-aggregated columns when pivot active
      * @returns a map of sort indexes for every sorted column, if groups sort primaries then they will have equivalent indices
      */
     SortController.prototype.getIndexedSortMap = function () {
@@ -177,7 +199,7 @@ var SortController = /** @class */ (function (_super) {
         if (isSortLinked) {
             allSortedCols = __spreadArray([], __read(new Set(
             // if linked sorting, replace all columns with the display group column for index purposes, and ensure uniqueness
-            allSortedCols.map(function (col) { var _a; return (_a = _this.columnModel.getGroupDisplayColumnForGroup(col.getId())) !== null && _a !== void 0 ? _a : col; }))));
+            allSortedCols.map(function (col) { var _a; return (_a = _this.columnModel.getGroupDisplayColumnForGroup(col.getId())) !== null && _a !== void 0 ? _a : col; }))), false);
         }
         // when both cols are missing sortIndex, we use the position of the col in all cols list.
         // this means if colDefs only have sort, but no sortIndex, we deterministically pick which
@@ -217,7 +239,7 @@ var SortController = /** @class */ (function (_super) {
     };
     SortController.prototype.getColumnsWithSortingOrdered = function () {
         // pull out all the columns that have sorting set
-        return __spreadArray([], __read(this.getIndexedSortMap().entries())).sort(function (_a, _b) {
+        return __spreadArray([], __read(this.getIndexedSortMap().entries()), false).sort(function (_a, _b) {
             var _c = __read(_a, 2), col1 = _c[0], idx1 = _c[1];
             var _d = __read(_b, 2), col2 = _d[0], idx2 = _d[1];
             return idx1 - idx2;
@@ -229,15 +251,17 @@ var SortController = /** @class */ (function (_super) {
     };
     // used by server side row models, to sent sort to server
     SortController.prototype.getSortModel = function () {
-        // because this is used by the SSRM, we include redundant options and let the server decide
-        return this.getColumnsWithSortingOrdered().map(function (column) { return ({
+        return this.getColumnsWithSortingOrdered()
+            .filter(function (column) { return column.getSort(); })
+            .map(function (column) { return ({
             sort: column.getSort(),
             colId: column.getId()
         }); });
     };
     SortController.prototype.getSortOptions = function () {
-        // this is used for client side sorting, as such we can ignore redundant column sorts
-        return this.getColumnsWithSortingOrdered().map(function (column) { return ({
+        return this.getColumnsWithSortingOrdered()
+            .filter(function (column) { return column.getSort(); })
+            .map(function (column) { return ({
             sort: column.getSort(),
             column: column
         }); });
@@ -254,7 +278,7 @@ var SortController = /** @class */ (function (_super) {
         }
         // if column has unique data, its sorting is independent - but can still be mixed
         var columnHasUniqueData = column.getColDef().field != null || !!column.getColDef().valueGetter;
-        var sortableColumns = columnHasUniqueData ? __spreadArray([column], __read(linkedColumns)) : linkedColumns;
+        var sortableColumns = columnHasUniqueData ? __spreadArray([column], __read(linkedColumns), false) : linkedColumns;
         var firstSort = sortableColumns[0].getSort();
         // the == is intentional, as null and undefined both represent no sort, which means they are equivalent
         var allMatch = sortableColumns.every(function (col) { return col.getSort() == firstSort; });
@@ -269,10 +293,10 @@ var SortController = /** @class */ (function (_super) {
     var SortController_1;
     SortController.DEFAULT_SORTING_ORDER = ['asc', 'desc', null];
     __decorate([
-        context_1.Autowired('columnModel')
+        (0, context_1.Autowired)('columnModel')
     ], SortController.prototype, "columnModel", void 0);
     SortController = SortController_1 = __decorate([
-        context_1.Bean('sortController')
+        (0, context_1.Bean)('sortController')
     ], SortController);
     return SortController;
 }(beanStub_1.BeanStub));

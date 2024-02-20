@@ -1,23 +1,27 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { TabGuardComp } from "./tabGuardComp";
-import { MenuItemDef } from "../entities/gridOptions";
+import { MenuItemDef } from "../interfaces/menuItem";
+import { WithoutGridCommon } from "../interfaces/iCommon";
+import { IMenuActionParams } from "../interfaces/iCallbackParams";
 export declare class AgMenuList extends TabGuardComp {
     private readonly level;
     private readonly focusService;
     private menuItems;
     private activeMenuItem;
-    constructor(level?: number);
+    private params;
+    constructor(level?: number, params?: WithoutGridCommon<IMenuActionParams>);
     private postConstruct;
-    protected onTabKeyDown(e: KeyboardEvent): void;
-    protected handleKeyDown(e: KeyboardEvent): void;
+    private onTabKeyDown;
+    private handleKeyDown;
+    private handleFocusIn;
+    private handleFocusOut;
     clearActiveItem(): void;
     addMenuItems(menuItems?: (MenuItemDef | string)[]): void;
-    addItem(menuItemDef: MenuItemDef): void;
+    private addItem;
     activateFirstItem(): void;
-    private addSeparator;
-    private findTopMenu;
+    private createSeparator;
     private handleNavKey;
     private closeIfIsChild;
     private openChild;

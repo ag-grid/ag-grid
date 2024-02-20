@@ -8,7 +8,7 @@ import { BeanStub } from "../../context/beanStub.mjs";
 import { Autowired, Bean, Optional } from "../../context/context.mjs";
 import { AgPromise } from "../../utils/index.mjs";
 import { mergeDeep } from '../../utils/object.mjs';
-import { CellEditorComponent, CellRendererComponent, DateComponent, FilterComponent, FloatingFilterComponent, FullWidth, FullWidthDetail, FullWidthGroup, FullWidthLoading, HeaderComponent, HeaderGroupComponent, InnerRendererComponent, LoadingOverlayComponent, NoRowsOverlayComponent, StatusPanelComponent, ToolPanelComponent, TooltipComponent } from "./componentTypes.mjs";
+import { CellEditorComponent, CellRendererComponent, DateComponent, FilterComponent, FloatingFilterComponent, FullWidth, FullWidthDetail, FullWidthGroup, FullWidthLoading, HeaderComponent, HeaderGroupComponent, InnerRendererComponent, LoadingOverlayComponent, MenuItemComponent, NoRowsOverlayComponent, StatusPanelComponent, ToolPanelComponent, TooltipComponent } from "./componentTypes.mjs";
 import { FloatingFilterMapper } from '../../filter/floating/floatingFilterMapper.mjs';
 let UserComponentFactory = class UserComponentFactory extends BeanStub {
     getHeaderCompDetails(colDef, params) {
@@ -73,6 +73,9 @@ let UserComponentFactory = class UserComponentFactory extends BeanStub {
     }
     getStatusPanelCompDetails(def, params) {
         return this.getCompDetails(def, StatusPanelComponent, null, params, true);
+    }
+    getMenuItemCompDetails(def, params) {
+        return this.getCompDetails(def, MenuItemComponent, 'agMenuItem', params, true);
     }
     getCompDetails(defObject, type, defaultName, params, mandatory = false) {
         const { propertyName, cellRenderer } = type;
@@ -181,11 +184,7 @@ let UserComponentFactory = class UserComponentFactory extends BeanStub {
     }
     // used by Floating Filter
     mergeParamsWithApplicationProvidedParams(defObject, type, paramsFromGrid, paramsFromSelector = null) {
-        const params = {
-            context: this.gridOptionsService.context,
-            columnApi: this.gridOptionsService.columnApi,
-            api: this.gridOptionsService.api
-        };
+        const params = this.gridOptionsService.getGridCommonParams();
         mergeDeep(params, paramsFromGrid);
         // pull user params from either the old prop name and new prop name
         // eg either cellRendererParams and cellCompParams

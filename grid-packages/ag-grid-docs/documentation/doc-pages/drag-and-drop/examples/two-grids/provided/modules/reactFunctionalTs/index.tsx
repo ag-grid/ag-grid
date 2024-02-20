@@ -4,17 +4,18 @@ import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
 import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
+import './styles.css';
+
 
 import { ColDef, GridApi, GridOptions, GridReadyEvent, ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const baseDefaultColDef: ColDef = {
-    width: 80,
-    sortable: true,
+    flex: 1,
     filter: true,
-    resizable: true
+    
 };
 
 const baseGridOptions: GridOptions = {
@@ -25,7 +26,6 @@ const baseGridOptions: GridOptions = {
         'blue-row': 'data.color == "Blue"'
     },
     rowDragManaged: true,
-    animateRows: true
 }
 
 const baseColumnDefs: ColDef[] = [
@@ -58,11 +58,11 @@ const GridExample = () => {
     const rightGridRef = useRef<AgGridReact>(null);
 
     const onLeftGridReady = (params: GridReadyEvent) => {
-        params.api.setRowData(createLeftRowData());
+        params.api.setGridOption('rowData', createLeftRowData());
     }
 
     const onRightGridReady = (params: GridReadyEvent) => {
-        params.api.setRowData([]);
+        params.api.setGridOption('rowData', []);
     }
 
     const createLeftRowData = () => ['Red', 'Green', 'Blue'].map(createDataItem);
@@ -155,7 +155,8 @@ const GridExample = () => {
 
     return (
         <div className="outer">
-            <div style={{ height: "100%" }} className="inner-col ag-theme-alpine" onDragOver={gridDragOver}
+            <div style={{ height: "100%" }} className={'inner-col ' + /** DARK MODE START **/(document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz')/** DARK MODE END **/}
+            onDragOver={gridDragOver}
                 onDrop={(e) => gridDrop('left', e)}>
                 <AgGridReact ref={leftGridRef} gridOptions={leftGridOptions} onGridReady={onLeftGridReady} />
             </div>
@@ -181,7 +182,8 @@ const GridExample = () => {
                 </span>
             </div>
 
-            <div style={{ height: "100%" }} className="inner-col ag-theme-alpine" onDragOver={gridDragOver}
+            <div style={{ height: "100%" }} className={'inner-col ' + /** DARK MODE START **/(document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz')/** DARK MODE END **/} 
+            onDragOver={gridDragOver}
                 onDrop={(e) => gridDrop('right', e)}>
                 <AgGridReact ref={rightGridRef} gridOptions={rightGridOptions} onGridReady={onRightGridReady} />
             </div>

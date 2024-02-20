@@ -1,10 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.lookupCustomChartTheme = exports.isStockTheme = exports.createAgChartTheme = void 0;
+exports.lookupCustomChartTheme = exports.isStockTheme = exports.applyThemeOverrides = exports.createAgChartTheme = void 0;
 const core_1 = require("@ag-grid-community/core");
 const ag_charts_community_1 = require("ag-charts-community");
 const axisTypeMapper_1 = require("../utils/axisTypeMapper");
 const seriesTypeMapper_1 = require("../utils/seriesTypeMapper");
+const object_1 = require("../utils/object");
 function createAgChartTheme(chartProxyParams, proxy) {
     var _a;
     const { chartOptionsToRestore, chartPaletteToRestore, chartThemeToRestore } = chartProxyParams;
@@ -15,8 +16,8 @@ function createAgChartTheme(chartProxyParams, proxy) {
         : (_a = lookupCustomChartTheme(chartProxyParams, themeName)) !== null && _a !== void 0 ? _a : {};
     const gridOptionsThemeOverrides = chartProxyParams.getGridOptionsChartThemeOverrides();
     const apiThemeOverrides = chartProxyParams.apiChartThemeOverrides;
-    const standaloneChartType = seriesTypeMapper_1.getSeriesType(chartProxyParams.chartType);
-    const crossFilterThemeOverridePoint = standaloneChartType === 'pie' ? 'polar' : 'cartesian';
+    const standaloneChartType = (0, seriesTypeMapper_1.getSeriesType)(chartProxyParams.chartType);
+    const crossFilterThemeOverridePoint = (0, seriesTypeMapper_1.isPieChartSeries)(standaloneChartType) ? standaloneChartType : 'cartesian';
     const crossFilteringOverrides = chartProxyParams.crossFiltering
         ? createCrossFilterThemeOverrides(proxy, chartProxyParams, crossFilterThemeOverridePoint)
         : undefined;
@@ -26,7 +27,7 @@ function createAgChartTheme(chartProxyParams, proxy) {
             if (!obj) {
                 return false;
             }
-            return Object.keys(obj).some(key => core_1._.get(obj[key], 'title.enabled', false));
+            return Object.keys(obj).some(key => (0, object_1.get)(obj[key], 'title.enabled', false));
         };
         return isTitleEnabled(gridOptionsThemeOverrides) || isTitleEnabled(apiThemeOverrides);
     };
@@ -59,6 +60,17 @@ function createAgChartTheme(chartProxyParams, proxy) {
     return theme;
 }
 exports.createAgChartTheme = createAgChartTheme;
+function applyThemeOverrides(baseTheme, overrides) {
+    return overrides.reduce((baseTheme, overrides) => {
+        if (!overrides)
+            return baseTheme;
+        return {
+            baseTheme: baseTheme,
+            overrides,
+        };
+    }, baseTheme);
+}
+exports.applyThemeOverrides = applyThemeOverrides;
 function isIdenticalPalette(paletteA, paletteB) {
     const arrayCompare = (arrA, arrB) => {
         if (arrA.length !== arrB.length)
@@ -85,19 +97,6 @@ function createCrossFilterThemeOverrides(proxy, chartProxyParams, overrideType) 
         },
     };
     const series = {};
-    if (overrideType === 'polar') {
-        series.pie = {
-            tooltip: {
-                renderer: ({ angleName, datum, calloutLabelKey, radiusKey, angleValue, }) => {
-                    const title = angleName;
-                    const label = datum[calloutLabelKey];
-                    const ratio = datum[radiusKey];
-                    const totalValue = angleValue;
-                    return { title, content: `${label}: ${totalValue * ratio}` };
-                },
-            },
-        };
-    }
     return {
         [overrideType]: {
             tooltip: {
@@ -116,6 +115,9 @@ function inbuiltStockThemeOverrides(params, titleEnabled) {
     const extraPadding = params.getExtraPaddingDirections();
     return {
         common: {
+            animation: {
+                duration: 500,
+            },
             axes: STATIC_INBUILT_STOCK_THEME_AXES_OVERRIDES,
             padding: {
                 // don't add extra padding when a title is present!
@@ -126,6 +128,16 @@ function inbuiltStockThemeOverrides(params, titleEnabled) {
             },
         },
         pie: {
+            series: {
+                title: { _enabledFromTheme: true },
+                calloutLabel: { _enabledFromTheme: true },
+                sectorLabel: {
+                    enabled: false,
+                    _enabledFromTheme: true,
+                },
+            },
+        },
+        donut: {
             series: {
                 title: { _enabledFromTheme: true },
                 calloutLabel: { _enabledFromTheme: true },

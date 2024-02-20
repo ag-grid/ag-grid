@@ -47,6 +47,7 @@
         font-size: inherit;
         line-height: inherit;
         color: inherit;
+        font-family: inherit;
 
         border: var(--ag-borders-input) var(--ag-input-border-color);
 
@@ -120,10 +121,9 @@
     }
 
     .ag-select-list-item {
-        padding-left: 4px;
-        padding-right: 4px;
-        cursor: default;
+        @include ag.unthemed-rtl(( padding-left: calc(var(--ag-cell-horizontal-padding) / 2) ));
         @include ag.selectable(none);
+        cursor: default;
         span {
             white-space: nowrap;
             text-overflow: ellipsis;
@@ -233,6 +233,7 @@
         border: var(--ag-borders);
         border-color: var(--ag-border-color);
         border-radius: 5px;
+        background-color: var(--ag-background-color);
 
         &:disabled {
             color: var(--ag-disabled-foreground-color);
@@ -241,7 +242,7 @@
         }
 
         &.ag-picker-has-focus,
-        &:focus {
+        &:focus-within {
             outline: none;
             box-shadow: var(--ag-input-focus-box-shadow);
             border-color: var(--ag-input-focus-border-color);
@@ -259,6 +260,11 @@
 
     .ag-color-picker .ag-picker-field-display {
         height: var(--ag-icon-size);
+    }
+
+    .ag-color-picker .ag-picker-field-wrapper {
+        max-width: 45px;
+        min-width: 45px;
     }
 
     .ag-color-panel {
@@ -363,8 +369,9 @@
     ////////////////////////////////////////
     .ag-select {
         .ag-picker-field-wrapper {
-            background-color: var(--ag-background-color);
             min-height: var(--ag-list-item-height);
+            @include ag.unthemed-rtl(( padding-left: calc(var(--ag-cell-horizontal-padding) / 2) ));
+            @include ag.unthemed-rtl(( padding-right: var(--ag-grid-size) ));
             cursor: default;
         }
 
@@ -373,11 +380,10 @@
         }
 
         &:not(.ag-cell-editor, .ag-label-align-top) {
-            height: var(--ag-list-item-height);
+            min-height: var(--ag-list-item-height);
         }
 
         .ag-picker-field-display {
-            margin: 4px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -406,15 +412,21 @@
         height: auto;
         border-radius: var(--ag-border-radius);
         border: var(--ag-borders) var(--ag-border-color);
-        max-height: calc(var(--ag-row-height)*6.5);
+        .ag-loading-text {
+            padding: var(--ag-widget-vertical-spacing) var(--ag-widget-horizontal-spacing);
+        }
     }
 
     .ag-rich-select-value {
         border-bottom: var(--ag-borders-secondary) var(--ag-secondary-border-color);
         padding-top: 0;
         padding-bottom: 0;
-        @include ag.unthemed-rtl(( padding-left: var(--ag-cell-horizontal-padding) ));
+        @include ag.unthemed-rtl(( padding-left: calc(var(--ag-cell-horizontal-padding) / 2) ));
         @include ag.unthemed-rtl(( padding-right: var(--ag-grid-size) ));
+    }
+
+    .ag-rich-select-field-input {
+        @include ag.unthemed-rtl(( left: calc(var(--ag-cell-horizontal-padding)) ));
     }
 
     .ag-popup-editor .ag-rich-select-value {
@@ -426,7 +438,7 @@
         cursor: default;
         height: var(--ag-list-item-height);
 
-        .ag-keyboard-focus &:focus::after {
+        &:focus-visible::after {
             content: none
         }
 
@@ -436,11 +448,15 @@
     }
 
     .ag-rich-select-row {
-        @include ag.unthemed-rtl(( padding-left: var(--ag-cell-horizontal-padding) ));
+        @include ag.unthemed-rtl(( padding-left: calc(var(--ag-cell-horizontal-padding) / 2) ));
     }
 
     .ag-rich-select-row-selected {
         background-color: var(--ag-selected-row-background-color);
+    }
+
+    .ag-rich-select-row-text-highlight {
+        font-weight: bold;
     }
 
     ////////////////////////////////////////
@@ -460,7 +476,7 @@
         cursor: default;
         height: var(--ag-list-item-height);
 
-        .ag-keyboard-focus &:focus::after {
+        &:focus-visible::after {
             content: none
         }
 
@@ -493,11 +509,11 @@
     }
 
     .ag-panel {
-        background-color: var(--ag-background-color);
+        background-color: var(--ag-panel-background-color);
+        border-color: var(--ag-panel-border-color);
     }
 
     .ag-panel-title-bar {
-        background-color: var(--ag-header-background-color);
         color: var(--ag-header-foreground-color);
         height: var(--ag-header-height);
         padding: var(--ag-grid-size) var(--ag-cell-horizontal-padding);

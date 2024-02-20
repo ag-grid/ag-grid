@@ -10,7 +10,6 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
     const { gridOptionsService } = useContext(BeansContext);
     const { ctrl } = props;
     
-    const [ getTransform, setTransform ] = createSignal<string | undefined>(ctrl.getTransform()!);
     const [ getHeight, setHeight ] = createSignal<string>();
     const [ getTop, setTop ] = createSignal<string>();
     const [ getWidth, setWidth ] = createSignal<string>();
@@ -21,7 +20,7 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
 
     const setCellCtrlsMaintainOrder = (next: AbstractHeaderCellCtrl[]) => {
         const prev = getCellCtrls();
-        const isEnsureDomOrder = gridOptionsService.is('ensureDomOrder');
+        const isEnsureDomOrder = gridOptionsService.get('ensureDomOrder');
         const isPrintLayout = gridOptionsService.isDomLayout('print');
 
         // if we are ensuring dom order, we set the ctrls into the dom in the same order they appear on screen
@@ -34,8 +33,8 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
         const prevMap = _.mapById(prev, c => c.getInstanceId());
         const nextMap = _.mapById(next, c => c.getInstanceId());
 
-        const oldCtrlsWeAreKeeping = prev.filter( c => nextMap.has(c.getInstanceId()) );
-        const newCtrls = next.filter( c => !prevMap.has(c.getInstanceId()) )
+        const oldCtrlsWeAreKeeping = prev.filter(c => nextMap.has(c.getInstanceId()));
+        const newCtrls = next.filter(c => !prevMap.has(c.getInstanceId()))
 
         const nextOrderMaintained = [...oldCtrlsWeAreKeeping, ...newCtrls];
         setCellCtrls(nextOrderMaintained);
@@ -52,7 +51,6 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
     });
 
     const style = createMemo( ()=> ({
-        transform: getTransform(),
         height: getHeight(),
         top: getTop(),
         width: getWidth()

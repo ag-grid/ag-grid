@@ -50,8 +50,8 @@ var CalloutPanel = /** @class */ (function (_super) {
         var initInput = function (expression, input, labelKey, defaultMaxValue) {
             var currentValue = _this.chartOptionsService.getSeriesOption(expression, _this.getSelectedSeries());
             input.setLabel(_this.chartTranslationService.translate(labelKey))
-                .setMaxValue(formatPanel_1.getMaxValue(currentValue, defaultMaxValue))
-                .setValue("" + currentValue)
+                .setMaxValue((0, formatPanel_1.getMaxValue)(currentValue, defaultMaxValue))
+                .setValue("".concat(currentValue))
                 .setTextFieldWidth(45)
                 .onValueChange(function (newValue) { return _this.chartOptionsService.setSeriesOption(expression, newValue, _this.getSelectedSeries()); });
         };
@@ -61,19 +61,19 @@ var CalloutPanel = /** @class */ (function (_super) {
     };
     CalloutPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"calloutGroup\">\n                <ag-slider ref=\"calloutLengthSlider\"></ag-slider>\n                <ag-slider ref=\"calloutStrokeWidthSlider\"></ag-slider>\n                <ag-slider ref=\"labelOffsetSlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
     __decorate([
-        core_1.RefSelector('calloutGroup')
+        (0, core_1.RefSelector)('calloutGroup')
     ], CalloutPanel.prototype, "calloutGroup", void 0);
     __decorate([
-        core_1.RefSelector('calloutLengthSlider')
+        (0, core_1.RefSelector)('calloutLengthSlider')
     ], CalloutPanel.prototype, "calloutLengthSlider", void 0);
     __decorate([
-        core_1.RefSelector('calloutStrokeWidthSlider')
+        (0, core_1.RefSelector)('calloutStrokeWidthSlider')
     ], CalloutPanel.prototype, "calloutStrokeWidthSlider", void 0);
     __decorate([
-        core_1.RefSelector('labelOffsetSlider')
+        (0, core_1.RefSelector)('labelOffsetSlider')
     ], CalloutPanel.prototype, "labelOffsetSlider", void 0);
     __decorate([
-        core_1.Autowired('chartTranslationService')
+        (0, core_1.Autowired)('chartTranslationService')
     ], CalloutPanel.prototype, "chartTranslationService", void 0);
     __decorate([
         core_1.PostConstruct

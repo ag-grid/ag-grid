@@ -39,15 +39,15 @@ To emit all the styles you need for an AG Grid application, include the `grid-st
 @include ag.grid-styles();
 ```
 
-Because no theme is specified, it will default to Alpine. Compiling this file will select the `ag-grid.css` and `ag-theme-alpine.css` files from the grid distribution and combine them into the output. There is no need to separately include `ag-grid.css` in your build.
+Because no theme is specified, it will default to Quartz. Compiling this file will select the `ag-grid.css` and `ag-theme-quartz.css` files from the grid distribution and combine them into the output. There is no need to separately include `ag-grid.css` in your build.
 
-To use the theme, set the `ag-theme-alpine` class on your grid div:
+To use the theme, set the `ag-theme-quartz` class on your grid div:
 
 ```html
-<div id="myGrid" class="ag-theme-alpine">
+<div id="myGrid" class="ag-theme-quartz">
 ```
 
-To customise the Alpine theme, you can add more parameters to the `grid-styles` mixin, as described in the rest of this page.
+To customise the theme, you can add more parameters to the `grid-styles` mixin, as described in the rest of this page.
 
 ## Choosing a theme
 
@@ -62,7 +62,7 @@ Use the `theme` parameter to set the name of the outputted theme.
 
 This can be either:
 
-1. a [provided theme](/themes/) (`alpine`, `alpine-dark`, `balham`, `balham-dark` or `material`). The CSS file for the theme will automatically be included.
+1. a [provided theme](/themes/) (`quartz`, `quartz-dark`, `alpine`, `alpine-dark`, `balham`, `balham-dark` or `material`). The CSS file for the theme will automatically be included.
 2. Any string of your choice to create a custom theme.
 
 ## Setting CSS variables
@@ -95,8 +95,8 @@ When you cannot achieve the effect you want with variables, add custom CSS rules
 @include ag.grid-styles((
     theme: alpine
 ));
-.ag-theme-alpine {
-    // Nest rules in .ag-theme-alpine so that the selectors include the theme name.
+.ag-theme-quartz {
+    // Nest rules in .ag-theme-quartz so that the selectors include the theme name.
     // Without the theme name, your styles will not override the theme's built-in
     // styles due to CSS selector specificity rules.
     .ag-header-cell-label {
@@ -132,8 +132,8 @@ will compile to this CSS:
 
 ```css
 /* ... content of ag-grid.css ... */
-/* ... content of ag-theme-alpine.css ... */
-.ag-theme-alpine {
+/* ... content of ag-theme-quartz.css ... */
+.ag-theme-quartz {
   --ag-alpine-active-color: red;
   --ag-range-selection-border-color: red;
   --ag-selected-row-background-color: rgba(255, 0, 0, 0.1);
@@ -199,7 +199,7 @@ To do this, set the `theme` parameter to your custom theme and the `extend-theme
 
 To use this theme, add the `ag-theme-acmecorp` class to your grid div.
 
-Theme extension is only available in the Sass API. The alternative method of creating a [reusable package of design customisations](/global-style-customisation#creating-a-reusable-package-of-design-customisations) works in both Sass and pure CSS projects.
+Theme extension is only available in the Sass API. The alternative method of creating a [reusable package of design customisations](/global-style-customisation/#creating-a-reusable-package-of-design-customisations) works in both Sass and pure CSS projects.
 
 Theme extension works with multiple themes too, set the `extend-theme` parameter at the theme level:
 
@@ -215,5 +215,5 @@ Theme extension works with multiple themes too, set the `extend-theme` parameter
 ```
 
 <note>
-`extend-theme` internally uses the Sass `@extend` rule, which generates new selectors for `.ag-theme-acmecorp` while leaving the original selectors for `.ag-theme-alpine` intact. This slightly increases the output of the compiled CSS, but the difference is likely to be too small to measure in real world conditions (less than 1kb gzipped)
+`extend-theme` internally uses the Sass `@extend` rule, which generates new selectors for `.ag-theme-acmecorp` while leaving the original selectors for `.ag-theme-quartz` intact. This slightly increases the output of the compiled CSS, but the difference is likely to be too small to measure in real world conditions (less than 1kb gzipped)
 </note>

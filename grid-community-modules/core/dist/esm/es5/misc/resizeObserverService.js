@@ -21,7 +21,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { Bean } from "../context/context";
 import { BeanStub } from "../context/beanStub";
-import { offsetHeight, offsetWidth } from "../utils/dom";
 var DEBOUNCE_DELAY = 50;
 var ResizeObserverService = /** @class */ (function (_super) {
     __extends(ResizeObserverService, _super);
@@ -39,15 +38,17 @@ var ResizeObserverService = /** @class */ (function (_super) {
             return function () { return resizeObserver.disconnect(); };
         };
         var usePolyfill = function () {
+            var _a, _b;
             // initialise to the current width and height, so first call will have no changes
-            var widthLastTime = offsetWidth(element);
-            var heightLastTime = offsetHeight(element);
+            var widthLastTime = (_a = element === null || element === void 0 ? void 0 : element.clientWidth) !== null && _a !== void 0 ? _a : 0;
+            var heightLastTime = (_b = element === null || element === void 0 ? void 0 : element.clientHeight) !== null && _b !== void 0 ? _b : 0;
             // when finished, this gets turned to false.
             var running = true;
             var periodicallyCheckWidthAndHeight = function () {
+                var _a, _b;
                 if (running) {
-                    var newWidth = offsetWidth(element);
-                    var newHeight = offsetHeight(element);
+                    var newWidth = (_a = element === null || element === void 0 ? void 0 : element.clientWidth) !== null && _a !== void 0 ? _a : 0;
+                    var newHeight = (_b = element === null || element === void 0 ? void 0 : element.clientHeight) !== null && _b !== void 0 ? _b : 0;
                     var changed = newWidth !== widthLastTime || newHeight !== heightLastTime;
                     if (changed) {
                         widthLastTime = newWidth;
@@ -61,12 +62,12 @@ var ResizeObserverService = /** @class */ (function (_super) {
             // the callback function we return sets running to false
             return function () { return running = false; };
         };
-        var suppressResize = this.gridOptionsService.is('suppressBrowserResizeObserver');
+        var suppressResize = this.gridOptionsService.get('suppressBrowserResizeObserver');
         var resizeObserverExists = !!win.ResizeObserver;
         if (resizeObserverExists && !suppressResize) {
             return useBrowserResizeObserver();
         }
-        return usePolyfill();
+        return this.getFrameworkOverrides().wrapIncoming(function () { return usePolyfill(); }, 'resize-observer');
     };
     ResizeObserverService.prototype.doNextPolyfillTurn = function (func) {
         this.polyfillFunctions.push(func);
@@ -86,7 +87,7 @@ var ResizeObserverService = /** @class */ (function (_super) {
             funcs.forEach(function (f) { return f(); });
         };
         this.polyfillScheduled = true;
-        this.getFrameworkOverrides().setTimeout(executeAllFuncs, DEBOUNCE_DELAY);
+        window.setTimeout(executeAllFuncs, DEBOUNCE_DELAY);
     };
     ResizeObserverService = __decorate([
         Bean('resizeObserverService')

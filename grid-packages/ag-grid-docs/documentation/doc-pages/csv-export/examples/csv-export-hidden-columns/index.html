@@ -11,13 +11,13 @@
     }
 
     #csvResult {
+        box-sizing: border-box;
         height: 100%;
         width: 47%;
         margin-left: 5%;
         position: absolute;
         top: 0;
         right: 0;
-        font-size: 1em;
     }
 </style>
 
@@ -33,7 +33,7 @@
     </div>
     <div style="flex: 1 1 0px; position: relative;">
         <div id="gridContainer">
-            <div id="myGrid" style="width:100%;height: 100%;display: block;" class="ag-theme-alpine"></div>
+            <div id="myGrid" style="width:100%;height: 100%;display: block;" class="ag-theme-quartz"></div>
         </div>
         <textarea id="csvResult" placeholder="Click the Show CSV export content button to view exported CSV here"></textarea>
     </div>

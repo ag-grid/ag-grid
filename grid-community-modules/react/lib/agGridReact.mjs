@@ -1,19 +1,23 @@
-// @ag-grid-community/react v30.1.0
+// @ag-grid-community/react v31.1.0
 import React, { Component } from 'react';
-import { AgGridReactLegacy } from './legacy/agGridReactLegacy.mjs';
 import { AgGridReactUi } from './reactUi/agGridReactUi.mjs';
 export class AgGridReact extends Component {
     constructor() {
         super(...arguments);
+        this.apiListeners = [];
         this.setGridApi = (api, columnApi) => {
             this.api = api;
             this.columnApi = columnApi;
+            this.apiListeners.forEach(listener => listener(api));
         };
     }
+    registerApiListener(listener) {
+        this.apiListeners.push(listener);
+    }
+    componentWillUnmount() {
+        this.apiListeners.length = 0;
+    }
     render() {
-        const ReactComponentToUse = this.props.suppressReactUi ?
-            React.createElement(AgGridReactLegacy, Object.assign({}, this.props, { setGridApi: this.setGridApi }))
-            : React.createElement(AgGridReactUi, Object.assign({}, this.props, { setGridApi: this.setGridApi }));
-        return ReactComponentToUse;
+        return React.createElement(AgGridReactUi, Object.assign({}, this.props, { setGridApi: this.setGridApi }));
     }
 }

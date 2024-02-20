@@ -16,7 +16,7 @@ var ProvidedColumnGroup = /** @class */ (function () {
         this.expandable = false;
         // used by React (and possibly other frameworks) as key for rendering. also used to
         // identify old vs new columns for destroying cols when no longer used.
-        this.instanceId = column_1.getNextColInstanceId();
+        this.instanceId = (0, column_1.getNextColInstanceId)();
         this.expandableListenerRemoveCallback = null;
         this.colGroupDef = colGroupDef;
         this.groupId = groupId;

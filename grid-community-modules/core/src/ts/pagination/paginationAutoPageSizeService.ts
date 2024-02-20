@@ -4,11 +4,13 @@ import { Autowired, Bean, PostConstruct } from "../context/context";
 import { CtrlsService } from "../ctrlsService";
 import { RowContainerCtrl } from "../gridBodyComp/rowContainer/rowContainerCtrl";
 import { debounce } from "../utils/function";
+import { PaginationProxy } from "./paginationProxy";
 
 @Bean('paginationAutoPageSizeService')
 export class PaginationAutoPageSizeService extends BeanStub {
 
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
+    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
 
     private centerRowContainerCon: RowContainerCtrl;
 
@@ -23,19 +25,26 @@ export class PaginationAutoPageSizeService extends BeanStub {
 
             this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.checkPageSize.bind(this));
             this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.checkPageSize.bind(this));
+            this.addManagedPropertyListener('paginationAutoPageSize', this.onPaginationAutoSizeChanged.bind(this));
 
             this.checkPageSize();
         });
     }
 
     private notActive(): boolean {
-        return !this.gridOptionsService.is('paginationAutoPageSize') || this.centerRowContainerCon == null;
+        return !this.gridOptionsService.get('paginationAutoPageSize') || this.centerRowContainerCon == null;
+    }
+
+    private onPaginationAutoSizeChanged(): void {
+        if (this.notActive()) {
+            this.paginationProxy.unsetAutoCalculatedPageSize();
+        } else {
+            this.checkPageSize();
+        }
     }
 
     private checkPageSize(): void {
-        if (this.notActive()) {
-            return;
-        }
+        if (this.notActive()) { return; }
 
         const bodyHeight = this.centerRowContainerCon.getViewportSizeFeature()!.getBodyHeight();
 
@@ -43,7 +52,7 @@ export class PaginationAutoPageSizeService extends BeanStub {
             const update = () => {
                 const rowHeight = this.gridOptionsService.getRowHeightAsNumber();
                 const newPageSize = Math.floor(bodyHeight / rowHeight);
-                this.gridOptionsService.set('paginationPageSize', newPageSize);
+                this.paginationProxy.setPageSize(newPageSize, 'autoCalculated');
             }
 
             if (!this.isBodyRendered) {

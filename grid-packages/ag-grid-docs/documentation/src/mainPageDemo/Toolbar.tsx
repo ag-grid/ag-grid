@@ -1,11 +1,19 @@
+import { Label } from '@carbon/icons-react';
 import classnames from 'classnames';
 import React from 'react';
 import { Icon } from '../components/Icon';
 import { trackDemoToolbar, trackOnceDemoToolbar } from '../utils/analytics';
-import styles from './Toolbar.module.scss';
+import styles from '@design-system/modules/Toolbar.module.scss';
 import { createDataSizeValue } from './utils';
 
 const IS_SSR = typeof window === 'undefined';
+
+const options: Record<string, string> = {
+    "quartz": "Quartz",
+    "balham": "Balham",
+    "material": "Material",
+    "alpine": "Alpine",
+}
 
 export const Toolbar = ({ gridRef, dataSize, setDataSize, rowCols, gridTheme, setGridTheme, setCountryColumnPopupEditor }) => {
     function onDataSizeChanged(event) {
@@ -19,7 +27,7 @@ export const Toolbar = ({ gridRef, dataSize, setDataSize, rowCols, gridTheme, se
 
     function onThemeChanged(event) {
         const newTheme = event.target.value || 'ag-theme-none';
-        setCountryColumnPopupEditor(newTheme, gridRef.current.columnApi);
+        setCountryColumnPopupEditor(newTheme, gridRef.current.api);
         setGridTheme(newTheme);
         trackDemoToolbar({
             type: 'theme',
@@ -29,7 +37,7 @@ export const Toolbar = ({ gridRef, dataSize, setDataSize, rowCols, gridTheme, se
         if (!IS_SSR) {
             let url = window.location.href;
             if (url.indexOf('?theme=') !== -1) {
-                url = url.replace(/\?theme=[\w-]+/, `?theme=${newTheme}`);
+                url = url.replace(/\?theme=[\w:-]+/, `?theme=${newTheme}`);
             } else {
                 const sep = url.indexOf('?') === -1 ? '?' : '&';
                 url += `${sep}theme=${newTheme}`;
@@ -39,7 +47,7 @@ export const Toolbar = ({ gridRef, dataSize, setDataSize, rowCols, gridTheme, se
     }
 
     function onFilterChanged(event) {
-        gridRef.current.api.setQuickFilter(event.target.value);
+        gridRef.current.api.setGridOption('quickFilterText', event.target.value);
         trackOnceDemoToolbar({
             type: 'filterChange',
         })
@@ -47,7 +55,7 @@ export const Toolbar = ({ gridRef, dataSize, setDataSize, rowCols, gridTheme, se
 
     return (
         <div className={styles.toolbar}>
-            <div className={classnames('page-margin', styles.controlsContainer)}>
+            <div className={styles.controlsContainer}>
                 <div className={styles.controls}>
                     <label htmlFor="data-size">Data Size:</label>
                     <select id="data-size" onChange={onDataSizeChanged} value={dataSize}>
@@ -67,12 +75,12 @@ export const Toolbar = ({ gridRef, dataSize, setDataSize, rowCols, gridTheme, se
 
                     <label htmlFor="grid-theme">Theme:</label>
                     <select id="grid-theme" onChange={onThemeChanged} value={gridTheme || ''}>
-                        <option value="ag-theme-none">-none-</option>
-                        <option value="ag-theme-alpine">Alpine</option>
-                        <option value="ag-theme-alpine-dark">Alpine Dark</option>
-                        <option value="ag-theme-balham">Balham</option>
-                        <option value="ag-theme-balham-dark">Balham Dark</option>
-                        <option value="ag-theme-material">Material</option>
+                        {
+                            Object.entries(options).map(([themeName, label]) => <option key={themeName} value={themeName}>{label}</option>)
+                        }
+                        {
+                            gridTheme && options[gridTheme] == null && <option value={gridTheme}>{gridTheme}</option>
+                        }
                     </select>
 
                     <label htmlFor="global-filter">Filter:</label>

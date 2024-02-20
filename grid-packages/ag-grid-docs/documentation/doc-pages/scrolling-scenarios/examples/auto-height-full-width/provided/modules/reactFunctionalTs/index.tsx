@@ -2,10 +2,10 @@
 
 import React, { useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AgGridReact } from '@ag-grid-community/react';
+import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
-import { ColDef, ColGroupDef, ICellRendererParams, IsFullWidthRowParams, ModuleRegistry } from '@ag-grid-community/core';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { ColDef, ColGroupDef, IsFullWidthRowParams, ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
@@ -41,10 +41,10 @@ const createRowData = () => {
     return rowData;
 }
 
-const fullWidthCellRenderer = (props: ICellRendererParams) => {
+const fullWidthCellRenderer = (props: CustomCellRendererProps) => {
     // pinned rows will have node.floating set to either 'top' or 'bottom' - see docs for floating
     const [cssClass] = useState(props.node.rowPinned ? 'example-full-width-floating-row' : 'example-full-width-row')
-    const [message] = useState(props.node.rowPinned ? `Floating full width row at index ${props.rowIndex}` : `Normal full width row at index ${props.rowIndex}`)
+    const [message] = useState(props.node.rowPinned ? `Floating full width row at index ${props.node.rowIndex}` : `Normal full width row at index ${props.node.rowIndex}`)
 
     return (
         <div>
@@ -95,8 +95,6 @@ const GridExample = () => {
             enablePivot: true,
             enableValue: true,
             width: 100,
-            sortable: true,
-            resizable: true,
             filter: true,
             flex: 1,
             minWidth: 100,
@@ -110,7 +108,7 @@ const GridExample = () => {
     return (
         <div>
 
-            <div style={gridStyle} className="ag-theme-alpine">
+            <div style={gridStyle} className={/** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
                 <AgGridReact
 
                     rowData={rowData}
@@ -118,6 +116,7 @@ const GridExample = () => {
                     defaultColDef={defaultColDef}
                     pagination={true}
                     paginationPageSize={10}
+                    paginationPageSizeSelector={[10, 20, 50]}
                     domLayout={'autoHeight'}
                     isFullWidthRow={isFullWidthRow}
                     fullWidthCellRenderer={fullWidthCellRenderer}

@@ -12,7 +12,6 @@ import { Autowired, Bean, Optional, PostConstruct } from "../context/context.mjs
  * and CellComp need. Not autowiring all the cells gives performance improvement. */
 let Beans = class Beans {
     postConstruct() {
-        this.doingMasterDetail = this.gridOptionsService.isMasterDetail();
         if (this.gridOptionsService.isRowModelType('clientSide')) {
             this.clientSideRowModel = this.rowModel;
         }
@@ -75,9 +74,6 @@ __decorate([
 __decorate([
     Autowired('focusService')
 ], Beans.prototype, "focusService", void 0);
-__decorate([
-    Optional('contextMenuFactory')
-], Beans.prototype, "contextMenuFactory", void 0);
 __decorate([
     Autowired('popupService')
 ], Beans.prototype, "popupService", void 0);
@@ -156,6 +152,12 @@ __decorate([
 __decorate([
     Autowired('valueParserService')
 ], Beans.prototype, "valueParserService", void 0);
+__decorate([
+    Autowired('syncService')
+], Beans.prototype, "syncService", void 0);
+__decorate([
+    Autowired('ariaAnnouncementService')
+], Beans.prototype, "ariaAnnouncementService", void 0);
 __decorate([
     PostConstruct
 ], Beans.prototype, "postConstruct", null);

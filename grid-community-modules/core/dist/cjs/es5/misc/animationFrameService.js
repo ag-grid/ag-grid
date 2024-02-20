@@ -48,7 +48,7 @@ var AnimationFrameService = /** @class */ (function (_super) {
         return _this;
     }
     AnimationFrameService.prototype.setScrollTop = function (scrollTop) {
-        var isPaginationActive = this.gridOptionsService.is('pagination');
+        var isPaginationActive = this.gridOptionsService.get('pagination');
         this.scrollGoingDown = scrollTop >= this.lastScrollTop;
         if (isPaginationActive && scrollTop === 0) {
             var currentPage = this.paginationProxy.getCurrentPage();
@@ -60,7 +60,7 @@ var AnimationFrameService = /** @class */ (function (_super) {
         this.lastScrollTop = scrollTop;
     };
     AnimationFrameService.prototype.init = function () {
-        this.useAnimationFrame = !this.gridOptionsService.is('suppressAnimationFrame');
+        this.useAnimationFrame = !this.gridOptionsService.get('suppressAnimationFrame');
     };
     AnimationFrameService.prototype.isOn = function () {
         return this.useAnimationFrame;
@@ -71,7 +71,7 @@ var AnimationFrameService = /** @class */ (function (_super) {
     // when it should not.
     AnimationFrameService.prototype.verifyAnimationFrameOn = function (methodName) {
         if (this.useAnimationFrame === false) {
-            console.warn("AG Grid: AnimationFrameService." + methodName + " called but animation frames are off");
+            console.warn("AG Grid: AnimationFrameService.".concat(methodName, " called but animation frames are off"));
         }
     };
     AnimationFrameService.prototype.createTask = function (task, index, list) {
@@ -194,7 +194,7 @@ var AnimationFrameService = /** @class */ (function (_super) {
         var pending = false;
         return function () {
             if (!_this.isOn()) {
-                _this.getFrameworkOverrides().setTimeout(func, 0);
+                window.setTimeout(func, 0);
                 return;
             }
             if (pending) {
@@ -208,16 +208,16 @@ var AnimationFrameService = /** @class */ (function (_super) {
         };
     };
     __decorate([
-        context_1.Autowired('ctrlsService')
+        (0, context_1.Autowired)('ctrlsService')
     ], AnimationFrameService.prototype, "ctrlsService", void 0);
     __decorate([
-        context_1.Autowired('paginationProxy')
+        (0, context_1.Autowired)('paginationProxy')
     ], AnimationFrameService.prototype, "paginationProxy", void 0);
     __decorate([
         context_1.PostConstruct
     ], AnimationFrameService.prototype, "init", null);
     AnimationFrameService = __decorate([
-        context_1.Bean('animationFrameService')
+        (0, context_1.Bean)('animationFrameService')
     ], AnimationFrameService);
     return AnimationFrameService;
 }(beanStub_1.BeanStub));

@@ -88,7 +88,7 @@ var InfiniteBlock = /** @class */ (function (_super) {
             failCallback: this.pageLoadFailed.bind(this, this.getVersion()),
             sortModel: this.params.sortModel,
             filterModel: this.params.filterModel,
-            context: this.gridOptionsService.context
+            context: this.gridOptionsService.getGridCommonParams().context
         };
         return params;
     };
@@ -142,6 +142,7 @@ var InfiniteBlock = /** @class */ (function (_super) {
                 _this.rowNodes[index] = new core_1.RowNode(_this.beans);
                 _this.rowNodes[index].setRowIndex(rowNode.rowIndex);
                 _this.rowNodes[index].setRowTop(rowNode.rowTop);
+                _this.rowNodes[index].setRowHeight(rowNode.rowHeight);
                 // clean up the old row
                 rowNode.clearRowTopAndRowIndex();
             }
@@ -158,7 +159,7 @@ var InfiniteBlock = /** @class */ (function (_super) {
         });
     };
     __decorate([
-        core_1.Autowired('beans')
+        (0, core_1.Autowired)('beans')
     ], InfiniteBlock.prototype, "beans", void 0);
     __decorate([
         core_1.PostConstruct

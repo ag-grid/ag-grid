@@ -1,9 +1,9 @@
-// @ag-grid-community/react v30.1.0
+// @ag-grid-community/react v31.1.0
 import React, { forwardRef, memo, useCallback, useContext, useImperativeHandle, useRef } from 'react';
 import { TabGuardClassNames, TabGuardCtrl } from '@ag-grid-community/core';
 import { BeansContext } from './beansContext.mjs';
 const TabGuardCompRef = (props, forwardRef) => {
-    const { children, eFocusableElement, onTabKeyDown, gridCtrl } = props;
+    const { children, eFocusableElement, onTabKeyDown, gridCtrl, forceFocusOutWhenTabGuardsAreEmpty } = props;
     const { context } = useContext(BeansContext);
     const topTabGuardRef = useRef(null);
     const bottomTabGuardRef = useRef(null);
@@ -21,9 +21,9 @@ const TabGuardCompRef = (props, forwardRef) => {
         });
     };
     useImperativeHandle(forwardRef, () => ({
-        forceFocusOutOfContainer() {
+        forceFocusOutOfContainer(up) {
             var _a;
-            (_a = tabGuardCtrlRef.current) === null || _a === void 0 ? void 0 : _a.forceFocusOutOfContainer();
+            (_a = tabGuardCtrlRef.current) === null || _a === void 0 ? void 0 : _a.forceFocusOutOfContainer(up);
         }
     }));
     const setupCtrl = useCallback(() => {
@@ -43,6 +43,7 @@ const TabGuardCompRef = (props, forwardRef) => {
                 eBottomGuard: bottomTabGuardRef.current,
                 eFocusableElement: eFocusableElement,
                 onTabKeyDown: onTabKeyDown,
+                forceFocusOutWhenTabGuardsAreEmpty: forceFocusOutWhenTabGuardsAreEmpty,
                 focusInnerElement: (fromBottom) => gridCtrl.focusInnerElement(fromBottom)
             }));
         }

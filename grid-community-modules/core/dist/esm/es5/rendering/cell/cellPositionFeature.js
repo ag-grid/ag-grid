@@ -36,13 +36,23 @@ var CellPositionFeature = /** @class */ (function (_super) {
         return _this;
     }
     CellPositionFeature.prototype.setupRowSpan = function () {
+        var _this = this;
         this.rowSpan = this.column.getRowSpan(this.rowNode);
+        this.addManagedListener(this.beans.eventService, Events.EVENT_NEW_COLUMNS_LOADED, function () { return _this.onNewColumnsLoaded(); });
     };
     CellPositionFeature.prototype.setComp = function (eGui) {
         this.eGui = eGui;
         this.onLeftChanged();
         this.onWidthChanged();
         this.applyRowSpan();
+    };
+    CellPositionFeature.prototype.onNewColumnsLoaded = function () {
+        var rowSpan = this.column.getRowSpan(this.rowNode);
+        if (this.rowSpan === rowSpan) {
+            return;
+        }
+        this.rowSpan = rowSpan;
+        this.applyRowSpan(true);
     };
     CellPositionFeature.prototype.onDisplayColumnsChanged = function () {
         var colsSpanning = this.getColSpanningList();
@@ -71,7 +81,7 @@ var CellPositionFeature = /** @class */ (function (_super) {
             return;
         }
         var width = this.getCellWidth();
-        this.eGui.style.width = width + "px";
+        this.eGui.style.width = "".concat(width, "px");
     };
     CellPositionFeature.prototype.getCellWidth = function () {
         if (!this.colsSpanning) {
@@ -112,7 +122,7 @@ var CellPositionFeature = /** @class */ (function (_super) {
     };
     CellPositionFeature.prototype.getCellLeft = function () {
         var mostLeftCol;
-        if (this.beans.gridOptionsService.is('enableRtl') && this.colsSpanning) {
+        if (this.beans.gridOptionsService.get('enableRtl') && this.colsSpanning) {
             mostLeftCol = last(this.colsSpanning);
         }
         else {
@@ -132,13 +142,13 @@ var CellPositionFeature = /** @class */ (function (_super) {
         // is in body
         return leftWidth + (leftPosition || 0);
     };
-    CellPositionFeature.prototype.applyRowSpan = function () {
-        if (this.rowSpan === 1) {
+    CellPositionFeature.prototype.applyRowSpan = function (force) {
+        if (this.rowSpan === 1 && !force) {
             return;
         }
         var singleRowHeight = this.beans.gridOptionsService.getRowHeightAsNumber();
         var totalRowHeight = singleRowHeight * this.rowSpan;
-        this.eGui.style.height = totalRowHeight + "px";
+        this.eGui.style.height = "".concat(totalRowHeight, "px");
         this.eGui.style.zIndex = '1';
     };
     // overriding to make public, as we don't dispose this bean via context

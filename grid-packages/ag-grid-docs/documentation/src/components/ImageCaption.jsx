@@ -1,7 +1,8 @@
 import classnames from 'classnames';
 import React from 'react';
 import Gif from './Gif';
-import styles from './ImageCaption.module.scss';
+import { useGlobalContext } from './GlobalContext';
+import styles from '@design-system/modules/ImageCaption.module.scss';
 import { getImage, useImageFileNodes } from './use-image-file-nodes';
 
 /**
@@ -20,25 +21,12 @@ const ImageCaption = ({
     maxwidth: maxWidth,
     minwidth: minWidth,
     width,
+    toggledarkmode: toggleDarkMode,
+    filterdarkmode: filterDarkMode,
+    auto,
 }) => {
     const { fluidImages, images } = useImageFileNodes();
-
-    let imgSrc;
-    const fluidImage = getImage(fluidImages, pageName, src);
-
-    if (fluidImage) {
-        imgSrc = fluidImage.childImageSharp.gatsbyImageData.images.fallback.src;
-    } else {
-        const image = getImage(images, pageName, src);
-
-        if (image) {
-            imgSrc = image.publicURL;
-        }
-    }
-
-    if (!imgSrc) {
-        throw new Error(`Could not find requested image: ${src}`);
-    }
+    const { darkMode } = useGlobalContext();
 
     const style = {};
 
@@ -65,23 +53,51 @@ const ImageCaption = ({
         </div>
     );
 
+    if (toggleDarkMode) {
+        const splitName = src.split('.');
+        const extension = splitName[splitName.length - 1];
+        src = src.replace(`-dark.${extension}`, `.${extension}`);
+        if (darkMode) {
+            src = src.replace(`.${extension}`, `-dark.${extension}`);
+        }
+    }
+
+    let imgSrc;
+    const fluidImage = getImage(fluidImages, pageName, src);
+
+    if (fluidImage) {
+        imgSrc = fluidImage.childImageSharp.gatsbyImageData.images.fallback.src;
+    } else {
+        const image = getImage(images, pageName, src);
+
+        if (image) {
+            imgSrc = image.publicURL;
+        }
+    }
+
+    if (!imgSrc) {
+        throw new Error(`Could not find requested image: ${src}`);
+    }
+
+
     return (
         <div
             className={classnames(styles.imageCaption, {
                 [styles.centered]: centered,
                 [styles.constrained]: constrained,
+                [styles.darkmodeFilter]: filterDarkMode,
             })}
             style={style}
         >
             {descriptionTop && description}
             {src.endsWith('.gif') ? (
-                <Gif src={src} alt={alt} className={styles.image} wrapped={true} />
+                <Gif src={src} alt={alt} className={styles.image} wrapped={true} toggledarkmode={toggleDarkMode} autoPlay={!!auto} />
             ) : (
                 <img src={imgSrc} className={styles.image} alt={alt} />
             )}
             {!descriptionTop && description}
         </div>
-    );
+    )
 };
 
 export default ImageCaption;

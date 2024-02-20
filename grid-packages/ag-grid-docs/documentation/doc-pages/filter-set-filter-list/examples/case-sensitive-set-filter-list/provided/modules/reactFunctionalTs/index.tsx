@@ -2,20 +2,20 @@
 
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AgGridReact } from '@ag-grid-community/react';
+import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ColDef, FirstDataRenderedEvent, ModuleRegistry } from '@ag-grid-community/core';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 
-import { ColDef, FirstDataRenderedEvent, ICellRendererParams, IFiltersToolPanel, ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule, SetFilterModule, MenuModule, ColumnsToolPanelModule, FiltersToolPanelModule]);
 
-const colourCellRenderer = (props: ICellRendererParams) => {
+const colourCellRenderer = (props: CustomCellRendererProps) => {
     if (!props.value || props.value === '(Select All)') {
         return props.value;
     }
@@ -85,7 +85,6 @@ const GridExample = () => {
             flex: 1,
             minWidth: 225,
             cellRenderer: colourCellRenderer,
-            resizable: true,
             floatingFilter: true,
         }
     }, []);
@@ -100,7 +99,7 @@ const GridExample = () => {
         <div style={containerStyle}>
             <div style={{ "display": "flex", "flexDirection": "column", "height": "100%" }}>
 
-                <div style={gridStyle} className="ag-theme-alpine">
+                <div style={gridStyle} className={/** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
                     <AgGridReact
                         ref={gridRef}
                         rowData={rowData}

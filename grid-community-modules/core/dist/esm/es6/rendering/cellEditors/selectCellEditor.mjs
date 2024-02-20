@@ -19,6 +19,7 @@ export class SelectCellEditor extends PopupComponent {
     }
     init(params) {
         this.focusAfterAttached = params.cellStartedEdit;
+        const { eSelect, valueFormatterService, gridOptionsService } = this;
         const { values, value, eventKey } = params;
         if (missing(values)) {
             console.warn('AG Grid: no values found for select cellEditor');
@@ -28,24 +29,31 @@ export class SelectCellEditor extends PopupComponent {
         let hasValue = false;
         values.forEach((currentValue) => {
             const option = { value: currentValue };
-            const valueFormatted = this.valueFormatterService.formatValue(params.column, null, currentValue);
+            const valueFormatted = valueFormatterService.formatValue(params.column, null, currentValue);
             const valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
             option.text = valueFormattedExits ? valueFormatted : currentValue;
-            this.eSelect.addOption(option);
+            eSelect.addOption(option);
             hasValue = hasValue || value === currentValue;
         });
         if (hasValue) {
-            this.eSelect.setValue(params.value, true);
+            eSelect.setValue(params.value, true);
         }
         else if (params.values.length) {
-            this.eSelect.setValue(params.values[0], true);
+            eSelect.setValue(params.values[0], true);
         }
-        if (params.valueListGap != null) {
-            this.eSelect.setPickerGap(params.valueListGap);
+        const { valueListGap, valueListMaxWidth, valueListMaxHeight } = params;
+        if (valueListGap != null) {
+            eSelect.setPickerGap(valueListGap);
+        }
+        if (valueListMaxHeight != null) {
+            eSelect.setPickerMaxHeight(valueListMaxHeight);
+        }
+        if (valueListMaxWidth != null) {
+            eSelect.setPickerMaxWidth(valueListMaxWidth);
         }
         // we don't want to add this if full row editing, otherwise selecting will stop the
         // full row editing.
-        if (this.gridOptionsService.get('editType') !== 'fullRow') {
+        if (gridOptionsService.get('editType') !== 'fullRow') {
             this.addManagedListener(this.eSelect, AgSelect.EVENT_ITEM_SELECTED, () => params.stopEditing());
         }
     }

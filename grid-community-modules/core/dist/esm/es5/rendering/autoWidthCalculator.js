@@ -83,8 +83,7 @@ var AutoWidthCalculator = /** @class */ (function (_super) {
         return dummyContainerWidth + autoSizePadding;
     };
     AutoWidthCalculator.prototype.getAutoSizePadding = function () {
-        var value = this.gridOptionsService.getNum('autoSizePadding');
-        return value != null && value >= 0 ? value : 20;
+        return this.gridOptionsService.get('autoSizePadding');
     };
     AutoWidthCalculator.prototype.getHeaderCellForColumn = function (column) {
         /* tslint:enable */

@@ -1,7 +1,7 @@
 import { ChartType } from '@ag-grid-community/core';
 import { AgCartesianAxisType } from 'ag-charts-community';
 
-export const ALL_AXIS_TYPES: AgCartesianAxisType[] = ['number', 'category', 'groupedCategory', 'log', 'time'];
+export const ALL_AXIS_TYPES: AgCartesianAxisType[] = ['number', 'category', 'grouped-category', 'log', 'time'];
 
 export function getLegacyAxisType(chartType: ChartType): [AgCartesianAxisType, AgCartesianAxisType] | undefined {
     switch (chartType) {
@@ -10,7 +10,7 @@ export function getLegacyAxisType(chartType: ChartType): [AgCartesianAxisType, A
         case 'normalizedBar':
             return ['number', 'category'];
         case 'groupedBar':
-            return ['number', 'groupedCategory'];
+            return ['number', 'grouped-category'];
         case 'column':
         case 'stackedColumn':
         case 'normalizedColumn':
@@ -21,7 +21,7 @@ export function getLegacyAxisType(chartType: ChartType): [AgCartesianAxisType, A
         case 'histogram':
             return ['category', 'number'];
         case 'groupedColumn':
-            return ['groupedCategory', 'number'];
+            return ['grouped-category', 'number'];
         case 'scatter':
         case 'bubble':
             return ['number', 'number'];

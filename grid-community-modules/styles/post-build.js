@@ -21,12 +21,12 @@ const cssFiles = fs.readdirSync(distFolder)
     .filter(file => file.endsWith(".css"));
 
 // sanity check built files are present
-if (!cssFiles.includes("ag-theme-alpine.css")) {
-    console.error(`ag-theme-alpine.css not present, somehow ${scriptName} has run before the build`);
+if (!cssFiles.includes("ag-theme-quartz.css")) {
+    console.error(`ag-theme-quartz.css not present, somehow ${scriptName} has run before the build`);
     process.exit(1);
 }
-if (!cssFiles.includes("agGridAlpineFont.css")) {
-    console.error(`agGridAlpineFont.css not present, somehow ${scriptName} has run before the build`);
+if (!cssFiles.includes("agGridQuartzFont.css")) {
+    console.error(`agGridQuartzFont.css not present, somehow ${scriptName} has run before the build`);
     process.exit(1);
 }
 

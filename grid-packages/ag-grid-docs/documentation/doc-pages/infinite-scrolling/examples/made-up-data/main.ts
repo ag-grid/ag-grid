@@ -1,4 +1,12 @@
-import { Grid, ColDef, GridOptions, IDatasource, IGetRowsParams, GetRowIdParams } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  ColDef,
+  GridOptions,
+  IDatasource,
+  IGetRowsParams,
+  GetRowIdParams,
+} from '@ag-grid-community/core';
 
 var ALPHABET = 'abcdefghijklmnopqrstuvwxyz'.split('')
 
@@ -8,7 +16,7 @@ function getColumnDefs() {
     { headerName: '#', width: 80, valueGetter: 'node.rowIndex' },
   ]
 
-  ALPHABET.forEach(function (letter) {
+  ALPHABET.forEach((letter) => {
     columnDefs.push({
       headerName: letter.toUpperCase(),
       field: letter,
@@ -18,11 +26,10 @@ function getColumnDefs() {
   return columnDefs
 }
 
+let gridApi: GridApi;
+
 const gridOptions: GridOptions = {
   columnDefs: getColumnDefs(),
-  defaultColDef: {
-    resizable: true,
-  },
   rowModelType: 'infinite',
   rowSelection: 'multiple',
   maxBlocksInCache: 2,
@@ -31,6 +38,9 @@ const gridOptions: GridOptions = {
     return params.data.a
   },
   datasource: getDataSource(100),
+  defaultColDef: {
+    sortable: false,
+  }
 }
 
 function getDataSource(count: number) {
@@ -51,7 +61,7 @@ function getDataSource(count: number) {
       }
 
       // to mimic server call, we reply after a short delay
-      setTimeout(function () {
+      setTimeout(() => {
         // no need to pass the second 'rowCount' parameter as we have already provided it
         params.successCallback(rowsThisPage)
       }, 100)
@@ -63,5 +73,5 @@ function getDataSource(count: number) {
 
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

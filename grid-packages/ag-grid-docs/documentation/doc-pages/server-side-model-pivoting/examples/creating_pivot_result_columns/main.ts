@@ -1,5 +1,11 @@
-import { Grid, ColDef, ColGroupDef, ColumnApi, GridOptions, IServerSideDatasource, IServerSideGetRowsRequest } from '@ag-grid-community/core'
+import {
+  ColDef,
+  ColGroupDef, createGrid, GridApi, GridOptions,
+  IServerSideDatasource,
+  IServerSideGetRowsRequest
+} from '@ag-grid-community/core';
 declare var FakeServer: any;
+let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     { field: 'country', rowGroup: true },
@@ -11,8 +17,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     flex: 1,
     minWidth: 100,
-    resizable: true,
-    sortable: true,
   },
   autoGroupColumnDef: {
     minWidth: 200,
@@ -24,13 +28,12 @@ const gridOptions: GridOptions<IOlympicData> = {
   // enable pivoting
   pivotMode: true,
 
-  animateRows: true,
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
       .then(response => response.json())
@@ -42,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const datasource = getServerSideDatasource(fakeServer)
 
         // register the datasource with the grid
-        gridOptions.api!.setServerSideDatasource(datasource)
+        gridApi!.setGridOption('serverSideDatasource', datasource)
       })
 })
 
@@ -56,7 +59,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
       const response = server.getData(request)
 
       // add pivot results cols to the grid
-      addPivotResultCols(request, response, params.columnApi)
+      addPivotResultCols(request, response, params.api)
 
       // simulating real server call with a 500ms delay
       setTimeout( () => {
@@ -68,12 +71,12 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
         }
       }, 500)
     },
-  }
+  };
 }
 
-function addPivotResultCols(request: IServerSideGetRowsRequest, response: any, columnApi: ColumnApi) {
+function addPivotResultCols(request: IServerSideGetRowsRequest, response: any, api: GridApi) {
   // check if pivot colDefs already exist
-  const existingPivotColDefs = columnApi.getPivotResultColumns()
+  const existingPivotColDefs = api.getPivotResultColumns()
   if (existingPivotColDefs && existingPivotColDefs.length > 0) {
     return
   }
@@ -82,7 +85,7 @@ function addPivotResultCols(request: IServerSideGetRowsRequest, response: any, c
   const pivotResultColumns = createPivotResultColumns(request, response.pivotFields)
 
   // supply pivot result columns to the grid
-  columnApi.setPivotResultColumns(pivotResultColumns)
+  api.setPivotResultColumns(pivotResultColumns)
 }
 
 function addColDef(colId: string, parts: string[], res: (ColDef | ColGroupDef)[], request: IServerSideGetRowsRequest): (ColDef | ColGroupDef)[] {

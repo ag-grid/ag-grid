@@ -33,13 +33,17 @@ export var HeaderNavigationDirection;
 var HeaderNavigationService = /** @class */ (function (_super) {
     __extends(HeaderNavigationService, _super);
     function HeaderNavigationService() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.currentHeaderRowWithoutSpan = -1;
+        return _this;
     }
     HeaderNavigationService.prototype.postConstruct = function () {
         var _this = this;
         this.ctrlsService.whenReady(function (p) {
             _this.gridBodyCon = p.gridBodyCtrl;
         });
+        var eDocument = this.gridOptionsService.getDocument();
+        this.addManagedListener(eDocument, 'mousedown', function () { return _this.setCurrentHeaderRowWithoutSpan(-1); });
     };
     HeaderNavigationService.prototype.getHeaderRowCount = function () {
         var centerHeaderContainer = this.ctrlsService.getHeaderRowContainerCtrl();
@@ -61,7 +65,7 @@ var HeaderNavigationService = /** @class */ (function (_super) {
         var isUp = direction === HeaderNavigationDirection.UP;
         var _a = isUp
             ? this.headerPositionUtils.getColumnVisibleParent(column, headerRowIndex)
-            : this.headerPositionUtils.getColumnVisibleChild(column, headerRowIndex), nextRow = _a.nextRow, nextFocusColumn = _a.nextFocusColumn;
+            : this.headerPositionUtils.getColumnVisibleChild(column, headerRowIndex), nextRow = _a.headerRowIndex, nextFocusColumn = _a.column, headerRowIndexWithoutSpan = _a.headerRowIndexWithoutSpan;
         var skipColumn = false;
         if (nextRow < 0) {
             nextRow = 0;
@@ -70,6 +74,10 @@ var HeaderNavigationService = /** @class */ (function (_super) {
         }
         if (nextRow >= rowLen) {
             nextRow = -1; // -1 indicates the focus should move to grid rows.
+            this.setCurrentHeaderRowWithoutSpan(-1);
+        }
+        else if (headerRowIndexWithoutSpan !== undefined) {
+            this.currentHeaderRowWithoutSpan = headerRowIndexWithoutSpan;
         }
         if (!skipColumn && !nextFocusColumn) {
             return false;
@@ -80,6 +88,9 @@ var HeaderNavigationService = /** @class */ (function (_super) {
             event: event
         });
     };
+    HeaderNavigationService.prototype.setCurrentHeaderRowWithoutSpan = function (row) {
+        this.currentHeaderRowWithoutSpan = row;
+    };
     /*
      * This method navigates grid header horizontally
      * @return {boolean} true to preventDefault on the event that caused this navigation.
@@ -88,10 +99,16 @@ var HeaderNavigationService = /** @class */ (function (_super) {
         if (fromTab === void 0) { fromTab = false; }
         var focusedHeader = this.focusService.getFocusedHeader();
         var isLeft = direction === HeaderNavigationDirection.LEFT;
-        var isRtl = this.gridOptionsService.is('enableRtl');
+        var isRtl = this.gridOptionsService.get('enableRtl');
         var nextHeader;
         var normalisedDirection;
         // either navigating to the left or isRtl (cannot be both)
+        if (this.currentHeaderRowWithoutSpan !== -1) {
+            focusedHeader.headerRowIndex = this.currentHeaderRowWithoutSpan;
+        }
+        else {
+            this.currentHeaderRowWithoutSpan = focusedHeader.headerRowIndex;
+        }
         if (isLeft !== isRtl) {
             normalisedDirection = 'Before';
             nextHeader = this.headerPositionUtils.findHeader(focusedHeader, normalisedDirection);
@@ -118,15 +135,26 @@ var HeaderNavigationService = /** @class */ (function (_super) {
         if (direction === 'Before') {
             if (currentIndex > 0) {
                 nextRowIndex = currentIndex - 1;
+                this.currentHeaderRowWithoutSpan -= 1;
                 nextPosition = this.headerPositionUtils.findColAtEdgeForHeaderRow(nextRowIndex, 'end');
             }
         }
         else {
             nextRowIndex = currentIndex + 1;
+            if (this.currentHeaderRowWithoutSpan < this.getHeaderRowCount()) {
+                this.currentHeaderRowWithoutSpan += 1;
+            }
+            else {
+                this.setCurrentHeaderRowWithoutSpan(-1);
+            }
             nextPosition = this.headerPositionUtils.findColAtEdgeForHeaderRow(nextRowIndex, 'start');
         }
+        if (!nextPosition) {
+            return false;
+        }
+        var _a = this.headerPositionUtils.getHeaderIndexToFocus(nextPosition.column, nextPosition === null || nextPosition === void 0 ? void 0 : nextPosition.headerRowIndex), column = _a.column, headerRowIndex = _a.headerRowIndex;
         return this.focusService.focusHeaderPosition({
-            headerPosition: nextPosition,
+            headerPosition: { column: column, headerRowIndex: headerRowIndex },
             direction: direction,
             fromTab: true,
             allowUserOverride: true,

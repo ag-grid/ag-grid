@@ -45,13 +45,20 @@ var AggregationComp = /** @class */ (function (_super) {
     };
     AggregationComp.prototype.isValidRowModel = function () {
         // this component is only really useful with client or server side rowmodels
-        var rowModelType = this.gridApi.getModel().getType();
+        var rowModelType = this.gridApi.__getModel().getType();
         return rowModelType === 'clientSide' || rowModelType === 'serverSide';
     };
-    AggregationComp.prototype.init = function () {
+    AggregationComp.prototype.init = function (params) {
+        this.params = params;
+    };
+    AggregationComp.prototype.refresh = function (params) {
+        this.params = params;
+        this.onRangeSelectionChanged();
+        return true;
     };
     AggregationComp.prototype.setAggregationComponentValue = function (aggFuncName, value, visible) {
-        var statusBarValueComponent = this.getAggregationValueComponent(aggFuncName);
+        var _a;
+        var statusBarValueComponent = this.getAllowedAggregationValueComponent(aggFuncName);
         if (_.exists(statusBarValueComponent) && statusBarValueComponent) {
             var localeTextFunc = this.localeService.getLocaleTextFunc();
             var thousandSeparator = localeTextFunc('thousandSeparator', ',');
@@ -59,31 +66,26 @@ var AggregationComp = /** @class */ (function (_super) {
             statusBarValueComponent.setValue(_.formatNumberTwoDecimalPlacesAndCommas(value, thousandSeparator, decimalSeparator));
             statusBarValueComponent.setDisplayed(visible);
         }
+        else {
+            // might have previously been visible, so hide now
+            (_a = this.getAggregationValueComponent(aggFuncName)) === null || _a === void 0 ? void 0 : _a.setDisplayed(false);
+        }
     };
-    AggregationComp.prototype.getAggregationValueComponent = function (aggFuncName) {
-        // converts user supplied agg name to our reference - eg: sum => sumAggregationComp
-        var refComponentName = aggFuncName + "AggregationComp";
+    AggregationComp.prototype.getAllowedAggregationValueComponent = function (aggFuncName) {
         // if the user has specified the agAggregationPanelComp but no aggFuncs we show the all
         // if the user has specified the agAggregationPanelComp and aggFuncs, then we only show the aggFuncs listed
-        var statusBarValueComponent = null;
-        var statusBar = this.gridOptionsService.get('statusBar');
-        var aggregationPanelConfig = _.exists(statusBar) && statusBar ? statusBar.statusPanels.find(function (panel) { return panel.statusPanel === 'agAggregationComponent'; }) : null;
-        if (_.exists(aggregationPanelConfig) && aggregationPanelConfig) {
-            // a little defensive here - if no statusPanelParams show it, if componentParams we also expect aggFuncs
-            if (!_.exists(aggregationPanelConfig.statusPanelParams) ||
-                (_.exists(aggregationPanelConfig.statusPanelParams) &&
-                    _.exists(aggregationPanelConfig.statusPanelParams.aggFuncs) &&
-                    _.exists(aggregationPanelConfig.statusPanelParams.aggFuncs.find(function (func) { return func === aggFuncName; })))) {
-                statusBarValueComponent = this[refComponentName];
-            }
-        }
-        else {
-            // components not specified - assume we can show this component
-            statusBarValueComponent = this[refComponentName];
+        var aggFuncs = this.params.aggFuncs;
+        if (!aggFuncs || aggFuncs.includes(aggFuncName)) {
+            return this.getAggregationValueComponent(aggFuncName);
         }
         // either we can't find it (which would indicate a typo or similar user side), or the user has deliberately
         // not listed the component in aggFuncs
-        return statusBarValueComponent;
+        return null;
+    };
+    AggregationComp.prototype.getAggregationValueComponent = function (aggFuncName) {
+        // converts user supplied agg name to our reference - eg: sum => sumAggregationComp
+        var refComponentName = "".concat(aggFuncName, "AggregationComp");
+        return this[refComponentName];
     };
     AggregationComp.prototype.onRangeSelectionChanged = function () {
         var _this = this;

@@ -12,12 +12,17 @@ class NoRowsOverlayComponent extends component_1.Component {
         super.destroy();
     }
     init(params) {
-        var _a;
-        const template = (_a = this.gridOptionsService.get('overlayNoRowsTemplate')) !== null && _a !== void 0 ? _a : NoRowsOverlayComponent.DEFAULT_NO_ROWS_TEMPLATE;
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
-        const localisedTemplate = template.replace('[NO_ROWS_TO_SHOW]', localeTextFunc('noRowsToShow', 'No Rows To Show'));
-        this.setTemplate(localisedTemplate);
+        const customTemplate = this.gridOptionsService.get('overlayNoRowsTemplate');
+        this.setTemplate(customTemplate !== null && customTemplate !== void 0 ? customTemplate : NoRowsOverlayComponent.DEFAULT_NO_ROWS_TEMPLATE);
+        if (!customTemplate) {
+            const localeTextFunc = this.localeService.getLocaleTextFunc();
+            // setTimeout is used because some screen readers only announce `aria-live` text when
+            // there is a "text change", so we force a change from empty.
+            setTimeout(() => {
+                this.getGui().textContent = localeTextFunc('noRowsToShow', 'No Rows To Show');
+            });
+        }
     }
 }
 exports.NoRowsOverlayComponent = NoRowsOverlayComponent;
-NoRowsOverlayComponent.DEFAULT_NO_ROWS_TEMPLATE = '<span class="ag-overlay-no-rows-center">[NO_ROWS_TO_SHOW]</span>';
+NoRowsOverlayComponent.DEFAULT_NO_ROWS_TEMPLATE = `<span class="ag-overlay-no-rows-center"></span>`;

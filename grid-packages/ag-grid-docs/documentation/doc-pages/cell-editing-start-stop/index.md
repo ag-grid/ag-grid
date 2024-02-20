@@ -8,7 +8,7 @@ This page discusses the different ways in which Cell Editing can be started and 
 
 Assuming `editable=true` or `editable` has a callback that returns `true` for the Column Definition, editing will start upon any of the following:
 
-- **Edit Key Pressed**: One of the following is pressed: <kbd>Enter</kbd>, <kbd>F2</kbd>.
+- **Edit Key Pressed**: One of the following is pressed: <kbd>↵ Enter</kbd>, <kbd>F2</kbd>.
 - **Backspace**: The default editor will start and clear the contents of the cell if <kbd>Backspace</kbd> is pressed on Windows. To mimic this behaviour on MacOS, use the `enableCellEditingOnBackspace=true` grid option.
 - **Printable Key Pressed**: Any of the following characters are pressed: `abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!"£$%^&amp;*()_+-=[];\'#,./\|<>?:@~{}`<br/> The default editor places this character into the edit field so that the user experience is they are typing into the cell.
 - **Mouse Double Click**: If the mouse is double-clicked. There is a grid property `singleClickEdit` that will allow single-click to start editing instead of double-click. Another property `suppressClickEdit` will prevent both single-click and double-click from starting the edit; use this if you only want to have your own way of starting editing, such as clicking a button in your custom cell renderer.
@@ -20,9 +20,9 @@ The grid will stop editing when any of the following happen:
 
 - **Callback stopEditing**: The callback `stopEditing` (from the params above) gets called by the editor. This is how your cell editor informs the grid to stop editing.
 - **Other Cell Focus**: If focus in the grid goes to another cell, the editing will stop.
-- **Enter Key Down**: If the grid receives an <kbd>Enter</kbd> key press event on the cell. If you do **not** want to stop editing when <kbd>Enter</kbd> is pressed, then listen for the event and stop propagation so the grid does not act on the event.
-- **Escape Key Down**: Similar to <kbd>Enter</kbd>, if <kbd>Esc</kbd> key is pressed, editing will stop. Unlike <kbd>Enter</kbd>, the <kbd>Esc</kbd> action will discard changes rather than taking the new value.
-- **Tab Key Down**: Editing will stop, accepting changes, and editing will move to the next cell, or the previous cell if <kbd>Shift</kbd> is also pressed.
+- **Enter Key Down**: If the grid receives an <kbd>↵ Enter</kbd> key press event on the cell. If you do **not** want to stop editing when <kbd>↵ Enter</kbd> is pressed, then listen for the event and stop propagation so the grid does not act on the event.
+- **Escape Key Down**: Similar to <kbd>↵ Enter</kbd>, if <kbd>⎋ Esc</kbd> key is pressed, editing will stop. Unlike <kbd>↵ Enter</kbd>, the <kbd>⎋ Esc</kbd> action will discard changes rather than taking the new value.
+- **Tab Key Down**: Editing will stop, accepting changes, and editing will move to the next cell, or the previous cell if <kbd>⇧ Shift</kbd> is also pressed.
 - **Popup Editor Closed**: If using popup editor, the popup is configured to close if you click outside the editor. Closing the popup triggers the grid to stop editing.
 - **gridApi.stopEditing()**: If you call `stopEditing()` on the grid API.
 
@@ -34,7 +34,7 @@ The following events are fired when editing is started and stopped.
 
 ## Tab Navigation
 
-While editing, if you hit <kbd>Tab</kbd>, the editing will stop for the current cell and start on the next cell. If you hold down <kbd>Shift</kbd>+<kbd>Tab</kbd>, the same will happen except the previous cell will start editing rather than the next. This is in line with editing data in Excel.
+While editing, if you hit <kbd>⇥ Tab</kbd>, the editing will stop for the current cell and start on the next cell. If you hold down <kbd>⇧ Shift</kbd>+<kbd>⇥ Tab</kbd>, the same will happen except the previous cell will start editing rather than the next. This is in line with editing data in Excel.
 
 The next and previous cells can also be navigated using the API functions `api.tabToNextCell()` and `api.tabToPreviousCell()`. Both of these methods will return `true` if the navigation was successful, otherwise `false`.
 
@@ -53,16 +53,16 @@ Below is a code example of using the editing API methods.
 
 <snippet>
 | // start editing country cell on first row
-| gridOptions.api.startEditingCell({
+| api.startEditingCell({
 |     rowIndex: 0,
 |     colKey: 'country'
 | });
 | 
 | // stop editing
-| gridOptions.api.stopEditing();
+| api.stopEditing();
 | 
 | // print details of editing cell
-| const cellDefs = gridOptions.api.getEditingCells();
+| const cellDefs = api.getEditingCells();
 | cellDefs.forEach(cellDef => {
 |     console.log(cellDef.rowIndex);
 |     console.log(cellDef.column.getId());
@@ -92,14 +92,14 @@ Finally, the example also demonstrates querying which cell is editing:
 
 ## Enter Key Navigation
 
-By default pressing <kbd>Enter</kbd> will start editing on a cell, or stop editing on an editing cell. It will not navigate to the cell below.
+By default pressing <kbd>↵ Enter</kbd> will start editing on a cell, or stop editing on an editing cell. It will not navigate to the cell below.
 
 To allow consistency with Excel the grid has the following properties:
 
-- `enterNavigatesVertically`: Set to `true` to have <kbd>Enter</kbd> key move focus to the cell below if not editing. The default is <kbd>Enter</kbd> key starts editing the currently focused cell.
-- `enterNavigatesVerticallyAfterEdit:` Set to `true` to have <kbd>Enter</kbd> key move focus to the cell below after <kbd>Enter</kbd> is pressed while editing. The default is editing will stop and focus will remain on the editing cell.
+- `enterNavigatesVertically`: Set to `true` to have <kbd>↵ Enter</kbd> key move focus to the cell below if not editing. The default is <kbd>↵ Enter</kbd> key starts editing the currently focused cell.
+- `enterNavigatesVerticallyAfterEdit:` Set to `true` to have <kbd>↵ Enter</kbd> key move focus to the cell below after <kbd>↵ Enter</kbd> is pressed while editing. The default is editing will stop and focus will remain on the editing cell.
 
-The example below demonstrates the focus moving down when <kbd>Enter</kbd> is pressed.
+The example below demonstrates the focus moving down when <kbd>↵ Enter</kbd> is pressed.
 
 <grid-example title='Enter Key Navigation' name='enter-key-navigation' type='generated' options='{ "exampleHeight": 555 }'></grid-example>
 

@@ -8,7 +8,7 @@ class MiniColumn extends miniChartWithAxes_1.MiniChartWithAxes {
         super(container, "groupedColumnTooltip");
         this.columnData = [2, 3, 4];
         const { root, columnData, size, padding } = this;
-        this.columns = miniChartHelpers_1.createColumnRects({
+        this.columns = (0, miniChartHelpers_1.createColumnRects)({
             stacked: false,
             root,
             data: columnData,

@@ -1,52 +1,50 @@
 import {
     ChartMenuOptions,
-    ColDef,
-    CreateRangeChartParams,
+    createGrid,
     FirstDataRenderedEvent,
-    Grid,
-    GridOptions
+    GridApi,
+    GridOptions,
+    GridReadyEvent
 } from '@ag-grid-community/core';
-import { getData } from "./data";
+import {getData} from "./data";
 
-const columnDefs: ColDef[] = [
-    { field: 'country', width: 150, chartDataType: 'category' },
-    { field: 'gold', chartDataType: 'series' },
-    { field: 'silver', chartDataType: 'series' },
-    { field: 'bronze', chartDataType: 'series' },
-]
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
-    defaultColDef: {
-        flex: 1,
-    },
-    columnDefs: columnDefs,
-    rowData: getData(),
-    onFirstDataRendered: onFirstDataRendered,
-    popupParent: document.body,
+    columnDefs: [
+        {field: 'country', width: 150, chartDataType: 'category'},
+        {field: 'gold', chartDataType: 'series'},
+        {field: 'silver', chartDataType: 'series'},
+        {field: 'bronze', chartDataType: 'series'},
+    ],
+    defaultColDef: {flex: 1},
     enableRangeSelection: true,
+    popupParent: document.body,
     enableCharts: true,
-    getChartToolbarItems: getChartToolbarItems,
-}
+    getChartToolbarItems,
+    onGridReady : (params: GridReadyEvent) => {
+    getData().then(rowData => params.api.setGridOption('rowData', rowData));
+  },
+    onFirstDataRendered,
+};
 
 function getChartToolbarItems(): ChartMenuOptions[] {
-    return ['chartDownload']
+    return ['chartDownload'];
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-    const createRangeChartParams: CreateRangeChartParams = {
+    params.api.createRangeChart({
         cellRange: {
             rowStartIndex: 0,
             rowEndIndex: 4,
             columns: ['country', 'gold', 'silver', 'bronze'],
         },
         chartType: 'groupedColumn'
-    }
-
-    params.api.createRangeChart(createRangeChartParams)
+    });
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-    new Grid(gridDiv, gridOptions)
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+    gridApi = createGrid(gridDiv, gridOptions);
 })

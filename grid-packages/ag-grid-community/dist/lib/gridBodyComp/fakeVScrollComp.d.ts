@@ -6,5 +6,5 @@ export declare class FakeVScrollComp extends AbstractFakeScrollComp {
     protected setScrollVisible(): void;
     private onRowContainerHeightChanged;
     getScrollPosition(): number;
-    setScrollPosition(value: number): void;
+    setScrollPosition(value: number, force?: boolean): void;
 }

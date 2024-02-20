@@ -23,10 +23,12 @@ import { Autowired, Component, PostConstruct, RefSelector, } from "@ag-grid-comm
 import { getMaxValue } from "../formatPanel";
 var ShadowPanel = /** @class */ (function (_super) {
     __extends(ShadowPanel, _super);
-    function ShadowPanel(chartOptionsService, getSelectedSeries) {
+    function ShadowPanel(chartOptionsService, getSelectedSeries, propertyKey) {
+        if (propertyKey === void 0) { propertyKey = "shadow"; }
         var _this = _super.call(this) || this;
         _this.chartOptionsService = chartOptionsService;
         _this.getSelectedSeries = getSelectedSeries;
+        _this.propertyKey = propertyKey;
         return _this;
     }
     ShadowPanel.prototype.init = function () {
@@ -43,25 +45,27 @@ var ShadowPanel = /** @class */ (function (_super) {
     };
     ShadowPanel.prototype.initSeriesShadow = function () {
         var _this = this;
+        // Determine the path within the series options object to get/set the individual shadow options
+        var propertyNamespace = this.propertyKey;
         this.shadowGroup
             .setTitle(this.chartTranslationService.translate("shadow"))
-            .setEnabled(this.chartOptionsService.getSeriesOption("shadow.enabled", this.getSelectedSeries()))
+            .setEnabled(this.chartOptionsService.getSeriesOption("".concat(propertyNamespace, ".enabled"), this.getSelectedSeries()))
             .hideOpenCloseIcons(true)
             .hideEnabledCheckbox(false)
-            .onEnableChange(function (newValue) { return _this.chartOptionsService.setSeriesOption("shadow.enabled", newValue, _this.getSelectedSeries()); });
+            .onEnableChange(function (newValue) { return _this.chartOptionsService.setSeriesOption("".concat(propertyNamespace, ".enabled"), newValue, _this.getSelectedSeries()); });
         this.shadowColorPicker
             .setLabel(this.chartTranslationService.translate("color"))
             .setLabelWidth("flex")
-            .setInputWidth(45)
-            .setValue(this.chartOptionsService.getSeriesOption("shadow.color", this.getSelectedSeries()))
-            .onValueChange(function (newValue) { return _this.chartOptionsService.setSeriesOption("shadow.color", newValue, _this.getSelectedSeries()); });
+            .setInputWidth('flex')
+            .setValue(this.chartOptionsService.getSeriesOption("".concat(propertyNamespace, ".color"), this.getSelectedSeries()))
+            .onValueChange(function (newValue) { return _this.chartOptionsService.setSeriesOption("".concat(propertyNamespace, ".color"), newValue, _this.getSelectedSeries()); });
         var initInput = function (input, property, minValue, defaultMaxValue) {
-            var currentValue = _this.chartOptionsService.getSeriesOption("shadow." + property, _this.getSelectedSeries());
+            var currentValue = _this.chartOptionsService.getSeriesOption("".concat(propertyNamespace, ".").concat(property), _this.getSelectedSeries());
             input.setLabel(_this.chartTranslationService.translate(property))
                 .setMinValue(minValue)
                 .setMaxValue(getMaxValue(currentValue, defaultMaxValue))
-                .setValue("" + currentValue)
-                .onValueChange(function (newValue) { return _this.chartOptionsService.setSeriesOption("shadow." + property, newValue, _this.getSelectedSeries()); });
+                .setValue("".concat(currentValue))
+                .onValueChange(function (newValue) { return _this.chartOptionsService.setSeriesOption("".concat(propertyNamespace, ".").concat(property), newValue, _this.getSelectedSeries()); });
         };
         initInput(this.shadowBlurSlider, "blur", 0, 20);
         initInput(this.shadowXOffsetSlider, "xOffset", -10, 10);

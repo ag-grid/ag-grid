@@ -29,9 +29,6 @@ export class ToolPanelColumnGroupComp extends Component {
         const checkboxInput = this.cbSelect.getInputElement();
         checkboxGui.insertAdjacentElement('afterend', this.eDragHandle);
         checkboxInput.setAttribute('tabindex', '-1');
-        if (_.missing(this.displayName)) {
-            this.displayName = '>>';
-        }
         this.eLabel.innerHTML = this.displayName ? this.displayName : '';
         this.setupExpandContract();
         this.addCssClass('ag-column-select-indent-' + this.columnDept);
@@ -91,7 +88,7 @@ export class ToolPanelColumnGroupComp extends Component {
     }
     onContextMenu(e) {
         const { columnGroup, gridOptionsService } = this;
-        if (gridOptionsService.is('functionsReadOnly')) {
+        if (gridOptionsService.get('functionsReadOnly')) {
             return;
         }
         const contextMenu = this.createBean(new ToolPanelContextMenu(columnGroup, e, this.focusWrapper));
@@ -114,14 +111,15 @@ export class ToolPanelColumnGroupComp extends Component {
             _.setDisplayed(this.eDragHandle, false);
             return;
         }
-        const hideColumnOnExit = !this.gridOptionsService.is('suppressDragLeaveHidesColumns');
+        let hideColumnOnExit = !this.gridOptionsService.get('suppressDragLeaveHidesColumns');
         const dragSource = {
             type: DragSourceType.ToolPanel,
             eElement: this.eDragHandle,
             dragItemName: this.displayName,
-            defaultIconName: hideColumnOnExit ? DragAndDropService.ICON_HIDE : DragAndDropService.ICON_NOT_ALLOWED,
+            getDefaultIconName: () => hideColumnOnExit ? DragAndDropService.ICON_HIDE : DragAndDropService.ICON_NOT_ALLOWED,
             getDragItem: () => this.createDragItem(),
             onDragStarted: () => {
+                hideColumnOnExit = !this.gridOptionsService.get('suppressDragLeaveHidesColumns');
                 const event = {
                     type: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START,
                     column: this.columnGroup

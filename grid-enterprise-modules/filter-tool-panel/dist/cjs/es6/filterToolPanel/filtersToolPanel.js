@@ -21,14 +21,12 @@ class FiltersToolPanel extends core_1.Component {
             this.listenerDestroyFuncs = [];
         }
         this.initialised = true;
-        const defaultParams = {
+        const defaultParams = this.gridOptionsService.addGridCommonParams({
             suppressExpandAll: false,
             suppressFilterSearch: false,
-            suppressSyncLayoutWithGrid: false,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-        };
-        this.params = Object.assign(Object.assign(Object.assign({}, defaultParams), params), { context: this.gridOptionsService.context });
+            suppressSyncLayoutWithGrid: false
+        });
+        this.params = Object.assign(Object.assign({}, defaultParams), params);
         this.filtersToolPanelHeaderPanel.init(this.params);
         this.filtersToolPanelListPanel.init(this.params);
         const hideExpand = this.params.suppressExpandAll;
@@ -37,7 +35,7 @@ class FiltersToolPanel extends core_1.Component {
             this.filtersToolPanelHeaderPanel.setDisplayed(false);
         }
         // this is necessary to prevent a memory leak while refreshing the tool panel
-        this.listenerDestroyFuncs.push(this.addManagedListener(this.filtersToolPanelHeaderPanel, 'expandAll', this.onExpandAll.bind(this)), this.addManagedListener(this.filtersToolPanelHeaderPanel, 'collapseAll', this.onCollapseAll.bind(this)), this.addManagedListener(this.filtersToolPanelHeaderPanel, 'searchChanged', this.onSearchChanged.bind(this)), this.addManagedListener(this.filtersToolPanelListPanel, 'groupExpanded', this.onGroupExpanded.bind(this)));
+        this.listenerDestroyFuncs.push(this.addManagedListener(this.filtersToolPanelHeaderPanel, 'expandAll', this.onExpandAll.bind(this)), this.addManagedListener(this.filtersToolPanelHeaderPanel, 'collapseAll', this.onCollapseAll.bind(this)), this.addManagedListener(this.filtersToolPanelHeaderPanel, 'searchChanged', this.onSearchChanged.bind(this)), this.addManagedListener(this.filtersToolPanelListPanel, 'filterExpanded', this.onFilterExpanded.bind(this)), this.addManagedListener(this.filtersToolPanelListPanel, 'groupExpanded', this.onGroupExpanded.bind(this)));
     }
     // lazy initialise the panel
     setVisible(visible) {
@@ -58,8 +56,12 @@ class FiltersToolPanel extends core_1.Component {
     setFilterLayout(colDefs) {
         this.filtersToolPanelListPanel.setFiltersLayout(colDefs);
     }
+    onFilterExpanded() {
+        this.params.onStateUpdated();
+    }
     onGroupExpanded(event) {
         this.filtersToolPanelHeaderPanel.setExpandState(event.state);
+        this.params.onStateUpdated();
     }
     expandFilterGroups(groupIds) {
         this.filtersToolPanelListPanel.expandFilterGroups(true, groupIds);
@@ -76,8 +78,12 @@ class FiltersToolPanel extends core_1.Component {
     syncLayoutWithGrid() {
         this.filtersToolPanelListPanel.syncFilterLayout();
     }
-    refresh() {
-        this.init(this.params);
+    refresh(params) {
+        this.init(params);
+        return true;
+    }
+    getState() {
+        return this.filtersToolPanelListPanel.getExpandedFiltersAndGroups();
     }
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
@@ -90,15 +96,9 @@ FiltersToolPanel.TEMPLATE = `<div class="ag-filter-toolpanel">
             <ag-filters-tool-panel-list ref="filtersToolPanelListPanel"></ag-filters-tool-panel-list>
          </div>`;
 __decorate([
-    core_1.RefSelector('filtersToolPanelHeaderPanel')
+    (0, core_1.RefSelector)('filtersToolPanelHeaderPanel')
 ], FiltersToolPanel.prototype, "filtersToolPanelHeaderPanel", void 0);
 __decorate([
-    core_1.RefSelector('filtersToolPanelListPanel')
+    (0, core_1.RefSelector)('filtersToolPanelListPanel')
 ], FiltersToolPanel.prototype, "filtersToolPanelListPanel", void 0);
-__decorate([
-    core_1.Autowired('gridApi')
-], FiltersToolPanel.prototype, "gridApi", void 0);
-__decorate([
-    core_1.Autowired('columnApi')
-], FiltersToolPanel.prototype, "columnApi", void 0);
 exports.FiltersToolPanel = FiltersToolPanel;

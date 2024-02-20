@@ -50,7 +50,7 @@ var PivotStage = /** @class */ (function (_super) {
         var uniqueValues = this.bucketUpRowNodes(changedPath);
         var uniqueValuesChanged = this.setUniqueValues(uniqueValues);
         var aggregationColumns = this.columnModel.getValueColumns();
-        var aggregationColumnsHash = aggregationColumns.map(function (column) { return column.getId() + "-" + column.getColDef().headerName; }).join('#');
+        var aggregationColumnsHash = aggregationColumns.map(function (column) { return "".concat(column.getId(), "-").concat(column.getColDef().headerName); }).join('#');
         var aggregationFuncsHash = aggregationColumns.map(function (column) { return column.getAggFunc().toString(); }).join('#');
         var aggregationColumnsChanged = this.aggregationColumnsHashLastTime !== aggregationColumnsHash;
         var aggregationFuncsChanged = this.aggregationFuncsHashLastTime !== aggregationFuncsHash;
@@ -59,7 +59,17 @@ var PivotStage = /** @class */ (function (_super) {
         var groupColumnsHash = this.columnModel.getRowGroupColumns().map(function (column) { return column.getId(); }).join('#');
         var groupColumnsChanged = groupColumnsHash !== this.groupColumnsHashLastTime;
         this.groupColumnsHashLastTime = groupColumnsHash;
-        if (uniqueValuesChanged || aggregationColumnsChanged || groupColumnsChanged || aggregationFuncsChanged) {
+        var pivotRowTotals = this.gridOptionsService.get('pivotRowTotals');
+        var pivotColumnGroupTotals = this.gridOptionsService.get('pivotColumnGroupTotals');
+        var suppressExpandablePivotGroups = this.gridOptionsService.get('suppressExpandablePivotGroups');
+        var removePivotHeaderRowWhenSingleValueColumn = this.gridOptionsService.get('removePivotHeaderRowWhenSingleValueColumn');
+        var anyGridOptionsChanged = (pivotRowTotals !== this.pivotRowTotalsLastTime || pivotColumnGroupTotals !== this.pivotColumnGroupTotalsLastTime ||
+            suppressExpandablePivotGroups !== this.suppressExpandablePivotGroupsLastTime || removePivotHeaderRowWhenSingleValueColumn !== this.removePivotHeaderRowWhenSingleValueColumnLastTime);
+        this.pivotRowTotalsLastTime = pivotRowTotals;
+        this.pivotColumnGroupTotalsLastTime = pivotColumnGroupTotals;
+        this.suppressExpandablePivotGroupsLastTime = suppressExpandablePivotGroups;
+        this.removePivotHeaderRowWhenSingleValueColumnLastTime = removePivotHeaderRowWhenSingleValueColumn;
+        if (uniqueValuesChanged || aggregationColumnsChanged || groupColumnsChanged || aggregationFuncsChanged || anyGridOptionsChanged) {
             var _a = this.pivotColDefService.createPivotColumnDefs(this.uniqueValues), pivotColumnGroupDefs = _a.pivotColumnGroupDefs, pivotColumnDefs = _a.pivotColumnDefs;
             this.pivotColumnDefs = pivotColumnDefs;
             this.columnModel.setSecondaryColumns(pivotColumnGroupDefs, "rowModelUpdated");

@@ -40,13 +40,13 @@ var AbstractFakeScrollComp = /** @class */ (function (_super) {
     AbstractFakeScrollComp.prototype.postConstruct = function () {
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
         this.onScrollVisibilityChanged();
-        this.addOrRemoveCssClass('ag-apple-scrollbar', browser_1.isMacOsUserAgent() || browser_1.isIOSUserAgent());
+        this.addOrRemoveCssClass('ag-apple-scrollbar', (0, browser_1.isMacOsUserAgent)() || (0, browser_1.isIOSUserAgent)());
     };
     AbstractFakeScrollComp.prototype.initialiseInvisibleScrollbar = function () {
         if (this.invisibleScrollbar !== undefined) {
             return;
         }
-        this.invisibleScrollbar = browser_1.isInvisibleScrollbar();
+        this.invisibleScrollbar = (0, browser_1.isInvisibleScrollbar)();
         if (this.invisibleScrollbar) {
             this.hideAndShowInvisibleScrollAsNeeded();
             this.addActiveListenerToggles();
@@ -91,7 +91,7 @@ var AbstractFakeScrollComp = /** @class */ (function (_super) {
     AbstractFakeScrollComp.prototype.attemptSettingScrollPosition = function (value) {
         var _this = this;
         var viewport = this.getViewport();
-        function_1.waitUntil(function () { return dom_1.isVisible(viewport); }, function () { return _this.setScrollPosition(value); }, 100);
+        (0, function_1.waitUntil)(function () { return (0, dom_1.isVisible)(viewport); }, function () { return _this.setScrollPosition(value); }, 100);
     };
     AbstractFakeScrollComp.prototype.getViewport = function () {
         return this.eViewport;
@@ -103,19 +103,19 @@ var AbstractFakeScrollComp = /** @class */ (function (_super) {
         this.addManagedListener(this.getViewport(), 'scroll', fn);
     };
     __decorate([
-        componentAnnotations_1.RefSelector('eViewport')
+        (0, componentAnnotations_1.RefSelector)('eViewport')
     ], AbstractFakeScrollComp.prototype, "eViewport", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('eContainer')
+        (0, componentAnnotations_1.RefSelector)('eContainer')
     ], AbstractFakeScrollComp.prototype, "eContainer", void 0);
     __decorate([
-        context_1.Autowired('scrollVisibleService')
+        (0, context_1.Autowired)('scrollVisibleService')
     ], AbstractFakeScrollComp.prototype, "scrollVisibleService", void 0);
     __decorate([
-        context_1.Autowired('ctrlsService')
+        (0, context_1.Autowired)('ctrlsService')
     ], AbstractFakeScrollComp.prototype, "ctrlsService", void 0);
     __decorate([
-        context_1.Autowired('animationFrameService')
+        (0, context_1.Autowired)('animationFrameService')
     ], AbstractFakeScrollComp.prototype, "animationFrameService", void 0);
     return AbstractFakeScrollComp;
 }(component_1.Component));

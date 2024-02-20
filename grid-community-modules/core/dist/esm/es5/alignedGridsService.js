@@ -28,6 +28,8 @@ import { Qualifier } from "./context/context";
 import { Autowired } from "./context/context";
 import { PostConstruct } from "./context/context";
 import { BeanStub } from "./context/beanStub";
+import { GridApi } from "./gridApi";
+import { errorOnce } from "./utils/function";
 var AlignedGridsService = /** @class */ (function (_super) {
     __extends(AlignedGridsService, _super);
     function AlignedGridsService() {
@@ -40,6 +42,42 @@ var AlignedGridsService = /** @class */ (function (_super) {
     }
     AlignedGridsService.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('AlignedGridsService');
+    };
+    AlignedGridsService.prototype.getAlignedGridApis = function () {
+        var _this = this;
+        var _a;
+        var alignedGrids = (_a = this.gridOptionsService.get('alignedGrids')) !== null && _a !== void 0 ? _a : [];
+        var isCallbackConfig = typeof alignedGrids === 'function';
+        if (typeof alignedGrids === 'function') {
+            alignedGrids = alignedGrids();
+        }
+        var seeUrl = function () { return "See ".concat(_this.getFrameworkOverrides().getDocLink('aligned-grids')); };
+        var apis = alignedGrids.map(function (alignedGrid) {
+            var _a;
+            if (!alignedGrid) {
+                errorOnce("alignedGrids contains an undefined option.");
+                if (!isCallbackConfig) {
+                    errorOnce("You may want to configure via a callback to avoid setup race conditions:\n                     \"alignedGrids: () => [linkedGrid]\"");
+                }
+                errorOnce(seeUrl());
+                return;
+            }
+            if (alignedGrid instanceof GridApi) {
+                return alignedGrid;
+            }
+            // Extract the GridApi from a ref or component
+            var refOrComp = alignedGrid;
+            if ('current' in refOrComp) {
+                return (_a = refOrComp.current) === null || _a === void 0 ? void 0 : _a.api;
+            }
+            else {
+                if (!refOrComp.api) {
+                    errorOnce("alignedGrids - No api found on the linked grid. If you are passing gridOptions to alignedGrids since v31 this is no longer valid. ".concat(seeUrl()));
+                }
+                return refOrComp.api;
+            }
+        }).filter(function (api) { return !!api && !api.isDestroyed(); });
+        return apis;
     };
     AlignedGridsService.prototype.init = function () {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.fireColumnEvent.bind(this));
@@ -57,15 +95,10 @@ var AlignedGridsService = /** @class */ (function (_super) {
             return;
         }
         // iterate through the aligned grids, and pass each aligned grid service to the callback
-        var otherGrids = this.gridOptionsService.get('alignedGrids');
-        if (otherGrids) {
-            otherGrids.forEach(function (otherGridOptions) {
-                if (otherGridOptions.api) {
-                    var alignedGridService = otherGridOptions.api.__getAlignedGridService();
-                    callback(alignedGridService);
-                }
-            });
-        }
+        this.getAlignedGridApis().forEach(function (api) {
+            var alignedGridService = api.__getAlignedGridService();
+            callback(alignedGridService);
+        });
     };
     // common logic across all consume methods. very little common logic, however extracting
     // guarantees consistency across the methods.
@@ -143,18 +176,20 @@ var AlignedGridsService = /** @class */ (function (_super) {
         });
     };
     AlignedGridsService.prototype.processGroupOpenedEvent = function (groupOpenedEvent) {
-        // likewise for column group
-        var masterColumnGroup = groupOpenedEvent.columnGroup;
-        var otherColumnGroup = null;
-        if (masterColumnGroup) {
-            var groupId = masterColumnGroup.getGroupId();
-            otherColumnGroup = this.columnModel.getProvidedColumnGroup(groupId);
-        }
-        if (masterColumnGroup && !otherColumnGroup) {
-            return;
-        }
-        this.logger.log('onColumnEvent-> processing ' + groupOpenedEvent + ' expanded = ' + masterColumnGroup.isExpanded());
-        this.columnModel.setColumnGroupOpened(otherColumnGroup, masterColumnGroup.isExpanded(), "alignedGridChanged");
+        var _this = this;
+        groupOpenedEvent.columnGroups.forEach(function (masterGroup) {
+            // likewise for column group
+            var otherColumnGroup = null;
+            if (masterGroup) {
+                var groupId = masterGroup.getGroupId();
+                otherColumnGroup = _this.columnModel.getProvidedColumnGroup(groupId);
+            }
+            if (masterGroup && !otherColumnGroup) {
+                return;
+            }
+            _this.logger.log('onColumnEvent-> processing ' + groupOpenedEvent + ' expanded = ' + masterGroup.isExpanded());
+            _this.columnModel.setColumnGroupOpened(otherColumnGroup, masterGroup.isExpanded(), "alignedGridChanged");
+        });
     };
     AlignedGridsService.prototype.processColumnEvent = function (colEvent) {
         var _this = this;
@@ -181,10 +216,10 @@ var AlignedGridsService = /** @class */ (function (_super) {
                 // so only way to be sure is match the order of all columns using Column State.
                 {
                     var movedEvent = colEvent;
-                    var srcColState = colEvent.columnApi.getColumnState();
+                    var srcColState = colEvent.api.getColumnState();
                     var destColState = srcColState.map(function (s) { return ({ colId: s.colId }); });
                     this.columnModel.applyColumnState({ state: destColState, applyOrder: true }, "alignedGridChanged");
-                    this.logger.log("onColumnEvent-> processing " + colEvent.type + " toIndex = " + movedEvent.toIndex);
+                    this.logger.log("onColumnEvent-> processing ".concat(colEvent.type, " toIndex = ").concat(movedEvent.toIndex));
                 }
                 break;
             case Events.EVENT_COLUMN_VISIBLE:
@@ -193,26 +228,26 @@ var AlignedGridsService = /** @class */ (function (_super) {
                 // so only way to be sure is match the visibility of all columns using Column State.
                 {
                     var visibleEvent = colEvent;
-                    var srcColState = colEvent.columnApi.getColumnState();
+                    var srcColState = colEvent.api.getColumnState();
                     var destColState = srcColState.map(function (s) { return ({ colId: s.colId, hide: s.hide }); });
                     this.columnModel.applyColumnState({ state: destColState }, "alignedGridChanged");
-                    this.logger.log("onColumnEvent-> processing " + colEvent.type + " visible = " + visibleEvent.visible);
+                    this.logger.log("onColumnEvent-> processing ".concat(colEvent.type, " visible = ").concat(visibleEvent.visible));
                 }
                 break;
             case Events.EVENT_COLUMN_PINNED:
                 {
                     var pinnedEvent = colEvent;
-                    var srcColState = colEvent.columnApi.getColumnState();
+                    var srcColState = colEvent.api.getColumnState();
                     var destColState = srcColState.map(function (s) { return ({ colId: s.colId, pinned: s.pinned }); });
                     this.columnModel.applyColumnState({ state: destColState }, "alignedGridChanged");
-                    this.logger.log("onColumnEvent-> processing " + colEvent.type + " pinned = " + pinnedEvent.pinned);
+                    this.logger.log("onColumnEvent-> processing ".concat(colEvent.type, " pinned = ").concat(pinnedEvent.pinned));
                 }
                 break;
             case Events.EVENT_COLUMN_RESIZED:
                 var resizedEvent = colEvent;
                 var columnWidths_1 = {};
                 masterColumns.forEach(function (column) {
-                    _this.logger.log("onColumnEvent-> processing " + colEvent.type + " actualWidth = " + column.getActualWidth());
+                    _this.logger.log("onColumnEvent-> processing ".concat(colEvent.type, " actualWidth = ").concat(column.getActualWidth()));
                     columnWidths_1[column.getId()] = { key: column.getColId(), newWidth: column.getActualWidth() };
                 });
                 // don't set flex columns width
@@ -226,14 +261,9 @@ var AlignedGridsService = /** @class */ (function (_super) {
         }
         var gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         var isVerticalScrollShowing = gridBodyCon.isVerticalScrollShowing();
-        var alignedGrids = this.gridOptionsService.get('alignedGrids');
-        if (alignedGrids) {
-            alignedGrids.forEach(function (grid) {
-                if (grid.api) {
-                    grid.api.setAlwaysShowVerticalScroll(isVerticalScrollShowing);
-                }
-            });
-        }
+        this.getAlignedGridApis().forEach(function (api) {
+            api.setGridOption('alwaysShowVerticalScroll', isVerticalScrollShowing);
+        });
     };
     __decorate([
         Autowired('columnModel')

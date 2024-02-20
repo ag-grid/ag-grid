@@ -1,1 +1,0 @@
-{"version":3,"file":"linearGradient.d.ts","sourceRoot":"","sources":["../../../src/scene/gradient/linearGradient.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,QAAQ,EAAE,MAAM,YAAY,CAAC;AACtC,OAAO,KAAK,EAAE,IAAI,EAAE,MAAM,SAAS,CAAC;AAGpC,qBAAa,cAAe,SAAQ,QAAQ;IACxC,KAAK,SAAK;IAEV,cAAc,CAAC,GAAG,EAAE,wBAAwB,EAAE,IAAI,EAAE,IAAI,GAAG,cAAc,GAAG,MAAM;CAwCrF"}

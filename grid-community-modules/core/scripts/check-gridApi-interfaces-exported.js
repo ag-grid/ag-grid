@@ -4,31 +4,33 @@ function checkGridOptionPropertyKeys() {
     const communityMainFilename = '../../grid-packages/ag-grid-enterprise/src/main.ts';
     const communityMainFileContents = fs.readFileSync(communityMainFilename, 'UTF-8');
     const gridApiContents = fs.readFileSync('./src/ts/gridApi.ts', 'UTF-8');
-    const columnApiContents = fs.readFileSync('./src/ts/columns/columnApi.ts', 'UTF-8');
 
     const matches = [...communityMainFileContents.split('/* COMMUNITY_EXPORTS_START_DO_NOT_DELETE */')[1].matchAll(/(\w)*/g)];
-    let mainExports = [];
+    let mainExports = new Set();
     matches.forEach(m => {
         const split = m[0].split(/\W/).map(i => i.trim()).filter(i => !!i);
-        mainExports = [...mainExports, ...split]
+        split.forEach(s => {
+            mainExports.add(s);
+        });
     })
 
     let publicGridApiTypes = getPublicTypes(gridApiContents);
-    let publicColumnApiTypes = getPublicTypes(columnApiContents);
     let missingPropertyKeys = new Set();
 
-    [...publicGridApiTypes, ...publicColumnApiTypes].forEach(m => {
-        if (!mainExports.includes(m)) {
+    const excludedTypescriptExports = new Set(['Partial', 'Required', 'Readonly', 'Record', 'Pick', 'Omit', 'Exclude', 'Extract', 'NonNullable', 'Uppercase', 'Lowercase', 'Capitalize', 'Uncapitalize', 'Parameters', 'ConstructorParameters', 'ReturnType', 'InstanceType']);
+
+    publicGridApiTypes.forEach(m => {
+        if (!mainExports.has(m) && !excludedTypescriptExports.has(m)) {
             missingPropertyKeys.add(m)
         }
-    })
+    });
 
     if (missingPropertyKeys.size > 0) {
-        console.error('check-grid-api-exports - GridApi / ColumnApi are using types that are not publicly exported. Missing the following types:', [...missingPropertyKeys].join(', '));
+        console.error('check-grid-api-exports - GridApi are using types that are not publicly exported. Missing the following types:', [...missingPropertyKeys].join(', '));
         console.error('If running locally and you have added the missing type be sure to run build in "grid-community-modules/core", "grid-packages/ag-grid-community", "grid-packages/ag-grid-enterprise".')
         return 1;
     }
-    console.log('check-grid-api-exports - GridApi / ColumnApi Passed sanity check for missing types.')
+    console.log('check-grid-api-exports - GridApi Passed sanity check for missing types.')
     return 0;
 }
 
@@ -41,7 +43,7 @@ function getPublicTypes(fileContents) {
     const toIgnore = [
     'TData', 'Blob', '', 'Document', 'Function', 'HTMLElement', 'KeyboardEvent', 'MouseEvent', 'Touch',
     // Some just missed by this script due to use of import * from ./events
-    'OverlayWrapperComponent', 'AgEvent', 'ColumnEventType', 'SelectionEventSourceType', 'FilterChangedEventSourceType'];
+    'AgEvent', 'ColumnEventType', 'SelectionEventSourceType', 'FilterChangedEventSourceType'];
     matchesPublicMethods.forEach(m => {
         const params = m[2].split(/\W/).map(i => i.trim());
         const returnType = m[4].split(/\W/).map(i => i.trim());

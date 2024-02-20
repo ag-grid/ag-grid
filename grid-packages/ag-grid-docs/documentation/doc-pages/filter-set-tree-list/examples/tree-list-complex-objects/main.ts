@@ -1,10 +1,19 @@
-import { Grid, GridOptions, ISetFilterParams, KeyCreatorParams, ValueFormatterParams } from "@ag-grid-community/core";
+import {
+  GridApi,
+  createGrid,
+  GridOptions,
+  ISetFilterParams,
+  KeyCreatorParams,
+  ValueFormatterParams,
+} from "@ag-grid-community/core";
 import { getData } from "./data";
 
 const pathLookup: { [key: string]: string } = getData().reduce((pathMap, row) => {
   pathMap[row.path.key] = row.path.displayValue;
   return pathMap;
 }, {});
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -14,7 +23,6 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     minWidth: 200,
-    resizable: true,
     filter: true,
     floatingFilter: true,
     cellDataType: false,
@@ -36,7 +44,6 @@ const gridOptions: GridOptions = {
     valueFormatter: (params: ValueFormatterParams) => params.value.displayValue
   },
   treeData: true,
-  animateRows: true,
   groupDefaultExpanded: -1,
   getDataPath: data => data.path.key.split('.'),
   rowData: getData(),
@@ -53,5 +60,5 @@ function valueFormatter(params: ValueFormatterParams): string {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

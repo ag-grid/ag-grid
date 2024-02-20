@@ -10,10 +10,9 @@ const {JSDOM} = require('jsdom');
 const algoliasearch = require('algoliasearch');
 const commander = require("commander");
 
-const menu = require('./doc-pages/licensing/menu.json');
+const mainMenu = require('./doc-pages/licensing/menu.json');
 const supportedFrameworks = require('./src/utils/supported-frameworks');
 const convertToFrameworkUrl = require('./src/utils/convert-to-framework-url');
-const puppeteer = require("puppeteer-core");
 
 const options = commander
     .option('-d, --debug <debug>', 'if debug = true (not provided - it\'ll default to true), the script writes the records it would upload into JSON files for inspection', true)
@@ -36,6 +35,81 @@ if (!debug) {
     algoliaClient = algoliasearch(process.env.GATSBY_ALGOLIA_APP_ID, process.env.ALGOLIA_ADMIN_KEY);
 }
 
+/**
+ * Parse API from JSON config files.
+ */
+const parseFileForApi = (details) => {
+    const records = [];
+    const { propertiesFileUrl, breadcrumbSuffix, pagePath } = details;
+
+    const { _config_, ...sections } = require(propertiesFileUrl);
+    if (!_config_) return []; // if no config, wrong type of file.
+    const { codeSrc } = _config_;
+    if (!codeSrc) return []; // if no src, wrong type of file.
+
+    const apiPropertiesSourceFile = require(`./doc-pages/${codeSrc}`);
+
+    // load the defined sections for the API docs
+    Object.entries(sections).forEach(([sectionKey, section]) => {
+        const { meta, ...properties } = section;
+        const sectionDisplayName = meta?.displayName ?? sectionKey; // Formatted section name
+
+        Object.entries(properties).forEach(([propertyKey, property]) => {
+            const { description, more } = property; // more can include a link to a page with more info
+            
+            const data = apiPropertiesSourceFile[propertyKey];
+
+            const breadcrumb = `API > ${breadcrumbSuffix}`;
+            const path = `${pagePath}#reference-${sectionKey}-${propertyKey}`;
+
+            const text = description ?? data.meta.comment;
+            const normalizedText = text.replace(/\[([^\]]+)\][^\)]+\)/g, '$1');
+            records.push({
+                objectID: path,
+                title: breadcrumbSuffix,
+                heading: propertyKey,
+                text: normalizedText,
+                breadcrumb: breadcrumb,
+                path: path,
+                rank: 0,
+            });
+        });
+    });
+    return records;
+};
+
+const allApiRecords = [];
+
+/**
+ * The following code iterates through the doc-pages folder to search for JSON files containing
+ * a _config_.codeSrc property. This is a dumb way to detect the file is parse-able.
+ * The file is then parsed to extract a basic description, title, path and header for algolia.
+ */
+const docPageSourceDirectory = './doc-pages';
+const pageNames = fs.readdirSync(docPageSourceDirectory, { withFileTypes: true });
+pageNames.forEach(page => {
+    if (page.isDirectory()) {
+        const pagePath = `${docPageSourceDirectory}/${page.name}`;
+        const files = fs.readdirSync(pagePath);
+        const configFiles = files.filter(file => file.endsWith('.json') && !file.endsWith('.AUTO.json'));
+        
+        configFiles.forEach(file => {
+            const pageName = page.name.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+            const config = {
+                pagePath: `/${page.name}/`,
+                propertiesFileUrl: `${pagePath}/${file}`,
+                breadcrumbSuffix: pageName,
+            };
+            allApiRecords.push(...parseFileForApi(config));
+        });
+    }
+});
+
+
+/**
+ * The following code iterates through the doc-pages folder to search for HTML files and parses them for algolia links.
+ */
+
 const disallowedTags = ['style', 'pre'];
 const disallowedClasses = ['gatsby-highlight', 'code-tab'];
 
@@ -55,39 +129,33 @@ const extractTitle = titleTag => {
     let title = titleTag.firstChild.textContent;
 
     let sibling = titleTag.firstChild.nextSibling;
-    while(sibling) {
+    while (sibling) {
         title += ` ${sibling.textContent}`;
         sibling = sibling.nextSibling;
     }
 
-    return title;
+    return title
+        ? title
+            .replace('React Data Grid', '')
+            .replace('JavaScript Data Grid', '')
+            .replace('Angular Data Grid', '')
+            .replace('Vue Data Grid', '')
+            .replace('ReactAngularVueJavascript', '')
+        : title;
 }
 
-const createRecords = async (browser, url, framework, breadcrumb, rank, loadFromAgGrid) => {
+const createRecords = async (url, framework, breadcrumb, rank) => {
     const records = [];
     const path = convertToFrameworkUrl(url, framework);
 
     let dom = null;
-    if (loadFromAgGrid) {
-        const prodUrl = `https://www.ag-grid.com${path}`;
+    const filePath = `public${path}index.html`;
 
-        const page = await browser.newPage();
-        await page.setViewport({width: 800, height: 570});
-
-        await page.goto(prodUrl, {waitUntil: 'networkidle2'});
-        await page.waitForFunction(() => document.querySelectorAll("[id^='reference-']").length > 5)
-
-        const content = await page.content();
-        dom = await new JSDOM(content);
-    } else {
-        const filePath = `public${path}index.html`;
-
-        if (!fs.existsSync(filePath)) {
-            return records;
-        }
-
-        dom = await JSDOM.fromFile(filePath);
+    if (!fs.existsSync(filePath)) {
+        return records;
     }
+
+    dom = await JSDOM.fromFile(filePath);
 
     let key = undefined;
     let heading = undefined;
@@ -191,32 +259,20 @@ const createRecords = async (browser, url, framework, breadcrumb, rank, loadFrom
     return records;
 };
 
-// we read these pages from ag-grid.com and parse them as these pages no longer have
-// the page content statically - they're loaded via JS
-// we'll run this after we deploy to ag-grid.com so the indices will be accurate
-const readFromAgGrid = url => url === '/grid-options/' ||
-    url === '/grid-api/' ||
-    url === '/grid-events/' ||
-    url === '/row-object/' ||
-    url === '/column-properties/' ||
-    url === '/column-api/' ||
-    url === '/column-object/';
-
 const processIndexForFramework = async framework => {
     let rank = 10000; // using this rank ensures that pages that are earlier in the menu will rank higher in results
-    const records = [];
     const indexName = `${indexNamePrefix}_${framework}`;
 
-    const exclusions = ["charts-api-themes", "charts-api", "charts-api-explorer"];
-    const filter = (item) => {
-        // Exclude enterprise charts until launch.
-        return item.enterprise === 'charts';
-    };
+    const prefix = `/${framework}-data-grid`;
+    /**
+     * Adjust API urls to have framework prefix, doc urls will be added to this as they are scraped
+     */
+    const records = allApiRecords.map(record => ({
+        ...record,
+        path: `${prefix}${record.path}`,
+    }));
 
-    const browser = await puppeteer.launch({
-        executablePath: indexNamePrefix === 'ag-grid-dev' ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' : '/usr/bin/google-chrome',
-        ignoreHTTPSErrors: true
-    });
+    const exclusions = ["charts-api-themes", "charts-api", "charts-api-explorer"];
 
     console.log(`Generating records for ${indexName}...`);
 
@@ -228,13 +284,11 @@ const processIndexForFramework = async framework => {
         const breadcrumbPrefix = prefix ? `${prefix} > ` : '';
 
         for (const item of items) {
-            if (filter(item)) continue;
-
             const breadcrumb = breadcrumbPrefix + item.title;
             console.log(`=== Walking ${breadcrumb}...`);
 
             if (item.url && !exclusions.some(exclusion => exclusion === item.url.replace(/\//g, ''))) {
-                const newRecords = await createRecords(browser, item.url, framework, breadcrumb, rank, readFromAgGrid(item.url));
+                const newRecords = await createRecords(item.url, framework, breadcrumb, rank);
                 console.log(`Created ${newRecords.length} new records`)
                 records.push(...newRecords);
 
@@ -245,9 +299,7 @@ const processIndexForFramework = async framework => {
         }
     };
 
-    for (const item of menu) {
-        if (filter(item)) continue;
-
+    for (const item of mainMenu) {
         await iterateItems(item.items);
     }
 
@@ -262,13 +314,13 @@ const processIndexForFramework = async framework => {
         const index = algoliaClient.initIndex(indexName);
 
         index.setSettings({
-            searchableAttributes: ['title', 'heading', 'subHeading', 'text'], // attributes used for searching
+            searchableAttributes: ['title', 'heading', 'subHeading'], // attributes used for searching
             disableExactOnAttributes: ['text'], // don't allow "exact matches" in the text
             attributesToSnippet: ['text:40'], // configure snippet length shown in results
             distinct: 1, // only allow each page to appear in the results once
             attributeForDistinct: 'breadcrumb', // configure what is used to decide if a page is the same
             customRanking: ['desc(rank)', 'asc(positionInPage)'], // custom tweaks to the ranking
-            camelCaseAttributes: ['heading', 'subHeading', 'text'], // split camelCased text so it can match regular text
+            camelCaseAttributes: ['heading', 'subHeading'], // split camelCased text so it can match regular text
             hitsPerPage: 10, // how many results should be returned per page
             snippetEllipsisText: '…', // the character used when truncating content for snippets
         });
@@ -285,15 +337,18 @@ const processIndexForFramework = async framework => {
             console.error(`Failed to save records.`, e);
         }
     }
-
-    browser.close();
 };
 
 const run = async () => {
-    for (const framework of supportedFrameworks) {
-        await processIndexForFramework(framework);
+    try {
+        for (const framework of supportedFrameworks) {
+            await processIndexForFramework(framework);
+        }
+    }
+    catch(e) {
+        console.error(e);
+        process.exit(1);
     }
 };
 
 run();
-

@@ -66,11 +66,13 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
 
         this.asyncTransactions.forEach(txWrapper => {
             let result: ServerSideTransactionResult | undefined;
-            this.serverSideRowModel.executeOnStore(txWrapper.transaction.route!, cache => {
+            const hasStarted = this.serverSideRowModel.executeOnStore(txWrapper.transaction.route!, cache => {
                 result = cache.applyTransaction(txWrapper.transaction);
             });
 
-            if (result == undefined) {
+            if (!hasStarted) {
+                result = {status: ServerSideTransactionResultStatus.StoreNotStarted};
+            } else if (result == undefined) {
                 result = {status: ServerSideTransactionResultStatus.StoreNotFound};
             }
 
@@ -128,11 +130,13 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
     public applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult | undefined {
         let res: ServerSideTransactionResult | undefined;
 
-        this.serverSideRowModel.executeOnStore(transaction.route!, store => {
+        const hasStarted = this.serverSideRowModel.executeOnStore(transaction.route!, store => {
             res = store.applyTransaction(transaction);
         });
 
-        if (res) {
+        if (!hasStarted) {
+            return { status: ServerSideTransactionResultStatus.StoreNotStarted };
+        } else if (res) {
             this.valueCache.onDataChanged();
             if (res.remove) {
                 const removedRowIds = res.remove.map(row => row.id!);

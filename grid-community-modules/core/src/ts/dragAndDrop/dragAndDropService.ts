@@ -14,6 +14,7 @@ import { loadTemplate, clearElement, getElementRectWithOffset } from "../utils/d
 import { isFunction } from "../utils/function";
 import { IRowNode } from "../interfaces/iRowNode";
 import { IAggFunc } from "../entities/colDef";
+import { HorizontalDirection, VerticalDirection } from "../constants/direction";
 
 export interface DragItem {
     /**
@@ -39,7 +40,7 @@ export interface DragItem {
     } };
 }
 
-export enum DragSourceType { ToolPanel, HeaderCell, RowDrag, ChartPanel }
+export enum DragSourceType { ToolPanel, HeaderCell, RowDrag, ChartPanel, AdvancedFilterBuilder }
 
 export interface DragSource {
     /**
@@ -62,12 +63,7 @@ export interface DragSource {
     /**
      * Icon to show when not over a drop zone
      */
-    defaultIconName?: string;
-    /**
-     * The drop target associated with this dragSource. When dragging starts, this
-     * target does not get an onDragEnter event.
-     */
-    dragSourceDropTarget?: DropTarget;
+    getDefaultIconName?: () => string;
     /**
      * The drag source DOM Data Key, this is useful to detect if the origin grid is the same
      * as the target grid.
@@ -109,7 +105,7 @@ export interface DropTarget {
     /**
      * If `true`, the DragSources will only be allowed to be dragged within the DragTarget that contains them.
      * This is useful for changing order of items within a container, and not moving items across containers.
-     * Default: `false`
+     * @default false
      */
     targetContainsSource?: boolean;
 
@@ -124,9 +120,6 @@ export interface DropTarget {
     external?: boolean;
 }
 
-export enum VerticalDirection { Up, Down }
-export enum HorizontalDirection { Left, Right }
-
 export interface DraggingEvent {
     event: MouseEvent;
     x: number;
@@ -137,6 +130,7 @@ export interface DraggingEvent {
     dragItem: DragItem;
     fromNudge: boolean;
     api: GridApi;
+    /** @deprecated v31 ColumnApi has been deprecated and all methods moved to the api. */
     columnApi: ColumnApi;
     dropZoneTarget: HTMLElement;
 }
@@ -244,7 +238,6 @@ export class DragAndDropService extends BeanStub {
         this.dragSource = dragSource;
         this.eventLastTime = mouseEvent;
         this.dragItem = this.dragSource.getDragItem();
-        this.lastDropTarget = this.dragSource.dragSourceDropTarget;
 
         if (this.dragSource.onDragStarted) {
             this.dragSource.onDragStarted();
@@ -276,7 +269,6 @@ export class DragAndDropService extends BeanStub {
         const vDirection = this.getVerticalDirection(mouseEvent);
 
         this.eventLastTime = mouseEvent;
-
         this.positionGhost(mouseEvent);
 
         // check if mouseEvent intersects with any of the drop targets
@@ -505,7 +497,6 @@ export class DragAndDropService extends BeanStub {
         }
 
         this.eGhostIcon = this.eGhost.querySelector('.ag-dnd-ghost-icon') as HTMLElement;
-
         this.setGhostIcon(null);
 
         const eText = this.eGhost.querySelector('.ag-dnd-ghost-label') as HTMLElement;
@@ -522,24 +513,27 @@ export class DragAndDropService extends BeanStub {
         this.eGhost.style.left = '20px';
 
         const eDocument = this.gridOptionsService.getDocument();
+        let rootNode: Document | ShadowRoot | HTMLElement | null = null;
         let targetEl: HTMLElement | ShadowRoot | null = null;
 
         try {
-            targetEl = eDocument.fullscreenElement as HTMLElement | null;
+            rootNode = eDocument.fullscreenElement as HTMLElement;
         } catch (e) {
             // some environments like SalesForce will throw errors
             // simply by trying to read the fullscreenElement property
         } finally {
-            if (!targetEl) {
-                const rootNode = this.gridOptionsService.getRootNode();
-                const body = rootNode.querySelector('body');
-                if (body) {
-                    targetEl = body;
-                } else if (rootNode instanceof ShadowRoot) {
-                    targetEl = rootNode;
-                } else {
-                    targetEl = rootNode?.documentElement;
-                }
+            if (!rootNode) {
+                rootNode = this.gridOptionsService.getRootNode();
+            }
+            const body = rootNode.querySelector('body');
+            if (body) {
+                targetEl = body;
+            } else if (rootNode instanceof ShadowRoot) {
+                targetEl = rootNode;
+            } else if (rootNode instanceof Document) {
+                targetEl = rootNode?.documentElement;
+            } else {
+                targetEl = rootNode;
             }
         }
 
@@ -558,9 +552,8 @@ export class DragAndDropService extends BeanStub {
         let eIcon: Element | null = null;
 
         if (!iconName) {
-            iconName = this.dragSource.defaultIconName || DragAndDropService.ICON_NOT_ALLOWED;
+            iconName = this.dragSource.getDefaultIconName ? this.dragSource.getDefaultIconName() : DragAndDropService.ICON_NOT_ALLOWED;
         }
-
         switch (iconName) {
             case DragAndDropService.ICON_PINNED:      eIcon = this.ePinnedIcon; break;
             case DragAndDropService.ICON_MOVE:        eIcon = this.eMoveIcon; break;
@@ -575,10 +568,9 @@ export class DragAndDropService extends BeanStub {
 
         this.eGhostIcon.classList.toggle('ag-shake-left-to-right', shake);
 
-        if (eIcon === this.eHideIcon && this.gridOptionsService.is('suppressDragLeaveHidesColumns')) {
+        if (eIcon === this.eHideIcon && this.gridOptionsService.get('suppressDragLeaveHidesColumns')) {
             return;
         }
-
         if (eIcon) {
             this.eGhostIcon.appendChild(eIcon);
         }

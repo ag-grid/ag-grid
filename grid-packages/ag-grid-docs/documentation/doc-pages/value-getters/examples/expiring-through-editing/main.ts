@@ -1,4 +1,12 @@
-import { ColDef, GetRowIdParams, Grid, GridOptions, ValueFormatterParams, ValueGetterParams } from '@ag-grid-community/core';
+import {
+  ColDef,
+  GetRowIdParams,
+  GridApi,
+  createGrid,
+  GridOptions,
+  ValueFormatterParams,
+  ValueGetterParams,
+} from '@ag-grid-community/core';
 import { getData } from "./data";
 
 
@@ -43,11 +51,12 @@ const columnDefs: ColDef[] = [
   },
 ]
 
+let gridApi: GridApi;
+
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   defaultColDef: {
     flex: 1,
-    resizable: true,
   },
   autoGroupColumnDef: {
     minWidth: 130,
@@ -77,29 +86,25 @@ const gridOptions: GridOptions = {
 }
 
 function formatNumber(params: ValueFormatterParams) {
-  var number = params.value
-  // this puts commas into the number eg 1000 goes to 1,000,
-  // i pulled this from stack overflow, i have no idea how it works
-  return Math.floor(number)
-    .toString()
-    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+  var number = params.value  
+  return Math.floor(number).toLocaleString()
 }
 
 function onExpireValueCache() {
   console.log('onInvalidateValueCache -> start')
-  gridOptions.api!.expireValueCache()
+  gridApi!.expireValueCache()
   console.log('onInvalidateValueCache -> end')
 }
 
 function onRefreshCells() {
   console.log('onRefreshCells -> start')
-  gridOptions.api!.refreshCells()
+  gridApi!.refreshCells()
   console.log('onRefreshCells -> end')
 }
 
 function onUpdateOneValue() {
   var randomId = Math.floor(Math.random() * 10) + '';
-  var rowNode = gridOptions.api!.getRowNode(randomId)
+  var rowNode = gridApi!.getRowNode(randomId)
   if (rowNode) {
     var randomCol = ['q1', 'q2', 'q3', 'q4'][Math.floor(Math.random() * 4)]
     var newValue = Math.floor(Math.random() * 1000)
@@ -112,5 +117,5 @@ function onUpdateOneValue() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

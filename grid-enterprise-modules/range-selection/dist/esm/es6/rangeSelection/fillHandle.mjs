@@ -98,7 +98,7 @@ export class FillHandle extends AbstractSelectionHandle {
             return 'xy';
         }
         if (direction !== 'x' && direction !== 'y' && direction !== 'xy') {
-            _.doOnce(() => console.warn(`AG Grid: valid values for fillHandleDirection are 'x', 'y' and 'xy'. Default to 'xy'.`), 'warn invalid fill direction');
+            _.warnOnce(`valid values for fillHandleDirection are 'x', 'y' and 'xy'. Default to 'xy'.`);
             return 'xy';
         }
         return direction;
@@ -125,7 +125,7 @@ export class FillHandle extends AbstractSelectionHandle {
         const isVertical = this.dragAxis === 'y';
         // if the range is being reduced in size, all we need to do is
         // clear the cells that are no longer part of the range
-        if (this.isReduce && !this.gridOptionsService.is('suppressClearOnFillReduction')) {
+        if (this.isReduce && !this.gridOptionsService.get('suppressClearOnFillReduction')) {
             const columns = isVertical
                 ? initialRange.columns
                 : initialRange.columns.filter(col => finalRange.columns.indexOf(col) < 0);
@@ -135,13 +135,17 @@ export class FillHandle extends AbstractSelectionHandle {
             }
             return;
         }
-        let withinInitialRange = true;
         const values = [];
         const initialValues = [];
+        const initialNonAggregatedValues = [];
+        const initialFormattedValues = [];
+        let withinInitialRange = true;
         let idx = 0;
         const resetValues = () => {
             values.length = 0;
             initialValues.length = 0;
+            initialNonAggregatedValues.length = 0;
+            initialFormattedValues.length = 0;
             idx = 0;
         };
         const iterateAcrossCells = (column, columns) => {
@@ -179,18 +183,29 @@ export class FillHandle extends AbstractSelectionHandle {
             if (withinInitialRange) {
                 currentValue = this.valueService.getValue(col, rowNode);
                 initialValues.push(currentValue);
+                initialNonAggregatedValues.push(this.valueService.getValue(col, rowNode, undefined, true));
+                initialFormattedValues.push(this.valueFormatterService.formatValue(col, rowNode, currentValue));
                 withinInitialRange = updateInitialSet();
             }
             else {
-                const { value, fromUserFunction, sourceCol, sourceRowNode } = this.processValues(e, currentValues, initialValues, col, rowNode, idx++);
+                const { value, fromUserFunction, sourceCol, sourceRowNode } = this.processValues({
+                    event: e,
+                    values: currentValues,
+                    initialValues,
+                    initialNonAggregatedValues,
+                    initialFormattedValues,
+                    col,
+                    rowNode,
+                    idx: idx++
+                });
                 currentValue = value;
                 if (col.isCellEditable(rowNode)) {
                     const cellValue = this.valueService.getValue(col, rowNode);
                     if (!fromUserFunction) {
-                        if ((_a = sourceCol === null || sourceCol === void 0 ? void 0 : sourceCol.getColDef()) === null || _a === void 0 ? void 0 : _a.useValueFormatterForExport) {
+                        if (sourceCol && ((_a = sourceCol.getColDef()) === null || _a === void 0 ? void 0 : _a.useValueFormatterForExport) !== false) {
                             currentValue = (_b = this.valueFormatterService.formatValue(sourceCol, sourceRowNode, currentValue)) !== null && _b !== void 0 ? _b : currentValue;
                         }
-                        if (col.getColDef().useValueParserForImport) {
+                        if (col.getColDef().useValueParserForImport !== false) {
                             currentValue = this.valueParserService.parseValue(col, rowNode, 
                             // if no sourceCol, then currentValue is a number
                             sourceCol ? currentValue : _.toStringOrNull(currentValue), cellValue);
@@ -231,7 +246,8 @@ export class FillHandle extends AbstractSelectionHandle {
         };
         this.rangeService.clearCellRangeCellValues({ cellRanges: [cellRange] });
     }
-    processValues(event, values, initialValues, col, rowNode, idx) {
+    processValues(params) {
+        const { event, values, initialValues, initialNonAggregatedValues, initialFormattedValues, col, rowNode, idx } = params;
         const userFillOperation = this.gridOptionsService.getCallback('fillOperation');
         const isVertical = this.dragAxis === 'y';
         let direction;
@@ -246,6 +262,8 @@ export class FillHandle extends AbstractSelectionHandle {
                 event,
                 values: values.map(({ value }) => value),
                 initialValues,
+                initialNonAggregatedValues,
+                initialFormattedValues,
                 currentIndex: idx,
                 currentCellValue: this.valueService.getValue(col, rowNode),
                 direction,

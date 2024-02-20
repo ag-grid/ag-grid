@@ -59,7 +59,7 @@ var TemplateService = /** @class */ (function (_super) {
     };
     TemplateService.prototype.handleHttpResult = function (httpResult, url) {
         if (httpResult.status !== 200 || httpResult.response === null) {
-            console.warn("AG Grid: Unable to get template error " + httpResult.status + " - " + url);
+            console.warn("AG Grid: Unable to get template error ".concat(httpResult.status, " - ").concat(url));
             return;
         }
         // response success, so process it

@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import { AgGridVue } from '@ag-grid-community/vue';
 import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 import SimpleCellRenderer from './simpleCellRendererVue.js';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
@@ -15,7 +15,7 @@ const VueExample = {
         <div style="height: 100%">
                 <ag-grid-vue                
                 style="width: 100%; height: 100%;"
-                class="ag-theme-alpine"
+                :class="themeClass"
                 :columnDefs="columnDefs"
                 @grid-ready="onGridReady"
                 :defaultColDef="defaultColDef"
@@ -24,8 +24,7 @@ const VueExample = {
                 :suppressRowClickSelection="true"
                 :groupDefaultExpanded="groupDefaultExpanded"
                 :rowSelection="rowSelection"
-                :groupSelectsChildren="true"
-                :animateRows="true"></ag-grid-vue>
+                :groupSelectsChildren="true"></ag-grid-vue>
         </div>
     `,
     components: {
@@ -79,16 +78,15 @@ const VueExample = {
                 field: "city"
             }],
             gridApi: null,
-            columnApi: null,
             defaultColDef: {
                 flex: 1,
                 minWidth: 120,
-                resizable: true,
             },
             rowData: null,
             groupDisplayType: null,
             groupDefaultExpanded: null,
-            rowSelection: null
+            rowSelection: null,
+            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
         }
     },
     created() {
@@ -100,7 +98,6 @@ const VueExample = {
     methods: {
         onGridReady(params) {
             this.gridApi = params.api;
-            this.gridColumnApi = params.columnApi;
 
         },
     }

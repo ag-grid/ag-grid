@@ -1,21 +1,23 @@
 import { Component } from "@angular/core";
+import { FormsModule } from "@angular/forms";
 
 import { IFilterAngularComp } from "@ag-grid-community/angular";
 import { IDoesFilterPassParams, IFilterParams } from "@ag-grid-community/core";
 
 @Component({
-  selector: 'year-component',
+  standalone: true,
+  imports: [FormsModule],
   template: `
-      <div style="display: inline-block; width: 400px;">
-      <div style="padding: 10px; background-color: #d3d3d3; text-align: center;">Select Year Range</div>
-      <label style="margin: 10px; padding: 50px; display: inline-block; background-color: #999999">
+    <div class="year-filter">
+      <div>Select Year Range</div>
+      <label>
         <input type="radio" name="year" [(ngModel)]="year" (ngModelChange)="updateFilter()" [value]="'All'"/> All
       </label>
-      <label style="margin: 10px; padding: 50px; display: inline-block; background-color: #999999">
+      <label>
         <input type="radio" name="year" [(ngModel)]="year" (ngModelChange)="updateFilter()" [value]="'2010'"/> Since 2010
       </label>
-      </div>
-    `
+    </div>
+  `
 })
 export class YearFilter implements IFilterAngularComp {
   params!: IFilterParams;

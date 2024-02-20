@@ -65,7 +65,7 @@ var BodyDropTarget = /** @class */ (function (_super) {
     };
     BodyDropTarget.prototype.isInterestedIn = function (type) {
         return type === dragAndDropService_1.DragSourceType.HeaderCell ||
-            (type === dragAndDropService_1.DragSourceType.ToolPanel && this.gridOptionsService.is('allowDragFromColumnsToolPanel'));
+            (type === dragAndDropService_1.DragSourceType.ToolPanel && this.gridOptionsService.get('allowDragFromColumnsToolPanel'));
     };
     BodyDropTarget.prototype.getSecondaryContainers = function () {
         return this.eSecondaryContainers;
@@ -107,13 +107,13 @@ var BodyDropTarget = /** @class */ (function (_super) {
         this.currentDropListener.onDragStop(params);
     };
     __decorate([
-        context_1.Autowired('dragAndDropService')
+        (0, context_1.Autowired)('dragAndDropService')
     ], BodyDropTarget.prototype, "dragAndDropService", void 0);
     __decorate([
-        context_1.Autowired('columnModel')
+        (0, context_1.Autowired)('columnModel')
     ], BodyDropTarget.prototype, "columnModel", void 0);
     __decorate([
-        context_1.Autowired('ctrlsService')
+        (0, context_1.Autowired)('ctrlsService')
     ], BodyDropTarget.prototype, "ctrlsService", void 0);
     __decorate([
         context_1.PostConstruct

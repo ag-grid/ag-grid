@@ -29,13 +29,18 @@ var generic_1 = require("../../utils/generic");
 var AnimateSlideCellRenderer = /** @class */ (function (_super) {
     __extends(AnimateSlideCellRenderer, _super);
     function AnimateSlideCellRenderer() {
-        var _this = _super.call(this, AnimateSlideCellRenderer.TEMPLATE) || this;
+        var _this = _super.call(this) || this;
         _this.refreshCount = 0;
+        var template = document.createElement('span');
+        var slide = document.createElement('span');
+        slide.setAttribute('class', 'ag-value-slide-current');
+        template.appendChild(slide);
+        _this.setTemplateFromElement(template);
         _this.eCurrent = _this.queryForHtmlElement('.ag-value-slide-current');
         return _this;
     }
     AnimateSlideCellRenderer.prototype.init = function (params) {
-        this.refresh(params);
+        this.refresh(params, true);
     };
     AnimateSlideCellRenderer.prototype.addSlideAnimation = function () {
         var _this = this;
@@ -48,29 +53,34 @@ var AnimateSlideCellRenderer = /** @class */ (function (_super) {
         if (this.ePrevious) {
             this.getGui().removeChild(this.ePrevious);
         }
-        this.ePrevious = dom_1.loadTemplate('<span class="ag-value-slide-previous ag-value-slide-out"></span>');
-        this.ePrevious.innerHTML = this.eCurrent.innerHTML;
+        var prevElement = document.createElement('span');
+        prevElement.setAttribute('class', 'ag-value-slide-previous ag-value-slide-out');
+        this.ePrevious = prevElement;
+        this.ePrevious.textContent = this.eCurrent.textContent;
         this.getGui().insertBefore(this.ePrevious, this.eCurrent);
         // having timeout of 0 allows use to skip to the next css turn,
         // so we know the previous css classes have been applied. so the
         // complex set of setTimeout below creates the animation
-        window.setTimeout(function () {
-            if (refreshCountCopy !== _this.refreshCount) {
-                return;
-            }
-            _this.ePrevious.classList.add('ag-value-slide-out-end');
-        }, 50);
-        window.setTimeout(function () {
-            if (refreshCountCopy !== _this.refreshCount) {
-                return;
-            }
-            _this.getGui().removeChild(_this.ePrevious);
-            _this.ePrevious = null;
-        }, 3000);
+        this.getFrameworkOverrides().wrapIncoming(function () {
+            window.setTimeout(function () {
+                if (refreshCountCopy !== _this.refreshCount) {
+                    return;
+                }
+                _this.ePrevious.classList.add('ag-value-slide-out-end');
+            }, 50);
+            window.setTimeout(function () {
+                if (refreshCountCopy !== _this.refreshCount) {
+                    return;
+                }
+                _this.getGui().removeChild(_this.ePrevious);
+                _this.ePrevious = null;
+            }, 3000);
+        });
     };
-    AnimateSlideCellRenderer.prototype.refresh = function (params) {
+    AnimateSlideCellRenderer.prototype.refresh = function (params, isInitialRender) {
+        if (isInitialRender === void 0) { isInitialRender = false; }
         var value = params.value;
-        if (generic_1.missing(value)) {
+        if ((0, generic_1.missing)(value)) {
             value = '';
         }
         if (value === this.lastValue) {
@@ -81,22 +91,23 @@ var AnimateSlideCellRenderer = /** @class */ (function (_super) {
         if (this.filterManager.isSuppressFlashingCellsBecauseFiltering()) {
             return false;
         }
-        this.addSlideAnimation();
-        this.lastValue = value;
-        if (generic_1.exists(params.valueFormatted)) {
-            this.eCurrent.innerHTML = params.valueFormatted;
+        if (!isInitialRender) {
+            this.addSlideAnimation();
         }
-        else if (generic_1.exists(params.value)) {
-            this.eCurrent.innerHTML = value;
+        this.lastValue = value;
+        if ((0, generic_1.exists)(params.valueFormatted)) {
+            this.eCurrent.textContent = params.valueFormatted;
+        }
+        else if ((0, generic_1.exists)(params.value)) {
+            this.eCurrent.textContent = value;
         }
         else {
-            dom_1.clearElement(this.eCurrent);
+            (0, dom_1.clearElement)(this.eCurrent);
         }
         return true;
     };
-    AnimateSlideCellRenderer.TEMPLATE = "<span>\n            <span class=\"ag-value-slide-current\"></span>\n        </span>";
     __decorate([
-        context_1.Autowired('filterManager')
+        (0, context_1.Autowired)('filterManager')
     ], AnimateSlideCellRenderer.prototype, "filterManager", void 0);
     return AnimateSlideCellRenderer;
 }(component_1.Component));

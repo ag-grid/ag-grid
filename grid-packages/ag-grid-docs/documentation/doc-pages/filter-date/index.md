@@ -4,7 +4,7 @@ title: "Date Filter"
 
 Date Filters allow you to filter date data. 
 
-<image-caption src="filter-date/resources/date-filter.png" alt="Date Filter" width="12.5rem" centered="true"></image-caption>
+<image-caption src="filter-date/resources/date-filter.png" alt="Date Filter" centered="true" toggleDarkMode="true"></image-caption>
 
 ## Enabling Date Filters
 
@@ -37,6 +37,17 @@ The example below shows the Date Filter in action:
 - the `inRangeFloatingFilterDateFormat` property has been set to define a custom date format, this is only shown in the floating filter panel when an in-range filter has been applied.
 
 <grid-example title='Date Picker' name='date-filter' type='generated' options='{ "exampleHeight": 520 }'></grid-example>
+
+## Example: Setting Range For Date Filter
+
+The example below demonstrates configuring date range filtering in the Date Filter with minimum and maximum validation dates:
+
+- The `minValidDate` parameter is set to `2008-01-08` using a string.
+- The `maxValidDate` is dynamically set to tomorrow's date using JavaScript's Date object.
+- Together, `minValidDate` and `maxValidDate` restrict the selectable date range.
+- Any manually entered or selected dates outside the valid range will be invalid.
+
+<grid-example title='Setting Date Range For Filter' name='range-for-date-filter' type='generated' options='{ "exampleHeight": 520 }'></grid-example>
 
 ## Date Filter Parameters
 
@@ -169,15 +180,15 @@ The list of options are as follows:
 | Option Name             | Option Key            | Included by Default |
 | ----------------------- | --------------------- | ------------------- |
 | Equals                  | `equals`              | Yes                 |
-| Greater than            | `greaterThan`         | Yes                 |
-| Less than               | `lessThan`            | Yes                 |
-| Not equal               | `notEqual`            | Yes                 |
-| In range                | `inRange`             | Yes                 |
+| Does not equal          | `notEqual`            | Yes                 |
+| Before                  | `lessThan`            | Yes                 |
+| After                   | `greaterThan`         | Yes                 |
+| Between                 | `inRange`             | Yes                 |
 | Blank                   | `blank`               | Yes                 |
 | Not blank               | `notBlank`            | Yes                 |
-| Choose One              | `empty`               | No                  |
+| Choose one              | `empty`               | No                  |
 
-Note that the `empty` filter option is primarily used when creating [Custom Filter Options](/filter-conditions/#custom-filter-options). When 'Choose One' is displayed, the filter is not active.
+Note that the `empty` filter option is primarily used when creating [Custom Filter Options](/filter-conditions/#custom-filter-options). When 'Choose one' is displayed, the filter is not active.
 
 The default option for the Date Filter is `equals`.
 
@@ -196,7 +207,7 @@ Applying the Date Filter is described in more detail in the following sections:
 
 ## Blank Cells
 
-If the row data contains blanks (i.e. `null` or `undefined`), by default the row won't be included in filter results. To change this, use the filter params `includeBlanksInEquals`, `includeBlanksInLessThan`, `includeBlanksInGreaterThan` and `includeBlanksInRange`. For example, the code snippet below configures a filter to include `null` for equals, but not for less than, greater than or in range:
+If the row data contains blanks (i.e. `null` or `undefined`), by default the row won't be included in filter results. To change this, use the filter params `includeBlanksInEquals`, `includeBlanksInLessThan`, `includeBlanksInGreaterThan` and `includeBlanksInRange`. For example, the code snippet below configures a filter to include `null` for equals, but not for less than, greater than or in range (between):
 
 ```js
 const filterParams = {

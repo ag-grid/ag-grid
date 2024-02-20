@@ -45,8 +45,8 @@ var SetLeftFeature = /** @class */ (function (_super) {
         this.onLeftChanged();
     };
     SetLeftFeature.prototype.getColumnOrGroup = function () {
-        if (this.beans.gridOptionsService.is('enableRtl') && this.colsSpanning) {
-            return array_1.last(this.colsSpanning);
+        if (this.beans.gridOptionsService.get('enableRtl') && this.colsSpanning) {
+            return (0, array_1.last)(this.colsSpanning);
         }
         return this.columnOrGroup;
     };
@@ -60,8 +60,8 @@ var SetLeftFeature = /** @class */ (function (_super) {
         this.addManagedPropertyListener('domLayout', this.onLeftChanged.bind(this));
     };
     SetLeftFeature.prototype.setLeftFirstTime = function () {
-        var suppressMoveAnimation = this.beans.gridOptionsService.is('suppressColumnMoveAnimation');
-        var oldLeftExists = generic_1.exists(this.columnOrGroup.getOldLeft());
+        var suppressMoveAnimation = this.beans.gridOptionsService.get('suppressColumnMoveAnimation');
+        var oldLeftExists = (0, generic_1.exists)(this.columnOrGroup.getOldLeft());
         var animateColumnMove = this.beans.columnAnimationService.isActive() && oldLeftExists && !suppressMoveAnimation;
         if (animateColumnMove) {
             this.animateInLeft();
@@ -117,8 +117,8 @@ var SetLeftFeature = /** @class */ (function (_super) {
         // if the value is null, then that means the column is no longer
         // displayed. there is logic in the rendering to fade these columns
         // out, so we don't try and change their left positions.
-        if (generic_1.exists(value)) {
-            this.eCell.style.left = value + "px";
+        if ((0, generic_1.exists)(value)) {
+            this.eCell.style.left = "".concat(value, "px");
         }
         var indexColumn;
         if (this.columnOrGroup instanceof column_1.Column) {
@@ -131,12 +131,10 @@ var SetLeftFeature = /** @class */ (function (_super) {
                 return;
             }
             if (children.length > 1) {
-                aria_1.setAriaColSpan(this.ariaEl, children.length);
+                (0, aria_1.setAriaColSpan)(this.ariaEl, children.length);
             }
             indexColumn = children[0];
         }
-        var index = this.beans.columnModel.getAriaColumnIndex(indexColumn);
-        aria_1.setAriaColIndex(this.ariaEl, index);
     };
     __decorate([
         context_1.PostConstruct

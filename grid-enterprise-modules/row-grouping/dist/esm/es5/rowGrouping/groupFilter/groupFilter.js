@@ -39,13 +39,13 @@ var GroupFilter = /** @class */ (function (_super) {
     GroupFilter.prototype.validateParams = function () {
         var colDef = this.params.colDef;
         if (colDef.field) {
-            _.doOnce(function () { return console.warn('AG Grid: Group Column Filter does not work with the colDef property "field". This property will be ignored.'); }, 'groupFilterFieldParam');
+            _.warnOnce('Group Column Filter does not work with the colDef property "field". This property will be ignored.');
         }
         if (colDef.filterValueGetter) {
-            _.doOnce(function () { return console.warn('AG Grid: Group Column Filter does not work with the colDef property "filterValueGetter". This property will be ignored.'); }, 'groupFilterFilterValueGetterParam');
+            _.warnOnce('Group Column Filter does not work with the colDef property "filterValueGetter". This property will be ignored.');
         }
         if (colDef.filterParams) {
-            _.doOnce(function () { return console.warn('AG Grid: Group Column Filter does not work with the colDef property "filterParams". This property will be ignored.'); }, 'groupFilterFilterParams');
+            _.warnOnce('Group Column Filter does not work with the colDef property "filterParams". This property will be ignored.');
         }
     };
     GroupFilter.prototype.updateGroups = function () {
@@ -54,13 +54,13 @@ var GroupFilter = /** @class */ (function (_super) {
     };
     GroupFilter.prototype.getSourceColumns = function () {
         this.groupColumn = this.params.column;
-        if (this.gridOptionsService.is('treeData')) {
-            _.doOnce(function () { return console.warn('AG Grid: Group Column Filter does not work with Tree Data enabled. Please disable Tree Data, or use a different filter.'); }, 'groupFilterTreeData');
+        if (this.gridOptionsService.get('treeData')) {
+            _.warnOnce('Group Column Filter does not work with Tree Data enabled. Please disable Tree Data, or use a different filter.');
             return [];
         }
         var sourceColumns = this.columnModel.getSourceColumnsForGroupColumn(this.groupColumn);
         if (!sourceColumns) {
-            _.doOnce(function () { return console.warn('AG Grid: Group Column Filter only works on group columns. Please use a different filter.'); }, 'groupFilterNotGroupColumn');
+            _.warnOnce('Group Column Filter only works on group columns. Please use a different filter.');
             return [];
         }
         return sourceColumns;

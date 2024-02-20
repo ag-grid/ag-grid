@@ -8,7 +8,7 @@ data using the Server-Side Row Model (SSRM).
 
 ## Enabling Pivoting
 
-To pivot on a column `pivot=true` should be set on the column definition. Additionally the grid needs to be in
+To pivot on a column `pivot=true` should be set on the column definition. Additionally, the grid needs to be in
 pivot mode which is set through the grid option `pivotMode=true`.
 
 In the snippet below a pivot is defined on the 'year' column and pivot mode is enabled:
@@ -33,7 +33,7 @@ For more configuration details see the section on [Pivoting](/pivoting/).
 
 The actual pivoting is performed on the server when using the Server-Side Row Model.
 When the grid needs more rows it makes a request via `getRows(params)` on the
-[Server-Side Datasource](/server-side-model-datasource/#datasource-interface) with metadata
+[Server-Side Datasource](/server-side-model-datasource/) with metadata
 containing row grouping details.
 
 The properties relevant to pivoting in the request are shown below:
@@ -131,7 +131,7 @@ but can become complex when column groups are involved.
 Pivot result columns are defined identically to the columns supplied to the grid options: you provide a list of [Column Definitions](/column-definitions/) 
 passing a list of columns and / or column groups using the following column API method:
 
-<api-documentation source='column-api/api.json' section='Pivoting' names='["setPivotResultColumns"]' ></api-documentation>
+<api-documentation source='grid-api/api.json' section='Pivoting' names='["setPivotResultColumns"]' ></api-documentation>
 
 There is no limit or restriction as to the number of columns or groups you pass. However, it's important that the field 
 (or value getter) that you set for the columns match.
@@ -148,7 +148,7 @@ const createDatasource = server => {
             const response = server.getData(params.request);
 
             // add pivot result cols to the grid
-            addPivotResultCols(response, params.columnApi)
+            addPivotResultCols(response, params.api)
             
             if (response.success) {
                 // supply rows for requested block to grid
@@ -163,7 +163,7 @@ const createDatasource = server => {
     };
 }
 
-function addPivotResultCols(response, columnApi) {
+function addPivotResultCols(response, api) {
     // create colDefs
     var pivotColDefs = response.pivotFields.map(function (field) {
         var headerName = field.split('_')[0]
@@ -171,7 +171,7 @@ function addPivotResultCols(response, columnApi) {
     })
 
     // supply pivot result columns to the grid
-    columnApi.setPivotResultColumns(pivotColDefs)
+    api.setPivotResultColumns(pivotColDefs)
 }
 ```
 
@@ -179,12 +179,12 @@ In the code above, `addPivotColDefs` does not create column groups for simplicit
 more complex implementation that creates column groups. Note the following:
 
 - Column definitions are created from the `pivotFields` are returned from the server.
-- These column definitions are then supplied to the grid via `columnApi.setPivotResultColumns()`.
+- These column definitions are then supplied to the grid via `api.setPivotResultColumns()`.
 
 <grid-example title='Creating Pivot Result Columns' name='creating_pivot_result_columns' type='generated' options='{ "enterprise": true, "exampleHeight": 605, "extras": ["alasql"], "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 
 <note>
-The pivot result columns are displayed in the order they are supplied to `columnApi.setPivotResultColumns(pivotColDefs)`. You can control the order of the columns by sorting the `pivotColDefs` array before passing it to the grid.
+The pivot result columns are displayed in the order they are supplied to `api.setPivotResultColumns(pivotColDefs)`. You can control the order of the columns by sorting the `pivotColDefs` array before passing it to the grid.
 </note>
 
 ## Example: Pivot Column Groups
@@ -196,7 +196,7 @@ The example below demonstrates server-side Pivoting with multiple row groups whe
 - Rows are grouped by **Country** and **Sport** with `rowGroup=true` defined on their column definitions.
 - The **Gold**, **Silver** and **Bronze** value columns have `aggFunc='sum'` defined on their column definitions.
 - The `pivotCols` and `pivotMode` properties in the request are used by the server to perform pivoting.
-- New column group definitions created from the `pivotFields` are returned from the server and supplied to the grid using `columnApi.setPivotResultColumns(pivotColDefs)`.
+- New column group definitions created from the `pivotFields` are returned from the server and supplied to the grid using `api.setPivotResultColumns(pivotColDefs)`.
 - Open the browser's dev console to view the request supplied to the datasource.
 
 <grid-example title='Pivot Column Groups' name='pivot-column-groups' type='generated' options='{ "enterprise": true, "exampleHeight": 610, "extras": ["alasql"], "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
@@ -211,7 +211,7 @@ The example demonstrates the following:
 
 - Columns `Gold, Silver` and `Bronze` all have `enableValue=true` which means they can be aggregated on. To aggregate, you drag the column to the `Values` section. When you are grouping, all columns in the `Values` section will be aggregated.
 
-- You can turn the grid into **Pivot Mode**. To do this, you click the pivot mode checkbox. When the grid is in pivot mode, the grid behaves similar to an Excel grid. This extra information is passed to your server as part of the request and it is your server's responsibility to return the data in the correct structure.
+- You can turn the grid into **Pivot Mode**. To do this, you click the pivot mode checkbox. When the grid is in pivot mode, the grid behaves similarly to an Excel grid. This extra information is passed to your server as part of the request and it is your server's responsibility to return the data in the correct structure.
 
 - Columns `Age, Country, Year` and `Sport` all have `enablePivot=true` which means they can be pivoted on when **Pivot Mode** is active. To pivot, you drag the column to the **Pivot** section.
 

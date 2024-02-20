@@ -1,11 +1,12 @@
-@use "sass:map";
-@use "sass:math";
 @use '../core' as *;
 
-$vertical-padding: $size-1;
+$vertical-padding: $spacing-size-2;
+$blog-code-selector: '.post-full pre[class*="language-"]';
 
 pre.code,
-pre.code code {
+#{$blog-code-selector},
+pre.code code,
+#{$blog-code-selector} code {
     color: black;
     background: none;
     text-align: left;
@@ -23,74 +24,119 @@ pre.code code {
     -moz-hyphens: none;
     -ms-hyphens: none;
     hyphens: none;
+
+    #{$selector-darkmode} & {
+        -webkit-font-smoothing: antialiased;
+
+        color: var(--default-text-color);
+    }
 }
 
-pre.code {
-    --comment-color: hsl(120, 30%, 40%);
-    --tag-color: #a31515;
-    --string-color: #a31515;
+pre.code,
+#{$blog-code-selector} {
+    --color-code-background: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 70%);
+
+    --comment-color: #5d6376;
+    --tag-color: #984f4e;
+    --string-color: #c33c3a;
     --punctuation-color: #393a34;
-    --symbol-color: #36acaa;
+    --keyword-color: #b31ea7;
+    --symbol-color: #0e4491;
     --function-color: #393a34;
-    --deleted-color: #9a050f;
-    --selector-color: #00009f;
+    --deleted-color: #f54946;
+    --selector-color: #0e4491;
     --important-color: #e90;
-    --class-name-color: #2b91af;
-    --property-color: #0a2c80;
+    --class-name-color: #0e4491;
+    --property-color: #2ea248;
 
     position: relative;
-    margin: 0 0 $size-2;
+    margin: 0 0 $spacing-size-4;
     padding: 0;
-    border: 2px solid var(--bright-blue-gray);
-    overflow: auto !important;
+    border: 1px solid color-mix(in srgb, var(--color-border-secondary), var(--color-border-primary));
+    background-color: var(--color-code-background);
+    overflow: visible;
+    overflow-y: auto;
+
+    #{$selector-darkmode} & {
+        color-scheme: dark;
+        --comment-color: #aaabb3;
+        --tag-color: #bf9fea;
+        --string-color: #bfda7f;
+        --punctuation-color: var(--default-text-color);
+        --keyword-color: #7ac1d1;
+        --symbol-color: #36d8d6;
+        --function-color: var(--default-text-color);
+        --deleted-color: #9a050f;
+        --selector-color: #36d8d6;
+        --important-color: #e90;
+        --class-name-color: #2b91af;
+        --property-color: #7ac1d1;
+
+        border: 1px solid rgb(255, 255, 255, 0.1);
+    }
 }
 
-pre.code > code {
+pre.code > code,
+#{$blog-code-selector} > code {
     position: relative;
     display: inline-block;
-    padding: $vertical-padding $size-2;
-    font-size: 0.9375em;
-    background-color: white;
-    background-image: linear-gradient(transparent 50%, var(--ghost-blue) 50%);
+    min-width: 100%;
+    margin-bottom: -6px;
+    padding: $vertical-padding $spacing-size-4;
+    font-size: 15px;
+    background-color: var(--color-code-background);
     background-size: 3em 3em;
     background-origin: content-box;
     background-attachment: local;
     border: none;
     border-radius: 0;
-    box-shadow: inset 0 $vertical-padding 0 0 white, inset 0 $vertical-padding * -1 0 0 white;
-    z-index: 1;
+    overflow-x: auto;
 }
 
-pre.code.line-numbers.line-numbers code {
+pre.code > .language-bash,
+#{$blog-code-selector} > .language-bash {
+    color: var(--function-color);
+}
+
+pre.code.line-numbers.line-numbers code,
+#{$blog-code-selector}.line-numbers.line-numbers code {
     padding-left: 3.8em;
 }
 
-pre.code.line-numbers.line-numbers .line-numbers-rows {
+pre.code.line-numbers.line-numbers .line-numbers-rows,
+#{$blog-code-selector}.line-numbers.line-numbers .line-numbers-rows {
     left: 0;
 }
 
-pre.code[data-line] {
+pre.code[data-line],
+#{$blog-code-selector}[data-line] {
     padding-top: 0;
     padding-bottom: 0;
     padding-left: 0;
 }
-pre[data-line] code {
+
+pre[data-line] code,
+#{$blog-code-selector}[data-line] code {
     position: relative;
     padding-left: 4em;
 }
-pre.code .line-highlight {
+
+pre.code .line-highlight,
+#{$blog-code-selector} .line-highlight {
     margin-top: 0;
 }
 
-pre.code.line-numbers {
+pre.code.line-numbers,
+#{$blog-code-selector}.line-numbers {
     position: relative;
     counter-reset: linenumber;
 }
 
-pre.code.line-numbers > code {
+pre.code.line-numbers > code,
+#{$blog-code-selector}.line-numbers > code {
     position: relative;
     white-space: inherit;
-    min-height: 100%;
+    min-height: calc(100% - 1px);
 }
 
 .line-numbers .line-numbers-rows {
@@ -162,7 +208,7 @@ pre.code.line-numbers > code {
 .language-json .token.boolean,
 .language-json .token.number,
 code[class*='language-css'] {
-    color: #0000ff;
+    color: var(--keyword-color);
 }
 
 .token.function {
@@ -212,10 +258,50 @@ code[class*='language-css'] {
     color: var(--tag-color);
 }
 
+.token.atrule,
+.token.attr-name,
+.token.attr-value,
+.token.boolean,
+.token.builtin,
+.token.cdata,
+.token.class-name,
+.token.comment,
+.token.constant,
+.token.deleted,
+.token.doctype,
+.token.entity,
+.token.inserted,
+.token.keyword,
+.token.namespace,
+.token.number,
+.token.operator,
+.token.prolog,
+.token.property,
+.token.regex,
+.token.selector,
+.token.string,
+.token.symbol,
+.token.tag,
+.token.url,
+.token.variable {
+    #{$selector-darkmode} & {
+        -webkit-font-smoothing: subpixel-antialiased;
+    }
+}
+
 .line-numbers .line-numbers-rows {
-    border-right: 1px solid rgba(map.get($abstract-colors, medium-electric-blue), 0.1);
+    border-right: 1px solid var(--color-util-brand-100);
+
+    #{$selector-darkmode} & {
+        border-right-color: var(--color-border-secondary);
+    }
 }
 
 .line-numbers-rows > span:before {
-    color: rgba(map.get($abstract-colors, medium-electric-blue), 0.33);
+    color: var(--color-util-brand-500);
+    opacity: 0.33;
+
+    #{$selector-darkmode} & {
+        color: var(--color-fg-primary);
+    }
 }

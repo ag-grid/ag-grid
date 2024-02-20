@@ -1,7 +1,7 @@
 import { MiniStackedColumn } from "./miniStackedColumn.mjs";
 export class MiniNormalizedColumn extends MiniStackedColumn {
-    constructor(container, fills, strokes) {
-        super(container, fills, strokes, MiniNormalizedColumn.data, [0, 10], "normalizedColumnTooltip");
+    constructor(container, fills, strokes, themeTemplateParameters, isCustomTheme) {
+        super(container, fills, strokes, themeTemplateParameters, isCustomTheme, MiniNormalizedColumn.data, [0, 10], "normalizedColumnTooltip");
     }
 }
 MiniNormalizedColumn.chartType = 'normalizedColumn';

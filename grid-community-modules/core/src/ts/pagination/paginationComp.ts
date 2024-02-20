@@ -1,7 +1,7 @@
 import { Component } from "../widgets/component";
 import { Autowired, PostConstruct } from "../context/context";
 import { RefSelector } from "../widgets/componentAnnotations";
-import { Events } from "../events";
+import {Events, PaginationChangedEvent} from "../events";
 import { PaginationProxy } from "./paginationProxy";
 import { createIconNoSpan } from "../utils/icon";
 import { formatNumberCommas } from "../utils/number";
@@ -10,6 +10,7 @@ import { KeyCode } from '../constants/keyCode';
 import { RowNodeBlockLoader } from "../rowNodeCache/rowNodeBlockLoader";
 import { PaginationNumberFormatterParams } from "../interfaces/iCallbackParams";
 import { WithoutGridCommon } from "../interfaces/iCommon";
+import { PageSizeSelectorComp } from "./pageSizeSelector/pageSizeSelectorComp";
 
 export class PaginationComp extends Component {
 
@@ -27,6 +28,8 @@ export class PaginationComp extends Component {
     @RefSelector('lbCurrent') private lbCurrent: any;
     @RefSelector('lbTotal') private lbTotal: any;
 
+    @RefSelector('pageSizeComp') private pageSizeComp: PageSizeSelectorComp;
+
     private previousAndFirstButtonsDisabled = false;
     private nextButtonDisabled = false;
     private lastButtonDisabled = false;
@@ -38,11 +41,10 @@ export class PaginationComp extends Component {
 
     @PostConstruct
     protected postConstruct(): void {
-        const isRtl = this.gridOptionsService.is('enableRtl');
+        const isRtl = this.gridOptionsService.get('enableRtl');
         this.setTemplate(this.getTemplate());
 
-        const { btFirst, btPrevious, btNext, btLast } = this;
-
+        const { btFirst, btPrevious, btNext, btLast, pageSizeComp } = this;
         this.activateTabIndex([btFirst, btPrevious, btNext, btLast])
 
         btFirst.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'last' : 'first', this.gridOptionsService)!);
@@ -52,13 +54,20 @@ export class PaginationComp extends Component {
 
         this.addManagedPropertyListener('pagination', this.onPaginationChanged.bind(this));
         this.addManagedPropertyListener('suppressPaginationPanel', this.onPaginationChanged.bind(this));
+        this.addManagedPropertyListeners(['paginationPageSizeSelector', 'paginationAutoPageSize', 'suppressPaginationPanel'],
+            () => this.onPageSizeRelatedOptionsChange(),
+        );
+
+        this.pageSizeComp.toggleSelectDisplay(
+            this.pageSizeComp.shouldShowPageSizeSelector()
+        );
 
         this.onPaginationChanged();
     }
 
     private onPaginationChanged(): void {
-        const isPaging = this.gridOptionsService.is('pagination');
-        const paginationPanelEnabled = isPaging && !this.gridOptionsService.is('suppressPaginationPanel');
+        const isPaging = this.gridOptionsService.get('pagination');
+        const paginationPanelEnabled = isPaging && !this.gridOptionsService.get('suppressPaginationPanel');
 
         this.setDisplayed(paginationPanelEnabled);
         if (!paginationPanelEnabled) {
@@ -71,6 +80,13 @@ export class PaginationComp extends Component {
         this.updateRowLabels();
         this.setCurrentPageLabel();
         this.setTotalLabels();
+        this.onPageSizeRelatedOptionsChange();
+    }
+
+    private onPageSizeRelatedOptionsChange(): void {
+        this.pageSizeComp.toggleSelectDisplay(
+            this.pageSizeComp.shouldShowPageSizeSelector()
+        );
     }
 
     private setupListeners() {
@@ -107,7 +123,7 @@ export class PaginationComp extends Component {
         const currentPage = this.paginationProxy.getCurrentPage();
         const toDisplay = pagesExist ? currentPage + 1 : 0;
 
-        this.lbCurrent.innerHTML = this.formatNumber(toDisplay);
+        this.lbCurrent.textContent = this.formatNumber(toDisplay);
     }
 
     private formatNumber(value: number): string {
@@ -138,6 +154,7 @@ export class PaginationComp extends Component {
         const compId = this.getCompId();
 
         return /* html */`<div class="ag-paging-panel ag-unselectable" id="ag-${compId}">
+                <ag-page-size-selector ref="pageSizeComp"></ag-page-size-selector>
                 <span class="ag-paging-row-summary-panel" role="status">
                     <span id="ag-${compId}-first-row" ref="lbFirstRowOnPage" class="ag-paging-row-summary-panel-number"></span>
                     <span id="ag-${compId}-to">${strTo}</span>
@@ -188,7 +205,7 @@ export class PaginationComp extends Component {
         this.toggleButtonDisabled(this.btPrevious, this.previousAndFirstButtonsDisabled);
 
         const zeroPagesToDisplay = this.isZeroPagesToDisplay();
-        const onLastPage = maxRowFound && currentPage === (totalPages - 1);
+        const onLastPage = currentPage === (totalPages - 1);
 
         this.nextButtonDisabled = onLastPage || zeroPagesToDisplay;
         this.lastButtonDisabled = !maxRowFound || zeroPagesToDisplay || currentPage === (totalPages - 1);
@@ -222,12 +239,12 @@ export class PaginationComp extends Component {
             }
         }
 
-        this.lbFirstRowOnPage.innerHTML = this.formatNumber(startRow);
+        this.lbFirstRowOnPage.textContent = this.formatNumber(startRow);
         if (this.rowNodeBlockLoader.isLoading()) {
             const translate = this.localeService.getLocaleTextFunc();
             this.lbLastRowOnPage.innerHTML = translate('pageLastRowUnknown', '?');
         } else {
-            this.lbLastRowOnPage.innerHTML = this.formatNumber(endRow);
+            this.lbLastRowOnPage.textContent = this.formatNumber(endRow);
         }
     }
 
@@ -257,8 +274,8 @@ export class PaginationComp extends Component {
         }
 
         if (lastPageFound) {
-            this.lbTotal.innerHTML = this.formatNumber(totalPages);
-            this.lbRecordCount.innerHTML = this.formatNumber(rowCount!);
+            this.lbTotal.textContent = this.formatNumber(totalPages);
+            this.lbRecordCount.textContent = this.formatNumber(rowCount!);
         } else {
             const moreText = this.localeService.getLocaleTextFunc()('more', 'more');
             this.lbTotal.innerHTML = moreText;
@@ -267,10 +284,10 @@ export class PaginationComp extends Component {
     }
 
     private setTotalLabelsToZero() {
-        this.lbFirstRowOnPage.innerHTML = this.formatNumber(0);
-        this.lbCurrent.innerHTML = this.formatNumber(0);
-        this.lbLastRowOnPage.innerHTML = this.formatNumber(0);
-        this.lbTotal.innerHTML = this.formatNumber(0);
-        this.lbRecordCount.innerHTML = this.formatNumber(0);
+        this.lbFirstRowOnPage.textContent = this.formatNumber(0);
+        this.lbCurrent.textContent = this.formatNumber(0);
+        this.lbLastRowOnPage.textContent = this.formatNumber(0);
+        this.lbTotal.textContent = this.formatNumber(0);
+        this.lbRecordCount.textContent = this.formatNumber(0);
     }
 }

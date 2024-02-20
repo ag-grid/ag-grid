@@ -1,4 +1,6 @@
-import {Grid, GridOptions} from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
+
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
@@ -17,36 +19,34 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 100,
         filter: true,
-        sortable: true,
-        resizable: true,
     },
 
     // custom loading template. the class ag-overlay-loading-center is part of the grid,
     // it gives a white background and rounded border
     overlayLoadingTemplate:
-        '<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>',
+        '<div aria-live="polite" aria-atomic="true" style="position:absolute;top:0;left:0;right:0; bottom:0; background: url(https://ag-grid.com/images/ag-grid-loading-spinner.svg) center no-repeat" aria-label="loading"></div>',
     overlayNoRowsTemplate:
-        '<span style="padding: 10px; border: 2px solid #444; background: lightgoldenrodyellow;">This is a custom \'no rows\' overlay</span>',
+        '<span aria-live="polite" aria-atomic="true" style="padding: 10px; border: 2px solid #666; background: #55AA77;">This is a custom \'no rows\' overlay</span>',
 }
 
 function onBtShowLoading() {
-    gridOptions.api!.showLoadingOverlay()
+    gridApi!.showLoadingOverlay()
 }
 
 function onBtShowNoRows() {
-    gridOptions.api!.showNoRowsOverlay()
+    gridApi!.showNoRowsOverlay()
 }
 
 function onBtHide() {
-    gridOptions.api!.hideOverlay()
+    gridApi!.hideOverlay()
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-    new Grid(gridDiv, gridOptions)
+    gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then(response => response.json())
-        .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

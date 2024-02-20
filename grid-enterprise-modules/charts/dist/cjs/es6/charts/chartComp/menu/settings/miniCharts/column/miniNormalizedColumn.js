@@ -3,8 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MiniNormalizedColumn = void 0;
 const miniStackedColumn_1 = require("./miniStackedColumn");
 class MiniNormalizedColumn extends miniStackedColumn_1.MiniStackedColumn {
-    constructor(container, fills, strokes) {
-        super(container, fills, strokes, MiniNormalizedColumn.data, [0, 10], "normalizedColumnTooltip");
+    constructor(container, fills, strokes, themeTemplateParameters, isCustomTheme) {
+        super(container, fills, strokes, themeTemplateParameters, isCustomTheme, MiniNormalizedColumn.data, [0, 10], "normalizedColumnTooltip");
     }
 }
 exports.MiniNormalizedColumn = MiniNormalizedColumn;

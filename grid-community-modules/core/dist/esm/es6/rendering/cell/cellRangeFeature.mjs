@@ -71,7 +71,7 @@ export class CellRangeFeature {
         }
     }
     getRangeBorders() {
-        const isRtl = this.beans.gridOptionsService.is('enableRtl');
+        const isRtl = this.beans.gridOptionsService.get('enableRtl');
         let top = false;
         let right = false;
         let bottom = false;
@@ -120,7 +120,7 @@ export class CellRangeFeature {
         return { top, right, bottom, left };
     }
     refreshHandle() {
-        if (!this.beans.rangeService) {
+        if (!this.beans.rangeService || this.beans.context.isDestroyed()) {
             return;
         }
         const shouldHaveSelectionHandle = this.shouldHaveSelectionHandle();
@@ -141,8 +141,8 @@ export class CellRangeFeature {
         }
         const cellRange = last(cellRanges);
         const cellPosition = this.cellCtrl.getCellPosition();
-        const isFillHandleAvailable = gridOptionsService.is('enableFillHandle') && !this.cellCtrl.isSuppressFillHandle();
-        const isRangeHandleAvailable = gridOptionsService.is('enableRangeHandle');
+        const isFillHandleAvailable = gridOptionsService.get('enableFillHandle') && !this.cellCtrl.isSuppressFillHandle();
+        const isRangeHandleAvailable = gridOptionsService.get('enableRangeHandle');
         let handleIsAvailable = rangesLen === 1 && !this.cellCtrl.isEditing() && (isFillHandleAvailable || isRangeHandleAvailable);
         if (this.hasChartRange) {
             const hasCategoryRange = cellRanges[0].type === CellRangeType.DIMENSION;
@@ -158,7 +158,7 @@ export class CellRangeFeature {
     addSelectionHandle() {
         const { gridOptionsService, rangeService } = this.beans;
         const cellRangeType = last(rangeService.getCellRanges()).type;
-        const selectionHandleFill = gridOptionsService.is('enableFillHandle') && missing(cellRangeType);
+        const selectionHandleFill = gridOptionsService.get('enableFillHandle') && missing(cellRangeType);
         const type = selectionHandleFill ? SelectionHandleType.FILL : SelectionHandleType.RANGE;
         if (this.selectionHandle && this.selectionHandle.getType() !== type) {
             this.selectionHandle = this.beans.context.destroyBean(this.selectionHandle);

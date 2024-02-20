@@ -4,10 +4,10 @@ exports.MiniStackedColumn = void 0;
 const miniChartWithAxes_1 = require("../miniChartWithAxes");
 const miniChartHelpers_1 = require("../miniChartHelpers");
 class MiniStackedColumn extends miniChartWithAxes_1.MiniChartWithAxes {
-    constructor(container, fills, strokes, data = MiniStackedColumn.data, yScaleDomain = [0, 16], tooltipName = "stackedColumnTooltip") {
+    constructor(container, fills, strokes, _themeTemplateParameters, _isCustomTheme, data = MiniStackedColumn.data, yScaleDomain = [0, 16], tooltipName = "stackedColumnTooltip") {
         super(container, tooltipName);
         const { root, size, padding } = this;
-        this.stackedColumns = miniChartHelpers_1.createColumnRects({
+        this.stackedColumns = (0, miniChartHelpers_1.createColumnRects)({
             stacked: true,
             root,
             data,

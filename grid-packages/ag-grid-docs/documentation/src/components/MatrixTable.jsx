@@ -2,7 +2,7 @@ import { convertMarkdown, convertUrl } from 'components/documentation-helpers';
 import React from 'react';
 import { isProductionEnvironment } from '../utils/consts';
 import { Icon } from './Icon';
-import styles from './MatrixTable.module.scss';
+import styles from '@design-system/modules/MatrixTable.module.scss';
 import { useJsonFileNodes } from './use-json-file-nodes';
 
 /**

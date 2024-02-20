@@ -150,7 +150,7 @@ const CellComp = (props) => {
                 {editDetails() &&
             <ShowEditDetails editDetails={editDetails()} cellCtrl={cellCtrl} eGuiFn={eGuiFn} setInlineRef={setInlineEditorRef} setPopupRef={setPopupEditorRef}/>}
         </>);
-    return (<div ref={eGui} style={userStyles()} tabIndex={tabIndex()} role={'gridcell'} col-id={colId()}> {showCellWrapper()
+    return (<div ref={eGui} style={userStyles()} tabIndex={tabIndex()} role={cellCtrl.getCellAriaRole()} col-id={colId()}> {showCellWrapper()
             ? (<div class="ag-cell-wrapper" role="presentation" ref={eCellWrapper}>
                         {bodyJsxFunc()}
                     </div>)

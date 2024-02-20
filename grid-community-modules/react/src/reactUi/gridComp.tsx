@@ -64,10 +64,8 @@ const GridComp = ({ context }: GridCompProps) => {
             destroyGridUi:
                 () => {}, // do nothing, as framework users destroy grid by removing the comp
             setRtlClass: setRtlClass,
-            addOrRemoveKeyboardFocusClass:
-                (addOrRemove: boolean) => setKeyboardFocusClass(addOrRemove ? FocusService.AG_KEYBOARD_FOCUS : ''),
-            forceFocusOutOfContainer: () => {
-                tabGuardRef.current?.forceFocusOutOfContainer();
+            forceFocusOutOfContainer: (up?: boolean) => {
+                tabGuardRef.current?.forceFocusOutOfContainer(up);
             },
             updateLayoutClasses: setLayoutClass,
             getFocusableContainers: () => {
@@ -190,7 +188,8 @@ const GridComp = ({ context }: GridCompProps) => {
                             ref={ setTabGuardCompRef }
                             eFocusableElement= { eGridBodyParent }
                             onTabKeyDown={ onTabKeyDown }
-                            gridCtrl={ gridCtrlRef.current! }>
+                            gridCtrl={ gridCtrlRef.current! }
+                            forceFocusOutWhenTabGuardsAreEmpty={ true }>
                         { // we wait for initialised before rending the children, so GridComp has created and registered with it's
                         // GridCtrl before we create the child GridBodyComp. Otherwise the GridBodyComp would initialise first,
                         // before we have set the the Layout CSS classes, causing the GridBodyComp to render rows to a grid that

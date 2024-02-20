@@ -128,16 +128,16 @@ var ChartCrossFilterService = /** @class */ (function (_super) {
     };
     var ChartCrossFilterService_1;
     __decorate([
-        core_1.Autowired('gridApi')
+        (0, core_1.Autowired)('gridApi')
     ], ChartCrossFilterService.prototype, "gridApi", void 0);
     __decorate([
-        core_1.Autowired('columnModel')
+        (0, core_1.Autowired)('columnModel')
     ], ChartCrossFilterService.prototype, "columnModel", void 0);
     __decorate([
-        core_1.Autowired('valueService')
+        (0, core_1.Autowired)('valueService')
     ], ChartCrossFilterService.prototype, "valueService", void 0);
     ChartCrossFilterService = ChartCrossFilterService_1 = __decorate([
-        core_1.Bean("chartCrossFilterService")
+        (0, core_1.Bean)("chartCrossFilterService")
     ], ChartCrossFilterService);
     return ChartCrossFilterService;
 }(core_1.BeanStub));

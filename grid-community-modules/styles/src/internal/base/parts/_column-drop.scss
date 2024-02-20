@@ -6,7 +6,7 @@
         border-radius: calc(var(--ag-grid-size) * 4);
         height: calc(var(--ag-grid-size) * 4);
         padding: 0 calc(var(--ag-grid-size) * 0.5);
-        border: 1px solid transparent;
+        border: 1px solid var(--ag-chip-border-color);
     }
 
     @include ag.keyboard-focus((ag-column-drop-cell), 2px);
@@ -33,9 +33,9 @@
     // HORIZONTAL COLUMN DROP
 
     .ag-column-drop-horizontal {
-        background-color: var(--ag-control-panel-background-color);
+        background-color: var(--ag-header-background-color);
         color: var(--ag-secondary-foreground-color);
-        height: var(--ag-row-height);
+        height: var(--ag-header-height);
         border-bottom: var(--ag-borders) var(--ag-border-color);
 
         @include ag.unthemed-rtl(( padding-left: var(--ag-cell-horizontal-padding) ));

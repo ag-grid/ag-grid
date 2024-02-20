@@ -3,7 +3,7 @@ import { AgGridVue } from '@ag-grid-community/vue3';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
@@ -52,7 +52,7 @@ const VueExample = {
             <ag-grid-vue
                     :groupAllowUnbalanced="true"
                     style="width: 100%; height: 98%;"
-                    class="ag-theme-alpine"
+                    :class="themeClass"
                     :columnDefs="columnDefs"
                     @grid-ready="onGridReady"
                     :defaultColDef="defaultColDef"
@@ -61,7 +61,7 @@ const VueExample = {
                     :rowData="rowData"
                     :groupDefaultExpanded="groupDefaultExpanded"
                     :rowGroupPanelShow="rowGroupPanelShow"
-                    :animateRows="true"></ag-grid-vue>
+                    ></ag-grid-vue>
         </div>
     `,
     components: {
@@ -91,17 +91,16 @@ const VueExample = {
                 type: "numberValue"
             }],
             gridApi: null,
-            columnApi: null,
             defaultColDef: {
                 flex: 1,
                 minWidth: 150,
-                resizable: true,
             },
             autoGroupColumnDef: null,
             columnTypes: null,
             rowData: null,
             groupDefaultExpanded: null,
-            rowGroupPanelShow: null
+            rowGroupPanelShow: null,
+            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
         }
     },
     created() {
@@ -128,7 +127,6 @@ const VueExample = {
     methods: {
         onGridReady(params) {
             this.gridApi = params.api;
-            this.gridColumnApi = params.columnApi;
 
         },
     }

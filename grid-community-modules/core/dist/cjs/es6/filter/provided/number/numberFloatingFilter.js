@@ -66,11 +66,14 @@ class NumberFloatingFilter extends textInputFloatingFilter_1.TextInputFloatingFi
         this.filterModelFormatter = new numberFilter_1.NumberFilterModelFormatter(this.localeService, this.optionsFactory, (_a = params.filterParams) === null || _a === void 0 ? void 0 : _a.numberFormatter);
     }
     onParamsUpdated(params) {
-        const allowedCharPattern = numberFilter_1.getAllowedCharPattern(params.filterParams);
+        this.refresh(params);
+    }
+    refresh(params) {
+        const allowedCharPattern = (0, numberFilter_1.getAllowedCharPattern)(params.filterParams);
         if (allowedCharPattern !== this.allowedCharPattern) {
             this.recreateFloatingFilterInputService(params);
         }
-        super.onParamsUpdated(params);
+        super.refresh(params);
         this.filterModelFormatter.updateParams({ optionsFactory: this.optionsFactory });
     }
     getDefaultFilterOptions() {
@@ -80,7 +83,7 @@ class NumberFloatingFilter extends textInputFloatingFilter_1.TextInputFloatingFi
         return this.filterModelFormatter;
     }
     createFloatingFilterInputService(params) {
-        this.allowedCharPattern = numberFilter_1.getAllowedCharPattern(params.filterParams);
+        this.allowedCharPattern = (0, numberFilter_1.getAllowedCharPattern)(params.filterParams);
         if (this.allowedCharPattern) {
             // need to use text input
             return this.createManagedBean(new textInputFloatingFilter_1.FloatingFilterTextInputService({

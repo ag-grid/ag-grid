@@ -26,9 +26,9 @@ The example below shows full row editing. In addition to standard full row editi
   Both `focusIn()` and `focusOut()` for this editor are logged to the console. Note that `focusIn()`
   and `focusOut()` are only called when the user is tabbing between cells when editing, they are not called
   as the user double clicks on a cell to start editing that cell, or the user finishes editing that cell by
-  e.g. hitting the <kbd>Enter</kbd> key.
-- Pressing <kbd>Tab</kbd> / <kbd>Shift</kbd> & <kbd>Tab</kbd> while editing will move the focus between the cells on the editing row. Read only cells will be focusable while the row is in edit mode.
-- The 'Suppress Navigable' column is not navigable using <kbd>Tab</kbd> / <kbd>Shift</kbd> & <kbd>Tab</kbd>. In other words, when tabbing around the grid, you cannot tab onto this cell.
+  e.g. hitting the <kbd>↵ Enter</kbd> key.
+- Pressing <kbd>⇥ Tab</kbd> / <kbd>⇧ Shift</kbd> & <kbd>⇥ Tab</kbd> while editing will move the focus between the cells on the editing row. Read only cells will be focusable while the row is in edit mode.
+- The 'Suppress Navigable' column is not navigable using <kbd>⇥ Tab</kbd> / <kbd>⇧ Shift</kbd> & <kbd>⇥ Tab</kbd>. In other words, when tabbing around the grid, you cannot tab onto this cell.
 - The **Read Only** column is not editable, so when the row goes into edit mode, the cell in the **Read Only** column cannot be edited.
 - The button will start editing line two. It uses the API to start editing a cell, however the result is that the whole row will become editable starting with the specified cell.
 - `cellValueChanged` and `rowValueChanged` events are logged to console.

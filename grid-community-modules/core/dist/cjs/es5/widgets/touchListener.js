@@ -5,8 +5,8 @@ var eventService_1 = require("../eventService");
 var mouse_1 = require("../utils/mouse");
 var TouchListener = /** @class */ (function () {
     function TouchListener(eElement, preventMouseClick) {
-        var _this = this;
         if (preventMouseClick === void 0) { preventMouseClick = false; }
+        var _this = this;
         this.destroyFuncs = [];
         this.touching = false;
         this.eventService = new eventService_1.EventService();
@@ -71,7 +71,7 @@ var TouchListener = /** @class */ (function () {
         if (!touch) {
             return;
         }
-        var eventIsFarAway = !mouse_1.areEventsNear(touch, this.touchStart, 4);
+        var eventIsFarAway = !(0, mouse_1.areEventsNear)(touch, this.touchStart, 4);
         if (eventIsFarAway) {
             this.moved = true;
         }

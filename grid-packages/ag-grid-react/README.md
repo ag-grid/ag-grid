@@ -1,7 +1,7 @@
 
 ![AG Grid HTML5 Grid trusted by the community, built for enterprise](./github-banner.png "AG Grid")
 
-[![CDNJS](https://img.shields.io/cdnjs/v/ag-grid)](https://cdnjs.com/libraries/ag-grid) [![npm](https://img.shields.io/npm/dm/ag-grid-react)](https://www.npmjs.com/package/ag-grid-react) [![Bundle Phobia](https://badgen.net/bundlephobia/minzip/ag-grid-react)](https://bundlephobia.com/result?p=ag-grid-react) [![Github Stars](https://img.shields.io/github/stars/ag-grid/ag-grid?style=social)](https://github.com/ag-grid/ag-grid) [![Twitter](https://img.shields.io/twitter/follow/ag_grid?style=social)](https://twitter.com/ag_grid)
+[![CDNJS](https://img.shields.io/cdnjs/v/ag-grid)](https://cdnjs.com/libraries/ag-grid) [![npm](https://img.shields.io/npm/dm/ag-grid-react)](https://www.npmjs.com/package/ag-grid-react) [![Github Stars](https://img.shields.io/github/stars/ag-grid/ag-grid?style=social)](https://github.com/ag-grid/ag-grid) [![Twitter](https://img.shields.io/twitter/follow/ag_grid?style=social)](https://twitter.com/ag_grid)
 
 AG Grid React Component
 ------
@@ -65,7 +65,7 @@ Use the setup instructions below or go through [a 5-minute-quickstart guide](htt
     import {AgGridReact} from 'ag-grid-react';
     
     import 'ag-grid-community/styles//ag-grid.css';
-    import 'ag-grid-community/styles//ag-theme-alpine.css';
+    import 'ag-grid-community/styles//ag-theme-quartz.css';
 
 ### Set the grid's configuration in a parent component
 	class App extends Component {
@@ -97,7 +97,7 @@ Use the setup instructions below or go through [a 5-minute-quickstart guide](htt
 		render() {
 			return (
 				<div
-					className="ag-theme-alpine"
+					className="ag-theme-quartz"
 					style={{
 						height: '500px',
 						width: '600px'

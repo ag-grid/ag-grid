@@ -1,5 +1,7 @@
-import { Grid, GridOptions } from '@ag-grid-community/core';
+import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 import { getData } from "./data";
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -20,7 +22,6 @@ const gridOptions: GridOptions = {
   },
   rowData: getData(),
   treeData: true, // enable Tree Data mode
-  animateRows: true,
   groupDefaultExpanded: -1, // expand all groups by default
   rowSelection: 'multiple',
   groupSelectsChildren: true,
@@ -37,5 +38,5 @@ document.addEventListener('DOMContentLoaded', function () {
   var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
 
   // create the grid passing in the div to use together with the columns & data we want to use
-  new Grid(eGridDiv, gridOptions)
+  gridApi = createGrid(eGridDiv, gridOptions);
 })

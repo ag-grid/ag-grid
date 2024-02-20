@@ -11,7 +11,7 @@ import { ICellRendererComp } from '../rendering/cellRenderers/iCellRenderer';
  */
 export declare function radioCssClass(element: HTMLElement, elementClass: string | null, otherElementClass?: string | null): void;
 export declare const FOCUSABLE_SELECTOR = "[tabindex], input, select, button, textarea, [href]";
-export declare const FOCUSABLE_EXCLUDE = ".ag-hidden, .ag-hidden *, [disabled], .ag-disabled:not(.ag-button), .ag-disabled *";
+export declare const FOCUSABLE_EXCLUDE = "[disabled], .ag-disabled:not(.ag-button), .ag-disabled *";
 export declare function isFocusableFormField(element: HTMLElement): boolean;
 export declare function setDisplayed(element: Element, displayed: boolean, options?: {
     skipAriaHidden?: boolean;
@@ -52,10 +52,9 @@ export declare function isRtlNegativeScroll(): boolean;
 export declare function getScrollLeft(element: HTMLElement, rtl: boolean): number;
 export declare function setScrollLeft(element: HTMLElement, value: number, rtl: boolean): void;
 export declare function clearElement(el: HTMLElement): void;
-/** @deprecated */
-export declare function removeElement(parent: HTMLElement, cssSelector: string): void;
 export declare function removeFromParent(node: Element | null): void;
-export declare function isVisible(element: HTMLElement): boolean;
+export declare function isInDOM(element: HTMLElement): boolean;
+export declare function isVisible(element: HTMLElement): any;
 /**
  * Loads the template and returns it as an element. makes up for no simple way in
  * the dom api to load html directly, eg we cannot do this: document.createElement(template)
@@ -63,16 +62,9 @@ export declare function isVisible(element: HTMLElement): boolean;
  * @returns {HTMLElement}
  */
 export declare function loadTemplate(template: string): HTMLElement;
-export declare function appendHtml(eContainer: HTMLElement, htmlTemplate: string): void;
-/** @deprecated */
-export declare function getElementAttribute(element: any, attributeName: string): string | null;
-export declare function offsetHeight(element: HTMLElement): number;
-export declare function offsetWidth(element: HTMLElement): number;
 export declare function ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore?: HTMLElement | null): void;
 export declare function setDomChildOrder(eContainer: HTMLElement, orderedChildren: (HTMLElement | null)[]): void;
 export declare function insertWithDomOrder(eContainer: HTMLElement, eToInsert: HTMLElement, eChildBefore: HTMLElement | null): void;
-/** @deprecated */
-export declare function prependDC(parent: HTMLElement, documentFragment: DocumentFragment): void;
 export declare function addStylesToElement(eElement: any, styles: RowStyle | CellStyle | null | undefined): void;
 export declare function isHorizontalScrollShowing(element: HTMLElement): boolean;
 export declare function isVerticalScrollShowing(element: HTMLElement): boolean;

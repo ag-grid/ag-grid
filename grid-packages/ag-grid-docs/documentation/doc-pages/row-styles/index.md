@@ -113,7 +113,7 @@ If you refresh a row, or a cell is updated due to editing, the `rowStyle`, `rowC
 
 The example below demonstrates `rowClassRules`:
 
-- `rowClassRules` are used to apply the class `sick-days-warning` when the number of sick days > 5 and <= 7, and the class `sick-days-breach` is applied when the number of sick days >= 8.
+- `rowClassRules` are used to apply the class `sick-days-warning` when the number of sick days > 5 and \<= 7, and the class `sick-days-breach` is applied when the number of sick days >= 8.
 
 - The grid re-evaluates the rowClassRules when the data is changed. The example
 shows changing the data in the three different ways: `rowNode.setDataValue`, `rowNode.setData` and `api.applyTransaction`. See [Updating Data](/data-update/) for details on these update functions.
@@ -143,13 +143,29 @@ Note if you hover over a header group, all columns in the group will be highligh
 
 <grid-example title='Highlight Rows And Columns' name='highlight-rows-and-columns' type='generated'></grid-example>
 
-In this example both Rows and Columns are not highlighted by setting.
+In this example Column highlighting is disabled by default and Row highlighting has been disabled using `suppressRowHoverHighlight=true`.
 
 <grid-example title='No Highlighting Rows And Columns' name='highlight-nothing' type='generated'></grid-example>
 
-Rows highlight by default as this is a common requirement. Column highlighting is less common and as such needs to be opted it.
+Rows highlight by default as this is a common requirement. Column highlighting is less common and as such needs to be opted in.
 
 Row Highlighting works by the grid adding the CSS class `ag-row-hover` to the row's getting hovered. The grid cannot depend on using CSS `:hover` selector as this will not highlight the entire row if Columns are pinned.
 
 Column Highlighting works by the grid adding the CSS class `ag-column-hover`
 to all Cells to be highlighted.
+
+## Styling the First and Last Rows
+
+It's possible to style the first and last rows of the grid using CSS by targeting the `.ag-row-first` and `.ag-row-last` selectors as follows:
+
+```css
+.ag-row.ag-row-first {
+    background-color: #2244CC44;
+}
+
+.ag-row.ag-row-last {
+    background-color: #CC333344;
+}
+```
+
+<grid-example title='Row Styling First and Last' name='row-styling-first-last' type='generated'></grid-example>

@@ -1,4 +1,11 @@
-import { Grid, ColDef, GridOptions, INumberCellEditorParams, ValueFormatterParams } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  ColDef,
+  GridOptions,
+  INumberCellEditorParams,
+  ValueFormatterParams,
+} from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
   { 
@@ -41,10 +48,11 @@ const data = Array.from(Array(20).keys()).map( (val: any, index: number) => ({
   boolean: !!(index % 2),
 }) );
 
+let gridApi: GridApi;
+
 const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
-    resizable: true,
     editable: true
   },
   columnDefs: columnDefs,
@@ -54,5 +62,5 @@ const gridOptions: GridOptions = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

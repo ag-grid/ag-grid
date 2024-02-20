@@ -1,6 +1,10 @@
 {
   "_config_": {},
   "variables": {
+    "--ag-active-color": {
+      "description": "(Quartz theme only) accent colour used for checked checkboxes, range selections, and input focus outlines in the Quartz theme",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
     "--ag-alpine-active-color": {
       "description": "(Alpine theme only) accent colour used for checked checkboxes, range selections, row hover, row selections, selected tab underlines, and input focus outlines in the Alpine theme",
       "type": "CSS color (e.g. `red` or `#fff`)"
@@ -75,6 +79,14 @@
     },
     "--ag-modal-overlay-background-color": {
       "description": "Background color of the overlay shown over the grid e.g. a data loading indicator",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-menu-background-color": {
+      "description": "Background color of menus, including the column menu and right-click context menu",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-panel-background-color": {
+      "description": "Background color of panels, including the advanced filter builder and integrated charts",
       "type": "CSS color (e.g. `red` or `#fff`)"
     },
     "--ag-row-hover-color": {
@@ -187,6 +199,14 @@
     },
     "--ag-row-border-color": {
       "description": "Colour of the border between grid rows, or `transparent` to display no border",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-menu-border-color": {
+      "description": "Colour of the border around menus including the column menu and right-click context menu",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-panel-border-color": {
+      "description": "Colour of the border around panels including the advanced filter builder and integrated charts",
       "type": "CSS color (e.g. `red` or `#fff`)"
     },
     "--ag-cell-horizontal-border": {
@@ -309,6 +329,10 @@
       "description": "The size of square icons and icon-buttons",
       "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
+    "--ag-icon-font-weight": {
+      "description": "The font weight to apply to icon elements, used for icon fonts that require a specific weight to work",
+      "type": "CSS length (e.g. `0`, `4px` or `50%`)"
+    },
     "--ag-widget-container-horizontal-padding": {
       "description": "The horizontal padding of containers that contain stacked widgets, such as menus and tool panels",
       "type": "CSS length (e.g. `0`, `4px` or `50%`)"
@@ -385,6 +409,10 @@
       "description": "How much to indent child filter items in the Set Filter List relative to their parent",
       "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
+    "--ag-advanced-filter-builder-indent-size": {
+      "description": "How much to indent child filter items in the Advanced Filter Builder relative to their parent",
+      "type": "CSS length (e.g. `0`, `4px` or `50%`)"
+    },
     "--ag-row-group-indent-size": {
       "description": "How much to indent child rows in the grid relative to their parent row",
       "type": "CSS length (e.g. `0`, `4px` or `50%`)"
@@ -398,7 +426,7 @@
       "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-menu-min-width": {
-      "description": "Minimum width of a menu that is not tabbed",
+      "description": "Minimum width of the filter menu",
       "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-side-bar-panel-width": {
@@ -428,6 +456,22 @@
     "--ag-popup-shadow": {
       "description": "override the shadow for popups - cards that contain complex UI, like menus and charts",
       "type": "CSS box-shadow value (e.g. `0 5px 10px black`)"
+    },
+    "--ag-advanced-filter-join-pill-color": {
+      "description": "Colour of the join operator pills in the Advanced Filter Builder",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-advanced-filter-column-pill-color": {
+      "description": "Colour of the column pills in the Advanced Filter Builder",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-advanced-filter-option-pill-color": {
+      "description": "Colour of the filter option pills in the Advanced Filter Builder",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-advanced-filter-value-pill-color": {
+      "description": "Colour of the value pills in the Advanced Filter Builder",
+      "type": "CSS color (e.g. `red` or `#fff`)"
     }
   }
 }

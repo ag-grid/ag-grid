@@ -8,19 +8,11 @@
 
 .my-grid {
     flex-grow: 1;
-    border: 1px solid lightslategrey;
 }
 
 .my-chart {
     flex-grow: 1;
     height: 135px;
     display: inline-block;
-    border: 1px solid lightslategrey;
-    background: rgb(34, 38, 41);
-}
-
-.ag-theme-alpine-dark {
-    --ag-grid-size: 0.49em;
-    --ag-list-item-height: 20px;
-    --ag-font-size: 10px;
+    margin-top: 0.5rem;
 }

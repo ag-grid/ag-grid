@@ -86,7 +86,7 @@ export class AgAutocompleteList extends PopupComponent {
         let matchingStrings;
         let topSuggestion;
         if (this.params.useFuzzySearch) {
-            matchingStrings = fuzzySuggestions(this.searchString, searchStrings, true);
+            matchingStrings = fuzzySuggestions(this.searchString, searchStrings, true).values;
             topSuggestion = matchingStrings.length ? matchingStrings[0] : undefined;
         }
         else {

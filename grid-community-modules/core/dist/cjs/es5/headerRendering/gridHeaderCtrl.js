@@ -26,8 +26,10 @@ var keyCode_1 = require("../constants/keyCode");
 var beanStub_1 = require("../context/beanStub");
 var context_1 = require("../context/context");
 var eventKeys_1 = require("../eventKeys");
+var browser_1 = require("../utils/browser");
 var generic_1 = require("../utils/generic");
 var managedFocusFeature_1 = require("../widgets/managedFocusFeature");
+var touchListener_1 = require("../widgets/touchListener");
 var headerNavigationService_1 = require("./common/headerNavigationService");
 var GridHeaderCtrl = /** @class */ (function (_super) {
     __extends(GridHeaderCtrl, _super);
@@ -47,6 +49,9 @@ var GridHeaderCtrl = /** @class */ (function (_super) {
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.onPivotModeChanged();
         this.setupHeaderHeight();
+        var listener = this.onHeaderContextMenu.bind(this);
+        this.addManagedListener(this.eGui, 'contextmenu', listener);
+        this.mockContextMenuForIPad(listener);
         this.ctrlsService.registerGridHeaderCtrl(this);
     };
     GridHeaderCtrl.prototype.setupHeaderHeight = function () {
@@ -88,7 +93,7 @@ var GridHeaderCtrl = /** @class */ (function (_super) {
         this.headerHeight = totalHeaderHeight;
         // one extra pixel is needed here to account for the
         // height of the border
-        var px = totalHeaderHeight + 1 + "px";
+        var px = "".concat(totalHeaderHeight + 1, "px");
         this.comp.setHeightAndMinHeight(px);
         this.eventService.dispatchEvent({
             type: eventKeys_1.Events.EVENT_HEADER_HEIGHT_CHANGED
@@ -105,7 +110,7 @@ var GridHeaderCtrl = /** @class */ (function (_super) {
         this.comp.addOrRemoveCssClass('ag-header-allow-overflow', shouldAllowOverflow);
     };
     GridHeaderCtrl.prototype.onTabKeyDown = function (e) {
-        var isRtl = this.gridOptionsService.is('enableRtl');
+        var isRtl = this.gridOptionsService.get('enableRtl');
         var direction = e.shiftKey !== isRtl
             ? headerNavigationService_1.HeaderNavigationDirection.LEFT
             : headerNavigationService_1.HeaderNavigationDirection.RIGHT;
@@ -120,7 +125,7 @@ var GridHeaderCtrl = /** @class */ (function (_super) {
             case keyCode_1.KeyCode.LEFT:
                 direction = headerNavigationService_1.HeaderNavigationDirection.LEFT;
             case keyCode_1.KeyCode.RIGHT:
-                if (!generic_1.exists(direction)) {
+                if (!(0, generic_1.exists)(direction)) {
                     direction = headerNavigationService_1.HeaderNavigationDirection.RIGHT;
                 }
                 this.headerNavigationService.navigateHorizontally(direction, false, e);
@@ -128,7 +133,7 @@ var GridHeaderCtrl = /** @class */ (function (_super) {
             case keyCode_1.KeyCode.UP:
                 direction = headerNavigationService_1.HeaderNavigationDirection.UP;
             case keyCode_1.KeyCode.DOWN:
-                if (!generic_1.exists(direction)) {
+                if (!(0, generic_1.exists)(direction)) {
                     direction = headerNavigationService_1.HeaderNavigationDirection.DOWN;
                 }
                 if (this.headerNavigationService.navigateVertically(direction, null, e)) {
@@ -149,21 +154,45 @@ var GridHeaderCtrl = /** @class */ (function (_super) {
             this.focusService.clearFocusedHeader();
         }
     };
+    GridHeaderCtrl.prototype.onHeaderContextMenu = function (mouseEvent, touch, touchEvent) {
+        if ((!mouseEvent && !touchEvent) || !this.menuService.isHeaderContextMenuEnabled()) {
+            return;
+        }
+        var target = (mouseEvent !== null && mouseEvent !== void 0 ? mouseEvent : touch).target;
+        if (target === this.eGui || target === this.ctrlsService.getHeaderRowContainerCtrl().getViewport()) {
+            this.menuService.showHeaderContextMenu(undefined, mouseEvent, touchEvent);
+        }
+    };
+    GridHeaderCtrl.prototype.mockContextMenuForIPad = function (listener) {
+        // we do NOT want this when not in iPad
+        if (!(0, browser_1.isIOSUserAgent)()) {
+            return;
+        }
+        var touchListener = new touchListener_1.TouchListener(this.eGui);
+        var longTapListener = function (event) {
+            listener(undefined, event.touchStart, event.touchEvent);
+        };
+        this.addManagedListener(touchListener, touchListener_1.TouchListener.EVENT_LONG_TAP, longTapListener);
+        this.addDestroyFunc(function () { return touchListener.destroy(); });
+    };
     __decorate([
-        context_1.Autowired('headerNavigationService')
+        (0, context_1.Autowired)('headerNavigationService')
     ], GridHeaderCtrl.prototype, "headerNavigationService", void 0);
     __decorate([
-        context_1.Autowired('focusService')
+        (0, context_1.Autowired)('focusService')
     ], GridHeaderCtrl.prototype, "focusService", void 0);
     __decorate([
-        context_1.Autowired('columnModel')
+        (0, context_1.Autowired)('columnModel')
     ], GridHeaderCtrl.prototype, "columnModel", void 0);
     __decorate([
-        context_1.Autowired('ctrlsService')
+        (0, context_1.Autowired)('ctrlsService')
     ], GridHeaderCtrl.prototype, "ctrlsService", void 0);
     __decorate([
-        context_1.Autowired('filterManager')
+        (0, context_1.Autowired)('filterManager')
     ], GridHeaderCtrl.prototype, "filterManager", void 0);
+    __decorate([
+        (0, context_1.Autowired)('menuService')
+    ], GridHeaderCtrl.prototype, "menuService", void 0);
     return GridHeaderCtrl;
 }(beanStub_1.BeanStub));
 exports.GridHeaderCtrl = GridHeaderCtrl;

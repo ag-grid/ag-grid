@@ -6,7 +6,7 @@ const PopupEditorComp = (props) => {
     const { context, popupService, localeService, gridOptionsService } = useContext(BeansContext);
     const { editDetails, cellCtrl, eParentCell } = props;
     const { compDetails } = editDetails;
-    const useModelPopup = gridOptionsService.is('stopEditingWhenCellsLoseFocus');
+    const useModelPopup = gridOptionsService.get('stopEditingWhenCellsLoseFocus');
     const wrapper = context.createBean(new PopupEditorWrapper(compDetails.params));
     const ePopupGui = wrapper.getGui();
     const positionParams = {

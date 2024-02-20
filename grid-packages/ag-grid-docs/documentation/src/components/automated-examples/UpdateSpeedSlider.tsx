@@ -1,6 +1,6 @@
 import classnames from 'classnames';
 import React, { FunctionComponent } from 'react';
-import styles from './UpdateSpeedSlider.module.scss';
+import styles from '@design-system/modules/UpdateSpeedSlider.module.scss';
 
 interface Props {
     min: number;
@@ -14,7 +14,7 @@ interface Props {
 export const UpdateSpeedSlider: FunctionComponent<Props> = ({ min, max, step, value, disabled, setValue }) => {
     const updateSpeed = value <= 0 ? '0' : `${value}x`;
     return (
-        <div className={classnames('font-size-extra-large', styles.slider)}>
+        <div className={classnames('text-xl', styles.slider)}>
             <label htmlFor="update-speed-slider">
                 <span className="text-secondary">Update speed:</span> <span>{updateSpeed}</span>
             </label>

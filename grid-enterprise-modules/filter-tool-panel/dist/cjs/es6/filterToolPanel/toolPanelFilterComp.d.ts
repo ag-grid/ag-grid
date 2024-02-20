@@ -1,5 +1,6 @@
 import { Column, Component } from "@ag-grid-community/core";
 export declare class ToolPanelFilterComp extends Component {
+    private readonly expandedCallback;
     private static TEMPLATE;
     private eFilterToolPanelHeader;
     private eFilterName;
@@ -14,7 +15,7 @@ export declare class ToolPanelFilterComp extends Component {
     private column;
     private expanded;
     private underlyingFilter;
-    constructor(hideHeader?: boolean);
+    constructor(hideHeader: boolean, expandedCallback: () => void);
     private postConstruct;
     setColumn(column: Column): void;
     getColumn(): Column;

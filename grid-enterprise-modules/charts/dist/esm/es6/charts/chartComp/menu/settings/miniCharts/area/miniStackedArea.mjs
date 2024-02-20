@@ -1,7 +1,7 @@
 import { MiniChartWithAxes } from "../miniChartWithAxes.mjs";
 import { _Scene } from "ag-charts-community";
 export class MiniStackedArea extends MiniChartWithAxes {
-    constructor(container, fills, strokes, data = MiniStackedArea.data, tooltipName = "stackedAreaTooltip") {
+    constructor(container, fills, strokes, _themeTemplateParameters, _isCustomTheme, data = MiniStackedArea.data, tooltipName = "stackedAreaTooltip") {
         super(container, tooltipName);
         const size = this.size;
         const padding = this.padding;
@@ -35,7 +35,7 @@ export class MiniStackedArea extends MiniChartWithAxes {
         });
         this.areas = pathData.map(points => {
             const area = new _Scene.Path();
-            area.strokeWidth = 1;
+            area.strokeWidth = 0;
             const path = area.path;
             path.clear();
             points.forEach((point, i) => path[i > 0 ? "lineTo" : "moveTo"](point.x, point.y));

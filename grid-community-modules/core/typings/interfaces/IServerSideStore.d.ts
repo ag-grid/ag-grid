@@ -11,7 +11,7 @@ export interface IServerSideStore {
     }): void;
     forEachStoreDeep(callback: (rowNode: IServerSideStore, index: number) => void, sequence?: NumberSequence): void;
     forEachNodeDeep(callback: (rowNode: IRowNode, index: number) => void, sequence?: NumberSequence): void;
-    forEachNodeDeepAfterFilterAndSort(callback: (rowNode: IRowNode, index: number) => void, sequence?: NumberSequence): void;
+    forEachNodeDeepAfterFilterAndSort(callback: (rowNode: IRowNode, index: number) => void, sequence?: NumberSequence, includeFooterNodes?: boolean): void;
     retryLoads(): void;
     getRowUsingDisplayIndex(displayRowIndex: number, dontCreateBlock?: boolean): IRowNode | undefined;
     getRowBounds(index: number): RowBounds | null;
@@ -61,7 +61,4 @@ export interface ServerSideGroupLevelState {
      * The size (number of rows) of each infinite cache block.
      */
     cacheBlockSize?: number;
-}
-/** @deprecated use ServerSideGroupLevelState instead  */
-export interface ServerSideGroupState extends ServerSideGroupLevelState {
 }

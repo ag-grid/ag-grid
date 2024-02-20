@@ -28,15 +28,27 @@ export declare class Events {
     static EVENT_COLUMN_RESIZED: 'columnResized';
     /** The list of displayed columns has changed, can result from columns open / close, column move, pivot, group, etc */
     static EVENT_DISPLAYED_COLUMNS_CHANGED: 'displayedColumnsChanged';
+    /** The grid option related to suppressing movable columns has changed */
+    static EVENT_SUPPRESS_COLUMN_MOVE_CHANGED: 'suppressMovableColumns';
+    /** The grid option related to suppressing column group selection has changed */
+    static EVENT_SUPPRESS_MENU_HIDE_CHANGED: 'suppressMenuHide';
+    /** The grid option related to suppressing movable columns has changed */
+    static EVENT_SUPPRESS_FIELD_DOT_NOTATION: 'suppressFieldDotNotation';
     /** The list of virtual columns has changed, results from viewport changing */
     static EVENT_VIRTUAL_COLUMNS_CHANGED: 'virtualColumnsChanged';
+    /** Column header mouse over */
+    static EVENT_COLUMN_HEADER_MOUSE_OVER: 'columnHeaderMouseOver';
+    /** Column header mouse leave */
+    static EVENT_COLUMN_HEADER_MOUSE_LEAVE: 'columnHeaderMouseLeave';
+    /** Column header clicked */
+    static EVENT_COLUMN_HEADER_CLICKED: 'columnHeaderClicked';
+    /** Column header context menu event, such as right-click or context menu key press */
+    static EVENT_COLUMN_HEADER_CONTEXT_MENU: 'columnHeaderContextMenu';
     /** Async Transactions Executed */
     static EVENT_ASYNC_TRANSACTIONS_FLUSHED: 'asyncTransactionsFlushed';
     /** A row group was opened / closed */
     static EVENT_ROW_GROUP_OPENED: 'rowGroupOpened';
-    /** @deprecated v28 use EVENT_ROW_DATA_UPDATED instead */
-    static EVENT_ROW_DATA_CHANGED: 'rowDataChanged';
-    /** The client has updated data for the grid */
+    /** Client-Side Row Model only. The client has updated data for the grid */
     static EVENT_ROW_DATA_UPDATED: 'rowDataUpdated';
     /** The client has set new floating data into the grid */
     static EVENT_PINNED_ROW_DATA_CHANGED: 'pinnedRowDataChanged';
@@ -97,6 +109,7 @@ export declare class Events {
     /** Filter was change but not applied. Only useful if apply buttons are used in filters. */
     static EVENT_FILTER_MODIFIED: 'filterModified';
     static EVENT_FILTER_OPENED: 'filterOpened';
+    static EVENT_ADVANCED_FILTER_BUILDER_VISIBLE_CHANGED: 'advancedFilterBuilderVisibleChanged';
     static EVENT_SORT_CHANGED: 'sortChanged';
     /** A row was removed from the dom, for any reason. Use to clean up resources (if any) used by the row. */
     static EVENT_VIRTUAL_ROW_REMOVED: 'virtualRowRemoved';
@@ -104,6 +117,8 @@ export declare class Events {
     static EVENT_ROW_DOUBLE_CLICKED: 'rowDoubleClicked';
     /** Gets called once after the grid has finished initialising. */
     static EVENT_GRID_READY: 'gridReady';
+    /** Called once when the grid is about to get destroyed. */
+    static EVENT_GRID_PRE_DESTROYED: 'gridPreDestroyed';
     /** Width of height of the main grid div has changed. Grid listens for this and does layout of grid if it's
      * changed, so always filling the space it was given. */
     static EVENT_GRID_SIZE_CHANGED: 'gridSizeChanged';
@@ -135,10 +150,14 @@ export declare class Events {
     static EVENT_COMPONENT_STATE_CHANGED: 'componentStateChanged';
     /** Only used by the SSRM, called when the grid has no more rows to refresh */
     static EVENT_STORE_REFRESHED: 'storeRefreshed';
+    static EVENT_STATE_UPDATED: 'stateUpdated';
+    /** The visibility of the column menu has changed. */
+    static EVENT_COLUMN_MENU_VISIBLE_CHANGED: 'columnMenuVisibleChanged';
     /*****************************  INTERNAL EVENTS: START ******************************************* */
     /** Please remember to add to ComponentUtil.EXCLUDED_INTERNAL_EVENTS to not have these events exposed to framework components. */
     /** All items from here down are used internally by the grid, not intended for external use. */
     static EVENT_BODY_HEIGHT_CHANGED: 'bodyHeightChanged';
+    static EVENT_COLUMN_CONTAINER_WIDTH_CHANGED: 'columnContainerWidthChanged';
     static EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED: 'displayedColumnsWidthChanged';
     static EVENT_SCROLL_VISIBILITY_CHANGED: 'scrollVisibilityChanged';
     static EVENT_COLUMN_HOVER_CHANGED: 'columnHoverChanged';
@@ -160,13 +179,13 @@ export declare class Events {
     static EVENT_COLUMN_PIVOT_CHANGE_REQUEST: 'columnPivotChangeRequest';
     static EVENT_COLUMN_VALUE_CHANGE_REQUEST: 'columnValueChangeRequest';
     static EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST: 'columnAggFuncChangeRequest';
-    static EVENT_KEYBOARD_FOCUS: 'keyboardFocus';
-    static EVENT_MOUSE_FOCUS: 'mouseFocus';
     static EVENT_STORE_UPDATED: 'storeUpdated';
     static EVENT_FILTER_DESTROYED: 'filterDestroyed';
     static EVENT_ROW_DATA_UPDATE_STARTED: 'rowDataUpdateStarted';
+    static EVENT_ROW_COUNT_READY: 'rowCountReady';
     static EVENT_ADVANCED_FILTER_ENABLED_CHANGED: 'advancedFilterEnabledChanged';
     static EVENT_DATA_TYPES_INFERRED: 'dataTypesInferred';
     static EVENT_FIELD_VALUE_CHANGED: 'fieldValueChanged';
     static EVENT_FIELD_PICKER_VALUE_SELECTED: 'fieldPickerValueSelected';
+    static EVENT_SIDE_BAR_UPDATED: 'sideBarUpdated';
 }

@@ -1,4 +1,4 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 
 // specify the data
 var rowData = [
@@ -7,6 +7,8 @@ var rowData = [
   { orgHierarchy: ['C', 'D'] },
   { orgHierarchy: ['E', 'F', 'G', 'H'] },
 ]
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -29,7 +31,6 @@ const gridOptions: GridOptions = {
   },
   rowData: rowData,
   treeData: true, // enable Tree Data mode
-  animateRows: true,
   groupDefaultExpanded: -1, // expand all groups by default
   getDataPath: (data: any) => {
     return data.orgHierarchy
@@ -43,5 +44,5 @@ document.addEventListener('DOMContentLoaded', function () {
   var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
 
   // create the grid passing in the div to use together with the columns & data we want to use
-  new Grid(eGridDiv, gridOptions)
+  gridApi = createGrid(eGridDiv, gridOptions);
 })

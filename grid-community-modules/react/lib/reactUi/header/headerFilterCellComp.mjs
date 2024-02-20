@@ -1,16 +1,20 @@
-// @ag-grid-community/react v30.1.0
+// @ag-grid-community/react v31.1.0
 import React, { memo, useCallback, useContext, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { BeansContext } from '../beansContext.mjs';
 import { AgPromise } from '@ag-grid-community/core';
 import { CssClasses, isComponentStateless } from '../utils.mjs';
 import { showJsComp } from '../jsComp.mjs';
+import { FloatingFilterComponentProxy } from '../../shared/customComp/floatingFilterComponentProxy.mjs';
+import { CustomContext } from '../../shared/customComp/customContext.mjs';
+import { warnReactiveCustomComponents } from '../../shared/customComp/util.mjs';
 const HeaderFilterCellComp = (props) => {
-    const { context } = useContext(BeansContext);
+    const { context, gridOptionsService } = useContext(BeansContext);
     const [cssClasses, setCssClasses] = useState(() => new CssClasses('ag-header-cell', 'ag-floating-filter'));
     const [cssBodyClasses, setBodyCssClasses] = useState(() => new CssClasses());
     const [cssButtonWrapperClasses, setButtonWrapperCssClasses] = useState(() => new CssClasses('ag-floating-filter-button', 'ag-hidden'));
     const [buttonWrapperAriaHidden, setButtonWrapperAriaHidden] = useState("false");
     const [userCompDetails, setUserCompDetails] = useState();
+    const [renderKey, setRenderKey] = useState(1);
     const eGui = useRef(null);
     const eFloatingFilterBody = useRef(null);
     const eButtonWrapper = useRef(null);
@@ -62,12 +66,30 @@ const HeaderFilterCellComp = (props) => {
             && isComponentStateless(userCompDetails.componentClass);
         return !!res;
     }, [userCompDetails]);
+    const reactiveCustomComponents = useMemo(() => gridOptionsService.get('reactiveCustomComponents'), []);
+    const floatingFilterCompProxy = useMemo(() => {
+        if (userCompDetails) {
+            if (reactiveCustomComponents) {
+                const compProxy = new FloatingFilterComponentProxy(userCompDetails.params, () => setRenderKey(prev => prev + 1));
+                userCompRef(compProxy);
+                return compProxy;
+            }
+            else if (userCompDetails.componentFromFramework) {
+                warnReactiveCustomComponents();
+            }
+        }
+        return undefined;
+    }, [userCompDetails]);
+    const floatingFilterProps = floatingFilterCompProxy === null || floatingFilterCompProxy === void 0 ? void 0 : floatingFilterCompProxy.getProps();
     const reactUserComp = userCompDetails && userCompDetails.componentFromFramework;
     const UserCompClass = userCompDetails && userCompDetails.componentClass;
-    return (React.createElement("div", { ref: setRef, className: className, role: "gridcell", tabIndex: -1 },
+    return (React.createElement("div", { ref: setRef, className: className, role: "gridcell" },
         React.createElement("div", { ref: eFloatingFilterBody, className: bodyClassName, role: "presentation" },
-            reactUserComp && userCompStateless && React.createElement(UserCompClass, Object.assign({}, userCompDetails.params)),
-            reactUserComp && !userCompStateless && React.createElement(UserCompClass, Object.assign({}, userCompDetails.params, { ref: userCompRef }))),
+            reactUserComp && !reactiveCustomComponents && React.createElement(UserCompClass, Object.assign({}, userCompDetails.params, { ref: userCompStateless ? () => { } : userCompRef })),
+            reactUserComp && reactiveCustomComponents && React.createElement(CustomContext.Provider, { value: {
+                    setMethods: (methods) => floatingFilterCompProxy.setMethods(methods)
+                } },
+                React.createElement(UserCompClass, Object.assign({}, floatingFilterProps)))),
         React.createElement("div", { ref: eButtonWrapper, "aria-hidden": buttonWrapperAriaHidden, className: buttonWrapperClassName, role: "presentation" },
             React.createElement("button", { ref: eButtonShowMainFilter, type: "button", className: "ag-button ag-floating-filter-button-button", tabIndex: -1 }))));
 };

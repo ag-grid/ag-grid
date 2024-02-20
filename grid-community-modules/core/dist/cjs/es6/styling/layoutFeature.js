@@ -42,7 +42,7 @@ class LayoutFeature extends beanStub_1.BeanStub {
         const domLayout = (_a = this.gridOptionsService.get('domLayout')) !== null && _a !== void 0 ? _a : 'normal';
         const validLayouts = ['normal', 'print', 'autoHeight'];
         if (validLayouts.indexOf(domLayout) === -1) {
-            function_1.doOnce(() => console.warn(`AG Grid: ${domLayout} is not valid for DOM Layout, valid values are 'normal', 'autoHeight', 'print'.`), 'warn about dom layout values');
+            (0, function_1.warnOnce)(`${domLayout} is not valid for DOM Layout, valid values are 'normal', 'autoHeight', 'print'.`);
             return 'normal';
         }
         return domLayout;

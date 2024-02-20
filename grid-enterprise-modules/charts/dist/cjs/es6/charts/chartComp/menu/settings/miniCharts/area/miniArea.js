@@ -4,7 +4,7 @@ exports.MiniArea = void 0;
 const miniChartWithAxes_1 = require("../miniChartWithAxes");
 const ag_charts_community_1 = require("ag-charts-community");
 class MiniArea extends miniChartWithAxes_1.MiniChartWithAxes {
-    constructor(container, fills, strokes, data = MiniArea.data) {
+    constructor(container, fills, strokes, _themeTemplateParameters, _isCustomTheme, data = MiniArea.data) {
         super(container, "groupedAreaTooltip");
         const size = this.size;
         const padding = this.padding;
@@ -38,6 +38,7 @@ class MiniArea extends miniChartWithAxes_1.MiniChartWithAxes {
         this.areas = pathData.reverse().map(points => {
             const area = new ag_charts_community_1._Scene.Path();
             area.strokeWidth = 1;
+            area.strokeOpacity = 0.75;
             area.fillOpacity = 0.7;
             const path = area.path;
             path.clear();

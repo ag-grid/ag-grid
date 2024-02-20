@@ -58,8 +58,11 @@ export class PrimaryColsHeaderPanel extends Component {
         });
 
         this.addManagedListener(this.eSelect.getInputElement(), 'click', this.onSelectClicked.bind(this));
+        this.addManagedPropertyListener('functionsReadOnly', () => this.onFunctionsReadOnlyPropChanged());
 
-        this.eFilterTextField.onValueChange(() => this.onFilterTextChanged());
+        this.eFilterTextField
+            .setAutoComplete(false)
+            .onValueChange(() => this.onFilterTextChanged());
 
         this.addManagedListener(
             this.eFilterTextField.getInputElement(),
@@ -77,8 +80,18 @@ export class PrimaryColsHeaderPanel extends Component {
         this.activateTabIndex([this.eExpand]);
     }
 
+    private onFunctionsReadOnlyPropChanged(): void {
+        const readOnly = this.gridOptionsService.get('functionsReadOnly');
+        this.eSelect.setReadOnly(readOnly);
+        this.eSelect.addOrRemoveCssClass('ag-column-select-column-readonly', readOnly);
+    }
+
     public init(params: ToolPanelColumnCompParams): void {
         this.params = params;
+
+        const readOnly = this.gridOptionsService.get('functionsReadOnly');
+        this.eSelect.setReadOnly(readOnly);
+        this.eSelect.addOrRemoveCssClass('ag-column-select-column-readonly', readOnly);
 
         if (this.columnModel.isReady()) {
             this.showOrHideOptions();

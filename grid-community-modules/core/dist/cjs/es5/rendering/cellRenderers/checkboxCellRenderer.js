@@ -38,17 +38,19 @@ var CheckboxCellRenderer = /** @class */ (function (_super) {
         var _this = this;
         this.params = params;
         this.updateCheckbox(params);
-        this.eCheckbox.getInputElement().setAttribute('tabindex', '-1');
-        this.addManagedListener(this.eCheckbox.getInputElement(), 'click', function (event) {
-            event_1.stopPropagationForAgGrid(event);
+        var inputEl = this.eCheckbox.getInputElement();
+        inputEl.setAttribute('tabindex', '-1');
+        (0, aria_1.setAriaLive)(inputEl, 'polite');
+        this.addManagedListener(inputEl, 'click', function (event) {
+            (0, event_1.stopPropagationForAgGrid)(event);
             if (_this.eCheckbox.isDisabled()) {
                 return;
             }
             var isSelected = _this.eCheckbox.getValue();
             _this.onCheckboxChanged(isSelected);
         });
-        this.addManagedListener(this.eCheckbox.getInputElement(), 'dblclick', function (event) {
-            event_1.stopPropagationForAgGrid(event);
+        this.addManagedListener(inputEl, 'dblclick', function (event) {
+            (0, event_1.stopPropagationForAgGrid)(event);
         });
         var eDocument = this.gridOptionsService.getDocument();
         this.addManagedListener(this.params.eGridCell, 'keydown', function (event) {
@@ -95,10 +97,10 @@ var CheckboxCellRenderer = /** @class */ (function (_super) {
         var disabled = params.disabled != null ? params.disabled : !((_c = params.column) === null || _c === void 0 ? void 0 : _c.isCellEditable(params.node));
         this.eCheckbox.setDisabled(disabled);
         var translate = this.localeService.getLocaleTextFunc();
-        var stateName = aria_1.getAriaCheckboxStateName(translate, isSelected);
+        var stateName = (0, aria_1.getAriaCheckboxStateName)(translate, isSelected);
         var ariaLabel = disabled
             ? stateName
-            : translate('ariaToggleCellValue', 'Press SPACE to toggle cell value') + " (" + stateName + ")";
+            : "".concat(translate('ariaToggleCellValue', 'Press SPACE to toggle cell value'), " (").concat(stateName, ")");
         this.eCheckbox.setInputAriaLabel(ariaLabel);
     };
     CheckboxCellRenderer.prototype.onCheckboxChanged = function (isSelected) {
@@ -132,7 +134,7 @@ var CheckboxCellRenderer = /** @class */ (function (_super) {
     };
     CheckboxCellRenderer.TEMPLATE = "\n        <div class=\"ag-cell-wrapper ag-checkbox-cell\" role=\"presentation\">\n            <ag-checkbox role=\"presentation\" ref=\"eCheckbox\"></ag-checkbox>\n        </div>";
     __decorate([
-        componentAnnotations_1.RefSelector('eCheckbox')
+        (0, componentAnnotations_1.RefSelector)('eCheckbox')
     ], CheckboxCellRenderer.prototype, "eCheckbox", void 0);
     return CheckboxCellRenderer;
 }(component_1.Component));

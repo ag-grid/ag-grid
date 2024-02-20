@@ -11,6 +11,7 @@ export declare class PaginationComp extends Component {
     private lbLastRowOnPage;
     private lbCurrent;
     private lbTotal;
+    private pageSizeComp;
     private previousAndFirstButtonsDisabled;
     private nextButtonDisabled;
     private lastButtonDisabled;
@@ -18,6 +19,7 @@ export declare class PaginationComp extends Component {
     constructor();
     protected postConstruct(): void;
     private onPaginationChanged;
+    private onPageSizeRelatedOptionsChange;
     private setupListeners;
     private onBtFirst;
     private setCurrentPageLabel;

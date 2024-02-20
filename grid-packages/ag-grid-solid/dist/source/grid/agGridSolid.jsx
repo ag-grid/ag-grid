@@ -1,4 +1,4 @@
-import { ComponentUtil, CtrlsService, GridCoreCreator } from 'ag-grid-community';
+import { ColumnApi, ComponentUtil, CtrlsService, GridCoreCreator } from 'ag-grid-community';
 import { createEffect, createSignal, For, onCleanup, onMount } from "solid-js";
 import { Portal } from 'solid-js/web';
 import SolidCompWrapperFactory from './core/solidCompWrapperFactory';
@@ -6,7 +6,7 @@ import { SolidFrameworkOverrides } from './core/solidFrameworkOverrides';
 import GridComp from './gridComp';
 const AgGridSolid = (props) => {
     let eGui;
-    let gridOptions;
+    let api;
     const [context, setContext] = createSignal();
     const [getPortals, setPortals] = createSignal([]);
     const destroyFuncs = [];
@@ -29,16 +29,13 @@ const AgGridSolid = (props) => {
             const currentValue = props[key];
             const previousValue = propsCopy[key];
             if (previousValue !== currentValue) {
-                changes[key] = {
-                    currentValue,
-                    previousValue
-                };
+                changes[key] = currentValue;
                 propsCopy[key] = currentValue;
                 changesExist = true;
             }
         });
         if (changesExist) {
-            ComponentUtil.processOnChange(changes, gridOptions.api);
+            ComponentUtil.processOnChange(changes, api);
         }
     });
     onMount(() => {
@@ -58,8 +55,7 @@ const AgGridSolid = (props) => {
             modules,
             frameworkOverrides: new SolidFrameworkOverrides()
         };
-        gridOptions = props.gridOptions || {};
-        ComponentUtil.copyAttributesToGridOptions(gridOptions, props);
+        const gridOptions = ComponentUtil.combineAttributesAndGridOptions(props.gridOptions, props);
         const createUiCallback = (context) => {
             setContext(context);
             // because React is Async, we need to wait for the UI to be initialised before exposing the API's
@@ -68,19 +64,19 @@ const AgGridSolid = (props) => {
                 const refCallback = props.ref && props.ref;
                 if (refCallback) {
                     const gridRef = {
-                        api: gridOptions.api,
-                        columnApi: gridOptions.columnApi
+                        api: api,
+                        columnApi: new ColumnApi(api)
                     };
                     refCallback(gridRef);
                 }
-                destroyFuncs.push(() => gridOptions.api.destroy());
+                destroyFuncs.push(() => api.destroy());
             });
         };
         const acceptChangesCallback = () => {
             // todo, what goes here?
         };
         const gridCoreCreator = new GridCoreCreator();
-        gridCoreCreator.create(eGui, gridOptions, createUiCallback, acceptChangesCallback, gridParams);
+        api = gridCoreCreator.create(eGui, gridOptions, createUiCallback, acceptChangesCallback, gridParams);
     });
     return (<div ref={eGui} style={{ height: '100%' }}>
             {context() &&

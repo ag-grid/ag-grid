@@ -30,7 +30,7 @@ npm i --save-dev sass-loader sass style-loader css-loader html-webpack-plugin
 Our application will be a very simple one, consisting of a single class that will render a simple grid:
 
 ```js
-import { Grid, GridOptions, ModuleRegistry } from "@ag-grid-community/core";
+import { createGrid, GridOptions, ModuleRegistry } from "@ag-grid-community/core";
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
 
 // or, if using Enterprise features
@@ -52,7 +52,7 @@ class SimpleGrid {
         };
 
         let eGridDiv:HTMLElement = <HTMLElement>document.querySelector('#myGrid');
-        new Grid(eGridDiv, this.gridOptions);
+        let api = createGrid(eGridDiv, this.gridOptions);
     }
 
     // specify the columns
@@ -85,7 +85,7 @@ new SimpleGrid();
 </head>
 
 <body>
-    <div id="myGrid" style="height: 200px;width: 600px" class="ag-theme-alpine"></div>
+    <div id="myGrid" style="height: 200px;width: 600px" class="ag-theme-quartz"></div>
 </body>
 </html>
 ```
@@ -161,9 +161,7 @@ With all this in place, we can now add the following npm scripts to our package.
 
 Now we can either run `npm start` to run the development setup, or `npm run build` for the production build. In the case of the production build the generated files will be under the `dist/` folder.
 
-If we now run our application with the above code we will see this:
-
-<image-caption src="building-typescript/resources/ts-grid.png" alt="Datagrid" width="40rem" centered="true" constrained="true"></image-caption>
+If we now run our application with the above code our grid will be displayed.
 
 ## Example Code
 

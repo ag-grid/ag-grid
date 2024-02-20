@@ -10,8 +10,11 @@
         > * {
             margin: 0 var(--ag-cell-horizontal-padding);
         }
-    }
 
+        > .ag-paging-page-size .ag-wrapper {
+            min-width: calc(var(--ag-grid-size) * 10);
+        }
+    }
 
     .ag-paging-button {
         cursor: pointer;

@@ -40,11 +40,11 @@ class ManagedFocusFeature extends beanStub_1.BeanStub {
     }
     addKeyDownListeners(eGui) {
         this.addManagedListener(eGui, 'keydown', (e) => {
-            if (e.defaultPrevented || event_1.isStopPropagationForAgGrid(e)) {
+            if (e.defaultPrevented || (0, event_1.isStopPropagationForAgGrid)(e)) {
                 return;
             }
             if (this.callbacks.shouldStopEventPropagation(e)) {
-                event_1.stopPropagationForAgGrid(e);
+                (0, event_1.stopPropagationForAgGrid)(e);
                 return;
             }
             if (e.key === keyCode_1.KeyCode.TAB) {
@@ -58,7 +58,7 @@ class ManagedFocusFeature extends beanStub_1.BeanStub {
 }
 ManagedFocusFeature.FOCUS_MANAGED_CLASS = 'ag-focus-managed';
 __decorate([
-    context_1.Autowired('focusService')
+    (0, context_1.Autowired)('focusService')
 ], ManagedFocusFeature.prototype, "focusService", void 0);
 __decorate([
     context_1.PostConstruct

@@ -6,6 +6,8 @@
 @use "./generated/agGridAlpine";
 @use "./generated/agGridBalham";
 @use "./generated/agGridMaterial";
+@use "./generated/agGridQuartz";
+@use "./generated/agGridQuartzSubset";
 @use "./generated/agGridClassic";
 
 $-fonts-emitted: ();
@@ -29,14 +31,15 @@ $-fonts-emitted: ();
 
 @mixin icon() {
     font-family: var(--ag-icon-font-family);
+    font-weight: var(--ag-icon-font-weight);
+    color: var(--ag-icon-font-color);
     font-size: var(--ag-icon-size);
     line-height: var(--ag-icon-size);
     font-style: normal;
-    font-weight: normal;
     font-variant: normal;
     text-transform: none;
     
-    // Better Font Rendering
+    // subpixel rendering can really mess up some icon fonts so disable it
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }

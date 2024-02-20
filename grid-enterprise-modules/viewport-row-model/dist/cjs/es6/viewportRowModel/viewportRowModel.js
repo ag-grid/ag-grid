@@ -8,8 +8,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ViewportRowModel = void 0;
 const core_1 = require("@ag-grid-community/core");
-const DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
-const DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE = 5;
 let ViewportRowModel = class ViewportRowModel extends core_1.BeanStub {
     constructor() {
         super(...arguments);
@@ -25,11 +23,14 @@ let ViewportRowModel = class ViewportRowModel extends core_1.BeanStub {
     init() {
         this.rowHeight = this.gridOptionsService.getRowHeightAsNumber();
         this.addManagedListener(this.eventService, core_1.Events.EVENT_VIEWPORT_CHANGED, this.onViewportChanged.bind(this));
+        this.addManagedPropertyListener('viewportDatasource', () => this.updateDatasource());
+        this.addManagedPropertyListener('rowHeight', () => {
+            this.rowHeight = this.gridOptionsService.getRowHeightAsNumber();
+            this.updateRowHeights();
+        });
     }
     start() {
-        if (this.gridOptionsService.get('viewportDatasource')) {
-            this.setViewportDatasource(this.gridOptionsService.get('viewportDatasource'));
-        }
+        this.updateDatasource();
     }
     isLastRowIndexKnown() {
         return true;
@@ -45,11 +46,17 @@ let ViewportRowModel = class ViewportRowModel extends core_1.BeanStub {
         this.firstRow = -1;
         this.lastRow = -1;
     }
+    updateDatasource() {
+        const datasource = this.gridOptionsService.get('viewportDatasource');
+        if (datasource) {
+            this.setViewportDatasource(datasource);
+        }
+    }
     getViewportRowModelPageSize() {
-        return core_1._.oneOrGreater(this.gridOptionsService.getNum('viewportRowModelPageSize'), DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE);
+        return this.gridOptionsService.get('viewportRowModelPageSize');
     }
     getViewportRowModelBufferSize() {
-        return core_1._.zeroOrGreater(this.gridOptionsService.getNum('viewportRowModelBufferSize'), DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE);
+        return this.gridOptionsService.get('viewportRowModelBufferSize');
     }
     calculateFirstRow(firstRenderedRow) {
         const bufferSize = this.getViewportRowModelBufferSize();
@@ -153,6 +160,20 @@ let ViewportRowModel = class ViewportRowModel extends core_1.BeanStub {
             rowTop: this.rowHeight * index
         };
     }
+    updateRowHeights() {
+        this.forEachNode(node => {
+            node.setRowHeight(this.rowHeight);
+            node.setRowTop(this.rowHeight * node.rowIndex);
+        });
+        const event = {
+            type: core_1.Events.EVENT_MODEL_UPDATED,
+            newData: false,
+            newPage: false,
+            keepRenderedRows: true,
+            animate: false,
+        };
+        this.eventService.dispatchEvent(event);
+    }
     getTopLevelRowCount() {
         return this.getRowCount();
     }
@@ -223,6 +244,9 @@ let ViewportRowModel = class ViewportRowModel extends core_1.BeanStub {
             return;
         }
         this.rowCount = rowCount;
+        this.eventService.dispatchEventOnce({
+            type: core_1.Events.EVENT_ROW_COUNT_READY
+        });
         const event = {
             type: core_1.Events.EVENT_MODEL_UPDATED,
             newData: false,
@@ -238,13 +262,13 @@ let ViewportRowModel = class ViewportRowModel extends core_1.BeanStub {
     }
 };
 __decorate([
-    core_1.Autowired('rowRenderer')
+    (0, core_1.Autowired)('rowRenderer')
 ], ViewportRowModel.prototype, "rowRenderer", void 0);
 __decorate([
-    core_1.Autowired('focusService')
+    (0, core_1.Autowired)('focusService')
 ], ViewportRowModel.prototype, "focusService", void 0);
 __decorate([
-    core_1.Autowired('beans')
+    (0, core_1.Autowired)('beans')
 ], ViewportRowModel.prototype, "beans", void 0);
 __decorate([
     core_1.PostConstruct
@@ -253,6 +277,6 @@ __decorate([
     core_1.PreDestroy
 ], ViewportRowModel.prototype, "destroyDatasource", null);
 ViewportRowModel = __decorate([
-    core_1.Bean('rowModel')
+    (0, core_1.Bean)('rowModel')
 ], ViewportRowModel);
 exports.ViewportRowModel = ViewportRowModel;

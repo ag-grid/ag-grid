@@ -14,7 +14,7 @@ const validGridChartsVersion_1 = require("./utils/validGridChartsVersion");
 exports.GridChartsModule = {
     version: version_1.VERSION,
     validate: () => {
-        return validGridChartsVersion_1.validGridChartsVersion({
+        return (0, validGridChartsVersion_1.validGridChartsVersion)({
             gridVersion: version_1.VERSION,
             chartsVersion: chartService_1.ChartService.CHARTS_VERSION
         });

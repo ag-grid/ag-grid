@@ -4,35 +4,34 @@ title: "Row Sorting"
 
 This page describes how to sort row data in the grid and how you can customise that sorting to match your requirements. 
 
-## Enable Sorting
+## Sorting
 
-Enable sorting for columns by setting the `sortable` column definition attribute.
-You can then sort a column by clicking on the column header.
+Sorting is enabled by default for all columns. You can sort a column by clicking on the column header. To enable / disable sorting per column use the `sortable` column definition attribute.
 
 <snippet>
 const gridOptions = {
-    // enable sorting on 'name' and 'age' columns only
     columnDefs: [
-        { field: 'name', sortable: true },
-        { field: 'age', sortable: true },
-        { field: 'address' },
+        { field: 'name' },
+        { field: 'age' },
+        // disable sorting by address
+        { field: 'address', sortable: false },
     ],
 }
 </snippet>
 
-To enable sorting for all columns, set sorting in the [default column definition](/column-definitions/).
+To disable sorting for all columns, set sorting in the [default column definition](/column-definitions/).
 
 <snippet>
 const gridOptions = {
-    // enable sorting on all columns by default
+    // disable sorting on all columns
     defaultColDef: {
-        sortable: true
+        sortable: false
     },
     columnDefs: [
-        { field: 'name' },
+        // Override default to enable sorting by name
+        { field: 'name', sortable: true },
         { field: 'age' },
-        // suppress sorting on address column
-        { field: 'address', sortable: false },
+        { field: 'address' },
     ],
 }
 </snippet>
@@ -45,10 +44,6 @@ Custom sorting is provided at a column level by configuring a comparator on the 
 
 <snippet spaceBetweenProperties="true">
 const gridOptions = {
-    // enable sorting on all columns by default
-    defaultColDef: {
-        sortable: true
-    },
     columnDefs: [
         {
             field: 'age',
@@ -98,13 +93,13 @@ var gridOptions = {
 ## Multi Column Sorting
 
 It is possible to sort by multiple columns. The default action for multiple column sorting is for
-the user to hold down <kbd>Shift</kbd> while clicking the column header. To change the default action to use
-the <kbd>Ctrl</kbd> key (or <kbd>Command</kbd> key on Apple) instead set the property `multiSortKey='ctrl'`.
+the user to hold down <kbd>⇧ Shift</kbd> while clicking the column header. To change the default action to use
+the <kbd>^ Ctrl</kbd> key (or <kbd>Command</kbd> key on Apple) instead set the property `multiSortKey='ctrl'`.
 
 The example below demonstrates the following:
 
 - The grid sorts by **Country** then **Athlete** by default.
-- The property `multiSortKey='ctrl'` is set so multiple column sorting is achieved by holding down <kbd>Ctrl</kbd> (or <kbd>Command</kbd> on Apple) and selecting multiple columns.
+- The property `multiSortKey='ctrl'` is set so multiple column sorting is achieved by holding down <kbd>^ Ctrl</kbd> (or <kbd>Command</kbd> on Apple) and selecting multiple columns.
 
 <grid-example title='Multi Column Sort' name='multi-column' type='generated'></grid-example>
 
@@ -115,7 +110,7 @@ the `alwaysMultiSort` option.
 
 ## Sorting Animation
 
-To enable animation of the rows after sorting, set grid property `animateRows=true`.
+By default rows will animate after sorting. If you wish to suppress this animation set the grid property `animateRows=false`.
 
 ## Sorting Order
 

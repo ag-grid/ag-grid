@@ -7,7 +7,7 @@ This section describes the behaviour of the Set Filter Tree List and shows how i
 
 The Tree List allows the user to display the values in the Filter List grouped in a tree structure.
 
-<image-caption src="filter-set-tree-list/resources/set-filter-tree-list.png" alt="Filter Tree List" constrained="true" centered="true"></image-caption>
+<image-caption src="filter-set-tree-list/resources/set-filter-tree-list.png" alt="Filter Tree List" constrained="true" centered="true" toggledarkmode="true" width="18rem"></image-caption>
 
 ## Enabling Tree Lists
 
@@ -15,7 +15,7 @@ Tree List is enabled by setting `filterParams.treeList = true`. There are four d
 - The column values are of type `Date`, in which case the tree will be year -> month -> day. Note that if the `Date` objects have a time defined, then a Key Creator must also be supplied to generate a unique key without the time.
 - Tree Data mode is enabled and the column is a group column. The Filter List will match the tree structure. A Key Creator must be supplied to convert the array of keys.
 - Grouping is enabled and the column is the group column. The Filter List will match the group structure. A Key Creator must be supplied to convert the array of keys.
-- A `filterParams.treeListPathGetter` is provided to get a custom tree path for the column values. If the column values are [Complex Objects](/filter-set-filter-list/#complex-objects), a Key Creator will also be required.
+- A `filterParams.treeListPathGetter` is provided to get a custom tree path for the column values. Each row must map to a leaf value in the tree. If the column values are [Complex Objects](/filter-set-filter-list/#complex-objects), a Key Creator will also be required.
 
 <interface-documentation interfaceName='ISetFilterParams' names='["treeListPathGetter","keyCreator"]' config='{"description":""}'></interface-documentation>
 
@@ -46,7 +46,7 @@ The following example demonstrates enabling different types of Tree List in the 
 - The **Group**, **Date** and **Gold** columns all have `filterParams.treeList = true`.
 - The **Group** column Filter List matches the format of the Row Grouping. A Key Creator is specified to convert the path into a string.
 - The **Date** column is grouped by year -> month -> day.
-- The **Gold** column has `filterParams.treeListPathGetter` provided which groups the values into a tree of >2 and <=2.
+- The **Gold** column has `filterParams.treeListPathGetter` provided which groups the values into a tree of >2 and \<=2.
 
 <grid-example title='Filter Tree List' name='filter-tree-list' type='generated' options='{ "enterprise": true, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] }'></grid-example>
 

@@ -20,7 +20,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { PostConstruct, PreDestroy } from "../../../context/context";
-import { removeAriaSort, setAriaDescription, setAriaSort } from "../../../utils/aria";
+import { removeAriaSort, setAriaSort } from "../../../utils/aria";
 import { RefSelector } from "../../../widgets/componentAnnotations";
 import { AbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellComp";
 var HeaderCellComp = /** @class */ (function (_super) {
@@ -47,7 +47,6 @@ var HeaderCellComp = /** @class */ (function (_super) {
         var compProxy = {
             setWidth: function (width) { return eGui.style.width = width; },
             addOrRemoveCssClass: function (cssClassName, on) { return _this.addOrRemoveCssClass(cssClassName, on); },
-            setAriaDescription: function (label) { return setAriaDescription(eGui, label); },
             setAriaSort: function (sort) { return sort ? setAriaSort(eGui, sort) : removeAriaSort(eGui); },
             setUserCompDetails: function (compDetails) { return _this.setUserCompDetails(compDetails); },
             getUserCompInstance: function () { return _this.headerComp; }
@@ -80,7 +79,7 @@ var HeaderCellComp = /** @class */ (function (_super) {
         this.eHeaderCompWrapper.appendChild(this.headerCompGui);
         this.ctrl.setDragSource(this.getGui());
     };
-    HeaderCellComp.TEMPLATE = "<div class=\"ag-header-cell\" role=\"columnheader\" tabindex=\"-1\">\n            <div ref=\"eResize\" class=\"ag-header-cell-resize\" role=\"presentation\"></div>\n            <div ref=\"eHeaderCompWrapper\" class=\"ag-header-cell-comp-wrapper\" role=\"presentation\"></div>\n        </div>";
+    HeaderCellComp.TEMPLATE = "<div class=\"ag-header-cell\" role=\"columnheader\">\n            <div ref=\"eResize\" class=\"ag-header-cell-resize\" role=\"presentation\"></div>\n            <div ref=\"eHeaderCompWrapper\" class=\"ag-header-cell-comp-wrapper\" role=\"presentation\"></div>\n        </div>";
     __decorate([
         RefSelector('eResize')
     ], HeaderCellComp.prototype, "eResize", void 0);

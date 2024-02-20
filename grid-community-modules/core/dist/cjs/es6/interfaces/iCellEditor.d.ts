@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColDef } from "../entities/colDef";
@@ -6,47 +6,53 @@ import { Column } from "../entities/column";
 import { AgGridCommon } from "./iCommon";
 import { IPopupComponent } from "./iPopupComponent";
 import { IRowNode } from "./iRowNode";
-export interface ICellEditor<TValue = any> {
-    /**
-     * Return the final value - called by the grid once after editing is complete
-     */
-    getValue(): TValue | null | undefined;
-    /** Gets called once after initialised. If you return true, the editor will
-     * appear in a popup, so is not constrained to the boundaries of the cell.
-     * This is great if you want to, for example, provide you own custom dropdown list
-     * for selection. Default is false (ie if you don't provide the method).
-     */
-    isPopup?(): boolean;
-    /** Gets called once, only if isPopup() returns true. Return "over" if the popup
-     * should cover the cell, or "under" if it should be positioned below leaving the
-     * cell value visible. If this method is not present, the default is "over".
-     */
-    getPopupPosition?(): 'over' | 'under' | undefined;
-    /** Gets called once after initialised. If you return true, the editor will not be
+export interface BaseCellEditor<TData = any, TValue = any, TContext = any> {
+    /** Optional: Gets called once after initialised. If you return true, the editor will not be
      * used and the grid will continue editing. Use this to make a decision on editing
      * inside the init() function, eg maybe you want to only start editing if the user
      * hits a numeric key, but not a letter, if the editor is for numbers.
      */
     isCancelBeforeStart?(): boolean;
-    /** Gets called once after editing is complete. If your return true, then the new
+    /** Optional: Gets called once after editing is complete. If your return true, then the new
      * value will not be used. The editing will have no impact on the record. Use this
      * if you do not want a new value from your gui, i.e. you want to cancel the editing.
      */
     isCancelAfterEnd?(): boolean;
     /**
-     * If doing full line edit, then gets called when focus should be put into the editor
+     * Optional: If doing full line edit, then gets called when focus should be put into the editor
      */
     focusIn?(): void;
     /**
-     * If doing full line edit, then gets called when focus is leaving the editor
+     * Optional: If doing full line edit, then gets called when focus is leaving the editor
      */
     focusOut?(): void;
+}
+export interface ICellEditor<TValue = any> extends BaseCellEditor<any, TValue> {
     /**
-     * A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.
+     * Return the final value - called by the grid once after editing is complete
+     */
+    getValue(): TValue | null | undefined;
+    /**
+     * Optional: Gets called with the latest cell editor params every time they update
+     */
+    refresh?(params: ICellEditorParams<any, TValue>): void;
+    /**
+     * Optional: A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.
      * This method is called each time the edit component is activated.
      * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.
      */
     afterGuiAttached?(): void;
+    /** Optional: Gets called once after initialised. If you return true, the editor will
+     * appear in a popup, so is not constrained to the boundaries of the cell.
+     * This is great if you want to, for example, provide you own custom dropdown list
+     * for selection. Default is false (ie if you don't provide the method).
+     */
+    isPopup?(): boolean;
+    /** Optional: Gets called once, only if isPopup() returns true. Return "over" if the popup
+     * should cover the cell, or "under" if it should be positioned below leaving the
+     * cell value visible. If this method is not present, the default is "over".
+     */
+    getPopupPosition?(): 'over' | 'under' | undefined;
 }
 export interface ICellEditorParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** Current value of the cell */
@@ -83,5 +89,5 @@ export interface ICellEditorParams<TData = any, TValue = any, TContext = any> ex
     /** Utility function to format a value using the column's `colDef.valueFormatter` */
     formatValue: (value: TValue | null | undefined) => string;
 }
-export interface ICellEditorComp<TData = any, TValue = any> extends ICellEditor<TValue>, IPopupComponent<ICellEditorParams<TData, TValue>> {
+export interface ICellEditorComp<TData = any, TValue = any, TContext = any> extends ICellEditor<TValue>, IPopupComponent<ICellEditorParams<TData, TValue, TContext>> {
 }

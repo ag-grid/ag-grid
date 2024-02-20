@@ -86,22 +86,19 @@ var Sparkline = /** @class */ (function () {
         this.rootGroup = root;
         var element = document.createElement('div');
         element.setAttribute('class', 'ag-sparkline-wrapper');
-        var scene = new ag_charts_community_1._Scene.Scene({ document: document });
+        // initialise scene
+        var scene = new ag_charts_community_1._Scene.Scene({ window: window, document: document });
         this.scene = scene;
         this.canvasElement = scene.canvas.element;
+        // set scene properties
         scene.root = root;
         scene.container = element;
-        scene.resize(this.width, this.height);
-        this.seriesRect.width = this.width;
-        this.seriesRect.height = this.height;
+        this.resizeAndSetDimensions(this.width, this.height);
         // one style element for tooltip styles per document
-        if (Sparkline.tooltipDocuments.indexOf(document) === -1) {
-            var styleElement = document.createElement('style');
-            styleElement.innerHTML = defaultTooltipCss_1.defaultTooltipCss;
-            document.head.insertBefore(styleElement, document.head.querySelector('style'));
-            Sparkline.tooltipDocuments.push(document);
+        if (!Sparkline.tooltipDocuments.includes(document)) {
+            this.initialiseTooltipStyles();
         }
-        this.setupDomEventListeners(this.scene.canvas.element);
+        this.setupDomEventListeners(this.canvasElement);
     }
     Object.defineProperty(Sparkline.prototype, "context", {
         get: function () {
@@ -150,6 +147,17 @@ var Sparkline = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
+    Sparkline.prototype.resizeAndSetDimensions = function (width, height) {
+        this.scene.resize(width, height);
+        this.seriesRect.width = width;
+        this.seriesRect.height = height;
+    };
+    Sparkline.prototype.initialiseTooltipStyles = function () {
+        var styleElement = document.createElement('style');
+        styleElement.innerHTML = defaultTooltipCss_1.defaultTooltipCss;
+        document.head.insertBefore(styleElement, document.head.querySelector('style'));
+        Sparkline.tooltipDocuments.push(document);
+    };
     Object.defineProperty(Sparkline.prototype, "width", {
         get: function () {
             return this._width;

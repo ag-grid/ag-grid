@@ -1,6 +1,6 @@
 @use "sass:color";
 
-.ag-theme-balham, .ag-theme-balham-dark {
+.ag-theme-balham, .ag-theme-balham-dark, .ag-theme-balham-auto-dark {
     // main colours (overridden by balham-dark)
     --ag-balham-active-color: #0091ea;
     --ag-foreground-color: #000;
@@ -18,12 +18,17 @@
     --ag-input-disabled-background-color: #ebebeb;
     --ag-checkbox-unchecked-color: #7f8c8d;
     --ag-input-focus-border-color: #719ECE;
+    --ag-advanced-filter-join-pill-color: #f08e8d;
+    --ag-advanced-filter-column-pill-color: #a6e194;
+    --ag-advanced-filter-option-pill-color: #f3c08b;
+    --ag-advanced-filter-value-pill-color: #85c0e4;
 
     // derived colours (no color blending - these are shared by balham-dark)
     --ag-input-focus-box-shadow: 0 0 2px 1px var(--ag-input-focus-border-color);
     --ag-range-selection-border-color: var(--ag-balham-active-color);
     --ag-checkbox-checked-color: var(--ag-balham-active-color);
     --ag-checkbox-background-color: var(--ag-background-color);
+    --ag-panel-background-color: var(--ag-header-background-color);
 
     // derived and blended colours (these are static versions of the dynamic colour blends
     // applied by the Sass API and must be overridden in balham-dark)
@@ -64,7 +69,7 @@
     --ag-card-shadow: none;
 };
 
-.ag-theme-balham-dark {
+@mixin -dark-vars {
     // override colours from balham theme
     --ag-balham-active-color: #00B0FF;
     --ag-foreground-color: #F5F5F5;
@@ -81,6 +86,10 @@
     --ag-input-disabled-background-color: rgba(48, 46, 46, 0.3);
     --ag-modal-overlay-background-color: rgba(45, 52, 54, 0.66);
     --ag-checkbox-unchecked-color: #ecf0f1;
+    --ag-advanced-filter-join-pill-color: #7a3a37;
+    --ag-advanced-filter-column-pill-color: #355f2d;
+    --ag-advanced-filter-option-pill-color: #5a3168;
+    --ag-advanced-filter-value-pill-color: #374c86;
 
     // override blended colors from balham theme
     --ag-secondary-foreground-color: var(--ag-foreground-color);
@@ -103,4 +112,17 @@
     --ag-range-selection-chart-category-background-color: #{color.change(#1ab14a, $alpha: 0.5)};
     --ag-range-selection-chart-background-color: #{color.change(#2da6ff, $alpha: 0.5)};
     --ag-input-focus-box-shadow: 0 0 4px 1.5px var(--ag-input-focus-border-color);
+
+    color-scheme: dark;
+}
+
+
+.ag-theme-balham-dark {
+    @include -dark-vars();
+}
+
+@media (prefers-color-scheme: dark) {
+    .ag-theme-balham-auto-dark {
+        @include -dark-vars();
+    }
 }

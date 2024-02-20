@@ -1,8 +1,9 @@
 import { Column } from "../entities/column";
 import { ContainerType } from "./iAfterGuiAttachedParams";
 export interface IMenuFactory {
-    showMenuAfterButtonClick(column: Column | null, eventSource: HTMLElement, containerType: ContainerType, defaultTab?: string, restrictToTabs?: string[]): void;
-    showMenuAfterMouseEvent(column: Column, mouseEvent: MouseEvent | Touch, defaultTab?: string, restrictToTabs?: string[]): void;
+    showMenuAfterButtonClick(column: Column | undefined, eventSource: HTMLElement, containerType: ContainerType, filtersOnly?: boolean): void;
+    showMenuAfterMouseEvent(column: Column | undefined, mouseEvent: MouseEvent | Touch, containerType: ContainerType, filtersOnly?: boolean): void;
+    showMenuAfterContextMenuEvent(column: Column | undefined, mouseEvent?: MouseEvent | null, touchEvent?: TouchEvent | null): void;
     isMenuEnabled(column: Column): boolean;
     hideActiveMenu(): void;
 }

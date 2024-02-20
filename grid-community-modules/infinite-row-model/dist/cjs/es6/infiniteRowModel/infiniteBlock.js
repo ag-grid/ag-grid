@@ -70,7 +70,7 @@ class InfiniteBlock extends core_1.RowNodeBlock {
             failCallback: this.pageLoadFailed.bind(this, this.getVersion()),
             sortModel: this.params.sortModel,
             filterModel: this.params.filterModel,
-            context: this.gridOptionsService.context
+            context: this.gridOptionsService.getGridCommonParams().context
         };
         return params;
     }
@@ -121,6 +121,7 @@ class InfiniteBlock extends core_1.RowNodeBlock {
                 this.rowNodes[index] = new core_1.RowNode(this.beans);
                 this.rowNodes[index].setRowIndex(rowNode.rowIndex);
                 this.rowNodes[index].setRowTop(rowNode.rowTop);
+                this.rowNodes[index].setRowHeight(rowNode.rowHeight);
                 // clean up the old row
                 rowNode.clearRowTopAndRowIndex();
             }
@@ -138,7 +139,7 @@ class InfiniteBlock extends core_1.RowNodeBlock {
     }
 }
 __decorate([
-    core_1.Autowired('beans')
+    (0, core_1.Autowired)('beans')
 ], InfiniteBlock.prototype, "beans", void 0);
 __decorate([
     core_1.PostConstruct

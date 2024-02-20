@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ChartToolPanelName, ChartType, CrossFilterChartType, SeriesChartType } from "./iChartOptions";
@@ -61,6 +61,7 @@ export interface ChartModel {
     seriesChartTypes?: SeriesChartType[];
 }
 export interface IChartService {
+    isEnterprise(): boolean;
     getChartModels(): ChartModel[];
     getChartRef(chartId: string): ChartRef | undefined;
     createRangeChart(params: CreateRangeChartParams): ChartRef | undefined;

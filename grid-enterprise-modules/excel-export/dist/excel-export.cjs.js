@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/excel-export - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.1.0
+          * @ag-grid-enterprise/excel-export - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.1.0
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -11,372 +11,160 @@ var core = require('@ag-grid-community/core');
 var core$1 = require('@ag-grid-enterprise/core');
 var csvExport = require('@ag-grid-community/csv-export');
 
-var workbook = {
-    getTemplate: function () {
+var coreFactory = {
+    getTemplate: function (author) {
+        var dt = new Date();
+        var jsonDate = dt.toJSON();
         return {
-            name: "Workbook",
+            name: 'cp:coreProperties',
             properties: {
                 prefixedAttributes: [{
                         prefix: "xmlns:",
                         map: {
-                            o: "urn:schemas-microsoft-com:office:office",
-                            x: "urn:schemas-microsoft-com:office:excel",
-                            ss: "urn:schemas-microsoft-com:office:spreadsheet",
-                            html: "http://www.w3.org/TR/REC-html40"
-                        },
-                    }],
-                rawMap: {
-                    xmlns: "urn:schemas-microsoft-com:office:spreadsheet"
-                }
-            }
-        };
-    }
-};
-
-var excelWorkbook = {
-    getTemplate: function () {
-        return {
-            name: "ExcelWorkbook",
-            properties: {
-                rawMap: {
-                    xmlns: "urn:schemas-microsoft-com:office:excel"
-                }
-            },
-            children: [{
-                    name: "WindowHeight",
-                    textNode: "8130"
-                }, {
-                    name: "WindowWidth",
-                    textNode: "15135"
-                }, {
-                    name: "WindowHeight",
-                    textNode: "8130"
-                }, {
-                    name: "WindowTopX",
-                    textNode: "120"
-                }, {
-                    name: "WindowTopY",
-                    textNode: "45"
-                }, {
-                    name: "ProtectStructure",
-                    textNode: "False"
-                }, {
-                    name: "ProtectWindow",
-                    textNode: "False"
-                }]
-        };
-    }
-};
-
-var column = {
-    getTemplate: function (c) {
-        var width = c.width;
-        return {
-            name: "Column",
-            properties: {
-                prefixedAttributes: [{
-                        prefix: "ss:",
-                        map: {
-                            Width: width
+                            cp: "http://schemas.openxmlformats.org/package/2006/metadata/core-properties",
+                            dc: 'http://purl.org/dc/elements/1.1/',
+                            dcterms: 'http://purl.org/dc/terms/',
+                            dcmitype: 'http://purl.org/dc/dcmitype/',
+                            xsi: 'http://www.w3.org/2001/XMLSchema-instance'
                         }
                     }]
-            }
-        };
-    }
-};
-
-var cell = {
-    getTemplate: function (c) {
-        var mergeAcross = c.mergeAcross, styleId = c.styleId, data = c.data;
-        var properties = {};
-        if (mergeAcross) {
-            properties.MergeAcross = mergeAcross;
-        }
-        if (styleId) {
-            properties.StyleID = styleId;
-        }
-        return {
-            name: "Cell",
-            properties: {
-                prefixedAttributes: [{
-                        prefix: "ss:",
-                        map: properties
-                    }]
             },
             children: [{
-                    name: "Data",
+                    name: 'dc:creator',
+                    textNode: author
+                }, {
+                    name: 'dc:title',
+                    textNode: 'Workbook'
+                }, {
+                    name: 'dcterms:created',
                     properties: {
-                        prefixedAttributes: [{
-                                prefix: "ss:",
-                                map: {
-                                    Type: data === null || data === void 0 ? void 0 : data.type
-                                }
-                            }]
+                        rawMap: {
+                            'xsi:type': 'dcterms:W3CDTF'
+                        }
                     },
-                    textNode: data === null || data === void 0 ? void 0 : data.value
+                    textNode: jsonDate
+                }, {
+                    name: 'dcterms:modified',
+                    properties: {
+                        rawMap: {
+                            'xsi:type': 'dcterms:W3CDTF'
+                        }
+                    },
+                    textNode: jsonDate
                 }]
         };
     }
 };
 
-var row = {
-    getTemplate: function (r) {
-        var cells = r.cells;
+var contentTypeFactory = {
+    getTemplate: function (config) {
+        var name = config.name, ContentType = config.ContentType, Extension = config.Extension, PartName = config.PartName;
         return {
-            name: "Row",
-            children: cells.map(function (it) { return cell.getTemplate(it); })
-        };
-    }
-};
-
-var worksheet = {
-    getTemplate: function (ws) {
-        var table = ws.table, name = ws.name;
-        var columns = table.columns, rows = table.rows;
-        var c = columns.map(function (it) { return column.getTemplate(it); });
-        var r = rows.map(function (it) { return row.getTemplate(it); });
-        return {
-            name: "Worksheet",
-            children: [{
-                    name: "Table",
-                    children: c.concat(r)
-                }],
-            properties: {
-                prefixedAttributes: [{
-                        prefix: "ss:",
-                        map: {
-                            Name: name
-                        }
-                    }]
-            }
-        };
-    }
-};
-
-var documentProperties = {
-    getTemplate: function () {
-        return {
-            name: "DocumentProperties",
+            name: name,
             properties: {
                 rawMap: {
-                    xmlns: "urn:schemas-microsoft-com:office:office"
+                    Extension: Extension,
+                    PartName: PartName,
+                    ContentType: ContentType
+                }
+            }
+        };
+    }
+};
+
+var __read$6 = (undefined && undefined.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
+var __spreadArray$3 = (undefined && undefined.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
+var contentTypesFactory = {
+    getTemplate: function (sheetLen) {
+        var worksheets = new Array(sheetLen).fill(undefined).map(function (v, i) { return ({
+            name: 'Override',
+            ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml',
+            PartName: "/xl/worksheets/sheet".concat(i + 1, ".xml")
+        }); });
+        var sheetsWithImages = ExcelXlsxFactory.worksheetImages.size;
+        var imageTypesObject = {};
+        ExcelXlsxFactory.workbookImageIds.forEach(function (v) {
+            imageTypesObject[v.type] = true;
+        });
+        var imageDocs = new Array(sheetsWithImages).fill(undefined).map(function (v, i) { return ({
+            name: 'Override',
+            ContentType: 'application/vnd.openxmlformats-officedocument.drawing+xml',
+            PartName: "/xl/drawings/drawing".concat(i + 1, ".xml")
+        }); });
+        var imageTypes = Object.keys(imageTypesObject).map(function (ext) { return ({
+            name: 'Default',
+            ContentType: "image/".concat(ext),
+            Extension: ext
+        }); });
+        var children = __spreadArray$3(__spreadArray$3(__spreadArray$3(__spreadArray$3(__spreadArray$3(__spreadArray$3([], __read$6(imageTypes), false), [
+            {
+                name: 'Default',
+                Extension: 'rels',
+                ContentType: 'application/vnd.openxmlformats-package.relationships+xml'
+            }, {
+                name: 'Default',
+                ContentType: 'application/xml',
+                Extension: 'xml'
+            }, {
+                name: 'Override',
+                ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml',
+                PartName: "/xl/workbook.xml"
+            }
+        ], false), __read$6(worksheets), false), [
+            {
+                name: 'Override',
+                ContentType: 'application/vnd.openxmlformats-officedocument.theme+xml',
+                PartName: '/xl/theme/theme1.xml'
+            }, {
+                name: 'Override',
+                ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml',
+                PartName: '/xl/styles.xml'
+            }, {
+                name: 'Override',
+                ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml',
+                PartName: '/xl/sharedStrings.xml'
+            }
+        ], false), __read$6(imageDocs), false), [
+            {
+                name: 'Override',
+                ContentType: 'application/vnd.openxmlformats-package.core-properties+xml',
+                PartName: '/docProps/core.xml'
+            }
+        ], false).map(function (contentType) { return contentTypeFactory.getTemplate(contentType); });
+        return {
+            name: "Types",
+            properties: {
+                rawMap: {
+                    xmlns: "http://schemas.openxmlformats.org/package/2006/content-types"
                 }
             },
-            children: [{
-                    name: "Version",
-                    textNode: "12.00"
-                }]
+            children: children
         };
     }
 };
-
-var alignment = {
-    getTemplate: function (styleProperties) {
-        var _a = styleProperties.alignment, vertical = _a.vertical, horizontal = _a.horizontal, indent = _a.indent, readingOrder = _a.readingOrder, rotate = _a.rotate, shrinkToFit = _a.shrinkToFit, verticalText = _a.verticalText, wrapText = _a.wrapText;
-        return {
-            name: 'Alignment',
-            properties: {
-                prefixedAttributes: [{
-                        prefix: "ss:",
-                        map: {
-                            Vertical: vertical,
-                            Horizontal: horizontal,
-                            Indent: indent,
-                            ReadingOrder: readingOrder,
-                            Rotate: rotate,
-                            ShrinkToFit: shrinkToFit,
-                            VerticalText: verticalText,
-                            WrapText: wrapText
-                        }
-                    }]
-            }
-        };
-    }
-};
-
-var borders = {
-    getTemplate: function (styleProperties) {
-        var _a = styleProperties.borders, borderBottom = _a.borderBottom, borderLeft = _a.borderLeft, borderRight = _a.borderRight, borderTop = _a.borderTop;
-        return {
-            name: 'Borders',
-            children: [borderBottom, borderLeft, borderRight, borderTop].map(function (it, index) {
-                var current = index == 0 ? "Bottom" : index == 1 ? "Left" : index == 2 ? "Right" : "Top";
-                return {
-                    name: 'Border',
-                    properties: {
-                        prefixedAttributes: [{
-                                prefix: 'ss:',
-                                map: {
-                                    Position: current,
-                                    LineStyle: it.lineStyle,
-                                    Weight: it.weight,
-                                    Color: it.color
-                                }
-                            }]
-                    }
-                };
-            })
-        };
-    }
-};
-
-var font = {
-    getTemplate: function (styleProperties) {
-        var _a = styleProperties.font, bold = _a.bold, fontName = _a.fontName, italic = _a.italic, color = _a.color, outline = _a.outline, shadow = _a.shadow, size = _a.size, strikeThrough = _a.strikeThrough, underline = _a.underline, verticalAlign = _a.verticalAlign, charSet = _a.charSet, family = _a.family;
-        return {
-            name: "Font",
-            properties: {
-                prefixedAttributes: [{
-                        prefix: "ss:",
-                        map: {
-                            Bold: bold,
-                            FontName: fontName,
-                            Italic: italic,
-                            Color: color,
-                            Outline: outline,
-                            Shadow: shadow,
-                            Size: size,
-                            StrikeThrough: strikeThrough,
-                            Underline: underline,
-                            VerticalAlign: verticalAlign
-                        }
-                    }, {
-                        prefix: "x:",
-                        map: {
-                            CharSet: charSet,
-                            Family: family
-                        }
-                    }]
-            }
-        };
-    }
-};
-
-var interior = {
-    getTemplate: function (styleProperties) {
-        var _a = styleProperties.interior, color = _a.color, pattern = _a.pattern, patternColor = _a.patternColor;
-        return {
-            name: "Interior",
-            properties: {
-                prefixedAttributes: [{
-                        prefix: "ss:",
-                        map: {
-                            Color: color,
-                            Pattern: pattern,
-                            PatternColor: patternColor
-                        }
-                    }]
-            }
-        };
-    }
-};
-
-var protection = {
-    getTemplate: function (styleProperties) {
-        return {
-            name: "Protection",
-            properties: {
-                prefixedAttributes: [{
-                        prefix: "ss:",
-                        map: {
-                            Protected: styleProperties.protection.protected,
-                            HideFormula: styleProperties.protection.hideFormula
-                        }
-                    }]
-            }
-        };
-    }
-};
-
-var numberFormat = {
-    getTemplate: function (styleProperties) {
-        var format = styleProperties.numberFormat.format;
-        return {
-            name: "NumberFormat",
-            properties: {
-                prefixedAttributes: [{
-                        prefix: "ss:",
-                        map: {
-                            Format: format
-                        }
-                    }]
-            }
-        };
-    }
-};
-
-var style = {
-    getTemplate: function (styleProperties) {
-        var id = styleProperties.id, name = styleProperties.name;
-        return {
-            name: 'Style',
-            properties: {
-                prefixedAttributes: [{
-                        prefix: "ss:",
-                        map: {
-                            ID: id,
-                            Name: name ? name : id
-                        }
-                    }]
-            }
-        };
-    }
-};
-
-/**
- * See https://msdn.microsoft.com/en-us/library/aa140066(v=office.10).aspx
- */
-var ExcelXmlFactory = /** @class */ (function () {
-    function ExcelXmlFactory() {
-    }
-    ExcelXmlFactory.createExcel = function (styles, currentWorksheet) {
-        var header = this.excelXmlHeader();
-        var docProps = documentProperties.getTemplate();
-        var eWorkbook = excelWorkbook.getTemplate();
-        var wb = this.workbook(docProps, eWorkbook, styles, currentWorksheet);
-        return "" + header + csvExport.XmlFactory.createXml(wb, function (boolean) { return boolean ? '1' : '0'; });
-    };
-    ExcelXmlFactory.workbook = function (docProperties, eWorkbook, styles, currentWorksheet) {
-        var children = [
-            docProperties,
-            eWorkbook,
-            this.stylesXmlElement(styles)
-        ].concat(worksheet.getTemplate(currentWorksheet));
-        return Object.assign({}, workbook.getTemplate(), { children: children });
-    };
-    ExcelXmlFactory.excelXmlHeader = function () {
-        return "<?xml version=\"1.0\" ?>\n        <?mso-application progid=\"Excel.Sheet\" ?>\n        ";
-    };
-    ExcelXmlFactory.stylesXmlElement = function (styles) {
-        var _this = this;
-        return {
-            name: 'Styles',
-            children: styles ? styles.map(function (it) { return _this.styleXmlElement(it); }) : []
-        };
-    };
-    ExcelXmlFactory.styleXmlElement = function (styleProperties) {
-        var children = core._.compose(this.addProperty('alignment', styleProperties), this.addProperty('borders', styleProperties), this.addProperty('font', styleProperties), this.addProperty('interior', styleProperties), this.addProperty('protection', styleProperties), this.addProperty('numberFormat', styleProperties))([]);
-        return Object.assign({}, style.getTemplate(styleProperties), { children: children });
-    };
-    ExcelXmlFactory.addProperty = function (property, styleProperties) {
-        return function (children) {
-            if (!styleProperties[property]) {
-                return children;
-            }
-            var options = {
-                alignment: alignment,
-                borders: borders,
-                font: font,
-                interior: interior,
-                numberFormat: numberFormat,
-                protection: protection
-            };
-            return children.concat(options[property].getTemplate(styleProperties));
-        };
-    };
-    ExcelXmlFactory.factoryMode = core.ExcelFactoryMode.SINGLE_SHEET;
-    return ExcelXmlFactory;
-}());
 
 var INCH_TO_EMU = 9525;
 var numberFormatMap = {
@@ -491,7 +279,7 @@ var createXmlPart = function (body) {
         standalone: 'yes'
     });
     var xmlBody = csvExport.XmlFactory.createXml(body);
-    return "" + header + xmlBody;
+    return "".concat(header).concat(xmlBody);
 };
 var getExcelColumnName = function (colIdx) {
     var startCode = 65;
@@ -511,563 +299,8 @@ var getExcelColumnName = function (colIdx) {
     return getExcelColumnName(pos) + fromCharCode(startCode + tableIdx - 1);
 };
 
-var __extends$3 = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        if (typeof b !== "function" && b !== null)
-            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __assign$2 = (undefined && undefined.__assign) || function () {
-    __assign$2 = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign$2.apply(this, arguments);
-};
-var __read$6 = (undefined && undefined.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
-var __spreadArray$3 = (undefined && undefined.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
-};
-var BaseExcelSerializingSession = /** @class */ (function (_super) {
-    __extends$3(BaseExcelSerializingSession, _super);
-    function BaseExcelSerializingSession(config) {
-        var _this = _super.call(this, config) || this;
-        _this.mixedStyles = {};
-        _this.mixedStyleCounter = 0;
-        _this.rows = [];
-        _this.config = Object.assign({}, config);
-        _this.stylesByIds = {};
-        _this.config.baseExcelStyles.forEach(function (style) {
-            _this.stylesByIds[style.id] = style;
-        });
-        _this.excelStyles = __spreadArray$3([], __read$6(_this.config.baseExcelStyles));
-        return _this;
-    }
-    BaseExcelSerializingSession.prototype.addCustomContent = function (customContent) {
-        var _this = this;
-        customContent.forEach(function (row) {
-            var rowLen = _this.rows.length + 1;
-            var outlineLevel;
-            if (!_this.config.suppressRowOutline && row.outlineLevel != null) {
-                outlineLevel = row.outlineLevel;
-            }
-            var rowObj = {
-                height: getHeightFromProperty(rowLen, row.height || _this.config.rowHeight),
-                cells: (row.cells || []).map(function (cell, idx) {
-                    var _a, _b, _c;
-                    var image = _this.addImage(rowLen, _this.columnsToExport[idx], (_a = cell.data) === null || _a === void 0 ? void 0 : _a.value);
-                    var excelStyles = null;
-                    if (cell.styleId) {
-                        excelStyles = typeof cell.styleId === 'string' ? [cell.styleId] : cell.styleId;
-                    }
-                    var excelStyleId = _this.getStyleId(excelStyles);
-                    if (image) {
-                        return _this.createCell(excelStyleId, _this.getDataTypeForValue(image.value), image.value == null ? '' : image.value);
-                    }
-                    var value = (_c = (_b = cell.data) === null || _b === void 0 ? void 0 : _b.value) !== null && _c !== void 0 ? _c : '';
-                    var type = _this.getDataTypeForValue(value);
-                    if (cell.mergeAcross) {
-                        return _this.createMergedCell(excelStyleId, type, value, cell.mergeAcross);
-                    }
-                    return _this.createCell(excelStyleId, type, value);
-                }),
-                outlineLevel: outlineLevel
-            };
-            if (row.collapsed != null) {
-                rowObj.collapsed = row.collapsed;
-            }
-            if (row.hidden != null) {
-                rowObj.hidden = row.hidden;
-            }
-            _this.rows.push(rowObj);
-        });
-    };
-    BaseExcelSerializingSession.prototype.onNewHeaderGroupingRow = function () {
-        var _this = this;
-        var currentCells = [];
-        this.rows.push({
-            cells: currentCells,
-            height: getHeightFromProperty(this.rows.length + 1, this.config.headerRowHeight)
-        });
-        return {
-            onColumn: function (columnGroup, header, index, span, collapsibleRanges) {
-                var styleIds = _this.config.styleLinker({ rowType: csvExport.RowType.HEADER_GROUPING, rowIndex: 1, value: "grouping-" + header, columnGroup: columnGroup });
-                currentCells.push(__assign$2(__assign$2({}, _this.createMergedCell(_this.getStyleId(styleIds), _this.getDataTypeForValue('string'), header, span)), { collapsibleRanges: collapsibleRanges }));
-            }
-        };
-    };
-    BaseExcelSerializingSession.prototype.onNewHeaderRow = function () {
-        return this.onNewRow(this.onNewHeaderColumn, this.config.headerRowHeight);
-    };
-    BaseExcelSerializingSession.prototype.onNewBodyRow = function (node) {
-        var rowAccumulator = this.onNewRow(this.onNewBodyColumn, this.config.rowHeight);
-        if (node) {
-            this.addRowOutlineIfNecessary(node);
-        }
-        return rowAccumulator;
-    };
-    BaseExcelSerializingSession.prototype.addRowOutlineIfNecessary = function (node) {
-        var _a = this.config, gridOptionsService = _a.gridOptionsService, suppressRowOutline = _a.suppressRowOutline, _b = _a.rowGroupExpandState, rowGroupExpandState = _b === void 0 ? 'expanded' : _b;
-        var isGroupHideOpenParents = gridOptionsService.is('groupHideOpenParents');
-        if (isGroupHideOpenParents || suppressRowOutline || node.level == null) {
-            return;
-        }
-        var padding = node.footer ? 1 : 0;
-        var currentRow = core._.last(this.rows);
-        currentRow.outlineLevel = node.level + padding;
-        if (rowGroupExpandState === 'expanded') {
-            return;
-        }
-        var collapseAll = rowGroupExpandState === 'collapsed';
-        if (node.isExpandable()) {
-            var isExpanded = !collapseAll && node.expanded;
-            currentRow.collapsed = !isExpanded;
-        }
-        currentRow.hidden =
-            // always show the node if there is no parent to be expanded
-            !!node.parent &&
-                // or if it is a child of the root node
-                node.parent.level !== -1 &&
-                (collapseAll || this.isAnyParentCollapsed(node.parent));
-    };
-    BaseExcelSerializingSession.prototype.isAnyParentCollapsed = function (node) {
-        while (node && node.level !== -1) {
-            if (!node.expanded) {
-                return true;
-            }
-            node = node.parent;
-        }
-        return false;
-    };
-    BaseExcelSerializingSession.prototype.prepare = function (columnsToExport) {
-        var _this = this;
-        _super.prototype.prepare.call(this, columnsToExport);
-        this.columnsToExport = __spreadArray$3([], __read$6(columnsToExport));
-        this.cols = columnsToExport.map(function (col, i) { return _this.convertColumnToExcel(col, i); });
-    };
-    BaseExcelSerializingSession.prototype.parse = function () {
-        // adding custom content might have made some rows wider than the grid, so add new columns
-        var longestRow = this.rows.reduce(function (a, b) { return Math.max(a, b.cells.length); }, 0);
-        while (this.cols.length < longestRow) {
-            this.cols.push(this.convertColumnToExcel(null, this.cols.length + 1));
-        }
-        var data = {
-            name: this.config.sheetName,
-            table: {
-                columns: this.cols,
-                rows: this.rows
-            }
-        };
-        return this.createExcel(data);
-    };
-    BaseExcelSerializingSession.prototype.isFormula = function (value) {
-        if (value == null) {
-            return false;
-        }
-        return this.config.autoConvertFormulas && value.toString().startsWith('=');
-    };
-    BaseExcelSerializingSession.prototype.isNumerical = function (value) {
-        if (typeof value === 'bigint') {
-            return true;
-        }
-        return isFinite(value) && value !== '' && !isNaN(parseFloat(value));
-    };
-    BaseExcelSerializingSession.prototype.getStyleById = function (styleId) {
-        if (styleId == null) {
-            return null;
-        }
-        return this.stylesByIds[styleId] || null;
-    };
-    BaseExcelSerializingSession.prototype.convertColumnToExcel = function (column, index) {
-        var columnWidth = this.config.columnWidth;
-        if (columnWidth) {
-            if (typeof columnWidth === 'number') {
-                return { width: columnWidth };
-            }
-            return { width: columnWidth({ column: column, index: index }) };
-        }
-        if (column) {
-            var smallestUsefulWidth = 75;
-            return { width: Math.max(column.getActualWidth(), smallestUsefulWidth) };
-        }
-        return {};
-    };
-    BaseExcelSerializingSession.prototype.onNewHeaderColumn = function (rowIndex, currentCells) {
-        var _this = this;
-        return function (column, index) {
-            var nameForCol = _this.extractHeaderValue(column);
-            var styleIds = _this.config.styleLinker({ rowType: csvExport.RowType.HEADER, rowIndex: rowIndex, value: nameForCol, column: column });
-            currentCells.push(_this.createCell(_this.getStyleId(styleIds), _this.getDataTypeForValue('string'), nameForCol));
-        };
-    };
-    BaseExcelSerializingSession.prototype.onNewRow = function (onNewColumnAccumulator, height) {
-        var currentCells = [];
-        this.rows.push({
-            cells: currentCells,
-            height: getHeightFromProperty(this.rows.length + 1, height)
-        });
-        return {
-            onColumn: onNewColumnAccumulator.bind(this, this.rows.length, currentCells)()
-        };
-    };
-    BaseExcelSerializingSession.prototype.onNewBodyColumn = function (rowIndex, currentCells) {
-        var _this = this;
-        var skipCols = 0;
-        return function (column, index, node) {
-            if (skipCols > 0) {
-                skipCols -= 1;
-                return;
-            }
-            var _a = _this.extractRowCellValue(column, index, rowIndex, 'excel', node), valueForCell = _a.value, valueFormatted = _a.valueFormatted;
-            var styleIds = _this.config.styleLinker({ rowType: csvExport.RowType.BODY, rowIndex: rowIndex, value: valueForCell, column: column, node: node });
-            var excelStyleId = _this.getStyleId(styleIds);
-            var colSpan = column.getColSpan(node);
-            var addedImage = _this.addImage(rowIndex, column, valueForCell);
-            if (addedImage) {
-                currentCells.push(_this.createCell(excelStyleId, _this.getDataTypeForValue(addedImage.value), addedImage.value == null ? '' : addedImage.value));
-            }
-            else if (colSpan > 1) {
-                skipCols = colSpan - 1;
-                currentCells.push(_this.createMergedCell(excelStyleId, _this.getDataTypeForValue(valueForCell), valueForCell, colSpan - 1));
-            }
-            else {
-                currentCells.push(_this.createCell(excelStyleId, _this.getDataTypeForValue(valueForCell), valueForCell, valueFormatted));
-            }
-        };
-    };
-    BaseExcelSerializingSession.prototype.getStyleId = function (styleIds) {
-        if (!styleIds || !styleIds.length) {
-            return null;
-        }
-        if (styleIds.length === 1) {
-            return styleIds[0];
-        }
-        var key = styleIds.join("-");
-        if (!this.mixedStyles[key]) {
-            this.addNewMixedStyle(styleIds);
-        }
-        return this.mixedStyles[key].excelID;
-    };
-    BaseExcelSerializingSession.prototype.addNewMixedStyle = function (styleIds) {
-        var _this = this;
-        this.mixedStyleCounter += 1;
-        var excelId = "mixedStyle" + this.mixedStyleCounter;
-        var resultantStyle = {};
-        styleIds.forEach(function (styleId) {
-            _this.excelStyles.forEach(function (excelStyle) {
-                if (excelStyle.id === styleId) {
-                    core._.mergeDeep(resultantStyle, core._.deepCloneObject(excelStyle));
-                }
-            });
-        });
-        resultantStyle.id = excelId;
-        resultantStyle.name = excelId;
-        var key = styleIds.join("-");
-        this.mixedStyles[key] = {
-            excelID: excelId,
-            key: key,
-            result: resultantStyle
-        };
-        this.excelStyles.push(resultantStyle);
-        this.stylesByIds[excelId] = resultantStyle;
-    };
-    return BaseExcelSerializingSession;
-}(csvExport.BaseGridSerializingSession));
-
-var __extends$2 = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        if (typeof b !== "function" && b !== null)
-            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var ExcelXmlSerializingSession = /** @class */ (function (_super) {
-    __extends$2(ExcelXmlSerializingSession, _super);
-    function ExcelXmlSerializingSession() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    ExcelXmlSerializingSession.prototype.createExcel = function (data) {
-        return ExcelXmlFactory.createExcel(this.excelStyles, data);
-    };
-    ExcelXmlSerializingSession.prototype.getDataTypeForValue = function (valueForCell) {
-        return this.isNumerical(valueForCell) ? 'Number' : 'String';
-    };
-    ExcelXmlSerializingSession.prototype.getType = function (type, style, value) {
-        if (this.isFormula(value)) {
-            return 'Formula';
-        }
-        if (style && style.dataType) {
-            switch (style.dataType.toLocaleLowerCase()) {
-                case 'string':
-                    return 'Formula';
-                case 'number':
-                    return 'Number';
-                case 'datetime':
-                    return 'DateTime';
-                case 'error':
-                    return 'Error';
-                case 'boolean':
-                    return 'Boolean';
-                default:
-                    console.warn("AG Grid: Unrecognized data type for excel export [" + style.id + ".dataType=" + style.dataType + "]");
-            }
-        }
-        return type;
-    };
-    ExcelXmlSerializingSession.prototype.addImage = function () {
-        return;
-    };
-    ExcelXmlSerializingSession.prototype.createCell = function (styleId, type, value, valueFormatted) {
-        var actualStyle = this.getStyleById(styleId);
-        if (!(actualStyle === null || actualStyle === void 0 ? void 0 : actualStyle.dataType) && type === 'String' && valueFormatted) {
-            value = valueFormatted;
-        }
-        var typeTransformed = (this.getType(type, actualStyle, value) || type);
-        return {
-            styleId: !!actualStyle ? styleId : undefined,
-            data: {
-                type: typeTransformed,
-                value: this.getValueTransformed(typeTransformed, value)
-            }
-        };
-    };
-    ExcelXmlSerializingSession.prototype.getValueTransformed = function (typeTransformed, value) {
-        var _this = this;
-        var wrapText = function (val) {
-            if (_this.config.suppressTextAsCDATA) {
-                return core._.escapeString(val);
-            }
-            var cdataStart = '<![CDATA[';
-            var cdataEnd = ']]>';
-            var cdataEndRegex = new RegExp(cdataEnd, "g");
-            return cdataStart
-                // CDATA sections are closed by the character sequence ']]>' and there is no
-                // way of escaping this, so if the text contains the offending sequence, emit
-                // multiple CDATA sections and split the characters between them.
-                + String(val).replace(cdataEndRegex, ']]' + cdataEnd + cdataStart + '>')
-                + cdataEnd;
-        };
-        var convertBoolean = function (val) {
-            if (!val || val === '0' || val === 'false') {
-                return '0';
-            }
-            return '1';
-        };
-        switch (typeTransformed) {
-            case 'String':
-                return wrapText(value);
-            case 'Number':
-                return Number(value).valueOf() + '';
-            case 'Boolean':
-                return convertBoolean(value);
-            default:
-                return value;
-        }
-    };
-    ExcelXmlSerializingSession.prototype.createMergedCell = function (styleId, type, value, numOfCells) {
-        return {
-            styleId: !!this.getStyleById(styleId) ? styleId : undefined,
-            data: {
-                type: type,
-                value: value
-            },
-            mergeAcross: numOfCells
-        };
-    };
-    return ExcelXmlSerializingSession;
-}(BaseExcelSerializingSession));
-
-var coreFactory = {
-    getTemplate: function (author) {
-        var dt = new Date();
-        var jsonDate = dt.toJSON();
-        return {
-            name: 'cp:coreProperties',
-            properties: {
-                prefixedAttributes: [{
-                        prefix: "xmlns:",
-                        map: {
-                            cp: "http://schemas.openxmlformats.org/package/2006/metadata/core-properties",
-                            dc: 'http://purl.org/dc/elements/1.1/',
-                            dcterms: 'http://purl.org/dc/terms/',
-                            dcmitype: 'http://purl.org/dc/dcmitype/',
-                            xsi: 'http://www.w3.org/2001/XMLSchema-instance'
-                        }
-                    }]
-            },
-            children: [{
-                    name: 'dc:creator',
-                    textNode: author
-                }, {
-                    name: 'dc:title',
-                    textNode: 'Workbook'
-                }, {
-                    name: 'dcterms:created',
-                    properties: {
-                        rawMap: {
-                            'xsi:type': 'dcterms:W3CDTF'
-                        }
-                    },
-                    textNode: jsonDate
-                }, {
-                    name: 'dcterms:modified',
-                    properties: {
-                        rawMap: {
-                            'xsi:type': 'dcterms:W3CDTF'
-                        }
-                    },
-                    textNode: jsonDate
-                }]
-        };
-    }
-};
-
-var contentTypeFactory = {
-    getTemplate: function (config) {
-        var name = config.name, ContentType = config.ContentType, Extension = config.Extension, PartName = config.PartName;
-        return {
-            name: name,
-            properties: {
-                rawMap: {
-                    Extension: Extension,
-                    PartName: PartName,
-                    ContentType: ContentType
-                }
-            }
-        };
-    }
-};
-
-var __read$5 = (undefined && undefined.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
-var __spreadArray$2 = (undefined && undefined.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
-};
-var contentTypesFactory = {
-    getTemplate: function (sheetLen) {
-        var worksheets = new Array(sheetLen).fill(undefined).map(function (v, i) { return ({
-            name: 'Override',
-            ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml',
-            PartName: "/xl/worksheets/sheet" + (i + 1) + ".xml"
-        }); });
-        var sheetsWithImages = ExcelXlsxFactory.worksheetImages.size;
-        var imageTypesObject = {};
-        ExcelXlsxFactory.workbookImageIds.forEach(function (v) {
-            imageTypesObject[v.type] = true;
-        });
-        var imageDocs = new Array(sheetsWithImages).fill(undefined).map(function (v, i) { return ({
-            name: 'Override',
-            ContentType: 'application/vnd.openxmlformats-officedocument.drawing+xml',
-            PartName: "/xl/drawings/drawing" + (i + 1) + ".xml"
-        }); });
-        var imageTypes = Object.keys(imageTypesObject).map(function (ext) { return ({
-            name: 'Default',
-            ContentType: "image/" + ext,
-            Extension: ext
-        }); });
-        var children = __spreadArray$2(__spreadArray$2(__spreadArray$2(__spreadArray$2(__spreadArray$2(__spreadArray$2([], __read$5(imageTypes)), [
-            {
-                name: 'Default',
-                Extension: 'rels',
-                ContentType: 'application/vnd.openxmlformats-package.relationships+xml'
-            }, {
-                name: 'Default',
-                ContentType: 'application/xml',
-                Extension: 'xml'
-            }, {
-                name: 'Override',
-                ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml',
-                PartName: "/xl/workbook.xml"
-            }
-        ]), __read$5(worksheets)), [
-            {
-                name: 'Override',
-                ContentType: 'application/vnd.openxmlformats-officedocument.theme+xml',
-                PartName: '/xl/theme/theme1.xml'
-            }, {
-                name: 'Override',
-                ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml',
-                PartName: '/xl/styles.xml'
-            }, {
-                name: 'Override',
-                ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml',
-                PartName: '/xl/sharedStrings.xml'
-            }
-        ]), __read$5(imageDocs)), [
-            {
-                name: 'Override',
-                ContentType: 'application/vnd.openxmlformats-package.core-properties+xml',
-                PartName: '/docProps/core.xml'
-            }
-        ]).map(function (contentType) { return contentTypeFactory.getTemplate(contentType); });
-        return {
-            name: "Types",
-            properties: {
-                rawMap: {
-                    xmlns: "http://schemas.openxmlformats.org/package/2006/content-types"
-                }
-            },
-            children: children
-        };
-    }
-};
-
 var getAnchor = function (name, imageAnchor) { return ({
-    name: "xdr:" + name,
+    name: "xdr:".concat(name),
     children: [{
             name: 'xdr:col',
             textNode: (imageAnchor.col).toString()
@@ -1245,7 +478,7 @@ var getBlipFill = function (image, index) {
                 properties: {
                     rawMap: {
                         'cstate': 'print',
-                        'r:embed': "rId" + index,
+                        'r:embed': "rId".concat(index),
                         'xmlns:r': 'http://schemas.openxmlformats.org/officeDocument/2006/relationships'
                     }
                 },
@@ -1368,7 +601,7 @@ var drawingFactory = {
     }
 };
 
-var __read$4 = (undefined && undefined.__read) || function (o, n) {
+var __read$5 = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -1385,11 +618,11 @@ var __read$4 = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 var getColorChildren = function (props) {
-    var _a = __read$4(props, 4), type = _a[0], innerType = _a[1], val = _a[2], lastClr = _a[3];
+    var _a = __read$5(props, 4), type = _a[0], innerType = _a[1], val = _a[2], lastClr = _a[3];
     return {
-        name: "a:" + type,
+        name: "a:".concat(type),
         children: [{
-                name: "a:" + innerType,
+                name: "a:".concat(innerType),
                 properties: {
                     rawMap: {
                         val: val,
@@ -1426,7 +659,7 @@ var colorScheme = {
     }
 };
 
-var __read$3 = (undefined && undefined.__read) || function (o, n) {
+var __read$4 = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -1443,9 +676,9 @@ var __read$3 = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 var getFont = function (props) {
-    var _a = __read$3(props, 4), type = _a[0], typeface = _a[1], script = _a[2], panose = _a[3];
+    var _a = __read$4(props, 4), type = _a[0], typeface = _a[1], script = _a[2], panose = _a[3];
     return {
-        name: "a:" + type,
+        name: "a:".concat(type),
         properties: {
             rawMap: {
                 script: script,
@@ -1457,7 +690,6 @@ var getFont = function (props) {
 };
 var fontScheme = {
     getTemplate: function () {
-        var utf8_encode = core._.utf8_encode;
         return {
             name: "a:fontScheme",
             properties: {
@@ -1471,10 +703,10 @@ var fontScheme = {
                         getFont(['latin', 'Calibri Light', undefined, '020F0302020204030204']),
                         getFont(['ea', '']),
                         getFont(['cs', '']),
-                        getFont(['font', utf8_encode('游ゴシック Light'), 'Jpan']),
-                        getFont(['font', utf8_encode('맑은 고딕'), 'Hang']),
-                        getFont(['font', utf8_encode('等线 Light'), 'Hans']),
-                        getFont(['font', utf8_encode('新細明體'), 'Hant']),
+                        getFont(['font', '游ゴシック Light', 'Jpan']),
+                        getFont(['font', '맑은 고딕', 'Hang']),
+                        getFont(['font', '等线 Light', 'Hans']),
+                        getFont(['font', '新細明體', 'Hant']),
                         getFont(['font', 'Times New Roman', 'Arab']),
                         getFont(['font', 'Times New Roman', 'Hebr']),
                         getFont(['font', 'Tahoma', 'Thai']),
@@ -1525,10 +757,10 @@ var fontScheme = {
                         getFont(['latin', 'Calibri', undefined, '020F0502020204030204']),
                         getFont(['ea', '']),
                         getFont(['cs', '']),
-                        getFont(['font', utf8_encode('游ゴシック'), 'Jpan']),
-                        getFont(['font', utf8_encode('맑은 고딕'), 'Hang']),
-                        getFont(['font', utf8_encode('等线'), 'Hans']),
-                        getFont(['font', utf8_encode('新細明體'), 'Hant']),
+                        getFont(['font', '游ゴシック', 'Jpan']),
+                        getFont(['font', '맑은 고딕', 'Hang']),
+                        getFont(['font', '等线', 'Hans']),
+                        getFont(['font', '新細明體', 'Hant']),
                         getFont(['font', 'Arial', 'Arab']),
                         getFont(['font', 'Arial', 'Hebr']),
                         getFont(['font', 'Tahoma', 'Thai']),
@@ -1578,7 +810,7 @@ var fontScheme = {
     }
 };
 
-var __read$2 = (undefined && undefined.__read) || function (o, n) {
+var __read$3 = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -1595,7 +827,7 @@ var __read$2 = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 var getPropertyVal = function (name, val, children) { return ({
-    name: "a:" + name,
+    name: "a:".concat(name),
     properties: {
         rawMap: {
             val: val
@@ -1604,7 +836,7 @@ var getPropertyVal = function (name, val, children) { return ({
     children: children
 }); };
 var getGs = function (props) {
-    var _a = __read$2(props, 6), pos = _a[0], schemeColor = _a[1], satMod = _a[2], lumMod = _a[3], tint = _a[4], shade = _a[5];
+    var _a = __read$3(props, 6), pos = _a[0], schemeColor = _a[1], satMod = _a[2], lumMod = _a[3], tint = _a[4], shade = _a[5];
     var children = [];
     children.push(getPropertyVal('satMod', satMod));
     if (lumMod) {
@@ -1639,8 +871,8 @@ var getSolidFill = function (val, children) { return ({
     children: [getPropertyVal('schemeClr', val, children)]
 }); };
 var getGradFill = function (props) {
-    var _a = __read$2(props, 5), rotWithShape = _a[0], gs1 = _a[1], gs2 = _a[2], gs3 = _a[3], lin = _a[4];
-    var _b = __read$2(lin, 2), ang = _b[0], scaled = _b[1];
+    var _a = __read$3(props, 5), rotWithShape = _a[0], gs1 = _a[1], gs2 = _a[2], gs3 = _a[3], lin = _a[4];
+    var _b = __read$3(lin, 2), ang = _b[0], scaled = _b[1];
     return {
         name: 'a:gradFill',
         properties: {
@@ -1667,7 +899,7 @@ var getGradFill = function (props) {
     };
 };
 var getLine = function (props) {
-    var _a = __read$2(props, 4), w = _a[0], cap = _a[1], cmpd = _a[2], algn = _a[3];
+    var _a = __read$3(props, 4), w = _a[0], cap = _a[1], cmpd = _a[2], algn = _a[3];
     return {
         name: 'a:ln',
         properties: {
@@ -1690,7 +922,7 @@ var getLine = function (props) {
 var getEffectStyle = function (shadow) {
     var children = [];
     if (shadow) {
-        var _a = __read$2(shadow, 5), blurRad = _a[0], dist = _a[1], dir = _a[2], algn = _a[3], rotWithShape = _a[4];
+        var _a = __read$3(shadow, 5), blurRad = _a[0], dist = _a[1], dir = _a[2], algn = _a[3], rotWithShape = _a[4];
         children.push({
             name: 'a:outerShdw',
             properties: {
@@ -1821,28 +1053,50 @@ var officeTheme = {
     }
 };
 
-var buildSharedString = function (strMap) {
-    var ret = [];
-    strMap.forEach(function (val, key) {
-        var textNode = key.toString();
-        var child = {
-            name: 't',
-            textNode: core._.utf8_encode(core._.escapeString(textNode))
-        };
-        // if we have leading or trailing spaces, instruct Excel not to trim them
-        var preserveSpaces = textNode.trim().length !== textNode.length;
-        if (preserveSpaces) {
-            child.properties = {
-                rawMap: {
-                    "xml:space": "preserve"
-                }
-            };
+var __values$1 = (undefined && undefined.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
         }
-        ret.push({
-            name: 'si',
-            children: [child]
-        });
-    });
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
+var buildSharedString = function (strMap) {
+    var e_1, _a;
+    var ret = [];
+    try {
+        for (var _b = __values$1(strMap.keys()), _c = _b.next(); !_c.done; _c = _b.next()) {
+            var key = _c.value;
+            var textNode = key.toString();
+            var child = {
+                name: 't',
+                textNode: core._.escapeString(textNode)
+            };
+            // if we have leading or trailing spaces, instruct Excel not to trim them
+            var preserveSpaces = textNode.trim().length !== textNode.length;
+            if (preserveSpaces) {
+                child.properties = {
+                    rawMap: {
+                        "xml:space": "preserve"
+                    }
+                };
+            }
+            ret.push({
+                name: 'si',
+                children: [child]
+            });
+        }
+    }
+    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+    finally {
+        try {
+            if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+        }
+        finally { if (e_1) throw e_1.error; }
+    }
     return ret;
 };
 var sharedStrings = {
@@ -2090,7 +1344,7 @@ var convertLegacyColor = function (color) {
         return color;
     }
     if (color.charAt(0) === '#') {
-        color = color.substr(1);
+        color = color.substring(1);
     }
     return color.length === 6 ? 'FF' + color : color;
 };
@@ -2108,9 +1362,9 @@ var convertLegacyBorder = function (type, weight) {
         return namedWeight;
     }
     if (namedWeight === 'medium' && mediumBorders.indexOf(mappedName) !== -1) {
-        return "medium" + mappedName;
+        return "medium".concat(mappedName);
     }
-    return mappedName.charAt(0).toLowerCase() + mappedName.substr(1);
+    return mappedName.charAt(0).toLowerCase() + mappedName.substring(1);
 };
 var convertLegacyHorizontalAlignment = function (alignment) {
     return horizontalAlignmentMap[alignment] || 'general';
@@ -2221,7 +1475,7 @@ var protectionFactory = {
 
 var xfFactory = {
     getTemplate: function (xf) {
-        var alignment = xf.alignment, borderId = xf.borderId, fillId = xf.fillId, fontId = xf.fontId, numFmtId = xf.numFmtId, protection = xf.protection, xfId = xf.xfId;
+        var alignment = xf.alignment, borderId = xf.borderId, fillId = xf.fillId, fontId = xf.fontId, numFmtId = xf.numFmtId, protection = xf.protection, quotePrefix = xf.quotePrefix, xfId = xf.xfId;
         var children = [];
         if (alignment) {
             children.push(alignmentFactory.getTemplate(alignment));
@@ -2243,6 +1497,7 @@ var xfFactory = {
                     fontId: fontId,
                     applyNumberFormat: numFmtId ? 1 : undefined,
                     numFmtId: numFmtId,
+                    quotePrefix: quotePrefix ? 1 : undefined,
                     xfId: xfId
                 }
             },
@@ -2309,8 +1564,8 @@ var cellStylesFactory = {
     }
 };
 
-var __assign$1 = (undefined && undefined.__assign) || function () {
-    __assign$1 = Object.assign || function(t) {
+var __assign$2 = (undefined && undefined.__assign) || function () {
+    __assign$2 = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -2318,7 +1573,7 @@ var __assign$1 = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$1.apply(this, arguments);
+    return __assign$2.apply(this, arguments);
 };
 var stylesMap;
 var registeredNumberFmts;
@@ -2331,7 +1586,7 @@ var registeredCellStyles;
 var currentSheet;
 var getStyleName = function (name, currentSheet) {
     if (name.indexOf('mixedStyle') !== -1 && currentSheet > 1) {
-        name += "_" + currentSheet;
+        name += "_".concat(currentSheet);
     }
     return name;
 };
@@ -2365,7 +1620,6 @@ var registerFill = function (fill) {
     return pos;
 };
 var registerNumberFmt = function (format) {
-    format = core._.utf8_encode(format);
     if (numberFormatMap[format]) {
         return numberFormatMap[format];
     }
@@ -2462,13 +1716,12 @@ var registerBorders = function (borders) {
 };
 var registerFont = function (font) {
     var _a = font.fontName, name = _a === void 0 ? 'Calibri' : _a, color = font.color, size = font.size, bold = font.bold, italic = font.italic, outline = font.outline, shadow = font.shadow, strikeThrough = font.strikeThrough, underline = font.underline, family = font.family, verticalAlign = font.verticalAlign;
-    var utf8Name = name ? core._.utf8_encode(name) : name;
     var convertedColor = convertLegacyColor(color);
     var familyId = getFontFamilyId(family);
     var convertedUnderline = underline ? underline.toLocaleLowerCase() : undefined;
     var convertedVerticalAlign = verticalAlign ? verticalAlign.toLocaleLowerCase() : undefined;
     var pos = registeredFonts.findIndex(function (currentFont) {
-        if (currentFont.fontName != utf8Name ||
+        if (currentFont.fontName != name ||
             currentFont.color != convertedColor ||
             currentFont.size != size ||
             currentFont.bold != bold ||
@@ -2487,7 +1740,7 @@ var registerFont = function (font) {
     if (pos === -1) {
         pos = registeredFonts.length;
         registeredFonts.push({
-            fontName: utf8Name,
+            fontName: name,
             color: convertedColor,
             size: size,
             bold: bold,
@@ -2503,7 +1756,7 @@ var registerFont = function (font) {
     return pos;
 };
 var registerStyle = function (config) {
-    var alignment = config.alignment, borders = config.borders, font = config.font, interior = config.interior, numberFormat = config.numberFormat, protection = config.protection;
+    var alignment = config.alignment, borders = config.borders, font = config.font, interior = config.interior, numberFormat = config.numberFormat, protection = config.protection, quotePrefix = config.quotePrefix;
     var id = config.id;
     var currentFill = 0;
     var currentBorder = 0;
@@ -2536,13 +1789,14 @@ var registerStyle = function (config) {
         fontId: currentFont || 0,
         numFmtId: currentNumberFmt || 0,
         protection: protection,
+        quotePrefix: quotePrefix,
         xfId: 0
     });
 };
 var stylesheetFactory = {
     getTemplate: function (defaultFontSize) {
         var numberFormats = numberFormatsFactory.getTemplate(registeredNumberFmts);
-        var fonts = fontsFactory.getTemplate(registeredFonts.map(function (font) { return (__assign$1(__assign$1({}, font), { size: font.size != null ? font.size : defaultFontSize })); }));
+        var fonts = fontsFactory.getTemplate(registeredFonts.map(function (font) { return (__assign$2(__assign$2({}, font), { size: font.size != null ? font.size : defaultFontSize })); }));
         var fills = fillsFactory.getTemplate(registeredFills);
         var borders = bordersFactory.getTemplate(registeredBorders);
         var cellStylesXfs = cellStylesXfsFactory.getTemplate(registeredCellStyleXfs);
@@ -2603,7 +1857,7 @@ var sheetFactory = {
                 rawMap: {
                     "name": name,
                     "sheetId": sheetId,
-                    "r:id": "rId" + sheetId
+                    "r:id": "rId".concat(sheetId)
                 }
             }
         };
@@ -2700,7 +1954,7 @@ var cellFactory = {
         if (convertedType === 'str' && type === 'f') {
             children = [{
                     name: 'f',
-                    textNode: core._.escapeString(core._.utf8_encode(value))
+                    textNode: core._.escapeString(value)
                 }];
         }
         else if (convertedType === 'inlineStr') {
@@ -2708,21 +1962,21 @@ var cellFactory = {
                     name: 'is',
                     children: [{
                             name: 't',
-                            textNode: core._.escapeString(core._.utf8_encode(value))
+                            textNode: core._.escapeString(value)
                         }]
                 }];
         }
         else {
             children = [{
                     name: 'v',
-                    textNode: value
+                    textNode: value,
                 }];
         }
         return Object.assign({}, obj, { children: children });
     }
 };
 
-var __read$1 = (undefined && undefined.__read) || function (o, n) {
+var __read$2 = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -2738,10 +1992,14 @@ var __read$1 = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray$1 = (undefined && undefined.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray$2 = (undefined && undefined.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 var addEmptyCells = function (cells, rowIdx) {
     var mergeMap = [];
@@ -2763,13 +2021,13 @@ var addEmptyCells = function (cells, rowIdx) {
             var cell = cells[mergeMap[i].pos];
             for (var j = 1; j <= cell.mergeAcross; j++) {
                 mergedCells.push({
-                    ref: "" + getExcelColumnName(mergeMap[i].excelPos + 1 + j) + (rowIdx + 1),
+                    ref: "".concat(getExcelColumnName(mergeMap[i].excelPos + 1 + j)).concat(rowIdx + 1),
                     styleId: cell.styleId,
                     data: { type: 'empty', value: null }
                 });
             }
             if (mergedCells.length) {
-                cells.splice.apply(cells, __spreadArray$1([mergeMap[i].pos + 1, 0], __read$1(mergedCells)));
+                cells.splice.apply(cells, __spreadArray$2([mergeMap[i].pos + 1, 0], __read$2(mergedCells), false));
             }
         }
     }
@@ -2825,7 +2083,7 @@ var getMergedCellsAndAddColumnGroups = function (rows, cols, suppressColumnOutli
             if (currentCell.mergeAcross) {
                 merges += currentCell.mergeAcross;
                 var end = getExcelColumnName(cellIdx + merges + 1);
-                mergedCells.push("" + start + outputRow + ":" + end + outputRow);
+                mergedCells.push("".concat(start).concat(outputRow, ":").concat(end).concat(outputRow));
             }
             if (!cols[min - 1]) {
                 cols[min - 1] = {};
@@ -2839,7 +2097,7 @@ var getMergedCellsAndAddColumnGroups = function (rows, cols, suppressColumnOutli
             lastCol = cols[min - 1];
             lastCol.min = min;
             lastCol.max = min;
-            currentCell.ref = "" + start + outputRow;
+            currentCell.ref = "".concat(start).concat(outputRow);
         });
     });
     cellsWithCollapsibleGroups.sort(function (a, b) {
@@ -2994,24 +2252,24 @@ var applyHeaderFontStyle = function (headerString, font) {
     }
     headerString += '&quot;';
     if (font.size) {
-        headerString += "&amp;" + font.size;
+        headerString += "&amp;".concat(font.size);
     }
     if (font.strikeThrough) {
         headerString += '&amp;S';
     }
     if (font.underline) {
-        headerString += "&amp;" + (font.underline === 'Double' ? 'E' : 'U');
+        headerString += "&amp;".concat(font.underline === 'Double' ? 'E' : 'U');
     }
     if (font.color) {
-        headerString += "&amp;K" + font.color.replace('#', '').toUpperCase();
+        headerString += "&amp;K".concat(font.color.replace('#', '').toUpperCase());
     }
     return headerString;
 };
 var processHeaderFooterContent = function (content) {
     return content.reduce(function (prev, curr) {
         var pos = getHeaderPosition(curr.position);
-        var output = applyHeaderFontStyle(prev + "&amp;" + pos, curr.font);
-        return "" + output + core._.escapeString(replaceHeaderFooterTokens(curr.value));
+        var output = applyHeaderFontStyle("".concat(prev, "&amp;").concat(pos), curr.font);
+        return "".concat(output).concat(core._.escapeString(replaceHeaderFooterTokens(curr.value)));
     }, '');
 };
 var buildHeaderFooter = function (headerFooterConfig) {
@@ -3024,10 +2282,10 @@ var buildHeaderFooter = function (headerFooterConfig) {
             return;
         }
         core._.iterateObject(headerFooter, function (key, value) {
-            var nameSuffix = "" + key.charAt(0).toUpperCase() + key.slice(1);
+            var nameSuffix = "".concat(key.charAt(0).toUpperCase()).concat(key.slice(1));
             if (value) {
                 headersAndFooters.push({
-                    name: "" + namePrefix + nameSuffix,
+                    name: "".concat(namePrefix).concat(nameSuffix),
                     properties: {
                         rawMap: {
                             'xml:space': 'preserve'
@@ -3170,7 +2428,7 @@ var relationshipsFactory = {
     }
 };
 
-var __read = (undefined && undefined.__read) || function (o, n) {
+var __read$1 = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -3186,13 +2444,19 @@ var __read = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (undefined && undefined.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray$1 = (undefined && undefined.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 /**
- * See https://www.ecma-international.org/news/TC45_current_work/OpenXML%20White%20Paper.pdf
+ * See links for more info on the Office Open XML format being used:
+ * https://www.ecma-international.org/wp-content/uploads/Office-Open-XML-White-Paper.pdf
+ * https://ecma-international.org/publications-and-standards/standards/ecma-376/
  */
 var ExcelXlsxFactory = /** @class */ (function () {
     function ExcelXlsxFactory() {
@@ -3256,16 +2520,16 @@ var ExcelXlsxFactory = /** @class */ (function () {
     ExcelXlsxFactory.addSheetName = function (worksheet) {
         var name = core._.escapeString(worksheet.name) || '';
         var append = '';
-        while (this.sheetNames.indexOf("" + name + append) !== -1) {
+        while (this.sheetNames.indexOf("".concat(name).concat(append)) !== -1) {
             if (append === '') {
                 append = '_1';
             }
             else {
                 var curr = parseInt(append.slice(1), 10);
-                append = "_" + (curr + 1);
+                append = "_".concat(curr + 1);
             }
         }
-        worksheet.name = "" + name + append;
+        worksheet.name = "".concat(name).concat(append);
         this.sheetNames.push(worksheet.name);
     };
     ExcelXlsxFactory.getStringPosition = function (str) {
@@ -3316,25 +2580,25 @@ var ExcelXlsxFactory = /** @class */ (function () {
     };
     ExcelXlsxFactory.createWorkbookRels = function (sheetLen) {
         var worksheets = new Array(sheetLen).fill(undefined).map(function (v, i) { return ({
-            Id: "rId" + (i + 1),
+            Id: "rId".concat(i + 1),
             Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet',
-            Target: "worksheets/sheet" + (i + 1) + ".xml"
+            Target: "worksheets/sheet".concat(i + 1, ".xml")
         }); });
-        var rs = relationshipsFactory.getTemplate(__spreadArray(__spreadArray([], __read(worksheets)), [
+        var rs = relationshipsFactory.getTemplate(__spreadArray$1(__spreadArray$1([], __read$1(worksheets), false), [
             {
-                Id: "rId" + (sheetLen + 1),
+                Id: "rId".concat(sheetLen + 1),
                 Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme',
                 Target: 'theme/theme1.xml'
             }, {
-                Id: "rId" + (sheetLen + 2),
+                Id: "rId".concat(sheetLen + 2),
                 Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles',
                 Target: 'styles.xml'
             }, {
-                Id: "rId" + (sheetLen + 3),
+                Id: "rId".concat(sheetLen + 3),
                 Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings',
                 Target: 'sharedStrings.xml'
             }
-        ]));
+        ], false));
         return createXmlPart(rs);
     };
     ExcelXlsxFactory.createDrawing = function (sheetIndex) {
@@ -3346,9 +2610,9 @@ var ExcelXlsxFactory = /** @class */ (function () {
         var XMLArr = [];
         worksheetImageIds.forEach(function (value, key) {
             XMLArr.push({
-                Id: "rId" + (value.index + 1),
+                Id: "rId".concat(value.index + 1),
                 Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image',
-                Target: "../media/image" + (_this.workbookImageIds.get(key).index + 1) + "." + value.type
+                Target: "../media/image".concat(_this.workbookImageIds.get(key).index + 1, ".").concat(value.type)
             });
         });
         return createXmlPart(relationshipsFactory.getTemplate(XMLArr));
@@ -3357,7 +2621,7 @@ var ExcelXlsxFactory = /** @class */ (function () {
         var rs = relationshipsFactory.getTemplate([{
                 Id: 'rId1',
                 Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing',
-                Target: "../drawings/drawing" + (currentRelationIndex + 1) + ".xml"
+                Target: "../drawings/drawing".concat(currentRelationIndex + 1, ".xml")
             }]);
         return createXmlPart(rs);
     };
@@ -3397,22 +2661,253 @@ var __extends$1 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var ExcelXlsxSerializingSession = /** @class */ (function (_super) {
-    __extends$1(ExcelXlsxSerializingSession, _super);
-    function ExcelXlsxSerializingSession() {
-        return _super !== null && _super.apply(this, arguments) || this;
+var __assign$1 = (undefined && undefined.__assign) || function () {
+    __assign$1 = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign$1.apply(this, arguments);
+};
+var __read = (undefined && undefined.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
     }
-    ExcelXlsxSerializingSession.prototype.createExcel = function (data) {
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
+var __spreadArray = (undefined && undefined.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
+var __values = (undefined && undefined.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
+var ExcelSerializingSession = /** @class */ (function (_super) {
+    __extends$1(ExcelSerializingSession, _super);
+    function ExcelSerializingSession(config) {
+        var _this = _super.call(this, config) || this;
+        _this.mixedStyles = {};
+        _this.mixedStyleCounter = 0;
+        _this.rows = [];
+        _this.config = Object.assign({}, config);
+        _this.stylesByIds = {};
+        _this.config.baseExcelStyles.forEach(function (style) {
+            _this.stylesByIds[style.id] = style;
+        });
+        _this.excelStyles = __spreadArray(__spreadArray([], __read(_this.config.baseExcelStyles), false), [{ id: '_quotePrefix', quotePrefix: 1 }], false);
+        return _this;
+    }
+    ExcelSerializingSession.prototype.addCustomContent = function (customContent) {
+        var _this = this;
+        customContent.forEach(function (row) {
+            var rowLen = _this.rows.length + 1;
+            var outlineLevel;
+            if (!_this.config.suppressRowOutline && row.outlineLevel != null) {
+                outlineLevel = row.outlineLevel;
+            }
+            var rowObj = {
+                height: getHeightFromProperty(rowLen, row.height || _this.config.rowHeight),
+                cells: (row.cells || []).map(function (cell, idx) {
+                    var _a, _b, _c;
+                    var image = _this.addImage(rowLen, _this.columnsToExport[idx], (_a = cell.data) === null || _a === void 0 ? void 0 : _a.value);
+                    var excelStyles = null;
+                    if (cell.styleId) {
+                        excelStyles = typeof cell.styleId === 'string' ? [cell.styleId] : cell.styleId;
+                    }
+                    var excelStyleId = _this.getStyleId(excelStyles);
+                    if (image) {
+                        return _this.createCell(excelStyleId, _this.getDataTypeForValue(image.value), image.value == null ? '' : image.value);
+                    }
+                    var value = (_c = (_b = cell.data) === null || _b === void 0 ? void 0 : _b.value) !== null && _c !== void 0 ? _c : '';
+                    var type = _this.getDataTypeForValue(value);
+                    if (cell.mergeAcross) {
+                        return _this.createMergedCell(excelStyleId, type, value, cell.mergeAcross);
+                    }
+                    return _this.createCell(excelStyleId, type, value);
+                }),
+                outlineLevel: outlineLevel
+            };
+            if (row.collapsed != null) {
+                rowObj.collapsed = row.collapsed;
+            }
+            if (row.hidden != null) {
+                rowObj.hidden = row.hidden;
+            }
+            _this.rows.push(rowObj);
+        });
+    };
+    ExcelSerializingSession.prototype.onNewHeaderGroupingRow = function () {
+        var _this = this;
+        var currentCells = [];
+        this.rows.push({
+            cells: currentCells,
+            height: getHeightFromProperty(this.rows.length + 1, this.config.headerRowHeight)
+        });
+        return {
+            onColumn: function (columnGroup, header, index, span, collapsibleRanges) {
+                var styleIds = _this.config.styleLinker({ rowType: csvExport.RowType.HEADER_GROUPING, rowIndex: 1, value: "grouping-".concat(header), columnGroup: columnGroup });
+                currentCells.push(__assign$1(__assign$1({}, _this.createMergedCell(_this.getStyleId(styleIds), _this.getDataTypeForValue('string'), header, span)), { collapsibleRanges: collapsibleRanges }));
+            }
+        };
+    };
+    ExcelSerializingSession.prototype.onNewHeaderRow = function () {
+        return this.onNewRow(this.onNewHeaderColumn, this.config.headerRowHeight);
+    };
+    ExcelSerializingSession.prototype.onNewBodyRow = function (node) {
+        var rowAccumulator = this.onNewRow(this.onNewBodyColumn, this.config.rowHeight);
+        if (node) {
+            this.addRowOutlineIfNecessary(node);
+        }
+        return rowAccumulator;
+    };
+    ExcelSerializingSession.prototype.prepare = function (columnsToExport) {
+        var _this = this;
+        _super.prototype.prepare.call(this, columnsToExport);
+        this.columnsToExport = __spreadArray([], __read(columnsToExport), false);
+        this.cols = columnsToExport.map(function (col, i) { return _this.convertColumnToExcel(col, i); });
+    };
+    ExcelSerializingSession.prototype.parse = function () {
+        // adding custom content might have made some rows wider than the grid, so add new columns
+        var longestRow = this.rows.reduce(function (a, b) { return Math.max(a, b.cells.length); }, 0);
+        while (this.cols.length < longestRow) {
+            this.cols.push(this.convertColumnToExcel(null, this.cols.length + 1));
+        }
+        var data = {
+            name: this.config.sheetName,
+            table: {
+                columns: this.cols,
+                rows: this.rows
+            }
+        };
+        return this.createExcel(data);
+    };
+    ExcelSerializingSession.prototype.addRowOutlineIfNecessary = function (node) {
+        var _a = this.config, gridOptionsService = _a.gridOptionsService, suppressRowOutline = _a.suppressRowOutline, _b = _a.rowGroupExpandState, rowGroupExpandState = _b === void 0 ? 'expanded' : _b;
+        var isGroupHideOpenParents = gridOptionsService.get('groupHideOpenParents');
+        if (isGroupHideOpenParents || suppressRowOutline || node.level == null) {
+            return;
+        }
+        var padding = node.footer ? 1 : 0;
+        var currentRow = core._.last(this.rows);
+        currentRow.outlineLevel = node.level + padding;
+        if (rowGroupExpandState === 'expanded') {
+            return;
+        }
+        var collapseAll = rowGroupExpandState === 'collapsed';
+        if (node.isExpandable()) {
+            var isExpanded = !collapseAll && node.expanded;
+            currentRow.collapsed = !isExpanded;
+        }
+        currentRow.hidden =
+            // always show the node if there is no parent to be expanded
+            !!node.parent &&
+                // or if it is a child of the root node
+                node.parent.level !== -1 &&
+                (collapseAll || this.isAnyParentCollapsed(node.parent));
+    };
+    ExcelSerializingSession.prototype.isAnyParentCollapsed = function (node) {
+        while (node && node.level !== -1) {
+            if (!node.expanded) {
+                return true;
+            }
+            node = node.parent;
+        }
+        return false;
+    };
+    ExcelSerializingSession.prototype.convertColumnToExcel = function (column, index) {
+        var columnWidth = this.config.columnWidth;
+        if (columnWidth) {
+            if (typeof columnWidth === 'number') {
+                return { width: columnWidth };
+            }
+            return { width: columnWidth({ column: column, index: index }) };
+        }
+        if (column) {
+            var smallestUsefulWidth = 75;
+            return { width: Math.max(column.getActualWidth(), smallestUsefulWidth) };
+        }
+        return {};
+    };
+    ExcelSerializingSession.prototype.onNewHeaderColumn = function (rowIndex, currentCells) {
+        var _this = this;
+        return function (column, index) {
+            var nameForCol = _this.extractHeaderValue(column);
+            var styleIds = _this.config.styleLinker({ rowType: csvExport.RowType.HEADER, rowIndex: rowIndex, value: nameForCol, column: column });
+            currentCells.push(_this.createCell(_this.getStyleId(styleIds), _this.getDataTypeForValue('string'), nameForCol));
+        };
+    };
+    ExcelSerializingSession.prototype.onNewBodyColumn = function (rowIndex, currentCells) {
+        var _this = this;
+        var skipCols = 0;
+        return function (column, index, node) {
+            if (skipCols > 0) {
+                skipCols -= 1;
+                return;
+            }
+            var _a = _this.extractRowCellValue(column, index, rowIndex, 'excel', node), valueForCell = _a.value, valueFormatted = _a.valueFormatted;
+            var styleIds = _this.config.styleLinker({ rowType: csvExport.RowType.BODY, rowIndex: rowIndex, value: valueForCell, column: column, node: node });
+            var excelStyleId = _this.getStyleId(styleIds);
+            var colSpan = column.getColSpan(node);
+            var addedImage = _this.addImage(rowIndex, column, valueForCell);
+            if (addedImage) {
+                currentCells.push(_this.createCell(excelStyleId, _this.getDataTypeForValue(addedImage.value), addedImage.value == null ? '' : addedImage.value));
+            }
+            else if (colSpan > 1) {
+                skipCols = colSpan - 1;
+                currentCells.push(_this.createMergedCell(excelStyleId, _this.getDataTypeForValue(valueForCell), valueForCell, colSpan - 1));
+            }
+            else {
+                currentCells.push(_this.createCell(excelStyleId, _this.getDataTypeForValue(valueForCell), valueForCell, valueFormatted));
+            }
+        };
+    };
+    ExcelSerializingSession.prototype.onNewRow = function (onNewColumnAccumulator, height) {
+        var currentCells = [];
+        this.rows.push({
+            cells: currentCells,
+            height: getHeightFromProperty(this.rows.length + 1, height)
+        });
+        return {
+            onColumn: onNewColumnAccumulator.bind(this, this.rows.length, currentCells)()
+        };
+    };
+    ExcelSerializingSession.prototype.createExcel = function (data) {
         var _a = this, excelStyles = _a.excelStyles, config = _a.config;
         return ExcelXlsxFactory.createExcel(excelStyles, data, config);
     };
-    ExcelXlsxSerializingSession.prototype.getDataTypeForValue = function (valueForCell) {
+    ExcelSerializingSession.prototype.getDataTypeForValue = function (valueForCell) {
         if (valueForCell === undefined) {
             return 'empty';
         }
         return this.isNumerical(valueForCell) ? 'n' : 's';
     };
-    ExcelXlsxSerializingSession.prototype.getType = function (type, style, value) {
+    ExcelSerializingSession.prototype.getTypeFromStyle = function (style, value) {
         if (this.isFormula(value)) {
             return 'f';
         }
@@ -3431,12 +2926,12 @@ var ExcelXlsxSerializingSession = /** @class */ (function (_super) {
                 case 'boolean':
                     return 'b';
                 default:
-                    console.warn("AG Grid: Unrecognized data type for excel export [" + style.id + ".dataType=" + style.dataType + "]");
+                    console.warn("AG Grid: Unrecognized data type for excel export [".concat(style.id, ".dataType=").concat(style.dataType, "]"));
             }
         }
-        return type;
+        return null;
     };
-    ExcelXlsxSerializingSession.prototype.addImage = function (rowIndex, column, value) {
+    ExcelSerializingSession.prototype.addImage = function (rowIndex, column, value) {
         if (!this.config.addImageToCell) {
             return;
         }
@@ -3447,21 +2942,30 @@ var ExcelXlsxSerializingSession = /** @class */ (function (_super) {
         ExcelXlsxFactory.buildImageMap(addedImage.image, rowIndex, column, this.columnsToExport, this.config.rowHeight);
         return addedImage;
     };
-    ExcelXlsxSerializingSession.prototype.createCell = function (styleId, type, value, valueFormatted) {
+    ExcelSerializingSession.prototype.createCell = function (styleId, type, value, valueFormatted) {
         var actualStyle = this.getStyleById(styleId);
         if (!(actualStyle === null || actualStyle === void 0 ? void 0 : actualStyle.dataType) && type === 's' && valueFormatted) {
             value = valueFormatted;
         }
-        var typeTransformed = this.getType(type, actualStyle, value) || type;
+        var processedType = this.getTypeFromStyle(actualStyle, value) || type;
+        var _a = this.getCellValue(processedType, value), processedValue = _a.value, escaped = _a.escaped;
+        var styles = [];
+        if (actualStyle) {
+            styles.push(styleId);
+        }
+        if (escaped) {
+            styles.push('_quotePrefix');
+        }
+        styleId = this.getStyleId(styles) || undefined;
         return {
-            styleId: actualStyle ? styleId : undefined,
+            styleId: styleId,
             data: {
-                type: typeTransformed,
-                value: this.getCellValue(typeTransformed, value)
+                type: processedType,
+                value: processedValue
             }
         };
     };
-    ExcelXlsxSerializingSession.prototype.createMergedCell = function (styleId, type, value, numOfCells) {
+    ExcelSerializingSession.prototype.createMergedCell = function (styleId, type, value, numOfCells) {
         var valueToUse = value == null ? '' : value;
         return {
             styleId: !!this.getStyleById(styleId) ? styleId : undefined,
@@ -3472,23 +2976,106 @@ var ExcelXlsxSerializingSession = /** @class */ (function (_super) {
             mergeAcross: numOfCells
         };
     };
-    ExcelXlsxSerializingSession.prototype.getCellValue = function (type, value) {
+    ExcelSerializingSession.prototype.getCellValue = function (type, value) {
+        var escaped = false;
         if (value == null) {
-            return ExcelXlsxFactory.getStringPosition('').toString();
+            type = 's';
+            value = '';
         }
-        switch (type) {
-            case 's':
-                return value === '' ? '' : ExcelXlsxFactory.getStringPosition(value).toString();
-            case 'f':
-                return value.slice(1);
-            case 'n':
-                return Number(value).toString();
-            default:
-                return value;
+        if (type === 's') {
+            if (value && value[0] === "'") {
+                escaped = true;
+                value = value.slice(1);
+            }
+            value = ExcelXlsxFactory.getStringPosition(value).toString();
         }
+        else if (type === 'f') {
+            value = value.slice(1);
+        }
+        else if (type === 'n') {
+            value = Number(value).toString();
+        }
+        return { value: value, escaped: escaped };
     };
-    return ExcelXlsxSerializingSession;
-}(BaseExcelSerializingSession));
+    ExcelSerializingSession.prototype.getStyleId = function (styleIds) {
+        if (!styleIds || !styleIds.length) {
+            return null;
+        }
+        if (styleIds.length === 1) {
+            return styleIds[0];
+        }
+        var key = styleIds.join("-");
+        if (!this.mixedStyles[key]) {
+            this.addNewMixedStyle(styleIds);
+        }
+        return this.mixedStyles[key].excelID;
+    };
+    ExcelSerializingSession.prototype.deepCloneObject = function (object) {
+        return JSON.parse(JSON.stringify(object));
+    };
+    ExcelSerializingSession.prototype.addNewMixedStyle = function (styleIds) {
+        var e_1, _a, e_2, _b;
+        this.mixedStyleCounter += 1;
+        var excelId = "mixedStyle".concat(this.mixedStyleCounter);
+        var resultantStyle = {};
+        try {
+            for (var styleIds_1 = __values(styleIds), styleIds_1_1 = styleIds_1.next(); !styleIds_1_1.done; styleIds_1_1 = styleIds_1.next()) {
+                var styleId = styleIds_1_1.value;
+                try {
+                    for (var _c = (e_2 = void 0, __values(this.excelStyles)), _d = _c.next(); !_d.done; _d = _c.next()) {
+                        var excelStyle = _d.value;
+                        if (excelStyle.id === styleId) {
+                            core._.mergeDeep(resultantStyle, this.deepCloneObject(excelStyle));
+                        }
+                    }
+                }
+                catch (e_2_1) { e_2 = { error: e_2_1 }; }
+                finally {
+                    try {
+                        if (_d && !_d.done && (_b = _c.return)) _b.call(_c);
+                    }
+                    finally { if (e_2) throw e_2.error; }
+                }
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (styleIds_1_1 && !styleIds_1_1.done && (_a = styleIds_1.return)) _a.call(styleIds_1);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        resultantStyle.id = excelId;
+        resultantStyle.name = excelId;
+        var key = styleIds.join("-");
+        this.mixedStyles[key] = {
+            excelID: excelId,
+            key: key,
+            result: resultantStyle
+        };
+        this.excelStyles.push(resultantStyle);
+        this.stylesByIds[excelId] = resultantStyle;
+    };
+    ExcelSerializingSession.prototype.isFormula = function (value) {
+        if (value == null) {
+            return false;
+        }
+        return this.config.autoConvertFormulas && value.toString().startsWith('=');
+    };
+    ExcelSerializingSession.prototype.isNumerical = function (value) {
+        if (typeof value === 'bigint') {
+            return true;
+        }
+        return isFinite(value) && value !== '' && !isNaN(parseFloat(value));
+    };
+    ExcelSerializingSession.prototype.getStyleById = function (styleId) {
+        if (styleId == null) {
+            return null;
+        }
+        return this.stylesByIds[styleId] || null;
+    };
+    return ExcelSerializingSession;
+}(csvExport.BaseGridSerializingSession));
 
 var __extends = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -3522,9 +3109,7 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var getMultipleSheetsAsExcel = function (params) {
-    var data = params.data, _a = params.fontSize, fontSize = _a === void 0 ? 11 : _a, _b = params.author, author = _b === void 0 ? 'AG Grid' : _b;
-    var hasImages = ExcelXlsxFactory.images.size > 0;
+var createExcelXMLCoreFolderStructure = function () {
     csvExport.ZipContainer.addFolders([
         '_rels/',
         'docProps/',
@@ -3533,33 +3118,32 @@ var getMultipleSheetsAsExcel = function (params) {
         'xl/_rels/',
         'xl/worksheets/'
     ]);
-    if (hasImages) {
-        csvExport.ZipContainer.addFolders([
-            'xl/worksheets/_rels',
-            'xl/drawings/',
-            'xl/drawings/_rels',
-            'xl/media/',
-        ]);
-        var imgCounter_1 = 0;
-        ExcelXlsxFactory.images.forEach(function (value) {
-            var firstImage = value[0].image[0];
-            var ext = firstImage.imageType;
-            csvExport.ZipContainer.addFile("xl/media/image" + ++imgCounter_1 + "." + ext, firstImage.base64, true);
-        });
-    }
-    if (!data || data.length === 0) {
-        console.warn("AG Grid: Invalid params supplied to getMultipleSheetsAsExcel() - `ExcelExportParams.data` is empty.");
-        ExcelXlsxFactory.resetFactory();
+    if (!ExcelXlsxFactory.images.size) {
         return;
     }
-    var sheetLen = data.length;
+    csvExport.ZipContainer.addFolders([
+        'xl/worksheets/_rels',
+        'xl/drawings/',
+        'xl/drawings/_rels',
+        'xl/media/',
+    ]);
+    var imgCounter = 0;
+    ExcelXlsxFactory.images.forEach(function (value) {
+        var firstImage = value[0].image[0];
+        var ext = firstImage.imageType;
+        csvExport.ZipContainer.addFile("xl/media/image".concat(++imgCounter, ".").concat(ext), firstImage.base64, true);
+    });
+};
+var createExcelXmlWorksheets = function (data) {
     var imageRelationCounter = 0;
     data.forEach(function (value, idx) {
-        csvExport.ZipContainer.addFile("xl/worksheets/sheet" + (idx + 1) + ".xml", value);
-        if (hasImages && ExcelXlsxFactory.worksheetImages.get(idx)) {
+        csvExport.ZipContainer.addFile("xl/worksheets/sheet".concat(idx + 1, ".xml"), value, false);
+        if (ExcelXlsxFactory.images.size && ExcelXlsxFactory.worksheetImages.get(idx)) {
             createImageRelationsForSheet(idx, imageRelationCounter++);
         }
     });
+};
+var createExcelXmlCoreSheets = function (fontSize, author, sheetLen) {
     csvExport.ZipContainer.addFile('xl/workbook.xml', ExcelXlsxFactory.createWorkbook());
     csvExport.ZipContainer.addFile('xl/styles.xml', ExcelXlsxFactory.createStylesheet(fontSize));
     csvExport.ZipContainer.addFile('xl/sharedStrings.xml', ExcelXlsxFactory.createSharedStrings());
@@ -3568,22 +3152,57 @@ var getMultipleSheetsAsExcel = function (params) {
     csvExport.ZipContainer.addFile('docProps/core.xml', ExcelXlsxFactory.createCore(author));
     csvExport.ZipContainer.addFile('[Content_Types].xml', ExcelXlsxFactory.createContentTypes(sheetLen));
     csvExport.ZipContainer.addFile('_rels/.rels', ExcelXlsxFactory.createRels());
+};
+var createExcelFileForExcel = function (data, fontSize, author) {
+    if (fontSize === void 0) { fontSize = 11; }
+    if (author === void 0) { author = 'AG Grid'; }
+    if (data && data.length > 0) {
+        createExcelXMLCoreFolderStructure();
+        createExcelXmlWorksheets(data);
+        createExcelXmlCoreSheets(fontSize, author, data.length);
+    }
+    else {
+        console.warn("AG Grid: Invalid params supplied to getMultipleSheetsAsExcel() - `ExcelExportParams.data` is empty.");
+    }
+    // reset the internal variables of the Excel Factory
     ExcelXlsxFactory.resetFactory();
+    if (!data || data.length === 0) {
+        return false;
+    }
+    return true;
+};
+var getMultipleSheetsAsExcelCompressed = function (params) {
+    var data = params.data, fontSize = params.fontSize, author = params.author;
     var mimeType = params.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-    return csvExport.ZipContainer.getContent(mimeType);
+    if (!createExcelFileForExcel(data, fontSize, author)) {
+        return Promise.resolve(undefined);
+    }
+    return csvExport.ZipContainer.getZipFile(mimeType);
+};
+var getMultipleSheetsAsExcel = function (params) {
+    var data = params.data, fontSize = params.fontSize, author = params.author;
+    var mimeType = params.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+    if (!createExcelFileForExcel(data, fontSize, author)) {
+        return;
+    }
+    return csvExport.ZipContainer.getUncompressedZipFile(mimeType);
 };
 var exportMultipleSheetsAsExcel = function (params) {
     var _a = params.fileName, fileName = _a === void 0 ? 'export.xlsx' : _a;
-    var contents = getMultipleSheetsAsExcel(params);
-    if (contents) {
-        csvExport.Downloader.download(fileName, contents);
-    }
+    getMultipleSheetsAsExcelCompressed(params).then(function (contents) {
+        if (contents) {
+            var downloadFileName = typeof fileName === 'function'
+                ? fileName()
+                : fileName;
+            csvExport.Downloader.download(downloadFileName, contents);
+        }
+    });
 };
 var createImageRelationsForSheet = function (sheetIndex, currentRelationIndex) {
     var drawingFolder = 'xl/drawings';
-    var drawingFileName = drawingFolder + "/drawing" + (currentRelationIndex + 1) + ".xml";
-    var relFileName = drawingFolder + "/_rels/drawing" + (currentRelationIndex + 1) + ".xml.rels";
-    var worksheetRelFile = "xl/worksheets/_rels/sheet" + (sheetIndex + 1) + ".xml.rels";
+    var drawingFileName = "".concat(drawingFolder, "/drawing").concat(currentRelationIndex + 1, ".xml");
+    var relFileName = "".concat(drawingFolder, "/_rels/drawing").concat(currentRelationIndex + 1, ".xml.rels");
+    var worksheetRelFile = "xl/worksheets/_rels/sheet".concat(sheetIndex + 1, ".xml.rels");
     csvExport.ZipContainer.addFile(relFileName, ExcelXlsxFactory.createDrawingRel(sheetIndex));
     csvExport.ZipContainer.addFile(drawingFileName, ExcelXlsxFactory.createDrawing(sheetIndex));
     csvExport.ZipContainer.addFile(worksheetRelFile, ExcelXlsxFactory.createWorksheetDrawingRel(currentRelationIndex));
@@ -3591,9 +3210,7 @@ var createImageRelationsForSheet = function (sheetIndex, currentRelationIndex) {
 var ExcelCreator = /** @class */ (function (_super) {
     __extends(ExcelCreator, _super);
     function ExcelCreator() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.exportMode = 'xlsx';
-        return _this;
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     ExcelCreator.prototype.postConstruct = function () {
         this.setBeans({
@@ -3605,14 +3222,11 @@ var ExcelCreator = /** @class */ (function (_super) {
         var baseParams = this.gridOptionsService.get('defaultExcelExportParams');
         return Object.assign({}, baseParams, params);
     };
-    ExcelCreator.prototype.getData = function (params) {
-        this.setExportMode(params.exportMode || 'xlsx');
-        return _super.prototype.getData.call(this, params);
-    };
     ExcelCreator.prototype.export = function (userParams) {
+        var _this = this;
         if (this.isExportSuppressed()) {
             console.warn("AG Grid: Export cancelled. Export is not allowed as per your configuration.");
-            return '';
+            return;
         }
         var mergedParams = this.getMergedParams(userParams);
         var data = this.getData(mergedParams);
@@ -3622,21 +3236,22 @@ var ExcelCreator = /** @class */ (function (_super) {
             author: mergedParams.author,
             mimeType: mergedParams.mimeType
         };
-        var packageFile = this.packageFile(exportParams);
-        if (packageFile) {
-            csvExport.Downloader.download(this.getFileName(mergedParams.fileName), packageFile);
-        }
-        return data;
+        this.packageCompressedFile(exportParams).then(function (packageFile) {
+            if (packageFile) {
+                var fileName = mergedParams.fileName;
+                var providedFileName = typeof fileName === 'function'
+                    ? fileName(_this.gridOptionsService.getGridCommonParams())
+                    : fileName;
+                csvExport.Downloader.download(_this.getFileName(providedFileName), packageFile);
+            }
+        });
     };
     ExcelCreator.prototype.exportDataAsExcel = function (params) {
-        return this.export(params);
+        this.export(params);
     };
     ExcelCreator.prototype.getDataAsExcel = function (params) {
         var mergedParams = this.getMergedParams(params);
         var data = this.getData(mergedParams);
-        if (params && params.exportMode === 'xml') {
-            return data;
-        }
         var exportParams = {
             data: [data],
             fontSize: mergedParams.fontSize,
@@ -3645,14 +3260,11 @@ var ExcelCreator = /** @class */ (function (_super) {
         };
         return this.packageFile(exportParams);
     };
-    ExcelCreator.prototype.setFactoryMode = function (factoryMode, exportMode) {
-        if (exportMode === void 0) { exportMode = 'xlsx'; }
-        var factory = exportMode === 'xlsx' ? ExcelXlsxFactory : ExcelXmlFactory;
-        factory.factoryMode = factoryMode;
+    ExcelCreator.prototype.setFactoryMode = function (factoryMode) {
+        ExcelXlsxFactory.factoryMode = factoryMode;
     };
-    ExcelCreator.prototype.getFactoryMode = function (exportMode) {
-        var factory = exportMode === 'xlsx' ? ExcelXlsxFactory : ExcelXmlFactory;
-        return factory.factoryMode;
+    ExcelCreator.prototype.getFactoryMode = function () {
+        return ExcelXlsxFactory.factoryMode;
     };
     ExcelCreator.prototype.getSheetDataForExcel = function (params) {
         var mergedParams = this.getMergedParams(params);
@@ -3663,23 +3275,26 @@ var ExcelCreator = /** @class */ (function (_super) {
         return getMultipleSheetsAsExcel(params);
     };
     ExcelCreator.prototype.exportMultipleSheetsAsExcel = function (params) {
-        return exportMultipleSheetsAsExcel(params);
-    };
-    ExcelCreator.prototype.getDefaultFileName = function () {
-        return "export." + this.getExportMode();
+        exportMultipleSheetsAsExcel(params);
     };
     ExcelCreator.prototype.getDefaultFileExtension = function () {
-        return this.getExportMode();
+        return 'xlsx';
     };
     ExcelCreator.prototype.createSerializingSession = function (params) {
         var _a = this, columnModel = _a.columnModel, valueService = _a.valueService, gridOptionsService = _a.gridOptionsService, valueFormatterService = _a.valueFormatterService, valueParserService = _a.valueParserService;
-        var isXlsx = this.getExportMode() === 'xlsx';
-        var sheetName = 'ag-grid';
+        var sheetName;
         if (params.sheetName != null) {
-            sheetName = core._.utf8_encode(params.sheetName.toString().substr(0, 31));
+            var sheetNameParam = params.sheetName;
+            var sheetNameValue = typeof sheetNameParam === 'function'
+                ? sheetNameParam(this.gridOptionsService.getGridCommonParams())
+                : sheetNameParam;
+            sheetName = String(sheetNameValue).substring(0, 31);
         }
-        var config = __assign(__assign({}, params), { sheetName: sheetName, columnModel: columnModel, valueService: valueService, gridOptionsService: gridOptionsService, valueFormatterService: valueFormatterService, valueParserService: valueParserService, headerRowHeight: params.headerRowHeight || params.rowHeight, baseExcelStyles: this.gridOptionsService.get('excelStyles') || [], styleLinker: this.styleLinker.bind(this) });
-        return new (isXlsx ? ExcelXlsxSerializingSession : ExcelXmlSerializingSession)(config);
+        else {
+            sheetName = 'ag-grid';
+        }
+        var config = __assign(__assign({}, params), { sheetName: sheetName, columnModel: columnModel, valueService: valueService, gridOptionsService: gridOptionsService, valueFormatterService: valueFormatterService, valueParserService: valueParserService, suppressRowOutline: params.suppressRowOutline || params.skipRowGroups, headerRowHeight: params.headerRowHeight || params.rowHeight, baseExcelStyles: this.gridOptionsService.get('excelStyles') || [], styleLinker: this.styleLinker.bind(this) });
+        return new ExcelSerializingSession(config);
     };
     ExcelCreator.prototype.styleLinker = function (params) {
         var rowType = params.rowType, rowIndex = params.rowIndex, value = params.value, column = params.column, columnGroup = params.columnGroup, node = params.node;
@@ -3705,17 +3320,14 @@ var ExcelCreator = /** @class */ (function (_super) {
         var styleIds = styles.map(function (it) {
             return it.id;
         });
-        this.stylingService.processAllCellClasses(column.getDefinition(), {
+        this.stylingService.processAllCellClasses(column.getDefinition(), this.gridOptionsService.addGridCommonParams({
             value: value,
             data: node.data,
             node: node,
             colDef: column.getDefinition(),
             column: column,
-            rowIndex: rowIndex,
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context
-        }, function (className) {
+            rowIndex: rowIndex
+        }), function (className) {
             if (styleIds.indexOf(className) > -1) {
                 applicableStyles.push(className);
             }
@@ -3725,19 +3337,12 @@ var ExcelCreator = /** @class */ (function (_super) {
         });
     };
     ExcelCreator.prototype.isExportSuppressed = function () {
-        return this.gridOptionsService.is('suppressExcelExport');
+        return this.gridOptionsService.get('suppressExcelExport');
     };
-    ExcelCreator.prototype.setExportMode = function (exportMode) {
-        this.exportMode = exportMode;
-    };
-    ExcelCreator.prototype.getExportMode = function () {
-        return this.exportMode;
+    ExcelCreator.prototype.packageCompressedFile = function (params) {
+        return getMultipleSheetsAsExcelCompressed(params);
     };
     ExcelCreator.prototype.packageFile = function (params) {
-        if (this.getExportMode() === 'xml') {
-            var mimeType = params.mimeType || 'application/vnd.ms-excel';
-            return new Blob(["\ufeff", params.data[0]], { type: mimeType });
-        }
         return getMultipleSheetsAsExcel(params);
     };
     __decorate([
@@ -3771,7 +3376,7 @@ var ExcelCreator = /** @class */ (function (_super) {
 }(csvExport.BaseCreator));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '30.1.0';
+var VERSION = '31.1.0';
 
 var ExcelExportModule = {
     version: VERSION,

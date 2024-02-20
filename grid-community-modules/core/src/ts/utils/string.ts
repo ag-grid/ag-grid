@@ -108,7 +108,7 @@ export function utf8_encode(s: string | null): string {
 }
 
 export function capitalise(str: string): string {
-    return str[0].toUpperCase() + str.substr(1).toLowerCase();
+    return str[0].toUpperCase() + str.substring(1).toLowerCase();
 }
 
 export function escapeString(toEscape?: string | null, skipEscapingHtmlChars?: boolean): string | null {

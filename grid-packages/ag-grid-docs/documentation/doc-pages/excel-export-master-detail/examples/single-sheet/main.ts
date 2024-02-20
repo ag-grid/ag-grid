@@ -1,5 +1,6 @@
 import {
-  Grid,
+  GridApi,
+  createGrid,
   CsvCell,
   CsvExportParams,
   ExcelCell,
@@ -7,8 +8,8 @@ import {
   ExcelExportParams,
   GridOptions,
   IDetailCellRendererParams,
-  ProcessRowGroupForExportParams
-} from '@ag-grid-community/core'
+  ProcessRowGroupForExportParams,
+} from '@ag-grid-community/core';
 
 var getRows = (params: ProcessRowGroupForExportParams) => {
   const rows = [{
@@ -49,6 +50,8 @@ var defaultExcelExportParams: ExcelExportParams = {
   columnWidth: 120,
   fileName: 'ag-grid.xlsx'
 }
+
+let gridApi: GridApi<IAccount>;
 
 const gridOptions: GridOptions<IAccount> = {
   columnDefs: [
@@ -106,21 +109,21 @@ function cell(text: string, styleId?: string): ExcelCell {
       type: /^\d+$/.test(text) ? 'Number' : 'String',
       value: String(text),
     },
-  }
+  };
 }
 
 function onBtExport() {
-  gridOptions.api!.exportDataAsExcel()
+  gridApi!.exportDataAsExcel()
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/master-detail-data.json')
     .then(response => response.json())
     .then((data: IAccount[]) => {
-      gridOptions.api!.setRowData(data)
+      gridApi!.setGridOption('rowData', data)
     })
 })

@@ -25,7 +25,7 @@ var SideBarDefParser = /** @class */ (function () {
             toParse.forEach(function (key) {
                 var lookupResult = SideBarDefParser.DEFAULT_BY_KEY[key];
                 if (!lookupResult) {
-                    console.warn("AG Grid: the key " + key + " is not a valid key for specifying a tool panel, valid keys are: " + Object.keys(SideBarDefParser.DEFAULT_BY_KEY).join(','));
+                    console.warn("AG Grid: the key ".concat(key, " is not a valid key for specifying a tool panel, valid keys are: ").concat(Object.keys(SideBarDefParser.DEFAULT_BY_KEY).join(',')));
                     return;
                 }
                 comps_1.push(lookupResult);
@@ -56,7 +56,7 @@ var SideBarDefParser = /** @class */ (function () {
             if (typeof it === 'string') {
                 var lookupResult = SideBarDefParser.DEFAULT_BY_KEY[it];
                 if (!lookupResult) {
-                    console.warn("AG Grid: the key " + it + " is not a valid key for specifying a tool panel, valid keys are: " + Object.keys(SideBarDefParser.DEFAULT_BY_KEY).join(','));
+                    console.warn("AG Grid: the key ".concat(it, " is not a valid key for specifying a tool panel, valid keys are: ").concat(Object.keys(SideBarDefParser.DEFAULT_BY_KEY).join(',')));
                     return;
                 }
                 toAdd = lookupResult;

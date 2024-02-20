@@ -50,7 +50,7 @@ let DragService = class DragService extends BeanStub {
         const { eElement, includeTouch, stopPropagationForTouch } = params;
         eElement.addEventListener('mousedown', mouseListener);
         let touchListener = null;
-        const suppressTouch = this.gridOptionsService.is('suppressTouch');
+        const suppressTouch = this.gridOptionsService.get('suppressTouch');
         if (includeTouch && !suppressTouch) {
             touchListener = (touchEvent) => {
                 if (isFocusableFormField(touchEvent.target)) {
@@ -209,21 +209,23 @@ let DragService = class DragService extends BeanStub {
     // only gets called after a mouse down - as this is only added after mouseDown
     // and is removed when mouseUp happens
     onMouseMove(mouseEvent, el) {
+        var _a;
+        if (isBrowserSafari()) {
+            const eDocument = this.gridOptionsService.getDocument();
+            (_a = eDocument.getSelection()) === null || _a === void 0 ? void 0 : _a.removeAllRanges();
+        }
         if (this.shouldPreventMouseEvent(mouseEvent)) {
             mouseEvent.preventDefault();
         }
         this.onCommonMove(mouseEvent, this.mouseStartEvent, el);
     }
     shouldPreventMouseEvent(mouseEvent) {
-        const isEnableCellTextSelect = this.gridOptionsService.is('enableCellTextSelection');
-        const isSafari = isBrowserSafari();
+        const isEnableCellTextSelect = this.gridOptionsService.get('enableCellTextSelection');
         const isMouseMove = mouseEvent.type === 'mousemove';
         return (
         // when `isEnableCellTextSelect` is `true`, we need to preventDefault on mouseMove
         // to avoid the grid text being selected while dragging components.
-        // Note: Safari also has an issue, where `user-select: none` is not being respected, so also
-        // prevent it on MouseDown.
-        ((isEnableCellTextSelect && isMouseMove) || isSafari) &&
+        ((isEnableCellTextSelect && isMouseMove)) &&
             mouseEvent.cancelable &&
             this.mouseEventService.isEventFromThisGrid(mouseEvent) &&
             !this.isOverFormFieldElement(mouseEvent));

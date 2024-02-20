@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { DraggingEvent, DragSourceType, DropTarget } from "../dragAndDrop/dragAndDropService";
@@ -36,16 +36,10 @@ export declare class RowDragFeature extends BeanStub implements DropTarget {
     private clientSideRowModel;
     private eContainer;
     private isMultiRowDrag;
-    private isGridSorted;
-    private isGridFiltered;
-    private isRowGroupActive;
     private lastDraggingEvent;
     private autoScrollService;
     constructor(eContainer: HTMLElement);
     private postConstruct;
-    private onSortChanged;
-    private onFilterChanged;
-    private onRowGroupChanged;
     getContainer(): HTMLElement;
     isInterestedIn(type: DragSourceType): boolean;
     getIconName(): string;

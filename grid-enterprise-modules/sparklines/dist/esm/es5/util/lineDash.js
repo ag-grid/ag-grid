@@ -30,13 +30,13 @@ export function getLineDash(lineCap, lineDash) {
     };
     if (lineCap === 'round' || lineCap === 'square') {
         if (roundOrSquare[lineDash] == undefined) {
-            console.warn("'" + lineDash + "' is not a valid 'lineDash' option.");
+            console.warn("'".concat(lineDash, "' is not a valid 'lineDash' option."));
             return roundOrSquare.solid;
         }
         return roundOrSquare[lineDash];
     }
     if (buttOrNull[lineDash] == undefined) {
-        console.warn("'" + lineDash + "' is not a valid 'lineDash' option.");
+        console.warn("'".concat(lineDash, "' is not a valid 'lineDash' option."));
         return buttOrNull.solid;
     }
     return buttOrNull[lineDash];

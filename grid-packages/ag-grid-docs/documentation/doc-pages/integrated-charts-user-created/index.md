@@ -8,7 +8,7 @@ applications such as Excel, but fully integrated inside your applications.
 
 Users can select a range of cells in the grid and create a chart from the context menu, as shown below:
 
-<gif src="chart-showcase.gif" alt="Chart Showcase"></gif>
+<gif src="chart-showcase.gif" alt="Chart Showcase" toggledarkmode="true"></gif>
 
 Notice that Chart Ranges appear in the grid after a chart is created. These provide useful visual feedback for users by
 highlighting the charted category and series data in the grid.
@@ -52,13 +52,13 @@ The video above highlights a number of charting features. For more details on ea
         </ul>
     </div>
     <div style="flex: 1 1 0;">
-        <image-caption src="integrated-charts-user-created/resources/category-range-fill-handle.png" alt="Range Handle" maxWidth="90%" constrained="true" centered="true"></image-caption>
+        <image-caption src="integrated-charts-user-created/resources/category-range-fill-handle.png" alt="Range Handle" maxWidth="90%" constrained="true" centered="true" toggledarkmode="true"></image-caption>
     </div>
 </div>
 
 <div style="display: flex; margin-bottom: 25px; margin-top: 25px; margin-left: 40px;">
     <div style="flex: 1 1 0;">
-        <image-caption src="integrated-charts-user-created/resources/chart-tool-panels.png" alt="Open Chart Tool Panel" maxWidth="90%" constrained="true" centered="true"></image-caption>
+        <image-caption src="integrated-charts-user-created/resources/chart-tool-panels.png" alt="Open Chart Tool Panel" maxWidth="90%" constrained="true" centered="true"  toggledarkmode="true"></image-caption>
     </div>
     <div style="flex: 1 1 0;">
         <ul class="content">
@@ -88,7 +88,7 @@ The video above highlights a number of charting features. For more details on ea
         </ul>
     </div>
     <div style="flex: 1 1 0;">
-        <image-caption src="integrated-charts-user-created/resources/chart-toolbar.png" alt="Chart Toolbar" maxWidth="90%" constrained="true" centered="true"></image-caption>
+        <image-caption src="integrated-charts-user-created/resources/chart-toolbar.png" alt="Chart Toolbar" maxWidth="90%" constrained="true" centered="true"  toggledarkmode="true"></image-caption>
     </div>
 </div>
 

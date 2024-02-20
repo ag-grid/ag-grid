@@ -1,4 +1,11 @@
-import { Grid, ColDef, GridOptions, GridReadyEvent, RowDropZoneParams } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  ColDef,
+  GridOptions,
+  GridReadyEvent,
+  RowDropZoneParams,
+} from '@ag-grid-community/core';
 
 var rowIdSequence = 100
 
@@ -9,11 +16,11 @@ const columnDefs: ColDef[] = [
   { field: 'value2' },
 ]
 
+let gridApi: GridApi;
+
 const gridOptions: GridOptions = {
   defaultColDef: {
-    sortable: true,
     filter: true,
-    resizable: true,
     flex: 1,
   },
   rowClassRules: {
@@ -24,7 +31,6 @@ const gridOptions: GridOptions = {
   rowData: createRowData(),
   rowDragManaged: true,
   columnDefs: columnDefs,
-  animateRows: true,
   onGridReady: (params) => {
     addDropZones(params)
     addCheckboxListener(params)
@@ -34,8 +40,8 @@ const gridOptions: GridOptions = {
 function addCheckboxListener(params: GridReadyEvent) {
   var checkbox = document.querySelector('input[type=checkbox]')! as any;
 
-  checkbox.addEventListener('change', function () {
-    params.api.setSuppressMoveWhenRowDragging(checkbox.checked)
+  checkbox.addEventListener('change', () => {
+    params.api.setGridOption('suppressMoveWhenRowDragging', checkbox.checked)
   })
 }
 
@@ -51,7 +57,7 @@ function createRowData() {
     'Red',
     'Green',
     'Blue',
-  ].forEach(function (color) {
+  ].forEach((color) => {
     var newDataItem = {
       id: rowIdSequence++,
       color: color,
@@ -101,5 +107,5 @@ function addDropZones(params: GridReadyEvent) {
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
 
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

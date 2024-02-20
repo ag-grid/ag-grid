@@ -2,7 +2,7 @@ import { BeanStub } from "../../context/beanStub";
 export declare class RowContainerEventsFeature extends BeanStub {
     private mouseEventService;
     private valueService;
-    private contextMenuFactory;
+    private menuService;
     private ctrlsService;
     private navigationService;
     private focusService;

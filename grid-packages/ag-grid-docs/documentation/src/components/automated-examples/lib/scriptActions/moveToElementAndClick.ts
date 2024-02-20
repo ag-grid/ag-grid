@@ -7,12 +7,14 @@ import { isInViewport } from '../dom';
 import { ScriptDebugger } from '../scriptDebugger';
 import { EasingFunction } from '../tween';
 import { createMoveMouse } from './createMoveMouse';
+import { mouseClick } from './mouseClick';
 import { waitFor } from './waitFor';
 
 interface MoveToElementAndClickParams {
     agElementFinder: AgElementFinder;
     target: AgElementName;
     targetParams: any;
+    useMouseDown?: boolean;
     mouse: Mouse;
     tweenGroup: Group;
     speed?: number;
@@ -30,6 +32,7 @@ export async function moveToElementAndClick({
     agElementFinder,
     target,
     targetParams,
+    useMouseDown,
     mouse,
     speed,
     duration,
@@ -70,8 +73,16 @@ export async function moveToElementAndClick({
     });
 
     await waitFor(500);
-    mouse.click();
-    await 200;
 
-    element?.get()?.click();
+    if (useMouseDown) {
+        return mouseClick({
+            mouse,
+            coords: toPos,
+            scriptDebugger,
+        });
+    } else {
+        mouse.click();
+        await 200;
+        element?.get()?.click();
+    }
 }

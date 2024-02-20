@@ -60,6 +60,9 @@ var FlatSetDisplayValueModel = /** @class */ (function () {
     FlatSetDisplayValueModel.prototype.getSelectAllItem = function () {
         return SetFilterDisplayValue.SELECT_ALL;
     };
+    FlatSetDisplayValueModel.prototype.getAddSelectionToFilterItem = function () {
+        return SetFilterDisplayValue.ADD_SELECTION_TO_FILTER;
+    };
     FlatSetDisplayValueModel.prototype.getDisplayedKeys = function () {
         return this.displayedKeys;
     };

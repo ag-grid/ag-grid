@@ -14,10 +14,14 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 import { getExcelColumnName } from '../../assets/excelUtils';
 import cellFactory from './cell';
@@ -41,13 +45,13 @@ var addEmptyCells = function (cells, rowIdx) {
             var cell = cells[mergeMap[i].pos];
             for (var j = 1; j <= cell.mergeAcross; j++) {
                 mergedCells.push({
-                    ref: "" + getExcelColumnName(mergeMap[i].excelPos + 1 + j) + (rowIdx + 1),
+                    ref: "".concat(getExcelColumnName(mergeMap[i].excelPos + 1 + j)).concat(rowIdx + 1),
                     styleId: cell.styleId,
                     data: { type: 'empty', value: null }
                 });
             }
             if (mergedCells.length) {
-                cells.splice.apply(cells, __spreadArray([mergeMap[i].pos + 1, 0], __read(mergedCells)));
+                cells.splice.apply(cells, __spreadArray([mergeMap[i].pos + 1, 0], __read(mergedCells), false));
             }
         }
     }

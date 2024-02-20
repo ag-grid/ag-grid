@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "../../context/beanStub";
@@ -50,6 +50,7 @@ export declare class HeaderRowContainerCtrl extends BeanStub {
     getHtmlElementForColumnHeader(column: Column): HTMLElement | null;
     getRowType(rowIndex: number): HeaderRowType | undefined;
     focusHeader(rowIndex: number, column: IHeaderColumn, event?: KeyboardEvent): boolean;
+    getViewport(): HTMLElement;
     getRowCount(): number;
     protected destroy(): void;
 }

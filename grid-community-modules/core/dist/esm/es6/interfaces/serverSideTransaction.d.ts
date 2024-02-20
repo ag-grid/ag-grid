@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IRowNode } from "./iRowNode";
@@ -56,5 +56,9 @@ export declare enum ServerSideTransactionResultStatus {
      * Transaction was cancelled, due to grid.
      * Callback isApplyServerSideTransaction() returning false
      */
-    Cancelled = "Cancelled"
+    Cancelled = "Cancelled",
+    /**
+     * Store has not started yet, transaction not applied
+     */
+    StoreNotStarted = "StoreNotStarted"
 }

@@ -1,3 +1,14 @@
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __read = (this && this.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
@@ -14,10 +25,14 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 var __values = (this && this.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
@@ -30,9 +45,10 @@ var __values = (this && this.__values) || function(o) {
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
+import { getCanonicalChartType } from './seriesTypeMapper';
 var validateIfDefined = function (validationFn) {
     return function (value) {
-        if (value === undefined)
+        if (value == undefined)
             return true;
         return validationFn(value);
     };
@@ -41,11 +57,17 @@ var isString = function (value) { return typeof value === 'string'; };
 var isBoolean = function (value) { return typeof value === 'boolean'; };
 var isValidSeriesChartType = function (value) { return typeof value === 'object'; };
 var createWarnMessage = function (property, expectedType) {
-    return function (value) { return "AG Grid - unable to update chart as invalid params supplied:  `" + property + ": " + value + "`, expected " + expectedType + "."; };
+    return function (value) { return "AG Grid - unable to update chart as invalid params supplied:  `".concat(property, ": ").concat(value, "`, expected ").concat(expectedType, "."); };
 };
 var UpdateParamsValidator = /** @class */ (function () {
     function UpdateParamsValidator() {
     }
+    UpdateParamsValidator.isValidChartType = function (value) {
+        return UpdateParamsValidator.validChartTypes.includes(value);
+    };
+    UpdateParamsValidator.isLegacyChartType = function (value) {
+        return UpdateParamsValidator.legacyChartTypes.includes(value);
+    };
     UpdateParamsValidator.validateChartParams = function (params) {
         var paramsToValidate = params;
         switch (paramsToValidate.type) {
@@ -56,59 +78,73 @@ var UpdateParamsValidator = /** @class */ (function () {
             case 'crossFilterChartUpdate':
                 return UpdateParamsValidator.validateUpdateCrossFilterChartParams(params);
             default:
-                console.warn("AG Grid - Invalid value supplied for 'type': " + params.type + ". It must be either 'rangeChartUpdate', 'pivotChartUpdate', or 'crossFilterChartUpdate'.");
+                console.warn("AG Grid - Invalid value supplied for 'type': ".concat(params.type, ". It must be either 'rangeChartUpdate', 'pivotChartUpdate', or 'crossFilterChartUpdate'."));
                 return false;
         }
     };
     UpdateParamsValidator.validateUpdateRangeChartParams = function (params) {
-        var validations = __spreadArray(__spreadArray(__spreadArray([], __read(UpdateParamsValidator.commonValidations)), __read(UpdateParamsValidator.cellRangeValidations)), [
+        var validations = __spreadArray(__spreadArray(__spreadArray([], __read(UpdateParamsValidator.commonValidations), false), __read(UpdateParamsValidator.cellRangeValidations), false), [
             {
                 property: 'seriesChartTypes',
                 validationFn: function (value) { return value === undefined || (Array.isArray(value) && value.every(isValidSeriesChartType)); },
                 warnMessage: createWarnMessage('seriesChartTypes', 'Array of SeriesChartType'),
             },
-        ]);
+        ], false);
         return UpdateParamsValidator.validateProperties(params, validations, ['type', 'chartId', 'chartType', 'chartThemeName', 'chartThemeOverrides', 'unlinkChart', 'cellRange', 'suppressChartRanges', 'aggFunc', 'seriesChartTypes'], 'UpdateRangeChartParams');
     };
     UpdateParamsValidator.validateUpdatePivotChartParams = function (params) {
-        var validations = __spreadArray([], __read(UpdateParamsValidator.commonValidations));
+        var validations = __spreadArray([], __read(UpdateParamsValidator.commonValidations), false);
         return UpdateParamsValidator.validateProperties(params, validations, ['type', 'chartId', 'chartType', 'chartThemeName', 'chartThemeOverrides', 'unlinkChart'], 'UpdatePivotChartParams');
     };
     UpdateParamsValidator.validateUpdateCrossFilterChartParams = function (params) {
-        var validations = __spreadArray(__spreadArray([], __read(UpdateParamsValidator.commonValidations)), __read(UpdateParamsValidator.cellRangeValidations));
+        var validations = __spreadArray(__spreadArray([], __read(UpdateParamsValidator.commonValidations), false), __read(UpdateParamsValidator.cellRangeValidations), false);
         return UpdateParamsValidator.validateProperties(params, validations, ['type', 'chartId', 'chartType', 'chartThemeName', 'chartThemeOverrides', 'unlinkChart', 'cellRange', 'suppressChartRanges', 'aggFunc'], 'UpdateCrossFilterChartParams');
     };
     UpdateParamsValidator.validateProperties = function (params, validations, validPropertyNames, paramsType) {
-        var e_1, _a;
+        var e_1, _b;
+        var validatedProperties = undefined;
         try {
             for (var validations_1 = __values(validations), validations_1_1 = validations_1.next(); !validations_1_1.done; validations_1_1 = validations_1.next()) {
                 var validation = validations_1_1.value;
                 var property = validation.property, validationFn = validation.validationFn, warnMessage = validation.warnMessage;
                 if (property in params) {
                     var value = params[property];
-                    if (!validationFn(value)) {
+                    var validationResult = validationFn(value);
+                    if (validationResult === true)
+                        continue;
+                    if (validationResult === false) {
                         console.warn(warnMessage(value));
                         return false;
                     }
+                    // If the validation function returned a 'fix' value, we need to return an updated property set.
+                    // First we clone the input set if there has not been a 'fix' encountered in a previous iteration:
+                    validatedProperties = validatedProperties || __assign({}, params);
+                    /// Then we update the cloned object with the 'fixed' value
+                    validatedProperties[property] = validationResult;
                 }
             }
         }
         catch (e_1_1) { e_1 = { error: e_1_1 }; }
         finally {
             try {
-                if (validations_1_1 && !validations_1_1.done && (_a = validations_1.return)) _a.call(validations_1);
+                if (validations_1_1 && !validations_1_1.done && (_b = validations_1.return)) _b.call(validations_1);
             }
             finally { if (e_1) throw e_1.error; }
         }
         // Check for unexpected properties
         for (var property in params) {
             if (!validPropertyNames.includes(property)) {
-                console.warn("AG Grid - Unexpected property supplied. " + paramsType + " does not contain: `" + property + "`.");
+                console.warn("AG Grid - Unexpected property supplied. ".concat(paramsType, " does not contain: `").concat(property, "`."));
                 return false;
             }
         }
+        // If one or more 'fixed' values were encountered, return the updated property set
+        if (validatedProperties)
+            return validatedProperties;
         return true;
     };
+    var _a;
+    _a = UpdateParamsValidator;
     UpdateParamsValidator.validChartTypes = [
         'column',
         'groupedColumn',
@@ -122,17 +158,40 @@ var UpdateParamsValidator = /** @class */ (function () {
         'scatter',
         'bubble',
         'pie',
-        'doughnut',
+        'donut',
         'area',
         'stackedArea',
         'normalizedArea',
         'histogram',
+        'radialColumn',
+        'radialBar',
+        'radarLine',
+        'radarArea',
+        'nightingale',
+        'rangeBar',
+        'rangeArea',
+        'boxPlot',
+        'treemap',
+        'sunburst',
+        'heatmap',
+        'waterfall',
         'columnLineCombo',
         'areaColumnCombo',
         'customCombo'
     ];
+    UpdateParamsValidator.legacyChartTypes = [
+        'doughnut',
+    ];
     UpdateParamsValidator.validateChartType = validateIfDefined(function (chartType) {
-        return UpdateParamsValidator.validChartTypes.includes(chartType);
+        if (_a.isValidChartType(chartType))
+            return true;
+        if (_a.isLegacyChartType(chartType)) {
+            var renamedChartType = getCanonicalChartType(chartType);
+            console.warn("AG Grid - The chart type '".concat(chartType, "' has been deprecated. Please use '").concat(renamedChartType, "' instead."));
+            return renamedChartType;
+        }
+        ;
+        return false;
     });
     UpdateParamsValidator.validateAgChartThemeOverrides = validateIfDefined(function (themeOverrides) {
         // ensure supplied AgChartThemeOverrides is an object - can be improved if necessary?

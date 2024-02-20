@@ -1,7 +1,7 @@
 import { UserCompDetails } from "../../../components/framework/userComponentFactory";
 import { PostConstruct, PreDestroy } from "../../../context/context";
 import { Column, ColumnPinnedType } from "../../../entities/column";
-import { removeAriaSort, setAriaDescription, setAriaSort } from "../../../utils/aria";
+import { removeAriaSort, setAriaSort } from "../../../utils/aria";
 import { RefSelector } from "../../../widgets/componentAnnotations";
 import { AbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellComp";
 import { HeaderCellCtrl, IHeaderCellComp } from "./headerCellCtrl";
@@ -10,7 +10,7 @@ import { IHeaderComp } from "./headerComp";
 export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
 
     private static TEMPLATE = /* html */
-        `<div class="ag-header-cell" role="columnheader" tabindex="-1">
+        `<div class="ag-header-cell" role="columnheader">
             <div ref="eResize" class="ag-header-cell-resize" role="presentation"></div>
             <div ref="eHeaderCompWrapper" class="ag-header-cell-comp-wrapper" role="presentation"></div>
         </div>`;
@@ -33,7 +33,6 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
 
     @PostConstruct
     private postConstruct(): void {
-
         const eGui = this.getGui();
 
         const setAttribute = (name: string, value: string | null | undefined) => {
@@ -49,7 +48,6 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
         const compProxy: IHeaderCellComp = {
             setWidth: width => eGui.style.width = width,
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
-            setAriaDescription: label => setAriaDescription(eGui, label),
             setAriaSort: sort => sort ? setAriaSort(eGui, sort) : removeAriaSort(eGui),
             setUserCompDetails: compDetails => this.setUserCompDetails(compDetails),
             getUserCompInstance: () => this.headerComp

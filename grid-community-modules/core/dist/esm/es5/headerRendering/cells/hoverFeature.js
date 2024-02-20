@@ -30,7 +30,7 @@ var HoverFeature = /** @class */ (function (_super) {
         return _this;
     }
     HoverFeature.prototype.postConstruct = function () {
-        if (this.gridOptionsService.is('columnHoverHighlight')) {
+        if (this.gridOptionsService.get('columnHoverHighlight')) {
             this.addMouseHoverListeners();
         }
     };

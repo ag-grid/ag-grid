@@ -1,4 +1,0 @@
-{
-    "extends": "./tsconfig.cjs.es5.json",
-    "compilerOptions": { "experimentalDecorators": true, "strict": true }
-}

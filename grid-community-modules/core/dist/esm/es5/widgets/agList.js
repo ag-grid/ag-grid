@@ -25,11 +25,12 @@ import { escapeString } from "../utils/string";
 import { KeyCode } from '../constants/keyCode';
 import { setAriaPosInSet, setAriaRole, setAriaSelected, setAriaSetSize } from '../utils/aria';
 import { Events } from "../eventKeys";
+import { isVisible } from "../utils/dom";
 var AgList = /** @class */ (function (_super) {
     __extends(AgList, _super);
     function AgList(cssIdentifier) {
         if (cssIdentifier === void 0) { cssIdentifier = 'default'; }
-        var _this = _super.call(this, /* html */ "<div class=\"ag-list ag-" + cssIdentifier + "-list\" role=\"listbox\"></div>") || this;
+        var _this = _super.call(this, /* html */ "<div class=\"ag-list ag-".concat(cssIdentifier, "-list\" role=\"listbox\"></div>")) || this;
         _this.cssIdentifier = cssIdentifier;
         _this.options = [];
         _this.itemEls = [];
@@ -92,8 +93,8 @@ var AgList = /** @class */ (function (_super) {
         var _this = this;
         var itemEl = document.createElement('div');
         setAriaRole(itemEl, 'option');
-        itemEl.classList.add('ag-list-item', "ag-" + this.cssIdentifier + "-list-item");
-        itemEl.innerHTML = "<span>" + text + "</span>";
+        itemEl.classList.add('ag-list-item', "ag-".concat(this.cssIdentifier, "-list-item"));
+        itemEl.innerHTML = "<span>".concat(text, "</span>");
         itemEl.tabIndex = -1;
         this.itemEls.push(itemEl);
         this.addManagedListener(itemEl, 'mouseover', function () { return _this.highlightItem(itemEl); });
@@ -146,7 +147,7 @@ var AgList = /** @class */ (function (_super) {
         this.fireChangeEvent();
     };
     AgList.prototype.highlightItem = function (el) {
-        if (!el.offsetParent) {
+        if (!isVisible(el)) {
             return;
         }
         this.clearHighlighted();
@@ -156,7 +157,7 @@ var AgList = /** @class */ (function (_super) {
         this.highlightedEl.focus();
     };
     AgList.prototype.clearHighlighted = function () {
-        if (!this.highlightedEl || !this.highlightedEl.offsetParent) {
+        if (!this.highlightedEl || !isVisible(this.highlightedEl)) {
             return;
         }
         this.highlightedEl.classList.remove(AgList.ACTIVE_CLASS);

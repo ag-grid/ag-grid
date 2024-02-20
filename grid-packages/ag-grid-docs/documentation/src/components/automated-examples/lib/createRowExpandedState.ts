@@ -1,14 +1,14 @@
-import { GridOptions } from 'ag-grid-community';
+import { GridApi } from 'ag-grid-community';
 
 /**
  * Mapping from row id to row expanded value
  */
 export type RowExpandedState = Record<string, boolean>;
 
-export function createRowExpandedState(gridOptions: GridOptions) {
+export function createRowExpandedState(gridApi: GridApi) {
     const get = (): RowExpandedState => {
         const rowExpandedState = {};
-        gridOptions.api!.forEachNode((node) => {
+        gridApi.forEachNode((node) => {
             rowExpandedState[node.id] = node.expanded;
         });
         return rowExpandedState;
@@ -18,9 +18,9 @@ export function createRowExpandedState(gridOptions: GridOptions) {
         if (!rowExpandedState) {
             return;
         }
-        gridOptions.api!.forEachNode((node) => {
+        gridApi.forEachNode((node) => {
             const openState = rowExpandedState[node.id];
-            gridOptions.api!.setRowNodeExpanded(node, openState, false);
+            gridApi.setRowNodeExpanded(node, openState, false);
         });
     };
 

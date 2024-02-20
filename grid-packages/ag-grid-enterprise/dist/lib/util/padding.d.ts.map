@@ -1,1 +1,0 @@
-{"version":3,"file":"padding.d.ts","sourceRoot":"","sources":["../../src/util/padding.ts"],"names":[],"mappings":"AAEA,qBAAa,OAAO;IAEhB,GAAG,EAAE,MAAM,CAAC;IAGZ,KAAK,EAAE,MAAM,CAAC;IAGd,MAAM,EAAE,MAAM,CAAC;IAGf,IAAI,EAAE,MAAM,CAAC;gBAED,GAAG,GAAE,MAAU,EAAE,KAAK,GAAE,MAAY,EAAE,MAAM,GAAE,MAAY,EAAE,IAAI,GAAE,MAAc;IAO5F,KAAK;CAGR"}

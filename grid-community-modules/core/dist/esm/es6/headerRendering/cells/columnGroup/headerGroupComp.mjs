@@ -8,7 +8,7 @@ import { Autowired } from "../../../context/context.mjs";
 import { ProvidedColumnGroup } from "../../../entities/providedColumnGroup.mjs";
 import { setDisplayed } from "../../../utils/dom.mjs";
 import { isStopPropagationForAgGrid, stopPropagationForAgGrid } from "../../../utils/event.mjs";
-import { doOnce } from "../../../utils/function.mjs";
+import { warnOnce } from "../../../utils/function.mjs";
 import { exists } from "../../../utils/generic.mjs";
 import { createIconNoSpan } from "../../../utils/icon.mjs";
 import { escapeString } from "../../../utils/string.mjs";
@@ -34,8 +34,7 @@ export class HeaderGroupComp extends Component {
     checkWarnings() {
         const paramsAny = this.params;
         if (paramsAny.template) {
-            const message = `AG Grid: A template was provided for Header Group Comp - templates are only supported for Header Comps (not groups)`;
-            doOnce(() => console.warn(message), 'HeaderGroupComp.templateNotSupported');
+            warnOnce(`A template was provided for Header Group Comp - templates are only supported for Header Comps (not groups)`);
         }
     }
     setupExpandIcons() {
@@ -102,8 +101,8 @@ export class HeaderGroupComp extends Component {
         // no renderer, default text render
         const { displayName, columnGroup } = this.params;
         if (exists(displayName)) {
-            const displayNameSanitised = escapeString(displayName);
-            this.getRefElement('agLabel').innerHTML = displayNameSanitised;
+            const displayNameSanitised = escapeString(displayName, true);
+            this.getRefElement('agLabel').textContent = displayNameSanitised;
         }
         this.addOrRemoveCssClass('ag-sticky-label', !((_a = columnGroup.getColGroupDef()) === null || _a === void 0 ? void 0 : _a.suppressStickyLabel));
     }

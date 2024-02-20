@@ -6,67 +6,85 @@ This section details how to provide your own icons for the grid and style grid i
 
 ## Swapping the Provided Icon Fonts
 
-Each provided theme comes with its own icon font. It is simple to use one provided theme with another theme's icons. Set `--ag-icon-font-family` to one of: `agGridAlpine`, `agGridBalham` or `agGridMaterial`. You can compare the available icon fonts in the [Provided Icons list](#provided-icons).
+Each provided theme comes with its own icon font. It is simple to use one provided theme with another theme's icons. Set `--ag-icon-font-family` to one of: `agGridQuartz`, `agGridAlpine`, `agGridBalham` or `agGridMaterial`. You can compare the available icon fonts in the [Provided Icons list](#provided-icons).
 
-If you are using the Sass API, it will embed the required font data for you. Apps using CSS should load the font's CSS file from whatever location they are loading `ag-grid.css` and other CSS files. For example to use the Alpine icons in the Material theme:
+If you are using the Sass API, it will embed the required font data for you. Apps using CSS should load the font's CSS file from whatever location they are loading `ag-grid.css` and other CSS files. For example to use the Material icons in the Quartz theme:
 
 1. Load `agGridMaterialFont.css`
-2. (optional) switch `ag-theme-alpine.css` for `ag-theme-alpine-no-font.css` to save a few kB if you no longer require the Material icons
+2. (optional) switch `ag-theme-quartz.css` for `ag-theme-quartz-no-font.css` to save a few kB if you no longer require the Quartz icons
 3. Set the CSS variable `--ag-icon-font-family: agGridMaterial`
 
-This example uses the Alpine theme with icons from the Material theme:
+This example uses the Quartz theme with icons from the Material theme:
 
 <grid-example title='Swapping the Icon Font' name='icons-swapping-font' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "setfilter", "columnpanel", "filterpanel"]  }'></grid-example>
 
-## Using an Alternative Icon Font
+## Using Alternative Icons
 
-The grid exposes a number of CSS variables to control the icon font:
+Grid icons can use an icon font or images. The grid exposes a number of CSS variables to control the icons. Each variable can optionally be suffixed with the name of a specific icon, and will affect only that icon, e.g. setting `--ag-icon-font-color-loading` sets the color of the "loading" icon.
 
-- `--ag-icon-font-family` sets the icon font to use.
-- `--ag-icon-font-code-{icon-name}` sets the character within the icon font for the `{icon-name}` icon. You can get the icon names from the [Provided Icons list](#provided-icons) below.
-- `--ag-icon-size` sets the height of icons in pixels. Width is automatic depending on the character in the icon font.
+Icon font variables:
 
-If you intend to replace every icon in the grid using the same font then you can set these variables using a CSS selector targeting the theme name, as you would any other CSS variable:
+  - `--ag-icon-font-family[-icon-name]` set the icon font family.
+  - `--ag-icon-font-code[-icon-name]` set the unicode character of the icon within the icon font, using a unicode escape sequence like `"\f247"`.
+  - `--ag-icon-font-weight[-icon-name]` sets the font weight, used for icon fonts that require a specific weight to work.
+  - `--ag-icon-font-color[-icon-name]` set the color of the icon.
+  - `--ag-icon-font-display[-icon-name]` set this to `none` to hide the icon font if you want to provide an image-based icon instead.
+
+Icon image variables:
+  - `--ag-icon-image[-icon-name]` set this to `url(/path/to/icon.svg)`
+  - `--ag-icon-image-opacity[-icon-name]` set the opacity of an icon. Defaults to 0.9 if not set.
+  - `--ag-icon-image-display[-icon-name]` set this to `none` to hide the icon image if you want to provide an font-based icon instead.
+
+Other icon variables:
+
+- `--ag-icon-size` sets the height and width of icons in pixels.
+
+### Example: using an alternative icon font
+
+This example demonstrates globally changing the icon font, and also selectively replacing individual icons:
 
 ```css
-/* replace all icons in the grid with icons from Font Awesome */
-.ag-theme-alpine .ag-icon-pin {
+.ag-theme-quartz {
+  /* replace all icons in the grid with icons from Font Awesome */
   --ag-icon-font-family: "Font Awesome 5 Free";
   --ag-icon-font-code-aggregation: "\f247";
   --ag-icon-font-code-arrows: "\f0b2";
   --ag-icon-font-code-asc: "\f062";
-  /* ... and so on - you must define a font code for every icon */
+  /* ... and so on - because --ag-icon-font-family sets the font for
+     all icons, a new code must be provided for every one. If you only
+     wanted to replace some icons, use --ag-icon-font-family-{icon-name} */
+
+  /* selectively replace the the group icon with one from Material Design Icons */
+  --ag-icon-font-family-group: "Material Design Icons";
+  --ag-icon-font-code-group: "\F0328";
+  --ag-icon-font-color-group: red;
+  --ag-icon-font-weight-group: normal;
 }
 ```
-
-Or to replace some icons without affecting others, set the variables using a CSS selector targeting the icon class:
-
-```css
-/* selectively replace the group icon with one from Material Design Icons */
-.ag-theme-alpine .ag-icon-group {
-    --ag-icon-font-family: "Material Design Icons";
-    --ag-icon-font-code-group: "\F0328";
-}
-```
-
-This example demonstrates both techniques - most icons are replaced by Font Awesome icons and the group and aggregation icons (highlighted in red) are from Material Design Icons:
 
 <grid-example title='Alternative Icon Font' name='icons-alternative-font' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "setfilter", "columnpanel", "filterpanel"], "extras": ["fontawesome", "materialdesignicons"]  }'></grid-example>
 
-## SVG Icons
+### Example: SVG icons
 
-To replace icons with an image, including SVG images, use CSS selectors that target the icon class. You can hide the existing icon character by setting the `color` to transparent.
+This example demonstrates using the `--ag-icon-image-icon-name` variables to set SVG images for specific icons.
 
 ```css
-.ag-theme-alpine .ag-icon-menu {
-  background: transparent url("https://www.ag-grid.com/example-assets/svg-icons/menu.svg") center/contain no-repeat;
-  color: transparent;
+.ag-theme-quartz {
+  /* hide all font icons */
+  --ag-icon-font-display: none;
+  /* provide a SVG icon */
+  --ag-icon-image-aggregation: url("https://www.ag-grid.com/example-assets/svg-icons/aggregation.svg");
+  --ag-icon-image-arrows: url("https://www.ag-grid.com/example-assets/svg-icons/arrows.svg");
+  --ag-icon-image-asc: url("https://www.ag-grid.com/example-assets/svg-icons/asc.svg");
+  /* ... and so on - because --ag-icon-font-display: none; hides all
+     icons, an image must be provided for every one. If you only wanted
+     to replace some icons, use --ag-icon-font-display-{icon-name} */
 }
 ```
 
 The following example replaces the grid's icons with SVG images:
 
-<grid-example title='SVG Icons' name='icons-images' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "setfilter", "columnpanel", "filterpanel"], "extras": ["fontawesome", "materialdesignicons"]  }'></grid-example>
+<grid-example title='SVG Icons' name='icons-images' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "setfilter", "columnpanel", "filterpanel", "charts-enterprise"], "extras": ["fontawesome", "materialdesignicons"]  }'></grid-example>
 
 ## Set the Icons Through gridOptions (JavaScript)
 
@@ -199,7 +217,21 @@ sortAscending: 'asc'
 // show on column header when column is sorted descending
 sortDescending: 'desc'
 // show on column header when column has no sort, only when enabled with gridOptions.unSortIcon=true
-sortUnSort: 'none'
+sortUnSort: 'none',
+// Builder button in Advanced Filter
+advancedFilterBuilder: 'group',
+// drag handle used to pick up Advanced Filter Builder rows
+advancedFilterBuilderDrag: 'grip',
+// Advanced Filter Builder row validation error
+advancedFilterBuilderInvalid: 'not-allowed',
+// shown on Advanced Filter Builder rows to move them up
+advancedFilterBuilderMoveUp: 'up',
+// shown on Advanced Filter Builder rows to move them down
+advancedFilterBuilderMoveDown: 'down',
+// shown on Advanced Filter Builder rows to add new rows
+advancedFilterBuilderAdd: 'plus',
+// shown on Advanced Filter Builder rows to remove row
+advancedFilterBuilderRemove: 'minus',
 ```
 
 ## Provided Icons

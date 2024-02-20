@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "./component";
@@ -11,10 +11,10 @@ export interface PanelOptions extends PositionableOptions {
     title?: string | null;
     cssIdentifier?: string | null;
 }
-export declare class AgPanel extends Component {
+export declare class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Component {
+    protected readonly config: TConfig;
     protected static CLOSE_BTN_TEMPLATE: string;
     protected closable: boolean;
-    protected config: PanelOptions | undefined;
     protected closeButtonComp: Component | undefined;
     protected positionableFeature: PositionableFeature;
     close: () => void;
@@ -22,7 +22,7 @@ export declare class AgPanel extends Component {
     protected readonly eTitleBar: HTMLElement;
     protected readonly eTitleBarButtons: HTMLElement;
     protected readonly eTitle: HTMLElement;
-    constructor(config?: PanelOptions);
+    constructor(config: TConfig);
     private static getTemplate;
     protected postConstruct(): void;
     protected renderComponent(): void;

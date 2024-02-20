@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
 declare var window: any;
 const columnDefs: ColDef[] = [
   { field: 'athlete' },
@@ -13,14 +13,17 @@ const columnDefs: ColDef[] = [
   { field: 'total' },
 ]
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
-    sortable: true,
-    resizable: true,
     width: 100,
     enableRowGroup: true,
     enablePivot: true,
     enableValue: true,
+  },
+  autoGroupColumnDef: {
+    minWidth: 200,
   },
   sideBar: {
     toolPanels: ['columns'],
@@ -33,7 +36,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function saveState() {
-  window.colState = gridOptions.columnApi!.getColumnState()
+  window.colState = gridApi!.getColumnState()
   console.log('column state saved')
 }
 
@@ -42,7 +45,7 @@ function restoreState() {
     console.log('no columns state to restore by, you must save state first')
     return
   }
-  gridOptions.columnApi!.applyColumnState({
+  gridApi!.applyColumnState({
     state: window.colState,
     applyOrder: true,
   })
@@ -50,16 +53,16 @@ function restoreState() {
 }
 
 function resetState() {
-  gridOptions.columnApi!.resetColumnState()
+  gridApi!.resetColumnState()
   console.log('column state reset')
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

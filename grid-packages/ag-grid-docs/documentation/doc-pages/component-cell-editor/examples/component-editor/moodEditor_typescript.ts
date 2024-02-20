@@ -28,7 +28,7 @@ export class MoodEditor implements ICellEditorComp {
 
     init(params: ICellEditorParams) {
         this.container = document.createElement('div');
-        this.container.style = "border-radius: 15px; border: 1px solid grey;background: #e6e6e6;padding: 15px; text-align:center;display:inline-block;outline:none";
+        this.container.style = "border-radius: 15px; border: 1px solid grey;background-color: #e6e6e6;padding: 15px; text-align:center;display:inline-block;outline:none";
         this.container.tabIndex = "0";                // to allow the div to capture events
 
         this.happyImg = document.createElement('img');

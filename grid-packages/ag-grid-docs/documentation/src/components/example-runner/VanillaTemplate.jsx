@@ -8,6 +8,7 @@ import isDevelopment from 'utils/is-development';
 import Scripts from './Scripts';
 import Styles from './Styles';
 import MetaData from './MetaData';
+import {integratedChartsUsesChartsEnterprise} from "../../utils/consts";
 
 const getCacheBustingUrl = (url, timestamp) => `${url}?t=${timestamp}`;
 
@@ -33,31 +34,14 @@ const VanillaTemplate = ({ isExecuting, modifiedTimeMs, library, appLocation, op
 
 const VanillaBody = ({ library, appLocation, options, scriptFiles, indexFragment }) => {
     let scriptPath;
-    let chartScriptPath;
-
-    if (library === 'charts' || options.enableChartApi) {
-        if (options.enterprise) {
-            chartScriptPath = isUsingPublishedPackages()
-                ? `https://cdn.jsdelivr.net/npm/ag-charts-enterprise@${agChartsVersion}/dist/ag-charts-enterprise.min.js`
-                : isDevelopment()
-                    ? `${localPrefix}/ag-charts-enterprise/dist/ag-charts-enterprise.js`
-                    : `${localPrefix}/ag-charts-enterprise/dist/ag-charts-enterprise.min.js`;
-        } else {
-            chartScriptPath = isUsingPublishedPackages()
-                ? `https://cdn.jsdelivr.net/npm/ag-charts-community@${agChartsVersion}/dist/ag-charts-community.min.js`
-                : isDevelopment()
-                    ? `${localPrefix}/ag-charts-community/dist/ag-charts-community.js`
-                    : `${localPrefix}/ag-charts-community/dist/ag-charts-community.min.js`;
-        }
-    }
 
     if (library === 'grid') {
         if (options.enterprise) {
             scriptPath = isUsingPublishedPackages()
-                ? `https://cdn.jsdelivr.net/npm/ag-grid-enterprise@${agGridEnterpriseVersion}/dist/ag-grid-enterprise.min.js`
+                ? `https://cdn.jsdelivr.net/npm/ag-grid-${integratedChartsUsesChartsEnterprise && options.modules.includes('charts-enterprise') ? 'charts-' : ''}enterprise@${agGridEnterpriseVersion}/dist/ag-grid-${integratedChartsUsesChartsEnterprise && options.modules.includes('charts-enterprise') ? 'charts-' : ''}enterprise.min.js`
                 : isDevelopment()
-                    ? `${localPrefix}/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js`
-                    : `${localPrefix}/ag-grid-enterprise/dist/ag-grid-enterprise.min.js`;
+                    ? `${localPrefix}/@ag-grid-enterprise/all-modules/dist/ag-grid-${integratedChartsUsesChartsEnterprise && options.modules.includes('charts-enterprise') ? 'charts-' : ''}enterprise.js`
+                    : `${localPrefix}/ag-grid-enterprise/dist/ag-grid-${integratedChartsUsesChartsEnterprise && options.modules.includes('charts-enterprise') ? 'charts-' : ''}enterprise.min.js`;
         } else {
             scriptPath = isUsingPublishedPackages()
                 ? `https://cdn.jsdelivr.net/npm/ag-grid-community@${agGridVersion}/dist/ag-grid-community.min.js`
@@ -71,7 +55,6 @@ const VanillaBody = ({ library, appLocation, options, scriptFiles, indexFragment
         <>
             <script dangerouslySetInnerHTML={{ __html: `var __basePath = '${appLocation}';` }}></script>
             {scriptPath ? <script src={scriptPath}></script> : ''}
-            {chartScriptPath ? <script src={chartScriptPath}></script> : ''}
             <Scripts files={scriptFiles} />
         </>
     );

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnVO } from "./iColumnVO";
@@ -6,6 +6,8 @@ import { LoadSuccessParams } from "../rowNodeCache/rowNodeBlock";
 import { SortModelItem } from "../sortController";
 import { AgGridCommon } from "./iCommon";
 import { IRowNode } from "./iRowNode";
+import { FilterModel } from "./iFilter";
+import { AdvancedFilterModel } from "./advancedFilterModel";
 export interface IServerSideGetRowsRequest {
     /** First row requested or undefined for all rows. */
     startRow: number | undefined;
@@ -21,8 +23,12 @@ export interface IServerSideGetRowsRequest {
     pivotMode: boolean;
     /** What groups the user is viewing.  */
     groupKeys: string[];
-    /** If filtering, what the filter model is.  */
-    filterModel: any;
+    /**
+     * If filtering, what the filter model is.
+     * If Advanced Filter is enabled, will be of type `AdvancedFilterModel | null`.
+     * If Advanced Filter is disabled, will be of type `FilterModel`.
+     */
+    filterModel: FilterModel | AdvancedFilterModel | null;
     /** If sorting, what the sort model is.  */
     sortModel: SortModelItem[];
 }
@@ -37,17 +43,9 @@ export interface IServerSideGetRowsParams<TData = any, TContext = any> extends A
      */
     parentNode: IRowNode;
     /**
-     * @deprecated Use `success` method instead and return result as a `LoadSuccessParams` object.
-     */
-    successCallback(rowsThisPage: any[], lastRow: number): void;
-    /**
      * Success callback, pass the rows back to the grid that were requested.
      */
     success(params: LoadSuccessParams): void;
-    /**
-     * @deprecated Use `fail` instead.
-     */
-    failCallback(): void;
     /**
      * Fail callback, tell the grid the call failed so it can adjust it's state.
      */

@@ -1,4 +1,4 @@
-import { ICellEditor, ICellEditorParams, ICellRenderer, ICellRendererParams, IDate, IDateParams, IFilter, IFilterParams, IFloatingFilter, IFloatingFilterParams, IHeader, IHeaderGroup, IHeaderGroupParams, IHeaderParams, ILoadingCellRendererParams, ILoadingOverlayParams, INoRowsOverlayParams, IStatusPanelParams, IToolPanelParams, ITooltipParams } from "@ag-grid-community/core";
+import { ICellEditor, ICellEditorParams, ICellRenderer, ICellRendererParams, IDate, IDateParams, IFilter, IFilterParams, IFloatingFilter, IFloatingFilterParams, IHeader, IHeaderGroup, IHeaderGroupParams, IHeaderParams, ILoadingCellRendererParams, ILoadingOverlay, ILoadingOverlayParams, IMenuItem, IMenuItemParams, INoRowsOverlay, INoRowsOverlayParams, IStatusPanel, IStatusPanelParams, IToolPanel, IToolPanelParams, ITooltipParams } from "@ag-grid-community/core";
 export interface AgFrameworkComponent<T> {
     /** Mandatory - Params for rendering this component. */
     agInit(params: T): void;
@@ -27,13 +27,15 @@ export interface AgFloatingFilterComponent extends IFloatingFilterAngularComp {
 }
 export interface ILoadingCellRendererAngularComp extends AgFrameworkComponent<ILoadingCellRendererParams> {
 }
-export interface ILoadingOverlayAngularComp extends AgFrameworkComponent<ILoadingOverlayParams> {
+export interface ILoadingOverlayAngularComp extends AgFrameworkComponent<ILoadingOverlayParams>, ILoadingOverlay {
 }
-export interface INoRowsOverlayAngularComp extends AgFrameworkComponent<INoRowsOverlayParams> {
+export interface INoRowsOverlayAngularComp extends AgFrameworkComponent<INoRowsOverlayParams>, INoRowsOverlay {
 }
-export interface IStatusPanelAngularComp extends AgFrameworkComponent<IStatusPanelParams> {
+export interface IStatusPanelAngularComp extends AgFrameworkComponent<IStatusPanelParams>, IStatusPanel {
 }
-export interface IToolPanelAngularComp extends AgFrameworkComponent<IToolPanelParams> {
+export interface IToolPanelAngularComp extends AgFrameworkComponent<IToolPanelParams>, IToolPanel {
 }
 export interface ITooltipAngularComp extends AgFrameworkComponent<ITooltipParams> {
+}
+export interface IMenuItemAngularComp extends AgFrameworkComponent<IMenuItemParams>, IMenuItem {
 }

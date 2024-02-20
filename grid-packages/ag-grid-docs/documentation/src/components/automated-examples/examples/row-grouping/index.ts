@@ -6,7 +6,7 @@
 // to prevent AG Grid from loading the code twice
 
 import { Easing, Group } from '@tweenjs/tween.js';
-import { ColDef, GridOptions, MenuItemDef } from 'ag-grid-community';
+import { ColDef, GridOptions, MenuItemDef, GridApi } from 'ag-grid-community';
 import { CATEGORIES, PORTFOLIOS } from '../../data/constants';
 import { createDataWorker } from '../../data/createDataWorker';
 import { ROW_GROUPING_ID } from '../../lib/constants';
@@ -39,6 +39,7 @@ interface CreateAutomatedRowGroupingParams {
     runOnce: boolean;
     scriptDebuggerManager: ScriptDebuggerManager;
     visibilityThreshold: number;
+    darkMode: boolean
 }
 
 export type RowGroupingAutomatedExample = AutomatedExample & {
@@ -82,15 +83,13 @@ const columnDefs: ColDef[] = [
     { field: 'dealType', enableRowGroup: true },
     { field: 'portfolio', enableRowGroup: true },
 ];
-
+let api: GridApi
 const gridOptions: GridOptions = {
     columnDefs,
     defaultColDef: {
-        sortable: true,
         flex: 1,
         minWidth: 150,
         filter: true,
-        resizable: true,
     },
     autoGroupColumnDef: {
         minWidth: 280,
@@ -103,8 +102,6 @@ const gridOptions: GridOptions = {
             cellRenderer: 'agAnimateShowChangeCellRenderer',
         },
     },
-    chartThemes: ['ag-default-dark'],
-    animateRows: true,
     enableCharts: true,
     enableRangeSelection: true,
     suppressAggFuncInHeader: true,
@@ -113,6 +110,10 @@ const gridOptions: GridOptions = {
     },
     rowGroupPanelShow: 'always',
 };
+
+function getDarkModeChartThemes(darkMode: boolean) {
+    return darkMode ? ['ag-default-dark'] : ['ag-default'];
+}
 
 function initWorker() {
     dataWorker = new Worker(
@@ -127,14 +128,14 @@ function initWorker() {
         },
     });
     dataWorker.onmessage = function (e) {
-        if (!gridOptions || !gridOptions.api) {
+        if (!api) {
             return;
         }
 
         if (e.data.type === 'setRowData') {
-            gridOptions.api.setRowData(e.data.records);
+            api.setGridOption('rowData', e.data.records);
         } else if (e.data.type === 'updateData') {
-            gridOptions.api.applyTransactionAsync({ update: e.data.records });
+            api.applyTransactionAsync({ update: e.data.records });
         }
     };
 }
@@ -164,6 +165,7 @@ export function createAutomatedRowGrouping({
     scriptDebuggerManager,
     runOnce,
     visibilityThreshold,
+    darkMode
 }: CreateAutomatedRowGroupingParams): RowGroupingAutomatedExample {
     const gridSelector = `.${gridClassname}`;
     let gridDiv: HTMLElement;
@@ -182,7 +184,8 @@ export function createAutomatedRowGrouping({
         if (additionalContextMenuItems) {
             gridOptions.getContextMenuItems = () => getAdditionalContextMenuItems(additionalContextMenuItems);
         }
-        gridOptions.onGridReady = () => {
+        gridOptions.chartThemes = getDarkModeChartThemes(darkMode);
+        gridOptions.onGridReady = (params) => {
             if (suppressUpdates) {
                 return;
             }
@@ -220,14 +223,18 @@ export function createAutomatedRowGrouping({
                     onStateChange && onStateChange(state);
                 },
                 tweenGroup,
-                gridOptions,
+                gridApi: params.api,
                 loop: !runOnce,
                 scriptDebugger,
                 defaultEasing: Easing.Quadratic.InOut,
             });
         };
-        new globalThis.agGrid.Grid(gridDiv, gridOptions);
+       api = globalThis.agGrid.createGrid(gridDiv, gridOptions);
     };
+    const updateDarkMode = (newDarkMode: boolean) => {
+        // NOTE: Invert dark mode
+        api?.setGridOption('chartThemes', getDarkModeChartThemes(!newDarkMode));
+    }
 
     const setUpdateFrequency = (value: number) => {
         dataWorker?.postMessage({
@@ -259,6 +266,7 @@ export function createAutomatedRowGrouping({
         },
         setUpdateFrequency,
         getDebugger: () => scriptDebugger,
+        updateDarkMode
     };
 }
 
@@ -270,7 +278,7 @@ export function cleanUp() {
 
     stopWorkerMessages();
     dataWorker?.terminate();
-    gridOptions.api?.destroy();
+    api?.destroy();
 }
 
 /**

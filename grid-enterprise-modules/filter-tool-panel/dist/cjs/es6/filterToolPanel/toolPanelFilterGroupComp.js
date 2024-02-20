@@ -173,10 +173,10 @@ ToolPanelFilterGroupComp.TEMPLATE = `<div class="ag-filter-toolpanel-group-wrapp
             <ag-group-component ref="filterGroupComp"></ag-group-component>
         </div>`;
 __decorate([
-    core_1.RefSelector('filterGroupComp')
+    (0, core_1.RefSelector)('filterGroupComp')
 ], ToolPanelFilterGroupComp.prototype, "filterGroupComp", void 0);
 __decorate([
-    core_1.Autowired('columnModel')
+    (0, core_1.Autowired)('columnModel')
 ], ToolPanelFilterGroupComp.prototype, "columnModel", void 0);
 __decorate([
     core_1.PreConstruct

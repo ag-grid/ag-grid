@@ -10,17 +10,14 @@ import { exists } from '../utils/generic.mjs';
 let ValueParserService = class ValueParserService extends BeanStub {
     parseValue(column, rowNode, newValue, oldValue) {
         const colDef = column.getColDef();
-        const params = {
+        const params = this.gridOptionsService.addGridCommonParams({
             node: rowNode,
             data: rowNode === null || rowNode === void 0 ? void 0 : rowNode.data,
             oldValue,
             newValue,
             colDef,
-            column,
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context
-        };
+            column
+        });
         const valueParser = colDef.valueParser;
         if (exists(valueParser)) {
             if (typeof valueParser === 'function') {

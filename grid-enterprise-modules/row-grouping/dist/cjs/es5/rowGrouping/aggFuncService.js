@@ -25,6 +25,15 @@ exports.AggFuncService = void 0;
 var core_1 = require("@ag-grid-community/core");
 // @ts-ignore
 var AGBigInt = typeof BigInt === 'undefined' ? null : BigInt;
+var defaultAggFuncNames = {
+    sum: 'Sum',
+    first: 'First',
+    last: 'Last',
+    min: 'Min',
+    max: 'Max',
+    count: 'Count',
+    avg: 'Average',
+};
 var AggFuncService = /** @class */ (function (_super) {
     __extends(AggFuncService, _super);
     function AggFuncService() {
@@ -57,6 +66,10 @@ var AggFuncService = /** @class */ (function (_super) {
         var funcExists = core_1._.exists(this.aggFuncsMap[func]);
         return allowed && funcExists;
     };
+    AggFuncService.prototype.getDefaultFuncLabel = function (fctName) {
+        var _a;
+        return (_a = defaultAggFuncNames[fctName]) !== null && _a !== void 0 ? _a : fctName;
+    };
     AggFuncService.prototype.getDefaultAggFunc = function (column) {
         var defaultAgg = column.getColDef().defaultAggFunc;
         if (core_1._.exists(defaultAgg) && this.isAggFuncPossible(column, defaultAgg)) {
@@ -69,11 +82,11 @@ var AggFuncService = /** @class */ (function (_super) {
         return core_1._.existsAndNotEmpty(allKeys) ? allKeys[0] : null;
     };
     AggFuncService.prototype.addAggFuncs = function (aggFuncs) {
-        core_1._.iterateObject(aggFuncs, this.addAggFunc.bind(this));
-    };
-    AggFuncService.prototype.addAggFunc = function (key, aggFunc) {
+        var _this = this;
         this.init();
-        this.aggFuncsMap[key] = aggFunc;
+        core_1._.iterateObject(aggFuncs, function (key, aggFunc) {
+            _this.aggFuncsMap[key] = aggFunc;
+        });
     };
     AggFuncService.prototype.getAggFunc = function (name) {
         this.init();
@@ -98,7 +111,7 @@ var AggFuncService = /** @class */ (function (_super) {
         core_1.PostConstruct
     ], AggFuncService.prototype, "init", null);
     AggFuncService = AggFuncService_1 = __decorate([
-        core_1.Bean('aggFuncService')
+        (0, core_1.Bean)('aggFuncService')
     ], AggFuncService);
     return AggFuncService;
 }(core_1.BeanStub));

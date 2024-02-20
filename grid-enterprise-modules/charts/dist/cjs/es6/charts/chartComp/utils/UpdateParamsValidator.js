@@ -1,9 +1,11 @@
 "use strict";
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateParamsValidator = void 0;
+const seriesTypeMapper_1 = require("./seriesTypeMapper");
 const validateIfDefined = (validationFn) => {
     return (value) => {
-        if (value === undefined)
+        if (value == undefined)
             return true;
         return validationFn(value);
     };
@@ -13,6 +15,12 @@ const isBoolean = (value) => typeof value === 'boolean';
 const isValidSeriesChartType = (value) => typeof value === 'object';
 const createWarnMessage = (property, expectedType) => (value) => `AG Grid - unable to update chart as invalid params supplied:  \`${property}: ${value}\`, expected ${expectedType}.`;
 class UpdateParamsValidator {
+    static isValidChartType(value) {
+        return UpdateParamsValidator.validChartTypes.includes(value);
+    }
+    static isLegacyChartType(value) {
+        return UpdateParamsValidator.legacyChartTypes.includes(value);
+    }
     static validateChartParams(params) {
         let paramsToValidate = params;
         switch (paramsToValidate.type) {
@@ -53,14 +61,23 @@ class UpdateParamsValidator {
         return UpdateParamsValidator.validateProperties(params, validations, ['type', 'chartId', 'chartType', 'chartThemeName', 'chartThemeOverrides', 'unlinkChart', 'cellRange', 'suppressChartRanges', 'aggFunc'], 'UpdateCrossFilterChartParams');
     }
     static validateProperties(params, validations, validPropertyNames, paramsType) {
+        let validatedProperties = undefined;
         for (const validation of validations) {
             const { property, validationFn, warnMessage } = validation;
             if (property in params) {
                 const value = params[property];
-                if (!validationFn(value)) {
+                const validationResult = validationFn(value);
+                if (validationResult === true)
+                    continue;
+                if (validationResult === false) {
                     console.warn(warnMessage(value));
                     return false;
                 }
+                // If the validation function returned a 'fix' value, we need to return an updated property set.
+                // First we clone the input set if there has not been a 'fix' encountered in a previous iteration:
+                validatedProperties = validatedProperties || Object.assign({}, params);
+                /// Then we update the cloned object with the 'fixed' value
+                validatedProperties[property] = validationResult;
             }
         }
         // Check for unexpected properties
@@ -70,10 +87,14 @@ class UpdateParamsValidator {
                 return false;
             }
         }
+        // If one or more 'fixed' values were encountered, return the updated property set
+        if (validatedProperties)
+            return validatedProperties;
         return true;
     }
 }
 exports.UpdateParamsValidator = UpdateParamsValidator;
+_a = UpdateParamsValidator;
 UpdateParamsValidator.validChartTypes = [
     'column',
     'groupedColumn',
@@ -87,17 +108,40 @@ UpdateParamsValidator.validChartTypes = [
     'scatter',
     'bubble',
     'pie',
-    'doughnut',
+    'donut',
     'area',
     'stackedArea',
     'normalizedArea',
     'histogram',
+    'radialColumn',
+    'radialBar',
+    'radarLine',
+    'radarArea',
+    'nightingale',
+    'rangeBar',
+    'rangeArea',
+    'boxPlot',
+    'treemap',
+    'sunburst',
+    'heatmap',
+    'waterfall',
     'columnLineCombo',
     'areaColumnCombo',
     'customCombo'
 ];
+UpdateParamsValidator.legacyChartTypes = [
+    'doughnut',
+];
 UpdateParamsValidator.validateChartType = validateIfDefined((chartType) => {
-    return UpdateParamsValidator.validChartTypes.includes(chartType);
+    if (_a.isValidChartType(chartType))
+        return true;
+    if (_a.isLegacyChartType(chartType)) {
+        const renamedChartType = (0, seriesTypeMapper_1.getCanonicalChartType)(chartType);
+        console.warn(`AG Grid - The chart type '${chartType}' has been deprecated. Please use '${renamedChartType}' instead.`);
+        return renamedChartType;
+    }
+    ;
+    return false;
 });
 UpdateParamsValidator.validateAgChartThemeOverrides = validateIfDefined((themeOverrides) => {
     // ensure supplied AgChartThemeOverrides is an object - can be improved if necessary?

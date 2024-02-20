@@ -17,7 +17,7 @@ import { MiniChartWithAxes } from "../miniChartWithAxes";
 import { _Scene } from "ag-charts-community";
 var MiniArea = /** @class */ (function (_super) {
     __extends(MiniArea, _super);
-    function MiniArea(container, fills, strokes, data) {
+    function MiniArea(container, fills, strokes, _themeTemplateParameters, _isCustomTheme, data) {
         if (data === void 0) { data = MiniArea.data; }
         var _this = _super.call(this, container, "groupedAreaTooltip") || this;
         var size = _this.size;
@@ -52,6 +52,7 @@ var MiniArea = /** @class */ (function (_super) {
         _this.areas = pathData.reverse().map(function (points) {
             var area = new _Scene.Path();
             area.strokeWidth = 1;
+            area.strokeOpacity = 0.75;
             area.fillOpacity = 0.7;
             var path = area.path;
             path.clear();

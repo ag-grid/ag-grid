@@ -43,11 +43,11 @@ var ToolPanelFilterGroupComp = /** @class */ (function (_super) {
         var _this = this;
         this.setGroupTitle();
         this.filterGroupComp.setAlignItems('stretch');
-        this.filterGroupComp.addCssClass("ag-filter-toolpanel-group-level-" + this.depth);
-        this.filterGroupComp.addCssClassToTitleBar("ag-filter-toolpanel-group-level-" + this.depth + "-header");
+        this.filterGroupComp.addCssClass("ag-filter-toolpanel-group-level-".concat(this.depth));
+        this.filterGroupComp.addCssClassToTitleBar("ag-filter-toolpanel-group-level-".concat(this.depth, "-header"));
         this.childFilterComps.forEach(function (filterComp) {
             _this.filterGroupComp.addItem(filterComp);
-            filterComp.addCssClassToTitleBar("ag-filter-toolpanel-group-level-" + (_this.depth + 1) + "-header");
+            filterComp.addCssClassToTitleBar("ag-filter-toolpanel-group-level-".concat(_this.depth + 1, "-header"));
         });
         this.refreshFilterClass();
         this.addExpandCollapseListeners();

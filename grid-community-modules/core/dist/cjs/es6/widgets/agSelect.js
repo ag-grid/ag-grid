@@ -5,20 +5,23 @@ const agPickerField_1 = require("./agPickerField");
 const agList_1 = require("./agList");
 const eventKeys_1 = require("../eventKeys");
 const keyCode_1 = require("../constants/keyCode");
-const dom_1 = require("../utils/dom");
+const aria_1 = require("../utils/aria");
 class AgSelect extends agPickerField_1.AgPickerField {
     constructor(config) {
-        super(Object.assign({ pickerAriaLabelKey: 'ariaLabelSelectField', pickerAriaLabelValue: 'Select Field', pickerType: 'ag-list' }, config), 'ag-select', 'smallDown', 'listbox');
+        super(Object.assign({ pickerAriaLabelKey: 'ariaLabelSelectField', pickerAriaLabelValue: 'Select Field', pickerType: 'ag-list', className: 'ag-select', pickerIcon: 'smallDown', ariaRole: 'combobox' }, config));
     }
     postConstruct() {
-        var _a;
         super.postConstruct();
         this.createListComponent();
-        this.eWrapper.tabIndex = (_a = this.gridOptionsService.getNum('tabIndex')) !== null && _a !== void 0 ? _a : 0;
+        this.eWrapper.tabIndex = this.gridOptionsService.get('tabIndex');
     }
     createListComponent() {
         this.listComponent = this.createBean(new agList_1.AgList('select'));
         this.listComponent.setParentComponent(this);
+        const eListAriaEl = this.listComponent.getAriaElement();
+        const listId = `ag-select-list-${this.listComponent.getCompId()}`;
+        eListAriaEl.setAttribute('id', listId);
+        (0, aria_1.setAriaControls)(this.getAriaElement(), eListAriaEl);
         this.listComponent.addGuiEventListener('keydown', (e) => {
             if (e.key === keyCode_1.KeyCode.TAB) {
                 e.preventDefault();
@@ -53,21 +56,7 @@ class AgSelect extends agPickerField_1.AgPickerField {
             return;
         }
         super.showPicker();
-        this.listComponent.getGui().style.maxHeight = `${dom_1.getInnerHeight(this.popupService.getPopupParent())}px`;
-        const ePicker = this.listComponent.getGui();
-        this.pickerFocusOutListener = this.addManagedListener(ePicker, 'focusout', (e) => {
-            if (!ePicker.contains(e.relatedTarget)) {
-                this.hidePicker();
-            }
-        });
         this.listComponent.refreshHighlighted();
-    }
-    beforeHidePicker() {
-        if (this.pickerFocusOutListener) {
-            this.pickerFocusOutListener();
-            this.pickerFocusOutListener = undefined;
-        }
-        super.beforeHidePicker();
     }
     addOptions(options) {
         options.forEach(option => this.addOption(option));

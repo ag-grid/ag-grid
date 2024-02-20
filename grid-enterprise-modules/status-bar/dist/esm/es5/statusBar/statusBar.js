@@ -19,43 +19,96 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, Component, PostConstruct, AgPromise, RefSelector } from '@ag-grid-community/core';
+import { Autowired, Component, PostConstruct, PreDestroy, AgPromise, RefSelector, _ } from '@ag-grid-community/core';
 var StatusBar = /** @class */ (function (_super) {
     __extends(StatusBar, _super);
     function StatusBar() {
-        return _super.call(this, StatusBar.TEMPLATE) || this;
+        var _this = _super.call(this, StatusBar.TEMPLATE) || this;
+        _this.compDestroyFunctions = {};
+        return _this;
     }
     StatusBar.prototype.postConstruct = function () {
+        this.processStatusPanels(new Map());
+        this.addManagedPropertyListeners(['statusBar'], this.handleStatusBarChanged.bind(this));
+    };
+    StatusBar.prototype.processStatusPanels = function (existingStatusPanelsToReuse) {
         var _a;
         var statusPanels = (_a = this.gridOptionsService.get('statusBar')) === null || _a === void 0 ? void 0 : _a.statusPanels;
         if (statusPanels) {
             var leftStatusPanelComponents = statusPanels
                 .filter(function (componentConfig) { return componentConfig.align === 'left'; });
-            this.createAndRenderComponents(leftStatusPanelComponents, this.eStatusBarLeft);
+            this.createAndRenderComponents(leftStatusPanelComponents, this.eStatusBarLeft, existingStatusPanelsToReuse);
             var centerStatusPanelComponents = statusPanels
                 .filter(function (componentConfig) { return componentConfig.align === 'center'; });
-            this.createAndRenderComponents(centerStatusPanelComponents, this.eStatusBarCenter);
+            this.createAndRenderComponents(centerStatusPanelComponents, this.eStatusBarCenter, existingStatusPanelsToReuse);
             var rightStatusPanelComponents = statusPanels
                 .filter(function (componentConfig) { return (!componentConfig.align || componentConfig.align === 'right'); });
-            this.createAndRenderComponents(rightStatusPanelComponents, this.eStatusBarRight);
+            this.createAndRenderComponents(rightStatusPanelComponents, this.eStatusBarRight, existingStatusPanelsToReuse);
         }
         else {
             this.setDisplayed(false);
         }
     };
-    StatusBar.prototype.createAndRenderComponents = function (statusBarComponents, ePanelComponent) {
+    StatusBar.prototype.handleStatusBarChanged = function () {
+        var _this = this;
+        var _a;
+        var statusPanels = (_a = this.gridOptionsService.get('statusBar')) === null || _a === void 0 ? void 0 : _a.statusPanels;
+        var validStatusBarPanelsProvided = Array.isArray(statusPanels) && statusPanels.length > 0;
+        this.setDisplayed(validStatusBarPanelsProvided);
+        var existingStatusPanelsToReuse = new Map();
+        if (validStatusBarPanelsProvided) {
+            statusPanels.forEach(function (statusPanelConfig) {
+                var _a, _b;
+                var key = (_a = statusPanelConfig.key) !== null && _a !== void 0 ? _a : statusPanelConfig.statusPanel;
+                var existingStatusPanel = _this.statusBarService.getStatusPanel(key);
+                if (existingStatusPanel === null || existingStatusPanel === void 0 ? void 0 : existingStatusPanel.refresh) {
+                    var newParams = _this.gridOptionsService.addGridCommonParams((_b = statusPanelConfig.statusPanelParams) !== null && _b !== void 0 ? _b : {});
+                    var hasRefreshed = existingStatusPanel.refresh(newParams);
+                    if (hasRefreshed) {
+                        existingStatusPanelsToReuse.set(key, existingStatusPanel);
+                        delete _this.compDestroyFunctions[key];
+                        _.removeFromParent(existingStatusPanel.getGui());
+                    }
+                }
+            });
+        }
+        this.resetStatusBar();
+        if (validStatusBarPanelsProvided) {
+            this.processStatusPanels(existingStatusPanelsToReuse);
+        }
+    };
+    StatusBar.prototype.resetStatusBar = function () {
+        this.eStatusBarLeft.innerHTML = '';
+        this.eStatusBarCenter.innerHTML = '';
+        this.eStatusBarRight.innerHTML = '';
+        this.destroyComponents();
+        this.statusBarService.unregisterAllComponents();
+    };
+    StatusBar.prototype.destroyComponents = function () {
+        Object.values(this.compDestroyFunctions).forEach(function (func) { return func(); });
+        this.compDestroyFunctions = {};
+    };
+    StatusBar.prototype.createAndRenderComponents = function (statusBarComponents, ePanelComponent, existingStatusPanelsToReuse) {
         var _this = this;
         var componentDetails = [];
         statusBarComponents.forEach(function (componentConfig) {
-            var params = {};
-            var compDetails = _this.userComponentFactory.getStatusPanelCompDetails(componentConfig, params);
-            var promise = compDetails.newAgStackInstance();
-            if (!promise) {
-                return;
+            // default to the component name if no key supplied
+            var key = componentConfig.key || componentConfig.statusPanel;
+            var existingStatusPanel = existingStatusPanelsToReuse.get(key);
+            var promise;
+            if (existingStatusPanel) {
+                promise = AgPromise.resolve(existingStatusPanel);
+            }
+            else {
+                var params = {};
+                var compDetails = _this.userComponentFactory.getStatusPanelCompDetails(componentConfig, params);
+                promise = compDetails.newAgStackInstance();
+                if (!promise) {
+                    return;
+                }
             }
             componentDetails.push({
-                // default to the component name if no key supplied
-                key: componentConfig.key || componentConfig.statusPanel,
+                key: key,
                 promise: promise
             });
         });
@@ -69,7 +122,7 @@ var StatusBar = /** @class */ (function (_super) {
                     if (_this.isAlive()) {
                         _this.statusBarService.registerStatusPanel(componentDetail.key, component);
                         ePanelComponent.appendChild(component.getGui());
-                        _this.addDestroyFunc(destroyFunc);
+                        _this.compDestroyFunctions[componentDetail.key] = destroyFunc;
                     }
                     else {
                         destroyFunc();
@@ -97,6 +150,9 @@ var StatusBar = /** @class */ (function (_super) {
     __decorate([
         PostConstruct
     ], StatusBar.prototype, "postConstruct", null);
+    __decorate([
+        PreDestroy
+    ], StatusBar.prototype, "destroyComponents", null);
     return StatusBar;
 }(Component));
 export { StatusBar };

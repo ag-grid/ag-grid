@@ -66,7 +66,7 @@ var AgAutocompleteList = /** @class */ (function (_super) {
     };
     AgAutocompleteList.prototype.setSearch = function (searchString) {
         this.searchString = searchString;
-        if (generic_1.exists(searchString)) {
+        if ((0, generic_1.exists)(searchString)) {
             this.runSearch();
         }
         else {
@@ -107,7 +107,7 @@ var AgAutocompleteList = /** @class */ (function (_super) {
         var matchingStrings;
         var topSuggestion;
         if (this.params.useFuzzySearch) {
-            matchingStrings = fuzzyMatch_1.fuzzySuggestions(this.searchString, searchStrings, true);
+            matchingStrings = (0, fuzzyMatch_1.fuzzySuggestions)(this.searchString, searchStrings, true).values;
             topSuggestion = matchingStrings.length ? matchingStrings[0] : undefined;
         }
         else {
@@ -177,7 +177,7 @@ var AgAutocompleteList = /** @class */ (function (_super) {
     };
     AgAutocompleteList.TEMPLATE = "<div class=\"ag-autocomplete-list-popup\">\n            <div ref=\"eList\" class=\"ag-autocomplete-list\"></div>\n        <div>";
     __decorate([
-        componentAnnotations_1.RefSelector('eList')
+        (0, componentAnnotations_1.RefSelector)('eList')
     ], AgAutocompleteList.prototype, "eList", void 0);
     __decorate([
         context_1.PostConstruct

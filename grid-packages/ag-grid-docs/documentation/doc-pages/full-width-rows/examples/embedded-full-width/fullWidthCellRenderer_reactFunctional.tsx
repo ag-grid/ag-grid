@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 
-import { ICellRendererParams } from '@ag-grid-community/core';
+import { CustomCellRendererProps } from '@ag-grid-community/react';
 
-export default (props: ICellRendererParams) => {
+export default (props: CustomCellRendererProps) => {
     const [cssClass] = useState(props.pinned ? 'example-full-width-pinned' :
         'example-full-width-row');
-    const [message] = useState(props.pinned ? `Pinned full width on ${props.pinned} - index ${props.rowIndex}` :
-        `Non pinned full width row at index${props.rowIndex}`);
+    const [message] = useState(props.pinned ? `Pinned full width on ${props.pinned} - index ${props.node.rowIndex}` :
+        `Non pinned full width row at index ${props.node.rowIndex}`);
 
     return (
         <div className={cssClass}>

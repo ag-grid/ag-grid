@@ -13,17 +13,17 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import { MiniStackedBar } from "./miniStackedBar";
+import { MiniStackedBar } from './miniStackedBar';
 var MiniNormalizedBar = /** @class */ (function (_super) {
     __extends(MiniNormalizedBar, _super);
-    function MiniNormalizedBar(container, fills, strokes) {
-        return _super.call(this, container, fills, strokes, MiniNormalizedBar.data, [0, 10], "normalizedBarTooltip") || this;
+    function MiniNormalizedBar(container, fills, strokes, themeTemplateParameters, isCustomTheme) {
+        return _super.call(this, container, fills, strokes, themeTemplateParameters, isCustomTheme, MiniNormalizedBar.data, [0, 10], 'normalizedBarTooltip') || this;
     }
     MiniNormalizedBar.chartType = 'normalizedBar';
     MiniNormalizedBar.data = [
         [10, 10, 10],
         [6, 7, 8],
-        [2, 4, 6]
+        [2, 4, 6],
     ];
     return MiniNormalizedBar;
 }(MiniStackedBar));

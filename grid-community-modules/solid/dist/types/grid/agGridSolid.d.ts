@@ -1,6 +1,7 @@
 import { ColumnApi, GridApi, GridOptions, Module } from '@ag-grid-community/core';
 export interface AgGridSolidRef {
     api: GridApi;
+    /** @deprecated v31 - The `columnApi` has been deprecated and all the methods are now present of the `api`. */
     columnApi: ColumnApi;
 }
 export interface AgGridSolidProps extends GridOptions {

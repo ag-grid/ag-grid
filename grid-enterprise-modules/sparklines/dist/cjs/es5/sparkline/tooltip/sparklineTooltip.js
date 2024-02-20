@@ -12,19 +12,19 @@ function toTooltipHtml(input, defaults) {
     var contentHtml;
     if (color) {
         titleHtml = title
-            ? "<span class=\"" + SparklineTooltip.class + "-title\"; style=\"color: " + color + "\">" + title + "</span>"
+            ? "<span class=\"".concat(SparklineTooltip.class, "-title\"; style=\"color: ").concat(color, "\">").concat(title, "</span>")
             : '';
-        contentHtml = "<span class=\"" + SparklineTooltip.class + "-content\" style=\"color: " + color + "\">" + content + "</span>";
+        contentHtml = "<span class=\"".concat(SparklineTooltip.class, "-content\" style=\"color: ").concat(color, "\">").concat(content, "</span>");
     }
     else {
-        titleHtml = title ? "<span class=\"" + SparklineTooltip.class + "-title\">" + title + "</span>" : '';
-        contentHtml = "<span class=\"" + SparklineTooltip.class + "-content\">" + content + "</span>";
+        titleHtml = title ? "<span class=\"".concat(SparklineTooltip.class, "-title\">").concat(title, "</span>") : '';
+        contentHtml = "<span class=\"".concat(SparklineTooltip.class, "-content\">").concat(content, "</span>");
     }
-    var style = "opacity: " + opacity;
+    var style = "opacity: ".concat(opacity);
     if (backgroundColor) {
-        style += "; background-color: " + backgroundColor.toLowerCase();
+        style += "; background-color: ".concat(backgroundColor.toLowerCase());
     }
-    return "<div class=\"" + SparklineTooltip.class + "\" style=\"" + style + "\">\n                " + titleHtml + "\n                " + contentHtml + "\n            </div>";
+    return "<div class=\"".concat(SparklineTooltip.class, "\" style=\"").concat(style, "\">\n                ").concat(titleHtml, "\n                ").concat(contentHtml, "\n            </div>");
 }
 exports.toTooltipHtml = toTooltipHtml;
 var SparklineTooltip = /** @class */ (function () {
@@ -36,19 +36,19 @@ var SparklineTooltip = /** @class */ (function () {
     SparklineTooltip.prototype.isVisible = function () {
         var element = this.element;
         if (element.classList) {
-            return !element.classList.contains(SparklineTooltip.class + "-wrapper-hidden");
+            return !element.classList.contains("".concat(SparklineTooltip.class, "-wrapper-hidden"));
         }
         // IE11
         var classes = element.getAttribute('class');
         if (classes) {
-            return classes.split(' ').indexOf(SparklineTooltip.class + "-wrapper-hidden") < 0;
+            return classes.split(' ').indexOf("".concat(SparklineTooltip.class, "-wrapper-hidden")) < 0;
         }
         return false;
     };
     SparklineTooltip.prototype.updateClass = function (visible) {
-        var classList = [SparklineTooltip.class + "-wrapper"];
+        var classList = ["".concat(SparklineTooltip.class, "-wrapper")];
         if (visible !== true) {
-            classList.push(SparklineTooltip.class + "-wrapper-hidden");
+            classList.push("".concat(SparklineTooltip.class, "-wrapper-hidden"));
         }
         this.element.setAttribute('class', classList.join(' '));
     };
@@ -81,8 +81,8 @@ var SparklineTooltip = /** @class */ (function () {
         if (typeof scrollY !== 'undefined') {
             top += scrollY;
         }
-        element.style.left = Math.round(left) + "px";
-        element.style.top = Math.round(top) + "px";
+        element.style.left = "".concat(Math.round(left), "px");
+        element.style.top = "".concat(Math.round(top), "px");
         this.toggle(true);
     };
     SparklineTooltip.prototype.toggle = function (visible) {

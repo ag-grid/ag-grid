@@ -38,10 +38,13 @@ let TransactionManager = class TransactionManager extends BeanStub {
         let atLeastOneTransactionApplied = false;
         this.asyncTransactions.forEach(txWrapper => {
             let result;
-            this.serverSideRowModel.executeOnStore(txWrapper.transaction.route, cache => {
+            const hasStarted = this.serverSideRowModel.executeOnStore(txWrapper.transaction.route, cache => {
                 result = cache.applyTransaction(txWrapper.transaction);
             });
-            if (result == undefined) {
+            if (!hasStarted) {
+                result = { status: ServerSideTransactionResultStatus.StoreNotStarted };
+            }
+            else if (result == undefined) {
                 result = { status: ServerSideTransactionResultStatus.StoreNotFound };
             }
             resultsForEvent.push(result);
@@ -87,10 +90,13 @@ let TransactionManager = class TransactionManager extends BeanStub {
     }
     applyTransaction(transaction) {
         let res;
-        this.serverSideRowModel.executeOnStore(transaction.route, store => {
+        const hasStarted = this.serverSideRowModel.executeOnStore(transaction.route, store => {
             res = store.applyTransaction(transaction);
         });
-        if (res) {
+        if (!hasStarted) {
+            return { status: ServerSideTransactionResultStatus.StoreNotStarted };
+        }
+        else if (res) {
             this.valueCache.onDataChanged();
             if (res.remove) {
                 const removedRowIds = res.remove.map(row => row.id);

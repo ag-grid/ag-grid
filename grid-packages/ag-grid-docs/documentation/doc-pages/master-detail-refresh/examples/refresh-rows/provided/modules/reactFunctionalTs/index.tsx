@@ -4,7 +4,7 @@ import React, { useCallback, useMemo, useRef, useState, StrictMode } from 'react
 import { createRoot } from 'react-dom/client';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { ColDef, FirstDataRenderedEvent, GetDetailRowDataParams, GetRowIdParams, GridReadyEvent, ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { MasterDetailModule } from '@ag-grid-enterprise/master-detail';
@@ -54,7 +54,6 @@ const GridExample = () => {
                 ],
                 defaultColDef: {
                     flex: 1,
-                    sortable: true,
                 },
             },
             getDetailRowData: (params: GetDetailRowDataParams) => {
@@ -109,7 +108,7 @@ const GridExample = () => {
     return (
         <div style={containerStyle}>
 
-            <div style={gridStyle} className="ag-theme-alpine">
+            <div style={gridStyle} className={/** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
                 <AgGridReact
                     ref={gridRef}
                     rowData={rowData}

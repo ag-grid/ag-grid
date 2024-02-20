@@ -72,13 +72,13 @@ let FilterService = class FilterService extends core_1.BeanStub {
         }
     }
     doingTreeDataFiltering() {
-        return this.gridOptionsService.isTreeData() && !this.gridOptionsService.is('excludeChildrenWhenTreeDataFiltering');
+        return this.gridOptionsService.get('treeData') && !this.gridOptionsService.get('excludeChildrenWhenTreeDataFiltering');
     }
 };
 __decorate([
-    core_1.Autowired('filterManager')
+    (0, core_1.Autowired)('filterManager')
 ], FilterService.prototype, "filterManager", void 0);
 FilterService = __decorate([
-    core_1.Bean("filterService")
+    (0, core_1.Bean)("filterService")
 ], FilterService);
 exports.FilterService = FilterService;

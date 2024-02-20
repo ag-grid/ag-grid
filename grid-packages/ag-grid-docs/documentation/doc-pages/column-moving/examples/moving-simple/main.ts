@@ -1,4 +1,6 @@
-import { Grid, Column, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, Column, GridOptions } from '@ag-grid-community/core';
+
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -20,23 +22,23 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function onMedalsFirst() {
-  gridOptions.columnApi!.moveColumns(['gold', 'silver', 'bronze', 'total'], 0)
+  gridApi!.moveColumns(['gold', 'silver', 'bronze', 'total'], 0)
 }
 
 function onMedalsLast() {
-  gridOptions.columnApi!.moveColumns(['gold', 'silver', 'bronze', 'total'], 6)
+  gridApi!.moveColumns(['gold', 'silver', 'bronze', 'total'], 6)
 }
 
 function onCountryFirst() {
-  gridOptions.columnApi!.moveColumn('country', 0)
+  gridApi!.moveColumns(['country'], 0)
 }
 
 function onSwapFirstTwo() {
-  gridOptions.columnApi!.moveColumnByIndex(0, 1)
+  gridApi!.moveColumnByIndex(0, 1)
 }
 
 function onPrintColumns() {
-  const cols = gridOptions.columnApi!.getAllGridColumns()
+  const cols = gridApi!.getAllGridColumns()
   const colToNameFunc = (col: Column, index: number) => index + ' = ' + col.getId()
   const colNames = cols.map(colToNameFunc).join(', ')
   console.log('columns are: ' + colNames)
@@ -45,9 +47,9 @@ function onPrintColumns() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

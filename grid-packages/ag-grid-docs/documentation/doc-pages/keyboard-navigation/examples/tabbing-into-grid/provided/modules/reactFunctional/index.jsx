@@ -6,7 +6,9 @@ import { createRoot } from 'react-dom/client';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
+import './styles.css';
+
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
@@ -14,7 +16,6 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const GridExample = () => {
     const [gridApi, setGridApi] = useState(null);
-    const [gridColumnApi, setGridColumnApi] = useState(null);
     const [rowData, setRowData] = useState(null);
     const columnDefs = useMemo(() => [
         {
@@ -40,7 +41,6 @@ const GridExample = () => {
 
     const onGridReady = (params) => {
         setGridApi(params.api);
-        setGridColumnApi(params.columnApi);
 
         const updateData = (data) => {
             setRowData(data);
@@ -52,7 +52,7 @@ const GridExample = () => {
     };
 
     useEffect(() => {
-        if (!myInput.current || !gridApi || !gridColumnApi) { return; }
+        if (!myInput.current || !gridApi || !gridApi) { return; }
 
         myInput.current.addEventListener('keydown', function (event) {
             if (event.key !== 'Tab') { return; }
@@ -60,13 +60,20 @@ const GridExample = () => {
             event.preventDefault();
             gridApi.ensureIndexVisible(0);
 
-            const firstCol = gridColumnApi.getAllDisplayedColumns()[0];
+            const firstCol = gridApi.getAllDisplayedColumns()[0];
 
             gridApi.ensureColumnVisible(firstCol);
             gridApi.setFocusedCell(0, firstCol);
         }, true);
 
-    }, [myInput, gridApi, gridColumnApi]);
+    }, [myInput, gridApi, gridApi]);
+
+    const defaultColDef = useMemo(() => ({
+        editable: true,
+        flex: 1,
+        minWidth: 100,
+        filter: true,
+    }), []);
 
     return (
         <div style={{ width: '100%', height: '100%' }}>
@@ -81,18 +88,11 @@ const GridExample = () => {
                         <input type="text" />
                     </div>
                 </div>
-                <div id="myGrid" style={{ height: '100%', width: '100%' }} className="ag-theme-alpine">
+                <div id="myGrid" style={{ height: '100%', width: '100%' }} className={/** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
                     <AgGridReact
                         rowData={rowData}
                         columnDefs={columnDefs}
-                        defaultColDef={{
-                            editable: true,
-                            sortable: true,
-                            flex: 1,
-                            minWidth: 100,
-                            filter: true,
-                            resizable: true
-                        }}
+                        defaultColDef={defaultColDef}
                         onGridReady={onGridReady}
                     />
                 </div>

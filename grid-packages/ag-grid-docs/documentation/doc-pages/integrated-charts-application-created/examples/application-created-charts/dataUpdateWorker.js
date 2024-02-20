@@ -2,30 +2,28 @@
 
 // NOTE: The details of this web worker are not important it's just used to simulate streaming updates in the grid.
 
-// update these to change the number and rate of updates
-var UPDATES_PER_MESSAGE = 100;
-var MILLISECONDS_BETWEEN_MESSAGES = 100;
+// Constants
+const UPDATES_PER_MESSAGE = 100;
+const MILLISECONDS_BETWEEN_MESSAGES = 100;
+const BOOK_COUNT = 5;
+const TRADE_COUNT = 2;
+const VALUE_FIELDS = ['current', 'previous', 'pl1', 'pl2', 'gainDx', 'sxPx', '_99Out'];
+const PRODUCTS = ['Cobalt', 'Rubber', 'Wool', 'Amber', 'Corn', 'Nickel', 'Copper', 'Oats', 'Coffee', 'Wheat', 'Lead', 'Zinc', 'Tin', 'Coca'];
+const PORTFOLIOS = ['Aggressive', 'Defensive', 'Income', 'Speculative', 'Hybrid'];
 
-// update these to change the size of the data initially loaded into the grid for updating
-var BOOK_COUNT = 5;
-var TRADE_COUNT = 2;
+// Global Variables
+let globalRowData;
+let nextBookId = 62472;
+let nextTradeId = 24287;
+let nextBatchId = 101;
+let latestUpdateId = 0;
 
-// add / remove products to change the data set
-var PRODUCTS = ['Cobalt','Rubber','Wool','Amber','Corn','Nickel','Copper','Oats','Coffee','Wheat','Lead','Zinc','Tin','Coca'];
-
-// add / remove portfolios to change the data set
-var PORTFOLIOS = ['Aggressive','Defensive','Income','Speculative','Hybrid'];
-
-// these are the list of columns that updates go to
-var VALUE_FIELDS = ['current','previous','pl1','pl2','gainDx','sxPx','_99Out'];
-
-// a list of the data, that we modify as we go
-var globalRowData;
-
-// start the book id's and trade id's at some future random number
-var nextBookId = 62472;
-var nextTradeId = 24287;
-var nextBatchId = 101;
+/**
+ * Generates a random number between min and max
+ */
+function randomBetween(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
 // build up the test data
 function createRowData() {
@@ -74,13 +72,6 @@ function createTradeRecord(product, portfolio, book, batch) {
     };
 }
 
-createRowData();
-
-postMessage({
-    type: 'setRowData',
-    records: globalRowData
-});
-
 function updateSomeItems(updateCount) {
     var itemsToUpdate = [];
     for (var k = 0; k<updateCount; k++) {
@@ -97,7 +88,6 @@ function updateSomeItems(updateCount) {
     return itemsToUpdate;
 }
 
-var latestUpdateId = 0;
 function startUpdates(thisUpdateId) {
     postMessage({
         type: 'start',
@@ -119,8 +109,19 @@ function startUpdates(thisUpdateId) {
     intervalId = setInterval(intervalFunc, MILLISECONDS_BETWEEN_MESSAGES);
 }
 
-self.addEventListener('message', function(e) {
-    // used to control start / stop of updates
+// Initialize Row Data
+createRowData();
+
+// Notify that row data is ready
+postMessage({
+    type: 'setRowData',
+    records: globalRowData
+});
+
+// Event Listener for incoming messages
+self.addEventListener('message', function (e) {
     latestUpdateId++;
-    if (e.data === 'start') startUpdates(latestUpdateId);
+    if (e.data === 'start') {
+        startUpdates(latestUpdateId);
+    }
 });

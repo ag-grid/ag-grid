@@ -4,7 +4,7 @@ import { Column, ColumnPinnedType } from "../../entities/column";
 import { RowStyle } from "../../entities/gridOptions";
 import { RowNode } from "../../entities/rowNode";
 import { RowPosition } from "../../entities/rowPositionUtils";
-import { CellFocusedEvent, RowEvent } from "../../events";
+import { AgEventListener, CellFocusedEvent, RowEvent } from "../../events";
 import { RowContainerType } from "../../gridBodyComp/rowContainer/rowContainerCtrl";
 import { IFrameworkOverrides } from "../../interfaces/iFrameworkOverrides";
 import { Beans } from "../beans";
@@ -30,6 +30,7 @@ export interface IRowComp {
     setRowId(rowId: string): void;
     setRowBusinessKey(businessKey: string): void;
     setUserStyles(styles: RowStyle | undefined): void;
+    refreshFullWidth(getUpdatedParams: () => ICellRendererParams): boolean;
 }
 export declare class RowCtrl extends BeanStub {
     static DOM_DATA_KEY_ROW_CTRL: string;
@@ -54,6 +55,7 @@ export declare class RowCtrl extends BeanStub {
     private rightCellCtrls;
     private slideInAnimation;
     private fadeInAnimation;
+    private rowDragComps;
     private readonly useAnimationFrameForCreate;
     private paginationPage;
     private lastMouseDownOnDragger;
@@ -61,6 +63,7 @@ export declare class RowCtrl extends BeanStub {
     private rowStyles;
     private readonly emptyStyle;
     private readonly printLayout;
+    private readonly suppressRowTransform;
     private updateColumnListsPending;
     private rowId;
     private tabIndex;
@@ -87,7 +90,7 @@ export declare class RowCtrl extends BeanStub {
     private addRowDraggerToRow;
     private setupFullWidth;
     isPrintLayout(): boolean;
-    getFullWidthCellRenderer(): ICellRenderer<any> | null | undefined;
+    getFullWidthCellRenderers(): (ICellRenderer<any> | null | undefined)[];
     getCellElement(column: Column): HTMLElement | null;
     executeProcessRowPostCreateFunc(): void;
     private areAllContainersReady;
@@ -103,18 +106,14 @@ export declare class RowCtrl extends BeanStub {
     private listenOnDomOrder;
     private setAnimateFlags;
     isEditing(): boolean;
-    stopRowEditing(cancel: boolean): void;
     isFullWidth(): boolean;
     getRowType(): RowType;
     refreshFullWidth(): boolean;
     private addListeners;
-    private onColumnMoved;
     private addListenersForCellComps;
     private onRowNodeDataChanged;
-    private onRowNodeCellChanged;
     private postProcessCss;
     private onRowNodeHighlightChanged;
-    private onRowNodeDraggingChanged;
     private postProcessRowDragging;
     private updateExpandedCss;
     private onDisplayedColumnsChanged;
@@ -131,13 +130,13 @@ export declare class RowCtrl extends BeanStub {
     private onRowDblClick;
     private onRowMouseDown;
     onRowClick(mouseEvent: MouseEvent): void;
+    isRowSelectionBlocked(): boolean;
     setupDetailRowAutoHeight(eDetailGui: HTMLElement): void;
     createFullWidthParams(eRow: HTMLElement, pinned: ColumnPinnedType): ICellRendererParams;
     private addFullWidthRowDragging;
     private onUiLevelChanged;
     private isFirstRowOnPage;
     private isLastRowOnPage;
-    private onModelUpdated;
     private refreshFirstAndLastRowStyles;
     stopEditing(cancel?: boolean): void;
     setInlineEditingCss(editing: boolean): void;
@@ -151,21 +150,18 @@ export declare class RowCtrl extends BeanStub {
     private getInitialRowClasses;
     processStylesFromGridOptions(): RowStyle | undefined;
     private onRowSelected;
-    private createAriaLabel;
+    announceDescription(): void;
     isUseAnimationFrameForCreate(): boolean;
     addHoverFunctionality(eRow: HTMLElement): void;
-    roundRowTopToBounds(rowTop: number): number;
+    private roundRowTopToBounds;
     protected getFrameworkOverrides(): IFrameworkOverrides;
     private forEachGui;
     private onRowHeightChanged;
-    addEventListener(eventType: string, listener: Function): void;
-    removeEventListener(eventType: string, listener: Function): void;
-    destroyFirstPass(): void;
-    private setupRemoveAnimation;
+    addEventListener(eventType: string, listener: AgEventListener): void;
+    removeEventListener(eventType: string, listener: AgEventListener): void;
+    destroyFirstPass(suppressAnimation?: boolean): void;
     destroySecondPass(): void;
     private setFocusedClasses;
-    private onCellFocused;
-    private onCellFocusCleared;
     private onCellFocusChanged;
     private onPaginationChanged;
     private onTopChanged;
@@ -181,9 +177,5 @@ export declare class RowCtrl extends BeanStub {
     private onRowIndexChanged;
     getRowIndex(): string;
     private updateRowIndexes;
-    getPinnedLeftRowElement(): HTMLElement;
-    getPinnedRightRowElement(): HTMLElement;
-    getBodyRowElement(): HTMLElement;
-    getFullWidthRowElement(): HTMLElement;
 }
 export {};

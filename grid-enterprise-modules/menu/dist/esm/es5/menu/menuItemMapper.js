@@ -36,7 +36,7 @@ var MenuItemMapper = /** @class */ (function (_super) {
     function MenuItemMapper() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    MenuItemMapper.prototype.mapWithStockItems = function (originalList, column) {
+    MenuItemMapper.prototype.mapWithStockItems = function (originalList, column, sourceElement) {
         var _this = this;
         if (!originalList) {
             return [];
@@ -45,7 +45,7 @@ var MenuItemMapper = /** @class */ (function (_super) {
         originalList.forEach(function (menuItemOrString) {
             var result;
             if (typeof menuItemOrString === 'string') {
-                result = _this.getStockMenuItem(menuItemOrString, column);
+                result = _this.getStockMenuItem(menuItemOrString, column, sourceElement);
             }
             else {
                 // Spread to prevent leaking mapped subMenus back into the original menuItem
@@ -58,7 +58,7 @@ var MenuItemMapper = /** @class */ (function (_super) {
             var resultDef = result;
             var subMenu = resultDef.subMenu;
             if (subMenu && subMenu instanceof Array) {
-                resultDef.subMenu = _this.mapWithStockItems(subMenu, column);
+                resultDef.subMenu = _this.mapWithStockItems(subMenu, column, sourceElement);
             }
             if (result != null) {
                 resultList.push(result);
@@ -66,11 +66,11 @@ var MenuItemMapper = /** @class */ (function (_super) {
         });
         return resultList;
     };
-    MenuItemMapper.prototype.getStockMenuItem = function (key, column) {
+    MenuItemMapper.prototype.getStockMenuItem = function (key, column, sourceElement) {
         var _this = this;
-        var _a, _b;
+        var _a;
         var localeTextFunc = this.localeService.getLocaleTextFunc();
-        var skipHeaderOnAutoSize = this.gridOptionsService.is('skipHeaderOnAutoSize');
+        var skipHeaderOnAutoSize = this.gridOptionsService.get('skipHeaderOnAutoSize');
         switch (key) {
             case 'pinSubMenu':
                 return {
@@ -81,19 +81,19 @@ var MenuItemMapper = /** @class */ (function (_super) {
             case 'pinLeft':
                 return {
                     name: localeTextFunc('pinLeft', 'Pin Left'),
-                    action: function () { return _this.columnModel.setColumnPinned(column, 'left', "contextMenu"); },
+                    action: function () { return _this.columnModel.setColumnsPinned([column], 'left', "contextMenu"); },
                     checked: !!column && column.isPinnedLeft()
                 };
             case 'pinRight':
                 return {
                     name: localeTextFunc('pinRight', 'Pin Right'),
-                    action: function () { return _this.columnModel.setColumnPinned(column, 'right', "contextMenu"); },
+                    action: function () { return _this.columnModel.setColumnsPinned([column], 'right', "contextMenu"); },
                     checked: !!column && column.isPinnedRight()
                 };
             case 'clearPinned':
                 return {
                     name: localeTextFunc('noPin', 'No Pin'),
-                    action: function () { return _this.columnModel.setColumnPinned(column, null, "contextMenu"); },
+                    action: function () { return _this.columnModel.setColumnsPinned([column], null, "contextMenu"); },
                     checked: !!column && !column.isPinned()
                 };
             case 'valueAggSubMenu':
@@ -113,48 +113,49 @@ var MenuItemMapper = /** @class */ (function (_super) {
             case 'autoSizeThis':
                 return {
                     name: localeTextFunc('autosizeThiscolumn', 'Autosize This Column'),
-                    action: function () { return _this.columnModel.autoSizeColumn(column, skipHeaderOnAutoSize, "contextMenu"); }
+                    action: function () { return _this.columnModel.autoSizeColumn(column, "contextMenu", skipHeaderOnAutoSize); }
                 };
             case 'autoSizeAll':
                 return {
                     name: localeTextFunc('autosizeAllColumns', 'Autosize All Columns'),
-                    action: function () { return _this.columnModel.autoSizeAllColumns(skipHeaderOnAutoSize, "contextMenu"); }
+                    action: function () { return _this.columnModel.autoSizeAllColumns("contextMenu", skipHeaderOnAutoSize); }
                 };
             case 'rowGroup':
                 return {
                     name: localeTextFunc('groupBy', 'Group by') + ' ' + _.escapeString(this.columnModel.getDisplayNameForColumn(column, 'header')),
                     disabled: (column === null || column === void 0 ? void 0 : column.isRowGroupActive()) || !(column === null || column === void 0 ? void 0 : column.getColDef().enableRowGroup),
-                    action: function () { return _this.columnModel.addRowGroupColumn(column, "contextMenu"); },
+                    action: function () { return _this.columnModel.addRowGroupColumns([column], "contextMenu"); },
                     icon: _.createIconNoSpan('menuAddRowGroup', this.gridOptionsService, null)
                 };
             case 'rowUnGroup':
                 var icon = _.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsService, null);
                 var showRowGroup_1 = column === null || column === void 0 ? void 0 : column.getColDef().showRowGroup;
+                var lockedGroups_1 = this.gridOptionsService.get('groupLockGroupColumns');
                 // Handle single auto group column
                 if (showRowGroup_1 === true) {
                     return {
                         name: localeTextFunc('ungroupAll', 'Un-Group All'),
-                        disabled: !(column === null || column === void 0 ? void 0 : column.getColDef().showRowGroup),
-                        action: function () { return _this.columnModel.setRowGroupColumns([], "contextMenu"); },
+                        disabled: lockedGroups_1 === -1 || lockedGroups_1 >= this.columnModel.getRowGroupColumns().length,
+                        action: function () { return _this.columnModel.setRowGroupColumns(_this.columnModel.getRowGroupColumns().slice(0, lockedGroups_1), "contextMenu"); },
                         icon: icon
                     };
                 }
                 // Handle multiple auto group columns
                 if (typeof showRowGroup_1 === 'string') {
-                    var underlyingColumn = (_a = this.columnModel.getSourceColumnsForGroupColumn(column)) === null || _a === void 0 ? void 0 : _a[0];
+                    var underlyingColumn = this.columnModel.getPrimaryColumn(showRowGroup_1);
                     var ungroupByName = (underlyingColumn != null) ? _.escapeString(this.columnModel.getDisplayNameForColumn(underlyingColumn, 'header')) : showRowGroup_1;
                     return {
                         name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + ungroupByName,
-                        disabled: !(column === null || column === void 0 ? void 0 : column.getColDef().showRowGroup),
-                        action: function () { return _this.columnModel.removeRowGroupColumn(showRowGroup_1, "contextMenu"); },
+                        disabled: underlyingColumn != null && this.columnModel.isColumnGroupingLocked(underlyingColumn),
+                        action: function () { return _this.columnModel.removeRowGroupColumns([showRowGroup_1], "contextMenu"); },
                         icon: icon
                     };
                 }
                 // Handle primary column
                 return {
                     name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + _.escapeString(this.columnModel.getDisplayNameForColumn(column, 'header')),
-                    disabled: !(column === null || column === void 0 ? void 0 : column.isRowGroupActive()) || !(column === null || column === void 0 ? void 0 : column.getColDef().enableRowGroup),
-                    action: function () { return _this.columnModel.removeRowGroupColumn(column, "contextMenu"); },
+                    disabled: !(column === null || column === void 0 ? void 0 : column.isRowGroupActive()) || !(column === null || column === void 0 ? void 0 : column.getColDef().enableRowGroup) || this.columnModel.isColumnGroupingLocked(column),
+                    action: function () { return _this.columnModel.removeRowGroupColumns([column], "contextMenu"); },
                     icon: icon
                 };
             case 'resetColumns':
@@ -217,7 +218,7 @@ var MenuItemMapper = /** @class */ (function (_super) {
                         name: localeTextFunc('cut', 'Cut'),
                         shortcut: localeTextFunc('ctrlX', 'Ctrl+X'),
                         icon: _.createIconNoSpan('clipboardCut', this.gridOptionsService, null),
-                        disabled: !isEditable || this.gridOptionsService.is('suppressCutToClipboard'),
+                        disabled: !isEditable || this.gridOptionsService.get('suppressCutToClipboard'),
                         action: function () { return _this.clipboardService.cutToClipboard(undefined, 'contextMenu'); }
                     };
                 }
@@ -241,10 +242,10 @@ var MenuItemMapper = /** @class */ (function (_super) {
                 var exportSubMenuItems = [];
                 var csvModuleLoaded = ModuleRegistry.__isRegistered(ModuleNames.CsvExportModule, this.context.getGridId());
                 var excelModuleLoaded = ModuleRegistry.__isRegistered(ModuleNames.ExcelExportModule, this.context.getGridId());
-                if (!this.gridOptionsService.is('suppressCsvExport') && csvModuleLoaded) {
+                if (!this.gridOptionsService.get('suppressCsvExport') && csvModuleLoaded) {
                     exportSubMenuItems.push('csvExport');
                 }
-                if (!this.gridOptionsService.is('suppressExcelExport') && excelModuleLoaded) {
+                if (!this.gridOptionsService.get('suppressExcelExport') && excelModuleLoaded) {
                     exportSubMenuItems.push('excelExport');
                 }
                 return {
@@ -268,9 +269,52 @@ var MenuItemMapper = /** @class */ (function (_super) {
                 return 'separator';
             case 'pivotChart':
             case 'chartRange':
-                return (_b = this.chartMenuItemMapper.getChartItems(key)) !== null && _b !== void 0 ? _b : null;
+                return (_a = this.chartMenuItemMapper.getChartItems(key)) !== null && _a !== void 0 ? _a : null;
+            case 'columnFilter':
+                if (column) {
+                    return {
+                        name: localeTextFunc('columnFilter', 'Column Filter'),
+                        icon: _.createIconNoSpan('filter', this.gridOptionsService, null),
+                        action: function () { return _this.menuService.showFilterMenu({
+                            column: column,
+                            buttonElement: sourceElement(), containerType: 'columnFilter', positionBy: 'button'
+                        }); }
+                    };
+                }
+                else {
+                    return null;
+                }
+            case 'columnChooser':
+                if (ModuleRegistry.__isRegistered(ModuleNames.ColumnsToolPanelModule, this.context.getGridId())) {
+                    return {
+                        name: localeTextFunc('columnChooser', 'Choose Columns'),
+                        icon: _.createIconNoSpan('columns', this.gridOptionsService, null),
+                        action: function () { return _this.menuService.showColumnChooser({ column: column, eventSource: sourceElement() }); }
+                    };
+                }
+                else {
+                    return null;
+                }
+            case 'sortAscending':
+                return {
+                    name: localeTextFunc('sortAscending', 'Sort Ascending'),
+                    icon: _.createIconNoSpan('sortAscending', this.gridOptionsService, null),
+                    action: function () { return _this.sortController.setSortForColumn(column, 'asc', false, 'columnMenu'); }
+                };
+            case 'sortDescending':
+                return {
+                    name: localeTextFunc('sortDescending', 'Sort Descending'),
+                    icon: _.createIconNoSpan('sortDescending', this.gridOptionsService, null),
+                    action: function () { return _this.sortController.setSortForColumn(column, 'desc', false, 'columnMenu'); }
+                };
+            case 'sortUnSort':
+                return {
+                    name: localeTextFunc('sortUnSort', 'Clear Sort'),
+                    icon: _.createIconNoSpan('sortUnSort', this.gridOptionsService, null),
+                    action: function () { return _this.sortController.setSortForColumn(column, null, false, 'columnMenu'); }
+                };
             default: {
-                console.warn("AG Grid: unknown menu item type " + key);
+                console.warn("AG Grid: unknown menu item type ".concat(key));
                 return null;
             }
         }
@@ -293,17 +337,17 @@ var MenuItemMapper = /** @class */ (function (_super) {
             result.push({
                 name: localeTextFunc('noAggregation', 'None'),
                 action: function () {
-                    _this.columnModel.removeValueColumn(columnToUse, "contextMenu");
+                    _this.columnModel.removeValueColumns([columnToUse], "contextMenu");
                     _this.columnModel.setColumnAggFunc(columnToUse, undefined, "contextMenu");
                 },
                 checked: !columnIsAlreadyAggValue_1
             });
             funcNames.forEach(function (funcName) {
                 result.push({
-                    name: localeTextFunc(funcName, _.capitalise(funcName)),
+                    name: localeTextFunc(funcName, _this.aggFuncService.getDefaultFuncLabel(funcName)),
                     action: function () {
                         _this.columnModel.setColumnAggFunc(columnToUse, funcName, "contextMenu");
-                        _this.columnModel.addValueColumn(columnToUse, "contextMenu");
+                        _this.columnModel.addValueColumns([columnToUse], "contextMenu");
                     },
                     checked: columnIsAlreadyAggValue_1 && columnToUse.getAggFunc() === funcName
                 });
@@ -332,6 +376,12 @@ var MenuItemMapper = /** @class */ (function (_super) {
     __decorate([
         Autowired('chartMenuItemMapper')
     ], MenuItemMapper.prototype, "chartMenuItemMapper", void 0);
+    __decorate([
+        Autowired('menuService')
+    ], MenuItemMapper.prototype, "menuService", void 0);
+    __decorate([
+        Autowired('sortController')
+    ], MenuItemMapper.prototype, "sortController", void 0);
     MenuItemMapper = __decorate([
         Bean('menuItemMapper')
     ], MenuItemMapper);

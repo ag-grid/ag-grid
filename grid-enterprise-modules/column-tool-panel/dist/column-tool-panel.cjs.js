@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/column-tool-panel - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.1.0
+          * @ag-grid-enterprise/column-tool-panel - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.1.0
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -27,7 +27,7 @@ var __extends$8 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$9 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$8 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -55,7 +55,10 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
             }
         });
         this.addManagedListener(this.eSelect.getInputElement(), 'click', this.onSelectClicked.bind(this));
-        this.eFilterTextField.onValueChange(function () { return _this.onFilterTextChanged(); });
+        this.addManagedPropertyListener('functionsReadOnly', function () { return _this.onFunctionsReadOnlyPropChanged(); });
+        this.eFilterTextField
+            .setAutoComplete(false)
+            .onValueChange(function () { return _this.onFilterTextChanged(); });
         this.addManagedListener(this.eFilterTextField.getInputElement(), 'keydown', this.onMiniFilterKeyDown.bind(this));
         this.addManagedListener(this.eventService, core.Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
         var translate = this.localeService.getLocaleTextFunc();
@@ -63,8 +66,16 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
         this.eFilterTextField.setInputAriaLabel(translate('ariaFilterColumnsInput', 'Filter Columns Input'));
         this.activateTabIndex([this.eExpand]);
     };
+    PrimaryColsHeaderPanel.prototype.onFunctionsReadOnlyPropChanged = function () {
+        var readOnly = this.gridOptionsService.get('functionsReadOnly');
+        this.eSelect.setReadOnly(readOnly);
+        this.eSelect.addOrRemoveCssClass('ag-column-select-column-readonly', readOnly);
+    };
     PrimaryColsHeaderPanel.prototype.init = function (params) {
         this.params = params;
+        var readOnly = this.gridOptionsService.get('functionsReadOnly');
+        this.eSelect.setReadOnly(readOnly);
+        this.eSelect.addOrRemoveCssClass('ag-column-select-column-readonly', readOnly);
         if (this.columnModel.isReady()) {
             this.showOrHideOptions();
         }
@@ -123,19 +134,19 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
     };
     PrimaryColsHeaderPanel.DEBOUNCE_DELAY = 300;
     PrimaryColsHeaderPanel.TEMPLATE = "<div class=\"ag-column-select-header\" role=\"presentation\">\n            <div ref=\"eExpand\" class=\"ag-column-select-header-icon\"></div>\n            <ag-checkbox ref=\"eSelect\" class=\"ag-column-select-header-checkbox\"></ag-checkbox>\n            <ag-input-text-field class=\"ag-column-select-header-filter-wrapper\" ref=\"eFilterTextField\"></ag-input-text-field>\n        </div>";
-    __decorate$9([
+    __decorate$8([
         core.Autowired('columnModel')
     ], PrimaryColsHeaderPanel.prototype, "columnModel", void 0);
-    __decorate$9([
+    __decorate$8([
         core.RefSelector('eExpand')
     ], PrimaryColsHeaderPanel.prototype, "eExpand", void 0);
-    __decorate$9([
+    __decorate$8([
         core.RefSelector('eSelect')
     ], PrimaryColsHeaderPanel.prototype, "eSelect", void 0);
-    __decorate$9([
+    __decorate$8([
         core.RefSelector('eFilterTextField')
     ], PrimaryColsHeaderPanel.prototype, "eFilterTextField", void 0);
-    __decorate$9([
+    __decorate$8([
         core.PostConstruct
     ], PrimaryColsHeaderPanel.prototype, "postConstruct", null);
     return PrimaryColsHeaderPanel;
@@ -200,7 +211,7 @@ var __extends$7 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$8 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$7 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -222,10 +233,14 @@ var __read = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (undefined && undefined.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (undefined && undefined.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 var __values = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
@@ -259,7 +274,11 @@ var ToolPanelContextMenu = /** @class */ (function (_super) {
         }
         if (this.isActive()) {
             this.mouseEvent.preventDefault();
-            this.displayContextMenu();
+            var menuItemsMapped = this.getMappedMenuItems();
+            if (menuItemsMapped.length === 0) {
+                return;
+            }
+            this.displayContextMenu(menuItemsMapped);
         }
     };
     ToolPanelContextMenu.prototype.initializeProperties = function (column) {
@@ -278,10 +297,10 @@ var ToolPanelContextMenu = /** @class */ (function (_super) {
         var localeTextFunc = this.localeService.getLocaleTextFunc();
         this.menuItemMap = new Map();
         this.menuItemMap.set('rowGroup', {
-            allowedFunction: function (col) { return col.isPrimary() && col.isAllowRowGroup(); },
+            allowedFunction: function (col) { return col.isPrimary() && col.isAllowRowGroup() && !_this.columnModel.isColumnGroupingLocked(col); },
             activeFunction: function (col) { return col.isRowGroupActive(); },
-            activateLabel: function () { return localeTextFunc('groupBy', 'Group by') + " " + _this.displayName; },
-            deactivateLabel: function () { return localeTextFunc('ungroupBy', 'Un-Group by') + " " + _this.displayName; },
+            activateLabel: function () { return "".concat(localeTextFunc('groupBy', 'Group by'), " ").concat(_this.displayName); },
+            deactivateLabel: function () { return "".concat(localeTextFunc('ungroupBy', 'Un-Group by'), " ").concat(_this.displayName); },
             activateFunction: function () {
                 var groupedColumns = _this.columnModel.getRowGroupColumns();
                 _this.columnModel.setRowGroupColumns(_this.addColumnsToList(groupedColumns), "toolPanelUi");
@@ -296,8 +315,8 @@ var ToolPanelContextMenu = /** @class */ (function (_super) {
         this.menuItemMap.set('value', {
             allowedFunction: function (col) { return col.isPrimary() && col.isAllowValue(); },
             activeFunction: function (col) { return col.isValueActive(); },
-            activateLabel: function () { return localeTextFunc('addToValues', "Add " + _this.displayName + " to values", [_this.displayName]); },
-            deactivateLabel: function () { return localeTextFunc('removeFromValues', "Remove " + _this.displayName + " from values", [_this.displayName]); },
+            activateLabel: function () { return localeTextFunc('addToValues', "Add ".concat(_this.displayName, " to values"), [_this.displayName]); },
+            deactivateLabel: function () { return localeTextFunc('removeFromValues', "Remove ".concat(_this.displayName, " from values"), [_this.displayName]); },
             activateFunction: function () {
                 var valueColumns = _this.columnModel.getValueColumns();
                 _this.columnModel.setValueColumns(_this.addColumnsToList(valueColumns), "toolPanelUi");
@@ -312,8 +331,8 @@ var ToolPanelContextMenu = /** @class */ (function (_super) {
         this.menuItemMap.set('pivot', {
             allowedFunction: function (col) { return _this.columnModel.isPivotMode() && col.isPrimary() && col.isAllowPivot(); },
             activeFunction: function (col) { return col.isPivotActive(); },
-            activateLabel: function () { return localeTextFunc('addToLabels', "Add " + _this.displayName + " to labels", [_this.displayName]); },
-            deactivateLabel: function () { return localeTextFunc('removeFromLabels', "Remove " + _this.displayName + " from labels", [_this.displayName]); },
+            activateLabel: function () { return localeTextFunc('addToLabels', "Add ".concat(_this.displayName, " to labels"), [_this.displayName]); },
+            deactivateLabel: function () { return localeTextFunc('removeFromLabels', "Remove ".concat(_this.displayName, " from labels"), [_this.displayName]); },
             activateFunction: function () {
                 var pivotColumns = _this.columnModel.getPivotColumns();
                 _this.columnModel.setPivotColumns(_this.addColumnsToList(pivotColumns), "toolPanelUi");
@@ -327,22 +346,21 @@ var ToolPanelContextMenu = /** @class */ (function (_super) {
         });
     };
     ToolPanelContextMenu.prototype.addColumnsToList = function (columnList) {
-        return __spreadArray([], __read(columnList)).concat(this.columns.filter(function (col) { return columnList.indexOf(col) === -1; }));
+        return __spreadArray([], __read(columnList), false).concat(this.columns.filter(function (col) { return columnList.indexOf(col) === -1; }));
     };
     ToolPanelContextMenu.prototype.removeColumnsFromList = function (columnList) {
         var _this = this;
         return columnList.filter(function (col) { return _this.columns.indexOf(col) === -1; });
     };
-    ToolPanelContextMenu.prototype.displayContextMenu = function () {
+    ToolPanelContextMenu.prototype.displayContextMenu = function (menuItemsMapped) {
         var _this = this;
         var eGui = this.getGui();
         var menuList = this.createBean(new core.AgMenuList());
-        var menuItemsMapped = this.getMappedMenuItems();
         var localeTextFunc = this.localeService.getLocaleTextFunc();
         var hideFunc = function () { };
         eGui.appendChild(menuList.getGui());
         menuList.addMenuItems(menuItemsMapped);
-        menuList.addManagedListener(menuList, core.AgMenuItemComponent.EVENT_MENU_ITEM_SELECTED, function () {
+        menuList.addManagedListener(menuList, core.AgMenuItemComponent.EVENT_CLOSE_MENU, function () {
             _this.parentEl.focus();
             hideFunc();
         });
@@ -408,16 +426,16 @@ var ToolPanelContextMenu = /** @class */ (function (_super) {
         }
         return ret;
     };
-    __decorate$8([
+    __decorate$7([
         core.Autowired('columnModel')
     ], ToolPanelContextMenu.prototype, "columnModel", void 0);
-    __decorate$8([
+    __decorate$7([
         core.Autowired('popupService')
     ], ToolPanelContextMenu.prototype, "popupService", void 0);
-    __decorate$8([
+    __decorate$7([
         core.Autowired('focusService')
     ], ToolPanelContextMenu.prototype, "focusService", void 0);
-    __decorate$8([
+    __decorate$7([
         core.PostConstruct
     ], ToolPanelContextMenu.prototype, "postConstruct", null);
     return ToolPanelContextMenu;
@@ -438,7 +456,7 @@ var __extends$6 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$7 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$6 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -469,9 +487,6 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
         var checkboxInput = this.cbSelect.getInputElement();
         checkboxGui.insertAdjacentElement('afterend', this.eDragHandle);
         checkboxInput.setAttribute('tabindex', '-1');
-        if (core._.missing(this.displayName)) {
-            this.displayName = '>>';
-        }
         this.eLabel.innerHTML = this.displayName ? this.displayName : '';
         this.setupExpandContract();
         this.addCssClass('ag-column-select-indent-' + this.columnDept);
@@ -533,7 +548,7 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
     ToolPanelColumnGroupComp.prototype.onContextMenu = function (e) {
         var _this = this;
         var _a = this, columnGroup = _a.columnGroup, gridOptionsService = _a.gridOptionsService;
-        if (gridOptionsService.is('functionsReadOnly')) {
+        if (gridOptionsService.get('functionsReadOnly')) {
             return;
         }
         var contextMenu = this.createBean(new ToolPanelContextMenu(columnGroup, e, this.focusWrapper));
@@ -558,14 +573,15 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
             core._.setDisplayed(this.eDragHandle, false);
             return;
         }
-        var hideColumnOnExit = !this.gridOptionsService.is('suppressDragLeaveHidesColumns');
+        var hideColumnOnExit = !this.gridOptionsService.get('suppressDragLeaveHidesColumns');
         var dragSource = {
             type: core.DragSourceType.ToolPanel,
             eElement: this.eDragHandle,
             dragItemName: this.displayName,
-            defaultIconName: hideColumnOnExit ? core.DragAndDropService.ICON_HIDE : core.DragAndDropService.ICON_NOT_ALLOWED,
+            getDefaultIconName: function () { return hideColumnOnExit ? core.DragAndDropService.ICON_HIDE : core.DragAndDropService.ICON_NOT_ALLOWED; },
             getDragItem: function () { return _this.createDragItem(); },
             onDragStarted: function () {
+                hideColumnOnExit = !_this.gridOptionsService.get('suppressDragLeaveHidesColumns');
                 var event = {
                     type: core.Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START,
                     column: _this.columnGroup
@@ -665,8 +681,8 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
             translate('ariaIndeterminate', 'indeterminate') :
             (checkboxValue ? translate('ariaVisible', 'visible') : translate('ariaHidden', 'hidden'));
         var visibilityLabel = translate('ariaToggleVisibility', 'Press SPACE to toggle visibility');
-        core._.setAriaLabel(this.focusWrapper, this.displayName + " " + columnLabel);
-        this.cbSelect.setInputAriaLabel(visibilityLabel + " (" + state + ")");
+        core._.setAriaLabel(this.focusWrapper, "".concat(this.displayName, " ").concat(columnLabel));
+        this.cbSelect.setInputAriaLabel("".concat(visibilityLabel, " (").concat(state, ")"));
         core._.setAriaDescribedBy(this.focusWrapper, this.cbSelect.getInputElement().id);
     };
     ToolPanelColumnGroupComp.prototype.onColumnStateChanged = function () {
@@ -762,31 +778,31 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
         this.cbSelect.setValue(selected, true);
     };
     ToolPanelColumnGroupComp.TEMPLATE = "<div class=\"ag-column-select-column-group\" aria-hidden=\"true\">\n            <span class=\"ag-column-group-icons\" ref=\"eColumnGroupIcons\" >\n                <span class=\"ag-column-group-closed-icon\" ref=\"eGroupClosedIcon\"></span>\n                <span class=\"ag-column-group-opened-icon\" ref=\"eGroupOpenedIcon\"></span>\n            </span>\n            <ag-checkbox ref=\"cbSelect\" class=\"ag-column-select-checkbox\"></ag-checkbox>\n            <span class=\"ag-column-select-column-label\" ref=\"eLabel\"></span>\n        </div>";
-    __decorate$7([
+    __decorate$6([
         core.Autowired('columnModel')
     ], ToolPanelColumnGroupComp.prototype, "columnModel", void 0);
-    __decorate$7([
+    __decorate$6([
         core.Autowired('dragAndDropService')
     ], ToolPanelColumnGroupComp.prototype, "dragAndDropService", void 0);
-    __decorate$7([
+    __decorate$6([
         core.Autowired('modelItemUtils')
     ], ToolPanelColumnGroupComp.prototype, "modelItemUtils", void 0);
-    __decorate$7([
+    __decorate$6([
         core.RefSelector('cbSelect')
     ], ToolPanelColumnGroupComp.prototype, "cbSelect", void 0);
-    __decorate$7([
+    __decorate$6([
         core.RefSelector('eLabel')
     ], ToolPanelColumnGroupComp.prototype, "eLabel", void 0);
-    __decorate$7([
+    __decorate$6([
         core.RefSelector('eGroupOpenedIcon')
     ], ToolPanelColumnGroupComp.prototype, "eGroupOpenedIcon", void 0);
-    __decorate$7([
+    __decorate$6([
         core.RefSelector('eGroupClosedIcon')
     ], ToolPanelColumnGroupComp.prototype, "eGroupClosedIcon", void 0);
-    __decorate$7([
+    __decorate$6([
         core.RefSelector('eColumnGroupIcons')
     ], ToolPanelColumnGroupComp.prototype, "eColumnGroupIcons", void 0);
-    __decorate$7([
+    __decorate$6([
         core.PostConstruct
     ], ToolPanelColumnGroupComp.prototype, "init", null);
     return ToolPanelColumnGroupComp;
@@ -807,119 +823,58 @@ var __extends$5 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$6 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$5 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var PRIMARY_COLS_LIST_ITEM_HOVERED = 'ag-list-item-hovered';
 var PrimaryColsListPanelItemDragFeature = /** @class */ (function (_super) {
     __extends$5(PrimaryColsListPanelItemDragFeature, _super);
     function PrimaryColsListPanelItemDragFeature(comp, virtualList) {
         var _this = _super.call(this) || this;
         _this.comp = comp;
         _this.virtualList = virtualList;
-        _this.currentDragColumn = null;
-        _this.lastHoveredColumnItem = null;
         return _this;
     }
     PrimaryColsListPanelItemDragFeature.prototype.postConstruct = function () {
-        this.addManagedListener(this.eventService, core.Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START, this.columnPanelItemDragStart.bind(this));
-        this.addManagedListener(this.eventService, core.Events.EVENT_COLUMN_PANEL_ITEM_DRAG_END, this.columnPanelItemDragEnd.bind(this));
-        this.createDropTarget();
-        this.createAutoScrollService();
+        var _this = this;
+        this.createManagedBean(new core.VirtualListDragFeature(this.comp, this.virtualList, {
+            dragSourceType: core.DragSourceType.ToolPanel,
+            listItemDragStartEvent: core.Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START,
+            listItemDragEndEvent: core.Events.EVENT_COLUMN_PANEL_ITEM_DRAG_END,
+            eventSource: this.eventService,
+            getCurrentDragValue: function (listItemDragStartEvent) { return _this.getCurrentDragValue(listItemDragStartEvent); },
+            isMoveBlocked: function (currentDragValue) { return _this.isMoveBlocked(currentDragValue); },
+            getNumRows: function (comp) { return comp.getDisplayedColsList().length; },
+            moveItem: function (currentDragValue, lastHoveredListItem) { return _this.moveItem(currentDragValue, lastHoveredListItem); }
+        }));
     };
-    PrimaryColsListPanelItemDragFeature.prototype.columnPanelItemDragStart = function (_a) {
-        var column = _a.column;
-        this.currentDragColumn = column;
-        var currentColumns = this.getCurrentColumns();
+    PrimaryColsListPanelItemDragFeature.prototype.getCurrentDragValue = function (listItemDragStartEvent) {
+        return listItemDragStartEvent.column;
+    };
+    PrimaryColsListPanelItemDragFeature.prototype.isMoveBlocked = function (currentDragValue) {
+        var preventMoving = this.gridOptionsService.get('suppressMovableColumns');
+        if (preventMoving) {
+            return true;
+        }
+        var currentColumns = this.getCurrentColumns(currentDragValue);
         var hasNotMovable = currentColumns.find(function (col) {
             var colDef = col.getColDef();
             return !!colDef.suppressMovable || !!colDef.lockPosition;
         });
-        if (hasNotMovable) {
-            this.moveBlocked = true;
-        }
+        return !!hasNotMovable;
     };
-    PrimaryColsListPanelItemDragFeature.prototype.columnPanelItemDragEnd = function () {
-        var _this = this;
-        window.setTimeout(function () {
-            _this.currentDragColumn = null;
-            _this.moveBlocked = false;
-        }, 10);
-    };
-    PrimaryColsListPanelItemDragFeature.prototype.createDropTarget = function () {
-        var _this = this;
-        var dropTarget = {
-            isInterestedIn: function (type) { return type === core.DragSourceType.ToolPanel; },
-            getIconName: function () { return core.DragAndDropService[_this.moveBlocked ? 'ICON_NOT_ALLOWED' : 'ICON_MOVE']; },
-            getContainer: function () { return _this.comp.getGui(); },
-            onDragging: function (e) { return _this.onDragging(e); },
-            onDragStop: function () { return _this.onDragStop(); },
-            onDragLeave: function () { return _this.onDragLeave(); }
-        };
-        this.dragAndDropService.addDropTarget(dropTarget);
-    };
-    PrimaryColsListPanelItemDragFeature.prototype.createAutoScrollService = function () {
-        var virtualListGui = this.virtualList.getGui();
-        this.autoScrollService = new core.AutoScrollService({
-            scrollContainer: virtualListGui,
-            scrollAxis: 'y',
-            getVerticalPosition: function () { return virtualListGui.scrollTop; },
-            setVerticalPosition: function (position) { return virtualListGui.scrollTop = position; }
-        });
-    };
-    PrimaryColsListPanelItemDragFeature.prototype.onDragging = function (e) {
-        if (!this.currentDragColumn || this.moveBlocked) {
-            return;
-        }
-        var hoveredColumnItem = this.getDragColumnItem(e);
-        var comp = this.virtualList.getComponentAt(hoveredColumnItem.rowIndex);
-        if (!comp) {
-            return;
-        }
-        var el = comp.getGui().parentElement;
-        if (this.lastHoveredColumnItem &&
-            this.lastHoveredColumnItem.rowIndex === hoveredColumnItem.rowIndex &&
-            this.lastHoveredColumnItem.position === hoveredColumnItem.position) {
-            return;
-        }
-        this.autoScrollService.check(e.event);
-        this.clearHoveredItems();
-        this.lastHoveredColumnItem = hoveredColumnItem;
-        core._.radioCssClass(el, "" + PRIMARY_COLS_LIST_ITEM_HOVERED);
-        core._.radioCssClass(el, "ag-item-highlight-" + hoveredColumnItem.position);
-    };
-    PrimaryColsListPanelItemDragFeature.prototype.getDragColumnItem = function (e) {
-        var virtualListGui = this.virtualList.getGui();
-        var paddingTop = parseFloat(window.getComputedStyle(virtualListGui).paddingTop);
-        var rowHeight = this.virtualList.getRowHeight();
-        var scrollTop = this.virtualList.getScrollTop();
-        var rowIndex = Math.max(0, (e.y - paddingTop + scrollTop) / rowHeight);
-        var maxLen = this.comp.getDisplayedColsList().length - 1;
-        var normalizedRowIndex = Math.min(maxLen, rowIndex) | 0;
-        return {
-            rowIndex: normalizedRowIndex,
-            position: (Math.round(rowIndex) > rowIndex || rowIndex > maxLen) ? 'bottom' : 'top',
-            component: this.virtualList.getComponentAt(normalizedRowIndex)
-        };
-    };
-    PrimaryColsListPanelItemDragFeature.prototype.onDragStop = function () {
-        if (this.moveBlocked) {
-            return;
-        }
-        var targetIndex = this.getTargetIndex();
-        var columnsToMove = this.getCurrentColumns();
+    PrimaryColsListPanelItemDragFeature.prototype.moveItem = function (currentDragValue, lastHoveredListItem) {
+        var targetIndex = this.getTargetIndex(currentDragValue, lastHoveredListItem);
+        var columnsToMove = this.getCurrentColumns(currentDragValue);
         if (targetIndex != null) {
             this.columnModel.moveColumns(columnsToMove, targetIndex, 'toolPanelUi');
         }
-        this.clearHoveredItems();
-        this.autoScrollService.ensureCleared();
     };
-    PrimaryColsListPanelItemDragFeature.prototype.getMoveDiff = function (end) {
+    PrimaryColsListPanelItemDragFeature.prototype.getMoveDiff = function (currentDragValue, end) {
         var allColumns = this.columnModel.getAllGridColumns();
-        var currentColumns = this.getCurrentColumns();
+        var currentColumns = this.getCurrentColumns(currentDragValue);
         var currentColumn = currentColumns[0];
         var span = currentColumns.length;
         var currentIndex = allColumns.indexOf(currentColumn);
@@ -928,18 +883,18 @@ var PrimaryColsListPanelItemDragFeature = /** @class */ (function (_super) {
         }
         return 0;
     };
-    PrimaryColsListPanelItemDragFeature.prototype.getCurrentColumns = function () {
-        if (this.currentDragColumn instanceof core.ProvidedColumnGroup) {
-            return this.currentDragColumn.getLeafColumns();
+    PrimaryColsListPanelItemDragFeature.prototype.getCurrentColumns = function (currentDragValue) {
+        if (currentDragValue instanceof core.ProvidedColumnGroup) {
+            return currentDragValue.getLeafColumns();
         }
-        return [this.currentDragColumn];
+        return [currentDragValue];
     };
-    PrimaryColsListPanelItemDragFeature.prototype.getTargetIndex = function () {
-        if (!this.lastHoveredColumnItem) {
+    PrimaryColsListPanelItemDragFeature.prototype.getTargetIndex = function (currentDragValue, lastHoveredListItem) {
+        if (!lastHoveredListItem) {
             return null;
         }
-        var columnItemComponent = this.lastHoveredColumnItem.component;
-        var isBefore = this.lastHoveredColumnItem.position === 'top';
+        var columnItemComponent = lastHoveredListItem.component;
+        var isBefore = lastHoveredListItem.position === 'top';
         var targetColumn;
         if (columnItemComponent instanceof ToolPanelColumnGroupComp) {
             var columns = columnItemComponent.getColumns();
@@ -949,35 +904,23 @@ var PrimaryColsListPanelItemDragFeature = /** @class */ (function (_super) {
         else {
             targetColumn = columnItemComponent.getColumn();
         }
+        // if the target col is in the cols to be moved, no index to move.
+        var movingCols = this.getCurrentColumns(currentDragValue);
+        if (movingCols.indexOf(targetColumn) !== -1) {
+            return null;
+        }
         var targetColumnIndex = this.columnModel.getAllGridColumns().indexOf(targetColumn);
         var adjustedTarget = isBefore ? targetColumnIndex : targetColumnIndex + 1;
-        var diff = this.getMoveDiff(adjustedTarget);
+        var diff = this.getMoveDiff(currentDragValue, adjustedTarget);
         return adjustedTarget - diff;
     };
-    PrimaryColsListPanelItemDragFeature.prototype.onDragLeave = function () {
-        this.clearHoveredItems();
-        this.autoScrollService.ensureCleared();
-    };
-    PrimaryColsListPanelItemDragFeature.prototype.clearHoveredItems = function () {
-        var virtualListGui = this.virtualList.getGui();
-        virtualListGui.querySelectorAll("." + PRIMARY_COLS_LIST_ITEM_HOVERED).forEach(function (el) {
-            [
-                PRIMARY_COLS_LIST_ITEM_HOVERED,
-                'ag-item-highlight-top',
-                'ag-item-highlight-bottom'
-            ].forEach(function (cls) {
-                el.classList.remove(cls);
-            });
-        });
-        this.lastHoveredColumnItem = null;
-    };
-    __decorate$6([
+    __decorate$5([
         core.Autowired('columnModel')
     ], PrimaryColsListPanelItemDragFeature.prototype, "columnModel", void 0);
-    __decorate$6([
-        core.Autowired('dragAndDropService')
-    ], PrimaryColsListPanelItemDragFeature.prototype, "dragAndDropService", void 0);
-    __decorate$6([
+    __decorate$5([
+        core.Autowired('gridOptionsService')
+    ], PrimaryColsListPanelItemDragFeature.prototype, "gridOptionsService", void 0);
+    __decorate$5([
         core.PostConstruct
     ], PrimaryColsListPanelItemDragFeature.prototype, "postConstruct", null);
     return PrimaryColsListPanelItemDragFeature;
@@ -998,7 +941,7 @@ var __extends$4 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$5 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$4 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -1033,7 +976,7 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         if (this.groupsExist) {
             this.addCssClass('ag-column-select-add-group-indent');
         }
-        this.addCssClass("ag-column-select-indent-" + indent);
+        this.addCssClass("ag-column-select-indent-".concat(indent));
         this.setupDragging();
         this.addManagedListener(this.eventService, core.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this));
         this.addManagedListener(this.column, core.Column.EVENT_VALUE_CHANGED, this.onColumnStateChanged.bind(this));
@@ -1072,7 +1015,7 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
     ToolPanelColumnComp.prototype.onContextMenu = function (e) {
         var _this = this;
         var _a = this, column = _a.column, gridOptionsService = _a.gridOptionsService;
-        if (gridOptionsService.is('functionsReadOnly')) {
+        if (gridOptionsService.get('functionsReadOnly')) {
             return;
         }
         var contextMenu = this.createBean(new ToolPanelContextMenu(column, e, this.focusWrapper));
@@ -1091,7 +1034,7 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         }
     };
     ToolPanelColumnComp.prototype.onLabelClicked = function () {
-        if (this.gridOptionsService.is('functionsReadOnly')) {
+        if (this.gridOptionsService.get('functionsReadOnly')) {
             return;
         }
         var nextState = !this.cbSelect.getValue();
@@ -1118,8 +1061,8 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         var columnLabel = translate('ariaColumn', 'Column');
         var state = this.cbSelect.getValue() ? translate('ariaVisible', 'visible') : translate('ariaHidden', 'hidden');
         var visibilityLabel = translate('ariaToggleVisibility', 'Press SPACE to toggle visibility');
-        core._.setAriaLabel(this.focusWrapper, this.displayName + " " + columnLabel);
-        this.cbSelect.setInputAriaLabel(visibilityLabel + " (" + state + ")");
+        core._.setAriaLabel(this.focusWrapper, "".concat(this.displayName, " ").concat(columnLabel));
+        this.cbSelect.setInputAriaLabel("".concat(visibilityLabel, " (").concat(state, ")"));
         core._.setAriaDescribedBy(this.focusWrapper, this.cbSelect.getInputElement().id);
     };
     ToolPanelColumnComp.prototype.setupDragging = function () {
@@ -1128,14 +1071,15 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
             core._.setDisplayed(this.eDragHandle, false);
             return;
         }
-        var hideColumnOnExit = !this.gridOptionsService.is('suppressDragLeaveHidesColumns');
+        var hideColumnOnExit = !this.gridOptionsService.get('suppressDragLeaveHidesColumns');
         var dragSource = {
             type: core.DragSourceType.ToolPanel,
             eElement: this.eDragHandle,
             dragItemName: this.displayName,
-            defaultIconName: hideColumnOnExit ? core.DragAndDropService.ICON_HIDE : core.DragAndDropService.ICON_NOT_ALLOWED,
+            getDefaultIconName: function () { return hideColumnOnExit ? core.DragAndDropService.ICON_HIDE : core.DragAndDropService.ICON_NOT_ALLOWED; },
             getDragItem: function () { return _this.createDragItem(); },
             onDragStarted: function () {
+                hideColumnOnExit = !_this.gridOptionsService.get('suppressDragLeaveHidesColumns');
                 var event = {
                     type: core.Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START,
                     column: _this.column
@@ -1198,7 +1142,7 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         if (isPivotMode) {
             // when in pivot mode, the item should be read only if:
             //  a) gui is not allowed make any changes
-            var functionsReadOnly = this.gridOptionsService.is('functionsReadOnly');
+            var functionsReadOnly = this.gridOptionsService.get('functionsReadOnly');
             //  b) column is not allow any functions on it
             var noFunctionsAllowed = !this.column.isAnyFunctionAllowed();
             canBeToggled = !functionsReadOnly && !noFunctionsAllowed;
@@ -1214,7 +1158,7 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         this.cbSelect.setReadOnly(!canBeToggled);
         this.eDragHandle.classList.toggle('ag-column-select-column-readonly', !canBeDragged);
         this.addOrRemoveCssClass('ag-column-select-column-readonly', !canBeDragged && !canBeToggled);
-        var checkboxPassive = isPivotMode && this.gridOptionsService.is('functionsPassive');
+        var checkboxPassive = isPivotMode && this.gridOptionsService.get('functionsPassive');
         this.cbSelect.setPassive(checkboxPassive);
         this.processingColumnStateChange = false;
     };
@@ -1241,22 +1185,22 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         console.warn('AG Grid: can not expand a column item that does not represent a column group header');
     };
     ToolPanelColumnComp.TEMPLATE = "<div class=\"ag-column-select-column\" aria-hidden=\"true\">\n            <ag-checkbox ref=\"cbSelect\" class=\"ag-column-select-checkbox\"></ag-checkbox>\n            <span class=\"ag-column-select-column-label\" ref=\"eLabel\"></span>\n        </div>";
-    __decorate$5([
+    __decorate$4([
         core.Autowired('columnModel')
     ], ToolPanelColumnComp.prototype, "columnModel", void 0);
-    __decorate$5([
+    __decorate$4([
         core.Autowired('dragAndDropService')
     ], ToolPanelColumnComp.prototype, "dragAndDropService", void 0);
-    __decorate$5([
+    __decorate$4([
         core.Autowired('modelItemUtils')
     ], ToolPanelColumnComp.prototype, "modelItemUtils", void 0);
-    __decorate$5([
+    __decorate$4([
         core.RefSelector('eLabel')
     ], ToolPanelColumnComp.prototype, "eLabel", void 0);
-    __decorate$5([
+    __decorate$4([
         core.RefSelector('cbSelect')
     ], ToolPanelColumnComp.prototype, "cbSelect", void 0);
-    __decorate$5([
+    __decorate$4([
         core.PostConstruct
     ], ToolPanelColumnComp.prototype, "init", null);
     return ToolPanelColumnComp;
@@ -1277,7 +1221,7 @@ var __extends$3 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$4 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$3 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -1301,6 +1245,8 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
     function PrimaryColsListPanel() {
         var _this = _super.call(this, PrimaryColsListPanel.TEMPLATE) || this;
         _this.destroyColumnItemFuncs = [];
+        _this.hasLoadedInitialState = false;
+        _this.isInitialState = false;
         return _this;
     }
     PrimaryColsListPanel.prototype.destroyColumnTree = function () {
@@ -1330,14 +1276,15 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
             _this.addManagedListener(_this.eventService, event, _this.fireSelectionChangedEvent.bind(_this));
         });
         this.expandGroupsByDefault = !this.params.contractColumnSelection;
-        var translate = this.localeService.getLocaleTextFunc();
-        var columnListName = translate('ariaColumnList', 'Column List');
         this.virtualList = this.createManagedBean(new core.VirtualList({
             cssIdentifier: 'column-select',
             ariaRole: 'tree',
-            listName: columnListName
         }));
         this.appendChild(this.virtualList.getGui());
+        var ariaEl = this.virtualList.getAriaElement();
+        core._.setAriaLive(ariaEl, 'assertive');
+        core._.setAriaAtomic(ariaEl, false);
+        core._.setAriaRelevant(ariaEl, 'text');
         this.virtualList.setComponentCreator(function (item, listItemElement) {
             core._.setAriaLevel(listItemElement, (item.getDept() + 1));
             return _this.createComponentFromItem(item, listItemElement);
@@ -1345,9 +1292,10 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         if (this.columnModel.isReady()) {
             this.onColumnsChanged();
         }
-        if (!params.suppressColumnMove && !this.gridOptionsService.is('suppressMovableColumns')) {
-            this.createManagedBean(new PrimaryColsListPanelItemDragFeature(this, this.virtualList));
+        if (this.params.suppressColumnMove) {
+            return;
         }
+        this.colsListPanelItemDragFeature = this.createManagedBean(new PrimaryColsListPanelItemDragFeature(this, this.virtualList));
     };
     PrimaryColsListPanel.prototype.createComponentFromItem = function (item, listItemElement) {
         if (item.isGroup()) {
@@ -1360,6 +1308,10 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         return columnComp;
     };
     PrimaryColsListPanel.prototype.onColumnsChanged = function () {
+        if (!this.hasLoadedInitialState) {
+            this.hasLoadedInitialState = true;
+            this.isInitialState = !!this.params.initialState;
+        }
         var expandedStates = this.getExpandedStates();
         var pivotModeActive = this.columnModel.isPivotMode();
         var shouldSyncColumnLayoutWithGrid = !this.params.suppressSyncLayoutWithGrid && !pivotModeActive;
@@ -1372,15 +1324,23 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         this.setExpandedStates(expandedStates);
         this.markFilteredColumns();
         this.flattenAndFilterModel();
+        this.isInitialState = false;
     };
     PrimaryColsListPanel.prototype.getDisplayedColsList = function () {
         return this.displayedColsList;
     };
     PrimaryColsListPanel.prototype.getExpandedStates = function () {
+        var res = {};
+        if (this.isInitialState) {
+            var expandedGroupIds = this.params.initialState.expandedGroupIds;
+            expandedGroupIds.forEach(function (id) {
+                res[id] = true;
+            });
+            return res;
+        }
         if (!this.allColsTree) {
             return {};
         }
-        var res = {};
         this.forEachItem(function (item) {
             if (!item.isGroup()) {
                 return;
@@ -1396,6 +1356,7 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         if (!this.allColsTree) {
             return;
         }
+        var isInitialState = this.isInitialState;
         this.forEachItem(function (item) {
             if (!item.isGroup()) {
                 return;
@@ -1404,8 +1365,8 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
             if (colGroup) { // group should always exist, this is defensive
                 var expanded = states[colGroup.getId()];
                 var groupExistedLastTime = expanded != null;
-                if (groupExistedLastTime) {
-                    item.setExpanded(expanded);
+                if (groupExistedLastTime || isInitialState) {
+                    item.setExpanded(!!expanded);
                 }
             }
         });
@@ -1496,6 +1457,14 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
             this.focusRowIfAlive(focusedRow);
         }
         this.notifyListeners();
+        this.refreshAriaLabel();
+    };
+    PrimaryColsListPanel.prototype.refreshAriaLabel = function () {
+        var translate = this.localeService.getLocaleTextFunc();
+        var columnListName = translate('ariaColumnPanelList', 'Column List');
+        var localeColumns = translate('columns', 'Columns');
+        var items = this.displayedColsList.length;
+        core._.setAriaLabel(this.virtualList.getAriaElement(), "".concat(columnListName, " ").concat(items, " ").concat(localeColumns));
     };
     PrimaryColsListPanel.prototype.focusRowIfAlive = function (rowIndex) {
         var _this = this;
@@ -1514,6 +1483,9 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
                 }
             });
         };
+        if (!this.allColsTree) {
+            return;
+        }
         recursiveFunc(this.allColsTree);
     };
     PrimaryColsListPanel.prototype.doSetExpandedAll = function (value) {
@@ -1643,20 +1615,35 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         this.dispatchEvent({ type: 'groupExpanded', state: expandState });
     };
     PrimaryColsListPanel.prototype.fireSelectionChangedEvent = function () {
+        if (!this.allColsTree) {
+            return;
+        }
         var selectionState = this.getSelectionState();
         this.dispatchEvent({ type: 'selectionChanged', state: selectionState });
     };
-    PrimaryColsListPanel.TEMPLATE = "<div class=\"" + PRIMARY_COLS_LIST_PANEL_CLASS + "\" role=\"presentation\"></div>";
-    __decorate$4([
+    PrimaryColsListPanel.prototype.getExpandedGroups = function () {
+        var expandedGroupIds = [];
+        if (!this.allColsTree) {
+            return expandedGroupIds;
+        }
+        this.forEachItem(function (item) {
+            if (item.isGroup() && item.isExpanded()) {
+                expandedGroupIds.push(item.getColumnGroup().getId());
+            }
+        });
+        return expandedGroupIds;
+    };
+    PrimaryColsListPanel.TEMPLATE = "<div class=\"".concat(PRIMARY_COLS_LIST_PANEL_CLASS, "\" role=\"presentation\"></div>");
+    __decorate$3([
         core.Autowired('columnModel')
     ], PrimaryColsListPanel.prototype, "columnModel", void 0);
-    __decorate$4([
+    __decorate$3([
         core.Autowired('toolPanelColDefService')
     ], PrimaryColsListPanel.prototype, "colDefService", void 0);
-    __decorate$4([
+    __decorate$3([
         core.Autowired('modelItemUtils')
     ], PrimaryColsListPanel.prototype, "modelItemUtils", void 0);
-    __decorate$4([
+    __decorate$3([
         core.PreDestroy
     ], PrimaryColsListPanel.prototype, "destroyColumnTree", null);
     return PrimaryColsListPanel;
@@ -1677,7 +1664,7 @@ var __extends$2 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$3 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -1703,8 +1690,8 @@ var PivotModePanel = /** @class */ (function (_super) {
     PivotModePanel.prototype.onBtPivotMode = function () {
         var newValue = !!this.cbPivotMode.getValue();
         if (newValue !== this.columnModel.isPivotMode()) {
-            this.columnModel.setPivotMode(newValue, "toolPanelUi");
-            var api = this.gridOptionsService.api;
+            this.gridOptionsService.updateGridOptions({ options: { pivotMode: newValue }, source: 'toolPanelUi' });
+            var api = this.api;
             if (api) {
                 api.refreshHeader();
             }
@@ -1714,13 +1701,16 @@ var PivotModePanel = /** @class */ (function (_super) {
         var pivotModeActive = this.columnModel.isPivotMode();
         this.cbPivotMode.setValue(pivotModeActive);
     };
-    __decorate$3([
+    __decorate$2([
         core.Autowired('columnModel')
     ], PivotModePanel.prototype, "columnModel", void 0);
-    __decorate$3([
+    __decorate$2([
+        core.Autowired('gridApi')
+    ], PivotModePanel.prototype, "api", void 0);
+    __decorate$2([
         core.RefSelector('cbPivotMode')
     ], PivotModePanel.prototype, "cbPivotMode", void 0);
-    __decorate$3([
+    __decorate$2([
         core.PreConstruct
     ], PivotModePanel.prototype, "init", null);
     return PivotModePanel;
@@ -1741,7 +1731,7 @@ var __extends$1 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -1807,15 +1797,19 @@ var PrimaryColsPanel = /** @class */ (function (_super) {
     };
     PrimaryColsPanel.prototype.onGroupExpanded = function (event) {
         this.primaryColsHeaderPanel.setExpandState(event.state);
+        this.params.onStateUpdated();
     };
     PrimaryColsPanel.prototype.onSelectionChange = function (event) {
         this.primaryColsHeaderPanel.setSelectionState(event.state);
     };
+    PrimaryColsPanel.prototype.getExpandedGroups = function () {
+        return this.primaryColsListPanel.getExpandedGroups();
+    };
     PrimaryColsPanel.TEMPLATE = "<div class=\"ag-column-select\">\n            <ag-primary-cols-header ref=\"primaryColsHeaderPanel\"></ag-primary-cols-header>\n            <ag-primary-cols-list ref=\"primaryColsListPanel\"></ag-primary-cols-list>\n        </div>";
-    __decorate$2([
+    __decorate$1([
         core.RefSelector('primaryColsHeaderPanel')
     ], PrimaryColsPanel.prototype, "primaryColsHeaderPanel", void 0);
-    __decorate$2([
+    __decorate$1([
         core.RefSelector('primaryColsListPanel')
     ], PrimaryColsPanel.prototype, "primaryColsListPanel", void 0);
     return PrimaryColsPanel;
@@ -1847,12 +1841,6 @@ var __assign = (undefined && undefined.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-var __decorate$1 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
 var ColumnToolPanel = /** @class */ (function (_super) {
     __extends(ColumnToolPanel, _super);
     function ColumnToolPanel() {
@@ -1870,7 +1858,7 @@ var ColumnToolPanel = /** @class */ (function (_super) {
     };
     ColumnToolPanel.prototype.init = function (params) {
         var _this = this;
-        var defaultParams = {
+        var defaultParams = this.gridOptionsService.addGridCommonParams({
             suppressColumnMove: false,
             suppressColumnSelectAll: false,
             suppressColumnFilter: false,
@@ -1881,10 +1869,8 @@ var ColumnToolPanel = /** @class */ (function (_super) {
             suppressValues: false,
             suppressPivots: false,
             suppressSyncLayoutWithGrid: false,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-        };
-        this.params = __assign(__assign(__assign({}, defaultParams), params), { context: this.gridOptionsService.context });
+        });
+        this.params = __assign(__assign({}, defaultParams), params);
         if (this.isRowGroupingModuleLoaded() && !this.params.suppressPivotMode) {
             // DO NOT CHANGE TO createManagedBean
             this.pivotModePanel = this.createBean(new PivotModePanel());
@@ -2035,9 +2021,15 @@ var ColumnToolPanel = /** @class */ (function (_super) {
         this.childDestroyFuncs.length = 0;
         core._.clearElement(this.getGui());
     };
-    ColumnToolPanel.prototype.refresh = function () {
+    ColumnToolPanel.prototype.refresh = function (params) {
         this.destroyChildren();
-        this.init(this.params);
+        this.init(params);
+        return true;
+    };
+    ColumnToolPanel.prototype.getState = function () {
+        return {
+            expandedGroupIds: this.primaryColsPanel.getExpandedGroups()
+        };
     };
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so this must be public.
@@ -2046,12 +2038,6 @@ var ColumnToolPanel = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     ColumnToolPanel.TEMPLATE = "<div class=\"ag-column-panel\"></div>";
-    __decorate$1([
-        core.Autowired("gridApi")
-    ], ColumnToolPanel.prototype, "gridApi", void 0);
-    __decorate$1([
-        core.Autowired("columnApi")
-    ], ColumnToolPanel.prototype, "columnApi", void 0);
     return ColumnToolPanel;
 }(core.Component));
 
@@ -2115,7 +2101,7 @@ var ModelItemUtils = /** @class */ (function () {
         }
     };
     ModelItemUtils.prototype.setAllPivot = function (columns, value, eventType) {
-        if (this.gridOptionsService.is('functionsPassive')) {
+        if (this.gridOptionsService.get('functionsPassive')) {
             this.setAllPivotPassive(columns, value);
         }
         else {
@@ -2284,7 +2270,7 @@ var ModelItemUtils = /** @class */ (function () {
 }());
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '30.1.0';
+var VERSION = '31.1.0';
 
 var ColumnsToolPanelModule = {
     version: VERSION,

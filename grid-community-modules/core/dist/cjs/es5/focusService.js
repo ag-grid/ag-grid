@@ -31,27 +31,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FocusService = void 0;
 var context_1 = require("./context/context");
@@ -71,52 +50,19 @@ var FocusService = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     FocusService_1 = FocusService;
-    /**
-     * Adds a gridCore to the list of the gridCores monitoring Keyboard Mode
-     * in a specific HTMLDocument.
-     *
-     * @param doc {Document} - The Document containing the gridCore.
-     * @param gridCore {GridComp} - The GridCore to be monitored.
-     */
-    FocusService.addKeyboardModeEvents = function (doc, controller) {
-        var docControllers = FocusService_1.instancesMonitored.get(doc);
-        if (docControllers && docControllers.length > 0) {
-            if (docControllers.indexOf(controller) === -1) {
-                docControllers.push(controller);
-            }
+    FocusService.addKeyboardModeEvents = function (doc) {
+        if (this.instanceCount > 0) {
+            return;
         }
-        else {
-            FocusService_1.instancesMonitored.set(doc, [controller]);
-            doc.addEventListener('keydown', FocusService_1.toggleKeyboardMode);
-            doc.addEventListener('mousedown', FocusService_1.toggleKeyboardMode);
-        }
+        doc.addEventListener('keydown', FocusService_1.toggleKeyboardMode);
+        doc.addEventListener('mousedown', FocusService_1.toggleKeyboardMode);
     };
-    /**
-     * Removes a gridCore from the list of the gridCores monitoring Keyboard Mode
-     * in a specific HTMLDocument.
-     *
-     * @param doc {Document} - The Document containing the gridCore.
-     * @param gridCore {GridComp} - The GridCore to be removed.
-     */
-    FocusService.removeKeyboardModeEvents = function (doc, controller) {
-        var docControllers = FocusService_1.instancesMonitored.get(doc);
-        var newControllers = [];
-        if (docControllers && docControllers.length) {
-            newControllers = __spreadArray([], __read(docControllers)).filter(function (currentGridCore) { return currentGridCore !== controller; });
-            FocusService_1.instancesMonitored.set(doc, newControllers);
-        }
-        if (newControllers.length === 0) {
-            doc.removeEventListener('keydown', FocusService_1.toggleKeyboardMode);
-            doc.removeEventListener('mousedown', FocusService_1.toggleKeyboardMode);
-        }
+    FocusService.removeKeyboardModeEvents = function (doc) {
+        if (this.instanceCount > 0)
+            return;
+        doc.addEventListener('keydown', FocusService_1.toggleKeyboardMode);
+        doc.addEventListener('mousedown', FocusService_1.toggleKeyboardMode);
     };
-    /**
-     * This method will be called by `keydown` and `mousedown` events on all Documents monitoring
-     * KeyboardMode. It will then fire a KEYBOARD_FOCUS, MOUSE_FOCUS on each gridCore present in
-     * the Document allowing each gridCore to maintain a state for KeyboardMode.
-     *
-     * @param event {KeyboardEvent | MouseEvent | TouchEvent} - The event triggered.
-     */
     FocusService.toggleKeyboardMode = function (event) {
         var isKeyboardActive = FocusService_1.keyboardModeActive;
         var isKeyboardEvent = event.type === 'keydown';
@@ -126,20 +72,13 @@ var FocusService = /** @class */ (function (_super) {
                 return;
             }
         }
-        if (isKeyboardActive && isKeyboardEvent || !isKeyboardActive && !isKeyboardEvent) {
+        if (isKeyboardActive === isKeyboardEvent) {
             return;
         }
         FocusService_1.keyboardModeActive = isKeyboardEvent;
-        var doc = event.target.ownerDocument;
-        if (!doc) {
-            return;
-        }
-        var controllersForDoc = FocusService_1.instancesMonitored.get(doc);
-        if (controllersForDoc) {
-            controllersForDoc.forEach(function (controller) {
-                controller.dispatchEvent({ type: isKeyboardEvent ? events_1.Events.EVENT_KEYBOARD_FOCUS : events_1.Events.EVENT_MOUSE_FOCUS });
-            });
-        }
+    };
+    FocusService.unregisterGridCompController = function (doc) {
+        FocusService_1.removeKeyboardModeEvents(doc);
     };
     FocusService.prototype.init = function () {
         var _this = this;
@@ -148,16 +87,19 @@ var FocusService = /** @class */ (function (_super) {
         this.addManagedListener(this.eventService, events_1.Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnEverythingChanged.bind(this));
         this.addManagedListener(this.eventService, events_1.Events.EVENT_COLUMN_GROUP_OPENED, clearFocusedCellListener);
         this.addManagedListener(this.eventService, events_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, clearFocusedCellListener);
+        this.registerKeyboardFocusEvents();
         this.ctrlsService.whenReady(function (p) {
             _this.gridCtrl = p.gridCtrl;
-            var doc = _this.gridOptionsService.getDocument();
-            FocusService_1.addKeyboardModeEvents(doc, _this.gridCtrl);
-            _this.addDestroyFunc(function () { return _this.unregisterGridCompController(_this.gridCtrl); });
         });
     };
-    FocusService.prototype.unregisterGridCompController = function (gridCompController) {
-        var doc = this.gridOptionsService.getDocument();
-        FocusService_1.removeKeyboardModeEvents(doc, gridCompController);
+    FocusService.prototype.registerKeyboardFocusEvents = function () {
+        var eDocument = this.gridOptionsService.getDocument();
+        FocusService_1.addKeyboardModeEvents(eDocument);
+        FocusService_1.instanceCount++;
+        this.addDestroyFunc(function () {
+            FocusService_1.instanceCount--;
+            FocusService_1.unregisterGridCompController(eDocument);
+        });
     };
     FocusService.prototype.onColumnEverythingChanged = function () {
         // if the columns change, check and see if this column still exists. if it does, then
@@ -183,7 +125,7 @@ var FocusService = /** @class */ (function (_super) {
     // however the browser focus will have moved somewhere else.
     FocusService.prototype.getFocusCellToUseAfterRefresh = function () {
         var eDocument = this.gridOptionsService.getDocument();
-        if (this.gridOptionsService.is('suppressFocusAfterRefresh') || !this.focusedCellPosition) {
+        if (this.gridOptionsService.get('suppressFocusAfterRefresh') || !this.focusedCellPosition) {
             return null;
         }
         // we check that the browser is actually focusing on the grid, if it is not, then
@@ -196,7 +138,7 @@ var FocusService = /** @class */ (function (_super) {
     };
     FocusService.prototype.getFocusHeaderToUseAfterRefresh = function () {
         var eDocument = this.gridOptionsService.getDocument();
-        if (this.gridOptionsService.is('suppressFocusAfterRefresh') || !this.focusedHeaderPosition) {
+        if (this.gridOptionsService.get('suppressFocusAfterRefresh') || !this.focusedHeaderPosition) {
             return null;
         }
         // we check that the browser is actually focusing on the grid, if it is not, then
@@ -280,7 +222,7 @@ var FocusService = /** @class */ (function (_super) {
         }
         this.focusedCellPosition = gridColumn ? {
             rowIndex: rowIndex,
-            rowPinned: generic_1.makeNull(rowPinned),
+            rowPinned: (0, generic_1.makeNull)(rowPinned),
             column: gridColumn
         } : null;
         var event = __assign(__assign({ type: events_1.Events.EVENT_CELL_FOCUSED }, this.getFocusEventParams()), { forceBrowserFocus: forceBrowserFocus, preventScrollOnBrowserFocus: preventScrollOnBrowserFocus, floating: null });
@@ -317,7 +259,10 @@ var FocusService = /** @class */ (function (_super) {
         this.focusedHeaderPosition = { headerRowIndex: headerRowIndex, column: column };
     };
     FocusService.prototype.focusHeaderPosition = function (params) {
-        var direction = params.direction, fromTab = params.fromTab, allowUserOverride = params.allowUserOverride, event = params.event, fromCell = params.fromCell;
+        if (this.gridOptionsService.get('suppressHeaderFocus')) {
+            return false;
+        }
+        var direction = params.direction, fromTab = params.fromTab, allowUserOverride = params.allowUserOverride, event = params.event, fromCell = params.fromCell, rowWithoutSpanValue = params.rowWithoutSpanValue;
         var headerPosition = params.headerPosition;
         if (fromCell && this.filterManager.isAdvancedFilterHeaderActive()) {
             return this.focusAdvancedFilter(headerPosition);
@@ -358,14 +303,15 @@ var FocusService = /** @class */ (function (_super) {
             if (this.filterManager.isAdvancedFilterHeaderActive()) {
                 return this.focusAdvancedFilter(headerPosition);
             }
-            else {
-                return this.focusGridView(headerPosition.column);
-            }
+            return this.focusGridView(headerPosition.column);
         }
         this.headerNavigationService.scrollToColumn(headerPosition.column, direction);
         var headerRowContainerCtrl = this.ctrlsService.getHeaderRowContainerCtrl(headerPosition.column.getPinned());
         // this will automatically call the setFocusedHeader method above
         var focusSuccess = headerRowContainerCtrl.focusHeader(headerPosition.headerRowIndex, headerPosition.column, event);
+        if (focusSuccess && (rowWithoutSpanValue != null || fromCell)) {
+            this.headerNavigationService.setCurrentHeaderRowWithoutSpan(rowWithoutSpanValue !== null && rowWithoutSpanValue !== void 0 ? rowWithoutSpanValue : -1);
+        }
         return focusSuccess;
     };
     FocusService.prototype.focusFirstHeader = function () {
@@ -376,15 +322,18 @@ var FocusService = /** @class */ (function (_super) {
         if (firstColumn.getParent()) {
             firstColumn = this.columnModel.getColumnGroupAtLevel(firstColumn, 0);
         }
+        var headerPosition = this.headerPositionUtils.getHeaderIndexToFocus(firstColumn, 0);
         return this.focusHeaderPosition({
-            headerPosition: { headerRowIndex: 0, column: firstColumn }
+            headerPosition: headerPosition,
+            rowWithoutSpanValue: 0
         });
     };
     FocusService.prototype.focusLastHeader = function (event) {
         var headerRowIndex = this.headerNavigationService.getHeaderRowCount() - 1;
-        var column = array_1.last(this.columnModel.getAllDisplayedColumns());
+        var column = (0, array_1.last)(this.columnModel.getAllDisplayedColumns());
         return this.focusHeaderPosition({
             headerPosition: { headerRowIndex: headerRowIndex, column: column },
+            rowWithoutSpanValue: -1,
             event: event
         });
     };
@@ -392,9 +341,7 @@ var FocusService = /** @class */ (function (_super) {
         if (this.filterManager.isAdvancedFilterHeaderActive()) {
             return this.focusAdvancedFilter(null);
         }
-        else {
-            return this.focusLastHeader(event);
-        }
+        return this.focusLastHeader(event);
     };
     FocusService.prototype.isAnyCellFocused = function () {
         return !!this.focusedCellPosition;
@@ -403,7 +350,7 @@ var FocusService = /** @class */ (function (_super) {
         if (this.focusedCellPosition == null) {
             return false;
         }
-        return this.focusedCellPosition.rowIndex === rowIndex && this.focusedCellPosition.rowPinned === generic_1.makeNull(floating);
+        return this.focusedCellPosition.rowIndex === rowIndex && this.focusedCellPosition.rowPinned === (0, generic_1.makeNull)(floating);
     };
     FocusService.prototype.findFocusableElements = function (rootNode, exclude, onlyUnmanaged) {
         if (onlyUnmanaged === void 0) { onlyUnmanaged = false; }
@@ -415,7 +362,9 @@ var FocusService = /** @class */ (function (_super) {
         if (onlyUnmanaged) {
             excludeString += ', [tabindex="-1"]';
         }
-        var nodes = Array.prototype.slice.apply(rootNode.querySelectorAll(focusableString));
+        var nodes = Array.prototype.slice.apply(rootNode.querySelectorAll(focusableString)).filter(function (node) {
+            return (0, dom_1.isVisible)(node);
+        });
         var excludeNodes = Array.prototype.slice.apply(rootNode.querySelectorAll(excludeString));
         if (!excludeNodes.length) {
             return nodes;
@@ -427,7 +376,7 @@ var FocusService = /** @class */ (function (_super) {
         if (up === void 0) { up = false; }
         if (onlyUnmanaged === void 0) { onlyUnmanaged = false; }
         var focusableElements = this.findFocusableElements(rootNode, null, onlyUnmanaged);
-        var toFocus = up ? array_1.last(focusableElements) : focusableElements[0];
+        var toFocus = up ? (0, array_1.last)(focusableElements) : focusableElements[0];
         if (toFocus) {
             toFocus.focus({ preventScroll: true });
             return true;
@@ -477,7 +426,7 @@ var FocusService = /** @class */ (function (_super) {
         if (!target) {
             return false;
         }
-        var managedContainers = rootNode.querySelectorAll("." + managedFocusFeature_1.ManagedFocusFeature.FOCUS_MANAGED_CLASS);
+        var managedContainers = rootNode.querySelectorAll(".".concat(managedFocusFeature_1.ManagedFocusFeature.FOCUS_MANAGED_CLASS));
         if (!managedContainers.length) {
             return false;
         }
@@ -491,10 +440,10 @@ var FocusService = /** @class */ (function (_super) {
     FocusService.prototype.findTabbableParent = function (node, limit) {
         if (limit === void 0) { limit = 5; }
         var counter = 0;
-        while (node && browser_1.getTabIndex(node) === null && ++counter <= limit) {
+        while (node && (0, browser_1.getTabIndex)(node) === null && ++counter <= limit) {
             node = node.parentElement;
         }
-        if (browser_1.getTabIndex(node) === null) {
+        if ((0, browser_1.getTabIndex)(node) === null) {
             return null;
         }
         return node;
@@ -503,9 +452,12 @@ var FocusService = /** @class */ (function (_super) {
         // if suppressCellFocus is `true`, it means the user does not want to
         // navigate between the cells using tab. Instead, we put focus on either
         // the header or after the grid, depending on whether tab or shift-tab was pressed.
-        if (this.gridOptionsService.is('suppressCellFocus')) {
+        if (this.gridOptionsService.get('suppressCellFocus')) {
             if (backwards) {
-                return this.focusLastHeader();
+                if (!this.gridOptionsService.get('suppressHeaderFocus')) {
+                    return this.focusLastHeader();
+                }
+                return this.focusNextGridCoreContainer(true, true);
             }
             return this.focusNextGridCoreContainer(false);
         }
@@ -527,7 +479,7 @@ var FocusService = /** @class */ (function (_super) {
         this.setFocusedCell({
             rowIndex: rowIndex,
             column: column,
-            rowPinned: generic_1.makeNull(rowPinned),
+            rowPinned: (0, generic_1.makeNull)(rowPinned),
             forceBrowserFocus: true
         });
         if (this.rangeService) {
@@ -569,47 +521,49 @@ var FocusService = /** @class */ (function (_super) {
         this.advancedFilterFocusColumn = undefined;
     };
     var FocusService_1;
-    FocusService.AG_KEYBOARD_FOCUS = 'ag-keyboard-focus';
     FocusService.keyboardModeActive = false;
-    FocusService.instancesMonitored = new Map();
+    FocusService.instanceCount = 0;
     __decorate([
-        context_1.Autowired('eGridDiv')
+        (0, context_1.Autowired)('eGridDiv')
     ], FocusService.prototype, "eGridDiv", void 0);
     __decorate([
-        context_1.Autowired('columnModel')
+        (0, context_1.Autowired)('columnModel')
     ], FocusService.prototype, "columnModel", void 0);
     __decorate([
-        context_1.Autowired('headerNavigationService')
+        (0, context_1.Autowired)('headerNavigationService')
     ], FocusService.prototype, "headerNavigationService", void 0);
     __decorate([
-        context_1.Autowired('rowRenderer')
+        (0, context_1.Autowired)('headerPositionUtils')
+    ], FocusService.prototype, "headerPositionUtils", void 0);
+    __decorate([
+        (0, context_1.Autowired)('rowRenderer')
     ], FocusService.prototype, "rowRenderer", void 0);
     __decorate([
-        context_1.Autowired('rowPositionUtils')
+        (0, context_1.Autowired)('rowPositionUtils')
     ], FocusService.prototype, "rowPositionUtils", void 0);
     __decorate([
-        context_1.Autowired('cellPositionUtils')
+        (0, context_1.Autowired)('cellPositionUtils')
     ], FocusService.prototype, "cellPositionUtils", void 0);
     __decorate([
-        context_1.Optional('rangeService')
+        (0, context_1.Optional)('rangeService')
     ], FocusService.prototype, "rangeService", void 0);
     __decorate([
-        context_1.Autowired('navigationService')
+        (0, context_1.Autowired)('navigationService')
     ], FocusService.prototype, "navigationService", void 0);
     __decorate([
-        context_1.Autowired('ctrlsService')
+        (0, context_1.Autowired)('ctrlsService')
     ], FocusService.prototype, "ctrlsService", void 0);
     __decorate([
-        context_1.Autowired('filterManager')
+        (0, context_1.Autowired)('filterManager')
     ], FocusService.prototype, "filterManager", void 0);
     __decorate([
-        context_1.Optional('advancedFilterService')
+        (0, context_1.Optional)('advancedFilterService')
     ], FocusService.prototype, "advancedFilterService", void 0);
     __decorate([
         context_1.PostConstruct
     ], FocusService.prototype, "init", null);
     FocusService = FocusService_1 = __decorate([
-        context_1.Bean('focusService')
+        (0, context_1.Bean)('focusService')
     ], FocusService);
     return FocusService;
 }(beanStub_1.BeanStub));

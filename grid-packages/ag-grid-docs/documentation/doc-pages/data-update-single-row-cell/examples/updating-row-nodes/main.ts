@@ -1,6 +1,6 @@
-import { Grid, GridOptions, GetRowIdParams } from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions, GetRowIdParams } from '@ag-grid-community/core';
 
-var rowData = [
+const rowData = [
   { id: 'aa', make: 'Toyota', model: 'Celica', price: 35000 },
   { id: 'bb', make: 'Ford', model: 'Mondeo', price: 32000 },
   { id: 'cc', make: 'Porsche', model: 'Boxster', price: 72000 },
@@ -9,6 +9,8 @@ var rowData = [
   { id: 'ff', make: 'Mazda', model: 'MX5', price: 28000 },
   { id: 'gg', make: 'Horse', model: 'Outside', price: 99000 },
 ]
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -19,46 +21,55 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     editable: true,
-    sortable: true,
     filter: true,
   },
-  animateRows: true,
   getRowId: (params: GetRowIdParams) => {
     return params.data.id
   },
   rowData: rowData,
+  enableCellChangeFlash: true,
 }
 
 function updateSort() {
-  gridOptions.api!.refreshClientSideRowModel('sort')
+  gridApi!.refreshClientSideRowModel('sort')
 }
 
 function updateFilter() {
-  gridOptions.api!.refreshClientSideRowModel('filter')
+  gridApi!.refreshClientSideRowModel('filter')
 }
 
 function setPriceOnToyota() {
-  var rowNode = gridOptions.api!.getRowNode('aa')!
-  var newPrice = Math.floor(Math.random() * 100000)
+  const rowNode = gridApi!.getRowNode('aa')!
+  const newPrice = Math.floor(Math.random() * 100000)
   rowNode.setDataValue('price', newPrice)
 }
 
-function setDataOnFord() {
-  var rowNode = gridOptions.api!.getRowNode('bb')!
-  var newPrice = Math.floor(Math.random() * 100000)
-  var newModel = 'T-' + Math.floor(Math.random() * 1000)
-  var newData = {
+function generateNewFordData() {
+  const newPrice = Math.floor(Math.random() * 100000);
+  const newModel = 'T-' + Math.floor(Math.random() * 1000);
+  return {
     id: 'bb',
     make: 'Ford',
     model: newModel,
     price: newPrice,
-  }
-  rowNode.setData(newData)
+  };
+}
+
+function setDataOnFord() {
+  const rowNode = gridApi!.getRowNode('bb')!;
+  const newData = generateNewFordData();
+  rowNode.setData(newData);
+}
+
+function updateDataOnFord() {
+  const rowNode = gridApi!.getRowNode('bb')!;
+  const newData = generateNewFordData();
+  rowNode.updateData(newData);
 }
 
 // wait for the document to be loaded, otherwise
 // AG Grid will not find the div in the document.
 document.addEventListener('DOMContentLoaded', function () {
-  var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(eGridDiv, gridOptions)
+  const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  gridApi = createGrid(eGridDiv, gridOptions);
 })

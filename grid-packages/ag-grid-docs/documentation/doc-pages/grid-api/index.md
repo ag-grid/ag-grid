@@ -1,7 +1,7 @@
 ---
-title: "Grid API"
+title: "Grid API Reference"
 ---
 
-All of these grid methods are available through the `api` property of `GridOptions`.
+To access the api see: [Grid Api](/grid-interface/#grid-api).
 
 <api-documentation source='api.json' config='{"isApi": true}'></api-documentation>

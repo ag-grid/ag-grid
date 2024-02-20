@@ -30,15 +30,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { _, Autowired, Bean, PostConstruct, CssClassApplier } from '@ag-grid-community/core';
-import { ExcelXmlSerializingSession } from './excelXmlSerializingSession';
-import { ExcelXlsxSerializingSession } from './excelXlsxSerializingSession';
+import { Autowired, Bean, PostConstruct, CssClassApplier } from '@ag-grid-community/core';
 import { ExcelXlsxFactory } from './excelXlsxFactory';
 import { BaseCreator, Downloader, RowType, ZipContainer } from "@ag-grid-community/csv-export";
-import { ExcelXmlFactory } from './excelXmlFactory';
-export var getMultipleSheetsAsExcel = function (params) {
-    var data = params.data, _a = params.fontSize, fontSize = _a === void 0 ? 11 : _a, _b = params.author, author = _b === void 0 ? 'AG Grid' : _b;
-    var hasImages = ExcelXlsxFactory.images.size > 0;
+import { ExcelSerializingSession } from './excelSerializingSession';
+var createExcelXMLCoreFolderStructure = function () {
     ZipContainer.addFolders([
         '_rels/',
         'docProps/',
@@ -47,33 +43,32 @@ export var getMultipleSheetsAsExcel = function (params) {
         'xl/_rels/',
         'xl/worksheets/'
     ]);
-    if (hasImages) {
-        ZipContainer.addFolders([
-            'xl/worksheets/_rels',
-            'xl/drawings/',
-            'xl/drawings/_rels',
-            'xl/media/',
-        ]);
-        var imgCounter_1 = 0;
-        ExcelXlsxFactory.images.forEach(function (value) {
-            var firstImage = value[0].image[0];
-            var ext = firstImage.imageType;
-            ZipContainer.addFile("xl/media/image" + ++imgCounter_1 + "." + ext, firstImage.base64, true);
-        });
-    }
-    if (!data || data.length === 0) {
-        console.warn("AG Grid: Invalid params supplied to getMultipleSheetsAsExcel() - `ExcelExportParams.data` is empty.");
-        ExcelXlsxFactory.resetFactory();
+    if (!ExcelXlsxFactory.images.size) {
         return;
     }
-    var sheetLen = data.length;
+    ZipContainer.addFolders([
+        'xl/worksheets/_rels',
+        'xl/drawings/',
+        'xl/drawings/_rels',
+        'xl/media/',
+    ]);
+    var imgCounter = 0;
+    ExcelXlsxFactory.images.forEach(function (value) {
+        var firstImage = value[0].image[0];
+        var ext = firstImage.imageType;
+        ZipContainer.addFile("xl/media/image".concat(++imgCounter, ".").concat(ext), firstImage.base64, true);
+    });
+};
+var createExcelXmlWorksheets = function (data) {
     var imageRelationCounter = 0;
     data.forEach(function (value, idx) {
-        ZipContainer.addFile("xl/worksheets/sheet" + (idx + 1) + ".xml", value);
-        if (hasImages && ExcelXlsxFactory.worksheetImages.get(idx)) {
+        ZipContainer.addFile("xl/worksheets/sheet".concat(idx + 1, ".xml"), value, false);
+        if (ExcelXlsxFactory.images.size && ExcelXlsxFactory.worksheetImages.get(idx)) {
             createImageRelationsForSheet(idx, imageRelationCounter++);
         }
     });
+};
+var createExcelXmlCoreSheets = function (fontSize, author, sheetLen) {
     ZipContainer.addFile('xl/workbook.xml', ExcelXlsxFactory.createWorkbook());
     ZipContainer.addFile('xl/styles.xml', ExcelXlsxFactory.createStylesheet(fontSize));
     ZipContainer.addFile('xl/sharedStrings.xml', ExcelXlsxFactory.createSharedStrings());
@@ -82,22 +77,57 @@ export var getMultipleSheetsAsExcel = function (params) {
     ZipContainer.addFile('docProps/core.xml', ExcelXlsxFactory.createCore(author));
     ZipContainer.addFile('[Content_Types].xml', ExcelXlsxFactory.createContentTypes(sheetLen));
     ZipContainer.addFile('_rels/.rels', ExcelXlsxFactory.createRels());
+};
+var createExcelFileForExcel = function (data, fontSize, author) {
+    if (fontSize === void 0) { fontSize = 11; }
+    if (author === void 0) { author = 'AG Grid'; }
+    if (data && data.length > 0) {
+        createExcelXMLCoreFolderStructure();
+        createExcelXmlWorksheets(data);
+        createExcelXmlCoreSheets(fontSize, author, data.length);
+    }
+    else {
+        console.warn("AG Grid: Invalid params supplied to getMultipleSheetsAsExcel() - `ExcelExportParams.data` is empty.");
+    }
+    // reset the internal variables of the Excel Factory
     ExcelXlsxFactory.resetFactory();
+    if (!data || data.length === 0) {
+        return false;
+    }
+    return true;
+};
+var getMultipleSheetsAsExcelCompressed = function (params) {
+    var data = params.data, fontSize = params.fontSize, author = params.author;
     var mimeType = params.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-    return ZipContainer.getContent(mimeType);
+    if (!createExcelFileForExcel(data, fontSize, author)) {
+        return Promise.resolve(undefined);
+    }
+    return ZipContainer.getZipFile(mimeType);
+};
+export var getMultipleSheetsAsExcel = function (params) {
+    var data = params.data, fontSize = params.fontSize, author = params.author;
+    var mimeType = params.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+    if (!createExcelFileForExcel(data, fontSize, author)) {
+        return;
+    }
+    return ZipContainer.getUncompressedZipFile(mimeType);
 };
 export var exportMultipleSheetsAsExcel = function (params) {
     var _a = params.fileName, fileName = _a === void 0 ? 'export.xlsx' : _a;
-    var contents = getMultipleSheetsAsExcel(params);
-    if (contents) {
-        Downloader.download(fileName, contents);
-    }
+    getMultipleSheetsAsExcelCompressed(params).then(function (contents) {
+        if (contents) {
+            var downloadFileName = typeof fileName === 'function'
+                ? fileName()
+                : fileName;
+            Downloader.download(downloadFileName, contents);
+        }
+    });
 };
 var createImageRelationsForSheet = function (sheetIndex, currentRelationIndex) {
     var drawingFolder = 'xl/drawings';
-    var drawingFileName = drawingFolder + "/drawing" + (currentRelationIndex + 1) + ".xml";
-    var relFileName = drawingFolder + "/_rels/drawing" + (currentRelationIndex + 1) + ".xml.rels";
-    var worksheetRelFile = "xl/worksheets/_rels/sheet" + (sheetIndex + 1) + ".xml.rels";
+    var drawingFileName = "".concat(drawingFolder, "/drawing").concat(currentRelationIndex + 1, ".xml");
+    var relFileName = "".concat(drawingFolder, "/_rels/drawing").concat(currentRelationIndex + 1, ".xml.rels");
+    var worksheetRelFile = "xl/worksheets/_rels/sheet".concat(sheetIndex + 1, ".xml.rels");
     ZipContainer.addFile(relFileName, ExcelXlsxFactory.createDrawingRel(sheetIndex));
     ZipContainer.addFile(drawingFileName, ExcelXlsxFactory.createDrawing(sheetIndex));
     ZipContainer.addFile(worksheetRelFile, ExcelXlsxFactory.createWorksheetDrawingRel(currentRelationIndex));
@@ -105,9 +135,7 @@ var createImageRelationsForSheet = function (sheetIndex, currentRelationIndex) {
 var ExcelCreator = /** @class */ (function (_super) {
     __extends(ExcelCreator, _super);
     function ExcelCreator() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.exportMode = 'xlsx';
-        return _this;
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     ExcelCreator.prototype.postConstruct = function () {
         this.setBeans({
@@ -119,14 +147,11 @@ var ExcelCreator = /** @class */ (function (_super) {
         var baseParams = this.gridOptionsService.get('defaultExcelExportParams');
         return Object.assign({}, baseParams, params);
     };
-    ExcelCreator.prototype.getData = function (params) {
-        this.setExportMode(params.exportMode || 'xlsx');
-        return _super.prototype.getData.call(this, params);
-    };
     ExcelCreator.prototype.export = function (userParams) {
+        var _this = this;
         if (this.isExportSuppressed()) {
             console.warn("AG Grid: Export cancelled. Export is not allowed as per your configuration.");
-            return '';
+            return;
         }
         var mergedParams = this.getMergedParams(userParams);
         var data = this.getData(mergedParams);
@@ -136,21 +161,22 @@ var ExcelCreator = /** @class */ (function (_super) {
             author: mergedParams.author,
             mimeType: mergedParams.mimeType
         };
-        var packageFile = this.packageFile(exportParams);
-        if (packageFile) {
-            Downloader.download(this.getFileName(mergedParams.fileName), packageFile);
-        }
-        return data;
+        this.packageCompressedFile(exportParams).then(function (packageFile) {
+            if (packageFile) {
+                var fileName = mergedParams.fileName;
+                var providedFileName = typeof fileName === 'function'
+                    ? fileName(_this.gridOptionsService.getGridCommonParams())
+                    : fileName;
+                Downloader.download(_this.getFileName(providedFileName), packageFile);
+            }
+        });
     };
     ExcelCreator.prototype.exportDataAsExcel = function (params) {
-        return this.export(params);
+        this.export(params);
     };
     ExcelCreator.prototype.getDataAsExcel = function (params) {
         var mergedParams = this.getMergedParams(params);
         var data = this.getData(mergedParams);
-        if (params && params.exportMode === 'xml') {
-            return data;
-        }
         var exportParams = {
             data: [data],
             fontSize: mergedParams.fontSize,
@@ -159,14 +185,11 @@ var ExcelCreator = /** @class */ (function (_super) {
         };
         return this.packageFile(exportParams);
     };
-    ExcelCreator.prototype.setFactoryMode = function (factoryMode, exportMode) {
-        if (exportMode === void 0) { exportMode = 'xlsx'; }
-        var factory = exportMode === 'xlsx' ? ExcelXlsxFactory : ExcelXmlFactory;
-        factory.factoryMode = factoryMode;
+    ExcelCreator.prototype.setFactoryMode = function (factoryMode) {
+        ExcelXlsxFactory.factoryMode = factoryMode;
     };
-    ExcelCreator.prototype.getFactoryMode = function (exportMode) {
-        var factory = exportMode === 'xlsx' ? ExcelXlsxFactory : ExcelXmlFactory;
-        return factory.factoryMode;
+    ExcelCreator.prototype.getFactoryMode = function () {
+        return ExcelXlsxFactory.factoryMode;
     };
     ExcelCreator.prototype.getSheetDataForExcel = function (params) {
         var mergedParams = this.getMergedParams(params);
@@ -177,23 +200,26 @@ var ExcelCreator = /** @class */ (function (_super) {
         return getMultipleSheetsAsExcel(params);
     };
     ExcelCreator.prototype.exportMultipleSheetsAsExcel = function (params) {
-        return exportMultipleSheetsAsExcel(params);
-    };
-    ExcelCreator.prototype.getDefaultFileName = function () {
-        return "export." + this.getExportMode();
+        exportMultipleSheetsAsExcel(params);
     };
     ExcelCreator.prototype.getDefaultFileExtension = function () {
-        return this.getExportMode();
+        return 'xlsx';
     };
     ExcelCreator.prototype.createSerializingSession = function (params) {
         var _a = this, columnModel = _a.columnModel, valueService = _a.valueService, gridOptionsService = _a.gridOptionsService, valueFormatterService = _a.valueFormatterService, valueParserService = _a.valueParserService;
-        var isXlsx = this.getExportMode() === 'xlsx';
-        var sheetName = 'ag-grid';
+        var sheetName;
         if (params.sheetName != null) {
-            sheetName = _.utf8_encode(params.sheetName.toString().substr(0, 31));
+            var sheetNameParam = params.sheetName;
+            var sheetNameValue = typeof sheetNameParam === 'function'
+                ? sheetNameParam(this.gridOptionsService.getGridCommonParams())
+                : sheetNameParam;
+            sheetName = String(sheetNameValue).substring(0, 31);
         }
-        var config = __assign(__assign({}, params), { sheetName: sheetName, columnModel: columnModel, valueService: valueService, gridOptionsService: gridOptionsService, valueFormatterService: valueFormatterService, valueParserService: valueParserService, headerRowHeight: params.headerRowHeight || params.rowHeight, baseExcelStyles: this.gridOptionsService.get('excelStyles') || [], styleLinker: this.styleLinker.bind(this) });
-        return new (isXlsx ? ExcelXlsxSerializingSession : ExcelXmlSerializingSession)(config);
+        else {
+            sheetName = 'ag-grid';
+        }
+        var config = __assign(__assign({}, params), { sheetName: sheetName, columnModel: columnModel, valueService: valueService, gridOptionsService: gridOptionsService, valueFormatterService: valueFormatterService, valueParserService: valueParserService, suppressRowOutline: params.suppressRowOutline || params.skipRowGroups, headerRowHeight: params.headerRowHeight || params.rowHeight, baseExcelStyles: this.gridOptionsService.get('excelStyles') || [], styleLinker: this.styleLinker.bind(this) });
+        return new ExcelSerializingSession(config);
     };
     ExcelCreator.prototype.styleLinker = function (params) {
         var rowType = params.rowType, rowIndex = params.rowIndex, value = params.value, column = params.column, columnGroup = params.columnGroup, node = params.node;
@@ -219,17 +245,14 @@ var ExcelCreator = /** @class */ (function (_super) {
         var styleIds = styles.map(function (it) {
             return it.id;
         });
-        this.stylingService.processAllCellClasses(column.getDefinition(), {
+        this.stylingService.processAllCellClasses(column.getDefinition(), this.gridOptionsService.addGridCommonParams({
             value: value,
             data: node.data,
             node: node,
             colDef: column.getDefinition(),
             column: column,
-            rowIndex: rowIndex,
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context
-        }, function (className) {
+            rowIndex: rowIndex
+        }), function (className) {
             if (styleIds.indexOf(className) > -1) {
                 applicableStyles.push(className);
             }
@@ -239,19 +262,12 @@ var ExcelCreator = /** @class */ (function (_super) {
         });
     };
     ExcelCreator.prototype.isExportSuppressed = function () {
-        return this.gridOptionsService.is('suppressExcelExport');
+        return this.gridOptionsService.get('suppressExcelExport');
     };
-    ExcelCreator.prototype.setExportMode = function (exportMode) {
-        this.exportMode = exportMode;
-    };
-    ExcelCreator.prototype.getExportMode = function () {
-        return this.exportMode;
+    ExcelCreator.prototype.packageCompressedFile = function (params) {
+        return getMultipleSheetsAsExcelCompressed(params);
     };
     ExcelCreator.prototype.packageFile = function (params) {
-        if (this.getExportMode() === 'xml') {
-            var mimeType = params.mimeType || 'application/vnd.ms-excel';
-            return new Blob(["\ufeff", params.data[0]], { type: mimeType });
-        }
         return getMultipleSheetsAsExcel(params);
     };
     __decorate([

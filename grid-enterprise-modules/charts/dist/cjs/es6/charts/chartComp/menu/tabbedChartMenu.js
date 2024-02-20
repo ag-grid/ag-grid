@@ -84,7 +84,7 @@ class TabbedChartMenu extends core_1.Component {
 TabbedChartMenu.TAB_DATA = 'data';
 TabbedChartMenu.TAB_FORMAT = 'format';
 __decorate([
-    core_1.Autowired('chartTranslationService')
+    (0, core_1.Autowired)('chartTranslationService')
 ], TabbedChartMenu.prototype, "chartTranslationService", void 0);
 __decorate([
     core_1.PostConstruct

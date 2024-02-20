@@ -4,11 +4,16 @@ import { Component } from "../../widgets/component";
 
 export interface ILoadingOverlayParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> { }
 
-export interface ILoadingOverlayComp extends IComponent<ILoadingOverlayParams> { }
+export interface ILoadingOverlay<TData = any, TContext = any> {
+    // Gets called when the `loadingOverlayComponentParams` grid option is updated
+    refresh?(params: ILoadingOverlayParams<TData, TContext>): void;
+}
+
+export interface ILoadingOverlayComp<TData = any, TContext = any> extends IComponent<ILoadingOverlayParams<TData, TContext>>, ILoadingOverlay<TData, TContext> { }
 
 export class LoadingOverlayComponent extends Component implements ILoadingOverlayComp {
 
-    private static DEFAULT_LOADING_OVERLAY_TEMPLATE = '<span class="ag-overlay-loading-center">[LOADING...]</span>';
+    private static DEFAULT_LOADING_OVERLAY_TEMPLATE = /* html */ `<span aria-live="polite" aria-atomic="true" class="ag-overlay-loading-center"></span>`;
 
     constructor() {
         super();
@@ -21,12 +26,17 @@ export class LoadingOverlayComponent extends Component implements ILoadingOverla
     }
 
     public init(params: ILoadingOverlayParams): void {
-        const template =
-            this.gridOptionsService.get('overlayLoadingTemplate') ?? LoadingOverlayComponent.DEFAULT_LOADING_OVERLAY_TEMPLATE;
+        const customTemplate = this.gridOptionsService.get('overlayLoadingTemplate');
 
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
-        const localisedTemplate = template!.replace('[LOADING...]', localeTextFunc('loadingOoo', 'Loading...'));
+        this.setTemplate(customTemplate ?? LoadingOverlayComponent.DEFAULT_LOADING_OVERLAY_TEMPLATE);
 
-        this.setTemplate(localisedTemplate);
+        if (!customTemplate) {
+            const localeTextFunc = this.localeService.getLocaleTextFunc();
+            // setTimeout is used because some screen readers only announce `aria-live` text when
+            // there is a "text change", so we force a change from empty.
+            setTimeout(() => {
+                this.getGui().textContent = localeTextFunc('loadingOoo', 'Loading...');
+            });
+        }
     }
 }

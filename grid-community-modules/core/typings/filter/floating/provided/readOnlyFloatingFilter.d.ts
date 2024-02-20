@@ -10,4 +10,5 @@ export declare class ReadOnlyFloatingFilter extends Component implements IFloati
     init(params: IFloatingFilterParams): void;
     onParentModelChanged(parentModel: any): void;
     onParamsUpdated(params: IFloatingFilterParams): void;
+    refresh(params: IFloatingFilterParams): void;
 }

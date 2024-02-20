@@ -6,7 +6,7 @@ function extractPropertyKeys(filePath) {
     const testConfig = JSON.parse(fileContents);
 
     const propKeys = Object.entries(testConfig).filter(([k, v]) => {
-        return !v.description?.includes('deprecated');
+        return !v.meta?.tags?.some(tag => tag.name === 'deprecated');
     }).map(([k, v]) => k);
     return propKeys;
 }
@@ -34,7 +34,7 @@ function validateDocFile(name, autoFile, docFiles, manualExclusions = [], eventS
 
         Object.entries(eventsProps).forEach(([k, v]) => {
             Object.keys(v).forEach(key => {
-                const eventName = 'on' + key[0].toUpperCase() + key.substr(1)
+                const eventName = 'on' + key[0].toUpperCase() + key.substring(1)
                 docKeys[key] = true
                 docKeys[eventName] = true
             })
@@ -78,8 +78,6 @@ validateDocFile('GridOptions', './documentation/doc-pages/grid-api/grid-options.
 validateDocFile('ColDef', './documentation/doc-pages/column-properties/column-options.AUTO.json', ['./documentation/doc-pages/column-properties/properties.json'], [
     'pivotKeys', 'pivotValueColumn', 'pivotTotalColumnIds'
 ]);
-validateDocFile('ColumnApi', './documentation/doc-pages/column-api/column-api.AUTO.json', ['./documentation/doc-pages/column-api/api.json']);
-
 
 // So many missing will need to get clarification on this.
 // TODO 
@@ -90,7 +88,6 @@ validateDocFile('ColumnApi', './documentation/doc-pages/column-api/column-api.AU
 
 validateDocFile('RowNode', './documentation/doc-pages/row-object/row-node.AUTO.json',
     [
-        './documentation/doc-pages/row-object/resources/events.json',
-        './documentation/doc-pages/row-object/resources/methods.json',
+        './documentation/doc-pages/row-events/resources/events.json',
         './documentation/doc-pages/row-object/resources/reference.json'
     ]);

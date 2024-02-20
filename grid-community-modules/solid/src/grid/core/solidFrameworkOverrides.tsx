@@ -5,7 +5,7 @@ import GroupCellRenderer from "../cellRenderer/groupCellRenderer";
 export class SolidFrameworkOverrides extends VanillaFrameworkOverrides {
 
     constructor() {
-        super();
+        super('solid');
     }
 
     private frameworkComponents: any = {

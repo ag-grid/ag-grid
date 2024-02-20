@@ -247,17 +247,17 @@ const getImageBoxSize = (image) => {
         from: {
             row: row - 1,
             col: column - 1,
-            offsetX: excelUtils_1.pixelsToEMU(offsetX),
-            offsetY: excelUtils_1.pixelsToEMU(offsetY)
+            offsetX: (0, excelUtils_1.pixelsToEMU)(offsetX),
+            offsetY: (0, excelUtils_1.pixelsToEMU)(offsetY)
         },
         to: {
             row: (row - 1) + (fitCell ? 1 : rowSpan - 1),
             col: (column - 1) + (fitCell ? 1 : colSpan - 1),
-            offsetX: excelUtils_1.pixelsToEMU(width + offsetX),
-            offsetY: excelUtils_1.pixelsToEMU(height + offsetY)
+            offsetX: (0, excelUtils_1.pixelsToEMU)(width + offsetX),
+            offsetY: (0, excelUtils_1.pixelsToEMU)(height + offsetY)
         },
-        height: excelUtils_1.pixelsToEMU(totalHeight || height),
-        width: excelUtils_1.pixelsToEMU(totalWidth || width)
+        height: (0, excelUtils_1.pixelsToEMU)(totalHeight || height),
+        width: (0, excelUtils_1.pixelsToEMU)(totalWidth || width)
     };
 };
 const getPicture = (image, currentIndex, worksheetImageIndex, imageBoxSize) => {

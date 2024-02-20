@@ -1,4 +1,6 @@
-import { Grid, GridOptions, IDetailCellRendererParams } from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions, IDetailCellRendererParams } from '@ag-grid-community/core';
+
+let gridApi: GridApi<IAccount>;
 
 const gridOptions: GridOptions<IAccount> = {
   columnDefs: [
@@ -27,7 +29,7 @@ const gridOptions: GridOptions<IAccount> = {
     },
     getDetailRowData: (params) => {
       // simulate delayed supply of data to the detail pane
-      setTimeout(function () {
+      setTimeout(() => {
         params.successCallback(params.data.callRecords)
       }, 1000)
     },
@@ -37,11 +39,11 @@ const gridOptions: GridOptions<IAccount> = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/master-detail-data.json')
     .then(response => response.json())
     .then((data: IAccount[]) => {
-      gridOptions.api!.setRowData(data)
+      gridApi!.setGridOption('rowData', data)
     })
 })

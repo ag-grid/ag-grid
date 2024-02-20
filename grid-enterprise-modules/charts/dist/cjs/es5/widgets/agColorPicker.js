@@ -32,7 +32,7 @@ var core_1 = require("@ag-grid-community/core");
 var AgColorPicker = /** @class */ (function (_super) {
     __extends(AgColorPicker, _super);
     function AgColorPicker(config) {
-        var _this = _super.call(this, __assign({ pickerAriaLabelKey: 'ariaLabelColorPicker', pickerAriaLabelValue: 'Color Picker', pickerType: 'ag-list' }, config), 'ag-color-picker', 'colorPicker') || this;
+        var _this = _super.call(this, __assign({ pickerAriaLabelKey: 'ariaLabelColorPicker', pickerAriaLabelValue: 'Color Picker', pickerType: 'ag-list', className: 'ag-color-picker', pickerIcon: 'colorPicker' }, config)) || this;
         if (config && config.color) {
             _this.value = config.color;
         }

@@ -51,7 +51,7 @@ var TabbedChartMenu = /** @class */ (function (_super) {
     };
     TabbedChartMenu.prototype.createTab = function (name, title, TabPanelClass) {
         var eWrapperDiv = document.createElement('div');
-        eWrapperDiv.classList.add('ag-chart-tab', "ag-chart-" + title);
+        eWrapperDiv.classList.add('ag-chart-tab', "ag-chart-".concat(title));
         var comp = new TabPanelClass(this.chartController, this.chartOptionsService);
         this.getContext().createBean(comp);
         eWrapperDiv.appendChild(comp.getGui());

@@ -22,7 +22,7 @@ class LargeTextCellEditor extends popupComponent_1.PopupComponent {
             .setMaxLength(params.maxLength || 200)
             .setCols(params.cols || 60)
             .setRows(params.rows || 10);
-        if (generic_1.exists(params.value, true)) {
+        if ((0, generic_1.exists)(params.value, true)) {
             this.eTextArea.setValue(params.value.toString(), true);
         }
         this.addGuiEventListener('keydown', this.onKeyDown.bind(this));
@@ -47,7 +47,7 @@ class LargeTextCellEditor extends popupComponent_1.PopupComponent {
     }
     getValue() {
         const value = this.eTextArea.getValue();
-        if (!generic_1.exists(value) && !generic_1.exists(this.params.value)) {
+        if (!(0, generic_1.exists)(value) && !(0, generic_1.exists)(this.params.value)) {
             return this.params.value;
         }
         return this.params.parseValue(value);
@@ -57,6 +57,6 @@ LargeTextCellEditor.TEMPLATE = `<div class="ag-large-text">
             <ag-input-text-area ref="eTextArea" class="ag-large-text-input"></ag-input-text-area>
         </div>`;
 __decorate([
-    componentAnnotations_1.RefSelector("eTextArea")
+    (0, componentAnnotations_1.RefSelector)("eTextArea")
 ], LargeTextCellEditor.prototype, "eTextArea", void 0);
 exports.LargeTextCellEditor = LargeTextCellEditor;

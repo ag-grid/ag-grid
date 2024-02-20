@@ -1,3 +1,4 @@
+
 import {
     _,
     AgGroupComponent,
@@ -14,66 +15,124 @@ import {
     MiniArea,
     MiniAreaColumnCombo,
     MiniBar,
+    MiniBoxPlot,
     MiniBubble,
     MiniColumn,
     MiniColumnLineCombo,
     MiniCustomCombo,
-    MiniDoughnut,
+    MiniDonut,
+    MiniHeatmap,
     MiniHistogram,
     MiniLine,
+    MiniNightingale,
     MiniNormalizedArea,
     MiniNormalizedBar,
     MiniNormalizedColumn,
     MiniPie,
+    MiniRadarArea,
+    MiniRadarLine,
+    MiniRadialBar,
+    MiniRadialColumn,
+    MiniRangeBar,
+    MiniRangeArea,
+    MiniWaterfall,
     MiniScatter,
     MiniStackedArea,
     MiniStackedBar,
     MiniStackedColumn,
+    MiniSunburst,
+    MiniTreemap,
 } from "./miniCharts/index"; // please leave this as is - we want it to be explicit for build reasons
+import { MiniChart } from './miniCharts/miniChart';
 
-const miniChartMapping = {
-    columnGroup: {
-        column: MiniColumn,
-        stackedColumn: MiniStackedColumn,
-        normalizedColumn: MiniNormalizedColumn
-    },
-    barGroup: {
-        bar: MiniBar,
-        stackedBar: MiniStackedBar,
-        normalizedBar: MiniNormalizedBar
-    },
-    pieGroup: {
-        pie: MiniPie,
-        doughnut: MiniDoughnut
-    },
-    lineGroup: {
-        line: MiniLine
-    },
-    scatterGroup: {
-        scatter: MiniScatter,
-        bubble: MiniBubble
-    },
-    areaGroup: {
-        area: MiniArea,
-        stackedArea: MiniStackedArea,
-        normalizedArea: MiniNormalizedArea
-    },
-    histogramGroup: {
-        histogram: MiniHistogram
-    },
-    combinationGroup: {
-        columnLineCombo: MiniColumnLineCombo,
-        areaColumnCombo: MiniAreaColumnCombo,
-        customCombo: MiniCustomCombo
-    }
+// import {enterprise} from "../../../../main";
+
+export type ThemeTemplateParameters = {
+    extensions: Map<any, any>;
+    properties: Map<any, any>;
+};
+
+type MiniChartMenuMapping = {
+    [K in keyof ChartGroupsDef]-?: MiniChartMenuGroup<K>;
+};
+
+type MiniChartMenuGroup<K extends keyof ChartGroupsDef> = {
+    [T in NonNullable<ChartGroupsDef[K]>[number]]: MiniChartMenuItem;
 }
 
-export class MiniChartsContainer extends Component {
+interface MiniChartMenuItem {
+    range: boolean;
+    pivot: boolean;
+    enterprise: boolean;
+    icon: MiniChartConstructor;
+}
 
+type MiniChartConstructor = {
+    chartType: ChartType;
+    new (...args: any[]): MiniChart;
+};
+
+const miniChartMapping: MiniChartMenuMapping = {
+    columnGroup: {
+        column: { range: true, pivot: true, enterprise: false, icon: MiniColumn },
+        stackedColumn: { range: true, pivot: true, enterprise: false, icon: MiniStackedColumn },
+        normalizedColumn: { range: true, pivot: true, enterprise: false, icon: MiniNormalizedColumn },
+    },
+    barGroup: {
+        bar: { range: true, pivot: true, enterprise: false, icon: MiniBar },
+        stackedBar: { range: true, pivot: true, enterprise: false, icon: MiniStackedBar },
+        normalizedBar: { range: true, pivot: true, enterprise: false, icon: MiniNormalizedBar },
+    },
+    pieGroup: {
+        pie: { range: true, pivot: true, enterprise: false, icon: MiniPie },
+        donut: { range: true, pivot: true, enterprise: false, icon: MiniDonut },
+        doughnut: { range: true, pivot: true, enterprise: false, icon: MiniDonut },
+    },
+    lineGroup: { line: { range: true, pivot: true, enterprise: false, icon: MiniLine } },
+    scatterGroup: {
+        scatter: { range: true, pivot: true, enterprise: false, icon: MiniScatter },
+        bubble: { range: true, pivot: true, enterprise: false, icon: MiniBubble },
+    },
+    areaGroup: {
+        area: { range: true, pivot: true, enterprise: false, icon: MiniArea },
+        stackedArea: { range: true, pivot: true, enterprise: false, icon: MiniStackedArea },
+        normalizedArea: { range: true, pivot: true, enterprise: false, icon: MiniNormalizedArea },
+    },
+    polarGroup: {
+        radarLine: { range: true, pivot: false, enterprise: true, icon: MiniRadarLine },
+        radarArea: { range: true, pivot: false, enterprise: true, icon: MiniRadarArea },
+        nightingale: { range: true, pivot: false, enterprise: true, icon: MiniNightingale },
+        radialColumn: { range: true, pivot: false, enterprise: true, icon: MiniRadialColumn },
+        radialBar: { range: true, pivot: false, enterprise: true, icon: MiniRadialBar },
+    },
+    statisticalGroup: {
+        boxPlot: { range: true, pivot: false, enterprise: true, icon: MiniBoxPlot },
+        histogram: { range: true, pivot: false, enterprise: false, icon: MiniHistogram },
+        rangeBar: { range: true, pivot: false, enterprise: true, icon: MiniRangeBar },
+        rangeArea: { range: true, pivot: false, enterprise: true, icon: MiniRangeArea },
+    },
+    hierarchicalGroup: {
+        treemap: { range: true, pivot: true, enterprise: true, icon: MiniTreemap },
+        sunburst: { range: true, pivot: true, enterprise: true, icon: MiniSunburst },
+    },
+    specializedGroup: {
+        heatmap: { range: true, pivot: false, enterprise: true, icon: MiniHeatmap },
+        waterfall: { range: true, pivot: false, enterprise: true, icon: MiniWaterfall },
+    },
+    combinationGroup: {
+        columnLineCombo: { range: true, pivot: true, enterprise: false, icon: MiniColumnLineCombo },
+        areaColumnCombo: { range: true, pivot: true, enterprise: false, icon: MiniAreaColumnCombo },
+        customCombo: { range: true, pivot: true, enterprise: false, icon: MiniCustomCombo },
+    },
+};
+
+export class MiniChartsContainer extends Component {
     static TEMPLATE = /* html */ `<div class="ag-chart-settings-mini-wrapper"></div>`;
 
     private readonly fills: string[];
     private readonly strokes: string[];
+    private readonly themeTemplateParameters: ThemeTemplateParameters;
+    private readonly isCustomTheme: boolean;
     private wrappers: { [key: string]: HTMLElement } = {};
     private chartController: ChartController;
 
@@ -81,47 +140,83 @@ export class MiniChartsContainer extends Component {
 
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
-    constructor(chartController: ChartController, fills: string[], strokes: string[], chartGroups: ChartGroupsDef = DEFAULT_CHART_GROUPS) {
+    constructor(chartController: ChartController, fills: string[], strokes: string[], themeTemplateParameters: ThemeTemplateParameters, isCustomTheme: boolean, chartGroups: ChartGroupsDef = DEFAULT_CHART_GROUPS) {
         super(MiniChartsContainer.TEMPLATE);
 
         this.chartController = chartController;
         this.fills = fills;
         this.strokes = strokes;
+        this.themeTemplateParameters = themeTemplateParameters;
+        this.isCustomTheme = isCustomTheme;
         this.chartGroups = {...chartGroups};
     }
 
     @PostConstruct
     private init() {
-        // hide MiniCustomCombo if no custom combo exists
-        if (!this.chartController.customComboExists() && this.chartGroups.combinationGroup) {
-            this.chartGroups.combinationGroup = this.chartGroups.combinationGroup.filter(chartType => chartType !== 'customCombo');
-        }
-
         const eGui = this.getGui();
+        const isEnterprise = this.chartController.isEnterprise();
+        const isPivotChart = this.chartController.isPivotChart();
+        const isRangeChart = !isPivotChart;
 
-        Object.keys(this.chartGroups).forEach((group: keyof ChartGroupsDef) => {
-            const chartGroupValues = this.chartGroups[group];
-            const groupComponent = this.createBean(new AgGroupComponent({
-                title: this.chartTranslationService.translate(group),
-                suppressEnabledCheckbox: true,
-                enabled: true,
-                suppressOpenCloseIcons: true,
-                cssIdentifier: 'charts-settings',
-                direction: 'horizontal'
-            }));
+        // Determine the set of chart types that are specified by the chartGroupsDef config, filtering out any entries
+        // that are invalid for the current chart configuration (pivot/range) and license type
+        const displayedMenuGroups = Object.keys(this.chartGroups).map((group) => {
+            const menuGroup = group in miniChartMapping
+                ? miniChartMapping[group as keyof typeof miniChartMapping]
+                : undefined;
+            if (!menuGroup) {
+                // User has specified an invalid chart group in the chartGroupsDef config
+                _.warnOnce(`invalid chartGroupsDef config '${group}'`);
+                return null;
+            }
 
-            chartGroupValues!.forEach((chartType: keyof ChartGroupsDef[typeof group]) => {
-                const MiniClass = miniChartMapping[group]?.[chartType] as any;
-                if (!MiniClass) {
-                    if (miniChartMapping[group]) {
-                        _.doOnce(() => console.warn(`AG Grid - invalid chartGroupsDef config '${group}.${chartType}'`), `invalid_chartGroupsDef${chartType}_${group}`);
-                    } else {
-                        _.doOnce(() => console.warn(`AG Grid - invalid chartGroupsDef config '${group}'`), `invalid_chartGroupsDef${group}`);
+            // Determine the valid chart types within this group, based on the chartGroupsDef config
+            const chartGroupValues = this.chartGroups[group as keyof ChartGroupsDef] ?? [];
+            const menuItems = chartGroupValues.map((chartType) => {
+                const menuItem = chartType in menuGroup
+                        ? (menuGroup as Record<typeof chartType, MiniChartMenuItem>)[chartType]
+                        : undefined;
 
-                    }
-                    return;
+                if (!menuItem) {
+                     // User has specified an invalid chart type in the chartGroupsDef config
+                    _.warnOnce(`invalid chartGroupsDef config '${group}.${chartType}'`);
+                    return null;
                 }
 
+                if (!isEnterprise && menuItem.enterprise) {
+                    return null; // skip enterprise charts if community
+                }
+                // Only show the chart if it is valid for the current chart configuration (pivot/range)
+                if (isRangeChart && menuItem.range) return menuItem;
+                if (isPivotChart && menuItem.pivot) return menuItem;
+                return null;
+            })
+            .filter((menuItem): menuItem is NonNullable<typeof menuItem> => menuItem != null);
+
+            if (menuItems.length === 0) return null; // don't render empty chart groups
+
+            return {
+                label: this.chartTranslationService.translate(group),
+                items: menuItems
+            };
+        })
+        .filter((menuGroup): menuGroup is NonNullable<typeof menuGroup> => menuGroup != null);
+
+        // Render the filtered menu items
+        for (const { label, items } of displayedMenuGroups) {
+            const groupComponent = this.createBean(
+                new AgGroupComponent({
+                    title: label,
+                    suppressEnabledCheckbox: true,
+                    enabled: true,
+                    suppressOpenCloseIcons: true,
+                    cssIdentifier: 'charts-settings',
+                    direction: 'horizontal',
+                })
+            );
+
+            for (const menuItem of items) {
+                const MiniClass = menuItem.icon;
                 const miniWrapper = document.createElement('div');
                 miniWrapper.classList.add('ag-chart-mini-thumbnail');
 
@@ -133,12 +228,17 @@ export class MiniChartsContainer extends Component {
 
                 this.wrappers[miniClassChartType] = miniWrapper;
 
-                this.createBean(new MiniClass(miniWrapper, this.fills, this.strokes));
+                this.createBean(new MiniClass(miniWrapper, this.fills, this.strokes, this.themeTemplateParameters, this.isCustomTheme));
                 groupComponent.addItem(miniWrapper);
-            });
+            }
 
             eGui.appendChild(groupComponent.getGui());
-        });
+        }            
+
+        // hide MiniCustomCombo if no custom combo exists
+        if (!this.chartController.customComboExists() && this.chartGroups.combinationGroup) {
+            this.chartGroups.combinationGroup = this.chartGroups.combinationGroup.filter(chartType => chartType !== 'customCombo');
+        }
 
         this.updateSelectedMiniChart();
     }

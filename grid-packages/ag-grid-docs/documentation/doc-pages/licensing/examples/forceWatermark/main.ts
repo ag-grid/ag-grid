@@ -1,8 +1,10 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 import { LicenseManager } from "@ag-grid-enterprise/core";
 
 // enter your license key here to suppress license message in the console and watermark
 LicenseManager.setLicenseKey("")
+
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   // define grid columns
@@ -20,7 +22,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   ],
 
   defaultColDef: {
-    width: 150,
+    flex: 1,
   },
 
   // default ColGroupDef, get applied to every column group
@@ -33,18 +35,14 @@ const gridOptions: GridOptions<IOlympicData> = {
   },
 
   rowData: null,
-
-  onGridReady: (params) => {
-    params.api.sizeColumnsToFit()
-  },
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

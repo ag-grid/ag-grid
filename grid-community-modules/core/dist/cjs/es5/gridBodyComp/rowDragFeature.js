@@ -47,10 +47,14 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RowDragFeature = void 0;
@@ -60,17 +64,14 @@ var eventKeys_1 = require("../eventKeys");
 var iRowNode_1 = require("../interfaces/iRowNode");
 var array_1 = require("../utils/array");
 var beanStub_1 = require("../context/beanStub");
-var generic_1 = require("../utils/generic");
 var function_1 = require("../utils/function");
 var autoScrollService_1 = require("../autoScrollService");
+var direction_1 = require("../constants/direction");
 var RowDragFeature = /** @class */ (function (_super) {
     __extends(RowDragFeature, _super);
     function RowDragFeature(eContainer) {
         var _this = _super.call(this) || this;
         _this.isMultiRowDrag = false;
-        _this.isGridSorted = false;
-        _this.isGridFiltered = false;
-        _this.isRowGroupActive = false;
         _this.eContainer = eContainer;
         return _this;
     }
@@ -79,18 +80,6 @@ var RowDragFeature = /** @class */ (function (_super) {
         if (this.gridOptionsService.isRowModelType('clientSide')) {
             this.clientSideRowModel = this.rowModel;
         }
-        var refreshStatus = function () {
-            _this.onSortChanged();
-            _this.onFilterChanged();
-            _this.onRowGroupChanged();
-        };
-        this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
-        this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
-        this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this));
-        this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_MODEL_UPDATED, function () {
-            refreshStatus();
-        });
-        refreshStatus();
         this.ctrlsService.whenReady(function () {
             var gridBodyCon = _this.ctrlsService.getGridBodyCtrl();
             _this.autoScrollService = new autoScrollService_1.AutoScrollService({
@@ -102,16 +91,6 @@ var RowDragFeature = /** @class */ (function (_super) {
             });
         });
     };
-    RowDragFeature.prototype.onSortChanged = function () {
-        this.isGridSorted = this.sortController.isSortActive();
-    };
-    RowDragFeature.prototype.onFilterChanged = function () {
-        this.isGridFiltered = this.filterManager.isAnyFilterPresent();
-    };
-    RowDragFeature.prototype.onRowGroupChanged = function () {
-        var rowGroups = this.columnModel.getRowGroupColumns();
-        this.isRowGroupActive = !generic_1.missingOrEmpty(rowGroups);
-    };
     RowDragFeature.prototype.getContainer = function () {
         return this.eContainer;
     };
@@ -119,22 +98,34 @@ var RowDragFeature = /** @class */ (function (_super) {
         return type === dragAndDropService_1.DragSourceType.RowDrag;
     };
     RowDragFeature.prototype.getIconName = function () {
-        var managedDrag = this.gridOptionsService.is('rowDragManaged');
+        var managedDrag = this.gridOptionsService.get('rowDragManaged');
         if (managedDrag && this.shouldPreventRowMove()) {
             return dragAndDropService_1.DragAndDropService.ICON_NOT_ALLOWED;
         }
         return dragAndDropService_1.DragAndDropService.ICON_MOVE;
     };
     RowDragFeature.prototype.shouldPreventRowMove = function () {
-        return this.isGridSorted || this.isGridFiltered || this.isRowGroupActive;
+        var rowGroupCols = this.columnModel.getRowGroupColumns();
+        if (rowGroupCols.length) {
+            return true;
+        }
+        var isFilterPresent = this.filterManager.isAnyFilterPresent();
+        if (isFilterPresent) {
+            return true;
+        }
+        var isSortActive = this.sortController.isSortActive();
+        if (isSortActive) {
+            return true;
+        }
+        return false;
     };
     RowDragFeature.prototype.getRowNodes = function (draggingEvent) {
         var _this = this;
         if (!this.isFromThisGrid(draggingEvent)) {
             return (draggingEvent.dragItem.rowNodes || []);
         }
-        var isRowDragMultiRow = this.gridOptionsService.is('rowDragMultiRow');
-        var selectedNodes = __spreadArray([], __read(this.selectionService.getSelectedNodes())).sort(function (a, b) {
+        var isRowDragMultiRow = this.gridOptionsService.get('rowDragMultiRow');
+        var selectedNodes = __spreadArray([], __read(this.selectionService.getSelectedNodes()), false).sort(function (a, b) {
             if (a.rowIndex == null || b.rowIndex == null) {
                 return 0;
             }
@@ -177,7 +168,7 @@ var RowDragFeature = /** @class */ (function (_super) {
         this.dispatchGridEvent(eventKeys_1.Events.EVENT_ROW_DRAG_MOVE, draggingEvent);
         this.lastDraggingEvent = draggingEvent;
         var pixel = this.mouseEventService.getNormalisedPosition(draggingEvent).y;
-        var managedDrag = this.gridOptionsService.is('rowDragManaged');
+        var managedDrag = this.gridOptionsService.get('rowDragManaged');
         if (managedDrag) {
             this.doManagedDrag(draggingEvent, pixel);
         }
@@ -185,12 +176,12 @@ var RowDragFeature = /** @class */ (function (_super) {
     };
     RowDragFeature.prototype.doManagedDrag = function (draggingEvent, pixel) {
         var isFromThisGrid = this.isFromThisGrid(draggingEvent);
-        var managedDrag = this.gridOptionsService.is('rowDragManaged');
+        var managedDrag = this.gridOptionsService.get('rowDragManaged');
         var rowNodes = draggingEvent.dragItem.rowNodes;
         if (managedDrag && this.shouldPreventRowMove()) {
             return;
         }
-        if (this.gridOptionsService.is('suppressMoveWhenRowDragging') || !isFromThisGrid) {
+        if (this.gridOptionsService.get('suppressMoveWhenRowDragging') || !isFromThisGrid) {
             if (!this.isDropZoneWithinThisGrid(draggingEvent)) {
                 this.clientSideRowModel.highlightRowAtPixel(rowNodes[0], pixel);
             }
@@ -200,7 +191,7 @@ var RowDragFeature = /** @class */ (function (_super) {
         }
     };
     RowDragFeature.prototype.getRowIndexNumber = function (rowNode) {
-        return parseInt(array_1.last(rowNode.getRowIndexString().split('-')), 10);
+        return parseInt((0, array_1.last)(rowNode.getRowIndexString().split('-')), 10);
     };
     RowDragFeature.prototype.moveRowAndClearHighlight = function (draggingEvent) {
         var _this = this;
@@ -248,7 +239,7 @@ var RowDragFeature = /** @class */ (function (_super) {
     RowDragFeature.prototype.addRowDropZone = function (params) {
         var _this = this;
         if (!params.getContainer()) {
-            function_1.doOnce(function () { return console.warn('AG Grid: addRowDropZone - A container target needs to be provided'); }, 'add-drop-zone-empty-target');
+            (0, function_1.warnOnce)('addRowDropZone - A container target needs to be provided');
             return;
         }
         if (this.dragAndDropService.findExternalZone(params)) {
@@ -336,21 +327,18 @@ var RowDragFeature = /** @class */ (function (_super) {
         }
         var vDirectionString;
         switch (draggingEvent.vDirection) {
-            case dragAndDropService_1.VerticalDirection.Down:
+            case direction_1.VerticalDirection.Down:
                 vDirectionString = 'down';
                 break;
-            case dragAndDropService_1.VerticalDirection.Up:
+            case direction_1.VerticalDirection.Up:
                 vDirectionString = 'up';
                 break;
             default:
                 vDirectionString = null;
                 break;
         }
-        var event = {
+        var event = this.gridOptionsService.addGridCommonParams({
             type: type,
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context,
             event: draggingEvent.event,
             node: draggingEvent.dragItem.rowNode,
             nodes: draggingEvent.dragItem.rowNodes,
@@ -358,7 +346,7 @@ var RowDragFeature = /** @class */ (function (_super) {
             overNode: overNode,
             y: yNormalised,
             vDirection: vDirectionString
-        };
+        });
         return event;
     };
     RowDragFeature.prototype.dispatchGridEvent = function (type, draggingEvent) {
@@ -368,7 +356,7 @@ var RowDragFeature = /** @class */ (function (_super) {
     RowDragFeature.prototype.onDragLeave = function (draggingEvent) {
         this.dispatchGridEvent(eventKeys_1.Events.EVENT_ROW_DRAG_LEAVE, draggingEvent);
         this.stopDragging(draggingEvent);
-        if (this.gridOptionsService.is('rowDragManaged')) {
+        if (this.gridOptionsService.get('rowDragManaged')) {
             this.clearRowHighlight();
         }
         if (this.isFromThisGrid(draggingEvent)) {
@@ -378,8 +366,8 @@ var RowDragFeature = /** @class */ (function (_super) {
     RowDragFeature.prototype.onDragStop = function (draggingEvent) {
         this.dispatchGridEvent(eventKeys_1.Events.EVENT_ROW_DRAG_END, draggingEvent);
         this.stopDragging(draggingEvent);
-        if (this.gridOptionsService.is('rowDragManaged') &&
-            (this.gridOptionsService.is('suppressMoveWhenRowDragging') || !this.isFromThisGrid(draggingEvent)) &&
+        if (this.gridOptionsService.get('rowDragManaged') &&
+            (this.gridOptionsService.get('suppressMoveWhenRowDragging') || !this.isFromThisGrid(draggingEvent)) &&
             !this.isDropZoneWithinThisGrid(draggingEvent)) {
             this.moveRowAndClearHighlight(draggingEvent);
         }
@@ -391,37 +379,37 @@ var RowDragFeature = /** @class */ (function (_super) {
         });
     };
     __decorate([
-        context_1.Autowired('dragAndDropService')
+        (0, context_1.Autowired)('dragAndDropService')
     ], RowDragFeature.prototype, "dragAndDropService", void 0);
     __decorate([
-        context_1.Autowired('rowModel')
+        (0, context_1.Autowired)('rowModel')
     ], RowDragFeature.prototype, "rowModel", void 0);
     __decorate([
-        context_1.Autowired('paginationProxy')
+        (0, context_1.Autowired)('paginationProxy')
     ], RowDragFeature.prototype, "paginationProxy", void 0);
     __decorate([
-        context_1.Autowired('columnModel')
+        (0, context_1.Autowired)('columnModel')
     ], RowDragFeature.prototype, "columnModel", void 0);
     __decorate([
-        context_1.Autowired('focusService')
+        (0, context_1.Autowired)('focusService')
     ], RowDragFeature.prototype, "focusService", void 0);
     __decorate([
-        context_1.Autowired('sortController')
+        (0, context_1.Autowired)('sortController')
     ], RowDragFeature.prototype, "sortController", void 0);
     __decorate([
-        context_1.Autowired('filterManager')
+        (0, context_1.Autowired)('filterManager')
     ], RowDragFeature.prototype, "filterManager", void 0);
     __decorate([
-        context_1.Autowired('selectionService')
+        (0, context_1.Autowired)('selectionService')
     ], RowDragFeature.prototype, "selectionService", void 0);
     __decorate([
-        context_1.Autowired('mouseEventService')
+        (0, context_1.Autowired)('mouseEventService')
     ], RowDragFeature.prototype, "mouseEventService", void 0);
     __decorate([
-        context_1.Autowired('ctrlsService')
+        (0, context_1.Autowired)('ctrlsService')
     ], RowDragFeature.prototype, "ctrlsService", void 0);
     __decorate([
-        context_1.Optional('rangeService')
+        (0, context_1.Optional)('rangeService')
     ], RowDragFeature.prototype, "rangeService", void 0);
     __decorate([
         context_1.PostConstruct

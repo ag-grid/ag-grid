@@ -1,4 +1,4 @@
-import { Grid, GridOptions, ValueGetterParams } from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions, ValueGetterParams } from '@ag-grid-community/core';
 
 function hashValueGetter(params: ValueGetterParams) {
   return params.node ? params.node.rowIndex : null;
@@ -23,6 +23,7 @@ function chainValueGetter(params: ValueGetterParams) {
 function constValueGetter() {
   return 99999
 }
+let gridApi: GridApi;
 const gridOptions: GridOptions = {
   columnDefs: [
     {
@@ -84,5 +85,5 @@ function createRowData() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

@@ -77,6 +77,9 @@ let UserComponentFactory = class UserComponentFactory extends beanStub_1.BeanStu
     getStatusPanelCompDetails(def, params) {
         return this.getCompDetails(def, componentTypes_1.StatusPanelComponent, null, params, true);
     }
+    getMenuItemCompDetails(def, params) {
+        return this.getCompDetails(def, componentTypes_1.MenuItemComponent, 'agMenuItem', params, true);
+    }
     getCompDetails(defObject, type, defaultName, params, mandatory = false) {
         const { propertyName, cellRenderer } = type;
         let { compName, jsComp, fwComp, paramsFromSelector, popupFromSelector, popupPositionFromSelector } = this.getCompKeys(defObject, type, params);
@@ -184,24 +187,20 @@ let UserComponentFactory = class UserComponentFactory extends beanStub_1.BeanStu
     }
     // used by Floating Filter
     mergeParamsWithApplicationProvidedParams(defObject, type, paramsFromGrid, paramsFromSelector = null) {
-        const params = {
-            context: this.gridOptionsService.context,
-            columnApi: this.gridOptionsService.columnApi,
-            api: this.gridOptionsService.api
-        };
-        object_1.mergeDeep(params, paramsFromGrid);
+        const params = this.gridOptionsService.getGridCommonParams();
+        (0, object_1.mergeDeep)(params, paramsFromGrid);
         // pull user params from either the old prop name and new prop name
         // eg either cellRendererParams and cellCompParams
         const defObjectAny = defObject;
         const userParams = defObjectAny && defObjectAny[type.propertyName + 'Params'];
         if (typeof userParams === 'function') {
             const userParamsFromFunc = userParams(paramsFromGrid);
-            object_1.mergeDeep(params, userParamsFromFunc);
+            (0, object_1.mergeDeep)(params, userParamsFromFunc);
         }
         else if (typeof userParams === 'object') {
-            object_1.mergeDeep(params, userParams);
+            (0, object_1.mergeDeep)(params, userParams);
         }
-        object_1.mergeDeep(params, paramsFromSelector);
+        (0, object_1.mergeDeep)(params, paramsFromSelector);
         return params;
     }
     initComponent(component, params) {
@@ -231,21 +230,21 @@ let UserComponentFactory = class UserComponentFactory extends beanStub_1.BeanStu
     }
 };
 __decorate([
-    context_1.Autowired('gridOptions')
+    (0, context_1.Autowired)('gridOptions')
 ], UserComponentFactory.prototype, "gridOptions", void 0);
 __decorate([
-    context_1.Autowired('agComponentUtils')
+    (0, context_1.Autowired)('agComponentUtils')
 ], UserComponentFactory.prototype, "agComponentUtils", void 0);
 __decorate([
-    context_1.Autowired('componentMetadataProvider')
+    (0, context_1.Autowired)('componentMetadataProvider')
 ], UserComponentFactory.prototype, "componentMetadataProvider", void 0);
 __decorate([
-    context_1.Autowired('userComponentRegistry')
+    (0, context_1.Autowired)('userComponentRegistry')
 ], UserComponentFactory.prototype, "userComponentRegistry", void 0);
 __decorate([
-    context_1.Optional('frameworkComponentWrapper')
+    (0, context_1.Optional)('frameworkComponentWrapper')
 ], UserComponentFactory.prototype, "frameworkComponentWrapper", void 0);
 UserComponentFactory = __decorate([
-    context_1.Bean('userComponentFactory')
+    (0, context_1.Bean)('userComponentFactory')
 ], UserComponentFactory);
 exports.UserComponentFactory = UserComponentFactory;

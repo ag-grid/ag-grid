@@ -1,4 +1,5 @@
 import * as CarbonIcon from '@carbon/icons-react';
+import * as LucideIcon from 'lucide-react';
 import classNames from 'classnames';
 import React from 'react';
 import ApiIcon from '../images/inline-svgs/api.svg';
@@ -14,12 +15,13 @@ import IntegratedChartsIcon from '../images/inline-svgs/integrated-chart.svg';
 import maximizeIcon from '../images/inline-svgs/maximize.svg';
 import minimizeIcon from '../images/inline-svgs/minimize.svg';
 import PlunkerIcon from '../images/inline-svgs/plunker.svg';
+import NewTabIcon from '../images/inline-svgs/new-tab.svg';
 import ReplayDemoIcon from '../images/inline-svgs/replay-demo-icon.svg';
 import RowsIcon from '../images/inline-svgs/rows.svg';
 import StackBlitzIcon from '../images/inline-svgs/stack-blitz.svg';
 import TakeControlIcon from '../images/inline-svgs/take-control-icon.svg';
 import TickIcon from '../images/inline-svgs/tick.svg';
-import styles from './Icon.module.scss';
+import styles from '@design-system/modules/Icon.module.scss';
 
 // Uses IBM Carbon Design System icons as a base
 // Full list of Carbon icons => https://carbondesignsystem.com/guidelines/icons/library
@@ -72,6 +74,35 @@ const HOMEPAGE_FEATURES_ICON_MAP = {
     'feature-tree': CarbonIcon.TreeViewAlt,
 };
 
+const CHARTS_ICON_MAP = {
+    chartsBar: CarbonIcon.ChartBar,
+    chartsColumn: CarbonIcon.ChartColumn,
+    chartsLine: CarbonIcon.ChartLine,
+    chartsArea: CarbonIcon.ChartArea,
+    chartsScatter: CarbonIcon.ChartScatter,
+    chartsBubble: CarbonIcon.ChartBubble,
+    chartsPie: CarbonIcon.ChartPie,
+    chartsDonut: CarbonIcon.ChartRing,
+    chartsCombination: CarbonIcon.ChartCombo,
+    chartsHistogram: CarbonIcon.Ordinal,
+    chartsHeatmap: CarbonIcon.HeatMap_03,
+    chartsRangeArea: CarbonIcon.ChartRiver,
+    chartsRangeBar: CarbonIcon.ChartBarFloating,
+    chartsBoxPlot: CarbonIcon.BoxPlot,
+    chartsErrorBar: CarbonIcon.ChartErrorBar,
+    chartsWaterfall: CarbonIcon.ChartWaterfall,
+    chartsRadar: CarbonIcon.ChartRadar,
+    chartsNightingale: CarbonIcon.ChartRose,
+    chartsRadialColumn: CarbonIcon.ChartSpiral,
+    chartsRadialBar: CarbonIcon.ChartRadial,
+    chartsTreemap: CarbonIcon.ChartTreemap,
+    chartsSunburst: CarbonIcon.ChartSunburst,
+    chartsIcicle: CarbonIcon.ChartClusterBar,
+    chartsFunnel: CarbonIcon.Filter,
+    chartsPyramid: CarbonIcon.UpToTop,
+    chartsBullet: CarbonIcon.ChartBullet,
+};
+
 export const ICON_MAP = {
     info: CarbonIcon.Information,
     warning: CarbonIcon.WarningAlt,
@@ -90,11 +121,12 @@ export const ICON_MAP = {
     chevronRight: BoldChevronRight,
     chevronDown: BoldChevronDown,
     chevronLeft: BoldChevronLeft,
+    chevronDownAlt: LucideIcon.ChevronDown,
     replaydemo: ReplayDemoIcon,
     takeControl: TakeControlIcon,
     playCircle: CarbonIcon.PlayFilled,
     download: CarbonIcon.Download,
-    executableProgram: CarbonIcon.ExecutableProgram,
+    eye: CarbonIcon.View,
     code: CarbonIcon.Code,
     tick: TickIcon,
     cross: CrossIcon,
@@ -104,9 +136,14 @@ export const ICON_MAP = {
     maximize: maximizeIcon,
     minimize: minimizeIcon,
     idea: CarbonIcon.DataEnrichment,
+    sun: CarbonIcon.Sun,
+    moon: CarbonIcon.Moon,
+    newTab: NewTabIcon,
+    sort: CarbonIcon.ChevronSort,
     ...SOCIALS_ICON_MAP,
     ...DOCS_CATEGORIES_ICON_MAP,
     ...HOMEPAGE_FEATURES_ICON_MAP,
+    ...CHARTS_ICON_MAP
 };
 
 export type IconName = keyof typeof ICON_MAP;

@@ -91,13 +91,17 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
     }
 
     public init(params: IFloatingFilterParams): void {
-       this.setSimpleParams(params);
+       this.setSimpleParams(params, false);
     }
 
-    private setSimpleParams(params: IFloatingFilterParams): void {
+    private setSimpleParams(params: IFloatingFilterParams, update: boolean = true): void {
         this.optionsFactory = new OptionsFactory();
         this.optionsFactory.init(params.filterParams as ScalarFilterParams, this.getDefaultFilterOptions());
-        this.lastType = this.optionsFactory.getDefaultOption();
+
+        // Initial call
+        if (!update) {
+            this.lastType = this.optionsFactory.getDefaultOption();
+        }
 
         // readOnly is a property of ProvidedFilterParams - we need to find a better (type-safe)
         // way to support reading this in the future.
@@ -106,12 +110,16 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
         // we are editable if:
         // 1) there is a type (user has configured filter wrong if not type)
         //  AND
-        // 2) the default type is not 'in range'
-        const editable = this.isTypeEditable(this.lastType);
+        // 2) the default type is not 'inRange'
+        const editable = this.isTypeEditable(this.optionsFactory.getDefaultOption());
         this.setEditable(editable);
     }
 
     public onParamsUpdated(params: IFloatingFilterParams): void {
+        this.refresh(params);
+    }
+
+    public refresh(params: IFloatingFilterParams): void {
         this.setSimpleParams(params);
     }
 

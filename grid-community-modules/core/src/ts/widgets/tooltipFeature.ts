@@ -20,6 +20,8 @@ export interface ITooltipFeatureCtrl {
 
     // this makes no sense, why is the cell formatted value passed to the tooltip???
     getValueFormatted?(): string;
+    getTooltipShowDelayOverride?(): number;
+    getTooltipHideDelayOverride?(): number;
 }
 
 export class TooltipFeature extends BeanStub {
@@ -56,7 +58,7 @@ export class TooltipFeature extends BeanStub {
     }
 
     private setupTooltip(): void {
-        this.browserTooltips = this.beans.gridOptionsService.is('enableBrowserTooltips');
+        this.browserTooltips = this.beans.gridOptionsService.get('enableBrowserTooltips');
         this.updateTooltipText();
 
         if (this.browserTooltips) {
@@ -78,7 +80,11 @@ export class TooltipFeature extends BeanStub {
             getGui: () => this.ctrl.getGui()
         };
 
-        this.genericTooltipFeature = this.createManagedBean(new CustomTooltipFeature(parent), this.beans.context);
+        this.genericTooltipFeature = this.createManagedBean(new CustomTooltipFeature(
+            parent,
+            this.ctrl.getTooltipShowDelayOverride?.(),
+            this.ctrl.getTooltipHideDelayOverride?.()
+        ), this.beans.context);
     }
 
     public refreshToolTip() {

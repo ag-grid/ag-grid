@@ -48,7 +48,7 @@ var RowContainerHeightService = /** @class */ (function (_super) {
     };
     RowContainerHeightService.prototype.postConstruct = function () {
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_BODY_HEIGHT_CHANGED, this.updateOffset.bind(this));
-        this.maxDivHeight = browser_1.getMaxDivHeight();
+        this.maxDivHeight = (0, browser_1.getMaxDivHeight)();
         this.logger.log('maxDivHeight = ' + this.maxDivHeight);
     };
     RowContainerHeightService.prototype.isStretching = function () {
@@ -77,7 +77,7 @@ var RowContainerHeightService = /** @class */ (function (_super) {
         this.maxScrollY = this.uiContainerHeight - this.uiBodyHeight;
         var scrollPercent = this.scrollY / this.maxScrollY;
         var divStretchOffset = scrollPercent * this.pixelsToShave;
-        this.logger.log("Div Stretch Offset = " + divStretchOffset + " (" + this.pixelsToShave + " * " + scrollPercent + ")");
+        this.logger.log("Div Stretch Offset = ".concat(divStretchOffset, " (").concat(this.pixelsToShave, " * ").concat(scrollPercent, ")"));
         this.setDivStretchOffset(divStretchOffset);
     };
     RowContainerHeightService.prototype.setUiContainerHeight = function (height) {
@@ -133,16 +133,16 @@ var RowContainerHeightService = /** @class */ (function (_super) {
         return scrollPixel;
     };
     __decorate([
-        context_1.Autowired('ctrlsService')
+        (0, context_1.Autowired)('ctrlsService')
     ], RowContainerHeightService.prototype, "ctrlsService", void 0);
     __decorate([
-        __param(0, context_1.Qualifier("loggerFactory"))
+        __param(0, (0, context_1.Qualifier)("loggerFactory"))
     ], RowContainerHeightService.prototype, "agWire", null);
     __decorate([
         context_1.PostConstruct
     ], RowContainerHeightService.prototype, "postConstruct", null);
     RowContainerHeightService = __decorate([
-        context_1.Bean('rowContainerHeightService')
+        (0, context_1.Bean)('rowContainerHeightService')
     ], RowContainerHeightService);
     return RowContainerHeightService;
 }(beanStub_1.BeanStub));

@@ -8,7 +8,7 @@ export class MedalCellRenderer implements ICellRendererComp {
     init(params: ICellRendererParams<IOlympicData, number>) {
         this.params = params;
         this.eGui = document.createElement('span');
-        this.eGui.innerHTML = new Array(params.value!).fill('#').join('');
+        this.eGui.textContent = new Array(params.value!).fill('#').join('');
     }
 
     getGui() {
@@ -16,7 +16,7 @@ export class MedalCellRenderer implements ICellRendererComp {
     }
 
     medalUserFunction() {
-        console.log(`user function called for medal column: row = ${this.params.rowIndex}, column = ${this.params.column?.getId()}`);
+        console.log(`user function called for medal column: row = ${this.params.node.rowIndex}, column = ${this.params.column?.getId()}`);
     }
 
     refresh(params: ICellRendererParams): boolean {

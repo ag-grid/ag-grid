@@ -57,9 +57,9 @@ var NavigatorPanel = /** @class */ (function (_super) {
         this.navigatorHeightSlider
             .setLabel(chartTranslationService.translate("height"))
             .setMinValue(10)
-            .setMaxValue(formatPanel_1.getMaxValue(currentValue, 60))
+            .setMaxValue((0, formatPanel_1.getMaxValue)(currentValue, 60))
             .setTextFieldWidth(45)
-            .setValue("" + (currentValue || 30))
+            .setValue("".concat(currentValue || 30))
             .onValueChange(function (height) { return _this.chartOptionsService.setChartOption("navigator.height", height); });
     };
     NavigatorPanel.prototype.destroy = function () {
@@ -67,13 +67,13 @@ var NavigatorPanel = /** @class */ (function (_super) {
     };
     NavigatorPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"navigatorGroup\">\n                <ag-slider ref=\"navigatorHeightSlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
     __decorate([
-        core_1.RefSelector('navigatorGroup')
+        (0, core_1.RefSelector)('navigatorGroup')
     ], NavigatorPanel.prototype, "navigatorGroup", void 0);
     __decorate([
-        core_1.RefSelector('navigatorHeightSlider')
+        (0, core_1.RefSelector)('navigatorHeightSlider')
     ], NavigatorPanel.prototype, "navigatorHeightSlider", void 0);
     __decorate([
-        core_1.Autowired('chartTranslationService')
+        (0, core_1.Autowired)('chartTranslationService')
     ], NavigatorPanel.prototype, "chartTranslationService", void 0);
     __decorate([
         core_1.PostConstruct

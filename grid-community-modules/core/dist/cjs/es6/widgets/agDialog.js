@@ -49,19 +49,25 @@ class AgDialog extends agPanel_1.AgPanel {
     }
     renderComponent() {
         const eGui = this.getGui();
-        const { alwaysOnTop, modal, title } = this.config;
+        const { alwaysOnTop, modal, title, afterGuiAttached } = this.config;
         const translate = this.localeService.getLocaleTextFunc();
         const addPopupRes = this.popupService.addPopup({
             modal,
             eChild: eGui,
             closeOnEsc: true,
-            closedCallback: this.destroy.bind(this),
+            closedCallback: this.onClosed.bind(this),
             alwaysOnTop,
-            ariaLabel: title || translate('ariaLabelDialog', 'Dialog')
+            ariaLabel: title || translate('ariaLabelDialog', 'Dialog'),
+            afterGuiAttached
         });
         if (addPopupRes) {
             this.close = addPopupRes.hideFunc;
         }
+    }
+    onClosed(event) {
+        var _a, _b;
+        this.destroy();
+        (_b = (_a = this.config).closedCallback) === null || _b === void 0 ? void 0 : _b.call(_a, event);
     }
     toggleMaximize() {
         const position = this.positionableFeature.getPosition();
@@ -84,8 +90,8 @@ class AgDialog extends agPanel_1.AgPanel {
         this.refreshMaximizeIcon();
     }
     refreshMaximizeIcon() {
-        dom_1.setDisplayed(this.maximizeIcon, !this.isMaximized);
-        dom_1.setDisplayed(this.minimizeIcon, this.isMaximized);
+        (0, dom_1.setDisplayed)(this.maximizeIcon, !this.isMaximized);
+        (0, dom_1.setDisplayed)(this.minimizeIcon, this.isMaximized);
     }
     clearMaximizebleListeners() {
         if (this.maximizeListeners.length) {
@@ -135,16 +141,16 @@ class AgDialog extends agPanel_1.AgPanel {
         const maximizeButtonComp = this.maximizeButtonComp =
             this.createBean(new component_1.Component(/* html */ `<div class="ag-dialog-button"></span>`));
         const eGui = maximizeButtonComp.getGui();
-        this.maximizeIcon = icon_1.createIconNoSpan('maximize', this.gridOptionsService);
+        this.maximizeIcon = (0, icon_1.createIconNoSpan)('maximize', this.gridOptionsService);
         eGui.appendChild(this.maximizeIcon);
         this.maximizeIcon.classList.add('ag-panel-title-bar-button-icon');
-        this.minimizeIcon = icon_1.createIconNoSpan('minimize', this.gridOptionsService);
+        this.minimizeIcon = (0, icon_1.createIconNoSpan)('minimize', this.gridOptionsService);
         eGui.appendChild(this.minimizeIcon);
         this.minimizeIcon.classList.add('ag-panel-title-bar-button-icon');
         return maximizeButtonComp;
     }
 }
 __decorate([
-    context_1.Autowired('popupService')
+    (0, context_1.Autowired)('popupService')
 ], AgDialog.prototype, "popupService", void 0);
 exports.AgDialog = AgDialog;

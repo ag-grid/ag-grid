@@ -2,20 +2,23 @@ import { AgPickerField } from "./agPickerField.mjs";
 import { AgList } from "./agList.mjs";
 import { Events } from "../eventKeys.mjs";
 import { KeyCode } from "../constants/keyCode.mjs";
-import { getInnerHeight } from "../utils/dom.mjs";
+import { setAriaControls } from "../utils/aria.mjs";
 export class AgSelect extends AgPickerField {
     constructor(config) {
-        super(Object.assign({ pickerAriaLabelKey: 'ariaLabelSelectField', pickerAriaLabelValue: 'Select Field', pickerType: 'ag-list' }, config), 'ag-select', 'smallDown', 'listbox');
+        super(Object.assign({ pickerAriaLabelKey: 'ariaLabelSelectField', pickerAriaLabelValue: 'Select Field', pickerType: 'ag-list', className: 'ag-select', pickerIcon: 'smallDown', ariaRole: 'combobox' }, config));
     }
     postConstruct() {
-        var _a;
         super.postConstruct();
         this.createListComponent();
-        this.eWrapper.tabIndex = (_a = this.gridOptionsService.getNum('tabIndex')) !== null && _a !== void 0 ? _a : 0;
+        this.eWrapper.tabIndex = this.gridOptionsService.get('tabIndex');
     }
     createListComponent() {
         this.listComponent = this.createBean(new AgList('select'));
         this.listComponent.setParentComponent(this);
+        const eListAriaEl = this.listComponent.getAriaElement();
+        const listId = `ag-select-list-${this.listComponent.getCompId()}`;
+        eListAriaEl.setAttribute('id', listId);
+        setAriaControls(this.getAriaElement(), eListAriaEl);
         this.listComponent.addGuiEventListener('keydown', (e) => {
             if (e.key === KeyCode.TAB) {
                 e.preventDefault();
@@ -50,21 +53,7 @@ export class AgSelect extends AgPickerField {
             return;
         }
         super.showPicker();
-        this.listComponent.getGui().style.maxHeight = `${getInnerHeight(this.popupService.getPopupParent())}px`;
-        const ePicker = this.listComponent.getGui();
-        this.pickerFocusOutListener = this.addManagedListener(ePicker, 'focusout', (e) => {
-            if (!ePicker.contains(e.relatedTarget)) {
-                this.hidePicker();
-            }
-        });
         this.listComponent.refreshHighlighted();
-    }
-    beforeHidePicker() {
-        if (this.pickerFocusOutListener) {
-            this.pickerFocusOutListener();
-            this.pickerFocusOutListener = undefined;
-        }
-        super.beforeHidePicker();
     }
     addOptions(options) {
         options.forEach(option => this.addOption(option));

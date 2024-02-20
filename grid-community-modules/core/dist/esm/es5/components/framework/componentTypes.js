@@ -66,3 +66,7 @@ export var FullWidthDetail = {
     propertyName: 'detailCellRenderer',
     cellRenderer: true
 };
+export var MenuItemComponent = {
+    propertyName: 'menuItem',
+    cellRenderer: false
+};

@@ -67,7 +67,7 @@ class AgInputNumberField extends agInputTextField_1.AgInputTextField {
             return this;
         }
         this.min = min;
-        dom_1.addOrRemoveAttribute(this.eInput, 'min', min);
+        (0, dom_1.addOrRemoveAttribute)(this.eInput, 'min', min);
         return this;
     }
     setMax(max) {
@@ -75,7 +75,7 @@ class AgInputNumberField extends agInputTextField_1.AgInputTextField {
             return this;
         }
         this.max = max;
-        dom_1.addOrRemoveAttribute(this.eInput, 'max', max);
+        (0, dom_1.addOrRemoveAttribute)(this.eInput, 'max', max);
         return this;
     }
     setPrecision(precision) {
@@ -87,7 +87,7 @@ class AgInputNumberField extends agInputTextField_1.AgInputTextField {
             return this;
         }
         this.step = step;
-        dom_1.addOrRemoveAttribute(this.eInput, 'step', step);
+        (0, dom_1.addOrRemoveAttribute)(this.eInput, 'step', step);
         return this;
     }
     setValue(value, silent) {
@@ -97,7 +97,7 @@ class AgInputNumberField extends agInputTextField_1.AgInputTextField {
         return this.setValueOrInputValue(v => super.setValue(v, true), v => { this.eInput.value = v; }, value);
     }
     setValueOrInputValue(setValueFunc, setInputValueOnlyFunc, value) {
-        if (generic_1.exists(value)) {
+        if ((0, generic_1.exists)(value)) {
             // need to maintain the scientific notation format whilst typing (e.g. 1e10)
             let setInputValueOnly = this.isScientificNotation(value);
             if (setInputValueOnly && this.eInput.validity.valid) {

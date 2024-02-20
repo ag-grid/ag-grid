@@ -1,6 +1,4 @@
 <framework-specific-section frameworks="react">
-|## Cell Renderer Component
-|
 |When a React component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell &
 |row values available to you via `props`.  
 |

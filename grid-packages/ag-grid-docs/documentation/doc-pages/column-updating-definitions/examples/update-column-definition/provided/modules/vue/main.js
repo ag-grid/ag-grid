@@ -2,7 +2,7 @@ import Vue from 'vue';
 import { AgGridVue } from '@ag-grid-community/vue';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
@@ -20,7 +20,7 @@ const VueExample = {
         </div>
         <ag-grid-vue
             style="width: 100%; height: 100%;"
-            class="ag-theme-alpine"
+            :class="themeClass"
             id="myGrid"
             :gridOptions="gridOptions"
             @grid-ready="onGridReady"
@@ -37,15 +37,13 @@ const VueExample = {
         return {
             gridOptions: null,
             gridApi: null,
-            columnApi: null,
             defaultColDef: {
                 initialWidth: 100,
-                sortable: true,
-                resizable: true,
                 filter: true,
             },
             columnDefs: null,
             rowData: null,
+            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
         };
     },
     beforeMount() {
@@ -53,8 +51,6 @@ const VueExample = {
         this.columnDefs = this.getColumnDefs();
     },
     mounted() {
-        this.gridApi = this.gridOptions.api;
-        this.gridColumnApi = this.gridOptions.columnApi;
     },
     methods: {
         setHeaderNames() {
@@ -62,14 +58,14 @@ const VueExample = {
             columnDefs.forEach(function (colDef, index) {
                 colDef.headerName = 'C' + index;
             });
-            this.gridApi.setColumnDefs(columnDefs);
+            this.gridApi.setGridOption('columnDefs', columnDefs);
         },
         removeHeaderNames() {
             const columnDefs = this.getColumnDefs();
             columnDefs.forEach(function (colDef, index) {
                 colDef.headerName = undefined;
             });
-            this.gridApi.setColumnDefs(columnDefs);
+            this.gridApi.setGridOption('columnDefs', columnDefs);
         },
         setValueFormatters() {
             const columnDefs = this.getColumnDefs();
@@ -78,14 +74,14 @@ const VueExample = {
                     return '[ ' + params.value + ' ]';
                 };
             });
-            this.gridApi.setColumnDefs(columnDefs);
+            this.gridApi.setGridOption('columnDefs', columnDefs);
         },
         removeValueFormatters() {
             const columnDefs = this.getColumnDefs();
             columnDefs.forEach(function (colDef, index) {
                 colDef.valueFormatter = undefined;
             });
-            this.gridApi.setColumnDefs(columnDefs);
+            this.gridApi.setGridOption('columnDefs', columnDefs);
         },
         getColumnDefs() {
             return [
@@ -102,6 +98,7 @@ const VueExample = {
             ];
         },
         onGridReady(params) {
+            this.gridApi = params.api;
             const updateData = (data) => {
                 this.rowData = data;
             };

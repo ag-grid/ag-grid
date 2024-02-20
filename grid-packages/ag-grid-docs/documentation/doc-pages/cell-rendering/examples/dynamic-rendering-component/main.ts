@@ -1,4 +1,13 @@
-import { CellEditingStartedEvent, CellEditingStoppedEvent, Grid, GridOptions, ICellRendererParams, RowEditingStartedEvent, RowEditingStoppedEvent } from '@ag-grid-community/core'
+import {
+  CellEditingStartedEvent,
+  CellEditingStoppedEvent,
+  GridApi,
+  createGrid,
+  GridOptions,
+  ICellRendererParams,
+  RowEditingStartedEvent,
+  RowEditingStoppedEvent,
+} from '@ag-grid-community/core';
 
 import { MoodRenderer } from './moodRenderer_typescript'
 import { GenderRenderer } from './genderRenderer_typescript'
@@ -10,12 +19,14 @@ interface IRow {
 
 const rowData: IRow[] = [
   { value: 14, type: 'age' },
-  { value: 'female', type: 'gender' },
+  { value: 'Female', type: 'gender' },
   { value: 'Happy', type: 'mood' },
   { value: 21, type: 'age' },
-  { value: 'male', type: 'gender' },
+  { value: 'Male', type: 'gender' },
   { value: 'Sad', type: 'mood' },
 ]
+
+let gridApi: GridApi<IRow>;
 
 const gridOptions: GridOptions<IRow> = {
   columnDefs: [
@@ -63,5 +74,5 @@ const gridOptions: GridOptions<IRow> = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

@@ -32,7 +32,7 @@ class Component extends beanStub_1.BeanStub {
         }
     }
     preConstructOnComponent() {
-        this.usingBrowserTooltips = this.gridOptionsService.is('enableBrowserTooltips');
+        this.usingBrowserTooltips = this.gridOptionsService.get('enableBrowserTooltips');
     }
     getCompId() {
         return this.compId;
@@ -76,7 +76,7 @@ class Component extends beanStub_1.BeanStub {
     createChildComponentsFromTags(parentNode, paramsMap) {
         // we MUST take a copy of the list first, as the 'swapComponentForNode' adds comments into the DOM
         // which messes up the traversal order of the children.
-        const childNodeList = dom_1.copyNodeList(parentNode.childNodes);
+        const childNodeList = (0, dom_1.copyNodeList)(parentNode.childNodes);
         childNodeList.forEach(childNode => {
             if (!(childNode instanceof HTMLElement)) {
                 return;
@@ -118,7 +118,7 @@ class Component extends beanStub_1.BeanStub {
         return null;
     }
     copyAttributesFromNode(source, dest) {
-        dom_1.iterateNamedNodeMap(source.attributes, (name, value) => dest.setAttribute(name, value));
+        (0, dom_1.iterateNamedNodeMap)(source.attributes, (name, value) => dest.setAttribute(name, value));
     }
     swapComponentForNode(newComponent, parentNode, childNode) {
         const eComponent = newComponent.getGui();
@@ -139,7 +139,7 @@ class Component extends beanStub_1.BeanStub {
         let thisPrototype = Object.getPrototypeOf(this);
         while (thisPrototype != null) {
             const metaData = thisPrototype.__agComponentMetaData;
-            const currentProtoName = function_1.getFunctionName(thisPrototype.constructor);
+            const currentProtoName = (0, function_1.getFunctionName)(thisPrototype.constructor);
             if (metaData && metaData[currentProtoName] && metaData[currentProtoName].querySelectors) {
                 metaData[currentProtoName].querySelectors.forEach((querySelector) => action(querySelector));
             }
@@ -147,7 +147,7 @@ class Component extends beanStub_1.BeanStub {
         }
     }
     activateTabIndex(elements) {
-        const tabIndex = this.gridOptionsService.getNum('tabIndex') || 0;
+        const tabIndex = this.gridOptionsService.get('tabIndex');
         if (!elements) {
             elements = [];
         }
@@ -157,7 +157,7 @@ class Component extends beanStub_1.BeanStub {
         elements.forEach(el => el.setAttribute('tabindex', tabIndex.toString()));
     }
     setTemplate(template, paramsMap) {
-        const eGui = dom_1.loadTemplate(template);
+        const eGui = (0, dom_1.loadTemplate)(template);
         this.setTemplateFromElement(eGui, paramsMap);
     }
     setTemplateFromElement(element, paramsMap) {
@@ -206,6 +206,9 @@ class Component extends beanStub_1.BeanStub {
     getFocusableElement() {
         return this.eGui;
     }
+    getAriaElement() {
+        return this.getFocusableElement();
+    }
     setParentComponent(component) {
         this.parentComponent = component;
     }
@@ -230,7 +233,7 @@ class Component extends beanStub_1.BeanStub {
         if (!container) {
             container = this.eGui;
         }
-        if (dom_1.isNodeOrElement(newChild)) {
+        if ((0, dom_1.isNodeOrElement)(newChild)) {
             container.appendChild(newChild);
         }
         else {
@@ -245,14 +248,14 @@ class Component extends beanStub_1.BeanStub {
         if (visible !== this.visible) {
             this.visible = visible;
             const { skipAriaHidden } = options;
-            dom_1.setVisible(this.eGui, visible, { skipAriaHidden });
+            (0, dom_1.setVisible)(this.eGui, visible, { skipAriaHidden });
         }
     }
     setDisplayed(displayed, options = {}) {
         if (displayed !== this.displayed) {
             this.displayed = displayed;
             const { skipAriaHidden } = options;
-            dom_1.setDisplayed(this.eGui, displayed, { skipAriaHidden });
+            (0, dom_1.setDisplayed)(this.eGui, displayed, { skipAriaHidden });
             const event = {
                 type: Component.EVENT_DISPLAYED_CHANGED,
                 visible: this.displayed
@@ -299,7 +302,7 @@ class Component extends beanStub_1.BeanStub {
 }
 Component.EVENT_DISPLAYED_CHANGED = 'displayedChanged';
 __decorate([
-    context_1.Autowired('agStackComponentsRegistry')
+    (0, context_1.Autowired)('agStackComponentsRegistry')
 ], Component.prototype, "agStackComponentsRegistry", void 0);
 __decorate([
     context_1.PreConstruct

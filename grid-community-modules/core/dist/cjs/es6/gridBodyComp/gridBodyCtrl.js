@@ -42,7 +42,8 @@ class GridBodyCtrl extends beanStub_1.BeanStub {
         this.eTop = eTop;
         this.eBottom = eBottom;
         this.eStickyTop = eStickyTop;
-        this.setCellTextSelection(this.gridOptionsService.is('enableCellTextSelection'));
+        this.setCellTextSelection(this.gridOptionsService.get('enableCellTextSelection'));
+        this.addManagedPropertyListener('enableCellTextSelection', (props) => this.setCellTextSelection(props.currentValue));
         this.createManagedBean(new layoutFeature_1.LayoutFeature(this.comp));
         this.bodyScrollFeature = this.createManagedBean(new gridBodyScrollFeature_1.GridBodyScrollFeature(this.eBodyViewport));
         this.addRowDragListener();
@@ -71,14 +72,14 @@ class GridBodyCtrl extends beanStub_1.BeanStub {
             this.addManagedListener(element, 'focusin', (e) => {
                 const { target } = e;
                 // element being focused is nested?
-                const isFocusedElementNested = dom_1.isElementChildOfClass(target, 'ag-root', element);
+                const isFocusedElementNested = (0, dom_1.isElementChildOfClass)(target, 'ag-root', element);
                 element.classList.toggle('ag-has-focus', !isFocusedElementNested);
             });
             this.addManagedListener(element, 'focusout', (e) => {
                 const { target, relatedTarget } = e;
                 const gridContainRelatedTarget = element.contains(relatedTarget);
-                const isNestedRelatedTarget = dom_1.isElementChildOfClass(relatedTarget, 'ag-root', element);
-                const isNestedTarget = dom_1.isElementChildOfClass(target, 'ag-root', element);
+                const isNestedRelatedTarget = (0, dom_1.isElementChildOfClass)(relatedTarget, 'ag-root', element);
+                const isNestedTarget = (0, dom_1.isElementChildOfClass)(target, 'ag-root', element);
                 // element losing focus belongs to a nested grid,
                 // it should not be handled here.
                 if (isNestedTarget) {
@@ -104,13 +105,13 @@ class GridBodyCtrl extends beanStub_1.BeanStub {
         this.setVerticalScrollPaddingVisible(visible);
         this.setStickyTopWidth(visible);
         const scrollbarWidth = visible ? (this.gridOptionsService.getScrollbarWidth() || 0) : 0;
-        const pad = browser_1.isInvisibleScrollbar() ? 16 : 0;
+        const pad = (0, browser_1.isInvisibleScrollbar)() ? 16 : 0;
         const width = `calc(100% + ${scrollbarWidth + pad}px)`;
         this.animationFrameService.requestAnimationFrame(() => this.comp.setBodyViewportWidth(width));
     }
     onGridColumnsChanged() {
         const columns = this.columnModel.getAllGridColumns();
-        this.comp.setColumnCount(columns ? columns.length : 0);
+        this.comp.setColumnCount(columns.length);
     }
     // if we do not do this, then the user can select a pic in the grid (eg an image in a custom cell renderer)
     // and then that will start the browser native drag n' drop, which messes up with our own drag and drop.
@@ -123,13 +124,13 @@ class GridBodyCtrl extends beanStub_1.BeanStub {
         });
     }
     addStopEditingWhenGridLosesFocus() {
-        if (!this.gridOptionsService.is('stopEditingWhenCellsLoseFocus')) {
+        if (!this.gridOptionsService.get('stopEditingWhenCellsLoseFocus')) {
             return;
         }
         const focusOutListener = (event) => {
             // this is the element the focus is moving to
             const elementWithFocus = event.relatedTarget;
-            if (browser_1.getTabIndex(elementWithFocus) === null) {
+            if ((0, browser_1.getTabIndex)(elementWithFocus) === null) {
                 this.rowRenderer.stopEditing();
                 return;
             }
@@ -165,11 +166,11 @@ class GridBodyCtrl extends beanStub_1.BeanStub {
         this.comp.setPinnedTopBottomOverflowY(overflowY);
     }
     isVerticalScrollShowing() {
-        const show = this.gridOptionsService.is('alwaysShowVerticalScroll');
+        const show = this.gridOptionsService.get('alwaysShowVerticalScroll');
         const cssClass = show ? exports.CSS_CLASS_FORCE_VERTICAL_SCROLL : null;
         const allowVerticalScroll = this.gridOptionsService.isDomLayout('normal');
         this.comp.setAlwaysVerticalScrollClass(cssClass, show);
-        return show || (allowVerticalScroll && dom_1.isVerticalScrollShowing(this.eBodyViewport));
+        return show || (allowVerticalScroll && (0, dom_1.isVerticalScrollShowing)(this.eBodyViewport));
     }
     setupRowAnimationCssClass() {
         const listener = () => {
@@ -217,27 +218,19 @@ class GridBodyCtrl extends beanStub_1.BeanStub {
         if (!mouseEvent && !touchEvent) {
             return;
         }
-        if (this.gridOptionsService.is('preventDefaultOnContextMenu')) {
+        if (this.gridOptionsService.get('preventDefaultOnContextMenu')) {
             const event = (mouseEvent || touchEvent);
             event.preventDefault();
         }
         const { target } = (mouseEvent || touch);
         if (target === this.eBodyViewport || target === this.ctrlsService.getCenterRowContainerCtrl().getViewportElement()) {
             // show it
-            if (!this.contextMenuFactory) {
-                return;
-            }
-            if (mouseEvent) {
-                this.contextMenuFactory.onContextMenu(mouseEvent, null, null, null, null, this.eGridBody);
-            }
-            else if (touchEvent) {
-                this.contextMenuFactory.onContextMenu(null, touchEvent, null, null, null, this.eGridBody);
-            }
+            this.menuService.showContextMenu({ mouseEvent, touchEvent, value: null, anchorToElement: this.eGridBody });
         }
     }
     mockContextMenuForIPad(listener) {
         // we do NOT want this when not in iPad
-        if (!browser_1.isIOSUserAgent()) {
+        if (!(0, browser_1.isIOSUserAgent)()) {
             return;
         }
         const touchListener = new touchListener_1.TouchListener(this.eBodyViewport);
@@ -248,7 +241,7 @@ class GridBodyCtrl extends beanStub_1.BeanStub {
         this.addDestroyFunc(() => touchListener.destroy());
     }
     onBodyViewportWheel(e) {
-        if (!this.gridOptionsService.is('suppressScrollWhenPopupsAreOpen')) {
+        if (!this.gridOptionsService.get('suppressScrollWhenPopupsAreOpen')) {
             return;
         }
         if (this.popupService.hasAnchoredPopup()) {
@@ -283,15 +276,7 @@ class GridBodyCtrl extends beanStub_1.BeanStub {
     setFloatingHeights() {
         const { pinnedRowModel } = this;
         let floatingTopHeight = pinnedRowModel.getPinnedTopTotalHeight();
-        if (floatingTopHeight) {
-            // adding 1px for cell bottom border
-            floatingTopHeight += 1;
-        }
         let floatingBottomHeight = pinnedRowModel.getPinnedBottomTotalHeight();
-        if (floatingBottomHeight) {
-            // adding 1px for cell bottom border
-            floatingBottomHeight += 1;
-        }
         this.comp.setTopHeight(floatingTopHeight);
         this.comp.setBottomHeight(floatingBottomHeight);
         this.comp.setTopDisplay(floatingTopHeight ? 'inherit' : 'none');
@@ -338,7 +323,7 @@ class GridBodyCtrl extends beanStub_1.BeanStub {
         const scrollWidthToRemove = removeScrollWidth ? this.gridOptionsService.getScrollbarWidth() : 0;
         // bodyViewportWidth should be calculated from eGridBody, not eBodyViewport
         // because we change the width of the bodyViewport to hide the real browser scrollbar
-        const bodyViewportWidth = dom_1.getInnerWidth(this.eGridBody);
+        const bodyViewportWidth = (0, dom_1.getInnerWidth)(this.eGridBody);
         const availableWidth = bodyViewportWidth - scrollWidthToRemove;
         if (availableWidth > 0) {
             this.columnModel.sizeColumnsToFit(availableWidth, "sizeColumnsToFit", false, params);
@@ -374,45 +359,45 @@ class GridBodyCtrl extends beanStub_1.BeanStub {
     }
 }
 __decorate([
-    context_1.Autowired('animationFrameService')
+    (0, context_1.Autowired)('animationFrameService')
 ], GridBodyCtrl.prototype, "animationFrameService", void 0);
 __decorate([
-    context_1.Autowired('rowContainerHeightService')
+    (0, context_1.Autowired)('rowContainerHeightService')
 ], GridBodyCtrl.prototype, "rowContainerHeightService", void 0);
 __decorate([
-    context_1.Autowired('ctrlsService')
+    (0, context_1.Autowired)('ctrlsService')
 ], GridBodyCtrl.prototype, "ctrlsService", void 0);
 __decorate([
-    context_1.Autowired('columnModel')
+    (0, context_1.Autowired)('columnModel')
 ], GridBodyCtrl.prototype, "columnModel", void 0);
 __decorate([
-    context_1.Autowired('scrollVisibleService')
+    (0, context_1.Autowired)('scrollVisibleService')
 ], GridBodyCtrl.prototype, "scrollVisibleService", void 0);
 __decorate([
-    context_1.Optional('contextMenuFactory')
-], GridBodyCtrl.prototype, "contextMenuFactory", void 0);
+    (0, context_1.Autowired)('menuService')
+], GridBodyCtrl.prototype, "menuService", void 0);
 __decorate([
-    context_1.Autowired('headerNavigationService')
+    (0, context_1.Autowired)('headerNavigationService')
 ], GridBodyCtrl.prototype, "headerNavigationService", void 0);
 __decorate([
-    context_1.Autowired('dragAndDropService')
+    (0, context_1.Autowired)('dragAndDropService')
 ], GridBodyCtrl.prototype, "dragAndDropService", void 0);
 __decorate([
-    context_1.Autowired('pinnedRowModel')
+    (0, context_1.Autowired)('pinnedRowModel')
 ], GridBodyCtrl.prototype, "pinnedRowModel", void 0);
 __decorate([
-    context_1.Autowired('rowRenderer')
+    (0, context_1.Autowired)('rowRenderer')
 ], GridBodyCtrl.prototype, "rowRenderer", void 0);
 __decorate([
-    context_1.Autowired('popupService')
+    (0, context_1.Autowired)('popupService')
 ], GridBodyCtrl.prototype, "popupService", void 0);
 __decorate([
-    context_1.Autowired('mouseEventService')
+    (0, context_1.Autowired)('mouseEventService')
 ], GridBodyCtrl.prototype, "mouseEventService", void 0);
 __decorate([
-    context_1.Autowired('rowModel')
+    (0, context_1.Autowired)('rowModel')
 ], GridBodyCtrl.prototype, "rowModel", void 0);
 __decorate([
-    context_1.Autowired('filterManager')
+    (0, context_1.Autowired)('filterManager')
 ], GridBodyCtrl.prototype, "filterManager", void 0);
 exports.GridBodyCtrl = GridBodyCtrl;

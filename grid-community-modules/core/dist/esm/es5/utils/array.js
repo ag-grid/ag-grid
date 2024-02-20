@@ -1,17 +1,4 @@
-import { exists, toStringOrNull } from './generic';
-export function firstExistingValue() {
-    var values = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-        values[_i] = arguments[_i];
-    }
-    for (var i = 0; i < values.length; i++) {
-        var value = values[i];
-        if (exists(value)) {
-            return value;
-        }
-    }
-    return null;
-}
+import { toStringOrNull } from './generic';
 export function existsAndNotEmpty(value) {
     return value != null && value.length > 0;
 }
@@ -30,7 +17,6 @@ export function areEqual(a, b, comparator) {
         a.length === b.length &&
         a.every(function (value, index) { return comparator ? comparator(value, b[index]) : b[index] === value; });
 }
-/** @deprecated */
 export function shallowCompare(arr1, arr2) {
     return areEqual(arr1, arr2);
 }

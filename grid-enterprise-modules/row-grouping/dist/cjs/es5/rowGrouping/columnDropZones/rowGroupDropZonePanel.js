@@ -58,15 +58,15 @@ var RowGroupDropZonePanel = /** @class */ (function (_super) {
         res.location = 'rowGroupColumnsList';
         return res;
     };
-    RowGroupDropZonePanel.prototype.isColumnDroppable = function (column) {
+    RowGroupDropZonePanel.prototype.isColumnDroppable = function (column, draggingEvent) {
         // we never allow grouping of secondary columns
-        if (this.gridOptionsService.is('functionsReadOnly') || !column.isPrimary()) {
+        if (this.gridOptionsService.get('functionsReadOnly') || !column.isPrimary()) {
             return false;
         }
-        return column.isAllowRowGroup() && !column.isRowGroupActive();
+        return column.isAllowRowGroup() && (!column.isRowGroupActive() || this.isSourceEventFromTarget(draggingEvent));
     };
     RowGroupDropZonePanel.prototype.updateColumns = function (columns) {
-        if (this.gridOptionsService.is('functionsPassive')) {
+        if (this.gridOptionsService.get('functionsPassive')) {
             var event_1 = {
                 type: core_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST,
                 columns: columns
@@ -84,13 +84,13 @@ var RowGroupDropZonePanel = /** @class */ (function (_super) {
         return this.columnModel.getRowGroupColumns();
     };
     __decorate([
-        core_1.Autowired('columnModel')
+        (0, core_1.Autowired)('columnModel')
     ], RowGroupDropZonePanel.prototype, "columnModel", void 0);
     __decorate([
-        core_1.Autowired('loggerFactory')
+        (0, core_1.Autowired)('loggerFactory')
     ], RowGroupDropZonePanel.prototype, "loggerFactory", void 0);
     __decorate([
-        core_1.Autowired('dragAndDropService')
+        (0, core_1.Autowired)('dragAndDropService')
     ], RowGroupDropZonePanel.prototype, "dragAndDropService", void 0);
     __decorate([
         core_1.PostConstruct

@@ -38,6 +38,9 @@ class SetFloatingFilterComp extends core_1.Component {
         this.eFloatingFilterText.setInputAriaLabel(`${displayName} ${translate('ariaFilterInput', 'Filter Input')}`);
     }
     onParamsUpdated(params) {
+        this.refresh(params);
+    }
+    refresh(params) {
         this.params = params;
         this.setParams(params);
     }
@@ -77,9 +80,9 @@ class SetFloatingFilterComp extends core_1.Component {
     }
 }
 __decorate([
-    core_1.RefSelector('eFloatingFilterText')
+    (0, core_1.RefSelector)('eFloatingFilterText')
 ], SetFloatingFilterComp.prototype, "eFloatingFilterText", void 0);
 __decorate([
-    core_1.Autowired('columnModel')
+    (0, core_1.Autowired)('columnModel')
 ], SetFloatingFilterComp.prototype, "columnModel", void 0);
 exports.SetFloatingFilterComp = SetFloatingFilterComp;

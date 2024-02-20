@@ -2,7 +2,7 @@ import Vue from 'vue';
 import { AgGridVue } from '@ag-grid-community/vue';
 
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
@@ -32,12 +32,13 @@ const createRowBlock = () => ['Red', 'Green', 'Blue'].map((color) =>
 
 const VueExample = {
     template: /* html */
-        `<div class="example-wrapper ag-theme-alpine">
+        `<div class="example-wrapper">
 
             <div class="inner-col">
                 <div style="height: 100%;" class="inner-col">
                     <ag-grid-vue
                         style="height: 100%;"
+                        :class="themeClass"
                         :defaultColDef="defaultColDef"
                         :rowData="leftRowData"
                         :columnDefs="columns"
@@ -53,6 +54,7 @@ const VueExample = {
                 <div style="height: 100%;" class="inner-col">
                     <ag-grid-vue
                         style="height: 100%;"
+                        :class="themeClass"
                         :defaultColDef="defaultColDef"
                         :rowData="rightRowData"
                         :columnDefs="columns"
@@ -76,16 +78,15 @@ const VueExample = {
             defaultColDef: {
                 flex: 1,
                 minWidth: 100,
-                sortable: true,
                 filter: true,
                 floatingFilter: true,
-                resizable: true
             },
             columns: [
                 { field: "id" },
                 { field: "color" },
                 { field: "value1" }
-            ]
+            ],
+            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
         };
     },
     beforeMount() {

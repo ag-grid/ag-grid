@@ -29,13 +29,20 @@ export class AggregationComp extends Component {
     }
     isValidRowModel() {
         // this component is only really useful with client or server side rowmodels
-        const rowModelType = this.gridApi.getModel().getType();
+        const rowModelType = this.gridApi.__getModel().getType();
         return rowModelType === 'clientSide' || rowModelType === 'serverSide';
     }
-    init() {
+    init(params) {
+        this.params = params;
+    }
+    refresh(params) {
+        this.params = params;
+        this.onRangeSelectionChanged();
+        return true;
     }
     setAggregationComponentValue(aggFuncName, value, visible) {
-        const statusBarValueComponent = this.getAggregationValueComponent(aggFuncName);
+        var _a;
+        const statusBarValueComponent = this.getAllowedAggregationValueComponent(aggFuncName);
         if (_.exists(statusBarValueComponent) && statusBarValueComponent) {
             const localeTextFunc = this.localeService.getLocaleTextFunc();
             const thousandSeparator = localeTextFunc('thousandSeparator', ',');
@@ -43,31 +50,26 @@ export class AggregationComp extends Component {
             statusBarValueComponent.setValue(_.formatNumberTwoDecimalPlacesAndCommas(value, thousandSeparator, decimalSeparator));
             statusBarValueComponent.setDisplayed(visible);
         }
+        else {
+            // might have previously been visible, so hide now
+            (_a = this.getAggregationValueComponent(aggFuncName)) === null || _a === void 0 ? void 0 : _a.setDisplayed(false);
+        }
+    }
+    getAllowedAggregationValueComponent(aggFuncName) {
+        // if the user has specified the agAggregationPanelComp but no aggFuncs we show the all
+        // if the user has specified the agAggregationPanelComp and aggFuncs, then we only show the aggFuncs listed
+        const { aggFuncs } = this.params;
+        if (!aggFuncs || aggFuncs.includes(aggFuncName)) {
+            return this.getAggregationValueComponent(aggFuncName);
+        }
+        // either we can't find it (which would indicate a typo or similar user side), or the user has deliberately
+        // not listed the component in aggFuncs
+        return null;
     }
     getAggregationValueComponent(aggFuncName) {
         // converts user supplied agg name to our reference - eg: sum => sumAggregationComp
         const refComponentName = `${aggFuncName}AggregationComp`;
-        // if the user has specified the agAggregationPanelComp but no aggFuncs we show the all
-        // if the user has specified the agAggregationPanelComp and aggFuncs, then we only show the aggFuncs listed
-        let statusBarValueComponent = null;
-        const statusBar = this.gridOptionsService.get('statusBar');
-        const aggregationPanelConfig = _.exists(statusBar) && statusBar ? statusBar.statusPanels.find(panel => panel.statusPanel === 'agAggregationComponent') : null;
-        if (_.exists(aggregationPanelConfig) && aggregationPanelConfig) {
-            // a little defensive here - if no statusPanelParams show it, if componentParams we also expect aggFuncs
-            if (!_.exists(aggregationPanelConfig.statusPanelParams) ||
-                (_.exists(aggregationPanelConfig.statusPanelParams) &&
-                    _.exists(aggregationPanelConfig.statusPanelParams.aggFuncs) &&
-                    _.exists(aggregationPanelConfig.statusPanelParams.aggFuncs.find((func) => func === aggFuncName)))) {
-                statusBarValueComponent = this[refComponentName];
-            }
-        }
-        else {
-            // components not specified - assume we can show this component
-            statusBarValueComponent = this[refComponentName];
-        }
-        // either we can't find it (which would indicate a typo or similar user side), or the user has deliberately
-        // not listed the component in aggFuncs
-        return statusBarValueComponent;
+        return this[refComponentName];
     }
     onRangeSelectionChanged() {
         const cellRanges = this.rangeService ? this.rangeService.getCellRanges() : undefined;

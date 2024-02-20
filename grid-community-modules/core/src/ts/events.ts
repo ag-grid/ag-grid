@@ -10,7 +10,18 @@ import { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
 import { AgChartThemeOverrides } from './interfaces/iAgChartOptions';
 import { AgGridCommon } from './interfaces/iCommon';
 import { RowPinnedType, IRowNode } from './interfaces/iRowNode';
+import { GridState } from './interfaces/gridState';
 export { Events } from './eventKeys';
+
+export interface AgEvent {
+    /** Event identifier */
+    type: string;
+}
+
+export interface AgGridEvent<TData = any, TContext = any> extends AgGridCommon<TData, TContext>, AgEvent { }
+
+export type AgEventListener<TData = any,TContext = any> = (event: AgGridEvent<TData, TContext>) => void
+export type AgGlobalEventListener<TData = any, TContext = any> = (eventType: string, event: AgGridEvent<TData, TContext>) => void
 
 export interface ModelUpdatedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
     /** If true, the grid will try and animate the rows to the new positions */
@@ -24,6 +35,8 @@ export interface ModelUpdatedEvent<TData = any, TContext = any> extends AgGridEv
     newData: boolean | undefined;
     /** True when pagination and a new page is navigated to. */
     newPage: boolean;
+    /** True when page size changes from the page size selector. */
+    newPageSize?: boolean;
     /** true if all we did is changed row height, data still the same, no need to clear the undo/redo stacks */
     keepUndoRedoStack?: boolean;
 }
@@ -37,14 +50,9 @@ export interface PaginationChangedEvent<TData = any, TContext = any> extends AgG
     newData?: boolean;
     /** True if user went to a new page */
     newPage: boolean;
+    /** True if user changed the page size */
+    newPageSize?: boolean;
 }
-
-export interface AgEvent {
-    /** Event identifier */
-    type: string;
-}
-
-export interface AgGridEvent<TData = any, TContext = any> extends AgGridCommon<TData, TContext>, AgEvent { }
 
 export interface ToolPanelVisibleChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
     source: 'sideBarButtonClicked' | 'sideBarInitializing' | 'api';
@@ -68,7 +76,9 @@ export interface ToolPanelSizeChangedEvent<TData = any, TContext = any> extends 
 
 export interface ColumnPivotModeChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { }
 
-export interface VirtualColumnsChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { }
+export interface VirtualColumnsChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    afterScroll: boolean;
+ }
 
 export interface ColumnEverythingChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
     source: string;
@@ -81,9 +91,6 @@ export interface NewColumnsLoadedEvent<TData = any, TContext = any> extends AgGr
 export interface GridColumnsChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { }
 
 export interface DisplayedColumnsChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { }
-
-/** @deprecated v28 use RowDataUpdatedEvent instead */
-export interface RowDataChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { }
 
 export interface RowDataUpdatedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { }
 
@@ -107,6 +114,7 @@ export interface PinnedRowDataChangedEvent<TData = any, TContext = any> extends 
  * - `uiSelectAll` - select all in header clicked
  * - `uiSelectAllFiltered` - select all in header clicked when `headerCheckboxSelectionFilteredOnly = true`
  * - `uiSelectAllCurrentPage` - select all in header clicked when `headerCheckboxSelectionCurrentPageOnly = true`
+ * - 'gridInitializing' - set as part of initial state while the grid is initializing
  */
 export type SelectionEventSourceType =
     'api' |
@@ -121,7 +129,8 @@ export type SelectionEventSourceType =
     'spaceKey' |
     'uiSelectAll' |
     'uiSelectAllFiltered' |
-    'uiSelectAllCurrentPage';
+    'uiSelectAllCurrentPage' |
+    'gridInitializing';
 
 export interface SelectionChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
     source: SelectionEventSourceType;
@@ -150,9 +159,9 @@ export interface FilterChangedEvent<TData = any, TContext = any> extends AgGridE
      * Columns affected by the filter change. Array contents depend on the source of the event.
      *
      * - Expect 1 element for UI-driven column filter changes.
-     * - Expect 0-N elements (all affected columns) for calls to `gridOptions.api.setFilterModel()`.
-     * - Expect 0-N elements (removed columns) for calls to `gridOptions.api.setColumnDefs()`.
-     * - Expect 0 elements for quick-filters and calls to `gridOptions.api.onFilterChanged()`.
+     * - Expect 0-N elements (all affected columns) for calls to `api.setFilterModel()`.
+     * - Expect 0-N elements (removed columns) for calls to `api.setColumnDefs()`.
+     * - Expect 0 elements for quick-filters and calls to `api.onFilterChanged()`.
      */
     columns: Column[];
 }
@@ -173,17 +182,33 @@ export interface FilterOpenedEvent<TData = any, TContext = any> extends AgGridEv
 
 // internal event
 export interface FilterDestroyedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
-    source: 'api' | 'columnChanged' | 'gridDestroyed' | 'advancedFilterEnabled';
+    source: 'api' | 'columnChanged' | 'gridDestroyed' | 'advancedFilterEnabled' | 'paramsUpdated';
     column: Column;
+}
+
+export interface AdvancedFilterBuilderVisibleChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    /** Source of the visibility status change. */
+    source: 'api' | 'ui';
+    /** `true` if now visible. `false` if now hidden. */
+    visible: boolean
 }
 
 export interface SortChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
     /** Source of the sort change. */
     source: string;
+    /**
+     * The list of columns impacted by the sort change.
+     */
+    columns?: Column[];
 }
 
 export interface GridReadyEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { }
+export interface GridPreDestroyedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    /** Current state of the grid */
+    state: GridState;
+}
 
+export interface ColumnContainerWidthChanged<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { } // not documented
 export interface DisplayedColumnsWidthChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { } // not documented
 export interface ColumnHoverChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { } // not documented
 export interface BodyHeightChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { } // not documented
@@ -380,7 +405,8 @@ export interface ChartDestroyed<TData = any, TContext = any> extends AgGridEvent
 }
 
 export interface ColumnGroupOpenedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
-    columnGroup: ProvidedColumnGroup;
+    columnGroup?: ProvidedColumnGroup;
+    columnGroups: ProvidedColumnGroup[];
 }
 
 export interface ItemsAddedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
@@ -481,7 +507,8 @@ export type ColumnEventType =
     "flex" |
     "pivotChart" |
     "columnRowGroupChanged" |
-    "cellDataTypeInferred";
+    "cellDataTypeInferred" |
+    "viewportSizeFeature";
 
 export interface ColumnEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
     /** The impacted column, only set if action was on one column */
@@ -513,13 +540,55 @@ export interface ColumnMovedEvent<TData = any, TContext = any> extends ColumnEve
 }
 
 export interface ColumnVisibleEvent<TData = any, TContext = any> extends ColumnEvent<TData, TContext> {
-    /** True if column was set to visible, false if set to hide */
+    /** True if column was set to visible, false if set to hide, undefined if in a single call some columns were shown while others hidden */
     visible?: boolean;
 }
 
 export interface ColumnPinnedEvent<TData = any, TContext = any> extends ColumnEvent<TData, TContext> {
     /** Either 'left', 'right', or null (it not pinned) */
     pinned: ColumnPinnedType;
+}
+
+export interface ColumnHeaderMouseOverEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    /** Column or column-group related to the header that triggered the event */
+    column: Column | ProvidedColumnGroup;
+}
+
+export interface ColumnHeaderMouseLeaveEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    /** Column or column-group related to the header that triggered the event */
+    column: Column | ProvidedColumnGroup;
+}
+
+export interface ColumnHeaderClickedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    /** Column or column-group related to the header that triggered the event */
+    column: Column | ProvidedColumnGroup;
+}
+
+export interface ColumnHeaderContextMenuEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    /** Column or column-group related to the header that triggered the event */
+    column: Column | ProvidedColumnGroup;
+}
+
+export interface ColumnMenuVisibleChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    /** True if now visible; false if now hidden. */
+    visible: boolean;
+    /** True if switching between tabs. False if showing/hiding. Only applies to legacy tabbed menu. */
+    switchingTab: boolean;
+    /**
+     * Currently displayed menu/tab.
+     * If filter launched from floating filter, will be `'floatingFilter'`.
+     * If using AG Grid Enterprise and `columnMenu = 'legacy'`,
+     * will be the tab `'generalMenuTab'`, `'filterMenuTab'` or `'columnsMenuTab'`.
+     * If using AG Grid Community and `columnMenu = 'legacy'`, will be `'columnMenu'`.
+     * If using `columnMenu = 'new'`, will be `'columnMenu'` for the column menu,
+     * `'columnFilter'` for the column filter, and `'columnChooser'` for the column chooser.
+     */
+    key: 'generalMenuTab' | 'filterMenuTab' | 'columnsMenuTab' | 'columnMenu' | 'columnFilter' | 'floatingFilter' | 'columnChooser';
+    /**
+     * Column the menu is opened for. Will be `null` if not launched from a column
+     * (e.g. column chooser from the API, or column menu via right-click on an empty header).
+     */
+    column: Column | null;
 }
 
 /**------------*/
@@ -658,6 +727,13 @@ export interface StoreRefreshedEvent<TData = any, TContext = any> extends AgGrid
     route?: string[];
 }
 
+export interface StateUpdatedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    /** Which parts of the state triggered the update, or `gridInitializing` when the state has been created during grid initialization */
+    sources: (keyof GridState | 'gridInitializing')[];
+    /** The updated state */
+    state: GridState;
+}
+
 export interface ScrollVisibilityChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { } // not documented
 
 export interface StoreUpdatedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { } // not documented
@@ -670,6 +746,7 @@ export interface RowContainerHeightChanged<TData = any, TContext = any> extends 
 export interface DisplayedRowsChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { afterScroll: boolean } // not documented
 
 export interface CssVariablesChanged<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { } // not documented
+
 
 /**-----------------*/
 /** Internal EVENTS */
@@ -687,3 +764,4 @@ export interface FieldValueEvent<TData = any, TContext = any> extends AgGridEven
 export interface FieldPickerValueSelectedEvent<TData = any, TContext = any> extends FieldValueEvent {
     fromEnterKey: boolean;
 }
+

@@ -50,9 +50,12 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
     SetFloatingFilterComp.prototype.setParams = function (params) {
         var displayName = this.columnModel.getDisplayNameForColumn(params.column, 'header', true);
         var translate = this.localeService.getLocaleTextFunc();
-        this.eFloatingFilterText.setInputAriaLabel(displayName + " " + translate('ariaFilterInput', 'Filter Input'));
+        this.eFloatingFilterText.setInputAriaLabel("".concat(displayName, " ").concat(translate('ariaFilterInput', 'Filter Input')));
     };
     SetFloatingFilterComp.prototype.onParamsUpdated = function (params) {
+        this.refresh(params);
+    };
+    SetFloatingFilterComp.prototype.refresh = function (params) {
         this.params = params;
         this.setParams(params);
     };
@@ -93,10 +96,10 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
         });
     };
     __decorate([
-        core_1.RefSelector('eFloatingFilterText')
+        (0, core_1.RefSelector)('eFloatingFilterText')
     ], SetFloatingFilterComp.prototype, "eFloatingFilterText", void 0);
     __decorate([
-        core_1.Autowired('columnModel')
+        (0, core_1.Autowired)('columnModel')
     ], SetFloatingFilterComp.prototype, "columnModel", void 0);
     return SetFloatingFilterComp;
 }(core_1.Component));

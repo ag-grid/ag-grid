@@ -27,7 +27,7 @@ var MiniLine = /** @class */ (function (_super) {
             [5, 6, 3, 4, 1],
             [1, 3, 4, 8, 7]
         ];
-        _this.lines = miniChartHelpers_1.createLinePaths(_this.root, _this.data, _this.size, _this.padding);
+        _this.lines = (0, miniChartHelpers_1.createLinePaths)(_this.root, _this.data, _this.size, _this.padding);
         _this.updateColors(fills, strokes);
         return _this;
     }

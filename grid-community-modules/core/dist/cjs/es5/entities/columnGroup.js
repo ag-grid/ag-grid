@@ -60,8 +60,8 @@ var ColumnGroup = /** @class */ (function () {
         });
         // set our left based on first displayed column
         if (this.displayedChildren.length > 0) {
-            if (this.gridOptionsService.is('enableRtl')) {
-                var lastChild = array_1.last(this.displayedChildren);
+            if (this.gridOptionsService.get('enableRtl')) {
+                var lastChild = (0, array_1.last)(this.displayedChildren);
                 var lastChildLeft = lastChild.getLeft();
                 this.setLeft(lastChildLeft);
             }
@@ -83,7 +83,7 @@ var ColumnGroup = /** @class */ (function () {
         return this.oldLeft;
     };
     ColumnGroup.prototype.setLeft = function (left) {
-        this.oldLeft = left;
+        this.oldLeft = this.left;
         if (this.left !== left) {
             this.left = left;
             this.localEventService.dispatchEvent(this.createAgEvent(ColumnGroup.EVENT_LEFT_CHANGED));
@@ -273,7 +273,7 @@ var ColumnGroup = /** @class */ (function () {
     ColumnGroup.EVENT_LEFT_CHANGED = 'leftChanged';
     ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED = 'displayedChildrenChanged';
     __decorate([
-        context_1.Autowired('gridOptionsService')
+        (0, context_1.Autowired)('gridOptionsService')
     ], ColumnGroup.prototype, "gridOptionsService", void 0);
     return ColumnGroup;
 }());

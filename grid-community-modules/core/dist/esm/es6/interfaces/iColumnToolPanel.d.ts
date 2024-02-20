@@ -1,7 +1,8 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColDef, ColGroupDef } from '../entities/colDef';
+import { ColumnToolPanelState } from './gridState';
 import { IToolPanel } from './iToolPanel';
 export interface IColumnToolPanel extends IToolPanel {
     expandColumnGroups(groupIds?: string[]): void;
@@ -12,4 +13,5 @@ export interface IColumnToolPanel extends IToolPanel {
     setRowGroupsSectionVisible(visible: boolean): void;
     setValuesSectionVisible(visible: boolean): void;
     setPivotSectionVisible(visible: boolean): void;
+    getState(): ColumnToolPanelState;
 }

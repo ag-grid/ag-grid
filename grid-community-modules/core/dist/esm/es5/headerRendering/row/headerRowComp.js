@@ -39,13 +39,12 @@ var HeaderRowComp = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.headerComps = {};
         _this.ctrl = ctrl;
-        _this.setTemplate(/* html */ "<div class=\"" + _this.ctrl.getHeaderRowClass() + "\" role=\"row\"></div>");
+        _this.setTemplate(/* html */ "<div class=\"".concat(_this.ctrl.getHeaderRowClass(), "\" role=\"row\"></div>"));
         return _this;
     }
     //noinspection JSUnusedLocalSymbols
     HeaderRowComp.prototype.init = function () {
         var _this = this;
-        this.getGui().style.transform = this.ctrl.getTransform();
         setAriaRowIndex(this.getGui(), this.ctrl.getAriaRowIndex());
         var compProxy = {
             setHeight: function (height) { return _this.getGui().style.height = height; },

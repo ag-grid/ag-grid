@@ -1,4 +1,4 @@
-import { Grid, GridOptions, SuppressKeyboardEventParams } from '@ag-grid-community/core';
+import { GridApi, createGrid, GridOptions, SuppressKeyboardEventParams } from '@ag-grid-community/core';
 
 import { CustomElements } from './customElements_typescript';
 
@@ -95,10 +95,11 @@ const columnDefs = [
   }
 ];
 
+let gridApi: GridApi;
+
 const gridOptions: GridOptions = {
   columnDefs,
   defaultColDef: {
-    resizable: true,
     minWidth: 130,
     suppressKeyboardEvent
   }
@@ -107,11 +108,11 @@ const gridOptions: GridOptions = {
 // Setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
     .then(response => response.json())
     .then(data => {
-      gridOptions.api!.setRowData(data)
+      gridApi!.setGridOption('rowData', data)
     })
 })

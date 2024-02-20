@@ -31,8 +31,11 @@ var PinnedRowModel = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     PinnedRowModel.prototype.init = function () {
-        this.setPinnedTopRowData(this.gridOptionsService.get('pinnedTopRowData'));
-        this.setPinnedBottomRowData(this.gridOptionsService.get('pinnedBottomRowData'));
+        var _this = this;
+        this.setPinnedTopRowData();
+        this.setPinnedBottomRowData();
+        this.addManagedPropertyListener('pinnedTopRowData', function () { return _this.setPinnedTopRowData(); });
+        this.addManagedPropertyListener('pinnedBottomRowData', function () { return _this.setPinnedBottomRowData(); });
     };
     PinnedRowModel.prototype.isEmpty = function (floating) {
         var rows = floating === 'top' ? this.pinnedTopRows : this.pinnedBottomRows;
@@ -57,14 +60,16 @@ var PinnedRowModel = /** @class */ (function (_super) {
         }
         return rows.length - 1;
     };
-    PinnedRowModel.prototype.setPinnedTopRowData = function (rowData) {
+    PinnedRowModel.prototype.setPinnedTopRowData = function () {
+        var rowData = this.gridOptionsService.get('pinnedTopRowData');
         this.pinnedTopRows = this.createNodesFromData(rowData, true);
         var event = {
             type: Events.EVENT_PINNED_ROW_DATA_CHANGED
         };
         this.eventService.dispatchEvent(event);
     };
-    PinnedRowModel.prototype.setPinnedBottomRowData = function (rowData) {
+    PinnedRowModel.prototype.setPinnedBottomRowData = function () {
+        var rowData = this.gridOptionsService.get('pinnedBottomRowData');
         this.pinnedBottomRows = this.createNodesFromData(rowData, false);
         var event = {
             type: Events.EVENT_PINNED_ROW_DATA_CHANGED

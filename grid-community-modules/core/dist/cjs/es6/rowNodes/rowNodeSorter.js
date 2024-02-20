@@ -13,7 +13,7 @@ const beanStub_1 = require("../context/beanStub");
 // this logic is used by both SSRM and CSRM
 let RowNodeSorter = class RowNodeSorter extends beanStub_1.BeanStub {
     init() {
-        this.isAccentedSort = this.gridOptionsService.is('accentedSort');
+        this.isAccentedSort = this.gridOptionsService.get('accentedSort');
         this.primaryColumnsSortGroups = this.gridOptionsService.isColumnsSortingCoupledToGroup();
         this.addManagedPropertyListener('accentedSort', (propChange) => this.isAccentedSort = propChange.currentValue);
         this.addManagedPropertyListener('autoGroupColumnDef', () => this.primaryColumnsSortGroups = this.gridOptionsService.isColumnsSortingCoupledToGroup());
@@ -82,15 +82,9 @@ let RowNodeSorter = class RowNodeSorter extends beanStub_1.BeanStub {
         const isNodeGroupedAtLevel = node.rowGroupColumn === column;
         if (isNodeGroupedAtLevel) {
             const isGroupRows = this.gridOptionsService.isGroupUseEntireRow(this.columnModel.isPivotActive());
+            // because they're group rows, no display cols exist, so groupData never populated.
+            // instead delegate to getting value from leaf child.
             if (isGroupRows) {
-                // if the column has a provided a keyCreator, we have to use the key, as the group could be
-                // irrelevant to the column value
-                const keyCreator = column.getColDef().keyCreator;
-                if (keyCreator) {
-                    return node.key;
-                }
-                // if the group was generated from the column data, all the leaf children should return the same
-                // value
                 const leafChild = (_a = node.allLeafChildren) === null || _a === void 0 ? void 0 : _a[0];
                 if (leafChild) {
                     return this.valueService.getValue(column, leafChild, false, false);
@@ -110,15 +104,15 @@ let RowNodeSorter = class RowNodeSorter extends beanStub_1.BeanStub {
     }
 };
 __decorate([
-    context_1.Autowired('valueService')
+    (0, context_1.Autowired)('valueService')
 ], RowNodeSorter.prototype, "valueService", void 0);
 __decorate([
-    context_1.Autowired('columnModel')
+    (0, context_1.Autowired)('columnModel')
 ], RowNodeSorter.prototype, "columnModel", void 0);
 __decorate([
     context_1.PostConstruct
 ], RowNodeSorter.prototype, "init", null);
 RowNodeSorter = __decorate([
-    context_1.Bean('rowNodeSorter')
+    (0, context_1.Bean)('rowNodeSorter')
 ], RowNodeSorter);
 exports.RowNodeSorter = RowNodeSorter;

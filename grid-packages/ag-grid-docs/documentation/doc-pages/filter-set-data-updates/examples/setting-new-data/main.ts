@@ -1,8 +1,12 @@
 import {
-  FirstDataRenderedEvent, Grid,
+  FirstDataRenderedEvent,
+  GridApi,
+  createGrid,
   GridOptions,
   IFiltersToolPanel,
-} from '@ag-grid-community/core'
+} from '@ag-grid-community/core';
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -32,12 +36,12 @@ function setNewData() {
     { col1: 'D' },
     { col1: 'E' },
   ]
-  gridOptions.api!.setRowData(newData)
+  gridApi!.setGridOption('rowData', newData)
 }
 
 function reset() {
-  gridOptions.api!.setFilterModel(null);
-  gridOptions.api!.setRowData(getRowData());
+  gridApi!.setFilterModel(null);
+  gridApi!.setGridOption('rowData', getRowData());
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
@@ -47,5 +51,5 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

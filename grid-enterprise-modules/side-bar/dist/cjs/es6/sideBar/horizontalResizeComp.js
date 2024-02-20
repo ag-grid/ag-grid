@@ -26,7 +26,7 @@ class HorizontalResizeComp extends core_1.Component {
             onResizeEnd: this.onResizeEnd.bind(this)
         });
         this.addDestroyFunc(finishedWithResizeFunc);
-        this.setInverted(this.gridOptionsService.is('enableRtl'));
+        this.setInverted(this.gridOptionsService.get('enableRtl'));
     }
     dispatchResizeEvent(start, end, width) {
         const event = {
@@ -69,7 +69,7 @@ class HorizontalResizeComp extends core_1.Component {
     }
 }
 __decorate([
-    core_1.Autowired('horizontalResizeService')
+    (0, core_1.Autowired)('horizontalResizeService')
 ], HorizontalResizeComp.prototype, "horizontalResizeService", void 0);
 __decorate([
     core_1.PostConstruct

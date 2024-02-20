@@ -39,10 +39,10 @@ var NameValueComp = /** @class */ (function (_super) {
     };
     NameValueComp.TEMPLATE = "<div class=\"ag-status-name-value\">\n            <span ref=\"eLabel\"></span>:&nbsp;\n            <span ref=\"eValue\" class=\"ag-status-name-value-value\"></span>\n        </div>";
     __decorate([
-        core_1.RefSelector('eLabel')
+        (0, core_1.RefSelector)('eLabel')
     ], NameValueComp.prototype, "eLabel", void 0);
     __decorate([
-        core_1.RefSelector('eValue')
+        (0, core_1.RefSelector)('eValue')
     ], NameValueComp.prototype, "eValue", void 0);
     return NameValueComp;
 }(core_1.Component));

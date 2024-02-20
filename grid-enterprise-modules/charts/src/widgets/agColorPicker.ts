@@ -1,5 +1,5 @@
 import { AgColorPanel } from "./agColorPanel";
-import { _, IPickerFieldParams, AgPickerField, AgDialog, Component } from "@ag-grid-community/core";
+import { _, IPickerFieldParams, AgPickerField, AgDialog } from "@ag-grid-community/core";
 
 interface ColorPickerConfig extends IPickerFieldParams {
     color: string;
@@ -14,8 +14,10 @@ export class AgColorPicker extends AgPickerField<string, IPickerFieldParams, AgD
             pickerAriaLabelKey: 'ariaLabelColorPicker',
             pickerAriaLabelValue: 'Color Picker',
             pickerType: 'ag-list',
+            className: 'ag-color-picker',
+            pickerIcon: 'colorPicker',
             ...config,
-        }, 'ag-color-picker', 'colorPicker');
+        });
 
         if (config && config.color) {
             this.value = config.color;

@@ -26,20 +26,42 @@ var FilterListener = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     FilterListener.prototype.postConstruct = function () {
+        var _this = this;
         // only want to be active if SSRM active, otherwise would be interfering with other row models
         if (!this.gridOptionsService.isRowModelType('serverSide')) {
             return;
         }
-        this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED, function () { return _this.onFilterChanged(true); });
+        this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, function () { return _this.onFilterChanged(); });
     };
-    FilterListener.prototype.onFilterChanged = function () {
+    FilterListener.prototype.onFilterChanged = function (advancedFilterEnabledChanged) {
         var storeParams = this.serverSideRowModel.getParams();
         if (!storeParams) {
             return;
         } // params is undefined if no datasource set
-        var newModel = this.filterManager.getFilterModel();
-        var oldModel = storeParams ? storeParams.filterModel : {};
-        var changedColumns = this.findChangedColumns(newModel, oldModel);
+        var oldModel = storeParams.filterModel;
+        var newModel;
+        var changedColumns;
+        if (this.filterManager.isAdvancedFilterEnabled()) {
+            newModel = this.filterManager.getAdvancedFilterModel();
+            // if advancedFilterEnabledChanged, old model is of type `FilterModel`
+            var oldColumns = advancedFilterEnabledChanged ? Object.keys(oldModel !== null && oldModel !== void 0 ? oldModel : {}) : this.getAdvancedFilterColumns(oldModel);
+            var newColumns_1 = this.getAdvancedFilterColumns(newModel);
+            oldColumns.forEach(function (column) { return newColumns_1.add(column); });
+            changedColumns = Array.from(newColumns_1);
+        }
+        else {
+            newModel = this.filterManager.getFilterModel();
+            if (advancedFilterEnabledChanged) {
+                // old model is of type `AdvancedFilterModel | null`
+                var oldColumns_1 = this.getAdvancedFilterColumns(oldModel);
+                Object.keys(newModel).forEach(function (column) { return oldColumns_1.add(column); });
+                changedColumns = Array.from(oldColumns_1);
+            }
+            else {
+                changedColumns = this.findChangedColumns(oldModel, newModel);
+            }
+        }
         var valueColChanged = this.listenerUtils.isSortingWithValueColumn(changedColumns);
         var secondaryColChanged = this.listenerUtils.isSortingWithSecondaryColumn(changedColumns);
         var params = {
@@ -63,6 +85,22 @@ var FilterListener = /** @class */ (function (_super) {
             }
         });
         return res;
+    };
+    FilterListener.prototype.getAdvancedFilterColumns = function (model) {
+        var columns = new Set();
+        if (!model) {
+            return columns;
+        }
+        var processAdvancedFilterModel = function (filterModel) {
+            if (filterModel.filterType === 'join') {
+                filterModel.conditions.forEach(function (condition) { return processAdvancedFilterModel(condition); });
+            }
+            else {
+                columns.add(filterModel.colId);
+            }
+        };
+        processAdvancedFilterModel(model);
+        return columns;
     };
     __decorate([
         Autowired('rowModel')

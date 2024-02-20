@@ -13,12 +13,12 @@ var alignmentFactory = {
             name: 'alignment',
             properties: {
                 rawMap: {
-                    horizontal: horizontal && excelLegacyConvert_1.convertLegacyHorizontalAlignment(horizontal),
+                    horizontal: horizontal && (0, excelLegacyConvert_1.convertLegacyHorizontalAlignment)(horizontal),
                     indent: indent,
                     readingOrder: readingOrder && getReadingOrderId(readingOrder),
                     textRotation: rotate,
                     shrinkToFit: shrinkToFit,
-                    vertical: vertical && excelLegacyConvert_1.convertLegacyVerticalAlignment(vertical),
+                    vertical: vertical && (0, excelLegacyConvert_1.convertLegacyVerticalAlignment)(vertical),
                     wrapText: wrapText
                 }
             }

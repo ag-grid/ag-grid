@@ -1,7 +1,7 @@
 import { BeanStub } from "../../context/beanStub";
 import { Autowired } from "../../context/context";
 import { DragListenerParams, DragService } from "../../dragAndDrop/dragService";
-import { getAbsoluteHeight, getAbsoluteWidth, setFixedHeight, setFixedWidth } from "../../utils/dom";
+import { getAbsoluteHeight, getAbsoluteWidth, isVisible, setFixedHeight, setFixedWidth } from "../../utils/dom";
 import { PopupService } from "../../widgets/popupService";
 import { ResizeObserverService } from "../../misc/resizeObserverService";
 
@@ -128,8 +128,8 @@ export class PositionableFeature extends BeanStub {
 
         // here we don't use the main offset parent but the element's offsetParent
         // in order to calculated the minWidth and minHeight correctly
-        const isVisible = !!this.element.offsetParent;
-        if (isVisible) {
+        const isElementVisible = isVisible(this.element);
+        if (isElementVisible) {
             const boundaryEl = this.findBoundaryElement();
             const offsetParentComputedStyles = window.getComputedStyle(boundaryEl);
             if (offsetParentComputedStyles.minWidth != null) {
@@ -162,7 +162,7 @@ export class PositionableFeature extends BeanStub {
             this.center();
         } else if (x || y) {
             this.offsetElement(x!, y!);
-        } else if (isVisible && forcePopupParentAsOffsetParent) {
+        } else if (isElementVisible && forcePopupParentAsOffsetParent) {
             let boundaryEl: HTMLElement | null = this.boundaryEl;
             let initialisedDuringPositioning = true;
 
@@ -777,9 +777,7 @@ export class PositionableFeature extends BeanStub {
         this.boundaryEl = null;
 
         const params = {
-            type: 'resize',
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi
+            type: 'resize'
         };
 
         this.element.classList.remove('ag-resizing');

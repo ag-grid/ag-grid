@@ -1,4 +1,4 @@
-// ag-grid-react v30.1.0
+// ag-grid-react v31.1.0
 "use strict";
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
@@ -37,6 +37,7 @@ var beansContext_1 = require("../beansContext");
 var jsComp_1 = require("../jsComp");
 var utils_1 = require("../utils");
 var GroupCellRenderer = react_1.forwardRef(function (props, ref) {
+    var _a;
     var context = react_1.useContext(beansContext_1.BeansContext).context;
     var eGui = react_1.useRef(null);
     var eValueRef = react_1.useRef(null);
@@ -44,13 +45,13 @@ var GroupCellRenderer = react_1.forwardRef(function (props, ref) {
     var eExpandedRef = react_1.useRef(null);
     var eContractedRef = react_1.useRef(null);
     var ctrlRef = react_1.useRef();
-    var _a = react_1.useState(), innerCompDetails = _a[0], setInnerCompDetails = _a[1];
-    var _b = react_1.useState(), childCount = _b[0], setChildCount = _b[1];
-    var _c = react_1.useState(), value = _c[0], setValue = _c[1];
-    var _d = react_1.useState(function () { return new utils_1.CssClasses(); }), cssClasses = _d[0], setCssClasses = _d[1];
-    var _e = react_1.useState(function () { return new utils_1.CssClasses('ag-hidden'); }), expandedCssClasses = _e[0], setExpandedCssClasses = _e[1];
-    var _f = react_1.useState(function () { return new utils_1.CssClasses('ag-hidden'); }), contractedCssClasses = _f[0], setContractedCssClasses = _f[1];
-    var _g = react_1.useState(function () { return new utils_1.CssClasses('ag-invisible'); }), checkboxCssClasses = _g[0], setCheckboxCssClasses = _g[1];
+    var _b = react_1.useState(), innerCompDetails = _b[0], setInnerCompDetails = _b[1];
+    var _c = react_1.useState(), childCount = _c[0], setChildCount = _c[1];
+    var _d = react_1.useState(), value = _d[0], setValue = _d[1];
+    var _e = react_1.useState(function () { return new utils_1.CssClasses(); }), cssClasses = _e[0], setCssClasses = _e[1];
+    var _f = react_1.useState(function () { return new utils_1.CssClasses('ag-hidden'); }), expandedCssClasses = _f[0], setExpandedCssClasses = _f[1];
+    var _g = react_1.useState(function () { return new utils_1.CssClasses('ag-hidden'); }), contractedCssClasses = _g[0], setContractedCssClasses = _g[1];
+    var _h = react_1.useState(function () { return new utils_1.CssClasses('ag-invisible'); }), checkboxCssClasses = _h[0], setCheckboxCssClasses = _h[1];
     react_1.useImperativeHandle(ref, function () {
         return {
             // force new instance when grid tries to refresh
@@ -89,7 +90,8 @@ var GroupCellRenderer = react_1.forwardRef(function (props, ref) {
     var FwRenderer = useFwRenderer ? innerCompDetails.componentClass : undefined;
     var useValue = innerCompDetails == null && value != null;
     var escapedValue = ag_grid_community_1._.escapeString(value, true);
-    return (react_1.default.createElement("span", __assign({ className: className, ref: setRef }, (!props.colDef ? { role: 'gridcell' } : {})),
+    // if there is no ColDef, it means this is a Full Width Group, then we need to add `role="gridcell"`.
+    return (react_1.default.createElement("span", __assign({ className: className, ref: setRef }, (!props.colDef ? { role: (_a = ctrlRef.current) === null || _a === void 0 ? void 0 : _a.getCellAriaRole() } : {})),
         react_1.default.createElement("span", { className: expandedClassName, ref: eExpandedRef }),
         react_1.default.createElement("span", { className: contractedClassName, ref: eContractedRef }),
         react_1.default.createElement("span", { className: checkboxClassName, ref: eCheckboxRef }),

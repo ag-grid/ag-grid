@@ -31,100 +31,190 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MiniChartsContainer = void 0;
 var core_1 = require("@ag-grid-community/core");
 var index_1 = require("./miniCharts/index"); // please leave this as is - we want it to be explicit for build reasons
 var miniChartMapping = {
     columnGroup: {
-        column: index_1.MiniColumn,
-        stackedColumn: index_1.MiniStackedColumn,
-        normalizedColumn: index_1.MiniNormalizedColumn
+        column: { range: true, pivot: true, enterprise: false, icon: index_1.MiniColumn },
+        stackedColumn: { range: true, pivot: true, enterprise: false, icon: index_1.MiniStackedColumn },
+        normalizedColumn: { range: true, pivot: true, enterprise: false, icon: index_1.MiniNormalizedColumn },
     },
     barGroup: {
-        bar: index_1.MiniBar,
-        stackedBar: index_1.MiniStackedBar,
-        normalizedBar: index_1.MiniNormalizedBar
+        bar: { range: true, pivot: true, enterprise: false, icon: index_1.MiniBar },
+        stackedBar: { range: true, pivot: true, enterprise: false, icon: index_1.MiniStackedBar },
+        normalizedBar: { range: true, pivot: true, enterprise: false, icon: index_1.MiniNormalizedBar },
     },
     pieGroup: {
-        pie: index_1.MiniPie,
-        doughnut: index_1.MiniDoughnut
+        pie: { range: true, pivot: true, enterprise: false, icon: index_1.MiniPie },
+        donut: { range: true, pivot: true, enterprise: false, icon: index_1.MiniDonut },
+        doughnut: { range: true, pivot: true, enterprise: false, icon: index_1.MiniDonut },
     },
-    lineGroup: {
-        line: index_1.MiniLine
-    },
+    lineGroup: { line: { range: true, pivot: true, enterprise: false, icon: index_1.MiniLine } },
     scatterGroup: {
-        scatter: index_1.MiniScatter,
-        bubble: index_1.MiniBubble
+        scatter: { range: true, pivot: true, enterprise: false, icon: index_1.MiniScatter },
+        bubble: { range: true, pivot: true, enterprise: false, icon: index_1.MiniBubble },
     },
     areaGroup: {
-        area: index_1.MiniArea,
-        stackedArea: index_1.MiniStackedArea,
-        normalizedArea: index_1.MiniNormalizedArea
+        area: { range: true, pivot: true, enterprise: false, icon: index_1.MiniArea },
+        stackedArea: { range: true, pivot: true, enterprise: false, icon: index_1.MiniStackedArea },
+        normalizedArea: { range: true, pivot: true, enterprise: false, icon: index_1.MiniNormalizedArea },
     },
-    histogramGroup: {
-        histogram: index_1.MiniHistogram
+    polarGroup: {
+        radarLine: { range: true, pivot: false, enterprise: true, icon: index_1.MiniRadarLine },
+        radarArea: { range: true, pivot: false, enterprise: true, icon: index_1.MiniRadarArea },
+        nightingale: { range: true, pivot: false, enterprise: true, icon: index_1.MiniNightingale },
+        radialColumn: { range: true, pivot: false, enterprise: true, icon: index_1.MiniRadialColumn },
+        radialBar: { range: true, pivot: false, enterprise: true, icon: index_1.MiniRadialBar },
+    },
+    statisticalGroup: {
+        boxPlot: { range: true, pivot: false, enterprise: true, icon: index_1.MiniBoxPlot },
+        histogram: { range: true, pivot: false, enterprise: false, icon: index_1.MiniHistogram },
+        rangeBar: { range: true, pivot: false, enterprise: true, icon: index_1.MiniRangeBar },
+        rangeArea: { range: true, pivot: false, enterprise: true, icon: index_1.MiniRangeArea },
+    },
+    hierarchicalGroup: {
+        treemap: { range: true, pivot: true, enterprise: true, icon: index_1.MiniTreemap },
+        sunburst: { range: true, pivot: true, enterprise: true, icon: index_1.MiniSunburst },
+    },
+    specializedGroup: {
+        heatmap: { range: true, pivot: false, enterprise: true, icon: index_1.MiniHeatmap },
+        waterfall: { range: true, pivot: false, enterprise: true, icon: index_1.MiniWaterfall },
     },
     combinationGroup: {
-        columnLineCombo: index_1.MiniColumnLineCombo,
-        areaColumnCombo: index_1.MiniAreaColumnCombo,
-        customCombo: index_1.MiniCustomCombo
-    }
+        columnLineCombo: { range: true, pivot: true, enterprise: false, icon: index_1.MiniColumnLineCombo },
+        areaColumnCombo: { range: true, pivot: true, enterprise: false, icon: index_1.MiniAreaColumnCombo },
+        customCombo: { range: true, pivot: true, enterprise: false, icon: index_1.MiniCustomCombo },
+    },
 };
 var MiniChartsContainer = /** @class */ (function (_super) {
     __extends(MiniChartsContainer, _super);
-    function MiniChartsContainer(chartController, fills, strokes, chartGroups) {
+    function MiniChartsContainer(chartController, fills, strokes, themeTemplateParameters, isCustomTheme, chartGroups) {
         if (chartGroups === void 0) { chartGroups = core_1.DEFAULT_CHART_GROUPS; }
         var _this = _super.call(this, MiniChartsContainer.TEMPLATE) || this;
         _this.wrappers = {};
         _this.chartController = chartController;
         _this.fills = fills;
         _this.strokes = strokes;
+        _this.themeTemplateParameters = themeTemplateParameters;
+        _this.isCustomTheme = isCustomTheme;
         _this.chartGroups = __assign({}, chartGroups);
         return _this;
     }
     MiniChartsContainer.prototype.init = function () {
+        var e_1, _a, e_2, _b;
         var _this = this;
+        var eGui = this.getGui();
+        var isEnterprise = this.chartController.isEnterprise();
+        var isPivotChart = this.chartController.isPivotChart();
+        var isRangeChart = !isPivotChart;
+        // Determine the set of chart types that are specified by the chartGroupsDef config, filtering out any entries
+        // that are invalid for the current chart configuration (pivot/range) and license type
+        var displayedMenuGroups = Object.keys(this.chartGroups).map(function (group) {
+            var _a;
+            var menuGroup = group in miniChartMapping
+                ? miniChartMapping[group]
+                : undefined;
+            if (!menuGroup) {
+                // User has specified an invalid chart group in the chartGroupsDef config
+                core_1._.warnOnce("invalid chartGroupsDef config '".concat(group, "'"));
+                return null;
+            }
+            // Determine the valid chart types within this group, based on the chartGroupsDef config
+            var chartGroupValues = (_a = _this.chartGroups[group]) !== null && _a !== void 0 ? _a : [];
+            var menuItems = chartGroupValues.map(function (chartType) {
+                var menuItem = chartType in menuGroup
+                    ? menuGroup[chartType]
+                    : undefined;
+                if (!menuItem) {
+                    // User has specified an invalid chart type in the chartGroupsDef config
+                    core_1._.warnOnce("invalid chartGroupsDef config '".concat(group, ".").concat(chartType, "'"));
+                    return null;
+                }
+                if (!isEnterprise && menuItem.enterprise) {
+                    return null; // skip enterprise charts if community
+                }
+                // Only show the chart if it is valid for the current chart configuration (pivot/range)
+                if (isRangeChart && menuItem.range)
+                    return menuItem;
+                if (isPivotChart && menuItem.pivot)
+                    return menuItem;
+                return null;
+            })
+                .filter(function (menuItem) { return menuItem != null; });
+            if (menuItems.length === 0)
+                return null; // don't render empty chart groups
+            return {
+                label: _this.chartTranslationService.translate(group),
+                items: menuItems
+            };
+        })
+            .filter(function (menuGroup) { return menuGroup != null; });
+        try {
+            // Render the filtered menu items
+            for (var displayedMenuGroups_1 = __values(displayedMenuGroups), displayedMenuGroups_1_1 = displayedMenuGroups_1.next(); !displayedMenuGroups_1_1.done; displayedMenuGroups_1_1 = displayedMenuGroups_1.next()) {
+                var _c = displayedMenuGroups_1_1.value, label = _c.label, items = _c.items;
+                var groupComponent = this.createBean(new core_1.AgGroupComponent({
+                    title: label,
+                    suppressEnabledCheckbox: true,
+                    enabled: true,
+                    suppressOpenCloseIcons: true,
+                    cssIdentifier: 'charts-settings',
+                    direction: 'horizontal',
+                }));
+                var _loop_1 = function (menuItem) {
+                    var MiniClass = menuItem.icon;
+                    var miniWrapper = document.createElement('div');
+                    miniWrapper.classList.add('ag-chart-mini-thumbnail');
+                    var miniClassChartType = MiniClass.chartType;
+                    this_1.addManagedListener(miniWrapper, 'click', function () {
+                        _this.chartController.setChartType(miniClassChartType);
+                        _this.updateSelectedMiniChart();
+                    });
+                    this_1.wrappers[miniClassChartType] = miniWrapper;
+                    this_1.createBean(new MiniClass(miniWrapper, this_1.fills, this_1.strokes, this_1.themeTemplateParameters, this_1.isCustomTheme));
+                    groupComponent.addItem(miniWrapper);
+                };
+                var this_1 = this;
+                try {
+                    for (var items_1 = (e_2 = void 0, __values(items)), items_1_1 = items_1.next(); !items_1_1.done; items_1_1 = items_1.next()) {
+                        var menuItem = items_1_1.value;
+                        _loop_1(menuItem);
+                    }
+                }
+                catch (e_2_1) { e_2 = { error: e_2_1 }; }
+                finally {
+                    try {
+                        if (items_1_1 && !items_1_1.done && (_b = items_1.return)) _b.call(items_1);
+                    }
+                    finally { if (e_2) throw e_2.error; }
+                }
+                eGui.appendChild(groupComponent.getGui());
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (displayedMenuGroups_1_1 && !displayedMenuGroups_1_1.done && (_a = displayedMenuGroups_1.return)) _a.call(displayedMenuGroups_1);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
         // hide MiniCustomCombo if no custom combo exists
         if (!this.chartController.customComboExists() && this.chartGroups.combinationGroup) {
             this.chartGroups.combinationGroup = this.chartGroups.combinationGroup.filter(function (chartType) { return chartType !== 'customCombo'; });
         }
-        var eGui = this.getGui();
-        Object.keys(this.chartGroups).forEach(function (group) {
-            var chartGroupValues = _this.chartGroups[group];
-            var groupComponent = _this.createBean(new core_1.AgGroupComponent({
-                title: _this.chartTranslationService.translate(group),
-                suppressEnabledCheckbox: true,
-                enabled: true,
-                suppressOpenCloseIcons: true,
-                cssIdentifier: 'charts-settings',
-                direction: 'horizontal'
-            }));
-            chartGroupValues.forEach(function (chartType) {
-                var _a;
-                var MiniClass = (_a = miniChartMapping[group]) === null || _a === void 0 ? void 0 : _a[chartType];
-                if (!MiniClass) {
-                    if (miniChartMapping[group]) {
-                        core_1._.doOnce(function () { return console.warn("AG Grid - invalid chartGroupsDef config '" + group + "." + chartType + "'"); }, "invalid_chartGroupsDef" + chartType + "_" + group);
-                    }
-                    else {
-                        core_1._.doOnce(function () { return console.warn("AG Grid - invalid chartGroupsDef config '" + group + "'"); }, "invalid_chartGroupsDef" + group);
-                    }
-                    return;
-                }
-                var miniWrapper = document.createElement('div');
-                miniWrapper.classList.add('ag-chart-mini-thumbnail');
-                var miniClassChartType = MiniClass.chartType;
-                _this.addManagedListener(miniWrapper, 'click', function () {
-                    _this.chartController.setChartType(miniClassChartType);
-                    _this.updateSelectedMiniChart();
-                });
-                _this.wrappers[miniClassChartType] = miniWrapper;
-                _this.createBean(new MiniClass(miniWrapper, _this.fills, _this.strokes));
-                groupComponent.addItem(miniWrapper);
-            });
-            eGui.appendChild(groupComponent.getGui());
-        });
         this.updateSelectedMiniChart();
     };
     MiniChartsContainer.prototype.updateSelectedMiniChart = function () {
@@ -137,7 +227,7 @@ var MiniChartsContainer = /** @class */ (function (_super) {
     };
     MiniChartsContainer.TEMPLATE = "<div class=\"ag-chart-settings-mini-wrapper\"></div>";
     __decorate([
-        core_1.Autowired('chartTranslationService')
+        (0, core_1.Autowired)('chartTranslationService')
     ], MiniChartsContainer.prototype, "chartTranslationService", void 0);
     __decorate([
         core_1.PostConstruct

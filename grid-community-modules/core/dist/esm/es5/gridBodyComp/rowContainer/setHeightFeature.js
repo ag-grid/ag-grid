@@ -24,10 +24,10 @@ import { Autowired, PostConstruct } from "../../context/context";
 import { Events } from "../../eventKeys";
 var SetHeightFeature = /** @class */ (function (_super) {
     __extends(SetHeightFeature, _super);
-    function SetHeightFeature(eContainer, eWrapper) {
+    function SetHeightFeature(eContainer, eViewport) {
         var _this = _super.call(this) || this;
         _this.eContainer = eContainer;
-        _this.eWrapper = eWrapper;
+        _this.eViewport = eViewport;
         return _this;
     }
     SetHeightFeature.prototype.postConstruct = function () {
@@ -35,10 +35,10 @@ var SetHeightFeature = /** @class */ (function (_super) {
     };
     SetHeightFeature.prototype.onHeightChanged = function () {
         var height = this.maxDivHeightScaler.getUiContainerHeight();
-        var heightString = height != null ? height + "px" : "";
+        var heightString = height != null ? "".concat(height, "px") : "";
         this.eContainer.style.height = heightString;
-        if (this.eWrapper) {
-            this.eWrapper.style.height = heightString;
+        if (this.eViewport) {
+            this.eViewport.style.height = heightString;
         }
     };
     __decorate([

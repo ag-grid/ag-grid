@@ -98,7 +98,10 @@ export class TextInputFloatingFilter extends SimpleFloatingFilter {
         }
     }
     onParamsUpdated(params) {
-        super.onParamsUpdated(params);
+        this.refresh(params);
+    }
+    refresh(params) {
+        super.refresh(params);
         this.setTextInputParams(params);
     }
     recreateFloatingFilterInputService(params) {

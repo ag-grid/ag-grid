@@ -31,13 +31,14 @@ class SortIndicatorComp extends component_1.Component {
         this.column = column;
         this.suppressOrder = suppressOrder;
         this.setupMultiSortIndicator();
-        const canSort = !!this.column.getColDef().sortable;
-        if (!canSort) {
+        if (!this.column.isSortable()) {
             return;
         }
         this.addInIcon('sortAscending', this.eSortAsc, column);
         this.addInIcon('sortDescending', this.eSortDesc, column);
         this.addInIcon('sortUnSort', this.eSortNone, column);
+        this.addManagedPropertyListener('unSortIcon', () => this.updateIcons());
+        this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_NEW_COLUMNS_LOADED, () => this.updateIcons());
         // Watch global events, as row group columns can effect their display column.
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_SORT_CHANGED, () => this.onSortChanged());
         // when grouping changes so can sort indexes and icons
@@ -48,7 +49,7 @@ class SortIndicatorComp extends component_1.Component {
         if (eParent == null) {
             return;
         }
-        const eIcon = icon_1.createIconNoSpan(iconName, this.gridOptionsService, column);
+        const eIcon = (0, icon_1.createIconNoSpan)(iconName, this.gridOptionsService, column);
         if (eIcon) {
             eParent.appendChild(eIcon);
         }
@@ -63,16 +64,16 @@ class SortIndicatorComp extends component_1.Component {
         const sortDirection = this.sortController.getDisplaySortForColumn(this.column);
         if (this.eSortAsc) {
             const isAscending = sortDirection === 'asc';
-            dom_1.setDisplayed(this.eSortAsc, isAscending, { skipAriaHidden: true });
+            (0, dom_1.setDisplayed)(this.eSortAsc, isAscending, { skipAriaHidden: true });
         }
         if (this.eSortDesc) {
             const isDescending = sortDirection === 'desc';
-            dom_1.setDisplayed(this.eSortDesc, isDescending, { skipAriaHidden: true });
+            (0, dom_1.setDisplayed)(this.eSortDesc, isDescending, { skipAriaHidden: true });
         }
         if (this.eSortNone) {
-            const alwaysHideNoSort = !this.column.getColDef().unSortIcon && !this.gridOptionsService.is('unSortIcon');
+            const alwaysHideNoSort = !this.column.getColDef().unSortIcon && !this.gridOptionsService.get('unSortIcon');
             const isNone = sortDirection === null || sortDirection === undefined;
-            dom_1.setDisplayed(this.eSortNone, !alwaysHideNoSort && isNone, { skipAriaHidden: true });
+            (0, dom_1.setDisplayed)(this.eSortNone, !alwaysHideNoSort && isNone, { skipAriaHidden: true });
         }
     }
     setupMultiSortIndicator() {
@@ -90,7 +91,7 @@ class SortIndicatorComp extends component_1.Component {
     updateMultiSortIndicator() {
         if (this.eSortMixed) {
             const isMixedSort = this.sortController.getDisplaySortForColumn(this.column) === 'mixed';
-            dom_1.setDisplayed(this.eSortMixed, isMixedSort, { skipAriaHidden: true });
+            (0, dom_1.setDisplayed)(this.eSortMixed, isMixedSort, { skipAriaHidden: true });
         }
     }
     // we listen here for global sort events, NOT column sort events, as we want to do this
@@ -105,12 +106,12 @@ class SortIndicatorComp extends component_1.Component {
         const indexThisCol = (_a = this.sortController.getDisplaySortIndexForColumn(this.column)) !== null && _a !== void 0 ? _a : -1;
         const moreThanOneColSorting = allColumnsWithSorting.some(col => { var _a; return (_a = this.sortController.getDisplaySortIndexForColumn(col)) !== null && _a !== void 0 ? _a : -1 >= 1; });
         const showIndex = indexThisCol >= 0 && moreThanOneColSorting;
-        dom_1.setDisplayed(this.eSortOrder, showIndex, { skipAriaHidden: true });
+        (0, dom_1.setDisplayed)(this.eSortOrder, showIndex, { skipAriaHidden: true });
         if (indexThisCol >= 0) {
-            this.eSortOrder.innerHTML = (indexThisCol + 1).toString();
+            this.eSortOrder.textContent = (indexThisCol + 1).toString();
         }
         else {
-            dom_1.clearElement(this.eSortOrder);
+            (0, dom_1.clearElement)(this.eSortOrder);
         }
     }
 }
@@ -122,24 +123,24 @@ SortIndicatorComp.TEMPLATE = `<span class="ag-sort-indicator-container">
             <span ref="eSortNone" class="ag-sort-indicator-icon ag-sort-none-icon ag-hidden" aria-hidden="true"></span>
         </span>`;
 __decorate([
-    componentAnnotations_1.RefSelector('eSortOrder')
+    (0, componentAnnotations_1.RefSelector)('eSortOrder')
 ], SortIndicatorComp.prototype, "eSortOrder", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eSortAsc')
+    (0, componentAnnotations_1.RefSelector)('eSortAsc')
 ], SortIndicatorComp.prototype, "eSortAsc", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eSortDesc')
+    (0, componentAnnotations_1.RefSelector)('eSortDesc')
 ], SortIndicatorComp.prototype, "eSortDesc", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eSortMixed')
+    (0, componentAnnotations_1.RefSelector)('eSortMixed')
 ], SortIndicatorComp.prototype, "eSortMixed", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eSortNone')
+    (0, componentAnnotations_1.RefSelector)('eSortNone')
 ], SortIndicatorComp.prototype, "eSortNone", void 0);
 __decorate([
-    context_1.Autowired('columnModel')
+    (0, context_1.Autowired)('columnModel')
 ], SortIndicatorComp.prototype, "columnModel", void 0);
 __decorate([
-    context_1.Autowired('sortController')
+    (0, context_1.Autowired)('sortController')
 ], SortIndicatorComp.prototype, "sortController", void 0);
 exports.SortIndicatorComp = SortIndicatorComp;

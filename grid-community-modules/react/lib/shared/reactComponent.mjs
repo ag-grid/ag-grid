@@ -1,17 +1,31 @@
-// @ag-grid-community/react v30.1.0
-class BaseReactComponent {
-}
-export class ReactComponent extends BaseReactComponent {
-    constructor(reactComponent, portalManager, componentType) {
-        super();
+// @ag-grid-community/react v31.1.0
+import { createElement } from 'react';
+import { AgPromise, _ } from '@ag-grid-community/core';
+import generateNewKey from './keyGenerator.mjs';
+import { createPortal } from 'react-dom';
+import { renderToStaticMarkup } from 'react-dom/server';
+export class ReactComponent {
+    constructor(reactComponent, portalManager, componentType, suppressFallbackMethods) {
         this.portal = null;
+        this.oldPortal = null;
         this.reactComponent = reactComponent;
         this.portalManager = portalManager;
         this.componentType = componentType;
+        this.suppressFallbackMethods = !!suppressFallbackMethods;
         this.statelessComponent = this.isStateless(this.reactComponent);
+        this.key = generateNewKey();
+        this.portalKey = generateNewKey();
+        this.instanceCreated = this.isStatelessComponent() ? AgPromise.resolve(false) : new AgPromise(resolve => {
+            this.resolveInstanceCreated = resolve;
+        });
     }
     getGui() {
         return this.eParentElement;
+    }
+    /** `getGui()` returns the parent element. This returns the actual root element. */
+    getRootElement() {
+        const firstChild = this.eParentElement.firstChild;
+        return firstChild;
     }
     destroy() {
         if (this.componentInstance && typeof this.componentInstance.destroy == 'function') {
@@ -23,8 +37,7 @@ export class ReactComponent extends BaseReactComponent {
         const componentWrappingElement = this.portalManager.getComponentWrappingElement();
         const eParentElement = document.createElement(componentWrappingElement || 'div');
         eParentElement.classList.add('ag-react-container');
-        // DEPRECATED - use componentInstance.getReactContainerStyle or componentInstance.getReactContainerClasses instead
-        // so user can have access to the react container, to add css class or style
+        /** @deprecated v21.2 */
         params.reactContainer = eParentElement;
         return eParentElement;
     }
@@ -33,9 +46,11 @@ export class ReactComponent extends BaseReactComponent {
             return;
         }
         if (this.componentInstance.getReactContainerStyle && this.componentInstance.getReactContainerStyle()) {
+            _.warnOnce('Since v31.1 "getReactContainerStyle" is deprecated. Apply styling directly to ".ag-react-container" if needed.');
             Object.assign(this.eParentElement.style, this.componentInstance.getReactContainerStyle());
         }
         if (this.componentInstance.getReactContainerClasses && this.componentInstance.getReactContainerClasses()) {
+            _.warnOnce('Since v31.1 "getReactContainerClasses" is deprecated. Apply styling directly to ".ag-react-container" if needed.');
             const parentContainerClasses = this.componentInstance.getReactContainerClasses();
             parentContainerClasses.forEach(className => this.eParentElement.classList.add(className));
         }
@@ -65,7 +80,7 @@ export class ReactComponent extends BaseReactComponent {
     }
     hasMethod(name) {
         const frameworkComponentInstance = this.getFrameworkComponentInstance();
-        return (!!frameworkComponentInstance && frameworkComponentInstance[name] !== null) ||
+        return (!!frameworkComponentInstance && frameworkComponentInstance[name] != null) ||
             this.fallbackMethodAvailable(name);
     }
     callMethod(name, args) {
@@ -88,5 +103,92 @@ export class ReactComponent extends BaseReactComponent {
     }
     addMethod(name, callback) {
         this[name] = callback;
+    }
+    init(params) {
+        this.eParentElement = this.createParentElement(params);
+        this.params = params;
+        this.createOrUpdatePortal(params);
+        return new AgPromise(resolve => this.createReactComponent(resolve));
+    }
+    createOrUpdatePortal(params) {
+        if (!this.isStatelessComponent()) {
+            // grab hold of the actual instance created
+            this.ref = (element) => {
+                var _a;
+                this.componentInstance = element;
+                this.addParentContainerStyleAndClasses();
+                (_a = this.resolveInstanceCreated) === null || _a === void 0 ? void 0 : _a.call(this, true);
+                this.resolveInstanceCreated = undefined;
+            };
+            params.ref = this.ref;
+        }
+        this.reactElement = this.createElement(this.reactComponent, Object.assign(Object.assign({}, params), { key: this.key }));
+        this.portal = createPortal(this.reactElement, this.eParentElement, this.portalKey // fixed deltaRowModeRefreshCompRenderer
+        );
+    }
+    createElement(reactComponent, props) {
+        return createElement(reactComponent, props);
+    }
+    createReactComponent(resolve) {
+        this.portalManager.mountReactPortal(this.portal, this, (value) => {
+            resolve(value);
+        });
+    }
+    isNullValue() {
+        return this.valueRenderedIsNull(this.params);
+    }
+    rendered() {
+        return (this.isStatelessComponent() && this.statelessComponentRendered()) ||
+            !!(!this.isStatelessComponent() && this.getFrameworkComponentInstance());
+    }
+    valueRenderedIsNull(params) {
+        // we only do this for cellRenderers
+        if (!this.componentType.cellRenderer) {
+            return false;
+        }
+        // we've no way of knowing if a component returns null without rendering it first
+        // so we render it to markup and check the output - if it'll be null we know and won't timeout
+        // waiting for a component that will never be created
+        const originalConsoleError = console.error;
+        try {
+            // if a user is doing anything that uses useLayoutEffect (like material ui) then it will throw and we
+            // can't do anything to stop it; this is just a warning and has no effect on anything so just suppress it
+            // for this single operation
+            console.error = () => {
+            };
+            const staticMarkup = renderToStaticMarkup(createElement(this.reactComponent, params));
+            return staticMarkup === '';
+        }
+        catch (ignore) {
+        }
+        finally {
+            console.error = originalConsoleError;
+        }
+        return false;
+    }
+    /*
+    * fallback methods - these will be invoked if a corresponding instance method is not present
+    * for example if refresh is called and is not available on the component instance, then refreshComponent on this
+    * class will be invoked instead
+    *
+    * Currently only refresh is supported
+    */
+    refreshComponent(args) {
+        this.oldPortal = this.portal;
+        this.createOrUpdatePortal(args);
+        this.portalManager.updateReactPortal(this.oldPortal, this.portal);
+    }
+    fallbackMethod(name, params) {
+        const method = this[`${name}Component`];
+        if (!this.suppressFallbackMethods && !!method) {
+            return method.bind(this)(params);
+        }
+    }
+    fallbackMethodAvailable(name) {
+        if (this.suppressFallbackMethods) {
+            return false;
+        }
+        const method = this[`${name}Component`];
+        return !!method;
     }
 }

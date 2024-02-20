@@ -1,5 +1,9 @@
-import { Grid, GridOptions, ICellRendererParams, ValueParserParams } from '@ag-grid-community/core';
+import { GridApi, createGrid, GridOptions, ICellRendererParams, ValueParserParams } from '@ag-grid-community/core';
 import { getData } from "./data";
+
+
+
+let gridApi: GridApi;
 
 
 
@@ -24,7 +28,6 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     minWidth: 150,
-    resizable: true,
   },
   autoGroupColumnDef: {
     field: 'city',
@@ -45,7 +48,6 @@ const gridOptions: GridOptions = {
   rowData: getData(),
   groupDefaultExpanded: -1,
   rowGroupPanelShow: 'always',
-  animateRows: true,
   groupAllowUnbalanced: true,
 }
 
@@ -94,5 +96,5 @@ function cityCellRenderer(params: ICellRendererParams) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

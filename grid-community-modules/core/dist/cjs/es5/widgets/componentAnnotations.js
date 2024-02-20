@@ -7,7 +7,7 @@ function QuerySelector(selector) {
 }
 exports.QuerySelector = QuerySelector;
 function RefSelector(ref) {
-    return querySelectorFunc.bind(this, "[ref=" + ref + "]", ref);
+    return querySelectorFunc.bind(this, "[ref=".concat(ref, "]"), ref);
 }
 exports.RefSelector = RefSelector;
 function querySelectorFunc(selector, refSelector, classPrototype, methodOrAttributeName, index) {
@@ -43,7 +43,7 @@ function querySelectorFunc(selector, refSelector, classPrototype, methodOrAttrib
 // }
 function addToObjectProps(target, key, value) {
     // it's an attribute on the class
-    var props = getOrCreateProps(target, function_1.getFunctionName(target.constructor));
+    var props = getOrCreateProps(target, (0, function_1.getFunctionName)(target.constructor));
     if (!props[key]) {
         props[key] = [];
     }

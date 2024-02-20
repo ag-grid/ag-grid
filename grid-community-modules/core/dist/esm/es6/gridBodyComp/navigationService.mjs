@@ -11,7 +11,7 @@ import { last } from "../utils/array.mjs";
 import { KeyCode } from '../constants/keyCode.mjs';
 import { CellCtrl } from "../rendering/cell/cellCtrl.mjs";
 import { RowCtrl } from "../rendering/row/rowCtrl.mjs";
-import { doOnce, throttle } from "../utils/function.mjs";
+import { warnOnce, throttle } from "../utils/function.mjs";
 import { Events } from "../eventKeys.mjs";
 let NavigationService = class NavigationService extends BeanStub {
     constructor() {
@@ -291,7 +291,7 @@ let NavigationService = class NavigationService extends BeanStub {
             const { rowIndex, rowPinned } = previous.getRowPosition();
             const firstRow = rowPinned ? rowIndex === 0 : rowIndex === this.paginationProxy.getPageFirstRow();
             if (firstRow) {
-                if (this.gridOptionsService.getNum('headerHeight') === 0) {
+                if (this.gridOptionsService.get('headerHeight') === 0 || this.gridOptionsService.get('suppressHeaderFocus')) {
                     this.focusService.focusNextGridCoreContainer(true, true);
                 }
                 else {
@@ -451,7 +451,7 @@ let NavigationService = class NavigationService extends BeanStub {
                 const userCell = userFunc(params);
                 if (exists(userCell)) {
                     if (userCell.floating) {
-                        doOnce(() => { console.warn(`AG Grid: tabToNextCellFunc return type should have attributes: rowIndex, rowPinned, column. However you had 'floating', maybe you meant 'rowPinned'?`); }, 'no floating in userCell');
+                        warnOnce(`tabToNextCellFunc return type should have attributes: rowIndex, rowPinned, column. However you had 'floating', maybe you meant 'rowPinned'?`);
                         userCell.rowPinned = userCell.floating;
                     }
                     nextPosition = {
@@ -550,7 +550,7 @@ let NavigationService = class NavigationService extends BeanStub {
             // if the current cell is spanning across multiple columns, we need to move
             // our current position to be the last cell on the right before finding the
             // the next target.
-            if (this.gridOptionsService.is('enableRtl')) {
+            if (this.gridOptionsService.get('enableRtl')) {
                 if (key === KeyCode.LEFT) {
                     nextCell = this.getLastCellOfColSpan(nextCell);
                 }
@@ -583,7 +583,7 @@ let NavigationService = class NavigationService extends BeanStub {
                 const userCell = userFunc(params);
                 if (exists(userCell)) {
                     if (userCell.floating) {
-                        doOnce(() => { console.warn(`AG Grid: tabToNextCellFunc return type should have attributes: rowIndex, rowPinned, column. However you had 'floating', maybe you meant 'rowPinned'?`); }, 'no floating in userCell');
+                        warnOnce(`tabToNextCellFunc return type should have attributes: rowIndex, rowPinned, column. However you had 'floating', maybe you meant 'rowPinned'?`);
                         userCell.rowPinned = userCell.floating;
                     }
                     nextCell = {

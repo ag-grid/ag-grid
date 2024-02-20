@@ -1,7 +1,7 @@
 import React from 'react';
-import { ICellRendererParams } from '@ag-grid-community/core';
+import { CustomCellRendererProps } from '@ag-grid-community/react';
 
-export default (props: ICellRendererParams) => {
+export default (props: CustomCellRendererProps) => {
 
     const footer = props.node.footer;
     const isRootLevel = props.node.level === -1;
@@ -9,9 +9,9 @@ export default (props: ICellRendererParams) => {
 
     if (footer) {
         if (isRootLevel) {
-            return <span style={{ color: 'navy', fontWeight: 'bold' }}>Grand Total</span>;
+            return <span style={{ textDecoration: 'underline', fontWeight: 'bold' }}>Grand Total</span>;
         } else {
-            return <span style={{ color: 'navy' }}>Sub Total {value}</span>;
+            return <span style={{ textDecoration: 'underline' }}>Sub Total {value}</span>;
         }
     } else {
         return <span>{value}</span>;

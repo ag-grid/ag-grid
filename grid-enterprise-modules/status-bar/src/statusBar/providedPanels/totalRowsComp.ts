@@ -10,7 +10,7 @@ export class TotalRowsComp extends NameValueComp implements IStatusPanelComp {
         this.setLabel('totalRows', 'Total Rows');
 
         // this component is only really useful with client side row model
-        if (this.gridApi.getModel().getType() !== 'clientSide') {
+        if (this.gridApi.__getModel().getType() !== 'clientSide') {
             console.warn(`AG Grid: agTotalRowCountComponent should only be used with the client side row model.`);
             return;
         }
@@ -38,6 +38,10 @@ export class TotalRowsComp extends NameValueComp implements IStatusPanelComp {
     }
 
     public init() {
+    }
+
+    public refresh(): boolean {
+        return true;
     }
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.

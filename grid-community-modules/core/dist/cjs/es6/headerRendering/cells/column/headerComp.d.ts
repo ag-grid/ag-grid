@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../../../entities/column";
@@ -25,11 +25,30 @@ export interface IHeaderParams<TData = any, TContext = any> extends AgGridCommon
      */
     enableMenu: boolean;
     /**
+     * Whether filter button should be displayed in the header (for new column menu).
+     */
+    enableFilterButton: boolean;
+    /**
+     * Whether filter icon should be displayed in the header (for legacy tabbed column menu).
+     */
+    enableFilterIcon: boolean;
+    /**
      * Callback to request the grid to show the column menu.
-     * Pass in the html element of the column menu to have the
-     *  grid position the menu over the button.
+     * Pass in the html element of the column menu button to have the
+     * grid position the menu over the button.
      */
     showColumnMenu: (source: HTMLElement) => void;
+    /**
+     * Callback to request the grid to show the column menu.
+     * Similar to `showColumnMenu`, but will position the menu next to the provided `mouseEvent`.
+     */
+    showColumnMenuAfterMouseClick: (mouseEvent: MouseEvent | Touch) => void;
+    /**
+     * Callback to request the grid to show the filter.
+     * Pass in the html element of the filter button to have the
+     * grid position the menu over the button.
+     */
+    showFilter: (source: HTMLElement) => void;
     /**
      * Callback to progress the sort for this column.
      * The grid will decide the next sort direction eg ascending, descending or 'no sort'.
@@ -62,11 +81,12 @@ export interface IHeaderComp extends IHeader, IComponent<IHeaderParams> {
 export declare class HeaderComp extends Component implements IHeaderComp {
     private static TEMPLATE;
     private sortController;
-    private menuFactory;
+    private menuService;
     private readonly columnModel;
     private eFilter;
+    private eFilterButton?;
     private eSortIndicator;
-    private eMenu;
+    private eMenu?;
     private eLabel;
     private eText;
     /**
@@ -82,20 +102,25 @@ export declare class HeaderComp extends Component implements IHeaderComp {
     private currentDisplayName;
     private currentTemplate;
     private currentShowMenu;
+    private currentSuppressMenuHide;
     private currentSort;
     destroy(): void;
     refresh(params: IHeaderParams): boolean;
     private workOutTemplate;
     init(params: IHeaderParams): void;
     private setDisplayName;
-    private setupIcons;
     private addInIcon;
     private setupTap;
     private workOutShowMenu;
+    private shouldSuppressMenuHide;
     private setMenu;
-    showMenu(eventSource?: HTMLElement): void;
+    onMenuKeyboardShortcut(isFilterShortcut: boolean): boolean;
     private workOutSort;
     setupSort(): void;
     private setupFilterIcon;
-    private onFilterChanged;
+    private setupFilterButton;
+    private configureFilter;
+    private onFilterChangedIcon;
+    private onFilterChangedButton;
+    getAnchorElementForMenu(isFilter?: boolean): HTMLElement;
 }

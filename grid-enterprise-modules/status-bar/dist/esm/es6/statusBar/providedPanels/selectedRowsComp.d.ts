@@ -7,5 +7,6 @@ export declare class SelectedRowsComp extends NameValueComp implements IStatusPa
     private isValidRowModel;
     private onRowSelectionChanged;
     init(): void;
+    refresh(): boolean;
     destroy(): void;
 }

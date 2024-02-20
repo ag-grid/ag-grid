@@ -25,7 +25,7 @@ const leftColumnDefs = [
     {
         rowDrag: true,
         maxWidth: 50,
-        suppressMenu: true,
+        suppressHeaderMenuButton: true,
         rowDragText: (params, dragItemCount) => {
             if (dragItemCount > 1) {
                 return dragItemCount + ' athletes';
@@ -41,7 +41,7 @@ const rightColumnDefs = [
     {
         rowDrag: true,
         maxWidth: 50,
-        suppressMenu: true,
+        suppressHeaderMenuButton: true,
         rowDragText: (params, dragItemCount) => {
             if (dragItemCount > 1) {
                 return dragItemCount + ' athletes';
@@ -52,19 +52,17 @@ const rightColumnDefs = [
     { field: "athlete" },
     { field: "sport" },
     {
-        suppressMenu: true,
+        suppressHeaderMenuButton: true,
         maxWidth: 50,
         cellRenderer: SportRenderer
     }
 ];
-
+let leftApi;
 const leftGridOptions = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
-        sortable: true,
         filter: true,
-        resizable: true
     },
     rowSelection: 'multiple',
     rowDragMultiRow: true,
@@ -74,34 +72,30 @@ const leftGridOptions = {
     rowDragManaged: true,
     suppressMoveWhenRowDragging: true,
     columnDefs: leftColumnDefs,
-    animateRows: true,
     onGridReady: (params) => {
         addGridDropZone(params);
     }
 };
-
+let rightApi;
 const rightGridOptions = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
-        sortable: true,
         filter: true,
-        resizable: true
     },
     getRowId: (params) => {
         return params.data.athlete;
     },
     rowDragManaged: true,
     columnDefs: rightColumnDefs,
-    animateRows: true
 };
 
 function addGridDropZone(params) {
-    const dropZoneParams = rightGridOptions.api.getRowDropZoneParams({
+    const dropZoneParams = rightApi.getRowDropZoneParams({
         onDragStop: (params) => {
             const nodes = params.nodes;
 
-            leftGridOptions.api.applyTransaction({
+            leftApi.applyTransaction({
                 remove: nodes.map(function (node) {
                     return node.data;
                 })
@@ -112,15 +106,12 @@ function addGridDropZone(params) {
     params.api.addRowDropZone(dropZoneParams);
 }
 
-function loadGrid(options, side, data) {
+function loadGrid(options, oldApi, side, data) {
     const grid = document.querySelector('#e' + side + 'Grid');
 
-    if (options && options.api) {
-        options.api.destroy();
-    }
-
+    oldApi?.destroy();
     options.rowData = data;
-    new agGrid.Grid(grid, options);
+    return agGrid.createGrid(grid, options);
 }
 
 function loadGrids() {
@@ -140,8 +131,8 @@ function loadGrids() {
                 athletes.push(data[pos]);
             }
 
-            loadGrid(leftGridOptions, 'Left', athletes.slice(0, athletes.length / 2));
-            loadGrid(rightGridOptions, 'Right', athletes.slice(athletes.length / 2));
+            leftApi = loadGrid(leftGridOptions, leftApi, 'Left', athletes.slice(0, athletes.length / 2));
+            rightApi = loadGrid(rightGridOptions, rightApi, 'Right', athletes.slice(athletes.length / 2));
         });
 }
 
@@ -149,12 +140,12 @@ function onExcelExport() {
     const spreadsheets = [];
 
     spreadsheets.push(
-        leftGridOptions.api.getSheetDataForExcel({ sheetName: 'Athletes' }),
-        rightGridOptions.api.getSheetDataForExcel({ sheetName: 'Selected Athletes' })
+        leftApi.getSheetDataForExcel({ sheetName: 'Athletes' }),
+        rightApi.getSheetDataForExcel({ sheetName: 'Selected Athletes' })
     );
 
     // could be leftGridOptions or rightGridOptions
-    leftGridOptions.api.exportMultipleSheetsAsExcel({
+    leftApi.exportMultipleSheetsAsExcel({
         data: spreadsheets,
         fileName: 'ag-grid.xlsx'
     });

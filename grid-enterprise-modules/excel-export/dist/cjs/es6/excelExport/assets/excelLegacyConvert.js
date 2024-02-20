@@ -72,7 +72,7 @@ const convertLegacyColor = (color) => {
         return color;
     }
     if (color.charAt(0) === '#') {
-        color = color.substr(1);
+        color = color.substring(1);
     }
     return color.length === 6 ? 'FF' + color : color;
 };
@@ -93,7 +93,7 @@ const convertLegacyBorder = (type, weight) => {
     if (namedWeight === 'medium' && mediumBorders.indexOf(mappedName) !== -1) {
         return `medium${mappedName}`;
     }
-    return mappedName.charAt(0).toLowerCase() + mappedName.substr(1);
+    return mappedName.charAt(0).toLowerCase() + mappedName.substring(1);
 };
 exports.convertLegacyBorder = convertLegacyBorder;
 const convertLegacyHorizontalAlignment = (alignment) => {

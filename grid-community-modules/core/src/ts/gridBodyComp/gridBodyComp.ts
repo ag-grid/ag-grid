@@ -24,13 +24,11 @@ const GRID_BODY_TEMPLATE = /* html */
             <ag-row-container ref="topFullWidthContainer" name="${RowContainerName.TOP_FULL_WIDTH}"></ag-row-container>
         </div>
         <div class="ag-body" ref="eBody" role="presentation">
-            <div class="ag-body-clipper" ref="eBodyClipper" role="presentation">
-                <div class="ag-body-viewport" ref="eBodyViewport" role="presentation">
-                    <ag-row-container ref="leftContainer" name="${RowContainerName.LEFT}"></ag-row-container>
-                    <ag-row-container ref="centerContainer" name="${RowContainerName.CENTER}"></ag-row-container>
-                    <ag-row-container ref="rightContainer" name="${RowContainerName.RIGHT}"></ag-row-container>
-                    <ag-row-container ref="fullWidthContainer" name="${RowContainerName.FULL_WIDTH}"></ag-row-container>
-                </div>
+            <div class="ag-body-viewport" ref="eBodyViewport" role="presentation">
+                <ag-row-container ref="leftContainer" name="${RowContainerName.LEFT}"></ag-row-container>
+                <ag-row-container ref="centerContainer" name="${RowContainerName.CENTER}"></ag-row-container>
+                <ag-row-container ref="rightContainer" name="${RowContainerName.RIGHT}"></ag-row-container>
+                <ag-row-container ref="fullWidthContainer" name="${RowContainerName.FULL_WIDTH}"></ag-row-container>
             </div>
             <ag-fake-vertical-scroll></ag-fake-vertical-scroll>
         </div>
@@ -61,7 +59,6 @@ export class GridBodyComp extends Component {
     @RefSelector('eTop') private eTop: HTMLElement;
     @RefSelector('eBottom') private eBottom: HTMLElement;
     @RefSelector('gridHeader') headerRootComp: GridHeaderComp;
-    @RefSelector('eBodyClipper') private eBodyClipper: HTMLElement;
     @RefSelector('eBody') private eBody: HTMLElement;
 
     private ctrl: GridBodyCtrl;
@@ -92,10 +89,8 @@ export class GridBodyComp extends Component {
             setStickyTopWidth: width => this.eStickyTop.style.width = width,
             setColumnMovingCss: (cssClass, flag) => this.addOrRemoveCssClass(cssClass, flag),
             updateLayoutClasses: (cssClass, params) => {
-                
                 const classLists = [
                     this.eBodyViewport.classList,
-                    this.eBodyClipper.classList,
                     this.eBody.classList
                 ];
 
@@ -133,7 +128,7 @@ export class GridBodyComp extends Component {
             this.eStickyTop
         );
 
-        if (this.rangeService || this.gridOptionsService.get('rowSelection') === 'multiple') {
+        if (this.rangeService && this.gridOptionsService.get('enableRangeSelection') || this.gridOptionsService.get('rowSelection') === 'multiple') {
             setAriaMultiSelectable(this.getGui(), true);
         }
     }

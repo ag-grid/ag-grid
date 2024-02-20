@@ -18,8 +18,10 @@ export class PinnedRowModel extends BeanStub {
 
     @PostConstruct
     public init(): void {
-        this.setPinnedTopRowData(this.gridOptionsService.get('pinnedTopRowData'));
-        this.setPinnedBottomRowData(this.gridOptionsService.get('pinnedBottomRowData'));
+        this.setPinnedTopRowData();
+        this.setPinnedBottomRowData();
+        this.addManagedPropertyListener('pinnedTopRowData', () => this.setPinnedTopRowData());
+        this.addManagedPropertyListener('pinnedBottomRowData', () => this.setPinnedBottomRowData());
     }
 
     public isEmpty(floating: RowPinnedType): boolean {
@@ -48,7 +50,8 @@ export class PinnedRowModel extends BeanStub {
         return rows.length - 1;
     }
 
-    public setPinnedTopRowData(rowData: any[] | undefined): void {
+    private setPinnedTopRowData(): void {
+        const rowData = this.gridOptionsService.get('pinnedTopRowData');
         this.pinnedTopRows = this.createNodesFromData(rowData, true);
         const event: WithoutGridCommon<PinnedRowDataChangedEvent> = {
             type: Events.EVENT_PINNED_ROW_DATA_CHANGED
@@ -56,7 +59,8 @@ export class PinnedRowModel extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    public setPinnedBottomRowData(rowData: any[] | undefined): void {
+    private setPinnedBottomRowData(): void {
+        const rowData = this.gridOptionsService.get('pinnedBottomRowData');
         this.pinnedBottomRows = this.createNodesFromData(rowData, false);
         const event: WithoutGridCommon<PinnedRowDataChangedEvent> = {
             type: Events.EVENT_PINNED_ROW_DATA_CHANGED

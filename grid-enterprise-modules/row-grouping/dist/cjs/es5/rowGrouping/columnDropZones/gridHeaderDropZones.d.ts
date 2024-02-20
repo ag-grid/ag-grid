@@ -8,4 +8,5 @@ export declare class GridHeaderDropZones extends Component {
     private createNorthPanel;
     private onDropPanelVisible;
     private onRowGroupChanged;
+    private onPivotPanelShow;
 }

@@ -8,7 +8,9 @@ import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
+import './styles.css';
+
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 
@@ -71,7 +73,6 @@ const GridExample = () => {
             flex: 1,
             minWidth: 225,
             cellRenderer: colourCellRenderer,
-            resizable: true,
             floatingFilter: true,
         }
     }, []);
@@ -82,33 +83,35 @@ const GridExample = () => {
     }, [])
 
     const setModel = useCallback((type) => {
-        const instance = gridRef.current.api.getFilterInstance(FILTER_TYPES[type]);
-        instance.setModel({ values: MANGLED_COLOURS });
-        gridRef.current.api.onFilterChanged();
+        gridRef.current.api.setColumnFilterModel(FILTER_TYPES[type], { values: MANGLED_COLOURS }).then(() => {
+            gridRef.current.api.onFilterChanged();
+        });
     }, [])
 
     const getModel = useCallback((type) => {
-        const instance = gridRef.current.api.getFilterInstance(FILTER_TYPES[type]);
-        alert(JSON.stringify(instance.getModel(), null, 2));
+        alert(JSON.stringify(gridRef.current.api.getColumnFilterModel(FILTER_TYPES[type]), null, 2));
     }, [alert])
 
     const setFilterValues = useCallback((type) => {
-        const instance = gridRef.current.api.getFilterInstance(FILTER_TYPES[type]);
-        instance.setFilterValues(MANGLED_COLOURS);
-        instance.applyModel();
-        gridRef.current.api.onFilterChanged();
+        gridRef.current.api.getColumnFilterInstance(FILTER_TYPES[type]).then(instance => {
+            instance.setFilterValues(MANGLED_COLOURS);
+            instance.applyModel();
+            gridRef.current.api.onFilterChanged();
+        });
     }, [])
 
     const getValues = useCallback((type) => {
-        const instance = gridRef.current.api.getFilterInstance(FILTER_TYPES[type]);
-        alert(JSON.stringify(instance.getFilterValues(), null, 2));
-    }, [alert])
+        gridRef.current.api.getColumnFilterInstance(FILTER_TYPES[type]).then(instance => {
+            alert(JSON.stringify(instance.getFilterValues(), null, 2));
+        });
+        }, [alert])
 
     const reset = useCallback((type) => {
-        const instance = gridRef.current.api.getFilterInstance(FILTER_TYPES[type]);
-        instance.resetFilterValues();
-        instance.setModel(null);
-        gridRef.current.api.onFilterChanged();
+        gridRef.current.api.getColumnFilterInstance(FILTER_TYPES[type]).then(instance => {
+            instance.resetFilterValues();
+            instance.setModel(null);
+            gridRef.current.api.onFilterChanged();
+        });
     }, [])
 
 
@@ -134,7 +137,7 @@ const GridExample = () => {
                     </div>
                 </div>
 
-                <div style={gridStyle} className="ag-theme-alpine">
+                <div style={gridStyle} className={/** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
                     <AgGridReact
                         ref={gridRef}
                         rowData={rowData}

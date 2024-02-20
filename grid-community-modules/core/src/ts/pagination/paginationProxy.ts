@@ -15,7 +15,16 @@ export class PaginationProxy extends BeanStub {
     private active: boolean;
     private paginateChildRows: boolean;
 
-    private pageSize: number;
+    // We should track all the different sources of page size, as we can fall back to the next one if one is missing.
+    // or if user preferences change (Example: disabling auto page size option should mean we get page size from
+    // page size selector value - if a value was previously selected .. otherwise fall back to initial state value).
+    // IMPORTANT: We should always use this.pageSize getter to get the page size instead of accessing
+    // directly to these variables, as the getter takes care of returning the correct value based on precedence.
+    private pageSizeAutoCalculated?: number; // When paginationAutoPageSize = true or when the pages panel is disabled
+    private pageSizeFromPageSizeSelector?: number; // When user selects page size from page size selector.
+    private pageSizeFromInitialState?: number; // When the initial grid state is loaded, and a page size rehydrated
+    private pageSizeFromGridOptions?: number; // When user sets gridOptions.paginationPageSize.
+    private defaultPageSize: 100; // When nothing else set, default page size is 100.
 
     private totalPages: number;
     private currentPage = 0;
@@ -30,12 +39,13 @@ export class PaginationProxy extends BeanStub {
 
     @PostConstruct
     private postConstruct() {
-        this.active = this.gridOptionsService.is('pagination');
+        this.active = this.gridOptionsService.get('pagination');
+        this.pageSizeFromGridOptions = this.gridOptionsService.get('paginationPageSize');
         this.paginateChildRows = this.isPaginateChildRows();
 
         this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
-        this.addManagedPropertyListener('pagination', this.onPaginationPageSizeChanged.bind(this));
-        this.addManagedPropertyListener('paginationPageSize', this.onPaginationPageSizeChanged.bind(this));
+        this.addManagedPropertyListener('pagination', this.onPaginationGridOptionChanged.bind(this));
+        this.addManagedPropertyListener('paginationPageSize', this.onPageSizeGridOptionChanged.bind(this));
 
         this.onModelUpdated();
     }
@@ -49,9 +59,9 @@ export class PaginationProxy extends BeanStub {
     }
 
     private isPaginateChildRows(): boolean {
-        const shouldPaginate = this.gridOptionsService.is('groupRemoveSingleChildren') || this.gridOptionsService.is('groupRemoveLowestSingleChildren');
+        const shouldPaginate = this.gridOptionsService.get('groupRemoveSingleChildren') || this.gridOptionsService.get('groupRemoveLowestSingleChildren');
         if (shouldPaginate) { return true; }
-        return this.gridOptionsService.is('paginateChildRows');
+        return this.gridOptionsService.get('paginateChildRows');
     }
 
     private onModelUpdated(modelUpdatedEvent?: WithoutGridCommon<ModelUpdatedEvent>): void {
@@ -61,24 +71,30 @@ export class PaginationProxy extends BeanStub {
             animate: modelUpdatedEvent ? modelUpdatedEvent.animate : false,
             newData: modelUpdatedEvent ? modelUpdatedEvent.newData : false,
             newPage: modelUpdatedEvent ? modelUpdatedEvent.newPage : false,
+            newPageSize: modelUpdatedEvent ? modelUpdatedEvent.newPageSize : false,
             keepRenderedRows: modelUpdatedEvent ? modelUpdatedEvent.keepRenderedRows : false
         };
         this.eventService.dispatchEvent(paginationChangedEvent);
     }
 
-    private onPaginationPageSizeChanged(): void {
-        this.active = this.gridOptionsService.is('pagination');
+    private onPaginationGridOptionChanged(): void {
+        this.active = this.gridOptionsService.get('pagination');
         this.calculatePages();
         const paginationChangedEvent: WithoutGridCommon<PaginationChangedEvent> = {
             type: Events.EVENT_PAGINATION_CHANGED,
             animate: false,
             newData: false,
             newPage: false,
+            newPageSize: false,
             // important to keep rendered rows, otherwise every time grid is resized,
             // we would destroy all the rows.
             keepRenderedRows: true
         };
         this.eventService.dispatchEvent(paginationChangedEvent);
+    }
+
+    private onPageSizeGridOptionChanged(): void {
+        this.setPageSize(this.gridOptionsService.get('paginationPageSize'),'gridOptions');
     }
 
     public goToPage(page: number): void {
@@ -90,7 +106,8 @@ export class PaginationProxy extends BeanStub {
             animate: false,
             keepRenderedRows: false,
             newData: false,
-            newPage: true
+            newPage: true,
+            newPageSize: false
         };
         this.onModelUpdated(event);
     }
@@ -228,17 +245,73 @@ export class PaginationProxy extends BeanStub {
         return this.totalPages;
     }
 
-    private setPageSize(): void {
-        // show put this into super class
-        this.pageSize = this.gridOptionsService.getNum('paginationPageSize')!;
-        if (this.pageSize == null || this.pageSize < 1) {
-            this.pageSize = 100;
+    /** This is only for state setting before data has been loaded */
+    public setPage(page: number): void {
+        this.currentPage = page;
+    }
+
+    private get pageSize(): number {
+        if (exists(this.pageSizeAutoCalculated)) { return this.pageSizeAutoCalculated; }
+        if (exists(this.pageSizeFromPageSizeSelector)) { return this.pageSizeFromPageSizeSelector; }
+        if (exists(this.pageSizeFromInitialState)) { return this.pageSizeFromInitialState; }
+        if (exists(this.pageSizeFromGridOptions)) { return this.pageSizeFromGridOptions; }
+        return this.defaultPageSize;
+    }
+
+    public unsetAutoCalculatedPageSize(): void {
+        if (this.pageSizeAutoCalculated === undefined) { return; }
+        const oldPageSize = this.pageSizeAutoCalculated;
+
+        this.pageSizeAutoCalculated = undefined;
+
+        if (this.pageSize === oldPageSize) { return; }
+        this.onModelUpdated({
+            type: Events.EVENT_MODEL_UPDATED,
+            animate: false,
+            keepRenderedRows: false,
+            newData: false,
+            newPage: false,
+            newPageSize: true,
+        });
+    }
+
+    public setPageSize(size: number, source: 'autoCalculated' | 'pageSizeSelector' | 'initialState' | 'gridOptions'): void {
+        const currentSize = this.pageSize;
+        switch (source) {
+            case 'autoCalculated':
+                this.pageSizeAutoCalculated = size;
+                break;
+            case 'pageSizeSelector':
+                this.pageSizeFromPageSizeSelector = size;
+                if (this.currentPage !== 0) { this.goToFirstPage(); }
+                break;
+            case 'initialState':
+                this.pageSizeFromInitialState = size;
+                break;
+            case 'gridOptions':
+                this.pageSizeFromGridOptions = size;
+                this.pageSizeFromInitialState = undefined;
+                this.pageSizeFromPageSizeSelector = undefined;
+                if (this.currentPage !== 0) { this.goToFirstPage(); }
+                break;
+        }
+
+        if (currentSize !== this.pageSize) {
+            const event: WithoutGridCommon<ModelUpdatedEvent> = {
+                type: Events.EVENT_MODEL_UPDATED,
+                animate: false,
+                keepRenderedRows: false,
+                newData: false,
+                newPage: false,
+                newPageSize: true,
+            };
+
+            this.onModelUpdated(event);
         }
     }
 
     private calculatePages(): void {
         if (this.active) {
-            this.setPageSize();
             if (this.paginateChildRows) {
                 this.calculatePagesAllRows();
             } else {
@@ -354,7 +427,7 @@ export class PaginationProxy extends BeanStub {
     }
 
     private calculatedPagesNotActive(): void {
-        this.pageSize = this.rowModel.getRowCount();
+        this.setPageSize(this.masterRowCount, 'autoCalculated');
         this.totalPages = 1;
         this.currentPage = 0;
         this.topDisplayedRowIndex = 0;

@@ -1,1 +1,0 @@
-{"version":3,"file":"triangle.d.ts","sourceRoot":"","sources":["../../../src/chart/marker/triangle.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,cAAc,EAAE,MAAM,UAAU,CAAC;AAC/C,OAAO,EAAE,MAAM,EAAE,MAAM,UAAU,CAAC;AAElC,qBAAa,QAAS,SAAQ,MAAM;IAChC,MAAM,CAAC,SAAS,SAAc;IAE9B,MAAM,CAAC,KAAK,EAAE,cAAc,EAAE,CAI5B;IAEF,UAAU;CAKb"}

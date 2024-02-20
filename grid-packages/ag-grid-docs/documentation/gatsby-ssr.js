@@ -22,8 +22,6 @@ const PLAUSIBLE_DOMAIN = isProductionBuild()
  * required to be installed as they are used elsewhere, so we import the versions here to ensure we are consistent.
  */
 export const onRenderBody = ({setPostBodyComponents}) => {
-    const scrollOffset = 80;
-
     setPostBodyComponents([
         <script
             key="jquery"
@@ -39,14 +37,19 @@ export const onRenderBody = ({setPostBodyComponents}) => {
             crossOrigin="anonymous"/>,
 
         // This initialises the smooth scrolling when clicking hash links
+        // Gets scroll offset from the `--layout-scroll-offset` CSS custom property set for :root
         <script key="initialise-smooth-scroll" dangerouslySetInnerHTML={{
             __html: `
+            var scrollOffsetCustomProp = () => {return window.getComputedStyle(document.body).getPropertyValue('--layout-scroll-offset')};
+
             var scroll = new SmoothScroll(
                 'a[href*="#"]',
                 {
                     speed: 200,
                     speedAsDuration: true,
-                    offset: function() { return ${scrollOffset}; }
+                    offset: function() { 
+                        return scrollOffsetCustomProp() ? Number(scrollOffsetCustomProp().replace('px', '')) : 80; 
+                    }
                 });`
         }}/>,
     ]);
@@ -107,6 +110,12 @@ export const onPreRenderHTML = ({ getHeadComponents, replaceHeadComponents, path
         key="roboto"
         rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/@fontsource/roboto@4.1.0/index.min.css"
+        crossOrigin="anonymous"/>,
+    );
+    headComponents.unshift(<link
+        key="plex"
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;700&display=swap"
         crossOrigin="anonymous"/>,
     );
 

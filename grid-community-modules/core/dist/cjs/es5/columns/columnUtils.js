@@ -43,8 +43,8 @@ var ColumnUtils = /** @class */ (function (_super) {
         var minColWidth = this.calculateColMinWidth(colDef);
         var maxColWidth = this.calculateColMaxWidth(colDef);
         var width;
-        var colDefWidth = generic_1.attrToNumber(colDef.width);
-        var colDefInitialWidth = generic_1.attrToNumber(colDef.initialWidth);
+        var colDefWidth = (0, generic_1.attrToNumber)(colDef.width);
+        var colDefInitialWidth = (0, generic_1.attrToNumber)(colDef.initialWidth);
         if (colDefWidth != null) {
             width = colDefWidth;
         }
@@ -118,7 +118,7 @@ var ColumnUtils = /** @class */ (function (_super) {
         });
     };
     ColumnUtils = __decorate([
-        context_1.Bean('columnUtils')
+        (0, context_1.Bean)('columnUtils')
     ], ColumnUtils);
     return ColumnUtils;
 }(beanStub_1.BeanStub));

@@ -27,8 +27,8 @@ class LazyBlockLoader extends core_1.BeanStub {
     }
     getBlockToLoad() {
         var _a;
-        const firstRowInViewport = this.api.getFirstDisplayedRow();
-        const lastRowInViewport = this.api.getLastDisplayedRow();
+        const firstRowInViewport = this.api.getFirstDisplayedRowIndex();
+        const lastRowInViewport = this.api.getLastDisplayedRowIndex();
         // quick look-up for priority rows needing loading in viewport.
         for (let i = firstRowInViewport; i <= lastRowInViewport; i++) {
             const node = this.cache.getNodeCachedByDisplayIndex(i);
@@ -114,17 +114,12 @@ class LazyBlockLoader extends core_1.BeanStub {
             removeNodesFromLoadingMap();
             this.queueLoadAction();
         };
-        const params = {
+        const params = this.gridOptionsService.addGridCommonParams({
             request,
-            successCallback: (rowData, rowCount) => success({ rowData, rowCount }),
             success,
-            failCallback: fail,
             fail,
-            parentNode: this.parentNode,
-            api: this.api,
-            columnApi: this.columnApi,
-            context: this.gridOptionsService.context
-        };
+            parentNode: this.parentNode
+        });
         addNodesToLoadingMap();
         (_a = this.cache.getSsrmParams().datasource) === null || _a === void 0 ? void 0 : _a.getRows(params);
     }
@@ -147,7 +142,6 @@ class LazyBlockLoader extends core_1.BeanStub {
         });
     }
     queueLoadAction() {
-        var _a;
         const nextBlockToLoad = this.getNextBlockToLoad();
         if (!nextBlockToLoad) {
             // there's no block we should be loading right now, clear the timeouts
@@ -169,7 +163,7 @@ class LazyBlockLoader extends core_1.BeanStub {
                 this.loaderTimeout = undefined;
                 this.attemptLoad(startRow, endRow);
                 this.nextBlockToLoad = undefined;
-            }, (_a = this.gridOptionsService.getNum('blockLoadDebounceMillis')) !== null && _a !== void 0 ? _a : 0);
+            }, this.gridOptionsService.get('blockLoadDebounceMillis'));
         }
     }
     attemptLoad(start, end) {
@@ -197,13 +191,10 @@ class LazyBlockLoader extends core_1.BeanStub {
 }
 LazyBlockLoader.DEFAULT_BLOCK_SIZE = 100;
 __decorate([
-    core_1.Autowired('gridApi')
+    (0, core_1.Autowired)('gridApi')
 ], LazyBlockLoader.prototype, "api", void 0);
 __decorate([
-    core_1.Autowired('columnApi')
-], LazyBlockLoader.prototype, "columnApi", void 0);
-__decorate([
-    core_1.Autowired('rowNodeBlockLoader')
+    (0, core_1.Autowired)('rowNodeBlockLoader')
 ], LazyBlockLoader.prototype, "rowNodeBlockLoader", void 0);
 __decorate([
     core_1.PostConstruct

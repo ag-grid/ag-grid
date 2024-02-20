@@ -10,12 +10,6 @@ These properties can be used to change the different heights used in the headers
 
 <api-documentation source="grid-options/properties.json" section="headers"></api-documentation>
 
-<br>
-
-All these properties also have setter methods that can be called from the API and will change the header heights dynamically.
-
-<api-documentation source="grid-api/api.json" section="headers"></api-documentation>
-
 ## Text Orientation
 
 By default, the text label for the header is display horizontally, i.e. as normal readable text. To display the text in another orientation you have to provide your own CSS to change the orientation and also provide the adequate header heights using the appropriate grid property.
@@ -142,7 +136,7 @@ You can provide a tooltip to the header using `colDef.headerTooltip`.
 The example below shows header tooltips. Note the following:
 
 - All the columns, apart from **Country** and **Year**, have a header tooltip set.
-- We have set the Grid `tooltipShowDelay` property to 500ms to make the tooltips appear quicker.
+- We have set the Grid `tooltipShowDelay` property to 500ms to make the tooltips appear sooner.
 
 <grid-example title='Header Tooltip' name='header-tooltip' type='generated'></grid-example>
 
@@ -155,6 +149,7 @@ This is the default template used in AG Grid:
 ```html
 <div class="ag-cell-label-container" role="presentation">
     <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button" aria-hidden="true"></span>
+    <span ref="eFilterButton" class="ag-header-icon ag-header-cell-filter-button" aria-hidden="true"></span>
     <div ref="eLabel" class="ag-header-cell-label" role="presentation">
         <span ref="eText" class="ag-header-cell-text"></span>
         <span ref="eFilter" class="ag-header-icon ag-header-label-icon ag-filter-icon" aria-hidden="true"></span>
@@ -171,9 +166,10 @@ When you provide your own template, everything should work as expected as long a
 | Ref | Description |
 |-|-|
 | `eMenu` | The container where the column menu icon will appear to enable opening the column menu. |
+| `eFilterButton` | The container where the column filter icon will appear to enable opening the filter (when using `columnMenu = 'new'`). |
 | `eLabel` | The container where there is going to be an onClick mouse listener to trigger the sort. |
 | `eText` | The text displayed on the column. |
-| `eFilter` | The container with the icon that will appear if the user filters this column. |
+| `eFilter` | The container with the icon that will appear if the user filters this column (when using `columnMenu = 'legacy'`). |
 | `eSortOrder` | In case of sorting on multiple columns, this shows the index that represents the position of this column in the order. |
 | `eSortAsc` | In case of sorting ascending the data in the column, this shows the associated icon. |
 | `eSortDesc` | In case of sorting descending the data in the column, this shows the descending icon. |
@@ -182,7 +178,7 @@ When you provide your own template, everything should work as expected as long a
 The ref parameters are used by the grid to identify elements to add functionality to. If you leave an element out of your template, the functionality will not be added. For example if you do not specify `eLabel` then the column will not react to click events for sorting.
 
 <note>
-Templates are not meant to let you configure icons. If you are looking to change the icons, check our [icon docs](/custom-icons/).
+Templates are not meant to let you configure icons. If you are looking to change the icons, check our [icon docs](../custom-icons/).
 </note>
 
 ### Example: Simple Header Templates
@@ -195,17 +191,18 @@ const gridOptions = {
         width: 100,
         headerComponentParams: {
             template:
-                '&lt;div class="ag-cell-label-container" role="presentation"&gt;' +
-                '  &lt;span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"&gt;&lt;/span&gt;' +
-                '  &lt;div ref="eLabel" class="ag-header-cell-label" role="presentation"&gt;' +
-                '    &lt;span ref="eSortOrder" class="ag-header-icon ag-sort-order"&gt;&lt;/span&gt;' +
-                '    &lt;span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon"&gt;&lt;/span&gt;' +
-                '    &lt;span ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon"&gt;&lt;/span&gt;' +
-                '    &lt;span ref="eSortNone" class="ag-header-icon ag-sort-none-icon"&gt;&lt;/span&gt;' +
-                '    ** &lt;span ref="eText" class="ag-header-cell-text" role="columnheader"&gt;&lt;/span&gt;' +
-                '    &lt;span ref="eFilter" class="ag-header-icon ag-filter-icon"&gt;&lt;/span&gt;' +
-                '  &lt;/div&gt;' +
-                '&lt;/div&gt;'
+                `&lt;div class="ag-cell-label-container" role="presentation"&gt;
+                  &lt;span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"&gt;&lt;/span&gt;
+                  &lt;span ref="eFilterButton" class="ag-header-icon ag-header-cell-filter-button"&gt;&lt;/span&gt;
+                  &lt;div ref="eLabel" class="ag-header-cell-label" role="presentation"&gt;
+                    &lt;span ref="eSortOrder" class="ag-header-icon ag-sort-order"&gt;&lt;/span&gt;
+                    &lt;span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon"&gt;&lt;/span&gt;
+                    &lt;span ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon"&gt;&lt;/span&gt;
+                    &lt;span ref="eSortNone" class="ag-header-icon ag-sort-none-icon"&gt;&lt;/span&gt;
+                    ** &lt;span ref="eText" class="ag-header-cell-text" role="columnheader"&gt;&lt;/span&gt;
+                    &lt;span ref="eFilter" class="ag-header-icon ag-filter-icon"&gt;&lt;/span&gt;
+                  &lt;/div&gt;
+                &lt;/div&gt;`
         }
     }
 }
@@ -213,9 +210,9 @@ const gridOptions = {
 
 Note that specifying your own templates is compatible with other configurations:
 
-- `suppressMenu` is specified in: **Athlete**, **Country**, **Date** and **Bronze** columns
+- `suppressHeaderMenuButton` is specified in: **Athlete**, **Country**, **Date** and **Bronze** columns
 - `sortable=false` is specified in: **Age**, **Year**, **Sport**, **Silver** and **Total** columns
-- **Gold** is the only column that doesn't have `sortable=false` or `suppressMenu`
+- **Gold** is the only column that doesn't have `sortable=false` or `suppressHeaderMenuButton`
 
 <grid-example title='Header template' name='header-template' type='generated' options='{ "extras": ["fontawesome"] }'></grid-example>
 

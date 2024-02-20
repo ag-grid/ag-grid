@@ -26,20 +26,34 @@ let HeaderPositionUtils = class HeaderPositionUtils extends BeanStub {
             return;
         }
         let { headerRowIndex } = focusedHeader;
-        const currentRowType = this.getHeaderRowType(headerRowIndex);
-        if (currentRowType === HeaderRowType.COLUMN_GROUP) {
-            const columnGroup = nextColumn;
-            if (columnGroup.isPadding() && this.isAnyChildSpanningHeaderHeight(columnGroup)) {
-                const { nextFocusColumn, nextRow } = this.getColumnVisibleChild(columnGroup, headerRowIndex, direction);
-                if (nextFocusColumn) {
-                    nextColumn = nextFocusColumn;
-                    headerRowIndex = nextRow;
-                }
+        if (this.getHeaderRowType(headerRowIndex) !== HeaderRowType.FLOATING_FILTER) {
+            const columnsInPath = [nextColumn];
+            while (nextColumn.getParent()) {
+                nextColumn = nextColumn.getParent();
+                columnsInPath.push(nextColumn);
+            }
+            nextColumn = columnsInPath[columnsInPath.length - 1 - headerRowIndex];
+        }
+        const { column, headerRowIndex: indexToFocus } = this.getHeaderIndexToFocus(nextColumn, headerRowIndex);
+        return {
+            column,
+            headerRowIndex: indexToFocus
+        };
+    }
+    getHeaderIndexToFocus(column, currentIndex) {
+        let nextColumn;
+        if (column instanceof ColumnGroup && this.isAnyChildSpanningHeaderHeight(column) && column.isPadding()) {
+            const targetColumn = column;
+            nextColumn = targetColumn.getLeafColumns()[0];
+            let col = nextColumn;
+            while (col !== targetColumn) {
+                currentIndex++;
+                col = col.getParent();
             }
         }
         return {
-            column: nextColumn,
-            headerRowIndex
+            column: nextColumn || column,
+            headerRowIndex: currentIndex
         };
     }
     isAnyChildSpanningHeaderHeight(columnGroup) {
@@ -54,38 +68,54 @@ let HeaderPositionUtils = class HeaderPositionUtils extends BeanStub {
         const isColumn = currentRowType === HeaderRowType.COLUMN;
         let nextFocusColumn = isFloatingFilter ? currentColumn : currentColumn.getParent();
         let nextRow = currentIndex - 1;
+        let headerRowIndexWithoutSpan = nextRow;
         if (isColumn && this.isAnyChildSpanningHeaderHeight(currentColumn.getParent())) {
             while (nextFocusColumn && nextFocusColumn.isPadding()) {
                 nextFocusColumn = nextFocusColumn.getParent();
                 nextRow--;
             }
+            headerRowIndexWithoutSpan = nextRow;
             if (nextRow < 0) {
                 nextFocusColumn = currentColumn;
                 nextRow = currentIndex;
+                headerRowIndexWithoutSpan = undefined;
             }
         }
-        return { nextFocusColumn: nextFocusColumn, nextRow };
+        return { column: nextFocusColumn, headerRowIndex: nextRow, headerRowIndexWithoutSpan };
     }
     getColumnVisibleChild(column, currentIndex, direction = 'After') {
         const currentRowType = this.getHeaderRowType(currentIndex);
         let nextFocusColumn = column;
         let nextRow = currentIndex + 1;
+        let headerRowIndexWithoutSpan = nextRow;
         if (currentRowType === HeaderRowType.COLUMN_GROUP) {
-            const leafColumns = column.getLeafColumns();
-            const leafChild = direction === 'After' ? leafColumns[0] : last(leafColumns);
-            if (this.isAnyChildSpanningHeaderHeight(leafChild.getParent())) {
-                nextFocusColumn = leafChild;
-                let currentColumn = leafChild.getParent();
-                while (currentColumn && currentColumn !== column) {
-                    currentColumn = currentColumn.getParent();
+            const leafColumns = column.getDisplayedLeafColumns();
+            const leafColumn = direction === 'After' ? leafColumns[0] : last(leafColumns);
+            const columnsInTheWay = [];
+            let currentColumn = leafColumn;
+            while (currentColumn.getParent() !== column) {
+                currentColumn = currentColumn.getParent();
+                columnsInTheWay.push(currentColumn);
+            }
+            nextFocusColumn = leafColumn;
+            if (leafColumn.isSpanHeaderHeight()) {
+                for (let i = columnsInTheWay.length - 1; i >= 0; i--) {
+                    const colToFocus = columnsInTheWay[i];
+                    if (!colToFocus.isPadding()) {
+                        nextFocusColumn = colToFocus;
+                        break;
+                    }
                     nextRow++;
                 }
             }
             else {
-                nextFocusColumn = column.getDisplayedChildren()[0];
+                nextFocusColumn = last(columnsInTheWay);
+                if (!nextFocusColumn) {
+                    nextFocusColumn = leafColumn;
+                }
             }
         }
-        return { nextFocusColumn, nextRow };
+        return { column: nextFocusColumn, headerRowIndex: nextRow, headerRowIndexWithoutSpan };
     }
     getHeaderRowType(rowIndex) {
         const centerHeaderContainer = this.ctrlsService.getHeaderRowContainerCtrl();

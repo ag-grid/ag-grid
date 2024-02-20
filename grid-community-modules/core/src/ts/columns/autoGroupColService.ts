@@ -6,6 +6,7 @@ import { ColumnFactory } from "./columnFactory";
 import { BeanStub } from "../context/beanStub";
 import { mergeDeep } from "../utils/object";
 import { missing } from "../utils/generic";
+import { ColumnEventType } from "../events";
 
 export const GROUP_AUTO_COLUMN_ID: 'ag-Grid-AutoColumn' = 'ag-Grid-AutoColumn';
 @Bean('autoGroupColService')
@@ -17,7 +18,7 @@ export class AutoGroupColService extends BeanStub {
     public createAutoGroupColumns(rowGroupColumns: Column[]): Column[] {
         const groupAutoColumns: Column[] = [];
 
-        const doingTreeData = this.gridOptionsService.isTreeData();
+        const doingTreeData = this.gridOptionsService.get('treeData');
         let doingMultiAutoColumn = this.gridOptionsService.isGroupMultiAutoColumn();
 
         if (doingTreeData && doingMultiAutoColumn) {
@@ -38,8 +39,8 @@ export class AutoGroupColService extends BeanStub {
         return groupAutoColumns;
     }
 
-    public updateAutoGroupColumns(autoGroupColumns: Column[]) {
-        autoGroupColumns.forEach((column: Column, index: number) => this.updateOneAutoGroupColumn(column, index));
+    public updateAutoGroupColumns(autoGroupColumns: Column[], source: ColumnEventType) {
+        autoGroupColumns.forEach((column: Column, index: number) => this.updateOneAutoGroupColumn(column, index, source));
     }
 
     // rowGroupCol and index are missing if groupDisplayType != "multipleColumns"
@@ -63,14 +64,14 @@ export class AutoGroupColService extends BeanStub {
     /**
      * Refreshes an auto group col to load changes from defaultColDef or autoGroupColDef
      */
-    private updateOneAutoGroupColumn(colToUpdate: Column, index: number) {
+    private updateOneAutoGroupColumn(colToUpdate: Column, index: number, source: ColumnEventType) {
         const oldColDef = colToUpdate.getColDef();
         const underlyingColId = typeof oldColDef.showRowGroup == 'string' ? oldColDef.showRowGroup : undefined;
         const underlyingColumn = underlyingColId!=null ? this.columnModel.getPrimaryColumn(underlyingColId) : undefined;
         const colDef = this.createAutoGroupColDef(colToUpdate.getId(), underlyingColumn??undefined, index);
 
-        colToUpdate.setColDef(colDef, null);
-        this.columnFactory.applyColumnState(colToUpdate, colDef);
+        colToUpdate.setColDef(colDef, null, source);
+        this.columnFactory.applyColumnState(colToUpdate, colDef, source);
     }
 
     private createAutoGroupColDef(colId: string, underlyingColumn?: Column, index?: number): ColDef {
@@ -83,7 +84,7 @@ export class AutoGroupColService extends BeanStub {
         res = this.columnFactory.addColumnDefaultAndTypes(res, colId);
 
         // For tree data the filter is always allowed
-        if (!this.gridOptionsService.isTreeData()) {
+        if (!this.gridOptionsService.get('treeData')) {
             // we would only allow filter if the user has provided field or value getter. otherwise the filter
             // would not be able to work.
             const noFieldOrValueGetter =

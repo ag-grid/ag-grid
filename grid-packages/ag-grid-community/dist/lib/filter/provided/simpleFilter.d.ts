@@ -51,7 +51,8 @@ export interface ISimpleFilterParams extends IProvidedFilterParams {
     defaultJoinOperator?: JoinOperator;
     /**
      * Maximum number of conditions allowed in the filter.
-     * Default: `2`
+     *
+     * @default 2
      */
     maxNumConditions?: number;
     /**
@@ -59,7 +60,8 @@ export interface ISimpleFilterParams extends IProvidedFilterParams {
      * (up to `maxNumConditions`). To have more conditions shown by default, set this to the number required.
      * Conditions will be disabled until the previous conditions have been entered.
      * Note that this cannot be greater than `maxNumConditions` - anything larger will be ignored.
-     * Default: `1`
+     *
+     * @default 1
      */
     numAlwaysVisibleConditions?: number;
     /**
@@ -167,6 +169,8 @@ export declare abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = 
     protected getConditionType(position: number): ISimpleFilterModelType | null;
     protected getJoinOperator(): JoinOperator;
     protected areModelsEqual(a: M | ICombinedSimpleModel<M>, b: M | ICombinedSimpleModel<M>): boolean;
+    private shouldRefresh;
+    refresh(newParams: SimpleFilterParams): boolean;
     protected setModelIntoUi(model: ISimpleFilterModel | ICombinedSimpleModel<M>): AgPromise<void>;
     private validateAndUpdateConditions;
     doesFilterPass(params: IDoesFilterPassParams): boolean;
@@ -198,7 +202,7 @@ export declare abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = 
     afterGuiDetached(): void;
     private getPlaceholderText;
     protected resetPlaceholder(): void;
-    protected setElementValue(element: E, value: V | null): void;
+    protected setElementValue(element: E, value: V | null, fromFloatingFilter?: boolean): void;
     protected setElementDisplayed(element: E, displayed: boolean): void;
     protected setElementDisabled(element: E, disabled: boolean): void;
     protected attachElementOnChange(element: E, listener: () => void): void;
@@ -225,7 +229,7 @@ export declare abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = 
     private addChangedListeners;
     /** returns true if the row passes the said condition */
     protected individualConditionPasses(params: IDoesFilterPassParams, filterModel: M): boolean;
-    protected evaluateCustomFilter(customFilterOption: IFilterOptionDef | undefined, values: Tuple<V>, cellValue: V): boolean | undefined;
+    protected evaluateCustomFilter(customFilterOption: IFilterOptionDef | undefined, values: Tuple<V>, cellValue: V | null | undefined): boolean | undefined;
     protected isBlank(cellValue: V): boolean;
     protected hasInvalidInputs(): boolean;
 }

@@ -35,10 +35,14 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 var __values = (this && this.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
@@ -58,12 +62,11 @@ import { BeanStub } from "../context/beanStub";
 import { exists } from "../utils/generic";
 import { getAllValuesInObject, iterateObject } from "../utils/object";
 import { createArrayOfNumbers } from "../utils/number";
-import { doOnce, executeInAWhile } from "../utils/function";
+import { executeInAWhile } from "../utils/function";
 import { CellCtrl } from "./cell/cellCtrl";
 import { removeFromArray } from "../utils/array";
 import { StickyRowFeature } from "./features/stickyRowFeature";
 import { browserSupportsPreventScroll } from "../utils/browser";
-var DEFAULT_KEEP_DETAIL_ROW_COUNT = 10;
 var RowRenderer = /** @class */ (function (_super) {
     __extends(RowRenderer, _super);
     function RowRenderer() {
@@ -82,6 +85,40 @@ var RowRenderer = /** @class */ (function (_super) {
         // then it will be trying to draw rows in the middle of a refresh.
         _this.refreshInProgress = false;
         _this.dataFirstRenderedFired = false;
+        _this.setupRangeSelectionListeners = function () {
+            var onRangeSelectionChanged = function () {
+                _this.getAllCellCtrls().forEach(function (cellCtrl) { return cellCtrl.onRangeSelectionChanged(); });
+            };
+            var onColumnMovedPinnedVisible = function () {
+                _this.getAllCellCtrls().forEach(function (cellCtrl) { return cellCtrl.updateRangeBordersIfRangeCount(); });
+            };
+            var addRangeSelectionListeners = function () {
+                _this.eventService.addEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, onRangeSelectionChanged);
+                _this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, onColumnMovedPinnedVisible);
+                _this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, onColumnMovedPinnedVisible);
+                _this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, onColumnMovedPinnedVisible);
+            };
+            var removeRangeSelectionListeners = function () {
+                _this.eventService.removeEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, onRangeSelectionChanged);
+                _this.eventService.removeEventListener(Events.EVENT_COLUMN_MOVED, onColumnMovedPinnedVisible);
+                _this.eventService.removeEventListener(Events.EVENT_COLUMN_PINNED, onColumnMovedPinnedVisible);
+                _this.eventService.removeEventListener(Events.EVENT_COLUMN_VISIBLE, onColumnMovedPinnedVisible);
+            };
+            _this.addDestroyFunc(function () { return removeRangeSelectionListeners(); });
+            _this.addManagedPropertyListener('enableRangeSelection', function (params) {
+                var isEnabled = params.currentValue;
+                if (isEnabled) {
+                    addRangeSelectionListeners();
+                }
+                else {
+                    removeRangeSelectionListeners();
+                }
+            });
+            var rangeSelectionEnabled = _this.gridOptionsService.get('enableRangeSelection');
+            if (rangeSelectionEnabled) {
+                addRangeSelectionListeners();
+            }
+        };
         return _this;
     }
     RowRenderer.prototype.postConstruct = function () {
@@ -92,13 +129,24 @@ var RowRenderer = /** @class */ (function (_super) {
         });
     };
     RowRenderer.prototype.initialise = function () {
+        var _this = this;
         this.addManagedListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onPageLoaded.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onPinnedRowDataChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL, this.onBodyScroll.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.redraw.bind(this));
-        this.addManagedPropertyListener('domLayout', this.onDomLayoutChanged.bind(this));
-        this.addManagedPropertyListener('rowClass', this.redrawRows.bind(this));
+        this.addManagedPropertyListeners(['domLayout', 'embedFullWidthRows'], function () { return _this.onDomLayoutChanged(); });
+        this.addManagedPropertyListeners(['suppressMaxRenderedRowRestriction', 'rowBuffer'], function () { return _this.redraw(); });
+        this.addManagedPropertyListeners([
+            'suppressCellFocus', 'getBusinessKeyForNode',
+            'fullWidthCellRenderer', 'fullWidthCellRendererParams',
+            'rowStyle', 'getRowStyle',
+            'rowClass', 'getRowClass', 'rowClassRules',
+            'groupRowRenderer', 'groupRowRendererParams',
+            'loadingCellRenderer', 'loadingCellRendererParams',
+            'detailCellRenderer', 'detailCellRendererParams',
+            'enableRangeSelection', 'enableCellTextSelection',
+        ], function () { return _this.redrawRows(); });
         if (this.gridOptionsService.isGroupRowsSticky()) {
             var rowModelType = this.rowModel.getType();
             if (rowModelType === 'clientSide' || rowModelType === 'serverSide') {
@@ -108,22 +156,18 @@ var RowRenderer = /** @class */ (function (_super) {
         this.registerCellEventListeners();
         this.initialiseCache();
         this.printLayout = this.gridOptionsService.isDomLayout('print');
-        this.embedFullWidthRows = this.printLayout || this.gridOptionsService.is('embedFullWidthRows');
+        this.embedFullWidthRows = this.printLayout || this.gridOptionsService.get('embedFullWidthRows');
         this.redrawAfterModelUpdate();
     };
     RowRenderer.prototype.initialiseCache = function () {
-        if (this.gridOptionsService.is('keepDetailRows')) {
+        if (this.gridOptionsService.get('keepDetailRows')) {
             var countProp = this.getKeepDetailRowsCount();
             var count = countProp != null ? countProp : 3;
             this.cachedRowCtrls = new RowCtrlCache(count);
         }
     };
     RowRenderer.prototype.getKeepDetailRowsCount = function () {
-        var keepDetailRowsCount = this.gridOptionsService.getNum('keepDetailRowsCount');
-        if (exists(keepDetailRowsCount) && keepDetailRowsCount > 0) {
-            return keepDetailRowsCount;
-        }
-        return DEFAULT_KEEP_DETAIL_ROW_COUNT;
+        return this.gridOptionsService.get('keepDetailRowsCount');
     };
     RowRenderer.prototype.getStickyTopRowCtrls = function () {
         if (!this.stickyRowFeature) {
@@ -133,16 +177,11 @@ var RowRenderer = /** @class */ (function (_super) {
     };
     RowRenderer.prototype.updateAllRowCtrls = function () {
         var liveList = getAllValuesInObject(this.rowCtrlsByRowIndex);
-        var isEnsureDomOrder = this.gridOptionsService.is('ensureDomOrder');
-        var isPrintLayout = this.gridOptionsService.isDomLayout('print');
-        if (isEnsureDomOrder || isPrintLayout) {
-            liveList.sort(function (a, b) { return a.getRowNode().rowIndex - b.getRowNode.rowIndex; });
-        }
         var zombieList = getAllValuesInObject(this.zombieRowCtrls);
         var cachedList = this.cachedRowCtrls ? this.cachedRowCtrls.getEntries() : [];
         if (zombieList.length > 0 || cachedList.length > 0) {
             // Only spread if we need to.
-            this.allRowCtrls = __spreadArray(__spreadArray(__spreadArray([], __read(liveList)), __read(zombieList)), __read(cachedList));
+            this.allRowCtrls = __spreadArray(__spreadArray(__spreadArray([], __read(liveList), false), __read(zombieList), false), __read(cachedList), false);
         }
         else {
             this.allRowCtrls = liveList;
@@ -182,21 +221,7 @@ var RowRenderer = /** @class */ (function (_super) {
                 _this.getAllCellCtrls().forEach(function (cellCtrl) { return cellCtrl.onLeftChanged(); });
             }
         });
-        var rangeSelectionEnabled = this.gridOptionsService.isEnableRangeSelection();
-        if (rangeSelectionEnabled) {
-            this.addManagedListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, function () {
-                _this.getAllCellCtrls().forEach(function (cellCtrl) { return cellCtrl.onRangeSelectionChanged(); });
-            });
-            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, function () {
-                _this.getAllCellCtrls().forEach(function (cellCtrl) { return cellCtrl.updateRangeBordersIfRangeCount(); });
-            });
-            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, function () {
-                _this.getAllCellCtrls().forEach(function (cellCtrl) { return cellCtrl.updateRangeBordersIfRangeCount(); });
-            });
-            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, function () {
-                _this.getAllCellCtrls().forEach(function (cellCtrl) { return cellCtrl.updateRangeBordersIfRangeCount(); });
-            });
-        }
+        this.setupRangeSelectionListeners();
         // add listeners to the grid columns
         this.refreshListenersToColumnsForCellComps();
         // if the grid columns change, then refresh the listeners again
@@ -216,9 +241,6 @@ var RowRenderer = /** @class */ (function (_super) {
         var _this = this;
         this.removeGridColumnListeners();
         var cols = this.columnModel.getAllGridColumns();
-        if (!cols) {
-            return;
-        }
         cols.forEach(function (col) {
             var forEachCellWithThisCol = function (callback) {
                 _this.getAllCellCtrls().forEach(function (cellCtrl) {
@@ -258,7 +280,7 @@ var RowRenderer = /** @class */ (function (_super) {
     };
     RowRenderer.prototype.onDomLayoutChanged = function () {
         var printLayout = this.gridOptionsService.isDomLayout('print');
-        var embedFullWidthRows = printLayout || this.gridOptionsService.is('embedFullWidthRows');
+        var embedFullWidthRows = printLayout || this.gridOptionsService.get('embedFullWidthRows');
         // if moving towards or away from print layout, means we need to destroy all rows, as rows are not laid
         // out using absolute positioning when doing print layout
         var destroyRows = embedFullWidthRows !== this.embedFullWidthRows || this.printLayout !== printLayout;
@@ -337,9 +359,17 @@ var RowRenderer = /** @class */ (function (_super) {
     };
     RowRenderer.prototype.redrawRow = function (rowNode, suppressEvent) {
         var _this = this;
+        var _a;
         if (suppressEvent === void 0) { suppressEvent = false; }
         if (rowNode.sticky) {
             this.stickyRowFeature.refreshStickyNode(rowNode);
+        }
+        else if ((_a = this.cachedRowCtrls) === null || _a === void 0 ? void 0 : _a.has(rowNode)) {
+            // delete row from cache if it needs redrawn
+            // if it's in the cache no updates need fired, as nothing
+            // has been rendered
+            this.cachedRowCtrls.removeRow(rowNode);
+            return;
         }
         else {
             var destroyAndRecreateCtrl = function (dataStruct) {
@@ -358,8 +388,10 @@ var RowRenderer = /** @class */ (function (_super) {
             switch (rowNode.rowPinned) {
                 case 'top':
                     destroyAndRecreateCtrl(this.topRowCtrls);
+                    break;
                 case 'bottom':
                     destroyAndRecreateCtrl(this.bottomRowCtrls);
+                    break;
                 default:
                     destroyAndRecreateCtrl(this.rowCtrlsByRowIndex);
                     this.updateAllRowCtrls();
@@ -438,7 +470,7 @@ var RowRenderer = /** @class */ (function (_super) {
     };
     RowRenderer.prototype.scrollToTopIfNewData = function (params) {
         var scrollToTop = params.newData || params.newPage;
-        var suppressScrollToTop = this.gridOptionsService.is('suppressScrollOnNewData');
+        var suppressScrollToTop = this.gridOptionsService.get('suppressScrollOnNewData');
         if (scrollToTop && !suppressScrollToTop) {
             this.gridBodyCtrl.getScrollFeature().scrollToTop();
         }
@@ -486,17 +518,14 @@ var RowRenderer = /** @class */ (function (_super) {
             // so we mock a change event for the full width rows and cells to ensure they update to the newly selected
             // state
             this.focusService.setRestoreFocusedCell(cellPosition);
-            this.onCellFocusChanged({
+            this.onCellFocusChanged(this.beans.gridOptionsService.addGridCommonParams({
                 rowIndex: cellPosition.rowIndex,
                 column: cellPosition.column,
                 rowPinned: cellPosition.rowPinned,
                 forceBrowserFocus: true,
                 preventScrollOnBrowserFocus: true,
-                api: this.beans.gridApi,
-                columnApi: this.beans.columnApi,
-                context: this.beans.gridOptionsService.context,
                 type: 'mock',
-            });
+            }));
         }
     };
     RowRenderer.prototype.stopEditing = function (cancel) {
@@ -521,7 +550,7 @@ var RowRenderer = /** @class */ (function (_super) {
     RowRenderer.prototype.getAllRowCtrls = function () {
         var e_1, _a;
         var stickyRowCtrls = (this.stickyRowFeature && this.stickyRowFeature.getStickyRowCtrls()) || [];
-        var res = __spreadArray(__spreadArray(__spreadArray([], __read(this.topRowCtrls)), __read(this.bottomRowCtrls)), __read(stickyRowCtrls));
+        var res = __spreadArray(__spreadArray(__spreadArray([], __read(this.topRowCtrls), false), __read(this.bottomRowCtrls), false), __read(stickyRowCtrls), false);
         try {
             for (var _b = __values(Object.keys(this.rowCtrlsByRowIndex)), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var key = _c.value;
@@ -545,9 +574,8 @@ var RowRenderer = /** @class */ (function (_super) {
     };
     RowRenderer.prototype.flashCells = function (params) {
         if (params === void 0) { params = {}; }
-        var flashDelay = params.flashDelay, fadeDelay = params.fadeDelay;
         this.getCellCtrls(params.rowNodes, params.columns)
-            .forEach(function (cellCtrl) { return cellCtrl.flashCell({ flashDelay: flashDelay, fadeDelay: fadeDelay }); });
+            .forEach(function (cellCtrl) { return cellCtrl.flashCell(params); });
     };
     RowRenderer.prototype.refreshCells = function (params) {
         var _this = this;
@@ -558,17 +586,7 @@ var RowRenderer = /** @class */ (function (_super) {
             suppressFlash: params.suppressFlash
         };
         this.getCellCtrls(params.rowNodes, params.columns)
-            .forEach(function (cellCtrl) {
-            if (cellCtrl.refreshShouldDestroy()) {
-                var rowCtrl = cellCtrl.getRowCtrl();
-                if (rowCtrl) {
-                    rowCtrl.refreshCell(cellCtrl);
-                }
-            }
-            else {
-                cellCtrl.refreshCell(refreshCellParams);
-            }
-        });
+            .forEach(function (cellCtrl) { return cellCtrl.refreshOrDestroyCell(refreshCellParams); });
         if (params.rowNodes) {
             // refresh the full width rows too
             this.getRowCtrls(params.rowNodes).forEach(function (rowCtrl) {
@@ -601,12 +619,15 @@ var RowRenderer = /** @class */ (function (_super) {
             if (!rowCtrl.isFullWidth()) {
                 return;
             }
-            var fullWidthRenderer = rowCtrl.getFullWidthCellRenderer();
-            if (fullWidthRenderer) {
-                fullWidthRenderers.push(fullWidthRenderer);
+            var renderers = rowCtrl.getFullWidthCellRenderers();
+            for (var i = 0; i < renderers.length; i++) {
+                var renderer = renderers[i];
+                if (renderer != null) {
+                    fullWidthRenderers.push(renderer);
+                }
             }
         });
-        return __spreadArray(__spreadArray([], __read(fullWidthRenderers)), __read(cellRenderers));
+        return __spreadArray(__spreadArray([], __read(fullWidthRenderers), false), __read(cellRenderers), false);
     };
     RowRenderer.prototype.getCellEditorInstances = function (params) {
         var res = [];
@@ -733,14 +754,15 @@ var RowRenderer = /** @class */ (function (_super) {
         return ctrlsByIdMap;
     };
     // takes array of row indexes
-    RowRenderer.prototype.removeRowCtrls = function (rowsToRemove) {
-        var _this = this;
+    RowRenderer.prototype.removeRowCtrls = function (rowsToRemove, suppressAnimation) {
         // if no fromIndex then set to -1, which will refresh everything
         // let realFromIndex = -1;
+        var _this = this;
+        if (suppressAnimation === void 0) { suppressAnimation = false; }
         rowsToRemove.forEach(function (indexToRemove) {
             var rowCtrl = _this.rowCtrlsByRowIndex[indexToRemove];
             if (rowCtrl) {
-                rowCtrl.destroyFirstPass();
+                rowCtrl.destroyFirstPass(suppressAnimation);
                 rowCtrl.destroySecondPass();
             }
             delete _this.rowCtrlsByRowIndex[indexToRemove];
@@ -779,7 +801,8 @@ var RowRenderer = /** @class */ (function (_super) {
         this.getLockOnRefresh();
         this.recycleRows(null, false, afterScroll);
         this.releaseLockOnRefresh();
-        this.dispatchDisplayedRowsChanged(afterScroll);
+        // AfterScroll results in flushSync in React but we need to disable flushSync for sticky row group changes to avoid flashing
+        this.dispatchDisplayedRowsChanged(afterScroll && !hasStickyRowChanges);
         if (cellFocused != null) {
             var newFocusedCell = this.getCellToRestoreFocusToAfterRefresh();
             if (cellFocused != null && newFocusedCell == null) {
@@ -788,13 +811,13 @@ var RowRenderer = /** @class */ (function (_super) {
             }
         }
     };
-    RowRenderer.prototype.removeRowCompsNotToDraw = function (indexesToDraw) {
+    RowRenderer.prototype.removeRowCompsNotToDraw = function (indexesToDraw, suppressAnimation) {
         // for speedy lookup, dump into map
         var indexesToDrawMap = {};
         indexesToDraw.forEach(function (index) { return (indexesToDrawMap[index] = true); });
         var existingIndexes = Object.keys(this.rowCtrlsByRowIndex);
         var indexesNotToDraw = existingIndexes.filter(function (index) { return !indexesToDrawMap[index]; });
-        this.removeRowCtrls(indexesNotToDraw);
+        this.removeRowCtrls(indexesNotToDraw, suppressAnimation);
     };
     RowRenderer.prototype.calculateIndexesToDraw = function (rowsToRecycle) {
         var _this = this;
@@ -837,12 +860,13 @@ var RowRenderer = /** @class */ (function (_super) {
         // this is all the indexes we want, including those that already exist, so this method
         // will end up going through each index and drawing only if the row doesn't already exist
         var indexesToDraw = this.calculateIndexesToDraw(rowsToRecycle);
-        this.removeRowCompsNotToDraw(indexesToDraw);
         // never animate when doing print layout - as we want to get things ready to print as quickly as possible,
         // otherwise we risk the printer printing a row that's half faded (half way through fading in)
-        if (this.printLayout) {
+        // Don't animate rows that have been added or removed as part of scrolling
+        if (this.printLayout || afterScroll) {
             animate = false;
         }
+        this.removeRowCompsNotToDraw(indexesToDraw, !animate);
         // add in new rows
         var rowCtrls = [];
         indexesToDraw.forEach(function (rowIndex) {
@@ -852,7 +876,7 @@ var RowRenderer = /** @class */ (function (_super) {
             }
         });
         if (rowsToRecycle) {
-            var useAnimationFrame = afterScroll && !this.gridOptionsService.is('suppressAnimationFrame') && !this.printLayout;
+            var useAnimationFrame = afterScroll && !this.gridOptionsService.get('suppressAnimationFrame') && !this.printLayout;
             if (useAnimationFrame) {
                 this.beans.animationFrameService.addDestroyTask(function () {
                     _this.destroyRowCtrls(rowsToRecycle, animate);
@@ -959,7 +983,7 @@ var RowRenderer = /** @class */ (function (_super) {
                 _this.cachedRowCtrls.addRow(rowCtrl);
                 return;
             }
-            rowCtrl.destroyFirstPass();
+            rowCtrl.destroyFirstPass(!animate);
             if (animate) {
                 _this.zombieRowCtrls[rowCtrl.getInstanceId()] = rowCtrl;
                 executeInAWhileFuncs.push(function () {
@@ -982,18 +1006,7 @@ var RowRenderer = /** @class */ (function (_super) {
         }
     };
     RowRenderer.prototype.getRowBuffer = function () {
-        var rowBuffer = this.gridOptionsService.getNum('rowBuffer');
-        if (typeof rowBuffer === 'number') {
-            if (rowBuffer < 0) {
-                doOnce(function () { return console.warn("AG Grid: rowBuffer should not be negative"); }, 'warn rowBuffer negative');
-                rowBuffer = 0;
-                this.gridOptionsService.set('rowBuffer', 0);
-            }
-        }
-        else {
-            rowBuffer = 10;
-        }
-        return rowBuffer;
+        return this.gridOptionsService.get('rowBuffer');
     };
     RowRenderer.prototype.getRowBufferInPixels = function () {
         var rowsToBuffer = this.getRowBuffer();
@@ -1009,13 +1022,14 @@ var RowRenderer = /** @class */ (function (_super) {
             newLast = -1; // setting to -1 means nothing in range
         }
         else if (this.printLayout) {
+            this.environment.refreshRowHeightVariable();
             newFirst = this.paginationProxy.getPageFirstRow();
             newLast = this.paginationProxy.getPageLastRow();
         }
         else {
             var bufferPixels = this.getRowBufferInPixels();
             var gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
-            var suppressRowVirtualisation = this.gridOptionsService.is('suppressRowVirtualisation');
+            var suppressRowVirtualisation = this.gridOptionsService.get('suppressRowVirtualisation');
             var rowHeightsChanged = false;
             var firstPixel = void 0;
             var lastPixel = void 0;
@@ -1057,7 +1071,7 @@ var RowRenderer = /** @class */ (function (_super) {
         // killing the browser, we limit the number of rows. just in case some use case we didn't think
         // of, we also have a property to not do this operation.
         var rowLayoutNormal = this.gridOptionsService.isDomLayout('normal');
-        var suppressRowCountRestriction = this.gridOptionsService.is('suppressMaxRenderedRowRestriction');
+        var suppressRowCountRestriction = this.gridOptionsService.get('suppressMaxRenderedRowRestriction');
         var rowBufferMaxSize = Math.max(this.getRowBuffer(), 500);
         if (rowLayoutNormal && !suppressRowCountRestriction) {
             if (newLast - newFirst > rowBufferMaxSize) {
@@ -1155,7 +1169,7 @@ var RowRenderer = /** @class */ (function (_super) {
         // (via the animation frames) which is awkward to do from code.
         // we only do the animation frames after scrolling, as this is where we want the smooth user experience.
         // having animation frames for other times makes the grid look 'jumpy'.
-        var suppressAnimationFrame = this.gridOptionsService.is('suppressAnimationFrame');
+        var suppressAnimationFrame = this.gridOptionsService.get('suppressAnimationFrame');
         var useAnimationFrameForCreate = afterScroll && !suppressAnimationFrame && !this.printLayout;
         var res = new RowCtrl(rowNode, this.beans, animate, useAnimationFrameForCreate, this.printLayout);
         return res;
@@ -1275,6 +1289,15 @@ var RowCtrlCache = /** @class */ (function () {
         // the same ID as the old one
         var rowNodeMismatch = res.getRowNode() != rowNode;
         return rowNodeMismatch ? null : res;
+    };
+    RowCtrlCache.prototype.has = function (rowNode) {
+        return this.entriesMap[rowNode.id] != null;
+    };
+    RowCtrlCache.prototype.removeRow = function (rowNode) {
+        var rowNodeId = rowNode.id;
+        var ctrl = this.entriesMap[rowNodeId];
+        delete this.entriesMap[rowNodeId];
+        removeFromArray(this.entriesList, ctrl);
     };
     RowCtrlCache.prototype.removeFromCache = function (rowCtrl) {
         var rowNodeId = rowCtrl.getRowNode().id;

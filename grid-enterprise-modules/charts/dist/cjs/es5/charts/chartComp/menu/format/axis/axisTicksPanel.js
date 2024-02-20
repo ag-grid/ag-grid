@@ -44,19 +44,21 @@ var AxisTicksPanel = /** @class */ (function (_super) {
         var _this = this;
         this.axisTicksGroup
             .setTitle(this.chartTranslationService.translate("ticks"))
+            .setEnabled(this.chartOptionsService.getAxisProperty("tick.enabled"))
             .hideOpenCloseIcons(true)
-            .hideEnabledCheckbox(true);
+            .hideEnabledCheckbox(false)
+            .onEnableChange(function (newValue) { return _this.chartOptionsService.setAxisProperty("tick.enabled", newValue); });
         this.axisTicksColorPicker
             .setLabel(this.chartTranslationService.translate("color"))
             .setLabelWidth("flex")
-            .setInputWidth(45)
+            .setInputWidth('flex')
             .setValue(this.chartOptionsService.getAxisProperty("tick.color"))
             .onValueChange(function (newColor) { return _this.chartOptionsService.setAxisProperty("tick.color", newColor); });
         var initInput = function (expression, input, label, defaultMaxValue) {
             var currentValue = _this.chartOptionsService.getAxisProperty(expression);
             input.setLabel(label)
-                .setMaxValue(formatPanel_1.getMaxValue(currentValue, defaultMaxValue))
-                .setValue("" + currentValue)
+                .setMaxValue((0, formatPanel_1.getMaxValue)(currentValue, defaultMaxValue))
+                .setValue("".concat(currentValue))
                 .setTextFieldWidth(45)
                 .onValueChange(function (newValue) { return _this.chartOptionsService.setAxisProperty(expression, newValue); });
         };
@@ -65,19 +67,19 @@ var AxisTicksPanel = /** @class */ (function (_super) {
     };
     AxisTicksPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"axisTicksGroup\">\n                <ag-color-picker ref=\"axisTicksColorPicker\"></ag-color-picker>\n                <ag-slider ref=\"axisTicksWidthSlider\"></ag-slider>\n                <ag-slider ref=\"axisTicksSizeSlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
     __decorate([
-        core_1.RefSelector('axisTicksGroup')
+        (0, core_1.RefSelector)('axisTicksGroup')
     ], AxisTicksPanel.prototype, "axisTicksGroup", void 0);
     __decorate([
-        core_1.RefSelector('axisTicksColorPicker')
+        (0, core_1.RefSelector)('axisTicksColorPicker')
     ], AxisTicksPanel.prototype, "axisTicksColorPicker", void 0);
     __decorate([
-        core_1.RefSelector('axisTicksWidthSlider')
+        (0, core_1.RefSelector)('axisTicksWidthSlider')
     ], AxisTicksPanel.prototype, "axisTicksWidthSlider", void 0);
     __decorate([
-        core_1.RefSelector('axisTicksSizeSlider')
+        (0, core_1.RefSelector)('axisTicksSizeSlider')
     ], AxisTicksPanel.prototype, "axisTicksSizeSlider", void 0);
     __decorate([
-        core_1.Autowired('chartTranslationService')
+        (0, core_1.Autowired)('chartTranslationService')
     ], AxisTicksPanel.prototype, "chartTranslationService", void 0);
     __decorate([
         core_1.PostConstruct

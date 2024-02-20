@@ -1,4 +1,4 @@
-import { ColDef, Grid, GridOptions, IGroupCellRendererParams } from '@ag-grid-community/core';
+import { ColDef, GridApi, createGrid, GridOptions, IGroupCellRendererParams } from '@ag-grid-community/core';
 import { getData } from "./data";
 import { SimpleCellRenderer } from './simpleCellRenderer_typescript';
 
@@ -52,12 +52,13 @@ const columnDefs: ColDef[] = [
     { headerName: 'City', field: 'city' },
 ]
 
+let gridApi: GridApi;
+
 const gridOptions: GridOptions = {
     columnDefs: columnDefs,
     defaultColDef: {
         flex: 1,
         minWidth: 120,
-        resizable: true,
     },
     rowData: getData(),
     // we don't want the auto column here, as we are providing our own cols
@@ -66,11 +67,10 @@ const gridOptions: GridOptions = {
     groupDefaultExpanded: 1,
     rowSelection: 'multiple',
     groupSelectsChildren: true,
-    animateRows: true,
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    new Grid(gridDiv, gridOptions)
+    gridApi = createGrid(gridDiv, gridOptions);
 })

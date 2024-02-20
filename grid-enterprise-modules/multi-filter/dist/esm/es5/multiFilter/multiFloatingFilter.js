@@ -67,6 +67,9 @@ var MultiFloatingFilterComp = /** @class */ (function (_super) {
         });
     };
     MultiFloatingFilterComp.prototype.onParamsUpdated = function (params) {
+        this.refresh(params);
+    };
+    MultiFloatingFilterComp.prototype.refresh = function (params) {
         var _this = this;
         this.params = params;
         var _a = this.getCompDetailsList(params), newCompDetailsList = _a.compDetailsList, floatingFilterParamsList = _a.floatingFilterParamsList;
@@ -76,7 +79,17 @@ var MultiFloatingFilterComp = /** @class */ (function (_super) {
             floatingFilterParamsList.forEach(function (floatingFilterParams, index) {
                 var _a;
                 var floatingFilter = _this.floatingFilters[index];
-                (_a = floatingFilter.onParamsUpdated) === null || _a === void 0 ? void 0 : _a.call(floatingFilter, floatingFilterParams);
+                var hasRefreshed = false;
+                if (floatingFilter.refresh) {
+                    var result = floatingFilter.refresh(floatingFilterParams);
+                    // framework wrapper always implements optional methods, but returns null if no underlying method
+                    if (result !== null) {
+                        hasRefreshed = true;
+                    }
+                }
+                if (!hasRefreshed) {
+                    (_a = floatingFilter.onParamsUpdated) === null || _a === void 0 ? void 0 : _a.call(floatingFilter, floatingFilterParams);
+                }
             });
         }
         else {

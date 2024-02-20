@@ -1,6 +1,7 @@
 import { AgAbstractLabel, IAgLabelParams } from './agAbstractLabel';
 import { setFixedWidth } from '../utils/dom';
 import { Events } from '../eventKeys';
+import { getAriaLabel, setAriaLabel, setAriaLabelledBy } from '../utils/aria';
 
 export type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 export abstract class AgAbstractField<TValue, TConfig extends IAgLabelParams = IAgLabelParams> extends AgAbstractLabel<TConfig> {
@@ -18,6 +19,26 @@ export abstract class AgAbstractField<TValue, TConfig extends IAgLabelParams = I
         if (this.className) {
             this.addCssClass(this.className);
         }
+
+        this.refreshAriaLabelledBy();
+    }
+
+    protected refreshAriaLabelledBy() {
+        const ariaEl = this.getAriaElement();
+        const labelId = this.getLabelId();
+
+        if (getAriaLabel(ariaEl) !== null) {
+            setAriaLabelledBy(ariaEl, '');
+        } else {
+            setAriaLabelledBy(ariaEl, labelId ?? '');
+        }
+    }
+
+    public setAriaLabel(label?: string | null): this {
+        setAriaLabel(this.getAriaElement(), label);
+        this.refreshAriaLabelledBy();
+
+        return this;
     }
 
     public onValueChange(callbackFn: (newValue?: TValue | null) => void) {

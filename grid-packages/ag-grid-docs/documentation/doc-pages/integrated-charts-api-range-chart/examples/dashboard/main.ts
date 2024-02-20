@@ -1,94 +1,60 @@
-import { ChartMenuOptions, CreateRangeChartParams, FirstDataRenderedEvent, GetChartToolbarItemsParams, Grid, GridOptions, ValueParserParams } from '@ag-grid-community/core';
-import { getData } from "./data";
+import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent,} from '@ag-grid-community/core';
+import {getData} from "./data";
 
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'country', width: 150, chartDataType: 'category' },
     { field: 'group', chartDataType: 'category' },
-    {
-      field: 'gold',
-      chartDataType: 'series',
-      editable: true,
-      valueParser: numberValueParser,
-    },
-    {
-      field: 'silver',
-      chartDataType: 'series',
-      editable: true,
-      valueParser: numberValueParser,
-    },
-    {
-      field: 'bronze',
-      chartDataType: 'series',
-      editable: true,
-      valueParser: numberValueParser,
-    },
-    {
-      field: 'a',
-      chartDataType: 'series',
-      editable: true,
-      valueParser: numberValueParser,
-    },
-    {
-      field: 'b',
-      chartDataType: 'series',
-      editable: true,
-      valueParser: numberValueParser,
-    },
-    {
-      field: 'c',
-      chartDataType: 'series',
-      editable: true,
-      valueParser: numberValueParser,
-    },
-    {
-      field: 'd',
-      chartDataType: 'series',
-      editable: true,
-      valueParser: numberValueParser,
-    },
+    { field: 'gold', chartDataType: 'series' },
+    { field: 'silver', chartDataType: 'series' },
+    { field: 'bronze', chartDataType: 'series' },
   ],
   defaultColDef: {
     editable: true,
-    sortable: true,
     flex: 1,
     minWidth: 100,
     filter: true,
-    resizable: true,
   },
-  rowData: getData(),
   enableRangeSelection: true,
   enableCharts: true,
-  onFirstDataRendered: onFirstDataRendered,
-  getChartToolbarItems: getChartToolbarItems,
-  chartToolPanelsDef: {
-    panels: []
-  },
+  chartToolPanelsDef: { panels: []},
   popupParent: document.body,
+  onGridReady : (params: GridReadyEvent) => {
+    getData().then(rowData => params.api.setGridOption('rowData', rowData));
+  },
+  onFirstDataRendered,
+  getChartToolbarItems:  () => [],
 }
 
+
+
 function onFirstDataRendered(event: FirstDataRenderedEvent) {
-  var eContainer1 = document.querySelector('#chart1') as any;
-  var params1: CreateRangeChartParams = {
+  createGroupedBarChart(event, '#chart1', ['country', 'gold', 'silver']);
+  createPieChart(event, '#chart2', ['group', 'gold']);
+  createPieChart(event, '#chart3', ['group', 'silver']);
+}
+
+function createGroupedBarChart(params: FirstDataRenderedEvent, selector: string, columns: string[]) {
+  params.api.createRangeChart({
+    chartContainer: document.querySelector(selector) as HTMLElement,
     cellRange: {
       rowStartIndex: 0,
       rowEndIndex: 4,
-      columns: ['country', 'gold', 'silver'],
+      columns,
     },
+    suppressChartRanges: true,
     chartType: 'groupedBar',
-    chartContainer: eContainer1,
-  }
+  });
+}
 
-  event.api.createRangeChart(params1)
-
-  var eContainer2 = document.querySelector('#chart2') as any;
-  var params2: CreateRangeChartParams = {
-    cellRange: {
-      columns: ['group', 'gold'],
-    },
+function createPieChart(params: FirstDataRenderedEvent, selector: string, columns: string[]) {
+  params.api.createRangeChart({
+    chartContainer: document.querySelector(selector) as HTMLElement,
+    cellRange: {columns},
+    suppressChartRanges: true,
     chartType: 'pie',
-    chartContainer: eContainer2,
     aggFunc: 'sum',
     chartThemeOverrides: {
       common: {
@@ -103,53 +69,10 @@ function onFirstDataRendered(event: FirstDataRenderedEvent) {
         },
       },
     },
-  }
-
-  event.api.createRangeChart(params2)
-
-  var eContainer3 = document.querySelector('#chart3') as any
-  var params3: CreateRangeChartParams = {
-    cellRange: {
-      columns: ['group', 'silver'],
-    },
-    chartType: 'pie',
-    chartContainer: eContainer3,
-    aggFunc: 'sum',
-    chartThemeOverrides: {
-      common: {
-        padding: {
-          top: 20,
-          left: 10,
-          bottom: 30,
-          right: 10,
-        },
-        legend: {
-          position: 'right',
-        },
-      },
-    },
-  }
-
-  event.api.createRangeChart(params3)
+  });
 }
 
-function numberValueParser(params: ValueParserParams) {
-  var res = Number.parseInt(params.newValue)
-
-  if (isNaN(res)) {
-    return undefined
-  }
-
-  return res
-}
-
-function getChartToolbarItems(params: GetChartToolbarItemsParams): ChartMenuOptions[] {
-  return []
-}
-
-
-// setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
-})
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+  gridApi = createGrid(gridDiv, gridOptions);
+});

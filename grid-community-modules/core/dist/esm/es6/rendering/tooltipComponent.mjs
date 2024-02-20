@@ -7,6 +7,6 @@ export class TooltipComponent extends PopupComponent {
     // will need to type params
     init(params) {
         const { value } = params;
-        this.getGui().innerHTML = escapeString(value);
+        this.getGui().textContent = escapeString(value, true);
     }
 }

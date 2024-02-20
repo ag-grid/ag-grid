@@ -35,7 +35,7 @@ var AgInputTextField = /** @class */ (function (_super) {
     AgInputTextField.prototype.setValue = function (value, silent) {
         // update the input before we call super.setValue, so it's updated before the value changed event is fired
         if (this.eInput.value !== value) {
-            this.eInput.value = generic_1.exists(value) ? value : '';
+            this.eInput.value = (0, generic_1.exists)(value) ? value : '';
         }
         return _super.prototype.setValue.call(this, value, silent);
     };
@@ -44,9 +44,9 @@ var AgInputTextField = /** @class */ (function (_super) {
         this.setValue(value, true);
     };
     AgInputTextField.prototype.preventDisallowedCharacters = function () {
-        var pattern = new RegExp("[" + this.config.allowedCharPattern + "]");
+        var pattern = new RegExp("[".concat(this.config.allowedCharPattern, "]"));
         var preventCharacters = function (event) {
-            if (!keyboard_1.isEventFromPrintableCharacter(event)) {
+            if (!(0, keyboard_1.isEventFromPrintableCharacter)(event)) {
                 return;
             }
             if (event.key && !pattern.test(event.key)) {

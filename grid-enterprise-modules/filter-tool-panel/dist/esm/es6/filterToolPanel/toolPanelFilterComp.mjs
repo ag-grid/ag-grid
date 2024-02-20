@@ -6,8 +6,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { _, Autowired, Column, Component, Events, KeyCode, PostConstruct, RefSelector } from "@ag-grid-community/core";
 export class ToolPanelFilterComp extends Component {
-    constructor(hideHeader = false) {
+    constructor(hideHeader, expandedCallback) {
         super(ToolPanelFilterComp.TEMPLATE);
+        this.expandedCallback = expandedCallback;
         this.expanded = false;
         this.hideHeader = hideHeader;
     }
@@ -66,12 +67,12 @@ export class ToolPanelFilterComp extends Component {
     }
     onFilterDestroyed(event) {
         if (this.expanded &&
-            event.source === 'api' &&
+            (event.source === 'api' || event.source === 'paramsUpdated') &&
             event.column.getId() === this.column.getId() &&
             this.columnModel.getPrimaryColumn(this.column)) {
-            // filter was visible and has been destroyed by the API. If the column still exists, need to recreate UI component
+            // filter was visible and has been destroyed by the API or params changing. If the column still exists, need to recreate UI component
             this.removeFilterElement();
-            this.addFilterElement();
+            this.addFilterElement(true);
         }
     }
     toggleExpanded() {
@@ -86,8 +87,9 @@ export class ToolPanelFilterComp extends Component {
         _.setDisplayed(this.eExpandChecked, true);
         _.setDisplayed(this.eExpandUnchecked, false);
         this.addFilterElement();
+        this.expandedCallback();
     }
-    addFilterElement() {
+    addFilterElement(suppressFocus) {
         const filterPanelWrapper = _.loadTemplate(/* html */ `<div class="ag-filter-toolpanel-instance-filter"></div>`);
         const filterWrapper = this.filterManager.getOrCreateFilterWrapper(this.column, 'TOOLBAR');
         if (!filterWrapper) {
@@ -105,7 +107,7 @@ export class ToolPanelFilterComp extends Component {
                 }
                 this.agFilterToolPanelBody.appendChild(filterPanelWrapper);
                 if (filter.afterGuiAttached) {
-                    filter.afterGuiAttached({ container: 'toolPanel' });
+                    filter.afterGuiAttached({ container: 'toolPanel', suppressFocus });
                 }
             });
         });
@@ -121,6 +123,7 @@ export class ToolPanelFilterComp extends Component {
         _.setDisplayed(this.eExpandChecked, false);
         _.setDisplayed(this.eExpandUnchecked, true);
         (_b = (_a = this.underlyingFilter) === null || _a === void 0 ? void 0 : _a.afterGuiDetached) === null || _b === void 0 ? void 0 : _b.call(_a);
+        this.expandedCallback();
     }
     removeFilterElement() {
         _.clearElement(this.agFilterToolPanelBody);

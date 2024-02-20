@@ -128,6 +128,18 @@ For more info see: https://www.ag-grid.com/javascript-grid/packages/`;
         }, warningKey);
         return false;
     }
+    /**
+     * AG GRID INTERNAL - Warn that a given integrated chart type is not supported under the community distribution.
+     */
+    static __warnEnterpriseChartDisabled(chartType) {
+        const reason = 'ag-charts-enterprise';
+        const warningKey = reason + ':' + chartType;
+        const url = 'https://ag-grid.com/javascript-data-grid/integrated-charts/';
+        const warningMessage = `AG Grid: the '${chartType}' chart type is not supported in AG Charts Community. See ${url} for more details.`;
+        doOnce(() => {
+            console.warn(warningMessage);
+        }, warningKey);
+    }
     /** AG GRID INTERNAL - Is the given module registered, globally or individually with this grid. */
     static __isRegistered(moduleName, gridId) {
         var _a;

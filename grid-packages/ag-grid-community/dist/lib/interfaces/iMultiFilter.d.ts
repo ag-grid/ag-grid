@@ -9,7 +9,7 @@ export interface IMultiFilter extends IProvidedFilter {
 export interface IMultiFilterDef extends IFilterDef {
     /**
      * Configures how the filter is shown in the Multi Filter.
-     * Default: `inline`
+     * @default 'inline'
      */
     display?: 'inline' | 'accordion' | 'subMenu';
     /** The title to be used when a filter is displayed inside a sub-menu or accordion. */
@@ -38,7 +38,7 @@ export interface IMultiFilterParams {
      * If true, all UI inputs managed by this filter are for display only, and the filter can only
      * be affected by API calls. Does NOT affect child filters, they need to be individually
      * configured with `readOnly` where applicable.
-     * Default: `false`
+     * @default false
      */
     readOnly?: boolean;
 }

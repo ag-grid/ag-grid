@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Beans } from "./../beans";
@@ -17,6 +17,7 @@ import { UserCompDetails } from "../../components/framework/userComponentFactory
 import { CheckboxSelectionComponent } from "../checkboxSelectionComponent";
 import { DndSourceComp } from "../dndSourceComp";
 import { RowDragComp } from "../row/rowDragComp";
+import { FlashCellsParams } from "../rowRenderer";
 export interface ICellComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
     setUserStyles(styles: CellStyle): void;
@@ -28,7 +29,7 @@ export interface ICellComp {
     getCellRenderer(): ICellRenderer | null;
     getParentOfValue(): HTMLElement | null;
     setRenderDetails(compDetails: UserCompDetails | undefined, valueToDisplay: any, forceNewCellRendererInstance: boolean): void;
-    setEditDetails(compDetails?: UserCompDetails, popup?: boolean, position?: 'over' | 'under'): void;
+    setEditDetails(compDetails?: UserCompDetails, popup?: boolean, position?: 'over' | 'under', reactiveCustomComponents?: boolean): void;
 }
 export declare class CellCtrl extends BeanStub {
     static DOM_DATA_KEY_CELL_CTRL: string;
@@ -39,6 +40,7 @@ export declare class CellCtrl extends BeanStub {
     private column;
     private rowNode;
     private rowCtrl;
+    private editCompDetails?;
     private focusEventToRestore;
     private printLayout;
     private value;
@@ -51,34 +53,36 @@ export declare class CellCtrl extends BeanStub {
     private cellKeyboardListenerFeature;
     private cellPosition;
     private editing;
-    private isCellRenderer;
     private includeSelection;
     private includeDndSource;
     private includeRowDrag;
     private colIdSanitised;
     private tabIndex;
+    private isAutoHeight;
     private suppressRefreshCell;
     private customRowDragComp;
     private onCellCompAttachedFuncs;
     constructor(column: Column, rowNode: RowNode, beans: Beans, rowCtrl: RowCtrl);
     shouldRestoreFocus(): boolean;
     private addFeatures;
-    private addTooltipFeature;
+    private enableTooltipFeature;
+    private disableTooltipFeature;
     setComp(comp: ICellComp, eGui: HTMLElement, eCellWrapper: HTMLElement | undefined, printLayout: boolean, startEditing: boolean): void;
     private setupAutoHeight;
+    getCellAriaRole(): string;
     getInstanceId(): string;
     getIncludeSelection(): boolean;
     getIncludeRowDrag(): boolean;
     getIncludeDndSource(): boolean;
     getColumnIdSanitised(): string;
     getTabIndex(): number | undefined;
-    getIsCellRenderer(): boolean;
+    isCellRenderer(): boolean;
     getValueToDisplay(): any;
     private showValue;
     private setupControlComps;
     isForceWrapper(): boolean;
     private isIncludeControl;
-    refreshShouldDestroy(): boolean;
+    private refreshShouldDestroy;
     startEditing(key?: string | null, cellStartedEdit?: boolean, event?: KeyboardEvent | MouseEvent | null): void;
     private setEditing;
     stopRowOrCellEdit(cancel?: boolean): void;
@@ -101,6 +105,11 @@ export declare class CellCtrl extends BeanStub {
     setFocusOutOnEditor(): void;
     setFocusInOnEditor(): void;
     onCellChanged(event: CellChangedEvent): void;
+    refreshOrDestroyCell(params?: {
+        suppressFlash?: boolean;
+        newData?: boolean;
+        forceRefresh?: boolean;
+    }): void;
     refreshCell(params?: {
         suppressFlash?: boolean;
         newData?: boolean;
@@ -108,10 +117,7 @@ export declare class CellCtrl extends BeanStub {
     }): void;
     stopEditingAndFocus(suppressNavigateAfterEdit?: boolean, shiftKey?: boolean): void;
     private navigateAfterEdit;
-    flashCell(delays?: {
-        flashDelay?: number | null;
-        fadeDelay?: number | null;
-    }): void;
+    flashCell(delays?: Pick<FlashCellsParams, 'fadeDelay' | 'flashDelay' | 'fadeDuration' | 'flashDuration'>): void;
     private animateCell;
     onFlashCells(event: FlashCellsEvent): void;
     isCellEditable(): boolean;
@@ -133,7 +139,8 @@ export declare class CellCtrl extends BeanStub {
     getColSpanningList(): Column[];
     onLeftChanged(): void;
     onDisplayedColumnsChanged(): void;
-    private setAriaColIndex;
+    private refreshFirstAndLastStyles;
+    private refreshAriaColIndex;
     isSuppressNavigable(): boolean;
     onWidthChanged(): void;
     getColumn(): Column;

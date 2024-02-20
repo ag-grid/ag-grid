@@ -71,22 +71,22 @@ $ npm install --save @ag-grid-community/core
 ### Add a placeholder to HTML
 
 ```html
-<div id="myGrid" style="height: 150px; width: 600px" class="ag-theme-alpine"></div>
+<div id="myGrid" style="height: 150px; width: 600px" class="ag-theme-quartz"></div>
 ```
 
 ### Import the grid and styles
 
 ```js
-import { Grid } from '@ag-grid-community/core';
+import { createGrid } from '@ag-grid-community/core';
 
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 ```
 
 ### Set configuration
 
 ```js
-var gridOptions = {
+const gridOptions = {
 	columnDefs: [
 		{ headerName: 'Make', field: 'make' },
 		{ headerName: 'Model', field: 'model' },
@@ -103,8 +103,8 @@ var gridOptions = {
 ### Initialise the grid
 
 ```js
-var eGridDiv = document.querySelector('#myGrid');
-new Grid(eGridDiv, this.gridOptions);
+const eGridDiv = document.querySelector('#myGrid');
+const api = createGrid(eGridDiv, gridOptions);
 ```
 
 For more information on how to integrate the grid into your project see [Building AG Grid Applications](https://www.ag-grid.com/javascript-data-grid/building/?utm_source=@ag-grid-community/all-modules-readme&utm_medium=repository&utm_campaign=github).

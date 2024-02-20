@@ -5,7 +5,7 @@ import { MenuModule } from '@ag-grid-enterprise/menu';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
 import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 import MoodEditor from './moodEditorVue.js';
 import NumericCellEditor from './numericCellEditorVue.js';
 
@@ -18,7 +18,7 @@ const VueExample = {
         <div style="height: 100%">
             <ag-grid-vue
                     style="width: 100%; height: 100%;"
-                    class="ag-theme-alpine"
+                    :class="themeClass"
                     id="myGrid"
                     :columnDefs="columnDefs"
                     @grid-ready="onGridReady"
@@ -72,12 +72,12 @@ const VueExample = {
                 }
             ],
             gridApi: null,
-            columnApi: null,
             defaultColDef: {
                 flex: 1,
                 cellDataType: false,
             },
             rowData: null,
+            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
         }
     },
     created() {
@@ -98,7 +98,6 @@ const VueExample = {
         },
         onGridReady(params) {
             this.gridApi = params.api;
-            this.gridColumnApi = params.columnApi;
 
         },
     }

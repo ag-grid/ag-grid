@@ -1,4 +1,14 @@
-import { Grid, ColDef, GridOptions, IServerSideDatasource, IServerSideGetRowsParams, IServerSideGetRowsRequest, IsServerSideGroupOpenByDefaultParams, IsServerSideGroup } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  ColDef,
+  GridOptions,
+  IServerSideDatasource,
+  IServerSideGetRowsParams,
+  IServerSideGetRowsRequest,
+  IsServerSideGroupOpenByDefaultParams,
+  IsServerSideGroup,
+} from '@ag-grid-community/core';
 const columnDefs: ColDef[] = [
   { field: 'employeeId', hide: true },
   { field: 'employeeName', hide: true },
@@ -6,11 +16,13 @@ const columnDefs: ColDef[] = [
   { field: 'startDate' },
 ]
 
+let gridApi: GridApi;
+
 const gridOptions: GridOptions = {
   defaultColDef: {
     width: 235,
-    resizable: true,
     flex: 1,
+    sortable: false,
   },
   autoGroupColumnDef: {
     field: 'employeeName',
@@ -18,7 +30,6 @@ const gridOptions: GridOptions = {
   rowModelType: 'serverSide',
   treeData: true,
   columnDefs: columnDefs,
-  animateRows: true,
   cacheBlockSize: 10,
   isServerSideGroupOpenByDefault: (params: IsServerSideGroupOpenByDefaultParams) => {
     var isKathrynPowers =
@@ -38,20 +49,20 @@ const gridOptions: GridOptions = {
 }
 
 function refreshCache(route: string[]) {
-  gridOptions.api!.refreshServerSide({ route: route, purge: true })
+  gridApi!.refreshServerSide({ route: route, purge: true })
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/tree-data.json')
     .then(response => response.json())
     .then(function (data) {
       var fakeServer = createFakeServer(data)
       var datasource = createServerSideDatasource(fakeServer)
-      gridOptions.api!.setServerSideDatasource(datasource)
+      gridApi!.setGridOption('serverSideDatasource', datasource)
     })
 })
 
@@ -103,7 +114,7 @@ function createServerSideDatasource(fakeServer: any) {
         }
         : { rowData: allRows }
       console.log('getRows: result = ', result)
-      setTimeout(function () {
+      setTimeout(() => {
         params.success(result)
       }, 500)
     }

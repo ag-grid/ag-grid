@@ -12,8 +12,10 @@ import { missingOrEmpty } from "../utils/generic.mjs";
 import { last } from "../utils/array.mjs";
 let PinnedRowModel = class PinnedRowModel extends BeanStub {
     init() {
-        this.setPinnedTopRowData(this.gridOptionsService.get('pinnedTopRowData'));
-        this.setPinnedBottomRowData(this.gridOptionsService.get('pinnedBottomRowData'));
+        this.setPinnedTopRowData();
+        this.setPinnedBottomRowData();
+        this.addManagedPropertyListener('pinnedTopRowData', () => this.setPinnedTopRowData());
+        this.addManagedPropertyListener('pinnedBottomRowData', () => this.setPinnedBottomRowData());
     }
     isEmpty(floating) {
         const rows = floating === 'top' ? this.pinnedTopRows : this.pinnedBottomRows;
@@ -38,14 +40,16 @@ let PinnedRowModel = class PinnedRowModel extends BeanStub {
         }
         return rows.length - 1;
     }
-    setPinnedTopRowData(rowData) {
+    setPinnedTopRowData() {
+        const rowData = this.gridOptionsService.get('pinnedTopRowData');
         this.pinnedTopRows = this.createNodesFromData(rowData, true);
         const event = {
             type: Events.EVENT_PINNED_ROW_DATA_CHANGED
         };
         this.eventService.dispatchEvent(event);
     }
-    setPinnedBottomRowData(rowData) {
+    setPinnedBottomRowData() {
+        const rowData = this.gridOptionsService.get('pinnedBottomRowData');
         this.pinnedBottomRows = this.createNodesFromData(rowData, false);
         const event = {
             type: Events.EVENT_PINNED_ROW_DATA_CHANGED

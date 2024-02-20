@@ -9,7 +9,7 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
         this.beans = beans;
     }
 
-    public abstract export(userParams?: P): string;
+    protected abstract export(userParams?: P, compress?: boolean): void;
 
     protected abstract getMergedParams(params?: P): P;
 
@@ -25,13 +25,14 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
 
     protected getData(params: P): string {
         const serializingSession = this.createSerializingSession(params);
-        const data = this.beans.gridSerializer.serialize(serializingSession, params);
+        return  this.beans.gridSerializer.serialize(serializingSession, params);
+    }
 
-        return data;
+    public getDefaultFileName(): string {
+        return `export.${this.getDefaultFileExtension()}`;
     }
 
     public abstract createSerializingSession(params?: P): S;
-    public abstract getDefaultFileName(): string;
     public abstract getDefaultFileExtension(): string;
     public abstract isExportSuppressed(): boolean;
 }

@@ -64,9 +64,13 @@ export class PrimaryColsPanel extends Component {
     }
     onGroupExpanded(event) {
         this.primaryColsHeaderPanel.setExpandState(event.state);
+        this.params.onStateUpdated();
     }
     onSelectionChange(event) {
         this.primaryColsHeaderPanel.setSelectionState(event.state);
+    }
+    getExpandedGroups() {
+        return this.primaryColsListPanel.getExpandedGroups();
     }
 }
 PrimaryColsPanel.TEMPLATE = `<div class="ag-column-select">

@@ -21,10 +21,11 @@ class HeaderGroupCellComp extends abstractHeaderCellComp_1.AbstractHeaderCellCom
         eGui.setAttribute("col-id", this.ctrl.getColId());
         const compProxy = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
-            setResizableDisplayed: (displayed) => dom_1.setDisplayed(this.eResize, displayed),
+            setResizableDisplayed: (displayed) => (0, dom_1.setDisplayed)(this.eResize, displayed),
             setWidth: width => eGui.style.width = width,
             setAriaExpanded: expanded => setAttribute('aria-expanded', expanded),
-            setUserCompDetails: details => this.setUserCompDetails(details)
+            setUserCompDetails: details => this.setUserCompDetails(details),
+            getUserCompInstance: () => this.headerGroupComp,
         };
         this.ctrl.setComp(compProxy, eGui, this.eResize);
     }
@@ -41,17 +42,15 @@ class HeaderGroupCellComp extends abstractHeaderCellComp_1.AbstractHeaderCellCom
         const eHeaderGroupGui = headerGroupComp.getGui();
         eGui.appendChild(eHeaderGroupGui);
         this.addDestroyFunc(destroyFunc);
+        this.headerGroupComp = headerGroupComp;
         this.ctrl.setDragSource(eGui);
     }
 }
-HeaderGroupCellComp.TEMPLATE = `<div class="ag-header-group-cell" role="columnheader" tabindex="-1">
+HeaderGroupCellComp.TEMPLATE = `<div class="ag-header-group-cell" role="columnheader">
             <div ref="eResize" class="ag-header-cell-resize" role="presentation"></div>
         </div>`;
 __decorate([
-    context_1.Autowired('userComponentFactory')
-], HeaderGroupCellComp.prototype, "userComponentFactory", void 0);
-__decorate([
-    componentAnnotations_1.RefSelector('eResize')
+    (0, componentAnnotations_1.RefSelector)('eResize')
 ], HeaderGroupCellComp.prototype, "eResize", void 0);
 __decorate([
     context_1.PostConstruct

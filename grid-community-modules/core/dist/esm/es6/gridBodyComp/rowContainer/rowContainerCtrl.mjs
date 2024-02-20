@@ -8,7 +8,7 @@ import { BeanStub } from "../../context/beanStub.mjs";
 import { Autowired, PostConstruct } from "../../context/context.mjs";
 import { Events } from "../../eventKeys.mjs";
 import { RowContainerEventsFeature } from "./rowContainerEventsFeature.mjs";
-import { getInnerWidth, getScrollLeft, isHorizontalScrollShowing, isVisible, setScrollLeft } from "../../utils/dom.mjs";
+import { getInnerWidth, getScrollLeft, isHorizontalScrollShowing, isInDOM, setScrollLeft } from "../../utils/dom.mjs";
 import { ViewportSizeFeature } from "../viewportSizeFeature.mjs";
 import { convertToMap } from "../../utils/map.mjs";
 import { SetPinnedLeftWidthFeature } from "./setPinnedLeftWidthFeature.mjs";
@@ -16,7 +16,6 @@ import { SetPinnedRightWidthFeature } from "./setPinnedRightWidthFeature.mjs";
 import { SetHeightFeature } from "./setHeightFeature.mjs";
 import { DragListenerFeature } from "./dragListenerFeature.mjs";
 import { CenterWidthFeature } from "../centerWidthFeature.mjs";
-import { isInvisibleScrollbar } from "../../utils/browser.mjs";
 export var RowContainerName;
 (function (RowContainerName) {
     RowContainerName["LEFT"] = "left";
@@ -93,9 +92,6 @@ const ViewportCssClasses = convertToMap([
     [RowContainerName.STICKY_TOP_CENTER, 'ag-sticky-top-viewport'],
     [RowContainerName.BOTTOM_CENTER, 'ag-floating-bottom-viewport'],
 ]);
-const WrapperCssClasses = convertToMap([
-    [RowContainerName.CENTER, 'ag-center-cols-clipper'],
-]);
 export class RowContainerCtrl extends BeanStub {
     constructor(name) {
         super();
@@ -112,8 +108,7 @@ export class RowContainerCtrl extends BeanStub {
     static getRowContainerCssClasses(name) {
         const containerClass = ContainerCssClasses.get(name);
         const viewportClass = ViewportCssClasses.get(name);
-        const wrapperClass = WrapperCssClasses.get(name);
-        return { container: containerClass, viewport: viewportClass, wrapper: wrapperClass };
+        return { container: containerClass, viewport: viewportClass };
     }
     static getPinned(name) {
         switch (name) {
@@ -132,8 +127,7 @@ export class RowContainerCtrl extends BeanStub {
         }
     }
     postConstruct() {
-        this.enableRtl = this.gridOptionsService.is('enableRtl');
-        this.embedFullWidthRows = this.gridOptionsService.is('embedFullWidthRows');
+        this.enableRtl = this.gridOptionsService.get('enableRtl');
         this.forContainers([RowContainerName.CENTER], () => this.viewportSizeFeature = this.createManagedBean(new ViewportSizeFeature(this)));
     }
     registerWithCtrlsService() {
@@ -187,11 +181,10 @@ export class RowContainerCtrl extends BeanStub {
     getViewportSizeFeature() {
         return this.viewportSizeFeature;
     }
-    setComp(view, eContainer, eViewport, eWrapper) {
+    setComp(view, eContainer, eViewport) {
         this.comp = view;
         this.eContainer = eContainer;
         this.eViewport = eViewport;
-        this.eWrapper = eWrapper;
         this.createManagedBean(new RowContainerEventsFeature(this.eContainer));
         this.addPreventScrollWhileDragging();
         this.listenOnDomOrder();
@@ -213,39 +206,16 @@ export class RowContainerCtrl extends BeanStub {
             this.pinnedWidthFeature = this.createManagedBean(new SetPinnedRightWidthFeature(this.eContainer));
             this.addManagedListener(this.eventService, Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED, () => this.onPinnedWidthChanged());
         });
-        this.forContainers(allMiddle, () => this.createManagedBean(new SetHeightFeature(this.eContainer, this.eWrapper)));
+        this.forContainers(allMiddle, () => this.createManagedBean(new SetHeightFeature(this.eContainer, this.name === RowContainerName.CENTER ? eViewport : undefined)));
         this.forContainers(allNoFW, () => this.createManagedBean(new DragListenerFeature(this.eContainer)));
         this.forContainers(allCenter, () => this.createManagedBean(new CenterWidthFeature(width => this.comp.setContainerWidth(`${width}px`))));
-        if (isInvisibleScrollbar()) {
-            this.forContainers([RowContainerName.CENTER], () => {
-                const pinnedWidthChangedEvent = this.enableRtl ? Events.EVENT_LEFT_PINNED_WIDTH_CHANGED : Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED;
-                this.addManagedListener(this.eventService, pinnedWidthChangedEvent, () => this.refreshPaddingForFakeScrollbar());
-            });
-            this.refreshPaddingForFakeScrollbar();
-        }
         this.addListeners();
         this.registerWithCtrlsService();
     }
-    refreshPaddingForFakeScrollbar() {
-        const { enableRtl, columnModel, name, eWrapper, eContainer } = this;
-        const sideToCheck = enableRtl ? RowContainerName.LEFT : RowContainerName.RIGHT;
-        this.forContainers([RowContainerName.CENTER, sideToCheck], () => {
-            const pinnedWidth = columnModel.getContainerWidth(sideToCheck);
-            const marginSide = enableRtl ? 'marginLeft' : 'marginRight';
-            if (name === RowContainerName.CENTER) {
-                eWrapper.style[marginSide] = pinnedWidth ? '0px' : '16px';
-            }
-            else {
-                eContainer.style[marginSide] = pinnedWidth ? '16px' : '0px';
-            }
-        });
-    }
     addListeners() {
-        this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, () => this.onScrollVisibilityChanged());
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, () => this.onDisplayedColumnsChanged());
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, () => this.onDisplayedColumnsWidthChanged());
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_ROWS_CHANGED, (params) => this.onDisplayedRowsChanged(params.afterScroll));
-        this.onScrollVisibilityChanged();
         this.onDisplayedColumnsChanged();
         this.onDisplayedColumnsWidthChanged();
         this.onDisplayedRowsChanged();
@@ -259,7 +229,7 @@ export class RowContainerCtrl extends BeanStub {
             return;
         }
         const listener = () => {
-            const isEnsureDomOrder = this.gridOptionsService.is('ensureDomOrder');
+            const isEnsureDomOrder = this.gridOptionsService.get('ensureDomOrder');
             const isPrintLayout = this.gridOptionsService.isDomLayout('print');
             this.comp.setDomOrder(isEnsureDomOrder || isPrintLayout);
         };
@@ -281,20 +251,6 @@ export class RowContainerCtrl extends BeanStub {
     onDisplayedColumnsWidthChanged() {
         this.forContainers([RowContainerName.CENTER], () => this.onHorizontalViewportChanged());
     }
-    onScrollVisibilityChanged() {
-        const scrollWidth = this.gridOptionsService.getScrollbarWidth() || 0;
-        if (this.name === RowContainerName.CENTER) {
-            const visible = this.scrollVisibleService.isHorizontalScrollShowing();
-            const scrollbarWidth = visible ? scrollWidth : 0;
-            const size = scrollbarWidth == 0 ? '100%' : `calc(100% + ${scrollbarWidth}px)`;
-            this.animationFrameService.requestAnimationFrame(() => this.comp.setViewportHeight(size));
-        }
-        if (this.name === RowContainerName.FULL_WIDTH) {
-            const pad = isInvisibleScrollbar() ? 16 : 0;
-            const size = `calc(100% - ${pad}px)`;
-            this.eContainer.style.setProperty('width', size);
-        }
-    }
     // this methods prevents the grid views from being scrolled while the dragService is being used
     // eg. the view should not scroll up and down while dragging rows using the rowDragComp.
     addPreventScrollWhileDragging() {
@@ -311,10 +267,10 @@ export class RowContainerCtrl extends BeanStub {
     // this gets called whenever a change in the viewport, so we can inform column controller it has to work
     // out the virtual columns again. gets called from following locations:
     // + ensureColVisible, scroll, init, layoutChanged, displayedColumnsChanged
-    onHorizontalViewportChanged() {
+    onHorizontalViewportChanged(afterScroll = false) {
         const scrollWidth = this.getCenterWidth();
         const scrollPosition = this.getCenterViewportScrollLeft();
-        this.columnModel.setViewportPosition(scrollWidth, scrollPosition);
+        this.columnModel.setViewportPosition(scrollWidth, scrollPosition, afterScroll);
     }
     getCenterWidth() {
         return getInnerWidth(this.eViewport);
@@ -327,14 +283,14 @@ export class RowContainerCtrl extends BeanStub {
         const unsubscribeFromResize = this.resizeObserverService.observeResize(this.eViewport, listener);
         this.addDestroyFunc(() => unsubscribeFromResize());
     }
-    isViewportVisible() {
-        return isVisible(this.eViewport);
+    isViewportInTheDOMTree() {
+        return isInDOM(this.eViewport);
     }
     getViewportScrollLeft() {
         return getScrollLeft(this.eViewport, this.enableRtl);
     }
     isHorizontalScrollShowing() {
-        const isAlwaysShowHorizontalScroll = this.gridOptionsService.is('alwaysShowHorizontalScroll');
+        const isAlwaysShowHorizontalScroll = this.gridOptionsService.get('alwaysShowHorizontalScroll');
         return isAlwaysShowHorizontalScroll || isHorizontalScrollShowing(this.eViewport);
     }
     getViewportElement() {
@@ -364,32 +320,28 @@ export class RowContainerCtrl extends BeanStub {
             this.visible = visible;
             this.onDisplayedRowsChanged();
         }
-        if (isInvisibleScrollbar()) {
-            this.refreshPaddingForFakeScrollbar();
-        }
     }
-    onDisplayedRowsChanged(useFlushSync = false) {
-        if (this.visible) {
-            const printLayout = this.gridOptionsService.isDomLayout('print');
+    onDisplayedRowsChanged(afterScroll = false) {
+        if (!this.visible) {
+            this.comp.setRowCtrls({ rowCtrls: this.EMPTY_CTRLS });
+            return;
+        }
+        const printLayout = this.gridOptionsService.isDomLayout('print');
+        const embedFullWidthRows = this.gridOptionsService.get('embedFullWidthRows');
+        const embedFW = embedFullWidthRows || printLayout;
+        // this list contains either all pinned top, center or pinned bottom rows
+        // this filters out rows not for this container, eg if it's a full with row, but we are not full with container
+        const rowsThisContainer = this.getRowCtrls().filter(rowCtrl => {
             // this just justifies if the ctrl is in the correct place, this will be fed with zombie rows by the
             // row renderer, so should not block them as they still need to animate -  the row renderer
             // will clean these up when they finish animating
-            const doesRowMatch = (rowCtrl) => {
-                const fullWidthRow = rowCtrl.isFullWidth();
-                const embedFW = this.embedFullWidthRows || printLayout;
-                const match = this.isFullWithContainer ?
-                    !embedFW && fullWidthRow
-                    : embedFW || !fullWidthRow;
-                return match;
-            };
-            // this list contains either all pinned top, center or pinned bottom rows
-            // this filters out rows not for this container, eg if it's a full with row, but we are not full with container
-            const rowsThisContainer = this.getRowCtrls().filter(doesRowMatch);
-            this.comp.setRowCtrls(rowsThisContainer, useFlushSync);
-        }
-        else {
-            this.comp.setRowCtrls(this.EMPTY_CTRLS, false);
-        }
+            const fullWidthRow = rowCtrl.isFullWidth();
+            const match = this.isFullWithContainer ?
+                !embedFW && fullWidthRow
+                : embedFW || !fullWidthRow;
+            return match;
+        });
+        this.comp.setRowCtrls({ rowCtrls: rowsThisContainer, useFlushSync: afterScroll });
     }
     getRowCtrls() {
         switch (this.name) {
@@ -414,9 +366,6 @@ export class RowContainerCtrl extends BeanStub {
     }
 }
 __decorate([
-    Autowired('scrollVisibleService')
-], RowContainerCtrl.prototype, "scrollVisibleService", void 0);
-__decorate([
     Autowired('dragService')
 ], RowContainerCtrl.prototype, "dragService", void 0);
 __decorate([
@@ -428,9 +377,6 @@ __decorate([
 __decorate([
     Autowired('resizeObserverService')
 ], RowContainerCtrl.prototype, "resizeObserverService", void 0);
-__decorate([
-    Autowired('animationFrameService')
-], RowContainerCtrl.prototype, "animationFrameService", void 0);
 __decorate([
     Autowired('rowRenderer')
 ], RowContainerCtrl.prototype, "rowRenderer", void 0);

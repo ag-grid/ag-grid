@@ -2,20 +2,20 @@
 title: "Massive Row Count"
 ---
 
-Given the grid uses [Row Virtualisation](/dom-virtualisation/#row-virtualisation) there is no
+As the grid uses [Row Virtualisation](/dom-virtualisation/), there is no
 fixed limit to the number of rows the grid can display. However browsers do have a fixed limit
 on how tall a DOM div element can be. Given the grid renders using the DOM, the div that contains
 the rows has a fixed max height, and as such puts a limit on number of rows that can be
 rendered using normal techniques.
 
-To get around this, the grid uses a technique to fit more rows onto a div that can naturally fit.
+To get around this, the grid uses a technique to fit more rows into a div that can naturally fit.
 This technique, unique to AG Grid, we call Stretching and is explained below.
 
 ## The Problem
 
 Each browser has a limit to the maximum height of a div. This limit is not published so can differ
 between different browsers as well as different browser versions. At the time of writing, on 
-Chrome v112 the maximum height was 32,000,000 pixels.
+Chrome v118 the maximum height was 32,000,000 pixels.
 
 The grid works out the maximum height of a div by testing the DOM as the grid initialises. To see what
 the grid has determined as the maximum height for a div, set the grid property `debug=true`
@@ -27,7 +27,7 @@ like the following:
 For example assume each row is 100px high, then this means the maximum number of rows the grid
 would be able to cater for with a max div height of 32,000,000 is 320,000.
 
-Although the grid uses [Row Virtualisation](/dom-virtualisation/#row-virtualisation) to only render
+Although the grid uses [Row Virtualisation](/dom-virtualisation/) to only render
 a subset of rows, it depends on setting the container height correctly to fit all rows such that the
 vertical scroll bar is able to scroll over the entire dataset.
 
@@ -89,5 +89,4 @@ space is required, the rows will appear to move x10 when scrolling.
 The faster scrolling is a side effect of the implementation to display massive amounts of rows.
 There is no way around this, as the grid is working within the constraints of the browser and the
 browser has a maximum height that a div can have.
-If this makes your application not usable, then consider not displaying so many rows (question why
-display millions of rows in the first place) or use [Pagination](/row-pagination/).
+If this makes your application unusable, then consider not displaying so many rows (do you need to display millions of rows in the first place?) or use [Pagination](/row-pagination/).

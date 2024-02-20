@@ -2,9 +2,12 @@ import React, { useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { SizeColumnsToFitGridStrategy } from '@ag-grid-community/core';
 
 import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
+import './styles.css';
+
 
 import { ColDef, ColGroupDef, GridReadyEvent, FirstDataRenderedEvent, ModuleRegistry } from '@ag-grid-community/core';
 
@@ -16,19 +19,14 @@ const GridExample = () => {
     const bottomGridRef = useRef<AgGridReact>(null);
 
     const defaultColDef = useMemo(() => ({
-        editable: true,
-        sortable: true,
-        resizable: true,
         filter: true,
         flex: 1,
-        minWidth: 100,
-        width: 100,
+        minWidth: 120,
     }), []);
 
     const columnDefs = useMemo<(ColDef | ColGroupDef)[]>(() => [
         {
             headerName: 'Group 1',
-            headerClass: 'blue',
             groupId: 'Group1',
             children: [
                 { field: 'athlete', pinned: true },
@@ -37,13 +35,10 @@ const GridExample = () => {
                 { field: 'year', columnGroupShow: 'open' },
                 { field: 'date' },
                 { field: 'sport', columnGroupShow: 'open' },
-                { field: 'date' },
-                { field: 'sport', columnGroupShow: 'open' }
             ]
         },
         {
             headerName: 'Group 2',
-            headerClass: 'green',
             groupId: 'Group2',
             children: [
                 { field: 'athlete', pinned: true },
@@ -52,13 +47,15 @@ const GridExample = () => {
                 { field: 'year', columnGroupShow: 'open' },
                 { field: 'date' },
                 { field: 'sport', columnGroupShow: 'open' },
-                { field: 'date' },
-                { field: 'sport', columnGroupShow: 'open' }
             ]
         }
     ], []);
 
     const [rowData, setRowData] = useState<any[]>([]);
+
+    const autoSizeStrategy = useMemo<SizeColumnsToFitGridStrategy>(() => ({
+        type: 'fitGridWidth'
+    }), []);
 
     const onGridReady = (params: GridReadyEvent) => {
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
@@ -70,13 +67,13 @@ const GridExample = () => {
 
     const onFirstDataRendered = (params: FirstDataRenderedEvent) => {
         // mix up some columns
-        params.columnApi.moveColumnByIndex(11, 4);
-        params.columnApi.moveColumnByIndex(11, 4);
+        params.api.moveColumnByIndex(11, 4);
+        params.api.moveColumnByIndex(11, 4);
     }
 
     return (
         <div className="container">
-            <div className="grid ag-theme-alpine">
+            <div className={'grid ' + /** DARK MODE START **/(document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz')/** DARK MODE END **/}>
                 <AgGridReact
                     ref={topGridRef}
                     rowData={rowData}
@@ -84,19 +81,20 @@ const GridExample = () => {
                     defaultColDef={defaultColDef}
                     onGridReady={onGridReady}
                     onFirstDataRendered={onFirstDataRendered}
-                    alignedGrids={bottomGridRef.current ? [bottomGridRef.current] : undefined}
+                    alignedGrids={[bottomGridRef]}
+                    autoSizeStrategy={autoSizeStrategy}
                 />
             </div>
 
             <div className="divider"></div>
 
-            <div className="grid ag-theme-alpine">
+            <div className={'grid ' + /** DARK MODE START **/(document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz')/** DARK MODE END **/}>
                 <AgGridReact
                     ref={bottomGridRef}
                     rowData={rowData}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
-                    alignedGrids={topGridRef.current ? [topGridRef.current] : undefined}
+                    alignedGrids={[topGridRef]}
                 />
             </div>
         </div>

@@ -27,9 +27,9 @@ NameValueComp.TEMPLATE = `<div class="ag-status-name-value">
             <span ref="eValue" class="ag-status-name-value-value"></span>
         </div>`;
 __decorate([
-    core_1.RefSelector('eLabel')
+    (0, core_1.RefSelector)('eLabel')
 ], NameValueComp.prototype, "eLabel", void 0);
 __decorate([
-    core_1.RefSelector('eValue')
+    (0, core_1.RefSelector)('eValue')
 ], NameValueComp.prototype, "eValue", void 0);
 exports.NameValueComp = NameValueComp;

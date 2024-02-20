@@ -1,6 +1,6 @@
 import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-alpine.css";
-import { ColDef, ColGroupDef, Grid, GridOptions, GetRowIdParams } from '@ag-grid-community/core';
+import "@ag-grid-community/styles/ag-theme-quartz.css";
+import { ColDef, GridOptions, GetRowIdParams, GridApi, createGrid } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
@@ -22,12 +22,11 @@ var rightColumnDefs: ColDef[] = [
     { field: 'value2' }
 ];
 
+var leftApi: GridApi;
 var leftGridOptions: GridOptions = {
     defaultColDef: {
-        width: 80,
-        sortable: true,
+        flex: 1,
         filter: true,
-        resizable: true
     },
     rowClassRules: {
         'red-row': 'data.color == "Red"',
@@ -38,15 +37,13 @@ var leftGridOptions: GridOptions = {
     rowData: createLeftRowData(),
     rowDragManaged: true,
     columnDefs: leftColumnDefs,
-    animateRows: true
 };
 
+var rightApi: GridApi;
 var rightGridOptions: GridOptions = {
     defaultColDef: {
-        width: 80,
-        sortable: true,
+        flex: 1,
         filter: true,
-        resizable: true
     },
     rowClassRules: {
         'red-row': 'data.color == "Red"',
@@ -57,7 +54,6 @@ var rightGridOptions: GridOptions = {
     rowData: [],
     rowDragManaged: true,
     columnDefs: rightColumnDefs,
-    animateRows: true
 };
 
 function createLeftRowData() {
@@ -97,14 +93,14 @@ function binDrop(event: any) {
         remove: [data]
     };
 
-    var rowIsInLeftGrid = !!leftGridOptions.api!.getRowNode(data.id);
+    var rowIsInLeftGrid = !!leftApi!.getRowNode(data.id);
     if (rowIsInLeftGrid) {
-        leftGridOptions.api!.applyTransaction(transaction);
+        leftApi!.applyTransaction(transaction);
     }
 
-    var rowIsInRightGrid = !!rightGridOptions.api!.getRowNode(data.id);
+    var rowIsInRightGrid = !!rightApi!.getRowNode(data.id);
     if (rowIsInRightGrid) {
-        rightGridOptions.api!.applyTransaction(transaction);
+        rightApi!.applyTransaction(transaction);
     }
 }
 
@@ -134,10 +130,10 @@ function gridDrop(event: any, grid: string) {
     // if data missing or data has no it, do nothing
     if (!data || data.id == null) { return; }
 
-    var api = grid == 'left' ? leftGridOptions.api! : rightGridOptions.api!;
+    var gridApi = grid == 'left' ? leftApi! : rightApi!;
 
     // do nothing if row is already in the grid, otherwise we would have duplicates
-    var rowAlreadyInGrid = !!api!.getRowNode(data.id);
+    var rowAlreadyInGrid = !!gridApi!.getRowNode(data.id);
     if (rowAlreadyInGrid) {
         console.log('not adding row to avoid duplicates in the grid');
         return;
@@ -146,15 +142,15 @@ function gridDrop(event: any, grid: string) {
     var transaction = {
         add: [data]
     };
-    api.applyTransaction(transaction);
+    gridApi.applyTransaction(transaction);
 }
 
 
 var leftGridDiv = document.querySelector<HTMLElement>('#eLeftGrid')!;
-new Grid(leftGridDiv, leftGridOptions);
+leftApi = createGrid(leftGridDiv, leftGridOptions);
 
 var rightGridDiv = document.querySelector<HTMLElement>('#eRightGrid')!;
-new Grid(rightGridDiv, rightGridOptions);
+rightApi = createGrid(rightGridDiv, rightGridOptions);
 
 if (typeof window !== 'undefined') {
     // Attach external event handlers to window so they can be called from index.html

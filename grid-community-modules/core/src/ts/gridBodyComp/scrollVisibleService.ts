@@ -3,6 +3,8 @@ import { BeanStub } from "../context/beanStub";
 import { Events, ScrollVisibilityChangedEvent } from "../events";
 import { CtrlsService } from "../ctrlsService";
 import { WithoutGridCommon } from "../interfaces/iCommon";
+import { debounce } from "../utils/function";
+import { ColumnAnimationService } from "../rendering/columnAnimationService";
 
 export interface SetScrollsVisibleParams {
     horizontalScrollShowing: boolean;
@@ -13,6 +15,7 @@ export interface SetScrollsVisibleParams {
 export class ScrollVisibleService extends BeanStub {
 
     @Autowired('ctrlsService') public ctrlsService: CtrlsService;
+    @Autowired('columnAnimationService') public columnAnimationService: ColumnAnimationService;
 
     private horizontalScrollShowing: boolean;
     private verticalScrollShowing: boolean;
@@ -33,20 +36,25 @@ export class ScrollVisibleService extends BeanStub {
     }
 
     private update(): void {
-        // because of column animation (which takes 200ms), we have to do this twice.
-        // eg if user removes cols anywhere except at the RHS, then the cols on the RHS
-        // will animate to the left to fill the gap. this animation means just after
-        // the cols are removed, the remaining cols are still in the original location
-        // at the start of the animation, so pre animation the H scrollbar is still needed,
-        // but post animation it is not.
-        this.updateImpl();
-        setTimeout(this.updateImpl.bind(this), 500);
+        // Because of column animation, if user removes cols anywhere except at the RHS, 
+        // then the cols on the RHS will animate to the left to fill the gap. This animation 
+        // means just after the cols are removed, the remaining cols are still in the original
+        // location at the start of the animation, so pre animation the H scrollbar is still
+        // needed, but post animation it is not. So if animation is active, we only update
+        // after the animation has ended.
+        if (this.columnAnimationService.isActive()) {
+            this.columnAnimationService.executeLaterVMTurn(() => {
+                this.columnAnimationService.executeLaterVMTurn(() => this.updateImpl());
+            });
+        } else {
+            this.updateImpl();
+        }
     }
 
     private updateImpl(): void {
         const centerRowCtrl = this.ctrlsService.getCenterRowContainerCtrl();
 
-        if (!centerRowCtrl) { return; }
+        if (!centerRowCtrl || this.columnAnimationService.isActive()) { return; }
 
         const params: SetScrollsVisibleParams = {
             horizontalScrollShowing: centerRowCtrl.isHorizontalScrollShowing(),

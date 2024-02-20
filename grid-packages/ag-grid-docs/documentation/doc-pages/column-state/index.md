@@ -27,15 +27,19 @@ This section details how such state items can be manipulated without having to u
 
 ## Save and Apply State {#save-and-apply}
 
-There are two API methods provided for getting and setting Column State. `columnApi.getColumnState()` gets the current
-column state and `columnApi.applyColumnState(params)` sets the column state.
+<note>
+|If you are only interested in restoring Column State on grid initialisation, you should consider using [Initial State](../grid-state/) instead, which contains all of the Column State properties.
+</note>
+
+There are two API methods provided for getting and setting Column State. `api.getColumnState()` gets the current
+column state and `api.applyColumnState(params)` sets the column state.
 
 <snippet>
 | // save the column's state
-| const savedState = gridOptions.columnApi.getColumnState();
+| const savedState = api.getColumnState();
 |
 | // restore the column state
-| gridOptions.columnApi.applyColumnState({ state: savedState });
+| api.applyColumnState({ state: savedState });
 </snippet>
 
 The example below demonstrates saving and restoring column state. Try the following:
@@ -51,7 +55,7 @@ The example below demonstrates saving and restoring column state. Try the follow
 
 The Column State method interfaces are as follows:
 
-<api-documentation source='column-api/api.json' section='state' names='["getColumnState", "applyColumnState"]'></api-documentation>
+<api-documentation source='grid-api/api.json' section='state' names='["getColumnState", "applyColumnState"]'></api-documentation>
 
 ## Partial State
 
@@ -75,7 +79,7 @@ examples:
 
 <snippet>
 | // Sort Athlete column ascending
-| gridOptions.columnApi.applyColumnState({
+| api.applyColumnState({
 |     state: [
 |         {
 |             colId: 'athlete',
@@ -84,7 +88,7 @@ examples:
 |     ]
 | });
 | // Sort Athlete column ascending and clear sort on all other columns
-| gridOptions.columnApi.applyColumnState({
+| api.applyColumnState({
 |     state: [
 |         {
 |             colId: 'athlete',
@@ -97,14 +101,14 @@ examples:
 |     }
 | });
 | // Clear sorting on all columns, leave all other attributes untouched
-| gridOptions.columnApi.applyColumnState({
+| api.applyColumnState({
 |     defaultState: {
 |         // important to say 'null' as undefined means 'do nothing'
 |         sort: null
 |     }
 | });
 | // Clear sorting, row group, pivot and pinned on all columns, leave all other attributes untouched
-| gridOptions.columnApi.applyColumnState({
+| api.applyColumnState({
 |     defaultState: {
 |         // important to say 'null' as undefined means 'do nothing'
 |         sort: null,
@@ -114,7 +118,7 @@ examples:
 |     }
 | });
 | // Order columns, but do nothing else
-| gridOptions.columnApi.applyColumnState({
+| api.applyColumnState({
 |     state: [
 |         { colId: 'athlete' },
 |         { colId: 'country' },
@@ -147,7 +151,7 @@ re-applying the state.
 
 There are a few items to note on specific state attributes. They are as follows:
 
-### **null** vs **undefined**
+### null vs undefined
 
 For all state attributes, `undefined` means _"do not apply this attribute"_ and `null` means _"clear this attribute"_.
 
@@ -157,17 +161,6 @@ For example setting `sort=null` will clear sort on a column whereas setting
 The only exception is with regards to Column Width. For width, both `undefined`
 and `null` will skip the attribute. This is because width is mandatory - there
 is no such thing as a Column with no width.
-
-### Width and Flex
-
-When Flex is active on a Column, the grid ignores the `width` attribute when setting the width.
-
-When `getColumnState()` is called, both `width` and `flex` are returned.
-When `applyColumnState()` is called, if `flex` is present then `width` is
-ignored.
-
-If you want to restore a Column's width to the exact same pixel width as specified in the Column State,
-set `flex=null` for that Column's state to turn Flex off.
 
 ### Row Group and Pivot
 
@@ -198,10 +191,10 @@ a new tab and observe the dev console.
 Column Group State is concerned with the state of Column Groups. There is only one state attribute for Column Groups,
 which is whether the group is open or closed.
 
-To get the state of Column Groups use the API method `columnApi.getColumnGroupState()`. To
-set the Column Group state use the API method `columnApi.setColumnGroupState(stateItems)`.
+To get the state of Column Groups use the API method `api.getColumnGroupState()`. To
+set the Column Group state use the API method `api.setColumnGroupState(stateItems)`.
 
-<api-documentation source='column-api/api.json' section='state' names='["getColumnGroupState", "setColumnGroupState"]' ></api-documentation>
+<api-documentation source='grid-api/api.json' section='state' names='["getColumnGroupState", "setColumnGroupState"]' ></api-documentation>
 
 The example below demonstrates getting and setting Column Group State. Note the following:
 

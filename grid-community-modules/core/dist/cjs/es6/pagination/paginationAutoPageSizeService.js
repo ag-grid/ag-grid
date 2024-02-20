@@ -17,11 +17,20 @@ let PaginationAutoPageSizeService = class PaginationAutoPageSizeService extends 
             this.centerRowContainerCon = p.centerRowContainerCtrl;
             this.addManagedListener(this.eventService, events_1.Events.EVENT_BODY_HEIGHT_CHANGED, this.checkPageSize.bind(this));
             this.addManagedListener(this.eventService, events_1.Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.checkPageSize.bind(this));
+            this.addManagedPropertyListener('paginationAutoPageSize', this.onPaginationAutoSizeChanged.bind(this));
             this.checkPageSize();
         });
     }
     notActive() {
-        return !this.gridOptionsService.is('paginationAutoPageSize') || this.centerRowContainerCon == null;
+        return !this.gridOptionsService.get('paginationAutoPageSize') || this.centerRowContainerCon == null;
+    }
+    onPaginationAutoSizeChanged() {
+        if (this.notActive()) {
+            this.paginationProxy.unsetAutoCalculatedPageSize();
+        }
+        else {
+            this.checkPageSize();
+        }
     }
     checkPageSize() {
         if (this.notActive()) {
@@ -32,14 +41,14 @@ let PaginationAutoPageSizeService = class PaginationAutoPageSizeService extends 
             const update = () => {
                 const rowHeight = this.gridOptionsService.getRowHeightAsNumber();
                 const newPageSize = Math.floor(bodyHeight / rowHeight);
-                this.gridOptionsService.set('paginationPageSize', newPageSize);
+                this.paginationProxy.setPageSize(newPageSize, 'autoCalculated');
             };
             if (!this.isBodyRendered) {
                 update();
                 this.isBodyRendered = true;
             }
             else {
-                function_1.debounce(() => update(), 50)();
+                (0, function_1.debounce)(() => update(), 50)();
             }
         }
         else {
@@ -48,12 +57,15 @@ let PaginationAutoPageSizeService = class PaginationAutoPageSizeService extends 
     }
 };
 __decorate([
-    context_1.Autowired('ctrlsService')
+    (0, context_1.Autowired)('ctrlsService')
 ], PaginationAutoPageSizeService.prototype, "ctrlsService", void 0);
+__decorate([
+    (0, context_1.Autowired)('paginationProxy')
+], PaginationAutoPageSizeService.prototype, "paginationProxy", void 0);
 __decorate([
     context_1.PostConstruct
 ], PaginationAutoPageSizeService.prototype, "postConstruct", null);
 PaginationAutoPageSizeService = __decorate([
-    context_1.Bean('paginationAutoPageSizeService')
+    (0, context_1.Bean)('paginationAutoPageSizeService')
 ], PaginationAutoPageSizeService);
 exports.PaginationAutoPageSizeService = PaginationAutoPageSizeService;

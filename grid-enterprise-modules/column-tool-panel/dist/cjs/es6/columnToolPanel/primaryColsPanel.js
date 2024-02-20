@@ -67,9 +67,13 @@ class PrimaryColsPanel extends core_1.Component {
     }
     onGroupExpanded(event) {
         this.primaryColsHeaderPanel.setExpandState(event.state);
+        this.params.onStateUpdated();
     }
     onSelectionChange(event) {
         this.primaryColsHeaderPanel.setSelectionState(event.state);
+    }
+    getExpandedGroups() {
+        return this.primaryColsListPanel.getExpandedGroups();
     }
 }
 PrimaryColsPanel.TEMPLATE = `<div class="ag-column-select">
@@ -77,9 +81,9 @@ PrimaryColsPanel.TEMPLATE = `<div class="ag-column-select">
             <ag-primary-cols-list ref="primaryColsListPanel"></ag-primary-cols-list>
         </div>`;
 __decorate([
-    core_1.RefSelector('primaryColsHeaderPanel')
+    (0, core_1.RefSelector)('primaryColsHeaderPanel')
 ], PrimaryColsPanel.prototype, "primaryColsHeaderPanel", void 0);
 __decorate([
-    core_1.RefSelector('primaryColsListPanel')
+    (0, core_1.RefSelector)('primaryColsListPanel')
 ], PrimaryColsPanel.prototype, "primaryColsListPanel", void 0);
 exports.PrimaryColsPanel = PrimaryColsPanel;

@@ -22,7 +22,7 @@ const addEmptyCells = (cells, rowIdx) => {
             const cell = cells[mergeMap[i].pos];
             for (let j = 1; j <= cell.mergeAcross; j++) {
                 mergedCells.push({
-                    ref: `${excelUtils_1.getExcelColumnName(mergeMap[i].excelPos + 1 + j)}${rowIdx + 1}`,
+                    ref: `${(0, excelUtils_1.getExcelColumnName)(mergeMap[i].excelPos + 1 + j)}${rowIdx + 1}`,
                     styleId: cell.styleId,
                     data: { type: 'empty', value: null }
                 });

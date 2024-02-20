@@ -13,7 +13,7 @@ class FilteredRowsComp extends nameValueComp_1.NameValueComp {
     postConstruct() {
         this.setLabel('filteredRows', 'Filtered');
         // this component is only really useful with client side row model
-        if (this.gridApi.getModel().getType() !== 'clientSide') {
+        if (this.gridApi.__getModel().getType() !== 'clientSide') {
             console.warn(`AG Grid: agFilteredRowCountComponent should only be used with the client side row model.`);
             return;
         }
@@ -48,6 +48,9 @@ class FilteredRowsComp extends nameValueComp_1.NameValueComp {
         return filteredRowCount;
     }
     init() { }
+    refresh() {
+        return true;
+    }
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
     destroy() {
@@ -55,7 +58,7 @@ class FilteredRowsComp extends nameValueComp_1.NameValueComp {
     }
 }
 __decorate([
-    core_1.Autowired('gridApi')
+    (0, core_1.Autowired)('gridApi')
 ], FilteredRowsComp.prototype, "gridApi", void 0);
 __decorate([
     core_1.PostConstruct

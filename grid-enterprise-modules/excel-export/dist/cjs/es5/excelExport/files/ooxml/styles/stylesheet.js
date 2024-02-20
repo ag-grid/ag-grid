@@ -12,7 +12,6 @@ var __assign = (this && this.__assign) || function () {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.registerStyles = exports.getStyleId = void 0;
-var core_1 = require("@ag-grid-community/core");
 var numberFormats_1 = require("./numberFormats");
 var fonts_1 = require("./fonts");
 var fills_1 = require("./fills");
@@ -34,7 +33,7 @@ var registeredCellStyles;
 var currentSheet;
 var getStyleName = function (name, currentSheet) {
     if (name.indexOf('mixedStyle') !== -1 && currentSheet > 1) {
-        name += "_" + currentSheet;
+        name += "_".concat(currentSheet);
     }
     return name;
 };
@@ -49,9 +48,9 @@ var resetStylesheetValues = function () {
     registeredCellStyles = [{ builtinId: 0, name: 'Normal', xfId: 0 }];
 };
 var registerFill = function (fill) {
-    var convertedPattern = excelLegacyConvert_1.convertLegacyPattern(fill.pattern);
-    var convertedFillColor = excelLegacyConvert_1.convertLegacyColor(fill.color);
-    var convertedPatternColor = excelLegacyConvert_1.convertLegacyColor(fill.patternColor);
+    var convertedPattern = (0, excelLegacyConvert_1.convertLegacyPattern)(fill.pattern);
+    var convertedFillColor = (0, excelLegacyConvert_1.convertLegacyColor)(fill.color);
+    var convertedPatternColor = (0, excelLegacyConvert_1.convertLegacyColor)(fill.patternColor);
     var pos = registeredFills.findIndex(function (currentFill) {
         var patternType = currentFill.patternType, fgRgb = currentFill.fgRgb, bgRgb = currentFill.bgRgb;
         if (patternType != convertedPattern ||
@@ -68,7 +67,6 @@ var registerFill = function (fill) {
     return pos;
 };
 var registerNumberFmt = function (format) {
-    format = core_1._.utf8_encode(format);
     if (excelConstants_1.numberFormatMap[format]) {
         return excelConstants_1.numberFormatMap[format];
     }
@@ -93,20 +91,20 @@ var registerBorders = function (borders) {
     var leftColor;
     var rightColor;
     if (borderLeft) {
-        leftStyle = excelLegacyConvert_1.convertLegacyBorder(borderLeft.lineStyle, borderLeft.weight);
-        leftColor = excelLegacyConvert_1.convertLegacyColor(borderLeft.color);
+        leftStyle = (0, excelLegacyConvert_1.convertLegacyBorder)(borderLeft.lineStyle, borderLeft.weight);
+        leftColor = (0, excelLegacyConvert_1.convertLegacyColor)(borderLeft.color);
     }
     if (borderRight) {
-        rightStyle = excelLegacyConvert_1.convertLegacyBorder(borderRight.lineStyle, borderRight.weight);
-        rightColor = excelLegacyConvert_1.convertLegacyColor(borderRight.color);
+        rightStyle = (0, excelLegacyConvert_1.convertLegacyBorder)(borderRight.lineStyle, borderRight.weight);
+        rightColor = (0, excelLegacyConvert_1.convertLegacyColor)(borderRight.color);
     }
     if (borderBottom) {
-        bottomStyle = excelLegacyConvert_1.convertLegacyBorder(borderBottom.lineStyle, borderBottom.weight);
-        bottomColor = excelLegacyConvert_1.convertLegacyColor(borderBottom.color);
+        bottomStyle = (0, excelLegacyConvert_1.convertLegacyBorder)(borderBottom.lineStyle, borderBottom.weight);
+        bottomColor = (0, excelLegacyConvert_1.convertLegacyColor)(borderBottom.color);
     }
     if (borderTop) {
-        topStyle = excelLegacyConvert_1.convertLegacyBorder(borderTop.lineStyle, borderTop.weight);
-        topColor = excelLegacyConvert_1.convertLegacyColor(borderTop.color);
+        topStyle = (0, excelLegacyConvert_1.convertLegacyBorder)(borderTop.lineStyle, borderTop.weight);
+        topColor = (0, excelLegacyConvert_1.convertLegacyColor)(borderTop.color);
     }
     var pos = registeredBorders.findIndex(function (currentBorder) {
         var left = currentBorder.left, right = currentBorder.right, top = currentBorder.top, bottom = currentBorder.bottom;
@@ -165,13 +163,12 @@ var registerBorders = function (borders) {
 };
 var registerFont = function (font) {
     var _a = font.fontName, name = _a === void 0 ? 'Calibri' : _a, color = font.color, size = font.size, bold = font.bold, italic = font.italic, outline = font.outline, shadow = font.shadow, strikeThrough = font.strikeThrough, underline = font.underline, family = font.family, verticalAlign = font.verticalAlign;
-    var utf8Name = name ? core_1._.utf8_encode(name) : name;
-    var convertedColor = excelLegacyConvert_1.convertLegacyColor(color);
-    var familyId = excelUtils_1.getFontFamilyId(family);
+    var convertedColor = (0, excelLegacyConvert_1.convertLegacyColor)(color);
+    var familyId = (0, excelUtils_1.getFontFamilyId)(family);
     var convertedUnderline = underline ? underline.toLocaleLowerCase() : undefined;
     var convertedVerticalAlign = verticalAlign ? verticalAlign.toLocaleLowerCase() : undefined;
     var pos = registeredFonts.findIndex(function (currentFont) {
-        if (currentFont.fontName != utf8Name ||
+        if (currentFont.fontName != name ||
             currentFont.color != convertedColor ||
             currentFont.size != size ||
             currentFont.bold != bold ||
@@ -190,7 +187,7 @@ var registerFont = function (font) {
     if (pos === -1) {
         pos = registeredFonts.length;
         registeredFonts.push({
-            fontName: utf8Name,
+            fontName: name,
             color: convertedColor,
             size: size,
             bold: bold,
@@ -206,7 +203,7 @@ var registerFont = function (font) {
     return pos;
 };
 var registerStyle = function (config) {
-    var alignment = config.alignment, borders = config.borders, font = config.font, interior = config.interior, numberFormat = config.numberFormat, protection = config.protection;
+    var alignment = config.alignment, borders = config.borders, font = config.font, interior = config.interior, numberFormat = config.numberFormat, protection = config.protection, quotePrefix = config.quotePrefix;
     var id = config.id;
     var currentFill = 0;
     var currentBorder = 0;
@@ -239,6 +236,7 @@ var registerStyle = function (config) {
         fontId: currentFont || 0,
         numFmtId: currentNumberFmt || 0,
         protection: protection,
+        quotePrefix: quotePrefix,
         xfId: 0
     });
 };

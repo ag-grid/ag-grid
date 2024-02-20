@@ -2,6 +2,7 @@ import { BeanStub } from "../context/beanStub";
 import { RowContainerCtrl } from "./rowContainer/rowContainerCtrl";
 export declare class ViewportSizeFeature extends BeanStub {
     private ctrlsService;
+    private pinnedWidthService;
     private columnModel;
     private scrollVisibleService;
     private centerContainerCtrl;
@@ -13,6 +14,8 @@ export declare class ViewportSizeFeature extends BeanStub {
     private listenForResize;
     private onScrollbarWidthChanged;
     private onCenterViewportResized;
+    private keepPinnedColumnsNarrowerThanViewport;
+    private getPinnedColumnsOverflowingViewport;
     private checkViewportAndScrolls;
     getBodyHeight(): number;
     private checkBodyHeight;

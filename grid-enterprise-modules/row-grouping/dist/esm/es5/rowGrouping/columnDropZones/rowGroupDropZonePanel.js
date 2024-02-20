@@ -55,15 +55,15 @@ var RowGroupDropZonePanel = /** @class */ (function (_super) {
         res.location = 'rowGroupColumnsList';
         return res;
     };
-    RowGroupDropZonePanel.prototype.isColumnDroppable = function (column) {
+    RowGroupDropZonePanel.prototype.isColumnDroppable = function (column, draggingEvent) {
         // we never allow grouping of secondary columns
-        if (this.gridOptionsService.is('functionsReadOnly') || !column.isPrimary()) {
+        if (this.gridOptionsService.get('functionsReadOnly') || !column.isPrimary()) {
             return false;
         }
-        return column.isAllowRowGroup() && !column.isRowGroupActive();
+        return column.isAllowRowGroup() && (!column.isRowGroupActive() || this.isSourceEventFromTarget(draggingEvent));
     };
     RowGroupDropZonePanel.prototype.updateColumns = function (columns) {
-        if (this.gridOptionsService.is('functionsPassive')) {
+        if (this.gridOptionsService.get('functionsPassive')) {
             var event_1 = {
                 type: Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST,
                 columns: columns

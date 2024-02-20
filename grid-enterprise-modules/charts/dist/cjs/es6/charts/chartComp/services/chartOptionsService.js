@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChartOptionsService = void 0;
 const core_1 = require("@ag-grid-community/core");
 const ag_charts_community_1 = require("ag-charts-community");
+const array_1 = require("../utils/array");
 const object_1 = require("../utils/object");
 const seriesTypeMapper_1 = require("../utils/seriesTypeMapper");
 class ChartOptionsService extends core_1.BeanStub {
@@ -11,26 +12,24 @@ class ChartOptionsService extends core_1.BeanStub {
         this.chartController = chartController;
     }
     getChartOption(expression) {
-        // TODO: We shouldn't be reading the chart implementation directly, but right now
-        // it isn't possible to either get option defaults OR retrieve themed options.
-        return core_1._.get(this.getChart(), expression, undefined);
+        return (0, object_1.get)(this.getChart(), expression, undefined);
     }
     setChartOption(expression, value, isSilent) {
         const chartSeriesTypes = this.chartController.getChartSeriesTypes();
         if (this.chartController.isComboChart()) {
-            chartSeriesTypes.push('cartesian');
+            chartSeriesTypes.push('common');
         }
         let chartOptions = {};
         // we need to update chart options on each series type for combo charts
         chartSeriesTypes.forEach(seriesType => {
-            chartOptions = object_1.deepMerge(chartOptions, this.createChartOptions({
+            chartOptions = (0, object_1.deepMerge)(chartOptions, this.createChartOptions({
                 seriesType,
                 expression,
                 value
             }));
         });
-        this.updateChart(chartOptions);
         if (!isSilent) {
+            this.updateChart(chartOptions);
             this.raiseChartOptionsChangedEvent();
         }
     }
@@ -41,22 +40,41 @@ class ChartOptionsService extends core_1.BeanStub {
     }
     getAxisProperty(expression) {
         var _a;
-        return core_1._.get((_a = this.getChart().axes) === null || _a === void 0 ? void 0 : _a[0], expression, undefined);
+        return (0, object_1.get)((_a = this.getChart().axes) === null || _a === void 0 ? void 0 : _a[0], expression, undefined);
     }
     setAxisProperty(expression, value) {
-        var _a;
-        // update axis options
+        this.setAxisProperties([{ expression, value }]);
+    }
+    setAxisProperties(properties) {
         const chart = this.getChart();
-        let chartOptions = {};
-        (_a = chart.axes) === null || _a === void 0 ? void 0 : _a.forEach((axis) => {
-            chartOptions = object_1.deepMerge(chartOptions, this.getUpdateAxisOptions(axis, expression, value));
-        });
-        this.updateChart(chartOptions);
-        this.raiseChartOptionsChangedEvent();
+        const chartOptions = (0, array_1.flatMap)(properties, ({ expression, value }) => {
+            var _a;
+            // Only apply the property to axes that declare the property on their prototype chain
+            const relevantAxes = (_a = chart.axes) === null || _a === void 0 ? void 0 : _a.filter((axis) => {
+                const parts = expression.split('.');
+                let current = axis;
+                for (const part of parts) {
+                    if (!(part in current)) {
+                        return false;
+                    }
+                    current = current[part];
+                }
+                return true;
+            });
+            if (!relevantAxes)
+                return [];
+            return relevantAxes.map((axis) => this.getUpdateAxisOptions(axis, expression, value));
+        })
+            // Combine all property updates into a single merged object
+            .reduce((chartOptions, axisOptions) => (0, object_1.deepMerge)(chartOptions, axisOptions), {});
+        if (Object.keys(chartOptions).length > 0) {
+            this.updateChart(chartOptions);
+            this.raiseChartOptionsChangedEvent();
+        }
     }
     getLabelRotation(axisType) {
         const axis = this.getAxis(axisType);
-        return core_1._.get(axis, 'label.rotation', undefined);
+        return (0, object_1.get)(axis, 'label.rotation', undefined);
     }
     setLabelRotation(axisType, value) {
         const chartAxis = this.getAxis(axisType);
@@ -66,9 +84,12 @@ class ChartOptionsService extends core_1.BeanStub {
             this.raiseChartOptionsChangedEvent();
         }
     }
-    getSeriesOption(expression, seriesType) {
+    getSeriesOption(expression, seriesType, calculated) {
+        // N.B. 'calculated' here refers to the fact that the property exists on the internal series object itself,
+        // rather than the properties object. This is due to us needing to reach inside the chart itself to retrieve
+        // the value, and will likely be cleaned up in a future release
         const series = this.getChart().series.find((s) => ChartOptionsService.isMatchingSeries(seriesType, s));
-        return core_1._.get(series, expression, undefined);
+        return (0, object_1.get)(calculated ? series : series === null || series === void 0 ? void 0 : series.properties.toJson(), expression, undefined);
     }
     setSeriesOption(expression, value, seriesType) {
         const chartOptions = this.createChartOptions({
@@ -96,16 +117,21 @@ class ChartOptionsService extends core_1.BeanStub {
         return (chart.axes && chart.axes[1].direction === 'y') ? chart.axes[1] : chart.axes[0];
     }
     getUpdateAxisOptions(chartAxis, expression, value) {
-        const seriesType = seriesTypeMapper_1.getSeriesType(this.getChartType());
-        const validAxisTypes = ['number', 'category', 'time', 'groupedCategory'];
+        const chartSeriesTypes = this.chartController.getChartSeriesTypes();
+        if (this.chartController.isComboChart()) {
+            chartSeriesTypes.push('common');
+        }
+        const validAxisTypes = ['number', 'category', 'time', 'grouped-category', 'angle-category', 'angle-number', 'radius-category', 'radius-number'];
         if (!validAxisTypes.includes(chartAxis.type)) {
             return {};
         }
-        return this.createChartOptions({
+        return chartSeriesTypes
+            .map((seriesType) => this.createChartOptions({
             seriesType,
             expression: `axes.${chartAxis.type}.${expression}`,
-            value
-        });
+            value,
+        }))
+            .reduce((combinedOptions, options) => (0, object_1.deepMerge)(combinedOptions, options));
     }
     getChartType() {
         return this.chartController.getChartType();
@@ -115,7 +141,8 @@ class ChartOptionsService extends core_1.BeanStub {
     }
     updateChart(chartOptions) {
         const chartRef = this.chartController.getChartProxy().getChartRef();
-        ag_charts_community_1.AgChart.updateDelta(chartRef, chartOptions);
+        chartRef.skipAnimations();
+        ag_charts_community_1.AgCharts.updateDelta(chartRef, chartOptions);
     }
     createChartOptions({ seriesType, expression, value }) {
         const overrides = {};
@@ -124,7 +151,7 @@ class ChartOptionsService extends core_1.BeanStub {
                 overrides
             }
         };
-        core_1._.set(overrides, `${seriesType}.${expression}`, value);
+        (0, object_1.set)(overrides, `${seriesType}.${expression}`, value);
         return chartOptions;
     }
     raiseChartOptionsChangedEvent() {

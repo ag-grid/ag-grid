@@ -1,4 +1,15 @@
-import { Grid, ColDef, GridOptions, GetRowIdParams, GridReadyEvent, IServerSideGetRowsParams, IsServerSideGroupOpenByDefaultParams, ServerSideTransaction, ServerSideTransactionResult } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  ColDef,
+  GridOptions,
+  GetRowIdParams,
+  GridReadyEvent,
+  IServerSideGetRowsParams,
+  IsServerSideGroupOpenByDefaultParams,
+  ServerSideTransaction,
+  ServerSideTransactionResult,
+} from '@ag-grid-community/core';
 
 declare var FakeServer: any;
 declare var createRowOnServer: any;
@@ -10,12 +21,13 @@ const columnDefs: ColDef[] = [
     { field: 'current' },
 ];
 
+let gridApi: GridApi;
+
 const gridOptions: GridOptions = {
   columnDefs,
   defaultColDef: {
     flex: 1,
     minWidth: 100,
-    resizable: true,
   },
   autoGroupColumnDef: {
     minWidth: 220,
@@ -42,7 +54,7 @@ const gridOptions: GridOptions = {
     const datasource = getServerSideDatasource(server);
 
     // register the datasource with the grid
-    params.api.setServerSideDatasource(datasource);
+    params.api.setGridOption('serverSideDatasource', datasource);
   },
 
   rowModelType: 'serverSide',
@@ -56,7 +68,7 @@ function getServerSideDatasource(server: any) {
       const response = server.getData(params.request);
 
       // adding delay to simulate real server call
-      setTimeout(function () {
+      setTimeout(() => {
         if (response.success) {
           // call the success callback
           params.success({
@@ -90,7 +102,7 @@ function createOneAggressive() {
       route: [],
       add: [{ portfolio: 'Aggressive' }],
     };
-    const result = gridOptions.api!.applyServerSideTransaction(transaction);
+    const result = gridApi!.applyServerSideTransaction(transaction);
     logResults(transaction, result);
   } else {
     // if the group already existed, add rows to it
@@ -98,7 +110,7 @@ function createOneAggressive() {
       route: ['Aggressive'],
       add: [serverResponse.newRecord],
     };
-    const result = gridOptions.api!.applyServerSideTransaction(transaction);
+    const result = gridApi!.applyServerSideTransaction(transaction);
     logResults(transaction, result);
   }
 }
@@ -106,5 +118,5 @@ function createOneAggressive() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-  new Grid(gridDiv, gridOptions);
+  gridApi = createGrid(gridDiv, gridOptions);
 });

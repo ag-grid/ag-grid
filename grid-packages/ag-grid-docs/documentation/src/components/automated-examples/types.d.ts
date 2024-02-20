@@ -8,4 +8,5 @@ export interface AutomatedExample {
     currentState: () => RunScriptState;
     isInViewport: () => boolean;
     getDebugger: () => ScriptDebugger | undefined;
+    updateDarkMode?: (darkMode: boolean) => void;
 }

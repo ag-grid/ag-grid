@@ -43,7 +43,7 @@ var ExpandListener = /** @class */ (function (_super) {
                 rowNode.childStore = this.createBean(this.storeFactory.createStore(storeParams, rowNode));
             }
         }
-        else if (this.gridOptionsService.is('purgeClosedRowNodes') && _.exists(rowNode.childStore)) {
+        else if (this.gridOptionsService.get('purgeClosedRowNodes') && _.exists(rowNode.childStore)) {
             rowNode.childStore = this.destroyBean(rowNode.childStore);
         }
         var storeUpdatedEvent = { type: Events.EVENT_STORE_UPDATED };

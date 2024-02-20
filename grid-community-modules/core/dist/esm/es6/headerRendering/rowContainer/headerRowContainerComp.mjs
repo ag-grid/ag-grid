@@ -82,8 +82,8 @@ export class HeaderRowContainerComp extends Component {
         getAllValuesInObject(oldRowComps).forEach(c => this.destroyRowComp(c));
     }
 }
-HeaderRowContainerComp.PINNED_LEFT_TEMPLATE = `<div class="ag-pinned-left-header" role="presentation"></div>`;
-HeaderRowContainerComp.PINNED_RIGHT_TEMPLATE = `<div class="ag-pinned-right-header" role="presentation"></div>`;
+HeaderRowContainerComp.PINNED_LEFT_TEMPLATE = `<div class="ag-pinned-left-header" role="rowgroup"></div>`;
+HeaderRowContainerComp.PINNED_RIGHT_TEMPLATE = `<div class="ag-pinned-right-header" role="rowgroup"></div>`;
 HeaderRowContainerComp.CENTER_TEMPLATE = `<div class="ag-header-viewport" role="presentation">
             <div class="ag-header-container" ref="eCenterContainer" role="rowgroup"></div>
         </div>`;

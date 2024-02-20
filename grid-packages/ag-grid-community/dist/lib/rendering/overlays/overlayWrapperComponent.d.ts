@@ -1,28 +1,21 @@
 import { Component } from '../../widgets/component';
-import { UserComponentFactory } from '../../components/framework/userComponentFactory';
+import { AgPromise } from '../../utils';
 import { LayoutView, UpdateLayoutClassesParams } from "../../styling/layoutFeature";
 export declare class OverlayWrapperComponent extends Component implements LayoutView {
     private static TEMPLATE;
-    userComponentFactory: UserComponentFactory;
-    private paginationProxy;
-    private gridApi;
-    private columnModel;
+    private readonly overlayService;
     eOverlayWrapper: HTMLElement;
     private activeOverlay;
     private inProgress;
     private destroyRequested;
-    private manuallyDisplayed;
+    private activeOverlayWrapperCssClass;
+    private updateListenerDestroyFunc?;
     constructor();
     updateLayoutClasses(cssClass: string, params: UpdateLayoutClassesParams): void;
     private postConstruct;
     private setWrapperTypeClass;
-    showLoadingOverlay(): void;
-    showNoRowsOverlay(): void;
-    private showOverlay;
+    showOverlay(overlayComp: AgPromise<Component> | null, overlayWrapperCssClass: string, updateListenerDestroyFunc: () => null): void;
     private destroyActiveOverlay;
     hideOverlay(): void;
     destroy(): void;
-    private showOrHideOverlay;
-    private onRowDataUpdated;
-    private onNewColumnsLoaded;
 }

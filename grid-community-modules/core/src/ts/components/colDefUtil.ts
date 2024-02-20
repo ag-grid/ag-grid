@@ -30,6 +30,7 @@ export class ColDefUtil {
         pinned: undefined,
         initialPinned: undefined,
         chartDataType: undefined,
+        cellAriaRole: undefined,
         cellEditorPopupPosition: undefined,
         headerGroupComponent: undefined,
         headerGroupComponentParams: undefined,
@@ -47,6 +48,7 @@ export class ColDefUtil {
         tooltipComponentParams: undefined,
         refData: undefined,
         columnsMenuParams: undefined,
+        columnChooserParams: undefined,
         children: undefined,
         sortingOrder: undefined,
         allowedAggFuncs: undefined,
@@ -84,6 +86,7 @@ export class ColDefUtil {
         headerCheckboxSelectionFilteredOnly: undefined,
         headerCheckboxSelectionCurrentPageOnly: undefined,
         suppressMenu: undefined,
+        suppressHeaderMenuButton: undefined,
         suppressMovable: undefined,
         lockPosition: undefined,
         lockVisible: undefined,
@@ -136,6 +139,11 @@ export class ColDefUtil {
         suppressSpanHeaderHeight: undefined,
         useValueFormatterForExport: undefined,
         useValueParserForImport: undefined,
+        mainMenuItems: undefined,
+        contextMenuItems: undefined,
+        suppressFloatingFilterButton: undefined,
+        suppressHeaderFilterButton: undefined,
+        suppressHeaderContextMenu: undefined,
     };
 
     public static ALL_PROPERTIES: ColKey[] = Object.keys(ColDefUtil.ColDefPropertyMap) as ColKey[];

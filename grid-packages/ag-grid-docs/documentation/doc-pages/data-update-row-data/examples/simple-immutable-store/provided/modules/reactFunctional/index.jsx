@@ -8,7 +8,7 @@ import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
 import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
@@ -53,16 +53,16 @@ function createItem(data) {
     return item;
 }
 
-function setGroupingEnabled(enabled, columnApi) {
+function setGroupingEnabled(enabled, api) {
     if (enabled) {
-        columnApi.applyColumnState({
+        api.applyColumnState({
             state: [
                 { colId: 'group', rowGroup: true, hide: true },
                 { colId: 'symbol', hide: true },
             ],
         });
     } else {
-        columnApi.applyColumnState({
+        api.applyColumnState({
             state: [
                 { colId: 'group', rowGroup: false, hide: false },
                 { colId: 'symbol', hide: false },
@@ -91,8 +91,6 @@ const GridExample = () => {
     const defaultColDef = useMemo(() => {
         return {
             width: 250,
-            sortable: true,
-            resizable: true,
         }
     }, []);
     const autoGroupColumnDef = useMemo(() => {
@@ -113,7 +111,7 @@ const GridExample = () => {
 
 
     const onGridReady = useCallback((params) => {
-        setGroupingEnabled(false, params.columnApi);
+        setGroupingEnabled(false, params.api);
     }, []);
 
     const addFiveItems = useCallback((append) => {
@@ -178,7 +176,7 @@ const GridExample = () => {
     }, [rowData])
 
     const onGroupingEnabled = useCallback((enabled) => {
-        setGroupingEnabled(enabled, gridRef.current.columnApi);
+        setGroupingEnabled(enabled, gridRef.current.api);
     }, [])
 
     const reverseItems = useCallback(() => {
@@ -189,37 +187,30 @@ const GridExample = () => {
     return (
         <div style={containerStyle}>
             <div style={{ "height": "100%", "width": "100%", "display": "flex", "flexDirection": "column" }}>
-                <div style={{ "marginBottom": "5px", "minHeight": "30px" }}>
-                    <button onClick={reverseItems}>Reverse</button>
-                    <button onClick={() => addFiveItems(true)}>Append</button>
-                    <button onClick={() => addFiveItems(false)}>Prepend</button>
-                    <button onClick={removeSelected}>Remove Selected</button>
-                    <button onClick={updatePrices}>Update Prices</button>
-
-                    <button id="groupingOn" onClick={() => onGroupingEnabled(true)}>Grouping On</button>
-                    <button id="groupingOff" onClick={() => onGroupingEnabled(false)}>Grouping Off</button>
-                    <span style={{
-                        "border": "1px solid lightgrey",
-                        "marginLeft": "20px",
-                        "padding": "8px",
-                        "whiteSpace": "nowrap",
-                        "display": "inline-block"
-                    }}>
-                        Move to Group:
-                        <button onClick={() => setSelectedToGroup('A')}>A</button>
-                        <button onClick={() => setSelectedToGroup('B')}>B</button>
-                        <button onClick={() => setSelectedToGroup('C')}>C</button>
-                    </span>
+                <div>
+                    <div style={{ "marginBottom": "5px", "minHeight": "30px" }}>
+                        <button onClick={reverseItems}>Reverse</button>
+                        <button onClick={() => addFiveItems(true)}>Append</button>
+                        <button onClick={() => addFiveItems(false)}>Prepend</button>
+                        <button onClick={removeSelected}>Remove Selected</button>
+                        <button onClick={updatePrices}>Update Prices</button>
+                    </div>
+                    <div style={{ "marginBottom": "5px", "minHeight": "30px" }}>
+                        <button id="groupingOn" onClick={() => onGroupingEnabled(true)}>Grouping On</button>
+                        <button id="groupingOff" onClick={() => onGroupingEnabled(false)}>Grouping Off</button>
+                        <button onClick={() => setSelectedToGroup('A')}>Move to Group A</button>
+                        <button onClick={() => setSelectedToGroup('B')}>Move to Group B</button>
+                        <button onClick={() => setSelectedToGroup('C')}>Move to Group C</button>
+                    </div>
                 </div>
                 <div style={{ "flex": "1 1 0px" }}>
 
-                    <div style={gridStyle} className="ag-theme-alpine">
+                    <div style={gridStyle} className={/** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
                         <AgGridReact
                             ref={gridRef}
                             rowData={rowData}
                             columnDefs={columnDefs}
                             defaultColDef={defaultColDef}
-                            animateRows={true}
                             rowSelection={'multiple'}
                             enableRangeSelection={true}
                             autoGroupColumnDef={autoGroupColumnDef}

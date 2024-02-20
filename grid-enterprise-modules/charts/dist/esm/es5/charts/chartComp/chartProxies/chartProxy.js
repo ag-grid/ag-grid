@@ -9,11 +9,11 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-import { _ } from "@ag-grid-community/core";
-import { _Theme, AgChart } from "ag-charts-community";
+import { _Theme, AgCharts } from "ag-charts-community";
 import { getSeriesType } from "../utils/seriesTypeMapper";
 import { deproxy } from "../utils/integration";
-import { createAgChartTheme, lookupCustomChartTheme } from './chartTheme';
+import { applyThemeOverrides, createAgChartTheme, lookupCustomChartTheme } from './chartTheme';
+import { get } from "../utils/object";
 var ChartProxy = /** @class */ (function () {
     function ChartProxy(chartProxyParams) {
         this.chartProxyParams = chartProxyParams;
@@ -24,7 +24,7 @@ var ChartProxy = /** @class */ (function () {
         this.crossFilterCallback = chartProxyParams.crossFilterCallback;
         this.standaloneChartType = getSeriesType(this.chartType);
         if (this.chart == null) {
-            this.chart = AgChart.create(this.getCommonChartOptions());
+            this.chart = AgCharts.create(this.getCommonChartOptions());
         }
         else {
             // On chart change, reset formatting panel changes.
@@ -42,7 +42,7 @@ var ChartProxy = /** @class */ (function () {
         var rawChart = deproxy(chart);
         var imageFileName = fileName || (rawChart.title ? rawChart.title.text : 'chart');
         var _a = dimensions || {}, width = _a.width, height = _a.height;
-        AgChart.download(chart, { width: width, height: height, fileName: imageFileName, fileFormat: fileFormat });
+        AgCharts.download(chart, { width: width, height: height, fileName: imageFileName, fileFormat: fileFormat });
     };
     ChartProxy.prototype.getChartImageDataURL = function (type) {
         return this.getChart().scene.getDataURL(type);
@@ -65,11 +65,11 @@ var ChartProxy = /** @class */ (function () {
         // the first column is used for X and every other column is treated as Y
         // (or alternates between Y and size for bubble)
         var seriesType = getSeriesType(this.chartProxyParams.chartType);
-        AgChart.updateDelta(this.chart, { theme: { overrides: (_a = {}, _a[seriesType] = { paired: paired }, _a) } });
+        AgCharts.updateDelta(this.chart, { theme: { overrides: (_a = {}, _a[seriesType] = { paired: paired }, _a) } });
     };
     ChartProxy.prototype.isPaired = function () {
         var seriesType = getSeriesType(this.chartProxyParams.chartType);
-        return _.get(this.getChartThemeOverrides(), seriesType + ".paired", true);
+        return get(this.getChartThemeOverrides(), "".concat(seriesType, ".paired"), true);
     };
     ChartProxy.prototype.lookupCustomChartTheme = function (themeName) {
         return lookupCustomChartTheme(this.chartProxyParams, themeName);
@@ -91,10 +91,23 @@ var ChartProxy = /** @class */ (function () {
         var _a, _b;
         // Only apply active overrides if chart is initialised.
         var existingOptions = this.clearThemeOverrides ? {} : (_b = (_a = this.chart) === null || _a === void 0 ? void 0 : _a.getOptions()) !== null && _b !== void 0 ? _b : {};
-        var formattingPanelOverrides = this.chart != null ?
-            { overrides: this.getActiveFormattingPanelOverrides() } : {};
+        var formattingPanelOverrides = this.chart != null ? this.getActiveFormattingPanelOverrides() : undefined;
         this.clearThemeOverrides = false;
-        return __assign(__assign({}, existingOptions), { theme: __assign(__assign({}, createAgChartTheme(this.chartProxyParams, this)), (updatedOverrides ? { overrides: updatedOverrides } : formattingPanelOverrides)), container: this.chartProxyParams.parentElement, mode: 'integrated' });
+        // Create a base theme and apply the various layers of overrides.
+        var baseTheme = createAgChartTheme(this.chartProxyParams, this);
+        var chartThemeDefaults = this.getChartThemeDefaults();
+        var theme = applyThemeOverrides(baseTheme, [
+            chartThemeDefaults,
+            updatedOverrides !== null && updatedOverrides !== void 0 ? updatedOverrides : formattingPanelOverrides,
+        ]);
+        return __assign(__assign({}, existingOptions), { theme: theme, container: this.chartProxyParams.parentElement, mode: 'integrated' });
+    };
+    /**
+     * Retrieve default theme overrides for the current chart type
+     */
+    ChartProxy.prototype.getChartThemeDefaults = function () {
+        // Override this method to provide chart type specific theme overrides
+        return undefined;
     };
     ChartProxy.prototype.getActiveFormattingPanelOverrides = function () {
         var _a, _b;
@@ -107,6 +120,11 @@ var ChartProxy = /** @class */ (function () {
     ChartProxy.prototype.destroy = function (_a) {
         var _b = _a === void 0 ? {} : _a, _c = _b.keepChartInstance, keepChartInstance = _c === void 0 ? false : _c;
         if (keepChartInstance) {
+            // Reset Charts animation state, so that future updates to this re-used chart instance
+            // behave as-if the chart is brand new. When switching chartTypes, this means we hide
+            // the fact we are reusing the chart instance; the user sees a new chart which behaves
+            // as-if it is a completely new and distinct chart instance.
+            this.chart.resetAnimations();
             return this.chart;
         }
         this.destroyChart();

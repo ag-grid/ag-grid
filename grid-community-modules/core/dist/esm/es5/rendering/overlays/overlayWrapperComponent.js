@@ -24,19 +24,12 @@ import { Component } from '../../widgets/component';
 import { RefSelector } from '../../widgets/componentAnnotations';
 import { clearElement } from '../../utils/dom';
 import { LayoutCssClasses, LayoutFeature } from "../../styling/layoutFeature";
-import { Events } from "../../eventKeys";
-var LoadingType;
-(function (LoadingType) {
-    LoadingType[LoadingType["Loading"] = 0] = "Loading";
-    LoadingType[LoadingType["NoRows"] = 1] = "NoRows";
-})(LoadingType || (LoadingType = {}));
 var OverlayWrapperComponent = /** @class */ (function (_super) {
     __extends(OverlayWrapperComponent, _super);
     function OverlayWrapperComponent() {
         var _this = _super.call(this, OverlayWrapperComponent.TEMPLATE) || this;
         _this.inProgress = false;
         _this.destroyRequested = false;
-        _this.manuallyDisplayed = false;
         return _this;
     }
     OverlayWrapperComponent.prototype.updateLayoutClasses = function (cssClass, params) {
@@ -48,59 +41,40 @@ var OverlayWrapperComponent = /** @class */ (function (_super) {
     OverlayWrapperComponent.prototype.postConstruct = function () {
         this.createManagedBean(new LayoutFeature(this));
         this.setDisplayed(false, { skipAriaHidden: true });
-        this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, this.onRowDataUpdated.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
-        if (this.gridOptionsService.isRowModelType('clientSide') && !this.gridOptionsService.get('rowData')) {
-            this.showLoadingOverlay();
-        }
-        this.gridApi.registerOverlayWrapperComp(this);
+        this.overlayService.registerOverlayWrapperComp(this);
     };
-    OverlayWrapperComponent.prototype.setWrapperTypeClass = function (loadingType) {
+    OverlayWrapperComponent.prototype.setWrapperTypeClass = function (overlayWrapperCssClass) {
         var overlayWrapperClassList = this.eOverlayWrapper.classList;
-        overlayWrapperClassList.toggle('ag-overlay-loading-wrapper', loadingType === LoadingType.Loading);
-        overlayWrapperClassList.toggle('ag-overlay-no-rows-wrapper', loadingType === LoadingType.NoRows);
-    };
-    OverlayWrapperComponent.prototype.showLoadingOverlay = function () {
-        if (this.gridOptionsService.is('suppressLoadingOverlay')) {
-            return;
+        if (this.activeOverlayWrapperCssClass) {
+            overlayWrapperClassList.toggle(this.activeOverlayWrapperCssClass, false);
         }
-        var params = {};
-        var compDetails = this.userComponentFactory.getLoadingOverlayCompDetails(params);
-        var promise = compDetails.newAgStackInstance();
-        this.showOverlay(promise, LoadingType.Loading);
+        this.activeOverlayWrapperCssClass = overlayWrapperCssClass;
+        overlayWrapperClassList.toggle(overlayWrapperCssClass, true);
     };
-    OverlayWrapperComponent.prototype.showNoRowsOverlay = function () {
-        if (this.gridOptionsService.is('suppressNoRowsOverlay')) {
-            return;
-        }
-        var params = {};
-        var compDetails = this.userComponentFactory.getNoRowsOverlayCompDetails(params);
-        var promise = compDetails.newAgStackInstance();
-        this.showOverlay(promise, LoadingType.NoRows);
-    };
-    OverlayWrapperComponent.prototype.showOverlay = function (workItem, type) {
+    OverlayWrapperComponent.prototype.showOverlay = function (overlayComp, overlayWrapperCssClass, updateListenerDestroyFunc) {
         var _this = this;
         if (this.inProgress) {
             return;
         }
-        this.setWrapperTypeClass(type);
+        this.setWrapperTypeClass(overlayWrapperCssClass);
         this.destroyActiveOverlay();
         this.inProgress = true;
-        if (workItem) {
-            workItem.then(function (comp) {
+        if (overlayComp) {
+            overlayComp.then(function (comp) {
                 _this.inProgress = false;
                 _this.eOverlayWrapper.appendChild(comp.getGui());
                 _this.activeOverlay = comp;
+                _this.updateListenerDestroyFunc = updateListenerDestroyFunc;
                 if (_this.destroyRequested) {
                     _this.destroyRequested = false;
                     _this.destroyActiveOverlay();
                 }
             });
         }
-        this.manuallyDisplayed = this.columnModel.isReady() && !this.paginationProxy.isEmpty();
         this.setDisplayed(true, { skipAriaHidden: true });
     };
     OverlayWrapperComponent.prototype.destroyActiveOverlay = function () {
+        var _a;
         if (this.inProgress) {
             this.destroyRequested = true;
             return;
@@ -109,10 +83,10 @@ var OverlayWrapperComponent = /** @class */ (function (_super) {
             return;
         }
         this.activeOverlay = this.getContext().destroyBean(this.activeOverlay);
+        (_a = this.updateListenerDestroyFunc) === null || _a === void 0 ? void 0 : _a.call(this);
         clearElement(this.eOverlayWrapper);
     };
     OverlayWrapperComponent.prototype.hideOverlay = function () {
-        this.manuallyDisplayed = false;
         this.destroyActiveOverlay();
         this.setDisplayed(false, { skipAriaHidden: true });
     };
@@ -120,42 +94,11 @@ var OverlayWrapperComponent = /** @class */ (function (_super) {
         this.destroyActiveOverlay();
         _super.prototype.destroy.call(this);
     };
-    OverlayWrapperComponent.prototype.showOrHideOverlay = function () {
-        var isEmpty = this.paginationProxy.isEmpty();
-        var isSuppressNoRowsOverlay = this.gridOptionsService.is('suppressNoRowsOverlay');
-        if (isEmpty && !isSuppressNoRowsOverlay) {
-            this.showNoRowsOverlay();
-        }
-        else {
-            this.hideOverlay();
-        }
-    };
-    OverlayWrapperComponent.prototype.onRowDataUpdated = function () {
-        this.showOrHideOverlay();
-    };
-    OverlayWrapperComponent.prototype.onNewColumnsLoaded = function () {
-        // hide overlay if columns and rows exist, this can happen if columns are loaded after data.
-        // this problem exists before of the race condition between the services (column controller in this case)
-        // and the view (grid panel). if the model beans were all initialised first, and then the view beans second,
-        // this race condition would not happen.
-        if (this.columnModel.isReady() && !this.paginationProxy.isEmpty() && !this.manuallyDisplayed) {
-            this.hideOverlay();
-        }
-    };
     // wrapping in outer div, and wrapper, is needed to center the loading icon
-    OverlayWrapperComponent.TEMPLATE = "\n        <div class=\"ag-overlay\" aria-hidden=\"true\">\n            <div class=\"ag-overlay-panel\">\n                <div class=\"ag-overlay-wrapper\" ref=\"eOverlayWrapper\"></div>\n            </div>\n        </div>";
+    OverlayWrapperComponent.TEMPLATE = "\n        <div class=\"ag-overlay\" role=\"presentation\">\n            <div class=\"ag-overlay-panel\" role=\"presentation\">\n                <div class=\"ag-overlay-wrapper\" ref=\"eOverlayWrapper\" role=\"presentation\"></div>\n            </div>\n        </div>";
     __decorate([
-        Autowired('userComponentFactory')
-    ], OverlayWrapperComponent.prototype, "userComponentFactory", void 0);
-    __decorate([
-        Autowired('paginationProxy')
-    ], OverlayWrapperComponent.prototype, "paginationProxy", void 0);
-    __decorate([
-        Autowired('gridApi')
-    ], OverlayWrapperComponent.prototype, "gridApi", void 0);
-    __decorate([
-        Autowired('columnModel')
-    ], OverlayWrapperComponent.prototype, "columnModel", void 0);
+        Autowired('overlayService')
+    ], OverlayWrapperComponent.prototype, "overlayService", void 0);
     __decorate([
         RefSelector('eOverlayWrapper')
     ], OverlayWrapperComponent.prototype, "eOverlayWrapper", void 0);

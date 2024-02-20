@@ -4,7 +4,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Component, Grid, RefSelector, _, ModuleRegistry } from "@ag-grid-community/core";
+import { Component, RefSelector, _, ModuleRegistry, createGrid, ColumnApi } from "@ag-grid-community/core";
 import { DetailCellRendererCtrl } from "./detailCellRendererCtrl.mjs";
 export class DetailCellRenderer extends Component {
     init(params) {
@@ -75,26 +75,23 @@ export class DetailCellRenderer extends Component {
         // this is only used by Angular and Vue, as React uses native React AG Grid detail grids
         const frameworkComponentWrapper = this.context.getBean('frameworkComponentWrapper');
         const frameworkOverrides = this.getFrameworkOverrides();
-        // tslint:disable-next-line
-        new Grid(this.eDetailGrid, gridOptions, {
+        const api = createGrid(this.eDetailGrid, gridOptions, {
             frameworkOverrides,
             providedBeanInstances: {
                 agGridReact: agGridReactCloned,
-                frameworkComponentWrapper: frameworkComponentWrapper
+                frameworkComponentWrapper: frameworkComponentWrapper,
             },
-            modules: ModuleRegistry.__getGridRegisteredModules(this.params.api.getGridId())
+            modules: ModuleRegistry.__getGridRegisteredModules(this.params.api.getGridId()),
         });
-        this.detailApi = gridOptions.api;
-        this.ctrl.registerDetailWithMaster(gridOptions.api, gridOptions.columnApi);
+        this.detailApi = api;
+        this.ctrl.registerDetailWithMaster(api, new ColumnApi(api));
         this.addDestroyFunc(() => {
-            if (gridOptions.api) {
-                gridOptions.api.destroy();
-            }
+            api === null || api === void 0 ? void 0 : api.destroy();
         });
     }
     setRowData(rowData) {
         // ensure detail grid api still exists (grid may be destroyed when async call tries to set data)
-        this.detailApi && this.detailApi.setRowData(rowData);
+        this.detailApi && this.detailApi.setGridOption('rowData', rowData);
     }
 }
 DetailCellRenderer.TEMPLATE = `<div class="ag-details-row" role="gridcell">

@@ -74,7 +74,7 @@ var RowContainerHeightService = /** @class */ (function (_super) {
         this.maxScrollY = this.uiContainerHeight - this.uiBodyHeight;
         var scrollPercent = this.scrollY / this.maxScrollY;
         var divStretchOffset = scrollPercent * this.pixelsToShave;
-        this.logger.log("Div Stretch Offset = " + divStretchOffset + " (" + this.pixelsToShave + " * " + scrollPercent + ")");
+        this.logger.log("Div Stretch Offset = ".concat(divStretchOffset, " (").concat(this.pixelsToShave, " * ").concat(scrollPercent, ")"));
         this.setDivStretchOffset(divStretchOffset);
     };
     RowContainerHeightService.prototype.setUiContainerHeight = function (height) {

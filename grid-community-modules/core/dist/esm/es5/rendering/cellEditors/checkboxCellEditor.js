@@ -34,7 +34,8 @@ var CheckboxCellEditor = /** @class */ (function (_super) {
         this.params = params;
         var isSelected = (_a = params.value) !== null && _a !== void 0 ? _a : undefined;
         this.eCheckbox.setValue(isSelected);
-        this.eCheckbox.getInputElement().setAttribute('tabindex', '-1');
+        var inputEl = this.eCheckbox.getInputElement();
+        inputEl.setAttribute('tabindex', '-1');
         this.setAriaLabel(isSelected);
         this.addManagedListener(this.eCheckbox, Events.EVENT_FIELD_VALUE_CHANGED, function (event) { return _this.setAriaLabel(event.selected); });
     };
@@ -56,7 +57,7 @@ var CheckboxCellEditor = /** @class */ (function (_super) {
         var translate = this.localeService.getLocaleTextFunc();
         var stateName = getAriaCheckboxStateName(translate, isSelected);
         var ariaLabel = translate('ariaToggleCellValue', 'Press SPACE to toggle cell value');
-        this.eCheckbox.setInputAriaLabel(ariaLabel + " (" + stateName + ")");
+        this.eCheckbox.setInputAriaLabel("".concat(ariaLabel, " (").concat(stateName, ")"));
     };
     __decorate([
         RefSelector('eCheckbox')

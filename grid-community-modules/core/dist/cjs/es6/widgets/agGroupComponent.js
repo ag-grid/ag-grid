@@ -69,8 +69,8 @@ class AgGroupComponent extends component_1.Component {
         this.refreshChildDisplay();
     }
     setupExpandContract() {
-        this.eGroupClosedIcon.appendChild(icon_1.createIcon('columnSelectClosed', this.gridOptionsService, null));
-        this.eGroupOpenedIcon.appendChild(icon_1.createIcon('columnSelectOpen', this.gridOptionsService, null));
+        this.eGroupClosedIcon.appendChild((0, icon_1.createIcon)('columnSelectClosed', this.gridOptionsService, null));
+        this.eGroupOpenedIcon.appendChild((0, icon_1.createIcon)('columnSelectOpen', this.gridOptionsService, null));
         this.addManagedListener(this.eTitleBar, 'click', () => this.toggleGroupExpand());
         this.addManagedListener(this.eTitleBar, 'keydown', (e) => {
             switch (e.key) {
@@ -89,14 +89,14 @@ class AgGroupComponent extends component_1.Component {
     }
     refreshAriaStatus() {
         if (!this.suppressOpenCloseIcons) {
-            aria_1.setAriaExpanded(this.eTitleBar, this.expanded);
+            (0, aria_1.setAriaExpanded)(this.eTitleBar, this.expanded);
         }
     }
     refreshChildDisplay() {
         const showIcon = !this.suppressOpenCloseIcons;
-        dom_1.setDisplayed(this.eToolbar, this.expanded && !this.suppressEnabledCheckbox);
-        dom_1.setDisplayed(this.eGroupOpenedIcon, showIcon && this.expanded);
-        dom_1.setDisplayed(this.eGroupClosedIcon, showIcon && !this.expanded);
+        (0, dom_1.setDisplayed)(this.eToolbar, this.expanded && !this.suppressEnabledCheckbox);
+        (0, dom_1.setDisplayed)(this.eGroupOpenedIcon, showIcon && this.expanded);
+        (0, dom_1.setDisplayed)(this.eGroupClosedIcon, showIcon && !this.expanded);
     }
     isExpanded() {
         return this.expanded;
@@ -114,7 +114,7 @@ class AgGroupComponent extends component_1.Component {
         if (this.suppressOpenCloseIcons) {
             this.expanded = true;
             this.refreshChildDisplay();
-            dom_1.setDisplayed(this.eContainer, true);
+            (0, dom_1.setDisplayed)(this.eContainer, true);
             return this;
         }
         expanded = expanded != null ? expanded : !this.expanded;
@@ -124,23 +124,29 @@ class AgGroupComponent extends component_1.Component {
         this.expanded = expanded;
         this.refreshAriaStatus();
         this.refreshChildDisplay();
-        dom_1.setDisplayed(this.eContainer, expanded);
+        (0, dom_1.setDisplayed)(this.eContainer, expanded);
         this.dispatchEvent({ type: this.expanded ? AgGroupComponent.EVENT_EXPANDED : AgGroupComponent.EVENT_COLLAPSED });
         return this;
     }
     addItems(items) {
         items.forEach(item => this.addItem(item));
     }
+    prependItem(item) {
+        this.insertItem(item, this.eContainer.firstChild);
+    }
     addItem(item) {
+        this.insertItem(item, null);
+    }
+    insertItem(item, before) {
         const container = this.eContainer;
         const el = item instanceof component_1.Component ? item.getGui() : item;
         el.classList.add('ag-group-item', `ag-${this.cssIdentifier}-group-item`);
-        container.appendChild(el);
+        container.insertBefore(el, before);
         this.items.push(el);
     }
     hideItem(hide, index) {
         const itemToHide = this.items[index];
-        dom_1.setDisplayed(itemToHide, !hide);
+        (0, dom_1.setDisplayed)(itemToHide, !hide);
     }
     setTitle(title) {
         this.eTitle.innerText = title;
@@ -197,25 +203,25 @@ class AgGroupComponent extends component_1.Component {
 AgGroupComponent.EVENT_EXPANDED = 'expanded';
 AgGroupComponent.EVENT_COLLAPSED = 'collapsed';
 __decorate([
-    componentAnnotations_1.RefSelector('eTitleBar')
+    (0, componentAnnotations_1.RefSelector)('eTitleBar')
 ], AgGroupComponent.prototype, "eTitleBar", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eGroupOpenedIcon')
+    (0, componentAnnotations_1.RefSelector)('eGroupOpenedIcon')
 ], AgGroupComponent.prototype, "eGroupOpenedIcon", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eGroupClosedIcon')
+    (0, componentAnnotations_1.RefSelector)('eGroupClosedIcon')
 ], AgGroupComponent.prototype, "eGroupClosedIcon", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eToolbar')
+    (0, componentAnnotations_1.RefSelector)('eToolbar')
 ], AgGroupComponent.prototype, "eToolbar", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('cbGroupEnabled')
+    (0, componentAnnotations_1.RefSelector)('cbGroupEnabled')
 ], AgGroupComponent.prototype, "cbGroupEnabled", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eTitle')
+    (0, componentAnnotations_1.RefSelector)('eTitle')
 ], AgGroupComponent.prototype, "eTitle", void 0);
 __decorate([
-    componentAnnotations_1.RefSelector('eContainer')
+    (0, componentAnnotations_1.RefSelector)('eContainer')
 ], AgGroupComponent.prototype, "eContainer", void 0);
 __decorate([
     context_1.PostConstruct

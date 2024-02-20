@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.1.0
+// Type definitions for @ag-grid-community/core v31.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { NumberFilterModel } from './numberFilter';
@@ -11,6 +11,7 @@ export declare class NumberFloatingFilter extends TextInputFloatingFilter<Number
     private allowedCharPattern;
     init(params: INumberFloatingFilterParams): void;
     onParamsUpdated(params: INumberFloatingFilterParams): void;
+    refresh(params: INumberFloatingFilterParams): void;
     protected getDefaultFilterOptions(): string[];
     protected getFilterModelFormatter(): SimpleFilterModelFormatter;
     protected createFloatingFilterInputService(params: INumberFloatingFilterParams): FloatingFilterInputService;

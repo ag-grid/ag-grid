@@ -30,17 +30,29 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
 import { _, Autowired, BeanStub, Events, PostConstruct } from "@ag-grid-community/core";
-import { _Theme } from "ag-charts-community";
-import { getSeriesType } from "./utils/seriesTypeMapper";
+import { _Theme, _ModuleSupport } from "ag-charts-community";
+import { getSeriesType, isHierarchical } from "./utils/seriesTypeMapper";
 import { isStockTheme } from "./chartProxies/chartTheme";
 import { UpdateParamsValidator } from "./utils/UpdateParamsValidator";
-export var DEFAULT_THEMES = ['ag-default', 'ag-material', 'ag-pastel', 'ag-vivid', 'ag-solar'];
+export var DEFAULT_THEMES = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];
 var ChartController = /** @class */ (function (_super) {
     __extends(ChartController, _super);
     function ChartController(model) {
         var _this = _super.call(this) || this;
         _this.model = model;
+        _this.isEnterprise = function () { return _ModuleSupport.enterpriseModule.isEnterprise; };
         return _this;
     }
     ChartController.prototype.init = function () {
@@ -64,10 +76,17 @@ var ChartController = /** @class */ (function (_super) {
         this.addManagedListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.updateForDataChange.bind(this));
     };
     ChartController.prototype.update = function (params) {
-        var _a, _b, _c, _d, _e, _f, _g;
-        if (!this.validUpdateType(params) || !UpdateParamsValidator.validateChartParams(params)) {
+        if (!this.validUpdateType(params))
             return false;
-        }
+        var validationResult = UpdateParamsValidator.validateChartParams(params);
+        if (!validationResult)
+            return false;
+        var validParams = validationResult === true ? params : validationResult;
+        this.applyValidatedChartParams(validParams);
+        return true;
+    };
+    ChartController.prototype.applyValidatedChartParams = function (params) {
+        var _a, _b, _c, _d, _e, _f, _g;
         var chartId = params.chartId, chartType = params.chartType, chartThemeName = params.chartThemeName, unlinkChart = params.unlinkChart;
         // create a common base for the chart model parameters (this covers pivot chart updates)
         var common = {
@@ -80,7 +99,7 @@ var ChartController = /** @class */ (function (_super) {
             aggFunc: this.model.aggFunc,
             seriesChartTypes: undefined,
             suppressChartRanges: false,
-            crossFiltering: false
+            crossFiltering: false,
         };
         var chartModelParams = __assign({}, common);
         // modify the chart model properties based on the type of update
@@ -102,7 +121,6 @@ var ChartController = /** @class */ (function (_super) {
         // if the chart should be unlinked or chart ranges suppressed, remove all cell ranges; otherwise, set the chart range
         var removeChartCellRanges = chartModelParams.unlinkChart || chartModelParams.suppressChartRanges;
         removeChartCellRanges ? (_g = this.rangeService) === null || _g === void 0 ? void 0 : _g.setCellRanges([]) : this.setChartRange();
-        return true;
     };
     ChartController.prototype.updateForGridChange = function () {
         if (this.model.unlinked) {
@@ -130,18 +148,19 @@ var ChartController = /** @class */ (function (_super) {
         this.raiseChartRangeSelectionChangedEvent();
     };
     ChartController.prototype.getChartUpdateParams = function (updatedOverrides) {
+        var _this = this;
         var selectedCols = this.getSelectedValueColState();
         var fields = selectedCols.map(function (c) { return ({ colId: c.colId, displayName: c.displayName }); });
         var data = this.getChartData();
-        var selectedDimension = this.getSelectedDimension();
+        var selectedDimensions = this.getSelectedDimensions();
         return {
             data: data,
             grouping: this.isGrouping(),
-            category: {
+            categories: selectedDimensions.map(function (selectedDimension) { return ({
                 id: selectedDimension.colId,
                 name: selectedDimension.displayName,
-                chartDataType: this.model.getChartDataType(selectedDimension.colId)
-            },
+                chartDataType: _this.model.getChartDataType(selectedDimension.colId)
+            }); }),
             fields: fields,
             chartId: this.getChartId(),
             getCrossFilteringContext: function () { return ({ lastSelectedChartId: 'xxx' }); },
@@ -176,15 +195,41 @@ var ChartController = /** @class */ (function (_super) {
         return this.model.chartType;
     };
     ChartController.prototype.setChartType = function (chartType) {
+        var e_1, _a;
+        // If we are changing from a multi-dimensional chart type to a single-dimensional chart type,
+        // ensure that only the first selected dimension column remains selected
+        var previousChartType = this.model.chartType;
+        if (isHierarchical(previousChartType) && !isHierarchical(chartType)) {
+            var hasSelectedDimension = false;
+            try {
+                for (var _b = __values(this.model.dimensionColState), _c = _b.next(); !_c.done; _c = _b.next()) {
+                    var colState = _c.value;
+                    if (!colState.selected)
+                        continue;
+                    if (hasSelectedDimension)
+                        colState.selected = false;
+                    hasSelectedDimension = true;
+                }
+            }
+            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            finally {
+                try {
+                    if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+                }
+                finally { if (e_1) throw e_1.error; }
+            }
+        }
         this.model.chartType = chartType;
         this.model.comboChartModel.updateSeriesChartTypes();
         this.raiseChartModelUpdateEvent();
         this.raiseChartOptionsChangedEvent();
     };
-    ChartController.prototype.setChartThemeName = function (chartThemeName) {
+    ChartController.prototype.setChartThemeName = function (chartThemeName, silent) {
         this.model.chartThemeName = chartThemeName;
-        this.raiseChartModelUpdateEvent();
-        this.raiseChartOptionsChangedEvent();
+        if (!silent) {
+            this.raiseChartModelUpdateEvent();
+            this.raiseChartOptionsChangedEvent();
+        }
     };
     ChartController.prototype.getChartThemeName = function () {
         return this.model.chartThemeName;
@@ -201,16 +246,28 @@ var ChartController = /** @class */ (function (_super) {
     ChartController.prototype.isCrossFilterChart = function () {
         return this.model.crossFiltering;
     };
-    ChartController.prototype.getThemes = function () {
+    ChartController.prototype.getThemeNames = function () {
         return this.gridOptionsService.get('chartThemes') || DEFAULT_THEMES;
     };
-    ChartController.prototype.getPalettes = function () {
+    ChartController.prototype.getThemes = function () {
         var _this = this;
-        var themeNames = this.getThemes();
+        var themeNames = this.getThemeNames();
         return themeNames.map(function (themeName) {
             var stockTheme = isStockTheme(themeName);
             var theme = stockTheme ? themeName : _this.chartProxy.lookupCustomChartTheme(themeName);
-            return _Theme.getChartTheme(theme).palette;
+            return _Theme.getChartTheme(theme);
+        });
+    };
+    ChartController.prototype.getPalettes = function () {
+        var themes = this.getThemes();
+        return themes.map(function (theme) {
+            return theme.palette;
+        });
+    };
+    ChartController.prototype.getThemeTemplateParameters = function () {
+        var themes = this.getThemes();
+        return themes.map(function (theme) {
+            return theme.getTemplateParameters();
         });
     };
     ChartController.prototype.getValueColState = function () {
@@ -219,8 +276,8 @@ var ChartController = /** @class */ (function (_super) {
     ChartController.prototype.getSelectedValueColState = function () {
         return this.getValueColState().filter(function (cs) { return cs.selected; });
     };
-    ChartController.prototype.getSelectedDimension = function () {
-        return this.model.getSelectedDimension();
+    ChartController.prototype.getSelectedDimensions = function () {
+        return this.model.getSelectedDimensions();
     };
     ChartController.prototype.displayNameMapper = function (col) {
         var columnNames = this.model.columnNames[col.colId];
@@ -315,7 +372,7 @@ var ChartController = /** @class */ (function (_super) {
         return this.getSeriesChartTypes().filter(function (s) { return selectedColIds.includes(s.colId); });
     };
     ChartController.prototype.getChartSeriesTypes = function () {
-        var supportedComboSeriesTypes = ['line', 'column', 'area'];
+        var supportedComboSeriesTypes = ['line', 'bar', 'area'];
         return this.isComboChart() ? supportedComboSeriesTypes : [getSeriesType(this.getChartType())];
     };
     ChartController.prototype.getCellRanges = function () {
@@ -339,9 +396,9 @@ var ChartController = /** @class */ (function (_super) {
         };
         var currentChartType = (_a = Object.keys(chartTypeMap).find(function (type) { return chartTypeMap[type](); })) !== null && _a !== void 0 ? _a : 'Range Chart';
         var valid = params.type ===
-            "" + currentChartType[0].toLowerCase() + currentChartType.slice(1).replace(/ /g, '') + "Update";
+            "".concat(currentChartType[0].toLowerCase()).concat(currentChartType.slice(1).replace(/ /g, ''), "Update");
         if (!valid) {
-            console.warn("AG Grid - Unable to update chart as a '" + params.type + "' update type is not permitted on a " + currentChartType + ".");
+            console.warn("AG Grid - Unable to update chart as a '".concat(params.type, "' update type is not permitted on a ").concat(currentChartType, "."));
         }
         return valid;
     };

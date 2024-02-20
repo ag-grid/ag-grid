@@ -18,7 +18,7 @@ import { VueComponentFactory } from './VueComponentFactory';
 var VueFrameworkOverrides = /** @class */ (function (_super) {
     __extends(VueFrameworkOverrides, _super);
     function VueFrameworkOverrides(parent) {
-        var _this = _super.call(this) || this;
+        var _this = _super.call(this, 'vue') || this;
         _this.parent = parent;
         return _this;
     }

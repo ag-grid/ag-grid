@@ -33,6 +33,10 @@ class BaseDropZonePanel extends core_1.Component {
     setBeans(beans) {
         this.beans = beans;
     }
+    isSourceEventFromTarget(draggingEvent) {
+        const { dropZoneTarget, dragSource } = draggingEvent;
+        return dropZoneTarget.contains(dragSource.eElement);
+    }
     destroy() {
         this.destroyGui();
         super.destroy();
@@ -50,7 +54,7 @@ class BaseDropZonePanel extends core_1.Component {
             handleKeyDown: this.handleKeyDown.bind(this)
         }));
         this.addManagedListener(this.beans.eventService, core_1.Events.EVENT_NEW_COLUMNS_LOADED, this.refreshGui.bind(this));
-        this.addManagedPropertyListener('functionsReadOnly', this.refreshGui.bind(this));
+        this.addManagedPropertyListeners(['functionsReadOnly', 'rowGroupPanelSuppressSort', 'groupLockGroupColumns'], this.refreshGui.bind(this));
         this.setupDropTarget();
         this.positionableFeature = new core_1.PositionableFeature(this.getGui(), { minHeight: 100 });
         this.createManagedBean(this.positionableFeature);
@@ -65,7 +69,7 @@ class BaseDropZonePanel extends core_1.Component {
         let isNext = e.key === core_1.KeyCode.DOWN;
         let isPrevious = e.key === core_1.KeyCode.UP;
         if (!isVertical) {
-            const isRtl = this.gridOptionsService.is('enableRtl');
+            const isRtl = this.gridOptionsService.get('enableRtl');
             isNext = (!isRtl && e.key === core_1.KeyCode.RIGHT) || (isRtl && e.key === core_1.KeyCode.LEFT);
             isPrevious = (!isRtl && e.key === core_1.KeyCode.LEFT) || (isRtl && e.key === core_1.KeyCode.RIGHT);
         }
@@ -99,15 +103,25 @@ class BaseDropZonePanel extends core_1.Component {
         // not interested in row drags
         return type === core_1.DragSourceType.HeaderCell || type === core_1.DragSourceType.ToolPanel;
     }
+    minimumAllowedNewInsertIndex() {
+        const numberOfLockedCols = this.gridOptionsService.get('groupLockGroupColumns');
+        const numberOfGroupCols = this.colModel.getRowGroupColumns().length;
+        if (numberOfLockedCols === -1) {
+            return numberOfGroupCols;
+        }
+        return Math.min(numberOfLockedCols, numberOfGroupCols);
+    }
     checkInsertIndex(draggingEvent) {
         const newIndex = this.getNewInsertIndex(draggingEvent);
         // <0 happens when drag is no a direction we are interested in, eg drag is up/down but in horizontal panel
         if (newIndex < 0) {
             return false;
         }
-        const changed = newIndex !== this.insertIndex;
+        const minimumAllowedIndex = this.minimumAllowedNewInsertIndex();
+        const newAdjustedIndex = Math.max(minimumAllowedIndex, newIndex);
+        const changed = newAdjustedIndex !== this.insertIndex;
         if (changed) {
-            this.insertIndex = newIndex;
+            this.insertIndex = newAdjustedIndex;
         }
         return changed;
     }
@@ -119,7 +133,7 @@ class BaseDropZonePanel extends core_1.Component {
         const hoveredIndex = boundsList.findIndex(rect => (this.horizontal ? (rect.right > mouseLocation && rect.left < mouseLocation) : (rect.top < mouseLocation && rect.bottom > mouseLocation)));
         // not hovering a non-ghost component
         if (hoveredIndex === -1) {
-            const enableRtl = this.beans.gridOptionsService.is('enableRtl');
+            const enableRtl = this.beans.gridOptionsService.get('enableRtl');
             // if mouse is below or right of all components then new index should be placed last
             const isLast = boundsList.every(rect => (mouseLocation > (this.horizontal ? rect.right : rect.bottom)));
             if (isLast) {
@@ -161,20 +175,26 @@ class BaseDropZonePanel extends core_1.Component {
         const dragColumns = draggingEvent.dragSource.getDragItem().columns || [];
         this.state = BaseDropZonePanel.STATE_NEW_COLUMNS_IN;
         // take out columns that are not droppable
-        const goodDragColumns = dragColumns.filter(this.isColumnDroppable.bind(this));
-        if (goodDragColumns.length > 0) {
-            const hideColumnOnExit = this.isRowGroupPanel() && !this.gridOptionsService.is('suppressRowGroupHidesColumns') && !draggingEvent.fromNudge;
-            if (hideColumnOnExit) {
-                const dragItem = draggingEvent.dragSource.getDragItem();
-                const columns = dragItem.columns;
-                this.setColumnsVisible(columns, false, "uiColumnDragged");
-            }
-            this.potentialDndColumns = goodDragColumns;
-            this.checkInsertIndex(draggingEvent);
-            this.refreshGui();
+        const goodDragColumns = dragColumns.filter(col => this.isColumnDroppable(col, draggingEvent));
+        const alreadyPresent = goodDragColumns.every(col => this.childColumnComponents.map(cmp => cmp.getColumn()).indexOf(col) !== -1);
+        if (goodDragColumns.length === 0) {
+            return;
         }
+        this.potentialDndColumns = goodDragColumns;
+        if (alreadyPresent) {
+            this.state = BaseDropZonePanel.STATE_NOT_DRAGGING;
+            return;
+        }
+        const hideColumnOnExit = this.isRowGroupPanel() && !this.gridOptionsService.get('suppressRowGroupHidesColumns') && !draggingEvent.fromNudge;
+        if (hideColumnOnExit) {
+            const dragItem = draggingEvent.dragSource.getDragItem();
+            const columns = dragItem.columns;
+            this.setColumnsVisible(columns, false, "uiColumnDragged");
+        }
+        this.checkInsertIndex(draggingEvent);
+        this.refreshGui();
     }
-    setColumnsVisible(columns, visible, source = "api") {
+    setColumnsVisible(columns, visible, source) {
         if (columns) {
             const allowedCols = columns.filter(c => !c.getColDef().lockVisible);
             this.colModel.setColumnsVisible(allowedCols, visible, source);
@@ -194,7 +214,7 @@ class BaseDropZonePanel extends core_1.Component {
             this.removeColumns(columns);
         }
         if (this.isPotentialDndColumns()) {
-            const showColumnOnExit = this.isRowGroupPanel() && !this.gridOptionsService.is('suppressMakeColumnVisibleAfterUnGroup') && !draggingEvent.fromNudge;
+            const showColumnOnExit = this.isRowGroupPanel() && !this.gridOptionsService.get('suppressMakeColumnVisibleAfterUnGroup') && !draggingEvent.fromNudge;
             if (showColumnOnExit) {
                 const dragItem = draggingEvent.dragSource.getDragItem();
                 this.setColumnsVisible(dragItem.columns, true, "uiColumnDragged");
@@ -220,7 +240,7 @@ class BaseDropZonePanel extends core_1.Component {
             // cause a refresh. This gives a nice GUI where the ghost stays until the app has caught
             // up with the changes. However, if there was no change in the order, then we do need to
             // refresh to reset the columns
-            if (!this.beans.gridOptionsService.is('functionsPassive') || !success) {
+            if (!this.beans.gridOptionsService.get('functionsPassive') || !success) {
                 this.refreshGui();
             }
         }
@@ -381,7 +401,7 @@ class BaseDropZonePanel extends core_1.Component {
         // only add the arrows if the layout is horizontal
         if (this.horizontal) {
             // for RTL it's a left arrow, otherwise it's a right arrow
-            const enableRtl = this.beans.gridOptionsService.is('enableRtl');
+            const enableRtl = this.beans.gridOptionsService.get('enableRtl');
             const icon = core_1._.createIconNoSpan(enableRtl ? 'smallLeft' : 'smallRight', this.beans.gridOptionsService);
             this.addElementClasses(icon, 'cell-separator');
             eParent.appendChild(icon);
@@ -392,9 +412,9 @@ BaseDropZonePanel.STATE_NOT_DRAGGING = 'notDragging';
 BaseDropZonePanel.STATE_NEW_COLUMNS_IN = 'newColumnsIn';
 BaseDropZonePanel.STATE_REARRANGE_COLUMNS = 'rearrangeColumns';
 __decorate([
-    core_1.Autowired('columnModel')
+    (0, core_1.Autowired)('columnModel')
 ], BaseDropZonePanel.prototype, "colModel", void 0);
 __decorate([
-    core_1.Autowired('focusService')
+    (0, core_1.Autowired)('focusService')
 ], BaseDropZonePanel.prototype, "focusService", void 0);
 exports.BaseDropZonePanel = BaseDropZonePanel;

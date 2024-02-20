@@ -46,7 +46,7 @@ To prevent this behaviour you should copy your data before passing it down to th
 ```jsx
 <ag-grid-vue 
     style="width: 600px; height: 150px;"
-    class="ag-theme-alpine"
+    class="ag-theme-quartz"
     v-model="rowData"
     //..other bindings/attributes
 
@@ -75,7 +75,7 @@ the row data when grid data changes:
 ```jsx
 <ag-grid-vue
     style="width: 600px; height: 150px;"
-    class="ag-theme-alpine"
+    class="ag-theme-quartz"
     v-model="rowData"
     @data-model-changed="dataModelChanged"
     //..other bindings/attributes
@@ -91,7 +91,7 @@ methods: {
 ```jsx
 <ag-grid-vue
     style="width: 600px; height: 150px;"
-    class="ag-theme-alpine"
+    class="ag-theme-quartz"
     v-model="rowData"
     v-on:update:modelValue="modelChanges"
     //..other bindings/attributes

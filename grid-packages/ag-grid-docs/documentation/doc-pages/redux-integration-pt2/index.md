@@ -187,8 +187,10 @@ Before discussing the grid features in our file browser, here are all of the gri
 
 render() {
     return (
-        <div className="ag-theme-alpine">
+        <div className="ag-theme-quartz">
             <AgGridReact
+                {/* shared column definition */}
+                defaultColDef={this.defaultColDef}
                 {/* provide column definitions */}
                 columnDefs={this.colDefs}
                 {/* specify auto group column definition */}
@@ -201,8 +203,6 @@ render() {
                 getDataPath={data => data.filePath}
                 {/* expand tree by default */}
                 groupDefaultExpanded={-1}
-                {/* fit grid columns */}
-                onGridReady={params => params.api.sizeColumnsToFit()}
                 {/* provide context menu callback */}
                 getContextMenuItems={this.getContextMenuItems}
                 {/* provide row drag end callback */}
@@ -286,7 +286,7 @@ via: `onRowDragEnd={this.onRowDragEnd}`. Here is the implementation:
 
 ```js
 onRowDragEnd = (event) => {
-    if(event.overNode.data.file) return;
+    if (event.overNode.data.file) return;
 
     let movingFilePath = event.node.data.filePath;
     let targetPath = event.overNode.data.filePath;
@@ -372,7 +372,7 @@ with source code is shown below. In this example you can:
 - Right Click on a file for the option to delete the file.
 - Click and Drag on the move icon to move files and folders.
 
-<grid-example title='Redux File Browser' name='redux-file-browser' type='react' options=' { "enterprise": true,  "showImportsDropdown": false, "extras": ["fontawesome"] }'></grid-example>
+<grid-example title='Redux File Browser' name='redux-file-browser' type='react' options=' { "enterprise": true,  "showImportsDropdown": false, "extras": ["fontawesome"], "noCodeSandbox": true }'></grid-example>
 
 ## Conclusion
 

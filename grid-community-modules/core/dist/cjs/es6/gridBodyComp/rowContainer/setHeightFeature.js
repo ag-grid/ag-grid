@@ -11,10 +11,10 @@ const beanStub_1 = require("../../context/beanStub");
 const context_1 = require("../../context/context");
 const eventKeys_1 = require("../../eventKeys");
 class SetHeightFeature extends beanStub_1.BeanStub {
-    constructor(eContainer, eWrapper) {
+    constructor(eContainer, eViewport) {
         super();
         this.eContainer = eContainer;
-        this.eWrapper = eWrapper;
+        this.eViewport = eViewport;
     }
     postConstruct() {
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_ROW_CONTAINER_HEIGHT_CHANGED, this.onHeightChanged.bind(this));
@@ -23,13 +23,13 @@ class SetHeightFeature extends beanStub_1.BeanStub {
         const height = this.maxDivHeightScaler.getUiContainerHeight();
         const heightString = height != null ? `${height}px` : ``;
         this.eContainer.style.height = heightString;
-        if (this.eWrapper) {
-            this.eWrapper.style.height = heightString;
+        if (this.eViewport) {
+            this.eViewport.style.height = heightString;
         }
     }
 }
 __decorate([
-    context_1.Autowired("rowContainerHeightService")
+    (0, context_1.Autowired)("rowContainerHeightService")
 ], SetHeightFeature.prototype, "maxDivHeightScaler", void 0);
 __decorate([
     context_1.PostConstruct

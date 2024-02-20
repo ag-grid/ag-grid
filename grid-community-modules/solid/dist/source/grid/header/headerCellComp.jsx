@@ -6,7 +6,6 @@ const HeaderCellComp = (props) => {
     const [getWidth, setWidth] = createSignal();
     const [getColId, setColId] = createSignal(ctrl.getColId());
     const [getAriaSort, setAriaSort] = createSignal();
-    const [getAriaDescription, setAriaDescription] = createSignal();
     const [getUserCompDetails, setUserCompDetails] = createSignal();
     let eGui;
     let eResize;
@@ -15,17 +14,11 @@ const HeaderCellComp = (props) => {
     const setRef = (ref) => {
         userComp = ref;
     };
-    const clearRef = (ref) => {
-        if (userComp === ref) {
-            userComp = undefined;
-        }
-    };
     const cssClassManager = new CssClassManager(() => eGui);
     onMount(() => {
         const compProxy = {
             setWidth: width => setWidth(width),
             addOrRemoveCssClass: (name, on) => cssClassManager.addOrRemoveCssClass(name, on),
-            setAriaDescription: description => setAriaDescription(description),
             setAriaSort: sort => setAriaSort(sort),
             setUserCompDetails: compDetails => setUserCompDetails(compDetails),
             getUserCompInstance: () => userComp
@@ -36,21 +29,7 @@ const HeaderCellComp = (props) => {
         ctrl.setDragSource(eGui);
     });
     const style = createMemo(() => ({ width: getWidth() }));
-    const showSolidComp = createMemo(() => {
-        const details = getUserCompDetails();
-        if (!details) {
-            return false;
-        }
-        return details.componentFromFramework;
-    });
-    const showJsComp = createMemo(() => {
-        const details = getUserCompDetails();
-        if (!details) {
-            return false;
-        }
-        return !details.componentFromFramework;
-    });
-    return (<div ref={eGui} class="ag-header-cell" style={style()} col-id={getColId()} aria-sort={getAriaSort()} role="columnheader" tabIndex={-1} aria-description={getAriaDescription()}>
+    return (<div ref={eGui} class="ag-header-cell" style={style()} col-id={getColId()} aria-sort={getAriaSort()} role="columnheader">
             <div ref={eResize} class="ag-header-cell-resize" role="presentation"></div>
             <div ref={eHeaderCompWrapper} class="ag-header-cell-comp-wrapper" role="presentation">
             {getUserCompDetails()

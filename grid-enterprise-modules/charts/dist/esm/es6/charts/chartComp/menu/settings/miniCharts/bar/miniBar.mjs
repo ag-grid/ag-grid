@@ -22,7 +22,7 @@ export class MiniBar extends MiniChartWithAxes {
             rect.y = yScale.convert(i);
             rect.width = bottom - xScale.convert(datum);
             rect.height = height;
-            rect.strokeWidth = 1;
+            rect.strokeWidth = 0;
             rect.crisp = true;
             return rect;
         });

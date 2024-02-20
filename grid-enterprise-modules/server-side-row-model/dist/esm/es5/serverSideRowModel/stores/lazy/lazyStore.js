@@ -35,10 +35,14 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 import { _, Autowired, BeanStub, Events, NumberSequence, PostConstruct, PreDestroy, ServerSideTransactionResultStatus } from "@ag-grid-community/core";
 import { LazyCache } from "./lazyCache";
@@ -57,12 +61,16 @@ var LazyStore = /** @class */ (function (_super) {
         return _this;
     }
     LazyStore.prototype.init = function () {
+        var _a;
         var numberOfRows = 1;
         if (this.level === 0) {
-            numberOfRows = this.storeUtils.getServerSideInitialRowCount();
+            numberOfRows = (_a = this.storeUtils.getServerSideInitialRowCount()) !== null && _a !== void 0 ? _a : 1;
+            this.eventService.dispatchEventOnce({
+                type: Events.EVENT_ROW_COUNT_READY
+            });
         }
         this.cache = this.createManagedBean(new LazyCache(this, numberOfRows, this.storeParams));
-        var usingTreeData = this.gridOptionsService.isTreeData();
+        var usingTreeData = this.gridOptionsService.get('treeData');
         if (!usingTreeData && this.group) {
             var groupColVo = this.ssrmParams.rowGroupCols[this.level];
             this.groupField = groupColVo.field;
@@ -73,6 +81,16 @@ var LazyStore = /** @class */ (function (_super) {
         this.displayIndexStart = undefined;
         this.displayIndexEnd = undefined;
         this.destroyBean(this.cache);
+    };
+    /**
+     * Given a server response, ingest the rows outside of the data source lifecycle.
+     *
+     * @param rowDataParams the server response containing the rows to ingest
+     * @param startRow the index to start ingesting rows
+     * @param expectedRows the expected number of rows in the response (used to determine if the last row index is known)
+     */
+    LazyStore.prototype.applyRowData = function (rowDataParams, startRow, expectedRows) {
+        this.cache.onLoadSuccess(startRow, expectedRows, rowDataParams);
     };
     /**
      * Applies a given transaction to the data set within this store
@@ -95,7 +113,6 @@ var LazyStore = /** @class */ (function (_super) {
             var params = {
                 transaction: transaction,
                 parentNode: this.parentRowNode,
-                storeInfo: this.info,
                 groupLevelInfo: this.info
             };
             var apply = applyCallback(params);
@@ -103,6 +120,9 @@ var LazyStore = /** @class */ (function (_super) {
                 return { status: ServerSideTransactionResultStatus.Cancelled };
             }
         }
+        // needs checked before transactions are applied, as rows won't be contiguous immediately
+        // after
+        var allRowsLoaded = this.cache.isStoreFullyLoaded();
         var updatedNodes = undefined;
         if ((_a = transaction.update) === null || _a === void 0 ? void 0 : _a.length) {
             updatedNodes = this.cache.updateRowNodes(transaction.update);
@@ -118,8 +138,15 @@ var LazyStore = /** @class */ (function (_super) {
         var removedNodes = undefined;
         if ((_c = transaction.remove) === null || _c === void 0 ? void 0 : _c.length) {
             var allIdsToRemove = transaction.remove.map(function (data) { return (idFunc({ level: _this.level, parentKeys: _this.parentRowNode.getGroupKeys(), data: data })); });
-            var allUniqueIdsToRemove = __spreadArray([], __read(new Set(allIdsToRemove)));
+            var allUniqueIdsToRemove = __spreadArray([], __read(new Set(allIdsToRemove)), false);
             removedNodes = this.cache.removeRowNodes(allUniqueIdsToRemove);
+        }
+        var isClientSideSortingEnabled = this.gridOptionsService.get('serverSideEnableClientSideSort');
+        var isUpdateOrAdd = (updatedNodes === null || updatedNodes === void 0 ? void 0 : updatedNodes.length) || (insertedNodes === null || insertedNodes === void 0 ? void 0 : insertedNodes.length);
+        var isClientSideSort = allRowsLoaded && isClientSideSortingEnabled;
+        if (isClientSideSort && isUpdateOrAdd) {
+            // if client side sorting, we need to sort the rows after the transaction
+            this.cache.clientSideSortRows();
         }
         this.updateSelectionAfterTransaction(updatedNodes, removedNodes);
         return {
@@ -255,16 +282,20 @@ var LazyStore = /** @class */ (function (_super) {
      *
      * For the purpose of exclusively server side filtered stores, this is the same as getNodes().forEachDeep
      */
-    LazyStore.prototype.forEachNodeDeepAfterFilterAndSort = function (callback, sequence) {
+    LazyStore.prototype.forEachNodeDeepAfterFilterAndSort = function (callback, sequence, includeFooterNodes) {
         if (sequence === void 0) { sequence = new NumberSequence(); }
+        if (includeFooterNodes === void 0) { includeFooterNodes = false; }
         var orderedNodes = this.cache.getOrderedNodeMap();
         for (var key in orderedNodes) {
             var lazyNode = orderedNodes[key];
             callback(lazyNode.node, sequence.next());
             var childCache = lazyNode.node.childStore;
             if (childCache) {
-                childCache.forEachNodeDeepAfterFilterAndSort(callback, sequence);
+                childCache.forEachNodeDeepAfterFilterAndSort(callback, sequence, includeFooterNodes);
             }
+        }
+        if (includeFooterNodes && this.parentRowNode.sibling) {
+            callback(this.parentRowNode.sibling, sequence.next());
         }
     };
     /**
@@ -441,11 +472,18 @@ var LazyStore = /** @class */ (function (_super) {
     LazyStore.prototype.refreshAfterSort = function (params) {
         var serverSortsAllLevels = this.storeUtils.isServerSideSortAllLevels();
         if (serverSortsAllLevels || this.storeUtils.isServerRefreshNeeded(this.parentRowNode, this.ssrmParams.rowGroupCols, params)) {
-            var oldCount = this.cache.getRowCount();
-            this.destroyBean(this.cache);
-            this.cache = this.createManagedBean(new LazyCache(this, oldCount, this.storeParams));
-            this.fireStoreUpdatedEvent();
-            return;
+            var allRowsLoaded = this.cache.isStoreFullyLoaded();
+            var isClientSideSortingEnabled = this.gridOptionsService.get('serverSideEnableClientSideSort');
+            var isClientSideSort = allRowsLoaded && isClientSideSortingEnabled;
+            if (!isClientSideSort) {
+                var oldCount = this.cache.getRowCount();
+                this.destroyBean(this.cache);
+                this.cache = this.createManagedBean(new LazyCache(this, oldCount, this.storeParams));
+                return;
+            }
+            // client side sorting only handles one level, so allow it to pass through
+            // to recursive sort.
+            this.cache.clientSideSortRows();
         }
         // call refreshAfterSort on children, as we did not purge.
         // if we did purge, no need to do this as all children were destroyed
@@ -464,7 +502,7 @@ var LazyStore = /** @class */ (function (_super) {
             this.refreshStore(true);
             return;
         }
-        // call refreshAfterSort on children, as we did not purge.
+        // call refreshAfterFilter on children, as we did not purge.
         // if we did purge, no need to do this as all children were destroyed
         this.forEachChildStoreShallow(function (store) { return store.refreshAfterFilter(params); });
     };

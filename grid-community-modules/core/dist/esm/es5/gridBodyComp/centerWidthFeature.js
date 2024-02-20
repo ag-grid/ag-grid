@@ -34,8 +34,8 @@ var CenterWidthFeature = /** @class */ (function (_super) {
     CenterWidthFeature.prototype.postConstruct = function () {
         var listener = this.setWidth.bind(this);
         this.addManagedPropertyListener('domLayout', listener);
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_CONTAINER_WIDTH_CHANGED, listener);
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, listener);
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, listener);
         this.addManagedListener(this.eventService, Events.EVENT_LEFT_PINNED_WIDTH_CHANGED, listener);
         if (this.addSpacer) {
             this.addManagedListener(this.eventService, Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED, listener);
@@ -57,7 +57,7 @@ var CenterWidthFeature = /** @class */ (function (_super) {
         else {
             totalWidth = centerWidth;
             if (this.addSpacer) {
-                var relevantWidth = this.gridOptionsService.is('enableRtl') ? leftWidth : rightWidth;
+                var relevantWidth = this.gridOptionsService.get('enableRtl') ? leftWidth : rightWidth;
                 if (relevantWidth === 0 && this.scrollVisibleService.isVerticalScrollShowing()) {
                     totalWidth += this.gridOptionsService.getScrollbarWidth();
                 }

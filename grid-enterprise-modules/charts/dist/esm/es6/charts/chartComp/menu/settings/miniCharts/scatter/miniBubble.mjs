@@ -19,7 +19,7 @@ export class MiniBubble extends MiniChartWithAxes {
         data.forEach(series => {
             series.forEach(([x, y, radius]) => {
                 const arc = new _Scene.Arc();
-                arc.strokeWidth = 1;
+                arc.strokeWidth = 0;
                 arc.centerX = xScale.convert(x);
                 arc.centerY = yScale.convert(y);
                 arc.radius = radius;

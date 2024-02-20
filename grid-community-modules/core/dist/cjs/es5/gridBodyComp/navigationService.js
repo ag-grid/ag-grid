@@ -46,8 +46,8 @@ var NavigationService = /** @class */ (function (_super) {
     __extends(NavigationService, _super);
     function NavigationService() {
         var _this = _super.call(this) || this;
-        _this.onPageDown = function_1.throttle(_this.onPageDown, 100);
-        _this.onPageUp = function_1.throttle(_this.onPageUp, 100);
+        _this.onPageDown = (0, function_1.throttle)(_this.onPageDown, 100);
+        _this.onPageUp = (0, function_1.throttle)(_this.onPageUp, 100);
         return _this;
     }
     NavigationService.prototype.postConstruct = function () {
@@ -118,10 +118,10 @@ var NavigationService = /** @class */ (function (_super) {
     };
     NavigationService.prototype.navigateTo = function (navigateParams) {
         var scrollIndex = navigateParams.scrollIndex, scrollType = navigateParams.scrollType, scrollColumn = navigateParams.scrollColumn, focusIndex = navigateParams.focusIndex, focusColumn = navigateParams.focusColumn;
-        if (generic_1.exists(scrollColumn) && !scrollColumn.isPinned()) {
+        if ((0, generic_1.exists)(scrollColumn) && !scrollColumn.isPinned()) {
             this.gridBodyCon.getScrollFeature().ensureColumnVisible(scrollColumn);
         }
-        if (generic_1.exists(scrollIndex)) {
+        if ((0, generic_1.exists)(scrollIndex)) {
             this.gridBodyCon.getScrollFeature().ensureIndexVisible(scrollIndex, scrollType);
         }
         // setFocusedCell relies on the browser default focus behavior to scroll the focused cell into view,
@@ -302,7 +302,7 @@ var NavigationService = /** @class */ (function (_super) {
     NavigationService.prototype.onHomeOrEndKey = function (key) {
         var homeKey = key === keyCode_1.KeyCode.PAGE_HOME;
         var allColumns = this.columnModel.getAllDisplayedColumns();
-        var columnToSelect = homeKey ? allColumns[0] : array_1.last(allColumns);
+        var columnToSelect = homeKey ? allColumns[0] : (0, array_1.last)(allColumns);
         var scrollIndex = homeKey ? this.paginationProxy.getPageFirstRow() : this.paginationProxy.getPageLastRow();
         this.navigateTo({
             scrollIndex: scrollIndex,
@@ -328,7 +328,7 @@ var NavigationService = /** @class */ (function (_super) {
             var _a = previous.getRowPosition(), rowIndex = _a.rowIndex, rowPinned = _a.rowPinned;
             var firstRow = rowPinned ? rowIndex === 0 : rowIndex === this.paginationProxy.getPageFirstRow();
             if (firstRow) {
-                if (this.gridOptionsService.getNum('headerHeight') === 0) {
+                if (this.gridOptionsService.get('headerHeight') === 0 || this.gridOptionsService.get('suppressHeaderFocus')) {
                     this.focusService.focusNextGridCoreContainer(true, true);
                 }
                 else {
@@ -449,7 +449,7 @@ var NavigationService = /** @class */ (function (_super) {
         var displayedColumns = this.columnModel.getAllDisplayedColumns();
         var cellPos;
         if (previousCell instanceof rowCtrl_1.RowCtrl) {
-            cellPos = __assign(__assign({}, previousCell.getRowPosition()), { column: backwards ? displayedColumns[0] : array_1.last(displayedColumns) });
+            cellPos = __assign(__assign({}, previousCell.getRowPosition()), { column: backwards ? displayedColumns[0] : (0, array_1.last)(displayedColumns) });
         }
         else {
             cellPos = previousCell.getCellPosition();
@@ -464,7 +464,7 @@ var NavigationService = /** @class */ (function (_super) {
         else if (nextCell) {
             return this.tryToFocusFullWidthRow(nextCell.getRowPosition(), backwards);
         }
-        return generic_1.exists(nextCell);
+        return (0, generic_1.exists)(nextCell);
     };
     // called by the cell, when tab is pressed while editing.
     // @return: RenderedCell when navigation successful, otherwise null
@@ -480,7 +480,7 @@ var NavigationService = /** @class */ (function (_super) {
             nextPosition = this.cellNavigationService.getNextTabbedCell(nextPosition, backwards);
             // allow user to override what cell to go to next
             var userFunc = this.gridOptionsService.getCallback('tabToNextCell');
-            if (generic_1.exists(userFunc)) {
+            if ((0, generic_1.exists)(userFunc)) {
                 var params = {
                     backwards: backwards,
                     editing: startEditing,
@@ -488,9 +488,9 @@ var NavigationService = /** @class */ (function (_super) {
                     nextCellPosition: nextPosition ? nextPosition : null
                 };
                 var userCell = userFunc(params);
-                if (generic_1.exists(userCell)) {
+                if ((0, generic_1.exists)(userCell)) {
                     if (userCell.floating) {
-                        function_1.doOnce(function () { console.warn("AG Grid: tabToNextCellFunc return type should have attributes: rowIndex, rowPinned, column. However you had 'floating', maybe you meant 'rowPinned'?"); }, 'no floating in userCell');
+                        (0, function_1.warnOnce)("tabToNextCellFunc return type should have attributes: rowIndex, rowPinned, column. However you had 'floating', maybe you meant 'rowPinned'?");
                         userCell.rowPinned = userCell.floating;
                     }
                     nextPosition = {
@@ -589,7 +589,7 @@ var NavigationService = /** @class */ (function (_super) {
             // if the current cell is spanning across multiple columns, we need to move
             // our current position to be the last cell on the right before finding the
             // the next target.
-            if (this.gridOptionsService.is('enableRtl')) {
+            if (this.gridOptionsService.get('enableRtl')) {
                 if (key === keyCode_1.KeyCode.LEFT) {
                     nextCell = this.getLastCellOfColSpan(nextCell);
                 }
@@ -599,7 +599,7 @@ var NavigationService = /** @class */ (function (_super) {
             }
             nextCell = this.cellNavigationService.getNextCellToFocus(key, nextCell);
             // eg if going down, and nextCell=undefined, means we are gone past the last row
-            hitEdgeOfGrid = generic_1.missing(nextCell);
+            hitEdgeOfGrid = (0, generic_1.missing)(nextCell);
         }
         if (hitEdgeOfGrid && event && event.key === keyCode_1.KeyCode.UP) {
             nextCell = {
@@ -612,7 +612,7 @@ var NavigationService = /** @class */ (function (_super) {
         // we allow this, however if processing 'enter after edit' we don't allow override
         if (allowUserOverride) {
             var userFunc = this.gridOptionsService.getCallback('navigateToNextCell');
-            if (generic_1.exists(userFunc)) {
+            if ((0, generic_1.exists)(userFunc)) {
                 var params = {
                     key: key,
                     previousCellPosition: currentCell,
@@ -620,9 +620,9 @@ var NavigationService = /** @class */ (function (_super) {
                     event: event
                 };
                 var userCell = userFunc(params);
-                if (generic_1.exists(userCell)) {
+                if ((0, generic_1.exists)(userCell)) {
                     if (userCell.floating) {
-                        function_1.doOnce(function () { console.warn("AG Grid: tabToNextCellFunc return type should have attributes: rowIndex, rowPinned, column. However you had 'floating', maybe you meant 'rowPinned'?"); }, 'no floating in userCell');
+                        (0, function_1.warnOnce)("tabToNextCellFunc return type should have attributes: rowIndex, rowPinned, column. However you had 'floating', maybe you meant 'rowPinned'?");
                         userCell.rowPinned = userCell.floating;
                     }
                     nextCell = {
@@ -687,7 +687,7 @@ var NavigationService = /** @class */ (function (_super) {
         var cellPosition = {
             rowIndex: position.rowIndex,
             rowPinned: position.rowPinned,
-            column: position.column || (backwards ? array_1.last(displayedColumns) : displayedColumns[0])
+            column: position.column || (backwards ? (0, array_1.last)(displayedColumns) : displayedColumns[0])
         };
         this.focusPosition(cellPosition);
         var fromBelow = currentCellFocused != null ? this.rowPositionUtils.before(cellPosition, currentCellFocused) : false;
@@ -730,7 +730,7 @@ var NavigationService = /** @class */ (function (_super) {
         }
         return {
             rowIndex: cell.rowIndex,
-            column: array_1.last(colSpanningList),
+            column: (0, array_1.last)(colSpanningList),
             rowPinned: cell.rowPinned
         };
     };
@@ -740,7 +740,7 @@ var NavigationService = /** @class */ (function (_super) {
         // sticky rows are always visible, so the grid shouldn't scroll to focus them.
         var skipScrollToRow = isGroupStickyEnabled && (rowNode === null || rowNode === void 0 ? void 0 : rowNode.sticky);
         // this scrolls the row into view
-        if (!skipScrollToRow && generic_1.missing(gridCell.rowPinned)) {
+        if (!skipScrollToRow && (0, generic_1.missing)(gridCell.rowPinned)) {
             this.gridBodyCon.getScrollFeature().ensureIndexVisible(gridCell.rowIndex);
         }
         if (!gridCell.column.isPinned()) {
@@ -748,46 +748,46 @@ var NavigationService = /** @class */ (function (_super) {
         }
     };
     __decorate([
-        context_1.Autowired('mouseEventService')
+        (0, context_1.Autowired)('mouseEventService')
     ], NavigationService.prototype, "mouseEventService", void 0);
     __decorate([
-        context_1.Autowired('paginationProxy')
+        (0, context_1.Autowired)('paginationProxy')
     ], NavigationService.prototype, "paginationProxy", void 0);
     __decorate([
-        context_1.Autowired('focusService')
+        (0, context_1.Autowired)('focusService')
     ], NavigationService.prototype, "focusService", void 0);
     __decorate([
-        context_1.Optional('rangeService')
+        (0, context_1.Optional)('rangeService')
     ], NavigationService.prototype, "rangeService", void 0);
     __decorate([
-        context_1.Autowired('columnModel')
+        (0, context_1.Autowired)('columnModel')
     ], NavigationService.prototype, "columnModel", void 0);
     __decorate([
-        context_1.Autowired('rowModel')
+        (0, context_1.Autowired)('rowModel')
     ], NavigationService.prototype, "rowModel", void 0);
     __decorate([
-        context_1.Autowired('ctrlsService')
+        (0, context_1.Autowired)('ctrlsService')
     ], NavigationService.prototype, "ctrlsService", void 0);
     __decorate([
-        context_1.Autowired('rowRenderer')
+        (0, context_1.Autowired)('rowRenderer')
     ], NavigationService.prototype, "rowRenderer", void 0);
     __decorate([
-        context_1.Autowired('headerNavigationService')
+        (0, context_1.Autowired)('headerNavigationService')
     ], NavigationService.prototype, "headerNavigationService", void 0);
     __decorate([
-        context_1.Autowired("rowPositionUtils")
+        (0, context_1.Autowired)("rowPositionUtils")
     ], NavigationService.prototype, "rowPositionUtils", void 0);
     __decorate([
-        context_1.Autowired("cellNavigationService")
+        (0, context_1.Autowired)("cellNavigationService")
     ], NavigationService.prototype, "cellNavigationService", void 0);
     __decorate([
-        context_1.Autowired("pinnedRowModel")
+        (0, context_1.Autowired)("pinnedRowModel")
     ], NavigationService.prototype, "pinnedRowModel", void 0);
     __decorate([
         context_1.PostConstruct
     ], NavigationService.prototype, "postConstruct", null);
     NavigationService = __decorate([
-        context_1.Bean('navigationService')
+        (0, context_1.Bean)('navigationService')
     ], NavigationService);
     return NavigationService;
 }(beanStub_1.BeanStub));

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DEFAULT_FILTER_LOCALE_TEXT = void 0;
-exports.DEFAULT_FILTER_LOCALE_TEXT = {
+exports.FILTER_LOCALE_TEXT = void 0;
+exports.FILTER_LOCALE_TEXT = {
     applyFilter: 'Apply',
     clearFilter: 'Clear',
     resetFilter: 'Reset',
@@ -11,22 +11,24 @@ exports.DEFAULT_FILTER_LOCALE_TEXT = {
     dateFilter: 'Date Filter',
     setFilter: 'Set Filter',
     filterOoo: 'Filter...',
-    empty: 'Choose One',
+    empty: 'Choose one',
     equals: 'Equals',
-    notEqual: 'Not equal',
+    notEqual: 'Does not equal',
     lessThan: 'Less than',
     greaterThan: 'Greater than',
-    inRange: 'In range',
+    inRange: 'Between',
     inRangeStart: 'From',
     inRangeEnd: 'To',
-    lessThanOrEqual: 'Less than or equals',
-    greaterThanOrEqual: 'Greater than or equals',
+    lessThanOrEqual: 'Less than or equal to',
+    greaterThanOrEqual: 'Greater than or equal to',
     contains: 'Contains',
-    notContains: 'Not contains',
-    startsWith: 'Starts with',
+    notContains: 'Does not contain',
+    startsWith: 'Begins with',
     endsWith: 'Ends with',
     blank: 'Blank',
     notBlank: 'Not blank',
+    before: 'Before',
+    after: 'After',
     andCondition: 'AND',
     orCondition: 'OR',
     dateFormatOoo: 'yyyy-mm-dd',

@@ -3,7 +3,7 @@ import { IHeaderParams } from "@ag-grid-community/core";
 import { IHeaderAngularComp } from "@ag-grid-community/angular";
 
 @Component({
-    selector: 'custom-header',
+    standalone: true,
     template: `
         <div class="custom-header">
             <span>{{params.displayName}}</span>

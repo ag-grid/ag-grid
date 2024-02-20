@@ -8,9 +8,9 @@ export default props => {
 
     if (footer) {
         if (isRootLevel) {
-            return <span style={{color: 'navy', fontWeight: 'bold'}}>Grand Total</span>;
+            return <span style={{textDecoration: 'underline', fontWeight: 'bold'}}>Grand Total</span>;
         } else {
-            return <span style={{color: 'navy'}}>Sub Total {value}</span>;
+            return <span style={{textDecoration: 'underline'}}>Sub Total {value}</span>;
         }
     } else {
         return <span>{value}</span>;

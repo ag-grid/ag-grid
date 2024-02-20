@@ -27,7 +27,6 @@ export class HeaderRowComp extends Component {
     }
     //noinspection JSUnusedLocalSymbols
     init() {
-        this.getGui().style.transform = this.ctrl.getTransform();
         setAriaRowIndex(this.getGui(), this.ctrl.getAriaRowIndex());
         const compProxy = {
             setHeight: height => this.getGui().style.height = height,

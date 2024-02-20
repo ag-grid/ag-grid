@@ -63,6 +63,6 @@ let TemplateService = class TemplateService extends beanStub_1.BeanStub {
     }
 };
 TemplateService = __decorate([
-    context_1.Bean('templateService')
+    (0, context_1.Bean)('templateService')
 ], TemplateService);
 exports.TemplateService = TemplateService;

@@ -78,7 +78,7 @@ var AgAbstractLabel = /** @class */ (function (_super) {
         return this;
     };
     AgAbstractLabel.prototype.getLabelId = function () {
-        this.eLabel.id = this.eLabel.id || "ag-" + this.getCompId() + "-label";
+        this.eLabel.id = this.eLabel.id || "ag-".concat(this.getCompId(), "-label");
         return this.eLabel.id;
     };
     AgAbstractLabel.prototype.getLabel = function () {

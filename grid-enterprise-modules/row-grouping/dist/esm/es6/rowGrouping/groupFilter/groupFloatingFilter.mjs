@@ -34,6 +34,9 @@ export class GroupFloatingFilterComp extends Component {
         });
     }
     onParamsUpdated(params) {
+        this.refresh(params);
+    }
+    refresh(params) {
         this.params = params;
         this.setParams();
     }
@@ -86,13 +89,18 @@ export class GroupFloatingFilterComp extends Component {
         this.setupUnderlyingFloatingFilterElement();
     }
     onColDefChanged(event) {
-        var _a, _b;
+        var _a, _b, _c;
         if (!event.column) {
             return;
         }
         const compDetails = this.filterManager.getFloatingFilterCompDetails(event.column, this.params.showParentFilter);
         if (compDetails) {
-            (_b = (_a = this.underlyingFloatingFilter) === null || _a === void 0 ? void 0 : _a.onParamsUpdated) === null || _b === void 0 ? void 0 : _b.call(_a, compDetails.params);
+            if ((_a = this.underlyingFloatingFilter) === null || _a === void 0 ? void 0 : _a.refresh) {
+                this.underlyingFloatingFilter.refresh(compDetails.params);
+            }
+            else {
+                (_c = (_b = this.underlyingFloatingFilter) === null || _b === void 0 ? void 0 : _b.onParamsUpdated) === null || _c === void 0 ? void 0 : _c.call(_b, compDetails.params);
+            }
         }
     }
     onParentModelChanged(_model, event) {

@@ -42,10 +42,20 @@ var SetFilter = /** @class */ (function (_super) {
         _this.groupingTreeList = false;
         _this.hardRefreshVirtualList = false;
         _this.noValueFormatterSupplied = false;
-        // To make the filtering super fast, we store the keys in an Set rather than using the default array
-        _this.appliedModelKeys = null;
-        _this.noAppliedModelKeys = false;
         _this.filterModelFormatter = new setFilterModelFormatter_1.SetFilterModelFormatter();
+        _this.updateSetFilterOnParamsChange = function (newParams) {
+            var _a;
+            _this.setFilterParams = newParams;
+            _this.convertValuesToStrings = !!newParams.convertValuesToStrings;
+            _this.caseSensitive = !!newParams.caseSensitive;
+            var keyCreator = (_a = newParams.keyCreator) !== null && _a !== void 0 ? _a : newParams.colDef.keyCreator;
+            _this.setValueFormatter(newParams.valueFormatter, keyCreator, _this.convertValuesToStrings, !!newParams.treeList, !!newParams.colDef.refData);
+            var isGroupCol = newParams.column.getId().startsWith(core_1.GROUP_AUTO_COLUMN_ID);
+            _this.treeDataTreeList = _this.gridOptionsService.get('treeData') && !!newParams.treeList && isGroupCol;
+            _this.getDataPath = _this.gridOptionsService.get('getDataPath');
+            _this.groupingTreeList = !!_this.columnModel.getRowGroupColumns().length && !!newParams.treeList && isGroupCol;
+            _this.createKey = _this.generateCreateKey(keyCreator, _this.convertValuesToStrings, _this.treeDataTreeList || _this.groupingTreeList);
+        };
         return _this;
     }
     SetFilter.prototype.postConstruct = function () {
@@ -55,7 +65,7 @@ var SetFilter = /** @class */ (function (_super) {
     // maybe this method belongs in abstractSimpleFilter???
     SetFilter.prototype.updateUiVisibility = function () { };
     SetFilter.prototype.createBodyTemplate = function () {
-        return /* html */ "\n            <div class=\"ag-set-filter\">\n                <div ref=\"eFilterLoading\" class=\"ag-filter-loading ag-hidden\">" + this.translateForSetFilter('loadingOoo') + "</div>\n                <ag-input-text-field class=\"ag-mini-filter\" ref=\"eMiniFilter\"></ag-input-text-field>\n                <div ref=\"eFilterNoMatches\" class=\"ag-filter-no-matches ag-hidden\">" + this.translateForSetFilter('noMatches') + "</div>\n                <div ref=\"eSetFilterList\" class=\"ag-set-filter-list\" role=\"presentation\"></div>\n            </div>";
+        return /* html */ "\n            <div class=\"ag-set-filter\">\n                <div ref=\"eFilterLoading\" class=\"ag-filter-loading ag-hidden\">".concat(this.translateForSetFilter('loadingOoo'), "</div>\n                <ag-input-text-field class=\"ag-mini-filter\" ref=\"eMiniFilter\"></ag-input-text-field>\n                <div ref=\"eFilterNoMatches\" class=\"ag-filter-no-matches ag-hidden\">").concat(this.translateForSetFilter('noMatches'), "</div>\n                <div ref=\"eSetFilterList\" class=\"ag-set-filter-list\" role=\"presentation\"></div>\n            </div>");
     };
     SetFilter.prototype.handleKeyDown = function (e) {
         _super.prototype.handleKeyDown.call(this, e);
@@ -139,9 +149,49 @@ var SetFilter = /** @class */ (function (_super) {
         }
         return _super.prototype.setModel.call(this, model);
     };
+    SetFilter.prototype.refresh = function (params) {
+        var _this = this;
+        var _a, _b, _c;
+        if (!_super.prototype.refresh.call(this, params)) {
+            return false;
+        }
+        // Those params have a large impact and should trigger a reload when they change.
+        var paramsThatForceReload = [
+            'treeList', 'treeListFormatter', 'treeListPathGetter', 'keyCreator', 'convertValuesToStrings',
+            'caseSensitive', 'comparator', 'suppressSelectAll', 'excelMode'
+        ];
+        if (paramsThatForceReload.some(function (param) { var _a; return params[param] !== ((_a = _this.setFilterParams) === null || _a === void 0 ? void 0 : _a[param]); })) {
+            return false;
+        }
+        if (this.haveColDefParamsChanged(params.colDef)) {
+            return false;
+        }
+        _super.prototype.updateParams.call(this, params);
+        this.updateSetFilterOnParamsChange(params);
+        this.updateMiniFilter();
+        if (params.cellRenderer !== ((_a = this.setFilterParams) === null || _a === void 0 ? void 0 : _a.cellRenderer) ||
+            params.valueFormatter !== ((_b = this.setFilterParams) === null || _b === void 0 ? void 0 : _b.valueFormatter)) {
+            this.checkAndRefreshVirtualList();
+        }
+        (_c = this.valueModel) === null || _c === void 0 ? void 0 : _c.updateOnParamsChange(params).then(function () {
+            var _a;
+            if ((_a = _this.valueModel) === null || _a === void 0 ? void 0 : _a.hasSelections()) {
+                _this.refreshFilterValues();
+            }
+        });
+        return true;
+    };
+    SetFilter.prototype.haveColDefParamsChanged = function (colDef) {
+        var _a;
+        var paramsThatForceReload = [
+            'keyCreator', 'filterValueGetter',
+        ];
+        var existingColDef = (_a = this.setFilterParams) === null || _a === void 0 ? void 0 : _a.colDef;
+        return paramsThatForceReload.some(function (param) { return colDef[param] !== (existingColDef === null || existingColDef === void 0 ? void 0 : existingColDef[param]); });
+    };
     SetFilter.prototype.setModelAndRefresh = function (values) {
         var _this = this;
-        return this.valueModel ? this.valueModel.setModel(values).then(function () { return _this.refresh(); }) : core_1.AgPromise.resolve();
+        return this.valueModel ? this.valueModel.setModel(values).then(function () { return _this.checkAndRefreshVirtualList(); }) : core_1.AgPromise.resolve();
     };
     SetFilter.prototype.resetUiToDefaults = function () {
         this.setMiniFilter(null);
@@ -180,16 +230,8 @@ var SetFilter = /** @class */ (function (_super) {
         var _a;
         this.applyExcelModeOptions(params);
         _super.prototype.setParams.call(this, params);
-        this.setFilterParams = params;
-        this.convertValuesToStrings = !!params.convertValuesToStrings;
-        this.caseSensitive = !!params.caseSensitive;
+        this.updateSetFilterOnParamsChange(params);
         var keyCreator = (_a = params.keyCreator) !== null && _a !== void 0 ? _a : params.colDef.keyCreator;
-        this.setValueFormatter(params.valueFormatter, keyCreator, this.convertValuesToStrings, !!params.treeList, !!params.colDef.refData);
-        var isGroupCol = params.column.getId().startsWith(core_1.GROUP_AUTO_COLUMN_ID);
-        this.treeDataTreeList = this.gridOptionsService.is('treeData') && !!params.treeList && isGroupCol;
-        this.getDataPath = this.gridOptionsService.get('getDataPath');
-        this.groupingTreeList = !!this.columnModel.getRowGroupColumns().length && !!params.treeList && isGroupCol;
-        this.createKey = this.generateCreateKey(keyCreator, this.convertValuesToStrings, this.treeDataTreeList || this.groupingTreeList);
         this.valueModel = new setValueModel_1.SetValueModel({
             filterParams: params,
             setIsLoading: function (loading) { return _this.setIsLoading(loading); },
@@ -203,10 +245,17 @@ var SetFilter = /** @class */ (function (_super) {
             columnModel: this.columnModel,
             valueService: this.valueService,
             treeDataTreeList: this.treeDataTreeList,
-            groupingTreeList: this.groupingTreeList
+            groupingTreeList: this.groupingTreeList,
+            addManagedListener: function (event, listener) { return _this.addManagedListener(_this.eventService, event, listener); }
         });
         this.initialiseFilterBodyUi();
         this.addEventListenersForDataChanges();
+    };
+    SetFilter.prototype.onAddCurrentSelectionToFilterChange = function (newValue) {
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
+        this.valueModel.setAddCurrentSelectionToFilter(newValue);
     };
     SetFilter.prototype.setValueFormatter = function (providedValueFormatter, keyCreator, convertValuesToStrings, treeList, isRefData) {
         var valueFormatter = providedValueFormatter;
@@ -275,7 +324,7 @@ var SetFilter = /** @class */ (function (_super) {
         }
         if (params.excelMode && params.defaultToNothingSelected) {
             params.defaultToNothingSelected = false;
-            core_1._.doOnce(function () { return console.warn('AG Grid: The Set Filter Parameter "defaultToNothingSelected" value was ignored because it does not work when "excelMode" is used.'); }, 'setFilterExcelModeDefaultToNothingSelect');
+            core_1._.warnOnce('The Set Filter Parameter "defaultToNothingSelected" value was ignored because it does not work when "excelMode" is used.');
         }
     };
     SetFilter.prototype.addEventListenersForDataChanges = function () {
@@ -289,6 +338,9 @@ var SetFilter = /** @class */ (function (_super) {
                 _this.syncAfterDataChange();
             }
         });
+        this.addManagedPropertyListeners(['treeData', 'getDataPath', 'groupAllowUnbalanced'], function () {
+            _this.syncAfterDataChange();
+        });
     };
     SetFilter.prototype.syncAfterDataChange = function () {
         var _this = this;
@@ -297,7 +349,7 @@ var SetFilter = /** @class */ (function (_super) {
         }
         var promise = this.valueModel.refreshValues();
         return promise.then(function () {
-            _this.refresh();
+            _this.checkAndRefreshVirtualList();
             _this.onBtApply(false, true);
         });
     };
@@ -366,9 +418,17 @@ var SetFilter = /** @class */ (function (_super) {
             'selectAll' : 'selectAllSearchResults';
         return this.translateForSetFilter(key);
     };
+    SetFilter.prototype.getAddSelectionToFilterLabel = function () {
+        if (!this.setFilterParams) {
+            throw new Error('Set filter params have not been provided.');
+        }
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
+        return this.translateForSetFilter('addCurrentSelectionToFilter');
+    };
     SetFilter.prototype.createSetListItem = function (item, isTree, focusWrapper) {
         var _this = this;
-        var _a, _b, _c, _d, _e, _f;
         if (!this.setFilterParams) {
             throw new Error('Set filter params have not been provided.');
         }
@@ -376,46 +436,8 @@ var SetFilter = /** @class */ (function (_super) {
             throw new Error('Value model has not been created.');
         }
         var groupsExist = this.valueModel.hasGroups();
-        var value;
-        var depth;
-        var isGroup;
-        var hasIndeterminateExpandState;
-        var selectedListener;
-        var expandedListener;
-        if (this.isSetFilterModelTreeItem(item)) {
-            depth = item.depth;
-            if (item.key === iSetDisplayValueModel_1.SetFilterDisplayValue.SELECT_ALL) {
-                // select all
-                value = function () { return _this.getSelectAllLabel(); };
-                isGroup = groupsExist;
-                hasIndeterminateExpandState = true;
-                selectedListener = function (e) { return _this.onSelectAll(e.isSelected); };
-                expandedListener = function (e) { return _this.onExpandAll(e.item, e.isExpanded); };
-            }
-            else if (item.children) {
-                // group
-                value = (_c = (_b = (_a = this.setFilterParams).treeListFormatter) === null || _b === void 0 ? void 0 : _b.call(_a, item.treeKey, item.depth, item.parentTreeKeys)) !== null && _c !== void 0 ? _c : item.treeKey;
-                isGroup = true;
-                selectedListener = function (e) { return _this.onGroupItemSelected(e.item, e.isSelected); };
-                expandedListener = function (e) { return _this.onExpandedChanged(e.item, e.isExpanded); };
-            }
-            else {
-                // leaf
-                value = (_f = (_e = (_d = this.setFilterParams).treeListFormatter) === null || _e === void 0 ? void 0 : _e.call(_d, item.treeKey, item.depth, item.parentTreeKeys)) !== null && _f !== void 0 ? _f : item.treeKey;
-                selectedListener = function (e) { return _this.onItemSelected(e.item.key, e.isSelected); };
-            }
-        }
-        else {
-            if (item === iSetDisplayValueModel_1.SetFilterDisplayValue.SELECT_ALL) {
-                value = function () { return _this.getSelectAllLabel(); };
-                selectedListener = function (e) { return _this.onSelectAll(e.isSelected); };
-            }
-            else {
-                value = this.valueModel.getValue(item);
-                selectedListener = function (e) { return _this.onItemSelected(e.item, e.isSelected); };
-            }
-        }
-        var _g = this.isSelectedExpanded(item), isSelected = _g.isSelected, isExpanded = _g.isExpanded;
+        var _a = this.isSelectedExpanded(item), isSelected = _a.isSelected, isExpanded = _a.isExpanded;
+        var _b = this.newSetListItemAttributes(item, isTree), value = _b.value, depth = _b.depth, isGroup = _b.isGroup, hasIndeterminateExpandState = _b.hasIndeterminateExpandState, selectedListener = _b.selectedListener, expandedListener = _b.expandedListener;
         var itemParams = {
             focusWrapper: focusWrapper,
             value: value,
@@ -438,6 +460,90 @@ var SetFilter = /** @class */ (function (_super) {
         }
         return listItem;
     };
+    SetFilter.prototype.newSetTreeItemAttributes = function (item, isTree) {
+        var _this = this;
+        var _a, _b, _c, _d, _e, _f;
+        if (!this.setFilterParams) {
+            throw new Error('Set filter params have not been provided.');
+        }
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
+        var groupsExist = this.valueModel.hasGroups();
+        // Select all option
+        if (item.key === iSetDisplayValueModel_1.SetFilterDisplayValue.SELECT_ALL) {
+            return {
+                value: function () { return _this.getSelectAllLabel(); },
+                isGroup: groupsExist,
+                depth: item.depth,
+                hasIndeterminateExpandState: true,
+                selectedListener: function (e) { return _this.onSelectAll(e.isSelected); },
+                expandedListener: function (e) { return _this.onExpandAll(e.item, e.isExpanded); },
+            };
+        }
+        // Add selection to filter option
+        if (item.key === iSetDisplayValueModel_1.SetFilterDisplayValue.ADD_SELECTION_TO_FILTER) {
+            return {
+                value: function () { return _this.getAddSelectionToFilterLabel(); },
+                depth: item.depth,
+                isGroup: false,
+                hasIndeterminateExpandState: false,
+                selectedListener: function (e) {
+                    _this.onAddCurrentSelectionToFilterChange(e.isSelected);
+                }
+            };
+        }
+        // Group
+        if (item.children) {
+            return {
+                value: (_c = (_b = (_a = this.setFilterParams).treeListFormatter) === null || _b === void 0 ? void 0 : _b.call(_a, item.treeKey, item.depth, item.parentTreeKeys)) !== null && _c !== void 0 ? _c : item.treeKey,
+                depth: item.depth,
+                isGroup: true,
+                selectedListener: function (e) { return _this.onGroupItemSelected(e.item, e.isSelected); },
+                expandedListener: function (e) { return _this.onExpandedChanged(e.item, e.isExpanded); },
+            };
+        }
+        // Leaf
+        return {
+            value: (_f = (_e = (_d = this.setFilterParams).treeListFormatter) === null || _e === void 0 ? void 0 : _e.call(_d, item.treeKey, item.depth, item.parentTreeKeys)) !== null && _f !== void 0 ? _f : item.treeKey,
+            depth: item.depth,
+            selectedListener: function (e) { return _this.onItemSelected(e.item.key, e.isSelected); },
+        };
+    };
+    SetFilter.prototype.newSetListItemAttributes = function (item, isTree) {
+        var _this = this;
+        if (!this.setFilterParams) {
+            throw new Error('Set filter params have not been provided.');
+        }
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
+        // Tree item
+        if (this.isSetFilterModelTreeItem(item)) {
+            return this.newSetTreeItemAttributes(item, isTree);
+        }
+        // List item - 'Select All'
+        if (item === iSetDisplayValueModel_1.SetFilterDisplayValue.SELECT_ALL) {
+            return {
+                value: function () { return _this.getSelectAllLabel(); },
+                selectedListener: function (e) { return _this.onSelectAll(e.isSelected); },
+            };
+        }
+        // List item - 'Add selection to filter'
+        if (item === iSetDisplayValueModel_1.SetFilterDisplayValue.ADD_SELECTION_TO_FILTER) {
+            return {
+                value: function () { return _this.getAddSelectionToFilterLabel(); },
+                selectedListener: function (e) {
+                    _this.onAddCurrentSelectionToFilterChange(e.isSelected);
+                },
+            };
+        }
+        // List item
+        return {
+            value: this.valueModel.getValue(item),
+            selectedListener: function (e) { return _this.onItemSelected(e.item, e.isSelected); },
+        };
+    };
     SetFilter.prototype.updateSetListItem = function (item, component) {
         var _a = this.isSelectedExpanded(item), isSelected = _a.isSelected, isExpanded = _a.isExpanded;
         component.refresh(item, isSelected, isExpanded);
@@ -450,6 +556,9 @@ var SetFilter = /** @class */ (function (_super) {
             if (item.key === iSetDisplayValueModel_1.SetFilterDisplayValue.SELECT_ALL) {
                 isSelected = this.isSelectAllSelected();
             }
+            else if (item.key === iSetDisplayValueModel_1.SetFilterDisplayValue.ADD_SELECTION_TO_FILTER) {
+                isSelected = this.valueModel.isAddCurrentSelectionToFilterChecked();
+            }
             else if (item.children) {
                 isSelected = this.areAllChildrenSelected(item);
             }
@@ -460,6 +569,9 @@ var SetFilter = /** @class */ (function (_super) {
         else {
             if (item === iSetDisplayValueModel_1.SetFilterDisplayValue.SELECT_ALL) {
                 isSelected = this.isSelectAllSelected();
+            }
+            else if (item === iSetDisplayValueModel_1.SetFilterDisplayValue.ADD_SELECTION_TO_FILTER) {
+                isSelected = this.valueModel.isAddCurrentSelectionToFilterChecked();
             }
             else {
                 isSelected = this.valueModel.isKeySelected(item);
@@ -485,6 +597,22 @@ var SetFilter = /** @class */ (function (_super) {
         eMiniFilter.onValueChange(function () { return _this.onMiniFilterInput(); });
         eMiniFilter.setInputAriaLabel(translate('ariaSearchFilterValues', 'Search filter values'));
         this.addManagedListener(eMiniFilter.getInputElement(), 'keydown', function (e) { return _this.onMiniFilterKeyDown(e); });
+    };
+    SetFilter.prototype.updateMiniFilter = function () {
+        if (!this.setFilterParams) {
+            throw new Error('Set filter params have not been provided.');
+        }
+        if (!this.valueModel) {
+            throw new Error('Value model has not been created.');
+        }
+        var eMiniFilter = this.eMiniFilter;
+        if (eMiniFilter.isDisplayed() !== !this.setFilterParams.suppressMiniFilter) {
+            eMiniFilter.setDisplayed(!this.setFilterParams.suppressMiniFilter);
+        }
+        var miniFilterValue = this.valueModel.getMiniFilter();
+        if (eMiniFilter.getValue() !== miniFilterValue) {
+            eMiniFilter.setValue(miniFilterValue);
+        }
     };
     // we need to have the GUI attached before we can draw the virtual rows, as the
     // virtual row logic needs info about the GUI state
@@ -529,19 +657,29 @@ var SetFilter = /** @class */ (function (_super) {
             // column is removed. This ensures the filter is removed in this situation.
             this.valueModel.selectAllMatchingMiniFilter();
         }
+        // Here we implement AG-9090 TC2
+        // When 'Add current selection to filter' is visible and checked, but no filter is applied:
+        // Do NOT apply the current selection as filter.
+        var shouldKeepCurrentSelection = this.valueModel.showAddCurrentSelectionToFilter() && this.valueModel.isAddCurrentSelectionToFilterChecked();
+        if (shouldKeepCurrentSelection && !this.getModel()) {
+            return false;
+        }
         var result = _super.prototype.applyModel.call(this, source);
         // keep appliedModelKeys in sync with the applied model
         var appliedModel = this.getModel();
         if (appliedModel) {
-            this.appliedModelKeys = new Set();
+            if (!shouldKeepCurrentSelection) {
+                this.valueModel.setAppliedModelKeys(new Set());
+            }
             appliedModel.values.forEach(function (key) {
-                _this.appliedModelKeys.add(_this.caseFormat(key));
+                _this.valueModel.addToAppliedModelKeys(key);
             });
         }
         else {
-            this.appliedModelKeys = null;
+            if (!shouldKeepCurrentSelection) {
+                this.valueModel.setAppliedModelKeys(null);
+            }
         }
-        this.noAppliedModelKeys = (appliedModel === null || appliedModel === void 0 ? void 0 : appliedModel.values.length) === 0;
         return result;
     };
     SetFilter.prototype.isModelValid = function (model) {
@@ -549,11 +687,11 @@ var SetFilter = /** @class */ (function (_super) {
     };
     SetFilter.prototype.doesFilterPass = function (params) {
         var _this = this;
-        if (!this.setFilterParams || !this.valueModel || !this.appliedModelKeys) {
+        if (!this.setFilterParams || !this.valueModel || !this.valueModel.getCaseFormattedAppliedModelKeys()) {
             return true;
         }
         // if nothing selected, don't need to check value
-        if (this.noAppliedModelKeys) {
+        if (!this.valueModel.hasAnyAppliedModelKey()) {
             return false;
         }
         var node = params.node, data = params.data;
@@ -561,16 +699,16 @@ var SetFilter = /** @class */ (function (_super) {
             return this.doesFilterPassForTreeData(node, data);
         }
         if (this.groupingTreeList) {
-            return this.doesFilterPassForGrouping(node, data);
+            return this.doesFilterPassForGrouping(node);
         }
-        var value = this.getValueFromNode(node, data);
+        var value = this.getValueFromNode(node);
         if (this.convertValuesToStrings) {
             // for backwards compatibility - keeping separate as it will eventually be removed
             return this.doesFilterPassForConvertValuesToString(node, value);
         }
         if (value != null && Array.isArray(value)) {
             if (value.length === 0) {
-                return this.appliedModelKeys.has(null);
+                return this.valueModel.hasAppliedModelKey(null);
             }
             return value.some(function (v) { return _this.isInAppliedModel(_this.createKey(v, node)); });
         }
@@ -581,7 +719,7 @@ var SetFilter = /** @class */ (function (_super) {
         var key = this.createKey(value, node);
         if (key != null && Array.isArray(key)) {
             if (key.length === 0) {
-                return this.appliedModelKeys.has(null);
+                return this.valueModel.hasAppliedModelKey(null);
             }
             return key.some(function (v) { return _this.isInAppliedModel(v); });
         }
@@ -595,10 +733,10 @@ var SetFilter = /** @class */ (function (_super) {
         }
         return this.isInAppliedModel(this.createKey(this.checkMakeNullDataPath(this.getDataPath(data))));
     };
-    SetFilter.prototype.doesFilterPassForGrouping = function (node, data) {
+    SetFilter.prototype.doesFilterPassForGrouping = function (node) {
         var _this = this;
         var dataPath = this.columnModel.getRowGroupColumns().map(function (groupCol) { return _this.valueService.getKeyForNode(groupCol, node); });
-        dataPath.push(this.getValueFromNode(node, data));
+        dataPath.push(this.getValueFromNode(node));
         return this.isInAppliedModel(this.createKey(this.checkMakeNullDataPath(dataPath)));
     };
     SetFilter.prototype.checkMakeNullDataPath = function (dataPath) {
@@ -611,20 +749,10 @@ var SetFilter = /** @class */ (function (_super) {
         return dataPath;
     };
     SetFilter.prototype.isInAppliedModel = function (key) {
-        return this.appliedModelKeys.has(this.caseFormat(key));
+        return this.valueModel.hasAppliedModelKey(key);
     };
-    SetFilter.prototype.getValueFromNode = function (node, data) {
-        var _a = this.setFilterParams, valueGetter = _a.valueGetter, api = _a.api, colDef = _a.colDef, column = _a.column, columnApi = _a.columnApi, context = _a.context;
-        return valueGetter({
-            api: api,
-            colDef: colDef,
-            column: column,
-            columnApi: columnApi,
-            context: context,
-            data: data,
-            getValue: function (field) { return data[field]; },
-            node: node,
-        });
+    SetFilter.prototype.getValueFromNode = function (node) {
+        return this.setFilterParams.getValue(node);
     };
     SetFilter.prototype.getKeyCreatorParams = function (value, node) {
         if (node === void 0) { node = null; }
@@ -664,7 +792,7 @@ var SetFilter = /** @class */ (function (_super) {
             throw new Error('Value model has not been created.');
         }
         this.valueModel.overrideValues(values).then(function () {
-            _this.refresh();
+            _this.checkAndRefreshVirtualList();
             _this.onUiChanged();
         });
     };
@@ -689,7 +817,7 @@ var SetFilter = /** @class */ (function (_super) {
             return;
         }
         this.valueModel.refreshValues().then(function () {
-            _this.refresh();
+            _this.checkAndRefreshVirtualList();
             _this.onUiChanged();
         });
     };
@@ -705,7 +833,7 @@ var SetFilter = /** @class */ (function (_super) {
             }
             _this.valueModel.refreshAfterAnyFilterChanged().then(function (refresh) {
                 if (refresh) {
-                    _this.refresh();
+                    _this.checkAndRefreshVirtualList();
                     _this.showOrHideResults();
                 }
             });
@@ -738,14 +866,14 @@ var SetFilter = /** @class */ (function (_super) {
         }
         var _a = this.setFilterParams || {}, excelMode = _a.excelMode, readOnly = _a.readOnly;
         if (excelMode == null || !!readOnly) {
-            this.refresh();
+            this.checkAndRefreshVirtualList();
         }
         else if (this.valueModel.getMiniFilter() == null) {
             this.resetUiToActiveModel(this.getModel());
         }
         else {
             this.valueModel.selectAllMatchingMiniFilter(true);
-            this.refresh();
+            this.checkAndRefreshVirtualList();
             this.onUiChanged();
         }
         this.showOrHideResults();
@@ -791,7 +919,7 @@ var SetFilter = /** @class */ (function (_super) {
             throw new Error('Unable to filter in readOnly mode.');
         }
         this.valueModel.selectAllMatchingMiniFilter(true);
-        this.refresh();
+        this.checkAndRefreshVirtualList();
         this.onUiChanged(false, applyImmediately ? 'immediately' : 'debounce');
         this.showOrHideResults();
     };
@@ -872,12 +1000,12 @@ var SetFilter = /** @class */ (function (_super) {
     SetFilter.prototype.refreshAfterExpansion = function () {
         var focusedRow = this.virtualList.getLastFocusedRow();
         this.valueModel.updateDisplayedValues('expansion');
-        this.refresh();
+        this.checkAndRefreshVirtualList();
         this.focusRowIfAlive(focusedRow);
     };
     SetFilter.prototype.refreshAfterSelection = function () {
         var focusedRow = this.virtualList.getLastFocusedRow();
-        this.refresh();
+        this.checkAndRefreshVirtualList();
         this.onUiChanged();
         this.focusRowIfAlive(focusedRow);
     };
@@ -888,7 +1016,7 @@ var SetFilter = /** @class */ (function (_super) {
     SetFilter.prototype.getMiniFilter = function () {
         return this.valueModel ? this.valueModel.getMiniFilter() : null;
     };
-    SetFilter.prototype.refresh = function () {
+    SetFilter.prototype.checkAndRefreshVirtualList = function () {
         if (!this.virtualList) {
             throw new Error('Virtual list has not been created.');
         }
@@ -911,7 +1039,7 @@ var SetFilter = /** @class */ (function (_super) {
             this.refreshFilterValues();
         }
         else {
-            this.refresh();
+            this.checkAndRefreshVirtualList();
         }
     };
     SetFilter.prototype.translateForSetFilter = function (key) {
@@ -1019,25 +1147,25 @@ var SetFilter = /** @class */ (function (_super) {
         return this.eSetFilterList;
     };
     __decorate([
-        core_1.RefSelector('eMiniFilter')
+        (0, core_1.RefSelector)('eMiniFilter')
     ], SetFilter.prototype, "eMiniFilter", void 0);
     __decorate([
-        core_1.RefSelector('eFilterLoading')
+        (0, core_1.RefSelector)('eFilterLoading')
     ], SetFilter.prototype, "eFilterLoading", void 0);
     __decorate([
-        core_1.RefSelector('eSetFilterList')
+        (0, core_1.RefSelector)('eSetFilterList')
     ], SetFilter.prototype, "eSetFilterList", void 0);
     __decorate([
-        core_1.RefSelector('eFilterNoMatches')
+        (0, core_1.RefSelector)('eFilterNoMatches')
     ], SetFilter.prototype, "eNoMatches", void 0);
     __decorate([
-        core_1.Autowired('valueFormatterService')
+        (0, core_1.Autowired)('valueFormatterService')
     ], SetFilter.prototype, "valueFormatterService", void 0);
     __decorate([
-        core_1.Autowired('columnModel')
+        (0, core_1.Autowired)('columnModel')
     ], SetFilter.prototype, "columnModel", void 0);
     __decorate([
-        core_1.Autowired('valueService')
+        (0, core_1.Autowired)('valueService')
     ], SetFilter.prototype, "valueService", void 0);
     return SetFilter;
 }(core_1.ProvidedFilter));
@@ -1052,9 +1180,6 @@ var ModelWrapper = /** @class */ (function () {
     ModelWrapper.prototype.getRow = function (index) {
         return this.model.getDisplayedItem(index);
     };
-    ModelWrapper.prototype.isRowSelected = function (index) {
-        return this.model.isKeySelected(this.getRow(index));
-    };
     ModelWrapper.prototype.areRowsEqual = function (oldRow, newRow) {
         return oldRow === newRow;
     };
@@ -1066,13 +1191,20 @@ var ModelWrapperWithSelectAll = /** @class */ (function () {
         this.isSelectAllSelected = isSelectAllSelected;
     }
     ModelWrapperWithSelectAll.prototype.getRowCount = function () {
-        return this.model.getDisplayedValueCount() + 1;
+        var showAddCurrentSelectionToFilter = this.model.showAddCurrentSelectionToFilter();
+        var outboundItems = showAddCurrentSelectionToFilter ? 2 : 1;
+        return this.model.getDisplayedValueCount() + outboundItems;
     };
     ModelWrapperWithSelectAll.prototype.getRow = function (index) {
-        return index === 0 ? this.model.getSelectAllItem() : this.model.getDisplayedItem(index - 1);
-    };
-    ModelWrapperWithSelectAll.prototype.isRowSelected = function (index) {
-        return index === 0 ? this.isSelectAllSelected() : this.model.isKeySelected(this.getRow(index));
+        if (index === 0) {
+            return this.model.getSelectAllItem();
+        }
+        var showAddCurrentSelectionToFilter = this.model.showAddCurrentSelectionToFilter();
+        var outboundItems = showAddCurrentSelectionToFilter ? 2 : 1;
+        if (index === 1 && showAddCurrentSelectionToFilter) {
+            return this.model.getAddSelectionToFilterItem();
+        }
+        return this.model.getDisplayedItem(index - outboundItems);
     };
     ModelWrapperWithSelectAll.prototype.areRowsEqual = function (oldRow, newRow) {
         return oldRow === newRow;

@@ -41,19 +41,21 @@ var AxisTicksPanel = /** @class */ (function (_super) {
         var _this = this;
         this.axisTicksGroup
             .setTitle(this.chartTranslationService.translate("ticks"))
+            .setEnabled(this.chartOptionsService.getAxisProperty("tick.enabled"))
             .hideOpenCloseIcons(true)
-            .hideEnabledCheckbox(true);
+            .hideEnabledCheckbox(false)
+            .onEnableChange(function (newValue) { return _this.chartOptionsService.setAxisProperty("tick.enabled", newValue); });
         this.axisTicksColorPicker
             .setLabel(this.chartTranslationService.translate("color"))
             .setLabelWidth("flex")
-            .setInputWidth(45)
+            .setInputWidth('flex')
             .setValue(this.chartOptionsService.getAxisProperty("tick.color"))
             .onValueChange(function (newColor) { return _this.chartOptionsService.setAxisProperty("tick.color", newColor); });
         var initInput = function (expression, input, label, defaultMaxValue) {
             var currentValue = _this.chartOptionsService.getAxisProperty(expression);
             input.setLabel(label)
                 .setMaxValue(getMaxValue(currentValue, defaultMaxValue))
-                .setValue("" + currentValue)
+                .setValue("".concat(currentValue))
                 .setTextFieldWidth(45)
                 .onValueChange(function (newValue) { return _this.chartOptionsService.setAxisProperty(expression, newValue); });
         };

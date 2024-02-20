@@ -62,7 +62,7 @@ var LocaleService = /** @class */ (function (_super) {
         };
     };
     LocaleService = __decorate([
-        context_1.Bean('localeService')
+        (0, context_1.Bean)('localeService')
     ], LocaleService);
     return LocaleService;
 }(beanStub_1.BeanStub));

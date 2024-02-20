@@ -8,10 +8,10 @@ import { BeanStub } from "../../context/beanStub.mjs";
 import { Autowired, PostConstruct } from "../../context/context.mjs";
 import { Events } from "../../eventKeys.mjs";
 export class SetHeightFeature extends BeanStub {
-    constructor(eContainer, eWrapper) {
+    constructor(eContainer, eViewport) {
         super();
         this.eContainer = eContainer;
-        this.eWrapper = eWrapper;
+        this.eViewport = eViewport;
     }
     postConstruct() {
         this.addManagedListener(this.eventService, Events.EVENT_ROW_CONTAINER_HEIGHT_CHANGED, this.onHeightChanged.bind(this));
@@ -20,8 +20,8 @@ export class SetHeightFeature extends BeanStub {
         const height = this.maxDivHeightScaler.getUiContainerHeight();
         const heightString = height != null ? `${height}px` : ``;
         this.eContainer.style.height = heightString;
-        if (this.eWrapper) {
-            this.eWrapper.style.height = heightString;
+        if (this.eViewport) {
+            this.eViewport.style.height = heightString;
         }
     }
 }

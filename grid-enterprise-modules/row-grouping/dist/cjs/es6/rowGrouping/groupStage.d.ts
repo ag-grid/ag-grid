@@ -5,12 +5,8 @@ export declare class GroupStage extends BeanStub implements IRowNodeStage {
     private valueService;
     private beans;
     private selectionService;
-    private usingTreeData;
-    private getDataPath;
-    private groupIdSequence;
     private oldGroupingDetails;
     private oldGroupDisplayColIds;
-    private postConstruct;
     execute(params: StageExecuteParams): void;
     private positionLeafsAndGroups;
     private createGroupingDetails;
@@ -38,6 +34,7 @@ export declare class GroupStage extends BeanStub implements IRowNodeStage {
     private swapGroupWithUserNode;
     private getOrCreateNextNode;
     private createGroup;
+    private createGroupId;
     private setGroupData;
     private getChildrenMappedKey;
     private setExpandedInitialValue;
