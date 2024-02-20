@@ -3,14 +3,12 @@ import { getCollection } from 'astro:content';
 import Layout from '@layouts/Layout.astro';
 import { getDocsExamplePages } from '@features/docs/utils/pageData';
 import { getExampleContentsUrl, getExampleUrl } from '@features/docs/utils/urlPaths';
+import { getIsImplemented } from '@constants';
 
 const pages = await getCollection('docs');
 const examples = await getDocsExamplePages({
     pages,
 });
-
-// TODO: Remove once all are implemented
-const getIsImplemented = ({ internalFramework, importType }) => internalFramework === 'typescript' && importType === 'modules'
 ---
 
 <Layout title={`Debug: Docs Example Pages`}>

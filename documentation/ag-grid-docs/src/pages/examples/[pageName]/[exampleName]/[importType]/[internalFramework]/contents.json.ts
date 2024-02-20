@@ -1,4 +1,5 @@
 import type { ImportType, InternalFramework } from '@ag-grid-types';
+import { getIsImplemented } from '@constants';
 import { getDocsExamplePages } from '@features/docs/utils/pageData';
 import { getGeneratedContents } from '@features/example-generator';
 import type { APIContext } from 'astro';
@@ -9,7 +10,10 @@ export async function getStaticPaths() {
     const examples = await getDocsExamplePages({
         pages,
     });
-    return examples;
+
+    return examples.filter(({ params }) => {
+        return getIsImplemented(params);
+    });
 }
 
 export async function GET(context: APIContext) {

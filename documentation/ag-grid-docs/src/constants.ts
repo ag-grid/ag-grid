@@ -78,3 +78,14 @@ export const SITE_BASE_URL_SEGMENTS = SITE_BASE_URL?.split('/').filter(Boolean).
  * URL prefix to serve files
  */
 export const FILES_BASE_PATH = '/files';
+
+// TODO: Remove once all docs are implemented
+export const getIsImplemented = ({
+    internalFramework,
+    importType,
+}: {
+    internalFramework: InternalFramework;
+    importType: ImportType;
+}) => {
+    return internalFramework === 'typescript' && importType === 'modules';
+};
