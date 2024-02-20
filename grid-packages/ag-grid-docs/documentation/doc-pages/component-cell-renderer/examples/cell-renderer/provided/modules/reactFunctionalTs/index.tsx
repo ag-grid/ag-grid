@@ -3,19 +3,19 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import { ColDef, ColGroupDef, ICellRendererParams, ModuleRegistry } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridReact } from '@ag-grid-community/react';
 import React, { useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { CustomCellRendererProps } from '@ag-grid-community/react';
 import './styles.css';
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 export interface ImageCellRendererParams extends CustomCellRendererProps {
     rendererImage: string;
     divisor?: number;
 }
-
-// Register the required feature modules with the Grid
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const createImageArr = (imageMultiplier: number, image: string) => {
   const arr = [];
