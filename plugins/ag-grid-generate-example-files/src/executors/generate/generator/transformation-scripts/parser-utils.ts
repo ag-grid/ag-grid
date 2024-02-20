@@ -2,7 +2,6 @@ import { transform } from 'sucrase';
 import ts from 'typescript';
 
 import {integratedChartsUsesChartsEnterprise} from "../constants";
-import { getModules } from '../utils/fileUtils';
 
 export type ImportType = 'packages' | 'modules';
 
@@ -13,7 +12,6 @@ export interface BindingImport {
     imports: string[];
 }
 
-const moduleMapping  = getModules();
 
 export function readAsJsFile(srcFile, options: { includeImports: boolean } = undefined) {
     const tsFile = srcFile
@@ -53,32 +51,6 @@ export function tsGenerate(node, srcFile) {
         console.error(error);
     }
     return 'ERROR - Printing';
-}
-
-export function modulesProcessor(modules: string[]) {
-    const moduleImports = [];
-    const suppliedModules = [];
-
-    const requiredModules = [];
-    modules.forEach((module) => {
-        let found = false;
-        moduleMapping.forEach(moduleConfig => {
-            if (moduleConfig.shortname && moduleConfig.shortname == module) {
-                requiredModules.push(moduleConfig);
-                found = true;
-            }
-        });
-        if (!found) {
-            console.error(`Could not find module ${module} in modules.json`);
-        }
-    });
-
-    requiredModules.forEach((requiredModule) => {
-        moduleImports.push(`import { ${requiredModule.exported} } from '${requiredModule.module}';`);
-        suppliedModules.push(requiredModule.exported);
-    });
-
-    return { moduleImports, suppliedModules };
 }
 
 export function removeFunctionKeyword(code: string): string {
@@ -682,24 +654,8 @@ export function addBindingImports(
     }
 }
 
-export function getModuleRegistration({ gridSettings, enterprise, exampleName }) {
-    const moduleRegistration = ["import { ModuleRegistry } from '@ag-grid-community/core';"];
-    const modules = gridSettings.modules;
-
-    if (enterprise && !Array.isArray(modules)) {
-        throw new Error(
-            `The example ${exampleName} has "enterprise" : true but no modules have been provided "modules":[...]. Either remove the enterprise flag or provide the required modules.`
-        );
-    }
-
-    const exampleModules = Array.isArray(modules) ? modules : ['clientside'];
-    const { moduleImports, suppliedModules } = modulesProcessor(exampleModules);
-    moduleRegistration.push(...moduleImports);
-    const gridSuppliedModules = `[${suppliedModules.join(', ')}]`;
-
-    moduleRegistration.push(`\n// Register the required feature modules with the Grid`);
-    moduleRegistration.push(`ModuleRegistry.registerModules(${gridSuppliedModules})`);
-    return moduleRegistration;
+export function removeModuleRegistration(code: string) {
+ return code.replace(/ModuleRegistry.*]\)(;?)/g, '');
 }
 
 export function handleRowGenericInterface(fileTxt: string, tData: string): string {

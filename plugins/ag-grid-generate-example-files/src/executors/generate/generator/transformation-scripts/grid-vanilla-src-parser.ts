@@ -1,6 +1,7 @@
 import * as cheerio from 'cheerio';
 import ts from 'typescript';
-import {Events, PropertyKeys} from './eventKeys';
+import {Events } from '../_copiedFromCore/eventKeys';
+import { PropertyKeys } from '../_copiedFromCore/propertyKeys';
 import {
     extractClassDeclarations,
     extractEventHandlers,
@@ -31,8 +32,8 @@ import {
 
 export const templatePlaceholder = 'GRID_TEMPLATE_PLACEHOLDER';
 const EVENTS = (<any>Object).values(Events);
-const PROPERTIES = PropertyKeys.ALL_PROPERTIES;
-const FUNCTION_PROPERTIES = PropertyKeys.FUNCTION_PROPERTIES;
+const PROPERTIES: any = PropertyKeys.ALL_PROPERTIES;
+const FUNCTION_PROPERTIES: any = PropertyKeys.FUNCTION_PROPERTIES;
 
 function tsNodeIsDocumentContentLoaded(node) {
     try {

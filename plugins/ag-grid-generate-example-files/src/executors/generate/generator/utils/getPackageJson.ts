@@ -2,7 +2,6 @@ import { readFileSync } from 'fs';
 
 import { integratedChartsUsesChartsEnterprise, INTERNAL_FRAMEWORK_DEPENDENCIES } from '../constants';
 import type { InternalFramework } from '../types';
-import { getModules } from './fileUtils';
 
 interface Params {
     isEnterprise: boolean;
@@ -70,7 +69,7 @@ function addPackageJson(type, framework, importType) {
         if (type === 'grid' && isFrameworkReact()) {
             addDependency('@ag-grid-community/react', agGridReactVersion);
         }
-        getModules().forEach(m => addDependency(m, agGridVersion));
+        //getModules().forEach(m => addDependency(m, agGridVersion));
     } else {
         if (type === 'grid') {
             if (framework === 'angular') {

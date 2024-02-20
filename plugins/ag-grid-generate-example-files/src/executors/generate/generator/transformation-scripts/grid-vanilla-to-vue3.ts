@@ -1,15 +1,5 @@
-import {
-    convertFunctionToConstProperty,
-    getActiveTheme,
-    getFunctionName,
-    getIntegratedDarkModeCode,
-    getModuleRegistration,
-    ImportType,
-    isInstanceMethod,
-    preferParamsApi,
-    replaceGridReadyRowData
-} from './parser-utils';
-import {getImport, toConst, toInput, toOutput, toRef} from './vue-utils';
+import * as JSON5 from "json5";
+import { integratedChartsUsesChartsEnterprise } from "../constants";
 import {
     convertDefaultColDef,
     getColumnDefs,
@@ -19,8 +9,16 @@ import {
     isExternalVueFile,
     OVERRIDABLE_AG_COMPONENTS
 } from "./grid-vanilla-to-vue-common";
-import * as JSON5 from "json5";
-import {integratedChartsUsesChartsEnterprise} from "../constants";
+import {
+    convertFunctionToConstProperty,
+    getActiveTheme,
+    getFunctionName,
+    getIntegratedDarkModeCode, ImportType,
+    isInstanceMethod,
+    preferParamsApi,
+    replaceGridReadyRowData
+} from './parser-utils';
+import { getImport, toConst, toInput, toOutput, toRef } from './vue-utils';
 
 const path = require('path');
 
@@ -264,8 +262,6 @@ function getModuleImports(bindings: any, componentFileNames: string[], allStyles
         imports.push(...componentFileNames.map(componentFileName => getImport(componentFileName, 'Vue', '')));
     }
 
-    imports = [...imports, ...getModuleRegistration(bindings)];
-
     return imports;
 }
 
@@ -278,7 +274,7 @@ function getPackageImports(bindings: any, componentFileNames: string[], allStyle
     ];
 
     if (gridSettings.enterprise) {
-        imports.push(`import 'ag-grid-enterprise${integratedChartsUsesChartsEnterprise && bindings.gridSettings.modules.includes('charts-enterprise') ? '-charts-enterprise' : ''}';`);
+        imports.push(`import 'ag-grid-${integratedChartsUsesChartsEnterprise && bindings.gridSettings.modules.includes('charts-enterprise') ? 'charts-' : ''}enterprise';`);
     }
     if (bindings.gridSettings.enableChartApi) {
         imports.push("import { AgChart } from 'ag-charts-community'");

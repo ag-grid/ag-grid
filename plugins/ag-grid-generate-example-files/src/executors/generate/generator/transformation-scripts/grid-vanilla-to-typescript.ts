@@ -1,5 +1,5 @@
-import {addBindingImports, addGenericInterfaceImport, getIntegratedDarkModeCode, getModuleRegistration, ImportType} from './parser-utils';
-import {integratedChartsUsesChartsEnterprise} from "../constants";
+import { integratedChartsUsesChartsEnterprise } from "../constants";
+import { addBindingImports, addGenericInterfaceImport, getIntegratedDarkModeCode, ImportType, removeModuleRegistration } from './parser-utils';
 import { toTitleCase } from './string-utils';
 
 
@@ -43,8 +43,6 @@ function getModuleImports(bindings: any): string[] {
 
     addGenericInterfaceImport(imports, bindings.tData, bindings);
 
-    imports = [...imports, ...getModuleRegistration(bindings)]
-
     return imports;
 }
 
@@ -53,7 +51,7 @@ function getPackageImports(bindings: any): string[] {
     const imports = [];
 
     if (gridSettings.enterprise) {
-        imports.push(`import 'ag-grid-enterprise${integratedChartsUsesChartsEnterprise && bindings.gridSettings.modules.includes('charts-enterprise') ? '-charts-enterprise' : ''}';`);
+        imports.push(`import 'ag-grid-${integratedChartsUsesChartsEnterprise && bindings.gridSettings.modules.includes('charts-enterprise') ? 'charts-' : ''}enterprise';`);
     }
 
     imports.push("import 'ag-grid-community/styles/ag-grid.css';");
@@ -123,6 +121,10 @@ export function vanillaToTypescript(bindings: any, mainFilePath: string, tsFile:
 
         // Remove the original import statements
         unWrapped = unWrapped.replace(/import ((.|\n)*?)from.*\n/g, '');
+
+        if(importType === 'packages') {
+            unWrapped = removeModuleRegistration(unWrapped);
+        }
 
         // TODO: skipping dark mode handling for TS
         return `${formattedImports}${unWrapped} ${toAttach || ''} ${getIntegratedDarkModeCode(bindings.exampleName, true, 'gridApi')}`

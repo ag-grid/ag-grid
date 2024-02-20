@@ -154,11 +154,3 @@ export const getFileList = async ({ folderPath, fileList }: { folderPath: string
 };
 
 export const getIsEnterprise = ({ entryFile }: { entryFile: string }) => entryFile?.includes('ag-grid-enterprise');
-
-/** Get the list of Grid modules so that we can fill this in for module example code */
-export function getModules() {
-    const path = `${process.cwd()}/documentation/ag-grid-docs/src/content/matrix-table/modules.json`;    
-    const modulesJsonStr = readFileSync(path, 'utf-8');
-    const modules = JSON.parse(modulesJsonStr);
-    return modules;
-}
