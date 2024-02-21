@@ -24,12 +24,6 @@
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-<h2 id="custom-date-parameters">Custom Date Parameters</h2>
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-|### Date Props
-|
 |The following props are passed to the custom date components (`CustomDateProps` interface).
 </framework-specific-section>
 
@@ -38,8 +32,6 @@
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-|### Date Callbacks
-|
 |The following callbacks can be passed to the `useGridDate` hook (`CustomDateCallbacks` interface). All the callbacks are optional, and the hook only needs to be used if callbacks are provided.
 </framework-specific-section>
 

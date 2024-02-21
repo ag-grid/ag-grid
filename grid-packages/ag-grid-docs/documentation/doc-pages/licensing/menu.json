@@ -1528,10 +1528,6 @@
             "showInCollapsed": true
           },
           {
-            "title": "Date Component",
-            "url": "/component-date/"
-          },
-          {
             "title": "Higher Order Components",
             "url": "/framework-hoc/",
             "showInCollapsed": true,

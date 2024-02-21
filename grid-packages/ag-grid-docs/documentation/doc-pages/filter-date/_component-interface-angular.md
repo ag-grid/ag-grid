@@ -6,7 +6,5 @@
 </framework-specific-section> 
 
 <framework-specific-section frameworks="angular">
-|### Custom Date Parameters
-|
 |The `agInit(params)` method takes a params object with the items listed below:
 </framework-specific-section>

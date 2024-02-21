@@ -6,9 +6,7 @@ Date Filters allow you to filter date data.
 
 <image-caption src="filter-date/resources/date-filter.png" alt="Date Filter" centered="true" toggleDarkMode="true"></image-caption>
 
-## Enabling Date Filters
-
-The Date Filter can be configured as shown below:
+Configure as follows:
 
 <snippet>
 const gridOptions = {
@@ -25,8 +23,6 @@ const gridOptions = {
 }
 </snippet>
 
-## Example: Date Filter
-
 The example below shows the Date Filter in action:
 
 - The **Date** column is using a Date Filter.
@@ -38,7 +34,13 @@ The example below shows the Date Filter in action:
 
 <grid-example title='Date Picker' name='date-filter' type='generated' options='{ "exampleHeight": 520 }'></grid-example>
 
-## Example: Setting Range For Date Filter
+## Configuration
+
+Date Filters are configured though the `filterParams` attribute of the column definition (`IDateFilterParams` interface):
+
+<interface-documentation interfaceName='IDateFilterParams' config='{"description":"", "sortAlphabetically":"true"}'  overrideSrc="filter-date/resources/date-filter-params.json"></interface-documentation>
+
+## Date Range
 
 The example below demonstrates configuring date range filtering in the Date Filter with minimum and maximum validation dates:
 
@@ -49,19 +51,7 @@ The example below demonstrates configuring date range filtering in the Date Filt
 
 <grid-example title='Setting Date Range For Filter' name='range-for-date-filter' type='generated' options='{ "exampleHeight": 520 }'></grid-example>
 
-## Date Filter Parameters
-
-Date Filters are configured though the `filterParams` attribute of the column definition (`IDateFilterParams` interface):
-
-<interface-documentation interfaceName='IDateFilterParams' config='{"description":"", "sortAlphabetically":"true"}'  overrideSrc="filter-date/resources/date-filter-params.json"></interface-documentation>
-
-## Date Selection Component
-
-By default the grid will use the browser-provided date picker for all [Supported Browsers](/supported-browsers/), but for other browsers it will provide a simple text field. To override this and provide a custom date picker, see [Date Component](/component-date/).
-
-It is also possible to enable a native date picker for unsupported browsers by setting `filterParams.browserDatePicker = true`. However, you will need to test this behaviour yourself.
-
-## Date Filter Comparator
+## Filter Comparator
 
 Dates can be represented in your data in many ways e.g. as a JavaScript `Date` object, as a string in a particular format such as `'26-MAR-2020'`, or something else. How you represent dates will be particular to your application.
 
@@ -120,13 +110,11 @@ Below is an example of using a date filter with a comparator.
 
 Once the date comparator callback is provided, then the Date Filter is able to perform all the comparison operations it needs, e.g. 'Less Than', 'Greater Than' and 'Equals'.
 
-## Date Model vs Comparison Types
+## Filter Model
 
-It should be noted that the Date Filter Model represents the Date as a string in format `'YYYY-MM-DD'`, however when doing comparisons the date is provided as a JavaScript `Date` object as that's what date pickers typically work with. The model uses string representation to make it easier to save and avoid any timezone issues.
+The Filter Model describes the current state of the applied Date Filter. The Date Filter Model represents the Date as a string in format `'YYYY-MM-DD'`, however when doing comparisons the date is provided as a JavaScript `Date` object as that's what date pickers typically work with. The model uses string representation to make it easier to save and avoid any timezone issues.
 
-## Date Filter Model
-
-The Filter Model describes the current state of the applied Date Filter. If only one [Filter Condition](/filter-conditions/) is set, this will be a `DateFilterModel`:
+If only one [Filter Condition](/filter-conditions/) is set, this will be a `DateFilterModel`:
 
 <interface-documentation interfaceName='DateFilterModel' config='{"description":""}'></interface-documentation>
 
@@ -171,7 +159,7 @@ const dateEquals04OrEquals08 = {
 };
 ```
 
-## Date Filter Options
+## Filter Options
 
 The Date Filter presents a list of [Filter Options](/filter-conditions/#filter-options) to the user.
 
@@ -192,13 +180,36 @@ Note that the `empty` filter option is primarily used when creating [Custom Filt
 
 The default option for the Date Filter is `equals`.
 
-## Date Filter Values
+## Filter Values
 
 By default, the values supplied to the Date Filter are retrieved from the data based on the `field` attribute. This can be overridden by providing a `filterValueGetter` in the Column Definition. This is similar to using a [Value Getter](/value-getters), but is specific to the filter.
 
 <api-documentation source='column-properties/properties.json' section='filtering' names='["filterValueGetter"]'></api-documentation>
 
-## Applying the Date Filter
+## Date Selection Component
+
+By default the grid will use the browser-provided date picker for all [Supported Browsers](/supported-browsers/), but for other browsers it will provide a simple text field. To override this and provide a custom date picker, see [Date Component](/component-date/).
+
+It is also possible to enable a native date picker for unsupported browsers by setting `filterParams.browserDatePicker = true`. However, you will need to test this behaviour yourself.
+
+## Custom Selection Component
+
+You can provide a Date Selection Component to replace the default. 
+
+The example below shows how to register a custom date component that contains an extra floating calendar picker rendered from the filter field. The problem with this approach is that we have no control over third party components and therefore no way to implement a `preventDefault` when the user clicks on the Calendar Picker (for more info see [Custom Floating Filter Example](/component-floating-filter/#example-custom-floating-filter)). Our way of fixing this problem is to add the `ag-custom-component-popup` class to the floating calendar.
+
+<grid-example title='Custom Date Component' name='custom-date' type='mixed' options='{ "extras": ["fontawesome", "flatpickr"] }'></grid-example>
+
+md-include:component-interface-javascript.md
+md-include:component-interface-angular.md
+md-include:component-interface-react.md
+md-include:component-interface-vue.md
+
+<framework-specific-section frameworks="javascript,angular,vue">
+<interface-documentation interfaceName='IDateParams' overridesrc='component-date/resources/dateParams.json' ></interface-documentation>
+</framework-specific-section>
+
+## Applying the Filter
 
 Applying the Date Filter is described in more detail in the following sections:
 
