@@ -1,5 +1,5 @@
 import type { InternalFramework, Library } from '@ag-grid-types';
-import { SITE_BASE_URL, USE_PUBLISHED_PACKAGES } from '@constants';
+import { SITE_BASE_URL, USE_PUBLISHED_PACKAGES } from '../constants';
 import type { CollectionEntry } from 'astro:content';
 import glob from 'glob';
 
@@ -125,6 +125,16 @@ export const getContentRootFileUrl = ({ isDev }: { isDev?: boolean } = {}): URL 
 export const isUsingPublishedPackages = () => USE_PUBLISHED_PACKAGES === true;
 export const isPreProductionBuild = () => false;
 export const isBuildServerBuild = () => false;
+
+/**
+ * Get Dev File URL for referencing on the front end
+ */
+export const getDevFileList = () => {
+    const distFolder = getRootUrl();
+    return Object.values(FILES_PATH_MAP).map((file) => {
+        return pathJoin(distFolder.pathname, file as string);
+    });
+};
 
 export function getExtraFiles(): ExtraFileRoute[] {
     const result = [];

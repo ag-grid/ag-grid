@@ -5,6 +5,8 @@ import react from '@astrojs/react';
 import mkcert from 'vite-plugin-mkcert';
 import svgr from 'vite-plugin-svgr';
 import markdoc from "@astrojs/markdoc";
+import agHotModuleReload from './plugins/agHotModuleReload';
+
 const {
   NODE_ENV
 } = process.env;
@@ -31,7 +33,7 @@ export default defineConfig({
   site: PUBLIC_SITE_URL,
   base: PUBLIC_BASE_URL,
   vite: {
-    plugins: [mkcert(), svgr()],
+    plugins: [mkcert(), svgr(), agHotModuleReload()],
     server: {
       https: !['0', 'false'].includes(PUBLIC_HTTPS_SERVER)
     }
