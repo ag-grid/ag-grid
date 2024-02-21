@@ -25,5 +25,5 @@ md-include:component-interface-react.md
 md-include:component-interface-vue.md
 
 <framework-specific-section frameworks="javascript,angular,vue">
-<interface-documentation interfaceName='IDateParams' overridesrc='component-date/resources/dateParams.json' ></interface-documentation>
+<interface-documentation interfaceName='IDateParams' overrideSrc='component-date/resources/dateParams.json' ></interface-documentation>
 </framework-specific-section>
