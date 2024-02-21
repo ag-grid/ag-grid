@@ -6,16 +6,29 @@
   "targets": {
     "build": {
       "executor": "nx:noop",
-      "dependsOn": ["build:types", "build:package", "build:umd"]
+      "dependsOn": ["build:types", "build:package", "build:umd", "build:copy-styles"]
     },
     "build:umd": {
       "executor": "@nx/webpack:webpack",
       "options": {
         "webpackConfig": "packages/ag-grid-community/webpack.config.js",
-        "outputPath":  "overriden in webpack config but required by nx",
-        "outputFileName": "overriden in webpack config but required by nx"
+        "outputPath":  "overridden in webpack config but required by nx",
+        "outputFileName": "overridden in webpack config but required by nx"
       },
+      "cache": true,
       "dependsOn": []
+    },
+    "build:copy-styles": {
+      "dependsOn": [],
+      "inputs": [
+        "^production",
+        "production"
+      ],
+      "cache": true,
+      "command": "rsync -r ../../community-modules/styles/*.*css --delete styles",
+      "options": {
+        "cwd": "packages/ag-grid-community"
+      }
     },
     "build:types": {
       "executor": "@nx/js:tsc",
@@ -28,6 +41,7 @@
         "tsConfig": "packages/ag-grid-community/tsconfig.types.json",
         "compiler": "tsc"
       },
+      "cache": true,
       "configurations": {
         "watch": {
           "tsConfig": "packages/ag-grid-community/tsconfig.types.watch.json"

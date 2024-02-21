@@ -36,6 +36,8 @@ dist
 
 grid-community-modules/all-modules/styles/**
 grid-enterprise-modules/all-modules/styles/**
+packages/ag-grid-community/styles/**
+packages/ag-grid-enterprise/styles/**
 grid-packages/ag-grid-community/styles/**
 grid-packages/ag-grid-enterprise/styles/**
 grid-packages/ag-grid-charts-enterprise/styles/**
