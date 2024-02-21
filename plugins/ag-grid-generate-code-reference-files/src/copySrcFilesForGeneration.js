@@ -1,8 +1,8 @@
-import { readFile, writeFile } from 'fs';
+const fs = require('fs');
 
 function copyFileWithTSNoCheck(sourceFile, destinationFile) {
 
-    readFile(sourceFile, 'utf8', (err, data) => {
+    fs.readFile(sourceFile, 'utf8', (err, data) => {
         if (err) {
             console.error(`Error reading file: ${err}`);
             return;
@@ -10,7 +10,7 @@ function copyFileWithTSNoCheck(sourceFile, destinationFile) {
 
         // Prepend '@ts-nocheck' to the content so we don't have to worry about typescript errors
         const modifiedContent = `// @ts-nocheck\n${data}`;
-        writeFile(destinationFile, modifiedContent, {
+        fs.writeFile(destinationFile, modifiedContent, {
             encoding: 'utf8',
             flag: 'w'
         }, (err) => {
