@@ -6,7 +6,19 @@
   "targets": {
     "build": {
       "executor": "nx:noop",
-      "dependsOn": ["build:types", "build:package", "build:umd"]
+      "dependsOn": ["build:types", "build:package", "build:umd"],
+      "inputs": [
+        {
+          "externalDependencies": [
+            "npm:typescript"
+          ]
+        }
+      ],
+      "cache": false,
+      "configurations": {
+        "watch": {},
+        "production": {}
+      }
     },
     "build:types": {
       "executor": "@nx/js:tsc",

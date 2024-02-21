@@ -6,7 +6,19 @@
   "targets": {
     "build": {
       "executor": "nx:noop",
-      "dependsOn": ["build:types", "build:package", "build:umd"]
+      "dependsOn": ["build:types", "build:package", "build:umd"],
+      "inputs": [
+        {
+          "externalDependencies": [
+            "npm:typescript"
+          ]
+        }
+      ],
+      "cache": false,
+      "configurations": {
+        "watch": {},
+        "production": {}
+      }
     },
     "build:types": {
       "executor": "@nx/js:tsc",
@@ -28,9 +40,15 @@
     },
     "build:package": {
       "executor": "@nx/esbuild:esbuild",
-      "dependsOn": ["^build"],
-      "inputs": ["tsDefaults"],
-      "outputs": ["{options.outputPath}"],
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs": [
+        "tsDefaults"
+      ],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "community-modules/core/dist/package",
         "main": "community-modules/core/src/main.ts",
@@ -38,7 +56,10 @@
         "esbuildConfig": "esbuild.config.cjs",
         "platform": "browser",
         "target": "es6",
-        "format": ["cjs", "esm"],
+        "format": [
+          "cjs",
+          "esm"
+        ],
         "sourcemap": true
       },
       "configurations": {
@@ -52,11 +73,15 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
+      "outputs": [
+        "{options.outputFile}"
+      ]
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
       "options": {
         "jestConfig": "community-modules/jest.config.ts"
       }
