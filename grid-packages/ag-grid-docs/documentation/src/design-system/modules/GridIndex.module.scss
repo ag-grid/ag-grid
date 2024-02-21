@@ -14,5 +14,8 @@ main {
     width: 100%;
     min-height: 100vh;
     padding: 0;
-    overflow-x: hidden;
+
+    @media screen and (max-width: $breakpoint-docs-nav-medium) {
+        overflow-x: hidden;
+    }
 }
