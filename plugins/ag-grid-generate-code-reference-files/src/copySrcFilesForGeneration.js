@@ -22,11 +22,6 @@ function copyFileWithTSNoCheck(sourceFile, destinationFile) {
     });
 }
 
-const srcPropertyKeys = '../../community-modules/core/src/propertyKeys.ts';
-const destPropertyKeys = './src/executors/generate/generator/_copiedFromCore/propertyKeys.ts';
-
-const srcEventKeys = '../../community-modules/core/src/eventKeys.ts';
-const destEventKeys = './src/executors/generate/generator/_copiedFromCore/eventKeys.ts';
-
+const srcPropertyKeys = '../../community-modules/core/src/eventKeys.ts';
+const destPropertyKeys = './src/executors/generate/_copiedFromCore/eventKeys.ts';
 copyFileWithTSNoCheck(srcPropertyKeys, destPropertyKeys);
-copyFileWithTSNoCheck(srcEventKeys, destEventKeys);

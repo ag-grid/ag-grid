@@ -1,11 +1,15 @@
 /* eslint-disable no-console */
-import * as ts from 'typescript';
+import ts from 'typescript';
 
-import { writeJSONFile } from '../../executors-utils';
-import { TypeMapper } from './types-utils';
+import { inputGlob, writeJSONFile } from '../../executors-utils';
+import { getGridOptions, getInterfaces  } from './generate-code-reference-files';
+import { getGridApi } from './generate-code-reference-files';
+import { getRowNode } from './generate-code-reference-files';
+import { getColumnOptions } from './generate-code-reference-files';
+import { getColumn } from './generate-code-reference-files';
+import { buildInterfaceProps } from './generate-code-reference-files';
 
-type OptionsMode = 'debug-interfaces' | 'docs-interfaces';
-type ExecutorOptions = { mode: OptionsMode; inputs: string[]; output: string };
+type ExecutorOptions = { output: string};
 
 export default async function (options: ExecutorOptions) {
     try {
@@ -26,17 +30,42 @@ export default async function (options: ExecutorOptions) {
 }
 
 async function generateFile(options: ExecutorOptions) {
-    const typeMapper = new TypeMapper(options.inputs);
+    const workspaceRoot = process.cwd();
+    const gridOpsFile = workspaceRoot + "/community-modules/core/src/entities/gridOptions.ts";
+    const colDefFile = workspaceRoot + "/community-modules/core/src/entities/colDef.ts";
+    const filterFile = workspaceRoot +  "/community-modules/core/src/interfaces/iFilter.ts";
+    const gridApiFile = workspaceRoot +  "/community-modules/core/src/gridApi.ts";
+    const columnFile = workspaceRoot +  "/community-modules/core/src/entities/column.ts";
+    const rowNodeFile = workspaceRoot +  "/community-modules/core/src/interfaces/iRowNode.ts";
 
-    switch (options.mode) {
-        // flat version of the interfaces file, without resolving
-        case 'debug-interfaces':
-            return await writeJSONFile(options.output, typeMapper.entries());
+    const distFolder = workspaceRoot + '/' + options.output;
 
-        case 'docs-interfaces':
-            return await writeJSONFile(options.output, typeMapper.resolvedEntries());
+    // Matches the inputs in docs-resolved-interfaces task
+    const INTERFACE_GLOBS = [
+        ...inputGlob(workspaceRoot + '/community-modules/core/src'),
+        ...inputGlob(workspaceRoot + '/community-modules/angular/projects/ag-grid-angular/src/lib'),
+        ...inputGlob(workspaceRoot + '/community-modules/react/src/shared'),
+        ...inputGlob(workspaceRoot + '/grid-enterprise-modules/set-filter/src'),
+        ...inputGlob(workspaceRoot + '/grid-enterprise-modules/filter-tool-panel/src'),
+        ...inputGlob(workspaceRoot + '/grid-enterprise-modules/multi-filter/src'),
+    ];
 
-        default:
-            throw new Error(`Unsupported mode "${options.mode}"`);
-    }
+    const generateMetaFiles = async () => {
+        await writeJSONFile(distFolder + '/grid-options.AUTO.json', getGridOptions(gridOpsFile));
+        await writeJSONFile(distFolder + '/grid-api.AUTO.json', getGridApi(gridApiFile));
+        await writeJSONFile(distFolder + '/row-node.AUTO.json', getRowNode(rowNodeFile));
+        await writeJSONFile(distFolder + '/column-options.AUTO.json', getColumnOptions(colDefFile, filterFile));
+        await writeJSONFile(distFolder + '/column.AUTO.json', getColumn(columnFile));
+        await writeJSONFile(distFolder + '/interfaces.AUTO.json', getInterfaces(INTERFACE_GLOBS));
+        await writeJSONFile(distFolder + '/doc-interfaces.AUTO.json', buildInterfaceProps(INTERFACE_GLOBS));
+    };
+    
+    console.log(`--------------------------------------------------------------------------------`);
+    console.log(`Generate docs reference files...`);
+    console.log('Using Typescript version: ', ts.version)
+    
+    await generateMetaFiles();
+    
+    console.log(`Generated OK.`);
+    console.log(`--------------------------------------------------------------------------------`);
 }

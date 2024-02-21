@@ -6,22 +6,7 @@
     "cli": "nx",
     "outputCapture": "pipe",
     "type": "object",
-    "properties": {
-        "mode": {
-            "type": "string",
-            "enum": ["debug-interfaces", "docs-interfaces"],
-            "description": "Type of output to generate.",
-            "x-priority": "important"
-        },
-        "inputs": {
-            "type": "array",
-            "items": {
-                "type": "string",
-                "x-completion-type": "glob"
-            },
-            "description": "Globs for TS files to be included.",
-            "x-priority": "important"
-        },
+    "properties": {      
         "output": {
             "type": "string",
             "description": "The output path of the generated file.",
@@ -29,5 +14,5 @@
             "x-priority": "important"
         }
     },
-    "required": ["mode", "inputs", "output"]
+    "required": ["output"]
 }

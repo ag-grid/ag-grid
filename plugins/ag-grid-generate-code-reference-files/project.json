@@ -6,6 +6,7 @@
   "targets": {
     "build": {
       "executor": "@nx/js:swc",
+      "dependsOn": ["copySrcFilesForGeneration"],
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "plugins/ag-grid-generate-code-reference-files/dist",
@@ -35,6 +36,18 @@
           }
         ]
       }
+    },
+    "copySrcFilesForGeneration": {
+      "executor": "nx:run-script",
+      "options": {
+        "script": "copySrcFilesForGeneration"
+      },
+      "inputs": [
+        "{workspaceRoot}/community-modules/core/src/eventKeys.ts"
+      ],
+      "outputs": [
+        "{workspaceRoot}/plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore/eventKeys.ts"
+      ]
     },
     "lint": {
       "executor": "@nx/eslint:lint",
