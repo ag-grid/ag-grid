@@ -1526,31 +1526,6 @@
             "title": "Registering Components",
             "url": "/components/",
             "showInCollapsed": true
-          },
-          {
-            "title": "Higher Order Components",
-            "url": "/framework-hoc/",
-            "showInCollapsed": true,
-            "frameworks": [
-              "react"
-            ]
-          },
-          {
-            "title": "Parent/Child Communication",
-            "url": "/component-communication/",
-            "showInCollapsed": true,
-            "frameworks": [
-              "angular",
-              "vue"
-            ]
-          },
-          {
-            "title": "Provide/Inject",
-            "url": "/component-provide-inject/",
-            "showInCollapsed": true,
-            "frameworks": [
-              "vue"
-            ]
           }
         ]
       },
