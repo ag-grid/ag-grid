@@ -17,6 +17,8 @@ import {
 dotenv.config();
 const { SOURCE_FOLDER, DEST_FOLDER } = process.env;
 const ROOT_MDX = 'index.md';
+const KNOWN_FILES = ['index.md', 'examples', 'resources'];
+const FILE_EXTS_TO_FILTER = ['.json']; // Filter out json, as it should go into `contents` folder
 
 type CreateType = 'cancel' | 'show-output' | 'show-ast' | 'successful' | 'successful-warning';
 type MigrationType = 'all' | 'new' | 'existing' | 'existing-mdoc' | 'select';
@@ -279,8 +281,6 @@ async function createFolders({
     sourceFolder: string;
     results: CreateableResult[];
 }): Promise<CreateFoldersResult> {
-    const knownFiles = ['index.md', 'examples', 'resources'];
-    const fileExtsToFilter = ['.json']; // Filter out json, as it should go into `contents` folder
     const warnings: string[] = [];
     const successResults: Result[] = [];
 
@@ -288,7 +288,7 @@ async function createFolders({
         const { folderPath, folder, output, files } = result;
         const markdocFile = path.join(folderPath, 'index.mdoc');
 
-        const otherFiles = files.filter((file) => !knownFiles.includes(file));
+        const otherFiles = files.filter((file) => !KNOWN_FILES.includes(file));
         if (otherFiles.length) {
             warnings.push(`⚠️  ${folder}: Other files found that have not been moved - ${otherFiles}`);
         }
@@ -300,7 +300,7 @@ async function createFolders({
             const destResourcesFolder = path.join(folderPath, 'resources');
             const filter = (src: string) => {
                 const ext = getFileExtension(src);
-                const shouldExcludeFileExt = fileExtsToFilter.includes(ext);
+                const shouldExcludeFileExt = FILE_EXTS_TO_FILTER.includes(ext);
 
                 if (shouldExcludeFileExt) {
                     warnings.push(
