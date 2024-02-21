@@ -171,8 +171,6 @@ export const Licenses: FunctionComponent<{ isChecked: boolean }> = ({ isChecked 
                     setShowFeatureBreakdown(!showFeatureBreakdown);
                 };
 
-                console.log({data})
-
                 return (
                     <div key={data.id} id={data.id} className={classnames(styles.license, data.className)}>
                         <License {...data} />
