@@ -185,7 +185,7 @@ export const quartzIcons = definePart<QuartzIconsParam>({
   css: [quartzIconsCssImport, quartzIconsEmbeddedTsImport],
 });
 
-export type VariableTypes = {
+export type ParamTypes = {
   /**
    * Style of the border around range selections.
    *
@@ -548,5 +548,7 @@ export type VariableTypes = {
    */
   iconStrokeWidth: string;
 };
+
+export type Param = keyof ParamTypes;
 
 export const allParts = [core, colors, borders, quartzIcons];

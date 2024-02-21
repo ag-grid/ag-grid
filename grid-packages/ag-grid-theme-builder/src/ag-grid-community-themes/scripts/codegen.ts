@@ -83,7 +83,7 @@ const makePublicFile = (): string => {
     result += `export const ${camelCase(part.partId)} = definePart<${paramsUnionName(part.partId)}>(${argsCode});\n\n`;
   }
 
-  result += 'export type VariableTypes = {\n';
+  result += 'export type ParamTypes = {\n';
   for (const part of allPartsMeta) {
     if (part.params) {
       for (const param of part.params) {
@@ -93,6 +93,8 @@ const makePublicFile = (): string => {
     }
   }
   result += '}\n\n';
+
+  result += `export type Param = keyof ParamTypes;\n\n`;
 
   result += `export const allParts = [${allPartsMeta.map((p) => camelCase(p.partId)).join(', ')}]\n\n`;
 

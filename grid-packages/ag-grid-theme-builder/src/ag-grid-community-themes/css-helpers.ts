@@ -1,3 +1,4 @@
+import { Param } from '.';
 import { kebabCase, proportionToPercent } from './theme-utils';
 
 /**
@@ -26,8 +27,8 @@ export const transparentBackground = (alpha: number) => transparentRef('backgrou
  *
  * @param alpha - 0 for fully transparent, 1 for fully opaque
  */
-export const transparentRef = (name: string, alpha: number) =>
-  cssColorMix('transparent', ref(name), alpha);
+export const transparentRef = (name: Param, alpha: number) =>
+  cssColorMix('transparent', untypedRef(name), alpha);
 
 /**
  * Create a CSS color-mix expression that blends two color variables
@@ -35,7 +36,7 @@ export const transparentRef = (name: string, alpha: number) =>
  * @param alpha - amount of `b` to include in blend: 0 for fully `a`, 1 for fully `b`
  */
 export const colorMixRefs = (aName: string, bName: string, bProportion: number) =>
-  cssColorMix(ref(aName), ref(bName), bProportion);
+  cssColorMix(untypedRef(aName), untypedRef(bName), bProportion);
 
 const cssColorMix = (a: string, b: string, bAmount: number) => {
   return `color-mix(in srgb, ${a}, ${b} ${proportionToPercent(bAmount)}%)`;
@@ -45,13 +46,15 @@ const cssColorMix = (a: string, b: string, bAmount: number) => {
  * Create a CSS calc expression from a string containing variable names, for
  * example `calc("gridSize * 4")` produces `"calc(var(--ag-grid-size) * 4)"`
  */
-// TODO tests and validation
 export const calc = (expression: string) =>
-  `calc(${expression.replace(/(?<!\w)([a-z][a-z0-9]*\b)(?!\s*\()/gi, ref)})`;
+  `calc(${expression.replace(/(?<!\w)([a-z][a-z0-9]*\b)(?!\s*\()/gi, untypedRef)})`;
 
 /**
  * Create a CSS expression referring to a variable. For example
  * `ref("foregroundColor")` produces `"var(--ag-foreground-color)"`
  */
-// TODO validate variable name in JS and TS typing
-export const ref = (name: string) => `var(--ag-${kebabCase(name)})`;
+export const ref = (name: Param) => untypedRef(name);
+
+const untypedRef = (name: string) => {
+  return `var(--ag-${kebabCase(name)})`;
+};

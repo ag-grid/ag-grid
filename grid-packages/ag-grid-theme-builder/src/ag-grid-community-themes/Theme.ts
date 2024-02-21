@@ -1,5 +1,5 @@
 import { logErrorMessageOnce } from '../model/utils';
-import { VariableTypes } from './GENERATED-parts-public';
+import { ParamTypes } from './GENERATED-parts-public';
 import commonStructuralCSS from './css/common-structural.css?inline';
 import { AnyPart, CssFragment, Part } from './theme-types';
 import { logErrorMessage, paramToVariableName, presetParamName } from './theme-utils';
@@ -15,7 +15,7 @@ export type PickVariables<P extends AnyPart, V extends object> = {
   [K in P['params'][number]]?: K extends keyof V ? V[K] : never;
 };
 
-export const defineTheme = <P extends AnyPart, V extends object = VariableTypes>(
+export const defineTheme = <P extends AnyPart, V extends object = ParamTypes>(
   themeName: string,
   partOrParts: P | readonly P[],
   parameters: PickVariables<P, V>,

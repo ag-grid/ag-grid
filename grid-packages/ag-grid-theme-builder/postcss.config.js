@@ -12,5 +12,3 @@ module.exports = {
     'postcss-nesting': {},
   },
 };
-
-console.log('top level');

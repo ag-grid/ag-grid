@@ -1,11 +1,11 @@
-import { VariableTypes } from '.';
+import { Param, ParamTypes } from '.';
 
 export type CssFragment = string | ((params: Record<string, any>) => string);
 
 export type Part<T extends string = string> = {
   partId: string;
   params: T[];
-  defaults?: { [K in T]: K extends keyof VariableTypes ? VariableTypes[K] : any };
+  defaults?: { [K in T]: K extends Param ? ParamTypes[K] : any };
   css?: CssFragment[];
   conditionalCss?: Record<string, CssFragment | undefined>;
   icons?: Record<string, string>;

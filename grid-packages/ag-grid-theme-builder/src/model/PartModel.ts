@@ -1,11 +1,11 @@
 import { atom, useAtom } from 'jotai';
-import { Part, VariableTypes, allParts } from '../ag-grid-community-themes';
+import { ParamTypes, Part, allParts } from '../ag-grid-community-themes';
 import { PartMeta, PresetMeta, allPartsMeta } from '../ag-grid-community-themes/metadata';
 import { PersistentAtom, atomWithJSONStorage } from './JSONStorage';
 import { ParamModel } from './ParamModel';
 import { logErrorMessageOnce, memoize, titleCase } from './utils';
 
-export type ParamValueMap = Readonly<Partial<VariableTypes>>;
+export type ParamValueMap = Readonly<Partial<ParamTypes>>;
 
 export class PartModel {
   readonly partId: string;
