@@ -7,7 +7,7 @@ import { vanillaToReactFunctionalTs } from '../transformation-scripts/grid-vanil
 import { vanillaToTypescript } from '../transformation-scripts/grid-vanilla-to-typescript';
 import { vanillaToVue } from '../transformation-scripts/grid-vanilla-to-vue';
 import { vanillaToVue3 } from '../transformation-scripts/grid-vanilla-to-vue3';
-import { readAsJsFile } from '../transformation-scripts/parser-utils';
+import { getIntegratedDarkModeCode, readAsJsFile } from '../transformation-scripts/parser-utils';
 import { FRAMEWORKS, InternalFramework } from '../types';
 import type { FileContents } from '../types';
 import { deepCloneObject } from './deepCloneObject';
@@ -98,17 +98,13 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         const mainFileName = getMainFileName(internalFramework)!;
         let mainJs = readAsJsFile(entryFile);
 
-        // Chart classes that need scoping
-        const gridImports = typedBindings.imports.find(
-            (i: any) => i.module.includes('ag-grid-community') || i.module.includes('ag-grid-enterprise')
-        );
-        if (gridImports) {
-            gridImports.imports.forEach((i: any) => {
-                const toReplace = `(?<!\\.)${i}([\\s/.])`;
-                const reg = new RegExp(toReplace, 'g');
-                mainJs = mainJs.replace(reg, `agGrid.${i}$1`);
-            });
-        }
+        // replace Typescript createGrid( with Javascript agGrid.createGrid(
+        mainJs = mainJs.replace(/createGrid\(/g, 'agGrid.createGrid(');
+
+        // replace Typescript LicenseManager.setLicenseKey( with Javascript agGrid.LicenseManager.setLicenseKey(
+        mainJs = mainJs.replace(/LicenseManager\.setLicenseKey\(/g, "agGrid.LicenseManager.setLicenseKey(");
+
+        mainJs = mainJs.replace(/agGrid\.createGrid(.*);/g, `agGrid.createGrid$1; ${getIntegratedDarkModeCode(entryFile, false, 'gridApi')}`);
 
         const scriptFiles = {...otherScriptFiles, ...componentScriptFiles};
         mainJs = await prettier.format(mainJs, { parser: 'babel' });
