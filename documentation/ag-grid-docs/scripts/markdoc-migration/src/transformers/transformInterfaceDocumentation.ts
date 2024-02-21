@@ -1,3 +1,4 @@
+import path from 'path';
 import { visit } from 'unist-util-visit';
 
 import { JSX_TYPE } from '../constants';
@@ -15,14 +16,33 @@ export function transformInterfaceDocumentation(ast: any) {
             children,
             config: {
                 interfaceName: 'interfaceName',
+                overrideSrc: {
+                    type: 'string',
+                    name: 'overrideSrc',
+                    transform(value) {
+                        if (!value) {
+                            return value;
+                        }
+
+                        // Remove resources folder
+                        const paths = value.split(path.sep).filter((path) => path !== 'resources');
+
+                        return paths.join(path.sep);
+                    },
+                },
                 names: {
                     type: 'array',
                     name: 'names',
+                },
+                exclude: {
+                    type: 'array',
+                    name: 'exclude',
                 },
                 config: {
                     type: 'object',
                     name: 'config',
                 },
+                wrapNamesAt: 'wrapNamesAt',
             },
         });
     });

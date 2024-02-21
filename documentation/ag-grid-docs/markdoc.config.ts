@@ -109,10 +109,13 @@ export default defineMarkdocConfig({
         },
         // TODO: Implement
         interfaceDocumentation: {
-            render: 'pre',
+            render: component('./src/components/reference-documentation/InterfaceDocumentation.astro'),
             attributes: {
                 interfaceName: { type: String, required: true },
+                overrideSrc: { type: String },
                 names: { type: Array },
+                exclude: { type: Array },
+                wrapNamesAt: { type: Number },
                 config: { type: Object },
             },
         },

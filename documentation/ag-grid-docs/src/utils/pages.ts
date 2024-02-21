@@ -2,6 +2,7 @@ import type { InternalFramework, Library } from '@ag-grid-types';
 import { SITE_BASE_URL, USE_PUBLISHED_PACKAGES } from '../constants';
 import type { CollectionEntry } from 'astro:content';
 import glob from 'glob';
+import { readFileSync } from 'node:fs';
 
 import { type GlobConfig, createFilePathFinder } from './createFilePathFinder';
 import { getIsDev } from './env';
@@ -34,6 +35,16 @@ export interface ExtraFileRoute {
  * NOTE: File path is after `getRootUrl()`
  */
 export const FILES_PATH_MAP: Record<string, string | GlobConfig> = {
+    // Code doc reference files
+    // NOTE: Manually specified, so it can be referenced by key
+    'reference/column-options.AUTO.json': 'dist/documentation/reference/column-options.AUTO.json',
+    'reference/column.AUTO.json': 'dist/documentation/reference/column.AUTO.json',
+    'reference/doc-interfaces.AUTO.json': 'dist/documentation/reference/doc-interfaces.AUTO.json',
+    'reference/grid-api.AUTO.json': 'dist/documentation/reference/grid-api.AUTO.json',
+    'reference/grid-options.AUTO.json': 'dist/documentation/reference/grid-options.AUTO.json',
+    'reference/interfaces.AUTO.json': 'dist/documentation/reference/interfaces.AUTO.json',
+    'reference/row-node.AUTO.json': 'dist/documentation/reference/row-node.AUTO.json',
+
     // Community modules
     '@ag-grid-community/core/dist/**': 'community-modules/core/dist/**/*.{cjs,js,map}',
     '@ag-grid-community/client-side-row-model/dist/**':
@@ -87,6 +98,19 @@ export const FILES_PATH_MAP: Record<string, string | GlobConfig> = {
     //     fileNameGlob: '*/dist/**/*.{cjs,js,map}',
     // },
 };
+type FileKey = keyof typeof FILES_PATH_MAP;
+
+export function getJsonFile(fileKey: FileKey) {
+    const filePath = FILES_PATH_MAP[fileKey] as string;
+
+    if (!filePath) {
+        return {};
+    }
+
+    const file = pathJoin(getRootUrl().pathname, filePath);
+    const fileContents = readFileSync(file).toString();
+    return fileContents ? JSON.parse(fileContents) : {};
+}
 
 /**
  * The root url where the monorepo exists
