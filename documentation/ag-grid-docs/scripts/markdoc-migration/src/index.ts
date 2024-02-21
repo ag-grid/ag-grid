@@ -247,7 +247,7 @@ async function getResultsToCreateWithPrompts({
         hint: destFolder,
         choices: [
             { title: `No`, value: 'cancel' },
-            { title: `No, show output`, value: 'show-output' },
+            { title: `No, show output and errors ❌`, value: 'show-output' },
             { title: `No, show mdast Abstract Syntax Tree`, value: 'show-ast' },
             {
                 title: `Only ✅ Success transforms`,
@@ -313,7 +313,17 @@ async function createFolders({
             await copyFiles(resourcesFolder, destResourcesFolder, filter);
         }
 
-        // TODO: Move examples
+        // Copy examples folder
+        if (files.includes('examples')) {
+            const examplesFolder = path.join(sourceFolder, folder, 'examples');
+            const destExamplesFolder = path.join(folderPath, '_examples');
+            // Exclude `_gen` folder
+            const filter = (src: string) => {
+                return !src.includes('_gen');
+            };
+
+            await copyFiles(examplesFolder, destExamplesFolder, filter);
+        }
 
         successResults.push(result);
     });
