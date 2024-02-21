@@ -159,7 +159,7 @@ function getTypeLookupFunc(includeTypes, fileName) {
                 return undefined;
             }
         } else {
-            console.error('Could not find GridOptions file for ', fileName);
+            // Maybe this is a provided placeholder file, in which case the file will not have imported the gridOptions file
         }
     }
     return lookupType;

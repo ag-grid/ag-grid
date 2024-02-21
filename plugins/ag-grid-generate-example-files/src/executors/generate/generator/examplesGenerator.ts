@@ -6,8 +6,10 @@ import { ANGULAR_GENERATED_MAIN_FILE_NAME, SOURCE_ENTRY_FILE_NAME } from './cons
 import gridVanillaSrcParser from './transformation-scripts/grid-vanilla-src-parser';
 import type { GeneratedContents, InternalFramework } from './types';
 import {
+    getBoilerPlateFiles,
     getEntryFileName,
     getIsEnterprise,
+    getMainFileName,
     getProvidedExampleFiles,
     getProvidedExampleFolder,
     getTransformTsFileExt,
@@ -61,7 +63,7 @@ type GeneratedContentParams = {
     internalFramework: InternalFramework;
     folderPath: string;
     isDev?: boolean;
-    importType?: 'modules'| 'packages';
+    importType?: 'modules' | 'packages';
 };
 
 /**
@@ -83,7 +85,7 @@ export const getGeneratedContents = async (params: GeneratedContentParams): Prom
         folderPath,
         sourceFileList,
         transformTsFileExt: getTransformTsFileExt(internalFramework),
-        internalFramework
+        internalFramework,
     });
     const providedExampleFileNames = getProvidedExampleFiles({ folderPath, internalFramework });
 
@@ -123,20 +125,29 @@ export const getGeneratedContents = async (params: GeneratedContentParams): Prom
         internalFramework,
         importType,
     });
+    const boilerPlateFiles = await getBoilerPlateFiles(isDev, internalFramework);
+    const entryFileName = getEntryFileName(internalFramework)!;
+    const mainFileName = getMainFileName(internalFramework)!;
 
-    const { files, boilerPlateFiles, scriptFiles, entryFileName, mainFileName } = await getFrameworkFiles({
-        entryFile,
-        indexHtml,
-        isEnterprise,
-        bindings,
-        typedBindings,
-        componentScriptFiles,
-        otherScriptFiles,
-        ignoreDarkMode: false,
-        isDev,
-        importType,
-    });
-
+    let scriptFiles: string[] = [];
+    let files: Record<string, string> = {}
+    if (providedExampleEntries.length === 0) {
+        const { files: f, scriptFiles: s } = await getFrameworkFiles({
+            entryFile,
+            indexHtml,
+            isEnterprise,
+            bindings,
+            typedBindings,
+            componentScriptFiles,
+            otherScriptFiles,
+            ignoreDarkMode: false,
+            isDev,
+            importType,
+        });
+        files = f;
+        scriptFiles = s;
+    } 
+    
     const result: GeneratedContents = {
         isEnterprise,
         scriptFiles: scriptFiles!,
@@ -146,7 +157,7 @@ export const getGeneratedContents = async (params: GeneratedContentParams): Prom
         files: Object.assign(styleFiles, files, providedExamples),
         // Files without provided examples
         generatedFiles: files,
-        boilerPlateFiles: boilerPlateFiles!,
+        boilerPlateFiles,
         providedExamples,
         entryFileName,
         mainFileName,
