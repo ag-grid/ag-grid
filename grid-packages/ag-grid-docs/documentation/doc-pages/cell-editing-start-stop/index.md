@@ -139,5 +139,5 @@ The example below shows the editing with `stopEditingWhenCellsLoseFocus = true`.
 <grid-example title='Stop Editing When Cells Loses Focus' name='stop-edit-when-grid-loses-focus' type='generated' options='{ "exampleHeight": 510 }'></grid-example>
 
 <note>
-Cell Editing can also be performed via Cell Editor Components; please see [Cell Editor Components](../component-cell-editor/) for more information.
+Cell Editing can also be performed via Cell Editor Components; please see [Cell Editor Components](..cell-editors/) for more information.
 </note>

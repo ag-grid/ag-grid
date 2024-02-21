@@ -182,7 +182,7 @@ information to the console, so best open the example in a new tab and observe th
 
 ## Refreshing Headers
 
-If you are creating your own [Header Components](/component-header/) then you will need to be aware of
+If you are creating your own [Header Components](/column-headers/) then you will need to be aware of
 how Header Components are refreshed.
 
 All Header Components that still exist after the new Column Definitions are applied (in other words, the Column still

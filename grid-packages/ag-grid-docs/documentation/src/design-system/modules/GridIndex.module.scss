@@ -11,7 +11,11 @@ main {
 .mainContainer {
     display: flex;
     flex-direction: column;
+    width: 100%;
     min-height: 100vh;
     padding: 0;
-    width: 100%;
+
+    @media screen and (max-width: $breakpoint-docs-nav-medium) {
+        overflow-x: hidden;
+    }
 }

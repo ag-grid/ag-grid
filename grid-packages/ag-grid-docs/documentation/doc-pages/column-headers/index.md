@@ -457,7 +457,7 @@ As you can see in the example below, if you change any of the header heights, th
 
 ## Auto Header Height
 
-The column header row can have its height set automatically based on the content of the header cells. This is most useful when used together with [Custom Header Components](/component-header/) or when using the `wrapHeaderText` column property.
+The column header row can have its height set automatically based on the content of the header cells. This is most useful when used together with [Custom Header Components](/column-headers/#custom-component/) or when using the `wrapHeaderText` column property.
 
 To enable this, set `autoHeaderHeight=true` on the column definition you want to adjust the header height for. If more than one column has this property enabled, then the header row will be sized to the maximum of these
 column's header cells so no content overflows.
@@ -472,14 +472,3 @@ When `autoHeaderHeight=true` the Grid automatically disables Span Header Height,
 </note>
 
 <grid-example title='Auto Header Height' name='auto-height' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"] }'></grid-example>
-
-## Header Tooltips
-
-You can provide a tooltip to the header using `colDef.headerTooltip`.
-
-The example below shows header tooltips. Note the following:
-
-- All the columns, apart from **Country** and **Year**, have a header tooltip set.
-- We have set the Grid `tooltipShowDelay` property to 500ms to make the tooltips appear sooner.
-
-<grid-example title='Header Tooltip' name='header-tooltip' type='generated'></grid-example>

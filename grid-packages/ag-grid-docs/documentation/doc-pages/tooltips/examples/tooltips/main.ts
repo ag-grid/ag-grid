@@ -1,41 +1,42 @@
-import { GridApi, createGrid, ColDef, GridOptions, ITooltipParams } from '@ag-grid-community/core';
+import { GridApi, createGrid, ColDef, ColGroupDef, GridOptions, ITooltipParams } from '@ag-grid-community/core';
 
-const columnDefs: ColDef[] = [
+const columnDefs: (ColDef|ColGroupDef)[] = [
   {
+    headerName: 'Athlete',
     field: 'athlete',
-    tooltipField: 'athlete',
-    headerTooltip: 'Athlete column',
+    // here the Athlete column will tooltip the Country value
+    tooltipField: 'country',
+    headerTooltip: 'Tooltip for Athlete Column Header',
   },
   {
     field: 'age',
-    tooltipField: 'age',
-    headerTooltip: 'Age column',
-  },
-  {
-    field: 'country',
-    tooltipField: 'country',
-    headerTooltip: 'Country column',
+    tooltipValueGetter: (p: ITooltipParams) => 'Create any fixed message, eg This is the Athelets Age',
+    headerTooltip: 'Tooltip for Age Column Header',
   },
   {
     field: 'year',
-    tooltipValueGetter: (params: ITooltipParams) => 'A fixed tooltip value',
-    headerTooltip: 'Year column',
+    tooltipValueGetter: (p: ITooltipParams) => 'This is a dynamic tooltip using the value of ' + p.value,
+    headerTooltip: 'Tooltip for Year Column Header',
   },
   {
-    field: 'sport',
-    tooltipValueGetter: (params: ITooltipParams) => params.value,
-    headerTooltip: 'Sport column',
-  },
+    headerName: 'Hover For Tooltip',
+    headerTooltip: 'Column Groups can have Tooltips also',
+    children: [
+      {
+        field: 'sport',
+        tooltipValueGetter: () => 'Tooltip text about Sport should go here',
+        headerTooltip: 'Tooltip for Sport Column Header',
+      }    
+    ]
+  }
 ]
 
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
-    editable: true,
     flex: 1,
-    minWidth: 100,
-    filter: true,
+    minWidth: 100
   },
   rowData: null,
   columnDefs: columnDefs,

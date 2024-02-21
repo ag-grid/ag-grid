@@ -1,35 +1,36 @@
-import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
+import { GridApi, createGrid, ColDef, GridOptions, ITooltipParams } from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
   {
+    headerName: 'Athlete',
     field: 'athlete',
-    minWidth: 170,
-    tooltipField: 'athlete',
-    headerTooltip: 'Athlete Column',
-  },
-  { field: 'age' },
-  {
-    field: 'country',
-    minWidth: 150,
+    tooltipComponentParams: { color: '#55AA77' },
     tooltipField: 'country',
-    headerTooltip: 'Country Column',
+    headerTooltip: 'Tooltip for Athlete Column Header',
   },
-  { field: 'year' },
-  { field: 'sport' },
-  { field: 'gold' },
-  { field: 'silver' },
-  { field: 'bronze' },
-  { field: 'total' },
+  {
+    field: 'age',
+    tooltipValueGetter: (p: ITooltipParams) => 'Create any fixed message, eg This is the Athelets Age',
+    headerTooltip: 'Tooltip for Age Column Header',
+  },
+  {
+    field: 'year',
+    tooltipValueGetter: (p: ITooltipParams) => 'This is a dynamic tooltip using the value of ' + p.value,
+    headerTooltip: 'Tooltip for Year Column Header',
+  },
+  {
+    field: 'sport',
+    tooltipValueGetter: () => 'Tooltip text about Sport should go here',
+    headerTooltip: 'Tooltip for Sport Column Header',
+  }    
 ]
 
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
-    editable: true,
     flex: 1,
-    minWidth: 100,
-    filter: true,
+    minWidth: 100
   },
   enableBrowserTooltips: true,
   rowData: null,

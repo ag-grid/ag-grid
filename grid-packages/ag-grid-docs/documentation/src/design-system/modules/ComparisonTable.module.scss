@@ -70,6 +70,12 @@
         border-right: 3px solid var(--color-border-tertiary);
         border-left: 3px solid var(--color-border-tertiary);
     }
+
+    &.hasDetails {
+        min-width: $spacing-size-24;
+        padding-right: $spacing-size-2;
+        padding-left: $spacing-size-2;
+    }
 }
 
 .subGroup {
@@ -83,6 +89,10 @@
 
         &:first-child {
             padding-left: $spacing-size-6;
+        }
+
+        &:not(:first-child) {
+            width: $spacing-size-16;
         }
     }
 
@@ -120,18 +130,6 @@
     }
 }
 
-@media screen and (max-width: $breakpoint-pricing-medium) {
-   .subGroup {
-    .row .cell {
-        &:nth-child(2) {
-            div {
-            margin-right: -36px; // TODO: refactor to spacing variable
-            }
-        }
-    }
-   }
-}
-
 .subGroupHeader {
     --icon-size: #{$spacing-size-5};
 
@@ -143,7 +141,7 @@
     .cell:first-child {
         span {
             --color-icon: var(--color-link);
-    
+
             padding-left: $spacing-size-3;
             font-weight: var(--text-semibold);
             color: var(--color-link);
@@ -159,7 +157,7 @@
 
         display: flex;
         justify-content: center;
-        
+
         svg {
             transition: opacity $transition-default-timing;
         }
@@ -181,18 +179,17 @@
     border: 1px solid color-mix(in srgb, var(--color-link), var(--color-bg-primary) 80%);
     transition: all 1s;
 }
+
 .subGroupIconWrapper:hover {
     border: 1px solid color-mix(in srgb, var(--color-link), var(--color-bg-primary) 40%);
     box-shadow: var(--shadow-sm);
     transition: all 1s;
 }
 
-.subGroupTitleIcon:hover {
-    .subGroupIconWrapper {
-        border: 1px solid color-mix(in srgb, var(--color-link), var(--color-bg-primary) 40%);
-        box-shadow: var(--shadow-sm);
-        transition: all 1s;
-    }
+.subGroupTitleIcon:hover .subGroupIconWrapper {
+    border: 1px solid color-mix(in srgb, var(--color-link), var(--color-bg-primary) 40%);
+    box-shadow: var(--shadow-sm);
+    transition: all 1s;
 }
 
 .subGroupTitleIcon {

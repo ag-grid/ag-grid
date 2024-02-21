@@ -88,7 +88,7 @@ There are two ways you can get fix this problem:
 
 - Add a mouse click listener to your floating element and set it to `preventDefault()`. This way, the click event will not bubble up to the grid.
   This is the best solution, but you can only do this if you are writing the component yourself.
-- Add the `ag-custom-component-popup` CSS class to your floating element. An example of this usage can be found here: [Custom Date Component](/component-date/#example-custom-date-component)
+- Add the `ag-custom-component-popup` CSS class to your floating element. An example of this usage can be found here: [Custom Date Component](/filter-date/#example-custom-date-component)
 
 ## Accessing the Component Instance
 

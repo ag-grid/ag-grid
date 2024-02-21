@@ -47,9 +47,9 @@ See the [Codemods](/codemods/) documentation for more details.
 <framework-specific-section frameworks="react">
 |- `getValue` is no longer used. The component will be passed `value` as a prop with the latest value (and `initialValue` with the value when editing started). When the value is updated in the UI, the component should call the prop `onValueChange` with the updated value.
 |- Any other date methods defined via `useImperativeHandle` should now be defined as callbacks, and passed to the new hook `useGridCellEditor`. These are all optional; the hook is only needed if the callbacks are required.
-|- If using `api.getCellEditorInstances`, the instance returned will now be a wrapper. To get the React custom cell editor component, use the helper function `getInstance` with the returned wrapper instance. See [Accessing Cell Editor Instances](/component-cell-editor/#accessing-cell-editor-instances).
+|- If using `api.getCellEditorInstances`, the instance returned will now be a wrapper. To get the React custom cell editor component, use the helper function `getInstance` with the returned wrapper instance. See [Accessing Cell Editor Instances](/cell-editors/#accessing-cell-editor-instances).
 |
-|See [Implementing a Cell Editor Component](/component-cell-editor/#implementing-a-cell-editor-component) for examples and more details on the interfaces.
+|See [Implementing a Cell Editor Component](/cell-editors/#implementing-a-cell-editor-component) for examples and more details on the interfaces.
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
@@ -60,7 +60,7 @@ See the [Codemods](/codemods/) documentation for more details.
 |- `getDate` and `setDate` are no longer used. The component will be passed `date` as a prop with the latest date. When the date is updated in the UI, the component should call the prop `onDateChange` with the updated date (instead of calling the prop `onDateChanged` when the date changes).
 |- Any other editing methods defined via `useImperativeHandle` should now be defined as callbacks, and passed to the new hook `useGridDate`. These are all optional; the hook is only needed if the callbacks are required.
 |
-|See [Implementing a Date Component](/component-date/#implementing-a-date-component) for examples and more details on the interfaces.
+|See [Implementing a Date Component](filter-date/) for examples and more details on the interfaces.
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
@@ -93,7 +93,7 @@ See the [Codemods](/codemods/) documentation for more details.
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-|- If using `api.getStatusPanel`, the instance returned will now be a wrapper. To get the React custom status bar panel component, use the helper function `getInstance` with the returned wrapper instance. See [Accessing Status Bar Panel Instances](/component-status-bar/#accessing-status-bar-panel-instances).
+|- If using `api.getStatusPanel`, the instance returned will now be a wrapper. To get the React custom status bar panel component, use the helper function `getInstance` with the returned wrapper instance. See [Accessing Status Bar Panel Instances](/status-bar/).
 </framework-specific-section>
 
 ## Deprecations
