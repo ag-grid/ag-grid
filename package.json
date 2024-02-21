@@ -84,7 +84,6 @@
       "enterprise-modules/status-bar",
       "packages/ag-grid-community",
       "documentation/ag-grid-docs",
-      "documentation/example-generation",
       "plugins/ag-grid-generate-code-reference-files",
       "plugins/ag-grid-generate-example-files",
       "plugins/ag-grid-task-autogen"

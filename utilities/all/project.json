@@ -147,8 +147,7 @@
     "enterprise-modules/viewport-row-model",
     "enterprise-modules/status-bar",
     "packages/ag-grid-community",
-    "documentation/ag-grid-docs",
-    "documentation/example-generation"
+    "documentation/ag-grid-docs"
   ],
   "tags": []
 }
