@@ -1,84 +1,68 @@
 import { Help } from '@carbon/icons-react';
-import { Checkbox, Option, Select, Slider, Tooltip, styled } from '@mui/joy';
-import { ReactElement } from 'react';
-import { cssBorderStyles } from '../../ag-grid-community-themes/metadata';
+import {
+  Autocomplete,
+  AutocompleteOption,
+  ListItemContent,
+  Stack,
+  Tooltip,
+  styled,
+} from '@mui/joy';
+import { useStore } from 'jotai';
+import { paramToVariableName } from '../../ag-grid-community-themes/theme-utils';
 import { withErrorBoundary } from '../../components/ErrorBoundary';
-import { Cell } from '../../components/Table';
-import { ParamModel, allParamModels, useParamAtom } from '../../model/ParamModel';
-import { ColorParamEditor } from './ColorParamEditor';
+import { ParamModel, allParamModels } from '../../model/ParamModel';
+import { renderedThemeAtom } from '../../model/rendered-theme';
+import { ParamEditor } from './ParamEditor';
 
-export const ParamsEditor = withErrorBoundary(() => (
-  <Table>
-    {allParamModels()
-      .filter((param) => param.meta.type !== 'preset')
-      .map((param) => (
-        <ParamEditor key={param.property} param={param} />
-      ))}
-  </Table>
-));
+const editablePrams = allParamModels()
+  .filter((param) => param.meta.type !== 'preset')
+  .sort((a, b) => a.label.toLowerCase().localeCompare(b.label.toLowerCase()));
 
-export type ParamEditorProps = {
-  param: ParamModel;
-};
-
-export const ParamEditor = ({ param }: ParamEditorProps) => {
-  const [value, setValue] = useParamAtom(param);
-
-  if (value == null) return null;
-
-  const renderEditor = (): ReactElement => {
-    const { meta } = param;
-    switch (meta.type) {
-      case 'color':
-        return <ColorParamEditor param={param} meta={meta} />;
-      case 'length':
-        return (
-          <Slider
-            value={value || null}
-            min={meta.min}
-            max={meta.max}
-            step={meta.step}
-            onChange={(_, newValue) => setValue(newValue)}
-            valueLabelDisplay="auto"
-            valueLabelFormat={(value) => formatRoundedToStep(value, meta.step) + 'px'}
-            sx={{ '--Slider-size': '15px' }}
-          />
-        );
-      case 'boolean':
-        return <Checkbox checked={!!value} onChange={() => setValue(!value)} />;
-      case 'borderStyle':
-        return (
-          <Select value={value || null} onChange={(_, newValue) => setValue(newValue)}>
-            {cssBorderStyles.map((borderStyle) => (
-              <Option key={borderStyle} value={borderStyle}>
-                {borderStyle}
-              </Option>
-            ))}
-          </Select>
-        );
-      case 'preset':
-        // presets don't have param editors, they're handled by part editors
-        return <span />;
-      case 'css':
-        return <span>TODO</span>;
-    }
-  };
+export const ParamsEditor = withErrorBoundary(() => {
+  const store = useStore();
 
   return (
-    <>
-      <LabelCell>{param.label}:</LabelCell>
-      {renderEditor()}
-      <Tooltip title={param.meta.docs}>
-        <HelpIcon />
-      </Tooltip>
-    </>
+    <Stack>
+      <Autocomplete
+        size="sm"
+        placeholder="Customise a parameter"
+        options={editablePrams}
+        multiple
+        blurOnSelect
+        value={[] as ParamModel[]}
+        onChange={(_, [newValue]) => {
+          if (newValue) {
+            const renderedTheme = store.get(renderedThemeAtom);
+            const variableName = paramToVariableName(newValue.property);
+            store.set(newValue.valueAtom, renderedTheme.variableDefaults[variableName] || '');
+          }
+        }}
+        getOptionDisabled={(param) => param.hasValue(store)}
+        renderOption={(props, param) => {
+          const hasValue = param.hasValue(store);
+          return (
+            <AutocompleteOption {...props}>
+              <AutocompleteItem>
+                {param.label}
+                {hasValue ? ' (already selected)' : ''}
+                <Tooltip title={param.meta.docs}>
+                  <HelpIcon />
+                </Tooltip>
+              </AutocompleteItem>
+            </AutocompleteOption>
+          );
+        }}
+      />
+      <Table>
+        {editablePrams.map((param) => (
+          <ParamEditor key={param.property} param={param} />
+        ))}
+      </Table>
+    </Stack>
   );
-};
+});
 
-const formatRoundedToStep = (value: number, step: number): string =>
-  (Math.round(value / step) * step).toFixed(5).replace(/\.?0+$/, '');
-
-export const Table = styled('div')`
+const Table = styled('div')`
   display: grid;
   grid-template-columns: auto 1fr auto;
   grid-column-gap: 16px;
@@ -86,17 +70,13 @@ export const Table = styled('div')`
   align-items: center;
 `;
 
-export const Label = styled('div')`
+const AutocompleteItem = styled(ListItemContent)`
+  /* font-size: 0.9em; */
   display: flex;
   align-items: center;
+  gap: 16px;
 `;
 
-export const HelpIcon = styled(Help)`
-  display: flex;
-  align-items: center;
+const HelpIcon = styled(Help)`
   opacity: 0.5;
-`;
-
-export const LabelCell = styled(Cell)`
-  font-size: 0.9em;
 `;

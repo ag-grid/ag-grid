@@ -86,7 +86,8 @@ const DropdownIcon = styled(ChevronDown)`
 const PartsTable = styled('div')`
   display: grid;
   grid-template-columns: auto 1fr;
-  grid-column-gap: 20px;
+  grid-column-gap: 16px;
+  grid-row-gap: 8px;
 `;
 
 const StateAndIconButton: FC<{

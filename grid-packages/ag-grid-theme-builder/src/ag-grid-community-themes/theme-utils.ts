@@ -20,28 +20,7 @@ export const kebabCase = (str: string) => str.replace(/[A-Z]/g, (m) => `-${m}`).
 export const clamp = (value: number, min: number, max: number) =>
   Math.max(min, Math.min(max, value));
 
-type FormatTable<T> = {
-  string?: (keyof T)[];
-  px?: (keyof T)[];
-};
-
-export const formatVariables = <T extends Record<string, any>>(
-  source: T,
-  format: FormatTable<T> = {},
-): Record<string, string> => {
-  const variables: Record<string, string> = {};
-  for (const [key, value] of typedEntries(source)) {
-    const variable = `--ag-${kebabCase(key)}`;
-    if (key.endsWith('Color')) {
-      variables[variable] = colorParamToCss(value);
-    } else if (format.px?.includes(key)) {
-      variables[variable] = `${value}px`;
-    } else if (format.string?.includes(key)) {
-      variables[variable] = String(value);
-    }
-  }
-  return variables;
-};
+export const paramToVariableName = (paramName: string) => `--ag-${kebabCase(paramName)}`;
 
 export const logErrorMessage = (message: unknown, error?: unknown) => {
   if (error) {

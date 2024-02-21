@@ -2,7 +2,7 @@ import { logErrorMessageOnce } from '../model/utils';
 import { VariableTypes } from './GENERATED-parts-public';
 import commonStructuralCSS from './css/common-structural.css?inline';
 import { AnyPart, CssFragment, Part } from './theme-types';
-import { kebabCase, logErrorMessage, presetParamName } from './theme-utils';
+import { logErrorMessage, paramToVariableName, presetParamName } from './theme-utils';
 
 export type Theme = {
   name: string;
@@ -80,7 +80,7 @@ export const defineTheme = <P extends AnyPart, V extends object = VariableTypes>
   // render variables
   for (const [name, value] of Object.entries(mergedParams)) {
     if (!presetProperties.has(name) && typeof value === 'string') {
-      result.variableDefaults[`--ag-${kebabCase(name)}`] = value;
+      result.variableDefaults[paramToVariableName(name)] = value;
     }
   }
 

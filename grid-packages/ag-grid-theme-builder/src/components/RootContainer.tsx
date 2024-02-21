@@ -66,7 +66,9 @@ const Spacer = styled('div')`
 
 const Menu = styled('div')`
   grid-area: menu;
-  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 `;
 
 const Main = styled('div')`

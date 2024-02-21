@@ -44,6 +44,8 @@ export type ParamMeta =
   | BorderStyleParam
   | CssExpressionParam;
 
+export type ParamType = ParamMeta['type'];
+
 export type ParamCommon = {
   property: string;
   docs: string;

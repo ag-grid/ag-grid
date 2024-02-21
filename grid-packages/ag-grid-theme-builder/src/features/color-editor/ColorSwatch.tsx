@@ -21,7 +21,7 @@ export const ColorSwatch = ({ color, className, splitBackground }: ColorSwatchPr
       </Tooltip>
     )}
     <Color
-      sx={{
+      style={{
         backgroundColor: colorValueToCssExpression(color),
       }}
     />

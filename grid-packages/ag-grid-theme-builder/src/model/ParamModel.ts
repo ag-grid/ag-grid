@@ -2,6 +2,7 @@ import { useAtom, useAtomValue } from 'jotai';
 import { ParamMeta } from '../ag-grid-community-themes/metadata';
 import { PersistentAtom, atomWithJSONStorage } from './JSONStorage';
 import { allPartModels } from './PartModel';
+import { Store } from './store';
 import { memoize, titleCase } from './utils';
 
 export class ParamModel {
@@ -14,9 +15,12 @@ export class ParamModel {
     this.label = titleCase(meta.property);
     this.valueAtom = atomWithJSONStorage(`param.${meta.property}`, undefined);
   }
+
+  hasValue = (store: Store) => store.get(this.valueAtom) != null;
 }
 
-export const useParamAtom = (model: ParamModel) => useAtom(model.valueAtom);
+export const useParamAtom = <T = any>(model: ParamModel) =>
+  useAtom(model.valueAtom as PersistentAtom<T>);
 export const useParam = (model: ParamModel) => useAtomValue(model.valueAtom);
 
 export const allParamModels = memoize(() => allPartModels().flatMap((part) => part.params));
