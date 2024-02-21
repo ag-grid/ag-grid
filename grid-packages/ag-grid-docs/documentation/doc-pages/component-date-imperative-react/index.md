@@ -4,7 +4,7 @@ frameworks: ["react"]
 ---
 
 <warning>
-|This page describes the old imperative way of declaring custom date components when the grid option `reactiveCustomComponents` is not set. This behaviour is deprecated, and you should instead use the new behaviour described on the [Custom Date](../component-date) page.
+|This page describes the old imperative way of declaring custom date components when the grid option `reactiveCustomComponents` is not set. This behaviour is deprecated, and you should instead use the new behaviour described on the [Custom Date](../filter-date) page.
 </warning>
 
 An example date component looks like this:
@@ -64,4 +64,4 @@ The interface for a custom date component is as follows:
 When a React component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell &
 row values available to you via `props` - the interface for what is provided is documented below.
 
-<interface-documentation interfaceName='IDateParams' overridesrc='component-date/resources/dateParams.json' ></interface-documentation>
+<interface-documentation interfaceName='IDateParams' overridesrc='filter-date/resources/dateParams.json' ></interface-documentation>

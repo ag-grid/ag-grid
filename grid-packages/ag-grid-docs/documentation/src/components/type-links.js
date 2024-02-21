@@ -23,7 +23,7 @@ const TYPE_LINKS = {
     CellPosition: '/keyboard-navigation/#cellposition',
     CellRange: '/range-selection/#range-selection-api',
     ICellRendererParams: 'component-cell-renderer/#complementing-cell-renderer-params',
-    ICellEditorParams: '/component-cell-editor/#reference-ICellEditorParams',
+    ICellEditorParams: '/cell-editors/#reference-ICellEditorParams',
     ChartModel: '/integrated-charts-api-save-restore-charts/#api-reference',
     ColDef: '/column-properties/',
     ColGroupDef: '/column-properties/',

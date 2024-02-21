@@ -399,7 +399,7 @@ const gridOptions = {
 
 ### Cell Components
 
-Add buttons, checkboxes or images to cells with a [Cell Renderer](../cell-rendering/).
+Add buttons, checkboxes or images to cells with a [Cell Component](../component-cell-renderer/).
 
 <framework-specific-section frameworks="react">
 
@@ -579,7 +579,7 @@ const gridOptions = {
 </snippet>
 
 Set the cell editor type using the `cellEditor` attribute. There are 7 [Provided Cell Editors](../provided-cell-editors/) which can be set through this attribute.
-You can also create your own [Custom Editors](../component-cell-editor/).
+You can also create your own [Custom Editors](../cell-editors/).
 
 <snippet>
 const gridOptions = {

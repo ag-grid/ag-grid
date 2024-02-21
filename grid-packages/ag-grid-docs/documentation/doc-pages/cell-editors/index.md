@@ -2,7 +2,7 @@
 title: "Edit Components"
 ---
 
-A Cell Editor Component is the UI that appears, normally inside the Cell, that takes care of the Edit operation. You can select from the [Provided Cell Editors](/provided-cell-editors/) or create your own [Custom Cell Editor Components](/component-cell-editor/).
+A Cell Editor Component is the UI that appears, normally inside the Cell, that takes care of the Edit operation. You can select from the [Provided Cell Editors](/provided-cell-editors/) or create your own [Custom Cell Editor Components](/cell-editors/).
 
 The example below shows some Custom Editor Components.
 

@@ -460,7 +460,7 @@
             "displayName": "Tooltips",
             "page": {
                 "name": "Tooltip Component",
-                "url": "/component-tooltip/"
+                "url": "/tooltips/"
             }
         },
         "tooltipShow": {},

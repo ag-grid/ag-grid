@@ -6,7 +6,7 @@ This sections covers how shared contextual information can be passed around the 
 
 ## Overview
 
-The context object is passed to all callbacks and events used in the grid. The purpose of the context object is to allow the client application to pass details to custom callbacks such as the [Cell Renderers](/cell-rendering/) and [Cell Editors](/cell-editing/).
+The context object is passed to all callbacks and events used in the grid. The purpose of the context object is to allow the client application to pass details to custom callbacks such as the [Cell Renderers](/component-cell-renderer/) and [Cell Editors](/cell-editing/).
 
 <api-documentation source='grid-options/properties.json' section='miscellaneous' names='["context"]' ></api-documentation>
 

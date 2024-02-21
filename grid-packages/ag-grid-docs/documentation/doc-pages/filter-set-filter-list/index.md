@@ -91,14 +91,14 @@ The following example shows how Set Filter values are formatted using a Value Fo
 
 ### Cell Renderer
 
-A [Cell Renderer](/cell-rendering/) is a good choice when the value displayed requires markup. For instance if a
+A [Cell Component](/component-cell-renderer/) is a good choice when the value displayed requires markup. For instance if a
 country flag image is to be shown alongside country names.
 
-The same Cell Renderer can used to format the grid cells and filter values, or different renderers can be supplied to
-each. Note that the Cell Renderer will be supplied additional info when used to format cells inside the grid (as grid
+The same Cell Component can used to format the grid cells and filter values, or different components can be supplied to
+each. Note that the Cell Component will be supplied additional info when used to format cells inside the grid (as grid
 cells have row details that are not present for values inside a Filter List).
 
-Assuming you have a customer Country Cell Renderer, the following snippet shows how to provide the `countryCellRenderer` to the Set Filter:
+Assuming you have a custom Country Cell Component, the following snippet shows how to provide the `countryCellRenderer` to the Set Filter:
 
 <snippet>
 const gridOptions = {
@@ -412,7 +412,7 @@ const gridOptions = {
 }
 </snippet>
 
-The default tooltip component will be used unless a [Custom Tooltip Component](/component-tooltip/) is provided.
+The default tooltip component will be used unless a [Custom Tooltip Component](/tooltips/) is provided.
 
 The following example demonstrates tooltips in the Set Filter. Note the following:
 

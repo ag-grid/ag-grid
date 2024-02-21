@@ -188,7 +188,7 @@ By default, the values supplied to the Date Filter are retrieved from the data b
 
 ## Date Selection Component
 
-By default the grid will use the browser-provided date picker for all [Supported Browsers](/supported-browsers/), but for other browsers it will provide a simple text field. To override this and provide a custom date picker, see [Date Component](/component-date/).
+By default the grid will use the browser-provided date picker for all [Supported Browsers](/supported-browsers/), but for other browsers it will provide a simple text field. To override this and provide a custom date picker, see [Date Component](/filter-date/).
 
 It is also possible to enable a native date picker for unsupported browsers by setting `filterParams.browserDatePicker = true`. However, you will need to test this behaviour yourself.
 
@@ -206,7 +206,7 @@ md-include:component-interface-react.md
 md-include:component-interface-vue.md
 
 <framework-specific-section frameworks="javascript,angular,vue">
-<interface-documentation interfaceName='IDateParams' overridesrc='component-date/resources/dateParams.json' ></interface-documentation>
+<interface-documentation interfaceName='IDateParams' overridesrc='filter-date/resources/dateParams.json' ></interface-documentation>
 </framework-specific-section>
 
 ## Applying the Filter

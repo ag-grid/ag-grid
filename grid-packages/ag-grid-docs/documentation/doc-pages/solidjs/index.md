@@ -176,7 +176,7 @@ See [Cell Renderers](/component-cell-renderer/) for full details on creating Rea
 
 ### Using Cell Editors
 
-Below is an example showing different types of Solid [Cell Editors](/component-cell-editor/). Edit any cell by double clicking the mouse. The Gold and Silver Columns use custom Solid Components. Gold edits inside the cell and and Silver edits in a popup (`cellEditorPopup=true`).
+Below is an example showing different types of Solid [Cell Editors](/cell-editors/). Edit any cell by double clicking the mouse. The Gold and Silver Columns use custom Solid Components. Gold edits inside the cell and and Silver edits in a popup (`cellEditorPopup=true`).
 
 A custom Cell Editor component requires the component to expose an API from the componet to the grid. Using React this is done using an Imperative Handle. In Solid this is done by calling `ref(api)` on the props.
 
@@ -194,18 +194,18 @@ props.ref(api);
 </div>
 
 
-See [Cell Editors](/component-cell-editor/) for full details on creating React Cell Editors and then apply this knowledge to Solid.
+See [Cell Editors](/cell-editors/) for full details on creating React Cell Editors and then apply this knowledge to Solid.
 
 ### Customising Headers
 
-This example demonstrates custom [Column Headers](/component-header/) and [Column Group Headers](/component-header/#header-group-components) using Solid components.
+This example demonstrates custom Column Headers and Column Group Headers using Solid components.
 
 <div class="text-right" style="margin-top: 8px; display: flex; align-items: center;">
     <label>Open in StackBlitz</label>
     <open-in-cta type="stackblitz" href="https://stackblitz.com/edit/solidjs-template-wnpr7s?embed=1&file=src/App.tsx" />
 </div>
 
-See [Column Headers](/component-header/) and [Column Group Headers](/component-header/#header-group-components) for full details on creating these components with React and then apply this knowledge to Solid.
+See Column Headers and Column Group Headers for full details on creating these components with React and then apply this knowledge to Solid.
 
 
 ### Advanced Grid Features

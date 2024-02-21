@@ -18,7 +18,7 @@ jest.mock('./use-json-file-nodes');
  * ```
  */
 const OVERRIDES_TO_TEST = [
-    'component-date/resources/dateParams.json',
+    'filter-date/resources/dateParams.json',
     'filter-date/resources/date-filter-params.json',
     'filter-number/resources/number-filter-params.json',
     'filter-text/resources/text-filter-params.json',
