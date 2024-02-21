@@ -3,9 +3,9 @@ import { urlWithPrefix } from './urlWithPrefix';
 describe('urlWithPrefix', () => {
     test.each`
         url                      | framework       | expected
-        ${'./docs'}              | ${'javascript'} | ${'/ag-charts/javascript/docs'}
-        ${'./docs'}              | ${'react'}      | ${'/ag-charts/react/docs'}
-        ${'./docs/path'}         | ${'react'}      | ${'/ag-charts/react/docs/path'}
+        ${'./docs'}              | ${'javascript'} | ${'/ag-charts/javascript-data-grid/docs'}
+        ${'./docs'}              | ${'react'}      | ${'/ag-charts/react-data-grid/docs'}
+        ${'./docs/path'}         | ${'react'}      | ${'/ag-charts/react-data-grid/docs/path'}
         ${'/gallery'}            | ${'react'}      | ${'/ag-charts/gallery'}
         ${'https://youtube.com'} | ${'react'}      | ${'https://youtube.com'}
     `(
