@@ -175,6 +175,7 @@ typings/
 
 # dotenv environment variable files
 .env*
+!documentation/ag-grid-docs/.env
 
 # gatsby files
 .cache/
