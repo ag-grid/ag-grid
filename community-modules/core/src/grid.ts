@@ -140,6 +140,7 @@ export interface Params {
  */
 export function createGrid<TData>(eGridDiv: HTMLElement, gridOptions: GridOptions<TData>, params?: Params): GridApi<TData>{
 
+    console.log("Boo");
     if (!gridOptions) {
         errorOnce('No gridOptions provided to createGrid');
         return {} as GridApi;
