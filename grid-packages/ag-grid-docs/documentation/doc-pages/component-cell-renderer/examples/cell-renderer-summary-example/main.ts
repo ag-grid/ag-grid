@@ -89,7 +89,8 @@ class CustomButtonComponent {
     // Optional: Params for rendering. The same params that are passed to the cellRenderer function.
     init(params: ICellRendererParams) {
         let price: HTMLImageElement = document.createElement('img');
-        price.src = `https://www.ag-grid.com/example-assets/svg-icons/plus.svg`
+        price.src = `https://www.ag-grid.com/example-assets/pound.png`;
+        price.setAttribute('style', 'display: block; width: 25px; height: auto; max-height: 50%; margin-right: 12px; filter: brightness(1.1)');
 
         this.eGui = document.createElement('span');
         this.eGui.setAttribute('style', 'display: flex; height: 100%; width: 100%; align-items: center')
@@ -158,6 +159,6 @@ const gridOptions: GridOptions = {
 gridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
 
 // Fetch Remote Data
-fetch('https://www.ag-grid.com/example-assets/space-mission-data.json')
+fetch('https://www.ag-grid.com/example-assets/small-space-mission-data.json')
     .then(response => response.json())
     .then((data: any) => gridApi.setGridOption('rowData', data))
