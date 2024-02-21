@@ -83,31 +83,43 @@ class CustomButtonComponent {
     }
   }
 
-  class PriceRenderer implements ICellRendererComp {
-    eGui!: HTMLSpanElement;
+function PriceRenderer(params: ICellRendererParams) {
 
-    // Optional: Params for rendering. The same params that are passed to the cellRenderer function.
-    init(params: ICellRendererParams) {
-        let price: HTMLImageElement = document.createElement('img');
-        price.src = `https://www.ag-grid.com/example-assets/pound.png`;
-        price.setAttribute('style', 'display: block; width: 25px; height: auto; max-height: 50%; margin-right: 12px; filter: brightness(1.1)');
-
-        this.eGui = document.createElement('span');
-        this.eGui.setAttribute('style', 'display: flex; height: 100%; width: 100%; align-items: center')
-        this.eGui.appendChild(price)
+    let priceMultiplier: number = 1;
+    if (params.value > 5000000) {
+      priceMultiplier = 2
     }
-
-    // Required: Return the DOM element of the component, this is what the grid puts into the cell
-    getGui() { 
-        return this.eGui;
+    if (params.value > 10000000) {
+      priceMultiplier = 3
     }
-
-    // Required: Get the cell to refresh. 
-    refresh(params: ICellRendererParams): boolean {
-        return false
+    if (params.value > 25000000) {
+      priceMultiplier = 4
     }
+    if (params.value > 20000000) {
+      priceMultiplier = 5
+    }
+  
+    const priceSpan = document.createElement('span')
+    priceSpan.setAttribute('style', 'display: flex; height: 100%; width: 100%; align-items: center')
+      for (let i = 0; i < priceMultiplier; i++) {
+    const priceElement = document.createElement('img')
+    priceElement.src = `https://www.ag-grid.com/example-assets/pound.png`
+    priceElement.setAttribute('style', 'display: block; width: 15px; height: auto; max-height: 50%;');
+      priceSpan.appendChild(priceElement)
+    }
+    return priceSpan
+    
 }
 
+function CompanyRenderer(params: ICellRendererParams) {
+  let value = params.value;
+  if (params.value === 'Astra') {
+    value = 'Astra_(American_spaceflight_company)'
+  }
+  const link = `<a href="https://en.wikipedia.org/wiki/${value}" target="_blank">${params.value}</a>`
+  return link
+  
+}
 
 // Row Data Interface
 interface IRow {
@@ -124,6 +136,10 @@ const gridOptions: GridOptions = {
     columnDefs: [
           {
             field: "company",
+            valueGetter: (params: ValueGetterParams) => {
+              return params.data.company;
+          },
+            cellRenderer: CompanyRenderer
           },
           {
             headerName: "Logo",
@@ -138,7 +154,6 @@ const gridOptions: GridOptions = {
                 return params.data.price;
             },
             cellRenderer: PriceRenderer,
-            // valueFormatter: (params: ValueFormatterParams) => { return '£' + params.value.toLocaleString(); }
           },
           {
             field: "successful",
@@ -151,8 +166,6 @@ const gridOptions: GridOptions = {
             cellRenderer: CustomButtonComponent,
           },
     ] as ColDef[],
-    // Grid Options & Callbacks
-    pagination: true,
 }
 
 // Create Grid: Create new grid within the #myGrid div, using the Grid Options object
