@@ -87,5 +87,7 @@ export const getIsImplemented = ({
     internalFramework: InternalFramework;
     importType: ImportType;
 }) => {
-    return internalFramework === 'typescript' && importType === 'modules';
+    return (
+        (internalFramework === 'typescript' || internalFramework === 'reactFunctionalTs') && importType === 'modules'
+    );
 };
