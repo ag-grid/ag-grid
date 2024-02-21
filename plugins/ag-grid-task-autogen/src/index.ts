@@ -12,8 +12,6 @@ export const createNodes: CreateNodes = [
     (configFilePath, options, context) => {
         const parentProject = PROJECTS.find((p) => configFilePath.startsWith(`documentation/${p}`));
 
-        console.log('parentProject', parentProject);
-
         if (!parentProject) {
             return {};
         }

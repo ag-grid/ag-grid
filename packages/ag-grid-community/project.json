@@ -16,7 +16,7 @@
         "outputFileName": "overridden in webpack config but required by nx"
       },
       "cache": true,
-      "dependsOn": []
+      "dependsOn": ["^build"]
     },
     "build:copy-styles": {
       "dependsOn": [],
