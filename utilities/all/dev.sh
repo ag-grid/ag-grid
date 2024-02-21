@@ -24,7 +24,7 @@ done
 # fi
 
 if [[ "${MODIFIED}" == "ag-charts-community" ]] ; then
-  nx run-many -p ag-charts-community,ag-charts-enterprise -t build:types,build:package,build:umd,docs-resolved-interfaces -c watch
+  nx run-many -p ag-charts-community,ag-charts-enterprise -t build:types,build:package,build:umd,generate-doc-references -c watch
 elif [[ "${MODIFIED}" == "ag-charts-enterprise" ]] ; then
   nx run-many -p ${MODIFIED} -t build:types,build:package,build:umd -c watch
 elif [[ "${VALID_FILE_COUNT}" -gt 0 ]] ; then

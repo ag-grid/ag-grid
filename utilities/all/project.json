@@ -115,7 +115,7 @@
         "production": {}
       }
     },
-    "docs-resolved-interfaces": {
+    "generate-doc-references": {
       "executor": "ag-grid-generate-code-reference-files:generate",
       "dependsOn": ["ag-grid-generate-code-reference-files:build"],
       "inputs": [

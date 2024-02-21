@@ -40,7 +40,7 @@ async function generateFile(options: ExecutorOptions) {
 
     const distFolder = workspaceRoot + '/' + options.output;
 
-    // Matches the inputs in docs-resolved-interfaces task
+    // Matches the inputs in generate-doc-references task
     const INTERFACE_GLOBS = [
         ...inputGlob(workspaceRoot + '/community-modules/core/src'),
         ...inputGlob(workspaceRoot + '/community-modules/angular/projects/ag-grid-angular/src/lib'),
