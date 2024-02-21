@@ -5,12 +5,19 @@ import { pathJoin } from '@utils/pathJoin';
 
 import { DOCS_FRAMEWORK_PATH_INDEX } from '../constants';
 
-export function getFrameworkFromPath(path: string) {
-    return path.split('/')[DOCS_FRAMEWORK_PATH_INDEX];
+export function getFrameworkPath(framework: Framework) {
+    return `${framework}-data-grid`;
+}
+
+export function getFrameworkFromPath(path: string): Framework {
+    const frameworkPath = path.split('/')[DOCS_FRAMEWORK_PATH_INDEX];
+    const framework = frameworkPath.replace('-data-grid', '');
+    return framework as Framework;
 }
 
 export const getExamplePageUrl = ({ framework, path }: { framework: Framework; path: string }) => {
-    return pathJoin(SITE_BASE_URL, framework, path) + '/';
+    const frameworkPath = getFrameworkPath(framework);
+    return pathJoin(SITE_BASE_URL, frameworkPath, path) + '/';
 };
 
 /**

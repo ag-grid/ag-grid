@@ -1,10 +1,9 @@
 ---
-import { DOCS_FRAMEWORK_PATH_INDEX } from '@features/docs/constants';
 import { Snippet } from '@components/snippet/Snippet';
 import he from 'he';
+import { getFrameworkFromPath } from '@features/docs/utils/urlPaths';
 
-const pathSegments = Astro.url.pathname.split('/');
-const framework = pathSegments[DOCS_FRAMEWORK_PATH_INDEX];
+const framework = getFrameworkFromPath(Astro.url.pathname);
 
 const {
     // NOTE: Language is passed through by markdoc as `data-language`

@@ -1,5 +1,6 @@
 import type { Framework } from '@ag-grid-types';
 import { SITE_BASE_URL } from '@constants';
+import { getFrameworkPath } from '@features/docs/utils/urlPaths';
 
 import { pathJoin } from './pathJoin';
 
@@ -14,7 +15,8 @@ export const urlWithPrefix = ({
 }): string => {
     let path = url;
     if (url.startsWith('./')) {
-        path = pathJoin('/', siteBaseUrl, framework, url.slice('./'.length));
+        const frameworkPath = getFrameworkPath(framework!);
+        path = pathJoin('/', siteBaseUrl, frameworkPath, url.slice('./'.length));
     } else if (url.startsWith('/')) {
         path = pathJoin('/', siteBaseUrl, url);
     } else if (!url.startsWith('#') && !url.startsWith('http') && !url.startsWith('mailto')) {
