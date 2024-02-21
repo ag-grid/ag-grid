@@ -4,7 +4,7 @@ import path from 'path';
 import { readFile } from '../../../executors-utils';
 import { ANGULAR_GENERATED_MAIN_FILE_NAME, SOURCE_ENTRY_FILE_NAME } from './constants';
 import gridVanillaSrcParser from './transformation-scripts/grid-vanilla-src-parser';
-import type { GeneratedContents, InternalFramework } from './types';
+import { FRAMEWORKS, GeneratedContents, InternalFramework } from './types';
 import {
     getBoilerPlateFiles,
     getEntryFileName,
@@ -89,18 +89,24 @@ export const getGeneratedContents = async (params: GeneratedContentParams): Prom
     });
     const providedExampleFileNames = getProvidedExampleFiles({ folderPath, internalFramework });
 
+    const entryType = providedExampleFileNames.length > 0 ? 'mixed' : 'generated';
+
     const providedExampleBasePath = getProvidedExampleFolder({
         folderPath,
         internalFramework,
     });
-    const mainEntryFilename = getEntryFileName(internalFramework);
     const providedExampleEntries = await Promise.all(
         providedExampleFileNames.map(async (fileName) => {
             let contents = (await fs.readFile(path.join(providedExampleBasePath, fileName))).toString('utf-8');
             return [fileName, contents];
         })
     );
-    const providedExamples = Object.fromEntries(providedExampleEntries);
+    const frameworkProvidedExamples = Object.fromEntries(providedExampleEntries);
+
+    const frameworkHasProvided = {};
+    FRAMEWORKS.forEach((framework) => {
+        frameworkHasProvided[framework] = getProvidedExampleFiles({ folderPath, internalFramework: framework }).length > 0;
+    });
 
     const styleFiles = await getStyleFiles({ folderPath, sourceFileList });
 
@@ -112,8 +118,8 @@ export const getGeneratedContents = async (params: GeneratedContentParams): Prom
         entryFile,
         indexHtml,
         {}, // Hardcoded for now used to provide custom theme, width, height for inline styles
-        'generated', // Hardcoded for now,
-        providedExamples
+        entryType,
+        frameworkHasProvided
     );
 
     const getFrameworkFiles = frameworkFilesGenerator[internalFramework];
@@ -147,18 +153,18 @@ export const getGeneratedContents = async (params: GeneratedContentParams): Prom
         files = f;
         scriptFiles = s;
     } 
-    
+
     const result: GeneratedContents = {
         isEnterprise,
         scriptFiles: scriptFiles!,
         styleFiles: Object.keys(styleFiles),
         sourceFileList,
         // Replace files with provided examples
-        files: Object.assign(styleFiles, files, providedExamples),
+        files: Object.assign(styleFiles, files, frameworkProvidedExamples),
         // Files without provided examples
         generatedFiles: files,
         boilerPlateFiles,
-        providedExamples,
+        providedExamples: frameworkProvidedExamples,
         entryFileName,
         mainFileName,
         packageJson,

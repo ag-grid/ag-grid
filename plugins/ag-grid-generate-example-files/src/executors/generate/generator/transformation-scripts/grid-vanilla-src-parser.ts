@@ -114,19 +114,6 @@ function processGlobalComponentsForVue(propertyName: string, exampleType, provid
     return false;
 }
 
-export function parser(examplePath, fileName, srcFile, html, exampleSettings, exampleType, providedExamples) {
-    const typedBindings = internalParser(examplePath, {
-        fileName,
-        srcFile,
-        includeTypes: true
-    }, html, exampleSettings, exampleType, providedExamples);
-    const bindings = internalParser(examplePath, {
-        fileName,
-        srcFile,
-        includeTypes: false
-    }, html, exampleSettings, exampleType, providedExamples);
-    return {bindings, typedBindings};
-}
 
 /** Creating a TS program takes about half a second which quickly gets very expensive. As we only need it to access the same GridOptions file we cache the first program that finds this. */
 let cachedProgram = undefined
@@ -639,6 +626,20 @@ function internalParser(examplePath, {
     };
 
     return tsBindings;
+}
+
+export function parser(examplePath, fileName, srcFile, html, exampleSettings, exampleType, providedExamples) {
+    const typedBindings = internalParser(examplePath, {
+        fileName,
+        srcFile,
+        includeTypes: true
+    }, html, exampleSettings, exampleType, providedExamples);
+    const bindings = internalParser(examplePath, {
+        fileName,
+        srcFile,
+        includeTypes: false
+    }, html, exampleSettings, exampleType, providedExamples);
+    return {bindings, typedBindings};
 }
 
 export default parser;
