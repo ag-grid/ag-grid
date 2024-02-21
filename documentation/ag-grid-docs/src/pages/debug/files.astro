@@ -1,14 +1,14 @@
 ---
-import { getDevFiles } from '@utils/pages';
-import { getDevFileUrl } from '@utils/devFileUrl';
+import { getExtraFiles } from '@utils/pages';
+import { getExtraFileUrl } from '@utils/extraFileUrl';
 import Layout from '@layouts/Layout.astro';
 
-const devFiles = getDevFiles();
+const extraFiles = getExtraFiles();
 ---
 
-<Layout title={`Debug: Dev Files`}>
+<Layout title={`Debug: Extra Files`}>
     <main class="layout-page-max-width container">
-        <h1>Dev files ({devFiles.length})</h1>
+        <h1>Extra files ({extraFiles.length})</h1>
         <p><code>props.file</code> gets the file contents, but is not shown here.</p>
         <table>
             <thead>
@@ -19,10 +19,10 @@ const devFiles = getDevFiles();
             </thead>
             <tbody>
                 {
-                    devFiles.map((devFile, index) => {
-                        const { filePath } = devFile.params;
-                        const { fullFilePath } = devFile.props;
-                        const url = getDevFileUrl({
+                    extraFiles.map((file, index) => {
+                        const { filePath } = file.params;
+                        const { fullFilePath } = file.props;
+                        const url = getExtraFileUrl({
                             filePath,
                         });
                         return (

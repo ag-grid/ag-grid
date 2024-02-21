@@ -19,7 +19,7 @@ export interface InternalFrameworkExample {
     exampleName: string;
 }
 
-export interface DevFileRoute {
+export interface ExtraFileRoute {
     params: {
         filePath: string;
     };
@@ -29,11 +29,11 @@ export interface DevFileRoute {
 }
 
 /**
- * Mapping for dev files, from route to file path
+ * Mapping for extra files, from route to file path
  *
  * NOTE: File path is after `getRootUrl()`
  */
-export const DEV_FILE_PATH_MAP: Record<string, string | GlobConfig> = {
+export const FILES_PATH_MAP: Record<string, string | GlobConfig> = {
     // TODO: Fix hardcoded module files
     // NOTE: Using `*.esm.mjs` and not `.cjs.js` as those are the module files
 
@@ -125,10 +125,10 @@ export const isUsingPublishedPackages = () => USE_PUBLISHED_PACKAGES === true;
 export const isPreProductionBuild = () => false;
 export const isBuildServerBuild = () => false;
 
-export function getDevFiles(): DevFileRoute[] {
+export function getExtraFiles(): ExtraFileRoute[] {
     const result = [];
 
-    for (const [filePath, sourceFilePath] of Object.entries(DEV_FILE_PATH_MAP)) {
+    for (const [filePath, sourceFilePath] of Object.entries(FILES_PATH_MAP)) {
         if (typeof sourceFilePath === 'string') {
             const fullFilePath = pathJoin(getRootUrl().pathname, sourceFilePath);
             if (fullFilePath.includes('**')) {

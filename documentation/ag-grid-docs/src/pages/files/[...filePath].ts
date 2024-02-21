@@ -1,15 +1,15 @@
-import { type DevFileRoute, getDevFiles } from '@utils/pages';
+import { type ExtraFileRoute, getExtraFiles } from '@utils/pages';
 import fsOriginal from 'node:fs';
 import fs from 'node:fs/promises';
 
 export function getStaticPaths() {
-    return getDevFiles();
+    return getExtraFiles();
 }
 
 /**
  * Get files for dev server
  */
-export async function GET({ props }: DevFileRoute) {
+export async function GET({ props }: ExtraFileRoute) {
     const { fullFilePath } = props;
 
     const fileExists = fsOriginal.existsSync(fullFilePath);
