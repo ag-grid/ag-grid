@@ -1,8 +1,10 @@
 import { Events, CheckboxChangedEvent } from "../events";
-import { AgAbstractInputField, IInputField } from './agAbstractInputField';
+import { AgAbstractInputField, AgInputFieldParams } from './agAbstractInputField';
 import { LabelAlignment } from './agAbstractLabel';
 
-export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> {
+export interface AgCheckboxParams extends AgInputFieldParams {}
+
+export class AgCheckbox<TConfig extends AgCheckboxParams = AgCheckboxParams> extends AgAbstractInputField<HTMLInputElement, boolean, TConfig> {
 
     protected labelAlignment: LabelAlignment = 'right';
 
@@ -10,7 +12,7 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
     private readOnly = false;
     private passive = false;
 
-    constructor(config?: IInputField, className = 'ag-checkbox', inputType = 'checkbox') {
+    constructor(config?: TConfig, className = 'ag-checkbox', inputType = 'checkbox') {
         super(config, className, inputType);
     }
 

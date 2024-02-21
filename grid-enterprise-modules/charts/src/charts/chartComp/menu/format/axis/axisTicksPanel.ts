@@ -1,16 +1,13 @@
 import {
-    AgGroupComponent,
     AgGroupComponentParams,
-    AgSlider,
+    AgSliderParams,
     Autowired,
     Component,
-    PostConstruct,
-    RefSelector
+    PostConstruct
 } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartOptionsService } from "../../../services/chartOptionsService";
-import { getMaxValue } from "../formatPanel";
-import { AgColorPicker } from "../../../../../widgets/agColorPicker";
+import { ChartMenuUtils } from "../../chartMenuUtils";
 
 export class AxisTicksPanel extends Component {
 
@@ -23,12 +20,8 @@ export class AxisTicksPanel extends Component {
             </ag-group-component>
         </div>`;
 
-    @RefSelector('axisTicksGroup') private axisTicksGroup: AgGroupComponent;
-    @RefSelector('axisTicksColorPicker') private axisTicksColorPicker: AgColorPicker;
-    @RefSelector('axisTicksWidthSlider') private axisTicksWidthSlider: AgSlider;
-    @RefSelector('axisTicksSizeSlider') private axisTicksSizeSlider: AgSlider;
-
-    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
+    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    @Autowired('chartMenuUtils') private readonly chartMenuUtils: ChartMenuUtils;
 
     constructor(private readonly chartOptionsService: ChartOptionsService) {
         super();
@@ -36,40 +29,34 @@ export class AxisTicksPanel extends Component {
 
     @PostConstruct
     private init() {
-        const groupParams: AgGroupComponentParams = {
+        const axisTicksGroupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',
-            suppressOpenCloseIcons: true
+            suppressOpenCloseIcons: true,
+            title: this.chartTranslationService.translate("ticks"),
+            enabled: this.chartOptionsService.getAxisProperty("tick.enabled"),
+            suppressEnabledCheckbox: false,
+            onEnableChange: newValue => this.chartOptionsService.setAxisProperty("tick.enabled", newValue)
         };
-        this.setTemplate(AxisTicksPanel.TEMPLATE, {axisTicksGroup: groupParams});
-        this.initAxisTicks();
-    }
-
-    private initAxisTicks() {
-        this.axisTicksGroup
-            .setTitle(this.chartTranslationService.translate("ticks"))
-            .setEnabled(this.chartOptionsService.getAxisProperty("tick.enabled"))
-            .hideOpenCloseIcons(true)
-            .hideEnabledCheckbox(false)
-            .onEnableChange(newValue => this.chartOptionsService.setAxisProperty("tick.enabled", newValue));
-
-        this.axisTicksColorPicker
-            .setLabel(this.chartTranslationService.translate("color"))
-            .setLabelWidth("flex")
-            .setInputWidth('flex')
-            .setValue(this.chartOptionsService.getAxisProperty("tick.color"))
-            .onValueChange(newColor => this.chartOptionsService.setAxisProperty("tick.color", newColor));
-
-        const initInput = (expression: string, input: AgSlider, label: string, defaultMaxValue: number) => {
-            const currentValue = this.chartOptionsService.getAxisProperty<number>(expression);
-            input.setLabel(label)
-                .setMaxValue(getMaxValue(currentValue, defaultMaxValue))
-                .setValue(`${currentValue}`)
-                .setTextFieldWidth(45)
-                .onValueChange(newValue => this.chartOptionsService.setAxisProperty(expression, newValue));
+        const axisTicksColorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams({
+            value: this.chartOptionsService.getAxisProperty("tick.color"),
+            onValueChange: newColor => this.chartOptionsService.setAxisProperty("tick.color", newColor)
+        });
+        const getSliderParams = (expression: string, labelKey: string, defaultMaxValue: number): AgSliderParams => {
+            return this.chartMenuUtils.getDefaultSliderParams({
+                labelKey,
+                defaultMaxValue,
+                value: this.chartOptionsService.getAxisProperty<number>(expression),
+                onValueChange: newValue => this.chartOptionsService.setAxisProperty(expression, newValue)
+            });
         };
-
-        initInput("tick.width", this.axisTicksWidthSlider, this.chartTranslationService.translate("width"), 10);
-        initInput("tick.size", this.axisTicksSizeSlider, this.chartTranslationService.translate("length"), 30);
+        const axisTicksWidthSliderParams = getSliderParams("tick.width", "width", 10);
+        const axisTicksSizeSliderParams = getSliderParams("tick.size", "length", 30);
+        this.setTemplate(AxisTicksPanel.TEMPLATE, {
+            axisTicksGroup: axisTicksGroupParams,
+            axisTicksColorPicker: axisTicksColorPickerParams,
+            axisTicksWidthSlider: axisTicksWidthSliderParams,
+            axisTicksSizeSlider: axisTicksSizeSliderParams
+        });
     }
 }

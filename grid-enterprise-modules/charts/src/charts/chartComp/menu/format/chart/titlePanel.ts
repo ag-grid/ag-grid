@@ -8,15 +8,17 @@ import {
     PostConstruct,
     WithoutGridCommon
 } from "@ag-grid-community/core";
-import { Font, FontPanel, FontPanelParams } from "../fontPanel";
+import { FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartOptionsService } from "../../../services/chartOptionsService";
+import { ChartMenuUtils } from "../../chartMenuUtils";
 
 export default class TitlePanel extends Component {
 
     public static TEMPLATE = /* html */ `<div></div>`;
 
-    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
+    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    @Autowired('chartMenuUtils') private readonly chartMenuUtils: ChartMenuUtils;
 
     private activePanels: Component[] = [];
     private titlePlaceholder: string;
@@ -39,32 +41,14 @@ export default class TitlePanel extends Component {
     private initFontPanel(): void {
         const hasTitle = this.hasTitle();
 
-        const setFont = (font: Font, isSilent?: boolean) => {
-            if (font.family) { this.setOption('title.fontFamily', font.family, isSilent); }
-            if (font.weight) { this.setOption('title.fontWeight', font.weight, isSilent); }
-            if (font.style) { this.setOption('title.fontStyle', font.style, isSilent); }
-            if (font.size) { this.setOption('title.fontSize', font.size, isSilent); }
-            if (font.color) { this.setOption('title.color', font.color, isSilent); }
-        };
-
-        const initialFont = {
-            family: this.getOption('title.fontFamily'),
-            style: this.getOption('title.fontStyle'),
-            weight: this.getOption('title.fontWeight'),
-            size: this.getOption<number>('title.fontSize'),
-            color: this.getOption('title.color')
-        };
-
-        if (!hasTitle) {
-            setFont(initialFont, true);
-        }
-
         const fontPanelParams: FontPanelParams = {
             name: this.chartTranslationService.translate('title'),
             enabled: hasTitle,
             suppressEnabledCheckbox: false,
-            initialFont,
-            setFont,
+            fontModelProxy: {
+                setValue: (key, value) => this.setOption(`title.${key}`, value),
+                getValue: key => this.getOption(`title.${key}`)
+            },
             setEnabled: (enabled) => {
                 if (this.toolbarExists()) {
                     // extra padding is only included when the toolbar is present
@@ -96,16 +80,12 @@ export default class TitlePanel extends Component {
     }
 
     private createSpacingSlicer() {
-        const spacingSlider = this.createBean(new AgSlider());
-        const currentValue = this.chartOptionsService.getChartOption<number>('title.spacing') || 10;
-
-        spacingSlider.setLabel(this.chartTranslationService.translate('spacing'))
-            .setMaxValue(Math.max(currentValue, 100))
-            .setValue(`${currentValue}`)
-            .setTextFieldWidth(45)
-            .onValueChange(newValue => this.chartOptionsService.setChartOption('title.spacing', newValue));
-
-        return spacingSlider;
+        return this.createBean(new AgSlider(this.chartMenuUtils.getDefaultSliderParams({
+            labelKey: 'spacing',
+            defaultMaxValue: 100,
+            value: this.chartOptionsService.getChartOption<number>('title.spacing') ?? 10,
+            onValueChange: newValue => this.chartOptionsService.setChartOption('title.spacing', newValue)
+        })));
     }
 
     private toolbarExists() {
@@ -123,8 +103,8 @@ export default class TitlePanel extends Component {
         return this.chartOptionsService.getChartOption(expression);
     }
 
-    private setOption(property: string, value: any, isSilent?: boolean): void {
-        this.chartOptionsService.setChartOption(property, value, isSilent);
+    private setOption(property: string, value: any): void {
+        this.chartOptionsService.setChartOption(property, value);
     }
 
     private destroyActivePanels(): void {

@@ -1,10 +1,10 @@
 import { Module, ModuleNames } from "@ag-grid-community/core";
 import { EnterpriseCoreModule } from "@ag-grid-enterprise/core";
+import { RangeSelectionModule } from "@ag-grid-enterprise/range-selection";
 import { ChartService } from "./charts/chartService";
+import { ChartMenuUtils } from "./charts/chartComp/menu/chartMenuUtils";
 import { ChartTranslationService } from "./charts/chartComp/services/chartTranslationService";
 import { ChartCrossFilterService } from "./charts/chartComp/services/chartCrossFilterService";
-
-import { RangeSelectionModule } from "@ag-grid-enterprise/range-selection";
 import { AgColorPicker } from "./widgets/agColorPicker";
 import { AgAngleSelect } from "./widgets/agAngleSelect";
 import { VERSION as GRID_VERSION } from "./version";
@@ -20,7 +20,7 @@ export const GridChartsModule: Module = {
     },
     moduleName: ModuleNames.GridChartsModule,
     beans: [
-        ChartService, ChartTranslationService, ChartCrossFilterService
+        ChartService, ChartTranslationService, ChartCrossFilterService, ChartMenuUtils
     ],
     agStackComponents: [
         { componentName: 'AgColorPicker', componentClass: AgColorPicker },

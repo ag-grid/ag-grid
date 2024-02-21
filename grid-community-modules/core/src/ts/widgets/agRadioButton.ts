@@ -1,10 +1,11 @@
-import { AgCheckbox } from './agCheckbox';
+import { AgCheckbox, AgCheckboxParams } from './agCheckbox';
 import { Events } from '../eventKeys';
-import { IInputField } from './agAbstractInputField';
 import { CheckboxChangedEvent } from '../events';
 
-export class AgRadioButton extends AgCheckbox {
-    constructor(config?: IInputField) {
+export interface AgRadioButtonParams extends AgCheckboxParams {}
+
+export class AgRadioButton extends AgCheckbox<AgRadioButtonParams> {
+    constructor(config?: AgRadioButtonParams) {
         super(config, 'ag-radio-button', 'radio');
     }
 

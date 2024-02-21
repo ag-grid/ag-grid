@@ -20,6 +20,8 @@ export interface AgGroupComponentParams {
     items?: GroupItem[];
     alignItems?: Align;
     direction?: Direction;
+    onEnableChange?: (enabled: boolean) => void;
+    expanded?: boolean;
 }
 
 export class AgGroupComponent extends Component {
@@ -43,10 +45,10 @@ export class AgGroupComponent extends Component {
     @RefSelector('eTitle') private eTitle: HTMLElement;
     @RefSelector('eContainer') private eContainer: HTMLElement;
 
-    constructor(params: AgGroupComponentParams = {}) {
+    constructor(private readonly params: AgGroupComponentParams = {}) {
         super(AgGroupComponent.getTemplate(params));
 
-        const { title, enabled, items, suppressEnabledCheckbox, suppressOpenCloseIcons } = params;
+        const { title, enabled, items, suppressEnabledCheckbox, suppressOpenCloseIcons, expanded } = params;
 
         this.title = title;
         this.cssIdentifier = params.cssIdentifier || 'default';
@@ -54,6 +56,8 @@ export class AgGroupComponent extends Component {
         this.items = items || [];
 
         this.alignItems = params.alignItems || 'center';
+
+        this.expanded = !!expanded;
 
         if (suppressEnabledCheckbox != null) {
             this.suppressEnabledCheckbox = suppressEnabledCheckbox;
@@ -109,6 +113,11 @@ export class AgGroupComponent extends Component {
         this.setupExpandContract();
         this.refreshAriaStatus();
         this.refreshChildDisplay();
+
+        const { onEnableChange } = this.params;
+        if (onEnableChange != null) {
+            this.onEnableChange(onEnableChange);
+        }
     }
 
     private setupExpandContract(): void {

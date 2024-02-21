@@ -1,14 +1,14 @@
 import {
     _,
     AgGroupComponentParams,
-    AgSelect,
     AgSlider,
     AgGroupComponent,
     Autowired,
     Component,
     ListOption,
     PostConstruct,
-    RefSelector
+    RefSelector,
+    AgSelectParams
 } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartOptionsService } from "../../../services/chartOptionsService";
@@ -28,7 +28,6 @@ export class SeriesItemsPanel extends Component {
         </div>`;
 
     @RefSelector('seriesItemsGroup') private seriesItemsGroup: AgGroupComponent;
-    @RefSelector('seriesItemSelect') private seriesItemSelect: AgSelect;
 
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
@@ -49,14 +48,16 @@ export class SeriesItemsPanel extends Component {
             suppressOpenCloseIcons: true,
             suppressEnabledCheckbox: true,
         };
-        this.setTemplate(SeriesItemsPanel.TEMPLATE, {seriesItemsGroup: seriesItemsGroupParams});
+        this.setTemplate(SeriesItemsPanel.TEMPLATE, {
+            seriesItemsGroup: seriesItemsGroupParams,
+            seriesItemSelect: this.getSeriesItemsParams()
+        });
 
-        this.initSeriesItems();
         this.initSeriesControls();
     }
 
-    private initSeriesItems() {
-        const selectOptions: ListOption<SeriesItemType>[] = [
+    private getSeriesItemsParams(): AgSelectParams {
+        const options: ListOption<SeriesItemType>[] = [
             {value: 'positive', text: this.chartTranslationService.translate('seriesItemPositive')},
             {value: 'negative', text: this.chartTranslationService.translate('seriesItemNegative')},
         ];
@@ -66,14 +67,15 @@ export class SeriesItemsPanel extends Component {
             this.initSeriesControls(newValue as SeriesItemType);
         }
 
-        this.seriesItemSelect
-            .setLabel(this.chartTranslationService.translate('seriesItemType'))
-            .setLabelAlignment("left")
-            .setLabelWidth('flex')
-            .setInputWidth('flex')
-            .addOptions(selectOptions)
-            .setValue('positive')
-            .onValueChange(seriesItemChangedCallback);
+        return {
+            label: this.chartTranslationService.translate('seriesItemType'),
+            labelAlignment: "left",
+            labelWidth: 'flex',
+            inputWidth: 'flex',
+            options,
+            value: 'positive',
+            onValueChange: seriesItemChangedCallback
+        };
     }
 
     private initSeriesControls(itemType: SeriesItemType = 'positive') {
@@ -85,7 +87,6 @@ export class SeriesItemsPanel extends Component {
     }
 
     private initSlider(labelKey: string, minValue: number, maxValue: number, textFieldWidth: number, seriesOptionKey: string, step: number = 1, isArray: boolean = false) {
-        const itemSlider = this.seriesItemsGroup.createManagedBean(new AgSlider());
         const value = this.chartOptionsService.getSeriesOption(seriesOptionKey, this.getSelectedSeries());
 
         const sliderChangedCallback = (newValue: number) => {
@@ -93,14 +94,15 @@ export class SeriesItemsPanel extends Component {
             this.chartOptionsService.setSeriesOption(seriesOptionKey, value, this.getSelectedSeries());
         }
 
-        itemSlider
-            .setLabel(this.chartTranslationService.translate(labelKey))
-            .setMinValue(minValue)
-            .setMaxValue(maxValue)
-            .setTextFieldWidth(textFieldWidth)
-            .setValue(`${value}`)
-            .setStep(step)
-            .onValueChange(sliderChangedCallback);
+        const itemSlider = this.seriesItemsGroup.createManagedBean(new AgSlider({
+            label: this.chartTranslationService.translate(labelKey),
+            minValue,
+            maxValue,
+            textFieldWidth,
+            value: `${value}`,
+            step,
+            onValueChange: sliderChangedCallback
+        }));
 
         this.seriesItemsGroup.addItem(itemSlider);
         this.activePanels.push(itemSlider);

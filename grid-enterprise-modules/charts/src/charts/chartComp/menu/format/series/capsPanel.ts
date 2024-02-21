@@ -1,15 +1,13 @@
 import {
-    AgGroupComponent,
     AgGroupComponentParams,
-    AgSlider,
     Autowired,
     Component,
     PostConstruct,
-    RefSelector,
 } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartOptionsService } from "../../../services/chartOptionsService";
 import { ChartSeriesType } from "../../../utils/seriesTypeMapper";
+import { ChartMenuUtils } from "../../chartMenuUtils";
 
 export class CapsPanel extends Component {
 
@@ -20,10 +18,8 @@ export class CapsPanel extends Component {
             </ag-group-component>
         </div>`;
 
-    @RefSelector('capsGroup') private capsGroup: AgGroupComponent;
-    @RefSelector('capLengthRatioSlider') private capLengthRatioSlider: AgSlider;
-
-    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
+    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    @Autowired('chartMenuUtils') private readonly chartMenuUtils: ChartMenuUtils;
 
     constructor(private readonly chartOptionsService: ChartOptionsService,
                 private getSelectedSeries: () => ChartSeriesType) {
@@ -32,7 +28,7 @@ export class CapsPanel extends Component {
 
     @PostConstruct
     private init() {
-        const groupParams: AgGroupComponentParams = {
+        const capsGroupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',
             title: this.chartTranslationService.translate("cap"),
@@ -40,20 +36,18 @@ export class CapsPanel extends Component {
             suppressOpenCloseIcons: true,
             suppressEnabledCheckbox: true,
         };
-        this.setTemplate(CapsPanel.TEMPLATE, {capsGroup: groupParams});
+        const capLengthRatioSliderParams = this.chartMenuUtils.getDefaultSliderParams({
+            labelKey: "capLengthRatio",
+            defaultMaxValue: 1,
+            value: this.chartOptionsService.getSeriesOption<number>("cap.lengthRatio", this.getSelectedSeries()),
+            onValueChange: newValue => this.chartOptionsService.setSeriesOption("cap.lengthRatio", newValue, this.getSelectedSeries())
+        });
+        capLengthRatioSliderParams.step = 0.05;
+        capLengthRatioSliderParams.minValue = 0;
 
-        this.initControls();
-    }
-
-    private initControls() {
-        const lengthRatio = this.chartOptionsService.getSeriesOption<number>("cap.lengthRatio", this.getSelectedSeries());
-        this.capLengthRatioSlider
-            .setLabel(this.chartTranslationService.translate("capLengthRatio"))
-            .setStep(0.05)
-            .setMinValue(0)
-            .setMaxValue(1)
-            .setTextFieldWidth(45)
-            .setValue(`${lengthRatio}`)
-            .onValueChange(newValue => this.chartOptionsService.setSeriesOption("cap.lengthRatio", newValue, this.getSelectedSeries()));
+        this.setTemplate(CapsPanel.TEMPLATE, {
+            capsGroup: capsGroupParams,
+            capLengthRatioSlider: capLengthRatioSliderParams
+        });
     }
 }

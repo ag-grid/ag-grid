@@ -1,10 +1,16 @@
-import { AgAbstractLabel, IAgLabelParams } from './agAbstractLabel';
+import { AgAbstractLabel, AgLabelParams } from './agAbstractLabel';
 import { setFixedWidth } from '../utils/dom';
 import { Events } from '../eventKeys';
 import { getAriaLabel, setAriaLabel, setAriaLabelledBy } from '../utils/aria';
 
+export interface AgFieldParams extends AgLabelParams {
+    value?: any;
+    width?: number;
+    onValueChange?: (value?: any) => void;
+}
+
 export type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
-export abstract class AgAbstractField<TValue, TConfig extends IAgLabelParams = IAgLabelParams> extends AgAbstractLabel<TConfig> {
+export abstract class AgAbstractField<TValue, TConfig extends AgFieldParams = AgFieldParams> extends AgAbstractLabel<TConfig> {
 
     protected previousValue: TValue | null | undefined;
     protected value: TValue | null | undefined;
@@ -15,6 +21,17 @@ export abstract class AgAbstractField<TValue, TConfig extends IAgLabelParams = I
 
     protected postConstruct(): void {
         super.postConstruct();
+
+        const { width, value, onValueChange } = this.config;
+        if (width != null) {
+            this.setWidth(width);
+        }
+        if (value != null) {
+            this.setValue(value);
+        }
+        if (onValueChange != null) {
+            this.onValueChange(onValueChange);
+        }
 
         if (this.className) {
             this.addCssClass(this.className);

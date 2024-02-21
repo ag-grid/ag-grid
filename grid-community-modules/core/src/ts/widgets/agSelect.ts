@@ -1,14 +1,21 @@
-import { AgPickerField, IPickerFieldParams } from "./agPickerField";
+import { AgPickerField, AgPickerFieldParams } from "./agPickerField";
 import { ListOption, AgList } from "./agList";
 import { Events } from "../eventKeys";
 import { KeyCode } from "../constants/keyCode";
 import { setAriaControls } from "../utils/aria";
 
-export class AgSelect extends AgPickerField<string | null, IPickerFieldParams, AgList> {
+export interface AgSelectParams extends Omit<AgPickerFieldParams, 'pickerType' | 'pickerAriaLabelKey' | 'pickerAriaLabelValue'> {
+    options?: ListOption[];
+    pickerType?: string;
+    pickerAriaLabelKey?: string;
+    pickerAriaLabelValue?: string;
+}
+
+export class AgSelect extends AgPickerField<string | null, AgSelectParams & AgPickerFieldParams, AgList> {
     public static EVENT_ITEM_SELECTED = 'selectedItem';
     protected listComponent: AgList | undefined;
 
-    constructor(config?: IPickerFieldParams) {
+    constructor(config?: AgSelectParams) {
         super({
             pickerAriaLabelKey: 'ariaLabelSelectField',
             pickerAriaLabelValue: 'Select Field',
@@ -24,6 +31,11 @@ export class AgSelect extends AgPickerField<string | null, IPickerFieldParams, A
         super.postConstruct();
         this.createListComponent();
         this.eWrapper.tabIndex = this.gridOptionsService.get('tabIndex');
+
+        const { options } = this.config;
+        if (options != null) {
+            this.addOptions(options);
+        }
     }
 
     private createListComponent(): void {

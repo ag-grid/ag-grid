@@ -1,4 +1,4 @@
-import { AgInputTextField, ITextInputField } from "./agInputTextField";
+import { AgInputTextField, AgInputTextFieldParams } from "./agInputTextField";
 import { addOrRemoveAttribute } from "../utils/dom";
 import { parseDateTimeFromString, serialiseDate } from "../utils/date";
 import { isBrowserSafari } from "../utils/browser";
@@ -8,7 +8,7 @@ export class AgInputDateField extends AgInputTextField {
     private max?: string;
     private step?: number;
 
-    constructor(config?: ITextInputField) {
+    constructor(config?: AgInputTextFieldParams) {
         super(config, 'ag-date-field', 'date');
     }
 
