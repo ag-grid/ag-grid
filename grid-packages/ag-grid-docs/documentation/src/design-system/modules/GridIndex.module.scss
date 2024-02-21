@@ -11,7 +11,8 @@ main {
 .mainContainer {
     display: flex;
     flex-direction: column;
+    width: 100%;
     min-height: 100vh;
     padding: 0;
-    width: 100%;
+    overflow-x: hidden;
 }
