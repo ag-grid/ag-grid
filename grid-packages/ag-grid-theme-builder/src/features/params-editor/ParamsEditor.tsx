@@ -8,7 +8,6 @@ import {
   styled,
 } from '@mui/joy';
 import { useStore } from 'jotai';
-import { paramToVariableName } from '../../ag-grid-community-themes/theme-utils';
 import { withErrorBoundary } from '../../components/ErrorBoundary';
 import { ParamModel, allParamModels } from '../../model/ParamModel';
 import { renderedThemeAtom } from '../../model/rendered-theme';
@@ -33,7 +32,7 @@ export const ParamsEditor = withErrorBoundary(() => {
         onChange={(_, [newValue]) => {
           if (newValue) {
             const renderedTheme = store.get(renderedThemeAtom);
-            const variableName = paramToVariableName(newValue.property);
+            const variableName = newValue.variableName;
             store.set(newValue.valueAtom, renderedTheme.variableDefaults[variableName] || '');
           }
         }}

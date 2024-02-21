@@ -1,5 +1,5 @@
 import { logErrorMessageOnce } from '../../model/utils';
-import { colorValueToCssExpression, int, proportionToHex2 } from './color-editor-utils';
+import { int, proportionToHex2 } from './color-editor-utils';
 
 export class RGBAColor {
   constructor(
@@ -36,8 +36,8 @@ export class RGBAColor {
     return new RGBAColor(r, g, b, a);
   }
 
-  static parseCss(css: string | number): RGBAColor | null {
-    css = colorValueToCssExpression(css).trim().toLowerCase();
+  static parseCss(css: string): RGBAColor | null {
+    css = css.trim().toLowerCase();
     const numbers = Array.from(css.matchAll(/[\d.%-]+/g)).map(([m]) =>
       m.endsWith('%') ? parseFloat(m) / 100 : parseFloat(m),
     );
@@ -56,14 +56,13 @@ export class RGBAColor {
    * Given any CSS expression, including var() and color-mix(), get the browser to
    * transform it to a RGBA colour.
    */
-  static reinterpretCss(value: string | number): RGBAColor | null {
+  static reinterpretCss(value: string): RGBAColor | null {
     if (!reinterpretationElement) {
       reinterpretationElement = document.createElement('span');
       document.body.appendChild(reinterpretationElement);
     }
-    const css = colorValueToCssExpression(value);
     reinterpretationElement.style.backgroundColor = '';
-    reinterpretationElement.style.backgroundColor = `color-mix(in srgb, transparent, ${css} 100%)`;
+    reinterpretationElement.style.backgroundColor = `color-mix(in srgb, transparent, ${value} 100%)`;
     if (!reinterpretationElement.style.backgroundColor) return null;
     const srgbColor = getComputedStyle(reinterpretationElement).backgroundColor;
     const parsed = RGBAColor.parseCss(srgbColor);

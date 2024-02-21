@@ -1,13 +1,11 @@
-import { colorValueToCssExpression } from './color-editor-utils';
-
 export class VarColor {
   constructor(
     public variable: string,
     public alpha: number,
   ) {}
 
-  static parseCss(css: string | number): VarColor | null {
-    css = colorValueToCssExpression(css).trim().toLowerCase();
+  static parseCss(css: string): VarColor | null {
+    css = css.trim().toLowerCase();
     const simpleVar = parseVarExpression(css);
     if (simpleVar) {
       return new VarColor(simpleVar, 1);
@@ -28,11 +26,6 @@ export class VarColor {
 
   toCSSFunction() {
     return `color-mix(in srgb, transparent, var(${this.variable}) ${this.alpha * 100}%)`;
-  }
-
-  toColorValue() {
-    if (this.variable === '--ag-foreground-color') return this.alpha;
-    return this.toCSSFunction();
   }
 }
 

@@ -51,6 +51,38 @@
   .ag-row {
     background-color: var(--ag-background-color);
     color: var(--ag-data-color);
+    white-space: nowrap;
+    width: 100%;
+    height: var(--ag-row-height);
+
+    /* Work out the correct line height. --ag-row-height is the default row
+     height, --ag-line-height is the actual row height, only set if variable row
+     heights are enabled.
+
+  - use line height rather than flex align to centre single line text within a
+    default height row, because if the row is larger than the default height
+    then we want content to be top aligned.
+  - don't allow line height to be larger than the actual row height as then
+    content won't fit
+    */
+    --ag-internal-content-line-height: min(
+      calc(var(--ag-row-height) - 1px),
+      var(--ag-line-height, 1000px)
+    );
+  }
+
+  .ag-cell,
+  .ag-full-width-row .ag-cell-wrapper.ag-row-group {
+    /* There is always a 1px border around cells, defaulting to transparent to
+  avoid layout shift when we add a selection border. */
+    border: 1px solid transparent;
+    line-height: var(--ag-internal-content-line-height);
+  }
+
+  .ag-cell-wrapper > *:not(.ag-cell-value):not(.ag-group-value) {
+    /* cell widgets like checkboxes don't respond to line-height, so set their
+  height to vertically centre them */
+    height: var(--ag-internal-content-line-height);
   }
 
   .ag-row-highlight-above::after,

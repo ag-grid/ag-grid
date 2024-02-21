@@ -3,10 +3,10 @@ import { Button, Stack, Typography } from '@mui/joy';
 import { useState } from 'react';
 import { useChangeHandler } from '../../components/component-utils';
 import { ColorSwatch } from './ColorSwatch';
-import { UncontrolledColorEditorProps, colorValueToCssExpression } from './color-editor-utils';
+import { UncontrolledColorEditorProps } from './color-editor-utils';
 
 export const EyedropperColorEditor = ({ initialValue, onChange }: UncontrolledColorEditorProps) => {
-  const [value, setValue] = useState(() => colorValueToCssExpression(initialValue));
+  const [value, setValue] = useState(initialValue);
   const [open, setOpen] = useState(false);
 
   useChangeHandler(value, onChange);

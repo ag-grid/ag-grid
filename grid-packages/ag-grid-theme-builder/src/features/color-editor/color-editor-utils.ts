@@ -7,17 +7,11 @@ export type ColorEditorProps = {
 };
 
 export type ControlledColorEditorProps = ColorEditorProps & {
-  value: string | number;
+  value: string;
 };
 
 export type UncontrolledColorEditorProps = ColorEditorProps & {
-  initialValue: string | number;
-};
-
-export const colorValueToCssExpression = (value: string | number) => {
-  if (typeof value === 'string') return value;
-  const percent = formatProportionAs3dpPercent(value);
-  return `color-mix(in srgb, transparent, var(--ag-foreground-color) ${percent})`;
+  initialValue: string;
 };
 
 export const proportionToHex2 = (f: number) => numberToHex2(Math.floor(f * 256));

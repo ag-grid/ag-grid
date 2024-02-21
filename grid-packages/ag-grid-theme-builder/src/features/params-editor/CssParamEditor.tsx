@@ -1,5 +1,5 @@
 import { Input } from '@mui/joy';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ParamType } from '../../ag-grid-community-themes/metadata';
 import { ParamModel, useParamAtom } from '../../model/ParamModel';
 
@@ -8,15 +8,25 @@ export type CssParamEditorProps = {
 };
 
 export const CssParamEditor = ({ param }: CssParamEditorProps) => {
-  const [rawValue, setValue] = useParamAtom<string>(param);
-  const value = rawValue == null ? '' : String(rawValue);
-  const [valid, setValid] = useState(() => cssStringIsValid(value, param.meta.type));
+  const [paramValue, setParamValue] = useParamAtom<string | null>(param);
+  const [editorValue, setEditorValue] = useState(paramValue == null ? '' : String(paramValue));
+  const [valid, setValid] = useState(() => cssStringIsValid(editorValue, param.meta.type));
 
-  useEffect(() => {
-    setValid(cssStringIsValid(value, param.meta.type));
-  }, [value, param.meta.type]);
-
-  return <Input error={!valid} value={String(value)} onChange={(e) => setValue(e.target.value)} />;
+  return (
+    <Input
+      error={!valid}
+      value={editorValue}
+      onChange={(e) => {
+        const newValue = e.target.value;
+        const isValid = cssStringIsValid(newValue, param.meta.type);
+        setEditorValue(newValue);
+        setValid(isValid);
+        if (isValid) {
+          setParamValue(newValue);
+        }
+      }}
+    />
+  );
 };
 
 const cssStringIsValid = (value: string, type: ParamType): boolean => {

@@ -1,5 +1,6 @@
 import { useAtom, useAtomValue } from 'jotai';
 import { ParamMeta } from '../ag-grid-community-themes/metadata';
+import { paramToVariableName } from '../ag-grid-community-themes/theme-utils';
 import { PersistentAtom, atomWithJSONStorage } from './JSONStorage';
 import { allPartModels } from './PartModel';
 import { Store } from './store';
@@ -17,10 +18,18 @@ export class ParamModel {
   }
 
   hasValue = (store: Store) => store.get(this.valueAtom) != null;
+
+  get variableName(): string {
+    return paramToVariableName(this.property);
+  }
 }
 
 export const useParamAtom = <T = any>(model: ParamModel) =>
   useAtom(model.valueAtom as PersistentAtom<T>);
 export const useParam = (model: ParamModel) => useAtomValue(model.valueAtom);
 
-export const allParamModels = memoize(() => allPartModels().flatMap((part) => part.params));
+export const allParamModels = memoize(() =>
+  allPartModels()
+    .flatMap((part) => part.params)
+    .sort((a, b) => a.label.toLowerCase().localeCompare(b.label.toLowerCase())),
+);

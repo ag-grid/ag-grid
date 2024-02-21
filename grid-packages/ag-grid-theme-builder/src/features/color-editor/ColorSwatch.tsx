@@ -1,32 +1,44 @@
 import { Card, Tooltip, styled } from '@mui/joy';
-import { colorValueToCssExpression } from './color-editor-utils';
+import { useAtomValue } from 'jotai';
+import { addVariableDefaults } from '../../ag-grid-community-themes';
+import { renderedThemeAtom } from '../../model/rendered-theme';
 
 export type ColorSwatchProps = {
-  color: string | number;
+  color: string;
   splitBackground?: boolean;
   className?: string;
 };
 
-export const ColorSwatch = ({ color, className, splitBackground }: ColorSwatchProps) => (
-  <ColorSwatchCard className={className}>
-    {splitBackground && (
-      <Tooltip title="This shows your color on top of the background">
-        <OpaqueBackground>
-          <ColorOverOpaqueBackground
-            sx={{
-              borderColor: colorValueToCssExpression(color),
-            }}
-          />
-        </OpaqueBackground>
-      </Tooltip>
-    )}
-    <Color
-      style={{
-        backgroundColor: colorValueToCssExpression(color),
-      }}
-    />
-  </ColorSwatchCard>
-);
+export const ColorSwatch = ({ color, className, splitBackground }: ColorSwatchProps) => {
+  const theme = useAtomValue(renderedThemeAtom);
+
+  const colorCss = addVariableDefaults(color, theme.variableDefaults);
+
+  return (
+    <ColorSwatchCard className={className}>
+      {splitBackground && (
+        <Tooltip title="This shows your color on top of the background">
+          <OpaqueBackground color={theme.variableDefaults['--ag-background-color']}>
+            <ColorOverOpaqueBackground
+              style={{
+                borderColor: colorCss,
+              }}
+            />
+          </OpaqueBackground>
+        </Tooltip>
+      )}
+      <Color
+        style={{
+          backgroundColor: colorCss,
+        }}
+      />
+    </ColorSwatchCard>
+  );
+};
+
+type ColorProps = {
+  color: string;
+};
 
 const Color = styled('div')`
   width: 100%;
@@ -39,7 +51,7 @@ const OpaqueBackground = styled('div')`
   right: 0;
   bottom: 0;
   width: 60px;
-  background-color: var(--ag-background-color);
+  background-color: ${({ color }: ColorProps) => color};
 `;
 
 const ColorOverOpaqueBackground = styled('div')`

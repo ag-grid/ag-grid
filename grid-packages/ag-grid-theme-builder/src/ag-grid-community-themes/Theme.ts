@@ -79,7 +79,7 @@ export const defineTheme = <P extends AnyPart, V extends object = VariableTypes>
 
   // render variables
   for (const [name, value] of Object.entries(mergedParams)) {
-    if (!presetProperties.has(name) && typeof value === 'string') {
+    if (!presetProperties.has(name) && typeof value === 'string' && value) {
       result.variableDefaults[paramToVariableName(name)] = value;
     }
   }
@@ -143,24 +143,7 @@ const preprocessCss = (themeName: string, variables: Record<string, string>, css
   const themeSelector = `.ag-theme-${themeName}`;
   const themeSelectorPlaceholder = ':ag-current-theme';
 
-  // Add default values to var(--ag-foo) expressions. This is recursive - if the
-  // default value for --ag-foo is var(--ag-bar) then `var(--ag-foo)` becomes
-  // `var(--ag-foo, var(--ag-bar, [bar default]))`
-  const addVariableDefaults = (css: string): string =>
-    css.replaceAll(/var\((--ag-[^)]+)\)/g, (match, variable) => {
-      if (!/^[\w-]+$/.test(variable)) {
-        throw new Error(`${match} - variables should not contain default values.`);
-      } else if (!Object.hasOwn(variables, variable)) {
-        logErrorMessageOnce(`${variable} does not match a theme param`);
-      }
-      const defaultValue = variables[variable];
-      if (defaultValue) {
-        return `var(${variable}, ${addVariableDefaults(defaultValue)})`;
-      } else {
-        return match;
-      }
-    });
-  css = addVariableDefaults(css);
+  css = addVariableDefaults(css, variables);
 
   // rtlcss doesn't have an option to remove the space after the RTL selector,
   // so we're doing it here removing the space in `.ag-rtl .ag-theme-custom`
@@ -169,6 +152,28 @@ const preprocessCss = (themeName: string, variables: Record<string, string>, css
 
   return css;
 };
+
+// Add default values to var(--ag-foo) expressions. This is recursive - if the
+// default value for --ag-foo is var(--ag-bar) then `var(--ag-foo)` becomes
+// `var(--ag-foo, var(--ag-bar, [bar default]))`
+export const addVariableDefaults = (css: string, variables: Record<string, string>): string =>
+  css.replaceAll(
+    // omit all --ag-internal vars, and --ag-line-height which comes from grid code not a param
+    /var\((--ag-(?!line-height[^\w-]|internal)[^)]+)\)/g,
+    (match, variable) => {
+      if (!/^[\w-]+$/.test(variable) && variable !== '--ag-line-height') {
+        throw new Error(`${match} - variables should not contain default values ${variable}.`);
+      } else if (!Object.hasOwn(variables, variable)) {
+        logErrorMessageOnce(`${variable} does not match a theme param`);
+      }
+      const defaultValue = variables[variable];
+      if (defaultValue) {
+        return `var(${variable}, ${addVariableDefaults(defaultValue, variables)})`;
+      } else {
+        return match;
+      }
+    },
+  );
 
 const flattenParts = (parts: readonly AnyPart[]): Part[] => {
   const result: Part[] = [];

@@ -17,10 +17,10 @@ export const colorParamToCss = (value: string | number) => {
 
 export const kebabCase = (str: string) => str.replace(/[A-Z]/g, (m) => `-${m}`).toLowerCase();
 
+export const paramToVariableName = (paramName: string) => `--ag-${kebabCase(paramName)}`;
+
 export const clamp = (value: number, min: number, max: number) =>
   Math.max(min, Math.min(max, value));
-
-export const paramToVariableName = (paramName: string) => `--ag-${kebabCase(paramName)}`;
 
 export const logErrorMessage = (message: unknown, error?: unknown) => {
   if (error) {

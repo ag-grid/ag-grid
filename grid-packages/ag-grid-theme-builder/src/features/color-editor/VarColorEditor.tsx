@@ -15,6 +15,7 @@ import {
 import { useEffect, useState } from 'react';
 import { Cell, TwoColumnTable } from '../../components/Table';
 import { useChangeHandler } from '../../components/component-utils';
+import { allParamModels } from '../../model/ParamModel';
 import { singleOrFirst, titleCase } from '../../model/utils';
 import { ColorSwatch } from './ColorSwatch';
 import { RGBAColor } from './RGBAColor';
@@ -28,7 +29,7 @@ export const VarColorEditor = ({ initialValue, onChange }: UncontrolledColorEdit
 
   useEffect(() => {
     if (editorState) {
-      setValue(new VarColor(editorState.variable.variable, editorState.alpha).toColorValue());
+      setValue(new VarColor(editorState.variable.variable, editorState.alpha).toCSSFunction());
     }
   }, [editorState]);
 
@@ -123,7 +124,7 @@ type EditorState = {
   alpha: number;
 };
 
-const getInitialEditorState = (initialValue: string | number): EditorState | null => {
+const getInitialEditorState = (initialValue: string): EditorState | null => {
   const color = VarColor.parseCss(initialValue);
   if (!color) return null;
   const info = allVariableInfos.find((v) => v.variable === color.variable);
@@ -223,118 +224,7 @@ const allVariableInfos: VariableInfo[] = [
   variableInfo('--ag-foreground-color', true),
   variableInfo('--ag-background-color', true),
   variableInfo('--ag-accent-color', true),
-  variableInfo('--ag-accent-color'),
-  variableInfo('--ag-advanced-filter-builder-indent-size'),
-  variableInfo('--ag-advanced-filter-column-pill-color'),
-  variableInfo('--ag-advanced-filter-join-pill-color'),
-  variableInfo('--ag-advanced-filter-option-pill-color'),
-  variableInfo('--ag-advanced-filter-value-pill-color'),
-  variableInfo('--ag-background-color'),
-  variableInfo('--ag-border-color'),
-  variableInfo('--ag-border-radius'),
-  variableInfo('--ag-borders'),
-  variableInfo('--ag-borders-critical'),
-  variableInfo('--ag-borders-input'),
-  variableInfo('--ag-borders-input-invalid'),
-  variableInfo('--ag-borders-secondary'),
-  variableInfo('--ag-borders-side-button'),
-  variableInfo('--ag-card-radius'),
-  variableInfo('--ag-card-shadow'),
-  variableInfo('--ag-cell-horizontal-border'),
-  variableInfo('--ag-cell-horizontal-padding'),
-  variableInfo('--ag-cell-widget-spacing'),
-  variableInfo('--ag-checkbox-background-color'),
-  variableInfo('--ag-checkbox-border-radius'),
-  variableInfo('--ag-checkbox-checked-color'),
-  variableInfo('--ag-checkbox-indeterminate-color'),
-  variableInfo('--ag-checkbox-unchecked-color'),
-  variableInfo('--ag-chip-background-color'),
-  variableInfo('--ag-chip-border-color'),
-  variableInfo('--ag-column-hover-color'),
-  variableInfo('--ag-column-select-indent-size'),
-  variableInfo('--ag-control-panel-background-color'),
-  variableInfo('--ag-data-color'),
-  variableInfo('--ag-disabled-foreground-color'),
-  variableInfo('--ag-filter-tool-panel-group-indent'),
-  variableInfo('--ag-font-family'),
-  variableInfo('--ag-font-size'),
-  variableInfo('--ag-foreground-color'),
-  variableInfo('--ag-grid-size'),
-  variableInfo('--ag-header-background-color'),
-  variableInfo('--ag-header-cell-hover-background-color'),
-  variableInfo('--ag-header-cell-moving-background-color'),
-  variableInfo('--ag-header-column-resize-handle-color'),
-  variableInfo('--ag-header-column-resize-handle-display'),
-  variableInfo('--ag-header-column-resize-handle-height'),
-  variableInfo('--ag-header-column-resize-handle-width'),
-  variableInfo('--ag-header-column-separator-color'),
-  variableInfo('--ag-header-column-separator-display'),
-  variableInfo('--ag-header-column-separator-height'),
-  variableInfo('--ag-header-column-separator-width'),
-  variableInfo('--ag-header-foreground-color'),
-  variableInfo('--ag-header-height'),
-  variableInfo('--ag-icon-font-color'),
-  variableInfo('--ag-icon-font-family'),
-  variableInfo('--ag-icon-font-weight'),
-  variableInfo('--ag-icon-image-display'),
-  variableInfo('--ag-icon-size'),
-  variableInfo('--ag-input-border-color'),
-  variableInfo('--ag-input-border-color-invalid'),
-  variableInfo('--ag-input-disabled-background-color'),
-  variableInfo('--ag-input-disabled-border-color'),
-  variableInfo('--ag-input-focus-border-color'),
-  variableInfo('--ag-input-focus-box-shadow'),
-  variableInfo('--ag-invalid-color'),
-  variableInfo('--ag-list-item-height'),
-  variableInfo('--ag-menu-min-width'),
-  variableInfo('--ag-minichart-selected-chart-color'),
-  variableInfo('--ag-minichart-selected-page-color'),
-  variableInfo('--ag-modal-overlay-background-color'),
-  variableInfo('--ag-odd-row-background-color'),
-  variableInfo('--ag-popup-shadow'),
-  variableInfo('--ag-range-selection-background-color'),
-  variableInfo('--ag-range-selection-background-color-2'),
-  variableInfo('--ag-range-selection-background-color-3'),
-  variableInfo('--ag-range-selection-background-color-4'),
-  variableInfo('--ag-range-selection-border-color'),
-  variableInfo('--ag-range-selection-border-style'),
-  variableInfo('--ag-range-selection-chart-background-color'),
-  variableInfo('--ag-range-selection-chart-category-background-color'),
-  variableInfo('--ag-range-selection-highlight-color'),
-  variableInfo('--ag-row-border-color'),
-  variableInfo('--ag-row-border-style'),
-  variableInfo('--ag-row-border-width'),
-  variableInfo('--ag-row-group-indent-size'),
-  variableInfo('--ag-row-height'),
-  variableInfo('--ag-row-hover-color'),
-  variableInfo('--ag-secondary-border-color'),
-  variableInfo('--ag-secondary-foreground-color'),
-  variableInfo('--ag-selected-row-background-color'),
-  variableInfo('--ag-selected-tab-underline-color'),
-  variableInfo('--ag-selected-tab-underline-transition-speed'),
-  variableInfo('--ag-selected-tab-underline-width'),
-  variableInfo('--ag-set-filter-indent-size'),
-  variableInfo('--ag-side-bar-panel-width'),
-  variableInfo('--ag-side-button-selected-background-color'),
-  variableInfo('--ag-subheader-background-color'),
-  variableInfo('--ag-subheader-toolbar-background-color'),
-  variableInfo('--ag-tab-min-width'),
-  variableInfo('--ag-toggle-button-border-width'),
-  variableInfo('--ag-toggle-button-height'),
-  variableInfo('--ag-toggle-button-off-background-color'),
-  variableInfo('--ag-toggle-button-off-border-color'),
-  variableInfo('--ag-toggle-button-on-background-color'),
-  variableInfo('--ag-toggle-button-on-border-color'),
-  variableInfo('--ag-toggle-button-switch-background-color'),
-  variableInfo('--ag-toggle-button-switch-border-color'),
-  variableInfo('--ag-toggle-button-width'),
-  variableInfo('--ag-tooltip-background-color'),
-  variableInfo('--ag-value-change-delta-down-color'),
-  variableInfo('--ag-value-change-delta-up-color'),
-  variableInfo('--ag-value-change-value-highlight-background-color'),
-  variableInfo('--ag-widget-container-horizontal-padding'),
-  variableInfo('--ag-widget-container-vertical-padding'),
-  variableInfo('--ag-widget-horizontal-spacing'),
-  variableInfo('--ag-widget-vertical-spacing'),
-  variableInfo('--ag-wrapper-border-radius'),
+  ...allParamModels()
+    .filter((param) => param.meta.type === 'color')
+    .map((param) => variableInfo(param.variableName)),
 ];

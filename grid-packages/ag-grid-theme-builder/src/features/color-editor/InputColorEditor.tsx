@@ -8,7 +8,6 @@ import { HSLAColor } from './HSLAColor';
 import { RGBAColor } from './RGBAColor';
 import {
   UncontrolledColorEditorProps,
-  colorValueToCssExpression,
   format3dp,
   formatProportionAs3dpPercent,
   formatProportionAsDegrees,
@@ -20,7 +19,7 @@ export const InputColorEditor = ({
   onChange,
   preventTransparency,
 }: UncontrolledColorEditorProps) => {
-  const [value, setValue] = useState(() => colorValueToCssExpression(initialValue));
+  const [value, setValue] = useState(initialValue);
   const [editorValue, setEditorValue] = useState(() => getInitialEditorValue(value));
   const [valid, setValid] = useState(!!editorValue);
   const [sliderValues, setSliderValues] = useState(() => getInitialSliderValues(value));

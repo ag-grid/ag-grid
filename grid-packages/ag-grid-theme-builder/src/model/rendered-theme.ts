@@ -14,6 +14,12 @@ export const renderedThemeAtom = atom((get): Theme => {
 
   const theme = defineTheme('custom', themeParts, paramValues);
 
+  // TODO this line has an interesting effect - because environment.ts uses a
+  // MutationObserver to monitor the element with the theme class on it,
+  // classList.add causes the grid to re-measure row heights and resize itself
+  // if necessary. This is exactly what we want. But it's a bit of a hack and
+  // will stop working when we move to a theme grid option. Would be better to
+  // introduce an API for it.
   document.body.classList.add('ag-theme-custom');
 
   installTheme(theme);

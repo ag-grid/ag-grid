@@ -29,7 +29,9 @@ export type CoreParam =
   | 'valueChangeDeltaDownColor'
   | 'valueChangeValueHighlightBackgroundColor'
   | 'gridSize'
-  | 'cellHorizontalPadding';
+  | 'cellHorizontalPadding'
+  | 'fontSize'
+  | 'rowHeight';
 
 export type ColorsPreset = 'light' | 'dark';
 
@@ -87,6 +89,8 @@ export const core = definePart<CoreParam>({
     valueChangeValueHighlightBackgroundColor: '#16a08580',
     gridSize: '8px',
     cellHorizontalPadding: helpers.calc('gridSize * 2'),
+    fontSize: '14px',
+    rowHeight: helpers.calc('fontSize + gridSize * 3.5'),
   },
   css: [resetCssImport, gridBordersCssImport, gridLayoutCssImport],
 });
@@ -361,6 +365,24 @@ export type VariableTypes = {
    * @default calc("gridSize * 2")
    */
   cellHorizontalPadding: string;
+
+  /**
+   * Height of grid rows
+   *
+   * A CSS number value with length units, e.g. "1px" or "2em". If a JavaScript number is provided, its units are assumed to be 'px'.
+   *
+   * @default "14px"
+   */
+  fontSize: string;
+
+  /**
+   * Height of grid rows
+   *
+   * A CSS number value with length units, e.g. "1px" or "2em". If a JavaScript number is provided, its units are assumed to be 'px'.
+   *
+   * @default calc("fontSize + gridSize * 3.5")
+   */
+  rowHeight: string;
 
   /**
    * Use one of the built-in sets of preset colors values. Available presets are: "light", "dark".

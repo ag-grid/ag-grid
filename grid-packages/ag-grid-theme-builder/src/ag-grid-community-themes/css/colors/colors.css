@@ -1,7 +1,4 @@
 :ag-current-theme {
-  --ag-border-color: #999;
-  --ag-row-border-color: var(--ag-border-color);
-
   .ag-root-wrapper,
   .ag-sticky-top,
   .ag-dnd-ghost {

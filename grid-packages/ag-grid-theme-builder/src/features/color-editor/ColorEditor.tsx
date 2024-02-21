@@ -3,17 +3,15 @@ import { styled } from '@mui/system';
 import { UIDropdownButton } from '../../components/UIDropdownButton';
 import { ColorSwatch } from './ColorSwatch';
 import { TabbedColorEditor } from './TabbedColorEditor';
-import { ControlledColorEditorProps, colorValueToCssExpression } from './color-editor-utils';
+import { ControlledColorEditorProps } from './color-editor-utils';
 
 export const ColorEditor = (props: ControlledColorEditorProps) => {
-  const cssValue = colorValueToCssExpression(props.value);
-
   return (
     <SwatchButton
       dropdownContent={<TabbedColorEditor {...props} initialValue={props.value} />}
       endDecorator={<DropdownIcon />}
     >
-      <SmallColorSwatch color={cssValue} />
+      <SmallColorSwatch color={props.value} />
     </SwatchButton>
   );
 };
