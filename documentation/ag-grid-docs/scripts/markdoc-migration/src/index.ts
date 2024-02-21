@@ -398,7 +398,7 @@ async function main() {
         destFolder,
     });
 
-    if (!docs || !migrationType) {
+    if (!docs || !docs.length || !migrationType) {
         return;
     }
 
