@@ -12,7 +12,7 @@
             noImplicitAny: false,
             sourceMap: false,
             jsx: 'react',
-            lib: ['es2015', 'dom'],
+            lib: ['es2020', 'dom'],
         },
         paths: {
             // paths serve as alias
@@ -49,52 +49,23 @@
             'react-dom/server': {
                 main: '../umd/react-dom-server.browser.production.min.js',
             },
-            redux: {
-                main: './dist/redux.min.js',
-                defaultExtension: 'js',
-            },
-            'react-redux': {
-                main: './dist/react-redux.min.js',
-                defaultExtension: 'js',
-            },
-            'prop-types': {
-                main: './prop-types.min.js',
-                defaultExtension: 'js',
-            },
-
+            // SPL Still necessary?
+            // redux: {
+            //     main: './dist/redux.min.js',
+            //     defaultExtension: 'js'
+            // },
+            // 'react-redux': {
+            //     main: './dist/react-redux.min.js',
+            //     defaultExtension: 'js'
+            // },
             app: {
                 main: './index.tsx',
                 defaultExtension: 'tsx',
             },
-            'ag-grid-react': {
-                main: './lib/main.js',
-                defaultExtension: 'js',
-            },
-            'ag-grid-community': {
-                main: './dist/ag-grid-community.cjs.js',
-                defaultExtension: 'js',
-            },
-            'ag-grid-enterprise': {
-                main: './dist/ag-grid-enterprise.cjs.js',
-                defaultExtension: 'js',
-            },
-            'ag-grid-enterprise-charts-enterprise': {
-                main: './dist/ag-grid-enterprise-charts-enterprise.cjs.js',
-                defaultExtension: 'js',
-            },
             '@ag-grid-community/react': {
-                main: './index.mjs',
-                defaultExtension: 'mjs',
+                main: './dist/index.cjs',
+                defaultExtension: 'cjs',
             },
-            'ag-charts-community': {
-                main: './dist/package/main.cjs.js',
-                defaultExtension: 'js',
-            },
-            'ag-charts-enterprise': {
-                main: './dist/package/main.cjs.js',
-                defaultExtension: 'js',
-            },
-
             '@ag-grid-community/core': {
                 main: './dist/package/main.cjs.js',
                 defaultExtension: 'js',
@@ -140,7 +111,7 @@
             },
             '@ag-grid-enterprise/charts-enterprise': {
                 main: './dist/package/main.cjs.js',
-                defaultExtension: 'js',
+                defaultExtension: 'js'
             },
             '@ag-grid-enterprise/clipboard': {
                 main: './dist/package/main.cjs.js',
@@ -237,10 +208,14 @@
                 defaultExtension: 'js',
                 format: 'cjs',
             },
-            'ag-grid-enterprise-charts-enterprise': {
+            'ag-grid-charts-enterprise': {
                 main: './dist/package/main.cjs.js',
                 defaultExtension: 'js',
                 format: 'cjs',
+            },
+            'ag-grid-react': {
+                main: './dist/index.cjs',
+                defaultExtension: 'cjs',
             },
         },
         meta: {

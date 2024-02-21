@@ -45,9 +45,23 @@
         },
         // packages tells the System loader how to load when no filename and/or no extension
         packages: {
+            css: {},
+            react: {
+                main: './umd/react.development.js'
+            },
+            'react-dom': {
+                main: './umd/react-dom.development.js'
+            },
+            'react-dom/server': {
+                main: '../umd/react-dom-server.browser.production.min.js'
+            },
             app: {
                 main: "./main.ts",
                 defaultExtension: "ts",
+            },
+            '@ag-grid-community/react': {
+                main: './dist/index.cjs',
+                defaultExtension: 'cjs',
             },
             '@ag-grid-community/core': {
                 main: './dist/package/main.cjs.js',
@@ -191,10 +205,14 @@
                 defaultExtension: 'js',
                 format: 'cjs',
             },
-            'ag-grid-enterprise-charts-enterprise': {
+            'ag-grid-charts-enterprise': {
                 main: './dist/package/main.cjs.js',
                 defaultExtension: 'js',
                 format: 'cjs',
+            },
+            'ag-grid-react': {
+                main: './dist/index.cjs',
+                defaultExtension: 'cjs',
             },
         }
     });

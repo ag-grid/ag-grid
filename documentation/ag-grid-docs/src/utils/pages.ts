@@ -79,14 +79,11 @@ export const FILES_PATH_MAP: Record<string, string | GlobConfig> = {
     '@ag-grid-community/react/**': 'community-modules/react/dist/**/*.{cjs,mjs,js,map}',
     // '@ag-grid-community/client-side-row-model': 'community-modules/client-side-row-model/dist/package/main.cjs.js',
 
-    // 'ag-charts-vue/main.js': 'packages/ag-charts-vue/main.js',
-    // 'ag-charts-vue/lib/AgChartsVue.js': 'packages/ag-charts-vue/lib/AgChartsVue.js',
-    // 'ag-charts-vue3/lib/AgChartsVue.js': 'packages/ag-charts-vue3/lib/AgChartsVue.js',
-    //
-    // 'ag-charts-angular/fesm2015/ag-charts-angular.mjs':
-    //     'packages/ag-charts-angular/dist/ag-charts-angular/fesm2015/ag-charts-angular.mjs',
-    //
-    // 'ag-charts-thumbnails/**': 'dist/generated-thumbnails/ag-charts-website/gallery/_examples/**/*.{png,webp}',
+    '@ag-grid-community/react/dist/**': 'community-modules/react/dist/**/*.{cjs,js,map}',
+    '@ag-grid-community/angular': 'community-modules/angular/dist/ag-grid-angular/fesm2015/ag-grid-community-angular.mjs',
+    '@ag-grid-community/vue/main.js': 'community-modules/vue/main.js',
+    '@ag-grid-community/vue': 'community-modules/vue/lib/AgGridVue.js',
+    '@ag-grid-community/vue3': 'community-modules/vue3/lib/AgGridVue.js'
 
     // TODO: Dynamically map files
     // '@ag-grid-community': {
