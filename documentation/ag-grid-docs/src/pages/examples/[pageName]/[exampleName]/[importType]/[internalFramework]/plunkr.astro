@@ -14,12 +14,13 @@ export async function getStaticPaths() {
     });
 }
 
-const { internalFramework, pageName, exampleName } = Astro.params;
+const { internalFramework, pageName, exampleName, importType } = Astro.params;
 ---
 
 <DocsFrameworkTemplate
     internalFramework={internalFramework as InternalFramework}
     pageName={pageName!}
     exampleName={exampleName!}
+    importType={importType!}
     relativePath={true}
 />
