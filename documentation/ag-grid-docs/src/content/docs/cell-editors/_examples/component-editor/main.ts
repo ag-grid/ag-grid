@@ -4,6 +4,11 @@ import { MoodRenderer } from './moodRenderer_typescript'
 import { MoodEditor } from './moodEditor_typescript'
 import { NumericEditor } from './numericEditor_typescript'
 
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 let gridApi: GridApi;
 
 const gridOptions: GridOptions = {

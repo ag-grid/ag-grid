@@ -6,6 +6,10 @@ import {
   ICellRendererParams,
   ValueGetterParams,
 } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const gbpFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -71,6 +75,7 @@ const gridOptions: GridOptions = {
 function reportingCurrencyValueGetter(params: ValueGetterParams) {
   // Rates taken from google at time of writing
   const exchangeRates: Record<string, any> = {
+
     EUR: {
       GBP: 0.72,
       USD: 1.08,

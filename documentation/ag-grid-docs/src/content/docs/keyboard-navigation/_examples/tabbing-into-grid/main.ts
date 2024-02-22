@@ -1,5 +1,10 @@
 import { GridApi, createGrid, ColDef, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core';
 
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 const columnDefs: ColDef[] = [
   { headerName: '#', colId: 'rowNum', valueGetter: 'node.id' },
   { field: 'athlete', minWidth: 170 },

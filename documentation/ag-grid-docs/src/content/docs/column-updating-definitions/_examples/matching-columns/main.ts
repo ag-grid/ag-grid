@@ -1,5 +1,10 @@
 import { GridApi, createGrid, GridOptions, ValueGetterParams, ColDef } from '@ag-grid-community/core';
 
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 const athleteColumn = {
   headerName: 'Athlete',
   valueGetter: (params: ValueGetterParams<IOlympicData>) => {

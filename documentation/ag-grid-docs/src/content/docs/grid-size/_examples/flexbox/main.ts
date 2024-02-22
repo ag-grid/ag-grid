@@ -1,5 +1,10 @@
 import { GridApi, createGrid, GridOptions, GridReadyEvent } from '@ag-grid-community/core';
 
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 var rowData = [
   { make: 'Toyota', model: 'Celica', price: 35000 },
   { make: 'Ford', model: 'Mondeo', price: 32000 },

@@ -6,6 +6,10 @@ import {
   INumberCellEditorParams,
   ValueFormatterParams,
 } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const columnDefs: ColDef[] = [
   { 
@@ -43,6 +47,7 @@ const columnDefs: ColDef[] = [
 
 const data = Array.from(Array(20).keys()).map( (val: any, index: number) => ({
   number: index,
+
   date: new Date(2023, 5, index + 1),
   dateString: `2023-06-${index < 9 ? '0' + (index + 1) : index + 1}`,
   boolean: !!(index % 2),

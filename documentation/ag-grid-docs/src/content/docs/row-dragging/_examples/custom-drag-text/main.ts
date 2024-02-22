@@ -1,5 +1,10 @@
 import { GridApi, createGrid, ColDef, GridOptions, IRowDragItem } from '@ag-grid-community/core';
 
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 var rowDragText = function (params: IRowDragItem) {
   // keep double equals here because data can be a string or number
   if (params.rowNode!.data.year == '2012') {

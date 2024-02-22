@@ -1,5 +1,10 @@
 import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 interface IOlympicDataTypes extends IOlympicData {
   dateObject: Date;
   hasGold: boolean;

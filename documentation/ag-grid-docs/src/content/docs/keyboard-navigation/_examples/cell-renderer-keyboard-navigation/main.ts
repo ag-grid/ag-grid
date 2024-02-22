@@ -1,4 +1,8 @@
 import { GridApi, createGrid, GridOptions, SuppressKeyboardEventParams } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 import { CustomElements } from './customElements_typescript';
 
@@ -7,6 +11,7 @@ const GRID_CELL_CLASSNAME = "ag-cell";
 function getAllFocusableElementsOf(el: HTMLElement) {
   return Array.from<HTMLElement>(el.querySelectorAll(
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+
     )).filter((focusableEl) => {
       return focusableEl.tabIndex !== -1;
     });

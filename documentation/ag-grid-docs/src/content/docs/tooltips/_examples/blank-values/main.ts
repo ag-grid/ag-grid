@@ -6,6 +6,11 @@ import {
   ITooltipParams
 } from '@ag-grid-community/core';
 
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 const toolTipValueGetter = (params: ITooltipParams) => params.value == null || params.value === '' ? '- Missing -' : params.value;
 
 const columnDefs: ColDef[] = [

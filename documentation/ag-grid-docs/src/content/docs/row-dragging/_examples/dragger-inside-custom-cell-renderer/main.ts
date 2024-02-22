@@ -1,6 +1,11 @@
 import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
 import { CustomCellRenderer } from "./customCellRenderer_typescript";
 
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 const columnDefs: ColDef[] = [
   {
     field: 'athlete',

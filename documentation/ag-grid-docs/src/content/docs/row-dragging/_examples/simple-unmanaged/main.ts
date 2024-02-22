@@ -1,4 +1,8 @@
 import { GridApi, createGrid, GridOptions, GetRowIdParams, RowDragMoveEvent } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 import { getData } from "./data";
 
 var immutableStore: any[] = getData();
@@ -102,6 +106,7 @@ function onRowDragMove(event: RowDragMoveEvent) {
     var element = arr[fromIndex]
     arr.splice(fromIndex, 1)
     arr.splice(toIndex, 0, element)
+
   }
 }
 

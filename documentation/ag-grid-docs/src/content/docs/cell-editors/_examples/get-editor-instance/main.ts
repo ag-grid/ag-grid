@@ -2,6 +2,11 @@ import { ColDef, GridApi, createGrid, GridOptions } from '@ag-grid-community/cor
 import { getData } from "./data";
 import { MySimpleEditor } from './mySimpleEditor_typescript';
 
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 
 const columnDefs: ColDef[] = [
   { field: 'first_name', headerName: 'First Name', width: 120, editable: true },
