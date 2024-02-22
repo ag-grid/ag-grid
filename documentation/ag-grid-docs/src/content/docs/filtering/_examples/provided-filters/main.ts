@@ -1,5 +1,13 @@
 import { GridApi, createGrid, ColDef, GridOptions, IDateFilterParams } from '@ag-grid-community/core';
 
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { MultiFilterModule } from '@ag-grid-enterprise/multi-filter';
+import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, MultiFilterModule, SetFilterModule]);
+
 var filterParams: IDateFilterParams = {
   comparator: (filterLocalDateAtMidnight: Date, cellValue: string) => {
     var dateAsString = cellValue

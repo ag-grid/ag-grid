@@ -269,19 +269,3 @@ new Vue({
 If you have an enterprise grid running with an invalid license (no license, expired license) your console log will display a series of warnings and the grid will show a watermark for 5 seconds.
 
 {% gridExampleRunner title="Invalid License" name="forceWatermark" type="generated" options={ "enterprise": true, "licenseKey":true, "modules": ["clientside",  "rowgrouping"] } /%}
-
-## Feature Comparison
-
-The below table summarizes the features included in AG Grid Community and AG Grid Enterprise. Note that AG Grid Enterprise builds on AG Grid Community, it offers everything AG Grid Community offers plus more.
-
-{% matrixTable dataFileName="features"
-    columns={
-        "name || group": "",
-        "!enterprise": "Community",
-        "enterprise": "Enterprise {% enterpriseIcon /%}",
-    }
-    cellRenderer={
-        "group": "group",
-        "!enterprise": "featuresTickCross",
-        "enterprise": "featuresTickCross",
-    } /%}
