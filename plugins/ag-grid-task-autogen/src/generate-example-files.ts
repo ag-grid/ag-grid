@@ -5,7 +5,9 @@ export function createTask(parentProject: string, srcRelativeInputPath: string):
     return {
         'generate-example': {
             dependsOn: [
-                { projects: 'ag-grid-generate-example-files', target: 'build' }
+                { projects: 'ag-grid-generate-example-files', target: 'build' },
+                { projects: 'ag-grid-generate-example-files', target: 'generateGridOptionsType' },
+
             ],
             executor: 'ag-grid-generate-example-files:generate',
             inputs: [

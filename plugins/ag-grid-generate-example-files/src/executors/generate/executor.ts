@@ -26,7 +26,7 @@ export default async function (options: ExecutorOptions) {
 
 export async function generateFiles(options: ExecutorOptions) {
 
-    const gridOptionsTypes = await readJSONFile('gridOptions_Types.json');
+    const gridOptionsTypes = await readJSONFile('plugins/ag-grid-generate-example-files/src/gridOptionsTypes/_gridOptions_Types.json');
 
     for (const importType of ['modules', 'packages'] as const) {        
         for (const internalFramework of FRAMEWORKS) {
