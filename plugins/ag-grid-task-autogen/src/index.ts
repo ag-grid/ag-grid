@@ -6,7 +6,6 @@ import * as generateExampleFiles from './generate-example-files';
 
 const PROJECTS = ['ag-grid-docs'];
 const NON_UNIQUE_PATH_ELEMENTS = new Set(['src', 'content', 'docs', '_examples']);
-console.error('NON_UNIQUE_PATH_ELEMENTS', NON_UNIQUE_PATH_ELEMENTS);
 export const createNodes: CreateNodes = [
     'documentation/*/src/**/_examples/*/main.ts',
     (configFilePath, options, context) => {
