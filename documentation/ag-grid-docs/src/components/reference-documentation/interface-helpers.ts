@@ -91,3 +91,7 @@ export function getPropertyType(type: string | PropertyType, config: Config) {
 
     return propertyType;
 }
+
+export const mergeObjects = (objects) => {
+    return objects.reduce((result, value) => Object.assign(result, value), {});
+};

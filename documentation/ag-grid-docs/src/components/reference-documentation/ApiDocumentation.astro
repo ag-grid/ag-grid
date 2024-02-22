@@ -1,0 +1,55 @@
+---
+import { ApiDocumentation } from './ReferenceDocumentation';
+import { getFrameworkFromPath } from '@features/docs/utils/urlPaths';
+import { getJsonFile } from '@utils/pages';
+import { getEntry } from 'astro:content';
+
+const {
+    names,
+    config,
+    source,
+    sources: sourcesProp,
+    section
+} = Astro.props;
+
+const framework = getFrameworkFromPath(Astro.url.pathname);
+const interfaceLookup = getJsonFile('reference/interfaces.AUTO.json');
+
+const sources = source ? [source] : sourcesProp;
+const propertiesFromFilesPromises = sources.map(async (s) => {
+    // NOTE: Need to remove `.json` for getEntry
+    const fileName = s.replace('.json', '');
+    const fileEntry = await getEntry('api-documentation', fileName);
+    return fileEntry.data;
+});
+const propertiesFromFiles = await Promise.all(propertiesFromFilesPromises);
+const propertyConfigs = propertiesFromFiles.map((p) => {
+    const config = p['_config_'];
+    if (!config) {
+        // TODO: Figure out why this warning is showing
+        console.warn(
+                `ApiDocumentation: _config_ property missing from source ${sources.join()}.`
+            );
+    }
+    return config;
+}).filter(Boolean);
+const codeConfigSrcs = propertyConfigs.map((config) => config.codeSrc);
+const codeConfigs = {}
+codeConfigSrcs.forEach((fileName) => {
+    const referenceFileName = `reference/${fileName}`;
+    codeConfigs[fileName] = getJsonFile(referenceFileName)
+});
+
+propertiesFromFiles.forEach((p) => delete p['_config_']);
+---
+
+<ApiDocumentation client:load
+    framework={framework}
+    sources={sources}
+    section={section}
+    names={names}
+    config={config}
+    propertiesFromFiles={propertiesFromFiles}
+    interfaceLookup={interfaceLookup}
+    propertyConfigs={propertyConfigs}
+    codeConfigs={codeConfigs}/>

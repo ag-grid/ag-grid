@@ -217,12 +217,3 @@ export type FunctionCode = {
     type: PropertyType | string;
     config: Config;
 };
-export interface ApiProps {
-    pageName?: string;
-    framework?: string;
-    source?: string;
-    sources?: string[];
-    section?: string;
-    names?: string;
-    config?: Config;
-}

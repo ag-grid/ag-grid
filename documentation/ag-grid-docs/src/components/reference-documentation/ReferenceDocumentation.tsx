@@ -29,6 +29,7 @@ import {
     getPropertyType,
     isCallSig,
     isGridOptionEvent,
+    mergeObjects,
 } from './interface-helpers';
 import type {
     ChildDocEntry,
@@ -42,7 +43,7 @@ import type {
     SectionProps,
 } from './types';
 
-interface Props {
+interface InterfaceDocumentationProps {
     interfaceName: string;
     framework: Framework;
     overrides: Overrides;
@@ -55,10 +56,23 @@ interface Props {
     htmlLookup: Record<string, any>;
 }
 
+interface ApiDocumentationProps {
+    pageName: string;
+    framework: Framework;
+    sources: string[];
+    section: string;
+    names: string[];
+    config: Config;
+    propertiesFromFiles: unknown;
+    propertyConfigs: any[];
+    interfaceLookup: Record<string, any>;
+    codeConfigs: Record<string, any>;
+}
+
 /**
  * This generates tabulated interface documentation based on information in JSON files.
  */
-export const InterfaceDocumentation: FunctionComponent<Props> = ({
+export const InterfaceDocumentation: FunctionComponent<InterfaceDocumentationProps> = ({
     interfaceName,
     framework,
     overrides,
@@ -182,6 +196,98 @@ export const InterfaceDocumentation: FunctionComponent<Props> = ({
     return Object.entries(properties).map(([key, value]) => (
         <Section key={key} framework={framework} title={key} properties={value} config={config} />
     ));
+};
+
+/**
+ * This generates tabulated API documentation based on information in JSON files. This way it is possible to show
+ * information about different parts of an API in multiple places across the website while pulling the information
+ * from one source of truth, so we only have to update one file when the documentation needs to change.
+ */
+export const ApiDocumentation: FunctionComponent<ApiDocumentationProps> = ({
+    framework,
+    sources,
+    section,
+    names = [],
+    config = {},
+    propertiesFromFiles,
+    propertyConfigs,
+    interfaceLookup,
+    codeConfigs,
+}) => {
+    if (!sources || sources.length < 1) {
+        return null;
+    }
+
+    if (names && names.length) {
+        // Hide more links when properties included by name or use the value from config if its set
+        config = { hideMore: true, overrideBottomMargin: '1rem', ...config };
+    }
+
+    let codeLookup = {};
+    let codeSrcProvided = [];
+    propertyConfigs.forEach((c) => {
+        if (c.codeSrc) {
+            codeSrcProvided = [...codeSrcProvided, c.codeSrc];
+
+            const codeConfig = codeConfigs[c.codeSrc];
+            codeLookup = { ...codeLookup, ...codeConfig };
+        }
+
+        if (c.suppressMissingPropCheck) {
+            config = { ...config, suppressMissingPropCheck: true };
+        }
+    });
+
+    const { lookupRoot = 'grid-api' } = config;
+    const lookups = { codeLookup, interfaces: interfaceLookup };
+    for (const ignoreName of config.suppressTypes ?? []) {
+        delete interfaceLookup[ignoreName];
+    }
+    config = { ...config, lookupRoot, lookups, codeSrcProvided };
+
+    if (section == null) {
+        const properties: DocEntryMap = mergeObjects(propertiesFromFiles);
+
+        const entries = Object.entries(properties);
+        if (!config.suppressSort) {
+            entries.sort(([k1, v1], [k2, v2]) => {
+                const getName = (k, v) => (v.meta && v.meta.displayName) || k;
+                return getName(k1, v1) < getName(k2, v2) ? -1 : 1;
+            });
+        }
+        return entries.map(([key, value]) => (
+            <Section key={key} framework={framework} title={key} properties={value} config={config} />
+        ));
+    }
+
+    const keys = section.split('.');
+    const processed = keys.reduce(
+        (current, key) =>
+            current.map((x) => {
+                const prop = x[key];
+                if (!prop) {
+                    console.warn(
+                        `<api-documentation>: Could not find a prop ${key} under source ${source} and section ${section}!`
+                    );
+                    throw new Error(
+                        `<api-documentation>: Could not find a prop ${key} under source ${source} and section ${section}!`
+                    ); //spl todo
+                }
+                return prop;
+            }),
+        propertiesFromFiles
+    );
+    const properties = mergeObjects(processed);
+
+    return (
+        <Section
+            framework={framework}
+            title={keys[keys.length - 1]}
+            properties={properties}
+            config={{ ...config, isSubset: true }}
+            names={names}
+        />
+    );
 };
 
 const Section: React.FC<SectionProps> = ({

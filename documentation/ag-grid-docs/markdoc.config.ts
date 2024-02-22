@@ -97,17 +97,16 @@ export default defineMarkdocConfig({
                 options: { type: Object },
             },
         },
-        // TODO: Implement
         apiDocumentation: {
-            render: 'pre',
+            render: component('./src/components/reference-documentation/ApiDocumentation.astro'),
             attributes: {
-                source: { type: String, required: true },
+                source: { type: String },
+                sources: { type: Array },
                 section: { type: String },
                 names: { type: Array },
                 config: { type: Object },
             },
         },
-        // TODO: Implement
         interfaceDocumentation: {
             render: component('./src/components/reference-documentation/InterfaceDocumentation.astro'),
             attributes: {
