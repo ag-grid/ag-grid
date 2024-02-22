@@ -57,7 +57,7 @@ Dates can be represented in your data in many ways e.g. as a JavaScript `Date` o
 
 By default, the date filter assumes you are using JavaScript `Date` objects. If this is the case, the date filter will work out of the box. However, if your date is in any other format you will have to provide your own `comparator` to perform the date comparisons.
 
-{% interfaceDocumentation interfaceName="IDateFilterParams" names="[\\"comparator\\"]" config={"description":"", "overrideBottomMargin":"1rem"} /%}
+{% interfaceDocumentation interfaceName="IDateFilterParams" names=["comparator"] config={"description":"", "overrideBottomMargin":"1rem"} /%}
 
 The `comparator` function takes two parameters. The first parameter is a JavaScript `Date` object for the selected date in the filter (with the time set to midnight). The second parameter is the current value of the cell in the row being evaluated. The function must return:
 
@@ -183,7 +183,7 @@ The default option for the Date Filter is `equals`.
 
 By default, the values supplied to the Date Filter are retrieved from the data based on the `field` attribute. This can be overridden by providing a `filterValueGetter` in the Column Definition. This is similar to using a [Value Getter](./value-getters), but is specific to the filter.
 
-{% apiDocumentation source="column-properties/properties.json" section="filtering" names="[\\"filterValueGetter\\"]" /%}
+{% apiDocumentation source="column-properties/properties.json" section="filtering" names=["filterValueGetter"] /%}
 
 ## Date Selection Component
 

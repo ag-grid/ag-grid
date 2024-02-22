@@ -65,7 +65,7 @@ By default, the grid compares the Text Filter with the values in a case-insensit
 
 You might have more advanced requirements, for example to ignore accented characters. In this case, you can provide your own `textFormatter`, which is a function with the following signature:
 
-{% interfaceDocumentation interfaceName="ITextFilterParams" names="[\\"textFormatter\\"]" config={"description":"", "overrideBottomMargin":"1rem"} /%}
+{% interfaceDocumentation interfaceName="ITextFilterParams" names=["textFormatter"] config={"description":"", "overrideBottomMargin":"1rem"} /%}
 
 `from` is the value coming from the grid. This can be from the `valueGetter` if there is any for the column, or the value as originally provided in the `rowData`. The function should return a string to be used for the purpose of filtering.
 
@@ -97,7 +97,7 @@ In most cases, you can customise the Text Filter matching logic by providing you
 
 For more advanced use cases, you can provide your own `textMatcher` to decide when to include a row in the filtered results. For example, you might want to apply different logic for the filter option `equals` than for `contains`.
 
-{% interfaceDocumentation interfaceName="ITextFilterParams" names="[\\"textMatcher\\"]" config={"description":"", "overrideBottomMargin":"1rem"} /%}
+{% interfaceDocumentation interfaceName="ITextFilterParams" names=["textMatcher"] config={"description":"", "overrideBottomMargin":"1rem"} /%}
 
 The following is an example of a `textMatcher` that mimics the current implementation of AG Grid. This can be used as a template to create your own.
 
@@ -210,7 +210,7 @@ The default option for the Text Filter is `contains`.
 
 By default, the values supplied to the Text Filter are retrieved from the data based on the `field` attribute. This can be overridden by providing a `filterValueGetter` in the Column Definition. This is similar to using a [Value Getter](./value-getters), but is specific to the filter.
 
-{% apiDocumentation source="column-properties/properties.json" section="filtering" names="[\\"filterValueGetter\\"]" /%}
+{% apiDocumentation source="column-properties/properties.json" section="filtering" names=["filterValueGetter"] /%}
 
 ## Applying the Text Filter
 

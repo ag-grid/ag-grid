@@ -18,7 +18,7 @@ Tree List is enabled by setting `filterParams.treeList = true`. There are four d
 * Grouping is enabled and the column is the group column. The Filter List will match the group structure. A Key Creator must be supplied to convert the array of keys.
 * A `filterParams.treeListPathGetter` is provided to get a custom tree path for the column values. Each row must map to a leaf value in the tree. If the column values are [Complex Objects](./filter-set-filter-list/#complex-objects), a Key Creator will also be required.
 
-{% interfaceDocumentation interfaceName="ISetFilterParams" names="[\\"treeListPathGetter\\",\\"keyCreator\\"]" config={"description":""} /%}
+{% interfaceDocumentation interfaceName="ISetFilterParams" names=["treeListPathGetter","keyCreator"] config={"description":""} /%}
 
 ```js {% frameworkTransform=true %}
 const gridOptions = {
@@ -77,7 +77,7 @@ The following example demonstrates changing the sorting of the Tree List. Note t
 
 The values can be formatted in the Filter List via `filterParams.treeListFormatter`. This allows a different format to be used for each level of the tree.
 
-{% interfaceDocumentation interfaceName="ISetFilterParams" names="[\\"treeListFormatter\\"]" config={"description":""} /%}
+{% interfaceDocumentation interfaceName="ISetFilterParams" names=["treeListFormatter"] config={"description":""} /%}
 
 ```js {% frameworkTransform=true %}
 const gridOptions = {
@@ -135,7 +135,7 @@ When using Tree List with a [Custom Tooltip Component](./tooltips/), the tooltip
 
 Additional property available on `ISetFilterTreeListTooltipParams`:
 
-{% interfaceDocumentation interfaceName="ISetFilterTreeListTooltipParams" names="[\\"level\\"]" config={"description":""} /%}
+{% interfaceDocumentation interfaceName="ISetFilterTreeListTooltipParams" names=["level"] config={"description":""} /%}
 
 ## Next Up
 

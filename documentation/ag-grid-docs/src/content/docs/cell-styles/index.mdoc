@@ -17,7 +17,7 @@ Some cell styles may also be overridden with CSS variables. See the full [CSS va
 Used to provide CSS styles directly (not using a class) to the cell. Can be either an object
 of CSS styles, or a function returning an object of CSS styles.
 
-{% apiDocumentation source="column-properties/properties.json" section="styling" names="[\\"cellStyle\\"]" /%}
+{% apiDocumentation source="column-properties/properties.json" section="styling" names=["cellStyle"] /%}
 
 ```js {% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
@@ -49,7 +49,7 @@ const gridOptions = {
 Provides a class for the cells in this column. Can be a string (a class), array of strings
 (array of classes), or a function (that returns a string or an array of strings).
 
-{% apiDocumentation source="column-properties/properties.json" section="styling" names="[\\"cellClass\\"]" /%}
+{% apiDocumentation source="column-properties/properties.json" section="styling" names=["cellClass"] /%}
 
 ```js {% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
@@ -91,7 +91,7 @@ These rules are provided as a JavaScript map where the keys are the class names 
 that if evaluated to true, the class gets used. The expression can either be a JavaScript function,
 or a string which is treated as a shorthand for a function by the grid.
 
-{% apiDocumentation source="column-properties/properties.json" section="styling" names="[\\"cellClassRules\\"]" /%}
+{% apiDocumentation source="column-properties/properties.json" section="styling" names=["cellClassRules"] /%}
 
 The following snippet is cellClassRules using functions on a year column:
 

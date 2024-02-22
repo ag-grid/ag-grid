@@ -59,7 +59,7 @@ The example below demonstrates server-side Row Grouping. Note the following:
 
 It is possible to have rows open as soon as they are loaded. To do this implement the grid callback `isServerSideGroupOpenByDefault`.
 
-{% apiDocumentation source="grid-options/properties.json" section="serverSideRowModel" names="[\\"isServerSideGroupOpenByDefault\\"]" /%}
+{% apiDocumentation source="grid-options/properties.json" section="serverSideRowModel" names=["isServerSideGroupOpenByDefault"] /%}
 
 ```js
 // Example implementation
@@ -72,7 +72,7 @@ function isServerSideGroupOpenByDefault(params) {
 
 It may also be helpful to use the [Row Node](./row-object/) API `getRoute()` to inspect the route of a row node.
 
-{% apiDocumentation source="row-object/resources/reference.json" section="serverSide" names="[\\"getRoute\\"]" /%}
+{% apiDocumentation source="row-object/resources/reference.json" section="serverSide" names=["getRoute"] /%}
 
 Below shows `isServerSideGroupOpenByDefault()` and `getRoute` in action. Note the following:
 
@@ -143,7 +143,7 @@ The example below demonstrates these techniques. Note the following:
 
 By default, the grid will not show row counts beside the group names. If you do want row counts, you need to implement the `getChildCount(dataItem)` callback for the grid. The callback provides you with the row data; it is your application's responsibility to know what the child row count is. The suggestion is you set this information into the row data item you provide to the grid.
 
-{% apiDocumentation source="grid-options/properties.json" section="serverSideRowModel" names="[\\"getChildCount\\"]" /%}
+{% apiDocumentation source="grid-options/properties.json" section="serverSideRowModel" names=["getChildCount"] /%}
 
 ```js {% frameworkTransform=true %}
 const gridOptions = {

@@ -30,7 +30,7 @@ The grid will stop editing when any of the following happen:
 
 The following events are fired when editing is started and stopped.
 
-{% apiDocumentation source="grid-events/events.json" section="editing" names="[\\"cellEditingStarted\\", \\"cellEditingStopped\\"]" /%}
+{% apiDocumentation source="grid-events/events.json" section="editing" names=["cellEditingStarted", "cellEditingStopped"] /%}
 
 ## Tab Navigation
 
@@ -38,13 +38,13 @@ While editing, if you hit {% kbd "⇥ Tab" /%}, the editing will stop for the cu
 
 The next and previous cells can also be navigated using the API functions `api.tabToNextCell()` and `api.tabToPreviousCell()`. Both of these methods will return `true` if the navigation was successful, otherwise `false`.
 
-{% apiDocumentation source="grid-api/api.json" section="navigation" names="[\\"tabToNextCell\\", \\"tabToPreviousCell\\"]" /%}
+{% apiDocumentation source="grid-api/api.json" section="navigation" names=["tabToNextCell", "tabToPreviousCell"] /%}
 
 ## Editing API
 
 The grid has the following API methods for editing:
 
-{% apiDocumentation source="grid-api/api.json" section="editing" names="[\\"startEditingCell\\", \\"stopEditing\\", \\"getEditingCells\\"]" /%}
+{% apiDocumentation source="grid-api/api.json" section="editing" names=["startEditingCell", "stopEditing", "getEditingCells"] /%}
 
 If the grid is editing, `getEditingCells()` returns back details of the editing cell(s). The result is an array of objects. If only one cell is editing (the default) then the array will have one entry. If multiple cells are editing (e.g. [Full Row Edit](./cell-editing-full-row/)) then the array contains all editing cells.
 

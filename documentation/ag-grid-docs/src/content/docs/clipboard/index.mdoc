@@ -20,7 +20,7 @@ Multiple cell ranges can be selected at once using {% kbd "^ Ctrl" /%} and dragg
 
 The column headers can be copied to the clipboard in addition to the cell contents by enabling the option `copyHeadersToClipboard`.
 
-{% apiDocumentation source="grid-options/properties.json" section="clipboard" names="[\\"copyHeadersToClipboard\\"]" /%}
+{% apiDocumentation source="grid-options/properties.json" section="clipboard" names=["copyHeadersToClipboard"] /%}
 
 In the below example `copyHeadersToClipboard` has been enabled, try:
 
@@ -45,7 +45,7 @@ The below example demonstrates copying rows:
 If you want to use row selection for another purpose and wish to copy the focused cell instead of selected rows, you can disable copying rows by setting
 `gridOptions.suppressCopyRowsToClipboard=true`.
 
-{% apiDocumentation source="grid-options/properties.json" section="clipboard" names="[\\"suppressCopyRowsToClipboard\\"]" /%}
+{% apiDocumentation source="grid-options/properties.json" section="clipboard" names=["suppressCopyRowsToClipboard"] /%}
 
 The below example demonstrates copying the focused cell only when using row selection:
 
@@ -65,7 +65,7 @@ The copy operation copies the selected content in the following order of precede
 
 When both range selection and row selection are enabled, the default behaviour of copying ranges over copying rows can make it impossible for users to copy rows (as the selected cell range is copied by default). Enabling the grid option `gridOptions.suppressCopySingleCellRanges=true` makes it possible to copy the selected rows when only a single cell is selected via range selection.
 
-{% apiDocumentation source="grid-options/properties.json" section="clipboard" names="[\\"suppressCopySingleCellRanges\\"]" /%}
+{% apiDocumentation source="grid-options/properties.json" section="clipboard" names=["suppressCopySingleCellRanges"] /%}
 
 In this mode, when multiple cells are selected via range selection, the cell range is copied and not the selected rows. This behaviour is not enabled by default since it can be confusing for the copy behaviour to change depending on how much is selected.
 
@@ -92,7 +92,7 @@ The example below shows using `sendToClipboard(params)`, but rather than using t
 You can use the Grid API methods: `copySelectedRowsToClipboard(...)` and `copySelectedRangeToClipboard(...)`
 to copy rows or ranges respectively, these API calls take optional parameters to enable copying column and group headers.
 
-{% apiDocumentation source="grid-api/api.json" section="clipboard" names="[\\"copySelectedRangeToClipboard\\", \\"copySelectedRowsToClipboard\\"]" /%}
+{% apiDocumentation source="grid-api/api.json" section="clipboard" names=["copySelectedRangeToClipboard", "copySelectedRowsToClipboard"] /%}
 
 ## How to Cut
 
@@ -142,7 +142,7 @@ You can turn paste operations off for the entire grid, by setting the grid prope
 
 Or you can disable pasting for a specific column or cell by setting the property `suppressPaste` on the column definition. This can be a boolean or a function (use a function to specify for a particular cell, or boolean for the whole column).
 
-{% apiDocumentation source="column-properties/properties.json" section="columns" names="[\\"suppressPaste\\"]" /%}
+{% apiDocumentation source="column-properties/properties.json" section="columns" names=["suppressPaste"] /%}
 
 ## Processing Pasted Data
 
@@ -154,7 +154,7 @@ It is possible to override this behaviour specifically for the clipboard. This c
 
 The interfaces and parameters for processing individual cells are as follows:
 
-{% apiDocumentation source="grid-options/properties.json" section="clipboard" names="[\\"processCellForClipboard\\", \\"processHeaderForClipboard\\", \\"processGroupHeaderForClipboard\\", \\"processCellFromClipboard\\"]" /%}
+{% apiDocumentation source="grid-options/properties.json" section="clipboard" names=["processCellForClipboard", "processHeaderForClipboard", "processGroupHeaderForClipboard", "processCellFromClipboard"] /%}
 
 These three callbacks above are demonstrated in the example below. Note the following:
 
@@ -169,7 +169,7 @@ These three callbacks above are demonstrated in the example below. Note the foll
 
 To have complete control of processing clipboard data when pasting, you can use the callback below:
 
-{% apiDocumentation source="grid-options/properties.json" section="clipboard" names="[\\"processDataFromClipboard\\"]" /%}
+{% apiDocumentation source="grid-options/properties.json" section="clipboard" names=["processDataFromClipboard"] /%}
 
 The following example shows custom code to process the data from the clipboard:
 
@@ -199,7 +199,7 @@ The example below uses a custom `processDataFromClipboard` function to add new r
 
 When the grid is in [Read Only Edit](./value-setters/#read-only-edit) mode the `Clipboard` will not update the data inside the grid. Instead the grid fires `cellEditRequest` events allowing the application to process the update request.
 
-{% apiDocumentation source="grid-events/events.json" section="editing" names="[\\"cellEditRequest\\"]" /%}
+{% apiDocumentation source="grid-events/events.json" section="editing" names=["cellEditRequest"] /%}
 
 The example below will show how to update cell value combining the `Clipboard` with `readOnlyEdit=true`.
 
@@ -235,9 +235,9 @@ See this behavior shown in the example below:
 
 The following events are relevant to clipboard operations:
 
-{% apiDocumentation source="grid-events/events.json" section="clipboard" names="[\\"cutStart\\",\\"cutEnd\\",\\"pasteStart\\",\\"pasteEnd\\"]" config={"overrideBottomMargin":"0rem"} /%}
+{% apiDocumentation source="grid-events/events.json" section="clipboard" names=["cutStart","cutEnd","pasteStart","pasteEnd"] config={"overrideBottomMargin":"0rem"} /%}
 
-{% apiDocumentation source="grid-events/events.json" section="editing" names="[\\"cellValueChanged\\"]" config={ "hideMore":false} /%}
+{% apiDocumentation source="grid-events/events.json" section="editing" names=["cellValueChanged"] config={ "hideMore":false} /%}
 
 For a cut or paste operation the events will be fired as:
 

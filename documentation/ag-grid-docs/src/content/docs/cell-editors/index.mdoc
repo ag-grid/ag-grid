@@ -221,7 +221,7 @@ md-include:keyboard-option-1-vue.md
 
 If you implement `colDef.suppressKeyboardEvent()`, you can tell the grid which events you want process and which not. The advantage of this method of the previous method is it takes the responsibility out of the cell editor and into the column definition. So if you are using a reusable, or third party, cell editor, and the editor doesn't have this logic in it, you can add the logic via configuration.
 
-{% apiDocumentation source="column-properties/properties.json" section="columns" names="[\\"suppressKeyboardEvent\\"]" /%}
+{% apiDocumentation source="column-properties/properties.json" section="columns" names=["suppressKeyboardEvent"] /%}
 
 md-include:keyboard-option-2-javascript.md
 md-include:keyboard-option-2-angular.md
@@ -232,7 +232,7 @@ md-include:keyboard-option-2-vue.md
 
 After the grid has created an instance of an Editor Component for a Cell it is possible to access that instance. This is useful if you want to call a method that you provide on the Editor that has nothing to do with the operation of the grid. Accessing Editors is done using the grid API `getCellEditorInstances(params)`.
 
-{% apiDocumentation source="grid-api/api.json" section="editing" names="[\\"getCellEditorInstances\\"]" /%}
+{% apiDocumentation source="grid-api/api.json" section="editing" names=["getCellEditorInstances"] /%}
 
 If you are doing normal editing, then only one cell is editable at any given time. For this reason if you call `getCellEditorInstances()` with no params, it will return back the editing cell's editor if a cell is editing, or an empty list if no cell is editing.
 

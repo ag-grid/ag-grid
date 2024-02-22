@@ -26,9 +26,9 @@ Note that `colDef.contextMenuItems` will take priority over `getContextMenuItems
 
 The menu item list should be a list with each item either a) a string or b) a `MenuItemDef` description. Use 'string' to pick from built-in menu items (listed below) and use `MenuItemDef` descriptions for your own menu items.
 
-{% apiDocumentation source="column-properties/properties.json" section="columns" names="[\\"contextMenuItems\\"]" /%}
+{% apiDocumentation source="column-properties/properties.json" section="columns" names=["contextMenuItems"] /%}
 
-{% apiDocumentation source="grid-options/properties.json" section="accessories" names="[\\"getContextMenuItems\\"]" /%}
+{% apiDocumentation source="grid-options/properties.json" section="accessories" names=["getContextMenuItems"] /%}
 
 If you want to access your underlying data item, you can access that through the rowNode as `node.data`.
 
@@ -88,7 +88,7 @@ This will lead to a bad user experience which is demonstrated in the following e
 
 The solution is to set the `popupParent` element:
 
-{% apiDocumentation source="grid-options/properties.json" section="accessories" names="[\\"popupParent\\"]" config={"overrideBottomMargin":"0rem"} /%}
+{% apiDocumentation source="grid-options/properties.json" section="accessories" names=["popupParent"] config={"overrideBottomMargin":"0rem"} /%}
 
 Each mechanism allows you to set the popup parent to any HTML DOM element. The element must:
 

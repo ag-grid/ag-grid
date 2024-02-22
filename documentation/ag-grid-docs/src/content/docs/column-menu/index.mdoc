@@ -25,11 +25,11 @@ The new-format column menu is enabled by setting `columnMenu = 'new'`.
 
 How the column menu is launched from the header can be configured via the following column definition properties.
 
-{% apiDocumentation source="column-properties/properties.json" section="header" names="[\\"suppressHeaderMenuButton\\", \\"suppressHeaderFilterButton\\", \\"suppressHeaderContextMenu\\"]" /%}
+{% apiDocumentation source="column-properties/properties.json" section="header" names=["suppressHeaderMenuButton", "suppressHeaderFilterButton", "suppressHeaderContextMenu"] /%}
 
 The column menu button can be hidden until moused over by the grid option `suppressMenuHide`.
 
-{% apiDocumentation source="grid-options/properties.json" section="accessories" names="[\\"suppressMenuHide\\"]" /%}
+{% apiDocumentation source="grid-options/properties.json" section="accessories" names=["suppressMenuHide"] /%}
 
 The following example demonstrates different ways of customising the column menu:
 
@@ -80,9 +80,9 @@ Note that `colDef.mainMenuItems` will take priority over `getMainMenuItems()`.
 
 The menu item list should be a list with each item either a) a string or b) a `MenuItemDef` description. Use 'string' to pick from built-in menu items (listed below) and use `MenuItemDef` descriptions for your own menu items.
 
-{% apiDocumentation source="column-properties/properties.json" section="header" names="[\\"mainMenuItems\\"]" /%}
+{% apiDocumentation source="column-properties/properties.json" section="header" names=["mainMenuItems"] /%}
 
-{% apiDocumentation source="grid-options/properties.json" section="accessories" names="[\\"getMainMenuItems\\"]" /%}
+{% apiDocumentation source="grid-options/properties.json" section="accessories" names=["getMainMenuItems"] /%}
 
 ### Built-In Menu Items
 
@@ -193,13 +193,13 @@ The following example demonstrates providing custom column layouts in the column
 
 The `gridApi` has the following methods that can be used to interact with the column menu:
 
-{% apiDocumentation source="grid-api/api.json" section="accessories" names="[\\"showColumnChooser\\", \\"showColumnFilter\\", \\"showColumnMenu\\", \\"hidePopupMenu\\", \\"hideColumnChooser\\"]" /%}
+{% apiDocumentation source="grid-api/api.json" section="accessories" names=["showColumnChooser", "showColumnFilter", "showColumnMenu", "hidePopupMenu", "hideColumnChooser"] /%}
 
 {% br /%}
 
 The following column menu event is emitted by the grid:
 
-{% apiDocumentation source="grid-events/events.json" section="accessories" names="[\\"columnMenuVisibleChanged\\"]" /%}
+{% apiDocumentation source="grid-events/events.json" section="accessories" names=["columnMenuVisibleChanged"] /%}
 
 {% br /%}
 
@@ -215,7 +215,7 @@ The column menu is displayed inside a popup, which can be further configured.
 
 If not happy with the position of the popup, you can override its position using the `postProcessPopup(params)` callback. This gives you the popup HTML element so you can change its position should you wish to.
 
-{% apiDocumentation source="grid-options/properties.json" section="accessories" names="[\\"postProcessPopup\\"]" /%}
+{% apiDocumentation source="grid-options/properties.json" section="accessories" names=["postProcessPopup"] /%}
 
 The following example demonstrates using `postProcessPopup()` to move the **Age** column menu down by 25 pixels.
 

@@ -17,7 +17,7 @@ Configure row selection with the following properties:
 
 When you pass data to the grid, it wraps each data item in a node object. This is explained in the section [Client-Side Row Model](./client-side-model/). When you query for the selected rows, there are two method types: ones that return nodes, and ones that return data items. To get the selected nodes / rows from the grid, use the following API methods:
 
-{% apiDocumentation source="grid-api/api.json" section="selection" names="[\\"getSelectedNodes\\", \\"getSelectedRows\\"]" /%}
+{% apiDocumentation source="grid-api/api.json" section="selection" names=["getSelectedNodes", "getSelectedRows"] /%}
 
 Working with AG Grid nodes is preferred over the row data as it provides you with more information and maps better to the internal representation of AG Grid.
 
@@ -47,7 +47,7 @@ Clicking multiple rows will select a range of rows without the need for {% kbd "
 
 Checkbox selection can be used in two places: row selection and group selection.
 
-{% apiDocumentation source="column-properties/properties.json" section="columns" names="[\\"checkboxSelection\\", \\"showDisabledCheckboxes\\"]" /%}
+{% apiDocumentation source="column-properties/properties.json" section="columns" names=["checkboxSelection", "showDisabledCheckboxes"] /%}
 
 To include checkbox selection for a column, set the attribute `'checkboxSelection'` to `true` on the column definition.
 You can set this attribute on as many columns as you like, however it doesn't make sense to have it in more than one
@@ -134,7 +134,7 @@ To demonstrate, try this in the example:
 
 It is possible to have a checkbox in the header for selection. To configure the column to have a header checkbox, set `colDef.headerCheckboxSelection=true`. `headerCheckboxSelection` can also be a function, if you want the header checkbox to appear sometimes (e.g. if the column is ordered first in the grid).
 
-{% apiDocumentation source="column-properties/properties.json" section="header" names="[\\"headerCheckboxSelection\\"]" /%}
+{% apiDocumentation source="column-properties/properties.json" section="header" names=["headerCheckboxSelection"] /%}
 
 ```js {% frameworkTransform=true %}
 const gridOptions = {
@@ -211,7 +211,7 @@ The next example demonstrates the `headerCheckboxSelectionCurrentPageOnly` prope
 
 It is possible to specify which rows can be selected via the `gridOptions.isRowSelectable(rowNode)` callback function.
 
-{% apiDocumentation source="grid-options/properties.json" section="selection" names="[\\"isRowSelectable\\"]" /%}
+{% apiDocumentation source="grid-options/properties.json" section="selection" names=["isRowSelectable"] /%}
 
 For instance if we only wanted to allow rows where the 'year' property is less than 2007, we could implement the following:
 
@@ -250,7 +250,7 @@ This example demonstrates the following:
 
 There are two events with regards to selection:{% br /%}
 
-{% apiDocumentation source="grid-events/events.json" section="selection" names="[\\"rowSelected\\", \\"selectionChanged\\"]" /%}
+{% apiDocumentation source="grid-events/events.json" section="selection" names=["rowSelected", "selectionChanged"] /%}
 
 {% gridExampleRunner title="Selection Events" name="selection-events" type="generated" /%}
 
@@ -258,7 +258,7 @@ There are two events with regards to selection:{% br /%}
 
 To select rows programmatically, use the `node.setSelected(params)` method.
 
-{% apiDocumentation source="row-object/resources/reference.json" section="selection" names="[\\"setSelected\\", \\"isSelected\\"]" /%}
+{% apiDocumentation source="row-object/resources/reference.json" section="selection" names=["setSelected", "isSelected"] /%}
 
 ```js {% frameworkTransform=true %}
 // set selected, keep any other selections
@@ -280,7 +280,7 @@ The `isSelected()` method returns `true` if the node is selected, or `false` if 
 
 The grid API has the following methods for selection:
 
-{% apiDocumentation source="grid-api/api.json" section="selection" names="[\\"selectAll\\",\\"deselectAll\\",\\"selectAllFiltered\\",\\"deselectAllFiltered\\",\\"getSelectedNodes\\", \\"getSelectedRows\\", \\"setNodesSelected\\"]" /%}
+{% apiDocumentation source="grid-api/api.json" section="selection" names=["selectAll","deselectAll","selectAllFiltered","deselectAllFiltered","getSelectedNodes", "getSelectedRows", "setNodesSelected"] /%}
 
 If you want to select only the filtered rows, you could do this using the following:
 
@@ -305,7 +305,7 @@ By default, you can select a row on mouse click, and navigate up and down the ro
 
 We need to provide a callback to the `navigateToNextCell` grid option to override the default arrow key navigation:
 
-{% apiDocumentation source="grid-options/properties.json" section="nav" names="[\\"navigateToNextCell\\"]" /%}
+{% apiDocumentation source="grid-options/properties.json" section="nav" names=["navigateToNextCell"] /%}
 
 ```js {% frameworkTransform=true %}
 const gridOptions = {

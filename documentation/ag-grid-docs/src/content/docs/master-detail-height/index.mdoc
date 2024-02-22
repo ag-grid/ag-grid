@@ -82,7 +82,7 @@ is a concern for your grid and dataset, try it out and check the performance.
 Use the callback `getRowHeight(params)` to set height for each row individually. This is a specific use of the callback that is explained in more detail in
 [Get Row Height](./row-height/#getrowheight-callback)
 
-{% apiDocumentation source="grid-options/properties.json" section="styling" names="[\\"getRowHeight\\"]" /%}
+{% apiDocumentation source="grid-options/properties.json" section="styling" names=["getRowHeight"] /%}
 
 Note that this callback gets called for **all rows** in the Master Grid, not just rows containing Detail Grids. If you do not want to set row heights explicitly for other rows simply return `undefined / null` and the grid will ignore the result for that particular row.
 

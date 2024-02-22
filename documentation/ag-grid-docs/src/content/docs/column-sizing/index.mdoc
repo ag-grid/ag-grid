@@ -91,11 +91,11 @@ const gridOptions = {
 }
 ```
 
-{% apiDocumentation source="grid-options/properties.json" section="columnSizing" names="[\\"autoSizeStrategy\\"]" /%}
+{% apiDocumentation source="grid-options/properties.json" section="columnSizing" names=["autoSizeStrategy"] /%}
 
 The columns can also be sized on demand via `api.sizeColumnsToFit(params)`.
 
-{% apiDocumentation source="grid-api/api.json" section="columnSizing" names="[\\"sizeColumnsToFit\\"]" /%}
+{% apiDocumentation source="grid-api/api.json" section="columnSizing" names=["sizeColumnsToFit"] /%}
 
 If you don't want a particular column to be included in the auto-resize, then set the column definition `suppressSizeToFit=true`. This is helpful if, for example, you want the first column to remain fixed width, but all other columns to fill the width of the table.
 
@@ -150,11 +150,11 @@ const gridOptions = {
 }
 ```
 
-{% apiDocumentation source="grid-options/properties.json" section="columnSizing" names="[\\"autoSizeStrategy\\"]" /%}
+{% apiDocumentation source="grid-options/properties.json" section="columnSizing" names=["autoSizeStrategy"] /%}
 
 This can also be performed on demand via the following API methods:
 
-{% apiDocumentation source="grid-api/api.json" section="columnSizing" names="[\\"autoSizeColumns\\", \\"autoSizeAllColumns\\"]" /%}
+{% apiDocumentation source="grid-api/api.json" section="columnSizing" names=["autoSizeColumns", "autoSizeAllColumns"] /%}
 
 Note that using `autoSizeStrategy` to fit cell contents only works for the Client-Side Row Model and Server-Side Row Model, but the API methods work for all row models.
 

@@ -8,7 +8,7 @@ Transaction Updates allow large numbers of rows in the grid to be added, removed
 
 A transaction object contains the details of what rows should be added, removed and updated. The grid API `applyTransaction(transaction)` takes this transaction object and applies it to the grid's data.
 
-{% apiDocumentation source="grid-api/api.json" section="data" names="[\\"applyTransaction\\"]" /%}
+{% apiDocumentation source="grid-api/api.json" section="data" names=["applyTransaction"] /%}
 
 The result of the `applyTransaction(transaction)` is also a transaction, however it is a list of [Row Nodes](./row-object/) that were added, removed or updated. Both types of transactions look similar, but the difference is the data type they contain.
 

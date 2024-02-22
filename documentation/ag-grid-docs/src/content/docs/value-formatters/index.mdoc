@@ -19,7 +19,7 @@ const gridOptions = {
 
 Below shows the column definition properties for value formatters.
 
-{% apiDocumentation source="column-properties/properties.json" section="columns" names="[\\"valueFormatter\\"]" /%}
+{% apiDocumentation source="column-properties/properties.json" section="columns" names=["valueFormatter"] /%}
 
 Be aware that the Value Formatter params won't always have 'data' and 'node' supplied, e.g. the
 params supplied to the Value Formatter in the [Set Filter](./filter-set/).
@@ -46,7 +46,7 @@ By default, the grid uses the value formatter when performing other grid operati
 
 This behaviour can be prevented by setting the column definition property `useValueFormatterForExport = false` (note this does not apply to rendering).
 
-{% apiDocumentation source="column-properties/properties.json" section="display" names="[\\"useValueFormatterForExport\\"]" /%}
+{% apiDocumentation source="column-properties/properties.json" section="display" names=["useValueFormatterForExport"] /%}
 
 Using the value formatter for export applies to the following features:
 

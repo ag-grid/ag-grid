@@ -13,7 +13,7 @@ Server-Side Transactions require [Row ID's](./server-side-model-configuration/#p
 
 The SSRM Transaction API allows rows to be added, removed or updated in the grid:
 
-{% apiDocumentation source="grid-api/api.json" section="serverSideRowModel" names="[\\"applyServerSideTransaction\\"]" /%}
+{% apiDocumentation source="grid-api/api.json" section="serverSideRowModel" names=["applyServerSideTransaction"] /%}
 
 These operations are shown in the snippet below:
 
@@ -73,7 +73,7 @@ In the example below, note the following:
 
 When processing many updates rapidly, the grid will perform more smoothly if the changes are batched (as this can prevent excessive rendering). The grid can batch these changes for you without negatively impacting the user experience, and in most cases improving it.
 
-{% apiDocumentation source="grid-api/api.json" section="serverSideRowModel" names="[\\"applyServerSideTransactionAsync\\"]" /%}
+{% apiDocumentation source="grid-api/api.json" section="serverSideRowModel" names=["applyServerSideTransactionAsync"] /%}
 
 When using asynchronous transactions, the grid delays any transactions received within a time window (specified using `asyncTransactionWaitMillis`) and executes them together when the window has passed.
 

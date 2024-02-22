@@ -8,7 +8,7 @@ the first) column.
 
 ## Enabling Row Dragging
 
-{% apiDocumentation source="column-properties/properties.json" section="row dragging" names="[\\"rowDrag\\"]" /%}
+{% apiDocumentation source="column-properties/properties.json" section="row dragging" names=["rowDrag"] /%}
 
 To enable row dragging on all columns, set the column property `rowDrag = true` on one (typically the first) column.
 
@@ -263,7 +263,7 @@ There are some options that can be used to customise the Row Drag experience, so
 
 When a row drag starts, a "floating" DOM element is created to indicate which row is being dragged. By default, this DOM element will contain the same value as the cell that started the row drag. It's possible to override that text by using the `gridOptions.rowDragText` callback.
 
-{% apiDocumentation source="grid-options/properties.json" section="rowDragging" names="[\\"rowDragText\\"]" /%}
+{% apiDocumentation source="grid-options/properties.json" section="rowDragging" names=["rowDragText"] /%}
 
 ```js {% frameworkTransform=true %}
 const gridOptions = {

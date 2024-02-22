@@ -69,7 +69,7 @@ The different properties that can be set for each column are explained in the se
 
 By default, hidden columns do not appear in the Advanced Filter. To make hidden columns appear, set `includeHiddenColumnsInAdvancedFilter = true`.
 
-{% apiDocumentation source="grid-options/properties.json" section="filter" names="[\\"includeHiddenColumnsInAdvancedFilter\\"]" /%}
+{% apiDocumentation source="grid-options/properties.json" section="filter" names=["includeHiddenColumnsInAdvancedFilter"] /%}
 
 ### Row Grouping
 
@@ -175,7 +175,7 @@ const advancedFilterModel = {
 
 The Advanced Filter Model can be retrieved via the API method `getAdvancedFilterModel`, and set via the API method `setAdvancedFilterModel`.
 
-{% apiDocumentation source="grid-api/api.json" section="filter" names="[\\"getAdvancedFilterModel\\", \\"setAdvancedFilterModel\\"]" /%}
+{% apiDocumentation source="grid-api/api.json" section="filter" names=["getAdvancedFilterModel", "setAdvancedFilterModel"] /%}
 
 The Advanced Filter Model and API methods are demonstrated in the following example:
 
@@ -192,7 +192,7 @@ By default the Advanced Filter is displayed underneath the Column Headers, where
 
 It is possible to instead display the Advanced Filter outside of the grid (such as above it). This can be done by setting the grid option `advancedFilterParent` and providing it with a DOM element to contain the filter.
 
-{% apiDocumentation source="grid-options/properties.json" section="filter" names="[\\"advancedFilterParent\\"]" /%}
+{% apiDocumentation source="grid-options/properties.json" section="filter" names=["advancedFilterParent"] /%}
 
 The [Popup Parent](https://localhost:8000/javascript-data-grid/context-menu/#popup-parent) must also be set to an element that contains both the Advanced Filter parent and the grid.
 
@@ -211,15 +211,15 @@ The Advanced Filter Builder can be configured using the `IAdvancedFilterBuilderP
 
 The params can be set via the grid option `advancedFilterBuilderParams`:
 
-{% apiDocumentation source="grid-options/properties.json" section="filter" names="[\\"advancedFilterBuilderParams\\"]" /%}
+{% apiDocumentation source="grid-options/properties.json" section="filter" names=["advancedFilterBuilderParams"] /%}
 
 As well as using the button in the Advanced Filter, it's possible to launch the Advanced Filter Builder via the `showAdvancedFilterBuilder` grid API method:
 
-{% apiDocumentation source="grid-api/api.json" section="filter" names="[\\"showAdvancedFilterBuilder\\"]" /%}
+{% apiDocumentation source="grid-api/api.json" section="filter" names=["showAdvancedFilterBuilder"] /%}
 
 When the Advanced Filter Builder is shown or hidden, the `advancedFilterBuilderVisibleChanged` event is fired:
 
-{% apiDocumentation source="grid-events/events.json" section="filter" names="[\\"advancedFilterBuilderVisibleChanged\\"]" /%}
+{% apiDocumentation source="grid-events/events.json" section="filter" names=["advancedFilterBuilderVisibleChanged"] /%}
 
 The following example demonstrates configuring the Advanced Filter Builder:
 

@@ -88,7 +88,7 @@ will be additionally added to the params object, overriding items of the same na
 
 After the grid has created an instance of a cell editor for a cell it is possible to access that instance. This is useful if you want to call a method that you provide on the cell editor that has nothing to do with the operation of the grid. Accessing cell editors is done using the grid API `getCellEditorInstances(params)`.
 
-{% apiDocumentation source="grid-api/api.json" section="editing" names="[\\"getCellEditorInstances\\"]" /%}
+{% apiDocumentation source="grid-api/api.json" section="editing" names=["getCellEditorInstances"] /%}
 
 If you are doing normal editing, then only one cell is editable at any given time. For this reason if you call `getCellEditorInstances()` with no params, it will return back the editing cell's editor if a cell is editing, or an empty list if no cell is editing.
 

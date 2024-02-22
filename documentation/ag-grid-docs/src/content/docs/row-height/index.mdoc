@@ -25,7 +25,7 @@ Changing the property will set a new row height for all rows, including pinned r
 
 ## getRowHeight Callback
 
-{% apiDocumentation source="grid-options/properties.json" section="styling" names="[\\"getRowHeight\\"]" /%}
+{% apiDocumentation source="grid-options/properties.json" section="styling" names=["getRowHeight"] /%}
 
 To change the row height so that each row can have a different height,
 implement the `getRowHeight(params)` callback. For example, to set the height
@@ -55,7 +55,7 @@ heights and work them all out again from scratch - if you provide a `getRowHeigh
 callback, it will be called again for each row. The grid will then resize and
 reposition all rows again. This is the shotgun approach.
 
-{% apiDocumentation source="grid-api/api.json" section="rendering" names="[\\"resetRowHeights\\"]" /%}
+{% apiDocumentation source="grid-api/api.json" section="rendering" names=["resetRowHeights"] /%}
 
 ### rowNode.setRowHeight(height) and api.onRowHeightChanged()
 
@@ -74,9 +74,9 @@ If you pass in `null` or `undefined`, the grid will then calculate the row heigh
 usual way, either using the provided `rowHeight` property or `getRowHeight(params)`
 callback.
 
-{% apiDocumentation source="row-object/resources/reference.json" section="height" names="[\\"setRowHeight\\"]" config={"overrideBottomMargin":"0rem"} /%}
+{% apiDocumentation source="row-object/resources/reference.json" section="height" names=["setRowHeight"] config={"overrideBottomMargin":"0rem"} /%}
 
-{% apiDocumentation source="grid-api/api.json" section="rendering" names="[\\"onRowHeightChanged\\"]" /%}
+{% apiDocumentation source="grid-api/api.json" section="rendering" names=["onRowHeightChanged"] /%}
 
 ### Example Changing Row Height
 

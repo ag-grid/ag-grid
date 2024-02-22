@@ -60,7 +60,7 @@ If this behaviour for decreasing selection needs to be prevented, the flag `supp
 
 By the default, the Fill Handle can be dragged horizontally or vertically. If dragging only vertically, or only horizontally is a requirement, the `gridOptions` property `fillHandleDirection` property can be set. This default value is `xy`.
 
-{% apiDocumentation source="grid-options/properties.json" section="selection" names="[\\"fillHandleDirection\\"]" config={"overrideBottomMargin":"0"} /%}
+{% apiDocumentation source="grid-options/properties.json" section="selection" names=["fillHandleDirection"] config={"overrideBottomMargin":"0"} /%}
 
 ```js {% frameworkTransform=true %}
 const gridOptions = {
@@ -82,7 +82,7 @@ const gridOptions = {
 
 Often there is a need to use a custom method to fill values instead of simply copying values or increasing number values using linear progression. In these scenarios, the `fillOperation` callback should be used.
 
-{% apiDocumentation source="grid-options/properties.json" section="selection" names="[\\"fillOperation\\"]" /%}
+{% apiDocumentation source="grid-options/properties.json" section="selection" names=["fillOperation"] /%}
 
 ```js {% frameworkTransform=true %}
 const gridOptions = {
@@ -130,7 +130,7 @@ Non editable cells will **not** be changed by the Fill Handle, so there is no ne
 
 When the grid is in [Read Only Edit](./value-setters/#read-only-edit) mode the `Fill Handle` will not update the data inside the grid. Instead the grid fires `cellEditRequest` events allowing the application to process the update request.
 
-{% apiDocumentation source="grid-events/events.json" section="editing" names="[\\"cellEditRequest\\"]" /%}
+{% apiDocumentation source="grid-events/events.json" section="editing" names=["cellEditRequest"] /%}
 
 The example below will show how to update cell value combining the `Fill Handle` with `readOnlyEdit=true`.
 

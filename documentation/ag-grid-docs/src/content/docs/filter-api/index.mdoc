@@ -10,7 +10,7 @@ It is possible to get the state of all filters using the grid API method `getFil
 `setFilterModel()`. These methods manage the filters states via the `getModel()` and `setModel()` methods of the
 individual filters.
 
-{% apiDocumentation source="grid-api/api.json" section="filter" names="[\\"getFilterModel\\", \\"setFilterModel\\"]" /%}
+{% apiDocumentation source="grid-api/api.json" section="filter" names=["getFilterModel", "setFilterModel"] /%}
 
 ```js {% frameworkTransform=true %}
 // Gets filter model via the grid API
@@ -66,7 +66,7 @@ The example below shows getting and setting all the filter models in action.
 
 It is also possible to get or set the filter model for a specific filter, including your own custom filters.
 
-{% apiDocumentation source="grid-api/api.json" section="filter" names="[\\"getColumnFilterModel\\", \\"setColumnFilterModel\\"]" /%}
+{% apiDocumentation source="grid-api/api.json" section="filter" names=["getColumnFilterModel", "setColumnFilterModel"] /%}
 
 ### Re-running Grid Filtering
 
@@ -111,7 +111,7 @@ The example below shows getting and setting an individual filter model in action
 
 It is also possible to access the filter components directly if you want to interact with a specific filter. This also works for your own custom filters, where you can get a reference to the underlying filtering instance (i.e. what was created when AG Grid called `new` on your filter). Calling `api.getColumnFilterInstance(colKey)` will return a reference to the filter instance for the column with key `colKey`.
 
-{% apiDocumentation source="grid-api/api.json" section="filter" names="[\\"getColumnFilterInstance\\"]" /%}
+{% apiDocumentation source="grid-api/api.json" section="filter" names=["getColumnFilterInstance"] /%}
 
 ```js
 // Get a reference to the 'name' filter instance
@@ -120,7 +120,7 @@ const filterInstance = await api.getColumnFilterInstance('name');
 
 All of the methods of the filter are available on the instance. If using a custom filter, any other methods you have added will also be present, allowing bespoke behaviour to be added to your filter. Both provided and custom filters implement `IFilter` and have the following common methods:
 
-{% interfaceDocumentation interfaceName="IFilter" names="[\\"isFilterActive\\", \\"getModel\\", \\"setModel\\"]" config={"description":""} /%}
+{% interfaceDocumentation interfaceName="IFilter" names=["isFilterActive", "getModel", "setModel"] config={"description":""} /%}
 
 Note that if you call `setModel` on the filter, you will also need to call `onFilterChanged` to re-run filtering, similar to [Re-running Grid Filtering](./filter-api/#re-running-grid-filtering)
 
@@ -190,7 +190,7 @@ The following example demonstrates launching the filter:
 
 Filtering causes the following events to be emitted:
 
-{% apiDocumentation source="grid-events/events.json" section="filter" names="[\\"filterOpened\\", \\"filterChanged\\", \\"filterModified\\"]" /%}
+{% apiDocumentation source="grid-events/events.json" section="filter" names=["filterOpened", "filterChanged", "filterModified"] /%}
 
 ## Next Up
 

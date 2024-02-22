@@ -36,7 +36,7 @@ const gridOptions = {
 
 A value setter should return `true` if the value was updated successfully and `false` if the value was not updated (including if the value was not changed). When you return `true`, the grid knows it must refresh the cell.
 
-{% apiDocumentation source="column-properties/properties.json" section="editing" names="[\\"valueSetter\\"]" /%}
+{% apiDocumentation source="column-properties/properties.json" section="editing" names=["valueSetter"] /%}
 
 The example below demonstrates value setters working alongside value getters
 (value setters are typically only used alongside value getters). Note
@@ -58,7 +58,7 @@ the following:
 
 Read Only Edit is a mode in the grid whereby Cell Editing will not update the data inside the grid. Instead the grid fires `cellEditRequest` events allowing the application to process the update request. To enable this mode, set the grid property `readOnlyEdit=true`.
 
-{% apiDocumentation source="grid-events/events.json" section="editing" names="[\\"cellEditRequest\\"]" /%}
+{% apiDocumentation source="grid-events/events.json" section="editing" names=["cellEditRequest"] /%}
 
 {% if isFramework("javascript") %}
 ```ts

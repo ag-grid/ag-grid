@@ -68,7 +68,7 @@ The following example demonstrates restricting the aggregation functions. Note t
 
 After the grid is initialised aggregations can be applied / retrieved / removed via the `api` with the following methods:
 
-{% apiDocumentation source="grid-api/api.json" section="rowPivoting" names="[\\"getValueColumns\\", \\"addValueColumns\\", \\"removeValueColumns\\", \\"setValueColumns\\", \\"setColumnAggFunc\\"]" /%}
+{% apiDocumentation source="grid-api/api.json" section="rowPivoting" names=["getValueColumns", "addValueColumns", "removeValueColumns", "setValueColumns", "setColumnAggFunc"] /%}
 
 When the grid initialises, any column definitions that have `aggFunc` set will be automatically added as a value column.
 
@@ -76,7 +76,7 @@ When the grid initialises, any column definitions that have `aggFunc` set will b
 
 When aggregating, the column headers will include the aggregation function for the column. For example the header `'Bank Balance'` will become `'sum(Bank Balance)'` if you have the sum aggregation active on the column. To turn this off and display simply `'Bank Balance'` then set the grid property `suppressAggFuncInHeader`.
 
-{% apiDocumentation source="grid-options/properties.json" section="rowPivoting" names="[\\"suppressAggFuncInHeader\\"]" /%}
+{% apiDocumentation source="grid-options/properties.json" section="rowPivoting" names=["suppressAggFuncInHeader"] /%}
 
 ## Empty Aggregation Calls
 
@@ -91,7 +91,7 @@ The empty aggregation calls happen in the following two scenarios:
 
 If the data changes after the aggregation is done, you can tell the grid to recompute the aggregates through the API method `refreshClientSideRowModel('aggregate')`.
 
-{% apiDocumentation source="grid-api/api.json" section="data" names="[\\"refreshClientSideRowModel\\"]" /%}
+{% apiDocumentation source="grid-api/api.json" section="data" names=["refreshClientSideRowModel"] /%}
 
 ## Enabling Top Level Aggregations
 

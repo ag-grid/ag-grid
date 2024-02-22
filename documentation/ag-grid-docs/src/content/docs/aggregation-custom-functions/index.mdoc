@@ -49,7 +49,7 @@ Custom functions that are registered with the grid can be referenced by name in 
 appear in the [Columns Tool Panel](./tool-panel-columns/) just like any [Built-In Function](./aggregation/#enabling-aggregation),
 and is done using the `aggFuncs` grid option:
 
-{% apiDocumentation source="grid-options/properties.json" section="rowPivoting" names="[\\"aggFuncs\\"]" /%}
+{% apiDocumentation source="grid-options/properties.json" section="rowPivoting" names=["aggFuncs"] /%}
 
 The following snippet shows how to register custom functions using the `aggFuncs` grid option:
 
@@ -73,7 +73,7 @@ the column definition using the `aggFunc` property.
 
 Note that custom aggregation functions can also be registered using `gridApi.addAggFuncs({ mySum: mySumFunc })`.
 
-{% apiDocumentation source="grid-api/api.json" section="rowPivoting" names="[\\"addAggFuncs\\"]" /%}
+{% apiDocumentation source="grid-api/api.json" section="rowPivoting" names=["addAggFuncs"] /%}
 
 The example below uses the `aggFuncs` approach shown in the snippet above. Note the following:
 
@@ -88,7 +88,7 @@ The example below uses the `aggFuncs` approach shown in the snippet above. Note 
 It is possible to add your own custom aggregation to the grid. Custom aggregation functions can be applied directly to
 the column or registered to the grid and reference by name (similar to grid provided functions).
 
-{% apiDocumentation source="grid-options/properties.json" section="rowPivoting" names="[\\"aggFuncs\\"]" /%}
+{% apiDocumentation source="grid-options/properties.json" section="rowPivoting" names=["aggFuncs"] /%}
 
 A custom aggregation function takes values to aggregate and aggregates them.
 
