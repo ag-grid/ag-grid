@@ -14,6 +14,9 @@ const propertiesFromFilesPromises = sources.map(async (s) => {
     // NOTE: Need to remove `.json` for getEntry
     const fileName = s.replace('.json', '');
     const fileEntry = await getEntry('api-documentation', fileName);
+    if (!fileEntry) {
+        throw new Error(`ApiDocumentation source not found: src/content/api-documentation/${fileName}.json`);
+    }
     return fileEntry.data;
 });
 const propertiesFromFiles = await Promise.all(propertiesFromFilesPromises);
