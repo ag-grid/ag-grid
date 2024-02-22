@@ -472,17 +472,3 @@ When `autoHeaderHeight=true` the Grid automatically disables Span Header Height,
 </note>
 
 <grid-example title='Auto Header Height' name='auto-height' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"] }'></grid-example>
-<<<<<<< Updated upstream
-=======
-
-## Header Tooltips
-
-You can provide a tooltip to the header using `colDef.headerTooltip`.
-
-The example below shows header tooltips. Note the following:
-
-- All the columns, apart from **Country** and **Year**, have a header tooltip set.
-- We have set the Grid `tooltipShowDelay` property to 500ms to make the tooltips appear sooner.
-
-<grid-example title='Header Tooltip' name='header-tooltip' type='generated'></grid-example>
->>>>>>> Stashed changes

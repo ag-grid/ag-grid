@@ -46,11 +46,11 @@ The example below demonstrates using the string configuration. Note the followin
 
 The previous configurations are shortcuts for the full fledged configuration using a `SideBarDef` object. For full control over the configuration, you must provide a `SideBarDef` object.
 
-<interface-documentation interfaceName='SideBarDef' overrideSrc='side-bar/resources/sideBar.json'></interface-documentation>
+<interface-documentation interfaceName='SideBarDef' overridesrc='side-bar/resources/sideBar.json'></interface-documentation>
 
 The `toolPanels` property follows the `ToolPanelDef` interface:
 
-<interface-documentation interfaceName='ToolPanelDef' overrideSrc='side-bar/resources/sideBar.json'></interface-documentation>
+<interface-documentation interfaceName='ToolPanelDef' overridesrc='side-bar/resources/sideBar.json'></interface-documentation>
 
 The following snippet shows configuring the Tool Panel using a `SideBarDef` object:
 

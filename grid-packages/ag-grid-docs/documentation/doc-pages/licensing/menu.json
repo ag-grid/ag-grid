@@ -457,11 +457,7 @@
                 "showInCollapsed": true
               },
               {
-<<<<<<< Updated upstream
                 "title": "Text Formatting",
-=======
-                "title": "Formatting Values",
->>>>>>> Stashed changes
                 "url": "/value-formatters/",
                 "showInCollapsed": true
               },
@@ -1530,7 +1526,6 @@
             "title": "Custom Components",
             "url": "/components/",
             "showInCollapsed": true
-<<<<<<< Updated upstream
           }
         ]
       },
@@ -1545,37 +1540,9 @@
           {
             "title": "Change Detection",
             "url": "/change-detection/",
-=======
-          },
-          {
-            "title": "Date Component",
-            "url": "/component-date/"
-          },
-          {
-            "title": "Tooltip Component",
-            "url": "/component-tooltip/",
->>>>>>> Stashed changes
             "showInCollapsed": true
           }
         ]
-<<<<<<< Updated upstream
-=======
-      },
-      {
-        "title": "Performance",
-        "items": [
-          {
-            "title": "Value Cache",
-            "url": "/value-cache/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Change Detection",
-            "url": "/change-detection/",
-            "showInCollapsed": true
-          }
-        ]
->>>>>>> Stashed changes
       }
     ]
   },

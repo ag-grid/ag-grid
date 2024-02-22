@@ -29,31 +29,6 @@ md-include:params_vue.md
 
 ## Selecting Components
 
-The example below shows some Custom Editor Components.
-
-**NOTE - example needs to change and show: a) editing using provided editors and 2) editing with some simple custom editors, eg simple text editor (similar to provided) and happy / sad editor. Using head names sush as "Provided Text" and "Custom Numeric" would allow not having bullet points before example. The example use cases of doubling numbers is stupid.**
-
-- The `Doubling` Cell Editor will double a given input and reject values over a 1000
-- The `Mood` Cell Editor illustrates a slightly more complicated editor with values changed depending on the smiley chosen
-- The `Numeric` Cell Editor illustrates a slightly more complicated numeric editor to the `Doubling` editor, with increased input validation
-
-<grid-example title='Simple Editor Components' name='component-editor' type='mixed' options='{ "exampleHeight": 370, "includeNgFormsModule" : true }'></grid-example>
-
-## Custom Components
-
-md-include:component-interface-javascript.md 
-md-include:component-interface-angular.md
-md-include:component-interface-react.md
-md-include:component-interface-vue.md
-
-<framework-specific-section frameworks="javascript,angular,vue">
-<interface-documentation interfaceName='ICellEditorParams' config='{"description": ""}'></interface-documentation>
-</framework-specific-section>
-
-md-include:params_vue.md       
-
-## Selecting Components
-
 Cell Editor Components are configured using the `cellEditor` property of the [Column Definition](/column-definitions/).
 
 <snippet>
