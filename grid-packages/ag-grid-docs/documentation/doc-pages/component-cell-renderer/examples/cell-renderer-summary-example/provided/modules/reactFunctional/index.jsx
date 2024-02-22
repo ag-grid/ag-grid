@@ -45,7 +45,7 @@ const PriceRenderer = (params) => {
     priceMultiplier = 5
   }
 
-  const priceArray = new Array(priceMultiplier)
+  const priceArr = new Array(priceMultiplier).fill('');
 
   return (
     <span
