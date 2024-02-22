@@ -1,0 +1,21 @@
+.example-full-width-pinned {
+    background-color: #2244CC44;
+    border: 2px solid rgb(32, 32, 171);
+    /* we want the border to be kept within the row height */
+    box-sizing: border-box;
+    /* get the row to fill the available height */
+    height: 100%;
+    /* grid sets white-space to one line, need to reset for wrapping the text */
+    white-space: normal;
+}
+
+.example-full-width-row {
+    background-color: #33CC3344;
+    border: 2px solid #35af35;
+    /* we want the border to be kept within the row height */
+    box-sizing: border-box;
+    /* get the row to fill the available height */
+    height: 100%;
+    /* grid sets white-space to one line, need to reset for wrapping the text */
+    white-space: normal;
+}

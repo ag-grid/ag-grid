@@ -1,0 +1,86 @@
+<div class="container">
+    <div class="columns">
+        <fieldset class="column">
+            <legend>Header</legend>
+            <div class="row">
+                Position
+                <select id="headerPosition">
+                    <option>Left</option>
+                    <option>Center</option>
+                    <option>Right</option>
+                </select>
+            </div>
+            <div class="row">
+                Font
+                <select id="headerFontName">
+                    <option>Calibri</option>
+                    <option>Arial</option>
+                </select>
+                <select id="headerFontSize">
+                    <option>11</option>
+                    <option>12</option>
+                    <option>13</option>
+                    <option>14</option>
+                    <option>16</option>
+                    <option>20</option>
+                </select>
+                <select id="headerFontWeight">
+                    <option>Regular</option>
+                    <option>Bold</option>
+                    <option>Italic</option>
+                    <option>Bold Italic</option>
+                </select>
+                <label class="option underline" for="headerUnderline">
+                    <input type="checkbox" id="headerUnderline"><u>U</u>
+                </label>
+            </div>
+            <div class="row option">Value
+                <input id="headerValue" />
+            </div>
+        </fieldset>
+        <fieldset class="column">
+            <legend>Footer</legend>
+            <div class="row">
+                Position
+                <select id="footerPosition">
+                    <option>Left</option>
+                    <option>Center</option>
+                    <option>Right</option>
+                </select>
+            </div>
+            <div class="row">
+                Font
+                <select id="footerFontName">
+                    <option>Calibri</option>
+                    <option>Arial</option>
+                </select>
+                <select id="footerFontSize">
+                    <option>11</option>
+                    <option>12</option>
+                    <option>13</option>
+                    <option>14</option>
+                    <option>16</option>
+                    <option>20</option>
+                </select>
+                <select id="footerFontWeight">
+                    <option>Regular</option>
+                    <option>Bold</option>
+                    <option>Italic</option>
+                    <option>Bold Italic</option>
+                </select>
+                <label class="option underline" for="footerUnderline">
+                    <input type="checkbox" id="footerUnderline"><u>U</u>
+                </label>
+            </div>
+            <div class="row">Value
+                <input id="footerValue" />
+            </div>
+        </fieldset>
+    </div>
+    <div>
+        <button onclick="onBtExport()" style="margin: 5px 0px; font-weight: bold;">Export to Excel</button>
+    </div>
+    <div class="grid-wrapper">
+        <div id="myGrid" class="ag-theme-quartz"></div>
+    </div>
+</div>

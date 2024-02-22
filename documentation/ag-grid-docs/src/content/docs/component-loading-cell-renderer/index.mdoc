@@ -1,0 +1,39 @@
+---
+title: "Loading Component"
+---
+
+The Loading Component is displayed for a row to show data is loading.
+
+The example below demonstrates replacing the Provided Loading Component with a Custom Loading Component.
+
+* **Custom Loading Component** is supplied by name via `gridOptions.loadingCellRenderer`.
+* **Custom Loading Component Parameters** are supplied using `gridOptions.loadingCellRendererParams`.
+* Example simulates a long delay to display the spinner clearly.
+* Scrolling the grid will request more rows and again display the loading cell renderer.
+
+{% gridExampleRunner title="Custom Loading Cell Renderer" name="custom-loading-cell-renderer" type="generated" options={ "enterprise": true, "modules": ["serverside"], "extras": ["fontawesome"] } /%}
+
+## Custom Component
+
+md-include:component-interface-javascript.md
+md-include:component-interface-angular.md
+md-include:component-interface-react.md
+md-include:component-interface-vue.md
+
+{% if isFramework("javascript", "angular", "vue") %}
+{% interfaceDocumentation interfaceName="ILoadingCellRendererParams" names="[\\"api\\", \\"context\\", \\"node\\"]" /%}
+{% /if %}
+
+{% if isFramework("react") %}
+{% interfaceDocumentation interfaceName="CustomLoadingCellRendererProps" names="[\\"api\\", \\"context\\", \\"node\\"]" /%}
+{% /if %}
+
+## Dynamic Selection
+
+It's possible to determine what Loading Cell Renderer to use dynamically - i.e. at runtime. This requires providing a `loadingCellRendererSelector`.
+
+{% if isFramework("javascript", "angular", "react") %}
+md-include:component-dynamic-angular-react-js.md
+{% /if %}
+
+md-include:component-dynamic-vue.md

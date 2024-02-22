@@ -1,0 +1,20 @@
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.ag-fill-direction {
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+.ag-fill-direction.selected {
+    background-color: #2986e6;
+    color: white;
+}
+
+#myGrid {
+    flex: 1 1 0px;
+    width: 100%;
+}

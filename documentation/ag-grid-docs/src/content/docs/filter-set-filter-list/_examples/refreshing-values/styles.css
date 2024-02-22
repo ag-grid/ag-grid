@@ -1,0 +1,10 @@
+#container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+#myGrid {
+    flex: 1 1 0px;
+    padding-top: 1rem;
+}

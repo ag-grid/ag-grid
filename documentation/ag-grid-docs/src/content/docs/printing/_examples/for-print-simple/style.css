@@ -1,0 +1,5 @@
+@media print {
+    body {
+        overflow: visible;
+    }
+}

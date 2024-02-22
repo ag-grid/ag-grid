@@ -1,0 +1,26 @@
+.custom-header {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.custom-header input {
+    width: 50px;
+    margin: 0!important;
+}
+
+.custom-header button {
+    margin: 0!important;
+}
+
+a {
+    color: inherit;
+}
+
+button:focus, a:focus, input:focus {
+    border-color: cornflowerblue;
+}
+
+:focus {
+    background: lightskyblue !important;
+}

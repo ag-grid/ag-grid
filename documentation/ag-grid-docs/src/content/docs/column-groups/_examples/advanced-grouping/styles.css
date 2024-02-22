@@ -1,0 +1,22 @@
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#myGrid {
+    flex: 1 1 0px;
+    width: 100%;
+}
+
+.column-group-g {
+    background-color: #5577CC !important;
+}
+  
+.column-group-c {
+    background-color: #55AA77 !important;
+}
+
+.button-bar {
+    margin-bottom: 1rem;
+}

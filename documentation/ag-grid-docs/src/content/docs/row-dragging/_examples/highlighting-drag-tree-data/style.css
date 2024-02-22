@@ -1,0 +1,27 @@
+.fa-folder {
+    color: darkorange;
+}
+
+.fa-file-pdf {
+    color: red;
+}
+
+.fa-file-excel {
+    color: green;
+}
+
+.fa-file-audio {
+    color: blue;
+}
+
+.filename {
+    padding: 5px;
+    color: var(--ag-foreground-color);
+    font-size: 16px;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: normal;
+}
+
+.hover-over {
+    background-color: #e5e5ff;
+}
