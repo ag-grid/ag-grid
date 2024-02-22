@@ -34,7 +34,10 @@ const menuItemBase = {
      */
     newWindow: z.boolean().optional(),
     icon: z.enum(Object.keys(ICON_MAP) as any).optional(),
-    frameworks: z.array(z.enum(FRAMEWORKS as any)).optional(),
+    // TODO: Add frameworks back
+    // frameworks: z.array(z.enum(FRAMEWORKS as any)).optional(),
+    frameworks: z.array(z.string()).optional(),
+
     isEnterprise: z.boolean().optional(),
 };
 
