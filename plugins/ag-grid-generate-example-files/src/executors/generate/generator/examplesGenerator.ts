@@ -1,7 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 
-import { readFile } from '../../../executors-utils';
+import { readFile, readJSONFile } from '../../../executors-utils';
 import { ANGULAR_GENERATED_MAIN_FILE_NAME, SOURCE_ENTRY_FILE_NAME } from './constants';
 import gridVanillaSrcParser from './transformation-scripts/grid-vanilla-src-parser';
 import { FRAMEWORKS, GeneratedContents, InternalFramework } from './types';
@@ -85,6 +85,11 @@ export const getGeneratedContents = async (params: GeneratedContentParams): Prom
 
     if (!sourceFileList.includes(SOURCE_ENTRY_FILE_NAME)) {
         throw new Error('Unable to find example entry-point at: ' + folderPath);
+    }
+
+    if(!gridOptionsTypes){
+        console.error('No gridOptionsTypes provided!');
+        //gridOptionsTypes = await readJSONFile('plugins/ag-grid-generate-example-files/src/gridOptionsTypes/_gridOptions_Types.json');
     }
 
     const entryFilePath = path.join(folderPath, SOURCE_ENTRY_FILE_NAME);
