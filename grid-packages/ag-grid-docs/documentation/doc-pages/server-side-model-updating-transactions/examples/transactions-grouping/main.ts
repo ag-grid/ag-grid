@@ -11,6 +11,12 @@ import {
   ServerSideTransactionResult,
 } from '@ag-grid-community/core';
 
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([RowGroupingModule, ServerSideRowModelModule]);
+
 declare var FakeServer: any;
 declare var deletePortfolioOnServer: any;
 declare var changePortfolioOnServer: any;

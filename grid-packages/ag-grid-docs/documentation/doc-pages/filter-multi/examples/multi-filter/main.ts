@@ -8,6 +8,16 @@ import {
   ITextFilterParams,
 } from '@ag-grid-community/core';
 
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
+import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { MultiFilterModule } from '@ag-grid-enterprise/multi-filter';
+import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, ClipboardModule, FiltersToolPanelModule, MenuModule, MultiFilterModule, SetFilterModule]);
+
 var dateFilterParams: IMultiFilterParams = {
   filters: [
     {

@@ -1,5 +1,14 @@
 import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
 
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, MenuModule, RowGroupingModule, SetFilterModule]);
+
 const columnDefs: ColDef[] = [
   { field: 'country', width: 120, rowGroup: true, hide: true },
   { field: 'year', width: 90, rowGroup: true, hide: true },

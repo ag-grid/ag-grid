@@ -1,5 +1,13 @@
 import { GridApi, createGrid, ColDef, GridOptions, CellValueChangedEvent } from '@ag-grid-community/core';
 import { CustomStatsToolPanel } from './customStatsToolPanel_typescript'
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
+import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
+import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, FiltersToolPanelModule, SetFilterModule]);
+
 
 const columnDefs: ColDef[] = [
   { field: 'athlete', width: 150, filter: 'agTextColumnFilter' },

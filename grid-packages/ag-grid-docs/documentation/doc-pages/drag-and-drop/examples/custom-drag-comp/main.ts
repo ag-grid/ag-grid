@@ -1,5 +1,10 @@
 import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 import { getData } from "./data";
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 import { DragSourceRenderer } from './dragSourceRenderer_typescript';
 
 var rowClassRules = {

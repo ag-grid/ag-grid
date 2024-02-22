@@ -12,6 +12,12 @@ import {
     RowEditingStoppedEvent,
 } from '@ag-grid-community/core';
 import { getData } from "./data";
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, RichSelectModule]);
+
 import { GenderRenderer } from './genderRenderer_typescript';
 import { MoodEditor } from './moodEditor_typescript';
 import { MoodRenderer } from './moodRenderer_typescript';

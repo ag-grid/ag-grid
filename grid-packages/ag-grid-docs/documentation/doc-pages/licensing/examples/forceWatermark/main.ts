@@ -1,5 +1,11 @@
 import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 import { LicenseManager } from "@ag-grid-enterprise/core";
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
+
 
 // enter your license key here to suppress license message in the console and watermark
 LicenseManager.setLicenseKey("")

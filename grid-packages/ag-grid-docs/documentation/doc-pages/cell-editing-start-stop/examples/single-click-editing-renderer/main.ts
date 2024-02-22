@@ -1,5 +1,10 @@
 import { GridApi, createGrid, GridOptions, ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
 import { CellRenderer } from './cellRenderer_typescript';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 
 let gridApi: GridApi<IOlympicData>;
 

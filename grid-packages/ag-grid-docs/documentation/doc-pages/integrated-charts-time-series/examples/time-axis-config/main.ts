@@ -1,5 +1,12 @@
 import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent} from '@ag-grid-community/core';
 import {getData} from './data';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, GridChartsModule, MenuModule]);
+
 
 let gridApi: GridApi;
 
@@ -83,4 +90,3 @@ function formatTime(date: Date | number) {
 document.addEventListener('DOMContentLoaded', function () {
   gridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
 })
-

@@ -1,5 +1,10 @@
 import { createGrid, GridApi, GridOptions, IRowNode, RefreshCellsParams } from '@ag-grid-community/core'
 
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 // placing in 13 rows, so there are exactly enough rows to fill the grid, makes
 // the row animation look nice when you see all the rows
 var data: any[] = []

@@ -6,6 +6,16 @@ import {
   IServerSideDatasource,
 } from '@ag-grid-community/core';
 declare var CustomAgeFilter: any;
+import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
+import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
+import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ColumnsToolPanelModule, FiltersToolPanelModule, MenuModule, RowGroupingModule, ServerSideRowModelModule, SetFilterModule]);
+
 declare function createFakeServer(data: any): any;
 declare function createServerSideDatasource(server: any): IServerSideDatasource;
 declare function getCountries(): string[];
@@ -84,4 +94,3 @@ document.addEventListener('DOMContentLoaded', function () {
       gridApi!.setGridOption('serverSideDatasource', datasource)
     })
 })
-

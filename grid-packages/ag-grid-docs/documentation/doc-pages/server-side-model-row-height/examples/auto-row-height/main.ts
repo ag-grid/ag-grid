@@ -1,5 +1,11 @@
 import { GridApi, createGrid, ColDef, GridOptions, IServerSideDatasource } from '@ag-grid-community/core';
 import { getData } from "./data";
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([RowGroupingModule, ServerSideRowModelModule]);
+
 
 declare var FakeServer: any;
 const columnDefs: ColDef[] = [
@@ -81,5 +87,4 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
     },
   }
 }
-
 

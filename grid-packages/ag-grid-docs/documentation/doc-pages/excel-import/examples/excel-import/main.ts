@@ -1,5 +1,12 @@
 import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 declare var XLSX: any;
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, ExcelExportModule, MenuModule]);
+
 
 let gridApi: GridApi;
 

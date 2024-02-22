@@ -1,5 +1,10 @@
 import { GridApi, createGrid, GridOptions, GridReadyEvent } from '@ag-grid-community/core';
 import { getData,TAthlete } from './data';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 
 let gridApi: GridApi;
 

@@ -6,6 +6,12 @@ import {
   IRichCellEditorParams,
 } from '@ag-grid-community/core';
 
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, RichSelectModule]);
+
 const languages = ['English', 'Spanish', 'French', 'Portuguese', '(other)'];
 
 function getRandomNumber(min: number, max: number) { // min and max included 

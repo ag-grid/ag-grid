@@ -1,5 +1,10 @@
 import { GridApi, createGrid, GridOptions, ValueGetterParams } from '@ag-grid-community/core';
 
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 function hashValueGetter(params: ValueGetterParams) {
   return params.node ? params.node.rowIndex : null;
 }

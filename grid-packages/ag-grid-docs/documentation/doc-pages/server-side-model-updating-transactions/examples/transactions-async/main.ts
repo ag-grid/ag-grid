@@ -9,6 +9,11 @@ import {
   ServerSideTransaction,
 } from '@ag-grid-community/core';
 
+import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ServerSideRowModelModule]);
+
 declare var FakeServer: any;
 declare var dataObservers: any;
 declare var randomUpdates: any;

@@ -1,5 +1,13 @@
 import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
 
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, ExcelExportModule, MenuModule, SetFilterModule]);
+
 const columnDefs: ColDef[] = [
   { field: 'athlete', minWidth: 200 },
   { field: 'age' },

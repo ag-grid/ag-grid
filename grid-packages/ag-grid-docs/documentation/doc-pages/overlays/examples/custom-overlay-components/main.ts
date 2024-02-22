@@ -1,5 +1,10 @@
 import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
 import { CustomLoadingOverlay } from './customLoadingOverlay_typescript';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 import { CustomNoRowsOverlay } from './customNoRowsOverlay_typescript';
 
 const columnDefs: ColDef[] = [

@@ -1,5 +1,12 @@
 import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
+import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, RangeSelectionModule, StatusBarModule]);
+
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {

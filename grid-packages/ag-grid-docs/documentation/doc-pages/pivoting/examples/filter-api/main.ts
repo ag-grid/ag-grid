@@ -1,5 +1,14 @@
 import { GridApi, createGrid, GridOptions, ColDef } from '@ag-grid-community/core';
 let gridApi: GridApi<IOlympicData>;
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, FiltersToolPanelModule, MenuModule, RowGroupingModule, SetFilterModule]);
+
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     { field: 'country', rowGroup: true, enableRowGroup: true },

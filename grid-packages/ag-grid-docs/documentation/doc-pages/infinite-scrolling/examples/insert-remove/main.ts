@@ -13,6 +13,11 @@ import {
     GridReadyEvent,
 } from '@ag-grid-community/core';
 
+import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([InfiniteRowModelModule]);
+
 const valueFormatter = function (params: ValueFormatterParams) {
     if (typeof params.value === 'number') {
         return '£' + params.value.toLocaleString()

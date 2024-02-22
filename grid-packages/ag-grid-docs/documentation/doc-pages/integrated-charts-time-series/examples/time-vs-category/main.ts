@@ -8,6 +8,13 @@ import {
   ValueFormatterParams
 } from '@ag-grid-community/core';
 import {getData} from './data';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, GridChartsModule, MenuModule]);
+
 
 declare var moment: any;
 

@@ -7,6 +7,11 @@ import {
   IServerSideGetRowsRequest,
 } from '@ag-grid-community/core';
 import { CustomLoadingCellRenderer } from './customLoadingCellRenderer_typescript'
+import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ServerSideRowModelModule]);
+
 
 const columnDefs: ColDef[] = [
   { field: 'id' },

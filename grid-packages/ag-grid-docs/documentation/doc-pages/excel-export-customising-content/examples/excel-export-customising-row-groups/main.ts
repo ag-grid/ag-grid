@@ -7,6 +7,16 @@ import {
   ProcessRowGroupForExportParams,
 } from "@ag-grid-community/core";
 
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { CsvExportModule } from '@ag-grid-community/csv-export';
+import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, CsvExportModule, ExcelExportModule, MenuModule, RowGroupingModule, SetFilterModule]);
+
 const getParams: () => ExcelExportParams = () => ({
   processCellCallback(params: ProcessCellForExportParams): string {
     const value = params.value

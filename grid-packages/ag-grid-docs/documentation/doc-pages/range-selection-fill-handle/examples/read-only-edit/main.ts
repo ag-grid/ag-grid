@@ -1,5 +1,11 @@
 import { GridApi, createGrid, GridOptions, CellEditRequestEvent, GetRowIdParams } from '@ag-grid-community/core';
 
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, RangeSelectionModule]);
+
 let gridApi: GridApi<IOlympicDataWithId>;
 
 const gridOptions: GridOptions<IOlympicDataWithId> = {

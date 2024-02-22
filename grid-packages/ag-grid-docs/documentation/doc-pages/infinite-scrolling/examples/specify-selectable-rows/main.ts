@@ -8,6 +8,11 @@ import {
     IRowNode,
 } from '@ag-grid-community/core';
 
+import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([InfiniteRowModelModule]);
+
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {

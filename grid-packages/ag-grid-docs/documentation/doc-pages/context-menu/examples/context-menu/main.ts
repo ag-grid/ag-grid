@@ -1,5 +1,15 @@
 import { GridApi, createGrid, GetContextMenuItemsParams, GridOptions, MenuItemDef } from '@ag-grid-community/core';
 
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
+import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
+import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, ClipboardModule, ExcelExportModule, GridChartsModule, MenuModule, RangeSelectionModule]);
+
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {

@@ -11,6 +11,14 @@ import {
   GetRowIdParams,
 } from '@ag-grid-community/core';
 
+import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ColumnsToolPanelModule, MenuModule, RowGroupingModule, ServerSideRowModelModule]);
+
 var fakeServer: {
   getData: (request: IServerSideGetRowsRequest) => void,
   addChildRow: (route: string[], newRow: any) => void,

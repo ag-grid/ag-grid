@@ -9,6 +9,11 @@ import {
   ValueParserParams,
 } from '@ag-grid-community/core';
 
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 const ragCellClassRules: CellClassRules = {
   'rag-green-outer': params => params.value === 2008,
   'rag-blue-outer': params => params.value === 2004,

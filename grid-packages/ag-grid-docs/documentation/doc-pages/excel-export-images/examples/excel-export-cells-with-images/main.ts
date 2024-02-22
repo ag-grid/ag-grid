@@ -1,5 +1,12 @@
 import { ColDef, GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 import { FlagContext } from './interfaces';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, ExcelExportModule, MenuModule]);
+
 import { CountryCellRenderer } from './countryCellRenderer_typescript'
 
 declare function createBase64FlagsFromResponse(response: any, countryCodes: any, base64flags: any): any;

@@ -1,5 +1,12 @@
 import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 
+import { AdvancedFilterModule } from '@ag-grid-enterprise/advanced-filter';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([AdvancedFilterModule, ClientSideRowModelModule, MenuModule]);
+
 interface IOlympicDataTypes extends IOlympicData {
   dateObject: Date;
   hasGold: boolean;

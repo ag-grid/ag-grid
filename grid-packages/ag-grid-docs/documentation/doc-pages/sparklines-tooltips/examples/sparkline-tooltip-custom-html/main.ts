@@ -6,6 +6,12 @@ import {
   TooltipRendererParams,
 } from '@ag-grid-community/core';
 import { getData } from "./data";
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { SparklinesModule } from '@ag-grid-enterprise/sparklines';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, SparklinesModule]);
+
 
 
 const body = document.body;

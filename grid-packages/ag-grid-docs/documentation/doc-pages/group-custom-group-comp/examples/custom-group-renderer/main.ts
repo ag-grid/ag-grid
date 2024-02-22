@@ -7,6 +7,12 @@ import {
     GridOptions,
 } from '@ag-grid-community/core';
 import { CustomGroupCellRenderer } from './customGroupCellRenderer_typescript';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
+
 
 const columnDefs: ColDef[] = [
     {

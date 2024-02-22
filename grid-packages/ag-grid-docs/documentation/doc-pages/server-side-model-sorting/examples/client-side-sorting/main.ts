@@ -7,6 +7,11 @@ import {
   IsServerSideGroupOpenByDefaultParams
 } from '@ag-grid-community/core';
 declare var FakeServer: any;
+import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ServerSideRowModelModule]);
+
 let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [

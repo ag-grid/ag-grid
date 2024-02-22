@@ -1,5 +1,11 @@
 import { GridApi, createGrid, ColDef, GridOptions, IServerSideDatasource } from '@ag-grid-community/core';
 declare var FakeServer: any;
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([RowGroupingModule, ServerSideRowModelModule]);
+
 const columnDefs: ColDef[] = [
   // here we are using a valueGetter to get the country name from the complex object
   {

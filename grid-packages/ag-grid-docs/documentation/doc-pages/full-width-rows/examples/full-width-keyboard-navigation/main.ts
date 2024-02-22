@@ -6,6 +6,11 @@ import {
   SuppressKeyboardEventParams,
 } from "@ag-grid-community/core";
 import { getData } from "./data"
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 import { FullWidthCellRenderer } from "./fullWidthCellRenderer_typescript"
 
 const GRID_CELL_CLASSNAME = "ag-full-width-row";

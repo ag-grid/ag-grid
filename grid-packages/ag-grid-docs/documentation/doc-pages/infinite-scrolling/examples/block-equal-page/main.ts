@@ -10,6 +10,14 @@ import {
     GetRowIdParams,
 } from '@ag-grid-community/core';
 
+import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
+import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ColumnsToolPanelModule, InfiniteRowModelModule, MenuModule, SetFilterModule]);
+
 declare function countries(): string[];
 
 const filterParams = { values: countries() };

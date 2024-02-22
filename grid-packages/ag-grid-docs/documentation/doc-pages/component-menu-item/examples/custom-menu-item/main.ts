@@ -1,5 +1,14 @@
 import { GridApi, createGrid, ColDef, GridOptions, GetMainMenuItemsParams, GetContextMenuItemsParams } from '@ag-grid-community/core';
 import { MenuItem } from './menuItem_typescript';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
+import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, ClipboardModule, ExcelExportModule, MenuModule, RangeSelectionModule]);
+
 
 const columnDefs: ColDef[] = [
   { field: 'athlete'},

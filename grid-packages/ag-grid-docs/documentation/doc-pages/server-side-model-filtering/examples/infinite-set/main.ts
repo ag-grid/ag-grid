@@ -10,6 +10,13 @@ import {
   ValueFormatterParams,
 } from '@ag-grid-community/core';
 
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
+import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([MenuModule, ServerSideRowModelModule, SetFilterModule]);
+
 declare var FakeServer: any;
 const columnDefs: ColDef[] = [
   {

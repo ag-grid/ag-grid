@@ -1,5 +1,10 @@
 import { GridApi, createGrid, GridOptions, ICellRendererParams } from '@ag-grid-community/core';
 import { getData } from "./data";
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 
 
 const getMedalString = function ({ gold, silver, bronze }: { gold: number, silver: number, bronze: number }) {

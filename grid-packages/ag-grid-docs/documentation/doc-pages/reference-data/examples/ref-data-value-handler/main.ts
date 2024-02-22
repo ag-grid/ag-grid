@@ -8,6 +8,15 @@ import {
     ValueSetterParams,
 } from '@ag-grid-community/core';
 import { ColourCellRenderer } from './colourCellRenderer_typescript';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
+import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, MenuModule, RichSelectModule, SetFilterModule]);
+
 import { getData } from "./data";
 
 

@@ -1,5 +1,10 @@
 import { GridApi, createGrid, ColDef, GridOptions, ValueGetterParams } from '@ag-grid-community/core';
 import { MedalCellRenderer } from './medalCellRenderer_typescript'
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 
 const columnDefs: ColDef[] = [
   { field: 'athlete', width: 150 },

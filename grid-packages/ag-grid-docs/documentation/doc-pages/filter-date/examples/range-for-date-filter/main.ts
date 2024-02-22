@@ -1,5 +1,10 @@
 import { GridApi, createGrid, ColDef, GridOptions, IDateFilterParams } from '@ag-grid-community/core';
 
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 const today = new Date();
 const tomorrow = new Date(today.getTime() + (24 * 60 * 60 * 1000));
 

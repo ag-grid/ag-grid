@@ -11,6 +11,16 @@ import {
   ProcessRowGroupForExportParams,
 } from '@ag-grid-community/core';
 
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
+import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
+import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
+import { MasterDetailModule } from '@ag-grid-enterprise/master-detail';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, ClipboardModule, ColumnsToolPanelModule, ExcelExportModule, MasterDetailModule, MenuModule]);
+
 var getRows = (params: ProcessRowGroupForExportParams) => {
   const rows = [{
     outlineLevel: 1,

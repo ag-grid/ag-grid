@@ -7,6 +7,11 @@ import {
   IViewportDatasourceParams,
 } from '@ag-grid-community/core';
 
+import { ViewportRowModelModule } from '@ag-grid-enterprise/viewport-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ViewportRowModelModule]);
+
 const columnDefs: ColDef[] = [
   {
     headerName: 'ID',

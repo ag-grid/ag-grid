@@ -1,5 +1,11 @@
 import { ColDef, createGrid, GridOptions, GetRowIdParams, IAggFuncParams, IDoesFilterPassParams, IFilterComp, IFilterParams, IFilterType, IsGroupOpenByDefaultParams, GridApi } from '@ag-grid-community/core'
 
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
+
 import { createDataItem, getData } from './data'
 
 let aggCallCount = 0;
@@ -232,5 +238,4 @@ function timeOperation(name: string, operation: any) {
         filterCallCount
     )
 }
-
 

@@ -1,5 +1,13 @@
 import { createGrid, GetRowIdParams, GridApi, GridOptions } from '@ag-grid-community/core';
 
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, RangeSelectionModule, RowGroupingModule, StatusBarModule]);
+
 function getInitialData() {
     const data = [];
     for (let i = 0; i < 5; i++) {

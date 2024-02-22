@@ -1,5 +1,10 @@
 import { GridApi, createGrid, ColDef, GridOptions, ITextFilterParams } from '@ag-grid-community/core';
 
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 function contains(target: string, lookingFor: string) {
   return target && target.indexOf(lookingFor) >= 0
 }

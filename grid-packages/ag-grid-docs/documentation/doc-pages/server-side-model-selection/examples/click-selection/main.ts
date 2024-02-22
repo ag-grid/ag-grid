@@ -1,5 +1,11 @@
 import { GridApi, createGrid, GridOptions, GetRowIdParams, IServerSideDatasource } from '@ag-grid-community/core';
 declare var FakeServer: any;
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([RowGroupingModule, ServerSideRowModelModule]);
+
 let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [

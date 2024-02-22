@@ -1,5 +1,13 @@
 import { GridApi, createGrid, ColDef, GridOptions, ProcessDataFromClipboardParams } from '@ag-grid-community/core';
 
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, ClipboardModule, MenuModule, RangeSelectionModule]);
+
 const columnDefs: ColDef[] = [
   { headerName: 'Athlete', field: 'athlete', width: 150 },
   { headerName: 'Age', field: 'age', width: 90 },

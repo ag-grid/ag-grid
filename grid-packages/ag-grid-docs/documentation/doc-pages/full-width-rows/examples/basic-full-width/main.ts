@@ -7,6 +7,11 @@ import {
     RowHeightParams,
 } from '@ag-grid-community/core';
 import { FullWidthCellRenderer } from './fullWidthCellRenderer_typescript'
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 
 const rowData = createData(100, 'body')
 const pinnedTopRowData = createData(3, 'pinned')

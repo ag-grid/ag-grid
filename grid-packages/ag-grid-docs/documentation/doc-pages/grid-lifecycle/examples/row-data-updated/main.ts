@@ -6,6 +6,11 @@ import {
     RowDataUpdatedEvent,
 } from '@ag-grid-community/core';
 import { getData, TAthlete } from './data';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 
 const updateRowCount = (id: string) => {
     const element = document.querySelector(`#${id} > .value`);

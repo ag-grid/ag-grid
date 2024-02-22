@@ -1,5 +1,11 @@
 import { GridApi, createGrid, GridOptions, GetGroupIncludeFooterParams } from '@ag-grid-community/core';
 
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
+
 let gridApi: GridApi;
 
 const gridOptions: GridOptions = {

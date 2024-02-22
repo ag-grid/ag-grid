@@ -10,6 +10,11 @@ import {
   GetRowIdParams,
 } from '@ag-grid-community/core';
 declare function createMockServer(): any;
+import { ViewportRowModelModule } from '@ag-grid-enterprise/viewport-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ViewportRowModelModule]);
+
 declare function createViewportDatasource(mockServer: any): IViewportDatasource;
 
 class RowIndexRenderer implements ICellRendererComp {
@@ -110,6 +115,5 @@ document.addEventListener('DOMContentLoaded', function () {
       gridApi!.setGridOption('viewportDatasource', viewportDatasource)
     })
 })
-
 
 

@@ -8,6 +8,11 @@ import {
   IDateFilterParams,
 } from '@ag-grid-community/core';
 
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 import { CustomNumberFilter } from "./custom-number-filter_typescript";
 import { NumberFloatingFilter, CustomFloatingParams } from "./number-floating-filter_typescript";
 

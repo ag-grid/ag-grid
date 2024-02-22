@@ -6,6 +6,11 @@ import {
   ISelectCellEditorParams,
 } from '@ag-grid-community/core';
 
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 const languages = ['English', 'Spanish', 'French', 'Portuguese', '(other)'];
 
 function getRandomNumber(min: number, max: number) { // min and max included 

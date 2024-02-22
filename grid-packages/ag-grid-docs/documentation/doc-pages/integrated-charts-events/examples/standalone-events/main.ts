@@ -1,5 +1,12 @@
 import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions} from '@ag-grid-community/core';
 import {AgChartLegendClickEvent, AgSeriesNodeClickEvent} from 'ag-charts-community';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, GridChartsModule, MenuModule]);
+
 
 let gridApi: GridApi;
 

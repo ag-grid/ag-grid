@@ -1,5 +1,10 @@
 import { GridApi, createGrid, ColDef, GridOptions, RowSpanParams } from '@ag-grid-community/core';
 
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 function rowSpan(params: RowSpanParams<IOlympicData>) {
   var athlete = params.data ? params.data.athlete : undefined;
   if (athlete === 'Aleksey Nemov') {

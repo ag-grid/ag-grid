@@ -6,6 +6,12 @@ import {
   IDetailCellRendererParams,
 } from '@ag-grid-community/core';
 
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { MasterDetailModule } from '@ag-grid-enterprise/master-detail';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, MasterDetailModule]);
+
 let gridApi: GridApi<IAccount>;
 
 const gridOptions: GridOptions<IAccount> = {

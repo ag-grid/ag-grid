@@ -1,5 +1,10 @@
 import { ColDef, GridApi, createGrid, GridOptions, INumberFilterParams } from '@ag-grid-community/core';
 import { SliderFloatingFilter } from './sliderFloatingFilter_typescript';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 
 const filterParams: INumberFilterParams = {
   filterOptions: ['greaterThan'],
