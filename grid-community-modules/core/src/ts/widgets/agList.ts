@@ -1,4 +1,3 @@
-import { AgAbstractField } from "./agAbstractField";
 import { Component } from "./component";
 import { PostConstruct } from "../context/context";
 import { escapeString } from "../utils/string";
@@ -28,8 +27,10 @@ export class AgList extends Component {
 
     @PostConstruct
     private init(): void {
+        const eGui = this.getGui();
+        this.addManagedListener(eGui, 'mouseleave', () => this.clearHighlighted());
         if (this.unFocusable) { return; }
-        this.addManagedListener(this.getGui(), 'keydown', this.handleKeyDown.bind(this));
+        this.addManagedListener(eGui, 'keydown', this.handleKeyDown.bind(this));
     }
 
     public handleKeyDown(e: KeyboardEvent): void {
@@ -101,9 +102,8 @@ export class AgList extends Component {
 
         this.itemEls.push(itemEl);
 
-        this.addManagedListener(itemEl, 'mouseover', () => this.highlightItem(itemEl));
-        this.addManagedListener(itemEl, 'mouseleave', () => this.clearHighlighted());
-        this.addManagedListener(itemEl, 'click', () => this.setValue(value));
+        this.addManagedListener(itemEl, 'mousemove', () => this.highlightItem(itemEl));
+        this.addManagedListener(itemEl, 'mousedown', (e) => { e.preventDefault(); this.setValue(value) });
 
         this.getGui().appendChild(itemEl);
     }
@@ -173,7 +173,16 @@ export class AgList extends Component {
         this.highlightedEl.classList.add(AgList.ACTIVE_CLASS);
         setAriaSelected(this.highlightedEl, true);
 
-        this.highlightedEl.scrollIntoView();
+        const eGui = this.getGui();
+        const rect = eGui.getBoundingClientRect();
+
+        const currentTop = rect.top + eGui.scrollTop;
+        const height = rect.height;
+        const { offsetTop, offsetHeight } = el;
+
+        if (((offsetTop + offsetHeight) > currentTop + height) || (offsetTop < currentTop)) {
+            this.highlightedEl.scrollIntoView({ block: 'nearest' })
+        }
 
         if (!this.unFocusable) {
             this.highlightedEl.focus();
