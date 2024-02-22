@@ -183,22 +183,22 @@ export class SeriesPanel extends Component {
     private initLineColor(): void {
         const currentValue = this.getSeriesOption<string | undefined>("stroke");
 
-        const seriesLineColorPicker = this.createBean(new AgColorPicker(this.chartMenuUtils.getDefaultColorPickerParams({
-            labelKey: 'strokeColor',
-            value: currentValue,
-            onValueChange: newValue => this.setSeriesOption("stroke", newValue)
-        })));
+        const seriesLineColorPicker = this.createBean(new AgColorPicker(this.chartMenuUtils.getDefaultColorPickerParams(
+            currentValue,
+            newValue => this.setSeriesOption("stroke", newValue),
+            'strokeColor',
+        )));
 
         this.addWidget(seriesLineColorPicker);
     }
 
     private initStrokeWidth(labelKey: 'strokeWidth' | 'lineWidth'): void {
-        const seriesStrokeWidthSlider = this.createBean(new AgSlider(this.chartMenuUtils.getDefaultSliderParams({
+        const seriesStrokeWidthSlider = this.createBean(new AgSlider(this.chartMenuUtils.getDefaultSliderParams(
+            this.getSeriesOption<number | undefined>("strokeWidth") ?? 0,
+            newValue => this.setSeriesOption("strokeWidth", newValue),
             labelKey,
-            defaultMaxValue: 10,
-            value: this.getSeriesOption<number | undefined>("strokeWidth") ?? 0,
-            onValueChange: newValue => this.setSeriesOption("strokeWidth", newValue)
-        })));
+            10
+        )));
 
         this.addWidget(seriesStrokeWidthSlider);
     }
@@ -206,23 +206,23 @@ export class SeriesPanel extends Component {
     private initLineDash(): void {
         const lineDash = this.getSeriesOption<number[]>("lineDash");
 
-        const seriesLineDashSlider = this.createBean(new AgSlider(this.chartMenuUtils.getDefaultSliderParams({
-            labelKey: 'lineDash',
-            defaultMaxValue: 30,
-            value: lineDash ? lineDash[0] : 0,
-            onValueChange: newValue => this.setSeriesOption("lineDash", [newValue])
-        })));
+        const seriesLineDashSlider = this.createBean(new AgSlider(this.chartMenuUtils.getDefaultSliderParams(
+            lineDash ? lineDash[0] : 0,
+            newValue => this.setSeriesOption("lineDash", [newValue]),
+            'lineDash',
+            30
+        )));
 
         this.addWidget(seriesLineDashSlider);
     }
 
     private initLineOpacity(): void {
-        const params = this.chartMenuUtils.getDefaultSliderParams({
-            labelKey: "strokeOpacity",
-            defaultMaxValue: 1,
-            value: this.getSeriesOption<number | undefined>("strokeOpacity") ?? 0,
-            onValueChange: newValue => this.setSeriesOption("strokeOpacity", newValue)
-        });
+        const params = this.chartMenuUtils.getDefaultSliderParams(
+            this.getSeriesOption<number | undefined>("strokeOpacity") ?? 0,
+            newValue => this.setSeriesOption("strokeOpacity", newValue),
+            "strokeOpacity",
+            1
+        );
         params.step = 0.05;
         const seriesLineOpacitySlider = this.createBean(new AgSlider(params));
 
@@ -231,12 +231,12 @@ export class SeriesPanel extends Component {
 
     private initFillOpacity(): void {
 
-        const params = this.chartMenuUtils.getDefaultSliderParams({
-            labelKey: "fillOpacity",
-            defaultMaxValue: 1,
-            value: this.getSeriesOption<number | undefined>("fillOpacity") ?? 0,
-            onValueChange: newValue => this.setSeriesOption("fillOpacity", newValue)
-        });
+        const params = this.chartMenuUtils.getDefaultSliderParams(
+            this.getSeriesOption<number | undefined>("fillOpacity") ?? 0,
+            newValue => this.setSeriesOption("fillOpacity", newValue),
+            "fillOpacity",
+            1
+        );
         params.step = 0.05;
         const seriesFillOpacitySlider = this.createBean(new AgSlider(params));
 
@@ -300,12 +300,12 @@ export class SeriesPanel extends Component {
             this.activePanels.push(placementSelect);
 
             // Add padding slider
-            const paddingSlider = labelPanelComp.createManagedBean(new AgSlider(this.chartMenuUtils.getDefaultSliderParams({
-                labelKey: 'padding',
-                defaultMaxValue: 200,
-                value: this.chartOptionsService.getSeriesOption<number>('label.padding', this.seriesType),
-                onValueChange: newValue => this.chartOptionsService.setSeriesOption('label.padding', newValue, this.seriesType)
-            })));
+            const paddingSlider = labelPanelComp.createManagedBean(new AgSlider(this.chartMenuUtils.getDefaultSliderParams(
+                this.chartOptionsService.getSeriesOption<number>('label.padding', this.seriesType),
+                newValue => this.chartOptionsService.setSeriesOption('label.padding', newValue, this.seriesType),
+                'padding',
+                200
+            )));
 
             labelPanelComp.addCompToPanel(paddingSlider);
             this.activePanels.push(paddingSlider);
@@ -315,12 +315,12 @@ export class SeriesPanel extends Component {
     private getSectorLabelPositionRatio(): AgSlider {
         const expression = 'sectorLabel.positionRatio';
 
-        const params = this.chartMenuUtils.getDefaultSliderParams({
-            labelKey: "positionRatio",
-            defaultMaxValue: 1,
-            value: this.chartOptionsService.getSeriesOption<number>(expression, this.seriesType),
-            onValueChange: newValue => this.chartOptionsService.setSeriesOption(expression, newValue, this.seriesType)
-        });
+        const params = this.chartMenuUtils.getDefaultSliderParams(
+            this.chartOptionsService.getSeriesOption<number>(expression, this.seriesType),
+            newValue => this.chartOptionsService.setSeriesOption(expression, newValue, this.seriesType),
+            "positionRatio",
+            1
+        );
         params.step = 0.05;
         return this.createBean(new AgSlider(params));
     }
@@ -336,12 +336,12 @@ export class SeriesPanel extends Component {
     }
 
     private initBins() {
-        const seriesBinCountSlider = this.createBean(new AgSlider(this.chartMenuUtils.getDefaultSliderParams({
-            labelKey: "histogramBinCount",
-            defaultMaxValue: 20,
-            value: (this.getSeriesOption<any>("bins") ?? this.getSeriesOption<any>("calculatedBins", true)).length,
-            onValueChange: newValue => this.setSeriesOption("binCount", newValue)
-        })));
+        const seriesBinCountSlider = this.createBean(new AgSlider(this.chartMenuUtils.getDefaultSliderParams(
+            (this.getSeriesOption<any>("bins") ?? this.getSeriesOption<any>("calculatedBins", true)).length,
+            newValue => this.setSeriesOption("binCount", newValue),
+            "histogramBinCount",
+            20
+        )));
 
         this.addWidget(seriesBinCountSlider);
     }

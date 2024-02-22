@@ -200,10 +200,10 @@ export class FontPanel extends Component {
     }
 
     private getColorPickerParams(): AgColorPickerParams {
-        return this.chartMenuUtils.getDefaultColorPickerParams({
-            value: `${this.getInitialFontValue('color')}`,
-            onValueChange: newColor => this.setFont({ color: newColor! })
-        });
+        return this.chartMenuUtils.getDefaultColorPickerParams(
+            `${this.getInitialFontValue('color')}`,
+            newColor => this.setFont({ color: newColor! })
+        );
     }
 
     public addItemToPanel(item: Component) {

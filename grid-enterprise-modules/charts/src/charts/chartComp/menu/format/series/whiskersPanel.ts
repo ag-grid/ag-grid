@@ -42,16 +42,16 @@ export class WhiskersPanel extends Component {
             suppressEnabledCheckbox: true,
         };
         const color = this.chartOptionsService.getSeriesOption<string | undefined | null>("whisker.stroke", this.getSelectedSeries());
-        const whiskerColorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams({
-            value: color == null ? 'transparent' : `${color}`,
-            onValueChange: newValue => this.chartOptionsService.setSeriesOption("whisker.stroke", newValue, this.getSelectedSeries())
-        });
-        const whiskerLineDashSliderParams = this.chartMenuUtils.getDefaultSliderParams({
-            labelKey: "lineDash",
-            defaultMaxValue: 30,
-            value: this.chartOptionsService.getSeriesOption<number[]>("whisker.lineDash", this.getSelectedSeries())?.[0] ?? 0,
-            onValueChange: newValue => this.chartOptionsService.setSeriesOption("whisker.lineDash", [newValue], this.getSelectedSeries())
-        });
+        const whiskerColorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams(
+            color == null ? 'transparent' : `${color}`,
+            newValue => this.chartOptionsService.setSeriesOption("whisker.stroke", newValue, this.getSelectedSeries())
+        );
+        const whiskerLineDashSliderParams = this.chartMenuUtils.getDefaultSliderParams(
+            this.chartOptionsService.getSeriesOption<number[]>("whisker.lineDash", this.getSelectedSeries())?.[0] ?? 0,
+            newValue => this.chartOptionsService.setSeriesOption("whisker.lineDash", [newValue], this.getSelectedSeries()),
+            "lineDash",
+            30,
+        );
         this.setTemplate(WhiskersPanel.TEMPLATE, {
             whiskersGroup: whiskersGroupParams,
             whiskerColorPicker: whiskerColorPickerParams,
@@ -63,11 +63,11 @@ export class WhiskersPanel extends Component {
     }
 
     private getSliderParams(labelKey: string, key: string, defaultMaxValue: number): AgSliderParams {
-        return this.chartMenuUtils.getDefaultSliderParams({
+        return this.chartMenuUtils.getDefaultSliderParams(
+            this.chartOptionsService.getSeriesOption(key, this.getSelectedSeries()),
+            newValue => this.chartOptionsService.setSeriesOption(key, newValue, this.getSelectedSeries()),
             labelKey,
-            defaultMaxValue,
-            value: this.chartOptionsService.getSeriesOption(key, this.getSelectedSeries()),
-            onValueChange: newValue => this.chartOptionsService.setSeriesOption(key, newValue, this.getSelectedSeries())
-        });
+            defaultMaxValue
+        );
     }
 }

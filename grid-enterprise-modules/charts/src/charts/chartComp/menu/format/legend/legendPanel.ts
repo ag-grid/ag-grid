@@ -73,26 +73,19 @@ export class LegendPanel extends Component {
     }
 
     private getLegendPositionParams(): AgSelectParams {
-        return {
-            label: this.chartTranslationService.translate("position"),
-            labelWidth: "flex",
-            inputWidth: 'flex',
-            options: ['top', 'right', 'bottom', 'left'].map(position => ({
-                value: position,
-                text: this.chartTranslationService.translate(position)
-            })),
-            value: this.chartOptionsService.getChartOption("legend.position"),
-            onValueChange: newValue => this.chartOptionsService.setChartOption("legend.position", newValue)
-        };
+        return this.chartMenuUtils.getDefaultLegendParams(
+            this.chartOptionsService.getChartOption("legend.position"),
+            newValue => this.chartOptionsService.setChartOption("legend.position", newValue)
+        );
     }
 
     private getSliderParams(expression: string, labelKey: string, defaultMaxValue: number): AgSliderParams {
-        return this.chartMenuUtils.getDefaultSliderParams({
+        return this.chartMenuUtils.getDefaultSliderParams(
+            this.chartOptionsService.getChartOption<number | undefined>(`legend.${expression}`) ?? 0,
+            newValue => this.chartOptionsService.setChartOption(`legend.${expression}`, newValue),
             labelKey,
-            defaultMaxValue,
-            value: this.chartOptionsService.getChartOption<number | undefined>(`legend.${expression}`) ?? 0,
-            onValueChange: newValue => this.chartOptionsService.setChartOption(`legend.${expression}`, newValue)
-        });
+            defaultMaxValue
+        );
     }
 
     private createLabelPanel(): FontPanel {

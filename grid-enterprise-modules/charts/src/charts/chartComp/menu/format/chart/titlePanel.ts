@@ -80,12 +80,12 @@ export default class TitlePanel extends Component {
     }
 
     private createSpacingSlicer() {
-        return this.createBean(new AgSlider(this.chartMenuUtils.getDefaultSliderParams({
-            labelKey: 'spacing',
-            defaultMaxValue: 100,
-            value: this.chartOptionsService.getChartOption<number>('title.spacing') ?? 10,
-            onValueChange: newValue => this.chartOptionsService.setChartOption('title.spacing', newValue)
-        })));
+        return this.createBean(new AgSlider(this.chartMenuUtils.getDefaultSliderParams(
+            this.chartOptionsService.getChartOption<number>('title.spacing') ?? 10,
+            newValue => this.chartOptionsService.setChartOption('title.spacing', newValue),
+            'spacing',
+            100
+        )));
     }
 
     private toolbarExists() {

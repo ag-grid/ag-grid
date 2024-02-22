@@ -36,12 +36,12 @@ export class CapsPanel extends Component {
             suppressOpenCloseIcons: true,
             suppressEnabledCheckbox: true,
         };
-        const capLengthRatioSliderParams = this.chartMenuUtils.getDefaultSliderParams({
-            labelKey: "capLengthRatio",
-            defaultMaxValue: 1,
-            value: this.chartOptionsService.getSeriesOption<number>("cap.lengthRatio", this.getSelectedSeries()),
-            onValueChange: newValue => this.chartOptionsService.setSeriesOption("cap.lengthRatio", newValue, this.getSelectedSeries())
-        });
+        const capLengthRatioSliderParams = this.chartMenuUtils.getDefaultSliderParams(
+            this.chartOptionsService.getSeriesOption<number>("cap.lengthRatio", this.getSelectedSeries()),
+            newValue => this.chartOptionsService.setSeriesOption("cap.lengthRatio", newValue, this.getSelectedSeries()),
+            "capLengthRatio",
+            1
+        );
         capLengthRatioSliderParams.step = 0.05;
         capLengthRatioSliderParams.minValue = 0;
 

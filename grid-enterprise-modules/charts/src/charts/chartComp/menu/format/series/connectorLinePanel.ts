@@ -52,10 +52,10 @@ export class ConnectorLinePanel extends Component {
 
     private getColorPickerParams(seriesOptionKey: string): AgColorPickerParams {
         const color = this.chartOptionsService.getSeriesOption<string | undefined | null>(seriesOptionKey, this.getSelectedSeries());
-        return this.chartMenuUtils.getDefaultColorPickerParams({
-            value: color == null ? 'transparent' : `${color}`,
-            onValueChange: newValue => this.chartOptionsService.setSeriesOption(seriesOptionKey, newValue, this.getSelectedSeries())
-        });
+        return this.chartMenuUtils.getDefaultColorPickerParams(
+            color == null ? 'transparent' : `${color}`,
+            newValue => this.chartOptionsService.setSeriesOption(seriesOptionKey, newValue, this.getSelectedSeries())
+        );
     }
 
     private getSliderParams(

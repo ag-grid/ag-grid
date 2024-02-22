@@ -1,4 +1,4 @@
-import { AgSliderParams, Autowired, Bean, BeanStub } from "@ag-grid-community/core";
+import { AgSelectParams, AgSliderParams, Autowired, Bean, BeanStub } from "@ag-grid-community/core";
 import { AgColorPickerParams } from "../../../widgets/agColorPicker";
 import { ChartTranslationService } from "../services/chartTranslationService";
 
@@ -6,12 +6,11 @@ import { ChartTranslationService } from "../services/chartTranslationService";
 export class ChartMenuUtils extends BeanStub {
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
-    public getDefaultColorPickerParams(params: {
-        labelKey?: string,
+    public getDefaultColorPickerParams(
         value: any,
-        onValueChange: (value: any) => void
-    }): AgColorPickerParams {
-        const { labelKey, value, onValueChange } = params;
+        onValueChange: (value: any) => void,
+        labelKey?: string
+    ): AgColorPickerParams {
         return {
             label: this.chartTranslationService.translate(labelKey ?? 'color'),
             labelWidth: 'flex',
@@ -21,18 +20,35 @@ export class ChartMenuUtils extends BeanStub {
         }
     }
 
-    public getDefaultSliderParams(params: {
-        labelKey: string,
+    public getDefaultSliderParams(
         value: number,
         onValueChange: (value: any) => void,
+        labelKey: string,
         defaultMaxValue: number
-    }): AgSliderParams {
-        const { labelKey, value, onValueChange, defaultMaxValue } = params;
+    ): AgSliderParams {
         return {
             label: this.chartTranslationService.translate(labelKey),
+            minValue: 0,
             maxValue: Math.max(value, defaultMaxValue),
             textFieldWidth: 45,
             value: `${value}`,
+            onValueChange
+        };
+    }
+
+    public getDefaultLegendParams(
+        value: any,
+        onValueChange: (value: any) => void
+    ): AgSelectParams {
+        return {
+            label: this.chartTranslationService.translate('position'),
+            labelWidth: "flex",
+            inputWidth: 'flex',
+            options: ['top', 'right', 'bottom', 'left'].map(position => ({
+                value: position,
+                text: this.chartTranslationService.translate(position)
+            })),
+            value,
             onValueChange
         };
     }

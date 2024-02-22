@@ -48,11 +48,11 @@ export class CalloutPanel extends Component {
     }
 
     private getSliderParams(expression: string, labelKey: string, defaultMaxValue: number): AgSliderParams {
-        return this.chartMenuUtils.getDefaultSliderParams({
+        return this.chartMenuUtils.getDefaultSliderParams(
+            this.chartOptionsService.getSeriesOption<number>(expression, this.getSelectedSeries()),
+            newValue => this.chartOptionsService.setSeriesOption(expression, newValue, this.getSelectedSeries()),
             labelKey,
-            defaultMaxValue,
-            value: this.chartOptionsService.getSeriesOption<number>(expression, this.getSelectedSeries()),
-            onValueChange: newValue => this.chartOptionsService.setSeriesOption(expression, newValue, this.getSelectedSeries())
-        });
+            defaultMaxValue
+        );
     }
 }

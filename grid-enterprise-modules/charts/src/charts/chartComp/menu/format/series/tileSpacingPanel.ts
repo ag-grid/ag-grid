@@ -52,11 +52,11 @@ export class TileSpacingPanel extends Component {
     }
 
     private getSliderParams(labelKey: string, key: string): AgSliderParams {
-        return this.chartMenuUtils.getDefaultSliderParams({
+        return this.chartMenuUtils.getDefaultSliderParams(
+            this.chartOptionsService.getSeriesOption<number>(key, this.getSelectedSeries()),
+            newValue => this.chartOptionsService.setSeriesOption(key, newValue, this.getSelectedSeries()),
             labelKey,
-            defaultMaxValue: 10,
-            value: this.chartOptionsService.getSeriesOption<number>(key, this.getSelectedSeries()),
-            onValueChange: newValue => this.chartOptionsService.setSeriesOption(key, newValue, this.getSelectedSeries())
-        });
+            10
+        );
     }
 }

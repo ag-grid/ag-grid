@@ -60,27 +60,27 @@ export class CartesianAxisPanel extends Component {
             expanded: this.isExpandedOnInit,
             suppressEnabledCheckbox: true
         };
-        const axisColorInputParams = this.chartMenuUtils.getDefaultColorPickerParams({
-            value: this.chartOptionsService.getAxisProperty("line.color"),
-            onValueChange: newColor => {
+        const axisColorInputParams = this.chartMenuUtils.getDefaultColorPickerParams(
+            this.chartOptionsService.getAxisProperty("line.color"),
+            newColor => {
                 const isLineEnabled = this.chartOptionsService.getAxisProperty<number>("line.width") > 0;
                 this.chartOptionsService.setAxisProperties<string | null | undefined | boolean>([
                     { expression: "line.enabled", value: isLineEnabled }, 
                     { expression: "line.color", value: newColor }, 
                 ]);
             }
-        });
+        );
         // Note that there is no separate checkbox for enabling/disabling the axis line. Whenever the line settings are
         // changed, the value for `line.enabled` is inferred based on the current `line.width` value.
-        const axisLineWidthSliderParams = this.chartMenuUtils.getDefaultSliderParams({
-            defaultMaxValue: 10,
-            labelKey: "thickness",
-            value: this.chartOptionsService.getAxisProperty<number>("line.width"),
-            onValueChange: newValue => this.chartOptionsService.setAxisProperties<number | boolean>([
+        const axisLineWidthSliderParams = this.chartMenuUtils.getDefaultSliderParams(
+            this.chartOptionsService.getAxisProperty<number>("line.width"),
+            newValue => this.chartOptionsService.setAxisProperties<number | boolean>([
                 { expression: "line.enabled", value: (newValue !== 0) },
                 { expression: "line.width", value: newValue },
-            ])
-        });
+            ]),
+            "thickness",
+            10
+        );
         this.setTemplate(CartesianAxisPanel.TEMPLATE, {
             axisGroup: axisGroupParams,
             axisColorInput: axisColorInputParams,
@@ -227,12 +227,12 @@ export class CartesianAxisPanel extends Component {
     }
 
     private addLabelPadding(labelPanelComp: FontPanel) {
-        const labelPaddingSlider = this.createBean(new AgSlider(this.chartMenuUtils.getDefaultSliderParams({
-            labelKey: "padding",
-            defaultMaxValue: 30,
-            value: this.chartOptionsService.getAxisProperty<number>("label.padding"),
-            onValueChange: newValue => this.chartOptionsService.setAxisProperty("label.padding", newValue)
-        })));
+        const labelPaddingSlider = this.createBean(new AgSlider(this.chartMenuUtils.getDefaultSliderParams(
+            this.chartOptionsService.getAxisProperty<number>("label.padding"),
+            newValue => this.chartOptionsService.setAxisProperty("label.padding", newValue),
+            "padding",
+            30
+        )));
 
         labelPanelComp.addCompToPanel(labelPaddingSlider);
     }

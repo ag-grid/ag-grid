@@ -71,17 +71,10 @@ export class GradientLegendPanel extends Component {
     }
 
     private getLegendPositionParams(): AgSelectParams {
-        return {
-            label: this.chartTranslationService.translate("position"),
-            labelWidth: "flex",
-            inputWidth: 'flex',
-            options: ['top', 'right', 'bottom', 'left'].map(position => ({
-                value: position,
-                text: this.chartTranslationService.translate(position)
-            })),
-            value: this.chartOptionsService.getChartOption("gradientLegend.position"),
-            onValueChange: newValue => this.chartOptionsService.setChartOption("gradientLegend.position", newValue)
-        };
+        return this.chartMenuUtils.getDefaultLegendParams(
+            this.chartOptionsService.getChartOption("gradientLegend.position"),
+            newValue => this.chartOptionsService.setChartOption("gradientLegend.position", newValue)
+        );
     }
 
     private getGradientReverseCheckboxParams(): AgCheckboxParams {
@@ -94,23 +87,23 @@ export class GradientLegendPanel extends Component {
     }
             
      private getSliderParams(expression: string, labelKey: string, defaultMaxValue: number): AgSliderParams {
-        return this.chartMenuUtils.getDefaultSliderParams({
+        return this.chartMenuUtils.getDefaultSliderParams(
+            this.chartOptionsService.getChartOption<number | undefined>(expression) ?? 0,
+            newValue => {
+                this.chartOptionsService.setChartOption(expression, newValue)
+            },
             labelKey,
-            defaultMaxValue,
-            value: this.chartOptionsService.getChartOption<number | undefined>(expression) ?? 0,
-            onValueChange: newValue => {
-                    this.chartOptionsService.setChartOption(expression, newValue)
-            }
-        });
+            defaultMaxValue
+        );
     }
 
     private getLegendSpacingParams(): AgSliderParams {
-        return this.chartMenuUtils.getDefaultSliderParams({
-            labelKey: "spacing",
-            defaultMaxValue: 200,
-            value: this.chartOptionsService.getChartOption<number>("gradientLegend.spacing"),
-            onValueChange: newValue => this.chartOptionsService.setChartOption("gradientLegend.spacing", newValue)
-        });
+        return this.chartMenuUtils.getDefaultSliderParams(
+            this.chartOptionsService.getChartOption<number>("gradientLegend.spacing"),
+            newValue => this.chartOptionsService.setChartOption("gradientLegend.spacing", newValue),
+            "spacing",
+            200
+        );
     }
 
     private createLabelPanel(): FontPanel {

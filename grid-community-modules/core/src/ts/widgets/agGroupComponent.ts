@@ -57,7 +57,8 @@ export class AgGroupComponent extends Component {
 
         this.alignItems = params.alignItems || 'center';
 
-        this.expanded = !!expanded;
+        // expanded by default
+        this.expanded = expanded == null ? true : expanded;
 
         if (suppressEnabledCheckbox != null) {
             this.suppressEnabledCheckbox = suppressEnabledCheckbox;
@@ -102,7 +103,7 @@ export class AgGroupComponent extends Component {
         }
 
         if (this.enabled) {
-            this.setEnabled(this.enabled);
+            this.setEnabled(this.enabled, undefined, true);
         }
 
         this.setAlignItems(this.alignItems);
@@ -113,6 +114,7 @@ export class AgGroupComponent extends Component {
         this.setupExpandContract();
         this.refreshAriaStatus();
         this.refreshChildDisplay();
+        setDisplayed(this.eContainer, this.expanded);
 
         const { onEnableChange } = this.params;
         if (onEnableChange != null) {
@@ -233,11 +235,13 @@ export class AgGroupComponent extends Component {
         this.eTitleBar.classList.add(cssClass);
     }
 
-    public setEnabled(enabled: boolean, skipToggle?: boolean): this {
+    public setEnabled(enabled: boolean, skipToggle?: boolean, skipExpand?: boolean): this {
         this.enabled = enabled;
         this.refreshDisabledStyles();
 
-        this.toggleGroupExpand(enabled);
+        if (!skipExpand) {
+            this.toggleGroupExpand(enabled);
+        }
 
         if (!skipToggle) {
             this.cbGroupEnabled.setValue(enabled);

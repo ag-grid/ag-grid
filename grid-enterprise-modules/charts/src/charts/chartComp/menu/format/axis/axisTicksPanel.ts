@@ -38,17 +38,17 @@ export class AxisTicksPanel extends Component {
             suppressEnabledCheckbox: false,
             onEnableChange: newValue => this.chartOptionsService.setAxisProperty("tick.enabled", newValue)
         };
-        const axisTicksColorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams({
-            value: this.chartOptionsService.getAxisProperty("tick.color"),
-            onValueChange: newColor => this.chartOptionsService.setAxisProperty("tick.color", newColor)
-        });
+        const axisTicksColorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams(
+            this.chartOptionsService.getAxisProperty("tick.color"),
+            newColor => this.chartOptionsService.setAxisProperty("tick.color", newColor)
+        );
         const getSliderParams = (expression: string, labelKey: string, defaultMaxValue: number): AgSliderParams => {
-            return this.chartMenuUtils.getDefaultSliderParams({
+            return this.chartMenuUtils.getDefaultSliderParams(
+                this.chartOptionsService.getAxisProperty<number>(expression),
+                newValue => this.chartOptionsService.setAxisProperty(expression, newValue),
                 labelKey,
-                defaultMaxValue,
-                value: this.chartOptionsService.getAxisProperty<number>(expression),
-                onValueChange: newValue => this.chartOptionsService.setAxisProperty(expression, newValue)
-            });
+                defaultMaxValue
+            );
         };
         const axisTicksWidthSliderParams = getSliderParams("tick.width", "width", 10);
         const axisTicksSizeSliderParams = getSliderParams("tick.size", "length", 30);

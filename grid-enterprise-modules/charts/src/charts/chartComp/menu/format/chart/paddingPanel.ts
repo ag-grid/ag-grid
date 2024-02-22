@@ -44,12 +44,12 @@ export class PaddingPanel extends Component {
             suppressEnabledCheckbox: true
         };
         const getSliderParams = (property: keyof AgChartPaddingOptions) => {
-            return this.chartMenuUtils.getDefaultSliderParams({
-                labelKey: property,
-                defaultMaxValue: 200,
-                value: this.chartOptionsService.getChartOption<number>('padding.' + property),
-                onValueChange: newValue => this.chartOptionsService.setChartOption('padding.' + property, newValue)
-            });
+            return this.chartMenuUtils.getDefaultSliderParams(
+                this.chartOptionsService.getChartOption<number>('padding.' + property),
+                newValue => this.chartOptionsService.setChartOption('padding.' + property, newValue),
+                property,
+                200
+            );
         };
 
         this.setTemplate(PaddingPanel.TEMPLATE, {

@@ -51,17 +51,17 @@ export class MarkersPanel extends Component {
             onEnableChange: newValue => this.setSeriesOption("marker.enabled", newValue)
         };
 
+        const isBubble = chartType === 'bubble';
         let seriesMarkerMinSizeSliderParams: AgSliderParams;
         let seriesMarkerSizeSliderParams: AgSliderParams;
-        if (chartType === 'bubble') {
+        if (isBubble) {
             seriesMarkerMinSizeSliderParams = this.getSliderParams("marker.maxSize", "maxSize", 60);
             seriesMarkerSizeSliderParams = this.getSliderParams("marker.size", "minSize", 60);
         } else {
             seriesMarkerMinSizeSliderParams = {};
-            this.seriesMarkerMinSizeSlider.setDisplayed(false);
             seriesMarkerSizeSliderParams = this.getSliderParams("marker.size", "size", 60);
         }
-
+        
         this.setTemplate(MarkersPanel.TEMPLATE, {
             seriesMarkersGroup: seriesMarkersGroupParams,
             seriesMarkerShapeSelect: this.getMarkerShapeSelectParams(),
@@ -69,7 +69,9 @@ export class MarkersPanel extends Component {
             seriesMarkerSizeSlider: seriesMarkerSizeSliderParams,
             seriesMarkerStrokeWidthSlider: this.getSliderParams("marker.strokeWidth", "strokeWidth", 10)
         });
-        this.getMarkerShapeSelectParams();
+        if (!isBubble) {
+            this.seriesMarkerMinSizeSlider.setDisplayed(false);
+        }
     }
 
     private getMarkerShapeSelectParams(): AgSelectParams {
@@ -112,12 +114,12 @@ export class MarkersPanel extends Component {
     }
 
     private getSliderParams(expression: string, labelKey: string, defaultMaxValue: number): AgSliderParams {
-        return this.chartMenuUtils.getDefaultSliderParams({
+        return this.chartMenuUtils.getDefaultSliderParams(
+            this.getSeriesOption<number>(expression),
+            newValue => this.setSeriesOption(expression, newValue),
             labelKey,
-            defaultMaxValue,
-            value: this.getSeriesOption<number>(expression),
-            onValueChange: newValue => this.setSeriesOption(expression, newValue)
-        });
+            defaultMaxValue
+        );
     }
 
     private getSeriesOption<T = string>(expression: string): T {

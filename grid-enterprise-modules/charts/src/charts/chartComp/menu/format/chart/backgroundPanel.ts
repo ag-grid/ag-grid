@@ -34,10 +34,10 @@ export class BackgroundPanel extends Component {
             suppressEnabledCheckbox: false,
             onEnableChange: enabled => this.chartOptionsService.setChartOption('background.visible', enabled)
         };
-        const colorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams({
-            value: this.chartOptionsService.getChartOption('background.fill'),
-            onValueChange: newColor => this.chartOptionsService.setChartOption('background.fill', newColor)
-        });
+        const colorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams(
+            this.chartOptionsService.getChartOption('background.fill'),
+            newColor => this.chartOptionsService.setChartOption('background.fill', newColor)
+        );
         this.setTemplate(BackgroundPanel.TEMPLATE, {
             chartBackgroundGroup: chartBackgroundGroupParams,
             colorPicker: colorPickerParams

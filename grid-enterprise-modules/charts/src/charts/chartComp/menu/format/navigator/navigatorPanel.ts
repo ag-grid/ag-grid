@@ -49,12 +49,12 @@ export class NavigatorPanel extends Component {
             },
             expanded: this.isExpandedOnInit
         };
-        const navigatorHeightSliderParams = this.chartMenuUtils.getDefaultSliderParams({
-            labelKey: "height",
-            defaultMaxValue: 60,
-            value: this.chartOptionsService.getChartOption<number>("navigator.height") ?? 30,
-            onValueChange: height => this.chartOptionsService.setChartOption("navigator.height", height)
-        });
+        const navigatorHeightSliderParams = this.chartMenuUtils.getDefaultSliderParams(
+            this.chartOptionsService.getChartOption<number>("navigator.height") ?? 30,
+            height => this.chartOptionsService.setChartOption("navigator.height", height),
+            "height",
+            60
+        );
         navigatorHeightSliderParams.minValue = 10;
         this.setTemplate(NavigatorPanel.TEMPLATE, {
             navigatorGroup: navigatorGroupParams,

@@ -18,22 +18,6 @@ import {FormatPanelOptions} from '../formatPanel';
 import {isPolar, isRadial} from '../../../utils/seriesTypeMapper';
 import { ChartMenuUtils } from '../../chartMenuUtils';
 
-interface SliderConfig {
-    label: string;
-    maxValue: number;
-    minValue?: number;
-    step?: number;
-    currentValue: number;
-    onValueChange: (newValue: number) => void;
-}
-
-interface SelectConfig {
-    label: string;
-    options: Array<ListOption>;
-    currentValue?: string;
-    onValueChange: (newValue: string) => void;
-}
-
 export class PolarAxisPanel extends Component {
     public static TEMPLATE = /* html */
         `<div>
@@ -69,16 +53,16 @@ export class PolarAxisPanel extends Component {
             expanded: this.isExpandedOnInit,
             suppressEnabledCheckbox: true
         };
-        const axisColorInputParams = this.chartMenuUtils.getDefaultColorPickerParams({
-            value: this.chartOptionsService.getAxisProperty('line.color'),
-            onValueChange: (newColor) => this.chartOptionsService.setAxisProperty('line.color', newColor)
-        });
-        const axisLineWidthSliderParams = this.chartMenuUtils.getDefaultSliderParams({
-            defaultMaxValue: 10,
-            labelKey: 'thickness',
-            value: this.chartOptionsService.getAxisProperty<number>('line.width'),
-            onValueChange: (newValue) => this.chartOptionsService.setAxisProperty('line.width', newValue)
-        });
+        const axisColorInputParams = this.chartMenuUtils.getDefaultColorPickerParams(
+            this.chartOptionsService.getAxisProperty('line.color'),
+            (newColor) => this.chartOptionsService.setAxisProperty('line.color', newColor)
+        );
+        const axisLineWidthSliderParams = this.chartMenuUtils.getDefaultSliderParams(
+            this.chartOptionsService.getAxisProperty<number>('line.width'),
+            (newValue) => this.chartOptionsService.setAxisProperty('line.width', newValue),
+            'thickness',
+            10
+        );
         this.setTemplate(PolarAxisPanel.TEMPLATE, {
             axisGroup: axisGroupParams,
             axisColorInput: axisColorInputParams,
@@ -99,21 +83,18 @@ export class PolarAxisPanel extends Component {
                 { value: 'polygon', text: this.translate('polygon') },
             ];
 
-            this.axisGroup.addItem(this.initSelect({
+            this.axisGroup.addItem(this.createSelect({
                 label: 'shape',
                 options: options,
-                currentValue: this.chartOptionsService.getAxisProperty('shape'),
-                onValueChange: newValue => this.chartOptionsService.setAxisProperty('shape', newValue)
+                property: 'shape'
             }));
         }
 
         if (isPolar(chartType)) {
-            const currentValue = this.chartOptionsService.getAxisProperty<number>('innerRadiusRatio');
-            this.axisGroup.addItem(this.initSlider({
-                label: 'innerRadius',
-                maxValue: 1,
-                currentValue: currentValue ?? 0, // Provide a default value if undefined
-                onValueChange: newValue => this.chartOptionsService.setAxisProperty('innerRadiusRatio', newValue)
+            this.axisGroup.addItem(this.createSlider({
+                labelKey: 'innerRadius',
+                defaultMaxValue: 1,
+                property: 'innerRadiusRatio'
             }));
         }
     }
@@ -143,11 +124,10 @@ export class PolarAxisPanel extends Component {
             { value: 'perpendicular', text: this.translate('perpendicular') },
         ];
 
-        return this.initSelect({
+        return this.createSelect({
             label: 'orientation',
-            options: options,
-            currentValue: this.chartOptionsService.getAxisProperty('label.orientation'),
-            onValueChange: newValue => this.chartOptionsService.setAxisProperty('label.orientation', newValue),
+            options,
+            property: 'label.orientation'
         });
     }
 
@@ -156,17 +136,15 @@ export class PolarAxisPanel extends Component {
         if (!isRadial(chartType)) return;
 
         const items = [
-            this.initSlider({
-                label: 'groupPadding',
-                maxValue: 1,
-                currentValue: this.chartOptionsService.getAxisProperty<number>('paddingInner') ?? 0,
-                onValueChange: newValue => this.chartOptionsService.setAxisProperty('paddingInner', newValue)
+            this.createSlider({
+                labelKey: 'groupPadding',
+                defaultMaxValue: 1,
+                property: 'paddingInner'
             }),
-            this.initSlider({
-                label: 'seriesPadding',
-                maxValue: 1,
-                currentValue: this.chartOptionsService.getAxisProperty<number>('groupPaddingInner') ?? 0,
-                onValueChange: newValue => this.chartOptionsService.setAxisProperty('groupPaddingInner', newValue)
+            this.createSlider({
+                labelKey: 'seriesPadding',
+                defaultMaxValue: 1,
+                property: 'groupPaddingInner'
             })
         ];
 
@@ -183,29 +161,37 @@ export class PolarAxisPanel extends Component {
         this.axisGroup.addItem(paddingPanelComp);
     }
 
-    private initSlider(config: SliderConfig): AgSlider {
-        const { label, maxValue, minValue = 0, step = 0.05, currentValue, onValueChange } = config;
-        return this.createManagedBean(new AgSlider({
-            label: this.translate(label),
-            labelWidth: 'flex',
-            minValue,
-            maxValue,
-            step,
-            value: `${currentValue}`,
-            onValueChange
-        }));
+    private createSlider(config: {
+        labelKey: string;
+        defaultMaxValue: number;
+        step?: number;
+        property: string;
+    }): AgSlider {
+        const { labelKey, defaultMaxValue, step = 0.05, property } = config;
+        const params = this.chartMenuUtils.getDefaultSliderParams(
+            this.chartOptionsService.getAxisProperty<number>(property) ?? 0,
+            newValue => this.chartOptionsService.setAxisProperty(property, newValue),
+            labelKey,
+            defaultMaxValue
+        );
+        params.step = step;
+        return this.createManagedBean(new AgSlider(params));
     }
 
-    private initSelect(config: SelectConfig): AgSelect {
-        const { label, options, currentValue, onValueChange } = config;
+    private createSelect(config: {
+        label: string;
+        options: Array<ListOption>;
+        property: string
+    }): AgSelect {
+        const { label, options, property } = config;
         return this.createManagedBean(new AgSelect({
             label: this.translate(label),
             labelAlignment: 'left',
             labelWidth: 'flex',
             inputWidth: 'flex',
             options,
-            value: currentValue,
-            onValueChange: onValueChange
+            value: this.chartOptionsService.getAxisProperty(property),
+            onValueChange: newValue => this.chartOptionsService.setAxisProperty(property, newValue)
         }));
     }
 

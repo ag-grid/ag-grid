@@ -44,10 +44,10 @@ export class ShadowPanel extends Component {
             suppressEnabledCheckbox: false,
             onEnableChange: newValue => this.chartOptionsService.setSeriesOption(`${propertyNamespace}.enabled`, newValue, this.getSelectedSeries())
         };
-        const shadowColorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams({
-            value: this.chartOptionsService.getSeriesOption(`${propertyNamespace}.color`, this.getSelectedSeries()),
-            onValueChange: newValue => this.chartOptionsService.setSeriesOption(`${propertyNamespace}.color`, newValue, this.getSelectedSeries())
-        });
+        const shadowColorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams(
+            this.chartOptionsService.getSeriesOption(`${propertyNamespace}.color`, this.getSelectedSeries()),
+            newValue => this.chartOptionsService.setSeriesOption(`${propertyNamespace}.color`, newValue, this.getSelectedSeries())
+        );
         this.setTemplate(ShadowPanel.TEMPLATE, {
             shadowGroup: shadowGroupParams,
             shadowColorPicker: shadowColorPickerParams,
@@ -59,12 +59,12 @@ export class ShadowPanel extends Component {
 
     private getSliderParams(property: string, minValue: number, defaultMaxValue: number): AgSliderParams {
         const expression = `${this.propertyKey}.${property}`
-        const params = this.chartMenuUtils.getDefaultSliderParams({
-            labelKey: property,
-            defaultMaxValue,
-            value: this.chartOptionsService.getSeriesOption<number>(expression, this.getSelectedSeries()),
-            onValueChange: newValue => this.chartOptionsService.setSeriesOption(expression, newValue, this.getSelectedSeries())
-        });
+        const params = this.chartMenuUtils.getDefaultSliderParams(
+            this.chartOptionsService.getSeriesOption<number>(expression, this.getSelectedSeries()),
+            newValue => this.chartOptionsService.setSeriesOption(expression, newValue, this.getSelectedSeries()),
+            property,
+            defaultMaxValue
+        );
         params.minValue = minValue;
         return params;
     }
