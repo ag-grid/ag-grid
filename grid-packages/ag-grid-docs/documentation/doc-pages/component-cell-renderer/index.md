@@ -32,7 +32,7 @@ in a cell. The grid comes with some Provided Cell Components for common grid tas
 
 The example below shows some Custom Cell Components.
 
-<grid-example title='Simple Cell Renderer' name='simple' type='mixed' options='{ "exampleHeight": 460 }'></grid-example>
+<grid-example title='Simple Cell Renderer' name='cell-renderer-summary-example' type='mixed' options='{ "exampleHeight": 460 }'></grid-example>
 
 ## Custom Components
 
