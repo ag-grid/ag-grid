@@ -73,6 +73,15 @@ export const getGeneratedContents = async (params: GeneratedContentParams): Prom
     const { internalFramework, folderPath, isDev = false, importType } = params;
     const sourceFileList = await fs.readdir(folderPath);
 
+    if(sourceFileList.includes('SKIP_EXAMPLE_GENERATION.md')) {
+        const msg = `Skipping example generation for ${folderPath} as there is a SKIP_EXAMPLE_GENERATION.md file present.`;
+        console.log(msg);
+        return {
+            skipped: msg,
+            generatedFiles: {},
+        } as any;
+    }
+
     if (!sourceFileList.includes(SOURCE_ENTRY_FILE_NAME)) {
         throw new Error('Unable to find example entry-point at: ' + folderPath);
     }
