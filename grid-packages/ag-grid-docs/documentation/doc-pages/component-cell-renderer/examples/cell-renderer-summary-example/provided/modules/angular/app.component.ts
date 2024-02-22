@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { NgIf } from '@angular/common';
-import { ModuleRegistry, CellValueChangedEvent, ColDef, GridReadyEvent, ICellRendererParams, SelectionChangedEvent, ValueFormatterParams, ValueGetterParams } from '@ag-grid-community/core';
+import { NgFor, NgIf } from '@angular/common';
+import { ModuleRegistry, ColDef, GridReadyEvent, ICellRendererParams, ValueGetterParams } from '@ag-grid-community/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
@@ -74,7 +74,7 @@ export class MissionResultRenderer implements ICellRendererAngularComp {
     />
   </span>
   `,
-  styles: ["img {display: block; width: 25px; height: auto; max-height: 50%; margin-right: 12px; filter: brightness(1.1);} span {display: flex; height: 100%; width: 100%; align-items: center} p { text-overflow: ellipsis; overflow: hidden; white-space: nowrap }"]
+  styles: ["img {display: block; width: 25px; height: auto; max-height: 50%; margin-right: 12px; filter: brightness(1.1);} span {display: flex; height: 100%; width: 100%; align-items: center}"]
 })
 export class CompanyLogoRenderer implements ICellRendererAngularComp {
   // Init Cell Value
@@ -86,6 +86,56 @@ export class CompanyLogoRenderer implements ICellRendererAngularComp {
   // Return Cell Value
   refresh(params: ICellRendererParams): boolean {
     this.value = params.value;
+    return true;
+  }
+}
+
+@Component({
+  standalone: true,
+  imports: [NgFor],
+  template: `
+      <span>
+          <img *ngFor="let number of arr" [src]="src" />
+      </span>
+  `,
+  styles: ["img {display: block; width: 15px; height: auto; max-height: 50%;} span {display: flex; height: 100%; width: 100%; align-items: center}"]
+})
+export class PriceRenderer implements ICellRendererAngularComp {
+  priceMultiplier: number = 1;
+  src: string = "https://www.ag-grid.com/example-assets/pound.png";
+  arr!: any[];
+
+  agInit(params: ICellRendererParams): void {
+    if (params.value > 5000000) {
+      this.priceMultiplier = 2
+    }
+    if (params.value > 10000000) {
+      this.priceMultiplier = 3
+    }
+    if (params.value > 25000000) {
+      this.priceMultiplier = 4
+    }
+    if (params.value > 20000000) {
+      this.priceMultiplier = 5
+    }
+    this.arr = new Array(this.priceMultiplier);
+  }
+
+  // Return Cell Value
+  refresh(params: ICellRendererParams): boolean {
+    if (params.value > 5000000) {
+      this.priceMultiplier = 2
+    }
+    if (params.value > 10000000) {
+      this.priceMultiplier = 3
+    }
+    if (params.value > 25000000) {
+      this.priceMultiplier = 4
+    }
+    if (params.value > 20000000) {
+      this.priceMultiplier = 5
+    }
+    this.arr = new Array(this.priceMultiplier).fill('');
     return true;
   }
 }
@@ -160,7 +210,7 @@ export class AppComponent {
     {
       field: "price",
       valueGetter: params => { return params.data.price },
-      // cellRenderer: PriceRenderer
+      cellRenderer: PriceRenderer
     },
     {
       field: "successful", 
