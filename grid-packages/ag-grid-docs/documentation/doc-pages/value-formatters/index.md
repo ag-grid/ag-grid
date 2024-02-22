@@ -1,5 +1,9 @@
 ---
+<<<<<<< Updated upstream
 title: "Text Formatting"
+=======
+title: "Formatting Values"
+>>>>>>> Stashed changes
 ---
 
 Use a Value Formatter to provide text formatting of values.

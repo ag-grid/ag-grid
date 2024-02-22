@@ -31,11 +31,19 @@ in a cell. The grid comes with some Provided Cell Components for common grid tas
 </framework-specific-section>
 
 The example below shows some Custom Cell Components.
+<<<<<<< Updated upstream
 
-<grid-example title='Simple Cell Renderer' name='simple' type='mixed' options='{ "exampleHeight": 460 }'></grid-example>
+<grid-example title='Simple Cell Renderer' name='cell-renderer-summary-example' type='mixed' options='{ "exampleHeight": 460 }'></grid-example>
+=======
+>>>>>>> Stashed changes
 
 ## Custom Components
 
+<<<<<<< Updated upstream
+=======
+## Custom Components
+
+>>>>>>> Stashed changes
 md-include:component-interface-angular.md
 md-include:component-interface-javascript.md
 md-include:component-interface-react.md
