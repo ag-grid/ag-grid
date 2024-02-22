@@ -6,11 +6,11 @@ Update the Row Data inside the grid by updating the `rowData` grid property or b
 
 The example below shows the data with two sets of data. Clicking the buttons toggles between the data sets. Some rows are common between the dataset, however if any row is selected (by clicking the row), the selection is lost between row updates.
 
-{% gridExampleRunner title="Simple Row Data" name="simple-row-data" type="generated" options= { "modules": ["clientside"] } /%}
+{% gridExampleRunner title="Simple Row Data" name="simple-row-data" type="generated" options={ "modules": ["clientside"] } /%}
 
 The example below is identical to the above except [Row IDs](./row-ids/) are provided via the `getRowId()` callback. This results in Row Selection being maintained across Row Data changes (assuming the Row exists in both sets) and the HTML is not redrawn from scratch, resulting in a Row Animation (`animateRows=true`) of the rows.
 
-{% gridExampleRunner title="Simple Row ID" name="simple-row-id" type="generated" options= { "modules": ["clientside"] } /%}
+{% gridExampleRunner title="Simple Row ID" name="simple-row-id" type="generated" options={ "modules": ["clientside"] } /%}
 
 Providing [Row IDs](./row-ids/) allows the grid to work optimally in a few areas which are outlined as follows:
 

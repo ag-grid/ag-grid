@@ -158,7 +158,7 @@ When a row is selected, the selection will remain inside the grid, even if the g
 The example below uses AG Grid Enterprise, to demonstrate the set filter with server-side filtering. AG Grid Enterprise is not required for infinite scrolling.
 {% /note %}
 
-{% gridExampleRunner title="Server-Side Sorting And Filtering" name="server-side" type="mixed" options= { "enterprise": true, "modules": ["infinite", "setfilter", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Server-Side Sorting And Filtering" name="server-side" type="mixed" options={ "enterprise": true, "modules": ["infinite", "setfilter", "menu", "columnpanel"] } /%}
 
 {% note %}
 When performing multiple row selections using shift-click, it is possible that not all rows are available in memory if the configured value of `maxBlocksInCache` doesn't cover the range. In this case multiple selections will not be allowed.

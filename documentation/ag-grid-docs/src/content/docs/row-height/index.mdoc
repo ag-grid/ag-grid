@@ -90,7 +90,7 @@ Note that this example uses AG Grid Enterprise as it uses grouping. Setting the 
 height is an AG Grid Community feature, we just demonstrate it against groups and normal
 rows below.
 
-{% gridExampleRunner title="Changing Row Height" name="row-height-change" type="generated" options= { "enterprise": true, "exampleHeight": 590, "modules": ["clientside", "rowgrouping", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Changing Row Height" name="row-height-change" type="generated" options={ "enterprise": true, "exampleHeight": 590, "modules": ["clientside", "rowgrouping", "menu", "columnpanel"] } /%}
 
 ## Text Wrapping
 
@@ -128,7 +128,7 @@ The example below shows Auto Height. Column A has Auto Height enabled by setting
 
 <!-- this example uses a timeout to set data - the runner doesn't currently support this sort of thing -->
 
-{% gridExampleRunner title="Auto Row Height" name="auto-row-height" type="generated" options= { "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Auto Row Height" name="auto-row-height" type="generated" options={ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "columnpanel"] } /%}
 
 {% warning %}
 Columns with Auto Height will always be rendered because the grid needs to set the height of the row. Setting `autoHeight=true` adds size listeners to cells and stops Column Virtualisation for these columns which can negatively impact rendering performance. This is why only set Auto Height for columns which require it. For example, if you have many columns that do not require variable height, do not set them to Auto Height.
