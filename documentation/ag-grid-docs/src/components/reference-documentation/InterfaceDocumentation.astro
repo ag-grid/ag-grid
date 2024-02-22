@@ -14,11 +14,16 @@ if (overrideSrc) {
     const overrideFileName = overrideSrc.replace('.json', '');
     const overridesEntry = await getEntry('interface-documentation', overrideFileName);
     if (!overridesEntry) {
-        throw new Error(
+        // TODO: throw this error when errors fixed
+        // throw new Error(
+        //     `InterfaceDocumentation source not found: src/content/interface-documentation/${overrideFileName}.json`
+        // );
+        console.error(
             `InterfaceDocumentation source not found: src/content/interface-documentation/${overrideFileName}.json`
         );
+    } else {
+        overrides = overridesEntry.data;
     }
-    overrides = overridesEntry.data;
 }
 
 const interfaceLookup = getJsonFile('reference/interfaces.AUTO.json');
