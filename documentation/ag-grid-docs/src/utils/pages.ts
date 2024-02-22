@@ -1,9 +1,9 @@
 import type { InternalFramework, Library } from '@ag-grid-types';
-import { SITE_BASE_URL, USE_PUBLISHED_PACKAGES } from '../constants';
 import type { CollectionEntry } from 'astro:content';
 import glob from 'glob';
 import { readFileSync } from 'node:fs';
 
+import { SITE_BASE_URL, USE_PUBLISHED_PACKAGES } from '../constants';
 import { type GlobConfig, createFilePathFinder } from './createFilePathFinder';
 import { getIsDev } from './env';
 import { pathJoin } from './pathJoin';
@@ -80,10 +80,11 @@ export const FILES_PATH_MAP: Record<string, string | GlobConfig> = {
     // '@ag-grid-community/client-side-row-model': 'community-modules/client-side-row-model/dist/package/main.cjs.js',
 
     '@ag-grid-community/react/dist/**': 'community-modules/react/dist/**/*.{cjs,js,map}',
-    '@ag-grid-community/angular': 'community-modules/angular/dist/ag-grid-angular/fesm2015/ag-grid-community-angular.mjs',
-    '@ag-grid-community/vue/main.js': 'community-modules/vue/main.js',
-    '@ag-grid-community/vue': 'community-modules/vue/lib/AgGridVue.js',
-    '@ag-grid-community/vue3': 'community-modules/vue3/lib/AgGridVue.js'
+    '@ag-grid-community/angular':
+        'community-modules/angular/dist/ag-grid-angular/fesm2015/ag-grid-community-angular.mjs',
+    // '@ag-grid-community/vue/main.js': 'community-modules/vue/main.js',
+    // '@ag-grid-community/vue': 'community-modules/vue/lib/AgGridVue.js',
+    // '@ag-grid-community/vue3': 'community-modules/vue3/lib/AgGridVue.js'
 
     // TODO: Dynamically map files
     // '@ag-grid-community': {
