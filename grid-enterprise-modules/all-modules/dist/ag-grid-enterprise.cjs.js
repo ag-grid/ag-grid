@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/all-modules - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.1.0
+          * @ag-grid-enterprise/all-modules - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.1.1
           * @link https://www.ag-grid.com/
           * @license Commercial
           */

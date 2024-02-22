@@ -1,4 +1,4 @@
-// @ag-grid-community/react v31.1.0
+// @ag-grid-community/react v31.1.1
 import { ICellRendererComp } from '@ag-grid-community/core';
 import { MutableRefObject } from 'react';
 import { RenderDetails } from './cellComp';

@@ -1,4 +1,4 @@
-// ag-grid-react v31.1.0
+// ag-grid-react v31.1.1
 import { IStatusPanel, IStatusPanelParams } from "ag-grid-community";
 import { CustomComponentWrapper } from "./customComponentWrapper";
 import { CustomStatusPanelProps } from "./interfaces";

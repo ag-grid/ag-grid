@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/column-tool-panel - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.1.0
+          * @ag-grid-enterprise/column-tool-panel - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.1.1
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -49834,7 +49834,7 @@ var BarColumnLabelPlacement;
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v31.1.0
+ * @version v31.1.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -50396,7 +50396,7 @@ __decorate$u([
 ], WatermarkComp.prototype, "postConstruct", null);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$3 = '31.1.0';
+const VERSION$3 = '31.1.1';
 
 const EnterpriseCoreModule = {
     version: VERSION$3,
@@ -54771,7 +54771,7 @@ FilterAggregatesStage = __decorate$c([
 ], FilterAggregatesStage);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$2 = '31.1.0';
+const VERSION$2 = '31.1.1';
 
 var __decorate$b = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -56429,7 +56429,7 @@ ToolPanelColDefService = __decorate$2([
 ], ToolPanelColDefService);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$1 = '31.1.0';
+const VERSION$1 = '31.1.1';
 
 var __decorate$1 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -56687,7 +56687,7 @@ ModelItemUtils = __decorate([
 ], ModelItemUtils);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION = '31.1.0';
+const VERSION = '31.1.1';
 
 const ColumnsToolPanelModule = {
     version: VERSION,

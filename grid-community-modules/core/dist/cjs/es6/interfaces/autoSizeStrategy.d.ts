@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v31.1.0
+// Type definitions for @ag-grid-community/core v31.1.1
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 /** Limit a column width when auto-sizing to fit grid width. */

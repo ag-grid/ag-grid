@@ -1,8 +1,4 @@
 import type { DeepPartial } from './types';
-export interface JsonMergeOptions {
-    /** Contains a list of properties where deep clones should be avoided */
-    avoidDeepClone: string[];
-}
 /**
  * Performs a recursive JSON-diff between a source and target JSON structure.
  *

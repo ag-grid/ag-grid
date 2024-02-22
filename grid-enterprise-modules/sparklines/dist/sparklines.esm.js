@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/sparklines - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.1.0
+          * @ag-grid-enterprise/sparklines - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.1.1
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -49834,7 +49834,7 @@ var BarColumnLabelPlacement$1;
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v31.1.0
+ * @version v31.1.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -50396,7 +50396,7 @@ __decorate$2([
 ], WatermarkComp.prototype, "postConstruct", null);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$1 = '31.1.0';
+const VERSION$1 = '31.1.1';
 
 const EnterpriseCoreModule = {
     version: VERSION$1,
@@ -51128,6 +51128,9 @@ function isEnumKey(enumObject, enumKey) {
 }
 function isEnumValue(enumObject, enumValue) {
   return Object.values(enumObject).includes(enumValue);
+}
+function isSymbol(value) {
+  return typeof value === "symbol";
 }
 
 // packages/ag-charts-community/src/util/object.ts
@@ -53388,6 +53391,7 @@ var ChartOptions = class {
     this.seriesTypeIntegrity(options);
     this.soloSeriesIntegrity(options);
     this.removeDisabledOptions(options);
+    this.removeLeftoverSymbols(options);
     if (((_a = options.series) == null ? void 0 : _a.some((s) => s.type === "bullet")) && options.sync != null && options.sync.enabled !== false) {
       Logger.warnOnce("bullet series cannot be synced, disabling synchronization.");
       delete options.sync;
@@ -53674,6 +53678,21 @@ var ChartOptions = class {
         }
       },
       { skip: ["data", "theme"] }
+    );
+  }
+  removeLeftoverSymbols(options) {
+    jsonWalk(
+      options,
+      (optionsNode) => {
+        if (!optionsNode || !isObject(optionsNode))
+          return;
+        for (const [key, value] of Object.entries(optionsNode)) {
+          if (isSymbol(value)) {
+            delete optionsNode[key];
+          }
+        }
+      },
+      { skip: ["data"] }
     );
   }
   specialOverridesDefaults(options) {
@@ -69750,7 +69769,7 @@ var _Chart = class _Chart extends Observable {
     this.lastInteractionEvent = void 0;
     this.pointerScheduler = debouncedAnimationFrame(() => {
       if (this.lastInteractionEvent) {
-        this.handlePointer(this.lastInteractionEvent);
+        this.handlePointer(this.lastInteractionEvent, false);
         this.lastInteractionEvent = void 0;
       }
     });
@@ -70089,7 +70108,7 @@ var _Chart = class _Chart extends Observable {
             break;
           const tooltipMeta = this.tooltipManager.getTooltipMeta(this.id);
           if (performUpdateType <= 4 /* SERIES_UPDATE */ && tooltipMeta !== void 0) {
-            this.handlePointer(tooltipMeta.lastPointerEvent);
+            this.handlePointer(tooltipMeta.lastPointerEvent, true);
           }
           splits["\u2196"] = performance.now();
         case 6 /* SCENE_RENDER */:
@@ -70449,7 +70468,7 @@ var _Chart = class _Chart extends Observable {
       });
     }
   }
-  handlePointer(event) {
+  handlePointer(event, redisplay) {
     if (this.interactionManager.getState() !== 8 /* Default */) {
       return;
     }
@@ -70460,6 +70479,10 @@ var _Chart = class _Chart extends Observable {
         this.resetPointer(highlightOnly);
       }
     };
+    if (redisplay && this.animationManager.isActive()) {
+      disablePointer();
+      return;
+    }
     if (!(hoverRect == null ? void 0 : hoverRect.containsPoint(offsetX, offsetY))) {
       disablePointer();
       return;
@@ -73413,6 +73436,13 @@ var _RangeSelector = class _RangeSelector extends Group {
     minHandle.centerX = x + width * min;
     maxHandle.centerX = x + width * max;
     minHandle.centerY = maxHandle.centerY = y + height / 2;
+    if (min + (max - min) / 2 < 0.5) {
+      minHandle.zIndex = 3;
+      maxHandle.zIndex = 4;
+    } else {
+      minHandle.zIndex = 4;
+      maxHandle.zIndex = 3;
+    }
   }
   computeBBox() {
     return this.mask.computeBBox();
@@ -73531,14 +73561,21 @@ var Navigator = class extends BaseModuleInstance {
     const { minHandle, maxHandle, min } = rs;
     const { x, width } = this;
     const visibleRange = rs.computeVisibleRangeBBox();
-    if (!(this.minHandleDragging || this.maxHandleDragging)) {
-      if (minHandle.containsPoint(offsetX, offsetY)) {
-        this.minHandleDragging = true;
-      } else if (maxHandle.containsPoint(offsetX, offsetY)) {
+    if (this.minHandleDragging || this.maxHandleDragging)
+      return;
+    if (minHandle.zIndex < maxHandle.zIndex) {
+      if (maxHandle.containsPoint(offsetX, offsetY)) {
         this.maxHandleDragging = true;
-      } else if (visibleRange.containsPoint(offsetX, offsetY)) {
-        this.panHandleOffset = (offsetX - x) / width - min;
+      } else if (minHandle.containsPoint(offsetX, offsetY)) {
+        this.minHandleDragging = true;
       }
+    } else if (minHandle.containsPoint(offsetX, offsetY)) {
+      this.minHandleDragging = true;
+    } else if (maxHandle.containsPoint(offsetX, offsetY)) {
+      this.maxHandleDragging = true;
+    }
+    if (!this.minHandleDragging && !this.maxHandleDragging && visibleRange.containsPoint(offsetX, offsetY)) {
+      this.panHandleOffset = (offsetX - x) / width - min;
     }
   }
   onDrag(offset4) {
@@ -73965,8 +74002,8 @@ __decorateClass([
 ], AreaSeriesProperties.prototype, "connectMissingData", 2);
 
 // packages/ag-charts-community/src/chart/series/cartesian/markerUtil.ts
-function markerFadeInAnimation({ id }, animationManager, markerSelections, status = "unknown") {
-  const params = { phase: NODE_UPDATE_STATE_TO_PHASE_MAPPING[status] };
+function markerFadeInAnimation({ id }, animationManager, markerSelections, status) {
+  const params = { phase: status ? NODE_UPDATE_STATE_TO_PHASE_MAPPING[status] : "trailing" };
   staticFromToMotion(id, "markers", animationManager, markerSelections, { opacity: 0 }, { opacity: 1 }, params);
   markerSelections.forEach((s) => s.cleanup());
 }
@@ -75149,7 +75186,7 @@ var _AreaSeries = class _AreaSeries extends CartesianSeries {
       skip();
       return;
     }
-    fromToMotion(this.id, "markers", animationManager, markerSelections, fns.marker);
+    markerFadeInAnimation(this, animationManager, markerSelections);
     fromToMotion(this.id, "fill_path_properties", animationManager, [fill], fns.fill.pathProperties);
     pathMotion(this.id, "fill_path_update", animationManager, [fill], fns.fill.path);
     this.updateStrokePath(paths, contextData);
@@ -77417,7 +77454,7 @@ var _LineSeries = class _LineSeries extends CartesianSeries {
       skip();
       return;
     }
-    fromToMotion(this.id, "marker", animationManager, markerSelections, fns.marker);
+    markerFadeInAnimation(this, animationManager, markerSelections);
     fromToMotion(this.id, "path_properties", animationManager, path, fns.pathProperties);
     pathMotion(this.id, "path_update", animationManager, path, fns.path);
     if (fns.hasMotion) {
@@ -81941,6 +81978,7 @@ __export(module_support_exports, {
   isProperties: () => isProperties,
   isRegExp: () => isRegExp,
   isString: () => isString$1,
+  isSymbol: () => isSymbol,
   isValidDate: () => isValidDate,
   jsonApply: () => jsonApply,
   jsonDiff: () => jsonDiff,
@@ -84500,7 +84538,7 @@ SparklineTooltipSingleton = __decorate([
 ], SparklineTooltipSingleton);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION = '31.1.0';
+const VERSION = '31.1.1';
 
 const SparklinesModule = {
     version: VERSION,

@@ -1,4 +1,4 @@
-// @ag-grid-community/react v31.1.0
+// @ag-grid-community/react v31.1.1
 import { _, CssClassManager } from '@ag-grid-community/core';
 import React, { useCallback, useRef, useState, useMemo, memo, useContext, useLayoutEffect } from 'react';
 import { isComponentStateless } from '../utils.mjs';

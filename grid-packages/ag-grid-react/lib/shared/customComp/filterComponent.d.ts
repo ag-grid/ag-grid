@@ -1,4 +1,4 @@
-// ag-grid-react v31.1.0
+// ag-grid-react v31.1.1
 import { IDoesFilterPassParams, IFilter, IFilterParams } from "ag-grid-community";
 import { CustomComponent } from "./customComponent";
 import { CustomFilterProps, CustomFilterCallbacks } from "./interfaces";

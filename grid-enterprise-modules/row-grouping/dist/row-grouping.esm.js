@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/row-grouping - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.1.0
+          * @ag-grid-enterprise/row-grouping - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.1.1
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -49834,7 +49834,7 @@ var BarColumnLabelPlacement;
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v31.1.0
+ * @version v31.1.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -50396,7 +50396,7 @@ __decorate$e([
 ], WatermarkComp.prototype, "postConstruct", null);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$1 = '31.1.0';
+const VERSION$1 = '31.1.1';
 
 const EnterpriseCoreModule = {
     version: VERSION$1,
@@ -53256,7 +53256,7 @@ FilterAggregatesStage = __decorate$3([
 ], FilterAggregatesStage);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION = '31.1.0';
+const VERSION = '31.1.1';
 
 var __decorate$2 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;

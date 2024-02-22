@@ -1,4 +1,4 @@
-// @ag-grid-community/react v31.1.0
+// @ag-grid-community/react v31.1.1
 import React, { memo, useEffect, useState } from "react";
 import { CustomContext } from "../../shared/customComp/customContext.mjs";
 const CustomWrapperComp = (params) => {

@@ -1,4 +1,4 @@
-// @ag-grid-community/react v31.1.0
+// @ag-grid-community/react v31.1.1
 /**
  * Show a JS Component
  * @returns Effect Cleanup function

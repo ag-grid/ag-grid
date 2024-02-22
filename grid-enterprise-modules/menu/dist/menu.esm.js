@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/menu - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.1.0
+          * @ag-grid-enterprise/menu - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.1.1
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -49834,7 +49834,7 @@ var BarColumnLabelPlacement;
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v31.1.0
+ * @version v31.1.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -50396,7 +50396,7 @@ __decorate$B([
 ], WatermarkComp.prototype, "postConstruct", null);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$4 = '31.1.0';
+const VERSION$4 = '31.1.1';
 
 const EnterpriseCoreModule = {
     version: VERSION$4,
@@ -51413,7 +51413,7 @@ MenuItemMapper = __decorate$y([
 ], MenuItemMapper);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$3 = '31.1.0';
+const VERSION$3 = '31.1.1';
 
 var __decorate$x = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -56229,7 +56229,7 @@ FilterAggregatesStage = __decorate$f([
 ], FilterAggregatesStage);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$2 = '31.1.0';
+const VERSION$2 = '31.1.1';
 
 var __decorate$e = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -57887,7 +57887,7 @@ ToolPanelColDefService = __decorate$5([
 ], ToolPanelColDefService);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$1 = '31.1.0';
+const VERSION$1 = '31.1.1';
 
 var __decorate$4 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -58145,7 +58145,7 @@ ModelItemUtils = __decorate$3([
 ], ModelItemUtils);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION = '31.1.0';
+const VERSION = '31.1.1';
 
 ({
     version: VERSION,

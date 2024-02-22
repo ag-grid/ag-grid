@@ -1,4 +1,4 @@
-// @ag-grid-community/react v31.1.0
+// @ag-grid-community/react v31.1.1
 import { AgPromise } from "@ag-grid-community/core";
 import customWrapperComp from "../../reactUi/customComp/customWrapperComp.mjs";
 import { ReactComponent } from "../reactComponent.mjs";

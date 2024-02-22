@@ -1,4 +1,4 @@
-// ag-grid-react v31.1.0
+// ag-grid-react v31.1.1
 import { IMenuItem, IMenuItemParams } from "ag-grid-community";
 import { CustomComponentWrapper } from "./customComponentWrapper";
 import { CustomMenuItemProps, CustomMenuItemCallbacks } from "./interfaces";

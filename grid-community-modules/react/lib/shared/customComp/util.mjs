@@ -1,4 +1,4 @@
-// @ag-grid-community/react v31.1.0
+// @ag-grid-community/react v31.1.1
 import { AgPromise, _ } from "@ag-grid-community/core";
 /**
  * Function to retrieve the React component from an instance returned by the grid.

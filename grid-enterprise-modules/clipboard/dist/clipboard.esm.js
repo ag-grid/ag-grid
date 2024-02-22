@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/clipboard - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.1.0
+          * @ag-grid-enterprise/clipboard - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.1.1
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -49834,7 +49834,7 @@ var BarColumnLabelPlacement;
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v31.1.0
+ * @version v31.1.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -50396,7 +50396,7 @@ __decorate$3([
 ], WatermarkComp.prototype, "postConstruct", null);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$2 = '31.1.0';
+const VERSION$2 = '31.1.1';
 
 const EnterpriseCoreModule = {
     version: VERSION$2,
@@ -51110,7 +51110,7 @@ GridSerializer = __decorate$1([
 ], GridSerializer);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$1 = '31.1.0';
+const VERSION$1 = '31.1.1';
 
 const CsvExportModule = {
     version: VERSION$1,
@@ -52037,7 +52037,7 @@ ClipboardService = ClipboardService_1 = __decorate([
 ], ClipboardService);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION = '31.1.0';
+const VERSION = '31.1.1';
 
 const ClipboardModule = {
     version: VERSION,

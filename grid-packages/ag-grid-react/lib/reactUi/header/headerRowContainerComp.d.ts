@@ -1,4 +1,4 @@
-// ag-grid-react v31.1.0
+// ag-grid-react v31.1.1
 import React from 'react';
 import { ColumnPinnedType } from 'ag-grid-community';
 declare const _default: React.MemoExoticComponent<(props: {

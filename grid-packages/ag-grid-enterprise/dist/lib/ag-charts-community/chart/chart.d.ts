@@ -176,7 +176,7 @@ export declare abstract class Chart extends Observable implements AgChartInstanc
     private onContextMenu;
     private lastInteractionEvent?;
     private pointerScheduler;
-    protected handlePointer(event: PointerOffsets): void;
+    protected handlePointer(event: PointerOffsets, redisplay: boolean): void;
     protected handlePointerTooltip(event: PointerOffsets, disablePointer: (highlightOnly?: boolean) => void): void;
     protected handlePointerNode(event: PointerOffsets): void;
     protected onClick(event: InteractionEvent<'click'>): void;

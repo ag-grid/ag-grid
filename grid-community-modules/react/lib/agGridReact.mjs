@@ -1,4 +1,4 @@
-// @ag-grid-community/react v31.1.0
+// @ag-grid-community/react v31.1.1
 import React, { Component } from 'react';
 import { AgGridReactUi } from './reactUi/agGridReactUi.mjs';
 export class AgGridReact extends Component {

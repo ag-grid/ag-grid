@@ -1,4 +1,4 @@
-// ag-grid-react v31.1.0
+// ag-grid-react v31.1.1
 import { IToolPanel, IToolPanelParams } from "ag-grid-community";
 import { CustomComponentWrapper } from "./customComponentWrapper";
 import { CustomToolPanelProps } from "./interfaces";

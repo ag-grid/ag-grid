@@ -1,4 +1,4 @@
-// @ag-grid-community/react v31.1.0
+// @ag-grid-community/react v31.1.1
 import { CustomComponentWrapper } from "./customComponentWrapper.mjs";
 import { updateFloatingFilterParent } from "./floatingFilterComponentProxy.mjs";
 // floating filter is normally instantiated via react header filter cell comp, but not in the case of multi filter

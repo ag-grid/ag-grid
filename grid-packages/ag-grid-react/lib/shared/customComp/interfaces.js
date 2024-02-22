@@ -1,4 +1,4 @@
-// ag-grid-react v31.1.0
+// ag-grid-react v31.1.1
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useGridMenuItem = exports.useGridFloatingFilter = exports.useGridFilter = exports.useGridDate = exports.useGridCellEditor = void 0;

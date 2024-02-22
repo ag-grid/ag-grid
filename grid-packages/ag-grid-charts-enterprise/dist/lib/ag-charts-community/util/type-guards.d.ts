@@ -15,3 +15,4 @@ export declare function isFiniteNumber(value: unknown): value is number;
 export declare function isHtmlElement(value: unknown): value is HTMLElement;
 export declare function isEnumKey<T extends object>(enumObject: T, enumKey: keyof T): enumKey is keyof T;
 export declare function isEnumValue<T extends object>(enumObject: T, enumValue: unknown): enumValue is T[keyof T];
+export declare function isSymbol(value: unknown): value is symbol;

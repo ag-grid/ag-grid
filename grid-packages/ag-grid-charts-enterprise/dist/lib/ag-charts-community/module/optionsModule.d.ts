@@ -79,6 +79,7 @@ export declare class ChartOptions<T extends AgChartOptions = AgChartOptions> {
     private soloSeriesIntegrity;
     private enableConfiguredOptions;
     private removeDisabledOptions;
+    private removeLeftoverSymbols;
     private specialOverridesDefaults;
 }
 export {};

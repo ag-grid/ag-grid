@@ -1,4 +1,4 @@
-// @ag-grid-community/react v31.1.0
+// @ag-grid-community/react v31.1.1
 export class PortalManager {
     constructor(refresher, wrappingElement, maxComponentCreationTimeMs) {
         this.destroyed = false;

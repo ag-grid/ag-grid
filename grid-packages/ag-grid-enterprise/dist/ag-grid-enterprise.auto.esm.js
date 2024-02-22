@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/all-modules - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.1.0
+          * @ag-grid-enterprise/all-modules - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.1.1
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -613,7 +613,7 @@ var WatermarkComp = /** @class */ (function (_super) {
 }(Component));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$j = '31.1.0';
+var VERSION$j = '31.1.1';
 
 var EnterpriseCoreModule = {
     version: VERSION$j,
@@ -4668,7 +4668,7 @@ var AdvancedFilterService = /** @class */ (function (_super) {
 }(BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$i = '31.1.0';
+var VERSION$i = '31.1.1';
 
 var AdvancedFilterModule = {
     version: VERSION$i,
@@ -5688,7 +5688,7 @@ var ClipboardService = /** @class */ (function (_super) {
 }(BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$h = '31.1.0';
+var VERSION$h = '31.1.1';
 
 var ClipboardModule = {
     version: VERSION$h,
@@ -10594,7 +10594,7 @@ var FilterAggregatesStage = /** @class */ (function (_super) {
 }(BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$g = '31.1.0';
+var VERSION$g = '31.1.1';
 
 var __extends$2v = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -12505,7 +12505,7 @@ var ToolPanelColDefService = /** @class */ (function (_super) {
 }(BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$f = '31.1.0';
+var VERSION$f = '31.1.1';
 
 var __extends$2k = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -12788,7 +12788,7 @@ var ModelItemUtils = /** @class */ (function () {
 }());
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$e = '31.1.0';
+var VERSION$e = '31.1.1';
 
 var ColumnsToolPanelModule = {
     version: VERSION$e,
@@ -16174,7 +16174,7 @@ var ExcelCreator = /** @class */ (function (_super) {
 }(BaseCreator));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$d = '31.1.0';
+var VERSION$d = '31.1.1';
 
 var ExcelExportModule = {
     version: VERSION$d,
@@ -17286,7 +17286,7 @@ var FiltersToolPanel = /** @class */ (function (_super) {
 }(Component));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$c = '31.1.0';
+var VERSION$c = '31.1.1';
 
 var FiltersToolPanelModule = {
     version: VERSION$c,
@@ -18038,6 +18038,9 @@ function isEnumKey(enumObject, enumKey) {
 }
 function isEnumValue(enumObject, enumValue) {
   return Object.values(enumObject).includes(enumValue);
+}
+function isSymbol(value) {
+  return typeof value === "symbol";
 }
 
 // packages/ag-charts-community/src/util/object.ts
@@ -20392,6 +20395,7 @@ var ChartOptions = class {
     this.seriesTypeIntegrity(options);
     this.soloSeriesIntegrity(options);
     this.removeDisabledOptions(options);
+    this.removeLeftoverSymbols(options);
     if (((_a = options.series) == null ? void 0 : _a.some((s) => s.type === "bullet")) && options.sync != null && options.sync.enabled !== false) {
       Logger.warnOnce("bullet series cannot be synced, disabling synchronization.");
       delete options.sync;
@@ -20678,6 +20682,21 @@ var ChartOptions = class {
         }
       },
       { skip: ["data", "theme"] }
+    );
+  }
+  removeLeftoverSymbols(options) {
+    jsonWalk(
+      options,
+      (optionsNode) => {
+        if (!optionsNode || !isObject(optionsNode))
+          return;
+        for (const [key, value] of Object.entries(optionsNode)) {
+          if (isSymbol(value)) {
+            delete optionsNode[key];
+          }
+        }
+      },
+      { skip: ["data"] }
     );
   }
   specialOverridesDefaults(options) {
@@ -36754,7 +36773,7 @@ var _Chart = class _Chart extends Observable {
     this.lastInteractionEvent = void 0;
     this.pointerScheduler = debouncedAnimationFrame(() => {
       if (this.lastInteractionEvent) {
-        this.handlePointer(this.lastInteractionEvent);
+        this.handlePointer(this.lastInteractionEvent, false);
         this.lastInteractionEvent = void 0;
       }
     });
@@ -37093,7 +37112,7 @@ var _Chart = class _Chart extends Observable {
             break;
           const tooltipMeta = this.tooltipManager.getTooltipMeta(this.id);
           if (performUpdateType <= 4 /* SERIES_UPDATE */ && tooltipMeta !== void 0) {
-            this.handlePointer(tooltipMeta.lastPointerEvent);
+            this.handlePointer(tooltipMeta.lastPointerEvent, true);
           }
           splits["\u2196"] = performance.now();
         case 6 /* SCENE_RENDER */:
@@ -37453,7 +37472,7 @@ var _Chart = class _Chart extends Observable {
       });
     }
   }
-  handlePointer(event) {
+  handlePointer(event, redisplay) {
     if (this.interactionManager.getState() !== 8 /* Default */) {
       return;
     }
@@ -37464,6 +37483,10 @@ var _Chart = class _Chart extends Observable {
         this.resetPointer(highlightOnly);
       }
     };
+    if (redisplay && this.animationManager.isActive()) {
+      disablePointer();
+      return;
+    }
     if (!(hoverRect == null ? void 0 : hoverRect.containsPoint(offsetX, offsetY))) {
       disablePointer();
       return;
@@ -40419,6 +40442,13 @@ var _RangeSelector = class _RangeSelector extends Group {
     minHandle.centerX = x + width * min;
     maxHandle.centerX = x + width * max;
     minHandle.centerY = maxHandle.centerY = y + height / 2;
+    if (min + (max - min) / 2 < 0.5) {
+      minHandle.zIndex = 3;
+      maxHandle.zIndex = 4;
+    } else {
+      minHandle.zIndex = 4;
+      maxHandle.zIndex = 3;
+    }
   }
   computeBBox() {
     return this.mask.computeBBox();
@@ -40537,14 +40567,21 @@ var Navigator = class extends BaseModuleInstance {
     const { minHandle, maxHandle, min } = rs;
     const { x, width } = this;
     const visibleRange = rs.computeVisibleRangeBBox();
-    if (!(this.minHandleDragging || this.maxHandleDragging)) {
-      if (minHandle.containsPoint(offsetX, offsetY)) {
-        this.minHandleDragging = true;
-      } else if (maxHandle.containsPoint(offsetX, offsetY)) {
+    if (this.minHandleDragging || this.maxHandleDragging)
+      return;
+    if (minHandle.zIndex < maxHandle.zIndex) {
+      if (maxHandle.containsPoint(offsetX, offsetY)) {
         this.maxHandleDragging = true;
-      } else if (visibleRange.containsPoint(offsetX, offsetY)) {
-        this.panHandleOffset = (offsetX - x) / width - min;
+      } else if (minHandle.containsPoint(offsetX, offsetY)) {
+        this.minHandleDragging = true;
       }
+    } else if (minHandle.containsPoint(offsetX, offsetY)) {
+      this.minHandleDragging = true;
+    } else if (maxHandle.containsPoint(offsetX, offsetY)) {
+      this.maxHandleDragging = true;
+    }
+    if (!this.minHandleDragging && !this.maxHandleDragging && visibleRange.containsPoint(offsetX, offsetY)) {
+      this.panHandleOffset = (offsetX - x) / width - min;
     }
   }
   onDrag(offset4) {
@@ -40971,8 +41008,8 @@ __decorateClass([
 ], AreaSeriesProperties.prototype, "connectMissingData", 2);
 
 // packages/ag-charts-community/src/chart/series/cartesian/markerUtil.ts
-function markerFadeInAnimation({ id }, animationManager, markerSelections, status = "unknown") {
-  const params = { phase: NODE_UPDATE_STATE_TO_PHASE_MAPPING[status] };
+function markerFadeInAnimation({ id }, animationManager, markerSelections, status) {
+  const params = { phase: status ? NODE_UPDATE_STATE_TO_PHASE_MAPPING[status] : "trailing" };
   staticFromToMotion(id, "markers", animationManager, markerSelections, { opacity: 0 }, { opacity: 1 }, params);
   markerSelections.forEach((s) => s.cleanup());
 }
@@ -42155,7 +42192,7 @@ var _AreaSeries = class _AreaSeries extends CartesianSeries {
       skip();
       return;
     }
-    fromToMotion(this.id, "markers", animationManager, markerSelections, fns.marker);
+    markerFadeInAnimation(this, animationManager, markerSelections);
     fromToMotion(this.id, "fill_path_properties", animationManager, [fill], fns.fill.pathProperties);
     pathMotion(this.id, "fill_path_update", animationManager, [fill], fns.fill.path);
     this.updateStrokePath(paths, contextData);
@@ -44660,7 +44697,7 @@ var _LineSeries = class _LineSeries extends CartesianSeries {
       skip();
       return;
     }
-    fromToMotion(this.id, "marker", animationManager, markerSelections, fns.marker);
+    markerFadeInAnimation(this, animationManager, markerSelections);
     fromToMotion(this.id, "path_properties", animationManager, path, fns.pathProperties);
     pathMotion(this.id, "path_update", animationManager, path, fns.path);
     if (fns.hasMotion) {
@@ -48910,6 +48947,20 @@ var _AgChartsInternal = class _AgChartsInternal {
     return proxy;
   }
   static updateUserDelta(proxy, deltaOptions) {
+    deltaOptions = deepClone(deltaOptions, { shallow: ["data"] });
+    jsonWalk(
+      deltaOptions,
+      (node) => {
+        if (typeof node !== "object")
+          return;
+        for (const [key, value] of Object.entries(node)) {
+          if (typeof value === "undefined") {
+            Object.assign(node, { [key]: Symbol("UNSET") });
+          }
+        }
+      },
+      { skip: ["data"] }
+    );
     const { chart } = proxy;
     const lastUpdateOptions = chart.getOptions();
     const userOptions = mergeDefaults(deltaOptions, lastUpdateOptions);
@@ -48921,21 +48972,22 @@ var _AgChartsInternal = class _AgChartsInternal {
    * Returns the content of the current canvas as an image.
    */
   static download(proxy, opts) {
-    _AgChartsInternal.prepareResizedChart(proxy, opts).then((maybeClone) => {
-      maybeClone.chart.scene.download(opts == null ? void 0 : opts.fileName, opts == null ? void 0 : opts.fileFormat);
-      if (maybeClone !== proxy) {
-        maybeClone.destroy();
+    return __async(this, null, function* () {
+      try {
+        const clone = yield _AgChartsInternal.prepareResizedChart(proxy, opts);
+        clone.chart.scene.download(opts == null ? void 0 : opts.fileName, opts == null ? void 0 : opts.fileFormat);
+        clone.destroy();
+      } catch (error) {
+        Logger.errorOnce(error);
       }
-    }).catch(Logger.errorOnce);
+    });
   }
   static getImageDataURL(proxy, opts) {
     return __async(this, null, function* () {
-      const maybeClone = yield _AgChartsInternal.prepareResizedChart(proxy, opts);
-      const { canvas } = maybeClone.chart.scene;
+      const clone = yield _AgChartsInternal.prepareResizedChart(proxy, opts);
+      const { canvas } = clone.chart.scene;
       const result = canvas.getDataURL(opts == null ? void 0 : opts.fileFormat);
-      if (maybeClone !== proxy) {
-        maybeClone.destroy();
-      }
+      clone.destroy();
       return result;
     });
   }
@@ -48943,9 +48995,6 @@ var _AgChartsInternal = class _AgChartsInternal {
     return __async(this, arguments, function* (chartProxy, opts = {}) {
       const { chart } = chartProxy;
       const { width = chart.width, height = chart.height } = opts;
-      if (chart.scene.canvas.pixelRatio === 1 && chart.width === width && chart.height === height) {
-        return chartProxy;
-      }
       const options = mergeDefaults(
         {
           container: document.createElement("div"),
@@ -48961,8 +49010,11 @@ var _AgChartsInternal = class _AgChartsInternal {
       const cloneProxy = _AgChartsInternal.createOrUpdate(options);
       cloneProxy.chart.zoomManager.updateZoom(chartProxy.chart.zoomManager.getZoom());
       chartProxy.chart.series.forEach((series, index) => {
-        cloneProxy.chart.series[index].visible = series.visible;
+        if (series.visible !== true) {
+          cloneProxy.chart.series[index].visible = series.visible;
+        }
       });
+      chartProxy.chart.update(0 /* FULL */, { forceNodeDataRefresh: true });
       yield cloneProxy.chart.waitForUpdate();
       return cloneProxy;
     });
@@ -48989,7 +49041,7 @@ _AgChartsInternal.initialised = false;
 var AgChartsInternal = _AgChartsInternal;
 
 // packages/ag-charts-community/src/version.ts
-var VERSION$b = "9.1.0-beta.20240219.1847";
+var VERSION$b = "9.1.1";
 
 // packages/ag-charts-community/src/integrated-charts-scene.ts
 var integrated_charts_scene_exports = {};
@@ -49735,6 +49787,7 @@ __export(module_support_exports, {
   isProperties: () => isProperties,
   isRegExp: () => isRegExp,
   isString: () => isString$2,
+  isSymbol: () => isSymbol,
   isValidDate: () => isValidDate,
   jsonApply: () => jsonApply,
   jsonDiff: () => jsonDiff,
@@ -63051,7 +63104,7 @@ var GridChartComp = /** @class */ (function (_super) {
 }(Component));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$a = '31.1.0';
+var VERSION$a = '31.1.1';
 
 var __assign$d = (undefined && undefined.__assign) || function () {
     __assign$d = Object.assign || function(t) {
@@ -65891,7 +65944,7 @@ var SelectionHandleFactory = /** @class */ (function (_super) {
 }(BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$9 = '31.1.0';
+var VERSION$9 = '31.1.1';
 
 var RangeSelectionModule = {
     version: VERSION$9,
@@ -66350,7 +66403,7 @@ var DetailCellRenderer = /** @class */ (function (_super) {
 }(Component));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$8 = '31.1.0';
+var VERSION$8 = '31.1.1';
 
 var MasterDetailModule = {
     version: VERSION$8,
@@ -67481,7 +67534,7 @@ var MenuItemMapper = /** @class */ (function (_super) {
 }(BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$7 = '31.1.0';
+var VERSION$7 = '31.1.1';
 
 var __extends$E = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -69062,7 +69115,7 @@ var MultiFloatingFilterComp = /** @class */ (function (_super) {
 }(Component));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$6 = '31.1.0';
+var VERSION$6 = '31.1.1';
 
 var MultiFilterModule = {
     version: VERSION$6,
@@ -69223,7 +69276,7 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
 }(PopupComponent));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$5 = '31.1.0';
+var VERSION$5 = '31.1.1';
 
 var RichSelectModule = {
     version: VERSION$5,
@@ -74528,7 +74581,7 @@ var ServerSideSelectionService = /** @class */ (function (_super) {
 }(BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$4 = '31.1.0';
+var VERSION$4 = '31.1.1';
 
 var __extends$j = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -77459,7 +77512,7 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
 }(Component));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$3 = '31.1.0';
+var VERSION$3 = '31.1.1';
 
 var SetFilterModule = {
     version: VERSION$3,
@@ -78255,7 +78308,7 @@ var AggregationComp = /** @class */ (function (_super) {
 }(Component));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$2 = '31.1.0';
+var VERSION$2 = '31.1.1';
 
 var StatusBarModule = {
     version: VERSION$2,
@@ -78278,7 +78331,7 @@ var StatusBarModule = {
 };
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$1 = '31.1.0';
+var VERSION$1 = '31.1.1';
 
 var __extends$7 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -80902,7 +80955,7 @@ var SparklineTooltipSingleton = /** @class */ (function (_super) {
 }(BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '31.1.0';
+var VERSION = '31.1.1';
 
 var SparklinesModule = {
     version: VERSION,

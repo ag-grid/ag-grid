@@ -1,4 +1,4 @@
-// ag-grid-react v31.1.0
+// ag-grid-react v31.1.1
 import { ReactPortal } from 'react';
 import { AgPromise, ComponentType, IComponent, WrappableInterface } from 'ag-grid-community';
 import { PortalManager } from './portalManager';

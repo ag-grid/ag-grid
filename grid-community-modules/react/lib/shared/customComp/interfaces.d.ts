@@ -1,4 +1,4 @@
-// @ag-grid-community/react v31.1.0
+// @ag-grid-community/react v31.1.1
 import { BaseCellEditor, BaseDate, BaseDateParams, BaseFilter, BaseFilterParams, BaseFloatingFilter, BaseMenuItem, BaseMenuItemParams, BaseToolPanelParams, ICellEditorParams, ICellRendererParams, IDetailCellRendererParams, IFilter, IFloatingFilterParams, IGroupCellRendererParams, IHeaderGroupParams, IHeaderParams, ILoadingCellRendererParams, ILoadingOverlayParams, INoRowsOverlayParams, IStatusPanelParams, ITooltipParams } from "@ag-grid-community/core";
 /** Props provided to custom cell editor components */
 export interface CustomCellEditorProps<TData = any, TValue = any, TContext = any> extends ICellEditorParams<TData, TValue, TContext> {

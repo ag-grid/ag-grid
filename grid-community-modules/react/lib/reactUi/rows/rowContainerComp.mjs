@@ -1,4 +1,4 @@
-// @ag-grid-community/react v31.1.0
+// @ag-grid-community/react v31.1.1
 import { getRowContainerTypeForName, RowContainerCtrl, RowContainerName } from '@ag-grid-community/core';
 import React, { useMemo, useRef, useState, memo, useContext, useCallback } from 'react';
 import { agFlushSync, classesList, getNextValueIfDifferent } from '../utils.mjs';
