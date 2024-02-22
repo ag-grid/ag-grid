@@ -7,14 +7,32 @@ import { AgChartActual } from "../utils/integration";
 import { deepMerge, get, set } from "../utils/object";
 import { ChartSeriesType, VALID_SERIES_TYPES } from "../utils/seriesTypeMapper";
 
+export interface ChartOptionsProxy {
+    getValue<T = string>(expression: string, calculated?: boolean): T;
+    setValue<T = string>(expression: string, value: T): void;
+    getChartOptionsService: () => ChartOptionsService;
+}
+
 type ChartAxis = NonNullable<AgChartActual['axes']>[number];
 type SupportedSeries = AgChartActual['series'][number];
 export class ChartOptionsService extends BeanStub {
     private readonly chartController: ChartController;
+    private readonly chartOptionProxy: ChartOptionsProxy;
+    private readonly axisPropertyProxy: ChartOptionsProxy;
 
     constructor(chartController: ChartController) {
         super();
         this.chartController = chartController;
+        this.chartOptionProxy = {
+            getValue: e => this.getChartOption(e),
+            setValue: (e, v) => this.setChartOption(e, v),
+            getChartOptionsService: () => this
+        };
+        this.axisPropertyProxy = {
+            getValue: e => this.getAxisProperty(e),
+            setValue: (e, v) => this.setAxisProperty(e, v),
+            getChartOptionsService: () => this
+        };
     }
 
     public getChartOption<T = string>(expression: string): T {
@@ -199,6 +217,22 @@ export class ChartOptionsService extends BeanStub {
         };
 
         this.eventService.dispatchEvent(event);
+    }
+
+    public getChartOptionProxy(): ChartOptionsProxy {
+        return this.chartOptionProxy;
+    }
+
+    public getAxisPropertyProxy(): ChartOptionsProxy {
+        return this.axisPropertyProxy
+    }
+
+    public getSeriesOptionProxy(getSelectedSeries: () => ChartSeriesType): ChartOptionsProxy {
+        return {
+            getValue: (expression, calculated) => this.getSeriesOption(expression, getSelectedSeries(), calculated),
+            setValue: (expression, value) => this.setSeriesOption(expression, value, getSelectedSeries()),
+            getChartOptionsService: () => this
+        };
     }
 
     private static isMatchingSeries(seriesType: ChartSeriesType, series: SupportedSeries): boolean {

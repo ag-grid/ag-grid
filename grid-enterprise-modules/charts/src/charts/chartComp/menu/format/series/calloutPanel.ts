@@ -5,9 +5,7 @@ import {
     PostConstruct
 } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { ChartOptionsService } from "../../../services/chartOptionsService";
-import { ChartSeriesType } from "../../../utils/seriesTypeMapper";
-import { AgSliderParams } from "@ag-grid-community/core";
+import { ChartOptionsProxy } from "../../../services/chartOptionsService";
 import { ChartMenuUtils } from "../../chartMenuUtils";
 
 export class CalloutPanel extends Component {
@@ -24,8 +22,7 @@ export class CalloutPanel extends Component {
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
     @Autowired('chartMenuUtils') private readonly chartMenuUtils: ChartMenuUtils;
 
-    constructor(private readonly chartOptionsService: ChartOptionsService,
-                private getSelectedSeries: () => ChartSeriesType) {
+    constructor(private readonly chartOptionsProxy: ChartOptionsProxy) {
         super();
     }
 
@@ -41,18 +38,9 @@ export class CalloutPanel extends Component {
         };
         this.setTemplate(CalloutPanel.TEMPLATE, {
             calloutGroup: calloutGroupParams,
-            calloutLengthSlider: this.getSliderParams('calloutLine.length', 'length', 40),
-            calloutStrokeWidthSlider: this.getSliderParams('calloutLine.strokeWidth', 'strokeWidth', 10),
-            labelOffsetSlider: this.getSliderParams('calloutLabel.offset', 'offset', 30)
+            calloutLengthSlider: this.chartMenuUtils.getDefaultSliderParams(this.chartOptionsProxy, 'calloutLine.length', 'length', 40),
+            calloutStrokeWidthSlider: this.chartMenuUtils.getDefaultSliderParams(this.chartOptionsProxy, 'calloutLine.strokeWidth', 'strokeWidth', 10),
+            labelOffsetSlider: this.chartMenuUtils.getDefaultSliderParams(this.chartOptionsProxy, 'calloutLabel.offset', 'offset', 30)
         });
-    }
-
-    private getSliderParams(expression: string, labelKey: string, defaultMaxValue: number): AgSliderParams {
-        return this.chartMenuUtils.getDefaultSliderParams(
-            this.chartOptionsService.getSeriesOption<number>(expression, this.getSelectedSeries()),
-            newValue => this.chartOptionsService.setSeriesOption(expression, newValue, this.getSelectedSeries()),
-            labelKey,
-            defaultMaxValue
-        );
     }
 }

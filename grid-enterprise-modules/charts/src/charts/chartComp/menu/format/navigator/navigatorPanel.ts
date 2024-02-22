@@ -7,7 +7,7 @@ import {
     RefSelector
 } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { ChartOptionsService } from "../../../services/chartOptionsService";
+import { ChartOptionsProxy } from "../../../services/chartOptionsService";
 import { FormatPanelOptions } from "../formatPanel";
 import { ChartMenuUtils } from "../../chartMenuUtils";
 
@@ -25,13 +25,13 @@ export class NavigatorPanel extends Component {
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
     @Autowired('chartMenuUtils') private readonly chartMenuUtils: ChartMenuUtils;
 
-    private readonly chartOptionsService: ChartOptionsService;
+    private readonly chartOptionsProxy: ChartOptionsProxy;
     private readonly isExpandedOnInit: boolean;
 
     constructor({ chartOptionsService, isExpandedOnInit = false }: FormatPanelOptions) {
         super();
 
-        this.chartOptionsService = chartOptionsService;
+        this.chartOptionsProxy = chartOptionsService.getChartOptionProxy();
         this.isExpandedOnInit = isExpandedOnInit;
     }
 
@@ -42,19 +42,14 @@ export class NavigatorPanel extends Component {
             direction: 'vertical',
             title: this.chartTranslationService.translate("navigator"),
             suppressEnabledCheckbox: false,
-            enabled: this.chartOptionsService.getChartOption<boolean>("navigator.enabled") || false,
+            enabled: this.chartOptionsProxy.getValue<boolean>("navigator.enabled") || false,
             onEnableChange: enabled => {
-                this.chartOptionsService.setChartOption("navigator.enabled", enabled);
+                this.chartOptionsProxy.setValue("navigator.enabled", enabled);
                 this.navigatorGroup.toggleGroupExpand(true);
             },
             expanded: this.isExpandedOnInit
         };
-        const navigatorHeightSliderParams = this.chartMenuUtils.getDefaultSliderParams(
-            this.chartOptionsService.getChartOption<number>("navigator.height") ?? 30,
-            height => this.chartOptionsService.setChartOption("navigator.height", height),
-            "height",
-            60
-        );
+        const navigatorHeightSliderParams = this.chartMenuUtils.getDefaultSliderParams(this.chartOptionsProxy, "navigator.height", "height", 60);
         navigatorHeightSliderParams.minValue = 10;
         this.setTemplate(NavigatorPanel.TEMPLATE, {
             navigatorGroup: navigatorGroupParams,

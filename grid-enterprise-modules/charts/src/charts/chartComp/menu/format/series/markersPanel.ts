@@ -10,8 +10,7 @@ import {
     AgSelectParams
 } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { ChartOptionsService } from "../../../services/chartOptionsService";
-import { ChartSeriesType } from "../../../utils/seriesTypeMapper";
+import { ChartOptionsProxy } from "../../../services/chartOptionsService";
 import { ChartMenuUtils } from "../../chartMenuUtils";
 
 export class MarkersPanel extends Component {
@@ -31,25 +30,26 @@ export class MarkersPanel extends Component {
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
     @Autowired('chartMenuUtils') private readonly chartMenuUtils: ChartMenuUtils;
 
-    constructor(private readonly chartOptionsService: ChartOptionsService,
-                private getSelectedSeries: () => ChartSeriesType) {
+    constructor(private readonly chartOptionsProxy: ChartOptionsProxy) {
         super();
     }
 
     @PostConstruct
     private init() {
         // scatter charts should always show markers
-        const chartType = this.chartOptionsService.getChartType();
+        const chartType = this.chartOptionsProxy.getChartOptionsService().getChartType();
         const shouldHideEnabledCheckbox = _.includes(['scatter', 'bubble'], chartType);
-        const seriesMarkersGroupParams: AgGroupComponentParams = {
-            cssIdentifier: 'charts-format-sub-level',
-            direction: 'vertical',
-            title: this.chartTranslationService.translate("markers"),
-            suppressEnabledCheckbox: shouldHideEnabledCheckbox,
-            enabled: this.getSeriesOption("marker.enabled") || false,
-            suppressOpenCloseIcons: true,
-            onEnableChange: newValue => this.setSeriesOption("marker.enabled", newValue)
-        };
+        const seriesMarkersGroupParams: AgGroupComponentParams = this.chartMenuUtils.addEnableParams(
+            this.chartOptionsProxy,
+            'marker.enabled',
+            {
+                cssIdentifier: 'charts-format-sub-level',
+                direction: 'vertical',
+                title: this.chartTranslationService.translate("markers"),
+                suppressEnabledCheckbox: shouldHideEnabledCheckbox,
+                suppressOpenCloseIcons: true
+            }
+        );
 
         const isBubble = chartType === 'bubble';
         let seriesMarkerMinSizeSliderParams: AgSliderParams;
@@ -105,28 +105,22 @@ export class MarkersPanel extends Component {
                 text: 'Heart'
             }
         ];
-        return {
-            options,
-            label: this.chartTranslationService.translate('shape'),
-            value: this.getSeriesOption("marker.shape"),
-            onValueChange: value => this.setSeriesOption("marker.shape", value)
-        }
+        return this.chartMenuUtils.addValueParams(
+            this.chartOptionsProxy,
+            'marker.shape',
+            {
+                options,
+                label: this.chartTranslationService.translate('shape')
+            }
+        );
     }
 
     private getSliderParams(expression: string, labelKey: string, defaultMaxValue: number): AgSliderParams {
         return this.chartMenuUtils.getDefaultSliderParams(
-            this.getSeriesOption<number>(expression),
-            newValue => this.setSeriesOption(expression, newValue),
+            this.chartOptionsProxy,
+            expression,
             labelKey,
             defaultMaxValue
         );
-    }
-
-    private getSeriesOption<T = string>(expression: string): T {
-        return this.chartOptionsService.getSeriesOption<T>(expression, this.getSelectedSeries());
-    }
-
-    private setSeriesOption<T = string>(expression: string, newValue: T): void {
-        this.chartOptionsService.setSeriesOption(expression, newValue, this.getSelectedSeries());
     }
 }

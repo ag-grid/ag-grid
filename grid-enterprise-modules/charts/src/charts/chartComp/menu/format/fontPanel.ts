@@ -9,6 +9,7 @@ import {
     RefSelector
 } from "@ag-grid-community/core";
 import { AgColorPickerParams } from "../../../../widgets/agColorPicker";
+import { ChartOptionsProxy } from "../../services/chartOptionsService";
 import { ChartTranslationService } from "../../services/chartTranslationService";
 import { ChartMenuUtils } from "../chartMenuUtils";
 
@@ -200,9 +201,13 @@ export class FontPanel extends Component {
     }
 
     private getColorPickerParams(): AgColorPickerParams {
+        const chartOptionsProxy: ChartOptionsProxy = {
+            getValue: () => this.getInitialFontValue('color') as any,
+            setValue: (color: string) => this.setFont({ color })
+        } as any;
         return this.chartMenuUtils.getDefaultColorPickerParams(
-            `${this.getInitialFontValue('color')}`,
-            newColor => this.setFont({ color: newColor! })
+            chartOptionsProxy,
+            'color'
         );
     }
 

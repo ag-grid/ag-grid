@@ -8,7 +8,7 @@ import { PaddingPanel } from "./paddingPanel";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { BackgroundPanel } from "./backgroundPanel";
 import TitlePanel from "./titlePanel";
-import { ChartOptionsService } from "../../../services/chartOptionsService";
+import { ChartOptionsProxy } from "../../../services/chartOptionsService";
 import { FormatPanelOptions } from "../formatPanel";
 import { ChartController } from "../../../chartController";
 
@@ -21,7 +21,7 @@ export class ChartPanel extends Component {
 
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
-    private readonly chartOptionsService: ChartOptionsService;
+    private readonly chartOptionsProxy: ChartOptionsProxy;
     private readonly chartController: ChartController;
     private readonly isExpandedOnInit: boolean;
 
@@ -33,7 +33,7 @@ export class ChartPanel extends Component {
         super();
 
         this.chartController = chartController;
-        this.chartOptionsService = chartOptionsService;
+        this.chartOptionsProxy = chartOptionsService.getChartOptionProxy();
         this.isExpandedOnInit = isExpandedOnInit;
     }
 
@@ -46,9 +46,9 @@ export class ChartPanel extends Component {
             expanded: this.isExpandedOnInit,
             suppressEnabledCheckbox: true,
             items: [
-                this.createManagedBean(new TitlePanel(this.chartOptionsService)),
-                this.createManagedBean(new PaddingPanel(this.chartOptionsService, this.chartController)),
-                this.createManagedBean(new BackgroundPanel(this.chartOptionsService))
+                this.createManagedBean(new TitlePanel(this.chartOptionsProxy)),
+                this.createManagedBean(new PaddingPanel(this.chartOptionsProxy, this.chartController)),
+                this.createManagedBean(new BackgroundPanel(this.chartOptionsProxy))
             ]
         };
         this.setTemplate(ChartPanel.TEMPLATE, { chartGroup: chartGroupParams });

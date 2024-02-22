@@ -6,8 +6,7 @@ import {
     PostConstruct,
 } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { ChartOptionsService } from "../../../services/chartOptionsService";
-import { ChartSeriesType } from "../../../utils/seriesTypeMapper";
+import { ChartOptionsProxy } from "../../../services/chartOptionsService";
 import { ChartMenuUtils } from "../../chartMenuUtils";
 
 export class ShadowPanel extends Component {
@@ -25,8 +24,7 @@ export class ShadowPanel extends Component {
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
     @Autowired('chartMenuUtils') private readonly chartMenuUtils: ChartMenuUtils;
 
-    constructor(private readonly chartOptionsService: ChartOptionsService,
-                private getSelectedSeries: () => ChartSeriesType,
+    constructor(private readonly chartOptionsProxy: ChartOptionsProxy,
                 private propertyKey: string = "shadow") {
         super();
     }
@@ -35,19 +33,18 @@ export class ShadowPanel extends Component {
     private init() {
         // Determine the path within the series options object to get/set the individual shadow options
         const propertyNamespace = this.propertyKey;
-        const shadowGroupParams: AgGroupComponentParams = {
-            cssIdentifier: 'charts-format-sub-level',
-            direction: 'vertical',
-            suppressOpenCloseIcons: true,
-            title: this.chartTranslationService.translate("shadow"),
-            enabled: this.chartOptionsService.getSeriesOption(`${propertyNamespace}.enabled`, this.getSelectedSeries()),
-            suppressEnabledCheckbox: false,
-            onEnableChange: newValue => this.chartOptionsService.setSeriesOption(`${propertyNamespace}.enabled`, newValue, this.getSelectedSeries())
-        };
-        const shadowColorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams(
-            this.chartOptionsService.getSeriesOption(`${propertyNamespace}.color`, this.getSelectedSeries()),
-            newValue => this.chartOptionsService.setSeriesOption(`${propertyNamespace}.color`, newValue, this.getSelectedSeries())
+        const shadowGroupParams: AgGroupComponentParams = this.chartMenuUtils.addEnableParams(
+            this.chartOptionsProxy,
+            `${propertyNamespace}.enabled`,
+            {
+                cssIdentifier: 'charts-format-sub-level',
+                direction: 'vertical',
+                suppressOpenCloseIcons: true,
+                title: this.chartTranslationService.translate("shadow"),
+                suppressEnabledCheckbox: false,
+            }
         );
+        const shadowColorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams(this.chartOptionsProxy, `${propertyNamespace}.color`);
         this.setTemplate(ShadowPanel.TEMPLATE, {
             shadowGroup: shadowGroupParams,
             shadowColorPicker: shadowColorPickerParams,
@@ -60,8 +57,8 @@ export class ShadowPanel extends Component {
     private getSliderParams(property: string, minValue: number, defaultMaxValue: number): AgSliderParams {
         const expression = `${this.propertyKey}.${property}`
         const params = this.chartMenuUtils.getDefaultSliderParams(
-            this.chartOptionsService.getSeriesOption<number>(expression, this.getSelectedSeries()),
-            newValue => this.chartOptionsService.setSeriesOption(expression, newValue, this.getSelectedSeries()),
+            this.chartOptionsProxy,
+            expression,
             property,
             defaultMaxValue
         );

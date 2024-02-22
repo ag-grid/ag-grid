@@ -1,13 +1,11 @@
 import {
     AgGroupComponentParams,
-    AgSliderParams,
     Autowired,
     Component,
     PostConstruct,
 } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { ChartOptionsService } from "../../../services/chartOptionsService";
-import { ChartSeriesType } from "../../../utils/seriesTypeMapper";
+import { ChartOptionsProxy } from "../../../services/chartOptionsService";
 import { ChartMenuUtils } from "../../chartMenuUtils";
 
 export class WhiskersPanel extends Component {
@@ -26,8 +24,7 @@ export class WhiskersPanel extends Component {
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
     @Autowired('chartMenuUtils') private readonly chartMenuUtils: ChartMenuUtils;
 
-    constructor(private readonly chartOptionsService: ChartOptionsService,
-                private getSelectedSeries: () => ChartSeriesType) {
+    constructor(private readonly chartOptionsProxy: ChartOptionsProxy) {
         super();
     }
 
@@ -41,33 +38,20 @@ export class WhiskersPanel extends Component {
             suppressOpenCloseIcons: true,
             suppressEnabledCheckbox: true,
         };
-        const color = this.chartOptionsService.getSeriesOption<string | undefined | null>("whisker.stroke", this.getSelectedSeries());
-        const whiskerColorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams(
-            color == null ? 'transparent' : `${color}`,
-            newValue => this.chartOptionsService.setSeriesOption("whisker.stroke", newValue, this.getSelectedSeries())
-        );
         const whiskerLineDashSliderParams = this.chartMenuUtils.getDefaultSliderParams(
-            this.chartOptionsService.getSeriesOption<number[]>("whisker.lineDash", this.getSelectedSeries())?.[0] ?? 0,
-            newValue => this.chartOptionsService.setSeriesOption("whisker.lineDash", [newValue], this.getSelectedSeries()),
+            this.chartOptionsProxy,
+            'whisker.lineDash',
             "lineDash",
             30,
+            true
         );
         this.setTemplate(WhiskersPanel.TEMPLATE, {
             whiskersGroup: whiskersGroupParams,
-            whiskerColorPicker: whiskerColorPickerParams,
-            whiskerThicknessSlider: this.getSliderParams('strokeWidth', 'whisker.strokeWidth', 10),
-            whiskerOpacitySlider: this.getSliderParams('strokeOpacity', 'whisker.strokeOpacity', 1),
+            whiskerColorPicker: this.chartMenuUtils.getDefaultColorPickerParams(this.chartOptionsProxy, 'whisker.stroke'),
+            whiskerThicknessSlider: this.chartMenuUtils.getDefaultSliderParams(this.chartOptionsProxy, 'strokeWidth', 'whisker.strokeWidth', 10),
+            whiskerOpacitySlider: this.chartMenuUtils.getDefaultSliderParams(this.chartOptionsProxy, 'strokeOpacity', 'whisker.strokeOpacity', 1),
             whiskerLineDashSlider: whiskerLineDashSliderParams,
-            whiskerLineDashOffsetSlider: this.getSliderParams('lineDashOffset', 'whisker.lineDashOffset', 30)
+            whiskerLineDashOffsetSlider: this.chartMenuUtils.getDefaultSliderParams(this.chartOptionsProxy, 'lineDashOffset', 'whisker.lineDashOffset', 30)
         });
-    }
-
-    private getSliderParams(labelKey: string, key: string, defaultMaxValue: number): AgSliderParams {
-        return this.chartMenuUtils.getDefaultSliderParams(
-            this.chartOptionsService.getSeriesOption(key, this.getSelectedSeries()),
-            newValue => this.chartOptionsService.setSeriesOption(key, newValue, this.getSelectedSeries()),
-            labelKey,
-            defaultMaxValue
-        );
     }
 }

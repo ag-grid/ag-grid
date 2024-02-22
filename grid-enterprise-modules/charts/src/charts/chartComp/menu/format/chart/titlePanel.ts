@@ -10,7 +10,7 @@ import {
 } from "@ag-grid-community/core";
 import { FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { ChartOptionsService } from "../../../services/chartOptionsService";
+import { ChartOptionsProxy } from "../../../services/chartOptionsService";
 import { ChartMenuUtils } from "../../chartMenuUtils";
 
 export default class TitlePanel extends Component {
@@ -23,7 +23,7 @@ export default class TitlePanel extends Component {
     private activePanels: Component[] = [];
     private titlePlaceholder: string;
 
-    constructor(private readonly chartOptionsService: ChartOptionsService) {
+    constructor(private readonly chartOptionsProxy: ChartOptionsProxy) {
         super(TitlePanel.TEMPLATE);
     }
 
@@ -34,7 +34,7 @@ export default class TitlePanel extends Component {
     }
 
     private hasTitle(): boolean {
-        const title: any = this.getOption('title');
+        const title: any = this.chartOptionsProxy.getValue('title');
         return title && title.enabled && title.text && title.text.length > 0;
     }
 
@@ -46,21 +46,21 @@ export default class TitlePanel extends Component {
             enabled: hasTitle,
             suppressEnabledCheckbox: false,
             fontModelProxy: {
-                setValue: (key, value) => this.setOption(`title.${key}`, value),
-                getValue: key => this.getOption(`title.${key}`)
+                setValue: (key, value) => this.chartOptionsProxy.setValue(`title.${key}`, value),
+                getValue: key => this.chartOptionsProxy.getValue(`title.${key}`)
             },
             setEnabled: (enabled) => {
                 if (this.toolbarExists()) {
                     // extra padding is only included when the toolbar is present
-                    const topPadding: number = this.getOption('padding.top');
-                    this.setOption('padding.top', enabled ? topPadding - 20 : topPadding + 20);
+                    const topPadding: number = this.chartOptionsProxy.getValue('padding.top');
+                    this.chartOptionsProxy.setValue('padding.top', enabled ? topPadding - 20 : topPadding + 20);
                 }
 
-                this.setOption('title.enabled', enabled);
-                const currentTitleText = this.getOption('title.text');
+                this.chartOptionsProxy.setValue('title.enabled', enabled);
+                const currentTitleText = this.chartOptionsProxy.getValue('title.text');
                 const replaceableTitleText = currentTitleText === 'Title' || currentTitleText?.trim().length === 0;
                 if (enabled && replaceableTitleText) {
-                    this.setOption('title.text', this.titlePlaceholder);
+                    this.chartOptionsProxy.setValue('title.text', this.titlePlaceholder);
                 }
             }
         };
@@ -80,12 +80,10 @@ export default class TitlePanel extends Component {
     }
 
     private createSpacingSlicer() {
-        return this.createBean(new AgSlider(this.chartMenuUtils.getDefaultSliderParams(
-            this.chartOptionsService.getChartOption<number>('title.spacing') ?? 10,
-            newValue => this.chartOptionsService.setChartOption('title.spacing', newValue),
-            'spacing',
-            100
-        )));
+        const params = this.chartMenuUtils.getDefaultSliderParams(this.chartOptionsProxy, 'title.spacing', 'spacing', 100);
+        // Default title spacing is 10, but this isn't reflected in the options - this should really be fixed there.
+        params.value = '10';
+        return this.createBean(new AgSlider(params));
     }
 
     private toolbarExists() {
@@ -97,14 +95,6 @@ export default class TitlePanel extends Component {
         };
         const topItems: ChartMenuOptions[] = ['chartLink', 'chartUnlink', 'chartDownload'];
         return topItems.some(v => (toolbarItemsFunc && toolbarItemsFunc(params))?.includes(v));
-    }
-
-    private getOption<T = string>(expression: string): T {
-        return this.chartOptionsService.getChartOption(expression);
-    }
-
-    private setOption(property: string, value: any): void {
-        this.chartOptionsService.setChartOption(property, value);
     }
 
     private destroyActivePanels(): void {

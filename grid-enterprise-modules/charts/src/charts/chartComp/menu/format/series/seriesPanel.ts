@@ -9,14 +9,16 @@ import {
     Component,
     ListOption,
     PostConstruct,
-    RefSelector
+    RefSelector,
+    AgSelectParams,
+    AgToggleButtonParams
 } from "@ag-grid-community/core";
 import type { AgRangeBarSeriesLabelPlacement } from 'ag-charts-community';
 import { ShadowPanel } from "./shadowPanel";
 import { FontPanel } from "../fontPanel";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { initFontPanelParams } from "./fontPanelParams";
-import { ChartOptionsService } from "../../../services/chartOptionsService";
+import { ChartOptionsProxy } from "../../../services/chartOptionsService";
 import { FormatPanelOptions } from "../formatPanel";
 import { MarkersPanel } from "./markersPanel";
 import { ChartController } from "../../../chartController";
@@ -44,8 +46,8 @@ export class SeriesPanel extends Component {
     @Autowired('chartMenuUtils') private readonly chartMenuUtils: ChartMenuUtils;
 
     private readonly chartController: ChartController;
-    private readonly chartOptionsService: ChartOptionsService;
     private readonly isExpandedOnInit: boolean;
+    private readonly chartOptionsProxy: ChartOptionsProxy;
 
     private seriesSelectOptions: Map<ChartSeriesType, ListOption>;
 
@@ -105,9 +107,9 @@ export class SeriesPanel extends Component {
         super();
 
         this.chartController = chartController;
-        this.chartOptionsService = chartOptionsService;
         this.seriesType = seriesType || this.getChartSeriesType();
         this.isExpandedOnInit = isExpandedOnInit;
+        this.chartOptionsProxy = chartOptionsService.getSeriesOptionProxy(() => this.seriesType)
     }
 
     @PostConstruct
@@ -168,24 +170,24 @@ export class SeriesPanel extends Component {
     }
 
     private initTooltips(): void {
-        const seriesTooltipsToggle = this.createBean(new AgToggleButton({
-            label: this.translate("tooltips"),
-            labelAlignment: "left",
-            labelWidth: "flex",
-            inputWidth: 'flex',
-            value: this.getSeriesOption("tooltip.enabled") || false,
-            onValueChange: newValue => this.setSeriesOption("tooltip.enabled", newValue)
-        }));
+        const seriesTooltipsToggle = this.createBean(new AgToggleButton(this.chartMenuUtils.addValueParams<AgToggleButtonParams>(
+            this.chartOptionsProxy,
+            'tooltip.enabled',
+            {
+                label: this.translate("tooltips"),
+                labelAlignment: "left",
+                labelWidth: "flex",
+                inputWidth: 'flex',
+            }
+        )));
 
         this.addWidget(seriesTooltipsToggle);
     }
 
     private initLineColor(): void {
-        const currentValue = this.getSeriesOption<string | undefined>("stroke");
-
         const seriesLineColorPicker = this.createBean(new AgColorPicker(this.chartMenuUtils.getDefaultColorPickerParams(
-            currentValue,
-            newValue => this.setSeriesOption("stroke", newValue),
+            this.chartOptionsProxy,
+            'stroke',
             'strokeColor',
         )));
 
@@ -194,8 +196,8 @@ export class SeriesPanel extends Component {
 
     private initStrokeWidth(labelKey: 'strokeWidth' | 'lineWidth'): void {
         const seriesStrokeWidthSlider = this.createBean(new AgSlider(this.chartMenuUtils.getDefaultSliderParams(
-            this.getSeriesOption<number | undefined>("strokeWidth") ?? 0,
-            newValue => this.setSeriesOption("strokeWidth", newValue),
+            this.chartOptionsProxy,
+            'strokeWidth',
             labelKey,
             10
         )));
@@ -204,13 +206,12 @@ export class SeriesPanel extends Component {
     }
 
     private initLineDash(): void {
-        const lineDash = this.getSeriesOption<number[]>("lineDash");
-
         const seriesLineDashSlider = this.createBean(new AgSlider(this.chartMenuUtils.getDefaultSliderParams(
-            lineDash ? lineDash[0] : 0,
-            newValue => this.setSeriesOption("lineDash", [newValue]),
+            this.chartOptionsProxy,
             'lineDash',
-            30
+            'lineDash',
+            30,
+            true
         )));
 
         this.addWidget(seriesLineDashSlider);
@@ -218,8 +219,8 @@ export class SeriesPanel extends Component {
 
     private initLineOpacity(): void {
         const params = this.chartMenuUtils.getDefaultSliderParams(
-            this.getSeriesOption<number | undefined>("strokeOpacity") ?? 0,
-            newValue => this.setSeriesOption("strokeOpacity", newValue),
+            this.chartOptionsProxy,
+            'strokeOpacity',
             "strokeOpacity",
             1
         );
@@ -230,10 +231,9 @@ export class SeriesPanel extends Component {
     }
 
     private initFillOpacity(): void {
-
         const params = this.chartMenuUtils.getDefaultSliderParams(
-            this.getSeriesOption<number | undefined>("fillOpacity") ?? 0,
-            newValue => this.setSeriesOption("fillOpacity", newValue),
+            this.chartOptionsProxy,
+            'fillOpacity',
             "fillOpacity",
             1
         );
@@ -251,14 +251,13 @@ export class SeriesPanel extends Component {
             : this.chartTranslationService.translate('labels');
         const labelParams = initFontPanelParams({
             labelName,
-            chartOptionsService: this.chartOptionsService,
-            getSelectedSeries: () => this.seriesType,
+            chartOptionsProxy: this.chartOptionsProxy,
             seriesOptionLabelProperty
         });
         const labelPanelComp = this.createBean(new FontPanel(labelParams));
 
         if (isPieChart) {
-            const calloutPanelComp = this.createBean(new CalloutPanel(this.chartOptionsService, () => this.seriesType));
+            const calloutPanelComp = this.createBean(new CalloutPanel(this.chartOptionsProxy));
             labelPanelComp.addCompToPanel(calloutPanelComp);
             this.activePanels.push(calloutPanelComp);
         }
@@ -268,8 +267,7 @@ export class SeriesPanel extends Component {
         if (isPieChart) {
             const sectorParams = initFontPanelParams({
                 labelName: this.chartTranslationService.translate('sectorLabels'),
-                chartOptionsService: this.chartOptionsService,
-                getSelectedSeries: () => this.seriesType,
+                chartOptionsProxy: this.chartOptionsProxy,
                 seriesOptionLabelProperty: 'sectorLabel'
             });
             const sectorPanelComp = this.createBean(new FontPanel(sectorParams));
@@ -285,24 +283,25 @@ export class SeriesPanel extends Component {
                 { value: 'inside', text: this.translate('inside') },
                 { value: 'outside', text: this.translate('outside') },
             ];
-            const placementValue = this.chartOptionsService.getSeriesOption<AgRangeBarSeriesLabelPlacement>('label.placement', this.seriesType);
-            const placementSelect = labelPanelComp.createManagedBean(new AgSelect({
-                label: this.translate('labelPlacement'),
-                labelAlignment: 'left',
-                labelWidth: 'flex',
-                inputWidth: 'flex',
-                options,
-                value: placementValue,
-                onValueChange: (newValue) => this.chartOptionsService.setSeriesOption('label.placement', newValue, this.seriesType)
-            }));
+            const placementSelect = labelPanelComp.createManagedBean(new AgSelect(this.chartMenuUtils.addValueParams<AgSelectParams>(
+                this.chartOptionsProxy,
+                'label.placement',
+                {
+                    label: this.translate('labelPlacement'),
+                    labelAlignment: 'left',
+                    labelWidth: 'flex',
+                    inputWidth: 'flex',
+                    options,
+                }
+            )));
 
             labelPanelComp.addCompToPanel(placementSelect);
             this.activePanels.push(placementSelect);
 
             // Add padding slider
             const paddingSlider = labelPanelComp.createManagedBean(new AgSlider(this.chartMenuUtils.getDefaultSliderParams(
-                this.chartOptionsService.getSeriesOption<number>('label.padding', this.seriesType),
-                newValue => this.chartOptionsService.setSeriesOption('label.padding', newValue, this.seriesType),
+                this.chartOptionsProxy,
+                'label.padding',
                 'padding',
                 200
             )));
@@ -313,11 +312,9 @@ export class SeriesPanel extends Component {
     }
 
     private getSectorLabelPositionRatio(): AgSlider {
-        const expression = 'sectorLabel.positionRatio';
-
         const params = this.chartMenuUtils.getDefaultSliderParams(
-            this.chartOptionsService.getSeriesOption<number>(expression, this.seriesType),
-            newValue => this.chartOptionsService.setSeriesOption(expression, newValue, this.seriesType),
+            this.chartOptionsProxy,
+            'sectorLabel.positionRatio',
             "positionRatio",
             1
         );
@@ -326,62 +323,54 @@ export class SeriesPanel extends Component {
     }
 
     private initShadow() {
-        const shadowPanelComp = this.createBean(new ShadowPanel(this.chartOptionsService, () => this.seriesType));
+        const shadowPanelComp = this.createBean(new ShadowPanel(this.chartOptionsProxy));
         this.addWidget(shadowPanelComp);
     }
 
     private initMarkers() {
-        const markersPanelComp = this.createBean(new MarkersPanel(this.chartOptionsService, () => this.seriesType));
+        const markersPanelComp = this.createBean(new MarkersPanel(this.chartOptionsProxy));
         this.addWidget(markersPanelComp);
     }
 
     private initBins() {
-        const seriesBinCountSlider = this.createBean(new AgSlider(this.chartMenuUtils.getDefaultSliderParams(
-            (this.getSeriesOption<any>("bins") ?? this.getSeriesOption<any>("calculatedBins", true)).length,
-            newValue => this.setSeriesOption("binCount", newValue),
-            "histogramBinCount",
-            20
-        )));
+        const params = this.chartMenuUtils.getDefaultSliderParams(this.chartOptionsProxy, 'binCount', 'histogramBinCount', 20);
+        // this needs fixing
+        const value = (this.chartOptionsProxy.getValue<any>("bins") ?? this.chartOptionsProxy.getValue<any>("calculatedBins", true)).length;
+        params.value = `${value}`;
+        params.maxValue = Math.max(value, 20);
+        const seriesBinCountSlider = this.createBean(new AgSlider(params));
 
         this.addWidget(seriesBinCountSlider);
     }
 
     private initWhiskers() {
-        const whiskersPanelComp = this.createBean(new WhiskersPanel(this.chartOptionsService, () => this.seriesType));
+        const whiskersPanelComp = this.createBean(new WhiskersPanel(this.chartOptionsProxy));
         this.addWidget(whiskersPanelComp);
     }
 
     private initCaps() {
-        const capsPanelComp = this.createBean(new CapsPanel(this.chartOptionsService, () => this.seriesType));
+        const capsPanelComp = this.createBean(new CapsPanel(this.chartOptionsProxy));
         this.addWidget(capsPanelComp);
     }
 
     private initConnectorLine() {
-        const connectorLinePanelComp = this.createBean(new ConnectorLinePanel(this.chartOptionsService, () => this.seriesType));
+        const connectorLinePanelComp = this.createBean(new ConnectorLinePanel(this.chartOptionsProxy));
         this.addWidget(connectorLinePanelComp);
     }
 
     private initSeriesItemsPanel() {
-        const seriesItemsPanelComp = this.createBean(new SeriesItemsPanel(this.chartOptionsService, () => this.seriesType));
+        const seriesItemsPanelComp = this.createBean(new SeriesItemsPanel(this.chartOptionsProxy));
         this.addWidget(seriesItemsPanelComp);
     }
 
     private initTileSpacingPanel() {
-        const tileSpacingPanelComp = this.createBean(new TileSpacingPanel(this.chartOptionsService, () => this.seriesType));
+        const tileSpacingPanelComp = this.createBean(new TileSpacingPanel(this.chartOptionsProxy));
         this.addWidget(tileSpacingPanelComp);
     }
 
     private addWidget(widget: Component): void {
         this.seriesGroup.addItem(widget);
         this.activePanels.push(widget);
-    }
-
-    private getSeriesOption<T = string>(expression: string, calculated?: boolean): T {
-        return this.chartOptionsService.getSeriesOption<T>(expression, this.seriesType, calculated);
-    }
-
-    private setSeriesOption<T = string>(expression: string, newValue: T): void {
-        this.chartOptionsService.setSeriesOption(expression, newValue, this.seriesType);
     }
 
     private getChartSeriesType(): ChartSeriesType {

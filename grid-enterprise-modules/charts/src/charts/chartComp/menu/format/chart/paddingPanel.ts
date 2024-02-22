@@ -8,7 +8,7 @@ import {
     RefSelector,
 } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { ChartOptionsService } from "../../../services/chartOptionsService";
+import { ChartOptionsProxy } from "../../../services/chartOptionsService";
 import { AgChartPaddingOptions } from "ag-charts-community";
 import { ChartController } from "../../../chartController";
 import { ChartMenuUtils } from "../../chartMenuUtils";
@@ -30,7 +30,7 @@ export class PaddingPanel extends Component {
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
     @Autowired('chartMenuUtils') private readonly chartMenuUtils: ChartMenuUtils;
 
-    constructor(private readonly chartOptionsService: ChartOptionsService, private readonly chartController: ChartController) {
+    constructor(private readonly chartOptionsProxy: ChartOptionsProxy, private readonly chartController: ChartController) {
         super();
     }
 
@@ -43,14 +43,8 @@ export class PaddingPanel extends Component {
             title: this.chartTranslationService.translate("padding"),
             suppressEnabledCheckbox: true
         };
-        const getSliderParams = (property: keyof AgChartPaddingOptions) => {
-            return this.chartMenuUtils.getDefaultSliderParams(
-                this.chartOptionsService.getChartOption<number>('padding.' + property),
-                newValue => this.chartOptionsService.setChartOption('padding.' + property, newValue),
-                property,
-                200
-            );
-        };
+        const getSliderParams = (property: keyof AgChartPaddingOptions) => 
+            this.chartMenuUtils.getDefaultSliderParams(this.chartOptionsProxy, 'padding.' + property, property, 200);
 
         this.setTemplate(PaddingPanel.TEMPLATE, {
             chartPaddingGroup: chartPaddingGroupParams,

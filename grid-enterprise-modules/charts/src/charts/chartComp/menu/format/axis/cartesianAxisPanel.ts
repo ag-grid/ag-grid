@@ -13,7 +13,7 @@ import { ChartController } from "../../../chartController";
 import { AxisTicksPanel } from "./axisTicksPanel";
 import { FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { ChartOptionsService } from "../../../services/chartOptionsService";
+import { ChartOptionsProxy } from "../../../services/chartOptionsService";
 import { FormatPanelOptions } from "../formatPanel";
 import { AgAngleSelect } from "../../../../../widgets/agAngleSelect";
 import { ChartMenuUtils } from "../../chartMenuUtils";
@@ -34,7 +34,7 @@ export class CartesianAxisPanel extends Component {
     @Autowired('chartMenuUtils') private readonly chartMenuUtils: ChartMenuUtils;
 
     private readonly chartController: ChartController;
-    private readonly chartOptionsService: ChartOptionsService;
+    private readonly chartOptionsProxy: ChartOptionsProxy;
     private readonly isExpandedOnInit: boolean;
 
     private activePanels: Component[] = [];
@@ -47,7 +47,7 @@ export class CartesianAxisPanel extends Component {
         super();
 
         this.chartController = chartController;
-        this.chartOptionsService = chartOptionsService;
+        this.chartOptionsProxy = chartOptionsService.getAxisPropertyProxy();
         this.isExpandedOnInit = isExpandedOnInit;
     }
 
@@ -60,24 +60,21 @@ export class CartesianAxisPanel extends Component {
             expanded: this.isExpandedOnInit,
             suppressEnabledCheckbox: true
         };
-        const axisColorInputParams = this.chartMenuUtils.getDefaultColorPickerParams(
-            this.chartOptionsService.getAxisProperty("line.color"),
-            newColor => {
-                const isLineEnabled = this.chartOptionsService.getAxisProperty<number>("line.width") > 0;
-                this.chartOptionsService.setAxisProperties<string | null | undefined | boolean>([
-                    { expression: "line.enabled", value: isLineEnabled }, 
-                    { expression: "line.color", value: newColor }, 
-                ]);
-            }
-        );
-        // Note that there is no separate checkbox for enabling/disabling the axis line. Whenever the line settings are
+        const axisColorInputParams = this.chartMenuUtils.getDefaultColorPickerParams(this.chartOptionsProxy, 'line.color');
+        // Note that there is no separate checkbox for enabling/disabling the axis line. Whenever the line width is
         // changed, the value for `line.enabled` is inferred based on the current `line.width` value.
-        const axisLineWidthSliderParams = this.chartMenuUtils.getDefaultSliderParams(
-            this.chartOptionsService.getAxisProperty<number>("line.width"),
-            newValue => this.chartOptionsService.setAxisProperties<number | boolean>([
-                { expression: "line.enabled", value: (newValue !== 0) },
-                { expression: "line.width", value: newValue },
+        // The UI needs changing to fix this properly.
+        const overrideProxy: ChartOptionsProxy = {
+            ...this.chartOptionsProxy,
+            getValue: () => this.chartOptionsProxy.getValue<boolean>("line.enabled") ? this.chartOptionsProxy.getValue<number>("line.width") : 0 as any,
+            setValue: (e, newValue) => this.chartOptionsProxy.getChartOptionsService().setAxisProperties<number | boolean>([
+                { expression: "line.enabled", value: ((newValue as any) !== 0) },
+                { expression: "line.width", value: (newValue as any) },
             ]),
+        }
+        const axisLineWidthSliderParams = this.chartMenuUtils.getDefaultSliderParams(
+            overrideProxy,
+            'line.width',
             "thickness",
             10
         );
@@ -96,7 +93,7 @@ export class CartesianAxisPanel extends Component {
 
     private initAxisTicks() {
         if (!this.hasConfigurableAxisTicks()) return;
-        const axisTicksComp = this.createBean(new AxisTicksPanel(this.chartOptionsService));
+        const axisTicksComp = this.createBean(new AxisTicksPanel(this.chartOptionsProxy));
         this.axisGroup.addItem(axisTicksComp);
         this.activePanels.push(axisTicksComp);
     }
@@ -122,8 +119,8 @@ export class CartesianAxisPanel extends Component {
             enabled: true,
             suppressEnabledCheckbox: true,
             fontModelProxy: {
-                getValue: key => this.chartOptionsService.getAxisProperty(`label.${key}`),
-                setValue: (key, value) => this.chartOptionsService.setAxisProperty(`label.${key}`, value)
+                getValue: key => this.chartOptionsProxy.getValue(`label.${key}`),
+                setValue: (key, value) => this.chartOptionsProxy.setValue(`label.${key}`, value)
             }
         };
 
@@ -147,15 +144,15 @@ export class CartesianAxisPanel extends Component {
 
     private initLabelRotations(xRotationComp: AgAngleSelect, yRotationComp: AgAngleSelect) {
         const getLabelRotation = (axisType: 'xAxis' | 'yAxis'): number => {
-            return this.chartOptionsService.getLabelRotation(axisType);
+            return this.chartOptionsProxy.getChartOptionsService().getLabelRotation(axisType);
         }
 
         const setLabelRotation = (axisType: 'xAxis' | 'yAxis', value: number | undefined) => {
-            this.chartOptionsService.setLabelRotation(axisType, value);
+            this.chartOptionsProxy.getChartOptionsService().setLabelRotation(axisType, value);
         }
 
         const updateAutoRotate = (autoRotate: boolean) => {
-            this.chartOptionsService.setAxisProperty("label.autoRotate", autoRotate);
+            this.chartOptionsProxy.setValue("label.autoRotate", autoRotate);
 
             if (autoRotate) {
                 // store prev rotations before we remove them from the options
@@ -179,7 +176,7 @@ export class CartesianAxisPanel extends Component {
             const xRotation = getLabelRotation("xAxis");
             const yRotation = getLabelRotation("yAxis");
             if (xRotation == undefined && yRotation == undefined) {
-                return this.chartOptionsService.getAxisProperty<boolean>("label.autoRotate");
+                return this.chartOptionsProxy.getValue<boolean>("label.autoRotate");
             }
             return false;
         }
@@ -201,19 +198,21 @@ export class CartesianAxisPanel extends Component {
     private createRotationWidgets() {
         const degreesSymbol = String.fromCharCode(176);
 
+        const chartOptionsService = this.chartOptionsProxy.getChartOptionsService();
+
         const createRotationComp = (labelKey: string, axisType: 'xAxis' | 'yAxis') => {
             const label = `${this.chartTranslationService.translate(labelKey)} ${degreesSymbol}`;
-            const value = this.chartOptionsService.getLabelRotation(axisType) as number;
+            const value = chartOptionsService.getLabelRotation(axisType) as number;
             const angleSelect = new AgAngleSelect({
                 label,
                 labelWidth: "flex",
                 value: value || 0,
-                onValueChange: newValue => this.chartOptionsService.setLabelRotation(axisType, newValue)
+                onValueChange: newValue => chartOptionsService.setLabelRotation(axisType, newValue)
             });
 
             // the axis label rotation needs to be updated when the default category changes in the data panel
             this.axisLabelUpdateFuncs.push(() => {
-                const value = this.chartOptionsService.getLabelRotation(axisType) as number;
+                const value = chartOptionsService.getLabelRotation(axisType) as number;
                 angleSelect.setValue(value || 0);
             });
 
@@ -228,8 +227,8 @@ export class CartesianAxisPanel extends Component {
 
     private addLabelPadding(labelPanelComp: FontPanel) {
         const labelPaddingSlider = this.createBean(new AgSlider(this.chartMenuUtils.getDefaultSliderParams(
-            this.chartOptionsService.getAxisProperty<number>("label.padding"),
-            newValue => this.chartOptionsService.setAxisProperty("label.padding", newValue),
+            this.chartOptionsProxy,
+            "label.padding",
             "padding",
             30
         )));

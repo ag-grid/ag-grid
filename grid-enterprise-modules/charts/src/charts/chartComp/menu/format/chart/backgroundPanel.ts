@@ -5,7 +5,7 @@ import {
     PostConstruct
 } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { ChartOptionsService } from "../../../services/chartOptionsService";
+import { ChartOptionsProxy } from "../../../services/chartOptionsService";
 import { ChartMenuUtils } from "../../chartMenuUtils";
 
 export class BackgroundPanel extends Component {
@@ -19,25 +19,24 @@ export class BackgroundPanel extends Component {
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
     @Autowired('chartMenuUtils') private readonly chartMenuUtils: ChartMenuUtils;
 
-    constructor(private readonly chartOptionsService: ChartOptionsService) {
+    constructor(private readonly chartOptionsProxy: ChartOptionsProxy) {
         super();
     }
 
     @PostConstruct
     private init() {
-        const chartBackgroundGroupParams: AgGroupComponentParams = {
-            cssIdentifier: 'charts-format-sub-level',
-            direction: 'vertical',
-            suppressOpenCloseIcons: true,
-            title: this.chartTranslationService.translate('background'),
-            enabled: this.chartOptionsService.getChartOption('background.visible'),
-            suppressEnabledCheckbox: false,
-            onEnableChange: enabled => this.chartOptionsService.setChartOption('background.visible', enabled)
-        };
-        const colorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams(
-            this.chartOptionsService.getChartOption('background.fill'),
-            newColor => this.chartOptionsService.setChartOption('background.fill', newColor)
+        const chartBackgroundGroupParams: AgGroupComponentParams = this.chartMenuUtils.addEnableParams(
+            this.chartOptionsProxy,
+            'background.visible',
+            {
+                cssIdentifier: 'charts-format-sub-level',
+                direction: 'vertical',
+                suppressOpenCloseIcons: true,
+                title: this.chartTranslationService.translate('background'),
+                suppressEnabledCheckbox: false
+            }
         );
+        const colorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams(this.chartOptionsProxy, 'background.fill');
         this.setTemplate(BackgroundPanel.TEMPLATE, {
             chartBackgroundGroup: chartBackgroundGroupParams,
             colorPicker: colorPickerParams

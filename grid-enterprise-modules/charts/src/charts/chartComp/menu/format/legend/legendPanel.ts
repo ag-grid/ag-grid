@@ -6,12 +6,11 @@ import {
     Component,
     PostConstruct,
     RefSelector,
-    AgSelectParams,
     AgSliderParams,
 } from "@ag-grid-community/core";
 import { FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { ChartOptionsService } from "../../../services/chartOptionsService";
+import { ChartOptionsProxy } from "../../../services/chartOptionsService";
 import { FormatPanelOptions } from "../formatPanel";
 import { ChartMenuUtils } from "../../chartMenuUtils";
 
@@ -35,13 +34,13 @@ export class LegendPanel extends Component {
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
     @Autowired('chartMenuUtils') private readonly chartMenuUtils: ChartMenuUtils;
 
-    private readonly chartOptionsService: ChartOptionsService;
+    private readonly chartOptionsProxy: ChartOptionsProxy;
     private readonly isExpandedOnInit: boolean;
 
     constructor({ chartOptionsService, isExpandedOnInit = false }: FormatPanelOptions) {
         super();
 
-        this.chartOptionsService = chartOptionsService;
+        this.chartOptionsProxy = chartOptionsService.getChartOptionProxy();
         this.isExpandedOnInit = isExpandedOnInit;
     }
 
@@ -52,17 +51,17 @@ export class LegendPanel extends Component {
             direction: 'vertical',
             title: this.chartTranslationService.translate("legend"),
             suppressEnabledCheckbox: false,
-            enabled: this.chartOptionsService.getChartOption<boolean>("legend.enabled") || false,
+            enabled: this.chartOptionsProxy.getValue<boolean>("legend.enabled") || false,
             expanded: this.isExpandedOnInit,
             onEnableChange: enabled => {
-                this.chartOptionsService.setChartOption("legend.enabled", enabled);
+                this.chartOptionsProxy.setValue("legend.enabled", enabled);
                 this.legendGroup.toggleGroupExpand(true);
             },
             items: [this.createLabelPanel()]
         };
         this.setTemplate(LegendPanel.TEMPLATE, {
             legendGroup: legendGroupParams,
-            legendPositionSelect: this.getLegendPositionParams(),
+            legendPositionSelect: this.chartMenuUtils.getDefaultLegendParams(this.chartOptionsProxy, 'legend.position'),
             legendPaddingSlider: this.getSliderParams('spacing', 'spacing', 200),
             markerSizeSlider: this.getSliderParams("item.marker.size", "markerSize", 40),
             markerStrokeSlider: this.getSliderParams("item.marker.strokeWidth", "markerStroke", 10),
@@ -72,31 +71,17 @@ export class LegendPanel extends Component {
         });
     }
 
-    private getLegendPositionParams(): AgSelectParams {
-        return this.chartMenuUtils.getDefaultLegendParams(
-            this.chartOptionsService.getChartOption("legend.position"),
-            newValue => this.chartOptionsService.setChartOption("legend.position", newValue)
-        );
-    }
-
     private getSliderParams(expression: string, labelKey: string, defaultMaxValue: number): AgSliderParams {
-        return this.chartMenuUtils.getDefaultSliderParams(
-            this.chartOptionsService.getChartOption<number | undefined>(`legend.${expression}`) ?? 0,
-            newValue => this.chartOptionsService.setChartOption(`legend.${expression}`, newValue),
-            labelKey,
-            defaultMaxValue
-        );
+        return this.chartMenuUtils.getDefaultSliderParams(this.chartOptionsProxy, `legend.${expression}`, labelKey, defaultMaxValue);
     }
 
     private createLabelPanel(): FontPanel {
-        const chartProxy = this.chartOptionsService;
-
         const params: FontPanelParams = {
             enabled: true,
             suppressEnabledCheckbox: true,
             fontModelProxy: {
-                getValue: key => chartProxy.getChartOption(`legend.item.label.${key}`),
-                setValue: (key, value) => chartProxy.setChartOption(`legend.item.label.${key}`, value)
+                getValue: key => this.chartOptionsProxy.getValue(`legend.item.label.${key}`),
+                setValue: (key, value) => this.chartOptionsProxy.setValue(`legend.item.label.${key}`, value)
             }
         };
 

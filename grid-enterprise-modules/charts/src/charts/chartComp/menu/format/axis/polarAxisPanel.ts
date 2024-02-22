@@ -3,6 +3,7 @@ import {
     AgGroupComponent,
     AgGroupComponentParams,
     AgSelect,
+    AgSelectParams,
     AgSlider,
     Autowired,
     Component,
@@ -13,7 +14,7 @@ import {
 import {ChartController} from '../../../chartController';
 import {FontPanel, FontPanelParams} from '../fontPanel';
 import {ChartTranslationService} from '../../../services/chartTranslationService';
-import {ChartOptionsService} from '../../../services/chartOptionsService';
+import {ChartOptionsProxy} from '../../../services/chartOptionsService';
 import {FormatPanelOptions} from '../formatPanel';
 import {isPolar, isRadial} from '../../../utils/seriesTypeMapper';
 import { ChartMenuUtils } from '../../chartMenuUtils';
@@ -33,14 +34,14 @@ export class PolarAxisPanel extends Component {
     @Autowired('chartMenuUtils') private readonly chartMenuUtils: ChartMenuUtils;
 
     private readonly chartController: ChartController;
-    private readonly chartOptionsService: ChartOptionsService;
+    private readonly chartOptionsProxy: ChartOptionsProxy;
     private readonly isExpandedOnInit: boolean;
 
     constructor({ chartController, chartOptionsService, isExpandedOnInit = false }: FormatPanelOptions) {
         super();
 
         this.chartController = chartController;
-        this.chartOptionsService = chartOptionsService;
+        this.chartOptionsProxy = chartOptionsService.getAxisPropertyProxy();
         this.isExpandedOnInit = isExpandedOnInit;
     }
 
@@ -53,16 +54,8 @@ export class PolarAxisPanel extends Component {
             expanded: this.isExpandedOnInit,
             suppressEnabledCheckbox: true
         };
-        const axisColorInputParams = this.chartMenuUtils.getDefaultColorPickerParams(
-            this.chartOptionsService.getAxisProperty('line.color'),
-            (newColor) => this.chartOptionsService.setAxisProperty('line.color', newColor)
-        );
-        const axisLineWidthSliderParams = this.chartMenuUtils.getDefaultSliderParams(
-            this.chartOptionsService.getAxisProperty<number>('line.width'),
-            (newValue) => this.chartOptionsService.setAxisProperty('line.width', newValue),
-            'thickness',
-            10
-        );
+        const axisColorInputParams = this.chartMenuUtils.getDefaultColorPickerParams(this.chartOptionsProxy, 'line.color');
+        const axisLineWidthSliderParams = this.chartMenuUtils.getDefaultSliderParams(this.chartOptionsProxy, 'line.width', 'thickness', 10);
         this.setTemplate(PolarAxisPanel.TEMPLATE, {
             axisGroup: axisGroupParams,
             axisColorInput: axisColorInputParams,
@@ -105,8 +98,8 @@ export class PolarAxisPanel extends Component {
             enabled: true,
             suppressEnabledCheckbox: true,
             fontModelProxy: {
-                getValue: key => this.chartOptionsService.getAxisProperty(`label.${key}`),
-                setValue: (key, value) => this.chartOptionsService.setAxisProperty(`label.${key}`, value)
+                getValue: key => this.chartOptionsProxy.getValue(`label.${key}`),
+                setValue: (key, value) => this.chartOptionsProxy.setValue(`label.${key}`, value)
             }
         };
 
@@ -168,12 +161,7 @@ export class PolarAxisPanel extends Component {
         property: string;
     }): AgSlider {
         const { labelKey, defaultMaxValue, step = 0.05, property } = config;
-        const params = this.chartMenuUtils.getDefaultSliderParams(
-            this.chartOptionsService.getAxisProperty<number>(property) ?? 0,
-            newValue => this.chartOptionsService.setAxisProperty(property, newValue),
-            labelKey,
-            defaultMaxValue
-        );
+        const params = this.chartMenuUtils.getDefaultSliderParams(this.chartOptionsProxy, property, labelKey, defaultMaxValue);
         params.step = step;
         return this.createManagedBean(new AgSlider(params));
     }
@@ -184,15 +172,17 @@ export class PolarAxisPanel extends Component {
         property: string
     }): AgSelect {
         const { label, options, property } = config;
-        return this.createManagedBean(new AgSelect({
-            label: this.translate(label),
-            labelAlignment: 'left',
-            labelWidth: 'flex',
-            inputWidth: 'flex',
-            options,
-            value: this.chartOptionsService.getAxisProperty(property),
-            onValueChange: newValue => this.chartOptionsService.setAxisProperty(property, newValue)
-        }));
+        return this.createManagedBean(new AgSelect(this.chartMenuUtils.addValueParams<AgSelectParams>(
+            this.chartOptionsProxy,
+            property,
+            {
+                label: this.translate(label),
+                labelAlignment: 'left',
+                labelWidth: 'flex',
+                inputWidth: 'flex',
+                options,
+            }
+        )));
     }
 
     private translate(key: string, defaultText?: string) {

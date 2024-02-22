@@ -5,8 +5,7 @@ import {
     PostConstruct,
 } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { ChartOptionsService } from "../../../services/chartOptionsService";
-import { ChartSeriesType } from "../../../utils/seriesTypeMapper";
+import { ChartOptionsProxy } from "../../../services/chartOptionsService";
 import { ChartMenuUtils } from "../../chartMenuUtils";
 
 export class CapsPanel extends Component {
@@ -21,8 +20,7 @@ export class CapsPanel extends Component {
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
     @Autowired('chartMenuUtils') private readonly chartMenuUtils: ChartMenuUtils;
 
-    constructor(private readonly chartOptionsService: ChartOptionsService,
-                private getSelectedSeries: () => ChartSeriesType) {
+    constructor(private readonly chartOptionsProxy: ChartOptionsProxy) {
         super();
     }
 
@@ -36,14 +34,8 @@ export class CapsPanel extends Component {
             suppressOpenCloseIcons: true,
             suppressEnabledCheckbox: true,
         };
-        const capLengthRatioSliderParams = this.chartMenuUtils.getDefaultSliderParams(
-            this.chartOptionsService.getSeriesOption<number>("cap.lengthRatio", this.getSelectedSeries()),
-            newValue => this.chartOptionsService.setSeriesOption("cap.lengthRatio", newValue, this.getSelectedSeries()),
-            "capLengthRatio",
-            1
-        );
+        const capLengthRatioSliderParams = this.chartMenuUtils.getDefaultSliderParams(this.chartOptionsProxy, "cap.lengthRatio", "capLengthRatio", 1);
         capLengthRatioSliderParams.step = 0.05;
-        capLengthRatioSliderParams.minValue = 0;
 
         this.setTemplate(CapsPanel.TEMPLATE, {
             capsGroup: capsGroupParams,

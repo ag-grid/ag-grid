@@ -11,10 +11,10 @@ import {
     AgSelectParams
 } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { ChartOptionsService } from "../../../services/chartOptionsService";
-import { ChartSeriesType } from "../../../utils/seriesTypeMapper";
+import { ChartOptionsProxy } from "../../../services/chartOptionsService";
 import { initFontPanelParams } from "./fontPanelParams";
 import { FontPanel } from "../fontPanel";
+import { ChartMenuUtils } from "../../chartMenuUtils";
 
 type SeriesItemType = 'positive' | 'negative';
 
@@ -29,12 +29,12 @@ export class SeriesItemsPanel extends Component {
 
     @RefSelector('seriesItemsGroup') private seriesItemsGroup: AgGroupComponent;
 
-    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
+    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    @Autowired('chartMenuUtils') private readonly chartMenuUtils: ChartMenuUtils;
 
     private activePanels: Component[] = [];
 
-    constructor(private readonly chartOptionsService: ChartOptionsService,
-                private getSelectedSeries: () => ChartSeriesType) {
+    constructor(private readonly chartOptionsProxy: ChartOptionsProxy) {
         super();
     }
 
@@ -79,30 +79,24 @@ export class SeriesItemsPanel extends Component {
     }
 
     private initSeriesControls(itemType: SeriesItemType = 'positive') {
-        this.initSlider("strokeWidth", 0, 10, 45, `item.${itemType}.strokeWidth`);
-        this.initSlider("lineDash", 0, 30, 45, `item.${itemType}.lineDash`, 1, true);
-        this.initSlider("strokeOpacity", 0, 1, 45, `item.${itemType}.strokeOpacity`, 0.05, false);
-        this.initSlider("fillOpacity", 0, 1, 45, `item.${itemType}.fillOpacity`, 0.05, false);
+        this.initSlider("strokeWidth", 10, `item.${itemType}.strokeWidth`);
+        this.initSlider("lineDash", 30, `item.${itemType}.lineDash`, 1, true);
+        this.initSlider("strokeOpacity", 1, `item.${itemType}.strokeOpacity`, 0.05, false);
+        this.initSlider("fillOpacity", 1, `item.${itemType}.fillOpacity`, 0.05, false);
         this.initItemLabels(itemType);
     }
 
-    private initSlider(labelKey: string, minValue: number, maxValue: number, textFieldWidth: number, seriesOptionKey: string, step: number = 1, isArray: boolean = false) {
-        const value = this.chartOptionsService.getSeriesOption(seriesOptionKey, this.getSelectedSeries());
-
-        const sliderChangedCallback = (newValue: number) => {
-            const value = isArray ? [newValue] : newValue;
-            this.chartOptionsService.setSeriesOption(seriesOptionKey, value, this.getSelectedSeries());
-        }
-
-        const itemSlider = this.seriesItemsGroup.createManagedBean(new AgSlider({
-            label: this.chartTranslationService.translate(labelKey),
-            minValue,
+    private initSlider(labelKey: string, maxValue: number, seriesOptionKey: string, step: number = 1, isArray: boolean = false) {
+        const params = this.chartMenuUtils.getDefaultSliderParams(
+            this.chartOptionsProxy,
+            seriesOptionKey,
+            labelKey,
             maxValue,
-            textFieldWidth,
-            value: `${value}`,
-            step,
-            onValueChange: sliderChangedCallback
-        }));
+            isArray
+        );
+        params.step = step;
+
+        const itemSlider = this.seriesItemsGroup.createManagedBean(new AgSlider(params));
 
         this.seriesItemsGroup.addItem(itemSlider);
         this.activePanels.push(itemSlider);
@@ -111,8 +105,7 @@ export class SeriesItemsPanel extends Component {
     private initItemLabels(itemType: "positive" | "negative") {
         const sectorParams = initFontPanelParams({
             labelName: this.chartTranslationService.translate('seriesItemLabels'),
-            chartOptionsService: this.chartOptionsService,
-            getSelectedSeries: () => this.getSelectedSeries(),
+            chartOptionsProxy: this.chartOptionsProxy,
             seriesOptionLabelProperty: `item.${itemType}.label`
         });
 

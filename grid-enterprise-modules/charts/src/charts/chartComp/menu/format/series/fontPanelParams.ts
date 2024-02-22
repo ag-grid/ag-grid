@@ -1,18 +1,16 @@
 import { FontPanelParams } from "../fontPanel";
-import { ChartOptionsService } from "../../../services/chartOptionsService";
+import { ChartOptionsProxy, ChartOptionsService } from "../../../services/chartOptionsService";
 import { ChartSeriesType } from "../../../utils/seriesTypeMapper";
 
 interface InitFontPanelParams {
     labelName: string,
-    chartOptionsService: ChartOptionsService,
-    getSelectedSeries: () => ChartSeriesType,
+    chartOptionsProxy: ChartOptionsProxy,
     seriesOptionLabelProperty: 'calloutLabel' | 'sectorLabel' | 'label' | 'item.positive.label' | 'item.negative.label'
 }
 
 export function initFontPanelParams({
     labelName,
-    chartOptionsService,
-    getSelectedSeries,
+    chartOptionsProxy,
     seriesOptionLabelProperty
 }: InitFontPanelParams) {
 
@@ -21,11 +19,11 @@ export function initFontPanelParams({
     };
     const getFontOption = <T = string>(fontOption: string) => {
         const expression = getFontOptionExpression(fontOption);
-        return chartOptionsService.getSeriesOption<T>(expression, getSelectedSeries());
+        return chartOptionsProxy.getValue<T>(expression);
     };
     const setFontOption = (fontOption: string, value: any) => {
         const expression = getFontOptionExpression(fontOption);
-        chartOptionsService.setSeriesOption(expression, value, getSelectedSeries());
+        chartOptionsProxy.setValue(expression, value);
     };
 
     const params: FontPanelParams = {
