@@ -145,7 +145,7 @@ export const Licenses: FunctionComponent<{ isChecked: boolean }> = ({ isChecked 
             {filteredData.map((data) => {
                 let columns, cellRenderer;
 
-                if (data.id === 'togther') { // Correcting the typo to 'together' if necessary
+                if (data.id === 'together') { // Correcting the typo to 'together' if necessary
                     columns = {
                         'label': '',
                         'chartsGrid': '',

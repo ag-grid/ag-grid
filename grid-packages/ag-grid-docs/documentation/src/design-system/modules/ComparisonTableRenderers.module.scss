@@ -16,12 +16,6 @@
     gap: $spacing-size-2;
 }
 
-@media screen and (max-width: $breakpoint-pricing-medium) {
-    .feature {
-        margin-right: $spacing-size-12;
-    }
-}
-
 .detail {
     text-align: center;
     font-size: var(--text-fs-sm);
@@ -42,7 +36,7 @@
 
 .tick span {
     transition: all 0.3s;
-    opacity: 1
+    opacity: 1;
 }
 
 .dash {
