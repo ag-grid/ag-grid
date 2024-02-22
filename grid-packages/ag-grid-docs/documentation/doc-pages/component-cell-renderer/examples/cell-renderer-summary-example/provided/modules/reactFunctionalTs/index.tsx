@@ -93,7 +93,7 @@ const PriceRenderer = (params: CustomCellRendererProps) => {
     priceMultiplier = 5
   }
 
-  const priceArr: any[] = new Array(priceMultiplier)
+  const priceArr: any[] = new Array(priceMultiplier).fill('');
 
   return (
     <span
