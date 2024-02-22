@@ -18,8 +18,8 @@ function findIndexMDFilesContainingModules(directory) {
             return
           }
 
-          if (data.includes("grid-example")) {
-            const subFolderPath = path.join(directory, "examples")
+          if (data.includes("gridExampleRunner")) {
+            const subFolderPath = path.join(directory, "_examples")
             findFilesWithSameNameInSubfolder(filePath, data, subFolderPath)
           }
         })
@@ -285,12 +285,12 @@ function appendTextAfterLastImport(filePath, textToAppend) {
 
 // Function to find files with the same name within a subfolder
 function findFilesWithSameNameInSubfolder(filePath, docFile, subFolderPath) {
-  const nameOnlyRegex = /grid-example.*name=['"](.*?)['"]/g
-  const regex = /grid-example.*name=['"](.*?)['"].*"modules".*?\[(.*?)\]/g
-  const moduleMatches = [...docFile.matchAll(regex)];
+  const nameOnlyRegex = /gridExampleRunner.*name=['"](.*?)['"]/g
+  //const regex = /gridExampleRunner.*name=['"](.*?)['"].*"modules".*?\[(.*?)\]/g
+  //const moduleMatches = [...docFile.matchAll(regex)];
   const nameOnlyMatches = [...docFile.matchAll(nameOnlyRegex)];
 
-  const matches = moduleMatches.length > 0 ? moduleMatches : nameOnlyMatches;
+  const matches = nameOnlyMatches;// moduleMatches.length > 0 ? moduleMatches : nameOnlyMatches;
   for (const match of matches) {
     const exampleFolder = match[1]
     const exampleModules = match[2] ?? "'clientside'";
@@ -324,5 +324,5 @@ function findFilesWithSameNameInSubfolder(filePath, docFile, subFolderPath) {
 }
 
 // Example usage:
-const directoryToSearch = "./doc-pages" // Adjust this to the directory you want to start the search from
+const directoryToSearch = "./src/content/docs/" // Adjust this to the directory you want to start the search from
 findIndexMDFilesContainingModules(directoryToSearch)
