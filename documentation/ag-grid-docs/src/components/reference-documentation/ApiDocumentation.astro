@@ -4,13 +4,7 @@ import { getFrameworkFromPath } from '@features/docs/utils/urlPaths';
 import { getJsonFile } from '@utils/pages';
 import { getEntry } from 'astro:content';
 
-const {
-    names,
-    config,
-    source,
-    sources: sourcesProp,
-    section
-} = Astro.props;
+const { names, config, source, sources: sourcesProp, section } = Astro.props;
 
 const framework = getFrameworkFromPath(Astro.url.pathname);
 const interfaceLookup = getJsonFile('reference/interfaces.AUTO.json');
@@ -23,27 +17,28 @@ const propertiesFromFilesPromises = sources.map(async (s) => {
     return fileEntry.data;
 });
 const propertiesFromFiles = await Promise.all(propertiesFromFilesPromises);
-const propertyConfigs = propertiesFromFiles.map((p) => {
-    const config = p['_config_'];
-    if (!config) {
-        // TODO: Figure out why this warning is showing
-        console.warn(
-                `ApiDocumentation: _config_ property missing from source ${sources.join()}.`
-            );
-    }
-    return config;
-}).filter(Boolean);
+const propertyConfigs = propertiesFromFiles
+    .map((p) => {
+        const config = p['_config_'];
+        if (!config) {
+            // TODO: Figure out why this warning is showing
+            console.warn(`ApiDocumentation: _config_ property missing from source ${sources.join()}.`);
+        }
+        return config;
+    })
+    .filter(Boolean);
 const codeConfigSrcs = propertyConfigs.map((config) => config.codeSrc);
-const codeConfigs = {}
+const codeConfigs = {};
 codeConfigSrcs.forEach((fileName) => {
     const referenceFileName = `reference/${fileName}`;
-    codeConfigs[fileName] = getJsonFile(referenceFileName)
+    codeConfigs[fileName] = getJsonFile(referenceFileName);
 });
 
 propertiesFromFiles.forEach((p) => delete p['_config_']);
 ---
 
-<ApiDocumentation client:load
+<ApiDocumentation
+    client:load
     framework={framework}
     sources={sources}
     section={section}
@@ -52,4 +47,5 @@ propertiesFromFiles.forEach((p) => delete p['_config_']);
     propertiesFromFiles={propertiesFromFiles}
     interfaceLookup={interfaceLookup}
     propertyConfigs={propertyConfigs}
-    codeConfigs={codeConfigs}/>
+    codeConfigs={codeConfigs}
+/>

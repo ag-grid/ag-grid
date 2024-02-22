@@ -4,14 +4,7 @@ import { getFrameworkFromPath } from '@features/docs/utils/urlPaths';
 import { getJsonFile } from '@utils/pages';
 import { getEntry } from 'astro:content';
 
-const {
-    interfaceName,
-    overrideSrc,
-    names,
-    exclude,
-    config,
-    wrapNamesAt
-} = Astro.props;
+const { interfaceName, overrideSrc, names, exclude, config, wrapNamesAt } = Astro.props;
 
 const framework = getFrameworkFromPath(Astro.url.pathname);
 
@@ -29,7 +22,8 @@ const codeLookup = getJsonFile('reference/doc-interfaces.AUTO.json');
 const htmlLookup = getJsonFile('reference/doc-interfaces.HTML.json');
 ---
 
-<InterfaceDocumentation client:load
+<InterfaceDocumentation
+    client:load
     interfaceName={interfaceName}
     framework={framework}
     overrides={overrides}
@@ -39,4 +33,5 @@ const htmlLookup = getJsonFile('reference/doc-interfaces.HTML.json');
     config={config}
     interfaceLookup={interfaceLookup}
     codeLookup={codeLookup}
-    htmlLookup={htmlLookup} />
+    htmlLookup={htmlLookup}
+/>
