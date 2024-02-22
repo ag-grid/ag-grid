@@ -188,9 +188,21 @@ async function transformDocs({
         const files = await getFolderFiles(sourceDocsFolder);
 
         const rootFilePath = path.join(sourceDocsFolder, ROOT_MDX);
-        const contents = await readFile(rootFilePath);
-
         let result: Result;
+        let contents;
+        try {
+            contents = await readFile(rootFilePath);
+        } catch (error) {
+            result = {
+                type: 'error',
+                error: error,
+                message: error.message,
+                ast: error.ast,
+                folder: docFolder,
+            };
+            return result;
+        }
+
         try {
             const { warnings, replacedContents } = removeExtraHtmlElements(contents);
             const transformResult = await transformMdxToMarkdoc({
