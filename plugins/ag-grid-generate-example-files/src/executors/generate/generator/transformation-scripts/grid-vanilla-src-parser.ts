@@ -115,54 +115,17 @@ function processGlobalComponentsForVue(propertyName: string, exampleType, provid
 }
 
 
-/** Creating a TS program takes about half a second which quickly gets very expensive. As we only need it to access the same GridOptions file we cache the first program that finds this. */
-let cachedProgram = undefined
-
-function getTypeLookupFunc(includeTypes, fileName) {
-    let lookupType = (propName: string) => undefined;
-    if (includeTypes) {
-        const program = cachedProgram || ts.createProgram([fileName], {
-            "paths": {
-                "@ag-*": [
-                    "node_modules/@ag-*/dist/cjs/es5/main"
-                ]
-            }
-        });
-        program.getTypeChecker(); // does something important to make types work below
-
-        const optionsFile = program.getSourceFiles().find(f => f.fileName.endsWith('gridOptions.d.ts'));
-        if (optionsFile) {
-            cachedProgram = program;
-            const gridOptionsInterface = optionsFile.statements.find((i: ts.Node) => ts.isInterfaceDeclaration(i) && i.name.getText() == 'GridOptions') as ts.InterfaceDeclaration;
-
-            lookupType = (propName: string) => {
-
-                const pop = gridOptionsInterface.members.find(m => (ts.isPropertySignature(m) || ts.isMethodSignature(m)) && m.name.getText() == propName) as ts.PropertySignature | ts.MethodSignature;
-                if (pop && pop.type) {
-                    return { typeName: pop.type.getText(), typesToInclude: getTypes(pop.type) };
-                } else {
-                    console.error(`Could not find GridOptions property ${propName} for example file ${fileName}`);
-                }
-                return undefined;
-            }
-        } else {
-            // Maybe this is a provided placeholder file, in which case the file will not have imported the gridOptions file
-        }
-    }
-    return lookupType;
-}
-
 function internalParser(examplePath, {
-    fileName,
     srcFile,
-    includeTypes
+    includeTypes,
+    gridOptionsTypes
 }, html, exampleSettings, exampleType, providedExamples) {
     const domTree = cheerio.load(html, null, false);
     domTree('style').remove();
     const domEventHandlers = extractEventHandlers(domTree, recognizedDomEvents);
 
     const tsTree = includeTypes ? parseFile(srcFile) : parseFile(readAsJsFile(srcFile));
-    const gridOpsTypeLookup = getTypeLookupFunc(includeTypes, fileName);
+    const gridOpsTypeLookup = includeTypes ? (prop) => gridOptionsTypes[prop] : () => undefined;
 
     const tsCollectors = [];
     const tsGridOptionsCollectors = [];
@@ -628,16 +591,16 @@ function internalParser(examplePath, {
     return tsBindings;
 }
 
-export function parser(examplePath, fileName, srcFile, html, exampleSettings, exampleType, providedExamples) {
+export function parser(examplePath, srcFile, html, exampleSettings, exampleType, providedExamples, gridOptionsTypes) {
     const typedBindings = internalParser(examplePath, {
-        fileName,
         srcFile,
-        includeTypes: true
+        includeTypes: true,
+        gridOptionsTypes
     }, html, exampleSettings, exampleType, providedExamples);
     const bindings = internalParser(examplePath, {
-        fileName,
         srcFile,
-        includeTypes: false
+        includeTypes: false,
+        gridOptionsTypes
     }, html, exampleSettings, exampleType, providedExamples);
     return {bindings, typedBindings};
 }

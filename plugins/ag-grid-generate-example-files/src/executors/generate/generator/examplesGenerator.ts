@@ -12,7 +12,7 @@ import {
     getMainFileName,
     getProvidedExampleFiles,
     getProvidedExampleFolder,
-    getTransformTsFileExt,
+    getTransformTsFileExt
 } from './utils/fileUtils';
 import { frameworkFilesGenerator } from './utils/frameworkFilesGenerator';
 import { getOtherScriptFiles } from './utils/getOtherScriptFiles';
@@ -64,13 +64,14 @@ type GeneratedContentParams = {
     folderPath: string;
     isDev?: boolean;
     importType?: 'modules' | 'packages';
+    gridOptionsTypes?: any;
 };
 
 /**
  * Get generated contents for an example
  */
 export const getGeneratedContents = async (params: GeneratedContentParams): Promise<GeneratedContents | undefined> => {
-    const { internalFramework, folderPath, isDev = false, importType } = params;
+    const { internalFramework, folderPath, isDev = false, importType, gridOptionsTypes } = params;
     const sourceFileList = await fs.readdir(folderPath);
 
     if(sourceFileList.includes('SKIP_EXAMPLE_GENERATION.md')) {
@@ -123,12 +124,12 @@ export const getGeneratedContents = async (params: GeneratedContentParams): Prom
 
     const { bindings, typedBindings } = gridVanillaSrcParser(
         folderPath,
-        entryFilePath,
         entryFile,
         indexHtml,
         {}, // Hardcoded for now used to provide custom theme, width, height for inline styles
         entryType,
-        frameworkHasProvided
+        frameworkHasProvided,
+        gridOptionsTypes
     );
 
     const getFrameworkFiles = frameworkFilesGenerator[internalFramework];

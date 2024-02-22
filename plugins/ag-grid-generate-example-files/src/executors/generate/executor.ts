@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import path from 'path';
 
-import { writeFile } from '../../executors-utils';
+import { readJSONFile, writeFile } from '../../executors-utils';
 import { getGeneratedContents } from './generator/examplesGenerator';
 import { FRAMEWORKS } from './generator/types';
 
@@ -25,13 +25,17 @@ export default async function (options: ExecutorOptions) {
 }
 
 export async function generateFiles(options: ExecutorOptions) {
+
+    const gridOptionsTypes = await readJSONFile('gridOptions_Types.json');
+
     for (const importType of ['modules', 'packages'] as const) {        
         for (const internalFramework of FRAMEWORKS) {
             const result = await getGeneratedContents({
                 folderPath: options.examplePath,
                 internalFramework,
                 isDev: options.mode === 'dev',
-                importType
+                importType,
+                gridOptionsTypes
             });
 
             const outputPath = path.join(options.outputPath, importType, internalFramework, 'contents.json');

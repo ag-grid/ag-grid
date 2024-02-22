@@ -17,6 +17,7 @@
   "typings": "./dist/src/index.d.ts",
   "executors": "./executors.json",
   "scripts": {
-    "copySrcFilesForGeneration": "node ./src/copySrcFilesForGeneration.js"
+    "copySrcFilesForGeneration": "node ./src/copySrcFilesForGeneration.js",
+    "generateGridOptionsType": "ts-node ./src/gridOptionsTypes/buildGridOptionsType.ts"
   }
 }
