@@ -79,10 +79,8 @@ export class LegendPanel extends Component {
         const params: FontPanelParams = {
             enabled: true,
             suppressEnabledCheckbox: true,
-            fontModelProxy: {
-                getValue: key => this.chartOptionsProxy.getValue(`legend.item.label.${key}`),
-                setValue: (key, value) => this.chartOptionsProxy.setValue(`legend.item.label.${key}`, value)
-            }
+            chartOptionsProxy: this.chartOptionsProxy,
+            keyMapper: key => `legend.item.label.${key}`
         };
 
         return this.createManagedBean(new FontPanel(params));

@@ -25,7 +25,7 @@ export class BackgroundPanel extends Component {
 
     @PostConstruct
     private init() {
-        const chartBackgroundGroupParams: AgGroupComponentParams = this.chartMenuUtils.addEnableParams(
+        const chartBackgroundGroupParams = this.chartMenuUtils.addEnableParams<AgGroupComponentParams>(
             this.chartOptionsProxy,
             'background.visible',
             {

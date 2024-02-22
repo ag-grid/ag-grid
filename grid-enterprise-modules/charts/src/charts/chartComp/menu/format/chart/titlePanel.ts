@@ -45,11 +45,9 @@ export default class TitlePanel extends Component {
             name: this.chartTranslationService.translate('title'),
             enabled: hasTitle,
             suppressEnabledCheckbox: false,
-            fontModelProxy: {
-                setValue: (key, value) => this.chartOptionsProxy.setValue(`title.${key}`, value),
-                getValue: key => this.chartOptionsProxy.getValue(`title.${key}`)
-            },
-            setEnabled: (enabled) => {
+            chartOptionsProxy: this.chartOptionsProxy,
+            keyMapper: key => `title.${key}`,
+            onEnableChange: (enabled) => {
                 if (this.toolbarExists()) {
                     // extra padding is only included when the toolbar is present
                     const topPadding: number = this.chartOptionsProxy.getValue('padding.top');

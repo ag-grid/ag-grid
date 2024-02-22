@@ -89,10 +89,8 @@ export class GradientLegendPanel extends Component {
         const params: FontPanelParams = {
             enabled: true,
             suppressEnabledCheckbox: true,
-            fontModelProxy: {
-                getValue: key => this.chartOptionsProxy.getValue(`gradientLegend.scale.label.${key}`),
-                setValue: (key, value) => this.chartOptionsProxy.setValue(`gradientLegend.scale.label.${key}`, value)
-            }
+            chartOptionsProxy: this.chartOptionsProxy,
+            keyMapper: key => `gradientLegend.scale.label.${key}`
         };
 
         return this.createManagedBean(new FontPanel(params));

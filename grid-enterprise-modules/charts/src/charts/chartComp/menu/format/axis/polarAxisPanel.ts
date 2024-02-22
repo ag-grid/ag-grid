@@ -97,10 +97,8 @@ export class PolarAxisPanel extends Component {
             name: this.translate('labels'),
             enabled: true,
             suppressEnabledCheckbox: true,
-            fontModelProxy: {
-                getValue: key => this.chartOptionsProxy.getValue(`label.${key}`),
-                setValue: (key, value) => this.chartOptionsProxy.setValue(`label.${key}`, value)
-            }
+            chartOptionsProxy: this.chartOptionsProxy,
+            keyMapper: key => `label.${key}`
         };
 
         const labelPanelComp = this.createManagedBean(new FontPanel(params));

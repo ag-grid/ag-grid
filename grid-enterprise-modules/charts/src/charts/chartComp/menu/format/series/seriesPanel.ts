@@ -17,7 +17,6 @@ import type { AgRangeBarSeriesLabelPlacement } from 'ag-charts-community';
 import { ShadowPanel } from "./shadowPanel";
 import { FontPanel } from "../fontPanel";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { initFontPanelParams } from "./fontPanelParams";
 import { ChartOptionsProxy } from "../../../services/chartOptionsService";
 import { FormatPanelOptions } from "../formatPanel";
 import { MarkersPanel } from "./markersPanel";
@@ -246,14 +245,8 @@ export class SeriesPanel extends Component {
     private initLabels() {
         const isPieChart = isPieChartSeries(this.seriesType);
         const seriesOptionLabelProperty = isPieChart ? 'calloutLabel' : 'label';
-        const labelName = isPieChart
-            ? this.chartTranslationService.translate('calloutLabels')
-            : this.chartTranslationService.translate('labels');
-        const labelParams = initFontPanelParams({
-            labelName,
-            chartOptionsProxy: this.chartOptionsProxy,
-            seriesOptionLabelProperty
-        });
+        const labelKey = isPieChart ? 'calloutLabels' : 'labels';
+        const labelParams = this.chartMenuUtils.getDefaultFontPanelParams(this.chartOptionsProxy, seriesOptionLabelProperty, labelKey);
         const labelPanelComp = this.createBean(new FontPanel(labelParams));
 
         if (isPieChart) {
@@ -265,11 +258,7 @@ export class SeriesPanel extends Component {
         this.addWidget(labelPanelComp);
 
         if (isPieChart) {
-            const sectorParams = initFontPanelParams({
-                labelName: this.chartTranslationService.translate('sectorLabels'),
-                chartOptionsProxy: this.chartOptionsProxy,
-                seriesOptionLabelProperty: 'sectorLabel'
-            });
+            const sectorParams = this.chartMenuUtils.getDefaultFontPanelParams(this.chartOptionsProxy, 'sectorLabel', 'sectorLabels');
             const sectorPanelComp = this.createBean(new FontPanel(sectorParams));
             const positionRatioComp = this.getSectorLabelPositionRatio();
             sectorPanelComp.addCompToPanel(positionRatioComp);

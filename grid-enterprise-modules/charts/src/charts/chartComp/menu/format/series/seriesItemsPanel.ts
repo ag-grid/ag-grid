@@ -12,7 +12,6 @@ import {
 } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartOptionsProxy } from "../../../services/chartOptionsService";
-import { initFontPanelParams } from "./fontPanelParams";
 import { FontPanel } from "../fontPanel";
 import { ChartMenuUtils } from "../../chartMenuUtils";
 
@@ -103,11 +102,7 @@ export class SeriesItemsPanel extends Component {
     }
 
     private initItemLabels(itemType: "positive" | "negative") {
-        const sectorParams = initFontPanelParams({
-            labelName: this.chartTranslationService.translate('seriesItemLabels'),
-            chartOptionsProxy: this.chartOptionsProxy,
-            seriesOptionLabelProperty: `item.${itemType}.label`
-        });
+        const sectorParams = this.chartMenuUtils.getDefaultFontPanelParams(this.chartOptionsProxy, `item.${itemType}.label`, 'seriesItemLabels');
 
         const labelPanelComp = this.createBean(new FontPanel(sectorParams));
         this.seriesItemsGroup.addItem(labelPanelComp);

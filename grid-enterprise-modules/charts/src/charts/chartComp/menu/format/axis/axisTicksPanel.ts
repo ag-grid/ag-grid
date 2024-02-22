@@ -28,7 +28,7 @@ export class AxisTicksPanel extends Component {
 
     @PostConstruct
     private init() {
-        const axisTicksGroupParams: AgGroupComponentParams = this.chartMenuUtils.addEnableParams(
+        const axisTicksGroupParams = this.chartMenuUtils.addEnableParams<AgGroupComponentParams>(
             this.chartOptionsProxy,
             'tick.enabled',
             {

@@ -1,8 +1,8 @@
-import { AgGroupComponentParams } from "@ag-grid-community/core";
 import { AgFieldParams, AgSelectParams, AgSliderParams, Autowired, Bean, BeanStub } from "@ag-grid-community/core";
 import { AgColorPickerParams } from "../../../widgets/agColorPicker";
 import { ChartOptionsProxy } from "../services/chartOptionsService";
 import { ChartTranslationService } from "../services/chartTranslationService";
+import { FontPanelParams } from "./format/fontPanel";
 
 @Bean('chartMenuUtils')
 export class ChartMenuUtils extends BeanStub {
@@ -65,13 +65,34 @@ export class ChartMenuUtils extends BeanStub {
         );
     }
 
+    public getDefaultFontPanelParams(
+        chartOptionsProxy: ChartOptionsProxy,
+        expression: string,
+        labelKey: string
+    ) {
+        const keyMapper = (key: string) => `${expression}.${key}`;
+        return this.addEnableParams<FontPanelParams>(
+            chartOptionsProxy,
+            keyMapper('enabled'),
+            {
+                name: this.chartTranslationService.translate(labelKey),
+                suppressEnabledCheckbox: false,
+                chartOptionsProxy,
+                keyMapper
+            } as FontPanelParams
+        );
+    }
+
     public addValueParams<P extends AgFieldParams>(chartOptionsProxy: ChartOptionsProxy, expression: string, params: P): P {
         params.value =  chartOptionsProxy.getValue(expression);
         params.onValueChange = value => chartOptionsProxy.setValue(expression, value);
         return params;
     }
 
-    public addEnableParams<P extends AgGroupComponentParams>(chartOptionsProxy: ChartOptionsProxy, expression: string, params: P): P {
+    public addEnableParams<P extends {
+        enabled?: boolean;
+        onEnableChange?: (value: boolean) => void;
+    }>(chartOptionsProxy: ChartOptionsProxy, expression: string, params: P): P {
         params.enabled =  chartOptionsProxy.getValue(expression) ?? false;
         params.onEnableChange = value => chartOptionsProxy.setValue(expression, value);
         return params;

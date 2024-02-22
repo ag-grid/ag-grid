@@ -25,11 +25,9 @@ export interface FontPanelParams {
     name?: string;
     enabled: boolean;
     suppressEnabledCheckbox?: boolean;
-    setEnabled?: (enabled: boolean) => void;
-    fontModelProxy: {
-        setValue: <K extends keyof Font>(key: K, value: Font[K]) => void;
-        getValue: <K extends keyof Font>(key: K) => Font[K];
-    }
+    onEnableChange?: (enabled: boolean) => void;
+    chartOptionsProxy: ChartOptionsProxy,
+    keyMapper: (key: string) => string
 }
 
 export class FontPanel extends Component {
@@ -69,8 +67,8 @@ export class FontPanel extends Component {
             enabled: this.params.enabled,
             suppressEnabledCheckbox: !!this.params.suppressEnabledCheckbox,
             onEnableChange: enabled => {
-                if (this.params.setEnabled) {
-                    this.params.setEnabled(enabled);
+                if (this.params.onEnableChange) {
+                    this.params.onEnableChange(enabled);
                 }
             }
         };
@@ -229,15 +227,16 @@ export class FontPanel extends Component {
     }
 
     private setFont(font: Font): void {
-        const { setValue } = this.params.fontModelProxy;
+        const { chartOptionsProxy, keyMapper } = this.params;
         Object.entries(font).forEach(([fontKey, value]: [keyof Font, any]) => {
             if (value) {
-                setValue(fontKey, value);
+                chartOptionsProxy.setValue(keyMapper(fontKey), value);
             }
         });
     }
 
     private getInitialFontValue<K extends keyof Font>(fontKey: K): Font[K] {
-        return this.params.fontModelProxy.getValue(fontKey);
+        const { chartOptionsProxy, keyMapper } = this.params;
+        return chartOptionsProxy.getValue(keyMapper(fontKey));
     }
 }

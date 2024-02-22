@@ -33,7 +33,7 @@ export class ShadowPanel extends Component {
     private init() {
         // Determine the path within the series options object to get/set the individual shadow options
         const propertyNamespace = this.propertyKey;
-        const shadowGroupParams: AgGroupComponentParams = this.chartMenuUtils.addEnableParams(
+        const shadowGroupParams = this.chartMenuUtils.addEnableParams<AgGroupComponentParams>(
             this.chartOptionsProxy,
             `${propertyNamespace}.enabled`,
             {
