@@ -37,24 +37,11 @@
                 "path": "/whats-new"
             },
             {
-                "title": "Overview",
+                "title": "Getting Started",
                 "items": [
                     {
-                        "title": "Get Started",
-                        "items": [
-                            {
-                                "title": "Quick Start",
-                                "path": "getting-started"
-                            },
-                            {
-                                "title": "Creating a Basic Grid",
-                                "path": "deep-dive"
-                            },
-                            {
-                                "title": "Video Tutorials",
-                                "path": "videos"
-                            }
-                        ]
+                        "title": "Quick Start",
+                        "path": "getting-started"
                     },
                     {
                         "title": "Installation",
@@ -127,24 +114,6 @@
                                         "frameworks": ["javascript"]
                                     }
                                 ]
-                            },
-                            {
-                                "title": "Compatibility",
-                                "path": "react-compatibility",
-                                "frameworks": ["react"]
-                            },
-                            {
-                                "title": "Compatibility",
-                                "path": "angular-compatibility",
-                                "frameworks": ["angular"]
-                            },
-                            {
-                                "title": "Supported Browsers",
-                                "path": "supported-browsers"
-                            },
-                            {
-                                "title": "Upgrading to Enterprise",
-                                "path": "licensing"
                             }
                         ]
                     },
@@ -152,54 +121,21 @@
                         "title": "Guides",
                         "items": [
                             {
-                                "title": "Testing",
-                                "path": "testing"
+                                "title": "Tutorial: My First Grid",
+                                "path": "deep-dive"
                             },
                             {
-                                "title": "Testing Async",
-                                "path": "testing-async",
-                                "frameworks": ["angular"]
+                                "title": "Video Tutorials",
+                                "path": "videos"
                             },
                             {
-                                "title": "Security",
-                                "path": "security"
+                                "title": "AG Grid Enterprise",
+                                "path": "licensing"
                             },
                             {
-                                "title": "Best Practices",
+                                "title": "React Hooks",
                                 "path": "react-hooks",
                                 "frameworks": ["react"]
-                            },
-                            {
-                                "title": "Vue2 Tutorial",
-                                "path": "vue2",
-                                "frameworks": ["vue"]
-                            },
-                            {
-                                "title": "Unidirectional Data Flow",
-                                "path": "framework-data-flow",
-                                "frameworks": ["vue"]
-                            },
-                            {
-                                "title": "Miscellaneous",
-                                "path": "framework-misc",
-                                "frameworks": ["vue"]
-                            }
-                        ]
-                    },
-                    {
-                        "title": "Migration",
-                        "items": [
-                            {
-                                "title": "Upgrading to AG Grid 31",
-                                "path": "upgrading-to-ag-grid-31"
-                            },
-                            {
-                                "title": "Upgrading to Older Versions",
-                                "path": "upgrading-to-older-versions"
-                            },
-                            {
-                                "title": "Codemods",
-                                "path": "codemods"
                             }
                         ]
                     }
@@ -290,10 +226,6 @@
                             {
                                 "title": "Styling Rows",
                                 "path": "row-styles"
-                            },
-                            {
-                                "title": "Styling Cells",
-                                "path": "cell-styles"
                             },
                             {
                                 "title": "Grid Size",
@@ -415,6 +347,16 @@
                                 "isEnterprise": true
                             },
                             {
+                                "title": "Chart Types",
+                                "path": "integrated-charts-chart-types",
+                                "isEnterprise": true
+                            },
+                            {
+                                "title": "Chart Tool Panels",
+                                "path": "integrated-charts-chart-tool-panels",
+                                "isEnterprise": true
+                            },
+                            {
                                 "title": "Chart Toolbar",
                                 "path": "integrated-charts-toolbar",
                                 "isEnterprise": true
@@ -467,6 +409,62 @@
                 "title": "Core Features",
                 "items": [
                     {
+                        "title": "Cells",
+                        "items": [
+                            {
+                                "title": "Cell Content",
+                                "path": "cell-content",
+                                "items": [
+                                    {
+                                        "title": "Getting Values",
+                                        "path": "value-getters"
+                                    },
+                                    {
+                                        "title": "Text Formatting",
+                                        "path": "value-formatters"
+                                    },
+                                    {
+                                        "title": "Cell Components",
+                                        "path": "component-cell-renderer"
+                                    },
+                                    {
+                                        "title": "Cell Data Types",
+                                        "path": "cell-data-types"
+                                    }
+                                ]
+                            },
+                            {
+                                "title": "Styling Cells",
+                                "path": "cell-styles"
+                            },
+                            {
+                                "title": "Highlighting Changes",
+                                "path": "change-cell-renderers"
+                            },
+                            {
+                                "title": "Tooltips",
+                                "path": "tooltips"
+                            },
+                            {
+                                "title": "Advanced",
+                                "items": [
+                                    {
+                                        "title": "Expressions",
+                                        "path": "cell-expressions"
+                                    },
+                                    {
+                                        "title": "View Refresh",
+                                        "path": "view-refresh"
+                                    },
+                                    {
+                                        "title": "Reference Data",
+                                        "path": "reference-data"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
                         "title": "Columns",
                         "items": [
                             {
@@ -496,10 +494,6 @@
                             {
                                 "title": "Column Moving",
                                 "path": "column-moving"
-                            },
-                            {
-                                "title": "Cell Data Types",
-                                "path": "cell-data-types"
                             },
                             {
                                 "title": "Column Pinning",
@@ -541,6 +535,10 @@
                             {
                                 "title": "Row Animation",
                                 "path": "row-animation"
+                            },
+                            {
+                                "title": "Displayed Rows",
+                                "path": "rendering-api"
                             },
                             {
                                 "title": "Row Dragging",
@@ -634,17 +632,25 @@
                                     {
                                         "title": "Filter API",
                                         "path": "filter-api"
-                                    },
-                                    {
-                                        "title": "Floating Filters",
-                                        "path": "floating-filters"
                                     }
                                 ]
                             },
                             {
+                                "title": "Custom Column Filters",
+                                "path": "component-filter"
+                            },
+                            {
+                                "title": "Floating Filters",
+                                "path": "floating-filters"
+                            },
+                            {
+                                "title": "Custom Floating Filters",
+                                "path": "component-floating-filter"
+                            },
+                            {
                                 "title": "Advanced Filter",
                                 "path": "filter-advanced",
-                                "isEnterprise": true
+                                "enterprise": true
                             },
                             {
                                 "title": "External Filter",
@@ -687,81 +693,6 @@
                         ]
                     },
                     {
-                        "title": "Rendering",
-                        "items": [
-                            {
-                                "title": "Cell Content",
-                                "path": "cell-content",
-                                "items": [
-                                    {
-                                        "title": "Value Getters",
-                                        "path": "value-getters"
-                                    },
-                                    {
-                                        "title": "Value Formatters",
-                                        "path": "value-formatters"
-                                    },
-                                    {
-                                        "title": "Expressions",
-                                        "path": "cell-expressions"
-                                    },
-                                    {
-                                        "title": "Reference Data",
-                                        "path": "reference-data"
-                                    }
-                                ]
-                            },
-                            {
-                                "title": "Cell Rendering",
-                                "path": "cell-rendering",
-                                "items": [
-                                    {
-                                        "title": "Group Cell Renderer",
-                                        "path": "group-cell-renderer",
-                                        "isEnterprise": true
-                                    },
-                                    {
-                                        "title": "Change Cell Renderers",
-                                        "path": "change-cell-renderers"
-                                    }
-                                ]
-                            },
-                            {
-                                "title": "Rendering API",
-                                "path": "rendering-api"
-                            },
-                            {
-                                "title": "View Refresh",
-                                "path": "view-refresh"
-                            },
-                            {
-                                "title": "Flashing Cells",
-                                "path": "flashing-cells"
-                            },
-                            {
-                                "title": "Change Detection",
-                                "path": "change-detection"
-                            },
-                            {
-                                "title": "Tooltips",
-                                "path": "tooltips"
-                            },
-                            {
-                                "title": "Context",
-                                "path": "context"
-                            },
-                            {
-                                "title": "See Also",
-                                "items": [
-                                    {
-                                        "title": "Expressions & Context",
-                                        "path": "expressions-and-context"
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
                         "title": "Editing",
                         "items": [
                             {
@@ -781,40 +712,40 @@
                                 "path": "value-setters"
                             },
                             {
-                                "title": "Cell Editors",
+                                "title": "Edit Components",
                                 "path": "cell-editors"
                             },
                             {
-                                "title": "Provided Cell Editors",
+                                "title": "Provided Edit Editors",
                                 "path": "provided-cell-editors",
                                 "items": [
                                     {
-                                        "title": "Text Cell Editor",
+                                        "title": "Text Editor",
                                         "path": "provided-cell-editors-text"
                                     },
                                     {
-                                        "title": "Large Text Cell Editor",
+                                        "title": "Large Text Editor",
                                         "path": "provided-cell-editors-large-text"
                                     },
                                     {
-                                        "title": "Select Cell Editor",
+                                        "title": "Select Editor",
                                         "path": "provided-cell-editors-select"
                                     },
                                     {
-                                        "title": "Rich Select Cell Editor",
+                                        "title": "Rich Select Editor",
                                         "path": "provided-cell-editors-rich-select",
                                         "isEnterprise": true
                                     },
                                     {
-                                        "title": "Number Cell Editor",
+                                        "title": "Number Editor",
                                         "path": "provided-cell-editors-number"
                                     },
                                     {
-                                        "title": "Date Cell Editors",
+                                        "title": "Date Editors",
                                         "path": "provided-cell-editors-date"
                                     },
                                     {
-                                        "title": "Checkbox Cell Editor",
+                                        "title": "Checkbox Editor",
                                         "path": "provided-cell-editors-checkbox"
                                     }
                                 ]
@@ -967,6 +898,24 @@
                                             }
                                         ]
                                     },
+
+                                    {
+                                        "title": "Group Cell Component",
+                                        "path": "group-expand-collapse-comp",
+                                        "isEnterprise": true,
+                                        "items": [
+                                            {
+                                                "title": "Provided Component",
+                                                "path": "group-cell-renderer",
+                                                "isEnterprise": true
+                                            },
+                                            {
+                                                "title": "Custom Component",
+                                                "path": "group-custom-group-comp",
+                                                "isEnterprise": true
+                                            }
+                                        ]
+                                    },
                                     {
                                         "title": "Row Group Panel",
                                         "path": "grouping-group-panel",
@@ -1107,7 +1056,6 @@
                     },
                     {
                         "title": "Accessories",
-                        "level-2-display-style-forced": "block",
                         "items": [
                             {
                                 "title": "Tool Panels",
@@ -1128,6 +1076,11 @@
                                         "title": "Filters Tool Panel",
                                         "path": "tool-panel-filters",
                                         "isEnterprise": true
+                                    },
+                                    {
+                                        "title": "Custom Panel",
+                                        "path": "component-tool-panel",
+                                        "isEnterprise": true
                                     }
                                 ]
                             },
@@ -1139,6 +1092,11 @@
                             {
                                 "title": "Context Menu",
                                 "path": "context-menu",
+                                "isEnterprise": true
+                            },
+                            {
+                                "title": "Menu Item Component",
+                                "path": "component-menu-item",
                                 "isEnterprise": true
                             },
                             {
@@ -1185,7 +1143,7 @@
                                         "isEnterprise": true
                                     },
                                     {
-                                        "title": "Filtering ",
+                                        "title": "Filtering",
                                         "path": "server-side-model-filtering",
                                         "isEnterprise": true
                                     },
@@ -1208,6 +1166,10 @@
                                         "title": "Row Selection",
                                         "path": "server-side-model-selection",
                                         "isEnterprise": true
+                                    },
+                                    {
+                                        "title": "Loading Cell Renderer",
+                                        "path": "component-loading-cell-renderer"
                                     },
                                     {
                                         "title": "Changing Columns",
@@ -1247,7 +1209,7 @@
                                         "isEnterprise": true
                                     },
                                     {
-                                        "title": "Master Detail ",
+                                        "title": "Master Detail",
                                         "path": "server-side-model-master-detail",
                                         "isEnterprise": true
                                     },
@@ -1275,7 +1237,7 @@
                                                 "isEnterprise": true
                                             },
                                             {
-                                                "title": "Using Java & Apache Spark",
+                                                "title": "Using Java & Apache",
                                                 "path": "server-side-operations-spark",
                                                 "isEnterprise": true
                                             }
@@ -1397,69 +1359,94 @@
                         "title": "Custom Components",
                         "items": [
                             {
-                                "title": "Registering Components",
+                                "title": "Custom Components",
                                 "path": "components"
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Performance",
+                        "items": [
+                            {
+                                "title": "Value Cache",
+                                "path": "value-cache"
                             },
                             {
-                                "title": "Cell Renderer",
-                                "path": "component-cell-renderer"
+                                "title": "Change Detection",
+                                "path": "change-detection"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "group": "Misc",
+                "items": [
+                    {
+                        "title": "Migration",
+                        "items": [
+                            {
+                                "title": "Upgrading to AG Grid 31",
+                                "path": "upgrading-to-ag-grid-31"
                             },
                             {
-                                "title": "Cell Editor",
-                                "path": "component-cell-editor"
+                                "title": "Upgrading to Older Versions",
+                                "path": "upgrading-to-older-versions"
                             },
                             {
-                                "title": "Date Component",
-                                "path": "component-date"
+                                "title": "Codemods",
+                                "path": "codemods"
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Other",
+                        "items": [
+                            {
+                                "title": "Testing",
+                                "path": "testing"
                             },
                             {
-                                "title": "Filter Component",
-                                "path": "component-filter"
+                                "title": "Testing Async",
+                                "path": "testing-async",
+                                "frameworks": ["angular"]
                             },
                             {
-                                "title": "Floating Filter Component",
-                                "path": "component-floating-filter"
+                                "title": "Security",
+                                "path": "security"
                             },
                             {
-                                "title": "Header Component",
-                                "path": "component-header"
+                                "title": "Vue2 Tutorial",
+                                "path": "vue2",
+                                "frameworks": ["vue"]
                             },
                             {
-                                "title": "Loading Cell Renderer",
-                                "path": "component-loading-cell-renderer"
+                                "title": "Unidirectional Data Flow",
+                                "path": "framework-data-flow",
+                                "frameworks": ["vue"]
                             },
                             {
-                                "title": "Overlay Component",
-                                "path": "component-overlay"
-                            },
-                            {
-                                "title": "Status Bar Component",
-                                "path": "component-status-bar",
-                                "isEnterprise": true
-                            },
-                            {
-                                "title": "Tool Panel Component",
-                                "path": "component-tool-panel",
-                                "isEnterprise": true
-                            },
-                            {
-                                "title": "Tooltip Component",
-                                "path": "component-tooltip"
-                            },
-                            {
-                                "title": "Higher Order Components",
-                                "path": "framework-hoc",
+                                "title": "Compatibility",
+                                "path": "react-compatibility",
                                 "frameworks": ["react"]
                             },
                             {
-                                "title": "Parent/Child Communication",
-                                "path": "component-communication",
-                                "frameworks": ["angular", "vue"]
+                                "title": "Compatibility",
+                                "path": "angular-compatibility",
+                                "frameworks": ["angular"]
                             },
                             {
-                                "title": "Provide/Inject",
-                                "path": "component-provide-inject",
+                                "title": "Supported Browsers",
+                                "path": "supported-browsers"
+                            },
+                            {
+                                "title": "Miscellaneous",
+                                "path": "framework-misc",
                                 "frameworks": ["vue"]
+                            },
+                            {
+                                "title": "Context",
+                                "path": "context"
                             }
                         ]
                     }
