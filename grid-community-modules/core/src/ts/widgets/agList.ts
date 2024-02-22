@@ -22,16 +22,17 @@ export class AgList extends Component {
     private value: string | null;
     private displayValue: string | null;
 
-    constructor(private readonly cssIdentifier = 'default') {
+    constructor(private readonly cssIdentifier = 'default', private readonly unFocusable: boolean = false) {
         super(/* html */`<div class="ag-list ag-${cssIdentifier}-list" role="listbox"></div>`);
     }
 
     @PostConstruct
     private init(): void {
+        if (this.unFocusable) { return; }
         this.addManagedListener(this.getGui(), 'keydown', this.handleKeyDown.bind(this));
     }
 
-    private handleKeyDown(e: KeyboardEvent): void {
+    public handleKeyDown(e: KeyboardEvent): void {
         const key = e.key;
         switch (key) {
             case KeyCode.ENTER:
@@ -93,7 +94,10 @@ export class AgList extends Component {
         setAriaRole(itemEl, 'option');
         itemEl.classList.add('ag-list-item', `ag-${this.cssIdentifier}-list-item`);
         itemEl.innerHTML = `<span>${text}</span>`;
-        itemEl.tabIndex = -1;
+
+        if (!this.unFocusable) {
+            itemEl.tabIndex = -1;
+        }
 
         this.itemEls.push(itemEl);
 
