@@ -19,13 +19,24 @@ export async function getStaticPaths() {
 export async function GET(context: APIContext) {
     const { internalFramework, pageName, importType, exampleName } = context.params;
 
-    const generatedContents = await getGeneratedContents({
-        type: 'docs',
-        framework: internalFramework as InternalFramework,
-        pageName: pageName!,
-        importType: importType as ImportType,
-        exampleName: exampleName!,
-    });
+    let generatedContents;
+    try {
+        generatedContents = await getGeneratedContents({
+            type: 'docs',
+            framework: internalFramework as InternalFramework,
+            pageName: pageName!,
+            importType: importType as ImportType,
+            exampleName: exampleName!,
+        });
+    } catch (error) {
+        console.error(`Error generating contents: ${error.message}`);
+        return new Response(JSON.stringify({ error: 'Error generating contents.json file' }), {
+            status: 400,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+    }
 
     return new Response(JSON.stringify(generatedContents), {
         status: 200,
