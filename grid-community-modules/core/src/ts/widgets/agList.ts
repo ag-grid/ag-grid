@@ -173,7 +173,11 @@ export class AgList extends Component {
         this.highlightedEl.classList.add(AgList.ACTIVE_CLASS);
         setAriaSelected(this.highlightedEl, true);
 
-        this.highlightedEl.focus();
+        this.highlightedEl.scrollIntoView();
+
+        if (!this.unFocusable) {
+            this.highlightedEl.focus();
+        }
     }
 
     private clearHighlighted(): void {
