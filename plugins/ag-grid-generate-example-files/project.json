@@ -42,6 +42,7 @@
       "options": {
         "script": "copySrcFilesForGeneration"
       },
+      "cache": true,
       "inputs": [
         "{workspaceRoot}/community-modules/core/src/propertyKeys.ts",
         "{workspaceRoot}/community-modules/core/src/eventKeys.ts"
