@@ -2,7 +2,7 @@ import { logErrorMessageOnce } from '../model/utils';
 import { ParamTypes } from './GENERATED-parts-public';
 import commonStructuralCSS from './css/common-structural.css?inline';
 import { AnyPart, CssFragment, Part } from './theme-types';
-import { logErrorMessage, paramToVariableName, presetParamName } from './theme-utils';
+import { camelCase, logErrorMessage, paramToVariableName, presetParamName } from './theme-utils';
 
 export type Theme = {
   name: string;
@@ -67,13 +67,11 @@ export const defineTheme = <P extends AnyPart, V extends object = ParamTypes>(
   for (const [property, value] of Object.entries(overrideParams)) {
     if (value === undefined) continue;
     if (allowedParams.has(property)) {
-      if (validateParam(property, value)) {
+      if (validateParam(property, value, allowedParams)) {
         mergedParams[property] = value;
       }
     } else {
-      logErrorMessage(
-        `Invalid parameter ${property} provided. It may be misspelled, or your theme may not include the part that defines it.`,
-      );
+      logErrorMessageOnce(`Invalid theme parameter ${property} provided. ${invalidParamMessage}`);
     }
   }
 
@@ -122,7 +120,7 @@ const cssPartToString = (p: CssFragment, params: Record<string, any>): string =>
 const _tmpExpectedType = (property: string) =>
   property.startsWith('borders') ? 'boolean' : 'string';
 
-const validateParam = (property: string, value: any): boolean => {
+const validateParam = (property: string, value: unknown, allowedParams: Set<string>): boolean => {
   const expectedType = _tmpExpectedType(property);
   const actualType = typeof value;
   if (expectedType !== actualType) {
@@ -131,8 +129,21 @@ const validateParam = (property: string, value: any): boolean => {
     );
     return false;
   }
+  if (typeof value === 'string') {
+    for (const varMatch of value.matchAll(/var\(--ag-([a-z-]+)[^)]*\)/g)) {
+      const paramName = camelCase(varMatch[1]);
+      if (!allowedParams.has(paramName)) {
+        logErrorMessageOnce(
+          `Invalid value provided to theme parameter ${property}. Expression "${varMatch[0]}" refers to non-existent parameter ${paramName}. ${invalidParamMessage}`,
+        );
+      }
+    }
+  }
   return true;
 };
+
+const invalidParamMessage =
+  'It may be misspelled, or your theme may not include the part that defines it.';
 
 const describeValue = (value: any): string => {
   if (value == null) return String(value);

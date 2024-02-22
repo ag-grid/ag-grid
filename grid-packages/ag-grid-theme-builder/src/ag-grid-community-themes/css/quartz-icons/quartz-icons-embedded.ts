@@ -11,5 +11,10 @@ export default (params: Record<string, any>) => {
 
 const buildSvg = (name: string, strokeWidth: string): string => {
   const svgFragment = agIconNameToSvgFragment[name];
-  return `<svg xmlns="http://www.w3.org/2000/svg" class="ag-icon ag-icon-${name}" vector-effect="non-scaling-stroke" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke="black" stroke-width="${strokeWidth}" viewBox="0 0 16 16"><g transform="scale(0.6666666667)">${svgFragment}</g></svg>`;
+  return (
+    `<svg xmlns="http://www.w3.org/2000/svg" class="ag-icon ag-icon-${name}" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke="black" stroke-width="${strokeWidth}" viewBox="0 0 24 24">` +
+    '<style>* { vector-effect: non-scaling-stroke; }</style>' +
+    svgFragment +
+    '</svg>'
+  );
 };
