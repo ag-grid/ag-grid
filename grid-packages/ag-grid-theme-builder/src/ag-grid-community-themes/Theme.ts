@@ -2,7 +2,13 @@ import { logErrorMessageOnce } from '../model/utils';
 import { ParamTypes } from './GENERATED-parts-public';
 import commonStructuralCSS from './css/common-structural.css?inline';
 import { AnyPart, CssFragment, Part } from './theme-types';
-import { camelCase, logErrorMessage, paramToVariableName, presetParamName } from './theme-utils';
+import {
+  borderValueToCss,
+  camelCase,
+  logErrorMessage,
+  paramToVariableName,
+  presetParamName,
+} from './theme-utils';
 
 export type Theme = {
   css: string;
@@ -74,11 +80,7 @@ export const defineTheme = <P extends AnyPart, V extends object = ParamTypes>(
   for (const name of Object.keys(mergedParams)) {
     let value = mergedParams[name];
     if (isBorderParam(name)) {
-      if (value === true) {
-        value = mergedParams[name] = '1px solid var(--ag-border-color)';
-      } else if (value === false) {
-        value = mergedParams[name] = 'none';
-      }
+      value = borderValueToCss(value);
     }
     if (!presetProperties.has(name) && typeof value === 'string' && value) {
       variableDefaults += `\t${paramToVariableName(name)}: ${value};\n`;

@@ -1,4 +1,5 @@
 import { styled } from '@mui/joy';
+import { borderValueToCss } from '../../../ag-grid-community-themes/theme-utils';
 import { PresetModel } from '../../../model/PartModel';
 
 type BordersPresetPreviewProps = {
@@ -8,15 +9,15 @@ type BordersPresetPreviewProps = {
 export const BordersPresetPreview = ({ preset }: BordersPresetPreviewProps) => {
   const params = preset.getFullPartParamValues();
   return (
-    <Grid style={showIf(params.wrapperBorder)}>
-      <Row style={showIf(params.wrapperBorder || params.headerBorder)} />
-      <Row style={showIf(params.headerBorder)} />
-      <Row style={showIf(params.rowBorderColor)} />
-      <Row style={showIf(params.rowBorderColor)} />
-      <Row style={showIf(params.rowBorderColor)} />
+    <Grid style={{ border: borderValueToCss(params.wrapperBorder || false) }}>
+      <Row style={{ borderBottom: borderValueToCss(params.headerBorder || false) }} />
+      <Row style={{ borderBottom: borderValueToCss(params.headerBorder || false) }} />
+      <Row style={{ borderBottom: borderValueToCss(params.rowBorder || false) }} />
+      <Row style={{ borderBottom: borderValueToCss(params.rowBorder || false) }} />
+      <Row style={{ borderBottom: borderValueToCss(params.rowBorder || false) }} />
       <Columns>
-        <Column style={showIf(params.columnBorder)} />
-        <Column style={showIf(params.columnBorder)} />
+        <Column style={{ borderLeft: borderValueToCss(params.columnBorder || false) }} />
+        <Column style={{ borderLeft: borderValueToCss(params.columnBorder || false) }} />
       </Columns>
     </Grid>
   );
@@ -30,13 +31,12 @@ const Grid = styled('div')`
   flex-direction: column;
   gap: 2px;
   align-items: center;
-  border-left: solid 1px;
-  border-right: solid 1px;
+  border-color: currentColor !important;
 `;
 
 const Row = styled('span')`
   width: 100%;
-  border-bottom: solid 1px;
+  border-color: currentColor !important;
 `;
 
 const Columns = styled('div')`
@@ -49,9 +49,5 @@ const Columns = styled('div')`
 
 const Column = styled('span')`
   height: 13px;
-  border-left: solid 1px;
+  border-color: currentColor !important;
 `;
-
-const showIf = (value: boolean | undefined | string) => ({
-  borderColor: value ? 'currentColor' : 'transparent',
-});

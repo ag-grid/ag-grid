@@ -76,6 +76,7 @@ export class PresetModel {
   }
 
   getFullPartParamValues(): ParamValueMap {
+    // TODO should include core params too
     return Object.assign({}, this.part.paramDefaults, this.paramValueOverrides);
   }
 }

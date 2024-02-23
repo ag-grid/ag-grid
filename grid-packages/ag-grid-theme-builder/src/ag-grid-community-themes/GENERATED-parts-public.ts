@@ -14,9 +14,16 @@ export type CoreParam =
   | 'foregroundColor'
   | 'accentColor'
   | 'borderColor'
+  | 'wrapperBorder'
+  | 'headerBorder'
+  | 'rowBorder'
+  | 'footerBorder'
+  | 'columnBorder'
+  | 'pinnedColumnBorder'
+  | 'pinnedRowBorder'
+  | 'sidePanelBorder'
   | 'chromeBackgroundColor'
   | 'dataColor'
-  | 'rowBorderColor'
   | 'rangeSelectionBorderStyle'
   | 'rangeSelectionBorderColor'
   | 'rangeSelectionBackgroundColor'
@@ -51,15 +58,7 @@ export type ColorsParam = 'colorsPreset';
 
 export type BordersPreset = 'horizontal' | 'default' | 'full';
 
-export type BordersParam =
-  | 'bordersPreset'
-  | 'wrapperBorder'
-  | 'headerBorder'
-  | 'footerBorder'
-  | 'columnBorder'
-  | 'pinnedColumnBorder'
-  | 'pinnedRowBorder'
-  | 'sidePanelBorder';
+export type BordersParam = 'bordersPreset';
 
 export type QuartzIconsPreset = 'light' | 'regular' | 'bold';
 
@@ -80,9 +79,16 @@ export const core = definePart<CoreParam>({
     foregroundColor: '#181d1f',
     accentColor: '#2196f3',
     borderColor: helpers.transparentForeground(0.15),
+    wrapperBorder: true,
+    headerBorder: true,
+    rowBorder: true,
+    footerBorder: true,
+    columnBorder: false,
+    pinnedColumnBorder: true,
+    pinnedRowBorder: true,
+    sidePanelBorder: true,
     chromeBackgroundColor: helpers.transparentForeground(0.02),
     dataColor: helpers.ref('foregroundColor'),
-    rowBorderColor: helpers.ref('borderColor'),
     rangeSelectionBorderStyle: 'solid',
     rangeSelectionBorderColor: helpers.ref('accentColor'),
     rangeSelectionBackgroundColor: helpers.transparentAccent(0.2),
@@ -150,13 +156,6 @@ export const borders = definePart<BordersParam>({
   },
   defaults: {
     bordersPreset: null,
-    wrapperBorder: true,
-    headerBorder: true,
-    footerBorder: true,
-    columnBorder: false,
-    pinnedColumnBorder: true,
-    pinnedRowBorder: true,
-    sidePanelBorder: true,
   },
 });
 
@@ -220,6 +219,78 @@ export type ParamTypes = {
   borderColor: string;
 
   /**
+   * Borders around the outside of the grid
+   *
+   * A CSS border value e.g. "solid 1px red". Passing true is equivalent to "solid 1px var(--ag-border-color)", and false to "none".
+   *
+   * @default true
+   */
+  wrapperBorder: string | boolean;
+
+  /**
+   * Borders between and below headers, including ordinary header rows and components that render within header rows such as the floating filter and advanced filter
+   *
+   * A CSS border value e.g. "solid 1px red". Passing true is equivalent to "solid 1px var(--ag-border-color)", and false to "none".
+   *
+   * @default true
+   */
+  headerBorder: string | boolean;
+
+  /**
+   * Borders between rows.
+   *
+   * A CSS border value e.g. "solid 1px red". Passing true is equivalent to "solid 1px var(--ag-border-color)", and false to "none".
+   *
+   * @default true
+   */
+  rowBorder: string | boolean;
+
+  /**
+   * Horizontal borders above footer components like the pagination and status bars
+   *
+   * A CSS border value e.g. "solid 1px red". Passing true is equivalent to "solid 1px var(--ag-border-color)", and false to "none".
+   *
+   * @default true
+   */
+  footerBorder: string | boolean;
+
+  /**
+   * Vertical borders separating columns.
+   *
+   * A CSS border value e.g. "solid 1px red". Passing true is equivalent to "solid 1px var(--ag-border-color)", and false to "none".
+   *
+   * @default false
+   */
+  columnBorder: string | boolean;
+
+  /**
+   * Borders between the grid and columns that are pinned to the left or right
+   *
+   * A CSS border value e.g. "solid 1px red". Passing true is equivalent to "solid 1px var(--ag-border-color)", and false to "none".
+   *
+   * @default true
+   */
+  pinnedColumnBorder: string | boolean;
+
+  /**
+   * Borders between the grid and rows that are pinned to the top or bottom
+   *
+   * A CSS border value e.g. "solid 1px red". Passing true is equivalent to "solid 1px var(--ag-border-color)", and false to "none".
+   *
+   * @default true
+   */
+  pinnedRowBorder: string | boolean;
+
+  /**
+   * Borders between the grid and side panels including the column and filter tool bars, and chart settings
+   *
+   * A CSS border value e.g. "solid 1px red". Passing true is equivalent to "solid 1px var(--ag-border-color)", and false to "none".
+   *
+   * @default true
+   */
+  sidePanelBorder: string | boolean;
+
+  /**
    * Background colour for non-data areas of the grid. Headers, tool panels and menus use this colour by default.
    *
    * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
@@ -236,15 +307,6 @@ export type ParamTypes = {
    * @default ref("foregroundColor")
    */
   dataColor: string;
-
-  /**
-   * Colour of the border between grid rows.
-   *
-   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
-   *
-   * @default ref("borderColor")
-   */
-  rowBorderColor: string;
 
   /**
    * Style of the border around range selections.
@@ -506,69 +568,6 @@ export type ParamTypes = {
    * @default null
    */
   bordersPreset: BordersPreset | null;
-
-  /**
-   * Borders around the outside of the grid
-   *
-   * A CSS border value e.g. "solid 1px red". Passing true is equivalent to "solid 1px var(--ag-border-color)", and false to "none".
-   *
-   * @default true
-   */
-  wrapperBorder: string | boolean;
-
-  /**
-   * Borders between and below headers, including ordinary header rows and components that render within header rows such as the floating filter and advanced filter
-   *
-   * A CSS border value e.g. "solid 1px red". Passing true is equivalent to "solid 1px var(--ag-border-color)", and false to "none".
-   *
-   * @default true
-   */
-  headerBorder: string | boolean;
-
-  /**
-   * Horizontal borders above footer components like the pagination and status bars
-   *
-   * A CSS border value e.g. "solid 1px red". Passing true is equivalent to "solid 1px var(--ag-border-color)", and false to "none".
-   *
-   * @default true
-   */
-  footerBorder: string | boolean;
-
-  /**
-   * Vertical borders separating columns
-   *
-   * A CSS border value e.g. "solid 1px red". Passing true is equivalent to "solid 1px var(--ag-border-color)", and false to "none".
-   *
-   * @default false
-   */
-  columnBorder: string | boolean;
-
-  /**
-   * Borders between the grid and columns that are pinned to the left or right
-   *
-   * A CSS border value e.g. "solid 1px red". Passing true is equivalent to "solid 1px var(--ag-border-color)", and false to "none".
-   *
-   * @default true
-   */
-  pinnedColumnBorder: string | boolean;
-
-  /**
-   * Borders between the grid and rows that are pinned to the top or bottom
-   *
-   * A CSS border value e.g. "solid 1px red". Passing true is equivalent to "solid 1px var(--ag-border-color)", and false to "none".
-   *
-   * @default true
-   */
-  pinnedRowBorder: string | boolean;
-
-  /**
-   * Borders between the grid and side panels including the column and filter tool bars, and chart settings
-   *
-   * A CSS border value e.g. "solid 1px red". Passing true is equivalent to "solid 1px var(--ag-border-color)", and false to "none".
-   *
-   * @default true
-   */
-  sidePanelBorder: string | boolean;
 
   /**
    * Use one of the built-in sets of preset quartz-icons values. Available presets are: "light", "regular", "bold".

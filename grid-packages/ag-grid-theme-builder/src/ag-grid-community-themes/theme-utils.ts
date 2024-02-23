@@ -56,3 +56,9 @@ export const combineParts = <P extends AnyPart>(
   params: parts.flatMap((part) => part.params),
   componentParts: parts,
 });
+
+export const borderValueToCss = (value: string | boolean) => {
+  if (value === true) return 'solid 1px var(--ag-border-color)';
+  if (value === false) return 'none';
+  return value;
+};

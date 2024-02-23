@@ -50,7 +50,7 @@
   width: 100%;
   height: var(--ag-row-height);
 
-  border-bottom: solid 1px var(--ag-row-border-color);
+  border-bottom: var(--ag-row-border);
 
   /* Work out the correct line height. --ag-row-height is the default row
      height, --ag-line-height is the actual row height, only set if variable row
