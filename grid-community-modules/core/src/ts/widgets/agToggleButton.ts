@@ -1,8 +1,9 @@
-import { AgCheckbox } from './agCheckbox';
-import { IInputField } from './agAbstractInputField';
+import { AgCheckbox, AgCheckboxParams } from './agCheckbox';
 
-export class AgToggleButton extends AgCheckbox {
-    constructor(config?: IInputField) {
+export interface AgToggleButtonParams extends AgCheckboxParams {}
+
+export class AgToggleButton extends AgCheckbox<AgToggleButtonParams> {
+    constructor(config?: AgToggleButtonParams) {
         super(config, 'ag-toggle-button');
     }
 

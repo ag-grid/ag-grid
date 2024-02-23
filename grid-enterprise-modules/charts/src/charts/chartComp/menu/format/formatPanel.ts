@@ -25,10 +25,6 @@ export interface FormatPanelOptions {
     seriesType?: ChartSeriesType,
 }
 
-export function getMaxValue(currentValue: number, defaultMaxValue: number) {
-    return Math.max(currentValue, defaultMaxValue);
-}
-
 const DefaultFormatPanelDef: ChartFormatPanel = {
     groups: [
         { type: 'chart' },

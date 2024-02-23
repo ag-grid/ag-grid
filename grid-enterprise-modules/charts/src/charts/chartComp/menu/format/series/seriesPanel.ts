@@ -9,15 +9,15 @@ import {
     Component,
     ListOption,
     PostConstruct,
-    RefSelector
+    RefSelector,
+    AgSelectParams,
+    AgToggleButtonParams
 } from "@ag-grid-community/core";
 import type { AgRangeBarSeriesLabelPlacement } from 'ag-charts-community';
 import { ShadowPanel } from "./shadowPanel";
 import { FontPanel } from "../fontPanel";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { initFontPanelParams } from "./fontPanelParams";
-import { ChartOptionsService } from "../../../services/chartOptionsService";
-import { FormatPanelOptions, getMaxValue } from "../formatPanel";
+import { FormatPanelOptions } from "../formatPanel";
 import { MarkersPanel } from "./markersPanel";
 import { ChartController } from "../../../chartController";
 import { ChartSeriesType, getSeriesType, isPieChartSeries } from "../../../utils/seriesTypeMapper";
@@ -28,6 +28,7 @@ import { ConnectorLinePanel } from "./connectorLinePanel";
 import { WhiskersPanel } from "./whiskersPanel";
 import { SeriesItemsPanel } from "./seriesItemsPanel";
 import { TileSpacingPanel } from "./tileSpacingPanel";
+import { ChartMenuUtils } from "../../chartMenuUtils";
 
 export class SeriesPanel extends Component {
 
@@ -39,11 +40,11 @@ export class SeriesPanel extends Component {
 
     @RefSelector('seriesGroup') private seriesGroup: AgGroupComponent;
 
-    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
+    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
     private readonly chartController: ChartController;
-    private readonly chartOptionsService: ChartOptionsService;
     private readonly isExpandedOnInit: boolean;
+    private readonly chartMenuUtils: ChartMenuUtils;
 
     private seriesSelectOptions: Map<ChartSeriesType, ListOption>;
 
@@ -103,23 +104,21 @@ export class SeriesPanel extends Component {
         super();
 
         this.chartController = chartController;
-        this.chartOptionsService = chartOptionsService;
         this.seriesType = seriesType || this.getChartSeriesType();
         this.isExpandedOnInit = isExpandedOnInit;
+        this.chartMenuUtils = chartOptionsService.getSeriesOptionMenuUtils(() => this.seriesType)
     }
 
     @PostConstruct
     private init() {
-        const groupParams: AgGroupComponentParams = {
+        const seriesGroupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-top-level',
-            direction: 'vertical'
+            direction: 'vertical',
+            title: this.translate("series"),
+            expanded: this.isExpandedOnInit,
+            suppressEnabledCheckbox: true
         };
-        this.setTemplate(SeriesPanel.TEMPLATE, {seriesGroup: groupParams});
-
-        this.seriesGroup
-            .setTitle(this.translate("series"))
-            .toggleGroupExpand(this.isExpandedOnInit)
-            .hideEnabledCheckbox(true);
+        this.setTemplate(SeriesPanel.TEMPLATE, {seriesGroup: seriesGroupParams});
 
         this.addManagedListener(this.chartController, ChartController.EVENT_CHART_SERIES_CHART_TYPE_CHANGED, this.refreshWidgets.bind(this));
 
@@ -149,18 +148,18 @@ export class SeriesPanel extends Component {
     }
 
     private initSeriesSelect() {
-        const seriesSelect = this.seriesGroup.createManagedBean(new AgSelect());
-        seriesSelect
-            .setLabel(this.translate('seriesType'))
-            .setLabelAlignment("left")
-            .setLabelWidth('flex')
-            .setInputWidth('flex')
-            .addOptions(this.getSeriesSelectOptions())
-            .setValue(`${this.seriesType}`)
-            .onValueChange((newValue: ChartSeriesType) => {
+        const seriesSelect = this.seriesGroup.createManagedBean(new AgSelect({
+            label: this.translate('seriesType'),
+            labelAlignment: "left",
+            labelWidth: 'flex',
+            inputWidth: 'flex',
+            options: this.getSeriesSelectOptions(),
+            value: `${this.seriesType}`,
+            onValueChange: (newValue: ChartSeriesType) => {
                 this.seriesType = newValue;
                 this.refreshWidgets();
-            });
+            }
+        }));
 
         this.seriesGroup.addItem(seriesSelect);
 
@@ -168,86 +167,69 @@ export class SeriesPanel extends Component {
     }
 
     private initTooltips(): void {
-        const seriesTooltipsToggle = this.createBean(new AgToggleButton());
-        seriesTooltipsToggle
-            .setLabel(this.translate("tooltips"))
-            .setLabelAlignment("left")
-            .setLabelWidth("flex")
-            .setInputWidth('flex')
-            .setValue(this.getSeriesOption("tooltip.enabled") || false)
-            .onValueChange(newValue => this.setSeriesOption("tooltip.enabled", newValue));
+        const seriesTooltipsToggle = this.createBean(new AgToggleButton(this.chartMenuUtils.addValueParams<AgToggleButtonParams>(
+            'tooltip.enabled',
+            {
+                label: this.translate("tooltips"),
+                labelAlignment: "left",
+                labelWidth: "flex",
+                inputWidth: 'flex',
+            }
+        )));
 
         this.addWidget(seriesTooltipsToggle);
     }
 
     private initLineColor(): void {
-        const currentValue = this.getSeriesOption<string | undefined>("stroke");
-
-        const seriesLineColorPicker = this.createBean(new AgColorPicker());
-        seriesLineColorPicker
-            .setLabel(this.translate("strokeColor"))
-            .setLabelWidth('flex')
-            .onValueChange(newValue => this.setSeriesOption("stroke", newValue));
-        if (currentValue) seriesLineColorPicker.setValue(currentValue);
+        const seriesLineColorPicker = this.createBean(new AgColorPicker(this.chartMenuUtils.getDefaultColorPickerParams(
+            'stroke',
+            'strokeColor',
+        )));
 
         this.addWidget(seriesLineColorPicker);
     }
 
-    private initStrokeWidth(label: 'strokeWidth' | 'lineWidth'): void {
-        const currentValue = this.getSeriesOption<number | undefined>("strokeWidth") ?? 0;
-
-        const seriesStrokeWidthSlider = this.createBean(new AgSlider());
-        seriesStrokeWidthSlider
-            .setLabel(this.translate(label))
-            .setMaxValue(getMaxValue(currentValue, 10))
-            .setTextFieldWidth(45)
-            .setValue(`${currentValue}`)
-            .onValueChange(newValue => this.setSeriesOption("strokeWidth", newValue));
+    private initStrokeWidth(labelKey: 'strokeWidth' | 'lineWidth'): void {
+        const seriesStrokeWidthSlider = this.createBean(new AgSlider(this.chartMenuUtils.getDefaultSliderParams(
+            'strokeWidth',
+            labelKey,
+            10
+        )));
 
         this.addWidget(seriesStrokeWidthSlider);
     }
 
     private initLineDash(): void {
-        const lineDash = this.getSeriesOption<number[]>("lineDash");
-        const currentValue = lineDash ? lineDash[0] : 0;
-
-        const seriesLineDashSlider = this.createBean(new AgSlider());
-        seriesLineDashSlider
-            .setLabel(this.translate('lineDash'))
-            .setMaxValue(getMaxValue(currentValue, 30))
-            .setTextFieldWidth(45)
-            .setValue(`${currentValue}`)
-            .onValueChange(newValue => this.setSeriesOption("lineDash", [newValue]));
+        const seriesLineDashSlider = this.createBean(new AgSlider(this.chartMenuUtils.getDefaultSliderParams(
+            'lineDash',
+            'lineDash',
+            30,
+            true
+        )));
 
         this.addWidget(seriesLineDashSlider);
     }
 
     private initLineOpacity(): void {
-        const currentValue = this.getSeriesOption<number | undefined>("strokeOpacity") ?? 0;
-
-        const seriesLineOpacitySlider = this.createBean(new AgSlider());
-        seriesLineOpacitySlider
-            .setLabel(this.translate("strokeOpacity"))
-            .setStep(0.05)
-            .setMaxValue(getMaxValue(currentValue, 1))
-            .setTextFieldWidth(45)
-            .setValue(`${currentValue}`)
-            .onValueChange(newValue => this.setSeriesOption("strokeOpacity", newValue));
+        const params = this.chartMenuUtils.getDefaultSliderParams(
+            'strokeOpacity',
+            "strokeOpacity",
+            1
+        );
+        params.step = 0.05;
+        const seriesLineOpacitySlider = this.createBean(new AgSlider(params));
 
         this.addWidget(seriesLineOpacitySlider);
     }
 
     private initFillOpacity(): void {
-        const currentValue = this.getSeriesOption<number | undefined>("fillOpacity") ?? 0;
-
-        const seriesFillOpacitySlider = this.createBean(new AgSlider());
-        seriesFillOpacitySlider
-            .setLabel(this.translate("fillOpacity"))
-            .setStep(0.05)
-            .setMaxValue(getMaxValue(currentValue, 1))
-            .setTextFieldWidth(45)
-            .setValue(`${currentValue}`)
-            .onValueChange(newValue => this.setSeriesOption("fillOpacity", newValue));
+        const params = this.chartMenuUtils.getDefaultSliderParams(
+            'fillOpacity',
+            "fillOpacity",
+            1
+        );
+        params.step = 0.05;
+        const seriesFillOpacitySlider = this.createBean(new AgSlider(params));
 
         this.addWidget(seriesFillOpacitySlider);
     }
@@ -255,19 +237,12 @@ export class SeriesPanel extends Component {
     private initLabels() {
         const isPieChart = isPieChartSeries(this.seriesType);
         const seriesOptionLabelProperty = isPieChart ? 'calloutLabel' : 'label';
-        const labelName = isPieChart
-            ? this.chartTranslationService.translate('calloutLabels')
-            : this.chartTranslationService.translate('labels');
-        const labelParams = initFontPanelParams({
-            labelName,
-            chartOptionsService: this.chartOptionsService,
-            getSelectedSeries: () => this.seriesType,
-            seriesOptionLabelProperty
-        });
+        const labelKey = isPieChart ? 'calloutLabels' : 'labels';
+        const labelParams = this.chartMenuUtils.getDefaultFontPanelParams(seriesOptionLabelProperty, labelKey);
         const labelPanelComp = this.createBean(new FontPanel(labelParams));
 
         if (isPieChart) {
-            const calloutPanelComp = this.createBean(new CalloutPanel(this.chartOptionsService, () => this.seriesType));
+            const calloutPanelComp = this.createBean(new CalloutPanel(this.chartMenuUtils));
             labelPanelComp.addCompToPanel(calloutPanelComp);
             this.activePanels.push(calloutPanelComp);
         }
@@ -275,12 +250,7 @@ export class SeriesPanel extends Component {
         this.addWidget(labelPanelComp);
 
         if (isPieChart) {
-            const sectorParams = initFontPanelParams({
-                labelName: this.chartTranslationService.translate('sectorLabels'),
-                chartOptionsService: this.chartOptionsService,
-                getSelectedSeries: () => this.seriesType,
-                seriesOptionLabelProperty: 'sectorLabel'
-            });
+            const sectorParams = this.chartMenuUtils.getDefaultFontPanelParams('sectorLabel', 'sectorLabels');
             const sectorPanelComp = this.createBean(new FontPanel(sectorParams));
             const positionRatioComp = this.getSectorLabelPositionRatio();
             sectorPanelComp.addCompToPanel(positionRatioComp);
@@ -294,28 +264,26 @@ export class SeriesPanel extends Component {
                 { value: 'inside', text: this.translate('inside') },
                 { value: 'outside', text: this.translate('outside') },
             ];
-            const placementValue = this.chartOptionsService.getSeriesOption<AgRangeBarSeriesLabelPlacement>('label.placement', this.seriesType);
-            const placementSelect = labelPanelComp.createManagedBean(new AgSelect());
-            placementSelect
-                .setLabel(this.translate('labelPlacement'))
-                .setLabelAlignment('left')
-                .setLabelWidth('flex')
-                .setInputWidth('flex')
-                .addOptions(options)
-                .setValue(placementValue)
-                .onValueChange((newValue) => this.chartOptionsService.setSeriesOption('label.placement', newValue, this.seriesType));
+            const placementSelect = labelPanelComp.createManagedBean(new AgSelect(this.chartMenuUtils.addValueParams<AgSelectParams>(
+                'label.placement',
+                {
+                    label: this.translate('labelPlacement'),
+                    labelAlignment: 'left',
+                    labelWidth: 'flex',
+                    inputWidth: 'flex',
+                    options,
+                }
+            )));
 
             labelPanelComp.addCompToPanel(placementSelect);
             this.activePanels.push(placementSelect);
 
             // Add padding slider
-            const paddingValue = this.chartOptionsService.getSeriesOption<number>('label.padding', this.seriesType);
-            const paddingSlider = labelPanelComp.createManagedBean(new AgSlider());
-            paddingSlider.setLabel(this.chartTranslationService.translate('padding'))
-                .setMaxValue(getMaxValue(paddingValue, 200))
-                .setValue(`${paddingValue}`)
-                .setTextFieldWidth(45)
-                .onValueChange(newValue => this.chartOptionsService.setSeriesOption('label.padding', newValue, this.seriesType));
+            const paddingSlider = labelPanelComp.createManagedBean(new AgSlider(this.chartMenuUtils.getDefaultSliderParams(
+                'label.padding',
+                'padding',
+                200
+            )));
 
             labelPanelComp.addCompToPanel(paddingSlider);
             this.activePanels.push(paddingSlider);
@@ -323,80 +291,64 @@ export class SeriesPanel extends Component {
     }
 
     private getSectorLabelPositionRatio(): AgSlider {
-        const expression = 'sectorLabel.positionRatio';
-        const currentValue = this.chartOptionsService.getSeriesOption<number>(expression, this.seriesType);
-
-        const sectorLabelPositionRatioSlider = this.createBean(new AgSlider());
-        return sectorLabelPositionRatioSlider
-            .setLabel(this.translate("positionRatio"))
-            .setStep(0.05)
-            .setMaxValue(getMaxValue(currentValue, 1))
-            .setTextFieldWidth(45)
-            .setValue(`${currentValue}`)
-            .onValueChange(newValue => this.chartOptionsService.setSeriesOption(expression, newValue, this.seriesType));
+        const params = this.chartMenuUtils.getDefaultSliderParams(
+            'sectorLabel.positionRatio',
+            "positionRatio",
+            1
+        );
+        params.step = 0.05;
+        return this.createBean(new AgSlider(params));
     }
 
     private initShadow() {
-        const shadowPanelComp = this.createBean(new ShadowPanel(this.chartOptionsService, () => this.seriesType));
+        const shadowPanelComp = this.createBean(new ShadowPanel(this.chartMenuUtils));
         this.addWidget(shadowPanelComp);
     }
 
     private initMarkers() {
-        const markersPanelComp = this.createBean(new MarkersPanel(this.chartOptionsService, () => this.seriesType));
+        const markersPanelComp = this.createBean(new MarkersPanel(this.chartMenuUtils));
         this.addWidget(markersPanelComp);
     }
 
     private initBins() {
-        const currentValue = (this.getSeriesOption<any>("bins") ?? this.getSeriesOption<any>("calculatedBins", true)).length;
-
-        const seriesBinCountSlider = this.createBean(new AgSlider());
-        seriesBinCountSlider
-            .setLabel(this.translate("histogramBinCount"))
-            .setMinValue(0)
-            .setMaxValue(getMaxValue(currentValue, 20))
-            .setTextFieldWidth(45)
-            .setValue(`${currentValue}`)
-            .onValueChange(newValue => this.setSeriesOption("binCount", newValue));
+        const params = this.chartMenuUtils.getDefaultSliderParams('binCount', 'histogramBinCount', 20);
+        // this needs fixing
+        const value = (this.chartMenuUtils.getValue<any>("bins") ?? this.chartMenuUtils.getValue<any>("calculatedBins", true)).length;
+        params.value = `${value}`;
+        params.maxValue = Math.max(value, 20);
+        const seriesBinCountSlider = this.createBean(new AgSlider(params));
 
         this.addWidget(seriesBinCountSlider);
     }
 
     private initWhiskers() {
-        const whiskersPanelComp = this.createBean(new WhiskersPanel(this.chartOptionsService, () => this.seriesType));
+        const whiskersPanelComp = this.createBean(new WhiskersPanel(this.chartMenuUtils));
         this.addWidget(whiskersPanelComp);
     }
 
     private initCaps() {
-        const capsPanelComp = this.createBean(new CapsPanel(this.chartOptionsService, () => this.seriesType));
+        const capsPanelComp = this.createBean(new CapsPanel(this.chartMenuUtils));
         this.addWidget(capsPanelComp);
     }
 
     private initConnectorLine() {
-        const connectorLinePanelComp = this.createBean(new ConnectorLinePanel(this.chartOptionsService, () => this.seriesType));
+        const connectorLinePanelComp = this.createBean(new ConnectorLinePanel(this.chartMenuUtils));
         this.addWidget(connectorLinePanelComp);
     }
 
     private initSeriesItemsPanel() {
-        const seriesItemsPanelComp = this.createBean(new SeriesItemsPanel(this.chartOptionsService, () => this.seriesType));
+        const seriesItemsPanelComp = this.createBean(new SeriesItemsPanel(this.chartMenuUtils));
         this.addWidget(seriesItemsPanelComp);
     }
 
     private initTileSpacingPanel() {
-        const tileSpacingPanelComp = this.createBean(new TileSpacingPanel(this.chartOptionsService, () => this.seriesType));
+        const tileSpacingPanelComp = this.createBean(new TileSpacingPanel(this.chartMenuUtils));
         this.addWidget(tileSpacingPanelComp);
     }
 
     private addWidget(widget: Component): void {
         this.seriesGroup.addItem(widget);
         this.activePanels.push(widget);
-    }
-
-    private getSeriesOption<T = string>(expression: string, calculated?: boolean): T {
-        return this.chartOptionsService.getSeriesOption<T>(expression, this.seriesType, calculated);
-    }
-
-    private setSeriesOption<T = string>(expression: string, newValue: T): void {
-        this.chartOptionsService.setSeriesOption(expression, newValue, this.seriesType);
     }
 
     private getChartSeriesType(): ChartSeriesType {

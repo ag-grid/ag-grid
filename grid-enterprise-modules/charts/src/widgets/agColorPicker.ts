@@ -1,15 +1,17 @@
 import { AgColorPanel } from "./agColorPanel";
-import { _, IPickerFieldParams, AgPickerField, AgDialog } from "@ag-grid-community/core";
+import { _, AgPickerFieldParams, AgPickerField, AgDialog } from "@ag-grid-community/core";
 
-interface ColorPickerConfig extends IPickerFieldParams {
-    color: string;
+export interface AgColorPickerParams extends Omit<AgPickerFieldParams, 'pickerType' | 'pickerAriaLabelKey' | 'pickerAriaLabelValue'> {
+    pickerType?: string;
+    pickerAriaLabelKey?: string;
+    pickerAriaLabelValue?: string;
 }
 
-export class AgColorPicker extends AgPickerField<string, IPickerFieldParams, AgDialog> {
+export class AgColorPicker extends AgPickerField<string, AgColorPickerParams & AgPickerFieldParams, AgDialog> {
 
     private isDestroyingPicker: boolean;
 
-    constructor(config?: ColorPickerConfig) {
+    constructor(config?: AgColorPickerParams) {
         super({
             pickerAriaLabelKey: 'ariaLabelColorPicker',
             pickerAriaLabelValue: 'Color Picker',
@@ -18,10 +20,6 @@ export class AgColorPicker extends AgPickerField<string, IPickerFieldParams, AgD
             pickerIcon: 'colorPicker',
             ...config,
         });
-
-        if (config && config.color) {
-            this.value = config.color;
-        }
     }
 
     protected postConstruct() {

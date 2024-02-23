@@ -1,5 +1,4 @@
 import {
-    AgGroupComponent,
     AgGroupComponentParams,
     AgSlider,
     Autowired,
@@ -9,10 +8,9 @@ import {
     RefSelector,
 } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { ChartOptionsService } from "../../../services/chartOptionsService";
-import { getMaxValue } from "../formatPanel";
 import { AgChartPaddingOptions } from "ag-charts-community";
 import { ChartController } from "../../../chartController";
+import { ChartMenuUtils } from "../../chartMenuUtils";
 
 export class PaddingPanel extends Component {
 
@@ -26,56 +24,37 @@ export class PaddingPanel extends Component {
             </ag-group-component>
         <div>`;
 
-    @RefSelector('chartPaddingGroup') private chartPaddingGroup: AgGroupComponent;
     @RefSelector('paddingTopSlider') private paddingTopSlider: AgSlider;
-    @RefSelector('paddingRightSlider') private paddingRightSlider: AgSlider;
-    @RefSelector('paddingBottomSlider') private paddingBottomSlider: AgSlider;
-    @RefSelector('paddingLeftSlider') private paddingLeftSlider: AgSlider;
 
-    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
+    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
-    constructor(private readonly chartOptionsService: ChartOptionsService, private readonly chartController: ChartController) {
+    constructor(private readonly chartMenuUtils: ChartMenuUtils, private readonly chartController: ChartController) {
         super();
     }
 
     @PostConstruct
     private init() {
-        const groupParams: AgGroupComponentParams = {
+        const chartPaddingGroupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',
-            suppressOpenCloseIcons: true
+            suppressOpenCloseIcons: true,
+            title: this.chartTranslationService.translate("padding"),
+            suppressEnabledCheckbox: true
         };
-        this.setTemplate(PaddingPanel.TEMPLATE, { chartPaddingGroup: groupParams });
+        const getSliderParams = (property: keyof AgChartPaddingOptions) => 
+            this.chartMenuUtils.getDefaultSliderParams('padding.' + property, property, 200);
+
+        this.setTemplate(PaddingPanel.TEMPLATE, {
+            chartPaddingGroup: chartPaddingGroupParams,
+            paddingTopSlider: getSliderParams('top'),
+            paddingRightSlider: getSliderParams('right'),
+            paddingBottomSlider: getSliderParams('bottom'),
+            paddingLeftSlider: getSliderParams('left')
+        });
 
         this.addManagedListener(this.eventService, Events.EVENT_CHART_OPTIONS_CHANGED, (e) => {
             this.updateTopPadding(e.chartOptions);
         });
-
-        this.initGroup();
-        this.initChartPaddingItems();
-    }
-
-    private initGroup(): void {
-        this.chartPaddingGroup
-            .setTitle(this.chartTranslationService.translate("padding"))
-            .hideOpenCloseIcons(true)
-            .hideEnabledCheckbox(true);
-    }
-
-    private initChartPaddingItems(): void {
-        const initInput = (property: keyof AgChartPaddingOptions, input: AgSlider) => {
-            const currentValue = this.chartOptionsService.getChartOption<number>('padding.' + property);
-            input.setLabel(this.chartTranslationService.translate(property))
-                .setMaxValue(getMaxValue(currentValue, 200))
-                .setValue(`${currentValue}`)
-                .setTextFieldWidth(45)
-                .onValueChange(newValue => this.chartOptionsService.setChartOption('padding.' + property, newValue));
-        };
-
-        initInput('top', this.paddingTopSlider);
-        initInput('right', this.paddingRightSlider);
-        initInput('bottom', this.paddingBottomSlider);
-        initInput('left', this.paddingLeftSlider);
     }
 
     private updateTopPadding(chartOptions: any) {

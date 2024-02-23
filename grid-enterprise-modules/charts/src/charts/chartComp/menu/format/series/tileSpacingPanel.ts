@@ -1,15 +1,12 @@
 import {
-    AgGroupComponent,
     AgGroupComponentParams,
-    AgSlider,
+    AgSliderParams,
     Autowired,
     Component,
     PostConstruct,
-    RefSelector,
 } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { ChartOptionsService } from "../../../services/chartOptionsService";
-import { ChartSeriesType } from "../../../utils/seriesTypeMapper";
+import { ChartMenuUtils } from "../../chartMenuUtils";
 
 export class TileSpacingPanel extends Component {
 
@@ -25,16 +22,9 @@ export class TileSpacingPanel extends Component {
             </ag-group-component>
         </div>`;
 
-    @RefSelector('groupSpacing') private groupSpacing: AgGroupComponent;
-    @RefSelector('groupPaddingSlider') private groupPaddingSlider: AgSlider;
-    @RefSelector('groupSpacingSlider') private groupSpacingSlider: AgSlider;
-    @RefSelector('tilePaddingSlider') private tilePaddingSlider: AgSlider;
-    @RefSelector('tileSpacingSlider') private tileSpacingSlider: AgSlider;
+    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
-    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
-
-    constructor(private readonly chartOptionsService: ChartOptionsService,
-                private getSelectedSeries: () => ChartSeriesType) {
+    constructor(private readonly chartMenuUtils: ChartMenuUtils) {
         super();
     }
 
@@ -50,49 +40,14 @@ export class TileSpacingPanel extends Component {
         this.setTemplate(TileSpacingPanel.TEMPLATE, {
             groupSpacing: { ...groupParams, title: this.chartTranslationService.translate("group") },
             tileSpacing: { ...groupParams, title: this.chartTranslationService.translate("tile") },
+            groupPaddingSlider: this.getSliderParams('padding', 'group.padding'),
+            groupSpacingSlider: this.getSliderParams('spacing', 'group.gap'),
+            tilePaddingSlider: this.getSliderParams('padding', 'tile.padding'),
+            tileSpacingSlider: this.getSliderParams('spacing', 'tile.gap')
         });
-
-        this.initControls();
     }
 
-    private initControls() {
-        const optionGroups = [
-            {
-                optionNamespace: "group",
-                components: {
-                    paddingSlider: this.groupPaddingSlider,
-                    spacingSlider: this.groupSpacingSlider,
-                },
-            },
-            {
-                optionNamespace: "tile",
-                components: {
-                    paddingSlider: this.tilePaddingSlider,
-                    spacingSlider: this.tileSpacingSlider,
-                },
-            },
-        ];
-        for (const group of optionGroups) {
-            const { optionNamespace, components } = group;
-            const { paddingSlider, spacingSlider } = components;
-
-            const paddingValue = this.chartOptionsService.getSeriesOption<number>(`${optionNamespace}.padding`, this.getSelectedSeries());
-            paddingSlider
-                .setLabel(this.chartTranslationService.translate("padding"))
-                .setMinValue(0)
-                .setMaxValue(10)
-                .setTextFieldWidth(45)
-                .setValue(`${paddingValue}`)
-                .onValueChange(newValue => this.chartOptionsService.setSeriesOption(`${optionNamespace}.padding`, newValue, this.getSelectedSeries()));
-
-            const spacingValue = this.chartOptionsService.getSeriesOption<number>(`${optionNamespace}.gap`, this.getSelectedSeries());
-            spacingSlider
-                .setLabel(this.chartTranslationService.translate("spacing"))
-                .setMinValue(0)
-                .setMaxValue(10)
-                .setTextFieldWidth(45)
-                .setValue(`${spacingValue}`)
-                .onValueChange(newValue => this.chartOptionsService.setSeriesOption(`${optionNamespace}.gap`, newValue, this.getSelectedSeries()));
-        }
+    private getSliderParams(labelKey: string, key: string): AgSliderParams {
+        return this.chartMenuUtils.getDefaultSliderParams(key, labelKey, 10);
     }
 }

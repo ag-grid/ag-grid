@@ -1,16 +1,12 @@
 import {
-    AgGroupComponent,
     AgGroupComponentParams,
-    AgSlider,
+    AgSliderParams,
     Autowired,
     Component,
-    PostConstruct,
-    RefSelector
+    PostConstruct
 } from "@ag-grid-community/core";
-import {ChartTranslationService} from "../../../services/chartTranslationService";
-import {ChartOptionsService} from "../../../services/chartOptionsService";
-import {ChartSeriesType} from "../../../utils/seriesTypeMapper";
-import {AgColorPicker} from "../../../../../widgets/agColorPicker";
+import { ChartTranslationService } from "../../../services/chartTranslationService";
+import { ChartMenuUtils } from "../../chartMenuUtils";
 
 export class ConnectorLinePanel extends Component {
 
@@ -24,15 +20,9 @@ export class ConnectorLinePanel extends Component {
             </ag-group-component>
         </div>`;
 
-    @RefSelector('lineColorPicker') private lineColorPicker: AgColorPicker;
-    @RefSelector('lineStrokeWidthSlider') private lineStrokeWidthSlider: AgSlider;
-    @RefSelector('lineOpacitySlider') private lineOpacitySlider: AgSlider;
-    @RefSelector('lineDashSlider') private lineDashSlider: AgSlider;
+    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
-    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
-
-    constructor(private readonly chartOptionsService: ChartOptionsService,
-                private getSelectedSeries: () => ChartSeriesType) {
+    constructor(private readonly chartMenuUtils: ChartMenuUtils) {
         super();
     }
 
@@ -46,39 +36,18 @@ export class ConnectorLinePanel extends Component {
             suppressOpenCloseIcons: true,
             suppressEnabledCheckbox: true,
         };
-        this.setTemplate(ConnectorLinePanel.TEMPLATE, {lineGroup: lineGroupParams});
-
-        this.initConnectorLineControls();
+        this.setTemplate(ConnectorLinePanel.TEMPLATE, {
+            lineGroup: lineGroupParams,
+            lineColorPicker: this.chartMenuUtils.getDefaultColorPickerParams("line.stroke"),
+            lineStrokeWidthSlider: this.getSliderParams("strokeWidth", 10, "line.strokeWidth"),
+            lineDashSlider: this.getSliderParams("lineDash", 30, "line.lineDash", 1, true),
+            lineOpacitySlider: this.getSliderParams("strokeOpacity", 1, "line.strokeOpacity", 0.05)
+        });
     }
 
-    private initConnectorLineControls() {
-        this.initColorPicker(this.lineColorPicker, "color", "line.stroke");
-        this.initSlider(this.lineStrokeWidthSlider, "strokeWidth", 0, 10, 45, "line.strokeWidth");
-        this.initSlider(this.lineDashSlider, "lineDash", 0, 30, 45, "line.lineDash", 1, true);
-        this.initSlider(this.lineOpacitySlider, "strokeOpacity", 0, 1, 45, "line.strokeOpacity", 0.05, false);
-    }
-
-    private initColorPicker(colorPicker: AgColorPicker, labelKey: string, seriesOptionKey: string) {
-        const color = this.chartOptionsService.getSeriesOption<string | undefined | null>(seriesOptionKey, this.getSelectedSeries());
-        colorPicker
-            .setLabel(this.chartTranslationService.translate(labelKey))
-            .setLabelWidth("flex")
-            .setValue(color == null ? 'transparent' : `${color}`)
-            .onValueChange(newValue => this.chartOptionsService.setSeriesOption(seriesOptionKey, newValue, this.getSelectedSeries()));
-    }
-
-    private initSlider(slider: AgSlider, labelKey: string, minValue: number, maxValue: number, textFieldWidth: number, seriesOptionKey: string, step: number = 1, isArray: boolean = false) {
-        const value = this.chartOptionsService.getSeriesOption(seriesOptionKey, this.getSelectedSeries());
-        slider
-            .setLabel(this.chartTranslationService.translate(labelKey))
-            .setMinValue(minValue)
-            .setMaxValue(maxValue)
-            .setTextFieldWidth(textFieldWidth)
-            .setValue(`${value}`)
-            .setStep(step)
-            .onValueChange(newValue => {
-                const value = isArray ? [newValue] : newValue;
-                this.chartOptionsService.setSeriesOption(seriesOptionKey, value, this.getSelectedSeries());
-            });
+    private getSliderParams(labelKey: string, maxValue: number, seriesOptionKey: string, step: number = 1, isArray: boolean = false): AgSliderParams {
+        const params = this.chartMenuUtils.getDefaultSliderParams(seriesOptionKey, labelKey, maxValue, isArray);
+        params.step = step;
+        return params;
     }
 }

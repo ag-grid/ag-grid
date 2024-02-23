@@ -1,15 +1,12 @@
 import {
-    AgGroupComponent,
     AgGroupComponentParams,
-    AgSlider,
     Autowired,
     Component,
-    PostConstruct,
-    RefSelector
+    PostConstruct
 } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { ChartOptionsService } from "../../../services/chartOptionsService";
-import { FormatPanelOptions, getMaxValue } from "../formatPanel";
+import { FormatPanelOptions } from "../formatPanel";
+import { ChartMenuUtils } from "../../chartMenuUtils";
 
 export class NavigatorPanel extends Component {
 
@@ -20,56 +17,36 @@ export class NavigatorPanel extends Component {
             </ag-group-component>
         </div>`;
 
-    @RefSelector('navigatorGroup') private navigatorGroup: AgGroupComponent;
-    @RefSelector('navigatorHeightSlider') private navigatorHeightSlider: AgSlider;
+    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
-    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
-
-    private readonly chartOptionsService: ChartOptionsService;
+    private readonly chartMenuUtils: ChartMenuUtils;
     private readonly isExpandedOnInit: boolean;
 
     constructor({ chartOptionsService, isExpandedOnInit = false }: FormatPanelOptions) {
         super();
 
-        this.chartOptionsService = chartOptionsService;
+        this.chartMenuUtils = chartOptionsService.getChartOptionMenuUtils();
         this.isExpandedOnInit = isExpandedOnInit;
     }
 
     @PostConstruct
     private init() {
-        const groupParams: AgGroupComponentParams = {
-            cssIdentifier: 'charts-format-top-level',
-            direction: 'vertical'
-        };
-        this.setTemplate(NavigatorPanel.TEMPLATE, { navigatorGroup: groupParams });
-
-        this.initNavigator();
-    }
-
-    private initNavigator() {
-        const { chartTranslationService } = this;
-
-        this.navigatorGroup
-            .setTitle(chartTranslationService.translate("navigator"))
-            .hideEnabledCheckbox(false)
-            .setEnabled(this.chartOptionsService.getChartOption<boolean>("navigator.enabled") || false)
-            .onEnableChange(enabled => {
-                this.chartOptionsService.setChartOption("navigator.enabled", enabled);
-                this.navigatorGroup.toggleGroupExpand(true);
-            })
-            .toggleGroupExpand(this.isExpandedOnInit);
-
-        const currentValue = this.chartOptionsService.getChartOption<number>("navigator.height");
-        this.navigatorHeightSlider
-            .setLabel(chartTranslationService.translate("height"))
-            .setMinValue(10)
-            .setMaxValue(getMaxValue(currentValue,60))
-            .setTextFieldWidth(45)
-            .setValue(`${currentValue || 30}`)
-            .onValueChange(height => this.chartOptionsService.setChartOption("navigator.height", height));
-    }
-
-    protected destroy(): void {
-        super.destroy();
+        const navigatorGroupParams = this.chartMenuUtils.addEnableParams<AgGroupComponentParams>(
+            'navigator.enabled',
+            {
+                cssIdentifier: 'charts-format-top-level',
+                direction: 'vertical',
+                title: this.chartTranslationService.translate("navigator"),
+                suppressEnabledCheckbox: false,
+                suppressToggleExpandOnEnableChange: true,
+                expanded: this.isExpandedOnInit
+            }
+        );
+        const navigatorHeightSliderParams = this.chartMenuUtils.getDefaultSliderParams("navigator.height", "height", 60);
+        navigatorHeightSliderParams.minValue = 10;
+        this.setTemplate(NavigatorPanel.TEMPLATE, {
+            navigatorGroup: navigatorGroupParams,
+            navigatorHeightSlider: navigatorHeightSliderParams
+        });
     }
 }

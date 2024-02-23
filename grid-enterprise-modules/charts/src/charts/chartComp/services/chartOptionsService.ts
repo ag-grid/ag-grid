@@ -1,7 +1,8 @@
-import { _, BeanStub, ChartOptionsChanged, ChartType, Events, WithoutGridCommon } from "@ag-grid-community/core";
+import { _, BeanStub, ChartOptionsChanged, ChartType, Events, WithoutGridCommon, PostConstruct } from "@ag-grid-community/core";
 import { AgCartesianAxisType, AgCharts, AgChartOptions, AgPolarAxisType } from "ag-charts-community";
 
 import { ChartController } from "../chartController";
+import { ChartMenuUtils } from "../menu/chartMenuUtils";
 import { flatMap } from '../utils/array';
 import { AgChartActual } from "../utils/integration";
 import { deepMerge, get, set } from "../utils/object";
@@ -12,16 +13,31 @@ type SupportedSeries = AgChartActual['series'][number];
 export class ChartOptionsService extends BeanStub {
     private readonly chartController: ChartController;
 
+    private chartOptionMenuUtil: ChartMenuUtils;
+    private axisPropertyMenuUtil: ChartMenuUtils;
+
     constructor(chartController: ChartController) {
         super();
         this.chartController = chartController;
     }
 
-    public getChartOption<T = string>(expression: string): T {
+    @PostConstruct
+    private postConstruct(): void {
+        this.chartOptionMenuUtil = this.createManagedBean(new ChartMenuUtils({
+            getValue: e => this.getChartOption(e),
+            setValue: (e, v) => this.setChartOption(e, v),
+        }, this));
+        this.axisPropertyMenuUtil = this.createManagedBean(new ChartMenuUtils({
+            getValue: e => this.getAxisProperty(e),
+            setValue: (e, v) => this.setAxisProperty(e, v),
+        }, this));
+    }
+
+    private getChartOption<T = string>(expression: string): T {
         return get(this.getChart(), expression, undefined) as T;
     }
 
-    public setChartOption<T = string>(expression: string, value: T, isSilent?: boolean): void {
+    private setChartOption<T = string>(expression: string, value: T): void {
         const chartSeriesTypes = this.chartController.getChartSeriesTypes();
         if (this.chartController.isComboChart()) {
             chartSeriesTypes.push('common');
@@ -37,10 +53,8 @@ export class ChartOptionsService extends BeanStub {
             }));
         });
 
-        if (!isSilent) {
-            this.updateChart(chartOptions);
-            this.raiseChartOptionsChangedEvent();
-        }
+        this.updateChart(chartOptions);
+        this.raiseChartOptionsChangedEvent();
     }
 
     public awaitChartOptionUpdate(func: () => void) {
@@ -49,11 +63,11 @@ export class ChartOptionsService extends BeanStub {
             .catch((e) => console.error(`AG Grid - chart update failed`, e));
     }
 
-    public getAxisProperty<T = string>(expression: string): T {
+    private getAxisProperty<T = string>(expression: string): T {
         return get(this.getChart().axes?.[0], expression, undefined);
     }
 
-    public setAxisProperty<T = string>(expression: string, value: T) {
+    private setAxisProperty<T = string>(expression: string, value: T) {
         this.setAxisProperties([{ expression, value }]);
     }
 
@@ -87,6 +101,7 @@ export class ChartOptionsService extends BeanStub {
         }
     }
 
+    // These should be removed along with `setAxisProperties`, and proper handling added for getting/updating a single axis vs all axes
     public getLabelRotation(axisType: 'xAxis' | 'yAxis'): number {
         const axis = this.getAxis(axisType);
         return get(axis, 'label.rotation', undefined);
@@ -101,7 +116,7 @@ export class ChartOptionsService extends BeanStub {
         }
     }
 
-    public getSeriesOption<T = string>(expression: string, seriesType: ChartSeriesType, calculated?: boolean): T {
+    private getSeriesOption<T = string>(expression: string, seriesType: ChartSeriesType, calculated?: boolean): T {
         // N.B. 'calculated' here refers to the fact that the property exists on the internal series object itself,
         // rather than the properties object. This is due to us needing to reach inside the chart itself to retrieve
         // the value, and will likely be cleaned up in a future release
@@ -109,7 +124,7 @@ export class ChartOptionsService extends BeanStub {
         return get(calculated ? series : series?.properties.toJson(), expression, undefined) as T;
     }
 
-    public setSeriesOption<T = string>(expression: string, value: T, seriesType: ChartSeriesType): void {
+    private setSeriesOption<T = string>(expression: string, value: T, seriesType: ChartSeriesType): void {
         const chartOptions = this.createChartOptions<T>({
             seriesType,
             expression: `series.${expression}`,
@@ -201,6 +216,21 @@ export class ChartOptionsService extends BeanStub {
         };
 
         this.eventService.dispatchEvent(event);
+    }
+
+    public getChartOptionMenuUtils(): ChartMenuUtils {
+        return this.chartOptionMenuUtil;
+    }
+
+    public getAxisPropertyMenuUtils(): ChartMenuUtils {
+        return this.axisPropertyMenuUtil;
+    }
+
+    public getSeriesOptionMenuUtils(getSelectedSeries: () => ChartSeriesType): ChartMenuUtils {
+        return this.createManagedBean(new ChartMenuUtils({
+            getValue: (expression, calculated) => this.getSeriesOption(expression, getSelectedSeries(), calculated),
+            setValue: (expression, value) => this.setSeriesOption(expression, value, getSelectedSeries()),
+        }, this));
     }
 
     private static isMatchingSeries(seriesType: ChartSeriesType, series: SupportedSeries): boolean {
