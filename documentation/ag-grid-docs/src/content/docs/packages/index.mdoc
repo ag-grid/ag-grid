@@ -15,135 +15,38 @@ Note that the following describes the setup for Vue 3. For Vue 2, use `ag-grid-v
 The following artifacts are "`packages`" and are designed to work together:
 
 {% if isFramework("javascript") %}
-````js {% fixme=true %}
-<table>
-  ```
-  <thead>
-  <tr>
-      <th>Package Name</th>
-      <th>Contents</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr>
-      <td><code>ag-grid-community</code></td>
-      <td>All Community Features</td>
-  </tr>
-  <tr>
-      <td><code>ag-grid-enterprise</code></td>
-      <td>All Enterprise Features</td>
-  </tr>
-  <tr>
-      <td><code>ag-grid-charts-enterprise</code></td>
-      <td>AG Grid Enterprise & AG Charts Enterprise</td>
-  </tr>
-  </tbody>
-  ```
-</table>
-
-````
+| Package Name | Contents |
+| - | - |
+| `ag-grid-community` | All Community Features |
+| `ag-grid-enterprise` | All Enterprise Features |
+| `ag-grid-charts-enterprise` | AG Grid Enterprise & AG Charts Enterprise |
 {% /if %}
 
 {% if isFramework("angular") %}
-````js {% fixme=true %}
-<table>
-  ```
-  <thead>
-  <tr>
-      <th>Package Name</th>
-      <th>Contents</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr>
-      <td><code>ag-grid-community</code></td>
-      <td>All Community Features</td>
-  </tr>
-  <tr>
-      <td><code>ag-grid-enterprise</code></td>
-      <td>All Enterprise Features</td>
-  </tr>
-  <tr>
-      <td><code>ag-grid-charts-enterprise</code></td>
-      <td>AG Grid Enterprise & AG Charts Enterprise</td>
-  </tr>
-  <tr>
-      <td><code>ag-grid-angular</code></td>
-      <td>Angular Support</td>
-  </tr>
-  </tbody>
-  ```
-</table>
-
-````
+| Package Name | Contents |
+| - | - |
+| `ag-grid-community` | All Community Features |
+| `ag-grid-enterprise` | All Enterprise Features |
+| `ag-grid-charts-enterprise` | AG Grid Enterprise & AG Charts Enterprise |
+| `ag-grid-angular` | Angular Support |
 {% /if %}
 
 {% if isFramework("react") %}
-````js {% fixme=true %}
-<table>
-  ```
-  <thead>
-  <tr>
-      <th>Package Name</th>
-      <th>Contents</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr>
-      <td><code>ag-grid-community</code></td>
-      <td>All Community Features</td>
-  </tr>
-  <tr>
-      <td><code>ag-grid-enterprise</code></td>
-      <td>All Enterprise Features</td>
-  </tr>
-  <tr>
-      <td><code>ag-grid-charts-enterprise</code></td>
-      <td>AG Grid Enterprise & AG Charts Enterprise</td>
-  </tr>
-  <tr>
-      <td><code>ag-grid-react</code></td>
-      <td>React Support</td>
-  </tr>
-  </tbody>
-  ```
-</table>
-
-````
+| Package Name | Contents |
+| - | - |
+| `ag-grid-community` | All Community Features |
+| `ag-grid-enterprise` | All Enterprise Features |
+| `ag-grid-charts-enterprise` | AG Grid Enterprise & AG Charts Enterprise |
+| `ag-grid-react` | React Support |
 {% /if %}
 
 {% if isFramework("vue") %}
-````js {% fixme=true %}
-<table>
-  ```
-  <thead>
-  <tr>
-      <th>Package Name</th>
-      <th>Contents</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr>
-      <td><code>ag-grid-community</code></td>
-      <td>All Community Features</td>
-  </tr>
-  <tr>
-      <td><code>ag-grid-enterprise</code></td>
-      <td>All Enterprise Features</td>
-  </tr>
-  <tr>
-      <td><code>ag-grid-charts-enterprise</code></td>
-      <td>AG Grid Enterprise & AG Charts Enterprise</td>
-  </tr>
-  <tr>
-      <td><code>ag-grid-vue3</code></td>
-      <td>Vue Support</td>
-  </tr>
-  </tbody>
-  ```
-</table>
-
-````
+| Package Name | Contents |
+| - | - |
+| `ag-grid-community` | All Community Features |
+| `ag-grid-enterprise` | All Enterprise Features |
+| `ag-grid-charts-enterprise` | AG Grid Enterprise & AG Charts Enterprise |
+| `ag-grid-vue3` | Vue Support |
 {% /if %}
 
 When using `packages` you get all of the code within that package and cannot pick and choose which features you require. Unlike [Modules](./modules/) there is no need to register feature modules with the grid as the packages take care of this for you.
