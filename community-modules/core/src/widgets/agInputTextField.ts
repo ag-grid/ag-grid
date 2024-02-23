@@ -1,13 +1,13 @@
-import { AgAbstractInputField, IInputField } from './agAbstractInputField';
+import { AgAbstractInputField, AgInputFieldParams } from './agAbstractInputField';
 import { exists } from '../utils/generic';
 import { isEventFromPrintableCharacter } from '../utils/keyboard';
 
-export interface ITextInputField extends IInputField {
+export interface AgInputTextFieldParams extends AgInputFieldParams {
     allowedCharPattern?: string;
 }
 
-export class AgInputTextField extends AgAbstractInputField<HTMLInputElement, string, ITextInputField> {
-    constructor(config?: ITextInputField, className = 'ag-text-field', inputType = 'text') {
+export class AgInputTextField extends AgAbstractInputField<HTMLInputElement, string, AgInputTextFieldParams> {
+    constructor(config?: AgInputTextFieldParams, className = 'ag-text-field', inputType = 'text') {
         super(config, className, inputType);
     }
 

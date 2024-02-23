@@ -6450,17 +6450,17 @@ adjust-sourcemap-loader@^4.0.0:
     loader-utils "^2.0.0"
     regex-parser "^2.2.11"
 
-ag-charts-community@9.1.0:
-  version "9.1.0"
-  resolved "http://52.50.158.57:4873/ag-charts-community/-/ag-charts-community-9.1.0.tgz#dda615343c1a2ad7290108d7368c06a2d4d99374"
-  integrity sha512-aK1YFxK0bntDDY7D00qxQ3btiKbulyppPZ3KI45JOTTDtUHaN3bhypVmbeEtd+zgy0J6+lD+KrvMIUrOl4MUXA==
+ag-charts-community@9.1.1:
+  version "9.1.1"
+  resolved "https://registry.yarnpkg.com/ag-charts-community/-/ag-charts-community-9.1.1.tgz#3dedf6390c3ceefc47b95c46d7b67d6674cfb12f"
+  integrity sha512-IRt6qx9ZpPLME+w3fyWNUqNMGBe9nbcOC5VSHcwkfFdtlyyVa7/b/kkLPfdcXtY+6vhPMSdqOmlod1oANYCU2A==
 
-ag-charts-enterprise@9.1.0:
-  version "9.1.0"
-  resolved "http://52.50.158.57:4873/ag-charts-enterprise/-/ag-charts-enterprise-9.1.0.tgz#5cdb1b66c70f85e53b882f2dcd60cee236cd3a2b"
-  integrity sha512-XOb6ridGlUbjU3aTlHCBhgmWowoep9WvupuUbO6KpIkbVkd+vTcryPmXc2DF0BL7d6vOPCpsuzaOqsBUnMx5Tw==
+ag-charts-enterprise@9.1.1:
+  version "9.1.1"
+  resolved "https://registry.yarnpkg.com/ag-charts-enterprise/-/ag-charts-enterprise-9.1.1.tgz#2945911c1115556bf23cdd7afe6565cc33af2ea8"
+  integrity sha512-IfxmX0vFPMEWCwz4PvLdMktTb71RJQbK7tc5ALUrWs4r6+CjX7NCmH83z//IdEpPOuTPUk4jgc112cSBJYyMwg==
   dependencies:
-    ag-charts-community "9.1.0"
+    ag-charts-community "9.1.1"
 
 agent-base@4, agent-base@^4.1.0, agent-base@^4.3.0:
   version "4.3.0"

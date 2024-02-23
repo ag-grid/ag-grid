@@ -1,15 +1,14 @@
-import { IAgLabelParams } from './agAbstractLabel';
 import { RefSelector } from './componentAnnotations';
-import { AgAbstractField, FieldElement } from './agAbstractField';
+import { AgAbstractField, AgFieldParams, FieldElement } from './agAbstractField';
 import { setDisabled, setElementWidth, addOrRemoveAttribute } from '../utils/dom';
 import { setAriaLabel } from '../utils/aria';
 
-export interface IInputField extends IAgLabelParams {
-    value?: any;
-    width?: number;
+export interface AgInputFieldParams extends AgFieldParams {
+    inputName?: string;
+    inputWidth?: number | 'flex';
 }
 
-export abstract class AgAbstractInputField<TElement extends FieldElement, TValue, TConfig extends IInputField = IInputField>
+export abstract class AgAbstractInputField<TElement extends FieldElement, TValue, TConfig extends AgInputFieldParams = AgInputFieldParams>
     extends AgAbstractField<TValue, TConfig> {
     @RefSelector('eLabel') protected readonly eLabel: HTMLElement;
     @RefSelector('eWrapper') protected readonly eWrapper: HTMLElement;
@@ -36,14 +35,12 @@ export abstract class AgAbstractInputField<TElement extends FieldElement, TValue
 
         this.eInput.id = this.eInput.id || `ag-${this.getCompId()}-input`;
 
-        const { width, value } = this.config;
-
-        if (width != null) {
-            this.setWidth(width);
+        const { inputName, inputWidth } = this.config;
+        if (inputName != null) {
+            this.setInputName(inputName);
         }
-
-        if (value != null) {
-            this.setValue(value);
+        if (inputWidth != null) {
+            this.setInputWidth(inputWidth);
         }
 
         this.addInputListeners();

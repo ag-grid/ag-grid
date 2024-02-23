@@ -1,4 +1,4 @@
-import { AgInputTextField, ITextInputField } from "./agInputTextField";
+import { AgInputTextField, AgInputTextFieldParams } from "./agInputTextField";
 import { addOrRemoveAttribute } from '../utils/dom';
 import { exists } from "../utils/generic";
 
@@ -8,7 +8,7 @@ export class AgInputNumberField extends AgInputTextField {
     private min?: number;
     private max?: number;
 
-    constructor(config?: ITextInputField) {
+    constructor(config?: AgInputTextFieldParams) {
         super(config, 'ag-number-field', 'number');
     }
 

@@ -1,16 +1,15 @@
-import { AgAbstractField } from "./agAbstractField";
+import { AgAbstractField, AgFieldParams } from "./agAbstractField";
 import { Component } from "./component";
 import { RefSelector } from "./componentAnnotations";
 import { setAriaExpanded, setAriaRole } from "../utils/aria";
 import { createIconNoSpan } from "../utils/icon";
 import { setElementWidth, getAbsoluteWidth, getInnerHeight, formatSize } from "../utils/dom";
 import { KeyCode } from '../constants/keyCode';
-import { IAgLabelParams } from './agAbstractLabel';
 import { AddPopupParams, PopupService } from "./popupService";
 import { Autowired } from "../context/context";
 import { Events } from "../eventKeys";
 
-export interface IPickerFieldParams extends IAgLabelParams {
+export interface AgPickerFieldParams extends AgFieldParams {
     pickerType: string;
     pickerGap?: number;
     /**
@@ -27,7 +26,8 @@ export interface IPickerFieldParams extends IAgLabelParams {
     className?: string;
     pickerIcon?: string;
     ariaRole?: string;
-    modalPicker?: boolean
+    modalPicker?: boolean;
+    inputWidth?: number | 'flex';
 }
 
 const TEMPLATE = /* html */`
@@ -39,7 +39,7 @@ const TEMPLATE = /* html */`
         </div>
     </div>`;
 
-export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams = IPickerFieldParams, TComponent extends Component = Component> extends AgAbstractField<TValue, TConfig> {
+export abstract class AgPickerField<TValue, TConfig extends AgPickerFieldParams = AgPickerFieldParams, TComponent extends Component = Component> extends AgAbstractField<TValue, TConfig> {
 
     protected abstract createPickerComponent(): TComponent;
 
@@ -111,13 +111,17 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
         this.addManagedListener(this.eLabel, 'mousedown', this.onLabelOrWrapperMouseDown.bind(this));
         this.addManagedListener(this.eWrapper, 'mousedown', this.onLabelOrWrapperMouseDown.bind(this));
 
-        const { pickerIcon } = this.config;
+        const { pickerIcon, inputWidth } = this.config;
 
         if (pickerIcon) {
             const icon = createIconNoSpan(pickerIcon, this.gridOptionsService);
             if (icon) {
                 this.eIcon.appendChild(icon);
             }
+        }
+
+        if (inputWidth != null) {
+            this.setInputWidth(inputWidth);
         }
     }
 
