@@ -6,7 +6,6 @@ import {
     PostConstruct,
 } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { ChartOptionsProxy } from "../../../services/chartOptionsService";
 import { ChartMenuUtils } from "../../chartMenuUtils";
 
 export class ShadowPanel extends Component {
@@ -22,9 +21,8 @@ export class ShadowPanel extends Component {
         </div>`;
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
-    @Autowired('chartMenuUtils') private readonly chartMenuUtils: ChartMenuUtils;
 
-    constructor(private readonly chartOptionsProxy: ChartOptionsProxy,
+    constructor(private readonly chartMenuUtils: ChartMenuUtils,
                 private propertyKey: string = "shadow") {
         super();
     }
@@ -34,7 +32,6 @@ export class ShadowPanel extends Component {
         // Determine the path within the series options object to get/set the individual shadow options
         const propertyNamespace = this.propertyKey;
         const shadowGroupParams = this.chartMenuUtils.addEnableParams<AgGroupComponentParams>(
-            this.chartOptionsProxy,
             `${propertyNamespace}.enabled`,
             {
                 cssIdentifier: 'charts-format-sub-level',
@@ -44,7 +41,7 @@ export class ShadowPanel extends Component {
                 suppressEnabledCheckbox: false,
             }
         );
-        const shadowColorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams(this.chartOptionsProxy, `${propertyNamespace}.color`);
+        const shadowColorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams(`${propertyNamespace}.color`);
         this.setTemplate(ShadowPanel.TEMPLATE, {
             shadowGroup: shadowGroupParams,
             shadowColorPicker: shadowColorPickerParams,
@@ -57,7 +54,6 @@ export class ShadowPanel extends Component {
     private getSliderParams(property: string, minValue: number, defaultMaxValue: number): AgSliderParams {
         const expression = `${this.propertyKey}.${property}`
         const params = this.chartMenuUtils.getDefaultSliderParams(
-            this.chartOptionsProxy,
             expression,
             property,
             defaultMaxValue

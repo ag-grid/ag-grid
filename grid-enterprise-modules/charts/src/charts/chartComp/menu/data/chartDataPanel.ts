@@ -405,7 +405,7 @@ export class ChartDataPanel extends Component {
         }
 
         const isBubble = this.chartType === 'bubble';
-        const isInPairedMode = this.isInPairedMode();
+        const isInPairedMode = this.chartOptionsService.getPairedMode();
         let selectedValuesCount = 0;
 
         const indexToAxisLabel = new Map<number, string>();
@@ -449,10 +449,6 @@ export class ChartDataPanel extends Component {
     private getDataPanelDef() {
         const userProvidedDataPanelDef = this.gridOptionsService.get('chartToolPanelsDef')?.dataPanel;
         return userProvidedDataPanelDef ? userProvidedDataPanelDef : DefaultDataPanelDef;
-    }
-
-    private isInPairedMode() {
-        return this.chartController.isActiveXYChart() && this.chartOptionsService.getSeriesOption('paired', 'scatter');
     }
 
     private clearComponents() {

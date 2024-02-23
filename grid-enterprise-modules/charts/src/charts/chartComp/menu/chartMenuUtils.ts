@@ -1,20 +1,29 @@
-import { AgFieldParams, AgSelectParams, AgSliderParams, Autowired, Bean, BeanStub } from "@ag-grid-community/core";
+import { AgFieldParams, AgSelectParams, AgSliderParams, Autowired, BeanStub } from "@ag-grid-community/core";
 import { AgColorPickerParams } from "../../../widgets/agColorPicker";
-import { ChartOptionsProxy } from "../services/chartOptionsService";
+import { ChartOptionsService } from "../services/chartOptionsService";
 import { ChartTranslationService } from "../services/chartTranslationService";
 import { FontPanelParams } from "./format/fontPanel";
 
-@Bean('chartMenuUtils')
+interface ChartOptionsProxy {
+    getValue<T = string>(expression: string, calculated?: boolean): T;
+    setValue<T = string>(expression: string, value: T): void;
+}
+
 export class ChartMenuUtils extends BeanStub {
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
+    constructor(
+        private readonly chartOptionsProxy: ChartOptionsProxy,
+        private readonly chartOptionsService: ChartOptionsService
+    ) {
+        super();
+    }
+
     public getDefaultColorPickerParams(
-        chartOptionsProxy: ChartOptionsProxy,
         expression: string,
         labelKey?: string
     ): AgColorPickerParams {
         return this.addValueParams(
-            chartOptionsProxy,
             expression,
             {
                 label: this.chartTranslationService.translate(labelKey ?? 'color'),
@@ -24,34 +33,37 @@ export class ChartMenuUtils extends BeanStub {
         );
     }
 
-
     public getDefaultSliderParams(
-        chartOptionsProxy: ChartOptionsProxy,
         expression: string,
         labelKey: string,
         defaultMaxValue: number,
         isArray?: boolean
     ): AgSliderParams {
-        let value = chartOptionsProxy.getValue<number>(expression) ?? 0;
+        let value = this.chartOptionsProxy.getValue<number>(expression) ?? 0;
         if (isArray && Array.isArray(value)) {
             value = value[0];
         }
+        const params = this.getDefaultSliderParamsWithoutValueParams(value, labelKey, defaultMaxValue);
+        params.onValueChange = value => this.chartOptionsProxy.setValue(expression, isArray ? [value] : value);
+        return params;
+    }
+
+    public getDefaultSliderParamsWithoutValueParams(
+        value: number,
+        labelKey: string,
+        defaultMaxValue: number
+    ): AgSliderParams {
         return {
             label: this.chartTranslationService.translate(labelKey),
             minValue: 0,
             maxValue: Math.max(value, defaultMaxValue),
             textFieldWidth: 45,
-            value: `${value}`,
-            onValueChange: value => chartOptionsProxy.setValue(expression, isArray ? [value] : value)
+            value: `${value}`
         };
     }
 
-    public getDefaultLegendParams(
-        chartOptionsProxy: ChartOptionsProxy,
-        expression: string
-    ): AgSelectParams {
+    public getDefaultLegendParams(expression: string): AgSelectParams {
         return this.addValueParams(
-            chartOptionsProxy,
             expression,
             {
                 label: this.chartTranslationService.translate('position'),
@@ -66,35 +78,45 @@ export class ChartMenuUtils extends BeanStub {
     }
 
     public getDefaultFontPanelParams(
-        chartOptionsProxy: ChartOptionsProxy,
         expression: string,
         labelKey: string
-    ) {
+    ): FontPanelParams {
         const keyMapper = (key: string) => `${expression}.${key}`;
         return this.addEnableParams<FontPanelParams>(
-            chartOptionsProxy,
             keyMapper('enabled'),
             {
                 name: this.chartTranslationService.translate(labelKey),
                 suppressEnabledCheckbox: false,
-                chartOptionsProxy,
+                chartMenuUtils: this,
                 keyMapper
-            } as FontPanelParams
+            } as any
         );
     }
 
-    public addValueParams<P extends AgFieldParams>(chartOptionsProxy: ChartOptionsProxy, expression: string, params: P): P {
-        params.value =  chartOptionsProxy.getValue(expression);
-        params.onValueChange = value => chartOptionsProxy.setValue(expression, value);
+    public addValueParams<P extends AgFieldParams>(expression: string, params: P): P {
+        params.value =  this.chartOptionsProxy.getValue(expression);
+        params.onValueChange = value => this.chartOptionsProxy.setValue(expression, value);
         return params;
     }
 
     public addEnableParams<P extends {
         enabled?: boolean;
         onEnableChange?: (value: boolean) => void;
-    }>(chartOptionsProxy: ChartOptionsProxy, expression: string, params: P): P {
-        params.enabled =  chartOptionsProxy.getValue(expression) ?? false;
-        params.onEnableChange = value => chartOptionsProxy.setValue(expression, value);
+    }>(expression: string, params: P): P {
+        params.enabled =  this.chartOptionsProxy.getValue(expression) ?? false;
+        params.onEnableChange = value => this.chartOptionsProxy.setValue(expression, value);
         return params;
+    }
+
+    public getValue<T = string>(expression: string, calculated?: boolean): T {
+        return this.chartOptionsProxy.getValue(expression, calculated);
+    }
+
+    public setValue<T = string>(expression: string, value: T): void {
+        this.chartOptionsProxy.setValue(expression, value);
+    }
+
+    public getChartOptionsService(): ChartOptionsService {
+        return this.chartOptionsService;
     }
 }

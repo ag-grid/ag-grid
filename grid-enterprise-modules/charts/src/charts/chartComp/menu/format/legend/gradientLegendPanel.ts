@@ -1,16 +1,13 @@
 import {
     _,
-    AgGroupComponent,
     AgGroupComponentParams,
     Autowired,
     Component,
     PostConstruct,
-    RefSelector,
     AgCheckboxParams
 } from "@ag-grid-community/core";
 import { FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { ChartOptionsProxy } from "../../../services/chartOptionsService";
 import { FormatPanelOptions } from "../formatPanel";
 import { ChartMenuUtils } from "../../chartMenuUtils";
 
@@ -27,56 +24,44 @@ export class GradientLegendPanel extends Component {
             </ag-group-component>
         </div>`;
 
-    @RefSelector('legendGroup') private legendGroup: AgGroupComponent;
-
-
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
-    @Autowired('chartMenuUtils') private readonly chartMenuUtils: ChartMenuUtils;
 
-    private readonly chartOptionsProxy: ChartOptionsProxy;
+    private readonly chartMenuUtils: ChartMenuUtils;
     private readonly isExpandedOnInit: boolean;
 
     constructor({ chartOptionsService, isExpandedOnInit = false }: FormatPanelOptions) {
         super();
 
-        this.chartOptionsProxy = chartOptionsService.getChartOptionProxy();
+        this.chartMenuUtils = chartOptionsService.getChartOptionMenuUtils();
         this.isExpandedOnInit = isExpandedOnInit;
     }
 
     @PostConstruct
     private init() {
-        const legendGroupParams: AgGroupComponentParams = {
-            cssIdentifier: 'charts-format-top-level',
-            direction: 'vertical',
-            title: this.chartTranslationService.translate("legend"),
-            suppressEnabledCheckbox: false,
-            enabled: this.chartOptionsProxy.getValue<boolean>("gradientLegend.enabled") || false,
-            expanded: this.isExpandedOnInit,
-            onEnableChange: enabled => {
-                this.chartOptionsProxy.setValue("gradientLegend.enabled", enabled);
-                this.legendGroup.toggleGroupExpand(true);
-            },
-            items: [this.createLabelPanel()]
-        };
+        const legendGroupParams = this.chartMenuUtils.addEnableParams<AgGroupComponentParams>(
+            'gradientLegend.enabled',
+            {
+                cssIdentifier: 'charts-format-top-level',
+                direction: 'vertical',
+                title: this.chartTranslationService.translate("legend"),
+                suppressEnabledCheckbox: false,
+                suppressToggleExpandOnEnableChange: true,
+                expanded: this.isExpandedOnInit,
+                items: [this.createLabelPanel()]
+            }
+        );
         this.setTemplate(GradientLegendPanel.TEMPLATE, {
             legendGroup: legendGroupParams,
-            legendPositionSelect: this.chartMenuUtils.getDefaultLegendParams(this.chartOptionsProxy, "gradientLegend.position"),
+            legendPositionSelect: this.chartMenuUtils.getDefaultLegendParams("gradientLegend.position"),
             gradientReverseCheckbox: this.getGradientReverseCheckboxParams(),
-            gradientThicknessSlider: this.chartMenuUtils.getDefaultSliderParams(
-                this.chartOptionsProxy, "gradientLegend.gradient.thickness", "thickness", 40
-            ),
-            gradientPreferredLengthSlider: this.chartMenuUtils.getDefaultSliderParams(
-                this.chartOptionsProxy, "gradientLegend.gradient.preferredLength", "preferredLength", 300
-            ),
-            legendSpacingSlider: this.chartMenuUtils.getDefaultSliderParams(
-                this.chartOptionsProxy, "gradientLegend.spacing", "spacing", 200
-            )
+            gradientThicknessSlider: this.chartMenuUtils.getDefaultSliderParams("gradientLegend.gradient.thickness", "thickness", 40),
+            gradientPreferredLengthSlider: this.chartMenuUtils.getDefaultSliderParams("gradientLegend.gradient.preferredLength", "preferredLength", 300),
+            legendSpacingSlider: this.chartMenuUtils.getDefaultSliderParams("gradientLegend.spacing", "spacing", 200)
         });
     }
 
     private getGradientReverseCheckboxParams(): AgCheckboxParams {
         return this.chartMenuUtils.addValueParams(
-            this.chartOptionsProxy,
             'gradientLegend.reverseOrder',
             {
                 label: this.chartTranslationService.translate("reverseDirection"),
@@ -89,7 +74,7 @@ export class GradientLegendPanel extends Component {
         const params: FontPanelParams = {
             enabled: true,
             suppressEnabledCheckbox: true,
-            chartOptionsProxy: this.chartOptionsProxy,
+            chartMenuUtils: this.chartMenuUtils,
             keyMapper: key => `gradientLegend.scale.label.${key}`
         };
 

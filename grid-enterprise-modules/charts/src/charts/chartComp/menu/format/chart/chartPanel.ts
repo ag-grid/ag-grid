@@ -8,9 +8,9 @@ import { PaddingPanel } from "./paddingPanel";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { BackgroundPanel } from "./backgroundPanel";
 import TitlePanel from "./titlePanel";
-import { ChartOptionsProxy } from "../../../services/chartOptionsService";
 import { FormatPanelOptions } from "../formatPanel";
 import { ChartController } from "../../../chartController";
+import { ChartMenuUtils } from "../../chartMenuUtils";
 
 export class ChartPanel extends Component {
 
@@ -21,7 +21,7 @@ export class ChartPanel extends Component {
 
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
-    private readonly chartOptionsProxy: ChartOptionsProxy;
+    private readonly chartMenuUtils: ChartMenuUtils;
     private readonly chartController: ChartController;
     private readonly isExpandedOnInit: boolean;
 
@@ -33,7 +33,7 @@ export class ChartPanel extends Component {
         super();
 
         this.chartController = chartController;
-        this.chartOptionsProxy = chartOptionsService.getChartOptionProxy();
+        this.chartMenuUtils = chartOptionsService.getChartOptionMenuUtils();
         this.isExpandedOnInit = isExpandedOnInit;
     }
 
@@ -46,9 +46,9 @@ export class ChartPanel extends Component {
             expanded: this.isExpandedOnInit,
             suppressEnabledCheckbox: true,
             items: [
-                this.createManagedBean(new TitlePanel(this.chartOptionsProxy)),
-                this.createManagedBean(new PaddingPanel(this.chartOptionsProxy, this.chartController)),
-                this.createManagedBean(new BackgroundPanel(this.chartOptionsProxy))
+                this.createManagedBean(new TitlePanel(this.chartMenuUtils)),
+                this.createManagedBean(new PaddingPanel(this.chartMenuUtils, this.chartController)),
+                this.createManagedBean(new BackgroundPanel(this.chartMenuUtils))
             ]
         };
         this.setTemplate(ChartPanel.TEMPLATE, { chartGroup: chartGroupParams });

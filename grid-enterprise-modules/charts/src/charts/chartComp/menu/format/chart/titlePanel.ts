@@ -10,7 +10,6 @@ import {
 } from "@ag-grid-community/core";
 import { FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { ChartOptionsProxy } from "../../../services/chartOptionsService";
 import { ChartMenuUtils } from "../../chartMenuUtils";
 
 export default class TitlePanel extends Component {
@@ -18,12 +17,11 @@ export default class TitlePanel extends Component {
     public static TEMPLATE = /* html */ `<div></div>`;
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
-    @Autowired('chartMenuUtils') private readonly chartMenuUtils: ChartMenuUtils;
 
     private activePanels: Component[] = [];
     private titlePlaceholder: string;
 
-    constructor(private readonly chartOptionsProxy: ChartOptionsProxy) {
+    constructor(private readonly chartMenuUtils: ChartMenuUtils) {
         super(TitlePanel.TEMPLATE);
     }
 
@@ -34,7 +32,7 @@ export default class TitlePanel extends Component {
     }
 
     private hasTitle(): boolean {
-        const title: any = this.chartOptionsProxy.getValue('title');
+        const title: any = this.chartMenuUtils.getValue('title');
         return title && title.enabled && title.text && title.text.length > 0;
     }
 
@@ -45,20 +43,20 @@ export default class TitlePanel extends Component {
             name: this.chartTranslationService.translate('title'),
             enabled: hasTitle,
             suppressEnabledCheckbox: false,
-            chartOptionsProxy: this.chartOptionsProxy,
+            chartMenuUtils: this.chartMenuUtils,
             keyMapper: key => `title.${key}`,
             onEnableChange: (enabled) => {
                 if (this.toolbarExists()) {
                     // extra padding is only included when the toolbar is present
-                    const topPadding: number = this.chartOptionsProxy.getValue('padding.top');
-                    this.chartOptionsProxy.setValue('padding.top', enabled ? topPadding - 20 : topPadding + 20);
+                    const topPadding: number = this.chartMenuUtils.getValue('padding.top');
+                    this.chartMenuUtils.setValue('padding.top', enabled ? topPadding - 20 : topPadding + 20);
                 }
 
-                this.chartOptionsProxy.setValue('title.enabled', enabled);
-                const currentTitleText = this.chartOptionsProxy.getValue('title.text');
+                this.chartMenuUtils.setValue('title.enabled', enabled);
+                const currentTitleText = this.chartMenuUtils.getValue('title.text');
                 const replaceableTitleText = currentTitleText === 'Title' || currentTitleText?.trim().length === 0;
                 if (enabled && replaceableTitleText) {
-                    this.chartOptionsProxy.setValue('title.text', this.titlePlaceholder);
+                    this.chartMenuUtils.setValue('title.text', this.titlePlaceholder);
                 }
             }
         };
@@ -78,7 +76,7 @@ export default class TitlePanel extends Component {
     }
 
     private createSpacingSlicer() {
-        const params = this.chartMenuUtils.getDefaultSliderParams(this.chartOptionsProxy, 'title.spacing', 'spacing', 100);
+        const params = this.chartMenuUtils.getDefaultSliderParams('title.spacing', 'spacing', 100);
         // Default title spacing is 10, but this isn't reflected in the options - this should really be fixed there.
         params.value = '10';
         return this.createBean(new AgSlider(params));

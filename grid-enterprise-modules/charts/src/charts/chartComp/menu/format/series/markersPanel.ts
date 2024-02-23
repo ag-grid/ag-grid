@@ -10,7 +10,6 @@ import {
     AgSelectParams
 } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { ChartOptionsProxy } from "../../../services/chartOptionsService";
 import { ChartMenuUtils } from "../../chartMenuUtils";
 
 export class MarkersPanel extends Component {
@@ -28,19 +27,17 @@ export class MarkersPanel extends Component {
     @RefSelector('seriesMarkerMinSizeSlider') private seriesMarkerMinSizeSlider: AgSlider;
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
-    @Autowired('chartMenuUtils') private readonly chartMenuUtils: ChartMenuUtils;
 
-    constructor(private readonly chartOptionsProxy: ChartOptionsProxy) {
+    constructor(private readonly chartMenuUtils: ChartMenuUtils) {
         super();
     }
 
     @PostConstruct
     private init() {
         // scatter charts should always show markers
-        const chartType = this.chartOptionsProxy.getChartOptionsService().getChartType();
+        const chartType = this.chartMenuUtils.getChartOptionsService().getChartType();
         const shouldHideEnabledCheckbox = _.includes(['scatter', 'bubble'], chartType);
         const seriesMarkersGroupParams = this.chartMenuUtils.addEnableParams<AgGroupComponentParams>(
-            this.chartOptionsProxy,
             'marker.enabled',
             {
                 cssIdentifier: 'charts-format-sub-level',
@@ -106,7 +103,6 @@ export class MarkersPanel extends Component {
             }
         ];
         return this.chartMenuUtils.addValueParams(
-            this.chartOptionsProxy,
             'marker.shape',
             {
                 options,
@@ -117,7 +113,6 @@ export class MarkersPanel extends Component {
 
     private getSliderParams(expression: string, labelKey: string, defaultMaxValue: number): AgSliderParams {
         return this.chartMenuUtils.getDefaultSliderParams(
-            this.chartOptionsProxy,
             expression,
             labelKey,
             defaultMaxValue

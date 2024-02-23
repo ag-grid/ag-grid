@@ -1,16 +1,13 @@
 import {
     _,
-    AgGroupComponent,
     AgGroupComponentParams,
     Autowired,
     Component,
     PostConstruct,
-    RefSelector,
-    AgSliderParams,
+    AgSliderParams
 } from "@ag-grid-community/core";
 import { FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { ChartOptionsProxy } from "../../../services/chartOptionsService";
 import { FormatPanelOptions } from "../formatPanel";
 import { ChartMenuUtils } from "../../chartMenuUtils";
 
@@ -29,39 +26,35 @@ export class LegendPanel extends Component {
             </ag-group-component>
         </div>`;
 
-    @RefSelector('legendGroup') private legendGroup: AgGroupComponent;
-
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
-    @Autowired('chartMenuUtils') private readonly chartMenuUtils: ChartMenuUtils;
 
-    private readonly chartOptionsProxy: ChartOptionsProxy;
+    private readonly chartMenuUtils: ChartMenuUtils;
     private readonly isExpandedOnInit: boolean;
 
     constructor({ chartOptionsService, isExpandedOnInit = false }: FormatPanelOptions) {
         super();
 
-        this.chartOptionsProxy = chartOptionsService.getChartOptionProxy();
+        this.chartMenuUtils = chartOptionsService.getChartOptionMenuUtils();
         this.isExpandedOnInit = isExpandedOnInit;
     }
 
     @PostConstruct
     private init() {
-        const legendGroupParams: AgGroupComponentParams = {
-            cssIdentifier: 'charts-format-top-level',
-            direction: 'vertical',
-            title: this.chartTranslationService.translate("legend"),
-            suppressEnabledCheckbox: false,
-            enabled: this.chartOptionsProxy.getValue<boolean>("legend.enabled") || false,
-            expanded: this.isExpandedOnInit,
-            onEnableChange: enabled => {
-                this.chartOptionsProxy.setValue("legend.enabled", enabled);
-                this.legendGroup.toggleGroupExpand(true);
-            },
-            items: [this.createLabelPanel()]
-        };
+        const legendGroupParams = this.chartMenuUtils.addEnableParams<AgGroupComponentParams>(
+            'legend.enabled',
+            {
+                cssIdentifier: 'charts-format-top-level',
+                direction: 'vertical',
+                title: this.chartTranslationService.translate("legend"),
+                suppressEnabledCheckbox: false,
+                suppressToggleExpandOnEnableChange: true,
+                expanded: this.isExpandedOnInit,
+                items: [this.createLabelPanel()]
+            }
+        );
         this.setTemplate(LegendPanel.TEMPLATE, {
             legendGroup: legendGroupParams,
-            legendPositionSelect: this.chartMenuUtils.getDefaultLegendParams(this.chartOptionsProxy, 'legend.position'),
+            legendPositionSelect: this.chartMenuUtils.getDefaultLegendParams('legend.position'),
             legendPaddingSlider: this.getSliderParams('spacing', 'spacing', 200),
             markerSizeSlider: this.getSliderParams("item.marker.size", "markerSize", 40),
             markerStrokeSlider: this.getSliderParams("item.marker.strokeWidth", "markerStroke", 10),
@@ -72,14 +65,14 @@ export class LegendPanel extends Component {
     }
 
     private getSliderParams(expression: string, labelKey: string, defaultMaxValue: number): AgSliderParams {
-        return this.chartMenuUtils.getDefaultSliderParams(this.chartOptionsProxy, `legend.${expression}`, labelKey, defaultMaxValue);
+        return this.chartMenuUtils.getDefaultSliderParams(`legend.${expression}`, labelKey, defaultMaxValue);
     }
 
     private createLabelPanel(): FontPanel {
         const params: FontPanelParams = {
             enabled: true,
             suppressEnabledCheckbox: true,
-            chartOptionsProxy: this.chartOptionsProxy,
+            chartMenuUtils: this.chartMenuUtils,
             keyMapper: key => `legend.item.label.${key}`
         };
 

@@ -6,7 +6,6 @@ import {
     PostConstruct,
 } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { ChartOptionsProxy } from "../../../services/chartOptionsService";
 import { ChartMenuUtils } from "../../chartMenuUtils";
 
 export class TileSpacingPanel extends Component {
@@ -24,9 +23,8 @@ export class TileSpacingPanel extends Component {
         </div>`;
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
-    @Autowired('chartMenuUtils') private readonly chartMenuUtils: ChartMenuUtils;
 
-    constructor(private readonly chartOptionsProxy: ChartOptionsProxy) {
+    constructor(private readonly chartMenuUtils: ChartMenuUtils) {
         super();
     }
 
@@ -50,6 +48,6 @@ export class TileSpacingPanel extends Component {
     }
 
     private getSliderParams(labelKey: string, key: string): AgSliderParams {
-        return this.chartMenuUtils.getDefaultSliderParams(this.chartOptionsProxy, key, labelKey, 10);
+        return this.chartMenuUtils.getDefaultSliderParams(key, labelKey, 10);
     }
 }

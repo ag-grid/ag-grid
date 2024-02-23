@@ -16,6 +16,7 @@ export interface AgGroupComponentParams {
     enabled?: boolean;
     suppressEnabledCheckbox?: boolean;
     suppressOpenCloseIcons?: boolean;
+    suppressToggleExpandOnEnableChange?: boolean;
     cssIdentifier?: string;
     items?: GroupItem[];
     alignItems?: Align;
@@ -35,6 +36,7 @@ export class AgGroupComponent extends Component {
     private expanded: boolean;
     private suppressEnabledCheckbox: boolean = true;
     private suppressOpenCloseIcons: boolean = false;
+    private suppressToggleExpandOnEnableChange: boolean = false;
     private alignItems: Align | undefined;
 
     @RefSelector('eTitleBar') private eTitleBar: HTMLElement;
@@ -48,7 +50,7 @@ export class AgGroupComponent extends Component {
     constructor(private readonly params: AgGroupComponentParams = {}) {
         super(AgGroupComponent.getTemplate(params));
 
-        const { title, enabled, items, suppressEnabledCheckbox, suppressOpenCloseIcons, expanded } = params;
+        const { title, enabled, items, suppressEnabledCheckbox, suppressOpenCloseIcons, expanded, suppressToggleExpandOnEnableChange } = params;
 
         this.title = title;
         this.cssIdentifier = params.cssIdentifier || 'default';
@@ -66,6 +68,10 @@ export class AgGroupComponent extends Component {
 
         if (suppressOpenCloseIcons != null) {
             this.suppressOpenCloseIcons = suppressOpenCloseIcons;
+        }
+
+        if (suppressToggleExpandOnEnableChange != null) {
+            this.suppressToggleExpandOnEnableChange = suppressToggleExpandOnEnableChange;
         }
     }
 
@@ -256,7 +262,7 @@ export class AgGroupComponent extends Component {
 
     public onEnableChange(callbackFn: (enabled: boolean) => void): this {
         this.cbGroupEnabled.onValueChange((newSelection: boolean) => {
-            this.setEnabled(newSelection, true);
+            this.setEnabled(newSelection, true, this.suppressToggleExpandOnEnableChange);
             callbackFn(newSelection);
         });
 

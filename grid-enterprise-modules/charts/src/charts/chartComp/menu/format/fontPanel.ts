@@ -8,8 +8,6 @@ import {
     PostConstruct,
     RefSelector
 } from "@ag-grid-community/core";
-import { AgColorPickerParams } from "../../../../widgets/agColorPicker";
-import { ChartOptionsProxy } from "../../services/chartOptionsService";
 import { ChartTranslationService } from "../../services/chartTranslationService";
 import { ChartMenuUtils } from "../chartMenuUtils";
 
@@ -26,7 +24,7 @@ export interface FontPanelParams {
     enabled: boolean;
     suppressEnabledCheckbox?: boolean;
     onEnableChange?: (enabled: boolean) => void;
-    chartOptionsProxy: ChartOptionsProxy,
+    chartMenuUtils: ChartMenuUtils,
     keyMapper: (key: string) => string
 }
 
@@ -47,7 +45,6 @@ export class FontPanel extends Component {
     @RefSelector('fontGroup') private fontGroup: AgGroupComponent;
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
-    @Autowired('chartMenuUtils') private readonly chartMenuUtils: ChartMenuUtils;
 
     private params: FontPanelParams;
     private activeComps: Component[] = [];
@@ -77,7 +74,7 @@ export class FontPanel extends Component {
             familySelect: this.getFamilySelectParams(),
             weightStyleSelect: this.getWeightStyleSelectParams(),
             sizeSelect: this.getSizeSelectParams(),
-            colorPicker: this.getColorPickerParams()
+            colorPicker: this.params.chartMenuUtils.getDefaultColorPickerParams(this.params.keyMapper('color'))
         });
     }
 
@@ -198,17 +195,6 @@ export class FontPanel extends Component {
         };
     }
 
-    private getColorPickerParams(): AgColorPickerParams {
-        const chartOptionsProxy: ChartOptionsProxy = {
-            getValue: () => this.getInitialFontValue('color') as any,
-            setValue: (color: string) => this.setFont({ color })
-        } as any;
-        return this.chartMenuUtils.getDefaultColorPickerParams(
-            chartOptionsProxy,
-            'color'
-        );
-    }
-
     public addItemToPanel(item: Component) {
         this.fontGroup.addItem(item);
         this.activeComps.push(item);
@@ -227,7 +213,7 @@ export class FontPanel extends Component {
     }
 
     private setFont(font: Font): void {
-        const { chartOptionsProxy, keyMapper } = this.params;
+        const { chartMenuUtils: chartOptionsProxy, keyMapper } = this.params;
         Object.entries(font).forEach(([fontKey, value]: [keyof Font, any]) => {
             if (value) {
                 chartOptionsProxy.setValue(keyMapper(fontKey), value);
@@ -236,7 +222,7 @@ export class FontPanel extends Component {
     }
 
     private getInitialFontValue<K extends keyof Font>(fontKey: K): Font[K] {
-        const { chartOptionsProxy, keyMapper } = this.params;
+        const { chartMenuUtils: chartOptionsProxy, keyMapper } = this.params;
         return chartOptionsProxy.getValue(keyMapper(fontKey));
     }
 }

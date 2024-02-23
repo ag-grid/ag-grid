@@ -11,7 +11,6 @@ import {
     AgSelectParams
 } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { ChartOptionsProxy } from "../../../services/chartOptionsService";
 import { FontPanel } from "../fontPanel";
 import { ChartMenuUtils } from "../../chartMenuUtils";
 
@@ -29,11 +28,10 @@ export class SeriesItemsPanel extends Component {
     @RefSelector('seriesItemsGroup') private seriesItemsGroup: AgGroupComponent;
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
-    @Autowired('chartMenuUtils') private readonly chartMenuUtils: ChartMenuUtils;
 
     private activePanels: Component[] = [];
 
-    constructor(private readonly chartOptionsProxy: ChartOptionsProxy) {
+    constructor(private readonly chartMenuUtils: ChartMenuUtils) {
         super();
     }
 
@@ -87,7 +85,6 @@ export class SeriesItemsPanel extends Component {
 
     private initSlider(labelKey: string, maxValue: number, seriesOptionKey: string, step: number = 1, isArray: boolean = false) {
         const params = this.chartMenuUtils.getDefaultSliderParams(
-            this.chartOptionsProxy,
             seriesOptionKey,
             labelKey,
             maxValue,
@@ -102,7 +99,7 @@ export class SeriesItemsPanel extends Component {
     }
 
     private initItemLabels(itemType: "positive" | "negative") {
-        const sectorParams = this.chartMenuUtils.getDefaultFontPanelParams(this.chartOptionsProxy, `item.${itemType}.label`, 'seriesItemLabels');
+        const sectorParams = this.chartMenuUtils.getDefaultFontPanelParams(`item.${itemType}.label`, 'seriesItemLabels');
 
         const labelPanelComp = this.createBean(new FontPanel(sectorParams));
         this.seriesItemsGroup.addItem(labelPanelComp);

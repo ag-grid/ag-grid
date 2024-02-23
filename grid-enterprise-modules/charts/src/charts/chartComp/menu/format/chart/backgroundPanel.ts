@@ -5,7 +5,6 @@ import {
     PostConstruct
 } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { ChartOptionsProxy } from "../../../services/chartOptionsService";
 import { ChartMenuUtils } from "../../chartMenuUtils";
 
 export class BackgroundPanel extends Component {
@@ -17,16 +16,14 @@ export class BackgroundPanel extends Component {
         <div>`;
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
-    @Autowired('chartMenuUtils') private readonly chartMenuUtils: ChartMenuUtils;
 
-    constructor(private readonly chartOptionsProxy: ChartOptionsProxy) {
+    constructor(private readonly chartMenuUtils: ChartMenuUtils) {
         super();
     }
 
     @PostConstruct
     private init() {
         const chartBackgroundGroupParams = this.chartMenuUtils.addEnableParams<AgGroupComponentParams>(
-            this.chartOptionsProxy,
             'background.visible',
             {
                 cssIdentifier: 'charts-format-sub-level',
@@ -36,7 +33,7 @@ export class BackgroundPanel extends Component {
                 suppressEnabledCheckbox: false
             }
         );
-        const colorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams(this.chartOptionsProxy, 'background.fill');
+        const colorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams('background.fill');
         this.setTemplate(BackgroundPanel.TEMPLATE, {
             chartBackgroundGroup: chartBackgroundGroupParams,
             colorPicker: colorPickerParams
