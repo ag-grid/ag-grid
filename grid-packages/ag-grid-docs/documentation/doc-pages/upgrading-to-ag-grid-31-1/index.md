@@ -41,7 +41,7 @@ See the [Codemods](/codemods/) documentation for more details.
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-<h3 id="custom-cell-editor-components">Custom Cell Editor Components</h2>
+<h2 id="custom-cell-editor-components">Custom Cell Editor Components</h2>
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
@@ -53,7 +53,7 @@ See the [Codemods](/codemods/) documentation for more details.
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-<h3 id="custom-date-components">Custom Date Components</h2>
+<h2 id="custom-date-components">Custom Date Components</h2>
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
@@ -64,7 +64,7 @@ See the [Codemods](/codemods/) documentation for more details.
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-<h3 id="custom-filter-components">Custom Filter Components</h2>
+<h2 id="custom-filter-components">Custom Filter Components</h2>
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
@@ -78,7 +78,7 @@ See the [Codemods](/codemods/) documentation for more details.
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-<h3 id="custom-floating-filter-components">Custom Floating Filter Components</h2>
+<h2 id="custom-floating-filter-components">Custom Floating Filter Components</h2>
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
@@ -89,7 +89,7 @@ See the [Codemods](/codemods/) documentation for more details.
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-<h3 id="custom-cell-editor-components">Custom Status Bar Panel Components</h2>
+<h2 id="custom-cell-editor-components">Custom Status Bar Panel Components</h2>
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
@@ -101,7 +101,7 @@ See the [Codemods](/codemods/) documentation for more details.
 This release includes the following deprecations:
 
 <framework-specific-section frameworks="react">
-<h3 id="react">React</h2>
+<h3 id="react">React</h3>
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
