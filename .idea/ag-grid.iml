@@ -153,6 +153,8 @@
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/core/dist" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/excel-export/dist" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/angular/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/.nx" />
+      <excludeFolder url="file://$MODULE_DIR$/.vscode" />
     </content>
     <content url="file://$MODULE_DIR$/community-modules/angular/dist" />
     <content url="file://$MODULE_DIR$/community-modules/react/dev" />

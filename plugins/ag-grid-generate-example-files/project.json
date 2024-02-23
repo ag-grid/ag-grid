@@ -39,6 +39,7 @@
     },
     "generateGridOptionsType": {
       "executor": "nx:run-script",
+      "dependsOn": ["@ag-grid-community:build:types"],
       "options": {
         "script": "generateGridOptionsType"
       },

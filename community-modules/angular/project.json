@@ -6,13 +6,8 @@
   "targets": {
     "build": {
       "executor": "nx:run-script",
-      "inputs": [
-        "tsDefaults",
-        "{projectRoot}/angular.json",
-        "{projectRoot}/projects/**",
-        "!{projectRoot}/dist",
-        { "externalDependencies": ["@angular/cli", "@angular/core"] }
-      ],
+      "dependsOn": ["ag-charts-community:build:types"],
+      "inputs": ["{projectRoot}/angular.json", "{projectRoot}/projects/**", "!{projectRoot}/dist"],
       "cache": true,
       "outputs": ["{projectRoot}/dist"],
       "options": {

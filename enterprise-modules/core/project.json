@@ -6,15 +6,9 @@
   "targets": {
     "build": {
       "executor": "nx:noop",
-      "dependsOn": ["build:types", "build:package", "build:umd"],
-      "inputs": [
-        {
-          "externalDependencies": [
-            "npm:typescript"
-          ]
-        }
-      ],
-      "cache": false,
+      "dependsOn": ["build:types", "build:package"],
+      "inputs": [],
+      "outputs": [],
       "configurations": {
         "watch": {},
         "production": {}
@@ -23,7 +17,17 @@
     "build:types": {
       "executor": "@nx/js:tsc",
       "dependsOn": ["^build:types"],
-      "inputs": ["tsDefaults"],
+      "inputs": [
+        "{projectRoot}/package.json",
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/tsconfig.*.json",
+        "tsDeclarations",
+        "sharedGlobals",
+        "defaultExcludes",
+        {
+          "externalDependencies": ["npm:typescript", "npm:esbuild"]
+        }
+      ],
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "enterprise-modules/core/dist/types",
@@ -40,9 +44,23 @@
     },
     "build:package": {
       "executor": "@nx/esbuild:esbuild",
-      "dependsOn": ["^build"],
-      "inputs": ["tsDefaults"],
-      "outputs": ["{options.outputPath}"],
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs": [
+        "{projectRoot}/package.json",
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/tsconfig.*.json",
+        "tsDeclarations",
+        "sharedGlobals",
+        "defaultExcludes",
+        {
+          "externalDependencies": ["npm:typescript", "npm:esbuild"]
+        }
+      ],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "enterprise-modules/core/dist/package",
         "main": "enterprise-modules/core/src/main.ts",
@@ -50,7 +68,10 @@
         "esbuildConfig": "esbuild.config.cjs",
         "platform": "browser",
         "target": "es6",
-        "format": ["cjs", "esm"],
+        "format": [
+          "cjs",
+          "esm"
+        ],
         "sourcemap": true
       },
       "configurations": {
@@ -64,11 +85,15 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
+      "outputs": [
+        "{options.outputFile}"
+      ]
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
       "options": {
         "jestConfig": "enterprise-modules/jest.config.ts"
       }

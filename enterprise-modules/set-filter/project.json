@@ -6,15 +6,9 @@
   "targets": {
     "build": {
       "executor": "nx:noop",
-      "dependsOn": ["build:types", "build:package", "build:umd"],
-      "inputs": [
-        {
-          "externalDependencies": [
-            "npm:typescript"
-          ]
-        }
-      ],
-      "cache": false,
+      "dependsOn": ["build:types", "build:package"],
+      "inputs": [],
+      "outputs": [],
       "configurations": {
         "watch": {},
         "production": {}
@@ -22,15 +16,19 @@
     },
     "build:types": {
       "executor": "@nx/js:tsc",
-      "dependsOn": [
-        "^build:types"
-      ],
+      "dependsOn": ["^build:types"],
       "inputs": [
-        "tsDefaults"
+        "{projectRoot}/package.json",
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/tsconfig.*.json",
+        "tsDeclarations",
+        "sharedGlobals",
+        "defaultExcludes",
+        {
+          "externalDependencies": ["npm:typescript", "npm:esbuild"]
+        }
       ],
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "enterprise-modules/set-filter/dist/types",
         "main": "enterprise-modules/set-filter/src/main.ts",
@@ -50,7 +48,15 @@
         "^build"
       ],
       "inputs": [
-        "tsDefaults"
+        "{projectRoot}/package.json",
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/tsconfig.*.json",
+        "tsDeclarations",
+        "sharedGlobals",
+        "defaultExcludes",
+        {
+          "externalDependencies": ["npm:typescript", "npm:esbuild"]
+        }
       ],
       "outputs": [
         "{options.outputPath}"

@@ -14,15 +14,18 @@
       "!{projectRoot}/tsconfig.spec.json",
       "!{projectRoot}/jest.config.[jt]s"
     ],
+    "buildOutputExcludes": ["!{projectRoot}/dist/**"],
     "production": ["default", "defaultExcludes"],
     "tsDeclarations": [
       {
-        "dependentTasksOutputFiles": "**/*.d.ts"
+        "dependentTasksOutputFiles": "**/*.d.ts",
+        "transitive": false
       }
     ],
     "jsOutputs": [
       {
-        "dependentTasksOutputFiles": "**/*.js"
+        "dependentTasksOutputFiles": "**/*.js",
+        "transitive": false
       }
     ],
     "tsDefaults": [
@@ -33,7 +36,7 @@
       "sharedGlobals",
       "defaultExcludes",
       {
-        "externalDependencies": ["typescript", "esbuild"]
+        "externalDependencies": ["npm:typescript", "npm:esbuild"]
       }
     ],
     "sharedGlobals": ["{workspaceRoot}/esbuild.config*.cjs", "{workspaceRoot}/tsconfig.*.json"]

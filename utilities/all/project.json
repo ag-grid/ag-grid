@@ -6,7 +6,8 @@
   "targets": {
     "build": {
       "executor": "nx:noop",
-      "inputs": [{ "externalDependencies": ["npm:typescript"] }],
+      "inputs": [],
+      "outputs": [],
       "dependsOn": ["generate-doc-references", "^build", "generate-examples"]
     },
     "build:styles": {
@@ -79,6 +80,7 @@
     "dev": {
       "executor": "nx:run-commands",
       "dependsOn": ["dev:setup"],
+      "inputs": [],
       "options": {
         "parallel": true,
         "commands": [
