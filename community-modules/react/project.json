@@ -3,7 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "community-modules/react/src",
   "projectType": "library",
-  "tags": [],
+  "tags": ["module:community", "module", "community"],
   "targets": {
     "lint": {
       "executor": "nx:noop"
@@ -113,5 +113,6 @@
         "commands": ["node tools/sanity-check-package.js dist/packages/contents/ag-charts-react/package"]
       }
     }
-  }
+  },
+  "tags": ["module:community", "module:framework", "module", "community", "framework"]
 }

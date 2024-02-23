@@ -74,5 +74,5 @@
       }
     }
   },
-  "tags": []
+  "tags": ["module:enterprise", "module", "enterprise"]
 }
