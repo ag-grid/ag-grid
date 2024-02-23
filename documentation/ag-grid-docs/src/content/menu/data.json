@@ -342,11 +342,6 @@
                                 ]
                             },
                             {
-                                "title": "Chart Tool Panels",
-                                "path": "integrated-charts-chart-tool-panels",
-                                "isEnterprise": true
-                            },
-                            {
                                 "title": "Chart Types",
                                 "path": "integrated-charts-chart-types",
                                 "isEnterprise": true
