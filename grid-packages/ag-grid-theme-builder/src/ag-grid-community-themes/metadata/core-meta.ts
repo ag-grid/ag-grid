@@ -235,5 +235,4 @@ export const coreMeta = definePartMeta({
       defaultValue: true,
     },
   ],
-  cssFiles: ['root.css', 'reset.css', 'grid-borders.css', 'grid-layout.css', 'drag-and-drop.css'],
 });

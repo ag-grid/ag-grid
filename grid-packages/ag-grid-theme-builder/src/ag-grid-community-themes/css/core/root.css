@@ -23,6 +23,7 @@
 
   color: var(--ag-foreground-color);
   background-color: var(--ag-background-color);
+  border: var(--ag-wrapper-border);
   border-radius: var(--ag-wrapper-border-radius);
 }
 

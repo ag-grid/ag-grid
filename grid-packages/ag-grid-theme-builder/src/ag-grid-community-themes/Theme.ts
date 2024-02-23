@@ -68,8 +68,8 @@ export const defineTheme = <P extends AnyPart, V extends object = ParamTypes>(
     }
   }
 
-  // render variables
-  // use :where(html) to ensure lowest specificity so that html { --ag-foreground-color: red; } will override this
+  // render variable defaults using :where(html) to ensure lowest specificity so that
+  // `html { --ag-foreground-color: red; }` will override this
   let variableDefaults = ':where(html) {\n';
   for (const name of Object.keys(mergedParams)) {
     let value = mergedParams[name];
@@ -93,14 +93,7 @@ export const defineTheme = <P extends AnyPart, V extends object = ParamTypes>(
       mainCSS.push(`/* Part ${part.partId} */`);
       mainCSS.push(...part.css.map((p) => cssPartToString(p, mergedParams)));
     }
-    for (const [property, css] of Object.entries(part.conditionalCss || {})) {
-      if (css && mergedParams[property]) {
-        mainCSS.push(`/* Sub-part ${part.partId}.${property} */`);
-        mainCSS.push(cssPartToString(css, mergedParams));
-      }
-    }
   }
-
   result.css = mainCSS.join('\n');
 
   // combine icons

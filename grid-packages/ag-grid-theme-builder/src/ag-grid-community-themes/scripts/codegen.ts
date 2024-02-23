@@ -1,3 +1,4 @@
+import { globSync } from 'glob';
 import path from 'path';
 import * as prettier from 'prettier';
 import { ParamMeta, allPartsMeta, cssBorderStyles } from '../metadata';
@@ -57,20 +58,14 @@ const makePublicFile = (): string => {
         }
       }
     }
-    if (part.cssFiles) {
+    const cssFilesDir = projectDir + `css/${part.partId}/`;
+    const files = globSync(cssFilesDir + `**/*`).map((f) => f.replace(cssFilesDir, ''));
+    if (files.length > 0) {
       args.css = [];
-      for (const fileName of part.cssFiles) {
+      for (const fileName of files) {
         const importName = fileToImportName(fileName);
         result += `import ${importName} from './css/${part.partId}/${fileToImportPath(fileName)}';\n`;
         args.css.push(codeLiteral(importName));
-      }
-    }
-    if (part.conditionalCssFiles) {
-      args.conditionalCss = {};
-      for (const [paramName, fileName] of Object.entries(part.conditionalCssFiles)) {
-        const importName = fileToImportName(fileName);
-        result += `import ${importName} from './css/${part.partId}/${fileToImportPath(fileName)}';\n`;
-        args.conditionalCss[paramName] = codeLiteral(importName);
       }
     }
     if (part.iconsFile) {

@@ -1,0 +1,103 @@
+/* Above footers */
+
+.ag-paging-panel,
+.ag-status-bar {
+  border-top: var(--ag-footer-border);
+}
+
+/* Below headers */
+
+.ag-header,
+.ag-advanced-filter-header,
+.ag-column-drop-horizontal {
+  border-bottom: var(--ag-header-border);
+}
+
+.ag-header-row:not(:first-child) {
+  .ag-header-cell:not(.ag-header-span-height.ag-header-span-total),
+  .ag-header-group-cell.ag-header-group-cell-with-group {
+    border-top: var(--ag-header-border);
+  }
+}
+
+/* Betwee columns */
+
+.ag-column-drop-horizontal-half-width:not(:last-child) {
+  border-right: var(--ag-column-border);
+}
+.ag-cell {
+  border-right: var(--ag-column-border);
+}
+
+/**
+ * Pinned columns.
+ *
+ * NOTE: these don't need RTL versions when pinning columns, "left" always means
+ * visually on the left
+ */
+
+.ag-body-horizontal-scroll:not(.ag-scrollbar-invisible) {
+  .ag-horizontal-left-spacer:not(.ag-scroller-corner) {
+    /*rtl:ignore*/
+    border-right: var(--ag-pinned-column-border);
+  }
+
+  .ag-horizontal-right-spacer:not(.ag-scroller-corner) {
+    /*rtl:ignore*/
+    border-left: var(--ag-pinned-column-border);
+  }
+}
+
+.ag-pinned-right-header {
+  /*rtl:ignore*/
+  border-left: var(--ag-pinned-column-border);
+}
+
+.ag-pinned-left-header {
+  /*rtl:ignore*/
+  border-right: var(--ag-pinned-column-border);
+}
+
+.ag-cell.ag-cell-first-right-pinned:not(.ag-cell-range-left):not(.ag-cell-range-single-cell) {
+  /*rtl:ignore*/
+  border-left: var(--ag-pinned-column-border);
+}
+
+.ag-cell.ag-cell-last-left-pinned:not(.ag-cell-range-right):not(.ag-cell-range-single-cell) {
+  /*rtl:ignore*/
+  border-right: var(--ag-pinned-column-border);
+}
+
+/* Pinned row borders */
+
+.ag-floating-top {
+  border-bottom: var(--ag-pinned-row-border);
+}
+
+.ag-floating-bottom {
+  border-top: var(--ag-pinned-row-border);
+}
+
+/* Side panel borders */
+
+/* sidebar visually on left */
+.ag-ltr .ag-side-bar-left,
+.ag-rtl .ag-side-bar-right {
+  border-right: var(--ag-borders-side-panels);
+  .ag-tool-panel-wrapper {
+    border-left: var(--ag-borders-side-panels);
+  }
+}
+/* sidebar visually on right */
+.ag-rtl .ag-side-bar-left,
+.ag-ltr .ag-side-bar-right {
+  border-left: var(--ag-side-panel-border);
+
+  .ag-tool-panel-wrapper {
+    border-right: var(--ag-side-panel-border);
+  }
+}
+
+.ag-chart-menu-panel {
+  border-left: var(--ag-side-panel-border);
+}

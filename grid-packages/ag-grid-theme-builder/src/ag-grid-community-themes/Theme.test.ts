@@ -64,29 +64,3 @@ test('Icons', () => {
     }
   `);
 });
-
-test('Conditional CSS', () => {
-  const a = definePart({
-    partId: 'a',
-    defaults: { paramA1: 'paramA1-default', paramA2: 'paramA2-default' },
-    conditionalCss: {
-      paramA1: 'paramA1-conditional.css',
-      paramA2: 'paramA2-conditional.css',
-    },
-    css: ['a-x.css'],
-  });
-  const theme = defineTheme(a, { paramA1: 'foo', paramA2: false });
-  expect(theme.css).toMatchInlineSnapshot(`
-    {
-      "common": "",
-      "theme-custom": "/* Part a */
-    a-x.css
-    /* Sub-part a.paramA1 */
-    paramA1-conditional.css",
-      "theme-custom-variables": "
-    .ag-theme-custom {
-    	--ag-param-a1: foo;
-    }",
-    }
-  `);
-});

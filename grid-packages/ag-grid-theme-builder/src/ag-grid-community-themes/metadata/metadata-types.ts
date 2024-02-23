@@ -4,8 +4,6 @@ export type PartMeta = {
   partId: string;
   params?: ParamMeta[];
   presets?: PresetMeta[];
-  cssFiles?: string[];
-  conditionalCssFiles?: Record<string, string>;
   iconsFile?: string;
 };
 

@@ -48,6 +48,7 @@
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
+    "glob": "^10.3.10",
     "postcss-nesting": "^12.0.1",
     "postcss-rtlcss": "^4.0.9",
     "prettier": "^3.0.3",

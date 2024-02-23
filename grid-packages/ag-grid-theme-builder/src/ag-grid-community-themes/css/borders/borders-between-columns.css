@@ -1,6 +1,0 @@
-.ag-column-drop-horizontal-half-width:not(:last-child) {
-  border-right: solid 1px var(--ag-border-color);
-}
-.ag-cell {
-  border-right: solid 1px var(--ag-border-color);
-}

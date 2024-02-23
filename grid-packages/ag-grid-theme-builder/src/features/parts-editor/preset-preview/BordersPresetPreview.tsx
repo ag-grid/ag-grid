@@ -8,15 +8,15 @@ type BordersPresetPreviewProps = {
 export const BordersPresetPreview = ({ preset }: BordersPresetPreviewProps) => {
   const params = preset.getFullPartParamValues();
   return (
-    <Grid style={showIf(params.bordersOutside)}>
-      <Row style={showIf(params.bordersOutside || params.bordersBelowHeaders)} />
-      <Row style={showIf(params.bordersBelowHeaders)} />
-      <Row style={showIf(params.bordersBetweenRows)} />
-      <Row style={showIf(params.bordersBetweenRows)} />
-      <Row style={showIf(params.bordersBetweenRows)} />
+    <Grid style={showIf(params.wrapperBorder)}>
+      <Row style={showIf(params.wrapperBorder || params.headerBorder)} />
+      <Row style={showIf(params.headerBorder)} />
+      <Row style={showIf(params.rowBorderColor)} />
+      <Row style={showIf(params.rowBorderColor)} />
+      <Row style={showIf(params.rowBorderColor)} />
       <Columns>
-        <Column style={showIf(params.bordersBetweenColumns)} />
-        <Column style={showIf(params.bordersBetweenColumns)} />
+        <Column style={showIf(params.columnBorder)} />
+        <Column style={showIf(params.columnBorder)} />
       </Columns>
     </Grid>
   );
@@ -52,6 +52,6 @@ const Column = styled('span')`
   border-left: solid 1px;
 `;
 
-const showIf = (value: boolean | undefined) => ({
+const showIf = (value: boolean | undefined | string) => ({
   borderColor: value ? 'currentColor' : 'transparent',
 });

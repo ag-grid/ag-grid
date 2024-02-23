@@ -37,7 +37,6 @@ export const quartzIconsMeta = definePartMeta({
       step: 0.1,
     },
   ],
-  cssFiles: ['quartz-icons.css', 'quartz-icons-embedded.ts'],
   // TODO re-enable when using theme grid option
   // iconsFile: 'quartz-icons-fragments',
 });

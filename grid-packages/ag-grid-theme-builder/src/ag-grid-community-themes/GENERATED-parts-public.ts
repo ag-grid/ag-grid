@@ -53,14 +53,13 @@ export type BordersPreset = 'horizontal' | 'default' | 'full';
 
 export type BordersParam =
   | 'bordersPreset'
-  | 'bordersOutside'
-  | 'bordersBelowHeaders'
-  | 'bordersAboveFooters'
-  | 'bordersBetweenRows'
-  | 'bordersBetweenColumns'
-  | 'bordersPinnedRows'
-  | 'bordersPinnedColumns'
-  | 'bordersSidePanels';
+  | 'wrapperBorder'
+  | 'headerBorder'
+  | 'footerBorder'
+  | 'columnBorder'
+  | 'pinnedColumnBorder'
+  | 'pinnedRowBorder'
+  | 'sidePanelBorder';
 
 export type QuartzIconsPreset = 'light' | 'regular' | 'bold';
 
@@ -68,9 +67,11 @@ export type QuartzIconsParam = 'quartzIconsPreset' | 'iconSize' | 'iconStrokeWid
 
 import rootCssImport from './css/core/root.css?inline';
 import resetCssImport from './css/core/reset.css?inline';
-import gridBordersCssImport from './css/core/grid-borders.css?inline';
+import headerCssImport from './css/core/header.css?inline';
 import gridLayoutCssImport from './css/core/grid-layout.css?inline';
+import gridBordersCssImport from './css/core/grid-borders.css?inline';
 import dragAndDropCssImport from './css/core/drag-and-drop.css?inline';
+import bordersTodoMoveIntoComponentFilesCssImport from './css/core/borders-todo-move-into-component-files.css?inline';
 
 export const core = definePart<CoreParam>({
   partId: 'core',
@@ -113,9 +114,11 @@ export const core = definePart<CoreParam>({
   css: [
     rootCssImport,
     resetCssImport,
-    gridBordersCssImport,
+    headerCssImport,
     gridLayoutCssImport,
+    gridBordersCssImport,
     dragAndDropCssImport,
+    bordersTodoMoveIntoComponentFilesCssImport,
   ],
 });
 
@@ -133,47 +136,27 @@ export const colors = definePart<ColorsParam>({
   },
 });
 
-import bordersAboveFootersCssImport from './css/borders/borders-above-footers.css?inline';
-import bordersBelowHeadersCssImport from './css/borders/borders-below-headers.css?inline';
-import bordersBetweenColumnsCssImport from './css/borders/borders-between-columns.css?inline';
-import bordersBetweenRowsCssImport from './css/borders/borders-between-rows.css?inline';
-import bordersOutsideCssImport from './css/borders/borders-outside.css?inline';
-import bordersPinnedColumnsCssImport from './css/borders/borders-pinned-columns.css?inline';
-import bordersPinnedRowsCssImport from './css/borders/borders-pinned-rows.css?inline';
-import bordersSidePanelsCssImport from './css/borders/borders-side-panels.css?inline';
-
 export const borders = definePart<BordersParam>({
   partId: 'borders',
   presets: {
     horizontal: {
-      bordersOutside: false,
-      bordersSidePanels: false,
+      wrapperBorder: false,
+      sidePanelBorder: false,
     },
     default: {},
     full: {
-      bordersBetweenColumns: true,
+      columnBorder: true,
     },
   },
   defaults: {
     bordersPreset: null,
-    bordersOutside: true,
-    bordersBelowHeaders: true,
-    bordersAboveFooters: true,
-    bordersBetweenRows: true,
-    bordersBetweenColumns: false,
-    bordersPinnedRows: true,
-    bordersPinnedColumns: true,
-    bordersSidePanels: true,
-  },
-  conditionalCss: {
-    bordersAboveFooters: bordersAboveFootersCssImport,
-    bordersBelowHeaders: bordersBelowHeadersCssImport,
-    bordersBetweenColumns: bordersBetweenColumnsCssImport,
-    bordersBetweenRows: bordersBetweenRowsCssImport,
-    bordersOutside: bordersOutsideCssImport,
-    bordersPinnedColumns: bordersPinnedColumnsCssImport,
-    bordersPinnedRows: bordersPinnedRowsCssImport,
-    bordersSidePanels: bordersSidePanelsCssImport,
+    wrapperBorder: true,
+    headerBorder: true,
+    footerBorder: true,
+    columnBorder: false,
+    pinnedColumnBorder: true,
+    pinnedRowBorder: true,
+    sidePanelBorder: true,
   },
 });
 
@@ -527,58 +510,65 @@ export type ParamTypes = {
   /**
    * Borders around the outside of the grid
    *
+   * A CSS border value e.g. "solid 1px red". Passing true is equivalent to "solid 1px var(--ag-border-color)", and false to "none".
+   *
    * @default true
    */
-  bordersOutside: boolean;
+  wrapperBorder: string | boolean;
 
   /**
    * Borders between and below headers, including ordinary header rows and components that render within header rows such as the floating filter and advanced filter
    *
+   * A CSS border value e.g. "solid 1px red". Passing true is equivalent to "solid 1px var(--ag-border-color)", and false to "none".
+   *
    * @default true
    */
-  bordersBelowHeaders: boolean;
+  headerBorder: string | boolean;
 
   /**
    * Horizontal borders above footer components like the pagination and status bars
    *
-   * @default true
-   */
-  bordersAboveFooters: boolean;
-
-  /**
-   * Horizontal borders separating rows
+   * A CSS border value e.g. "solid 1px red". Passing true is equivalent to "solid 1px var(--ag-border-color)", and false to "none".
    *
    * @default true
    */
-  bordersBetweenRows: boolean;
+  footerBorder: string | boolean;
 
   /**
    * Vertical borders separating columns
    *
+   * A CSS border value e.g. "solid 1px red". Passing true is equivalent to "solid 1px var(--ag-border-color)", and false to "none".
+   *
    * @default false
    */
-  bordersBetweenColumns: boolean;
-
-  /**
-   * Borders between the grid and rows that are pinned to the top or bottom
-   *
-   * @default true
-   */
-  bordersPinnedRows: boolean;
+  columnBorder: string | boolean;
 
   /**
    * Borders between the grid and columns that are pinned to the left or right
    *
+   * A CSS border value e.g. "solid 1px red". Passing true is equivalent to "solid 1px var(--ag-border-color)", and false to "none".
+   *
    * @default true
    */
-  bordersPinnedColumns: boolean;
+  pinnedColumnBorder: string | boolean;
+
+  /**
+   * Borders between the grid and rows that are pinned to the top or bottom
+   *
+   * A CSS border value e.g. "solid 1px red". Passing true is equivalent to "solid 1px var(--ag-border-color)", and false to "none".
+   *
+   * @default true
+   */
+  pinnedRowBorder: string | boolean;
 
   /**
    * Borders between the grid and side panels including the column and filter tool bars, and chart settings
    *
+   * A CSS border value e.g. "solid 1px red". Passing true is equivalent to "solid 1px var(--ag-border-color)", and false to "none".
+   *
    * @default true
    */
-  bordersSidePanels: boolean;
+  sidePanelBorder: string | boolean;
 
   /**
    * Use one of the built-in sets of preset quartz-icons values. Available presets are: "light", "regular", "bold".

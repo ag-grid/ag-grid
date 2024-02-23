@@ -7,7 +7,6 @@ export type Part<T extends string = string> = {
   params: T[];
   defaults?: { [K in T]: K extends Param ? ParamTypes[K] : any };
   css?: CssFragment[];
-  conditionalCss?: Record<string, CssFragment | undefined>;
   icons?: Record<string, string>;
   presets?: Record<string, Record<string, any>>;
 };
