@@ -61,6 +61,9 @@ export class StateService extends BeanStub {
     private suppressEvents = true;
     private queuedUpdateSources: Set<(keyof GridState | 'gridInitializing')> = new Set();
     private dispatchStateUpdateEventDebounced = debounce(() => this.dispatchQueuedStateUpdateEvents(), 0);
+    // If user is doing a manual expand all node by node, we don't want to process one at a time.
+    // EVENT_ROW_GROUP_OPENED is already async, so no impact of making the state async here.
+    private onRowGroupOpenedDebounced = debounce(() => this.updateCachedState('rowGroupExpansion', this.getRowGroupExpansionState()), 0);
     private columnStates?: ColumnState[];
     private columnGroupStates?: { groupId: string, open: boolean | undefined }[];
 
@@ -163,7 +166,7 @@ export class StateService extends BeanStub {
         this.updateCachedState('pagination', this.getPaginationState());
 
         this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, () => this.updateCachedState('filter', this.getFilterState()));
-        this.addManagedListener(this.eventService, Events.EVENT_ROW_GROUP_OPENED, () => this.updateCachedState('rowGroupExpansion', this.getRowGroupExpansionState()));
+        this.addManagedListener(this.eventService, Events.EVENT_ROW_GROUP_OPENED, () => this.onRowGroupOpenedDebounced());
         this.addManagedListener(this.eventService, Events.EVENT_EXPAND_COLLAPSE_ALL, () => this.updateCachedState('rowGroupExpansion', this.getRowGroupExpansionState()));
         this.addManagedListener(this.eventService, Events.EVENT_SELECTION_CHANGED, () => this.updateCachedState('rowSelection', this.getRowSelectionState()));
         this.addManagedListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, (event: PaginationChangedEvent) => {

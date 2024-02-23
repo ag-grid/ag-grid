@@ -1,3 +1,0 @@
----
-title: "Date Component"
----

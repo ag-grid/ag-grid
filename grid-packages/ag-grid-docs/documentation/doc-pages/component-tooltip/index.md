@@ -1,3 +1,0 @@
----
-title: "Tooltip Component"
----
