@@ -17,7 +17,7 @@ export const RootContainer = memo(() => {
         <Header>
           <GridConfigDropdownButton />
           <Spacer />
-          <CopyButton getText={() => Object.values(theme.css).join('\n\n')}>Copy CSS</CopyButton>
+          <CopyButton getText={() => theme.css}>Copy CSS</CopyButton>
           <DiscardChangesButton />
         </Header>
         <Menu>

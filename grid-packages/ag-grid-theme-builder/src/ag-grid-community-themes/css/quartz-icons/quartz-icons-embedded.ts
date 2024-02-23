@@ -1,10 +1,10 @@
 import { agIconNameToSvgFragment } from './quartz-icons-fragments';
 
 export default (params: Record<string, any>) => {
-  let result = ':ag-current-theme .ag-icon { background-color: currentColor; }\n';
+  let result = '.ag-icon { background-color: currentColor; }\n';
   for (const iconName of Object.keys(agIconNameToSvgFragment)) {
     const iconSvg = buildSvg(iconName, params.iconStrokeWidth || '1.5px');
-    result += `:ag-current-theme .ag-icon-${iconName} { mask-image: url('data:image/svg+xml,${encodeURIComponent(iconSvg)}'); }\n`;
+    result += `.ag-icon-${iconName} { mask-image: url('data:image/svg+xml,${encodeURIComponent(iconSvg)}'); }\n`;
   }
   return result;
 };

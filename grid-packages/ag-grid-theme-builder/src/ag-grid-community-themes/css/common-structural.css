@@ -100,19 +100,6 @@ ag-grid-aurelia {
   }
 }
 
-.ag-root-wrapper {
-  cursor: default;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  white-space: normal;
-
-  &.ag-layout-normal {
-    height: 100%;
-  }
-}
-
 .ag-watermark {
   position: absolute;
   bottom: 20px;

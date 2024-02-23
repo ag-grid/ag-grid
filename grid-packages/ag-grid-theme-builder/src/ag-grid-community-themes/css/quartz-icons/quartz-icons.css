@@ -1,11 +1,10 @@
-:ag-current-theme {
-  .ag-icon {
-    width: var(--ag-icon-size);
-    height: var(--ag-icon-size);
-  }
+.ag-icon {
+  width: var(--ag-icon-size);
+  height: var(--ag-icon-size);
+}
 
-  /*
-    TODO restore once we pass icons in through the theme grid option
+/*
+    TODO restore once we move back to inline SVG icons
   .ag-icon {
     width: var(--ag-icon-size);
     height: var(--ag-icon-size);
@@ -23,4 +22,3 @@
       fill: currentColor;
     }
   } */
-}

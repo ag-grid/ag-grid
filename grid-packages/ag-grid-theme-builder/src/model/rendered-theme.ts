@@ -12,7 +12,7 @@ export const renderedThemeAtom = atom((get): Theme => {
     .filter((part) => get(part.enabledAtom))
     .map((part) => part.themePart);
 
-  const theme = defineTheme('custom', themeParts, paramValues);
+  const theme = defineTheme(themeParts, paramValues);
 
   // TODO this line has an interesting effect - because environment.ts uses a
   // MutationObserver to monitor the element with the theme class on it,

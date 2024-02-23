@@ -1,33 +1,24 @@
-:ag-current-theme {
-  line-height: normal;
+[class^='ag-'],
+[class^='ag-']:focus,
+[class^='ag-']::after,
+[class^='ag-']::before {
+  box-sizing: border-box;
+  outline: none;
+}
 
-  /**
-   * These resets are scoped to elements with an [class^='ag-'] attribute to
-   * avoid messing with custom component styles
-   */
+button[class^='ag-'],
+input[class^='ag-'] {
+  border: none;
+  padding: 0;
+  margin: none;
+  background: none;
+  color: inherit;
+  font-size: inherit;
+  font-family: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+}
 
-  [class^='ag-'],
-  [class^='ag-']:focus,
-  [class^='ag-']::after,
-  [class^='ag-']::before {
-    box-sizing: border-box;
-    outline: none;
-  }
-
-  button[class^='ag-'],
-  input[class^='ag-'] {
-    border: none;
-    padding: 0;
-    margin: none;
-    background: none;
-    color: inherit;
-    font-size: inherit;
-    font-family: inherit;
-    font-weight: inherit;
-    line-height: inherit;
-  }
-
-  [class^='ag-']::-ms-clear {
-    display: none;
-  }
+[class^='ag-']::-ms-clear {
+  display: none;
 }

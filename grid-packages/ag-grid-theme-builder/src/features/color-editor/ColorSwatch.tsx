@@ -1,7 +1,4 @@
 import { Card, Tooltip, styled } from '@mui/joy';
-import { useAtomValue } from 'jotai';
-import { addVariableDefaults } from '../../ag-grid-community-themes';
-import { renderedThemeAtom } from '../../model/rendered-theme';
 
 export type ColorSwatchProps = {
   color: string;
@@ -10,18 +7,14 @@ export type ColorSwatchProps = {
 };
 
 export const ColorSwatch = ({ color, className, splitBackground }: ColorSwatchProps) => {
-  const theme = useAtomValue(renderedThemeAtom);
-
-  const colorCss = addVariableDefaults(color, theme.variableDefaults);
-
   return (
     <ColorSwatchCard className={className}>
       {splitBackground && (
         <Tooltip title="This shows your color on top of the background">
-          <OpaqueBackground color={theme.variableDefaults['--ag-background-color']}>
+          <OpaqueBackground color="var(--ag-background-color)">
             <ColorOverOpaqueBackground
               style={{
-                borderColor: colorCss,
+                borderColor: color,
               }}
             />
           </OpaqueBackground>
@@ -29,7 +22,7 @@ export const ColorSwatch = ({ color, className, splitBackground }: ColorSwatchPr
       )}
       <Color
         style={{
-          backgroundColor: colorCss,
+          backgroundColor: color,
         }}
       />
     </ColorSwatchCard>

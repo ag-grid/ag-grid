@@ -4,10 +4,9 @@ import { AnyPart } from './theme-types';
 import { definePart } from './theme-utils';
 
 export const defineTheme = <P extends AnyPart>(
-  name: string,
   partOrParts: P | readonly P[],
   parameters: PickVariables<P, any> & { aPreset?: string } = {},
-) => defineThemeImport(name, partOrParts, parameters);
+) => defineThemeImport(partOrParts, parameters);
 
 test('Parameters', () => {
   const a = definePart({
@@ -22,7 +21,7 @@ test('Parameters', () => {
     partId: 'b',
     defaults: { paramB1: 'paramB1-default' },
   });
-  const theme = defineTheme('custom', [a, b], {
+  const theme = defineTheme([a, b], {
     paramA1: 'foo',
     aPreset: 'preset2',
   });
@@ -56,7 +55,7 @@ test('Icons', () => {
       iconBaz: 'iconBaz-b.svg',
     },
   });
-  const theme = defineTheme('custom', [a, b]);
+  const theme = defineTheme([a, b]);
   expect(theme.icons).toMatchInlineSnapshot(`
     {
       "iconBar": "iconBar-b.svg",
@@ -76,7 +75,7 @@ test('Conditional CSS', () => {
     },
     css: ['a-x.css'],
   });
-  const theme = defineTheme('custom', a, { paramA1: 'foo', paramA2: false });
+  const theme = defineTheme(a, { paramA1: 'foo', paramA2: false });
   expect(theme.css).toMatchInlineSnapshot(`
     {
       "common": "",
@@ -90,21 +89,4 @@ test('Conditional CSS', () => {
     }",
     }
   `);
-});
-
-test('CSS Rendering', () => {
-  const a = definePart({
-    partId: 'a',
-    defaults: { paramA1: 'paramA1-default' },
-    css: [
-      ':ag-current-theme { content: "a" }',
-      '.ag-rtl :ag-current-theme { content: "b" }',
-      '.ag-ltr :ag-current-theme { content: "c" }',
-    ],
-    conditionalCss: {
-      paramA1: '.ag-rtl :ag-current-theme { content: "d" }',
-    },
-  });
-  const theme = defineTheme('custom', a, {});
-  expect(theme.css['theme-custom-css']).toMatchInlineSnapshot('undefined');
 });

@@ -5,10 +5,8 @@ import { AnyPart, CssFragment, Part } from './theme-types';
 import { camelCase, logErrorMessage, paramToVariableName, presetParamName } from './theme-utils';
 
 export type Theme = {
-  name: string;
-  css: Record<string, string>;
+  css: string;
   icons: Record<string, string>;
-  variableDefaults: Record<string, string>;
 };
 
 export type PickVariables<P extends AnyPart, V extends object> = {
@@ -16,17 +14,12 @@ export type PickVariables<P extends AnyPart, V extends object> = {
 };
 
 export const defineTheme = <P extends AnyPart, V extends object = ParamTypes>(
-  themeName: string,
   partOrParts: P | readonly P[],
   parameters: PickVariables<P, V>,
 ): Theme => {
   const result: Theme = {
-    name: themeName,
-    css: {
-      common: commonStructuralCSS,
-    },
+    css: '',
     icons: {},
-    variableDefaults: {},
   };
 
   const parts = flattenParts(Array.isArray(partOrParts) ? partOrParts : [partOrParts]);
@@ -76,6 +69,8 @@ export const defineTheme = <P extends AnyPart, V extends object = ParamTypes>(
   }
 
   // render variables
+  // use :where(html) to ensure lowest specificity so that html { --ag-foreground-color: red; } will override this
+  let variableDefaults = ':where(html) {\n';
   for (const name of Object.keys(mergedParams)) {
     let value = mergedParams[name];
     if (isBorderParam(name)) {
@@ -86,12 +81,13 @@ export const defineTheme = <P extends AnyPart, V extends object = ParamTypes>(
       }
     }
     if (!presetProperties.has(name) && typeof value === 'string' && value) {
-      result.variableDefaults[paramToVariableName(name)] = value;
+      variableDefaults += `\t${paramToVariableName(name)}: ${value};\n`;
     }
   }
+  variableDefaults += '}';
 
   // combine CSS and conditional CSS
-  const mainCSS: string[] = [];
+  const mainCSS: string[] = [variableDefaults, commonStructuralCSS];
   for (const part of parts) {
     if (part.css) {
       mainCSS.push(`/* Part ${part.partId} */`);
@@ -105,13 +101,7 @@ export const defineTheme = <P extends AnyPart, V extends object = ParamTypes>(
     }
   }
 
-  if (mainCSS.length > 0) {
-    result.css[`theme-${themeName}`] = preprocessCss(
-      themeName,
-      result.variableDefaults,
-      mainCSS.join('\n'),
-    );
-  }
+  result.css = mainCSS.join('\n');
 
   // combine icons
   for (const part of parts) {
@@ -157,42 +147,6 @@ const describeValue = (value: any): string => {
   return `${typeof value} ${value}`;
 };
 
-const preprocessCss = (themeName: string, variables: Record<string, string>, css: string) => {
-  const themeSelector = `.ag-theme-${themeName}`;
-  const themeSelectorPlaceholder = ':ag-current-theme';
-
-  css = addVariableDefaults(css, variables);
-
-  // rtlcss doesn't have an option to remove the space after the RTL selector,
-  // so we're doing it here removing the space in `.ag-rtl .ag-theme-custom`
-  css = css.replaceAll(` ${themeSelectorPlaceholder}`, themeSelectorPlaceholder);
-  css = css.replaceAll(themeSelectorPlaceholder, themeSelector);
-
-  return css;
-};
-
-// Add default values to var(--ag-foo) expressions. This is recursive - if the
-// default value for --ag-foo is var(--ag-bar) then `var(--ag-foo)` becomes
-// `var(--ag-foo, var(--ag-bar, [bar default]))`
-export const addVariableDefaults = (css: string, variables: Record<string, string>): string =>
-  css.replaceAll(
-    // omit all --ag-internal vars, and --ag-line-height which comes from grid code not a param
-    /var\((--ag-(?!line-height[^\w-]|internal)[^)]+)\)/g,
-    (match, variable) => {
-      if (!/^[\w-]+$/.test(variable) && variable !== '--ag-line-height') {
-        throw new Error(`${match} - variables should not contain default values ${variable}.`);
-      } else if (!Object.hasOwn(variables, variable)) {
-        logErrorMessageOnce(`${variable} does not match a theme param`);
-      }
-      const defaultValue = variables[variable];
-      if (defaultValue) {
-        return `var(${variable}, ${addVariableDefaults(defaultValue, variables)})`;
-      } else {
-        return match;
-      }
-    },
-  );
-
 const flattenParts = (parts: readonly AnyPart[]): Part[] => {
   const result: Part[] = [];
   for (const part of parts) {
@@ -206,31 +160,14 @@ const flattenParts = (parts: readonly AnyPart[]): Part[] => {
 };
 
 export const installTheme = (theme: Theme) => {
-  for (const [name, css] of Object.entries(theme.css)) {
-    addOrUpdateStyle(name, css);
-  }
-};
-
-const addOrUpdateStyle = (id: string, css: string) => {
-  id = `ag-injected-style-${id}`;
+  const id = 'ag-injected-style';
   const head = document.querySelector('head');
-  if (!head) throw new Error("Can't inject theme before document head is created");
+  if (!head) throw new Error("Can't install theme before document head is created");
   let style = head.querySelector(`#${id}`) as HTMLStyleElement;
   if (!style) {
     style = document.createElement('style');
     style.setAttribute('id', id);
-    style.setAttribute('data-ag-injected-style', '');
-    const others = document.querySelectorAll('head [data-ag-injected-style]');
-    if (others.length > 0) {
-      const lastOther = others[others.length - 1];
-      if (lastOther.nextSibling) {
-        head.insertBefore(style, lastOther.nextSibling);
-      } else {
-        head.appendChild(style);
-      }
-    } else {
-      head.insertBefore(style, head.firstChild);
-    }
+    head.insertBefore(style, head.firstChild);
   }
-  style.textContent = css;
+  style.textContent = theme.css;
 };

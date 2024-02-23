@@ -1,16 +1,35 @@
-:ag-current-theme {
-  .ag-root-wrapper,
-  .ag-sticky-top,
-  .ag-dnd-ghost {
-    background-color: var(--ag-background-color);
-    color: var(--ag-foreground-color);
+/* TODO move elsewhere */
+.ag-sticky-top,
+.ag-dnd-ghost {
+  background-color: var(--ag-background-color);
+  color: var(--ag-foreground-color);
+}
+
+.ag-root-wrapper {
+  line-height: normal;
+  cursor: default;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  white-space: normal;
+  -webkit-font-smoothing: antialiased;
+  font-family: var(--ag-font-family);
+  font-size: var(--ag-font-size);
+
+  &.ag-layout-normal {
+    height: 100%;
   }
 
-  /* TODO temporary */
-  .ag-header,
-  .ag-advanced-filter-header,
-  .ag-tool-panel-wrapper,
-  .ag-column-drop-horizontal {
-    background-color: var(--ag-chrome-background-color);
-  }
+  color: var(--ag-foreground-color);
+  background-color: var(--ag-background-color);
+  border-radius: var(--ag-wrapper-border-radius);
+}
+
+/* TODO temporary */
+.ag-header,
+.ag-advanced-filter-header,
+.ag-tool-panel-wrapper,
+.ag-column-drop-horizontal {
+  background-color: var(--ag-chrome-background-color);
 }
