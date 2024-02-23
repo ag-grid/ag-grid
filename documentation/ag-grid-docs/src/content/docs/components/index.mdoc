@@ -314,172 +314,64 @@ The below table gives a summary of the components, where they are configured and
 
 The grid comes with pre-registered components that can be used. Each component provided by the grid starts with the namespaces 'ag' to minimise naming conflicts with user provided components. The full list of grid provided components are in the table below.
 
-````js {% fixme=true %}
-<table>
-  ```
-  <thead>
-      <tr>
-          <th colspan="2"><h3>Date Inputs</h3></th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td>agDateInput</td>
-          <td>Default date input used by filters.</td>
-      </tr>
-      <tr>
-          <td colspan="2"><h3>Column Headers</h3></td>
-      </tr>
-      <tr>
-          <td>agColumnHeader</td>
-          <td>Default column header.</td>
-      </tr>
-      <tr>
-          <td>agColumnHeaderGroup</td>
-          <td>Default column group header.</td>
-      </tr>
-      <tr>
-          <td colspan="2"><h3>Column Filters</h3></td>
-      </tr>
-      <tr>
-          <td>agSetColumnFilter<enterprise-icon></enterprise-icon></td>
-          <td>Set filter (default when using AG Grid Enterprise).</td>
-      </tr>
-      <tr>
-          <td>agTextColumnFilter</td>
-          <td>Simple text filter (default when using AG Grid Community).</td>
-      </tr>
-      <tr>
-          <td>agNumberColumnFilter</td>
-          <td>Number filter.</td>
-      </tr>
-      <tr>
-          <td>agDateColumnFilter</td>
-          <td>Date filter.</td>
-      </tr>
-      <tr>
-          <td>agMultiColumnFilter<enterprise-icon></enterprise-icon></td>
-          <td>Multi filter.</td>
-      </tr>
-      <tr>
-          <td>agGroupColumnFilter<enterprise-icon></enterprise-icon></td>
-          <td>Group column filter.</td>
-      </tr>
-      <tr>
-          <td colspan="2"><h3>Floating Filters</h3></td>
-      </tr>
-      <tr>
-          <td>agSetColumnFloatingFilter<enterprise-icon></enterprise-icon></td>
-          <td>Floating set filter.</td>
-      </tr>
-      <tr>
-          <td>agTextColumnFloatingFilter</td>
-          <td>Floating text filter.</td>
-      </tr>
-      <tr>
-          <td>agNumberColumnFloatingFilter</td>
-          <td>Floating number filter.</td>
-      </tr>
-      <tr>
-          <td>agDateColumnFloatingFilter</td>
-          <td>Floating date filter.</td>
-      </tr>
-      <tr>
-          <td>agMultiColumnFloatingFilter<enterprise-icon></enterprise-icon></td>
-          <td>Floating multi filter.</td>
-      </tr>
-      <tr>
-          <td>agGroupColumnFloatingFilter<enterprise-icon></enterprise-icon></td>
-          <td>Floating group column filter.</td>
-      </tr>
-      <tr>
-          <td colspan="2"><h3>Cell Components</h3></td>
-      </tr>
-      <tr>
-          <td>agAnimateShowChangeCellRenderer</td>
-          <td>Cell Component that animates value changes.</td>
-      </tr>
-      <tr>
-          <td>agAnimateSlideCellRenderer</td>
-          <td>Cell Component that animates value changes.</td>
-      </tr>
-      <tr>
-          <td>agGroupCellRenderer</td>
-          <td>Cell Component for displaying group information.</td>
-      </tr>
-      <tr>
-          <td>agLoadingCellRenderer<enterprise-icon></enterprise-icon></td>
-          <td>Cell Component for loading row when using Enterprise row model.</td>
-      </tr>
-      <tr>
-          <td>agCheckboxCellRenderer</td>
-          <td>Cell Component that displays a checkbox for boolean values.</td>
-      </tr>
-      <tr>
-          <td colspan="2"><h3>Overlays</h3></td>
-      </tr>
-      <tr>
-          <td>agLoadingOverlay</td>
-          <td>Loading overlay.</td>
-      </tr>
-      <tr>
-          <td>agNoRowsOverlay</td>
-          <td>No rows overlay.</td>
-      </tr>
-      <tr>
-          <td colspan="2"><h3>Cell Editors</h3></td>
-      </tr>
-      <tr>
-          <td>agTextCellEditor</td>
-          <td>Text cell editor.</td>
-      </tr>
-      <tr>
-          <td>agSelectCellEditor</td>
-          <td>Select cell editor.</td>
-      </tr>
-      <tr>
-          <td>agRichSelectCellEditor<enterprise-icon></enterprise-icon></td>
-          <td>Rich select editor.</td>
-      </tr>
-      <tr>
-          <td>agLargeTextCellEditor</td>
-          <td>Large text cell editor.</td>
-      </tr>
-      <tr>
-          <td>agNumberCellEditor</td>
-          <td>Number cell editor.</td>
-      </tr>
-      <tr>
-          <td>agDateCellEditor</td>
-          <td>Date cell editor.</td>
-      </tr>
-      <tr>
-          <td>agDateStringCellEditor</td>
-          <td>Date represented as string cell editor.</td>
-      </tr>
-      <tr>
-          <td>agCheckboxCellEditor</td>
-          <td>Checkbox cell editor.</td>
-      </tr>
-      <tr>
-          <td colspan="2"><h3>Master Detail</h3></td>
-      </tr>
-      <tr>
-          <td>agDetailCellRenderer<enterprise-icon></enterprise-icon></td>
-          <td>Detail panel for master / detail grid.</td>
-      </tr>
-      <tr>
-          <td colspan="2"><h3>Column Menu / Context Menu</h3></td>
-      </tr>
-      <tr>
-          <td>agMenuItem<enterprise-icon></enterprise-icon></td>
-          <td>Menu item within column or context menu</td>
-      </tr>
-  </tbody>
-  ```
-</table>
+| Date Inputs | |
+| - | - |
+| agDateInput | Default date input used by filters |
 
-````
+| Column Headers | |
+| - | - |
+| agColumnHeader | Default column header |
+| agColumnHeaderGroup | Default column group header |
+
+| Column Filters | |
+| - | - |
+| agSetColumnFilter {% enterpriseIcon /%} | Set filter (default when using AG Grid Enterprise) |
+| agTextColumnFilter | Simple text filter (default when using AG Grid Community) |
+| agNumberColumnFilter | Number filter |
+| agDateColumnFilter | Date filter |
+| agMultiColumnFilter {% enterpriseIcon /%} | Multi filter |
+| agGroupColumnFilter {% enterpriseIcon /%} | Group column filter |
+
+| Floating Filters | |
+| - | - |
+| agSetColumnFloatingFilter {% enterpriseIcon /%} | Floating set filter |
+| agTextColumnFloatingFilter | Floating text filter |
+| agNumberColumnFloatingFilter | Floating number filter |
+| agDateColumnFloatingFilter | Floating date filter |
+| agMultiColumnFloatingFilter {% enterpriseIcon /%} | Floating multi filter |
+| agGroupColumnFloatingFilter {% enterpriseIcon /%} | Floating group column filter |
+
+| Cell Components | |
+| - | - |
+| agAnimateShowChangeCellRenderer | Cell Component that animates value changes | 
+| agAnimateSlideCellRenderer | Cell Component that animates value changes | 
+| agGroupCellRenderer | Cell Component for displaying group information | 
+| agLoadingCellRenderer {% enterpriseIcon /%} | Cell Component for loading row when using Enterprise row model | 
+| agCheckboxCellRenderer | Cell Component that displays a checkbox for boolean values | 
+
+| Overlays | |
+| - | - |
+| agLoadingOverlay | Loading overlay |
+| agNoRowsOverlay | No rows overlay |
+
+| Cell Editors | |
+| - | - |
+| agTextCellEditor | Text cell editor |
+| agSelectCellEditor | Select cell editor |
+| agRichSelectCellEditor {% enterpriseIcon /%} | Rich select editor |
+| agLargeTextCellEditor | Large text cell editor |
+| agNumberCellEditor | Number cell editor |
+| agDateCellEditor | Date cell editor |
+| agDateStringCellEditor | Date represented as string cell editor |
+| agCheckboxCellEditor | Checkbox cell editor |
+
+| Master Detail | |
+| - | - |
+| agDetailCellRenderer {% enterpriseIcon /%} | Detail panel for master / detail grid |
+
+| Column Menu / Context Menu | |
+| - | - |
+| agMenuItem {% enterpriseIcon /%} | Menu item within column or context menu |
 
 ## Overriding Grid Components
 
