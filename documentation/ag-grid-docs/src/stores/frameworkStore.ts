@@ -9,7 +9,7 @@ export type FrameworkContext = {
 };
 
 const LOCALSTORAGE_PREFIX = 'documentation';
-const DEFAULT_INTERNAL_FRAMEWORK: InternalFramework = 'reactFunctional';
+const DEFAULT_INTERNAL_FRAMEWORK: InternalFramework = 'typescript';
 
 export const $internalFramework = persistentAtom<InternalFramework>(
     `${LOCALSTORAGE_PREFIX}:internalFramework`,
@@ -17,7 +17,7 @@ export const $internalFramework = persistentAtom<InternalFramework>(
     { listen: false }
 );
 export const $frameworkContext = persistentMap<FrameworkContext>(`${LOCALSTORAGE_PREFIX}:context`, {
-    useTypescript: 'false',
+    useTypescript: 'true',
     useVue3: 'false',
     importType: 'modules',
 });
