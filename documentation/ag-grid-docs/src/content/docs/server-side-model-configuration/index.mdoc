@@ -12,15 +12,15 @@ understand how the grid organises data obtained from the server into caches.
 
 The grid arranges rows into blocks which are in turn stored in a cache as illustrated below:
 
-````js {% fixme=true %}
-<div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
-  ```
-  <image-caption src="server-side-model-configuration/resources/serverSideCache.png" alt="serverSideCache" constrained="true" centered="true" filterdarkmode="true"></image-caption>
-  <div>Fig 1. Server-side Cache</div>
-  ```
-</div>
+{% flex justifyContent="center" %}
 
-````
+{% imageCaption imagePath="resources/serverSideCache.png" alt="serverSideCache" centered=true constrained=true %}
+{% flex justifyContent="center" %}
+Fig 1. Server-side Cache
+{% /flex %}
+{% /imageCaption %}
+
+{% /flex %}
 
 There is a cache containing the top-level rows (i.e. on the root node) and for each individual [Row Grouping](./server-side-model-grouping/)
 level. When the grid initialises, it will retrieve an initial number (as per configuration) of blocks containing rows,
