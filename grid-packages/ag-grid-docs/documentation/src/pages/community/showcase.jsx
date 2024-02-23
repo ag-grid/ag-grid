@@ -6,7 +6,7 @@ import 'ag-grid-community/styles/ag-theme-quartz.css'; // Theme
 import { AgGridReact } from 'ag-grid-react';
 import classnames from 'classnames';
 import { Icon } from '../../components/Icon';
-import SEO from '../components/SEO';
+import { SEO } from '../../components/SEO';
 import showcase from './showcase.json';
 import ShowcaseContainer from '../../components/community/ShowcaseContainer';
 

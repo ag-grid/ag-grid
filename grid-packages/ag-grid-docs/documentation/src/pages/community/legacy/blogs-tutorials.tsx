@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from '@design-system/modules/GridDocs.module.scss';
 import classnames from 'classnames';
-import SEO from '../../../components/SEO';
+import { SEO } from '../../../components/SEO';
 import 'ag-grid-community/styles/ag-grid.css'; // Core CSS
 import 'ag-grid-community/styles/ag-theme-quartz.css'; // Theme
 import { AgGridReact } from 'ag-grid-react';

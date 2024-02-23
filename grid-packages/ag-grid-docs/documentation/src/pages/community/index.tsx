@@ -2,7 +2,7 @@ import React from 'react';
 import styles from '@design-system/modules/GridDocs.module.scss';
 import newsStyles from '@design-system/modules/CommunityNews.module.scss';
 import classnames from 'classnames';
-import SEO from '../components/SEO';
+import { SEO } from '../../components/SEO';
 import FeaturedNews from './featured-news';
 import showcase from './showcase.json';
 import ShowcaseList from '../../components/community/ShowcaseList';

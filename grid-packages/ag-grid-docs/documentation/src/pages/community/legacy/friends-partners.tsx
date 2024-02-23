@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from '@design-system/modules/GridDocs.module.scss';
 import classnames from 'classnames';
-import SEO from '../../../components/SEO';
+import { SEO } from '../../../components/SEO';
 
 const CommunityPage = () => {
     return (
