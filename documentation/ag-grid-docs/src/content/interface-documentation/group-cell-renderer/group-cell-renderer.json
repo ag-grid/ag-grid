@@ -1,0 +1,37 @@
+{
+    "_config_": {},
+    "IGroupCellRendererParams": {
+        "checkbox": {
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "GroupCheckboxSelectionCallbackParams"
+                ],
+                "include": []
+            }
+        },
+        "footerValueGetter": {
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "GroupCellRendererParams"
+                ],
+                "include": []
+            }
+        },
+        "innerRenderer": {
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "ICellRendererComp"
+                ],
+                "include": []
+            }
+        },
+        "innerRendererSelector": {
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "ICellRendererComp"
+                ],
+                "include": []
+            }
+        }
+    }
+}
