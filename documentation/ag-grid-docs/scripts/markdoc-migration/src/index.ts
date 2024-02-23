@@ -21,7 +21,7 @@ const KNOWN_FILES = ['index.md', 'examples', 'resources'];
 const FILE_EXTS_TO_FILTER = ['.json']; // Filter out json, as it should go into `contents` folder
 
 type CreateType = 'cancel' | 'show-output' | 'show-ast' | 'successful' | 'successful-warning';
-type MigrationType = 'all' | 'new' | 'existing' | 'existing-mdoc' | 'select';
+type MigrationType = 'all' | 'new' | 'existing' | 'existing-mdoc' | 'no-mdoc' | 'select';
 interface WarningResult {
     type: 'warning';
     folder: string;
@@ -83,6 +83,16 @@ async function getDocsWithPrompts({
         )
     ).filter(Boolean);
 
+    const existingDocsWithoutMarkdoc = (
+        await Promise.all(
+            existingDocs.map(async (doc) => {
+                const mdoc = path.join(destFolder, doc, 'index.mdoc');
+                const mdocExists = await exists(mdoc);
+                return mdocExists ? undefined : doc;
+            })
+        )
+    ).filter(Boolean);
+
     const { migrationType } = (await prompts<'migrationType'>({
         type: 'select',
         name: 'migrationType',
@@ -105,6 +115,11 @@ async function getDocsWithPrompts({
                 description: DEST_FOLDER,
                 value: 'existing-mdoc',
             },
+            {
+                title: `Replace existing folders *without* 'index.mdoc' in destination folder (${existingDocsWithoutMarkdoc.length})`,
+                description: DEST_FOLDER,
+                value: 'no-mdoc',
+            },
             { title: 'Select them manually', value: 'select' },
         ],
         initial: 1,
@@ -119,6 +134,8 @@ async function getDocsWithPrompts({
         docs = existingDocs;
     } else if (migrationType === 'existing-mdoc') {
         docs = existingDocsWithMarkdoc;
+    } else if (migrationType === 'no-mdoc') {
+        docs = existingDocsWithoutMarkdoc;
     } else if (migrationType === 'select') {
         const answers = await prompts<'docs'>({
             type: 'autocompleteMultiselect',
