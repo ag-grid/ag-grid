@@ -1,0 +1,97 @@
+[
+    {
+        "title": "AGGrid: High-Performance DOM Updates w/ Niall Crosby",
+        "link": "https://www.youtube.com/embed/QRtrS_SvR4w",
+        "description": "SolidJS's ecosystem has been growing at a rapid rate. The latest addition is AGGrid, a high-performance table library. Niall Crosby, creator of AGGrid, joins me on stream to talk about what AGGrid is, how we can use it with Solid, and where things are going in the future.",
+        "author": "Ryan Carniato",
+        "type": "Video",
+        "published": "10/2022"
+    },
+    {
+        "title": "Typing the not so secret to customisation ngTemplateOutlet",
+        "link": "https://www.youtube.com/embed/ELRCT7ooNCU",
+        "description": "ngTemplateOutlets are no longer a secret and continue to be an immensely powerful feature for customising our applications. But they were held back by a lack of template typings. This is no longer the case. We can now type them!",
+        "author": "Stephen Cooper",
+        "type": "Video",
+        "published": "10/2023"
+    },
+    {
+        "title": "AG Grid's new React Rendering Engine ",
+        "link": "https://www.youtube.com/embed/u4QTr56t7iM",
+        "description": "An overview of the Rendering engine built specifically for React",
+        "author": "Niall Crosby",
+        "type": "Video",
+        "published": "04/2022"
+    },
+    {
+        "title": "AG Grid - Behind the Frameworks",
+        "link": "https://www.youtube.com/embed/iUsYl3Ux_Hc",
+        "description": "Recently the AG Grid team redesigned AG Grid to optionally utilise React for Rendering when used within a React Application. Hear from Niall, the Godfather of AG Grid, why this was so important to do, the challenges it presented, and what this means for AG Grid Application Developers today.",
+        "author": "Fin JS",
+        "type": "Video",
+        "published": "12/2022"
+    },
+    {
+        "title": "Patterns for Performance",
+        "link": "https://www.youtube.com/embed/qR608qHWTCA",
+        "description": "When working with React it is important that we use the right tool for the right job. If not we will be missing out on the best performance and developer experience. While optimising AG Grid React Table we discovered a number of patterns that made significant improvements to the tables performance.",
+        "author": "Stephen Cooper",
+        "published": "11/2023"
+    },
+    {
+        "title": "Rendering: To Sync or Not to Sync?",
+        "link": "https://www.youtube.com/embed/69d3QIDVKDc",
+        "description": "Let’s dive deep into React rendering and evaluate the implication of Concurrent Rendering and automated batching on code that previously relied on the synchronous nature of v17. Does it always make things better?",
+        "author": "Stephen Cooper",
+        "type": "",
+        "published": "12/2023"
+    },
+    {
+        "title": "Is your Component Ready for Strict Mode?",
+        "link": "https://www.youtube.com/embed/hIMgpj3qR1E",
+        "description": "I will demonstrate the use cases for ngAcceptInputType along with Input coercion, drawing on my experience as a component library developer.",
+        "author": "Stephen Cooper",
+        "type": "",
+        "published": "08/2023"
+    },
+    {
+        "title": "Angular Community Meetup",
+        "link": "https://www.youtube.com/embed/gA6iJbA9oBg",
+        "description": "Typing the not so secret to customization ngTemplateOutlet",
+        "author": "Stephen Cooper",
+        "type": "",
+        "published": "04/2023"
+    },
+    {
+        "title": "",
+        "link": "",
+        "description": "",
+        "author": "",
+        "type": "",
+        "published": ""
+    },
+    {
+        "title": "",
+        "link": "",
+        "description": "",
+        "author": "",
+        "type": "",
+        "published": ""
+    },
+    {
+        "title": "",
+        "link": "",
+        "description": "",
+        "author": "",
+        "type": "",
+        "published": ""
+    },
+    {
+        "title": "",
+        "link": "",
+        "description": "",
+        "author": "",
+        "type": "",
+        "published": ""
+    }
+  ]

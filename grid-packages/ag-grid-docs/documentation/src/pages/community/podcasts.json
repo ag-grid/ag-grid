@@ -1,0 +1,27 @@
+[
+    {
+        "title": "AgGrid: From Open Source to Successful Business ft. Niall Crosby - JSJ 504",
+        "link": "https://podcasts.apple.com/gb/podcast/aggrid-from-open-source-to-successful-business-ft-niall/id496893300?i=1000538344830",
+        "description": "Niall Crosby, creator of AgGrid, joins the panel to discuss the journey from building an open source data grid used all over the world to providing support and enterprise features and running a successful business based on that same open source software.",
+        "production": "Javascript Jabber",
+        "guests": [ "Niall Crosby" ],
+        "published": "06/2022"
+    },
+    {
+        "title": "AG Grid with Stephen Cooper on Web Rush #212",
+        "link": "https://cdn.simplecast.com/audio/df5fbc79-a4cb-46e5-9cd9-12d319d7f92b/episodes/5e1f5c76-2730-4802-97ad-bbc978312be0/audio/df3447b5-b577-4d32-8b0b-abde4cb2e7e0/default_tc.mp3",
+        "description": "Stephen Cooper joins us to talk about AG Grid and his work helping developers figure out how best to use AG Grid in their projects. What are the pain points for using a grid? How do they determine sensible defaults? And advice for developers trying out AG Grid.",
+        "production": "Web Rush",
+        "guests": [ "Stephen Cooper" ],
+        "published": "12/2022"
+    },
+    {
+        "title": "",
+        "link": "",
+        "description": "",
+        "production": "Web Rush",
+        "guests": [""],
+        "type": "",
+        "published": ""
+    }
+]

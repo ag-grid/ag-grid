@@ -1,0 +1,67 @@
+{
+    "featuredContent": [
+        {
+            "type": "Blog",
+            "title": "What's new in AG Grid v31.1.0",
+            "desc": "",
+            "img": "",
+            "url": ""
+        },
+        {
+            "type": "Blog",
+            "title": "Whats new in AG Charts v9.1.0",
+            "desc": "",
+            "img": "",
+            "url": ""
+        },
+        {
+            "type": "Blog",
+            "title": "Updating AG Charts in Real Time",
+            "desc": "",
+            "img": "",
+            "url": ""
+        },
+        {
+            "type": "",
+            "title": "",
+            "desc": "",
+            "img": "",
+            "url": ""
+        }
+    ],
+    "events": {
+        "2024": [
+            {
+                "title": "",
+                "desc": "",
+                "location": {
+                    "lat": "",
+                    "lng": ""
+                }
+            }
+        ],
+        "2023": [
+            {
+
+            }
+        ],
+        "images": [
+
+        ]
+    },
+    "podcasts": [
+        {
+
+        }
+    ],
+    "videos": [
+        {
+            
+        }
+    ],
+    "sponsorships": [
+        {
+
+        }
+    ]
+}

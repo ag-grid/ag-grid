@@ -1,0 +1,13 @@
+.video-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+  }
+  
+  .video-card {
+    flex: 1;
+    max-width: calc(25% - 20px); /* Adjust based on your actual padding/margins */
+    margin: 10px;
+    box-shadow: 0px 0px 4px #3d3d3d;
+    padding: 10px;
+  }

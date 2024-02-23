@@ -1,8 +1,23 @@
 import React from 'react';
 import styles from '@design-system/modules/GridDocs.module.scss';
+import newsStyles from '@design-system/modules/CommunityNews.module.scss';
 import classnames from 'classnames';
 import SEO from '../components/SEO';
+import FeaturedNews from './featured-news';
+import showcase from './showcase.json';
+import ShowcaseList from '../../components/community/ShowcaseList';
 
+const extractFavouriteProducts = (data) => {
+    const favouriteSet = new Set();
+    data.forEach(item => {
+      if (item.favourite) {
+        favouriteSet.add(item);
+      }
+    })
+    return Array.from(favouriteSet);
+  }
+
+  
 const CommunityPage = () => {
     return (
         <div id="doc-page-wrapper" className={styles['doc-page-wrapper']}>
@@ -12,7 +27,7 @@ const CommunityPage = () => {
                     <h1 id="top" className={styles.docsPageTitle}>
                         <div className={styles.pageTitleContainer}>
                             <div className={styles.pageTitleGroup}>
-                                <span>Welcome to the AG Grid Community!</span>
+                                <span>AG Grid Community</span>
                             </div>
                         </div>
                     </h1>
@@ -23,10 +38,13 @@ const CommunityPage = () => {
                 <div>
                     <h2>Whats New at AG Grid</h2>
                     <span>Highlight of content from news & updates page</span>
+                    <FeaturedNews />
                 </div>
+                <hr></hr>
                 <div>
                     <h2>Community Showcase</h2>
                     <span>Favourites from showcase</span>
+                    <ShowcaseList products={extractFavouriteProducts(showcase)} />
                 </div>
                 <div>
                     <h2>3rd Party Tools & Extensions</h2>
