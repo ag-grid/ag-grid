@@ -133,17 +133,17 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         const { menu, eMenuGui, anchorToElement, restoreFocusParams } = this.getMenuParams(column, restrictToTabs, eventSource);
         const closedFuncs: ((e?: Event) => void)[] = [];
 
-        if (column) {
-            // if we don't have a column, then the menu wasn't launched via keyboard navigation
-            closedFuncs.push(
-                (e) => {
-                    const eComp = menu.getGui();
-                    this.destroyBean(menu);
-                    column?.setMenuVisible(false, 'contextMenu');
+        closedFuncs.push(
+            (e) => {
+                const eComp = menu.getGui();
+                this.destroyBean(menu);
+                if (column) {
+                    column.setMenuVisible(false, 'contextMenu');
+                    // if we don't have a column, then the menu wasn't launched via keyboard navigation
                     this.menuUtils.restoreFocusOnClose(restoreFocusParams, eComp, e);
                 }
-            );
-        }
+            }
+        );
 
         const translate = this.localeService.getLocaleTextFunc();
 
