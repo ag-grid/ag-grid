@@ -1,6 +1,6 @@
 import {beforeEach, describe, expect, it} from '@jest/globals';
-import {ZipFile} from '../src/csvExport/zipContainer/zipContainer';
-import {getHeaderAndContent} from '../src/csvExport/zipContainer/zipContainerHelper';
+import {ZipFile} from './csvExport/zipContainer/zipContainer';
+import {getHeaderAndContent} from './csvExport/zipContainer/zipContainerHelper';
 
 describe('getHeaderAndContent', () => {
     let testPath: string = 'test-path/file-name.csv';

@@ -72,11 +72,13 @@
       "cache": true
     },
     "test": {
-      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"],
+      "inputs": ["default", "buildOutputExcludes", "^production", "{workspaceRoot}/jest.preset.js"],
+      "outputs": [],
       "cache": true
     },
     "e2e": {
-      "inputs": ["default", "^production"],
+      "inputs": ["default", "buildOutputExcludes", "^production"],
+      "outputs": [],
       "cache": true
     },
     "pack": {

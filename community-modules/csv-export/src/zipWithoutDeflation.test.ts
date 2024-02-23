@@ -1,5 +1,5 @@
 import {describe, expect, it} from '@jest/globals';
-import {ZipContainer} from '../src/csvExport/zipContainer/zipContainer';
+import {ZipContainer} from './csvExport/zipContainer/zipContainer';
 
 describe('When adding a file to a zip container without deflation', () => {
     const testPath: string = 'test-path/file-name.csv';

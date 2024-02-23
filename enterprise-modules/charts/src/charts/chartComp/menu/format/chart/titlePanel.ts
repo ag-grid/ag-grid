@@ -8,20 +8,20 @@ import {
     PostConstruct,
     WithoutGridCommon
 } from "@ag-grid-community/core";
-import { Font, FontPanel, FontPanelParams } from "../fontPanel";
+import { FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { ChartOptionsService } from "../../../services/chartOptionsService";
+import { ChartMenuUtils } from "../../chartMenuUtils";
 
 export default class TitlePanel extends Component {
 
     public static TEMPLATE = /* html */ `<div></div>`;
 
-    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
+    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
     private activePanels: Component[] = [];
     private titlePlaceholder: string;
 
-    constructor(private readonly chartOptionsService: ChartOptionsService) {
+    constructor(private readonly chartMenuUtils: ChartMenuUtils) {
         super(TitlePanel.TEMPLATE);
     }
 
@@ -32,51 +32,31 @@ export default class TitlePanel extends Component {
     }
 
     private hasTitle(): boolean {
-        const title: any = this.getOption('title');
+        const title: any = this.chartMenuUtils.getValue('title');
         return title && title.enabled && title.text && title.text.length > 0;
     }
 
     private initFontPanel(): void {
         const hasTitle = this.hasTitle();
 
-        const setFont = (font: Font, isSilent?: boolean) => {
-            if (font.family) { this.setOption('title.fontFamily', font.family, isSilent); }
-            if (font.weight) { this.setOption('title.fontWeight', font.weight, isSilent); }
-            if (font.style) { this.setOption('title.fontStyle', font.style, isSilent); }
-            if (font.size) { this.setOption('title.fontSize', font.size, isSilent); }
-            if (font.color) { this.setOption('title.color', font.color, isSilent); }
-        };
-
-        const initialFont = {
-            family: this.getOption('title.fontFamily'),
-            style: this.getOption('title.fontStyle'),
-            weight: this.getOption('title.fontWeight'),
-            size: this.getOption<number>('title.fontSize'),
-            color: this.getOption('title.color')
-        };
-
-        if (!hasTitle) {
-            setFont(initialFont, true);
-        }
-
         const fontPanelParams: FontPanelParams = {
             name: this.chartTranslationService.translate('title'),
             enabled: hasTitle,
             suppressEnabledCheckbox: false,
-            initialFont,
-            setFont,
-            setEnabled: (enabled) => {
+            chartMenuUtils: this.chartMenuUtils,
+            keyMapper: key => `title.${key}`,
+            onEnableChange: (enabled) => {
                 if (this.toolbarExists()) {
                     // extra padding is only included when the toolbar is present
-                    const topPadding: number = this.getOption('padding.top');
-                    this.setOption('padding.top', enabled ? topPadding - 20 : topPadding + 20);
+                    const topPadding: number = this.chartMenuUtils.getValue('padding.top');
+                    this.chartMenuUtils.setValue('padding.top', enabled ? topPadding - 20 : topPadding + 20);
                 }
 
-                this.setOption('title.enabled', enabled);
-                const currentTitleText = this.getOption('title.text');
+                this.chartMenuUtils.setValue('title.enabled', enabled);
+                const currentTitleText = this.chartMenuUtils.getValue('title.text');
                 const replaceableTitleText = currentTitleText === 'Title' || currentTitleText?.trim().length === 0;
                 if (enabled && replaceableTitleText) {
-                    this.setOption('title.text', this.titlePlaceholder);
+                    this.chartMenuUtils.setValue('title.text', this.titlePlaceholder);
                 }
             }
         };
@@ -96,16 +76,10 @@ export default class TitlePanel extends Component {
     }
 
     private createSpacingSlicer() {
-        const spacingSlider = this.createBean(new AgSlider());
-        const currentValue = this.chartOptionsService.getChartOption<number>('title.spacing') || 10;
-
-        spacingSlider.setLabel(this.chartTranslationService.translate('spacing'))
-            .setMaxValue(Math.max(currentValue, 100))
-            .setValue(`${currentValue}`)
-            .setTextFieldWidth(45)
-            .onValueChange(newValue => this.chartOptionsService.setChartOption('title.spacing', newValue));
-
-        return spacingSlider;
+        const params = this.chartMenuUtils.getDefaultSliderParams('title.spacing', 'spacing', 100);
+        // Default title spacing is 10, but this isn't reflected in the options - this should really be fixed there.
+        params.value = '10';
+        return this.createBean(new AgSlider(params));
     }
 
     private toolbarExists() {
@@ -117,14 +91,6 @@ export default class TitlePanel extends Component {
         };
         const topItems: ChartMenuOptions[] = ['chartLink', 'chartUnlink', 'chartDownload'];
         return topItems.some(v => (toolbarItemsFunc && toolbarItemsFunc(params))?.includes(v));
-    }
-
-    private getOption<T = string>(expression: string): T {
-        return this.chartOptionsService.getChartOption(expression);
-    }
-
-    private setOption(property: string, value: any, isSilent?: boolean): void {
-        this.chartOptionsService.setChartOption(property, value, isSilent);
     }
 
     private destroyActivePanels(): void {

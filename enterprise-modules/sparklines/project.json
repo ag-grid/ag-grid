@@ -96,7 +96,7 @@
         "{workspaceRoot}/coverage/{projectRoot}"
       ],
       "options": {
-        "jestConfig": "enterprise-modules/jest.config.ts"
+        "jestConfig": "enterprise-modules/sparklines/jest.config.js"
       }
     }
   },

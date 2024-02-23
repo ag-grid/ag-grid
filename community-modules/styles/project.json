@@ -9,13 +9,28 @@
       "dependsOn": ["build:styles"]
     },
     "build:styles": {
+      "outputs": ["{projectRoot}/*.css", "{projectRoot}/_css-content.scss"],
       "options": {
         "options": {
           "cwd": "community-modules/styles",
-          "command": "npm run build:sass"
+          "command": "sass --no-source-map --load-path src/internal src:."
         }
+      },
+      "cache": true
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "inputs": [],
+      "outputs": [],
+      "options": {
+        "cwd": "community-modules/styles",
+        "commands": [
+          "stylelint --formatter unix --config stylelint-config-scss.js 'src/**/*.scss' '*.scss'",
+          "stylelint --formatter unix --config stylelint-config-css.js '*.css'",
+          "sass test/test.scss"]
       }
     }
+
   },
   "tags": ["module:community", "module", "community", "styles"]
 }

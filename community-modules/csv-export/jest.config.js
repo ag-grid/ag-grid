@@ -1,22 +1,25 @@
-const { compilerOptions } = require('./tsconfig.test');
-
 module.exports = {
-    roots: ['<rootDir>'],
+    roots: [
+        '<rootDir>/src',
+    ],
     transform: {
-        '^.+\\.ts?$': [
+        '^.+\\.tsx?$': [
             'ts-jest',
             {
-                tsconfig: 'tsconfig.test.json',
+                tsconfig: '<rootDir>/tsconfig.spec.json',
             },
         ],
     },
-    transformIgnorePatterns: ['node_modules/(?!(@ag-grid-community.*)/)'],
-    modulePaths: [compilerOptions.baseUrl],
-    moduleNameMapper: {
-        '@ag-grid-community/core': ['node_modules/@ag-grid-community/core/dist/cjs/es6/main.js'],
-    },
-    testEnvironment: 'jsdom',
     testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$',
-    moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+    moduleFileExtensions: [
+        'js',
+        'json',
+        'jsx',
+        'node',
+        'ts',
+        'tsx',
+    ],
+    testEnvironment: 'jsdom',
+    preset: 'ts-jest',
     setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-};
+}

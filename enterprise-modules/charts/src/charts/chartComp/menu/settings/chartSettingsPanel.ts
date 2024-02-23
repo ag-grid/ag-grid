@@ -1,4 +1,4 @@
-import { _, Autowired, Component, PostConstruct, RefSelector, ResizeObserverService } from "@ag-grid-community/core";
+import { _, Component, PostConstruct, RefSelector } from "@ag-grid-community/core";
 import { MiniChartsContainer } from "./miniChartsContainer";
 import { AgChartThemePalette } from "ag-charts-community";
 import { ChartController } from "../../chartController";
@@ -22,7 +22,6 @@ export class ChartSettingsPanel extends Component {
             </div>
         </div>`;
 
-    @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
     @RefSelector('eMiniChartsContainer') private readonly eMiniChartsContainer: HTMLElement;
     @RefSelector('eNavBar') private readonly eNavBar: HTMLElement;
     @RefSelector('eCardSelector') private readonly eCardSelector: HTMLElement;

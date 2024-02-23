@@ -2,20 +2,20 @@ import {
     _,
     AgGroupComponent,
     AgGroupComponentParams,
-    AgSelect,
+    AgSelectParams,
     Autowired,
     Component,
     PostConstruct,
     RefSelector
 } from "@ag-grid-community/core";
-import { AgColorPicker } from "../../../../widgets/agColorPicker";
 import { ChartTranslationService } from "../../services/chartTranslationService";
+import { ChartMenuUtils } from "../chartMenuUtils";
 
-export interface Font {
-    family?: string;
-    style?: string;
-    weight?: string;
-    size?: number;
+interface Font {
+    fontFamily?: string;
+    fontStyle?: string;
+    fontWeight?: string;
+    fontSize?: number;
     color?: string;
 }
 
@@ -23,9 +23,9 @@ export interface FontPanelParams {
     name?: string;
     enabled: boolean;
     suppressEnabledCheckbox?: boolean;
-    setEnabled?: (enabled: boolean) => void;
-    initialFont: Font;
-    setFont: (font: Font, isSilent?: boolean) => void;
+    onEnableChange?: (enabled: boolean) => void;
+    chartMenuUtils: ChartMenuUtils,
+    keyMapper: (key: string) => string
 }
 
 export class FontPanel extends Component {
@@ -43,12 +43,8 @@ export class FontPanel extends Component {
         </div>`;
 
     @RefSelector('fontGroup') private fontGroup: AgGroupComponent;
-    @RefSelector('familySelect') private familySelect: AgSelect;
-    @RefSelector('weightStyleSelect') private weightStyleSelect: AgSelect;
-    @RefSelector('sizeSelect') private sizeSelect: AgSelect;
-    @RefSelector('colorPicker') private colorPicker: AgColorPicker;
 
-    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
+    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
     private params: FontPanelParams;
     private activeComps: Component[] = [];
@@ -60,18 +56,26 @@ export class FontPanel extends Component {
 
     @PostConstruct
     private init() {
-        const groupParams: AgGroupComponentParams = {
+        const fontGroupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',
-            suppressOpenCloseIcons: true
+            suppressOpenCloseIcons: true,
+            title: this.params.name || this.chartTranslationService.translate('font'),
+            enabled: this.params.enabled,
+            suppressEnabledCheckbox: !!this.params.suppressEnabledCheckbox,
+            onEnableChange: enabled => {
+                if (this.params.onEnableChange) {
+                    this.params.onEnableChange(enabled);
+                }
+            }
         };
-        this.setTemplate(FontPanel.TEMPLATE, {fontGroup: groupParams});
-
-        this.initGroup();
-        this.initFontFamilySelect();
-        this.initFontWeightStyleSelect();
-        this.initFontSizeSelect();
-        this.initFontColorPicker();
+        this.setTemplate(FontPanel.TEMPLATE, {
+            fontGroup: fontGroupParams,
+            familySelect: this.getFamilySelectParams(),
+            weightStyleSelect: this.getWeightStyleSelectParams(),
+            sizeSelect: this.getSizeSelectParams(),
+            colorPicker: this.params.chartMenuUtils.getDefaultColorPickerParams(this.params.keyMapper('color'))
+        });
     }
 
     public addCompToPanel(comp: Component) {
@@ -83,20 +87,7 @@ export class FontPanel extends Component {
         this.fontGroup.setEnabled(enabled);
     }
 
-    private initGroup() {
-        this.fontGroup
-            .setTitle(this.params.name || this.chartTranslationService.translate('font'))
-            .setEnabled(this.params.enabled)
-            .hideEnabledCheckbox(!!this.params.suppressEnabledCheckbox)
-            .hideOpenCloseIcons(true)
-            .onEnableChange(enabled => {
-                if (this.params.setEnabled) {
-                    this.params.setEnabled(enabled);
-                }
-            });
-    }
-
-    private initFontFamilySelect() {
+    private getFamilySelectParams(): AgSelectParams {
         const families = [
             'Arial, sans-serif',
             'Aria Black, sans-serif',
@@ -120,7 +111,7 @@ export class FontPanel extends Component {
             'Verdana, sans-serif'
         ];
 
-        const { family } = this.params.initialFont;
+        const family = this.getInitialFontValue('fontFamily');
         let initialValue = families[0];
 
         if (family) {
@@ -142,15 +133,17 @@ export class FontPanel extends Component {
 
         const options = families.sort().map(value => ({ value, text: value }));
 
-        this.familySelect.addOptions(options)
-            .setInputWidth('flex')
-            .setValue(`${initialValue}`)
-            .onValueChange(newValue => this.params.setFont({ family: newValue! }));
+        return {
+            options,
+            inputWidth: 'flex',
+            value: `${initialValue}`,
+            onValueChange: newValue => this.setFont({ fontFamily: newValue! })
+        };
     }
 
-    private initFontSizeSelect() {
+    private getSizeSelectParams(): AgSelectParams {
         const sizes = [8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36];
-        const { size } = this.params.initialFont;
+        const size = this.getInitialFontValue('fontSize');
 
         if (!_.includes(sizes, size)) {
             sizes.push(size!);
@@ -158,16 +151,18 @@ export class FontPanel extends Component {
 
         const options = sizes.sort((a, b) => a - b).map(value => ({ value: `${value}`, text: `${value}` }));
 
-        this.sizeSelect.addOptions(options)
-            .setInputWidth('flex')
-            .setValue(`${size}`)
-            .onValueChange(newValue => this.params.setFont({ size: parseInt(newValue!, 10) }));
-
-        this.sizeSelect.setLabel(this.chartTranslationService.translate('size'));
+        return {
+            options,
+            inputWidth: 'flex',
+            value: `${size}`,
+            onValueChange: newValue => this.setFont({ fontSize: parseInt(newValue!, 10) }),
+            label: this.chartTranslationService.translate('size')
+        };
     }
 
-    private initFontWeightStyleSelect() {
-        const { weight = 'normal', style = 'normal' } = this.params.initialFont;
+    private getWeightStyleSelectParams(): AgSelectParams {
+        const weight = this.getInitialFontValue('fontWeight') ?? 'normal';
+        const style = this.getInitialFontValue('fontStyle') ?? 'normal';
 
         const weightStyles: { name: string, weight: string, style: string }[] = [
             { name: 'normal', weight: 'normal', style: 'normal' },
@@ -188,22 +183,16 @@ export class FontPanel extends Component {
             text: this.chartTranslationService.translate(ws.name),
         }));
 
-        this.weightStyleSelect.addOptions(options)
-            .setInputWidth('flex')
-            .setValue(selectedOption.name)
-            .onValueChange(newValue => {
+        return {
+            options,
+            inputWidth: 'flex',
+            value: selectedOption.name,
+            onValueChange: newValue => {
                 const selectedWeightStyle = weightStyles.find(x => x.name === newValue);
 
-                this.params.setFont({ weight: selectedWeightStyle!.weight, style: selectedWeightStyle!.style });
-            });
-    }
-
-    private initFontColorPicker() {
-        this.colorPicker
-            .setLabel(this.chartTranslationService.translate('color'))
-            .setInputWidth('flex')
-            .setValue(`${this.params.initialFont.color}`)
-            .onValueChange(newColor => this.params.setFont({ color: newColor! }));
+                this.setFont({ fontWeight: selectedWeightStyle!.weight, fontStyle: selectedWeightStyle!.style });
+            }
+        };
     }
 
     public addItemToPanel(item: Component) {
@@ -221,5 +210,19 @@ export class FontPanel extends Component {
     protected destroy(): void {
         this.destroyActiveComps();
         super.destroy();
+    }
+
+    private setFont(font: Font): void {
+        const { chartMenuUtils: chartOptionsProxy, keyMapper } = this.params;
+        Object.entries(font).forEach(([fontKey, value]: [keyof Font, any]) => {
+            if (value) {
+                chartOptionsProxy.setValue(keyMapper(fontKey), value);
+            }
+        });
+    }
+
+    private getInitialFontValue<K extends keyof Font>(fontKey: K): Font[K] {
+        const { chartMenuUtils: chartOptionsProxy, keyMapper } = this.params;
+        return chartOptionsProxy.getValue(keyMapper(fontKey));
     }
 }

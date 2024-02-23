@@ -96,7 +96,7 @@
         "{workspaceRoot}/coverage/{projectRoot}"
       ],
       "options": {
-        "jestConfig": "community-modules/jest.config.ts"
+        "jestConfig": "community-modules/client-side-row-model/jest.config.js"
       }
     }
   },

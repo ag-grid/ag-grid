@@ -26,7 +26,7 @@ describe('getColumnDefs', () => {
             onGridReady: (params: GridReadyEvent) => {
                 const defs1 = params.api.getColumnDefs();
                 expect(getColNames(defs1)).toStrictEqual(getColNames(onlyFields));
-                done();
+                done!();
             }
         };
         createGrid(document.createElement('div'), options, {
@@ -42,7 +42,7 @@ describe('getColumnDefs', () => {
             onGridReady: (params: GridReadyEvent) => {
                 const defs1 = params.api.getColumnDefs();
                 expect(getColNames(defs1)).toStrictEqual(getColNames(withGroups));
-                done();
+                done!();
             }
         };
         createGrid(document.createElement('div'), options, {
@@ -62,7 +62,7 @@ describe('getColumnDefs', () => {
                 // If not broken this will just finish.
                 params.api.getColumnDefs();
 
-                done();
+                done!();
             }
         };
         createGrid(document.createElement('div'), options, {

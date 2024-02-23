@@ -14,7 +14,7 @@
     "watch:post-build": "chokidar '*.css' --ignore '*.min.css' --command 'node post-build.js'",
     "watch:sass": "npm run build:sass -- --watch",
     "clean": "rm -f *.css",
-    "test": "npm run lint:scss && npm run build && npm run lint:css && npm run test:sass",
+    "testx": "npm run lint:scss && npm run build && npm run lint:css && npm run test:sass",
     "test:sass": "sass test/test.scss",
     "lint:css": "stylelint --formatter unix --config stylelint-config-css.js '*.css'",
     "lint:scss": "stylelint --formatter unix --config stylelint-config-scss.js 'src/**/*.scss' '*.scss'",

@@ -1,14 +1,11 @@
 import {
-    AgGroupComponent,
     AgGroupComponentParams,
     Autowired,
     Component,
-    PostConstruct,
-    RefSelector
+    PostConstruct
 } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { ChartOptionsService } from "../../../services/chartOptionsService";
-import { AgColorPicker } from "../../../../../widgets/agColorPicker";
+import { ChartMenuUtils } from "../../chartMenuUtils";
 
 export class BackgroundPanel extends Component {
     public static TEMPLATE = /* html */
@@ -18,43 +15,28 @@ export class BackgroundPanel extends Component {
             </ag-group-component>
         <div>`;
 
-    @RefSelector('chartBackgroundGroup') private group: AgGroupComponent;
-    @RefSelector('colorPicker') private colorPicker: AgColorPicker;
+    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
-    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
-
-    constructor(private readonly chartOptionsService: ChartOptionsService) {
+    constructor(private readonly chartMenuUtils: ChartMenuUtils) {
         super();
     }
 
     @PostConstruct
     private init() {
-        const groupParams: AgGroupComponentParams = {
-            cssIdentifier: 'charts-format-sub-level',
-            direction: 'vertical',
-            suppressOpenCloseIcons: true
-        };
-        this.setTemplate(BackgroundPanel.TEMPLATE, {chartBackgroundGroup: groupParams});
-
-        this.initGroup();
-        this.initColorPicker();
-    }
-
-    private initGroup(): void {
-        this.group
-            .setTitle(this.chartTranslationService.translate('background'))
-            .setEnabled(this.chartOptionsService.getChartOption('background.visible'))
-            .hideOpenCloseIcons(true)
-            .hideEnabledCheckbox(false)
-            .onEnableChange(enabled => this.chartOptionsService.setChartOption('background.visible', enabled));
-    }
-
-    private initColorPicker(): void {
-        this.colorPicker
-            .setLabel(this.chartTranslationService.translate('color'))
-            .setLabelWidth('flex')
-            .setInputWidth('flex')
-            .setValue(this.chartOptionsService.getChartOption('background.fill'))
-            .onValueChange(newColor => this.chartOptionsService.setChartOption('background.fill', newColor));
+        const chartBackgroundGroupParams = this.chartMenuUtils.addEnableParams<AgGroupComponentParams>(
+            'background.visible',
+            {
+                cssIdentifier: 'charts-format-sub-level',
+                direction: 'vertical',
+                suppressOpenCloseIcons: true,
+                title: this.chartTranslationService.translate('background'),
+                suppressEnabledCheckbox: false
+            }
+        );
+        const colorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams('background.fill');
+        this.setTemplate(BackgroundPanel.TEMPLATE, {
+            chartBackgroundGroup: chartBackgroundGroupParams,
+            colorPicker: colorPickerParams
+        });
     }
 }

@@ -2,7 +2,7 @@ import { Autowired, Component, PostConstruct } from "@ag-grid-community/core";
 import { ChartMenu } from "../menu/chartMenu";
 import { ChartTranslationService } from "../services/chartTranslationService";
 import { ChartController } from "../chartController";
-import { ChartOptionsService } from "../services/chartOptionsService";
+import { ChartMenuUtils } from "../menu/chartMenuUtils";
 
 interface BBox { x: number; y: number; width: number; height: number }
 
@@ -17,7 +17,7 @@ export class TitleEdit extends Component {
 
     private destroyableChartListeners: (() => void)[] = [];
     private chartController: ChartController;
-    private chartOptionsService: ChartOptionsService;
+    private chartMenuUtils: ChartMenuUtils;
     private editing: boolean = false;
 
     constructor(private readonly chartMenu: ChartMenu) {
@@ -41,9 +41,9 @@ export class TitleEdit extends Component {
     }
 
     /* should be called when the containing component changes to a new chart proxy */
-    public refreshTitle(chartController: ChartController, chartOptionsService: ChartOptionsService) {
+    public refreshTitle(chartController: ChartController, chartMenuUtils: ChartMenuUtils) {
         this.chartController = chartController;
-        this.chartOptionsService = chartOptionsService;
+        this.chartMenuUtils = chartMenuUtils;
 
         for (const destroyFn of this.destroyableChartListeners) {
             destroyFn();
@@ -105,14 +105,14 @@ export class TitleEdit extends Component {
         const inputStyle = element.style;
 
         // match style of input to title that we're editing
-        inputStyle.fontFamily = this.chartOptionsService.getChartOption('title.fontFamily');
-        inputStyle.fontWeight = this.chartOptionsService.getChartOption('title.fontWeight');
-        inputStyle.fontStyle = this.chartOptionsService.getChartOption('title.fontStyle');
-        inputStyle.fontSize = this.chartOptionsService.getChartOption('title.fontSize') + 'px';
-        inputStyle.color = this.chartOptionsService.getChartOption('title.color');
+        inputStyle.fontFamily = this.chartMenuUtils.getValue('title.fontFamily');
+        inputStyle.fontWeight = this.chartMenuUtils.getValue('title.fontWeight');
+        inputStyle.fontStyle = this.chartMenuUtils.getValue('title.fontStyle');
+        inputStyle.fontSize = this.chartMenuUtils.getValue('title.fontSize') + 'px';
+        inputStyle.color = this.chartMenuUtils.getValue('title.color');
 
         // populate the input with the title, unless the title is the placeholder:
-        const oldTitle = this.chartOptionsService.getChartOption('title.text');
+        const oldTitle = this.chartMenuUtils.getValue('title.text');
         const isTitlePlaceholder = oldTitle === this.chartTranslationService.translate('titlePlaceholder');
         element.value = isTitlePlaceholder ? '' : oldTitle;
 
@@ -131,36 +131,36 @@ export class TitleEdit extends Component {
         const element = this.getGui() as HTMLTextAreaElement;
 
         // The element should cover the title and provide enough space for the new one.
-        const oldTitleLines = this.chartOptionsService.getChartOption('title.text').split(/\r?\n/g).length;
+        const oldTitleLines = this.chartMenuUtils.getValue('title.text').split(/\r?\n/g).length;
         const currentTitleLines = element.value.split(/\r?\n/g).length;
 
         element.style.height = (Math.round(Math.max(oldTitleLines, currentTitleLines) * this.getLineHeight()) + 4) + 'px';
     }
 
     private getLineHeight() : number {
-        const fixedLineHeight = this.chartOptionsService.getChartOption('title.lineHeight');
+        const fixedLineHeight = this.chartMenuUtils.getValue('title.lineHeight');
         if (fixedLineHeight) {
             return parseInt(fixedLineHeight);
         }
-        return Math.round(parseInt(this.chartOptionsService.getChartOption('title.fontSize')) * 1.2);
+        return Math.round(parseInt(this.chartMenuUtils.getValue('title.fontSize')) * 1.2);
     }
 
     private handleEndEditing() {
         // special handling to avoid flicker caused by delay when swapping old and new titles
 
         // 1 - store current title color
-        const titleColor = this.chartOptionsService.getChartOption('title.color');
+        const titleColor = this.chartMenuUtils.getValue('title.color');
 
         // 2 - hide title by making it transparent
         const transparentColor = 'rgba(0, 0, 0, 0)';
-        this.chartOptionsService.setChartOption('title.color', transparentColor);
+        this.chartMenuUtils.setValue('title.color', transparentColor);
 
         // 3 - trigger 'end editing' - this will update the chart with the new title
-        this.chartOptionsService.awaitChartOptionUpdate(() => this.endEditing());
+        this.chartMenuUtils.getChartOptionsService().awaitChartOptionUpdate(() => this.endEditing());
 
         // 4 - restore title color to its original value
-        this.chartOptionsService.awaitChartOptionUpdate(() => {
-            this.chartOptionsService.setChartOption('title.color', titleColor)
+        this.chartMenuUtils.getChartOptionsService().awaitChartOptionUpdate(() => {
+            this.chartMenuUtils.setValue('title.color', titleColor)
         });
     }
 
@@ -172,16 +172,16 @@ export class TitleEdit extends Component {
 
         const value = (this.getGui() as HTMLTextAreaElement).value;
         if (value && value.trim() !== '') {
-            this.chartOptionsService.setChartOption('title.text', value);
-            this.chartOptionsService.setChartOption('title.enabled', true);
+            this.chartMenuUtils.setValue('title.text', value);
+            this.chartMenuUtils.setValue('title.enabled', true);
         } else {
-            this.chartOptionsService.setChartOption('title.text', '');
-            this.chartOptionsService.setChartOption('title.enabled', false);
+            this.chartMenuUtils.setValue('title.text', '');
+            this.chartMenuUtils.setValue('title.enabled', false);
         }
         this.getGui().classList.remove('currently-editing');
 
         // await chart updates so `chartTitleEdit` event consumers can read the new state correctly
-        this.chartOptionsService.awaitChartOptionUpdate(() => {
+        this.chartMenuUtils.getChartOptionsService().awaitChartOptionUpdate(() => {
             this.eventService.dispatchEvent({type: 'chartTitleEdit'});
         });
     }

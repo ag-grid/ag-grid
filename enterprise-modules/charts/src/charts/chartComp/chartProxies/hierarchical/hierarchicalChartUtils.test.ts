@@ -1,7 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
 import { createAutoGroupHierarchy, createCategoryHierarchy } from './hierarchicalChartUtils';
 
-describe(createCategoryHierarchy, () => {
+describe(createCategoryHierarchy as any, () => {
     it('should return a flat list of leaves with null category labels if there are no categories', () => {
         const input = [{ value: 1 }, { value: 2 }, { value: 3 }];
         const categoryKeys: Array<keyof (typeof input)[number]> = [];
@@ -173,7 +173,7 @@ describe(createCategoryHierarchy, () => {
     });
 });
 
-describe(createAutoGroupHierarchy, () => {
+describe(createAutoGroupHierarchy as any, () => {
     function getRowAutoGroupLabels(item: object): string[] | null {
         return (item as { 'ag-Grid-AutoColumn'?: { labels: string[] } })['ag-Grid-AutoColumn']?.labels ?? null;
     }
