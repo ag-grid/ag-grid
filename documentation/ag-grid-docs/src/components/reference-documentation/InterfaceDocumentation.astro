@@ -3,6 +3,7 @@ import { InterfaceDocumentation } from './ReferenceDocumentation';
 import { getFrameworkFromPath } from '@features/docs/utils/urlPaths';
 import { getJsonFile } from '@utils/pages';
 import { getEntry } from 'astro:content';
+import { getIsDev } from '@utils/env';
 
 const { interfaceName, overrideSrc, names, exclude, config, wrapNamesAt } = Astro.props;
 
@@ -14,13 +15,12 @@ if (overrideSrc) {
     const overrideFileName = overrideSrc.replace('.json', '');
     const overridesEntry = await getEntry('interface-documentation', overrideFileName);
     if (!overridesEntry) {
-        // TODO: throw this error when errors fixed
-        // throw new Error(
-        //     `InterfaceDocumentation source not found: src/content/interface-documentation/${overrideFileName}.json`
-        // );
-        console.error(
-            `InterfaceDocumentation source not found: src/content/interface-documentation/${overrideFileName}.json`
-        );
+        const message = `InterfaceDocumentation source not found: src/content/interface-documentation/${overrideFileName}.json`;
+        if (getIsDev()) {
+            console.error(message);
+        } else {
+            throw new Error(message);
+        }
     } else {
         overrides = overridesEntry.data;
     }

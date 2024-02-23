@@ -3,6 +3,7 @@ import { ApiDocumentation } from './ReferenceDocumentation';
 import { getFrameworkFromPath } from '@features/docs/utils/urlPaths';
 import { getJsonFile } from '@utils/pages';
 import { getEntry } from 'astro:content';
+import { getIsDev } from '@utils/env';
 
 const { names, config, source, sources: sourcesProp, section } = Astro.props;
 
@@ -15,11 +16,17 @@ const propertiesFromFilesPromises = sources.map(async (s) => {
     const fileName = s.replace('.json', '');
     const fileEntry = await getEntry('api-documentation', fileName);
     if (!fileEntry) {
-        throw new Error(`ApiDocumentation source not found: src/content/api-documentation/${fileName}.json`);
+        const message = `ApiDocumentation source not found: src/content/api-documentation/${fileName}.json`;
+        if (getIsDev()) {
+            console.error(message);
+        } else {
+            throw new Error(message);
+        }
+    } else {
+        return fileEntry.data;
     }
-    return fileEntry.data;
 });
-const propertiesFromFiles = await Promise.all(propertiesFromFilesPromises);
+const propertiesFromFiles = (await Promise.all(propertiesFromFilesPromises)).filter(Boolean);
 const propertyConfigs = propertiesFromFiles
     .map((p) => {
         const config = p['_config_'];
