@@ -81,11 +81,6 @@ export class FiltersToolPanelListPanel extends Component {
         if (this.columnModel.isReady()) {
             this.onColumnsChanged();
         }
-
-        const ariaEl = this.getAriaElement() 
-        _.setAriaLive(ariaEl, 'assertive');
-        _.setAriaAtomic(ariaEl, false);
-        _.setAriaRelevant(ariaEl, 'text');
     }
 
     public onColumnsChanged(): void {

@@ -117,11 +117,6 @@ export class PrimaryColsListPanel extends Component {
 
         this.appendChild(this.virtualList.getGui());
 
-        const ariaEl = this.virtualList.getAriaElement() 
-        _.setAriaLive(ariaEl, 'assertive');
-        _.setAriaAtomic(ariaEl, false);
-        _.setAriaRelevant(ariaEl, 'text');
-
         this.virtualList.setComponentCreator(
             (item: ColumnModelItem, listItemElement: HTMLElement) => {
                 _.setAriaLevel(listItemElement, (item.getDept() + 1));
