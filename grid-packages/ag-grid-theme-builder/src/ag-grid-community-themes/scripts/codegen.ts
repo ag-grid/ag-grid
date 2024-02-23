@@ -110,6 +110,10 @@ const restoreLiterals = (json: string) =>
 
 const validatePartsMeta = async () => {
   const variablesDefinedIn: Record<string, string> = {};
+  const corePart = allPartsMeta.find((p) => p.partId === 'core');
+  if (!corePart) {
+    throw fatalError('No core part defined');
+  }
   for (const { partId, presets, params } of allPartsMeta) {
     if (presets) {
       const defaultPresets = presets.filter((p) => p.isDefault);
@@ -133,9 +137,11 @@ const validatePartsMeta = async () => {
         variablesDefinedIn[property] = partId;
       }
 
+      const paramsAndCoreParams = [...(corePart.params || []), ...(params || [])];
+
       for (const { paramValues } of presets) {
         for (const [paramName, paramValue] of Object.entries(paramValues)) {
-          const param = params?.find((p) => p.property === paramName);
+          const param = paramsAndCoreParams?.find((p) => p.property === paramName);
           if (!param) {
             throw fatalError(`Part ${partId} has a preset for unknown param ${paramName}`);
           }
@@ -172,6 +178,8 @@ const paramTsType = (param: ParamMeta): string => {
       return 'string';
     case 'borderStyle':
       return 'BorderStyle';
+    case 'border':
+      return 'string | boolean';
     case 'boolean':
       return 'boolean';
     case 'preset':
@@ -189,6 +197,8 @@ const paramValueIsValid = (param: ParamMeta, value: any): boolean => {
       return typeof value === 'string';
     case 'borderStyle':
       return cssBorderStyles.includes(value);
+    case 'border':
+      return typeof value === 'string' || typeof value === 'boolean';
     case 'boolean':
       return typeof value === 'boolean';
     case 'preset':
@@ -206,6 +216,8 @@ const paramExtraDocs = (param: ParamMeta): string | null => {
         : 'Any valid CSS color expression is accepted.';
     case 'borderStyle':
       return 'A CSS border-style value e.g. "solid" or "dashed".';
+    case 'border':
+      return 'A CSS border value e.g. "solid 1px red". Passing true is equivalent to "solid 1px var(--ag-border-color)", and false to "none".';
     case 'length':
       return `A CSS number value with length units, e.g. "1px" or "2em". If a JavaScript number is provided, its units are assumed to be 'px'.`;
     case 'css':

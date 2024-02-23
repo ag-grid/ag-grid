@@ -10,6 +10,13 @@ import * as helpers from './css-helpers';
 export type BorderStyle = 'solid' | 'dotted' | 'dashed' | 'none';
 
 export type CoreParam =
+  | 'backgroundColor'
+  | 'foregroundColor'
+  | 'accentColor'
+  | 'borderColor'
+  | 'chromeBackgroundColor'
+  | 'dataColor'
+  | 'rowBorderColor'
   | 'rangeSelectionBorderStyle'
   | 'rangeSelectionBorderColor'
   | 'rangeSelectionBackgroundColor'
@@ -31,19 +38,16 @@ export type CoreParam =
   | 'gridSize'
   | 'cellHorizontalPadding'
   | 'fontSize'
-  | 'rowHeight';
+  | 'rowHeight'
+  | 'headerHeight'
+  | 'popupShadow'
+  | 'dropdownShadow'
+  | 'dragGhostBackgroundColor'
+  | 'dragGhostBorder';
 
 export type ColorsPreset = 'light' | 'dark';
 
-export type ColorsParam =
-  | 'colorsPreset'
-  | 'backgroundColor'
-  | 'foregroundColor'
-  | 'accentColor'
-  | 'borderColor'
-  | 'chromeBackgroundColor'
-  | 'dataColor'
-  | 'rowBorderColor';
+export type ColorsParam = 'colorsPreset';
 
 export type BordersPreset = 'horizontal' | 'default' | 'full';
 
@@ -62,13 +66,22 @@ export type QuartzIconsPreset = 'light' | 'regular' | 'bold';
 
 export type QuartzIconsParam = 'quartzIconsPreset' | 'iconSize' | 'iconStrokeWidth';
 
+import rootCssImport from './css/core/root.css?inline';
 import resetCssImport from './css/core/reset.css?inline';
 import gridBordersCssImport from './css/core/grid-borders.css?inline';
 import gridLayoutCssImport from './css/core/grid-layout.css?inline';
+import dragAndDropCssImport from './css/core/drag-and-drop.css?inline';
 
 export const core = definePart<CoreParam>({
   partId: 'core',
   defaults: {
+    backgroundColor: '#FFF',
+    foregroundColor: '#181d1f',
+    accentColor: '#2196f3',
+    borderColor: helpers.transparentForeground(0.15),
+    chromeBackgroundColor: helpers.transparentForeground(0.02),
+    dataColor: helpers.ref('foregroundColor'),
+    rowBorderColor: helpers.ref('borderColor'),
     rangeSelectionBorderStyle: 'solid',
     rangeSelectionBorderColor: helpers.ref('accentColor'),
     rangeSelectionBackgroundColor: helpers.transparentAccent(0.2),
@@ -91,11 +104,20 @@ export const core = definePart<CoreParam>({
     cellHorizontalPadding: helpers.calc('gridSize * 2'),
     fontSize: '14px',
     rowHeight: helpers.calc('fontSize + gridSize * 3.5'),
+    headerHeight: helpers.calc('fontSize + gridSize * 4.25'),
+    popupShadow: '0 0 16px 0 #00000026',
+    dropdownShadow: '0 1px 4px 1px #babfc766',
+    dragGhostBackgroundColor: helpers.ref('backgroundColor'),
+    dragGhostBorder: true,
   },
-  css: [resetCssImport, gridBordersCssImport, gridLayoutCssImport],
+  css: [
+    rootCssImport,
+    resetCssImport,
+    gridBordersCssImport,
+    gridLayoutCssImport,
+    dragAndDropCssImport,
+  ],
 });
-
-import colorsCssImport from './css/colors/colors.css?inline';
 
 export const colors = definePart<ColorsParam>({
   partId: 'colors',
@@ -108,15 +130,7 @@ export const colors = definePart<ColorsParam>({
   },
   defaults: {
     colorsPreset: null,
-    backgroundColor: '#FFF',
-    foregroundColor: '#181d1f',
-    accentColor: '#2196f3',
-    borderColor: helpers.transparentForeground(0.15),
-    chromeBackgroundColor: helpers.transparentForeground(0.02),
-    dataColor: helpers.ref('foregroundColor'),
-    rowBorderColor: helpers.ref('borderColor'),
   },
-  css: [colorsCssImport],
 });
 
 import bordersAboveFootersCssImport from './css/borders/borders-above-footers.css?inline';
@@ -186,6 +200,69 @@ export const quartzIcons = definePart<QuartzIconsParam>({
 });
 
 export type ParamTypes = {
+  /**
+   * Background colour of the grid. The default is white - if you override this, ensure that there is enough contrast between the foreground and background.
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default "#FFF"
+   */
+  backgroundColor: string;
+
+  /**
+   * Foreground colour of the grid, and default text colour. The default is black - if you override this, ensure that there is enough contrast between the foreground and background.
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default "#181d1f"
+   */
+  foregroundColor: string;
+
+  /**
+   * The 'brand colour' for the grid, used wherever a non-neutral colour is required. Selections, focus outlines and checkboxes use the accent colour by default.
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default "#2196f3"
+   */
+  accentColor: string;
+
+  /**
+   * Default colour for borders.
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default transparentForeground(0.15)
+   */
+  borderColor: string;
+
+  /**
+   * Background colour for non-data areas of the grid. Headers, tool panels and menus use this colour by default.
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default transparentForeground(0.02)
+   */
+  chromeBackgroundColor: string;
+
+  /**
+   * Colour of text in grid cells.
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default ref("foregroundColor")
+   */
+  dataColor: string;
+
+  /**
+   * Colour of the border between grid rows.
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default ref("borderColor")
+   */
+  rowBorderColor: string;
+
   /**
    * Style of the border around range selections.
    *
@@ -385,6 +462,51 @@ export type ParamTypes = {
   rowHeight: string;
 
   /**
+   * Height of header rows
+   *
+   * A CSS number value with length units, e.g. "1px" or "2em". If a JavaScript number is provided, its units are assumed to be 'px'.
+   *
+   * @default calc("fontSize + gridSize * 4.25")
+   */
+  headerHeight: string;
+
+  /**
+   * Default shadow for elements that float above the grid e.g. dialogs and menus
+   *
+   * Any valid CSS expression is accepted.
+   *
+   * @default "0 0 16px 0 #00000026"
+   */
+  popupShadow: string;
+
+  /**
+   * Default shadow for dropdown menus
+   *
+   * Any valid CSS expression is accepted.
+   *
+   * @default "0 1px 4px 1px #babfc766"
+   */
+  dropdownShadow: string;
+
+  /**
+   * Background colour of the ghost element when dragging columns
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default ref("backgroundColor")
+   */
+  dragGhostBackgroundColor: string;
+
+  /**
+   * Border colour of the ghost element when dragging columns
+   *
+   * A CSS border value e.g. "solid 1px red". Passing true is equivalent to "solid 1px var(--ag-border-color)", and false to "none".
+   *
+   * @default true
+   */
+  dragGhostBorder: string | boolean;
+
+  /**
    * Use one of the built-in sets of preset colors values. Available presets are: "light", "dark".
    *
    * Setting a preset provides default values for other properties that you can then override if required.
@@ -392,69 +514,6 @@ export type ParamTypes = {
    * @default null
    */
   colorsPreset: ColorsPreset | null;
-
-  /**
-   * Background colour of the grid. The default is white - if you override this, ensure that there is enough contrast between the foreground and background.
-   *
-   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
-   *
-   * @default "#FFF"
-   */
-  backgroundColor: string;
-
-  /**
-   * Foreground colour of the grid, and default text colour. The default is black - if you override this, ensure that there is enough contrast between the foreground and background.
-   *
-   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
-   *
-   * @default "#181d1f"
-   */
-  foregroundColor: string;
-
-  /**
-   * The 'brand colour' for the grid, used wherever a non-neutral colour is required. Selections, focus outlines and checkboxes use the accent colour by default.
-   *
-   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
-   *
-   * @default "#2196f3"
-   */
-  accentColor: string;
-
-  /**
-   * Default colour for borders.
-   *
-   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
-   *
-   * @default transparentForeground(0.15)
-   */
-  borderColor: string;
-
-  /**
-   * Background colour for non-data areas of the grid. Headers, tool panels and menus use this colour by default.
-   *
-   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
-   *
-   * @default transparentForeground(0.02)
-   */
-  chromeBackgroundColor: string;
-
-  /**
-   * Colour of text in grid cells.
-   *
-   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
-   *
-   * @default ref("foregroundColor")
-   */
-  dataColor: string;
-
-  /**
-   * Colour of the border between grid rows.
-   *
-   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
-   *
-   * @default ref("borderColor")
-   */
-  rowBorderColor: string;
 
   /**
    * Use one of the built-in sets of preset borders values. Available presets are: "horizontal", "default", "full".

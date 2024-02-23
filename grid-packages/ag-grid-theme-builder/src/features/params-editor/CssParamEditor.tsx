@@ -44,6 +44,9 @@ const cssStringIsValid = (value: string, type: ParamType): boolean => {
     case 'borderStyle':
       cssProperty = 'borderLeftStyle';
       break;
+    case 'border':
+      cssProperty = 'borderLeft';
+      break;
     case 'color':
       cssProperty = 'color';
       break;

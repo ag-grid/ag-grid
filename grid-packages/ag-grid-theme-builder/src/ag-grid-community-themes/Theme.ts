@@ -64,19 +64,27 @@ export const defineTheme = <P extends AnyPart, V extends object = ParamTypes>(
   const allowedParams = new Set(parts.flatMap((part) => part.params));
 
   // apply params passed to this method, which override presets and defaults
-  for (const [property, value] of Object.entries(overrideParams)) {
+  for (const [name, value] of Object.entries(overrideParams)) {
     if (value === undefined) continue;
-    if (allowedParams.has(property)) {
-      if (validateParam(property, value, allowedParams)) {
-        mergedParams[property] = value;
+    if (allowedParams.has(name)) {
+      if (validateParam(name, value, allowedParams)) {
+        mergedParams[name] = value;
       }
     } else {
-      logErrorMessageOnce(`Invalid theme parameter ${property} provided. ${invalidParamMessage}`);
+      logErrorMessageOnce(`Invalid theme parameter ${name} provided. ${invalidParamMessage}`);
     }
   }
 
   // render variables
-  for (const [name, value] of Object.entries(mergedParams)) {
+  for (const name of Object.keys(mergedParams)) {
+    let value = mergedParams[name];
+    if (isBorderParam(name)) {
+      if (value === true) {
+        value = mergedParams[name] = '1px solid var(--ag-border-color)';
+      } else if (value === false) {
+        value = mergedParams[name] = 'none';
+      }
+    }
     if (!presetProperties.has(name) && typeof value === 'string' && value) {
       result.variableDefaults[paramToVariableName(name)] = value;
     }
@@ -116,16 +124,15 @@ export const defineTheme = <P extends AnyPart, V extends object = ParamTypes>(
 const cssPartToString = (p: CssFragment, params: Record<string, any>): string =>
   typeof p === 'function' ? p(params) : p;
 
-// TODO get type from metadata - assume params are strings, include a list of non-string params in definePart
-const _tmpExpectedType = (property: string) =>
-  property.startsWith('borders') ? 'boolean' : 'string';
+const isBorderParam = (property: string) =>
+  property.startsWith('borders') || property.endsWith('Border');
 
 const validateParam = (property: string, value: unknown, allowedParams: Set<string>): boolean => {
-  const expectedType = _tmpExpectedType(property);
   const actualType = typeof value;
-  if (expectedType !== actualType) {
+  if (isBorderParam(property) && actualType === 'boolean') return true;
+  if (actualType !== 'string') {
     logErrorMessageOnce(
-      `Invalid value for ${property} (expected ${expectedType}, got ${describeValue(value)})`,
+      `Invalid value for ${property} (expected a string, got ${describeValue(value)})`,
     );
     return false;
   }

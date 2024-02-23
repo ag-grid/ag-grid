@@ -50,6 +50,7 @@ export const ParamEditor = ({ param }: ParamEditorProps) => {
         // presets don't have param editors, they're handled by part editors
         return <span />;
       case 'length':
+      case 'border':
       case 'css':
         return <CssParamEditor param={param} />;
     }

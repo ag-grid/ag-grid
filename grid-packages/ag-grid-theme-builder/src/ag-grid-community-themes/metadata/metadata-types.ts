@@ -41,6 +41,7 @@ export type ParamMeta =
   | PresetParam
   | ColorParam
   | LengthParam
+  | BorderParam
   | BorderStyleParam
   | CssExpressionParam;
 
@@ -85,6 +86,11 @@ export type CSSBorderStyle = (typeof cssBorderStyles)[number];
 export type BorderStyleParam = ParamCommon & {
   type: 'borderStyle';
   defaultValue: CSSBorderStyle;
+};
+
+export type BorderParam = ParamCommon & {
+  type: 'border';
+  defaultValue: boolean | string;
 };
 
 export type CssExpressionParam = ParamCommon & {

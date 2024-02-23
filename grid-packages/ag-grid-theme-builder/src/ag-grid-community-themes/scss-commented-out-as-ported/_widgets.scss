@@ -373,6 +373,7 @@
   ////////////////////////////////////////
   // Ghost Element (Drag and Drop)
   ////////////////////////////////////////
+  /* PORTED
   .ag-dnd-ghost {
     @include ag.card();
     overflow: hidden;
@@ -390,6 +391,7 @@
     margin-right: var(--ag-grid-size);
     color: var(--ag-foreground-color);
   }
+  */
 
   // Popups
   .ag-popup-child:not(.ag-tooltip-custom) {
