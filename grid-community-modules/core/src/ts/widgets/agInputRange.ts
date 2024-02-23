@@ -1,6 +1,6 @@
-import { IInputField, AgAbstractInputField } from "./agAbstractInputField";
+import { AgInputFieldParams, AgAbstractInputField } from "./agAbstractInputField";
 
-interface IInputRange extends IInputField {
+interface IInputRange extends AgInputFieldParams {
     min?: number;
     max?: number;
     step?: number;

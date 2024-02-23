@@ -3,36 +3,35 @@ title: "Custom Components"
 ---
 
 <framework-specific-section frameworks="javascript,vue">
-|You can create your own custom components to customise the behaviour of the grid. For example you can customise how cells are rendered, how values are edited and also create your own filters.
+|You can create your own Custom Components to customise the behaviour of the grid. For example you can customise how cells are rendered, how values are edited and also create your own filters.
 </framework-specific-section>
-
 
 <framework-specific-section frameworks="react">
 <video-section id="eglfpHRpcu0" title="React Custom Components" header="true">
-You can create your own custom components to customise the behaviour of the grid. For example you can customise how cells are rendered, how values are edited and also create your own filters.
+You can create your own Custom Components to customise the behaviour of the grid. For example you can customise how cells are rendered, how values are edited and also create your own filters.
 </video-section>
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
 <video-section id="A5-Li_9oPSE" title="Angular Custom Components" header="true">
-You can create your own custom components to customise the behaviour of the grid. For example you can customise how cells are rendered, how values are edited and also create your own filters.
+You can create your own Custom Components to customise the behaviour of the grid. For example you can customise how cells are rendered, how values are edited and also create your own filters.
 </video-section>
 </framework-specific-section>
 
 
-The full list of component types you can provide in AG Grid are as follows:
+The full list of component types you can provide in the grid are as follows:
 
-- [Cell Renderer](/component-cell-renderer/): To customise the contents of a cell.
-- [Cell Editor](/component-cell-editor/): To customise the editing of a cell.
-- [Date Component](/component-date/): To customise the date selection component in the date filter.
+- [Cell Component](/component-cell-renderer/): To customise the contents of a cell.
+- [Edit Component](/cell-editors/): To customise the editing of a cell.
+- [Date Component](/filter-date/#custom-selection-component): To customise the date selection component in the date filter.
 - [Filter Component](/component-filter/): For custom column filter that appears inside the column menu.
 - [Floating Filter](/component-floating-filter/): For custom column floating filter that appears inside the column menu.
-- [Header Component](/component-header/): To customise the header of a column and column groups.
-- [Loading Cell Renderer](/component-loading-cell-renderer/): To customise the loading cell row when using Server Side row model.
-- [Overlay Component](/component-overlay/): To customise loading and no rows overlay components.
-- [Status Bar Component](/component-status-bar/): For custom status bar components.
+- [Header Component](/column-headers/): To customise the header of a column and column groups.
+- [Loading Component](/component-loading-cell-renderer/): To customise the loading cell row when using Server Side row model.
+- [Overlay Component](/overlays/): To customise loading and no rows overlay components.
+- [Status Bar Component](/status-bar/): For custom status bar components.
 - [Tool Panel Component](/component-tool-panel/): For custom tool panel components.
-- [Tooltip Component](/component-tooltip/): For custom cell tooltip components.
+- [Tooltip Component](/tooltips/): For custom cell tooltip components.
 
 The remainder of this page gives information that is common across all the component types.
 
@@ -51,7 +50,7 @@ md-include:advantages-vue.md
 
 ## Providing Additional Parameters  
 
-Each Custom Component gets a set of parameters from the grid. For example, for Cell Renderer the grid provides, among other things, the value to be rendered. You can provide additional properties to the Custom Component (e.g. what currency symbol to use) by providing additional parameters specific to your application.
+Each Custom Component gets a set of parameters from the grid. For example, for Cell Component the grid provides, among other things, the value to be rendered. You can provide additional properties to the Custom Component (e.g. what currency symbol to use) by providing additional parameters specific to your application.
 
 To provide additional parameters, use the property `[prop-name]Params`, e.g. `cellRendererParams`.
 
@@ -75,10 +74,216 @@ md-include:js-fw-vue.md
 md-include:js-fw-common-end.md
 
 <framework-specific-section frameworks="react">
-|## JavaScript Functional Components
+<h2 id="higher-order-components">Higher Order Components</h2>
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+<note>
+|We provide a guide on how to use AG Grid with Redux in our [React/Redux Integration Guide.](../redux-integration-pt1/)
+</note>
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+|If you use `connect` to use Redux, or if you're using a Higher Order Component (HOC) to wrap the grid React component, you'll also need to ensure the grid can get access to the newly created component. To do this you need to ensure `forwardRef` is set:
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+<snippet transform={false} language="jsx">
+|export default connect((state) => {
+|    return {
+|        currencySymbol: state.currencySymbol,
+|        exchangeRate: state.exchangeRate
+|    }
+|}, null, null, { forwardRef: true } // must be supplied for react/redux when using AgGridReact
+|)(PriceRenderer);
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular,vue">
+<h2 id="higher-order-components">Child to Parent Communication</h2>
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+|There are a variety of ways to manage component communication in Angular (shared service,
+|local variables etc), but you often need a simple way to let a "parent" component know
+|that something has happened on a "child" component. In this case the simplest route is
+|to use the Grid's `context` feature to hold a reference to the parent, which the child can
+|then access.
+</framework-specific-section>
+
+
+<framework-specific-section frameworks="angular">
+<snippet transform={false} language="ts">
+|//...other imports
+|import {Component} from '@angular/core';
+|import {ICellRendererAngularComp} from 'ag-grid-angular';
+|import {CubeComponent} from './cube.component';
 |
-|Function Components are not supported by AG Grid React. This is because the grid has no way to distinguish JavaScript Functional Components from React Functional Components. The grid identifies a JavaScript Class Component by looking for the `getGui()` method. If this method is missing, it assumes a React Component. Thus all functions will be treated as React Components / Hooks.
+|@Component({
+|   selector: 'app-root',
+|   template: `
+|       &lt;ag-grid-angular [context]="context" /* ...other properties */>
+|       &lt;/ag-grid-angular>
+|   `
+|})
+|export class AppComponent {
+|   constructor() {
+|       this.context = {
+|           componentParent: this
+|       }
+|   }
 |
+|   parentMethod() {
+|       // do something
+|   }
+|   //...other properties & methods
+|}
+|
+|@Component({
+|   selector: 'cell-renderer',
+|   template: `
+|       ...component template...
+|   `
+|})
+|export class CellRendererComponent implements ICellRendererAngularComp {
+|   params: any;
+|   componentParent: any;
+|
+|   agInit(params) {
+|       this.params = params;
+|       this.componentParent = this.params.context.componentParent;
+|       // the grid component can now be accessed - for example: this.componentParent.parentMethod()
+|   }
+|
+|   //...other properties & methods
+|}
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+|Note that although we've used `componentParent` as the property name here it can
+|be anything - the main point is that you can use the `context` mechanism to share
+|information between the components.
+|A working example of this can be found in the [Cell Renderer](/component-cell-renderer/#example-dynamic-components) docs.
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+|There are a variety of ways to manage component communication in Vue (shared service,
+|local variables etc), but you often need a simple way to let a "parent" component know
+|that something has happened on a "child" component. In this case the simplest route is
+|to use the Grid's `context` feature to hold a reference to the parent, which the child can
+|then access.
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false}>
+|// Parent Grid Component
+|&lt;template>
+|   &lt;ag-grid-vue :context="context" ...other properties>
+|   &lt;/ag-grid-vue>
+|&lt;/template>
+|
+|&lt;script>
+|//...other imports
+|import {AgGridVue} from "ag-grid-vue3";
+|import CubeComponent from './CubeComponent.vue';
+|
+|export default {
+|   components: {
+|       AgGridVue
+|   }
+|   data() {
+|       return {
+|           context: {}
+|       }
+|   },
+|   beforeMount() {
+|       this.context = {
+|           componentParent: this
+|       }
+|   },
+|   methods: {
+|       parentMethod() {
+|           // do something
+|       }
+|   }
+|   //...other properties & methods
+|}
+|&lt;/script>
+|
+|// Child Grid Component
+|&lt;template>
+|   &lt;ag-grid-vue ...other properties>
+|   &lt;/ag-grid-vue>
+|&lt;/template>
+|
+|&lt;script>
+|//...other imports
+|
+|export default {
+|   methods: {
+|       doSomethingOnGrid() {
+|           // the grid component can now be accessed via this.params.context.componentParent
+|           this.params.context.componentParent.parentMethod()
+|       }
+|   }
+|   //...other properties & methods
+|}
+|&lt;/script>
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+|Note that although we've used `componentParent` as the property name here it can
+|be anything - the main point is that you can use the `context` mechanism to share
+|information between the components.
+|
+|A working example of this can be found in the [Cell Renderer](/component-cell-renderer/#example-dynamic-components) docs.
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<h2 id="higher-order-components">Provide/Inject</h2>
+When using Vue Components within AG Grid you are able to use `provide` / `context`, but only in the `Options` format below:
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false} language="jsx">
+|// Parent Grid
+|const VueExample = {
+|    template: `
+|        <ag-grid-vue
+|                style="width: 100%; height: 100%;"
+|                class="ag-theme-quartz"
+|                :columnDefs="columnDefs"
+|                :rowData="rowData">
+|        </ag-grid-vue>
+|    `,
+|    components: {
+|        'ag-grid-vue': AgGridVue,
+|        'myRenderer': MyRenderer
+|    },
+|    provide: {
+|        'providedValue': 'testValue' // provide this value to grid components
+|    },
+| 
+|    //...rest of the component definition
+|}
+|
+|// Child Grid Component
+|export default {
+|    name: 'myRenderer',
+|    template: `<span>{{ value }} {{ test }}</span>`,
+|    inject: ['providedValue'],   // retrieve/inject the provided value
+|    
+|    //...rest of the component definition
+|};
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+|You cannot use the new Composition API (inject/provide) as this is not supported by Vue when using createNode `createVNode`, but the above is a workable alternative.
+|
+|Alternatively you could consider using the Grid's [Context](/context/) mechanism to share data with child components.
 </framework-specific-section>
 
 ## Component Usage
@@ -87,18 +292,18 @@ The below table gives a summary of the components, where they are configured and
 
 | Component                     | Where                     | Attribute | 
 | ----------------------------- | ------------------------- | ------------------------ | 
-| Cell Renderer                 | Column Definition         | cellRenderer<br/>cellRendererParams<br/>cellRendererSelector         | 
-| Cell Editor                   | Column Definition         | cellEditor<br />cellEditorParams<br/>cellEditorSelector| 
+| Cell Component                 | Column Definition         | cellRenderer<br/>cellRendererParams<br/>cellRendererSelector         | 
+| Editor Component                   | Column Definition         | cellEditor<br />cellEditorParams<br/>cellEditorSelector| 
 | Filter                        | Column Definition         | filter<br/>filterParams              | 
 | Floating Filter               | Column Definition         | floatingFilter<br/>floatingFilterParams       | 
 | Header Component              | Column Definition         | headerComponent<br/>headerComponentParams               | 
 | Header Group Component        | Column Definition         | headerGroupComponent<br/>headerGroupComponentParams         | 
 | Tooltip Component             | Column Definition         | tooltipComponent<br/>tooltipComponentParams              | 
-| Group Row Cell Renderer       | Grid Option               | groupRowRenderer<br/>groupRowRendererParams         | 
-| Group Row Inner Cell Renderer | Grid Option               | innerRenderer<br/>innerRendererParams            | 
-| Detail Cell Renderer          | Grid Option               | detailCellRenderer<br/>detailCellRendererParams        | 
-| Full Width Cell Renderer      | Grid Option               | fullWidthCellRenderer<br/>fullWidthCellRendererParams        | 
-| Loading Cell Renderer         | Grid Option               | loadingCellRenderer<br/>loadingCellRendererParams       |
+| Group Row Cell Component       | Grid Option               | groupRowRenderer<br/>groupRowRendererParams         | 
+| Group Row Inner Cell Component | Grid Option               | innerRenderer<br/>innerRendererParams            | 
+| Detail Cell Component          | Grid Option               | detailCellRenderer<br/>detailCellRendererParams        | 
+| Full Width Cell Component      | Grid Option               | fullWidthCellRenderer<br/>fullWidthCellRendererParams        | 
+| Loading Cell Component         | Grid Option               | loadingCellRenderer<br/>loadingCellRendererParams       |
 | Loading Overlay               | Grid Option               | loadingOverlayComponent<br/>loadingOverlayComponentParams       | 
 | No Rows Overlay               | Grid Option               | noRowsOverlayComponent<br/>noRowsOverlayComponentParams        |
 | Date Component                | Grid Option               | dateComponent<br/>dateComponentParams                  | 
@@ -187,27 +392,27 @@ The grid comes with pre-registered components that can be used. Each component p
             <td>Floating group column filter.</td>
         </tr>
         <tr>
-            <td colspan="2"><h3>Cell Renderers</h3></td>
+            <td colspan="2"><h3>Cell Components</h3></td>
         </tr>
         <tr>
             <td>agAnimateShowChangeCellRenderer</td>
-            <td>Cell renderer that animates value changes.</td>
+            <td>Cell Component that animates value changes.</td>
         </tr>
         <tr>
             <td>agAnimateSlideCellRenderer</td>
-            <td>Cell renderer that animates value changes.</td>
+            <td>Cell Component that animates value changes.</td>
         </tr>
         <tr>
             <td>agGroupCellRenderer</td>
-            <td>Cell renderer for displaying group information.</td>
+            <td>Cell Component for displaying group information.</td>
         </tr>
         <tr>
             <td>agLoadingCellRenderer<enterprise-icon></enterprise-icon></td>
-            <td>Cell renderer for loading row when using Enterprise row model.</td>
+            <td>Cell Component for loading row when using Enterprise row model.</td>
         </tr>
         <tr>
             <td>agCheckboxCellRenderer</td>
-            <td>Cell renderer that displays a checkbox for boolean values.</td>
+            <td>Cell Component that displays a checkbox for boolean values.</td>
         </tr>
         <tr>
             <td colspan="2"><h3>Overlays</h3></td>
@@ -353,6 +558,6 @@ To override the default component, register the custom component in the GridOpti
 |Overridable grid components are the only components you need to additionally specify with `components` in order to tie their usage to the 
 |actual component. All other registration types specify their usage in column definitions or on the `AgGridVue` component itself.
 |
-|For an example of this please refer to the [Date Component](../component-date/#registering-date-components) documentation.
+|For an example of this please refer to the [Date Component](../filter-date/#registering-date-components) documentation.
 </note>
 </framework-specific-section>

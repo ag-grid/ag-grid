@@ -1,16 +1,11 @@
 import {
-    AgGroupComponent,
     AgGroupComponentParams,
-    AgSlider,
     Autowired,
     Component,
-    PostConstruct,
-    RefSelector
+    PostConstruct
 } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { ChartOptionsService } from "../../../services/chartOptionsService";
-import { getMaxValue } from "../formatPanel";
-import { ChartSeriesType } from "../../../utils/seriesTypeMapper";
+import { ChartMenuUtils } from "../../chartMenuUtils";
 
 export class CalloutPanel extends Component {
 
@@ -23,46 +18,27 @@ export class CalloutPanel extends Component {
             </ag-group-component>
         </div>`;
 
-    @RefSelector('calloutGroup') private calloutGroup: AgGroupComponent;
-    @RefSelector('calloutLengthSlider') private calloutLengthSlider: AgSlider;
-    @RefSelector('calloutStrokeWidthSlider') private calloutStrokeWidthSlider: AgSlider;
-    @RefSelector('labelOffsetSlider') private labelOffsetSlider: AgSlider;
+    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
-    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
-
-    constructor(private readonly chartOptionsService: ChartOptionsService,
-                private getSelectedSeries: () => ChartSeriesType) {
+    constructor(private readonly chartMenuUtils: ChartMenuUtils) {
         super();
     }
 
     @PostConstruct
     private init() {
-        const groupParams: AgGroupComponentParams = {
+        const calloutGroupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-sub-level',
-            direction: 'vertical'
+            direction: 'vertical',
+            title: this.chartTranslationService.translate("callout"),
+            enabled: true,
+            suppressOpenCloseIcons: true,
+            suppressEnabledCheckbox: true
         };
-        this.setTemplate(CalloutPanel.TEMPLATE, {calloutGroup: groupParams});
-        this.initCalloutOptions();
-    }
-
-    private initCalloutOptions() {
-        this.calloutGroup
-            .setTitle(this.chartTranslationService.translate("callout"))
-            .setEnabled(true)
-            .hideOpenCloseIcons(true)
-            .hideEnabledCheckbox(true);
-
-        const initInput = (expression: string, input: AgSlider, labelKey: string, defaultMaxValue: number) => {
-            const currentValue = this.chartOptionsService.getSeriesOption<number>(expression, this.getSelectedSeries());
-            input.setLabel(this.chartTranslationService.translate(labelKey))
-                .setMaxValue(getMaxValue(currentValue, defaultMaxValue))
-                .setValue(`${currentValue}`)
-                .setTextFieldWidth(45)
-                .onValueChange(newValue => this.chartOptionsService.setSeriesOption(expression, newValue, this.getSelectedSeries()));
-        };
-
-        initInput('calloutLine.length', this.calloutLengthSlider, 'length', 40);
-        initInput('calloutLine.strokeWidth', this.calloutStrokeWidthSlider, 'strokeWidth', 10);
-        initInput('calloutLabel.offset', this.labelOffsetSlider, 'offset', 30);
+        this.setTemplate(CalloutPanel.TEMPLATE, {
+            calloutGroup: calloutGroupParams,
+            calloutLengthSlider: this.chartMenuUtils.getDefaultSliderParams('calloutLine.length', 'length', 40),
+            calloutStrokeWidthSlider: this.chartMenuUtils.getDefaultSliderParams('calloutLine.strokeWidth', 'strokeWidth', 10),
+            labelOffsetSlider: this.chartMenuUtils.getDefaultSliderParams('calloutLabel.offset', 'offset', 30)
+        });
     }
 }

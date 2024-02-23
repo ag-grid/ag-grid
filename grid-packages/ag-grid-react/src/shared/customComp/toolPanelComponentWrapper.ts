@@ -24,11 +24,9 @@ export class ToolPanelComponentWrapper extends CustomComponentWrapper<IToolPanel
     }
 
     protected getProps(): CustomToolPanelProps {
-        return {
-            ...this.sourceParams,
-            key: this.key,
-            state: this.state,
-            onStateChange: this.onStateChange
-        } as any;
+        const props = super.getProps();
+        props.state = this.state;
+        props.onStateChange = this.onStateChange;
+        return props;
     }
 }

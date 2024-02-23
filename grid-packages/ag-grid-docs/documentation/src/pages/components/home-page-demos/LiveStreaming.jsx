@@ -1,6 +1,12 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import {agGridEnterpriseVersion, isProductionBuild, localPrefix, rootLocalPrefix} from '../../../utils/consts';
+import {
+    agGridEnterpriseVersion,
+    integratedChartsUsesChartsEnterprise,
+    isProductionBuild,
+    localPrefix,
+    rootLocalPrefix
+} from '../../../utils/consts';
 
 const helmet = [];
 if (!isProductionBuild()) {
@@ -23,7 +29,7 @@ if (!isProductionBuild()) {
     helmet.push(
         <script
             key="enterprise-lib"
-            src={`https://cdn.jsdelivr.net/npm/ag-grid-enterprise@${agGridEnterpriseVersion}/dist/ag-grid-enterprise.min.js`}
+            src={`https://cdn.jsdelivr.net/npm/ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise@${agGridEnterpriseVersion}/dist/ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise.min.js`}
             type="text/javascript"
         />
     );

@@ -1,25 +1,19 @@
 ---
-title: "Loading Cell Renderer"
+title: "Loading Component"
 ---
 
-Loading cell renderers allow you to add your own loading renderers to AG Grid. Use these when the provided loading renderers do not meet your requirements.
+The Loading Component is displayed for a row to show data is loading.
 
-<note>
-|The loading cell renderer is only used with the [Server-Side Row Model](../row-models/). To customise the [Loading Overlay](../overlays/) used with the Client-Side Row Model, see the [Overlay Component](../component-overlay/) section.
-</note>
+The example below demonstrates replacing the Provided Loading Component with a Custom Loading Component.
  
-## Example: Custom Loading Cell Renderer
-
-The example below demonstrates how to provide custom loading cell renderer component to the grid. Notice the following:
- 
-- **Custom Loading Cell Renderer** is supplied by name via `gridOptions.loadingCellRenderer`.
-- **Custom Loading Cell Renderer Parameters** are supplied using `gridOptions.loadingCellRendererParams`.
+- **Custom Loading Component** is supplied by name via `gridOptions.loadingCellRenderer`.
+- **Custom Loading Component Parameters** are supplied using `gridOptions.loadingCellRendererParams`.
 - Example simulates a long delay to display the spinner clearly. 
 - Scrolling the grid will request more rows and again display the loading cell renderer.
 
 <grid-example title='Custom Loading Cell Renderer' name='custom-loading-cell-renderer' type='generated' options='{ "enterprise": true, "modules": ["serverside"], "extras": ["fontawesome"] }'></grid-example>
 
-## Implementing a Loading Cell Renderer Component
+## Custom Component
 
 md-include:component-interface-javascript.md
 md-include:component-interface-angular.md
@@ -33,7 +27,7 @@ md-include:component-interface-vue.md
 <interface-documentation interfaceName='CustomLoadingCellRendererProps' names='["api", "context", "node"]'></interface-documentation>
 </framework-specific-section>
 
-## Dynamic Cell Loading Renderer
+## Dynamic Selection
 
 It's possible to determine what Loading Cell Renderer to use dynamically - i.e. at runtime. This requires providing a `loadingCellRendererSelector`.
 
@@ -42,8 +36,3 @@ md-include:component-dynamic-angular-react-js.md
 </framework-specific-section>
 
 md-include:component-dynamic-vue.md 
-
-## Registering Loading Cell Renderer Components
-
-See the section [registering custom components](/components/#registering-custom-components) for details on registering and using custom loading cell renderers.
-

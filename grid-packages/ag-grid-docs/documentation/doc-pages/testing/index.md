@@ -979,7 +979,7 @@ Here we give some hints on testing AG Grid as part of your application.
 |
 | ## Testing User Supplied Components
 |
-| For example, let us suppose a user provides a custom [Editor Component](/component-cell-editor/) and wants
+| For example, let us suppose a user provides a custom [Editor Component](/cell-editors/) and wants
 | to test this within the context of the Grid.
 |
 </framework-specific-section>

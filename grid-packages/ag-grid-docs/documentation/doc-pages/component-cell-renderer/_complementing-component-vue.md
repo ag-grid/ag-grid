@@ -9,7 +9,7 @@
 |//...other imports
 |import {AgGridVue} from "ag-grid-vue3";
 |
-|// define cellRenderer to be reused
+|// define Cell Component to be reused
 |const ColourComponent = {
 |   template: '&lt;span :style="{color: params.color}">{{params.value}}&lt;/span>'
 |};

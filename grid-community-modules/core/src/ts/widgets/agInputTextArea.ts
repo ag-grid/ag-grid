@@ -1,7 +1,7 @@
-import { AgAbstractInputField, IInputField } from "./agAbstractInputField";
+import { AgAbstractInputField, AgInputFieldParams } from "./agAbstractInputField";
 
 export class AgInputTextArea extends AgAbstractInputField<HTMLTextAreaElement, string> {
-    constructor(config?: IInputField) {
+    constructor(config?: AgInputFieldParams) {
         super(config, 'ag-text-area', null, 'textarea');
     }
 

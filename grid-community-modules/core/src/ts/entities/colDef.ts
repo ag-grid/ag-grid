@@ -43,7 +43,7 @@ export interface AbstractColDef<TData = any, TValue = any> {
 
     /**
     * Provide your own tooltip component for the column.
-    * See [Tooltip Component](https://www.ag-grid.com/javascript-data-grid/component-tooltip/) for framework specific implementation details.
+    * See [Tooltip Component](https://www.ag-grid.com/javascript-data-grid/tooltips/) for framework specific implementation details.
     */
     tooltipComponent?: any;
     /** The params used to configure `tooltipComponent`. */
@@ -289,7 +289,6 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     valueParser?: string | ValueParserFunc<TData, TValue>;
     /**
     * Provide your own cell editor component for this column's cells.
-    * See [Cell Editor](https://www.ag-grid.com/javascript-data-grid/component-cell-editor/) for framework specific implementation detail.
     */
     cellEditor?: any;
     /** Params to be passed to the `cellEditor` component. */

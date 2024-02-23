@@ -6,7 +6,11 @@ import {
   GridReadyEvent,
   ValueParserParams,
 } from '@ag-grid-community/core';
-import {AgAxisCaptionFormatterParams, AgCartesianSeriesTooltipRendererParams} from 'ag-charts-community';
+import {
+  AgAxisCaptionFormatterParams,
+  AgCartesianSeriesTooltipRendererParams,
+  AgCrosshairLabelRendererParams,
+} from 'ag-charts-community';
 import {getData} from "./data";
 
 let gridApi: GridApi;
@@ -34,7 +38,16 @@ const gridOptions: GridOptions = {
             formatter: (params: AgAxisCaptionFormatterParams)  => {
               return params.boundSeries.map(s => s.name).join(' / ');
             }
-          }
+          },
+        },
+        time: {
+          crosshair: {
+            label: {
+              renderer: (params: AgCrosshairLabelRendererParams) => ({
+                text: formatDate(params.value),
+              }),
+            },
+          },
         },
       },
     },
@@ -90,7 +103,7 @@ function numberParser(params: ValueParserParams) {
   return parseFloat(value);
 }
 
-function chartTooltipRenderer({ datum, xKey, yKey }: any) {
+function chartTooltipRenderer({ datum, xKey, yKey }: AgCartesianSeriesTooltipRendererParams) {
   return {
     content: `${formatDate(datum[xKey])}: ${datum[yKey]}`,
   };

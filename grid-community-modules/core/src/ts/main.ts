@@ -261,18 +261,18 @@ export { StylingService } from "./styling/stylingService";
 export { UpdateLayoutClassesParams, LayoutCssClasses } from "./styling/layoutFeature";
 
 // widgets
-export { AgAbstractField, FieldElement } from "./widgets/agAbstractField";
-export { AgCheckbox } from "./widgets/agCheckbox";
-export { AgRadioButton } from "./widgets/agRadioButton";
-export { AgToggleButton } from "./widgets/agToggleButton";
+export { AgAbstractField, FieldElement, AgFieldParams } from "./widgets/agAbstractField";
+export { AgCheckbox, AgCheckboxParams } from "./widgets/agCheckbox";
+export { AgRadioButton, AgRadioButtonParams } from "./widgets/agRadioButton";
+export { AgToggleButton, AgToggleButtonParams } from "./widgets/agToggleButton";
 export { AgInputTextField } from "./widgets/agInputTextField";
 export { AgInputTextArea } from "./widgets/agInputTextArea";
 export { AgInputNumberField } from "./widgets/agInputNumberField";
 export { AgInputDateField } from "./widgets/agInputDateField";
 export { AgInputRange } from "./widgets/agInputRange";
 export { AgRichSelect, RichSelectParams } from "./widgets/agRichSelect";
-export { AgSelect } from "./widgets/agSelect";
-export { AgSlider } from "./widgets/agSlider";
+export { AgSelect, AgSelectParams } from "./widgets/agSelect";
+export { AgSlider, AgSliderParams } from "./widgets/agSlider";
 export { AgGroupComponent, AgGroupComponentParams } from "./widgets/agGroupComponent";
 export { AgMenuItemRenderer } from "./widgets/agMenuItemRenderer";
 export { AgMenuItemComponent, MenuItemActivatedEvent, CloseMenuEvent } from "./widgets/agMenuItemComponent";
@@ -290,8 +290,8 @@ export { PopupService, AgPopup, PopupPositionParams, PopupEventParams } from "./
 export { TouchListener, TapEvent, LongTapEvent } from "./widgets/touchListener";
 export { VirtualList, VirtualListModel } from "./widgets/virtualList";
 
-export { AgAbstractLabel, IAgLabelParams } from "./widgets/agAbstractLabel";
-export { AgPickerField, IPickerFieldParams } from "./widgets/agPickerField";
+export { AgAbstractLabel, AgLabelParams } from "./widgets/agAbstractLabel";
+export { AgPickerField, AgPickerFieldParams } from "./widgets/agPickerField";
 export { AgAutocomplete, AutocompleteOptionSelectedEvent, AutocompleteValidChangedEvent, AutocompleteValueChangedEvent, AutocompleteValueConfirmedEvent } from "./widgets/agAutocomplete";
 export { AutocompleteEntry, AutocompleteListParams } from "./widgets/autocompleteParams";
 

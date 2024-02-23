@@ -1,0 +1,15 @@
+---
+title: "Custom Group Cell Component"
+enterprise: true
+---
+
+Create a Custom Group Cell Component when you need functionliaty not provided by the Group Cell Component.
+
+Creating a Custom Group Cell Component is not typical. Be sure the provided [Provided Component](/group-cell-renderer/) doesn't suit before implementing your own.
+
+Below is an example Custom Group Cell Component.
+- The example has a custom icon which represents whether the group is open
+- Reacts to the row events if the group is expanded from another source
+- Cleans up event listeners when it's disposed of
+
+<grid-example title='Group Renderers' name='custom-group-renderer' type='mixed' options='{"enterprise": true, "modules": ["clientside", "rowgrouping"]}'></grid-example>

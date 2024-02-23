@@ -5,14 +5,14 @@ import { setAriaRole } from "../utils/aria";
 
 export type LabelAlignment = 'left' | 'right' | 'top';
 
-export interface IAgLabelParams {
+export interface AgLabelParams {
     label?: HTMLElement | string;
     labelWidth?: number | 'flex';
     labelSeparator?: string;
     labelAlignment?: LabelAlignment;
 }
 
-export abstract class AgAbstractLabel<TConfig extends IAgLabelParams = IAgLabelParams> extends Component {
+export abstract class AgAbstractLabel<TConfig extends AgLabelParams = AgLabelParams> extends Component {
     protected abstract eLabel: HTMLElement;
 
     protected readonly config: TConfig;

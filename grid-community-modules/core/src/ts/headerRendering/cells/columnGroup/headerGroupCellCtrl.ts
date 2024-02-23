@@ -1,7 +1,5 @@
-import { ColumnModel } from "../../../columns/columnModel";
 import { UserCompDetails } from "../../../components/framework/userComponentFactory";
 import { KeyCode } from '../../../constants/keyCode';
-import { Autowired } from "../../../context/context";
 import {
     DragAndDropService,
     DragItem,
@@ -86,15 +84,13 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
         this.addResizeAndMoveKeyboardListeners();
     }
 
-    protected resizeHeader(direction: HorizontalDirection, shiftKey: boolean): void {
+    protected resizeHeader(delta: number, shiftKey: boolean): void {
         // check to avoid throwing when a component has not been setup yet (React 18)
         if (!this.resizeFeature) { return; }
 
-        const isLeft = direction === HorizontalDirection.Left;
-        const diff = (isLeft ? -1 : 1) * this.resizeMultiplier;
         const initialValues = this.resizeFeature.getInitialValues(shiftKey);
 
-        this.resizeFeature.resizeColumns(initialValues, initialValues.resizeStartWidth + diff, 'uiColumnResized', true);
+        this.resizeFeature.resizeColumns(initialValues, initialValues.resizeStartWidth + delta, 'uiColumnResized', true);
     }
 
     protected moveHeader(hDirection: HorizontalDirection): void {

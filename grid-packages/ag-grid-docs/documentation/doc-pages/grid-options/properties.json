@@ -818,13 +818,13 @@
             "description": "Provide a custom loading overlay component.",
             "more": {
                 "name": "Loading Overlay Component",
-                "url": "/component-overlay/#implementing-a-loading-overlay-component"
+                "url": "/overlays/"
             }
         },
         "loadingOverlayComponentParams": {
             "more": {
                 "name": "Overlay Component",
-                "url": "/component-overlay/"
+                "url": "/overlays/"
             }
         },
         "suppressLoadingOverlay": {},
@@ -838,13 +838,13 @@
             "description": "Provide a custom no rows overlay component.",
             "more": {
                 "name": "No Rows Overlay Component",
-                "url": "/component-overlay/#implementing-a-no-rows-overlay-component"
+                "url": "/overlays/"
             }
         },
         "noRowsOverlayComponentParams": {
             "more": {
                 "name": "Overlay Component",
-                "url": "/component-overlay/"
+                "url": "/overlays/"
             }
         },
         "suppressNoRowsOverlay": {}
@@ -1054,25 +1054,25 @@
         "enableCellChangeFlash": {
             "more": {
                 "name": "Flashing Data Changes",
-                "url": "/flashing-cells/"
+                "url": "/change-cell-renderers/"
             }
         },
         "cellFlashDuration": {
             "more": {
                 "name": "How Flashing Works",
-                "url": "/flashing-cells/#how-flashing-works"
+                "url": "/change-cell-renderers/#how-flashing-works"
             }
         },
         "cellFadeDuration": {
             "more": {
                 "name": "How Flashing Works",
-                "url": "/flashing-cells/#how-flashing-works"
+                "url": "/change-cell-renderers/#how-flashing-works"
             }
         },
         "allowShowChangeAfterFilter": {
             "more": {
                 "name": "Flashing Data Changes",
-                "url": "/flashing-cells/"
+                "url": "/change-cell-renderers/"
             }
         },
         "domLayout": {
@@ -1880,7 +1880,7 @@
             "displayName": "Tooltips",
             "page": {
                 "name": "Tooltip Component",
-                "url": "/component-tooltip/"
+                "url": "/tooltips/"
             }
         },
         "enableBrowserTooltips": {

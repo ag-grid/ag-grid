@@ -15,13 +15,13 @@ import { exists } from "../utils/generic";
 import { isEventFromPrintableCharacter } from "../utils/keyboard";
 import { escapeString } from "../utils/string";
 import { AgInputTextField } from "./agInputTextField";
-import { AgPickerField, IPickerFieldParams } from "./agPickerField";
+import { AgPickerField, AgPickerFieldParams } from "./agPickerField";
 import { RichSelectRow } from "./agRichSelectRow";
 import { Component } from "./component";
 import { RefSelector } from "./componentAnnotations";
 import { VirtualList } from "./virtualList";
 
-export interface RichSelectParams<TValue = any> extends IPickerFieldParams {
+export interface RichSelectParams<TValue = any> extends AgPickerFieldParams {
     value?: TValue;
     valueList?: TValue[]
     allowTyping?: boolean;

@@ -12,6 +12,7 @@ import {ICellRendererParams} from "@ag-grid-community/core";
     `
 })
 export class MedalRenderer implements ICellRendererAngularComp {
+
     public country: string = '';
     public total: string = '';
 

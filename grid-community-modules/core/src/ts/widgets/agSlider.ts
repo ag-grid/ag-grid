@@ -1,11 +1,20 @@
 import { RefSelector } from "./componentAnnotations";
 import { AgInputRange } from "./agInputRange";
-import { AgAbstractLabel, LabelAlignment, IAgLabelParams } from "./agAbstractLabel";
+import { AgAbstractLabel, LabelAlignment, AgLabelParams } from "./agAbstractLabel";
 import { AgInputNumberField } from "./agInputNumberField";
 import { PostConstruct } from "../context/context";
 import { Events } from "../eventKeys";
 
-export class AgSlider extends AgAbstractLabel {
+export interface AgSliderParams extends AgLabelParams {
+    minValue?: number;
+    maxValue?: number;
+    textFieldWidth?: number;
+    step?: number;
+    value?: string;
+    onValueChange?: (newValue: number) => void;
+}
+
+export class AgSlider extends AgAbstractLabel<AgSliderParams> {
     private static TEMPLATE = /* html */
         `<div class="ag-slider">
             <label ref="eLabel"></label>
@@ -21,13 +30,32 @@ export class AgSlider extends AgAbstractLabel {
 
     protected labelAlignment: LabelAlignment = 'top';
 
-    constructor(config?: IAgLabelParams) {
+    constructor(config?: AgSliderParams) {
         super(config, AgSlider.TEMPLATE);
     }
 
     @PostConstruct
     private init() {
         this.eSlider.addCssClass('ag-slider-field');
+        const { minValue, maxValue, textFieldWidth, step, value, onValueChange } = this.config;
+        if (minValue != null) {
+            this.setMinValue(minValue);
+        }
+        if (maxValue != null) {
+            this.setMaxValue(maxValue);
+        }
+        if (textFieldWidth != null) {
+            this.setTextFieldWidth(textFieldWidth);
+        }
+        if (step != null) {
+            this.setStep(step);
+        }
+        if (value != null) {
+            this.setValue(value);
+        }
+        if (onValueChange != null) {
+            this.onValueChange(onValueChange);
+        }
     }
 
     public onValueChange(callbackFn: (newValue: number) => void) {
@@ -74,7 +102,7 @@ export class AgSlider extends AgAbstractLabel {
         return this.eText.getValue();
     }
 
-    public setValue(value: string): this {
+    public setValue(value: string, silent?: boolean): this {
         if (this.getValue() === value) {
             return this;
         }
@@ -82,7 +110,9 @@ export class AgSlider extends AgAbstractLabel {
         this.eText.setValue(value, true);
         this.eSlider.setValue(value, true);
 
-        this.dispatchEvent({ type: Events.EVENT_FIELD_VALUE_CHANGED });
+        if (!silent) {
+            this.dispatchEvent({ type: Events.EVENT_FIELD_VALUE_CHANGED });
+        }
 
         return this;
     }

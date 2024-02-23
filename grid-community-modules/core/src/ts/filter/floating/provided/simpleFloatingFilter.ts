@@ -111,7 +111,7 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
         // 1) there is a type (user has configured filter wrong if not type)
         //  AND
         // 2) the default type is not 'inRange'
-        const editable = this.isTypeEditable(this.lastType);
+        const editable = this.isTypeEditable(this.optionsFactory.getDefaultOption());
         this.setEditable(editable);
     }
 

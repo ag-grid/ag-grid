@@ -54,6 +54,7 @@
     display: flex;
     flex-direction: column;
     margin-bottom: $spacing-size-8;
+    padding-bottom: $spacing-size-5;
     color: var(--color-text-tertiary);
 
     h2 {
@@ -115,14 +116,15 @@ p.name {
     flex-direction: row;
     align-items: end;
     height: 52px;
-    padding-bottom: $spacing-size-4;
+    padding-bottom: $spacing-size-3;
     font-size: 30px;
     line-height: var(--text-lh-ultra-tight);
     font-weight: var(--text-bold);
     letter-spacing: -0.05em;
 
+
     &.freePrice {
-        margin-bottom: 12px;
+        margin-bottom: 18px;
     }
 
     .developerText {
@@ -173,6 +175,7 @@ p.name {
         transform: translateX(5px);
     }
 }
+
 
 .fromText {
     margin-top: -25px;

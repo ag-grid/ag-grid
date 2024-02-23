@@ -1,4 +1,3 @@
-import { AgAbstractField } from "./agAbstractField";
 import { Component } from "./component";
 import { PostConstruct } from "../context/context";
 import { escapeString } from "../utils/string";
@@ -22,16 +21,19 @@ export class AgList extends Component {
     private value: string | null;
     private displayValue: string | null;
 
-    constructor(private readonly cssIdentifier = 'default') {
+    constructor(private readonly cssIdentifier = 'default', private readonly unFocusable: boolean = false) {
         super(/* html */`<div class="ag-list ag-${cssIdentifier}-list" role="listbox"></div>`);
     }
 
     @PostConstruct
     private init(): void {
-        this.addManagedListener(this.getGui(), 'keydown', this.handleKeyDown.bind(this));
+        const eGui = this.getGui();
+        this.addManagedListener(eGui, 'mouseleave', () => this.clearHighlighted());
+        if (this.unFocusable) { return; }
+        this.addManagedListener(eGui, 'keydown', this.handleKeyDown.bind(this));
     }
 
-    private handleKeyDown(e: KeyboardEvent): void {
+    public handleKeyDown(e: KeyboardEvent): void {
         const key = e.key;
         switch (key) {
             case KeyCode.ENTER:
@@ -93,13 +95,15 @@ export class AgList extends Component {
         setAriaRole(itemEl, 'option');
         itemEl.classList.add('ag-list-item', `ag-${this.cssIdentifier}-list-item`);
         itemEl.innerHTML = `<span>${text}</span>`;
-        itemEl.tabIndex = -1;
+
+        if (!this.unFocusable) {
+            itemEl.tabIndex = -1;
+        }
 
         this.itemEls.push(itemEl);
 
-        this.addManagedListener(itemEl, 'mouseover', () => this.highlightItem(itemEl));
-        this.addManagedListener(itemEl, 'mouseleave', () => this.clearHighlighted());
-        this.addManagedListener(itemEl, 'click', () => this.setValue(value));
+        this.addManagedListener(itemEl, 'mousemove', () => this.highlightItem(itemEl));
+        this.addManagedListener(itemEl, 'mousedown', (e) => { e.preventDefault(); this.setValue(value) });
 
         this.getGui().appendChild(itemEl);
     }
@@ -169,7 +173,20 @@ export class AgList extends Component {
         this.highlightedEl.classList.add(AgList.ACTIVE_CLASS);
         setAriaSelected(this.highlightedEl, true);
 
-        this.highlightedEl.focus();
+        const eGui = this.getGui();
+        const rect = eGui.getBoundingClientRect();
+
+        const currentTop = rect.top + eGui.scrollTop;
+        const height = rect.height;
+        const { offsetTop, offsetHeight } = el;
+
+        if (((offsetTop + offsetHeight) > currentTop + height) || (offsetTop < currentTop)) {
+            this.highlightedEl.scrollIntoView({ block: 'nearest' })
+        }
+
+        if (!this.unFocusable) {
+            this.highlightedEl.focus();
+        }
     }
 
     private clearHighlighted(): void {

@@ -1,26 +1,52 @@
 ---
-title: "Installation"
+title: "Install Integrated Charts"
 enterprise: true
 ---
+This section shows how to install Integrated Charts using Modules or Packages. 
 
-## Charts Module
+## Integrated Charts Module
 
-To minimise bundle sizes for applications that do not require charting, charts are contained in a separate [AG Grid Module](/modules/),
-and has been built from the ground up with zero dependencies on any third party libraries.
+To reduce bundle sizes in applications that do not require charts, AG Grid provides a dedicated charts [AG Grid Module](/modules/),
+free from third-party library dependencies. This approach is recommended for most applications.
  
-The Charts module can be imported as follows:
+The Integrated Enterprise Charts module, which includes AG Charts Enterprise, can be imported as follows: 
 
 ```ts
 // Import minimal modules required for charts
 import { ModuleRegistry } from "@ag-grid-community/core";
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
-import { GridChartsModule } from "@ag-grid-enterprise/charts";
+import { GridChartsModule } from "@ag-grid-enterprise/charts-enterprise";
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, GridChartsModule]);
 ```
 
 <note>
-If you are not using ES6 Modules and are instead using the bundled version of AG Grid Enterprise, note that `ag-grid-enterprise.js` already contains the charting module.
+| When importing from `@ag-grid-enterprise/charts`, only AG Chart Community features are available.
+</note>
+
+## Integrated Charts Package
+
+Applications that are not using ES6 Modules and are instead using the [bundled](/packages/) version of AG Grid Enterprise
+can install Integrated Enterprise Charts as follows:
+
+```bash
+npm install --save ag-grid-charts-enterpise
+```
+
+Then in your code you can import the charts module as shown below:
+
+```ts
+// import the AG Grid Enteprise package - this includes all enterprise features and performs all 
+// required registration
+import  "ag-grid-charts-enterprise";
+
+// rest of your code 
+```
+
+The `ag-grid-charts-enterpise` package includes AG Grid Enterprise and AG Charts Enterprise.
+
+<note>
+| The `ag-grid-enterprise` package is limited to AG Chart Community features.
 </note>
 
 ## Next Up

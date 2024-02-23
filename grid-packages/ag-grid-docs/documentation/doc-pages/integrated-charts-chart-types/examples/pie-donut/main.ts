@@ -1,8 +1,18 @@
-import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent, ChartRef, ChartType} from '@ag-grid-community/core';
+import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent, ChartRef} from '@ag-grid-community/core';
 import {getData} from "./data";
 
 let gridApi: GridApi;
 let chartRef: ChartRef;
+
+
+const chartConfig: Record<'pie' | 'donut', { chartColumns: string[] }> = {
+  pie: {
+    chartColumns: ['period', 'individual'],
+  },
+  donut: {
+    chartColumns: ['period', 'recurring', 'individual'],
+  },
+};
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -27,22 +37,28 @@ const gridOptions: GridOptions = {
 };
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
+  const chartType = 'pie';
   chartRef = params.api.createRangeChart({
     chartContainer: document.querySelector('#myChart') as any,
+    chartType,
     cellRange: {
       rowStartIndex: 0,
       rowEndIndex: 3,
-      columns: ['period', 'individual'],
+      columns: chartConfig[chartType].chartColumns,
     },
-    chartType: 'pie',
   })!;
 }
 
-function updateChart(chartType: ChartType) {
+function updateChart(chartType: 'pie' | 'donut') {
   gridApi.updateChart({
     type: 'rangeChartUpdate',
     chartId: `${chartRef.chartId}`,
-    chartType: chartType
+    chartType,
+    cellRange: {
+      rowStartIndex: 0,
+      rowEndIndex: 3,
+      columns: chartConfig[chartType].chartColumns,
+    },
   });
 }
 

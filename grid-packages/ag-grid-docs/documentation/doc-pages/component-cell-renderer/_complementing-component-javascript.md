@@ -1,10 +1,10 @@
 <framework-specific-section frameworks="javascript">
 <snippet transform={false}>
-|// define cellRenderer to be reused
-|const myCellRenderer = params => `&lt;span style="color: ${params.color}">${params.value}&lt;/span>`;
+|// define Cell Component to be reused
+|const myCellComp = params => `&lt;span style="color: ${params.color}">${params.value}&lt;/span>`;
 |
 |// use with a colour
-|colDef.cellRenderer = myCellRenderer;
+|colDef.cellRenderer = myCellComp;
 |colDef.cellRendererParams = {
 |    color: 'guinnessBlack'
 |}

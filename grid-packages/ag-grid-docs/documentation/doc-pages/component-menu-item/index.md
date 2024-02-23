@@ -3,15 +3,11 @@ title: "Menu Item Component"
 enterprise: true
 ---
 
-Menu item components allow you to customise the menu items shown in the [Column Menu](/column-menu/) and [Context Menu](/context-menu/). Use these when the provided menu items do not meet your requirements.
-
-## Example: Custom Menu Item Components
+Menu Item Components allow you to customise the menu items shown in the [Column Menu](/column-menu/) and [Context Menu](/context-menu/). Use these when the provided menu items do not meet your requirements.
 
 The following example demonstrates a custom menu item component in both the column menu and context menu.
 
 <grid-example title='Custom Menu Item Component' name='custom-menu-item' type='mixed' options='{ "enterprise": true, "modules": ["clientside", "menu", "excel", "clipboard", "range"] }'></grid-example>
-
-## Implementing a Menu Item Component
 
 <framework-specific-section frameworks="javascript,angular,vue">
 |Implement this interface to provide a custom menu item.
@@ -185,12 +181,8 @@ It is also possible to disable certain parts of the behaviour by returning an ob
 
 <interface-documentation interfaceName='IMenuConfigParams' config='{ "description": "" }'></interface-documentation>
 
-The following example demonstrates providing custom behaviour (in the column menu only). To allow for a full-width custom menu item alongside grid-provided ones, the default menu styling is overridden (see [Default Styling](/component-menu-item/#default-styling)).
+The following example demonstrates providing custom behaviour (in the column menu only) by including a filter as a menu item. To allow for a full-width custom menu item alongside grid-provided ones, the default menu styling is overridden (see [Default Styling](/component-menu-item/#default-styling)).
 
 <grid-example title='Menu Item Component Without Defaults' name='menu-item-without-defaults' type='mixed' options='{ "enterprise": true, "modules": ["clientside", "menu", "excel", "clipboard", "range"] }'></grid-example>
 
 Note this shows a column filter in the custom menu item as an example for how complex items can be added. It is not meant to be used as a complete solution.
-
-## Registering Menu Item Components
-
-See [Registering Custom Components](/components/#registering-custom-components) for details on registering and using custom menu item.

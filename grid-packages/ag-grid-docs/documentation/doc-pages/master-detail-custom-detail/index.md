@@ -19,6 +19,10 @@ const gridOptions = {
 The Detail Cell Renderer should be a [Cell Renderer](/component-cell-renderer/) component. See [Cell Renderer](/component-cell-renderer/) on how to build
 and register a Cell Renderer with the grid.
 
+<framework-specific-section frameworks="react">
+|To get refresh working smoothly on a custom Detail Component set the grid option `reactiveCustomComponents`.
+</framework-specific-section>
+
 The following examples demonstrate minimalist custom Detail Cell Renderer. Note that where a Detail Grid would normally appear, only the message "My Custom Detail" is shown.
 
 <grid-example title='Simple Detail Cell Renderer' name='simple-custom-detail' type='generated' options='{ "enterprise": true, "exampleHeight": 545, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>

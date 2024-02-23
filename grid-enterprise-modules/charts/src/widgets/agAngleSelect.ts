@@ -1,7 +1,11 @@
-import { AgInputNumberField, Autowired, DragService, Events, AgAbstractLabel, DragListenerParams, IAgLabelParams, RefSelector, _ } from "@ag-grid-community/core";
+import { AgInputNumberField, Autowired, DragService, Events, AgAbstractLabel, DragListenerParams, AgLabelParams, RefSelector, _ } from "@ag-grid-community/core";
 
+export interface AgAngleSelectParams extends AgLabelParams {
+    value?: number;
+    onValueChange?: (value: number) => void;
+};
 
-export class AgAngleSelect extends AgAbstractLabel {
+export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams> {
 
     private static TEMPLATE = /* html */
         `<div class="ag-angle-select">
@@ -30,12 +34,21 @@ export class AgAngleSelect extends AgAbstractLabel {
     private offsetY: number = 0;
     private dragListener: DragListenerParams;
 
-    constructor(config?: IAgLabelParams) {
+    constructor(config?: AgAngleSelectParams) {
         super(config, AgAngleSelect.TEMPLATE);
     }
 
     postConstruct() {
         super.postConstruct();
+
+        const { value, onValueChange } = this.config;
+
+        if (value != null) {
+            this.setValue(value, undefined, true);
+        }
+        if (onValueChange != null) {
+            this.onValueChange(onValueChange);
+        }
 
         this.dragListener = {
             eElement: this.eParentCircle,
@@ -199,7 +212,7 @@ export class AgAngleSelect extends AgAbstractLabel {
         return radians ? this.toRadians(this.degrees) : this.degrees;
     }
 
-    public setValue(degrees: number, radians?: boolean): this {
+    public setValue(degrees: number, radians?: boolean, silent?: boolean): this {
         let radiansValue: number;
         if (!radians) {
             radiansValue = this.normalizeAngle180(this.toRadians(degrees));
@@ -213,7 +226,9 @@ export class AgAngleSelect extends AgAbstractLabel {
             this.degrees = Math.floor(degrees);
             this.calculateCartesian();
             this.positionChildCircle(radiansValue);
-            this.dispatchEvent({ type: Events.EVENT_FIELD_VALUE_CHANGED });
+            if (!silent) {
+                this.dispatchEvent({ type: Events.EVENT_FIELD_VALUE_CHANGED });
+            }
         }
 
         return this;

@@ -110,7 +110,7 @@
       },
       {
         "title": "Guides",
-        "items": [
+        "items": [          
           {
             "title": "Tutorial: My First Grid",
             "url": "/deep-dive/",
@@ -129,30 +129,6 @@
             "url": "/react-hooks/",
             "frameworks": [
               "react"
-            ]
-          },
-          {
-            "title": "Vue2 Tutorial",
-            "url": "/vue2/",
-            "showInCollapsed": true,
-            "frameworks": [
-              "vue"
-            ]
-          },
-          {
-            "title": "Unidirectional Data Flow",
-            "url": "/framework-data-flow/",
-            "showInCollapsed": true,
-            "frameworks": [
-              "vue"
-            ]
-          },
-          {
-            "title": "Miscellaneous",
-            "url": "/framework-misc/",
-            "showInCollapsed": true,
-            "frameworks": [
-              "vue"
             ]
           }
         ]
@@ -263,11 +239,6 @@
             "showInCollapsed": true
           },
           {
-            "title": "Styling Cells",
-            "url": "/cell-styles/",
-            "showInCollapsed": true
-          },
-          {
             "title": "Grid Size",
             "url": "/grid-size/",
             "showInCollapsed": true
@@ -355,7 +326,7 @@
             "showInCollapsed": true
           },
           {
-            "title": "Installation",
+            "title": "Install Integrated Charts",
             "url": "/integrated-charts-installation/",
             "enterprise": true,
             "showInCollapsed": true
@@ -473,6 +444,73 @@
     "group": "CORE FEATURES",
     "items": [
       {
+        "title": "Cells",
+        "items": [
+          {
+            "title": "Cell Content",
+            "url": "/cell-content/",
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "Getting Values",
+                "url": "/value-getters/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Text Formatting",
+                "url": "/value-formatters/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Cell Components",
+                "url": "/component-cell-renderer/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Cell Data Types",
+                "url": "/cell-data-types/",
+                "showInCollapsed": true
+              }
+            ]
+          },
+          {
+            "title": "Styling Cells",
+            "url": "/cell-styles/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Highlighting Changes",
+            "url": "/change-cell-renderers/"
+          },
+          {
+            "title": "Tooltips",
+            "url": "/tooltips/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Advanced",
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "Expressions",
+                "url": "/cell-expressions/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "View Refresh",
+                "url": "/view-refresh/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Reference Data",
+                "url": "/reference-data/",
+                "showInCollapsed": true
+              }
+            ]
+          }
+        ]
+      },
+      {
         "title": "Columns",
         "items": [
           {
@@ -508,11 +546,6 @@
           {
             "title": "Column Moving",
             "url": "/column-moving/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Cell Data Types",
-            "url": "/cell-data-types/",
             "showInCollapsed": true
           },
           {
@@ -566,6 +599,11 @@
             "showInCollapsed": true
           },
           {
+            "title": "Displayed Rows",
+            "url": "/rendering-api/",
+            "showInCollapsed": true
+          },
+          {
             "title": "Row Dragging",
             "showInCollapsed": true,
             "url": "/row-dragging/",
@@ -591,7 +629,7 @@
             "showInCollapsed": true
           },
           {
-            "title": "Column Filters",
+            "title": "Provided Column Filters",
             "url": "/filtering/",
             "showInCollapsed": false,
             "items": [
@@ -665,12 +703,21 @@
               {
                 "title": "Filter API",
                 "url": "/filter-api/"
-              },
-              {
-                "title": "Floating Filters",
-                "url": "/floating-filters/"
               }
             ]
+          },          
+          {
+            "title": "Custom Column Filters",
+            "url": "/component-filter/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Floating Filters",
+            "url": "/floating-filters/"
+          },
+          {
+            "title": "Custom Floating Filters",
+            "url": "/component-floating-filter/"
           },
           {
             "title": "Advanced Filter",
@@ -726,94 +773,6 @@
         ]
       },
       {
-        "title": "Rendering",
-        "items": [
-          {
-            "title": "Cell Content",
-            "url": "/cell-content/",
-            "showInCollapsed": true,
-            "items": [
-              {
-                "title": "Value Getters",
-                "url": "/value-getters/",
-                "showInCollapsed": true
-              },
-              {
-                "title": "Value Formatters",
-                "url": "/value-formatters/",
-                "showInCollapsed": true
-              },
-              {
-                "title": "Expressions",
-                "url": "/cell-expressions/",
-                "showInCollapsed": true
-              },
-              {
-                "title": "Reference Data",
-                "url": "/reference-data/",
-                "showInCollapsed": true
-              }
-            ]
-          },
-          {
-            "title": "Cell Rendering",
-            "url": "/cell-rendering/",
-            "showInCollapsed": true,
-            "items": [
-              {
-                "title": "Group Cell Renderer",
-                "url": "/group-cell-renderer/",
-                "enterprise": true
-              },
-              {
-                "title": "Change Cell Renderers",
-                "url": "/change-cell-renderers/"
-              }
-            ]
-          },
-          {
-            "title": "Rendering API",
-            "url": "/rendering-api/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "View Refresh",
-            "url": "/view-refresh/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Flashing Cells",
-            "url": "/flashing-cells/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Change Detection",
-            "url": "/change-detection/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Tooltips",
-            "url": "/tooltips/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Context",
-            "url": "/context/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "See Also",
-            "url": "",
-            "items": [
-              {
-                "title": "Expressions & Context",
-                "url": "/expressions-and-context/"
-              }
-            ]
-          }
-        ]
-      },
-      {
         "title": "Editing",
         "items": [
           {
@@ -837,48 +796,48 @@
             "showInCollapsed": true
           },
           {
-            "title": "Cell Editors",
+            "title": "Edit Components",
             "url": "/cell-editors/",
             "showInCollapsed": true
           },
           {
-            "title": "Provided Cell Editors",
+            "title": "Provided Edit Components",
             "url": "/provided-cell-editors/",
             "showInCollapsed": true,
             "items": [
               {
-                "title": "Text Cell Editor",
+                "title": "Text Editor",
                 "url": "/provided-cell-editors-text/",
                 "showInCollapsed": true
               },
               {
-                "title": "Large Text Cell Editor",
+                "title": "Large Text Editor",
                 "url": "/provided-cell-editors-large-text/",
                 "showInCollapsed": true
               },
               {
-                "title": "Select Cell Editor",
+                "title": "Select Editor",
                 "url": "/provided-cell-editors-select/",
                 "showInCollapsed": true
               },
               {
-                "title": "Rich Select Cell Editor",
+                "title": "Rich Select Editor",
                 "url": "/provided-cell-editors-rich-select/",
                 "showInCollapsed": true,
                 "enterprise": true
               },
               {
-                "title": "Number Cell Editor",
+                "title": "Number Editor",
                 "url": "/provided-cell-editors-number/",
                 "showInCollapsed": true
               },
               {
-                "title": "Date Cell Editors",
+                "title": "Date Editors",
                 "url": "/provided-cell-editors-date/",
                 "showInCollapsed": true
               },
               {
-                "title": "Checkbox Cell Editor",
+                "title": "Checkbox Editor",
                 "url": "/provided-cell-editors-checkbox/",
                 "showInCollapsed": true
               }
@@ -1056,6 +1015,23 @@
                     "enterprise": true,
                     "showInCollapsed": false
                   }
+                ]
+              },
+              {
+                "title": "Group Cell Component",
+                "url": "/group-expand-collapse-comp/",
+                "enterprise": true,
+                "items": [
+                  {
+                    "title": "Provided Component",
+                    "url": "/group-cell-renderer/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Custom Component",
+                    "url": "/group-custom-group-comp/",
+                    "enterprise": true
+                  }                  
                 ]
               },
               {
@@ -1248,6 +1224,12 @@
                 "url": "/tool-panel-filters/",
                 "showInCollapsed": true,
                 "enterprise": true
+              },
+              {
+                "title": "Custom Panel",
+                "url": "/component-tool-panel/",
+                "enterprise": true,
+                "showInCollapsed": true
               }
             ]
           },
@@ -1260,6 +1242,12 @@
           {
             "title": "Context Menu",
             "url": "/context-menu/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Menu Item Component",
+            "url": "/component-menu-item/",
             "enterprise": true,
             "showInCollapsed": true
           },
@@ -1334,6 +1322,10 @@
                 "title": "Row Selection",
                 "url": "/server-side-model-selection/",
                 "enterprise": true
+              },
+              {
+                "title": "Loading Cell Renderer",
+                "url": "/component-loading-cell-renderer/"
               },
               {
                 "title": "Changing Columns",
@@ -1531,112 +1523,35 @@
         "title": "Custom Components",
         "items": [
           {
-            "title": "Registering Components",
+            "title": "Custom Components",
             "url": "/components/",
             "showInCollapsed": true
-          },
-          {
-            "title": "Cell Renderer",
-            "url": "/component-cell-renderer/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Cell Editor",
-            "url": "/component-cell-editor/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Date Component",
-            "url": "/component-date/"
-          },
-          {
-            "title": "Filter Component",
-            "url": "/component-filter/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Floating Filter Component",
-            "url": "/component-floating-filter/"
-          },
-          {
-            "title": "Header Component",
-            "url": "/component-header/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Loading Cell Renderer",
-            "url": "/component-loading-cell-renderer/"
-          },
-          {
-            "title": "Menu Item Component",
-            "url": "/component-menu-item/",
-            "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
-            "title": "Overlay Component",
-            "url": "/component-overlay/"
-          },
-          {
-            "title": "Status Bar Component",
-            "url": "/component-status-bar/",
-            "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
-            "title": "Tool Panel Component",
-            "url": "/component-tool-panel/",
-            "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
-            "title": "Tooltip Component",
-            "url": "/component-tooltip/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Higher Order Components",
-            "url": "/framework-hoc/",
-            "showInCollapsed": true,
-            "frameworks": [
-              "react"
-            ]
-          },
-          {
-            "title": "Parent/Child Communication",
-            "url": "/component-communication/",
-            "showInCollapsed": true,
-            "frameworks": [
-              "angular",
-              "vue"
-            ]
-          },
-          {
-            "title": "Provide/Inject",
-            "url": "/component-provide-inject/",
-            "showInCollapsed": true,
-            "frameworks": [
-              "vue"
-            ]
           }
         ]
       },
       {
-        "title": "",
-        "items": []
+        "title": "Performance",
+        "items": [
+          {
+            "title": "Value Cache",
+            "url": "/value-cache/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Change Detection",
+            "url": "/change-detection/",
+            "showInCollapsed": true
+          }
+        ]
       }
     ]
   },
   {
-    "group": "MISCELLANEOUS",
+    "group": "MISC",
     "items": [
       {
         "title": "Migration",
         "items": [
-          {
-            "title": "Upgrading to AG Grid 31.1",
-            "url": "/upgrading-to-ag-grid-31-1/"
-          },
           {
             "title": "Upgrading to AG Grid 31",
             "url": "/upgrading-to-ag-grid-31/"
@@ -1653,7 +1568,7 @@
       },
       {
         "title": "Other",
-        "items": [         
+        "items": [
           {
             "title": "Testing",
             "url": "/testing/"
@@ -1670,10 +1585,19 @@
             "url": "/security/"
           },
           {
-            "title": "Compatibility",
-            "url": "/angular-compatibility/",
+            "title": "Vue2 Tutorial",
+            "url": "/vue2/",
+            "showInCollapsed": true,
             "frameworks": [
-              "angular"
+              "vue"
+            ]
+          },
+          {
+            "title": "Unidirectional Data Flow",
+            "url": "/framework-data-flow/",
+            "showInCollapsed": true,
+            "frameworks": [
+              "vue"
             ]
           },
           {
@@ -1684,8 +1608,28 @@
             ]
           },
           {
+            "title": "Compatibility",
+            "url": "/angular-compatibility/",
+            "frameworks": [
+              "angular"
+            ]
+          },
+          {
             "title": "Supported Browsers",
             "url": "/supported-browsers/"
+          },
+          {
+            "title": "Miscellaneous",
+            "url": "/framework-misc/",
+            "showInCollapsed": true,
+            "frameworks": [
+              "vue"
+            ]
+          },
+          {
+            "title": "Context",
+            "url": "/context/",
+            "showInCollapsed": true
           }
         ]
       }

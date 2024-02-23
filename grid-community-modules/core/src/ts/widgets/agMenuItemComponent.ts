@@ -239,7 +239,7 @@ export class AgMenuItemComponent extends BeanStub {
         }
         this.menuItemComp.setActive?.(true);
         if (!this.suppressFocus) {
-            this.eGui!.focus();
+            this.eGui!.focus({ preventScroll: true });
         }
 
         if (openSubMenu && this.params.subMenu) {

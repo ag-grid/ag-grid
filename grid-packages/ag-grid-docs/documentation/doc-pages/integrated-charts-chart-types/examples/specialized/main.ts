@@ -4,36 +4,45 @@ import {getData} from "./data";
 let gridApi: GridApi;
 let chartRef: ChartRef;
 
-const chartConfig: Record<'heatmap' | 'waterfall', { columnDefs: ColDef[], chartColumns: string[] }> = {
-  heatmap: {
-    columnDefs: [
-      { field: "year", width: 150, chartDataType: "category" },
-      { field: "jan", chartDataType: "series" },
-      { field: "feb", chartDataType: "series" },
-      { field: "mar", chartDataType: "series" },
-      { field: "apr", chartDataType: "series" },
-      { field: "may", chartDataType: "series" },
-      { field: "jun", chartDataType: "series" },
-      { field: "jul", chartDataType: "series" },
-      { field: "aug", chartDataType: "series" },
-      { field: "sep", chartDataType: "series" },
-      { field: "oct", chartDataType: "series" },
-      { field: "nov", chartDataType: "series" },
-      { field: "dec", chartDataType: "series" },
-    ],
-    chartColumns: ['year', 'jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'],
-  },
-  waterfall: {
-    columnDefs:  [
-      { field: 'financials', width: 150, chartDataType: 'category' },
-      { field: 'amount', chartDataType: 'series' },
-    ],
-    chartColumns: ['financials', 'amount'],
-  },
-}
+const heatmapColIds: string[] = [
+  'year',
+  'jan',
+  'feb',
+  'mar',
+  'apr',
+  'may',
+  'jun',
+  'jul',
+  'aug',
+  'sep',
+  'oct',
+  'nov',
+  'dec',
+];
+const heatmapColDefs: ColDef[] = [
+  { field: 'year', width: 150, chartDataType: 'category' },
+  { field: 'jan' },
+  { field: 'feb' },
+  { field: 'mar' },
+  { field: 'apr' },
+  { field: 'may' },
+  { field: 'jun' },
+  { field: 'jul' },
+  { field: 'aug' },
+  { field: 'sep' },
+  { field: 'oct' },
+  { field: 'nov' },
+  { field: 'dec' },
+];
+
+const waterfallColIds: string[] = ['financials', 'amount'];
+const waterfallColDefs: ColDef[] = [
+  { field: 'financials', width: 150, chartDataType: 'category' },
+  { field: 'amount', chartDataType: 'series' },
+];
 
 const gridOptions: GridOptions = {
-  columnDefs: chartConfig.heatmap.columnDefs,
+  columnDefs: heatmapColDefs,
   defaultColDef: {
     flex: 1,
     minWidth: 100,
@@ -55,23 +64,27 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
     chartContainer: document.querySelector('#myChart') as any,
     chartType: 'heatmap',
     cellRange: {
-      columns: chartConfig.heatmap.chartColumns,
+      columns: heatmapColIds,
     },
   })!;
 }
 
 function updateChart(chartType: 'heatmap' | 'waterfall') {
-  gridApi.setGridOption('rowData', []);
-  if (chartRef) chartRef.destroyChart();
-  gridApi.setGridOption('columnDefs', chartConfig[chartType].columnDefs);
-  chartRef = gridApi.createRangeChart({
-    chartContainer: document.querySelector('#myChart') as any,
-    chartType,
-    cellRange: {
-      columns: chartConfig[chartType].chartColumns,
-    }
-  })!;
-  getData(chartType).then(rowData => gridApi.setGridOption('rowData', rowData));
+  getData(chartType).then((rowData) => {
+    gridApi.setGridOption('rowData', rowData);
+    gridApi.setGridOption(
+        'columnDefs',
+        chartType === 'heatmap' ? heatmapColDefs : waterfallColDefs
+    );
+    gridApi.updateChart({
+      type: 'rangeChartUpdate',
+      chartId: chartRef.chartId,
+      chartType,
+      cellRange: {
+        columns: chartType === 'heatmap' ? heatmapColIds : waterfallColIds,
+      },
+    });
+  });
 }
 
 // setup the grid after the page has finished loading

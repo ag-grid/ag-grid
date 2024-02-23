@@ -132,7 +132,7 @@ const TableRow = ({ datum, cellRenderer, columns, id }) => {
                     }
 
                     return (
-                        <div className={styles.cell} key={`column-${columnField}`}>
+                        <div className={classnames(styles.cell, value.detail ? styles.hasDetails : undefined)} key={`column-${columnField}`}>
                             {isFirstColumn ? (
                                 <TitleCell level={level}>
                                     {cellValue}

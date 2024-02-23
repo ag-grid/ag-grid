@@ -1,14 +1,21 @@
-import { AgPickerField, IPickerFieldParams } from "./agPickerField";
+import { AgPickerField, AgPickerFieldParams } from "./agPickerField";
 import { ListOption, AgList } from "./agList";
 import { Events } from "../eventKeys";
 import { KeyCode } from "../constants/keyCode";
 import { setAriaControls } from "../utils/aria";
 
-export class AgSelect extends AgPickerField<string | null, IPickerFieldParams, AgList> {
+export interface AgSelectParams extends Omit<AgPickerFieldParams, 'pickerType' | 'pickerAriaLabelKey' | 'pickerAriaLabelValue'> {
+    options?: ListOption[];
+    pickerType?: string;
+    pickerAriaLabelKey?: string;
+    pickerAriaLabelValue?: string;
+}
+
+export class AgSelect extends AgPickerField<string | null, AgSelectParams & AgPickerFieldParams, AgList> {
     public static EVENT_ITEM_SELECTED = 'selectedItem';
     protected listComponent: AgList | undefined;
 
-    constructor(config?: IPickerFieldParams) {
+    constructor(config?: AgSelectParams) {
         super({
             pickerAriaLabelKey: 'ariaLabelSelectField',
             pickerAriaLabelValue: 'Select Field',
@@ -24,10 +31,23 @@ export class AgSelect extends AgPickerField<string | null, IPickerFieldParams, A
         super.postConstruct();
         this.createListComponent();
         this.eWrapper.tabIndex = this.gridOptionsService.get('tabIndex');
+
+        const { options } = this.config;
+        if (options != null) {
+            this.addOptions(options);
+        }
+
+        this.addManagedListener(this.eWrapper, 'focusout', this.onWrapperFocusOut.bind(this));
+    }
+
+    private onWrapperFocusOut(e: FocusEvent): void {
+        if (!this.eWrapper.contains(e.relatedTarget as Element)) {
+            this.hidePicker();
+        }
     }
 
     private createListComponent(): void {
-        this.listComponent = this.createBean(new AgList('select'));
+        this.listComponent = this.createBean(new AgList('select', true));
         this.listComponent.setParentComponent(this);
 
         const eListAriaEl = this.listComponent.getAriaElement();
@@ -35,20 +55,6 @@ export class AgSelect extends AgPickerField<string | null, IPickerFieldParams, A
 
         eListAriaEl.setAttribute('id', listId);
         setAriaControls(this.getAriaElement(), eListAriaEl);
-
-        this.listComponent.addGuiEventListener('keydown', (e: KeyboardEvent) => {
-            if (e.key === KeyCode.TAB) {
-                e.preventDefault();
-                e.stopImmediatePropagation();
-
-                this.getGui().dispatchEvent(new KeyboardEvent('keydown', {
-                    key: e.key,
-                    shiftKey: e.shiftKey,
-                    ctrlKey: e.ctrlKey,
-                    bubbles: true
-                }));
-            };
-        })
 
         this.listComponent.addManagedListener(
             this.listComponent,
@@ -73,6 +79,17 @@ export class AgSelect extends AgPickerField<string | null, IPickerFieldParams, A
     protected createPickerComponent() {
         // do not create the picker every time to save state
         return this.listComponent!;
+    }
+
+    protected onKeyDown(e: KeyboardEvent): void {
+        const { key } = e;
+        if (key === KeyCode.TAB) {
+            this.hidePicker();
+        } else if (!this.isPickerDisplayed || (key !== KeyCode.ENTER && key !== KeyCode.UP && key !== KeyCode.DOWN)) {
+            super.onKeyDown(e);
+        } else {
+            this.listComponent?.handleKeyDown(e);
+        }
     }
 
     public showPicker() {

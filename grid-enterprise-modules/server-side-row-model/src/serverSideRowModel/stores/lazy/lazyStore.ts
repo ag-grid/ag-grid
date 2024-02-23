@@ -702,4 +702,8 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             heightPx: this.heightPx,
         }
     }
+
+    public getCache() {
+        return this.cache;
+    }
 }

@@ -16,10 +16,13 @@ export interface AgGroupComponentParams {
     enabled?: boolean;
     suppressEnabledCheckbox?: boolean;
     suppressOpenCloseIcons?: boolean;
+    suppressToggleExpandOnEnableChange?: boolean;
     cssIdentifier?: string;
     items?: GroupItem[];
     alignItems?: Align;
     direction?: Direction;
+    onEnableChange?: (enabled: boolean) => void;
+    expanded?: boolean;
 }
 
 export class AgGroupComponent extends Component {
@@ -33,6 +36,7 @@ export class AgGroupComponent extends Component {
     private expanded: boolean;
     private suppressEnabledCheckbox: boolean = true;
     private suppressOpenCloseIcons: boolean = false;
+    private suppressToggleExpandOnEnableChange: boolean = false;
     private alignItems: Align | undefined;
 
     @RefSelector('eTitleBar') private eTitleBar: HTMLElement;
@@ -43,10 +47,10 @@ export class AgGroupComponent extends Component {
     @RefSelector('eTitle') private eTitle: HTMLElement;
     @RefSelector('eContainer') private eContainer: HTMLElement;
 
-    constructor(params: AgGroupComponentParams = {}) {
+    constructor(private readonly params: AgGroupComponentParams = {}) {
         super(AgGroupComponent.getTemplate(params));
 
-        const { title, enabled, items, suppressEnabledCheckbox, suppressOpenCloseIcons } = params;
+        const { title, enabled, items, suppressEnabledCheckbox, suppressOpenCloseIcons, expanded, suppressToggleExpandOnEnableChange } = params;
 
         this.title = title;
         this.cssIdentifier = params.cssIdentifier || 'default';
@@ -55,12 +59,19 @@ export class AgGroupComponent extends Component {
 
         this.alignItems = params.alignItems || 'center';
 
+        // expanded by default
+        this.expanded = expanded == null ? true : expanded;
+
         if (suppressEnabledCheckbox != null) {
             this.suppressEnabledCheckbox = suppressEnabledCheckbox;
         }
 
         if (suppressOpenCloseIcons != null) {
             this.suppressOpenCloseIcons = suppressOpenCloseIcons;
+        }
+
+        if (suppressToggleExpandOnEnableChange != null) {
+            this.suppressToggleExpandOnEnableChange = suppressToggleExpandOnEnableChange;
         }
     }
 
@@ -98,7 +109,7 @@ export class AgGroupComponent extends Component {
         }
 
         if (this.enabled) {
-            this.setEnabled(this.enabled);
+            this.setEnabled(this.enabled, undefined, true);
         }
 
         this.setAlignItems(this.alignItems);
@@ -109,6 +120,12 @@ export class AgGroupComponent extends Component {
         this.setupExpandContract();
         this.refreshAriaStatus();
         this.refreshChildDisplay();
+        setDisplayed(this.eContainer, this.expanded);
+
+        const { onEnableChange } = this.params;
+        if (onEnableChange != null) {
+            this.onEnableChange(onEnableChange);
+        }
     }
 
     private setupExpandContract(): void {
@@ -224,11 +241,13 @@ export class AgGroupComponent extends Component {
         this.eTitleBar.classList.add(cssClass);
     }
 
-    public setEnabled(enabled: boolean, skipToggle?: boolean): this {
+    public setEnabled(enabled: boolean, skipToggle?: boolean, skipExpand?: boolean): this {
         this.enabled = enabled;
         this.refreshDisabledStyles();
 
-        this.toggleGroupExpand(enabled);
+        if (!skipExpand) {
+            this.toggleGroupExpand(enabled);
+        }
 
         if (!skipToggle) {
             this.cbGroupEnabled.setValue(enabled);
@@ -243,7 +262,7 @@ export class AgGroupComponent extends Component {
 
     public onEnableChange(callbackFn: (enabled: boolean) => void): this {
         this.cbGroupEnabled.onValueChange((newSelection: boolean) => {
-            this.setEnabled(newSelection, true);
+            this.setEnabled(newSelection, true, this.suppressToggleExpandOnEnableChange);
             callbackFn(newSelection);
         });
 

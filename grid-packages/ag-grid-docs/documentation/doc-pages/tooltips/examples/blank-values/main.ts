@@ -10,32 +10,23 @@ const toolTipValueGetter = (params: ITooltipParams) => params.value == null || p
 
 const columnDefs: ColDef[] = [
   {
-    headerName: 'Athlete Col 1',
+    headerName: 'Athlete - Blank Cells No Tooltip',
     field: 'athlete',
-    minWidth: 150,
     tooltipField: 'athlete',
   },
   {
-    headerName: 'Athlete Col 2',
+    headerName: 'Athlete - Blank Cells Show Tooltip',
     field: 'athlete',
-    minWidth: 150,
     tooltipValueGetter: toolTipValueGetter,
-  },
-  { field: 'sport', width: 110 },
-  { field: 'gold', width: 100 },
-  { field: 'silver', width: 100 },
-  { field: 'bronze', width: 100 },
-  { field: 'total', width: 100 },
+  }
 ]
 
 let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   defaultColDef: {
-    editable: true,
     flex: 1,
-    minWidth: 100,
-    filter: true,
+    minWidth: 100
   },
   rowData: null,
   columnDefs: columnDefs,

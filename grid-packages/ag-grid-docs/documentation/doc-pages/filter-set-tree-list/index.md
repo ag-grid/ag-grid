@@ -129,7 +129,7 @@ The following example demonstrates complex objects being used with Tree Data and
 
 ## Filter Value Tooltips
 
-When using Tree List with a [Custom Tooltip Component](/component-tooltip/), the tooltip params will be of type `ISetFilterTreeListTooltipParams` which extends the Custom Tooltip params to include the level of the item within the tree.
+When using Tree List with a [Custom Tooltip Component](/tooltips/), the tooltip params will be of type `ISetFilterTreeListTooltipParams` which extends the Custom Tooltip params to include the level of the item within the tree.
 
 Additional property available on `ISetFilterTreeListTooltipParams`:
 

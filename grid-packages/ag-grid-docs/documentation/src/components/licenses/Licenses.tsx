@@ -82,7 +82,7 @@ const Price = ({ priceFullDollars, launchPrice }) => {
             { hasCost && <span className={styles.fromText}>From</span> }
 
             <p className={classnames(styles.priceFullDollars, !hasCost ? styles.freePrice : '' )}>
-                <span>{ hasCost ? `$${ price }` : 'Free' }</span>
+                <span className={styles.priceCost}>{ hasCost ? `$${ price }` : 'Free' }</span>
 
                 { launchPrice && (
                     <>
@@ -92,9 +92,7 @@ const Price = ({ priceFullDollars, launchPrice }) => {
                     </>
                 )}
             </p>
-
             { hasCost && <p className={styles.developerText}>per developer</p> }
-            { !hasCost && <p className={styles.developerText}>under MIT-license</p> }
         </div>
     );
 };
@@ -147,7 +145,7 @@ export const Licenses: FunctionComponent<{ isChecked: boolean }> = ({ isChecked 
             {filteredData.map((data) => {
                 let columns, cellRenderer;
 
-                if (data.id === 'togther') { // Correcting the typo to 'together' if necessary
+                if (data.id === 'together') { // Correcting the typo to 'together' if necessary
                     columns = {
                         'label': '',
                         'chartsGrid': '',

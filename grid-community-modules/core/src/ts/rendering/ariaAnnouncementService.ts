@@ -36,7 +36,9 @@ export class AriaAnnouncementService extends BeanStub {
         // and then use a setTimeout to force the Screen Reader announcement 
         this.descriptionContainer!.textContent = '';
         setTimeout(() => {
-            this.descriptionContainer!.textContent = value;
+            if (this.isAlive() && this.descriptionContainer) {
+                this.descriptionContainer.textContent = value;
+            }
         }, 50);
     }
 

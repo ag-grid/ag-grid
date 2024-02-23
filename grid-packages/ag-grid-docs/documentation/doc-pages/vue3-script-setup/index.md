@@ -62,4 +62,4 @@ When exposing a date component for use with AG Grid you need to expose the compo
 
 with `DateComponent` being the custom component you wish to use within AG Grid.
 
-You can learn more about Date Components [here](../component-date/). 
+You can learn more about Date Components [here](../filter-date/). 

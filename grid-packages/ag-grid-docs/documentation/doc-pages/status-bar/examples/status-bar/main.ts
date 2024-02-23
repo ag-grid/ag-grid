@@ -20,7 +20,18 @@ const gridOptions: GridOptions<IOlympicData> = {
     minWidth: 100,
   },
   statusBar: {
-    statusPanels: [{ statusPanel: 'agAggregationComponent' }],
+    statusPanels: [
+        {
+            statusPanel: 'agTotalRowCountComponent',
+            align: 'left'
+        },
+        {
+            statusPanel: 'agAggregationComponent',
+            statusPanelParams: {
+                aggFuncs: ['avg', 'sum']
+            }
+        }
+    ]
   },
   enableRangeSelection: true,
 }

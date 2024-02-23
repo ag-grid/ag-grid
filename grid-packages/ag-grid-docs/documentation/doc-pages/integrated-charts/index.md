@@ -8,7 +8,7 @@ integrates with the grid, requiring minimal effort from developers.
 
 ## Built-In Charting
 
-Just set `enableCharts=true` to [allow users to create charts](/integrated-charts-user-created/) from inside the grid.
+Just set `enableCharts=true` to allow users to create charts from inside the grid.
 
 <image-caption src="integrated-charts/resources/built-in-charting.gif" alt="Built-In Charting" auto="true" maxWidth="95%" centered="true" toggledarkmode="true"></image-caption>
 
@@ -22,14 +22,13 @@ Any updates within the grid, including operations such as sorting and filtering,
 
 An ever-expanding selection of chart types are provided.
 
-## Highly Interactive 
-
-A wide range of chart interactivity features are available.
-
-## Fully Customisable
-
-Integrated Charts comes with high level of customisation for developers and the end users.
+<image-caption src="integrated-charts/resources/extensive-chart-types.gif" alt="Extensive Chart Types" auto="true" maxWidth="95%" centered="true" toggledarkmode="true"></image-caption>
 
 ## Next Up
 
-Continue to the next section to learn about: [Installing Integrated Charts](/integrated-charts-installation/).
+Explore how to chart grid data with Integrated Charts:
+
+- [User Created Charts](/integrated-charts-user-created/): charts created by users through the grid's UI.
+- [Application Created Charts](/integrated-charts-application-created/): charts created programmatically via the Grid API.
+
+Alternatively, continue to the next section to learn how to: [Install Integrated Charts](/integrated-charts-installation/).

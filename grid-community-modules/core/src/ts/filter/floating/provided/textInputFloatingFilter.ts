@@ -5,7 +5,7 @@ import { ProvidedFilter } from '../../provided/providedFilter';
 import { PostConstruct, Autowired } from '../../../context/context';
 import { SimpleFloatingFilter } from './simpleFloatingFilter';
 import { FilterChangedEvent } from '../../../events';
-import { AgInputTextField, ITextInputField } from '../../../widgets/agInputTextField';
+import { AgInputTextField, AgInputTextFieldParams } from '../../../widgets/agInputTextField';
 import { ColumnModel } from '../../../columns/columnModel';
 import { KeyCode } from '../../../constants/keyCode';
 import { TextFilterParams, TextFilter, TextFilterModel } from '../../provided/text/textFilter';
@@ -26,7 +26,7 @@ export class FloatingFilterTextInputService extends BeanStub implements Floating
     private eFloatingFilterTextInput: AgInputTextField;
     private valueChangedListener: (e: KeyboardEvent) => void = () => {};
 
-    constructor(private params?: { config?: ITextInputField }) {
+    constructor(private params?: { config?: AgInputTextFieldParams }) {
         super();
     }
 

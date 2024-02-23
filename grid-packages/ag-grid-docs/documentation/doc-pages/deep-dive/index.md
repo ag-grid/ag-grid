@@ -815,7 +815,7 @@ Now, when we run the grid, we should see a company logo next to the name:
 
 <grid-example title='Cell Renderer Example' name='cell-renderer-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
 
-_Note: Read our [Cell Renderer](/cell-rendering/) page for more information on using custom components in cells_
+_Note: Read our [Cell Components](/component-cell-renderer/) page for more information on using custom components in cells_
 
 ---
 
@@ -855,7 +855,7 @@ Now, when we run the grid, we should see a company logo next to the name:
 
 <grid-example title='Cell Renderer Example' name='cell-renderer-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
 
-_Note: Read our [Cell Renderer](/cell-rendering/) page for more information on using custom components in cells_
+_Note: Read our [Cell Components](/component-cell-renderer/) page for more information on using custom components in cells_
 
 ---
 
@@ -912,7 +912,7 @@ Now, when we run the grid, we should see a company logo next to the name:
 
 <grid-example title='Cell Renderer Example' name='cell-renderer-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
 
-_Note: Read our [Cell Renderer](/cell-rendering/) page for more information on using custom components in cells_
+_Note: Read our [Cell Components](/component-cell-renderer/) page for more information on using custom components in cells_
 
 ---
 
@@ -971,7 +971,7 @@ Now, when we run the grid, we should see a company logo next to the name:
 
 <grid-example title='Cell Renderer Example' name='cell-renderer-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
 
-_Note: Read our [Cell Renderer](/cell-rendering/) page for more information on using custom components in cells_
+_Note: Read our [Cell Components](/component-cell-renderer/) page for more information on using custom components in cells_
 
 ---
 

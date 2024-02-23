@@ -1,6 +1,7 @@
 import {
     _,
     AgCheckbox,
+    AgCheckboxParams,
     AgGroupComponent,
     AgRadioButton,
     AgSelect,
@@ -201,7 +202,7 @@ export class ChartDataPanel extends Component {
             cssIdentifier: 'charts-data'
         }));
 
-        const inputName = `chartDimension${this.getCompId()}`;
+        const inputName = `chartDimension${this.categoriesGroupComp.getCompId()}`;
 
         // Display either radio buttons or checkboxes
         // depending on whether the current chart type supports multiple category columns
@@ -209,19 +210,20 @@ export class ChartDataPanel extends Component {
         const supportsMultipleCategoryColumns = isHierarchical(chartType);
 
         columns.forEach(col => {
+            const params: AgCheckboxParams = {
+                label: _.escapeString(col.displayName)!,
+                value: col.selected,
+                inputName
+            };
             const comp: AgCheckbox | AgRadioButton = this.categoriesGroupComp!.createManagedBean(
                 supportsMultipleCategoryColumns
                     ? (() => {
-                        const checkboxComp = new AgCheckbox();
+                        const checkboxComp = new AgCheckbox(params);
                         checkboxComp.addCssClass('ag-data-select-checkbox');
                         return checkboxComp;
                     })()
-                    : new AgRadioButton()
+                    : new AgRadioButton(params)
             );
-
-            comp.setLabel(_.escapeString(col.displayName)!);
-            comp.setValue(col.selected);
-            comp.setInputName(inputName);
 
             this.addChangeListener(comp, col);
             this.categoriesGroupComp!.addItem(comp);
@@ -259,31 +261,29 @@ export class ChartDataPanel extends Component {
         }));
 
         if (this.chartController.isActiveXYChart()) {
-            const pairedModeToggle = this.seriesGroupComp.createManagedBean(new AgToggleButton());
-            pairedModeToggle
-                .setLabel(this.chartTranslationService.translate('paired'))
-                .setLabelAlignment('left')
-                .setLabelWidth('flex')
-                .setInputWidth('flex')
-                .setValue(this.chartOptionsService.getPairedMode())
-                .onValueChange(newValue => {
+            const pairedModeToggle = this.seriesGroupComp.createManagedBean(new AgToggleButton({
+                label: this.chartTranslationService.translate('paired'),
+                labelAlignment: 'left',
+                labelWidth: 'flex',
+                inputWidth: 'flex',
+                value: this.chartOptionsService.getPairedMode(),
+                onValueChange: newValue => {
                     this.chartOptionsService.setPairedMode(!!newValue);
                     this.chartController.updateForGridChange();
-                });
-
+                }
+            }));
             this.seriesGroupComp.addItem(pairedModeToggle);
         }
 
         const getSeriesLabel = this.generateGetSeriesLabel();
 
         columns.forEach(col => {
-            const comp = this.seriesGroupComp!.createManagedBean(new AgCheckbox());
-            comp.addCssClass('ag-data-select-checkbox');
-
             const label = getSeriesLabel(col);
-
-            comp.setLabel(label);
-            comp.setValue(col.selected);
+            const comp = this.seriesGroupComp!.createManagedBean(new AgCheckbox({
+                label,
+                value: col.selected
+            }));
+            comp.addCssClass('ag-data-select-checkbox');
 
             this.addChangeListener(comp, col);
             this.seriesGroupComp!.addItem(comp);
@@ -338,12 +338,13 @@ export class ChartDataPanel extends Component {
             }));
 
             const secondaryAxisComp = this.seriesChartTypeGroupComp!
-                .createManagedBean(new AgCheckbox())
-                .setLabel(this.chartTranslationService.translate('secondaryAxis'))
-                .setLabelWidth("flex")
-                .setDisabled(['groupedColumn', 'stackedColumn', 'stackedArea'].includes(seriesChartType.chartType))
-                .setValue(!!seriesChartType.secondaryAxis)
-                .onValueChange((enabled: boolean) => this.chartController.updateSeriesChartType(col.colId, undefined, enabled));
+                .createManagedBean(new AgCheckbox({
+                    label: this.chartTranslationService.translate('secondaryAxis'),
+                    labelWidth: "flex",
+                    disabled: ['groupedColumn', 'stackedColumn', 'stackedArea'].includes(seriesChartType.chartType),
+                    value: !!seriesChartType.secondaryAxis,
+                    onValueChange: (enabled: boolean) => this.chartController.updateSeriesChartType(col.colId, undefined, enabled)
+                }));
 
             seriesItemGroup.addItem(secondaryAxisComp);
 
@@ -359,13 +360,13 @@ export class ChartDataPanel extends Component {
                 { value: 'stackedColumn', text: translate('stackedColumn', 'Stacked Column') },
             ];
 
-            const chartTypeComp = seriesItemGroup.createManagedBean(new AgSelect());
-            chartTypeComp
-                .setLabelAlignment('left')
-                .setLabelWidth("flex")
-                .addOptions(availableChartTypes)
-                .setValue(seriesChartType.chartType)
-                .onValueChange((chartType: ChartType) => this.chartController.updateSeriesChartType(col.colId, chartType));
+            const chartTypeComp = seriesItemGroup.createManagedBean(new AgSelect({
+                labelAlignment: 'left',
+                labelWidth: "flex",
+                options: availableChartTypes,
+                value: seriesChartType.chartType,
+                onValueChange: (chartType: ChartType) => this.chartController.updateSeriesChartType(col.colId, chartType)
+            }));
 
             seriesItemGroup.addItem(chartTypeComp);
 
@@ -404,7 +405,7 @@ export class ChartDataPanel extends Component {
         }
 
         const isBubble = this.chartType === 'bubble';
-        const isInPairedMode = this.isInPairedMode();
+        const isInPairedMode = this.chartOptionsService.getPairedMode();
         let selectedValuesCount = 0;
 
         const indexToAxisLabel = new Map<number, string>();
@@ -448,10 +449,6 @@ export class ChartDataPanel extends Component {
     private getDataPanelDef() {
         const userProvidedDataPanelDef = this.gridOptionsService.get('chartToolPanelsDef')?.dataPanel;
         return userProvidedDataPanelDef ? userProvidedDataPanelDef : DefaultDataPanelDef;
-    }
-
-    private isInPairedMode() {
-        return this.chartController.isActiveXYChart() && this.chartOptionsService.getSeriesOption('paired', 'scatter');
     }
 
     private clearComponents() {

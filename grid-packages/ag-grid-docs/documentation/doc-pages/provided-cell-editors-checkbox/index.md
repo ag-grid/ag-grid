@@ -10,7 +10,7 @@ Edit any cell in the grid below to see the Checkbox Cell Editor. Note that by de
 
 <grid-example title='Checkbox Editor' name='checkbox-editor' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
 
-Enabled with `agCheckboxCellEditor` and generally used in conjunction with the [Checkbox Cell Renderer](/cell-rendering/#checkbox-cell-renderer).
+Enabled with `agCheckboxCellEditor` and generally used in conjunction with the [Checkbox Cell Component](/cell-data-types/#enable-cell-data-types).
 
 ```js
 columnDefs: [

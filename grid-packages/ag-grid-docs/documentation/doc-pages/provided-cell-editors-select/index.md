@@ -88,7 +88,7 @@ columnDefs: [
 |
 |If you are unhappy with the additional click required, we advise you don't depend on the
 |browsers standard Select (ie avoid `agSelectCellEditor`) and instead use `agRichSelectCellEditor` or
-|create your own using a [Cell Editor Component](../component-cell-editor/).
+|create your own using a [Cell Editor Component](../cell-editors/).
 </note>
 
 Continue to the next section: [Rich Select Cell Editor](../provided-cell-editors-rich-select/).

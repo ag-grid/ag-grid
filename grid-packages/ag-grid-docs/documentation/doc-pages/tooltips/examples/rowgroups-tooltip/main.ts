@@ -1,16 +1,11 @@
 import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
-  { field: 'country', width: 120, rowGroup: true },
-  { field: 'year', width: 90, rowGroup: true },
-  { field: 'sport', width: 110 },
+  { field: 'country', width: 120, rowGroup: true, hide: true },
+  { field: 'year', width: 90, rowGroup: true, hide: true },
   { field: 'athlete', width: 200 },
-  { field: 'gold', width: 100 },
-  { field: 'silver', width: 100 },
-  { field: 'bronze', width: 100 },
-  { field: 'total', width: 100 },
   { field: 'age', width: 90 },
-  { field: 'date', width: 110 },
+  { field: 'sport', width: 110 }
 ]
 
 let gridApi: GridApi<IOlympicData>;
@@ -23,17 +18,15 @@ const gridOptions: GridOptions<IOlympicData> = {
       const count = params.node && params.node.allChildrenCount
 
       if (count != null) {
-        return params.value + ' (' + count + ')'
+        return 'Tooltip text - ' + params.value + ' (' + count + ')'
       }
 
       return params.value
     },
   },
   defaultColDef: {
-    editable: true,
     flex: 1,
-    minWidth: 100,
-    filter: true,
+    minWidth: 100
   },
   columnDefs: columnDefs,
   rowData: null,

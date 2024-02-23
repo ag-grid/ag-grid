@@ -213,8 +213,8 @@ export class GridChartComp extends Component {
         }
 
         this.chartController.setChartProxy(this.chartProxy);
-        this.chartOptionsService = this.createBean(new ChartOptionsService(this.chartController));
-        this.titleEdit && this.titleEdit.refreshTitle(this.chartController, this.chartOptionsService);
+        this.chartOptionsService = this.createManagedBean(new ChartOptionsService(this.chartController));
+        this.titleEdit && this.titleEdit.refreshTitle(this.chartController, this.chartOptionsService.getChartOptionMenuUtils());
     }
     
     private getChartThemeName(): string {
@@ -340,7 +340,7 @@ export class GridChartComp extends Component {
         this.titleEdit = this.createBean(new TitleEdit(this.chartMenu));
         this.eTitleEditContainer.appendChild(this.titleEdit.getGui());
         if (this.chartProxy) {
-            this.titleEdit.refreshTitle(this.chartController, this.chartOptionsService);
+            this.titleEdit.refreshTitle(this.chartController, this.chartOptionsService.getChartOptionMenuUtils());
         }
     }
 
@@ -387,7 +387,7 @@ export class GridChartComp extends Component {
             this.chartController.raiseChartUpdatedEvent();
         });
 
-        this.titleEdit.refreshTitle(this.chartController, this.chartOptionsService);
+        this.titleEdit.refreshTitle(this.chartController, this.chartOptionsService.getChartOptionMenuUtils());
     }
 
     private chartTypeChanged(updateParams?: UpdateChartParams): boolean {

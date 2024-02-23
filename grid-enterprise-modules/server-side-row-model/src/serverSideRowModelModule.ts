@@ -13,13 +13,14 @@ import { ListenerUtils } from "./serverSideRowModel/listeners/listenerUtils";
 import { ServerSideSelectionService } from "./serverSideRowModel/services/serverSideSelectionService";
 import { VERSION } from "./version";
 import { ServerSideExpansionService } from "./serverSideRowModel/services/serverSideExpansionService";
+import { LazyBlockLoadingService } from "./serverSideRowModel/stores/lazy/lazyBlockLoadingService";
 
 export const ServerSideRowModelModule: Module = {
     version: VERSION,
     moduleName: ModuleNames.ServerSideRowModelModule,
     rowModel: 'serverSide',
     beans: [ServerSideRowModel, ExpandListener, SortListener, StoreUtils, BlockUtils, NodeManager, TransactionManager,
-        FilterListener, StoreFactory, ListenerUtils, ServerSideSelectionService, ServerSideExpansionService],
+        FilterListener, StoreFactory, ListenerUtils, ServerSideSelectionService, ServerSideExpansionService, LazyBlockLoadingService],
     dependantModules: [
         EnterpriseCoreModule
     ]
