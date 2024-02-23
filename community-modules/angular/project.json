@@ -6,7 +6,7 @@
   "targets": {
     "build": {
       "executor": "nx:run-script",
-      "dependsOn": ["ag-charts-community:build:types"],
+      "dependsOn": ["ag-grid-community:build:types"],
       "inputs": ["{projectRoot}/angular.json", "{projectRoot}/projects/**", "!{projectRoot}/dist"],
       "cache": true,
       "outputs": ["{projectRoot}/dist"],
@@ -17,7 +17,7 @@
     "pack": {
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
-      "inputs": ["{projectRoot}/dist/ag-charts-angular/"],
+      "inputs": ["{projectRoot}/dist/ag-grid-angular/"],
       "outputs": ["{workspaceRoot}/dist/{projectRoot}.tgz"],
       "options": {
         "cwd": "{projectRoot}/dist/ag-grid-angular",

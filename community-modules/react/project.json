@@ -3,7 +3,6 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "community-modules/react/src",
   "projectType": "library",
-  "tags": ["module:community", "module", "community"],
   "targets": {
     "lint": {
       "executor": "nx:noop"
@@ -11,11 +10,8 @@
     "build": {
       "executor": "nx:noop",
       "dependsOn": ["build:package", "build:umd"],
-      "inputs": [
-        {
-          "externalDependencies": ["npm:typescript"]
-        }
-      ],
+      "inputs": [],
+      "outputs": [],
       "cache": false,
       "configurations": {
         "watch": {},
@@ -56,7 +52,7 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "community-modules/react/dist/umd",
-        "outputFileName": "ag-charts-react",
+        "outputFileName": "ag-grid-react",
         "main": "community-modules/react/dist/index.cjs",
         "tsConfig": "community-modules/react/tsconfig.lib.json",
         "esbuildConfig": "esbuild.config.cjs",
