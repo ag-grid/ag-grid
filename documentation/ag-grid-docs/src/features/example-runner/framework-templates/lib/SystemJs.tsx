@@ -262,6 +262,9 @@ export const SystemJs = ({
     if (isDev) {
         configuration.gridMap = {
             ...configuration.gridMap,
+            'ag-charts-community': `${localPrefix}/ag-charts-community`,
+            'ag-charts-enterprise': `${localPrefix}/ag-charts-enterprise`,
+
             '@ag-grid-community/client-side-row-model': `${localPrefix}/@ag-grid-community/client-side-row-model`,
             '@ag-grid-community/core': `${localPrefix}/@ag-grid-community/core`,
             '@ag-grid-community/csv-export': `${localPrefix}/@ag-grid-community/csv-export`,

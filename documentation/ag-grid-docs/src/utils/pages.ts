@@ -76,6 +76,14 @@ export const FILES_PATH_MAP: Record<string, string | GlobConfig> = {
     '@ag-grid-enterprise/status-bar/dist/**': 'enterprise-modules/status-bar/dist/**/*.{cjs,js,map}',
     '@ag-grid-enterprise/viewport-row-model/dist/**': 'enterprise-modules/viewport-row-model/dist/**/*.{cjs,js,map}',
 
+    // Charts modules
+    // Is it cjs?
+    // 'ag-charts-community': 'enterprise-modules/charts/dist/package/main.cjs.js',
+    // 'ag-charts-enterprise': 'enterprise-modules/charts-enterprise/dist/package/main.cjs.js',
+    // Or esm modules?
+    'ag-charts-community': 'enterprise-modules/charts/dist/package/main.esm.mjs',
+    'ag-charts-enterprise': 'enterprise-modules/charts-enterprise/dist/package/main.esm.mjs',
+
     // Framework libraries
     // '@ag-grid-community/react/**': 'community-modules/react/dist/**/*.{cjs,mjs,js,map}',
     // '@ag-grid-community/client-side-row-model': 'community-modules/client-side-row-model/dist/package/main.cjs.js',
