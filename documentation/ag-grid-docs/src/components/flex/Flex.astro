@@ -3,9 +3,10 @@ interface Props {
     direction?: 'row' | 'column';
     alignItems?: 'center' | 'start' | 'end' | 'self-start' | 'self-end' | 'flex-start' | 'flex-end';
     justifyContent?: 'center' | 'start' | 'end' | 'self-start' | 'self-end' | 'flex-start' | 'flex-end';
+    gap?: 'size-6' | 'size-10';
 }
 
-const { direction, alignItems, justifyContent } = Astro.props as Props;
+const { direction, alignItems, justifyContent, gap } = Astro.props as Props;
 
 const style = {
     ...(alignItems && { 'align-items': alignItems }),
@@ -13,13 +14,33 @@ const style = {
 };
 ---
 
-<div class:list={['flexContainer', direction]} style={style}>
+<div
+    class:list={[
+        'flexContainer',
+        direction,
+        {
+            gapSize6: gap === 'size-6',
+            gapSize10: gap === 'size-10',
+        },
+    ]}
+    style={style}
+>
     <slot />
 </div>
 
-<style>
+<style lang="scss">
+    @use '../../design-system' as *;
+
     .flexContainer {
         display: flex;
+
+        &.gapSize6 {
+            gap: $spacing-size-6;
+        }
+
+        &.gapSize10 {
+            gap: $spacing-size-10;
+        }
 
         &.row {
             flex-direction: row;

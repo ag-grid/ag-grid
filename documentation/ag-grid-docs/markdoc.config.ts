@@ -231,6 +231,10 @@ export default defineMarkdocConfig({
                     type: String,
                     matches: ['center', 'start', 'end', 'self-start', 'self-end', 'flex-start', 'flex-end'],
                 },
+                gap: {
+                    type: String,
+                    matches: ['size-6', 'size-10'],
+                },
             },
         },
         tabs: {
