@@ -21,65 +21,18 @@ If you're unsure whether to use `packages` or `modules` then we'd recommend star
 
 If you want to minimize your bundle size then you should definitely use `modules` to only include features that your application requires.
 
-````js {% fixme=true %}
-<style>
-  ```
-  .pm-outer {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 1.5rem;
-      margin-bottom: 6rem;
-  }
+{% flex justifyContent="center" %}
 
-  .pm-outer .tile {
-      display:flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      width: 14rem;
-      padding: 1rem;
-      background-color: var(--background-100);
-      border-radius: var(--border-radius);
-      border: 2px solid var(--secondary-border-color);
-      transition: border-color .25s ease-in-out;
-  }
+{% imageCaption imagePath="resources/packages.svg" alt="Grid Packages Overview" constrained=true centered=true width="20rem" %}
+{% flex justifyContent="center" %}
+[Packages Overview](./packages)
+{% /flex %}
+{% /imageCaption %}
 
-  .pm-outer .tile:hover {
-      border-color: var(--link-hover-color);
-  } 
+{% imageCaption imagePath="resources/modules.svg" alt="Grid Modules Overview" constrained=true centered=true width="20rem" %}
+{% flex justifyContent="center" %}
+[Modules Overview](./modules)
+{% /flex %}
+{% /imageCaption %}
 
-  .pm-outer img {
-      width: 100%;
-      max-width: 6rem;
-      margin-top: 3rem;
-      margin-bottom: 3rem;
-  }
-
-  [data-dark-mode='true'] .pm-outer img {
-      filter: invert(1);
-  }
-
-  .pm-outer .button {
-      display: inline-block;
-  }
-  ```
-</style>
-
-````
-
-````js {% fixme=true %}
-<div class="pm-outer">
-  ```
-  <a href="../packages/" class="tile">
-      <image-caption src="packages-modules/resources/packages.svg" alt="Grid Packages Overview" constrained="true" centered="true"></image-caption>
-      <span class="button">Packages Overview</span>
-  </a>
-  <a href="../modules/" class="tile">
-      <image-caption src="packages-modules/resources/modules.svg" alt="Grid Modules Overview" constrained="true" centered="true"></image-caption>
-      <span class="button">Modules Overview</span>
-  </a>
-  ```
-</div>
-
-````
+{% /flex %}
