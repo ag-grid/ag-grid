@@ -175,8 +175,6 @@ const paramTsType = (param: ParamMeta): string => {
       return 'BorderStyle';
     case 'border':
       return 'string | boolean';
-    case 'boolean':
-      return 'boolean';
     case 'preset':
       return `${upperCamelCase(param.property)} | null`;
   }
@@ -194,8 +192,6 @@ const paramValueIsValid = (param: ParamMeta, value: any): boolean => {
       return cssBorderStyles.includes(value);
     case 'border':
       return typeof value === 'string' || typeof value === 'boolean';
-    case 'boolean':
-      return typeof value === 'boolean';
     case 'preset':
       return value == null || param.presetNames.includes(value);
   }
@@ -219,8 +215,6 @@ const paramExtraDocs = (param: ParamMeta): string | null => {
       return 'Any valid CSS expression is accepted.';
     case 'preset':
       return 'Setting a preset provides default values for other properties that you can then override if required.';
-    case 'boolean':
-      return null;
   }
   fatalError(`Unknown param type: ${type}`);
 };

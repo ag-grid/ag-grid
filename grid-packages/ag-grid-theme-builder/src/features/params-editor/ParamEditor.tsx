@@ -2,6 +2,7 @@ import { Close } from '@carbon/icons-react';
 import { Checkbox, IconButton, Option, Select, Tooltip, styled } from '@mui/joy';
 import { ReactElement } from 'react';
 import { cssBorderStyles } from '../../ag-grid-community-themes/metadata';
+import { borderValueToCss } from '../../ag-grid-community-themes/theme-utils';
 import { Cell } from '../../components/Table';
 import { ParamModel, useParamAtom } from '../../model/ParamModel';
 import { ColorParamEditor } from './ColorParamEditor';
@@ -34,8 +35,13 @@ export const ParamEditor = ({ param }: ParamEditorProps) => {
       //       sx={{ '--Slider-size': '15px' }}
       //     />
       //   );
-      case 'boolean':
-        return <Checkbox checked={!!value} onChange={() => setValue(!value)} />;
+      case 'border':
+        return (
+          <Checkbox
+            checked={borderValueToCss(value) === borderValueToCss(true)}
+            onChange={(e) => setValue(e.target.checked)}
+          />
+        );
       case 'borderStyle':
         return (
           <Select value={value || null} onChange={(_, newValue) => setValue(newValue)}>
@@ -50,7 +56,6 @@ export const ParamEditor = ({ param }: ParamEditorProps) => {
         // presets don't have param editors, they're handled by part editors
         return <span />;
       case 'length':
-      case 'border':
       case 'css':
         return <CssParamEditor param={param} />;
     }

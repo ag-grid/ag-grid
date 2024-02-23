@@ -51,7 +51,6 @@ const cssStringIsValid = (value: string, type: ParamType): boolean => {
       cssProperty = 'color';
       break;
     case 'css':
-    case 'boolean':
     case 'preset':
       return true;
   }

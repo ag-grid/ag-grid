@@ -35,7 +35,6 @@ export type PresetMeta = {
 };
 
 export type ParamMeta =
-  | BooleanParam
   | PresetParam
   | ColorParam
   | LengthParam
@@ -49,11 +48,6 @@ export type ParamCommon = {
   property: string;
   docs: string;
   defaultValueComment?: string;
-};
-
-export type BooleanParam = ParamCommon & {
-  type: 'boolean';
-  defaultValue: boolean;
 };
 
 export type PresetParam = ParamCommon & {
