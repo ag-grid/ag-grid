@@ -3,6 +3,8 @@
 @mixin output {
   .ag-menu {
     @include ag.card();
+    background-color: var(--ag-menu-background-color);
+    border-color: var(--ag-menu-border-color);
     padding: 0;
   }
 
@@ -23,7 +25,6 @@
 
   .ag-menu-option-active,
   .ag-compact-menu-option-active {
-    /* TODO different variable */
     background-color: var(--ag-row-hover-color);
   }
 
@@ -103,9 +104,11 @@
     color: var(--ag-secondary-foreground-color);
   }
 
-  //   .ag-filter-separator {
-  //     border-top: var(--ag-borders-critical) var(--ag-border-color);
-  //   }
+  /* PORTED
+  .ag-filter-separator {
+    border-top: var(--ag-borders-critical) var(--ag-border-color);
+  }
+  */
 
   .ag-filter-select .ag-picker-field-wrapper {
     // Force picker to match width of sibling inputs.
@@ -176,7 +179,7 @@
   .ag-set-filter-add-group-indent {
     @include ag.unthemed-rtl(
       (
-        margin-left: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2),
+        margin-left: calc(var(--ag-icon-size) + var(--ag-widget-container-horizontal-padding)),
       )
     );
   }
@@ -189,12 +192,18 @@
     );
   }
 
+  .ag-filter-menu .ag-set-filter-list {
+    min-width: 200px;
+  }
+
   @include ag.keyboard-focus((ag-filter-virtual-list-item), 1px);
 
   .ag-filter-apply-panel {
     padding: var(--ag-widget-container-vertical-padding)
       var(--ag-widget-container-horizontal-padding);
-    // border-top: var(--ag-borders-secondary) var(--ag-secondary-border-color);
+    /* PORTED
+    border-top: var(--ag-borders-secondary) var(--ag-secondary-border-color);
+    */
   }
 
   .ag-filter-apply-panel-button {

@@ -36,7 +36,6 @@
     font-weight: 600;
 
     &:hover:not(:disabled) {
-      /* TODO different variable */
       background-color: var(--ag-row-hover-color);
     }
 
@@ -263,7 +262,6 @@
     height: var(--ag-list-item-height);
 
     &:hover {
-      /* TODO different variable */
       background-color: var(--ag-row-hover-color);
 
       .ag-advanced-filter-builder-item-button {

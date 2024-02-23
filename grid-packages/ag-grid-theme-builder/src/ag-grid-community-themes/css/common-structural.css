@@ -11,6 +11,18 @@ ag-grid-aurelia {
   display: block;
 }
 
+.ag-aria-description-container {
+  z-index: 9999;
+  border: 0px;
+  clip: rect(1px, 1px, 1px, 1px);
+  height: 1px;
+  width: 1px;
+  position: absolute;
+  overflow: hidden;
+  padding: 0px;
+  white-space: nowrap;
+}
+
 .ag-hidden {
   display: none !important;
 }
@@ -404,10 +416,10 @@ ag-grid-aurelia {
   align-items: center;
   position: absolute;
   height: 100%;
-  overflow: hidden;
 }
 
-.ag-header-cell.ag-header-active .ag-header-cell-menu-button {
+.ag-header-cell.ag-header-active .ag-header-cell-menu-button,
+.ag-header-cell-filter-button {
   opacity: 1;
 }
 
@@ -491,6 +503,14 @@ ag-grid-aurelia {
 
 .ag-header-select-all {
   display: flex;
+}
+
+.ag-header-cell-menu-button,
+.ag-header-cell-filter-button,
+.ag-side-button-button,
+.ag-panel-title-bar-button,
+.ag-floating-filter-button-button {
+  cursor: pointer;
 }
 
 /**
@@ -1206,6 +1226,10 @@ ag-grid-aurelia {
   }
 }
 
+.ag-dialog .ag-panel-content-wrapper .ag-column-select {
+  user-select: none;
+}
+
 .ag-menu-list {
   display: table;
   width: 100%;
@@ -1224,6 +1248,10 @@ ag-grid-aurelia {
 
 .ag-menu-option-text {
   white-space: nowrap;
+}
+
+.ag-menu-option-custom {
+  display: contents;
 }
 
 .ag-compact-menu-option {

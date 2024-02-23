@@ -220,6 +220,7 @@
     height: 100%;
     align-items: center;
     justify-content: center;
+    background-color: var(--ag-background-color);
   }
 
   .ag-chart .ag-chart-menu {
@@ -267,6 +268,8 @@
 
       .ag-icon {
         padding: 14px 5px 14px 2px;
+        width: auto;
+        height: auto;
       }
 
       &:before {
@@ -359,30 +362,6 @@
   .ag-chart-mini-thumbnail {
     border: 1px solid var(--ag-secondary-border-color);
     border-radius: 5px;
-    margin: 5px;
-
-    // specific style to apply when there are 3 items in the row
-    &:nth-last-child(3),
-    &:nth-last-child(3) ~ .ag-chart-mini-thumbnail {
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    &:first-child {
-      @include ag.unthemed-rtl(
-        (
-          margin-left: 0,
-        )
-      );
-    }
-
-    &:last-child {
-      @include ag.unthemed-rtl(
-        (
-          margin-right: 0,
-        )
-      );
-    }
 
     &.ag-selected {
       border-color: var(--ag-minichart-selected-chart-color);
@@ -404,14 +383,10 @@
     margin-left: var(--ag-grid-size);
   }
 
-  // .ag-charts-settings-group-title-bar,
-  // .ag-charts-data-group-title-bar,
-  // .ag-charts-format-top-level-group-title-bar {
-  //     border-top: var(--ag-borders-secondary) var(--ag-secondary-border-color);
-  // }
-
-  .ag-charts-settings-group-container {
-    padding: var(--ag-grid-size);
+  .ag-charts-settings-group-title-bar,
+  .ag-charts-data-group-title-bar,
+  .ag-charts-format-top-level-group-title-bar {
+    border-top: var(--ag-borders-secondary) var(--ag-secondary-border-color);
   }
 
   .ag-charts-data-group-container {
@@ -438,8 +413,22 @@
     @include ag.vertical-widget-container();
   }
 
-  .ag-charts-group-container.ag-group-container-horizontal {
+  .ag-charts-settings-group-container {
     padding: var(--ag-grid-size);
+    row-gap: 8px;
+
+    display: grid;
+    grid-template-columns: 60px 1fr 60px 1fr 60px;
+
+    .ag-chart-mini-thumbnail:nth-child(3n + 1) {
+      grid-column: 1;
+    }
+    .ag-chart-mini-thumbnail:nth-child(3n + 2) {
+      grid-column: 3;
+    }
+    .ag-chart-mini-thumbnail:nth-child(3n + 3) {
+      grid-column: 5;
+    }
   }
 
   .ag-chart-data-section,
@@ -449,11 +438,11 @@
   }
 
   .ag-chart-menu-panel {
-    // @include ag.unthemed-rtl(
-    //   (
-    //     border-left: solid 1px var(--ag-border-color),
-    //   )
-    // );
+    @include ag.unthemed-rtl(
+      (
+        border-left: solid 1px var(--ag-border-color),
+      )
+    );
     background-color: var(--ag-control-panel-background-color);
   }
 }

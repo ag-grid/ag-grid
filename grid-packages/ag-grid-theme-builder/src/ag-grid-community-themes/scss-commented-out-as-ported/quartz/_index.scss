@@ -68,13 +68,17 @@
   }
 
   .ag-menu {
-    background-color: var(--ag-control-panel-background-color);
     color: color-mix(in srgb, transparent, var(--ag-foreground-color) 95%);
 
     &.ag-tabs {
       // min width only on top-level popup menu to stop it switching as we change tab
       min-width: 290px;
     }
+  }
+
+  .ag-panel-content-wrapper .ag-column-select {
+    background-color: var(--ag-control-panel-background-color);
+    color: color-mix(in srgb, transparent, var(--ag-foreground-color) 95%);
   }
 
   .ag-menu-option .ag-icon {
@@ -122,6 +126,18 @@
   .ag-side-button {
     border-top: var(--ag-borders) transparent;
     border-bottom: var(--ag-borders) transparent;
+  }
+
+  .ag-side-button-label {
+    @media (max-resolution: 1.5x) {
+      // On Windows, on low res screens only, most custom fonts look awful
+      // in vertical-lr mode. Use "Segoe UI" in preference. In practice
+      // this is a Windows-only fix since most non-Windows computers don't
+      // have Segoe UI installed.
+      font-family: 'Segoe UI', var(--ag-font-family);
+      // ... and additionally apply a rotation to fix rendering in Firefox
+      transform: rotate(0.05deg);
+    }
   }
 
   .ag-side-button.ag-selected {
@@ -384,6 +400,7 @@
   }
 
   .ag-header-cell-menu-button,
+  .ag-header-cell-filter-button,
   .ag-panel-title-bar-button,
   .ag-header-expand-icon,
   .ag-column-group-icons,
@@ -400,11 +417,36 @@
   .ag-chart-menu-icon,
   .ag-chart-menu-close {
     --ag-quartz-icon-hover-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 10%);
+
     &:hover {
       border-radius: 1px;
       background-color: var(--ag-quartz-icon-hover-color);
       box-shadow: 0 0 0 4px var(--ag-quartz-icon-hover-color);
-      cursor: pointer;
+    }
+  }
+
+  .ag-filter-active {
+    --ag-quartz-icon-active-color: color-mix(in srgb, transparent, var(--ag-active-color) 14%);
+    --ag-quartz-icon-hover-color: color-mix(in srgb, transparent, var(--ag-active-color) 28%);
+
+    position: relative;
+    border-radius: 1px;
+    background-color: var(--ag-quartz-icon-active-color);
+    box-shadow: 0 0 0 4px var(--ag-quartz-icon-active-color);
+
+    &::after {
+      content: '';
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      top: -1px;
+      right: -1px;
+      border-radius: 50%;
+      background-color: var(--ag-active-color);
+    }
+
+    .ag-icon-filter {
+      clip-path: path('M8,0C8,4.415 11.585,8 16,8L16,16L0,16L0,0L8,0Z');
     }
   }
 
