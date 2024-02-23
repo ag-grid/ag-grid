@@ -31,7 +31,7 @@ export interface IDate extends BaseDate {
     /** Sets the date represented by this component */
     setDate(date: Date | null): void;
 
-    // /** @deprecated v31.1 - Use `refresh` instead. */
+    /** @deprecated v31.1 - Use `refresh` instead. */
     onParamsUpdated?(params: IDateParams): void;
 
     /**

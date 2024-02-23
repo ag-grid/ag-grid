@@ -44,7 +44,6 @@ export { LicenseManager } from "@ag-grid-enterprise/core";
 export { exportMultipleSheetsAsExcel, getMultipleSheetsAsExcel } from '@ag-grid-enterprise/excel-export';
 export { SetFilter } from "@ag-grid-enterprise/set-filter";
 export * from "@ag-grid-enterprise/charts";
-export * from "ag-charts-community";
 
 /* COMMUNITY_EXPORTS_START_DO_NOT_DELETE */
 export { AbstractColDef,
@@ -259,11 +258,15 @@ ExcelProtection,
 ExcelRelationship,
 ExcelRow,
 ExcelSheetMargin,
+ExcelSheetNameGetter,
+ExcelSheetNameGetterParams,
 ExcelSheetPageSetup,
 ExcelStyle,
 ExcelTable,
 ExcelWorksheet,
 ExpansionService,
+ExportFileNameGetter,
+ExportFileNameGetterParams,
 ExportParams,
 ExpressionService,
 FieldElement,

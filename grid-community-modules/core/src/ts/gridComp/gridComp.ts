@@ -5,7 +5,6 @@ import { Component } from "../widgets/component";
 import { ISideBar } from "../interfaces/iSideBar";
 import { RefSelector } from "../widgets/componentAnnotations";
 import { isVisible } from "../utils/dom";
-import { FocusService } from "../focusService";
 import { GridCtrl, IGridComp } from "./gridCtrl";
 import { LayoutCssClasses, UpdateLayoutClassesParams } from "../styling/layoutFeature";
 import { TabGuardComp } from "../widgets/tabGuardComp";

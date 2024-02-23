@@ -6,15 +6,15 @@ import {
 } from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
-  { field: 'athlete', minWidth: 200, filter: true, suppressMenu: true },
-  { field: 'age', filter: true, floatingFilter: true, suppressMenu: true },
-  { field: 'country', minWidth: 200, filter: true, suppressHeaderFilter: true },
-  { field: 'year', filter: true, floatingFilter: true, suppressHeaderFilter: true },
+  { field: 'athlete', minWidth: 200, filter: true, suppressHeaderMenuButton: true },
+  { field: 'age', filter: true, floatingFilter: true, suppressHeaderMenuButton: true },
+  { field: 'country', minWidth: 200, filter: true, suppressHeaderFilterButton: true },
+  { field: 'year', filter: true, floatingFilter: true, suppressHeaderFilterButton: true },
   { field: 'sport', minWidth: 200, suppressHeaderContextMenu: true },
-  { field: 'gold', suppressMenu: true, suppressHeaderFilter: true },
-  { field: 'silver', filter: true, suppressMenu: true, suppressHeaderFilter: true },
-  { field: 'bronze', filter: true, floatingFilter: true, suppressMenu: true, suppressHeaderFilter: true },
-  { field: 'total', filter: true, suppressMenu: true, suppressHeaderFilter: true, suppressHeaderContextMenu: true },
+  { field: 'gold', suppressHeaderMenuButton: true, suppressHeaderFilterButton: true },
+  { field: 'silver', filter: true, suppressHeaderMenuButton: true, suppressHeaderFilterButton: true },
+  { field: 'bronze', filter: true, floatingFilter: true, suppressHeaderMenuButton: true, suppressHeaderFilterButton: true },
+  { field: 'total', filter: true, suppressHeaderMenuButton: true, suppressHeaderFilterButton: true, suppressHeaderContextMenu: true },
 ]
 
 let gridApi: GridApi<IOlympicData>;

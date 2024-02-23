@@ -1,6 +1,33 @@
 [
 
   {
+    "version": "31.1.0",
+    "date": "February 20th 2024",
+    "highlights": [
+      {
+        "text": "Integrated Charts use all AG Charts Enterprise features",
+        "url": ""
+      },
+      {
+        "text": "Column Menu Redesign",
+        "url": "/javascript-data-grid/column-menu/"
+      },
+      {
+        "text": "Custom Column/Context Menu Item Components",
+        "url": "/javascript-data-grid/component-menu-item/"
+      },
+      {
+        "text": "Compressed Excel file",
+        "url": "/javascript-data-grid/excel-export/"
+      },
+      {
+        "text": "Client-side Sorting in Server-side row model",
+        "url": "/javascript-data-grid/server-side-model-sorting/#client-side-sorting"
+      }
+    ],
+    "notesUrl": "/javascript-data-grid/upgrading-to-ag-grid-31-1/"
+  },
+  {
     "version": "31.0.0",
     "date": "November 29th 2023",
     "highlights": [
@@ -25,8 +52,7 @@
         "url": "https://www.ag-grid.com/javascript-data-grid/row-pagination/#top"
       }
     ],
-    "buttonURL": "/javascript-data-grid/upgrading-to-ag-grid-31/",
-    "majorMinor": true
+    "notesUrl": "/javascript-data-grid/upgrading-to-ag-grid-31/"
   },
   {
     "version": "30.2.0",
@@ -52,8 +78,7 @@
         "text": "Documentation examples on CodeSandbox",
         "url": ""
       }
-    ],
-    "majorMinor": false
+    ]
   },
   {
     "version": "30.1.0",
@@ -79,8 +104,7 @@
         "text": "Interactive Tooltips",
         "url": "https://www.ag-grid.com/javascript-data-grid/tooltips/#interactive-tooltips"
       }
-    ],
-    "majorMinor": false
+    ]
   },
   {
     "version": "30.0.0",
@@ -106,8 +130,7 @@
         "text": "Export row groups to Excel with their current expanded state",
         "url": ""
       }
-    ],
-    "majorMinor": false
+    ]
   },
   {
     "version": "29.3.0",
@@ -133,8 +156,7 @@
         "text": "Pie chart callout labels anti-collision improvements",
         "url": ""
       }
-    ],
-    "majorMinor": false
+    ]
   },
   {
     "version": "29.2.0",
@@ -160,7 +182,6 @@
         "text": "Displaying stacked and unstacked column series together in the chart",
         "url": ""
       }
-    ],
-    "majorMinor": false
+    ]
   }
 ]

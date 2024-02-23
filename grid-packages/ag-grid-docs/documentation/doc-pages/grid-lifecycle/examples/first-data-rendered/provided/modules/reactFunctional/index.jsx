@@ -56,7 +56,7 @@ const GridExample = () => {
 
     const onFirstDataRendered = useCallback((params) => {
         const {api} = params;
-        api.setColumnWidth('athleteDescription', 300);
+        api.setColumnWidths([{ key: 'athleteDescription', newWidth: 300}]);
 
         const column = api.getColumn('athleteDescription');
         if (column) {

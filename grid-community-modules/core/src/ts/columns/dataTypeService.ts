@@ -19,7 +19,7 @@ import {
 import { IRowModel } from '../interfaces/iRowModel';
 import { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import { Events } from '../eventKeys';
-import { ColumnModel, ColumnState, ColumnStateParams } from './columnModel';
+import { ColumnModel, ColumnState, ColumnStateParams, convertSourceType } from './columnModel';
 import { getValueUsingField } from '../utils/object';
 import { ModuleRegistry } from '../modules/moduleRegistry';
 import { ModuleNames } from '../modules/moduleNames';
@@ -83,9 +83,9 @@ export class DataTypeService extends BeanStub {
         });
         this.processDataTypeDefinitions();
 
-        this.addManagedPropertyListener('dataTypeDefinitions', () => {
+        this.addManagedPropertyListener('dataTypeDefinitions', (event) => {
             this.processDataTypeDefinitions();
-            this.columnModel.recreateColumnDefs('gridOptionsChanged');
+            this.columnModel.recreateColumnDefs(convertSourceType(event.source));
         });
     }
 
@@ -745,7 +745,6 @@ export class DataTypeService extends BeanStub {
                 valueFormatter: (params: ValueFormatterLiteParams<any, number>) => {
                     if (params.value == null) { return ''; }
                     if (typeof params.value !== 'number' || isNaN(params.value)) {
-                        console.log('was', typeof params.value, params.value, params);
                         return translate('invalidNumber', 'Invalid Number');
                     }
                     return String(params.value);

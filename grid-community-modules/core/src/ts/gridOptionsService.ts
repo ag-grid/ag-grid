@@ -45,9 +45,11 @@ export interface PropertyChangeSet {
     /** All the properties that have been updated in this change set */
     properties: (keyof GridOptions)[];
 }
+export type PropertyChangedSource = 'api' | 'gridOptionsUpdated';
 export interface PropertyChangedEvent extends AgEvent {
     type: 'gridPropertyChanged',
     changeSet: PropertyChangeSet | undefined;
+    source: PropertyChangedSource
 }
 
 /**
@@ -60,6 +62,7 @@ export interface PropertyValueChangedEvent<K extends keyof GridOptions> extends 
     changeSet: PropertyChangeSet | undefined;
     currentValue: GridOptionsOrBooleanCoercedValue<K>;
     previousValue: GridOptionsOrBooleanCoercedValue<K>;
+    source: PropertyChangedSource
 }
 
 export type PropertyChangedListener = (event: PropertyChangedEvent) => void
@@ -235,7 +238,7 @@ export class GridOptionsService {
     }
 
     private static changeSetId = 0;
-    public updateGridOptions({ options, source = 'api' }: { options: Partial<GridOptions>, source?: 'api' | 'gridOptionsUpdated' }): void {
+    public updateGridOptions({ options, source = 'api' }: { options: Partial<GridOptions>, source?: PropertyChangedSource }): void {
         const changeSet: PropertyChangeSet = { id: GridOptionsService.changeSetId++, properties: [] };
         // all events are fired after grid options has finished updating.
         const events: PropertyValueChangedEvent<keyof GridOptions>[] = [];
@@ -249,7 +252,7 @@ export class GridOptionsService {
             const previousValue = this.gridOptions[key as keyof GridOptions];
             if (shouldForce || previousValue !== coercedValue) {
                 this.gridOptions[key as keyof GridOptions] = coercedValue;
-                const event: PropertyValueChangedEvent<keyof GridOptions> & { source: string }= {
+                const event: PropertyValueChangedEvent<keyof GridOptions> = {
                     type: key as keyof GridOptions,
                     currentValue: coercedValue,
                     previousValue,
@@ -309,9 +312,6 @@ export class GridOptionsService {
     // *************** Helper methods ************************** //
     // Methods to share common GridOptions related logic that goes above accessing a single property
 
-    public getGridId(): string {
-        return this.api.getGridId();
-    }
 
     // the user might be using some non-standard scrollbar, eg a scrollbar that has zero
     // width and overlays (like the Safari scrollbar, but presented in Chrome). so we

@@ -3,29 +3,24 @@ import { AgGridCommon } from "./iCommon";
 import { IComponent } from "./iComponent";
 
 export interface MenuItemLeafDef<TData = any, TContext = any> {
-    /**
-     * Name of the menu item */
+    /** Name of the menu item. */
     name: string;
-    /**
-     * It the item should be enabled / disabled */
+    /** Set to `true` to display the menu item as disabled. */
     disabled?: boolean;
     /**
-     * Shortcut (just display text, saying the shortcut here does nothing) */
+     * Shortcut text displayed inside menu item.
+     * Setting this doesn’t actually create a keyboard shortcut binding.
+     */
     shortcut?: string;
-    /**
-     * Function that gets executed when item is chosen */
+    /** Function that gets executed when item is chosen. */
     action?: (params: IMenuActionParams<TData, TContext>) => void;
-    /**
-     * Set to true to provide a check beside the option */
+    /** Set to true to provide a check beside the option. */
     checked?: boolean;
-    /**
-     * The icon to display, either a DOM element or HTML string */
+    /** The icon to display, either a DOM element or HTML string. */
     icon?: Element | string;
-    /**
-     * CSS classes to apply to the menu item */
+    /** CSS classes to apply to the menu item. */
     cssClasses?: string[];
-    /**
-     * Tooltip for the menu item */
+    /** Tooltip text to be displayed for the menu item. */
     tooltip?: string;
     /**
      * If `true`, will keep the menu open when the item is selected.

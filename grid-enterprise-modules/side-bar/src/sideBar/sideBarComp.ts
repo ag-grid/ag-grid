@@ -101,7 +101,7 @@ export class SideBarComp extends Component implements ISideBar {
             nextEl = sideBarGui.querySelector('.ag-selected button') as HTMLElement;
         }
 
-        if (nextEl) {
+        if (nextEl && nextEl !== e.target) {
             e.preventDefault();
             nextEl.focus();
         }

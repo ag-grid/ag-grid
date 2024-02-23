@@ -65,7 +65,7 @@ export class MiniRadialColumn extends MiniChartWithPolarAxes {
                 column.axisOuterRadius = radius;
 
                 column.stroke = undefined;
-                column.strokeWidth = 1;
+                column.strokeWidth = 0;
 
                 return column;
             });

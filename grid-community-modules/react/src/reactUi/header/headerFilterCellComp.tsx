@@ -6,6 +6,7 @@ import { showJsComp } from '../jsComp';
 import { FloatingFilterComponentProxy } from '../../shared/customComp/floatingFilterComponentProxy';
 import { CustomContext } from '../../shared/customComp/customContext';
 import { CustomFloatingFilterCallbacks } from '../../shared/customComp/interfaces';
+import { warnReactiveCustomComponents } from '../../shared/customComp/util';
 
 const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
 
@@ -87,10 +88,14 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
 
     const reactiveCustomComponents = useMemo(() => gridOptionsService.get('reactiveCustomComponents'), []);
     const floatingFilterCompProxy = useMemo(() => {
-        if (reactiveCustomComponents && userCompDetails) {
-            const compProxy = new FloatingFilterComponentProxy(userCompDetails!.params, () => setRenderKey(prev => prev + 1));
-            userCompRef(compProxy);
-            return compProxy;
+        if (userCompDetails) {
+            if (reactiveCustomComponents) {
+                const compProxy = new FloatingFilterComponentProxy(userCompDetails!.params, () => setRenderKey(prev => prev + 1));
+                userCompRef(compProxy);
+                return compProxy;
+            } else if (userCompDetails.componentFromFramework) {
+                warnReactiveCustomComponents();
+            }
         }
         return undefined;
     }, [userCompDetails]);
@@ -100,7 +105,7 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
     const UserCompClass = userCompDetails && userCompDetails.componentClass;
 
     return (
-        <div ref={setRef} className={className} role="gridcell" tabIndex={-1}>
+        <div ref={setRef} className={className} role="gridcell">
             <div ref={eFloatingFilterBody} className={bodyClassName} role="presentation">
                 { reactUserComp && !reactiveCustomComponents && <UserCompClass { ...userCompDetails!.params } ref={ userCompStateless ? () => {} : userCompRef }/> }
                 { reactUserComp && reactiveCustomComponents && <CustomContext.Provider value={{

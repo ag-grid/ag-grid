@@ -49,13 +49,21 @@ const SEO = ({ title, description } : { title: string, description: string }) =>
             content: metaDescription,
         },
         {
+            name: `og:image`,
+            content: "images/og_twitter.png",
+        },
+        {
             name: `twitter:title`,
             content: metaTitle,
         },
         {
-            name: `twitter:description`,
-            content: metaDescription,
+            name: `twitter:image`,
+            content: 'images/og_twitter.png',
         },
+        {
+            name: `twitter:description`,
+            content: metaDescription
+        }
     ];
 
     return <Helmet title={metaTitle} meta={meta} />;

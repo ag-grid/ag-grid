@@ -1,9 +1,11 @@
-import { IDoesFilterPassParams, IFilter, IFilterParams } from "@ag-grid-community/core";
+import { AgPromise, IDoesFilterPassParams, IFilter, IFilterParams } from "@ag-grid-community/core";
 import { CustomComponentWrapper } from "./customComponentWrapper";
 import { CustomFilterProps, CustomFilterCallbacks } from "./interfaces";
 
 export class FilterComponentWrapper extends CustomComponentWrapper<IFilterParams, CustomFilterProps, CustomFilterCallbacks> implements IFilter {
     private model: any = null;
+    private readonly onModelChange = (model: any) => this.updateModel(model);
+    private readonly onUiChange = () => this.sourceParams.filterChangedCallback();
 
     public isFilterActive(): boolean {
         return this.model != null;
@@ -17,9 +19,9 @@ export class FilterComponentWrapper extends CustomComponentWrapper<IFilterParams
         return this.model;
     }
 
-    public setModel(model: any): void {
+    public setModel(model: any): AgPromise<void> {
         this.model = model;
-        this.refreshProps();
+        return this.refreshProps();
     }
 
     public refresh(newParams: IFilterParams): boolean {
@@ -33,19 +35,15 @@ export class FilterComponentWrapper extends CustomComponentWrapper<IFilterParams
     }
 
     private updateModel(model: any): void {
-        this.setModel(model);
-        setTimeout(() => {
-            // ensure prop updates have happened
-            this.sourceParams.filterChangedCallback();
-        });
+        this.setModel(model).then(() => this.sourceParams.filterChangedCallback());
     }
 
     protected getProps(): CustomFilterProps {
         const props: CustomFilterProps = {
             ...this.sourceParams,
             model: this.model,
-            onModelChange: (model: any) => this.updateModel(model),
-            onUiChange: () => this.sourceParams.filterChangedCallback(),
+            onModelChange: this.onModelChange,
+            onUiChange: this.onUiChange,
             key: this.key
         } as any;
         // remove props in IFilterParams but not CustomFilterProps

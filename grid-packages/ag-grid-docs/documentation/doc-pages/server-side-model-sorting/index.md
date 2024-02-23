@@ -52,14 +52,16 @@ The example below demonstrates sorting using the SSRM. Note the following:
 
 ## Client-side Sorting
 
-The Server-Side Row Model supports client-side sorting. This is achieved by enabling the property `serverSideEnableClientSideSort`.
-With this property enabled, if the grid has all of the rows belonging to the impacted group, the grid can sort these rows on the client-side. This can be useful for reducing the load on the server, and improving user experience by reducing loading view time.
+The Server-Side Row Model supports client-side sorting, which can be enabled using the property `serverSideEnableClientSideSort`.
+With this property enabled, if the grid has all of the rows belonging to a group, the grid can sort these rows on the client-side.
 
 The example below demonstrates client-side sorting using the SSRM. Note the following:
 
-- `cacheBlockSize` has been increased to 10,000 - this allows the first request to load every row.
-- `serverSideEnableClientSideSort` is set to `true`
-- When sorting any column in this example, the rows are not replaced by loading rows, and a request to the server is not made.
+- `serverSideEnableClientSideSort` is set to true
+- Any row group with fewer than 100 rows (the default `cacheBlockSize`) can be sorted via the client-side upon loading. Additionally, scrolling down through all of the blocks inside of a group until all rows are loaded will allow that row group to switch to using client-side sorting.
+- Sorting the Athlete column happens client-side - the rows are not replaced by loading rows, and a request to the server is not made. This is because the child rows for the expanded row group are all loaded and can be sorted client-side.
+- Sorting the Group column or any of the aggregated columns happens server-side - the rows are replaced by loading rows, and a request to the server is made. This is because the number of top-level rows exceeds the default `cacheBlockSize` value of 100 and the grid doesn’t have all the rows client-side in order to sort them.
+- After the grid is loaded, scroll down to the bottom of the grid - this loads all of the top-level rows. At this point all the top-level rows have been loaded which allows sorting the Group column or any of the aggregated columns to happen client-side. This is why when sorting the rows are not replaced by loading rows and a request to the server is not made.
 
 <grid-example title='Client Side Sorting' name='client-side-sorting' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 

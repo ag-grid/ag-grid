@@ -10,7 +10,7 @@ The example below shows a few cell editors in action.
 - The `Mood` Cell Editor illustrates a slightly more complicated editor with values changed depending on the smiley chosen
 - The `Numeric` Cell Editor illustrates a slightly more complicated numeric editor to the `Doubling` editor, with increased input validation
 
-<grid-example title='Simple Editor Components' name='component-editor' type='mixed' options='{ "exampleHeight": 370, "includeNgFormsModule" : true }'></grid-example>
+<grid-example title='Simple Editor Components' name='component-editor' type='mixed' options='{ "exampleHeight": 370, "includeNgFormsModule": true }'></grid-example>
 
 ## Implementing a Cell Editor Component
 
@@ -121,7 +121,7 @@ The example below illustrates:
 - 'Address' column uses a Component cell editor that allows input of multiline text via a 'largeText'. <kbd>⇥ Tab</kbd> and <kbd>⎋ Esc</kbd> (amongst others) will exit editing in this field, <kbd>⇧ Shift</kbd>+<kbd>↵ Enter</kbd> will allow newlines.
 - 'Country' columns shows using 'richSelect' for a complex object - the cell renderer takes care of only rendering the country name.
 
-<grid-example title='Simple Editor Components' name='component-editor-2' type='mixed' options='{ "enterprise": true, "modules": ["clientside", "richselect"], "exampleHeight": 370, "includeNgFormsModule" : true, "extras": ["fontawesome"] }'></grid-example>
+<grid-example title='Simple Editor Components' name='component-editor-2' type='mixed' options='{ "enterprise": true, "modules": ["clientside", "richselect"], "exampleHeight": 370, "includeNgFormsModule": true, "extras": ["fontawesome"] }'></grid-example>
 
 ## Accessing Cell Editor Instances
 

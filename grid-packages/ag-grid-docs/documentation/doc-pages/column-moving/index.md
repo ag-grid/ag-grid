@@ -11,7 +11,7 @@ Columns can be moved in the grid in the following ways:
 
 The column API methods for moving columns are as follows:
 
-<api-documentation source='grid-api/api.json' section='columnMoving' names='["moveColumn", "moveColumns", "moveColumnByIndex"]'></api-documentation>
+<api-documentation source='grid-api/api.json' section='columnMoving' names='["moveColumns", "moveColumnByIndex"]'></api-documentation>
 
 ## Simple Example
 
@@ -19,7 +19,7 @@ The example below demonstrates simple moving via mouse dragging and the API. The
 
 - Dragging the column headers with the mouse moves the column to the new location.
 - The **Medals First** and **Medals Last** buttons call the API `moveColumns(keys, toIndex)` to place the medals columns at the start or at the end respectively.
-- The **Country First** button calls the API `moveColumn(key, toIndex)` to place the Country column first.
+- The **Country First** button calls the API `moveColumns([key], toIndex)` to place the Country column first.
 - The **Swap First Two** button calls the API `moveColumnByIndex(fromIndex, toIndex)` to swap the first two columns.
 - The **Print Columns** button calls the API `getAllGridColumns()` to print to the dev console the current column order.
 

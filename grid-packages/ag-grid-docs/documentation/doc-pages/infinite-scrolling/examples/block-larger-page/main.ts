@@ -29,9 +29,9 @@ const columnDefs: ColDef[] = [
         // we don't want to sort by the row index, this doesn't make sense as the point
         // of the row index is to know the row index in what came back from the server
         sortable: false,
-        suppressMenu: true,
+        suppressHeaderMenuButton: true,
     },
-    { headerName: 'Athlete', field: 'athlete', suppressMenu: true },
+    { headerName: 'Athlete', field: 'athlete', suppressHeaderMenuButton: true },
     {
         field: 'age',
         filter: 'agNumberColumnFilter',
@@ -50,11 +50,11 @@ const columnDefs: ColDef[] = [
         filterParams: { values: ['2000', '2004', '2008', '2012'] },
     },
     { field: 'date' },
-    { field: 'sport', suppressMenu: true },
-    { field: 'gold', suppressMenu: true },
-    { field: 'silver', suppressMenu: true },
-    { field: 'bronze', suppressMenu: true },
-    { field: 'total', suppressMenu: true },
+    { field: 'sport', suppressHeaderMenuButton: true },
+    { field: 'gold', suppressHeaderMenuButton: true },
+    { field: 'silver', suppressHeaderMenuButton: true },
+    { field: 'bronze', suppressHeaderMenuButton: true },
+    { field: 'total', suppressHeaderMenuButton: true },
 ]
 
 let gridApi: GridApi<IOlympicData>;

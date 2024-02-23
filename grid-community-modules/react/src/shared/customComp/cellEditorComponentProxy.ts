@@ -9,6 +9,7 @@ export class CellEditorComponentProxy implements ICellEditor {
     private instanceCreated: AgPromise<void> = new AgPromise(resolve => {
         this.resolveInstanceCreated = resolve;
     });
+    private readonly onValueChange = (value: any) => this.updateValue(value);
 
     constructor(private cellEditorParams: ICellEditorParams, private readonly refreshProps: () => void) {
         this.value = cellEditorParams.value;
@@ -19,7 +20,7 @@ export class CellEditorComponentProxy implements ICellEditor {
             ...this.cellEditorParams,
             initialValue: this.cellEditorParams.value,
             value: this.value,
-            onValueChange: value => this.updateValue(value)
+            onValueChange: this.onValueChange
         };
     }
 

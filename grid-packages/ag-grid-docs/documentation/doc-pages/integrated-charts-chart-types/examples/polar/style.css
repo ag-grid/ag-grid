@@ -1,0 +1,18 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.button-container {
+    flex-wrap: wrap;
+}
+
+#myGrid {
+    flex: 1;
+}
+
+#myChart {
+    flex: 2;
+    min-height: 530px;
+}

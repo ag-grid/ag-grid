@@ -92,11 +92,11 @@ const VueExample = {
             if (!gridApi.value) {
                 return;
             }
-
-            gridApi.value.getColumns().forEach(column => {
-                const newRandomWidth = Math.round((150 + Math.random() * 100) * 100) / 100;
-                gridApi.value.setColumnWidth(column, newRandomWidth);
-            });
+            
+            const newWidths = gridApi.value.getColumns().map(column => {
+                return { key: column.getColId(), newWidth: Math.round((150 + Math.random() * 100) * 100) / 100 };
+            })
+            gridApi.value.setColumnWidths(newWidths);            
         };
         const destroyGrid = () => {
             showGrid.value = false;

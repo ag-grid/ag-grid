@@ -1,0 +1,22 @@
+[
+  {
+    "question": "What does a Single Application Development License include?",
+    "answer": "Licenses AG Grid/Charts for one internal app perpetually. Includes 1-year updates, support, and covers all JS developers. Tied to one app name, not transferable."
+  },
+  {
+    "question": "How is a Multiple Application License different from a Single Application License?",
+    "answer": "Covers unlimited internal apps with AG Grid/Charts forever. Includes 1-year updates and support. Requires all JS developers to be licensed, not just for one app."
+  },
+  {
+    "question": "What is required for deploying customer-facing applications?",
+    "answer": "Needs a Deployment License Add-on plus Developer License. Allows sublicensing AG Grid/Charts for one app in one production environment forever, with 1-year updates/support."
+  },
+  {
+    "question": "Does the Deployment License cover multiple servers or environments?",
+    "answer": "Covers one production environment, regardless of server count. Failovers included, but separate deployments need their own licenses."
+  },
+  {
+    "question": "How does licensing work for multi-tenant deployments?",
+    "answer": "One Deployment License needed for multi-tenant setups, serving multiple customers under one application instance."
+  }
+]

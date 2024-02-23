@@ -61,8 +61,15 @@ export interface RefreshCellsParams<TData = any> extends GetCellsParams<TData> {
 }
 
 export interface FlashCellsParams<TData = any> extends GetCellsParams<TData> {
+    /** @deprecated v31.1 Use `flashDuration` instead. */
     flashDelay?: number;
+    /** @deprecated v31.1 Use `fadeDuration` instead. */
     fadeDelay?: number;
+
+    /** The duration in milliseconds of how long a cell should remain in its "flashed" state. */
+    flashDuration?: number;
+    /** The duration in milliseconds of how long the "flashed" state animation takes to fade away after the timer set by `flashDuration` has completed. */
+    fadeDuration?: number;
 }
 
 export interface GetCellRendererInstancesParams<TData = any> extends GetCellsParams<TData> { }
@@ -452,6 +459,12 @@ export class RowRenderer extends BeanStub {
     public redrawRow(rowNode: RowNode, suppressEvent = false) {
         if (rowNode.sticky) {
             this.stickyRowFeature.refreshStickyNode(rowNode);
+        } else if (this.cachedRowCtrls?.has(rowNode)) {
+            // delete row from cache if it needs redrawn
+            // if it's in the cache no updates need fired, as nothing
+            // has been rendered
+            this.cachedRowCtrls.removeRow(rowNode);
+            return;
         } else {
             const destroyAndRecreateCtrl = (dataStruct: RowCtrl[] | { [idx: number]: RowCtrl }) => {
                 const ctrl = dataStruct[rowNode.rowIndex!];
@@ -470,8 +483,10 @@ export class RowRenderer extends BeanStub {
             switch (rowNode.rowPinned) {
                 case 'top':
                     destroyAndRecreateCtrl(this.topRowCtrls);
+                    break;
                 case 'bottom':
                     destroyAndRecreateCtrl(this.bottomRowCtrls);
+                    break;
                 default:
                     destroyAndRecreateCtrl(this.rowCtrlsByRowIndex);
                     this.updateAllRowCtrls();
@@ -681,9 +696,8 @@ export class RowRenderer extends BeanStub {
     }
 
     public flashCells(params: FlashCellsParams = {}): void {
-        const { flashDelay, fadeDelay } = params;
         this.getCellCtrls(params.rowNodes, params.columns)
-            .forEach(cellCtrl => cellCtrl.flashCell({ flashDelay, fadeDelay }));
+            .forEach(cellCtrl => cellCtrl.flashCell(params));
     }
 
     public refreshCells(params: RefreshCellsParams = {}): void {
@@ -1479,7 +1493,18 @@ class RowCtrlCache {
         return rowNodeMismatch ? null : res;
     }
 
-    private removeFromCache(rowCtrl: RowCtrl): void {
+    public has(rowNode: RowNode): boolean {
+        return this.entriesMap[rowNode.id!] != null;
+    }
+
+    public removeRow(rowNode: RowNode): void {
+        const rowNodeId = rowNode.id!;
+        const ctrl = this.entriesMap[rowNodeId];
+        delete this.entriesMap[rowNodeId];
+        removeFromArray(this.entriesList, ctrl);
+    }
+
+    public removeFromCache(rowCtrl: RowCtrl): void {
         const rowNodeId = rowCtrl.getRowNode().id!;
         delete this.entriesMap[rowNodeId];
         removeFromArray(this.entriesList, rowCtrl);

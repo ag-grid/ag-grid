@@ -14,6 +14,10 @@ export interface HeaderPosition {
     column: Column | ColumnGroup;
 }
 
+export interface HeaderFuturePosition extends HeaderPosition {
+    headerRowIndexWithoutSpan?: number;
+}
+
 @Bean('headerPositionUtils')
 export class HeaderPositionUtils extends BeanStub {
 
@@ -37,24 +41,42 @@ export class HeaderPositionUtils extends BeanStub {
 
         let { headerRowIndex } = focusedHeader;
 
-        const currentRowType = this.getHeaderRowType(headerRowIndex);
+        if (this.getHeaderRowType(headerRowIndex) !== HeaderRowType.FLOATING_FILTER) {
+            const columnsInPath: (Column | ColumnGroup)[] = [nextColumn];
 
-        if (currentRowType === HeaderRowType.COLUMN_GROUP) {
-            const columnGroup = nextColumn as ColumnGroup;
-            if (columnGroup.isPadding() && this.isAnyChildSpanningHeaderHeight(columnGroup)) {
-                const { nextFocusColumn, nextRow } = this.getColumnVisibleChild(columnGroup, headerRowIndex, direction);
+            while (nextColumn.getParent()) {
+                nextColumn = nextColumn.getParent();
+                columnsInPath.push(nextColumn);
+            }
+    
+            nextColumn = columnsInPath[columnsInPath.length - 1 - headerRowIndex];
+        }
 
-                if (nextFocusColumn) {
-                    nextColumn = nextFocusColumn;
-                    headerRowIndex = nextRow;
-                }
+        const { column, headerRowIndex: indexToFocus } = this.getHeaderIndexToFocus(nextColumn, headerRowIndex)
+
+        return {
+            column,
+            headerRowIndex: indexToFocus
+        };
+    }
+
+    public getHeaderIndexToFocus(column: Column | ColumnGroup, currentIndex: number,): HeaderPosition {
+        let nextColumn: Column | undefined;
+
+        if (column instanceof ColumnGroup && this.isAnyChildSpanningHeaderHeight(column) && column.isPadding()) {
+            const targetColumn: ColumnGroup = column;
+            nextColumn = targetColumn.getLeafColumns()[0];
+            let col: Column | ColumnGroup = nextColumn;
+            while (col !== targetColumn) {
+                currentIndex++;
+                col = col.getParent();
             }
         }
 
         return {
-            column: nextColumn,
-            headerRowIndex
-        };
+            column: nextColumn || column,
+            headerRowIndex: currentIndex
+        }
     }
 
     private isAnyChildSpanningHeaderHeight(columnGroup: ColumnGroup): boolean {
@@ -62,13 +84,14 @@ export class HeaderPositionUtils extends BeanStub {
         return columnGroup.getLeafColumns().some(col => col.isSpanHeaderHeight());
     }
 
-    public getColumnVisibleParent(currentColumn: Column | ColumnGroup, currentIndex: number): { nextFocusColumn: Column | ColumnGroup | null; nextRow: number } {
+    public getColumnVisibleParent(currentColumn: Column | ColumnGroup, currentIndex: number): HeaderFuturePosition {
         const currentRowType = this.getHeaderRowType(currentIndex);
         const isFloatingFilter = currentRowType === HeaderRowType.FLOATING_FILTER;
         const isColumn = currentRowType === HeaderRowType.COLUMN;
 
         let nextFocusColumn: Column | ColumnGroup = isFloatingFilter ? currentColumn : currentColumn.getParent();
         let nextRow = currentIndex - 1;
+        let headerRowIndexWithoutSpan: number | undefined = nextRow;
 
         if (isColumn && this.isAnyChildSpanningHeaderHeight((currentColumn as Column).getParent())) {
             while (nextFocusColumn && (nextFocusColumn as ColumnGroup).isPadding()) {
@@ -76,39 +99,53 @@ export class HeaderPositionUtils extends BeanStub {
                 nextRow--;
             }
 
+            headerRowIndexWithoutSpan = nextRow;
             if (nextRow < 0) {
                 nextFocusColumn = currentColumn;
                 nextRow = currentIndex;
+                headerRowIndexWithoutSpan = undefined;
             }
         }
 
-        return { nextFocusColumn: nextFocusColumn, nextRow };
+        return { column: nextFocusColumn, headerRowIndex: nextRow, headerRowIndexWithoutSpan };
     }
 
-    public getColumnVisibleChild(column: Column | ColumnGroup, currentIndex: number, direction: 'Before' | 'After' = 'After'): { nextFocusColumn: Column | ColumnGroup | null; nextRow: number } {
+    public getColumnVisibleChild(column: Column | ColumnGroup, currentIndex: number, direction: 'Before' | 'After' = 'After'): HeaderFuturePosition {
         const currentRowType = this.getHeaderRowType(currentIndex);
         let nextFocusColumn: Column | ColumnGroup | null = column;
         let nextRow = currentIndex + 1;
+        let headerRowIndexWithoutSpan = nextRow;
 
         if (currentRowType === HeaderRowType.COLUMN_GROUP) {
             const leafColumns = (column as ColumnGroup).getDisplayedLeafColumns();
-            const leafChild = direction === 'After' ? leafColumns[0] : last(leafColumns);
+            const leafColumn = direction === 'After' ? leafColumns[0] : last(leafColumns);
+            const columnsInTheWay: ColumnGroup[] = [];
 
-            if (this.isAnyChildSpanningHeaderHeight(leafChild.getParent())) {
-                nextFocusColumn = leafChild;
+            let currentColumn: Column | ColumnGroup = leafColumn;
+            while (currentColumn.getParent() !== column) {
+                currentColumn = currentColumn.getParent();
+                columnsInTheWay.push(currentColumn);
+            }
 
-                let currentColumn = leafChild.getParent();
-
-                while (currentColumn && currentColumn !== column) {
-                    currentColumn = currentColumn.getParent();
+            nextFocusColumn = leafColumn;
+            if (leafColumn.isSpanHeaderHeight()) {
+                for (let i = columnsInTheWay.length - 1; i >= 0; i--) {
+                    const colToFocus = columnsInTheWay[i];
+                    if (!colToFocus.isPadding()) {
+                        nextFocusColumn = colToFocus;
+                        break;
+                    }
                     nextRow++;
                 }
             } else {
-                nextFocusColumn = (column as ColumnGroup).getDisplayedChildren()![0] as ColumnGroup;
+                nextFocusColumn = last(columnsInTheWay);
+                if (!nextFocusColumn) {
+                    nextFocusColumn = leafColumn;
+                }
             }
         }
 
-        return { nextFocusColumn, nextRow };
+        return { column: nextFocusColumn, headerRowIndex: nextRow, headerRowIndexWithoutSpan };
     }
 
     private getHeaderRowType(rowIndex: number): HeaderRowType | undefined {

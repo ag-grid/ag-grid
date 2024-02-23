@@ -1,20 +1,18 @@
-import { AgPromise,  IFloatingFilter, IFloatingFilterParams } from "@ag-grid-community/core";
+import { AgPromise, IFloatingFilter, IFloatingFilterParams } from "@ag-grid-community/core";
 import { addOptionalMethods } from "./customComponentWrapper";
 import { CustomFloatingFilterProps, CustomFloatingFilterCallbacks } from "./interfaces";
 
 export function updateFloatingFilterParent(params: IFloatingFilterParams, model: any): void {
     params.parentFilterInstance(instance => {
         (instance.setModel(model) || AgPromise.resolve()).then(() => {
-            setTimeout(() => {
-                // ensure prop updates have happened
-                params.filterParams.filterChangedCallback();
-            });
+            params.filterParams.filterChangedCallback();
         });
     });
 }
 
 export class FloatingFilterComponentProxy implements IFloatingFilter {
     private model: any = null;
+    private readonly onModelChange = (model: any) => this.updateModel(model);
 
     constructor(private floatingFilterParams: IFloatingFilterParams, private readonly refreshProps: () => void) {}
 
@@ -22,7 +20,7 @@ export class FloatingFilterComponentProxy implements IFloatingFilter {
         return {
             ...this.floatingFilterParams,
             model: this.model,
-            onModelChange: model => this.updateModel(model)
+            onModelChange: this.onModelChange
         };
     }
 

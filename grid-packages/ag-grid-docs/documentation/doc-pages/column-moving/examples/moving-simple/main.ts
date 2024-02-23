@@ -30,7 +30,7 @@ function onMedalsLast() {
 }
 
 function onCountryFirst() {
-  gridApi!.moveColumn('country', 0)
+  gridApi!.moveColumns(['country'], 0)
 }
 
 function onSwapFirstTwo() {

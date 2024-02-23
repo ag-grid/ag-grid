@@ -4,6 +4,10 @@ import { RowPosition } from "../entities/rowPositionUtils";
 import { AgGridCommon } from "./iCommon";
 import { IRowNode } from "./iRowNode";
 
+export interface ExportFileNameGetterParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {}
+
+export type ExportFileNameGetter = (params?: ExportFileNameGetterParams) => string;
+
 export interface BaseExportParams {
     /**
      * If `true`, all columns will be exported in the order they appear in the columnDefs.
@@ -18,9 +22,9 @@ export interface BaseExportParams {
     /** Row node positions. */
     rowPositions?: RowPosition[];
     /**
-     * String to use as the file name.
+     * String to use as the file name or a function that returns a string.
      */
-    fileName?: string;
+    fileName?: string | ExportFileNameGetter;
     /**
      * Determines whether rows are exported before being filtered and sorted.
      * @default 'filteredAndSorted'

@@ -69,7 +69,7 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
     const getButtonWrapperCssClassesString = createMemo( ()=> 'ag-floating-filter-button ' + getCssButtonWrapperClasses().toString() );
     
     return (
-        <div ref={eGui!} class={getCssClassesString()} style={getStyle()} role="gridcell" tabIndex={-1}>
+        <div ref={eGui!} class={getCssClassesString()} style={getStyle()} role="gridcell">
             <div ref={eFloatingFilterBody!} class={getBodyCssClassesString()} role="presentation">
                 { getUserCompDetails() && <UserComp compDetails={getUserCompDetails()!} ref={setRef}/> }
             </div>

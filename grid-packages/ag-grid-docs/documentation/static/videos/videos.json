@@ -187,7 +187,7 @@
     },
     {
       "title": "Custom Column Filter Components",
-      "url": "https://www.youtube.com/watch?v=yO3_nTyDv6o&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
+      "url": "https://www.youtube.com/watch?v=98JVaTcoexc&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW&index=6&pp=gAQBiAQB",
       "thumbnail": {
         "image": "AgGridVideo.png",
         "altText": "Custom Column Filter Components"
@@ -196,11 +196,11 @@
         "Creating Filter Components",
         "Custom Filter Models"
       ],
-      "runningTime": "18:04"
+      "runningTime": "7:52"
     },
     {
       "title": "Custom Floating Filter Components",
-      "url": "https://www.youtube.com/watch?v=CxwfX4KodaM&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
+      "url": "https://www.youtube.com/watch?v=MdO6vZN2Gxo&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW&index=7&pp=gAQBiAQB",
       "thumbnail": {
         "image": "AgGridVideo.png",
         "altText": "Custom Floating Filter Components"
@@ -208,7 +208,7 @@
       "keyPoints": [
         "Creating Floating Components"
       ],
-      "runningTime": "11:03"
+      "runningTime": "7:11"
     },
     {
       "title": "Custom Components",

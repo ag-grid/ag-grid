@@ -804,7 +804,7 @@ And then adding `cellRenderer: CompanyLogoRenderer` to the 'company' column defi
 <snippet transform={false} language="jsx">
 |columnDefs: [
 |  {
-|    field: "country",
+|    field: "company",
 |    cellRenderer: CompanyLogoRenderer
 |  },
 |  // ...
@@ -878,7 +878,7 @@ Let's try this by creating a new component to display the company logo in the 'c
 |  standalone: true,
 |  imports: [CommonModule],
 |  template: `&lt;span *ngIf="value" >&lt;img [alt]="value" [src]="'https://www.ag-grid.com/example-assets/space-company-logos/' + value.toLowerCase() + '.png'" /> &lt;p>{{ value }}&lt;/p>&lt;/span>`,
-|  styles: ["img {display: block; width: 25px; height: auto; maxHeight: 50%; margin-right: 12px; filter: brightness(1.2);} span {display: flex; height: 100%; width: 100%; align-items: center} p { text-overflow: ellipsis; overflow: hidden; white-space: nowrap }"]
+|  styles: ["img {display: block; width: 25px; height: auto; max-height: 50%; margin-right: 12px; filter: brightness(1.2);} span {display: flex; height: 100%; width: 100%; align-items: center} p { text-overflow: ellipsis; overflow: hidden; white-space: nowrap }"]
 |})
 |
 |export class CompanyLogoRenderer implements ICellRendererAngularComp {
@@ -958,7 +958,7 @@ And then adding the `cellRenderer` property to the 'company' column:
 |  },
 |  setup() {
 |    const colDefs = ref([
-|      { field: "country", cellRenderer: "companyLogoRenderer" },
+|      { field: "company", cellRenderer: "companyLogoRenderer" },
 |      // ...
 |    ]);
 |    // ...

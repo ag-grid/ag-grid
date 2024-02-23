@@ -354,6 +354,9 @@ export class PrimaryColsListPanel extends Component {
                 }
             });
         };
+
+        if (!this.allColsTree) { return; }
+
         recursiveFunc(this.allColsTree);
     }
 

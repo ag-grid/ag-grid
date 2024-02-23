@@ -14,6 +14,7 @@ export class ColumnAnimationService extends BeanStub {
     private executeLaterFuncs: Function[] = [];
 
     private active = false;
+    private suppressAnimation = false;
 
     private animationThreadCount = 0;
 
@@ -23,7 +24,11 @@ export class ColumnAnimationService extends BeanStub {
     }
 
     public isActive(): boolean {
-        return this.active;
+        return this.active && !this.suppressAnimation;
+    }
+
+    public setSuppressAnimation(suppress: boolean): void {
+        this.suppressAnimation = suppress;
     }
 
     public start(): void {
@@ -43,10 +48,7 @@ export class ColumnAnimationService extends BeanStub {
 
     public finish(): void {
         if (!this.active) { return; }
-        this.executeLaterVMTurn(() => {
-            this.active = false;
-        });
-        this.flush();
+        this.flush(() => { this.active = false });
     }
 
     public executeNextVMTurn(func: Function): void {
@@ -80,18 +82,25 @@ export class ColumnAnimationService extends BeanStub {
         });
     }
 
-    public flush(): void {
-        const nowFuncs = this.executeNextFuncs;
-        this.executeNextFuncs = [];
+    private flush(callback: () => void): void {
+        if (this.executeNextFuncs.length === 0 && this.executeLaterFuncs.length === 0) { 
+            callback();
+            return; 
+        }
 
-        const waitFuncs = this.executeLaterFuncs;
-        this.executeLaterFuncs = [];
-
-        if (nowFuncs.length === 0 && waitFuncs.length === 0) { return; }
+        const runFuncs = (queue: Function[]) => {
+            while (queue.length) {
+                const func = queue.pop();
+                if (func) { func(); }
+            }
+        }
 
         this.getFrameworkOverrides().wrapIncoming(() => {
-            window.setTimeout(() => nowFuncs.forEach(func => func()), 0);
-            window.setTimeout(() => waitFuncs.forEach(func => func()), 200);
+            window.setTimeout(() => runFuncs(this.executeNextFuncs), 0);
+            window.setTimeout(() => {
+                runFuncs(this.executeLaterFuncs);
+                callback();
+            }, 200);
         });
     }
 }

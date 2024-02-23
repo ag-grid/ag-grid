@@ -103,7 +103,8 @@ If you are using Angular v10-11 and have Ivy **disabled** via `enableIvy: false`
 ## Notes on Angular 10
 
 Due to a breaking change in Angular 10 you may experience the following error when building:
-`Generic type 'ModuleWithProviders<T>' requires 1 type argument(s)`<br/><br/>
+`Generic type 'ModuleWithProviders<T>' requires 1 type argument(s)`
+
 If you wish to use Angular 10 with AG Grid versions 18-23 then you need to set `"skipLibCheck": true`
 in `tsconfig.app.json` Please note however that this is a workaround and Angular 10 is only
 officially supported with AG Grid 24+.

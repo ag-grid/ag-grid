@@ -86,7 +86,7 @@ export class ColumnChooserFactory extends BeanStub implements IColumnChooserFact
                 this.activeColumnChooserDialog = undefined;
                 this.dispatchVisibleChangedEvent(false, column);
                 if (column) {
-                    this.menuUtils.restoreFocusOnClose(column, eComp, headerPosition, columnIndex, eventSource, event);
+                    this.menuUtils.restoreFocusOnClose({ column, headerPosition, columnIndex, eventSource }, eComp, event, true);
                 }
             }
         }));

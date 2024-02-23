@@ -186,7 +186,8 @@ button.sectionHeader {
     }
 }
 
-.menuGroup a {
+.menuGroup a,
+.singleItem {
     --active-color: var(--color-util-brand-500);
     --active-border: var(--color-util-brand-400);
     --hover-background: var(--color-util-brand-50);
@@ -244,6 +245,11 @@ button.sectionHeader {
         background-color: var(--active-background);
         border-left-color: var(--active-border);
     }
+}
+
+.singleItem {
+    margin-left: $spacing-size-3;
+    padding: $spacing-size-2 $spacing-size-2 $spacing-size-2 $spacing-size-3;
 }
 
 .menuGroup li a {

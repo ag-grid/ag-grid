@@ -24,7 +24,7 @@ The new-format column menu is enabled by setting `columnMenu = 'new'`.
 
 How the column menu is launched from the header can be configured via the following column definition properties.
 
-<api-documentation source='column-properties/properties.json' section='header' names='["suppressMenu", "suppressHeaderFilter", "suppressHeaderContextMenu"]'></api-documentation>
+<api-documentation source='column-properties/properties.json' section='header' names='["suppressHeaderMenuButton", "suppressHeaderFilterButton", "suppressHeaderContextMenu"]'></api-documentation>
 
 The column menu button can be hidden until moused over by the grid option `suppressMenuHide`.
 
@@ -37,7 +37,7 @@ The following example demonstrates different ways of customising the column menu
 - The **Year** column has a floating filter and the header filter button suppressed.
 - The **Sport** column has no filter and the menu suppressed on right-click.
 - The **Gold** column has no filter and the menu button suppressed, but still available via right-click
-- The **Silver** column has a filter and the menu button suppressed, but still available via right-click.
+- The **Silver** column has a filter (with the header filter button suppressed), and the menu button suppressed but still available via right-click.
 - The **Bronze** column has a floating filter and the menu button suppressed, but still available via right-click.
 - The **Total** column has the menu button, header filter button and right-click menu suppressed.
 
@@ -112,6 +112,12 @@ Menu items can be grouped together by adding separators between groups. Separato
 ```js
 menuItems.push('separator')
 ```
+
+### Custom Menu Item Components
+
+In addition to the provided menu items, it is also possible to create custom menu item components.
+
+For more details, refer to the section: [Custom Menu Item Components](/component-menu-item/).
 
 ### Example: Customising the Menu Items
 

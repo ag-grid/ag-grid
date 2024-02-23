@@ -7,10 +7,10 @@ AG Grid comes in two forms: AG Grid Community (free for everyone, including prod
 
 <div style="display: flex;">
     <div>
-        The Enterprise version of AG Grid comes with more features and <a href="https://ag-grid.zendesk.com/" target="_blank">support via Zendesk</a>. The features that are only available in AG Grid Enterprise are marked with the Enterprise icon<enterprise-icon></enterprise-icon> as demonstrated in the image to the right and in the <a href="/licensing/#feature-comparison">feature comparison</a> below. 
+        The Enterprise version of AG Grid comes with more features and <a href="https://ag-grid.zendesk.com/" target="_blank">support via Zendesk</a>. The features that are only available in AG Grid Enterprise are marked with the Enterprise icon<enterprise-icon></enterprise-icon> as demonstrated in the image to the right and in the <a href="https://www.ag-grid.com/license-pricing/">feature comparison</a> on the Pricing page.
         <br/>
         <br/>
-        See <a href="https://www.ag-grid.com/license-pricing">Pricing</a> for details on purchasing an AG Grid Enterprise license.
+        See <a href="https://www.ag-grid.com/license-pricing" target="_blank">Pricing</a> for details on purchasing an AG Grid Enterprise license.
     </div>
     <image-caption src="licensing/resources/enterprise-features.png" alt="Enterprise Features" minwidth="15rem" width="15rem" maxwidth="15rem" height="10rem" constrained="true" filterdarkmode="true"></image-caption>
 </div>
@@ -118,11 +118,11 @@ The versions of the modules you use, `@ag-grid-community/**` and `@ag-grid-enter
 
 ## Trial License Key
 
-When you do not have a license key installed then AG Grid Enterprise will display a invalid key watermark. If you would like to remove this watermark so it's not in the way, please send us an e-mail <a href="mailto: info@ag-grid.com">info@ag-grid.com</a> and get a trial license key.
+When you do not have a license key installed then AG Grid Enterprise will display a invalid key watermark. If you would like to remove this watermark so it's not in the way, please send us an e-mail <a href="mailto: info@ag-grid.com" target="_blank">info@ag-grid.com</a> and get a trial license key.
 
 ## Support While Trialing
 
-You can access [Support via Zendesk](https://ag-grid.zendesk.com/) for help while trialing. Email <a href="mailto: info@ag-grid.com">info@ag-grid.com</a> to get set up with access.
+You can access <a href="https://ag-grid.zendesk.com/" target="_blank">Support via Zendesk</a> for help while trialing. Email <a href="mailto: info@ag-grid.com" target="_blank">info@ag-grid.com</a> to get set up with access.
 
 
 ## Setting the License Key
@@ -268,9 +268,3 @@ If you mix the methods above (eg if you are using CommonJS in your application, 
 If you have an enterprise grid running with an invalid license (no license, expired license) your console log will display a series of warnings and the grid will show a watermark for 5 seconds.
  
 <grid-example title='Invalid License' name='forceWatermark' type='generated' options='{ "enterprise": true, "licenseKey":true, "modules": ["clientside",  "rowgrouping"] }'></grid-example>
-
-## Feature Comparison
-
-The below table summarizes the features included in AG Grid Community and AG Grid Enterprise. Note that AG Grid Enterprise builds on AG Grid Community, it offers everything AG Grid Community offers plus more.
-
-<matrix-table src='licensing/menu.json' tree='true' childpropertyname='items' booleanonly='true' columns='{ "title": "", "not(enterprise)": "Community", "enterprise": "Enterprise<enterprise-icon></enterprise-icon>" }' showcondition="notIn(excludeFromFeatures)"></matrix-table>

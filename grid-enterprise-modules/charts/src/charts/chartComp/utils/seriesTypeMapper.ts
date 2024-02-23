@@ -11,6 +11,7 @@ export type ChartSeriesType =
     'histogram' |
     'polar' |
     'pie' |
+    'donut' |
     'hierarchy' |
     'bubble' |
     'radial-column' |
@@ -23,14 +24,9 @@ export type ChartSeriesType =
     'box-plot' |
     'treemap' |
     'sunburst' |
+    'heatmap' |
     'waterfall' |
     'common';
-
-type PolarChartSeriesType = Extract<ChartSeriesType,
-    'radar-line' |
-    'radar-area' |
-    'nightingale'
->;
 
 export const VALID_SERIES_TYPES: ChartSeriesType[] = [
     'area',
@@ -39,6 +35,7 @@ export const VALID_SERIES_TYPES: ChartSeriesType[] = [
     'histogram',
     'line',
     'pie',
+    'donut',
     'scatter',
     'bubble',
     'radial-column',
@@ -51,8 +48,29 @@ export const VALID_SERIES_TYPES: ChartSeriesType[] = [
     'box-plot',
     'treemap',
     'sunburst',
+    'heatmap',
     'waterfall',
 ];
+
+export function isEnterpriseChartType(chartType: ChartType): boolean {
+    switch (chartType) {
+        case 'rangeBar':
+        case 'rangeArea':
+        case 'waterfall':
+        case 'boxPlot':
+        case 'radarLine':
+        case 'radarArea':
+        case 'nightingale':
+        case 'radialColumn':
+        case 'radialBar':
+        case 'sunburst':
+        case 'treemap':
+        case 'heatmap':
+            return true;
+        default:
+            return false;
+    }
+}
 
 const horizontalChartTypes = new Set(['bar', 'groupedBar', 'stackedBar', 'normalizedBar']);
 export function isHorizontal(chartType: ChartType): boolean {
@@ -94,6 +112,26 @@ export function isHierarchical(chartType: ChartType): boolean {
             return true;
         default:
             return false;
+    }
+}
+
+export function hasGradientLegend(chartType: ChartType): boolean {
+    switch (chartType) {
+        case 'treemap':
+        case 'sunburst':
+        case 'heatmap':
+            return true;
+        default:
+            return false;
+    }
+}
+
+export function getCanonicalChartType(chartType: ChartType): Exclude<ChartType, 'doughnut'> {
+    switch (chartType) {
+        case 'doughnut':
+            return 'donut';
+        default:
+            return chartType;
     }
 }
 
@@ -142,8 +180,12 @@ export function getSeriesType(chartType: ChartType): ChartSeriesType {
         case 'sunburst':
             return 'sunburst';
         case 'pie':
-        case 'doughnut':
             return 'pie';
+        case 'donut':
+        case 'doughnut':
+            return 'donut';
+        case 'heatmap':
+            return 'heatmap';
         case 'waterfall':
             return 'waterfall';
         default:
@@ -151,13 +193,12 @@ export function getSeriesType(chartType: ChartType): ChartSeriesType {
     }
 }
 
-export function isPolarChartSeriesType(seriesType: ChartSeriesType): seriesType is PolarChartSeriesType {
+export type PieChartSeriesType = Extract<ChartSeriesType, 'pie' | 'donut'>;
+
+export function isPieChartSeries(seriesType: ChartSeriesType): seriesType is PieChartSeriesType {
     switch (seriesType) {
-        case 'radar-line':
-        case 'radar-area':
-        case 'nightingale':
-        case 'radial-column':
-        case 'radial-bar':
+        case 'pie':
+        case 'donut':
             return true;
         default:
             return false;

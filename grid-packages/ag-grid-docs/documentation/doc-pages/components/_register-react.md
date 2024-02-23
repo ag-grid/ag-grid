@@ -1,6 +1,12 @@
 <framework-specific-section frameworks="react">
-|For all custom components, you should enable the grid option `reactiveCustomComponents`. This provides the simplest way to set up custom components when using Hooks. If you do not enable this option, then some of the custom components will need to be implemented in an imperative way (see the page for the relevant component for more details).
-|
+|For all custom components, you should enable the grid option `reactiveCustomComponents`. This provides the simplest way to set up custom components when using Hooks.
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+<note>If your custom component was built in an imperative way instead of setting the `reactiveCustomComponents` option, it needs to be rebuilt to take advantage of the new features that `reactiveCustomComponents` offers. Using custom components built in an imperative way is now deprecated, and in AG Grid v32 the `reactiveCustomComponents` option will be true by default.  See [Migrating to Use reactiveCustomComponents](../upgrading-to-ag-grid-31-1/#migrating-to-use-reactivecustomcomponents).</note>
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
 |There are two ways to register custom components:
 |
 |- Direct reference.

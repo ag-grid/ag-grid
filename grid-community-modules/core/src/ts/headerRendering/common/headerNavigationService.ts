@@ -23,12 +23,16 @@ export class HeaderNavigationService extends BeanStub {
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
     private gridBodyCon: GridBodyCtrl;
+    private currentHeaderRowWithoutSpan: number = -1;
 
     @PostConstruct
     private postConstruct(): void {
         this.ctrlsService.whenReady(p => {
             this.gridBodyCon = p.gridBodyCtrl;
         });
+
+        const eDocument = this.gridOptionsService.getDocument();
+        this.addManagedListener(eDocument, 'mousedown', () => this.setCurrentHeaderRowWithoutSpan(-1));
     }
 
     public getHeaderRowCount(): number {
@@ -51,7 +55,7 @@ export class HeaderNavigationService extends BeanStub {
         const rowLen = this.getHeaderRowCount();
         const isUp = direction === HeaderNavigationDirection.UP;
 
-        let { nextRow, nextFocusColumn } = isUp
+        let { headerRowIndex: nextRow, column: nextFocusColumn, headerRowIndexWithoutSpan } = isUp
             ? this.headerPositionUtils.getColumnVisibleParent(column, headerRowIndex)
             : this.headerPositionUtils.getColumnVisibleChild(column, headerRowIndex);
 
@@ -65,7 +69,11 @@ export class HeaderNavigationService extends BeanStub {
 
         if (nextRow >= rowLen) {
             nextRow = -1; // -1 indicates the focus should move to grid rows.
+            this.setCurrentHeaderRowWithoutSpan(-1);
+        } else if (headerRowIndexWithoutSpan !== undefined) {
+            this.currentHeaderRowWithoutSpan = headerRowIndexWithoutSpan;
         }
+
 
         if (!skipColumn && !nextFocusColumn) {
             return false;
@@ -76,6 +84,10 @@ export class HeaderNavigationService extends BeanStub {
             allowUserOverride:  true,
             event
         });
+    }
+
+    public setCurrentHeaderRowWithoutSpan(row: number): void {
+        this.currentHeaderRowWithoutSpan = row;
     }
 
     /*
@@ -90,6 +102,12 @@ export class HeaderNavigationService extends BeanStub {
         let normalisedDirection: 'Before' |  'After';
 
         // either navigating to the left or isRtl (cannot be both)
+        if (this.currentHeaderRowWithoutSpan !== -1) {
+            focusedHeader.headerRowIndex = this.currentHeaderRowWithoutSpan;
+        } else {
+            this.currentHeaderRowWithoutSpan = focusedHeader.headerRowIndex;
+        }
+
         if (isLeft !== isRtl) {
             normalisedDirection = 'Before';
             nextHeader = this.headerPositionUtils.findHeader(focusedHeader, normalisedDirection)!;
@@ -119,15 +137,25 @@ export class HeaderNavigationService extends BeanStub {
         if (direction === 'Before') {
             if (currentIndex > 0) {
                 nextRowIndex = currentIndex - 1;
+                this.currentHeaderRowWithoutSpan -= 1;
                 nextPosition = this.headerPositionUtils.findColAtEdgeForHeaderRow(nextRowIndex, 'end')!;
             }
         } else {
             nextRowIndex = currentIndex + 1;
+            if (this.currentHeaderRowWithoutSpan < this.getHeaderRowCount()) {
+                this.currentHeaderRowWithoutSpan += 1;
+            } else {
+                this.setCurrentHeaderRowWithoutSpan(-1);
+            }
             nextPosition = this.headerPositionUtils.findColAtEdgeForHeaderRow(nextRowIndex, 'start')!;
         }
 
+        if (!nextPosition) { return false; }
+
+        const { column, headerRowIndex } = this.headerPositionUtils.getHeaderIndexToFocus(nextPosition.column, nextPosition?.headerRowIndex)
+
         return this.focusService.focusHeaderPosition({
-            headerPosition: nextPosition,
+            headerPosition: { column, headerRowIndex },
             direction,
             fromTab: true,
             allowUserOverride: true,

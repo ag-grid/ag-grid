@@ -139,6 +139,10 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             }
         }
 
+        // needs checked before transactions are applied, as rows won't be contiguous immediately
+        // after
+        const allRowsLoaded = this.cache.isStoreFullyLoaded();
+
         let updatedNodes: RowNode[] | undefined = undefined;
         if (transaction.update?.length) {
             updatedNodes = this.cache.updateRowNodes(transaction.update);
@@ -160,6 +164,15 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             ));
             const allUniqueIdsToRemove = [...new Set(allIdsToRemove)];
             removedNodes = this.cache.removeRowNodes(allUniqueIdsToRemove);
+        }
+
+        const isClientSideSortingEnabled = this.gridOptionsService.get('serverSideEnableClientSideSort');
+        
+        const isUpdateOrAdd = updatedNodes?.length || insertedNodes?.length;
+        const isClientSideSort = allRowsLoaded && isClientSideSortingEnabled;
+        if (isClientSideSort && isUpdateOrAdd) {
+            // if client side sorting, we need to sort the rows after the transaction
+            this.cache.clientSideSortRows();
         }
 
         this.updateSelectionAfterTransaction(updatedNodes, removedNodes);

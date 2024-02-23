@@ -22,7 +22,7 @@ md-include:component-interface-vue.md
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-<note>If you do not enable the grid option `reactiveCustomComponents`, it is still possible to use custom status bar panels. However your status bar panel will not update with prop changes, but will instead be destroyed/recreated..</note>
+<note>Enabling `reactiveCustomComponents` affects all custom components. If you have custom components built in an imperative way instead of setting the `reactiveCustomComponents` option, they may need to be rebuilt to take advantage of the new features that `reactiveCustomComponents` offers. Using custom components built in an imperative way is now deprecated, and in AG Grid v32 the `reactiveCustomComponents` option will be `true` by default. See [Migrating to Use reactiveCustomComponents](../upgrading-to-ag-grid-31-1/#migrating-to-use-reactivecustomcomponents).</note>
 </framework-specific-section>
 
 ## Configuring Status Bar Panels

@@ -10,6 +10,7 @@ const chokidar = require('chokidar');
 const tcpPortUsed = require('tcp-port-used');
 const {generateDocumentationExamples} = require('./example-generator-documentation');
 const {updateBetweenStrings, getAllModules, processStdio} = require('./utils');
+const {watchValidateExampleTypes} = require('./example-validator');
 const {EOL} = os;
 
 const key = fs.readFileSync(process.env.AG_DOCS_KEY || './selfsigned.key', 'utf8');
@@ -847,7 +848,7 @@ module.exports = async (skipFrameworks, skipExampleFormatting, skipExampleGenera
                 console.log("Examples Generated");
 
                 console.log("Watch Typescript examples...");
-                // await watchValidateExampleTypes();
+                await watchValidateExampleTypes();
 
                 console.timeEnd("Generating examples");
             }

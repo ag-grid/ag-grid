@@ -30,3 +30,9 @@ export const isProductionEnvironment = () => (isProductionBuild() || isPreProduc
 // also need to update grid-packages/ag-grid-docs/src/example-generation/consts.ts if this value is changed
 // and grid-packages/ag-grid-docs/example-generator-documentation.js
 export const integratedChartsUsesChartsEnterprise = true;
+
+export const CHARTS_URL = isDevelopment()
+    ? "https://localhost:4600"
+    : isBuildServerBuild ? "https://charts-staging.ag-grid.com"
+    : isPreProductionBuild || isProductionBuild ? "https://charts.ag-grid.com"
+    : undefined;

@@ -37,6 +37,7 @@ export class MiniHistogram extends MiniChartWithAxes {
             rect.width = right - left;
             rect.height = bottom - top;
             rect.strokeWidth = 1;
+            rect.strokeOpacity = 0.75;
             rect.crisp = true;
 
             return rect;

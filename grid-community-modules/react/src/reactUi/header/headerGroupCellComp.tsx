@@ -69,7 +69,7 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
 
     return (
         <div ref={setRef} className={className} col-id={colId} 
-                    role="columnheader" tabIndex={-1} aria-expanded={ariaExpanded}>
+                    role="columnheader" aria-expanded={ariaExpanded}>
             { reactUserComp && userCompStateless && <UserCompClass { ...userCompDetails!.params } /> }
             { reactUserComp && !userCompStateless && <UserCompClass { ...userCompDetails!.params } ref={ userCompRef } /> }
             <div ref={eResize} aria-hidden={resizableAriaHidden} className={resizableClassName}></div>

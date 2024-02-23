@@ -69,7 +69,6 @@ const registerFill = (fill: ExcelInterior): number => {
 };
 
 const registerNumberFmt = (format: string): number => {
-    format = _.utf8_encode(format);
     if (numberFormatMap[format]) { return numberFormatMap[format]; }
 
     let pos = registeredNumberFmts.findIndex(currentFormat => currentFormat.formatCode === format);
@@ -161,7 +160,6 @@ const registerBorders = (borders: ExcelBorders): number => {
 
 const registerFont = (font: ExcelFont): number => {
     const { fontName: name = 'Calibri', color, size, bold, italic, outline, shadow, strikeThrough, underline, family, verticalAlign } = font;
-    const utf8Name = name ? _.utf8_encode(name) : name;
     const convertedColor = convertLegacyColor(color);
     const familyId = getFontFamilyId(family);
     const convertedUnderline = underline ? underline.toLocaleLowerCase() : undefined;
@@ -169,7 +167,7 @@ const registerFont = (font: ExcelFont): number => {
 
     let pos = registeredFonts.findIndex(currentFont => {
         if (
-            currentFont.fontName != utf8Name ||
+            currentFont.fontName != name ||
             currentFont.color != convertedColor ||
             currentFont.size != size ||
             currentFont.bold != bold ||
@@ -191,7 +189,7 @@ const registerFont = (font: ExcelFont): number => {
     if (pos === -1) {
         pos = registeredFonts.length;
         registeredFonts.push({
-            fontName: utf8Name,
+            fontName: name,
             color: convertedColor,
             size,
             bold,
@@ -208,8 +206,8 @@ const registerFont = (font: ExcelFont): number => {
     return pos;
 };
 
-const registerStyle = (config: ExcelStyle): void => {
-    const { alignment, borders, font, interior, numberFormat, protection } = config;
+const registerStyle = (config: ExcelStyle & { quotePrefix?: 1 }): void => {
+    const { alignment, borders, font, interior, numberFormat, protection, quotePrefix } = config;
     let { id } = config;
     let currentFill = 0;
     let currentBorder = 0;
@@ -247,6 +245,7 @@ const registerStyle = (config: ExcelStyle): void => {
         fontId: currentFont || 0,
         numFmtId: currentNumberFmt || 0,
         protection,
+        quotePrefix: quotePrefix,
         xfId: 0
     });
 };

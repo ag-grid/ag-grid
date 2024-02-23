@@ -2,7 +2,7 @@ export interface ChartGroupsDef {
     // community chart groups
     columnGroup?: ('column' | 'stackedColumn' | 'normalizedColumn')[];
     barGroup?: ('bar' | 'stackedBar' | 'normalizedBar')[],
-    pieGroup?: ('pie' | 'doughnut')[],
+    pieGroup?: ('pie' | 'donut' | 'doughnut')[],
     lineGroup?: ('line')[],
     scatterGroup?: ('scatter' | 'bubble')[],
     areaGroup?: ('area' | 'stackedArea' | 'normalizedArea')[],
@@ -12,7 +12,7 @@ export interface ChartGroupsDef {
     polarGroup?: ('radarLine' | 'radarArea' | 'nightingale' | 'radialColumn' | 'radialBar')[],
     statisticalGroup?: ('boxPlot' | 'histogram' | 'rangeBar' | 'rangeArea')[],
     hierarchicalGroup?: ('treemap' | 'sunburst')[],
-    specializedGroup?: ('waterfall')[],
+    specializedGroup?: ('heatmap' | 'waterfall')[],
 }
 
 export const DEFAULT_CHART_GROUPS: ChartGroupsDef = {
@@ -28,7 +28,7 @@ export const DEFAULT_CHART_GROUPS: ChartGroupsDef = {
     ],
     pieGroup: [
         'pie',
-        'doughnut',
+        'donut',
     ],
     lineGroup: [
         'line',
@@ -60,6 +60,7 @@ export const DEFAULT_CHART_GROUPS: ChartGroupsDef = {
         'sunburst',
     ],
     specializedGroup: [
+        'heatmap',
         'waterfall',
     ],
     combinationGroup: [
@@ -123,6 +124,7 @@ export type ChartType =
     | 'scatter'
     | 'bubble'
     | 'pie'
+    | 'donut'
     | 'doughnut'
     | 'area'
     | 'stackedArea'
@@ -152,6 +154,7 @@ export type CrossFilterChartType =
     | 'scatter'
     | 'bubble'
     | 'pie'
+    | 'donut'
     | 'doughnut'
     | 'area';
 

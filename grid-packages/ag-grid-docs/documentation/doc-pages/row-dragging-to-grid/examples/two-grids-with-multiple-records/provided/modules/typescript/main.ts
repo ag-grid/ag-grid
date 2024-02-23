@@ -34,7 +34,7 @@ const leftColumnDefs: ColDef[] = [
     {
         rowDrag: true,
         maxWidth: 50,
-        suppressMenu: true,
+        suppressHeaderMenuButton: true,
         rowDragText: (params, dragItemCount) => {
             if (dragItemCount > 1) {
                 return dragItemCount + ' athletes';
@@ -46,7 +46,7 @@ const leftColumnDefs: ColDef[] = [
         colId: 'checkbox',
         maxWidth: 50,
         checkboxSelection: true,
-        suppressMenu: true,
+        suppressHeaderMenuButton: true,
         headerCheckboxSelection: true
     },
     { field: "athlete" },
@@ -57,7 +57,7 @@ const rightColumnDefs: ColDef[] = [
     {
         rowDrag: true,
         maxWidth: 50,
-        suppressMenu: true,
+        suppressHeaderMenuButton: true,
         rowDragText: (params, dragItemCount) => {
             if (dragItemCount > 1) {
                 return dragItemCount + ' athletes';
@@ -68,7 +68,7 @@ const rightColumnDefs: ColDef[] = [
     { field: "athlete" },
     { field: "sport" },
     {
-        suppressMenu: true,
+        suppressHeaderMenuButton: true,
         maxWidth: 50,
         cellRenderer: SportRenderer
     }
@@ -180,7 +180,7 @@ resetBtn.addEventListener('click', () => {
 });
 
 checkboxToggle.addEventListener('change', () => {
-    leftApi!.setColumnVisible('checkbox', checkboxToggle.checked);
+    leftApi!.setColumnsVisible(['checkbox'], checkboxToggle.checked);
     leftApi!.setGridOption('suppressRowClickSelection', checkboxToggle.checked);
 });
 

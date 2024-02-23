@@ -1,117 +1,122 @@
 import classnames from 'classnames';
-import React, { FunctionComponent } from 'react';
-import { Icon } from '../../components/Icon';
+import React, { FunctionComponent, useState } from 'react';
 import { trackBuyButton } from '../../utils/analytics';
-import AGGridLogo from '../../images/inline-svgs/ag-grid-logo.svg';
-import AGChartsLogo from '../../images/inline-svgs/ag-charts-logo.svg';
 
 // @ts-ignore
 import styles from '@design-system/modules/Licenses.module.scss';
+import { ComparisonTable } from '../../components/comparison-table/ComparisonTable';
+import gridFeaturesData from '../../../doc-pages/licensing/gridFeaturesMatrix.json'
+import chartsFeaturesData from '../../../doc-pages/licensing/chartsFeaturesMatrix.json'
+
 
 type LicenseData = {
     className: string;
     id: string;
     subHeading: string;
-    licenseBenefits: string[];
     priceFullDollars: string;
     launchPrice: any;
     buyLink: string;
-    learnMoreLink: string;
-    Logo: any;
+    description: string;
+    tabGroup: string;
 };
 
 const DEV_LICENSE_DATA: LicenseData[] = [
     {
         className: styles.gridLicense,
-        id: 'grid',
-        subHeading: 'Enterprise',
-        priceFullDollars: '999',
+        id: 'community',
+        subHeading: 'AG Grid Community',
+        description: '',
+        priceFullDollars: '0',
         launchPrice: null,
-        licenseBenefits: ['Perpetual License', '1 Year of Support', '1 Year of Updates'],
-        buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=aggrid',
-        learnMoreLink: "https://www.ag-grid.com/javascript-data-grid/licensing/",
-        Logo: AGGridLogo
+        buyLink: '/javascript-data-grid/getting-started/',
+        tabGroup: 'grid'
     },
     {
-        className: styles.chartsLicense,
-        id: 'charts',
-        subHeading: 'Enterprise',
-        licenseBenefits: ['Perpetual License', '1 Year of Support', '1 Year of Updates'],
+        className: styles.gridLicense,
+        id: 'enterprise-grid',
+        subHeading: 'AG Grid Enterprise',
+        description: '',
+        priceFullDollars: '999',
+        launchPrice: null,
+        buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=aggrid',
+        tabGroup: 'grid'
+    },
+    {
+        className: styles.gridLicense,
+        id: 'community',
+        subHeading: 'AG Charts Community',
+        description: '',
+        priceFullDollars: '0',
+        launchPrice: null,
+        buyLink: 'https://charts.ag-grid.com/javascript/quick-start/',
+        tabGroup: 'charts'
+    },
+    {
+        className: styles.gridLicense,
+        id: 'enterprise-charts',
+        subHeading: 'AG Charts Enterprise',
+        description: '',
         priceFullDollars: '399',
         launchPrice: '199',
         buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=agcharts',
-        learnMoreLink: "https://charts.ag-grid.com/javascript/licensing/",
-        Logo: AGChartsLogo
+        tabGroup: 'charts'
+    },
+    {
+        className: styles.chartsLicense,
+        id: 'together',
+        subHeading: 'Enterprise Bundle',
+        description: 'AG Grid Enterprise &<br />AG Charts Enterprise',
+        priceFullDollars: '1398',
+        launchPrice: '1198',
+        buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=both',
+        tabGroup: 'both'
     },
 ];
 
-const makeNonBreaking = (text: string) => {
-    const nonBreakingSpace = '\u00A0';
-
-    return text.replace(' ', nonBreakingSpace);
-};
-
 const Price = ({ priceFullDollars, launchPrice }) => {
+    const price = launchPrice ? launchPrice : priceFullDollars;
+    const hasCost = price !== '0';
+
     return (
         <div className={styles.price}>
-            <p><b>Starting at...</b></p>
-            <p className={styles.priceFullDollars}>
-                {launchPrice ? launchPrice : priceFullDollars}
+            { hasCost && <span className={styles.fromText}>From</span> }
+
+            <p className={classnames(styles.priceFullDollars, !hasCost ? styles.freePrice : '' )}>
+                <span>{ hasCost ? `$${ price }` : 'Free' }</span>
+
                 { launchPrice && (
                     <>
                         <span className={styles.standardPrice}>
-                            {priceFullDollars}
+                            ${priceFullDollars}
                         </span>
                     </>
                 )}
             </p>
-            <p>
-                <b>Per Developer</b>
-            </p>
+
+            { hasCost && <p className={styles.developerText}>per developer</p> }
+            { !hasCost && <p className={styles.developerText}>under MIT-license</p> }
         </div>
     );
 };
 
 const License = (props: LicenseData) => {
-    const { id, subHeading, licenseBenefits, priceFullDollars, launchPrice, buyLink, learnMoreLink, Logo } = props;
+    const { id, description, subHeading, priceFullDollars, launchPrice, buyLink } = props;
 
     return (
         <>
-            <div className={classnames(styles.top, 'top')} id={id}>
+            <div className={styles.top}>
+                { launchPrice && <span className={styles.limitedTimePill}>Limited time offer</span> }
+                { !launchPrice && <span className={styles.limitedTimeSpacer}></span> }
+
                 <div className={styles.licenseMeta}>
-                    <Logo className={styles.logo}/>
-                    <p className="text-sm"><Icon name="enterprise" /> {subHeading}</p>
+                    <h2>{subHeading}</h2>
+                    <p dangerouslySetInnerHTML={{ __html: description }}></p>
                 </div>
 
                 <Price priceFullDollars={priceFullDollars} launchPrice={launchPrice} />
-
-                <div className={styles.licenseBenefits}>
-                    <ul className="list-style-none">
-                        {licenseBenefits.map((benefit, i) => {
-                            return <li key={i}><Icon name="tick"/> {makeNonBreaking(benefit)}</li>;
-                        })}
-                    </ul>
-
-                    <a className={classnames(styles.learnMoreLink, 'text-sm')} href={learnMoreLink}>
-                        Learn more
-
-                        <Icon name="arrowRight" />
-                    </a>
-                </div>
-
-
-                <div className={styles.launchExplainer}>
-                    { launchPrice && (
-                        <>
-                            <p className='text-sm'>Limited time launch price</p>
-                            <p className='text-sm'>Standard price <b>${priceFullDollars}</b></p>
-                        </>
-                    )}
-                </div>
-
                 <div className={styles.licenseActions}>
                     <a
-                        className="button-tertiary"
+                        className={`${id === 'community' ? 'button-tertiary' : 'button'} ${styles.pricing}`}
                         href={buyLink}
                         target="_blank"
                         onClick={() => {
@@ -120,7 +125,7 @@ const License = (props: LicenseData) => {
                             });
                         }}
                     >
-                        Configure Now
+                        {id === 'community' ? 'Get started' : 'Buy now'}
                     </a>
                 </div>
             </div>
@@ -128,13 +133,68 @@ const License = (props: LicenseData) => {
     );
 };
 
-export const Licenses: FunctionComponent = () => {
+export const Licenses: FunctionComponent<{ isChecked: boolean }> = ({ isChecked }) => {
+    const filteredData = DEV_LICENSE_DATA.filter(
+        (data) => data.tabGroup === 'both' || (isChecked ? data.tabGroup === 'charts' : data.tabGroup === 'grid')
+    );
+
+    const featuresData = !isChecked ? gridFeaturesData : chartsFeaturesData;
+
     return (
         <>
-            {DEV_LICENSE_DATA.map((data) => {
+            <div className={styles.emptyColumn}></div>
+            
+            {filteredData.map((data) => {
+                let columns, cellRenderer;
+
+                if (data.id === 'togther') { // Correcting the typo to 'together' if necessary
+                    columns = {
+                        'label': '',
+                        'chartsGrid': '',
+                    };
+                    cellRenderer = {
+                        'label': 'label',
+                        'chartsGrid': "feature",
+                    };
+                } else {
+                    columns = {
+                        'label': '',
+                        [data.id.includes('enterprise') ? 'enterprise' : 'community']: '',
+                    };
+                    cellRenderer = {
+                        'label': 'label',
+                        [data.id.includes('enterprise') ? 'enterprise' : 'community']: "feature",
+                    };
+                }
+
+                const [showFeatureBreakdown, setShowFeatureBreakdown] = useState(false);
+
+                const toggleFeatureBreakdown = () => {
+                    setShowFeatureBreakdown(!showFeatureBreakdown);
+                };
+
                 return (
-                    <div key={data.id} className={classnames(styles.license, data.className)}>
+                    <div key={data.id} id={data.id} className={classnames(styles.license, data.className)}>
                         <License {...data} />
+                        
+                        <span className={styles.toggleFeatureBreakdownButton} onClick={toggleFeatureBreakdown}>
+                            {showFeatureBreakdown ? 'Hide Feature Breakdown' : 'Show Feature Breakdown'}
+                        </span>
+                        
+                        {showFeatureBreakdown && (
+                            <div className={styles.mobileFeatureMatrix}>
+                                {featuresData.map((section, i) => (
+                                    <div className={styles.tableContainer} key={i}>
+                                        <h4 className={styles.categoryTableHeader}>{section.group.name}</h4>
+                                        <ComparisonTable
+                                            data={section.items}
+                                            columns={columns}
+                                            cellRenderer={cellRenderer}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 );
             })}

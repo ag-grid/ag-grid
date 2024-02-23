@@ -15,7 +15,8 @@ import { NavigatorPanel } from "./navigator/navigatorPanel";
 import { ChartPanel } from "./chart/chartPanel";
 import { ChartOptionsService } from "../../services/chartOptionsService";
 import { SeriesPanel } from "./series/seriesPanel";
-import { ChartSeriesType, getSeriesType, isPolarChartSeriesType } from "../../utils/seriesTypeMapper";
+import { ChartSeriesType, getSeriesType, hasGradientLegend, isPolar } from "../../utils/seriesTypeMapper";
+import { GradientLegendPanel } from './legend/gradientLegendPanel';
 
 export interface FormatPanelOptions {
     chartController: ChartController,
@@ -88,10 +89,12 @@ export class FormatPanel extends Component {
             if (group === 'chart') {
                 this.addComponent(new ChartPanel(opts));
             } else if (group === 'legend') {
-                this.addComponent(new LegendPanel(opts));
+                // Some chart types require non-standard legend options, so choose the appropriate panel
+                const panel = hasGradientLegend(chartType) ? new GradientLegendPanel(opts) : new LegendPanel(opts);
+                this.addComponent(panel);
             } else if (group === 'axis') {
                 // Polar charts have different axis options from cartesian charts, so choose the appropriate panel
-                const panel = isPolarChartSeriesType(seriesType) ? new PolarAxisPanel(opts) : new CartesianAxisPanel(opts);
+                const panel = isPolar(chartType) ? new PolarAxisPanel(opts) : new CartesianAxisPanel(opts);
                 this.addComponent(panel);
             } else if (group === 'series') {
                 this.addComponent(new SeriesPanel(opts));
@@ -139,6 +142,7 @@ export class FormatPanel extends Component {
             'range-area': ['axis', 'navigator'],
             'treemap': [],
             'sunburst': [],
+            'heatmap': ['axis'],
             'waterfall': ['axis', 'navigator'],
             'box-plot': ['axis', 'navigator'],
         };

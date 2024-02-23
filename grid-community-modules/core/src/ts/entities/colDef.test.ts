@@ -1,4 +1,4 @@
-import { ColDef } from './colDef'
+import { ColDef, ColGroupDef } from './colDef'
 import { describe, test } from '@jest/globals';
 
 describe('ColDef.field Types', () => {
@@ -17,6 +17,25 @@ describe('ColDef.field Types', () => {
             { field: 'b' },
             // @ts-expect-error - non existent field
             { field: 'c' },
+        ];
+    })
+
+    test('Simple TData with Column Group', () => {
+        interface RowData {
+            a: number
+            b: string
+        }
+        const t: (ColDef<RowData> | ColGroupDef<RowData>)[] = [
+            { field: 'a' },
+            { field: 'b' },
+            // @ts-expect-error - non existent field
+            { field: 'c' },
+            { children: [
+                { field: 'a' },
+                { field: 'b' },
+                // @ts-expect-error - non existent field
+                { field: 'c' },
+            ]},
         ];
     })
 

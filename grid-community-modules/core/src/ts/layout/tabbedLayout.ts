@@ -33,7 +33,6 @@ export class TabbedLayout extends TabGuardComp {
 
     @PostConstruct
     private postConstruct() {
-
         this.initialiseTabGuard({
             onTabKeyDown: this.onTabKeyDown.bind(this),
             handleKeyDown: this.handleKeyDown.bind(this),

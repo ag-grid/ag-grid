@@ -19,10 +19,10 @@ interface IRow {
 
 const rowData: IRow[] = [
   { value: 14, type: 'age' },
-  { value: 'female', type: 'gender' },
+  { value: 'Female', type: 'gender' },
   { value: 'Happy', type: 'mood' },
   { value: 21, type: 'age' },
-  { value: 'male', type: 'gender' },
+  { value: 'Male', type: 'gender' },
   { value: 'Sad', type: 'mood' },
 ]
 

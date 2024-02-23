@@ -62,13 +62,20 @@ const defaultColDef = {
 
 const IS_SSR = typeof window === 'undefined';
 
-const isRowMaster = (row) => row.moreInformation;
+const isRowMaster = (row) => row.moreInformation || row.deprecationNotes || row.breakingChangesNotes;
+
+const newLinesToBreaks = (message) =>
+    message.replaceAll('\n\r', '<br>').replaceAll('\n', '<br>').replaceAll('\r', '<br>');
 
 const detailCellRendererParams = (params) => {
-    let message = params.data.moreInformation;
-    message = message.replaceAll('\n\r', '<br>');
-    message = message.replaceAll('\n', '<br>');
-    message = message.replaceAll('\r', '<br>');
+    const combinedMessages = [
+        params.data.moreInformation,
+        params.data.deprecationNotes,
+        params.data.breakingChangesNotes,
+    ]
+        .filter(Boolean)
+        .join('\n\n');
+    let message = newLinesToBreaks(combinedMessages);
 
     function makeLinksFunctional(message) {
         let msgArr = message.split(' ');

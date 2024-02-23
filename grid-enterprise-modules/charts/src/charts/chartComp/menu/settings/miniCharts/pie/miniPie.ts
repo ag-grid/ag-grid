@@ -1,8 +1,8 @@
 import { ThemeTemplateParameters } from "../../miniChartsContainer";
-import { MiniDoughnut } from "./miniDoughnut";
+import { MiniDonut } from "./miniDonut";
 import { ChartType } from "@ag-grid-community/core";
 
-export class MiniPie extends MiniDoughnut {
+export class MiniPie extends MiniDonut {
 
     static chartType: ChartType = 'pie';
 

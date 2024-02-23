@@ -35,11 +35,6 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
                 }
             },
             addOrRemoveCssClass: (name, on) => cssClassManager.current!.addOrRemoveCssClass(name, on),
-            setAriaDescription: label => {
-                if (eGui.current) {
-                    _.setAriaDescription(eGui.current, label)
-                }
-            },
             setAriaSort: sort => {
                 if (eGui.current) {
                     sort ? _.setAriaSort(eGui.current, sort) : _.removeAriaSort(eGui.current)
@@ -77,7 +72,6 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
             className="ag-header-cell"
             col-id={colId}
             role="columnheader"
-            tabIndex={-1}
         >
             <div ref={eResize} className="ag-header-cell-resize" role="presentation"></div>
             <div ref={eHeaderCompWrapper} className="ag-header-cell-comp-wrapper" role="presentation">

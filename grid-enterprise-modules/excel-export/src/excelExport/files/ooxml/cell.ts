@@ -37,20 +37,20 @@ const cellFactory: ExcelOOXMLTemplate = {
         if (convertedType === 'str' && type === 'f') {
             children = [{
                 name: 'f',
-                textNode: _.escapeString(_.utf8_encode(value))
+                textNode: _.escapeString(value)
             }];
         } else if (convertedType === 'inlineStr') {
             children = [{
                 name: 'is',
                 children: [{
                     name: 't',
-                    textNode: _.escapeString(_.utf8_encode(value))
+                    textNode: _.escapeString(value)
                 }]
             }];
         } else {
             children = [{
                 name: 'v',
-                textNode: value
+                textNode: value,
             }];
         }
 

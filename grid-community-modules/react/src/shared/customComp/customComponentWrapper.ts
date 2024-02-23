@@ -19,7 +19,11 @@ export function addOptionalMethods<M, C>(optionalMethodNames: string[], provided
 }
 
 export class CustomComponentWrapper<TInputParams, TOutputParams, TMethods> extends ReactComponent {
-    protected refreshProps!: () => void;
+    private updateCallback?: () => AgPromise<void>;
+    private resolveUpdateCallback!: () => void;
+    private awaitUpdateCallback = new AgPromise<void>(resolve => {
+        this.resolveUpdateCallback = resolve;
+    });
 
     protected providedMethods!: TMethods;
 
@@ -51,7 +55,16 @@ export class CustomComponentWrapper<TInputParams, TOutputParams, TMethods> exten
             setMethods: (methods: TMethods) => this.setMethods(methods),
             addUpdateCallback: (callback: (props: TOutputParams) => void) => {
                 // this hooks up `CustomWrapperComp` to allow props updates to be pushed to the custom component
-                this.refreshProps = () => callback(this.getProps());
+                this.updateCallback = () => {
+                    callback(this.getProps());
+                    return new AgPromise<void>(resolve => {
+                        // ensure prop updates have happened
+                        setTimeout(() => {
+                            resolve();
+                        });
+                    });
+                };
+                this.resolveUpdateCallback();
             }
         });
     }
@@ -70,5 +83,15 @@ export class CustomComponentWrapper<TInputParams, TOutputParams, TMethods> exten
             ...this.sourceParams,
             key: this.key
          } as any;
+    }
+
+    protected refreshProps(): AgPromise<void> {
+        if (this.updateCallback) {
+            return this.updateCallback();
+        }
+        // `refreshProps` is assigned in an effect. It's possible it hasn't been run before the first usage, so wait.
+        return new AgPromise<void>(resolve => this.awaitUpdateCallback.then(() => {
+            this.updateCallback!().then(() => resolve());
+        }));
     }
 }

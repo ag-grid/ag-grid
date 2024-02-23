@@ -159,12 +159,12 @@ to all Cells to be highlighted.
 It's possible to style the first and last rows of the grid using CSS by targeting the `.ag-row-first` and `.ag-row-last` selectors as follows:
 
 ```css
-.ag-row.ag-row-first .ag-cell {
-    background-color: darkblue;
+.ag-row.ag-row-first {
+    background-color: #2244CC44;
 }
 
-.ag-row.ag-row-last .ag-cell {
-    background-color: gold;
+.ag-row.ag-row-last {
+    background-color: #CC333344;
 }
 ```
 

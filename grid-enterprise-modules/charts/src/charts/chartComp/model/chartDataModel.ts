@@ -262,14 +262,18 @@ export class ChartDataModel extends BeanStub {
 
     private getRowIndexes(): { startRow: number; endRow: number; } {
         let startRow = 0, endRow = 0;
-        const { rangeService, valueCellRange } = this;
+        const { rangeService, valueCellRange, dimensionCellRange } = this;
 
-        if (rangeService && valueCellRange) {
-            startRow = rangeService.getRangeStartRow(valueCellRange).rowIndex;
+        // Not all chart types require a value series (e.g. hierarchical charts),
+        // so fall back to using the dimension cell range for inferring row indices
+        const cellRange = valueCellRange || dimensionCellRange;
+
+        if (rangeService && cellRange) {
+            startRow = rangeService.getRangeStartRow(cellRange).rowIndex;
 
             // when the last row the cell range is a pinned 'bottom' row, the `endRow` index is set to -1 which results
             // in the ChartDatasource processing all non pinned rows from the `startRow` index.
-            const endRowPosition = rangeService.getRangeEndRow(valueCellRange);
+            const endRowPosition = rangeService.getRangeEndRow(cellRange);
             endRow = endRowPosition.rowPinned === 'bottom' ? -1 : endRowPosition.rowIndex;
         }
 
@@ -346,12 +350,29 @@ export class ChartDataModel extends BeanStub {
         const idsMatch = (cs: ColState) => cs.colId === updatedCol.colId;
         const { dimensionColState, valueColState } = this;
 
-        if (dimensionColState.filter(idsMatch).length > 0) {
-            // only one dimension should be selected
-            dimensionColState.forEach(cs => cs.selected = idsMatch(cs));
-        } else {
-            // just update the selected value on the supplied value column
-            valueColState.filter(idsMatch).forEach(cs => cs.selected = updatedCol.selected);
+        // Determine whether the specified column is a dimension or value column
+        const matchedDimensionColState = dimensionColState.find(idsMatch);
+        const matchedValueColState = valueColState.find(idsMatch);
+
+        if (matchedDimensionColState) {
+            // For non-hierarchical chart types, only one dimension can be selected
+            const supportsMultipleDimensions = isHierarchical(this.chartType);
+            if (!supportsMultipleDimensions) {
+                // Determine which column should end up selected, if any
+                const selectedColumnState = updatedCol.selected
+                    ? matchedDimensionColState
+                    : dimensionColState
+                        .filter((cs) => cs !== matchedDimensionColState)
+                        .find(({ selected }) => selected);
+                // Update the selection state of all dimension columns
+                dimensionColState.forEach(cs => cs.selected = (cs === selectedColumnState));
+            } else {
+                // Update the selection state of the specified dimension column
+                matchedDimensionColState.selected = updatedCol.selected;
+            }
+        } else if (matchedValueColState) {
+            // Update the selection state of the specified value column
+            matchedValueColState.selected = updatedCol.selected;
         }
 
         const allColumns = [...dimensionColState, ...valueColState];

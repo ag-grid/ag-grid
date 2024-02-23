@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired,
     Bean,
     Column,
@@ -95,7 +94,7 @@ const getMultipleSheetsAsExcelCompressed = (params: ExcelExportMultipleSheetPara
 
     if (!createExcelFileForExcel(data, fontSize, author)) { return Promise.resolve(undefined); }
 
-    return ZipContainer.getCompressedContent(mimeType);
+    return ZipContainer.getZipFile(mimeType);
 };
 
 export const getMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams): Blob | undefined => {
@@ -104,23 +103,21 @@ export const getMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams)
 
     if (!createExcelFileForExcel(data, fontSize, author)) { return; }
 
-    return ZipContainer.getContent(mimeType);
+    return ZipContainer.getUncompressedZipFile(mimeType);
 };
 
 export const exportMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams) => {
     const { fileName = 'export.xlsx' } = params;
-    if (params.compressOutput) {
-        getMultipleSheetsAsExcelCompressed(params).then(contents => {
-            if (contents) {
-                Downloader.download(fileName, contents);
-            }
-        });
-    } else {
-        const contents = getMultipleSheetsAsExcel(params);
+
+    getMultipleSheetsAsExcelCompressed(params).then(contents => {
         if (contents) {
-            Downloader.download(fileName, contents);
+            const downloadFileName = typeof fileName === 'function'
+                ? fileName()
+                : fileName;
+
+            Downloader.download(downloadFileName, contents);
         }
-    }
+    });
 };
 
 const createImageRelationsForSheet = (sheetIndex: number, currentRelationIndex: number) => {
@@ -172,19 +169,19 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
             data: [data],
             fontSize: mergedParams.fontSize,
             author: mergedParams.author,
-            mimeType: mergedParams.mimeType,
-            compressOutput: mergedParams.compressOutput,
+            mimeType: mergedParams.mimeType
         };
 
-        if (exportParams.compressOutput) {
-            this.packageCompressedFile(exportParams).then(packageFile => {
-                if (packageFile) {
-                    Downloader.download(this.getFileName(mergedParams.fileName), packageFile);
-                }
-            });
-        } else {
-            this.exportMultipleSheetsAsExcel(exportParams);
-        }
+        this.packageCompressedFile(exportParams).then(packageFile => {
+            if (packageFile) {
+                const { fileName } = mergedParams;
+                const providedFileName = typeof fileName === 'function'
+                    ? fileName(this.gridOptionsService.getGridCommonParams())
+                    : fileName;
+
+                Downloader.download(this.getFileName(providedFileName), packageFile);
+            }
+        });
     }
 
     public exportDataAsExcel(params?: ExcelExportParams): void {
@@ -235,10 +232,16 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
     public createSerializingSession(params: ExcelExportParams): ExcelSerializingSession {
         const { columnModel, valueService, gridOptionsService, valueFormatterService, valueParserService } = this;
 
-        let sheetName = 'ag-grid';
-
+        let sheetName: string;
         if (params.sheetName != null) {
-            sheetName = _.utf8_encode(String(params.sheetName).substring(0, 31));
+            const {sheetName: sheetNameParam } = params;
+            const sheetNameValue = typeof sheetNameParam === 'function'
+                ? sheetNameParam(this.gridOptionsService.getGridCommonParams())
+                : sheetNameParam;
+
+            sheetName = String(sheetNameValue).substring(0, 31);
+        } else {
+            sheetName = 'ag-grid';
         }
 
         const config: ExcelGridSerializingParams = {
