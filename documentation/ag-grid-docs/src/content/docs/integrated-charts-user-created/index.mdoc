@@ -44,68 +44,49 @@ const gridOptions = {
 
 The video above highlights a number of charting features. For more details on each feature follow the links provided below:
 
-````js {% fixme=true %}
-<div style="display: flex; margin-bottom: 25px; margin-top: 25px;">
-  ```
-  <div style="flex: 1 1 0;">
-      <ul class="content">
-          <li><a href="../integrated-charts-range-chart/#creating-chart-ranges">Chart Ranges</a>: When a chart is created, corresponding chart ranges appear in the grid and can be adjusted via the chart range handle.</li>
-          <li><a href="../integrated-charts-range-chart/#category-and-series-ranges">Categories and Series</a>: Columns can be configured as either categories or series for charting. If not configured then the grid will infer whether a column contains category or series data.</li>
-      </ul>
-  </div>
-  <div style="flex: 1 1 0;">
-      <image-caption src="integrated-charts-user-created/resources/category-range-fill-handle.png" alt="Range Handle" maxWidth="90%" constrained="true" centered="true" toggledarkmode="true"></image-caption>
-  </div>
-  ```
-</div>
+{% flex gap="size-6" direction="column" %}
 
-````
+{% flex gap="size-6" %}
+{% flex %}
+* [Chart Ranges](../integrated-charts-range-chart/#creating-chart-ranges): When a chart is created, corresponding chart ranges appear in the grid and can be adjusted via the chart range handle.
+* [Categories and Series](../integrated-charts-range-chart/#category-and-series-ranges): Columns can be configured as either categories or series for charting. If not configured then the grid will infer whether a column contains category or series data.
+{% /flex %}
 
-````js {% fixme=true %}
-<div style="display: flex; margin-bottom: 25px; margin-top: 25px; margin-left: 40px;">
-  ```
-  <div style="flex: 1 1 0;">
-      <image-caption src="integrated-charts-user-created/resources/chart-tool-panels.png" alt="Open Chart Tool Panel" maxWidth="90%" constrained="true" centered="true"  toggledarkmode="true"></image-caption>
-  </div>
-  <div style="flex: 1 1 0;">
-      <ul class="content">
-          <li><a href="../integrated-charts-chart-tool-panels/">Chart Tool Panels</a>:
-              The chart tool panels can be opened by a button located in the middle right part of the chart. The Chart Tool Panels allow a user to:
-              <ul class="content">
-                  <li>Change the chart type</li>
-                  <li>Change the theme</li>
-                  <li>Change which columns are used as categories and series</li>
-                  <li>Format different aspects of the chart</li>
-              </ul>
-          </li>
-      </ul>
-  </div>
-  ```
-</div>
+{% image imagePath="resources/category-range-fill-handle.png" alt="Range Handle" maxWidth="90%" /%}
+{% /flex %}
 
-````
 
-````js {% fixme=true %}
-<div style="display: flex; margin-bottom: 25px; margin-top: 25px; margin-left: 40px;">
-  ```
-  <div style="flex: 1 1 0;">
-      <ul class="content">
-          <li><a href="../integrated-charts-toolbar/">Chart Toolbar</a>:
-              The chart toolbar is located in the top right area of the chart and allows a user to:
-              <ul class="content">
-                  <li>Unlink the chart from the grid</li>
-                  <li>Download the chart</li>
-              </ul>
-          </li>
-      </ul>
-  </div>
-  <div style="flex: 1 1 0;">
-      <image-caption src="integrated-charts-user-created/resources/chart-toolbar.png" alt="Chart Toolbar" maxWidth="90%" constrained="true" centered="true"  toggledarkmode="true"></image-caption>
-  </div>
-  ```
-</div>
+{% flex gap="size-6" %}
+{% image imagePath="resources/chart-tool-panels.png" alt="Open Chart Tool Panel" maxWidth="90%" /%}
 
-````
+{% flex %}
+* [Chart Tool Panels](./integrated-charts-chart-tool-panels/):
+    
+  The chart tool panels can be opened by a button located in the middle right part of the chart. The Chart Tool Panels allow a user to:
+
+  * Change the chart type
+  * Change the theme
+  * Change which columns are used as categories and series
+  * Format different aspects of the chart
+{% /flex %}
+{% /flex %}
+
+{% flex gap="size-6" %}
+{% flex %}
+* [Chart Toolbar](./integrated-charts-toolbar):
+
+  The chart toolbar is located in the top right area of the chart and allows a user to:
+
+  * Unlink the chart from the grid
+  * Download the chart
+{% /flex %}
+
+{% image imagePath="resources/chart-toolbar.png" alt="Chart Toolbar" maxWidth="90%" /%}
+{% /flex %}
+
+{% /flex %}
+
+{% br /%}
 
 By default, user created charts are displayed inside the grid's own popup windows. The windows can be moved (by mouse dragging a window's title bar) and resized (by mouse dragging a window's borders).
 

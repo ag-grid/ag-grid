@@ -5,15 +5,15 @@ enterprise: true
 
 The chart toolbar allows users to unlink charts from the grid and download the current chart.
 
-````js {% fixme=true %}
-<figure>
-  ```
-  <image-caption src="integrated-charts-toolbar/resources/chart-toolbar.png" alt="Chart Toolbar" constrained="true" centered="true" toggledarkmode="true"></image-caption>
-  <figcaption style="text-align: center; font-size: 0.85rem; margin-top: 10px;">Chart Toolbar</figcaption>
-  ```
-</figure>
+{% flex justifyContent="center" %}
 
-````
+{% imageCaption imagePath="resources/chart-toolbar.png" alt="Chart Toolbar" constrained=true centered=true %}
+{% flex justifyContent="center" %}
+Chart Toolbar
+{% /flex %}
+{% /imageCaption %}
+
+{% /flex %}
 
 ## Unlinking Charts
 
@@ -21,21 +21,20 @@ Charts are linked to the data in the grid by default, so that if the data change
 
 Unlinking a chart is achieved through the 'Unlink Chart' toolbar item highlighted below:
 
-````js {% fixme=true %}
-<div style="display: flex; margin-bottom: 25px; margin-top: 25px; margin-left: 40px; gap: 40px">
-  ```
-  <figure style="flex: 1; margin: 0;">
-      <image-caption src="integrated-charts-toolbar/resources/chart-toolbar-link-chart.png" alt="Chart Toolbar Link button with linked data" constrained="true" centered="true" toggledarkmode="true"></image-caption>
-      <figcaption style="text-align: center; font-size: 0.85rem; margin-top: 10px;">Chart Toolbar Link button with linked data</figcaption>
-  </figure>
-  <figure style="flex: 1; margin: 0;">
-      <image-caption src="integrated-charts-toolbar/resources/chart-toolbar-unlink-chart.png" alt="Chart Toolbar Link button with unlinked data" constrained="true" centered="true" toggledarkmode="true"></image-caption>
-      <figcaption style="text-align: center; font-size: 0.85rem; margin-top: 10px;">Chart Toolbar Link button with unlinked data</figcaption>
-  </figure>
-  ```
-</div>
 
-````
+{% flex justifyContent="center" gap="size-10" %}
+{% imageCaption imagePath="resources/chart-toolbar-link-chart.png" alt="Chart Toolbar Link button with linked data" constrained=true centered=true %}
+{% flex justifyContent="center" %}
+Chart Toolbar Link button with linked data
+{% /flex %}
+{% /imageCaption %}
+
+{% imageCaption imagePath="resources/chart-toolbar-unlink-chart.png" alt="Chart Toolbar Link button with unlinked data" constrained=true centered=true %}
+{% flex justifyContent="center" %}
+Chart Toolbar Link button with unlinked data
+{% /flex %}
+{% /imageCaption %}
+{% /flex %}
 
 Notice that the chart range disappears from the grid when the chart has been unlinked. Subsequent changes to the grid sorting also do not impact the chart.
 
@@ -43,15 +42,15 @@ Notice that the chart range disappears from the grid when the chart has been unl
 
 The 'Download Chart' toolbar item will download the chart as a `PNG` file. Note that the chart is drawn using Canvas in the browser and as such the user can also right click on the chart and save just like any other image on a web page.
 
-````js {% fixme=true %}
-<figure>
-  ```
-  <image-caption src="integrated-charts-toolbar/resources/chart-toolbar-download.png" alt="Chart Toolbar Download Chart button" constrained="true" centered="true" toggledarkmode="true"></image-caption>
-  <figcaption style="text-align: center; font-size: 0.85rem; margin-top: 10px;">Chart Toolbar Download Chart button</figcaption>
-  ```
-</figure>
+{% flex justifyContent="center" %}
 
-````
+{% imageCaption imagePath="resources/chart-toolbar-download.png" alt="Chart Toolbar Download Chart button" constrained=true centered=true %}
+{% flex justifyContent="center" %}
+Chart Toolbar Download Chart button
+{% /flex %}
+{% /imageCaption %}
+
+{% /flex %}
 
 The chart can also be [downloaded using the Grid API](./integrated-charts-api-downloading-image).
 
