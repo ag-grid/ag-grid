@@ -5,7 +5,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import { GridApi, GridOptions, GridReadyEvent, Module } from '@ag-grid-community/core';
 import { AgGridAngular } from '../ag-grid-angular.component';
 
-// NOTE: More tests can be found under grid-examples/ag-grid-angular-cli-example/src/tests/
+// NOTE: More tests can be found under the ag-grid-angular-cli-example example under /src/tests/
 // https://github.com/ag-grid/ag-grid-angular-cli-example
 @Component({
     selector: 'app-grid-wrapper',
