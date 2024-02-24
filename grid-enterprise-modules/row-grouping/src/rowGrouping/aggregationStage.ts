@@ -161,7 +161,10 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
             }
 
             // bit of a memory drain storing null/undefined, but seems to speed up performance.
-            result[colDef.colId!] = this.aggregateValues(values, colDef.pivotValueColumn!.getAggFunc()!, colDef.pivotValueColumn!, rowNode, secondaryCol);
+            const value = this.aggregateValues(values, colDef.pivotValueColumn!.getAggFunc()!, colDef.pivotValueColumn!, rowNode, secondaryCol);
+            if (value !== undefined) {
+                result[colDef.colId!] = value;
+            }
         }
 
         if (!canSkipTotalColumns) {
@@ -175,7 +178,10 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
     
                 const aggResults: any[] = colDef.pivotTotalColumnIds.map((currentColId: string) => result[currentColId]);
                 // bit of a memory drain storing null/undefined, but seems to speed up performance.
-                result[colDef.colId!] = this.aggregateValues(aggResults, colDef.pivotValueColumn!.getAggFunc()!, colDef.pivotValueColumn!, rowNode, secondaryCol);
+                const value = this.aggregateValues(aggResults, colDef.pivotValueColumn!.getAggFunc()!, colDef.pivotValueColumn!, rowNode, secondaryCol);
+                if (value !== undefined) {
+                    result[colDef.colId!] = value;
+                }
             }
         }
 
@@ -197,7 +203,10 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
         const oldValues = rowNode.aggData;
 
         changedValueColumns.forEach((valueColumn: Column, index: number) => {
-            result[valueColumn.getId()] = this.aggregateValues(values2d[index], valueColumn.getAggFunc()!, valueColumn, rowNode);
+            const value = this.aggregateValues(values2d[index], valueColumn.getAggFunc()!, valueColumn, rowNode);
+            if (value !== undefined) {
+                result[valueColumn.getId()] = value;
+            }
         });
 
         if (notChangedValueColumns && oldValues) {
