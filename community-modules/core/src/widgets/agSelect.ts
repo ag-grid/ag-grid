@@ -32,9 +32,13 @@ export class AgSelect extends AgPickerField<string | null, AgSelectParams & AgPi
         this.createListComponent();
         this.eWrapper.tabIndex = this.gridOptionsService.get('tabIndex');
 
-        const { options } = this.config;
+        const { options, value } = this.config;
         if (options != null) {
             this.addOptions(options);
+        }
+        if (value != null) {
+            // need to reapply value after list component created
+            this.setValue(value, true);
         }
 
         this.addManagedListener(this.eWrapper, 'focusout', this.onWrapperFocusOut.bind(this));
