@@ -1,0 +1,16 @@
+.ag-header {
+  background-color: var(--ag-header-background-color);
+  border-bottom: var(--ag-header-border);
+}
+
+.ag-header-row {
+  color: var(--ag-header-foreground-color);
+  height: var(--ag-header-height);
+}
+
+.ag-header-row:not(:first-child) {
+  .ag-header-cell:not(.ag-header-span-height.ag-header-span-total),
+  .ag-header-group-cell.ag-header-group-cell-with-group {
+    border-top: var(--ag-header-border);
+  }
+}

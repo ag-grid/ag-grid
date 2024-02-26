@@ -76,6 +76,10 @@
   line-height: var(--ag-internal-content-line-height);
 }
 
+.ag-cell {
+  border-right: var(--ag-column-border);
+}
+
 .ag-cell-wrapper > *:not(.ag-cell-value):not(.ag-group-value) {
   /* cell widgets like checkboxes don't respond to line-height, so set their
   height to vertically centre them */

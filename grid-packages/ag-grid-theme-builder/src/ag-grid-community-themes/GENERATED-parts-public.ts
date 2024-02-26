@@ -22,7 +22,13 @@ export type CoreParam =
   | 'pinnedColumnBorder'
   | 'pinnedRowBorder'
   | 'sidePanelBorder'
+  | 'sideButtonSelectedBorder'
+  | 'sideButtonSelectedBackgroundColor'
+  | 'sideBarBackgroundColor'
+  | 'fontFamily'
   | 'chromeBackgroundColor'
+  | 'headerBackgroundColor'
+  | 'headerForegroundColor'
   | 'dataColor'
   | 'rangeSelectionBorderStyle'
   | 'rangeSelectionBorderColor'
@@ -50,7 +56,9 @@ export type CoreParam =
   | 'popupShadow'
   | 'dropdownShadow'
   | 'dragGhostBackgroundColor'
-  | 'dragGhostBorder';
+  | 'dragGhostBorder'
+  | 'insetFocusShadow'
+  | 'sideBarPanelWidth';
 
 export type ColorsPreset = 'light' | 'dark';
 
@@ -64,13 +72,16 @@ export type QuartzIconsPreset = 'light' | 'regular' | 'bold';
 
 export type QuartzIconsParam = 'quartzIconsPreset' | 'iconSize' | 'iconStrokeWidth';
 
+import sidebarCssImport from './css/core/sidebar.css?inline';
 import rootCssImport from './css/core/root.css?inline';
 import resetCssImport from './css/core/reset.css?inline';
 import headerCssImport from './css/core/header.css?inline';
 import gridLayoutCssImport from './css/core/grid-layout.css?inline';
 import gridBordersCssImport from './css/core/grid-borders.css?inline';
 import dragAndDropCssImport from './css/core/drag-and-drop.css?inline';
+import columnDropCssImport from './css/core/column-drop.css?inline';
 import bordersTodoMoveIntoComponentFilesCssImport from './css/core/borders-todo-move-into-component-files.css?inline';
+import advancedFilterCssImport from './css/core/advanced-filter.css?inline';
 
 export const core = definePart<CoreParam>({
   partId: 'core',
@@ -87,7 +98,14 @@ export const core = definePart<CoreParam>({
     pinnedColumnBorder: true,
     pinnedRowBorder: true,
     sidePanelBorder: true,
+    sideButtonSelectedBorder: true,
+    sideButtonSelectedBackgroundColor: helpers.ref('backgroundColor'),
+    sideBarBackgroundColor: helpers.ref('chromeBackgroundColor'),
+    fontFamily:
+      "'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif",
     chromeBackgroundColor: helpers.transparentForeground(0.02),
+    headerBackgroundColor: helpers.ref('chromeBackgroundColor'),
+    headerForegroundColor: helpers.ref('foregroundColor'),
     dataColor: helpers.ref('foregroundColor'),
     rangeSelectionBorderStyle: 'solid',
     rangeSelectionBorderColor: helpers.ref('accentColor'),
@@ -116,15 +134,20 @@ export const core = definePart<CoreParam>({
     dropdownShadow: '0 1px 4px 1px #babfc766',
     dragGhostBackgroundColor: helpers.ref('backgroundColor'),
     dragGhostBorder: true,
+    insetFocusShadow: 'inset 0 0 5px var(--ag-accent-color)',
+    sideBarPanelWidth: '250px',
   },
   css: [
+    sidebarCssImport,
     rootCssImport,
     resetCssImport,
     headerCssImport,
     gridLayoutCssImport,
     gridBordersCssImport,
     dragAndDropCssImport,
+    columnDropCssImport,
     bordersTodoMoveIntoComponentFilesCssImport,
+    advancedFilterCssImport,
   ],
 });
 
@@ -291,6 +314,42 @@ export type ParamTypes = {
   sidePanelBorder: string | boolean;
 
   /**
+   * Border around the selected sidebar button on the side panel
+   *
+   * A CSS border value e.g. "solid 1px red". Passing true is equivalent to "solid 1px var(--ag-border-color)", and false to "none".
+   *
+   * @default true
+   */
+  sideButtonSelectedBorder: string | boolean;
+
+  /**
+   * Border around the selected sidebar button on the side panel
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default ref("backgroundColor")
+   */
+  sideButtonSelectedBackgroundColor: string;
+
+  /**
+   * Background colour for non-data areas of the grid. Headers, tool panels and menus use this colour by default.
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default ref("chromeBackgroundColor")
+   */
+  sideBarBackgroundColor: string;
+
+  /**
+   * Font family used for all text.
+   *
+   * Any valid CSS expression is accepted.
+   *
+   * @default "'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif"
+   */
+  fontFamily: string;
+
+  /**
    * Background colour for non-data areas of the grid. Headers, tool panels and menus use this colour by default.
    *
    * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
@@ -298,6 +357,24 @@ export type ParamTypes = {
    * @default transparentForeground(0.02)
    */
   chromeBackgroundColor: string;
+
+  /**
+   * Background colour for non-data areas of the grid. Headers, tool panels and menus use this colour by default.
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default ref("chromeBackgroundColor")
+   */
+  headerBackgroundColor: string;
+
+  /**
+   * Background colour for non-data areas of the grid. Headers, tool panels and menus use this colour by default.
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default ref("foregroundColor")
+   */
+  headerForegroundColor: string;
 
   /**
    * Colour of text in grid cells.
@@ -550,6 +627,24 @@ export type ParamTypes = {
    * @default true
    */
   dragGhostBorder: string | boolean;
+
+  /**
+   * Border colour of the ghost element when dragging columns
+   *
+   * Any valid CSS expression is accepted.
+   *
+   * @default "inset 0 0 5px var(--ag-accent-color)"
+   */
+  insetFocusShadow: string;
+
+  /**
+   * Default width of the sidebar that contains the columns and filters tool panels
+   *
+   * A CSS number value with length units, e.g. "1px" or "2em". If a JavaScript number is provided, its units are assumed to be 'px'.
+   *
+   * @default "250px"
+   */
+  sideBarPanelWidth: string;
 
   /**
    * Use one of the built-in sets of preset colors values. Available presets are: "light", "dark".

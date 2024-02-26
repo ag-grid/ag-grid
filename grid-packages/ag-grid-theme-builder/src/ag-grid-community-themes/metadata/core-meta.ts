@@ -27,7 +27,6 @@ export const coreMeta = definePartMeta({
       docs: 'Default colour for borders.',
       defaultValue: { helper: 'transparentForeground', arg: 0.15 },
     },
-
     {
       property: 'wrapperBorder',
       type: 'border',
@@ -77,10 +76,47 @@ export const coreMeta = definePartMeta({
       defaultValue: true,
     },
     {
+      property: 'sideButtonSelectedBorder',
+      type: 'border',
+      docs: 'Border around the selected sidebar button on the side panel',
+      defaultValue: true,
+    },
+    {
+      property: 'sideButtonSelectedBackgroundColor',
+      type: 'color',
+      docs: 'Border around the selected sidebar button on the side panel',
+      defaultValue: { helper: 'ref', arg: 'backgroundColor' },
+    },
+    {
+      property: 'sideBarBackgroundColor',
+      type: 'color',
+      docs: 'Background colour for non-data areas of the grid. Headers, tool panels and menus use this colour by default.',
+      defaultValue: { helper: 'ref', arg: 'chromeBackgroundColor' },
+    },
+    {
+      property: 'fontFamily',
+      type: 'css',
+      docs: 'Font family used for all text.',
+      defaultValue:
+        "'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif",
+    },
+    {
       property: 'chromeBackgroundColor',
       type: 'color',
       docs: 'Background colour for non-data areas of the grid. Headers, tool panels and menus use this colour by default.',
       defaultValue: { helper: 'transparentForeground', arg: 0.02 },
+    },
+    {
+      property: 'headerBackgroundColor',
+      type: 'color',
+      docs: 'Background colour for non-data areas of the grid. Headers, tool panels and menus use this colour by default.',
+      defaultValue: { helper: 'ref', arg: 'chromeBackgroundColor' },
+    },
+    {
+      property: 'headerForegroundColor',
+      type: 'color',
+      docs: 'Background colour for non-data areas of the grid. Headers, tool panels and menus use this colour by default.',
+      defaultValue: { helper: 'ref', arg: 'foregroundColor' },
     },
     {
       property: 'dataColor',
@@ -276,6 +312,21 @@ export const coreMeta = definePartMeta({
       type: 'border',
       docs: 'Border colour of the ghost element when dragging columns',
       defaultValue: true,
+    },
+    {
+      property: 'insetFocusShadow',
+      type: 'css',
+      docs: 'Border colour of the ghost element when dragging columns',
+      defaultValue: 'inset 0 0 5px var(--ag-accent-color)',
+    },
+    {
+      property: 'sideBarPanelWidth',
+      type: 'length',
+      docs: 'Default width of the sidebar that contains the columns and filters tool panels',
+      defaultValue: '250px',
+      min: 100,
+      max: 500,
+      step: 1,
     },
   ],
 });

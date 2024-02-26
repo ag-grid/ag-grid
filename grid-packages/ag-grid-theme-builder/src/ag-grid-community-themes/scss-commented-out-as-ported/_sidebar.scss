@@ -1,10 +1,6 @@
 @use 'ag';
 
 @mixin output {
-  .ag-side-bar {
-    position: relative;
-  }
-
   .ag-tool-panel-wrapper {
     width: var(--ag-side-bar-panel-width);
     background-color: var(--ag-control-panel-background-color);

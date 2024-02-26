@@ -98,12 +98,23 @@ export const defineTheme = <P extends AnyPart, V extends object = ParamTypes>(
   }
   result.css = mainCSS.join('\n');
 
+  checkForUnsupportedVariables(result.css, Object.keys(mergedParams));
+
   // combine icons
   for (const part of parts) {
     Object.assign(result.icons, part.icons);
   }
 
   return result;
+};
+
+export const checkForUnsupportedVariables = (css: string, params: string[]) => {
+  const allowedVariables = new Set(params.map(paramToVariableName));
+  for (const [, variable] of css.matchAll(/var\((--ag-(?!line-height[^\w-]|internal)[^)]+)\)/g)) {
+    if (!allowedVariables.has(variable)) {
+      logErrorMessageOnce(`${variable} does not match a theme param`);
+    }
+  }
 };
 
 const cssPartToString = (p: CssSource, params: Record<string, any>): string =>

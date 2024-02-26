@@ -1,13 +1,9 @@
-[class^='ag-'],
-[class^='ag-']:focus,
-[class^='ag-']::after,
-[class^='ag-']::before {
+:where([class^='ag-'], [class^='ag-']:focus, [class^='ag-']::after, [class^='ag-']::before) {
   box-sizing: border-box;
   outline: none;
 }
 
-button[class^='ag-'],
-input[class^='ag-'] {
+:where(button[class^='ag-'], input[class^='ag-']) {
   border: none;
   padding: 0;
   margin: none;
@@ -17,8 +13,9 @@ input[class^='ag-'] {
   font-family: inherit;
   font-weight: inherit;
   line-height: inherit;
+  cursor: pointer;
 }
 
-[class^='ag-']::-ms-clear {
+:where([class^='ag-']::-ms-clear) {
   display: none;
 }

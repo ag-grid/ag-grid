@@ -26,11 +26,3 @@
   border: var(--ag-wrapper-border);
   border-radius: var(--ag-wrapper-border-radius);
 }
-
-/* TODO temporary */
-.ag-header,
-.ag-advanced-filter-header,
-.ag-tool-panel-wrapper,
-.ag-column-drop-horizontal {
-  background-color: var(--ag-chrome-background-color);
-}

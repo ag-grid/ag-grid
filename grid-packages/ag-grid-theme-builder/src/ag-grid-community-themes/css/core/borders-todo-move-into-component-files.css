@@ -5,30 +5,6 @@
   border-top: var(--ag-footer-border);
 }
 
-/* Below headers */
-
-.ag-header,
-.ag-advanced-filter-header,
-.ag-column-drop-horizontal {
-  border-bottom: var(--ag-header-border);
-}
-
-.ag-header-row:not(:first-child) {
-  .ag-header-cell:not(.ag-header-span-height.ag-header-span-total),
-  .ag-header-group-cell.ag-header-group-cell-with-group {
-    border-top: var(--ag-header-border);
-  }
-}
-
-/* Betwee columns */
-
-.ag-column-drop-horizontal-half-width:not(:last-child) {
-  border-right: var(--ag-column-border);
-}
-.ag-cell {
-  border-right: var(--ag-column-border);
-}
-
 /**
  * Pinned columns.
  *
@@ -83,10 +59,10 @@
 /* sidebar visually on left */
 .ag-ltr .ag-side-bar-left,
 .ag-rtl .ag-side-bar-right {
-  border-right: var(--ag-borders-side-panels);
+  border-right: var(--ag-side-panel-border);
   .ag-tool-panel-wrapper {
     /*rtl:ignore*/
-    border-left: var(--ag-borders-side-panels);
+    border-left: var(--ag-side-panel-border);
   }
 }
 /* sidebar visually on right */
