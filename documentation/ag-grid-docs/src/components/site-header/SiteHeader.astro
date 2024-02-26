@@ -11,7 +11,6 @@ import { SiteLogo } from './SiteLogo';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 // import { isDynamicFrameworkPath, replaceDynamicFrameworkPath } from '@utils/framework';
 import { DarkModeToggle } from './DarkModeToggle';
-import { PromoBanner } from '../promo-banner/PromoBanner';
 
 const { pathname } = Astro.url;
 const { data: menuData } = await getEntry('menu', 'data');
@@ -52,7 +51,6 @@ export interface Props {
 const { showDocsNav } = Astro.props;
 ---
 
-<PromoBanner client:load />
 <header class:list={[gridStyles.header, 'site-header']}>
     <div class:list={[gridStyles.headerInner, 'layout-page-max-width']}>
         <SiteLogo client:load />
