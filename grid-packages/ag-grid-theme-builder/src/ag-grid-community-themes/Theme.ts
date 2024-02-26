@@ -1,7 +1,7 @@
 import { logErrorMessageOnce } from '../model/utils';
 import { ParamTypes } from './GENERATED-parts-public';
 import commonStructuralCSS from './css/common-structural.css?inline';
-import { AnyPart, CssFragment, Part } from './theme-types';
+import { AnyPart, CssSource, Part } from './theme-types';
 import {
   borderValueToCss,
   camelCase,
@@ -106,7 +106,7 @@ export const defineTheme = <P extends AnyPart, V extends object = ParamTypes>(
   return result;
 };
 
-const cssPartToString = (p: CssFragment, params: Record<string, any>): string =>
+const cssPartToString = (p: CssSource, params: Record<string, any>): string =>
   typeof p === 'function' ? p(params) : p;
 
 const isBorderParam = (property: string) =>
