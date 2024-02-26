@@ -35,11 +35,6 @@ export const ExampleStyle = ({ rootSelector, extraStyles }: { rootSelector?: str
             display: grid;
             grid-auto-rows: minmax(0, 1fr);
             grid-auto-columns: minmax(0, 1fr);
-            padding: 1rem;
-        }
-
-        [data-ag-charts] {
-            overflow: hidden;
         }
 
         /* Center charts with explicit width and heights */
