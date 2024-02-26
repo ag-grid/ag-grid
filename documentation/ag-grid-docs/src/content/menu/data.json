@@ -1381,6 +1381,10 @@
                         "title": "Migration",
                         "items": [
                             {
+                                "title": "Upgrading to AG Grid 31.1",
+                                "path": "upgrading-to-ag-grid-31-1"
+                            },
+                            {
                                 "title": "Upgrading to AG Grid 31",
                                 "path": "upgrading-to-ag-grid-31"
                             },
