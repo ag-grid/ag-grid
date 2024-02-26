@@ -29,7 +29,6 @@
   "scripts": {
     "dev": "astro dev --port 4610 --host",
     "start": "astro dev",
-    "build": "astro build",
     "preview": "astro preview --port 4611",
     "test": "vitest --config ./vitest.config.mjs",
     "astro": "astro"
