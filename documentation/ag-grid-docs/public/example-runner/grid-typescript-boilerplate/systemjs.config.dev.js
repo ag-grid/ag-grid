@@ -1,0 +1,223 @@
+(function (global) {
+    var sjsPaths = {};
+    if (typeof systemJsPaths !== 'undefined') {
+        sjsPaths = systemJsPaths;
+    }
+    System.config({
+        // DEMO ONLY! REAL CODE SHOULD NOT TRANSPILE IN THE BROWSER
+        transpiler: "ts",
+        typescriptOptions: {
+            // Copy of compiler options in standard tsconfig.json
+            target: 'es2020',
+            module: "system", //gets rid of console warning
+            moduleResolution: "node",
+            sourceMap: false,
+            emitDecoratorMetadata: true,
+            experimentalDecorators: true,
+            lib: ["es2015", "dom"],
+            noImplicitAny: true,
+            suppressImplicitAnyIndexErrors: true
+        },
+        meta: {
+            typescript: {
+                exports: "ts"
+            },
+            '*.css': {loader: 'css'}
+        },
+        paths: {
+            // paths serve as alias
+            "npm:": "https://cdn.jsdelivr.net/npm/",
+            ...sjsPaths
+        },
+        // map tells the System loader where to look for things
+        map: {
+            // css plugin
+            'css': 'npm:systemjs-plugin-css@0.1.37/css.js',
+
+            ts: "npm:plugin-typescript@8.0.0/lib/plugin.js",
+            tslib: "npm:tslib@2.3.1/tslib.js",
+            typescript: "npm:typescript@4.3.5/lib/typescript.min.js",
+
+            // appLocation comes from index.html
+            app: appLocation,
+
+            ...systemJsMap
+        },
+        // packages tells the System loader how to load when no filename and/or no extension
+        packages: {
+            css: {},
+            react: {
+                main: './umd/react.development.js'
+            },
+            'react-dom': {
+                main: './umd/react-dom.development.js'
+            },
+            'react-dom/server': {
+                main: '../umd/react-dom-server.browser.production.min.js'
+            },
+            app: {
+                main: "./main.ts",
+                defaultExtension: "ts",
+            },
+            '@ag-grid-community/react': {
+                main: './dist/index.cjs',
+                defaultExtension: 'cjs',
+            },
+            '@ag-grid-community/core': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            '@ag-grid-community/client-side-row-model': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            '@ag-grid-community/csv-export': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            '@ag-grid-community/infinite-row-model': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            // these are a little different in that they're in a directory and sjs doesn't default to the index.js inside...
+            // '@ag-grid-community/core/dist/cjs/es5/utils': {
+            //     main: './index.js',
+            //     defaultExtension: 'js'
+            // },
+            // '@ag-grid-enterprise/charts-enterprise/dist/cjs/es5/charts/chartComp/menu/settings/miniCharts': {
+            //     main: './index.js',
+            //     defaultExtension: 'js'
+            // },
+            // '@ag-grid-enterprise/charts/dist/cjs/es5/charts/chartComp/menu/settings/miniCharts': {
+            //     main: './index.js',
+            //     defaultExtension: 'js'
+            // },
+            '@ag-grid-enterprise/advanced-filter': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/charts': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/charts-enterprise': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js'
+            },
+            '@ag-grid-enterprise/clipboard': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/column-tool-panel': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/core': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/excel-export': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/filter-tool-panel': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/master-detail': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/menu': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/multi-filter': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/range-selection': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/rich-select': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/row-grouping': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/server-side-row-model': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/set-filter': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/side-bar': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/sparklines': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/status-bar': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/viewport-row-model': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            'ag-grid-community': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            'ag-grid-enterprise': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            'ag-grid-charts-enterprise': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            'ag-grid-react': {
+                main: './dist/index.cjs',
+                defaultExtension: 'cjs',
+            },
+        }
+    });
+})(this);
+
+window.addEventListener('error', e => {
+    console.error('ERROR', e.message, e.filename)
+});

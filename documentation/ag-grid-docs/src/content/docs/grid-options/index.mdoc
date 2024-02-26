@@ -1,0 +1,13 @@
+---
+title: "Grid Options Reference"
+---
+
+Implements the `GridOptions<TData>` interface.
+
+The grid will respond to property updates unless they are marked as `Initial`. See [Updating Grid Options](./grid-interface/#updating-grid-options).
+
+{% apiDocumentation source="grid-options/properties.json" config={ "showInitialDescription": true } /%}
+
+{% if isFramework("angular", "vue", "react") %}
+{% apiDocumentation source="grid-options/gridOption.json" config={ "showInitialDescription": true } /%}
+{% /if %}

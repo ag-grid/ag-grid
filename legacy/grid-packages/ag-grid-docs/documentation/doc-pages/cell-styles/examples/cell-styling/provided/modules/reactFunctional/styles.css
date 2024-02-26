@@ -1,0 +1,19 @@
+.rag-red {
+    background-color: #CC222244;
+}
+.rag-green {
+    background-color: #33CC3344;
+}
+.rag-blue {
+    background-color: #2244CC44;
+}
+
+.rag-red-outer .rag-element {
+    background-color: #CC222244;
+}
+.rag-green-outer .rag-element {
+    background-color: #33CC3344;
+}
+.rag-blue-blue .rag-element {
+    background-color: #2244CC44;
+}

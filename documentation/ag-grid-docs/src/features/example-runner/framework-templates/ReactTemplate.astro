@@ -1,0 +1,65 @@
+---
+import { MetaData } from './lib/MetaData';
+import { ExampleStyle } from './lib/ExampleStyle';
+import { Styles } from './lib/Styles';
+import { SystemJs } from './lib/SystemJs';
+import { Scripts } from './lib/Scripts';
+import { pathJoin } from '@utils/pathJoin';
+
+interface Props {
+    isDev: boolean;
+    title: string;
+
+    modifiedTimeMs: number;
+    entryFileName: string;
+    /**
+     * Extra script file names (not including entry file)
+     */
+    scriptFiles?: string[];
+    styleFiles?: string[];
+    appLocation: string;
+    boilerplatePath: string;
+    ignoreSystemJs?: boolean;
+    extraStyles?: string;
+    children?: any;
+}
+
+const {
+    title,
+    isDev,
+    modifiedTimeMs,
+    appLocation,
+    entryFileName,
+    scriptFiles = [],
+    styleFiles = [],
+    boilerplatePath,
+    ignoreSystemJs,
+    extraStyles,
+} = Astro.props as Props;
+
+const startFile = pathJoin(appLocation, entryFileName);
+---
+
+<html lang="en">
+    <head>
+        <MetaData isDev={isDev} title={`React Example - ${title}`} modifiedTimeMs={modifiedTimeMs} />
+        <ExampleStyle rootSelector="#root" extraStyles={extraStyles} />
+        <Styles baseUrl={appLocation} files={styleFiles} />
+    </head>
+    <body>
+        <div id="root"></div>
+        {scriptFiles && <Scripts baseUrl={appLocation} files={scriptFiles} />}
+        {
+            !ignoreSystemJs && (
+                <SystemJs
+                    isDev={isDev}
+                    boilerplatePath={boilerplatePath}
+                    appLocation={appLocation}
+                    startFile={startFile}
+                    internalFramework={'react'}
+                />
+            )
+        }
+        <slot />
+    </body>
+</html>

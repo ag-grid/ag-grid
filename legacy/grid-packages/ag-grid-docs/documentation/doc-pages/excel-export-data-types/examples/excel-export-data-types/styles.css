@@ -1,0 +1,18 @@
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#myGrid {
+    flex: 1 1 0;
+    width: 100%;
+}
+
+.example-header {
+    display: flex;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 13px;
+    align-items: center;
+    margin-bottom: 5px;
+}

@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "strict": false,
+    "experimentalDecorators": true,
+    "declaration": true,
+    "rootDir": "src",
+    "outDir": "lib",
+    "skipLibCheck": true,
+    "lib": [
+      "esnext",
+      "dom",
+      "dom.iterable",
+      "scripthost"
+    ]
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "src/main.ts"
+  ]
+}

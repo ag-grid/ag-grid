@@ -1,0 +1,132 @@
+import {
+    CellEditingStartedEvent,
+    CellEditingStoppedEvent,
+    ColDef,
+    GridApi,
+    createGrid,
+    GridOptions,
+    ICellRendererComp,
+    ICellRendererParams,
+    KeyCreatorParams,
+    RowEditingStartedEvent,
+    RowEditingStoppedEvent,
+} from '@ag-grid-community/core';
+import { getData } from "./data";
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, RichSelectModule]);
+
+import { GenderRenderer } from './genderRenderer_typescript';
+import { MoodEditor } from './moodEditor_typescript';
+import { MoodRenderer } from './moodRenderer_typescript';
+import { NumericEditor } from './numericEditor_typescript';
+
+class CountryCellRenderer implements ICellRendererComp {
+    eGui!: HTMLElement;
+
+    init(params: ICellRendererParams) {
+        this.eGui = document.createElement('div');
+        this.eGui.innerHTML = `<span style="overflow: hidden; text-overflow: ellipsis">${params.value.name}</span>`;
+    }
+
+    getGui() {
+        return this.eGui;
+    }
+
+    refresh(params: ICellRendererParams): boolean {
+        return false;
+    }
+}
+
+const columnDefs: ColDef[] = [
+    { field: 'first_name', headerName: 'First Name', width: 120, editable: true },
+    { field: 'last_name', headerName: 'Last Name', width: 120, editable: true },
+    {
+        field: 'gender',
+        width: 100,
+        editable: true,
+        cellRenderer: GenderRenderer,
+        cellEditor: 'agRichSelectCellEditor',
+        cellEditorParams: {
+            cellRenderer: GenderRenderer,
+            values: ['Male', 'Female'],
+        },
+    },
+    {
+        field: 'age',
+        width: 80,
+        editable: true,
+        cellEditor: NumericEditor,
+    },
+    {
+        field: 'mood',
+        width: 100,
+        cellRenderer: MoodRenderer,
+        cellEditor: MoodEditor,
+        cellEditorPopup: true,
+        editable: true,
+    },
+    {
+        field: 'country',
+        width: 110,
+        cellEditor: 'agRichSelectCellEditor',
+        cellRenderer: CountryCellRenderer,
+        keyCreator: (params: KeyCreatorParams) => {
+            return params.value.name
+        },
+        cellEditorParams: {
+            cellRenderer: CountryCellRenderer,
+            values: [
+                { name: 'Ireland', code: 'IE' },
+                { name: 'UK', code: 'UK' },
+                { name: 'France', code: 'FR' },
+            ],
+        },
+        editable: true,
+        cellDataType: false,
+    },
+    {
+        field: 'address',
+        editable: true,
+        cellEditor: 'agLargeTextCellEditor',
+        cellEditorPopup: true,
+        cellEditorParams: {
+            maxLength: '300', // override the editor defaults
+            cols: '50',
+            rows: '6',
+        },
+    },
+]
+
+let gridApi: GridApi;
+
+const gridOptions: GridOptions = {
+    columnDefs: columnDefs,
+    rowData: getData(),
+    defaultColDef: {
+        editable: true,
+        flex: 1,
+        minWidth: 100,
+        filter: true,
+    },
+    onRowEditingStarted: (event: RowEditingStartedEvent) => {
+        console.log('never called - not doing row editing')
+    },
+    onRowEditingStopped: (event: RowEditingStoppedEvent) => {
+        console.log('never called - not doing row editing')
+    },
+    onCellEditingStarted: (event: CellEditingStartedEvent) => {
+        console.log('cellEditingStarted')
+    },
+    onCellEditingStopped: (event: CellEditingStoppedEvent) => {
+        console.log('cellEditingStopped')
+    }
+}
+
+// setup the grid after the page has finished loading
+document.addEventListener('DOMContentLoaded', () => {
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+    gridApi = createGrid(gridDiv, gridOptions);
+})

@@ -1,0 +1,89 @@
+{
+  "name": "ag-grid-community",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/ag-grid-community/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "nx:noop",
+      "dependsOn": ["build:types", "build:package", "build:umd", "build:copy-styles"]
+    },
+    "build:umd": {
+      "executor": "@nx/webpack:webpack",
+      "options": {
+        "webpackConfig": "packages/ag-grid-community/webpack.config.js",
+        "outputPath":  "overridden in webpack config but required by nx",
+        "outputFileName": "overridden in webpack config but required by nx"
+      },
+      "cache": true,
+      "dependsOn": ["^build"]
+    },
+    "build:copy-styles": {
+      "dependsOn": [],
+      "inputs": [
+        "^production",
+        "production"
+      ],
+      "cache": true,
+      "command": "rsync -r ../../community-modules/styles/*.*css --delete styles",
+      "options": {
+        "cwd": "packages/ag-grid-community"
+      }
+    },
+    "build:types": {
+      "executor": "@nx/js:tsc",
+      "dependsOn": ["^build:types"],
+      "inputs": ["tsDefaults"],
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "packages/ag-grid-community/dist/types",
+        "main": "packages/ag-grid-community/src/main.ts",
+        "tsConfig": "packages/ag-grid-community/tsconfig.types.json",
+        "compiler": "tsc"
+      },
+      "cache": true,
+      "configurations": {
+        "watch": {
+          "tsConfig": "packages/ag-grid-community/tsconfig.types.watch.json"
+        },
+        "production": {}
+      }
+    },
+    "build:package": {
+      "executor": "@nx/esbuild:esbuild",
+      "dependsOn": ["^build"],
+      "inputs": ["tsDefaults"],
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "packages/ag-grid-community/dist/package",
+        "main": "packages/ag-grid-community/src/main.ts",
+        "tsConfig": "packages/ag-grid-community/tsconfig.lib.json",
+        "esbuildConfig": "esbuild.config.cjs",
+        "platform": "browser",
+        "target": "es6",
+        "format": ["cjs", "esm"],
+        "sourcemap": true
+      },
+      "configurations": {
+        "watch": {
+          "tsConfig": "packages/ag-grid-community/tsconfig.watch.json"
+        },
+        "production": {
+          "sourcemap": false
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "community-modules/jest.config.ts"
+      }
+    }
+  },
+  "tags": ["package:community", "package", "community"]
+}

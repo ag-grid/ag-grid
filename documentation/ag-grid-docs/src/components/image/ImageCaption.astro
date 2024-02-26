@@ -1,0 +1,49 @@
+---
+import { ImageCaption } from './ImageCaption';
+import { DOCS_PAGE_NAME_PATH_INDEX } from '@features/docs/constants';
+import { getPageImages } from '@features/docs/utils/filesData';
+
+interface Props {
+    pageName?: string;
+    imagePath: string;
+    alt: string;
+    centered?: boolean;
+    constrained?: boolean;
+    descriptionTop?: boolean;
+    width?: string;
+    height?: string;
+    minWidth?: string;
+    maxWidth?: string;
+    /**
+     * Enable styles for dark mode using CSS Filters
+     */
+    enableDarkModeFilter?: boolean;
+}
+
+const { pageName: propPageName, imagePath, alt, ...props } = Astro.props as Props;
+
+const pathSegments = Astro.url.pathname.split('/');
+const pageName = propPageName ? propPageName : pathSegments[DOCS_PAGE_NAME_PATH_INDEX];
+
+const { imageSrc, darkModeImageSrc, gifStillImageSrc, gifDarkModeStillImageSrc } = await getPageImages({
+    pageName,
+    imagePath,
+});
+const caption = await Astro.slots.render('default');
+const isGif = imagePath.endsWith('.gif');
+---
+
+{
+    imageSrc && (
+        <ImageCaption
+            client:load
+            imageSrc={imageSrc}
+            darkModeImageSrc={darkModeImageSrc}
+            gifStillImageSrc={gifStillImageSrc}
+            gifDarkModeStillImageSrc={gifDarkModeStillImageSrc}
+            captionHtml={caption}
+            isGif={isGif}
+            {...props}
+        />
+    )
+}

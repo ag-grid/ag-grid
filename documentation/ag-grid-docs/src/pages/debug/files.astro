@@ -1,0 +1,52 @@
+---
+import { getExtraFiles } from '@utils/pages';
+import { getExtraFileUrl } from '@utils/extraFileUrl';
+import Layout from '@layouts/Layout.astro';
+
+const extraFiles = getExtraFiles();
+---
+
+<Layout title={`Debug: Extra Files`}>
+    <main class="layout-page-max-width container">
+        <h1>Extra files ({extraFiles.length})</h1>
+        <p><code>props.file</code> gets the file contents, but is not shown here.</p>
+        <table>
+            <thead>
+                <th>No.</th>
+                <th>Url</th>
+                <th><code>params.filePath</code></th>
+                <th><code>props.fullFilePath</code></th>
+            </thead>
+            <tbody>
+                {
+                    extraFiles.map((file, index) => {
+                        const { filePath } = file.params;
+                        const { fullFilePath } = file.props;
+                        const url = getExtraFileUrl({
+                            filePath,
+                        });
+                        return (
+                            <tr>
+                                <td>{index + 1}</td>
+                                <td>
+                                    <a href={url}>{url}</a>
+                                </td>
+                                <td>{filePath}</td>
+                                <td>{fullFilePath}</td>
+                            </tr>
+                        );
+                    })
+                }
+            </tbody>
+        </table>
+    </main>
+</Layout>
+
+<style lang="scss">
+    @use '../../design-system' as *;
+
+    .container {
+        margin-top: $spacing-size-12;
+        margin-bottom: calc($spacing-size-12 * 4);
+    }
+</style>

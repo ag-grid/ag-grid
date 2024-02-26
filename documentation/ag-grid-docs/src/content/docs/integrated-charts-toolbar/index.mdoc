@@ -1,0 +1,74 @@
+---
+title: "Chart Toolbar"
+enterprise: true
+---
+
+The chart toolbar allows users to unlink charts from the grid and download the current chart.
+
+{% flex justifyContent="center" %}
+
+{% imageCaption imagePath="resources/chart-toolbar.png" alt="Chart Toolbar" constrained=true centered=true %}
+{% flex justifyContent="center" %}
+Chart Toolbar
+{% /flex %}
+{% /imageCaption %}
+
+{% /flex %}
+
+## Unlinking Charts
+
+Charts are linked to the data in the grid by default, so that if the data changes, the chart will also update. However, it is sometimes desirable to unlink a chart from the grid data. For instance, users may want to prevent a chart from being updated when subsequent sorts and filters are applied in the grid.
+
+Unlinking a chart is achieved through the 'Unlink Chart' toolbar item highlighted below:
+
+
+{% flex justifyContent="center" gap="size-10" %}
+{% imageCaption imagePath="resources/chart-toolbar-link-chart.png" alt="Chart Toolbar Link button with linked data" constrained=true centered=true %}
+{% flex justifyContent="center" %}
+Chart Toolbar Link button with linked data
+{% /flex %}
+{% /imageCaption %}
+
+{% imageCaption imagePath="resources/chart-toolbar-unlink-chart.png" alt="Chart Toolbar Link button with unlinked data" constrained=true centered=true %}
+{% flex justifyContent="center" %}
+Chart Toolbar Link button with unlinked data
+{% /flex %}
+{% /imageCaption %}
+{% /flex %}
+
+Notice that the chart range disappears from the grid when the chart has been unlinked. Subsequent changes to the grid sorting also do not impact the chart.
+
+## Downloading Charts
+
+The 'Download Chart' toolbar item will download the chart as a `PNG` file. Note that the chart is drawn using Canvas in the browser and as such the user can also right click on the chart and save just like any other image on a web page.
+
+{% flex justifyContent="center" %}
+
+{% imageCaption imagePath="resources/chart-toolbar-download.png" alt="Chart Toolbar Download Chart button" constrained=true centered=true %}
+{% flex justifyContent="center" %}
+Chart Toolbar Download Chart button
+{% /flex %}
+{% /imageCaption %}
+
+{% /flex %}
+
+The chart can also be [downloaded using the Grid API](./integrated-charts-api-downloading-image).
+
+## Toolbar Customisation
+
+The Chart Toolbar items can be omitted and ordered using the `getChartToolbarItems()` grid callback which can return
+which toolbar items should be shown and the order in which they appear:
+
+```js {% frameworkTransform=true %}
+const gridOptions = { 
+    getChartToolbarItems: () => ['chartUnlink', 'chartDownload'] // default items and order
+}
+```
+
+The example below shows how the toolbar can be customised to only show the 'Download Chart' toolbar item.
+
+{% gridExampleRunner title="Toolbar Customisation" name="toolbar-customisation" type="generated" options={ "enterprise": true, "modules": ["clientside", "menu", "charts-enterprise"] } /%}
+
+## Next Up
+
+Continue to the next section to learn about the: [Chart Container](./integrated-charts-container/).

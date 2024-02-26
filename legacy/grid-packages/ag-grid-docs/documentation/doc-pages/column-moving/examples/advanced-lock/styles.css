@@ -1,0 +1,33 @@
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#myGrid {
+    flex: 1 1 0px;
+    width: 100%;
+}
+
+.locked-col {
+    background-color: #999999;
+    border: 1px solid #aaa;
+}
+
+.legend-bar {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 13px;
+    margin-bottom: 1rem;
+}
+
+.legend-box {
+    width: 15px;
+    height: 15px;
+    display: inline-block;
+    vertical-align: text-top;
+}
+
+.ag-cell button {
+    padding: 0.25rem;
+    margin-right: 0.25rem;
+}

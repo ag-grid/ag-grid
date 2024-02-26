@@ -1,0 +1,65 @@
+---
+import type { Library } from '@ag-grid-types';
+import { ExampleStyle } from './lib/ExampleStyle';
+import { MetaData } from './lib/MetaData';
+import { Scripts } from './lib/Scripts';
+import { Styles } from './lib/Styles';
+import { SystemJs } from './lib/SystemJs';
+import { pathJoin } from '@utils/pathJoin';
+
+interface Props {
+    isDev: boolean;
+    title: string;
+
+    modifiedTimeMs: number;
+    entryFileName: string;
+    /**
+     * Extra script file names (not including entry file)
+     */
+    scriptFiles?: string[];
+    styleFiles?: string[];
+    appLocation: string;
+    boilerplatePath: string;
+    extraStyles?: string;
+    children?: any;
+
+    vueFramework: 'vue' | 'vue3';
+}
+
+const {
+    isDev,
+    title,
+    modifiedTimeMs,
+    boilerplatePath,
+    appLocation,
+    entryFileName,
+    scriptFiles = [],
+    styleFiles = [],
+    vueFramework,
+    extraStyles,
+} = Astro.props as Props;
+
+const startFile = pathJoin(appLocation, entryFileName);
+const vueFrameworkTitle = vueFramework === 'vue3' ? 'Vue 3' : 'Vue';
+---
+
+<html lang="en">
+    <head>
+        <MetaData isDev={isDev} title={`${vueFrameworkTitle} Example - ${title}`} modifiedTimeMs={modifiedTimeMs} />
+        <ExampleStyle rootSelector="#app" extraStyles={extraStyles} />
+        <Styles baseUrl={appLocation} files={styleFiles} />
+    </head>
+    <body>
+        <div id="app"><my-component></my-component></div>
+
+        <Scripts baseUrl={appLocation} files={scriptFiles} />
+        <SystemJs
+            isDev={isDev}
+            boilerplatePath={boilerplatePath}
+            appLocation={appLocation}
+            startFile={startFile}
+            internalFramework={vueFramework}
+        />
+        <slot />
+    </body>
+</html>
