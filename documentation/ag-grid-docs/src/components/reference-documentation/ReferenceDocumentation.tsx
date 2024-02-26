@@ -3,12 +3,12 @@ import Code from '@components/Code';
 import { Icon } from '@components/icon/Icon';
 import styles from '@design-system/modules/ApiReference.module.scss';
 import { trackApiDocumentation } from '@utils/analytics';
+import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';
 import { Fragment, type FunctionComponent, type ReactElement, useEffect, useRef, useState } from 'react';
 
 import {
     convertMarkdown,
-    convertUrl,
     escapeGenericCode,
     extractInterfaces,
     formatJsDocString,
@@ -297,7 +297,7 @@ const Section: React.FC<SectionProps> = ({
     config = {} as Config,
     breadcrumbs = {},
     names = [],
-}): any => {
+}) => {
     const { meta } = properties;
     const displayName = (meta && meta.displayName) || title;
     if (meta && meta.isEvent) {
@@ -321,7 +321,7 @@ const Section: React.FC<SectionProps> = ({
         const headerLevel = config.headerLevel || breadcrumbKeys.length + 1;
         const HeaderTag = `h${headerLevel}` as any;
 
-        // We use a plugin (gatsby-remark-autolink-headers) to insert links for all the headings in Markdown
+        // Astro normally inserts links for all the headings in Markdown
         // We manually add the element here ourselves to match
         header = (
             <>
@@ -339,7 +339,8 @@ const Section: React.FC<SectionProps> = ({
                 )}
                 {meta && meta.page && (
                     <p>
-                        See <a href={convertUrl(meta.page.url, framework)}>{meta.page.name}</a> for more information.
+                        See <a href={urlWithPrefix({ url: meta.page.url, framework })}>{meta.page.name}</a> for more
+                        information.
                     </p>
                 )}
                 {config.showSnippets && names.length < 1 && (
@@ -785,7 +786,10 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
                             <span>
                                 <span className="text-secondary">See:</span>{' '}
                                 <a
-                                    href={convertUrl(more.url, framework)}
+                                    href={urlWithPrefix({
+                                        url: more.url,
+                                        framework,
+                                    })}
                                     onClick={() => {
                                         trackApiDocumentation({
                                             type: 'seeMoreLink',

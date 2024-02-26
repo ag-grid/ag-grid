@@ -167,7 +167,7 @@
     "columns": {
         "meta": {
             "displayName": "Column Definitions",
-            "description": "See [Column](/column-definitions/) / [Column Group](/column-groups/) definitions for more information"
+            "description": "See [Column](./column-definitions/) / [Column Group](./column-groups/) definitions for more information"
         },
         "columnDefs": {
             "more": {
@@ -271,7 +271,7 @@
                 "name": "Moving Animation",
                 "url": "/column-moving/#moving-animation"
             },
-            "description": "If `true`, the `ag-column-moving` class is not added to the grid while columns are moving. In the default [themes](/themes/), this results in no animation when moving columns. Default: `false` "
+            "description": "If `true`, the `ag-column-moving` class is not added to the grid while columns are moving. In the default [themes](./themes/), this results in no animation when moving columns. Default: `false` "
         },
         "suppressDragLeaveHidesColumns": {
             "more": {
@@ -678,7 +678,7 @@
                 "name": "Dynamic Master Rows",
                 "url": "/master-detail-master-rows/#dynamic-master-rows"
             },
-            "description": "Callback to be used with [Master Detail](/master-detail/) to determine if a row should be a master row. If `false` is returned no detail row will exist for this row."
+            "description": "Callback to be used with [Master Detail](./master-detail/) to determine if a row should be a master row. If `false` is returned no detail row will exist for this row."
         },
         "detailCellRenderer": {
             "description": "Provide a custom `detailCellRenderer` to use when a master row is expanded.",
@@ -688,7 +688,7 @@
             }
         },
         "detailCellRendererParams": {
-            "description": "Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable [dynamic definitions](/master-detail-grids/#dynamic-definitions) of the params.",
+            "description": "Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable [dynamic definitions](./master-detail-grids/#dynamic-definitions) of the params.",
             "more": {
                 "name": "Detail Grids",
                 "url": "/master-detail-grids/"
@@ -934,7 +934,7 @@
     "rowPivoting": {
         "meta": {
             "displayName": "Pivot and Aggregation",
-            "description": "See [Pivot](/pivoting/) and [Aggregation](/aggregation/) for more information"
+            "description": "See [Pivot](./pivoting/) and [Aggregation](./aggregation/) for more information"
         },
         "pivotMode": {
             "more": {
@@ -967,7 +967,7 @@
             }
         },
         "pivotSuppressAutoColumn": {
-            "description": "If `true`, the grid will not swap in the grouping column when pivoting. Useful if pivoting using [Server Side Row Model](/server-side-model/) or [Viewport Row Model](/viewport/) and you want full control of all columns including the group column."
+            "description": "If `true`, the grid will not swap in the grouping column when pivoting. Useful if pivoting using [Server Side Row Model](./server-side-model/) or [Viewport Row Model](./viewport/) and you want full control of all columns including the group column."
         },
         "processPivotResultColDef": {
             "more": {
@@ -1076,7 +1076,7 @@
                 "name": "DOM Layout",
                 "url": "/grid-size/#dom-layout"
             },
-            "description": "Switch between layout options. See [Printing](/printing/) and [Auto Height](/grid-size/#grid-auto-height). Default: `normal`"
+            "description": "Switch between layout options. See [Printing](./printing/) and [Auto Height](./grid-size/#grid-auto-height). Default: `normal`"
         },
         "ensureDomOrder": {
             "more": {
@@ -1310,7 +1310,7 @@
             }
         },
         "suppressDragLeaveHidesColumns": {
-            "description": "By default, dragging a column out of the grid, i.e. to the [Row Group Panel](/grouping-group-panel/), it will be hidden in the grid. This property prevents the column becoming hidden in the grid. Default: `false`",
+            "description": "By default, dragging a column out of the grid, i.e. to the [Row Group Panel](./grouping-group-panel/), it will be hidden in the grid. This property prevents the column becoming hidden in the grid. Default: `false`",
             "more": {
                 "name": "Keeping Columns Visible",
                 "url": "/grouping-group-panel/#keeping-columns-visible"
@@ -1329,7 +1329,7 @@
             }
         },
         "suppressMakeColumnVisibleAfterUnGroup": {
-            "description": "By default, when a column is un-grouped, i.e. using the [Row Group Panel](/grouping-group-panel/), it is made visible in the grid. This property stops the column becoming visible again when un-grouping. Default: `false`",
+            "description": "By default, when a column is un-grouped, i.e. using the [Row Group Panel](./grouping-group-panel/), it is made visible in the grid. This property stops the column becoming visible again when un-grouping. Default: `false`",
             "more": {
                 "name": "Keeping Columns Visible",
                 "url": "/grouping-group-panel/#keeping-columns-visible"
@@ -1355,7 +1355,7 @@
                 "name": "Row Pinning",
                 "url": "/row-pinning/"
             },
-            "description": "Row data uses the [generic type](/typescript-generics) `TData` if provided via `GridOptions&lt;TData&gt;`. Otherwise `TData` will default to `any`."
+            "description": "Row data uses the [generic type](./typescript-generics) `TData` if provided via `GridOptions&lt;TData&gt;`. Otherwise `TData` will default to `any`."
         },
         "pinnedTopRowData": {
             "more": {
@@ -1398,7 +1398,7 @@
                 "name": "Client-Side Row Model",
                 "url": "/client-side-model/"
             },
-            "description": "Row data uses the [generic type](/typescript-generics) `TData` if provided via `GridOptions&lt;TData&gt;`. Otherwise `TData` will default to `any`."
+            "description": "Row data uses the [generic type](./typescript-generics) `TData` if provided via `GridOptions&lt;TData&gt;`. Otherwise `TData` will default to `any`."
         },
         "rowData": {
             "more": {
@@ -1414,7 +1414,7 @@
             }
         },
         "suppressModelUpdateAfterUpdateTransaction": {
-            "description": "Prevents [Transactions](/data-update-transactions/) changing sort, filter, group or pivot state when transaction only contains updates. Default: `false`",
+            "description": "Prevents [Transactions](./data-update-transactions/) changing sort, filter, group or pivot state when transaction only contains updates. Default: `false`",
             "more": {
                 "name": "Suppress Model Updates",
                 "url": "/data-update-transactions/#suppress-model-updates"
@@ -1462,7 +1462,7 @@
             }
         },
         "purgeClosedRowNodes": {
-            "description": "When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is [Row Grouping](/server-side-model-grouping/). Default: `false`"
+            "description": "When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is [Row Grouping](./server-side-model-grouping/). Default: `false`"
         },
         "serverSidePivotResultFieldSeparator": {
             "more": {
@@ -1860,7 +1860,7 @@
                 "name": "Configuring Row Spanning",
                 "url": "/row-spanning/#configuring-row-spanning"
             },
-            "description": "Uses CSS `top` instead of CSS `transform` for positioning rows. Useful if the transform function is causing issues such as used in [row spanning](/row-spanning/). Default: `false`"
+            "description": "Uses CSS `top` instead of CSS `transform` for positioning rows. Useful if the transform function is causing issues such as used in [row spanning](./row-spanning/). Default: `false`"
         },
         "columnHoverHighlight": {
             "more": {

@@ -2,10 +2,10 @@
     "_config_": {},
     "ExcelExportParams": {
         "appendContent": {
-            "description": "Content to put at the top of the exported sheet. An array of ExcelRow objects, see [Extra Content section](/excel-export-extra-content/)."
+            "description": "Content to put at the top of the exported sheet. An array of ExcelRow objects, see [Extra Content section](./excel-export-extra-content/)."
         },
         "prependContent": {
-            "description": "Content to put at the bottom of the exported sheet. An array of ExcelRow objects, see [Extra Content section](/excel-export-extra-content/)."
+            "description": "Content to put at the bottom of the exported sheet. An array of ExcelRow objects, see [Extra Content section](./excel-export-extra-content/)."
         },
         "fileName": {
             "default": "export.xlsx"

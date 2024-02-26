@@ -46,7 +46,7 @@
     "columnSizing": {
         "meta": {
             "displayName": "Column Sizing",
-            "description": "See [Column Sizing](/column-sizing/)"
+            "description": "See [Column Sizing](./column-sizing/)"
         },
         "setColumnWidths": {},
         "sizeColumnsToFit": {
@@ -71,7 +71,7 @@
     "columnMoving": {
         "meta": {
             "displayName": "Column Moving",
-            "description": "See [Column Moving](/column-moving/)"
+            "description": "See [Column Moving](./column-moving/)"
         },
         "moveColumns": {},
         "moveColumnByIndex": {}
@@ -79,7 +79,7 @@
     "columnPinning": {
         "meta": {
             "displayName": "Column Pinning",
-            "description": "See [Column Pinning](/column-pinning/)"
+            "description": "See [Column Pinning](./column-pinning/)"
         },
         "isPinning": {},
         "isPinningLeft": {},
@@ -89,7 +89,7 @@
     "state": {
         "meta": {
             "displayName": "Column State",
-            "description": "See [Column State](/column-state/)"
+            "description": "See [Column State](./column-state/)"
         },
         "getColumnState": {
             "more": {
@@ -121,7 +121,7 @@
     "colGroups": {
         "meta": {
             "displayName": "Column Groups",
-            "description": "See [Column Groups](/column-groups/)"
+            "description": "See [Column Groups](./column-groups/)"
         },
         "getColumnGroup": {
             "more": {
@@ -154,7 +154,7 @@
     "Pivoting": {
         "meta": {
             "displayName": "Pivoting",
-            "description": "See [Pivoting](/pivoting/)"
+            "description": "See [Pivoting](./pivoting/)"
         },
         "isPivotMode": {},
         "getPivotColumns": {},
@@ -208,7 +208,7 @@
                 "name": "Iterating Rows",
                 "url": "/accessing-data/#iterating-rows"
             },
-            "description": "Iterates through each node (row) in the grid and calls the callback for each node. This works similar to the `forEach` method on a JavaScript array. This is called for every node, ignoring any filtering or sorting applied within the grid. If using the [Infinite Row Model](/infinite-scrolling/), then this gets called for each page loaded in the page cache."
+            "description": "Iterates through each node (row) in the grid and calls the callback for each node. This works similar to the `forEach` method on a JavaScript array. This is called for every node, ignoring any filtering or sorting applied within the grid. If using the [Infinite Row Model](./infinite-scrolling/), then this gets called for each page loaded in the page cache."
         },
         "forEachNodeAfterFilter": {
             "more": {
@@ -770,7 +770,7 @@
             }
         },
         "paginationIsLastPageFound": {
-            "description": "Returns `true` when the last page is known; this will always be the case if you are using the [Client-Side Row Model](/client-side-model/) for pagination. Returns `false` when the last page is not known; this only happens when using [Infinite Row Model](/infinite-scrolling/)."
+            "description": "Returns `true` when the last page is known; this will always be the case if you are using the [Client-Side Row Model](./client-side-model/) for pagination. Returns `false` when the last page is not known; this only happens when using [Infinite Row Model](./infinite-scrolling/)."
         },
         "paginationGetPageSize": {},
         "paginationGetCurrentPage": {},
@@ -798,7 +798,7 @@
     "rowPivoting": {
         "meta": {
             "displayName": "Pivot and Aggregation",
-            "description": "See [Pivot](/pivoting/) and [Aggregation](/aggregation/) for more information"
+            "description": "See [Pivot](./pivoting/) and [Aggregation](./aggregation/) for more information"
         },
         "getValueColumns": {},
         "addValueColumns": {},
@@ -836,7 +836,7 @@
             }
         },
         "hidePopupMenu": {
-            "description": "Hides any visible [context menu](/context-menu/) or [column menu](/column-menu/)."
+            "description": "Hides any visible [context menu](./context-menu/) or [column menu](./column-menu/)."
         },
         "hideColumnChooser": {
             "more": {

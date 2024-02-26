@@ -1,3 +1,4 @@
+import type { Framework } from '@ag-grid-types';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 
@@ -15,35 +16,16 @@ export const inferType = (value: any): string | null => {
     return typeof value;
 };
 
-const prefixRegex = new RegExp(`^${urlWithBaseUrl('/')}`);
-
-/**
- * Converts a root-based page link (e.g. /getting-started/) into one which is correct for the website
- * (e.g. /javascript-grid/getting-started/).
- */
-export const convertUrl = (href, framework) => {
-    const link = href || '';
-
-    if (link.includes('/static/')) {
-        return link;
-    }
-
-    return link.startsWith('/')
-        ? // strip the prefix is case it's been applied, before creating the proper URL
-          urlWithPrefix({
-              url: href.replace(prefixRegex, '/'),
-              framework,
-          })
-        : href;
-};
-
 /**
  * Converts a subset of Markdown so that it can be used in JSON files.
  */
-export const convertMarkdown = (content, framework) =>
+export const convertMarkdown = (content: string, framework: Framework) =>
     content
         .replace(/`(.*?)`/g, '<code>$1</code>')
-        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, text, href) => `<a href="${convertUrl(href, framework)}">${text}</a>`)
+        .replace(
+            /\[([^\]]+)\]\(([^)]+)\)/g,
+            (_, text, href) => `<a href="${urlWithPrefix({ url: href, framework })}">${text}</a>`
+        )
         .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
 
 export function escapeGenericCode(lines) {
@@ -79,7 +61,10 @@ export function getTypeUrl(type, framework) {
         return getTypeUrl(type.returnType, framework);
     }
 
-    return convertUrl(getTypeLink(type), framework);
+    return urlWithPrefix({
+        url: getTypeLink(type),
+        framework,
+    });
 }
 
 export function getLinkedType(type, framework) {

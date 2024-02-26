@@ -29,7 +29,7 @@
             }
         },
         "valueGetter": {
-            "description": "Function or [expression](/cell-expressions/#column-definition-expressions). Gets the value from your data for display.",
+            "description": "Function or [expression](./cell-expressions/#column-definition-expressions). Gets the value from your data for display.",
             "more": {
                 "name": "Value Getters",
                 "url": "/value-getters/"
@@ -89,7 +89,7 @@
     "charts": {
         "meta": {
             "displayName": "Columns: Integrated Charts",
-            "description": "(Enterprise only) See [Integrated Charts](/integrated-charts/)"
+            "description": "(Enterprise only) See [Integrated Charts](./integrated-charts/)"
         },
         "chartDataType": {}
     },
@@ -127,7 +127,7 @@
         },
         "headerName": {},
         "headerValueGetter": {
-            "description": "Function or [expression](/cell-expressions/#column-definition-expressions). Gets the value for display in the header."
+            "description": "Function or [expression](./cell-expressions/#column-definition-expressions). Gets the value for display in the header."
         },
         "headerTooltip": {},
         "headerClass": {},
@@ -273,7 +273,7 @@
     "spanning": {
         "meta": {
             "displayName": "Columns: Spanning",
-            "description": "See [Column](/column-spanning/) / [Row](/row-spanning/) Spanning"
+            "description": "See [Column](./column-spanning/) / [Row](./row-spanning/) Spanning"
         },
         "colSpan": {},
         "rowSpan": {}
@@ -350,7 +350,7 @@
             }
         },
         "filter": {
-            "description": "Filter component to use for this column. <br/>Set to `true` to use the default filter. <br/>Set to the name of a [Provided Filter](/filtering/#column-filter-types) or set to a `IFilterComp`.",
+            "description": "Filter component to use for this column. <br/>Set to `true` to use the default filter. <br/>Set to the name of a [Provided Filter](./filtering/#column-filter-types) or set to a `IFilterComp`.",
             "more": {
                 "name": "Column Filters",
                 "url": "/filtering/"
@@ -363,7 +363,7 @@
             }
         },
         "filterValueGetter": {
-            "description": "Function or [expression](/cell-expressions/#column-definition-expressions). Gets the value for filtering purposes."
+            "description": "Function or [expression](./cell-expressions/#column-definition-expressions). Gets the value for filtering purposes."
         },
         "getQuickFilterText": {
             "more": {
@@ -401,14 +401,14 @@
         },
         "editable": {},
         "valueSetter": {
-            "description": "Function or [expression](/cell-expressions/#column-definition-expressions). Custom function to modify your data based off the new value for saving. Return `true` if the data changed.",
+            "description": "Function or [expression](./cell-expressions/#column-definition-expressions). Custom function to modify your data based off the new value for saving. Return `true` if the data changed.",
             "more": {
                 "name": "Saving Values",
                 "url": "/value-setters/"
             }
         },
         "valueParser": {
-            "description": "Function or [expression](/cell-expressions/#column-definition-expressions). Parses the value for saving.",
+            "description": "Function or [expression](./cell-expressions/#column-definition-expressions). Parses the value for saving.",
             "more": {
                 "name": "Parsing Values",
                 "url": "/value-parsers/"
@@ -441,7 +441,7 @@
     "grouping": {
         "meta": {
             "displayName": "Columns: Row Grouping",
-            "description": "(Enterprise only) See [Row Grouping](/grouping/)"
+            "description": "(Enterprise only) See [Row Grouping](./grouping/)"
         },
         "rowGroup": {},
         "initialRowGroup": {},
@@ -463,7 +463,7 @@
     "pivoting": {
         "meta": {
             "displayName": "Columns: Pivoting",
-            "description": "(Enterprise only) See [Pivoting](/pivoting/)"
+            "description": "(Enterprise only) See [Pivoting](./pivoting/)"
         },
         "pivot": {},
         "initialPivot": {},

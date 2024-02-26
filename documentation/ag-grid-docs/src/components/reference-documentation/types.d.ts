@@ -1,3 +1,5 @@
+import { type Framework } from '@ag-grid-types';
+
 export type Overrides = Record<string, any>;
 
 interface MetaTag {
@@ -195,7 +197,7 @@ export interface Config {
     showInitialDescription?: boolean;
 }
 export type SectionProps = {
-    framework: string;
+    framework: Framework;
     title: string;
     properties: DocEntryMap | DocEntry | ChildDocEntry;
     config: Config;
@@ -205,14 +207,14 @@ export type SectionProps = {
     names?: string[];
 };
 export type PropertyCall = {
-    framework: string;
+    framework: Framework;
     id: string;
     name: string;
     definition: DocEntry | ChildDocEntry;
     config: Config;
 };
 export type FunctionCode = {
-    framework: string;
+    framework: Framework;
     name: string;
     type: PropertyType | string;
     config: Config;
