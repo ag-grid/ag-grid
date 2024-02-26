@@ -4,7 +4,7 @@ import { Icon } from '@components/icon/Icon';
 import { HeaderNav } from './HeaderNav';
 import { getEntry } from 'astro:content';
 import { FRAMEWORKS } from '@constants';
-import gridStyles from '@design-system/modules/SiteHeader.module.scss';
+import styles from '@design-system/modules/SiteHeader.module.scss';
 import { SiteLogo } from './SiteLogo';
 // import Search from '../search/Search';
 // import { getFrameworkFromPath } from '../../features/docs/utils/urlPaths';
@@ -51,48 +51,36 @@ export interface Props {
 const { showDocsNav } = Astro.props;
 ---
 
-<header class:list={[gridStyles.header, 'site-header']}>
-    <div class:list={[gridStyles.headerInner, 'layout-page-max-width']}>
+<header class:list={[styles.header, 'site-header']}>
+    <div class:list={[styles.headerInner, 'layout-page-max-width']}>
         <SiteLogo client:load />
 
         {
             showDocsNav && (
-                <button
-                    id="top-bar-docs-button"
-                    class:list={[gridStyles.mobileNavButton, 'button-secondary']}
-                    type="button"
-                    data-toggle="collapse"
-                    data-target="#side-nav"
-                    aria-controls="side-nav"
-                    aria-expanded="false"
-                    aria-label="Toggle docs page navigation">
-                    <span>Docs</span>
-                    <Icon name="collapseCategories" />
-                </button>
+                <div class={styles.docsNavBtnSearchContainer}>
+                    <button
+                        id="top-bar-docs-button"
+                        class:list={[styles.mobileNavButton, 'button-secondary']}
+                        type="button"
+                        data-toggle="collapse"
+                        data-target="#side-nav"
+                        aria-controls="side-nav"
+                        aria-expanded="false"
+                        aria-label="Toggle docs page navigation"
+                    >
+                        <span>Docs</span>
+                        <Icon name="collapseCategories" />
+                    </button>
+                </div>
             )
         }
 
         <!-- {showSearchBar && <Search client:load currentFramework={framework} isDev={isDev} />} -->
 
         <HeaderNav currentPath={pathname} items={topNavItems} allPaths={allPaths} client:load>
-            <li class:list={[gridStyles.navItem, gridStyles.buttonItem, 'darkModeItem']}>
+            <li class:list={[styles.navItem, styles.buttonItem, 'darkModeItem']}>
                 <DarkModeToggle client:only />
             </li>
         </HeaderNav>
     </div>
 </header>
-
-<style lang="scss">
-    @use '../../design-system' as *;
-
-    .darkModeItem {
-        min-width: 48px;
-    }
-
-    // Required to stop mobile docs nav flash on page load
-    @media screen and (min-width: $breakpoint-docs-nav-medium) {
-        #top-bar-docs-button {
-            display: none;
-        }
-    }
-</style>
