@@ -248,7 +248,7 @@ export const ApiDocumentation: FunctionComponent<ApiDocumentationProps> = ({
     if (section == null) {
         const properties: DocEntryMap = mergeObjects(propertiesFromFiles);
 
-        const entries = Object.entries(properties);
+        const entries = Object.entries(properties).filter(([key]) => key !== '_config_');
         if (!config.suppressSort) {
             entries.sort(([k1, v1], [k2, v2]) => {
                 const getName = (k, v) => (v.meta && v.meta.displayName) || k;
