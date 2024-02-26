@@ -2,13 +2,7 @@
 
 ZIP_PREFIX=`date +%Y%m%d`
 
-cd grid-packages/ag-grid-docs
-npx gulp release-archive
-
-cd ../../
-node scripts/release/patchDocs.js
-
-cd grid-packages/ag-grid-docs/dist
+cd documentation/ag-grid-docs/dist
 
 FILENAME=release_"$ZIP_PREFIX"_v"$ZIP_PREFIX".zip
 zip -qr ../../../$FILENAME *
