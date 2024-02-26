@@ -7,7 +7,6 @@ import {MenuModule} from '@ag-grid-enterprise/menu';
 import {RangeSelectionModule} from '@ag-grid-enterprise/range-selection';
 import './styles.scss';
 
-debugger
 ModuleRegistry.registerModules([ClientSideRowModelModule, StatusBarModule, ExcelExportModule, MenuModule, RangeSelectionModule, ClipboardModule]);
 
 class SimpleGrid {
