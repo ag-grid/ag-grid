@@ -181,16 +181,6 @@ export class SortController extends BeanStub {
         const sortedRowGroupCols = this.columnModel.getRowGroupColumns()
             .filter(col => !!col.getSort());
 
-        const isSortLinked = this.gridOptionsService.isColumnsSortingCoupledToGroup() && !!sortedRowGroupCols.length;
-        if (isSortLinked) {
-            allSortedCols = [
-                ...new Set(
-                    // if linked sorting, replace all columns with the display group column for index purposes, and ensure uniqueness
-                    allSortedCols.map(col =>  this.columnModel.getGroupDisplayColumnForGroup(col.getId()) ?? col)
-                )
-            ];
-        }
-
         // when both cols are missing sortIndex, we use the position of the col in all cols list.
         // this means if colDefs only have sort, but no sortIndex, we deterministically pick which
         // cols is sorted by first.
@@ -214,6 +204,16 @@ export class SortController extends BeanStub {
                 return 1; // iA missing
             }
         });
+
+        const isSortLinked = this.gridOptionsService.isColumnsSortingCoupledToGroup() && !!sortedRowGroupCols.length;
+        if (isSortLinked) {
+            allSortedCols = [
+                ...new Set(
+                    // if linked sorting, replace all columns with the display group column for index purposes, and ensure uniqueness
+                    allSortedCols.map(col =>  this.columnModel.getGroupDisplayColumnForGroup(col.getId()) ?? col)
+                )
+            ];
+        }
 
         const indexMap: Map<Column, number> = new Map();
 
