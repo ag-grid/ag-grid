@@ -7,6 +7,7 @@ import { getIsProduction, getIsStaging } from '@utils/env';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import Plausible from '@components/Plausible.astro';
 import { Footer } from '@components/footer/Footer';
+import styles from '@design-system/modules/GridIndex.module.scss';
 
 interface Props {
     title: string;
@@ -94,29 +95,11 @@ const socialImage = urlWithBaseUrl('/images/ag-grid-social.png');
             htmlEl.classList.remove('no-transitions');
         </script>
 
-        <div class="mainContainer">
+        <div class:list={styles.mainContainer}>
             {!hideHeader && <SiteHeader showSearchBar={showSearchBar} showDocsNav={showDocsNav} />}
             <slot />
         </div>
+        
         {!hideFooter && <Footer path={path} footerItems={footerItems} />}
-
-        <style lang="scss">
-            @use '../design-system' as *;
-
-            html {
-                overflow-x: hidden;
-            }
-
-            main {
-                flex: 1 1 auto;
-                min-width: 0px;
-            }
-
-            .mainContainer {
-                width: 100%;
-                min-height: 100vh;
-                padding: 0;
-            }
-        </style>
     </body>
 </html>
