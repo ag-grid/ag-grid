@@ -128,7 +128,7 @@
         "commands": ["nx run-many -t test --parallel 1"]
       }
     },
-    "clean": { "command": "rimraf dist/ 'community-modules/*/dist/' 'community-modules/styles/*.css' 'enterprise-modules/*/dist/'" },
+    "clean": { "command": "rimraf dist/ 'community-modules/*/dist/' 'community-modules/styles/*.css' 'enterprise-modules/*/dist/' 'documentation/*/dist/'" },
     "generate-examples": {
       "executor": "nx:noop",
       "dependsOn": ["^generate-example"],
@@ -141,24 +141,14 @@
       }
     },
     "generate-doc-references": {
-      "executor": "ag-grid-generate-code-reference-files:generate",
-      "dependsOn": ["ag-grid-generate-code-reference-files:build"],
-      "inputs": [
-        "{workspaceRoot}/community-modules/core/src/**/*.ts",
-        "{workspaceRoot}/community-modules/angular/projects/ag-grid-angular/src/lib/**/*.ts",
-        "{workspaceRoot}/community-modules/react/src/shared/**/*.ts",
-        "{workspaceRoot}/enterprise-modules/set-filter/src/**/*.ts",
-        "{workspaceRoot}/enterprise-modules/filter-tool-panel/src/**/*.ts",
-        "{workspaceRoot}/enterprise-modules/multi-filter/src/**/*.ts",
-        { "dependentTasksOutputFiles": "**/*", "transitive": false },
-        {
-          "externalDependencies": ["npm:typescript"]
-        }
-      ],
-      "outputs": ["{options.output}"],
-      "cache": true,
-      "options": {
-        "output": "dist/documentation/reference"
+      "executor": "nx:noop",
+      "dependsOn": ["^generate-doc-references"],
+      "inputs": [{ "externalDependencies": ["npm:typescript"] }],
+      "outputs": [],
+      "cache": false,
+      "configurations": {
+        "staging": {},
+        "production": {}
       }
     }
   },

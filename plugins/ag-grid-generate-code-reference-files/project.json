@@ -10,9 +10,9 @@
       "inputs": ["{projectRoot}/src/**"],
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "plugins/ag-grid-generate-code-reference-files/dist",
-        "main": "plugins/ag-grid-generate-code-reference-files/src/index.ts",
-        "tsConfig": "plugins/ag-grid-generate-code-reference-files/tsconfig.lib.json",
+        "outputPath": "{projectRoot}/dist",
+        "main": "{projectRoot}/src/index.ts",
+        "tsConfig": "{projectRoot}/tsconfig.lib.json",
         "assets": [
           "plugins/ag-grid-generate-code-reference-files/*.md",
           {

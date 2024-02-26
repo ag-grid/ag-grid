@@ -26,7 +26,7 @@
             app: appLocation + 'app',
             // systemJsMap comes from index.html
             ...systemJsMap
-        }, 
+        },
         packages: {
             'vue': {
                 defaultExtension: 'js'
@@ -40,35 +40,101 @@
             app: {
                 defaultExtension: 'js'
             },
-            'ag-grid-vue3': {
-                main: './lib/AgGridVue.js',
+            '@ag-grid-community/vue': {
+                main: './main.js',
                 defaultExtension: 'js'
+            },
+            '@ag-grid-community/react': {
+                main: './dist/index.cjs',
+                defaultExtension: 'cjs',
+            },
+            '@ag-grid-community/core': {
+                format: 'cjs',
+            },
+            '@ag-grid-community/client-side-row-model': {
+                format: 'cjs',
+            },
+            '@ag-grid-community/csv-export': {
+                format: 'cjs',
+            },
+            '@ag-grid-community/infinite-row-model': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/advanced-filter': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/charts': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/charts-enterprise': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/clipboard': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/column-tool-panel': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/core': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/excel-export': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/filter-tool-panel': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/master-detail': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/menu': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/multi-filter': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/range-selection': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/rich-select': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/row-grouping': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/server-side-row-model': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/set-filter': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/side-bar': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/sparklines': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/status-bar': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/viewport-row-model': {
+                format: 'cjs',
             },
             'ag-grid-community': {
-                main: './dist/ag-grid-community.cjs.min.js',
-                defaultExtension: 'js'
+                format: 'cjs',
             },
             'ag-grid-enterprise': {
-                main: './dist/ag-grid-enterprise.cjs.min.js',
-                defaultExtension: 'js'
+                format: 'cjs',
             },
-            'ag-grid-enterprise-charts-enterprise': {
-                main: './dist/ag-grid-enterprise-charts-enterprise.cjs.js',
-                defaultExtension: 'js'
+            'ag-grid-charts-enterprise': {
+                format: 'cjs',
             },
-            '@ag-grid-community/vue3': {
-                main: './lib/AgGridVue.js',
-                defaultExtension: 'js'
+            'ag-grid-vue3': {
+                main: './lib/AgChartsVue.js',
+                defaultExtension: 'js',
             },
-            'ag-charts-community': {
-                main: './dist/package/main.cjs.js',
-                defaultExtension: 'js'
-            },
-            'ag-charts-enterprise': {
-                main: './dist/package/main.cjs.js',
-                defaultExtension: 'js'
-            },
-        },
+        }
+        ,
         meta: {
             '*.js': {
                 babelOptions: {

@@ -155,6 +155,12 @@
       <excludeFolder url="file://$MODULE_DIR$/community-modules/angular/dist" />
       <excludeFolder url="file://$MODULE_DIR$/.nx" />
       <excludeFolder url="file://$MODULE_DIR$/.vscode" />
+      <excludeFolder url="file://$MODULE_DIR$/documentation/ag-grid-docs/.astro" />
+      <excludeFolder url="file://$MODULE_DIR$/documentation/ag-grid-docs/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/legacy" />
+      <excludeFolder url="file://$MODULE_DIR$/plugins/ag-grid-generate-example-files/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/plugins/ag-grid-task-autogen/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/plugins/ag-grid-generate-code-reference-files/dist" />
     </content>
     <content url="file://$MODULE_DIR$/community-modules/angular/dist" />
     <content url="file://$MODULE_DIR$/community-modules/react/dev" />

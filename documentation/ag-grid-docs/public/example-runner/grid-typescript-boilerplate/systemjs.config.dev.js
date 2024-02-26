@@ -46,15 +46,6 @@
         // packages tells the System loader how to load when no filename and/or no extension
         packages: {
             css: {},
-            react: {
-                main: './umd/react.development.js'
-            },
-            'react-dom': {
-                main: './umd/react-dom.development.js'
-            },
-            'react-dom/server': {
-                main: '../umd/react-dom-server.browser.production.min.js'
-            },
             app: {
                 main: "./main.ts",
                 defaultExtension: "ts",
@@ -83,19 +74,6 @@
                 defaultExtension: 'js',
                 format: 'cjs',
             },
-            // these are a little different in that they're in a directory and sjs doesn't default to the index.js inside...
-            // '@ag-grid-community/core/dist/cjs/es5/utils': {
-            //     main: './index.js',
-            //     defaultExtension: 'js'
-            // },
-            // '@ag-grid-enterprise/charts-enterprise/dist/cjs/es5/charts/chartComp/menu/settings/miniCharts': {
-            //     main: './index.js',
-            //     defaultExtension: 'js'
-            // },
-            // '@ag-grid-enterprise/charts/dist/cjs/es5/charts/chartComp/menu/settings/miniCharts': {
-            //     main: './index.js',
-            //     defaultExtension: 'js'
-            // },
             '@ag-grid-enterprise/advanced-filter': {
                 main: './dist/package/main.cjs.js',
                 defaultExtension: 'js',
@@ -209,10 +187,6 @@
                 main: './dist/package/main.cjs.js',
                 defaultExtension: 'js',
                 format: 'cjs',
-            },
-            'ag-grid-react': {
-                main: './dist/index.cjs',
-                defaultExtension: 'cjs',
             },
         }
     });

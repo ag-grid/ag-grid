@@ -3,11 +3,11 @@
         transpiler: 'plugin-babel',
         defaultExtension: 'js',
         paths:
-                {
-                    // paths serve as alias
-                    "npm:": "https://cdn.jsdelivr.net/npm/",
-            ...systemJsPaths
-        },
+            {
+                // paths serve as alias
+                "npm:": "https://cdn.jsdelivr.net/npm/",
+                ...systemJsPaths
+            },
         map: {
             css: boilerplatePath + "css.js",
 
@@ -29,10 +29,10 @@
         },
         packages: {
             react: {
-                main: './umd/react.production.min.js'
+                main: './umd/react.development.js'
             },
             'react-dom': {
-                main: './umd/react-dom.production.min.js'
+                main: './umd/react-dom.development.js'
             },
             'react-dom/server': {
                 main: '../umd/react-dom-server.browser.production.min.js'
@@ -53,34 +53,95 @@
             app: {
                 defaultExtension: 'jsx'
             },
-            'ag-charts-community': {
-                main: './dist/package/main.cjs.js',
-                defaultExtension: 'js'
+            '@ag-grid-community/react': {
+                main: './dist/index.cjs',
+                defaultExtension: 'cjs',
             },
-            'ag-charts-enterprise': {
-                main: './dist/package/main.cjs.js',
-                defaultExtension: 'js'
+            '@ag-grid-community/core': {
+                format: 'cjs',
             },
-            'ag-grid-react': {
-                main: './lib/main.js',
-                defaultExtension: 'js'
+            '@ag-grid-community/client-side-row-model': {
+                format: 'cjs',
+            },
+            '@ag-grid-community/csv-export': {
+                format: 'cjs',
+            },
+            '@ag-grid-community/infinite-row-model': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/advanced-filter': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/charts': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/charts-enterprise': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/clipboard': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/column-tool-panel': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/core': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/excel-export': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/filter-tool-panel': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/master-detail': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/menu': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/multi-filter': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/range-selection': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/rich-select': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/row-grouping': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/server-side-row-model': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/set-filter': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/side-bar': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/sparklines': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/status-bar': {
+                format: 'cjs',
+            },
+            '@ag-grid-enterprise/viewport-row-model': {
+                format: 'cjs',
             },
             'ag-grid-community': {
-                main: './dist/ag-grid-community.cjs.min.js',
-                defaultExtension: 'js'
+                format: 'cjs',
             },
             'ag-grid-enterprise': {
-                main: './dist/ag-grid-enterprise.cjs.min.js',
-                defaultExtension: 'js'
+                format: 'cjs',
             },
-            'ag-grid-enterprise-charts-enterprise': {
-                main: './dist/ag-grid-enterprise-charts-enterprise.cjs.js',
-                defaultExtension: 'js'
+            'ag-grid-charts-enterprise': {
+                format: 'cjs',
             },
-            '@ag-grid-community/react': {
-                main: './lib/main.mjs',
-                defaultExtension: 'mjs'
-            }
+            'ag-grid-react': {
+                main: './dist/index.cjs',
+                defaultExtension: 'cjs',
+            },
         },
         meta: {
             '*.jsx': {
@@ -88,7 +149,7 @@
                     react: true
                 }
             },
-            '*.css': { loader: 'css' }
+            '*.css': {loader: 'css'}
         }
     });
 })(this);
