@@ -5,9 +5,9 @@ import type { InternalFramework } from '../types';
 import ModuleConfig from '../_copiedFromCore/modules.json';
 
 const modules = Object.values(ModuleConfig).filter((m) => m.module && !m.framework);
-const communityModules = modules.filter((m) => {
-    return m.module.includes('community');
-});
+// const communityModules = modules.filter((m) => {
+//     return m.module.includes('community');
+// });
 
 interface Params {
     isEnterprise: boolean;
@@ -73,7 +73,8 @@ function addPackageJson(isEnterprise, framework, importType) {
         if (isFrameworkReact()) {
             addDependency('@ag-grid-community/react', agGridReactVersion);
         }
-        (!isEnterprise ? communityModules : modules).forEach((m) => addDependency(m.module, agGridVersion));
+        // Just include all modules for now
+        modules.forEach((m) => addDependency(m.module, agGridVersion));
     } else {
         if (framework === 'angular') {
             addDependency('ag-grid-angular', agGridAngularVersion);
