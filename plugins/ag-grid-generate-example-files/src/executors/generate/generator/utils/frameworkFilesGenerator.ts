@@ -59,7 +59,9 @@ const createVueFilesGenerator =
         const componentNames = getComponentName(componentScriptFiles);
         let mainJs = sourceGenerator(deepCloneObject(bindings), componentNames, [])(importType);
 
-        mainJs = await prettier.format(mainJs, { parser: 'babel' });
+        if(!isDev){
+            mainJs = await prettier.format(mainJs, { parser: 'babel' });
+        }
 
         const entryFileName = getEntryFileName(internalFramework)!;
 
@@ -77,7 +79,7 @@ const createVueFilesGenerator =
     };
 
 export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGenerator>> = {
-    vanilla: async ({ entryFile, indexHtml, typedBindings, componentScriptFiles, otherScriptFiles, ignoreDarkMode }) => {
+    vanilla: async ({ entryFile, indexHtml, typedBindings, componentScriptFiles, otherScriptFiles, isDev }) => {
         const internalFramework: InternalFramework = 'vanilla';
         const entryFileName = getEntryFileName(internalFramework)!;
         let mainJs = readAsJsFile(entryFile);
@@ -91,7 +93,9 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         mainJs = mainJs.replace(/agGrid\.createGrid(.*);/g, `agGrid.createGrid$1; ${getIntegratedDarkModeCode(entryFile, false, 'gridApi')}`);
 
         const scriptFiles = {...otherScriptFiles, ...componentScriptFiles};
-        mainJs = await prettier.format(mainJs, { parser: 'babel' });
+        if(!isDev){
+            mainJs = await prettier.format(mainJs, { parser: 'babel' });
+        }
 
         return {
             files: {
@@ -117,7 +121,9 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
 
         let mainTs = vanillaToTypescript(deepCloneObject(typedBindings), mainFileName, entryFile)(importType);
 
-        mainTs = await prettier.format(mainTs, { parser: 'typescript' });
+        if(!isDev){
+            mainTs = await prettier.format(mainTs, { parser: 'typescript' });
+        }
 
         const scriptFiles = {...otherScriptFiles, ...componentScriptFiles};
 
@@ -137,7 +143,9 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         const componentNames = getComponentName(componentScriptFiles);
         let indexJsx = vanillaToReactFunctional(deepCloneObject(bindings), componentNames, [])(importType);
 
-        indexJsx = await prettier.format(indexJsx, { parser: 'babel' });
+        if(!isDev){
+            indexJsx = await prettier.format(indexJsx, { parser: 'babel' });
+        }
 
         const scriptFiles = {...otherScriptFiles, ...componentScriptFiles};
 
@@ -157,7 +165,9 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         const componentNames = getComponentName(componentScriptFiles);
         let indexTsx = vanillaToReactFunctionalTs(deepCloneObject(typedBindings), componentNames, [])(importType);
 
-        indexTsx = await prettier.format(indexTsx, { parser: 'typescript' });
+        if(!isDev){
+            indexTsx = await prettier.format(indexTsx, { parser: 'typescript' });
+        }
 
         const scriptFiles = {...otherScriptFiles, ...componentScriptFiles};
 
@@ -178,7 +188,9 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         const componentNames = getComponentName(componentScriptFiles);
         let appComponent = vanillaToAngular(deepCloneObject(typedBindings), componentNames, [])(importType);
 
-        appComponent = await prettier.format(appComponent, { parser: 'typescript' });
+        if(!isDev){
+            appComponent = await prettier.format(appComponent, { parser: 'typescript' });
+        }
 
         const scriptFiles = {...otherScriptFiles, ...componentScriptFiles};
 
