@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-function copyFileWithTSNoCheck(sourceFile, destinationFile) {
+function copyFile(sourceFile, destinationFile, addTsNoCheck = true) {
 
     fs.readFile(sourceFile, 'utf8', (err, data) => {
         if (err) {
@@ -9,7 +9,7 @@ function copyFileWithTSNoCheck(sourceFile, destinationFile) {
         }
 
         // Prepend '@ts-nocheck' to the content so we don't have to worry about typescript errors
-        const modifiedContent = `// @ts-nocheck\n${data}`;
+        const modifiedContent = addTsNoCheck ? `// @ts-nocheck\n${data}` : data;
         fs.writeFile(destinationFile, modifiedContent, {
             encoding: 'utf8',
             flag: 'w'
@@ -28,5 +28,9 @@ const destPropertyKeys = './src/executors/generate/generator/_copiedFromCore/pro
 const srcEventKeys = '../../community-modules/core/src/eventKeys.ts';
 const destEventKeys = './src/executors/generate/generator/_copiedFromCore/eventKeys.ts';
 
-copyFileWithTSNoCheck(srcPropertyKeys, destPropertyKeys);
-copyFileWithTSNoCheck(srcEventKeys, destEventKeys);
+const srcModules = '../../documentation/ag-grid-docs/src/content/matrix-table/modules.json';
+const destModules = './src/executors/generate/generator/_copiedFromCore/modules.json';
+
+copyFile(srcPropertyKeys, destPropertyKeys);
+copyFile(srcEventKeys, destEventKeys);
+copyFile(srcModules, destModules, false);
