@@ -136,6 +136,9 @@
             position: absolute;
             inset: 0;
             background-color: var(--color-util-brand-400);
+            #{$selector-darkmode} & {
+                background-color: color-mix(in srgb, var(--color-util-brand-700), var(--color-bg-primary) 20%);
+            }
             opacity: 0.15;
             pointer-events: none;
         }
@@ -247,7 +250,7 @@
         color: var(--color-util-brand-700);
 
         #{$selector-darkmode} & {
-            color: var(--color-util-brand-400);
+            color: var(--color-fg-primary);
         }
     }
 
@@ -255,7 +258,7 @@
         background-color: var(--color-util-brand-100);
 
         #{$selector-darkmode} & {
-            background-color: var(--color-util-brand-50);
+            background-color: rgba(255, 255, 255, 0.1);
         }
     }
 }

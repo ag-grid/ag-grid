@@ -47,3 +47,9 @@
         --columns: 3;
     }
 }
+
+@media screen and (max-width: $breakpoint-docs-nav-medium) {
+    .layout-3-col {
+        max-width: 100%;
+    }
+}

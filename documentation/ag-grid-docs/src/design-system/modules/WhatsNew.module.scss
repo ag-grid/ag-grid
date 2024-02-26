@@ -28,6 +28,7 @@
     padding: $spacing-size-4;
     border-radius: 8px;
     border: 1px solid var(--color-border-primary);
+    gap: $spacing-size-4;
 
     @container (min-width: 640px) {
         width: calc(100% / 2 - var(--versions-gap) / 2);
@@ -102,18 +103,17 @@
     }
 }
 
-.major-text {
+.majorText {
     border: 1px solid var(--color-logo-orange);
     border-radius: var(--radius-4xl);
     color: var(--color-logo-orange);
     padding: 2px 8px;
 }
 
-.latest-tag {
+.latestTag {
     border: 1px solid var(--color-text-primary);
     border-radius: var(--radius-4xl);
     padding: 2px 8px;
-    margin-right: 8px;
 
     #{$selector-darkmode} & {
         border: 1px solid var(--color-border-primary);
@@ -144,11 +144,11 @@
     }
 }
 
-.buttonSecondary {
+a.buttonSecondary {
     width: 100%;
     display: flex;
     justify-content: center;
-    margin-bottom: 16px;
+    margin-bottom: 8px;
 
     #{$selector-darkmode} & {
         background-color: var(--color-util-gray-300);
@@ -169,6 +169,7 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: flex-start;
+    gap: $spacing-size-2;
 }
 
 .flex a {
