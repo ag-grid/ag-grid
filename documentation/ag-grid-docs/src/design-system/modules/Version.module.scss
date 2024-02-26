@@ -71,3 +71,14 @@ span.major-text {
         color: var(--color-button-secondary-fg);
     }
 }
+
+.latest-tag {
+    border: 1px solid var(--color-text-primary);
+    border-radius: var(--radius-4xl);
+    padding: 2px 8px;
+    margin-right: 8px;
+
+    #{$selector-darkmode} & {
+        border: 1px solid var(--color-border-primary);
+    }
+}

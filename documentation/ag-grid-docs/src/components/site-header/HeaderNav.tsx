@@ -1,7 +1,7 @@
 import type { MenuItem } from '@ag-grid-types';
 import { SITE_BASE_URL } from '@constants';
 import styles from '@design-system/modules/HeaderNav.module.scss';
-import gridStyles from '@design-system/modules/SiteHeader.module.scss';
+import siteHeaderStyles from '@design-system/modules/SiteHeader.module.scss';
 import MenuIcon from '@images/inline-svgs/menu-icon.svg?react';
 import { pathJoin } from '@utils/pathJoin';
 import classnames from 'classnames';
@@ -34,19 +34,19 @@ const HeaderLinks = ({
     children: ReactElement;
 }) => {
     return (
-        <ul className={classnames(gridStyles.navItemList, 'list-style-none')}>
+        <ul className={classnames(siteHeaderStyles.navItemList, 'list-style-none')}>
             {items.map(({ title, path, url, icon }) => {
-                const linkClasses = classnames(gridStyles.navItem, {
-                    [gridStyles.navItemActive]: title === getCurrentPageName({ path: currentPath, allPaths }),
-                    [gridStyles.buttonItem]: title === 'Github',
-                    [gridStyles.githubItem]: title === 'Github',
+                const linkClasses = classnames(siteHeaderStyles.navItem, {
+                    [siteHeaderStyles.navItemActive]: title === getCurrentPageName({ path: currentPath, allPaths }),
+                    [siteHeaderStyles.buttonItem]: title === 'Github',
+                    [siteHeaderStyles.githubItem]: title === 'Github',
                 });
                 const href = path ? pathJoin(SITE_BASE_URL, path) : url;
 
                 return (
                     <li key={title.toLocaleLowerCase()} className={linkClasses}>
                         <a
-                            className={gridStyles.navLink}
+                            className={siteHeaderStyles.navLink}
                             href={href}
                             onClick={() => {
                                 if (isOpen) {
@@ -69,14 +69,14 @@ const HeaderLinks = ({
 
 const HeaderExpandButton = ({ isOpen, toggleIsOpen }: { isOpen: boolean; toggleIsOpen: () => void }) => (
     <button
-        className={gridStyles.mobileMenuButton}
+        className={siteHeaderStyles.mobileMenuButton}
         type="button"
         aria-controls={styles.mainNavSmall}
         aria-expanded={isOpen}
         aria-label="Toggle navigation"
         onClick={() => toggleIsOpen()}
     >
-        <MenuIcon className={gridStyles.menuIcon} />
+        <MenuIcon className={siteHeaderStyles.menuIcon} />
     </button>
 );
 
@@ -92,7 +92,7 @@ const HeaderNavLarge = ({
     children: ReactElement;
 }) => {
     return (
-        <div className={classnames(gridStyles.mainNav, styles.mainNavLargeContainer)}>
+        <div className={classnames(siteHeaderStyles.mainNav, styles.mainNavLargeContainer)}>
             <nav className={styles.mainNavLarge}>
                 <HeaderLinks currentPath={currentPath} items={items} allPaths={allPaths}>
                     {children}
@@ -121,7 +121,7 @@ const HeaderNavSmall = ({
         <>
             <HeaderExpandButton isOpen={isOpen} toggleIsOpen={toggleIsOpen} />
             <Collapsible id={styles.mainNavSmall} isOpen={isOpen}>
-                <nav className={gridStyles.mainNav}>
+                <nav className={siteHeaderStyles.mainNav}>
                     <HeaderLinks
                         currentPath={currentPath}
                         items={items}

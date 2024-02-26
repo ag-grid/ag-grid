@@ -1,7 +1,5 @@
 @use '../core' as *;
 
-$toolbar-width: 1050px;
-
 .toolbar {
     width: 100%;
     position: relative;
@@ -31,7 +29,15 @@ $toolbar-width: 1050px;
 .controls {
     display: flex;
     align-items: center;
-    width: $toolbar-width;
+    min-height: 36px;
+
+    > * {
+        flex-shrink: 0;
+    }
+
+    > *:last-child {
+        padding-right: 90px;
+    }
 
     select,
     input {
@@ -46,12 +52,8 @@ $toolbar-width: 1050px;
     right: 0;
     height: 100%;
     width: 70px;
-    background: linear-gradient(90deg, transparent 0%, var(--color-bg-primary) 110%);
+    background: linear-gradient(90deg, transparent 0%, var(--color-bg-primary));
     pointer-events: none;
-
-    @media (min-width: $toolbar-width) {
-        display: none;
-    }
 }
 
 .videoTour {
@@ -71,8 +73,6 @@ $toolbar-width: 1050px;
 .toolbarNav {
     position: sticky;
     top: var(--header-nav-height);
-    padding-top: $spacing-size-2;
-    padding-bottom: $spacing-size-2;
     z-index: 2;
 
     ul {
