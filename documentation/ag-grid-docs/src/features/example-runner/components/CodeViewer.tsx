@@ -6,6 +6,7 @@ import type { ExampleType, FileContents } from '@features/example-generator/type
 import { doOnEnter } from '@utils/doOnEnter';
 import classnames from 'classnames';
 import { useEffect, useState } from 'react';
+import { POST_INIT_MESSAGE_END, POST_INIT_MESSAGE_START } from '../constants';
 
 import { CodeOptions } from './CodeOptions';
 
@@ -30,6 +31,30 @@ function stripOutDarkModeCode(files: FileContents) {
     mainFiles.forEach((mainFile) => {
         if (files[mainFile]) {
             files[mainFile] = files[mainFile].replace(regex, '').trim() + '\n';
+        }
+    });
+}
+
+function stripOutIndexHtml(files: FileContents) {
+    const mainFiles = ['index.html'];
+    mainFiles.forEach((mainFile) => {
+        if (files[mainFile]) {
+            const bodyRegex = /<body\b[^>]*>[\s\S]*?<\/body>/gi;
+            const scriptTagRegex = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi;
+            const linkRegex = /<link[^>]*>|<\/link>/gi;
+            const indexContent = files[mainFile];
+
+            // get the body content via the regex
+            const bodyMatches = indexContent.match(bodyRegex) ?? [];
+            if (bodyMatches.length > 0) {
+                let body = bodyMatches[0] ?? '';
+                body = body
+                    .replace(scriptTagRegex, '')
+                    .replace(linkRegex, '')
+                    .replace(POST_INIT_MESSAGE_START, '')
+                    .replace(POST_INIT_MESSAGE_END, '');
+                files[mainFile] = body ?? '';
+            }
         }
     });
 }
@@ -59,6 +84,7 @@ export const CodeViewer = ({
 
     const exampleFiles = Object.keys(files);
     stripOutDarkModeCode(files);
+    stripOutIndexHtml(files)
 
     useEffect(() => {
         setActiveFile(initialSelectedFile);
