@@ -76,9 +76,15 @@ export class PresetModel {
   }
 
   getFullPartParamValues(): ParamValueMap {
-    // TODO should include core params too
-    return Object.assign({}, this.part.paramDefaults, this.paramValueOverrides);
+    return Object.assign(
+      {},
+      corePartModel().paramDefaults,
+      this.part.paramDefaults,
+      this.paramValueOverrides,
+    );
   }
 }
 
 export const allPartModels = memoize(() => allPartsMeta.map((partMeta) => new PartModel(partMeta)));
+
+const corePartModel = memoize(() => allPartModels().find((part) => part.partId === 'core')!);

@@ -85,6 +85,7 @@
 .ag-rtl .ag-side-bar-right {
   border-right: var(--ag-borders-side-panels);
   .ag-tool-panel-wrapper {
+    /*rtl:ignore*/
     border-left: var(--ag-borders-side-panels);
   }
 }
@@ -94,6 +95,7 @@
   border-left: var(--ag-side-panel-border);
 
   .ag-tool-panel-wrapper {
+    /*rtl:ignore*/
     border-right: var(--ag-side-panel-border);
   }
 }

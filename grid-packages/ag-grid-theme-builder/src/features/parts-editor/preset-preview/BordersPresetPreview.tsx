@@ -35,13 +35,15 @@ const Grid = styled('div')`
 `;
 
 const Row = styled('span')`
+  position: relative;
+  top: -1px;
   width: 100%;
   border-color: currentColor !important;
 `;
 
 const Columns = styled('div')`
   position: absolute;
-  inset: 0 0 0 4px;
+  inset: -1px 0 1px 4px;
   display: flex;
   flex-direction: row;
   gap: 4px;
