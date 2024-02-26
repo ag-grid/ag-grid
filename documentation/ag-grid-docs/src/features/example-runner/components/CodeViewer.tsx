@@ -39,15 +39,15 @@ function stripOutIndexHtml(files: FileContents) {
     const mainFiles = ['index.html'];
     mainFiles.forEach((mainFile) => {
         if (files[mainFile]) {
-            const bodyRegex = /<body\b[^>]*>[\s\S]*?<\/body>/gi;
+            const bodyContentRegex = /<body\b[^>]*>([\s\S]*?)<\/body>/i;
             const scriptTagRegex = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi;
             const linkRegex = /<link[^>]*>|<\/link>/gi;
             const indexContent = files[mainFile];
 
             // get the body content via the regex
-            const bodyMatches = indexContent.match(bodyRegex) ?? [];
-            if (bodyMatches.length > 0) {
-                let body = bodyMatches[0] ?? '';
+            const bodyMatches = indexContent.match(bodyContentRegex) ?? [];
+            if (bodyMatches.length > 1) {
+                let body = bodyMatches[1] ?? '';
                 body = body
                     .replace(scriptTagRegex, '')
                     .replace(linkRegex, '')
