@@ -8,6 +8,7 @@ import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
+import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { styled } from '@mui/joy';
@@ -28,6 +29,7 @@ ModuleRegistry.registerModules([
   RowGroupingModule,
   GridChartsModule,
   SetFilterModule,
+  RichSelectModule,
 ]);
 
 ModuleRegistry.registerModules([SetFilterModule]);

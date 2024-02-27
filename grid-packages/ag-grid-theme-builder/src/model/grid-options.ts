@@ -27,6 +27,7 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
     resizable: config.columnResizing,
     enableRowGroup: true,
     floatingFilter: config.floatingFilters,
+    editable: true,
   };
   const columnDefs = buildSimpleColumnDefs();
   const sideBar: string[] = [];
@@ -98,6 +99,10 @@ const buildSimpleColumnDefs = (): ColDef[] => [
     filter: 'agSetColumnFilter',
     filterParams: {
       buttons: ['reset', 'apply'],
+    },
+    cellEditor: 'agRichSelectCellEditor',
+    cellEditorParams: {
+      values: Array.from(new Set(defaultRowData().map((row) => row.model))).sort(),
     },
   },
   { field: 'year', flex: 1 },

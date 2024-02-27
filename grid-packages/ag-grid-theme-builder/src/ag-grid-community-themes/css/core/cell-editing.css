@@ -1,0 +1,23 @@
+.ag-cell-inline-editing {
+  /* do not add `height` here, it breaks gridOptions.rowHeight for the cellEditor */
+  border-radius: var(--ag-border-radius);
+  padding: 0;
+}
+
+.ag-popup-editor .ag-large-text,
+.ag-autocomplete-list-popup {
+  border-radius: var(--ag-border-radius);
+  box-shadow: var(--ag-popup-shadow);
+  padding: var(--ag-grid-size);
+  background-color: var(--ag-background-color);
+  padding: 0;
+}
+
+.ag-large-text-input {
+  height: auto;
+  padding: var(--ag-cell-horizontal-padding);
+}
+
+.ag-rtl .ag-large-text-input textarea {
+  resize: none;
+}

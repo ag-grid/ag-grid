@@ -1014,6 +1014,7 @@ ag-grid-aurelia {
  * Rich Select
  ****************************
  */
+/*
 .ag-rich-select {
   cursor: default;
   outline: none;
@@ -1061,6 +1062,7 @@ ag-grid-aurelia {
     }
   }
 }
+*/
 
 /**
  ****************************

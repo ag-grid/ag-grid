@@ -68,7 +68,14 @@ export type CoreParam =
   | 'headerColumnResizeHandleWidth'
   | 'headerColumnResizeHandleColor'
   | 'widgetContainerHorizontalPadding'
-  | 'widgetContainerVerticalPadding';
+  | 'widgetContainerVerticalPadding'
+  | 'widgetHorizontalSpacing'
+  | 'widgetVerticalSpacing'
+  | 'listItemHeight'
+  | 'inputBackgroundColor'
+  | 'inputBorder'
+  | 'inputHorizontalPadding'
+  | 'inputBorderRadius';
 
 export type ColorsPreset = 'light' | 'dark';
 
@@ -84,6 +91,7 @@ export type QuartzIconsParam = 'quartzIconsPreset' | 'iconSize' | 'iconStrokeWid
 
 import sidebarCssImport from './css/core/sidebar.css?inline';
 import rootCssImport from './css/core/root.css?inline';
+import richSelectCssImport from './css/core/rich-select.css?inline';
 import resetCssImport from './css/core/reset.css?inline';
 import pinnedColumnsCssImport from './css/core/pinned-columns.css?inline';
 import headerCssImport from './css/core/header.css?inline';
@@ -92,8 +100,10 @@ import gridBordersCssImport from './css/core/grid-borders.css?inline';
 import dragAndDropCssImport from './css/core/drag-and-drop.css?inline';
 import columnFiltersCssImport from './css/core/column-filters.css?inline';
 import columnDropCssImport from './css/core/column-drop.css?inline';
+import cellEditingCssImport from './css/core/cell-editing.css?inline';
 import bordersTodoMoveIntoComponentFilesCssImport from './css/core/borders-todo-move-into-component-files.css?inline';
 import advancedFilterCssImport from './css/core/advanced-filter.css?inline';
+import widgetsListsCssImport from './css/core/widgets/lists.css?inline';
 
 export const core = definePart<CoreParam>({
   partId: 'core',
@@ -158,10 +168,18 @@ export const core = definePart<CoreParam>({
     headerColumnResizeHandleColor: helpers.ref('borderColor'),
     widgetContainerHorizontalPadding: helpers.calc('gridSize * 1.5'),
     widgetContainerVerticalPadding: helpers.calc('gridSize * 1.5'),
+    widgetHorizontalSpacing: helpers.calc('gridSize * 1.5'),
+    widgetVerticalSpacing: helpers.ref('gridSize'),
+    listItemHeight: helpers.calc('iconSize + widgetVerticalSpacing'),
+    inputBackgroundColor: helpers.ref('backgroundColor'),
+    inputBorder: true,
+    inputHorizontalPadding: helpers.ref('gridSize'),
+    inputBorderRadius: helpers.ref('borderRadius'),
   },
   css: [
     sidebarCssImport,
     rootCssImport,
+    richSelectCssImport,
     resetCssImport,
     pinnedColumnsCssImport,
     headerCssImport,
@@ -170,8 +188,10 @@ export const core = definePart<CoreParam>({
     dragAndDropCssImport,
     columnFiltersCssImport,
     columnDropCssImport,
+    cellEditingCssImport,
     bordersTodoMoveIntoComponentFilesCssImport,
     advancedFilterCssImport,
+    widgetsListsCssImport,
   ],
 });
 
@@ -759,6 +779,69 @@ export type ParamTypes = {
    * @default calc("gridSize * 1.5")
    */
   widgetContainerVerticalPadding: string;
+
+  /**
+   * The spacing between widgets in containers arrange widgets horizontally
+   *
+   * A CSS number value with length units, e.g. "1px" or "2em". If a JavaScript number is provided, its units are assumed to be 'px'.
+   *
+   * @default calc("gridSize * 1.5")
+   */
+  widgetHorizontalSpacing: string;
+
+  /**
+   * The spacing between widgets in containers arrange widgets vertically
+   *
+   * A CSS number value with length units, e.g. "1px" or "2em". If a JavaScript number is provided, its units are assumed to be 'px'.
+   *
+   * @default ref("gridSize")
+   */
+  widgetVerticalSpacing: string;
+
+  /**
+   * Height of items in scrolling lists e.g. dropdown select inputs and column menu set filters.
+   *
+   * A CSS number value with length units, e.g. "1px" or "2em". If a JavaScript number is provided, its units are assumed to be 'px'.
+   *
+   * @default calc("iconSize + widgetVerticalSpacing")
+   */
+  listItemHeight: string;
+
+  /**
+   * Borders for text inputs.
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default ref("backgroundColor")
+   */
+  inputBackgroundColor: string;
+
+  /**
+   * Borders around text inputs.
+   *
+   * A CSS border value e.g. "solid 1px red". Passing true is equivalent to "solid 1px var(--ag-border-color)", and false to "none".
+   *
+   * @default true
+   */
+  inputBorder: string | boolean;
+
+  /**
+   * Padding inside text inputs.
+   *
+   * A CSS number value with length units, e.g. "1px" or "2em". If a JavaScript number is provided, its units are assumed to be 'px'.
+   *
+   * @default ref("gridSize")
+   */
+  inputHorizontalPadding: string;
+
+  /**
+   * Padding inside text inputs.
+   *
+   * A CSS number value with length units, e.g. "1px" or "2em". If a JavaScript number is provided, its units are assumed to be 'px'.
+   *
+   * @default ref("borderRadius")
+   */
+  inputBorderRadius: string;
 
   /**
    * Use one of the built-in sets of preset colors values. Available presets are: "light", "dark".

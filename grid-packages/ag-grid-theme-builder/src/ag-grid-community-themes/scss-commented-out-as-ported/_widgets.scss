@@ -99,6 +99,7 @@
   ////////////////////////////////////////
   // Lists
   ////////////////////////////////////////
+  /* PORTED
   .ag-list-item,
   .ag-virtual-list-item {
     height: var(--ag-list-item-height);
@@ -140,6 +141,7 @@
       overflow: hidden;
     }
   }
+  */
 
   ////////////////////////////////////////
   // Selection checkbox
@@ -444,6 +446,7 @@
   ////////////////////////////////////////
   // Rich Select
   ////////////////////////////////////////
+  /* PORTED
   .ag-rich-select-value,
   .ag-rich-select-list {
     background-color: var(--ag-background-color);
@@ -497,7 +500,7 @@
     }
 
     &:hover {
-      /* TODO different variable */
+      // TODO different variable
       background-color: var(--ag-row-hover-color);
     }
   }
@@ -517,7 +520,7 @@
   .ag-rich-select-row-text-highlight {
     font-weight: bold;
   }
-
+*/
   ////////////////////////////////////////
   // Autocomplete
   ////////////////////////////////////////
