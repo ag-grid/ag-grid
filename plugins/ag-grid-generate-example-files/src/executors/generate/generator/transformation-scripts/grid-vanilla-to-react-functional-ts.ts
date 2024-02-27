@@ -65,9 +65,9 @@ function getModuleImports(
 
     addGenericInterfaceImport(imports, bindings.tData, bindings);
 
-    if (bindings.moduleRegistration) {
+   if(bindings.moduleRegistration){
         imports.push(bindings.moduleRegistration);
-    }
+   }
 
     return imports;
 }

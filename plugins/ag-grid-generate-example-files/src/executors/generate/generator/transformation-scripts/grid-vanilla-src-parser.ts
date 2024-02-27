@@ -552,7 +552,12 @@ function internalParser(examplePath: string, srcFile: string, includeTypes: bool
     tsBindings.interfaces = extractInterfaces(tsTree);
     tsBindings.exampleName = examplePath;
     tsBindings.moduleRegistration = extractModuleRegistration(tsTree);
-    tsBindings.inlineGridStyles = inlineGridStyles;
+    tsBindings.gridSettings = {
+        width: '100%',
+        height: '100%',
+        theme: 'ag-theme-quartz',
+        ...exampleSettings
+    };
 
     return tsBindings;
 }
