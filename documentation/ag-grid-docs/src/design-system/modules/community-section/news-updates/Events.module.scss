@@ -2,8 +2,8 @@
 
     .blurContainer {
         position: relative;
-        overflow: hidden; // Ensures the blur effect does not extend beyond this container 
-        margin-left: -1.5%; // Adjust margins to center the extended container
+        overflow: hidden;
+        margin-left: -1.5%; 
         margin-right: -1.5%;
       
         &:before,
@@ -12,8 +12,8 @@
           position: absolute;
           top: 0;
           bottom: 0;
-          width: 100px; // Adjust the width of the blur effect as needed
-          pointer-events: none; // Allows interaction with the images beneath
+          width: 100px;
+          pointer-events: none; 
         }
       
         &:before {
@@ -34,9 +34,9 @@
             .galleryImage {
                 flex: 0 0 auto;
                 scroll-snap-align: start;
-                width: auto; /* Make each image take up 1/7th of the container width */
-                margin-right: 10px; /* Adjust or remove spacing between images as needed */
-                height: 150px; /* Maintain aspect ratio */
+                width: auto; 
+                margin-right: 10px; 
+                height: 150px; 
             }
           }
       }
@@ -54,7 +54,7 @@
                 background-color: transparent;
                 border: none;
                 border-bottom: 1px solid #7f7e7e;
-                color: #FFF; /* Change as needed */
+                color: #FFF; 
                 padding: 10px 20px;
                 cursor: pointer;
                 font-weight: 300;
@@ -71,7 +71,7 @@
                 border-bottom-width: 1px;
                 border-bottom-left-radius: 0px;
                 border-bottom-right-radius: 0px;
-                color: #fff; /* Change for active state text color if needed */
+                color: #fff;
             }
 
         }
