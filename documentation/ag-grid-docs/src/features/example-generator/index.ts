@@ -1,4 +1,4 @@
-import type { ImportType } from '@ag-grid-types';
+import type {ImportType} from '@ag-grid-types';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
@@ -47,6 +47,7 @@ type GeneratedContents = {
     entryFileName: string;
     files: Record<string, string>;
     scriptFiles: string[];
+    boilerPlateFiles?: Record<string, string>;
 };
 
 const cacheKeys: Record<string, object> = {};
@@ -68,6 +69,10 @@ const readContentJson = async (params: GeneratedExampleParams) => {
     if (!result) {
         const buffer = await fs.readFile(jsonPath);
         result = JSON.parse(buffer.toString('utf-8')) as GeneratedContents;
+    }
+
+    if(params.framework === 'angular') {
+        result.files['main.ts'] = result.boilerPlateFiles!['main.ts'];
     }
 
     if (useCache) {
