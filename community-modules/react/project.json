@@ -9,41 +9,70 @@
     },
     "build": {
       "executor": "nx:noop",
-      "dependsOn": ["build:package", "build:umd"],
+      "dependsOn": ["build:package", "build:umd", "build:types"],
       "inputs": [],
       "outputs": [],
-      "cache": false,
+      "configurations": {
+        "watch": {},
+        "production": {}
+      }
+    },
+    "build:types": {
+      "executor": "@nx/js:tsc",
+      "dependsOn": ["^build:types"],
+      "inputs": [
+        "{projectRoot}/package.json",
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/tsconfig.*.json",
+        "tsDeclarations",
+        "sharedGlobals",
+        "defaultExcludes",
+        {
+          "externalDependencies": ["npm:typescript", "npm:esbuild"]
+        }
+      ],
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "community-modules/react/dist/types",
+        "main": "community-modules/react/src/index.ts",
+        "tsConfig": "community-modules/react/tsconfig.types.json",
+        "compiler": "tsc"
+      },
       "configurations": {
         "watch": {},
         "production": {}
       }
     },
     "build:package": {
-      "executor": "@nx/rollup:rollup",
-      "inputs": ["tsDefaults", "{projectRoot}/package.json", { "externalDependencies": ["react"] }],
+      "executor": "@nx/esbuild:esbuild",
+      "dependsOn": ["^build"],
+      "inputs": [
+        "{projectRoot}/package.json",
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/tsconfig.*.json",
+        "tsDeclarations",
+        "sharedGlobals",
+        "defaultExcludes"
+      ],
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "community-modules/react/dist",
-        "generateExportsField": false,
+        "outputPath": "community-modules/react/dist/package",
+        "main": "community-modules/react/src/index.ts",
         "tsConfig": "community-modules/react/tsconfig.lib.json",
-        "project": "community-modules/react/package.json",
-        "entryFile": "community-modules/react/src/index.ts",
-        "external": ["react", "react-dom", "react/jsx-runtime"],
-        "rollupConfig": "community-modules/react/rollup.config.cjs",
-        "compiler": "babel",
-        "assets": [
-          {
-            "glob": "community-modules/react/README.md",
-            "input": ".",
-            "output": "."
-          },
-          {
-            "glob": "community-modules/react/LICENSE.txt",
-            "input": ".",
-            "output": "."
-          }
-        ],
-        "format": ["cjs", "esm"]
+        "external": ["@ag-grid-community/core", "react", "react-dom"],
+        "esbuildConfig": "esbuild.config.cjs",
+        "platform": "browser",
+        "target": "es6",
+        "format": ["cjs", "esm"],
+        "sourcemap": true
+      },
+      "configurations": {
+        "watch": {
+          "tsConfig": "community-modules/react/tsconfig.watch.json"
+        },
+        "production": {
+          "sourcemap": false
+        }
       }
     },
     "build:umd": {
@@ -52,8 +81,8 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "community-modules/react/dist/umd",
-        "outputFileName": "ag-grid-react",
-        "main": "community-modules/react/dist/index.cjs",
+        "outputFileName": "@ag-grid-community/react",
+        "main": "community-modules/react/dist/package/index.esm.mjs",
         "tsConfig": "community-modules/react/tsconfig.lib.json",
         "esbuildConfig": "esbuild.config.cjs",
         "platform": "browser",
@@ -81,6 +110,7 @@
     "pack": {
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
+      "inputs": ["production", "{projectRoot}/dist"],
       "outputs": ["{workspaceRoot}/dist/{projectRoot}.tgz"],
       "options": {
         "cwd": "community-modules/react",
@@ -92,21 +122,21 @@
       "executor": "nx:run-commands",
       "dependsOn": ["pack"],
       "inputs": ["{workspaceRoot}/dist/{projectRoot}.tgz"],
-      "outputs": ["{workspaceRoot}/dist/packages/contents/ag-charts-react/"],
+      "outputs": ["{workspaceRoot}/dist/packages/contents/community/react/react/"],
       "options": {
         "parallel": false,
         "commands": [
-          "mkdir -p dist/packages/contents/ag-charts-react",
-          "tar -xzf dist/community-modules/react.tgz -C dist/packages/contents/ag-charts-react/"
+          "mkdir -p dist/packages/contents/community/react/react",
+          "tar -xzf dist/community-modules/react.tgz -C dist/packages/contents/community/react/react/"
         ]
       }
     },
     "pack:verify": {
       "executor": "nx:run-commands",
       "dependsOn": ["pack:extract"],
-      "inputs": ["{workspaceRoot}/dist/packages/contents/ag-charts-react/"],
+      "inputs": ["{workspaceRoot}/dist/packages/contents/community/react/react/"],
       "options": {
-        "commands": ["node tools/sanity-check-package.js dist/packages/contents/ag-charts-react/package"]
+        "commands": ["node tools/sanity-check-package.js dist/packages/contents/community/react/react/package"]
       }
     }
   },

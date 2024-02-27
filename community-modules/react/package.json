@@ -2,8 +2,10 @@
   "name": "@ag-grid-community/react",
   "version": "31.1.0",
   "description": "AG Grid React Component",
-  "main": "./dist/index.mjs",
-  "typings": "./dist/index.d.ts",
+  "main": "./dist/package/index.cjs.js",
+  "module": "./dist/package/index.esm.mjs",
+  "type": "module",
+  "types": "./dist/types/src/index.d.ts",
   "scripts": {
     "cypress:open": "npx cross-env NODE_ENV=test cypress open",
     "cypress:e2e": "npx cross-env NODE_ENV=test cypress run --spec 'cypress/integration/*spec.js'",

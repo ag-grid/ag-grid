@@ -21,14 +21,14 @@
             typescript: {
                 exports: "ts"
             },
-            '*.css': { loader: 'css' }
+            '*.css': {loader: 'css'}
         },
         paths:
-        {
-            // paths serve as alias
-            "npm:": "https://cdn.jsdelivr.net/npm/",
-            ...systemJsPaths
-        },       
+            {
+                // paths serve as alias
+                "npm:": "https://cdn.jsdelivr.net/npm/",
+                ...systemJsPaths
+            },
         // map tells the System loader where to look for things
         map: {
             '@angular/compiler': 'npm:@angular/compiler@' + ANGULAR_VERSION + '/fesm2015/compiler.mjs',
@@ -48,7 +48,9 @@
             'rxjs': "npm:rxjs@7.8.1/dist/bundles/rxjs.umd.min.js",
             'rxjs/operators': "npm:rxjs@7.8.1/dist/bundles/rxjs.umd.min.js",
 
-            css: boilerplatePath + "css.js",
+            // css: boilerplatePath + "css.js",
+            'css': 'npm:systemjs-plugin-css@0.1.37/css.js',
+
             ts: "npm:plugin-typescript@8.0.0/lib/plugin.js",
             tslib: "npm:tslib@2.3.1/tslib.js",
             typescript: "npm:typescript@4.3.5/lib/typescript.min.js",
