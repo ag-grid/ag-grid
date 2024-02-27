@@ -1,0 +1,6 @@
+[
+    {"name": "Home", "path": "/"},
+    {"name": "News & Updates", "path": "/news-updates"},
+    {"name": "Showcase", "path": "/showcase"},
+    {"name": "Tools & Extensions", "path": "/tools-extensions"}
+  ]

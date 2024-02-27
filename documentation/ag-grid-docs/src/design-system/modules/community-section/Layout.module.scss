@@ -1,0 +1,20 @@
+.header {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 0px 64px 0px;
+    margin: 64px 0px 0px 0px;
+}
+
+.container {
+    // TODO
+}
+
+.content { 
+    margin-top: 24px;
+    margin: 0px 12.5vw;
+    h3 {
+        margin-top: 12px;
+    }
+}
