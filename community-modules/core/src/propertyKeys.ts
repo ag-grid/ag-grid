@@ -160,7 +160,7 @@ export class PropertyKeys {
         'viewportRowModelBufferSize', 'autoSizePadding', 'maxBlocksInCache', 'maxConcurrentDatasourceRequests', 'tooltipShowDelay',
         'tooltipHideDelay', 'cacheOverflowSize', 'paginationPageSize', 'cacheBlockSize', 'infiniteInitialRowCount', 'serverSideInitialRowCount',
         'scrollbarWidth', 'asyncTransactionWaitMillis', 'blockLoadDebounceMillis', 'keepDetailRowsCount', 'undoRedoCellEditingLimit',
-        'cellFlashDelay', 'cellFadeDelay', 'cellFlashDuration', 'cellFadeDuration', 'tabIndex'
+        'cellFlashDelay', 'cellFadeDelay', 'cellFlashDuration', 'cellFadeDuration', 'tabIndex', 'pivotMaxGeneratedColumns',
     ];
 
     public static BOOLEAN_PROPERTIES: KeysOfType<boolean>[] = [

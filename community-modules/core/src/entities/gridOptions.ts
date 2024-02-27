@@ -89,7 +89,8 @@ import {
     ColumnHeaderMouseLeaveEvent,
     ColumnHeaderClickedEvent,
     ColumnHeaderContextMenuEvent,
-    ColumnMenuVisibleChangedEvent
+    PivotMaxColumnsExceededEvent,
+    ColumnMenuVisibleChangedEvent,
 } from "../events";
 import { HeaderPosition } from "../headerRendering/common/headerPosition";
 import {
@@ -855,6 +856,12 @@ export interface GridOptions<TData = any> {
      * @initial
      */
     pivotPanelShow?: 'always' | 'onlyWhenPivoting' | 'never';
+    /**
+     * The maximum number of generated columns before the grid halts execution. Upon reaching this number, the grid halts generation of columns
+     * and triggers a `pivotLimitExceeded` event. `-1` for no limit.
+     * @default -1
+     */
+    pivotMaxGeneratedColumns?: number;
     /**
      * If pivoting, set to the number of column group levels to expand by default, e.g. `0` for none, `1` for first level only, etc. Set to `-1` to expand everything.
      * @default 0
@@ -2117,6 +2124,10 @@ export interface GridOptions<TData = any> {
      * Fired when calling either of the API methods `expandAll()` or `collapseAll()`.
      */
     onExpandOrCollapseAll?(event: ExpandCollapseAllEvent<TData>): void;
+    /**
+     * Exceeded the `pivotMaxGeneratedColumns` limit when generating columns.
+     */
+    onPivotMaxColumnsExceeded?(event: PivotMaxColumnsExceededEvent<TData>): void;
 
     // *** Row Pinning *** //
     /**

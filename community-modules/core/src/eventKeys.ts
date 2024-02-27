@@ -10,6 +10,9 @@ export class Events {
     /** The pivot mode flag was changed */
     public static EVENT_COLUMN_PIVOT_MODE_CHANGED: 'columnPivotModeChanged' = 'columnPivotModeChanged';
 
+    /** Exceeded the pivot limit when generating columns */
+    public static EVENT_PIVOT_MAX_COLUMNS_EXCEEDED: 'pivotMaxColumnsExceeded' = 'pivotMaxColumnsExceeded';
+
     /** A row group column was added, removed or order changed. */
     public static EVENT_COLUMN_ROW_GROUP_CHANGED: 'columnRowGroupChanged' = 'columnRowGroupChanged';
 
