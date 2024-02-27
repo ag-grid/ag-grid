@@ -16,7 +16,8 @@
             ...systemJsPaths
         },
         map: {
-            css: boilerplatePath + "css.js",
+            // css: boilerplatePath + "css.js",
+            'css': 'npm:systemjs-plugin-css@0.1.37/css.js',
 
             // react
             react: 'npm:react@18.2.0',
@@ -58,8 +59,9 @@
                 defaultExtension: 'tsx',
             },
             '@ag-grid-community/react': {
-                main: './dist/index.cjs',
-                defaultExtension: 'cjs',
+                main: './dist/package/index.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
             },
             '@ag-grid-community/core': {
                 format: 'cjs',
@@ -143,15 +145,16 @@
                 format: 'cjs',
             },
             'ag-grid-react': {
-                main: './dist/index.cjs',
-                defaultExtension: 'cjs',
+                main: './dist/package/index.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
             },
         },
         meta: {
             typescript: {
                 exports: 'ts',
             },
-            '*.css': { loader: 'css' },
+            '*.css': {loader: 'css'},
         },
     });
 })(this);

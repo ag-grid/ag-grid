@@ -5,24 +5,25 @@
         paths: {
             'npm:': 'https://cdn.jsdelivr.net/npm/'
         },
-        map: 
+        map:
             {
-            // babel transpiler
-            'plugin-babel': 'npm:systemjs-plugin-babel@0.0.25/plugin-babel.js',
-            'systemjs-babel-build': 'npm:systemjs-plugin-babel@0.0.25/systemjs-babel-browser.js',
+                // babel transpiler
+                'plugin-babel': 'npm:systemjs-plugin-babel@0.0.25/plugin-babel.js',
+                'systemjs-babel-build': 'npm:systemjs-plugin-babel@0.0.25/systemjs-babel-browser.js',
 
-            css: boilerplatePath + "css.js",
+                // css: boilerplatePath + "css.js",
+                'css': 'npm:systemjs-plugin-css@0.1.37/css.js',
 
-            // vuejs
-            'vue': 'npm:vue@3.2.29/dist/vue.esm-browser.js',
-            '@vue/reactivity': 'npm:@vue/reactivity@3.0.0/dist/reactivity.esm-browser.js',
-            // vue class component
-            'vue-class-component': 'npm:vue-class-component@^8.0.0-beta.3/dist/vue-class-component.cjs.js',
+                // vuejs
+                'vue': 'npm:vue@3.2.29/dist/vue.esm-browser.js',
+                '@vue/reactivity': 'npm:@vue/reactivity@3.0.0/dist/reactivity.esm-browser.js',
+                // vue class component
+                'vue-class-component': 'npm:vue-class-component@^8.0.0-beta.3/dist/vue-class-component.cjs.js',
 
-            app: appLocation + 'app',
-            // systemJsMap comes from index.html
-            ...systemJsMap
-        },
+                app: appLocation + 'app',
+                // systemJsMap comes from index.html
+                ...systemJsMap
+            },
         packages: {
             'vue': {
                 defaultExtension: 'js'
@@ -200,7 +201,7 @@
                     es2015: true
                 }
             },
-            '*.css': { loader: 'css' }
+            '*.css': {loader: 'css'}
         }
     });
 })(this);
