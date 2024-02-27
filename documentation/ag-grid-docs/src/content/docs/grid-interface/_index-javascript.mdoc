@@ -1,0 +1,23 @@
+{% if isFramework("javascript") %}
+The `gridOptions` object is used to configure the grid. The example below shows the different types of items available on `gridOptions`.
+
+{% /if %}
+
+{% if isFramework("javascript") %}
+```js
+const gridOptions = {
+    // PROPERTIES
+    columnDefs: myColDefs,
+    pagination: true,
+
+    // EVENTS
+    onRowClicked: event => console.log('A row was clicked'),
+
+    // CALLBACKS
+    getRowHeight: (params) => 25
+}
+
+// Pass gridOptions to createGrid
+const api = createGrid(gridDiv, gridOptions)
+```
+{% /if %}

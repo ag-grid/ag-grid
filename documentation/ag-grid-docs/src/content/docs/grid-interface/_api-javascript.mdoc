@@ -1,0 +1,31 @@
+{% if isFramework("javascript") %}
+
+You can access the grid api by storing a reference to the `api` as returned from `createGrid`.
+{% /if %}
+
+{% if isFramework("javascript") %}
+```js
+// create the grid
+const api = createGrid(div, gridOptions);
+
+// Call an api method
+const cell = api.getFocusedCell(); 
+```
+{% /if %}
+
+{% if isFramework("javascript") %}
+### API within Events and Callbacks
+
+Alternatively all Grid [callbacks](./grid-options/) and [events](./grid-events/) include the `api` as part of their arguments.
+{% /if %}
+
+{% if isFramework("javascript") %}
+```js
+const gridOptions: GridOptions = {
+   onGridReady: (event: GridReadyEvent) {
+      // use api from event
+      event.api.ensureIndexVisible(10);
+   }
+}
+```
+{% /if %}
