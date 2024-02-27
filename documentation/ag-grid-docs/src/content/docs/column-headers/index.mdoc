@@ -17,8 +17,8 @@ This example shows a Custom Header Component. Note the following:
 
 Specify the Header Component using the Column Definition `headerComponent`.
 
-md-include:column-def-javascript.md
-md-include:column-def-vue.md
+{% includeMarkdoc file="column-headers/_column-def-javascript.mdoc" /%}
+{% includeMarkdoc file="column-headers/_column-def-vue.mdoc" /%}
 
 See [Registering Components](./components/) for an overview of registering componnets.
 
@@ -28,9 +28,9 @@ See [Registering Components](./components/) for an overview of registering compo
 The interface for a custom header component is:
 {% /if %}
 
-md-include:component-interface-javascript.md
-md-include:component-interface-angular.md
-md-include:component-interface-vue.md
+{% includeMarkdoc file="column-headers/_component-interface-javascript.mdoc" /%}
+{% includeMarkdoc file="column-headers/_component-interface-angular.mdoc" /%}
+{% includeMarkdoc file="column-headers/_component-interface-vue.mdoc" /%}
 
 {% if isFramework("javascript") %}
 The `init(params)` method takes a params object with the items listed below.

@@ -199,10 +199,10 @@ The example below shows how to register a custom date component that contains an
 
 {% gridExampleRunner title="Custom Date Component" name="custom-date" type="mixed" options={ "extras": ["fontawesome", "flatpickr"] } /%}
 
-md-include:component-interface-javascript.md
-md-include:component-interface-angular.md
-md-include:component-interface-react.md
-md-include:component-interface-vue.md
+{% includeMarkdoc file="filter-date/_component-interface-javascript.mdoc" /%}
+{% includeMarkdoc file="filter-date/_component-interface-angular.mdoc" /%}
+{% includeMarkdoc file="filter-date/_component-interface-react.mdoc" /%}
+{% includeMarkdoc file="filter-date/_component-interface-vue.mdoc" /%}
 
 {% if isFramework("javascript", "angular", "vue") %}
 {% interfaceDocumentation interfaceName="IDateParams" /%}

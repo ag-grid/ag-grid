@@ -34,18 +34,18 @@ The full list of component types you can provide in the grid are as follows:
 
 The remainder of this page gives information that is common across all the component types.
 
-md-include:declare-vue.md
+{% includeMarkdoc file="components/_declare-vue.mdoc" /%}
 
 ## Registering Custom Components
 
-md-include:register-javascript.md
-md-include:register-angular.md
-md-include:register-react.md
-md-include:register-vue.md
+{% includeMarkdoc file="components/_register-javascript.mdoc" /%}
+{% includeMarkdoc file="components/_register-angular.mdoc" /%}
+{% includeMarkdoc file="components/_register-react.mdoc" /%}
+{% includeMarkdoc file="components/_register-vue.mdoc" /%}
 
 {% gridExampleRunner title="Registering Components" name="register" type="generated" options={ "exampleHeight": 580 } /%}
 
-md-include:advantages-vue.md
+{% includeMarkdoc file="components/_advantages-vue.mdoc" /%}
 
 ## Providing Additional Parameters
 
@@ -67,10 +67,10 @@ const gridOptions = {
 }
 ```
 
-md-include:js-fw-angular.md
-md-include:js-fw-react.md
-md-include:js-fw-vue.md
-md-include:js-fw-common-end.md
+{% includeMarkdoc file="components/_js-fw-angular.mdoc" /%}
+{% includeMarkdoc file="components/_js-fw-react.mdoc" /%}
+{% includeMarkdoc file="components/_js-fw-vue.mdoc" /%}
+{% includeMarkdoc file="components/_js-fw-common-end.mdoc" /%}
 
 {% if isFramework("react") %}
 ## Higher Order Components

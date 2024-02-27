@@ -43,8 +43,8 @@ Set the attribute `columnGroupShow` on groups children to set the expand and col
 
 By default the grid provided Header Group Component is used. To use a Custom Group Component set `headerGroupComponent` on the Column Definition.
 
-md-include:column-def-javascript.md
-md-include:column-def-vue.md
+{% includeMarkdoc file="column-groups/_column-def-javascript.mdoc" /%}
+{% includeMarkdoc file="column-groups/_column-def-vue.mdoc" /%}
 
 See [Registering Components](./components/) for an overview of registering componnets.
 
@@ -58,10 +58,10 @@ As with Column Headers, the grid will always handle resize and column moving. Th
 
 * **Group Open / Close:** If the group can expand (one or more columns visibility depends on the open / closed state of the group) then the Custom Component should handle the interaction with the user for opening and closing groups.
 
-md-include:group-component-interface-javascript.md
-md-include:group-component-interface-angular.md
-md-include:group-component-interface-react.md
-md-include:group-component-interface-vue.md
+{% includeMarkdoc file="column-groups/_group-component-interface-javascript.mdoc" /%}
+{% includeMarkdoc file="column-groups/_group-component-interface-angular.mdoc" /%}
+{% includeMarkdoc file="column-groups/_group-component-interface-react.mdoc" /%}
+{% includeMarkdoc file="column-groups/_group-component-interface-vue.mdoc" /%}
 
 {% if isFramework("javascript", "angular", "vue") %}
 {% interfaceDocumentation interfaceName="IHeaderGroupParams" /%}
@@ -71,10 +71,10 @@ md-include:group-component-interface-vue.md
 {% interfaceDocumentation interfaceName="CustomHeaderGroupProps" /%}
 {% /if %}
 
-md-include:open-close-javascript.md
-md-include:open-close-angular.md
-md-include:open-close-react.md
-md-include:open-close-vue.md
+{% includeMarkdoc file="column-groups/_open-close-javascript.mdoc" /%}
+{% includeMarkdoc file="column-groups/_open-close-angular.mdoc" /%}
+{% includeMarkdoc file="column-groups/_open-close-react.mdoc" /%}
+{% includeMarkdoc file="column-groups/_open-close-vue.mdoc" /%}
 
 ## Groups & Column Pinning
 

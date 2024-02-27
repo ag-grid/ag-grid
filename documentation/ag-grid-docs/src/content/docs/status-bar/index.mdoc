@@ -82,10 +82,10 @@ The Status Bar sizes its height to fit content. When no panels are visible, the 
 
 {% gridExampleRunner title="Custom Panels" name="custom-component" type="mixed" options={ "enterprise": true, "modules": ["clientside", "statusbar", "range"] } /%}
 
-md-include:component-interface-javascript.md
-md-include:component-interface-angular.md
-md-include:component-interface-react.md
-md-include:component-interface-vue.md
+{% includeMarkdoc file="status-bar/_component-interface-javascript.mdoc" /%}
+{% includeMarkdoc file="status-bar/_component-interface-angular.mdoc" /%}
+{% includeMarkdoc file="status-bar/_component-interface-react.mdoc" /%}
+{% includeMarkdoc file="status-bar/_component-interface-vue.mdoc" /%}
 
 {% if isFramework("javascript", "angular", "vue") %}
 {% interfaceDocumentation interfaceName="IStatusPanelParams" /%}
@@ -103,17 +103,17 @@ If you do not enable the grid option `reactiveCustomComponents`, it is still pos
 
 Custom Panels are configured alongside Provided Panels.
 
-md-include:configure-javascript.md
-md-include:configure-angular.md
-md-include:configure-react.md
-md-include:configure-vue.md
+{% includeMarkdoc file="status-bar/_configure-javascript.mdoc" /%}
+{% includeMarkdoc file="status-bar/_configure-angular.mdoc" /%}
+{% includeMarkdoc file="status-bar/_configure-react.mdoc" /%}
+{% includeMarkdoc file="status-bar/_configure-vue.mdoc" /%}
 
 Custom Panels can listen to grid events to react to grid changes. An easy way to listen to grid events from inside a Status Panel is using the API provided via `props`.
 
-md-include:init-javascript.md
-md-include:init-angular.md
-md-include:init-react.md
-md-include:init-vue.md
+{% includeMarkdoc file="status-bar/_init-javascript.mdoc" /%}
+{% includeMarkdoc file="status-bar/_init-angular.mdoc" /%}
+{% includeMarkdoc file="status-bar/_init-react.mdoc" /%}
+{% includeMarkdoc file="status-bar/_init-vue.mdoc" /%}
 
 ## Accessing Instances
 
