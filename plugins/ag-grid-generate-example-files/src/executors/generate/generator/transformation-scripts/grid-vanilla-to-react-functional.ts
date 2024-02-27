@@ -35,7 +35,7 @@ function getModuleImports(bindings: any, componentFilenames: string[], allStyles
 
     if(bindings.moduleRegistration){
         imports.push(bindings.moduleRegistration);
-   }
+    }
 
     return imports;
 }
