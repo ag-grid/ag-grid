@@ -3,7 +3,7 @@ import {
   GridApi, GridOptions, IRowNode, RefreshCellsParams,
   RowDragEndEvent,
   RowDragLeaveEvent,
-  RowDragMoveEvent, ValueFormatterParams
+  RowDragMoveEvent, ValueFormatterParams, ICellRendererParams
 } from '@ag-grid-community/core';
 import { getData } from "./data";
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
@@ -13,7 +13,32 @@ import { ModuleRegistry } from "@ag-grid-community/core";
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
 
-declare var FileCellRenderer: any;
+class FileCellRenderer {
+  private eGui!: any;
+
+  init(params: ICellRendererParams) {
+      var tempDiv = document.createElement('div');
+      var value = params.value;
+      var icon = this.getFileIcon(params.value);
+      tempDiv.innerHTML = icon ? '<i class="' + icon + '"/>' + '<span class="filename">' + value + '</span>' : value;
+      this.eGui = tempDiv.firstChild!;
+  }
+  getGui() {
+      return this.eGui;
+  }
+
+  getFileIcon(filename: string) {
+      return filename.endsWith('.mp3') || filename.endsWith('.wav')
+          ? 'far fa-file-audio'
+          : filename.endsWith('.xls')
+            ? 'far fa-file-excel'
+            : filename.endsWith('.txt')
+              ? 'far fa-file'
+              : filename.endsWith('.pdf')
+                ? 'far fa-file-pdf'
+                : 'far fa-folder';
+  }
+}
 
 var valueFormatter = function (params: ValueFormatterParams) {
   return params.value ? params.value + ' MB' : ''
