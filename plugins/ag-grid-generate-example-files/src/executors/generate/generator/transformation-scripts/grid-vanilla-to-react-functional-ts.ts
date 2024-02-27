@@ -42,7 +42,9 @@ function getModuleImports(bindings: any, componentFilenames: string[], extraCore
 
     addGenericInterfaceImport(imports, bindings.tData, bindings);
 
-   
+   if(bindings.moduleRegistration){
+        imports.push(bindings.moduleRegistration);
+   }
 
     return imports;
 }
