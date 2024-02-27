@@ -208,7 +208,7 @@ function MenuSectionNav({
         <>
             {title && <h5>{title}</h5>}
             {items && (
-                <li>
+                <>
                     {items?.map((menuItem) => {
                         const isActive = menuItem === activeTopLevelMenuItem;
                         const toggleActive = () => {
@@ -227,7 +227,7 @@ function MenuSectionNav({
                             />
                         );
                     })}
-                </li>
+                </>
             )}
         </>
         </>
