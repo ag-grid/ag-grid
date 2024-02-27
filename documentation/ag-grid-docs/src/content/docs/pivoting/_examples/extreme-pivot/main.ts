@@ -1,5 +1,14 @@
 import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import { SideBarModule } from '@ag-grid-enterprise/side-bar';
+import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
+import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, SideBarModule, ColumnsToolPanelModule, FiltersToolPanelModule, RowGroupingModule]);
+
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
