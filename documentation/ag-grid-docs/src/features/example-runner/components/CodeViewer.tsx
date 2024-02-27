@@ -98,7 +98,7 @@ export const CodeViewer = ({
     }, [initialSelectedFile]);
 
     return (
-        <div className={classnames(styles.codeViewer, { [styles.hidden]: !isActive, [styles.hideFiles]: !showFiles })}>
+        <div className={classnames(styles.codeViewer, styles.codeViewerBorder, { [styles.hidden]: !isActive, [styles.hideFiles]: !showFiles })}>
             <div className={styles.mobileHeader}>
                 <button
                     className={'button-style-none button-as-link'}

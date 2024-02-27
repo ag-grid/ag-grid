@@ -1,8 +1,6 @@
 import type { InternalFramework } from '@ag-grid-types';
 import { Icon } from '@components/icon/Icon';
 import { OpenInCTA } from '@components/open-in-cta/OpenInCTA';
-// Charts specific example runner styles
-import chartsStyles from '@design-system/modules/ChartsExampleRunner.module.scss';
 import styles from '@design-system/modules/ExampleRunner.module.scss';
 import type { ExampleType, FileContents } from '@features/example-generator/types';
 import classnames from 'classnames';
@@ -50,7 +48,7 @@ export const ExampleRunner: FunctionComponent<Props> = ({
         <div id={id} className={styles.exampleOuter}>
             <div className={styles.tabsContainer}>
                 <div
-                    className={classnames(chartsStyles.content, styles.content)}
+                    className={styles.content}
                     role="tabpanel"
                     aria-labelledby={`${showCode ? 'Preview' : 'Code'} tab`}
                     style={{ height: exampleHeight, width: '100%' }}
