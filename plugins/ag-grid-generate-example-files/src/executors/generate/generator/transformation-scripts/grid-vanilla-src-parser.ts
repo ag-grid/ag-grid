@@ -38,28 +38,18 @@ const FUNCTION_PROPERTIES: any = PropertyKeys.FUNCTION_PROPERTIES;
 function tsNodeIsDocumentContentLoaded(node) {
     try {
         if (tsNodeIsFunctionCall(node)) {
-            return node.expression.arguments?.length > 0 &&
-                ts.isStringLiteral(node.expression.arguments[0]) &&
-                node.expression.arguments[0].text === 'DOMContentLoaded';
+            return node.arguments?.length > 0 &&
+                ts.isStringLiteral(node.arguments[0]) &&
+                node.arguments[0].text === 'DOMContentLoaded';
         }
     } catch (e) {
         console.error('We found something which we do not understand', node);
         if (tsNodeIsFunctionCall(node)) {
-            return node.expression.arguments?.length > 0 &&
-                ts.isStringLiteral(node.expression.arguments[0]) &&
-                node.expression.arguments[0].text === 'DOMContentLoaded';
+            return node.arguments?.length > 0 &&
+                ts.isStringLiteral(node.arguments[0]) &&
+                node.arguments[0].text === 'DOMContentLoaded';
         }
     }
-}
-
-function tsNodeIsHttpOpen(node) {
-    const callee = node.expression && node.expression.callee;
-    const calleeObject = callee && callee.object;
-
-    return ts.isExpressionStatement(node) &&
-        calleeObject &&
-        calleeObject.name === 'httpRequest' &&
-        callee.property.name === 'open';
 }
 
 function tsNodeIsSimpleFetchRequest(node) {
@@ -213,17 +203,6 @@ function internalParser(examplePath, {
         apply: (bindings, node) => bindings.utils.push(tsGenerate(node.parent, tsTree))
     });
 
-    // extract the xmlhttpreq call
-    tsOnReadyCollectors.push({
-        matches: tsNodeIsHttpOpen,
-        apply: (bindings, node) => {
-            const url = node.expression.arguments[1].raw;
-            const callback = '{ gridApi.setGridOption(\'rowData\', data); }';
-
-            bindings.data = {url, callback};
-        }
-    });
-
     // extract the Http Request call
     tsOnReadyCollectors.push({
         matches: tsNodeIsSimpleFetchRequest,
@@ -258,7 +237,7 @@ function internalParser(examplePath, {
     tsCollectors.push({
         matches: tsNodeIsDocumentContentLoaded,
         apply: (bindings, node) => {
-            return tsCollect(node.expression.arguments[1].body, bindings, tsOnReadyCollectors)
+            return tsCollect(node.arguments[1].body, bindings, tsOnReadyCollectors)
         }
 
     });

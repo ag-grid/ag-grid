@@ -360,7 +360,7 @@ const VueExample = {
         return {
             columnDefs,
             gridApi,
-            ${propertyNames.join(',\n')},
+            ${propertyNames.length > 0 ? propertyNames.join(',\n')+',' : ''}
             onGridReady,
             themeClass: ${getActiveTheme(bindings.gridSettings.theme, false)},
             ${functionNames ? functionNames.filter(functionName => !propertyNames.includes(functionName)).join(',\n') : ''}

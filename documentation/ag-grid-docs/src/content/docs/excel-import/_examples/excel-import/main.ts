@@ -49,7 +49,7 @@ function makeRequest(method: string, url: string, success: any, error: any) {
 }
 
 // read the raw data and convert it to a XLSX workbook
-function convertDataToWorkbook(dataRows: any[]) {
+function convertDataToWorkbook(dataRows: ArrayBuffer) {
   /* convert data to binary string */
   var data = new Uint8Array(dataRows)
   var arr = []
@@ -106,20 +106,12 @@ function populateGrid(workbook: any) {
 }
 
 function importExcel() {
-  makeRequest(
-    'GET',
-    'https://www.ag-grid.com/example-assets/olympic-data.xlsx',
-    // success
-    function (data: any[]) {
-      var workbook = convertDataToWorkbook(data)
-
-      populateGrid(workbook)
-    },
-    // error
-    function (error: any) {
-      throw error
-    }
-  )
+  fetch('https://www.ag-grid.com/example-assets/olympic-data.xlsx')
+    .then(response => response.arrayBuffer())
+    .then((data: ArrayBuffer) => {
+      const workbook = convertDataToWorkbook(data);
+      populateGrid(workbook);
+    })
 }
 
 // wait for the document to be loaded, otherwise

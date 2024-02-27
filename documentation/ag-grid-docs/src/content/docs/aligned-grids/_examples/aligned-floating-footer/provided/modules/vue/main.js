@@ -112,21 +112,13 @@ const VueExample = {
     },
     methods: {
         onGridReady(params) {
-            const httpRequest = new XMLHttpRequest();
-            const updateData = data => {
+            const updateData = (data) => {
                 this.rowData = data;
             };
 
-            httpRequest.open(
-                "GET",
-                'https://www.ag-grid.com/example-assets/olympic-winners.json'
-            );
-            httpRequest.send();
-            httpRequest.onreadystatechange = () => {
-                if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-                    updateData(JSON.parse(httpRequest.responseText));
-                }
-            };
+            fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+                .then((resp) => resp.json())
+                .then((data) => updateData(data));
         },
     },
 };

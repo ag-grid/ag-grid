@@ -69,18 +69,13 @@ const VueExample = {
             this.height = height;
         },
         onGridReady(params) {
-            const httpRequest = new XMLHttpRequest();
+            gridApi.value = params.api;
 
-            httpRequest.open(
-                "GET",
-                'https://www.ag-grid.com/example-assets/olympic-winners.json'
-            );
-            httpRequest.send();
-            httpRequest.onreadystatechange = () => {
-                if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-                    this.rowData = JSON.parse(httpRequest.responseText);
-                }
-            };
+            const updateData = (data) => (rowData.value = data);
+      
+            fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+              .then((resp) => resp.json())
+              .then((data) => updateData(data));
         }
     }
 };
