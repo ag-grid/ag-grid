@@ -19,7 +19,7 @@
     },
     "build:types": {
       "executor": "@nx/js:tsc",
-      "dependsOn": ["^build:types"],
+      "dependsOn": ["@ag-grid-community:build"],
       "inputs": [
         "{projectRoot}/package.json",
         "{projectRoot}/src/**/*",
@@ -45,7 +45,7 @@
     },
     "build:package": {
       "executor": "@nx/esbuild:esbuild",
-      "dependsOn": ["^build"],
+      "dependsOn": ["@ag-grid-community:build"],
       "inputs": [
         "{projectRoot}/package.json",
         "{projectRoot}/src/**/*",
