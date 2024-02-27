@@ -1,4 +1,10 @@
-:where([class^='ag-'], [class^='ag-']:focus, [class^='ag-']::after, [class^='ag-']::before) {
+:where(
+    [class^='ag-'],
+    [class^='ag-']:focus,
+    [class^='ag-']::after,
+    [class^='ag-']::before,
+    :focus-within
+  ) {
   box-sizing: border-box;
   outline: none;
 }

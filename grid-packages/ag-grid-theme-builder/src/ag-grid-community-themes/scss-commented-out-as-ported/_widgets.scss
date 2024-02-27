@@ -175,12 +175,16 @@
     align-items: center;
     flex: none;
   }
+
+  */
   
   .ag-group-title-bar-icon {
     cursor: pointer;
     flex: none;
     color: var(--ag-secondary-foreground-color);
   }
+
+  /* PORTED
 
   .ag-group-child-count {
     @include ag.unthemed-rtl(
@@ -189,6 +193,8 @@
       )
     );
   }
+
+  */
 
   .ag-group-title-bar {
     background-color: var(--ag-subheader-background-color);
@@ -204,11 +210,6 @@
   .ag-disabled-group-container {
     opacity: 0.5;
   }
-
-  .group-item {
-    margin: calc(var(--ag-grid-size) * 0.5) 0;
-  }
-  */
 
   .ag-label {
     white-space: nowrap;

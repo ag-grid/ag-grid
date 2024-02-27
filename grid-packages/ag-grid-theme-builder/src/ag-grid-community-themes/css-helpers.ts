@@ -9,6 +9,14 @@ import { kebabCase, proportionToPercent } from './theme-utils';
 export const transparentForeground = (alpha: number) => transparentRef('foregroundColor', alpha);
 
 /**
+ * Create a CSS color-mix expression for blending the foregroundColor and backgroundColor
+ *
+ * @param proportion - 0 for background, 1 for foreground
+ */
+export const opaqueForeground = (proportion: number) =>
+  colorMixRefs('backgroundColor', 'foregroundColor', proportion);
+
+/**
  * Create a CSS color-mix expression for a semi transparent accentColor
  *
  * @param alpha - 0 for fully transparent, 1 for fully opaque

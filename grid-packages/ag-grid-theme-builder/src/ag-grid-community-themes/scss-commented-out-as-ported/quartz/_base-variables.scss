@@ -1,0 +1,200 @@
+@use "sass:color";
+
+@mixin output {
+    // apply these variables to the root element that has the theme class name on
+    // it, e.g. "ag-theme-alpine"
+    [class*="ag-theme-"] {
+        --ag-foreground-color: #000;
+
+        --ag-data-color: var(--ag-foreground-color);
+
+        --ag-secondary-foreground-color: var(--ag-foreground-color);
+
+        --ag-header-foreground-color: var(--ag-secondary-foreground-color);
+
+        --ag-disabled-foreground-color: rgba(0, 0, 0, 0.5);
+
+        --ag-background-color: #fff;
+
+        --ag-header-background-color: transparent;
+
+        --ag-tooltip-background-color: transparent;
+
+        --ag-subheader-background-color: transparent;
+
+        --ag-subheader-toolbar-background-color: transparent;
+
+        --ag-control-panel-background-color: transparent;
+
+        --ag-side-button-selected-background-color: var(--ag-control-panel-background-color);
+
+        --ag-selected-row-background-color: #BBB;
+
+        --ag-odd-row-background-color: var(--ag-background-color);
+
+        --ag-modal-overlay-background-color: rgba(255, 255, 255, 0.66);
+
+        --ag-menu-background-color: var(--ag-background-color);
+        --ag-menu-border-color: var(--ag-border-color);
+        --ag-panel-background-color: var(--ag-background-color);
+        --ag-panel-border-color: var(--ag-border-color);
+
+        --ag-row-hover-color: transparent;
+
+        --ag-column-hover-color: transparent;
+
+        --ag-range-selection-border-color: var(--ag-foreground-color);
+
+        --ag-range-selection-border-style: solid;
+
+        --ag-range-selection-background-color: rgba(0, 0, 0, 0.2);
+
+        --ag-range-selection-background-color-2: var(--ag-range-selection-background-color);
+        --ag-range-selection-background-color-3: var(--ag-range-selection-background-color);
+        --ag-range-selection-background-color-4: var(--ag-range-selection-background-color);
+
+        --ag-range-selection-highlight-color: var(--ag-range-selection-border-color);
+
+        --ag-selected-tab-underline-color: var(--ag-range-selection-border-color);
+        --ag-selected-tab-underline-width: 0;
+        --ag-selected-tab-underline-transition-speed: 0s;
+
+        --ag-range-selection-chart-category-background-color: rgba(0, 255, 132, 0.1);
+
+        --ag-range-selection-chart-background-color: rgba(0, 88, 255, 0.1);
+
+        --ag-header-cell-hover-background-color: transparent;
+
+        --ag-header-cell-moving-background-color: var(--ag-background-color);
+
+        --ag-value-change-value-highlight-background-color: rgba(22, 160, 133, 0.5);
+
+        --ag-value-change-delta-up-color: #43a047;
+        --ag-value-change-delta-down-color: #e53935;
+
+        --ag-chip-background-color: transparent;
+        --ag-chip-border-color: var(--ag-chip-background-color);
+
+        --ag-borders: solid 1px;
+
+        --ag-border-color: rgba(0, 0, 0, 0.25);
+
+        --ag-borders-critical: var(--ag-borders);
+
+        --ag-borders-secondary: var(--ag-borders);
+
+        --ag-secondary-border-color: var(--ag-border-color);
+
+        --ag-row-border-style: solid;
+        --ag-row-border-color: var(--ag-secondary-border-color);
+        --ag-row-border-width: 1px;
+
+        --ag-cell-horizontal-border: solid transparent;
+        
+        --ag-borders-input: var(--ag-borders-secondary);
+
+        --ag-input-border-color: var(--ag-secondary-border-color);
+
+        --ag-borders-input-invalid: solid 2px;
+
+        --ag-input-border-color-invalid: var(--ag-invalid-color);
+
+        --ag-borders-side-button: var(--ag-borders);
+
+        --ag-border-radius: 0px;
+        --ag-wrapper-border-radius: var(--ag-border-radius);
+
+        --ag-row-border-color: var(--ag-secondary-border-color);
+
+        --ag-header-column-separator-display: none;
+        --ag-header-column-separator-height: 100%;
+        --ag-header-column-separator-width: 1px;
+        --ag-header-column-separator-color: var(--ag-secondary-border-color);
+
+        --ag-header-column-resize-handle-display: none;
+        --ag-header-column-resize-handle-height: 50%;
+        --ag-header-column-resize-handle-width: 1px;
+        --ag-header-column-resize-handle-color: var(--ag-secondary-border-color);
+
+
+        --ag-invalid-color: red;
+        --ag-input-disabled-border-color: var(--ag-input-border-color);
+        --ag-input-disabled-background-color: transparent;
+
+        --ag-checkbox-background-color: transparent;
+        --ag-checkbox-border-radius: var(--ag-border-radius);
+        --ag-checkbox-checked-color: var(--ag-foreground-color);
+        --ag-checkbox-unchecked-color: var(--ag-foreground-color);
+        --ag-checkbox-indeterminate-color: var(--ag-checkbox-unchecked-color);
+
+        --ag-toggle-button-off-border-color: var(--ag-checkbox-unchecked-color);
+        --ag-toggle-button-off-background-color: var(--ag-checkbox-unchecked-color);
+        --ag-toggle-button-on-border-color: var(--ag-checkbox-checked-color);
+        --ag-toggle-button-on-background-color: var(--ag-checkbox-checked-color);
+        --ag-toggle-button-switch-background-color: var(--ag-background-color);
+        --ag-toggle-button-switch-border-color: var(--ag-toggle-button-off-border-color);
+        --ag-toggle-button-border-width: 1px;
+        --ag-toggle-button-height: var(--ag-icon-size);
+        --ag-toggle-button-width: calc(var(--ag-toggle-button-height) * 2);
+
+        --ag-input-focus-box-shadow: none;
+        --ag-input-focus-border-color: none;
+
+
+        --ag-minichart-selected-chart-color: var(--ag-checkbox-checked-color);
+        --ag-minichart-selected-page-color: var(--ag-checkbox-checked-color);
+
+
+        --ag-grid-size: 4px;
+
+        --ag-icon-size: 12px;
+        --ag-icon-font-weight: normal;
+        --ag-icon-font-color: var(--ag-foreground-color);
+        --ag-icon-image-display: block;
+
+        --ag-widget-container-horizontal-padding: calc(var(--ag-grid-size) * 1.5);
+        --ag-widget-container-vertical-padding: calc(var(--ag-grid-size) * 1.5);
+        --ag-widget-horizontal-spacing: calc(var(--ag-grid-size) * 2);
+        --ag-widget-vertical-spacing: var(--ag-grid-size);
+
+        --ag-cell-horizontal-padding: calc(var(--ag-grid-size) * 3);
+
+        --ag-cell-widget-spacing: var(--ag-cell-horizontal-padding);
+
+        --ag-row-height: calc(var(--ag-grid-size) * 6 + 1px);
+
+        --ag-header-height: var(--ag-row-height);
+
+        --ag-list-item-height: calc(var(--ag-grid-size) * 5);
+
+        --ag-column-select-indent-size: calc(var(--ag-grid-size) + var(--ag-icon-size));
+
+        --ag-set-filter-indent-size: calc(var(--ag-grid-size) + var(--ag-icon-size));
+
+        --ag-advanced-filter-builder-indent-size: calc(var(--ag-grid-size) * 2 + var(--ag-icon-size));
+
+        --ag-row-group-indent-size: calc(var(--ag-cell-widget-spacing) + var(--ag-icon-size));
+
+        --ag-filter-tool-panel-group-indent: 16px;
+
+        --ag-tab-min-width: 220px;
+
+        --ag-menu-min-width: 181px;
+
+        --ag-side-bar-panel-width: 200px;
+
+        --ag-font-family: "Helvetica Neue", sans-serif;
+        --ag-font-size: 14px;
+
+        --ag-card-radius: var(--ag-border-radius);
+
+        --ag-card-shadow: none;
+
+        --ag-popup-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+
+        --ag-advanced-filter-join-pill-color: #f08e8d;
+        --ag-advanced-filter-column-pill-color: #a6e194;
+        --ag-advanced-filter-option-pill-color: #f3c08b;
+        --ag-advanced-filter-value-pill-color: #85c0e4;
+    };
+}

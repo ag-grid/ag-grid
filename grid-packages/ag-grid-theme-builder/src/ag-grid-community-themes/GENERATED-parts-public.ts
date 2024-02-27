@@ -61,6 +61,7 @@ export type CoreParam =
   | 'dropdownShadow'
   | 'dragGhostBackgroundColor'
   | 'dragGhostBorder'
+  | 'focusShadow'
   | 'insetFocusShadow'
   | 'sideBarPanelWidth'
   | 'headerColumnResizeHandleDisplay'
@@ -75,7 +76,28 @@ export type CoreParam =
   | 'inputBackgroundColor'
   | 'inputBorder'
   | 'inputHorizontalPadding'
-  | 'inputBorderRadius';
+  | 'inputBorderRadius'
+  | 'toggleButtonWidth'
+  | 'toggleButtonHeight'
+  | 'toggleButtonBorderWidth'
+  | 'toggleButtonOnBorderColor'
+  | 'toggleButtonOffBorderColor'
+  | 'toggleButtonOnBackgroundColor'
+  | 'toggleButtonOffBackgroundColor'
+  | 'toggleButtonSwitchBackgroundColor'
+  | 'toggleButtonSwitchBorderColor'
+  | 'checkboxBorderWidth'
+  | 'checkboxBorderRadius'
+  | 'checkboxUncheckedBackgroundColor'
+  | 'checkboxUncheckedBorderColor'
+  | 'checkboxCheckedBackgroundColor'
+  | 'checkboxCheckedBorderColor'
+  | 'checkboxCheckedShapeImage'
+  | 'checkboxCheckedShapeColor'
+  | 'checkboxIndeterminateBackgroundColor'
+  | 'checkboxIndeterminateBorderColor'
+  | 'checkboxIndeterminateShapeImage'
+  | 'checkboxIndeterminateShapeColor';
 
 export type ColorsPreset = 'light' | 'dark';
 
@@ -108,7 +130,6 @@ import widgetsRangeCssImport from './css/core/widgets/range.css?inline';
 import widgetsRadioButtonCssImport from './css/core/widgets/radio-button.css?inline';
 import widgetsListsCssImport from './css/core/widgets/lists.css?inline';
 import widgetsInputsCssImport from './css/core/widgets/inputs.css?inline';
-import widgetsGroupCssImport from './css/core/widgets/group.css?inline';
 import widgetsCheckboxCssImport from './css/core/widgets/checkbox.css?inline';
 import widgetsCheckButtonSharedCssImport from './css/core/widgets/check-button-shared.css?inline';
 
@@ -167,6 +188,7 @@ export const core = definePart<CoreParam>({
     dropdownShadow: '0 1px 4px 1px #babfc766',
     dragGhostBackgroundColor: helpers.ref('backgroundColor'),
     dragGhostBorder: true,
+    focusShadow: '0 0 0 3px color-mix(in srgb, transparent, var(--ag-accent-color) 50%)',
     insetFocusShadow: 'inset 0 0 5px var(--ag-accent-color)',
     sideBarPanelWidth: '250px',
     headerColumnResizeHandleDisplay: 'block',
@@ -182,6 +204,29 @@ export const core = definePart<CoreParam>({
     inputBorder: true,
     inputHorizontalPadding: helpers.ref('gridSize'),
     inputBorderRadius: helpers.ref('borderRadius'),
+    toggleButtonWidth: '28px',
+    toggleButtonHeight: '18px',
+    toggleButtonBorderWidth: '1px',
+    toggleButtonOnBorderColor: helpers.ref('accentColor'),
+    toggleButtonOffBorderColor: helpers.opaqueForeground(0.3),
+    toggleButtonOnBackgroundColor: helpers.ref('accentColor'),
+    toggleButtonOffBackgroundColor: helpers.opaqueForeground(0.3),
+    toggleButtonSwitchBackgroundColor: helpers.ref('backgroundColor'),
+    toggleButtonSwitchBorderColor: helpers.ref('toggleButtonOffBorderColor'),
+    checkboxBorderWidth: '1px',
+    checkboxBorderRadius: helpers.ref('borderRadius'),
+    checkboxUncheckedBackgroundColor: helpers.ref('backgroundColor'),
+    checkboxUncheckedBorderColor: helpers.opaqueForeground(0.3),
+    checkboxCheckedBackgroundColor: helpers.ref('accentColor'),
+    checkboxCheckedBorderColor: helpers.ref('accentColor'),
+    checkboxCheckedShapeImage:
+      "url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2210%22%20height%3D%227%22%20fill%3D%22none%22%3E%3Cpath%20stroke%3D%22%23000%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.75%22%20d%3D%22M1%203.5%203.5%206l5-5%22%2F%3E%3C%2Fsvg%3E')",
+    checkboxCheckedShapeColor: helpers.ref('backgroundColor'),
+    checkboxIndeterminateBackgroundColor: helpers.opaqueForeground(0.3),
+    checkboxIndeterminateBorderColor: helpers.opaqueForeground(0.3),
+    checkboxIndeterminateShapeImage:
+      "url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2210%22%20height%3D%222%22%20fill%3D%22none%22%3E%3Crect%20width%3D%2210%22%20height%3D%222%22%20fill%3D%22%23000%22%20rx%3D%221%22%2F%3E%3C%2Fsvg%3E')",
+    checkboxIndeterminateShapeColor: helpers.ref('backgroundColor'),
   },
   css: [
     sidebarCssImport,
@@ -203,7 +248,6 @@ export const core = definePart<CoreParam>({
     widgetsRadioButtonCssImport,
     widgetsListsCssImport,
     widgetsInputsCssImport,
-    widgetsGroupCssImport,
     widgetsCheckboxCssImport,
     widgetsCheckButtonSharedCssImport,
   ],
@@ -723,7 +767,16 @@ export type ParamTypes = {
   dragGhostBorder: string | boolean;
 
   /**
-   * Border colour of the ghost element when dragging columns
+   * Shadow around UI controls that have focus e.g. text inputs and buttons. The value must a valid CSS box-shadow.
+   *
+   * Any valid CSS expression is accepted.
+   *
+   * @default "0 0 0 3px color-mix(in srgb, transparent, var(--ag-accent-color) 50%)"
+   */
+  focusShadow: string;
+
+  /**
+   * Shadow inside UI controls that have focus and aren't in a position where they can display a shadow outside of their bounds. The value must a valid CSS box-shadow value beginning with the `inset` keyword.
    *
    * Any valid CSS expression is accepted.
    *
@@ -856,6 +909,195 @@ export type ParamTypes = {
    * @default ref("borderRadius")
    */
   inputBorderRadius: string;
+
+  /**
+   * Width of the whole toggle button component
+   *
+   * A CSS number value with length units, e.g. "1px" or "2em". If a JavaScript number is provided, its units are assumed to be 'px'.
+   *
+   * @default "28px"
+   */
+  toggleButtonWidth: string;
+
+  /**
+   * Height of the whole toggle button component
+   *
+   * A CSS number value with length units, e.g. "1px" or "2em". If a JavaScript number is provided, its units are assumed to be 'px'.
+   *
+   * @default "18px"
+   */
+  toggleButtonHeight: string;
+
+  /**
+   * Size of the toggle button outer border
+   *
+   * A CSS number value with length units, e.g. "1px" or "2em". If a JavaScript number is provided, its units are assumed to be 'px'.
+   *
+   * @default "1px"
+   */
+  toggleButtonBorderWidth: string;
+
+  /**
+   * Colour of the toggle button outer border in its 'on' state
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default ref("accentColor")
+   */
+  toggleButtonOnBorderColor: string;
+
+  /**
+   * Colour of the toggle button's outer border in its 'off' state
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default opaqueForeground(0.3)
+   */
+  toggleButtonOffBorderColor: string;
+
+  /**
+   * Colour of the toggle button background in its 'on' state
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default ref("accentColor")
+   */
+  toggleButtonOnBackgroundColor: string;
+
+  /**
+   * Colour of the toggle button background in its 'off' state
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default opaqueForeground(0.3)
+   */
+  toggleButtonOffBackgroundColor: string;
+
+  /**
+   * Colour of the toggle button switch (the bit that slides from left to right)
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default ref("backgroundColor")
+   */
+  toggleButtonSwitchBackgroundColor: string;
+
+  /**
+   * Border colour of the toggle button switch (the bit that slides from left to right)
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default ref("toggleButtonOffBorderColor")
+   */
+  toggleButtonSwitchBorderColor: string;
+
+  /**
+   * The color of an unchecked checkbox
+   *
+   * A CSS number value with length units, e.g. "1px" or "2em". If a JavaScript number is provided, its units are assumed to be 'px'.
+   *
+   * @default "1px"
+   */
+  checkboxBorderWidth: string;
+
+  /**
+   * The color of an unchecked checkbox
+   *
+   * A CSS number value with length units, e.g. "1px" or "2em". If a JavaScript number is provided, its units are assumed to be 'px'.
+   *
+   * @default ref("borderRadius")
+   */
+  checkboxBorderRadius: string;
+
+  /**
+   * The inner color of an unchecked checkbox
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default ref("backgroundColor")
+   */
+  checkboxUncheckedBackgroundColor: string;
+
+  /**
+   * The border color of an unchecked checkbox
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default opaqueForeground(0.3)
+   */
+  checkboxUncheckedBorderColor: string;
+
+  /**
+   * The inner color of a checked checkbox
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default ref("accentColor")
+   */
+  checkboxCheckedBackgroundColor: string;
+
+  /**
+   * The border color of a checked checkbox
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default ref("accentColor")
+   */
+  checkboxCheckedBorderColor: string;
+
+  /**
+   * An image defining the same of the check mark on checked checkboxes
+   *
+   * Any valid CSS expression is accepted.
+   *
+   * @default "url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2210%22%20height%3D%227%22%20fill%3D%22none%22%3E%3Cpath%20stroke%3D%22%23000%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.75%22%20d%3D%22M1%203.5%203.5%206l5-5%22%2F%3E%3C%2Fsvg%3E')"
+   */
+  checkboxCheckedShapeImage: string;
+
+  /**
+   * The colour of the check mark on checked checkboxes.
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default ref("backgroundColor")
+   */
+  checkboxCheckedShapeColor: string;
+
+  /**
+   * The inner color of an indeterminate checkbox
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default opaqueForeground(0.3)
+   */
+  checkboxIndeterminateBackgroundColor: string;
+
+  /**
+   * The border color of an indeterminate checkbox
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default opaqueForeground(0.3)
+   */
+  checkboxIndeterminateBorderColor: string;
+
+  /**
+   * An image defining the same of the dash mark on indeterminate checkboxes
+   *
+   * Any valid CSS expression is accepted.
+   *
+   * @default "url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2210%22%20height%3D%222%22%20fill%3D%22none%22%3E%3Crect%20width%3D%2210%22%20height%3D%222%22%20fill%3D%22%23000%22%20rx%3D%221%22%2F%3E%3C%2Fsvg%3E')"
+   */
+  checkboxIndeterminateShapeImage: string;
+
+  /**
+   * The colour of the dash mark on indeterminate checkboxes
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default ref("backgroundColor")
+   */
+  checkboxIndeterminateShapeColor: string;
 
   /**
    * Use one of the built-in sets of preset colors values. Available presets are: "light", "dark".
