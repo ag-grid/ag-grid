@@ -566,16 +566,17 @@ export function parser(examplePath, srcFile, html, exampleType: ExampleType, pro
     const typedBindings = internalParser(
         examplePath,
         srcFile,
-        true,
-        gridOptionsTypes,
-        html,
-        exampleType,
-        providedExamples
-    );
-    const bindings = internalParser(examplePath, srcFile, false, gridOptionsTypes, html, exampleType, providedExamples);
+        includeTypes: true,
+        gridOptionsTypes
+    }, html, exampleSettings, exampleType, providedExamples);
+    const bindings = internalParser(examplePath, {
+        srcFile,
+        includeTypes: false,
+        gridOptionsTypes
+    }, html, exampleSettings, exampleType, providedExamples);
     // We need to copy the imports from the typed bindings to the non-typed bindings
     bindings.imports = typedBindings.imports;
-    return { bindings, typedBindings };
+    return {bindings, typedBindings};
 }
 
 export default parser;
