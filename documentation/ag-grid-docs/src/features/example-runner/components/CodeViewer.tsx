@@ -13,12 +13,6 @@ import { CodeOptions } from './CodeOptions';
 export const DARK_MODE_START = '/** DARK MODE START **/';
 export const DARK_MODE_END = '/** DARK MODE END **/';
 
-const startDelimiter = DARK_MODE_START;
-const endDelimiter = DARK_MODE_END;
-const escapedStart = startDelimiter.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-const escapedEnd = endDelimiter.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-const regex = new RegExp(`\\s*${escapedStart}[\\s\\S]*?${escapedEnd}\\s*`, 'g');
-
 const ExtensionMap = {
     sh: 'bash',
     vue: 'html',
@@ -26,13 +20,26 @@ const ExtensionMap = {
     json: 'js',
 };
 
-function stripOutDarkModeCode(files: FileContents) {
+export function stripOutDarkModeCode(files: FileContents) {
     const mainFiles = ['main.js', 'main.ts', 'index.tsx', 'index.jsx', 'app.component.ts'];
+    const defaultTheme = document.documentElement.dataset.darkMode?.toUpperCase()  === 'TRUE' ? 'ag-theme-quartz-dark' : 'ag-theme-quartz';
     mainFiles.forEach((mainFile) => {
         if (files[mainFile]) {
-            files[mainFile] = files[mainFile].replace(regex, '').trim() + '\n';
+
+            // Integrated charts examples can only be viewed in light mode so that chart and grid match
+            const useDefaultTheme = !files[mainFile]?.includes('DARK INTEGRATED START');
+
+            // Hide theme switcher
+            files[mainFile] = files[mainFile]?.replace(/\/\*\* DARK MODE START \*\*\/([\s\S]*?)\/\*\* DARK MODE END \*\*\//g, `"${ useDefaultTheme ? defaultTheme : 'ag-theme-quartz'}"`);
+
+            // hide integrated theme switcher
+            files[mainFile] = files[mainFile]?.replace(/\/\*\* DARK INTEGRATED START \*\*\/([\s\S]*?)\/\*\* DARK INTEGRATED END \*\*\//g, '');
         }
     });
+   /* RTI-1751 Would break JS master detail example that provides a grid too,
+   if (files['index.html']) {        
+        files['index.html'] = files['index.html']?.replace(/(['"\s])ag-theme-quartz(['"\s])/g, "$1" + defaultTheme + "$2");
+    } */
 }
 
 function stripOutIndexHtml(files: FileContents) {
@@ -81,10 +88,10 @@ export const CodeViewer = ({
 }) => {
     const [activeFile, setActiveFile] = useState(initialSelectedFile);
     const [showFiles, setShowFiles] = useState(true);
-
-    const exampleFiles = Object.keys(files);
-    stripOutDarkModeCode(files);
-    stripOutIndexHtml(files)
+    let localFiles = {...files};
+    const exampleFiles = Object.keys(localFiles);
+    stripOutDarkModeCode(localFiles);
+    stripOutIndexHtml(localFiles)
 
     useEffect(() => {
         setActiveFile(initialSelectedFile);
@@ -135,9 +142,9 @@ export const CodeViewer = ({
                     )}
                 </div>
                 <div className={styles.code}>
-                    {!files && <FileView path={'loading.js'} code={'// Loading...'} />}
-                    {files && activeFile && files[activeFile] && (
-                        <FileView key={activeFile} path={activeFile} code={files[activeFile]} />
+                    {!localFiles && <FileView path={'loading.js'} code={'// Loading...'} />}
+                    {localFiles && activeFile && localFiles[activeFile] && (
+                        <FileView key={activeFile} path={activeFile} code={localFiles[activeFile]} />
                     )}
                 </div>
             </div>
