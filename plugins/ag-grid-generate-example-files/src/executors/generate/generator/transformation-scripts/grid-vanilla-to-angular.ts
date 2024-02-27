@@ -74,6 +74,10 @@ function addModuleImports(imports: string[], bindings: any, allStylesheets: stri
         addBindingImports(bImports, imports, false, true);
     }
 
+    if(bindings.moduleRegistration){
+        imports.push(bindings.moduleRegistration);
+    }
+
     return imports;
 }
 
