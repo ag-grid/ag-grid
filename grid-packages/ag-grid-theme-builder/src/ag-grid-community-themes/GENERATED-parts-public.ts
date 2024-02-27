@@ -30,6 +30,8 @@ export type CoreParam =
   | 'headerBackgroundColor'
   | 'headerFontWeight'
   | 'headerForegroundColor'
+  | 'headerCellHoverBackgroundColor'
+  | 'headerCellHoverBackgroundTransitionDuration'
   | 'dataColor'
   | 'rangeSelectionBorderStyle'
   | 'rangeSelectionBorderColor'
@@ -117,6 +119,8 @@ export const core = definePart<CoreParam>({
     headerBackgroundColor: helpers.ref('chromeBackgroundColor'),
     headerFontWeight: '500',
     headerForegroundColor: helpers.ref('foregroundColor'),
+    headerCellHoverBackgroundColor: 'transparent',
+    headerCellHoverBackgroundTransitionDuration: '0.2s',
     dataColor: helpers.ref('foregroundColor'),
     rangeSelectionBorderStyle: 'solid',
     rangeSelectionBorderColor: helpers.ref('accentColor'),
@@ -406,6 +410,24 @@ export type ParamTypes = {
   headerForegroundColor: string;
 
   /**
+   * Rollover colour for header cells.
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default "transparent"
+   */
+  headerCellHoverBackgroundColor: string;
+
+  /**
+   * Duration of header cell hover transition, if --ag-header-cell-hover-background-color is set.
+   *
+   * A CSS number value with length units, e.g. "1px" or "2em". If a JavaScript number is provided, its units are assumed to be 'px'.
+   *
+   * @default "0.2s"
+   */
+  headerCellHoverBackgroundTransitionDuration: string;
+
+  /**
    * Colour of text in grid cells.
    *
    * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
@@ -478,7 +500,7 @@ export type ParamTypes = {
   rowHoverColor: string;
 
   /**
-   * Background color when hovering over columns in the grid
+   * Background color when hovering over columns in the grid. This is not visible unless enabled in the grid options.
    *
    * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
    *

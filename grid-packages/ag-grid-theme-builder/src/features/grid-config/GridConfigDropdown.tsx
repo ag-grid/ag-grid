@@ -9,7 +9,7 @@ import { gridConfigAtom } from './grid-config-atom';
 export const GridConfigDropdownButton = () => {
   return (
     <UIDropdownButton dropdownContent={<GridConfigDropdown />} endDecorator={<DropdownIcon />}>
-      <TableAlias /> Grid setup
+      <TableAlias /> Grid options
     </UIDropdownButton>
   );
 };

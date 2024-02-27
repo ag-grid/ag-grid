@@ -78,7 +78,6 @@
       )
     );
   }
-  */
 
 // .ag-header-row:not(:first-child) {
 //     .ag-header-cell:not(.ag-header-span-height.ag-header-span-total),
@@ -86,8 +85,6 @@
 //         border-top: var(--ag-borders-critical) var(--ag-border-color);
 //     }
 // }
-
-// TODO if we're going to implement header cell hover, make it an optional part
 
 // This logic with :not(.ag-column-resizing) is to prevent a mouseover effect
 // being applied to the adjacent cell as the user resizes a cell, because
@@ -109,8 +106,6 @@
     background-color: var(--ag-header-cell-moving-background-color);
   }
 }
-
-/* PORTED
 
   .ag-header-cell::before,
   .ag-header-group-cell:not(.ag-header-span-height.ag-header-group-cell-no-group)::before {

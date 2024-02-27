@@ -1,6 +1,6 @@
 import { Input } from '@mui/joy';
 import { useState } from 'react';
-import { ParamType } from '../../ag-grid-community-themes/metadata';
+import { ParamMeta } from '../../ag-grid-community-themes/metadata';
 import { ParamModel, useParamAtom } from '../../model/ParamModel';
 
 export type CssParamEditorProps = {
@@ -10,7 +10,7 @@ export type CssParamEditorProps = {
 export const CssParamEditor = ({ param }: CssParamEditorProps) => {
   const [paramValue, setParamValue] = useParamAtom<string | null>(param);
   const [editorValue, setEditorValue] = useState(paramValue == null ? '' : String(paramValue));
-  const [valid, setValid] = useState(() => cssStringIsValid(editorValue, param.meta.type));
+  const [valid, setValid] = useState(() => cssStringIsValid(editorValue, param.meta));
 
   return (
     <Input
@@ -18,7 +18,7 @@ export const CssParamEditor = ({ param }: CssParamEditorProps) => {
       value={editorValue}
       onChange={(e) => {
         const newValue = e.target.value;
-        const isValid = cssStringIsValid(newValue, param.meta.type);
+        const isValid = cssStringIsValid(newValue, param.meta);
         setEditorValue(newValue);
         setValid(isValid);
         if (isValid) {
@@ -29,7 +29,7 @@ export const CssParamEditor = ({ param }: CssParamEditorProps) => {
   );
 };
 
-const cssStringIsValid = (value: string, type: ParamType): boolean => {
+const cssStringIsValid = (value: string, meta: ParamMeta): boolean => {
   value = value.trim();
   if (value === '') return true;
   if (!reinterpretationElement) {
@@ -37,9 +37,9 @@ const cssStringIsValid = (value: string, type: ParamType): boolean => {
     document.body.appendChild(reinterpretationElement);
   }
   let cssProperty: keyof CSSStyleDeclaration;
-  switch (type) {
+  switch (meta.type) {
     case 'length':
-      cssProperty = 'paddingLeft';
+      cssProperty = meta.property.endsWith('Duration') ? 'transitionDuration' : 'paddingLeft';
       break;
     case 'borderStyle':
       cssProperty = 'borderLeftStyle';

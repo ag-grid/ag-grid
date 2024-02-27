@@ -125,6 +125,21 @@ export const coreMeta = definePartMeta({
       defaultValue: { helper: 'ref', arg: 'foregroundColor' },
     },
     {
+      property: 'headerCellHoverBackgroundColor',
+      type: 'color',
+      docs: 'Rollover colour for header cells.',
+      defaultValue: 'transparent',
+    },
+    {
+      property: 'headerCellHoverBackgroundTransitionDuration',
+      type: 'length',
+      docs: 'Duration of header cell hover transition, if --ag-header-cell-hover-background-color is set.',
+      defaultValue: '0.2s',
+      min: 0,
+      max: 10,
+      step: 0.05,
+    },
+    {
       property: 'dataColor',
       type: 'color',
       docs: 'Colour of text in grid cells.',
@@ -175,7 +190,7 @@ export const coreMeta = definePartMeta({
     {
       property: 'columnHoverColor',
       type: 'color',
-      docs: 'Background color when hovering over columns in the grid',
+      docs: 'Background color when hovering over columns in the grid. This is not visible unless enabled in the grid options.',
       defaultValue: { helper: 'transparentAccent', arg: 0.05 },
     },
     {

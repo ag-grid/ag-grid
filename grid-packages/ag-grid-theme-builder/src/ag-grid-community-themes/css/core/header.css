@@ -44,6 +44,29 @@
   padding: 0 var(--ag-cell-horizontal-padding);
 }
 
+/* Implement header cell hover background as a pseudoelement so that it overlays
+on top of any custom colour that the application has given this cell */
+.ag-header-cell:not(.ag-floating-filter),
+.ag-header-group-cell {
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transition: background-color var(--ag-header-cell-hover-background-transition-duration);
+    background-color: transparent;
+  }
+  &:hover::before,
+  &.ag-header-cell-moving::before {
+    background-color: var(--ag-header-cell-hover-background-color);
+  }
+}
+
+/* Ensure cell content shows above cell hover background */
+:where(.ag-header-cell:not(.ag-floating-filter) *, .ag-header-group-cell *) {
+  position: relative;
+  z-index: 1;
+}
+
 .ag-header-cell.ag-header-active .ag-header-cell-menu-button,
 .ag-header-cell-filter-button {
   opacity: 1;
