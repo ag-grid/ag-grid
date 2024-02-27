@@ -1,0 +1,27 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CommunityMenu from '@components/community-section/menu'
+import LayoutStyles from '@design-system/modules/community-section/Layout.module.scss';
+import ShowcaseList from "@components/community-section/showcaselist"
+---
+
+<Layout title="AG Grid">
+    <div class="layout-max-width-large">
+        <CommunityMenu path={Astro.url.pathname} client:only/>
+        <div class={LayoutStyles.container}>
+            <header class={LayoutStyles.header}>
+                <h1>Showcase</h1>
+                <p>A collection of open-source projects that use AG Grid</p>
+                <button>Submit your Project</button>
+            </header>
+            <div class={LayoutStyles.content}>
+                <h3>Our Favourites</h3>
+                <p>These are some of our favourite projects that use AG Grid, either because of their popularity, implementation, or use-case.</p>
+                <ShowcaseList favouritesOnly={true}  client:only/>
+                <h3>All Products</h3>
+                <p>Browse all Products that we've found in the open-source community that have AG Grid as a dependency.</p>
+                <ShowcaseList client:only/>
+            </div>
+        </div>
+    </div>
+</Layout>
