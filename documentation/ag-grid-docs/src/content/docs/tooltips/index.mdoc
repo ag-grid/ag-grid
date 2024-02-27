@@ -21,10 +21,10 @@ In the example below:
 
 {% gridExampleRunner title="Custom Tooltip Component" name="custom-tooltip-component" type="generated" /%}
 
-md-include:component-interface-javascript.md
-md-include:component-interface-angular.md
-md-include:component-interface-react.md
-md-include:component-interface-vue.md
+{% includeMarkdoc file="tooltips/_component-interface-javascript.mdoc" /%}
+{% includeMarkdoc file="tooltips/_component-interface-angular.mdoc" /%}
+{% includeMarkdoc file="tooltips/_component-interface-react.mdoc" /%}
+{% includeMarkdoc file="tooltips/_component-interface-vue.mdoc" /%}
 
 {% if isFramework("javascript", "angular", "vue") %}
 {% interfaceDocumentation interfaceName="ITooltipParams" /%}

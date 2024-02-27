@@ -6,10 +6,10 @@ This section provides key information for configuring and interacting with a gri
 
 ## Grid Options
 
-md-include:index-javascript.md
-md-include:index-angular.md
-md-include:index-react.md
-md-include:index-vue.md
+{% includeMarkdoc file="grid-interface/_index-javascript.mdoc" /%}
+{% includeMarkdoc file="grid-interface/_index-angular.mdoc" /%}
+{% includeMarkdoc file="grid-interface/_index-react.mdoc" /%}
+{% includeMarkdoc file="grid-interface/_index-vue.mdoc" /%}
 
 ### Updating Grid Options
 
@@ -93,10 +93,10 @@ For a full list of options see: [Options Reference](./grid-options).
 
 As a user interacts with the grid events will be fired to enable your application to respond to specific actions.
 
-md-include:events-javascript.md
-md-include:events-angular.md
-md-include:events-react.md
-md-include:events-vue.md
+{% includeMarkdoc file="grid-interface/_events-javascript.mdoc" /%}
+{% includeMarkdoc file="grid-interface/_events-angular.mdoc" /%}
+{% includeMarkdoc file="grid-interface/_events-react.mdoc" /%}
+{% includeMarkdoc file="grid-interface/_events-vue.mdoc" /%}
 
 {% note %}
 TypeScript users can take advantage of the events' interfaces. Construct the interface name by suffixing the event name with `Event`. For example, the `cellClicked` event uses the interface `CellClickedEvent`. All events support [Typescript Generics](./typescript-generics/).
@@ -106,10 +106,10 @@ For a full list of events see: [Grid Events](./grid-events).
 
 ## Grid API
 
-md-include:api-javascript.md
-md-include:api-angular.md
-md-include:api-react.md
-md-include:api-vue.md
+{% includeMarkdoc file="grid-interface/_api-javascript.mdoc" /%}
+{% includeMarkdoc file="grid-interface/_api-angular.mdoc" /%}
+{% includeMarkdoc file="grid-interface/_api-react.mdoc" /%}
+{% includeMarkdoc file="grid-interface/_api-vue.mdoc" /%}
 
 For a full list of api methods see: [Grid API](./grid-api).
 

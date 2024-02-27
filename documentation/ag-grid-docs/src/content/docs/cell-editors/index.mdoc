@@ -16,16 +16,16 @@ The example below shows some Custom Editor Components.
 
 ## Custom Components
 
-md-include:component-interface-javascript.md
-md-include:component-interface-angular.md
-md-include:component-interface-react.md
-md-include:component-interface-vue.md
+{% includeMarkdoc file="cell-editors/_component-interface-javascript.mdoc" /%}
+{% includeMarkdoc file="cell-editors/_component-interface-angular.mdoc" /%}
+{% includeMarkdoc file="cell-editors/_component-interface-react.mdoc" /%}
+{% includeMarkdoc file="cell-editors/_component-interface-vue.mdoc" /%}
 
 {% if isFramework("javascript", "angular", "vue") %}
 {% interfaceDocumentation interfaceName="ICellEditorParams" config={"description": ""} /%}
 {% /if %}
 
-md-include:params\_vue.md
+{% includeMarkdoc file="cell-editors/_params_vue.mdoc" /%}
 
 ## Selecting Components
 
@@ -144,10 +144,10 @@ Below shows an example with dynamic props. The following can be noted:
 
 The property `colDef.cellEditorParams` allows custom props to be passed to editors.
 
-md-include:complementing-component-javascript.md
-md-include:complementing-component-angular.md
-md-include:complementing-component-react.md
-md-include:complementing-component-vue.md
+{% includeMarkdoc file="cell-editors/_complementing-component-javascript.mdoc" /%}
+{% includeMarkdoc file="cell-editors/_complementing-component-angular.mdoc" /%}
+{% includeMarkdoc file="cell-editors/_complementing-component-react.mdoc" /%}
+{% includeMarkdoc file="cell-editors/_complementing-component-vue.mdoc" /%}
 
 ## Popup Editor
 
@@ -212,10 +212,10 @@ If you don't want the grid to act on an event, call `event.stopPropagation()`. T
 
 The follow code snippet is one you could include for a simple text editor, which would stop the grid from doing navigation.
 
-md-include:keyboard-option-1-javascript.md
-md-include:keyboard-option-1-angular.md
-md-include:keyboard-option-1-react.md
-md-include:keyboard-option-1-vue.md
+{% includeMarkdoc file="cell-editors/_keyboard-option-1-javascript.mdoc" /%}
+{% includeMarkdoc file="cell-editors/_keyboard-option-1-angular.mdoc" /%}
+{% includeMarkdoc file="cell-editors/_keyboard-option-1-react.mdoc" /%}
+{% includeMarkdoc file="cell-editors/_keyboard-option-1-vue.mdoc" /%}
 
 ### Option 2 - Suppress Keyboard Event
 
@@ -223,10 +223,10 @@ If you implement `colDef.suppressKeyboardEvent()`, you can tell the grid which e
 
 {% apiDocumentation source="column-properties/properties.json" section="columns" names=["suppressKeyboardEvent"] /%}
 
-md-include:keyboard-option-2-javascript.md
-md-include:keyboard-option-2-angular.md
-md-include:keyboard-option-2-react.md
-md-include:keyboard-option-2-vue.md
+{% includeMarkdoc file="cell-editors/_keyboard-option-2-javascript.mdoc" /%}
+{% includeMarkdoc file="cell-editors/_keyboard-option-2-angular.mdoc" /%}
+{% includeMarkdoc file="cell-editors/_keyboard-option-2-react.mdoc" /%}
+{% includeMarkdoc file="cell-editors/_keyboard-option-2-vue.mdoc" /%}
 
 ## Accessing Instances
 

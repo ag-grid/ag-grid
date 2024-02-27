@@ -36,10 +36,10 @@ The example below shows some Custom Cell Components.
 
 ## Custom Components
 
-md-include:component-interface-angular.md
-md-include:component-interface-javascript.md
-md-include:component-interface-react.md
-md-include:component-interface-vue.md
+{% includeMarkdoc file="component-cell-renderer/_component-interface-angular.mdoc" /%}
+{% includeMarkdoc file="component-cell-renderer/_component-interface-javascript.mdoc" /%}
+{% includeMarkdoc file="component-cell-renderer/_component-interface-react.mdoc" /%}
+{% includeMarkdoc file="component-cell-renderer/_component-interface-vue.mdoc" /%}
 
 {% if isFramework("javascript", "angular", "vue") %}
 {% interfaceDocumentation interfaceName="ICellRendererParams" config={"description":""} /%}
@@ -49,7 +49,7 @@ md-include:component-interface-vue.md
 {% interfaceDocumentation interfaceName="CustomCellRendererProps" config={"description":""} /%}
 {% /if %}
 
-md-include:params\_vue.md
+{% includeMarkdoc file="component-cell-renderer/_params_vue.mdoc" /%}
 
 {% note %}
 Note that if [Row Selection](./row-selection/) is enabled, it is recommended to set `suppressKeyboardEvent` on the column definition to prevent the {% kbd "␣ Space" /%} key from triggering both row selection and toggling the checkbox.
@@ -209,8 +209,8 @@ The result is an object with `component` and `params` to use instead of `cellRen
 
 This following shows the Selector always returning back a Mood Cell Renderer:
 
-md-include:selector-common.md
-md-include:selector-vue.md
+{% includeMarkdoc file="component-cell-renderer/_selector-common.mdoc" /%}
+{% includeMarkdoc file="component-cell-renderer/_selector-vue.mdoc" /%}
 
 Here is a full example.
 
@@ -226,14 +226,14 @@ The `props` passed to the Cell Component can be complimented with custom props. 
 
 Compliment props to a cell renderer using the Column Definition attribute  `cellRendererParams`. When provided, these props will be merged with the grid provided props.
 
-md-include:complementing-component-javascript.md
-md-include:complementing-component-angular.md
-md-include:complementing-component-react.md
-md-include:complementing-component-vue.md
+{% includeMarkdoc file="component-cell-renderer/_complementing-component-javascript.mdoc" /%}
+{% includeMarkdoc file="component-cell-renderer/_complementing-component-angular.mdoc" /%}
+{% includeMarkdoc file="component-cell-renderer/_complementing-component-react.mdoc" /%}
+{% includeMarkdoc file="component-cell-renderer/_complementing-component-vue.mdoc" /%}
 
-md-include:renderer-function-javascript.md
-md-include:renderer-function-angular.md
-md-include:renderer-function-vue.md
+{% includeMarkdoc file="component-cell-renderer/_renderer-function-javascript.mdoc" /%}
+{% includeMarkdoc file="component-cell-renderer/_renderer-function-angular.mdoc" /%}
+{% includeMarkdoc file="component-cell-renderer/_renderer-function-vue.mdoc" /%}
 
 {% if isFramework("javascript") %}
 {% note %}
