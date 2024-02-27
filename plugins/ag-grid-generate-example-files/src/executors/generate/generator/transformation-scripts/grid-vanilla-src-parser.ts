@@ -572,6 +572,8 @@ export function parser(examplePath, srcFile, html, exampleSettings, exampleType,
         includeTypes: false,
         gridOptionsTypes
     }, html, exampleSettings, exampleType, providedExamples);
+    // We need to copy the imports from the typed bindings to the non-typed bindings
+    bindings.imports = typedBindings.imports;
     return {bindings, typedBindings};
 }
 
