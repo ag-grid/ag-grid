@@ -6,11 +6,14 @@ import {
     ColDef,
     Column,
     ColumnModel,
+    Events,
+    PivotMaxColumnsExceededEvent,
     GridOptions,
     IRowNodeStage,
     RowNode,
     StageExecuteParams,
     ValueService,
+    WithoutGridCommon,
     _
 } from "@ag-grid-community/core";
 import { PivotColDefService } from "./pivotColDefService";
@@ -37,6 +40,9 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
     private suppressExpandablePivotGroupsLastTime: GridOptions['suppressExpandablePivotGroups'];
     private removePivotHeaderRowWhenSingleValueColumnLastTime: GridOptions['removePivotHeaderRowWhenSingleValueColumn'];
 
+    private maxUniqueValues: number = -1;
+    private static EXCEEDED_MAX_UNIQUE_VALUES = 'Exceeded maximum allowed pivot column count.';
+
     public execute(params: StageExecuteParams): void {
         const changedPath = params.changedPath;
         if (this.columnModel.isPivotActive()) {
@@ -58,7 +64,28 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
     }
 
     private executePivotOn(changedPath: ChangedPath): void {
-        const uniqueValues = this.bucketUpRowNodes(changedPath);
+        const numberOfAggregationColumns = this.columnModel.getValueColumns().length ?? 1;
+
+        // As unique values creates one column per aggregation column, divide max columns by number of aggregation columns
+        // to get the max number of unique values.
+        this.maxUniqueValues = this.gridOptionsService.get('pivotMaxGeneratedColumns') / numberOfAggregationColumns;
+        let uniqueValues;
+        try {
+            // try catch is used to force execution to stop when the max count is exceeded.
+            uniqueValues = this.bucketUpRowNodes(changedPath);
+        } catch(e) {
+            // message is checked rather than inheritance as the build seems to break instanceof
+            if (e.message === PivotStage.EXCEEDED_MAX_UNIQUE_VALUES) {
+                this.columnModel.setSecondaryColumns([], "rowModelUpdated");
+                const event: WithoutGridCommon<PivotMaxColumnsExceededEvent> = {
+                    type: Events.EVENT_PIVOT_MAX_COLUMNS_EXCEEDED,
+                    message: e.message,
+                };
+                this.eventService.dispatchEvent(event);
+                return;
+            }
+            throw e;
+        }
 
         const uniqueValuesChanged = this.setUniqueValues(uniqueValues);
 
@@ -118,7 +145,9 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
         }
     }
 
+    private currentUniqueCount = 0;
     private bucketUpRowNodes(changedPath: ChangedPath): any {
+        this.currentUniqueCount = 0;
         // accessed from inside inner function
         const uniqueValues: any = {};
 
@@ -171,7 +200,15 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
             }
 
             if (!uniqueValues[key]) {
+                this.currentUniqueCount += 1;
                 uniqueValues[key] = {};
+
+                const doesGeneratedColMaxExist = this.maxUniqueValues !== -1;
+                const hasExceededColMax = this.currentUniqueCount > this.maxUniqueValues;
+                if (doesGeneratedColMaxExist && hasExceededColMax) {
+                    // throw an error to prevent all additional execution and escape the loops.
+                    throw Error(PivotStage.EXCEEDED_MAX_UNIQUE_VALUES);
+                }
             }
 
             if (!mappedChildren[key]) {

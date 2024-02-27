@@ -455,6 +455,10 @@
     "typeName": "number",
     "typesToInclude": []
   },
+  "pivotMaxGeneratedColumns": {
+    "typeName": "number",
+    "typesToInclude": []
+  },
   "doesExternalFilterPass": {
     "typeName": "(node: IRowNode<TData>) => boolean",
     "typesToInclude": [
