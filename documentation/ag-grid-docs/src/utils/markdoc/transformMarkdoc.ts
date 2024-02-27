@@ -1,3 +1,4 @@
+import type { Framework } from '@ag-grid-types';
 import Markdoc, { type ConfigType, type Node } from '@markdoc/markdoc';
 import Slugger from 'github-slugger';
 import React from 'react';
