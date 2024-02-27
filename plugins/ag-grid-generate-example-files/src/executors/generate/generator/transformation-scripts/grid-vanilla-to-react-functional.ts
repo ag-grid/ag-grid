@@ -54,7 +54,7 @@ function getModuleImports(
 
     if(bindings.moduleRegistration){
         imports.push(bindings.moduleRegistration);
-   }
+    }
 
     return imports;
 }

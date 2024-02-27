@@ -81,7 +81,7 @@ function addModuleImports(imports: string[], bindings: ParsedBindings, allStyles
         addBindingImports(bImports, imports, false, true);
     }
 
-    if (bindings.moduleRegistration) {
+    if(bindings.moduleRegistration){
         imports.push(bindings.moduleRegistration);
     }
 
