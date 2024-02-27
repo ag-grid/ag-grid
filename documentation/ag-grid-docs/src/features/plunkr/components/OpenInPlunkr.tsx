@@ -1,5 +1,6 @@
 import { OpenInCTA } from '@components/open-in-cta/OpenInCTA';
 import type { FileContents } from '@features/example-generator/types';
+import { stripOutDarkModeCode } from '@features/example-runner/components/CodeViewer';
 import { fetchTextFile } from '@utils/fetchTextFile';
 import type { FunctionComponent } from 'react';
 
@@ -27,8 +28,10 @@ export const OpenInPlunkr: FunctionComponent<Props> = ({
             type="plunker"
             onClick={async () => {
                 const html = await fetchTextFile(htmlUrl);
+                const localFiles = { ...files };
+                stripOutDarkModeCode(localFiles);
                 const plunkrExampleFiles = {
-                    ...files,
+                    ...localFiles,
                     ...boilerPlateFiles,
                     'package.json': JSON.stringify(packageJson, null, 2),
                     'index.html': html,
