@@ -115,6 +115,10 @@
     margin-bottom: $spacing-size-8;
     color: color-mix(in srgb, var(--color-fg-secondary), var(--color-bg-primary) 20%);
     line-height: var(--text-lh-sm);
+
+    :global(code) {
+        font-size: 0.8em;
+    }
 }
 
 // Hack to target markdown images and not images within components
