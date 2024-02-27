@@ -7,21 +7,18 @@ import {
     extractEventHandlers,
     extractImportStatements,
     extractInterfaces,
+    extractModuleRegistration,
     extractTypeDeclarations,
-    extractUnboundInstanceMethods,
     findAllAccessedProperties,
     findAllVariables,
-    getTypes,
     parseFile,
     readAsJsFile,
     recognizedDomEvents,
-    removeInScopeJsDoc,
     tsCollect,
     tsGenerate,
     tsNodeIsFunctionCall,
     tsNodeIsFunctionWithName,
     tsNodeIsGlobalVarWithName,
-    tsNodeIsInScope,
     tsNodeIsPropertyWithName,
     tsNodeIsTopLevelFunction,
     tsNodeIsTopLevelVariable,
@@ -141,13 +138,6 @@ function internalParser(examplePath, {
                 });
             }
         });
-    });
-
-    // functions marked as "inScope" will be added to "instance" methods, as opposed to (global/unused) "util" ones
-    const unboundInstanceMethods = extractUnboundInstanceMethods(tsTree);
-    tsCollectors.push({
-        matches: node => tsNodeIsInScope(node, unboundInstanceMethods),
-        apply: (bindings, node) => bindings.instanceMethods.push(removeInScopeJsDoc(tsGenerate(node, tsTree)))
     });
 
 
@@ -560,6 +550,7 @@ function internalParser(examplePath, {
     tsBindings.classes = extractClassDeclarations(tsTree);
     tsBindings.interfaces = extractInterfaces(tsTree);
     tsBindings.exampleName = examplePath;
+    tsBindings.moduleRegistration = extractModuleRegistration(tsTree);
     tsBindings.gridSettings = {
         width: '100%',
         height: '100%',

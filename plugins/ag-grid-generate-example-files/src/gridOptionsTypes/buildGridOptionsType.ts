@@ -1,7 +1,25 @@
 import ts from 'typescript';
 import { writeJSONFile } from '../executors-utils';
-import { getTypes } from '../executors/generate/generator/transformation-scripts/parser-utils';
 import { PropertyKeys } from '../executors/generate/generator/_copiedFromCore/propertyKeys';
+
+function getTypes(node: ts.Node) {
+    let typesToInclude = [];
+    if (ts.isIdentifier(node)) {
+        const typeName = node.getText();
+        if (!['HTMLElement', 'Function', 'Partial', 'TData', 'TContext', 'TValue'].includes(typeName)) {
+            typesToInclude.push(typeName);
+        }
+    }
+    node.forEachChild((ct) => {
+        // Only recurse down the type branches of the tree so we do not include argument names
+        if ((ct as any).type) {
+            typesToInclude = [...typesToInclude, ...getTypes((ct as any).type)];
+        } else {
+            typesToInclude = [...typesToInclude, ...getTypes(ct)];
+        }
+    });
+    return typesToInclude;
+}
 
 function getTypeLookupFunc(fileName) {
     let lookupType = (propName: string) => undefined;

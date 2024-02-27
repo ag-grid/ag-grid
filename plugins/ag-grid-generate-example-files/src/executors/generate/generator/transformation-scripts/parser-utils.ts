@@ -108,14 +108,6 @@ export function tsCollect(tsTree, tsBindings, collectors, recurse = true) {
     return tsBindings;
 }
 
-export function tsNodeIsGlobalVar(node: any): boolean {
-    // eg: var currentRowHeight = 10;
-    if (ts.isVariableDeclaration(node) && ts.isSourceFile(node.parent.parent.parent)) {
-        return true;
-    }
-    return false;
-}
-
 export function tsNodeIsGlobalVarWithName(node: any, name: string): boolean {
     // eg: var currentRowHeight = 10;
     if (ts.isVariableDeclaration(node) && ts.isSourceFile(node.parent.parent.parent)) {
@@ -164,17 +156,8 @@ export function tsNodeIsFunctionWithName(node: ts.Node, name: string): boolean {
     return false;
 }
 
-export function tsNodeIsInScope(node: any, unboundInstanceMethods: string[]): boolean {
-    return (
-        unboundInstanceMethods &&
-        ts.isFunctionDeclaration(node) &&
-        node.name &&
-        unboundInstanceMethods.indexOf(node.name.getText()) >= 0
-    );
-}
-
-export function tsNodeIsUnusedFunction(node: any, used: string[], unboundInstanceMethods: string[]): boolean {
-    if (!tsNodeIsInScope(node, unboundInstanceMethods)) {
+export function tsNodeIsUnusedFunction(node: any, used: string[]): boolean {
+    if (!(ts.isFunctionDeclaration(node) && !!node.name)) {
         if (ts.isFunctionLike(node) && used.indexOf(node.name.getText()) < 0) {
             const isTopLevel = ts.isSourceFile(node.parent);
             return isTopLevel && !isDeclareStatement(node);
@@ -194,35 +177,8 @@ export function tsNodeIsTypeDeclaration(node: any): boolean {
     return false;
 }
 
-export function tsNodeIsPropertyAccessExpressionOf(node: any, properties: string[]): boolean {
-    if (properties.length !== 2) {
-        throw new Error('Implement this');
-    }
-    return (
-        ts.isPropertyAccessExpression(node) &&
-        ts.isIdentifier(node.expression) &&
-        node.expression.escapedText === properties[0] &&
-        ts.isIdentifier(node.name) &&
-        node.name.escapedText === properties[1]
-    );
-}
-
 export function tsNodeIsFunctionCall(node: any): boolean {
     return ts.isCallExpression(node);
-}
-
-export function tsNodeIsGlobalFunctionCall(node: ts.Node) {
-    // Get top level function calls like
-    // setInterval(callback, 500)
-    // but don't match things like
-    // AgCharts.create(options)
-    if (ts.isExpressionStatement(node)) {
-        return (
-            ts.isSourceFile(node.parent) &&
-            ts.isCallExpression(node.expression) &&
-            ts.isIdentifier(node.expression.expression)
-        );
-    }
 }
 
 export const recognizedDomEvents = ['click', 'change', 'input', 'dragover', 'dragstart', 'drop'];
@@ -257,77 +213,6 @@ export function extractEventHandlers(domTree: any, eventNames: string[]) {
     });
 }
 
-export function removeInScopeJsDoc(method: string): string {
-    return method.replace(/\/\*\*\s*inScope.*\*\/\n/g, '');
-}
-
-// functions marked with an "inScope" comment will be handled as "instance" methods, as opposed to (global/unused)
-// "util" ones
-export function extractUnboundInstanceMethods(srcFile: ts.SourceFile) {
-    let inScopeMethods = [];
-    srcFile.statements.forEach((node) => {
-        if (ts.isFunctionDeclaration(node)) {
-            const docs = (node as any).jsDoc;
-            if (docs && docs.length > 0) {
-                docs.forEach((doc) => {
-                    const trimmed = doc.comment.trim() || '';
-                    if (trimmed.includes('inScope')) {
-                        inScopeMethods = [...inScopeMethods, node.name?.getText()];
-                    }
-                });
-            }
-        }
-    });
-    return inScopeMethods;
-}
-
-export function extractTypeInfoForVariable(srcFile: ts.SourceFile, varName: string) {
-    let typeStr = undefined;
-    let typeParts = [];
-    srcFile.statements.forEach((node) => {
-        if (ts.isVariableStatement(node)) {
-            node.declarationList.declarations.forEach((dec) => {
-                if (ts.isVariableDeclaration(dec) && dec.name.getText() == varName && dec.type) {
-                    typeStr = dec.type.getText();
-                    typeParts = getTypes(dec.type);
-                }
-            });
-        }
-    });
-    return { typeStr, typeParts };
-}
-
-export function getTypes(node: ts.Node) {
-    let typesToInclude = [];
-    if (ts.isIdentifier(node)) {
-        const typeName = node.getText();
-        if (!['HTMLElement', 'Function', 'Partial', 'TData', 'TContext', 'TValue'].includes(typeName)) {
-            typesToInclude.push(typeName);
-        }
-    }
-    node.forEachChild((ct) => {
-        // Only recurse down the type branches of the tree so we do not include argument names
-        if ((ct as any).type) {
-            typesToInclude = [...typesToInclude, ...getTypes((ct as any).type)];
-        } else {
-            typesToInclude = [...typesToInclude, ...getTypes(ct)];
-        }
-    });
-    return typesToInclude;
-}
-
-export function usesChartApi(node: ts.Node) {
-    if (ts.isCallExpression(node) && node.getText()?.match(/AgCharts.(?!create)/)) {
-        return true;
-    }
-
-    let usesApi = false;
-    node.forEachChild((ct) => {
-        usesApi ||= usesChartApi(ct);
-    });
-    return usesApi;
-}
-
 export function extractImportStatements(srcFile: ts.SourceFile): BindingImport[] {
     const allImports = [];
     srcFile.statements.forEach((node) => {
@@ -359,6 +244,15 @@ export function extractImportStatements(srcFile: ts.SourceFile): BindingImport[]
         }
     });
     return allImports;
+}
+
+export function extractModuleRegistration(srcFile: ts.SourceFile): string {
+    for (const statement of srcFile.statements) {
+        if (ts.isExpressionStatement(statement) && statement.expression?.getText().includes('ModuleRegistry.registerModules')) {
+            return statement.getText();
+        }
+    }
+    return undefined;
 }
 
 export function extractTypeDeclarations(srcFile: ts.SourceFile) {
@@ -536,6 +430,7 @@ export function findAllAccessedProperties(node) {
 export function convertImportPath(modulePackage: string, convertToPackage: boolean) {
     if (convertToPackage) {
         const conversions = {
+            // Duplicates have different quotes to handle both cases
             "'@ag-grid-community/angular'": "'ag-grid-angular'",
             '"@ag-grid-community/angular"': "'ag-grid-angular'",
             "'@ag-grid-community/vue3'": "'ag-grid-vue3'",
