@@ -177,9 +177,8 @@
                 format: 'cjs',
             },
             'ag-grid-vue': {
-                main: './dist/package/main.cjs.js',
-                defaultExtension: 'js',
-                format: 'cjs',
+                main: './main.js',
+                defaultExtension: 'js'
             }
         },
         meta: {

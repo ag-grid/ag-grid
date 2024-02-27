@@ -2,8 +2,8 @@ import type { Framework, ImportType, InternalFramework } from './types/ag-grid';
 
 export const FRAMEWORKS: readonly Framework[] = [
     'react',
-    'angular',
-    'vue',
+    // 'angular',
+    // 'vue',
     'javascript',
 ] as const;
 export const DEFAULT_FRAMEWORK: Framework = FRAMEWORKS[0];
@@ -11,11 +11,11 @@ export const DEFAULT_FRAMEWORK: Framework = FRAMEWORKS[0];
 export const INTERNAL_FRAMEWORKS: readonly InternalFramework[] = [
     // 'vanilla',
     'typescript',
-    'reactFunctional',
+    // 'reactFunctional',
     'reactFunctionalTs',
-    'angular',
-    'vue',
-    'vue3',
+    // 'angular',
+    // 'vue',
+    // 'vue3',
 ] as const;
 
 export const FRAMEWORK_DISPLAY_TEXT: Record<Framework, string> = {
