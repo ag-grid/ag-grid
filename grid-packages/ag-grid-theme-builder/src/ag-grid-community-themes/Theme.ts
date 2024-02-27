@@ -13,6 +13,7 @@ import {
 export type Theme = {
   css: string;
   icons: Record<string, string>;
+  paramDefaults: Record<string, string>;
 };
 
 export type PickVariables<P extends AnyPart, V extends object> = {
@@ -26,6 +27,7 @@ export const defineTheme = <P extends AnyPart, V extends object = ParamTypes>(
   const result: Theme = {
     css: '',
     icons: {},
+    paramDefaults: {},
   };
 
   const parts = flattenParts(Array.isArray(partOrParts) ? partOrParts : [partOrParts]);
@@ -84,6 +86,7 @@ export const defineTheme = <P extends AnyPart, V extends object = ParamTypes>(
     }
     if (!presetProperties.has(name) && typeof value === 'string' && value) {
       variableDefaults += `\t${paramToVariableName(name)}: ${value};\n`;
+      result.paramDefaults[name] = value;
     }
   }
   variableDefaults += '}';

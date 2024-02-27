@@ -224,6 +224,15 @@ export const coreMeta = definePartMeta({
       step: 1,
     },
     {
+      property: 'labelWidgetSpacing',
+      type: 'length',
+      docs: 'Horizontal spacing between icons and text inside labels, e.g. in the header and sidebar tabs',
+      defaultValue: { helper: 'ref', arg: 'gridSize' },
+      min: 0,
+      max: 50,
+      step: 1,
+    },
+    {
       property: 'rowGroupIndentSize',
       type: 'length',
       docs: 'The indentation applied to each level of row grouping - deep rows are indented by a multiple of this value.',

@@ -60,7 +60,7 @@
   flex: 1 1 auto;
   align-self: stretch;
   align-items: center;
-  gap: var(--ag-grid-size);
+  gap: var(--ag-label-widget-spacing);
 }
 
 .ag-header-cell-label {
@@ -131,12 +131,8 @@
   content: '';
   position: absolute;
   z-index: 1;
-  /* display: var(X--ag-header-column-separator-display);
-  width: var(X--ag-header-column-separator-width);
-  height: var(X--ag-header-column-separator-height);
-  top: calc(50% - var(X--ag-header-column-separator-height) * 0.5);
-  background-color: var(X--ag-header-column-separator-color); */
-
+  height: 100%;
+  border-right: var(--ag-column-border);
   right: 0;
 }
 
@@ -161,9 +157,10 @@
     position: absolute;
     z-index: 1;
     display: var(--ag-header-column-resize-handle-display);
+    top: calc(50% - var(--ag-header-column-resize-handle-height) * 0.5);
+    left: calc(50% - var(--ag-header-column-resize-handle-width));
     width: var(--ag-header-column-resize-handle-width);
     height: var(--ag-header-column-resize-handle-height);
-    top: calc(50% - var(--ag-header-column-resize-handle-height) * 0.5);
     background-color: var(--ag-header-column-resize-handle-color);
 
     .ag-header-cell.ag-header-span-height & {
@@ -175,9 +172,4 @@
 
 .ag-header-group-cell-no-group.ag-header-span-height .ag-header-cell-resize {
   display: none;
-}
-
-.ag-header-viewport .ag-header-cell-resize::after {
-  /* TODO looks like a specificity hack can I remove it? */
-  left: calc(50% - var(--ag-header-column-resize-handle-width));
 }

@@ -43,7 +43,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: calc(var(--ag-grid-size) * 0.5);
+  gap: var(--ag-label-widget-spacing);
   align-items: center;
   white-space: nowrap;
 

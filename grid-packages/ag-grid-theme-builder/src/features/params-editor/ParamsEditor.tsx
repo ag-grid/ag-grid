@@ -10,6 +10,7 @@ import {
 import { useStore } from 'jotai';
 import { withErrorBoundary } from '../../components/ErrorBoundary';
 import { ParamModel, allParamModels } from '../../model/ParamModel';
+import { renderedThemeAtom } from '../../model/rendered-theme';
 import { ParamEditor } from './ParamEditor';
 
 const editablePrams = allParamModels()
@@ -30,10 +31,11 @@ export const ParamsEditor = withErrorBoundary(() => {
         value={[] as ParamModel[]}
         onChange={(_, [newValue]) => {
           if (newValue) {
-            const defaultValue = getComputedStyle(document.body).getPropertyValue(
-              newValue.variableName,
-            );
-            store.set(newValue.valueAtom, defaultValue);
+            // const defaultValue = getComputedStyle(document.body).getPropertyValue(
+            //   newValue.variableName,
+            // );
+            const { paramDefaults } = store.get(renderedThemeAtom);
+            store.set(newValue.valueAtom, paramDefaults[newValue.property]);
           }
         }}
         getOptionDisabled={(param) => param.hasValue(store)}

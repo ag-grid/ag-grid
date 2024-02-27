@@ -58,10 +58,12 @@ export const VarColorEditor = ({ initialValue, onChange }: UncontrolledColorEdit
   }
 
   const feedback =
-    titleCase(formatVariable(editorState.variable.variable)) +
-    ' with ' +
-    formatProportionAs3dpPercent(editorState.alpha) +
-    ' alpha';
+    editorState.alpha === 1
+      ? `Same as ${titleCase(formatVariable(editorState.variable.variable))}`
+      : titleCase(formatVariable(editorState.variable.variable)) +
+        ' with ' +
+        formatProportionAs3dpPercent(editorState.alpha) +
+        ' alpha';
 
   return (
     <Stack>
@@ -135,8 +137,7 @@ const getInitialEditorState = (initialValue: string): EditorState | null => {
   };
 };
 
-const formatVariable = (variable: string) =>
-  titleCase(variable.replace(/^--ag-/i, '').replace(/-color/i, ''));
+const formatVariable = (variable: string) => titleCase(variable.replace(/^--ag-/i, ''));
 
 const VariableOption = ({ variable }: { variable: string }) => {
   return (

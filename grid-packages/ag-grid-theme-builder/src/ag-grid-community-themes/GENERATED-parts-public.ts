@@ -45,6 +45,7 @@ export type CoreParam =
   | 'borderRadius'
   | 'wrapperBorderRadius'
   | 'cellWidgetSpacing'
+  | 'labelWidgetSpacing'
   | 'rowGroupIndentSize'
   | 'valueChangeDeltaUpColor'
   | 'valueChangeDeltaDownColor'
@@ -131,6 +132,7 @@ export const core = definePart<CoreParam>({
     borderRadius: '4px',
     wrapperBorderRadius: '8px',
     cellWidgetSpacing: helpers.calc('gridSize * 1.5'),
+    labelWidgetSpacing: helpers.ref('gridSize'),
     rowGroupIndentSize: helpers.calc('cellWidgetSpacing + iconSize'),
     valueChangeDeltaUpColor: '#43a047',
     valueChangeDeltaDownColor: '#e53935',
@@ -537,6 +539,15 @@ export type ParamTypes = {
    * @default calc("gridSize * 1.5")
    */
   cellWidgetSpacing: string;
+
+  /**
+   * Horizontal spacing between icons and text inside labels, e.g. in the header and sidebar tabs
+   *
+   * A CSS number value with length units, e.g. "1px" or "2em". If a JavaScript number is provided, its units are assumed to be 'px'.
+   *
+   * @default ref("gridSize")
+   */
+  labelWidgetSpacing: string;
 
   /**
    * The indentation applied to each level of row grouping - deep rows are indented by a multiple of this value.
