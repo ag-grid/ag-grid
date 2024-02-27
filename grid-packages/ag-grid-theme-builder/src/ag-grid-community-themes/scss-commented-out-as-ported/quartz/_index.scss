@@ -457,7 +457,7 @@
 
   .ag-chart-menu-close {
     // use an opaque hover effect because we don't know what colour we're,
-    // overlaying on top of, the user might have set a custom
+    // overlaying on top of, the user might have set a custom background color
     --ag-quartz-icon-hover-color: color-mix(
       in srgb,
       var(--ag-background-color),

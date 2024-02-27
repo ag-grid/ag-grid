@@ -9,6 +9,7 @@ import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { styled } from '@mui/joy';
 import { useAtomValue } from 'jotai';
 import { memo, useMemo, useState } from 'react';
@@ -26,7 +27,10 @@ ModuleRegistry.registerModules([
   RangeSelectionModule,
   RowGroupingModule,
   GridChartsModule,
+  SetFilterModule,
 ]);
+
+ModuleRegistry.registerModules([SetFilterModule]);
 
 const GridPreview = () => {
   const gridConfig = useAtomValue(gridConfigAtom);

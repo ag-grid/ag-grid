@@ -20,7 +20,7 @@ const GridConfigDropdown = () => {
 
   return (
     <Card>
-      {gridConfigBooleanFields.map((property) => {
+      {gridConfigBooleanFields.toSorted().map((property) => {
         const showFiltersWarning = filtersConflict && property === 'filtersToolPanel';
         const item = (
           <ListItem key={property} sx={{ gap: 1 }}>

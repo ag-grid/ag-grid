@@ -3,17 +3,20 @@
   outline: none;
 }
 
-:where(button[class^='ag-'], input[class^='ag-']) {
+:where(button[class^='ag-'], input[class^='ag-'], textarea[class^='ag-']) {
   border: none;
   padding: 0;
-  margin: none;
+  margin: 0;
   background: none;
   color: inherit;
   font-size: inherit;
   font-family: inherit;
-  font-weight: inherit;
   line-height: inherit;
   cursor: pointer;
+}
+
+:where(button[class^='ag-']) {
+  font-weight: inherit;
 }
 
 :where([class^='ag-']::-ms-clear) {

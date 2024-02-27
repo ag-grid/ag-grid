@@ -131,6 +131,7 @@
     display: flex;
   }
 
+  // TODO remove this and replace with flex gap in column drop, already done for header
   .ag-sort-indicator-icon {
     @include ag.unthemed-rtl(
       (

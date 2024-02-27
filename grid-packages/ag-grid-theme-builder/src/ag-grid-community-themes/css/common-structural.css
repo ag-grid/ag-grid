@@ -186,10 +186,10 @@ ag-grid-aurelia {
 
 .ag-body-viewport {
   display: flex;
+  -webkit-overflow-scrolling: touch;
 
   &.ag-layout-normal {
     overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
   }
 }
 
@@ -353,151 +353,6 @@ ag-grid-aurelia {
   &.ag-scroller-corner {
     overflow-x: hidden;
   }
-}
-
-/**
- ****************************
- * Headers
- ****************************
- */
-.ag-header,
-.ag-pinned-left-header,
-.ag-pinned-right-header {
-  display: inline-block;
-  overflow: hidden;
-  position: relative;
-}
-
-.ag-header-cell-sortable .ag-header-cell-label {
-  cursor: pointer;
-}
-
-.ag-header {
-  display: flex;
-  width: 100%;
-  white-space: nowrap;
-}
-
-.ag-pinned-left-header {
-  height: 100%;
-}
-
-.ag-pinned-right-header {
-  height: 100%;
-}
-
-.ag-header-row {
-  position: absolute;
-}
-
-.ag-header-row:not(.ag-header-row-column-group) {
-  overflow: hidden;
-}
-
-.ag-header.ag-header-allow-overflow .ag-header-row {
-  overflow: visible;
-}
-
-.ag-header-cell {
-  display: inline-flex;
-  align-items: center;
-  position: absolute;
-  height: 100%;
-}
-
-.ag-header-cell.ag-header-active .ag-header-cell-menu-button,
-.ag-header-cell-filter-button {
-  opacity: 1;
-}
-
-.ag-header-cell-menu-button:not(.ag-header-menu-always-show) {
-  transition: opacity 0.2s;
-  opacity: 0;
-}
-
-.ag-header-group-cell-label,
-.ag-header-cell-label {
-  display: flex;
-  flex: 1 1 auto;
-  align-self: stretch;
-  align-items: center;
-}
-
-.ag-header-cell-label {
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.ag-header-group-cell-label.ag-sticky-label {
-  position: sticky;
-  flex: none;
-  max-width: 100%;
-}
-
-.ag-header-group-text {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.ag-header-cell-text {
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.ag-header-cell:not(.ag-header-cell-auto-height) .ag-header-cell-comp-wrapper {
-  height: 100%;
-  display: flex;
-  align-items: center;
-}
-
-.ag-header-cell-comp-wrapper {
-  width: 100%;
-}
-
-.ag-header-cell-wrap-text .ag-header-cell-comp-wrapper {
-  white-space: normal;
-}
-
-.ag-right-aligned-header .ag-header-cell-label {
-  flex-direction: row-reverse;
-}
-
-.ag-header-cell-resize {
-  position: absolute;
-  z-index: 2;
-  height: 100%;
-  width: 8px;
-  top: 0;
-
-  cursor: ew-resize;
-
-  /* unpinned headers get their rezise handle on the right in normal mode and left in RTL mode */
-  right: -4px;
-}
-
-.ag-pinned-left-header .ag-header-cell-resize {
-  /* pinned left headers always have their resize on the right, even in RTL mode */
-  /*rtl:ignore*/
-  right: -4px;
-}
-
-.ag-pinned-right-header .ag-header-cell-resize {
-  /* pinned right headers always have their resize on the left, even in RTL mode */
-  /*rtl:ignore*/
-  left: -4px;
-}
-
-.ag-header-select-all {
-  display: flex;
-}
-
-.ag-header-cell-menu-button,
-.ag-header-cell-filter-button,
-.ag-side-button-button,
-.ag-panel-title-bar-button,
-.ag-floating-filter-button-button {
-  cursor: pointer;
 }
 
 /**
@@ -789,89 +644,6 @@ ag-grid-aurelia {
 .ag-cell .ag-icon {
   display: inline-block;
   vertical-align: middle;
-}
-
-/**
- ****************************
- * Filters
- ****************************
- */
-.ag-set-filter-item {
-  display: flex;
-  align-items: center;
-  height: 100%;
-}
-
-.ag-set-filter-item-checkbox {
-  display: flex;
-  overflow: hidden;
-  height: 100%;
-}
-
-.ag-set-filter-group-icons {
-  display: block;
-  > * {
-    cursor: pointer;
-  }
-}
-
-.ag-filter-body-wrapper {
-  display: flex;
-  flex-direction: column;
-}
-
-.ag-filter-filter {
-  flex: 1 1 0px;
-}
-
-.ag-filter-condition {
-  display: flex;
-  justify-content: center;
-}
-
-/**
- ****************************
- * Floating Filter
- ****************************
- */
-
-.ag-floating-filter-body {
-  position: relative;
-  display: flex;
-  flex: 1 1 auto;
-  height: 100%;
-}
-
-.ag-floating-filter-full-body {
-  display: flex;
-  flex: 1 1 auto;
-  height: 100%;
-  width: 100%;
-  align-items: center;
-  overflow: hidden;
-}
-
-.ag-floating-filter-full-body > div {
-  flex: 1 1 auto;
-}
-
-.ag-floating-filter-input {
-  align-items: center;
-  display: flex;
-  width: 100%;
-
-  > * {
-    flex: 1 1 auto;
-  }
-}
-
-.ag-floating-filter-button {
-  display: flex;
-  flex: none;
-}
-
-.ag-set-floating-filter-input input[disabled] {
-  pointer-events: none;
 }
 
 /**
@@ -1418,17 +1190,6 @@ ag-grid-aurelia {
   height: 100%;
 }
 
-.ag-header-group-cell {
-  display: flex;
-  align-items: center;
-  height: 100%;
-  position: absolute;
-}
-
-.ag-header-group-cell-no-group.ag-header-span-height .ag-header-cell-resize {
-  display: none;
-}
-
 .ag-cell-label-container {
   display: flex;
   justify-content: space-between;
@@ -1572,6 +1333,7 @@ ag-grid-aurelia {
 }
 
 .ag-floating-filter-input .ag-input-field-input[type='date'] {
+  /* TODO test and remove */
   /* Fix a bug in Blink rendering engine where date input will not shrink from its default size in a
         flex container, but it will grow. So we give it a very small width and it will grow to the right size */
   width: 1px;
@@ -1726,22 +1488,6 @@ ag-grid-aurelia {
   cursor: pointer;
 }
 
-/*     
-TODO restore this using a variable
-    @for $i from 1 to 10 {
-        .ag-column-select-indent-#{$i} {
-            @include ag.unthemed-rtl(( padding-left: $i * 20px ));
-        }
-
-        .ag-set-filter-indent-#{$i} {
-            @include ag.unthemed-rtl(( padding-left: $i * 20px ));
-        }
-
-        .ag-row-group-indent-#{$i} {
-            @include ag.unthemed-rtl(( padding-left: $i * 20px ));
-        }
-    } */
-
 .ag-ltr {
   direction: ltr;
   .ag-body,
@@ -1773,8 +1519,4 @@ TODO restore this using a variable
     display: block;
     transform: rotate(180deg);
   }
-}
-
-.ag-body .ag-body-viewport {
-  -webkit-overflow-scrolling: touch;
 }

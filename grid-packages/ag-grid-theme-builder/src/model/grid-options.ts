@@ -11,6 +11,8 @@ export const gridConfigBooleanFields = [
   'rowDrag',
   'rowSelection',
   'integratedCharts',
+  'rightToLeft',
+  'floatingFilters',
 ] as const;
 
 type GridConfigBooleanField = (typeof gridConfigBooleanFields)[number];
@@ -24,6 +26,7 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
     sortable: true,
     resizable: config.columnResizing,
     enableRowGroup: true,
+    floatingFilter: config.floatingFilters,
   };
   const columnDefs = buildSimpleColumnDefs();
   const sideBar: string[] = [];
@@ -35,6 +38,7 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
     enableRangeSelection: true,
     rowData: defaultRowData(),
     columnDefs: config.columnGroups ? buildGroupColumnDefs(columnDefs) : columnDefs,
+    enableRtl: config.rightToLeft,
   };
 
   if (config.advancedFilter) {

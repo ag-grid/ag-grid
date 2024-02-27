@@ -1,3 +1,4 @@
+/* PORTED
 @use 'ag';
 
 @mixin output {
@@ -6,19 +7,19 @@
     background-color: var(--ag-header-background-color);
     // border-bottom: var(--ag-borders-critical) var(--ag-border-color);
   }
-
+  
   .ag-header-row {
     color: var(--ag-header-foreground-color);
     height: var(--ag-header-height);
   }
-
-  // .ag-pinned-right-header {
-  //     border-left: var(--ag-borders-critical) var(--ag-border-color);
-  // }
-
-  // .ag-pinned-left-header {
-  //     border-right: var(--ag-borders-critical) var(--ag-border-color);
-  // }
+  
+  .ag-pinned-right-header {
+    border-left: var(--ag-borders-critical) var(--ag-border-color);
+  }
+  
+  .ag-pinned-left-header {
+    border-right: var(--ag-borders-critical) var(--ag-border-color);
+  }
 
   .ag-header-cell:not(.ag-right-aligned-header) {
     .ag-header-label-icon,
@@ -77,26 +78,39 @@
       )
     );
   }
+  */
 
-  // .ag-header-row:not(:first-child) {
-  //     .ag-header-cell:not(.ag-header-span-height.ag-header-span-total),
-  //     .ag-header-group-cell.ag-header-group-cell-with-group {
-  //         border-top: var(--ag-borders-critical) var(--ag-border-color);
-  //     }
-  // }
+// .ag-header-row:not(:first-child) {
+//     .ag-header-cell:not(.ag-header-span-height.ag-header-span-total),
+//     .ag-header-group-cell.ag-header-group-cell-with-group {
+//         border-top: var(--ag-borders-critical) var(--ag-border-color);
+//     }
+// }
 
-  // This logic with :not(.ag-column-resizing) is to prevent a mouseover effect
-  // being applied to the adjacent cell as the user resizes a cell, because
-  // during a resize, the mouse will momentarily move over the neighbouring cell
-  .ag-header-group-cell:not(.ag-column-resizing) + .ag-header-group-cell:not(.ag-column-hover),
-  .ag-header-cell:not(.ag-column-resizing) + .ag-header-cell:not(.ag-column-hover),
-  .ag-header-group-cell:first-of-type,
-  .ag-header-cell:not(.ag-column-hover):first-of-type {
-    &:not(.ag-header-cell-moving):hover,
-    &.ag-column-resizing {
-      background-color: var(--ag-header-cell-hover-background-color);
-    }
+// TODO if we're going to implement header cell hover, make it an optional part
+
+// This logic with :not(.ag-column-resizing) is to prevent a mouseover effect
+// being applied to the adjacent cell as the user resizes a cell, because
+// during a resize, the mouse will momentarily move over the neighbouring cell
+.ag-header-group-cell:not(.ag-column-resizing) + .ag-header-group-cell:not(.ag-column-hover),
+.ag-header-cell:not(.ag-column-resizing) + .ag-header-cell:not(.ag-column-hover),
+.ag-header-group-cell:first-of-type,
+.ag-header-cell:not(.ag-column-hover):first-of-type {
+  &:not(.ag-header-cell-moving):hover,
+  &.ag-column-resizing {
+    background-color: var(--ag-header-cell-hover-background-color);
   }
+}
+
+.ag-header-cell,
+.ag-header-group-cell {
+  &.ag-header-cell-moving {
+    // NOTE: when header cell hover is reinstated, the moving color should always be the hover colour
+    background-color: var(--ag-header-cell-moving-background-color);
+  }
+}
+
+/* PORTED
 
   .ag-header-cell::before,
   .ag-header-group-cell:not(.ag-header-span-height.ag-header-group-cell-no-group)::before {
@@ -191,3 +205,4 @@
     z-index: 1;
   }
 }
+*/

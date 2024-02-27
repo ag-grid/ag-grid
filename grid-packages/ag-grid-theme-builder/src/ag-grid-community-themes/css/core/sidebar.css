@@ -74,3 +74,28 @@
     transform: rotate(0.05deg);
   }
 }
+
+/* sidebar visually on left */
+.ag-ltr .ag-side-bar-left,
+.ag-rtl .ag-side-bar-right {
+  border-right: var(--ag-side-panel-border);
+
+  .ag-tool-panel-wrapper {
+    /*rtl:ignore*/
+    border-left: var(--ag-side-panel-border);
+  }
+}
+/* sidebar visually on right */
+.ag-rtl .ag-side-bar-left,
+.ag-ltr .ag-side-bar-right {
+  border-left: var(--ag-side-panel-border);
+
+  .ag-tool-panel-wrapper {
+    /*rtl:ignore*/
+    border-right: var(--ag-side-panel-border);
+  }
+}
+
+.ag-chart-menu-panel {
+  border-left: var(--ag-side-panel-border);
+}

@@ -28,6 +28,7 @@ export type CoreParam =
   | 'fontFamily'
   | 'chromeBackgroundColor'
   | 'headerBackgroundColor'
+  | 'headerFontWeight'
   | 'headerForegroundColor'
   | 'dataColor'
   | 'rangeSelectionBorderStyle'
@@ -58,7 +59,13 @@ export type CoreParam =
   | 'dragGhostBackgroundColor'
   | 'dragGhostBorder'
   | 'insetFocusShadow'
-  | 'sideBarPanelWidth';
+  | 'sideBarPanelWidth'
+  | 'headerColumnResizeHandleDisplay'
+  | 'headerColumnResizeHandleHeight'
+  | 'headerColumnResizeHandleWidth'
+  | 'headerColumnResizeHandleColor'
+  | 'widgetContainerHorizontalPadding'
+  | 'widgetContainerVerticalPadding';
 
 export type ColorsPreset = 'light' | 'dark';
 
@@ -75,10 +82,12 @@ export type QuartzIconsParam = 'quartzIconsPreset' | 'iconSize' | 'iconStrokeWid
 import sidebarCssImport from './css/core/sidebar.css?inline';
 import rootCssImport from './css/core/root.css?inline';
 import resetCssImport from './css/core/reset.css?inline';
+import pinnedColumnsCssImport from './css/core/pinned-columns.css?inline';
 import headerCssImport from './css/core/header.css?inline';
 import gridLayoutCssImport from './css/core/grid-layout.css?inline';
 import gridBordersCssImport from './css/core/grid-borders.css?inline';
 import dragAndDropCssImport from './css/core/drag-and-drop.css?inline';
+import columnFiltersCssImport from './css/core/column-filters.css?inline';
 import columnDropCssImport from './css/core/column-drop.css?inline';
 import bordersTodoMoveIntoComponentFilesCssImport from './css/core/borders-todo-move-into-component-files.css?inline';
 import advancedFilterCssImport from './css/core/advanced-filter.css?inline';
@@ -105,6 +114,7 @@ export const core = definePart<CoreParam>({
       "'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif",
     chromeBackgroundColor: helpers.transparentForeground(0.02),
     headerBackgroundColor: helpers.ref('chromeBackgroundColor'),
+    headerFontWeight: '500',
     headerForegroundColor: helpers.ref('foregroundColor'),
     dataColor: helpers.ref('foregroundColor'),
     rangeSelectionBorderStyle: 'solid',
@@ -136,15 +146,23 @@ export const core = definePart<CoreParam>({
     dragGhostBorder: true,
     insetFocusShadow: 'inset 0 0 5px var(--ag-accent-color)',
     sideBarPanelWidth: '250px',
+    headerColumnResizeHandleDisplay: 'block',
+    headerColumnResizeHandleHeight: '30%',
+    headerColumnResizeHandleWidth: '2px',
+    headerColumnResizeHandleColor: helpers.ref('borderColor'),
+    widgetContainerHorizontalPadding: helpers.calc('gridSize * 1.5'),
+    widgetContainerVerticalPadding: helpers.calc('gridSize * 1.5'),
   },
   css: [
     sidebarCssImport,
     rootCssImport,
     resetCssImport,
+    pinnedColumnsCssImport,
     headerCssImport,
     gridLayoutCssImport,
     gridBordersCssImport,
     dragAndDropCssImport,
+    columnFiltersCssImport,
     columnDropCssImport,
     bordersTodoMoveIntoComponentFilesCssImport,
     advancedFilterCssImport,
@@ -251,7 +269,7 @@ export type ParamTypes = {
   wrapperBorder: string | boolean;
 
   /**
-   * Borders between and below headers, including ordinary header rows and components that render within header rows such as the floating filter and advanced filter
+   * Borders between and below header rows.
    *
    * A CSS border value e.g. "solid 1px red". Passing true is equivalent to "solid 1px var(--ag-border-color)", and false to "none".
    *
@@ -359,7 +377,7 @@ export type ParamTypes = {
   chromeBackgroundColor: string;
 
   /**
-   * Background colour for non-data areas of the grid. Headers, tool panels and menus use this colour by default.
+   * Background colour for header and header-like.
    *
    * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
    *
@@ -368,7 +386,16 @@ export type ParamTypes = {
   headerBackgroundColor: string;
 
   /**
-   * Background colour for non-data areas of the grid. Headers, tool panels and menus use this colour by default.
+   * Weight of text in the header
+   *
+   * Any valid CSS expression is accepted.
+   *
+   * @default "500"
+   */
+  headerFontWeight: string;
+
+  /**
+   * Colour of text in the header
    *
    * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
    *
@@ -645,6 +672,60 @@ export type ParamTypes = {
    * @default "250px"
    */
   sideBarPanelWidth: string;
+
+  /**
+   * Whether to show an indicator of the drag handle on resizable header columns. If hidden, the handle will still be active but invisible.
+   *
+   * Any valid CSS expression is accepted.
+   *
+   * @default "block"
+   */
+  headerColumnResizeHandleDisplay: string;
+
+  /**
+   * Height of the drag handle on resizable header columns. Percentage values are relative to the header height.
+   *
+   * A CSS number value with length units, e.g. "1px" or "2em". If a JavaScript number is provided, its units are assumed to be 'px'.
+   *
+   * @default "30%"
+   */
+  headerColumnResizeHandleHeight: string;
+
+  /**
+   * Width of the drag handle on resizable header columns.
+   *
+   * A CSS number value with length units, e.g. "1px" or "2em". If a JavaScript number is provided, its units are assumed to be 'px'.
+   *
+   * @default "2px"
+   */
+  headerColumnResizeHandleWidth: string;
+
+  /**
+   * Colour of the drag handle on resizable header columns
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default ref("borderColor")
+   */
+  headerColumnResizeHandleColor: string;
+
+  /**
+   * The horizontal padding of containers that contain stacked widgets, such as menus and tool panels
+   *
+   * A CSS number value with length units, e.g. "1px" or "2em". If a JavaScript number is provided, its units are assumed to be 'px'.
+   *
+   * @default calc("gridSize * 1.5")
+   */
+  widgetContainerHorizontalPadding: string;
+
+  /**
+   * The vertical padding of containers that contain stacked widgets, such as menus and tool panels
+   *
+   * A CSS number value with length units, e.g. "1px" or "2em". If a JavaScript number is provided, its units are assumed to be 'px'.
+   *
+   * @default calc("gridSize * 1.5")
+   */
+  widgetContainerVerticalPadding: string;
 
   /**
    * Use one of the built-in sets of preset colors values. Available presets are: "light", "dark".

@@ -88,7 +88,7 @@ export const defineTheme = <P extends AnyPart, V extends object = ParamTypes>(
   }
   variableDefaults += '}';
 
-  // combine CSS and conditional CSS
+  // combine CSS
   const mainCSS: string[] = [variableDefaults, commonStructuralCSS];
   for (const part of parts) {
     if (part.css) {
@@ -118,6 +118,9 @@ export const checkForUnsupportedVariables = (css: string, params: string[]) => {
 };
 
 const cssPartToString = (p: CssSource, params: Record<string, any>): string =>
+  // TODO allowing part functions to take params is a hack for icons to include
+  // the stroke width in the embedded SVG, when we implement inline SVGs combine
+  // all part CSS at build time and treat it as a string
   typeof p === 'function' ? p(params) : p;
 
 const isBorderParam = (property: string) =>

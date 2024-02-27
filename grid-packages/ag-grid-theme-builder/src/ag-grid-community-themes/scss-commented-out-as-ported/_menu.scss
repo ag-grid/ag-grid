@@ -104,11 +104,9 @@
     color: var(--ag-secondary-foreground-color);
   }
 
-  /* PORTED
   .ag-filter-separator {
     border-top: var(--ag-borders-critical) var(--ag-border-color);
   }
-  */
 
   .ag-filter-select .ag-picker-field-wrapper {
     // Force picker to match width of sibling inputs.
