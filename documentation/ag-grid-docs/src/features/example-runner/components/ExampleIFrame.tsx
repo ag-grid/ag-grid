@@ -36,13 +36,13 @@ export const ExampleIFrame: FunctionComponent<Props> = ({ isHidden, url, loading
         iFrameRef.current.src = url;
     }, [isIntersecting, url]);
 
-        // when dark mode is changed, applies it to the iframe.
-        useEffect(() => {
-            if (!iFrameRef.current) {
-                return;
-            }
-            applyExampleDarkMode(iFrameRef.current.contentDocument!, darkMode);
-        }, [darkMode]);
+    // when dark mode is changed, applies it to the iframe.
+    useEffect(() => {
+        if (!iFrameRef.current) {
+            return;
+        }
+        applyExampleDarkMode(iFrameRef.current.contentDocument!, darkMode);
+    }, [darkMode]);
 
     return (
         <div
@@ -64,13 +64,13 @@ export const ExampleIFrame: FunctionComponent<Props> = ({ isHidden, url, loading
     );
 };
 
-const themes: Record<string,any> = {
-    "ag-theme-quartz": {dark: false, other: "ag-theme-quartz-dark"},
-    "ag-theme-quartz-dark": {dark: true, other: "ag-theme-quartz"},
-    "ag-theme-alpine": {dark: false, other: "ag-theme-alpine-dark"},
-    "ag-theme-alpine-dark": {dark: true, other: "ag-theme-alpine"},
-    "ag-theme-balham": {dark: false, other: "ag-theme-balham-dark"},
-    "ag-theme-balham-dark": {dark: true, other: "ag-theme-balham"},
+const themes: Record<string, any> = {
+    "ag-theme-quartz": { dark: false, other: "ag-theme-quartz-dark" },
+    "ag-theme-quartz-dark": { dark: true, other: "ag-theme-quartz" },
+    "ag-theme-alpine": { dark: false, other: "ag-theme-alpine-dark" },
+    "ag-theme-alpine-dark": { dark: true, other: "ag-theme-alpine" },
+    "ag-theme-balham": { dark: false, other: "ag-theme-balham-dark" },
+    "ag-theme-balham-dark": { dark: true, other: "ag-theme-balham" },
 }
 
 const applyExampleDarkMode = (document: Document, darkMode: boolean) => {
@@ -96,9 +96,9 @@ const injectStylesheet = (document: Document) => {
     const id = 'example-runner-injected-styles';
     let style = document.body.querySelector(`#${id}`);
     if (!style) {
-      style = document.createElement('style');
-      style.setAttribute('id', id);
-      document.body.insertBefore(style, document.body.firstChild);
+        style = document.createElement('style');
+        style.setAttribute('id', id);
+        document.body.insertBefore(style, document.body.firstChild);
     }
     style.textContent = exampleRuntimeInjectedStyles;
 };
