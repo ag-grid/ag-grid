@@ -83,7 +83,8 @@ export const FILES_PATH_MAP: Record<string, string | GlobConfig> = {
     // Framework libraries
     // '@ag-grid-community/react/dist/**': 'community-modules/react/dist/**/*.{cjs,js,map}',
     // '@ag-grid-community/react/src/**': 'community-modules/react/src/**/*.{ts,tsx}',
-    '@ag-grid-community/react/**': 'community-modules/react/**/*.{cjs,mjs,tsx,ts,js,map}',
+    '@ag-grid-community/react/dist/**': 'community-modules/react/dist/**/*.{cjs,mjs,js,map}',
+    '@ag-grid-community/react/src/**': 'community-modules/react/src/**/*.{tsx,ts}',
 
     // '@ag-grid-community/angular':
     //     'community-modules/angular/dist/ag-grid-angular/fesm2015/ag-grid-community-angular.mjs',
