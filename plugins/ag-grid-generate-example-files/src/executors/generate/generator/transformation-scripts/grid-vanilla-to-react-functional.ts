@@ -34,6 +34,10 @@ function getModuleImports(bindings: any, componentFilenames: string[], allStyles
     }
 
     if(bindings.moduleRegistration){
+
+        const moduleImports = bindings.imports.filter((i) => i.imports.find(m => m.includes('Module')));
+        addBindingImports(moduleImports, imports, false, true);
+
         imports.push(bindings.moduleRegistration);
     }
 
