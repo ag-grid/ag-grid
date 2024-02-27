@@ -1,0 +1,75 @@
+{
+    "2024": [
+      {
+        "title": "NGConf",
+        "description": "...",
+        "location": "Salt Lake City, USA",
+        "framework": "Angular"
+      },
+      {
+        "title": "React Summit",
+        "description": "...",
+        "location": "Amsterdam, NL",
+        "framework": "React"
+      },
+      {
+        "title": "React Advanced",
+        "description": "...",
+        "location": "London, UK",
+        "framework": "React"
+      },
+      {
+        "title": "React Summit",
+        "description": "...",
+        "location": "New Jersey, USA",
+        "framework": "React"
+      }
+    ],
+    "2023": [
+      {
+        "title": "NGConf",
+        "description": "...",
+        "location": "Salt Lake City, USA",
+        "framework": "React"
+      },
+      {
+        "title": "React Summit",
+        "description": "...",
+        "location": "Amsterdam, NL",
+        "framework": "React"
+      },
+      {
+        "title": "React Advanced",
+        "description": "...",
+        "location": "London, UK",
+        "framework": "React"
+      },
+      {
+        "title": "React Summit",
+        "description": "...",
+        "location": "New Jersey, USA",
+        "framework": "React"
+      }
+    ],
+    "2022": [
+      {
+        "title": "JS Nation",
+        "description": "...",
+        "location": "Amsterdam, NL",
+        "framework": "JavaScript"
+      },
+      {
+        "title": "React Summit",
+        "description": "...",
+        "location": "Amsterdam, NL",
+        "framework": "React"
+      },
+      {
+        "title": "React Global Online Summit",
+        "description": "...",
+        "location": "",
+        "framework": "React"
+      }
+    ]
+  }
+  
