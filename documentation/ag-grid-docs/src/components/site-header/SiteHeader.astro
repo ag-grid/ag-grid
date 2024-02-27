@@ -11,6 +11,7 @@ import { SiteLogo } from './SiteLogo';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 // import { isDynamicFrameworkPath, replaceDynamicFrameworkPath } from '@utils/framework';
 import { DarkModeToggle } from './DarkModeToggle';
+import { ProductDropdown } from '@components/productDropdown/ProductDropdown';
 
 const { pathname } = Astro.url;
 const { data: menuData } = await getEntry('menu', 'data');
@@ -48,12 +49,30 @@ export interface Props {
     showSearchBar?: boolean;
     showDocsNav?: boolean;
 }
+
 const { showDocsNav } = Astro.props;
+
+const dropdownItems = [
+    {
+        title: 'AG Charts',
+        description: 'Best JavaScript Charts in the World',
+        icon: 'icon',
+        link: 'https://charts.ag-grid.com',
+    },
+    {
+        title: 'AG Grid',
+        description: 'Best JavaScript Grid in the World',
+        icon: 'icon',
+        link: 'https://ag-grid.com',
+    },
+];
 ---
 
 <header class:list={[styles.header, 'site-header']}>
     <div class:list={[styles.headerInner, 'layout-page-max-width']}>
         <SiteLogo client:load />
+
+        <ProductDropdown client:load items={dropdownItems} children={null} />
 
         {
             showDocsNav && (
