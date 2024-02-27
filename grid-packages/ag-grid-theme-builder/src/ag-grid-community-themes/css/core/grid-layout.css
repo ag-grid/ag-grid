@@ -68,6 +68,11 @@
   );
 }
 
+.ag-group-expanded,
+.ag-group-contracted {
+  cursor: pointer;
+}
+
 .ag-cell,
 .ag-full-width-row .ag-cell-wrapper.ag-row-group {
   /* There is always a 1px border around cells, defaulting to transparent to
@@ -80,10 +85,31 @@
   border-right: var(--ag-column-border);
 }
 
-.ag-cell-wrapper > *:not(.ag-cell-value):not(.ag-group-value) {
-  /* cell widgets like checkboxes don't respond to line-height, so set their
-  height to vertically centre them */
-  height: var(--ag-internal-content-line-height);
+.ag-cell-wrapper {
+  display: flex;
+  align-items: center;
+
+  &.ag-row-group {
+    align-items: flex-start;
+  }
+
+  > *:not(.ag-cell-value):not(.ag-group-value) {
+    /* cell widgets like checkboxes don't respond to line-height, so set their
+    height to vertically centre them */
+    height: var(--ag-internal-content-line-height);
+    display: flex;
+    align-items: center;
+  }
+}
+
+.ag-row-drag,
+.ag-selection-checkbox,
+.ag-group-expanded,
+.ag-group-contracted {
+  margin-right: var(--ag-cell-widget-spacing);
+}
+.ag-group-child-count {
+  margin-left: 3px;
 }
 
 .ag-row-highlight-above::after,

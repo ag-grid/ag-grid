@@ -1,0 +1,42 @@
+.ag-radio-button-input-wrapper {
+  border-radius: var(--ag-icon-size);
+
+  // ::after used for icon font glyph - most icons use ::before but widgets
+    // are the other way round for backwards compatibility
+    &::after {
+    content: ag.icon-content(radio-button-off);
+    color: var(--ag-checkbox-unchecked-color);
+    display: var(--ag-icon-font-display-radio-button-off, var(--ag-icon-font-display));
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+  }
+
+  &.ag-checked::after {
+    content: ag.icon-content(radio-button-on);
+    color: var(--ag-checkbox-checked-color);
+    display: var(--ag-icon-font-display-radio-button-on, var(--ag-icon-font-display));
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+  }
+
+  // ::before used for icon images
+    &::before {
+    content: '';
+    background: transparent center/contain no-repeat;
+    position: absolute;
+    inset: 0;
+    background-image: var(--ag-icon-image-radio-button-off, var(--ag-icon-image));
+    display: var(--ag-icon-image-display-radio-button-off, var(--ag-icon-image-display));
+    opacity: var(--ag-icon-image-opacity-radio-button-off, var(--ag-icon-image-opacity, 0.9));
+  }
+
+  &.ag-checked::before {
+    background-image: var(--ag-icon-image-radio-button-on, var(--ag-icon-image));
+    display: var(--ag-icon-image-display-radio-button-on, var(--ag-icon-image-display));
+    opacity: var(--ag-icon-image-opacity-radio-button-on, var(--ag-icon-image-opacity, 0.9));
+  }
+}

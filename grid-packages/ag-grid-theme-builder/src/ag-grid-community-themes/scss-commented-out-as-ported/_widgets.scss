@@ -1,3 +1,4 @@
+/* PORTED
 @use 'ag';
 
 @mixin output {
@@ -19,6 +20,7 @@
     width: unset;
     min-width: unset;
   }
+  */
 
   .ag-button {
     border-radius: 0px;
@@ -146,6 +148,7 @@
   ////////////////////////////////////////
   // Selection checkbox
   ////////////////////////////////////////
+  /* PORTED
   .ag-row-drag,
   .ag-selection-checkbox,
   .ag-group-expanded,
@@ -160,7 +163,6 @@
   }
 
   .ag-cell-wrapper > *:not(.ag-cell-value):not(.ag-group-value) {
-    /* PORTED
     // assign internal variables to simplify the `height` value
     --ag-internal-calculated-line-height: var(
       --ag-line-height,
@@ -169,17 +171,11 @@
     --ag-internal-padded-row-height: calc(var(--ag-row-height) - var(--ag-row-border-width));
     // Needed to capitalize min, because it clashes with old versions of Sass
     height: Min(var(--ag-internal-calculated-line-height), var(--ag-internal-padded-row-height));
-    */
     display: flex;
     align-items: center;
     flex: none;
   }
-
-  .ag-group-expanded,
-  .ag-group-contracted {
-    cursor: pointer;
-  }
-
+  
   .ag-group-title-bar-icon {
     cursor: pointer;
     flex: none;
@@ -212,6 +208,7 @@
   .group-item {
     margin: calc(var(--ag-grid-size) * 0.5) 0;
   }
+  */
 
   .ag-label {
     white-space: nowrap;

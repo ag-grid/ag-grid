@@ -103,7 +103,14 @@ import columnDropCssImport from './css/core/column-drop.css?inline';
 import cellEditingCssImport from './css/core/cell-editing.css?inline';
 import bordersTodoMoveIntoComponentFilesCssImport from './css/core/borders-todo-move-into-component-files.css?inline';
 import advancedFilterCssImport from './css/core/advanced-filter.css?inline';
+import widgetsToggleButtonCssImport from './css/core/widgets/toggle-button.css?inline';
+import widgetsRangeCssImport from './css/core/widgets/range.css?inline';
+import widgetsRadioButtonCssImport from './css/core/widgets/radio-button.css?inline';
 import widgetsListsCssImport from './css/core/widgets/lists.css?inline';
+import widgetsInputsCssImport from './css/core/widgets/inputs.css?inline';
+import widgetsGroupCssImport from './css/core/widgets/group.css?inline';
+import widgetsCheckboxCssImport from './css/core/widgets/checkbox.css?inline';
+import widgetsCheckButtonSharedCssImport from './css/core/widgets/check-button-shared.css?inline';
 
 export const core = definePart<CoreParam>({
   partId: 'core',
@@ -191,7 +198,14 @@ export const core = definePart<CoreParam>({
     cellEditingCssImport,
     bordersTodoMoveIntoComponentFilesCssImport,
     advancedFilterCssImport,
+    widgetsToggleButtonCssImport,
+    widgetsRangeCssImport,
+    widgetsRadioButtonCssImport,
     widgetsListsCssImport,
+    widgetsInputsCssImport,
+    widgetsGroupCssImport,
+    widgetsCheckboxCssImport,
+    widgetsCheckButtonSharedCssImport,
   ],
 });
 

@@ -1,0 +1,13 @@
+.ag-input-field-input {
+  width: 100%;
+  min-width: 0;
+}
+
+.ag-label {
+  white-space: nowrap;
+  @include ag.unthemed-rtl((margin-right: var(--ag-grid-size)));
+}
+
+.ag-label-align-top .ag-label {
+  margin-bottom: calc(var(--ag-grid-size) * 0.5);
+}

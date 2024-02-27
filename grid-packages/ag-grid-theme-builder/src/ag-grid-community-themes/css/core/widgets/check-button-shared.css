@@ -1,0 +1,30 @@
+.ag-checkbox-input-wrapper,
+.ag-radio-button-input-wrapper {
+  /* TODO apply icons */
+  /* @include ag.icon(); */
+
+  width: var(--ag-icon-size);
+  height: var(--ag-icon-size);
+
+  & input {
+    appearance: none;
+    width: 100%;
+    height: 100%;
+  }
+
+  background-color: var(--ag-checkbox-background-color);
+  border-radius: var(--ag-checkbox-border-radius);
+  display: inline-block;
+  vertical-align: middle;
+  flex: none;
+
+  &:focus-within,
+  &:active {
+    outline: none;
+    box-shadow: var(--ag-input-focus-box-shadow);
+  }
+
+  &.ag-disabled {
+    opacity: 0.5;
+  }
+}

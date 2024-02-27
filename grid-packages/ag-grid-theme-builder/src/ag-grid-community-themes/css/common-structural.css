@@ -604,14 +604,6 @@ ag-grid-aurelia {
   word-break: break-all;
 }
 
-.ag-cell-wrapper {
-  display: flex;
-  align-items: center;
-  &.ag-row-group {
-    align-items: flex-start;
-  }
-}
-
 .ag-sparkline-wrapper {
   position: absolute;
   /* TODO use inset */
@@ -1339,11 +1331,6 @@ ag-grid-aurelia {
   /* Fix a bug in Blink rendering engine where date input will not shrink from its default size in a
         flex container, but it will grow. So we give it a very small width and it will grow to the right size */
   width: 1px;
-}
-
-.ag-range-field {
-  display: flex;
-  align-items: center;
 }
 
 .ag-angle-select {

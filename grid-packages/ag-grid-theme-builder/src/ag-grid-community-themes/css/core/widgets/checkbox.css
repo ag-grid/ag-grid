@@ -1,0 +1,56 @@
+.ag-checkbox-input-wrapper {
+  // ::after used for icon font glyph - most icons use ::before but widgets
+    // are the other way round for backwards compatibility
+    &::after {
+    content: ag.icon-content(checkbox-unchecked);
+    color: var(--ag-checkbox-unchecked-color);
+    display: var(--ag-icon-font-display-checkbox-unchecked, var(--ag-icon-font-display));
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+  }
+
+  &.ag-checked::after {
+    content: ag.icon-content(checkbox-checked);
+    color: var(--ag-checkbox-checked-color);
+    display: var(--ag-icon-font-display-checkbox-checked, var(--ag-icon-font-display));
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+  }
+
+  &.ag-indeterminate::after {
+    content: ag.icon-content(checkbox-indeterminate);
+    color: var(--ag-checkbox-indeterminate-color);
+    display: var(--ag-icon-font-display-checkbox-indeterminate, var(--ag-icon-font-display));
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+  }
+
+  // ::before used for icon images
+    &::before {
+    content: '';
+    background: transparent center/contain no-repeat;
+    position: absolute;
+    inset: 0;
+    background-image: var(--ag-icon-image-checkbox-unchecked, var(--ag-icon-image));
+    display: var(--ag-icon-image-display-checkbox-unchecked, var(--ag-icon-image-display));
+    opacity: var(--ag-icon-image-opacity-checkbox-unchecked, var(--ag-icon-image-opacity, 0.9));
+  }
+
+  &.ag-checked::before {
+    background-image: var(--ag-icon-image-checkbox-checked, var(--ag-icon-image));
+    display: var(--ag-icon-image-display-checkbox-checked, var(--ag-icon-image-display));
+    opacity: var(--ag-icon-image-opacity-checkbox-checked, var(--ag-icon-image-opacity, 0.9));
+  }
+
+  &.ag-indeterminate::before {
+    background-image: var(--ag-icon-image-checkbox-indeterminate, var(--ag-icon-image));
+    display: var(--ag-icon-image-display-checkbox-indeterminate, var(--ag-icon-image-display));
+    opacity: var(--ag-icon-image-opacity-checkbox-indeterminate, var(--ag-icon-image-opacity, 0.9));
+  }
+}
