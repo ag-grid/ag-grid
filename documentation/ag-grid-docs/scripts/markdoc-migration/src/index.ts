@@ -21,7 +21,7 @@ const KNOWN_FILES = ['index.md', 'examples', 'resources'];
 const FILE_EXTS_TO_FILTER = ['.json']; // Filter out json, as it should go into `contents` folder
 
 type CreateType = 'cancel' | 'show-output' | 'show-ast' | 'successful' | 'successful-warning';
-type MigrationType = 'all' | 'new' | 'existing' | 'existing-mdoc' | 'no-mdoc' | 'select';
+type MigrationType = 'all' | 'new' | 'existing' | 'existing-mdoc' | 'no-mdoc' | 'partial-markdown' | 'select';
 interface WarningResult {
     type: 'warning';
     folder: string;
@@ -36,8 +36,8 @@ interface SuccessResult {
     folder: string;
     folderPath: string;
     files: string[];
-    output: string;
-    ast: any;
+    output?: string;
+    ast?: any;
 }
 interface ErrorResult {
     type: 'error';
@@ -120,6 +120,10 @@ async function getDocsWithPrompts({
                 description: DEST_FOLDER,
                 value: 'no-mdoc',
             },
+            {
+                title: `All partial markdown files`,
+                value: 'partial-markdown',
+            },
             { title: 'Select them manually', value: 'select' },
         ],
         initial: 1,
@@ -136,6 +140,8 @@ async function getDocsWithPrompts({
         docs = existingDocsWithMarkdoc;
     } else if (migrationType === 'no-mdoc') {
         docs = existingDocsWithoutMarkdoc;
+    } else if (migrationType === 'partial-markdown') {
+        docs = sourceDocs;
     } else if (migrationType === 'select') {
         const answers = await prompts<'docs'>({
             type: 'autocompleteMultiselect',
@@ -411,6 +417,85 @@ function displayOutput({
     }
 }
 
+async function copyPartialFiles({
+    sourceFolder,
+    destFolder,
+    docs,
+}: {
+    sourceFolder: string;
+    destFolder: string;
+    docs: string[];
+}) {
+    let warnings: string[] = [];
+    const errors: any[] = [];
+    const successResults: Result[] = [];
+
+    const isPartialFile = (file: string) => file.startsWith('_') && file.endsWith('.md');
+    const copyPartialFilePromises = docs.map(async (folder) => {
+        const folderPath = path.join(sourceFolder, folder);
+        const destFolderPath = path.join(destFolder, folder);
+        const partialFiles = (await getFolderFiles(folderPath)).filter(isPartialFile);
+        if (partialFiles.length) {
+            console.log(`${folder} has partial files`, partialFiles);
+
+            const copyFilePromises = partialFiles.map(async (file) => {
+                const fromFile = path.join(folderPath, file);
+                const markdocFileName = file.replace('.md', '.mdoc');
+                const toFile = path.join(destFolderPath, markdocFileName);
+
+                const contents = await readFile(fromFile);
+                try {
+                    const { warnings: removeWarnings, replacedContents } = removeExtraHtmlElements(contents);
+                    const transformResult = await transformMdxToMarkdoc({
+                        contents: replacedContents,
+                    });
+                    const { output, ast } = transformResult;
+                    warnings = warnings
+                        .concat(
+                            removeWarnings.map((w) => {
+                                return `${fromFile}: ${w}`;
+                            })
+                        )
+                        .concat(transformResult.warnings);
+
+                    await writeFile(toFile, output);
+
+                    successResults.push({
+                        type: 'success',
+                        folder: folderPath,
+                        folderPath: destFolderPath,
+                        files: partialFiles,
+                        output,
+                        ast,
+                    });
+                } catch (error) {
+                    errors.push({
+                        type: 'error',
+                        error: error,
+                        message: error.message,
+                        ast: error.ast,
+                        folder: folderPath,
+                    });
+                }
+            });
+
+            await Promise.all(copyFilePromises);
+        }
+    });
+
+    await Promise.all(copyPartialFilePromises);
+
+    if (warnings.length) {
+        console.log(`Warnings (${warnings.length}):`);
+        warnings.forEach((warning) => console.log(warning));
+    }
+
+    console.log('\n------------------------------------------------------------');
+    console.log(
+        `✅ Success: ${successResults.length} / ⚠️  Warnings: ${warnings.length} / ❌ Errors: ${errors.length}}`
+    );
+}
+
 async function main() {
     if (!SOURCE_FOLDER) {
         console.error(`No "SOURCE_FOLDER" defined in \`.env\``);
@@ -438,6 +523,11 @@ async function main() {
     });
 
     if (!docs || !docs.length || !migrationType) {
+        return;
+    }
+
+    if (migrationType === 'partial-markdown') {
+        await copyPartialFiles({ sourceFolder, destFolder, docs });
         return;
     }
 
