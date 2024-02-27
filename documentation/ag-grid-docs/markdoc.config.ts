@@ -2,6 +2,7 @@ import { Markdoc, component, defineMarkdocConfig, nodes } from '@astrojs/markdoc
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 
 import { DOCS_TAB_ITEM_ID_PREFIX } from './src/constants';
+import { includeMarkdoc } from './src/utils/markdoc/tags/include-markdoc';
 
 export default defineMarkdocConfig({
     nodes: {
@@ -87,7 +88,7 @@ export default defineMarkdocConfig({
         enterpriseIcon: {
             render: component('./src/components/icon/EnterpriseIcon', 'EnterpriseIcon'),
         },
-        // TODO: Implement
+        includeMarkdoc,
         gridExampleRunner: {
             render: component('./src/features/docs/components/DocsExampleRunner.astro'),
             attributes: {
