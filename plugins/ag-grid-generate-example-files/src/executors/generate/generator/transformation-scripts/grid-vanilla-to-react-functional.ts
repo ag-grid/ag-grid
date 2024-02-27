@@ -1,7 +1,7 @@
 import { basename } from 'path';
 import { integratedChartsUsesChartsEnterprise } from "../constants";
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
-import { convertFunctionToConstProperty, getActiveTheme, getFunctionName, getIntegratedDarkModeCode, ImportType, isInstanceMethod, preferParamsApi } from './parser-utils';
+import { addBindingImports, convertFunctionToConstProperty, getActiveTheme, getFunctionName, getIntegratedDarkModeCode, ImportType, isInstanceMethod, preferParamsApi } from './parser-utils';
 import { convertFunctionalTemplate, convertFunctionToConstCallback, EventAndCallbackNames, getImport, getValueType } from './react-utils';
 
 function getModuleImports(bindings: any, componentFilenames: string[], allStylesheets: string[]): string[] {
@@ -34,6 +34,10 @@ function getModuleImports(bindings: any, componentFilenames: string[], allStyles
     }
 
     if(bindings.moduleRegistration){
+
+        const moduleImports = bindings.imports.filter((i) => i.imports.find(m => m.includes('Module')));
+        addBindingImports(moduleImports, imports, false, true);
+
         imports.push(bindings.moduleRegistration);
     }
 
