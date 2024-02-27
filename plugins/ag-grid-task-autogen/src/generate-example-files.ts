@@ -14,6 +14,7 @@ export function createTask(parentProject: string, srcRelativeInputPath: string):
                 '{projectRoot}/**',
                 { dependentTasksOutputFiles: '**/*', transitive: false },
                 { externalDependencies: ['npm:typescript'] },
+                '{workspaceRoot}/documentation/ag-grid-docs/public/example-runner/**',
             ],
             outputs: ['{options.outputPath}'],
             cache: true,
