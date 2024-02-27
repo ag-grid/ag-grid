@@ -1,0 +1,41 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CommunityMenu from '@components/community-section/menu';
+import LayoutStyles from '@design-system/modules/community-section/Layout.module.scss';
+import FeaturedNews from '@components/community-section/news-updates/featurednews';
+import Events from '@components/community-section/news-updates/events';
+---
+
+<Layout title="AG Grid">
+    <div class="layout-max-width-large">
+        <CommunityMenu path={Astro.url.pathname} client:only/>
+        <div class={LayoutStyles.container}>
+            <header class={LayoutStyles.header}>
+                <h1>News & Updates</h1>
+                <p>The latest news from AG Grid, including Blogs, Videos, Events, and more...</p>
+            </header>
+            <div class={LayoutStyles.content}>
+                <section>
+                    <h3>Featured News</h3>
+                    <p>The latest content from the AG Grid team, including releases, new features, events, and more</p>
+                    <FeaturedNews client:only/>
+                </section>
+                <section>
+                    <h3>Events</h3>
+                    <p>...</p>
+                    <Events client:only/>
+                </section>
+                <section>
+                    <h3>Videos</h3>
+                    <p>...</p>
+                    <!-- TODO: Videos Component -->
+                </section>
+                <section>
+                    <h3>Podcasts</h3>
+                    <p>...</p>
+                    <!-- TODO: Podcasts Component -->
+                </section>
+            </div>
+        </div>
+    </div>
+</Layout>

@@ -1,0 +1,10 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CommunityMenu from '@components/community-section/menu'
+---
+
+<Layout title="AG Grid">
+    <div class="layout-max-width-large">
+        <CommunityMenu path={Astro.url.pathname} client:only/>
+    </div>
+</Layout>../../components/community-section/Menu
