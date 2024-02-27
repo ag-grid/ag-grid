@@ -18,23 +18,23 @@ export const getAgGridProperties = (): [Properties, Properties, Properties, {}] 
     const DEEP_CHECK_PROPERTIES = ComponentUtil.ALL_PROPERTIES.filter((propertyName: string) => !SHALLOW_CHECK_PROPERTIES.includes(propertyName));
 
     const createPropsObject = (properties: string[], component: any) => {
-        const props: { [key: string]: any } = {};
+        const newProps: { [key: string]: any } = {};
         properties.forEach((propertyName: string) => {
             if (component[propertyName] === ComponentUtil.VUE_OMITTED_PROPERTY) { return; }
-            props[propertyName] = component[propertyName];
+            newProps[propertyName] = component[propertyName];
         });
-        return props;
+        return newProps;
     };
 
     const processPropsObject = (prev: any, current: any, component: any) => {
         if (!component.gridCreated || !component.api) { return; }
         const changes: any = {};
         Object.entries(current).forEach(([key, value]) => {
-            if (prev[key] === value) return;
+            if (prev[key] === value) { return; }
             changes[key] = value;
         });
         ComponentUtil.processOnChange(changes, component.api);
-    }
+    };
 
     const computed: Properties = {
         props() {
@@ -42,7 +42,7 @@ export const getAgGridProperties = (): [Properties, Properties, Properties, {}] 
         },
         shallowProps() {
             return createPropsObject(SHALLOW_CHECK_PROPERTIES, this);
-        }
+        },
     };
 
     const watch: Properties = {
@@ -75,7 +75,7 @@ export const getAgGridProperties = (): [Properties, Properties, Properties, {}] 
                 processPropsObject(previousValue, currentValue, this);
             },
             deep: false,
-        }
+        },
     };
 
     ComponentUtil.ALL_PROPERTIES.forEach((propertyName: string) => {
