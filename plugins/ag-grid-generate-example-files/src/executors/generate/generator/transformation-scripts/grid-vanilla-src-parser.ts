@@ -143,7 +143,7 @@ function internalParser(examplePath, {
 
     // anything not marked as "inScope" and not handled above in the eventHandlers is considered an unused/util method
     tsCollectors.push({
-        matches: node => tsNodeIsUnusedFunction(node, registered, unboundInstanceMethods),
+        matches: node => tsNodeIsUnusedFunction(node, registered),
         apply: (bindings, node) => {
             const util = tsGenerate(node, tsTree);
             bindings.utils.push(util)
