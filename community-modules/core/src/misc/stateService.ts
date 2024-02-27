@@ -64,8 +64,14 @@ export class StateService extends BeanStub {
     // If user is doing a manual expand all node by node, we don't want to process one at a time.
     // EVENT_ROW_GROUP_OPENED is already async, so no impact of making the state async here.
     private onRowGroupOpenedDebounced = debounce(() => this.updateCachedState('rowGroupExpansion', this.getRowGroupExpansionState()), 0);
+    // similar to row expansion, want to debounce. However, selection is synchronous, so need to mark as stale in case `getState` is called.
+    private onRowSelectedDebounced = debounce(() => {
+        this.staleStateKeys.delete('rowSelection');
+        this.updateCachedState('rowSelection', this.getRowSelectionState());
+    }, 0);
     private columnStates?: ColumnState[];
     private columnGroupStates?: { groupId: string, open: boolean | undefined }[];
+    private staleStateKeys: Set<keyof GridState> = new Set();
 
     @PostConstruct
     private postConstruct(): void {
@@ -92,6 +98,9 @@ export class StateService extends BeanStub {
     }
 
     public getState(): GridState {
+        if (this.staleStateKeys.size) {
+            this.refreshStaleState();
+        }
         return this.cachedState;
     }
 
@@ -168,7 +177,10 @@ export class StateService extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, () => this.updateCachedState('filter', this.getFilterState()));
         this.addManagedListener(this.eventService, Events.EVENT_ROW_GROUP_OPENED, () => this.onRowGroupOpenedDebounced());
         this.addManagedListener(this.eventService, Events.EVENT_EXPAND_COLLAPSE_ALL, () => this.updateCachedState('rowGroupExpansion', this.getRowGroupExpansionState()));
-        this.addManagedListener(this.eventService, Events.EVENT_SELECTION_CHANGED, () => this.updateCachedState('rowSelection', this.getRowSelectionState()));
+        this.addManagedListener(this.eventService, Events.EVENT_SELECTION_CHANGED, () => {
+            this.staleStateKeys.add('rowSelection');
+            this.onRowSelectedDebounced();
+        });
         this.addManagedListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, (event: PaginationChangedEvent) => {
             if (event.newPage || event.newPageSize) {
                 this.updateCachedState('pagination', this.getPaginationState());
@@ -605,13 +617,29 @@ export class StateService extends BeanStub {
 
     private updateCachedState<K extends keyof GridState>(key: K, value: GridState[K]): void {
         const existingValue = this.cachedState[key];
-        this.cachedState = {
-            ...this.cachedState,
-            [key]: value
-        }
+        this.setCachedStateValue(key, value);
         if (!jsonEquals(value, existingValue)) {
             this.dispatchStateUpdateEvent([key]);
         }
+    }
+
+    private setCachedStateValue<K extends keyof GridState>(key: K, value: GridState[K]): void {
+        this.cachedState = {
+            ...this.cachedState,
+            [key]: value
+        };
+    }
+
+    private refreshStaleState(): void {
+        this.staleStateKeys.forEach(key => {
+            switch (key) {
+                // only row selection supported for now
+                case 'rowSelection':
+                    this.setCachedStateValue(key, this.getRowSelectionState());
+                    break;
+            }
+        });
+        this.staleStateKeys.clear();
     }
 
     private dispatchStateUpdateEvent(sources: (keyof GridState | 'gridInitializing')[]): void {
