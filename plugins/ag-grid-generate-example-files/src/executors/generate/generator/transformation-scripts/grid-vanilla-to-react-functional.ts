@@ -52,12 +52,9 @@ function getModuleImports(
         imports.push(...componentFilenames.map(getImport));
     }
 
-    if (bindings.moduleRegistration) {
-        const moduleImports = bindings.imports.filter((i) => i.imports.find((m) => m.includes('Module')));
-        addBindingImports(moduleImports, imports, false, true);
-
+    if(bindings.moduleRegistration){
         imports.push(bindings.moduleRegistration);
-    }
+   }
 
     return imports;
 }
