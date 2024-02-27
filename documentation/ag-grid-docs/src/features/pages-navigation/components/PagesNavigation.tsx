@@ -151,7 +151,7 @@ function MenuGroup({
         heading = (
             <a
                 href={linkUrl}
-                className={classnames(gridStyles.sectionHeader, {
+                className={classnames(gridStyles.sectionHeader, gridStyles.singleItem, {
                     [gridStyles.activeMenuItem]: activeMenuItem === menuItem,
                     [styles.activeMenuItem]: activeMenuItem === menuItem,
                 })}
@@ -203,20 +203,10 @@ function MenuSectionNav({
 }) {
     const { title, items, type } = menuSection;
     return (
-        <li>
+        <>
             {title && <h5>{title}</h5>}
             {items && (
-                <ul
-                    className={classnames(
-                        {
-                            [styles.iconsSection]: type === 'icons',
-                        },
-                        styles.menuInner,
-                        gridStyles.menuInner,
-                        gridStyles.menuGroup,
-                        'list-style-none'
-                    )}
-                >
+                <li>
                     {items?.map((menuItem) => {
                         const isActive = menuItem === activeTopLevelMenuItem;
                         const toggleActive = () => {
@@ -235,9 +225,9 @@ function MenuSectionNav({
                             />
                         );
                     })}
-                </ul>
+                </li>
             )}
-        </li>
+        </>
     );
 }
 
@@ -297,6 +287,7 @@ export function PagesNavigation({
                                             activeTopLevelMenuItem={activeTopLevelMenuItem}
                                             setActiveTopLevelMenuItem={setActiveTopLevelMenuItem}
                                         />
+
                                         {index < menuSections.length - 1 ? <hr /> : null}
                                     </>
                                 )}
