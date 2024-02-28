@@ -9,7 +9,6 @@ import { SiteLogo } from './SiteLogo';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { DarkModeToggle } from './DarkModeToggle';
 import { ProductDropdown } from '@components/product-dropdown/ProductDropdown';
-import { getApiPaths } from '@utils/apiMenuPath';
 
 const { pathname } = Astro.url;
 const { data: menuData } = await getEntry('menu', 'data');
