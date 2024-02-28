@@ -157,7 +157,7 @@ export function tsNodeIsFunctionWithName(node: ts.Node, name: string): boolean {
 }
 
 export function tsNodeIsUnusedFunction(node: any, used: string[]): boolean {
-    if (!(ts.isFunctionDeclaration(node) && !!node.name)) {
+    if (ts.isFunctionDeclaration(node) && !!node.name) {
         if (ts.isFunctionLike(node) && used.indexOf(node.name.getText()) < 0) {
             const isTopLevel = ts.isSourceFile(node.parent);
             return isTopLevel && !isDeclareStatement(node);  
