@@ -1,17 +1,11 @@
 ---
 import { getDocsFrameworkPages } from '@features/docs/utils/pageData';
 import { DOCS_FRAMEWORK_REDIRECT_PAGE } from '@features/docs/constants';
-import { urlWithPrefix } from '@utils/urlWithPrefix';
+import FrameworkRedirectPage from '@components/FrameworkRedirectPage.astro';
 
 export async function getStaticPaths() {
     return getDocsFrameworkPages();
 }
 ---
 
-<meta
-    http-equiv="refresh"
-    content={`0;url=${urlWithPrefix({
-        framework: Astro.params.framework,
-        url: DOCS_FRAMEWORK_REDIRECT_PAGE,
-    })}`}
-/>
+<FrameworkRedirectPage framework={Astro.params.framework} redirectPageName={DOCS_FRAMEWORK_REDIRECT_PAGE} />
