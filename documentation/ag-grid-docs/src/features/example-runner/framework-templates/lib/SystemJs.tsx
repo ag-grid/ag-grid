@@ -204,7 +204,8 @@ const publishedConfiguration: Configuration = {
 function getRelevantConfig(configuration: Configuration, framework: InternalFramework) {
     const filterByFramework = ([k]: string[]) => {
         const inverseFrameworks: Record<string, string[]> = {
-            react: ['angular', 'vue', 'vue3'],
+            reactFunctional: ['angular', 'vue', 'vue3'],
+            reactFunctionalTs: ['angular', 'vue', 'vue3'],
             angular: ['react', 'vue', 'vue3'],
             vue: ['angular', 'react', 'vue3'],
             vue3: ['angular', 'react', 'vue'],

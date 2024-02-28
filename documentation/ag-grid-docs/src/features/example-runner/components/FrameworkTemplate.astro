@@ -103,6 +103,7 @@ const title = `${toTitle(pageName)} - ${toTitle(exampleName)}`;
             appLocation={appLocation}
             boilerplatePath={boilerPlateUrl}
             extraStyles={extraStyles}
+            isEnterprise={isEnterprise}
         >
             {addInitMessageScript && <PostInitMessageScript pageName={pageName} exampleName={exampleName} />}
         </TypescriptTemplate>
@@ -122,6 +123,8 @@ const title = `${toTitle(pageName)} - ${toTitle(exampleName)}`;
             boilerplatePath={boilerPlateUrl}
             ignoreSystemJs={ignoreSystemJs}
             extraStyles={extraStyles}
+            isEnterprise={isEnterprise}
+            internalFramework={internalFramework}
         >
             {addInitMessageScript && <PostInitMessageScript pageName={pageName} exampleName={exampleName} />}
         </ReactTemplate>
@@ -133,6 +136,7 @@ const title = `${toTitle(pageName)} - ${toTitle(exampleName)}`;
         <AngularTemplate
             isDev={isDev}
             title={title}
+            isEnterprise={isEnterprise}
             modifiedTimeMs={timeNow}
             entryFileName={entryFileName!}
             styleFiles={styleFiles}
@@ -151,6 +155,7 @@ const title = `${toTitle(pageName)} - ${toTitle(exampleName)}`;
         <VueTemplate
             isDev={isDev}
             title={title}
+            isEnterprise={isEnterprise}
             modifiedTimeMs={timeNow}
             entryFileName={entryFileName!}
             scriptFiles={scriptFiles}

@@ -10,6 +10,7 @@ import { pathJoin } from '@utils/pathJoin';
 interface Props {
     isDev: boolean;
     title: string;
+    isEnterprise: boolean;
 
     modifiedTimeMs: number;
     entryFileName: string;
@@ -29,6 +30,7 @@ interface Props {
 const {
     isDev,
     title,
+    isEnterprise,
     modifiedTimeMs,
     boilerplatePath,
     appLocation,
@@ -59,6 +61,7 @@ const vueFrameworkTitle = vueFramework === 'vue3' ? 'Vue 3' : 'Vue';
             appLocation={appLocation}
             startFile={startFile}
             internalFramework={vueFramework}
+            isEnterprise={isEnterprise}
         />
         <slot />
     </body>
