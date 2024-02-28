@@ -4,6 +4,8 @@ import CommunityMenu from '@components/community-section/menu';
 import LayoutStyles from '@design-system/modules/community-section/Layout.module.scss';
 import FeaturedNews from '@components/community-section/news-updates/featurednews';
 import Events from '@components/community-section/news-updates/events';
+import Podcasts from '@components/community-section/news-updates/podcasts';
+import Videos from '@components/community-section/news-updates/videos';
 ---
 
 <Layout title="AG Grid">
@@ -17,22 +19,24 @@ import Events from '@components/community-section/news-updates/events';
             <div class={LayoutStyles.content}>
                 <section>
                     <h3>Featured News</h3>
-                    <p>The latest content from the AG Grid team, including releases, new features, events, and more</p>
+                    <p>Latest updates from the AG Grid team, including releases, new features, events, and more</p>
                     <FeaturedNews client:only/>
                 </section>
                 <section>
                     <h3>Events</h3>
-                    <p>A collection of conferences & meetups sponsored, hosted and/or attended by the AG Grid Team</p>
+                    <p>Conferences & meetups sponsored, hosted and/or attended by the AG Grid Team</p>
                     <Events client:only/>
                 </section>
                 <section>
                     <h3>Videos</h3>
-                    <p>...</p>
+                    <p>Conference talks, tutorials, interviews and more...</p>
+                    <Videos client:only />
                     <!-- TODO: Videos Component -->
                 </section>
                 <section>
                     <h3>Podcasts</h3>
-                    <p>...</p>
+                    <p>Listen to members of our team share their experiences on various community podcasts</p>
+                    <Podcasts client:only/>
                     <!-- TODO: Podcasts Component -->
                 </section>
             </div>
