@@ -1,3 +1,4 @@
+/* PORTED
 @use 'ag';
 
 @mixin output {
@@ -199,9 +200,7 @@
   .ag-filter-apply-panel {
     padding: var(--ag-widget-container-vertical-padding)
       var(--ag-widget-container-horizontal-padding);
-    /* PORTED
     border-top: var(--ag-borders-secondary) var(--ag-secondary-border-color);
-    */
   }
 
   .ag-filter-apply-panel-button {
@@ -251,3 +250,4 @@
 
   @include ag.keyboard-focus((ag-multi-filter-group-title-bar), 4px);
 }
+*/

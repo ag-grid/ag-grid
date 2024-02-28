@@ -509,12 +509,6 @@ ag-grid-aurelia {
   }
 }
 
-.ag-filter-apply-panel {
-  display: flex;
-  justify-content: flex-end;
-  overflow: hidden;
-}
-
 /**
  ****************************
  * Rows
@@ -812,6 +806,10 @@ ag-grid-aurelia {
   position: absolute;
 }
 
+.ag-dialog .ag-panel-content-wrapper .ag-column-select {
+  user-select: none;
+}
+
 .ag-resizer {
   position: absolute;
   pointer-events: none;
@@ -929,66 +927,6 @@ ag-grid-aurelia {
 
 .ag-opacity-zero {
   opacity: 0 !important;
-}
-
-/**
- ****************************
- * Menu
- ****************************
- */
-.ag-menu {
-  max-height: 100%;
-  overflow-y: auto;
-  position: absolute;
-  user-select: none;
-}
-
-.ag-menu-column-select-wrapper {
-  height: 265px;
-  overflow: auto;
-
-  .ag-column-select {
-    height: 100%;
-  }
-}
-
-.ag-dialog .ag-panel-content-wrapper .ag-column-select {
-  user-select: none;
-}
-
-.ag-menu-list {
-  display: table;
-  width: 100%;
-}
-
-.ag-menu-option,
-.ag-menu-separator {
-  display: table-row;
-}
-
-.ag-menu-option-part,
-.ag-menu-separator-part {
-  display: table-cell;
-  vertical-align: middle;
-}
-
-.ag-menu-option-text {
-  white-space: nowrap;
-}
-
-.ag-menu-option-custom {
-  display: contents;
-}
-
-.ag-compact-menu-option {
-  width: 100%;
-  display: flex;
-  flex-wrap: nowrap;
-}
-
-.ag-compact-menu-option-text {
-  white-space: nowrap;
-  flex: 1 1 auto;
 }
 
 /**

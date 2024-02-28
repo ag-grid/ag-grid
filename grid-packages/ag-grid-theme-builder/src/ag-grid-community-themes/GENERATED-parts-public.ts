@@ -97,7 +97,13 @@ export type CoreParam =
   | 'checkboxIndeterminateBackgroundColor'
   | 'checkboxIndeterminateBorderColor'
   | 'checkboxIndeterminateShapeImage'
-  | 'checkboxIndeterminateShapeColor';
+  | 'checkboxIndeterminateShapeColor'
+  | 'menuBorder'
+  | 'menuBackgroundColor'
+  | 'menuForegroundColor'
+  | 'menuShadow'
+  | 'menuSeparatorColor'
+  | 'setFilterIndentSize';
 
 export type ColorsPreset = 'light' | 'dark';
 
@@ -117,6 +123,7 @@ import richSelectCssImport from './css/core/rich-select.css?inline';
 import resetCssImport from './css/core/reset.css?inline';
 import printCssImport from './css/core/print.css?inline';
 import pinnedColumnsCssImport from './css/core/pinned-columns.css?inline';
+import menuCssImport from './css/core/menu.css?inline';
 import headerCssImport from './css/core/header.css?inline';
 import gridLayoutCssImport from './css/core/grid-layout.css?inline';
 import gridBordersCssImport from './css/core/grid-borders.css?inline';
@@ -228,6 +235,12 @@ export const core = definePart<CoreParam>({
     checkboxIndeterminateShapeImage:
       "url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2210%22%20height%3D%222%22%20fill%3D%22none%22%3E%3Crect%20width%3D%2210%22%20height%3D%222%22%20fill%3D%22%23000%22%20rx%3D%221%22%2F%3E%3C%2Fsvg%3E')",
     checkboxIndeterminateShapeColor: helpers.ref('backgroundColor'),
+    menuBorder: helpers.foregroundBorder(0.2),
+    menuBackgroundColor: helpers.opaqueForeground(0.03),
+    menuForegroundColor: helpers.opaqueForeground(0.95),
+    menuShadow: '0 0 16px 0 #00000026',
+    menuSeparatorColor: helpers.ref('borderColor'),
+    setFilterIndentSize: helpers.ref('iconSize'),
   },
   css: [
     sidebarCssImport,
@@ -236,6 +249,7 @@ export const core = definePart<CoreParam>({
     resetCssImport,
     printCssImport,
     pinnedColumnsCssImport,
+    menuCssImport,
     headerCssImport,
     gridLayoutCssImport,
     gridBordersCssImport,
@@ -1048,7 +1062,7 @@ export type ParamTypes = {
   checkboxCheckedBorderColor: string;
 
   /**
-   * An image defining the same of the check mark on checked checkboxes
+   * An image defining the shape of the check mark on checked checkboxes
    *
    * Any valid CSS expression is accepted.
    *
@@ -1084,7 +1098,7 @@ export type ParamTypes = {
   checkboxIndeterminateBorderColor: string;
 
   /**
-   * An image defining the same of the dash mark on indeterminate checkboxes
+   * An image defining the shape of the dash mark on indeterminate checkboxes
    *
    * Any valid CSS expression is accepted.
    *
@@ -1100,6 +1114,60 @@ export type ParamTypes = {
    * @default ref("backgroundColor")
    */
   checkboxIndeterminateShapeColor: string;
+
+  /**
+   * Border around menus e.g. column menu and right-click context menu
+   *
+   * A CSS border value e.g. "solid 1px red". Passing true is equivalent to "solid 1px var(--ag-border-color)", and false to "none".
+   *
+   * @default foregroundBorder(0.2)
+   */
+  menuBorder: string | boolean;
+
+  /**
+   * Background colour for menus e.g. column menu and right-click context menu
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default opaqueForeground(0.03)
+   */
+  menuBackgroundColor: string;
+
+  /**
+   * Text colour for menus e.g. column menu and right-click context menu
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default opaqueForeground(0.95)
+   */
+  menuForegroundColor: string;
+
+  /**
+   * Shadow for menus e.g. column menu and right-click context menu
+   *
+   * Any valid CSS expression is accepted.
+   *
+   * @default "0 0 16px 0 #00000026"
+   */
+  menuShadow: string;
+
+  /**
+   * Colour of the dividing line between sections of menus e.g. column menu and right-click context menu
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default ref("borderColor")
+   */
+  menuSeparatorColor: string;
+
+  /**
+   * How much to indent child items in the Set Filter list when filtering tree data.
+   *
+   * A CSS number value with length units, e.g. "1px" or "2em". If a JavaScript number is provided, its units are assumed to be 'px'.
+   *
+   * @default ref("iconSize")
+   */
+  setFilterIndentSize: string;
 
   /**
    * Use one of the built-in sets of preset colors values. Available presets are: "light", "dark".

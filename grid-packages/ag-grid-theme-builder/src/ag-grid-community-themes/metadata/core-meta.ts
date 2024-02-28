@@ -582,8 +582,7 @@ export const coreMeta = definePartMeta({
     {
       property: 'checkboxCheckedShapeImage',
       type: 'css',
-      docs: 'An image defining the same of the check mark on checked checkboxes',
-      // defaultValue: `url('data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="10" height="8" fill="none"><path fill="#000" d="M9.3.3c.3.1.5.4.5.7 0 .4 0 .2-3 3.4A28 28 0 0 1 4 7.3h-.3c-.4 0-.4 0-1.8-1.3C.6 4.6.6 4.6.6 4.3c0-.5.3-.9.8-.9.4 0 .3 0 1.4 1l.9.9 2.4-2.5A54.7 54.7 0 0 1 9 .2h.3Z"/></svg>')}')`,
+      docs: 'An image defining the shape of the check mark on checked checkboxes',
       defaultValue: `url('data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="10" height="7" fill="none"><path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M1 3.5 3.5 6l5-5"/></svg>')}')`,
     },
     {
@@ -607,8 +606,7 @@ export const coreMeta = definePartMeta({
     {
       property: 'checkboxIndeterminateShapeImage',
       type: 'css',
-      docs: 'An image defining the same of the dash mark on indeterminate checkboxes',
-      // defaultValue: `url('data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="10" height="3" fill="none"><path fill="#000" d="M9.4.1c.2 0 .4.3.5.5v.8a1 1 0 0 1-.8.6 327.3 327.3 0 0 1-8.7-.2 1 1 0 0 1-.3-.4V.7C0 .4.3.2.6.1h8.7Z"/></svg>')}')`,
+      docs: 'An image defining the shape of the dash mark on indeterminate checkboxes',
       defaultValue: `url('data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="10" height="2" fill="none"><rect width="10" height="2" fill="#000" rx="1"/></svg>')}')`,
     },
     {
@@ -616,6 +614,47 @@ export const coreMeta = definePartMeta({
       type: 'color',
       docs: 'The colour of the dash mark on indeterminate checkboxes',
       defaultValue: { helper: 'ref', arg: 'backgroundColor' },
+    },
+
+    {
+      property: 'menuBorder',
+      type: 'border',
+      docs: 'Border around menus e.g. column menu and right-click context menu',
+      defaultValue: { helper: 'foregroundBorder', arg: 0.2 },
+    },
+    {
+      property: 'menuBackgroundColor',
+      type: 'color',
+      docs: 'Background colour for menus e.g. column menu and right-click context menu',
+      defaultValue: { helper: 'opaqueForeground', arg: 0.03 },
+    },
+    {
+      property: 'menuForegroundColor',
+      type: 'color',
+      docs: 'Text colour for menus e.g. column menu and right-click context menu',
+      defaultValue: { helper: 'opaqueForeground', arg: 0.95 },
+    },
+    {
+      property: 'menuShadow',
+      type: 'css',
+      docs: 'Shadow for menus e.g. column menu and right-click context menu',
+      defaultValue: '0 0 16px 0 #00000026',
+    },
+    {
+      property: 'menuSeparatorColor',
+      type: 'color',
+      docs: 'Colour of the dividing line between sections of menus e.g. column menu and right-click context menu',
+      defaultValue: { helper: 'ref', arg: 'borderColor' },
+    },
+
+    {
+      property: 'setFilterIndentSize',
+      type: 'length',
+      docs: 'How much to indent child items in the Set Filter list when filtering tree data.',
+      defaultValue: { helper: 'ref', arg: 'iconSize' },
+      min: 0,
+      max: 50,
+      step: 1,
     },
   ],
 });

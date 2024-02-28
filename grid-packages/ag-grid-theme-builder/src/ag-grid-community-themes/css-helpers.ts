@@ -39,6 +39,13 @@ export const transparentRef = (name: Param, alpha: number) =>
   cssColorMix('transparent', untypedRef(name), alpha);
 
 /**
+ * Create a solid 1px border with a transparent foreground color
+ *
+ * @param alpha - 0 for fully transparent, 1 for fully opaque
+ */
+export const foregroundBorder = (alpha: number) => 'solid 1px ' + transparentForeground(alpha);
+
+/**
  * Create a CSS color-mix expression that blends two color variables
  *
  * @param alpha - amount of `b` to include in blend: 0 for fully `a`, 1 for fully `b`

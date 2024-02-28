@@ -10,10 +10,10 @@ export const gridConfigBooleanFields = [
   'columnResizing',
   'rowDrag',
   'rowSelection',
-  'integratedCharts',
   'rightToLeft',
   'floatingFilters',
   'printLayout',
+  'legacyColumnMenu',
 ] as const;
 
 type GridConfigBooleanField = (typeof gridConfigBooleanFields)[number];
@@ -36,13 +36,14 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
   const options: GridOptions = {
     defaultColDef,
     sideBar,
-    enableCharts: config.integratedCharts,
+    enableCharts: true,
     columnHoverHighlight: config.columnHover,
     enableRangeSelection: true,
     rowData: defaultRowData(),
     columnDefs: config.columnGroups ? buildGroupColumnDefs(columnDefs) : columnDefs,
     enableRtl: config.rightToLeft,
     domLayout: config.printLayout ? 'print' : undefined,
+    columnMenu: config.legacyColumnMenu ? 'legacy' : 'new',
   };
 
   if (config.advancedFilter) {

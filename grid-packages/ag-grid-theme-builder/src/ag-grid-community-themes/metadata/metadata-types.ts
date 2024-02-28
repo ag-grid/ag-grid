@@ -82,7 +82,7 @@ export type BorderStyleParam = ParamCommon & {
 
 export type BorderParam = ParamCommon & {
   type: 'border';
-  defaultValue: boolean | string;
+  defaultValue: boolean | string | { helper: string; arg: any };
 };
 
 export type CssExpressionParam = ParamCommon & {

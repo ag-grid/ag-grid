@@ -33,7 +33,7 @@
   //
   // TABS
   //
-
+  /* PORTED
   .ag-tab {
     padding: var(--ag-grid-size);
     border-left: var(--ag-borders) transparent;
@@ -68,13 +68,13 @@
   }
 
   .ag-menu {
-    color: color-mix(in srgb, transparent, var(--ag-foreground-color) 95%);
-
     &.ag-tabs {
       // min width only on top-level popup menu to stop it switching as we change tab
       min-width: 290px;
     }
   }
+
+  */
 
   .ag-panel-content-wrapper .ag-column-select {
     background-color: var(--ag-control-panel-background-color);
@@ -101,13 +101,14 @@
       )
     );
   }
-
+  /* PORTED
+  
   .ag-tabs-header {
     border-bottom: var(--ag-borders) var(--ag-border-color);
     display: flex;
     background-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 5%);
   }
-
+*/
   //
   // VERTICAL TABS
   //
@@ -163,10 +164,12 @@
   .ag-filter-toolpanel-search-input {
     margin: 0;
   }
+  /* PORTED
   .ag-filter-apply-panel {
     border: none;
     padding-top: var(--ag-widget-vertical-spacing);
   }
+  */
 
   .ag-chart-tabbed-menu-body {
     position: relative;
