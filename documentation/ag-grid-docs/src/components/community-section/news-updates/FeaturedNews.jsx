@@ -12,7 +12,9 @@ const FeaturedNews = () => {
                     <div className={styles.content}>
                         <h2>{featuredNews.major_article.title}</h2>
                         <span className={styles.leftColumnDescription}>{featuredNews.major_article.description}</span>
-                        <a href={featuredNews.major_article.link}>Learn More</a>
+                            <a target="_blank" href={featuredNews.major_article.link}>
+                                Learn More
+                            </a>
                     </div>
                 </div>
             </div>
@@ -23,7 +25,7 @@ const FeaturedNews = () => {
                         <div className={styles.content}>
                             <h2 className={styles.rightColumnTitle}>{article.title}</h2>
                             <p className={styles.rightColumnDescription}>{article.description}</p>
-                            <a href={article.link} className={styles.rightColumnLink}>
+                            <a target="_blank" href={article.link} className={styles.rightColumnLink}>
                                 Learn More
                             </a>
                         </div>
