@@ -18,6 +18,6 @@
   "executors": "./executors.json",
   "scripts": {
     "copySrcFilesForGeneration": "node ./src/copySrcFilesForGeneration.js",
-    "generateGridOptionsType": "ts-node ./src/gridOptionsTypes/buildGridOptionsType.ts"
+    "generateGridOptionsType": "ts-node ./gridOptionsTypes/buildGridOptionsType.ts"
   }
 }

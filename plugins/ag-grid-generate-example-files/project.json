@@ -6,7 +6,7 @@
   "targets": {
     "build": {
       "executor": "@nx/js:swc",
-      "dependsOn": ["copySrcFilesForGeneration", "generateGridOptionsType"],
+      "dependsOn": ["copySrcFilesForGeneration"],
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "plugins/ag-grid-generate-example-files/dist",
@@ -48,7 +48,7 @@
         "{workspaceRoot}/community-modules/core/src/entities/gridOptions.ts"
       ],
       "outputs": [
-        "{workspaceRoot}/plugins/ag-grid-generate-example-files/src/gridOptionsTypes/_gridOptions_Types.json"
+        "{workspaceRoot}/plugins/ag-grid-generate-example-files/gridOptionsTypes/_gridOptions_Types.json"
       ]
     },
     "copySrcFilesForGeneration": {

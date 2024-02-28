@@ -143,6 +143,14 @@
         "production": {}
       }
     },
+    "generate-one-example": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "nx run ag-grid-docs-src_content_docs_{args.page}__examples_{args.example}_main.ts:generate-example"
+        ]        
+      }
+    },
     "generate-doc-references": {
       "executor": "nx:noop",
       "dependsOn": ["^generate-doc-references"],
