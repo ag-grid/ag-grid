@@ -117,7 +117,7 @@ function internalParser(examplePath, {
     const tsCollectors = [];
     const tsGridOptionsCollectors = [];
     const tsOnReadyCollectors = [];
-    const registered = ['gridOptions'];
+    const registered = ['gridOptions', 'gridApi'];
 
     // handler is the function name, params are any function parameters
     domEventHandlers.forEach(([_, handler, params]) => {
