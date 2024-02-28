@@ -1,10 +1,39 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import CommunityMenu from '@components/community-section/menu'
+import CommunityMenu from '@components/community-section/menu';
+import LayoutStyles from '@design-system/modules/community-section/Layout.module.scss';
+import FeaturedNews from '@components/community-section/news-updates/featurednews';
+import Events from '@components/community-section/news-updates/events';
+import Podcasts from '@components/community-section/news-updates/podcasts';
+import Videos from '@components/community-section/news-updates/videos';
 ---
 
 <Layout title="AG Grid">
     <div class="layout-max-width-large">
         <CommunityMenu path={Astro.url.pathname} client:only/>
+        <div class={LayoutStyles.container}>
+            <header class={LayoutStyles.header}>
+                <h1>Tools & Extensions</h1>
+                <p>Tools built by our community that make AG Grid even easier to use</p>
+            </header>
+            <div class={LayoutStyles.content}>
+                <section>
+                    <h3>Featured</h3>
+                    <p>TBD...</p>
+                </section>
+                <section>
+                    <h3>Wrappers</h3>
+                    <p>TBD...</p>
+                </section>
+                <section>
+                    <h3>Integrations</h3>
+                    <p>TBD...</p>
+                </section>
+                <section>
+                    <h3>Utilities</h3>
+                    <p>TBD...</p>
+                </section>
+            </div>
+        </div>
     </div>
-</Layout>../../components/community-section/Menu
+</Layout>

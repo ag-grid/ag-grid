@@ -54,10 +54,20 @@ import Socials from "@components/community-section/landing-page/socials";
                 </section>
                 <!-- Tools & Extensons -->
                 <section>
-                    <h3 class={styles.sectionTitle}>Tools & Extensions</h3>
-                    <p class={styles.sectionDescription}>Wrappers, integrations and utilities created by our community to make using AG Grid even easier (***WIP***)</p>
+                    <div class={styles.sectionContainer}>
+                        <div class={styles.sectionHeader}>
+                            <h3 class={styles.sectionTitle}>Tools & Extensions</h3>
+                            <p class={styles.sectionDescription}>
+                                Wrappers, integrations and utilities created by our community to make using AG Grid even easier (***WIP***)
+                            </p>
+                        </div>
+                        <a href='/community/tools-extensions' class={styles.sectionLink}>
+                            <span class={styles.linkIcon}>View All</span>
+                            <Icon name="arrowRight" />
+                        </a>
+                    </div>
                     <!-- TODO: Replace w/ Tools & Extensons Component -->
-                    <ShowcaseList favouritesOnly={true} maxItems={4} client:only/>
+                    <h1 style={{ fontSize: "22pt", textAlign: "center"}}>*** TODO *** </h1>
                 </section>
                 <!-- Support -->
                 <section>
