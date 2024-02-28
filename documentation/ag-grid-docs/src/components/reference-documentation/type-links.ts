@@ -1,7 +1,7 @@
 /**
  * These are used to create links from types to relevant documentation.
  */
-const TYPE_LINKS = {
+const TYPE_LINKS : Record<string, string> = {
     AgChartTheme: './integrated-charts-customisation/#custom-chart-themes',
     AgChartThemeName: './integrated-charts-customisation/#provided-themes',
     AgChartThemeDefinition: 'https://charts.ag-grid.com/themes-api',
@@ -74,9 +74,9 @@ const TYPE_LINKS = {
     IRowNode: './row-object/',
     ServerSideTransaction: './server-side-model-transactions/#transaction-api',
     Touch: 'https://developer.mozilla.org/en-US/docs/Web/API/Touch',
-};
+} as const;
 
-export function getTypeLink(type) {
+export function getTypeLink(type: string | undefined) {
     if (typeof type === 'string') {
         // handle removal of generics.
         const cleanType = type?.split('<')[0];
