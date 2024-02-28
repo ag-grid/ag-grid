@@ -14,6 +14,7 @@ export const gridConfigBooleanFields = [
   'floatingFilters',
   'printLayout',
   'legacyColumnMenu',
+  'integratedCharts',
 ] as const;
 
 type GridConfigBooleanField = (typeof gridConfigBooleanFields)[number];

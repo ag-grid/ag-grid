@@ -344,6 +344,12 @@ export const coreMeta = definePartMeta({
       defaultValue: true,
     },
     {
+      property: 'dragGhostShadow',
+      type: 'css',
+      docs: 'Shadow for the ghost element when dragging columns',
+      defaultValue: { helper: 'ref', arg: 'popupShadow' },
+    },
+    {
       property: 'focusShadow',
       type: 'css',
       docs: 'Shadow around UI controls that have focus e.g. text inputs and buttons. The value must a valid CSS box-shadow.',
@@ -638,7 +644,7 @@ export const coreMeta = definePartMeta({
       property: 'menuShadow',
       type: 'css',
       docs: 'Shadow for menus e.g. column menu and right-click context menu',
-      defaultValue: '0 0 16px 0 #00000026',
+      defaultValue: { helper: 'ref', arg: 'popupShadow' },
     },
     {
       property: 'menuSeparatorColor',
@@ -655,6 +661,50 @@ export const coreMeta = definePartMeta({
       min: 0,
       max: 50,
       step: 1,
+    },
+    {
+      property: 'chartMenuButtonBorder',
+      type: 'border',
+      docs: 'Border around the button that shows and hides the chart settings menus',
+      defaultValue: true,
+    },
+    {
+      property: 'iconButtonHoverColor',
+      type: 'color',
+      docs: 'Hover color for clickable icons',
+      defaultValue: { helper: 'transparentForeground', arg: 0.1 },
+    },
+
+    {
+      property: 'dialogShadow',
+      type: 'css',
+      docs: 'Shadow for popup dialogs such as the integrated charts and the advanced filter builder.',
+      defaultValue: { helper: 'ref', arg: 'popupShadow' },
+    },
+    {
+      property: 'dialogBorder',
+      type: 'color',
+      docs: 'Border colour popup dialogs such as the integrated charts and the advanced filter builder.',
+      defaultValue: { helper: 'foregroundBorder', arg: 0.2 },
+    },
+
+    {
+      property: 'panelBackgroundColor',
+      type: 'color',
+      docs: 'Background colour for panels and dialogs such as the integrated charts and the advanced filter builder.',
+      defaultValue: { helper: 'ref', arg: 'backgroundColor' },
+    },
+    {
+      property: 'panelTitleBarBackgroundColor',
+      type: 'color',
+      docs: 'Background colour for the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.',
+      defaultValue: { helper: 'ref', arg: 'headerBackgroundColor' },
+    },
+    {
+      property: 'panelTitleBarBorder',
+      type: 'border',
+      docs: 'Border below the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.',
+      defaultValue: true,
     },
   ],
 });

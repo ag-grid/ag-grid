@@ -29,3 +29,33 @@
 .ag-label-align-top .ag-label {
   margin-bottom: calc(var(--ag-grid-size) * 0.5);
 }
+
+input[class^='ag-'] {
+  margin: 0;
+  background-color: var(--ag-background-color);
+}
+
+textarea[class^='ag-'],
+select[class^='ag-'] {
+  background-color: var(--ag-background-color);
+}
+
+input[class^='ag-'][type='number']:not(.ag-number-field-input-stepper) {
+  -moz-appearance: textfield;
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+input[class^='ag-'][type='range'] {
+  padding: 0;
+}
+
+input[class^='ag-'][type='button'],
+button[class^='ag-'] {
+  &:focus-visible {
+    box-shadow: var(--ag-focus-shadow);
+  }
+}

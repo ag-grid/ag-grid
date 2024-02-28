@@ -59,7 +59,9 @@ const makePublicFile = (): string => {
       }
     }
     const cssFilesDir = projectDir + `css/${part.partId}/`;
-    const files = globSync(cssFilesDir + `**/*.*`).map((f) => f.replace(cssFilesDir, ''));
+    const files = globSync(cssFilesDir + `**/*.*`)
+      .map((f) => f.replace(cssFilesDir, ''))
+      .sort();
     if (files.length > 0) {
       args.css = [];
       for (const fileName of files) {

@@ -20,16 +20,6 @@
     width: unset;
     min-width: unset;
   }
-  */
-
-  .ag-button {
-    border-radius: 0px;
-    color: var(--ag-foreground-color);
-  }
-
-  .ag-button:hover {
-    background-color: transparent;
-  }
 
   .ag-label-align-right .ag-label {
     @include ag.unthemed-rtl(
@@ -48,6 +38,8 @@
   select[class^='ag-'] {
     background-color: var(--ag-background-color);
   }
+
+  */
 
   @include ag.text-input {
     font-size: inherit;
@@ -73,6 +65,7 @@
       border: var(--ag-borders-input-invalid) var(--ag-input-border-color-invalid);
     }
   }
+  /* PORTED
 
   input[class^='ag-'][type='number']:not(.ag-number-field-input-stepper) {
     -moz-appearance: textfield;
@@ -101,7 +94,6 @@
   ////////////////////////////////////////
   // Lists
   ////////////////////////////////////////
-  /* PORTED
   .ag-list-item,
   .ag-virtual-list-item {
     height: var(--ag-list-item-height);
@@ -175,16 +167,12 @@
     align-items: center;
     flex: none;
   }
-
-  */
   
   .ag-group-title-bar-icon {
     cursor: pointer;
     flex: none;
     color: var(--ag-secondary-foreground-color);
   }
-
-  /* PORTED
 
   .ag-group-child-count {
     @include ag.unthemed-rtl(
@@ -554,6 +542,8 @@
     background-color: var(--ag-selected-row-background-color);
   }
 
+  /* PORTED
+
   ////////////////////////////////////////
   // Dialog
   ////////////////////////////////////////
@@ -588,6 +578,8 @@
       )
     );
   }
+
+  */
 
   ////////////////////////////////////////
   // Tooltip

@@ -56,16 +56,18 @@ export type PresetParam = ParamCommon & {
   defaultValue: string | null;
 };
 
+export type CssOrHelper<T = string> = T | { helper: string; arg: any };
+
 export type ColorParam = ParamCommon & {
   type: 'color';
-  defaultValue: string | { helper: string; arg: any };
+  defaultValue: CssOrHelper;
   preventTransparency?: boolean;
   preventVariables?: boolean;
 };
 
 export type LengthParam = ParamCommon & {
   type: 'length';
-  defaultValue: string | { helper: string; arg: any };
+  defaultValue: CssOrHelper;
   min: number;
   max: number;
   step: number;
@@ -77,15 +79,15 @@ export type CSSBorderStyle = (typeof cssBorderStyles)[number];
 
 export type BorderStyleParam = ParamCommon & {
   type: 'borderStyle';
-  defaultValue: CSSBorderStyle;
+  defaultValue: CssOrHelper<CSSBorderStyle>;
 };
 
 export type BorderParam = ParamCommon & {
   type: 'border';
-  defaultValue: boolean | string | { helper: string; arg: any };
+  defaultValue: boolean | CssOrHelper;
 };
 
 export type CssExpressionParam = ParamCommon & {
   type: 'css';
-  defaultValue: string;
+  defaultValue: CssOrHelper;
 };

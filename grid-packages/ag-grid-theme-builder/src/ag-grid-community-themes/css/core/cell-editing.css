@@ -7,7 +7,7 @@
 .ag-popup-editor .ag-large-text,
 .ag-autocomplete-list-popup {
   border-radius: var(--ag-border-radius);
-  box-shadow: var(--ag-popup-shadow);
+  box-shadow: var(--ag-dropdown-shadow);
   padding: var(--ag-grid-size);
   background-color: var(--ag-background-color);
   padding: 0;

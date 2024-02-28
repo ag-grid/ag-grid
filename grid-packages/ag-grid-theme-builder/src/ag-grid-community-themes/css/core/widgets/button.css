@@ -1,0 +1,8 @@
+.ag-button {
+  border-radius: 0px;
+  color: var(--ag-foreground-color);
+}
+
+.ag-button:hover {
+  background-color: transparent;
+}

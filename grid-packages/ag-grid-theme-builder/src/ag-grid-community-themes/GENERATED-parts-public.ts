@@ -61,6 +61,7 @@ export type CoreParam =
   | 'dropdownShadow'
   | 'dragGhostBackgroundColor'
   | 'dragGhostBorder'
+  | 'dragGhostShadow'
   | 'focusShadow'
   | 'insetFocusShadow'
   | 'sideBarPanelWidth'
@@ -103,7 +104,14 @@ export type CoreParam =
   | 'menuForegroundColor'
   | 'menuShadow'
   | 'menuSeparatorColor'
-  | 'setFilterIndentSize';
+  | 'setFilterIndentSize'
+  | 'chartMenuButtonBorder'
+  | 'iconButtonHoverColor'
+  | 'dialogShadow'
+  | 'dialogBorder'
+  | 'panelBackgroundColor'
+  | 'panelTitleBarBackgroundColor'
+  | 'panelTitleBarBorder';
 
 export type ColorsPreset = 'light' | 'dark';
 
@@ -117,29 +125,34 @@ export type QuartzIconsPreset = 'light' | 'regular' | 'bold';
 
 export type QuartzIconsParam = 'quartzIconsPreset' | 'iconSize' | 'iconStrokeWidth';
 
-import sidebarCssImport from './css/core/sidebar.css?inline';
-import rootCssImport from './css/core/root.css?inline';
-import richSelectCssImport from './css/core/rich-select.css?inline';
-import resetCssImport from './css/core/reset.css?inline';
-import printCssImport from './css/core/print.css?inline';
-import pinnedColumnsCssImport from './css/core/pinned-columns.css?inline';
-import menuCssImport from './css/core/menu.css?inline';
-import headerCssImport from './css/core/header.css?inline';
-import gridLayoutCssImport from './css/core/grid-layout.css?inline';
-import gridBordersCssImport from './css/core/grid-borders.css?inline';
-import dragAndDropCssImport from './css/core/drag-and-drop.css?inline';
-import columnFiltersCssImport from './css/core/column-filters.css?inline';
-import columnDropCssImport from './css/core/column-drop.css?inline';
-import cellEditingCssImport from './css/core/cell-editing.css?inline';
-import bordersTodoMoveIntoComponentFilesCssImport from './css/core/borders-todo-move-into-component-files.css?inline';
+import BaseComponentsGroupCssImport from './css/core/_base-components/group.css?inline';
 import advancedFilterCssImport from './css/core/advanced-filter.css?inline';
-import widgetsToggleButtonCssImport from './css/core/widgets/toggle-button.css?inline';
-import widgetsRangeCssImport from './css/core/widgets/range.css?inline';
-import widgetsRadioButtonCssImport from './css/core/widgets/radio-button.css?inline';
-import widgetsListsCssImport from './css/core/widgets/lists.css?inline';
-import widgetsInputsCssImport from './css/core/widgets/inputs.css?inline';
-import widgetsCheckboxCssImport from './css/core/widgets/checkbox.css?inline';
+import bordersTodoMoveIntoComponentFilesCssImport from './css/core/borders-todo-move-into-component-files.css?inline';
+import cellEditingCssImport from './css/core/cell-editing.css?inline';
+import chartsCssImport from './css/core/charts.css?inline';
+import columnDropCssImport from './css/core/column-drop.css?inline';
+import columnFiltersCssImport from './css/core/column-filters.css?inline';
+import dragAndDropCssImport from './css/core/drag-and-drop.css?inline';
+import gridBordersCssImport from './css/core/grid-borders.css?inline';
+import gridLayoutCssImport from './css/core/grid-layout.css?inline';
+import headerCssImport from './css/core/header.css?inline';
+import menuCssImport from './css/core/menu.css?inline';
+import panelCssImport from './css/core/panel.css?inline';
+import pinnedColumnsCssImport from './css/core/pinned-columns.css?inline';
+import printCssImport from './css/core/print.css?inline';
+import resetCssImport from './css/core/reset.css?inline';
+import richSelectCssImport from './css/core/rich-select.css?inline';
+import rootCssImport from './css/core/root.css?inline';
+import sidebarCssImport from './css/core/sidebar.css?inline';
+import widgetsButtonCssImport from './css/core/widgets/button.css?inline';
 import widgetsCheckButtonSharedCssImport from './css/core/widgets/check-button-shared.css?inline';
+import widgetsCheckboxCssImport from './css/core/widgets/checkbox.css?inline';
+import widgetsDragHandleCssImport from './css/core/widgets/drag-handle.css?inline';
+import widgetsInputsCssImport from './css/core/widgets/inputs.css?inline';
+import widgetsListsCssImport from './css/core/widgets/lists.css?inline';
+import widgetsRadioButtonCssImport from './css/core/widgets/radio-button.css?inline';
+import widgetsRangeCssImport from './css/core/widgets/range.css?inline';
+import widgetsToggleButtonCssImport from './css/core/widgets/toggle-button.css?inline';
 
 export const core = definePart<CoreParam>({
   partId: 'core',
@@ -196,6 +209,7 @@ export const core = definePart<CoreParam>({
     dropdownShadow: '0 1px 4px 1px #babfc766',
     dragGhostBackgroundColor: helpers.ref('backgroundColor'),
     dragGhostBorder: true,
+    dragGhostShadow: helpers.ref('popupShadow'),
     focusShadow: '0 0 0 3px color-mix(in srgb, transparent, var(--ag-accent-color) 50%)',
     insetFocusShadow: 'inset 0 0 5px var(--ag-accent-color)',
     sideBarPanelWidth: '250px',
@@ -238,34 +252,46 @@ export const core = definePart<CoreParam>({
     menuBorder: helpers.foregroundBorder(0.2),
     menuBackgroundColor: helpers.opaqueForeground(0.03),
     menuForegroundColor: helpers.opaqueForeground(0.95),
-    menuShadow: '0 0 16px 0 #00000026',
+    menuShadow: helpers.ref('popupShadow'),
     menuSeparatorColor: helpers.ref('borderColor'),
     setFilterIndentSize: helpers.ref('iconSize'),
+    chartMenuButtonBorder: true,
+    iconButtonHoverColor: helpers.transparentForeground(0.1),
+    dialogShadow: helpers.ref('popupShadow'),
+    dialogBorder: helpers.foregroundBorder(0.2),
+    panelBackgroundColor: helpers.ref('backgroundColor'),
+    panelTitleBarBackgroundColor: helpers.ref('headerBackgroundColor'),
+    panelTitleBarBorder: true,
   },
   css: [
-    sidebarCssImport,
-    rootCssImport,
-    richSelectCssImport,
-    resetCssImport,
-    printCssImport,
-    pinnedColumnsCssImport,
-    menuCssImport,
-    headerCssImport,
-    gridLayoutCssImport,
-    gridBordersCssImport,
-    dragAndDropCssImport,
-    columnFiltersCssImport,
-    columnDropCssImport,
-    cellEditingCssImport,
-    bordersTodoMoveIntoComponentFilesCssImport,
+    BaseComponentsGroupCssImport,
     advancedFilterCssImport,
-    widgetsToggleButtonCssImport,
-    widgetsRangeCssImport,
-    widgetsRadioButtonCssImport,
-    widgetsListsCssImport,
-    widgetsInputsCssImport,
-    widgetsCheckboxCssImport,
+    bordersTodoMoveIntoComponentFilesCssImport,
+    cellEditingCssImport,
+    chartsCssImport,
+    columnDropCssImport,
+    columnFiltersCssImport,
+    dragAndDropCssImport,
+    gridBordersCssImport,
+    gridLayoutCssImport,
+    headerCssImport,
+    menuCssImport,
+    panelCssImport,
+    pinnedColumnsCssImport,
+    printCssImport,
+    resetCssImport,
+    richSelectCssImport,
+    rootCssImport,
+    sidebarCssImport,
+    widgetsButtonCssImport,
     widgetsCheckButtonSharedCssImport,
+    widgetsCheckboxCssImport,
+    widgetsDragHandleCssImport,
+    widgetsInputsCssImport,
+    widgetsListsCssImport,
+    widgetsRadioButtonCssImport,
+    widgetsRangeCssImport,
+    widgetsToggleButtonCssImport,
   ],
 });
 
@@ -300,8 +326,8 @@ export const borders = definePart<BordersParam>({
   },
 });
 
-import quartzIconsCssImport from './css/quartz-icons/quartz-icons.css?inline';
 import quartzIconsEmbeddedTsImport from './css/quartz-icons/quartz-icons-embedded';
+import quartzIconsCssImport from './css/quartz-icons/quartz-icons.css?inline';
 
 export const quartzIcons = definePart<QuartzIconsParam>({
   partId: 'quartz-icons',
@@ -319,7 +345,7 @@ export const quartzIcons = definePart<QuartzIconsParam>({
     iconSize: '16px',
     iconStrokeWidth: '1.5px',
   },
-  css: [quartzIconsCssImport, quartzIconsEmbeddedTsImport],
+  css: [quartzIconsEmbeddedTsImport, quartzIconsCssImport],
 });
 
 export type ParamTypes = {
@@ -783,6 +809,15 @@ export type ParamTypes = {
   dragGhostBorder: string | boolean;
 
   /**
+   * Shadow for the ghost element when dragging columns
+   *
+   * Any valid CSS expression is accepted.
+   *
+   * @default ref("popupShadow")
+   */
+  dragGhostShadow: string;
+
+  /**
    * Shadow around UI controls that have focus e.g. text inputs and buttons. The value must a valid CSS box-shadow.
    *
    * Any valid CSS expression is accepted.
@@ -1147,7 +1182,7 @@ export type ParamTypes = {
    *
    * Any valid CSS expression is accepted.
    *
-   * @default "0 0 16px 0 #00000026"
+   * @default ref("popupShadow")
    */
   menuShadow: string;
 
@@ -1168,6 +1203,69 @@ export type ParamTypes = {
    * @default ref("iconSize")
    */
   setFilterIndentSize: string;
+
+  /**
+   * Border around the button that shows and hides the chart settings menus
+   *
+   * A CSS border value e.g. "solid 1px red". Passing true is equivalent to "solid 1px var(--ag-border-color)", and false to "none".
+   *
+   * @default true
+   */
+  chartMenuButtonBorder: string | boolean;
+
+  /**
+   * Hover color for clickable icons
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default transparentForeground(0.1)
+   */
+  iconButtonHoverColor: string;
+
+  /**
+   * Shadow for popup dialogs such as the integrated charts and the advanced filter builder.
+   *
+   * Any valid CSS expression is accepted.
+   *
+   * @default ref("popupShadow")
+   */
+  dialogShadow: string;
+
+  /**
+   * Border colour popup dialogs such as the integrated charts and the advanced filter builder.
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default foregroundBorder(0.2)
+   */
+  dialogBorder: string;
+
+  /**
+   * Background colour for panels and dialogs such as the integrated charts and the advanced filter builder.
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default ref("backgroundColor")
+   */
+  panelBackgroundColor: string;
+
+  /**
+   * Background colour for the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default ref("headerBackgroundColor")
+   */
+  panelTitleBarBackgroundColor: string;
+
+  /**
+   * Border below the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.
+   *
+   * A CSS border value e.g. "solid 1px red". Passing true is equivalent to "solid 1px var(--ag-border-color)", and false to "none".
+   *
+   * @default true
+   */
+  panelTitleBarBorder: string | boolean;
 
   /**
    * Use one of the built-in sets of preset colors values. Available presets are: "light", "dark".

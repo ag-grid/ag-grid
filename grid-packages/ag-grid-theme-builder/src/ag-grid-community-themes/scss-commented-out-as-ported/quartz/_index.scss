@@ -102,7 +102,7 @@
     );
   }
   /* PORTED
-  
+
   .ag-tabs-header {
     border-bottom: var(--ag-borders) var(--ag-border-color);
     display: flex;
@@ -169,7 +169,6 @@
     border: none;
     padding-top: var(--ag-widget-vertical-spacing);
   }
-  */
 
   .ag-chart-tabbed-menu-body {
     position: relative;
@@ -264,6 +263,8 @@
     );
   }
 
+  */
+
   .ag-color-picker {
     .ag-picker-field-wrapper {
       max-width: 55px;
@@ -285,6 +286,7 @@
       );
     }
   }
+  /* PORTED
 
   .ag-charts-format-sub-level-group {
     border-left: dashed 1px;
@@ -308,7 +310,6 @@
     margin-bottom: 0;
   }
 
-  /* PORTED
   &.ag-dnd-ghost {
     font-weight: 500;
   }
@@ -458,6 +459,8 @@
     }
   }
 
+  /* PORTED
+
   .ag-chart-menu-close {
     // use an opaque hover effect because we don't know what colour we're,
     // overlaying on top of, the user might have set a custom background color
@@ -522,7 +525,7 @@
       )
     );
   }
-
+*/
   .ag-multi-filter-group-title-bar {
     padding: calc(var(--ag-grid-size) * 1.5) var(--ag-grid-size);
   }

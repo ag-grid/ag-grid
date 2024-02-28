@@ -19,7 +19,7 @@
   background-color: var(--ag-drag-ghost-background-color);
   border: var(--ag-drag-ghost-border);
   border-radius: var(--ag-border-radius);
-  box-shadow: var(--ag-popup-shadow);
+  box-shadow: var(--ag-drag-ghost-shadow);
   padding-left: var(--ag-cell-horizontal-padding);
   padding-right: var(--ag-cell-horizontal-padding);
   gap: var(--ag-cell-widget-spacing);

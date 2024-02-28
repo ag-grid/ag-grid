@@ -12,6 +12,7 @@ import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { styled } from '@mui/joy';
+import 'ag-charts-enterprise';
 import { useAtomValue } from 'jotai';
 import { memo, useMemo, useState } from 'react';
 import { withErrorBoundary } from '../components/ErrorBoundary';
@@ -35,20 +36,43 @@ ModuleRegistry.registerModules([
 ModuleRegistry.registerModules([SetFilterModule]);
 
 const GridPreview = () => {
-  const gridConfig = useAtomValue(gridConfigAtom);
+  const config = useAtomValue(gridConfigAtom);
   const options = useMemo(() => {
-    return buildGridOptions(gridConfig);
-  }, [gridConfig]);
+    return buildGridOptions(config);
+  }, [config]);
 
-  const [internalState] = useState({ id: 1, prevConfig: gridConfig });
-  if (gridConfig !== internalState.prevConfig) {
+  const [internalState] = useState({ id: 1, prevConfig: config });
+  if (config !== internalState.prevConfig) {
     internalState.id += 1;
-    internalState.prevConfig = gridConfig;
+    internalState.prevConfig = config;
   }
 
   return (
     <Wrapper>
-      <AgGridReact key={internalState.id} {...options} />
+      <AgGridReact
+        onGridReady={({ api }) => {
+          if (config.integratedCharts) {
+            api.createRangeChart({
+              cellRange: {
+                rowStartIndex: 0,
+                rowEndIndex: 14,
+                columns: ['model', 'year', 'price'],
+              },
+              chartType: 'groupedColumn',
+              chartThemeOverrides: {
+                common: {
+                  title: {
+                    enabled: true,
+                    text: 'Top 5 Medal Winners',
+                  },
+                },
+              },
+            });
+          }
+        }}
+        key={internalState.id}
+        {...options}
+      />
     </Wrapper>
   );
 };
