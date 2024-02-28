@@ -1,11 +1,76 @@
 ---
-import Warning from '@components/alert/Warning';
 import Layout from '../../layouts/Layout.astro';
-import CommunityMenu from '@components/community-section/menu'
+import { Icon } from '@components/icon/Icon';
+import CommunityMenu from '@components/community-section/menu';
+import LayoutStyles from '@design-system/modules/community-section/Layout.module.scss';
+import styles from '@design-system/modules/community-section/index.module.scss';
+import FeaturedNews from '@components/community-section/news-updates/featurednews';
+import Events from '@components/community-section/news-updates/events';
+import ShowcaseList from "@components/community-section/showcaselist";
+import Support from "@components/community-section/landing-page/support";
+import Socials from "@components/community-section/landing-page/socials";
 ---
 
 <Layout title="AG Grid">
     <div class="layout-max-width-large">
         <CommunityMenu path={Astro.url.pathname} client:only/>
+        <div class={LayoutStyles.container}>
+            <header class={LayoutStyles.header}>
+                <h1>Our Community</h1>
+                <p>Stay up to date with the latest news & developments from in and around AG Grid</p>
+            </header>
+            <div class={LayoutStyles.content}>
+                <!-- Featured News -->
+                <section>
+                    <div class={styles.sectionContainer}>
+                        <div class={styles.sectionHeader}>
+                            <h3 class={styles.sectionTitle}>Featured News</h3>
+                            <p class={styles.sectionDescription}>
+                                The latest content from the AG Grid team, including releases, new features, events, and more
+                            </p>
+                        </div>
+                        <a href='/community/news-updates' class={styles.sectionLink}>
+                            <span class={styles.linkIcon}>View All</span>
+                            <Icon name="arrowRight" />
+                        </a>
+                    </div>
+                    <FeaturedNews clientOnly />
+                </section>
+                <!-- Showcase -->
+                <section>
+                    <div class={styles.sectionContainer}>
+                        <div class={styles.sectionHeader}>
+                            <h3 class={styles.sectionTitle}>Showcase</h3>
+                            <p class={styles.sectionDescription}>
+                                A selection of public projects that use AG Grid
+                            </p>
+                        </div>
+                        <a href='/community/showcase' class={styles.sectionLink}>
+                            <span class={styles.linkIcon}>View All</span>
+                            <Icon name="arrowRight" />
+                        </a>
+                    </div>
+                    <ShowcaseList favouritesOnly={true} maxItems={8} client:only/>
+                </section>
+                <!-- Tools & Extensons -->
+                <section>
+                    <h3 class={styles.sectionTitle}>Tools & Extensions</h3>
+                    <p class={styles.sectionDescription}>Wrappers, integrations and utilities created by our community to make using AG Grid even easier</p>
+                    <!-- TODO: Tools & Extensons Component -->
+                </section>
+                <!-- Support -->
+                <section>
+                    <h3>Support</h3>
+                    <p>Looking for developer support? Try one of the channels below</p>
+                    <Support client:only />
+                </section>
+                <!-- Socials -->
+                <section>
+                    <h3>Join the Community</h3>
+                    <p>Stay up to date on your favourite platform</p>
+                    <Socials client:only />
+                </section>
+            </div>
+        </div>
     </div>
-</Layout>../../components/community-section/Menu
+</Layout>
