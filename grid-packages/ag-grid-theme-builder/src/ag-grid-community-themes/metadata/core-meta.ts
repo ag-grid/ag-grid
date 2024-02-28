@@ -507,16 +507,16 @@ export const coreMeta = definePartMeta({
       defaultValue: { helper: 'ref', arg: 'accentColor' },
     },
     {
-      property: 'toggleButtonOffBorderColor',
-      type: 'color',
-      docs: "Colour of the toggle button's outer border in its 'off' state",
-      defaultValue: { helper: 'opaqueForeground', arg: 0.3 },
-    },
-    {
       property: 'toggleButtonOnBackgroundColor',
       type: 'color',
       docs: "Colour of the toggle button background in its 'on' state",
       defaultValue: { helper: 'ref', arg: 'accentColor' },
+    },
+    {
+      property: 'toggleButtonOffBorderColor',
+      type: 'color',
+      docs: "Colour of the toggle button's outer border in its 'off' state",
+      defaultValue: { helper: 'opaqueForeground', arg: 0.3 },
     },
     {
       property: 'toggleButtonOffBackgroundColor',
@@ -525,16 +525,16 @@ export const coreMeta = definePartMeta({
       defaultValue: { helper: 'opaqueForeground', arg: 0.3 },
     },
     {
-      property: 'toggleButtonSwitchBackgroundColor',
-      type: 'color',
-      docs: 'Colour of the toggle button switch (the bit that slides from left to right)',
-      defaultValue: { helper: 'ref', arg: 'backgroundColor' },
-    },
-    {
       property: 'toggleButtonSwitchBorderColor',
       type: 'color',
       docs: 'Border colour of the toggle button switch (the bit that slides from left to right)',
       defaultValue: { helper: 'ref', arg: 'toggleButtonOffBorderColor' },
+    },
+    {
+      property: 'toggleButtonSwitchBackgroundColor',
+      type: 'color',
+      docs: 'Colour of the toggle button switch (the bit that slides from left to right)',
+      defaultValue: { helper: 'ref', arg: 'backgroundColor' },
     },
 
     {

@@ -1,11 +1,12 @@
 .ag-checkbox-input-wrapper,
 .ag-radio-button-input-wrapper {
-  width: var(--ag-icon-size);
-  height: var(--ag-icon-size);
   flex: none;
   position: relative;
-  display: inline-block;
-  vertical-align: middle;
+  width: var(--ag-icon-size);
+  height: var(--ag-icon-size);
+  /* TODO can I remove this? */
+  /* display: inline-block;
+  vertical-align: middle; */
 
   & input {
     appearance: none;

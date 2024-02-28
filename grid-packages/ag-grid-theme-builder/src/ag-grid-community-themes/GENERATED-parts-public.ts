@@ -81,11 +81,11 @@ export type CoreParam =
   | 'toggleButtonHeight'
   | 'toggleButtonBorderWidth'
   | 'toggleButtonOnBorderColor'
-  | 'toggleButtonOffBorderColor'
   | 'toggleButtonOnBackgroundColor'
+  | 'toggleButtonOffBorderColor'
   | 'toggleButtonOffBackgroundColor'
-  | 'toggleButtonSwitchBackgroundColor'
   | 'toggleButtonSwitchBorderColor'
+  | 'toggleButtonSwitchBackgroundColor'
   | 'checkboxBorderWidth'
   | 'checkboxBorderRadius'
   | 'checkboxUncheckedBackgroundColor'
@@ -115,6 +115,7 @@ import sidebarCssImport from './css/core/sidebar.css?inline';
 import rootCssImport from './css/core/root.css?inline';
 import richSelectCssImport from './css/core/rich-select.css?inline';
 import resetCssImport from './css/core/reset.css?inline';
+import printCssImport from './css/core/print.css?inline';
 import pinnedColumnsCssImport from './css/core/pinned-columns.css?inline';
 import headerCssImport from './css/core/header.css?inline';
 import gridLayoutCssImport from './css/core/grid-layout.css?inline';
@@ -208,11 +209,11 @@ export const core = definePart<CoreParam>({
     toggleButtonHeight: '18px',
     toggleButtonBorderWidth: '1px',
     toggleButtonOnBorderColor: helpers.ref('accentColor'),
-    toggleButtonOffBorderColor: helpers.opaqueForeground(0.3),
     toggleButtonOnBackgroundColor: helpers.ref('accentColor'),
+    toggleButtonOffBorderColor: helpers.opaqueForeground(0.3),
     toggleButtonOffBackgroundColor: helpers.opaqueForeground(0.3),
-    toggleButtonSwitchBackgroundColor: helpers.ref('backgroundColor'),
     toggleButtonSwitchBorderColor: helpers.ref('toggleButtonOffBorderColor'),
+    toggleButtonSwitchBackgroundColor: helpers.ref('backgroundColor'),
     checkboxBorderWidth: '1px',
     checkboxBorderRadius: helpers.ref('borderRadius'),
     checkboxUncheckedBackgroundColor: helpers.ref('backgroundColor'),
@@ -233,6 +234,7 @@ export const core = definePart<CoreParam>({
     rootCssImport,
     richSelectCssImport,
     resetCssImport,
+    printCssImport,
     pinnedColumnsCssImport,
     headerCssImport,
     gridLayoutCssImport,
@@ -947,15 +949,6 @@ export type ParamTypes = {
   toggleButtonOnBorderColor: string;
 
   /**
-   * Colour of the toggle button's outer border in its 'off' state
-   *
-   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
-   *
-   * @default opaqueForeground(0.3)
-   */
-  toggleButtonOffBorderColor: string;
-
-  /**
    * Colour of the toggle button background in its 'on' state
    *
    * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
@@ -963,6 +956,15 @@ export type ParamTypes = {
    * @default ref("accentColor")
    */
   toggleButtonOnBackgroundColor: string;
+
+  /**
+   * Colour of the toggle button's outer border in its 'off' state
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default opaqueForeground(0.3)
+   */
+  toggleButtonOffBorderColor: string;
 
   /**
    * Colour of the toggle button background in its 'off' state
@@ -974,15 +976,6 @@ export type ParamTypes = {
   toggleButtonOffBackgroundColor: string;
 
   /**
-   * Colour of the toggle button switch (the bit that slides from left to right)
-   *
-   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
-   *
-   * @default ref("backgroundColor")
-   */
-  toggleButtonSwitchBackgroundColor: string;
-
-  /**
    * Border colour of the toggle button switch (the bit that slides from left to right)
    *
    * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
@@ -990,6 +983,15 @@ export type ParamTypes = {
    * @default ref("toggleButtonOffBorderColor")
    */
   toggleButtonSwitchBorderColor: string;
+
+  /**
+   * Colour of the toggle button switch (the bit that slides from left to right)
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default ref("backgroundColor")
+   */
+  toggleButtonSwitchBackgroundColor: string;
 
   /**
    * The color of an unchecked checkbox

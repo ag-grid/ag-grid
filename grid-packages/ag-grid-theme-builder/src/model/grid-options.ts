@@ -13,6 +13,7 @@ export const gridConfigBooleanFields = [
   'integratedCharts',
   'rightToLeft',
   'floatingFilters',
+  'printLayout',
 ] as const;
 
 type GridConfigBooleanField = (typeof gridConfigBooleanFields)[number];
@@ -28,6 +29,7 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
     enableRowGroup: true,
     floatingFilter: config.floatingFilters,
     editable: true,
+    flex: config.printLayout ? undefined : 1,
   };
   const columnDefs = buildSimpleColumnDefs();
   const sideBar: string[] = [];
@@ -40,6 +42,7 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
     rowData: defaultRowData(),
     columnDefs: config.columnGroups ? buildGroupColumnDefs(columnDefs) : columnDefs,
     enableRtl: config.rightToLeft,
+    domLayout: config.printLayout ? 'print' : undefined,
   };
 
   if (config.advancedFilter) {
@@ -92,10 +95,9 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
 };
 
 const buildSimpleColumnDefs = (): ColDef[] => [
-  { field: 'make', flex: 1 },
+  { field: 'make' },
   {
     field: 'model',
-    flex: 1,
     filter: 'agSetColumnFilter',
     filterParams: {
       buttons: ['reset', 'apply'],
@@ -105,8 +107,8 @@ const buildSimpleColumnDefs = (): ColDef[] => [
       values: Array.from(new Set(defaultRowData().map((row) => row.model))).sort(),
     },
   },
-  { field: 'year', flex: 1 },
-  { field: 'price', flex: 1 },
+  { field: 'year' },
+  { field: 'price' },
 ];
 
 const buildGroupColumnDefs = (columns: ColDef[]): ColGroupDef[] => [

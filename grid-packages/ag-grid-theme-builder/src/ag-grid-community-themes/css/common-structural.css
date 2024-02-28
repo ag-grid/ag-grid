@@ -698,16 +698,6 @@ ag-grid-aurelia {
 
 /**
  ****************************
- * Virtual Lists
- ****************************
- */
-.ag-virtual-list-item {
-  position: absolute;
-  width: 100%;
-}
-
-/**
- ****************************
  * Floating Top and Bottom
  ****************************
  */
@@ -1307,30 +1297,6 @@ ag-grid-aurelia {
 
 .ag-group-item-alignment-end .ag-group-item {
   align-items: flex-end;
-}
-
-.ag-toggle-button-icon {
-  transition: right 0.3s;
-  position: absolute;
-  top: -1px;
-}
-
-.ag-input-field,
-.ag-select {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-
-.ag-input-field-input {
-  flex: 1 1 auto;
-}
-
-.ag-floating-filter-input .ag-input-field-input[type='date'] {
-  /* TODO test and remove */
-  /* Fix a bug in Blink rendering engine where date input will not shrink from its default size in a
-        flex container, but it will grow. So we give it a very small width and it will grow to the right size */
-  width: 1px;
 }
 
 .ag-angle-select {
