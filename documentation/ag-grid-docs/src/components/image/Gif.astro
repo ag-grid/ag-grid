@@ -1,7 +1,7 @@
 ---
 import { Gif } from './Gif';
-import { DOCS_PAGE_NAME_PATH_INDEX } from '@features/docs/constants';
 import { getPageImages } from '@features/docs/utils/filesData';
+import { getPageNameFromPath } from '@features/docs/utils/urlPaths';
 
 interface Props {
     pageName?: string;
@@ -13,8 +13,7 @@ interface Props {
 
 const { pageName: propPageName, imagePath, alt, autoPlay, wrapped, ...props } = Astro.props as Props;
 
-const pathSegments = Astro.url.pathname.split('/');
-const pageName = propPageName ? propPageName : pathSegments[DOCS_PAGE_NAME_PATH_INDEX];
+const pageName = propPageName ? propPageName : getPageNameFromPath(Astro.url.pathname);
 
 const { imageSrc, darkModeImageSrc, gifStillImageSrc, gifDarkModeStillImageSrc } = await getPageImages({
     pageName,
