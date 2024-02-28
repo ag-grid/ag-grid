@@ -12,8 +12,6 @@ In order to use selective AG Grid modules within your application you need to do
 - Specify the modules you require as dependencies
 - Register the modules you require with the Grid
 
-That's it! In the sections below we will expand on these points with examples.
-|
 ### Choosing Our Modules
 
 You can refer to the [Complete List of Modules here](./modules/#modules) but for our purposes we're going to assume that the application we're building requires the following features:
@@ -65,14 +63,6 @@ You do not need to register framework modules (ie. `@ag-grid-community/angular`,
 
 {% if isNotJavascriptFramework() %}
 And that's all that's required. Below is an example using the above configuration for your framework.
-
-### Example
-{% /if %}
-
-{% if isNotJavascriptFramework() %}
-<!-- TODO: Fixme -->
-<!-- {% gridExampleRunner title="Using Modules" name="module-grid" type="multi" options={ "enterprise": true, "modules": ["clientside", "menu", "excel"], "showCode": true } /%} -->
-{% /if %}
 
 {% if isFramework("javascript") %}
 ## Building Your Own UMD Bundle
