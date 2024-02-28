@@ -137,7 +137,8 @@
         { "externalDependencies": ["npm:typescript"] }
       ],
       "outputs": [],
-      "cache": false,
+      "batch": true,
+      "cache": true,
       "configurations": {
         "staging": {},
         "production": {}
