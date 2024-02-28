@@ -40,11 +40,13 @@ export default async function (options: ExecutorOptions) {
     }
 }
 
-async function getGridOptionsType() {
-    return await readJSONFile('plugins/ag-grid-generate-example-files/gridOptionsTypes/_gridOptions_Types.json');
-}
+export async function generateFiles(options: ExecutorOptions) {
+    const isDev = options.mode === 'dev';
+    const gridOptionsTypes = await readJSONFile(
+        'plugins/ag-grid-generate-example-files/gridOptionsTypes/_gridOptions_Types.json'
+    );
+    const folderPath = options.examplePath;
 
-async function getSourceFileList(folderPath: string): Promise<string[]> {
     const sourceFileList = await fs.readdir(folderPath);
     if (sourceFileList.includes('SKIP_EXAMPLE_GENERATION.md')) {
         const msg = `Skipping example generation for ${folderPath} as there is a SKIP_EXAMPLE_GENERATION.md file present.`;
