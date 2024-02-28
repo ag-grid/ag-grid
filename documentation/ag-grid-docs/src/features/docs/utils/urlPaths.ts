@@ -3,7 +3,7 @@ import type { Framework } from '@ag-grid-types';
 import { SITE_BASE_URL } from '@constants';
 import { pathJoin } from '@utils/pathJoin';
 
-import { DOCS_FRAMEWORK_PATH_INDEX } from '../constants';
+import { DOCS_FRAMEWORK_PATH_INDEX, DOCS_PAGE_NAME_PATH_INDEX } from '../constants';
 
 export function getFrameworkPath(framework: Framework) {
     return `${framework}-data-grid`;
@@ -13,6 +13,10 @@ export function getFrameworkFromPath(path: string): Framework {
     const frameworkPath = path.split('/')[DOCS_FRAMEWORK_PATH_INDEX];
     const framework = frameworkPath.replace('-data-grid', '');
     return framework as Framework;
+}
+
+export function getPageNameFromPath(path: string): string {
+    return path.split('/')[DOCS_PAGE_NAME_PATH_INDEX];
 }
 
 export const getExamplePageUrl = ({ framework, path }: { framework: Framework; path: string }) => {
