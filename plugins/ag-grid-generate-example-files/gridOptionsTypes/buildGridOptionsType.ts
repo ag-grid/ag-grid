@@ -1,6 +1,6 @@
 import ts from 'typescript';
-import { writeJSONFile } from '../executors-utils';
-import { PropertyKeys } from '../executors/generate/generator/_copiedFromCore/propertyKeys';
+import { writeJSONFile } from '../src/executors-utils';
+import { PropertyKeys } from '../src/executors/generate/generator/_copiedFromCore/propertyKeys';
 
 function getTypes(node: ts.Node) {
     let typesToInclude = [];
@@ -47,7 +47,7 @@ function getTypeLookupFunc(fileName) {
                 fullLookup[prop] = lookupType(prop as string);
             });
 
-            writeJSONFile('./src/gridOptionsTypes/_gridOptions_Types.json', fullLookup);
+            writeJSONFile('./gridOptionsTypes/_gridOptions_Types.json', fullLookup);
         } else{
             console.error('No gridOptions file found');
         }

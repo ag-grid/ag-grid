@@ -43,7 +43,7 @@ export default async function (options: ExecutorOptions) {
 export async function generateFiles(options: ExecutorOptions) {
     const isDev = options.mode === 'dev';
     const gridOptionsTypes = await readJSONFile(
-        'plugins/ag-grid-generate-example-files/src/gridOptionsTypes/_gridOptions_Types.json'
+        'plugins/ag-grid-generate-example-files/gridOptionsTypes/_gridOptions_Types.json'
     );
     const folderPath = options.examplePath;
 
