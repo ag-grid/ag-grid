@@ -5,7 +5,7 @@ import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 import GenderRenderer from './genderRendererVue.js';
 import MoodRenderer from './moodRendererVue.js';
-
+import "./styles.css";
 import { ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
