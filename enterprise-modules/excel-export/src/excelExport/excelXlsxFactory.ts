@@ -21,7 +21,7 @@ import worksheetFactory from './files/ooxml/worksheet';
 import relationshipsFactory from './files/ooxml/relationships';
 
 import { setExcelImageTotalHeight, setExcelImageTotalWidth, createXmlPart } from './assets/excelUtils';
-import {ImageIdMap, ExcelCalculatedImage, ExcelTable} from './assets/excelInterfaces';
+import {ImageIdMap, ExcelCalculatedImage, ExcelDataTable} from './assets/excelInterfaces';
 import { ExcelGridSerializingParams } from './excelSerializingSession';
 
 /**
@@ -43,7 +43,7 @@ export class ExcelXlsxFactory {
     /** Maps all sheet images to unique Ids */
     public static worksheetImageIds: Map<number, ImageIdMap> = new Map();
     /** Maps all sheet tables to unique Ids */
-    public static worksheetTables: Map<number, ExcelTable[]> = new Map();
+    public static worksheetDataTables: Map<number, ExcelDataTable> = new Map();
 
     public static factoryMode: ExcelFactoryMode = ExcelFactoryMode.SINGLE_SHEET;
 
@@ -55,29 +55,45 @@ export class ExcelXlsxFactory {
         this.addSheetName(worksheet);
         registerStyles(styles, this.sheetNames.length);
 
-        const { name: tableName, columns, rowCount } = config.tableSetup || {};
-        if (tableName && columns && typeof rowCount === 'number') {
-            // TODO - Handle the case where there are multiple sheets
-            //   with different columns and rowCount
-            this.addTableToSheet(0, {
-                index: 0,
-                name: tableName,
-                columns,
-                firstDataRow: 0,
-                lastDataRow: Math.max(rowCount - 1, 0),
+        const sheetIndex = this.sheetNames.length - 1;
+        const name = `Table${sheetIndex + 1}`; // Assuming that there is only 1 table per sheet
+
+        const {
+            name: displayName,
+            columns,
+            rowCount,
+        } = config.tableSetup || {};
+
+        // TODO: For the case of grouped columns, the row to use should be the last row of the group
+
+        const tableColumnsRow: number = 0;
+        const tableRowCount = rowCount ?? worksheet.table.rows.length;
+        const tableColumns = columns
+            ? columns
+            : config.columnModel.getAllDisplayedColumns().map(col => col.getColId());
+
+        if (!tableColumns || !tableColumns.length || !tableRowCount || !displayName) {
+            console.warn('Unable to add data table to Excel sheet: Missing required parameters.');
+        } else {
+            this.addTableToSheet(sheetIndex, {
+                name,
+                displayName,
+                columns: tableColumns,
+                columnsRow: tableColumnsRow,
+                rowCount: tableRowCount,
             });
         }
 
         return this.createWorksheet(worksheet, config);
     }
 
-    public static addTableToSheet(sheetIndex: number, table: ExcelTable): void {
-        const worksheetTables = this.worksheetTables.get(sheetIndex);
-        if (!worksheetTables) {
-            this.worksheetTables.set(sheetIndex, [table]);
-        } else {
-            worksheetTables.push(table);
+    public static addTableToSheet(sheetIndex: number, table: ExcelDataTable): void {
+        if (this.worksheetDataTables.has(sheetIndex)) {
+            console.warn('Unable to add data table to Excel sheet: A table already exists.');
+            return;
         }
+
+        this.worksheetDataTables.set(sheetIndex, table);
     }
 
     public static buildImageMap(image: ExcelImage, rowIndex: number, col: Column, columnsToExport: Column[], rowHeight?: number | ((params: RowHeightCallbackParams) => number)): void {
@@ -171,7 +187,7 @@ export class ExcelXlsxFactory {
 
         this.workbookImageIds = new Map();
         this.worksheetImageIds = new Map();
-        this.worksheetTables = new Map();
+        this.worksheetDataTables = new Map();
 
         this.sheetNames = [];
         this.factoryMode = ExcelFactoryMode.SINGLE_SHEET;
@@ -215,13 +231,8 @@ export class ExcelXlsxFactory {
         return createXmlPart(officeThemeFactory.getTemplate());
     }
 
-    public static createTable(tableName: string, columns: string[], rowCount: number): string {
-        return createXmlPart(tableFactory.getTemplate({
-            id: "2",
-            name: tableName,
-            columns,
-            rowCount,
-        }));
+    public static createTable(dataTable: ExcelDataTable): string {
+        return createXmlPart(tableFactory.getTemplate(dataTable));
     }
 
     public static createWorkbookRels(sheetLen: number): string {
@@ -263,22 +274,6 @@ export class ExcelXlsxFactory {
                 Id: `rId${value.index + 1}`,
                 Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image',
                 Target: `../media/image${this.workbookImageIds.get(key)!.index + 1}.${value.type}`
-            });
-        });
-
-        return createXmlPart(relationshipsFactory.getTemplate(XMLArr));
-    }
-
-    public static createTableRel(sheetIndex: number) {
-        const worksheetTables = this.worksheetTables.get(sheetIndex);
-        const XMLArr: ExcelRelationship[] = [];
-
-        worksheetTables?.forEach((excelTable, index) => {
-
-            XMLArr.push({
-                Id: `rId${excelTable.index + 1}`,
-                Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/table',
-                Target: `../tables/table${excelTable.index + 1}.xml`
             });
         });
 

@@ -12,7 +12,7 @@ import {
     ExcelFont,
     _
 } from '@ag-grid-community/core';
-import {ExcelTable} from '../../assets/excelInterfaces';
+import {ExcelDataTable} from '../../assets/excelInterfaces';
 
 import columnFactory from './column';
 import rowFactory from './row';
@@ -294,22 +294,23 @@ const addHeaderFooter = (headerFooterConfig?: ExcelHeaderFooterConfig) => {
     };
 };
 
-const addExcelTableParts = (excelTables?: ExcelTable[]) => {
-    if (!excelTables || excelTables.length === 0) {
+const addExcelTableParts = (excelTable?: ExcelDataTable, index?: number) => {
+    if (!excelTable) {
         return (children: XmlElement[]) => children;
     }
 
+    const rId = index ? `rId${index}` : 'rId1';
     return (children: XmlElement[]) => {
         children.push({
             name: 'tableParts',
-            children: excelTables.map((table) => ({
+            children: [{
                 name: 'tablePart',
                 properties: {
                     rawMap: {
-                        'r:id': `rId${table.index + 1}`
+                        'r:id': rId,
                     }
                 }
-            }))
+            }],
         });
 
         return children;
@@ -386,7 +387,7 @@ const worksheetFactory: ExcelOOXMLTemplate = {
         const { rows, columns } = table;
         const mergedCells = (columns && columns.length) ? getMergedCellsAndAddColumnGroups(rows, columns, !!suppressColumnOutline) : [];
 
-        const worksheetExcelTables = ExcelXlsxFactory.worksheetTables.get(currentSheet);
+        const worksheetExcelTables = ExcelXlsxFactory.worksheetDataTables.get(currentSheet);
 
         const createWorksheetChildren = _.compose(
             addSheetPr(),

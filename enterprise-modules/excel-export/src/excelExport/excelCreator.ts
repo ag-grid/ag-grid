@@ -22,8 +22,6 @@ import { ExcelXlsxFactory } from './excelXlsxFactory';
 import { BaseCreator, Downloader, GridSerializer, RowType, ZipContainer } from "@ag-grid-community/csv-export";
 import { ExcelGridSerializingParams, ExcelSerializingSession, StyleLinkerInterface } from './excelSerializingSession';
 
-const defaultTableName = 'Table1';
-
 const createExcelXMLCoreFolderStructure = (): void => {
     ZipContainer.addFolders([
         '_rels/',
@@ -59,7 +57,7 @@ const createExcelXmlWorksheets = (data: string[]): void => {
     data.forEach((value, idx) => {
         ZipContainer.addFile(`xl/worksheets/sheet${idx + 1}.xml`, value, false);
 
-        if (ExcelXlsxFactory.worksheetTables.size && ExcelXlsxFactory.worksheetTables.get(idx)) {
+        if (ExcelXlsxFactory.worksheetDataTables.size && ExcelXlsxFactory.worksheetDataTables.get(idx)) {
             createTableRelationsForSheet(idx, tableRelationCounter++);
         }
 
@@ -72,27 +70,21 @@ const createExcelXmlWorksheets = (data: string[]): void => {
 }
 
 const createExcelXmlTables = (): void => {
-    const tablesDataByWorksheet = ExcelXlsxFactory.worksheetTables;
+    const tablesDataByWorksheet = ExcelXlsxFactory.worksheetDataTables;
     const worksheetKeys = Array.from(tablesDataByWorksheet.keys());
-    let tablesCount = 0;
 
     for (let i = 0; i < worksheetKeys.length; i++) {
         const sheetIndex = worksheetKeys[i];
-        const tablesData = tablesDataByWorksheet.get(sheetIndex);
+        const dataTable = tablesDataByWorksheet.get(sheetIndex);
 
-        if (!tablesData) { continue; }
-
-        for (let j = 0; j < tablesData.length; j++) {
-            tablesCount++;
-            const table = tablesData[j];
-            const { name, columns, firstDataRow, lastDataRow } = table;
-            const rowCount = lastDataRow - firstDataRow + 1;
-
-            ZipContainer.addFile(
-                `xl/tables/table${tablesCount}.xml`,
-                ExcelXlsxFactory.createTable(name || defaultTableName, columns, rowCount),
-            );
+        if (!dataTable) {
+            continue;
         }
+
+        ZipContainer.addFile(
+            `xl/tables/${dataTable.name}.xml`,
+            ExcelXlsxFactory.createTable(dataTable),
+        );
     }
 }
 
@@ -286,9 +278,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
 
     public getSheetDataForExcel(params: ExcelExportParams): string {
         const mergedParams = this.getMergedParams(params);
-        const data = this.getData(mergedParams);
-
-        return data;
+        return this.getData(mergedParams);
     }
 
     public getMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): Blob | undefined {

@@ -68,10 +68,10 @@ export interface ExcelCalculatedImage extends ExcelImage {
     totalHeight: number;
 }
 
-export interface ExcelTable {
-    index: number;
+export interface ExcelDataTable {
     name: string;
+    displayName: string;
     columns: string[];
-    firstDataRow: number;
-    lastDataRow: number;
+    columnsRow: number;
+    rowCount: number;
 }

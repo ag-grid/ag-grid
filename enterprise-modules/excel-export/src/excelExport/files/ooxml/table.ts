@@ -1,7 +1,8 @@
 import { ExcelOOXMLTemplate } from '@ag-grid-community/core';
+import {ExcelDataTable} from '../../assets/excelInterfaces';
 
 const tableFactory: ExcelOOXMLTemplate = {
-    getTemplate(config: any, idx: number) {
+    getTemplate(config: ExcelDataTable, idx: number) {
         if (
             typeof config !== 'object' || !config ||
             !config.name || !Array.isArray(config.columns) || !config.columns.length ||
@@ -10,7 +11,14 @@ const tableFactory: ExcelOOXMLTemplate = {
             return { name: "table" };
         }
 
-        const { name, id, columns, rowCount } = config;
+        const {
+            name,
+            displayName,
+            columns,
+            rowCount
+        } = config;
+
+        const id = "1"; // We assume that there is only 1 table per sheet with id: 1
         const ref = `A1:${String.fromCharCode(64 + columns.length)}${rowCount}`;
 
         return {
@@ -18,14 +26,16 @@ const tableFactory: ExcelOOXMLTemplate = {
             properties: {
                 rawMap: {
                     "xmlns": "http://schemas.openxmlformats.org/spreadsheetml/2006/main",
+                    "xmlns:mc": "http://schemas.openxmlformats.org/markup-compatibility/2006",
+                    "mc:Ignorable": "xr xr3",
+                    "xmlns:xr": "http://schemas.microsoft.com/office/spreadsheetml/2014/revision",
+                    "xmlns:xr3": "http://schemas.microsoft.com/office/spreadsheetml/2016/revision3",
+
                     "name": name,
-                    "displayName": name,
+                    "displayName": displayName,
                     "ref": ref,
                     "totalsRowShown": 0,
-                    "insertRow": 1,
                     "id": id,
-                    "headerRowCellStyle": "Normal",
-                    "dataCellStyle": "Normal",
                 }
             },
             children: [

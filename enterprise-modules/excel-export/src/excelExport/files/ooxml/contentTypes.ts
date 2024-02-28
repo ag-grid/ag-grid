@@ -12,7 +12,7 @@ const contentTypesFactory: ExcelOOXMLTemplate = {
         }));
 
         const sheetsWithImages = ExcelXlsxFactory.worksheetImages.size;
-        const sheetsWithTables = ExcelXlsxFactory.worksheetTables.size;
+        const sheetsWithTables = ExcelXlsxFactory.worksheetDataTables.size;
         const imageTypesObject: { [ key: string ]: boolean} = {};
 
         ExcelXlsxFactory.workbookImageIds.forEach((v) => {
