@@ -1,49 +1,40 @@
-.imageContainer {
+.supportChannelContainer {
     display: flex;
     justify-content: space-around; // This ensures horizontal layout with space between the items
     align-items: center;
     gap: 64px;
-  }
-  
-  .imageItem {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-  
-    img {
-      width: 75px; // Set the width of the image
-      height: 75px; // Set the height of the image
-      border-radius: 50%; // This makes the image circular
-      object-fit: cover; // This ensures the image covers the space without being distorted
-      margin: 12px;
-    }
-  
-    .text {
-        font-size: 18px;
-        font-weight: 600;
-    }
+    flex-wrap: wrap;
 
-    .desc { 
-        text-align: center;
-        padding: 0px 24px;
-    }
-
-    .linkContainer {
-        width: 100%;
+    .link {
+        flex: 1;
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
+        align-items: center;
         gap: 12px;
-        justify-content: flex-end;
-        padding: 0px 24px;
+        color: color-mix(in srgb, var(
+            --color-gray-400), var(--color-fg-primary) 20%);
+            font-weight: 400;
 
-        .link {
+    .supportChannel {
+
+        .header {
             display: flex;
-            justify-content: flex-end;
-            text-align: end;
+            align-items: center;
+            justify-content: flex-start;
+            width: 100%;
+            margin-bottom: 16px;
+
+            .text {
+                font-size: 18px;
+                font-weight: 600;
+            }
         }
 
+        img {
+            width: 28px;
+            height: 28px;
+            margin-right: 12px;
+        }
     }
-  }
-  
+}
+}

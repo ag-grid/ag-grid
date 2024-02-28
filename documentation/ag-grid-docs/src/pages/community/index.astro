@@ -55,19 +55,17 @@ import Socials from "@components/community-section/landing-page/socials";
                 <!-- Tools & Extensons -->
                 <section>
                     <h3 class={styles.sectionTitle}>Tools & Extensions</h3>
-                    <p class={styles.sectionDescription}>Wrappers, integrations and utilities created by our community to make using AG Grid even easier</p>
-                    <!-- TODO: Tools & Extensons Component -->
+                    <p class={styles.sectionDescription}>Wrappers, integrations and utilities created by our community to make using AG Grid even easier (***WIP***)</p>
+                    <!-- TODO: Replace w/ Tools & Extensons Component -->
+                    <ShowcaseList favouritesOnly={true} maxItems={4} client:only/>
                 </section>
                 <!-- Support -->
                 <section>
                     <h3>Support</h3>
-                    <p>Looking for developer support? Try one of the channels below</p>
                     <Support client:only />
                 </section>
-                <!-- Socials -->
+                <hr style={{ margin: "0px 5vw 24px 5vw"}}/>
                 <section>
-                    <h3>Join the Community</h3>
-                    <p>Stay up to date on your favourite platform</p>
                     <Socials client:only />
                 </section>
             </div>

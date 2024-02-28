@@ -55,13 +55,11 @@ const Socials = () => {
         <div className={styles.container}>
             <div className={styles.imageContainer}>
                 {images.map((image, index) => (
-                    <div key={index} className={styles.imageItem}>
-                        <img src={image.src} alt={`Image ${index + 1}`} />
-                        <span className={styles.text}>{image.text}</span>
-                        <div className={styles.linkContainer}>
-                            <a target={'_blank'} className={styles.link} href={image.link.url}>{image.link.text}</a>
+                    <a target={'_blank'} href={image.link.url}>
+                        <div key={index} className={styles.imageItem}>
+                            <img src={image.src} alt={`Image ${index + 1}`} />
                         </div>
-                    </div>
+                    </a>
                 ))}
             </div>
         </div>
