@@ -41,8 +41,7 @@
                 defaultExtension: 'js'
             },
             '@ag-grid-community/vue': {
-                main: './main.js',
-                defaultExtension: 'js'
+                format: 'cjs',
             },
             '@ag-grid-community/core': {
                 format: 'cjs',
@@ -126,8 +125,7 @@
                 format: 'cjs',
             },
             'ag-grid-vue': {
-                main: './main.js',
-                defaultExtension: 'js'
+                format: 'cjs',
             }
         },
         meta: {

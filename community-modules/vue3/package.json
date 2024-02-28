@@ -4,8 +4,15 @@
   "version": "31.1.0",
   "author": "Sean Landsman <sean@thelandsmans.com>",
   "license": "MIT",
-  "main": "./lib/AgGridVue.js",
-  "typings": "./lib/AgGridVue.d.ts",
+  "main": "./dist/package/main.cjs.js",
+  "types": "./dist/types/src/main.d.ts",
+  "module": "./dist/package/main.esm.mjs",
+  "exports": {
+    "import": "./dist/package/main.esm.mjs",
+    "require": "./dist/package/main.cjs.js",
+    "types": "./dist/types/src/main.d.ts",
+    "default": "./dist/package/main.cjs.js"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/ag-grid/ag-grid.git"
@@ -24,8 +31,6 @@
   "scripts": {
     "clean": "rimraf dist lib",
     "build": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service build --target lib src/AgGridVue.ts && npx tsc && rm ./dist/demo.html",
-    "build-docs": "npm run build",
-    "build-prod": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service build --target lib src/AgGridVue.ts && npx tsc --sourceMap false && rm ./dist/demo.html",
     "test:unit": "vue-cli-service test:unit",
     "test:e2ex": "vue-cli-service test:e2e"
   },
