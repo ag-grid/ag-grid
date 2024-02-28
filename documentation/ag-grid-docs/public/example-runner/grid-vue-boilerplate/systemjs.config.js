@@ -41,8 +41,7 @@
                 defaultExtension: 'js'
             },
             '@ag-grid-community/vue': {
-                main: './main.js',
-                defaultExtension: 'js'
+                format: 'cjs',
             },
             '@ag-grid-community/core': {
                 format: 'cjs',

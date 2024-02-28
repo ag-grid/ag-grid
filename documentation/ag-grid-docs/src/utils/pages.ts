@@ -81,11 +81,9 @@ export const FILES_PATH_MAP: Record<string, string | GlobConfig> = {
     // Framework libraries
     '@ag-grid-community/react/dist/**': 'community-modules/react/dist/**/*.{cjs,mjs,js,map}',
     '@ag-grid-community/react/src/**': 'community-modules/react/src/**/*.{tsx,ts}',
-
     '@ag-grid-community/angular/fesm2015/ag-grid-community-angular.mjs': 'community-modules/angular/dist/ag-grid-angular/fesm2015/ag-grid-community-angular.mjs',
-    // '@ag-grid-community/vue/main.js': 'community-modules/vue/main.js',
-    // '@ag-grid-community/vue': 'community-modules/vue/lib/AgGridVue.js',
-    // '@ag-grid-community/vue3': 'community-modules/vue3/lib/AgGridVue.js'
+    '@ag-grid-community/vue/dist/**': 'community-modules/vue/dist/**/*.{cjs,mjs,js,map}',
+    '@ag-grid-community/vue3/dist/**': 'community-modules/vue3/dist/**/*.{cjs,mjs,js,map}'
 
     // TODO: Dynamically map files
     // '@ag-grid-community': {
