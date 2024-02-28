@@ -53,7 +53,6 @@ const Events = () => {
 
     return (
         <div className={styles.container}>
-            <ScrollingGallery />
             <div className={styles.eventDetailsContainer}>
                 <div className={styles.yearFiltersContainer}>
                     {Object.keys(events)
@@ -68,6 +67,7 @@ const Events = () => {
                             </button>
                         ))}
                 </div>
+                <ScrollingGallery />
                 <div className={styles.eventTilesContainer}>
                     {events[selectedYear].map((event, index) => (
                         <div key={index} className={styles.eventTile}>
