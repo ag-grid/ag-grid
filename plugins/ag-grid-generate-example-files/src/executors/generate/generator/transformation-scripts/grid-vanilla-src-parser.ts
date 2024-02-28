@@ -132,9 +132,9 @@ function internalParser(examplePath: string, srcFile: string, includeTypes: bool
     const tsTree = includeTypes ? parseFile(srcFile) : parseFile(readAsJsFile(srcFile));
     const gridOpsTypeLookup = includeTypes ? (prop) => gridOptionsTypes[prop] : () => undefined;
 
-    const tsCollectors: Collector[] = [];
-    const tsGridOptionsCollectors: Collector[] = [];
-    const tsOnReadyCollectors: Collector[] = [];
+    const tsCollectors = [];
+    const tsGridOptionsCollectors = [];
+    const tsOnReadyCollectors = [];
     const registered = ['gridOptions', 'gridApi'];
 
     // handler is the function name, params are any function parameters
