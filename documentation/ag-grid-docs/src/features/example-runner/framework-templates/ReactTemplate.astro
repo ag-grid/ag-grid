@@ -5,10 +5,13 @@ import { Styles } from './lib/Styles';
 import { SystemJs } from './lib/SystemJs';
 import { Scripts } from './lib/Scripts';
 import { pathJoin } from '@utils/pathJoin';
+import type { InternalFramework } from '@ag-grid-types';
 
 interface Props {
     isDev: boolean;
     title: string;
+    isEnterprise: boolean;
+    internalFramework: InternalFramework;
 
     modifiedTimeMs: number;
     entryFileName: string;
@@ -27,6 +30,8 @@ interface Props {
 const {
     title,
     isDev,
+    isEnterprise,
+    internalFramework,
     modifiedTimeMs,
     appLocation,
     entryFileName,
@@ -56,7 +61,8 @@ const startFile = pathJoin(appLocation, entryFileName);
                     boilerplatePath={boilerplatePath}
                     appLocation={appLocation}
                     startFile={startFile}
-                    internalFramework={'react'}
+                    internalFramework={internalFramework}
+                    isEnterprise={isEnterprise}
                 />
             )
         }

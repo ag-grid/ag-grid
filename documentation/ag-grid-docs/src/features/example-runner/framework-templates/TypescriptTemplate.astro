@@ -9,6 +9,7 @@ import { getCacheBustingUrl } from '@utils/gridLibraryPaths';
 interface Props {
     isDev: boolean;
     title: string;
+    isEnterprise: boolean;
 
     modifiedTimeMs: number;
     entryFileName: string;
@@ -24,6 +25,7 @@ interface Props {
 const {
     title,
     isDev,
+    isEnterprise,
     modifiedTimeMs,
     appLocation,
     entryFileName,
@@ -67,6 +69,7 @@ const startFile = pathJoin(appLocation, entryFileName);
             appLocation={appLocation}
             startFile={startFile}
             internalFramework={'typescript'}
+            isEnterprise={isEnterprise}
         />
         <Styles
             baseUrl={appLocation}
