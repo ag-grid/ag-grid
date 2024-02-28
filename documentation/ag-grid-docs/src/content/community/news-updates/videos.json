@@ -1,0 +1,90 @@
+[
+    {
+        "title": "AGGrid: High-Performance DOM Updates w/ Niall Crosby",
+        "link": "https://www.youtube.com/embed/QRtrS_SvR4w",
+        "description": "SolidJS's ecosystem has been growing at a rapid rate. The latest addition is AGGrid, a high-performance table library. Niall Crosby, creator of AGGrid, joins me on stream to talk about what AGGrid is, how we can use it with Solid, and where things are going in the future.",
+        "author": "Ryan Carniato",
+        "type": "Video",
+        "published": "10/2022"
+    },
+    {
+        "title": "Typing: The not so secret to customisation ngTemplateOutlet",
+        "link": "https://www.youtube.com/embed/ELRCT7ooNCU",
+        "description": "ngTemplateOutlets are no longer a secret and continue to be an immensely powerful feature for customising our applications. But they were held back by a lack of template typings. This is no longer the case. We can now type them!",
+        "author": "Stephen Cooper",
+        "type": "Video",
+        "published": "10/2023"
+    },
+    {
+        "title": "Pablo Fonseca Interview - Streamlit AG Grid Component",
+        "link": "https://www.youtube.com/embed/RHTJCwYfxSk",
+        "description": "Pablo Fonseca has created a Streamlit Component to make it easy to add AG Grid to Python Streamlit applications. This provides an advanced and easy to use data exploration grid which can be populated from Pandas data frames.",
+        "author": "Pablo Fonesca",
+        "type": "Video",
+        "published": "03/2022"
+    },
+    {
+        "title": "Introducing AG Charts with Mana Peirov",
+        "link": "https://www.youtube.com/embed/1xXP7Lig5ZE",
+        "description": "AG Charts is the only charting library that integrates into an advanced datagrid like AG Grid. Learn about how we built a world class charting library that solves key charting challenges and learn how to seamlessly create powerful data analysis visuals in your applications. ",
+        "author": "Mana Peirov",
+        "type": "Video",
+        "published": "02/2023"
+    },
+    {
+        "title": "Is your Component Ready for Strict Mode?",
+        "link": "https://www.youtube.com/embed/hIMgpj3qR1E",
+        "description": "With strict mode enabled by default, we must acknowledge that there is nothing more tiresome than using a component that is poorly typed.",
+        "author": "Stephen Cooper",
+        "type": "Video",
+        "published": "05/2023"
+    },
+    {
+        "title": "AG Grid's New React Rendering Engine, Custom built for React",
+        "link": "https://www.youtube.com/embed/u4QTr56t7iM&t=9004s",
+        "description": "An overview of the Rendering engine built specifically for React",
+        "author": "Niall Crosby",
+        "type": "Video",
+        "published": "04/2022"
+    },
+    {
+        "title": "AG Grid - Behind the Frameworks",
+        "link": "https://www.youtube.com/embed/iUsYl3Ux_Hc",
+        "description": "Recently the AG Grid team redesigned AG Grid to optionally utilise React for Rendering when used within a React Application. Hear from Niall, the Godfather of AG Grid, why this was so important to do, the challenges it presented, and what this means for AG Grid Application Developers today.",
+        "author": "Fin JS",
+        "type": "Video",
+        "published": "12/2022"
+    },
+    {
+        "title": "AG Grid's New React Rendering Engine",
+        "link": "https://www.youtube.com/embed/noZxluN3WVc",
+        "description": "AG Grid is the industry standard JavaScript datagrid for building data centric Business Applications. Recently the AG Grid team redesigned the grid to implement the React Rendering Engine in 100% React code. Given the complexity of a datagrid, this was a very challenging task. Hear from Sean, Lead Framework Developer at AG Grid, about the journey of this migration including how this was achieved, lessons learned along the way, and how it will impact your React applications using AG Grid.",
+        "author": "Sean Landsman",
+        "type": "Video",
+        "published": "10/2022"
+    },
+    {
+        "title": "AG Grid | ng-conf 2022",
+        "link": "https://www.youtube.com/embed/4dhBnvgb5H0",
+        "description": "AG Grid is ng-conf 2022's Premier Sponsor. Listen in as Niall and Stephen share about AG Grid.",
+        "author": "Niall Crosby & Stephen Cooper",
+        "type": "Video",
+        "published": "10/2022"
+    },
+    {
+        "title": "The Angular Report",
+        "link": "https://www.youtube.com/embed/jG7aM8ZVLmc",
+        "description": "",
+        "author": "Stephen Cooper, Preston Lamb, & Jason Warner",
+        "type": "Video",
+        "published": "03/2023"
+    },
+    {
+        "title": "Dev Chats | Stephen Cooper",
+        "link": "https://www.youtube.com/embed/6UBj-L9Phqg",
+        "description": "Stephen Cooper from AG Grid sits down with Brooke Avery, Director of the Angular Community Meetup, for a Dev Chat. Stephen shares some of his proudest achievements as a programmer and the top skills he feels that have helped him reach that success. Find out ways in which you can find career contentment and have your own big wins as well.",
+        "author": "Stephen Cooper",
+        "type": "Video",
+        "published": "02/2023"
+    }
+]

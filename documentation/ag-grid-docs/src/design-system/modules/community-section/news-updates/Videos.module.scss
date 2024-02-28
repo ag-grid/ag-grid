@@ -1,0 +1,91 @@
+.videoCarouselContainer {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    position: relative;
+
+    .scrollButton {
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+        font-size: 24px;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 2;
+
+        &.left {
+            left: 0;
+            margin-left: -5%;
+        }
+
+        &.right {
+            right: 0;
+            margin-right: -5%;
+        }
+    }
+
+    .carousel {
+        display: flex;
+        overflow-x: scroll;
+        scroll-behavior: smooth;
+        width: 100%;
+        flex-direction: row;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+
+        .videoItem {
+            min-width: 322px;
+            margin-right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+
+            .video {
+                width: 100%;
+                height: 183px;
+                border: 1px solid var(--color-border-primary); 
+                border-radius: 12px;
+            }
+
+            .videoInfo {
+                display: flex;
+                flex-direction: column;
+                flex-grow: 1; // Allows the video info to expand and fill available space
+
+                .title,
+                .description,
+                .author {
+                    display: flex;
+                    flex-direction: column;
+                    margin: 5px 0;
+                }
+
+                .author {
+                    font-weight: 200;
+                    font-style: italic;
+                }
+
+                .description {
+                    display: -webkit-box;
+                    -webkit-line-clamp: 5;
+                    -webkit-box-orient: vertical;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    margin: 5px 0;
+                }
+
+                .link {
+                    display: flex;
+                    justify-content: flex-end;
+                    text-decoration: none;
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                }
+            }
+        }
+    }
+}
