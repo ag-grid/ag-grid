@@ -1,8 +1,5 @@
 import classNames from 'classnames';
-import React from 'react';
-import { addNonBreakingSpaceBetweenLastWords } from '../../utils/add-non-breaking-space-between-last-words';
 import styles from '@design-system/modules/Quotes.module.scss';
-import { QuotesData, QuotesDataItem } from './quotesData';
 
 function filterAndSortByKey(data: QuotesData, sortKey: keyof QuotesDataItem) {
     return Object.values(data)
@@ -19,7 +16,6 @@ const QuoteItems = ({ quotes }: { quotes: QuotesDataItem[] }) => {
     return (
         <>
             {quotes.map(({ name, avatarUrl, orgName, orgIconUrl, orgRole, text }) => {
-                const nonWidowText = addNonBreakingSpaceBetweenLastWords(text);
                 return (
                     <li key={name}>
                         <figure>
@@ -33,7 +29,7 @@ const QuoteItems = ({ quotes }: { quotes: QuotesDataItem[] }) => {
                                     <path d="M0 21V0h18L1.8 21.6c-.577.769-1.8.361-1.8-.6Z" />
                                 </svg>
 
-                                <p>{nonWidowText}</p>
+                                <p>{text}</p>
                             </blockquote>
                             <figcaption>
                                 <img className={styles.avatar} title={name} src={avatarUrl} alt={name} />

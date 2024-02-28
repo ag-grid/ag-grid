@@ -28,7 +28,7 @@ export const quotesData: QuotesData = {
     name: "Ryan Carniato",
     avatarUrl: "images/developer-quotes/portraits/ryan-carniato-portrait.png",
     orgName: "SolidJS",
-    orgIconUrl: "images/fw-logos/solid.svg",
+    orgIconUrl: "images/developer-quotes/orgIcons/solid.svg",
     orgRole: "Creator",
     text: "I've been impressed with AG Grid. Not only is it incredibly feature-rich, but it also leverages your framework of choice to do its rendering. This means seamless extensibility and a real way to leverage the framework's strengths. And for SolidJS that's a game changer.",
     order: 20,
