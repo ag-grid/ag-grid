@@ -59,7 +59,7 @@ The example below demonstrates server-side Pagination. Note the following:
   out as the last row index is only supplied to the grid when the last row has been reached.
 * Open the browser's dev console to view the request supplied to the datasource.
 
-{% gridExampleRunner title="Server-Side Pagination" name="pagination"  exampleHeight=551 /%}
+{% gridExampleRunner title="Server-Side Pagination" name="pagination" type="generated" options={ "enterprise": true, "exampleHeight": 551, "modules": ["serverside", "menu", "columnpanel"] } /%}
 
 ## Pagination with Groups
 
@@ -76,7 +76,7 @@ The example below demonstrates pagination with grouping. Note the following:
 * As rows are expanded, the number of visible rows in a page grows. The children appear on the same row as the parent and no rows are pushed to the next page.
 * For example, expand 'Australia' which will result in a large list for which vertical scrolling will be needed to view all children.
 
-{% gridExampleRunner title="Pagination with Groups" name="pagination-with-groups"  exampleHeight=551 /%}
+{% gridExampleRunner title="Pagination with Groups" name="pagination-with-groups" type="generated" options={ "enterprise": true, "exampleHeight": 551, "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] } /%}
 
 ## Pagination with Child Rows
 
@@ -94,7 +94,7 @@ The example below demonstrates pagination with grouping and `paginateChildRows=t
 
 * If the last visible row is expanded, the grid gives a confusing user experience, as the rows appear on the next page. So the user will have to click 'expand' and then click 'next page' to see the child rows. This is the desired behaviour as the grid keeps the number of rows on one page consistent. If this behaviour is not desired, then do not use `paginationAutoPageSize=true`.
 
-{% gridExampleRunner title="Pagination with Child Rows" name="paginate-child-rows"  exampleHeight=551 /%}
+{% gridExampleRunner title="Pagination with Child Rows" name="paginate-child-rows" type="generated" options={ "enterprise": true, "exampleHeight": 551, "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] } /%}
 
 ## Next Up
 

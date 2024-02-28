@@ -53,7 +53,7 @@ The example below demonstrates server-side Row Grouping. Note the following:
 * The `rowGroupCols` and `groupKeys` properties in the request are used by the server to perform grouping.
 * Open the browser's dev console to view the request supplied to the datasource.
 
-{% gridExampleRunner title="Row Grouping" name="row-grouping"  exampleHeight=590 /%}
+{% gridExampleRunner title="Row Grouping" name="row-grouping" type="generated" options={ "enterprise": true, "exampleHeight": 590, "modules": ["serverside", "rowgrouping"] } /%}
 
 ## Open by Default
 
@@ -84,23 +84,23 @@ Below shows `isServerSideGroupOpenByDefault()` and `getRoute` in action. Note th
 * Note **\[United States, Swimming]** is not visibly open by default, as the parent group 'United States' is not open. However when 'United States' is opened, it's 'Swimming' group is opened by default.
 * Selecting a group row and clicking 'Route of Selected' will print the route to the selected node.
 
-{% gridExampleRunner title="Open by Default" name="open-by-default" /%}
+{% gridExampleRunner title="Open by Default" name="open-by-default" type="generated" options={ "enterprise": true, "modules": ["serverside", "rowgrouping"] } /%}
 
 ## Suppressing Sticky Groups
 
 By default the group nodes stick to the top of the Grid, to disable this behaviour, set the `suppressGroupRowsSticky` property to true. This behaviour applies to all row group levels.
 
-{% gridExampleRunner title="Sticky Groups" name="suppress-sticky-groups" /%}
+{% gridExampleRunner title="Sticky Groups" name="suppress-sticky-groups" type="generated" options={ "enterprise": true, "modules": ["serverside", "rowgrouping"] } /%}
 
 ## Row Group Footers
 
 To enable [Row Group Footers](./grouping-footers/), set the `groupIncludeFooter` property to true. Note that the total footer is not supported by the SSRM.
 
-{% gridExampleRunner title="Group Footers" name="group-footer" /%}
+{% gridExampleRunner title="Group Footers" name="group-footer" type="generated" options={ "enterprise": true, "modules": ["serverside","rowgrouping"] } /%}
 
 Row group footers can also be used with `groupDisplayType='multipleColumns'`, as demonstrated in the example below.
 
-{% gridExampleRunner title="Multiple Group Columns and Footers" name="group-footer-multiple-cols" /%}
+{% gridExampleRunner title="Multiple Group Columns and Footers" name="group-footer-multiple-cols" type="generated" options={ "enterprise": true, "modules": ["serverside","rowgrouping"] } /%}
 
 ## Expand All / Collapse All
 
@@ -137,7 +137,7 @@ The example below demonstrates these techniques. Note the following:
 
 * Clicking 'Expand Top Level Only' will expand Years only, even if more group rows are loaded..
 
-{% gridExampleRunner title="Expand All" name="expand-all" /%}
+{% gridExampleRunner title="Expand All" name="expand-all" type="generated" options={ "enterprise": true, "modules": ["serverside","rowgrouping"] } /%}
 
 ## Providing Child Counts
 
@@ -154,7 +154,7 @@ const gridOptions = {
 }
 ```
 
-{% gridExampleRunner title="Child Counts" name="child-counts"  exampleHeight=590 /%}
+{% gridExampleRunner title="Child Counts" name="child-counts" type="generated" options={ "enterprise": true, "exampleHeight": 590, "modules": ["serverside", "rowgrouping"] } /%}
 
 ## Group via Value Getter
 
@@ -184,7 +184,7 @@ In the example below, all rows are modified so that the rows look something like
 
 Then the columns are set up so that country uses a `valueGetter` that uses the field with dot notation, i.e. `data.country.name`
 
-{% gridExampleRunner title="Complex Objects" name="complex-objects"  exampleHeight=590 /%}
+{% gridExampleRunner title="Complex Objects" name="complex-objects" type="generated" options={ "enterprise": true, "exampleHeight": 590, "modules": ["serverside", "rowgrouping"] } /%}
 
 ## Filters
 
@@ -196,7 +196,7 @@ In the example below, note the following:
 * Applying a filter to the `Year` column does not purge the entire grid, and instead only refreshes the `Year` group rows.
 * The example enables `serverSideOnlyRefreshFilteredGroups`, note that if you apply a filter to `Year` with the value `1900`, no leaf rows exist in any group.
 
-{% gridExampleRunner title="Filtering" name="filtering"  exampleHeight=590 /%}
+{% gridExampleRunner title="Filtering" name="filtering" type="generated" options={ "enterprise": true, "exampleHeight": 590, "modules": ["serverside", "rowgrouping"] } /%}
 
 ## Next Up
 

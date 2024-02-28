@@ -38,7 +38,7 @@ The following example demonstrates add / update and remove operations via the Se
 * **Updated Selected** - updates the 'current' value on the selected row.
 * **Removed Selected** - removes the selected row.
 
-{% gridExampleRunner title="Server-Side Transaction API" name="transactions-simple"  exampleHeight=615 /%}
+{% gridExampleRunner title="Server-Side Transaction API" name="transactions-simple" type="generated" options={ "enterprise": true, "exampleHeight": 615, "modules": ["serverside"] } /%}
 
 ## Row Grouping
 
@@ -67,7 +67,7 @@ In the example below, note the following:
 * To delete a row, if the group row would be deleted then a transaction needs to be applied to remove this group row instead of the leaf row.
 * To move a row between groups, the row needs to be deleted from the old group with one transaction, and added to the new group with another.
 
-{% gridExampleRunner title="Transactions With Groups" name="transactions-grouping"  exampleHeight=615 /%}
+{% gridExampleRunner title="Transactions With Groups" name="transactions-grouping" type="generated" options={ "enterprise": true, "exampleHeight": 615, "modules": ["serverside", "rowgrouping"] } /%}
 
 ## Asynchronous Updates
 
@@ -99,7 +99,7 @@ In the example below, note the following:
 * After starting the updates, 1 row is created, 10 rows are updated, and 1 rows is deleted every 10 milliseconds.
 * The transactions are batched, and only executed once every second.
 
-{% gridExampleRunner title="Asynchronous Example" name="transactions-async"  exampleHeight=615 /%}
+{% gridExampleRunner title="Asynchronous Example" name="transactions-async" type="generated" options={ "enterprise": true, "exampleHeight": 615, "modules": ["serverside"] } /%}
 
 ## Showcase Example
 
@@ -112,7 +112,7 @@ In the example below, note the following:
 * The group panel has been enabled, allowing a dynamic configuration of groups.
 * The group child counts and aggregations update in sync with changes to the leaf rows.
 
-{% gridExampleRunner title="Showcase Example" name="transactions-showcase"  exampleHeight=670 /%}
+{% gridExampleRunner title="Showcase Example" name="transactions-showcase" type="generated" options={ "enterprise": true, "exampleHeight": 670, "modules": ["serverside", "rowgrouping"] } /%}
 
 ## Tree Data
 

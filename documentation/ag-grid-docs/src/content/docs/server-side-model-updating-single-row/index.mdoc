@@ -24,7 +24,7 @@ The example below demonstrates a basic example, using the API's `forEachNode` fu
 
 * **Update Data:** Updates the row data using `updateData` and the grid refreshes the row, notably the cells do flash with `enableCellChangeFlash`.
 
-{% gridExampleRunner title="Updating All Rows" name="updating-all-rows"  exampleHeight=615 /%}
+{% gridExampleRunner title="Updating All Rows" name="updating-all-rows" type="generated" options={ "enterprise": true, "exampleHeight": 615, "modules": ["serverside", "rowgrouping"] } /%}
 
 ## Specific Row Updates
 
@@ -45,7 +45,7 @@ api.forEachNode(rowNode => {
 
 The example below demonstrates this snippet in action;
 
-{% gridExampleRunner title="Updating Specific Rows" name="updating-specific-rows"  exampleHeight=615 /%}
+{% gridExampleRunner title="Updating Specific Rows" name="updating-specific-rows" type="generated" options={ "enterprise": true, "exampleHeight": 615, "modules": ["serverside", "rowgrouping"] } /%}
 
 ## Selected Row Updates
 
@@ -54,7 +54,7 @@ The example below demonstrates how to update all of the rows which the user has 
 * The **Update Selected Rows** button will update the row version directly on the selected row nodes.
 * The selected nodes are obtained using the `api.getSelectedNodes()` api, and are then individually updated.
 
-{% gridExampleRunner title="Updating Selected Rows" name="updating-selected-row"  exampleHeight=615 /%}
+{% gridExampleRunner title="Updating Selected Rows" name="updating-selected-row" type="generated" options={ "enterprise": true, "exampleHeight": 615, "modules": ["serverside", "rowgrouping"] } /%}
 
 ## Next Up
 
