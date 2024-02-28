@@ -13,6 +13,8 @@ import "@ag-grid-community/styles/ag-theme-quartz.css"; // Theme
 import {AgGridVue} from "@ag-grid-community/vue"; // Vue Grid Logic
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+
+debugger;
 ModuleRegistry.registerModules([ ClientSideRowModelModule ]);
 
 export default {

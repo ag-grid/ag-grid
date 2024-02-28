@@ -1,18 +1,18 @@
-import type { InternalFramework, Library } from '@ag-grid-types';
-import type { CollectionEntry } from 'astro:content';
+import type {InternalFramework, Library} from '@ag-grid-types';
+import type {CollectionEntry} from 'astro:content';
 import glob from 'glob';
-import { readFileSync } from 'node:fs';
+import {readFileSync} from 'node:fs';
 
-import { SITE_BASE_URL, USE_PUBLISHED_PACKAGES } from '../constants';
-import { type GlobConfig, createFilePathFinder } from './createFilePathFinder';
-import { getIsDev } from './env';
-import { pathJoin } from './pathJoin';
+import {SITE_BASE_URL, USE_PUBLISHED_PACKAGES} from '../constants';
+import {createFilePathFinder, type GlobConfig} from './createFilePathFinder';
+import {getIsDev} from './env';
+import {pathJoin} from './pathJoin';
 
 export type DocsPage =
     | CollectionEntry<'docs'>
     | {
-          slug: string;
-      };
+    slug: string;
+};
 
 export interface InternalFrameworkExample {
     internalFramework: InternalFramework;
@@ -47,8 +47,7 @@ export const FILES_PATH_MAP: Record<string, string | GlobConfig> = {
 
     // Community modules
     '@ag-grid-community/core/dist/**': 'community-modules/core/dist/**/*.{cjs,js,map}',
-    '@ag-grid-community/client-side-row-model/dist/**':
-        'community-modules/client-side-row-model/dist/**/*.{cjs,js,map}',
+    '@ag-grid-community/client-side-row-model/dist/**': 'community-modules/client-side-row-model/dist/**/*.{cjs,js,map}',
     '@ag-grid-community/csv-export/dist/**': 'community-modules/csv-export/dist/**/*.{cjs,js,map}',
     '@ag-grid-community/infinite-row-model/dist/**': 'community-modules/infinite-row-model/dist/**/*.{cjs,js,map}',
     '@ag-grid-community/styles/**': 'community-modules/styles/**/*.{css,scss}',
@@ -83,11 +82,9 @@ export const FILES_PATH_MAP: Record<string, string | GlobConfig> = {
     // Framework libraries
     '@ag-grid-community/react/dist/**': 'community-modules/react/dist/**/*.{cjs,mjs,js,map}',
     '@ag-grid-community/react/src/**': 'community-modules/react/src/**/*.{tsx,ts}',
-
     '@ag-grid-community/angular/fesm2015/ag-grid-community-angular.mjs': 'community-modules/angular/dist/ag-grid-angular/fesm2015/ag-grid-community-angular.mjs',
-    // '@ag-grid-community/vue/main.js': 'community-modules/vue/main.js',
-    // '@ag-grid-community/vue': 'community-modules/vue/lib/AgGridVue.js',
-    // '@ag-grid-community/vue3': 'community-modules/vue3/lib/AgGridVue.js'
+    '@ag-grid-community/vue/dist/**': 'community-modules/vue/dist/**/*.{cjs,mjs,js,map}',
+    '@ag-grid-community/vue3/dist/**': 'community-modules/vue3/dist/**/*.{cjs,mjs,js,map}'
 
     // TODO: Dynamically map files
     // '@ag-grid-community': {
@@ -119,9 +116,9 @@ export function getJsonFile(fileKey: FileKey) {
 export const getRootUrl = (): URL => {
     const root = getIsDev()
         ? // Relative to the folder of this file
-          '../../../../'
+        '../../../../'
         : // TODO: Relative to `/dist/chunks/pages` folder (Nx specific)
-          '../../../../../';
+        '../../../../../';
     return new URL(root, import.meta.url);
 };
 
@@ -136,17 +133,17 @@ export const getExampleRootFileUrl = (): URL => {
 /**
  * The `ag-charts-website` root url where the monorepo exists
  */
-const getWebsiteRootUrl = ({ isDev = getIsDev() }: { isDev?: boolean } = { isDev: getIsDev() }): URL => {
+const getWebsiteRootUrl = ({isDev = getIsDev()}: { isDev?: boolean } = {isDev: getIsDev()}): URL => {
     const root = isDev
         ? // Relative to the folder of this file
-          '../../'
+        '../../'
         : // Relative to `/dist/chunks/pages` folder (Nx specific)
-          '../../../';
+        '../../../';
     return new URL(root, import.meta.url);
 };
 
-export const getContentRootFileUrl = ({ isDev }: { isDev?: boolean } = {}): URL => {
-    const websiteRoot = getWebsiteRootUrl({ isDev });
+export const getContentRootFileUrl = ({isDev}: { isDev?: boolean } = {}): URL => {
+    const websiteRoot = getWebsiteRootUrl({isDev});
     const contentRoot = pathJoin(websiteRoot, 'src/content');
     return new URL(contentRoot, import.meta.url);
 };
@@ -184,16 +181,16 @@ export function getExtraFiles(): ExtraFileRoute[] {
                     const relativeFile = globFile.replace(sourcePrefix, '');
 
                     result.push({
-                        params: { filePath: `${pathPrefix}${relativeFile}` },
-                        props: { fullFilePath: globFile },
+                        params: {filePath: `${pathPrefix}${relativeFile}`},
+                        props: {fullFilePath: globFile},
                     });
                 }
                 continue;
             }
 
-            result.push({ params: { filePath }, props: { fullFilePath } });
+            result.push({params: {filePath}, props: {fullFilePath}});
         } else if (typeof sourceFilePath === 'object') {
-            const { globPattern, getFilePath } = createFilePathFinder({
+            const {globPattern, getFilePath} = createFilePathFinder({
                 baseUrl: getRootUrl().pathname,
                 globConfig: sourceFilePath as GlobConfig,
             });
@@ -207,8 +204,8 @@ export function getExtraFiles(): ExtraFileRoute[] {
                 const filePath = getFilePath(globFile);
 
                 result.push({
-                    params: { filePath },
-                    props: { fullFilePath: globFile },
+                    params: {filePath},
+                    props: {fullFilePath: globFile},
                 });
             }
         }
@@ -221,9 +218,9 @@ export function getExtraFiles(): ExtraFileRoute[] {
  * Get url of example boiler plate files
  */
 export const getBoilerPlateUrl = ({
-    library,
-    internalFramework,
-}: {
+                                      library,
+                                      internalFramework,
+                                  }: {
     library: Library;
     internalFramework: InternalFramework;
 }) => {

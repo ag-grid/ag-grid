@@ -13,7 +13,7 @@
             // css: boilerplatePath + "css.js",
             'css': 'npm:systemjs-plugin-css@0.1.37/css.js',
 
-            // vuejs
+            // vuejsw
             'vue': 'npm:vue@2.6.12/dist/vue.min.js',
             // vue property decorator
             'vue-class-component': 'npm:vue-class-component@6.3.2/dist/vue-class-component.min.js',
@@ -38,8 +38,9 @@
                 defaultExtension: 'js'
             },
             '@ag-grid-community/vue': {
-                main: './main.js',
-                defaultExtension: 'js'
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
             },
             '@ag-grid-community/core': {
                 main: './dist/package/main.cjs.js',
@@ -61,19 +62,6 @@
                 defaultExtension: 'js',
                 format: 'cjs',
             },
-            // these are a little different in that they're in a directory and sjs doesn't default to the index.js inside...
-            // '@ag-grid-community/core/dist/cjs/es5/utils': {
-            //     main: './index.js',
-            //     defaultExtension: 'js'
-            // },
-            // '@ag-grid-enterprise/charts-enterprise/dist/cjs/es5/charts/chartComp/menu/settings/miniCharts': {
-            //     main: './index.js',
-            //     defaultExtension: 'js'
-            // },
-            // '@ag-grid-enterprise/charts/dist/cjs/es5/charts/chartComp/menu/settings/miniCharts': {
-            //     main: './index.js',
-            //     defaultExtension: 'js'
-            // },
             '@ag-grid-enterprise/advanced-filter': {
                 main: './dist/package/main.cjs.js',
                 defaultExtension: 'js',
@@ -189,8 +177,9 @@
                 format: 'cjs',
             },
             'ag-grid-vue': {
-                main: './main.js',
-                defaultExtension: 'js'
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
             }
         },
         meta: {

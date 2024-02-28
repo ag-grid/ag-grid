@@ -425,7 +425,7 @@ export function findAllAccessedProperties(node) {
 /** Convert import paths to their package equivalent when the docs are in Packages mode
  * i.e import { GridOptions } from '@ag-grid-community/core';
  * to
- * import { GridOptions } from '@ag-grid-community';
+ * import { GridOptions } from 'ag-grid-community';
  */
 export function convertImportPath(modulePackage: string, convertToPackage: boolean) {
     if (convertToPackage) {
