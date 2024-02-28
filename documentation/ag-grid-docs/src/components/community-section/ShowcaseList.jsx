@@ -5,8 +5,10 @@ import React from 'react';
 import menu from '../../content/community/community-menu.json';
 import showcase from '../../content/community/showcase.json';
 
-const ShowcaseList = ({ favouritesOnly = false }) => {
-    const products = favouritesOnly ? showcase.favourites : showcase.favourites.concat(showcase.other);
+const ShowcaseList = ({ favouritesOnly = false, maxItems = -1 }) => {
+    const products = favouritesOnly 
+        ? maxItems === -1 ? showcase.favourites : showcase.favourites.slice(0, maxItems) 
+        : maxItems === -1 ? showcase.favourites.concat(showcase.other) : showcase.favourites.concat(showcase.other).slice(0, maxItems);
     const productsSortedByStars = products.sort((a, b) => b.stars - a.stars);
 
     return (
