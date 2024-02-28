@@ -90,8 +90,10 @@
         &:first-child {
             padding-left: $spacing-size-6;
         }
+    }
 
-        &:not(:first-child) {
+    @media screen and (max-width: $breakpoint-pricing-medium) {
+        .row .cell:not(:first-child) {
             width: $spacing-size-16;
         }
     }
