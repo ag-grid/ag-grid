@@ -61,10 +61,14 @@ export function getTypeUrl(type, framework) {
         return getTypeUrl(type.returnType, framework);
     }
 
-    return urlWithPrefix({
-        url: getTypeLink(type),
-        framework,
-    });
+    const typeLink = getTypeLink(type);
+    if(typeLink) {
+        return urlWithPrefix({
+            url: typeLink,
+            framework,
+        });
+    }
+    return undefined;
 }
 
 export function getLinkedType(type, framework) {
