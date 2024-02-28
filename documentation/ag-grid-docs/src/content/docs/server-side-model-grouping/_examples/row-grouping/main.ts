@@ -1,5 +1,5 @@
 import { GridApi, createGrid, GridOptions, IServerSideDatasource } from '@ag-grid-community/core';
-declare var FakeServer: any;
+import { FakeServer } from './fakeServer';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
 import { ModuleRegistry } from "@ag-grid-community/core";

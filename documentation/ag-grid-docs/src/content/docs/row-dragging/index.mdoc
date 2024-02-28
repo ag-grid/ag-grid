@@ -231,7 +231,7 @@ The example below shows [Tree Data](./tree-data/) and row dragging where the fol
 
 * The expanded/contracted state of a folder and all of its child folders is preserved when the folder is moved to a new parent.
 
-{% gridExampleRunner title="Dragging with Tree Data" name="dragging-with-tree-data" type="generated" options={ "enterprise": true, "exampleHeight": 545, "extras": ["fontawesome"], "modules": ["clientside", "rowgrouping"] } /%}
+{% gridExampleRunner title="Dragging with Tree Data" name="dragging-with-tree-data" type="generated" options={ "enterprise": true, "exampleHeight": 545, "modules": ["clientside", "rowgrouping"] } /%}
 
 ### Example Highlighted Tree Data
 
@@ -247,7 +247,7 @@ The example above works, however it is not intuitive as the user is given no vis
 
 * The example uses [Refresh Cells](./view-refresh/#refresh-cells) to get the grid to execute the Cell Class Rules again over the destination folder when the destination folder changes.
 
-{% gridExampleRunner title="Highlighting Drag with Tree Data" name="highlighting-drag-tree-data" type="generated" options={ "enterprise": true, "extras": ["fontawesome"], "modules": ["clientside", "rowgrouping"] } /%}
+{% gridExampleRunner title="Highlighting Drag with Tree Data" name="highlighting-drag-tree-data" type="generated" options={ "enterprise": true, "modules": ["clientside", "rowgrouping"] } /%}
 
 ## Other Row Models
 
@@ -390,7 +390,7 @@ The example below shows a custom cell renderer, with using the `registerRowDragg
 
 * When you hover the cells, an arrow will appear, and this arrow can be used to **drag** the rows.
 
-{% gridExampleRunner title="Row Drag With Custom Cell Renderer" name="dragger-inside-custom-cell-renderer" type="generated" options={ "extras": ["fontawesome"] } /%}
+{% gridExampleRunner title="Row Drag With Custom Cell Renderer" name="dragger-inside-custom-cell-renderer" type="generated" /%}
 
 ### Full Width Row Dragging
 
@@ -410,4 +410,4 @@ Note the following:
 
 * The drag event starts as soon as `mousedown` is fired.
 
-{% gridExampleRunner title="Row Drag With Custom Start Drag Pixels" name="dragger-inside-custom-start-drag-pixels" type="generated" options={ "extras": ["fontawesome"] } /%}
+{% gridExampleRunner title="Row Drag With Custom Start Drag Pixels" name="dragger-inside-custom-start-drag-pixels" type="generated" /%}

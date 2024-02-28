@@ -68,7 +68,7 @@ The example below demonstrates filtering using Simple Column Filters, note the f
 * The server uses the metadata contained in the `filterModel` to filter the rows.
 * Open the browser's dev console to view the `filterModel` supplied in the request to the datasource.
 
-{% gridExampleRunner title="Server Side Filtering" name="infinite-simple" type="generated" options={ "enterprise": true, "extras": ["alasql"], "modules": ["serverside", "menu"] } /%}
+{% gridExampleRunner title="Server Side Filtering" name="infinite-simple" type="generated" options={ "enterprise": true, "modules": ["serverside", "menu"] } /%}
 
 ## Set Filtering
 
@@ -135,13 +135,13 @@ The example below demonstrates Server-side Filtering using the Set Filter. Note 
 * The server uses the metadata contained in the `filterModel` to filter the rows.
 * Open the browser's dev console to view the `filterModel` supplied in the request to the datasource.
 
-{% gridExampleRunner title="Set Filter Server Side Filtering" name="infinite-set" type="generated" options={ "enterprise": true, "extras": ["alasql"], "modules": ["serverside", "setfilter", "menu"] } /%}
+{% gridExampleRunner title="Set Filter Server Side Filtering" name="infinite-set" type="generated" options={ "enterprise": true, "modules": ["serverside", "setfilter", "menu"] } /%}
 
 ## Advanced Filter
 
 In addition to Column Filters, the [Advanced Filter](./filter-advanced/) can also be used with the Server-Side Row Model. In this case, the `filterModel` in the request will be an [Advanced Filter Model](./filter-advanced/#filter-model--api) of type `AdvancedFilterModel | null`.
 
-{% gridExampleRunner title="Advanced Filter" name="advanced-filter" type="generated" options={ "enterprise": true, "modules": ["serverside", "menu", "advancedfilter"], "extras": ["alasql"] } /%}
+{% gridExampleRunner title="Advanced Filter" name="advanced-filter" type="generated" options={ "enterprise": true, "modules": ["serverside", "menu", "advancedfilter"]  } /%}
 
 Note that [Cell Data Types](./cell-data-types/) must be supplied in order for the Advanced Filter to display the correct filter options, otherwise only `'text'` options will be displayed.
 

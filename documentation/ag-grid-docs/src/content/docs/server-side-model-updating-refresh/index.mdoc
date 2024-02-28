@@ -26,7 +26,7 @@ The following example provides a simple demonstration of the different behaviour
 * The `Purge` checkbox enables the purge option in the API call, this causes all rows (and all row state except row selection state) to be reset when the refresh call is made, and replaced with loading rows.
 * When a refresh is finished, note the `storeRefreshed` event is fired, and logged in the console.
 
-{% gridExampleRunner title="Simple Example" name="refreshing-the-grid" type="generated" options={ "enterprise": true, "exampleHeight": 615, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] } /%}
+{% gridExampleRunner title="Simple Example" name="refreshing-the-grid" type="generated" options={ "enterprise": true, "exampleHeight": 615, "modules": ["serverside", "rowgrouping"] } /%}
 
 ## Refreshing Groups
 
@@ -40,7 +40,7 @@ The following example demonstrates how to refresh specified groups on the server
 * Because [Row IDs](./server-side-model-configuration/#providing-row-ids) have been implemented, the grid is able to retain the state for reloaded rows, such as whether a group row was expanded.
 * When a refresh is finished, note the `storeRefreshed` event is fired, and logged in the console.
 
-{% gridExampleRunner title="Refreshing Groups" name="refreshing-the-groups" type="generated" options={ "enterprise": true, "exampleHeight": 615, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] } /%}
+{% gridExampleRunner title="Refreshing Groups" name="refreshing-the-groups" type="generated" options={ "enterprise": true, "exampleHeight": 615, "modules": ["serverside", "rowgrouping"] } /%}
 
 ## Next Up
 
