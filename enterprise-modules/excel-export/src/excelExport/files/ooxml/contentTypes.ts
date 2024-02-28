@@ -12,6 +12,7 @@ const contentTypesFactory: ExcelOOXMLTemplate = {
         }));
 
         const sheetsWithImages = ExcelXlsxFactory.worksheetImages.size;
+        const sheetsWithTables = ExcelXlsxFactory.worksheetTables.size;
         const imageTypesObject: { [ key: string ]: boolean} = {};
 
         ExcelXlsxFactory.workbookImageIds.forEach((v) => {
@@ -22,6 +23,13 @@ const contentTypesFactory: ExcelOOXMLTemplate = {
             name: 'Override',
             ContentType: 'application/vnd.openxmlformats-officedocument.drawing+xml',
             PartName: `/xl/drawings/drawing${i + 1}.xml`
+        }));
+
+        // TODO - Smart calcuation of table count ( table !== sheet )
+        const tableDocs = new Array(sheetsWithTables).fill(undefined).map((v, i) => ({
+            name: 'Override',
+            ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml',
+            PartName: `/xl/tables/table${i + 1}.xml`
         }));
 
         const imageTypes = Object.keys(imageTypesObject).map(ext => ({
@@ -60,10 +68,16 @@ const contentTypesFactory: ExcelOOXMLTemplate = {
                 PartName: '/xl/sharedStrings.xml'
             },
             ...imageDocs,
+            ...tableDocs,
             {
                 name: 'Override',
                 ContentType: 'application/vnd.openxmlformats-package.core-properties+xml',
                 PartName: '/docProps/core.xml'
+            },
+            {
+                name: 'Override',
+                ContentType: 'application/vnd.openxmlformats-officedocument.extended-properties+xml',
+                PartName: '/docProps/app.xml'
             }
         ].map(contentType => contentTypeFactory.getTemplate(contentType));
 

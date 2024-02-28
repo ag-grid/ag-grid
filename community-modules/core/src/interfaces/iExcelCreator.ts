@@ -397,6 +397,8 @@ export interface ExcelExportParams extends ExportParams<ExcelRow[]> {
     margins?: ExcelSheetMargin;
     /** Allows you to setup the page orientation and size. */
     pageSetup?: ExcelSheetPageSetup;
+    /** Use to export the data as a table within each sheet of the Excel document. */
+    tableSetup?: ExcelSheetTableSetup,
     /** The configuration for header and footers. */
     headerFooterConfig?: ExcelHeaderFooterConfig;
     /**
@@ -453,6 +455,10 @@ export interface ExcelExportMultipleSheetParams {
      * @default 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
      */
     mimeType?: string;
+    /**
+     * Use to export the data as a table within each sheet of the Excel document.
+     **/
+    tableSetup?: ExcelSheetTableSetup,
 }
 
 export interface ExcelHeaderFooterConfig {
@@ -539,4 +545,13 @@ export interface ExcelSheetPageSetup {
      * @default 'Letter'
      */
     pageSize?: 'Letter' | 'Letter Small' | 'Tabloid' | 'Ledger' | 'Legal' | 'Statement' | 'Executive' | 'A3' | 'A4' | 'A4 Small' | 'A5' | 'A6' | 'B4' | 'B5' | 'Folio' | 'Envelope' | 'Envelope DL' | 'Envelope C5' | 'Envelope B5' | 'Envelope C3' | 'Envelope C4' | 'Envelope C6' | 'Envelope Monarch' | 'Japanese Postcard' | 'Japanese Double Postcard';
+}
+
+export interface ExcelSheetTableSetup {
+    /** When exportAsTable is set to true, this property can be used to set the table name. */
+    name: string;
+    /** The configuration for table columns. */
+    columns: string[];
+    /** When a table is exported, the row count is required. */
+    rowCount: number;
 }

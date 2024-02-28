@@ -16,6 +16,7 @@ import {
     RowNode,
     _,
 } from '@ag-grid-community/core';
+import {ExcelSheetTableSetup} from '@ag-grid-community/core/dist/types/src/interfaces/iExcelCreator';
 
 import {
     BaseGridSerializingSession,
@@ -52,6 +53,7 @@ export interface ExcelGridSerializingParams extends GridSerializingParams {
     rowHeight?: number | ((params: RowHeightCallbackParams) => number);
     margins?: ExcelSheetMargin;
     pageSetup?: ExcelSheetPageSetup;
+    tableSetup?: ExcelSheetTableSetup;
     sheetName: string;
     suppressColumnOutline?: boolean;
     suppressRowOutline?: boolean;

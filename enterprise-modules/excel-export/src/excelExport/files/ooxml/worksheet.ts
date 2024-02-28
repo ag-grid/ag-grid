@@ -12,6 +12,7 @@ import {
     ExcelFont,
     _
 } from '@ag-grid-community/core';
+import {ExcelTable} from '../../assets/excelInterfaces';
 
 import columnFactory from './column';
 import rowFactory from './row';
@@ -293,6 +294,28 @@ const addHeaderFooter = (headerFooterConfig?: ExcelHeaderFooterConfig) => {
     };
 };
 
+const addExcelTableParts = (excelTables?: ExcelTable[]) => {
+    if (!excelTables || excelTables.length === 0) {
+        return (children: XmlElement[]) => children;
+    }
+
+    return (children: XmlElement[]) => {
+        children.push({
+            name: 'tableParts',
+            children: excelTables.map((table) => ({
+                name: 'tablePart',
+                properties: {
+                    rawMap: {
+                        'r:id': `rId${table.index + 1}`
+                    }
+                }
+            }))
+        });
+
+        return children;
+    };
+};
+
 const addDrawingRel = (currentSheet: number) => {
     return (children: XmlElement[]) => {
         if (ExcelXlsxFactory.worksheetImages.get(currentSheet)) {
@@ -363,6 +386,8 @@ const worksheetFactory: ExcelOOXMLTemplate = {
         const { rows, columns } = table;
         const mergedCells = (columns && columns.length) ? getMergedCellsAndAddColumnGroups(rows, columns, !!suppressColumnOutline) : [];
 
+        const worksheetExcelTables = ExcelXlsxFactory.worksheetTables.get(currentSheet);
+
         const createWorksheetChildren = _.compose(
             addSheetPr(),
             addSheetFormatPr(rows),
@@ -372,7 +397,8 @@ const worksheetFactory: ExcelOOXMLTemplate = {
             addPageMargins(margins),
             addPageSetup(pageSetup),
             addHeaderFooter(headerFooterConfig),
-            addDrawingRel(currentSheet)
+            addDrawingRel(currentSheet),
+            addExcelTableParts(worksheetExcelTables),
         );
 
         const children = createWorksheetChildren([]);

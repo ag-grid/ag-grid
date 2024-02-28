@@ -67,3 +67,11 @@ export interface ExcelCalculatedImage extends ExcelImage {
     totalWidth: number;
     totalHeight: number;
 }
+
+export interface ExcelTable {
+    index: number;
+    name: string;
+    columns: string[];
+    firstDataRow: number;
+    lastDataRow: number;
+}

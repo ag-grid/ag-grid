@@ -303,7 +303,7 @@ const drawingFactory: ExcelOOXMLTemplate = {
         const sheetImages = ExcelXlsxFactory.worksheetImages.get(sheetIndex);
         const sheetImageIds = ExcelXlsxFactory.worksheetImageIds.get(sheetIndex);
 
-        const children = sheetImages!.map((image, idx) => {
+        const children = sheetImages?.map((image, idx) => {
             const boxSize = getImageBoxSize(image);
             return ({
                 name: 'xdr:twoCellAnchor',
