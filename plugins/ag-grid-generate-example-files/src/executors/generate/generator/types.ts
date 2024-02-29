@@ -13,7 +13,78 @@ export interface ExampleConfig {
     extras?: string[];
     noStyle?: boolean;
     licenseKey?: boolean;
-};
+}
+
+export type ImportType = 'packages' | 'modules';
+
+export interface BindingImport {
+    isNamespaced: boolean;
+    module: string;
+    namedImport?: string;
+    imports: string[];
+}
+
+export interface InlineGridStyles{
+    theme: string;
+    width: string;
+    height: string;
+}
+export interface EventHandler {
+    name: string;
+    handlerName: string;
+    handler: string;
+
+}
+export interface ExternalEventHandlers{
+    name: string;
+    params: string[];
+    body: string;
+}
+
+export interface DataCallback{
+    url: string;
+    callback: string;
+}
+export interface Property {
+    name: string;
+    value: string;
+    typings: GridOptionsType;
+}
+export interface Component {
+    name: string;
+    value: string;
+}
+
+export interface GridOptionsType {
+    typeName: string;
+    typesToInclude: string[];
+}
+
+export interface ParsedBindings {
+    eventHandlers: EventHandler[];
+    properties: Property[];
+    components: Component[];
+    vuePropertyBindings: {};
+    defaultColDef: string;
+    onGridReady: string;
+    globalComponents: string[];
+    parsedColDefs: string;
+    instanceMethods: string[];
+    externalEventHandlers: ExternalEventHandlers[];
+    utils: string[];
+    declarations: string[];
+    callbackDependencies: {};
+    template: string;
+    imports: BindingImport[];
+    typeDeclares: string[];
+    classes: string[];
+    interfaces: string[];
+    exampleName: string;
+    moduleRegistration: string | undefined;
+    inlineGridStyles: InlineGridStyles;
+    data: DataCallback;
+    tData: string;
+}
 
 export interface GeneratedContents extends ExampleConfig {
     isEnterprise: boolean;

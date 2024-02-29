@@ -1,8 +1,8 @@
 import { getFunctionName, isInstanceMethod, removeFunctionKeyword, replaceGridReadyRowData } from './parser-utils';
 import { convertTemplate, toAssignment, toConst, toInput, toMember } from './vue-utils';
-import { templatePlaceholder } from "./grid-vanilla-src-parser";
-import * as JSON5 from "json5";
-import { ExampleConfig } from '../types';
+import { templatePlaceholder } from './grid-vanilla-src-parser';
+import * as JSON5 from 'json5';
+import { ExampleConfig, ParsedBindings, ImportType } from '../types';
 
 export const GRID_WIDE_COMPONENTS = [
     'loadingCellRenderer',
@@ -170,9 +170,11 @@ export function getPropertyBindings(
     return [propertyAssignments, propertyVars, propertyAttributes, vueComponents];
 }
 
-export function getTemplate(bindings: any, exampleConfig: ExampleConfig, attributes: string[]): string {
+export function getTemplate(bindings: ParsedBindings, exampleConfig: ExampleConfig, attributes: string[]): string {
     const { inlineGridStyles } = bindings;
-    const style = exampleConfig.noStyle ? '' : `style="width: ${inlineGridStyles.width}; height: ${inlineGridStyles.height};"`;
+    const style = exampleConfig.noStyle
+        ? ''
+        : `style="width: ${inlineGridStyles.width}; height: ${inlineGridStyles.height};"`;
 
     const agGridTag = `<ag-grid-vue
     ${style}

@@ -8,7 +8,7 @@ import { vanillaToTypescript } from '../transformation-scripts/grid-vanilla-to-t
 import { vanillaToVue } from '../transformation-scripts/grid-vanilla-to-vue';
 import { vanillaToVue3 } from '../transformation-scripts/grid-vanilla-to-vue3';
 import { getIntegratedDarkModeCode, readAsJsFile } from '../transformation-scripts/parser-utils';
-import { InternalFramework } from '../types';
+import { InternalFramework, ParsedBindings } from '../types';
 import type { FileContents, ExampleConfig } from '../types';
 import { deepCloneObject } from './deepCloneObject';
 import { getBoilerPlateFiles, getEntryFileName, getMainFileName } from './fileUtils';
@@ -51,7 +51,7 @@ const createVueFilesGenerator =
         internalFramework,
     }: {
         sourceGenerator: (
-            bindings: any,
+            bindings: ParsedBindings,
             exampleConfig: ExampleConfig,
             componentFilenames: string[],
             allStylesheets: string[]

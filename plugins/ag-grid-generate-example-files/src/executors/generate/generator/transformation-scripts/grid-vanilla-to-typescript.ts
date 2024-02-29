@@ -1,5 +1,11 @@
-import { ExampleConfig } from "../types";
-import { addBindingImports, addEnterprisePackage, addGenericInterfaceImport, getIntegratedDarkModeCode, ImportType, removeModuleRegistration } from './parser-utils';
+import { ExampleConfig, ParsedBindings, ImportType } from '../types';
+import {
+    addBindingImports,
+    addEnterprisePackage,
+    addGenericInterfaceImport,
+    getIntegratedDarkModeCode,
+    removeModuleRegistration,
+} from './parser-utils';
 import { toTitleCase } from './string-utils';
 
 export function getImport(filename: string) {
@@ -17,8 +23,8 @@ function getPropertyInterfaces(properties) {
     return [...new Set(propTypesUsed)];
 }
 
-function getModuleImports(bindings: any): string[] {
-    const {inlineGridStyles, imports: bindingImports, properties} = bindings;
+function getModuleImports(bindings: ParsedBindings): string[] {
+    const { inlineGridStyles, imports: bindingImports, properties } = bindings;
 
     let imports = [];
     imports.push("import '@ag-grid-community/styles/ag-grid.css';");
@@ -45,8 +51,8 @@ function getModuleImports(bindings: any): string[] {
     return imports;
 }
 
-function getPackageImports(bindings: any): string[] {
-    const {inlineGridStyles, imports: bindingImports, properties} = bindings;
+function getPackageImports(bindings: ParsedBindings): string[] {
+    const { inlineGridStyles, imports: bindingImports, properties } = bindings;
     const imports = [];
 
     addEnterprisePackage(imports, bindings);
@@ -84,8 +90,13 @@ function getImports(bindings: ParsedBindings, importType: ImportType): string[] 
     }
 }
 
-export function vanillaToTypescript(bindings: any, exampleConfig: ExampleConfig, mainFilePath: string, tsFile: string): (importType: ImportType) => string {
-    const {externalEventHandlers} = bindings;
+export function vanillaToTypescript(
+    bindings: ParsedBindings,
+    exampleConfig: ExampleConfig,
+    mainFilePath: string,
+    tsFile: string
+): (importType: ImportType) => string {
+    const { externalEventHandlers } = bindings;
 
     // attach external handlers to window
     let toAttach = '';

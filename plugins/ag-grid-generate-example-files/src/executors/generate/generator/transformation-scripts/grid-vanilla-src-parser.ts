@@ -124,11 +124,7 @@ interface Collector {
     apply: (bindings: ParsedBindings, node: any) => void;
 }
 
-function internalParser(examplePath, {
-    srcFile,
-    includeTypes,
-    gridOptionsTypes
-}, html, exampleType, providedExamples) {
+function internalParser(examplePath: string, srcFile: string, includeTypes: boolean, gridOptionsTypes: Record<string, GridOptionsType>, html: string, exampleType: ExampleType, providedExamples) {
     const domTree = cheerio.load(html, null, false);
     domTree('style').remove();
     const domEventHandlers = extractEventHandlers(domTree, recognizedDomEvents);
@@ -136,9 +132,9 @@ function internalParser(examplePath, {
     const tsTree = includeTypes ? parseFile(srcFile) : parseFile(readAsJsFile(srcFile));
     const gridOpsTypeLookup = includeTypes ? (prop) => gridOptionsTypes[prop] : () => undefined;
 
-    const tsCollectors = [];
-    const tsGridOptionsCollectors = [];
-    const tsOnReadyCollectors = [];
+    const tsCollectors: Collector[] = [];
+    const tsGridOptionsCollectors: Collector[] = [];
+    const tsOnReadyCollectors: Collector[] = [];
     const registered = ['gridOptions', 'gridApi'];
 
     // handler is the function name, params are any function parameters
@@ -164,7 +160,7 @@ function internalParser(examplePath, {
 
     // anything not marked as "inScope" and not handled above in the eventHandlers is considered an unused/util method
     tsCollectors.push({
-        matches: node => tsNodeIsUnusedFunction(node, registered),
+        matches: (node) => tsNodeIsUnusedFunction(node, registered),
         apply: (bindings, node) => {
             const util = tsGenerate(node, tsTree);
             bindings.utils.push(util);
@@ -537,11 +533,13 @@ function internalParser(examplePath, {
     const inlineHeight = gridElement.css('height');
     const inlineWidth = gridElement.css('width');
 
-    let inlineGridStyles: any = {
+    let inlineGridStyles: InlineGridStyles = {
         theme: 'ag-theme-quartz',
+        width: '100%',
+        height: '100%',
     };
     if (inlineClass) {
-        const theme = inlineClass.split(' ').filter(className => className.indexOf('ag-theme') >= 0);
+        const theme = inlineClass.split(' ').filter((className) => className.indexOf('ag-theme') >= 0);
         inlineGridStyles.theme = theme && theme.length > 0 ? theme[0] : 'ag-theme-quartz';
     }
     inlineGridStyles.height = parseInt(inlineHeight) ? inlineHeight : '100%';
@@ -559,20 +557,20 @@ function internalParser(examplePath, {
     return tsBindings;
 }
 
-export function parser(examplePath, srcFile, html, exampleType, providedExamples, gridOptionsTypes) {
-    const typedBindings = internalParser(examplePath, {
+export function parser(examplePath, srcFile, html, exampleType: ExampleType, providedExamples, gridOptionsTypes: Record<string, GridOptionsType>) {
+    const typedBindings = internalParser(
+        examplePath,
         srcFile,
-        includeTypes: true,
-        gridOptionsTypes
-    }, html, exampleType, providedExamples);
-    const bindings = internalParser(examplePath, {
-        srcFile,
-        includeTypes: false,
-        gridOptionsTypes
-    }, html, exampleType, providedExamples);
+        true,
+        gridOptionsTypes,
+        html,
+        exampleType,
+        providedExamples
+    );
+    const bindings = internalParser(examplePath, srcFile, false, gridOptionsTypes, html, exampleType, providedExamples);
     // We need to copy the imports from the typed bindings to the non-typed bindings
     bindings.imports = typedBindings.imports;
-    return {bindings, typedBindings};
+    return { bindings, typedBindings };
 }
 
 export default parser;

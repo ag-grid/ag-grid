@@ -151,7 +151,7 @@ export function tsNodeIsUnusedFunction(node: any, used: string[]): boolean {
     if (ts.isFunctionDeclaration(node) && !!node.name) {
         if (ts.isFunctionLike(node) && used.indexOf(node.name.getText()) < 0) {
             const isTopLevel = ts.isSourceFile(node.parent);
-            return isTopLevel && !isDeclareStatement(node);  
+            return isTopLevel && !isDeclareStatement(node);
         }
     }
     return false;
@@ -237,17 +237,22 @@ export function extractImportStatements(srcFile: ts.SourceFile): BindingImport[]
     return allImports;
 }
 
-export function addEnterprisePackage(imports: any[], bindings: any) {
+export function addEnterprisePackage(imports: any[], bindings: ParsedBindings) {
     const isEnterprise = bindings.imports.some((i) => i.module.includes('-enterprise'));
     const isChartsEnterprise = bindings.imports.some((i) => i.module.includes('charts-enterprise'));
     if (isEnterprise) {
-        imports.push(`import 'ag-grid-${integratedChartsUsesChartsEnterprise && isChartsEnterprise ? 'charts-' : ''}enterprise';`);
+        imports.push(
+            `import 'ag-grid-${integratedChartsUsesChartsEnterprise && isChartsEnterprise ? 'charts-' : ''}enterprise';`
+        );
     }
 }
 
 export function extractModuleRegistration(srcFile: ts.SourceFile): string {
     for (const statement of srcFile.statements) {
-        if (ts.isExpressionStatement(statement) && statement.expression?.getText().includes('ModuleRegistry.registerModules')) {
+        if (
+            ts.isExpressionStatement(statement) &&
+            statement.expression?.getText().includes('ModuleRegistry.registerModules')
+        ) {
             return statement.getText();
         }
     }

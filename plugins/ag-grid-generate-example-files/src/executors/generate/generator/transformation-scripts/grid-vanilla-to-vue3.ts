@@ -1,5 +1,5 @@
-import * as JSON5 from "json5";
-import { ExampleConfig } from "../types";
+import * as JSON5 from 'json5';
+import { ExampleConfig, ImportType, ParsedBindings } from '../types';
 import {
     convertDefaultColDef,
     getColumnDefs,
@@ -238,8 +238,13 @@ function getPropertyBindings(
     return [propertyAssignments, propertyVars, propertyAttributes, vueComponents, propertyNames];
 }
 
-function getModuleImports(bindings: any, exampleConfig: ExampleConfig, componentFileNames: string[], allStylesheets: string[]): string[] {
-    const {inlineGridStyles} = bindings;
+function getModuleImports(
+    bindings: ParsedBindings,
+    exampleConfig: ExampleConfig,
+    componentFileNames: string[],
+    allStylesheets: string[]
+): string[] {
+    const { inlineGridStyles } = bindings;
 
     let imports = [
         "import { createApp, onBeforeMount, ref } from 'vue';",
@@ -268,8 +273,13 @@ function getModuleImports(bindings: any, exampleConfig: ExampleConfig, component
     return imports;
 }
 
-function getPackageImports(bindings: any, exampleConfig: ExampleConfig, componentFileNames: string[], allStylesheets: string[]): string[] {
-    const {inlineGridStyles} = bindings;
+function getPackageImports(
+    bindings: ParsedBindings,
+    exampleConfig: ExampleConfig,
+    componentFileNames: string[],
+    allStylesheets: string[]
+): string[] {
+    const { inlineGridStyles } = bindings;
 
     const imports = [
         "import { createApp, onBeforeMount, ref } from 'vue';",
@@ -300,7 +310,13 @@ function getPackageImports(bindings: any, exampleConfig: ExampleConfig, componen
     return imports;
 }
 
-function getImports(bindings: any, exampleConfig: ExampleConfig, componentFileNames: string[], importType: ImportType, allStylesheets: string[]): string[] {
+function getImports(
+    bindings: ParsedBindings,
+    exampleConfig: ExampleConfig,
+    componentFileNames: string[],
+    importType: ImportType,
+    allStylesheets: string[]
+): string[] {
     if (importType === 'packages') {
         return getPackageImports(bindings, exampleConfig, componentFileNames, allStylesheets);
     } else {
@@ -308,8 +324,13 @@ function getImports(bindings: any, exampleConfig: ExampleConfig, componentFileNa
     }
 }
 
-export function vanillaToVue3(bindings: any, exampleConfig: ExampleConfig, componentFileNames: string[], allStylesheets: string[]): (importType: ImportType) => string {
-    const vueComponents = bindings.components.map(component => `${component.name}:${component.value}`);
+export function vanillaToVue3(
+    bindings: ParsedBindings,
+    exampleConfig: ExampleConfig,
+    componentFileNames: string[],
+    allStylesheets: string[]
+): (importType: ImportType) => string {
+    const vueComponents = bindings.components.map((component) => `${component.name}:${component.value}`);
 
     const onGridReady = getOnGridReadyCode(bindings);
     const eventAttributes = bindings.eventHandlers.filter((event) => event.name !== 'onGridReady').map(toOutput);
@@ -320,10 +341,14 @@ export function vanillaToVue3(bindings: any, exampleConfig: ExampleConfig, compo
         ? convertDefaultColDef(bindings.defaultColDef, vueComponents, componentFileNames)
         : null;
 
-    return importType => {
-
+    return (importType) => {
         const imports = getImports(bindings, exampleConfig, componentFileNames, importType, allStylesheets);
-        const [propertyAssignments, propertyVars, propertyAttributes, _, propertyNames] = getPropertyBindings(bindings, componentFileNames, importType, vueComponents);
+        const [propertyAssignments, propertyVars, propertyAttributes, _, propertyNames] = getPropertyBindings(
+            bindings,
+            componentFileNames,
+            importType,
+            vueComponents
+        );
         const template = getTemplate(bindings, exampleConfig, propertyAttributes.concat(eventAttributes));
 
         return `
@@ -364,7 +389,7 @@ const VueExample = {
             ${propertyNames.length > 0 ? propertyNames.join(',\n') + ',' : ''}
             onGridReady,
             themeClass: ${getActiveTheme(bindings.inlineGridStyles.theme, false)},
-            ${functionNames ? functionNames.filter(functionName => !propertyNames.includes(functionName)).join(',\n') : ''}
+            ${functionNames ? functionNames.filter((functionName) => !propertyNames.includes(functionName)).join(',\n') : ''}
         }        
     }
 }
