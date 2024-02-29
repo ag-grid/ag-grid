@@ -391,22 +391,6 @@ In the example below, note the following:
 
 {% gridExampleRunner title="Extreme Pivot Handling" name="extreme-pivot"  exampleHeight=620 /%}
 
-## Handling Extreme Data
-
-The grid generates pivot result columns from the underlying data and the pivot columns, due to the flexibility of both of these inputs it can be difficult to handle extreme scenarios where thousands of columns can be generated. In these scenarios the browser can become overwhelmed with the amount of data to process causing slow performance or even crashing the browser.
-
-To circumvent this, you can provide a `pivotMaxGeneratedColumns`. When the grid reaches the point where it shall exceed this provided number of columns, it halts generation and does not display any pivot result columns at all. In this circumstance the grid will trigger a `pivotLimitExceeded` event, allowing your application to provide custom handling.
-
-In the example below, note the following:
-
-* The `pivotMaxGeneratedColumns` is set to `1000`.
-
-* The `pivotLimitExceeded` event is triggered when the grid reaches the `pivotMaxGeneratedColumns` limit, this logs an error in the browser console.
-
-* Try pivoting by the 'Athlete' column, this will exceed the `pivotMaxGeneratedColumns` limit and trigger the `pivotLimitExceeded` event.
-
-{% gridExampleRunner title="Extreme Pivot Handling" name="extreme-pivot" type="generated" options={ "enterprise": true, "exampleHeight": 620, "modules": ["clientside", "rowgrouping"] } /%}
-
 ## Pivot API
 
 Below shows examples of using the pivot API directly. Use this is you want to build out your own toolPanel.
