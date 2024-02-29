@@ -11,7 +11,7 @@ To enable [Dynamic Row Height](./row-height/) when using the Server-Side Row Mod
 
 {% apiDocumentation source="grid-options/properties.json" section="styling" names=["getRowHeight"] /%}
 
-{% gridExampleRunner title="Dynamic Row Height Example" name="dynamic-row-height" type="generated" options={ "enterprise": true, "exampleHeight": 630, "modules": ["serverside", "rowgrouping"] } /%}
+{% gridExampleRunner title="Dynamic Row Height Example" name="dynamic-row-height"  exampleHeight=630 /%}
 
 {% note %}
 Ensure `maxBlocksInCache` is not set when using dynamic row height.
@@ -28,7 +28,7 @@ Server-Side Row Model the row height cannot be changed once it is set.
 In the example below, Column A & B have `autoHeight=true` and `wrapText=true`. See [Row Height](./row-height/) for
 details on these properties.
 
-{% gridExampleRunner title="Auto Row Height Example" name="auto-row-height" type="generated" options={ "enterprise": true, "exampleHeight": 610, "modules": ["serverside", "rowgrouping"] } /%}
+{% gridExampleRunner title="Auto Row Height Example" name="auto-row-height"  exampleHeight=610 /%}
 
 {% note %}
 Ensure `maxBlocksInCache` is not set when using auto row height.
