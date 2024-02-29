@@ -759,20 +759,18 @@ Customise themes using CSS variables.
 }
 </snippet>
 
-<image-caption src="getting-started/resources/customisingThemeExample.png" constrained=true centered=true alt="Customising a Theme with CSS Variables"></image-caption>
+<image-caption src="getting-started/resources/customisingThemeExample.png" constrained={true} centered={true} alt="Customising a Theme with CSS Variables"></image-caption>
 
 ### Figma
 
 If you are designing within Figma, you can use the [AG Grid Design System](../ag-grid-design-system/) to replicate the  Quartz and Alpine AG Grid themes within Figma. These default themes can be extended with Figma variables to match any existing visual design or create entirely new AG Grid themes. These can then be exported and generated into new AG Grid themes.
 
-<image-caption src="getting-started/resources/FDS-Example.png" constrained=true centered=true alt="Figma Design System with AG Grid"></image-caption>
+<image-caption src="getting-started/resources/FDS-Example.png" constrained={true} centered={true} alt="Figma Design System with AG Grid"></image-caption>
 
 ### Cell Style
 
 Define rules to apply styling to cells using `cellClassRules`. This can be used, for example, to set cell background colour based on its value.
 
-<div style="display: flex">
-<div style="min-width: 0;flex: 3">
 <snippet transform={false} language="css">
 .rag-green {
   background-color: #33cc3344;
