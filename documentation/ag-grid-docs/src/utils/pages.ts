@@ -98,6 +98,9 @@ export const FILES_PATH_MAP: Record<string, string | GlobConfig> = {
     //     sourceFolder: 'enterprise-modules',
     //     fileNameGlob: '*/dist/**/*.{cjs,js,map}',
     // },
+
+    // Hero grid
+    '@ag-grid-community/styles/ag-theme-alpine.css': 'community-modules/styles/ag-theme-alpine.css',
 };
 type FileKey = keyof typeof FILES_PATH_MAP;
 

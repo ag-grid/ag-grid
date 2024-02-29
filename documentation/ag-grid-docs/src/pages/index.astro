@@ -6,6 +6,9 @@ import { Quotes } from '@components/quotes/Quotes';
 import { quotesData } from '@components/quotes/quotesData';
 import FrameworkSelector from '@components/FrameworkSelector';
 import ChartsLogo from '@images/inline-svgs/ag-charts-logo.svg?react';
+import HeroGrid from '@components/hero-grid/HeroGrid.astro';
+import { pathJoin } from '@utils/pathJoin';
+import { FILES_BASE_PATH } from '@constants';
 
 // TODO: Is this best place to get the current version from?
 const { data: versions } = await getEntry('versions', 'ag-grid-versions');
@@ -29,7 +32,21 @@ const frameworksData = [
         url: '/javascript-data-grid/',
     },
 ];
+
+// TODO: Use `agGridEnterpriseVersion` from `@constants`;
+const agGridEnterpriseVersion = '31.1.1';
+const enterpriseGridUrl = `https://cdn.jsdelivr.net/npm/ag-grid-enterprise@${agGridEnterpriseVersion}/dist/ag-grid-enterprise.min.js`;
 ---
+
+<!-- Dev files -->
+<link
+    rel="stylesheet"
+    href={pathJoin(FILES_BASE_PATH, '/@ag-grid-community/styles/ag-theme-alpine.css')}
+    crossorigin="anonymous"
+    type="text/css"
+/>
+<!-- TODO: Add for dev packages -->
+<script src={enterpriseGridUrl}></script>
 
 <Layout
     title="AG Grid: High-Performance React Grid, Angular Grid, JavaScript Grid"
@@ -45,22 +62,9 @@ const frameworksData = [
                     The professional choice for developers building enterprise&nbsp;applications
                 </h2>
             </section>
-            <!-- <section class={styles.heroGrid}>
-                {
-                    IS_SSR && (
-                        <div class={styles.loadingLogoContainer}>
-                            <LogoMark isSpinning />
-                        </div>
-                    )
-                }
-                {
-                    !IS_SSR && (
-                        <React.Suspense fallback={<></>}>
-                            <HeroGrid />
-                        </React.Suspense>
-                    )
-                }
-            </section> -->
+            <section class={styles.heroGrid}>
+                <HeroGrid />
+            </section>
         </section>
     </div>
 
