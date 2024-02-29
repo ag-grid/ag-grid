@@ -1,5 +1,3 @@
-@import "https://use.fontawesome.com/releases/v5.6.3/css/all.css";
-
 /* enable row hover for full width rows, since it is not applied by default */
 .ag-full-width-row.ag-row-hover {
   background-color: var(--ag-row-hover-color);
