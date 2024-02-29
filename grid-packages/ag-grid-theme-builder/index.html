@@ -13,19 +13,18 @@
     <div id="theme-builder-root"></div>
     <script>
       const licenseWarningLines = [
-        '****************************************************************************************************************************',
-        '************************************************ AG Grid Enterprise License ************************************************',
-        '************************************************** License Key Not Found ***************************************************',
-        '* All AG Grid Enterprise features are unlocked for trial.                                                                  *',
-        '* If you want to hide the watermark please email info@ag-grid.com for a trial license key.                                 *',
-        '*********************************************** AG Charts Enterprise License ***********************************************',
-        '* All AG Charts Enterprise features are unlocked for trial.                                                                *',
+        '************************',
+        'Enterprise License',
+        'License Key Not Found',
+        'features are unlocked for trial',
+        'email info@ag-grid.com for a trial license key',
       ];
       // eslint-disable-next-line no-console
       const oldConsoleError = console.error;
       // eslint-disable-next-line no-console
       console.error = (...args) => {
-        if (!licenseWarningLines.includes(String(args[0]))) {
+        const isLicenseLine = typeof args[0] === "string" && licenseWarningLines.find((line) => args[0].includes(line));
+        if (!isLicenseLine) {
           oldConsoleError.apply(console, args);
         }
       };

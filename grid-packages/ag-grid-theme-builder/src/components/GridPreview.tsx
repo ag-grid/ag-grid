@@ -68,9 +68,11 @@ const GridPreview = () => {
                 },
               },
             });
-            document
-              .querySelector('.ag-chart .ag-icon-expanded')!
-              .dispatchEvent(new MouseEvent('click', { bubbles: true }));
+            setTimeout(() => {
+              document
+                .querySelector('.ag-chart .ag-icon-expanded')
+                ?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+            }, 1);
           }
         }}
         key={internalState.id}
