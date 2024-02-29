@@ -1,0 +1,6 @@
+{
+  "extras": [
+    "jquery",
+    "jqueryui"
+  ]
+}
