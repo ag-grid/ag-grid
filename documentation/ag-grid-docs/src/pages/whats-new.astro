@@ -1,14 +1,87 @@
 ---
-import Layout from '@layouts/Layout.astro';
-import styles from '@design-system/modules/about.module.scss';
-import { urlWithPrefix } from '@utils/urlWithPrefix';
+import { getCollection, getEntry } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import { PagesNavigationFromLocalStorage } from '../features/pages-navigation/components/PagesNavigationFromLocalStorage';
+import { getDocsPages } from '../features/docs/utils/pageData';
+import { Version } from '../components/version/Version';
+
+export async function getStaticPaths() {
+    const pages = await getCollection('docs');
+    return getDocsPages(pages);
+}
+
+const menuEntry = await getEntry('menu', 'data');
+console.log(menuEntry.data);
+const versionsContent = await getEntry('versions', 'ag-grid-versions');
+const versionsData: any[] = versionsContent ? versionsContent.data : [];
 ---
 
-<Layout
-    title="Our Mission, Our Principles and Our Team at AG Grid"
-    description="AG Grid is a feature-rich datagrid available in Community or Enterprise versions. This is the story of AG Grid and explains our mission, where we came from and who we are."
-    showSearchBar={true}
-    showDocsNav={false}
->
-    <h1>I AM NEW</h1>
+<Layout title={"What's new"} showDocsNav={true} showSearchBar={true}>
+    <div class={'contentViewport layout-grid'}>
+        <PagesNavigationFromLocalStorage client:load menuSections={menuEntry.data} pageName={'whats-new'} />
+
+        <div id="doc-content" class="docPage">
+            <div class="pageSections">
+                <h1>What's New in AG Grid</h1>
+                <p>See what's new in recent AG Grid versions.</p>
+                <div class={'versions'}>
+                    {
+                        versionsData.map((versionInfo, index) => {
+                            return (
+                                <Version
+                                    isLatest={index === 0}
+                                    version={versionInfo.version}
+                                    date={versionInfo.date}
+                                    highlights={versionInfo.highlights}
+                                    notesUrl={versionInfo.notesUrl}
+                                />
+                            );
+                        })
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
 </Layout>
+
+<style lang="scss">
+    @use '../design-system' as *;
+    @import '../design-system/modules/docs.module.scss';
+
+    .versions {
+        max-width: var(--max-page-width);
+        display: grid;
+        grid-template-columns: repeat(3, minmax(400px, 1fr));
+        grid-gap: 16px;
+        margin-top: 32px;
+        margin-bottom: 32px;
+    }
+
+    @media (max-width: 1200px) {
+        .versions {
+            display: flex;
+            flex-direction: column;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)) !important;
+        }
+    }
+
+    .contentViewport {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+
+        @media (min-width: $breakpoint-docs-nav-medium) {
+            flex-direction: row;
+        }
+
+        @media (min-width: $breakpoint-docs-nav-large) {
+            &.noLeftMenu {
+                padding-left: max(var(--horizontal-margin), calc(50vw - var(--max-page-width) / 2));
+            }
+
+            .docPage {
+                padding-left: 0;
+            }
+        }
+    }
+</style>
