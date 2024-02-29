@@ -1,10 +1,8 @@
-import alasql from "alasql";
-
 // This fake server uses http://alasql.org/ to mimic how a real server
 // might generate sql queries from the Server-Side Row Model request.
 // To keep things simple it does the bare minimum to support the example.
 export function FakeServer(allData) {
-    alasql.options.cache = false;
+    alasql.options.cache = false; 
 
     return {
         getData: function(request) {
@@ -27,41 +25,12 @@ export function FakeServer(allData) {
     }
 
     function buildSql(request) {
-        return selectSql(request) + ' FROM ?' + whereSql(request) + groupBySql(request) + orderBySql(request) + limitSql(request);
-    }
-
-    function selectSql(request) {
-        var rowGroupCols = request.rowGroupCols;
-        var valueCols = request.valueCols;
-        var groupKeys = request.groupKeys;
-
-        if (isDoingGrouping(rowGroupCols, groupKeys)) {
-            var rowGroupCol = rowGroupCols[groupKeys.length];
-            var colsToSelect = [rowGroupCol.id];
-
-            valueCols.forEach(function(valueCol) {
-                colsToSelect.push(valueCol.aggFunc + '(' + valueCol.id + ') AS ' + valueCol.id);
-            });
-
-            return 'SELECT ' + colsToSelect.join(', ');
-        }
-
-        return 'SELECT *';
+        return 'SELECT * FROM ?' + whereSql(request) + orderBySql(request) + limitSql(request);
     }
 
     function whereSql(request) {
-        var rowGroups = request.rowGroupCols;
-        var groupKeys = request.groupKeys;
-        var filterModel = request.filterModel;
         var whereParts = [];
-
-        if (groupKeys) {
-            groupKeys.forEach(function(key, i) {
-                var value = typeof key === 'string' ? "'" + key + "'" : key;
-
-                whereParts.push(rowGroups[i].id + ' = ' + value);
-            });
-        }
+        var filterModel = request.filterModel;
 
         if (filterModel) {
             Object.keys(filterModel).forEach(function(key) {
@@ -146,19 +115,6 @@ export function FakeServer(allData) {
         }
     }
 
-    function groupBySql(request) {
-        var rowGroupCols = request.rowGroupCols;
-        var groupKeys = request.groupKeys;
-
-        if (isDoingGrouping(rowGroupCols, groupKeys)) {
-            var rowGroupCol = rowGroupCols[groupKeys.length];
-
-            return ' GROUP BY ' + rowGroupCol.id + ' HAVING count(*) > 0';
-        }
-
-        return '';
-    }
-
     function orderBySql(request) {
         var sortModel = request.sortModel;
 
@@ -176,11 +132,6 @@ export function FakeServer(allData) {
         var blockSize = request.endRow - request.startRow;
 
         return ' LIMIT ' + blockSize + ' OFFSET ' + request.startRow;
-    }
-
-    function isDoingGrouping(rowGroupCols, groupKeys) {
-        // we are not doing grouping if at the lowest level
-        return rowGroupCols.length > groupKeys.length;
     }
 
     function getLastRowIndex(request) {

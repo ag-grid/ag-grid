@@ -33,7 +33,7 @@ The example below demonstrates some configurations. Note the following:
 * The grid property `cacheBlockSize = 50`. This sets the block size to 50, thus rows are read back 50 at a time.
 * The grid property `maxBlocksInCache = 2`. This means the grid will keep two blocks in memory only. To see this in action, scroll past row 100 (which will require a third block to be loaded), then quickly scroll back to the start and you will observe the first block needs to be reloaded.
 
-{% gridExampleRunner title="Cache Configurations" name="cache-configurations" type="generated" options={ "enterprise": true, "modules": ["serverside"] } /%}
+{% gridExampleRunner title="Cache Configurations" name="cache-configurations" /%}
 
 ## Block Loading Debounce
 
@@ -47,7 +47,7 @@ The example below shows how debouncing block loading can be achieved. Note the f
 
 * The grid property `debug = true`. This means the browser's dev console will show loading block details.
 
-{% gridExampleRunner title="Block Loading Debounce" name="block-load-debounce" type="generated" options={ "enterprise": true, "modules": ["serverside", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Block Loading Debounce" name="block-load-debounce" /%}
 
 ## Providing Additional Data
 
@@ -61,7 +61,7 @@ The example below demonstrates that the grid can be populated with data outside 
 * 100 rows are provided by default, ignoring the `cacheBlockSize` property
 * The loading of these additional rows  bypasses the `blockLoadDebounceMillis` and `maxConcurrentDatasourceRequests` properties.
 
-{% gridExampleRunner title="Additional Row Data" name="additional-row-data" type="generated" options={ "enterprise": true, "modules": ["serverside"] } /%}
+{% gridExampleRunner title="Additional Row Data" name="additional-row-data" /%}
 
 ## Initial Scroll Position
 
@@ -78,7 +78,7 @@ This is demonstrated in the example below, note the following:
 
 * After the datasource has been set `api.ensureIndexVisible(5000, 'top')` is called, causing the grid to scroll down to row `5000`.
 
-{% gridExampleRunner title="Initial Scroll Position" name="initial-scroll-position" type="generated" options={ "enterprise": true, "modules": ["serverside", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Initial Scroll Position" name="initial-scroll-position" /%}
 
 ## Providing Row IDs
 
@@ -127,7 +127,7 @@ In the example below, note the following:
 * The grid option `debug: true` has been enabled
 * When scrolling through the grid, block information is logged to the console
 
-{% gridExampleRunner title="Cache Block State" name="cache-block-state" type="generated" options={ "enterprise": true, "modules": ["serverside", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Cache Block State" name="cache-block-state" /%}
 
 ## Next Up
 

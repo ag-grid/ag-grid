@@ -88,7 +88,7 @@ The example below shows this in action where the following can be noted:
 * Group nodes are determined using the callback `gridOptions.isServerSideGroup(dataItem)`.
 * Group keys are returned from the callback `gridOptions.getServerSideGroupKey(dataItem)`.
 
-{% gridExampleRunner title="Tree Data" name="tree-data" type="generated" options={ "enterprise": true, "exampleHeight": 590, "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Tree Data" name="tree-data"  exampleHeight=590 /%}
 
 ## Refreshing Tree Data
 
@@ -100,7 +100,7 @@ The example below shows this in action where the following can be noted:
 * Click **Refresh Everything** to clear all caches by calling `api.refreshServerSide({ route: [], purge: true })`.
 * Click **Refresh \['Kathryn Powers','Mabel Ward']** to clear a single cache by calling `api.refreshServerSide({ route: ['Kathryn Powers','Mabel Ward'], purge: true })`.
 
-{% gridExampleRunner title="Purging Tree Data" name="purging-tree-data" type="generated" options={ "enterprise": true, "exampleHeight": 615, "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Purging Tree Data" name="purging-tree-data"  exampleHeight=615 /%}
 
 ## Transactions with Tree Data
 
@@ -113,7 +113,7 @@ The example below demonstrates transactions with Tree Data. Note the following:
 * **Delete Selected** removes the selected row, and all of its child rows.
 * **Move Selected to Robert Peterson** moves the selected row and its children directly under `Robert Peterson`.
 
-{% gridExampleRunner title="Transactions with Tree Data" name="transactions-tree-data" type="generated" options={ "enterprise": true, "exampleHeight": 615, "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Transactions with Tree Data" name="transactions-tree-data"  exampleHeight=615 /%}
 
 ## Selection with Tree Data
 
@@ -125,7 +125,7 @@ The example below demonstrates row selection with Tree Data. Note the following:
 * Selecting a row with children also selects all of its children.
 * Selecting some, but not all, of a rows children places that row in the indeterminate state.
 
-{% gridExampleRunner title="Selection with Tree Data" name="selecting-tree-data" type="generated" options={ "enterprise": true, "exampleHeight": 615, "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Selection with Tree Data" name="selecting-tree-data"  exampleHeight=615 /%}
 
 ## Filtering Tree Data
 
@@ -146,10 +146,10 @@ The following example demonstrates Server-Side Tree Data Filtering using the [Se
 * The **Date** column has a `filterParams.keyCreator` provided to convert the `Date` values into the (string) format the server is expecting in the Filter Model.
 * The **Group** and **Date** columns both have `filterParams.excelMode = 'windows'`, which allows changes to the tree filter to be applied in batches.
 
-{% gridExampleRunner title="Filtering Tree Data" name="filtering-tree-data" type="generated" options={ "enterprise": true, "exampleHeight": 590, "modules": ["serverside", "rowgrouping", "menu", "columnpanel", "setfilter"] } /%}
+{% gridExampleRunner title="Filtering Tree Data" name="filtering-tree-data"  exampleHeight=590 /%}
 
 ## Providing Hierarchical Data via API
 
 Below is an example of utilising `api.applyServerSideRowData` to populate data. The datasource is only used to provide root level rows, and when these are loaded the grid is provided the child row data via the API.
 
-{% gridExampleRunner title="Hierarchical Data" name="supplying-hierarchy" type="generated" options={ "enterprise": true, "modules": ["serverside", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Hierarchical Data" name="supplying-hierarchy" /%}
