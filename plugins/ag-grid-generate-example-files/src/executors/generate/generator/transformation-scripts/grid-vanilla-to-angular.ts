@@ -1,13 +1,25 @@
-import { ExampleConfig } from "../types";
+import { ExampleConfig, ImportType, ParsedBindings } from '../types';
 import { convertTemplate, getImport, toConst, toInput, toMemberWithValue, toOutput } from './angular-utils';
-import { templatePlaceholder } from "./grid-vanilla-src-parser";
-import { addBindingImports, addEnterprisePackage, addGenericInterfaceImport, getActiveTheme, getIntegratedDarkModeCode, getPropertyInterfaces, handleRowGenericInterface, ImportType, isInstanceMethod, preferParamsApi, removeFunctionKeyword, removeModuleRegistration, replaceGridReadyRowData } from './parser-utils';
+import { templatePlaceholder } from './grid-vanilla-src-parser';
+import {
+    addBindingImports,
+    addEnterprisePackage,
+    addGenericInterfaceImport,
+    getActiveTheme,
+    getIntegratedDarkModeCode,
+    getPropertyInterfaces,
+    handleRowGenericInterface,
+    isInstanceMethod,
+    preferParamsApi,
+    removeFunctionKeyword,
+    removeModuleRegistration,
+    replaceGridReadyRowData,
+} from './parser-utils';
 import { toTitleCase } from './string-utils';
 const path = require('path');
 
 function getOnGridReadyCode(
     readyCode: string,
-    resizeToFit: boolean,
     data: { url: string; callback: string },
     rowDataType: string | undefined,
     hasApi: boolean,
@@ -19,21 +31,16 @@ function getOnGridReadyCode(
         additionalLines.push(readyCode.trim().replace(/^\{|\}$/g, ''));
     }
 
-    if (resizeToFit) {
-        additionalLines.push('params.api.sizeColumnsToFit();');
-    }
-
     if (data) {
         const { url, callback } = data;
-        const setRowDataBlock = replaceGridReadyRowData(callback, 'this.rowData');        
+        const setRowDataBlock = replaceGridReadyRowData(callback, 'this.rowData');
         additionalLines.push(`this.http.get<${rowDataType}[]>(${url}).subscribe(data => ${setRowDataBlock});`);
     }
     const gridReadyEventParam = rowDataType !== 'any' ? `<${rowDataType}>` : '';
     if (hasApi || additionalLines.length > 0) {
         // use params in gridReady event
-        const additional = preferParamsApi(additionalLines.length > 0
-            ? `\n\n        ${additionalLines.join('\n        ')}`
-            : ''
+        const additional = preferParamsApi(
+            additionalLines.length > 0 ? `\n\n        ${additionalLines.join('\n        ')}` : ''
         );
         return `
         onGridReady(params: GridReadyEvent${gridReadyEventParam}) {
@@ -45,7 +52,7 @@ function getOnGridReadyCode(
     }
 }
 
-function addModuleImports(imports: string[], bindings: any, allStylesheets: string[]): string[] {
+function addModuleImports(imports: string[], bindings: ParsedBindings, allStylesheets: string[]): string[] {
     const { inlineGridStyles, imports: bindingImports, properties } = bindings;
 
     imports.push("import { AgGridAngular } from '@ag-grid-community/angular';");
@@ -74,14 +81,14 @@ function addModuleImports(imports: string[], bindings: any, allStylesheets: stri
         addBindingImports(bImports, imports, false, true);
     }
 
-    if(bindings.moduleRegistration){
+    if (bindings.moduleRegistration) {
         imports.push(bindings.moduleRegistration);
     }
 
     return imports;
 }
 
-function addPackageImports(imports: string[], bindings: any, allStylesheets: string[]): string[] {
+function addPackageImports(imports: string[], bindings: ParsedBindings, allStylesheets: string[]): string[] {
     const { inlineGridStyles, imports: bindingImports, properties } = bindings;
 
     imports.push("import { AgGridAngular } from 'ag-grid-angular';");
@@ -95,8 +102,8 @@ function addPackageImports(imports: string[], bindings: any, allStylesheets: str
     const theme = inlineGridStyles.theme ? inlineGridStyles.theme.replace('-dark', '') : 'ag-theme-quartz';
     imports.push(`import "ag-grid-community/styles/${theme}.css";`);
 
-    if(allStylesheets && allStylesheets.length > 0) {
-        allStylesheets.forEach(styleSheet => imports.push(`import './${path.basename(styleSheet)}';`));
+    if (allStylesheets && allStylesheets.length > 0) {
+        allStylesheets.forEach((styleSheet) => imports.push(`import './${path.basename(styleSheet)}';`));
     }
 
     let propertyInterfaces = getPropertyInterfaces(properties);
@@ -104,8 +111,8 @@ function addPackageImports(imports: string[], bindings: any, allStylesheets: str
     bImports.push({
         module: `'ag-grid-community'`,
         isNamespaced: false,
-        imports: [...propertyInterfaces, 'GridReadyEvent', 'GridApi']
-    })
+        imports: [...propertyInterfaces, 'GridReadyEvent', 'GridApi'],
+    });
 
     if (bImports.length > 0) {
         addBindingImports(bImports, imports, true, true);
@@ -114,15 +121,19 @@ function addPackageImports(imports: string[], bindings: any, allStylesheets: str
     return imports;
 }
 
-function getImports(bindings: any, componentFileNames: string[], importType: ImportType, allStylesheets: string[]): string[] {
-
+function getImports(
+    bindings: ParsedBindings,
+    componentFileNames: string[],
+    importType: ImportType,
+    allStylesheets: string[]
+): string[] {
     let imports = ["import { Component } from '@angular/core';"];
 
     if (bindings.data) {
         imports.push("import { HttpClient, HttpClientModule } from '@angular/common/http';");
     }
-    
-    if (importType === "packages") {
+
+    if (importType === 'packages') {
         addPackageImports(imports, bindings, allStylesheets);
     } else {
         addModuleImports(imports, bindings, allStylesheets);
@@ -137,9 +148,11 @@ function getImports(bindings: any, componentFileNames: string[], importType: Imp
     return imports;
 }
 
-function getTemplate(bindings: any, exampleConfig: ExampleConfig, attributes: string[]): string {
+function getTemplate(bindings: ParsedBindings, exampleConfig: ExampleConfig, attributes: string[]): string {
     const { inlineGridStyles } = bindings;
-    const style = exampleConfig.noStyle ? '' : `style="width: ${inlineGridStyles.width}; height: ${inlineGridStyles.height};"`;
+    const style = exampleConfig.noStyle
+        ? ''
+        : `style="width: ${inlineGridStyles.width}; height: ${inlineGridStyles.height};"`;
 
     const agGridTag = `<ag-grid-angular
     ${style}
@@ -151,7 +164,12 @@ function getTemplate(bindings: any, exampleConfig: ExampleConfig, attributes: st
     return convertTemplate(template);
 }
 
-export function vanillaToAngular(bindings: any, exampleConfig: ExampleConfig, componentFileNames: string[], allStylesheets: string[]): (importType: ImportType) => string {
+export function vanillaToAngular(
+    bindings: ParsedBindings,
+    exampleConfig: ExampleConfig,
+    componentFileNames: string[],
+    allStylesheets: string[]
+): (importType: ImportType) => string {
     const { data, properties, typeDeclares, interfaces, tData } = bindings;
     const rowDataType = tData || 'any';
     const diParams = [];
@@ -162,61 +180,70 @@ export function vanillaToAngular(bindings: any, exampleConfig: ExampleConfig, co
 
     const instanceMethods = bindings.instanceMethods.map(removeFunctionKeyword);
 
+    const eventHandlers = bindings.eventHandlers.map((event) => event.handler).map(removeFunctionKeyword);
+    const externalEventHandlers = bindings.externalEventHandlers.map((handler) => removeFunctionKeyword(handler.body));
+    const genericParams = rowDataType !== 'any' ? `<${rowDataType}>` : '';
 
-    const eventHandlers = bindings.eventHandlers.map(event => event.handler).map(removeFunctionKeyword);
-    const externalEventHandlers = bindings.externalEventHandlers.map(handler => removeFunctionKeyword(handler.body));
-    const genericParams = rowDataType !== 'any' ? `<${rowDataType}>` : ''
-
-    return importType => {
+    return (importType) => {
         const imports = getImports(bindings, componentFileNames, importType, allStylesheets);
         const propertyAttributes = [];
         const propertyVars = [];
         const propertyAssignments = [];
 
-        properties.filter(property => property.name !== 'onGridReady').forEach(property => {
-            if (property.value === 'true' || property.value === 'false') {
-                propertyAttributes.push(toConst(property));
-            } else if (property.value === null || property.value === 'null') {
-                propertyAttributes.push(toInput(property));
-            } else {
-                // for when binding a method
-                // see javascript-grid-keyboard-navigation for an example
-                // tabToNextCell needs to be bound to the angular component
-                if (!isInstanceMethod(bindings.instanceMethods, property)) {
+        properties
+            .filter((property) => property.name !== 'onGridReady')
+            .forEach((property) => {
+                if (property.value === 'true' || property.value === 'false') {
+                    propertyAttributes.push(toConst(property));
+                } else if (property.value === null || property.value === 'null') {
                     propertyAttributes.push(toInput(property));
+                } else {
+                    // for when binding a method
+                    // see javascript-grid-keyboard-navigation for an example
+                    // tabToNextCell needs to be bound to the angular component
+                    if (!isInstanceMethod(bindings.instanceMethods, property)) {
+                        propertyAttributes.push(toInput(property));
+                    }
+
+                    propertyAssignments.push(toMemberWithValue(property));
                 }
+            });
 
-                propertyAssignments.push(toMemberWithValue(property));
-            }
-        });
-
-        if (!propertyAttributes.find(item => item.indexOf('[rowData]') >= 0)) {
+        if (!propertyAttributes.find((item) => item.indexOf('[rowData]') >= 0)) {
             propertyAttributes.push('[rowData]="rowData"');
         }
 
-        if (!propertyAssignments.find(item => item.indexOf('rowData') >= 0)) {
+        if (!propertyAssignments.find((item) => item.indexOf('rowData') >= 0)) {
             propertyAssignments.push(`public rowData!: ${rowDataType}[];`);
         }
-        
+
         propertyAttributes.push('[class]="themeClass"');
-        propertyAssignments.push(`public themeClass: string = ${getActiveTheme(bindings.inlineGridStyles.theme, true)};`);
+        propertyAssignments.push(
+            `public themeClass: string = ${getActiveTheme(bindings.inlineGridStyles.theme, true)};`
+        );
 
         const componentForCheckBody = eventHandlers
             .concat(externalEventHandlers)
             .concat(instanceMethods)
-            .map(snippet => snippet.trim())
+            .map((snippet) => snippet.trim())
             .join('\n\n');
 
         const hasGridApi = componentForCheckBody.includes('gridApi');
-        const gridReadyCode = getOnGridReadyCode(bindings.onGridReady, bindings.resizeToFit, data, rowDataType, hasGridApi, bindings.exampleName);
+        const gridReadyCode = getOnGridReadyCode(
+            bindings.onGridReady,
+            data,
+            rowDataType,
+            hasGridApi,
+            bindings.exampleName
+        );
         const additional = [];
 
         if (gridReadyCode) {
-            additional.push(gridReadyCode)
+            additional.push(gridReadyCode);
         }
 
         const eventAttributes = bindings.eventHandlers
-            .filter(event => event.name !== 'onGridReady')
+            .filter((event) => event.name !== 'onGridReady')
             .map(toOutput)
             .concat(gridReadyCode ? '(gridReady)="onGridReady($event)"' : '');
 
@@ -226,23 +253,22 @@ export function vanillaToAngular(bindings: any, exampleConfig: ExampleConfig, co
             .concat(externalEventHandlers)
             .concat(additional)
             .concat(instanceMethods)
-            .map(snippet => snippet.trim())
+            .map((snippet) => snippet.trim())
             .join('\n\n')
-            // We do not need the non-null assertion in component code as already applied to the declaration for the apis.            
+            // We do not need the non-null assertion in component code as already applied to the declaration for the apis.
             .replace(/(?<!this.)gridApi(\??)(!?)/g, 'this.gridApi');
 
-  
-   let standaloneImports = ["AgGridAngular"];
-   if(bindings.data){
-    standaloneImports.push("HttpClientModule");
-   }
+        let standaloneImports = ['AgGridAngular'];
+        if (bindings.data) {
+            standaloneImports.push('HttpClientModule');
+        }
 
-   if (componentFileNames) {
-    componentFileNames.forEach(filename => {
-      const componentName = toTitleCase(filename.split('.')[0]);
-      standaloneImports.push(componentName);
-    });
-  }
+        if (componentFileNames) {
+            componentFileNames.forEach((filename) => {
+                const componentName = toTitleCase(filename.split('.')[0]);
+                standaloneImports.push(componentName);
+            });
+        }
 
         let generatedOutput = `
 ${imports.join('\n')}
@@ -261,11 +287,14 @@ ${hasGridApi ? `    private gridApi!: GridApi${genericParams};\n` : ''}
     ${propertyVars.join('\n')}
     ${propertyAssignments.join(';\n')}
 
-${diParams.length > 0 ?
-            `    constructor(${diParams.join(', ')}) {
+${
+    diParams.length > 0
+        ? `    constructor(${diParams.join(', ')}) {
 }
 
-`: ''}
+`
+        : ''
+}
     ${componentBody}
 }
 
@@ -277,7 +306,7 @@ ${bindings.utils.join('\n')}
         // Until we support this cleanly.
         generatedOutput = handleRowGenericInterface(generatedOutput, tData);
 
-        if(importType === 'packages') {
+        if (importType === 'packages') {
             generatedOutput = removeModuleRegistration(generatedOutput);
         }
 

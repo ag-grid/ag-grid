@@ -4,7 +4,7 @@ import fs from 'fs/promises';
 
 import { readFile, readJSONFile, writeFile } from '../../executors-utils';
 import gridVanillaSrcParser from './generator/transformation-scripts/grid-vanilla-src-parser';
-import { ExampleConfig, FRAMEWORKS, GeneratedContents } from './generator/types';
+import { ExampleConfig, ExampleType, FRAMEWORKS, GeneratedContents } from './generator/types';
 
 import { SOURCE_ENTRY_FILE_NAME } from './generator/constants';
 import {
@@ -104,7 +104,7 @@ export async function generateFiles(options: ExecutorOptions) {
     ]);
 
     const isEnterprise = getIsEnterprise({ entryFile });
-    let entryType = sourceFileList.includes('provided') ? 'mixed' : 'generated';
+    let entryType: ExampleType = sourceFileList.includes('provided') ? 'mixed' : 'generated';
 
     const frameworkProvidedExamples = entryType === 'mixed' ? await getExampleTypeAndProvidedFiles(folderPath) : {};
 

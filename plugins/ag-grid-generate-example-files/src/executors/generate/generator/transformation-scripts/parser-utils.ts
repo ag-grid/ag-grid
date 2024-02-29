@@ -1,17 +1,8 @@
 import { transform } from 'sucrase';
 import ts from 'typescript';
 
-import {integratedChartsUsesChartsEnterprise} from "../constants";
-
-export type ImportType = 'packages' | 'modules';
-
-export interface BindingImport {
-    isNamespaced: boolean;
-    module: string;
-    namedImport: string;
-    imports: string[];
-}
-
+import { integratedChartsUsesChartsEnterprise } from '../constants';
+import { BindingImport, ParsedBindings } from '../types';
 
 export function readAsJsFile(srcFile, options: { includeImports: boolean } = undefined) {
     const tsFile = srcFile
@@ -81,7 +72,7 @@ export const enum NodeType {
     Expression = 'ExpressionStatement',
 }
 
-export function tsCollect(tsTree, tsBindings, collectors, recurse = true) {
+export function tsCollect(tsTree, tsBindings: ParsedBindings, collectors, recurse = true): ParsedBindings {
     ts.forEachChild(tsTree, (node: ts.Node) => {
         collectors
             .filter((c) => {
@@ -160,7 +151,7 @@ export function tsNodeIsUnusedFunction(node: any, used: string[]): boolean {
     if (ts.isFunctionDeclaration(node) && !!node.name) {
         if (ts.isFunctionLike(node) && used.indexOf(node.name.getText()) < 0) {
             const isTopLevel = ts.isSourceFile(node.parent);
-            return isTopLevel && !isDeclareStatement(node);  
+            return isTopLevel && !isDeclareStatement(node);
         }
     }
     return false;
@@ -246,17 +237,22 @@ export function extractImportStatements(srcFile: ts.SourceFile): BindingImport[]
     return allImports;
 }
 
-export function addEnterprisePackage(imports: any[], bindings: any) {
+export function addEnterprisePackage(imports: any[], bindings: ParsedBindings) {
     const isEnterprise = bindings.imports.some((i) => i.module.includes('-enterprise'));
     const isChartsEnterprise = bindings.imports.some((i) => i.module.includes('charts-enterprise'));
     if (isEnterprise) {
-        imports.push(`import 'ag-grid-${integratedChartsUsesChartsEnterprise && isChartsEnterprise ? 'charts-' : ''}enterprise';`);
+        imports.push(
+            `import 'ag-grid-${integratedChartsUsesChartsEnterprise && isChartsEnterprise ? 'charts-' : ''}enterprise';`
+        );
     }
 }
 
 export function extractModuleRegistration(srcFile: ts.SourceFile): string {
     for (const statement of srcFile.statements) {
-        if (ts.isExpressionStatement(statement) && statement.expression?.getText().includes('ModuleRegistry.registerModules')) {
+        if (
+            ts.isExpressionStatement(statement) &&
+            statement.expression?.getText().includes('ModuleRegistry.registerModules')
+        ) {
             return statement.getText();
         }
     }
@@ -558,7 +554,7 @@ export function addBindingImports(
 }
 
 export function removeModuleRegistration(code: string) {
- return code.replace(/ModuleRegistry.*]\)(;?)/g, '');
+    return code.replace(/ModuleRegistry.*]\)(;?)/g, '');
 }
 
 export function handleRowGenericInterface(fileTxt: string, tData: string): string {
@@ -582,11 +578,13 @@ export function addGenericInterfaceImport(imports: string[], tData: string, bind
 }
 
 export function replaceGridReadyRowData(callback: string, rowDataSetter: string) {
-    return callback
-        // replace gridApi.setGridOption('rowData', data) with this.rowData = data
-        .replace(/gridApi(!?)\.setGridOption\('rowData', data\)/, `${rowDataSetter} = data`)
-        // replace gridApi.setGridOption('rowData', data.map(...)) with this.rowData = data.map(...)
-        .replace(/gridApi(!?)\.setGridOption\('rowData', data/, `${rowDataSetter} = (data`);
+    return (
+        callback
+            // replace gridApi.setGridOption('rowData', data) with this.rowData = data
+            .replace(/gridApi(!?)\.setGridOption\('rowData', data\)/, `${rowDataSetter} = data`)
+            // replace gridApi.setGridOption('rowData', data.map(...)) with this.rowData = data.map(...)
+            .replace(/gridApi(!?)\.setGridOption\('rowData', data/, `${rowDataSetter} = (data`)
+    );
 }
 
 export function preferParamsApi(code: string): string {
@@ -613,7 +611,7 @@ const chartsExamplePathSubstrings = [
 ];
 
 export function getIntegratedDarkModeCode(exampleName: string, typescript?: boolean, apiName = 'params.api'): string {
-    if (!chartsExamplePathSubstrings.find(s => exampleName.includes(s))) {
+    if (!chartsExamplePathSubstrings.find((s) => exampleName.includes(s))) {
         return '';
     }
     return `${DARK_INTEGRATED_START}${(typescript ? darkModeTs : darkModeJS).replace(/params\.api/g, apiName)}${DARK_INTEGRATED_END}`;
@@ -655,7 +653,6 @@ const darkModeTs = `
         // listen for user-triggered dark mode changes (not removing listener is fine here!)
         document.addEventListener('color-scheme-change', handleColorSchemeChange as EventListener);                
     `;
-
 
 const darkModeJS = `
     const isInitialModeDark = () => {

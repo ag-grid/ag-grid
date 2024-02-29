@@ -1,5 +1,5 @@
-import * as JSON5 from "json5";
-import { ExampleConfig } from "../types";
+import * as JSON5 from 'json5';
+import { ExampleConfig, ImportType, ParsedBindings } from '../types';
 import {
     convertDefaultColDef,
     getColumnDefs,
@@ -7,49 +7,46 @@ import {
     GRID_WIDE_COMPONENTS,
     isComponent,
     isExternalVueFile,
-    OVERRIDABLE_AG_COMPONENTS
-} from "./grid-vanilla-to-vue-common";
+    OVERRIDABLE_AG_COMPONENTS,
+} from './grid-vanilla-to-vue-common';
 import {
     addEnterprisePackage,
     convertFunctionToConstProperty,
     getActiveTheme,
     getFunctionName,
-    getIntegratedDarkModeCode, ImportType,
+    getIntegratedDarkModeCode,
     isInstanceMethod,
     preferParamsApi,
-    replaceGridReadyRowData
+    replaceGridReadyRowData,
 } from './parser-utils';
 import { getImport, toConst, toInput, toOutput, toRef } from './vue-utils';
 
 const path = require('path');
 
-function getOnGridReadyCode(bindings: any): string {
-    const {onGridReady, resizeToFit, data} = bindings;
+function getOnGridReadyCode(bindings: ParsedBindings): string {
+    const { onGridReady, data } = bindings;
     const additionalLines = [];
 
     if (onGridReady) {
         additionalLines.push(onGridReady.trim().replace(/^\{|\}$/g, ''));
     }
 
-    if (resizeToFit) {
-        additionalLines.push('params.api.sizeColumnsToFit();');
-    }
-
     if (data) {
-        const {url, callback} = data;
+        const { url, callback } = data;
 
         const setRowDataBlock = replaceGridReadyRowData(callback, 'rowData.value');
-        
+
         additionalLines.push(`
             const updateData = (data) => ${setRowDataBlock};
             
             fetch(${url})
                 .then(resp => resp.json())
-                .then(data => updateData(data));`
-        );
+                .then(data => updateData(data));`);
     }
 
-    const additional = preferParamsApi(additionalLines.length > 0 ? `\n\n        ${additionalLines.join('\n        ')}` : '')
+    const additional = preferParamsApi(
+        additionalLines.length > 0 ? `\n\n        ${additionalLines.join('\n        ')}` : ''
+    );
     return `const onGridReady = (params) => {
         ${getIntegratedDarkModeCode(bindings.exampleName)}
         gridApi.value = params.api;
@@ -57,52 +54,52 @@ function getOnGridReadyCode(bindings: any): string {
     }`;
 }
 
-const replaceApiThisReference = (code) => code.replaceAll("gridApi", 'gridApi.value');
+const replaceApiThisReference = (code) => code.replaceAll('gridApi', 'gridApi.value');
 
-function getAllMethods(bindings: any): [string[], string[], string[], string[], string[]] {
+function getAllMethods(bindings: ParsedBindings): [string[], string[], string[], string[], string[]] {
     const eventHandlers = bindings.eventHandlers
-        .filter(event => event.name != 'onGridReady')
-        .map(event => event.handler)
+        .filter((event) => event.name != 'onGridReady')
+        .map((event) => event.handler)
         .map(replaceApiThisReference)
         .map(convertFunctionToConstProperty);
 
     const externalEventHandlers = bindings.externalEventHandlers
-        .map(event => event.body)
+        .map((event) => event.body)
         .map(replaceApiThisReference)
         .map(convertFunctionToConstProperty);
-    const instanceMethods = bindings.instanceMethods
-        .map(replaceApiThisReference)
-        .map(convertFunctionToConstProperty);
+    const instanceMethods = bindings.instanceMethods.map(replaceApiThisReference).map(convertFunctionToConstProperty);
 
-    const utilFunctions = bindings.utils.map(body => {
-        const funcName = getFunctionName(body);
+    const utilFunctions = bindings.utils
+        .map((body) => {
+            const funcName = getFunctionName(body);
 
-        if (funcName) {
-            return `window.${funcName} = ${body}`;
+            if (funcName) {
+                return `window.${funcName} = ${body}`;
+            }
 
-        }
+            // probably a var
+            return body;
+        })
+        .sort((a, b) => {
+            const aIsAssignedToWindow = a.startsWith('window.');
+            const bIsAssignedToWindow = b.startsWith('window.');
 
-        // probably a var
-        return body;
-    }).sort((a, b) => {
-        const aIsAssignedToWindow = a.startsWith('window.');
-        const bIsAssignedToWindow = b.startsWith('window.');
+            if (aIsAssignedToWindow && bIsAssignedToWindow) {
+                return 0;
+            }
+            if (aIsAssignedToWindow) {
+                return -1;
+            }
+            if (bIsAssignedToWindow) {
+                return 1;
+            }
 
-        if (aIsAssignedToWindow && bIsAssignedToWindow) {
             return 0;
-        }
-        if (aIsAssignedToWindow) {
-            return -1;
-        }
-        if (bIsAssignedToWindow) {
-            return 1;
-        }
+        });
 
-        return 0;
-    });
-
-    const functionNames = bindings.eventHandlers.map(event => event.handlerName)
-        .concat(bindings.externalEventHandlers.map(event => event.name))
+    const functionNames = bindings.eventHandlers
+        .map((event) => event.handlerName)
+        .concat(bindings.externalEventHandlers.map((event) => event.name))
         .concat(bindings.instanceMethods.map(getFunctionName));
 
     return [eventHandlers, externalEventHandlers, instanceMethods, utilFunctions, functionNames];
@@ -115,34 +112,40 @@ function toAssignment(property: any): string {
     return `${property.name}.value = ${value}`;
 }
 
-function getPropertyBindings(bindings: any, componentFileNames: string[], importType: ImportType, vueComponents): [string[], string[], string[], string[], string[]] {
+function getPropertyBindings(
+    bindings: ParsedBindings,
+    componentFileNames: string[],
+    importType: ImportType,
+    vueComponents
+): [string[], string[], string[], string[], string[]] {
     const propertyAssignments = [];
     const propertyVars = [];
     const propertyAttributes = [];
     const propertyNames = [];
 
     bindings.properties
-        .filter(property =>
-            property.name !== 'onGridReady' &&
-            property.name !== 'columnDefs'
-        )
-        .forEach(property => {
+        .filter((property) => property.name !== 'onGridReady' && property.name !== 'columnDefs')
+        .forEach((property) => {
             if (bindings.vuePropertyBindings[property.name]) {
                 const parsedObj = JSON5.parse(bindings.vuePropertyBindings[property.name]);
                 const panelArrayName = parsedObj['toolPanels'] ? 'toolPanels' : 'statusPanels';
                 if (parsedObj[panelArrayName]) {
-                    parsedObj[panelArrayName].forEach(panel => {
-                        Object.keys(panel).forEach(panelProperty => {
-                            if (!panelProperty.startsWith('ag') && isComponent(panelProperty) && typeof panel[panelProperty] === 'string') {
-                                const parsedValue = panel[panelProperty].replace('AG_LITERAL_', '')
+                    parsedObj[panelArrayName].forEach((panel) => {
+                        Object.keys(panel).forEach((panelProperty) => {
+                            if (
+                                !panelProperty.startsWith('ag') &&
+                                isComponent(panelProperty) &&
+                                typeof panel[panelProperty] === 'string'
+                            ) {
+                                const parsedValue = panel[panelProperty].replace('AG_LITERAL_', '');
                                 if (isExternalVueFile(componentFileNames, parsedValue)) {
                                     panel[panelProperty] = parsedValue;
                                     if (!vueComponents.includes(parsedValue)) {
-                                        vueComponents.push(parsedValue)
+                                        vueComponents.push(parsedValue);
                                     }
                                 }
                             }
-                        })
+                        });
                     });
                     property.value = JSON.stringify(parsedObj);
                 }
@@ -151,10 +154,11 @@ function getPropertyBindings(bindings: any, componentFileNames: string[], import
                 propertyVars.push(toRef(property));
                 propertyAssignments.push(toAssignment(property));
                 propertyNames.push(property.name);
-            } else if (componentFileNames.length > 0 && (property.name === 'components')) {
-                if (bindings.frameworkComponents) {
-                    const userAgComponents = OVERRIDABLE_AG_COMPONENTS.filter(agComponentName => bindings.frameworkComponents.some(component => component.name === agComponentName))
-                        .map(agComponentName => `${agComponentName}: '${agComponentName}'`);
+            } else if (componentFileNames.length > 0 && property.name === 'components') {
+                if (bindings.components) {
+                    const userAgComponents = OVERRIDABLE_AG_COMPONENTS.filter((agComponentName) =>
+                        bindings.components.some((component) => component.name === agComponentName)
+                    ).map((agComponentName) => `${agComponentName}: '${agComponentName}'`);
 
                     vueComponents.push(...userAgComponents);
                 }
@@ -167,19 +171,21 @@ function getPropertyBindings(bindings: any, componentFileNames: string[], import
             } else if (property.name === 'groupRowRendererParams') {
                 const perLine = property.value.split('\n');
                 const result = [];
-                perLine.forEach(line => {
+                perLine.forEach((line) => {
                     if (line.includes('innerRenderer')) {
-                        const component = line.match(/.*:\s*(.*),/) ? line.match(/.*:\s*(.*),/)[1] : line.match(/.*:\s*(.*)$/)[1]
-                        line = line.replace(component, `'${component}'`)
+                        const component = line.match(/.*:\s*(.*),/)
+                            ? line.match(/.*:\s*(.*),/)[1]
+                            : line.match(/.*:\s*(.*)$/)[1];
+                        line = line.replace(component, `'${component}'`);
                         result.push(line);
 
                         if (!vueComponents.includes(component)) {
-                            vueComponents.push(component)
+                            vueComponents.push(component);
                         }
                     } else {
                         result.push(line);
                     }
-                })
+                });
                 const newValue = result.join('\n');
 
                 propertyAttributes.push(toInput(property));
@@ -195,7 +201,7 @@ function getPropertyBindings(bindings: any, componentFileNames: string[], import
                 propertyNames.push(property.name);
                 if (isExternalVueFile(componentFileNames, parsedValue)) {
                     if (!vueComponents.includes(parsedValue)) {
-                        vueComponents.push(parsedValue)
+                        vueComponents.push(parsedValue);
                     }
                 }
             } else {
@@ -212,20 +218,19 @@ function getPropertyBindings(bindings: any, componentFileNames: string[], import
                     }
                 }
 
-
                 if (property.name !== 'defaultColDef') {
                     propertyAssignments.push(toAssignment(property));
                 }
             }
         });
 
-    if (bindings.data && bindings.data.callback.indexOf('gridApi.setGridOption(\'rowData\',') >= 0) {
-        if (propertyAttributes.filter(item => item.indexOf(':rowData') >= 0).length === 0) {
+    if (bindings.data && bindings.data.callback.indexOf("gridApi.setGridOption('rowData',") >= 0) {
+        if (propertyAttributes.filter((item) => item.indexOf(':rowData') >= 0).length === 0) {
             propertyAttributes.push(':rowData="rowData"');
             propertyNames.push('rowData');
         }
 
-        if (propertyVars.filter(item => item.indexOf('rowData') >= 0).length === 0) {
+        if (propertyVars.filter((item) => item.indexOf('rowData') >= 0).length === 0) {
             propertyVars.push('const rowData = ref(null)');
         }
     }
@@ -233,8 +238,13 @@ function getPropertyBindings(bindings: any, componentFileNames: string[], import
     return [propertyAssignments, propertyVars, propertyAttributes, vueComponents, propertyNames];
 }
 
-function getModuleImports(bindings: any, exampleConfig: ExampleConfig, componentFileNames: string[], allStylesheets: string[]): string[] {
-    const {inlineGridStyles} = bindings;
+function getModuleImports(
+    bindings: ParsedBindings,
+    exampleConfig: ExampleConfig,
+    componentFileNames: string[],
+    allStylesheets: string[]
+): string[] {
+    const { inlineGridStyles } = bindings;
 
     let imports = [
         "import { createApp, onBeforeMount, ref } from 'vue';",
@@ -253,18 +263,23 @@ function getModuleImports(bindings: any, exampleConfig: ExampleConfig, component
     imports.push(`import "@ag-grid-community/styles/${theme}.css";`);
 
     if (allStylesheets && allStylesheets.length > 0) {
-        allStylesheets.forEach(styleSheet => imports.push(`import './${path.basename(styleSheet)}';`));
+        allStylesheets.forEach((styleSheet) => imports.push(`import './${path.basename(styleSheet)}';`));
     }
 
     if (componentFileNames) {
-        imports.push(...componentFileNames.map(componentFileName => getImport(componentFileName, 'Vue', '')));
+        imports.push(...componentFileNames.map((componentFileName) => getImport(componentFileName, 'Vue', '')));
     }
 
     return imports;
 }
 
-function getPackageImports(bindings: any, exampleConfig: ExampleConfig, componentFileNames: string[], allStylesheets: string[]): string[] {
-    const {inlineGridStyles} = bindings;
+function getPackageImports(
+    bindings: ParsedBindings,
+    exampleConfig: ExampleConfig,
+    componentFileNames: string[],
+    allStylesheets: string[]
+): string[] {
+    const { inlineGridStyles } = bindings;
 
     const imports = [
         "import { createApp, onBeforeMount, ref } from 'vue';",
@@ -279,7 +294,7 @@ function getPackageImports(bindings: any, exampleConfig: ExampleConfig, componen
     imports.push("import 'ag-grid-community/styles/ag-grid.css';");
 
     if (allStylesheets && allStylesheets.length > 0) {
-        allStylesheets.forEach(styleSheet => imports.push(`import './${path.basename(styleSheet)}';`));
+        allStylesheets.forEach((styleSheet) => imports.push(`import './${path.basename(styleSheet)}';`));
     }
 
     // to account for the (rare) example that has more than one class...just default to quartz if it does
@@ -289,13 +304,19 @@ function getPackageImports(bindings: any, exampleConfig: ExampleConfig, componen
     imports.push(`import 'ag-grid-community/styles/${theme}.css';`);
 
     if (componentFileNames) {
-        imports.push(...componentFileNames.map(componentFileName => getImport(componentFileName, 'Vue', '')));
+        imports.push(...componentFileNames.map((componentFileName) => getImport(componentFileName, 'Vue', '')));
     }
 
     return imports;
 }
 
-function getImports(bindings: any, exampleConfig: ExampleConfig, componentFileNames: string[], importType: ImportType, allStylesheets: string[]): string[] {
+function getImports(
+    bindings: ParsedBindings,
+    exampleConfig: ExampleConfig,
+    componentFileNames: string[],
+    importType: ImportType,
+    allStylesheets: string[]
+): string[] {
     if (importType === 'packages') {
         return getPackageImports(bindings, exampleConfig, componentFileNames, allStylesheets);
     } else {
@@ -303,19 +324,31 @@ function getImports(bindings: any, exampleConfig: ExampleConfig, componentFileNa
     }
 }
 
-export function vanillaToVue3(bindings: any, exampleConfig: ExampleConfig, componentFileNames: string[], allStylesheets: string[]): (importType: ImportType) => string {
-    const vueComponents = bindings.components.map(component => `${component.name}:${component.value}`);
+export function vanillaToVue3(
+    bindings: ParsedBindings,
+    exampleConfig: ExampleConfig,
+    componentFileNames: string[],
+    allStylesheets: string[]
+): (importType: ImportType) => string {
+    const vueComponents = bindings.components.map((component) => `${component.name}:${component.value}`);
 
     const onGridReady = getOnGridReadyCode(bindings);
-    const eventAttributes = bindings.eventHandlers.filter(event => event.name !== 'onGridReady').map(toOutput);
-    const [eventHandlers, externalEventHandlers, instanceMethods, utilFunctions, functionNames] = getAllMethods(bindings);
+    const eventAttributes = bindings.eventHandlers.filter((event) => event.name !== 'onGridReady').map(toOutput);
+    const [eventHandlers, externalEventHandlers, instanceMethods, utilFunctions, functionNames] =
+        getAllMethods(bindings);
     const columnDefs = getColumnDefs(bindings, vueComponents, componentFileNames);
-    const defaultColDef = bindings.defaultColDef ? convertDefaultColDef(bindings.defaultColDef, vueComponents, componentFileNames) : null;
+    const defaultColDef = bindings.defaultColDef
+        ? convertDefaultColDef(bindings.defaultColDef, vueComponents, componentFileNames)
+        : null;
 
-    return importType => {
-
+    return (importType) => {
         const imports = getImports(bindings, exampleConfig, componentFileNames, importType, allStylesheets);
-        const [propertyAssignments, propertyVars, propertyAttributes, _, propertyNames] = getPropertyBindings(bindings, componentFileNames, importType, vueComponents);
+        const [propertyAssignments, propertyVars, propertyAttributes, _, propertyNames] = getPropertyBindings(
+            bindings,
+            componentFileNames,
+            importType,
+            vueComponents
+        );
         const template = getTemplate(bindings, exampleConfig, propertyAttributes.concat(eventAttributes));
 
         return `
@@ -347,27 +380,27 @@ const VueExample = {
             .concat(externalEventHandlers)
             .concat(onGridReady)
             .concat(instanceMethods)
-            .map(snippet => `${snippet.trim()};`)
+            .map((snippet) => `${snippet.trim()};`)
             .join('\n')}
                 
         return {
             columnDefs,
             gridApi,
-            ${propertyNames.length > 0 ? propertyNames.join(',\n')+',' : ''}
+            ${propertyNames.length > 0 ? propertyNames.join(',\n') + ',' : ''}
             onGridReady,
             themeClass: ${getActiveTheme(bindings.inlineGridStyles.theme, false)},
-            ${functionNames ? functionNames.filter(functionName => !propertyNames.includes(functionName)).join(',\n') : ''}
+            ${functionNames ? functionNames.filter((functionName) => !propertyNames.includes(functionName)).join(',\n') : ''}
         }        
     }
 }
 
-${utilFunctions.map(snippet => `${snippet.trim()}`).join('\n\n')}
+${utilFunctions.map((snippet) => `${snippet.trim()}`).join('\n\n')}
 
 createApp(VueExample)
     .mount("#app")
 
 `;
-    }
+    };
 }
 
 if (typeof window !== 'undefined') {

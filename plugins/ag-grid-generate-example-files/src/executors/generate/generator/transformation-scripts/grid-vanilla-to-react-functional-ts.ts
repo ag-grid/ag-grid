@@ -1,27 +1,50 @@
-import { basename } from "path";
-import { ExampleConfig } from "../types";
-import { templatePlaceholder } from "./grid-vanilla-src-parser";
-import { addBindingImports, addEnterprisePackage, addGenericInterfaceImport, convertFunctionToConstPropertyTs, getActiveTheme, getFunctionName, getIntegratedDarkModeCode, getPropertyInterfaces, handleRowGenericInterface, ImportType, isInstanceMethod, preferParamsApi } from './parser-utils';
-import { convertFunctionalTemplate, convertFunctionToConstCallbackTs, EventAndCallbackNames, getImport, getValueType } from './react-utils';
+import { basename } from 'path';
+import { ExampleConfig, ParsedBindings, ImportType } from '../types';
+import { templatePlaceholder } from './grid-vanilla-src-parser';
+import {
+    addBindingImports,
+    addEnterprisePackage,
+    addGenericInterfaceImport,
+    convertFunctionToConstPropertyTs,
+    getActiveTheme,
+    getFunctionName,
+    getIntegratedDarkModeCode,
+    getPropertyInterfaces,
+    handleRowGenericInterface,
+    isInstanceMethod,
+    preferParamsApi,
+} from './parser-utils';
+import {
+    convertFunctionalTemplate,
+    convertFunctionToConstCallbackTs,
+    EventAndCallbackNames,
+    getImport,
+    getValueType,
+} from './react-utils';
 
-
-
-function getModuleImports(bindings: any, componentFilenames: string[], extraCoreTypes: string[], allStylesheets: string[]): string[] {
+function getModuleImports(
+    bindings: ParsedBindings,
+    componentFilenames: string[],
+    extraCoreTypes: string[],
+    allStylesheets: string[]
+): string[] {
     let imports = [
         "import React, { useCallback, useMemo, useRef, useState, StrictMode } from 'react';",
         "import { createRoot } from 'react-dom/client';",
-        "import { AgGridReact } from '@ag-grid-community/react';"
+        "import { AgGridReact } from '@ag-grid-community/react';",
     ];
 
     imports.push("import '@ag-grid-community/styles/ag-grid.css';");
     // to account for the (rare) example that has more than one class...just default to quartz if it does
     // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
     // "source" non dark version
-    const theme = bindings.inlineGridStyles.theme ? bindings.inlineGridStyles.theme.replace('-dark', '') : 'ag-theme-quartz';
+    const theme = bindings.inlineGridStyles.theme
+        ? bindings.inlineGridStyles.theme.replace('-dark', '')
+        : 'ag-theme-quartz';
     imports.push(`import '@ag-grid-community/styles/${theme}.css';`);
 
     if (allStylesheets && allStylesheets.length > 0) {
-        allStylesheets.forEach(styleSheet => imports.push(`import './${basename(styleSheet)}';`));
+        allStylesheets.forEach((styleSheet) => imports.push(`import './${basename(styleSheet)}';`));
     }
 
     let propertyInterfaces = getPropertyInterfaces(bindings.properties);
@@ -29,8 +52,8 @@ function getModuleImports(bindings: any, componentFilenames: string[], extraCore
     bImports.push({
         module: `'@ag-grid-community/core'`,
         isNamespaced: false,
-        imports: [...propertyInterfaces, ...extraCoreTypes]
-    })
+        imports: [...propertyInterfaces, ...extraCoreTypes],
+    });
 
     if (bImports.length > 0) {
         addBindingImports(bImports, imports, false, true);
@@ -42,20 +65,25 @@ function getModuleImports(bindings: any, componentFilenames: string[], extraCore
 
     addGenericInterfaceImport(imports, bindings.tData, bindings);
 
-   if(bindings.moduleRegistration){
+    if (bindings.moduleRegistration) {
         imports.push(bindings.moduleRegistration);
-   }
+    }
 
     return imports;
 }
 
-function getPackageImports(bindings: any, componentFilenames: string[], extraCoreTypes: string[], allStylesheets: string[]): string[] {
+function getPackageImports(
+    bindings: ParsedBindings,
+    componentFilenames: string[],
+    extraCoreTypes: string[],
+    allStylesheets: string[]
+): string[] {
     const { inlineGridStyles, tData } = bindings;
 
     const imports = [
         "import React, { useCallback, useMemo, useRef, useState, StrictMode } from 'react';",
         "import { createRoot } from 'react-dom/client';",
-        "import { AgGridReact } from 'ag-grid-react';"
+        "import { AgGridReact } from 'ag-grid-react';",
     ];
 
     addEnterprisePackage(imports, bindings);
@@ -69,7 +97,7 @@ function getPackageImports(bindings: any, componentFilenames: string[], extraCor
     imports.push(`import 'ag-grid-community/styles/${theme}.css';`);
 
     if (allStylesheets && allStylesheets.length > 0) {
-        allStylesheets.forEach(styleSheet => imports.push(`import './${basename(styleSheet)}';`));
+        allStylesheets.forEach((styleSheet) => imports.push(`import './${basename(styleSheet)}';`));
     }
 
     let propertyInterfaces = getPropertyInterfaces(bindings.properties);
@@ -77,8 +105,8 @@ function getPackageImports(bindings: any, componentFilenames: string[], extraCor
     bImports.push({
         module: `'ag-grid-community'`,
         isNamespaced: false,
-        imports: [...propertyInterfaces, ...extraCoreTypes]
-    })
+        imports: [...propertyInterfaces, ...extraCoreTypes],
+    });
     if (bImports.length > 0) {
         addBindingImports(bImports, imports, true, true);
     }
@@ -92,7 +120,13 @@ function getPackageImports(bindings: any, componentFilenames: string[], extraCor
     return imports;
 }
 
-function getImports(bindings: any, componentFileNames: string[], importType: ImportType, extraCoreTypes: string[], allStylesheets: string[]): string[] {
+function getImports(
+    bindings: ParsedBindings,
+    componentFileNames: string[],
+    importType: ImportType,
+    extraCoreTypes: string[],
+    allStylesheets: string[]
+): string[] {
     if (importType === 'packages') {
         return getPackageImports(bindings, componentFileNames, extraCoreTypes, allStylesheets);
     } else {
@@ -100,7 +134,7 @@ function getImports(bindings: any, componentFileNames: string[], importType: Imp
     }
 }
 
-function getTemplate(bindings: any, componentAttributes: string[], rowDataGeneric: string): string {
+function getTemplate(bindings: ParsedBindings, componentAttributes: string[], rowDataGeneric: string): string {
     const { inlineGridStyles } = bindings;
     const agGridTag = `
         <div style={gridStyle} className={${getActiveTheme(inlineGridStyles.theme, true)}}>
@@ -110,7 +144,9 @@ function getTemplate(bindings: any, componentAttributes: string[], rowDataGeneri
             />
         </div>`;
 
-    const template = bindings.template ? bindings.template.replace(templatePlaceholder, agGridTag.replace('$', '$$$$')) : agGridTag;
+    const template = bindings.template
+        ? bindings.template.replace(templatePlaceholder, agGridTag.replace('$', '$$$$'))
+        : agGridTag;
 
     return convertFunctionalTemplate(template);
 }
@@ -121,15 +157,17 @@ function extractComponentInformation(properties, componentFilenames: string[]): 
         return components;
     }
 
-    properties.forEach(property => {
+    properties.forEach((property) => {
         if (property.name === 'components') {
-            property.value.split(`\n`).filter(keyValue => keyValue.includes(":"))
-                .map(keyValue => keyValue.replace(/\s/g, ''))
-                .map(keyValue => keyValue.replace(/,/g, ''))
-                .map(keyValue => keyValue.split(':'))
+            property.value
+                .split(`\n`)
+                .filter((keyValue) => keyValue.includes(':'))
+                .map((keyValue) => keyValue.replace(/\s/g, ''))
+                .map((keyValue) => keyValue.replace(/,/g, ''))
+                .map((keyValue) => keyValue.split(':'))
                 .reduce((accumulator, keyValue) => {
-                    accumulator[keyValue[0]] = keyValue[1]
-                    return accumulator
+                    accumulator[keyValue[0]] = keyValue[1];
+                    return accumulator;
                 }, components);
         }
     });
@@ -137,30 +175,32 @@ function extractComponentInformation(properties, componentFilenames: string[]): 
     return components;
 }
 
-
-
-
-
-export function vanillaToReactFunctionalTs(bindings: any, exampleConfig: ExampleConfig, componentFilenames: string[], allStylesheets: string[]): (importType: ImportType) => string {
-    const { properties, data, tData, inlineGridStyles, onGridReady, resizeToFit, typeDeclares, interfaces } = bindings;
+export function vanillaToReactFunctionalTs(
+    bindings: ParsedBindings,
+    exampleConfig: ExampleConfig,
+    componentFilenames: string[],
+    allStylesheets: string[]
+): (importType: ImportType) => string {
+    const { properties, data, tData, inlineGridStyles, onGridReady, typeDeclares, interfaces } = bindings;
 
     const utilMethodNames = bindings.utils.map(getFunctionName);
     const callbackDependencies = Object.keys(bindings.callbackDependencies).reduce((acc, callbackName) => {
-        acc[callbackName] = bindings.callbackDependencies[callbackName].filter(dependency => !utilMethodNames.includes(dependency))
-            .filter(dependency => !global[dependency]) // exclude things like Number, isNaN etc
+        acc[callbackName] = bindings.callbackDependencies[callbackName]
+            .filter((dependency) => !utilMethodNames.includes(dependency))
+            .filter((dependency) => !global[dependency]); // exclude things like Number, isNaN etc
         return acc;
-    }, {})
+    }, {});
     const rowDataType = tData || 'any';
-    const rowDataGeneric = tData ? `<${tData}>` : ''
-    const rowDataState = `const [rowData, setRowData] = useState<${rowDataType}[]>();`
-    const gridRefHook = `const gridRef = useRef<AgGridReact${rowDataGeneric}>(null);`
+    const rowDataGeneric = tData ? `<${tData}>` : '';
+    const rowDataState = `const [rowData, setRowData] = useState<${rowDataType}[]>();`;
+    const gridRefHook = `const gridRef = useRef<AgGridReact${rowDataGeneric}>(null);`;
 
-    return importType => {
+    return (importType) => {
         // instance values
         const stateProperties = [
             `const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);`,
             `const gridStyle = useMemo(() => ({height: '${inlineGridStyles.height}', width: '${inlineGridStyles.width}'}), []);`,
-            rowDataState
+            rowDataState,
         ];
 
         // for when binding a method
@@ -173,29 +213,21 @@ export function vanillaToReactFunctionalTs(bindings: any, exampleConfig: Example
 
         const additionalInReady = [];
         if (data) {
-            additionalInReady.push(
-                `${getIntegratedDarkModeCode(bindings.exampleName, true)}`
-            );
+            additionalInReady.push(`${getIntegratedDarkModeCode(bindings.exampleName, true)}`);
 
-            const setRowDataBlock = data.callback.replace('gridApi!.setGridOption(\'rowData\',', 'setRowData(');
+            const setRowDataBlock = data.callback.replace("gridApi!.setGridOption('rowData',", 'setRowData(');
             additionalInReady.push(`
                 fetch(${data.url})
                 .then(resp => resp.json())
-                .then((data: ${rowDataType}[]) => ${setRowDataBlock});`
-            );
+                .then((data: ${rowDataType}[]) => ${setRowDataBlock});`);
         }
 
         if (onGridReady) {
-            additionalInReady.push(
-                `${getIntegratedDarkModeCode(bindings.exampleName, true)}`
-            );
-            const hackedHandler = onGridReady.replace(/^{|}$/g, '')
-                .replace('gridApi!.setGridOption(\'rowData\',', 'setRowData(');
+            additionalInReady.push(`${getIntegratedDarkModeCode(bindings.exampleName, true)}`);
+            const hackedHandler = onGridReady
+                .replace(/^{|}$/g, '')
+                .replace("gridApi!.setGridOption('rowData',", 'setRowData(');
             additionalInReady.push(hackedHandler);
-        }
-
-        if (resizeToFit) {
-            additionalInReady.push('gridRef.current!.api.sizeColumnsToFit();');
         }
 
         let extraCoreTypes = [];
@@ -205,94 +237,124 @@ export function vanillaToReactFunctionalTs(bindings: any, exampleConfig: Example
 
         const imports = getImports(bindings, componentFilenames, importType, extraCoreTypes, allStylesheets);
 
-        const components: { [componentName: string]: string } = extractComponentInformation(properties, componentFilenames);
+        const components: { [componentName: string]: string } = extractComponentInformation(
+            properties,
+            componentFilenames
+        );
 
         const containsQuotes = (data: string) => {
             const withoutBoundaryQuotes = data.replace(/^"|"$/g, '');
             return withoutBoundaryQuotes.includes('"') || withoutBoundaryQuotes.includes("'");
         };
         const stripQuotes = (data: string) => data.replace(/"/g, '').replace(/'/g, '');
-        const componentNameExists = (componentName: string) => Object.keys(components).includes(stripQuotes(componentName));
+        const componentNameExists = (componentName: string) =>
+            Object.keys(components).includes(stripQuotes(componentName));
 
-        properties.filter(property => property.name !== 'onGridReady').forEach(property => {
-            if (property.name === 'rowData') {
-                if (property.value !== "null" && property.value !== null) {
-                    const rowDataIndex = stateProperties.indexOf(rowDataState);
-                    stateProperties[rowDataIndex] = `const [rowData, setRowData] = useState<${rowDataType}[]>(${property.value});`
-                }
-            } else if (property.value === 'true' || property.value === 'false') {
-                componentProps.push(`${property.name}={${property.value}}`);
-            } else if (property.value === null) {
-                componentProps.push(`${property.name}={${property.name}}`);
-            } else {
-                // for when binding a method
-                // see javascript-grid-keyboard-navigation for an example
-                // tabToNextCell needs to be bound to the react component
-                if (isInstanceMethod(bindings.instanceMethods, property)) {
-                    instanceBindings.push(`${property.name}=${property.value}`);
+        properties
+            .filter((property) => property.name !== 'onGridReady')
+            .forEach((property) => {
+                if (property.name === 'rowData') {
+                    if (property.value !== 'null' && property.value !== null) {
+                        const rowDataIndex = stateProperties.indexOf(rowDataState);
+                        stateProperties[rowDataIndex] =
+                            `const [rowData, setRowData] = useState<${rowDataType}[]>(${property.value});`;
+                    }
+                } else if (property.value === 'true' || property.value === 'false') {
+                    componentProps.push(`${property.name}={${property.value}}`);
+                } else if (property.value === null) {
+                    componentProps.push(`${property.name}={${property.name}}`);
                 } else {
-                    if (property.name === 'columnDefs') {
-                        // Special logic for columnDefs as its a popular property
-                        const typeName = (property.value.includes('children')) ? '(ColDef | ColGroupDef)[]' : 'ColDef[]';
-                        stateProperties.push(`const [${property.name}, setColumnDefs] = useState<${typeName}>(${property.value});`);
-                        componentProps.push(`${property.name}={${property.name}}`);
+                    // for when binding a method
+                    // see javascript-grid-keyboard-navigation for an example
+                    // tabToNextCell needs to be bound to the react component
+                    if (isInstanceMethod(bindings.instanceMethods, property)) {
+                        instanceBindings.push(`${property.name}=${property.value}`);
                     } else {
-                        // for values like booleans or strings just inline the prop - no need for a separate variable for it
-                        const valueType = getValueType(property.value);
-                        if (valueType === 'string') {
-                            if (componentNameExists(property.value)) {
-                                componentProps.push(`${property.name}={${components[stripQuotes(property.value)]}}`);
-                            } else {
-                                if (containsQuotes(property.value)) {
-                                    componentProps.push(`${property.name}={${property.value}}`);
-                                } else {
-                                    componentProps.push(`${property.name}=${property.value}`);
-                                }
-                            }
-                        } else if (valueType === 'boolean' || valueType === 'number') {
-                            componentProps.push(`${property.name}={${property.value}}`);
-                        } else {
-                            if (EventAndCallbackNames.has(property.name)) {
-                                stateProperties.push(`const ${property.name} = useCallback(${property.value}, [${callbackDependencies[property.name] || ''}]);`);
-                            } else {
-                                stateProperties.push(`const ${property.name} = useMemo<${property.typings.typeName}>(() => { return ${property.value} }, []);`);
-                            }
+                        if (property.name === 'columnDefs') {
+                            // Special logic for columnDefs as its a popular property
+                            const typeName = property.value.includes('children')
+                                ? '(ColDef | ColGroupDef)[]'
+                                : 'ColDef[]';
+                            stateProperties.push(
+                                `const [${property.name}, setColumnDefs] = useState<${typeName}>(${property.value});`
+                            );
                             componentProps.push(`${property.name}={${property.name}}`);
+                        } else {
+                            // for values like booleans or strings just inline the prop - no need for a separate variable for it
+                            const valueType = getValueType(property.value);
+                            if (valueType === 'string') {
+                                if (componentNameExists(property.value)) {
+                                    componentProps.push(
+                                        `${property.name}={${components[stripQuotes(property.value)]}}`
+                                    );
+                                } else {
+                                    if (containsQuotes(property.value)) {
+                                        componentProps.push(`${property.name}={${property.value}}`);
+                                    } else {
+                                        componentProps.push(`${property.name}=${property.value}`);
+                                    }
+                                }
+                            } else if (valueType === 'boolean' || valueType === 'number') {
+                                componentProps.push(`${property.name}={${property.value}}`);
+                            } else {
+                                if (EventAndCallbackNames.has(property.name)) {
+                                    stateProperties.push(
+                                        `const ${property.name} = useCallback(${property.value}, [${callbackDependencies[property.name] || ''}]);`
+                                    );
+                                } else {
+                                    stateProperties.push(
+                                        `const ${property.name} = useMemo<${property.typings.typeName}>(() => { return ${property.value} }, []);`
+                                    );
+                                }
+                                componentProps.push(`${property.name}={${property.name}}`);
+                            }
                         }
                     }
                 }
-            }
-        });
+            });
 
-        const componentEventAttributes = bindings.eventHandlers.map(event => `${event.handlerName}={${event.handlerName}}`);
+        const componentEventAttributes = bindings.eventHandlers.map(
+            (event) => `${event.handlerName}={${event.handlerName}}`
+        );
         if (additionalInReady.length > 0) {
             componentProps.push('onGridReady={onGridReady}');
         }
         componentProps.push.apply(componentProps, componentEventAttributes);
 
-
         // convert this.xxx to just xxx
         // no real need for "this" in hooks
-        const thisReferenceConverter = content => content.replace(/this\./g, "");
+        const thisReferenceConverter = (content) => content.replace(/this\./g, '');
 
-        const gridInstanceConverter = content => content
-            .replace(/params\.api(!?)\.setGridOption\('rowData', data\)/g, 'setRowData(data)')
-            .replace(/gridApi(!?)\./g, "gridRef.current!.api.")
-            .replace(/gridApi;/g, "gridRef.current!.api;")
-            .replace(/gridRef\.current\.api(!?)\.setGridOption\(\'rowData\',/g, "setRowData(")
-            .replace(/gridApi/g, "gridRef.current!.api")
+        const gridInstanceConverter = (content) =>
+            content
+                .replace(/params\.api(!?)\.setGridOption\('rowData', data\)/g, 'setRowData(data)')
+                .replace(/gridApi(!?)\./g, 'gridRef.current!.api.')
+                .replace(/gridApi;/g, 'gridRef.current!.api;')
+                .replace(/gridRef\.current\.api(!?)\.setGridOption\(\'rowData\',/g, 'setRowData(')
+                .replace(/gridApi/g, 'gridRef.current!.api');
 
         const template = getTemplate(bindings, componentProps.map(thisReferenceConverter), rowDataGeneric);
-        const eventHandlers = bindings.eventHandlers.map(event => convertFunctionToConstCallbackTs(event.handler, callbackDependencies)).map(thisReferenceConverter).map(gridInstanceConverter);
-        const externalEventHandlers = bindings.externalEventHandlers.map(handler => convertFunctionToConstCallbackTs(handler.body, callbackDependencies)).map(thisReferenceConverter).map(gridInstanceConverter);
-        const instanceMethods = bindings.instanceMethods.map(instance => convertFunctionToConstCallbackTs(instance, callbackDependencies)).map(thisReferenceConverter).map(gridInstanceConverter);
+        const eventHandlers = bindings.eventHandlers
+            .map((event) => convertFunctionToConstCallbackTs(event.handler, callbackDependencies))
+            .map(thisReferenceConverter)
+            .map(gridInstanceConverter);
+        const externalEventHandlers = bindings.externalEventHandlers
+            .map((handler) => convertFunctionToConstCallbackTs(handler.body, callbackDependencies))
+            .map(thisReferenceConverter)
+            .map(gridInstanceConverter);
+        const instanceMethods = bindings.instanceMethods
+            .map((instance) => convertFunctionToConstCallbackTs(instance, callbackDependencies))
+            .map(thisReferenceConverter)
+            .map(gridInstanceConverter);
         const containerStyle = exampleConfig.noStyle ? '' : `style={containerStyle}`;
 
-        const gridReady = additionalInReady.length > 0 ? `
+        const gridReady =
+            additionalInReady.length > 0
+                ? `
             const onGridReady = useCallback((params: GridReadyEvent) => {
                 ${preferParamsApi(additionalInReady.join('\n'))}
-            }, []);` : '';
-
+            }, []);`
+                : '';
 
         let generatedOutput = `
 'use strict';
@@ -326,14 +388,13 @@ const root = createRoot(document.getElementById('root')!);
 root.render(<StrictMode><GridExample /></StrictMode>);
 `;
 
-
         if ((generatedOutput.match(/gridRef\.current/g) || []).length === 0) {
-            generatedOutput = generatedOutput.replace(gridRefHook, "")
-            generatedOutput = generatedOutput.replace("ref={gridRef}", "")
+            generatedOutput = generatedOutput.replace(gridRefHook, '');
+            generatedOutput = generatedOutput.replace('ref={gridRef}', '');
         }
         if (generatedOutput.includes(rowDataState) && (generatedOutput.match(/setRowData/g) || []).length === 1) {
-            generatedOutput = generatedOutput.replace(rowDataState, "")
-            generatedOutput = generatedOutput.replace("rowData={rowData}", "")
+            generatedOutput = generatedOutput.replace(rowDataState, '');
+            generatedOutput = generatedOutput.replace('rowData={rowData}', '');
         }
 
         // Until we support this cleanly.
