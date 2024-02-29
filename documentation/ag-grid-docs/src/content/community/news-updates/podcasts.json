@@ -17,5 +17,14 @@
         "publication": "JavaScript Jabber",
         "guests": [ "Niall Crosby" ],
         "published": "October, 2021"
+    },
+    {
+        "title": "Async Angular Testing and Introducing AG Charts",
+        "link": "https://pdst.fm/e/dts.podtrac.com/redirect.mp3/audio2.redcircle.com/episodes/45a67d9d-80bb-47fb-9608-1eb8c39dc5dc/stream.mp3",
+        "description": "If you are testing an Angular application, then at some point, you will be required to test asynchronous behaviour.  Today on the show, guests Stephen Cooper and Mona Peirov share about how you can validate your internal models with async Angular testing and integrate AG Charts into your workflows.",
+        "host": "Charles Wood",
+        "publication": "Adventures in Angular",
+        "guests": [ "Stephen Cooper", "Mana Peirov" ],
+        "published": "July, 2022"
     }
 ]
