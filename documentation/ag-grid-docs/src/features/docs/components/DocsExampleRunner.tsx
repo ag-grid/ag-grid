@@ -171,7 +171,6 @@ const DocsExampleRunnerInner = ({ name, title, exampleType, exampleHeight, frame
     const externalLinks = (
         <ExternalLinks
             title={title}
-            options={options}
             internalFramework={internalFramework}
             exampleFiles={exampleFiles}
             exampleBoilerPlateFiles={exampleBoilerPlateFiles}
