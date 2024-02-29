@@ -113,7 +113,7 @@ const gridOptions = {
 }
 ```
 
-## Cell Style, Cell Class & Cell Class Rules Params
+## Props
 
 All cellClass cellStyle and cellClassRules functions take a `CellClassParams`.
 
@@ -152,7 +152,7 @@ const gridOptions = {
 }
 ```
 
-## Refresh of Styles
+## Style Refresh
 
 If you refresh a cell, or a cell is updated due to editing, the cellStyle,
 cellClass and cellClassRules are all applied again. This has the following
@@ -176,7 +176,7 @@ cellStyle: params => params.value > 80 ? { color: 'red' } : null
 cellStyle: params => params.value > 80 ? { color: 'red' } : { color: 'black' }
 ```
 
-## Cell Styling Example
+## Examples
 
 Below shows both cssClassRules snippets above in a full working example. The example demonstrates the following:
 
@@ -187,8 +187,6 @@ Below shows both cssClassRules snippets above in a full working example. The exa
 * Silver and Bronze set `cellStyle` using a function and depends on the value. Editing will update the cellStyle.
 
 {% gridExampleRunner title="Cell Styling" name="cell-styling" type="mixed" /%}
-
-## Styling Cells in the First and Last Columns
 
 It's possible to style the cells in the first and last columns using CSS by targeting the `.ag-column-first` and `.ag-column-last` selectors as follows:
 
