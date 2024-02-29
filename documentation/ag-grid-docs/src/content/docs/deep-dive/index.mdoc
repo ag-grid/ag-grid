@@ -18,7 +18,7 @@ In this tutorial you will:
 
 Once complete, you'll have an interactive grid, with custom components and formatted data - Try it out for yourself by **sorting**, **filtering**, **resizing**, **selecting**, or **editing** data in the grid:
 
-{% gridExampleRunner title="Testing Example" name="testing-example" type="mixed" options={ "exampleHeight": 550 } /%}
+{% gridExampleRunner title="Testing Example" name="testing-example"  exampleHeight=550 /%}
 
 ## Create a Basic Grid
 
@@ -33,7 +33,7 @@ Complete our [Quick Start](./getting-started/) (or open the example below in Cod
 1) **Container:** A div that contains and defines the grid's theme & dimensions.
 1) **Grid API:** Provides access to Grid API methods. Initialised when creating a new grid.
 
-{% gridExampleRunner title="Basic Example" name="basic-example" type="mixed" options={ "exampleHeight": 220 } /%}
+{% gridExampleRunner title="Basic Example" name="basic-example"  exampleHeight=220 /%}
 
 ***
 {% /if %}
@@ -48,7 +48,7 @@ Complete our [Quick Start](./getting-started/) (or open the example below in Cod
 1) **Container:** A div that contains the grid and defines it's theme & dimensions.
 1) **Grid Component:** The `AgGridReact` component with **Row Data** and **Column Definition** props.
 
-{% gridExampleRunner title="Basic Example" name="basic-example" type="mixed" options={ "exampleHeight": 220 } /%}
+{% gridExampleRunner title="Basic Example" name="basic-example"  exampleHeight=220 /%}
 
 _Note: `rowData` and `columnDefs` arrays use the `useState` hook. We recommend `useState` if the data is mutable, otherwise `useMemo` is preferable. Read our [Best Practices](./react-hooks/) guide to learn more about using React hooks with AG Grid._
 
@@ -64,7 +64,7 @@ Complete our [Quick Start](./getting-started/) (or open the example below in Cod
 1) **Column Definition:** Defines & controls grid columns.
 1) **Grid Component:** The `ag-grid-angular` component, with Dimensions, CSS Theme, Row Data, and Column Definition attributes
 
-{% gridExampleRunner title="Basic Example" name="basic-example" type="mixed" options={ "exampleHeight": 220 } /%}
+{% gridExampleRunner title="Basic Example" name="basic-example"  exampleHeight=220 /%}
 
 ***
 {% /if %}
@@ -78,7 +78,7 @@ Complete our [Quick Start](./getting-started/) (or open the example below in Cod
 1) **Column Definition:** Defines & controls grid columns.
 1) **Grid Component:** The `ag-grid-vue` component, with Dimensions, CSS Theme, Row Data, and Column Definition attributes
 
-{% gridExampleRunner title="Basic Example" name="basic-example" type="mixed" options={ "exampleHeight": 220 } /%}
+{% gridExampleRunner title="Basic Example" name="basic-example"  exampleHeight=220 /%}
 
 ***
 {% /if %}
@@ -115,7 +115,7 @@ const gridOptions = {
 
 When we run our application, we should see a grid with ~1,400 rows of new data, and new column headers to match:
 
-{% gridExampleRunner title="Updating Example" name="updating-example" type="mixed" options={ "exampleHeight": 550 } /%}
+{% gridExampleRunner title="Updating Example" name="updating-example"  exampleHeight=550 /%}
 
 _Note: There are a large number of APIs available. See our [API Docs](./grid-api/) for an exhaustive list._
 
@@ -157,7 +157,7 @@ const GridExample = () => {
 
 When we run our application, we should see a grid with ~1,400 rows of new data, and new column headers to match:
 
-{% gridExampleRunner title="Updating Example" name="updating-example" type="mixed" options={ "exampleHeight": 550 } /%}
+{% gridExampleRunner title="Updating Example" name="updating-example"  exampleHeight=550 /%}
 
 _Note: All properties that are not tagged as 'initial' are reactive. See our [API docs](./grid-options/) for a complete list._
 
@@ -217,7 +217,7 @@ export class AppComponent {
 
 When we run our application, we should see a grid with ~1,400 rows of new data, and new column headers to match:
 
-{% gridExampleRunner title="Updating Example" name="updating-example" type="mixed" options={ "exampleHeight": 550 } /%}
+{% gridExampleRunner title="Updating Example" name="updating-example"  exampleHeight=550 /%}
 
 _Note: All [Grid Option](./grid-options/) properties tagged as 'managed' are automatically updated when their value changes._
 
@@ -264,7 +264,7 @@ const App = {
 
 When we run our application, we should see a grid with ~1,400 rows of new data, and new column headers to match:
 
-{% gridExampleRunner title="Updating Example" name="updating-example" type="mixed" options={ "exampleHeight": 550 } /%}
+{% gridExampleRunner title="Updating Example" name="updating-example"  exampleHeight=550 /%}
 
 Note: All [Grid Option](./grid-options/) properties tagged as 'managed' are automatically updated when their value changes.
 
@@ -289,7 +289,7 @@ columnDefs: [
 
 We should now be able to filter the 'mission' column - you can test this by filtering for the 'Apollo' missions:
 
-{% gridExampleRunner title="Configuring Columns Example" name="configure-columns-example" type="mixed" options={ "exampleHeight": 550 } /%}
+{% gridExampleRunner title="Configuring Columns Example" name="configure-columns-example"  exampleHeight=550 /%}
 
 _Note: Column properties can be used to configure a wide-range of features; refer to our [Column Properties](./column-properties/) page for a full list of features._
 {% /if %}
@@ -310,7 +310,7 @@ const [colDefs] = useState([
 
 We should now be able to filter the 'mission' column - you can test this by filtering for the 'Apollo' missions:
 
-{% gridExampleRunner title="Configuring Columns Example" name="configure-columns-example" type="mixed" options={ "exampleHeight": 550 } /%}
+{% gridExampleRunner title="Configuring Columns Example" name="configure-columns-example"  exampleHeight=550 /%}
 
 _Note: Column properties can be used to configure a wide-range of features; refer to our [Column Properties](./column-properties/) page for a full list of features._
 {% /if %}
@@ -331,7 +331,7 @@ colDefs: ColDef[] = [
 
 We should now be able to filter the 'mission' column - you can test this by filtering for the 'Apollo' missions:
 
-{% gridExampleRunner title="Configuring Columns Example" name="configure-columns-example" type="mixed" options={ "exampleHeight": 550 } /%}
+{% gridExampleRunner title="Configuring Columns Example" name="configure-columns-example"  exampleHeight=550 /%}
 
 _Note: Column properties can be used to configure a wide-range of features; refer to our [Column Properties](./column-properties/) page for a full list of features._
 {% /if %}
@@ -352,7 +352,7 @@ const colDefs = ref([
 
 We should now be able to filter the 'mission' column - you can test this by filtering for the 'Apollo' missions:
 
-{% gridExampleRunner title="Configuring Columns Example" name="configure-columns-example" type="mixed" options={ "exampleHeight": 550 } /%}
+{% gridExampleRunner title="Configuring Columns Example" name="configure-columns-example"  exampleHeight=550 /%}
 
 _Note: Column properties can be used to configure a wide-range of features; refer to our [Column Properties](./column-properties/) page for a full list of features._
 {% /if %}
@@ -375,7 +375,7 @@ const gridOptions = {
 
 The grid should now allow filtering on all columns:
 
-{% gridExampleRunner title="Default Column Definitions Example" name="default-columns-example" type="mixed" options={ "exampleHeight": 550 } /%}
+{% gridExampleRunner title="Default Column Definitions Example" name="default-columns-example"  exampleHeight=550 /%}
 
 _Note: Column Definitions take precedence over Default Column Definitions_
 
@@ -403,7 +403,7 @@ const defaultColDef = useMemo(() => ({
 
 The grid should now allow filtering on all columns:
 
-{% gridExampleRunner title="Default Column Definitions Example" name="default-columns-example" type="mixed" options={ "exampleHeight": 550 } /%}
+{% gridExampleRunner title="Default Column Definitions Example" name="default-columns-example"  exampleHeight=550 /%}
 
 _Note: Column Definitions take precedence over Default Column Definitions_
 
@@ -441,7 +441,7 @@ export class AppComponent {
 
 The grid should now allow filtering on all columns:
 
-{% gridExampleRunner title="Default Column Definitions Example" name="default-columns-example" type="mixed" options={ "exampleHeight": 550 } /%}
+{% gridExampleRunner title="Default Column Definitions Example" name="default-columns-example"  exampleHeight=550 /%}
 
 _Note: Column Definitions take precedence over Default Column Definitions_
 
@@ -490,7 +490,7 @@ const App = {
 
 The grid should now allow filtering on all columns:
 
-{% gridExampleRunner title="Default Column Definitions Example" name="default-columns-example" type="mixed" options={ "exampleHeight": 550 } /%}
+{% gridExampleRunner title="Default Column Definitions Example" name="default-columns-example"  exampleHeight=550 /%}
 
 _Note: Column Definitions take precedence over Default Column Definitions_
 
@@ -515,7 +515,7 @@ const gridOptions: GridOptions = {
 
 We should now see Pagination has been enabled on the grid:
 
-{% gridExampleRunner title="Grid Options Example" name="grid-options-example" type="mixed" options={ "exampleHeight": 550 } /%}
+{% gridExampleRunner title="Grid Options Example" name="grid-options-example"  exampleHeight=550 /%}
 
 _Refer to our detailed [Grid Options](./grid-options/) documentation for a full list of options._
 
@@ -540,7 +540,7 @@ Grid Options are passed to the grid component directly as props. Let's enable pa
 
 We should now see Pagination has been enabled on the grid:
 
-{% gridExampleRunner title="Grid Options Example" name="grid-options-example" type="mixed" options={ "exampleHeight": 550 } /%}
+{% gridExampleRunner title="Grid Options Example" name="grid-options-example"  exampleHeight=550 /%}
 
 _Refer to our detailed [Grid Options](./grid-options/) documentation for a full list of options._
 
@@ -565,7 +565,7 @@ Grid Options are passed to the grid via attributes on the `ag-grid-angular` comp
 
 We should now see Pagination has been enabled on the grid:
 
-{% gridExampleRunner title="Grid Options Example" name="grid-options-example" type="mixed" options={ "exampleHeight": 550 } /%}
+{% gridExampleRunner title="Grid Options Example" name="grid-options-example"  exampleHeight=550 /%}
 
 _Refer to our detailed [Grid Options](./grid-options/) documentation for a full list of options._
 
@@ -600,7 +600,7 @@ const App = {
 
 We should now see Pagination has been enabled on the grid:
 
-{% gridExampleRunner title="Grid Options Example" name="grid-options-example" type="mixed" options={ "exampleHeight": 550 } /%}
+{% gridExampleRunner title="Grid Options Example" name="grid-options-example"  exampleHeight=550 /%}
 
 _Refer to our detailed [Grid Options](./grid-options/) documentation for a full list of options._
 
@@ -628,7 +628,7 @@ columnDefs: [
 
 The grid should now show the formatted value in the 'price' column:
 
-{% gridExampleRunner title="Value Formatter Example" name="value-formatter-example" type="mixed" options={ "exampleHeight": 550 } /%}
+{% gridExampleRunner title="Value Formatter Example" name="value-formatter-example"  exampleHeight=550 /%}
 
 _Note: Read our [Value Formatter](./value-formatters/) page for more information on formatting cell values_
 
@@ -655,7 +655,7 @@ const [colDefs] = useState([
 
 The grid should now show the formatted value in the 'price' column:
 
-{% gridExampleRunner title="Value Formatter Example" name="value-formatter-example" type="mixed" options={ "exampleHeight": 550 } /%}
+{% gridExampleRunner title="Value Formatter Example" name="value-formatter-example"  exampleHeight=550 /%}
 
 _Note: Read our [Value Formatter](./value-formatters/) page for more information on formatting cell values_
 
@@ -681,7 +681,7 @@ colDefs: ColDef[] = [
 
 The grid should now show the formatted value in the 'price' column:
 
-{% gridExampleRunner title="Value Formatter Example" name="value-formatter-example" type="mixed" options={ "exampleHeight": 550 } /%}
+{% gridExampleRunner title="Value Formatter Example" name="value-formatter-example"  exampleHeight=550 /%}
 
 _Note: Read our [Value Formatter](./value-formatters/) page for more information on formatting cell values_
 
@@ -704,7 +704,7 @@ const colDefs = ref([
 
 The grid should now show the formatted value in the 'price' column:
 
-{% gridExampleRunner title="Value Formatter Example" name="value-formatter-example" type="mixed" options={ "exampleHeight": 550 } /%}
+{% gridExampleRunner title="Value Formatter Example" name="value-formatter-example"  exampleHeight=550 /%}
 
 _Note: Read our [Value Formatter](./value-formatters/) page for more information on formatting cell values_
 {% /if %}
@@ -764,7 +764,7 @@ columnDefs: [
 
 Now, when we run the grid, we should see a company logo next to the name:
 
-{% gridExampleRunner title="Cell Renderer Example" name="cell-renderer-example" type="mixed" options={ "exampleHeight": 550 } /%}
+{% gridExampleRunner title="Cell Renderer Example" name="cell-renderer-example"  exampleHeight=550 /%}
 
 _Note: Read our [Cell Components](./component-cell-renderer/) page for more information on using custom components in cells_
 
@@ -802,7 +802,7 @@ const [colDefs] = useState([
 
 Now, when we run the grid, we should see a company logo next to the name:
 
-{% gridExampleRunner title="Cell Renderer Example" name="cell-renderer-example" type="mixed" options={ "exampleHeight": 550 } /%}
+{% gridExampleRunner title="Cell Renderer Example" name="cell-renderer-example"  exampleHeight=550 /%}
 
 _Note: Read our [Cell Components](./component-cell-renderer/) page for more information on using custom components in cells_
 
@@ -857,7 +857,7 @@ colDefs: ColDef[] = [
 
 Now, when we run the grid, we should see a company logo next to the name:
 
-{% gridExampleRunner title="Cell Renderer Example" name="cell-renderer-example" type="mixed" options={ "exampleHeight": 550 } /%}
+{% gridExampleRunner title="Cell Renderer Example" name="cell-renderer-example"  exampleHeight=550 /%}
 
 _Note: Read our [Cell Components](./component-cell-renderer/) page for more information on using custom components in cells_
 
@@ -914,7 +914,7 @@ const App = {
 
 Now, when we run the grid, we should see a company logo next to the name:
 
-{% gridExampleRunner title="Cell Renderer Example" name="cell-renderer-example" type="mixed" options={ "exampleHeight": 550 } /%}
+{% gridExampleRunner title="Cell Renderer Example" name="cell-renderer-example"  exampleHeight=550 /%}
 
 _Note: Read our [Cell Components](./component-cell-renderer/) page for more information on using custom components in cells_
 
@@ -949,7 +949,7 @@ const gridOptions = {
 
 Now, when we click on a cell we should be able to edit it and see the new value logged to the console:
 
-{% gridExampleRunner title="Complete Example" name="grid-events-example" type="mixed" options={ "exampleHeight": 550 } /%}
+{% gridExampleRunner title="Complete Example" name="grid-events-example"  exampleHeight=550 /%}
 
 _Refer to our [Grid Events](./grid-events/) documentation for a full list of events raised by the grid_
 
@@ -980,7 +980,7 @@ const defaultColDef = useMemo(() => ({
 
 Now, when we click on a cell we should be able to edit it and see the new value logged to the console:
 
-{% gridExampleRunner title="Complete Example" name="grid-events-example" type="mixed" options={ "exampleHeight": 550 } /%}
+{% gridExampleRunner title="Complete Example" name="grid-events-example"  exampleHeight=550 /%}
 
 _Refer to our [Grid Events](./grid-events/) documentation for a full list of events raised by the grid_
 
@@ -1026,7 +1026,7 @@ Finally, let's add the `gridReady` attribute to the `ag-grid-angular` component,
 
 Now, when we click on a cell we should be able to edit it and see the new value logged to the console:
 
-{% gridExampleRunner title="Complete Example" name="grid-events-example" type="mixed" options={ "exampleHeight": 550 } /%}
+{% gridExampleRunner title="Complete Example" name="grid-events-example"  exampleHeight=550 /%}
 
 _Refer to our [Grid Events](./grid-events/) documentation for a full list of events raised by the grid_
 
@@ -1068,7 +1068,7 @@ const App = {
 
 Now, when we click on a cell we should be able to edit it and see the new value logged to the console:
 
-{% gridExampleRunner title="Complete Example" name="grid-events-example" type="mixed" options={ "exampleHeight": 550 } /%}
+{% gridExampleRunner title="Complete Example" name="grid-events-example"  exampleHeight=550 /%}
 
 _Refer to our [Grid Events](./grid-events/) documentation for a full list of events raised by the grid_
 {% /if %}
@@ -1102,7 +1102,7 @@ Let's put what you've learned so far into action by modifying the grid:
 
 Once complete, your grid should look like the example below. If you're stuck, check out the source code to see how its done:
 
-{% gridExampleRunner title="Testing Example" name="testing-example" type="mixed" options={ "exampleHeight": 550 } /%}
+{% gridExampleRunner title="Testing Example" name="testing-example"  exampleHeight=550 /%}
 
 ***
 {% /if %}
@@ -1134,7 +1134,7 @@ Let's put what you've learned so far into action by modifying the grid:
 
 Once complete, your grid should look like the example below. If you're stuck, check out the source code to see how its done:
 
-{% gridExampleRunner title="Testing Example" name="testing-example" type="mixed" options={ "exampleHeight": 550 } /%}
+{% gridExampleRunner title="Testing Example" name="testing-example"  exampleHeight=550 /%}
 
 ***
 {% /if %}
@@ -1166,7 +1166,7 @@ Let's put what you've learned so far into action by modifying the grid:
 
 Once complete, your grid should look like the example below. If you're stuck, check out the source code to see how its done:
 
-{% gridExampleRunner title="Testing Example" name="testing-example" type="mixed" options={ "exampleHeight": 550 } /%}
+{% gridExampleRunner title="Testing Example" name="testing-example"  exampleHeight=550 /%}
 
 ***
 {% /if %}
@@ -1198,7 +1198,7 @@ Let's put what you've learned so far into action by modifying the grid:
 
 Once complete, your grid should look like the example below. If you're stuck, check out the source code to see how its done:
 
-{% gridExampleRunner title="Testing Example" name="testing-example" type="mixed" options={ "exampleHeight": 550 } /%}
+{% gridExampleRunner title="Testing Example" name="testing-example"  exampleHeight=550 /%}
 
 ***
 {% /if %}

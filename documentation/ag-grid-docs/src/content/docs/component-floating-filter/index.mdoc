@@ -16,7 +16,7 @@ Floating Filter Components allow you to add your own floating filter types to AG
 
 In the following example you can see how the Gold, Silver, Bronze and Total columns have a custom floating filter `NumberFloatingFilter`. This filter substitutes the standard floating filter for an input box that the user can change to adjust how many medals of each column to filter by based on a greater than filter.
 
-{% gridExampleRunner title="Custom Floating Filter" name="custom-floating-filter" type="mixed" options={ "includeNgFormsModule": true} /%}
+{% gridExampleRunner title="Custom Floating Filter" name="custom-floating-filter" /%}
 
 ## Implementing a Floating Filter Component
 
@@ -67,7 +67,7 @@ In this example it is important to note that:
 1. `NumberFilter.myMethodForTakingValueFromFloatingFilter(change)` performs the filtering.
 {% /if %}
 
-{% gridExampleRunner title="Custom Filter and Floating Filter" name="custom-filter-and-floating-filter" type="mixed" options={"includeNgFormsModule": true} /%}
+{% gridExampleRunner title="Custom Filter and Floating Filter" name="custom-filter-and-floating-filter" /%}
 
 ## Example: Custom Filter And Read-Only Floating Filter
 
@@ -75,7 +75,7 @@ If you want to provide a custom filter but don't want to provide an equivalent c
 
 This example uses the previous custom filter but implements `getModelAsString()`. Note how there are no custom floating filters and yet each column using `NumberFilter` (Gold, Silver, Bronze and Total) has a read-only floating filter that gets updated as you change the values from the main filter.
 
-{% gridExampleRunner title="Custom Filter Only" name="custom-filter" type="mixed" /%}
+{% gridExampleRunner title="Custom Filter Only" name="custom-filter" /%}
 
 {% if isFramework("react", "angular", "vue") %}
 ## Sliding Floating Filters
@@ -86,7 +86,7 @@ The below example shows how to create a custom floating filter re-using the out-
 {% /if %}
 
 {% if isFramework("react", "angular", "vue") %}
-{% gridExampleRunner title="Sliding Floating Filter Component" name="floating-filter-component" type="mixed" options={ "includeNgFormsModule": true } /%}
+{% gridExampleRunner title="Sliding Floating Filter Component" name="floating-filter-component" /%}
 {% /if %}
 
 {% if isFramework("javascript") %}

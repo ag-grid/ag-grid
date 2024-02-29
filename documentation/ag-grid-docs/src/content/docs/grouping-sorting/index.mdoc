@@ -11,7 +11,7 @@ When using [Single Group Column](./grouping-single-group-column/) or [Multiple G
 
 The example below demonstrates sorting with [Multiple Group Columns](./grouping-multiple-group-columns/).
 
-{% gridExampleRunner title="Enabling Group Sorting" name="enabling-group-sorting" type="generated" options={ "enterprise": true, "exampleHeight": 540, "modules": ["clientside", "rowgrouping"] } /%}
+{% gridExampleRunner title="Enabling Group Sorting" name="enabling-group-sorting"  exampleHeight=540 /%}
 
 ## Mixed Group Sorting
 
@@ -43,7 +43,7 @@ The following example demonstrates mixed group sorting. Note the following:
 * Click the header of the group column to apply a sort, observe how it forces the year and handset columns sort to match.
 * Hold shift and click the header of the year column, observe how the sort direction is now different from the auto column, and the auto column now displays the mixed-sort icon.
 
-{% gridExampleRunner title="Mixed Group Sort" name="mixed-group-sort" type="generated" options={ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "setfilter"] } /%}
+{% gridExampleRunner title="Mixed Group Sort" name="mixed-group-sort"  exampleHeight=515 /%}
 
 ## Custom Group Sorting
 
@@ -78,7 +78,7 @@ The following example demonstrates custom group sorting. Note the following:
 * The `month` column has a custom sort `comparator` supplied which sorts months in chronological order.
 * The 'Group' Column uses the `comparator` defined on the `month` column definition to sort the row groups.
 
-{% gridExampleRunner title="Custom Group Sort" name="custom-group-sort" type="generated" options={ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "setfilter"] } /%}
+{% gridExampleRunner title="Custom Group Sort" name="custom-group-sort"  exampleHeight=515 /%}
 
 {% note %}
 It is also possible to define a comparator that will be used across all group levels using; `autoGroupColumnDef.comparator`.
@@ -113,7 +113,7 @@ The following example demonstrates how `groupMaintainOrder` works. Note the foll
 * Clicking on the 'Task' column header only sorts the tasks without reordering the groups.
 * Sorting on the 'Assignee' or 'Priority' group column headers will reorder the groups.
 
-{% gridExampleRunner title="Maintain Group Order" name="maintain-group-order" type="generated" options={ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "setfilter"] } /%}
+{% gridExampleRunner title="Maintain Group Order" name="maintain-group-order"  exampleHeight=515 /%}
 
 ## Next Up
 

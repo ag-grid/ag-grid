@@ -27,7 +27,7 @@ The following example demonstrates these properties. Note the following:
 * A grand total footer is shown as the `groupIncludeTotalFooter = true`.
 * The medal totals are [aggregated](./aggregation/) via the `aggFunc: 'sum'` column property.
 
-{% gridExampleRunner title="Enabling Group Footers" name="enabling-group-footers" type="generated" options={ "enterprise": true, "exampleHeight": 503, "modules": ["clientside", "rowgrouping"] } /%}
+{% gridExampleRunner title="Enabling Group Footers" name="enabling-group-footers"  exampleHeight=503 /%}
 
 ## Dynamic Group Footers
 
@@ -53,7 +53,7 @@ The following example demonstrates a custom group footer enablement. Note the fo
 * Group Footer is shown for the group called `France`
 * No Group Footers are shown for any other groups.
 
-{% gridExampleRunner title="Customising Enabling Group Footers" name="customising-enabling-group-footers" type="generated" options={ "enterprise": true, "exampleHeight": 588, "modules": ["clientside", "rowgrouping"] } /%}
+{% gridExampleRunner title="Customising Enabling Group Footers" name="customising-enabling-group-footers"  exampleHeight=588 /%}
 
 ### Example: Group Column Footers
 
@@ -71,7 +71,7 @@ The following example demonstrates a custom group footer enablement for rows gro
 * Group Footer is shown for rows grouped by the country column.
 * Group Footer are not shown for any other groups
 
-{% gridExampleRunner title="Customising Enabling Group Footers" name="customising-enabling-group-footers-row-grouped" type="generated" options={ "enterprise": true, "exampleHeight": 488, "modules": ["clientside", "rowgrouping"] } /%}
+{% gridExampleRunner title="Customising Enabling Group Footers" name="customising-enabling-group-footers-row-grouped"  exampleHeight=488 /%}
 
 ## Customising Footer Values
 
@@ -97,7 +97,7 @@ const gridOptions = {
 Note in the snippet above that the `footerValueGetter` contains special handling to display Subtotals and Grand Totals
 differently. This is demonstrated in the example below.
 
-{% gridExampleRunner title="Customising Footer Values" name="customising-footer-values" type="generated" options={ "enterprise": true, "exampleHeight": 503, "modules": ["clientside", "rowgrouping"] } /%}
+{% gridExampleRunner title="Customising Footer Values" name="customising-footer-values"  exampleHeight=503 /%}
 
 ## Customising Footer Cells
 
@@ -108,7 +108,7 @@ also possible to customise the footer cell using the `innerCellRenderer` supplie
 In the example below the `innerRenderer` contains special handling to display Grand Total, Subtotal and
 non-footer cells differently.
 
-{% gridExampleRunner title="Customising Footer Cells" name="customising-footer-cells" type="mixed" options={ "enterprise": true, "exampleHeight": 503, "modules": ["clientside", "rowgrouping"] } /%}
+{% gridExampleRunner title="Customising Footer Cells" name="customising-footer-cells"  exampleHeight=503 /%}
 
 {% note %}
 It is also possible to customise footer cells using: `cellRendererParams.innerRendererSelector`. For more details see the [Group Cell Renderer](./group-cell-renderer/) section.

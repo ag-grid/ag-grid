@@ -50,7 +50,7 @@ The following example demonstrates Filter Condition configuration that can be ap
 * The **Age** column has a Number Filter with `numAlwaysVisibleConditions` set to `2` so that two conditions are always shown. The `defaultJoinOperator` is also set to `'OR'` rather than the default (`'AND'`).
 * The **Date** column has a Date Filter with `maxNumConditions` set to `1`, so that only the first condition is shown.
 
-{% gridExampleRunner title="Simple Filter Conditions" name="simple-filter-options" type="generated" options={ "exampleHeight": 560 } /%}
+{% gridExampleRunner title="Simple Filter Conditions" name="simple-filter-options"  exampleHeight=560 /%}
 
 ## Custom Filter Options
 
@@ -130,7 +130,7 @@ The following example demonstrates several custom filter options:
   * it also demonstrates how localisation can be achieved via the `gridOptions.getLocaleText(params)` callback function, where the default value is replaced for the filter option `'notEqualNoNulls'`.
 * Saving and restoring custom filter options via `api.getFilterModel()` and `api.setFilterModel()` can be tested using the provided buttons.
 
-{% gridExampleRunner title="Custom Filter Options" name="custom-filter-options" type="generated" /%}
+{% gridExampleRunner title="Custom Filter Options" name="custom-filter-options" /%}
 
 ## Customising Filter Placeholder Text
 
@@ -171,7 +171,7 @@ The following example shows the various ways of specifying filter placeholders. 
 * `Sport` column shows the filter option key with the default placeholder eg, for the `Contains` filter option, it shows `contains - Filter...`. The [filter option keys](#simple-filter-options) are listed in the table above.
 * `Total` column shows the filter option name with the suffix `total` eg, for the `Equals` filter option, it shows `Equals total`. The [filter option names](#simple-filter-options) are listed in the table above.
 
-{% gridExampleRunner title="Filter Placeholder Text" name="filter-placeholder-text" type="generated" options={ "exampleHeight": 560 } /%}
+{% gridExampleRunner title="Filter Placeholder Text" name="filter-placeholder-text"  exampleHeight=560 /%}
 
 ## Next Up
 

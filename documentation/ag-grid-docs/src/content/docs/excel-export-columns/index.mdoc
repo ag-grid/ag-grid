@@ -17,7 +17,7 @@ Note the following:
 * Group Headers will be skipped if Skip Column Group Headers is checked.
 * Normal headers will be skipped if Skip Column Headers is checked.
 
-{% gridExampleRunner title="Excel Export - Column Headers" name="excel-export-column-headers" type="generated" options={ "enterprise": true, "modules": ["clientside", "csv", "excel", "menu"], "exampleHeight": 815 } /%}
+{% gridExampleRunner title="Excel Export - Column Headers" name="excel-export-column-headers"  exampleHeight=815 /%}
 
 ## Hidden Columns
 
@@ -28,7 +28,7 @@ Note the following:
 * By default, **only visible columns will be exported**. The bronze, silver and gold columns will not.
 * If `All Columns` is checked, the bronze, silver and gold columns will be included in the exported file.
 
-{% gridExampleRunner title="Excel Export - Hidden Columns" name="excel-export-hidden-columns" type="generated" options={ "enterprise": true, "modules": ["clientside", "csv", "excel", "menu"], "exampleHeight": 815 } /%}
+{% gridExampleRunner title="Excel Export - Hidden Columns" name="excel-export-hidden-columns"  exampleHeight=815 /%}
 
 ## Collapsible Columns
 
@@ -50,7 +50,7 @@ In the example below, export the grid to Excel, open the exported Excel document
 When using pivoting to export [pivot result columns](./pivoting/#columns-vs-pivot-result-columns), only currently visible columns are exported as grouped. Collapsed pivot result columns aren’t exported at all, even when the [ExcelExportParams](./excel-export-api/#excelexportparams) option `allColumns:true` is set.
 {% /note %}
 
-{% gridExampleRunner title="Excel Export - Collapsible Columns" name="excel-export-collapsible-columns" type="generated" options={ "enterprise": true, "modules": ["clientside", "csv", "excel", "menu"] } /%}
+{% gridExampleRunner title="Excel Export - Collapsible Columns" name="excel-export-collapsible-columns" /%}
 
 ## Next Up
 

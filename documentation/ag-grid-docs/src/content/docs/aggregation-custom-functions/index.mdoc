@@ -41,7 +41,7 @@ The example below uses the direct `aggFunc` approach shown in the above snippet.
 * `func(Total)` is displayed in the column header by default as it's a direct function.
 * `agg(Total)` appears in the Columns Tool Panel, but it's omitted from the drop-down list as it's not registered with the grid.
 
-{% gridExampleRunner title="Directly Supplied Aggregation Functions" name="direct-functions" type="generated" options={ "enterprise": true, "exampleHeight": 540, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel", "setfilter"] } /%}
+{% gridExampleRunner title="Directly Supplied Aggregation Functions" name="direct-functions"  exampleHeight=540 /%}
 
 ## Registering Custom Functions
 
@@ -81,7 +81,7 @@ The example below uses the `aggFuncs` approach shown in the snippet above. Note 
 * `mySum(Total)` is displayed in the column header by default as it uses the registered function name.
 * `mySum(Total)` appears in the Columns Tool Panel and appears in the drop-down list just like a built-in function.
 
-{% gridExampleRunner title="Registering Custom Aggregation Functions" name="registered-function" type="generated" options={ "enterprise": true, "exampleHeight": 540, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel", "setfilter"] } /%}
+{% gridExampleRunner title="Registering Custom Aggregation Functions" name="registered-function"  exampleHeight=540 /%}
 
 ## Custom Aggregation Functions
 
@@ -119,7 +119,7 @@ The following can be noted from the example:
 
   The 'xyz' function is set using the API. Note that we also set 'xyz' in the grid options as otherwise the grid would complain 'Function not found' as it tries to use the function before it is set via the API.
 
-{% gridExampleRunner title="Custom Aggregation Functions" name="custom-agg-functions" type="generated" options={ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel", "setfilter"] } /%}
+{% gridExampleRunner title="Custom Aggregation Functions" name="custom-agg-functions" /%}
 
 Note that custom aggregations will get called for the top level rows to calculate a 'Grand Total', not just for row groups. For example if you have 10 rows in the grid, the grid will still call the aggregation with 10 values to get a grand total aggregation.
 
@@ -199,7 +199,7 @@ Note in the snippet of `avgAggFunction` above that:
 
 In the code example below, you can see how `avgAggFunction()` and `simpleAvg()` provide different values at country level but same values at the year group level:
 
-{% gridExampleRunner title="Multi-Level Custom Function Aggregation" name="custom-avg-function" type="generated" options={ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel", "setfilter"] } /%}
+{% gridExampleRunner title="Multi-Level Custom Function Aggregation" name="custom-avg-function" /%}
 
 ## Multi-Column Aggregation
 
@@ -253,7 +253,7 @@ const gridOptions = {
 
 The following example demonstrates this approach in action:
 
-{% gridExampleRunner title="Multi-Column Aggregation" name="multi-column-aggregation" type="generated" options={ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel", "setfilter"] } /%}
+{% gridExampleRunner title="Multi-Column Aggregation" name="multi-column-aggregation" /%}
 
 ## Custom Full Row Aggregation
 
@@ -283,7 +283,7 @@ Then the result of the aggregation will be stored in `data.aaa` and not in 'abby
 
 Below shows an  example using `getGroupRowAgg`. The example doesn't represent a real world scenario, it's contrived for demonstration. It takes the number of medals as inputs and creates two outputs, one as a normal sum and another by multiplying the result by `Math.PI`.
 
-{% gridExampleRunner title="Custom Full Row Aggregation" name="custom-full-row-aggregation" type="generated" options={ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel", "setfilter"], "exampleHeight": 620 } /%}
+{% gridExampleRunner title="Custom Full Row Aggregation" name="custom-full-row-aggregation"  exampleHeight=620 /%}
 
 ## Next Up
 

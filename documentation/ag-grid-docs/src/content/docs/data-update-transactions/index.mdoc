@@ -28,7 +28,7 @@ The example applies transactions in different ways and prints the results of the
 * **Get Row Data**: Prints all row data in the grid to the console.
 * **Clear Data**: Sets the data in the grid to an empty list.
 
-{% gridExampleRunner title="Updating with Transaction" name="updating-with-transaction" type="generated" /%}
+{% gridExampleRunner title="Updating with Transaction" name="updating-with-transaction" /%}
 
 ## Identifying Rows for Update and Remove
 
@@ -96,7 +96,7 @@ When using transactions and grouping, the groups are kept intact as you add, rem
 * When moving items, the grid animates the rows to the new location with minimal DOM updates.
 * **Get Row Data:** Prints all row data to the console.
 
-{% gridExampleRunner title="Updating with Transaction and Groups" name="updating-with-transaction-and-groups" type="generated" options={ "enterprise": true, "modules": ["clientside", "rowgrouping"] } /%}
+{% gridExampleRunner title="Updating with Transaction and Groups" name="updating-with-transaction-and-groups" /%}
 
 ## Localised Changes in Grouped Data
 
@@ -116,7 +116,7 @@ The example below demonstrates Changed Path Selection. The example is best viewe
 
 * Select a row and click **Update**, **Delete** OR **Duplicate** (duplicate results in an add operation). Note in the console that the number of aggregations, compares and filters is drastically fewer. The total time to execute is also drastically less.
 
-{% gridExampleRunner title="Small Changes Big Data" name="small-changes-big-data" type="mixed" options={ "enterprise": true, "modules": ["clientside", "rowgrouping"] } /%}
+{% gridExampleRunner title="Small Changes Big Data" name="small-changes-big-data" /%}
 
 {% note %}
 Note that [Header Checkbox Selection](./row-selection/#header-checkbox-selection)
@@ -143,7 +143,7 @@ Note the following:
 1. When data is added (**Duplicate** button) or removed (**Delete** button), the grid does execute sorting, filtering and aggregation.
 1. After data is updated, hitting **Update Model** gets the grid to sort, filter and aggregate.
 
-{% gridExampleRunner title="Suppress Update Model" name="suppress-update-model" type="generated" options={ "enterprise": true, "modules": ["clientside", "rowgrouping"] } /%}
+{% gridExampleRunner title="Suppress Update Model" name="suppress-update-model" /%}
 
 ## Delta Sorting
 
@@ -167,4 +167,4 @@ Some caveats also exist which may make delta sorting slower in your application 
 
 In the below example two buttons have been provided, one using delta sort and one without. When clicked they will use a transaction to insert one row and update one existing row on the initial dataset of 100,000 rows.
 
-{% gridExampleRunner title="Delta Sorting" name="delta-sorting" type="generated" options={ "enterprise": true, "modules": ["clientside", "rowgrouping"] } /%}
+{% gridExampleRunner title="Delta Sorting" name="delta-sorting" /%}

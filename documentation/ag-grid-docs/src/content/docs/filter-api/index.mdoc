@@ -60,7 +60,7 @@ The example below shows getting and setting all the filter models in action.
 
 (Note: the example uses the Enterprise-only [Set Filter](./filter-set/)).
 
-{% gridExampleRunner title="Filter Model" name="filter-model" type="generated" options={ "enterprise": true, "exampleHeight": 587, "modules": ["clientside", "menu", "filterpanel", "columnpanel", "setfilter"] } /%}
+{% gridExampleRunner title="Filter Model" name="filter-model"  exampleHeight=587 /%}
 
 ## Get / Set Individual Filter Model
 
@@ -105,7 +105,7 @@ The example below shows getting and setting an individual filter model in action
 * `Set Custom Filter Model` takes a custom hard-coded **Athlete** filter model and applies it to the grid.
 * `Reset Filter` will clear the **Athlete** filter.
 
-{% gridExampleRunner title="Individual Filter Model" name="filter-model-individual" type="generated" options={ "enterprise": true, "exampleHeight": 587, "modules": ["clientside", "menu", "filterpanel", "columnpanel", "setfilter"] } /%}
+{% gridExampleRunner title="Individual Filter Model" name="filter-model-individual"  exampleHeight=587 /%}
 
 ## Accessing Individual Filter Component Instances
 
@@ -134,7 +134,7 @@ The example below shows how you can interact with an individual filter instance,
 
 (Note: the example uses the Enterprise-only [Set Filter](./filter-set/)).
 
-{% gridExampleRunner title="Accessing Individual Filters" name="filter-api" type="generated" options={ "enterprise": true, "exampleHeight": 624, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] } /%}
+{% gridExampleRunner title="Accessing Individual Filters" name="filter-api"  exampleHeight=624 /%}
 
 ## Read-only Filter UI
 
@@ -167,7 +167,7 @@ The following example demonstrates all of the Provided Filters with `readOnly: t
 * [Floating Filters](./floating-filters/) are enabled and inherit `readOnly: true` from their parent, disabling any UI input.
 * Buttons above the grid provide API interactions to configure the filters.
 
-{% gridExampleRunner title="Read-only Filter UI" name="filter-api-readonly" type="generated" options={ "enterprise": true, "exampleHeight": 624, "modules": ["clientside", "setfilter", "menu", "columnpanel", "multifilter"] } /%}
+{% gridExampleRunner title="Read-only Filter UI" name="filter-api-readonly"  exampleHeight=624 /%}
 
 ## Launching Filters
 
@@ -184,7 +184,7 @@ The following example demonstrates launching the filter:
 * The **Country** column has the filter button hidden via `colDef.suppressHeaderFilterButton`. The filter can still be opened via the API by clicking the `Open Country Filter` button.
 * The **Year** column has a floating filter and the header button is also suppressed, so has a slightly different display style when the filter is active.
 
-{% gridExampleRunner title="Launching Filters" name="launching-filters" type="generated" options={ "modules": ["clientside"] } /%}
+{% gridExampleRunner title="Launching Filters" name="launching-filters" /%}
 
 ## Filter Events
 

@@ -87,7 +87,7 @@ Finally, the example also demonstrates querying which cell is editing:
 
 * `which()`: If the grid is editing, prints to the console which cell is in edit mode.
 
-{% gridExampleRunner title="Cell Editing" name="cell-editing" type="generated" options={ "exampleHeight": 545 } /%}
+{% gridExampleRunner title="Cell Editing" name="cell-editing"  exampleHeight=545 /%}
 
 ## Enter Key Navigation
 
@@ -100,7 +100,7 @@ To allow consistency with Excel the grid has the following properties:
 
 The example below demonstrates the focus moving down when {% kbd "↵ Enter" /%} is pressed.
 
-{% gridExampleRunner title="Enter Key Navigation" name="enter-key-navigation" type="generated" options={ "exampleHeight": 555 } /%}
+{% gridExampleRunner title="Enter Key Navigation" name="enter-key-navigation"  exampleHeight=555 /%}
 
 ## Single-Click Editing
 
@@ -110,7 +110,7 @@ It is also possible to define single-click editing on a per-column basis using `
 
 The grid below has `singleClickEdit = true` so that editing will start on a cell when you single-click on it.
 
-{% gridExampleRunner title="Single Click Editing" name="single-click-editing" type="generated" options={ "exampleHeight": 520 } /%}
+{% gridExampleRunner title="Single Click Editing" name="single-click-editing"  exampleHeight=520 /%}
 
 ## No-Click Editing
 
@@ -118,7 +118,7 @@ It is possible to configure the grid so neither Single-Click or Double-Click sta
 
 The grid below has `suppressClickEdit = true` so that clicking doesn't started editing. The grid configures a Cell Renderer with a button to start editing.
 
-{% gridExampleRunner title="No Click Editing" name="single-click-editing-renderer" type="generated" options={ "exampleHeight": 520 } /%}
+{% gridExampleRunner title="No Click Editing" name="single-click-editing-renderer"  exampleHeight=520 /%}
 
 ## Stop Editing When Grid Loses Focus
 
@@ -135,7 +135,7 @@ The example below shows the editing with `stopEditingWhenCellsLoseFocus = true`.
 * Double-click to start editing 'Age', then click outside the grid (on the 'Dummy Save' button, or the dummy text field) and the grid will stop editing.
 * Double-click to start editing 'Year', a custom popup editor appears, you can click anywhere on the popup editor, but once you click outside the editor, the popup closes.
 
-{% gridExampleRunner title="Stop Editing When Cells Loses Focus" name="stop-edit-when-grid-loses-focus" type="generated" options={ "exampleHeight": 510 } /%}
+{% gridExampleRunner title="Stop Editing When Cells Loses Focus" name="stop-edit-when-grid-loses-focus"  exampleHeight=510 /%}
 
 {% note %}
 Cell Editing can also be performed via Cell Editor Components; please see [Cell Editor Components](./cell-editors/) for more information.

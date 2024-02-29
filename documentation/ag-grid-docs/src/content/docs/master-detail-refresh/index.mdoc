@@ -58,7 +58,7 @@ This example shows the Refresh Rows strategy. Note the following:
 * The Detail Grid title 'Nora Thomas 24 calls' doesn't change as the template is only set once for the detail panel.
 {% /if %}
 
-{% gridExampleRunner title="Refresh Rows" name="refresh-rows" type="mixed" options={ "enterprise": true, "exampleHeight": 550, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Refresh Rows" name="refresh-rows"  exampleHeight=550 /%}
 
 ## Refresh Everything
 
@@ -72,7 +72,7 @@ This example shows the Refresh Everything strategy. Note the following:
 * The detail grid title 'Nora Thomas 24 calls' updates with the new call count, as the refresh results in the template getting reset.
 {% /if %}
 
-{% gridExampleRunner title="Refresh Everything" name="refresh-everything" type="mixed" options={ "enterprise": true, "exampleHeight": 550, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Refresh Everything" name="refresh-everything"  exampleHeight=550 /%}
 
 ## Refresh Nothing
 
@@ -87,4 +87,4 @@ This example shows the Refresh Nothing strategy. Note the following:
 * The Detail Grid's title remains unchanged.
 {% /if %}
 
-{% gridExampleRunner title="Refresh Nothing" name="refresh-nothing" type="mixed" options={ "enterprise": true, "exampleHeight": 550, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Refresh Nothing" name="refresh-nothing"  exampleHeight=550 /%}

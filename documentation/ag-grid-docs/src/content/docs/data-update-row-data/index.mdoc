@@ -6,11 +6,11 @@ Update the Row Data inside the grid by updating the `rowData` grid property or b
 
 The example below shows the data with two sets of data. Clicking the buttons toggles between the data sets. Some rows are common between the dataset, however if any row is selected (by clicking the row), the selection is lost between row updates.
 
-{% gridExampleRunner title="Simple Row Data" name="simple-row-data" type="generated" options={ "modules": ["clientside"] } /%}
+{% gridExampleRunner title="Simple Row Data" name="simple-row-data" /%}
 
 The example below is identical to the above except [Row IDs](./row-ids/) are provided via the `getRowId()` callback. This results in Row Selection being maintained across Row Data changes (assuming the Row exists in both sets) and the HTML is not redrawn from scratch, resulting in a Row Animation (`animateRows=true`) of the rows.
 
-{% gridExampleRunner title="Simple Row ID" name="simple-row-id" type="generated" options={ "modules": ["clientside"] } /%}
+{% gridExampleRunner title="Simple Row ID" name="simple-row-id" /%}
 
 Providing [Row IDs](./row-ids/) allows the grid to work optimally in a few areas which are outlined as follows:
 
@@ -48,7 +48,7 @@ Note the following:
 
 (Note: the example uses the Enterprise-only features [Row Grouping](./grouping/), [Range Selection](./range-selection/) and [Status Bar](./status-bar/).)
 
-{% gridExampleRunner title="Simple Immutable Store" name="simple-immutable-store" type="mixed" options={ "enterprise": true, "exampleHeight": 540, "modules": ["clientside", "rowgrouping", "statusbar", "range"] } /%}
+{% gridExampleRunner title="Simple Immutable Store" name="simple-immutable-store"  exampleHeight=540 /%}
 
 ## How It Works
 
@@ -75,7 +75,7 @@ Below is a dataset with over 11,000 rows with Row Grouping and Aggregation over 
 * Selecting the Update button updates a range of the data.
 * Note that all grid state (row and range selections, filters, sorting etc.) remain after updates are applied.
 
-{% gridExampleRunner title="Complex Immutable Store" name="complex-immutable-store" type="mixed" options={ "enterprise": true, "exampleHeight": 590, "modules": ["clientside", "rowgrouping"] } /%}
+{% gridExampleRunner title="Complex Immutable Store" name="complex-immutable-store"  exampleHeight=590 /%}
 
 ## Comparison to Transaction Updates
 

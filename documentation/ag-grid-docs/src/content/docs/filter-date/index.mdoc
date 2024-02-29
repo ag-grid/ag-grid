@@ -32,7 +32,7 @@ The example below shows the Date Filter in action:
   * Be highlighted with a red border (default theme) or other theme-appropriate highlight.
 * the `inRangeFloatingFilterDateFormat` property has been set to define a custom date format, this is only shown in the floating filter panel when an in-range filter has been applied.
 
-{% gridExampleRunner title="Date Picker" name="date-filter" type="generated" options={ "exampleHeight": 520 } /%}
+{% gridExampleRunner title="Date Picker" name="date-filter"  exampleHeight=520 /%}
 
 ## Configuration
 
@@ -49,7 +49,7 @@ The example below demonstrates configuring date range filtering in the Date Filt
 * Together, `minValidDate` and `maxValidDate` restrict the selectable date range.
 * Any manually entered or selected dates outside the valid range will be invalid.
 
-{% gridExampleRunner title="Setting Date Range For Filter" name="range-for-date-filter" type="generated" options={ "exampleHeight": 520 } /%}
+{% gridExampleRunner title="Setting Date Range For Filter" name="range-for-date-filter"  exampleHeight=520 /%}
 
 ## Filter Comparator
 
@@ -197,7 +197,7 @@ You can provide a Date Selection Component to replace the default.
 
 The example below shows how to register a custom date component that contains an extra floating calendar picker rendered from the filter field. The problem with this approach is that we have no control over third party components and therefore no way to implement a `preventDefault` when the user clicks on the Calendar Picker (for more info see [Custom Floating Filter Example](./component-floating-filter/#example-custom-floating-filter)). Our way of fixing this problem is to add the `ag-custom-component-popup` class to the floating calendar.
 
-{% gridExampleRunner title="Custom Date Component" name="custom-date" type="mixed" /%}
+{% gridExampleRunner title="Custom Date Component" name="custom-date" /%}
 
 {% includeMarkdoc file="filter-date/_component-interface-javascript.mdoc" /%}
 {% includeMarkdoc file="filter-date/_component-interface-angular.mdoc" /%}
@@ -233,7 +233,7 @@ In the following example you can filter by date and see how blank values are inc
 * Column **Date** has both `null` and `undefined` values resulting in blank cells.
 * Toggle the controls on the top to see how `includeBlanksInEquals`, `includeBlanksInLessThan`, `includeBlanksInGreaterThan` and `includeBlanksInRange` impact the search result.
 
-{% gridExampleRunner title="Date Null Filtering" name="date-null-filtering" type="typescript" options={ "exampleHeight": 310 } /%}
+{% gridExampleRunner title="Date Null Filtering" name="date-null-filtering" type="typescript" exampleHeight=310 /%}
 
 ## Data Updates
 

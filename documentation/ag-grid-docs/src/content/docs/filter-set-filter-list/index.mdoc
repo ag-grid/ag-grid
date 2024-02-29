@@ -39,7 +39,7 @@ The following example demonstrates sorting Set Filter values using a comparator.
 * The **Age (no Comparator)** filter values are sorted using the default string order: `1, 10, 100...`
 * The **Age (with Comparator)** filter has a custom Comparator supplied in the `filterParams` that sorts the ages by numeric value: `1, 2, 3...`
 
-{% gridExampleRunner title="Sorting Filter Lists" name="sorting-set-filter-values" type="generated" options={ "enterprise": true, "exampleHeight": 720, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] } /%}
+{% gridExampleRunner title="Sorting Filter Lists" name="sorting-set-filter-values"  exampleHeight=720 /%}
 
 ## Formatting Values
 
@@ -87,7 +87,7 @@ The following example shows how Set Filter values are formatted using a Value Fo
 * **With Value Formatter** has the same Value Formatter supplied to the Column and Set Filter. The Set Filter is supplied the value formatter through `filterParams.valueFormatter = countryValueFormatter`.
 * Click **Print Filter Model** with a filter applied and note the logged Filter Model (dev console) has not been modified.
 
-{% gridExampleRunner title="Filter List Value Formatters" name="filter-list-value-formatter" type="generated" options={ "enterprise": true, "exampleHeight": 745, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] } /%}
+{% gridExampleRunner title="Filter List Value Formatters" name="filter-list-value-formatter"  exampleHeight=745 /%}
 
 ### Cell Renderer
 
@@ -126,7 +126,7 @@ The following example shows how Set Filter values are rendered using a Cell Rend
 * **With Cell Renderer** uses the same Cell Renderer to format the cells and filter values. The Set Filter is supplied the Value Formatter using `filterParams.cellRenderer = countryCellRenderer`.
 * Click **Print Filter Model** with a filter applied and note the logged filter model (dev console) has not been modified.
 
-{% gridExampleRunner title="Filter List Cell Renderers" name="filter-list-cell-renderer" type="generated" options={ "enterprise": true, "exampleHeight": 745, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] } /%}
+{% gridExampleRunner title="Filter List Cell Renderers" name="filter-list-cell-renderer"  exampleHeight=745 /%}
 
 ## Supplying Filter Values
 
@@ -168,7 +168,7 @@ The following example demonstrates providing filter values using `filterParams.v
 * The **Days (Values Provided)** set filter is given values using `filterParams.values`. As all days are supplied the filter list also contains `'Saturday'` and `'Sunday'`.
 * As the **Days (Values Provided)** filter values are provided in the correct order, the default filter list sorting is turned off using: `filterParams.suppressSorting=true`.
 
-{% gridExampleRunner title="Providing Filter Values" name="providing-filter-values" type="generated" options={ "enterprise": true, "exampleHeight": 720, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] } /%}
+{% gridExampleRunner title="Providing Filter Values" name="providing-filter-values"  exampleHeight=720 /%}
 
 ### Asynchronous Values
 
@@ -213,7 +213,7 @@ The following example demonstrates loading set filter values asynchronously. Not
 * Opening the set filter shows a loading message before the values are set. See the [Localisation](./localisation/) section for details on how to change this message.
 * The callback is only invoked the first time the filter is opened. The next time the filter is opened the values are not loaded again.
 
-{% gridExampleRunner title="Callback/Async" name="callback-async" type="generated" options={ "enterprise": true, "exampleHeight": 510, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] } /%}
+{% gridExampleRunner title="Callback/Async" name="callback-async"  exampleHeight=510 /%}
 
 ### Refreshing Values
 
@@ -259,7 +259,7 @@ The following example demonstrates refreshing values. Note the following:
 * If you select any of the other options, that selection will be lost when you change to different values.
 * A filter is re-applied after values have been refreshed.
 
-{% gridExampleRunner title="Refreshing Values" name="refreshing-values" type="generated" options={ "enterprise": true, "exampleHeight": 755, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] } /%}
+{% gridExampleRunner title="Refreshing Values" name="refreshing-values"  exampleHeight=755 /%}
 
 ## Enabling Value Case-Sensitivity
 
@@ -292,7 +292,7 @@ The following example demonstrates the difference in behaviour between `caseSens
 * The case sensitive column's Filter List has 21 distinct values, although there are only seven distinct colours ignoring case.
   * Typing `black` into the Mini Filter will match only `black`, but not `Black` or `BLACK`.
 
-{% gridExampleRunner title="Enabling SetFilter Case-Sensitivity" name="case-sensitive-set-filter-list" type="mixed" options={ "enterprise": true, "exampleHeight": 720, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] } /%}
+{% gridExampleRunner title="Enabling SetFilter Case-Sensitivity" name="case-sensitive-set-filter-list"  exampleHeight=720 /%}
 
 If case differences need to be normalised to remove redundant values from the data-source for filtering, a [Value Formatter](#value-formatter) should be used.
 
@@ -347,7 +347,7 @@ The following example shows the Key Creator handling complex objects for the Set
 * Click **Print Filter Model** with a filter active on **Country (Complex Object as Value)** and note the logged Filter Model (dev console) uses the `code` property from the complex object.
 * Click **Print Filter Model** with a filter active on **Country (Complex Object as String)** and note the logged Filter Model (dev console) uses the `name` property from the complex object.
 
-{% gridExampleRunner title="Complex Objects" name="complex-objects" type="generated" options={ "enterprise": true, "exampleHeight": 720, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] } /%}
+{% gridExampleRunner title="Complex Objects" name="complex-objects"  exampleHeight=720 /%}
 
 ## Multiple Values Per Cell
 
@@ -362,7 +362,7 @@ The example below demonstrates this in action. Note the following:
 * Selecting values in the Set Filter will show rows where the data for that row contains **any** of the selected values.
 * The first row contains empty arrays for the **Animals (array)** and **Animals (objects)** columns, and an empty string for the **Animals (string)** column which is converted to an empty array. These all appear in the Filter List as `(Blanks)`.
 
-{% gridExampleRunner title="Multiple Values" name="multiple-values" type="generated" options={ "enterprise": true, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] } /%}
+{% gridExampleRunner title="Multiple Values" name="multiple-values" /%}
 
 ## Default State
 
@@ -392,7 +392,7 @@ The following example demonstrates different default states. Note the following:
 * The Country column has nothing selected by default, as `defaultToNothingSelected = true`.
 * When the Set Filter for the Country column is opened, the grid is not filtered until at least one value has been selected.
 
-{% gridExampleRunner title="Default State" name="default-state" type="generated" options={ "enterprise": true, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] } /%}
+{% gridExampleRunner title="Default State" name="default-state" /%}
 
 ## Filter Value Tooltips
 
@@ -421,7 +421,7 @@ The following example demonstrates tooltips in the Set Filter. Note the followin
 * **Col B** has Set Filter Tooltips enabled via `filterParams.showTooltips=true`.
 * **Col C** has Set Filter Tooltips enabled and is supplied a Custom Tooltip Component.
 
-{% gridExampleRunner title="Filter Value Tooltips" name="filter-value-tooltips" type="generated" options={ "enterprise": true, "exampleHeight": 500, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] } /%}
+{% gridExampleRunner title="Filter Value Tooltips" name="filter-value-tooltips"  exampleHeight=500 /%}
 
 ## Next Up
 

@@ -45,7 +45,7 @@ The following example demonstrates when the described events occur by writing to
 
 * Close the chart dialog to see the "Destroyed chart with ID id-xxxxxxxxxxx" message logged.
 
-{% gridExampleRunner title="Events" name="events" type="generated" options={ "enterprise": true, "modules": ["clientside", "menu", "charts-enterprise"] } /%}
+{% gridExampleRunner title="Events" name="events" /%}
 
 ## Event Driven Chart Updates
 
@@ -56,7 +56,7 @@ updated using the following Grid API method:
 
 Try changing the chart cell range in the grid and notice the subtitle is updated with chart range info.
 
-{% gridExampleRunner title="Event Driven Chart Updates" name="event-driven-chart-updates" type="generated" options={ "enterprise": true, "modules": ["clientside", "menu", "charts-enterprise"], "exampleHeight": 710 } /%}
+{% gridExampleRunner title="Event Driven Chart Updates" name="event-driven-chart-updates"  exampleHeight=710 /%}
 
 ## Standalone Chart Events
 
@@ -89,7 +89,7 @@ The example below demonstrates Standalone Charts Events subscription:
 * Click on the bars in the series and observe that the `seriesNodeClick` listener emits a console message.
 * Click on a legend item and observe that the `legendItemClick` listener emits a console message.
 
-{% gridExampleRunner title="Subscribing to Standalone Charts Events" name="standalone-events" type="generated" options={ "enterprise": true, "modules": ["clientside", "menu", "charts-enterprise"] } /%}
+{% gridExampleRunner title="Subscribing to Standalone Charts Events" name="standalone-events" /%}
 
 ## Next Up
 

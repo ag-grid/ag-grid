@@ -74,7 +74,7 @@ If the width and / or height change after the grid is initialised, the grid will
 
 The example below shows setting the grid size and then changing it as the user selects the buttons.
 
-{% gridExampleRunner title="Width & Height" name="width-and-height" type="mixed" /%}
+{% gridExampleRunner title="Width & Height" name="width-and-height" /%}
 
 ## DOM Layout
 
@@ -118,7 +118,7 @@ The following test is best viewed if you open it in a new tab, so it is obvious 
 Note that if you use the example inlined the scroll bars shown are for the containing `iframe`, not the grid.
 {% /note %}
 
-{% gridExampleRunner title="Auto Height" name="auto-height" type="generated" options={ "enterprise": true, "exampleHeight": 660, "noStyle": 1, "myGridReference": 1, "modules": ["clientside", "rowgrouping", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Auto Height" name="auto-height"  exampleHeight=660 /%}
 
 ## Min Height with Auto Height
 
@@ -154,7 +154,7 @@ Open the example below in a new tab and resize the window to see how the grid in
 
 For more information on how to work with flexbox, please visit: [CSS Flexbox](https://www.w3schools.com/css/css3_flexbox.asp)
 
-{% gridExampleRunner title="Grid Inside a Flexbox Container" name="flexbox" type="generated" /%}
+{% gridExampleRunner title="Grid Inside a Flexbox Container" name="flexbox" /%}
 
 ### Inside CSS Grid Container
 
@@ -164,13 +164,13 @@ Open the example below in a new tab and resize the window to see how the grid in
 
 For more information on how to work with the Grid Layout, please visit: [CSS Grid Layout](https://www.w3schools.com/css/css_grid.asp)
 
-{% gridExampleRunner title="Grid Inside a CSS Grid Container" name="css-grid" type="generated" /%}
+{% gridExampleRunner title="Grid Inside a CSS Grid Container" name="css-grid" /%}
 
 ### Dynamic Resizing with Horizontal Scroll
 
 The quickest way to achieve a responsive grid is to set the grid's containing div to a percentage. With this simple change the grid will automatically resize based on the div size and columns that can't fit in the viewport will simply be hidden and available to the right via the scrollbar.
 
-{% gridExampleRunner title="Dynamic horizontal resizing with scroll" name="example" type="generated" /%}
+{% gridExampleRunner title="Dynamic horizontal resizing with scroll" name="example" /%}
 
 ### Dynamic Resizing without Horizontal Scroll
 
@@ -180,10 +180,10 @@ To achieve this determine the width of the grid and work out how many columns co
 
 This example is best seen when opened in a new tab - then change the horizontal size of the browser and watch as columns hide/show based on the current grid size.
 
-{% gridExampleRunner title="Dynamic horizontal resizing without scroll" name="example1" type="generated" /%}
+{% gridExampleRunner title="Dynamic horizontal resizing without scroll" name="example1" /%}
 
 ### Dynamic Vertical Resizing
 
 Sometimes the vertical height of the grid is greater than the number of rows you have it in.  You can dynamically set the row heights to fill the available height as the following example shows:
 
-{% gridExampleRunner title="Dynamic vertical resizing" name="example2" type="generated" /%}
+{% gridExampleRunner title="Dynamic vertical resizing" name="example2" /%}

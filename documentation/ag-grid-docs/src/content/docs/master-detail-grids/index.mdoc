@@ -24,7 +24,7 @@ The example below shows configuring a Detail Grid with some additional Grid Opti
 * The Detail Grid Options is provided with a Default Column Definition (`defaultColDef`) that makes all columns use Flex for sizing.
 * The first Column Definition is configured to use Checkbox Selection.
 
-{% gridExampleRunner title="Detail Grid Options" name="grid-options" type="generated" options={ "enterprise": true, "modules": ["clientside", "masterdetail", "menu", "columnpanel", "range"] } /%}
+{% gridExampleRunner title="Detail Grid Options" name="grid-options" /%}
 
 ## Providing Rows
 
@@ -42,7 +42,7 @@ The following snippet illustrates this using a simple `setTimeout()` function to
 
 Below shows an example using `setTimeout()` to simulate lazying loading of data in the detail.
 
-{% gridExampleRunner title="Lazy Load Detail Rows" name="lazy-load-rows" type="generated" options={ "enterprise": true, "exampleHeight": 550,  "modules": ["clientside", "masterdetail", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Lazy Load Detail Rows" name="lazy-load-rows"  exampleHeight=550 /%}
 
 ## Dynamic Definitions
 
@@ -55,7 +55,7 @@ Below shows an example of this, where the Detail Grids are configured with diffe
 * Expanding rows 'Mila Smith' or 'Harper Johnson' will use a detail grid with the columns {Call ID, Number}.
 * Expanding all other rows will use a detail grid with the columns {Call ID, Direction, Duration, Switch Code}.
 
-{% gridExampleRunner title="Dynamic Params" name="dynamic-params" type="generated" options={ "enterprise": true, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Dynamic Params" name="dynamic-params" /%}
 
 {% includeMarkdoc file="master-detail-grids/_changing-the-template.mdoc" /%}
 
@@ -95,7 +95,7 @@ The following example shows flashing cells on the detail grids by using the Grid
 * Button 'Flash Mila Smith' uses `getDetailGridInfo` to get access to the Grid API for the Mila Smith Detail Grid.
 * Button 'Flash All' uses `forEachDetailGridInfo` to access all existing Detail Grids.
 
-{% gridExampleRunner title="Detail Grid API" name="detail-grid-api" type="generated" options={ "enterprise": true, "exampleHeight": 535, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Detail Grid API" name="detail-grid-api"  exampleHeight=535 /%}
 
 ## Detail Grid Lifecycle
 
@@ -112,7 +112,7 @@ The example below demonstrates keeping Detail Rows. Note the following:
 * All the Detail Grids allow moving and sorting columns. If you change the state of a Detail Grid (e.g. by sorting a Detail Grid), that state will be kept if you close the Parent Row and then open the Parent Row again.
 * The maximum number of Detail Rows kept is two. If you open three Detail Rows and apply sorting on each Detail Grid, then close all three Detail Rows (so none are showing) and then open all three again, only two of them will have the sort state kept.
 
-{% gridExampleRunner title="Keep Detail Rows" name="keep-detail-rows" type="generated" options={ "enterprise": true, "exampleHeight": 565, "modules": ["clientside", "masterdetail", "menu", "columnpanel", "filterpanel", "setfilter"] } /%}
+{% gridExampleRunner title="Keep Detail Rows" name="keep-detail-rows"  exampleHeight=565 /%}
 
 ## Detail Parameters
 

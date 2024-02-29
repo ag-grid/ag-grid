@@ -59,7 +59,7 @@ The example below shows flex in action. Things to note are as follows:
 * Column B has `flex: 2`, `minWidth: 200` and `maxWidth: 350`, so it should be constrained to this max/min width.
 * Column C has `flex: 1` so should be half the size of column B, unless column B is being constrained by its `minWidth`/`maxWidth` rules, in which case it should take up the remaining available space.
 
-{% gridExampleRunner title="Column Flex" name="flex-columns" type="generated" /%}
+{% gridExampleRunner title="Column Flex" name="flex-columns" /%}
 
 ## Auto-Sizing Columns
 
@@ -72,7 +72,7 @@ Columns can be auto-sized in two main ways:
 
 Columns can be resized to fit the width of the grid. The columns will scale (growing or shrinking) to fit the available width.
 
-{% gridExampleRunner title="Auto-Size Columns to Fit Grid" name="column-sizing-to-fit" type="generated" /%}
+{% gridExampleRunner title="Auto-Size Columns to Fit Grid" name="column-sizing-to-fit" /%}
 
 Provide the grid option `autoSizeStrategy` to size the columns to fit when the grid is loaded. This can either be set to size to the actual grid width (`type = 'fitGridWidth'`), or to a fixed width that is provided (`type = 'fitProvidedWidth'`).
 
@@ -138,7 +138,7 @@ then the calculation is as follows:
 Columns can be resized to fit the contents of the cells. The example below demonstrates the use of `autoSizeStrategy` to size the columns by default. The example
 button can restore this sizing by using the API if the columns are first resized by dragging the resize handle.
 
-{% gridExampleRunner title="Auto-Size Columns to Fit Cell Contents" name="column-resizing" type="generated" /%}
+{% gridExampleRunner title="Auto-Size Columns to Fit Cell Contents" name="column-resizing" /%}
 
 Provide the grid option `autoSizeStrategy` with `type = 'fitCellContents'` to size the columns to fit their content when the first data is rendered in the grid.
 
@@ -181,7 +181,7 @@ In the example below, note the following:
 * Grid property `colResizeDefault='shift'` so default column resizing will behave as if {% kbd "⇧ Shift" /%} key is pressed.
 * Holding down {% kbd "⇧ Shift" /%} will then resize the normal default way.
 
-{% gridExampleRunner title="Shift Resizing" name="shift-resizing" type="generated" /%}
+{% gridExampleRunner title="Shift Resizing" name="shift-resizing" /%}
 
 ## Resizing Groups
 
@@ -191,4 +191,4 @@ When you resize a group, it will distribute the extra room to all columns in the
 * The group 'Only Year Resizes' will resize only year, because the other columns have `resizable=false`.
 * The group 'Nothing Resizes' cannot be resized at all because all the columns in the groups have `resizable=false`.
 
-{% gridExampleRunner title="Resizing Groups" name="resizing-groups" type="generated" /%}
+{% gridExampleRunner title="Resizing Groups" name="resizing-groups" /%}

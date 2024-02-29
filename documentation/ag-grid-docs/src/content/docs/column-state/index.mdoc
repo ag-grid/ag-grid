@@ -50,7 +50,7 @@ The example below demonstrates saving and restoring column state. Try the follow
 1. Click 'Restore State' and the column's state is set back to where it was when you clicked 'Save State'.
 1. Click 'Reset State' and the state will go back to what was defined in the Column Definitions.
 
-{% gridExampleRunner title="Save and Apply State" name="save-apply-state" type="generated" options={ "enterprise": true, "modules": ["clientside", "rowgrouping", "columnpanel"] } /%}
+{% gridExampleRunner title="Save and Apply State" name="save-apply-state" /%}
 
 ## Column State Interface
 
@@ -132,7 +132,7 @@ api.applyColumnState({
 
 The example below shows some fine grained access to Column State.
 
-{% gridExampleRunner title="Fine Grained State" name="fine-grained-state" type="mixed" options={ "enterprise": true, "modules": ["clientside", "rowgrouping", "columnpanel"] } /%}
+{% gridExampleRunner title="Fine Grained State" name="fine-grained-state" /%}
 
 ### Saving Partial State
 
@@ -146,7 +146,7 @@ are not impacted.
 Likewise when saving and restoring visibility and order, only visibility and order will be impacted when
 re-applying the state.
 
-{% gridExampleRunner title="Selective State" name="selective-state" type="generated" options={ "enterprise": true, "modules": ["clientside", "rowgrouping", "columnpanel"] } /%}
+{% gridExampleRunner title="Selective State" name="selective-state" /%}
 
 ## Considerations
 
@@ -185,7 +185,7 @@ The example below demonstrates events getting raised based on Column State chang
 The example logs event information to the console, so best open the example in
 a new tab and observe the dev console.
 
-{% gridExampleRunner title="Column Events" name="column-events" type="generated" options={ "enterprise": true, "modules": ["clientside", "rowgrouping"] } /%}
+{% gridExampleRunner title="Column Events" name="column-events" /%}
 
 ## Column Group State
 
@@ -204,4 +204,4 @@ The example below demonstrates getting and setting Column Group State. Note the 
 * Clicking 'Reset State' will reset the column state to match the Column Definitions,
   i.e. all Column Groups will be closed.
 
-{% gridExampleRunner title="Column Group State" name="column-group-state" type="generated" options={ "enterprise": true, "modules": ["clientside", "rowgrouping"] } /%}
+{% gridExampleRunner title="Column Group State" name="column-group-state" /%}

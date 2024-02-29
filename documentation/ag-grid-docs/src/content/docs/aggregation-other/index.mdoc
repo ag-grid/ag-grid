@@ -32,7 +32,7 @@ The following example demonstrates overriding the default agg function. Note the
 * The **Silver** column is configured to use a custom aggregation function as its default. Drag the **Silver** column to the **Values** section and note that it is assigned the function `mySum`.
 * Dragging the **Bronze** column will use `sum` as the default.
 
-{% gridExampleRunner title="Default Aggregation Function" name="default-aggregation-function" type="generated" options={ "enterprise": true, "exampleHeight": 655, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel"] } /%}
+{% gridExampleRunner title="Default Aggregation Function" name="default-aggregation-function"  exampleHeight=655 /%}
 
 {% note %}
 Note that unlike `aggFunc` you can't pass a custom aggregation function directly to `defaultAggFunc`,
@@ -62,7 +62,7 @@ The following example demonstrates restricting the aggregation functions. Note t
 * The **Gold** column is configured with `allowedAggFuncs` set to `['sum', 'min', 'max']` and only displays these functions in the drop-down list in the **Values** section column to the of the Columns Tool Panel.
 * The **Silver** column shows all available agg functions as it hasn't been restricted.
 
-{% gridExampleRunner title="Restricting Aggregation Functions" name="restricting-aggregation-functions" type="generated" options={ "enterprise": true, "exampleHeight": 655, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel"] } /%}
+{% gridExampleRunner title="Restricting Aggregation Functions" name="restricting-aggregation-functions"  exampleHeight=655 /%}
 
 ## Aggregation API
 

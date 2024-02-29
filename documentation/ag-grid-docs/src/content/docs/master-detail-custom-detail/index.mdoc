@@ -25,7 +25,7 @@ To get refresh working smoothly on a custom Detail Component set the grid option
 
 The following examples demonstrate minimalist custom Detail Cell Renderer. Note that where a Detail Grid would normally appear, only the message "My Custom Detail" is shown.
 
-{% gridExampleRunner title="Simple Detail Cell Renderer" name="simple-custom-detail" type="generated" options={ "enterprise": true, "exampleHeight": 545, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Simple Detail Cell Renderer" name="simple-custom-detail"  exampleHeight=545 /%}
 
 ## Custom Detail With Form
 
@@ -33,13 +33,13 @@ It is not mandatory to display a grid inside the detail section. As you are prov
 
 This example shows a custom Detail Cell Renderer that uses a form rather than a grid.
 
-{% gridExampleRunner title="Custom Detail Cell Renderer with Form" name="custom-detail-with-form" type="generated" options={ "enterprise": true, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Custom Detail Cell Renderer with Form" name="custom-detail-with-form" /%}
 
 ## Custom Detail With Grid
 
 It is possible to provide a Custom Detail Grid that does a similar job to the default Detail Cell Renderer. This example demonstrates displaying a custom grid as the detail.
 
-{% gridExampleRunner title="Custom Detail Cell Renderer with Grid" name="custom-detail-with-grid" type="mixed" options={ "enterprise": true, "exampleHeight": 545, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Custom Detail Cell Renderer with Grid" name="custom-detail-with-grid"  exampleHeight=545 /%}
 
 ## Register Detail Grid
 
@@ -87,7 +87,7 @@ If `reactiveCustomComponents` is not enabled, Detail Cell Renderers will be dest
 The example below demonstrates Detail Cell Renderers refreshing when `reactiveCustomComponents` is enabled.
 {% /if %}
 
-{% gridExampleRunner title="Custom Detail with Refresh" name="custom-detail-with-refresh" type="mixed" options={ "enterprise": true, "exampleHeight": 545, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Custom Detail with Refresh" name="custom-detail-with-refresh"  exampleHeight=545 /%}
 
 ## Keyboard Navigation
 
@@ -106,4 +106,4 @@ The following example shows an implementation of keyboard navigation in a custom
 This example is illustrative of the main concepts, but the actual implementation of custom keyboard navigation will vary based on the specific custom detail panel.
 {% /note %}
 
-{% gridExampleRunner title="Custom Detail Cell Renderer Keyboard Navigation" name="custom-detail-keyboard-navigation" type="generated" options={ "enterprise": true, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Custom Detail Cell Renderer Keyboard Navigation" name="custom-detail-keyboard-navigation" /%}
