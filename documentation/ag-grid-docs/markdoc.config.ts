@@ -95,7 +95,7 @@ export default defineMarkdocConfig({
                 title: { type: String, required: true },
                 name: { type: String, required: true },
                 type: { type: String },
-                options: { type: Object },
+                exampleHeight: { type: Number },
             },
         },
         apiDocumentation: {
