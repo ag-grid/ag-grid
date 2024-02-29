@@ -4,18 +4,21 @@
     display: flex;
     gap: var(--layout-gap);
     flex-wrap: wrap;
+    width: 100%;
     max-width: min(calc(100% - var(--layout-horizontal-margins) * 2), var(--layout-max-width));
     margin-right: auto;
     margin-left: auto;
 }
 
 .layout-page-max-width {
+    width: 100%;
     max-width: min(calc(100% - var(--layout-horizontal-margins) * 2), var(--layout-max-width));
     margin-right: auto;
     margin-left: auto;
 }
 
 .layout-max-width-small {
+    width: 100%;
     max-width: var(--layout-max-width-small);
     padding-left: var(--layout-horizontal-margins);
     padding-right: var(--layout-horizontal-margins);
