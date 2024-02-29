@@ -15,6 +15,8 @@
     color: var(--ag-header-foreground-color);
   }
 
+  /* PORTED
+
   @include ag.text-input {
     min-height: calc(var(--ag-grid-size) * 4);
     border-radius: var(--ag-border-radius);
@@ -25,6 +27,8 @@
       )
     );
   }
+
+  */
 
   .ag-picker-field-wrapper {
     min-height: calc(var(--ag-grid-size) * 4);

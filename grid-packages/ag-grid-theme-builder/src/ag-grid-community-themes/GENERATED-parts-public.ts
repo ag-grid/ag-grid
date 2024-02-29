@@ -1272,3 +1272,24 @@ export type ParamTypes = {
 export type Param = keyof ParamTypes;
 
 export const allParts = [core, colors, borders, quartzIcons];
+
+if (import.meta.hot) {
+  import.meta.hot.accept((newModule) => {
+    if (newModule) {
+      const oldParts = newModule.allParts.map((p: Part) => p.partId).join(', ');
+      const newParts = allParts.map((p) => p.partId).join(', ');
+      if (oldParts !== newParts) {
+        console.log(`Reloading page as parts changed from ${oldParts} to ${newParts}`);
+        import.meta.hot?.invalidate();
+      } else {
+        console.log(`Hot reloading parts ${oldParts}`);
+        for (let i = 0; i < allParts.length; i++) {
+          Object.assign(allParts[i], newModule.allParts[i]);
+        }
+        Object.assign(newModule.allParts, allParts);
+        console.log('core in old after update', String(core.css?.[0]).split('\n')[1]);
+        (window as any).handlePartsCssChange?.();
+      }
+    }
+  });
+}

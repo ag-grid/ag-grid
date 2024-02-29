@@ -2,6 +2,7 @@ import { CssBaseline, CssVarsProvider, extendTheme } from '@mui/joy';
 import { Provider, createStore } from 'jotai';
 import { useMemo } from 'react';
 import { App } from './components/App';
+import { rerenderTheme } from './model/rendered-theme';
 
 const theme = extendTheme({
   components: {
@@ -35,6 +36,11 @@ const theme = extendTheme({
 
 export const ThemeBuilder = () => {
   const store = useMemo(createStore, []);
+
+  (window as any).handlePartsCssChange = () => {
+    rerenderTheme(store);
+  };
+
   // const { isDark } = useAtomValue(renderedThemeAtom);
   const isDark = false; // TODO restore
   return (

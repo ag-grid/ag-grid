@@ -1,3 +1,4 @@
+@import './reset.css';
 @import './group.css';
 @import './grid-layout.css';
 @import './grid-borders.css';
@@ -15,7 +16,6 @@
 @import './panel.css';
 @import './pinned-columns.css';
 @import './print.css';
-@import './reset.css';
 @import './rich-select.css';
 @import './root.css';
 @import './sidebar.css';
