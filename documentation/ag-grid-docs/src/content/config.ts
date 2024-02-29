@@ -70,6 +70,9 @@ const menu = defineCollection({
         header: z.object({
             items: z.array(level1MenuItem),
         }),
+        api: z.object({
+            sections: z.array(sectionItem),
+        }),
         main: z.object({
             sections: z.array(sectionItem),
         }),
