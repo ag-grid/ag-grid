@@ -1,9 +1,9 @@
 {
     "major_article": {
-        "title": "Integrated Charts - Community vs. Enterprise",
+        "title": "Enhancing AG Grid Enterprise with AG Charts Enterprise",
         "description": "Integrated Charting has been enhanced in v31.1 so that it now also contains all of the features & series types available in AG Charts Enterprise, our new enterprise-grade charting library. Read this blog to learn more about the differences between Integrated Community & Enterprise Charts",
-        "image": "https://blog.ag-grid.com/content/images/size/w1000/2024/02/Integrated-Community-Charts-Banner.png",
-        "link": "https://blog.ag-grid.com/integrated-charts-community-vs-enterprise/",
+        "image": "https://blog.ag-grid.com/content/images/size/w1000/2024/02/enhancing-ag-grid-enterprise-with-ag-charts-enterprise.png",
+        "link": "https://blog.ag-grid.com/enhancing-ag-grid-enterprise-with-ag-charts-enterprise/",
         "type": "Blog",
         "author": "James Swinton-Bland"
     },
