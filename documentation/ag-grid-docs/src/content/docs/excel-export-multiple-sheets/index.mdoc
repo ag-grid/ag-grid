@@ -30,7 +30,7 @@ Note the following:
 * The header is exported on each page, so each page will contain 101 records (including the header).
 * Because each export did not have a specified `sheetName`, they will be named `ag-grid`, `ag-grid_1`, `ag-grid_2` and so on.
 
-{% gridExampleRunner title="Excel Export - Multiple Sheets with Data Selection" name="excel-export-multiple-sheets-selected" type="generated" options={ "enterprise": true, "modules": ["clientside", "menu", "excel"]} /%}
+{% gridExampleRunner title="Excel Export - Multiple Sheets with Data Selection" name="excel-export-multiple-sheets-selected" /%}
 
 ## Using Data Filtering
 
@@ -41,7 +41,7 @@ Note the following:
 * The exported Excel file will contain one sheet for each sport result.
 * Each sheet was exported using the sport name as the name of the sheet.
 
-{% gridExampleRunner title="Excel Export - Multiple Sheets with Filtered Data" name="excel-export-multiple-sheets-by-filter" type="generated" options={ "enterprise": true, "modules": ["clientside", "menu", "excel", "setfilter"] } /%}
+{% gridExampleRunner title="Excel Export - Multiple Sheets with Filtered Data" name="excel-export-multiple-sheets-by-filter" /%}
 
 ## Multiple Grids to Multiple Sheets
 
@@ -53,7 +53,7 @@ Note the following:
 * The contents of the `Selected Athletes` grid will be exported to the `Selected Athletes` sheet.
 * Only the `onExcelExport` method is relevant to **Excel Export**
 
-{% gridExampleRunner title="Excel Export - Multiple Sheets with Multiple Grids" name="excel-export-multiple-sheets-multiple-grids" type="mixed" options={ "enterprise": true, "modules": ["clientside", "menu", "excel"] } /%}
+{% gridExampleRunner title="Excel Export - Multiple Sheets with Multiple Grids" name="excel-export-multiple-sheets-multiple-grids" /%}
 
 ## API
 
