@@ -28,7 +28,7 @@ In the following example note the following:
 * The Side Bar is displayed with Tool Panels Columns and Filters.
 * The Columns panel is displayed by default.
 
-{% gridExampleRunner title="Boolean Configuration" name="boolean-configuration" type="generated" options={ "enterprise": true, "modules": ["clientside", "columnpanel", "filterpanel", "setfilter"] } /%}
+{% gridExampleRunner title="Boolean Configuration" name="boolean-configuration" /%}
 
 ### String Configuration
 
@@ -39,7 +39,7 @@ The example below demonstrates using the string configuration. Note the followin
 * The grid property `sideBar` is set to `'filters'`.
 * The Side Bar is displayed showing only the Filters panel.
 
-{% gridExampleRunner title="Side Bar - Only Filters" name="only-filters" type="generated" options={ "enterprise": true, "modules": ["clientside", "columnpanel", "filterpanel", "setfilter"]  } /%}
+{% gridExampleRunner title="Side Bar - Only Filters" name="only-filters" /%}
 
 ### SideBarDef Configuration
 
@@ -86,7 +86,7 @@ const gridOptions = {
 
 The snippet above is demonstrated in the following example:
 
-{% gridExampleRunner title="SideBarDef" name="sideBarDef" type="generated" options={ "enterprise": true, "modules": ["clientside", "columnpanel", "filterpanel", "setfilter"], "exampleHeight": 600 } /%}
+{% gridExampleRunner title="SideBarDef" name="sideBarDef"  exampleHeight=600 /%}
 
 ## Configuration Shortcuts
 
@@ -192,7 +192,7 @@ const gridOptions = {
 
 If you are using the long form (providing a `SideBarDef` object) then it is possible to customise. The example below shows changing the label and icon for the columns and filters tab.
 
-{% gridExampleRunner title="Side Bar Fine Tuning" name="fine-tuning" type="generated" options={ "enterprise": true, "modules": ["clientside", "columnpanel", "filterpanel", "setfilter"]  } /%}
+{% gridExampleRunner title="Side Bar Fine Tuning" name="fine-tuning" /%}
 
 ## Providing Parameters to Tool Panels
 
@@ -234,7 +234,7 @@ The example below demonstrates different usages of the Tool Panel API methods. T
 * **Reset Buttons:** These reset the Tool Panel to a new configuration. Notice that [shortcuts](#configuration-shortcuts) are provided as configuration however `getSideBar()` returns back the long form.
 * **Position Buttons:** These change the position of the Side Bar relative to the grid.
 
-{% gridExampleRunner title="Side Bar API" name="api" type="generated" options={ "enterprise": true, "modules": ["clientside", "columnpanel", "filterpanel", "setfilter"], "exampleHeight": 630 } /%}
+{% gridExampleRunner title="Side Bar API" name="api"  exampleHeight=630 /%}
 
 ## Next Up
 
