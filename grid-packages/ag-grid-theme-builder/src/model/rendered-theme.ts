@@ -21,12 +21,6 @@ export const renderedThemeAtom = atom((get, set): Theme => {
     .filter((part) => get(part.enabledAtom))
     .map((part) => part.themePart);
 
-  console.log(
-    'core in render',
-    (themeParts[0] as any)._marker,
-    String(themeParts[0].css?.[0]).split('\n')[1],
-  );
-
   const theme = defineTheme(themeParts, paramValues);
 
   installTheme(theme);
