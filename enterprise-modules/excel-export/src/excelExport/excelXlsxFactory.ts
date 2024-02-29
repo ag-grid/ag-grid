@@ -56,7 +56,7 @@ export class ExcelXlsxFactory {
         registerStyles(styles, this.sheetNames.length);
 
         const sheetIndex = this.sheetNames.length - 1;
-        const name = `Table${sheetIndex + 1}`; // Assuming that there is only 1 table per sheet
+        const name = `table${sheetIndex + 1}`; // Assuming that there is only 1 table per sheet
         const { name: displayName } = config.tableSetup || {};
 
         const tableRowCount = worksheet.table.rows.length;
@@ -298,9 +298,26 @@ export class ExcelXlsxFactory {
 
     public static createWorksheetTableRel(currentRelationIndex: number) {
         const rs = relationshipsFactory.getTemplate([{
-            Id: 'rId1',
+            Id: `tableRelId${currentRelationIndex + 1}`,
             Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/table',
             Target: `../tables/table${currentRelationIndex + 1}.xml`
+        }]);
+
+        return createXmlPart(rs);
+    }
+
+    public static createWorksheetDrawingAndTableRel(
+        currentDrawRelationIndex: number,
+        currentTableRelationIndex: number
+    ) {
+        const rs = relationshipsFactory.getTemplate([{
+            Id: 'rId1',
+            Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing',
+            Target: `../drawings/drawing${currentDrawRelationIndex + 1}.xml`
+        }, {
+            Id: `tableRelId${currentTableRelationIndex + 1}`,
+            Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/table',
+            Target: `../tables/table${currentTableRelationIndex + 1}.xml`
         }]);
 
         return createXmlPart(rs);

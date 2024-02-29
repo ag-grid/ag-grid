@@ -18,9 +18,11 @@ import {
     ValueFormatterService,
     ValueParserService
 } from '@ag-grid-community/core';
+import {createXmlPart} from './assets/excelUtils';
 import { ExcelXlsxFactory } from './excelXlsxFactory';
 import { BaseCreator, Downloader, GridSerializer, RowType, ZipContainer } from "@ag-grid-community/csv-export";
 import { ExcelGridSerializingParams, ExcelSerializingSession, StyleLinkerInterface } from './excelSerializingSession';
+import relationshipsFactory from './files/ooxml/relationships';
 
 const createExcelXMLCoreFolderStructure = (): void => {
     ZipContainer.addFolders([
@@ -57,15 +59,24 @@ const createExcelXmlWorksheets = (data: string[]): void => {
     data.forEach((value, idx) => {
         ZipContainer.addFile(`xl/worksheets/sheet${idx + 1}.xml`, value, false);
 
-        if (ExcelXlsxFactory.worksheetDataTables.size && ExcelXlsxFactory.worksheetDataTables.get(idx)) {
-            createTableRelationsForSheet(idx, tableRelationCounter++);
-        }
+        const hasImages = ExcelXlsxFactory.images.size > 0 && ExcelXlsxFactory.worksheetImages.has(idx);
+        const hasTables = ExcelXlsxFactory.worksheetDataTables.size > 0 && ExcelXlsxFactory.worksheetDataTables.has(idx);
 
-        if (ExcelXlsxFactory.images.size && ExcelXlsxFactory.worksheetImages.get(idx)) {
-            createImageRelationsForSheet(idx, imageRelationCounter++);
-        }
+        if (hasImages && hasTables) {
+            createTableAndImageRelationsForSheet(
+                idx,
+                tableRelationCounter++,
+                imageRelationCounter++
+            );
+        } else {
+            if (hasTables) {
+                createTableRelationsForSheet(idx, tableRelationCounter++);
+            }
 
-        // TODO - Handle the case where spreadsheet contains both tables and images
+            if (hasImages) {
+                createImageRelationsForSheet(idx, imageRelationCounter++);
+            }
+        }
     });
 }
 
@@ -117,8 +128,8 @@ const createExcelFileForExcel = (data: string[], options: {
         author = 'AG Grid',
     } = options;
 
-    createExcelXmlTables();
     createExcelXMLCoreFolderStructure();
+    createExcelXmlTables();
     createExcelXmlWorksheets(data);
     createExcelXmlCoreSheets(fontSize, author, data.length);
 
@@ -181,6 +192,20 @@ const createTableRelationsForSheet = (sheetIndex: number, currentRelationIndex: 
     const worksheetRelFile = `xl/worksheets/_rels/sheet${sheetIndex + 1}.xml.rels`;
     ZipContainer.addFile(worksheetRelFile, ExcelXlsxFactory.createWorksheetTableRel(currentRelationIndex));
 };
+
+const createTableAndImageRelationsForSheet = (sheetIndex: number, currentTableRelationIndex: number, currentImageRelationIndex: number) => {
+    const drawingFolder = 'xl/drawings';
+    const drawingFileName = `${drawingFolder}/drawing${currentImageRelationIndex + 1}.xml`;
+    const relFileName = `${drawingFolder}/_rels/drawing${currentImageRelationIndex + 1}.xml.rels`;
+    const worksheetRelFile = `xl/worksheets/_rels/sheet${sheetIndex + 1}.xml.rels`;
+
+    ZipContainer.addFile(relFileName, ExcelXlsxFactory.createDrawingRel(sheetIndex));
+    ZipContainer.addFile(drawingFileName, ExcelXlsxFactory.createDrawing(sheetIndex));
+    ZipContainer.addFile(worksheetRelFile, ExcelXlsxFactory.createWorksheetDrawingAndTableRel(
+        currentTableRelationIndex,
+        currentImageRelationIndex
+    ));
+}
 
 @Bean('excelCreator')
 export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSession, ExcelExportParams> implements IExcelCreator {
