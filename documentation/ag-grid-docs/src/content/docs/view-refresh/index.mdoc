@@ -44,7 +44,7 @@ Below shows calling `api.refreshCells()` with different scenarios using a mixtur
 
 * The checkbox **Suppress Flash** impacts how the above three refreshes work. If checked, flashing will not occur on any cell.
 
-{% gridExampleRunner title="Refresh Cells" name="refresh-cells" type="generated" /%}
+{% gridExampleRunner title="Refresh Cells" name="refresh-cells" /%}
 
 {% note %}
 You may be wondering why would you want to force refresh, what is the point in refreshing a cell that
@@ -76,4 +76,4 @@ Below shows calling `api.redrawRows()` with different to change the background c
 * The **Redraw All Rows** redraws all the rows using a different background color by calling `api.redrawRows()` with no parameters.
 * The **Redraw Top Rows** redraws only the top half of the rows by calling `api.redrawRows({rowNodes})`.
 
-{% gridExampleRunner title="Redraw Rows" name="redraw-rows" type="generated" options={ "exampleHeight": 615 } /%}
+{% gridExampleRunner title="Redraw Rows" name="redraw-rows"  exampleHeight=615 /%}

@@ -38,7 +38,7 @@ The example below shows value formatters in action.
 * Columns `£A` and `£B` use a `currencyFormatter` to display the value as a currency
 * Columns`(A)` and `(B)` use a `bracketsFormatter` to display the value inside brackets
 
-{% gridExampleRunner title="Value Formatters" name="value-formatters" type="generated" /%}
+{% gridExampleRunner title="Value Formatters" name="value-formatters" /%}
 
 ## Formating for Export
 
@@ -60,7 +60,7 @@ Using a value formatter for export is normally used in conjunction with [Using a
 
 The following example demonstrates the default behaviour using the value formatter for export with each of the supported features mentioned above.
 
-{% gridExampleRunner title="Use Value Formatter for Export" name="use-value-formatter-for-export" type="generated" options={ "enterprise": true, "modules": ["clientside", "range", "clipboard", "excel", "menu"] } /%}
+{% gridExampleRunner title="Use Value Formatter for Export" name="use-value-formatter-for-export" /%}
 
 Note that if any of the following conditions are true, then `useValueFormatterForExport` is ignored for that feature and the value will be either the original value or that set in the custom handler:
 

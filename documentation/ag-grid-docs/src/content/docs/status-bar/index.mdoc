@@ -23,7 +23,7 @@ const gridOptions = {
 
 Some Status Panels only show when a Range Selection is present.
 
-{% gridExampleRunner title="Status Bar Simple" name="status-bar-simple" type="generated" options={ "enterprise": true, "modules": ["clientside", "statusbar", "range"] } /%}
+{% gridExampleRunner title="Status Bar Simple" name="status-bar-simple" /%}
 
 ## Provided Panels
 
@@ -68,7 +68,7 @@ Labels (e.g. "Rows", "Total Rows", "Average") and number formatting are changed 
 
 The Aggregation Panel `agAggregationComponent` will only work on number values.
 
-{% gridExampleRunner title="Status Bar Params" name="status-bar" type="generated" options={ "enterprise": true, "modules": ["clientside", "statusbar", "range"] } /%}
+{% gridExampleRunner title="Status Bar Params" name="status-bar" /%}
 
 The Status Bar sizes its height to fit content. When no panels are visible, the Status Bar will have zero height (not be shown). Add CSS to have a fixed height on the Status Bar.
 
@@ -80,7 +80,7 @@ The Status Bar sizes its height to fit content. When no panels are visible, the 
 
 ## Custom Panels
 
-{% gridExampleRunner title="Custom Panels" name="custom-component" type="mixed" options={ "enterprise": true, "modules": ["clientside", "statusbar", "range"] } /%}
+{% gridExampleRunner title="Custom Panels" name="custom-component" /%}
 
 {% includeMarkdoc file="status-bar/_component-interface-javascript.mdoc" /%}
 {% includeMarkdoc file="status-bar/_component-interface-angular.mdoc" /%}
@@ -119,4 +119,4 @@ Custom Panels can listen to grid events to react to grid changes. An easy way to
 
 Use the grid API `getStatusPanel(key)` to access a panel instance. This can be used to expose Custom Panels to the application.
 
-{% gridExampleRunner title="Get Status Bar Panel Instance" name="component-instance" type="mixed" options={ "enterprise": true, "modules": ["clientside", "statusbar", "range"] } /%}
+{% gridExampleRunner title="Get Status Bar Panel Instance" name="component-instance" /%}

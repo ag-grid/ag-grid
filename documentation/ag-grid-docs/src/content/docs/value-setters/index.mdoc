@@ -52,7 +52,7 @@ the following:
 
 * Column C.X and C.Y use `valueGetter` to get the value from an embedded object. They then use `valueSetter` to set the value into the embedded object while also making sure the correct structure exists (this structure creation would not happen if using field).
 
-{% gridExampleRunner title="Value Setters" name="example-setters" type="generated" /%}
+{% gridExampleRunner title="Value Setters" name="example-setters" /%}
 
 ## Read Only Edit
 
@@ -116,15 +116,15 @@ this.onCellEditRequest = event => {
 
 The example below has Cell Editing enabled, however the editing does nothing because `readOnlyEdit=true` is set. The application listens for `cellEditRequest` event and prints to the console. As the application does not try to update the data, the cell keeps its old value, giving the impression that editing is not working.
 
-{% gridExampleRunner title="Read Only Edit - Not Implemented" name="read-only" type="generated" options={"exampleHeight": 350} /%}
+{% gridExampleRunner title="Read Only Edit - Not Implemented" name="read-only"  exampleHeight=350 /%}
 
 This next example extends the above by getting the application to update the data.
 
 1. The application listens for `cellEditRequest` and updates the Row Data.
 1. The Row Data has ID's and `getRowId` is implemented. This allows the grid to only refresh the desired row after new Row Data is set.
 
-{% gridExampleRunner title="Read Only Edit - Row Data" name="read-only-row-data" type="generated" /%}
+{% gridExampleRunner title="Read Only Edit - Row Data" name="read-only-row-data" /%}
 
 This final example is similar to before, except it uses Transactions to update the data after the edit rather than updating the whole Row Data.
 
-{% gridExampleRunner title="Read Only Edit - Transactions" name="read-only-transactions" type="generated" /%}
+{% gridExampleRunner title="Read Only Edit - Transactions" name="read-only-transactions" /%}

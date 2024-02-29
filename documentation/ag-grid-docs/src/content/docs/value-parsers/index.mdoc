@@ -41,7 +41,7 @@ Below shows an example using value parsers. The following can be noted:
 * Column 'Bad Number' is bad because after an edit, the value is stored as a string in the data, whereas the data value should be number type.
 * Column 'Good Number' is good because after an edit, the value is converted to a number using the value parser.
 
-{% gridExampleRunner title="Value Parsers" name="example-parsers" type="generated" options={ "exampleHeight": 550 } /%}
+{% gridExampleRunner title="Value Parsers" name="example-parsers"  exampleHeight=550 /%}
 
 ## Use Value Parser for Import
 
@@ -61,7 +61,7 @@ Using a value parser for import is normally used in conjunction with [Using a Va
 
 The following example demonstrates using the value parser for import with each of the supported features mentioned above.
 
-{% gridExampleRunner title="Use Value Parser for Import" name="use-value-parser-for-import" type="generated" options={ "enterprise": true, "modules": ["clientside", "range", "clipboard"] } /%}
+{% gridExampleRunner title="Use Value Parser for Import" name="use-value-parser-for-import" /%}
 
 Note that if you are providing your own custom handling for the following features, then `useValueParserForImport` is ignored and the value will be either the original value or that set in the custom handler:
 

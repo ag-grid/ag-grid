@@ -27,7 +27,7 @@ Things to try:
 
   You will now have a pivot grid showing total gold medals for each country (rows showing countries) by year (columns showing years).
 
-{% gridExampleRunner title="Tool Panel Simple" name="simple" type="generated" options={ "enterprise": true, "exampleHeight": 630, "modules": ["clientside", "rowgrouping", "menu", "setfilter", "columnpanel"] } /%}
+{% gridExampleRunner title="Tool Panel Simple" name="simple"  exampleHeight=630 /%}
 
 {% note %}
 Remember to mark the column definitions with `enableRowGroup` for grouping, `enablePivot`
@@ -99,7 +99,7 @@ The example below demonstrates the suppress options / methods described above. N
 * Clicking **Show Values Section** invokes `showValuesSection(true)` on the Columns Tool Panel instance.
 * Clicking **Show Pivot Section** invokes `showPivotSection(true)` on the Columns Tool Panel instance.
 
-{% gridExampleRunner title="Section Visibility" name="section-visibility" type="generated" options={ "enterprise": true, "exampleHeight": 630, "modules": ["clientside", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Section Visibility" name="section-visibility"  exampleHeight=630 /%}
 
 ## Suppress Column Reordering
 
@@ -141,7 +141,7 @@ The following example demonstrates the results of enabling both of these propert
 * Moving columns in the grid won't reorder columns in the Columns Tool Panel as `suppressSyncLayoutWithGrid=true`.
 * It is not possible to reorder columns from the Columns Tool Panel as `suppressColumnMove=true`.
 
-{% gridExampleRunner title="Suppress Column Reordering" name="suppress-column-reordering" type="generated" options={ "enterprise": true, "exampleHeight": 670, "modules": ["clientside", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Suppress Column Reordering" name="suppress-column-reordering"  exampleHeight=670 /%}
 
 ## Styling Columns
 
@@ -176,13 +176,13 @@ The example below demonstrates the Columns Tool Panel using a mixture of items e
 * The `gold`, `silver` and `bronze` columns have style applied using `toolPanelClass`.
 * The country column uses a `headerValueGetter` to give the column a slightly different name dependent on where it appears using the `location` parameter.
 
-{% gridExampleRunner title="Tool Panel Styling" name="styling" type="generated" options={ "enterprise": true, "exampleHeight": 610, "modules": ["clientside", "menu", "setfilter", "columnpanel"] } /%}
+{% gridExampleRunner title="Tool Panel Styling" name="styling"  exampleHeight=610 /%}
 
 ## Read Only Functions
 
 By setting the property `functionsReadOnly=true`, the grid will prevent changes to group, pivot or values through the GUI. This is useful if you want to show the user the group, pivot and values panel, so they can see which columns are used, but prevent them from making changes to the selection.
 
-{% gridExampleRunner title="Read Only Example" name="read-only" type="generated" options={ "enterprise": true, "exampleHeight": 670, "modules": ["clientside", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Read Only Example" name="read-only"  exampleHeight=670 /%}
 
 ## Expand / Collapse Column Groups
 
@@ -225,7 +225,7 @@ The example below demonstrates these methods in action. Note the following:
 * Clicking **Expand Athlete & Competition** expands only the 'Athlete' and 'Competition' column groups using `expandColumnGroups(['athleteGroupId', 'competitionGroupId'])`.
 * Clicking **Collapse Competition** collapses only the 'Competition' column group using `collapseColumnGroups(['competitionGroupId'])`.
 
-{% gridExampleRunner title="Expand / Collapse Column Groups" name="expand-collapse" type="generated" options={ "enterprise": true, "exampleHeight": 640, "modules": ["clientside", "menu", "setfilter", "columnpanel"] } /%}
+{% gridExampleRunner title="Expand / Collapse Column Groups" name="expand-collapse"  exampleHeight=640 /%}
 
 ## Custom Column Layout
 
@@ -283,7 +283,7 @@ The example below shows two custom layouts for the Columns Tool Panel. Note the 
 * Moving columns in the grid won't affect the custom layouts as `suppressSyncLayoutWithGrid` is enabled.
 * Moving columns from within the Columns Tool Panel has been disabled as `suppressColumnMove` is enabled.
 
-{% gridExampleRunner title="Custom Column Layout" name="custom-layout" type="generated" options={ "enterprise": true, "modules": ["clientside", "menu", "setfilter", "columnpanel"],"exampleHeight": 640 } /%}
+{% gridExampleRunner title="Custom Column Layout" name="custom-layout"  exampleHeight=640 /%}
 
 ## Next Up
 

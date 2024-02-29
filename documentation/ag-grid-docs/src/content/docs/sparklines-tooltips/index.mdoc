@@ -84,7 +84,7 @@ The following example demonstrates the results of the tooltip renderer above. No
 * The renderer function sets the tooltip `content` to render Y values formatted with 1 digit after the decimal point.
 * The title of the tooltips is set to X values provided in the `params` formatted using the `toLocaleString()` method. This is optional because if X values are provided in the data, they will be formatted and displayed in the tooltip title by default.
 
-{% gridExampleRunner title="Sparkline Tooltip Renderer" name="sparkline-tooltip-renderer" type="generated" options={ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] } /%}
+{% gridExampleRunner title="Sparkline Tooltip Renderer" name="sparkline-tooltip-renderer"  exampleHeight=585 /%}
 
 ### Accessing Row Data
 
@@ -104,7 +104,7 @@ const tooltipRenderer = (params) => {
 
 The following example demonstrates the above tooltip renderer.
 
-{% gridExampleRunner title="Accessing Row Data" name="sparkline-accessing-row-data" type="generated" options={ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] } /%}
+{% gridExampleRunner title="Accessing Row Data" name="sparkline-accessing-row-data"  exampleHeight=585 /%}
 
 ## Tooltip Styles
 
@@ -123,7 +123,7 @@ const tooltipRenderer = (params) => {
 
 The following example demonstrates the results of the tooltip styles configured via the tooltip renderer above.
 
-{% gridExampleRunner title="Styling Sparkline Tooltips" name="sparkline-tooltip-styles" type="generated" options={ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] } /%}
+{% gridExampleRunner title="Styling Sparkline Tooltips" name="sparkline-tooltip-styles"  exampleHeight=585 /%}
 
 More styling can be applied using the CSS class selector to select the tooltip HTML elements with the following class attributes: `ag-sparkline-tooltip`, `ag-sparkline-tooltip-title`, `ag-sparkline-tooltip-content`, and modifying the style definitions in a stylesheet file.
 
@@ -131,7 +131,7 @@ This is shown in the example below. Note that:
 
 * The default tooltip template is used and the style definitions are overriden in the styles.css file.
 
-{% gridExampleRunner title="Styling Sparkline Tooltips" name="sparkline-tooltip-advanced-styles" type="generated" options={ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] } /%}
+{% gridExampleRunner title="Styling Sparkline Tooltips" name="sparkline-tooltip-advanced-styles"  exampleHeight=585 /%}
 
 ## Tooltip Container and Offset
 
@@ -163,7 +163,7 @@ Here's a live example to demonstrate the configuration above.
 * Note that the tooltip is now positioned underneath the mouse cursor as `xOffset` is set to `0`px and `yOffset` to `20`px.
 * The effect of the tooltip `container` configuration is that the tooltip will not flip to the left of the mouse cursor when it reaches the end of the sparkline cell width, instead it will only flip if the tooltip position surpasses the document body element's width.
 
-{% gridExampleRunner title="Sparkline Tooltip Container" name="sparkline-tooltip-container" type="generated" options={ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] } /%}
+{% gridExampleRunner title="Sparkline Tooltip Container" name="sparkline-tooltip-container"  exampleHeight=585 /%}
 
 ## Custom Tooltip
 
@@ -197,7 +197,7 @@ Note that:
 * The elements have custom CSS class attributes, but the default class names can also be used so that the tooltip gets the default styling.
 * The styles for the elements are defined in the external styles.css file.
 
-{% gridExampleRunner title="Custom Tooltips" name="sparkline-tooltip-custom-html" type="generated" options={ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] } /%}
+{% gridExampleRunner title="Custom Tooltips" name="sparkline-tooltip-custom-html"  exampleHeight=585 /%}
 
 ## Interfaces
 
