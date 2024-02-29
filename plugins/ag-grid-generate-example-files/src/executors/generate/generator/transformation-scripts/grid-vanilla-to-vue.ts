@@ -1,6 +1,6 @@
-import { integratedChartsUsesChartsEnterprise } from "../constants";
+import { ExampleConfig } from "../types";
 import { convertDefaultColDef, getAllMethods, getColumnDefs, getPropertyBindings, getTemplate } from "./grid-vanilla-to-vue-common";
-import { getActiveTheme, getIntegratedDarkModeCode, ImportType, preferParamsApi, replaceGridReadyRowData } from './parser-utils';
+import { addEnterprisePackage, getActiveTheme, getIntegratedDarkModeCode, ImportType, preferParamsApi, replaceGridReadyRowData } from './parser-utils';
 import { getImport, toOutput } from './vue-utils';
 const path = require('path');
 
@@ -37,18 +37,15 @@ function getOnGridReadyCode(bindings: any): string {
     }`;
 }
 
-function getModuleImports(bindings: any, componentFileNames: string[], allStylesheets: string[]): string[] {
-    const { gridSettings } = bindings;
+function getModuleImports(bindings: any, exampleConfig: ExampleConfig, componentFileNames: string[], allStylesheets: string[]): string[] {
+    const { inlineGridStyles } = bindings;
 
     let imports = [
         "import Vue from 'vue';",
         "import { AgGridVue } from '@ag-grid-community/vue';",
     ];
 
-    if (bindings.gridSettings.enableChartApi) {
-        imports.push("import { AgChart } from 'ag-charts-community'");
-    }
-    if (bindings.gridSettings.licenseKey) {
+    if (exampleConfig.licenseKey) {
         imports.push("import { LicenseManager } from '@ag-grid-enterprise/core';");
     }
 
@@ -56,7 +53,7 @@ function getModuleImports(bindings: any, componentFileNames: string[], allStyles
     // to account for the (rare) example that has more than one class...just default to quartz if it does
     // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
     // "source" non dark version
-    const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-quartz';
+    const theme = inlineGridStyles.theme ? inlineGridStyles.theme.replace('-dark', '') : 'ag-theme-quartz';
     imports.push(`import "@ag-grid-community/styles/${theme}.css";`);
 
     if (allStylesheets && allStylesheets.length > 0) {
@@ -70,21 +67,16 @@ function getModuleImports(bindings: any, componentFileNames: string[], allStyles
     return imports;
 }
 
-function getPackageImports(bindings: any, componentFileNames: string[], allStylesheets: string[]): string[] {
-    const { gridSettings } = bindings;
+function getPackageImports(bindings: any, exampleConfig: ExampleConfig, componentFileNames: string[], allStylesheets: string[]): string[] {
+    const { inlineGridStyles } = bindings;
 
     const imports = [
         "import Vue from 'vue';",
         "import { AgGridVue } from 'ag-grid-vue';",
     ];
 
-    if (gridSettings.enterprise) {
-        imports.push(`import 'ag-grid-${integratedChartsUsesChartsEnterprise && bindings.gridSettings.modules.includes('charts-enterprise') ? 'charts-' : ''}enterprise';`);
-    }
-    if (bindings.gridSettings.enableChartApi) {
-        imports.push("import { AgChart } from 'ag-charts-community'");
-    }
-    if (bindings.gridSettings.licenseKey) {
+    addEnterprisePackage(imports, bindings);
+    if (exampleConfig.licenseKey) {
         imports.push("import { LicenseManager } from 'ag-grid-enterprise';");
     }
 
@@ -93,7 +85,7 @@ function getPackageImports(bindings: any, componentFileNames: string[], allStyle
     // to account for the (rare) example that has more than one class...just default to quartz if it does
     // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
     // "source" non dark version
-    const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-quartz';
+    const theme = inlineGridStyles.theme ? inlineGridStyles.theme.replace('-dark', '') : 'ag-theme-quartz';
     imports.push(`import 'ag-grid-community/styles/${theme}.css';`);
 
     if (allStylesheets && allStylesheets.length > 0) {
@@ -107,15 +99,15 @@ function getPackageImports(bindings: any, componentFileNames: string[], allStyle
     return imports;
 }
 
-function getImports(bindings: any, componentFileNames: string[], importType: ImportType, allStylesheets: string[]): string[] {
+function getImports(bindings: any, exampleConfig: ExampleConfig, componentFileNames: string[], importType: ImportType, allStylesheets: string[]): string[] {
     if (importType === 'packages') {
-        return getPackageImports(bindings, componentFileNames, allStylesheets);
+        return getPackageImports(bindings, exampleConfig, componentFileNames, allStylesheets);
     } else {
-        return getModuleImports(bindings, componentFileNames, allStylesheets);
+        return getModuleImports(bindings, exampleConfig, componentFileNames, allStylesheets);
     }
 }
 
-export function vanillaToVue(bindings: any, componentFileNames: string[], allStylesheets: string[]): (importType: ImportType) => string {
+export function vanillaToVue(bindings: any, exampleConfig: ExampleConfig, componentFileNames: string[], allStylesheets: string[]): (importType: ImportType) => string {
     const vueComponents = bindings.components.map(component => `${component.name}:${component.value}`);
 
     const onGridReady = getOnGridReadyCode(bindings);
@@ -125,14 +117,14 @@ export function vanillaToVue(bindings: any, componentFileNames: string[], allSty
     const defaultColDef = bindings.defaultColDef ? convertDefaultColDef(bindings.defaultColDef, vueComponents, componentFileNames) : null;
 
     return importType => {
-        const imports = getImports(bindings, componentFileNames, importType, allStylesheets);
+        const imports = getImports(bindings, exampleConfig, componentFileNames, importType, allStylesheets);
         const [propertyAssignments, propertyVars, propertyAttributes] = getPropertyBindings(bindings, componentFileNames, importType, vueComponents);
-        const template = getTemplate(bindings, propertyAttributes.concat(eventAttributes));
+        const template = getTemplate(bindings, exampleConfig, propertyAttributes.concat(eventAttributes));
 
         return `
 ${imports.join('\n')}
 
-${bindings.gridSettings.licenseKey ? "// enter your license key here to suppress console message and watermark\nLicenseManager.setLicenseKey('');\n" : ''}
+${exampleConfig.licenseKey ? "// enter your license key here to suppress console message and watermark\nLicenseManager.setLicenseKey('');\n" : ''}
 
 ${bindings.classes.join('\n')}
 
@@ -150,7 +142,7 @@ const VueExample = {
         return {
             columnDefs: ${columnDefs},
             gridApi: null,
-            themeClass: ${getActiveTheme(bindings.gridSettings.theme, false)},
+            themeClass: ${getActiveTheme(bindings.inlineGridStyles.theme, false)},
             ${defaultColDef ? `defaultColDef: ${defaultColDef},` : ''}
             ${propertyVars.join(',\n')}
         }

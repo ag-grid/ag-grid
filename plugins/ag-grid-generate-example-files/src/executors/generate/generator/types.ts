@@ -8,13 +8,20 @@ export interface ExampleSettings {
 
 export type FileContents = Record<string, string>;
 
-export interface GeneratedContents {
-    files: FileContents;
+/** Matches the JSON file exampleConfig.json and the schema defined in .vscode/settings.json */
+export interface ExampleConfig {
+    extras?: string[];
+    noStyle?: boolean;
+    licenseKey?: boolean;
+};
+
+export interface GeneratedContents extends ExampleConfig {
+    isEnterprise: boolean;
     entryFileName: string;
     mainFileName: string;
+    files: FileContents;
     scriptFiles: string[];
     styleFiles: string[];
-    isEnterprise: boolean;
     sourceFileList: string[];
     boilerPlateFiles: FileContents;
     providedExamples: FileContents;

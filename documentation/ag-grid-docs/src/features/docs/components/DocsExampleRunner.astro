@@ -3,23 +3,23 @@ import { DocsExampleRunner } from './DocsExampleRunner';
 import type { ExampleType } from '@features/example-generator/types';
 import ExampleRunnerContainer from '@features/example-runner/components/ExampleRunnerContainer.astro';
 import { getPageNameFromPath } from '@features/docs/utils/urlPaths';
-import type { ExampleOptions } from '@features/example-runner/types';
+import { DOCS_PAGE_NAME_PATH_INDEX } from '../constants';
 import { getFrameworkFromPath } from '@features/docs/utils/urlPaths';
 
 interface Props {
     title: string;
     name: string;
     type: ExampleType;
-    options: ExampleOptions;
+    exampleHeight?: number;
 }
 
-const { title, name, type, options } = Astro.props as Props;
+const { title, name, type, exampleHeight } = Astro.props as Props;
 
 const framework = getFrameworkFromPath(Astro.url.pathname);
 const pageName = getPageNameFromPath(Astro.url.pathname);
 ---
 
-<ExampleRunnerContainer exampleHeight={options?.exampleHeight} pageName={pageName} exampleName={name}>
+<ExampleRunnerContainer exampleHeight={exampleHeight} pageName={pageName} exampleName={name}>
     <DocsExampleRunner
         client:only
         title={title}

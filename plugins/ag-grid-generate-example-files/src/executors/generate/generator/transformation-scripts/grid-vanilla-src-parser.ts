@@ -58,7 +58,7 @@ function tsNodeIsSimpleFetchRequest(node) {
     }
 }
 
-function processColDefsForFunctionalReactOrVue(propertyName: string, exampleType, exampleSettings, providedExamples) {
+function processColDefsForFunctionalReactOrVue(propertyName: string, exampleType, providedExamples) {
     if (propertyName === 'columnDefs') {
         return exampleType === 'generated' ||
             (exampleType === 'mixed' && !(providedExamples['reactFunctional'] && providedExamples['vue'] && providedExamples['vue3']));
@@ -106,7 +106,7 @@ function internalParser(examplePath, {
     srcFile,
     includeTypes,
     gridOptionsTypes
-}, html, exampleSettings, exampleType, providedExamples) {
+}, html, exampleType, providedExamples) {
     const domTree = cheerio.load(html, null, false);
     domTree('style').remove();
     const domEventHandlers = extractEventHandlers(domTree, recognizedDomEvents);
@@ -389,7 +389,7 @@ function internalParser(examplePath, {
             matches: node => tsNodeIsGlobalVarWithName(node, propertyName),
             apply: (bindings, node) => {
                 try {
-                    if (processColDefsForFunctionalReactOrVue(propertyName, exampleType, exampleSettings, providedExamples)) {
+                    if (processColDefsForFunctionalReactOrVue(propertyName, exampleType, providedExamples)) {
                         if (ts.isVariableDeclaration(node) && ts.isArrayLiteralExpression(node.initializer)) {
                             bindings.parsedColDefs = tsExtractAndParseColDefs(node.initializer);
                         }
@@ -410,7 +410,7 @@ function internalParser(examplePath, {
         tsGridOptionsCollectors.push({
             matches: (node: ts.Node) => tsNodeIsPropertyWithName(node, propertyName),
             apply: (bindings, node: ts.PropertyAssignment) => {
-                if (processColDefsForFunctionalReactOrVue(propertyName, exampleType, exampleSettings, providedExamples)) {
+                if (processColDefsForFunctionalReactOrVue(propertyName, exampleType, providedExamples)) {
                     const parent = node;
                     if (ts.isPropertyAssignment(parent) && parent.initializer) {
                         const initializer = parent.initializer
@@ -531,18 +531,15 @@ function internalParser(examplePath, {
     const inlineHeight = gridElement.css('height');
     const inlineWidth = gridElement.css('width');
 
+    let inlineGridStyles: any = {
+        theme: 'ag-theme-quartz',
+    };
     if (inlineClass) {
         const theme = inlineClass.split(' ').filter(className => className.indexOf('ag-theme') >= 0);
-        exampleSettings.theme = theme && theme.length > 0 ? theme[0] : 'ag-theme-quartz';
+        inlineGridStyles.theme = theme && theme.length > 0 ? theme[0] : 'ag-theme-quartz';
     }
-
-    if (parseInt(inlineHeight)) {
-        exampleSettings.height = inlineHeight;
-    }
-
-    if (parseInt(inlineWidth)) {
-        exampleSettings.width = inlineWidth;
-    }
+    inlineGridStyles.height = parseInt(inlineHeight) ? inlineHeight : '100%';
+    inlineGridStyles.width = parseInt(inlineWidth) ? inlineWidth : '100%';
 
     tsBindings.template = domTree.html().replace(/<br>/g, '<br />');
     tsBindings.imports = extractImportStatements(tsTree);
@@ -551,27 +548,22 @@ function internalParser(examplePath, {
     tsBindings.interfaces = extractInterfaces(tsTree);
     tsBindings.exampleName = examplePath;
     tsBindings.moduleRegistration = extractModuleRegistration(tsTree);
-    tsBindings.gridSettings = {
-        width: '100%',
-        height: '100%',
-        theme: 'ag-theme-quartz',
-        ...exampleSettings
-    };
+    tsBindings.inlineGridStyles = inlineGridStyles;
 
     return tsBindings;
 }
 
-export function parser(examplePath, srcFile, html, exampleSettings, exampleType, providedExamples, gridOptionsTypes) {
+export function parser(examplePath, srcFile, html, exampleType, providedExamples, gridOptionsTypes) {
     const typedBindings = internalParser(examplePath, {
         srcFile,
         includeTypes: true,
         gridOptionsTypes
-    }, html, exampleSettings, exampleType, providedExamples);
+    }, html, exampleType, providedExamples);
     const bindings = internalParser(examplePath, {
         srcFile,
         includeTypes: false,
         gridOptionsTypes
-    }, html, exampleSettings, exampleType, providedExamples);
+    }, html, exampleType, providedExamples);
     // We need to copy the imports from the typed bindings to the non-typed bindings
     bindings.imports = typedBindings.imports;
     return {bindings, typedBindings};

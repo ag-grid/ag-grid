@@ -1,5 +1,5 @@
-import { integratedChartsUsesChartsEnterprise } from "../constants";
-import { addBindingImports, addGenericInterfaceImport, getIntegratedDarkModeCode, ImportType, removeModuleRegistration } from './parser-utils';
+import { ExampleConfig } from "../types";
+import { addBindingImports, addEnterprisePackage, addGenericInterfaceImport, getIntegratedDarkModeCode, ImportType, removeModuleRegistration } from './parser-utils';
 import { toTitleCase } from './string-utils';
 
 
@@ -19,14 +19,14 @@ function getPropertyInterfaces(properties) {
 }
 
 function getModuleImports(bindings: any): string[] {
-    const {gridSettings, imports: bindingImports, properties} = bindings;
+    const {inlineGridStyles, imports: bindingImports, properties} = bindings;
 
     let imports = [];
     imports.push("import '@ag-grid-community/styles/ag-grid.css';");
     // to account for the (rare) example that has more than one class...just default to quartz if it does
     // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
     // "source" non dark version
-    const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-quartz';
+    const theme = inlineGridStyles.theme ? inlineGridStyles.theme.replace('-dark', '') : 'ag-theme-quartz';
     imports.push(`import "@ag-grid-community/styles/${theme}.css";`);
 
     let propertyInterfaces = getPropertyInterfaces(properties);
@@ -47,19 +47,17 @@ function getModuleImports(bindings: any): string[] {
 }
 
 function getPackageImports(bindings: any): string[] {
-    const {gridSettings, imports: bindingImports, properties} = bindings;
+    const {inlineGridStyles, imports: bindingImports, properties} = bindings;
     const imports = [];
 
-    if (gridSettings.enterprise) {
-        imports.push(`import 'ag-grid-${integratedChartsUsesChartsEnterprise && bindings.gridSettings.modules.includes('charts-enterprise') ? 'charts-' : ''}enterprise';`);
-    }
+    addEnterprisePackage(imports, bindings);
 
     imports.push("import 'ag-grid-community/styles/ag-grid.css';");
 
     // to account for the (rare) example that has more than one class...just default to quartz if it does
     // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
     // "source" non dark version
-    const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-quartz';
+    const theme = inlineGridStyles.theme ? inlineGridStyles.theme.replace('-dark', '') : 'ag-theme-quartz';
     imports.push(`import "ag-grid-community/styles/${theme}.css";`);
 
     let propertyInterfaces = getPropertyInterfaces(properties);
@@ -87,8 +85,8 @@ function getImports(bindings: any, importType: ImportType): string[] {
     }
 }
 
-export function vanillaToTypescript(bindings: any, mainFilePath: string, tsFile: string): (importType: ImportType) => string {
-    const {gridSettings, externalEventHandlers, imports} = bindings;
+export function vanillaToTypescript(bindings: any, exampleConfig: ExampleConfig, mainFilePath: string, tsFile: string): (importType: ImportType) => string {
+    const {externalEventHandlers} = bindings;
 
     // attach external handlers to window
     let toAttach = '';
