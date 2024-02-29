@@ -1,12 +1,10 @@
 import type { InternalFramework } from '@ag-grid-types';
 import { OpenInCodeSandbox } from '@features/codeSandbox/components/OpenInCodeSandbox';
 import type { FileContents } from '@features/example-generator/types';
-import type { ExampleOptions } from '@features/example-runner/types';
 import { OpenInPlunkr } from '@features/plunkr/components/OpenInPlunkr';
 
 export function ExternalLinks({
     title,
-    options,
     internalFramework,
     exampleFiles,
     exampleBoilerPlateFiles,
@@ -16,7 +14,6 @@ export function ExternalLinks({
     codeSandboxHtmlUrl,
 }: {
     title: string;
-    options?: ExampleOptions;
     internalFramework: InternalFramework;
     exampleFiles?: FileContents;
     exampleBoilerPlateFiles?: FileContents;
@@ -28,7 +25,7 @@ export function ExternalLinks({
 }) {
     return (
         <>
-            {!options?.noCodeSandbox && codeSandboxHtmlUrl && exampleFiles ? (
+            {codeSandboxHtmlUrl && exampleFiles ? (
                 <li>
                     <OpenInCodeSandbox
                         title={title}
@@ -40,7 +37,7 @@ export function ExternalLinks({
                     />
                 </li>
             ) : undefined}
-            {!options?.noPlunker && plunkrHtmlUrl && exampleFiles ? (
+            {plunkrHtmlUrl && exampleFiles ? (
                 <li>
                     <OpenInPlunkr
                         title={title}

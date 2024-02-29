@@ -1,7 +1,7 @@
-import { integratedChartsUsesChartsEnterprise } from "../constants";
+import { ExampleConfig } from "../types";
 import { convertTemplate, getImport, toConst, toInput, toMemberWithValue, toOutput } from './angular-utils';
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
-import { addBindingImports, addGenericInterfaceImport, getActiveTheme, getIntegratedDarkModeCode, getPropertyInterfaces, handleRowGenericInterface, ImportType, isInstanceMethod, preferParamsApi, removeFunctionKeyword, removeModuleRegistration, replaceGridReadyRowData } from './parser-utils';
+import { addBindingImports, addEnterprisePackage, addGenericInterfaceImport, getActiveTheme, getIntegratedDarkModeCode, getPropertyInterfaces, handleRowGenericInterface, ImportType, isInstanceMethod, preferParamsApi, removeFunctionKeyword, removeModuleRegistration, replaceGridReadyRowData } from './parser-utils';
 import { toTitleCase } from './string-utils';
 const path = require('path');
 
@@ -46,7 +46,7 @@ function getOnGridReadyCode(
 }
 
 function addModuleImports(imports: string[], bindings: any, allStylesheets: string[]): string[] {
-    const { gridSettings, imports: bindingImports, properties } = bindings;
+    const { inlineGridStyles, imports: bindingImports, properties } = bindings;
 
     imports.push("import { AgGridAngular } from '@ag-grid-community/angular';");
     imports.push('// NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273');
@@ -55,7 +55,7 @@ function addModuleImports(imports: string[], bindings: any, allStylesheets: stri
     // to account for the (rare) example that has more than one class...just default to quartz if it does
     // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
     // "source" non dark version
-    const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-quartz';
+    const theme = inlineGridStyles.theme ? inlineGridStyles.theme.replace('-dark', '') : 'ag-theme-quartz';
     imports.push(`import "@ag-grid-community/styles/${theme}.css";`);
 
     if (allStylesheets && allStylesheets.length > 0) {
@@ -82,19 +82,17 @@ function addModuleImports(imports: string[], bindings: any, allStylesheets: stri
 }
 
 function addPackageImports(imports: string[], bindings: any, allStylesheets: string[]): string[] {
-    const { gridSettings, imports: bindingImports, properties } = bindings;
+    const { inlineGridStyles, imports: bindingImports, properties } = bindings;
 
     imports.push("import { AgGridAngular } from 'ag-grid-angular';");
-    if (gridSettings.enterprise) {
-        imports.push(`import 'ag-grid-${integratedChartsUsesChartsEnterprise && bindings.gridSettings.modules.includes('charts-enterprise') ? 'charts-' : ''}enterprise';`);
-    }
+    addEnterprisePackage(imports, bindings);
 
     imports.push("import 'ag-grid-community/styles/ag-grid.css';");
 
     // to account for the (rare) example that has more than one class...just default to quartz if it does
     // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
     // "source" non dark version
-    const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-quartz';
+    const theme = inlineGridStyles.theme ? inlineGridStyles.theme.replace('-dark', '') : 'ag-theme-quartz';
     imports.push(`import "ag-grid-community/styles/${theme}.css";`);
 
     if(allStylesheets && allStylesheets.length > 0) {
@@ -119,15 +117,11 @@ function addPackageImports(imports: string[], bindings: any, allStylesheets: str
 function getImports(bindings: any, componentFileNames: string[], importType: ImportType, allStylesheets: string[]): string[] {
 
     let imports = ["import { Component } from '@angular/core';"];
-    if(bindings.gridSettings.includeNgFormsModule) {
-        imports.push("import { FormsModule } from '@angular/forms';");
-    }
 
     if (bindings.data) {
         imports.push("import { HttpClient, HttpClientModule } from '@angular/common/http';");
     }
     
-
     if (importType === "packages") {
         addPackageImports(imports, bindings, allStylesheets);
     } else {
@@ -143,13 +137,12 @@ function getImports(bindings: any, componentFileNames: string[], importType: Imp
     return imports;
 }
 
-function getTemplate(bindings: any, attributes: string[]): string {
-    const { gridSettings } = bindings;
-    const style = gridSettings.noStyle ? '' : `style="width: ${gridSettings.width}; height: ${gridSettings.height};"`;
+function getTemplate(bindings: any, exampleConfig: ExampleConfig, attributes: string[]): string {
+    const { inlineGridStyles } = bindings;
+    const style = exampleConfig.noStyle ? '' : `style="width: ${inlineGridStyles.width}; height: ${inlineGridStyles.height};"`;
 
     const agGridTag = `<ag-grid-angular
     ${style}
-    ${gridSettings.myGridReference ? 'id="myGrid"' : ''}
     ${attributes.join('\n    ')}
     ></ag-grid-angular>`;
 
@@ -158,7 +151,7 @@ function getTemplate(bindings: any, attributes: string[]): string {
     return convertTemplate(template);
 }
 
-export function vanillaToAngular(bindings: any, componentFileNames: string[], allStylesheets: string[]): (importType: ImportType) => string {
+export function vanillaToAngular(bindings: any, exampleConfig: ExampleConfig, componentFileNames: string[], allStylesheets: string[]): (importType: ImportType) => string {
     const { data, properties, typeDeclares, interfaces, tData } = bindings;
     const rowDataType = tData || 'any';
     const diParams = [];
@@ -206,7 +199,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[], al
         }
         
         propertyAttributes.push('[class]="themeClass"');
-        propertyAssignments.push(`public themeClass: string = ${getActiveTheme(bindings.gridSettings.theme, true)};`);
+        propertyAssignments.push(`public themeClass: string = ${getActiveTheme(bindings.inlineGridStyles.theme, true)};`);
 
         const componentForCheckBody = eventHandlers
             .concat(externalEventHandlers)
@@ -227,7 +220,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[], al
             .map(toOutput)
             .concat(gridReadyCode ? '(gridReady)="onGridReady($event)"' : '');
 
-        const template = getTemplate(bindings, propertyAttributes.concat(eventAttributes));
+        const template = getTemplate(bindings, exampleConfig, propertyAttributes.concat(eventAttributes));
 
         const componentBody = eventHandlers
             .concat(externalEventHandlers)
@@ -238,11 +231,8 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[], al
             // We do not need the non-null assertion in component code as already applied to the declaration for the apis.            
             .replace(/(?<!this.)gridApi(\??)(!?)/g, 'this.gridApi');
 
-  const { includeNgFormsModule } = bindings.gridSettings;
+  
    let standaloneImports = ["AgGridAngular"];
-   if(includeNgFormsModule) {
-    standaloneImports.push("FormsModule");
-   }
    if(bindings.data){
     standaloneImports.push("HttpClientModule");
    }
@@ -256,7 +246,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[], al
 
         let generatedOutput = `
 ${imports.join('\n')}
-${bindings.gridSettings.licenseKey ? "// enter your license key here to suppress console message and watermark\nLicenseManager.setLicenseKey('');\n" : ''}
+${exampleConfig.licenseKey ? "// enter your license key here to suppress console message and watermark\nLicenseManager.setLicenseKey('');\n" : ''}
 ${typeDeclares?.length > 0 ? '\n' + typeDeclares.join('\n') : ''}${interfaces?.length > 0 ? '\n' + interfaces.join('\n') : ''}
 
 @Component({

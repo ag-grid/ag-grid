@@ -4,7 +4,7 @@ import fs from 'fs/promises';
 
 import { readFile, readJSONFile, writeFile } from '../../executors-utils';
 import gridVanillaSrcParser from './generator/transformation-scripts/grid-vanilla-src-parser';
-import { FRAMEWORKS, GeneratedContents, InternalFramework } from './generator/types';
+import { ExampleConfig, FRAMEWORKS, GeneratedContents } from './generator/types';
 
 import { SOURCE_ENTRY_FILE_NAME } from './generator/constants';
 import {
@@ -40,34 +40,26 @@ export default async function (options: ExecutorOptions) {
     }
 }
 
-export async function generateFiles(options: ExecutorOptions) {
-    const isDev = options.mode === 'dev';
-    const gridOptionsTypes = await readJSONFile(
-        'plugins/ag-grid-generate-example-files/gridOptionsTypes/_gridOptions_Types.json'
-    );
-    const folderPath = options.examplePath;
+async function getGridOptionsType() {
+    return await readJSONFile('plugins/ag-grid-generate-example-files/gridOptionsTypes/_gridOptions_Types.json');
+}
 
+async function getSourceFileList(folderPath: string): Promise<string[]> {
     const sourceFileList = await fs.readdir(folderPath);
     if (sourceFileList.includes('SKIP_EXAMPLE_GENERATION.md')) {
         const msg = `Skipping example generation for ${folderPath} as there is a SKIP_EXAMPLE_GENERATION.md file present.`;
         console.log(msg);
-        return {
-            skipped: msg,
-            generatedFiles: {},
-        } as any;
+        return undefined;
     }
     if (!sourceFileList.includes(SOURCE_ENTRY_FILE_NAME)) {
         throw new Error('Unable to find example entry-point at: ' + folderPath);
     }
+    return sourceFileList;
+}
 
-    const entryFilePath = path.join(folderPath, SOURCE_ENTRY_FILE_NAME);
-    const entryFile = await readFile(entryFilePath);
-    const indexHtml = await readFile(path.join(folderPath, 'index.html'));
-    const isEnterprise = getIsEnterprise({ entryFile });
-    const styleFiles = await getStyleFiles({ folderPath, sourceFileList });
-
-    let entryType = 'generated';
+async function getExampleTypeAndProvidedFiles(folderPath: string) {
     const frameworkProvidedExamples = {};
+
     for await (const internalFramework of FRAMEWORKS) {
         const files = getProvidedExampleFiles({ folderPath, internalFramework });
 
@@ -84,15 +76,42 @@ export async function generateFiles(options: ExecutorOptions) {
             );
             const asObj = Object.fromEntries(providedExampleEntries);
             frameworkProvidedExamples[internalFramework] = asObj;
-            entryType = 'mixed';
         }
     }
+    return frameworkProvidedExamples;
+}
+
+export async function generateFiles(options: ExecutorOptions) {
+    const isDev = options.mode === 'dev';
+    const folderPath = options.examplePath;
+    const gridOptionsTypes = await getGridOptionsType();
+
+    const sourceFileList = await getSourceFileList(folderPath);
+    if (sourceFileList === undefined) {
+        return { generatedFiles: {} } as any;
+    }
+
+    let exampleConfig: ExampleConfig = {};
+    if (sourceFileList.includes('exampleConfig.json')) {
+        exampleConfig = await readJSONFile(path.join(folderPath, 'exampleConfig.json'));
+    }
+    const entryFilePath = path.join(folderPath, SOURCE_ENTRY_FILE_NAME);
+
+    const [entryFile, indexHtml, styleFiles] = await Promise.all([
+        readFile(entryFilePath),
+        readFile(path.join(folderPath, 'index.html')),
+        getStyleFiles({ folderPath, sourceFileList }),
+    ]);
+
+    const isEnterprise = getIsEnterprise({ entryFile });
+    let entryType = sourceFileList.includes('provided') ? 'mixed' : 'generated';
+
+    const frameworkProvidedExamples = entryType === 'mixed' ? await getExampleTypeAndProvidedFiles(folderPath) : {};
 
     const { bindings, typedBindings } = gridVanillaSrcParser(
         folderPath,
         entryFile,
         indexHtml,
-        {}, // Hardcoded for now used to provide custom theme, width, height for inline styles
         entryType,
         frameworkProvidedExamples,
         gridOptionsTypes
@@ -123,6 +142,10 @@ export async function generateFiles(options: ExecutorOptions) {
                 importType,
             });
 
+            let frameworkExampleConfig = {
+                ...exampleConfig,
+                ...(provideFrameworkFiles ? provideFrameworkFiles['exampleConfig.json'] : {}),
+            };
             const { files, scriptFiles } =
                 provideFrameworkFiles === undefined
                     ? await getFrameworkFiles({
@@ -136,11 +159,14 @@ export async function generateFiles(options: ExecutorOptions) {
                           ignoreDarkMode: false,
                           isDev,
                           importType,
+                          exampleConfig: frameworkExampleConfig,
                       })
                     : { files: {}, scriptFiles: [] };
 
             const result: GeneratedContents = {
                 isEnterprise,
+                entryFileName,
+                mainFileName,
                 scriptFiles: scriptFiles!,
                 styleFiles: Object.keys(styleFiles),
                 sourceFileList,
@@ -150,9 +176,8 @@ export async function generateFiles(options: ExecutorOptions) {
                 generatedFiles: files,
                 boilerPlateFiles,
                 providedExamples: provideFrameworkFiles ?? {},
-                entryFileName,
-                mainFileName,
                 packageJson,
+                ...frameworkExampleConfig,
             };
 
             const outputPath = path.join(options.outputPath, importType, internalFramework, 'contents.json');

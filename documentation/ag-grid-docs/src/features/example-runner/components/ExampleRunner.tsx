@@ -14,7 +14,6 @@ interface Props {
     exampleUrl?: string;
     exampleRunnerExampleUrl?: string;
     exampleType?: ExampleType;
-    initialShowCode?: boolean;
     externalLinks?: ReactElement;
     exampleHeight?: number;
     exampleFiles?: FileContents;
@@ -31,7 +30,6 @@ export const ExampleRunner: FunctionComponent<Props> = ({
     exampleUrl,
     exampleRunnerExampleUrl,
     exampleType,
-    initialShowCode,
     externalLinks,
     exampleHeight: initialExampleHeight,
     exampleFiles,
@@ -40,7 +38,7 @@ export const ExampleRunner: FunctionComponent<Props> = ({
     hideInternalFrameworkSelection,
     loadingIFrameId,
 }) => {
-    const [showCode, setShowCode] = useState(initialShowCode);
+    const [showCode, setShowCode] = useState(false);
 
     const exampleHeight = initialExampleHeight || DEFAULT_HEIGHT;
 

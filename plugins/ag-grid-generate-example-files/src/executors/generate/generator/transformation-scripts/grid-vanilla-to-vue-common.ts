@@ -2,6 +2,7 @@ import { getFunctionName, ImportType, isInstanceMethod, removeFunctionKeyword, r
 import { convertTemplate, toAssignment, toConst, toInput, toMember } from './vue-utils';
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
 import * as JSON5 from "json5";
+import { ExampleConfig } from '../types';
 
 export const GRID_WIDE_COMPONENTS = [
     'loadingCellRenderer',
@@ -160,12 +161,11 @@ export function getPropertyBindings(bindings: any, componentFileNames: string[],
     return [propertyAssignments, propertyVars, propertyAttributes, vueComponents];
 }
 
-export function getTemplate(bindings: any, attributes: string[]): string {
-    const { gridSettings } = bindings;
-    const style = gridSettings.noStyle ? '' : `style="width: ${gridSettings.width}; height: ${gridSettings.height};"`;
+export function getTemplate(bindings: any, exampleConfig: ExampleConfig, attributes: string[]): string {
+    const { inlineGridStyles } = bindings;
+    const style = exampleConfig.noStyle ? '' : `style="width: ${inlineGridStyles.width}; height: ${inlineGridStyles.height};"`;
 
     const agGridTag = `<ag-grid-vue
-    ${bindings.gridSettings.myGridReference ? 'id="myGrid"' : ''}
     ${style}
     :class="themeClass"
     :columnDefs="columnDefs"

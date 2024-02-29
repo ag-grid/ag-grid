@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs';
 
-import { integratedChartsUsesChartsEnterprise, INTERNAL_FRAMEWORK_DEPENDENCIES } from '../constants';
+import { integratedChartsUsesChartsEnterprise } from '../constants';
 import type { InternalFramework } from '../types';
 import ModuleConfig from '../_copiedFromCore/modules.json';
 

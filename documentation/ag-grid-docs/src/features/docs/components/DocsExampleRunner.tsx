@@ -2,7 +2,6 @@ import type { Framework, ImportType } from '@ag-grid-types';
 import type { ExampleType } from '@features/example-generator/types';
 import { ExampleRunner } from '@features/example-runner/components/ExampleRunner';
 import { ExternalLinks } from '@features/example-runner/components/ExternalLinks';
-import type { ExampleOptions } from '@features/example-runner/types';
 import { getLoadingIFrameId } from '@features/example-runner/utils/getLoadingLogoId';
 import { useStore } from '@nanostores/react';
 import { $frameworkContext, $internalFramework, updateInternalFrameworkBasedOnFramework } from '@stores/frameworkStore';
@@ -22,7 +21,7 @@ interface Props {
     name: string;
     title: string;
     exampleType?: ExampleType;
-    options?: ExampleOptions;
+    exampleHeight?: number;
     framework: Framework;
     pageName: string;
     importType: ImportType;
@@ -55,7 +54,7 @@ const queryOptions = {
     refetchOnReconnect: false,
 };
 
-const DocsExampleRunnerInner = ({ name, title, exampleType, options, framework, pageName }: Props) => {
+const DocsExampleRunnerInner = ({ name, title, exampleType, exampleHeight, framework, pageName }: Props) => {
     const internalFramework = useStore($internalFramework);
     const frameworkStore = useStore($frameworkContext);
     const importType = frameworkStore['importType'];
@@ -189,9 +188,8 @@ const DocsExampleRunnerInner = ({ name, title, exampleType, options, framework, 
             exampleUrl={exampleUrl}
             exampleRunnerExampleUrl={exampleRunnerExampleUrl}
             exampleType={exampleType}
-            exampleHeight={options?.exampleHeight}
+            exampleHeight={exampleHeight}
             exampleFiles={exampleFiles}
-            initialShowCode={options?.showCode}
             initialSelectedFile={initialSelectedFile}
             internalFramework={internalFramework}
             externalLinks={externalLinks}
