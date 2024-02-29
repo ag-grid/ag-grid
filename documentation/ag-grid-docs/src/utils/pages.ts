@@ -83,7 +83,11 @@ export const FILES_PATH_MAP: Record<string, string | GlobConfig> = {
     '@ag-grid-community/react/src/**': 'community-modules/react/src/**/*.{tsx,ts}',
     '@ag-grid-community/angular/fesm2015/ag-grid-community-angular.mjs': 'community-modules/angular/dist/ag-grid-angular/fesm2015/ag-grid-community-angular.mjs',
     '@ag-grid-community/vue/dist/**': 'community-modules/vue/dist/**/*.{cjs,mjs,js,map}',
-    '@ag-grid-community/vue3/dist/**': 'community-modules/vue3/dist/**/*.{cjs,mjs,js,map}'
+    '@ag-grid-community/vue3/dist/**': 'community-modules/vue3/dist/**/*.{cjs,mjs,js,map}',
+
+    // packages
+    'ag-grid-community/dist/**': 'packages/ag-grid-community/dist/**/*.{cjs,js,map}',
+
 
     // TODO: Dynamically map files
     // '@ag-grid-community': {
