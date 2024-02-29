@@ -1,3 +1,4 @@
+import fs from 'fs';
 import { globSync } from 'glob';
 import path from 'path';
 import * as prettier from 'prettier';
@@ -56,11 +57,24 @@ const makePublicFile = (): string => {
         }
       }
     }
+
     const cssFilesDir = projectDir + `css/${part.partId}/`;
-    const files = [
-      ...globSync(cssFilesDir + `**/*.ts`),
-      ...globSync(cssFilesDir + `${part.partId}.css`),
-    ]
+
+    const partEntryFiles = globSync(cssFilesDir + `${part.partId}.css`);
+    const partImplementationFiles = globSync(cssFilesDir + `**/*.css`).filter(
+      (file) => !partEntryFiles.includes(file),
+    );
+    const partEntrySource = partEntryFiles.map((file) => fs.readFileSync(file, 'utf8')).join('\n');
+    for (const file of partImplementationFiles) {
+      const pathWithinFolder = file.replace(cssFilesDir, '');
+      if (!partEntrySource.includes(`@import './${pathWithinFolder}';`)) {
+        throw fatalError(
+          `Part ${part.partId} has an implementation file ${pathWithinFolder} that is not imported in the entry file`,
+        );
+      }
+    }
+
+    const files = [...globSync(cssFilesDir + `**/*.ts`), ...partEntryFiles]
       .map((f) => f.replace(cssFilesDir, ''))
       .sort();
     if (files.length > 0) {
