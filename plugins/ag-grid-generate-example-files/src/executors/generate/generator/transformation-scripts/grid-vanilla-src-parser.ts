@@ -124,7 +124,11 @@ interface Collector {
     apply: (bindings: ParsedBindings, node: any) => void;
 }
 
-function internalParser(examplePath: string, srcFile: string, includeTypes: boolean, gridOptionsTypes: Record<string, GridOptionsType>, html: string, exampleType: ExampleType, providedExamples) {
+function internalParser(examplePath, {
+    srcFile,
+    includeTypes,
+    gridOptionsTypes
+}, html, exampleType, providedExamples) {
     const domTree = cheerio.load(html, null, false);
     domTree('style').remove();
     const domEventHandlers = extractEventHandlers(domTree, recognizedDomEvents);
@@ -533,13 +537,11 @@ function internalParser(examplePath: string, srcFile: string, includeTypes: bool
     const inlineHeight = gridElement.css('height');
     const inlineWidth = gridElement.css('width');
 
-    let inlineGridStyles: InlineGridStyles = {
+    let inlineGridStyles: any = {
         theme: 'ag-theme-quartz',
-        width: '100%',
-        height: '100%',
     };
     if (inlineClass) {
-        const theme = inlineClass.split(' ').filter((className) => className.indexOf('ag-theme') >= 0);
+        const theme = inlineClass.split(' ').filter(className => className.indexOf('ag-theme') >= 0);
         inlineGridStyles.theme = theme && theme.length > 0 ? theme[0] : 'ag-theme-quartz';
     }
     inlineGridStyles.height = parseInt(inlineHeight) ? inlineHeight : '100%';
@@ -552,28 +554,22 @@ function internalParser(examplePath: string, srcFile: string, includeTypes: bool
     tsBindings.interfaces = extractInterfaces(tsTree);
     tsBindings.exampleName = examplePath;
     tsBindings.moduleRegistration = extractModuleRegistration(tsTree);
-    tsBindings.gridSettings = {
-        width: '100%',
-        height: '100%',
-        theme: 'ag-theme-quartz',
-        ...exampleSettings
-    };
+    tsBindings.inlineGridStyles = inlineGridStyles;
 
     return tsBindings;
 }
 
-export function parser(examplePath, srcFile, html, exampleType: ExampleType, providedExamples, gridOptionsTypes: Record<string, GridOptionsType>) {
-    const typedBindings = internalParser(
-        examplePath,
+export function parser(examplePath, srcFile, html, exampleType, providedExamples, gridOptionsTypes) {
+    const typedBindings = internalParser(examplePath, {
         srcFile,
         includeTypes: true,
         gridOptionsTypes
-    }, html, exampleSettings, exampleType, providedExamples);
+    }, html, exampleType, providedExamples);
     const bindings = internalParser(examplePath, {
         srcFile,
         includeTypes: false,
         gridOptionsTypes
-    }, html, exampleSettings, exampleType, providedExamples);
+    }, html, exampleType, providedExamples);
     // We need to copy the imports from the typed bindings to the non-typed bindings
     bindings.imports = typedBindings.imports;
     return {bindings, typedBindings};

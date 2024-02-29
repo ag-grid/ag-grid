@@ -1,33 +1,12 @@
-import { basename } from 'path';
-import { ExampleConfig, ParsedBindings, ImportType } from '../types';
-import { templatePlaceholder } from './grid-vanilla-src-parser';
-import {
-    addBindingImports,
-    addEnterprisePackage,
-    addGenericInterfaceImport,
-    convertFunctionToConstPropertyTs,
-    getActiveTheme,
-    getFunctionName,
-    getIntegratedDarkModeCode,
-    getPropertyInterfaces,
-    handleRowGenericInterface,
-    isInstanceMethod,
-    preferParamsApi,
-} from './parser-utils';
-import {
-    convertFunctionalTemplate,
-    convertFunctionToConstCallbackTs,
-    EventAndCallbackNames,
-    getImport,
-    getValueType,
-} from './react-utils';
+import { basename } from "path";
+import { ExampleConfig } from "../types";
+import { templatePlaceholder } from "./grid-vanilla-src-parser";
+import { addBindingImports, addEnterprisePackage, addGenericInterfaceImport, convertFunctionToConstPropertyTs, getActiveTheme, getFunctionName, getIntegratedDarkModeCode, getPropertyInterfaces, handleRowGenericInterface, ImportType, isInstanceMethod, preferParamsApi } from './parser-utils';
+import { convertFunctionalTemplate, convertFunctionToConstCallbackTs, EventAndCallbackNames, getImport, getValueType } from './react-utils';
 
-function getModuleImports(
-    bindings: ParsedBindings,
-    componentFilenames: string[],
-    extraCoreTypes: string[],
-    allStylesheets: string[]
-): string[] {
+
+
+function getModuleImports(bindings: any, componentFilenames: string[], extraCoreTypes: string[], allStylesheets: string[]): string[] {
     let imports = [
         "import React, { useCallback, useMemo, useRef, useState, StrictMode } from 'react';",
         "import { createRoot } from 'react-dom/client';",
@@ -38,9 +17,7 @@ function getModuleImports(
     // to account for the (rare) example that has more than one class...just default to quartz if it does
     // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
     // "source" non dark version
-    const theme = bindings.inlineGridStyles.theme
-        ? bindings.inlineGridStyles.theme.replace('-dark', '')
-        : 'ag-theme-quartz';
+    const theme = bindings.inlineGridStyles.theme ? bindings.inlineGridStyles.theme.replace('-dark', '') : 'ag-theme-quartz';
     imports.push(`import '@ag-grid-community/styles/${theme}.css';`);
 
     if (allStylesheets && allStylesheets.length > 0) {
@@ -72,12 +49,7 @@ function getModuleImports(
     return imports;
 }
 
-function getPackageImports(
-    bindings: ParsedBindings,
-    componentFilenames: string[],
-    extraCoreTypes: string[],
-    allStylesheets: string[]
-): string[] {
+function getPackageImports(bindings: any, componentFilenames: string[], extraCoreTypes: string[], allStylesheets: string[]): string[] {
     const { inlineGridStyles, tData } = bindings;
 
     const imports = [
@@ -87,12 +59,14 @@ function getPackageImports(
     ];
 
     addEnterprisePackage(imports, bindings);
+    addEnterprisePackage(imports, bindings);
 
     imports.push("import 'ag-grid-community/styles/ag-grid.css';");
 
     // to account for the (rare) example that has more than one class...just default to quartz if it does
     // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
     // "source" non dark version
+    const theme = inlineGridStyles.theme ? inlineGridStyles.theme.replace('-dark', '') : 'ag-theme-quartz';
     const theme = inlineGridStyles.theme ? inlineGridStyles.theme.replace('-dark', '') : 'ag-theme-quartz';
     imports.push(`import 'ag-grid-community/styles/${theme}.css';`);
 
@@ -134,9 +108,10 @@ function getImports(
     }
 }
 
-function getTemplate(bindings: ParsedBindings, componentAttributes: string[], rowDataGeneric: string): string {
+function getTemplate(bindings: any, componentAttributes: string[], rowDataGeneric: string): string {
     const { inlineGridStyles } = bindings;
     const agGridTag = `
+        <div style={gridStyle} className={${getActiveTheme(inlineGridStyles.theme, true)}}>
         <div style={gridStyle} className={${getActiveTheme(inlineGridStyles.theme, true)}}>
             <AgGridReact${rowDataGeneric}
                 ref={gridRef}
@@ -175,13 +150,12 @@ function extractComponentInformation(properties, componentFilenames: string[]): 
     return components;
 }
 
-export function vanillaToReactFunctionalTs(
-    bindings: ParsedBindings,
-    exampleConfig: ExampleConfig,
-    componentFilenames: string[],
-    allStylesheets: string[]
-): (importType: ImportType) => string {
-    const { properties, data, tData, inlineGridStyles, onGridReady, typeDeclares, interfaces } = bindings;
+
+
+
+
+export function vanillaToReactFunctionalTs(bindings: any, exampleConfig: ExampleConfig, componentFilenames: string[], allStylesheets: string[]): (importType: ImportType) => string {
+    const { properties, data, tData, inlineGridStyles, onGridReady, resizeToFit, typeDeclares, interfaces } = bindings;
 
     const utilMethodNames = bindings.utils.map(getFunctionName);
     const callbackDependencies = Object.keys(bindings.callbackDependencies).reduce((acc, callbackName) => {
@@ -200,7 +174,7 @@ export function vanillaToReactFunctionalTs(
         const stateProperties = [
             `const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);`,
             `const gridStyle = useMemo(() => ({height: '${inlineGridStyles.height}', width: '${inlineGridStyles.width}'}), []);`,
-            rowDataState,
+            rowDataState
         ];
 
         // for when binding a method
@@ -334,18 +308,9 @@ export function vanillaToReactFunctionalTs(
                 .replace(/gridApi/g, 'gridRef.current!.api');
 
         const template = getTemplate(bindings, componentProps.map(thisReferenceConverter), rowDataGeneric);
-        const eventHandlers = bindings.eventHandlers
-            .map((event) => convertFunctionToConstCallbackTs(event.handler, callbackDependencies))
-            .map(thisReferenceConverter)
-            .map(gridInstanceConverter);
-        const externalEventHandlers = bindings.externalEventHandlers
-            .map((handler) => convertFunctionToConstCallbackTs(handler.body, callbackDependencies))
-            .map(thisReferenceConverter)
-            .map(gridInstanceConverter);
-        const instanceMethods = bindings.instanceMethods
-            .map((instance) => convertFunctionToConstCallbackTs(instance, callbackDependencies))
-            .map(thisReferenceConverter)
-            .map(gridInstanceConverter);
+        const eventHandlers = bindings.eventHandlers.map(event => convertFunctionToConstCallbackTs(event.handler, callbackDependencies)).map(thisReferenceConverter).map(gridInstanceConverter);
+        const externalEventHandlers = bindings.externalEventHandlers.map(handler => convertFunctionToConstCallbackTs(handler.body, callbackDependencies)).map(thisReferenceConverter).map(gridInstanceConverter);
+        const instanceMethods = bindings.instanceMethods.map(instance => convertFunctionToConstCallbackTs(instance, callbackDependencies)).map(thisReferenceConverter).map(gridInstanceConverter);
         const containerStyle = exampleConfig.noStyle ? '' : `style={containerStyle}`;
 
         const gridReady =
@@ -360,6 +325,7 @@ export function vanillaToReactFunctionalTs(
 'use strict';
 
 ${imports.join('\n')}
+${exampleConfig.licenseKey ? "// enter your license key here to suppress license message in the console and watermark\nLicenseManager.setLicenseKey('');\n" : ''}
 ${exampleConfig.licenseKey ? "// enter your license key here to suppress license message in the console and watermark\nLicenseManager.setLicenseKey('');\n" : ''}
 
 ${typeDeclares?.length > 0 ? '\n' + typeDeclares.join('\n') : ''}${interfaces?.length > 0 ? '\n' + interfaces.join('\n') : ''}

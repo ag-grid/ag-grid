@@ -1,20 +1,7 @@
-import { ExampleConfig, ImportType, ParsedBindings } from '../types';
+import { ExampleConfig } from "../types";
 import { convertTemplate, getImport, toConst, toInput, toMemberWithValue, toOutput } from './angular-utils';
-import { templatePlaceholder } from './grid-vanilla-src-parser';
-import {
-    addBindingImports,
-    addEnterprisePackage,
-    addGenericInterfaceImport,
-    getActiveTheme,
-    getIntegratedDarkModeCode,
-    getPropertyInterfaces,
-    handleRowGenericInterface,
-    isInstanceMethod,
-    preferParamsApi,
-    removeFunctionKeyword,
-    removeModuleRegistration,
-    replaceGridReadyRowData,
-} from './parser-utils';
+import { templatePlaceholder } from "./grid-vanilla-src-parser";
+import { addBindingImports, addEnterprisePackage, addGenericInterfaceImport, getActiveTheme, getIntegratedDarkModeCode, getPropertyInterfaces, handleRowGenericInterface, ImportType, isInstanceMethod, preferParamsApi, removeFunctionKeyword, removeModuleRegistration, replaceGridReadyRowData } from './parser-utils';
 import { toTitleCase } from './string-utils';
 const path = require('path');
 
@@ -52,7 +39,7 @@ function getOnGridReadyCode(
     }
 }
 
-function addModuleImports(imports: string[], bindings: ParsedBindings, allStylesheets: string[]): string[] {
+function addModuleImports(imports: string[], bindings: any, allStylesheets: string[]): string[] {
     const { inlineGridStyles, imports: bindingImports, properties } = bindings;
 
     imports.push("import { AgGridAngular } from '@ag-grid-community/angular';");
@@ -72,7 +59,7 @@ function addModuleImports(imports: string[], bindings: ParsedBindings, allStyles
     let propertyInterfaces = getPropertyInterfaces(properties);
     const bImports = [...(bindingImports || [])];
     bImports.push({
-        module: `'@ag-grid-community/core'`,
+        module: `'@ag-grid-community/core'`,w
         isNamespaced: false,
         imports: [...propertyInterfaces, 'GridReadyEvent', 'GridApi'],
     });
@@ -88,7 +75,7 @@ function addModuleImports(imports: string[], bindings: ParsedBindings, allStyles
     return imports;
 }
 
-function addPackageImports(imports: string[], bindings: ParsedBindings, allStylesheets: string[]): string[] {
+function addPackageImports(imports: string[], bindings: any, allStylesheets: string[]): string[] {
     const { inlineGridStyles, imports: bindingImports, properties } = bindings;
 
     imports.push("import { AgGridAngular } from 'ag-grid-angular';");
@@ -132,8 +119,8 @@ function getImports(
     if (bindings.data) {
         imports.push("import { HttpClient, HttpClientModule } from '@angular/common/http';");
     }
-
-    if (importType === 'packages') {
+    
+    if (importType === "packages") {
         addPackageImports(imports, bindings, allStylesheets);
     } else {
         addModuleImports(imports, bindings, allStylesheets);
@@ -148,11 +135,9 @@ function getImports(
     return imports;
 }
 
-function getTemplate(bindings: ParsedBindings, exampleConfig: ExampleConfig, attributes: string[]): string {
+function getTemplate(bindings: any, exampleConfig: ExampleConfig, attributes: string[]): string {
     const { inlineGridStyles } = bindings;
-    const style = exampleConfig.noStyle
-        ? ''
-        : `style="width: ${inlineGridStyles.width}; height: ${inlineGridStyles.height};"`;
+    const style = exampleConfig.noStyle ? '' : `style="width: ${inlineGridStyles.width}; height: ${inlineGridStyles.height};"`;
 
     const agGridTag = `<ag-grid-angular
     ${style}
@@ -164,12 +149,7 @@ function getTemplate(bindings: ParsedBindings, exampleConfig: ExampleConfig, att
     return convertTemplate(template);
 }
 
-export function vanillaToAngular(
-    bindings: ParsedBindings,
-    exampleConfig: ExampleConfig,
-    componentFileNames: string[],
-    allStylesheets: string[]
-): (importType: ImportType) => string {
+export function vanillaToAngular(bindings: any, exampleConfig: ExampleConfig, componentFileNames: string[], allStylesheets: string[]): (importType: ImportType) => string {
     const { data, properties, typeDeclares, interfaces, tData } = bindings;
     const rowDataType = tData || 'any';
     const diParams = [];
@@ -218,9 +198,7 @@ export function vanillaToAngular(
         }
 
         propertyAttributes.push('[class]="themeClass"');
-        propertyAssignments.push(
-            `public themeClass: string = ${getActiveTheme(bindings.inlineGridStyles.theme, true)};`
-        );
+        propertyAssignments.push(`public themeClass: string = ${getActiveTheme(bindings.inlineGridStyles.theme, true)};`);
 
         const componentForCheckBody = eventHandlers
             .concat(externalEventHandlers)
@@ -258,10 +236,11 @@ export function vanillaToAngular(
             // We do not need the non-null assertion in component code as already applied to the declaration for the apis.
             .replace(/(?<!this.)gridApi(\??)(!?)/g, 'this.gridApi');
 
-        let standaloneImports = ['AgGridAngular'];
-        if (bindings.data) {
-            standaloneImports.push('HttpClientModule');
-        }
+  
+   let standaloneImports = ["AgGridAngular"];
+   if(bindings.data){
+    standaloneImports.push("HttpClientModule");
+   }
 
         if (componentFileNames) {
             componentFileNames.forEach((filename) => {

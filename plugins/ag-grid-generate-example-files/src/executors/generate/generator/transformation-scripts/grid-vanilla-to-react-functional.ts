@@ -1,15 +1,10 @@
 import { basename } from 'path';
-import { integratedChartsUsesChartsEnterprise } from "../constants";
+import { ExampleConfig } from '../types';
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
-import { addBindingImports, convertFunctionToConstProperty, getActiveTheme, getFunctionName, getIntegratedDarkModeCode, ImportType, isInstanceMethod, preferParamsApi } from './parser-utils';
+import { addBindingImports, addEnterprisePackage, convertFunctionToConstProperty, getActiveTheme, getFunctionName, getIntegratedDarkModeCode, ImportType, isInstanceMethod, preferParamsApi } from './parser-utils';
 import { convertFunctionalTemplate, convertFunctionToConstCallback, EventAndCallbackNames, getImport, getValueType } from './react-utils';
 
-function getModuleImports(
-    bindings: ParsedBindings,
-    exampleConfig: ExampleConfig,
-    componentFilenames: string[],
-    allStylesheets: string[]
-): string[] {
+function getModuleImports(bindings: any, exampleConfig: ExampleConfig, componentFilenames: string[], allStylesheets: string[]): string[] {
     let imports = [
         "import React, { useCallback, useMemo, useRef, useState, StrictMode } from 'react';",
         "import { createRoot } from 'react-dom/client';",
@@ -24,9 +19,7 @@ function getModuleImports(
     // to account for the (rare) example that has more than one class...just default to quartz if it does
     // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
     // "source" non dark version
-    const theme = bindings.inlineGridStyles.theme
-        ? bindings.inlineGridStyles.theme.replace('-dark', '')
-        : 'ag-theme-quartz';
+    const theme = bindings.inlineGridStyles.theme ? bindings.inlineGridStyles.theme.replace('-dark', '') : 'ag-theme-quartz';
     imports.push(`import '@ag-grid-community/styles/${theme}.css';`);
 
     if (allStylesheets && allStylesheets.length > 0) {
@@ -48,12 +41,7 @@ function getModuleImports(
     return imports;
 }
 
-function getPackageImports(
-    bindings: ParsedBindings,
-    exampleConfig: ExampleConfig,
-    componentFilenames: string[],
-    allStylesheets: string[]
-): string[] {
+function getPackageImports(bindings: any, exampleConfig: ExampleConfig, componentFilenames: string[], allStylesheets: string[]): string[] {
     const { inlineGridStyles } = bindings;
 
     const imports = [
@@ -86,21 +74,15 @@ function getPackageImports(
     return imports;
 }
 
-function getImports(
-    bindings: ParsedBindings,
-    exampleConfig: ExampleConfig,
-    componentFileNames: string[],
-    importType: ImportType,
-    allStylesheets: string[]
-): string[] {
+function getImports(bindings: any, exampleConfig: ExampleConfig, componentFileNames: string[], importType: ImportType, allStylesheets: string[]): string[] {
     if (importType === 'packages') {
         return getPackageImports(bindings, exampleConfig, componentFileNames, allStylesheets);
     } else {
-        return getModuleImports(bindings, exampleConfig, componentFileNames, allStylesheets);
+        return getModuleImports(bindings,exampleConfig, componentFileNames, allStylesheets);
     }
 }
 
-function getTemplate(bindings: ParsedBindings, componentAttributes: string[]): string {
+function getTemplate(bindings: any, componentAttributes: string[]): string {
     const agGridTag = `
         <div style={gridStyle} className={${getActiveTheme(bindings.inlineGridStyles.theme, false)}}>
             <AgGridReact
@@ -140,13 +122,8 @@ function extractComponentInformation(properties, componentFilenames: string[]): 
     return components;
 }
 
-export function vanillaToReactFunctional(
-    bindings: ParsedBindings,
-    exampleConfig: ExampleConfig,
-    componentFilenames: string[],
-    allStylesheets: string[]
-): (importType: ImportType) => string {
-    const { properties, data, inlineGridStyles, onGridReady } = bindings;
+export function vanillaToReactFunctional(bindings: any, exampleConfig: ExampleConfig, componentFilenames: string[], allStylesheets: string[]): (importType: ImportType) => string {
+    const { properties, data, inlineGridStyles, onGridReady, resizeToFit } = bindings;
 
     const utilMethodNames = bindings.utils.map(getFunctionName);
     const callbackDependencies = Object.keys(bindings.callbackDependencies).reduce((acc, callbackName) => {
@@ -161,7 +138,7 @@ export function vanillaToReactFunctional(
         const stateProperties = [
             `const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);`,
             `const gridStyle = useMemo(() => ({height: '${inlineGridStyles.height}', width: '${inlineGridStyles.width}'}), []);`,
-            `const [rowData, setRowData] = useState();`,
+            `const [rowData, setRowData] = useState();`
         ];
 
         const imports = getImports(bindings, exampleConfig, componentFilenames, importType, allStylesheets);
@@ -285,18 +262,9 @@ export function vanillaToReactFunctional(
                 .replace(/gridApi/g, 'gridRef.current.api');
 
         const template = getTemplate(bindings, componentProps.map(thisReferenceConverter));
-        const eventHandlers = bindings.eventHandlers
-            .map((event) => convertFunctionToConstCallback(event.handler, callbackDependencies))
-            .map(thisReferenceConverter)
-            .map(gridInstanceConverter);
-        const externalEventHandlers = bindings.externalEventHandlers
-            .map((handler) => convertFunctionToConstCallback(handler.body, callbackDependencies))
-            .map(thisReferenceConverter)
-            .map(gridInstanceConverter);
-        const instanceMethods = bindings.instanceMethods
-            .map((instance) => convertFunctionToConstCallback(instance, callbackDependencies))
-            .map(thisReferenceConverter)
-            .map(gridInstanceConverter);
+        const eventHandlers = bindings.eventHandlers.map(event => convertFunctionToConstCallback(event.handler, callbackDependencies)).map(thisReferenceConverter).map(gridInstanceConverter);
+        const externalEventHandlers = bindings.externalEventHandlers.map(handler => convertFunctionToConstCallback(handler.body, callbackDependencies)).map(thisReferenceConverter).map(gridInstanceConverter);
+        const instanceMethods = bindings.instanceMethods.map(instance => convertFunctionToConstCallback(instance, callbackDependencies)).map(thisReferenceConverter).map(gridInstanceConverter);
         const containerStyle = exampleConfig.noStyle ? '' : `style={containerStyle}`;
 
         const gridReady =

@@ -1,18 +1,6 @@
-import { ExampleConfig, ImportType, ParsedBindings } from '../types';
-import {
-    convertDefaultColDef,
-    getAllMethods,
-    getColumnDefs,
-    getPropertyBindings,
-    getTemplate,
-} from './grid-vanilla-to-vue-common';
-import {
-    addEnterprisePackage,
-    getActiveTheme,
-    getIntegratedDarkModeCode,
-    preferParamsApi,
-    replaceGridReadyRowData,
-} from './parser-utils';
+import { ExampleConfig } from "../types";
+import { convertDefaultColDef, getAllMethods, getColumnDefs, getPropertyBindings, getTemplate } from "./grid-vanilla-to-vue-common";
+import { addEnterprisePackage, getActiveTheme, getIntegratedDarkModeCode, ImportType, preferParamsApi, replaceGridReadyRowData } from './parser-utils';
 import { getImport, toOutput } from './vue-utils';
 const path = require('path');
 
@@ -46,12 +34,7 @@ function getOnGridReadyCode(bindings: ParsedBindings): string {
     }`;
 }
 
-function getModuleImports(
-    bindings: ParsedBindings,
-    exampleConfig: ExampleConfig,
-    componentFileNames: string[],
-    allStylesheets: string[]
-): string[] {
+function getModuleImports(bindings: any, exampleConfig: ExampleConfig, componentFileNames: string[], allStylesheets: string[]): string[] {
     const { inlineGridStyles } = bindings;
 
     let imports = ["import Vue from 'vue';", "import { AgGridVue } from '@ag-grid-community/vue';"];
@@ -78,12 +61,7 @@ function getModuleImports(
     return imports;
 }
 
-function getPackageImports(
-    bindings: ParsedBindings,
-    exampleConfig: ExampleConfig,
-    componentFileNames: string[],
-    allStylesheets: string[]
-): string[] {
+function getPackageImports(bindings: any, exampleConfig: ExampleConfig, componentFileNames: string[], allStylesheets: string[]): string[] {
     const { inlineGridStyles } = bindings;
 
     const imports = ["import Vue from 'vue';", "import { AgGridVue } from 'ag-grid-vue';"];
@@ -112,13 +90,7 @@ function getPackageImports(
     return imports;
 }
 
-function getImports(
-    bindings: ParsedBindings,
-    exampleConfig: ExampleConfig,
-    componentFileNames: string[],
-    importType: ImportType,
-    allStylesheets: string[]
-): string[] {
+function getImports(bindings: any, exampleConfig: ExampleConfig, componentFileNames: string[], importType: ImportType, allStylesheets: string[]): string[] {
     if (importType === 'packages') {
         return getPackageImports(bindings, exampleConfig, componentFileNames, allStylesheets);
     } else {
@@ -126,13 +98,8 @@ function getImports(
     }
 }
 
-export function vanillaToVue(
-    bindings: ParsedBindings,
-    exampleConfig: ExampleConfig,
-    componentFileNames: string[],
-    allStylesheets: string[]
-): (importType: ImportType) => string {
-    const vueComponents = bindings.components.map((component) => `${component.name}:${component.value}`);
+export function vanillaToVue(bindings: any, exampleConfig: ExampleConfig, componentFileNames: string[], allStylesheets: string[]): (importType: ImportType) => string {
+    const vueComponents = bindings.components.map(component => `${component.name}:${component.value}`);
 
     const onGridReady = getOnGridReadyCode(bindings);
     const eventAttributes = bindings.eventHandlers.filter((event) => event.name !== 'onGridReady').map(toOutput);
@@ -142,14 +109,9 @@ export function vanillaToVue(
         ? convertDefaultColDef(bindings.defaultColDef, vueComponents, componentFileNames)
         : null;
 
-    return (importType) => {
+    return importType => {
         const imports = getImports(bindings, exampleConfig, componentFileNames, importType, allStylesheets);
-        const [propertyAssignments, propertyVars, propertyAttributes] = getPropertyBindings(
-            bindings,
-            componentFileNames,
-            importType,
-            vueComponents
-        );
+        const [propertyAssignments, propertyVars, propertyAttributes] = getPropertyBindings(bindings, componentFileNames, importType, vueComponents);
         const template = getTemplate(bindings, exampleConfig, propertyAttributes.concat(eventAttributes));
 
         return `
