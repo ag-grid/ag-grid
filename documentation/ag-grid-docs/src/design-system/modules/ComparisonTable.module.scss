@@ -12,10 +12,10 @@
     }
 }
 
-.twoColumn .subGroupHeader .cell {
-    &:nth-child(2),
-    &:nth-child(3) {
-        display: none;
+// Hack to deal with sub-groups on mobile
+@media screen and (max-width: $breakpoint-pricing-medium) {
+    .twoColumn .subGroupHeader .cell:not(:first-child) {
+        width: $spacing-size-16;
     }
 }
 
