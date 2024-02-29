@@ -1,7 +1,7 @@
 import { globSync } from 'glob';
 import path from 'path';
 import * as prettier from 'prettier';
-import { ParamMeta, allPartsMeta, cssBorderStyles } from '../metadata';
+import { Helper, ParamMeta, allPartsMeta, cssBorderStyles } from '../metadata';
 import { DefinePartArgs, camelCase, logErrorMessage } from '../theme-utils';
 
 const projectDir = path.join(__dirname, '../');
@@ -50,9 +50,7 @@ const makePublicFile = (): string => {
       args.defaults = {};
       for (const { property, defaultValue } of part.params) {
         if (defaultValue && typeof defaultValue === 'object' && defaultValue.helper) {
-          args.defaults[property] = codeLiteral(
-            `helpers.${defaultValue.helper}(${JSON.stringify(defaultValue.arg)})`,
-          );
+          args.defaults[property] = codeLiteral(`helpers.${renderHelper(defaultValue)}`);
         } else {
           args.defaults[property] = defaultValue;
         }
@@ -98,11 +96,12 @@ const makePublicFile = (): string => {
 
   result += `export const allParts = [${allPartsMeta.map((p) => camelCase(p.partId)).join(', ')}]\n\n`;
 
-  result += `
+  if (process.argv.includes('--hot-reload')) {
+    result += `
     if (import.meta.hot) {
       import.meta.hot.accept((newModule) => {
         if (newModule) {
-          const oldParts = newModule.allParts.map((p: Part) => p.partId).join(', ');
+          const oldParts = newModule.allParts.map((p: any) => p.partId).join(', ');
           const newParts = allParts.map((p) => p.partId).join(', ');
           if (oldParts !== newParts) {
             import.meta.hot?.invalidate();
@@ -119,6 +118,7 @@ const makePublicFile = (): string => {
       });
     }
   `;
+  }
 
   return result;
 };
@@ -269,7 +269,7 @@ const docComment = (arg: {
   if (arg.defaultValue !== undefined) {
     let defaultValueString: string;
     if (arg.defaultValue && typeof arg.defaultValue === 'object' && arg.defaultValue.helper) {
-      defaultValueString = `${arg.defaultValue.helper}(${JSON.stringify(arg.defaultValue.arg)})`;
+      defaultValueString = renderHelper(arg.defaultValue);
     } else {
       defaultValueString = JSON.stringify(arg.defaultValue);
     }
@@ -282,6 +282,9 @@ const docComment = (arg: {
   result += ' */\n';
   return result;
 };
+
+const renderHelper = ({ helper, arg }: Helper) =>
+  arg === undefined ? `${helper}()` : `${helper}(${JSON.stringify(arg)})`;
 
 const fatalError = (message: string) => {
   // eslint-disable-next-line no-console

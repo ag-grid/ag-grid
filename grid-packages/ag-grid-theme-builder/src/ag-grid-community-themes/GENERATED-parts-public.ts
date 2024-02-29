@@ -13,6 +13,7 @@ export type CoreParam =
   | 'backgroundColor'
   | 'foregroundColor'
   | 'accentColor'
+  | 'invalidColor'
   | 'borderColor'
   | 'wrapperBorder'
   | 'headerBorder'
@@ -75,7 +76,12 @@ export type CoreParam =
   | 'widgetVerticalSpacing'
   | 'listItemHeight'
   | 'inputBackgroundColor'
+  | 'inputDisabledBackgroundColor'
+  | 'inputDisabledForegroundColor'
   | 'inputBorder'
+  | 'inputDisabledBorder'
+  | 'inputInvalidBorder'
+  | 'inputFocusBorder'
   | 'inputHorizontalPadding'
   | 'inputBorderRadius'
   | 'toggleButtonWidth'
@@ -113,7 +119,11 @@ export type CoreParam =
   | 'panelBackgroundColor'
   | 'panelTitleBarBackgroundColor'
   | 'panelTitleBarBorder'
-  | 'columnSelectIndentSize';
+  | 'columnSelectIndentSize'
+  | 'toolPanelSeparatorBorder'
+  | 'tooltipBackgroundColor'
+  | 'tooltipForegroundColor'
+  | 'tooltipBorder';
 
 export type ColorsPreset = 'light' | 'dark';
 
@@ -135,6 +145,7 @@ export const core = definePart<CoreParam>({
     backgroundColor: '#FFF',
     foregroundColor: '#181d1f',
     accentColor: '#2196f3',
+    invalidColor: '#e02525',
     borderColor: helpers.transparentForeground(0.15),
     wrapperBorder: true,
     headerBorder: true,
@@ -198,7 +209,12 @@ export const core = definePart<CoreParam>({
     widgetVerticalSpacing: helpers.ref('gridSize'),
     listItemHeight: helpers.calc('iconSize + widgetVerticalSpacing'),
     inputBackgroundColor: helpers.ref('backgroundColor'),
+    inputDisabledBackgroundColor: helpers.opaqueForeground(0.06),
+    inputDisabledForegroundColor: helpers.transparentForeground(0.5),
     inputBorder: true,
+    inputDisabledBorder: true,
+    inputInvalidBorder: 'solid 1px var(--ag-invalid-color)',
+    inputFocusBorder: helpers.accentBorder(),
     inputHorizontalPadding: helpers.ref('gridSize'),
     inputBorderRadius: helpers.ref('borderRadius'),
     toggleButtonWidth: '28px',
@@ -240,6 +256,10 @@ export const core = definePart<CoreParam>({
     panelTitleBarBackgroundColor: helpers.ref('headerBackgroundColor'),
     panelTitleBarBorder: true,
     columnSelectIndentSize: helpers.ref('iconSize'),
+    toolPanelSeparatorBorder: true,
+    tooltipBackgroundColor: helpers.ref('chromeBackgroundColor'),
+    tooltipForegroundColor: helpers.ref('foregroundColor'),
+    tooltipBorder: true,
   },
   css: [coreCssImport],
 });
@@ -324,6 +344,15 @@ export type ParamTypes = {
    * @default "#2196f3"
    */
   accentColor: string;
+
+  /**
+   * The colour for inputs and UI controls in an invalid state.
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default "#e02525"
+   */
+  invalidColor: string;
 
   /**
    * Default colour for borders.
@@ -875,13 +904,31 @@ export type ParamTypes = {
   listItemHeight: string;
 
   /**
-   * Borders for text inputs.
+   * Background colour for text inputs.
    *
    * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
    *
    * @default ref("backgroundColor")
    */
   inputBackgroundColor: string;
+
+  /**
+   * Background colour for disabled text inputs.
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default opaqueForeground(0.06)
+   */
+  inputDisabledBackgroundColor: string;
+
+  /**
+   * Text colour for disabled text inputs.
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default transparentForeground(0.5)
+   */
+  inputDisabledForegroundColor: string;
 
   /**
    * Borders around text inputs.
@@ -891,6 +938,33 @@ export type ParamTypes = {
    * @default true
    */
   inputBorder: string | boolean;
+
+  /**
+   * Borders around text inputs.
+   *
+   * A CSS border value e.g. "solid 1px red". Passing true is equivalent to "solid 1px var(--ag-border-color)", and false to "none".
+   *
+   * @default true
+   */
+  inputDisabledBorder: string | boolean;
+
+  /**
+   * Borders around text inputs.
+   *
+   * A CSS border value e.g. "solid 1px red". Passing true is equivalent to "solid 1px var(--ag-border-color)", and false to "none".
+   *
+   * @default "solid 1px var(--ag-invalid-color)"
+   */
+  inputInvalidBorder: string | boolean;
+
+  /**
+   * Borders around focussed text inputs.
+   *
+   * A CSS border value e.g. "solid 1px red". Passing true is equivalent to "solid 1px var(--ag-border-color)", and false to "none".
+   *
+   * @default accentBorder()
+   */
+  inputFocusBorder: string | boolean;
 
   /**
    * Padding inside text inputs.
@@ -1235,6 +1309,42 @@ export type ParamTypes = {
   columnSelectIndentSize: string;
 
   /**
+   * Colour of the dividing line between sections of menus e.g. column menu and right-click context menu
+   *
+   * A CSS border value e.g. "solid 1px red". Passing true is equivalent to "solid 1px var(--ag-border-color)", and false to "none".
+   *
+   * @default true
+   */
+  toolPanelSeparatorBorder: string | boolean;
+
+  /**
+   * Background colour for tooltips
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default ref("chromeBackgroundColor")
+   */
+  tooltipBackgroundColor: string;
+
+  /**
+   * Text colour for tooltips
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default ref("foregroundColor")
+   */
+  tooltipForegroundColor: string;
+
+  /**
+   * Border for tooltips
+   *
+   * A CSS border value e.g. "solid 1px red". Passing true is equivalent to "solid 1px var(--ag-border-color)", and false to "none".
+   *
+   * @default true
+   */
+  tooltipBorder: string | boolean;
+
+  /**
    * Use one of the built-in sets of preset colors values. Available presets are: "light", "dark".
    *
    * Setting a preset provides default values for other properties that you can then override if required.
@@ -1287,7 +1397,7 @@ export const allParts = [core, colors, borders, quartzIcons];
 if (import.meta.hot) {
   import.meta.hot.accept((newModule) => {
     if (newModule) {
-      const oldParts = newModule.allParts.map((p: Part) => p.partId).join(', ');
+      const oldParts = newModule.allParts.map((p: any) => p.partId).join(', ');
       const newParts = allParts.map((p) => p.partId).join(', ');
       if (oldParts !== newParts) {
         import.meta.hot?.invalidate();

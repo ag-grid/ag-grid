@@ -122,10 +122,9 @@
 }
 
 .ag-angle-select[disabled] {
-  color: var(--ag-disabled-foreground-color);
+  opacity: 0.5;
   pointer-events: none;
   .ag-angle-select-field {
-    opacity: 0.4;
   }
 }
 
@@ -153,32 +152,29 @@
   margin-left: -3px;
   margin-top: -4px;
   border-radius: 3px;
-  background-color: var(--ag-secondary-foreground-color);
+  background-color: var(--ag-foreground-color);
 }
 
 .ag-picker-field-wrapper {
-  border: var(--ag-borders);
-  border-color: var(--ag-border-color);
+  border: var(--ag-input-border);
   border-radius: 5px;
   background-color: var(--ag-background-color);
 
   &:disabled {
-    color: var(--ag-disabled-foreground-color);
-    background-color: var(--ag-input-disabled-background-color);
-    border-color: var(--ag-input-disabled-border-color);
+    opacity: 0.5;
   }
 
   &.ag-picker-has-focus,
   &:focus-within {
     outline: none;
-    box-shadow: var(--ag-input-focus-box-shadow);
-    border-color: var(--ag-input-focus-border-color);
+    box-shadow: var(--ag-focus-shadow);
+    border: var(--ag-input-focus-border);
   }
 }
 
 .ag-picker-field-button {
   background-color: var(--ag-background-color);
-  color: var(--ag-secondary-foreground-color);
+  color: var(--ag-foreground-color);
 }
 
 .ag-dialog.ag-color-dialog {
@@ -252,6 +248,6 @@
 .ag-spectrum-slider,
 .ag-recent-color {
   &:focus-visible:not(:disabled):not([readonly]) {
-    box-shadow: var(--ag-input-focus-box-shadow);
+    box-shadow: var(--ag-focus-shadow);
   }
 }

@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "dev-test": "vitest",
     "codegen": "tsx src/ag-grid-community-themes/scripts/codegen.ts",
-    "codegen:watch": "tsx --watch src/ag-grid-community-themes/scripts/codegen.ts"
+    "codegen:watch": "tsx --watch src/ag-grid-community-themes/scripts/codegen.ts --hot-reload"
   },
   "dependencies": {
     "@ag-grid-community/client-side-row-model": "^31.1.1",

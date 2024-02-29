@@ -22,6 +22,12 @@ export const coreMeta = definePartMeta({
       defaultValue: '#2196f3',
     },
     {
+      property: 'invalidColor',
+      type: 'color',
+      docs: 'The colour for inputs and UI controls in an invalid state.',
+      defaultValue: '#e02525',
+    },
+    {
       property: 'borderColor',
       type: 'color',
       docs: 'Default colour for borders.',
@@ -452,14 +458,44 @@ export const coreMeta = definePartMeta({
     {
       property: 'inputBackgroundColor',
       type: 'color',
-      docs: 'Borders for text inputs.',
+      docs: 'Background colour for text inputs.',
       defaultValue: { helper: 'ref', arg: 'backgroundColor' },
+    },
+    {
+      property: 'inputDisabledBackgroundColor',
+      type: 'color',
+      docs: 'Background colour for disabled text inputs.',
+      defaultValue: { helper: 'opaqueForeground', arg: 0.06 },
+    },
+    {
+      property: 'inputDisabledForegroundColor',
+      type: 'color',
+      docs: 'Text colour for disabled text inputs.',
+      defaultValue: { helper: 'transparentForeground', arg: 0.5 },
     },
     {
       property: 'inputBorder',
       type: 'border',
       docs: 'Borders around text inputs.',
       defaultValue: true,
+    },
+    {
+      property: 'inputDisabledBorder',
+      type: 'border',
+      docs: 'Borders around text inputs.',
+      defaultValue: true,
+    },
+    {
+      property: 'inputInvalidBorder',
+      type: 'border',
+      docs: 'Borders around text inputs.',
+      defaultValue: 'solid 1px var(--ag-invalid-color)',
+    },
+    {
+      property: 'inputFocusBorder',
+      type: 'border',
+      docs: 'Borders around focussed text inputs.',
+      defaultValue: { helper: 'accentBorder' },
     },
     {
       property: 'inputHorizontalPadding',
@@ -722,6 +758,31 @@ export const coreMeta = definePartMeta({
       min: 0,
       max: 50,
       step: 1,
+    },
+    {
+      property: 'toolPanelSeparatorBorder',
+      type: 'border',
+      docs: 'Colour of the dividing line between sections of menus e.g. column menu and right-click context menu',
+      defaultValue: true,
+    },
+
+    {
+      property: 'tooltipBackgroundColor',
+      type: 'color',
+      docs: 'Background colour for tooltips',
+      defaultValue: { helper: 'ref', arg: 'chromeBackgroundColor' },
+    },
+    {
+      property: 'tooltipForegroundColor',
+      type: 'color',
+      docs: 'Text colour for tooltips',
+      defaultValue: { helper: 'ref', arg: 'foregroundColor' },
+    },
+    {
+      property: 'tooltipBorder',
+      type: 'border',
+      docs: 'Border for tooltips',
+      defaultValue: true,
     },
   ],
 });

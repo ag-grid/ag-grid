@@ -6,7 +6,6 @@
 .ag-group-title-bar {
   display: flex;
   align-items: center;
-  background-color: var(--ag-subheader-background-color);
   padding: var(--ag-grid-size);
 }
 
@@ -27,7 +26,6 @@
   display: flex;
   align-items: center;
   padding: var(--ag-grid-size);
-  background-color: var(--ag-subheader-toolbar-background-color);
 }
 
 .ag-group-container {

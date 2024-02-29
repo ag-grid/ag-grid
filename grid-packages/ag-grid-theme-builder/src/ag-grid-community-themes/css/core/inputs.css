@@ -67,6 +67,10 @@ input[class^='ag-'] {
   background-color: var(--ag-background-color);
 }
 
+.ag-label-align-right .ag-label {
+  margin-left: var(--ag-grid-size);
+}
+
 textarea[class^='ag-'],
 select[class^='ag-'] {
   background-color: var(--ag-background-color);
@@ -105,18 +109,18 @@ textarea[class^='ag-'] {
   padding-left: var(--ag-grid-size);
 
   &:disabled {
-    color: var(--ag-disabled-foreground-color);
+    color: var(--ag-input-disabled-foreground-color);
     background-color: var(--ag-input-disabled-background-color);
-    border-color: var(--ag-input-disabled-border-color);
+    border: var(--ag-input-disabled-border);
   }
 
   &:focus {
     outline: none;
-    box-shadow: var(--ag-input-focus-box-shadow);
-    border-color: var(--ag-input-focus-border-color);
+    box-shadow: var(--ag-focus-shadow);
+    border: var(--ag-input-focus-border);
   }
 
   &:invalid {
-    border: var(--ag-borders-input-invalid) var(--ag-input-border-color-invalid);
+    border: var(--ag-input-invalid-border);
   }
 }

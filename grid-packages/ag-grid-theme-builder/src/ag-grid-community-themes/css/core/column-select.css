@@ -11,8 +11,8 @@
   flex: none;
   display: flex;
   align-items: center;
-  padding-top: var(--ag-widget-container-horizontal-padding);
-  padding-bottom: var(--ag-widget-container-horizontal-padding);
+  padding-left: var(--ag-widget-container-horizontal-padding);
+  padding-right: var(--ag-widget-container-horizontal-padding);
   /* match header height instead of using vertical padding, because this is
      often displayed aligned with headers and it looks neater */
   height: var(--ag-header-height);
@@ -103,7 +103,7 @@
 
 .ag-column-select-column-readonly,
 .ag-column-select-column-group-readonly {
-  color: var(--ag-disabled-foreground-color);
+  opacity: 0.5;
   pointer-events: none;
 }
 

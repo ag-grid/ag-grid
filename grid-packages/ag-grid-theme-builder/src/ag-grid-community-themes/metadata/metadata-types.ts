@@ -56,7 +56,8 @@ export type PresetParam = ParamCommon & {
   defaultValue: string | null;
 };
 
-export type CssOrHelper<T = string> = T | { helper: string; arg: any };
+export type Helper = { helper: string; arg?: any };
+export type CssOrHelper<T = string> = T | Helper;
 
 export type ColorParam = ParamCommon & {
   type: 'color';
