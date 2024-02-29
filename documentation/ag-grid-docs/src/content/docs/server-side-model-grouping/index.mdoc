@@ -94,13 +94,19 @@ By default the group nodes stick to the top of the Grid, to disable this behavio
 
 ## Row Group Footers
 
-To enable [Row Group Footers](./grouping-footers/), set the `groupIncludeFooter` property to true. Note that the total footer is not supported by the SSRM.
+To enable [Row Group Footers](./grouping-footers/), set the `groupIncludeFooter` property to true.
 
 {% gridExampleRunner title="Group Footers" name="group-footer" /%}
 
 Row group footers can also be used with `groupDisplayType='multipleColumns'`, as demonstrated in the example below.
 
 {% gridExampleRunner title="Multiple Group Columns and Footers" name="group-footer-multiple-cols" /%}
+
+## Total Footer
+
+To enable [Total Footers](./grouping-footers/), set the `groupIncludeTotalFooter` property to true, and provide a datasource `getTotalFooterData` implementation.
+
+{% gridExampleRunner title="Total Footer" name="total-footer" type="generated" options={ "enterprise": true, "modules": ["serverside","rowgrouping"] } /%}
 
 ## Expand All / Collapse All
 
