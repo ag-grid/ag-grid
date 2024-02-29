@@ -2,10 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import CommunityMenu from '@components/community-section/menu';
 import LayoutStyles from '@design-system/modules/community-section/Layout.module.scss';
-import FeaturedNews from '@components/community-section/news-updates/featurednews';
-import Events from '@components/community-section/news-updates/events';
-import Podcasts from '@components/community-section/news-updates/podcasts';
-import Videos from '@components/community-section/news-updates/videos';
+import ToolsExtensions from '@components/community-section/tools-extensions/toolsextensions';
 ---
 
 <Layout title="AG Grid">
@@ -18,20 +15,7 @@ import Videos from '@components/community-section/news-updates/videos';
             </header>
             <div class={LayoutStyles.content}>
                 <section>
-                    <h3>Featured</h3>
-                    <p>TBD...</p>
-                </section>
-                <section>
-                    <h3>Wrappers</h3>
-                    <p>TBD...</p>
-                </section>
-                <section>
-                    <h3>Integrations</h3>
-                    <p>TBD...</p>
-                </section>
-                <section>
-                    <h3>Utilities</h3>
-                    <p>TBD...</p>
+                    <ToolsExtensions client:only/>
                 </section>
             </div>
         </div>

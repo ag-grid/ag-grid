@@ -1,0 +1,190 @@
+.container {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+
+    .filterContainer {
+        flex-basis: 250px;
+
+        .filterPanel {
+            background: transparent;
+            border-radius: 12px;
+            border: 1px solid var(--color-border-primary);
+            padding: 12px;
+
+            .header {
+                .title {
+                    font-weight: 800;
+                    font-size: 18px;
+                    margin-bottom: 8px;
+                }
+
+                .divider {
+                    margin-top: 6px;
+                    margin-bottom: 12px;
+                }
+            }
+
+            .body {
+                .filterSection {
+
+                    .divider {
+                        margin: 16px 64px;
+                    }
+
+                    .filterButtonContainer {
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: flex-start;
+                        gap: 12px;
+                        row-gap: 6px;
+
+                        .filterButton {
+                            background: transparent;
+                            border: none;
+                            text-align: start;
+                            justify-content: center;
+                            font-weight: 400;
+                            padding-left: 0px;
+
+                            img {
+                                width: 32px;
+                                height: 32px;
+                                margin-right: 12px;
+                                padding: 4px;
+                                object-fit: contain;
+                            }
+
+                            &.active {
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .listContainer {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem; // Adjust the space between items as needed
+      }
+      
+      .itemContainer {
+        display: flex;
+        background: #1f2836; // Card background color
+        border: 1px solid var(--color-border-primary);
+        border-radius: 0.5rem; // Card border radius for rounded corners
+      
+        .image,
+        .content {
+          img {
+            width: 100%; // Make image fill the container width
+            height: auto; // Keep the image aspect ratio
+            object-fit: cover; // Cover the area without breaking aspect ratio
+            border-radius: 24px;
+          }
+      
+          display: flex;
+          flex-direction: column;
+        }
+      
+        .image {
+        padding: 20px;
+          flex: 0 1 33%;
+        }
+      
+        .content {
+          flex: 0 1 67%;
+          padding: 1rem; // Padding inside the content area
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between; // Aligns header and description at the top and tags at the bottom
+      
+          .header {
+            display: flex;
+            font-weight: bold;
+            margin-bottom: 0.5rem; // Space between header and description
+          }
+      
+          .description {
+            flex-grow: 1; // Allows description to fill available space, pushing tags to the bottom
+            margin-bottom: 0.5rem; // Space between description and tags
+          }
+      
+          .tagContainer {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            row-gap: 8px;
+      
+            .tag {
+              background: transparent; // Tag background color
+              border: 1px solid var(--color-border-primary);
+              border-radius: 12px;
+              padding: 0.25rem 0.5rem; // Padding inside tags
+              font-size: 0.75rem; // Tag text size
+            }
+          }
+        }
+      }
+      
+
+    // .listContainer {
+    //     display: flex;
+    //     flex-direction: column;
+    //     flex-wrap: wrap;
+    //     padding: 0px 32px;
+    //     gap: 12px;
+
+    //     .itemContainer {
+    //         padding: 16px;
+    //         background: #1f2a46;
+    //         border-radius: 12px;
+    //         display: grid;
+    //         grid-template-columns: 33% 66%;	
+    //         height: 200px;
+
+    //         .image {
+
+    //             img {
+    //                 width: 100%;
+    //                 height: auto;
+    //                 border-radius: 24px;
+    //                 object-fit: contain;
+    //             }
+    //         }
+
+    //         .content {
+    //             display: flex;
+    //             flex-direction: column;
+
+    //             .header {
+    //                 font-size: 20px;
+    //                 font-weight: 800;
+    //             }
+
+    //             .description {
+    //                 flex-grow: 1;
+    //             }
+
+    //             .tagContainer {
+    //                 display: flex;
+    //                 gap: 12px;
+
+    //                 .tag {
+    //                     border-radius: 24px;
+    //                     padding: 6px 12px;
+    //                     font-size: 14px;
+    //                     font-weight: 400;
+    //                     border: 1px solid var(--color-border-primary);
+    //                     text-transform: capitalize;
+
+    //                     &:hover {
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
+}
