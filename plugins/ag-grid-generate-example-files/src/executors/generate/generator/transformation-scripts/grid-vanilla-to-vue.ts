@@ -1,19 +1,27 @@
-import { ExampleConfig } from "../types";
-import { convertDefaultColDef, getAllMethods, getColumnDefs, getPropertyBindings, getTemplate } from "./grid-vanilla-to-vue-common";
-import { addEnterprisePackage, getActiveTheme, getIntegratedDarkModeCode, ImportType, preferParamsApi, replaceGridReadyRowData } from './parser-utils';
+import { ExampleConfig, ImportType, ParsedBindings } from '../types';
+import {
+    convertDefaultColDef,
+    getAllMethods,
+    getColumnDefs,
+    getPropertyBindings,
+    getTemplate,
+} from './grid-vanilla-to-vue-common';
+import {
+    addEnterprisePackage,
+    getActiveTheme,
+    getIntegratedDarkModeCode,
+    preferParamsApi,
+    replaceGridReadyRowData,
+} from './parser-utils';
 import { getImport, toOutput } from './vue-utils';
 const path = require('path');
 
-function getOnGridReadyCode(bindings: any): string {
-    const { onGridReady, resizeToFit, data } = bindings;
+function getOnGridReadyCode(bindings: ParsedBindings): string {
+    const { onGridReady, data } = bindings;
     const additionalLines = [];
 
     if (onGridReady) {
         additionalLines.push(onGridReady.trim().replace(/^\{|\}$/g, ''));
-    }
-
-    if (resizeToFit) {
-        additionalLines.push('params.api.sizeColumnsToFit();');
     }
 
     if (data) {
@@ -26,10 +34,11 @@ function getOnGridReadyCode(bindings: any): string {
             
             fetch(${url})
                 .then(resp => resp.json())
-                .then(data => updateData(data));`
-        );
+                .then(data => updateData(data));`);
     }
-    const additional = preferParamsApi(additionalLines.length > 0 ? `\n\n        ${additionalLines.join('\n        ')}` : '')
+    const additional = preferParamsApi(
+        additionalLines.length > 0 ? `\n\n        ${additionalLines.join('\n        ')}` : ''
+    );
     return `onGridReady(params) {
         ${getIntegratedDarkModeCode(bindings.exampleName)}
         this.gridApi = params.api;
@@ -37,13 +46,15 @@ function getOnGridReadyCode(bindings: any): string {
     }`;
 }
 
-function getModuleImports(bindings: any, exampleConfig: ExampleConfig, componentFileNames: string[], allStylesheets: string[]): string[] {
+function getModuleImports(
+    bindings: ParsedBindings,
+    exampleConfig: ExampleConfig,
+    componentFileNames: string[],
+    allStylesheets: string[]
+): string[] {
     const { inlineGridStyles } = bindings;
 
-    let imports = [
-        "import Vue from 'vue';",
-        "import { AgGridVue } from '@ag-grid-community/vue';",
-    ];
+    let imports = ["import Vue from 'vue';", "import { AgGridVue } from '@ag-grid-community/vue';"];
 
     if (exampleConfig.licenseKey) {
         imports.push("import { LicenseManager } from '@ag-grid-enterprise/core';");
@@ -57,23 +68,25 @@ function getModuleImports(bindings: any, exampleConfig: ExampleConfig, component
     imports.push(`import "@ag-grid-community/styles/${theme}.css";`);
 
     if (allStylesheets && allStylesheets.length > 0) {
-        allStylesheets.forEach(styleSheet => imports.push(`import './${path.basename(styleSheet)}';`));
+        allStylesheets.forEach((styleSheet) => imports.push(`import './${path.basename(styleSheet)}';`));
     }
 
     if (componentFileNames) {
-        imports.push(...componentFileNames.map(componentFileName => getImport(componentFileName, 'Vue', '')));
+        imports.push(...componentFileNames.map((componentFileName) => getImport(componentFileName, 'Vue', '')));
     }
 
     return imports;
 }
 
-function getPackageImports(bindings: any, exampleConfig: ExampleConfig, componentFileNames: string[], allStylesheets: string[]): string[] {
+function getPackageImports(
+    bindings: ParsedBindings,
+    exampleConfig: ExampleConfig,
+    componentFileNames: string[],
+    allStylesheets: string[]
+): string[] {
     const { inlineGridStyles } = bindings;
 
-    const imports = [
-        "import Vue from 'vue';",
-        "import { AgGridVue } from 'ag-grid-vue';",
-    ];
+    const imports = ["import Vue from 'vue';", "import { AgGridVue } from 'ag-grid-vue';"];
 
     addEnterprisePackage(imports, bindings);
     if (exampleConfig.licenseKey) {
@@ -89,17 +102,23 @@ function getPackageImports(bindings: any, exampleConfig: ExampleConfig, componen
     imports.push(`import 'ag-grid-community/styles/${theme}.css';`);
 
     if (allStylesheets && allStylesheets.length > 0) {
-        allStylesheets.forEach(styleSheet => imports.push(`import './${path.basename(styleSheet)}';`));
+        allStylesheets.forEach((styleSheet) => imports.push(`import './${path.basename(styleSheet)}';`));
     }
 
     if (componentFileNames) {
-        imports.push(...componentFileNames.map(componentFileName => getImport(componentFileName, 'Vue', '')));
+        imports.push(...componentFileNames.map((componentFileName) => getImport(componentFileName, 'Vue', '')));
     }
 
     return imports;
 }
 
-function getImports(bindings: any, exampleConfig: ExampleConfig, componentFileNames: string[], importType: ImportType, allStylesheets: string[]): string[] {
+function getImports(
+    bindings: ParsedBindings,
+    exampleConfig: ExampleConfig,
+    componentFileNames: string[],
+    importType: ImportType,
+    allStylesheets: string[]
+): string[] {
     if (importType === 'packages') {
         return getPackageImports(bindings, exampleConfig, componentFileNames, allStylesheets);
     } else {
@@ -107,18 +126,30 @@ function getImports(bindings: any, exampleConfig: ExampleConfig, componentFileNa
     }
 }
 
-export function vanillaToVue(bindings: any, exampleConfig: ExampleConfig, componentFileNames: string[], allStylesheets: string[]): (importType: ImportType) => string {
-    const vueComponents = bindings.components.map(component => `${component.name}:${component.value}`);
+export function vanillaToVue(
+    bindings: ParsedBindings,
+    exampleConfig: ExampleConfig,
+    componentFileNames: string[],
+    allStylesheets: string[]
+): (importType: ImportType) => string {
+    const vueComponents = bindings.components.map((component) => `${component.name}:${component.value}`);
 
     const onGridReady = getOnGridReadyCode(bindings);
-    const eventAttributes = bindings.eventHandlers.filter(event => event.name !== 'onGridReady').map(toOutput);
+    const eventAttributes = bindings.eventHandlers.filter((event) => event.name !== 'onGridReady').map(toOutput);
     const [eventHandlers, externalEventHandlers, instanceMethods, utilFunctions] = getAllMethods(bindings);
     const columnDefs = getColumnDefs(bindings, vueComponents, componentFileNames);
-    const defaultColDef = bindings.defaultColDef ? convertDefaultColDef(bindings.defaultColDef, vueComponents, componentFileNames) : null;
+    const defaultColDef = bindings.defaultColDef
+        ? convertDefaultColDef(bindings.defaultColDef, vueComponents, componentFileNames)
+        : null;
 
-    return importType => {
+    return (importType) => {
         const imports = getImports(bindings, exampleConfig, componentFileNames, importType, allStylesheets);
-        const [propertyAssignments, propertyVars, propertyAttributes] = getPropertyBindings(bindings, componentFileNames, importType, vueComponents);
+        const [propertyAssignments, propertyVars, propertyAttributes] = getPropertyBindings(
+            bindings,
+            componentFileNames,
+            importType,
+            vueComponents
+        );
         const template = getTemplate(bindings, exampleConfig, propertyAttributes.concat(eventAttributes));
 
         return `
@@ -152,16 +183,16 @@ const VueExample = {
     },
     methods: {
         ${eventHandlers
-                .concat(externalEventHandlers)
-                .concat(onGridReady)
-                .concat(instanceMethods)
-                .map(snippet => `${snippet.trim()},`)
-                .join('\n')            
-                .replace(/(?<!this.)gridApi(\??)(!?)/g, 'this.gridApi')}
+            .concat(externalEventHandlers)
+            .concat(onGridReady)
+            .concat(instanceMethods)
+            .map((snippet) => `${snippet.trim()},`)
+            .join('\n')
+            .replace(/(?<!this.)gridApi(\??)(!?)/g, 'this.gridApi')}
     }
 }
 
-${utilFunctions.map(snippet => `${snippet.trim()}`).join('\n\n')}
+${utilFunctions.map((snippet) => `${snippet.trim()}`).join('\n\n')}
 
 new Vue({
     el: '#app',

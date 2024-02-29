@@ -1,14 +1,15 @@
+import { EventHandler, Property } from '../types';
 import { recognizedDomEvents } from './parser-utils';
 import { toKebabCase, toTitleCase } from './string-utils';
 
-export const toInput = (property) => `:${property.name}="${property.name}"`;
-export const toConst = (property) => `:${property.name}="${property.value}"`;
-export const toOutput = (event) => `@${toKebabCase(event.name)}="${event.handlerName}"`;
-export const toMember = (property) => `${property.name}: null`;
-export const toRef = property => `const ${property.name} = ref(null)`;
-export const toComponent = (property) => `'${property.name}': ${property.name}`;
+export const toInput = (property: Property) => `:${property.name}="${property.name}"`;
+export const toConst = (property: Property) => `:${property.name}="${property.value}"`;
+export const toOutput = (event: EventHandler) => `@${toKebabCase(event.name)}="${event.handlerName}"`;
+export const toMember = (property: Property) => `${property.name}: null`;
+export const toRef = (property: Property) => `const ${property.name} = ref(null)`;
+export const toComponent = (property: Property) => `'${property.name}': ${property.name}`;
 
-export function toAssignment(property: any): string {
+export function toAssignment(property: Property): string {
     // convert to arrow functions
     const value = property.value.replace(/function\s*\(([^)]+)\)/, '($1) =>');
 

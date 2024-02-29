@@ -1,11 +1,12 @@
+import { EventHandler, Property } from '../types';
 import { recognizedDomEvents } from './parser-utils';
 import { toTitleCase } from './string-utils';
 
-export const toInput = (property: any) => `[${property.name}]="${property.name}"`;
-export const toConst = (property: any) => `[${property.name}]="${property.value}"`;
-export const toOutput = (event: any) => `(${event.name})="${event.handlerName}($event)"`;
-export const toMember = (property: any) => `public ${property.name};`;
-export const toMemberWithValue = (property: any) => {
+export const toInput = (property: Property) => `[${property.name}]="${property.name}"`;
+export const toConst = (property: Property) => `[${property.name}]="${property.value}"`;
+export const toOutput = (event: EventHandler) => `(${event.name})="${event.handlerName}($event)"`;
+export const toMember = (property: Property) => `public ${property.name};`;
+export const toMemberWithValue = (property: Property) => {
     if (property.typings) {
         const typing = property.typings.typeName;
         // Don't include obvious types
@@ -20,7 +21,7 @@ export const toMemberWithValue = (property: any) => {
     }
     return `public ${property.name} = ${property.value}`;
 };
-export const toAssignment = (property: any) => `this.${property.name} = ${property.value}`;
+export const toAssignment = (property: Property) => `this.${property.name} = ${property.value}`;
 
 export function convertTemplate(template: string) {
     recognizedDomEvents.forEach((event) => {

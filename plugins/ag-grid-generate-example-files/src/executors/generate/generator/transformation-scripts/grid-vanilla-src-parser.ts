@@ -1,6 +1,7 @@
 import * as cheerio from 'cheerio';
 import ts from 'typescript';
-import {Events } from '../_copiedFromCore/eventKeys';
+import { ExampleType, GridOptionsType, InlineGridStyles, ParsedBindings } from '../types';
+import { Events } from '../_copiedFromCore/eventKeys';
 import { PropertyKeys } from '../_copiedFromCore/propertyKeys';
 import {
     extractClassDeclarations,
@@ -23,9 +24,8 @@ import {
     tsNodeIsTopLevelFunction,
     tsNodeIsTopLevelVariable,
     tsNodeIsTypeDeclaration,
-    tsNodeIsUnusedFunction
+    tsNodeIsUnusedFunction,
 } from './parser-utils';
-
 
 export const templatePlaceholder = 'GRID_TEMPLATE_PLACEHOLDER';
 const EVENTS = (<any>Object).values(Events);
@@ -35,16 +35,20 @@ const FUNCTION_PROPERTIES: any = PropertyKeys.FUNCTION_PROPERTIES;
 function tsNodeIsDocumentContentLoaded(node) {
     try {
         if (tsNodeIsFunctionCall(node)) {
-            return node.arguments?.length > 0 &&
+            return (
+                node.arguments?.length > 0 &&
                 ts.isStringLiteral(node.arguments[0]) &&
-                node.arguments[0].text === 'DOMContentLoaded';
+                node.arguments[0].text === 'DOMContentLoaded'
+            );
         }
     } catch (e) {
         console.error('We found something which we do not understand', node);
         if (tsNodeIsFunctionCall(node)) {
-            return node.arguments?.length > 0 &&
+            return (
+                node.arguments?.length > 0 &&
                 ts.isStringLiteral(node.arguments[0]) &&
-                node.arguments[0].text === 'DOMContentLoaded';
+                node.arguments[0].text === 'DOMContentLoaded'
+            );
         }
     }
 }
@@ -54,14 +58,16 @@ function tsNodeIsSimpleFetchRequest(node) {
         node = node as any;
         const isFetch = ts.isCallExpression(node) && node.expression.getText() === 'fetch';
         return isFetch;
-
     }
 }
 
 function processColDefsForFunctionalReactOrVue(propertyName: string, exampleType, providedExamples) {
     if (propertyName === 'columnDefs') {
-        return exampleType === 'generated' ||
-            (exampleType === 'mixed' && !(providedExamples['reactFunctional'] && providedExamples['vue'] && providedExamples['vue3']));
+        return (
+            exampleType === 'generated' ||
+            (exampleType === 'mixed' &&
+                !(providedExamples['reactFunctional'] && providedExamples['vue'] && providedExamples['vue3']))
+        );
     }
 
     return false;
@@ -69,7 +75,10 @@ function processColDefsForFunctionalReactOrVue(propertyName: string, exampleType
 
 function processComponentsForVue(propertyName: string, exampleType, providedExamples) {
     if (propertyName === 'components') {
-        return exampleType === 'generated' || (exampleType === 'mixed' && !(providedExamples['vue'] && providedExamples['vue3']));
+        return (
+            exampleType === 'generated' ||
+            (exampleType === 'mixed' && !(providedExamples['vue'] && providedExamples['vue3']))
+        );
     }
 
     return false;
@@ -77,7 +86,10 @@ function processComponentsForVue(propertyName: string, exampleType, providedExam
 
 function processVueProperties(propertyName: string, exampleType, providedExamples) {
     if (propertyName === 'statusBar' || propertyName === 'sideBar') {
-        return exampleType === 'generated' || (exampleType === 'mixed' && !(providedExamples['vue'] && providedExamples['vue3']));
+        return (
+            exampleType === 'generated' ||
+            (exampleType === 'mixed' && !(providedExamples['vue'] && providedExamples['vue3']))
+        );
     }
 
     return false;
@@ -85,7 +97,10 @@ function processVueProperties(propertyName: string, exampleType, providedExample
 
 function processDefaultColumnDefForVue(propertyName: string, exampleType, providedExamples) {
     if (propertyName === 'defaultColDef') {
-        return exampleType === 'generated' || (exampleType === 'mixed' && !(providedExamples['vue'] && providedExamples['vue3']));
+        return (
+            exampleType === 'generated' ||
+            (exampleType === 'mixed' && !(providedExamples['vue'] && providedExamples['vue3']))
+        );
     }
 
     return false;
@@ -95,18 +110,21 @@ const GLOBAL_COMPONENTS = ['dateComponent', 'loadingCellRenderer', 'loadingOverl
 
 function processGlobalComponentsForVue(propertyName: string, exampleType, providedExamples) {
     if (GLOBAL_COMPONENTS.indexOf(propertyName) !== -1) {
-        return exampleType === 'generated' || (exampleType === 'mixed' && !(providedExamples['vue'] && providedExamples['vue3']));
+        return (
+            exampleType === 'generated' ||
+            (exampleType === 'mixed' && !(providedExamples['vue'] && providedExamples['vue3']))
+        );
     }
 
     return false;
 }
 
+interface Collector {
+    matches: (node: any) => boolean;
+    apply: (bindings: ParsedBindings, node: any) => void;
+}
 
-function internalParser(examplePath, {
-    srcFile,
-    includeTypes,
-    gridOptionsTypes
-}, html, exampleType, providedExamples) {
+function internalParser(examplePath: string, srcFile: string, includeTypes: boolean, gridOptionsTypes: Record<string, GridOptionsType>, html: string, exampleType: ExampleType, providedExamples) {
     const domTree = cheerio.load(html, null, false);
     domTree('style').remove();
     const domEventHandlers = extractEventHandlers(domTree, recognizedDomEvents);
@@ -114,9 +132,9 @@ function internalParser(examplePath, {
     const tsTree = includeTypes ? parseFile(srcFile) : parseFile(readAsJsFile(srcFile));
     const gridOpsTypeLookup = includeTypes ? (prop) => gridOptionsTypes[prop] : () => undefined;
 
-    const tsCollectors = [];
-    const tsGridOptionsCollectors = [];
-    const tsOnReadyCollectors = [];
+    const tsCollectors: Collector[] = [];
+    const tsGridOptionsCollectors: Collector[] = [];
+    const tsOnReadyCollectors: Collector[] = [];
     const registered = ['gridOptions', 'gridApi'];
 
     // handler is the function name, params are any function parameters
@@ -129,48 +147,46 @@ function internalParser(examplePath, {
 
         // one of the event handlers extracted earlier (onclick, onchange etc)
         tsCollectors.push({
-            matches: node => tsNodeIsFunctionWithName(node, handler),
+            matches: (node) => tsNodeIsFunctionWithName(node, handler),
             apply: (bindings, node) => {
                 bindings.externalEventHandlers.push({
                     name: handler,
                     params: params,
-                    body: tsGenerate(node, tsTree)
+                    body: tsGenerate(node, tsTree),
                 });
-            }
+            },
         });
     });
 
-
     // anything not marked as "inScope" and not handled above in the eventHandlers is considered an unused/util method
     tsCollectors.push({
-        matches: node => tsNodeIsUnusedFunction(node, registered),
+        matches: (node) => tsNodeIsUnusedFunction(node, registered),
         apply: (bindings, node) => {
             const util = tsGenerate(node, tsTree);
-            bindings.utils.push(util)
-        }
+            bindings.utils.push(util);
+        },
     });
 
     tsCollectors.push({
-        matches: node => tsNodeIsTypeDeclaration(node),
+        matches: (node) => tsNodeIsTypeDeclaration(node),
         apply: (bindings, node) => {
             const declaration = tsGenerate(node, tsTree);
-            bindings.declarations.push(declaration)
-        }
+            bindings.declarations.push(declaration);
+        },
     });
 
     // For React we need to identify the external dependencies for callbacks to prevent stale closures
-    const GLOBAL_DEPS = new Set(['console', 'document', 'Error', 'this', 'gridApi', 'gridOptions'])
+    const GLOBAL_DEPS = new Set(['console', 'document', 'Error', 'this', 'gridApi', 'gridOptions']);
     tsCollectors.push({
-        matches: node => tsNodeIsTopLevelFunction(node),
+        matches: (node) => tsNodeIsTopLevelFunction(node),
         apply: (bindings, node: ts.SignatureDeclaration) => {
-
-            const body = (node as any).body
+            const body = (node as any).body;
 
             let allVariables = new Set(body ? findAllVariables(body) : []);
             if (node.parameters && node.parameters.length > 0) {
-                node.parameters.forEach(p => {
-                    allVariables.add(p.name.getText())
-                })
+                node.parameters.forEach((p) => {
+                    allVariables.add(p.name.getText());
+                });
             }
 
             const deps = body ? findAllAccessedProperties(body) : [];
@@ -184,13 +200,13 @@ function internalParser(examplePath, {
             if (allDeps.length > 0) {
                 bindings.callbackDependencies[node.name.getText()] = [...new Set(allDeps)];
             }
-        }
+        },
     });
 
-    // anything vars not handled above in the eventHandlers is considered an unused/util method    
+    // anything vars not handled above in the eventHandlers is considered an unused/util method
     tsCollectors.push({
-        matches: node => tsNodeIsTopLevelVariable(node, registered),
-        apply: (bindings, node) => bindings.utils.push(tsGenerate(node.parent, tsTree))
+        matches: (node) => tsNodeIsTopLevelVariable(node, registered),
+        apply: (bindings, node) => bindings.utils.push(tsGenerate(node.parent, tsTree)),
     });
 
     // extract the Http Request call
@@ -198,84 +214,66 @@ function internalParser(examplePath, {
         matches: tsNodeIsSimpleFetchRequest,
         apply: (bindings, node) => {
             const url = node.arguments[0].getText();
-            const callback = tsGenerate(node.parent.parent.parent.parent.arguments[0].body, tsTree).replace(/gridOptions/g, 'params');
-            bindings.data = {url, callback};
-        }
-    });
-
-    // extract the resizeColumnsToFit 
-    tsOnReadyCollectors.push({
-        matches: node => {
-            if (ts.isExpressionStatement(node) && ts.isCallExpression(node.expression) && ts.isPropertyAccessExpression(node.expression.expression)) {
-                //
-                if (node.expression.expression.name.getText() === 'sizeColumnsToFit') {
-                    const domContentLoaded = node.parent?.parent?.parent as any;
-                    // Make sure its a top level call to sizeColumnsToFit and not part of a setTimeout of the fetch body
-                    if (ts.isCallExpression(domContentLoaded) && domContentLoaded.arguments.length > 0) {
-                        return domContentLoaded.arguments[0].getText() === "'DOMContentLoaded'";
-                    }
-                }
-            }
-            ;
+            const callback = tsGenerate(node.parent.parent.parent.parent.arguments[0].body, tsTree).replace(
+                /gridOptions/g,
+                'params'
+            );
+            bindings.data = { url, callback };
         },
-        apply: bindings => {
-            bindings.resizeToFit = true;
-        }
     });
 
     // extract onready
     tsCollectors.push({
         matches: tsNodeIsDocumentContentLoaded,
         apply: (bindings, node) => {
-            return tsCollect(node.arguments[1].body, bindings, tsOnReadyCollectors)
-        }
-
+            return tsCollect(node.arguments[1].body, bindings, tsOnReadyCollectors);
+        },
     });
 
     // all onXXX will be handled here
-    // note: gridOptions = { onGridSizeChanged = function() {}  handled below    
-    EVENTS.forEach(eventName => {
-        const onEventName = 'on' + eventName.replace(/^\w/, w => w.toUpperCase());
+    // note: gridOptions = { onGridSizeChanged = function() {}  handled below
+    EVENTS.forEach((eventName) => {
+        const onEventName = 'on' + eventName.replace(/^\w/, (w) => w.toUpperCase());
         registered.push(onEventName);
 
         tsCollectors.push({
-            matches: node => tsNodeIsFunctionWithName(node, onEventName),
+            matches: (node) => tsNodeIsFunctionWithName(node, onEventName),
             apply: (bindings, node) => {
                 bindings.eventHandlers.push({
                     name: eventName,
                     handlerName: onEventName,
-                    handler: tsGenerate(node, tsTree)
+                    handler: tsGenerate(node, tsTree),
                 });
-            }
+            },
         });
     });
 
-    EVENTS.forEach(eventName => {
-        const onEventName = 'on' + eventName.replace(/^\w/, w => w.toUpperCase());
+    EVENTS.forEach((eventName) => {
+        const onEventName = 'on' + eventName.replace(/^\w/, (w) => w.toUpperCase());
         tsGridOptionsCollectors.push({
             // onGridReady is handled separately
-            matches: node => tsNodeIsPropertyWithName(node, onEventName) && onEventName !== 'onGridReady',
+            matches: (node) => tsNodeIsPropertyWithName(node, onEventName) && onEventName !== 'onGridReady',
             apply: (bindings, node: ts.PropertyAssignment) => {
                 // Find any inline arrow functions or functions for events and convert to external function definition
                 const eventHandler = tsGenerate(node.initializer, tsTree);
                 const functionHandler = ts.isArrowFunction(node.initializer)
                     ? eventHandler
-                        // (event: RowEditingStoppedEvent) => {  
-                        .replace(/^(\(.*?\)) (=>) {/, `function ${onEventName} $1 {`)
-                        // event => {}
-                        .replace(/^(\w*?) (=>) {/, `function ${onEventName} ($1) {`)
-                    : eventHandler.replace('function', 'function ' + onEventName)
+                          // (event: RowEditingStoppedEvent) => {
+                          .replace(/^(\(.*?\)) (=>) {/, `function ${onEventName} $1 {`)
+                          // event => {}
+                          .replace(/^(\w*?) (=>) {/, `function ${onEventName} ($1) {`)
+                    : eventHandler.replace('function', 'function ' + onEventName);
 
                 bindings.eventHandlers.push({
                     name: eventName,
                     handlerName: onEventName,
-                    handler: functionHandler
+                    handler: functionHandler,
                 });
-            }
+            },
         });
-    })
+    });
 
-    FUNCTION_PROPERTIES.forEach(functionName => {
+    FUNCTION_PROPERTIES.forEach((functionName) => {
         registered.push(functionName);
 
         tsCollectors.push({
@@ -283,8 +281,8 @@ function internalParser(examplePath, {
             apply: (bindings, node: ts.NamedDeclaration) => {
                 const methodText = tsGenerate(node, tsTree);
                 bindings.instanceMethods.push(methodText);
-                bindings.properties.push({name: functionName, value: null, typings: gridOpsTypeLookup(functionName)});
-            }
+                bindings.properties.push({ name: functionName, value: null, typings: gridOpsTypeLookup(functionName) });
+            },
         });
     });
 
@@ -302,14 +300,16 @@ function internalParser(examplePath, {
 
             // for each col def property
             let props = [];
-            for (let colDefPropertyIndex = 0; colDefPropertyIndex < columnDef.properties.length; colDefPropertyIndex++) {
+            for (
+                let colDefPropertyIndex = 0;
+                colDefPropertyIndex < columnDef.properties.length;
+                colDefPropertyIndex++
+            ) {
                 const columnDefProperty: any = columnDef.properties[colDefPropertyIndex];
 
                 if (columnDefProperty.name.getText() === 'children') {
-
                     const children = tsExtractColDefsStr(columnDefProperty.initializer);
-                    props.push(`children: ${children}`)
-
+                    props.push(`children: ${children}`);
                 } else {
                     props.push(`${tsConvertFunctionsIntoStringsStr(columnDefProperty)}`);
                 }
@@ -332,7 +332,6 @@ function internalParser(examplePath, {
             if (!ts.isObjectLiteralExpression(item)) {
                 copyOfArray.push(tsGenerate(item, tsTree));
             } else {
-
                 // for each property
                 let props = [];
                 for (let colDefPropertyIndex = 0; colDefPropertyIndex < item.properties.length; colDefPropertyIndex++) {
@@ -353,24 +352,19 @@ function internalParser(examplePath, {
             return `${property.name.text}: 'AG_LITERAL_${property.initializer.escapedText}'`;
         } else if (ts.isFunctionLike(property.initializer)) {
             const func = tsGenerate(property.initializer, tsTree);
-            const escaped = func
-                .replace(/\\/g, "\\\\")
-                .replace(/'/g, "\\'")
-                .replace(/"/g, "\\\"")
-                .replace(/\n/g, "\\n");
+            const escaped = func.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n');
             return `${property.name.text}: "AG_FUNCTION_${escaped}"`;
-
         } else if (ts.isObjectLiteralExpression(property.initializer)) {
-
             let objProps = [];
-            property.initializer.properties.forEach(p => {
+            property.initializer.properties.forEach((p) => {
                 objProps.push(tsConvertFunctionsIntoStringsStr(p));
             });
 
-            const props = objProps.length === 1 ? `{ ${objProps.join(',\n    ')} }` : `{\n    ${objProps.join(',\n    ')}\n }`;
+            const props =
+                objProps.length === 1 ? `{ ${objProps.join(',\n    ')} }` : `{\n    ${objProps.join(',\n    ')}\n }`;
             return `${property.name.text} : ${props}`;
         } else if (ts.isArrayLiteralExpression(property.initializer)) {
-            const result = tsArrayStr(property.initializer)
+            const result = tsArrayStr(property.initializer);
             return `${property.name.text} : ${result}`;
         }
         return tsGenerate(property, tsTree);
@@ -381,12 +375,12 @@ function internalParser(examplePath, {
         return colDefs || '';
     };
 
-    PROPERTIES.forEach(propertyName => {
+    PROPERTIES.forEach((propertyName) => {
         registered.push(propertyName);
 
         // grab global variables named as grid properties
         tsCollectors.push({
-            matches: node => tsNodeIsGlobalVarWithName(node, propertyName),
+            matches: (node) => tsNodeIsGlobalVarWithName(node, propertyName),
             apply: (bindings, node) => {
                 try {
                     if (processColDefsForFunctionalReactOrVue(propertyName, exampleType, providedExamples)) {
@@ -398,13 +392,13 @@ function internalParser(examplePath, {
                     bindings.properties.push({
                         name: propertyName,
                         value: code,
-                        typings: gridOpsTypeLookup(propertyName)
+                        typings: gridOpsTypeLookup(propertyName),
                     });
                 } catch (e) {
                     console.error('We failed generating', node, node.declarations[0].id);
                     throw e;
                 }
-            }
+            },
         });
 
         tsGridOptionsCollectors.push({
@@ -413,7 +407,7 @@ function internalParser(examplePath, {
                 if (processColDefsForFunctionalReactOrVue(propertyName, exampleType, providedExamples)) {
                     const parent = node;
                     if (ts.isPropertyAssignment(parent) && parent.initializer) {
-                        const initializer = parent.initializer
+                        const initializer = parent.initializer;
                         if (ts.isArrayLiteralExpression(initializer)) {
                             bindings.parsedColDefs = tsExtractAndParseColDefs(initializer);
                         }
@@ -427,7 +421,7 @@ function internalParser(examplePath, {
                             if (!ts.isCallExpression(comp.initializer) && !ts.isFunctionExpression(comp.initializer)) {
                                 bindings.components.push({
                                     name: comp.name.getText(),
-                                    value: comp.initializer.getText()
+                                    value: comp.initializer.getText(),
                                 });
                             }
                         }
@@ -444,51 +438,60 @@ function internalParser(examplePath, {
                             }
                         }
                         if (props.length > 0) {
-                            const propStr = props.length === 1 ? `{ ${props.join()} }` : `{\n        ${props.join(',\n    ')} }`;
+                            const propStr =
+                                props.length === 1 ? `{ ${props.join()} }` : `{\n        ${props.join(',\n    ')} }`;
                             bindings.vuePropertyBindings[propertyName] = propStr;
                         }
                     }
                 }
-                if (processDefaultColumnDefForVue(propertyName, exampleType, providedExamples)
-                    && node.initializer
-                    && ts.isObjectLiteralExpression(node.initializer)) {
+                if (
+                    processDefaultColumnDefForVue(propertyName, exampleType, providedExamples) &&
+                    node.initializer &&
+                    ts.isObjectLiteralExpression(node.initializer)
+                ) {
                     bindings.defaultColDef = tsGenerate(node.initializer, tsTree);
                 }
 
-                if (processGlobalComponentsForVue(propertyName, exampleType, providedExamples) && ts.isIdentifier(node)) {
+                if (
+                    processGlobalComponentsForVue(propertyName, exampleType, providedExamples) &&
+                    ts.isIdentifier(node)
+                ) {
                     bindings.globalComponents.push(tsGenerate(node, tsTree));
                 }
 
                 bindings.properties.push({
                     name: propertyName,
                     value: tsGenerate(node.initializer, tsTree),
-                    typings: gridOpsTypeLookup(propertyName)
+                    typings: gridOpsTypeLookup(propertyName),
                 });
-            }
+            },
         });
     });
 
     tsGridOptionsCollectors.push({
-        matches: node => tsNodeIsPropertyWithName(node, 'onGridReady'),
+        matches: (node) => tsNodeIsPropertyWithName(node, 'onGridReady'),
         apply: (bindings, node: ts.PropertyAssignment) => {
             if (node.initializer) {
-                bindings.onGridReady = tsGenerate((node.initializer as any).body, tsTree).replace(/gridOptions/g, 'params');
+                bindings.onGridReady = tsGenerate((node.initializer as any).body, tsTree).replace(
+                    /gridOptions/g,
+                    'params'
+                );
             } else {
-                console.error(node.getText())
+                console.error(node.getText());
             }
-        }
+        },
     });
 
     // gridOptionsCollectors captures all events, properties etc that are related to gridOptions
     tsCollectors.push({
-        matches: node => tsNodeIsGlobalVarWithName(node, 'gridOptions'),
+        matches: (node) => tsNodeIsGlobalVarWithName(node, 'gridOptions'),
         apply: (bindings, node) => {
             if (node.type?.typeArguments?.length > 0) {
                 bindings.tData = node.type.typeArguments[0].getText();
             }
             bindings = tsCollect(node.initializer, bindings, tsGridOptionsCollectors, false);
             return bindings;
-        }
+        },
     });
 
     /*
@@ -502,12 +505,11 @@ function internalParser(examplePath, {
      * instanceMethods -> methods that are either marked as "inScope" or ones that reference the gridApi
      * onGridReady -> any matching onGridReady method
      * data -> url: dataUrl, callback: callback, http calls etc
-     * resizeToFit -> true if sizeColumnsToFit is used
      * callbackDependencies -> lookup of function name to function external deps for react useCallback
      * declarations -> Typescript examples add declarations when working with globally defined javascript functions / variables
      * imports -> imports used by Typescript code
      */
-    const tsBindings = tsCollect(
+    const tsBindings: ParsedBindings = tsCollect(
         tsTree,
         {
             eventHandlers: [],
@@ -522,7 +524,7 @@ function internalParser(examplePath, {
             utils: [],
             declarations: [],
             callbackDependencies: {},
-        },
+        } as ParsedBindings,
         tsCollectors
     );
 
@@ -531,11 +533,13 @@ function internalParser(examplePath, {
     const inlineHeight = gridElement.css('height');
     const inlineWidth = gridElement.css('width');
 
-    let inlineGridStyles: any = {
+    let inlineGridStyles: InlineGridStyles = {
         theme: 'ag-theme-quartz',
+        width: '100%',
+        height: '100%',
     };
     if (inlineClass) {
-        const theme = inlineClass.split(' ').filter(className => className.indexOf('ag-theme') >= 0);
+        const theme = inlineClass.split(' ').filter((className) => className.indexOf('ag-theme') >= 0);
         inlineGridStyles.theme = theme && theme.length > 0 ? theme[0] : 'ag-theme-quartz';
     }
     inlineGridStyles.height = parseInt(inlineHeight) ? inlineHeight : '100%';
@@ -553,20 +557,20 @@ function internalParser(examplePath, {
     return tsBindings;
 }
 
-export function parser(examplePath, srcFile, html, exampleType, providedExamples, gridOptionsTypes) {
-    const typedBindings = internalParser(examplePath, {
+export function parser(examplePath, srcFile, html, exampleType: ExampleType, providedExamples, gridOptionsTypes: Record<string, GridOptionsType>) {
+    const typedBindings = internalParser(
+        examplePath,
         srcFile,
-        includeTypes: true,
-        gridOptionsTypes
-    }, html, exampleType, providedExamples);
-    const bindings = internalParser(examplePath, {
-        srcFile,
-        includeTypes: false,
-        gridOptionsTypes
-    }, html, exampleType, providedExamples);
+        true,
+        gridOptionsTypes,
+        html,
+        exampleType,
+        providedExamples
+    );
+    const bindings = internalParser(examplePath, srcFile, false, gridOptionsTypes, html, exampleType, providedExamples);
     // We need to copy the imports from the typed bindings to the non-typed bindings
     bindings.imports = typedBindings.imports;
-    return {bindings, typedBindings};
+    return { bindings, typedBindings };
 }
 
 export default parser;
