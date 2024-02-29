@@ -11,6 +11,7 @@ import { getFirstParagraphText } from '@utils/markdoc/getFirstParagraphText';
 import { DOCS_TAB_ITEM_ID_PREFIX } from '@constants';
 import { getFilteredMenuSections } from '@features/pages-navigation/utils/getFilteredMenuSections';
 import { getHeadings } from '@utils/markdoc/getHeadings';
+import { isApiMenuPath } from '@utils/apiMenuPath';
 
 export async function getStaticPaths() {
     const pages = await getCollection('docs');
@@ -31,14 +32,21 @@ const headings = getHeadings({
     getTabItemSlug: (id) => `${DOCS_TAB_ITEM_ID_PREFIX}${id}`,
 });
 
-const menuEntry = await getEntry('menu', 'data');
-const menuSections = menuEntry.data.main.sections;
+const { data: menu } = await getEntry('menu', 'data');
 const frameworkMenuSections: MenuSection[] = getFilteredMenuSections({
-    menuSections,
+    menuSections: menu.main.sections,
+    framework: currentFramework,
+});
+const apiMenuSections: MenuSection[] = getFilteredMenuSections({
+    menuSections: menu.api.sections,
     framework: currentFramework,
 });
 
 const description = page.data.description || getFirstParagraphText(page.body);
+const isApiPage = isApiMenuPath({
+    pageName,
+    menuData: menu,
+});
 ---
 
 <Layout
@@ -52,7 +60,7 @@ const description = page.data.description || getFirstParagraphText(page.body);
             !hidePageMenu && (
                 <PagesNavigation
                     client:load
-                    menuSections={frameworkMenuSections}
+                    menuSections={isApiPage ? apiMenuSections : frameworkMenuSections}
                     framework={currentFramework}
                     pageName={pageName}
                 />

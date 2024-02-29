@@ -1,5 +1,4 @@
 ---
-// import { getIsDev } from '@utils/env';
 import { Icon } from '@components/icon/Icon';
 import { HeaderNav } from './HeaderNav';
 import { getEntry } from 'astro:content';
@@ -7,43 +6,20 @@ import { FRAMEWORKS } from '@constants';
 import styles from '@design-system/modules/SiteHeader.module.scss';
 import { SiteLogo } from './SiteLogo';
 // import Search from '../search/Search';
-// import { getFrameworkFromPath } from '../../features/docs/utils/urlPaths';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
-// import { isDynamicFrameworkPath, replaceDynamicFrameworkPath } from '@utils/framework';
 import { DarkModeToggle } from './DarkModeToggle';
 import { ProductDropdown } from '@components/product-dropdown/ProductDropdown';
+import { getApiPaths } from '@utils/apiMenuPath';
 
 const { pathname } = Astro.url;
 const { data: menuData } = await getEntry('menu', 'data');
 const topNavItems = menuData.header.items;
-// const framework = getFrameworkFromPath(pathname);
-// const isDev = getIsDev();
-// const apiPaths = menuData.api.items.flatMap(({ path }) => {
-//     const pathWithBaseUrl = urlWithBaseUrl(path);
-
-//     if (isDynamicFrameworkPath(pathWithBaseUrl)) {
-//         return FRAMEWORKS.map((framework) => ({
-//             title: 'API',
-//             path: replaceDynamicFrameworkPath({ dynamicFrameworkPath: pathWithBaseUrl, framework }),
-//         }));
-//     }
-
-//     return {
-//         title: 'API',
-//         path: urlWithBaseUrl(path),
-//     };
-// });
 const frameworkPaths = FRAMEWORKS.map((framework) => ({
     title: 'Docs',
     path: urlWithBaseUrl(framework),
 }));
-const allPaths = [
-    ...topNavItems,
-    // NOTE: Prioritise API paths over framework paths - for doc pages which are in
-    //  the API section
-    // ...apiPaths,
-    ...frameworkPaths,
-];
+const allPaths = [...topNavItems, ...frameworkPaths];
+const apiPaths = getApiPaths(menuData);
 
 export interface Props {
     showSearchBar?: boolean;
@@ -96,7 +72,7 @@ const dropdownItems = [
 
         <!-- {showSearchBar && <Search client:load currentFramework={framework} isDev={isDev} />} -->
 
-        <HeaderNav currentPath={pathname} items={topNavItems} allPaths={allPaths} client:load>
+        <HeaderNav currentPath={pathname} items={topNavItems} allPaths={allPaths} apiPaths={apiPaths} client:load>
             <li class:list={[styles.navItem, styles.buttonItem, 'darkModeItem']}>
                 <DarkModeToggle client:only />
             </li>
