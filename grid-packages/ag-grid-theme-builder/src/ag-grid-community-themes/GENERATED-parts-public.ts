@@ -126,32 +126,7 @@ export type QuartzIconsPreset = 'light' | 'regular' | 'bold';
 
 export type QuartzIconsParam = 'quartzIconsPreset' | 'iconSize' | 'iconStrokeWidth';
 
-import BaseComponentsGroupCssImport from './css/core/_base-components/group.css?inline';
-import advancedFilterCssImport from './css/core/advanced-filter.css?inline';
-import bordersTodoMoveIntoComponentFilesCssImport from './css/core/borders-todo-move-into-component-files.css?inline';
-import cellEditingCssImport from './css/core/cell-editing.css?inline';
-import chartsCssImport from './css/core/charts.css?inline';
-import columnDropCssImport from './css/core/column-drop.css?inline';
-import columnFiltersCssImport from './css/core/column-filters.css?inline';
-import dragAndDropCssImport from './css/core/drag-and-drop.css?inline';
-import gridBordersCssImport from './css/core/grid-borders.css?inline';
-import gridLayoutCssImport from './css/core/grid-layout.css?inline';
-import headerCssImport from './css/core/header.css?inline';
-import menuCssImport from './css/core/menu.css?inline';
-import panelCssImport from './css/core/panel.css?inline';
-import pinnedColumnsCssImport from './css/core/pinned-columns.css?inline';
-import printCssImport from './css/core/print.css?inline';
-import resetCssImport from './css/core/reset.css?inline';
-import richSelectCssImport from './css/core/rich-select.css?inline';
-import rootCssImport from './css/core/root.css?inline';
-import sidebarCssImport from './css/core/sidebar.css?inline';
-import widgetsButtonCssImport from './css/core/widgets/button.css?inline';
-import widgetsCheckboxCssImport from './css/core/widgets/checkbox.css?inline';
-import widgetsDragHandleCssImport from './css/core/widgets/drag-handle.css?inline';
-import widgetsInputsCssImport from './css/core/widgets/inputs.css?inline';
-import widgetsListsCssImport from './css/core/widgets/lists.css?inline';
-import widgetsRangeCssImport from './css/core/widgets/range.css?inline';
-import widgetsToggleButtonCssImport from './css/core/widgets/toggle-button.css?inline';
+import coreCssImport from './css/core/core.css?inline';
 
 export const core = definePart<CoreParam>({
   partId: 'core',
@@ -264,34 +239,7 @@ export const core = definePart<CoreParam>({
     panelTitleBarBackgroundColor: helpers.ref('headerBackgroundColor'),
     panelTitleBarBorder: true,
   },
-  css: [
-    BaseComponentsGroupCssImport,
-    advancedFilterCssImport,
-    bordersTodoMoveIntoComponentFilesCssImport,
-    cellEditingCssImport,
-    chartsCssImport,
-    columnDropCssImport,
-    columnFiltersCssImport,
-    dragAndDropCssImport,
-    gridBordersCssImport,
-    gridLayoutCssImport,
-    headerCssImport,
-    menuCssImport,
-    panelCssImport,
-    pinnedColumnsCssImport,
-    printCssImport,
-    resetCssImport,
-    richSelectCssImport,
-    rootCssImport,
-    sidebarCssImport,
-    widgetsButtonCssImport,
-    widgetsCheckboxCssImport,
-    widgetsDragHandleCssImport,
-    widgetsInputsCssImport,
-    widgetsListsCssImport,
-    widgetsRangeCssImport,
-    widgetsToggleButtonCssImport,
-  ],
+  css: [coreCssImport],
 });
 
 export const colors = definePart<ColorsParam>({
