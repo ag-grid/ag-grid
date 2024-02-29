@@ -2,6 +2,7 @@ import type { MenuItem } from '@ag-grid-types';
 import { SITE_BASE_URL } from '@constants';
 import styles from '@design-system/modules/HeaderNav.module.scss';
 import siteHeaderStyles from '@design-system/modules/SiteHeader.module.scss';
+import { getPageNameFromPath } from '@features/docs/utils/urlPaths';
 import MenuIcon from '@images/inline-svgs/menu-icon.svg?react';
 import { pathJoin } from '@utils/pathJoin';
 import classnames from 'classnames';
@@ -10,18 +11,37 @@ import { type ReactElement, useState } from 'react';
 import { Collapsible } from '../Collapsible';
 import { Icon } from '../icon/Icon';
 
-const getCurrentPageName = ({ path, allPaths }: { path: string; allPaths: MenuItem[] }) => {
-    const match = allPaths.find((link) => path.includes(link.path!));
+/**
+ * Title of api header menu
+ */
+const API_TITLE = 'API';
 
-    if (match) {
-        return match.title;
-    }
+const getIsActiveNav = ({
+    title,
+    path,
+    allPaths,
+    apiPaths,
+}: {
+    title: string;
+    path: string;
+    allPaths: MenuItem[];
+    apiPaths: string[];
+}): boolean => {
+    const allPathsMatch = allPaths.find((link) => path.includes(link.path!));
+    const currentNavItem = allPathsMatch?.title;
+
+    const pageName = getPageNameFromPath(path);
+    const isApiPage = apiPaths.includes(pageName);
+
+    const checkTitle = isApiPage ? API_TITLE : currentNavItem;
+    return title === checkTitle;
 };
 
 const HeaderLinks = ({
     currentPath,
     items,
     allPaths,
+    apiPaths,
     isOpen,
     toggleIsOpen,
     children,
@@ -29,6 +49,7 @@ const HeaderLinks = ({
     currentPath: string;
     items: MenuItem[];
     allPaths: MenuItem[];
+    apiPaths: string[];
     isOpen?: boolean;
     toggleIsOpen?: () => void;
     children: ReactElement;
@@ -37,7 +58,7 @@ const HeaderLinks = ({
         <ul className={classnames(siteHeaderStyles.navItemList, 'list-style-none')}>
             {items.map(({ title, path, url, icon }) => {
                 const linkClasses = classnames(siteHeaderStyles.navItem, {
-                    [siteHeaderStyles.navItemActive]: title === getCurrentPageName({ path: currentPath, allPaths }),
+                    [siteHeaderStyles.navItemActive]: getIsActiveNav({ title, path: currentPath, allPaths, apiPaths }),
                     [siteHeaderStyles.buttonItem]: title === 'Github',
                     [siteHeaderStyles.githubItem]: title === 'Github',
                 });
@@ -84,17 +105,19 @@ const HeaderNavLarge = ({
     currentPath,
     items,
     allPaths,
+    apiPaths,
     children,
 }: {
     currentPath: string;
     items: MenuItem[];
     allPaths: MenuItem[];
+    apiPaths: string[];
     children: ReactElement;
 }) => {
     return (
         <div className={classnames(siteHeaderStyles.mainNav, styles.mainNavLargeContainer)}>
             <nav className={styles.mainNavLarge}>
-                <HeaderLinks currentPath={currentPath} items={items} allPaths={allPaths}>
+                <HeaderLinks currentPath={currentPath} items={items} allPaths={allPaths} apiPaths={apiPaths}>
                     {children}
                 </HeaderLinks>
             </nav>
@@ -106,6 +129,7 @@ const HeaderNavSmall = ({
     currentPath,
     items,
     allPaths,
+    apiPaths,
     isOpen,
     toggleIsOpen,
     children,
@@ -113,6 +137,7 @@ const HeaderNavSmall = ({
     currentPath: string;
     items: MenuItem[];
     allPaths: MenuItem[];
+    apiPaths: string[];
     isOpen: boolean;
     toggleIsOpen: () => void;
     children: ReactElement;
@@ -126,6 +151,7 @@ const HeaderNavSmall = ({
                         currentPath={currentPath}
                         items={items}
                         allPaths={allPaths}
+                        apiPaths={apiPaths}
                         isOpen={isOpen}
                         toggleIsOpen={toggleIsOpen}
                     >
@@ -141,11 +167,13 @@ export const HeaderNav = ({
     currentPath,
     items,
     allPaths,
+    apiPaths,
     children,
 }: {
     currentPath: string;
     items: MenuItem[];
     allPaths: MenuItem[];
+    apiPaths: string[];
     children: ReactElement;
 }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -158,13 +186,14 @@ export const HeaderNav = ({
 
     return (
         <>
-            <HeaderNavLarge currentPath={currentPath} items={items} allPaths={allPaths}>
+            <HeaderNavLarge currentPath={currentPath} items={items} allPaths={allPaths} apiPaths={apiPaths}>
                 {children}
             </HeaderNavLarge>
             <HeaderNavSmall
                 currentPath={currentPath}
                 items={items}
                 allPaths={allPaths}
+                apiPaths={apiPaths}
                 isOpen={isOpen}
                 toggleIsOpen={toggleIsOpen}
             >

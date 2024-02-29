@@ -29,6 +29,94 @@
             }
         ]
     },
+    "api": {
+        "sections": [
+            {
+                "items": [
+                    {
+                        "title": "Overview",
+                        "path": "reference"
+                    }
+                ]
+            },
+            {
+                "title": "Grid",
+                "items": [
+                    {
+                        "title": "Overview",
+                        "path": "grid-interface"
+                    },
+                    {
+                        "title": "Options Reference",
+                        "path": "grid-options"
+                    },
+                    {
+                        "title": "Events Reference",
+                        "path": "grid-events"
+                    },
+                    {
+                        "title": "API Reference",
+                        "path": "grid-api"
+                    },
+                    {
+                        "title": "Grid State",
+                        "path": "grid-state"
+                    },
+                    {
+                        "title": "Grid Lifecycle",
+                        "path": "grid-lifecycle"
+                    }
+                ]
+            },
+            {
+                "title": "Column",
+                "items": [
+                    {
+                        "title": "Overview",
+                        "path": "column-interface"
+                    },
+                    {
+                        "title": "Options Reference",
+                        "path": "column-properties"
+                    },
+                    {
+                        "title": "Column Reference",
+                        "path": "column-object"
+                    },
+                    {
+                        "title": "Events Reference",
+                        "path": "column-events"
+                    }
+                ]
+            },
+            {
+                "title": "Row",
+                "items": [
+                    {
+                        "title": "Overview",
+                        "path": "row-interface"
+                    },
+                    {
+                        "title": "Row Reference",
+                        "path": "row-object"
+                    },
+                    {
+                        "title": "Events Reference",
+                        "path": "row-events"
+                    }
+                ]
+            },
+            {
+                "title": "Typescript",
+                "items": [
+                    {
+                        "title": "Generics",
+                        "path": "typescript-generics"
+                    }
+                ]
+            }
+        ]
+    },
     "main": {
         "sections": [
             {
