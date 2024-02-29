@@ -41,7 +41,7 @@ The example below shows a simple pivot on the Sport column using the Gold, Silve
 
 Columns Date and Year, although defined as columns, are not displayed in the grid as they have no group, pivot or value associated with them.
 
-{% gridExampleRunner title="Simple Example" name="simple" type="generated" options={ "enterprise": true, "exampleHeight": 610, "modules": ["clientside", "rowgrouping", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Simple Example" name="simple"  exampleHeight=610 /%}
 
 ## Pivot Mode vs Pivot Active
 
@@ -55,7 +55,7 @@ The example below demonstrates the difference between pivot mode and having a co
 
 * **3 - Grouping Active with Pivot Mode and Pivot Active:** This is grouping with pivotMode=true and pivot active. Although it appears similar to the second option, there is no pivot active in the second option.
 
-{% gridExampleRunner title="Pivot Mode Vs Pivot Active" name="pivot-mode" type="generated" options={ "enterprise": true, "exampleHeight": 630, "modules": ["clientside", "rowgrouping", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Pivot Mode Vs Pivot Active" name="pivot-mode"  exampleHeight=630 /%}
 
 Note that a pivot can only be active if pivot mode is on. If pivot mode is off, all pivot columns are ignored.
 
@@ -127,7 +127,7 @@ In the example below, notice how applying these functions can be used to manipul
 * The Group `Year 2010` has been coloured yellow
 * The Columns pivoted from the `Gold` Column have been uppercased
 
-{% gridExampleRunner title="Pivot Result Columns" name="secondary-columns" type="generated" options={ "enterprise": true, "exampleHeight": 650, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel"] } /%}
+{% gridExampleRunner title="Pivot Result Columns" name="secondary-columns"  exampleHeight=650 /%}
 
 ## Filtering
 
@@ -181,7 +181,7 @@ Filtering on any other column:
 * Using the filters tool panel, deselect **Swimming** using the **Sport** column filters
 * Observe how in this case, some rows are hidden, and some pivot values change.
 
-{% gridExampleRunner title="Filtering With Pivot" name="filter" type="generated" options={ "enterprise": true, "exampleHeight": 610, "modules": ["clientside", "rowgrouping", "filterpanel", "menu", "setfilter"] } /%}
+{% gridExampleRunner title="Filtering With Pivot" name="filter"  exampleHeight=610 /%}
 
 ### Filtering on Pivot Result Columns
 
@@ -217,7 +217,7 @@ Filtering on a pivot result column:
 * Using the floating filters, apply the filter **Equals 2** to the **2000, gold** column
 * Observe how the group values do not reaggregate after this filter has been applied
 
-{% gridExampleRunner title="Filtering Pivot Result Columns" name="secondary-columns-filter" type="generated" options={ "enterprise": true, "exampleHeight": 610, "modules": ["clientside", "rowgrouping", "filterpanel", "menu", "setfilter"] } /%}
+{% gridExampleRunner title="Filtering Pivot Result Columns" name="secondary-columns-filter"  exampleHeight=610 /%}
 
 ### Filtering using the API
 
@@ -239,7 +239,7 @@ const filterNotBlank2000Silvers = () => {
 
 As shown in the snippet above, you can also set filters on pivot result columns using the API.
 
-{% gridExampleRunner title="Filtering using the API" name="filter-api" type="generated" options={ "enterprise": true, "exampleHeight": 610, "modules": ["clientside", "rowgrouping", "filterpanel", "menu", "setfilter"] } /%}
+{% gridExampleRunner title="Filtering using the API" name="filter-api"  exampleHeight=610 /%}
 
 ## Pivot Column Groups
 
@@ -251,7 +251,7 @@ When there is more than one active pivot column, multiple group columns will app
 
 {% apiDocumentation source="column-properties/properties.json" section="grouping" names=["aggFunc"] /%}
 
-{% gridExampleRunner title="Expandable Pivot Column Groups" name="expandable-pivot-column-groups" type="generated" options={ "enterprise": true, "exampleHeight": 655, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel"] } /%}
+{% gridExampleRunner title="Expandable Pivot Column Groups" name="expandable-pivot-column-groups"  exampleHeight=655 /%}
 
 ### Opening Pivot Group Levels by Default
 
@@ -282,13 +282,13 @@ By default all pivot group levels are collapsed. To expand all pivot group level
 
 The example below demonstrates the `pivotDefaultExpanded` behaviour. Note the first pivot group level `sport` is expanded by default as `pivotDefaultExpanded = 1`.
 
-{% gridExampleRunner title="Open Pivot Group By Default" name="open-pivot-group-by-default" type="generated" options={ "enterprise": true, "exampleHeight": 655, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel"] } /%}
+{% gridExampleRunner title="Open Pivot Group By Default" name="open-pivot-group-by-default"  exampleHeight=655 /%}
 
 ### Fixed Pivot Column Groups
 
 To fix the pivot column groups without the ability to expand and collapse the column groups, enable the following grid option property: `suppressExpandablePivotGroups=true`.
 
-{% gridExampleRunner title="Fixed Pivot Column Groups" name="fixed-pivot-column-groups" type="generated" options={ "enterprise": true, "exampleHeight": 655, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel"] } /%}
+{% gridExampleRunner title="Fixed Pivot Column Groups" name="fixed-pivot-column-groups"  exampleHeight=655 /%}
 
 ## Pivot Row Totals
 
@@ -301,7 +301,7 @@ The example below demonstrates Pivot Row Totals as follows:
 * Pivot Row Totals are positioned before the other pivot group columns using: `gridOption.pivotRowTotals = 'before'`.
 * Pivot Row Totals are added for each of the value columns: 'gold', 'silver' and 'bronze'.
 
-{% gridExampleRunner title="Pivot Row Totals" name="row-totals" type="generated" options={ "enterprise": true, "exampleHeight": 655, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel"] } /%}
+{% gridExampleRunner title="Pivot Row Totals" name="row-totals"  exampleHeight=655 /%}
 
 ## Pivot Column Group Totals
 
@@ -318,7 +318,7 @@ The example below demonstrates Pivot Column Group Totals as follows:
 * Pivot Column Group Totals added on \['sport', 'year'] columns.
 * Expanding pivot groups reveals columns that make up totals.
 
-{% gridExampleRunner title="Pivot Column Group Totals" name="totals" type="generated" options={ "enterprise": true, "exampleHeight": 655, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel"] } /%}
+{% gridExampleRunner title="Pivot Column Group Totals" name="totals"  exampleHeight=655 /%}
 
 ## Hiding Repeated Value Column Labels
 
@@ -332,7 +332,7 @@ The example below demonstrates hiding repeated column labels. Note the following
 * As **Gold** is the only value column, the `'sum(Gold)'` columns labels are hidden.
 * If more than one value column is used, the option is disabled and the row showing all the value column labels is displayed.
 
-{% gridExampleRunner title="Hiding Repeated Column Labels" name="hidden-single-value-column-header" type="generated" options={ "enterprise": true, "exampleHeight": 655, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel"] } /%}
+{% gridExampleRunner title="Hiding Repeated Column Labels" name="hidden-single-value-column-header"  exampleHeight=655 /%}
 
 ## Saving & Restoring Column State with Pivot
 
@@ -340,7 +340,7 @@ Saving and restoring column state is also possible when pivoting. The generated 
 
 Below shows some examples of saving and restoring state with pivot in mind. Note that `pivotMode` is not stored as part of the column state. If `pivotMode` is important to your columns state, it needs to be stored separately.
 
-{% gridExampleRunner title="Saving & Restoring Column State" name="state" type="generated" options={ "enterprise": true, "exampleHeight": 630, "modules": ["clientside", "rowgrouping", "menu", "setfilter", "columnpanel", "filterpanel"] } /%}
+{% gridExampleRunner title="Saving & Restoring Column State" name="state"  exampleHeight=630 /%}
 
 ## Enabling Pivot Panel
 
@@ -373,7 +373,7 @@ This is demonstrated in the following example, note the following:
 
 * The order of `year` and `sport` can be re-arranged within Pivot Panel as they have `enablePivot=true` enabled.
 
-{% gridExampleRunner title="Enabling Pivot Panel" name="pivot-panel" type="generated" options={ "enterprise": true, "exampleHeight": 540, "modules": ["clientside", "rowgrouping"] } /%}
+{% gridExampleRunner title="Enabling Pivot Panel" name="pivot-panel"  exampleHeight=540 /%}
 
 ## Handling Extreme Data
 
@@ -389,7 +389,7 @@ In the example below, note the following:
 
 * Try pivoting by the 'Athlete' column, this will exceed the `pivotMaxGeneratedColumns` limit and trigger the `pivotLimitExceeded` event.
 
-{% gridExampleRunner title="Extreme Pivot Handling" name="extreme-pivot" type="generated" options={ "enterprise": true, "exampleHeight": 620, "modules": ["clientside", "rowgrouping"] } /%}
+{% gridExampleRunner title="Extreme Pivot Handling" name="extreme-pivot"  exampleHeight=620 /%}
 
 ## Pivot API
 
@@ -397,7 +397,7 @@ Below shows examples of using the pivot API directly. Use this is you want to bu
 
 The example also demonstrates exporting to CSV while using Pivot. Basically what you see inside the grid is what will be exported.
 
-{% gridExampleRunner title="Pivot API" name="api" type="generated" options={ "enterprise": true, "exampleHeight": 620, "modules": ["clientside", "rowgrouping", "menu", "setfilter", "columnpanel", "filterpanel", "csv"] } /%}
+{% gridExampleRunner title="Pivot API" name="api"  exampleHeight=620 /%}
 
 ## Ordering Pivot Columns
 
@@ -413,7 +413,7 @@ In the example below, note the following:
 * A `pivotComparator` has been supplied to the `year` column.
 * The pivot column groups have been reversed, to instead display from highest to lowest.
 
-{% gridExampleRunner title="Ordering Pivot Groups" name="order-pivot-groups" type="generated" options={ "enterprise": true, "exampleHeight": 650, "modules": ["clientside", "rowgrouping"] } /%}
+{% gridExampleRunner title="Ordering Pivot Groups" name="order-pivot-groups"  exampleHeight=650 /%}
 
 **Order of Pivot Value Columns**{% br /%}
 Pivot value columns are the lowest level column and correspond to the values selected in your pivot. For example, if value columns are the months of the year, then the values will be 'Jan', 'Feb', 'Mar' etc, one for each value column added. The order of these will either be a) the order the value columns appear in the original column definitions if you provide 'aggFunc' as part of the columns or b) the order you add the columns as value columns.
@@ -426,7 +426,7 @@ The example below shows mixing in different options for the row group column. Fo
 * `groupDisplayType: 'multipleColumns':` So that one group column is created for each row group column (country and athlete).
 * `groupDefaultExpanded=2: ` So that all the groups are opened by default.
 
-{% gridExampleRunner title="Hide Open Parents" name="hide-open-parents" type="generated" options={ "enterprise": true, "exampleHeight": 650, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel"] } /%}
+{% gridExampleRunner title="Hide Open Parents" name="hide-open-parents"  exampleHeight=650 /%}
 
 ## Change Detection and Pivot
 

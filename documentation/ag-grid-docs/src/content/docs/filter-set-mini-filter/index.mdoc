@@ -34,7 +34,7 @@ The following example demonstrates this behaviour. Note the following:
 * The Athlete column's Set Filter shows the Mini Filter with default behaviour. Try typing in the Mini Filter to search the Filter List, and then hit the {% kbd "↵ Enter" /%} key and notice how the grid is filtered using the displayed values.
 * The Country column's Set Filter applies the Mini Filter as you type because `filterParams.applyMiniFilterWhileTyping = true`.
 
-{% gridExampleRunner title="Mini Filter Keyboard Shortcuts" name="mini-filter-keyboard-shortcuts" type="generated" options={ "enterprise": true, "exampleHeight": 565, "modules": ["clientside", "setfilter", "menu"] } /%}
+{% gridExampleRunner title="Mini Filter Keyboard Shortcuts" name="mini-filter-keyboard-shortcuts"  exampleHeight=565 /%}
 
 ## Custom Searches
 
@@ -75,7 +75,7 @@ The following example demonstrates searching when there are accented characters.
 * The Athlete column's Set filter is supplied a text formatter via `filterParams.textFormatter` to ignore accents.
 * Searching using `'bjorn'` will return all values containing `'björn'`.
 
-{% gridExampleRunner title="Mini Filter Text Formatter" name="mini-filter-text-formatter" type="generated" options={ "enterprise": true, "exampleHeight": 565, "modules": ["clientside", "setfilter", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Mini Filter Text Formatter" name="mini-filter-text-formatter"  exampleHeight=565 /%}
 
 ## Enabling Case-Sensitive Searches
 
@@ -116,7 +116,7 @@ The example below shows this text being customised:
 * `searchOOO` is set so that the Mini Filter textbox displays `'Search values...'` instead of the default text `'Search...'`
 * `noMatches` is set so that when no matches are found for the Mini Filter search, the message displays `'No matches could be found.'` instead of `'No matches.'`
 
-{% gridExampleRunner title="Text Customisation" name="text-customisation" type="generated" options={ "enterprise": true, "modules": ["clientside", "setfilter", "menu"] } /%}
+{% gridExampleRunner title="Text Customisation" name="text-customisation" /%}
 
 ## Hiding the Mini Filter
 
@@ -141,7 +141,7 @@ The following example demonstrates hiding the mini filter. Note the following:
 * The Athlete column's Set Filter shows the Mini Filter by default.
 * The Country column's Set Filter does not have a Mini Filter as `filterParams.suppressMiniFilter = true`.
 
-{% gridExampleRunner title="Hiding the Mini Filter" name="mini-filter-hiding" type="generated" options={ "enterprise": true, "exampleHeight": 565, "modules": ["clientside", "setfilter", "menu"] } /%}
+{% gridExampleRunner title="Hiding the Mini Filter" name="mini-filter-hiding"  exampleHeight=565 /%}
 
 ## Next Up
 

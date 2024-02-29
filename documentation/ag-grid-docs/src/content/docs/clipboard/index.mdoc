@@ -28,7 +28,7 @@ In the below example `copyHeadersToClipboard` has been enabled, try:
 * Copy with {% kbd "^ Ctrl" /%}+{% kbd "C" /%}
 * Paste into an external program / text editor, note that the column headers were also copied.
 
-{% gridExampleRunner title="Copying Cell Ranges" name="copy-range" type="generated" options={ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] } /%}
+{% gridExampleRunner title="Copying Cell Ranges" name="copy-range" /%}
 
 ## Copying Rows
 
@@ -40,7 +40,7 @@ The below example demonstrates copying rows:
 * Paste copied content in a text editor
 * Note pasted content includes all selected rows
 
-{% gridExampleRunner title="Copying Rows" name="copy-row" type="generated" options={ "enterprise": true, "modules": ["clientside", "menu", "clipboard"] } /%}
+{% gridExampleRunner title="Copying Rows" name="copy-row" /%}
 
 If you want to use row selection for another purpose and wish to copy the focused cell instead of selected rows, you can disable copying rows by setting
 `gridOptions.suppressCopyRowsToClipboard=true`.
@@ -53,7 +53,7 @@ The below example demonstrates copying the focused cell only when using row sele
 * Paste copied content in a text editor
 * Note pasted content includes focused cell only
 
-{% gridExampleRunner title="Suppress Copying Rows" name="suppress-copy-row" type="generated" options={ "enterprise": true, "modules": ["clientside", "menu", "clipboard"] } /%}
+{% gridExampleRunner title="Suppress Copying Rows" name="suppress-copy-row" /%}
 
 ## Mixed Copying Cell Ranges & Rows
 
@@ -77,7 +77,7 @@ The below example has range selection, row selection and `suppressCopySingleCell
 * Select one or more rows by moving focus with the arrow keys and pressing the {% kbd "␣ Space" /%} key to toggle the row's selection.
 * Copy with {% kbd "^ Ctrl" /%}+{% kbd "C" /%}, paste into a text editor and observe that the rows were copied.
 
-{% gridExampleRunner title="Copying Mixed Ranges & Rows" name="copy-mixed" type="generated" options={ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] } /%}
+{% gridExampleRunner title="Copying Mixed Ranges & Rows" name="copy-mixed" /%}
 
 ## Custom Clipboard Interaction
 
@@ -85,7 +85,7 @@ If you want to do the copy to clipboard yourself (i.e. not use the grid's clipbo
 
 The example below shows using `sendToClipboard(params)`, but rather than using the clipboard, demonstrates the callback by just printing the data to the console.
 
-{% gridExampleRunner title="Controlling Clipboard Copy" name="custom" type="generated" options={ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] } /%}
+{% gridExampleRunner title="Controlling Clipboard Copy" name="custom" /%}
 
 ## Copying via the API
 
@@ -115,7 +115,7 @@ This is demonstrated in the example below. Note the following:
 * Selecting a cell and pressing {% kbd "^ Ctrl" /%}+{% kbd "X" /%} will not `copy` or `cut` the data.
 * The context menu will not show an option to `Cut`.
 
-{% gridExampleRunner title="Clipboard Suppress Cut" name="suppress-cut" type="generated" options={ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] } /%}
+{% gridExampleRunner title="Clipboard Suppress Cut" name="suppress-cut" /%}
 
 ## How to Paste
 
@@ -163,7 +163,7 @@ These three callbacks above are demonstrated in the example below. Note the foll
 * When headers are copied to the clipboard, values are prefixed with 'H-'. Headers can be copied by using the context menu.
 * When group headers are copied to the clipboard, values are prefixed with 'GH-'. Headers can be copied by using the context menu.
 
-{% gridExampleRunner title="Example Process" name="process" type="generated" options={ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] } /%}
+{% gridExampleRunner title="Example Process" name="process" /%}
 
 ### Processing Data from Clipboard
 
@@ -178,7 +178,7 @@ The following example shows custom code to process the data from the clipboard:
 * Copy a cell range in the grid which includes a cell value that starts with `Yellow` and **doesn’t** include any `Red` cell values. Pasting this copied cell range will cancel the paste action and not paste anything
 * Any other copied cell data will be pasted as-is
 
-{% gridExampleRunner title="Example Process Data" name="process-all" type="generated" options={ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] } /%}
+{% gridExampleRunner title="Example Process Data" name="process-all" /%}
 
 ### Pasting New Rows at the Bottom of the Grid
 
@@ -193,7 +193,7 @@ The example below uses a custom `processDataFromClipboard` function to add new r
 * Select the `Ryan Lochte` cell on the last row and press {% kbd "^ Ctrl" /%}+{% kbd "V" /%} to paste the copied rows
 * Notice that the `Ryan Lochte` row has been overwritten and 2 extra rows are created at the bottom of the grid to accommodate the additional 2 rows pasted
 
-{% gridExampleRunner title="Paste New Rows" name="pasting-extra-rows" type="generated" options={ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] } /%}
+{% gridExampleRunner title="Paste New Rows" name="pasting-extra-rows" /%}
 
 ### Read Only Edit
 
@@ -203,7 +203,7 @@ When the grid is in [Read Only Edit](./value-setters/#read-only-edit) mode the `
 
 The example below will show how to update cell value combining the `Clipboard` with `readOnlyEdit=true`.
 
-{% gridExampleRunner title="Clipboard - ReadOnlyEdit" name="read-only-edit" type="generated" options={ "enterprise": true, "modules": ["clientside", "range", "clipboard"] } /%}
+{% gridExampleRunner title="Clipboard - ReadOnlyEdit" name="read-only-edit" /%}
 
 ## Changing the Delimiter for Copy & Paste
 
@@ -229,7 +229,7 @@ See this behavior shown in the example below:
 
 * This sample is using AG Grid Community version, so the context menu is not available to copy the focused cell value. In AG Grid Enterprise the context menu will be available to copy the entire focused cell value without having to select it as text.
 
-{% gridExampleRunner title="Using Browser text selection" name="cellTextSelection" type="generated" /%}
+{% gridExampleRunner title="Using Browser text selection" name="cellTextSelection" /%}
 
 ## Clipboard Events
 
@@ -249,4 +249,4 @@ If the application is doing work each time it receives a `cellValueChanged`, you
 
 There are no events triggered by copy to clipboard as this does not change the grid's data.
 
-{% gridExampleRunner title="Clipboard Events" name="clipboard-events" type="generated" options={ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] } /%}
+{% gridExampleRunner title="Clipboard Events" name="clipboard-events" /%}

@@ -37,7 +37,7 @@ In the example below, note the following:
 
 * You can also drag to other applications outside of the browser. For example, some text editors (eg Sublime Text) or word processors (eg Microsoft Word) will accept the drag based on the `text/plain` MIME type. You can test this by dragging a cell to e.g. Microsoft Word.
 
-{% gridExampleRunner title="Simple" name="simple" type="generated" /%}
+{% gridExampleRunner title="Simple" name="simple" /%}
 
 ## Dragging Between Grids
 
@@ -53,7 +53,7 @@ In the example below, note the following:
 
 * New rows can be created by dragging out from red, green and blue 'Create' draggable areas.
 
-{% gridExampleRunner title="Two Grids" name="two-grids" type="mixed" /%}
+{% gridExampleRunner title="Two Grids" name="two-grids" /%}
 
 Note that there is no specific drop zone logic in the grid. This was done on purpose after analysis.
 
@@ -75,7 +75,7 @@ The example below is identical to the first example on this page with the additi
 * The `onRowDrag` method provides an alternative piece of drag data to be set into the drag event.
 * The data dragged also includes row state such as whether the rows is selected or not.
 
-{% gridExampleRunner title="Custom Drag Data" name="custom-drag-data" type="generated" /%}
+{% gridExampleRunner title="Custom Drag Data" name="custom-drag-data" /%}
 
 ## Custom Drag Component
 
@@ -86,4 +86,4 @@ The example below shows a custom drag and drop cell renderer. Note the following
 * The dragging works similar to before, rows are dragged from the left grid to the right drop zone.
 * The grid does not provide the dragging. Instead, the example's cell renderer implements the drag logic.
 
-{% gridExampleRunner title="Custom Drag Component" name="custom-drag-comp" type="generated" options={  } /%}
+{% gridExampleRunner title="Custom Drag Component" name="custom-drag-comp" /%}

@@ -47,7 +47,7 @@ The example below shows simple managed dragging. The following can be noted:
 * The property `rowDragManaged` is set, to tell the grid to move the row as the row is dragged.
 * If a sort (click on the header) or filter (open up the column menu) is applied to the column, the draggable icon for row dragging is hidden. This is consistent with the constraints explained after the example.
 
-{% gridExampleRunner title="Row Drag Simple Managed" name="simple-managed" type="generated" /%}
+{% gridExampleRunner title="Row Drag Simple Managed" name="simple-managed" /%}
 
 The logic for managed dragging is simple and has the following constraints:
 
@@ -63,7 +63,7 @@ These constraints can be bypassed by using [unmanaged row dragging](#unmanaged-d
 
 By default, the managed row dragging moves the rows while you are dragging them. This effect might not be desirable due to your application design. To prevent this default behaviour, set `suppressMoveWhenRowDragging` to `true` in the `gridOptions`.
 
-{% gridExampleRunner title="Row Drag with SuppressMoveWhenRowDragging" name="managed-suppress-move-when-dragging" type="generated" /%}
+{% gridExampleRunner title="Row Drag with SuppressMoveWhenRowDragging" name="managed-suppress-move-when-dragging" /%}
 
 ### Multi-Row Dragging
 
@@ -74,7 +74,7 @@ For this example note the following:
 * When you select multiple items and drag one of them, all items in the selection will be dragged.
 * When you drag an item that is not selected while other items are selected, only the unselected item will be dragged.
 
-{% gridExampleRunner title="Row Drag with Multi Row Drag" name="managed-with-multi-row-drag" type="generated" /%}
+{% gridExampleRunner title="Row Drag with Multi Row Drag" name="managed-with-multi-row-drag" /%}
 
 ## Unmanaged Dragging
 
@@ -133,7 +133,7 @@ From the example the following can be noted:
 
 * Because `rowDragManaged` is not set, the row dragging is left enabled even if sorting or filtering is applied. This is because your application should decide if dragging should be allowed or suppressed using the `suppressRowDrag` property.
 
-{% gridExampleRunner title="Row Drag Events" name="dragging-events" type="generated" /%}
+{% gridExampleRunner title="Row Drag Events" name="dragging-events" /%}
 
 ### Simple Unmanaged Example
 
@@ -146,7 +146,7 @@ From the example the following can be noted:
   in the example doesn't cover these scenarios and wants to prevent row
   dragging when sorting or filtering is active.
 
-{% gridExampleRunner title="Row Drag Simple Unmanaged" name="simple-unmanaged" type="generated" /%}
+{% gridExampleRunner title="Row Drag Simple Unmanaged" name="simple-unmanaged" /%}
 
 The simple example doesn't add anything that managed dragging gives (the first
 example on this page). Things get interesting when we introduce complex scenarios
@@ -179,7 +179,7 @@ The example below demonstrates entire row dragging with [Multi-Row Dragging](./r
 * Multiple rows can be selected and dragged as `rowDragMultiRow` is also enabled with `rowSelection = 'multiple'`.
 * Row Drag Managed is being used, but it is not a requirement for `Entire Row Dragging`.
 
-{% gridExampleRunner title="Entire Row Dragging" name="entire-row-dragging" type="generated" options={ "enterprise": true, "modules": ["clientside"] } /%}
+{% gridExampleRunner title="Entire Row Dragging" name="entire-row-dragging" /%}
 
 {% warning %}
 [Range Selection](./range-selection/) is not supported when `rowDragEntireRow` is enabled.
@@ -196,7 +196,7 @@ The example below is almost identical to the [Managed Dragging](#managed-draggin
 * Button **Remove Suppress** will un-hide the drag icons.
 * Applying a sort or a filter to the grid will also suppress the drag icons.
 
-{% gridExampleRunner title="Suppress Row Drag" name="suppress-row-drag" type="generated" /%}
+{% gridExampleRunner title="Suppress Row Drag" name="suppress-row-drag" /%}
 
 ## Dragging & Row Grouping
 
@@ -212,7 +212,7 @@ The example below shows row dragging with [Row Grouping](./grouping/) where the 
 * The example listens to the event `onRowDragMove` and changes the group a row belongs to while the drag is happening (which is different to the next Tree Data example which waits until the drag is complete). It is the choice of your application whether it wants to move rows in real time during the drag, or wait until the drag action is complete.
 * The application can still move rows to groups even if ordering or sorting is applied. For this reason, the application does not suppress row dragging if sorting or filtering is applied.
 
-{% gridExampleRunner title="Dragging with Row Groups" name="dragging-with-row-groups" type="generated" options={"enterprise": true, "exampleHeight": 650, "modules": ["clientside", "rowgrouping", "setfilter", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Dragging with Row Groups" name="dragging-with-row-groups"  exampleHeight=650 /%}
 
 ## Row Dragging & Tree Data
 
@@ -231,7 +231,7 @@ The example below shows [Tree Data](./tree-data/) and row dragging where the fol
 
 * The expanded/contracted state of a folder and all of its child folders is preserved when the folder is moved to a new parent.
 
-{% gridExampleRunner title="Dragging with Tree Data" name="dragging-with-tree-data" type="generated" options={ "enterprise": true, "exampleHeight": 545, "modules": ["clientside", "rowgrouping"] } /%}
+{% gridExampleRunner title="Dragging with Tree Data" name="dragging-with-tree-data"  exampleHeight=545 /%}
 
 ### Example Highlighted Tree Data
 
@@ -247,7 +247,7 @@ The example above works, however it is not intuitive as the user is given no vis
 
 * The example uses [Refresh Cells](./view-refresh/#refresh-cells) to get the grid to execute the Cell Class Rules again over the destination folder when the destination folder changes.
 
-{% gridExampleRunner title="Highlighting Drag with Tree Data" name="highlighting-drag-tree-data" type="generated" options={ "enterprise": true, "modules": ["clientside", "rowgrouping"] } /%}
+{% gridExampleRunner title="Highlighting Drag with Tree Data" name="highlighting-drag-tree-data" /%}
 
 ## Other Row Models
 
@@ -289,7 +289,7 @@ The example below shows dragging with custom text. The following can be noted:
 
 * When you drag a row of the year 2012, the `rowDragText` callback will add **(London Olympics)** to the floating drag element.
 
-{% gridExampleRunner title="Row Drag With Custom Text" name="custom-drag-text" type="generated" /%}
+{% gridExampleRunner title="Row Drag With Custom Text" name="custom-drag-text" /%}
 
 ### Custom Row Drag Text with Multiple Draggers
 
@@ -326,7 +326,7 @@ The example below shows dragging with custom text and multiple column draggers. 
 
 * When you drag the row by the athlete row dragger, the `rowDragText` callback in the `gridOptions` will be overridden by the one in the `colDef` and will display the number of **athletes selected**.
 
-{% gridExampleRunner title="Row Drag With Custom Text and Multiple Draggers" name="custom-drag-multiple-draggers" type="generated" /%}
+{% gridExampleRunner title="Row Drag With Custom Text and Multiple Draggers" name="custom-drag-multiple-draggers" /%}
 
 ### Row Dragger inside Custom Cell Renderers
 
@@ -390,7 +390,7 @@ The example below shows a custom cell renderer, with using the `registerRowDragg
 
 * When you hover the cells, an arrow will appear, and this arrow can be used to **drag** the rows.
 
-{% gridExampleRunner title="Row Drag With Custom Cell Renderer" name="dragger-inside-custom-cell-renderer" type="generated" /%}
+{% gridExampleRunner title="Row Drag With Custom Cell Renderer" name="dragger-inside-custom-cell-renderer" /%}
 
 ### Full Width Row Dragging
 
@@ -400,7 +400,7 @@ Note the following:
 
 * Only the Full Width Rows are draggable.
 
-{% gridExampleRunner title="Row Drag with Full Width Rows" name="dragger-inside-full-width-row" type="generated" /%}
+{% gridExampleRunner title="Row Drag with Full Width Rows" name="dragger-inside-full-width-row" /%}
 
 ### Row Dragger with Custom Start Drag Pixels
 
@@ -410,4 +410,4 @@ Note the following:
 
 * The drag event starts as soon as `mousedown` is fired.
 
-{% gridExampleRunner title="Row Drag With Custom Start Drag Pixels" name="dragger-inside-custom-start-drag-pixels" type="generated" /%}
+{% gridExampleRunner title="Row Drag With Custom Start Drag Pixels" name="dragger-inside-custom-start-drag-pixels" /%}

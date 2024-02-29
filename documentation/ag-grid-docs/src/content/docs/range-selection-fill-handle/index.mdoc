@@ -45,7 +45,7 @@ The default Fill Handle behaviour will be as close as possible to other spreadsh
 
 * When reducing the size of the range, cells that are no longer part of the range will be cleared (set to `null`).
 
-{% gridExampleRunner title="Fill Handle" name="fill-handle" type="generated" options={ "enterprise": true, "exampleHeight": 560, "modules": ["clientside", "range"] } /%}
+{% gridExampleRunner title="Fill Handle" name="fill-handle"  exampleHeight=560 /%}
 
 ## Preventing Range Reduction
 
@@ -54,7 +54,7 @@ Reducing a range selection with the Fill Handle will clear cell contents by defa
 
 If this behaviour for decreasing selection needs to be prevented, the flag `suppressClearOnFillReduction` should be set to `true`.
 
-{% gridExampleRunner title="Fill Handle - Range Reduction" name="fill-handle-reduction" type="generated" options={ "enterprise": true, "exampleHeight": 560, "modules": ["clientside", "range"] } /%}
+{% gridExampleRunner title="Fill Handle - Range Reduction" name="fill-handle-reduction"  exampleHeight=560 /%}
 
 ## Fill Handle Axis
 
@@ -76,7 +76,7 @@ const gridOptions = {
 }
 ```
 
-{% gridExampleRunner title="Fill Handle - Direction" name="fill-handle-direction" type="generated" options={ "enterprise": true, "exampleHeight": 560, "modules": ["clientside", "range"] } /%}
+{% gridExampleRunner title="Fill Handle - Direction" name="fill-handle-direction"  exampleHeight=560 /%}
 
 ## Custom User Function
 
@@ -110,7 +110,7 @@ If a `fillOperation` callback is provided, the fill handle will always run it. I
 
 The example below will use the custom `fillOperation` for the **Day of the week** column, but it will use the default operation for any other column.
 
-{% gridExampleRunner title="Custom Fill Operation" name="custom-fill-operation" type="generated" options={ "enterprise": true, "exampleHeight": 560, "modules": ["clientside", "range"] } /%}
+{% gridExampleRunner title="Custom Fill Operation" name="custom-fill-operation"  exampleHeight=560 /%}
 
 ### Skipping Columns in the Fill Operation
 
@@ -120,7 +120,7 @@ The example below will use the custom `fillOperation` to prevent values in the *
 When the `fillOperation` function returns `params.currentCellValue` that value is not added to the `params.values` list. This allows users to skip any cells in the Fill Handle operation.
 {% /note %}
 
-{% gridExampleRunner title="Skipping Columns" name="skipping-columns" type="generated" options={ "enterprise": true, "exampleHeight": 560, "modules": ["clientside", "range"] } /%}
+{% gridExampleRunner title="Skipping Columns" name="skipping-columns"  exampleHeight=560 /%}
 
 {% warning %}
 Non editable cells will **not** be changed by the Fill Handle, so there is no need to add custom logic to skip columns that aren't editable.
@@ -134,7 +134,7 @@ When the grid is in [Read Only Edit](./value-setters/#read-only-edit) mode the `
 
 The example below will show how to update cell value combining the `Fill Handle` with `readOnlyEdit=true`.
 
-{% gridExampleRunner title="Fill Handle - ReadOnlyEdit" name="read-only-edit" type="generated" options={ "enterprise": true, "exampleHeight": 560, "modules": ["clientside", "range"] } /%}
+{% gridExampleRunner title="Fill Handle - ReadOnlyEdit" name="read-only-edit"  exampleHeight=560 /%}
 
 ## Suppressing the Fill Handle
 
@@ -142,4 +142,4 @@ The Fill Handle can be disabled on a per column basis by setting the column defi
 
 In the example below, please note that the Fill Handle is disabled in the **Country** and **Date** columns.
 
-{% gridExampleRunner title="Suppress Fill Handle" name="suppress-fill-handle" type="generated" options={ "enterprise": true, "exampleHeight": 560, "modules": ["clientside", "range"] } /%}
+{% gridExampleRunner title="Suppress Fill Handle" name="suppress-fill-handle"  exampleHeight=560 /%}

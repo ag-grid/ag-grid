@@ -127,7 +127,7 @@ The grid cannot do sorting or filtering for you, as it does not have all of the 
 
 The example below makes use of infinite scrolling and caching. Notice that the grid will load more data when you bring the scroll all the way to the bottom.
 
-{% gridExampleRunner title="Simple Example" name="simple" type="mixed" options={ "modules": ["infinite"] } /%}
+{% gridExampleRunner title="Simple Example" name="simple" /%}
 
 ### Selection
 
@@ -158,7 +158,7 @@ When a row is selected, the selection will remain inside the grid, even if the g
 The example below uses AG Grid Enterprise, to demonstrate the set filter with server-side filtering. AG Grid Enterprise is not required for infinite scrolling.
 {% /note %}
 
-{% gridExampleRunner title="Server-Side Sorting And Filtering" name="server-side" type="mixed" options={ "enterprise": true, "modules": ["infinite", "setfilter", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Server-Side Sorting And Filtering" name="server-side" /%}
 
 {% note %}
 When performing multiple row selections using shift-click, it is possible that not all rows are available in memory if the configured value of `maxBlocksInCache` doesn't cover the range. In this case multiple selections will not be allowed.
@@ -178,7 +178,7 @@ gridOptions.isRowSelectable: function(data) {
 }
 ```
 
-{% gridExampleRunner title="Specify Selectable Rows" name="specify-selectable-rows" type="mixed" options={ "modules": ["infinite"] } /%}
+{% gridExampleRunner title="Specify Selectable Rows" name="specify-selectable-rows" /%}
 
 Note that in the above example we have also included an optional checkbox to help highlight which rows are selectable.
 
@@ -186,7 +186,7 @@ Note that in the above example we have also included an optional checkbox to hel
 
 The examples above use old-style JavaScript objects for the datasource. This example turns things around slightly and creates a datasource Class. The example also just generates data on the fly.
 
-{% gridExampleRunner title="Made Up Data" name="made-up-data" type="generated" options={ "modules": ["infinite"] } /%}
+{% gridExampleRunner title="Made Up Data" name="made-up-data" /%}
 
 ### Loading Spinner
 
@@ -245,7 +245,7 @@ Below demonstrates the different API methods via the buttons. The example output
 The example also makes each Honda row bold - demonstrating that the callbacks `getRowStyle` and `getRowClass`
 get called after the data is set as well as when the row is created (when the data may not yet be available).
 
-{% gridExampleRunner title="Insert And Remove Example" name="insert-remove" type="mixed" options={ "modules": ["infinite"] } /%}
+{% gridExampleRunner title="Insert And Remove Example" name="insert-remove" /%}
 
 ## Changing Columns
 
@@ -257,7 +257,7 @@ The example below demonstrates changing columns on the infinite row model. The f
 * Add a sort or filter to Age column. When the sort or filter is applied the data is re-fetched. However once fetched, you can add and remove the Year column without re-fetching the data.
 * Add a sort or filter to the Year column. When the sort or filter is applied the data is re-fetched. Now remove the Year column and the data is re-fetched again as the sort or filter has changed.
 
-{% gridExampleRunner title="Changing Columns" name="changing-columns" type="generated" options={ "modules": ["infinite"] } /%}
+{% gridExampleRunner title="Changing Columns" name="changing-columns" /%}
 
 ## Pagination
 
@@ -278,13 +278,13 @@ You must have infinite block size greater than or equal to the pagination page s
 
 This example is the recommended approach. The infinite block size is larger than the pages size, so the grid loads data for a few pages, allowing the user to hit 'next' a few times before a server sided call is needed.
 
-{% gridExampleRunner title="Block Larger Than Page" name="block-larger-page" type="mixed" options={ "enterprise": true, "exampleHeight": 615, "modules": ["infinite", "setfilter", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Block Larger Than Page" name="block-larger-page"  exampleHeight=615 /%}
 
 ### Example 2: Equal Pagination Page Size and Large Infinite Block Size
 
 This example demonstrates having the page and block sizes equal. Here the server is hit every time a new page is navigated to.
 
-{% gridExampleRunner title="Block Equal Than Page" name="block-equal-page" type="mixed" options={ "enterprise": true, "exampleHeight": 615, "modules": ["infinite", "setfilter", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Block Equal Than Page" name="block-equal-page"  exampleHeight=615 /%}
 
 ## Overlays
 

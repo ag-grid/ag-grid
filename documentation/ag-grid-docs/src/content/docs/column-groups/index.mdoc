@@ -37,7 +37,7 @@ Set the attribute `columnGroupShow` on groups children to set the expand and col
 * **`closed`:** The child is only shown when the group is closed.
 * **`null`, `undefined`:** The child is always shown.
 
-{% gridExampleRunner title="Basic Grouping" name="basic-grouping" type="generated" options={ "exampleHeight": 550 } /%}
+{% gridExampleRunner title="Basic Grouping" name="basic-grouping"  exampleHeight=550 /%}
 
 ## Selecting Components
 
@@ -52,7 +52,7 @@ See [Registering Components](./components/) for an overview of registering compo
 
 The example below shows a Custom Column Group Component.
 
-{% gridExampleRunner title="Header Group" name="header-group-component" type="generated" /%}
+{% gridExampleRunner title="Header Group" name="header-group-component" /%}
 
 As with Column Headers, the grid will always handle resize and column moving. The Custom Component is responsible for the following:
 
@@ -91,7 +91,7 @@ Sometimes you want columns of the group to always stick together. To achieve thi
 * If you move a non group column, e.g. Age, it will not be possible to place it in the middle of a group and hence impossible to break the group apart.
 * It is possible to place a column between groups (e.g. you can place 'Age' between the 'Athlete Details' and 'Sports Results').
 
-{% gridExampleRunner title="Marry Children" name="marry-children" type="generated" options={ "exampleHeight": 560 } /%}
+{% gridExampleRunner title="Marry Children" name="marry-children"  exampleHeight=560 /%}
 
 ## Resizing Groups
 
@@ -129,7 +129,7 @@ When Column Groups are too wide, the **Header Label** is always visible while sc
 * Both 'Athlete Details' and 'Sport Results' have `suppressStickyLabel=true`.
 * If you scroll the grid horizontally, the header label will not be visible until the column is completely out of view.
 
-{% gridExampleRunner title="Sticky Label" name="suppress-sticky-label" type="generated" options={ "exampleHeight": 560 } /%}
+{% gridExampleRunner title="Sticky Label" name="suppress-sticky-label"  exampleHeight=560 /%}
 
 ## Mulitiple Levels
 
@@ -139,7 +139,7 @@ This example demonstrates a grid with many levels. The example doesn't make sens
 * Demonstrates `colDef.openByDefault` property, where it sets this on E and F groups, resulting in these groups appearing as open by default.
 * Uses `defaultColGroupDef` and `defaultColDef` to apply a class to some of the headers. Using this technique, you can apply style to any of the header sections.
 
-{% gridExampleRunner title="Advanced Grouping" name="advanced-grouping" type="generated" options={ "exampleHeight": 680 } /%}
+{% gridExampleRunner title="Advanced Grouping" name="advanced-grouping"  exampleHeight=680 /%}
 
 ## Group Changes
 
@@ -153,7 +153,7 @@ The example below shows adding and removing groups to columns. Note the followin
 * Select **Participant and Medals in Group** to show participant and medal columns in groups.
 * As groups are added and removed, note that the state of the individual columns is preserved. To observe this, try moving, resizing, sorting, filtering etc and then add and remove groups, all the changed state will be preserved.
 
-{% gridExampleRunner title="Group Changes" name="group-changes" type="generated" /%}
+{% gridExampleRunner title="Group Changes" name="group-changes" /%}
 
 The example above shows adding and removing groups. It is also possible to add and remove columns from groups. This is demonstrated in the example below. Note the following:
 
@@ -161,7 +161,7 @@ The example above shows adding and removing groups. It is also possible to add a
 * The example has two sets of columns, **Normal Cols** and **Extra Cols**.
 * When you move from **Normal Cols** to **Extra Cols**, three new columns are added to the list. Two belong to the **Athlete Details** group, the other belongs to no group.
 
-{% gridExampleRunner title="Group Changes 2" name="group-changes-2" type="generated" /%}
+{% gridExampleRunner title="Group Changes 2" name="group-changes-2" /%}
 
 ## Column Height
 
@@ -171,7 +171,7 @@ Note the following:
 
 * The **Age** column header cell is not under a column group cell, but spans the entire height of the header container.
 
-{% gridExampleRunner title="Span Header Height" name="span-header-height" type="generated" options={ "exampleHeight": 300 } /%}
+{% gridExampleRunner title="Span Header Height" name="span-header-height"  exampleHeight=300 /%}
 
 Using the **Column Property** `suppressSpanHeaderHeight` the Grid will balance the column headers with different number of levels with an empty column group header cell, as shown in the example below.
 
@@ -198,4 +198,4 @@ Note the following:
 
 * The **Age** column has an empty column group header cell above it (shown with red borders).
 
-{% gridExampleRunner title="Padded Header" name="padded-header" type="generated" options={ "exampleHeight": 300 } /%}
+{% gridExampleRunner title="Padded Header" name="padded-header"  exampleHeight=300 /%}

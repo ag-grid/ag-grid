@@ -26,7 +26,7 @@ The following example demonstrates the Advanced Filter:
 * Try out each of the columns to see how the different [Cell Data Types](./cell-data-types/) are handled.
 * Complex filter expressions can be built up by using `AND` and `OR` along with brackets - `(` and `)`.
 
-{% gridExampleRunner title="Advanced Filter" name="advanced-filter" type="generated" options={ "enterprise": true, "modules": ["clientside", "menu", "advancedfilter"] } /%}
+{% gridExampleRunner title="Advanced Filter" name="advanced-filter" /%}
 
 {% note %}
 Advanced Filter and Column Filters cannot be active at the same time. Enabling Advanced Filter will disable Column Filters.
@@ -46,7 +46,7 @@ The following example demonstrates the Advanced Filter Builder:
 * Use the add and remove buttons to create new conditions or delete existing ones.
 * If the filter is valid (and does not match the already applied filter), click the `Apply` button to apply the filter.
 
-{% gridExampleRunner title="Advanced Filter Builder" name="advanced-filter-builder" type="generated" options={ "enterprise": true, "modules": ["clientside", "menu", "advancedfilter"] } /%}
+{% gridExampleRunner title="Advanced Filter Builder" name="advanced-filter-builder" /%}
 
 ## Configuring Columns
 
@@ -63,7 +63,7 @@ The different properties that can be set for each column are explained in the se
 * The **Athlete** column has Filter Params defined, so that it only shows the `contains` option and is case sensitive.
 * The **Gold**, **Silver** and **Bronze** columns in the **Medals (-)** column group have a `headerValueGetter` defined and use the `location` property to have a different name in the filter (with a `(-)` suffix).
 
-{% gridExampleRunner title="Configuring Columns" name="configuring-columns" type="generated" options={ "enterprise": true, "modules": ["clientside", "menu", "rowgrouping", "advancedfilter"] } /%}
+{% gridExampleRunner title="Configuring Columns" name="configuring-columns" /%}
 
 ### Including Hidden Columns
 
@@ -184,7 +184,7 @@ The Advanced Filter Model and API methods are demonstrated in the following exam
 * Clicking `Set Custom Advanced Filter Model` will set `[Gold] >= 1`.
 * Clicking `Clear Advanced Filter` will clear the current Advanced Filter.
 
-{% gridExampleRunner title="Advanced Filter Model / API" name="advanced-filter-model-api" type="generated" options={ "enterprise": true, "modules": ["clientside", "menu", "advancedfilter"] } /%}
+{% gridExampleRunner title="Advanced Filter Model / API" name="advanced-filter-model-api" /%}
 
 ## Advanced Filter Parent
 
@@ -201,7 +201,7 @@ The following example demonstrates displaying the Advanced Filter outside of the
 * The Advanced Filter parent is set using an element directly above the grid.
 * Popup Parent is set to an element containing both the grid and the Advanced Filter parent.
 
-{% gridExampleRunner title="External Parent" name="external-parent" type="generated" options={ "enterprise": true, "modules": ["clientside", "menu", "advancedfilter"] } /%}
+{% gridExampleRunner title="External Parent" name="external-parent" /%}
 
 ## Configuring Advanced Filter Builder
 
@@ -227,7 +227,7 @@ The following example demonstrates configuring the Advanced Filter Builder:
 * The `advancedFilterBuilderVisibleChanged` event is used to toggle the disabled status of the `Advanced Filter Builder` button.
 * The `showMoveButtons` param is set in the `advancedFilterBuilderParams`, which displays buttons allowing the filter rows to be moved up and down (including via keyboard navigation).
 
-{% gridExampleRunner title="Configuring Advanced Filter Builder" name="configuring-advanced-filter-builder" type="generated" options={ "enterprise": true, "modules": ["clientside", "menu", "advancedfilter"] } /%}
+{% gridExampleRunner title="Configuring Advanced Filter Builder" name="configuring-advanced-filter-builder" /%}
 
 ## Cell Data Type Handling
 

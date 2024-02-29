@@ -45,7 +45,7 @@ The following example demonstrates Cell Editing with the Set Filter. Try the fol
 * Change (Cell Edit) a `'B'` cell value to `'X'` and notice it gets added to the Filter List but it is **not selected**.
 * Note that although `'X'` is not selected in the filter the row still appears in the grid. This is because grid filtering is not triggered for cell edits.
 
-{% gridExampleRunner title="Cell Editing Updates" name="cell-editing-updates" type="generated" options={ "enterprise": true, "exampleHeight": 480, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] } /%}
+{% gridExampleRunner title="Cell Editing Updates" name="cell-editing-updates"  exampleHeight=480 /%}
 
 ## Transaction Updates
 
@@ -78,7 +78,7 @@ The following example demonstrates these rules. Try the following:
 * Note that as `'AX'` is unselected in the filter list it has also been filtered out of the grid. This is because transaction updates also triggers grid filtering.
 * Click **Add New 'D' Row**: this calls `api.applyTransaction()` and adds a new row to the grid. Note `'D'` has been added to the filter list and is **not selected**.
 
-{% gridExampleRunner title="Transaction Updates" name="transaction-updates" type="generated" options={ "enterprise": true, "exampleHeight": 480, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] } /%}
+{% gridExampleRunner title="Transaction Updates" name="transaction-updates"  exampleHeight=480 /%}
 
 ## Setting New Data
 
@@ -92,7 +92,7 @@ The following example demonstrates how `api.setGridOption('rowData', data)` affe
 
 * Clicking **Reset** invokes `api.setGridOption('rowData', origData)` to restore the original data but also clears any selections using `api.setFilterModel([])`.
 
-{% gridExampleRunner title="Setting New Data" name="setting-new-data" type="generated" options={ "enterprise": true, "exampleHeight": 500, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] } /%}
+{% gridExampleRunner title="Setting New Data" name="setting-new-data"  exampleHeight=500 /%}
 
 ## Next Up
 

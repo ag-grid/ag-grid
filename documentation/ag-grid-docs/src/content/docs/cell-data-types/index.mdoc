@@ -35,7 +35,7 @@ The following example demonstrates the six pre-defined cell data types (inferred
 * The **Date (String)** column has a `'dateString'` data type (cell values are `string`s representing dates).
 * The **Country** column has an `'object'` data type. This also [Overrides the Pre-Defined Cell Data Type Definition](#overriding-the-pre-defined-cell-data-type-definitions) so that the value parser and formatter work with the object structure.
 
-{% gridExampleRunner title="Enable Cell Data Types" name="enable-cell-data-types" type="generated" /%}
+{% gridExampleRunner title="Enable Cell Data Types" name="enable-cell-data-types" /%}
 
 ## Inferring Data Types
 
@@ -147,7 +147,7 @@ The example below shows the same data types in AG Grid Enterprise:
   * Fill handle
   * CSV/Excel export
 
-{% gridExampleRunner title="Pre-Defined Cell Data Types" name="pre-defined-cell-data-types" type="generated" options={ "enterprise": true, "modules": ["clientside", "menu", "range", "rowgrouping", "excel", "clipboard", "setfilter"] } /%}
+{% gridExampleRunner title="Pre-Defined Cell Data Types" name="pre-defined-cell-data-types" /%}
 
 ## Providing Custom Cell Data Types
 
@@ -183,7 +183,7 @@ The following example demonstrates providing custom cell data types:
 * The **Sport** column contains a different type of complex object and has a cell data type of `'sport'`.
 * The `dataTypeMatcher` callback is defined for both cell data types to allow inferring the type.
 
-{% gridExampleRunner title="Providing Custom Cell Data Types" name="providing-custom-cell-data-types" type="generated" options={ "enterprise": true, "modules": ["clientside", "menu", "range", "setfilter"] } /%}
+{% gridExampleRunner title="Providing Custom Cell Data Types" name="providing-custom-cell-data-types" /%}
 
 ## Overriding the Pre-Defined Cell Data Type Definitions
 
@@ -228,7 +228,7 @@ The following example demonstrates overriding pre-defined cell data types:
 * The **Date** column is of type `'dateString'` which has been overridden to use a different date format (`dd/mm/yyyy`).
 * The data type definition for `'dateString'` provides a `dateParser` and `dateFormatter` as it is a [Date as String Data Type Definition](#date-as-string-data-type-definition).
 
-{% gridExampleRunner title="Overriding Pre-Defined Cell Data Types" name="overriding-pre-defined-cell-data-types" type="generated" /%}
+{% gridExampleRunner title="Overriding Pre-Defined Cell Data Types" name="overriding-pre-defined-cell-data-types" /%}
 
 ### Date as String Data Type Definition
 

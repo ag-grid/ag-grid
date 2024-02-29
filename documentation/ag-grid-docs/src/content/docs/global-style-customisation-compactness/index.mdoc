@@ -15,7 +15,7 @@ Add more white space or pack more data into the UI.
 }
 ```
 
-{% gridExampleRunner title="Tight layout" name="compactness-tight" type="generated" options={ "exampleHeight": 450, "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "setfilter", "columnpanel"]  } /%}
+{% gridExampleRunner title="Tight layout" name="compactness-tight"  exampleHeight=450 /%}
 
 ```css
 .ag-theme-quartz {
@@ -24,7 +24,7 @@ Add more white space or pack more data into the UI.
 }
 ```
 
-{% gridExampleRunner title="Loose layout" name="compactness-loose" type="generated" options={ "exampleHeight": 450, "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "setfilter", "columnpanel"]  } /%}
+{% gridExampleRunner title="Loose layout" name="compactness-loose"  exampleHeight=450 /%}
 
 ## Customising Row and Header Heights
 
@@ -43,7 +43,7 @@ which means that it needs to know the size of various elements like columns and 
 
 The grid performs its measurement of elements as described above when it starts up and it caches the calculated values internally so it won't have to recalculate the size of rows and headers while the Grid is scrolled. To force the grid to refresh this cache, you should simply change the CSS class applied to the Grid element as shown in the example below:
 
-{% gridExampleRunner title="Dynamic Height" name="dynamic-height" type="generated" options={ "exampleHeight": 450, "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "setfilter", "columnpanel"]  } /%}
+{% gridExampleRunner title="Dynamic Height" name="dynamic-height"  exampleHeight=450 /%}
 
 ## Key compactness variables
 

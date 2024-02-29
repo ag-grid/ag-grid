@@ -75,7 +75,7 @@ In this first example, the template is set statically. Note the following:
 {% /if %}
 
 {% if isFramework("javascript", "angular", "vue") %}
-{% gridExampleRunner title="Customising via String Template" name="string-template-customisation" type="generated" options={ "enterprise": true, "exampleHeight": 550, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Customising via String Template" name="string-template-customisation"  exampleHeight=550 /%}
 {% /if %}
 
 {% if isFramework("javascript", "angular", "vue") %}
@@ -89,5 +89,5 @@ In this second example, the template is set dynamically. Note the following:
 {% /if %}
 
 {% if isFramework("javascript", "angular", "vue") %}
-{% gridExampleRunner title="Customising via Template Callback" name="template-callback-customisation" type="generated" options={ "enterprise": true, "exampleHeight": 550, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Customising via Template Callback" name="template-callback-customisation"  exampleHeight=550 /%}
 {% /if %}

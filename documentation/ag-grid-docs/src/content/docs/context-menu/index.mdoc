@@ -73,7 +73,7 @@ Below shows a configured context menu in action demonstrating a customised menu 
 * The top menu item has CSS classes applied to it.
 * The 'Always Disabled' menu item has a tooltip.
 
-{% gridExampleRunner title="Context Menu Example" name="context-menu" type="generated" options={ "enterprise": true, "modules": ["clientside", "menu", "excel", "range", "clipboard", "charts-enterprise"] } /%}
+{% gridExampleRunner title="Context Menu Example" name="context-menu" /%}
 
 ## Popup Parent
 
@@ -84,7 +84,7 @@ This will lead to a bad user experience which is demonstrated in the following e
 * Open the context menu or the column menu in the grid
 * Notice the menu will not be fully visible (i.e. clipped)
 
-{% gridExampleRunner title="Small Grid Problem" name="popup-parent-problem" type="generated" options={ "enterprise": true, "modules": ["clientside", "menu", "excel", "clipboard"], "exampleHeight": 400 } /%}
+{% gridExampleRunner title="Small Grid Problem" name="popup-parent-problem"  exampleHeight=400 /%}
 
 The solution is to set the `popupParent` element:
 
@@ -99,4 +99,4 @@ Most of the time, you will simply set the popup parent to the document body.
 
 The example below is identical to the previous example except it sets the popup parent to the document body.
 
-{% gridExampleRunner title="Small Grid Solution" name="popup-parent-solution" type="generated" options={ "enterprise": true, "modules": ["clientside", "menu", "excel", "clipboard"], "exampleHeight": 400 } /%}
+{% gridExampleRunner title="Small Grid Solution" name="popup-parent-solution"  exampleHeight=400 /%}

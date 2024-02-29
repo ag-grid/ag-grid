@@ -25,13 +25,13 @@ Working with AG Grid nodes is preferred over the row data as it provides you wit
 
 * Property `rowSelection='single'` is set to enable single row selection. It is not possible to select multiple rows.
 
-{% gridExampleRunner title="Single Row Selection" name="single-row-selection" type="generated" /%}
+{% gridExampleRunner title="Single Row Selection" name="single-row-selection" /%}
 
 ### Multiple Row Selection
 
 * Property `rowSelection='multiple'` is set to enable multiple row selection. Selecting multiple rows can be achieved by holding down {% kbd "^ Ctrl" /%} and mouse clicking the rows. A range of rows can be selected by using {% kbd "⇧ Shift" /%}.
 
-{% gridExampleRunner title="Multiple Row Selection" name="multiple-row-selection" type="generated" /%}
+{% gridExampleRunner title="Multiple Row Selection" name="multiple-row-selection" /%}
 
 ### Multi Select With Click
 
@@ -41,7 +41,7 @@ Clicking multiple rows will select a range of rows without the need for {% kbd "
 * Clicking multiple rows will select multiple rows without needing to press {% kbd "^ Ctrl" /%} or {% kbd "⇧ Shift" /%} keys.
 * Clicking a selected row will deselect that row.
 
-{% gridExampleRunner title="Multi Select With Click" name="multi-select-single-click" type="generated" /%}
+{% gridExampleRunner title="Multi Select With Click" name="multi-select-single-click" /%}
 
 ## Checkbox Selection
 
@@ -83,7 +83,7 @@ colDef.checkboxSelection = () => false;
 
 It is possible to change the default behaviour for when a checkbox is not displayed, and instead have the checkbox visible but disabled. This can be done by enabling the column property `showDisabledCheckboxes`.
 
-{% gridExampleRunner title="Displaying Disabled Checkboxes" name="disabled-checkboxes" type="generated" options={ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Displaying Disabled Checkboxes" name="disabled-checkboxes" /%}
 
 ### Forcing Checkboxes As Selected
 
@@ -93,7 +93,7 @@ In the example below please note that only rows with Year=2012 are selectable. A
 
 Please note that clicking the header checkbox selects all rows even if their checkboxes are disabled.
 
-{% gridExampleRunner title="Forcing Checkboxes As Selected" name="force-enable-checkboxes" type="generated" options={ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Forcing Checkboxes As Selected" name="force-enable-checkboxes" /%}
 
 ## Group Selection
 
@@ -109,13 +109,13 @@ Selecting the group has the effect of selecting the children. Likewise selecting
 
 The example also shows a checkbox for selection on the age column. In practice, it is not normal to have more than one column for selection, the below is just for demonstration. Having a checkbox within a non-group row is best for grids that are not using grouping.
 
-{% gridExampleRunner title="Groups & Checkbox Selection" name="group-selection" type="generated" options={ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Groups & Checkbox Selection" name="group-selection" /%}
 
 ### Groups & Checkbox Selection With Unselectable Leaf Nodes
 
 The example below is similar to the previous example except it does not put checkboxes on the leaf level nodes, allowing only entire groups to be selected. This is achieved by providing functions for `colDef.checkboxSelection` and `autoGroupColumnDef.cellRendererParams.checkbox`.
 
-{% gridExampleRunner title="Groups & Checkbox Selection With Unselectable Leaf Nodes" name="selection-checkbox" type="generated" options={ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Groups & Checkbox Selection With Unselectable Leaf Nodes" name="selection-checkbox" /%}
 
 ### Groups & Checkbox Selection With Only Filtered Children
 
@@ -128,7 +128,7 @@ To demonstrate, try this in the example:
 1. Notice that all filtered rows get selected. If you remove the filter, the non-filtered rows are not selected.
 1. Notice that the group checkbox becomes indeterminate while all its filtered children get selected. This is because the selected state of the group node is independent to the filter, so it becomes indeterminate as not all of its children are selected.
 
-{% gridExampleRunner title="Groups & Checkbox Selection With Only Filtered Children" name="selection-checkbox-filtered" type="generated" options={ "enterprise": true, "exampleHeight": 590, "modules": ["clientside", "rowgrouping", "setfilter", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Groups & Checkbox Selection With Only Filtered Children" name="selection-checkbox-filtered"  exampleHeight=590 /%}
 
 ## Header Checkbox Selection
 
@@ -178,7 +178,7 @@ This example has the following characteristics:
 
 * The header checkbox is always on the athlete column, even if the athlete column is moved.
 
-{% gridExampleRunner title="Just Filtered" name="header-checkbox" type="generated" options={ "exampleHeight": 590 } /%}
+{% gridExampleRunner title="Just Filtered" name="header-checkbox"  exampleHeight=590 /%}
 
 ### Select Everything
 
@@ -187,7 +187,7 @@ The next example is similar to the one above with the following changes:
 * The header checkbox selects everything, not just filtered.
 * The column that the selection header checkbox appears in is always the first column. This can be observed by dragging the columns to reorder them.
 
-{% gridExampleRunner title="Select Everything" name="header-checkbox-entire-set" type="generated" options={ "exampleHeight": 590 } /%}
+{% gridExampleRunner title="Select Everything" name="header-checkbox-entire-set"  exampleHeight=590 /%}
 
 ### Select Only the Current Page
 
@@ -196,7 +196,7 @@ The next example demonstrates the `headerCheckboxSelectionCurrentPageOnly` prope
 * The header checkbox selects collapsed groups and all of their children.
 * The header checkbox will select expanded group nodes, but only the children which are also on the current page.
 
-{% gridExampleRunner title="Selecting Current Page" name="header-checkbox-current-page" type="generated" options={ "enterprise": true, "modules": ["clientside", "rowgrouping"] } /%}
+{% gridExampleRunner title="Selecting Current Page" name="header-checkbox-current-page" /%}
 
 ### Current Page with Group Selects Children
 
@@ -205,7 +205,7 @@ The next example demonstrates the `headerCheckboxSelectionCurrentPageOnly` prope
 * The header checkbox selects collapsed groups and all of their children.
 * The header checkbox will select expanded group nodes only if all of the children are selected, otherwise they will become indeterminate.
 
-{% gridExampleRunner title="Selecting Current Page with Group Selects Children" name="header-checkbox-current-page-groups" type="generated" options={ "enterprise": true, "modules": ["clientside", "rowgrouping"] } /%}
+{% gridExampleRunner title="Selecting Current Page with Group Selects Children" name="header-checkbox-current-page-groups" /%}
 
 ## Specify Selectable Rows
 
@@ -228,7 +228,7 @@ This example demonstrates the following:
 * The `isRowSelectable(node)` callback only allows selections on rows where the year < 2007.
 * The country column has `headerCheckboxSelection: true` and `checkboxSelection: true`, but only rows which are selectable will obtain a selectable checkbox. Similarly, the header checkbox will only select selectable rows.
 
-{% gridExampleRunner title="Selectable Rows with Header Checkbox" name="specify-selectable-rows" type="generated" options={ "enterprise": true, "modules": ["clientside", "rowgrouping"] } /%}
+{% gridExampleRunner title="Selectable Rows with Header Checkbox" name="specify-selectable-rows" /%}
 
 ### Specifying Selectable Rows with Groups
 
@@ -244,7 +244,7 @@ This example demonstrates the following:
   1. Click 'Clear Filter'.
   1. Notice that only 'United States' for 2008 is selected.
 
-{% gridExampleRunner title="Specifying Selectable Rows with Groups" name="specify-selectable-rows-with-groups" type="generated" options={ "enterprise": true, "exampleHeight": 590, "modules": ["clientside", "rowgrouping", "setfilter", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Specifying Selectable Rows with Groups" name="specify-selectable-rows-with-groups"  exampleHeight=590 /%}
 
 ## Selection Events
 
@@ -252,7 +252,7 @@ There are two events with regards to selection:{% br /%}
 
 {% apiDocumentation source="grid-events/events.json" section="selection" names=["rowSelected", "selectionChanged"] /%}
 
-{% gridExampleRunner title="Selection Events" name="selection-events" type="generated" /%}
+{% gridExampleRunner title="Selection Events" name="selection-events" /%}
 
 ## Node Selection API
 
@@ -297,7 +297,7 @@ api.setNodesSelected({ nodes, newValue: true });
 
 The Grid API function `forEachNode` can be used to select grid rows based on a business key. The example below shows selecting all rows with country = 'United States'. This method is also useful when you load data and need to know the node equivalent of the data for selection purposes.
 
-{% gridExampleRunner title="Using forEachNode" name="using-foreachnode" type="generated" options={ "exampleHeight": 590 } /%}
+{% gridExampleRunner title="Using forEachNode" name="using-foreachnode"  exampleHeight=590 /%}
 
 ### Selection with Keyboard Arrow Keys
 
@@ -334,4 +334,4 @@ const gridOptions = {
 
 From the code above you can see that we iterate over each node and call the `setSelected()` method if it matches the current `rowIndex`.
 
-{% gridExampleRunner title="Selection with Keyboard Arrow Keys" name="selection-with-arrow-keys" type="generated" /%}
+{% gridExampleRunner title="Selection with Keyboard Arrow Keys" name="selection-with-arrow-keys" /%}

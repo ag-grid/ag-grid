@@ -73,7 +73,7 @@ While navigating the Floating Filter Columns Headers with the keyboard, pressing
 
 The example below has grouped headers, headers and floating filters to demonstrate the features mentioned above:
 
-{% gridExampleRunner title="Keyboard Navigation" name="grid-keyboard-navigation" type="generated" options={ "enterprise": true,  "modules": ["clientside", "menu", "columnpanel", "filterpanel", "setfilter"] } /%}
+{% gridExampleRunner title="Keyboard Navigation" name="grid-keyboard-navigation" /%}
 
 ## Custom Navigation
 
@@ -140,7 +140,7 @@ Note the following:
 * When a header cell in the last header row is focused, pressing the up arrow will navigate  to the first grid row by passing `headerRowIndex: -1`.
 * Tabbing/Shift tabbing will move the focus until the first header or the last grid row, but focus will not leave the grid.
 
-{% gridExampleRunner title="Custom Keyboard Navigation" name="custom-keyboard-navigation" type="mixed" /%}
+{% gridExampleRunner title="Custom Keyboard Navigation" name="custom-keyboard-navigation" /%}
 
 ## Custom Master Detail Navigation
 
@@ -187,7 +187,7 @@ In the following example there is an input box provided to test tabbing into the
 * When the first header is out of view due to horizontal scroll, tabbing into the grid will cause the grid to scroll to focus the first header.
 * Shift-Tabbing out third input (below the grid) will have the default focus behaviour, which is to focus the last element of the grid. This element will vary depending on how many features have been enabled (eg. Row Pagination, Tool Panels, etc...).
 
-{% gridExampleRunner title="Tabbing into the Grid" name="tabbing-into-grid" type="mixed" /%}
+{% gridExampleRunner title="Tabbing into the Grid" name="tabbing-into-grid" /%}
 
 ## Keyboard Events
 
@@ -206,7 +206,7 @@ The example below shows processing grid cell keyboard events. The following can 
 * Each time a `cellKeyDown` is fired, the details of the event are logged to the console.
 * When the user hits {% kbd "S" /%} on a row, the row selection is toggled.
 
-{% gridExampleRunner title="Keyboard Events" name="keyboard-events" type="generated" options={ "enterprise": true, "modules": ["clientside", "menu", "columnpanel", "filterpanel", "setfilter"] } /%}
+{% gridExampleRunner title="Keyboard Events" name="keyboard-events" /%}
 
 ## Suppress Keyboard Events
 
@@ -252,7 +252,7 @@ The example below demonstrates suppressing the following keyboard events:
 * On all headers (excluding country):
   * Navigation is blocked up and down, but navigation left / right is allowed using arrows and {% kbd "⇥ Tab" /%}.
 
-{% gridExampleRunner title="Suppress Keys" name="suppress-keys" type="generated" options={ "enterprise": true, "modules": ["clientside", "menu", "columnpanel", "filterpanel", "setfilter"] } /%}
+{% gridExampleRunner title="Suppress Keys" name="suppress-keys" /%}
 
 ## Custom Cell Component
 
@@ -269,4 +269,4 @@ The `suppressKeyboardEvent` callback is used to capture tab events and determine
 
 If the focus is at the beginning or the end of the cell children and moving out of the cell, the keyboard event is not suppressed, so focus can move between the children elements. Also, when moving backwards, the focus needs to be manually set while preventing the default behaviour of the keyboard press event.
 
-{% gridExampleRunner title="Cell Renderer Keyboard Navigation" name="cell-renderer-keyboard-navigation" type="mixed" /%}
+{% gridExampleRunner title="Cell Renderer Keyboard Navigation" name="cell-renderer-keyboard-navigation" /%}

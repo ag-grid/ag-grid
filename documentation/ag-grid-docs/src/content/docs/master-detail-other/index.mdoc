@@ -15,7 +15,7 @@ It is possible to have the Detail Grid sit within the same container as the Mast
 
 In the example below, notice that horizontal scrolling is combined for both Master Grid and Detail Grid using the Embed Full Width Rows feature.
 
-{% gridExampleRunner title="Detail scrolls with Master" name="detail-scrolls-with-master" type="generated" options={ "enterprise": true, "exampleHeight": 525, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Detail scrolls with Master" name="detail-scrolls-with-master"  exampleHeight=525 /%}
 
 If you are mixing Embed Full Width Rows and [Custom Detail](./master-detail-custom-detail/), then be aware the Detail Panel will get rendered three times as follows:
 
@@ -25,7 +25,7 @@ If you are mixing Embed Full Width Rows and [Custom Detail](./master-detail-cust
 
 This is because the Columns, and thus the Detail Panel, are appearing in three separate scrollable sections. The example below demonstrates this. Note the custom Detail Panel appears in all three sections.
 
-{% gridExampleRunner title="Embed Custom Detail" name="embed-custom-detail" type="generated" options={ "enterprise": true, "modules": ["clientside",  "masterdetail"] } /%}
+{% gridExampleRunner title="Embed Custom Detail" name="embed-custom-detail" /%}
 
 If you want your custom Detail Panel to only show content in one section, have logic that inspects the components `params.pinned` property and renders content relevant for the section.
 
@@ -35,7 +35,7 @@ There are no specific configurations for filtering and sorting with Master / Det
 
 Below shows a simple Master / Detail setup which has filtering and sorting enabled in both master and detail grids.
 
-{% gridExampleRunner title="Filtering with Sort" name="filtering-with-sort" type="generated" options={ "enterprise": true, "exampleHeight": 550, "modules": ["clientside", "masterdetail", "menu", "setfilter", "columnpanel", "filterpanel"] } /%}
+{% gridExampleRunner title="Filtering with Sort" name="filtering-with-sort"  exampleHeight=550 /%}
 
 ## Supported Modes
 

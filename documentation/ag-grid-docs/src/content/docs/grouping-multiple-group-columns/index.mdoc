@@ -37,7 +37,7 @@ This is demonstrated in the following example, note the following:
 
 * The `country` and `year` columns are not shown in the grid as `hide=true` is set on their column definitions.
 
-{% gridExampleRunner title="Enabling Multiple Group Columns" name="enabling-multiple-group-columns" type="generated" options={ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] } /%}
+{% gridExampleRunner title="Enabling Multiple Group Columns" name="enabling-multiple-group-columns"  exampleHeight=515 /%}
 
 ## Group Column Configuration
 
@@ -71,7 +71,7 @@ The following example demonstrates some of the available `autoGroupColumnDef` co
 
 * Checkboxes are displayed beside each row group by setting `cellRendererParams.checkbox = true`.
 
-{% gridExampleRunner title="Multiple Group Columns Configuration" name="multiple-group-columns-configuration" type="generated" options={ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] } /%}
+{% gridExampleRunner title="Multiple Group Columns Configuration" name="multiple-group-columns-configuration"  exampleHeight=515 /%}
 
 ## Showing Open Groups
 
@@ -82,7 +82,7 @@ was opened is scrolled out of view.
 The following example uses `showOpenedGroup=true` with many group columns. The open groups are shown across all
 group columns where the group is open for that column.
 
-{% gridExampleRunner title="Show Opened Groups Many Columns" name="show-opened-groups-many-columns" type="generated" options={ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] } /%}
+{% gridExampleRunner title="Show Opened Groups Many Columns" name="show-opened-groups-many-columns"  exampleHeight=515 /%}
 
 ## Hide Open Parents
 
@@ -98,7 +98,7 @@ Filter is achieved for each column by providing a `filterValueGetter` for the `a
 When `groupHideOpenParents=true` the Grid automatically disables Group Rows Sticky, see: [suppressGroupRowsSticky](./grid-options/#reference-rowGrouping-suppressGroupRowsSticky).
 {% /note %}
 
-{% gridExampleRunner title="Hide Open Parents" name="hide-open-parents" type="generated" options={ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "setfilter"] } /%}
+{% gridExampleRunner title="Hide Open Parents" name="hide-open-parents"  exampleHeight=515 /%}
 
 ## Next Up
 

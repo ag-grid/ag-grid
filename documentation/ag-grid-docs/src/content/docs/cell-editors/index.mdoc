@@ -12,7 +12,7 @@ The example below shows some Custom Editor Components.
 * The `Mood` Cell Editor illustrates a slightly more complicated editor with values changed depending on the smiley chosen
 * The `Numeric` Cell Editor illustrates a slightly more complicated numeric editor to the `Doubling` editor, with increased input validation
 
-{% gridExampleRunner title="Simple Editor Components" name="component-editor" type="mixed" options={ "exampleHeight": 370, "includeNgFormsModule": true } /%}
+{% gridExampleRunner title="Simple Editor Components" name="component-editor"  exampleHeight=370 /%}
 
 ## Custom Components
 
@@ -109,7 +109,7 @@ Here is a full example:
 * `colDef.cellEditorSelector` is a function that returns the name of the component to use to edit based on the type of data for that row
 * Edit a cell by double clicking to observe the different editors used.
 
-{% gridExampleRunner title="Dynamic Editor Component" name="dynamic-editor-component" type="mixed" options={ "enterprise": true, "modules": ["clientside", "menu", "columnpanel", "richselect"], "exampleHeight": 450, "includeNgFormsModule": true } /%}
+{% gridExampleRunner title="Dynamic Editor Component" name="dynamic-editor-component"  exampleHeight=450 /%}
 
 ## Dynamic Props
 
@@ -138,7 +138,7 @@ Below shows an example with dynamic props. The following can be noted:
 * Column **City** uses dynamic parameters to display values for the selected country, and uses `formatValue` to add the selected city's country as a suffix.
 * Column **Address** uses the large text area editor.
 
-{% gridExampleRunner title="Dynamic Parameters" name="dynamic-parameters" type="generated" options={ "enterprise": true, "modules": ["clientside", "richselect", "menu", "columnpanel"], "exampleHeight": 520 } /%}
+{% gridExampleRunner title="Dynamic Parameters" name="dynamic-parameters"  exampleHeight=520 /%}
 
 ## Custom Props
 
@@ -265,7 +265,7 @@ The example below shows using `getCellEditorInstances`. The following can be not
 * All other columns use the provided `MySimpleCellEditor` editor.
 * The example sets an interval to print information from the active cell editor. There are three results: 1) No editing 2) Editing with default cell renderer and 3) editing with the custom cell editor. All results are printed to the developer console.
 
-{% gridExampleRunner title="Get Editor Instance" name="get-editor-instance" type="mixed" options={ } /%}
+{% gridExampleRunner title="Get Editor Instance" name="get-editor-instance" /%}
 
 ## Datepicker Cell Editing Example
 
@@ -273,7 +273,7 @@ The example below illustrates:
 
 * 'Date' column uses a Component cell editor that allows you to pick a date using jQuery UI Datepicker.
 
-{% gridExampleRunner title="Datepicker Cell Editing" name="datepicker-cell-editing" type="generated" options={ "enterprise": true, "modules": ["clientside", "menu", "columnpanel"] } /%}
+{% gridExampleRunner title="Datepicker Cell Editing" name="datepicker-cell-editing" /%}
 
 ## Another Example
 
@@ -283,4 +283,4 @@ The example below illustrates:
 * 'Address' column uses a Component cell editor that allows input of multiline text via a 'largeText'. {% kbd "⇥ Tab" /%} and {% kbd "⎋ Esc" /%} (amongst others) will exit editing in this field, {% kbd "⇧ Shift" /%}+{% kbd "↵ Enter" /%} will allow newlines.
 * 'Country' columns shows using 'richSelect' for a complex object - the cell renderer takes care of only rendering the country name.
 
-{% gridExampleRunner title="Simple Editor Components" name="component-editor-2" type="mixed" options={ "enterprise": true, "modules": ["clientside", "richselect"], "exampleHeight": 370, "includeNgFormsModule": true } /%}
+{% gridExampleRunner title="Simple Editor Components" name="component-editor-2"  exampleHeight=370 /%}

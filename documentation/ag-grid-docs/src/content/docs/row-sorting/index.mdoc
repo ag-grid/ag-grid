@@ -70,7 +70,7 @@ Example below shows the following:
 * When the **Year** column is not sorted, it shows a custom icon (up/down arrow).
 * The **Date** column has strings as the row data, but has a custom comparator so that when you sort this column it sorts as dates, not as strings.
 
-{% gridExampleRunner title="Custom Sorting" name="custom-sorting" type="generated" /%}
+{% gridExampleRunner title="Custom Sorting" name="custom-sorting" /%}
 
 ### Custom Sorting Groups Example
 
@@ -87,7 +87,7 @@ var gridOptions = {
 };
 ```
 
-{% gridExampleRunner title="Custom Sorting Groups" name="custom-sorting-groups" type="generated" options={ "enterprise": true, "modules": ["clientside", "rowgrouping" ] } /%}
+{% gridExampleRunner title="Custom Sorting Groups" name="custom-sorting-groups" /%}
 
 ## Multi Column Sorting
 
@@ -100,7 +100,7 @@ The example below demonstrates the following:
 * The grid sorts by **Country** then **Athlete** by default.
 * The property `multiSortKey='ctrl'` is set so multiple column sorting is achieved by holding down {% kbd "^ Ctrl" /%} (or {% kbd "Command" /%} on Apple) and selecting multiple columns.
 
-{% gridExampleRunner title="Multi Column Sort" name="multi-column" type="generated" /%}
+{% gridExampleRunner title="Multi Column Sort" name="multi-column" /%}
 
 {% note %}
 You can suppress the multi sorting behaviour by enabling the `suppressMultiSort` option, or force the behaviour without key press by enabling
@@ -135,13 +135,13 @@ The example below shows animation of the rows plus different combinations of sor
 * **Column Country:** descending -> no sort
 * **Column Year:** ascending only
 
-{% gridExampleRunner title="Sorting Order and Animation" name="sorting-order-and-animation" type="generated" /%}
+{% gridExampleRunner title="Sorting Order and Animation" name="sorting-order-and-animation" /%}
 
 ## Sorting API
 
 What sorting is applied is controlled via [Column State](./column-state/). The below examples uses the Column State API to control column sorting.
 
-{% gridExampleRunner title="Sorting API" name="sorting-api" type="generated" /%}
+{% gridExampleRunner title="Sorting API" name="sorting-api" /%}
 
 ## Accented Sort
 
@@ -153,7 +153,7 @@ causes the sort to be noticeably slower.
 
 The following example is configured to use this feature.
 
-{% gridExampleRunner title="Accented Sort" name="accented-sort" type="generated" /%}
+{% gridExampleRunner title="Accented Sort" name="accented-sort" /%}
 
 ## Post-Sort
 
@@ -183,4 +183,4 @@ const gridOptions = {
 The following example uses this configuration to perform a post-sort on the rows. The custom function
 puts rows with Ireland at the top always.
 
-{% gridExampleRunner title="Post Sort" name="post-sort" type="generated" /%}
+{% gridExampleRunner title="Post Sort" name="post-sort" /%}

@@ -16,7 +16,7 @@ The example below demonstrates adding and removing columns from a grid. Note the
 
 * Selecting the buttons to toggle between including or excluding the medal columns.
 
-{% gridExampleRunner title="Add & Remove Columns" name="add-remove-columns" type="mixed" options={ "modules": true } /%}
+{% gridExampleRunner title="Add & Remove Columns" name="add-remove-columns" /%}
 
 In the example above, note that any state applied to any column (e.g. sort, filter, width) will be kept
 if the column still exists after the new definitions are applied. For example try the following:
@@ -39,7 +39,7 @@ The example below demonstrates updating column definitions to change how columns
 * 'Set Value Formatter' and 'Remove Value Formatter' sets and then subsequently removes the `valueFormatter` attribute on all Columns.
 * Note that any resizing, sorting etc of the Columns is kept intact between updates to the Column Definitions.
 
-{% gridExampleRunner title="Updating Column Definition" name="update-column-definition" type="mixed" options={ "modules": true } /%}
+{% gridExampleRunner title="Updating Column Definition" name="update-column-definition" /%}
 
 ## Changing Column State
 
@@ -90,7 +90,7 @@ The example below shows Column Definitions using **initial attributes**. Note th
 * If you update the width, sort or pinned of a column by interacting with the grid's UI and then hit 'Set Columns with Initials', the columns state will not change.
 * Removing the columns first and then setting them again will use the initial values again.
 
-{% gridExampleRunner title="Updating Column Initial Attributes" name="changing-default" type="mixed" options={ "modules": true } /%}
+{% gridExampleRunner title="Updating Column Initial Attributes" name="changing-default" /%}
 
 The following example shows Column Definitions using **stateful attributes**. Note the following:
 
@@ -98,7 +98,7 @@ The following example shows Column Definitions using **stateful attributes**. No
 * If you update the width, sort or pinned of a column by interacting with the grid's UI and then hit 'Set Columns with  State', the columns state will change and the changes made via the UI will be lost.
 * Note the `defaultColDef` is used to remove state. For example `sort=null` is set so that any sorting the user might have done on another column is cleared down. Otherwise, the grid would see the `sort` attribute as `undefined` which means the state should not be changed.
 
-{% gridExampleRunner title="Updating Column State" name="changing-state" type="mixed" options={ "modules": true } /%}
+{% gridExampleRunner title="Updating Column State" name="changing-state" /%}
 
 ## null vs undefined
 
@@ -139,7 +139,7 @@ The example below demonstrates the different matching strategies. Note the follo
 * All other columns except Country are matched using the `field` attribute.
 * Country column is not matched as it's a different object instance and has no `colId` or `field` attributes.
 
-{% gridExampleRunner title="Matching Columns" name="matching-columns" type="mixed" options={ "modules": true } /%}
+{% gridExampleRunner title="Matching Columns" name="matching-columns" /%}
 
 ## Maintain Column Order
 
@@ -159,7 +159,7 @@ The example below demonstrates suppressing the Column order when Column Definiti
 
 If the Columns are cleared out (clicking Clear) then when columns are set again the order will match the Column Definition order.
 
-{% gridExampleRunner title="Column Definition Order" name="col-def-order" type="mixed" options={ "modules": true } /%}
+{% gridExampleRunner title="Column Definition Order" name="col-def-order" /%}
 
 If there are new Columns added (eg the new set of Column Definitions has additional Columns to those currently
 present), then these new Columns will always be added at the end.
@@ -176,7 +176,7 @@ Column Events will get raised when setting new Column Definitions that update th
 The example below demonstrates events getting raised based on Column Definition changes. The example logs event
 information to the console, so best open the example in a new tab and observe the dev console.
 
-{% gridExampleRunner title="Column Events" name="column-events" type="mixed" options={ "enterprise": true, "modules": ["clientside", "rowgrouping"] } /%}
+{% gridExampleRunner title="Column Events" name="column-events" /%}
 
 ## Refreshing Headers
 
@@ -196,7 +196,7 @@ The example below demonstrates refreshing of the headers. Note the following:
 * Toggling between 'Filter On' and 'Filter Off' causes the Header Component to refresh. For frameworks where possible, the Header Component returns `false` which results in the component getting destroyed and recreated.
 * Toggling between 'Resize On' and 'Resize Off' causes the Header Component to refresh. However there is no change to the Header Component as it doesn't depend on resize - the resize UI is provided by the grid.
 
-{% gridExampleRunner title="Refresh Headers" name="refresh-headers" type="mixed" /%}
+{% gridExampleRunner title="Refresh Headers" name="refresh-headers" /%}
 
 ## Column Definition Retrieval
 
@@ -250,4 +250,4 @@ In the example below, note the following:
 1. Column Group B - `groupId` is NOT provided, so expand / collapse is lost, group always closes when updates happen.
 1. Column Group C - `groupId` is provided, so expand / collapse is preserved. Child columns are changed.
 
-{% gridExampleRunner title="Column Groups" name="column-groups" type="mixed" options={ "modules": true } /%}
+{% gridExampleRunner title="Column Groups" name="column-groups" /%}

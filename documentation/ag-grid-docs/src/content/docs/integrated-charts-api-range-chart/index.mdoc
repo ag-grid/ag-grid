@@ -30,7 +30,7 @@ The following example demonstrates how Range Charts can be created programmatica
 * Clicking **'Bronze Medals by Country'** will chart Bronze by Country using all rows (the provided cell range does not specify rows).
 * Note the **'Bronze Medals by Country'** chart is unlinked from the grid as `unlinkChart=true`. Notice that sorting in the grid does not affect the chart and there is no chart range in the grid.
 
-{% gridExampleRunner title="Charts in Grid Popup Window" name="chart-api" type="generated" options={ "enterprise": true, "modules": ["clientside", "menu", "charts-enterprise"] } /%}
+{% gridExampleRunner title="Charts in Grid Popup Window" name="chart-api" /%}
 
 ## Range Chart Dashboard
 
@@ -43,7 +43,7 @@ location other than the grid's popup window. Note the following:
 * All data is editable in the grid. Changes to the grid data is reflected in the charts.
 * The pie charts have legends on the right side. This is configured in the `chartThemeOverrides`.
 
-{% gridExampleRunner title="Charts in Dashboard" name="dashboard" type="generated" options={ "enterprise": true, "modules": ["clientside", "menu", "charts-enterprise", "rowgrouping"], "exampleHeight": 700 } /%}
+{% gridExampleRunner title="Charts in Dashboard" name="dashboard"  exampleHeight=700 /%}
 
 ## Hiding Chart Ranges
 
@@ -99,7 +99,7 @@ The following example demonstrates the above configuration, note the following:
 * Values are aggregated by the 'Month' category by setting `aggFunc: 'sum'`
 * Chart Ranges are hidden using `suppressChartRanges=true`
 
-{% gridExampleRunner title="Combination Chart" name="combination-chart" type="generated" options={ "enterprise": true, "modules": ["clientside", "menu", "charts-enterprise", "rowgrouping"], "exampleHeight": 790 } /%}
+{% gridExampleRunner title="Combination Chart" name="combination-chart"  exampleHeight=790 /%}
 
 ## Range Chart API
 

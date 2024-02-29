@@ -32,7 +32,7 @@ in a cell. The grid comes with some Provided Cell Components for common grid tas
 
 The example below shows some Custom Cell Components.
 
-{% gridExampleRunner title="Simple Cell Renderer" name="cell-renderer-summary-example" type="mixed" options={ "exampleHeight": 460 } /%}
+{% gridExampleRunner title="Simple Cell Renderer" name="cell-renderer-summary-example"  exampleHeight=460 /%}
 
 ## Custom Components
 
@@ -218,7 +218,7 @@ Here is a full example.
 * `colDef.cellRendererSelector` is a function that selects the renderer based on the row data.
 * The column 'Rendered Value' show the data rendered applying the component and params specified by `colDef.cellRendererSelector`
 
-{% gridExampleRunner title="Dynamic Rendering Component" name="dynamic-rendering-component" type="mixed" options={ "exampleHeight": 335 } /%}
+{% gridExampleRunner title="Dynamic Rendering Component" name="dynamic-rendering-component"  exampleHeight=335 /%}
 
 ## Custom Props
 
@@ -252,7 +252,7 @@ The example below combines many of the features above and shows the following:
 * `Sunshine`, `Frost`, and `Rainfall` use functions to display icons.
 * `Randomise Frost` button triggers the cell components to refresh by randomising the frost data.
 
-{% gridExampleRunner title="Cell Renderer" name="cell-renderer" type="mixed" /%}
+{% gridExampleRunner title="Cell Renderer" name="cell-renderer" /%}
 
 ## Accessing Instances
 
@@ -283,7 +283,7 @@ The example below demonstrates custom methods on Cell Components called by the a
 * The **First Row Gold** method executes a method on the gold cell of the first row only. Note that the `getCellRendererInstances()` method will return nothing if the grid is scrolled far past the first row showing row virtualisation in action.
 * The **All Cells** method executes a method on all instances of all Cell Components.
 
-{% gridExampleRunner title="Get Cell Renderer" name="get-cell-renderer" type="mixed" /%}
+{% gridExampleRunner title="Get Cell Renderer" name="get-cell-renderer" /%}
 
 {% if isFramework("react") %}
 {% note %}
