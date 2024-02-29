@@ -131,7 +131,7 @@
     {
         "repo": "https://github.com/kpmck/cypress-ag-grid",
         "title": "Cypress AG Grid",
-        "description": "Cypress plugin for interacting with and validating against ag grid.",
+        "description": "With Cypress, you can easily create tests for your modern web applications, debug them visually, and automatically run them in your continuous integration builds. This plugin simplifies interacting with and validating against ag grid with Cypress.",
         "link": "",
         "type": "Utility",
         "open_source": true,
