@@ -67,8 +67,7 @@ export const FILES_PATH_MAP: Record<string, string | GlobConfig> = {
     '@ag-grid-enterprise/range-selection/dist/**': 'enterprise-modules/range-selection/dist/**/*.{cjs,js,map}',
     '@ag-grid-enterprise/rich-select/dist/**': 'enterprise-modules/rich-select/dist/**/*.{cjs,js,map}',
     '@ag-grid-enterprise/row-grouping/dist/**': 'enterprise-modules/row-grouping/dist/**/*.{cjs,js,map}',
-    '@ag-grid-enterprise/server-side-row-model/dist/**':
-        'enterprise-modules/server-side-row-model/dist/**/*.{cjs,js,map}',
+    '@ag-grid-enterprise/server-side-row-model/dist/**': 'enterprise-modules/server-side-row-model/dist/**/*.{cjs,js,map}',
     '@ag-grid-enterprise/set-filter/dist/**': 'enterprise-modules/set-filter/dist/**/*.{cjs,js,map}',
     '@ag-grid-enterprise/side-bar/dist/**': 'enterprise-modules/side-bar/dist/**/*.{cjs,js,map}',
     '@ag-grid-enterprise/sparklines/dist/**': 'enterprise-modules/sparklines/dist/**/*.{cjs,js,map}',
@@ -84,7 +83,11 @@ export const FILES_PATH_MAP: Record<string, string | GlobConfig> = {
     '@ag-grid-community/react/src/**': 'community-modules/react/src/**/*.{tsx,ts}',
     '@ag-grid-community/angular/fesm2015/ag-grid-community-angular.mjs': 'community-modules/angular/dist/ag-grid-angular/fesm2015/ag-grid-community-angular.mjs',
     '@ag-grid-community/vue/dist/**': 'community-modules/vue/dist/**/*.{cjs,mjs,js,map}',
-    '@ag-grid-community/vue3/dist/**': 'community-modules/vue3/dist/**/*.{cjs,mjs,js,map}'
+    '@ag-grid-community/vue3/dist/**': 'community-modules/vue3/dist/**/*.{cjs,mjs,js,map}',
+
+    // packages
+    'ag-grid-community/dist/**': 'packages/ag-grid-community/dist/**/*.{cjs,js,map}',
+
 
     // TODO: Dynamically map files
     // '@ag-grid-community': {
