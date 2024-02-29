@@ -25,7 +25,7 @@ const contentTypesFactory: ExcelOOXMLTemplate = {
             PartName: `/xl/drawings/drawing${i + 1}.xml`
         }));
 
-        // TODO - Smart calcuation of table count ( table !== sheet )
+        // TODO - Smart calculation of table count [ table !== sheet ]
         const tableDocs = new Array(sheetsWithTables).fill(undefined).map((v, i) => ({
             name: 'Override',
             ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml',

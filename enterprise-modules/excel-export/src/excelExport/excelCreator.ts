@@ -115,9 +115,6 @@ const createExcelFileForExcel = (data: string[], options: {
     const {
         fontSize = 11,
         author = 'AG Grid',
-        tableName,
-        columns,
-        rowCount,
     } = options;
 
     createExcelXmlTables();
@@ -137,8 +134,6 @@ const getMultipleSheetsAsExcelCompressed = (params: ExcelExportMultipleSheetPara
         author,
         fontSize,
         tableName: params.tableSetup?.name,
-        columns: params.tableSetup?.columns,
-        rowCount: params.tableSetup?.rowCount
     })) { return Promise.resolve(undefined); }
 
     return ZipContainer.getZipFile(mimeType);
@@ -152,8 +147,6 @@ export const getMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams)
         author,
         fontSize,
         tableName: params.tableSetup?.name,
-        columns: params.tableSetup?.columns,
-        rowCount: params.tableSetup?.rowCount
     })) { return; }
 
     return ZipContainer.getUncompressedZipFile(mimeType);
@@ -185,10 +178,7 @@ const createImageRelationsForSheet = (sheetIndex: number, currentRelationIndex: 
 };
 
 const createTableRelationsForSheet = (sheetIndex: number, currentRelationIndex: number) => {
-    const tablesFolder = 'xl/tables';
-    const tableFileName = `${tablesFolder}/table${currentRelationIndex + 1}.xml`;
     const worksheetRelFile = `xl/worksheets/_rels/sheet${sheetIndex + 1}.xml.rels`;
-
     ZipContainer.addFile(worksheetRelFile, ExcelXlsxFactory.createWorksheetTableRel(currentRelationIndex));
 };
 

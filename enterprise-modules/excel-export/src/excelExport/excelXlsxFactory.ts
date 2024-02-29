@@ -6,7 +6,7 @@ import {
     ExcelStyle,
     ExcelWorksheet,
     RowHeightCallbackParams,
-    _
+    _, ColGroupDef, ColDef,
 } from '@ag-grid-community/core';
 
 import coreFactory from './files/ooxml/core';
@@ -21,7 +21,7 @@ import worksheetFactory from './files/ooxml/worksheet';
 import relationshipsFactory from './files/ooxml/relationships';
 
 import { setExcelImageTotalHeight, setExcelImageTotalWidth, createXmlPart } from './assets/excelUtils';
-import {ImageIdMap, ExcelCalculatedImage, ExcelDataTable} from './assets/excelInterfaces';
+import { ImageIdMap, ExcelCalculatedImage, ExcelDataTable } from './assets/excelInterfaces';
 import { ExcelGridSerializingParams } from './excelSerializingSession';
 
 /**
@@ -57,20 +57,26 @@ export class ExcelXlsxFactory {
 
         const sheetIndex = this.sheetNames.length - 1;
         const name = `Table${sheetIndex + 1}`; // Assuming that there is only 1 table per sheet
+        const { name: displayName } = config.tableSetup || {};
 
-        const {
-            name: displayName,
-            columns,
-            rowCount,
-        } = config.tableSetup || {};
+        const tableRowCount = worksheet.table.rows.length;
+        const tableColumns = config.columnModel.getAllDisplayedColumns().map(col => col.getColId());
 
-        // TODO: For the case of grouped columns, the row to use should be the last row of the group
+        let treeLeafsLevel = 0;
+        const extractLeafs = (column: ColDef | ColGroupDef, leafLevel: number) => {
+            const colAsAny = column as any;
+            if (Array.isArray(colAsAny.children) && colAsAny.children.length > 0) {
+                const colAsColGroupDef = colAsAny as ColGroupDef;
+                colAsColGroupDef.children.forEach(
+                    item => extractLeafs(item, leafLevel + 1)
+                );
 
-        const tableColumnsRow: number = 0;
-        const tableRowCount = rowCount ?? worksheet.table.rows.length;
-        const tableColumns = columns
-            ? columns
-            : config.columnModel.getAllDisplayedColumns().map(col => col.getColId());
+                treeLeafsLevel = Math.max(treeLeafsLevel, leafLevel);
+            }
+        };
+
+        config.columnModel.getColumnDefs()?.forEach(extractLeafs);
+        const tableHeaderRowIndex: number = treeLeafsLevel; // Assuming that header starts at row 0
 
         if (!tableColumns || !tableColumns.length || !tableRowCount || !displayName) {
             console.warn('Unable to add data table to Excel sheet: Missing required parameters.');
@@ -79,8 +85,8 @@ export class ExcelXlsxFactory {
                 name,
                 displayName,
                 columns: tableColumns,
-                columnsRow: tableColumnsRow,
-                rowCount: tableRowCount,
+                headerRowIndex: tableHeaderRowIndex,
+                rowCount: tableRowCount - treeLeafsLevel - 1,
             });
         }
 

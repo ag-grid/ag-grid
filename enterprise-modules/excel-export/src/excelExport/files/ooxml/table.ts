@@ -2,11 +2,11 @@ import { ExcelOOXMLTemplate } from '@ag-grid-community/core';
 import {ExcelDataTable} from '../../assets/excelInterfaces';
 
 const tableFactory: ExcelOOXMLTemplate = {
-    getTemplate(config: ExcelDataTable, idx: number) {
+    getTemplate(dataTable: ExcelDataTable, idx: number) {
         if (
-            typeof config !== 'object' || !config ||
-            !config.name || !Array.isArray(config.columns) || !config.columns.length ||
-            !config.rowCount
+            typeof dataTable !== 'object' || !dataTable ||
+            !dataTable.name || !Array.isArray(dataTable.columns) || !dataTable.columns.length ||
+            !dataTable.rowCount
         ) {
             return { name: "table" };
         }
@@ -15,11 +15,15 @@ const tableFactory: ExcelOOXMLTemplate = {
             name,
             displayName,
             columns,
-            rowCount
-        } = config;
+            rowCount,
+            headerRowIndex,
+        } = dataTable;
 
-        const id = "1"; // We assume that there is only 1 table per sheet with id: 1
-        const ref = `A1:${String.fromCharCode(64 + columns.length)}${rowCount}`;
+        const firstRow = headerRowIndex + 1;
+        const id: string = "1"; // We assume that there is only 1 table per sheet with id: 1
+        const firstCell = `A${firstRow}`;
+        const lastCell = `${String.fromCharCode(64 + columns.length)}${firstRow + rowCount}`;
+        const ref = `${firstCell}:${lastCell}`;
 
         return {
             name: "table",
@@ -30,7 +34,6 @@ const tableFactory: ExcelOOXMLTemplate = {
                     "mc:Ignorable": "xr xr3",
                     "xmlns:xr": "http://schemas.microsoft.com/office/spreadsheetml/2014/revision",
                     "xmlns:xr3": "http://schemas.microsoft.com/office/spreadsheetml/2016/revision3",
-
                     "name": name,
                     "displayName": displayName,
                     "ref": ref,

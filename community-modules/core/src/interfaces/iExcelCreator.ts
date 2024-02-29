@@ -550,8 +550,4 @@ export interface ExcelSheetPageSetup {
 export interface ExcelTableSetup {
     /** This property is used to set the table name. It should be an alphanumeric string with no special characters. */
     name: string;
-    /** The name of the columns to be used in the table. */
-    columns: string[];
-    /** When a table is exported, the row count is required. */
-    rowCount: number;
 }

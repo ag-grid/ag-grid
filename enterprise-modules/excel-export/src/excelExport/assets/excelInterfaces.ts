@@ -72,6 +72,6 @@ export interface ExcelDataTable {
     name: string;
     displayName: string;
     columns: string[];
-    columnsRow: number;
+    headerRowIndex: number;
     rowCount: number;
 }
