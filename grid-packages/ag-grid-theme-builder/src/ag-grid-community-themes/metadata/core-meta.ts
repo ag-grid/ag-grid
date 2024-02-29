@@ -713,5 +713,15 @@ export const coreMeta = definePartMeta({
       docs: 'Border below the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.',
       defaultValue: true,
     },
+
+    {
+      property: 'columnSelectIndentSize',
+      type: 'length',
+      docs: 'How much to indent child items in the Set Filter list when filtering tree data.',
+      defaultValue: { helper: 'ref', arg: 'iconSize' },
+      min: 0,
+      max: 50,
+      step: 1,
+    },
   ],
 });

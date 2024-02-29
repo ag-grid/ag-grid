@@ -1,0 +1,121 @@
+.ag-column-select {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex: 3 1 0px;
+}
+
+.ag-column-select-header {
+  position: relative;
+  flex: none;
+  display: flex;
+  align-items: center;
+  padding-top: var(--ag-widget-container-horizontal-padding);
+  padding-bottom: var(--ag-widget-container-horizontal-padding);
+  /* match header height instead of using vertical padding, because this is
+     often displayed aligned with headers and it looks neater */
+  height: var(--ag-header-height);
+  gap: var(--ag-widget-horizontal-spacing);
+}
+
+.ag-column-select-column,
+.ag-column-select-column-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  gap: var(--ag-widget-horizontal-spacing);
+}
+
+.ag-column-select-virtual-list-item:focus-visible {
+  box-shadow: var(--ag-inset-focus-shadow);
+}
+
+.ag-column-select-header-icon {
+  position: relative;
+  cursor: pointer;
+  width: var(--ag-icon-size);
+  height: var(--ag-icon-size);
+  border-radius: var(--ag-border-radius);
+
+  &:focus-visible {
+    box-shadow: var(--ag-focus-shadow);
+  }
+}
+
+.ag-column-select-header-filter-wrapper {
+  flex: 1 1 auto;
+}
+
+.ag-column-select-header-filter {
+  width: 100%;
+}
+
+.ag-column-select-list {
+  flex: 1 1 0px;
+  overflow: hidden;
+}
+
+/* TODO replace with variable */
+.ag-column-select-indent-1 {
+  padding-left: calc(1 * var(--ag-column-select-indent-size));
+}
+.ag-column-select-indent-2 {
+  padding-left: calc(2 * var(--ag-column-select-indent-size));
+}
+.ag-column-select-indent-3 {
+  padding-left: calc(3 * var(--ag-column-select-indent-size));
+}
+.ag-column-select-indent-4 {
+  padding-left: calc(4 * var(--ag-column-select-indent-size));
+}
+.ag-column-select-indent-5 {
+  padding-left: calc(5 * var(--ag-column-select-indent-size));
+}
+.ag-column-select-indent-6 {
+  padding-left: calc(6 * var(--ag-column-select-indent-size));
+}
+.ag-column-select-indent-7 {
+  padding-left: calc(7 * var(--ag-column-select-indent-size));
+}
+.ag-column-select-indent-8 {
+  padding-left: calc(8 * var(--ag-column-select-indent-size));
+}
+.ag-column-select-indent-9 {
+  padding-left: calc(9 * var(--ag-column-select-indent-size));
+}
+.ag-column-select-indent-10 {
+  padding-left: calc(10 * var(--ag-column-select-indent-size));
+}
+
+.ag-column-select-add-group-indent {
+  /* indent items without icons to the same level as siblings with icons */
+  margin-left: calc(var(--ag-icon-size) + var(--ag-widget-horizontal-spacing));
+}
+
+.ag-column-select-column-group,
+.ag-column-select-column {
+  &:not(:last-child) {
+    margin-bottom: var(--ag-widget-vertical-spacing);
+  }
+}
+
+.ag-column-select-column-readonly,
+.ag-column-select-column-group-readonly {
+  color: var(--ag-disabled-foreground-color);
+  pointer-events: none;
+}
+
+.ag-column-select-virtual-list-viewport {
+  padding: calc(var(--ag-widget-container-vertical-padding) * 0.5) 0px;
+}
+
+.ag-column-select-virtual-list-item {
+  padding: 0 var(--ag-widget-container-horizontal-padding);
+}
+
+.ag-checkbox-edit {
+  padding-left: var(--ag-cell-horizontal-padding);
+  padding-right: var(--ag-cell-horizontal-padding);
+}

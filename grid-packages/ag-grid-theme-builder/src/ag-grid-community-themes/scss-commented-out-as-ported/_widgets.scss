@@ -134,10 +134,10 @@
   }
   */
 
-  ////////////////////////////////////////
-  // Selection checkbox
-  ////////////////////////////////////////
-  /* PORTED
+////////////////////////////////////////
+// Selection checkbox
+////////////////////////////////////////
+/* PORTED
   .ag-row-drag,
   .ag-selection-checkbox,
   .ag-group-expanded,
@@ -178,8 +178,6 @@
       )
     );
   }
-
-  */
 
   .ag-group-title-bar {
     background-color: var(--ag-subheader-background-color);
@@ -358,7 +356,6 @@
   ////////////////////////////////////////
   // Ghost Element (Drag and Drop)
   ////////////////////////////////////////
-  /* PORTED
   .ag-dnd-ghost {
     @include ag.card();
     overflow: hidden;
@@ -376,7 +373,6 @@
     margin-right: var(--ag-grid-size);
     color: var(--ag-foreground-color);
   }
-  */
 
   // Popups
   .ag-popup-child:not(.ag-tooltip-custom) {
@@ -429,7 +425,6 @@
   ////////////////////////////////////////
   // Rich Select
   ////////////////////////////////////////
-  /* PORTED
   .ag-rich-select-value,
   .ag-rich-select-list {
     background-color: var(--ag-background-color);
@@ -503,7 +498,6 @@
   .ag-rich-select-row-text-highlight {
     font-weight: bold;
   }
-*/
   ////////////////////////////////////////
   // Autocomplete
   ////////////////////////////////////////
@@ -526,7 +520,7 @@
     }
 
     &:hover {
-      /* TODO different variable */
+      // TODO different variable
       background-color: var(--ag-row-hover-color);
     }
   }
@@ -538,8 +532,6 @@
   .ag-autocomplete-row-selected {
     background-color: var(--ag-selected-row-background-color);
   }
-
-  /* PORTED
 
   ////////////////////////////////////////
   // Dialog
@@ -575,8 +567,6 @@
       )
     );
   }
-
-  */
 
   ////////////////////////////////////////
   // Tooltip
@@ -670,3 +660,6 @@
     padding-right: var(--ag-cell-horizontal-padding);
   }
 }
+
+
+  */

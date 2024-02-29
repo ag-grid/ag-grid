@@ -6,6 +6,8 @@
 .ag-group-title-bar {
   display: flex;
   align-items: center;
+  background-color: var(--ag-subheader-background-color);
+  padding: var(--ag-grid-size);
 }
 
 .ag-group-title {
@@ -24,6 +26,8 @@
 .ag-group-toolbar {
   display: flex;
   align-items: center;
+  padding: var(--ag-grid-size);
+  background-color: var(--ag-subheader-toolbar-background-color);
 }
 
 .ag-group-container {
@@ -32,6 +36,11 @@
 
 .ag-disabled .ag-group-container {
   pointer-events: none;
+}
+
+.ag-disabled-group-title-bar,
+.ag-disabled-group-container {
+  opacity: 0.5;
 }
 
 .ag-group-container-horizontal {

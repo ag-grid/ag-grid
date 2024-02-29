@@ -1,0 +1,257 @@
+.ag-angle-select {
+  display: flex;
+  align-items: center;
+}
+
+.ag-angle-select-wrapper {
+  display: flex;
+}
+
+.ag-angle-select-parent-circle {
+  display: block;
+  position: relative;
+}
+.ag-angle-select-child-circle {
+  position: absolute;
+}
+
+.ag-slider-wrapper {
+  display: flex;
+  .ag-input-field {
+    flex: 1 1 auto;
+  }
+}
+
+.ag-picker-field-display {
+  flex: 1 1 auto;
+}
+
+.ag-picker-field {
+  display: flex;
+  align-items: center;
+}
+
+.ag-picker-field-icon {
+  display: flex;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.ag-picker-field-wrapper {
+  overflow: hidden;
+}
+
+.ag-color-panel {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.ag-spectrum-color {
+  flex: 1 1 auto;
+  position: relative;
+  overflow: hidden;
+  cursor: default;
+}
+
+.ag-spectrum-fill {
+  position: absolute;
+  inset: 0;
+}
+
+.ag-spectrum-val {
+  cursor: pointer;
+}
+
+.ag-spectrum-dragger {
+  position: absolute;
+  pointer-events: none;
+  cursor: pointer;
+}
+
+.ag-spectrum-hue {
+  cursor: default;
+  /*rtl:ignore*/
+  background: linear-gradient(
+    to left,
+    #ff0000 3%,
+    #ffff00 17%,
+    #00ff00 33%,
+    #00ffff 50%,
+    #0000ff 67%,
+    #ff00ff 83%,
+    #ff0000 100%
+  );
+}
+
+.ag-spectrum-alpha {
+  cursor: default;
+}
+
+.ag-spectrum-hue-background {
+  width: 100%;
+  height: 100%;
+}
+
+.ag-spectrum-alpha-background {
+  /*rtl:ignore*/
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgb(0, 0, 0));
+  width: 100%;
+  height: 100%;
+}
+
+.ag-spectrum-tool {
+  cursor: pointer;
+}
+
+.ag-spectrum-slider {
+  position: absolute;
+  pointer-events: none;
+}
+
+.ag-recent-colors {
+  display: flex;
+  gap: 6px;
+}
+
+.ag-recent-color {
+  cursor: pointer;
+}
+
+.ag-angle-select[disabled] {
+  color: var(--ag-disabled-foreground-color);
+  pointer-events: none;
+  .ag-angle-select-field {
+    opacity: 0.4;
+  }
+}
+
+.ag-slider-field,
+.ag-angle-select-field {
+  margin-right: calc(var(--ag-grid-size) * 2);
+}
+
+.ag-angle-select-parent-circle {
+  width: 24px;
+  height: 24px;
+  border-radius: 12px;
+  border: solid 1px;
+  border-color: var(--ag-border-color);
+  background-color: var(--ag-background-color);
+}
+
+.ag-angle-select-child-circle {
+  top: 4px;
+  /*rtl:ignore*/
+  left: 12px;
+  width: 6px;
+  height: 6px;
+  /*rtl:ignore*/
+  margin-left: -3px;
+  margin-top: -4px;
+  border-radius: 3px;
+  background-color: var(--ag-secondary-foreground-color);
+}
+
+.ag-picker-field-wrapper {
+  border: var(--ag-borders);
+  border-color: var(--ag-border-color);
+  border-radius: 5px;
+  background-color: var(--ag-background-color);
+
+  &:disabled {
+    color: var(--ag-disabled-foreground-color);
+    background-color: var(--ag-input-disabled-background-color);
+    border-color: var(--ag-input-disabled-border-color);
+  }
+
+  &.ag-picker-has-focus,
+  &:focus-within {
+    outline: none;
+    box-shadow: var(--ag-input-focus-box-shadow);
+    border-color: var(--ag-input-focus-border-color);
+  }
+}
+
+.ag-picker-field-button {
+  background-color: var(--ag-background-color);
+  color: var(--ag-secondary-foreground-color);
+}
+
+.ag-dialog.ag-color-dialog {
+  border-radius: 5px;
+}
+
+.ag-color-picker .ag-picker-field-display {
+  height: var(--ag-icon-size);
+}
+
+.ag-color-picker .ag-picker-field-wrapper {
+  max-width: 45px;
+  min-width: 45px;
+}
+
+.ag-color-panel {
+  padding: var(--ag-grid-size);
+}
+
+.ag-spectrum-color {
+  background-color: rgb(255, 0, 0);
+  border-radius: 2px;
+}
+
+.ag-spectrum-tools {
+  padding: 10px;
+}
+
+.ag-spectrum-sat {
+  /*rtl:ignore*/
+  background-image: linear-gradient(to right, white, rgba(204, 154, 129, 0));
+}
+
+.ag-spectrum-val {
+  background-image: linear-gradient(to top, black, rgba(204, 154, 129, 0));
+}
+
+.ag-spectrum-dragger {
+  border-radius: 12px;
+  height: 12px;
+  width: 12px;
+  border: 1px solid white;
+  background: black;
+  box-shadow: 0 0 2px 0px rgba(0, 0, 0, 0.24);
+}
+
+.ag-spectrum-hue-background {
+  border-radius: 2px;
+}
+
+.ag-spectrum-alpha-background {
+  border-radius: 2px;
+}
+
+.ag-spectrum-tool {
+  margin-bottom: 10px;
+  height: 11px;
+  border-radius: 2px;
+}
+
+.ag-spectrum-slider {
+  margin-top: -12px;
+  width: 13px;
+  height: 13px;
+  border-radius: 13px;
+  background-color: rgb(248, 248, 248);
+  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.37);
+}
+
+.ag-spectrum-color,
+.ag-spectrum-slider,
+.ag-recent-color {
+  &:focus-visible:not(:disabled):not([readonly]) {
+    box-shadow: var(--ag-input-focus-box-shadow);
+  }
+}

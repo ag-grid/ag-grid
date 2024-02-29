@@ -636,14 +636,6 @@
     }
   }
 
-  .ag-column-select-add-group-indent {
-    @include ag.theme-rtl(
-      (
-        margin-left: calc(var(--ag-icon-size) + var(--ag-grid-size) * 1.5),
-      )
-    );
-  }
-
   .ag-text-field-input[disabled],
   .ag-menu-option-disabled {
     cursor: not-allowed;

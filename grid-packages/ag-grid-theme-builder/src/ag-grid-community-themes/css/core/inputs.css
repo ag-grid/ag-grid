@@ -1,5 +1,37 @@
-.ag-input-field,
-.ag-select {
+.ag-input-wrapper,
+.ag-picker-field-wrapper {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  line-height: normal;
+  position: relative;
+}
+
+.ag-label-align-right {
+  .ag-label {
+    order: 1;
+  }
+  > * {
+    flex: none;
+  }
+}
+
+.ag-label-align-top {
+  flex-direction: column;
+  align-items: flex-start;
+  > * {
+    align-self: stretch;
+  }
+}
+
+.ag-label-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.ag-input-field {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -23,7 +55,7 @@
 
 .ag-label {
   white-space: nowrap;
-  @include ag.unthemed-rtl((margin-right: var(--ag-grid-size)));
+  margin-right: var(--ag-grid-size);
 }
 
 .ag-label-align-top .ag-label {

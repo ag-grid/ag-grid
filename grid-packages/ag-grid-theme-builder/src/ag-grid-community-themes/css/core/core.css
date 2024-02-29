@@ -1,5 +1,6 @@
 @import './reset.css';
 @import './group.css';
+@import './popup.css';
 @import './grid-layout.css';
 @import './grid-borders.css';
 
@@ -8,6 +9,7 @@
 @import './cell-editing.css';
 @import './charts.css';
 @import './column-drop.css';
+@import './column-select.css';
 @import './column-filters.css';
 @import './core.css';
 @import './drag-and-drop.css';
@@ -16,13 +18,17 @@
 @import './panel.css';
 @import './pinned-columns.css';
 @import './print.css';
+@import './select.css';
 @import './rich-select.css';
 @import './root.css';
 @import './sidebar.css';
-@import './widgets/button.css';
-@import './widgets/checkbox.css';
-@import './widgets/drag-handle.css';
-@import './widgets/inputs.css';
-@import './widgets/lists.css';
-@import './widgets/range.css';
-@import './widgets/toggle-button.css';
+@import './button.css';
+@import './checkbox.css';
+@import './drag-handle.css';
+@import './inputs.css';
+@import './lists.css';
+@import './range.css';
+@import './toggle-button.css';
+@import './autocomplete.css';
+@import './tooltip.css';
+@import './chart-widgets-todo-split-into-separate-files.css';

@@ -1,0 +1,28 @@
+.ag-tooltip {
+  position: absolute;
+  background-color: var(--ag-tooltip-background-color);
+  color: var(--ag-foreground-color);
+  padding: var(--ag-grid-size);
+  border: var(--ag-borders) var(--ag-border-color);
+  border-radius: var(--ag-card-radius);
+  white-space: normal;
+  z-index: 99999;
+}
+
+.ag-tooltip-custom {
+  position: absolute;
+  z-index: 99999;
+}
+
+.ag-tooltip:not(.ag-tooltip-interactive),
+.ag-tooltip-custom:not(.ag-tooltip-interactive) {
+  pointer-events: none;
+}
+
+.ag-tooltip.ag-tooltip-animate,
+.ag-tooltip-custom.ag-tooltip-animate {
+  transition: opacity 1s;
+  &.ag-tooltip-hiding {
+    opacity: 0;
+  }
+}

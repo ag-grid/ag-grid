@@ -105,20 +105,14 @@ const makePublicFile = (): string => {
           const oldParts = newModule.allParts.map((p: Part) => p.partId).join(', ');
           const newParts = allParts.map((p) => p.partId).join(', ');
           if (oldParts !== newParts) {
-            // eslint-disable-next-line no-console
-            console.log(\`Reloading page as parts changed from \${oldParts} to \${newParts}\`);
             import.meta.hot?.invalidate();
           } else {
-            // eslint-disable-next-line no-console
-            console.log(\`Hot reloading parts \${oldParts}\`);
             for (let i = 0; i < allParts.length; i++) {
               // update the existing part object with data from the new module
               Object.assign(allParts[i], newModule.allParts[i]);
               // replace the new object in the module with the updated existing object
               newModule.allParts[i] = allParts[i];
             }
-            // eslint-disable-next-line no-console
-            console.log('core in old after update', String(core.css?.[0]).split('\\n')[1]);
             (window as any).handlePartsCssChange?.();
           }
         }
