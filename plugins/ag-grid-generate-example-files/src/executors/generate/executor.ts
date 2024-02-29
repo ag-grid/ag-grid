@@ -161,7 +161,11 @@ export async function generateFiles(options: ExecutorOptions) {
                           importType,
                           exampleConfig: frameworkExampleConfig,
                       })
-                    : { files: {}, scriptFiles: [] };
+                    : {
+                        files: {},
+                        // NOTE: Vanilla is the only framework where for provided examples, we need to include the entryfile
+                        scriptFiles: internalFramework === 'vanilla' ? [entryFileName] : []
+                    };
 
             const result: GeneratedContents = {
                 isEnterprise,
