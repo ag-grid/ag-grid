@@ -155,7 +155,6 @@
       border-color: var(--ag-toggle-button-on-border-color);
     }
   }
-  */
 
 .ag-radio-button-input-wrapper {
   @include -check-button-base();
@@ -201,8 +200,6 @@
     opacity: var(--ag-icon-image-opacity-radio-button-on, var(--ag-icon-image-opacity, 0.9));
   }
 }
-
-/* PORTED
 
     input[class^='ag-'][type='range'] {
         -webkit-appearance: none;

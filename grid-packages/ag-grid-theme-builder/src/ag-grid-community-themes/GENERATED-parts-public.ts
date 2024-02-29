@@ -99,6 +99,7 @@ export type CoreParam =
   | 'checkboxIndeterminateBorderColor'
   | 'checkboxIndeterminateShapeImage'
   | 'checkboxIndeterminateShapeColor'
+  | 'radioCheckedShapeImage'
   | 'menuBorder'
   | 'menuBackgroundColor'
   | 'menuForegroundColor'
@@ -145,12 +146,10 @@ import richSelectCssImport from './css/core/rich-select.css?inline';
 import rootCssImport from './css/core/root.css?inline';
 import sidebarCssImport from './css/core/sidebar.css?inline';
 import widgetsButtonCssImport from './css/core/widgets/button.css?inline';
-import widgetsCheckButtonSharedCssImport from './css/core/widgets/check-button-shared.css?inline';
 import widgetsCheckboxCssImport from './css/core/widgets/checkbox.css?inline';
 import widgetsDragHandleCssImport from './css/core/widgets/drag-handle.css?inline';
 import widgetsInputsCssImport from './css/core/widgets/inputs.css?inline';
 import widgetsListsCssImport from './css/core/widgets/lists.css?inline';
-import widgetsRadioButtonCssImport from './css/core/widgets/radio-button.css?inline';
 import widgetsRangeCssImport from './css/core/widgets/range.css?inline';
 import widgetsToggleButtonCssImport from './css/core/widgets/toggle-button.css?inline';
 
@@ -249,6 +248,8 @@ export const core = definePart<CoreParam>({
     checkboxIndeterminateShapeImage:
       "url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2210%22%20height%3D%222%22%20fill%3D%22none%22%3E%3Crect%20width%3D%2210%22%20height%3D%222%22%20fill%3D%22%23000%22%20rx%3D%221%22%2F%3E%3C%2Fsvg%3E')",
     checkboxIndeterminateShapeColor: helpers.ref('backgroundColor'),
+    radioCheckedShapeImage:
+      "url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%226%22%20height%3D%226%22%20fill%3D%22none%22%3E%3Ccircle%20cx%3D%223%22%20cy%3D%223%22%20r%3D%223%22%20fill%3D%22%23000%22%2F%3E%3C%2Fsvg%3E')",
     menuBorder: helpers.foregroundBorder(0.2),
     menuBackgroundColor: helpers.opaqueForeground(0.03),
     menuForegroundColor: helpers.opaqueForeground(0.95),
@@ -284,12 +285,10 @@ export const core = definePart<CoreParam>({
     rootCssImport,
     sidebarCssImport,
     widgetsButtonCssImport,
-    widgetsCheckButtonSharedCssImport,
     widgetsCheckboxCssImport,
     widgetsDragHandleCssImport,
     widgetsInputsCssImport,
     widgetsListsCssImport,
-    widgetsRadioButtonCssImport,
     widgetsRangeCssImport,
     widgetsToggleButtonCssImport,
   ],
@@ -1149,6 +1148,15 @@ export type ParamTypes = {
    * @default ref("backgroundColor")
    */
   checkboxIndeterminateShapeColor: string;
+
+  /**
+   * An image defining the shape of the mark on checked radio buttons
+   *
+   * Any valid CSS expression is accepted.
+   *
+   * @default "url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%226%22%20height%3D%226%22%20fill%3D%22none%22%3E%3Ccircle%20cx%3D%223%22%20cy%3D%223%22%20r%3D%223%22%20fill%3D%22%23000%22%2F%3E%3C%2Fsvg%3E')"
+   */
+  radioCheckedShapeImage: string;
 
   /**
    * Border around menus e.g. column menu and right-click context menu

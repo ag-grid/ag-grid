@@ -212,7 +212,7 @@ TODO introduce variable
   min-width: 200px;
 }
 
-.ag-filter-virtual-list-item {
+.ag-filter-virtual-list-item:focus-visible {
   box-shadow: var(--ag-inset-focus-shadow);
 }
 

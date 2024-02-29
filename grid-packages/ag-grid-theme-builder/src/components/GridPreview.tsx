@@ -51,7 +51,7 @@ const GridPreview = () => {
     <Wrapper>
       <AgGridReact
         onGridReady={({ api }) => {
-          if (config.integratedCharts) {
+          if (config.showIntegratedChartPopup) {
             api.createRangeChart({
               cellRange: {
                 rowStartIndex: 0,
@@ -68,6 +68,9 @@ const GridPreview = () => {
                 },
               },
             });
+            document
+              .querySelector('.ag-chart .ag-icon-expanded')!
+              .dispatchEvent(new MouseEvent('click', { bubbles: true }));
           }
         }}
         key={internalState.id}

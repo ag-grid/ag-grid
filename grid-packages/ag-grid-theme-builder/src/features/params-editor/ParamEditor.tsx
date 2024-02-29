@@ -22,19 +22,6 @@ export const ParamEditor = ({ param }: ParamEditorProps) => {
     switch (meta.type) {
       case 'color':
         return <ColorParamEditor param={param} meta={meta} />;
-      // case 'length':
-      //   return (
-      //     <Slider
-      //       value={value || null}
-      //       min={meta.min}
-      //       max={meta.max}
-      //       step={meta.step}
-      //       onChange={(_, newValue) => setValue(newValue)}
-      //       valueLabelDisplay="auto"
-      //       valueLabelFormat={(value) => formatRoundedToStep(value, meta.step) + 'px'}
-      //       sx={{ '--Slider-size': '15px' }}
-      //     />
-      //   );
       case 'border':
         return (
           <Checkbox
@@ -75,9 +62,6 @@ export const ParamEditor = ({ param }: ParamEditorProps) => {
     </>
   );
 };
-
-const formatRoundedToStep = (value: number, step: number): string =>
-  (Math.round(value / step) * step).toFixed(5).replace(/\.?0+$/, '');
 
 const RemoveIcon = styled(Close)`
   opacity: 0.5;

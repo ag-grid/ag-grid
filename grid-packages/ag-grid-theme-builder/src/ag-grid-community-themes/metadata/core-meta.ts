@@ -176,6 +176,7 @@ export const coreMeta = definePartMeta({
       defaultValue: '#00FF841A',
     },
     {
+      // TODO should be HighlightBackgroundColor, and add HighlightForegroundColor
       property: 'rangeSelectionHighlightColor',
       type: 'color',
       docs: 'Background colour to briefly apply to a cell range when the user copies from or pastes into it.',
@@ -620,6 +621,12 @@ export const coreMeta = definePartMeta({
       type: 'color',
       docs: 'The colour of the dash mark on indeterminate checkboxes',
       defaultValue: { helper: 'ref', arg: 'backgroundColor' },
+    },
+    {
+      property: 'radioCheckedShapeImage',
+      type: 'css',
+      docs: 'An image defining the shape of the mark on checked radio buttons',
+      defaultValue: `url('data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="6" height="6" fill="none"><circle cx="3" cy="3" r="3" fill="#000"/></svg>')}')`,
     },
 
     {
