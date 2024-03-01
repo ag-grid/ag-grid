@@ -48,6 +48,7 @@ type GeneratedContents = {
     files: Record<string, string>;
     scriptFiles: string[];
     boilerPlateFiles?: Record<string, string>;
+    extras?: string[];
 };
 
 const cacheKeys: Record<string, object> = {};

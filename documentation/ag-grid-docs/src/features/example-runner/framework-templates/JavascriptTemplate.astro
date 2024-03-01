@@ -15,14 +15,16 @@ interface Props {
     appLocation: string;
     extraStyles?: string;
     children?: any;
+    extras?: string[];
 }
 
-const { isDev, title, modifiedTimeMs, isEnterprise, styleFiles, scriptFiles, indexFragment, appLocation, extraStyles } =
+const { isDev, title, modifiedTimeMs, isEnterprise, styleFiles, scriptFiles, indexFragment, appLocation, extraStyles, extras } =
     Astro.props as Props;
 
 import { MetaData } from './lib/MetaData';
 import { ExampleStyle } from './lib/ExampleStyle';
 import { Styles } from './lib/Styles';
+import { Extras } from './lib/Extras';
 import { Scripts } from './lib/Scripts';
 import { SITE_BASE_URL } from '@constants';
 import { pathJoin } from '@utils/pathJoin';
@@ -46,6 +48,7 @@ const gridScriptEnterprisePath = getCacheBustingUrl(getGridEnterpriseScriptPath(
                       .map((file: string) => getCacheBustingUrl(file, modifiedTimeMs))
                 : []}
         />
+        <Extras extras={extras ?? []} />
     </head>
     <body>
         <Fragment set:html={indexFragment} />

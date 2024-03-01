@@ -20,6 +20,7 @@ export interface GeneratedContents {
     providedExamples: FileContents;
     generatedFiles: FileContents;
     packageJson: Record<string, string>;
+    extras?: string[];
 }
 
 export type InternalFramework =
