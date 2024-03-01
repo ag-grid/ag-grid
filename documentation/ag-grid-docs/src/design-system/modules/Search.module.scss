@@ -5,6 +5,7 @@
     align-items: center;
     position: relative;
     width: 100%;
+    min-width: 320px;
     padding: $spacing-size-2 $spacing-size-4;
     border-radius: var(--radius-md);
     background-color: rgba(0, 0, 0, 0.1);

@@ -52,6 +52,10 @@
     width: 100%;
     margin: 0 var(--layout-horizontal-margins) $spacing-size-4 var(--layout-horizontal-margins);
 
+    @media screen and (min-width: $breakpoint-site-header-extra-small) {
+        flex-wrap: nowrap;
+    }
+
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
         display: contents;
     }
@@ -78,7 +82,7 @@ button.mobileNavButton {
         margin-right: -$spacing-size-1;
     }
 
-    @media screen and (min-width: 520px) {
+    @media screen and (min-width: $breakpoint-site-header-extra-small) {
         max-width: 120px;
     }
 

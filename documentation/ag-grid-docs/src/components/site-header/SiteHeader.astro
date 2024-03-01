@@ -68,11 +68,11 @@ const dropdownItems = [
                         <span>Docs</span>
                         <Icon name="collapseCategories" />
                     </button>
+
+                    {currentFramework && <Search client:load currentFramework={currentFramework} />}
                 </div>
             )
         }
-
-        { currentFramework && <Search client:load currentFramework={currentFramework} /> }
 
         <HeaderNav currentPath={pathname} items={topNavItems} allPaths={allPaths} apiPaths={apiPaths} client:load>
             <li class:list={[styles.navItem, styles.buttonItem, 'darkModeItem']}>
