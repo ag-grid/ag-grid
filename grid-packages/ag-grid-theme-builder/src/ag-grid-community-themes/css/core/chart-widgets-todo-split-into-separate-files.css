@@ -194,6 +194,24 @@
   padding: var(--ag-grid-size);
 }
 
+.ag-color-picker {
+  .ag-picker-field-wrapper {
+    max-width: 55px;
+    min-width: 55px;
+  }
+  .ag-picker-field-display {
+    height: 18px;
+    width: 18px;
+    flex: auto 0 0;
+    margin: 6px;
+    border-radius: 2px;
+    border: solid 1px var(--ag-input-border-color);
+  }
+  .ag-picker-field-icon {
+    @include ag.theme-rtl((margin-right: 4px));
+  }
+}
+
 .ag-spectrum-color {
   background-color: rgb(255, 0, 0);
   border-radius: 2px;

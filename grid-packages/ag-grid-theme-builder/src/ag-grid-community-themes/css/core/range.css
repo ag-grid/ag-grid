@@ -15,25 +15,36 @@ input[class^='ag-'][type='range'] {
   background: none;
   overflow: visible;
 
-  &::-webkit-slider-runnable-track,
-  &::-moz-range-track,
-  &::-ms-track {
+  &::-webkit-slider-runnable-track {
     margin: 0;
     padding: 0;
     width: 100%;
     height: 3px;
     background-color: var(--ag-border-color);
-    border-radius: var(--ag-border-radius);
+    border-radius: 1.5px;
+  }
+
+  &::-moz-range-track {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 3px;
+    background-color: var(--ag-border-color);
+    border-radius: 1.5px;
+  }
+
+  &::-webkit-slider-thumb {
+    margin: 0;
+    padding: 0;
+    -webkit-appearance: none;
+    width: var(--ag-icon-size);
+    height: var(--ag-icon-size);
+    background-color: var(--ag-background-color);
+    border: 1px solid var(--ag-border-color);
     border-radius: 100%;
+    transform: translateY(calc(var(--ag-icon-size) * -0.5 + 1.5px));
   }
 
-  &::-ms-track {
-    color: transparent;
-    width: calc(100% - 2px);
-  }
-
-  &::-webkit-slider-thumb,
-  &::-ms-thumb,
   &::-moz-ag-range-thumb {
     margin: 0;
     padding: 0;
@@ -41,30 +52,31 @@ input[class^='ag-'][type='range'] {
     width: var(--ag-icon-size);
     height: var(--ag-icon-size);
     background-color: var(--ag-background-color);
-    border: 1px solid;
-    /* TODO new variable */
-    border-color: red;
-    border-radius: var(--ag-icon-size);
+    border: 1px solid var(--ag-border-color);
+    border-radius: 100%;
     transform: translateY(calc(var(--ag-icon-size) * -0.5 + 1.5px));
   }
 
   &:focus {
     outline: none;
 
-    &::-webkit-slider-thumb,
-    &::-ms-thumb,
+    &::-webkit-slider-thumb {
+      box-shadow: var(--ag-focus-shadow);
+      border-color: var(--ag-accent-color);
+    }
+
     &::-moz-ag-range-thumb {
-      /* TODO new variable */
-      border-color: red;
+      box-shadow: var(--ag-focus-shadow);
+      border-color: var(--ag-accent-color);
     }
   }
 
   &:active {
-    &::-webkit-slider-runnable-track,
-    &::-moz-ag-range-track,
-    &::-ms-track {
-      /* TODO new variable */
-      background-color: red;
+    &::-webkit-slider-runnable-track {
+      background-color: var(--ag-accent-color);
+    }
+    &::-moz-ag-range-track {
+      background-color: var(--ag-accent-color);
     }
   }
 

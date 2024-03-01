@@ -538,7 +538,7 @@ export const coreMeta = definePartMeta({
       property: 'toggleButtonBorderWidth',
       type: 'length',
       docs: 'Size of the toggle button outer border',
-      defaultValue: '1px',
+      defaultValue: '2px',
       min: 0,
       max: 10,
       step: 1,
@@ -783,6 +783,19 @@ export const coreMeta = definePartMeta({
       type: 'border',
       docs: 'Border for tooltips',
       defaultValue: true,
+    },
+
+    {
+      property: 'columnDropCellBackgroundColor',
+      type: 'color',
+      docs: 'Background colour for the representation of columns within the column drop component',
+      defaultValue: { helper: 'transparentForeground', arg: 0.07 },
+    },
+    {
+      property: 'columnDropCellBorder',
+      type: 'border',
+      docs: 'Border for the representation of columns within the column drop component',
+      defaultValue: { helper: 'foregroundBorder', arg: 0.13 },
     },
   ],
 });

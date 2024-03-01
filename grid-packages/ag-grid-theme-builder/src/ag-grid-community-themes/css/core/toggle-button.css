@@ -7,11 +7,9 @@
 .ag-toggle-button-input-wrapper {
   position: relative;
   flex: none;
-  width: var(--ag-toggle-button-width);
+  min-width: var(--ag-toggle-button-width);
+  max-width: var(--ag-toggle-button-width);
   height: var(--ag-toggle-button-height);
-  /* TODO see if I can remove this for chart settings */
-  /* min-width: var(--ag-toggle-button-width);
-  max-width: var(--ag-toggle-button-width); */
 
   & input {
     appearance: none;

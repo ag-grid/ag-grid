@@ -123,7 +123,9 @@ export type CoreParam =
   | 'toolPanelSeparatorBorder'
   | 'tooltipBackgroundColor'
   | 'tooltipForegroundColor'
-  | 'tooltipBorder';
+  | 'tooltipBorder'
+  | 'columnDropCellBackgroundColor'
+  | 'columnDropCellBorder';
 
 export type ColorsPreset = 'light' | 'dark';
 
@@ -219,7 +221,7 @@ export const core = definePart<CoreParam>({
     inputBorderRadius: helpers.ref('borderRadius'),
     toggleButtonWidth: '28px',
     toggleButtonHeight: '18px',
-    toggleButtonBorderWidth: '1px',
+    toggleButtonBorderWidth: '2px',
     toggleButtonOnBorderColor: helpers.ref('accentColor'),
     toggleButtonOnBackgroundColor: helpers.ref('accentColor'),
     toggleButtonOffBorderColor: helpers.opaqueForeground(0.3),
@@ -260,6 +262,8 @@ export const core = definePart<CoreParam>({
     tooltipBackgroundColor: helpers.ref('chromeBackgroundColor'),
     tooltipForegroundColor: helpers.ref('foregroundColor'),
     tooltipBorder: true,
+    columnDropCellBackgroundColor: helpers.transparentForeground(0.07),
+    columnDropCellBorder: helpers.foregroundBorder(0.13),
   },
   css: [coreCssImport],
 });
@@ -1007,7 +1011,7 @@ export type ParamTypes = {
    *
    * A CSS number value with length units, e.g. "1px" or "2em". If a JavaScript number is provided, its units are assumed to be 'px'.
    *
-   * @default "1px"
+   * @default "2px"
    */
   toggleButtonBorderWidth: string;
 
@@ -1343,6 +1347,24 @@ export type ParamTypes = {
    * @default true
    */
   tooltipBorder: string | boolean;
+
+  /**
+   * Background colour for the representation of columns within the column drop component
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default transparentForeground(0.07)
+   */
+  columnDropCellBackgroundColor: string;
+
+  /**
+   * Border for the representation of columns within the column drop component
+   *
+   * A CSS border value e.g. "solid 1px red". Passing true is equivalent to "solid 1px var(--ag-border-color)", and false to "none".
+   *
+   * @default foregroundBorder(0.13)
+   */
+  columnDropCellBorder: string | boolean;
 
   /**
    * Use one of the built-in sets of preset colors values. Available presets are: "light", "dark".
