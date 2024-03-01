@@ -40,6 +40,7 @@
     "@carbon/icons-react": "^11.33.0",
     "@nanostores/persistent": "^0.9.1",
     "@nanostores/react": "^0.7.1",
+    "@tweenjs/tween.js": "^18.6.4",
     "@types/react": "^18.2.47",
     "@types/react-dom": "^18.2.18",
     "astro": "^3.6.4",
