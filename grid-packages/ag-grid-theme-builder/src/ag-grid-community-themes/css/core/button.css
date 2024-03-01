@@ -23,12 +23,12 @@
   }
 
   &:active {
-    border-color: var(--ag-active-color);
+    border-color: var(--ag-accent-color);
   }
 
   &:disabled {
-    color: var(--ag-disabled-foreground-color);
+    color: var(--ag-input-disabled-foreground-color);
     background-color: var(--ag-input-disabled-background-color);
-    border-color: var(--ag-input-disabled-border-color);
+    border: var(--ag-input-disabled-border);
   }
 }

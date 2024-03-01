@@ -205,10 +205,11 @@
     flex: auto 0 0;
     margin: 6px;
     border-radius: 2px;
-    border: solid 1px var(--ag-input-border-color);
+    border: var(--ag-input-border);
   }
+
   .ag-picker-field-icon {
-    @include ag.theme-rtl((margin-right: 4px));
+    margin-right: 4px;
   }
 }
 

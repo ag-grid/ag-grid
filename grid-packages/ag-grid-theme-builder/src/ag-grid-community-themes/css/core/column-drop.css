@@ -99,7 +99,6 @@
 
 .ag-column-drop-horizontal {
   background-color: var(--ag-header-background-color);
-  color: var(--ag-secondary-foreground-color);
   height: var(--ag-header-height);
 
   padding-left: var(--ag-cell-horizontal-padding);
@@ -108,14 +107,6 @@
 
 .ag-column-drop-horizontal-list {
   gap: var(--ag-cell-widget-spacing);
-}
-
-.ag-column-drop-horizontal-cell-separator {
-  color: var(--ag-secondary-foreground-color);
-}
-
-.ag-column-drop-horizontal-empty-message {
-  color: var(--ag-disabled-foreground-color);
 }
 
 .ag-column-drop-vertical-list {
@@ -132,9 +123,9 @@
 .ag-column-drop-vertical {
   min-height: 50px;
 
-  border-bottom: var(--ag-borders-secondary) var(--ag-secondary-border-color);
-  &.ag-last-column-drop {
-    border-bottom: none;
+  &:not(.ag-last-column-drop) {
+    /* TODO this style belongs in the columns tool panel file */
+    border-bottom: var(--ag-tool-panel-separator-border);
   }
 }
 
@@ -149,7 +140,6 @@
   left: 0;
   right: 0;
   overflow: hidden;
-  color: var(--ag-disabled-foreground-color);
   margin-top: var(--ag-grid-size);
 }
 
@@ -222,8 +212,4 @@
   border-color: var(--ag-border-color);
   margin: calc(var(--ag-grid-size) * 1.5) calc(var(--ag-grid-size) * 2);
   padding: calc(var(--ag-grid-size) * 2);
-}
-
-.ag-column-drop-empty-message {
-  color: var(--ag-foreground-color);
 }
