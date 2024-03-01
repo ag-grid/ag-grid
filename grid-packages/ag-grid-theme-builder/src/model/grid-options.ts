@@ -49,6 +49,9 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
 
   if (config.advancedFilter) {
     options.enableAdvancedFilter = true;
+    options.advancedFilterBuilderParams = {
+      showMoveButtons: true,
+    };
     defaultColDef.filter = true;
   }
 

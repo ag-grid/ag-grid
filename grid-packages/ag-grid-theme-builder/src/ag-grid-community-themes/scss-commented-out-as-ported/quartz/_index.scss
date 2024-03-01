@@ -537,12 +537,14 @@
     background-color: var(--ag-active-color);
   }
 
+  /* PORTED
   .ag-advanced-filter-builder-button {
     padding: var(--ag-grid-size);
     font-weight: 600;
   }
+  */
 
-  .ag-advanced-filter-builder-item-button-disabled,
+  /* PORTED .ag-advanced-filter-builder-item-button-disabled, */
   .ag-disabled,
   .ag-column-select-column-group-readonly,
   [disabled] {

@@ -34,6 +34,7 @@ export type CoreParam =
   | 'headerCellHoverBackgroundColor'
   | 'headerCellHoverBackgroundTransitionDuration'
   | 'dataColor'
+  | 'subtleForegroundColor'
   | 'rangeSelectionBorderStyle'
   | 'rangeSelectionBorderColor'
   | 'rangeSelectionBackgroundColor'
@@ -125,7 +126,13 @@ export type CoreParam =
   | 'tooltipForegroundColor'
   | 'tooltipBorder'
   | 'columnDropCellBackgroundColor'
-  | 'columnDropCellBorder';
+  | 'columnDropCellBorder'
+  | 'advancedFilterBuilderButtonBarBorder'
+  | 'advancedFilterBuilderIndentSize'
+  | 'advancedFilterBuilderJoinPillColor'
+  | 'advancedFilterBuilderColumnPillColor'
+  | 'advancedFilterBuilderOptionPillColor'
+  | 'advancedFilterBuilderValuePillColor';
 
 export type ColorsPreset = 'light' | 'dark';
 
@@ -169,6 +176,7 @@ export const core = definePart<CoreParam>({
     headerCellHoverBackgroundColor: 'transparent',
     headerCellHoverBackgroundTransitionDuration: '0.2s',
     dataColor: helpers.ref('foregroundColor'),
+    subtleForegroundColor: helpers.transparentForeground(0.5),
     rangeSelectionBorderStyle: 'solid',
     rangeSelectionBorderColor: helpers.ref('accentColor'),
     rangeSelectionBackgroundColor: helpers.transparentAccent(0.2),
@@ -264,6 +272,12 @@ export const core = definePart<CoreParam>({
     tooltipBorder: true,
     columnDropCellBackgroundColor: helpers.transparentForeground(0.07),
     columnDropCellBorder: helpers.foregroundBorder(0.13),
+    advancedFilterBuilderButtonBarBorder: true,
+    advancedFilterBuilderIndentSize: helpers.calc('gridSize * 2 + iconSize'),
+    advancedFilterBuilderJoinPillColor: '#f08e8d',
+    advancedFilterBuilderColumnPillColor: '#a6e194',
+    advancedFilterBuilderOptionPillColor: '#f3c08b',
+    advancedFilterBuilderValuePillColor: '#85c0e4',
   },
   css: [coreCssImport],
 });
@@ -537,6 +551,15 @@ export type ParamTypes = {
    * @default ref("foregroundColor")
    */
   dataColor: string;
+
+  /**
+   * Colour of text and UI elements that should stand out less than the default.
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default transparentForeground(0.5)
+   */
+  subtleForegroundColor: string;
 
   /**
    * Style of the border around range selections.
@@ -1365,6 +1388,60 @@ export type ParamTypes = {
    * @default foregroundBorder(0.13)
    */
   columnDropCellBorder: string | boolean;
+
+  /**
+   * Colour of the dividing line above the buttons in the advanced filter builder
+   *
+   * A CSS border value e.g. "solid 1px red". Passing true is equivalent to "solid 1px var(--ag-border-color)", and false to "none".
+   *
+   * @default true
+   */
+  advancedFilterBuilderButtonBarBorder: string | boolean;
+
+  /**
+   * Amount that each level of the nesting in the advanced filter builder is indented by
+   *
+   * A CSS number value with length units, e.g. "1px" or "2em". If a JavaScript number is provided, its units are assumed to be 'px'.
+   *
+   * @default calc("gridSize * 2 + iconSize")
+   */
+  advancedFilterBuilderIndentSize: string;
+
+  /**
+   * Colour of the join operator pills in the Advanced Filter Builder
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default "#f08e8d"
+   */
+  advancedFilterBuilderJoinPillColor: string;
+
+  /**
+   * Colour of the column pills in the Advanced Filter Builder
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default "#a6e194"
+   */
+  advancedFilterBuilderColumnPillColor: string;
+
+  /**
+   * Colour of the filter option pills in the Advanced Filter Builder
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default "#f3c08b"
+   */
+  advancedFilterBuilderOptionPillColor: string;
+
+  /**
+   * Colour of the value pills in the Advanced Filter Builder
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default "#85c0e4"
+   */
+  advancedFilterBuilderValuePillColor: string;
 
   /**
    * Use one of the built-in sets of preset colors values. Available presets are: "light", "dark".

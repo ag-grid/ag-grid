@@ -152,6 +152,12 @@ export const coreMeta = definePartMeta({
       defaultValue: { helper: 'ref', arg: 'foregroundColor' },
     },
     {
+      property: 'subtleForegroundColor',
+      type: 'color',
+      docs: 'Colour of text and UI elements that should stand out less than the default.',
+      defaultValue: { helper: 'transparentForeground', arg: 0.5 },
+    },
+    {
       property: 'rangeSelectionBorderStyle',
       type: 'borderStyle',
       docs: 'Style of the border around range selections.',
@@ -796,6 +802,46 @@ export const coreMeta = definePartMeta({
       type: 'border',
       docs: 'Border for the representation of columns within the column drop component',
       defaultValue: { helper: 'foregroundBorder', arg: 0.13 },
+    },
+
+    {
+      property: 'advancedFilterBuilderButtonBarBorder',
+      type: 'border',
+      docs: 'Colour of the dividing line above the buttons in the advanced filter builder',
+      defaultValue: true,
+    },
+    {
+      property: 'advancedFilterBuilderIndentSize',
+      type: 'length',
+      docs: 'Amount that each level of the nesting in the advanced filter builder is indented by',
+      defaultValue: { helper: 'calc', arg: 'gridSize * 2 + iconSize' },
+      min: 0,
+      max: 50,
+      step: 1,
+    },
+    {
+      property: 'advancedFilterBuilderJoinPillColor',
+      type: 'color',
+      docs: 'Colour of the join operator pills in the Advanced Filter Builder',
+      defaultValue: '#f08e8d',
+    },
+    {
+      property: 'advancedFilterBuilderColumnPillColor',
+      type: 'color',
+      docs: 'Colour of the column pills in the Advanced Filter Builder',
+      defaultValue: '#a6e194',
+    },
+    {
+      property: 'advancedFilterBuilderOptionPillColor',
+      type: 'color',
+      docs: 'Colour of the filter option pills in the Advanced Filter Builder',
+      defaultValue: '#f3c08b',
+    },
+    {
+      property: 'advancedFilterBuilderValuePillColor',
+      type: 'color',
+      docs: 'Colour of the value pills in the Advanced Filter Builder',
+      defaultValue: '#85c0e4',
     },
   ],
 });

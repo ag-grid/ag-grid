@@ -41,6 +41,7 @@
 }
 
 .ag-list-item-hovered::after {
+  /* TODO use inset focus shadow? */
   content: '';
   position: absolute;
   left: 0;
