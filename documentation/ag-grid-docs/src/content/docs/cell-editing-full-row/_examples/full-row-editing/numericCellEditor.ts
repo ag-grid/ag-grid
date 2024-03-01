@@ -1,22 +1,25 @@
+import { ICellEditorComp, ICellEditorParams } from "@ag-grid-community/core";
 
-function isCharNumeric(charStr) {
+
+function isCharNumeric(charStr: string) {
     return !!/\d/.test(charStr)
 }
 
-function isNumericKey(event) {
+function isNumericKey(event: any) {
     var charStr = event.key;
     return isCharNumeric(charStr)
 }
 // Implementing ICellEditorComp
-class NumericCellEditor {
-    focusAfterAttached
-    eInput
-    cancelBeforeStart
+export class NumericCellEditor implements ICellEditorComp {
+    focusAfterAttached!: boolean;
+    eInput!: HTMLInputElement;
+    cancelBeforeStart!: boolean;
+
     // gets called once before the renderer is used
-    init(params) {
+    init(params: ICellEditorParams) {
         // we only want to highlight this cell if it started the edit, it is possible
         // another cell in this row started the edit
-        this.focusAfterAttached = params.cellStartedEdit
+        this.focusAfterAttached = params.cellStartedEdit;
 
         // create the cell
         this.eInput = document.createElement('input')
