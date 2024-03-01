@@ -138,7 +138,7 @@ export const CodeViewer = ({
                         ))}
                     </ul>
                     {!hideInternalFrameworkSelection && (
-                        <CodeOptions id={id} internalFramework={internalFramework} exampleType={exampleType} />
+                        <CodeOptions id={id} internalFramework={internalFramework} />
                     )}
                 </div>
                 <div className={styles.code}>
