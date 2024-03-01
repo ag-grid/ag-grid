@@ -2,9 +2,8 @@ import { FRAMEWORKS } from '@constants';
 import styles from '@design-system/modules/FrameworkSelectorInsideDocs.module.scss';
 import fwLogos from '@images/fw-logos';
 import { getFrameworkDisplayText } from '@utils/framework';
+import { getNewFrameworkPath } from '@utils/framework';
 import classnames from 'classnames';
-
-import { getNewFrameworkPath } from '../../utils/framework';
 
 export const FrameworkSelectorInsideDocs = ({ path, currentFramework }) => {
     const handleFrameworkChange = (selectedFramework) => {

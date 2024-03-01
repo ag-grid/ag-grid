@@ -1,9 +1,9 @@
-import type {ImportType} from '@ag-grid-types';
+import type { ImportType } from '@ag-grid-types';
+import { getIsDev } from '@utils/env';
+import { getExampleRootFileUrl } from '@utils/pages';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-import { getIsDev } from '../../utils/env';
-import { getExampleRootFileUrl } from '../../utils/pages';
 import type { InternalFramework } from './types';
 
 type GeneratedExampleParams = ExampleParams & DocsExampleParams;
@@ -72,7 +72,7 @@ const readContentJson = async (params: GeneratedExampleParams) => {
         result = JSON.parse(buffer.toString('utf-8')) as GeneratedContents;
     }
 
-    if(params.framework === 'angular') {
+    if (params.framework === 'angular') {
         result.files['main.ts'] = result.boilerPlateFiles!['main.ts'];
     }
 
