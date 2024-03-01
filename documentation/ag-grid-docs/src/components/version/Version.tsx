@@ -1,4 +1,4 @@
-import styles from '@design-system/modules/Version.module.scss';
+import styles from '@design-system/modules/WhatsNew.module.scss';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 
 const parseVersion = (version: string) => {
@@ -22,10 +22,10 @@ export const Version = ({ date, version, blogUrl, highlights, notesUrl, isLatest
 
     return (
         <div className={styles.version}>
-            <div>
-                <header className={styles.topHeader}>
+            <div className={styles.topheader}>
+                <header>
                     <div className={styles.flex}>
-                        <span className="text-secondary text-sm">{date}</span>
+                        <span className={styles.date}>{date}</span>
 
                         <div className={styles.flex}>
                             {isLatest && <span className={styles.latestTag}>Latest</span>}
@@ -33,8 +33,10 @@ export const Version = ({ date, version, blogUrl, highlights, notesUrl, isLatest
                         </div>
                     </div>
                     <div className={styles.flex}>
-                        <b className="text-lg">Version {version}</b>
-                        <a href={blogHref}>Read more →</a>
+                        <b>Version {version}</b>
+                        <a className={styles.bloglink} href={blogHref}>
+                            Read more →
+                        </a>
                     </div>
                     <span className={styles.line}></span>
                 </header>

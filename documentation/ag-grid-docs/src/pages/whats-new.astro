@@ -1,30 +1,46 @@
 ---
 import { getCollection, getEntry } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
-import { PagesNavigationFromLocalStorage } from '../features/pages-navigation/components/PagesNavigationFromLocalStorage';
+import { PagesNavigation } from '@features/pages-navigation/components/PagesNavigation';
 import { getDocsPages } from '../features/docs/utils/pageData';
 import { Version } from '../components/version/Version';
+import type { Framework, MenuSection } from '@ag-grid-types';
+import { getFilteredMenuSections } from '@features/pages-navigation/utils/getFilteredMenuSections';
+import styles from '@design-system/modules/WhatsNew.module.scss';
 
 export async function getStaticPaths() {
     const pages = await getCollection('docs');
     return getDocsPages(pages);
 }
 
-const menuEntry = await getEntry('menu', 'data');
-console.log(menuEntry.data);
+const currentFramework = Astro.params.framework as Framework;
+const pageName = Astro.params.pageName as Framework;
+
+const { data: menu } = await getEntry('menu', 'data');
+
+const frameworkMenuSections: MenuSection[] = getFilteredMenuSections({
+    menuSections: menu.main.sections,
+    framework: currentFramework,
+});
+
 const versionsContent = await getEntry('versions', 'ag-grid-versions');
 const versionsData: any[] = versionsContent ? versionsContent.data : [];
 ---
 
 <Layout title={"What's new"} showDocsNav={true} showSearchBar={true}>
-    <div class={'contentViewport layout-grid'}>
-        <PagesNavigationFromLocalStorage client:load menuSections={menuEntry.data} pageName={'whats-new'} />
+    <div class:list={['contentViewport layout-grid']}>
+        <PagesNavigation
+            client:load
+            menuSections={frameworkMenuSections}
+            framework={currentFramework}
+            pageName={pageName}
+        />
 
-        <div id="doc-content" class="docPage">
-            <div class="pageSections">
+        <main is="div">
+            <div class={styles.whatsNewContainer}>
                 <h1>What's New in AG Grid</h1>
-                <p>See what's new in recent AG Grid versions.</p>
-                <div class={'versions'}>
+                <p class={styles.description}>See what's new in recent AG Grid versions.</p>
+                <div class={styles.versions}>
                     {
                         versionsData.map((versionInfo, index) => {
                             return (
@@ -40,48 +56,6 @@ const versionsData: any[] = versionsContent ? versionsContent.data : [];
                     }
                 </div>
             </div>
-        </div>
+        </main>
     </div>
 </Layout>
-
-<style lang="scss">
-    @use '../design-system' as *;
-    @import '../design-system/modules/docs.module.scss';
-
-    .versions {
-        max-width: var(--max-page-width);
-        display: grid;
-        grid-template-columns: repeat(3, minmax(400px, 1fr));
-        grid-gap: 16px;
-        margin-top: 32px;
-        margin-bottom: 32px;
-    }
-
-    @media (max-width: 1200px) {
-        .versions {
-            display: flex;
-            flex-direction: column;
-            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)) !important;
-        }
-    }
-
-    .contentViewport {
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-
-        @media (min-width: $breakpoint-docs-nav-medium) {
-            flex-direction: row;
-        }
-
-        @media (min-width: $breakpoint-docs-nav-large) {
-            &.noLeftMenu {
-                padding-left: max(var(--horizontal-margin), calc(50vw - var(--max-page-width) / 2));
-            }
-
-            .docPage {
-                padding-left: 0;
-            }
-        }
-    }
-</style>
