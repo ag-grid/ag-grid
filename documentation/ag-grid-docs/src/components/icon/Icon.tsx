@@ -20,6 +20,10 @@ import StackBlitzIcon from '@images/inline-svgs/stack-blitz.svg?react';
 import TakeControlIcon from '@images/inline-svgs/take-control-icon.svg?react';
 import TickIcon from '@images/inline-svgs/tick.svg?react';
 import XLogoIcon from '@images/inline-svgs/x-logo.svg?react';
+import EscapeIcon from '@images/inline-svgs/escape.svg?react'
+import PageResult from '@images/inline-svgs/page-result.svg?react'
+import CodeResult from '@images/inline-svgs/code-result.svg?react'
+import HeadingResult from '@images/inline-svgs/heading-result.svg?react'
 import classNames from 'classnames';
 
 // Uses IBM Carbon Design System icons as a base
@@ -116,6 +120,7 @@ export const ICON_MAP = {
     arrowRight: CarbonIcon.ArrowRight,
     arrowDown: CarbonIcon.ArrowDown,
     arrowLeft: CarbonIcon.ArrowLeft,
+    return: CarbonIcon.Return,
     link: CarbonIcon.Link,
     chevronUp: BoldChevronUp,
     chevronRight: BoldChevronRight,
@@ -143,6 +148,11 @@ export const ICON_MAP = {
     zoomArea: CarbonIcon.ZoomArea,
     colorPalette: CarbonIcon.ColorPalette,
     newTab: NewTabIcon,
+    sort: CarbonIcon.ChevronSort,
+    escape: EscapeIcon,
+    pageResult: PageResult,
+    codeResult: CodeResult,
+    headingResult: HeadingResult,
     ...SOCIALS_ICON_MAP,
     ...DOCS_CATEGORIES_ICON_MAP,
     ...HOMEPAGE_FEATURES_ICON_MAP,
