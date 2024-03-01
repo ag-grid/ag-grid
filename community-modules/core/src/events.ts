@@ -11,6 +11,7 @@ import { AgChartThemeOverrides } from './interfaces/iAgChartOptions';
 import { AgGridCommon } from './interfaces/iCommon';
 import { RowPinnedType, IRowNode } from './interfaces/iRowNode';
 import { GridState } from './interfaces/gridState';
+import { Events } from './eventKeys';
 export { Events } from './eventKeys';
 
 export interface AgEvent {
@@ -769,3 +770,4 @@ export interface FieldPickerValueSelectedEvent<TData = any, TContext = any> exte
     fromEnterKey: boolean;
 }
 
+export const ALWAYS_SYNC_GLOBAL_EVENTS: Set<string> = new Set([Events.EVENT_GRID_PRE_DESTROYED]);
