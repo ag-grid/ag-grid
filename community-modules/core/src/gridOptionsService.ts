@@ -4,7 +4,7 @@ import { Autowired, Bean, PostConstruct, PreDestroy } from "./context/context";
 import { DomLayoutType, GridOptions } from "./entities/gridOptions";
 import { GetGroupAggFilteringParams, GetGroupIncludeFooterParams, RowHeightParams } from "./interfaces/iCallbackParams";
 import { Environment } from "./environment";
-import { AgEvent, Events } from "./events";
+import { AgEvent, ALWAYS_SYNC_GLOBAL_EVENTS, Events } from "./events";
 import { EventService } from "./eventService";
 import { GridApi } from "./gridApi";
 import { AgGridCommon, WithoutGridCommon } from "./interfaces/iCommon";
@@ -82,7 +82,6 @@ export class GridOptionsService {
     // we store this locally, so we are not calling getScrollWidth() multiple times as it's an expensive operation
     private scrollbarWidth: number;
     private domDataKey = '__AG_' + Math.random().toString();
-    private static readonly alwaysSyncGlobalEvents: Set<string> = new Set([Events.EVENT_GRID_PRE_DESTROYED]);
 
     // Store locally to avoid retrieving many times as these are requested for every callback
     @Autowired('gridApi') private readonly api: GridApi;
@@ -294,7 +293,7 @@ export class GridOptionsService {
                 return;
             }
 
-            const alwaysSync = GridOptionsService.alwaysSyncGlobalEvents.has(eventName);
+            const alwaysSync = ALWAYS_SYNC_GLOBAL_EVENTS.has(eventName);
             if ((alwaysSync && !restrictToSyncOnly) || (!alwaysSync && restrictToSyncOnly)) {
                 return;
             }
