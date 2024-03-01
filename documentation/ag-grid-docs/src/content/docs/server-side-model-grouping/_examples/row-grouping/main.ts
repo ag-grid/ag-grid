@@ -5,7 +5,7 @@ import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-mo
 import { ModuleRegistry } from "@ag-grid-community/core";
 
 ModuleRegistry.registerModules([RowGroupingModule, ServerSideRowModelModule]);
-
+ 
 let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [

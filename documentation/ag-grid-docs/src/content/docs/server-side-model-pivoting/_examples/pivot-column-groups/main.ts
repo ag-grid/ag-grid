@@ -1,5 +1,5 @@
 import { ColDef, createGrid, GridApi, GridOptions, IServerSideDatasource } from '@ag-grid-community/core';
-declare var FakeServer: any;
+import { FakeServer } from './fakeServer';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';

@@ -16,7 +16,7 @@ import { ModuleRegistry } from "@ag-grid-community/core";
 
 ModuleRegistry.registerModules([ColumnsToolPanelModule, MenuModule, RowGroupingModule, ServerSideRowModelModule]);
 
-declare var FakeServer: any;
+import { FakeServer } from './fakeServer';
 
 var colDefCountry: ColDef = { field: 'country', rowGroup: true }
 var colDefYear: ColDef = { field: 'year', rowGroup: true }

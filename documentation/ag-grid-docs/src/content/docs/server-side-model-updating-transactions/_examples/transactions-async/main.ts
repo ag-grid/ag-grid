@@ -14,7 +14,7 @@ import { ModuleRegistry } from "@ag-grid-community/core";
 
 ModuleRegistry.registerModules([ServerSideRowModelModule]);
 
-declare var FakeServer: any;
+import { FakeServer } from './fakeServer';
 declare var dataObservers: any;
 declare var randomUpdates: any;
 

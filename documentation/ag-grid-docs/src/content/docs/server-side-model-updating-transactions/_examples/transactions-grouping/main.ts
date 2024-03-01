@@ -17,7 +17,7 @@ import { ModuleRegistry } from "@ag-grid-community/core";
 
 ModuleRegistry.registerModules([RowGroupingModule, ServerSideRowModelModule]);
 
-declare var FakeServer: any;
+import { FakeServer } from './fakeServer';
 declare var deletePortfolioOnServer: any;
 declare var changePortfolioOnServer: any;
 declare var createRowOnServer: any;

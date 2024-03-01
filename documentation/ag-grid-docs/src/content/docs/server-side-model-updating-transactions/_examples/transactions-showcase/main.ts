@@ -17,7 +17,7 @@ import { ModuleRegistry } from "@ag-grid-community/core";
 ModuleRegistry.registerModules([RowGroupingModule, ServerSideRowModelModule]);
 
 declare var registerObserver: any;
-declare var FakeServer: any;
+import { FakeServer } from './fakeServer';
 declare var fakeServerInstance: any;
 
 const columnDefs: ColDef[] = [
