@@ -9,6 +9,7 @@ import {
 } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController";
 import { LegendPanel } from "./legend/legendPanel";
+import { AnimationPanel } from './animation/animationPanel';
 import { CartesianAxisPanel } from "./axis/cartesianAxisPanel";
 import { PolarAxisPanel } from "./axis/polarAxisPanel";
 import { NavigatorPanel } from "./navigator/navigatorPanel";
@@ -32,6 +33,7 @@ const DefaultFormatPanelDef: ChartFormatPanel = {
         { type: 'series' },
         { type: 'axis' },
         { type: 'navigator' },
+        { type: 'animation' },
     ]
 };
 
@@ -96,6 +98,8 @@ export class FormatPanel extends Component {
                 this.addComponent(new SeriesPanel(opts));
             } else if (group === 'navigator') {
                 this.addComponent(new NavigatorPanel(opts));
+            } else if (group === 'animation') {
+                this.addComponent(new AnimationPanel(opts));
             } else {
                 console.warn(`AG Grid: invalid charts format panel group name supplied: '${groupDef.type}'`);
             }
@@ -114,7 +118,7 @@ export class FormatPanel extends Component {
         // Determine whether the given panel group is shown depending on the active series type
 
         // These panel groups are always shown regardless of series type
-        const commonGroupPanels = ['chart', 'legend', 'series'];
+        const commonGroupPanels = ['chart', 'legend', 'series', 'animation'];
         if (commonGroupPanels.includes(group)) {
             return true;
         }
