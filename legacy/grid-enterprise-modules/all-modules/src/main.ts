@@ -164,6 +164,8 @@ export {VirtualList} from "@ag-grid-community/core";
 export {AgAbstractLabel} from "@ag-grid-community/core";
 export {AgPickerField} from "@ag-grid-community/core";
 export {AgAutocomplete} from "@ag-grid-community/core";
+export {PillDragComp} from "@ag-grid-community/core";
+export {PillDropZonePanel} from "@ag-grid-community/core";
 export {CellRangeType} from "@ag-grid-community/core";
 export {SelectionHandleType} from "@ag-grid-community/core";
 export {AutoScrollService} from "@ag-grid-community/core";
@@ -214,10 +216,6 @@ export {NumberSequence} from "@ag-grid-community/core";
 export {AgPromiseStatus} from "@ag-grid-community/core";
 export {AgPromise} from "@ag-grid-community/core";
 export {Timer} from "@ag-grid-community/core";
-export {DEFAULT_CHART_GROUPS} from "@ag-grid-community/core";
-export {CHART_TOOL_PANEL_ALLOW_LIST} from "@ag-grid-community/core";
-export {CHART_TOOLBAR_ALLOW_LIST} from "@ag-grid-community/core";
-export {CHART_TOOL_PANEL_MENU_OPTIONS} from "@ag-grid-community/core";
 export {BarColumnLabelPlacement} from "@ag-grid-community/core";
 /** AUTO_GENERATED_END **/
 

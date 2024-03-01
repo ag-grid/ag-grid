@@ -5,7 +5,7 @@ import {
     Component,
     PostConstruct
 } from "@ag-grid-community/core";
-import { ChartTranslationService } from "../../../services/chartTranslationService";
+import { ChartTranslationKey, ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartMenuUtils } from "../../chartMenuUtils";
 
 export class ConnectorLinePanel extends Component {
@@ -45,7 +45,7 @@ export class ConnectorLinePanel extends Component {
         });
     }
 
-    private getSliderParams(labelKey: string, maxValue: number, seriesOptionKey: string, step: number = 1, isArray: boolean = false): AgSliderParams {
+    private getSliderParams(labelKey: ChartTranslationKey, maxValue: number, seriesOptionKey: string, step: number = 1, isArray: boolean = false): AgSliderParams {
         const params = this.chartMenuUtils.getDefaultSliderParams(seriesOptionKey, labelKey, maxValue, isArray);
         params.step = step;
         return params;

@@ -420,6 +420,8 @@ const AG_GRID_LOCALE_EN = {
     seriesChartType: 'Series Chart Type',
     seriesType: 'Series Type',
     secondaryAxis: 'Secondary Axis',
+    seriesAdd: 'Add a series',
+    categoryAdd: 'Add a category',
 
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Level ${variable}. Press ENTER to edit.',

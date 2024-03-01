@@ -5,7 +5,7 @@ import {
     Component,
     PostConstruct,
 } from "@ag-grid-community/core";
-import { ChartTranslationService } from "../../../services/chartTranslationService";
+import { ChartTranslationKey, ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartMenuUtils } from "../../chartMenuUtils";
 
 export class ShadowPanel extends Component {
@@ -51,7 +51,7 @@ export class ShadowPanel extends Component {
         });
     }
 
-    private getSliderParams(property: string, minValue: number, defaultMaxValue: number): AgSliderParams {
+    private getSliderParams(property: ChartTranslationKey, minValue: number, defaultMaxValue: number): AgSliderParams {
         const expression = `${this.propertyKey}.${property}`
         const params = this.chartMenuUtils.getDefaultSliderParams(
             expression,

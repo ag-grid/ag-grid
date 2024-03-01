@@ -12,7 +12,7 @@ import {
 import { ChartController } from "../../../chartController";
 import { AxisTicksPanel } from "./axisTicksPanel";
 import { FontPanel, FontPanelParams } from "../fontPanel";
-import { ChartTranslationService } from "../../../services/chartTranslationService";
+import { ChartTranslationKey, ChartTranslationService } from "../../../services/chartTranslationService";
 import { FormatPanelOptions } from "../formatPanel";
 import { AgAngleSelect } from "../../../../../widgets/agAngleSelect";
 import { ChartMenuUtils } from "../../chartMenuUtils";
@@ -191,7 +191,7 @@ export class CartesianAxisPanel extends Component {
 
         const chartOptionsService = this.chartMenuUtils.getChartOptionsService();
 
-        const createRotationComp = (labelKey: string, axisType: 'xAxis' | 'yAxis') => {
+        const createRotationComp = (labelKey: ChartTranslationKey, axisType: 'xAxis' | 'yAxis') => {
             const label = `${this.chartTranslationService.translate(labelKey)} ${degreesSymbol}`;
             const value = chartOptionsService.getLabelRotation(axisType) as number;
             const angleSelect = new AgAngleSelect({
@@ -226,8 +226,8 @@ export class CartesianAxisPanel extends Component {
         labelPanelComp.addCompToPanel(labelPaddingSlider);
     }
 
-    private translate(key: string, defaultText?: string) {
-        return this.chartTranslationService.translate(key, defaultText);
+    private translate(key: ChartTranslationKey) {
+        return this.chartTranslationService.translate(key);
     }
 
     private destroyActivePanels(): void {

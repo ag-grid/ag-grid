@@ -370,13 +370,20 @@
     .ag-charts-data-group-title-bar,
     .ag-charts-format-top-level-group-title-bar {
         border-top: var(--ag-borders-secondary) var(--ag-secondary-border-color);
+        position: relative;
     }
+
+    @include ag.keyboard-focus((ag-charts-settings-group-title-bar, ag-charts-data-group-title-bar, ag-charts-format-top-level-group-title-bar), -4px);
 
     .ag-charts-data-group-container {
         padding: calc(var(--ag-widget-container-vertical-padding) * 0.5) var(--ag-widget-container-horizontal-padding);
 
-        .ag-charts-data-group-item:not(.ag-charts-format-sub-level-group) {
+        .ag-charts-data-group-item:not(.ag-charts-format-sub-level-group):not(.ag-pill-select):not(.ag-select) {
             height: var(--ag-list-item-height);
+        }
+
+        .ag-charts-data-group-item.ag-picker-field {
+            margin-top: var(--ag-grid-size);
         }
 
         @include ag.list-item-hovered();

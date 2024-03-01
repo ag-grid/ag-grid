@@ -7,7 +7,7 @@ import {
     AgSliderParams
 } from "@ag-grid-community/core";
 import { FontPanel, FontPanelParams } from "../fontPanel";
-import { ChartTranslationService } from "../../../services/chartTranslationService";
+import { ChartTranslationKey, ChartTranslationService } from "../../../services/chartTranslationService";
 import { FormatPanelOptions } from "../formatPanel";
 import { ChartMenuUtils } from "../../chartMenuUtils";
 
@@ -64,7 +64,7 @@ export class LegendPanel extends Component {
         });
     }
 
-    private getSliderParams(expression: string, labelKey: string, defaultMaxValue: number): AgSliderParams {
+    private getSliderParams(expression: string, labelKey: ChartTranslationKey, defaultMaxValue: number): AgSliderParams {
         return this.chartMenuUtils.getDefaultSliderParams(`legend.${expression}`, labelKey, defaultMaxValue);
     }
 

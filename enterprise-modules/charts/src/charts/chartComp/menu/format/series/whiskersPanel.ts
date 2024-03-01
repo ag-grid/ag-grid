@@ -39,10 +39,10 @@ export class WhiskersPanel extends Component {
         this.setTemplate(WhiskersPanel.TEMPLATE, {
             whiskersGroup: whiskersGroupParams,
             whiskerColorPicker: this.chartMenuUtils.getDefaultColorPickerParams('whisker.stroke'),
-            whiskerThicknessSlider: this.chartMenuUtils.getDefaultSliderParams('strokeWidth', 'whisker.strokeWidth', 10),
-            whiskerOpacitySlider: this.chartMenuUtils.getDefaultSliderParams('strokeOpacity', 'whisker.strokeOpacity', 1),
+            whiskerThicknessSlider: this.chartMenuUtils.getDefaultSliderParams('whisker.strokeWidth', 'strokeWidth', 10),
+            whiskerOpacitySlider: this.chartMenuUtils.getDefaultSliderParams('whisker.strokeOpacity', 'strokeOpacity', 1),
             whiskerLineDashSlider: this.chartMenuUtils.getDefaultSliderParams('whisker.lineDash', "lineDash", 30, true),
-            whiskerLineDashOffsetSlider: this.chartMenuUtils.getDefaultSliderParams('lineDashOffset', 'whisker.lineDashOffset', 30)
+            whiskerLineDashOffsetSlider: this.chartMenuUtils.getDefaultSliderParams('whisker.lineDashOffset', 'lineDashOffset', 30)
         });
     }
 }

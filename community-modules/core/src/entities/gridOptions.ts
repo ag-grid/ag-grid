@@ -601,6 +601,12 @@ export interface GridOptions<TData = any> {
      * @initial
      */
     chartToolPanelsDef?: ChartToolPanelsDef;
+    /**
+     * Enables the legacy format of the Integrated Charts Menu and Tool Panels.
+     * @default true
+     * @initial
+     */
+    legacyChartsMenu?: boolean;
 
     // *** Loading Cell Renderers *** //
     /**

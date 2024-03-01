@@ -35,6 +35,7 @@ export class ChartController extends BeanStub {
     public static EVENT_CHART_MODEL_UPDATE = 'chartModelUpdate';
     public static EVENT_CHART_TYPE_CHANGED = 'chartTypeChanged';
     public static EVENT_CHART_SERIES_CHART_TYPE_CHANGED = 'chartSeriesChartTypeChanged';
+    public static EVENT_CHART_LINKED_CHANGED = 'chartLinkedChanged';
 
     @Autowired('rangeService') private readonly rangeService: IRangeService;
 
@@ -144,8 +145,8 @@ export class ChartController extends BeanStub {
         this.raiseChartRangeSelectionChangedEvent();
     }
 
-    public updateForPanelChange(updatedCol: ColState): void {
-        this.model.updateCellRanges(updatedCol);
+    public updateForPanelChange(updatedCol: ColState, resetOrder?: boolean): void {
+        this.model.updateCellRanges(updatedCol, resetOrder);
         this.model.updateData();
         this.setChartRange();
         this.raiseChartRangeSelectionChangedEvent();
@@ -215,6 +216,9 @@ export class ChartController extends BeanStub {
                 if (!colState.selected) continue;
                 if (hasSelectedDimension) colState.selected = false;
                 hasSelectedDimension = true;
+            }
+            if (!hasSelectedDimension) {
+                this.model.dimensionColState[0].selected = true;
             }
         }
 
@@ -332,6 +336,7 @@ export class ChartController extends BeanStub {
             // update chart data may have changed
             this.updateForGridChange();
         }
+        this.dispatchEvent({ type: ChartController.EVENT_CHART_LINKED_CHANGED });
     }
 
     public setChartProxy(chartProxy: ChartProxy): void {

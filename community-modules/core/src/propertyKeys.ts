@@ -120,6 +120,7 @@ export const INITIAL_GRID_OPTION_KEYS = {
     getRowId: true,
     reactiveCustomComponents: true,
     columnMenu: true,
+    legacyChartsMenu: true,
 };
 
 type InitialGridOptionKey = keyof typeof INITIAL_GRID_OPTION_KEYS;
@@ -190,7 +191,7 @@ export class PropertyKeys {
         'maintainColumnOrder', 'groupMaintainOrder', 'columnHoverHighlight', 'readOnlyEdit', 'suppressRowVirtualisation', 'enableCellEditingOnBackspace',
         'resetRowDataOnUpdate', 'removePivotHeaderRowWhenSingleValueColumn', 'suppressCopySingleCellRanges', 'suppressGroupRowsSticky', 'suppressCutToClipboard',
         'suppressServerSideInfiniteScroll', 'rowGroupPanelSuppressSort', 'allowShowChangeAfterFilter','enableAdvancedFilter', 'masterDetail', 'treeData',
-        'suppressGroupMaintainValueType', 'reactiveCustomComponents'
+        'suppressGroupMaintainValueType', 'reactiveCustomComponents', 'legacyChartsMenu',
     ];
 
     /** You do not need to include event callbacks in this list, as they are generated automatically. */

@@ -10,6 +10,7 @@ export interface AgLabelParams {
     labelWidth?: number | 'flex';
     labelSeparator?: string;
     labelAlignment?: LabelAlignment;
+    disabled?: boolean;
 }
 
 export abstract class AgAbstractLabel<TConfig extends AgLabelParams = AgLabelParams> extends Component {
@@ -32,7 +33,11 @@ export abstract class AgAbstractLabel<TConfig extends AgLabelParams = AgLabelPar
         this.addCssClass('ag-labeled');
         this.eLabel.classList.add('ag-label');
 
-        const { labelSeparator, label, labelWidth, labelAlignment } = this.config;
+        const { labelSeparator, label, labelWidth, labelAlignment, disabled } = this.config;
+
+        if (disabled != null) {
+            this.setDisabled(disabled);
+        }
 
         if (labelSeparator != null) {
             this.setLabelSeparator(labelSeparator);

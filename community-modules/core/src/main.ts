@@ -294,6 +294,8 @@ export { AgAbstractLabel, AgLabelParams } from "./widgets/agAbstractLabel";
 export { AgPickerField, AgPickerFieldParams } from "./widgets/agPickerField";
 export { AgAutocomplete, AutocompleteOptionSelectedEvent, AutocompleteValidChangedEvent, AutocompleteValueChangedEvent, AutocompleteValueConfirmedEvent } from "./widgets/agAutocomplete";
 export { AutocompleteEntry, AutocompleteListParams } from "./widgets/autocompleteParams";
+export { PillDragComp } from "./widgets/pillDragComp";
+export { PillDropZonePanel, PillDropZonePanelParams } from "./widgets/pillDropZonePanel";
 
 // range
 export {
