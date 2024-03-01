@@ -147,6 +147,7 @@ export type QuartzIconsPreset = 'light' | 'regular' | 'bold';
 export type QuartzIconsParam = 'quartzIconsPreset' | 'iconSize' | 'iconStrokeWidth';
 
 import coreCssImport from './css/core/core.css?inline';
+import indentTsImport from './css/core/indent';
 
 export const core = definePart<CoreParam>({
   partId: 'core',
@@ -279,7 +280,7 @@ export const core = definePart<CoreParam>({
     advancedFilterBuilderOptionPillColor: '#f3c08b',
     advancedFilterBuilderValuePillColor: '#85c0e4',
   },
-  css: [coreCssImport],
+  css: [coreCssImport, indentTsImport],
 });
 
 export const colors = definePart<ColorsParam>({

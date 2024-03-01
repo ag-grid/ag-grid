@@ -1,3 +1,4 @@
+/* PORTED
 @use 'sass:color';
 
 @mixin output {
@@ -119,23 +120,21 @@
     --ag-invalid-color: red;
     --ag-input-disabled-border-color: var(--ag-input-border-color);
     --ag-input-disabled-background-color: transparent;
-    /* PORTED
-        --ag-checkbox-background-color: transparent;
-        --ag-checkbox-border-radius: var(--ag-border-radius);
-        --ag-checkbox-checked-color: var(--ag-foreground-color);
-        --ag-checkbox-unchecked-color: var(--ag-foreground-color);
-        --ag-checkbox-indeterminate-color: var(--ag-checkbox-unchecked-color);
+    --ag-checkbox-background-color: transparent;
+    --ag-checkbox-border-radius: var(--ag-border-radius);
+    --ag-checkbox-checked-color: var(--ag-foreground-color);
+    --ag-checkbox-unchecked-color: var(--ag-foreground-color);
+    --ag-checkbox-indeterminate-color: var(--ag-checkbox-unchecked-color);
 
-        --ag-toggle-button-off-border-color: var(--ag-checkbox-unchecked-color);
-        --ag-toggle-button-off-background-color: var(--ag-checkbox-unchecked-color);
-        --ag-toggle-button-on-border-color: var(--ag-checkbox-checked-color);
-        --ag-toggle-button-on-background-color: var(--ag-checkbox-checked-color);
-        --ag-toggle-button-switch-background-color: var(--ag-background-color);
-        --ag-toggle-button-switch-border-color: var(--ag-toggle-button-off-border-color);
-        --ag-toggle-button-border-width: 1px;
-        --ag-toggle-button-height: var(--ag-icon-size);
-        --ag-toggle-button-width: calc(var(--ag-toggle-button-height) * 2);
-*/
+    --ag-toggle-button-off-border-color: var(--ag-checkbox-unchecked-color);
+    --ag-toggle-button-off-background-color: var(--ag-checkbox-unchecked-color);
+    --ag-toggle-button-on-border-color: var(--ag-checkbox-checked-color);
+    --ag-toggle-button-on-background-color: var(--ag-checkbox-checked-color);
+    --ag-toggle-button-switch-background-color: var(--ag-background-color);
+    --ag-toggle-button-switch-border-color: var(--ag-toggle-button-off-border-color);
+    --ag-toggle-button-border-width: 1px;
+    --ag-toggle-button-height: var(--ag-icon-size);
+    --ag-toggle-button-width: calc(var(--ag-toggle-button-height) * 2);
     --ag-input-focus-box-shadow: none;
     --ag-input-focus-border-color: none;
 
@@ -195,3 +194,4 @@
     --ag-advanced-filter-value-pill-color: #85c0e4;
   }
 }
+*/

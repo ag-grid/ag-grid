@@ -57,36 +57,8 @@
   overflow: hidden;
 }
 
-/* TODO replace with variable */
-.ag-column-select-indent-1 {
-  padding-left: calc(1 * var(--ag-column-select-indent-size));
-}
-.ag-column-select-indent-2 {
-  padding-left: calc(2 * var(--ag-column-select-indent-size));
-}
-.ag-column-select-indent-3 {
-  padding-left: calc(3 * var(--ag-column-select-indent-size));
-}
-.ag-column-select-indent-4 {
-  padding-left: calc(4 * var(--ag-column-select-indent-size));
-}
-.ag-column-select-indent-5 {
-  padding-left: calc(5 * var(--ag-column-select-indent-size));
-}
-.ag-column-select-indent-6 {
-  padding-left: calc(6 * var(--ag-column-select-indent-size));
-}
-.ag-column-select-indent-7 {
-  padding-left: calc(7 * var(--ag-column-select-indent-size));
-}
-.ag-column-select-indent-8 {
-  padding-left: calc(8 * var(--ag-column-select-indent-size));
-}
-.ag-column-select-indent-9 {
-  padding-left: calc(9 * var(--ag-column-select-indent-size));
-}
-.ag-column-select-indent-10 {
-  padding-left: calc(10 * var(--ag-column-select-indent-size));
+.ag-column-select-column {
+  padding-left: calc(var(--ag-indentation-level) * var(--ag-column-select-indent-size));
 }
 
 .ag-column-select-add-group-indent {
