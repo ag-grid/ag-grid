@@ -1,4 +1,4 @@
-import { AgFieldParams, AgSelectParams, AgSliderParams, Autowired, BeanStub } from "@ag-grid-community/core";
+import { AgFieldParams, AgInputNumberFieldParams, AgSelectParams, AgSliderParams, Autowired, BeanStub } from "@ag-grid-community/core";
 import { AgColorPickerParams } from "../../../widgets/agColorPicker";
 import { ChartOptionsService } from "../services/chartOptionsService";
 import { ChartTranslationService } from "../services/chartTranslationService";
@@ -29,6 +29,39 @@ export class ChartMenuUtils extends BeanStub {
                 label: this.chartTranslationService.translate(labelKey ?? 'color'),
                 labelWidth: 'flex',
                 inputWidth: 'flex',
+            }
+        );
+    }
+
+    public getDefaultNumberInputParams(
+        expression: string,
+        labelKey: string,
+        options?: {
+            precision?: number,
+            step?: number,
+            min?: number,
+            max?: number,
+        }
+    ): AgInputNumberFieldParams {
+        return this.addValueParams<AgInputNumberFieldParams>(
+            expression,
+            {
+                label: this.chartTranslationService.translate(labelKey),
+                labelWidth: 'flex',
+                inputWidth: 'flex',
+                precision: options?.precision,
+                step: options?.step,
+                min: options?.min,
+                max: options?.max,
+            },
+            {
+                parseInputValue: value => {
+                    const numberValue = Number(value);
+                    return isNaN(numberValue) ? undefined : numberValue;
+                },
+                formatInputValue: value => {
+                    return value == null ? '' : `${value}`;
+                },
             }
         );
     }
@@ -93,9 +126,16 @@ export class ChartMenuUtils extends BeanStub {
         );
     }
 
-    public addValueParams<P extends AgFieldParams>(expression: string, params: P): P {
-        params.value =  this.chartOptionsProxy.getValue(expression);
-        params.onValueChange = value => this.chartOptionsProxy.setValue(expression, value);
+    public addValueParams<P extends AgFieldParams>(expression: string, params: P, options?: {
+        parseInputValue: (value: any) => any;
+        formatInputValue: (value: any) => any;
+    }): P {
+        const optionsValue = this.chartOptionsProxy.getValue(expression);
+        params.value = options?.formatInputValue ? options.formatInputValue(optionsValue) : optionsValue;
+        params.onValueChange = value => {
+            const optionsValue = options?.parseInputValue ? options.parseInputValue(value) : value;
+            this.chartOptionsProxy.setValue(expression, optionsValue);
+        };
         return params;
     }
 

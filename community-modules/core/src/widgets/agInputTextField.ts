@@ -6,8 +6,8 @@ export interface AgInputTextFieldParams extends AgInputFieldParams {
     allowedCharPattern?: string;
 }
 
-export class AgInputTextField extends AgAbstractInputField<HTMLInputElement, string, AgInputTextFieldParams> {
-    constructor(config?: AgInputTextFieldParams, className = 'ag-text-field', inputType = 'text') {
+export class AgInputTextField<TConfig extends AgInputTextFieldParams = AgInputTextFieldParams> extends AgAbstractInputField<HTMLInputElement, string, TConfig> {
+    constructor(config?: TConfig, className = 'ag-text-field', inputType = 'text') {
         super(config, className, inputType);
     }
 
