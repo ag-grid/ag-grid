@@ -28,6 +28,7 @@ packages/ag-grid-enterprise/styles/**
 grid-packages/ag-grid-community/styles/**
 grid-packages/ag-grid-enterprise/styles/**
 grid-packages/ag-grid-charts-enterprise/styles/**
+packages/ag-grid-charts-enterprise/styles/**
 grid-packages/ag-grid-docs/documentation/cypress.config.AUTO.json
 
 # compiled CSS files
