@@ -265,9 +265,9 @@ export { AgAbstractField, FieldElement, AgFieldParams } from "./widgets/agAbstra
 export { AgCheckbox, AgCheckboxParams } from "./widgets/agCheckbox";
 export { AgRadioButton, AgRadioButtonParams } from "./widgets/agRadioButton";
 export { AgToggleButton, AgToggleButtonParams } from "./widgets/agToggleButton";
-export { AgInputTextField } from "./widgets/agInputTextField";
+export { AgInputTextField, AgInputTextFieldParams } from "./widgets/agInputTextField";
 export { AgInputTextArea } from "./widgets/agInputTextArea";
-export { AgInputNumberField } from "./widgets/agInputNumberField";
+export { AgInputNumberField, AgInputNumberFieldParams } from "./widgets/agInputNumberField";
 export { AgInputDateField } from "./widgets/agInputDateField";
 export { AgInputRange } from "./widgets/agInputRange";
 export { AgRichSelect, RichSelectParams } from "./widgets/agRichSelect";

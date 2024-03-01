@@ -2,13 +2,20 @@ import { AgInputTextField, AgInputTextFieldParams } from "./agInputTextField";
 import { addOrRemoveAttribute } from '../utils/dom';
 import { exists } from "../utils/generic";
 
-export class AgInputNumberField extends AgInputTextField {
+export interface AgInputNumberFieldParams extends AgInputTextFieldParams {
+    precision?: number;
+    step?: number;
+    min?: number;
+    max?: number;
+}
+
+export class AgInputNumberField extends AgInputTextField<AgInputNumberFieldParams> {
     private precision?: number;
     private step?: number;
     private min?: number;
     private max?: number;
 
-    constructor(config?: AgInputTextFieldParams) {
+    constructor(config?: AgInputNumberFieldParams) {
         super(config, 'ag-number-field', 'number');
     }
 
@@ -26,6 +33,12 @@ export class AgInputNumberField extends AgInputTextField {
         this.addManagedListener(this.eInput, 'wheel', this.onWheel.bind(this));
 
         this.eInput.step = 'any';
+
+        const { precision, min, max, step } = this.config;
+        if (typeof precision === 'number') this.setPrecision(precision);
+        if (typeof min === 'number') this.setMin(min);
+        if (typeof max === 'number') this.setMax(max);
+        if (typeof step === 'number') this.setStep(step);
     }
 
     private onWheel(e: WheelEvent) {
