@@ -3,7 +3,6 @@ import { DocsExampleRunner } from './DocsExampleRunner';
 import type { ExampleType } from '@features/example-generator/types';
 import ExampleRunnerContainer from '@features/example-runner/components/ExampleRunnerContainer.astro';
 import { getPageNameFromPath } from '@features/docs/utils/urlPaths';
-import { DOCS_PAGE_NAME_PATH_INDEX } from '../constants';
 import { getFrameworkFromPath } from '@features/docs/utils/urlPaths';
 
 interface Props {
@@ -24,7 +23,7 @@ const pageName = getPageNameFromPath(Astro.url.pathname);
         client:only
         title={title}
         name={name}
-        exampleType={type}
+        exampleType={type ?? 'generated'}
         exampleHeight={exampleHeight}
         framework={framework}
         pageName={pageName}

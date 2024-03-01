@@ -92,8 +92,14 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
 
         // replace Typescript LicenseManager.setLicenseKey( with Javascript agGrid.LicenseManager.setLicenseKey(
         mainJs = mainJs.replace(/LicenseManager\.setLicenseKey\(/g, "agGrid.LicenseManager.setLicenseKey(");
-
+        
+        // Javascript is packages only
+        mainJs = mainJs.replace(/ModuleRegistry\.registerModules\(.*\)(;)?(\n\r)?/g, "");
+        
         mainJs = mainJs.replace(/agGrid\.createGrid(.*);/g, `agGrid.createGrid$1; ${getIntegratedDarkModeCode(entryFile, false, 'gridApi')}`);
+
+        // remove any leading new lines
+        mainJs = mainJs.replace(/^\s*[\r\n]/, '');
 
         const scriptFiles = {...otherScriptFiles, ...componentScriptFiles};
         if(!isDev){

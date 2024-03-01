@@ -9,7 +9,7 @@ export const FRAMEWORKS: readonly Framework[] = [
 export const DEFAULT_FRAMEWORK: Framework = FRAMEWORKS[0];
 
 export const INTERNAL_FRAMEWORKS: readonly InternalFramework[] = [
-    // 'vanilla',
+    'vanilla',
     'typescript',
     'reactFunctional',
     'reactFunctionalTs',

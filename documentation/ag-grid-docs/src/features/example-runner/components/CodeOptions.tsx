@@ -3,8 +3,6 @@ import styles from '@design-system/modules/CodeOptions.module.scss';
 import { setInternalFramework } from '@stores/frameworkStore';
 import { isReactInternalFramework, isVueInternalFramework } from '@utils/framework';
 
-import { type ExampleType, isGeneratedExample } from '../../example-generator/types';
-
 type SelectorType = 'typescript' | 'react' | 'vue';
 interface SelectorConfig {
     label: string;
@@ -86,17 +84,12 @@ function CodeOptionSelector({
 export const CodeOptions = ({
     id,
     internalFramework,
-    exampleType,
 }: {
     id: string;
     internalFramework: InternalFramework;
-    exampleType: ExampleType;
 }) => {
-    const isGenerated = isGeneratedExample(exampleType);
 
-    const showTypescriptSelector =
-        (isGenerated || exampleType === 'multi') &&
-        (internalFramework === 'vanilla' || internalFramework === 'typescript');
+    const showTypescriptSelector = (internalFramework === 'vanilla' || internalFramework === 'typescript');
     const showReactSelector = isReactInternalFramework(internalFramework);
     const showVueSelector = isVueInternalFramework(internalFramework);
     const nothingToShow = !(showTypescriptSelector || showReactSelector || showVueSelector);
