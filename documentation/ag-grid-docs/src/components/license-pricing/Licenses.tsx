@@ -1,13 +1,12 @@
-import classnames from 'classnames';
-import { FunctionComponent, useState } from 'react';
-import { trackBuyButton } from '../../utils/analytics';
-
 // @ts-ignore
 import styles from '@design-system/modules/Licenses.module.scss';
-import { ComparisonTable } from './comparison-table/ComparisonTable';
+import classnames from 'classnames';
+import { FunctionComponent, useState } from 'react';
+
 import chartsFeaturesData from '../../content/licence-features/chartsFeaturesMatrix.json';
 import gridFeaturesData from '../../content/licence-features/gridFeaturesMatrix.json';
-
+import { trackBuyButton } from '../../utils/analytics';
+import { ComparisonTable } from './comparison-table/ComparisonTable';
 
 type LicenseData = {
     className: string;
@@ -29,7 +28,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         priceFullDollars: '0',
         launchPrice: null,
         buyLink: '/javascript-data-grid/getting-started/',
-        tabGroup: 'grid'
+        tabGroup: 'grid',
     },
     {
         className: styles.gridLicense,
@@ -39,7 +38,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         priceFullDollars: '999',
         launchPrice: null,
         buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=aggrid',
-        tabGroup: 'grid'
+        tabGroup: 'grid',
     },
     {
         className: styles.gridLicense,
@@ -49,27 +48,27 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         priceFullDollars: '0',
         launchPrice: null,
         buyLink: 'https://charts.ag-grid.com/javascript/quick-start/',
-        tabGroup: 'charts'
+        tabGroup: 'charts',
     },
     {
         className: styles.gridLicense,
         id: 'enterprise-charts',
         subHeading: 'AG Charts Enterprise',
         description: '',
-        priceFullDollars: '399',
+        priceFullDollars: '499',
         launchPrice: '199',
         buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=agcharts',
-        tabGroup: 'charts'
+        tabGroup: 'charts',
     },
     {
         className: styles.chartsLicense,
         id: 'together',
         subHeading: 'Enterprise Bundle',
         description: 'AG Grid Enterprise &<br />AG Charts Enterprise',
-        priceFullDollars: '1398',
+        priceFullDollars: '1498',
         launchPrice: '1198',
         buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=both',
-        tabGroup: 'both'
+        tabGroup: 'both',
     },
 ];
 
@@ -79,20 +78,18 @@ const Price = ({ priceFullDollars, launchPrice }) => {
 
     return (
         <div className={styles.price}>
-            { hasCost && <span className={styles.fromText}>From</span> }
+            {hasCost && <span className={styles.fromText}>From</span>}
 
-            <p className={classnames(styles.priceFullDollars, !hasCost ? styles.freePrice : '' )}>
-                <span className={styles.priceCost}>{ hasCost ? `$${ price }` : 'Free' }</span>
+            <p className={classnames(styles.priceFullDollars, !hasCost ? styles.freePrice : '')}>
+                <span className={styles.priceCost}>{hasCost ? `$${price}` : 'Free'}</span>
 
-                { launchPrice && (
+                {launchPrice && (
                     <>
-                        <span className={styles.standardPrice}>
-                            ${priceFullDollars}
-                        </span>
+                        <span className={styles.standardPrice}>${priceFullDollars}</span>
                     </>
                 )}
             </p>
-            { hasCost && <p className={styles.developerText}>per developer</p> }
+            {hasCost && <p className={styles.developerText}>per developer</p>}
         </div>
     );
 };
@@ -103,8 +100,8 @@ const License = (props: LicenseData) => {
     return (
         <>
             <div className={styles.top}>
-                { launchPrice && <span className={styles.limitedTimePill}>Limited time offer</span> }
-                { !launchPrice && <span className={styles.limitedTimeSpacer}></span> }
+                {launchPrice && <span className={styles.limitedTimePill}>Limited time offer</span>}
+                {!launchPrice && <span className={styles.limitedTimeSpacer}></span>}
 
                 <div className={styles.licenseMeta}>
                     <h2>{subHeading}</h2>
@@ -141,27 +138,28 @@ export const Licenses: FunctionComponent<{ isChecked: boolean }> = ({ isChecked 
     return (
         <>
             <div className={styles.emptyColumn}></div>
-            
+
             {filteredData.map((data) => {
                 let columns, cellRenderer;
 
-                if (data.id === 'together') { // Correcting the typo to 'together' if necessary
+                if (data.id === 'together') {
+                    // Correcting the typo to 'together' if necessary
                     columns = {
-                        'label': '',
-                        'chartsGrid': '',
+                        label: '',
+                        chartsGrid: '',
                     };
                     cellRenderer = {
-                        'label': 'label',
-                        'chartsGrid': "feature",
+                        label: 'label',
+                        chartsGrid: 'feature',
                     };
                 } else {
                     columns = {
-                        'label': '',
+                        label: '',
                         [data.id.includes('enterprise') ? 'enterprise' : 'community']: '',
                     };
                     cellRenderer = {
-                        'label': 'label',
-                        [data.id.includes('enterprise') ? 'enterprise' : 'community']: "feature",
+                        label: 'label',
+                        [data.id.includes('enterprise') ? 'enterprise' : 'community']: 'feature',
                     };
                 }
 
@@ -174,11 +172,11 @@ export const Licenses: FunctionComponent<{ isChecked: boolean }> = ({ isChecked 
                 return (
                     <div key={data.id} id={data.id} className={classnames(styles.license, data.className)}>
                         <License {...data} />
-                        
+
                         <span className={styles.toggleFeatureBreakdownButton} onClick={toggleFeatureBreakdown}>
                             {showFeatureBreakdown ? 'Hide Feature Breakdown' : 'Show Feature Breakdown'}
                         </span>
-                        
+
                         {showFeatureBreakdown && (
                             <div className={styles.mobileFeatureMatrix}>
                                 {featuresData.map((section, i) => (
