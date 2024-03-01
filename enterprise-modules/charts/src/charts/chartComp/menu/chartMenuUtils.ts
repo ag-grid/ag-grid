@@ -1,4 +1,4 @@
-import { AgFieldParams, AgInputNumberFieldParams, AgSelectParams, AgSliderParams, Autowired, BeanStub } from "@ag-grid-community/core";
+import { AgFieldParams, AgCheckboxParams, AgInputNumberFieldParams, AgSelectParams, AgSliderParams, Autowired, BeanStub } from "@ag-grid-community/core";
 import { AgColorPickerParams } from "../../../widgets/agColorPicker";
 import { ChartOptionsService } from "../services/chartOptionsService";
 import { ChartTranslationService } from "../services/chartTranslationService";
@@ -93,6 +93,27 @@ export class ChartMenuUtils extends BeanStub {
             textFieldWidth: 45,
             value: `${value}`
         };
+    }
+
+    public getDefaultCheckboxParams(
+        expression: string,
+        labelKey: string,
+        options?: {
+            readOnly?: boolean,
+            passive?: boolean,
+        },
+    ): AgCheckboxParams {
+        const value = this.chartOptionsProxy.getValue<boolean>(expression);
+        const params: AgCheckboxParams = {
+            label: this.chartTranslationService.translate(labelKey),
+            value,
+            readOnly: options?.readOnly,
+            passive: options?.passive,
+        };
+        params.onValueChange = (value) => {
+            this.chartOptionsProxy.setValue(expression, typeof value === 'boolean' ? value : undefined);
+        };
+        return params;
     }
 
     public getDefaultLegendParams(expression: string): AgSelectParams {
