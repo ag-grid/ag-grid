@@ -4,10 +4,12 @@ import Layout from '@layouts/Layout.astro';
 import { getDocExampleFiles } from '@features/docs/utils/pageData';
 import { getExampleFileUrl } from '@features/docs/utils/urlPaths';
 
-const pages = await getCollection('docs');
-const exampleFiles = await getDocExampleFiles({
-    pages,
-});
+const pages = [];
+const exampleFiles = [];
+// const pages = await getCollection('docs');
+// const exampleFiles = await getDocExampleFiles({
+//     pages,
+// });
 ---
 
 <Layout title={`Debug: Docs Example Files`}>
