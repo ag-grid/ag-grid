@@ -62,6 +62,7 @@
       "inputs": [{ "externalDependencies": ["npm:typescript"] }],
       "outputs": [],
       "cache": true,
+      "batch": true,
       "configurations": {
         "staging": {},
         "production": {}
