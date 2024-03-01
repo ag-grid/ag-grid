@@ -51,7 +51,7 @@ const isDev = getIsDev();
 
 const library = 'grid';
 
-const { entryFileName, files, scriptFiles, styleFiles, isEnterprise } = generatedContents || {};
+const { entryFileName, files, scriptFiles, styleFiles, isEnterprise, extras } = generatedContents || {};
 const indexFragment = files && files['index.html'];
 const appLocation = relativePath ? '' : exampleUrl;
 const boilerPlateUrl = relativePath
@@ -85,6 +85,7 @@ const title = `${toTitle(pageName)} - ${toTitle(exampleName)}`;
             indexFragment={indexFragment!}
             appLocation={appLocation}
             extraStyles={extraStyles}
+            extras={extras}
         >
             {addInitMessageScript && <PostInitMessageScript pageName={pageName} exampleName={exampleName} />}
         </JavascriptTemplate>
@@ -104,6 +105,7 @@ const title = `${toTitle(pageName)} - ${toTitle(exampleName)}`;
             boilerplatePath={boilerPlateUrl}
             extraStyles={extraStyles}
             isEnterprise={isEnterprise}
+            extras={extras}
         >
             {addInitMessageScript && <PostInitMessageScript pageName={pageName} exampleName={exampleName} />}
         </TypescriptTemplate>
@@ -125,6 +127,7 @@ const title = `${toTitle(pageName)} - ${toTitle(exampleName)}`;
             extraStyles={extraStyles}
             isEnterprise={isEnterprise}
             internalFramework={internalFramework}
+            extras={extras}
         >
             {addInitMessageScript && <PostInitMessageScript pageName={pageName} exampleName={exampleName} />}
         </ReactTemplate>
@@ -144,6 +147,7 @@ const title = `${toTitle(pageName)} - ${toTitle(exampleName)}`;
             appLocation={appLocation}
             boilerplatePath={boilerPlateUrl}
             extraStyles={extraStyles}
+            extras={extras}
         >
             {addInitMessageScript && <PostInitMessageScript pageName={pageName} exampleName={exampleName} />}
         </AngularTemplate>
@@ -164,6 +168,7 @@ const title = `${toTitle(pageName)} - ${toTitle(exampleName)}`;
             boilerplatePath={boilerPlateUrl}
             vueFramework={internalFramework}
             extraStyles={extraStyles}
+            extras={extras}
         >
             {addInitMessageScript && <PostInitMessageScript pageName={pageName} exampleName={exampleName} />}
         </VueTemplate>

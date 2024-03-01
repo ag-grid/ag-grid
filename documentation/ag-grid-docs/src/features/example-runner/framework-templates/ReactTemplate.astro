@@ -2,6 +2,7 @@
 import { MetaData } from './lib/MetaData';
 import { ExampleStyle } from './lib/ExampleStyle';
 import { Styles } from './lib/Styles';
+import { Extras } from './lib/Extras';
 import { SystemJs } from './lib/SystemJs';
 import { Scripts } from './lib/Scripts';
 import { pathJoin } from '@utils/pathJoin';
@@ -25,6 +26,7 @@ interface Props {
     ignoreSystemJs?: boolean;
     extraStyles?: string;
     children?: any;
+    extras?: string[];
 }
 
 const {
@@ -40,6 +42,7 @@ const {
     boilerplatePath,
     ignoreSystemJs,
     extraStyles,
+    extras,
 } = Astro.props as Props;
 
 const startFile = pathJoin(appLocation, entryFileName);
@@ -50,6 +53,7 @@ const startFile = pathJoin(appLocation, entryFileName);
         <MetaData isDev={isDev} title={`React Example - ${title}`} modifiedTimeMs={modifiedTimeMs} />
         <ExampleStyle rootSelector="#root" extraStyles={extraStyles} />
         <Styles baseUrl={appLocation} files={styleFiles} />
+        <Extras extras={extras ?? []} />
     </head>
     <body>
         <div id="root"></div>
