@@ -5,7 +5,7 @@ import {
   IDetailCellRendererParams,
   IServerSideDatasource,
 } from '@ag-grid-community/core';
-declare var FakeServer: any;
+import { FakeServer } from './fakeServer';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { MasterDetailModule } from '@ag-grid-enterprise/master-detail';

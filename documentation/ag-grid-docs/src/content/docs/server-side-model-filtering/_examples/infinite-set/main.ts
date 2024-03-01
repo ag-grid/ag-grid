@@ -17,7 +17,7 @@ import { ModuleRegistry } from "@ag-grid-community/core";
 
 ModuleRegistry.registerModules([MenuModule, ServerSideRowModelModule, SetFilterModule]);
 
-declare var FakeServer: any;
+import { FakeServer } from './fakeServer';
 const columnDefs: ColDef[] = [
   {
     field: 'country',
