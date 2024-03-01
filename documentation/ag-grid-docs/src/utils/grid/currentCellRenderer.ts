@@ -38,7 +38,6 @@ export class CurrentCellRenderer implements ICellRendererComp {
             this.eGui.classList.remove(positiveClass);
             this.eGui.classList.add(negativeClass);
         }
-
         // Update value
         const currencyValue = toCurrency({ value });
         this.eGui.innerHTML = currencyValue;
