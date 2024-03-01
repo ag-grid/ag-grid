@@ -1,45 +1,39 @@
-// CSS directly lifted from Grid repo
-
 @use '../core' as *;
 
 .searchBox {
     display: flex;
-    align-items: center;
-    position: relative;
-
-    input[type='search'] {
-        width: 100%;
-        padding-top: 0.4375em;
-        padding-bottom: 0.4375em;
-        padding-left: 2em;
-
-        &::-webkit-search-decoration,
-        &::-webkit-search-cancel-button {
-            display: none;
-        }
-    }
-
-    #{$selector-darkmode} & {
-        input {
-            background: color-mix(in srgb, var(--color-white), transparent 94%);
-
-            &::placeholder {
-                color: rgba(255, 255, 255, 0.6);
-            }
-        }
-    }
-
-    :global(.icon) {
-        --icon-size: 1.25em;
-        --color-icon: var(--color-fg-secondary);
-
-        position: absolute;
-        left: 0.625em;
-    }
+    border-radius: var(--radius-md);
+    cursor: text;
 }
 
-input[type='search'].resultsOpen {
-    border-bottom-right-radius: 0;
-    border-bottom-left-radius: 0;
-    padding-right: 80px;
+.searchIcon {
+    --icon-size: 28px;
+    --color-icon: var(--color-fg-secondary);
+
+    position: absolute;
+    top: 24px;
+    left: 24px;
+}
+
+input[type='search'].searchInput {
+    width: 100%;
+    padding: $spacing-size-6 $spacing-size-6 $spacing-size-6 $spacing-size-16;
+    font-size: 20px;
+    border: none;
+    outline: none;
+    box-shadow: none;
+
+    &:focus,
+    &:focus-visible {
+        box-shadow: none !important; // !important required to override complex input focus selectors
+    }
+
+    &::placeholder {
+        color: var(--color-fg-quinary);
+    }
+
+    &::-webkit-search-decoration,
+    &::-webkit-search-cancel-button {
+        display: none;
+    }
 }

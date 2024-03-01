@@ -5,7 +5,8 @@ import { getEntry } from 'astro:content';
 import { FRAMEWORKS } from '@constants';
 import styles from '@design-system/modules/SiteHeader.module.scss';
 import { SiteLogo } from './SiteLogo';
-// import Search from '../search/Search';
+import Search from '../search/Search';
+import { getFrameworkFromPath } from '@features/docs/utils/urlPaths';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { DarkModeToggle } from './DarkModeToggle';
 import { ProductDropdown } from '@components/product-dropdown/ProductDropdown';
@@ -14,6 +15,7 @@ import { getApiPaths } from '@utils/apiMenuPath';
 const { pathname } = Astro.url;
 const { data: menuData } = await getEntry('menu', 'data');
 const topNavItems = menuData.header.items;
+const currentFramework = getFrameworkFromPath(pathname);
 const frameworkPaths = FRAMEWORKS.map((framework) => ({
     title: 'Docs',
     path: urlWithBaseUrl(framework),
@@ -70,7 +72,7 @@ const dropdownItems = [
             )
         }
 
-        <!-- {showSearchBar && <Search client:load currentFramework={framework} isDev={isDev} />} -->
+        { currentFramework && <Search client:load currentFramework={currentFramework} /> }
 
         <HeaderNav currentPath={pathname} items={topNavItems} allPaths={allPaths} apiPaths={apiPaths} client:load>
             <li class:list={[styles.navItem, styles.buttonItem, 'darkModeItem']}>
