@@ -21,14 +21,6 @@ export default ({ closeModal, structuredHits, selectedHit, setSelectedHit, query
                 <Icon name="search"/>
                 <span>No Results for "<b>{query}</b>"</span>
             </div>
-            <div>
-                Try searching for:
-                <div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                </div>
-            </div>
         </>;
     }
 
