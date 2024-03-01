@@ -50,6 +50,10 @@ export const PUBLISHED_UMD_URLS = {
 
 export const DOCS_TAB_ITEM_ID_PREFIX = 'reference-';
 
+// whether integrated charts includes ag-charts-enterprise or just ag-charts-community
+// also need to update plugins/ag-grid-generate-example-files/src/executors/generate/generator/constants.ts if this value is changed
+export const integratedChartsUsesChartsEnterprise = true;
+
 /**
  * Site base URL
  *

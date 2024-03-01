@@ -87,6 +87,8 @@ export const FILES_PATH_MAP: Record<string, string | GlobConfig> = {
 
     // packages
     'ag-grid-community/dist/**': 'packages/ag-grid-community/dist/**/*.{cjs,js,map}',
+    'ag-grid-enterprise/dist/**': 'packages/ag-grid-enterprise/dist/**/*.{cjs,js,map}',
+    'ag-grid-charts-enterprise/dist/**': 'packages/ag-grid-charts-enterprise/dist/**/*.{cjs,js,map}',
 
 
     // TODO: Dynamically map files

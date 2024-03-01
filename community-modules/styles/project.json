@@ -6,10 +6,13 @@
   "targets": {
     "build": {
       "executor": "nx:noop",
-      "dependsOn": ["build:styles"]
+      "dependsOn": ["build:styles"],
+      "inputs": [],
+      "outputs": []
     },
     "build:styles": {
       "outputs": ["{projectRoot}/*.css", "{projectRoot}/_css-content.scss"],
+      "inputs": ["{projectRoot}/*.scss", "{projectRoot}/*.js"],
       "options": {
         "options": {
           "cwd": "community-modules/styles",

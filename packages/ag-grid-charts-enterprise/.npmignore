@@ -1,0 +1,9 @@
+!dist
+
+src/**/*.ts
+.npmignore
+project.json
+tsconfig.json
+tsconfig.lib.json
+tsconfig.umd.json
+webpack.config.js

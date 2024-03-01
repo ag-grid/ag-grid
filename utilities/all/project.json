@@ -54,7 +54,7 @@
         "production": {}
       }
     },
-    "build:modules": {
+    "build:core:modules": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
@@ -62,6 +62,21 @@
         ]
       },
       "cache": true
+    },
+    "build:core:packages": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "nx run-many -t build --projects=tag:package --exclude=tag:framework"
+        ]
+      },
+      "cache": true
+    },
+    "build:core": {
+      "executor": "nx:noop",
+      "dependsOn": ["build:modules", "build:packages"],
+      "inputs": [],
+      "outputs": []
     },
     "test:modules": {
       "executor": "nx:run-commands",
@@ -195,6 +210,8 @@
     "enterprise-modules/viewport-row-model",
     "enterprise-modules/status-bar",
     "packages/ag-grid-community",
+    "packages/ag-grid-enterprise",
+    "packages/ag-grid-charts-enterprise",
     "documentation/ag-grid-docs",
     "ag-grid-generate-example-files"
   ],
