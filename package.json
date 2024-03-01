@@ -80,6 +80,8 @@
       "enterprise-modules/viewport-row-model",
       "enterprise-modules/status-bar",
       "packages/ag-grid-community",
+      "packages/ag-grid-enterprise",
+      "packages/ag-grid-charts-enterprise",
       "documentation/ag-grid-docs",
       "plugins/ag-grid-generate-code-reference-files",
       "plugins/ag-grid-generate-example-files",

@@ -6,6 +6,8 @@
   "targets": {
     "build": {
       "executor": "nx:noop",
+      "inputs": [],
+      "outputs": [],
       "dependsOn": ["build:types", "build:package", "build:umd", "build:copy-styles"]
     },
     "build:umd": {
@@ -20,10 +22,6 @@
     },
     "build:copy-styles": {
       "dependsOn": [],
-      "inputs": [
-        "^production",
-        "production"
-      ],
       "cache": true,
       "command": "rsync -r ../../community-modules/styles/*.*css --delete styles",
       "options": {
@@ -51,8 +49,24 @@
     },
     "build:package": {
       "executor": "@nx/esbuild:esbuild",
-      "dependsOn": ["^build"],
-      "inputs": ["tsDefaults"],
+      "dependsOn": [
+        "@ag-grid-community/core:build",
+        "@ag-grid-community/client-side-row-model:build",
+        "@ag-grid-community/csv-export:build",
+        "@ag-grid-community/infinite-row-model:build",
+        "@ag-grid-community/styles:build"
+      ],
+      "inputs": [
+        "{projectRoot}/package.json",
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/tsconfig.*.json",
+        "tsDeclarations",
+        "sharedGlobals",
+        "defaultExcludes",
+        {
+          "externalDependencies": ["npm:typescript", "npm:esbuild"]
+        }
+      ],
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "packages/ag-grid-community/dist/package",
@@ -87,3 +101,18 @@
   },
   "tags": ["package:community", "package", "community"]
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

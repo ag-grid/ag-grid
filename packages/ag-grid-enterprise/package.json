@@ -1,0 +1,80 @@
+{
+  "name": "ag-grid-enterprise",
+  "version": "31.1.0",
+  "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
+  "main": "./dist/package/main.cjs.js",
+  "types": "./dist/types/src/main.d.ts",
+  "module": "./dist/package/main.esm.mjs",
+  "exports": {
+    "import": "./dist/package/main.esm.mjs",
+    "require": "./dist/package/main.cjs.js",
+    "types": "./dist/types/src/main.d.ts",
+    "default": "./dist/package/main.cjs.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ag-grid/ag-grid.git"
+  },
+  "keywords": [
+    "ag",
+    "ag-grid",
+    "datagrid",
+    "data-grid",
+    "datatable",
+    "data-table",
+    "grid",
+    "table",
+    "react",
+    "table",
+    "angular",
+    "angular-component",
+    "react",
+    "react-component",
+    "reactjs",
+    "vue",
+    "vuejs"
+  ],
+  "author": "Sean Landsman <sean@thelandsmans.com>",
+  "license": "Commercial",
+  "bugs": {
+    "url": "https://github.com/ag-grid/ag-grid/issues"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie >= 0",
+    "not ie_mob >= 0",
+    "not blackberry > 0"
+  ],
+  "homepage": "https://www.ag-grid.com/",
+  "devDependencies": {
+    "@ag-grid-community/client-side-row-model": "31.1.0",
+    "@ag-grid-community/core": "31.1.0",
+    "@ag-grid-community/csv-export": "31.1.0",
+    "@ag-grid-community/infinite-row-model": "31.1.0",
+    "@ag-grid-community/styles": "31.1.0",
+    "@ag-grid-enterprise/advanced-filter": "31.1.0",
+    "@ag-grid-enterprise/charts": "31.1.0",
+    "@ag-grid-enterprise/clipboard": "31.1.0",
+    "@ag-grid-enterprise/column-tool-panel": "31.1.0",
+    "@ag-grid-enterprise/core": "31.1.0",
+    "@ag-grid-enterprise/excel-export": "31.1.0",
+    "@ag-grid-enterprise/filter-tool-panel": "31.1.0",
+    "@ag-grid-enterprise/master-detail": "31.1.0",
+    "@ag-grid-enterprise/menu": "31.1.0",
+    "@ag-grid-enterprise/multi-filter": "31.1.0",
+    "@ag-grid-enterprise/range-selection": "31.1.0",
+    "@ag-grid-enterprise/rich-select": "31.1.0",
+    "@ag-grid-enterprise/row-grouping": "31.1.0",
+    "@ag-grid-enterprise/server-side-row-model": "31.1.0",
+    "@ag-grid-enterprise/set-filter": "31.1.0",
+    "@ag-grid-enterprise/side-bar": "31.1.0",
+    "@ag-grid-enterprise/sparklines": "31.1.0",
+    "@ag-grid-enterprise/status-bar": "31.1.0",
+    "@ag-grid-enterprise/viewport-row-model": "31.1.0",
+    "ts-loader": "^9.5.1",
+    "style-loader": "^3.3.4",
+    "css-loader": "^6.10.0",
+    "postcss-loader": "^8.1.0"
+  }
+}
