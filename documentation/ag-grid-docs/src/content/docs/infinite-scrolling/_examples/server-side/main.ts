@@ -9,7 +9,7 @@ import {
     SortModelItem,
     GetRowIdParams,
 } from '@ag-grid-community/core';
-
+import { getCountries } from './countries';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
 import { MenuModule } from '@ag-grid-enterprise/menu';
@@ -18,7 +18,7 @@ import { ModuleRegistry } from "@ag-grid-community/core";
 
 ModuleRegistry.registerModules([ColumnsToolPanelModule, InfiniteRowModelModule, MenuModule, SetFilterModule]);
 
-declare function getCountries(): string[];
+
 
 const filterParams = { values: getCountries() };
 

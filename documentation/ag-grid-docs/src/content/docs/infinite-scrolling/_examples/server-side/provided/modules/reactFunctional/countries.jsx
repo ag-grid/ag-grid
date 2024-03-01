@@ -1,4 +1,4 @@
-function getCountries() {
+export function getCountries() {
     return [
         'United States',
         'Russia',

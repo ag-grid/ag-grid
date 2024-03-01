@@ -1,17 +1,11 @@
-import {
-  GridApi,
-  createGrid,
-  CellValueChangedEvent,
-  GridOptions,
-  ICellEditorComp,
-  ICellEditorParams,
-  RowValueChangedEvent,
-} from '@ag-grid-community/core';
-declare var NumericCellEditor: ICellEditorComp;
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import {
+  CellValueChangedEvent, createGrid, GridApi, GridOptions, ModuleRegistry, RowValueChangedEvent
+} from '@ag-grid-community/core';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
-import { ModuleRegistry } from "@ag-grid-community/core";
+
+import { NumericEditor } from './numericCellEditor';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, MenuModule]);
 
@@ -29,7 +23,7 @@ const gridOptions: GridOptions = {
     },
     { field: 'model' },
     { field: 'field4', headerName: 'Read Only', editable: false },
-    { field: 'price', cellEditor: NumericCellEditor },
+    { field: 'price', cellEditor: NumericEditor },
     {
       headerName: 'Suppress Navigable',
       field: 'field5',
