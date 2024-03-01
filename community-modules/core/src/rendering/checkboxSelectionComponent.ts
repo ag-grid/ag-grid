@@ -8,6 +8,7 @@ import { RowNode } from '../entities/rowNode';
 import { stopPropagationForAgGrid } from '../utils/event';
 import { CheckboxSelectionCallback } from '../entities/colDef';
 import { GroupCheckboxSelectionCallback } from './cellRenderers/groupCellRendererCtrl';
+import { getAriaCheckboxStateName } from '../utils/aria';
 
 export class CheckboxSelectionComponent extends Component {
 
@@ -49,8 +50,13 @@ export class CheckboxSelectionComponent extends Component {
     }
 
     private onSelectionChanged(): void {
+        const translate = this.localeService.getLocaleTextFunc();
         const state = this.rowNode.isSelected();
+        const stateName = getAriaCheckboxStateName(translate, state);
+        const ariaLabel = translate('ariaRowToggleSelection', 'Press Space to toggle row selection');
+
         this.eCheckbox.setValue(state, true);
+        this.eCheckbox.setInputAriaLabel(`${ariaLabel} (${stateName})`);
     }
 
     private onClicked(newValue: boolean, groupSelectsFiltered: boolean | undefined, event: MouseEvent): number {
