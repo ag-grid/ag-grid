@@ -3,7 +3,7 @@ import type {CollectionEntry} from 'astro:content';
 import glob from 'glob';
 import {readFileSync} from 'node:fs';
 
-import {SITE_BASE_URL, USE_PUBLISHED_PACKAGES} from '../constants';
+import {integratedChartsUsesChartsEnterprise, SITE_BASE_URL, USE_PUBLISHED_PACKAGES} from '../constants';
 import {createFilePathFinder, type GlobConfig} from './createFilePathFinder';
 import {getIsDev} from './env';
 import {pathJoin} from './pathJoin';
@@ -87,9 +87,6 @@ export const FILES_PATH_MAP: Record<string, string | GlobConfig> = {
 
     // packages
     'ag-grid-community/dist/**': 'packages/ag-grid-community/dist/**/*.{cjs,js,map}',
-    'ag-grid-enterprise/dist/**': 'packages/ag-grid-enterprise/dist/**/*.{cjs,js,map}',
-    'ag-grid-charts-enterprise/dist/**': 'packages/ag-grid-charts-enterprise/dist/**/*.{cjs,js,map}',
-
 
     // TODO: Dynamically map files
     // '@ag-grid-community': {
@@ -104,6 +101,8 @@ export const FILES_PATH_MAP: Record<string, string | GlobConfig> = {
     // Hero grid
     '@ag-grid-community/styles/ag-theme-alpine.css': 'community-modules/styles/ag-theme-alpine.css',
 };
+// FILES_PATH_MAP[`ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise/dist/**`] = `packages/ag-grid-enterprise/dist/**/*.{cjs,js,map}`;
+
 type FileKey = keyof typeof FILES_PATH_MAP;
 
 export function getJsonFile(fileKey: FileKey) {
