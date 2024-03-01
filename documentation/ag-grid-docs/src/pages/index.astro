@@ -9,6 +9,7 @@ import ChartsLogo from '@images/inline-svgs/ag-charts-logo.svg?react';
 import HeroGrid from '@components/hero-grid/HeroGrid.astro';
 import { pathJoin } from '@utils/pathJoin';
 import { FILES_BASE_PATH } from '@constants';
+import { AutomatedExamples } from '@components/automated-examples/AutomatedExamples';
 
 // TODO: Is this best place to get the current version from?
 const { data: versions } = await getEntry('versions', 'ag-grid-versions');
@@ -35,7 +36,7 @@ const frameworksData = [
 
 // TODO: Use `agGridEnterpriseVersion` from `@constants`;
 const agGridEnterpriseVersion = '31.1.1';
-const enterpriseGridUrl = `https://cdn.jsdelivr.net/npm/ag-grid-enterprise@${agGridEnterpriseVersion}/dist/ag-grid-enterprise.min.js`;
+const enterpriseGridUrl = `https://cdn.jsdelivr.net/npm/ag-grid-charts-enterprise@${agGridEnterpriseVersion}/dist/ag-grid-charts-enterprise.min.js`;
 ---
 
 <!-- Dev files -->
@@ -115,50 +116,7 @@ const enterpriseGridUrl = `https://cdn.jsdelivr.net/npm/ag-grid-enterprise@${agG
         </div>
     </div>
 
-    <section class={styles.automatedRowGroupingOuter}>
-        <div class:list={['layout-max-width-small', styles.homepageExample]}>
-            <!-- <div class={styles.automatedRowGrouping}>
-                {
-                    !IS_SSR && (
-                        <React.Suspense fallback={<></>}>
-                            <AutomatedRowGrouping
-                                automatedExampleManager={automatedExampleManager}
-                                useStaticData={isCI}
-                                runOnce={runAutomatedExamplesOnce}
-                                visibilityThreshold={0.2}
-                                Always
-                                keep
-                                it
-                                in
-                                dark
-                                mode
-                                darkMode={true}
-                            />
-                        </React.Suspense>
-                    )
-                }
-            </div> -->
-        </div>
-    </section>
-
-    <section class={styles.automatedIntegratedChartsOuter}>
-        <div class:list={['layout-max-width-small', styles.homepageExample]}>
-            <!-- <div class={styles.automatedIntegratedCharts}>
-                {
-                    !IS_SSR && (
-                        <React.Suspense fallback={<></>}>
-                            <AutomatedIntegratedCharts
-                                automatedExampleManager={automatedExampleManager}
-                                useStaticData={isCI}
-                                runOnce={runAutomatedExamplesOnce}
-                                visibilityThreshold={0.8}
-                            />
-                        </React.Suspense>
-                    )
-                }
-            </div> -->
-        </div>
-    </section>
+    <AutomatedExamples client:load />
 
     <div class={styles.homepageSponsorship}>
         <section class:list={[styles.sponsorshipInner, 'layout-max-width-small']}>
