@@ -268,7 +268,7 @@ export class FilterManager extends BeanStub {
     }
 
     public isAdvancedFilterEnabled(): boolean {
-        return this.advancedFilterService?.isEnabled();
+        return !!this.advancedFilterService?.isEnabled();
     }
 
     public isAdvancedFilterHeaderActive(): boolean {
