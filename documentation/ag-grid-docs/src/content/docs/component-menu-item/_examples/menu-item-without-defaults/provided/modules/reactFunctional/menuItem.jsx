@@ -1,6 +1,5 @@
 import React, { KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react';
-import { CustomMenuItemProps } from '@ag-grid-community/react';
-import { Column, IFilterComp } from '@ag-grid-community/core';
+import { Column } from '@ag-grid-community/core';
 
 export default ({ column, api, active, onActiveChange }) => {
     const filterWrapperRef = useRef(null);
