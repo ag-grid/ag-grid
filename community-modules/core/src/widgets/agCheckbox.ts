@@ -2,7 +2,10 @@ import { Events, CheckboxChangedEvent } from "../events";
 import { AgAbstractInputField, AgInputFieldParams } from './agAbstractInputField';
 import { LabelAlignment } from './agAbstractLabel';
 
-export interface AgCheckboxParams extends AgInputFieldParams {}
+export interface AgCheckboxParams extends AgInputFieldParams {
+    readOnly?: boolean;
+    passive?: boolean;
+}
 
 export class AgCheckbox<TConfig extends AgCheckboxParams = AgCheckboxParams> extends AgAbstractInputField<HTMLInputElement, boolean, TConfig> {
 
@@ -14,6 +17,14 @@ export class AgCheckbox<TConfig extends AgCheckboxParams = AgCheckboxParams> ext
 
     constructor(config?: TConfig, className = 'ag-checkbox', inputType = 'checkbox') {
         super(config, className, inputType);
+    }
+
+    protected override postConstruct() {
+        super.postConstruct();
+
+        const { readOnly, passive } = this.config;
+        if (typeof readOnly === 'boolean') this.setReadOnly(readOnly);
+        if (typeof passive === 'boolean') this.setPassive(passive);
     }
 
     protected addInputListeners() {
