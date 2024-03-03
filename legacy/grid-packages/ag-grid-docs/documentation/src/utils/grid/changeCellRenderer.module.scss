@@ -1,0 +1,36 @@
+@use '../../design-system' as *;
+
+.changeValue {
+    -webkit-font-smoothing: subpixel-antialiased;
+
+    border-radius: 20px;
+    padding: 5px 12px;
+}
+
+.positive {
+    $positive-color: #46e372;
+
+    color: $positive-color;
+    background-color: rgba($positive-color, 0.1);
+
+    #{$selector-darkmode} & {
+        $positive-color: #1ce61c;
+
+        color: $positive-color;
+        background-color: rgba($positive-color, 0.15);
+    }
+}
+
+.negative {
+    $negative-color: #ff005c;
+
+    color: $negative-color;
+    background-color: rgba($negative-color, 0.19);
+
+    #{$selector-darkmode} & {
+        $negative-color: #ff0552;
+
+        color: $negative-color;
+        background-color: rgba($negative-color, 0.24);
+    }
+}

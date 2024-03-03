@@ -1,0 +1,83 @@
+---
+import { Icon } from '@components/icon/Icon';
+import { HeaderNav } from './HeaderNav';
+import { getEntry } from 'astro:content';
+import { FRAMEWORKS } from '@constants';
+import styles from '@design-system/modules/SiteHeader.module.scss';
+import { SiteLogo } from './SiteLogo';
+import Search from '../search/Search';
+import { getFrameworkFromPath } from '@features/docs/utils/urlPaths';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+import { DarkModeToggle } from './DarkModeToggle';
+import { ProductDropdown } from '@components/product-dropdown/ProductDropdown';
+import { getApiPaths } from '@utils/apiMenuPath';
+
+const { pathname } = Astro.url;
+const { data: menuData } = await getEntry('menu', 'data');
+const topNavItems = menuData.header.items;
+const currentFramework = getFrameworkFromPath(pathname);
+const frameworkPaths = FRAMEWORKS.map((framework) => ({
+    title: 'Docs',
+    path: urlWithBaseUrl(framework),
+}));
+const allPaths = [...topNavItems, ...frameworkPaths];
+const apiPaths = getApiPaths(menuData);
+
+export interface Props {
+    showSearchBar?: boolean;
+    showDocsNav?: boolean;
+}
+
+const { showDocsNav } = Astro.props;
+
+const dropdownItems = [
+    {
+        title: 'AG Charts',
+        description: 'Best JavaScript Charts in the World',
+        icon: 'icon',
+        link: 'https://charts.ag-grid.com',
+    },
+    {
+        title: 'AG Grid',
+        description: 'Best JavaScript Grid in the World',
+        icon: 'icon',
+        link: 'https://ag-grid.com',
+    },
+];
+---
+
+<header class:list={[styles.header, 'site-header']}>
+    <div class:list={[styles.headerInner, 'layout-page-max-width']}>
+        <SiteLogo client:load />
+
+        <ProductDropdown client:load items={dropdownItems} children={null} />
+
+        {
+            showDocsNav && (
+                <div class={styles.docsNavBtnSearchContainer}>
+                    <button
+                        id="top-bar-docs-button"
+                        class:list={[styles.mobileNavButton, 'button-secondary']}
+                        type="button"
+                        data-toggle="collapse"
+                        data-target="#side-nav"
+                        aria-controls="side-nav"
+                        aria-expanded="false"
+                        aria-label="Toggle docs page navigation"
+                    >
+                        <span>Docs</span>
+                        <Icon name="collapseCategories" />
+                    </button>
+
+                    {currentFramework && <Search client:load currentFramework={currentFramework} />}
+                </div>
+            )
+        }
+
+        <HeaderNav currentPath={pathname} items={topNavItems} allPaths={allPaths} apiPaths={apiPaths} client:load>
+            <li class:list={[styles.navItem, styles.buttonItem, 'darkModeItem']}>
+                <DarkModeToggle client:only />
+            </li>
+        </HeaderNav>
+    </div>
+</header>

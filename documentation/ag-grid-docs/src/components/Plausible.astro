@@ -1,0 +1,16 @@
+---
+interface Props {
+    domain: string;
+}
+
+const { domain } = Astro.props as Props;
+---
+
+<script defer data-domain={domain} src="https://plausible.io/js/script.tagged-events.outbound-links.js"></script>
+<script is:inline>
+    window.plausible =
+        window.plausible ||
+        function () {
+            (window.plausible.q = window.plausible.q || []).push(arguments);
+        };
+</script>

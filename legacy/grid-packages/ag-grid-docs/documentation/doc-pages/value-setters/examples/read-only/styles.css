@@ -1,0 +1,17 @@
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#myGrid {
+    flex: 1 1 0px;
+    width: 100%;
+}
+
+.example-header {
+    background-color: #CCAA22A9;
+    padding: 5px;
+    margin-bottom: 1rem;
+    border-radius: 5px;
+}

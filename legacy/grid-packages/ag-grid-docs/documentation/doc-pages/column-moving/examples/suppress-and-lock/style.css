@@ -1,0 +1,31 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.locked-col {
+    background-color: #99999944;
+}
+
+.suppress-movable-col {
+    background-color: #CC333344;
+}
+
+.legend-box {
+    border: 1px solid #aaa;
+    height: 15px;
+    width: 15px;
+    display: inline-block;
+    vertical-align: text-top;
+}
+
+.legend-bar {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 13px;
+    margin-bottom: 1rem;
+}
+
+#myGrid {
+    flex: 1 1 0px;
+}

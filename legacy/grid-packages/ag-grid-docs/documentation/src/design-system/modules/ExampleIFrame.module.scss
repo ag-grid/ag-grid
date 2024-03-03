@@ -1,0 +1,15 @@
+.container {
+    width: 100%;
+    height: 100%;
+
+    &.hidden {
+        display: none;
+    }
+}
+
+.iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}

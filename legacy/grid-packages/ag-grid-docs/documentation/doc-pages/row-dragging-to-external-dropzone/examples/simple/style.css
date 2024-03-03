@@ -1,0 +1,84 @@
+body {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 13px;
+}
+
+.example-wrapper {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+}
+
+.drop-containers {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: row;
+    position: relative;
+    overflow: hidden;
+}
+
+.toolbar { 
+    height: 30px;
+}
+
+.grid-wrapper {
+    flex: 2 2 0px;
+    min-width: 0;
+}
+
+.drop-col {
+    padding-left: 10px;
+    box-sizing: border-box;
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.drop-target, .tile {
+    color: white;
+}
+
+.drop-target {
+    border: 1px solid #888;
+    background-color:#99999966;
+    padding: 10px;
+}
+
+.tile-container {
+    box-sizing: border-box;
+    border: 1px solid #888;
+    background-color: #99999944;
+    overflow: auto;
+    display: flex;
+    align-items: flex-start;
+    align-content: flex-start;
+    flex-wrap: wrap;
+    flex: 1 1 auto;
+}
+
+.tile { 
+    width: calc(50% - 30px);
+    margin: 5px;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.red-row {
+    background-color: #CC333344 !important;
+}
+.green-row {
+    background-color: #33CC3344 !important;
+}
+.blue-row {
+    background-color: #2244CC44 !important;
+}
+
+.tile.red {
+    background-color: #CC333344;
+}
+.tile.green {
+    background-color: #33CC3344;
+}
+.tile.blue {
+    background-color: #2244CC44;
+}

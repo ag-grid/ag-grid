@@ -1,0 +1,24 @@
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#myGrid {
+    flex: 1 1 0px;
+    width: 100%;
+}
+
+.example-header {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.ag-floating-top .ag-row {
+    background-color: #99999944;
+}
+
+.ag-floating-bottom .ag-row {
+    background-color: #99999944;
+}

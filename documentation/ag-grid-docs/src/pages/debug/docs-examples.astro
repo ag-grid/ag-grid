@@ -1,0 +1,75 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '@layouts/Layout.astro';
+import { getDocsExamplePages } from '@features/docs/utils/pageData';
+import { getExampleContentsUrl, getExampleUrl } from '@features/docs/utils/urlPaths';
+import { getIsImplemented } from '@constants';
+
+const pages = [];
+const examples = [];
+// const pages = await getCollection('docs');
+// const examples = await getDocsExamplePages({
+//     pages,
+// });
+---
+
+<Layout title={`Debug: Docs Example Pages`}>
+    <main class="layout-page-max-width container">
+        <h1>Example pages ({examples.length})</h1>
+        <table>
+            <thead>
+                <th>No.</th>
+                <th>Url</th>
+                <th>Contents</th>
+                <th><code>params.internalFramework</code></th>
+                <th><code>params.pageName</code></th>
+                <th><code>params.exampleName</code></th>
+                <th><code>params.importType</code></th>
+            </thead>
+            <tbody>
+                {
+                    examples.map((example, index) => {
+                        const { internalFramework, pageName, exampleName, importType } = example.params;
+                        const isImplemented = getIsImplemented(example.params);
+                        const url = getExampleUrl({
+                            internalFramework,
+                            pageName,
+                            exampleName,
+                            importType
+                        });
+                        const contentsUrl = getExampleContentsUrl({
+                            internalFramework,
+                            pageName,
+                            exampleName,
+                            importType
+                        });
+                        return (
+                            <tr>
+                                <td>{index + 1}</td>
+                                <td>
+                                    {isImplemented ? <a href={url}>{url}</a>:  `TODO: ${url}`}
+                                </td>
+                                <td>
+                                    <a href={contentsUrl}>contents.json</a>
+                                </td>
+                                <td>{internalFramework}</td>
+                                <td>{pageName}</td>
+                                <td>{exampleName}</td>
+                                <td>{importType}</td>
+                            </tr>
+                        );
+                    })
+                }
+            </tbody>
+        </table>
+    </main>
+</Layout>
+
+<style lang="scss">
+    @use '../../design-system' as *;
+
+    .container {
+        margin-top: $spacing-size-12;
+        margin-bottom: calc($spacing-size-12 * 4);
+    }
+</style>

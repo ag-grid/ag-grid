@@ -1,0 +1,126 @@
+---
+title: "Grid Overview" 
+---
+
+This section provides key information for configuring and interacting with a grid.
+
+## Grid Options
+
+{% includeMarkdoc file="grid-interface/_index-javascript.mdoc" /%}
+{% includeMarkdoc file="grid-interface/_index-angular.mdoc" /%}
+{% includeMarkdoc file="grid-interface/_index-react.mdoc" /%}
+{% includeMarkdoc file="grid-interface/_index-vue.mdoc" /%}
+
+### Updating Grid Options
+
+It is a common requirement to update a grid option after the grid has been created. For example, you may want to change `rowHeight` via an application toggle.
+
+{% if isFramework("javascript") %}
+Properties can be updated by calling either `api.setGridOption` or `api.updateGridOptions`. In this example all the rows will be redrawn with the new height.
+{% /if %}
+
+{% if isFramework("angular", "vue") %}
+Simply update the bound property and the grid will respond to the new value. In this example all the rows will be redrawn with the new height.
+{% /if %}
+
+{% if isFramework("angular") %}
+```js
+<ag-grid-angular
+   [rowHeight]="rowHeight"    
+</ag-grid-angular>
+
+updateHeight() {
+  this.rowHeight = 50;
+}
+```
+{% /if %}
+
+{% if isFramework("vue") %}
+```jsx
+<ag-grid-vue
+   :row-height="rowHeight"
+</ag-grid-vue>
+
+updateHeight() {
+  this.rowHeight = 50;
+}
+```
+{% /if %}
+
+{% if isFramework("angular", "vue") %}
+Properties can also be updated by calling either `api.setGridOption` or `api.updateGridOptions`.
+{% /if %}
+
+{% if isFramework("react") %}
+Simply update your state and the grid will respond to the new value. In this example all the rows will be redrawn with the new height.
+{% /if %}
+
+{% if isFramework("react") %}
+```jsx
+const [rowHeight, setRowHeight] = useState(25);
+
+// Callback to update the rowHeight
+const updateHeight = () => setRowHeight(50);
+
+<AgGridReact
+   rowHeight={rowHeight}
+/>
+```
+{% /if %}
+
+{% if isFramework("react") %}
+We recommend updating options via `AgGridReact` props but it is also possible to updated a property via `api.setGridOption` or `api.updateGridOptions`.
+{% /if %}
+
+{% if isFramework("javascript", "angular", "vue", "react") %}
+```js
+// update the rowHeight
+api.setGridOption('rowHeight', 50); 
+```
+{% /if %}
+
+### Initial Grid Options
+
+A small number of Grid Options do **not** support updating their value. Their value is only read during the initial setup of the grid. These options are marked as `Initial` on the [Options Reference](./grid-options). For these properties the grid must be destroyed and re-created for the new value to take effect.
+
+{% note %}
+Not all Grid Options support updates. These are marked as Initial.
+{% /note %}
+
+For a full list of options see: [Options Reference](./grid-options).
+
+## Grid Events
+
+As a user interacts with the grid events will be fired to enable your application to respond to specific actions.
+
+{% includeMarkdoc file="grid-interface/_events-javascript.mdoc" /%}
+{% includeMarkdoc file="grid-interface/_events-angular.mdoc" /%}
+{% includeMarkdoc file="grid-interface/_events-react.mdoc" /%}
+{% includeMarkdoc file="grid-interface/_events-vue.mdoc" /%}
+
+{% note %}
+TypeScript users can take advantage of the events' interfaces. Construct the interface name by suffixing the event name with `Event`. For example, the `cellClicked` event uses the interface `CellClickedEvent`. All events support [Typescript Generics](./typescript-generics/).
+{% /note %}
+
+For a full list of events see: [Grid Events](./grid-events).
+
+## Grid API
+
+{% includeMarkdoc file="grid-interface/_api-javascript.mdoc" /%}
+{% includeMarkdoc file="grid-interface/_api-angular.mdoc" /%}
+{% includeMarkdoc file="grid-interface/_api-react.mdoc" /%}
+{% includeMarkdoc file="grid-interface/_api-vue.mdoc" /%}
+
+For a full list of api methods see: [Grid API](./grid-api).
+
+## Grid State
+
+As a user interacts with the grid they may change state such as filtering, sorting and column order. This state is independent of the configuration and to provide save and restore capabilities the grid enables applications to save / restore this state.
+
+For a full list of the state properties see: [Grid State](./grid-state/).
+
+## Grid Lifecycle
+
+When working with AG Grid it is a common requirement to perform actions when the grid is first initialised, when data is first rendered and when the grid is about to be destroyed.
+
+For full details about how to interact with the grid at these key moments see: [Grid Lifecycle](./grid-lifecycle/).

@@ -1,0 +1,39 @@
+{
+  "name": "@ag-grid-community/styles",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "community-modules/styles",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "nx:noop",
+      "dependsOn": ["build:styles"],
+      "inputs": [],
+      "outputs": []
+    },
+    "build:styles": {
+      "outputs": ["{projectRoot}/*.css", "{projectRoot}/_css-content.scss"],
+      "inputs": ["{projectRoot}/*.scss", "{projectRoot}/*.js"],
+      "options": {
+        "options": {
+          "cwd": "community-modules/styles",
+          "command": "sass --no-source-map --load-path src/internal src:."
+        }
+      },
+      "cache": true
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "inputs": [],
+      "outputs": [],
+      "options": {
+        "cwd": "community-modules/styles",
+        "commands": [
+          "stylelint --formatter unix --config stylelint-config-scss.js 'src/**/*.scss' '*.scss'",
+          "stylelint --formatter unix --config stylelint-config-css.js '*.css'",
+          "sass test/test.scss"]
+      }
+    }
+
+  },
+  "tags": ["module:community", "module", "community", "styles"]
+}

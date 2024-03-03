@@ -1,0 +1,13 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.divider {
+    height: 5%;
+}
+
+.grid {
+    flex: 1 1 auto;
+}

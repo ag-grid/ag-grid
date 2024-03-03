@@ -1,0 +1,11 @@
+{
+    "_config_": {},
+    "SparklineTooltipOptions": {
+        "renderer": {
+            "more": {
+                "name": "TooltipRendererResult",
+                "url": "/sparklines-tooltips/#tooltiprendererparams"
+            }
+        }
+    }
+}

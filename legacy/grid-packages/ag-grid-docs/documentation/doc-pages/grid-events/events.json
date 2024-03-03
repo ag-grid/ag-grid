@@ -1,0 +1,469 @@
+{
+    "_config_": {
+        "codeSrc": "grid-api/grid-options.AUTO.json"
+    },
+    "accessories": {
+        "meta": {
+            "displayName": "Accessories"
+        },
+        "toolPanelVisibleChanged": {
+            "more": {
+                "name": "Tool Panel Events",
+                "url": "/tool-panel/#events"
+            }
+        },
+        "toolPanelSizeChanged": {
+            "more": {
+                "name": "Tool Panel Events",
+                "url": "/tool-panel/#events"
+            }
+        },
+        "columnMenuVisibleChanged": {
+            "more": {
+                "name": "Column Menu API / Events",
+                "url": "/column-menu/#column-menu-api--events"
+            }
+        }
+    },
+    "clipboard": {
+        "meta": {
+            "displayName": "Clipboard",
+            "page": {
+                "name": "Clipboard",
+                "url": "/clipboard/"
+            }
+        },
+        "cutStart": {
+            "more": {
+                "name": "Clipboard Events",
+                "url": "/clipboard/#clipboard-events"
+            }
+        },
+        "cutEnd": {
+            "more": {
+                "name": "Clipboard Events",
+                "url": "/clipboard/#clipboard-events"
+            }
+        },
+        "pasteStart": {
+            "more": {
+                "name": "Clipboard Events",
+                "url": "/clipboard/#clipboard-events"
+            }
+        },
+        "pasteEnd": {
+            "more": {
+                "name": "Clipboard Events",
+                "url": "/clipboard/#clipboard-events"
+            }
+        }
+    },
+    "components": {
+        "meta": {
+            "displayName": "Components",
+            "page": {
+                "name": "Components",
+                "url": "/components/"
+            }
+        },
+        "componentStateChanged": {}
+    },
+    "selection": {
+        "meta": {
+            "displayName": "Selection",
+            "page": {
+                "name": "Selection Overview",
+                "url": "/selection-overview/"
+            }
+        },
+        "cellClicked": {},
+        "cellDoubleClicked": {},
+        "cellFocused": {},
+        "cellMouseOver": {},
+        "cellMouseOut": {},
+        "cellMouseDown": {},
+        "rowClicked": {},
+        "rowDoubleClicked": {},
+        "rowSelected": {
+            "more": {
+                "name": "Selection Events",
+                "url": "/row-selection/#selection-events"
+            }
+        },
+        "selectionChanged": {
+            "more": {
+                "name": "Selection Events",
+                "url": "/row-selection/#selection-events"
+            }
+        },
+        "cellContextMenu": {},
+        "rangeSelectionChanged": {
+            "more": {
+                "name": "Range Selection Changed Event",
+                "url": "/range-selection/#range-selection-changed-event"
+            }
+        }
+    },
+    "charts": {
+        "meta": {
+            "displayName": "Integrated Charts",
+            "page": {
+                "name": "Integrated Charts Events",
+                "url": "/integrated-charts-events/"
+            }
+        },
+        "chartCreated": {
+            "more": {
+                "name": "Chart Created",
+                "url": "/integrated-charts-events/#chartcreated"
+            }
+        },
+        "chartRangeSelectionChanged": {
+            "more": {
+                "name": "Chart Range Selection Changed",
+                "url": "/integrated-charts-events/#chartrangeselectionchanged"
+            }
+        },
+        "chartOptionsChanged": {
+            "more": {
+                "name": "Chart Options Changed",
+                "url": "/integrated-charts-events/#chartoptionschanged"
+            },
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "ChartOptions"
+                ],
+                "include": []
+            }
+        },
+        "chartDestroyed": {
+            "more": {
+                "name": "Chart Destroyed",
+                "url": "/integrated-charts-events/#chartdestroyed"
+            }
+        }
+    },
+    "editing": {
+        "meta": {
+            "displayName": "Editing",
+            "page": {
+                "name": "Cell Editing",
+                "url": "/cell-editing/"
+            }
+        },
+        "cellValueChanged": {
+            "more": {
+                "name": "Editing Events",
+                "url": "/cell-editing/#editing-events"
+            }
+        },
+        "cellEditRequest": {
+            "more": {
+                "name": "Read Only Edit",
+                "url": "/value-setters/#read-only-edit"
+            }
+        },
+        "rowValueChanged": {
+            "more": {
+                "name": "Full Row Editing",
+                "url": "/cell-editing-full-row/"
+            }
+        },
+        "cellEditingStarted": {
+            "more": {
+                "name": "Editing Events",
+                "url": "/cell-editing/#editing-events"
+            }
+        },
+        "cellEditingStopped": {
+            "more": {
+                "name": "Editing Events",
+                "url": "/cell-editing/#editing-events"
+            }
+        },
+        "rowEditingStarted": {
+            "more": {
+                "name": "Full Row Editing",
+                "url": "/cell-editing-full-row/"
+            }
+        },
+        "rowEditingStopped": {
+            "more": {
+                "name": "Full Row Editing",
+                "url": "/cell-editing-full-row/"
+            }
+        },
+        "undoStarted": {
+            "more": {
+                "name": "Undo / Redo Events",
+                "url": "/undo-redo-edits/#undo--redo-events"
+            }
+        },
+        "undoEnded": {
+            "more": {
+                "name": "Undo / Redo Events",
+                "url": "/undo-redo-edits/#undo--redo-events"
+            }
+        },
+        "redoStarted": {
+            "more": {
+                "name": "Undo / Redo Events",
+                "url": "/undo-redo-edits/#undo--redo-events"
+            }
+        },
+        "redoEnded": {
+            "more": {
+                "name": "Undo / Redo Events",
+                "url": "/undo-redo-edits/#undo--redo-events"
+            }
+        },
+        "rangeDeleteStart": {
+            "more": {
+                "name": "Delete Range",
+                "url": "/range-selection/#delete-range"
+            }
+        },
+        "rangeDeleteEnd": {
+            "more": {
+                "name": "Delete Range",
+                "url": "/range-selection/#delete-range"
+            }
+        }
+    },
+    "filter": {
+        "meta": {
+            "displayName": "Filtering",
+            "page": {
+                "name": "Filtering",
+                "url": "/filtering-overview/"
+            }
+        },
+        "filterOpened": {
+            "more": {
+                "name": "Filter Events",
+                "url": "/filter-api/#filter-events"
+            }
+        },
+        "filterChanged": {
+            "more": {
+                "name": "Filter Events",
+                "url": "/filter-api/#filter-events"
+            }
+        },
+        "filterModified": {
+            "more": {
+                "name": "Filter Events",
+                "url": "/filter-api/#filter-events"
+            }
+        },
+        "advancedFilterBuilderVisibleChanged": {
+            "more": {
+                "name": "Advanced Filter",
+                "url": "/filter-advanced/#configuring-advanced-filter-builder"
+            }
+        }
+    },
+    "sort": {
+        "meta": {
+            "displayName": "Sorting",
+            "page": {
+                "name": "Row Sorting",
+                "url": "/row-sorting/"
+            }
+        },
+        "sortChanged": {}
+    },
+    "rowDragDrop": {
+        "meta": {
+            "displayName": "Row Drag and Drop",
+            "page": {
+                "name": "Row Dragging",
+                "url": "/row-dragging/"
+            }
+        },
+        "rowDragEnter": {
+            "more": {
+                "name": "Row Drag Events",
+                "url": "/row-dragging/#row-drag-events"
+            }
+        },
+        "rowDragMove": {
+            "more": {
+                "name": "Row Drag Events",
+                "url": "/row-dragging/#row-drag-events"
+            }
+        },
+        "rowDragLeave": {
+            "more": {
+                "name": "Row Drag Events",
+                "url": "/row-dragging/#row-drag-events"
+            }
+        },
+        "rowDragEnd": {
+            "more": {
+                "name": "Row Drag Events",
+                "url": "/row-dragging/#row-drag-events"
+            }
+        }
+    },
+    "columns": {
+        "meta": {
+            "displayName": "Columns"
+        },
+        "columnVisible": {},
+        "columnPinned": {},
+        "columnResized": {},
+        "columnMoved": {},
+        "columnValueChanged": {},
+        "columnPivotModeChanged": {},
+        "columnPivotChanged": {},
+        "columnGroupOpened": {},
+        "newColumnsLoaded": {},
+        "gridColumnsChanged": {},
+        "displayedColumnsChanged": {},
+        "virtualColumnsChanged": {},
+        "columnEverythingChanged": {},
+        "columnHeaderMouseOver": {},
+        "columnHeaderMouseLeave": {},
+        "columnHeaderClicked": {},
+        "columnHeaderContextMenu": {}
+    },
+    "rowGrouping": {
+        "meta": {
+            "displayName": "Row Grouping",
+            "page": {
+                "name": "Row Grouping",
+                "url": "/grouping/"
+            }
+        },
+        "columnRowGroupChanged": {},
+        "rowGroupOpened": {},
+        "expandOrCollapseAll": {}
+    },
+    "miscellaneous": {
+        "meta": {
+            "displayName": "Miscellaneous"
+        },
+        "gridReady": {
+            "more": {
+                "name": "Grid Ready",
+                "url": "/grid-lifecycle/#grid-ready"
+            }
+        },
+        "gridPreDestroyed": {
+            "more": {
+                "name": "Grid Pre-Destroyed",
+                "url": "/grid-lifecycle/#grid-pre-destroyed"
+            }
+        },
+        "firstDataRendered": {
+            "more": {
+                "name": "First Data Rendered",
+                "url": "/grid-lifecycle/#first-data-rendered"
+            }
+        },
+        "gridSizeChanged": {
+            "more": {
+                "name": "Grid Size",
+                "url": "/grid-size/"
+            }
+        },
+        "modelUpdated": {},
+        "virtualRowRemoved": {},
+        "viewportChanged": {},
+        "bodyScroll": {},
+        "bodyScrollEnd": {},
+        "dragStarted": {},
+        "dragStopped": {},
+        "stateUpdated": {
+            "more": {
+                "name": "Grid State",
+                "url": "/grid-state/"
+            }
+        }
+    },
+    "clientRowModel": {
+        "meta": {
+            "displayName": "RowModel: Client-Side",
+            "page": {
+                "name": "Client-Side Row Model",
+                "url": "/client-side-model/"
+            }
+        },
+        "rowDataUpdated": {
+            "more": {
+                "name": "Row Data Updated",
+                "url": "/grid-lifecycle/#row-data-updated"
+            }
+        },
+        "asyncTransactionsFlushed": {
+            "more": {
+                "name": "Flush Async Transactions",
+                "url": "/data-update-high-frequency/#flush-async-transactions"
+            }
+        }
+    },
+    "serverSideRowModel": {
+        "meta": {
+            "displayName": "RowModel: Server-Side",
+            "page": {
+                "name": "Server-Side Row Model",
+                "url": "/server-side-model/"
+            }
+        },
+        "storeRefreshed": {
+            "more": {
+                "name": "SSRM Refresh",
+                "url": "/server-side-model-updating-refresh/"
+            }
+        }
+    },
+    "navigation": {
+        "meta": {
+            "displayName": "Keyboard Navigation",
+            "page": {
+                "name": "Keyboard Navigation",
+                "url": "/keyboard-navigation/"
+            }
+        },
+        "cellKeyDown": {
+            "more": {
+                "name": "Keyboard Events",
+                "url": "/keyboard-navigation/#keyboard-events"
+            }
+        }
+    },
+    "pagination": {
+        "meta": {
+            "displayName": "Pagination",
+            "page": {
+                "name": "Row Pagination",
+                "url": "/row-pagination"
+            }
+        },
+        "paginationChanged": {
+            "description": "<p>Triggered every time the paging state changes. Some of the most common scenarios for this event to be triggered are:</p><ul class='content'><li>The page size changes</li><li>The current shown page is changed</li><li>New data is loaded onto the grid</li></ul>"
+        }
+    },
+    "rowPinning": {
+        "meta": {
+            "displayName": "Row Pinning",
+            "page": {
+                "name": "Row Pinning",
+                "url": "/row-pinning/"
+            }
+        },
+        "pinnedRowDataChanged": {}
+    },
+    "tooltips": {
+        "meta": {
+            "displayName": "Tooltips",
+            "page": {
+                "name": "Tooltip Component",
+                "url": "/tooltips/"
+            }
+        },
+        "tooltipShow": {},
+        "tooltipHide": {}
+    }
+}

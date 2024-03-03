@@ -1,0 +1,18 @@
+@use 'sass:meta';
+@use 'index' as *;
+
+@include meta.load-css('./root');
+@include meta.load-css('./base');
+@include meta.load-css('./layout');
+@include meta.load-css('./typography');
+@include meta.load-css('./color');
+@include meta.load-css('./interactions');
+
+@include meta.load-css('./elements/block');
+@include meta.load-css('./elements/inline');
+@include meta.load-css('./elements/button');
+@include meta.load-css('./elements/form-elements');
+@include meta.load-css('./elements/table');
+
+@include meta.load-css('./components/containers');
+@include meta.load-css('./components/code');

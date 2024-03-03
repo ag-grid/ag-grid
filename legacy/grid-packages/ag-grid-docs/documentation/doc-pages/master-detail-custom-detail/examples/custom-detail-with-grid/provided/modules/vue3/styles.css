@@ -1,0 +1,56 @@
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#myGrid {
+    flex: 1 1 0px;
+    width: 100%;
+}
+
+.full-width-panel {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    padding: 5px;
+}
+
+.call-record-cell {
+    text-align: right;
+}
+
+.full-width-detail {
+    padding-top: 4px;
+}
+
+.full-width-details {
+    float: left;
+    padding: 5px;
+    margin: 5px;
+    width: 150px;
+}
+
+.full-width-grid {
+    margin-left: 125px;
+    padding: 25px;
+    display: block;
+    height: calc(100% - 50px) !important;
+}
+
+.full-width-grid-toolbar {
+    top: 4px;
+    left: 30px;
+    margin-left: 150px;
+    display: block;
+    position: absolute;
+}
+
+.full-width-phone-icon {
+    padding-right: 10px;
+}
+
+.full-width-search {
+    border: 1px solid #eee;
+    margin-left: 10px;
+}

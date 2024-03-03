@@ -1,0 +1,18 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 50px);
+    margin-top: 5px;
+}
+
+#axisBtn {
+    text-transform: capitalize;
+}
+
+#myGrid {
+    flex: 1;
+}
+
+.my-chart {
+    flex: 1;
+}

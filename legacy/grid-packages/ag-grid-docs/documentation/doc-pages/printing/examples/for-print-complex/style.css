@@ -1,0 +1,9 @@
+.ag-row-level-0 {
+    background-color: #999 !important;
+}
+
+@media print {
+    body {
+        overflow: visible;
+    }
+}

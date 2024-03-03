@@ -1,0 +1,75 @@
+---
+import { MetaData } from './lib/MetaData';
+import { ExampleStyle } from './lib/ExampleStyle';
+import { Styles } from './lib/Styles';
+import { Extras } from './lib/Extras';
+import { SystemJs } from './lib/SystemJs';
+import { Scripts } from './lib/Scripts';
+import { pathJoin } from '@utils/pathJoin';
+import type { InternalFramework } from '@ag-grid-types';
+
+interface Props {
+    isDev: boolean;
+    title: string;
+    isEnterprise: boolean;
+    internalFramework: InternalFramework;
+
+    modifiedTimeMs: number;
+    entryFileName: string;
+    /**
+     * Extra script file names (not including entry file)
+     */
+    scriptFiles?: string[];
+    styleFiles?: string[];
+    appLocation: string;
+    boilerplatePath: string;
+    ignoreSystemJs?: boolean;
+    extraStyles?: string;
+    children?: any;
+    extras?: string[];
+}
+
+const {
+    title,
+    isDev,
+    isEnterprise,
+    internalFramework,
+    modifiedTimeMs,
+    appLocation,
+    entryFileName,
+    scriptFiles = [],
+    styleFiles = [],
+    boilerplatePath,
+    ignoreSystemJs,
+    extraStyles,
+    extras,
+} = Astro.props as Props;
+
+const startFile = pathJoin(appLocation, entryFileName);
+---
+
+<html lang="en">
+    <head>
+        <MetaData isDev={isDev} title={`React Example - ${title}`} modifiedTimeMs={modifiedTimeMs} />
+        <ExampleStyle rootSelector="#root" extraStyles={extraStyles} />
+        <Styles baseUrl={appLocation} files={styleFiles} />
+        <Extras extras={extras ?? []} />
+    </head>
+    <body>
+        <div id="root"></div>
+        {scriptFiles && <Scripts baseUrl={appLocation} files={scriptFiles} />}
+        {
+            !ignoreSystemJs && (
+                <SystemJs
+                    isDev={isDev}
+                    boilerplatePath={boilerplatePath}
+                    appLocation={appLocation}
+                    startFile={startFile}
+                    internalFramework={internalFramework}
+                    isEnterprise={isEnterprise}
+                />
+            )
+        }
+        <slot />
+    </body>
+</html>

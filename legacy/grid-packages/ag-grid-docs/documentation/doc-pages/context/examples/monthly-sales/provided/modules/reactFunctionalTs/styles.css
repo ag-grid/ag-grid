@@ -1,0 +1,48 @@
+.ag-basic .ag-cell {
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+}
+
+label {
+    font-weight: normal !important;
+}
+
+.cell-act {
+    background: rgba(255, 0, 0, 0.1);
+}
+
+.cell-bud {
+    background: rgba(0, 255, 0, 0.1);
+}
+
+.legend-box {
+    display: inline-block;
+    border: 1px solid black;
+    width: 12px;
+    height: 12px;
+}
+
+.cell-figure {
+    text-align: right;
+}
+
+.test-grid {
+    flex-grow: 1;
+}
+
+.test-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 14px;
+}
+
+.test-container button {
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.test-header {
+    margin-left: 20px;
+}

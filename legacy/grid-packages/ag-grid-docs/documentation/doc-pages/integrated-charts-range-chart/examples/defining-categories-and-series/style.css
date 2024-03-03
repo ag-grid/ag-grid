@@ -1,0 +1,22 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#myGrid {
+    flex: 1;
+    height: auto !important;
+}
+
+.my-chart {
+    flex: 1;
+}
+
+.ag-theme-quartz, .ag-theme-quartz-dark {
+    /* pink category range */
+    --ag-range-selection-chart-category-background-color: rgba(255, 0, 132, 0.1);
+    
+    /* orange data range */
+    --ag-range-selection-chart-background-color: rgba(255, 115, 0, 0.1);
+}

@@ -36,15 +36,15 @@ const extractPeerDependencies = (projectPackageJson, dependencies, depFilter) =>
     }, {});
 
 // only angular projects have "sub" projects
-const extractSubAngularProjectDependencies = (packageDirectory, directory) => {
+const extractSubAngularProjectDependencies = (packageDirectory) => {
     const CWD = process.cwd();
 
     let agSubAngularVersion = null;
     let agSubAngularGridDeps = null;
     let agSubAngularChartDeps = null;
-    if (directory.includes("angular") && !directory.includes("example")) {
-        const angularJson = require(`${CWD}/${packageDirectory}/${directory}/angular.json`);
-        const currentSubProjectPackageJsonFile = require(`${CWD}/${packageDirectory}/${directory}/${Object.values(angularJson.projects)[0].root}/package.json`);
+    if (packageDirectory.includes("angular")) {
+        const angularJson = require(`${CWD}/${packageDirectory}/angular.json`);
+        const currentSubProjectPackageJsonFile = require(`${CWD}/${packageDirectory}/${Object.values(angularJson.projects)[0].root}/package.json`);
 
         agSubAngularVersion = currentSubProjectPackageJsonFile.version;
 
@@ -74,45 +74,42 @@ const extractSubAngularProjectDependencies = (packageDirectory, directory) => {
     return {agSubAngularVersion, agSubAngularGridDeps, agSubAngularChartDeps};
 }
 
-const exclude = ['grid-packages/ag-grid-docs/documentation/']
-const getPackageInformation = () => {
-    const lernaFile = readFile('lerna.json');
-    const packages = lernaFile.packages.map(pkg => pkg.replace('/*', ''));
+const ROOT_PACKAGE_JSON = '../../package.json'
+const packageDirectories = require(ROOT_PACKAGE_JSON).workspaces.packages;
 
+const getPackageInformation = () => {
     const packageInformation = {};
 
-    packages
-        .filter(packageDirectory => !exclude.includes(packageDirectory))
+    packageDirectories
         .forEach(packageDirectory => {
-            fs.readdirSync(packageDirectory)
-                .filter(directory => !directory.includes('.git'))
-                .forEach(directory => {
-                    const projectRoot = `./${packageDirectory}/${directory}`;
-                    const projectPackageJson = readFile(`${projectRoot}/package.json`);
+            const projectPackageJson = readFile(`${packageDirectory}/package.json`);
 
-                    const dependencies = getAgDependencies(projectPackageJson).filter(dependency => dependency !== 'ag-grid-testing');
-                    const peerDependencies = getAgPeerDependencies(projectPackageJson).filter(dependency => dependency !== 'ag-grid-testing');
-                    const devDependencies = getAgDevDependencies(projectPackageJson).filter(dependency => dependency !== 'ag-grid-testing');
+            const dependencies = getAgDependencies(projectPackageJson);
+            const peerDependencies = getAgPeerDependencies(projectPackageJson);
+            const devDependencies = getAgDevDependencies(projectPackageJson);
 
-                    const agGridDeps = extractDependencies(projectPackageJson, dependencies, devDependencies, gridDependency);
-                    const agGridPeerDeps = projectPackageJson.peerDependencies ? extractPeerDependencies(projectPackageJson, peerDependencies, gridDependency) : {};
-                    const agChartDeps = extractDependencies(projectPackageJson, dependencies, devDependencies, chartDependency);
-                    const {agSubAngularVersion, agSubAngularGridDeps, agSubAngularChartDeps} = extractSubAngularProjectDependencies(packageDirectory, directory);
+            const agGridDeps = extractDependencies(projectPackageJson, dependencies, devDependencies, gridDependency);
+            const agGridPeerDeps = projectPackageJson.peerDependencies ? extractPeerDependencies(projectPackageJson, peerDependencies, gridDependency) : {};
+            const agChartDeps = extractDependencies(projectPackageJson, dependencies, devDependencies, chartDependency);
+            const {
+                agSubAngularVersion,
+                agSubAngularGridDeps,
+                agSubAngularChartDeps
+            } = extractSubAngularProjectDependencies(packageDirectory);
 
-                    packageInformation[projectPackageJson.name] = {
-                        projectRoot,
-                        version: projectPackageJson.version,
-                        publicPackage: !projectPackageJson.private,
-                        isGridPackage: gridDependency(projectPackageJson.name),
-                        agGridDeps,
-                        agGridPeerDeps,
-                        agChartDeps,
-                        agSubAngularVersion,
-                        agSubAngularGridDeps,
-                        agSubAngularChartDeps
-                    }
+            packageInformation[projectPackageJson.name] = {
+                projectRoot: packageDirectory,
+                version: projectPackageJson.version,
+                publicPackage: !projectPackageJson.private,
+                isGridPackage: gridDependency(projectPackageJson.name),
+                agGridDeps,
+                agGridPeerDeps,
+                agChartDeps,
+                agSubAngularVersion,
+                agSubAngularGridDeps,
+                agSubAngularChartDeps
+            }
 
-                });
         });
 
     return packageInformation;

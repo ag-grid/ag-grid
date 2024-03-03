@@ -1,0 +1,30 @@
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#myGrid {
+    flex-grow: 1;
+    width: 100%;
+}
+
+.example-header {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.ag-row-level-0 {
+    font-weight: bold;
+    color: burlywood;
+}
+
+.total-col {
+    font-weight: bold;
+    color: burlywood;
+}
+
+.number-cell {
+    text-align: right;
+}

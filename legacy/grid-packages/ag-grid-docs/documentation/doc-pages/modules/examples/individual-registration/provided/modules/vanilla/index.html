@@ -1,0 +1,78 @@
+<div class="example-wrapper ag-theme-quartz">
+    <div class="inner-col">
+        <div id="eLeftGrid" class="inner-col"></div>
+    </div>
+
+    <div class="inner-col">
+        <div id="eRightGrid" class="inner-col"></div>
+    </div>
+</div>
+
+<script type="module">
+    import { ModuleRegistry, createGrid } from 'https://cdn.jsdelivr.net/npm/@ag-grid-community/core/dist/core.esm.js';
+    import { ClientSideRowModelModule } from 'https://cdn.jsdelivr.net/npm/@ag-grid-community/client-side-row-model/dist/client-side-row-model.esm.js';
+    import { ClipboardModule } from 'https://cdn.jsdelivr.net/npm/@ag-grid-enterprise/clipboard/dist/clipboard.esm.js';
+    import { MenuModule } from 'https://cdn.jsdelivr.net/npm/@ag-grid-enterprise/menu/dist/menu.esm.js';
+    import { SetFilterModule } from 'https://cdn.jsdelivr.net/npm/@ag-grid-enterprise/set-filter/dist/set-filter.esm.js';
+
+    import { ExcelExportModule } from 'https://cdn.jsdelivr.net/npm/@ag-grid-enterprise/excel-export/dist/excel-export.esm.js';
+    import { GridChartsModule } from 'https://cdn.jsdelivr.net/npm/@ag-grid-enterprise/charts/dist/charts.esm.js';
+
+
+    // Register shared Modules globally
+    ModuleRegistry.registerModules([
+        ClientSideRowModelModule,
+        MenuModule,
+        GridChartsModule,
+    ]);
+    const columnDefs = [
+        { field: "id" },
+        { field: "color" },
+        { field: "value1" }
+    ];
+    const defaultColDef = {
+        flex: 1,
+        minWidth: 100,
+        filter: true,
+        floatingFilter: true,
+    };
+
+    let rowIdSequence = 100;
+    function createRowBlock() {
+        return ['Red', 'Green', 'Blue'].map((color) =>
+        ({
+            id: rowIdSequence++,
+            color: color,
+            value1: Math.floor(Math.random() * 100),
+        })
+        )
+    }
+
+        const baseGridOptions = {
+            defaultColDef: defaultColDef,
+            columnDefs: columnDefs,
+            enableCharts: true,
+            enableRangeSelection: true,
+        }
+
+        const leftGridOptions = {
+            ...baseGridOptions,
+            rowData: createRowBlock(),
+        };
+
+        const rightGridOptions = {
+            ...baseGridOptions,
+            rowData: createRowBlock(),
+        };
+
+
+    function loadGrid(side) {
+        const grid = document.querySelector('#e' + side + 'Grid');
+        let modules = side === 'Left' ? [SetFilterModule, ClipboardModule] : [ExcelExportModule];
+        createGrid(grid, side === 'Left' ? leftGridOptions : rightGridOptions, { modules: modules });
+    }
+
+    loadGrid('Left');
+    loadGrid('Right');
+
+</script>

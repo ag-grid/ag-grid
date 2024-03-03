@@ -1,0 +1,37 @@
+{
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "nx/tasks-runners/default",
+      "options": {
+        "cacheableOperations": [
+          "build",
+          "build-docs",
+          "build-prod",
+          "package",
+          "build-docs-initial",
+          "generate-doc-files",
+          "build-css",
+          "test",
+          "test:e2e"
+        ]
+      }
+    }
+  },
+  "targetDefaults": {
+    "build": {
+      "dependsOn": [
+        "^build"
+      ]
+    },
+    "build-prod": {
+      "dependsOn": [
+        "^build-prod"
+      ]
+    },
+    "package": {
+      "dependsOn": [
+        "^package"
+      ]
+    }
+  }
+}

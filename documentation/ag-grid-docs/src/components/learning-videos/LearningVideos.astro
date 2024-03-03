@@ -1,0 +1,8 @@
+---
+import { LearningVideos } from './LearningVideos';
+import { getFrameworkFromPath } from '@features/docs/utils/urlPaths';
+
+const framework = getFrameworkFromPath(Astro.url.pathname);
+---
+
+<LearningVideos client:load framework={framework} {...Astro.props} />

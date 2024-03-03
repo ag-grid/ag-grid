@@ -1,0 +1,16 @@
+{% if isFramework("angular") %}
+The grid is configure via Inputs on the `ag-grid-angular` component. Properties consist of simple types, arrays, complex objects and callback functions.
+{% /if %}
+
+{% if isFramework("angular") %}
+```js
+<ag-grid-angular
+   // Set boolean properties
+   pagination    
+   // Bind property / callback to component
+   [columnDefs]="columnDefs"
+   [getRowHeight]="myGetRowHeight"
+
+</ag-grid-angular>
+```
+{% /if %}
