@@ -35,6 +35,7 @@ export const INITIAL_GRID_OPTION_KEYS = {
     enableBrowserTooltips: true,
     tooltipTrigger: true,
     tooltipMouseTrack: true,
+    tooltipShowMode: true,
     tooltipInteraction: true,
     defaultColGroupDef: true,
     suppressAutoSize: true,
@@ -138,7 +139,7 @@ export class PropertyKeys {
     public static STRING_PROPERTIES: KeysOfType<string>[] = [
         'rowSelection', 'overlayLoadingTemplate', 'overlayNoRowsTemplate', 'gridId', 'quickFilterText', 'rowModelType', 'editType', 'domLayout', 
         'clipboardDelimiter', 'rowGroupPanelShow', 'multiSortKey', 'pivotColumnGroupTotals', 'pivotRowTotals', 'pivotPanelShow', 'fillHandleDirection',
-        'groupDisplayType', 'treeDataDisplayType', 'colResizeDefault', 'tooltipTrigger', 'serverSidePivotResultFieldSeparator', 'columnMenu',
+        'groupDisplayType', 'treeDataDisplayType', 'colResizeDefault', 'tooltipTrigger', 'serverSidePivotResultFieldSeparator', 'columnMenu', 'tooltipShowMode'
     ];
 
     public static OBJECT_PROPERTIES: KeysLike<object | HTMLElement>[] = [
