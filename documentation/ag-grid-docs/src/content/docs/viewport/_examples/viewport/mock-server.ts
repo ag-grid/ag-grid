@@ -1,4 +1,5 @@
-function createMockServer() {
+export function createMockServer() {
+
     class MockServer {
         constructor() {
             this.connections = {}

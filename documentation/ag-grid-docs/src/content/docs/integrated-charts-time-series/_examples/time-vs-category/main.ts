@@ -15,9 +15,6 @@ import { ModuleRegistry } from "@ag-grid-community/core";
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, GridChartsModule, MenuModule]);
 
-
-declare var moment: any;
-
 let gridApi: GridApi;
 let currentChartRef: any;
 
