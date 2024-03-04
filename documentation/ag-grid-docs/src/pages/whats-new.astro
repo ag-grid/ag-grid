@@ -1,7 +1,7 @@
 ---
 import { getCollection, getEntry } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
-import { PagesNavigation } from '@features/pages-navigation/components/PagesNavigation';
+import { PagesNavigationFromLocalStorage } from '@features/pages-navigation/components/PagesNavigationFromLocalStorage';
 import { getDocsPages } from '../features/docs/utils/pageData';
 import { Version } from '../components/version/Version';
 import type { Framework, MenuSection } from '@ag-grid-types';
@@ -29,7 +29,7 @@ const versionsData: any[] = versionsContent ? versionsContent.data : [];
 
 <Layout title={"What's new"} showDocsNav={true} showSearchBar={true}>
     <div class:list={['contentViewport layout-grid']}>
-        <PagesNavigation
+        <PagesNavigationFromLocalStorage
             client:load
             menuSections={frameworkMenuSections}
             framework={currentFramework}
