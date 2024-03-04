@@ -3,7 +3,7 @@ import type { Framework, ImportType, InternalFramework } from './types/ag-grid';
 export const FRAMEWORKS: readonly Framework[] = ['react', 'angular', 'vue', 'javascript'] as const;
 export const DEFAULT_FRAMEWORK: Framework = FRAMEWORKS[0];
 
-export const USE_PACKAGES = process.env?.USE_PACKAGES ?? false;
+export const USE_PACKAGES = true; // process.env?.USE_PACKAGES ?? false;
 
 export const INTERNAL_FRAMEWORKS: readonly InternalFramework[] = USE_PACKAGES ? [
     'vanilla',
