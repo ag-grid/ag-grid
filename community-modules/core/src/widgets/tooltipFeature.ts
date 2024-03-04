@@ -53,6 +53,8 @@ export class TooltipFeature extends BeanStub {
         const name = 'title';
         const eGui = this.ctrl.getGui();
 
+        if (!eGui) { return; }
+
         if (tooltip != null && tooltip != '') {
             eGui.setAttribute(name, tooltip);
         } else {

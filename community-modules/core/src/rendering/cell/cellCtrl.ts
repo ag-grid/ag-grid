@@ -190,20 +190,19 @@ export class CellCtrl extends BeanStub {
             return null;
         };
 
-        const eGui = this.getGui();
-
         const tooltipCtrl: ITooltipFeatureCtrl = {
             getColumn: () => this.column,
             getColDef: () => this.column.getColDef(),
             getRowIndex: () => this.cellPosition.rowIndex,
             getRowNode: () => this.rowNode,
-            getGui: () => eGui,
+            getGui: () => this.getGui(),
             getLocation: () => 'cell',
             getTooltipValue: getTooltipValue,
 
             // this makes no sense, why is the cell formatted value passed to the tooltip???
             getValueFormatted: () => this.valueFormatted,
             shouldShowTooltip: isTooltipStandard ? undefined : () => {
+                const eGui = this.getGui()
                 const textEl = eGui.children.length === 0 ? eGui : eGui.querySelector('.ag-cell-value');
                 if (!textEl) { return true; }
 
@@ -250,8 +249,8 @@ export class CellCtrl extends BeanStub {
 
         this.cellPositionFeature?.setComp(eGui);
         this.cellCustomStyleFeature?.setComp(comp);
-        this.cellKeyboardListenerFeature?.setComp(this.eGui);
         this.tooltipFeature?.refreshToolTip();
+        this.cellKeyboardListenerFeature?.setComp(this.eGui);
 
         if (this.cellRangeFeature) { this.cellRangeFeature.setComp(comp, eGui); }
 
