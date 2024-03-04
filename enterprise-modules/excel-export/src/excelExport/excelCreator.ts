@@ -61,19 +61,23 @@ const createExcelXmlWorksheets = (data: string[]): void => {
         const hasTables = ExcelXlsxFactory.worksheetDataTables.size > 0 && ExcelXlsxFactory.worksheetDataTables.has(idx);
 
         if (hasImages && hasTables) {
-            createTableAndImageRelationsForSheet(
-                idx,
-                tableRelationCounter++,
-                imageRelationCounter++
-            );
-        } else {
-            if (hasTables) {
-                createTableRelationsForSheet(idx, tableRelationCounter++);
-            }
+            createTableAndImageRelationsForSheet(idx, tableRelationCounter, imageRelationCounter);
+            tableRelationCounter++;
+            imageRelationCounter++;
 
-            if (hasImages) {
-                createImageRelationsForSheet(idx, imageRelationCounter++);
-            }
+            return;
+        }
+
+        if (hasTables) {
+            createTableRelationsForSheet(idx, tableRelationCounter);
+            tableRelationCounter++
+            return;
+        }
+
+        if (hasImages) {
+            createImageRelationsForSheet(idx, imageRelationCounter);
+            imageRelationCounter++;
+            return;
         }
     });
 }
@@ -191,7 +195,11 @@ const createTableRelationsForSheet = (sheetIndex: number, currentRelationIndex: 
     ZipContainer.addFile(worksheetRelFile, ExcelXlsxFactory.createWorksheetTableRel(currentRelationIndex));
 };
 
-const createTableAndImageRelationsForSheet = (sheetIndex: number, currentTableRelationIndex: number, currentImageRelationIndex: number) => {
+const createTableAndImageRelationsForSheet = (
+    sheetIndex: number,
+    currentTableRelationIndex: number,
+    currentImageRelationIndex: number,
+) => {
     const drawingFolder = 'xl/drawings';
     const drawingFileName = `${drawingFolder}/drawing${currentImageRelationIndex + 1}.xml`;
     const relFileName = `${drawingFolder}/_rels/drawing${currentImageRelationIndex + 1}.xml.rels`;

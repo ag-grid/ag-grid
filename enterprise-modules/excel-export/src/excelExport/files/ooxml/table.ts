@@ -1,5 +1,5 @@
 import { ExcelOOXMLTemplate } from '@ag-grid-community/core';
-import {ExcelDataTable} from '../../assets/excelInterfaces';
+import { ExcelDataTable } from '../../assets/excelInterfaces';
 
 const tableFactory: ExcelOOXMLTemplate = {
     getTemplate(dataTable: ExcelDataTable, idx: number) {

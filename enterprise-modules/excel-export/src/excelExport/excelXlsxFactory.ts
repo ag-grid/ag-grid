@@ -1,12 +1,14 @@
 import {
     Column,
+    ColGroupDef,
+    ColDef,
     ExcelFactoryMode,
     ExcelImage,
     ExcelRelationship,
     ExcelStyle,
     ExcelWorksheet,
     RowHeightCallbackParams,
-    _, ColGroupDef, ColDef,
+    _
 } from '@ag-grid-community/core';
 
 import coreFactory from './files/ooxml/core';
@@ -31,22 +33,6 @@ import { ExcelGridSerializingParams } from './excelSerializingSession';
  */
 export class ExcelXlsxFactory {
 
-    public static defaultTableDisplayName = 'AG-GRID-Table';
-
-    public static getTableNameFromIndex = (idx: number) => {
-        return `table${idx + 1}`;
-    };
-
-    public static getTableRelIdFromIndex = (idx: number) => {
-        return `tableRelId${idx + 1}`;
-    };
-
-    public static getSanitizedTableName = (name: string) => {
-        return name.replace(/^[^a-zA-Z_]+/, '_')
-        .replace(/\s/g, '_')
-        .replace(/[^a-zA-Z0-9_]/g, '_')
-    };
-
     private static sharedStrings: Map<string, number> = new Map();
     private static sheetNames: string[] = [];
 
@@ -60,6 +46,8 @@ export class ExcelXlsxFactory {
     public static worksheetImageIds: Map<number, ImageIdMap> = new Map();
     /** Maps all sheet tables to unique Ids */
     public static worksheetDataTables: Map<number, ExcelDataTable> = new Map();
+    /** Default name to be used for tables when no name is provided */
+    public static defaultTableDisplayName = 'AG-GRID-Table';
 
     public static factoryMode: ExcelFactoryMode = ExcelFactoryMode.SINGLE_SHEET;
 
@@ -110,6 +98,20 @@ export class ExcelXlsxFactory {
         }
 
         return this.createWorksheet(worksheet, config);
+    }
+
+    public static getTableNameFromIndex(idx: number) {
+        return `table${idx + 1}`;
+    }
+
+    public static getTableRelIdFromIndex(idx: number) {
+        return `tableRelId${idx + 1}`;
+    }
+
+    public static getSanitizedTableName(name: string) {
+        return name.replace(/^[^a-zA-Z_]+/, '_')
+                   .replace(/\s/g, '_')
+                   .replace(/[^a-zA-Z0-9_]/g, '_')
     }
 
     public static addTableToSheet(sheetIndex: number, table: ExcelDataTable): void {

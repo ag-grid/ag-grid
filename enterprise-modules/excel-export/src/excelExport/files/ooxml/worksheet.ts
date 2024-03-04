@@ -12,7 +12,7 @@ import {
     ExcelFont,
     _
 } from '@ag-grid-community/core';
-import {ExcelDataTable} from '../../assets/excelInterfaces';
+import { ExcelDataTable } from '../../assets/excelInterfaces';
 
 import columnFactory from './column';
 import rowFactory from './row';
