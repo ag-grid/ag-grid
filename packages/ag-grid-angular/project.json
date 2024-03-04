@@ -56,5 +56,5 @@
       }
     }
   },
-  "tags": ["module:community", "module:framework", "module", "community", "framework"]
+  "tags": ["package:community", "package:framework", "package", "community", "framework"]
 }
