@@ -1901,7 +1901,7 @@
                 "url": "/tooltips/#mouse-tracking"
             }
         },
-        "tooltipMode": {},
+        "tooltipShowMode": {},
         "tooltipTrigger": {},
         "tooltipInteraction": {
             "more": {

@@ -163,6 +163,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private enableTooltipFeature(): void {
+        const isTooltipStandard = this.beans.gridOptionsService.get('tooltipShowMode') === 'standard';
         const getTooltipValue = () => {
             const colDef = this.column.getColDef();
             const data = this.rowNode.data;
@@ -189,17 +190,25 @@ export class CellCtrl extends BeanStub {
             return null;
         };
 
+        const eGui = this.getGui();
+
         const tooltipCtrl: ITooltipFeatureCtrl = {
             getColumn: () => this.column,
             getColDef: () => this.column.getColDef(),
             getRowIndex: () => this.cellPosition.rowIndex,
             getRowNode: () => this.rowNode,
-            getGui: () => this.getGui(),
+            getGui: () => eGui,
             getLocation: () => 'cell',
             getTooltipValue: getTooltipValue,
 
             // this makes no sense, why is the cell formatted value passed to the tooltip???
-            getValueFormatted: () => this.valueFormatted
+            getValueFormatted: () => this.valueFormatted,
+            shouldShowTooltip: isTooltipStandard ? undefined : () => {
+                const textEl = eGui.children.length === 0 ? eGui : eGui.querySelector('.ag-cell-value');
+                if (!textEl) { return true; }
+
+                return textEl.scrollWidth > textEl.clientWidth;
+            }
         };
 
         this.tooltipFeature = new TooltipFeature(tooltipCtrl, this.beans);
