@@ -712,9 +712,9 @@ export abstract class Sparkline {
      * Cleanup and remove canvas element from the DOM.
      */
     public destroy(): void {
+        this.cleanupDomEventListeners(this.canvasElement);
         this.scene.destroy();
         // remove canvas element from the DOM
         this.container = undefined;
-        this.cleanupDomEventListeners(this.scene.canvas.element);
     }
 }
