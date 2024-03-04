@@ -11,30 +11,32 @@ import Videos from '@components/community-section/news-updates/videos';
 <Layout title="AG Grid">
     <div class="layout-max-width-large">
         <CommunityMenu path={Astro.url.pathname} client:only/>
-        <div class={LayoutStyles.container}>
-            <header class={LayoutStyles.header}>
-                <h1>News & Updates</h1>
-                <p>The latest news from AG Grid, including Blogs, Videos, Events, and more...</p>
-            </header>
-            <div class={LayoutStyles.content}>
-                <section>
-                    <h2>Featured News</h2>
-                    <FeaturedNews client:only/>
-                </section>
-                <section>
-                    <h2>Events</h2>
-                    <Events client:only/>
-                </section>
-                <section>
-                    <h2>Videos</h2>
-                    <Videos client:only />
-                    <!-- TODO: Videos Component -->
-                </section>
-                <section>
-                    <h2>Podcasts</h2>
-                    <Podcasts client:only/>
-                    <!-- TODO: Podcasts Component -->
-                </section>
+        <div class="layout-max-width-small">
+            <div class={LayoutStyles.container}>
+                <header class={LayoutStyles.header}>
+                    <h1>News & Updates</h1>
+                    <p>The latest news from AG Grid, including Blogs, Videos, Events, and more...</p>
+                </header>
+                <div class={LayoutStyles.content}>
+                    <section>
+                        <h2>Featured News</h2>
+                        <FeaturedNews client:only/>
+                    </section>
+                    <section>
+                        <h2>Events</h2>
+                        <Events client:only/>
+                    </section>
+                    <section>
+                        <h2>Videos</h2>
+                        <Videos client:only />
+                        <!-- TODO: Videos Component -->
+                    </section>
+                    <section>
+                        <h2>Podcasts</h2>
+                        <Podcasts client:only/>
+                        <!-- TODO: Podcasts Component -->
+                    </section>
+                </div>
             </div>
         </div>
     </div>

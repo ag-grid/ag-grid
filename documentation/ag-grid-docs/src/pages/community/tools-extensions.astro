@@ -8,15 +8,17 @@ import ToolsExtensions from '@components/community-section/tools-extensions/tool
 <Layout title="AG Grid">
     <div class="layout-max-width-large">
         <CommunityMenu path={Astro.url.pathname} client:only/>
-        <div class={LayoutStyles.container}>
-            <header class={LayoutStyles.header}>
-                <h1>Tools & Extensions</h1>
-                <p class={LayoutStyles.description}>AG Grid's open-source roots means that theres a ton of community-built tools, extensions and utilities to help you build your next project, whatever framework you're using.</p>
-            </header>
-            <div class={LayoutStyles.content}>
-                <section>
-                    <ToolsExtensions client:only/>
-                </section>
+        <div class="layout-max-width-small">
+            <div class={LayoutStyles.container}>
+                <header class={LayoutStyles.header}>
+                    <h1>Tools & Extensions</h1>
+                    <p class={LayoutStyles.description}>AG Grid's open-source roots means that theres a ton of community-built tools, extensions and utilities to help you build your next project, whatever framework you're using.</p>
+                </header>
+                <div class={LayoutStyles.content}>
+                    <section>
+                        <ToolsExtensions client:only/>
+                    </section>
+                </div>
             </div>
         </div>
     </div>
