@@ -84,6 +84,8 @@
       "packages/ag-grid-charts-enterprise",
       "packages/ag-grid-react",
       "packages/ag-grid-angular",
+      "packages/ag-grid-vue",
+      "packages/ag-grid-vue3",
       "documentation/ag-grid-docs",
       "plugins/ag-grid-generate-code-reference-files",
       "plugins/ag-grid-generate-example-files",

@@ -215,6 +215,8 @@
     "packages/ag-grid-charts-enterprise",
     "packages/ag-grid-react",
     "packages/ag-grid-angular",
+    "packages/ag-grid-vue",
+    "packages/ag-grid-vue3",
     "documentation/ag-grid-docs",
     "ag-grid-generate-example-files"
   ],

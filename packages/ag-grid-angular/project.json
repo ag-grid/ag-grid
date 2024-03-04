@@ -15,7 +15,7 @@
       }
     },
     "build:copy-source": {
-      "dependsOn": ["ag-grid-community:build"],
+      "dependsOn": ["@ag-grid-community/angular:build"],
       "inputs": [],
       "cache": true,
       "command": "npx gulp copy-from-module-source",
