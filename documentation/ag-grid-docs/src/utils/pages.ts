@@ -3,7 +3,7 @@ import type {CollectionEntry} from 'astro:content';
 import glob from 'glob';
 import {readFileSync} from 'node:fs';
 
-import {integratedChartsUsesChartsEnterprise, SITE_BASE_URL, USE_PUBLISHED_PACKAGES} from '../constants';
+import {SITE_BASE_URL, USE_PUBLISHED_PACKAGES} from '../constants';
 import {createFilePathFinder, type GlobConfig} from './createFilePathFinder';
 import {getIsDev} from './env';
 import {pathJoin} from './pathJoin';

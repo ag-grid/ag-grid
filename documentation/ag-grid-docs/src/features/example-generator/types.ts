@@ -15,6 +15,7 @@ export interface GeneratedContents {
     scriptFiles: string[];
     styleFiles: string[];
     isEnterprise: boolean;
+    isIntegratedCharts: boolean;
     sourceFileList: string[];
     boilerPlateFiles: FileContents;
     providedExamples: FileContents;
