@@ -1,10 +1,3 @@
-.ag-column-panel {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  flex: 1 1 auto;
-}
-
 .ag-filter-toolpanel {
   flex: 1 1 0px;
   min-width: 0;

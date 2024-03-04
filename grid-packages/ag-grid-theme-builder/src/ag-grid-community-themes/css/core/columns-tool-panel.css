@@ -1,3 +1,10 @@
+.ag-column-panel {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex: 1 1 auto;
+}
+
 .ag-pivot-mode-panel {
   height: var(--ag-header-height);
   display: flex;
@@ -14,6 +21,7 @@
   border-bottom: var(--ag-tool-panel-separator-border);
 }
 
-.ag-column-select-list {
-  @include ag.list-item-hovered();
+.ag-column-group-icons,
+.ag-column-select-header-icon {
+  color: var(--ag-secondary-foreground-color);
 }
