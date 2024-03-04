@@ -1,6 +1,8 @@
-class CustomTooltip {
+import { ITooltipComp, ITooltipParams } from '@ag-grid-community/core'
 
-    init(params) {
+export class CustomTooltip implements ITooltipComp {
+    eGui: any;
+    init(params: ITooltipParams) {
         var eGui = (this.eGui = document.createElement('div'));
 
         eGui.classList.add('custom-tooltip');

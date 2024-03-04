@@ -16,9 +16,8 @@ import { ModuleRegistry } from "@ag-grid-community/core";
 
 ModuleRegistry.registerModules([RowGroupingModule, ServerSideRowModelModule]);
 
-declare var registerObserver: any;
-import { FakeServer } from './fakeServer';
-declare var fakeServerInstance: any;
+import { registerObserver } from './data';
+import { getFakeServer } from './fakeServer';
 
 const columnDefs: ColDef[] = [
   { field: 'tradeId' },
@@ -69,11 +68,8 @@ const gridOptions: GridOptions = {
   onGridReady: (params) => {
     disable('#stopUpdates', true);
   
-    // setup the fake server
-    fakeServerInstance = new FakeServer();
-  
     // create datasource with a reference to the fake server
-    const datasource = getServerSideDatasource(fakeServerInstance);
+    const datasource = getServerSideDatasource(getFakeServer());
   
     // register the datasource with the grid
     params.api.setGridOption('serverSideDatasource', datasource);
@@ -88,12 +84,12 @@ const gridOptions: GridOptions = {
 
 
 function startUpdates() {
-  fakeServerInstance.randomUpdates();
+  getFakeServer().randomUpdates();
   disable('#startUpdates', true);
   disable('#stopUpdates', false);
 }
 function stopUpdates() {
-  fakeServerInstance.stopUpdates();
+  getFakeServer().stopUpdates();
   disable('#stopUpdates', true);
   disable('#startUpdates', false);
 }

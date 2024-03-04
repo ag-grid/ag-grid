@@ -1,6 +1,6 @@
 // Example locale file for English, give this to your locale team to translate
 
-const AG_GRID_LOCALE_EN = {
+export const AG_GRID_LOCALE_EN: Record<string,string> = {
     // Set Filter
     selectAll: '(Select All)',
     selectAllSearchResults: '(Select All Search Results)',

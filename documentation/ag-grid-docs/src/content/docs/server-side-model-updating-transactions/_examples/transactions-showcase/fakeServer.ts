@@ -1,6 +1,8 @@
-var fakeServerInstance;
+import {data, randomTransaction} from './data';
 
-export function FakeServer() {
+
+
+function FakeServer() {
   alasql.options.cache = false;
 
   let intervals = [];
@@ -171,6 +173,14 @@ export function FakeServer() {
 
     return currentLastRow <= request.endRow ? currentLastRow : -1;
   }
+}
+
+let fakeServerInstance: FakeServer;
+export function getFakeServer() {
+  if (!fakeServerInstance) {
+    fakeServerInstance = new FakeServer();
+  }
+  return fakeServerInstance;
 }
 
 // IE Workaround - as templates literals are not supported
