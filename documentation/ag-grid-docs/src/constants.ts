@@ -102,8 +102,7 @@ export const getIsImplemented = ({
     importType: ImportType;
 }) => {
     return (
-        (importType === 'modules') // packages are not implemented yet
-        && (INTERNAL_FRAMEWORKS.includes(internalFramework)
-        && !(internalFramework == 'vanilla' && importType === 'modules')) // javascript is packages only
+        (importType === 'modules' && internalFramework !== 'vanilla') || // packages are not implemented yet
+        (importType === 'packages' && internalFramework == 'vanilla') // javascript is packages only
     );
 };
