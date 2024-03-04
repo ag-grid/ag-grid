@@ -39,9 +39,15 @@
     padding: $spacing-size-2 10px;
     margin-left: calc(var(--layout-horizontal-margins) - 16px);
 
-    svg {
+    :global(.logotype) {
         width: unset;
         height: 34px;
+    }
+
+    :global(.logo-mark) {
+        width: 48px;
+        height: unset;
+        transform: translateY(0.5px); // improve logo rendering for low dpi screens
     }
 }
 
