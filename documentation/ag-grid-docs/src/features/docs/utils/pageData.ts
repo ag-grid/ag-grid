@@ -1,4 +1,4 @@
-import { FRAMEWORKS, IMPORT_TYPES } from '@constants';
+import { FRAMEWORKS, IMPORT_TYPES, SHOW_DEBUG_LOGS } from '@constants';
 import { type DocsPage, getContentRootFileUrl } from '@utils/pages';
 import { pathJoin } from '@utils/pathJoin';
 
@@ -87,7 +87,9 @@ export async function getDocExampleFiles({ pages }: { pages: DocsPage[] }) {
                 };
             });
         } catch (error) {
-            console.error('File not generated - ', error.message);
+            if (SHOW_DEBUG_LOGS) {
+                console.error('File not generated - ', error.message);
+            }
             return [];
         }
     });

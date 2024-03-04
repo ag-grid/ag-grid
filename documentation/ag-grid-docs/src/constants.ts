@@ -1,11 +1,6 @@
 import type { Framework, ImportType, InternalFramework } from './types/ag-grid';
 
-export const FRAMEWORKS: readonly Framework[] = [
-    'react',
-    'angular',
-    'vue',
-    'javascript',
-] as const;
+export const FRAMEWORKS: readonly Framework[] = ['react', 'angular', 'vue', 'javascript'] as const;
 export const DEFAULT_FRAMEWORK: Framework = FRAMEWORKS[0];
 
 export const INTERNAL_FRAMEWORKS: readonly InternalFramework[] = [
@@ -82,6 +77,11 @@ export const USE_PUBLISHED_PACKAGES = ['1', 'true'].includes(import.meta.env?.PU
  * Enable debug pages to be built
  */
 export const ENABLE_GENERATE_DEBUG_PAGES = import.meta.env?.ENABLE_GENERATE_DEBUG_PAGES;
+
+/**
+ * Show debug logs
+ */
+export const SHOW_DEBUG_LOGS = import.meta.env?.SHOW_DEBUG_LOGS;
 
 /**
  * Number of URL segments in `SITE_BASE_URL`

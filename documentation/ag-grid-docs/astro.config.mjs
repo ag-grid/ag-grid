@@ -19,6 +19,7 @@ const {
     PUBLIC_BASE_URL = DEFAULT_BASE_URL,
     PUBLIC_HTTPS_SERVER = '1',
     ENABLE_GENERATE_DEBUG_PAGES = '1',
+    SHOW_DEBUG_LOGS,
 } = dotenvExpand.expand(dotenv).parsed;
 console.log(
     'Astro configuration',
@@ -29,6 +30,7 @@ console.log(
             PUBLIC_SITE_URL,
             PUBLIC_BASE_URL,
             ENABLE_GENERATE_DEBUG_PAGES,
+            SHOW_DEBUG_LOGS,
         },
         null,
         2
