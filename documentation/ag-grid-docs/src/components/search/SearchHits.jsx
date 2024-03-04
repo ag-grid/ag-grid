@@ -38,7 +38,14 @@ export default ({ closeModal, structuredHits, selectedHit, setSelectedHit, query
     let hitIndex = 0;
 
     return (
-        <div className={styles.results} ref={containerRef}>
+        <div
+            className={styles.results}
+            ref={containerRef}
+
+            id="search-hits"
+            role="listbox"
+            aria-activedescendant={`hit-${selectedHit}`}
+        >
             {structuredHits.map(({ breadcrumb, children }) => (
                 <div key={breadcrumb}>
                     <div className={styles.crumbContainer}>
@@ -66,10 +73,18 @@ export default ({ closeModal, structuredHits, selectedHit, setSelectedHit, query
                             icon = 'headingResult';
                         }
                         return (
-                            <a className={styles.hitLink} href={hit.path} key={hit.objectID}>
+                            <a
+                                className={styles.hitLink} 
+                                href={hit.path}
+                                key={hit.objectID}
+                                tabIndex={-1}
+                                id={`hit-${idx}`}
+
+                                role="option"
+                                aria-selected={selectedHit === idx}
+                            >
                                 <article
                                     data-selected={selectedHit === idx}
-                                    tabIndex={0}
                                     data-hit-index={idx}
                                     key={hit.objectID}
                                     className={styles.hit}
@@ -80,7 +95,7 @@ export default ({ closeModal, structuredHits, selectedHit, setSelectedHit, query
                                         closeModal();
                                     }}
                                 >
-                                    <span className={styles.hitIcon}>
+                                    <span role="presentation" className={styles.hitIcon}>
                                         <Icon name={icon} />
                                     </span>
 
