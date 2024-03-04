@@ -38,6 +38,9 @@ const Search = () => {
                 // use the callback so we don't need to update the func ref,
                 // and start removing/adding the callback, which would be messy
                 setOpen((open) => !open);
+
+                // prevent default to avoid browser address bar capture
+                e.preventDefault();
                 return;
             }
 
@@ -51,14 +54,30 @@ const Search = () => {
         return () => document.removeEventListener('keydown', onKeyDownAnywhere);
     }, []);
 
+    const onPseudoInputKeyDown = (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            setOpen(true);
+        }
+    };
+
+    const setModalOpenFnc = (open) => () => {
+        setOpen(open);
+    }
     return <>
-        <div className={styles.headerSearchBox} onClick={() => setOpen(true)}>
+        <div
+            role="button"
+            tabIndex={0}
+            className={styles.headerSearchBox}
+            onClick={setModalOpenFnc(true)}
+            onKeyPress={onPseudoInputKeyDown}
+            aria-label={`Open search with Enter or Space, or use the shortcut ${isMac ? `⌘ K` : `Ctrl K`} while anywhere else in the page.`}
+        >
             <Icon name="search" svgClasses={styles.searchIcon}/>
             <span className={styles.placeholder}>Search...</span>
             <span className={styles.kbdShortcut}>{ isMac ? `⌘ K` : `Ctrl K` }</span>
         </div>
         
-        <SearchModal isOpen={isOpen} currentFramework={currentFramework} closeModal={() => setOpen(false)} />
+        <SearchModal isOpen={isOpen} currentFramework={currentFramework} closeModal={setModalOpenFnc(false)} />
     </>;
 }
 
