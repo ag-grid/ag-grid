@@ -18,7 +18,7 @@
       }
     },
     "build:copy-source": {
-      "dependsOn": ["ag-grid-community:build"],
+      "dependsOn": ["@ag-grid-community/react:build"],
       "cache": true,
       "command": "npx gulp copy-from-module-source",
       "options": {
@@ -27,7 +27,7 @@
     },
     "build:types": {
       "executor": "@nx/js:tsc",
-      "dependsOn": ["build:copy-source"],
+      "dependsOn": ["@ag-grid-community/core:build:types", "build:copy-source"],
       "inputs": [
         "{projectRoot}/package.json",
         "{projectRoot}/src/**/*",
@@ -53,7 +53,7 @@
     },
     "build:package": {
       "executor": "@nx/esbuild:esbuild",
-      "dependsOn": ["build:copy-source"],
+      "dependsOn": ["@ag-grid-community/core:build:types", "build:copy-source"],
       "inputs": [
         "{projectRoot}/package.json",
         "{projectRoot}/src/**/*",
