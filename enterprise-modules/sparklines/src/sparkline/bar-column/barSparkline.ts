@@ -121,7 +121,7 @@ export class BarSparkline extends BarColumnSparkline {
                 labelX = x + (isPositiveY ? width - labelPadding : labelPadding);
                 labelTextAlign = isPositiveY ? 'end' : 'start';
 
-                const textSize = _Scene.HdpiCanvas.getTextSize(labelText, labelFontFamily);
+                const textSize = _Scene.Text.getTextSize(labelText, labelFontFamily);
                 const textWidth = textSize.width || 20;
                 const positiveBoundary = yZero + textWidth;
                 const negativeBoundary = yZero - textWidth;

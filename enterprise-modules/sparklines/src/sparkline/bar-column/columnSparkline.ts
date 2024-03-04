@@ -120,7 +120,7 @@ export class ColumnSparkline extends BarColumnSparkline {
                 labelY = y + (isPositiveY ? labelPadding : height - labelPadding);
                 labelTextBaseline = isPositiveY ? 'top' : 'bottom';
 
-                const textSize = _Scene.HdpiCanvas.getTextSize(labelText, labelFontFamily);
+                const textSize = _Scene.Text.getTextSize(labelText, labelFontFamily);
                 const textHeight = textSize.height || 10;
                 const positiveBoundary = yZero - textHeight;
                 const negativeBoundary = yZero + textHeight;
