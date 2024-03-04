@@ -15,7 +15,11 @@ const GitHubDetails = ({ favouritesOnly, repo }) => {
             </div>
         );
     } else {
-        return <Icon className={styles.imageButton} name="github" />;
+        return (
+            <div className={styles.imageButton}>
+                <Icon name="github" />
+            </div>
+        );
     }
 };
 

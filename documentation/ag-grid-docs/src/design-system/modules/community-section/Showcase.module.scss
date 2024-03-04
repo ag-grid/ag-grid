@@ -1,115 +1,112 @@
+@use '../../core/' as *;
+
 .cardContainer {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); // Adjust the minmax() values as needed
-  gap: 20px; // Adjust spacing between cards as necessary
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    column-gap:  $spacing-size-4;
+    row-gap: $spacing-size-6;
 }
 
 .card {
-  background-color: #1f2836;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  height: 100%; // Ensure all cards stretch to the same height
-
-  .header {
-    .image {
-      width: 100%; // Ensures the image takes up the full width of its container
-      height: 150px; // Adjust based on desired fixed height
-      object-fit: cover; // Ensures image covers the box, cropping it as necessary
-      display: block; // Ensures the image is displayed as a block-level element, which can help with applying the height
-      object-position: top;
-    } 
-  }
-
-  .body {
-    padding: 15px;
-    flex-grow: 1; // Ensures body takes up all available space pushing footer to the bottom
-
-    .titleContainer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-      gap: 12px;
-    }
-    
-    .title {
-      color: #55B2C6;
-      font-size: 18px; // Adjust based on design requirements
-      font-weight: bold;
-      margin-bottom: 0px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    
-    .imageButton {
-      width: auto; // Adjust based on the button image size
-      height: 24px; // Adjust based on design requirements
-      cursor: pointer; // Changes the cursor to a pointer to indicate it's clickable
-      margin-left: 10px; // Adds some space between the title and the button
-    }
-  
-    .description {
-      font-size: 14px; // Adjust based on design requirements
-      font-weight: 400;
-      color: #fff; // Adjust based on design requirements
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      -webkit-line-clamp: 3; // Limit to 3 lines
-      line-height: 1.4; // Adjust based on design requirements
-      max-height: calc(1.4em * 3); // Adjust the multiplier based on the line-height to ensure consistency
-    }
-    
-  }
-
-  .footer {
-    padding: 10px 15px;
+    background-color: var(--color-util-gray-200);
+    border: 1px solid var(--color-border-secondary);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: var(--radius-2xl);
+    overflow: hidden;
     display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 8px;
-    row-gap: 8px;
-
-    .frameworks {
-        display: flex;
-        align-items: center;
-        background: transparent; // Tag background color
-        border-radius: 12px;
-        padding: 0.25rem 0.5rem; // Padding inside tags
-        font-size: 0.75rem; // Tag text size
-        color: var(--color-text-primary);
-        margin-bottom: 0px;
-
-    }
-
-    .tags {
-
-        display: flex;
-        align-items: center;
-        background: transparent; // Tag background color
-        border: 1px solid var(--color-border-primary);
-        border-radius: 12px;
-        padding: 0.25rem 0.5rem; // Padding inside tags
-        font-size: 0.75rem; // Tag text size
-        color: var(--color-text-primary)
-    }
-
-    
+    flex-direction: column;
+    height: 100%;    
 }
 
+.header {
+    .image {
+        width: 100%; // Ensures the image takes up the full width of its container
+        height: 150px; // Adjust based on desired fixed height
+        object-fit: cover; // Ensures image covers the box, cropping it as necessary
+        object-position: top;
+    }
 }
 
 .gitHubDetails {
     display: flex;
-    gap: 12px;
+    gap: $spacing-size-4;
     align-items: center;
 
-    p {
-        all: unset;
-    }
+}
+
+.titleContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-size-4;
+    gap: $spacing-size-4;
+}
+
+.title {
+    color: var(--color-button-tertiary-fg);
+    font-size: var(--text-fs-base);
+    font-weight: bold;
+    margin-bottom: 0px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.body {
+    padding: $spacing-size-4;
+    flex-grow: 1; // Ensures body takes up all available space pushing footer to the bottom
+}
+
+.imageButton {
+    width: auto; // Adjust based on the button image size
+    height: $spacing-size-8; // Adjust based on design requirements
+    cursor: pointer; // Changes the cursor to a pointer to indicate it's clickable
+    margin-left: $spacing-size-4; // Adds some space between the title and the button
+    fill: var(--color-fg-primary);
+}
+
+.description {
+    font-size: var(--text-fs-base); // Tag text size
+    font-weight: var(--text-regular);
+    color: var(--color-text-primary); // Adjust based on design requirements
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 3; // Limit to 3 lines
+    line-height: 1.4; // Adjust based on design requirements
+    max-height: calc(1.4em * 3); // Adjust the multiplier based on the line-height to ensure consistency
+}
+
+.footer {
+    padding: $spacing-size-4;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $spacing-size-2;
+    row-gap: $spacing-size-2;
+}
+
+.frameworks {
+    display: flex;
+    align-items: center;
+    background: transparent;
+    font-weight: var(--text-regular);
+    border-radius: var(--radius-2xl);
+    padding: $spacing-size-1 $spacing-size-2; 
+    font-size: var(--text-size-2xs);
+    color: var(--color-text-primary);
+    margin-bottom: 0px;
+}
+
+.tags {
+    display: flex;
+    align-items: center;
+    background: transparent;
+    font-weight: var(--text-regular);
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-2xl);
+    padding: $spacing-size-1 $spacing-size-2; 
+    font-size: var(--text-fs-xs); 
+    color: var(--color-text-primary);
 }
