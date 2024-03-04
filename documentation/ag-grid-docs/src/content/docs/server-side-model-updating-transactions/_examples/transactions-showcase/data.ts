@@ -1,3 +1,5 @@
+import { getFakeServer } from "./fakeServer";
+
 const BOOK_COUNT = 3;
 const MIN_TRADE_COUNT = 1;
 const MAX_TRADE_COUNT = 10;
@@ -21,23 +23,14 @@ const products = [
     'Oats',
 ];
 
-const portfolios = [
-    'Aggressive',
-    'Defensive',
-    'Income',
-    'Speculative',
-    'Hybrid',
-];
+const portfolios = ['Aggressive', 'Defensive', 'Income', 'Speculative', 'Hybrid'];
 
 let nextTradeId = 0;
 const FIRST_BOOK_ID = 62472;
 
-
 const PRODUCT_BOOK_START = {};
 products.forEach((product, idx) => {
-    PRODUCT_BOOK_START[product] = FIRST_BOOK_ID + (
-        (portfolios.length * BOOK_COUNT) * idx
-    );
+    PRODUCT_BOOK_START[product] = FIRST_BOOK_ID + portfolios.length * BOOK_COUNT * idx;
 });
 const PORTFOLIO_BOOK_OFFSET = {};
 portfolios.forEach((portfolio, idx) => {
@@ -46,7 +39,7 @@ portfolios.forEach((portfolio, idx) => {
 
 let nextBookId = 62472;
 
-var data = [];
+export let data = [];
 
 // IIFE to create initial data
 (function () {
@@ -59,10 +52,7 @@ var data = [];
 
             for (let k = 0; k < BOOK_COUNT; k++) {
                 let book = createBookName();
-                let tradeCount = randomBetween(
-                    MAX_TRADE_COUNT,
-                    MIN_TRADE_COUNT
-                );
+                let tradeCount = randomBetween(MAX_TRADE_COUNT, MIN_TRADE_COUNT);
                 for (let l = 0; l < tradeCount; l++) {
                     let trade = createTradeRecord(product, portfolio, book);
 
@@ -76,11 +66,9 @@ var data = [];
     }
 })();
 
-var dataObservers = [];
-const registerObserver = ({ transactionFunc, groupedFields }) => {
-    const existingObserver = dataObservers.find(
-        ({ transactionFunc: oldFunc }) => oldFunc === transactionFunc
-    );
+export let dataObservers = [];
+export const registerObserver = ({ transactionFunc, groupedFields }) => {
+    const existingObserver = dataObservers.find(({ transactionFunc: oldFunc }) => oldFunc === transactionFunc);
     if (existingObserver) {
         existingObserver.groupedFields = groupedFields;
         return;
@@ -92,7 +80,7 @@ const registerObserver = ({ transactionFunc, groupedFields }) => {
 };
 
 const uniqueQueries = new Map();
-function randomTransaction({ numAdd, numUpdate, numRemove }) {
+export function randomTransaction({ numAdd, numUpdate, numRemove }) {
     uniqueQueries.clear();
     // updates
     const update = [];
@@ -122,7 +110,7 @@ function randomTransaction({ numAdd, numUpdate, numRemove }) {
     // insert new rows at the end
     data.push(...add);
 
-     // removes
+    // removes
     const remove = [];
     for (let i = 0; i < numRemove && data.length; i++) {
         const idx = randomBetween(0, data.length - 1);
@@ -131,57 +119,44 @@ function randomTransaction({ numAdd, numUpdate, numRemove }) {
         remove.push(d);
     }
 
-    dataObservers.forEach(
-        ({ transactionFunc, groupedFields }) => {
-            const routedTransactions = {};
+    dataObservers.forEach(({ transactionFunc, groupedFields }) => {
+        const routedTransactions = {};
 
-            translateRowsToRoutes({
-                rows: update,
-                op: 'update',
-                fields: groupedFields,
-                mutableTransactionObj: routedTransactions,
-            });
-            translateRowsToRoutes({
-                rows: remove,
-                op: 'remove',
-                fields: groupedFields,
-                mutableTransactionObj: routedTransactions,
-            });
-            translateRowsToRoutes({
-                rows: add,
-                op: 'add',
-                fields: groupedFields,
-                mutableTransactionObj: routedTransactions,
-            });
+        translateRowsToRoutes({
+            rows: update,
+            op: 'update',
+            fields: groupedFields,
+            mutableTransactionObj: routedTransactions,
+        });
+        translateRowsToRoutes({
+            rows: remove,
+            op: 'remove',
+            fields: groupedFields,
+            mutableTransactionObj: routedTransactions,
+        });
+        translateRowsToRoutes({
+            rows: add,
+            op: 'add',
+            fields: groupedFields,
+            mutableTransactionObj: routedTransactions,
+        });
 
-            // may want to filter duplicates here
-            Object.values(routedTransactions).forEach(transactionFunc);
-        }
-    );
+        // may want to filter duplicates here
+        Object.values(routedTransactions).forEach(transactionFunc);
+    });
 }
 
-const translateRowsToRoutes = ({
-    rows,
-    op,
-    fields,
-    mutableTransactionObj,
-}) => {
+const translateRowsToRoutes = ({ rows, op, fields, mutableTransactionObj }) => {
     rows.forEach((item) => {
         for (let i = 0; i < fields.length; i++) {
             const route = fields.slice(0, i).map((field) => item[field]);
             const routeId = route.join('-');
             const groupRowFields = fields.slice(0, i + 1);
-            const groupRow = Object.fromEntries(
-                groupRowFields.map((field) => [field, item[field]])
-            );
+            const groupRow = Object.fromEntries(groupRowFields.map((field) => [field, item[field]]));
 
             // does a row belonging to this group already exist
             const doesGroupExist = data.some(
-                (row) =>
-                    row !== item &&
-                    groupRowFields.every(
-                        (field) => groupRow[field] === row[field]
-                    )
+                (row) => row !== item && groupRowFields.every((field) => groupRow[field] === row[field])
             );
 
             const stringifiedRow = JSON.stringify(groupRow);
@@ -189,7 +164,7 @@ const translateRowsToRoutes = ({
             if (uniqueQueries.has(stringifiedRow)) {
                 aggValues = uniqueQueries.get(stringifiedRow);
             } else {
-                aggValues = fakeServerInstance.getAggValues(groupRow);
+                aggValues = getFakeServer().getAggValues(groupRow);
                 uniqueQueries.set(stringifiedRow, aggValues);
             }
             const newGroupItem = { ...groupRow, ...aggValues };

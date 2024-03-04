@@ -2,6 +2,11 @@ import { GridApi, createGrid, ColDef, GridOptions, ValueGetterParams } from '@ag
 import { MedalCellRenderer } from "./medalCellRenderer_typescript";
 import { TotalValueRenderer } from "./totalValueRenderer_typescript";
 
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 const columnDefs: ColDef[] = [
   { field: 'athlete' },
   { field: 'year', minWidth: 60 },

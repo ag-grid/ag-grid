@@ -39,7 +39,7 @@ const portfolios = ['Aggressive', 'Defensive', 'Income', 'Speculative', 'Hybrid'
 let nextTradeId = 0;
 let nextBookId = 62472;
 
-var data = [];
+export var data = [];
 
 // IIFE to create initial data
 (function () {   
@@ -72,9 +72,9 @@ var data = [];
     }
 })();
 
-var dataObservers = [];
+export var dataObservers = [];
 
-function randomUpdates({ numRemove, numAdd, numUpdate }) {
+export function randomUpdates({ numRemove, numAdd, numUpdate }) {
     // removes
     const remove = [];
     for (let i = 0; i < (Math.ceil(numRemove)); i++) {

@@ -1,4 +1,4 @@
-var data = [
+export let data = [
     {
         product: 'Palm Oil',
         portfolio: 'Aggressive',

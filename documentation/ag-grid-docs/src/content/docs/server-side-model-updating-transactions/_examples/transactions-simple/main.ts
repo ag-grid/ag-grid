@@ -12,10 +12,10 @@ import {
 import { FakeServer } from './fakeServer';
 import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
 import { ModuleRegistry } from "@ag-grid-community/core";
+import { data } from './data';
 
 ModuleRegistry.registerModules([ServerSideRowModelModule]);
 
-declare var data: any;
 
 const columnDefs: ColDef[] = [
     { field: 'tradeId' },
