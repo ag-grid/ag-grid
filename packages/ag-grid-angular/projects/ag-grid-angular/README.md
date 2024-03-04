@@ -62,7 +62,7 @@ Use the setup instructions below or go through [a 5-minute-quickstart guide](htt
 ### Install dependencies
 
 ```sh
-$ npm install --save @ag-grid-community/core @ag-grid-community/angular
+$ npm install --save ag-grid-community @ag-grid-community/angular
 ```
 
 ### Import styles in `styles.css`

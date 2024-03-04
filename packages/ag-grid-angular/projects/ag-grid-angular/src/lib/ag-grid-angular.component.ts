@@ -12,7 +12,7 @@ import {
     ViewEncapsulation
 } from "@angular/core";
 
-import { AgPromise, ComponentUtil, GridApi, ColumnApi, GridOptions, GridParams, Module, createGrid } from "@ag-grid-community/core";
+import { AgPromise, ComponentUtil, GridApi, ColumnApi, GridOptions, GridParams, Module, createGrid } from "ag-grid-community";
 
 // @START_IMPORTS@
 import {
@@ -180,7 +180,7 @@ import {
     ViewportChangedEvent,
     VirtualColumnsChangedEvent,
     VirtualRowRemovedEvent
-} from "@ag-grid-community/core";
+} from "ag-grid-community";
 // @END_IMPORTS@
 
 import { AngularFrameworkOverrides } from "./angularFrameworkOverrides";
