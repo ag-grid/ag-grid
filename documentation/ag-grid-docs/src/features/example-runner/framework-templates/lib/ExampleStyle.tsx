@@ -185,5 +185,13 @@ export const ExampleStyle = ({ rootSelector, extraStyles }: { rootSelector?: str
         ${extraStyles ? extraStyles : ''}
     `;
 
-    return <style media="only screen" dangerouslySetInnerHTML={{ __html: styles }}></style>;
+    return (
+        <>
+            <link
+                href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;700&amp;display=swap"
+                rel="stylesheet"
+            />
+            <style media="only screen" dangerouslySetInnerHTML={{ __html: styles }}></style>
+        </>
+    );
 };
