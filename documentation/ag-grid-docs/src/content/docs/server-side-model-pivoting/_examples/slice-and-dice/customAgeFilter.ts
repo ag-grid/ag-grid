@@ -1,9 +1,12 @@
-class CustomAgeFilter {
-    eGui;
-    filterValue = null;
-    params;
+import { IDoesFilterPassParams, IFilterComp, IFilterParams } from "@ag-grid-community/core";
+
+
+export class CustomAgeFilter implements IFilterComp {
+    eGui!: HTMLElement;
+    filterValue: number | null = null;
+    params: IFilterParams;
   
-    init(params) {
+    init(params: IFilterParams) {
       this.eGui = document.createElement('div')
       this.eGui.innerHTML =
         `<div>  
@@ -24,17 +27,17 @@ class CustomAgeFilter {
       // var that = this;
   
       this.eGui
-        .querySelector('[ref="btAll"]')
+        .querySelector('[ref="btAll"]')!
         .addEventListener('change', this.onSelection.bind(this, null))
       this.eGui
-        .querySelector('[ref="bt20"]')
+        .querySelector('[ref="bt20"]')!
         .addEventListener('change', this.onSelection.bind(this, 20))
       this.eGui
-        .querySelector('[ref="bt22"]')
+        .querySelector('[ref="bt22"]')!
         .addEventListener('change', this.onSelection.bind(this, 22))
     }
   
-    onSelection(value) {
+    onSelection(value: number | null) {
       this.filterValue = value
       this.params.filterChangedCallback()
     }
@@ -47,7 +50,7 @@ class CustomAgeFilter {
       return this.filterValue !== null
     }
   
-    doesFilterPass(params) {
+    doesFilterPass(params: IDoesFilterPassParams) {
       // not needed for server side filtering
       const { node } = params;
       const value = this.params.getValue(node);
@@ -67,15 +70,15 @@ class CustomAgeFilter {
       }
     }
   
-    setModel(model) {
+    setModel(model: any) {
       if (model && model.filter === 20) {
-        this.eGui.querySelector('[ref="bt20"]').checked = true
+        this.eGui.querySelector<HTMLInputElement>('[ref="bt20"]')!.checked = true
         this.filterValue = 20
       } else if (model && model.filter === 22) {
-        this.eGui.querySelector('[ref="bt22"]').checked = true
+        this.eGui.querySelector<HTMLInputElement>('[ref="bt22"]')!.checked = true
         this.filterValue = 22
       } else {
-        this.eGui.querySelector('[ref="btAll"]').checked = true
+        this.eGui.querySelector<HTMLInputElement>('[ref="btAll"]')!.checked = true
         this.filterValue = null
       }
     }

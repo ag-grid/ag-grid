@@ -22,12 +22,9 @@ import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { SideBarModule } from '@ag-grid-enterprise/side-bar';
 import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
 import { ModuleRegistry } from "@ag-grid-community/core";
+import { AG_GRID_LOCALE_ZZZ } from './locale.zzz';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, ClipboardModule, ColumnsToolPanelModule, CsvExportModule, ExcelExportModule, FiltersToolPanelModule, GridChartsModule, MenuModule, MultiFilterModule, RangeSelectionModule, RowGroupingModule, SetFilterModule, SideBarModule, StatusBarModule]);
-
-declare var AG_GRID_LOCALE_ZZZ: {
-  [key: string]: string;
-};
 
 class NodeIdRenderer implements ICellRendererComp {
   eGui!: HTMLElement;

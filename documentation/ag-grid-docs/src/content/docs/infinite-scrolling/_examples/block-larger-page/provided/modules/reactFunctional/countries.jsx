@@ -1,5 +1,5 @@
 
-function countries() {
+export function countries() {
     return [
         'United States',
         'Russia',

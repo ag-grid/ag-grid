@@ -1,5 +1,5 @@
 import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
-declare var logos: any;
+import { logos } from './imageUtils';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { CsvExportModule } from '@ag-grid-community/csv-export';
 import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';

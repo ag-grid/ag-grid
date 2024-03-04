@@ -10,7 +10,7 @@ import {
   ServerSideTransaction,
   ServerSideTransactionResult,
 } from '@ag-grid-community/core';
-
+import { createRowOnServer } from './data';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
 import { ModuleRegistry } from "@ag-grid-community/core";
@@ -18,7 +18,6 @@ import { ModuleRegistry } from "@ag-grid-community/core";
 ModuleRegistry.registerModules([RowGroupingModule, ServerSideRowModelModule]);
 
 import { FakeServer } from './fakeServer';
-declare var createRowOnServer: any;
 
 const columnDefs: ColDef[] = [
     { field: 'portfolio', hide: true, rowGroup: true },
@@ -54,7 +53,7 @@ const gridOptions: GridOptions = {
   },
   onGridReady: (params: GridReadyEvent) => {
     // setup the fake server
-    const server = new FakeServer();
+    const server = FakeServer();
 
     // create datasource with a reference to the fake server
     const datasource = getServerSideDatasource(server);

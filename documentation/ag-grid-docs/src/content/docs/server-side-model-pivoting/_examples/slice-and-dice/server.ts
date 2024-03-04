@@ -1,27 +1,25 @@
-function createServerSideDatasource(fakeServer) {
+
+export function createServerSideDatasource(fakeServer) {
     class ServerSideDatasource {
         constructor(fakeServer) {
             this.fakeServer = fakeServer;
         }
 
         getRows(params) {
-            this.fakeServer.getData(
-                params.request,
-                (resultForGrid, lastRow, pivotFields) => {
-                    params.success({
-                        rowData: resultForGrid,
-                        rowCount: lastRow,
-                        pivotResultFields: pivotFields,
-                    });
-                }
-            );
+            this.fakeServer.getData(params.request, (resultForGrid, lastRow, pivotFields) => {
+                params.success({
+                    rowData: resultForGrid,
+                    rowCount: lastRow,
+                    pivotResultFields: pivotFields,
+                });
+            });
         }
     }
 
     return new ServerSideDatasource(fakeServer);
 }
 
-function createFakeServer(data) {
+export function createFakeServer(data) {
     // THIS IS NOT PRODUCTION CODE
     // in your application, you should be implementing the server logic in your server, maybe in JavaScript, but
     // also maybe in Java, C# or another server side language. The server side would then typically query a database
@@ -58,8 +56,7 @@ class FakeServer {
         } = request;
 
         // Pivot is only active if we have pivot columns and aggregate columns
-        const pivotActive =
-            pivotMode && pivotCols.length > 0 && valueCols.length > 0;
+        const pivotActive = pivotMode && pivotCols.length > 0 && valueCols.length > 0;
 
         /** Filter data */
         let rowData = this.filterList(this.allData, filterModel);
@@ -67,12 +64,7 @@ class FakeServer {
         /** Pivot data */
         let pivotFields = null;
         if (pivotActive) {
-            const pivotResult = this.pivot(
-                pivotCols,
-                rowGroupCols,
-                valueCols,
-                rowData
-            );
+            const pivotResult = this.pivot(pivotCols, rowGroupCols, valueCols, rowData);
             // Pivoted row data
             rowData = pivotResult.data;
             // Aggregate instead by the pivot columns
@@ -84,21 +76,12 @@ class FakeServer {
         /** Group & Aggregate data */
         if (rowGroupCols.length > 0) {
             // When grouping we only return data for one group per request, so filter the other data out
-            rowData = this.filterOutOtherGroups(
-                rowData,
-                groupKeys,
-                rowGroupCols
-            );
+            rowData = this.filterOutOtherGroups(rowData, groupKeys, rowGroupCols);
 
             // If this group isn't the bottom level, then group the rows rather than returning them
             const showingGroupLevel = rowGroupCols.length > groupKeys.length;
             if (showingGroupLevel) {
-                rowData = this.buildGroupsFromData(
-                    rowData,
-                    rowGroupCols,
-                    groupKeys,
-                    valueCols
-                );
+                rowData = this.buildGroupsFromData(rowData, rowGroupCols, groupKeys, valueCols);
             }
         } else if (pivotMode) {
             // When pivoting without groups, aggregate all data into one row
@@ -212,11 +195,7 @@ class FakeServer {
             pivotCols.forEach(function (pivotCol) {
                 var pivotField = pivotCol.id;
                 var pivotValue = item[pivotField];
-                if (
-                    pivotValue !== null &&
-                    pivotValue !== undefined &&
-                    pivotValue.toString
-                ) {
+                if (pivotValue !== null && pivotValue !== undefined && pivotValue.toString) {
                     pivotValues.push(pivotValue.toString());
                 } else {
                     pivotValues.push('-');
@@ -293,9 +272,9 @@ class FakeServer {
                         const row = rowData[i];
                         const value = row[field];
                         if (value === undefined) continue;
-                        
+
                         sum += value;
-                    };
+                    }
                     result[field] = sum;
                     break;
                 case 'min':
@@ -308,32 +287,30 @@ class FakeServer {
                         if (min === null || min > value) {
                             min = value;
                         }
-                    };
+                    }
                     result[field] = min;
                     break;
                 case 'max':
                     let max = null;
                     for (let i = 0; i < rowData.length; i++) {
-                        const row = rowData[i];                     
+                        const row = rowData[i];
                         const value = row[field];
                         if (value === undefined) continue;
 
                         if (max === null || max < value) {
                             max = value;
                         }
-                    };
+                    }
                     result[field] = max;
                     break;
                 case 'random':
                     result[field] = Math.random(); // just make up a number
                     break;
                 default:
-                    console.warn(
-                        'unrecognised aggregation function: ' + valueCol.aggFunc
-                    );
+                    console.warn('unrecognised aggregation function: ' + valueCol.aggFunc);
                     break;
             }
-        };
+        }
 
         return result;
     }
