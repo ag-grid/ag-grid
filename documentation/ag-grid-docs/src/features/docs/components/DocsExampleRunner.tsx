@@ -4,8 +4,7 @@ import { ExampleRunner } from '@features/example-runner/components/ExampleRunner
 import { ExternalLinks } from '@features/example-runner/components/ExternalLinks';
 import { getLoadingIFrameId } from '@features/example-runner/utils/getLoadingLogoId';
 import { useStore } from '@nanostores/react';
-import { $frameworkContext, $internalFramework, updateInternalFrameworkBasedOnFramework } from '@stores/frameworkStore';
-import { getFrameworkFromInternalFramework } from '@utils/framework';
+import { $internalFramework } from '@stores/frameworkStore';
 import { useImportType } from '@utils/hooks/useImportType';
 import { useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
@@ -31,22 +30,6 @@ interface Props {
 // NOTE: Not on the layout level, as that is generated at build time, and queryClient needs to be
 // loaded on the client side
 const queryClient = new QueryClient();
-
-/**
- * Update the internal framework if it is different to the framework in the URL
- *
- * @param framework Framework from the URL
- */
-function useUpdateInternalFrameworkFromFramework(framework: Framework) {
-    const internalFramework = useStore($internalFramework);
-
-    useEffect(() => {
-        const frameworkFromInternalFramework = getFrameworkFromInternalFramework(internalFramework);
-        if (frameworkFromInternalFramework !== framework) {
-            updateInternalFrameworkBasedOnFramework(framework);
-        }
-    }, [internalFramework, framework]);
-}
 
 const queryOptions = {
     retry: false,
@@ -165,8 +148,6 @@ const DocsExampleRunnerInner = ({ name, title, exampleType, exampleHeight, frame
         setPackageJson(contents.packageJson);
         setExampleBoilerPlateFiles(contents.boilerPlateFiles);
     }, [contents, contentsIsLoading, contentsIsError, exampleFileHtml]);
-
-    useUpdateInternalFrameworkFromFramework(framework);
 
     const externalLinks = (
         <ExternalLinks
