@@ -49,7 +49,7 @@ const getOtherJsFiles = ({
     folderPath: string;
     sourceFileList: string[];
 }): Promise<FileContents> => {
-    const otherJsFiles = sourceFileList.filter((fileName) => fileName.endsWith('.js'));
+    const otherJsFiles = sourceFileList.filter((fileName) => fileName.endsWith('.js') && !fileName.includes('_vue'));
     return getFileList({
         folderPath,
         fileList: otherJsFiles,
