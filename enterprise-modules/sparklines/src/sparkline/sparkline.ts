@@ -147,13 +147,13 @@ export abstract class Sparkline {
         element.setAttribute('class', 'ag-sparkline-wrapper');
 
         // initialise scene
-        const scene = new _Scene.Scene({ window, document });
+        const scene = new _Scene.Scene({});
         this.scene = scene;
         this.canvasElement = scene.canvas.element;
 
         // set scene properties
-        scene.root = root;
-        scene.container = element;
+        scene.setRoot(root);
+        scene.setContainer(element);
 
         this.resizeAndSetDimensions(this.width, this.height);
 
@@ -712,7 +712,7 @@ export abstract class Sparkline {
      * Cleanup and remove canvas element from the DOM.
      */
     public destroy(): void {
-        this.scene.container = undefined;
+        this.scene.destroy();
         // remove canvas element from the DOM
         this.container = undefined;
         this.cleanupDomEventListeners(this.scene.canvas.element);
