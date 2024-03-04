@@ -3,8 +3,17 @@ import type { Framework, ImportType, InternalFramework } from './types/ag-grid';
 export const FRAMEWORKS: readonly Framework[] = ['react', 'angular', 'vue', 'javascript'] as const;
 export const DEFAULT_FRAMEWORK: Framework = FRAMEWORKS[0];
 
-export const INTERNAL_FRAMEWORKS: readonly InternalFramework[] = [
+export const USE_PACKAGES = import.meta.env?.USE_PACKAGES ?? false;
+
+export const INTERNAL_FRAMEWORKS: readonly InternalFramework[] = USE_PACKAGES ? [
     'vanilla',
+    'typescript',
+    'reactFunctional',
+    'reactFunctionalTs',
+    'angular',
+    'vue',
+    'vue3',
+] : [
     'typescript',
     'reactFunctional',
     'reactFunctionalTs',
@@ -20,7 +29,7 @@ export const FRAMEWORK_DISPLAY_TEXT: Record<Framework, string> = {
     vue: 'Vue',
 };
 
-export const IMPORT_TYPES: ImportType[] = ['modules', 'packages'];
+export const IMPORT_TYPES: ImportType[] = USE_PACKAGES ? ['modules', 'packages'] : ['modules'];
 
 export const agGridVersion = import.meta.env?.PUBLIC_PACKAGE_VERSION ?? 'unknown';
 export const agGridEnterpriseVersion = import.meta.env?.PUBLIC_PACKAGE_VERSION ?? 'unknown';

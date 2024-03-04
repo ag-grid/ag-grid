@@ -15,12 +15,11 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
     protected componentType: ComponentType;
 
     protected key: string;
-    protected ref?: (element: any) => void;
     private portalKey: string;
     private oldPortal: ReactPortal | null = null;
     private reactElement: any;
     private params: any;
-    protected instanceCreated: AgPromise<boolean>;
+    protected instanceCreated: AgPromise<boolean> | AgPromise<false>;
     private resolveInstanceCreated?: (value: boolean) => void;
     private suppressFallbackMethods: boolean;
 
@@ -160,13 +159,12 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
     private createOrUpdatePortal(params: any) {
         if (!this.isStatelessComponent()) {
             // grab hold of the actual instance created
-            this.ref = (element: any) => {
+            params.ref = (element: any) => {
                 this.componentInstance = element;
                 this.addParentContainerStyleAndClasses();
                 this.resolveInstanceCreated?.(true);
                 this.resolveInstanceCreated = undefined;
             };
-            params.ref = this.ref;
         }
 
         this.reactElement = this.createElement(this.reactComponent, { ...params, key: this.key });
@@ -214,7 +212,7 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
             // for this single operation
             console.error = () => {
             };
-            const staticMarkup = renderToStaticMarkup(createElement(this.reactComponent, params));
+            const staticMarkup = renderToStaticMarkup(createElement(this.reactComponent, params) as any);
             return staticMarkup === '';
         } catch (ignore) {
         } finally {

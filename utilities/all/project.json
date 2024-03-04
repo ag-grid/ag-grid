@@ -114,7 +114,7 @@
           "while (test \"${BUILD_PACKAGES}\" != \"0\" && test \"${BUILD_FWS}\" != \"0\") ; do nx watch -p ag-grid-angular,ag-grid-react,ag-grid-vue,ag-grid-vue3 -- {projectRoot}/dev.sh \\${NX_PROJECT_NAME}; done",
           "while true ; do nx watch -p ag-grid-docs-* -- nx build \\${NX_PROJECT_NAME}:generate; done",
           "while true ; do nx watch -p ag-grid-docs -- {projectRoot}/dev.sh \\${NX_PROJECT_NAME}; done",
-          "nx run ag-grid-docs:dev"
+          "USE_PACKAGES=${BUILD_PACKAGES} nx run ag-grid-docs:dev"
         ]
       },
       "configurations": {
@@ -212,6 +212,7 @@
     "packages/ag-grid-community",
     "packages/ag-grid-enterprise",
     "packages/ag-grid-charts-enterprise",
+    "packages/ag-grid-react",
     "documentation/ag-grid-docs",
     "ag-grid-generate-example-files"
   ],

@@ -2,6 +2,7 @@ import type { InternalFramework } from '@ag-grid-types';
 import styles from '@design-system/modules/CodeOptions.module.scss';
 import { setInternalFramework } from '@stores/frameworkStore';
 import { isReactInternalFramework, isVueInternalFramework } from '@utils/framework';
+import {USE_PACKAGES} from "@constants";
 
 type SelectorType = 'typescript' | 'react' | 'vue';
 interface SelectorConfig {
@@ -13,7 +14,6 @@ const SELECTOR_CONFIG: Record<SelectorType, SelectorConfig> = {
     typescript: {
         label: 'Language',
         labelValues: {
-            Javascript: 'vanilla',
             Typescript: 'typescript',
         },
     },
@@ -32,6 +32,9 @@ const SELECTOR_CONFIG: Record<SelectorType, SelectorConfig> = {
         },
     },
 };
+if (USE_PACKAGES) {
+    SELECTOR_CONFIG.typescript.labelValues['Javascript'] = 'vanilla';
+}
 
 function CodeOptionSelector({
     id,

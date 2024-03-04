@@ -82,6 +82,7 @@
       "packages/ag-grid-community",
       "packages/ag-grid-enterprise",
       "packages/ag-grid-charts-enterprise",
+      "packages/ag-grid-react",
       "documentation/ag-grid-docs",
       "plugins/ag-grid-generate-code-reference-files",
       "plugins/ag-grid-generate-example-files",

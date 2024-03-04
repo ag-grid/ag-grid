@@ -82,7 +82,7 @@ export class CustomComponentWrapper<TInputParams, TOutputParams, TMethods> exten
         return {
             ...this.sourceParams,
             key: this.key,
-            ref: this.ref
+            ref: (this as any).ref
          } as any;
     }
 
