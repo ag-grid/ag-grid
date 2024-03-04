@@ -212,7 +212,7 @@ export class BeanStub implements IEventEmitter {
         return (context || this.getContext()).createBean(bean, afterPreCreateCallback);
     }
 
-    protected destroyBean<T>(bean: T, context?: Context): T | undefined {
+    protected destroyBean<T>(bean: T, context?: Context): undefined {
         return (context || this.getContext()).destroyBean(bean);
     }
 

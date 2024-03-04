@@ -2,11 +2,12 @@ import { BeanStub } from "../context/beanStub";
 import { Column } from "../entities/column";
 import { ColumnGroup } from "../entities/columnGroup";
 import { RowNode } from "../entities/rowNode";
-import { Beans } from "../rendering/beans";
-import { CustomTooltipFeature, TooltipParentComp } from "./customTooltipFeature";
+import { TooltipStateManager, TooltipParentComp } from "./tooltipStateManager";
 import { ITooltipParams, TooltipLocation } from "../rendering/tooltipComponent";
 import { ColDef, ColGroupDef } from "../entities/colDef";
 import { WithoutGridCommon } from "../interfaces/iCommon";
+import { Beans } from "../rendering/beans";
+import { Autowired, PostConstruct } from "../context/context";
 
 export interface ITooltipFeatureCtrl {
     getTooltipValue(): any;
@@ -22,49 +23,40 @@ export interface ITooltipFeatureCtrl {
     getValueFormatted?(): string;
     getTooltipShowDelayOverride?(): number;
     getTooltipHideDelayOverride?(): number;
+    shouldShowTooltip?(): boolean;
 }
 
 export class TooltipFeature extends BeanStub {
 
-    private readonly ctrl: ITooltipFeatureCtrl;
-    private readonly beans: Beans;
-
-    private eGui: HTMLElement;
-
     private tooltip: any;
 
-    private genericTooltipFeature: CustomTooltipFeature;
+    private tooltipManager: TooltipStateManager | undefined;
     private browserTooltips: boolean;
 
-    constructor(ctrl: ITooltipFeatureCtrl, beans: Beans) {
+    @Autowired('beans') private beans: Beans;
+
+    constructor(private readonly ctrl: ITooltipFeatureCtrl, beans?: Beans) {
         super();
 
-        this.ctrl = ctrl;
-        this.beans = beans;
-    }
-
-    public setComp(eGui: HTMLElement): void {
-        this.eGui = eGui;
-        this.setupTooltip();
-    }
-
-    private setBrowserTooltip(tooltip: string | null) {
-        const name = 'title';
-        if (tooltip != null && tooltip != '') {
-            this.eGui.setAttribute(name, tooltip);
-        } else {
-            this.eGui.removeAttribute(name);
+        if (beans) {
+            this.beans = beans;
         }
     }
 
-    private setupTooltip(): void {
-        this.browserTooltips = this.beans.gridOptionsService.get('enableBrowserTooltips');
-        this.updateTooltipText();
+    @PostConstruct
+    private postConstruct() {
+        this.refreshToolTip();
+    }
 
-        if (this.browserTooltips) {
-            this.setBrowserTooltip(this.tooltip);
+
+    private setBrowserTooltip(tooltip: string | null) {
+        const name = 'title';
+        const eGui = this.ctrl.getGui();
+
+        if (tooltip != null && tooltip != '') {
+            eGui.setAttribute(name, tooltip);
         } else {
-            this.createTooltipFeatureIfNeeded();
+            eGui.removeAttribute(name);
         }
     }
 
@@ -73,25 +65,33 @@ export class TooltipFeature extends BeanStub {
     }
 
     private createTooltipFeatureIfNeeded(): void {
-        if (this.genericTooltipFeature != null) { return; }
+        if (this.tooltipManager != null) { return; }
 
         const parent: TooltipParentComp = {
             getTooltipParams: () => this.getTooltipParams(),
             getGui: () => this.ctrl.getGui()
         };
 
-        this.genericTooltipFeature = this.createManagedBean(new CustomTooltipFeature(
+        this.tooltipManager = this.createBean(new TooltipStateManager(
             parent,
             this.ctrl.getTooltipShowDelayOverride?.(),
-            this.ctrl.getTooltipHideDelayOverride?.()
+            this.ctrl.getTooltipHideDelayOverride?.(),
+            this.ctrl.shouldShowTooltip
         ), this.beans.context);
     }
 
     public refreshToolTip() {
+        this.browserTooltips = this.beans.gridOptionsService.get('enableBrowserTooltips');
         this.updateTooltipText();
 
         if (this.browserTooltips) {
             this.setBrowserTooltip(this.tooltip);
+            if (this.tooltipManager) {
+                this.tooltipManager = this.destroyBean(this.tooltipManager, this.beans.context);
+            }
+        } else {
+            this.setBrowserTooltip(null);
+            this.createTooltipFeatureIfNeeded();
         }
     }
 
@@ -110,7 +110,7 @@ export class TooltipFeature extends BeanStub {
             data: rowNode ? rowNode.data : undefined,
             value: this.getTooltipText(),
             valueFormatted: ctrl.getValueFormatted ? ctrl.getValueFormatted() : undefined,
-            hideTooltipCallback: () => this.genericTooltipFeature.hideTooltip(true)
+            hideTooltipCallback: () => this.tooltipManager?.hideTooltip(true)
         };
 
     }
@@ -121,6 +121,9 @@ export class TooltipFeature extends BeanStub {
 
     // overriding to make public, as we don't dispose this bean via context
     public destroy() {
+        if (this.tooltipManager) {
+            this.tooltipManager = this.destroyBean(this.tooltipManager, this.beans.context);
+        }
         super.destroy();
     }
 }

@@ -241,8 +241,8 @@ export class CellCtrl extends BeanStub {
 
         this.cellPositionFeature?.setComp(eGui);
         this.cellCustomStyleFeature?.setComp(comp);
-        this.tooltipFeature?.setComp(eGui);
         this.cellKeyboardListenerFeature?.setComp(this.eGui);
+        this.tooltipFeature?.refreshToolTip();
 
         if (this.cellRangeFeature) { this.cellRangeFeature.setComp(comp, eGui); }
 
@@ -1054,7 +1054,6 @@ export class CellCtrl extends BeanStub {
         if (isTooltipEnabled) {
             this.disableTooltipFeature();
             this.enableTooltipFeature();
-            this.tooltipFeature?.setComp(this.eGui);
         } else {
             this.disableTooltipFeature();
         }
