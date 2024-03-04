@@ -5,6 +5,11 @@
     align-items: center;
     padding: 32px 0px 64px 0px;
     margin: 64px 0px 0px 0px;
+
+    .description {
+        text-align: center;
+        margin: 0px 25vw;
+    }
 }
 
 .container {
@@ -12,10 +17,9 @@
 }
 
 .content { 
-    margin-top: 24px;
-    margin: 0px 12.5vw;
+    margin: 0px 12.5vw 8vw 12.5vw;
     h3 {
-        margin-top: 12px;
+        margin-top: 24px;
     }
 }
 
