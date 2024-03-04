@@ -8,3 +8,38 @@
     flex: 1 1 0px;
     width: 100%;
 }
+
+.logo {
+    display: block;
+    width: 25px;
+    height: auto;
+    max-height: 50%;
+    margin-right: 12px;
+    filter: brightness(1.1);
+}
+
+.imgSpan {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    align-items: center;
+}
+
+.missionSpan {
+    display: flex;
+    justify-content: center;
+    height: 100%;
+    align-items: center;
+}
+
+.missionIcon {
+    width: auto;
+    height: auto;
+}
+
+.priceIcon {
+    display: block;
+    width: 15px;
+    height: auto;
+    max-height: 50%;
+}
