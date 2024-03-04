@@ -1,6 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import SearchModal from './SearchModal';
 import { Icon } from '../icon/Icon';
+import { useStore } from '@nanostores/react';
+import { $internalFramework } from '@stores/frameworkStore';
+import { getFrameworkFromInternalFramework } from '@utils/framework';
 
 import styles from '@design-system/modules/Search.module.scss';
 
@@ -9,9 +12,10 @@ import styles from '@design-system/modules/Search.module.scss';
  * The website uses Algolia to power its search functionality. This component builds on components provided by Algolia
  * to render the search box and results.
  */
-const Search = ({ currentFramework }) => {
+const Search = () => {
+    const internalFramework = useStore($internalFramework);
+    const currentFramework = useMemo(() => getFrameworkFromInternalFramework(internalFramework), [internalFramework]);
     const [isOpen, setOpen] = useState(false);
-
     const [isMac, setMac] = useState(false);
     
     // done inside effect as window won't be available for SSR.

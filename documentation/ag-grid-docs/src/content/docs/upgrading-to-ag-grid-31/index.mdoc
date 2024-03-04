@@ -53,11 +53,11 @@ The `solar` and `pastel` integrated chart themes have been removed. Any saved ch
 
 If you are using Standalone Charts, please see changes to charts in the [AG Charts Migration Guide](https://charts.ag-grid.com/react/upgrade-to-ag-charts-9/).
 
-### ColDef
+### ColumnDefs
 
-Grid columns are now sortable and resizable by default. Also, the grid animates rows by default. In order to avoid this, please set `defaultColDef.resizable = false`, `defaultColDef.sortable = false` and `gridOptions.animateRows = false`.
-
-When not providing column definitions or setting `columnDefs = undefined`, a loading overlay will be displayed until column definitions are set. To go back to the earlier behavior of showing a grid without any columns, please set `columnDefs = []`.
+* Grid columns are now sortable and resizable by default. Also, the grid animates rows by default. In order to avoid this, please set `defaultColDef.resizable = false`, `defaultColDef.sortable = false` and `gridOptions.animateRows = false`.
+* When not providing column definitions or setting `columnDefs = undefined`, a loading overlay will be displayed until column definitions are set. To go back to the earlier behavior of showing a grid without any columns, please set `columnDefs = []`.
+* Setting `columnDefs` to `null`/`undefined` via a call to `api.setColumnDefs` or via a state variable no longer clears the columns shown in the grid. Instead, set `columnDefs` to `[]` to clear the columns shown in the grid.
 
 ### GridOptions
 
@@ -77,6 +77,10 @@ When not providing column definitions or setting `columnDefs = undefined`, a loa
 
 * `IServerSideGetRowsRequest.filterModel` can now be of type AdvancedFilterModel | null if Advanced Filter is enabled, or FilterModel otherwise (for Column Filters).
 * Added new localisation keys for the Date Filter - `lessThan` is now `before`, and `greaterThan` is now `after`. Please provide translations for these 2 new keys in your localized dictionaries to display your translation instead of the English strings for "before" and "after".
+
+### Row Data 
+
+Setting `rowData` to `null`/`undefined` via a call to `api.setRowData` or via a state variable no longer clears the rows shown in the grid. Instead, set `rowData` to `[]` to clear the rows shown in the grid.
 
 ### Row Grouping
 
