@@ -207,14 +207,21 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
     }
 
     private setupTooltip(): void {
-
         const colGroupDef = this.column.getColGroupDef();
+        const isTooltipStandard = this.gridOptionsService.get('tooltipShowMode') === 'standard';
+        const eGui = this.eGui;
 
         const tooltipCtrl: ITooltipFeatureCtrl = {
             getColumn: () => this.column,
-            getGui: () => this.eGui,
+            getGui: () => eGui,
             getLocation: () => 'headerGroup',
-            getTooltipValue: () => colGroupDef && colGroupDef.headerTooltip
+            getTooltipValue: () => colGroupDef && colGroupDef.headerTooltip,
+            shouldShowTooltip: isTooltipStandard ? undefined : () => {
+                const textEl = eGui.querySelector('.ag-header-group-text');
+                if (!textEl) { return true; }
+
+                return textEl.scrollWidth > textEl.clientWidth;
+            }
         };
 
         if (colGroupDef) {

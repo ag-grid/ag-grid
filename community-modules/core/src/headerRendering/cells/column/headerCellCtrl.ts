@@ -263,16 +263,24 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     }
 
     private setupTooltip(): void {
+        const isTooltipStandard = this.gridOptionsService.get('tooltipShowMode') === 'standard';
+        const eGui = this.eGui;
 
         const tooltipCtrl: ITooltipFeatureCtrl = {
             getColumn: () => this.column,
             getColDef: () => this.column.getColDef(),
-            getGui: () => this.eGui,
+            getGui: () => eGui,
             getLocation: () => 'header',
             getTooltipValue: () => {
                 const res = this.column.getColDef().headerTooltip;
                 return res;
             },
+            shouldShowTooltip: isTooltipStandard ? undefined : () => {
+                const textEl = eGui.querySelector('.ag-header-cell-text');
+                if (!textEl) { return true; }
+
+                return textEl.scrollWidth > textEl.clientWidth;
+            }
         };
 
         const tooltipFeature = this.createManagedBean(new TooltipFeature(tooltipCtrl));
