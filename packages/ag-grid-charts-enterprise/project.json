@@ -40,6 +40,8 @@
     "build:umd": {
       "executor": "@nx/webpack:webpack",
       "dependsOn": ["^build", "build:updateWithCoreExports"],
+      "inputs": [],
+      "outputs": ["{projectRoot}/dist/ag-grid-charts-enterprise.js"],
       "options": {
         "webpackConfig": "packages/ag-grid-charts-enterprise/webpack.config.js",
         "outputPath":  "overridden in webpack config but required by nx",
@@ -49,10 +51,7 @@
     },
     "build:copy-styles": {
       "dependsOn": [],
-      "inputs": [
-        "^production",
-        "production"
-      ],
+      "inputs": [],
       "cache": true,
       "command": "rsync -r ../../community-modules/styles/*.*css --delete styles",
       "options": {

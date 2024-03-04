@@ -12,6 +12,8 @@
     },
     "build:umd": {
       "executor": "@nx/webpack:webpack",
+      "inputs": [],
+      "outputs": ["{projectRoot}/dist/ag-grid-community.js"],
       "options": {
         "webpackConfig": "packages/ag-grid-community/webpack.config.js",
         "outputPath":  "overridden in webpack config but required by nx",
@@ -85,17 +87,6 @@
         "production": {
           "sourcemap": false
         }
-      }
-    },
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
-    },
-    "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
-      "options": {
-        "jestConfig": "community-modules/jest.config.ts"
       }
     }
   },
