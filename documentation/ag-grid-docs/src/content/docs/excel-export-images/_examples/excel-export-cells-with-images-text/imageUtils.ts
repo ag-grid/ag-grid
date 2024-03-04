@@ -33,7 +33,7 @@ const createCountryCodeMap = countryCodeObject => fetch('https://flagcdn.com/en/
         return countryCodeObject;
     });
 
-const createBase64FlagsFromResponse = (response, countryCodeObject, base64FlagsObject) => {
+export const createBase64FlagsFromResponse = (response, countryCodeObject, base64FlagsObject) => {
     const urlPrefix = 'https://flagcdn.com/w20/';
     const extension = '.png';
     return response.json()

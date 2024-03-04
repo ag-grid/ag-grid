@@ -8,8 +8,7 @@ import { ModuleRegistry } from "@ag-grid-community/core";
 ModuleRegistry.registerModules([ClientSideRowModelModule, ExcelExportModule, MenuModule]);
 
 import { FlagContext } from './interfaces';
-
-declare function createBase64FlagsFromResponse(response: any, countryCodes: any, base64flags: any): any;
+import { createBase64FlagsFromResponse } from './imageUtils';
 
 const countryCodes: any = {};
 const base64flags: any = {};

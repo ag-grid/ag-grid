@@ -5,17 +5,16 @@ import {
   GridOptions,
   ICellRendererComp,
   ICellRendererParams,
-  IViewportDatasource,
   ValueFormatterParams,
   GetRowIdParams,
 } from '@ag-grid-community/core';
-declare function createMockServer(): any;
 import { ViewportRowModelModule } from '@ag-grid-enterprise/viewport-row-model';
 import { ModuleRegistry } from "@ag-grid-community/core";
 
-ModuleRegistry.registerModules([ViewportRowModelModule]);
+import { createMockServer } from './mock-server';
+import { createViewportDatasource } from './viewport-datasource';
 
-declare function createViewportDatasource(mockServer: any): IViewportDatasource;
+ModuleRegistry.registerModules([ViewportRowModelModule]);
 
 class RowIndexRenderer implements ICellRendererComp {
   eGui!: HTMLDivElement;
