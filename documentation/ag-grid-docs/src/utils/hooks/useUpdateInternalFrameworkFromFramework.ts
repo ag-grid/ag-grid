@@ -16,12 +16,6 @@ export function useUpdateInternalFrameworkFromFramework(framework: Framework) {
 
     useEffect(() => {
         const frameworkFromInternalFramework = getFrameworkFromInternalFramework(internalFramework);
-
-        console.log({
-            framework,
-            internalFramework,
-            frameworkFromInternalFramework,
-        });
         if (frameworkFromInternalFramework !== framework) {
             updateInternalFrameworkBasedOnFramework(framework);
         }
