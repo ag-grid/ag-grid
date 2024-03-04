@@ -25,7 +25,7 @@ import {
     IToolPanel,
     IToolPanelParams,
     ITooltipParams
-} from "@ag-grid-community/core";
+} from "ag-grid-community";
 
 export interface AgFrameworkComponent<T> {
     /** Mandatory - Params for rendering this component. */
