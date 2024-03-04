@@ -9,13 +9,12 @@ export const getGridScriptPath = (sitePrefix?: string) => {
     return pathJoin(sitePrefixUrl, '/files/ag-grid-community/dist/ag-grid-community.js');
 };
 
-export const getGridEnterpriseScriptPath = (isIntegratedCharts: boolean, sitePrefix?: string) => {
+export const getGridEnterpriseScriptPath = (sitePrefix?: string) => {
     if (USE_PUBLISHED_PACKAGES) {
         return PUBLISHED_UMD_URLS['ag-grid-enterprise'];
     }
     const sitePrefixUrl = sitePrefix ? sitePrefix : '';
-    const usesCharts = isIntegratedCharts && integratedChartsUsesChartsEnterprise;
-    return pathJoin(sitePrefixUrl, `/files/ag-grid-${usesCharts ? 'charts-' : ''}enterprise/dist/ag-grid-${usesCharts ? 'charts-' : ''}enterprise.js`);
+    return pathJoin(sitePrefixUrl, `/files/ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise/dist/ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise.js`);
 };
 
 export const getCacheBustingUrl = (url: string, timestamp: number) => `${url}?t=${timestamp}`;
