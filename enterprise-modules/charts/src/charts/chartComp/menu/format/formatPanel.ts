@@ -15,6 +15,7 @@ import { PolarAxisPanel } from "./axis/polarAxisPanel";
 import { NavigatorPanel } from "./navigator/navigatorPanel";
 import { ChartPanel } from "./chart/chartPanel";
 import { ChartOptionsService } from "../../services/chartOptionsService";
+import { CrosshairPanel } from './crosshair/crosshairPanel';
 import { SeriesPanel } from "./series/seriesPanel";
 import { ChartSeriesType, getSeriesType, hasGradientLegend, isPolar } from "../../utils/seriesTypeMapper";
 import { GradientLegendPanel } from './legend/gradientLegendPanel';
@@ -34,6 +35,7 @@ const DefaultFormatPanelDef: ChartFormatPanel = {
         { type: 'axis' },
         { type: 'navigator' },
         { type: 'animation' },
+        { type: 'crosshair' },
     ]
 };
 
@@ -100,6 +102,8 @@ export class FormatPanel extends Component {
                 this.addComponent(new NavigatorPanel(opts));
             } else if (group === 'animation') {
                 this.addComponent(new AnimationPanel(opts));
+            } else if (group === 'crosshair') {
+                this.addComponent(new CrosshairPanel(opts));
             } else {
                 console.warn(`AG Grid: invalid charts format panel group name supplied: '${groupDef.type}'`);
             }
@@ -125,26 +129,26 @@ export class FormatPanel extends Component {
 
         // These panel groups depend on the selected series type
         const extendedGroupPanels: { [T in ChartSeriesType]?: Array<ChartFormatPanelGroup> } = {
-            'bar': ['axis', 'navigator'],
-            'column': ['axis', 'navigator'],
-            'line': ['axis', 'navigator'],
-            'area': ['axis', 'navigator'],
-            'scatter': ['axis', 'navigator'],
-            'bubble': ['axis', 'navigator'],
-            'histogram': ['axis', 'navigator'],
-            'cartesian': ['axis', 'navigator'],
+            'bar': ['axis', 'navigator', 'crosshair'],
+            'column': ['axis', 'navigator', 'crosshair'],
+            'line': ['axis', 'navigator', 'crosshair'],
+            'area': ['axis', 'navigator', 'crosshair'],
+            'scatter': ['axis', 'navigator', 'crosshair'],
+            'bubble': ['axis', 'navigator', 'crosshair'],
+            'histogram': ['axis', 'navigator', 'crosshair'],
+            'cartesian': ['axis', 'navigator', 'crosshair'],
             'radial-column': ['axis'],
             'radial-bar': ['axis'],
             'radar-line': ['axis'],
             'radar-area': ['axis'],
             'nightingale': ['axis'],
-            'range-bar': ['axis', 'navigator'],
-            'range-area': ['axis', 'navigator'],
+            'range-bar': ['axis', 'navigator', 'crosshair'],
+            'range-area': ['axis', 'navigator', 'crosshair'],
             'treemap': [],
             'sunburst': [],
             'heatmap': ['axis'],
-            'waterfall': ['axis', 'navigator'],
-            'box-plot': ['axis', 'navigator'],
+            'waterfall': ['axis', 'navigator', 'crosshair'],
+            'box-plot': ['axis', 'navigator', 'crosshair'],
         };
         return extendedGroupPanels[seriesType]?.includes(group) ?? false;
     }
