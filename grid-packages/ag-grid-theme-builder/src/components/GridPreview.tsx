@@ -76,6 +76,9 @@ const GridPreview = () => {
                 ?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
             }, 1);
           }
+          if (config.showOverlay) {
+            api.showLoadingOverlay();
+          }
         }}
         key={internalState.id}
         {...options}

@@ -187,7 +187,7 @@ export const core = definePart<CoreParam>({
     rowHoverColor: helpers.transparentAccent(0.12),
     columnHoverColor: helpers.transparentAccent(0.05),
     selectedRowBackgroundColor: helpers.transparentAccent(0.08),
-    modalOverlayBackgroundColor: helpers.transparentBackground(0.08),
+    modalOverlayBackgroundColor: helpers.transparentBackground(0.66),
     oddRowBackgroundColor: helpers.ref('backgroundColor'),
     borderRadius: '4px',
     wrapperBorderRadius: '8px',
@@ -648,7 +648,7 @@ export type ParamTypes = {
    *
    * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
    *
-   * @default transparentBackground(0.08)
+   * @default transparentBackground(0.66)
    */
   modalOverlayBackgroundColor: string;
 

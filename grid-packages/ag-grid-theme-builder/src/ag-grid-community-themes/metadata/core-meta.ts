@@ -216,7 +216,7 @@ export const coreMeta = definePartMeta({
       property: 'modalOverlayBackgroundColor',
       type: 'color',
       docs: 'Background color of the overlay shown over the grid e.g. a data loading indicator.',
-      defaultValue: { helper: 'transparentBackground', arg: 0.08 },
+      defaultValue: { helper: 'transparentBackground', arg: 0.66 },
     },
     {
       property: 'oddRowBackgroundColor',

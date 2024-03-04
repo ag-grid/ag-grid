@@ -267,12 +267,10 @@
   .ag-overlay-loading-wrapper {
     background-color: var(--ag-modal-overlay-background-color);
   }
-  */
 
-.ag-overlay-loading-center {
-  @include ag.card();
-}
-/* PORTED
+  .ag-overlay-loading-center {
+    @include ag.card();
+  }
   // in auto-height mode with no rows, add padding to prevent grid being too small
   .ag-overlay-no-rows-wrapper.ag-layout-auto-height {
     padding-top: 30px;
