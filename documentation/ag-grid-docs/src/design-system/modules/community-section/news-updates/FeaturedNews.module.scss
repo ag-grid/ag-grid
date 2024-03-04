@@ -1,21 +1,21 @@
-.container {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
+.gridContainer {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Creates two columns of equal width */
+  column-gap: 12px;
+}
 
-  .left-column, .right-column {
-    display: flex;
-    flex-direction: column;
+.leftColumn {
+  grid-column: 1 / 2;
+  grid-row: 1 / 4; /* Spans all three rows of the right column */
+}
 
-    &.left-column {
-      width: 60%;
-    }
+.rightColumn {
+  grid-column: 2 / 3;
+}
 
-    &.right-column {
-      width: 40%;
-      justify-content: space-between;
-    }
-  }
+/* Ensure the grid container fits the content of the left column */
+.gridContainer {
+  align-items: start;
 }
 
 .card {
@@ -77,4 +77,9 @@
         margin: 5px 0; // Assuming you want to keep the original margin
     }
   }
+}
+
+.linkWrapper {
+  all: unset;
+  cursor: pointer;
 }
