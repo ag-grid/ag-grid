@@ -275,10 +275,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             },
         };
 
-        const tooltipFeature = this.createManagedBean(new TooltipFeature(tooltipCtrl, this.beans));
-
-        tooltipFeature.setComp(this.eGui);
-
+        const tooltipFeature = this.createManagedBean(new TooltipFeature(tooltipCtrl));
         this.refreshFunctions.push(() => tooltipFeature.refreshToolTip());
     }
 

@@ -94,7 +94,7 @@ export class AgList extends Component {
 
         setAriaRole(itemEl, 'option');
         itemEl.classList.add('ag-list-item', `ag-${this.cssIdentifier}-list-item`);
-        itemEl.innerHTML = `<span>${text}</span>`;
+        itemEl.innerHTML = /* html */ `<span>${text}</span>`;
 
         if (!this.unFocusable) {
             itemEl.tabIndex = -1;

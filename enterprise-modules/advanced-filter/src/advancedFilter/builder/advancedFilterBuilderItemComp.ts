@@ -191,8 +191,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
             getLocation: () => 'advancedFilter',
             getTooltipValue: () => this.ePillWrapper.getValidationMessage(),
             getTooltipShowDelayOverride: () => 1000
-        }, this.beans));
-        this.validationTooltipFeature.setComp(this.eValidation);
+        }));
         this.updateValidity();
     }
 
@@ -213,12 +212,11 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
         );
         this.eAddButton.appendChild(eAddButton.getGui());
 
-        const tooltipFeature = this.createManagedBean(new TooltipFeature({
+        this.createManagedBean(new TooltipFeature({
             getGui: () => this.eAddButton,
             getLocation: () => 'advancedFilter',
             getTooltipValue: () => this.advancedFilterExpressionService.translate('advancedFilterBuilderAddButtonTooltip')
-        }, this.beans));
-        tooltipFeature.setComp(this.eAddButton);
+        }));
     }
 
     private setupRemoveButton(): void {
@@ -234,12 +232,11 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
             }
         });
 
-        const tooltipFeature = this.createManagedBean(new TooltipFeature({
+        this.createManagedBean(new TooltipFeature({
             getGui: () => this.eRemoveButton,
             getLocation: () => 'advancedFilter',
             getTooltipValue: () => this.advancedFilterExpressionService.translate('advancedFilterBuilderRemoveButtonTooltip')
-        }, this.beans));
-        tooltipFeature.setComp(this.eRemoveButton);
+        }));
         _.setAriaLabel(this.eRemoveButton, this.advancedFilterExpressionService.translate('advancedFilterBuilderRemoveButtonTooltip'));
 
         this.activateTabIndex([this.eRemoveButton]);
@@ -265,8 +262,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
                 getTooltipValue: () => this.moveUpDisabled
                     ? null
                     : this.advancedFilterExpressionService.translate('advancedFilterBuilderMoveUpButtonTooltip')
-            }, this.beans));
-            this.moveUpTooltipFeature.setComp(this.eMoveUpButton);
+            }));
             _.setAriaLabel(this.eMoveUpButton, this.advancedFilterExpressionService.translate('advancedFilterBuilderMoveUpButtonTooltip'));
 
             this.eMoveDownButton.appendChild(_.createIconNoSpan('advancedFilterBuilderMoveDown', this.gridOptionsService)!);
@@ -287,8 +283,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
                 getTooltipValue: () => this.moveDownDisabled
                     ? null
                     : this.advancedFilterExpressionService.translate('advancedFilterBuilderMoveDownButtonTooltip')
-            }, this.beans));
-            this.moveDownTooltipFeature.setComp(this.eMoveDownButton);
+            }));
             _.setAriaLabel(this.eMoveDownButton, this.advancedFilterExpressionService.translate('advancedFilterBuilderMoveDownButtonTooltip'));
 
             this.activateTabIndex([this.eMoveUpButton, this.eMoveDownButton]);
