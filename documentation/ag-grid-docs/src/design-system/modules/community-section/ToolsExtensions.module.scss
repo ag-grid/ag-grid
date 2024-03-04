@@ -13,10 +13,18 @@
             padding: 12px;
 
             .header {
+              display: flex;
+              justify-content: space-between;
+
                 .title {
                     font-weight: 800;
                     font-size: 18px;
                     margin-bottom: 8px;
+                }
+
+                .img {
+                  width: 24px;
+                  height: 24px;
                 }
 
                 .divider {
@@ -27,7 +35,6 @@
 
             .body {
                 .filterSection {
-
                     .divider {
                         margin: 16px 64px;
                     }
@@ -43,9 +50,11 @@
                             background: transparent;
                             border: none;
                             text-align: start;
-                            justify-content: center;
                             font-weight: 400;
                             padding-left: 0px;
+                            display: flex;
+                            justify-content: flex-start;
+                            align-items: center;
 
                             img {
                                 width: 32px;
@@ -55,7 +64,8 @@
                                 object-fit: contain;
                             }
 
-                            &.active {
+                            &[active="true"] {
+                              color: var(--color-button-tertiary-fg);
                             }
                         }
                     }
@@ -68,123 +78,82 @@
         display: flex;
         flex-direction: column;
         gap: 1rem; // Adjust the space between items as needed
-      }
-      
-      .itemContainer {
+
+        .linkWrapper {
+          all: unset;
+          cursor: pointer;
+        }
+    }
+
+    .itemContainer {
         display: flex;
         background: #1f2836; // Card background color
         border: 1px solid var(--color-border-primary);
         border-radius: 0.5rem; // Card border radius for rounded corners
-      
+
         .image,
         .content {
-          img {
-            width: 100%; // Make image fill the container width
-            height: auto; // Keep the image aspect ratio
-            object-fit: cover; // Cover the area without breaking aspect ratio
-            border-radius: 24px;
-          }
-      
-          display: flex;
-          flex-direction: column;
-        }
-      
-        .image {
-        padding: 20px;
-          flex: 0 1 33%;
-        }
-      
-        .content {
-          flex: 0 1 67%;
-          padding: 1rem; // Padding inside the content area
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between; // Aligns header and description at the top and tags at the bottom
-      
-          .header {
-            display: flex;
-            font-weight: bold;
-            margin-bottom: 0.5rem; // Space between header and description
-          }
-      
-          .description {
-            flex-grow: 1; // Allows description to fill available space, pushing tags to the bottom
-            margin-bottom: 0.5rem; // Space between description and tags
-          }
-      
-          .tagContainer {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            row-gap: 8px;
-      
-            .tag {
-              background: transparent; // Tag background color
-              border: 1px solid var(--color-border-primary);
-              border-radius: 12px;
-              padding: 0.25rem 0.5rem; // Padding inside tags
-              font-size: 0.75rem; // Tag text size
+            img {
+                width: 100%; // Make image fill the container width
+                object-fit: cover; // Cover the area without breaking aspect ratio
+                border-radius: 24px;
             }
-          }
         }
-      }
-      
 
-    // .listContainer {
-    //     display: flex;
-    //     flex-direction: column;
-    //     flex-wrap: wrap;
-    //     padding: 0px 32px;
-    //     gap: 12px;
+        .image {
+            justify-content: center;
+            padding: 20px;
+            flex: 0 1 33%;
+        }
 
-    //     .itemContainer {
-    //         padding: 16px;
-    //         background: #1f2a46;
-    //         border-radius: 12px;
-    //         display: grid;
-    //         grid-template-columns: 33% 66%;	
-    //         height: 200px;
+        .content {
+            flex: 0 1 67%;
+            padding: 1rem; // Padding inside the content area
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; // Aligns header and description at the top and tags at the bottom
 
-    //         .image {
+            .header {
+                display: flex;
+                justify-content: space-between;
+                font-weight: bold;
+                margin-bottom: 0.5rem; // Space between header and description
 
-    //             img {
-    //                 width: 100%;
-    //                 height: auto;
-    //                 border-radius: 24px;
-    //                 object-fit: contain;
-    //             }
-    //         }
+                .logoContainer {
+                    display: flex;
+                    justify-content: space-between;
+                    gap: 18px;
 
-    //         .content {
-    //             display: flex;
-    //             flex-direction: column;
+                    .frameworkLogo {
+                        width: 24px;
+                        height: 24px;
+                    }
+                }
+            }
 
-    //             .header {
-    //                 font-size: 20px;
-    //                 font-weight: 800;
-    //             }
+            .description {
+                flex-grow: 1; // Allows description to fill available space, pushing tags to the bottom
+                margin-bottom: 0.25rem; // Space between description and tags
+                margin-right: 24px;
+            }
 
-    //             .description {
-    //                 flex-grow: 1;
-    //             }
+            .tagContainer {
+                display: flex;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 8px;
+                row-gap: 8px;
 
-    //             .tagContainer {
-    //                 display: flex;
-    //                 gap: 12px;
-
-    //                 .tag {
-    //                     border-radius: 24px;
-    //                     padding: 6px 12px;
-    //                     font-size: 14px;
-    //                     font-weight: 400;
-    //                     border: 1px solid var(--color-border-primary);
-    //                     text-transform: capitalize;
-
-    //                     &:hover {
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
+                .tag {
+                    display: flex;
+                    align-items: center;
+                    background: transparent; // Tag background color
+                    border: 1px solid var(--color-border-primary);
+                    border-radius: 12px;
+                    padding: 0.25rem 0.5rem; // Padding inside tags
+                    font-size: 0.75rem; // Tag text size
+                }
+            }
+        }
+    }
 }
