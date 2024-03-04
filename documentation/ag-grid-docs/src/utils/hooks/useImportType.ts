@@ -1,14 +1,13 @@
 import { useStore } from '@nanostores/react';
 import { $frameworkContext, $internalFramework } from '@stores/frameworkStore';
 import {USE_PACKAGES} from "@constants";
-import {getIsDev} from "@utils/env";
 import {setInternalFramework} from "@stores/frameworkStore";
 
 export const useImportType = () => {
     const internalFramework = useStore($internalFramework);
     const frameworkStore = useStore($frameworkContext);
 
-    if(getIsDev() && !USE_PACKAGES) {
+    if(!USE_PACKAGES) {
         if(internalFramework === 'vanilla') {
             setInternalFramework('typescript');
         }
