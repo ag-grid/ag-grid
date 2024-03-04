@@ -18,7 +18,7 @@ import { ModuleRegistry } from "@ag-grid-community/core";
 ModuleRegistry.registerModules([RowGroupingModule, ServerSideRowModelModule]);
 
 import { FakeServer } from './fakeServer';
-import { deletePortfolioOnServer, createRowOnServer, changePortfolioOnServer } from './utils';
+import { deletePortfolioOnServer, createRowOnServer, changePortfolioOnServer } from './data';
 
 const columnDefs: ColDef[] = [
     { field: 'tradeId' },
