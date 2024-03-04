@@ -89,6 +89,10 @@ const socialImage = urlWithBaseUrl('/images/ag-grid-social.png');
                 window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
             ).toString();
 
+            if (localDarkmode === undefined) {
+              localStorage.setItem("documentation:darkmode", isOSDarkmode);
+            }
+
             htmlEl.classList.add('no-transitions');
             htmlEl.dataset.darkMode = localDarkmode !== undefined ? localDarkmode : isOSDarkmode;
             htmlEl.offsetHeight; // Trigger a reflow, flushing the CSS changes
