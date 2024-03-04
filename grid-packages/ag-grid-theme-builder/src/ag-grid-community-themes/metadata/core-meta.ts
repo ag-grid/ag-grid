@@ -840,9 +840,19 @@ export const coreMeta = definePartMeta({
 
     {
       property: 'filterToolPanelGroupIndent',
-      type: 'color',
+      type: 'length',
       docs: 'How much to indent child columns in the filters tool panel relative to their parent',
       defaultValue: { helper: 'calc', arg: 'gridSize' },
+      min: 0,
+      max: 50,
+      step: 1,
+    },
+
+    {
+      property: 'iconButtonHoverBackgroundColor',
+      type: 'color',
+      docs: 'Background color of clickable icons when hovered',
+      defaultValue: { helper: 'transparentForeground', arg: 0.1 },
     },
   ],
 });

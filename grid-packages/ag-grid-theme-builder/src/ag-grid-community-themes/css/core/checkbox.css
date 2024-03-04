@@ -41,6 +41,7 @@
 
   &.ag-disabled {
     opacity: 0.5;
+    filter: grayscale();
   }
 }
 
@@ -67,5 +68,15 @@
 
   &.ag-checked::after {
     mask-image: var(--ag-radio-checked-shape-image);
+  }
+
+  &.ag-disabled {
+    opacity: 0.5;
+    background-color: var(--ag-checkbox-disabled-background-color);
+    border-color: var(--ag-checkbox-disabled-border-color);
+
+    &::after {
+      background-color: var(--ag-checkbox-disabled-shape-color);
+    }
   }
 }

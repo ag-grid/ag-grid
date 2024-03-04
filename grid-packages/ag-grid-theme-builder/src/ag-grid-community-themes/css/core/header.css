@@ -15,6 +15,7 @@
 .ag-header-row {
   position: absolute;
   height: var(--ag-header-height);
+  font-weight: 500;
 }
 
 .ag-header-row:not(:first-child) {

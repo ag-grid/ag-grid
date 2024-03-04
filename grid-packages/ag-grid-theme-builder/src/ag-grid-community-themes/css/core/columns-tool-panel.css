@@ -20,8 +20,3 @@
   border-top: var(--ag-tool-panel-separator-border);
   border-bottom: var(--ag-tool-panel-separator-border);
 }
-
-.ag-column-group-icons,
-.ag-column-select-header-icon {
-  color: var(--ag-secondary-foreground-color);
-}

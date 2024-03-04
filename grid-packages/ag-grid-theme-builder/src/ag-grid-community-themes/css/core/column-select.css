@@ -87,7 +87,13 @@
   padding: 0 var(--ag-widget-container-horizontal-padding);
 }
 
-.ag-checkbox-edit {
-  padding-left: var(--ag-cell-horizontal-padding);
-  padding-right: var(--ag-cell-horizontal-padding);
+.ag-column-select-column-label {
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ag-column-select-checkbox {
+  display: flex;
 }

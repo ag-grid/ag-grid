@@ -71,6 +71,7 @@
 .ag-menu-option-disabled,
 .ag-compact-menu-option-disabled {
   opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .ag-menu-option-icon,
@@ -249,8 +250,10 @@ TODO introduce variable
 }
 
 .ag-multi-filter-group-title-bar {
-  padding: calc(var(--ag-grid-size) * 2) var(--ag-grid-size);
+  padding: calc(var(--ag-grid-size) * 1.5) var(--ag-grid-size);
   background-color: transparent;
+  font-weight: 500;
+  color: var(--ag-header-foreground-color);
 
   &:focus-visible {
     /* TODO check this works properly */
@@ -294,4 +297,17 @@ TODO introduce variable
   border-bottom: solid 1px var(--ag-menu-separator-color);
   display: flex;
   background-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 5%);
+}
+
+.ag-menu-option .ag-icon {
+  opacity: 65%;
+}
+
+.ag-menu-option {
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.ag-menu-option-popup-pointer .ag-icon {
+  text-align: right;
 }

@@ -608,16 +608,11 @@ ag-grid-aurelia {
   }
 }
 
-.ag-select-agg-func-item,
-.ag-column-select-column-label {
+.ag-select-agg-func-item {
   flex: 1 1 auto;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.ag-column-select-checkbox {
-  display: flex;
 }
 
 .ag-tool-panel-horizontal-resize {
@@ -669,11 +664,6 @@ ag-grid-aurelia {
  * Widgets
  ****************************
  */
-
-.ag-icon {
-  display: block;
-  speak: none;
-}
 
 .ag-column-group-icons {
   display: block;

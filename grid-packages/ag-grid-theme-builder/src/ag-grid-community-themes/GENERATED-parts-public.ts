@@ -132,7 +132,8 @@ export type CoreParam =
   | 'advancedFilterBuilderColumnPillColor'
   | 'advancedFilterBuilderOptionPillColor'
   | 'advancedFilterBuilderValuePillColor'
-  | 'filterToolPanelGroupIndent';
+  | 'filterToolPanelGroupIndent'
+  | 'iconButtonHoverBackgroundColor';
 
 export type ColorsPreset = 'light' | 'dark';
 
@@ -279,6 +280,7 @@ export const core = definePart<CoreParam>({
     advancedFilterBuilderOptionPillColor: '#f3c08b',
     advancedFilterBuilderValuePillColor: '#85c0e4',
     filterToolPanelGroupIndent: helpers.calc('gridSize'),
+    iconButtonHoverBackgroundColor: helpers.transparentForeground(0.1),
   },
   css: [coreCssImport, indentTsImport],
 });
@@ -1438,11 +1440,20 @@ export type ParamTypes = {
   /**
    * How much to indent child columns in the filters tool panel relative to their parent
    *
-   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   * A CSS number value with length units, e.g. "1px" or "2em". If a JavaScript number is provided, its units are assumed to be 'px'.
    *
    * @default calc("gridSize")
    */
   filterToolPanelGroupIndent: string;
+
+  /**
+   * Background color of clickable icons when hovered
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default transparentForeground(0.1)
+   */
+  iconButtonHoverBackgroundColor: string;
 
   /**
    * Use one of the built-in sets of preset colors values. Available presets are: "light", "dark".

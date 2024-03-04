@@ -39,10 +39,6 @@
   cursor: pointer;
 }
 
-.ag-picker-field-wrapper {
-  overflow: hidden;
-}
-
 .ag-color-panel {
   width: 100%;
   display: flex;
@@ -156,9 +152,12 @@
 }
 
 .ag-picker-field-wrapper {
+  overflow: hidden;
   border: var(--ag-input-border);
   border-radius: 5px;
   background-color: var(--ag-background-color);
+  /* TODO support grid-size 0  */
+  min-height: calc(var(--ag-grid-size) * 4);
 
   &:disabled {
     opacity: 0.5;

@@ -33,6 +33,8 @@
 
 .ag-panel-title-bar-title {
   flex: 1 1 auto;
+  font-weight: 500;
+  color: var(--ag-header-foreground-color);
 }
 
 .ag-panel-title-bar-buttons {

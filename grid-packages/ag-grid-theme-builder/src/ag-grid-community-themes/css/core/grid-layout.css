@@ -235,7 +235,7 @@
 .ag-layout-print {
   .ag-center-cols-viewport,
   .ag-center-cols-container {
-    min-height: 50px;
+    min-height: 150px;
   }
 }
 
@@ -245,7 +245,7 @@
 
 /* in auto-height mode with no rows, add padding to prevent grid being too small */
 .ag-overlay-no-rows-wrapper.ag-layout-auto-height {
-  padding-top: 30px;
+  padding-top: 60px;
 }
 
 .ag-loading {
@@ -273,4 +273,8 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.ag-details-row {
+  padding: calc(var(--ag-grid-size) * 3.75);
 }
