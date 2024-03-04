@@ -16,13 +16,11 @@ import {
     CssClassApplier,
     ColumnGroup,
     ValueFormatterService,
-    ValueParserService
+    ValueParserService,
 } from '@ag-grid-community/core';
-import {createXmlPart} from './assets/excelUtils';
 import { ExcelXlsxFactory } from './excelXlsxFactory';
 import { BaseCreator, Downloader, GridSerializer, RowType, ZipContainer } from "@ag-grid-community/csv-export";
 import { ExcelGridSerializingParams, ExcelSerializingSession, StyleLinkerInterface } from './excelSerializingSession';
-import relationshipsFactory from './files/ooxml/relationships';
 
 const createExcelXMLCoreFolderStructure = (): void => {
     ZipContainer.addFolders([
@@ -240,9 +238,6 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
 
         const mergedParams = this.getMergedParams(userParams);
         const data = this.getData(mergedParams);
-        const columns: string[] = this.columnModel.getAllDisplayedColumns().map(col => {
-            return col.getDefinition().headerName || col.getColDef().field || col.getId();
-        });
 
         const exportParams: ExcelExportMultipleSheetParams = {
             data: [data],

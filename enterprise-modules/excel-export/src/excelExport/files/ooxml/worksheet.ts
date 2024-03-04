@@ -299,7 +299,7 @@ const addExcelTableParts = (excelTable?: ExcelDataTable, index?: number) => {
         return (children: XmlElement[]) => children;
     }
 
-    const rId = index ? `tableRelId${index}` : 'tableRelId1';
+    const rId = ExcelXlsxFactory.getTableRelIdFromIndex(index || 0);
     return (children: XmlElement[]) => {
         children.push({
             name: 'tableParts',

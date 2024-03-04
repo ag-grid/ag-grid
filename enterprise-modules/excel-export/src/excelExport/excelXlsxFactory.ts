@@ -31,6 +31,22 @@ import { ExcelGridSerializingParams } from './excelSerializingSession';
  */
 export class ExcelXlsxFactory {
 
+    public static defaultTableDisplayName = 'AG-GRID-Table';
+
+    public static getTableNameFromIndex = (idx: number) => {
+        return `table${idx + 1}`;
+    };
+
+    public static getTableRelIdFromIndex = (idx: number) => {
+        return `tableRelId${idx + 1}`;
+    };
+
+    public static getSanitizedTableName = (name: string) => {
+        return name.replace(/^[^a-zA-Z_]+/, '_')
+        .replace(/\s/g, '_')
+        .replace(/[^a-zA-Z0-9_]/g, '_')
+    };
+
     private static sharedStrings: Map<string, number> = new Map();
     private static sheetNames: string[] = [];
 
@@ -56,8 +72,11 @@ export class ExcelXlsxFactory {
         registerStyles(styles, this.sheetNames.length);
 
         const sheetIndex = this.sheetNames.length - 1;
-        const name = `table${sheetIndex + 1}`; // Assuming that there is only 1 table per sheet
-        const { name: displayName } = config.tableSetup || {};
+        const { name: nameFromConfig } = config.tableSetup || {};
+
+        const tableName = this.getSanitizedTableName(
+            nameFromConfig || ExcelXlsxFactory.defaultTableDisplayName
+        );
 
         const tableRowCount = worksheet.table.rows.length;
         const tableColumns = config.columnModel.getAllDisplayedColumns().map(col => col.getColId());
@@ -78,12 +97,12 @@ export class ExcelXlsxFactory {
         config.columnModel.getColumnDefs()?.forEach(extractLeafs);
         const tableHeaderRowIndex: number = treeLeafsLevel; // Assuming that header starts at row 0
 
-        if (!tableColumns || !tableColumns.length || !tableRowCount || !displayName) {
+        if (!tableColumns || !tableColumns.length || !tableRowCount || !tableName) {
             console.warn('Unable to add data table to Excel sheet: Missing required parameters.');
         } else {
             this.addTableToSheet(sheetIndex, {
-                name,
-                displayName,
+                name: this.getTableNameFromIndex(sheetIndex),
+                displayName: tableName,
                 columns: tableColumns,
                 headerRowIndex: tableHeaderRowIndex,
                 rowCount: tableRowCount - treeLeafsLevel - 1,
@@ -297,10 +316,12 @@ export class ExcelXlsxFactory {
     }
 
     public static createWorksheetTableRel(currentRelationIndex: number) {
+        const tableId = this.getTableNameFromIndex(currentRelationIndex);
+        const tableRelId = this.getTableRelIdFromIndex(currentRelationIndex);
         const rs = relationshipsFactory.getTemplate([{
-            Id: `tableRelId${currentRelationIndex + 1}`,
+            Id: tableRelId,
             Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/table',
-            Target: `../tables/table${currentRelationIndex + 1}.xml`
+            Target: `../tables/${tableId}.xml`
         }]);
 
         return createXmlPart(rs);
@@ -310,14 +331,16 @@ export class ExcelXlsxFactory {
         currentDrawRelationIndex: number,
         currentTableRelationIndex: number
     ) {
+        const tableId = this.getTableNameFromIndex(currentTableRelationIndex);
+        const tableRelId = this.getTableRelIdFromIndex(currentTableRelationIndex);
         const rs = relationshipsFactory.getTemplate([{
             Id: 'rId1',
             Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing',
             Target: `../drawings/drawing${currentDrawRelationIndex + 1}.xml`
         }, {
-            Id: `tableRelId${currentTableRelationIndex + 1}`,
+            Id: tableRelId,
             Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/table',
-            Target: `../tables/table${currentTableRelationIndex + 1}.xml`
+            Target: `../tables/${tableId}.xml`
         }]);
 
         return createXmlPart(rs);
