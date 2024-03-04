@@ -113,8 +113,10 @@ export const defineTheme = <P extends AnyPart, V extends object = ParamTypes>(
 
 export const checkForUnsupportedVariables = (css: string, params: string[]) => {
   const allowedVariables = new Set(params.map(paramToVariableName));
-  for (const [, variable] of css.matchAll(/var\((--ag-(?!line-height[^\w-]|internal)[^)]+)\)/g)) {
-    if (!allowedVariables.has(variable)) {
+  allowedVariables.add('--ag-line-height');
+  allowedVariables.add('--ag-indentation-level');
+  for (const [, variable] of css.matchAll(/var\((--ag-[\w-]+)[^)]*\)/g)) {
+    if (!allowedVariables.has(variable) && !variable.startsWith('--ag-internal')) {
       logErrorMessageOnce(`${variable} does not match a theme param`);
     }
   }

@@ -132,7 +132,8 @@ export type CoreParam =
   | 'advancedFilterBuilderJoinPillColor'
   | 'advancedFilterBuilderColumnPillColor'
   | 'advancedFilterBuilderOptionPillColor'
-  | 'advancedFilterBuilderValuePillColor';
+  | 'advancedFilterBuilderValuePillColor'
+  | 'filterToolPanelGroupIndent';
 
 export type ColorsPreset = 'light' | 'dark';
 
@@ -279,6 +280,7 @@ export const core = definePart<CoreParam>({
     advancedFilterBuilderColumnPillColor: '#a6e194',
     advancedFilterBuilderOptionPillColor: '#f3c08b',
     advancedFilterBuilderValuePillColor: '#85c0e4',
+    filterToolPanelGroupIndent: helpers.calc('gridSize'),
   },
   css: [coreCssImport, indentTsImport],
 });
@@ -1443,6 +1445,15 @@ export type ParamTypes = {
    * @default "#85c0e4"
    */
   advancedFilterBuilderValuePillColor: string;
+
+  /**
+   * How much to indent child columns in the filters tool panel relative to their parent
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default calc("gridSize")
+   */
+  filterToolPanelGroupIndent: string;
 
   /**
    * Use one of the built-in sets of preset colors values. Available presets are: "light", "dark".

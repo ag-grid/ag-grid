@@ -843,5 +843,12 @@ export const coreMeta = definePartMeta({
       docs: 'Colour of the value pills in the Advanced Filter Builder',
       defaultValue: '#85c0e4',
     },
+
+    {
+      property: 'filterToolPanelGroupIndent',
+      type: 'color',
+      docs: 'How much to indent child columns in the filters tool panel relative to their parent',
+      defaultValue: { helper: 'calc', arg: 'gridSize' },
+    },
   ],
 });

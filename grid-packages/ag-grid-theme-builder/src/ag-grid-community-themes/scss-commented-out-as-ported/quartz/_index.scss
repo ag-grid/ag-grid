@@ -5,8 +5,10 @@
 .ag-theme-quartz,
 .ag-theme-quartz-dark,
 .ag-theme-quartz-auto-dark {
+  /* PORTED
   .ag-filter-toolpanel-header,
   .ag-filter-toolpanel-search,
+  */
   .ag-status-bar,
   .ag-header-row,
   .ag-panel-title-bar-title,
@@ -161,6 +163,7 @@
     border-bottom: 1px solid var(--ag-secondary-border-color);
   }
 
+  /* PORTED
   .ag-filter-toolpanel-search {
     height: initial;
     margin-top: var(--ag-widget-container-vertical-padding);
@@ -168,7 +171,6 @@
   .ag-filter-toolpanel-search-input {
     margin: 0;
   }
-  /* PORTED
   .ag-filter-apply-panel {
     border: none;
     padding-top: var(--ag-widget-vertical-spacing);
@@ -489,6 +491,8 @@
     padding: calc(var(--ag-grid-size) * 1.5) var(--ag-grid-size);
   }
 
+  /* PORTED
+
   .ag-filter-toolpanel-group-container {
     @include ag.theme-rtl(
       (
@@ -520,6 +524,8 @@
   .ag-filter-toolpanel-group-item {
     margin: 0;
   }
+
+  */
 
   .ag-layout-auto-height,
   .ag-layout-print {

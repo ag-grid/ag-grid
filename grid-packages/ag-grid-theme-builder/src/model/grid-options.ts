@@ -121,9 +121,22 @@ const buildGroupColumnDefs = (columns: ColDef[]): ColGroupDef[] => [
     headerName: 'Car',
     children: columns.filter((c) => c.field === 'make' || c.field === 'model'),
   },
+  // {
+  //   headerName: 'Data',
+  //   children: columns.filter((c) => c.field !== 'make' && c.field !== 'model'),
+  // },
   {
     headerName: 'Data',
-    children: columns.filter((c) => c.field !== 'make' && c.field !== 'model'),
+    children: [
+      {
+        headerName: 'Year',
+        children: columns.filter((c) => c.field === 'year'),
+      },
+      {
+        headerName: 'Price',
+        children: columns.filter((c) => c.field === 'price'),
+      },
+    ],
   },
 ];
 

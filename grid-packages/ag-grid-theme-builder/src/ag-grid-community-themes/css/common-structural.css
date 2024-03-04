@@ -356,39 +356,6 @@ ag-grid-aurelia {
 
 /**
  ****************************
- * Column Panel
- ****************************
- */
-
-.ag-column-panel {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  flex: 1 1 auto;
-}
-
-.ag-filter-toolpanel {
-  flex: 1 1 0px;
-  min-width: 0;
-}
-
-.ag-filter-toolpanel-header {
-  position: relative;
-}
-
-.ag-filter-toolpanel-header,
-.ag-filter-toolpanel-search {
-  display: flex;
-  align-items: center;
-
-  > * {
-    display: flex;
-    align-items: center;
-  }
-}
-
-/**
- ****************************
  * Rows
  ****************************
  */
