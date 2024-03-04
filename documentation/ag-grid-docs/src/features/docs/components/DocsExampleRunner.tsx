@@ -6,6 +6,7 @@ import { getLoadingIFrameId } from '@features/example-runner/utils/getLoadingLog
 import { useStore } from '@nanostores/react';
 import { $frameworkContext, $internalFramework, updateInternalFrameworkBasedOnFramework } from '@stores/frameworkStore';
 import { getFrameworkFromInternalFramework } from '@utils/framework';
+import { useImportType } from '@utils/hooks/useImportType';
 import { useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
 
@@ -56,8 +57,7 @@ const queryOptions = {
 
 const DocsExampleRunnerInner = ({ name, title, exampleType, exampleHeight, framework, pageName }: Props) => {
     const internalFramework = useStore($internalFramework);
-    const frameworkStore = useStore($frameworkContext);
-    const importType = frameworkStore['importType'];
+    const importType = useImportType();
     const [initialSelectedFile, setInitialSelectedFile] = useState();
     const [exampleUrl, setExampleUrl] = useState<string>();
     const [exampleRunnerExampleUrl, setExampleRunnerExampleUrl] = useState<string>();
