@@ -7,6 +7,7 @@ import { FontPanelParams } from "./format/fontPanel";
 interface ChartOptionsProxy {
     getValue<T = string>(expression: string, calculated?: boolean): T;
     setValue<T = string>(expression: string, value: T): void;
+    setValues<T = string>(properties: { expression: string, value: T }[]): void;
 }
 
 export class ChartMenuUtils extends BeanStub {
@@ -175,6 +176,10 @@ export class ChartMenuUtils extends BeanStub {
 
     public setValue<T = string>(expression: string, value: T): void {
         this.chartOptionsProxy.setValue(expression, value);
+    }
+
+    public setValues<T = string>(properties: {expression: string, value: T}[]): void {
+        this.chartOptionsProxy.setValues(properties);
     }
 
     public getChartOptionsService(): ChartOptionsService {

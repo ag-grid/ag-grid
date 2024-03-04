@@ -31,6 +31,7 @@ export class CartesianAxisPanel extends Component {
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
+    private readonly axisType: 'xAxis' | 'yAxis';
     private readonly chartController: ChartController;
     private readonly chartMenuUtils: ChartMenuUtils;
     private readonly isExpandedOnInit: boolean;
@@ -38,39 +39,51 @@ export class CartesianAxisPanel extends Component {
     private activePanels: Component[] = [];
     private axisLabelUpdateFuncs: Function[] = [];
 
-    private prevXRotation = 0;
-    private prevYRotation = 0;
+    private prevRotation: number | undefined;
 
-    constructor({ chartController, chartOptionsService, isExpandedOnInit = false }: FormatPanelOptions) {
+    constructor(axisType: 'xAxis' | 'yAxis', { chartController, chartOptionsService, isExpandedOnInit = false }: FormatPanelOptions) {
         super();
 
+        this.axisType = axisType;
         this.chartController = chartController;
-        this.chartMenuUtils = chartOptionsService.getAxisPropertyMenuUtils();
+        this.chartMenuUtils = chartOptionsService.getCartesianAxisPropertyMenuUtils(axisType);
         this.isExpandedOnInit = isExpandedOnInit;
     }
 
     @PostConstruct
     private init() {
+        const labelKey: ChartTranslationKey = this.axisType;
         const axisGroupParams: AgGroupComponentParams = {
             cssIdentifier: 'charts-format-top-level',
             direction: 'vertical',
-            title: this.translate("axis"),
+            title: this.translate(labelKey),
             expanded: this.isExpandedOnInit,
             suppressEnabledCheckbox: true
         };
         const axisColorInputParams = this.chartMenuUtils.getDefaultColorPickerParams('line.color');
+
         // Note that there is no separate checkbox for enabling/disabling the axis line. Whenever the line width is
-        // changed, the value for `line.enabled` is inferred based on the current `line.width` value.
-        // The UI needs changing to fix this properly.
+        // changed, the value for `line.enabled` is inferred based on the whether the `line.width` value is non-zero.
+        const getAxisLineWidth = (): number | null => {
+            const isAxisLineEnabled = this.chartMenuUtils.getValue<boolean>('line.enabled');
+            if (!isAxisLineEnabled) return null;
+            return this.chartMenuUtils.getValue<number>('line.width');
+        };
+        const setAxisLineWidth = (value: number | null): void => {
+            this.chartMenuUtils.setValues<number | boolean>([
+                { expression: 'line.enabled', value: value != null },
+                { expression: 'line.width', value: value ?? 0},
+            ]);
+        };
         const axisLineWidthSliderParams = this.chartMenuUtils.getDefaultSliderParamsWithoutValueParams(
-            this.chartMenuUtils.getValue<boolean>("line.enabled") ? this.chartMenuUtils.getValue<number>("line.width") : 0,
+            getAxisLineWidth() ?? 0,
             "thickness",
             10
         );
-        axisLineWidthSliderParams.onValueChange = newValue => this.chartMenuUtils.getChartOptionsService().setAxisProperties<number | boolean>([
-            { expression: "line.enabled", value: ((newValue as any) !== 0) },
-            { expression: "line.width", value: (newValue as any) },
-        ]);
+        axisLineWidthSliderParams.onValueChange = (newValue) => {
+            setAxisLineWidth(newValue === 0 ? null : newValue);
+        };
+
         this.setTemplate(CartesianAxisPanel.TEMPLATE, {
             axisGroup: axisGroupParams,
             axisColorInput: axisColorInputParams,
@@ -125,54 +138,38 @@ export class CartesianAxisPanel extends Component {
     private addAdditionalLabelComps(labelPanelComp: FontPanel) {
         this.addLabelPadding(labelPanelComp);
 
-        const { xRotationComp, yRotationComp } = this.createRotationWidgets();
-        const autoRotateCb = this.initLabelRotations(xRotationComp, yRotationComp);
+        const rotationComp = this.createRotationWidget('labelRotation');
+        const autoRotateCb = this.initLabelRotation(rotationComp);
 
         labelPanelComp.addCompToPanel(autoRotateCb);
-        labelPanelComp.addCompToPanel(xRotationComp);
-        labelPanelComp.addCompToPanel(yRotationComp);
+        labelPanelComp.addCompToPanel(rotationComp);
     }
 
-    private initLabelRotations(xRotationComp: AgAngleSelect, yRotationComp: AgAngleSelect) {
-        const getLabelRotation = (axisType: 'xAxis' | 'yAxis'): number => {
-            return this.chartMenuUtils.getChartOptionsService().getLabelRotation(axisType);
-        }
-
-        const setLabelRotation = (axisType: 'xAxis' | 'yAxis', value: number | undefined) => {
-            this.chartMenuUtils.getChartOptionsService().setLabelRotation(axisType, value);
-        }
+    private initLabelRotation(rotationComp: AgAngleSelect) {
+        const getLabelRotationValue = (): number | undefined => {
+            return this.chartMenuUtils.getValue<number | undefined>('label.rotation');
+        };
+        const getLabelAutoRotateValue = (): boolean => {
+            return this.chartMenuUtils.getValue<boolean>('label.autoRotate');
+        };
 
         const updateAutoRotate = (autoRotate: boolean) => {
-            this.chartMenuUtils.setValue("label.autoRotate", autoRotate);
+            // Remember the existing rotation before we clear it from the options
+            if (autoRotate) this.prevRotation = getLabelRotationValue();
 
-            if (autoRotate) {
-                // store prev rotations before we remove them from the options
-                this.prevXRotation = getLabelRotation("xAxis");
-                this.prevYRotation = getLabelRotation("yAxis");
+            // For the autoRotate option to take effect, we need to additionally clear the rotation option value
+            this.chartMenuUtils.setValues<boolean | number | undefined>([
+                { expression: "label.autoRotate", value: autoRotate },
+                // Clear the rotation option when activating auto-rotate, reinstate the previous value when deactivating
+                { expression: "label.rotation", value: autoRotate ? undefined : this.prevRotation }
+            ]);
 
-                // `autoRotate` is only
-                setLabelRotation("xAxis", undefined);
-                setLabelRotation("yAxis", undefined);
-            } else {
-                // reinstate prev rotations
-                setLabelRotation("xAxis", this.prevXRotation);
-                setLabelRotation("yAxis", this.prevYRotation);
-            }
+            rotationComp.setDisabled(autoRotate);
+        };
 
-            xRotationComp.setDisabled(autoRotate);
-            yRotationComp.setDisabled(autoRotate);
-        }
+        const rotation = getLabelRotationValue();
+        const autoRotate = typeof rotation === 'number' ? false : getLabelAutoRotateValue();
 
-        const getAutoRotateValue = () => {
-            const xRotation = getLabelRotation("xAxis");
-            const yRotation = getLabelRotation("yAxis");
-            if (xRotation == undefined && yRotation == undefined) {
-                return this.chartMenuUtils.getValue<boolean>("label.autoRotate");
-            }
-            return false;
-        }
-
-        const autoRotate = getAutoRotateValue();
         const autoRotateCheckbox = this.createBean(new AgCheckbox({
             label: this.translate('autoRotate'),
             value: autoRotate,
@@ -180,40 +177,35 @@ export class CartesianAxisPanel extends Component {
         }));
 
         // init rotation comp state
-        xRotationComp.setDisabled(autoRotate);
-        yRotationComp.setDisabled(autoRotate);
+        rotationComp.setDisabled(autoRotate);
 
         return autoRotateCheckbox;
     }
 
-    private createRotationWidgets() {
+    private createRotationWidget(labelKey: ChartTranslationKey) {
+        const getLabelRotationValue = (): number | undefined => {
+            return this.chartMenuUtils.getValue<number | undefined>('label.rotation');
+        };
+        const setLabelRotationValue = (value: number | undefined): void => {
+            return this.chartMenuUtils.setValue<number | undefined>('label.rotation', value);
+        };
+
         const degreesSymbol = String.fromCharCode(176);
 
-        const chartOptionsService = this.chartMenuUtils.getChartOptionsService();
+        const label = `${this.chartTranslationService.translate(labelKey)} ${degreesSymbol}`;
+        const angleSelect = new AgAngleSelect({
+            label,
+            labelWidth: "flex",
+            value: getLabelRotationValue() ?? 0,
+            onValueChange: setLabelRotationValue,
+        });
 
-        const createRotationComp = (labelKey: ChartTranslationKey, axisType: 'xAxis' | 'yAxis') => {
-            const label = `${this.chartTranslationService.translate(labelKey)} ${degreesSymbol}`;
-            const value = chartOptionsService.getLabelRotation(axisType) as number;
-            const angleSelect = new AgAngleSelect({
-                label,
-                labelWidth: "flex",
-                value: value || 0,
-                onValueChange: newValue => chartOptionsService.setLabelRotation(axisType, newValue)
-            });
+        // the axis label rotation needs to be updated when the default category changes in the data panel
+        this.axisLabelUpdateFuncs.push(() => {
+            angleSelect.setValue(getLabelRotationValue() ?? 0);
+        });
 
-            // the axis label rotation needs to be updated when the default category changes in the data panel
-            this.axisLabelUpdateFuncs.push(() => {
-                const value = chartOptionsService.getLabelRotation(axisType) as number;
-                angleSelect.setValue(value || 0);
-            });
-
-            return this.createBean(angleSelect);
-        }
-
-        return {
-            xRotationComp: createRotationComp("xRotation", "xAxis"),
-            yRotationComp: createRotationComp("yRotation", "yAxis")
-        };
+        return this.createBean(angleSelect);
     }
 
     private addLabelPadding(labelPanelComp: FontPanel) {

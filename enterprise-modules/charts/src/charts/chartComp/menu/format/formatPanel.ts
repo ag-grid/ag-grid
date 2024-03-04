@@ -95,9 +95,13 @@ export class FormatPanel extends Component {
                 const panel = hasGradientLegend(chartType) ? new GradientLegendPanel(opts) : new LegendPanel(opts);
                 this.addComponent(panel);
             } else if (group === 'axis') {
-                // Polar charts have different axis options from cartesian charts, so choose the appropriate panel
-                const panel = isPolar(chartType) ? new PolarAxisPanel(opts) : new CartesianAxisPanel(opts);
-                this.addComponent(panel);
+                // Polar charts have different axis options from cartesian charts, so choose the appropriate panels
+                if (isPolar(chartType)) {
+                    this.addComponent(new PolarAxisPanel(opts));
+                } else {
+                    this.addComponent(new CartesianAxisPanel('xAxis', opts));
+                    this.addComponent(new CartesianAxisPanel('yAxis', opts));
+                }
             } else if (group === 'series') {
                 this.addComponent(new SeriesPanel(opts));
             } else if (group === 'navigator') {
