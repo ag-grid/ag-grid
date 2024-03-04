@@ -48,7 +48,6 @@ const ToolsExtensions = ({ limit = -1 }) => {
                             />
                         )}
                     </div>
-                    <hr className={styles.divider} />
                     <div className={styles.body}>
                         <div className={styles.filterSection}>
                             <div className={styles.filterButtonContainer}>

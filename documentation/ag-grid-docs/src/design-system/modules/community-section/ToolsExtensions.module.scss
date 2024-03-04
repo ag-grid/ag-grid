@@ -1,159 +1,145 @@
+@use '../../core/' as *;
+
 .container {
     display: flex;
-    flex-direction: row;
-    gap: 20px;
+    gap: $spacing-size-8;
+}
 
-    .filterContainer {
-        flex-basis: 250px;
+.listContainer {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-4;
+}
 
-        .filterPanel {
-            background: transparent;
-            border-radius: 12px;
-            border: 1px solid var(--color-border-primary);
-            padding: 12px;
+.linkWrapper {
+    all: unset;
+    cursor: pointer;
+}
 
-            .header {
-              display: flex;
-              justify-content: space-between;
+.itemContainer {
+    display: flex;
+    background-color: var(--color-util-gray-200);
+    border: 1px solid var(--color-border-secondary);
+    border-radius: var(--radius-2xl);
+}
 
-                .title {
-                    font-weight: 800;
-                    font-size: 18px;
-                    margin-bottom: 8px;
-                }
-
-                .img {
-                  width: 24px;
-                  height: 24px;
-                }
-
-                .divider {
-                    margin-top: 6px;
-                    margin-bottom: 12px;
-                }
-            }
-
-            .body {
-                .filterSection {
-                    .divider {
-                        margin: 16px 64px;
-                    }
-
-                    .filterButtonContainer {
-                        display: flex;
-                        flex-direction: column;
-                        justify-content: flex-start;
-                        gap: 12px;
-                        row-gap: 6px;
-
-                        .filterButton {
-                            background: transparent;
-                            border: none;
-                            text-align: start;
-                            font-weight: 400;
-                            padding-left: 0px;
-                            display: flex;
-                            justify-content: flex-start;
-                            align-items: center;
-
-                            img {
-                                width: 32px;
-                                height: 32px;
-                                margin-right: 12px;
-                                padding: 4px;
-                                object-fit: contain;
-                            }
-
-                            &[active="true"] {
-                              color: var(--color-button-tertiary-fg);
-                            }
-                        }
-                    }
-                }
-            }
-        }
+.image,
+.content {
+    img {
+        width: 100%;
+        object-fit: cover; 
+        border-radius: var(--radius-2xl);
     }
+}
 
-    .listContainer {
+.image {
+    justify-content: center;
+    padding: $spacing-size-4;
+    flex: 0 1 33%;
+}
+
+.content {
+    flex: 0 1 67%;
+    padding: 1rem; // Padding inside the content area
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; // Aligns header and description at the top and tags at the bottom
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: bold;
+    margin-bottom: 0.5rem; // Space between header and description
+}
+
+.logoContainer {
+    display: flex;
+    justify-content: space-between;
+    gap: $spacing-size-6;
+}
+
+.frameworkLogo {
+    width: 24px;
+    height: 24px;
+}
+
+.description {
+    flex-grow: 1; // Allows description to fill available space, pushing tags to the bottom
+    margin-right: $spacing-size-8;
+}
+
+.tagContainer {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $spacing-size-4;
+}
+
+.tag {
+    display: flex;
+    align-items: center;
+    background: transparent; 
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-2xl);
+    padding: $spacing-size-1 $spacing-size-2; 
+    font-size: var(--text-fs-xs); 
+}
+
+.filterPanel {
+    border-radius: var(--radius-2xl);
+    border: 1px solid var(--color-border-primary);
+    padding: $spacing-size-4;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.title {
+    font-weight: var(--text-bold);
+    font-size: var(--text-fs-base);
+}
+
+.img {
+    width: 24px;
+    height: 24px;
+}
+
+.filterButtonContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: $spacing-size-4;
+
+    .filterButton {
+        background: transparent;
+        background: none;
+        border: none;
+        text-align: start;
+        font-weight: 400;
+        padding-left: 0px;
         display: flex;
-        flex-direction: column;
-        gap: 1rem; // Adjust the space between items as needed
+        justify-content: flex-start;
+        align-items: center;
+        color: var(---color-util-gray-200);
 
-        .linkWrapper {
-          all: unset;
-          cursor: pointer;
+        img {
+            width: 32px;
+            height: 32px;
+            margin-right: 12px;
+            padding: 4px;
+            object-fit: contain;
+        }
+
+        &[active='true'] {
+            color: var(--color-button-tertiary-fg);
         }
     }
+}
 
-    .itemContainer {
-        display: flex;
-        background: #1f2836; // Card background color
-        border: 1px solid var(--color-border-primary);
-        border-radius: 0.5rem; // Card border radius for rounded corners
+.divider {
 
-        .image,
-        .content {
-            img {
-                width: 100%; // Make image fill the container width
-                object-fit: cover; // Cover the area without breaking aspect ratio
-                border-radius: 24px;
-            }
-        }
-
-        .image {
-            justify-content: center;
-            padding: 20px;
-            flex: 0 1 33%;
-        }
-
-        .content {
-            flex: 0 1 67%;
-            padding: 1rem; // Padding inside the content area
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between; // Aligns header and description at the top and tags at the bottom
-
-            .header {
-                display: flex;
-                justify-content: space-between;
-                font-weight: bold;
-                margin-bottom: 0.5rem; // Space between header and description
-
-                .logoContainer {
-                    display: flex;
-                    justify-content: space-between;
-                    gap: 18px;
-
-                    .frameworkLogo {
-                        width: 24px;
-                        height: 24px;
-                    }
-                }
-            }
-
-            .description {
-                flex-grow: 1; // Allows description to fill available space, pushing tags to the bottom
-                margin-bottom: 0.25rem; // Space between description and tags
-                margin-right: 24px;
-            }
-
-            .tagContainer {
-                display: flex;
-                align-items: center;
-                flex-wrap: wrap;
-                gap: 8px;
-                row-gap: 8px;
-
-                .tag {
-                    display: flex;
-                    align-items: center;
-                    background: transparent; // Tag background color
-                    border: 1px solid var(--color-border-primary);
-                    border-radius: 12px;
-                    padding: 0.25rem 0.5rem; // Padding inside tags
-                    font-size: 0.75rem; // Tag text size
-                }
-            }
-        }
-    }
 }
