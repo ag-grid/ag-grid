@@ -20,7 +20,7 @@
       object-fit: cover; // Ensures image covers the box, cropping it as necessary
       display: block; // Ensures the image is displayed as a block-level element, which can help with applying the height
       object-position: top;
-    }    
+    } 
   }
 
   .body {
@@ -32,6 +32,7 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 12px;
+      gap: 12px;
     }
     
     .title {
@@ -69,16 +70,46 @@
   .footer {
     padding: 10px 15px;
     display: flex;
+    align-items: center;
     flex-wrap: wrap;
-    gap: 10px; // Adjust spacing between tags as necessary
+    gap: 8px;
+    row-gap: 8px;
+
+    .frameworks {
+        display: flex;
+        align-items: center;
+        background: transparent; // Tag background color
+        border-radius: 12px;
+        padding: 0.25rem 0.5rem; // Padding inside tags
+        font-size: 0.75rem; // Tag text size
+        color: var(--color-text-primary);
+        margin-bottom: 0px;
+
+    }
 
     .tags {
-      background-color: transparent; // Adjust based on design requirements
-      border-radius: 24px;
-      padding: 5px 10px;
-      font-size: 12px; // Adjust based on design requirements
-      border: 2px solid #344054;
-      font-weight: 400;
+
+        display: flex;
+        align-items: center;
+        background: transparent; // Tag background color
+        border: 1px solid var(--color-border-primary);
+        border-radius: 12px;
+        padding: 0.25rem 0.5rem; // Padding inside tags
+        font-size: 0.75rem; // Tag text size
+        color: var(--color-text-primary)
     }
-  }
+
+    
+}
+
+}
+
+.gitHubDetails {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+
+    p {
+        all: unset;
+    }
 }

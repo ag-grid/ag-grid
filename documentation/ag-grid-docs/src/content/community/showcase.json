@@ -9,12 +9,53 @@
             "stars": 25600,
             "type": "Product",
             "tags": [
-                "Grid",
-                "Charts",
+                "Finance"
+            ],
+            "frameworks": [
                 "React"
+            ],
+            "products": [
+                "Grid",
+                "Charts"
             ],
             "img": "open-bb-terminal-pro.png",
             "favourite": true
+        },
+        {
+            "repo": "https://github.com/windmill-labs/windmill",
+            "title": "Windmill",
+            "description": "Open-source developer platform to turn scripts into workflows and UIs. Fastest workflow engine (5x vs Airflow). Open-source alternative to Airplane and Retool.",
+            "link": "https://windmill.dev",
+            "type": "Product",
+            "open_source": true,
+            "stars": 8000,
+            "img": "windmill.png",
+            "tags": [
+                "Platform"
+            ],
+            "frameworks": [
+                "Svelte"
+            ],
+            "products": [
+                "Grid"
+            ]
+        },
+        {
+            "title": "Pinpoint",
+            "description": "Pinpoint is an APM (Application Performance Management) tool for large-scale distributed systems written in Java / PHP/PYTHON.",
+            "repo": "https://github.com/pinpoint-apm/pinpoint",
+            "open_source": true,
+            "stars": 13100,
+            "type": "Product",
+            "link": "https://pinpoint-apm.gitbook.io/",
+            "img": "pinpoint.png",
+            "frameworks": [
+                "React", "Angular", "Vue"
+            ],
+            "products": [
+                "Grid",
+                "Charts"
+            ]
         },
         {
             "link": "https://www.prisma.io/studio",
@@ -27,8 +68,13 @@
             "favourite": true,
             "img": "prisma-studio.png",
             "tags": [
-                "Database",
+                "Database"
+            ],
+            "frameworks": [
                 "React"
+            ],
+            "products": [
+                "Grid"
             ]
         },
         {
@@ -42,8 +88,13 @@
             "favourite": true,
             "img": "apache-traffic-control.png",
             "tags": [
-                "CDN",
-                "React"
+                "CDN"
+            ],
+            "frameworks": [
+                "Angular"
+            ],
+            "products": [
+                "Grid"
             ]
         },
         {
@@ -57,29 +108,35 @@
             "img": "ml-flow.png",
             "favourite": true,
             "tags": [
-                "Grid",
-                "Charts",
+                "ML / AI"
+            ],
+            "frameworks": [
                 "React"
+            ],
+            "products": [
+                "Grid",
+                "Charts"
             ]
         },
         {
             "repo": "https://github.com/jpmorganchase/salt-ds",
-            "title": "Salt DS",
+            "title": "J.P.Morgan - Salt DS",
             "description": "React UI components built with a focus on accessibility, customisation and ease-of-use",
             "link": "https://www.saltdesignsystem.com/salt/index",
             "type": "Integration",
             "open_source": true,
             "stars": 100,
-            "favourite": true
-        },
-        {
-            "repo": "https://github.com/Azure/azure-iot-pcs-device-simulation",
-            "title": "Azure IoT Device Simulations",
-            "type": "Product",
-            "open_source": true,
-            "stars": 35,
-            "description": "Helps you build simulated devices that look and behave like the real thing enabling powerful testing scenarios",
-            "favourite": true
+            "favourite": true,
+            "img": "salt-ds.png",
+            "tags": [
+                "Design System"
+            ],
+            "frameworks": [
+                "React"
+            ],
+            "products": [
+                "Grid"
+            ]
         },
         {
             "title": "Irida",
@@ -89,7 +146,17 @@
             "stars": 45,
             "type": "Product",
             "link": "https://irida.ca",
-            "favourite": true
+            "favourite": true,
+            "img": "irida.png",
+            "tags": [
+                "Public Health"
+            ],
+            "frameworks": [
+                "JavaScript"
+            ],
+            "products": [
+                "Grid"
+            ]
         },
         {
             "title": "Allianz NG-Aquila",
@@ -103,14 +170,15 @@
             "favourite": true
         },
         {
-            "title": "MDR Gamut",
+            "title": "Microsoft MDR Gamut",
             "description": "MSR Gamut: A Design Probe to Understand How Data Scientists Understand Machine Learning Models",
             "repo": "https://github.com/microsoft/msrgamut",
             "open_source": true,
             "stars": 15,
             "type": "Product",
             "link": "https://microsoft.github.io/msrgamut/",
-            "favourite": true
+            "favourite": true,
+            "img": "mdr-gamut.png"
         },
         {
             "title": "Siemens IX",
@@ -120,7 +188,8 @@
             "stars": 140,
             "type": "Integration",
             "link": "https://ix.siemens.io/",
-            "favourite": true
+            "favourite": true,
+            "img": "siemens.png"
         },
         {
             "title": "NASA Aerie UI",
@@ -130,7 +199,9 @@
             "stars": 30,
             "type": "Product",
             "link": "https://nasa-ammos.github.io/aerie-docs/",
-            "favourite": true
+            "favourite": true,
+            "img": "nasa-eerie.png",
+            "companyLogo": "nasa.svg"
         },
         {
             "title": "AWS Network Orchestration",
@@ -140,7 +211,9 @@
             "stars": 100,
             "type": "Product",
             "link": "https://aws.amazon.com/solutions/implementations/serverless-transit-network-orchestrator/",
-            "favourite": true
+            "favourite": true,
+            "img": "aws-no.png",
+            "companyLogo": "aws.svg"
         },
         {
             "title": "MongoDB Compass",
@@ -151,7 +224,16 @@
             "type": "Product",
             "link": "https://mongodb.com/compass",
             "favourite": true,
-            "img": "mongodb-compass.png"
+            "img": "mongodb-compass.png",
+            "tags": [
+                "Database"
+            ],
+            "frameworks": [
+                "React"
+            ],
+            "products": [
+                "Grid"
+            ]
         },
         {
             "title": "Timely",
@@ -163,19 +245,7 @@
             "link": "https://code.nsa.gov/timely/",
             "favourite": true,
             "img": "nsa-timely.png"
-        }
-    ],
-    "other": [
-        {
-            "link": "https://tableflow.com/",
-            "repo": "https://github.com/tableflowhq/csv-import",
-            "title": "Tableflow",
-            "description": "TableFlow is a data import platform for companies to collect and transform customer data.",
-            "open_source": true,
-            "stars": 1600,
-            "type": "Product",
-            "img": "tableflow.png"
-        },
+        },       
         {
             "link": "https://marmelab.com/react-admin/",
             "repo": "https://github.com/marmelab/react-admin",
@@ -184,15 +254,64 @@
             "open_source": true,
             "type": "Integration",
             "stars": 23500,
-            "img": "react-admin.png"
+            "img": "react-admin.png",
+            "tags": [
+                "Library"
+            ],
+            "frameworks": [
+                "React"
+            ],
+            "products": [
+                "Grid"
+            ]
         },
         {
-            "link": "https://www.unavco.org/instrumentation/networks/status/all",
-            "title": "Unavco",
-            "open_source": false,
-            "description": "A public network (GPS) monitoring application.",
-            "stars": 0,
-            "type": "Product"
+            "link": "https://tableflow.com/",
+            "repo": "https://github.com/tableflowhq/csv-import",
+            "title": "Tableflow",
+            "description": "TableFlow is a data import platform for companies to collect and transform customer data.",
+            "open_source": true,
+            "stars": 1600,
+            "type": "Product",
+            "img": "tableflow.png",
+            "tags": [
+                "Library"
+            ],
+            "frameworks": [
+                "React", "JavaScript"
+            ],
+            "products": [
+                "Grid"
+            ]
+        },
+        {
+            "title": "Cube",
+            "description": "Cube — The Semantic Layer for Building Data Applications",
+            "repo": "https://github.com/cube-js/cube",
+            "open_source": true,
+            "stars": 16900,
+            "type": "Product",
+            "link": "https://cube.dev/",
+            "img": "cube-js.png",
+            "tags": [
+                "Library"
+            ],
+            "frameworks": [
+                "React"
+            ],
+            "products": [
+                "Grid"
+            ]
+        }
+    ],
+    "other": [
+        {
+            "repo": "https://github.com/Azure/azure-iot-pcs-device-simulation",
+            "title": "Azure IoT Device Simulations",
+            "type": "Product",
+            "open_source": true,
+            "stars": 35,
+            "description": "Helps you build simulated devices that look and behave like the real thing enabling powerful testing scenarios"
         },
         {
             "link": "https://enso.org/",
@@ -223,7 +342,7 @@
         },
         {
             "repo": "https://github.com/yobulkdev/yobulkdev",
-            "link": "www.yobulk.dev/",
+            "link": "https://yobulk.dev/",
             "title": "YoBulk",
             "description": "Open Source & AI driven Data Onboarding Platform:Free flatfile.com alternative",
             "open_source": true,
@@ -232,7 +351,7 @@
         },
         {
             "repo": "https://github.com/oughtinc/ice",
-            "link": "ice.ought.org",
+            "link": "https://ice.ought.org",
             "title": "Ice",
             "description": "Interactive Composition Explorer: a debugger for compositional language model programs",
             "open_source": true,
@@ -269,6 +388,7 @@
         {
             "repo": "https://github.com/certego/BuffaLogs",
             "title": "BuffaLogs",
+            "link": "https://github.com/certego/BuffaLogs/wiki/1.-About",
             "description": "BuffaLogs is an Open Source Django App whose main purpose is to detect login anomalies",
             "type": "Product",
             "open_source": true,
@@ -276,7 +396,7 @@
         },
         {
             "repo": "https://github.com/railmapgen/rmg",
-            "link": "railmapgen.github.io/?app=rmg",
+            "link": "https://railmapgen.github.io/?app=rmg",
             "title": "Rail Map Gen",
             "description": "A tool for generating railway maps and information panels in the styles of following public transportation systems",
             "stars": 145,
@@ -303,6 +423,7 @@
         },
         {
             "repo": "https://github.com/vxcontrol/soldr",
+            "link": "https://github.com/vxcontrol/soldr",
             "title": "Soldr",
             "description": "SOLDR is an Endpoint Detection and Response system which consists of centralised management part with extensive Web UI and Agents being installed on endpoint systems.",
             "type": "Product",
@@ -337,10 +458,10 @@
             "stars": 21
         },
         {
-            "link": "https://github.com/shawnbanasick/ken-q-analysis",
+            "link": "https://shawnbanasick.github.io/ken-q-analysis/index.html",
             "title": "Ken Q Analysis",
             "description": "A web application for Q Methodology",
-            "repo": "https://shawnbanasick.github.io/ken-q-analysis/index.html",
+            "repo": "https://github.com/shawnbanasick/ken-q-analysis",
             "type": "Integration",
             "open_source": true,
             "stars": 10
@@ -355,19 +476,10 @@
             "stars": 15
         },
         {
-            "repo": "https://github.com/windmill-labs/windmill",
-            "title": "Windmill",
-            "description": "Open-source developer platform to turn scripts into workflows and UIs. Fastest workflow engine (5x vs Airflow). Open-source alternative to Airplane and Retool.",
-            "link": "windmill.dev",
-            "type": "Product",
-            "open_source": true,
-            "stars": 8000
-        },
-        {
             "repo": "https://github.com/jose-donato/budgetguru",
             "title": "Budget Guru",
             "description": "BudgetGuru is your AI-powered guide to smarter personal finance.",
-            "link": "budgetguru.vercel.app",
+            "link": "https://budgetguru.vercel.app",
             "type": "Product",
             "open_source": true,
             "stars": 15
@@ -376,7 +488,7 @@
             "repo": "https://github.com/jeffvli/feishin",
             "title": "Feishin",
             "description": "A modern self-hosted music player.",
-            "link": "feishin.vercel.app",
+            "link": "https://feishin.vercel.app",
             "type": "Product",
             "open_source": true,
             "stars": 1300
@@ -403,7 +515,7 @@
             "repo": "https://github.com/AppImage/appimage.github.io",
             "title": "App Image",
             "description": "Given an URL to an AppImage, the GitHub action in this project inspects the AppImage and puts it into a community-maintained catalog",
-            "link": "appimage.github.io/",
+            "link": "https://appimage.github.io/",
             "type": "Product",
             "open_source": true,
             "stars": 290
@@ -418,10 +530,10 @@
             "stars": 10
         },
         {
-            "repo": "https://github.com/vegaprotocol/vegawallet-desktopz",
+            "repo": "https://github.com/vegaprotocol/vegawallet-desktop",
             "title": "VegaWallet Desktop",
             "description": "Desktop application for Vega Protocol's wallet",
-            "link": "vega.xyz",
+            "link": "https://vega.xyz",
             "type": "Product",
             "open_source": true,
             "stars": 15
@@ -430,7 +542,7 @@
             "repo": "https://github.com/sassoftware/vscode-sas-extension",
             "title": "VS Code SaS Extension",
             "description": "This SAS Extension for Visual Studio Code provides support for the SAS language, including features such as SAS syntax highlighting, code completion, hover help, code folding, outline, SAS code snippets and run SAS code.",
-            "link": "",
+            "link": "https://github.com/sassoftware/vscode-sas-extension",
             "type": "Product",
             "open_source": true,
             "stars": 100
@@ -455,8 +567,8 @@
         },
         {
             "title": "JP Project Identity Server 4",
-            "description": "ASP.NET Core 3 & Angular 8 Administration Panel for 💞IdentityServer4 and ASP.NET Core Identity",
-            "repo": "https://github.com/brunobritodev/JPProject.IdentityServer4.AdminUI?tab=readme-ov-file",
+            "description": "ASP.NET Core 3 & Angular 8 Administration Panel for IdentityServer4 and ASP.NET Core Identity",
+            "repo": "https://github.com/brunobritodev/JPProject.IdentityServer4.AdminUI",
             "open_source": true,
             "stars": 750,
             "type": "Product",
@@ -514,7 +626,7 @@
             "open_source": true,
             "stars": 15,
             "type": "Product",
-            "link": ""
+            "link": "https://github.com/ascendtech/gwt-examples"
         },
         {
             "title": "Night Hawk Response",
@@ -523,7 +635,7 @@
             "open_source": true,
             "stars": 600,
             "type": "Product",
-            "link": ""
+            "link": "https://github.com/biggiesmallsAG/nightHawkResponse"
         },
         {
             "title": "MyLG (Unsupported)",
@@ -550,7 +662,7 @@
             "open_source": true,
             "stars": 15,
             "type": "Product",
-            "link": ""
+            "link": "https://github.com/shukun-ai/shukun-ai"
         },
         {
             "title": "Section App Client",
@@ -613,7 +725,7 @@
             "open_source": true,
             "stars": 60,
             "type": "Product",
-            "link": ""
+            "link": "https://github.com/zhou-fuhao/relation-graph-vue2"
         },
         {
             "title": "HSR Optimiizer",
@@ -649,7 +761,7 @@
             "open_source": true,
             "stars": 20,
             "type": "Product",
-            "link": ""
+            "link": "https://github.com/maxplanck-ie/parkour2"
         },
         {
             "title": "Invoice Generator",
@@ -676,7 +788,7 @@
             "open_source": true,
             "stars": 40,
             "type": "Product",
-            "link": ""
+            "link": "https://github.com/oslabs-beta/FortifyQL"
         },
         {
             "title": "Ciphyr",
@@ -721,7 +833,7 @@
             "open_source": true,
             "stars": 40,
             "type": "Product",
-            "link": ""
+            "link": "https://github.com/koolkishan/nextjs-airbnb-clone-starter"
         },
         {
             "title": "Tabbled",
@@ -757,7 +869,7 @@
             "open_source": true,
             "stars": 550,
             "type": "Product",
-            "link": ""
+            "link": "https://github.com/ArtVentureX/sd-webui-agent-scheduler"
         },
         {
             "title": "Lightstreamer Example",
@@ -775,7 +887,7 @@
             "open_source": true,
             "stars": 23,
             "type": "Product",
-            "link": ""
+            "link": "https://github.com/finos/traderX"
         },
         {
             "title": "Domino",
@@ -847,7 +959,7 @@
             "open_source": true,
             "stars": 25,
             "type": "Example",
-            "link": ""
+            "link": "https://github.com/vitorlofonseca/microfrontend-vue-and-vite"
         },
         {
             "title": "Slickflow",
@@ -865,7 +977,7 @@
             "open_source": true,
             "stars": 15,
             "type": "Product",
-            "link": ""
+            "link": "https://github.com/EshaanAgg/Research-Literature-Manager"
         },
         {
             "title": "Baseball Trade Trees",
@@ -901,7 +1013,7 @@
             "open_source": true,
             "stars": 20,
             "type": "Product",
-            "link": ""
+            "link": "https://github.com/TypeFox/vscode-messenger"
         },
         {
             "title": "NeuVector Manager",
@@ -919,7 +1031,8 @@
             "open_source": true,
             "stars": 40,
             "type": "Integration",
-            "link": ""
+            "link": "https://github.com/odpi/egeria-ui"
+
         },
         {
             "title": "VarFish Server",
@@ -928,7 +1041,7 @@
             "open_source": true,
             "stars": 40,
             "type": "Product",
-            "link": ""
+            "link": "https://github.com/varfish-org/varfish-server"
         },
         {
             "title": "Tutors",
@@ -973,7 +1086,7 @@
             "open_source": true,
             "stars": 30,
             "type": "Product",
-            "link": ""
+            "link": "https://github.com/denyshorman/visualkey"
         },
         {
             "title": "New World Buddy",
@@ -991,7 +1104,7 @@
             "open_source": true,
             "stars": 40,
             "type": "Product",
-            "link": ""
+            "relinkpo": "https://github.com/delebash/unreal_vault_organizer"
         },
         {
             "title": "Datavizta",
@@ -1027,7 +1140,7 @@
             "open_source": true,
             "stars": 30,
             "type": "Product",
-            "link": ""
+            "link": "https://github.com/mathpaquette/tskmgr"
         },
         {
             "title": "Rio",
@@ -1036,7 +1149,7 @@
             "open_source": true,
             "stars": 10,
             "type": "Product",
-            "link": ""
+            "link": "https://github.com/sitkatech/rio"
         },
         {
             "title": "Flex",
@@ -1075,16 +1188,6 @@
             "link": "https://quake-demo.inherd.org/"
         },
         {
-            "title": "Pinpoint",
-            "description": "Pinpoint is an APM (Application Performance Management) tool for large-scale distributed systems written in Java / PHP/PYTHON.",
-            "repo": "https://github.com/pinpoint-apm/pinpoint",
-            "open_source": true,
-            "stars": 13100,
-            "type": "Product",
-            "link": "https://pinpoint-apm.gitbook.io/",
-            "img": "pinpoint.png"
-        },
-        {
             "title": "Survey Solutions",
             "description": "Survey Solutions is a survey management and data collection system developed by the World Bank.",
             "repo": "https://github.com/surveysolutions/surveysolutions",
@@ -1101,6 +1204,21 @@
             "stars": 50,
             "type": "Product",
             "link": "https://wedance.vip"
+        },
+        {
+            "repo": "https://github.com/SCADA-LTS/Scada-LTS",
+            "title": "Scada LTS",
+            "description": "Scada-LTS is an Open Source, web-based, multi-platform solution for building your own SCADA (Supervisory Control and Data Acquisition) system.",
+            "link": "https://github.com/SCADA-LTS/Scada-LTS",
+            "open_source": true,
+            "stars": 615,
+            "type": "Product",
+            "tags": [
+                "Grid",
+                "Charts",
+                "React"
+            ],
+            "img": "sample.png"
         },
         {
             "title": "React Importer",
@@ -1127,16 +1245,7 @@
             "open_source": true,
             "stars": 110,
             "type": "Product",
-            "link": ""
-        },
-        {
-            "title": "Abacus",
-            "description": "Abacus: Automattic's Experimentation Platform UI",
-            "repo": "https://github.com/Automattic/abacus",
-            "open_source": true,
-            "stars": 30,
-            "type": "Product",
-            "link": "https://abacus-a8c.vercel.app/"
+            "link": "https://github.com/mr-guard/dayz-server-manager"
         },
         {
             "title": "SF Dahlia Web",
@@ -1163,7 +1272,7 @@
             "open_source": true,
             "stars": 460,
             "type": "Product",
-            "link": ""
+            "link": "https://github.com/fribbels/Fribbels-Epic-7-Optimizer"
         },
         {
             "title": "OperatorFabric",
@@ -1199,7 +1308,7 @@
             "open_source": true,
             "stars": 40,
             "type": "Product",
-            "link": ""
+            "link": "https://github.com/jshinonome/vscode-q"
         },
         {
             "title": "Open Trading Platform",
@@ -1208,7 +1317,7 @@
             "open_source": true,
             "stars": 60,
             "type": "Product",
-            "link": ""
+            "link": "https://github.com/ettec/open-trading-platform"
         },
         {
             "title": "AoE II Companion",
@@ -1280,7 +1389,7 @@
             "open_source": true,
             "stars": 50,
             "type": "Product",
-            "link": ""
+            "link": "https://github.com/eclipse-cdt-cloud/theia-trace-extension"
         },
         {
             "title": "Employee Mangement System",
@@ -1307,7 +1416,7 @@
             "open_source": true,
             "stars": 40,
             "type": "Product",
-            "link": ""
+            "link": "https://github.com/LAB-MI/candilibV2"
         },
         {
             "title": "NGX Formly",
@@ -1339,7 +1448,7 @@
         {
             "title": "TestPlan",
             "description": "Testplan, a multi-testing framework, because unit tests can only go so far..",
-            "repo": "http://testplan.readthedocs.io/",
+            "repo": "https://github.com/morganstanley/testplan",
             "open_source": true,
             "stars": 170,
             "type": "Integration",
@@ -1370,7 +1479,7 @@
             "open_source": true,
             "stars": 80,
             "type": "Product",
-            "link": ""
+            "link": "https://github.com/talented/FileManager"
         },
         {
             "title": "C2C UI",
@@ -1400,23 +1509,13 @@
             "link": "http://accountgo.net/"
         },
         {
-            "title": "Cube",
-            "description": "Cube — The Semantic Layer for Building Data Applications",
-            "repo": "https://github.com/cube-js/cube",
-            "open_source": true,
-            "stars": 16900,
-            "type": "Product",
-            "link": "https://cube.dev/",
-            "img": "cube-js.png"
-        },
-        {
             "title": "Krypto Trading Bot",
             "description": "Self-hosted crypto trading bot (automated high frequency market making) written in C++",
             "repo": "https://github.com/ctubio/Krypto-trading-bot",
+            "link": "https://github.com/ctubio/Krypto-trading-bot",
             "open_source": true,
             "stars": 3200,
-            "type": "Product",
-            "link": ""
+            "type": "Product"
         },
         {
             "title": "Hook0",
@@ -1434,7 +1533,7 @@
             "open_source": true,
             "stars": 310,
             "type": "Product",
-            "link": ""
+            "link": "https://github.com/xxf098/LiteSpeedTest"
         },
         {
             "title": "Siembol",
@@ -1471,15 +1570,6 @@
             "stars": 10,
             "type": "Product",
             "link": "https://opensearch.org/docs/latest/observability-plugin/index/"
-        },
-        {
-            "title": "",
-            "description": "",
-            "repo": "",
-            "open_source": true,
-            "stars": 0,
-            "type": "",
-            "link": ""
         }
     ]
 }
