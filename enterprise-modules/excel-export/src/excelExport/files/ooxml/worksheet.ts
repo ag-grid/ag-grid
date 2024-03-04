@@ -303,6 +303,11 @@ const addExcelTableParts = (excelTable?: ExcelDataTable, index?: number) => {
     return (children: XmlElement[]) => {
         children.push({
             name: 'tableParts',
+            properties: {
+                rawMap: {
+                    count: '1',
+                }
+            },
             children: [{
                 name: 'tablePart',
                 properties: {
