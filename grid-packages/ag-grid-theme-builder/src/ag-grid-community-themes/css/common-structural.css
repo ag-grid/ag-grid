@@ -623,85 +623,6 @@ ag-grid-aurelia {
 
 /**
  ****************************
- * Rich Select
- ****************************
- */
-/*
-.ag-rich-select {
-  cursor: default;
-  outline: none;
-  height: 100%;
-}
-
-.ag-rich-select-value {
-  display: flex;
-  align-items: center;
-  height: 100%;
-  .ag-picker-field-display {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    &.ag-display-as-placeholder {
-      opacity: 0.5;
-    }
-  }
-}
-
-.ag-rich-select-list {
-  position: relative;
-  .ag-loading-text {
-    min-height: 2rem;
-  }
-}
-
-.ag-rich-select-row {
-  display: flex;
-  flex: 1 1 auto;
-  align-items: center;
-  white-space: nowrap;
-  overflow: hidden;
-  height: 100%;
-}
-
-.ag-rich-select-field-input {
-  flex: 1 1 auto;
-  .ag-input-field-input {
-    padding: 0 !important;
-    border: none !important;
-    box-shadow: none !important;
-    text-overflow: ellipsis;
-    &::placeholder {
-      opacity: 0.8;
-    }
-  }
-}
-*/
-
-/**
- ****************************
- * Pagination
- ****************************
- */
-.ag-paging-panel {
-  align-items: center;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.ag-paging-page-summary-panel {
-  display: flex;
-  align-items: center;
-}
-
-.ag-paging-button {
-  position: relative;
-}
-
-.ag-disabled .ag-paging-page-summary-panel {
-  pointer-events: none;
-}
-
-/**
- ****************************
  * Tool Panel
  ****************************
  */
@@ -779,37 +700,6 @@ ag-grid-aurelia {
   .ag-header-cell-text {
     text-align: end;
   }
-}
-
-/**
- ****************************
- * Status Bar
- ****************************
- */
-.ag-status-bar {
-  display: flex;
-  justify-content: space-between;
-  overflow: hidden;
-}
-
-.ag-status-panel {
-  display: inline-flex;
-}
-
-.ag-status-name-value {
-  white-space: nowrap;
-}
-
-.ag-status-bar-left {
-  display: inline-flex;
-}
-
-.ag-status-bar-center {
-  display: inline-flex;
-}
-
-.ag-status-bar-right {
-  display: inline-flex;
 }
 
 /**

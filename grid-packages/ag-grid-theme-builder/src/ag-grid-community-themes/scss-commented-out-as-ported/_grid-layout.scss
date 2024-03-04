@@ -1,7 +1,7 @@
+/* PORTED
 @use 'ag';
 
 @mixin output {
-  /* PORTED
   .ag-rtl {
     text-align: right;
   }
@@ -269,10 +269,10 @@
   }
   */
 
-  .ag-overlay-loading-center {
-    @include ag.card();
-  }
-  /* PORTED
+.ag-overlay-loading-center {
+  @include ag.card();
+}
+/* PORTED
   // in auto-height mode with no rows, add padding to prevent grid being too small
   .ag-overlay-no-rows-wrapper.ag-layout-auto-height {
     padding-top: 30px;
@@ -319,5 +319,5 @@
     .ag-floating-bottom {
       border-top: var(--ag-borders-critical) var(--ag-border-color);
     }
-  */
-}
+  }
+*/

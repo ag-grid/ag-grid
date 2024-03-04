@@ -15,6 +15,8 @@ export const gridConfigBooleanFields = [
   'printLayout',
   'legacyColumnMenu',
   'showIntegratedChartPopup',
+  'statusBar',
+  'pagination',
 ] as const;
 
 type GridConfigBooleanField = (typeof gridConfigBooleanFields)[number];
@@ -96,6 +98,29 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
     }
   }
 
+  if (config.statusBar) {
+    options.statusBar = {
+      statusPanels: [
+        {
+          statusPanel: 'agTotalRowCountComponent',
+          align: 'left',
+        },
+        {
+          statusPanel: 'agFilteredRowCountComponent',
+          align: 'left',
+        },
+        { statusPanel: 'agSelectedRowCountComponent', align: 'left' },
+        { statusPanel: 'agAggregationComponent', align: 'right' },
+      ],
+    };
+  }
+
+  if (config.pagination) {
+    options.pagination = true;
+    options.paginationPageSize = 5;
+    options.paginationPageSizeSelector = [5, 10, 25, 50, 100];
+  }
+
   return options;
 };
 
@@ -121,23 +146,23 @@ const buildGroupColumnDefs = (columns: ColDef[]): ColGroupDef[] => [
     headerName: 'Car',
     children: columns.filter((c) => c.field === 'make' || c.field === 'model'),
   },
-  // {
-  //   headerName: 'Data',
-  //   children: columns.filter((c) => c.field !== 'make' && c.field !== 'model'),
-  // },
   {
     headerName: 'Data',
-    children: [
-      {
-        headerName: 'Year',
-        children: columns.filter((c) => c.field === 'year'),
-      },
-      {
-        headerName: 'Price',
-        children: columns.filter((c) => c.field === 'price'),
-      },
-    ],
+    children: columns.filter((c) => c.field !== 'make' && c.field !== 'model'),
   },
+  // {
+  //   headerName: 'Data',
+  //   children: [
+  //     {
+  //       headerName: 'Year',
+  //       children: columns.filter((c) => c.field === 'year'),
+  //     },
+  //     {
+  //       headerName: 'Price',
+  //       children: columns.filter((c) => c.field === 'price'),
+  //     },
+  //   ],
+  // },
 ];
 
 const defaultRowData = () => [

@@ -1,7 +1,6 @@
 /* Above footers */
 
-.ag-paging-panel,
-.ag-status-bar {
+.ag-paging-panel {
   border-top: var(--ag-footer-border);
 }
 

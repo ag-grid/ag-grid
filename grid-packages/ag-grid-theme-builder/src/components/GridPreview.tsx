@@ -11,6 +11,7 @@ import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
 import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
 import { styled } from '@mui/joy';
 // import 'ag-charts-enterprise';
 import { useAtomValue } from 'jotai';
@@ -31,6 +32,7 @@ ModuleRegistry.registerModules([
   GridChartsModule,
   SetFilterModule,
   RichSelectModule,
+  StatusBarModule,
 ]);
 
 ModuleRegistry.registerModules([SetFilterModule]);
