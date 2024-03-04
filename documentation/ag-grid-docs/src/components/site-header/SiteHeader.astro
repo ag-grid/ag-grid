@@ -6,7 +6,6 @@ import { FRAMEWORKS } from '@constants';
 import styles from '@design-system/modules/SiteHeader.module.scss';
 import { SiteLogo } from './SiteLogo';
 import Search from '../search/Search';
-import { getFrameworkFromPath } from '@features/docs/utils/urlPaths';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { DarkModeToggle } from './DarkModeToggle';
 import { ProductDropdown } from '@components/product-dropdown/ProductDropdown';
@@ -15,7 +14,6 @@ import { getApiPaths } from '@utils/apiMenuPath';
 const { pathname } = Astro.url;
 const { data: menuData } = await getEntry('menu', 'data');
 const topNavItems = menuData.header.items;
-const currentFramework = getFrameworkFromPath(pathname);
 const frameworkPaths = FRAMEWORKS.map((framework) => ({
     title: 'Docs',
     path: urlWithBaseUrl(framework),
@@ -28,7 +26,7 @@ export interface Props {
     showDocsNav?: boolean;
 }
 
-const { showDocsNav } = Astro.props;
+const { showSearchBar, showDocsNav } = Astro.props;
 
 const dropdownItems = [
     {
@@ -69,7 +67,7 @@ const dropdownItems = [
                         <Icon name="collapseCategories" />
                     </button>
 
-                    {currentFramework && <Search client:load currentFramework={currentFramework} />}
+                    {showSearchBar && <Search client:load />}
                 </div>
             )
         }
