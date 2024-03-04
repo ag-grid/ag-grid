@@ -29,7 +29,7 @@
 }
 
 .ag-column-select-virtual-list-item:focus-visible {
-  box-shadow: var(--ag-inset-focus-shadow);
+  box-shadow: inset var(--ag-focus-shadow);
 }
 
 .ag-column-select-header-icon {

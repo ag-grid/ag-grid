@@ -369,12 +369,6 @@ export const coreMeta = definePartMeta({
       defaultValue: '0 0 0 3px color-mix(in srgb, transparent, var(--ag-accent-color) 50%)',
     },
     {
-      property: 'insetFocusShadow',
-      type: 'css',
-      docs: "Shadow inside UI controls that have focus and aren't in a position where they can display a shadow outside of their bounds. The value must a valid CSS box-shadow value beginning with the `inset` keyword.",
-      defaultValue: 'inset 0 0 5px var(--ag-accent-color)',
-    },
-    {
       property: 'sideBarPanelWidth',
       type: 'length',
       docs: 'Default width of the sidebar that contains the columns and filters tool panels',

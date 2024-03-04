@@ -65,7 +65,6 @@ export type CoreParam =
   | 'dragGhostBorder'
   | 'dragGhostShadow'
   | 'focusShadow'
-  | 'insetFocusShadow'
   | 'sideBarPanelWidth'
   | 'headerColumnResizeHandleDisplay'
   | 'headerColumnResizeHandleHeight'
@@ -209,7 +208,6 @@ export const core = definePart<CoreParam>({
     dragGhostBorder: true,
     dragGhostShadow: helpers.ref('popupShadow'),
     focusShadow: '0 0 0 3px color-mix(in srgb, transparent, var(--ag-accent-color) 50%)',
-    insetFocusShadow: 'inset 0 0 5px var(--ag-accent-color)',
     sideBarPanelWidth: '250px',
     headerColumnResizeHandleDisplay: 'block',
     headerColumnResizeHandleHeight: '30%',
@@ -833,15 +831,6 @@ export type ParamTypes = {
    * @default "0 0 0 3px color-mix(in srgb, transparent, var(--ag-accent-color) 50%)"
    */
   focusShadow: string;
-
-  /**
-   * Shadow inside UI controls that have focus and aren't in a position where they can display a shadow outside of their bounds. The value must a valid CSS box-shadow value beginning with the `inset` keyword.
-   *
-   * Any valid CSS expression is accepted.
-   *
-   * @default "inset 0 0 5px var(--ag-accent-color)"
-   */
-  insetFocusShadow: string;
 
   /**
    * Default width of the sidebar that contains the columns and filters tool panels

@@ -29,23 +29,14 @@
   height: calc(var(--ag-grid-size) * 6);
 
   &:focus-visible {
-    /* TODO check this works */
     border-radius: var(--ag-border-radius);
-    box-shadow: var(--ag-focus-shadow);
+    box-shadow: inset var(--ag-focus-shadow);
   }
 }
 
 .ag-filter-toolpanel-header,
 .ag-filter-toolpanel-search {
   padding: 0 var(--ag-grid-size);
-}
-
-.ag-filter-toolpanel-group.ag-has-filter > .ag-group-title-bar .ag-group-title::after {
-  /* TODO use a real icon here */
-  /* @include ag.icon(); */
-  padding-left: var(--ag-grid-size);
-  content: ag.icon-content(filter);
-  position: absolute;
 }
 
 .ag-filter-toolpanel-group-level-0-header {

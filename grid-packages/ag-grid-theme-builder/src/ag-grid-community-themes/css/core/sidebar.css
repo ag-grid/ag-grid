@@ -56,7 +56,7 @@
 }
 
 .ag-side-button-button:focus-visible {
-  box-shadow: var(--ag-inset-focus-shadow);
+  box-shadow: inset var(--ag-focus-shadow);
 }
 
 .ag-side-button-label {

@@ -126,7 +126,7 @@
   cursor: pointer;
 
   &:focus-visible {
-    box-shadow: var(--ag-inset-focus-shadow);
+    box-shadow: inset var(--ag-focus-shadow);
   }
 }
 
@@ -213,7 +213,7 @@ TODO introduce variable
 }
 
 .ag-filter-virtual-list-item:focus-visible {
-  box-shadow: var(--ag-inset-focus-shadow);
+  box-shadow: inset var(--ag-focus-shadow);
 }
 
 .ag-filter-apply-panel {

@@ -1,0 +1,52 @@
+.ag-paging-panel {
+  color: var(--ag-secondary-foreground-color);
+  height: var(--ag-header-height);
+
+  > * {
+    margin: 0 var(--ag-cell-horizontal-padding);
+  }
+
+  > .ag-paging-page-size .ag-wrapper {
+    min-width: calc(var(--ag-grid-size) * 10);
+  }
+}
+
+.ag-paging-button {
+  cursor: pointer;
+
+  &:focus-visible {
+    box-shadow: var(--ag-focus-shadow);
+  }
+}
+
+.ag-paging-button.ag-disabled {
+  cursor: default;
+  color: var(--ag-disabled-foreground-color);
+}
+
+.ag-paging-button,
+.ag-paging-description {
+  margin: 0 var(--ag-grid-size);
+}
+
+.ag-status-bar {
+  color: var(--ag-disabled-foreground-color);
+  padding-right: calc(var(--ag-grid-size) * 4);
+  padding-left: calc(var(--ag-grid-size) * 4);
+  line-height: 1.5;
+}
+
+.ag-status-name-value-value {
+  color: var(--ag-foreground-color);
+}
+
+.ag-status-bar-center {
+  text-align: center;
+}
+
+.ag-status-name-value {
+  margin-left: var(--ag-grid-size);
+  margin-right: var(--ag-grid-size);
+  padding-top: calc(var(--ag-grid-size) * 2);
+  padding-bottom: calc(var(--ag-grid-size) * 2);
+}
