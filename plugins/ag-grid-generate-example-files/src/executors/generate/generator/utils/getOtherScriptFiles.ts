@@ -56,6 +56,22 @@ const getOtherJsFiles = ({
     });
 };
 
+const getComponentFiles = ({
+    folderPath,
+    sourceFileList,
+    internalFramework,
+}: {
+    folderPath: string;
+    sourceFileList: string[];
+    internalFramework: InternalFramework;
+}): Promise<FileContents> => {
+    const frameworkComponents = sourceFileList.filter((fileName) => fileName.includes('_' + internalFramework));
+    return getFileList({
+        folderPath,
+        fileList: frameworkComponents,
+    });
+};
+
 export const getOtherScriptFiles = async ({
     folderPath,
     sourceFileList,
@@ -65,7 +81,7 @@ export const getOtherScriptFiles = async ({
     folderPath: string;
     sourceFileList: string[];
     transformTsFileExt?: TransformTsFileExt;
-    internalFramework: string;
+    internalFramework: InternalFramework;
 }) => {
     const otherTsGeneratedFileContents = await getOtherTsGeneratedFiles({
         folderPath,
@@ -76,17 +92,23 @@ export const getOtherScriptFiles = async ({
         folderPath,
         sourceFileList,
     });
+    const componentFiles = await getComponentFiles({
+        folderPath,
+        sourceFileList,
+        internalFramework,
+    });
 
-    const contents = Object.assign({}, otherTsGeneratedFileContents, otherJsFileContents) as FileContents;
-    const frameworkComponentSuffix = (framework: InternalFramework) => framework === 'vue' || framework === 'vue3' ? 'Vue' : ''; 
+    const contents = { ...otherTsGeneratedFileContents, ...otherJsFileContents, ...componentFiles } as FileContents;
+    const frameworkComponentSuffix = (framework: InternalFramework) =>
+        framework === 'vue' || framework === 'vue3' ? 'Vue' : '';
     const filteredToFramework = {};
-    const others = {}
+    const others = {};
     Object.entries(contents).forEach(([file, content]) => {
         let isFrameworkFile = false;
         FRAMEWORKS.forEach((framework) => {
             const suffix = '_' + framework;
             if (file.includes(suffix)) {
-                if(internalFramework === framework) {
+                if (internalFramework === framework) {
                     filteredToFramework[file.replace(suffix, frameworkComponentSuffix(framework))] = content;
                 }
                 isFrameworkFile = true;
