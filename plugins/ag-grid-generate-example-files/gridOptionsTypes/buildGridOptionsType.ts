@@ -53,4 +53,4 @@ function getTypeLookupFunc(fileName) {
         }
 }
 
-getTypeLookupFunc('./src/gridOptionsTypes/baseGridOptions.ts');
+getTypeLookupFunc('./gridOptionsTypes/baseGridOptions.ts');
