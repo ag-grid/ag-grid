@@ -20,9 +20,9 @@
 
 .header {
     .image {
-        width: 100%; // Ensures the image takes up the full width of its container
-        height: 150px; // Adjust based on desired fixed height
-        object-fit: cover; // Ensures image covers the box, cropping it as necessary
+        width: 100%;
+        height: 150px; 
+        object-fit: cover; 
         object-position: top;
     }
 }
@@ -54,28 +54,28 @@
 
 .body {
     padding: $spacing-size-4;
-    flex-grow: 1; // Ensures body takes up all available space pushing footer to the bottom
+    flex-grow: 1; 
 }
 
 .imageButton {
-    width: auto; // Adjust based on the button image size
-    height: $spacing-size-8; // Adjust based on design requirements
-    cursor: pointer; // Changes the cursor to a pointer to indicate it's clickable
-    margin-left: $spacing-size-4; // Adds some space between the title and the button
+    width: auto; 
+    height: $spacing-size-8; 
+    cursor: pointer; 
+    margin-left: $spacing-size-4;
     fill: var(--color-fg-primary);
 }
 
 .description {
-    font-size: var(--text-fs-base); // Tag text size
+    font-size: var(--text-fs-base); 
     font-weight: var(--text-regular);
-    color: var(--color-text-primary); // Adjust based on design requirements
+    color: var(--color-text-primary); 
     display: -webkit-box;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-    -webkit-line-clamp: 3; // Limit to 3 lines
-    line-height: 1.4; // Adjust based on design requirements
-    max-height: calc(1.4em * 3); // Adjust the multiplier based on the line-height to ensure consistency
+    -webkit-line-clamp: 3; 
+    line-height: 1.4;
+    max-height: calc(1.4em * 3); 
 }
 
 .footer {
