@@ -71,6 +71,7 @@
 
         #{$selector-darkmode} & {
             --color-icon: var(--color-fg-primary);
+            opacity: 0.5;
         }
     }
 }
