@@ -231,6 +231,13 @@ export interface GridOptions<TData = any> {
      */
     tooltipMouseTrack?: boolean;
     /**
+     * This defines when tooltip will show up for Cells, Headers and SetFilter Items.
+     *  - `standard` - The tooltip always shows up when the items configured with Tooltips are hovered.
+     * - `whenTruncated` - The tooltip will only be displayed when the items hovered have truncated (showing ellipsis) values.
+     * @default `standard`
+     */
+    tooltipShowMode?: 'standard' | 'whenTruncated'
+    /**
      * Set to `true` to enable tooltip interaction. When this option is enabled, the tooltip will not hide while the
      * tooltip itself it being hovered or has focus.
      * @default false
