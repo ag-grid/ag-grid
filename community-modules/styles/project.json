@@ -28,6 +28,7 @@
         "{projectRoot}/agGridBalhamFont.css",
         "{projectRoot}/agGridClassicFont.css",
         "{projectRoot}/agGridMaterialFont.css",
+        "{projectRoot}/agGridQuartzFont.css",
         "{projectRoot}/ag-grid.min.css",
         "{projectRoot}/ag-grid-no-native-widgets.min.css",
         "{projectRoot}/ag-theme-alpine.min.css",
@@ -42,6 +43,7 @@
         "{projectRoot}/agGridBalhamFont.min.css",
         "{projectRoot}/agGridClassicFont.min.css",
         "{projectRoot}/agGridMaterialFont.min.css",
+        "{projectRoot}/agGridQuartzFont.min.css",
         "{projectRoot}/_css-content.scss"
       ],
       "inputs": [
