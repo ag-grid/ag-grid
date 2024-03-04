@@ -65,7 +65,7 @@ const getComponentFiles = ({
     sourceFileList: string[];
     internalFramework: InternalFramework;
 }): Promise<FileContents> => {
-    const frameworkComponents = sourceFileList.filter((fileName) => fileName.includes('_' + internalFramework));
+    const frameworkComponents = sourceFileList.filter((fileName) => fileName.includes('_' + internalFramework + '.'));
     return getFileList({
         folderPath,
         fileList: frameworkComponents,
