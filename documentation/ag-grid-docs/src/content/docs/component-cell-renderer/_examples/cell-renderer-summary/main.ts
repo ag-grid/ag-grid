@@ -3,8 +3,6 @@ import {
   createGrid,
   GridApi,
   GridOptions,
-  ICellRendererComp,
-  ICellRendererParams,
 } from "@ag-grid-community/core"
 import { CompanyLogoRenderer } from './companyLogoRenderer_typescript'
 import { MissionResultRenderer } from './missionResultRenderer_typescript'
