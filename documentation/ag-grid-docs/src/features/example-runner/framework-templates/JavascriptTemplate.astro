@@ -34,7 +34,7 @@ import { getCacheBustingUrl, getGridEnterpriseScriptPath, getGridScriptPath } fr
 const siteUrl = Astro.site ? pathJoin(Astro.site, SITE_BASE_URL) : '/';
 
 const gridScriptPath = getCacheBustingUrl(getGridScriptPath(siteUrl), modifiedTimeMs);
-const gridScriptEnterprisePath = getCacheBustingUrl(getGridEnterpriseScriptPath(isIntegratedCharts, siteUrl), modifiedTimeMs);
+const gridScriptEnterprisePath = getCacheBustingUrl(getGridEnterpriseScriptPath(siteUrl), modifiedTimeMs);
 ---
 
 <html lang="en">
