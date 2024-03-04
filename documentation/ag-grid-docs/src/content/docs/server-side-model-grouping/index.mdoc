@@ -106,7 +106,11 @@ Row group footers can also be used with `groupDisplayType='multipleColumns'`, as
 
 To enable [Total Footers](./grouping-footers/), set the `groupIncludeTotalFooter` property to true, and provide a datasource `getTotalFooterData` implementation.
 
-{% gridExampleRunner title="Total Footer" name="total-footer" type="generated" options={ "enterprise": true, "modules": ["serverside","rowgrouping"] } /%}
+{% gridExampleRunner title="Total Footer" name="total-footer" /%}
+
+If using fast moving data and transactions, the footer row can be kept in sync by using `applyServerSideGroupTotalData`.
+
+{% apiDocumentation source="grid-api/api.json" section="serverSideRowModel" names=["applyServerSideGroupTotalData"] /%}
 
 ## Expand All / Collapse All
 

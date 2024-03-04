@@ -160,6 +160,10 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.resetRootStore();
     }
 
+    public applyGroupTotalData(rowData: any) {
+        this.rootNode.sibling?.setData(rowData);
+    }
+
     public applyRowData(rowDataParams: LoadSuccessParams, startRow: number, route: string[]) {
         const rootStore = this.getRootStore();
         if (!rootStore) { return; }

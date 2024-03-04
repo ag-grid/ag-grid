@@ -1100,6 +1100,12 @@
                 "url": "/server-side-model-updating-transactions/#asynchronous-updates"
             }
         },
+        "applyServerSideGroupTotalData": {
+            "more": {
+                "name": "Total Footer",
+                "url": "/server-side-model-grouping/#total-footer"
+            }
+        },
         "applyServerSideRowData": {
             "more": {
                 "name": "Providing Additional Data",

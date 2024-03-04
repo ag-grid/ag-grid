@@ -17,6 +17,7 @@ export interface IServerSideRowModel extends IRowModel {
     resetRootStore(): void;
     getBlockStates(): void;
     setRowCount(rowCount: number, isLastRowIndexKnown?: boolean): void;
+    applyGroupTotalData(groupTotalRowData: any): void;
     applyRowData(rowDataParams: LoadSuccessParams, startRow: number, route: string[]): void;
 }
 
