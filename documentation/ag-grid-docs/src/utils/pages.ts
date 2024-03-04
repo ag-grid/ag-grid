@@ -107,6 +107,7 @@ if(USE_PACKAGES) {
     // packages
     FILES_PATH_MAP['ag-grid-community/dist/**'] = `packages/ag-grid-community/dist/**/*.{cjs,js,map}`;
     FILES_PATH_MAP[`ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise/dist/**`] = `packages/ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise/dist/**/*.{cjs,js,map}`;
+    FILES_PATH_MAP['ag-grid-react/dist/**'] = `packages/ag-grid-react/dist/**/*.{cjs,js,map}`;
 }
 
 type FileKey = keyof typeof FILES_PATH_MAP;
