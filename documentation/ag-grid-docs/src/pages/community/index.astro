@@ -9,6 +9,7 @@ import Events from '@components/community-section/news-updates/events';
 import ShowcaseList from "@components/community-section/showcaselist";
 import Support from "@components/community-section/landing-page/support";
 import Socials from "@components/community-section/landing-page/socials";
+import ToolsExtensions from "@components/community-section/tools-extensions/toolsextensions";
 ---
 
 <Layout title="AG Grid">
@@ -34,13 +35,13 @@ import Socials from "@components/community-section/landing-page/socials";
                             <Icon name="arrowRight" />
                         </a>
                     </div>
-                    <FeaturedNews clientOnly />
+                    <FeaturedNews client:only />
                 </section>
                 <!-- Showcase -->
                 <section>
                     <div class={styles.sectionContainer}>
                         <div class={styles.sectionHeader}>
-                            <h3 class={styles.sectionTitle}>Showcase</h3>
+                            <h2 class={styles.sectionTitle}>Showcase</h3>
                             <p class={styles.sectionDescription}>
                                 A selection of public projects that use AG Grid
                             </p>
@@ -56,7 +57,7 @@ import Socials from "@components/community-section/landing-page/socials";
                 <section>
                     <div class={styles.sectionContainer}>
                         <div class={styles.sectionHeader}>
-                            <h3 class={styles.sectionTitle}>Tools & Extensions</h3>
+                            <h2 class={styles.sectionTitle}>Tools & Extensions</h2>
                             <p class={styles.sectionDescription}>
                                 Wrappers, integrations and utilities created by our community to make using AG Grid even easier (***WIP***)
                             </p>
@@ -66,12 +67,11 @@ import Socials from "@components/community-section/landing-page/socials";
                             <Icon name="arrowRight" />
                         </a>
                     </div>
-                    <!-- TODO: Replace w/ Tools & Extensons Component -->
-                    <h1 style={{ fontSize: "22pt", textAlign: "center"}}>*** TODO *** </h1>
+                    <ToolsExtensions limit={3} client:only/>
                 </section>
                 <!-- Support -->
                 <section>
-                    <h3>Support & Socials</h3>
+                    <h2>Support & Socials</h2>
                     <Support client:only />
                 </section>
                 <hr style={{ margin: "0px 5vw 24px 5vw"}}/>
