@@ -20,50 +20,6 @@ const Podcasts = () => {
     return arr.slice(0, -1).join(', ') + ' & ' + arr[arr.length - 1];
   };
 
-    const colDefs = [
-        {
-            field: 'link',
-            headerName: '',
-            cellRenderer: PodcastPlayerRenderer,
-            autoHeight: true,
-            cellStyle: {
-                'vertical-align': 'middle',
-            },
-        },
-        {
-            field: 'title',
-            cellStyle: {
-                padding: '8px',
-                'white-space': 'normal',
-                'line-height': '1.5', // Adjust the line-height as needed for minimal spacing
-            },
-            autoHeight: true, // Enable auto height for the cell to accommodate wrapped content
-        },
-        {
-            field: 'description',
-            cellStyle: {
-                padding: '8px',
-                'white-space': 'normal',
-                'line-height': '1.5', // Adjust the line-height as needed for minimal spacing
-            },
-            autoHeight: true, // Enable auto height for the cell to accommodate wrapped content
-        },
-        {
-            field: 'guests',
-            valueFormatter: (p) => {
-                p.value.map((guest) => {
-                    return guest;
-                });
-            },
-            cellStyle: {
-                'vertical-align': 'middle',
-            },
-        },
-        { field: 'published', headerName: 'Released' },
-        { field: 'host' },
-        { field: 'publication' },
-    ];
-
     return (
         <>
             <div className={styles.container}>
@@ -71,8 +27,10 @@ const Podcasts = () => {
                     <>
                         <div className={styles.podcastContainer}>
                             <div className={styles.podcastDetailsContainer}>
-                              <span className={styles.published}>{podcast.published}</span>
-                              <span className={styles.title}>{podcast.title}</span>
+                                <div className={styles.titleContainer}>
+                                    <span className={styles.title}>{podcast.title}</span>
+                                    <span className={styles.published}>{podcast.published}</span>
+                                </div>
                               <span className={styles.description}>{podcast.description}</span>
                               <div className={styles.creditsContainer}>
                                 <span className={styles.publication}>{podcast.publication}</span>
@@ -88,34 +46,11 @@ const Podcasts = () => {
                               </audio>
                             </div>
                         </div>
-                        {index != podcasts.length - 1 && <hr className={styles.divider} />}
                     </>
                 ))}
             </div>
-            {/* <div className={styles.container}>
-                <div className="ag-theme-quartz-dark" style={{ height: 400, width: '100%' }}>
-                    <AgGridReact rowData={podcasts} columnDefs={colDefs} />
-                </div>
-            </div> */}
         </>
     );
-};
-
-const PodcastPlayerRenderer = (props) => {
-    // The audio source URL is passed through the `value` prop by AG Grid.
-    const audioSrc = props.value;
-
-    return (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-            <audio controls src={audioSrc} style={{ width: '100%' }}>
-                Your browser does not support the audio element.
-            </audio>
-        </div>
-    );
-};
-
-const centerAlignRenderer = (params) => {
-    return `<div style="display: flex; align-items: center; height: 100%;">${params.value}</div>`;
 };
 
 export default Podcasts;

@@ -1,61 +1,55 @@
+@use '../../../core/' as *;
+
 .container {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: $spacing-size-4;
+}
 
-    .divider {
-        margin: 0px 25vw;
-    }
+.podcastContainer {
+    border-radius: 8px;
+    display: flex;
+    gap: $spacing-size-8;
+}
 
-    .podcastContainer {
-        border-radius: 8px;
-        display: flex;
-        flex-direction: row;
-        gap: 24px;
+.podcastDetailsContainer {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: $spacing-size-8;
+    gap: $spacing-size-2;
+}
 
-        .podcastDetailsContainer {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 15px;
+.titleContainer {
+    display: flex;
+    justify-content: space-between;
+}
 
-            .published,
-            .title,
-            .description {
-                display: block;
-                margin-bottom: 5px;
-            }
+.published {
+    font-weight: var(--text-regular);   
+    font-weight: 200;
+}
 
-            .published {
-                color: #55B2C6;
-            }
+.title {
+    color: var(--color-fg-primary);
+    font-size: var(--text-fs-lg);
+    font-weight: var(--text-semibold);
+}
 
-            .title {
-                font-weight: 800;
-            }
+.creditsContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    font-style: italic;
+    gap: $spacing-size-4;
+    font-weight: 200;
+}
 
-            .description {
-                
-            }
+.podcastPlayerContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-            .creditsContainer {
-                display: flex;
-                flex-direction: row;
-                justify-content: flex-start;
-                font-style: italic;
-                gap: 12px;
-                font-weight: 200;
-
-            }
-        }
-
-        .podcastPlayerContainer {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            audio {
-                mix-blend-mode: screen;
-            }
-        }
+    audio {
+        mix-blend-mode: luminosity;
     }
 }
