@@ -4,7 +4,7 @@ import { Events } from "../eventKeys";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
 import { AgPromise } from "../utils";
-import { bindCellRendererToHtmlElement } from "../utils/dom";
+import { bindCellRendererToHtmlElement, getInnerWidth } from "../utils/dom";
 import { RichSelectParams } from "./agRichSelect";
 import { FieldPickerValueSelectedEvent } from "../events";
 import { Component } from "./component";
@@ -12,6 +12,7 @@ import { escapeString } from "../utils/string";
 import { exists } from "../utils/generic";
 import { setAriaActiveDescendant, setAriaSelected } from "../utils/aria";
 import { VirtualList } from "./virtualList";
+import { TooltipFeature } from "./tooltipFeature";
 
 export class RichSelectRow<TValue> extends Component {
 
@@ -96,6 +97,13 @@ export class RichSelectRow<TValue> extends Component {
 
         eGui.appendChild(span);
         this.renderValueWithoutRenderer(parsedValue);
+
+        this.createManagedBean(new TooltipFeature({
+            getGui: () => eGui,
+            getLocation: () => 'UNKNOWN',
+            getTooltipValue: () => this.parsedValue,
+            shouldShowTooltip: () => span.scrollWidth > getInnerWidth(eGui)
+        }));
     }
 
     private renderValueWithoutRenderer(value: string | null): void {

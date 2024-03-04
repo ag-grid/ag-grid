@@ -63,7 +63,8 @@ export class TooltipStateManager extends BeanStub {
     constructor(
         private parentComp: TooltipParentComp,
         private tooltipShowDelayOverride?: number,
-        private tooltipHideDelayOverride?: number
+        private tooltipHideDelayOverride?: number,
+        private shouldShowTooltip?: () => boolean
     ) {
         super();
     }
@@ -204,12 +205,12 @@ export class TooltipStateManager extends BeanStub {
         this.setToDoNothing();
     }
 
-    private prepareToShowTooltip(mouseEvent?: MouseEvent): boolean {
+    private prepareToShowTooltip(mouseEvent?: MouseEvent): void {
         // every mouseenter should be following by a mouseleave, however for some unknown, it's possible for
         // mouseenter to be called twice in a row, which can happen if editing the cell. this was reported
         // in https://ag-grid.atlassian.net/browse/AG-4422. to get around this, we check the state, and if
         // state is != nothing, then we know mouseenter was already received.
-        if (this.state != TooltipStates.NOTHING || TooltipStateManager.isLocked) { return false; }
+        if (this.state != TooltipStates.NOTHING || TooltipStateManager.isLocked) { return; }
 
         // if we are showing the tooltip because of focus, no delay at all
         // if another tooltip was hidden very recently, we only wait 200ms to show, not the normal waiting time
@@ -222,8 +223,6 @@ export class TooltipStateManager extends BeanStub {
 
         this.showTooltipTimeoutId = window.setTimeout(this.showTooltip.bind(this), delay);
         this.state = TooltipStates.WAITING_TO_SHOW;
-
-        return true;
     }
 
     private isLastTooltipHiddenRecently(): boolean {
@@ -260,7 +259,7 @@ export class TooltipStateManager extends BeanStub {
             ...this.parentComp.getTooltipParams(),
         };
 
-        if (!exists(params.value)) {
+        if (!exists(params.value) || (this.shouldShowTooltip && !this.shouldShowTooltip())) {
             this.setToDoNothing();
             return;
         }
