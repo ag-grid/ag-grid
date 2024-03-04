@@ -105,7 +105,7 @@ export const FILES_PATH_MAP: Record<string, string | GlobConfig> = {
 };
 if(USE_PACKAGES) {
     // packages
-    FILES_PATH_MAP['ag-grid-community/dist/**'] = `'packages/ag-grid-community/dist/**/*.{cjs,js,map}'`;
+    FILES_PATH_MAP['ag-grid-community/dist/**'] = `packages/ag-grid-community/dist/**/*.{cjs,js,map}`;
     FILES_PATH_MAP[`ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise/dist/**`] = `packages/ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise/dist/**/*.{cjs,js,map}`;
 }
 
