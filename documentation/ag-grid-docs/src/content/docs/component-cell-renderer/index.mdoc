@@ -30,9 +30,9 @@ in a cell. The grid comes with some Provided Cell Components for common grid tas
 {% /videoSection %}
 {% /if %}
 
-The example below shows some Custom Cell Components.
+The example below shows adding images, hyperlinks, and buttons to a cell using Custom Cell Components.
 
-{% gridExampleRunner title="Simple Cell Renderer" name="cell-renderer-summary-example"  exampleHeight=460 /%}
+{% gridExampleRunner title="Simple Cell Renderer" name="cell-renderer-summary"  exampleHeight=460 /%}
 
 ## Custom Components
 
@@ -231,6 +231,11 @@ Compliment props to a cell renderer using the Column Definition attribute  `cell
 {% includeMarkdoc file="component-cell-renderer/_complementing-component-react.mdoc" /%}
 {% includeMarkdoc file="component-cell-renderer/_complementing-component-vue.mdoc" /%}
 
+This example shows rendering an image with and without custom props and using custom props to pass a callback to a button.
+The `Refresh Data` button triggers the cell components to refresh by randomising the success data.
+
+{% gridExampleRunner title="Custom Props" name="custom-props"  type="mixed" /%}
+
 {% includeMarkdoc file="component-cell-renderer/_renderer-function-javascript.mdoc" /%}
 {% includeMarkdoc file="component-cell-renderer/_renderer-function-angular.mdoc" /%}
 {% includeMarkdoc file="component-cell-renderer/_renderer-function-vue.mdoc" /%}
@@ -243,16 +248,6 @@ for the `getGui()` method in the prototype of the function (a mandatory method i
 interface). If the `getGui()` method exists, it assumes a component, otherwise it assumes a function.
 {% /note %}
 {% /if %}
-
-## Complex Example
-
-The example below combines many of the features above and shows the following:
-
-* `Max Temp` and `Min Temp` columns uses a function Cell Component.
-* `Sunshine`, `Frost`, and `Rainfall` use functions to display icons.
-* `Randomise Frost` button triggers the cell components to refresh by randomising the frost data.
-
-{% gridExampleRunner title="Cell Renderer" name="cell-renderer" /%}
 
 ## Accessing Instances
 
