@@ -1,14 +1,5 @@
 [
     {
-        "title": "AGGrid: High-Performance DOM Updates w/ Niall Crosby",
-        "link": "https://www.youtube.com/embed/QRtrS_SvR4w",
-        "description": "SolidJS's ecosystem has been growing at a rapid rate. The latest addition is AGGrid, a high-performance table library. Niall Crosby, creator of AGGrid, joins me on stream to talk about what AGGrid is, how we can use it with Solid, and where things are going in the future.",
-        "author": "Ryan Carniato",
-        "type": "Video",
-        "published": "10/2022",
-        "id": "QRtrS_SvR4w"
-    },
-    {
         "title": "Typing: The not so secret to customisation ngTemplateOutlet",
         "link": "https://www.youtube.com/embed/ELRCT7ooNCU",
         "description": "ngTemplateOutlets are no longer a secret and continue to be an immensely powerful feature for customising our applications. But they were held back by a lack of template typings. This is no longer the case. We can now type them!",
@@ -16,6 +7,15 @@
         "type": "Video",
         "published": "10/2023",
         "id": "ELRCT7ooNCU"
+    },
+    {
+        "title": "AGGrid: High-Performance DOM Updates w/ Niall Crosby",
+        "link": "https://www.youtube.com/embed/QRtrS_SvR4w",
+        "description": "SolidJS's ecosystem has been growing at a rapid rate. The latest addition is AGGrid, a high-performance table library. Niall Crosby, creator of AGGrid, joins me on stream to talk about what AGGrid is, how we can use it with Solid, and where things are going in the future.",
+        "author": "Ryan Carniato",
+        "type": "Video",
+        "published": "10/2022",
+        "id": "QRtrS_SvR4w"
     },
     {
         "title": "Pablo Fonseca Interview - Streamlit AG Grid Component",
