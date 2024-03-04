@@ -1,37 +1,39 @@
+import React, { useState } from 'react';
 import styles from '@design-system/modules/community-section/news-updates/Videos.module.scss';
-import React, { useEffect, useRef, useState } from 'react';
 import videos from '../../../content/community/news-updates/videos.json';
 
-
 const Videos = () => {
-    const carouselRef = useRef(null);
+  const [currentVideo, setCurrentVideo] = useState(videos[0]);
 
-    const scroll = (direction) => {
-      if (carouselRef.current) {
-        const { scrollLeft, clientWidth } = carouselRef.current;
-        const scrollTo = direction === 'left' ? scrollLeft - clientWidth : scrollLeft + clientWidth;
-        carouselRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
-      }
-    };
-  
-    return (
-        <div className={styles.videoCarouselContainer}>
-            <button onClick={() => scroll('left')} className={styles.scrollButton + ' ' + styles.left}>‹</button>
-            <div className={styles.carousel} ref={carouselRef}>
-                {videos.map((video, index) => (
-                    <div key={index} className={styles.videoItem}>
-                    <iframe src={video.link} className={styles.video} />
-                    <div className={styles.videoInfo}>
-                        <h4 className={styles.title}>{video.title}</h4>
-                        <p className={styles.author}>{video.author}</p>
-                        <p className={styles.description}>{video.description}</p>
-                    </div>
-                    </div>
-                ))}
-            </div>
-            <button onClick={() => scroll('right')} className={styles.scrollButton + ' ' + styles.right}>›</button>
+  const handleVideoSelect = (video) => {
+    setCurrentVideo(video);
+  };
+
+  return (
+    <div>
+      <div className={styles.container}>
+        <div className={styles.leftColumn}>
+          <h1>{currentVideo.title}</h1>
+          <p>{currentVideo.description}</p>
+        </div>
+        <div className={styles.rightColumn}>
+          <iframe
+            className={styles.videoFrame}
+            src={currentVideo.link}
+            frameBorder="0"
+            allowFullScreen
+          ></iframe>
+        </div>
       </div>
-    );
+      <div className={styles.videoContainer}>
+        {videos.slice(1,videos.length).map((video, index) => (
+          <div key={index} onClick={() => handleVideoSelect(video)} className={styles.video}>
+            <img src={`https://img.youtube.com/vi/${video.id}/0.jpg`} alt="Video thumbnail" className={styles.videoThumbnail} />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 };
 
 export default Videos;
