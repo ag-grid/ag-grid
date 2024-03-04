@@ -1,0 +1,83 @@
+[
+  {
+    "Symbol": "aapl",
+    "Date": "2-Mar-17",
+    "Open": 140,
+    "High": 140.28,
+    "Low": 138.76,
+    "Close": 138.96,
+    "Volume": 26210984
+  },
+  {
+    "Symbol": "adbe",
+    "Date": "2-Mar-17",
+    "Open": 120.09,
+    "High": 120.12,
+    "Low": 119.28,
+    "Close": 119.9,
+    "Volume": 1819664
+  },
+  {
+    "Symbol": "amzn",
+    "Date": "2-Mar-17",
+    "Open": 853.08,
+    "High": 854.82,
+    "Low": 847.28,
+    "Close": 848.91,
+    "Volume": 2132098
+  },
+  {
+    "Symbol": "ea",
+    "Date": "2-Mar-17",
+    "Open": 87.9,
+    "High": 88.25,
+    "Low": 86.46,
+    "Close": 87.01,
+    "Volume": 1709488
+  },
+  {
+    "Symbol": "goog",
+    "Date": "2-Mar-17",
+    "Open": 833.85,
+    "High": 834.51,
+    "Low": 829.64,
+    "Close": 830.63,
+    "Volume": 942476
+  },
+  {
+    "Symbol": "has",
+    "Date": "2-Mar-17",
+    "Open": 97.88,
+    "High": 98.61,
+    "Low": 97.28,
+    "Close": 97.53,
+    "Volume": 1055930
+  },
+  {
+    "Symbol": "intc",
+    "Date": "2-Mar-17",
+    "Open": 35.93,
+    "High": 36.02,
+    "Low": 35.65,
+    "Close": 35.91,
+    "Volume": 23602100
+  },
+  {
+    "Symbol": "msft",
+    "Date": "2-Mar-17",
+    "Open": 64.69,
+    "High": 64.75,
+    "Low": 63.88,
+    "Close": 64.01,
+    "Volume": 24539597
+  },
+  {
+    "Symbol": "tsla",
+    "Date": "2-Mar-17",
+    "Open": 249.71,
+    "High": 253.28,
+    "Low": 248.27,
+    "Close": 250.48,
+    "Volume": 3351833
+  }
+]
