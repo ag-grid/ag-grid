@@ -80,9 +80,19 @@
 
 button.mobileNavButton {
     width: 100%;
+    background-color: rgba(0, 0, 0, 0.1);
+    border: none;
+    color: var(--color-button-primary-fg);
+
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+        color: var(--color-button-primary-fg);
+    }
 
     :global(.icon) {
         --icon-size: #{$spacing-size-6};
+        --color-icon: var(--color-button-primary-fg);
+        fill: var(--color-button-primary-fg);
 
         margin-left: $spacing-size-1;
         margin-right: -$spacing-size-1;

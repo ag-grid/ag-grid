@@ -105,6 +105,7 @@
 
 .text {
     grid-area: text;
+    font-weight: var(--text-regular);
     color: var(--text-color-secondary);
 }
 
@@ -118,7 +119,6 @@
     text-decoration: none;
     color: var(--color-text-primary);
     font-size: var(--text-fs-base);
-
 
     #{$selector-darkmode} & {
         color: var(--color-white);
@@ -140,8 +140,13 @@
 
     :global(.icon) {
         --icon-size: #{$spacing-size-10};
-        --color-icon: var(--color-util-gray-300);
+        --color-icon: var(--color-text-secondary);
+        opacity: 0.7;
 
         margin-bottom: $spacing-size-2;
     }
+}
+
+.hitLink {
+    color: var(--color-text-tertiary);
 }
