@@ -133,8 +133,7 @@ export class AdvancedFilterBuilderComp extends Component {
             getLocation: () => 'advancedFilter',
             getTooltipValue: () => this.validationMessage,
             getTooltipShowDelayOverride: () => 1000
-        }, this.beans));
-        this.validationTooltipFeature.setComp(this.eApplyFilterButton);
+        }));
         this.validate();
 
         this.addManagedListener(

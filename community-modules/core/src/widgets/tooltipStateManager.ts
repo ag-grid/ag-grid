@@ -18,7 +18,7 @@ export interface TooltipParentComp {
 enum TooltipStates { NOTHING, WAITING_TO_SHOW, SHOWING }
 enum TooltipTrigger { HOVER, FOCUS }
 
-export class CustomTooltipFeature extends BeanStub {
+export class TooltipStateManager extends BeanStub {
 
     private readonly SHOW_QUICK_TOOLTIP_DIFF = 1000;
     private readonly FADE_OUT_TOOLTIP_TIMEOUT = 1000;
@@ -108,9 +108,9 @@ export class CustomTooltipFeature extends BeanStub {
     private getTooltipDelay(type: 'show' | 'hide'): number {
         if (type === 'show') {
             return this.tooltipShowDelayOverride ?? this.getGridOptionsTooltipDelay('tooltipShowDelay')!;
-        } else {
-            return this.tooltipHideDelayOverride ?? this.getGridOptionsTooltipDelay('tooltipHideDelay')!;
         }
+
+        return this.tooltipHideDelayOverride ?? this.getGridOptionsTooltipDelay('tooltipHideDelay')!;
     }
 
     protected destroy(): void {
@@ -141,7 +141,7 @@ export class CustomTooltipFeature extends BeanStub {
 
         if (isIOSUserAgent()) { return; }
 
-        if (CustomTooltipFeature.isLocked) {
+        if (TooltipStateManager.isLocked) {
             this.showTooltipTimeoutId = window.setTimeout(() => {
                 this.prepareToShowTooltip(e);
             }, this.INTERACTIVE_HIDE_DELAY)
@@ -209,7 +209,7 @@ export class CustomTooltipFeature extends BeanStub {
         // mouseenter to be called twice in a row, which can happen if editing the cell. this was reported
         // in https://ag-grid.atlassian.net/browse/AG-4422. to get around this, we check the state, and if
         // state is != nothing, then we know mouseenter was already received.
-        if (this.state != TooltipStates.NOTHING || CustomTooltipFeature.isLocked) { return false; }
+        if (this.state != TooltipStates.NOTHING || TooltipStateManager.isLocked) { return false; }
 
         // if we are showing the tooltip because of focus, no delay at all
         // if another tooltip was hidden very recently, we only wait 200ms to show, not the normal waiting time
@@ -229,7 +229,7 @@ export class CustomTooltipFeature extends BeanStub {
     private isLastTooltipHiddenRecently(): boolean {
         // return true if <1000ms since last time we hid a tooltip
         const now = new Date().getTime();
-        const then = CustomTooltipFeature.lastTooltipHideTime;
+        const then = TooltipStateManager.lastTooltipHideTime;
 
         return (now - then) < this.SHOW_QUICK_TOOLTIP_DIFF;
     }
@@ -284,7 +284,7 @@ export class CustomTooltipFeature extends BeanStub {
         // one, the instance may not be back yet
         if (this.tooltipComp) {
             this.destroyTooltipComp();
-            CustomTooltipFeature.lastTooltipHideTime = new Date().getTime();
+            TooltipStateManager.lastTooltipHideTime = new Date().getTime();
         }
 
         const event: WithoutGridCommon<TooltipHideEvent> = {
@@ -450,7 +450,7 @@ export class CustomTooltipFeature extends BeanStub {
     }
 
     private lockService(): void {
-        CustomTooltipFeature.isLocked = true;
+        TooltipStateManager.isLocked = true;
         this.interactiveTooltipTimeoutId = window.setTimeout(() => {
             this.unlockService();
             this.setToDoNothing();
@@ -458,7 +458,7 @@ export class CustomTooltipFeature extends BeanStub {
     }
 
     private unlockService(): void {
-        CustomTooltipFeature.isLocked = false;
+        TooltipStateManager.isLocked = false;
         this.clearInteractiveTimeout();
     }
 
