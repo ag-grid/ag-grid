@@ -22,6 +22,7 @@ export interface GeneratedContents {
     generatedFiles: FileContents;
     packageJson: Record<string, string>;
     extras?: string[];
+    supportedFrameworks?: InternalFramework[];
 }
 
 export type InternalFramework =

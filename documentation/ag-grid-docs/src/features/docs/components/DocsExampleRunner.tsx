@@ -1,5 +1,5 @@
 import type { Framework, ImportType } from '@ag-grid-types';
-import type { ExampleType } from '@features/example-generator/types';
+import { type ExampleType, TYPESCRIPT_INTERNAL_FRAMEWORKS } from '@features/example-generator/types';
 import { ExampleRunner } from '@features/example-runner/components/ExampleRunner';
 import { ExternalLinks } from '@features/example-runner/components/ExternalLinks';
 import { getLoadingIFrameId } from '@features/example-runner/utils/getLoadingLogoId';
@@ -39,7 +39,8 @@ const queryOptions = {
 };
 
 const DocsExampleRunnerInner = ({ name, title, exampleType, exampleHeight, framework, pageName }: Props) => {
-    const internalFramework = useStore($internalFramework);
+    const docsInternalFramework = useStore($internalFramework);
+    const internalFramework = exampleType === 'typescript' ? 'typescript' : docsInternalFramework;
     const importType = useImportType();
     const [initialSelectedFile, setInitialSelectedFile] = useState();
     const [exampleUrl, setExampleUrl] = useState<string>();
