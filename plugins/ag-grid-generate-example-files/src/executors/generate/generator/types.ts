@@ -13,6 +13,7 @@ export interface ExampleConfig {
     extras?: string[];
     noStyle?: boolean;
     licenseKey?: boolean;
+    supportedFrameworks?: InternalFramework[];
 }
 
 export type ImportType = 'packages' | 'modules';

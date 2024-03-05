@@ -121,6 +121,12 @@ export async function generateFiles(options: ExecutorOptions) {
     const isIntegratedCharts = typedBindings.imports.some(m => m.module.includes('@ag-grid-enterprise/charts-enterprise'));
 
     for (const internalFramework of FRAMEWORKS) { 
+
+
+        if(exampleConfig.supportedFrameworks && !exampleConfig.supportedFrameworks.includes(internalFramework)) {
+            continue;
+        }
+
         const [otherScriptFiles, componentScriptFiles] = await getOtherScriptFiles({
             folderPath,
             sourceFileList,
