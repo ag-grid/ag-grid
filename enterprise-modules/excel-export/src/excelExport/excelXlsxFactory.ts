@@ -141,19 +141,19 @@ export class ExcelXlsxFactory {
         const tableColumns = worksheet.table.columns.map(col => col.displayName || '');
 
         let treeLeafsLevel = 0;
-        const extractLeafs = (column: ColDef | ColGroupDef, leafLevel: number) => {
+        const checkLeafsDepth = (column: ColDef | ColGroupDef, leafLevel: number) => {
             const colAsAny = column as any;
             if (Array.isArray(colAsAny.children) && colAsAny.children.length > 0) {
                 const colAsColGroupDef = colAsAny as ColGroupDef;
                 colAsColGroupDef.children.forEach(
-                    item => extractLeafs(item, leafLevel + 1)
+                    item => checkLeafsDepth(item, leafLevel + 1)
                 );
 
-                treeLeafsLevel = Math.max(treeLeafsLevel, leafLevel);
+                treeLeafsLevel = Math.max(treeLeafsLevel, leafLevel + 1);
             }
         };
 
-        config.columnModel.getColumnDefs()?.forEach(extractLeafs);
+        config.columnModel.getColumnDefs()?.forEach((column: ColDef | ColGroupDef) => checkLeafsDepth(column, 0));
         const tableHeaderRowIndex: number = treeLeafsLevel; // Assuming that header starts at row 0
 
         if (!tableColumns || !tableColumns.length || !tableRowCount || !tableName) {

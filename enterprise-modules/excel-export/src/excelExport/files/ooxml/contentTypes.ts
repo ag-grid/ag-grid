@@ -72,11 +72,6 @@ const contentTypesFactory: ExcelOOXMLTemplate = {
                 name: 'Override',
                 ContentType: 'application/vnd.openxmlformats-package.core-properties+xml',
                 PartName: '/docProps/core.xml'
-            },
-            {
-                name: 'Override',
-                ContentType: 'application/vnd.openxmlformats-officedocument.extended-properties+xml',
-                PartName: '/docProps/app.xml'
             }
         ].map(contentType => contentTypeFactory.getTemplate(contentType));
 
