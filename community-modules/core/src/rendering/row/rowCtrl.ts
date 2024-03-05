@@ -385,7 +385,6 @@ export class RowCtrl extends BeanStub {
     private setupFullWidth(gui: RowGui): void {
 
         const pinned = this.getPinnedForContainer(gui.containerType);
-        const params = this.createFullWidthParams(gui.element, pinned);
 
         if (this.rowType == RowType.FullWidthDetail) {
             if (!ModuleRegistry.__assertRegistered(ModuleNames.MasterDetailModule, "cell renderer 'agDetailCellRenderer' (for master detail)", this.beans.context.getGridId())) {
@@ -393,22 +392,7 @@ export class RowCtrl extends BeanStub {
             }
         }
 
-        let compDetails: UserCompDetails;
-        switch (this.rowType) {
-            case RowType.FullWidthDetail:
-                compDetails = this.beans.userComponentFactory.getFullWidthDetailCellRendererDetails(params);
-                break;
-            case RowType.FullWidthGroup:
-                compDetails = this.beans.userComponentFactory.getFullWidthGroupCellRendererDetails(params);
-                break;
-            case RowType.FullWidthLoading:
-                compDetails = this.beans.userComponentFactory.getFullWidthLoadingCellRendererDetails(params);
-                break;
-            default:
-                compDetails = this.beans.userComponentFactory.getFullWidthCellRendererDetails(params);
-                break;
-        }
-
+        const compDetails = this.createFullWidthCompDetails(gui.element, pinned);
         gui.rowComp.showFullWidth(compDetails);
     }
 
@@ -675,7 +659,10 @@ export class RowCtrl extends BeanStub {
         const tryRefresh = (gui: RowGui | undefined, pinned: ColumnPinnedType): boolean => {
             if (!gui) { return true; } // no refresh needed
 
-            return gui.rowComp.refreshFullWidth(() => this.createFullWidthParams(gui.element, pinned));
+            return gui.rowComp.refreshFullWidth(() => {
+                const compDetails = this.createFullWidthCompDetails(gui.element, pinned);
+                return compDetails.params;
+            });
         };
 
         const fullWidthSuccess = tryRefresh(this.fullWidthGui, null);
@@ -1073,7 +1060,7 @@ export class RowCtrl extends BeanStub {
         checkRowSizeFunc();
     }
 
-    public createFullWidthParams(eRow: HTMLElement, pinned: ColumnPinnedType): ICellRendererParams {
+    private createFullWidthCompDetails(eRow: HTMLElement, pinned: ColumnPinnedType): UserCompDetails {
         const params = this.gridOptionsService.addGridCommonParams({
             fullWidth: true,
             data: this.rowNode.data,
@@ -1089,7 +1076,16 @@ export class RowCtrl extends BeanStub {
             registerRowDragger: (rowDraggerElement, dragStartPixels, value, suppressVisibilityChange) => this.addFullWidthRowDragging(rowDraggerElement, dragStartPixels, value, suppressVisibilityChange)
         } as WithoutGridCommon<ICellRendererParams>);
 
-        return params;
+        switch (this.rowType) {
+            case RowType.FullWidthDetail:
+                return this.beans.userComponentFactory.getFullWidthDetailCellRendererDetails(params);
+            case RowType.FullWidthGroup:
+                return this.beans.userComponentFactory.getFullWidthGroupCellRendererDetails(params);
+            case RowType.FullWidthLoading:
+                return this.beans.userComponentFactory.getFullWidthLoadingCellRendererDetails(params);
+            default:
+                return this.beans.userComponentFactory.getFullWidthCellRendererDetails(params);
+        }
     }
 
     private addFullWidthRowDragging(
