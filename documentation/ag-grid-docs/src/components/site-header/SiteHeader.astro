@@ -51,21 +51,23 @@ const dropdownItems = [
         <ProductDropdown client:load items={dropdownItems} children={null} />
 
         {
-            showDocsNav && (
+            (showDocsNav || showSearchBar) && (
                 <div class={styles.docsNavBtnSearchContainer}>
-                    <button
-                        id="top-bar-docs-button"
-                        class:list={[styles.mobileNavButton, 'button-secondary']}
-                        type="button"
-                        data-toggle="collapse"
-                        data-target="#side-nav"
-                        aria-controls="side-nav"
-                        aria-expanded="false"
-                        aria-label="Toggle docs page navigation"
-                    >
-                        <span>Docs</span>
-                        <Icon name="collapseCategories" />
-                    </button>
+                    {showDocsNav && (
+                        <button
+                            id="top-bar-docs-button"
+                            class:list={[styles.mobileNavButton, 'button-secondary']}
+                            type="button"
+                            data-toggle="collapse"
+                            data-target="#side-nav"
+                            aria-controls="side-nav"
+                            aria-expanded="false"
+                            aria-label="Toggle docs page navigation"
+                        >
+                            <span>Docs</span>
+                            <Icon name="collapseCategories" />
+                        </button>
+                    )}
 
                     {showSearchBar && <Search client:load />}
                 </div>
