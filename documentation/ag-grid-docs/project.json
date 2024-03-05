@@ -40,6 +40,16 @@
         "watch": {}
       }
     },
+    "devTest": {
+      "dependsOn": ["^build", "^docs-resolved-interfaces"],
+      "command": "PUBLIC_USE_PACKAGES=1 astro dev --port=${PORT} --host",
+      "options": {
+        "cwd": "documentation/ag-grid-docs"
+      },
+      "configurations": {
+        "watch": {}
+      }
+    },
     "preview": {
       "dependsOn": [
         {

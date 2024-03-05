@@ -21,6 +21,7 @@ const {
     PUBLIC_HTTPS_SERVER = '1',
     ENABLE_GENERATE_DEBUG_PAGES = '1',
     SHOW_DEBUG_LOGS,
+    PUBLIC_USE_PACKAGES,
 } = dotenvExpand.expand(dotenv).parsed;
 console.log(
     'Astro configuration',
@@ -33,6 +34,7 @@ console.log(
             USE_PACKAGES,
             ENABLE_GENERATE_DEBUG_PAGES,
             SHOW_DEBUG_LOGS,
+            PUBLIC_USE_PACKAGES,
         },
         null,
         2

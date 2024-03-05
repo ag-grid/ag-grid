@@ -5,22 +5,15 @@ export const DEFAULT_FRAMEWORK: Framework = FRAMEWORKS[0];
 
 export const USE_PACKAGES = true; // process.env?.USE_PACKAGES ?? false;
 
-export const INTERNAL_FRAMEWORKS: readonly InternalFramework[] = USE_PACKAGES ? [
-    'vanilla',
-    'typescript',
-    'reactFunctional',
-    'reactFunctionalTs',
-    'angular',
-    'vue',
-    'vue3',
-] : [
-    'typescript',
-    'reactFunctional',
-    'reactFunctionalTs',
-    'angular',
-    'vue',
-    'vue3',
-] as const;
+console.log('use packages', {
+    metaEnv: import.meta.env?.PUBLIC_USE_PACKAGES,
+    processEnv: process?.env.PUBLIC_USE_PACKAGES,
+    combined: import.meta.env?.PUBLIC_USE_PACKAGES ?? process?.env.PUBLIC_USE_PACKAGES,
+});
+
+export const INTERNAL_FRAMEWORKS: readonly InternalFramework[] = USE_PACKAGES
+    ? ['vanilla', 'typescript', 'reactFunctional', 'reactFunctionalTs', 'angular', 'vue', 'vue3']
+    : (['typescript', 'reactFunctional', 'reactFunctionalTs', 'angular', 'vue', 'vue3'] as const);
 
 export const FRAMEWORK_DISPLAY_TEXT: Record<Framework, string> = {
     javascript: 'JavaScript',
