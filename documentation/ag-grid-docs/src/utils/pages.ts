@@ -109,7 +109,7 @@ if(USE_PACKAGES) {
     FILES_PATH_MAP[`ag-grid-enterprise/dist/**`] = `packages/ag-grid-enterprise/dist/**/*.{cjs,js,map}`;
     FILES_PATH_MAP[`ag-grid-charts-enterprise/dist/**`] = `packages/ag-grid-charts-enterprise/dist/**/*.{cjs,js,map}`;
     FILES_PATH_MAP['ag-grid-react/dist/**'] = `packages/ag-grid-react/dist/**/*.{cjs,js,map}`;
-    FILES_PATH_MAP['ag-grid-angular/fesm2015/ag-grid-angular.mjs'] = `'packages/ag-grid-angular/dist/ag-grid-angular/fesm2015/ag-grid-angular.mjs'`;
+    FILES_PATH_MAP['ag-grid-angular/fesm2015/ag-grid-angular.mjs'] = 'packages/ag-grid-angular/dist/ag-grid-angular/fesm2015/ag-grid-angular.mjs'
 }
 
 type FileKey = keyof typeof FILES_PATH_MAP;
