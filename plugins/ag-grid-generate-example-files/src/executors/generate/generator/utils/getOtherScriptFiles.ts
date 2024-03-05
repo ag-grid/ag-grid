@@ -33,7 +33,13 @@ const getOtherTsGeneratedFiles = async ({
             generatedFiles[tsxFileName] = srcFile;
         } else if (transformTsFileExt === undefined) {
             generatedFiles[tsFileName] = srcFile;
-        } else {
+        } else if(transformTsFileExt === '.js') {
+            let jsFileName = tsFileName.replace('.ts', transformTsFileExt);
+            // For provided typescript component files, automatically generate vanilla js files
+            jsFileName = jsFileName.replace('_typescript', '_vanilla');
+            generatedFiles[jsFileName] = readAsJsFile(srcFile);
+        }
+        else {
             const jsFileName = tsFileName.replace('.ts', transformTsFileExt);
             generatedFiles[jsFileName] = readAsJsFile(srcFile);
         }
