@@ -14,6 +14,8 @@ export const DarkModeToggle = () => {
                 onClick={() => setDarkmode(!darkmode)}
             >
                 {darkmode ? <Icon name="sun" /> : <Icon name="moon" />}
+
+                <span>Toggle Darkmode</span>
             </button>
         </li>
     );
