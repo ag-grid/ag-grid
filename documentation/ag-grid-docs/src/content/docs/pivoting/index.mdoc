@@ -385,9 +385,9 @@ In the example below, note the following:
 
 * The `pivotMaxGeneratedColumns` is set to `1000`.
 
-* The `pivotLimitExceeded` event is triggered when the grid reaches the `pivotMaxGeneratedColumns` limit, this logs an error in the browser console.
+* The `pivotMaxColumnsExceeded` event is triggered when the grid reaches the `pivotMaxGeneratedColumns` limit, this logs an error in the browser console.
 
-* Try pivoting by the 'Athlete' column, this will exceed the `pivotMaxGeneratedColumns` limit and trigger the `pivotLimitExceeded` event.
+* Try pivoting by the 'Athlete' column, this will exceed the `pivotMaxGeneratedColumns` limit and trigger the `pivotMaxColumnsExceeded` event.
 
 {% gridExampleRunner title="Extreme Pivot Handling" name="extreme-pivot"  exampleHeight=620 /%}
 

@@ -865,7 +865,7 @@ export interface GridOptions<TData = any> {
     pivotPanelShow?: 'always' | 'onlyWhenPivoting' | 'never';
     /**
      * The maximum number of generated columns before the grid halts execution. Upon reaching this number, the grid halts generation of columns
-     * and triggers a `pivotLimitExceeded` event. `-1` for no limit.
+     * and triggers a `pivotMaxColumnsExceeded` event. `-1` for no limit.
      * @default -1
      */
     pivotMaxGeneratedColumns?: number;
