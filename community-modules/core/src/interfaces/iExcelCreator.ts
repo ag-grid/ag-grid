@@ -202,6 +202,7 @@ export interface ExcelColumn {
     s?: number;
     hidden?: boolean;
     bestFit?: boolean;
+    displayName?: string;
 }
 
 export interface ExcelRow {

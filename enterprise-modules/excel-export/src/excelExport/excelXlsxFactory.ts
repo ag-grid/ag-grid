@@ -138,22 +138,7 @@ export class ExcelXlsxFactory {
 
         const sheetIndex = this.sheetNames.length - 1;
         const tableRowCount = worksheet.table.rows.length;
-
-        const tableColumns = config.columnModel.getAllDisplayedColumns().map((col, index) => {
-            // When the user provides an empty string for a column header WHILE EXPORTING DATA AS A TABLE:
-            // We should use the default column header name (e.g. "Column1", "Column2", etc.) instead of an empty string.
-            // to comply with Excel's requirement for table headers.
-            const headerName = col.getColDef().headerName;
-            if (headerName === '') {
-                return `Column${index + 1}`;
-            }
-
-            if (headerName) {
-                return headerName;
-            }
-
-            return col.getColId();
-        });
+        const tableColumns = worksheet.table.columns.map(col => col.displayName || '');
 
         let treeLeafsLevel = 0;
         const extractLeafs = (column: ColDef | ColGroupDef, leafLevel: number) => {
