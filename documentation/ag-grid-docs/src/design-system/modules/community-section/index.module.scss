@@ -7,6 +7,7 @@
 .sectionHeader {
     display: flex;
     flex-direction: column;
+    margin-bottom: 32px;
 }
 
 .sectionHeading {
@@ -14,7 +15,8 @@
     justify-content: space-between;
 }
 
-.sectionTitle, .sectionDescription {
+.sectionTitle,
+.sectionDescription {
     text-align: left;
 }
 
@@ -30,4 +32,10 @@
 
 .sectionDescription {
     margin-bottom: 24px !important;
+}
+
+.sectionContainer h3,
+h2 {
+    font-size: var(--text-fs-2xl);
+    margin-bottom: 8px;
 }
