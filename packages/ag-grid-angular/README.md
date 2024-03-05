@@ -1,13 +1,13 @@
 ![AG Grid HTML5 Grid trusted by the community, built for enterprise](./github-banner.png "AG Grid")
 
 [![CDNJS](https://img.shields.io/cdnjs/v/ag-grid.svg)](https://cdnjs.com/libraries/ag-grid)
-[![npm](https://img.shields.io/npm/dm/@ag-grid-community/angular.svg)](https://www.npmjs.com/package/@ag-grid-community/angular)
-[![npm](https://img.shields.io/npm/dt/@ag-grid-community/angular.svg)](https://www.npmjs.com/package/@ag-grid-community/angular)
+[![npm](https://img.shields.io/npm/dm/ag-grid-angular.svg)](https://www.npmjs.com/package/ag-grid-angular)
+[![npm](https://img.shields.io/npm/dt/ag-grid-angular.svg)](https://www.npmjs.com/package/ag-grid-angular)
 
 # AG Grid Angular Component
 
 AG Grid is a fully-featured and highly customizable JavaScript data grid.
-It delivers [outstanding performance](https://www.ag-grid.com/example?utm_source=@ag-grid-community/angular-readme&utm_medium=repository&utm_campaign=github), has no third-party dependencies and [integrates smoothly with Angular](https://www.ag-grid.com/angular-data-grid/getting-started/?utm_source=@ag-grid-community/angular-readme&utm_medium=repository&utm_campaign=github).
+It delivers [outstanding performance](https://www.ag-grid.com/example?utm_source=ag-grid-angular-readme&utm_medium=repository&utm_campaign=github), has no third-party dependencies and [integrates smoothly with Angular](https://www.ag-grid.com/angular-data-grid/getting-started/?utm_source=ag-grid-angular-readme&utm_medium=repository&utm_campaign=github).
 
 Here's how our grid looks with multiple filters and grouping enabled:
 
@@ -51,18 +51,18 @@ Here are some of the features that make AG Grid stand out:
 * Integrated Charting
 * Sparklines
 
-\* The features marked with an asterisk are available in the [Enterprise version](https://www.ag-grid.com/license-pricing?utm_source=@ag-grid-community/angular-readme&utm_medium=repository&utm_campaign=github) only.
+\* The features marked with an asterisk are available in the [Enterprise version](https://www.ag-grid.com/license-pricing?utm_source=ag-grid-angular-readme&utm_medium=repository&utm_campaign=github) only.
 
-Check out the [developer documentation](https://www.ag-grid.com/angular-data-grid/?utm_source=@ag-grid-community/angular-readme&utm_medium=repository&utm_campaign=github) for a complete list of features or visit [our official docs](https://www.ag-grid.com/angular-data-grid/grid-features/?utm_source=@ag-grid-community/angular-readme&utm_medium=repository&utm_campaign=github) for tutorials and feature demos.
+Check out the [developer documentation](https://www.ag-grid.com/angular-data-grid/?utm_source=ag-grid-angular-readme&utm_medium=repository&utm_campaign=github) for a complete list of features or visit [our official docs](https://www.ag-grid.com/angular-data-grid/grid-features/?utm_source=ag-grid-angular-readme&utm_medium=repository&utm_campaign=github) for tutorials and feature demos.
 
 ## Getting started
 
-Use the setup instructions below or go through [a 5-minute-quickstart guide](https://www.ag-grid.com/angular-data-grid/getting-started/?utm_source=@ag-grid-community/angular-readme&utm_medium=repository&utm_campaign=github).
+Use the setup instructions below or go through [a 5-minute-quickstart guide](https://www.ag-grid.com/angular-data-grid/getting-started/?utm_source=ag-grid-angular-readme&utm_medium=repository&utm_campaign=github).
 
 ### Install dependencies
 
 ```sh
-$ npm install --save @ag-grid-community/core @ag-grid-community/angular
+$ npm install --save @ag-grid-community/core ag-grid-angular
 ```
 
 ### Import styles in `styles.css`
@@ -75,7 +75,7 @@ $ npm install --save @ag-grid-community/core @ag-grid-community/angular
 ### Set the grid's configuration in a parent component
 
 ```ts
-import { AgGridAngular } from '@ag-grid-community/angular';
+import { AgGridAngular } from 'ag-grid-angular';
 
 @Component({
     selector: 'app-grid',

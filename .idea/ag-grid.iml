@@ -166,6 +166,8 @@
       <excludeFolder url="file://$MODULE_DIR$/community-modules/vue3/lib" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-charts-enterprise/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-react/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-angular/.angular" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-community/styles" />
     </content>
     <content url="file://$MODULE_DIR$/community-modules/angular/dist" />
     <content url="file://$MODULE_DIR$/community-modules/react/dev" />

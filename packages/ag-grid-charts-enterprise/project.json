@@ -8,10 +8,16 @@
       "executor": "nx:noop",
       "inputs": [],
       "outputs": [],
-      "dependsOn": ["build:types", "build:package", "build:umd", "build:copy-styles"]
+      "dependsOn": [
+        "build:types",
+        "build:package",
+        "build:umd"
+      ]
     },
     "build:updateWithCoreExports": {
-      "dependsOn": ["@ag-grid-community/core:build"],
+      "dependsOn": [
+        "ag-grid-community:build"
+      ],
       "cache": true,
       "command": "node updateMainTsWithCoreExports.js",
       "options": {
@@ -19,32 +25,55 @@
       }
     },
     "build:types": {
-      "executor": "@nx/js:tsc",
+      "executor": "nx:run-commands",
       "dependsOn": ["^build:types"],
-      "inputs": ["tsDefaults"],
-      "outputs": ["{options.outputPath}"],
+      "inputs": [],
       "options": {
-        "outputPath": "packages/ag-grid-charts-enterprise/dist/types",
-        "main": "packages/ag-grid-charts-enterprise/src/main.ts",
-        "tsConfig": "packages/ag-grid-charts-enterprise/tsconfig.types.json",
-        "compiler": "tsc"
+        "parallel": true,
+        "commands": [
+          "mkdir -p dist/types && rsync -r ../../community-modules/core/dist/types/src/ --delete dist/types/core",
+          "mkdir -p dist/types && rsync -r ../../community-modules/client-side-row-model/dist/types/src/ --delete dist/types/client-side-row-model",
+          "mkdir -p dist/types && rsync -r ../../community-modules/infinite-row-model/dist/types/src/ --delete dist/types/infinite-row-model",
+          "mkdir -p dist/types && rsync -r ../../community-modules/csv-export/dist/types/src/ --delete dist/types/csv-export",
+          "mkdir -p dist/types && rsync -r ../../enterprise-modules/core/dist/types/src/ --delete dist/types/enterprise-core",
+          "mkdir -p dist/types && rsync -r ../../enterprise-modules/advanced-filter/dist/types/src/ --delete dist/types/advanced-filter",
+          "mkdir -p dist/types && rsync -r ../../enterprise-modules/charts-enterprise/dist/types/src/ --delete dist/types/charts-enterprise",
+          "mkdir -p dist/types && rsync -r ../../enterprise-modules/clipboard/dist/types/src/ --delete dist/types/clipboard",
+          "mkdir -p dist/types && rsync -r ../../enterprise-modules/column-tool-panel/dist/types/src/ --delete dist/types/column-tool-panel",
+          "mkdir -p dist/types && rsync -r ../../enterprise-modules/excel-export/dist/types/src/ --delete dist/types/excel-export",
+          "mkdir -p dist/types && rsync -r ../../enterprise-modules/filter-tool-panel/dist/types/src/ --delete dist/types/filter-tool-panel",
+          "mkdir -p dist/types && rsync -r ../../enterprise-modules/master-detail/dist/types/src/ --delete dist/types/master-detail",
+          "mkdir -p dist/types && rsync -r ../../enterprise-modules/menu/dist/types/src/ --delete dist/types/menu",
+          "mkdir -p dist/types && rsync -r ../../enterprise-modules/multi-filter/dist/types/src/ --delete dist/types/multi-filter",
+          "mkdir -p dist/types && rsync -r ../../enterprise-modules/range-selection/dist/types/src/ --delete dist/types/range-selection",
+          "mkdir -p dist/types && rsync -r ../../enterprise-modules/rich-select/dist/types/src/ --delete dist/types/rich-select",
+          "mkdir -p dist/types && rsync -r ../../enterprise-modules/row-grouping/dist/types/src/ --delete dist/types/row-grouping",
+          "mkdir -p dist/types && rsync -r ../../enterprise-modules/server-side-row-model/dist/types/src/ --delete dist/types/server-side-row-model",
+          "mkdir -p dist/types && rsync -r ../../enterprise-modules/set-filter/dist/types/src/ --delete dist/types/set-filter",
+          "mkdir -p dist/types && rsync -r ../../enterprise-modules/side-bar/dist/types/src/ --delete dist/types/side-bar",
+          "mkdir -p dist/types && rsync -r ../../enterprise-modules/sparklines/dist/types/src/ --delete dist/types/sparklines",
+          "mkdir -p dist/types && rsync -r ../../enterprise-modules/status-bar/dist/types/src/ --delete dist/types/status-bar",
+          "mkdir -p dist/types && rsync -r ../../enterprise-modules/viewport-row-model/dist/types/src/ --delete dist/types/viewport-row-model",
+          "mkdir -p dist/types && cp main.d.ts.src dist/types/main.d.ts"
+        ],
+        "cwd": "packages/ag-grid-charts-enterprise"
       },
-      "cache": true,
-      "configurations": {
-        "watch": {
-          "tsConfig": "packages/ag-grid-charts-enterprise/tsconfig.types.watch.json"
-        },
-        "production": {}
-      }
+      "cache": true
     },
     "build:umd": {
       "executor": "@nx/webpack:webpack",
-      "dependsOn": ["^build", "build:updateWithCoreExports"],
       "inputs": [],
-      "outputs": ["{projectRoot}/dist/ag-grid-charts-enterprise.js"],
+      "outputs": [
+        "{projectRoot}/dist/ag-grid-charts-enterprise.js"
+      ],
+      "dependsOn": [
+        "^build",
+        "build:updateWithCoreExports",
+        "build:copy-styles"
+      ],
       "options": {
         "webpackConfig": "packages/ag-grid-charts-enterprise/webpack.config.js",
-        "outputPath":  "overridden in webpack config but required by nx",
+        "outputPath": "overridden in webpack config but required by nx",
         "outputFileName": "overridden in webpack config but required by nx"
       },
       "cache": true
@@ -60,17 +89,28 @@
     },
     "build:package": {
       "executor": "@nx/esbuild:esbuild",
-      "dependsOn": ["^build", "build:updateWithCoreExports"],
-      "inputs": ["tsDefaults"],
-      "outputs": ["{options.outputPath}"],
+      "dependsOn": [
+        "^build",
+        "build:updateWithCoreExports"
+      ],
+      "inputs": [
+        "tsDefaults"
+      ],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "packages/ag-grid-charts-enterprise/dist/package",
         "main": "packages/ag-grid-charts-enterprise/src/main.ts",
         "tsConfig": "packages/ag-grid-charts-enterprise/tsconfig.lib.json",
+        "external": ["ag-grid-community"],
         "esbuildConfig": "esbuild.config.cjs",
         "platform": "browser",
         "target": "es6",
-        "format": ["cjs", "esm"],
+        "format": [
+          "cjs",
+          "esm"
+        ],
         "sourcemap": true
       },
       "configurations": {
@@ -84,15 +124,23 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
+      "outputs": [
+        "{options.outputFile}"
+      ]
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
       "options": {
         "jestConfig": "community-modules/jest.config.ts"
       }
     }
   },
-  "tags": ["package:enterprise", "package", "enterprise"]
+  "tags": [
+    "package:enterprise",
+    "package",
+    "enterprise"
+  ]
 }

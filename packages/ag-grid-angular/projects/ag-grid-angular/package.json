@@ -1,5 +1,5 @@
 {
-  "name": "@ag-grid-community/angular",
+  "name": "ag-grid-angular",
   "version": "31.1.0",
   "license": "MIT",
   "peerDependencies": {

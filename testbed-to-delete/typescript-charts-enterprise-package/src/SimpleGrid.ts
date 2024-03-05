@@ -1,4 +1,5 @@
 import {createGrid, GridOptions} from "ag-grid-community";
+import "ag-grid-charts-enterprise";
 import './styles.scss';
 
 class SimpleGrid {
@@ -7,7 +8,8 @@ class SimpleGrid {
     constructor() {
         this.gridOptions = {
             columnDefs: this.createColumnDefs(),
-            rowData: this.createRowData()
+            rowData: this.createRowData(),
+            enableRangeSelection: true
         };
 
         let eGridDiv: HTMLElement = <HTMLElement>document.querySelector('#myGrid');
