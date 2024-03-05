@@ -242,7 +242,8 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
 
     private onNewHeaderColumn(rowIndex: number, currentCells: ExcelCell[]): (column: Column, index: number, node: RowNode) => void {
         return (column, index) => {
-            const nameForCol = this.extractHeaderValue(column);
+            const isTableHeader = this.config.tableSetup !== undefined;
+            const nameForCol = this.extractHeaderValue(column, index, isTableHeader);
             const styleIds: string[] = this.config.styleLinker({ rowType: RowType.HEADER, rowIndex, value: nameForCol, column });
             currentCells.push(this.createCell(this.getStyleId(styleIds), this.getDataTypeForValue('string'), nameForCol));
         };
