@@ -1,7 +1,8 @@
 import type { InternalFramework } from '@ag-grid-types';
 import { USE_PACKAGES } from '@constants';
 import styles from '@design-system/modules/CodeOptions.module.scss';
-import { setImportType, setInternalFramework } from '@stores/frameworkStore';
+import { useStore } from '@nanostores/react';
+import { $internalFramework, setImportType, setInternalFramework } from '@stores/frameworkStore';
 import { isReactInternalFramework, isVueInternalFramework } from '@utils/framework';
 import { useImportType } from '@utils/hooks/useImportType';
 import { useCallback } from 'react';
@@ -141,7 +142,7 @@ export const CodeOptions = ({ id, internalFramework }: { id: string; internalFra
 
             {showVueSelector && <CodeOptionSelector id={id} type="vue" internalFramework={internalFramework} />}
 
-            <ImportTypeSelector id={id} />
+            {internalFramework !== 'vanilla' && <ImportTypeSelector id={id} />}
         </div>
     );
 };
