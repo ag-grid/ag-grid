@@ -4,7 +4,7 @@
         "renderer": {
             "more": {
                 "name": "TooltipRendererResult",
-                "url": "/sparklines-tooltips/#tooltiprendererparams"
+                "url": "./sparklines-tooltips/#tooltiprendererparams"
             }
         }
     }

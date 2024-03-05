@@ -3,13 +3,13 @@
     "ITextFilterParams": {
         "filterOptions": {
             "more": {
-                "url": "/filter-text/#text-filter-options",
+                "url": "./filter-text/#text-filter-options",
                 "name": "Filter Options"
             }
         },
         "readOnly": {
             "more": {
-                "url": "/filter-api/#read-only-filter-ui",
+                "url": "./filter-api/#read-only-filter-ui",
                 "name": "Read-only Filter UI"
             }
         }

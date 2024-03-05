@@ -4,13 +4,13 @@
         "axis": {
             "more": {
                 "name": "SparklineAxisOptions",
-                "url": "/sparklines-column-customisation/#sparklineaxisoptions"
+                "url": "./sparklines-column-customisation/#sparklineaxisoptions"
             }
         },
         "label": {
             "more": {
                 "name": "SparklineLabelOptions",
-                "url": "/sparklines-bar-customisation/#sparklinelabeloptions"
+                "url": "./sparklines-bar-customisation/#sparklinelabeloptions"
             }
         }
     }
