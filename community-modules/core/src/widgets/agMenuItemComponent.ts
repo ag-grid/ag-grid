@@ -416,7 +416,6 @@ export class AgMenuItemComponent extends BeanStub {
             getGui: () => this.getGui(),
             getTooltipValue: () => this.tooltip,
             getLocation: () => 'menu'
-        }, this.beans));
-        this.tooltipFeature.setComp(this.getGui());
+        }));
     }
 }

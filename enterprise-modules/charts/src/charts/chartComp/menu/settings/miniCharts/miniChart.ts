@@ -19,15 +19,13 @@ export abstract class MiniChart extends Component {
         super();
 
         const scene = new _Scene.Scene({
-            window: window,
-            document: window.document,
             width: this.size,
             height: this.size
         });
 
         scene.canvas.element.classList.add(CANVAS_CLASS);
-        scene.root = this.root;
-        scene.container = container;
+        scene.setRoot(this.root);
+        scene.setContainer(container);
 
         this.scene = scene;
     }

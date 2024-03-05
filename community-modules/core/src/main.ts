@@ -554,7 +554,7 @@ export { IFrameworkOverrides, FrameworkOverridesIncomingSource } from "./interfa
 export { Environment } from "./environment";
 export { ITooltipComp, ITooltipParams, TooltipLocation } from "./rendering/tooltipComponent";
 export { TooltipFeature } from "./widgets/tooltipFeature";
-export { CustomTooltipFeature } from "./widgets/customTooltipFeature";
+export { TooltipStateManager } from "./widgets/tooltipStateManager";
 export { IAggregationStage } from "./interfaces/iAggregationStage";
 export { MenuItemLeafDef, MenuItemDef, IMenuConfigParams, IMenuItemParams, IMenuItem, IMenuItemComp, BaseMenuItem, BaseMenuItemParams } from "./interfaces/menuItem";
 

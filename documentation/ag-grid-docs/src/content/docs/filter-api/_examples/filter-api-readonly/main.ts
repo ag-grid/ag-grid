@@ -20,7 +20,6 @@ import { ModuleRegistry } from "@ag-grid-community/core";
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, MenuModule, MultiFilterModule, SetFilterModule]);
 
-declare var dateComparator: any;
 var defaultFilterParams: IProvidedFilterParams = { readOnly: true }
 
 const columnDefs: ColDef[] = [
@@ -279,6 +278,25 @@ function clearSportFilter() {
   gridApi!.setColumnFilterModel('sport', null).then(() => {
     gridApi!.onFilterChanged();
   });
+}
+
+function dateComparator(filterLocalDateAtMidnight: Date, cellValue: Date) {
+  var dateAsString = cellValue;
+  if (dateAsString == null) return -1;
+  var dateParts = dateAsString.split('/');
+  var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
+
+  if (filterLocalDateAtMidnight.getTime() === cellDate.getTime()) {
+      return 0;
+  }
+
+  if (cellDate < filterLocalDateAtMidnight) {
+      return -1;
+  }
+
+  if (cellDate > filterLocalDateAtMidnight) {
+      return 1;
+  }
 }
 
 // setup the grid after the page has finished loading

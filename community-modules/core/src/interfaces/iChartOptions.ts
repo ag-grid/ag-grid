@@ -22,7 +22,7 @@ export interface ChartSettingsPanel {
     chartGroupsDef?: ChartGroupsDef;
 }
 
-export type ChartFormatPanelGroup = 'chart' | 'legend' | 'axis' | 'series' | 'navigator' | 'animation';
+export type ChartFormatPanelGroup = 'chart' | 'legend' | 'axis' | 'series' | 'navigator' | 'animation' | 'crosshair';
 
 export type ChartDataPanelGroup = 'categories' | 'series' | 'seriesChartType';
 

@@ -3,13 +3,13 @@
     "IDateFilterParams": {
         "filterOptions": {
             "more": {
-                "url": "/filter-date/#date-filter-options",
+                "url": "./filter-date/#date-filter-options",
                 "name": "Filter Options"
             }
         },
         "readOnly": {
             "more": {
-                "url": "/filter-api/#read-only-filter-ui",
+                "url": "./filter-api/#read-only-filter-ui",
                 "name": "Read-only Filter UI"
             }
         }

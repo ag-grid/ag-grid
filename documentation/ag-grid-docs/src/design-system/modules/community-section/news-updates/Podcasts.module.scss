@@ -1,0 +1,55 @@
+@use '../../../core/' as *;
+
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-4;
+}
+
+.podcastContainer {
+    border-radius: 8px;
+    display: flex;
+    gap: $spacing-size-8;
+}
+
+.podcastDetailsContainer {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: $spacing-size-8;
+    gap: $spacing-size-2;
+}
+
+.titleContainer {
+    display: flex;
+    justify-content: space-between;
+}
+
+.published {
+    font-weight: var(--text-regular);   
+    font-weight: 200;
+}
+
+.title {
+    color: var(--color-fg-primary);
+    font-size: var(--text-fs-lg);
+    font-weight: var(--text-semibold);
+}
+
+.creditsContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    font-style: italic;
+    gap: $spacing-size-4;
+    font-weight: 200;
+}
+
+.podcastPlayerContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    audio {
+        mix-blend-mode: luminosity;
+    }
+}

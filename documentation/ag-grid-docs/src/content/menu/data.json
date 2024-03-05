@@ -14,8 +14,8 @@
                 "path": "/reference"
             },
             {
-                "title": "Blog",
-                "url": "https://blog.ag-grid.com/"
+                "title": "Community",
+                "path": "/community"
             },
             {
                 "title": "Pricing",
@@ -307,23 +307,6 @@
                                 "path": "global-style-customisation-sass"
                             }
                         ]
-                    },
-                    {
-                        "title": "Styling",
-                        "items": [
-                            {
-                                "title": "Styling Rows",
-                                "path": "row-styles"
-                            },
-                            {
-                                "title": "Grid Size",
-                                "path": "grid-size"
-                            },
-                            {
-                                "title": "Printing",
-                                "path": "printing"
-                            }
-                        ]
                     }
                 ]
             },
@@ -555,14 +538,6 @@
                                 "path": "column-definitions"
                             },
                             {
-                                "title": "Updating Definitions",
-                                "path": "column-updating-definitions"
-                            },
-                            {
-                                "title": "Column State",
-                                "path": "column-state"
-                            },
-                            {
                                 "title": "Column Headers",
                                 "path": "column-headers"
                             },
@@ -585,6 +560,23 @@
                             {
                                 "title": "Column Spanning",
                                 "path": "column-spanning"
+                            },
+                            {
+                                "title": "Advanced",
+                                "items": [
+                                    {
+                                        "title": "Updating Definitions",
+                                        "path": "column-updating-definitions"
+                                    },
+                                    {
+                                        "title": "Column State",
+                                        "path": "column-state"
+                                    },
+                                    {
+                                        "title": "Aligned Grids",
+                                        "path": "aligned-grids"
+                                    }
+                                ]
                             }
                         ]
                     },
@@ -612,16 +604,16 @@
                                 "path": "row-height"
                             },
                             {
-                                "title": "Full Width Rows",
-                                "path": "full-width-rows"
-                            },
-                            {
                                 "title": "Row Animation",
                                 "path": "row-animation"
                             },
                             {
-                                "title": "Displayed Rows",
-                                "path": "rendering-api"
+                                "title": "Styling Rows",
+                                "path": "row-styles"
+                            },
+                            {
+                                "title": "Row Pagination",
+                                "path": "row-pagination"
                             },
                             {
                                 "title": "Row Dragging",
@@ -636,7 +628,42 @@
                                         "path": "row-dragging-to-grid"
                                     }
                                 ]
+                            },
+                            {
+                                "title": "Advanced",
+                                "items": [
+                                    {
+                                        "title": "Displayed Rows",
+                                        "path": "rendering-api"
+                                    },
+                                    {
+                                        "title": "Full Width Rows",
+                                        "path": "full-width-rows"
+                                    },
+                                    {
+                                        "title": "Scrolling Scenarios",
+                                        "path": "scrolling-scenarios"
+                                    }
+                                ]
                             }
+                        ]
+                    },
+                    {
+                        "title": "Grid",
+                        "items": [
+                            {
+                                "title": "Grid Size",
+                                "path": "grid-size"
+                            },
+                            {
+                                "title": "Printing",
+                                "path": "printing"
+                            },
+                            {
+                                "title": "Custom Components",
+                                "path": "components"
+                            }
+
                         ]
                     },
                     {
@@ -879,40 +906,6 @@
                             {
                                 "title": "Data Stages",
                                 "path": "client-side-row-stages"
-                            }
-                        ]
-                    },
-                    {
-                        "title": "Scrolling",
-                        "items": [
-                            {
-                                "title": "DOM Virtualisation",
-                                "path": "dom-virtualisation"
-                            },
-                            {
-                                "title": "Row Pagination",
-                                "path": "row-pagination"
-                            },
-                            {
-                                "title": "Aligned Grids",
-                                "path": "aligned-grids"
-                            },
-                            {
-                                "title": "Massive Row Count",
-                                "path": "massive-row-count"
-                            },
-                            {
-                                "title": "Scrolling Performance",
-                                "path": "scrolling-performance"
-                            },
-                            {
-                                "title": "See Also",
-                                "items": [
-                                    {
-                                        "title": "Scrolling Scenarios",
-                                        "path": "scrolling-scenarios"
-                                    }
-                                ]
                             }
                         ]
                     },
@@ -1439,17 +1432,12 @@
                         ]
                     },
                     {
-                        "title": "Custom Components",
-                        "items": [
-                            {
-                                "title": "Custom Components",
-                                "path": "components"
-                            }
-                        ]
-                    },
-                    {
                         "title": "Performance",
                         "items": [
+                            {
+                                "title": "DOM Virtualisation",
+                                "path": "dom-virtualisation"
+                            },
                             {
                                 "title": "Value Cache",
                                 "path": "value-cache"
@@ -1457,6 +1445,14 @@
                             {
                                 "title": "Change Detection",
                                 "path": "change-detection"
+                            },
+                            {
+                                "title": "Massive Row Count",
+                                "path": "massive-row-count"
+                            },
+                            {
+                                "title": "Scrolling Performance",
+                                "path": "scrolling-performance"
                             }
                         ]
                     }

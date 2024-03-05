@@ -1,11 +1,11 @@
 import type { Framework, ImportType } from '@ag-grid-types';
-import type { ExampleType } from '@features/example-generator/types';
+import { type ExampleType, TYPESCRIPT_INTERNAL_FRAMEWORKS } from '@features/example-generator/types';
 import { ExampleRunner } from '@features/example-runner/components/ExampleRunner';
 import { ExternalLinks } from '@features/example-runner/components/ExternalLinks';
 import { getLoadingIFrameId } from '@features/example-runner/utils/getLoadingLogoId';
 import { useStore } from '@nanostores/react';
-import { $frameworkContext, $internalFramework, updateInternalFrameworkBasedOnFramework } from '@stores/frameworkStore';
-import { getFrameworkFromInternalFramework } from '@utils/framework';
+import { $internalFramework } from '@stores/frameworkStore';
+import { useImportType } from '@utils/hooks/useImportType';
 import { useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
 
@@ -31,22 +31,6 @@ interface Props {
 // loaded on the client side
 const queryClient = new QueryClient();
 
-/**
- * Update the internal framework if it is different to the framework in the URL
- *
- * @param framework Framework from the URL
- */
-function useUpdateInternalFrameworkFromFramework(framework: Framework) {
-    const internalFramework = useStore($internalFramework);
-
-    useEffect(() => {
-        const frameworkFromInternalFramework = getFrameworkFromInternalFramework(internalFramework);
-        if (frameworkFromInternalFramework !== framework) {
-            updateInternalFrameworkBasedOnFramework(framework);
-        }
-    }, [internalFramework, framework]);
-}
-
 const queryOptions = {
     retry: false,
     refetchOnMount: false,
@@ -55,9 +39,9 @@ const queryOptions = {
 };
 
 const DocsExampleRunnerInner = ({ name, title, exampleType, exampleHeight, framework, pageName }: Props) => {
-    const internalFramework = useStore($internalFramework);
-    const frameworkStore = useStore($frameworkContext);
-    const importType = frameworkStore['importType'];
+    const docsInternalFramework = useStore($internalFramework);
+    const internalFramework = exampleType === 'typescript' ? 'typescript' : docsInternalFramework;
+    const importType = useImportType();
     const [initialSelectedFile, setInitialSelectedFile] = useState();
     const [exampleUrl, setExampleUrl] = useState<string>();
     const [exampleRunnerExampleUrl, setExampleRunnerExampleUrl] = useState<string>();
@@ -76,7 +60,7 @@ const DocsExampleRunnerInner = ({ name, title, exampleType, exampleHeight, frame
         isError: contentsIsError,
         data: [contents, exampleFileHtml] = [],
     } = useQuery(
-        ['docsExampleContents', internalFramework, pageName, exampleName],
+        ['docsExampleContents', internalFramework, pageName, exampleName, importType],
         () => {
             const getContents = fetch(
                 getExampleContentsUrl({
@@ -121,7 +105,7 @@ const DocsExampleRunnerInner = ({ name, title, exampleType, exampleHeight, frame
                 importType,
             })
         );
-    }, [internalFramework, pageName, exampleName]);
+    }, [internalFramework, pageName, exampleName, importType]);
 
     useEffect(() => {
         if (!contents || contentsIsLoading || contentsIsError) {
@@ -148,7 +132,7 @@ const DocsExampleRunnerInner = ({ name, title, exampleType, exampleHeight, frame
                 importType,
             })
         );
-    }, [internalFramework, pageName, exampleName]);
+    }, [internalFramework, pageName, exampleName, importType]);
 
     useEffect(() => {
         if (!contents || contentsIsLoading || contentsIsError || !exampleFileHtml) {
@@ -165,8 +149,6 @@ const DocsExampleRunnerInner = ({ name, title, exampleType, exampleHeight, frame
         setPackageJson(contents.packageJson);
         setExampleBoilerPlateFiles(contents.boilerPlateFiles);
     }, [contents, contentsIsLoading, contentsIsError, exampleFileHtml]);
-
-    useUpdateInternalFrameworkFromFramework(framework);
 
     const externalLinks = (
         <ExternalLinks

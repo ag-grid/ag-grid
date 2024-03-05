@@ -18,10 +18,9 @@
             display: none;
         }
     }
-
     #{$selector-darkmode} & {
         input {
-            background: color-mix(in srgb, var(--color-white), transparent 94%);
+            background: color-mix(in srgb, var(--color-bg-primary), var(--color-fg-primary) 8%);
 
             &::placeholder {
                 color: rgba(255, 255, 255, 0.6);

@@ -1,15 +1,23 @@
 import type { Framework, ImportType, InternalFramework } from './types/ag-grid';
 
-export const FRAMEWORKS: readonly Framework[] = [
-    'react',
-    'angular',
-    'vue',
-    'javascript',
-] as const;
+// Speed up the builds by only building some of the frameworks/pages
+const quickBuildPages = import.meta.env?.QUICK_BUILD_PAGES;
+export const QUICK_BUILD_PAGES: string[] = quickBuildPages ? quickBuildPages.split(',') : undefined;
+
+export const FRAMEWORKS: readonly Framework[] = ['react', 'angular', 'vue', 'javascript'] as const;
 export const DEFAULT_FRAMEWORK: Framework = FRAMEWORKS[0];
 
-export const INTERNAL_FRAMEWORKS: readonly InternalFramework[] = [
+export const USE_PACKAGES = true; // process.env?.USE_PACKAGES ?? false;
+
+export const INTERNAL_FRAMEWORKS: readonly InternalFramework[] = USE_PACKAGES ? [
     'vanilla',
+    'typescript',
+    'reactFunctional',
+    'reactFunctionalTs',
+    'angular',
+    'vue',
+    'vue3',
+] : [
     'typescript',
     'reactFunctional',
     'reactFunctionalTs',
@@ -25,7 +33,7 @@ export const FRAMEWORK_DISPLAY_TEXT: Record<Framework, string> = {
     vue: 'Vue',
 };
 
-export const IMPORT_TYPES: ImportType[] = ['modules', 'packages'];
+export const IMPORT_TYPES: ImportType[] = USE_PACKAGES ? ['modules', 'packages'] : ['modules'];
 
 export const agGridVersion = import.meta.env?.PUBLIC_PACKAGE_VERSION ?? 'unknown';
 export const agGridEnterpriseVersion = import.meta.env?.PUBLIC_PACKAGE_VERSION ?? 'unknown';
@@ -79,6 +87,16 @@ export const PRODUCTION_SITE_URL = 'https://ag-grid.com';
 export const USE_PUBLISHED_PACKAGES = ['1', 'true'].includes(import.meta.env?.PUBLIC_USE_PUBLISHED_PACKAGES);
 
 /**
+ * Enable debug pages to be built
+ */
+export const ENABLE_GENERATE_DEBUG_PAGES = import.meta.env?.ENABLE_GENERATE_DEBUG_PAGES;
+
+/**
+ * Show debug logs
+ */
+export const SHOW_DEBUG_LOGS = import.meta.env?.SHOW_DEBUG_LOGS;
+
+/**
  * Number of URL segments in `SITE_BASE_URL`
  */
 export const SITE_BASE_URL_SEGMENTS = SITE_BASE_URL?.split('/').filter(Boolean).length || 0;
@@ -97,8 +115,7 @@ export const getIsImplemented = ({
     importType: ImportType;
 }) => {
     return (
-        (importType === 'modules') // packages are not implemented yet
-        && (INTERNAL_FRAMEWORKS.includes(internalFramework)
-        && !(internalFramework == 'vanilla' && importType === 'modules')) // javascript is packages only
+        (importType === 'modules' && internalFramework !== 'vanilla') || // packages are not implemented yet
+        importType === 'packages'
     );
 };

@@ -85,18 +85,19 @@
     },
     {
       "title": "AG Grid Enterprise and AG Charts Enterprise License Explained",
-      "url": "https://www.youtube.com/watch?v=xacx_attYuo&list=PLsZlhayVgqNxijfRQxg5Mc6W4MzZHQ9MK",
+      "url": "https://www.youtube.com/watch?v=VPr__OKxH50&list=PLsZlhayVgqNxijfRQxg5Mc6W4MzZHQ9MK",
       "thumbnail": {
         "image": "AgGridVideo.png",
         "altText": "AG Grid & AG Charts Enterprise License"
       },
       "keyPoints": [
         "Community MIT License",
+        "Enterprise Bundle",
         "Single App License",
         "Multiple App License",
         "Deployment License"
       ],
-      "runningTime": "8:10"
+      "runningTime": "8:27"
     }
   ],
   "react": [
@@ -270,18 +271,19 @@
     },
     {
       "title": "AG Grid Enterprise and AG Charts Enterprise License Explained",
-      "url": "https://www.youtube.com/watch?v=xacx_attYuo&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
+      "url": "https://www.youtube.com/watch?v=VPr__OKxH50&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW",
       "thumbnail": {
         "image": "AgGridVideo.png",
         "altText": "AG Grid & AG Charts Enterprise License"
       },
       "keyPoints": [
         "Community MIT License",
+        "Enterprise Bundle",
         "Single App License",
         "Multiple App License",
         "Deployment License"
       ],
-      "runningTime": "8:10"
+      "runningTime": "8:27"
     }
   ],
   "angular": [
@@ -357,18 +359,19 @@
     },
     {
       "title": "AG Grid Enterprise and AG Charts Enterprise License Explained",
-      "url": "https://www.youtube.com/watch?v=xacx_attYuo&list=PLsZlhayVgqNw6VHFn4j6FcJM5vLACsf0x",
+      "url": "https://www.youtube.com/watch?v=VPr__OKxH50&list=PLsZlhayVgqNw6VHFn4j6FcJM5vLACsf0x",
       "thumbnail": {
         "image": "AgGridVideo.png",
         "altText": "AG Grid & AG Charts Enterprise License"
       },
       "keyPoints": [
         "Community MIT License",
+        "Enterprise Bundle",
         "Single App License",
         "Multiple App License",
         "Deployment License"
       ],
-      "runningTime": "8:10"
+      "runningTime": "8:27"
     }
   ],
   "vue": [
@@ -444,18 +447,19 @@
     },
     {
       "title": "AG Grid Enterprise and AG Charts Enterprise License Explained",
-      "url": "https://www.youtube.com/watch?v=xacx_attYuo&list=PLsZlhayVgqNz5iC0wFQDgixcAepFyrWbP",
+      "url": "https://www.youtube.com/watch?v=VPr__OKxH50&list=PLsZlhayVgqNz5iC0wFQDgixcAepFyrWbP",
       "thumbnail": {
         "image": "AgGridVideo.png",
         "altText": "AG Grid & AG Charts Enterprise License"
       },
       "keyPoints": [
         "Community MIT License",
+        "Enterprise Bundle",
         "Single App License",
         "Multiple App License",
         "Deployment License"
       ],
-      "runningTime": "8:10"
+      "runningTime": "8:27"
     }
   ]
 }

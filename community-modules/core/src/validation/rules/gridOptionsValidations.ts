@@ -48,6 +48,7 @@ export const GRID_OPTION_DEFAULTS = {
     tooltipShowDelay: 2000,
     tooltipHideDelay: 10000,
     tooltipMouseTrack: false,
+    tooltipShowMode: 'standard',
     tooltipInteraction: false,
     copyHeadersToClipboard: false,
     copyGroupHeadersToClipboard: false,

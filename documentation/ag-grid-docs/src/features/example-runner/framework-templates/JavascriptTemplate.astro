@@ -5,6 +5,7 @@ interface Props {
 
     modifiedTimeMs: number;
     isEnterprise: boolean;
+    isIntegratedCharts: boolean;
 
     /**
      * All script file names
@@ -18,7 +19,7 @@ interface Props {
     extras?: string[];
 }
 
-const { isDev, title, modifiedTimeMs, isEnterprise, styleFiles, scriptFiles, indexFragment, appLocation, extraStyles, extras } =
+const { isDev, title, modifiedTimeMs, isEnterprise, isIntegratedCharts, styleFiles, scriptFiles, indexFragment, appLocation, extraStyles, extras } =
     Astro.props as Props;
 
 import { MetaData } from './lib/MetaData';

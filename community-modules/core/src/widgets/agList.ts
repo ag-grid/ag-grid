@@ -4,7 +4,8 @@ import { escapeString } from "../utils/string";
 import { KeyCode } from '../constants/keyCode';
 import { setAriaPosInSet, setAriaRole, setAriaSelected, setAriaSetSize } from '../utils/aria';
 import { Events } from "../eventKeys";
-import { isVisible } from "../utils/dom";
+import { getInnerWidth, isVisible } from "../utils/dom";
+import { TooltipFeature } from "./tooltipFeature";
 
 export interface ListOption<TValue = string> {
     value: TValue;
@@ -90,11 +91,14 @@ export class AgList<TValue = string> extends Component {
     }
 
     private renderOption(value: TValue, text: string): void {
-        const itemEl = document.createElement('div');
+        const eDocument = this.gridOptionsService.getDocument();
+        const itemEl = eDocument.createElement('div');
 
         setAriaRole(itemEl, 'option');
         itemEl.classList.add('ag-list-item', `ag-${this.cssIdentifier}-list-item`);
-        itemEl.innerHTML = `<span>${text}</span>`;
+        const span = eDocument.createElement('span');
+        itemEl.appendChild(span);
+        span.innerText = text;
 
         if (!this.unFocusable) {
             itemEl.tabIndex = -1;
@@ -104,6 +108,13 @@ export class AgList<TValue = string> extends Component {
 
         this.addManagedListener(itemEl, 'mousemove', () => this.highlightItem(itemEl));
         this.addManagedListener(itemEl, 'mousedown', (e) => { e.preventDefault(); this.setValue(value) });
+        this.createManagedBean(new TooltipFeature({
+            getTooltipValue: () => text,
+            getGui:  () => itemEl,
+            getLocation: () => 'UNKNOWN',
+            // only show tooltips for items where the text cannot be fully displayed
+            shouldShowTooltip: () => span.scrollWidth > getInnerWidth(itemEl)
+        }));
 
         this.getGui().appendChild(itemEl);
     }

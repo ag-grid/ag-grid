@@ -13,6 +13,7 @@ export interface ExampleConfig {
     extras?: string[];
     noStyle?: boolean;
     licenseKey?: boolean;
+    supportedFrameworks?: InternalFramework[];
 }
 
 export type ImportType = 'packages' | 'modules';
@@ -88,6 +89,7 @@ export interface ParsedBindings {
 
 export interface GeneratedContents extends ExampleConfig {
     isEnterprise: boolean;
+    isIntegratedCharts: boolean;
     entryFileName: string;
     mainFileName: string;
     files: FileContents;

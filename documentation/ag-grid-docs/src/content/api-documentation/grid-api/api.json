@@ -9,19 +9,19 @@
         "getGridOption": {
             "more": {
                 "name": "GridOptions",
-                "url": "/grid-options/"
+                "url": "./grid-options/"
             }
         },
         "setGridOption": {
             "more": {
                 "name": "GridOptions",
-                "url": "/grid-options/"
+                "url": "./grid-options/"
             }
         },
         "updateGridOptions": {
             "more": {
                 "name": "GridOptions",
-                "url": "/grid-options/"
+                "url": "./grid-options/"
             }
         }
     },
@@ -30,13 +30,13 @@
             "displayName": "Column Definitions",
             "page": {
                 "name": "Updating Column Definitions",
-                "url": "/column-updating-definitions/"
+                "url": "./column-updating-definitions/"
             }
         },
         "getColumnDefs": {
             "more": {
                 "name": "Column Definition Retrieval",
-                "url": "/column-updating-definitions/#column-definition-retrieval"
+                "url": "./column-updating-definitions/#column-definition-retrieval"
             }
         },
         "getColumn": {},
@@ -52,19 +52,19 @@
         "sizeColumnsToFit": {
             "more": {
                 "name": "Auto-Size Columns to Fit Grid",
-                "url": "/column-sizing/#auto-size-columns-to-fit-grid"
+                "url": "./column-sizing/#auto-size-columns-to-fit-grid"
             }
         },
         "autoSizeColumns": {
             "more": {
                 "name": "Auto-Size Columns to Fit Cell Contents",
-                "url": "/column-sizing/#auto-size-columns-to-fit-cell-contents"
+                "url": "./column-sizing/#auto-size-columns-to-fit-cell-contents"
             }
         },
         "autoSizeAllColumns": {
             "more": {
                 "name": "Auto-Size Columns to Fit Cell Contents",
-                "url": "/column-sizing/#auto-size-columns-to-fit-cell-contents"
+                "url": "./column-sizing/#auto-size-columns-to-fit-cell-contents"
             }
         }
     },
@@ -94,26 +94,26 @@
         "getColumnState": {
             "more": {
                 "name": "Save and Apply State",
-                "url": "/column-state/#save-and-apply"
+                "url": "./column-state/#save-and-apply"
             }
         },
         "applyColumnState": {
             "more": {
                 "name": "Save and Apply State",
-                "url": "/column-state/#save-and-apply"
+                "url": "./column-state/#save-and-apply"
             }
         },
         "resetColumnState": {},
         "getColumnGroupState": {
             "more": {
                 "name": "Column Group State",
-                "url": "/column-state/#column-group-state"
+                "url": "./column-state/#column-group-state"
             }
         },
         "setColumnGroupState": {
             "more": {
                 "name": "Column Group State",
-                "url": "/column-state/#column-group-state"
+                "url": "./column-state/#column-group-state"
             }
         },
         "resetColumnGroupState": {}
@@ -126,7 +126,7 @@
         "getColumnGroup": {
             "more": {
                 "name": "Column Groups",
-                "url": "/column-groups/"
+                "url": "./column-groups/"
             }
         },
         "getProvidedColumnGroup": {},
@@ -164,19 +164,19 @@
         "getPivotResultColumn": {
             "more": {
                 "name": "Looking up Pivot Result Columns",
-                "url": "/pivoting/#looking-up-pivot-result-columns"
+                "url": "./pivoting/#looking-up-pivot-result-columns"
             }
         },
         "setPivotResultColumns": {
             "more": {
                 "name": "Creating Pivot Result Columns",
-                "url": "/server-side-model-pivoting/#creating-pivot-result-columns-advanced"
+                "url": "./server-side-model-pivoting/#creating-pivot-result-columns-advanced"
             }
         },
         "getPivotResultColumns": {
             "more": {
                 "name": "Columns vs Pivot Result Columns",
-                "url": "/pivoting/#columns-vs-pivot-result-columns"
+                "url": "./pivoting/#columns-vs-pivot-result-columns"
             }
         }
     },
@@ -185,7 +185,7 @@
             "displayName": "Row Pinning",
             "page": {
                 "name": "Row Pinning",
-                "url": "/row-pinning/"
+                "url": "./row-pinning/"
             }
         },
         "getPinnedTopRowCount": {},
@@ -200,32 +200,32 @@
         "getRowNode": {
             "more": {
                 "name": "Application Assigned IDs",
-                "url": "/row-ids/#application-assigned-ids"
+                "url": "./row-ids/#application-assigned-ids"
             }
         },
         "forEachNode": {
             "more": {
                 "name": "Iterating Rows",
-                "url": "/accessing-data/#iterating-rows"
+                "url": "./accessing-data/#iterating-rows"
             },
             "description": "Iterates through each node (row) in the grid and calls the callback for each node. This works similar to the `forEach` method on a JavaScript array. This is called for every node, ignoring any filtering or sorting applied within the grid. If using the [Infinite Row Model](./infinite-scrolling/), then this gets called for each page loaded in the page cache."
         },
         "forEachNodeAfterFilter": {
             "more": {
                 "name": "Iterating Rows",
-                "url": "/accessing-data/#iterating-rows"
+                "url": "./accessing-data/#iterating-rows"
             }
         },
         "forEachNodeAfterFilterAndSort": {
             "more": {
                 "name": "Iterating Rows",
-                "url": "/accessing-data/#iterating-rows"
+                "url": "./accessing-data/#iterating-rows"
             }
         },
         "forEachLeafNode": {
             "more": {
                 "name": "Iterating Rows",
-                "url": "/accessing-data/#iterating-rows"
+                "url": "./accessing-data/#iterating-rows"
             }
         }
     },
@@ -236,25 +236,25 @@
         "getDisplayedRowAtIndex": {
             "more": {
                 "name": "Rendering API",
-                "url": "/rendering-api/"
+                "url": "./rendering-api/"
             }
         },
         "getDisplayedRowCount": {
             "more": {
                 "name": "Rendering API",
-                "url": "/rendering-api/"
+                "url": "./rendering-api/"
             }
         },
         "getFirstDisplayedRowIndex": {
             "more": {
                 "name": "Rendering API",
-                "url": "/rendering-api/"
+                "url": "./rendering-api/"
             }
         },
         "getLastDisplayedRowIndex": {
             "more": {
                 "name": "Rendering API",
-                "url": "/rendering-api/"
+                "url": "./rendering-api/"
             }
         }
     },
@@ -263,31 +263,31 @@
             "displayName": "Master Detail",
             "page": {
                 "name": "Master Detail",
-                "url": "/master-detail/"
+                "url": "./master-detail/"
             }
         },
         "getDetailGridInfo": {
             "more": {
                 "name": "Accessing Detail Grids",
-                "url": "/master-detail-grids/#accessing-detail-grids"
+                "url": "./master-detail-grids/#accessing-detail-grids"
             }
         },
         "forEachDetailGridInfo": {
             "more": {
                 "name": "Accessing Detail Grids",
-                "url": "/master-detail-grids/#accessing-detail-grids"
+                "url": "./master-detail-grids/#accessing-detail-grids"
             }
         },
         "addDetailGridInfo": {
             "more": {
                 "name": "Register Detail Grid",
-                "url": "/master-detail-custom-detail/#register-detail-grid"
+                "url": "./master-detail-custom-detail/#register-detail-grid"
             }
         },
         "removeDetailGridInfo": {
             "more": {
                 "name": "Register Detail Grid",
-                "url": "/master-detail-custom-detail/#register-detail-grid"
+                "url": "./master-detail-custom-detail/#register-detail-grid"
             }
         }
     },
@@ -296,7 +296,7 @@
             "displayName": "Selection",
             "page": {
                 "name": "Selection Overview",
-                "url": "/selection-overview/"
+                "url": "./selection-overview/"
             }
         },
         "selectAll": {},
@@ -312,19 +312,19 @@
         "getCellRanges": {
             "more": {
                 "name": "getCellRanges",
-                "url": "/range-selection/#getcellranges"
+                "url": "./range-selection/#getcellranges"
             }
         },
         "addCellRange": {
             "more": {
                 "name": "addCellRange",
-                "url": "/range-selection/#addcellrangerangeselection"
+                "url": "./range-selection/#addcellrangerangeselection"
             }
         },
         "clearRangeSelection": {
             "more": {
                 "name": "clearRangeSelection",
-                "url": "/range-selection/#clearrangeselection"
+                "url": "./range-selection/#clearrangeselection"
             }
         }
     },
@@ -333,26 +333,26 @@
             "displayName": "Refresh",
             "page": {
                 "name": "View Refresh",
-                "url": "/view-refresh/"
+                "url": "./view-refresh/"
             }
         },
         "refreshCells": {
             "more": {
                 "name": "Refresh Cells",
-                "url": "/view-refresh/#refresh-cells"
+                "url": "./view-refresh/#refresh-cells"
             }
         },
         "redrawRows": {
             "more": {
                 "name": "Redraw Rows",
-                "url": "/view-refresh/#redraw-rows"
+                "url": "./view-refresh/#redraw-rows"
             }
         },
         "refreshHeader": {},
         "flashCells": {
             "more": {
                 "name": "Flashing Cells",
-                "url": "/change-cell-renderers/"
+                "url": "./change-cell-renderers/"
             }
         }
     },
@@ -361,7 +361,7 @@
             "displayName": "Sorting",
             "page": {
                 "name": "Row Sorting",
-                "url": "/row-sorting/"
+                "url": "./row-sorting/"
             }
         },
         "onSortChanged": {}
@@ -371,25 +371,25 @@
             "displayName": "Filtering",
             "page": {
                 "name": "Filtering",
-                "url": "/filtering-overview/"
+                "url": "./filtering-overview/"
             }
         },
         "getQuickFilter": {
             "more": {
                 "name": "Checking the Quick Filter",
-                "url": "/filter-quick/#checking-the-quick-filter"
+                "url": "./filter-quick/#checking-the-quick-filter"
             }
         },
         "resetQuickFilter": {
             "more": {
                 "name": "Reset Cache Text",
-                "url": "/filter-quick/#reset-cache-text"
+                "url": "./filter-quick/#reset-cache-text"
             }
         },
         "isQuickFilterPresent": {
             "more": {
                 "name": "Checking the Quick Filter",
-                "url": "/filter-quick/#checking-the-quick-filter"
+                "url": "./filter-quick/#checking-the-quick-filter"
             }
         },
         "isColumnFilterPresent": {},
@@ -397,56 +397,56 @@
         "getColumnFilterInstance": {
             "more": {
                 "name": "Accessing Individual Filter Component Instances",
-                "url": "/filter-api/#accessing-individual-filter-component-instances"
+                "url": "./filter-api/#accessing-individual-filter-component-instances"
             }
         },
         "getFilterModel": {
             "more": {
                 "name": "Get / Set All Filter Models",
-                "url": "/filter-api/#get--set-all-filter-models"
+                "url": "./filter-api/#get--set-all-filter-models"
             }
         },
         "setFilterModel": {
             "more": {
                 "name": "Get / Set All Filter Models",
-                "url": "/filter-api/#get--set-all-filter-models"
+                "url": "./filter-api/#get--set-all-filter-models"
             }
         },
         "getColumnFilterModel": {
             "more": {
                 "name": "Get / Set Individual Filter Model",
-                "url": "/filter-api/#get--set-individual-filter-model"
+                "url": "./filter-api/#get--set-individual-filter-model"
             }
         },
         "setColumnFilterModel": {
             "more": {
                 "name": "Get / Set Individual Filter Model",
-                "url": "/filter-api/#get--set-individual-filter-model"
+                "url": "./filter-api/#get--set-individual-filter-model"
             }
         },
         "onFilterChanged": {
             "more": {
                 "name": "Re-running Grid Filtering",
-                "url": "/filter-api/#re-running-grid-filtering"
+                "url": "./filter-api/#re-running-grid-filtering"
             }
         },
         "destroyFilter": {},
         "getAdvancedFilterModel": {
             "more": {
                 "name": "Advanced Filter",
-                "url": "/filter-advanced/#filter-model--api"
+                "url": "./filter-advanced/#filter-model--api"
             }
         },
         "setAdvancedFilterModel": {
             "more": {
                 "name": "Advanced Filter",
-                "url": "/filter-advanced/#filter-model--api"
+                "url": "./filter-advanced/#filter-model--api"
             }
         },
         "showAdvancedFilterBuilder": {
             "more": {
                 "name": "Advanced Filter",
-                "url": "/filter-advanced/#configuring-advanced-filter-builder"
+                "url": "./filter-advanced/#configuring-advanced-filter-builder"
             }
         }
     },
@@ -455,7 +455,7 @@
             "displayName": "Keyboard Navigation",
             "page": {
                 "name": "Keyboard Navigation",
-                "url": "/keyboard-navigation/"
+                "url": "./keyboard-navigation/"
             }
         },
         "getFocusedCell": {},
@@ -464,13 +464,13 @@
         "tabToNextCell": {
             "more": {
                 "name": "Custom Navigation",
-                "url": "/keyboard-navigation/#custom-navigation"
+                "url": "./keyboard-navigation/#custom-navigation"
             }
         },
         "tabToPreviousCell": {
             "more": {
                 "name": "Custom Navigation",
-                "url": "/keyboard-navigation/#custom-navigation"
+                "url": "./keyboard-navigation/#custom-navigation"
             }
         }
     },
@@ -479,31 +479,31 @@
             "displayName": "Editing",
             "page": {
                 "name": "Cell Editing",
-                "url": "/cell-editing/"
+                "url": "./cell-editing/"
             }
         },
         "startEditingCell": {
             "more": {
                 "name": "Editing API",
-                "url": "/cell-editing-start-stop/#editing-api"
+                "url": "./cell-editing-start-stop/#editing-api"
             }
         },
         "stopEditing": {
             "more": {
                 "name": "Editing API",
-                "url": "/cell-editing-start-stop/#editing-api"
+                "url": "./cell-editing-start-stop/#editing-api"
             }
         },
         "getEditingCells": {
             "more": {
                 "name": "Editing API",
-                "url": "/cell-editing-start-stop/#editing-api"
+                "url": "./cell-editing-start-stop/#editing-api"
             }
         },
         "getCellEditorInstances": {
             "more": {
                 "name": "Cell Editor Instances",
-                "url": "/cell-editors/#accessing-instances"
+                "url": "./cell-editors/#accessing-instances"
             },
             "interfaceHierarchyOverrides": {
                 "exclude": ["ICellEditor"],
@@ -516,44 +516,44 @@
             "displayName": "Export",
             "page": {
                 "name": "Export",
-                "url": "/excel-export/"
+                "url": "./excel-export/"
             }
         },
         "exportDataAsCsv": {
             "more": {
                 "name": "CSV Export",
-                "url": "/csv-export/"
+                "url": "./csv-export/"
             }
         },
         "getDataAsCsv": {
             "more": {
                 "name": "CSV Export",
-                "url": "/csv-export/"
+                "url": "./csv-export/"
             }
         },
         "exportDataAsExcel": {
             "more": {
                 "name": "Enabling Excel Export",
-                "url": "/excel-export/#enabling-excel-export"
+                "url": "./excel-export/#enabling-excel-export"
             }
         },
         "getDataAsExcel": {},
         "getSheetDataForExcel": {
             "more": {
                 "name": "Excel Export - Multiple Sheets",
-                "url": "/excel-export-multiple-sheets/"
+                "url": "./excel-export-multiple-sheets/"
             }
         },
         "exportMultipleSheetsAsExcel": {
             "more": {
                 "name": "Excel Export - Multiple Sheets",
-                "url": "/excel-export-multiple-sheets/"
+                "url": "./excel-export-multiple-sheets/"
             }
         },
         "getMultipleSheetsAsExcel": {
             "more": {
                 "name": "Excel Export - Multiple Sheets",
-                "url": "/excel-export-multiple-sheets/"
+                "url": "./excel-export-multiple-sheets/"
             }
         }
     },
@@ -568,7 +568,7 @@
         "addRenderedRowListener": {
             "more": {
                 "name": "Row Events",
-                "url": "/row-events/"
+                "url": "./row-events/"
             }
         }
     },
@@ -577,25 +577,25 @@
             "displayName": "Row Grouping",
             "page": {
                 "name": "Row Grouping",
-                "url": "/grouping/"
+                "url": "./grouping/"
             }
         },
         "expandAll": {
             "more": {
                 "name": "Expand / Collapse Groups via API",
-                "url": "/grouping-opening-groups/#expand--collapse-groups-via-api"
+                "url": "./grouping-opening-groups/#expand--collapse-groups-via-api"
             }
         },
         "collapseAll": {
             "more": {
                 "name": "Expand / Collapse Groups via API",
-                "url": "/grouping-opening-groups/#expand--collapse-groups-via-api"
+                "url": "./grouping-opening-groups/#expand--collapse-groups-via-api"
             }
         },
         "setRowNodeExpanded": {
             "more": {
                 "name": "Expand / Collapse Groups via API",
-                "url": "/grouping-opening-groups/#expand--collapse-groups-via-api"
+                "url": "./grouping-opening-groups/#expand--collapse-groups-via-api"
             }
         },
         "onGroupExpandedOrCollapsed": {},
@@ -610,13 +610,13 @@
             "displayName": "Row Drag and Drop",
             "page": {
                 "name": "Row Dragging",
-                "url": "/row-dragging/"
+                "url": "./row-dragging/"
             }
         },
         "addRowDropZone": {
             "more": {
                 "name": "Row Dragging to an External DropZone",
-                "url": "/row-dragging-to-external-dropzone/"
+                "url": "./row-dragging-to-external-dropzone/"
             },
             "interfaceHierarchyOverrides": {
                 "exclude": ["RowDragEnterEvent", "RowDragLeaveEvent", "RowDragMoveEvent", "RowDragEndEvent"],
@@ -626,7 +626,7 @@
         "removeRowDropZone": {
             "more": {
                 "name": "Row Dragging to an External DropZone",
-                "url": "/row-dragging-to-external-dropzone/"
+                "url": "./row-dragging-to-external-dropzone/"
             },
             "interfaceHierarchyOverrides": {
                 "exclude": ["RowDragEnterEvent", "RowDragLeaveEvent", "RowDragMoveEvent", "RowDragEndEvent"],
@@ -636,7 +636,7 @@
         "getRowDropZoneParams": {
             "more": {
                 "name": "Row Dragging Between Grids",
-                "url": "/row-dragging-to-grid/"
+                "url": "./row-dragging-to-grid/"
             },
             "interfaceHierarchyOverrides": {
                 "exclude": ["RowDragEnterEvent", "RowDragLeaveEvent", "RowDragMoveEvent", "RowDragEndEvent"],
@@ -652,20 +652,20 @@
         "getCellRendererInstances": {
             "more": {
                 "name": "Cell Renderer Instances",
-                "url": "/component-cell-renderer/#accessing-cell-renderer-instances"
+                "url": "./component-cell-renderer/#accessing-cell-renderer-instances"
             }
         },
         "getSizesForCurrentTheme": {},
         "resetRowHeights": {
             "more": {
                 "name": "Changing Row Height",
-                "url": "/row-height/#changing-row-height"
+                "url": "./row-height/#changing-row-height"
             }
         },
         "onRowHeightChanged": {
             "more": {
                 "name": "Changing Row Height",
-                "url": "/row-height/#changing-row-height"
+                "url": "./row-height/#changing-row-height"
             }
         }
     },
@@ -674,25 +674,25 @@
             "displayName": "Scrolling",
             "page": {
                 "name": "Scrolling",
-                "url": "/scrolling-scenarios/"
+                "url": "./scrolling-scenarios/"
             }
         },
         "ensureIndexVisible": {
             "more": {
                 "name": "firstDataRendered event",
-                "url": "/grid-events/#reference-miscellaneous-firstDataRendered"
+                "url": "./grid-events/#reference-miscellaneous-firstDataRendered"
             }
         },
         "ensureNodeVisible": {
             "more": {
                 "name": "firstDataRendered event",
-                "url": "/grid-events/#reference-miscellaneous-firstDataRendered"
+                "url": "./grid-events/#reference-miscellaneous-firstDataRendered"
             }
         },
         "ensureColumnVisible": {
             "more": {
                 "name": "firstDataRendered event",
-                "url": "/grid-events/#reference-miscellaneous-firstDataRendered"
+                "url": "./grid-events/#reference-miscellaneous-firstDataRendered"
             }
         },
         "getHorizontalPixelRange": {},
@@ -703,7 +703,7 @@
             "displayName": "RowModel: Infinite",
             "page": {
                 "name": "Infinite Row Model",
-                "url": "/infinite-scrolling/"
+                "url": "./infinite-scrolling/"
             }
         },
         "refreshInfiniteCache": {},
@@ -718,7 +718,7 @@
             "displayName": "RowModel: Viewport",
             "page": {
                 "name": "Viewport Row Model",
-                "url": "/viewport/"
+                "url": "./viewport/"
             }
         }
     },
@@ -727,7 +727,7 @@
             "displayName": "Overlays",
             "page": {
                 "name": "Overlays",
-                "url": "/overlays/"
+                "url": "./overlays/"
             }
         },
         "showLoadingOverlay": {},
@@ -739,7 +739,7 @@
             "displayName": "Clipboard",
             "page": {
                 "name": "Clipboard",
-                "url": "/clipboard/"
+                "url": "./clipboard/"
             }
         },
         "cutToClipboard": {},
@@ -747,7 +747,7 @@
         "copySelectedRangeToClipboard": {
             "more": {
                 "name": "Copying via the API",
-                "url": "/clipboard/#copying-via-the-api"
+                "url": "./clipboard/#copying-via-the-api"
             }
         },
         "copySelectedRangeDown": {
@@ -756,7 +756,7 @@
         "copySelectedRowsToClipboard": {
             "more": {
                 "name": "Copying via the API",
-                "url": "/clipboard/#copying-via-the-api"
+                "url": "./clipboard/#copying-via-the-api"
             }
         },
         "pasteFromClipboard": {}
@@ -766,7 +766,7 @@
             "displayName": "Pagination",
             "page": {
                 "name": "Row Pagination",
-                "url": "/row-pagination"
+                "url": "./row-pagination"
             }
         },
         "paginationIsLastPageFound": {
@@ -787,7 +787,7 @@
             "displayName": "Undo / Redo",
             "page": {
                 "name": "Undo/Redo Edits",
-                "url": "/undo-redo-edits/"
+                "url": "./undo-redo-edits/"
             }
         },
         "undoCellEditing": {},
@@ -808,7 +808,7 @@
         "addAggFuncs": {
             "more": {
                 "name": "Registering Custom Functions",
-                "url": "/aggregation-custom-functions/#registering-custom-functions"
+                "url": "./aggregation-custom-functions/#registering-custom-functions"
             }
         },
         "clearAggFuncs": {}
@@ -820,19 +820,19 @@
         "showColumnChooser": {
             "more": {
                 "name": "Column Menu API",
-                "url": "/column-menu/#column-menu-api--events"
+                "url": "./column-menu/#column-menu-api--events"
             }
         },
         "showColumnFilter": {
             "more": {
                 "name": "Column Menu API",
-                "url": "/column-menu/#column-menu-api--events"
+                "url": "./column-menu/#column-menu-api--events"
             }
         },
         "showColumnMenu": {
             "more": {
                 "name": "Column Menu API",
-                "url": "/column-menu/#column-menu-api--events"
+                "url": "./column-menu/#column-menu-api--events"
             }
         },
         "hidePopupMenu": {
@@ -841,13 +841,13 @@
         "hideColumnChooser": {
             "more": {
                 "name": "Column Menu API",
-                "url": "/column-menu/#column-menu-api--events"
+                "url": "./column-menu/#column-menu-api--events"
             }
         },
         "getSideBar": {
             "more": {
                 "name": "Side Bar API",
-                "url": "/side-bar/#side-bar-api"
+                "url": "./side-bar/#side-bar-api"
             },
             "interfaceHierarchyOverrides": {
                 "exclude": ["ToolPanelDef"],
@@ -857,61 +857,61 @@
         "setSideBarVisible": {
             "more": {
                 "name": "Side Bar",
-                "url": "/side-bar/"
+                "url": "./side-bar/"
             }
         },
         "isSideBarVisible": {
             "more": {
                 "name": "Side Bar",
-                "url": "/side-bar/"
+                "url": "./side-bar/"
             }
         },
         "setSideBarPosition": {
             "more": {
                 "name": "Side Bar",
-                "url": "/side-bar/"
+                "url": "./side-bar/"
             }
         },
         "openToolPanel": {
             "more": {
                 "name": "Tool Panel",
-                "url": "/tool-panel/"
+                "url": "./tool-panel/"
             }
         },
         "closeToolPanel": {
             "more": {
                 "name": "Tool Panel",
-                "url": "/tool-panel/"
+                "url": "./tool-panel/"
             }
         },
         "getOpenedToolPanel": {
             "more": {
                 "name": "Tool Panel",
-                "url": "/tool-panel/"
+                "url": "./tool-panel/"
             }
         },
         "isToolPanelShowing": {
             "more": {
                 "name": "Tool Panel",
-                "url": "/tool-panel/"
+                "url": "./tool-panel/"
             }
         },
         "refreshToolPanel": {
             "more": {
                 "name": "Tool Panel",
-                "url": "/tool-panel/"
+                "url": "./tool-panel/"
             }
         },
         "getToolPanelInstance": {
             "more": {
                 "name": "Tool Panel Expand / Collapse Column Groups",
-                "url": "/tool-panel-columns/#expand--collapse-column-groups"
+                "url": "./tool-panel-columns/#expand--collapse-column-groups"
             }
         },
         "getStatusPanel": {
             "more": {
                 "name": "Accessing Status Bar Panel Instances",
-                "url": "/status-bar/"
+                "url": "./status-bar/"
             },
             "interfaceHierarchyOverrides": {
                 "exclude": ["IAfterGuiAttachedParams", "ContainerType", "IStatusPanelParams"],
@@ -924,13 +924,13 @@
             "displayName": "Integrated Charts",
             "page": {
                 "name": "Integrated Charts",
-                "url": "/integrated-charts/"
+                "url": "./integrated-charts/"
             }
         },
         "createRangeChart": {
             "more": {
                 "name": "Range Chart API",
-                "url": "/integrated-charts-api-range-chart/"
+                "url": "./integrated-charts-api-range-chart/"
             },
             "interfaceHierarchyOverrides": {
                 "exclude": ["CellRangeParams", "CreateRangeChartParams"],
@@ -940,13 +940,13 @@
         "createPivotChart": {
             "more": {
                 "name": "Pivot Chart API",
-                "url": "/integrated-charts-api-pivot-chart/"
+                "url": "./integrated-charts-api-pivot-chart/"
             }
         },
         "createCrossFilterChart": {
             "more": {
                 "name": "Cross-filter API",
-                "url": "/integrated-charts-api-cross-filter-chart/"
+                "url": "./integrated-charts-api-cross-filter-chart/"
             },
             "interfaceHierarchyOverrides": {
                 "exclude": ["CellRangeParams"],
@@ -956,7 +956,7 @@
         "updateChart": {
             "more": {
                 "name": "Event Driven Chart Updates",
-                "url": "/integrated-charts-events/#event-driven-chart-updates"
+                "url": "./integrated-charts-events/#event-driven-chart-updates"
             },
             "interfaceHierarchyOverrides": {
                 "exclude": [
@@ -974,7 +974,7 @@
         "getChartModels": {
             "more": {
                 "name": "Saving / Restoring Charts",
-                "url": "/integrated-charts-api-save-restore-charts/"
+                "url": "./integrated-charts-api-save-restore-charts/"
             },
             "interfaceHierarchyOverrides": {
                 "exclude": ["CellRangeParams", "ChartOptions", "ChartModelType"],
@@ -984,7 +984,7 @@
         "restoreChart": {
             "more": {
                 "name": "Saving / Restoring Charts",
-                "url": "/integrated-charts-api-save-restore-charts/"
+                "url": "./integrated-charts-api-save-restore-charts/"
             },
             "interfaceHierarchyOverrides": {
                 "exclude": ["CellRangeParams", "ChartOptions", "ChartModelType"],
@@ -994,25 +994,25 @@
         "getChartImageDataURL": {
             "more": {
                 "name": "Downloading Chart Image",
-                "url": "/integrated-charts-api-downloading-image/"
+                "url": "./integrated-charts-api-downloading-image/"
             }
         },
         "downloadChart": {
             "more": {
                 "name": "Downloading Chart Image",
-                "url": "/integrated-charts-api-downloading-image/"
+                "url": "./integrated-charts-api-downloading-image/"
             }
         },
         "openChartToolPanel": {
             "more": {
                 "name": "Open Chart Tool Panel",
-                "url": "/integrated-charts-chart-tool-panels/#chart-tool-panel-api"
+                "url": "./integrated-charts-chart-tool-panels/#chart-tool-panel-api"
             }
         },
         "closeChartToolPanel": {
             "more": {
                 "name": "Close Chart Tool Panel",
-                "url": "/integrated-charts-chart-tool-panels/#chart-tool-panel-api"
+                "url": "./integrated-charts-chart-tool-panels/#chart-tool-panel-api"
             }
         }
     },
@@ -1026,7 +1026,7 @@
         "setGridAriaProperty": {
             "more": {
                 "name": "ARIA Attributes",
-                "url": "/accessibility/#aria-attributes"
+                "url": "./accessibility/#aria-attributes"
             },
             "description": "Sets an ARIA property in the grid panel (element with `role=\"grid\"`), and removes an ARIA property when the value is null.<br /><br />Example:<br />`api.setGridAriaProperty('label', 'my grid')` will set `aria-label=\"my grid\"`.<br />`api.setGridAriaProperty('label', null)` will remove the `aria-label` attribute from the grid element."
         },
@@ -1038,31 +1038,31 @@
             "displayName": "RowModel: Client-Side",
             "page": {
                 "name": "Client-Side Row Model",
-                "url": "/client-side-model/"
+                "url": "./client-side-model/"
             }
         },
         "applyTransaction": {
             "more": {
                 "name": "Transaction Updates",
-                "url": "/data-update-transactions/"
+                "url": "./data-update-transactions/"
             }
         },
         "applyTransactionAsync": {
             "more": {
                 "name": "High Frequency Updates",
-                "url": "/data-update-high-frequency/"
+                "url": "./data-update-high-frequency/"
             }
         },
         "flushAsyncTransactions": {
             "more": {
                 "name": "Flush Async Transactions",
-                "url": "/data-update-high-frequency/#flush-async-transactions"
+                "url": "./data-update-high-frequency/#flush-async-transactions"
             }
         },
         "refreshClientSideRowModel": {
             "more": {
                 "name": "Sort / Filter / Group Refresh",
-                "url": "/data-update-single-row-cell/#sort--filter--group-refresh"
+                "url": "./data-update-single-row-cell/#sort--filter--group-refresh"
             }
         }
     },
@@ -1071,57 +1071,57 @@
             "displayName": "RowModel: Server-Side",
             "page": {
                 "name": "Server-Side Row Model",
-                "url": "/server-side-model/"
+                "url": "./server-side-model/"
             }
         },
         "setRowCount": {},
         "refreshServerSide": {
             "more": {
                 "name": "Purging Groups",
-                "url": "/server-side-model-updating-refresh/"
+                "url": "./server-side-model-updating-refresh/"
             }
         },
         "getServerSideGroupLevelState": {},
         "retryServerSideLoads": {
             "more": {
                 "name": "Retry Loads",
-                "url": "/server-side-model-retry/"
+                "url": "./server-side-model-retry/"
             }
         },
         "applyServerSideTransaction": {
             "more": {
                 "name": "Transactions",
-                "url": "/server-side-model-updating-transactions/"
+                "url": "./server-side-model-updating-transactions/"
             }
         },
         "applyServerSideTransactionAsync": {
             "more": {
                 "name": "Transactions",
-                "url": "/server-side-model-updating-transactions/#asynchronous-updates"
+                "url": "./server-side-model-updating-transactions/#asynchronous-updates"
             }
         },
         "applyServerSideRowData": {
             "more": {
                 "name": "Providing Additional Data",
-                "url": "/server-side-model-configuration/#providing-additional-data"
+                "url": "./server-side-model-configuration/#providing-additional-data"
             }
         },
         "getServerSideSelectionState": {
             "more": {
                 "name": "Selection",
-                "url": "/server-side-model-selection/#api-selection"
+                "url": "./server-side-model-selection/#api-selection"
             }
         },
         "setServerSideSelectionState": {
             "more": {
                 "name": "Selection",
-                "url": "/server-side-model-selection/#api-selection"
+                "url": "./server-side-model-selection/#api-selection"
             }
         },
         "getCacheBlockState": {
             "more": {
                 "name": "Cache Block State",
-                "url": "/server-side-model-configuration/#debug-info"
+                "url": "./server-side-model-configuration/#debug-info"
             }
         }
     }

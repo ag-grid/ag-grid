@@ -1,5 +1,4 @@
 'use strict';
-declare function countries(): string[];
 import React, { useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
@@ -10,6 +9,7 @@ import { MenuModule } from '@ag-grid-enterprise/menu';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-quartz.css";
+import { countries } from './countries';
 
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([InfiniteRowModelModule, SetFilterModule, MenuModule, ColumnsToolPanelModule]);

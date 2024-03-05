@@ -2,6 +2,12 @@
 
 ZIP_PREFIX=`date +%Y%m%d`
 
+if [ ! -d "documentation/ag-grid-docs/dist" ];
+then
+  echo "documentation/ag-grid-docs/dist does NOT EXIST. Exiting with error."
+  exit 1
+fi
+
 cd documentation/ag-grid-docs/dist
 
 FILENAME=release_"$ZIP_PREFIX"_v"$ZIP_PREFIX".zip

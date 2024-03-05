@@ -15,8 +15,7 @@ import { ModuleRegistry } from "@ag-grid-community/core";
 ModuleRegistry.registerModules([ServerSideRowModelModule]);
 
 import { FakeServer } from './fakeServer';
-declare var dataObservers: any;
-declare var randomUpdates: any;
+import { dataObservers, randomUpdates } from './data';
 
 const columnDefs: ColDef[] = [
     { field: 'tradeId' },
@@ -72,7 +71,7 @@ const gridOptions: GridOptions = {
     disable('#stopUpdates', true);
   
     // setup the fake server
-    const server = new FakeServer();
+    const server = FakeServer();
   
     // create datasource with a reference to the fake server
     const datasource = getServerSideDatasource(server);

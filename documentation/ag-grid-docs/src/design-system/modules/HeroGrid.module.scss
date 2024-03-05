@@ -1,6 +1,6 @@
 @use '../core' as *;
 
-:global(#heroGrid.ag-theme-alpine-dark) {
+:global(#heroGrid.ag-theme-quartz-dark) {
     position: relative;
     overflow: hidden;
 
@@ -19,61 +19,35 @@
     }
 }
 
-:global(#heroGrid.ag-theme-alpine-dark .ag-root-wrapper) {
+:global(#heroGrid.ag-theme-quartz-dark .ag-root-wrapper) {
+    align-self: end;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    border: none;
+
+    @media screen and (max-width: $breakpoint-hero-small) {
+        --ag-range-selection-border-color: transparent;
+    }
+}
+
+:global([data-dark-mode='false'] #heroGrid.ag-theme-quartz-dark .ag-root-wrapper) {
     --ag-background-color: #001223;
     --ag-foreground-color: #94b2d0;
 
-    --ag-borders: none;
-    --ag-row-border-style: none;
-
-    --ag-borders: none;
-    --ag-row-border-style: none;
+    --ag-borders: 1px solid;
+    --ag-border-color: rgba(255, 255, 255, 0.1);
 
     --ag-row-height: 48px;
-    --ag-odd-row-background-color: #00162d;
+    --ag-odd-row-background-color: #001223;
 
     --ag-header-height: 30px;
-    --ag-header-background-color: #00162d;
-    --ag-header-foreground-color: #527497;
+    --ag-header-background-color: #001223;
+    --ag-header-foreground-color: rgba(255, 255, 255, 0.7);
 
     --input-background-color: #001223;
     --input-focus-box-shadow-color: rgba(255, 255, 255, 0.25);
 
     #{$selector-darkmode} & {
-        --ag-background-color: #0e1a23;
-        --ag-odd-row-background-color: #081a27 --ag-foreground-color: #e6f1fc;
-
-        --ag-header-background-color: #182834;
-        --ag-header-foreground-color: #bdd8ec;
-    }
-
-    @media screen and (max-width: $breakpoint-hero-small) {
-        --ag-range-selection-border-color: transparent;
-    }
-
-    align-self: end;
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
-    background-color: var(--ag-odd-row-background-color);
-
-    :global(.ag-header-row) {
-        font-weight: 400 !important;
-    }
-
-    :global(.ag-menu),
-    :global(.ag-menu-header) {
-        --ag-border-color: #527497;
-
-        color: #94b2d0;
-        background-color: #07161b;
-        border: none;
-    }
-
-    :global(.my-tooltip .ag-chart-tooltip-content) {
-        background-color: #07161b;
-    }
-
-    :global(.ag-icon.ag-icon-filter) {
-        display: none;
+        border: 1px solid rgba(255, 255, 255, 0.1);
     }
 }

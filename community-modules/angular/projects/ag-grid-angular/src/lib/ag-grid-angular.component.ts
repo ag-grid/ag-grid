@@ -392,6 +392,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * @initial
          */
     @Input() public tooltipMouseTrack: boolean | undefined = undefined;
+    /** This defines when tooltip will show up for Cells, Headers and SetFilter Items.
+         *  - `standard` - The tooltip always shows up when the items configured with Tooltips are hovered.
+         * - `whenTruncated` - The tooltip will only be displayed when the items hovered have truncated (showing ellipsis) values.
+         * @default `standard`
+         */
+    @Input() public tooltipShowMode: 'standard' | 'whenTruncated' | undefined = undefined;
     /** Set to `true` to enable tooltip interaction. When this option is enabled, the tooltip will not hide while the
          * tooltip itself it being hovered or has focus.
          * @default false
@@ -868,7 +874,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          */
     @Input() public pivotPanelShow: 'always' | 'onlyWhenPivoting' | 'never' | undefined = undefined;
     /** The maximum number of generated columns before the grid halts execution. Upon reaching this number, the grid halts generation of columns
-         * and triggers a `pivotLimitExceeded` event. `-1` for no limit.
+         * and triggers a `pivotMaxColumnsExceeded` event. `-1` for no limit.
          * @default -1
          */
     @Input() public pivotMaxGeneratedColumns: number | undefined = undefined;

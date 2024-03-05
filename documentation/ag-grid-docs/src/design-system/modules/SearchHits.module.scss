@@ -5,7 +5,12 @@
     padding-top: $spacing-size-2;
     padding-bottom: $spacing-size-4;
     font-size: 18px;
-    border-top: 1px solid var(--color-border-primary);
+
+    border-top: 1px solid var(--color-border-secondary);
+    #{$selector-darkmode} & {
+        border-top: 1px solid var(--color-border-primary);
+    }
+
     overflow: auto;
     overscroll-behavior: contain;
 
@@ -17,6 +22,13 @@
         left: 0;
         bottom: var(--controls-height);
         background-image: linear-gradient(transparent, var(--color-bg-primary));
+        #{$selector-darkmode} & {
+            background-image: linear-gradient(
+                transparent,
+                color-mix(in srgb, var(--color-bg-primary), var(--color-fg-primary) 6%)
+            );
+        }
+
         pointer-events: none;
     }
 
@@ -71,6 +83,7 @@
 
         #{$selector-darkmode} & {
             --color-icon: var(--color-fg-primary);
+            opacity: 0.5;
         }
     }
 }
@@ -105,6 +118,7 @@
 
 .text {
     grid-area: text;
+    font-weight: var(--text-regular);
     color: var(--text-color-secondary);
 }
 
@@ -118,7 +132,6 @@
     text-decoration: none;
     color: var(--color-text-primary);
     font-size: var(--text-fs-base);
-
 
     #{$selector-darkmode} & {
         color: var(--color-white);
@@ -140,8 +153,13 @@
 
     :global(.icon) {
         --icon-size: #{$spacing-size-10};
-        --color-icon: var(--color-util-gray-300);
+        --color-icon: var(--color-text-secondary);
+        opacity: 0.7;
 
         margin-bottom: $spacing-size-2;
     }
+}
+
+.hitLink {
+    color: var(--color-text-tertiary);
 }

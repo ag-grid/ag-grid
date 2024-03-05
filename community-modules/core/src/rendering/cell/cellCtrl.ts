@@ -163,6 +163,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private enableTooltipFeature(): void {
+        const isTooltipStandard = this.beans.gridOptionsService.get('tooltipShowMode') === 'standard';
         const getTooltipValue = () => {
             const colDef = this.column.getColDef();
             const data = this.rowNode.data;
@@ -199,7 +200,14 @@ export class CellCtrl extends BeanStub {
             getTooltipValue: getTooltipValue,
 
             // this makes no sense, why is the cell formatted value passed to the tooltip???
-            getValueFormatted: () => this.valueFormatted
+            getValueFormatted: () => this.valueFormatted,
+            shouldShowTooltip: isTooltipStandard ? undefined : () => {
+                const eGui = this.getGui()
+                const textEl = eGui.children.length === 0 ? eGui : eGui.querySelector('.ag-cell-value');
+                if (!textEl) { return true; }
+
+                return textEl.scrollWidth > textEl.clientWidth;
+            }
         };
 
         this.tooltipFeature = new TooltipFeature(tooltipCtrl, this.beans);
@@ -241,7 +249,7 @@ export class CellCtrl extends BeanStub {
 
         this.cellPositionFeature?.setComp(eGui);
         this.cellCustomStyleFeature?.setComp(comp);
-        this.tooltipFeature?.setComp(eGui);
+        this.tooltipFeature?.refreshToolTip();
         this.cellKeyboardListenerFeature?.setComp(this.eGui);
 
         if (this.cellRangeFeature) { this.cellRangeFeature.setComp(comp, eGui); }
@@ -1054,7 +1062,6 @@ export class CellCtrl extends BeanStub {
         if (isTooltipEnabled) {
             this.disableTooltipFeature();
             this.enableTooltipFeature();
-            this.tooltipFeature?.setComp(this.eGui);
         } else {
             this.disableTooltipFeature();
         }

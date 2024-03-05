@@ -1,6 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import SearchModal from './SearchModal';
 import { Icon } from '../icon/Icon';
+import { useStore } from '@nanostores/react';
+import { $internalFramework } from '@stores/frameworkStore';
+import { getFrameworkFromInternalFramework } from '@utils/framework';
 
 import styles from '@design-system/modules/Search.module.scss';
 
@@ -9,10 +12,11 @@ import styles from '@design-system/modules/Search.module.scss';
  * The website uses Algolia to power its search functionality. This component builds on components provided by Algolia
  * to render the search box and results.
  */
-const Search = ({ currentFramework }) => {
+const Search = () => {
+    const internalFramework = useStore($internalFramework);
+    const currentFramework = useMemo(() => getFrameworkFromInternalFramework(internalFramework), [internalFramework]);
     const [isOpen, setOpen] = useState(false);
-
-    const [isMac, setMac] = useState(false);
+    const [isMac, setMac] = useState(undefined);
     
     // done inside effect as window won't be available for SSR.
     useEffect(() => {
@@ -34,6 +38,9 @@ const Search = ({ currentFramework }) => {
                 // use the callback so we don't need to update the func ref,
                 // and start removing/adding the callback, which would be messy
                 setOpen((open) => !open);
+
+                // prevent default to avoid browser address bar capture
+                e.preventDefault();
                 return;
             }
 
@@ -47,14 +54,30 @@ const Search = ({ currentFramework }) => {
         return () => document.removeEventListener('keydown', onKeyDownAnywhere);
     }, []);
 
+    const onPseudoInputKeyDown = (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            setOpen(true);
+        }
+    };
+
+    const setModalOpenFnc = (open) => () => {
+        setOpen(open);
+    }
     return <>
-        <div className={styles.headerSearchBox} onClick={() => setOpen(true)}>
+        <div
+            role="button"
+            tabIndex={0}
+            className={styles.headerSearchBox}
+            onClick={setModalOpenFnc(true)}
+            onKeyPress={onPseudoInputKeyDown}
+            aria-label={`Open search with Enter or Space, or use the shortcut ${isMac ? `⌘ K` : `Ctrl K`} while anywhere else in the page.`}
+        >
             <Icon name="search" svgClasses={styles.searchIcon}/>
             <span className={styles.placeholder}>Search...</span>
-            <span className={styles.kbdShortcut}>{ isMac ? `⌘ K` : `Ctrl K` }</span>
+            { isMac !== undefined && <span className={styles.kbdShortcut}>{ isMac ? `⌘ K` : `Ctrl K` }</span> }
         </div>
         
-        <SearchModal isOpen={isOpen} currentFramework={currentFramework} closeModal={() => setOpen(false)} />
+        <SearchModal isOpen={isOpen} currentFramework={currentFramework} closeModal={setModalOpenFnc(false)} />
     </>;
 }
 

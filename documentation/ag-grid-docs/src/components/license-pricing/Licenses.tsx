@@ -1,11 +1,11 @@
 // @ts-ignore
 import styles from '@design-system/modules/Licenses.module.scss';
+import { trackBuyButton } from '@utils/analytics';
 import classnames from 'classnames';
 import { FunctionComponent, useState } from 'react';
 
 import chartsFeaturesData from '../../content/licence-features/chartsFeaturesMatrix.json';
 import gridFeaturesData from '../../content/licence-features/gridFeaturesMatrix.json';
-import { trackBuyButton } from '../../utils/analytics';
 import { ComparisonTable } from './comparison-table/ComparisonTable';
 
 type LicenseData = {

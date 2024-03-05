@@ -3,7 +3,12 @@ import type {CollectionEntry} from 'astro:content';
 import glob from 'glob';
 import {readFileSync} from 'node:fs';
 
-import {integratedChartsUsesChartsEnterprise, SITE_BASE_URL, USE_PUBLISHED_PACKAGES} from '../constants';
+import {
+    integratedChartsUsesChartsEnterprise,
+    SITE_BASE_URL,
+    USE_PACKAGES,
+    USE_PUBLISHED_PACKAGES
+} from '../constants';
 import {createFilePathFinder, type GlobConfig} from './createFilePathFinder';
 import {getIsDev} from './env';
 import {pathJoin} from './pathJoin';
@@ -85,9 +90,6 @@ export const FILES_PATH_MAP: Record<string, string | GlobConfig> = {
     '@ag-grid-community/vue/dist/**': 'community-modules/vue/dist/**/*.{cjs,mjs,js,map}',
     '@ag-grid-community/vue3/dist/**': 'community-modules/vue3/dist/**/*.{cjs,mjs,js,map}',
 
-    // packages
-    'ag-grid-community/dist/**': 'packages/ag-grid-community/dist/**/*.{cjs,js,map}',
-
     // TODO: Dynamically map files
     // '@ag-grid-community': {
     //     sourceFolder: 'community-modules',
@@ -101,7 +103,14 @@ export const FILES_PATH_MAP: Record<string, string | GlobConfig> = {
     // Hero grid
     '@ag-grid-community/styles/ag-theme-alpine.css': 'community-modules/styles/ag-theme-alpine.css',
 };
-// FILES_PATH_MAP[`ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise/dist/**`] = `packages/ag-grid-enterprise/dist/**/*.{cjs,js,map}`;
+if(USE_PACKAGES) {
+    // packages
+    FILES_PATH_MAP['ag-grid-community/dist/**'] = `packages/ag-grid-community/dist/**/*.{cjs,js,map}`;
+    FILES_PATH_MAP[`ag-grid-enterprise/dist/**`] = `packages/ag-grid-enterprise/dist/**/*.{cjs,js,map}`;
+    FILES_PATH_MAP[`ag-grid-charts-enterprise/dist/**`] = `packages/ag-grid-charts-enterprise/dist/**/*.{cjs,js,map}`;
+    FILES_PATH_MAP['ag-grid-react/dist/**'] = `packages/ag-grid-react/dist/**/*.{cjs,js,map}`;
+    FILES_PATH_MAP['ag-grid-angular/fesm2015/ag-grid-angular.mjs'] = 'packages/ag-grid-angular/dist/ag-grid-angular/fesm2015/ag-grid-angular.mjs'
+}
 
 type FileKey = keyof typeof FILES_PATH_MAP;
 

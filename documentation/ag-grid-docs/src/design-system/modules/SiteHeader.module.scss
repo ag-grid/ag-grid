@@ -39,9 +39,15 @@
     padding: $spacing-size-2 10px;
     margin-left: calc(var(--layout-horizontal-margins) - 16px);
 
-    svg {
+    :global(.logotype) {
         width: unset;
         height: 34px;
+    }
+
+    :global(.logo-mark) {
+        width: 48px;
+        height: unset;
+        transform: translateY(0.5px); // improve logo rendering for low dpi screens
     }
 }
 
@@ -74,9 +80,19 @@
 
 button.mobileNavButton {
     width: 100%;
+    background-color: rgba(0, 0, 0, 0.1);
+    border: none;
+    color: var(--color-button-primary-fg);
+
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+        color: var(--color-button-primary-fg);
+    }
 
     :global(.icon) {
         --icon-size: #{$spacing-size-6};
+        --color-icon: var(--color-button-primary-fg);
+        fill: var(--color-button-primary-fg);
 
         margin-left: $spacing-size-1;
         margin-right: -$spacing-size-1;
@@ -307,7 +323,7 @@ button.navLink {
         display: none;
     }
 
-    svg:global(.icon) {
+    svg:global(.icon), .pseudoIcon {
         --icon-size: 24px;
 
         margin-right: 4px;
@@ -325,12 +341,12 @@ button.navLink {
             padding-right: 12px;
         }
 
-        svg {
+        svg, .pseudoIcon {
             margin-right: 0;
             transition: box-shadow 0.33s ease-in-out;
         }
 
-        .navLink:hover svg {
+        .navLink:hover svg, .navLink:hover .pseudoIcon {
             box-shadow:
                 0 0 0 4px var(--color-bg-site-header),
                 0 0 0 6px rgba(white, 0.3);
@@ -343,4 +359,15 @@ button.navLink {
     @media screen and (max-width: $breakpoint-site-header-small) {
         display: inline;
     }
+}
+
+.icon {
+    width: 24px;
+    height: 24px;
+    margin: 2px;
+
+    background-image: var(--dark-icon);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
 }

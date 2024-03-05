@@ -39,6 +39,8 @@
     },
     "build:umd": {
       "executor": "@nx/webpack:webpack",
+      "inputs": [],
+      "outputs": ["{projectRoot}/dist/ag-grid-enterprise.js"],
       "dependsOn": ["^build", "build:updateWithCoreExports"],
       "options": {
         "webpackConfig": "packages/ag-grid-enterprise/webpack.config.js",
@@ -49,10 +51,7 @@
     },
     "build:copy-styles": {
       "dependsOn": [],
-      "inputs": [
-        "^production",
-        "production"
-      ],
+      "inputs": [],
       "cache": true,
       "command": "rsync -r ../../community-modules/styles/*.*css --delete styles",
       "options": {

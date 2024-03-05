@@ -7,5 +7,5 @@ export default {
         '^.+\\.[tj]sx?$': ['babel-jest', { presets: ['@nx/react/babel'] }],
     },
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-    coverageDirectory: '../../coverage/packages/ag-charts-react',
+    coverageDirectory: '../../coverage/packages/@ag-grid-community/react',
 };

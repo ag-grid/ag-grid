@@ -50,12 +50,11 @@ export class AdvancedFilterBuilderItemAddComp extends Component {
         });
         this.eItem.appendChild(eAddButton.getGui());
 
-        const tooltipFeature = this.createManagedBean(new TooltipFeature({
+        this.createManagedBean(new TooltipFeature({
             getGui: () => eAddButton.getGui(),
             getLocation: () => 'advancedFilter',
             getTooltipValue: () => this.advancedFilterExpressionService.translate('advancedFilterBuilderAddButtonTooltip')
-        }, this.beans));
-        tooltipFeature.setComp(eAddButton.getGui());
+        }));
 
         this.createManagedBean(new AdvancedFilterBuilderItemNavigationFeature(
             this.getGui(),

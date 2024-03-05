@@ -1,9 +1,12 @@
-import { FRAMEWORKS, IMPORT_TYPES } from '@constants';
+import { FRAMEWORKS, IMPORT_TYPES, QUICK_BUILD_PAGES, SHOW_DEBUG_LOGS } from '@constants';
 import { type DocsPage, getContentRootFileUrl } from '@utils/pages';
 import { pathJoin } from '@utils/pathJoin';
 
+import { getIsDev } from '../../../utils/env';
 import { getGeneratedContentsFileList } from '../../example-generator';
 import { getInternalFrameworkExamples, getPagesList } from './filesData';
+
+const shouldFilterPages = QUICK_BUILD_PAGES && !getIsDev();
 
 export function getDocsPages(pages: DocsPage[]) {
     const frameworkPages = FRAMEWORKS.flatMap((framework) => {
@@ -16,7 +19,13 @@ export function getDocsPages(pages: DocsPage[]) {
         });
     });
 
-    return frameworkPages.map(({ framework, pageName, page }) => {
+    const filteredPages = shouldFilterPages
+        ? frameworkPages.filter(({ pageName }) => {
+              return QUICK_BUILD_PAGES.includes(pageName);
+          })
+        : frameworkPages;
+
+    return filteredPages.map(({ framework, pageName, page }) => {
         return {
             params: {
                 framework,
@@ -41,7 +50,13 @@ export function getDocsFrameworkPages() {
 
 async function getDocsExampleNameParts({ pages }: { pages: DocsPage[] }) {
     const internalFrameworkExamples = await getInternalFrameworkExamples({ pages });
-    return internalFrameworkExamples.flatMap((example) => {
+    const filteredInternalFrameworkExamples = shouldFilterPages
+        ? internalFrameworkExamples.filter(({ pageName }) => {
+              return QUICK_BUILD_PAGES.includes(pageName);
+          })
+        : internalFrameworkExamples;
+
+    return filteredInternalFrameworkExamples.flatMap((example) => {
         return IMPORT_TYPES.map((importType) => {
             return {
                 ...example,
@@ -87,7 +102,9 @@ export async function getDocExampleFiles({ pages }: { pages: DocsPage[] }) {
                 };
             });
         } catch (error) {
-            console.error('File not generated - ', error.message);
+            if (SHOW_DEBUG_LOGS) {
+                console.error('File not generated - ', error.message);
+            }
             return [];
         }
     });

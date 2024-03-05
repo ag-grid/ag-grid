@@ -45,14 +45,14 @@
             "description": "When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart.",
             "more": {
                 "name": "Unlinking Charts",
-                "url": "/integrated-charts-toolbar/#unlinking-charts"
+                "url": "./integrated-charts-toolbar/#unlinking-charts"
             }
         },
         "chartThemeOverrides": {
             "description": "Allows specific chart options in the current theme to be overridden.",
             "more": {
                 "name": "Overriding Existing Themes",
-                "url": "/integrated-charts-customisation/#overriding-themes"
+                "url": "./integrated-charts-customisation/#overriding-themes"
             }
         }
     }

@@ -1,0 +1,112 @@
+@use '../../core/' as *;
+
+.cardContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    column-gap:  $spacing-size-4;
+    row-gap: $spacing-size-6;
+}
+
+.card {
+    background-color: var(--color-util-gray-200);
+    border: 1px solid var(--color-border-secondary);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: var(--radius-2xl);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;    
+}
+
+.header {
+    .image {
+        width: 100%;
+        height: 150px; 
+        object-fit: cover; 
+        object-position: top;
+    }
+}
+
+.gitHubDetails {
+    display: flex;
+    gap: $spacing-size-4;
+    align-items: center;
+
+}
+
+.titleContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-size-4;
+    gap: $spacing-size-4;
+}
+
+.title {
+    color: var(--color-button-tertiary-fg);
+    font-size: var(--text-fs-base);
+    font-weight: bold;
+    margin-bottom: 0px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.body {
+    padding: $spacing-size-4;
+    flex-grow: 1; 
+}
+
+.imageButton {
+    width: auto; 
+    height: $spacing-size-8; 
+    cursor: pointer; 
+    margin-left: $spacing-size-4;
+    fill: var(--color-fg-primary);
+}
+
+.description {
+    font-size: var(--text-fs-base); 
+    font-weight: var(--text-regular);
+    color: var(--color-text-primary); 
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 3; 
+    line-height: 1.4;
+    max-height: calc(1.4em * 3); 
+}
+
+.footer {
+    padding: $spacing-size-4;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $spacing-size-2;
+    row-gap: $spacing-size-2;
+}
+
+.frameworks {
+    display: flex;
+    align-items: center;
+    background: transparent;
+    font-weight: var(--text-regular);
+    border-radius: var(--radius-2xl);
+    padding: $spacing-size-1 $spacing-size-2; 
+    font-size: var(--text-size-2xs);
+    color: var(--color-text-primary);
+    margin-bottom: 0px;
+}
+
+.tags {
+    display: flex;
+    align-items: center;
+    background: transparent;
+    font-weight: var(--text-regular);
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-2xl);
+    padding: $spacing-size-1 $spacing-size-2; 
+    font-size: var(--text-fs-xs); 
+    color: var(--color-text-primary);
+}

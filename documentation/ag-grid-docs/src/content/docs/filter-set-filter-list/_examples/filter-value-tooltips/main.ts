@@ -6,11 +6,9 @@ import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { ModuleRegistry } from "@ag-grid-community/core";
+import { CustomTooltip } from './customTooltip';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, FiltersToolPanelModule, MenuModule, SetFilterModule]);
-
-
-declare var CustomTooltip: any
 
 let gridApi: GridApi;
 

@@ -1,0 +1,493 @@
+[
+    {
+        "link": "https://www.adaptabletools.com/",
+        "title": "Adaptable",
+        "description": "AdapTable for AG Grid is a powerful, cutting-edge extension for the market-leading AG Grid Data Grid. AdapTable extends the powerful functionality provided by AG Grid to enable you to build data management applications unparalleled in power and sophistication, with features not previously available.",
+        "open_source": false,
+        "type": "Extension",
+        "ag_grid_usage": "Extends AG Grid functionality and exposes additional APIs",
+        "tags": [
+            "Extension"
+        ],
+        "frameworks": [
+            "React",
+            "TypeScript",
+            "Angular"
+        ],
+        "products": [
+            "Grid",
+            "Charts"
+        ],
+        "img": "adaptable.png",
+        "favourite": true
+    },
+    {
+        "repo": "https://github.com/plotly/dash-ag-grid",
+        "title": "Dash AG Grid",
+        "description": "Dash AG Grid is a high-performance and highly customizable component that wraps AG Grid, designed for creating rich datagrids.",
+        "link": "dash.plotly.com/dash-ag-grid",
+        "type": "Wrapper",
+        "open_source": true,
+        "stars": 120,
+        "img": "plotly-dash.png",
+        "frameworks": [
+            "Python"
+        ],
+        "tags": [
+            "Wrapper"
+        ]
+    },
+    {
+        "link": "https://ag-grid-svelte.michael.kim/guide",
+        "title": "AG Grid Svelte",
+        "description": "An unofficial Svelte wrapper for AG Grid.",
+        "repo": "https://github.com/MichaelKim/ag-grid-svelte",
+        "type": "Wrapper",
+        "open_source": true,
+        "img": "svelte-aggrid.png",
+        "stars": 36,
+        "frameworks": [
+            "Svelte"
+        ],
+        "tags": [
+            "Wrapper"
+        ]
+    },
+    {
+        "title": "Streamlit AG Grid",
+        "description": "Streamlit is an open-source Python framework for machine learning and data science teams. This library, from Pablo Fonseca, implements AG Grid and AG Charts into Streamlit",
+        "repo": "https://github.com/PablocFonseca/streamlit-aggrid",
+        "open_source": true,
+        "stars": 900,
+        "type": "Wrapper",
+        "link": "https://pypi.org/project/streamlit-aggrid/",
+        "img": "streamlit-aggrid.png",
+        "frameworks": [
+            "Python"
+        ],
+        "tags": [
+            "Wrapper"
+        ]
+    },
+    {
+        "link": "https://developer.blackbaud.com/skyux/",
+        "type": "Integration",
+        "open_source": true,
+        "repo": "https://github.com/blackbaud/skyux",
+        "stars": 20,
+        "title": "Sky UX",
+        "description": "SKY UX components for Angular",
+        "frameworks": [
+            "Angular"
+        ],
+        "tags": [
+            "Integration"
+        ]
+    },
+    {
+        "repo": "https://github.com/widgetti/ipyaggrid",
+        "title": "ipyaggrid",
+        "description": "A wrapper for using AG Grid in Jupyter notebooks.",
+        "link": "https://widgetti.github.io/ipyaggrid/",
+        "type": "Wrapper",
+        "open_source": true,
+        "stars": 46,
+        "img": "ipya-aggrid.png",
+        "frameworks": [
+            "Python"
+        ],
+        "tags": [
+            "Wrapper"
+        ]
+    },
+    {
+        "repo": "https://github.com/lowdefy/lowdefy",
+        "title": "Lowdefy",
+        "description": "The config web stack for business apps - build internal tools, client portals, web apps, admin panels, dashboards, web sites, and CRUD apps with YAML or JSON.",
+        "link": "https://lowdefy.com/",
+        "type": "Integration",
+        "open_source": true,
+        "stars": 2500,
+        "frameworks": [
+            "React"
+        ],
+        "tags": [
+            "Integration"
+        ]
+    },
+    {
+        "repo": "https://github.com/systelab/systelab-components",
+        "title": "Systelab Components",
+        "description": "Systelab Angular common components",
+        "link": "https://systelab.github.io/components/",
+        "type": "Integration",
+        "open_source": true,
+        "stars": 15,
+        "frameworks": [
+            "Angular"
+        ],
+        "tags": [
+            "Component Library"
+        ]
+    },
+    {
+        "repo": "https://github.com/RocketCommunicationsInc/astro",
+        "title": "Astro UXDS",
+        "description": "Astro UXDS is a collection of guidelines, patterns and components for designing space-based user interface applications.",
+        "link": "https://www.astrouxds.com/patterns/table/#complex-tables",
+        "type": "Integration",
+        "open_source": true,
+        "stars": 80,
+        "frameworks": [
+            "React"
+        ],
+        "tags": [
+            "Design System"
+        ]
+    },
+    {
+        "repo": "https://github.com/xh/hoist-react",
+        "title": "Hoist UX Toolkit",
+        "description": "A web application development toolkit",
+        "link": "https://xh.io/#hoist",
+        "type": "Integration",
+        "open_source": true,
+        "stars": 21,
+        "frameworks": [
+            "React"
+        ],
+        "tags": [
+            "Integration"
+        ]
+    },
+    {
+        "repo": "https://github.com/epicmaxco/vuestic-ui",
+        "title": "Vuestic UI",
+        "description": "Free and Open Source UI Library for Vue 3",
+        "link": "https://ui.vuestic.dev/ui-elements/data-table",
+        "type": "Integration",
+        "open_source": true,
+        "stars": 3200,
+        "frameworks": [
+            "Vue"
+        ],
+        "tags": [
+            "Component Library"
+        ]
+    },
+    {
+        "repo": "https://github.com/kpmck/cypress-ag-grid",
+        "title": "Cypress AG Grid",
+        "description": "With Cypress, you can easily create tests for your modern web applications, debug them visually, and automatically run them in your continuous integration builds. This plugin simplifies interacting with and validating against ag grid with Cypress.",
+        "link": "",
+        "type": "Utility",
+        "open_source": true,
+        "stars": 30,
+        "frameworks": [
+            "JavaScript", "TypeScript", "React", "Angular", "Vue"
+        ],
+        "tags": [
+            "Utility"
+        ]
+    },
+    {
+        "repo": "https://github.com/clickbar/ag-grid-laravel",
+        "title": "AG Grid Laravel Server Side Adapter",
+        "description": "A server-side adapter for AG Grid with support for filtering, sorting, exporting and server-side selection.",
+        "link": "",
+        "type": "Wrapper",
+        "open_source": true,
+        "stars": 15,
+        "frameworks": [
+            "Laravel"
+        ],
+        "tags": [
+            "Wrapper"
+        ]
+    },
+    {
+        "repo": "https://github.com/LSEG/ag-grid-playwright",
+        "title": "AG Grid Playwright",
+        "description": "A simple way to test ag-grid with Playwright. Extensible enough to cover the all of ag-grid's features.",
+        "link": "",
+        "type": "Utility",
+        "open_source": true,
+        "stars": 6,
+        "frameworks": [
+            "JavaScript", "TypeScript", "React", "Angular", "Vue"
+        ],
+        "tags": [
+            "Utility"
+        ]
+    },
+    {
+        "repo": "https://github.com/syncfusion/ej2-angular-ui-components",
+        "title": "Syncfusion Angular UI Components",
+        "description": "Syncfusion Angular UI components library offer more than 50+ cross-browser, responsive, and lightweight angular UI controls for building modern web applications.",
+        "link": "https://www.syncfusion.com/angular-components",
+        "type": "Integration",
+        "open_source": true,
+        "frameworks": [
+            "Angular"
+        ],
+        "stars": 270,
+        "img": "syncfusion.png",
+        "tags": [
+            "Component Library"
+        ]
+    },
+    {
+        "repo": "https://github.com/zauberzeug/nicegui/tree/main",
+        "title": "Nice GUI",
+        "description": "Create web-based user interfaces with Python. The nice way.",
+        "type": "Integration",
+        "open_source": true,
+        "stars": 6600,
+        "frameworks": [
+            "Python"
+        ],
+        "tags": [
+            "Component Library"
+        ]
+    },
+    {
+        "repo": "https://github.com/terrestris/react-geo",
+        "title": "React GEO",
+        "description": "A set of geo related modules to use in combination with React, Ant Design and OpenLayers.",
+        "type": "Integration",
+        "open_source": true,
+        "stars": 350,
+        "frameworks": [
+            "React"
+        ],
+        "tags": [
+            "Component Library"
+        ]
+    },
+    {
+        "title": "Grid Widget for BBJ",
+        "description": "A Feature-rich grid component for BBj Based on HTML and JavaScript.",
+        "repo": "https://github.com/BBj-Plugins/BBjGridExWidget",
+        "open_source": true,
+        "stars": 5,
+        "type": "Wrapper",
+        "link": "https://bbj-plugins.github.io/BBjGridExWidget/",
+        "img": "bbjgridwidget.png",
+        "frameworks": [
+            "JavaScript"
+        ],
+        "tags": [
+            "Wrapper"
+        ]
+    },
+    {
+        "title": "GoodData UI SDK",
+        "description": "GoodData.UI is a TypeScript framework for building analytical applications on top of the GoodData platform, GoodData Cloud or GoodData.CN.",
+        "repo": "https://github.com/gooddata/gooddata-ui-sdk",
+        "open_source": true,
+        "stars": 60,
+        "type": "Wrapper",
+        "link": "https://www.gooddata.com/docs/gooddata-ui/latest/",
+        "frameworks": [
+            "TypeScript"
+        ],
+        "tags": [
+            "Component Library"
+        ]
+    },
+    {
+        "title": "Styled UI",
+        "description": "Faithlife UI styleguide and set of components",
+        "repo": "https://github.com/Faithlife/styled-ui",
+        "open_source": true,
+        "stars": 12,
+        "type": "Integration",
+        "link": "https://faithlife.github.io/styled-ui/",
+        "frameworks": [
+            "React"
+        ],
+        "tags": [
+            "Component Library"
+        ]
+    },
+    {
+        "title": "OpenMrs React Components",
+        "description": "This repository contains React components built to support the development of OpenMRS Open Web App (OWA) using ReactJS",
+        "repo": "https://github.com/openmrs/openmrs-react-components",
+        "open_source": true,
+        "stars": 20,
+        "type": "Integration",
+        "link": "https://openmrs.org/",
+        "frameworks": [
+            "React"
+        ],
+        "tags": [
+            "Component Library"
+        ]
+    },
+    {
+        "title": "OSharp",
+        "description": "OSharp is a rapid development framework based on .Net6.0.",
+        "repo": "https://github.com/dotnetcore/osharp",
+        "open_source": true,
+        "stars": 2660,
+        "type": "Integration",
+        "link": "",
+        "frameworks": [
+            ".NET"
+        ],
+        "tags": [
+            "Component Library"
+        ]
+    },
+    {
+        "title": "Otter",
+        "description": "The Otter project is a highly modular framework whose goal is to provide a common platform to accelerate and facilitate the development of runtime customizable Angular based Web Applications",
+        "repo": "https://github.com/AmadeusITGroup/otter",
+        "open_source": true,
+        "stars": 45,
+        "type": "Integration",
+        "link": "https://amadeusitgroup.github.io/otter/",
+        "frameworks": [
+            "Angular"
+        ],
+        "tags": [
+            "Framework"
+        ]
+    },
+    {
+        "title": "PortalJS",
+        "description": "Rapidly build rich data portals using a modern frontend framework",
+        "repo": "https://github.com/datopian/portaljs",
+        "open_source": true,
+        "stars": 2100,
+        "type": "Integration",
+        "link": "https://portaljs.org/",
+        "frameworks": [
+            "JavaScript"
+        ],
+        "tags": [
+            "Framework"
+        ]
+    },
+    {
+        "title": "Feliz AG Grid",
+        "description": "Feliz-style bindings for ag-grid-react",
+        "repo": "https://github.com/CompositionalIT/feliz-ag-grid",
+        "open_source": true,
+        "stars": 10,
+        "type": "Wrapper",
+        "link": "https://compositionalit.github.io/feliz-ag-grid/",
+        "frameworks": [
+            "React"
+        ],
+        "tags": [
+            "Wrapper"
+        ]
+    },
+    {
+        "open_source": true,
+        "stars": 5,
+        "link": "https://package.elm-lang.org/packages/mercurymedia/elm-ag-grid/latest/AgGrid",
+        "title": "Elm AG Grid",
+        "repo": "https://github.com/mercurymedia/elm-ag-grid",
+        "description": "Elm integration for the Ag Grid data grid library.",
+        "type": "Wrapper",
+        "frameworks": [
+            "JavaScript"
+        ],
+        "tags": [
+            "Wrapper"
+        ]
+    },
+    {
+        "title": "Blazor AG Grid",
+        "description": "Blazor-wrapped component over ag-Grid",
+        "repo": "https://github.com/ebekker/blazor-ag-grid",
+        "open_source": true,
+        "stars": 60,
+        "type": "Wrapper",
+        "link": "https://blog.bkkr.us/blazor-ag-grid/",
+        "frameworks": [
+            ".NET"
+        ],
+        "tags": [
+            "Wrapper"
+        ]
+    },
+    {
+        "title": "SUI Base",
+        "description": "Sui development environment and cookbook.",
+        "repo": "https://github.com/ChainMovers/suibase",
+        "open_source": true,
+        "stars": 25,
+        "type": "Integration",
+        "link": "suibase.io",
+        "frameworks": [
+            "Rust"
+        ],
+        "tags": [
+            "Framework"
+        ]
+    },
+    {
+        "title": "AG Grid RS (Rust)",
+        "description": "Rust bindings for the AG Grid JavaScript table library.",
+        "repo": "https://github.com/mfreeborn/ag-grid-rs/tree/main",
+        "open_source": true,
+        "stars": 10,
+        "type": "Wrapper",
+        "link": "https://docs.rs/ag-grid-rs/latest/ag_grid_rs/index.html#",
+        "frameworks": [
+            "Rust"
+        ],
+        "tags": [
+            "Wrapper"
+        ]
+    },
+    {
+        "title": "Baloise Design System",
+        "description": "The Baloise Design System consists of reusable components and a clearly defined visual style, that can be assembled together to build any number of applications.",
+        "repo": "https://github.com/baloise/design-system",
+        "open_source": true,
+        "stars": 90,
+        "type": "Integration",
+        "link": "https://design.baloise.dev",
+        "frameworks": [
+            "JavaScript", "React", "Angular", "Vue"
+        ],
+        "tags": [
+            "Component Library"
+        ]
+    },
+    {
+        "title": "SBA Angular",
+        "description": "Sinequa's Angular-based Search Based Application (SBA) Framework",
+        "repo": "https://github.com/sinequa/sba-angular",
+        "open_source": true,
+        "stars": 30,
+        "type": "Integration",
+        "link": "https://sinequa.github.io/sba-angular/",
+        "frameworks": [
+            "Angular"
+        ],
+        "tags": [
+            "Framework"
+        ]
+    },
+    {
+        "title": "AG Grid OData",
+        "description": "OData (Open Data Protocol) is an ISO/IEC approved, OASIS standard that defines a set of best practices for building and consuming RESTful APIs. This library creates an Odata compliant provider for AG Grid",
+        "repo": "https://github.com/SenyaMur/ag-grid-odata",
+        "open_source": true,
+        "stars": 20,
+        "type": "Extension",
+        "link": "https://codesandbox.io/p/sandbox/ag-grid-server-side-row-model-sample-zqujt",
+        "frameworks": [
+            "TypeScript"
+        ],
+        "tags": [
+            "Framework"
+        ]
+    }
+]
