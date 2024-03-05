@@ -1,6 +1,6 @@
 @use "sass:color";
 
-.ag-theme-material {
+.ag-theme-material, .ag-theme-material-dark, .ag-theme-material-auto-dark {
     // Taking primary and accent from the indigo / pink theme: https://github.com/angular/material2/blob/master/src/lib/core/theming/prebuilt/indigo-pink.scss
     --ag-material-primary-color: #3f51b5;
     --ag-material-accent-color: #ff4081;
@@ -75,3 +75,60 @@
     --ag-card-radius: 2px;
     --ag-invalid-color: #e02525;
 };
+
+@mixin -dark-vars {
+    --ag-background-color: #121212ff;
+    --ag-foreground-color: #f5f5f5ff;
+    --ag-active-color: #bb86fcff;
+    --ag-data-color: #f5f5f5ff;
+    --ag-header-cell-hover-background-color: #646464ff;
+    --ag-advanced-filter-join-pill-color: #f08e8dff;
+    --ag-advanced-filter-column-pill-color: #a6e194ff;
+    --ag-advanced-filter-option-pill-color: #f3c08bff;
+    --ag-advanced-filter-value-pill-color: #85c0e4ff;
+    --ag-input-disabled-border-color: #68686eff;
+    --ag-input-disabled-background-color: #f5f5f50f;
+    --ag-selected-row-background-color: #bb86fc33;
+    --ag-row-hover-color: #bb86fc33;
+    --ag-column-hover-color: #bb86fc0d;
+    --ag-input-focus-border-color: #bb86fcff;
+    --ag-range-selection-background-color: #bb86fc33;
+    --ag-range-selection-background-color-2: #bb86fc5c;
+    --ag-range-selection-background-color-3: #bb86fc7d;
+    --ag-range-selection-background-color-4: #bb86fc96;
+    --ag-border-color: #383838ff;
+    --ag-secondary-border-color: #383838ff;
+    --ag-header-background-color: #121212ff;
+    --ag-tooltip-background-color: #222628ff;
+    --ag-odd-row-background-color: #121212ff;
+    --ag-control-panel-background-color: #222628ff;
+    --ag-subheader-background-color: #ffffff0d;
+    --ag-subheader-toolbar-background-color: #383838ff;
+    --ag-invalid-color: #e02525ff;
+    --ag-checkbox-unchecked-color: #ffffffff;
+    --ag-checkbox-background-color: #121212ff;
+    --ag-checkbox-checked-color: #bb86fcff;
+    --ag-range-selection-border-color: #bb86fcff;
+    --ag-secondary-foreground-color: #f5f5f5ff;
+    --ag-input-border-color: #383838ff;
+    --ag-input-border-color-invalid: #e02525ff;
+    --ag-disabled-foreground-color: #f5f5f580;
+    --ag-chip-background-color: #22262812;
+    --ag-side-button-selected-background-color: #00000000;
+    --ag-selected-tab-underline-color: #bb86fcff;
+    --ag-modal-overlay-background-color: #121212a8;
+    --ag-value-change-delta-up-color: #43a047a8;
+    --ag-value-change-delta-down-color: #e53935ff;
+
+    color-scheme: dark;
+}
+
+.ag-theme-material-dark {
+    @include -dark-vars();
+}
+
+@media (prefers-color-scheme: dark) {
+    .ag-theme-material-auto-dark {
+        @include -dark-vars();
+    }
+}
