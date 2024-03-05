@@ -21,6 +21,9 @@ const {
     PUBLIC_HTTPS_SERVER = '1',
     ENABLE_GENERATE_DEBUG_PAGES = '1',
     SHOW_DEBUG_LOGS,
+
+    // Speed up builds by only building comma separated pages
+    QUICK_BUILD_PAGES,
 } = dotenvExpand.expand(dotenv).parsed;
 console.log(
     'Astro configuration',
@@ -33,6 +36,7 @@ console.log(
             USE_PACKAGES,
             ENABLE_GENERATE_DEBUG_PAGES,
             SHOW_DEBUG_LOGS,
+            QUICK_BUILD_PAGES,
         },
         null,
         2
