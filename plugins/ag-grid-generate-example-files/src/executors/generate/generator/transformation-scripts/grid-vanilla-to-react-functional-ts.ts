@@ -87,14 +87,12 @@ function getPackageImports(
     ];
 
     addEnterprisePackage(imports, bindings);
-    addEnterprisePackage(imports, bindings);
 
     imports.push("import 'ag-grid-community/styles/ag-grid.css';");
 
     // to account for the (rare) example that has more than one class...just default to quartz if it does
     // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
     // "source" non dark version
-    const theme = inlineGridStyles.theme ? inlineGridStyles.theme.replace('-dark', '') : 'ag-theme-quartz';
     const theme = inlineGridStyles.theme ? inlineGridStyles.theme.replace('-dark', '') : 'ag-theme-quartz';
     imports.push(`import 'ag-grid-community/styles/${theme}.css';`);
 
@@ -139,7 +137,6 @@ function getImports(
 function getTemplate(bindings: ParsedBindings, componentAttributes: string[], rowDataGeneric: string): string {
     const { inlineGridStyles } = bindings;
     const agGridTag = `
-        <div style={gridStyle} className={${getActiveTheme(inlineGridStyles.theme, true)}}>
         <div style={gridStyle} className={${getActiveTheme(inlineGridStyles.theme, true)}}>
             <AgGridReact${rowDataGeneric}
                 ref={gridRef}
@@ -363,7 +360,6 @@ export function vanillaToReactFunctionalTs(
 'use strict';
 
 ${imports.join('\n')}
-${exampleConfig.licenseKey ? "// enter your license key here to suppress license message in the console and watermark\nLicenseManager.setLicenseKey('');\n" : ''}
 ${exampleConfig.licenseKey ? "// enter your license key here to suppress license message in the console and watermark\nLicenseManager.setLicenseKey('');\n" : ''}
 
 ${typeDeclares?.length > 0 ? '\n' + typeDeclares.join('\n') : ''}${interfaces?.length > 0 ? '\n' + interfaces.join('\n') : ''}
