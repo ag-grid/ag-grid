@@ -1,9 +1,8 @@
 import { type Framework } from '@ag-grid-types';
-import Markdoc, { type ConfigType, type Node } from '@markdoc/markdoc';
+import Markdoc, { type Node } from '@markdoc/markdoc';
 import { type MarkdownHeading } from 'astro';
 import Slugger from 'github-slugger';
 
-import markdocConfig from '../../../markdoc.config';
 import { transformMarkdoc } from './transformMarkdoc';
 
 const TABS_TAG_NAME = 'tabs';
