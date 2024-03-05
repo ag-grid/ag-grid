@@ -59,44 +59,7 @@ export class ExcelXlsxFactory {
         this.addSheetName(worksheet);
         registerStyles(styles, this.sheetNames.length);
 
-        const sheetIndex = this.sheetNames.length - 1;
-        const { name: nameFromConfig } = config.tableSetup || {};
-
-        const tableName = this.getSanitizedTableName(
-            nameFromConfig || ExcelXlsxFactory.defaultTableDisplayName
-        );
-
-        const tableRowCount = worksheet.table.rows.length;
-        const tableColumns = config.columnModel.getAllDisplayedColumns().map(col => col.getColId());
-
-        let treeLeafsLevel = 0;
-        const extractLeafs = (column: ColDef | ColGroupDef, leafLevel: number) => {
-            const colAsAny = column as any;
-            if (Array.isArray(colAsAny.children) && colAsAny.children.length > 0) {
-                const colAsColGroupDef = colAsAny as ColGroupDef;
-                colAsColGroupDef.children.forEach(
-                    item => extractLeafs(item, leafLevel + 1)
-                );
-
-                treeLeafsLevel = Math.max(treeLeafsLevel, leafLevel);
-            }
-        };
-
-        config.columnModel.getColumnDefs()?.forEach(extractLeafs);
-        const tableHeaderRowIndex: number = treeLeafsLevel; // Assuming that header starts at row 0
-
-        if (!tableColumns || !tableColumns.length || !tableRowCount || !tableName) {
-            console.warn('Unable to add data table to Excel sheet: Missing required parameters.');
-        } else {
-            this.addTableToSheet(sheetIndex, {
-                name: this.getTableNameFromIndex(sheetIndex),
-                displayName: tableName,
-                columns: tableColumns,
-                headerRowIndex: tableHeaderRowIndex,
-                rowCount: tableRowCount - treeLeafsLevel - 1,
-            });
-        }
-
+        this.processTableConfig(worksheet, config);
         return this.createWorksheet(worksheet, config);
     }
 
@@ -157,6 +120,60 @@ export class ExcelXlsxFactory {
         }
 
         this.buildSheetImageMap(currentSheetIndex, calculatedImage);
+    }
+
+    private static processTableConfig(
+        worksheet: ExcelWorksheet,
+        config: ExcelGridSerializingParams
+    ) {
+        if (!config.tableSetup) {
+            return;
+        }
+
+        const { name: nameFromConfig } = config.tableSetup;
+
+        const tableName = this.getSanitizedTableName(
+            nameFromConfig || ExcelXlsxFactory.defaultTableDisplayName
+        );
+
+        const sheetIndex = this.sheetNames.length - 1;
+        const tableRowCount = worksheet.table.rows.length;
+        const tableColumns = config.columnModel.getAllDisplayedColumns().map(col => {
+            const headerName = col.getColDef().headerName;
+            if (headerName) {
+                return headerName;
+            }
+
+            return col.getColId();
+        });
+
+        let treeLeafsLevel = 0;
+        const extractLeafs = (column: ColDef | ColGroupDef, leafLevel: number) => {
+            const colAsAny = column as any;
+            if (Array.isArray(colAsAny.children) && colAsAny.children.length > 0) {
+                const colAsColGroupDef = colAsAny as ColGroupDef;
+                colAsColGroupDef.children.forEach(
+                    item => extractLeafs(item, leafLevel + 1)
+                );
+
+                treeLeafsLevel = Math.max(treeLeafsLevel, leafLevel);
+            }
+        };
+
+        config.columnModel.getColumnDefs()?.forEach(extractLeafs);
+        const tableHeaderRowIndex: number = treeLeafsLevel; // Assuming that header starts at row 0
+
+        if (!tableColumns || !tableColumns.length || !tableRowCount || !tableName) {
+            console.warn('Unable to add data table to Excel sheet: Missing required parameters.');
+        } else {
+            this.addTableToSheet(sheetIndex, {
+                name: this.getTableNameFromIndex(sheetIndex),
+                displayName: tableName,
+                columns: tableColumns,
+                headerRowIndex: tableHeaderRowIndex,
+                rowCount: tableRowCount - treeLeafsLevel - 1,
+            });
+        }
     }
 
     private static buildSheetImageMap(sheetIndex: number, image: ExcelCalculatedImage): void {
