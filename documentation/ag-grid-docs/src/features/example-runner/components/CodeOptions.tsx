@@ -131,10 +131,8 @@ export const CodeOptions = ({ id, internalFramework }: { id: string; internalFra
     const showTypescriptSelector = internalFramework === 'vanilla' || internalFramework === 'typescript';
     const showReactSelector = isReactInternalFramework(internalFramework);
     const showVueSelector = isVueInternalFramework(internalFramework);
-    const nothingToShow = !(showTypescriptSelector || showReactSelector || showVueSelector);
 
-    return nothingToShow ? null : (
-        <div className={styles.outer}>
+    return <div className={styles.outer}>
             {showTypescriptSelector && (
                 <CodeOptionSelector id={id} type="typescript" internalFramework={internalFramework} />
             )}
@@ -144,5 +142,4 @@ export const CodeOptions = ({ id, internalFramework }: { id: string; internalFra
 
             {internalFramework !== 'vanilla' && <ImportTypeSelector id={id} />}
         </div>
-    );
 };
