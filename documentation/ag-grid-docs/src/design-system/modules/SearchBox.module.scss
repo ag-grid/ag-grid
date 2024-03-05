@@ -4,6 +4,15 @@
     display: flex;
     border-radius: var(--radius-md);
     cursor: text;
+    #{$selector-darkmode} & {
+        input {
+            background: color-mix(in srgb, var(--color-bg-primary), var(--color-fg-primary) 6%);
+
+            &::placeholder {
+                color: rgba(255, 255, 255, 0.6);
+            }
+        }
+    }
 }
 
 .searchIcon {

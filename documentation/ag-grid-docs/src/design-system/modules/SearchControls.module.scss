@@ -12,7 +12,11 @@
     gap: $spacing-size-4;
     padding: $spacing-size-4 $spacing-size-6;
     height: var(--controls-height);
-    border-top: 1px solid var(--color-border-primary);
+    border-top: 1px solid var(--color-border-secondary);
+
+    #{$selector-darkmode} & {
+        border-top: 1px solid var(--color-border-primary);
+    }
 
     @media screen and (max-width: $breakpoint-docs-search-small) {
         display: none;
