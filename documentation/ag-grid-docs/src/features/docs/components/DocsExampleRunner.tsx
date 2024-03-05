@@ -40,7 +40,7 @@ const queryOptions = {
 
 const DocsExampleRunnerInner = ({ name, title, exampleType, exampleHeight, framework, pageName }: Props) => {
     const docsInternalFramework = useStore($internalFramework);
-    const internalFramework = exampleType === 'typescript' ? (TYPESCRIPT_INTERNAL_FRAMEWORKS.includes(docsInternalFramework) ? 'typescript' : 'vanilla' ) : docsInternalFramework;
+    const internalFramework = exampleType === 'typescript' ? 'typescript' : docsInternalFramework;
     const importType = useImportType();
     const [initialSelectedFile, setInitialSelectedFile] = useState();
     const [exampleUrl, setExampleUrl] = useState<string>();
