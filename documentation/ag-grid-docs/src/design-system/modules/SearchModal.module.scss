@@ -60,4 +60,8 @@
     border-radius: 12px;
     box-shadow: 0px 25px 50px -12px rgba(16, 24, 40, 0.25);
     overflow: hidden;
+
+    #{$selector-darkmode} & {
+        background: color-mix(in srgb, var(--color-bg-primary), var(--color-fg-primary) 6%);
+    }
 }
