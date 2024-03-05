@@ -80,40 +80,52 @@ export class TabbedLayout extends TabGuardComp {
     protected onTabKeyDown(e: KeyboardEvent) {
         if (e.defaultPrevented) { return; }
 
-        const { focusService, eHeader, eBody, activeItem } = this;
+        const { focusService, eHeader, eBody, activeItem, params } = this;
+        const { suppressTrapFocus } = params;
         const eDocument = this.gridOptionsService.getDocument();
         const activeElement = eDocument.activeElement as HTMLElement;
         const target = e.target as HTMLElement;
-
-        e.preventDefault();
+        const backwards = e.shiftKey;
 
         if (eHeader.contains(activeElement)) {
-            // focus is in header, move into body of popup
-            this.focusBody(e.shiftKey);
+            e.preventDefault();
+            if (suppressTrapFocus && backwards) {
+                this.focusService.findFocusableElementBeforeTabGuard(this.gridOptionsService.getDocument().body, target)?.focus();
+            } else {
+                // focus is in header, move into body of popup
+                this.focusBody(e.shiftKey);
+            }
             return;
         }
 
         let nextEl: HTMLElement | null = null;
 
         if (focusService.isTargetUnderManagedComponent(eBody, target)) {
-            if (e.shiftKey) {
+            if (backwards) {
                 nextEl = this.focusService.findFocusableElementBeforeTabGuard(eBody, target);
             }
 
-            if (!nextEl) {
+            if (!nextEl && !suppressTrapFocus) {
                 nextEl = activeItem.eHeaderButton;
             }
         }
 
         if (!nextEl && eBody.contains(activeElement)) {
-            nextEl = focusService.findNextFocusableElement(eBody, false, e.shiftKey);
+            nextEl = focusService.findNextFocusableElement(eBody, false, backwards);
 
             if (!nextEl) {
-                this.focusHeader();
+                if (suppressTrapFocus && !backwards) {
+                    e.preventDefault();
+                    this.forceFocusOutOfContainer(backwards);
+                } else {
+                    e.preventDefault();
+                    this.focusHeader();
+                }
             }
         }
 
         if (nextEl) {
+            e.preventDefault();
             nextEl.focus();
         }
     }
@@ -126,7 +138,7 @@ export class TabbedLayout extends TabGuardComp {
         }
     }
 
-    private focusHeader(): void {
+    public focusHeader(): void {
         this.activeItem.eHeaderButton.focus();
     }
 
@@ -192,7 +204,9 @@ export class TabbedLayout extends TabGuardComp {
             this.eBody.appendChild(body);
             const onlyUnmanaged = !this.focusService.isKeyboardMode();
 
-            this.focusService.focusInto(this.eBody, false, onlyUnmanaged);
+            if (!this.params.suppressFocusBodyOnOpen) {
+                this.focusService.focusInto(this.eBody, false, onlyUnmanaged);
+            }
 
             if (tabbedItem.afterAttachedCallback) {
                 tabbedItem.afterAttachedCallback(this.afterAttachedParams);
@@ -230,6 +244,8 @@ export interface TabbedLayoutParams {
     keepScrollPosition?: boolean;
     onItemClicked?: (event: { item: TabbedItem }) => void;
     onActiveItemClicked?: () => void;
+    suppressFocusBodyOnOpen?: boolean;
+    suppressTrapFocus?: boolean;
 }
 
 export interface TabbedItem {

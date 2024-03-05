@@ -33,9 +33,10 @@ export class AgPillSelect<TValue = string | null> extends Component {
     private static TEMPLATE = /* html */`<div class="ag-pill-select" role="presentation"></div>`;
 
     private dropZonePanel: PillSelectDropZonePanel<TValue>;
-    private eSelect: AgSelect<TValue>;
+    private eSelect?: AgSelect<TValue>;
 
     private readonly config: AgPillSelectParams<TValue>;
+    private valueList: TValue[];
     private selectedValues: TValue[];
     private valueFormatter: (value: TValue) => string;
     private onValuesChange?: (params: AgPillSelectChangeParams<TValue>) => void;
@@ -44,8 +45,9 @@ export class AgPillSelect<TValue = string | null> extends Component {
         super(AgPillSelect.TEMPLATE);
         this.config = config ?? {};
 
-        const { selectedValueList, valueFormatter } = this.config;
+        const { selectedValueList, valueFormatter, valueList } = this.config;
         this.selectedValues = selectedValueList ?? [];
+        this.valueList = valueList ?? [];
         this.valueFormatter = valueFormatter ?? (value => _.escapeString(value as any)!);
     }
 
@@ -58,7 +60,7 @@ export class AgPillSelect<TValue = string | null> extends Component {
                 setValues: values => this.updateValues(values),
                 isDraggable: () => this.selectedValues.length > 1
             },
-            this.valueFormatter,
+            value => this.valueFormatter(value),
             ariaLabel!,
             dragSourceId
         ));
@@ -70,39 +72,59 @@ export class AgPillSelect<TValue = string | null> extends Component {
         }
     }
 
-    private initSelect(): void {
-        const { valueList, selectPlaceholder: placeholder } = this.config;
-        const filteredValueList = valueList?.filter(value => !this.selectedValues.includes(value));
-        const disabled = !filteredValueList?.length;
+    public setValues(valueList: TValue[], selectedValues: TValue[]): this {
+        const { added, removed, updated} = this.getChanges(this.valueList, valueList)
+        let refreshSelect = false;
+        if (added.length || removed.length || updated.length) {
+            refreshSelect = true;
+        }
+        this.valueList = valueList;
+        this.updateValues(selectedValues, refreshSelect);
+        return this;
+    }
+
+    public setValueFormatter(valueFormatter: (value: TValue) => string): this {
+        this.valueFormatter = valueFormatter;
+        return this;
+    }
+
+    private initSelect(): boolean {
+        const { selectPlaceholder: placeholder } = this.config;
+        const filteredValueList = this.valueList.filter(value => !this.selectedValues.includes(value));
+        if (!filteredValueList.length) {
+            return false;
+        }
         this.eSelect = this.createBean(new AgSelect({
             options: filteredValueList?.map(value => ({value, text: this.valueFormatter(value)})),
             placeholder,
             onValueChange: value => this.addValue(value),
-            disabled,
             pickerIcon: 'chartsMenuAdd'
         }));
         this.getGui().appendChild(this.eSelect.getGui());
+        return true;
     }
 
     private addValue(value: TValue): void {
         this.dropZonePanel.addItem(value);
     }
 
-    private updateValues(values: TValue[]): void {
+    private updateValues(values: TValue[], forceRefreshSelect?: boolean): void {
         const previousSelectedValues = this.selectedValues;
         this.selectedValues = values;
         const changes = this.getChanges(previousSelectedValues, values);
-        const refreshSelect = changes.added.length || changes.removed.length;
+        const refreshSelect = forceRefreshSelect || changes.added.length || changes.removed.length;
         const activeElement = this.gridOptionsService.getDocument().activeElement;
-        let hasFocus = this.eSelect.getGui().contains(activeElement);
-        if (refreshSelect) {
-            this.refreshSelect();
-        }
+        let hasFocus = this.eSelect?.getGui().contains(activeElement);
+        this.onValuesChange?.(changes);
+        const emptyRefreshedSelect = refreshSelect ? !this.refreshSelect() : false;
         this.dropZonePanel.refreshGui();
         if (refreshSelect && hasFocus) {
-            this.eSelect.getFocusableElement().focus();
+            if (emptyRefreshedSelect) {
+                this.dropZonePanel.focusList(true);
+            } else {
+                this.eSelect?.getFocusableElement().focus();
+            }
         }
-        this.onValuesChange?.(changes);
     }
 
     private getChanges(previousSelectedValues: TValue[], newSelectedValues: TValue[]): AgPillSelectChangeParams<TValue> {
@@ -112,10 +134,12 @@ export class AgPillSelect<TValue = string | null> extends Component {
         return { added, removed, updated, selected: newSelectedValues };
     }
 
-    private refreshSelect(): void {
-        _.removeFromParent(this.eSelect.getGui());
-        this.destroyBean(this.eSelect);
-        this.initSelect();
+    private refreshSelect(): boolean {
+        if (this.eSelect) {
+            _.removeFromParent(this.eSelect.getGui());
+            this.destroyBean(this.eSelect);
+        }
+        return this.initSelect();
     }
 
     protected destroy(): void {

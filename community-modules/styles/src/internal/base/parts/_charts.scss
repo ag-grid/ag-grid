@@ -342,6 +342,13 @@
         }
     }
 
+    .ag-chart-menu-toolbar-button {
+        border: 0;
+        background-color: unset;
+        padding: 0 2px;
+        border-radius: 1px;
+    }
+
     .ag-chart-mini-thumbnail {
         border: 1px solid var(--ag-secondary-border-color);
         border-radius: 5px;

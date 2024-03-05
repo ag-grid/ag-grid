@@ -32,7 +32,7 @@ export abstract class DragDataPanel extends Component {
     }
 
     public refreshColumnComps(cols: ColState[]): boolean {
-        if (_.areEqual(_.keys(this.columnComps), cols.map(({ colId }) => colId))) {
+        if (!_.areEqual(_.keys(this.columnComps), cols.map(({ colId }) => colId))) {
             return false;
         }
 

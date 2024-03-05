@@ -99,7 +99,7 @@ export class ChartMenu extends Component {
             if (e.chartId === this.chartController.getChartId()) {
                 const showDefaultToolPanel = Boolean(this.gridOptionsService.get('chartToolPanelsDef')?.defaultToolPanel);
                 if (showDefaultToolPanel) {
-                    this.showMenu(this.defaultPanel, false);
+                    this.showMenu(this.defaultPanel, false, true);
                 }
             }
         });
@@ -195,7 +195,7 @@ export class ChartMenu extends Component {
             const defaultToolPanel = this.gridOptionsService.get('chartToolPanelsDef')?.defaultToolPanel;
             this.defaultPanel = (defaultToolPanel && CHART_TOOL_PANEL_MENU_OPTIONS[defaultToolPanel]) || this.panels[0];
 
-            this.chartToolbarOptions = this.panels.length > 0
+            this.chartToolbarOptions = this.panels.length > 0 && this.legacyFormat
                 // Only one panel is required to display menu icon in toolbar
                 ? [this.panels[0], ...chartToolbarOptions]
                 : chartToolbarOptions;
@@ -319,12 +319,15 @@ export class ChartMenu extends Component {
         });
     }
 
-    private showContainer() {
+    private showContainer(suppressFocus?: boolean) {
         if (!this.menuPanel) { return; }
 
         this.menuVisible = true;
         this.showParent(this.menuPanel.getWidth()!);
         this.refreshMenuClasses();
+        if (!suppressFocus) {
+            this.tabbedMenu.focusHeader();
+        }
     }
 
     private toggleMenu() {
@@ -339,14 +342,15 @@ export class ChartMenu extends Component {
         /**
          * Whether to animate the menu opening
          */
-        animate: boolean = true
+        animate: boolean = true,
+        suppressFocus?: boolean
     ): void {
         if (!animate) {
             this.eMenuPanelContainer.classList.add('ag-no-transition');
         }
 
         if (this.menuPanel && !panel) {
-            this.showContainer();
+            this.showContainer(suppressFocus);
         } else {
             const menuPanel = panel || this.defaultPanel;
             let tab = this.panels.indexOf(menuPanel);
@@ -357,9 +361,9 @@ export class ChartMenu extends Component {
     
             if (this.menuPanel) {
                 this.tabbedMenu.showTab(tab);
-                this.showContainer();
+                this.showContainer(suppressFocus);
             } else {
-                this.createMenuPanel(tab).then(this.showContainer.bind(this));
+                this.createMenuPanel(tab).then(() => this.showContainer(suppressFocus));
             }
         }
 

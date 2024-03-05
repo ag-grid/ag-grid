@@ -49,6 +49,10 @@ export class ChartMenuListFactory extends BeanStub {
             closedCallback: () => {
                 this.destroyBean(chartMenuList);
                 this.activeChartMenuList = undefined;
+                const document = this.gridOptionsService.getDocument();
+                if (document.activeElement === document.body) {
+                    eventSource.focus({ preventScroll: true });
+                }
             },
             afterGuiAttached: params => chartMenuList.afterGuiAttached(params),
             positionCallback: () => {
@@ -106,7 +110,7 @@ class ChartMenuList extends Component {
 
     constructor(private readonly menuItems: (MenuItemDef | string)[]) {
         super(/* html */`
-            <div ref="eChartsMenu" role="presentation" class="ag-menu ag-charts-menu"></div>
+            <div ref="eChartsMenu" role="presentation" class="ag-menu ag-chart-menu-popup"></div>
         `);
     }
 

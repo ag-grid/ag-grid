@@ -39,13 +39,7 @@ export class ChartToolbar extends Component {
 
         buttons.forEach(buttonConfig => {
             const { buttonName, iconName, callback } = buttonConfig;
-            const buttonEl = _.createIconNoSpan(
-                iconName,
-                this.gridOptionsService,
-                undefined,
-                true
-            )!;
-            buttonEl.classList.add('ag-chart-menu-icon');
+            const buttonEl = this.createButton(iconName);
 
             const tooltipTitle = this.chartTranslationService.translate(buttonName + 'ToolbarTooltip' as ChartTranslationKey);
             if (tooltipTitle && buttonEl instanceof HTMLElement) {
@@ -58,6 +52,29 @@ export class ChartToolbar extends Component {
 
             menuEl.appendChild(buttonEl);
         });
+    }
+
+    private createButton(iconName: string): Element {
+        let buttonEl = _.createIconNoSpan(
+            iconName,
+            this.gridOptionsService,
+            undefined,
+            true
+        )!;
+        buttonEl.classList.add('ag-chart-menu-icon');
+
+        if (!this.gridOptionsService.get('legacyChartsMenu')) {
+            buttonEl = this.wrapButton(buttonEl);
+        }
+
+        return buttonEl;
+    }
+
+    private wrapButton(buttonEl: Element): HTMLElement {
+        const wrapperEl = this.gridOptionsService.getDocument().createElement('button');
+        wrapperEl.appendChild(buttonEl);
+        wrapperEl.classList.add('ag-chart-menu-toolbar-button');
+        return wrapperEl;
     }
 
     protected destroy(): void {

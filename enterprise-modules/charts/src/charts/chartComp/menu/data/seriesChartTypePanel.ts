@@ -14,7 +14,6 @@ import { ColState } from "../../model/chartDataModel";
 import { ChartTranslationKey, ChartTranslationService } from "../../services/chartTranslationService";
 
 export class SeriesChartTypePanel extends Component {
-    // can't wire group comp unless done in a major version
     private static TEMPLATE = /* html */`<div id="seriesChartTypeGroup"></div>`;
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;

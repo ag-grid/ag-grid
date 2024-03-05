@@ -35,7 +35,7 @@ export class ChartMenuUtils extends BeanStub {
 
     public getDefaultNumberInputParams(
         expression: string,
-        labelKey: string,
+        labelKey: ChartTranslationKey,
         options?: {
             precision?: number,
             step?: number,
@@ -97,7 +97,7 @@ export class ChartMenuUtils extends BeanStub {
 
     public getDefaultCheckboxParams(
         expression: string,
-        labelKey: string,
+        labelKey: ChartTranslationKey,
         options?: {
             readOnly?: boolean,
             passive?: boolean,

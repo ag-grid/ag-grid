@@ -56,7 +56,9 @@ export class TabbedChartMenu extends Component {
         this.tabbedLayout = new TabbedLayout({
             items: this.tabs,
             cssClass: 'ag-chart-tabbed-menu',
-            keepScrollPosition: true
+            keepScrollPosition: true,
+            suppressFocusBodyOnOpen: true,
+            suppressTrapFocus: true
         });
         this.getContext().createBean(this.tabbedLayout);
     }
@@ -100,6 +102,10 @@ export class TabbedChartMenu extends Component {
 
     public getGui(): HTMLElement {
         return this.tabbedLayout && this.tabbedLayout.getGui();
+    }
+
+    public focusHeader(): void {
+        this.tabbedLayout?.focusHeader();
     }
 
     protected destroy(): void {

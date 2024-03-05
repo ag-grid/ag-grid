@@ -428,6 +428,11 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         if (el) { el.focus(); }
     }
 
+    public focusList(fromBottom?: boolean): void {
+        const index = fromBottom ? this.childPillComponents.length - 1 : 0;
+        this.restoreFocus(index, this.getFocusableElement());
+    }
+
     private getNonGhostItems(): TItem[] {
         const existingItems = this.getExistingItems();
 

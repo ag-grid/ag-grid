@@ -38,10 +38,10 @@ export class ChartDataPanel extends Component {
 
     @PostConstruct
     public init() {
+        this.createAutoScrollService();
         this.updatePanels();
         this.addManagedListener(this.chartController, ChartController.EVENT_CHART_MODEL_UPDATE, this.updatePanels.bind(this));
         this.addManagedListener(this.chartController, ChartController.EVENT_CHART_API_UPDATE, this.updatePanels.bind(this));
-        this.createAutoScrollService();
     }
 
     protected destroy(): void {
@@ -55,13 +55,24 @@ export class ChartDataPanel extends Component {
 
         this.chartType = this.chartController.getChartType();
 
-        if (this.chartType !== currentChartType) {
-            this.recreatePanels(dimensionCols, valueCols);
-        } else {
+        if (this.canRefresh(currentChartType, this.chartType)) {
             this.categoriesDataPanel.refresh(dimensionCols);
             this.seriesDataPanel.refresh(valueCols);
             this.seriesChartTypePanel?.refresh(valueCols);
+        } else {
+            this.recreatePanels(dimensionCols, valueCols);
         }
+    }
+
+    private canRefresh(oldChartType: ChartType | undefined, newChartType: ChartType): boolean {
+        if (oldChartType === newChartType) {
+            return true;
+        }
+        const isCombo = (chartType: ChartType) => ['columnLineCombo', 'areaColumnCombo', 'customCombo'].includes(chartType);
+        if (isCombo(oldChartType!) && isCombo(newChartType)) {
+            return true;
+        }
+        return false;
     }
 
     private recreatePanels(dimensionCols: ColState[], valueCols: ColState[]): void {

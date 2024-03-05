@@ -19,12 +19,12 @@ import { isHierarchical } from "../../utils/seriesTypeMapper";
 import { DragDataPanel } from "./dragDataPanel";
 
 export class CategoriesDataPanel extends DragDataPanel {
-    // can't wire group comp unless done in a major version
     private static TEMPLATE = /* html */`<div id="categoriesGroup"></div>`;
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
     private categoriesGroupComp: AgGroupComponent;
+    private categoriesSelect?: AgPillSelect<ColState>;
 
     constructor(
         chartController: ChartController,
@@ -59,7 +59,7 @@ export class CategoriesDataPanel extends DragDataPanel {
                 this.recreate(dimensionCols);
             }
         } else {
-            // TODO non-legacy
+            this.categoriesSelect?.setValues(dimensionCols, dimensionCols.filter(col => col.selected));
         }
     }
 
@@ -168,6 +168,7 @@ export class CategoriesDataPanel extends DragDataPanel {
 
     protected destroy(): void {
         this.categoriesGroupComp = this.destroyBean(this.categoriesGroupComp)!;
+        this.categoriesSelect = undefined;
         super.destroy();
     }
 }

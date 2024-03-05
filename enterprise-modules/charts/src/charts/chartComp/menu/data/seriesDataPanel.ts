@@ -17,12 +17,12 @@ import { ChartOptionsService } from "../../services/chartOptionsService";
 import { DragDataPanel } from "./dragDataPanel";
 
 export class SeriesDataPanel extends DragDataPanel {
-    // can't wire group comp unless done in a major version
     private static TEMPLATE = /* html */`<div id="seriesGroup"></div>`;
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
     private seriesGroupComp: AgGroupComponent;
+    private seriesSelect?: AgPillSelect<ColState>;
 
     constructor(
         chartController: ChartController,
@@ -81,7 +81,8 @@ export class SeriesDataPanel extends DragDataPanel {
                 this.recreate(valueCols);
             }
         } else {
-            // TODO - compare array contents
+            this.seriesSelect?.setValueFormatter(this.generateGetSeriesLabel());
+            this.seriesSelect?.setValues(valueCols, valueCols.filter(col => col.selected));
         }
     }
 
@@ -97,7 +98,7 @@ export class SeriesDataPanel extends DragDataPanel {
         const getSeriesLabel = this.generateGetSeriesLabel();
 
         const selectedValueList = columns.filter(col => col.selected);
-        const comp = this.seriesGroupComp.createManagedBean(new AgPillSelect<ColState>({
+        this.seriesSelect = this.seriesGroupComp.createManagedBean(new AgPillSelect<ColState>({
             valueList: columns,
             selectedValueList,
             valueFormatter: getSeriesLabel,
@@ -105,7 +106,7 @@ export class SeriesDataPanel extends DragDataPanel {
             dragSourceId: 'seriesSelect',
             onValuesChange: params => this.onValueChange(params)
         }));
-        this.seriesGroupComp.addItem(comp);
+        this.seriesGroupComp.addItem(this.seriesSelect);
     }
 
     private createLegacySeriesGroup(columns: ColState[]): void {
@@ -186,6 +187,7 @@ export class SeriesDataPanel extends DragDataPanel {
 
     protected destroy(): void {
         this.seriesGroupComp = this.destroyBean(this.seriesGroupComp)!;
+        this.seriesSelect = undefined;
         super.destroy();
     }
 }
