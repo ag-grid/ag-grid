@@ -35,7 +35,7 @@ const socialImage = urlWithBaseUrl('/images/ag-grid-social.png');
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <meta name="description" content="Astro description" />
+        <meta name="description" content={description} />
         <meta name="viewport" content="width=device-width" />
         {
             getFavIconsData().map(({ size, icon }: any) => (

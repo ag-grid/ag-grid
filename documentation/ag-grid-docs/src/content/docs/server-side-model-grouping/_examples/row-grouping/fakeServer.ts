@@ -97,7 +97,6 @@ export function FakeServer(allData) {
         if (request.endRow == undefined || request.startRow == undefined) { return ''; }
 
         var blockSize = request.endRow - request.startRow;
-
         return ' LIMIT ' + blockSize + ' OFFSET ' + request.startRow;
     }
 

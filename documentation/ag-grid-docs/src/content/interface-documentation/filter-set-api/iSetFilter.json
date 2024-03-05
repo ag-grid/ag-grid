@@ -7,7 +7,7 @@
         "refreshFilterValues": {
             "more": {
                 "name": "Refreshing Values",
-                "url": "/filter-set-filter-list/#refreshing-values"
+                "url": "./filter-set-filter-list/#refreshing-values"
             }
         }
     }

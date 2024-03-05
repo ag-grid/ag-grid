@@ -3,7 +3,7 @@ import { FrameworkSelectorInsideDocs } from '@components/framework-selector-insi
 import { Icon } from '@components/icon/Icon';
 import styles from '@design-system/modules/Header.module.scss';
 import { getFrameworkDisplayText } from '@utils/framework';
-import { useUpdateInternalFrameworkFromFramework } from '@utils/hooks/useUpdateInternalFrameworkFromFramework';
+import { useSyncFrameworkStoreState } from '@utils/hooks/useSyncFrameworkStoreState';
 import type { FunctionComponent } from 'react';
 
 interface Props {
@@ -15,9 +15,9 @@ interface Props {
 }
 
 export const Header: FunctionComponent<Props> = ({ title, framework, isEnterprise, suppressFrameworkHeader, path }) => {
-    // Update localstorage framework so it is in sync with url framework
+    // Update framework store so it is in sync with the page
     // Done here, because it's run on all docs pages
-    useUpdateInternalFrameworkFromFramework(framework);
+    useSyncFrameworkStoreState(framework);
 
     return (
         <header className={styles.docsPageHeader}>

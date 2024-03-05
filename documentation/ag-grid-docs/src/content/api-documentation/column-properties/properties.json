@@ -12,46 +12,46 @@
             },
             "more": {
                 "name": "Accessing Row Data Values",
-                "url": "/column-definitions/#accessing-row-data-values"
+                "url": "./column-definitions/#accessing-row-data-values"
             }
         },
         "colId": {},
         "type": {
             "more": {
                 "name": "Column Types",
-                "url": "/column-definitions/#default-column-definitions"
+                "url": "./column-definitions/#default-column-definitions"
             }
         },
         "cellDataType": {
             "more": {
                 "name": "Cell Data Types",
-                "url": "/cell-data-types/"
+                "url": "./cell-data-types/"
             }
         },
         "valueGetter": {
             "description": "Function or [expression](./cell-expressions/#column-definition-expressions). Gets the value from your data for display.",
             "more": {
                 "name": "Value Getters",
-                "url": "/value-getters/"
+                "url": "./value-getters/"
             }
         },
         "valueFormatter": {
             "more": {
                 "name": "Value Formatters",
-                "url": "/value-formatters/"
+                "url": "./value-formatters/"
             }
         },
         "refData": {
             "more": {
                 "name": "Using the 'refData' Property",
-                "url": "/reference-data/#using-the-refdata-property"
+                "url": "./reference-data/#using-the-refdata-property"
             }
         },
         "keyCreator": {},
         "equals": {
             "more": {
                 "name": "Change Detection Comparing Values",
-                "url": "/change-detection/#comparing-values"
+                "url": "./change-detection/#comparing-values"
             }
         },
         "checkboxSelection": {},
@@ -62,27 +62,27 @@
         "icons": {
             "more": {
                 "name": "Custom Icons",
-                "url": "/custom-icons/#set-the-icons-through-gridoptions-javascript"
+                "url": "./custom-icons/#set-the-icons-through-gridoptions-javascript"
             }
         },
         "suppressNavigable": {},
         "suppressKeyboardEvent": {
             "more": {
                 "name": "Suppress Keyboard Events",
-                "url": "/keyboard-navigation/#suppresskeyboardevent"
+                "url": "./keyboard-navigation/#suppresskeyboardevent"
             }
         },
         "suppressPaste": {},
         "suppressFillHandle": {
             "more": {
                 "name": "Suppressing the Fill Handle",
-                "url": "/range-selection-fill-handle/#suppressing-the-fill-handle"
+                "url": "./range-selection-fill-handle/#suppressing-the-fill-handle"
             }
         },
         "contextMenuItems": {
             "more": {
                 "name": "Configuring the Context Menu",
-                "url": "/context-menu/#configuring-the-context-menu"
+                "url": "./context-menu/#configuring-the-context-menu"
             }
         }
     },
@@ -105,14 +105,14 @@
         "tooltipValueGetter": {
             "more": {
                 "name": "Tooltip Component",
-                "url": "/tooltips"
+                "url": "./tooltips"
             }
         },
         "tooltipComponent": {
             "description": "Provide your own tooltip component for the column.",
             "more": {
                 "name": "Tooltip Component",
-                "url": "/tooltips"
+                "url": "./tooltips"
             }
         },
         "tooltipComponentParams": {}
@@ -122,7 +122,7 @@
             "displayName": "Columns: Header",
             "page": {
                 "name": "Column Headers",
-                "url": "/column-headers/"
+                "url": "./column-headers/"
             }
         },
         "headerName": {},
@@ -135,7 +135,7 @@
             "description": "The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used.",
             "more": {
                 "name": "Header Component",
-                "url": "/column-headers/"
+                "url": "./column-headers/"
             }
         },
         "headerComponentParams": {},
@@ -143,73 +143,73 @@
         "autoHeaderHeight": {
             "more": {
                 "name": "Auto Header Height",
-                "url": "/column-headers/"
+                "url": "./column-headers/"
             }
         },
         "menuTabs": {
             "more": {
                 "name": "Legacy Tabbed Column Menu",
-                "url": "/column-menu/#legacy-tabbed-column-menu"
+                "url": "./column-menu/#legacy-tabbed-column-menu"
             }
         },
         "columnChooserParams": {
             "more": {
                 "name": "Customising the Column Chooser",
-                "url": "/column-menu/#customising-the-column-chooser"
+                "url": "./column-menu/#customising-the-column-chooser"
             }
         },
         "mainMenuItems": {
             "more": {
                 "name": "Customising the Menu Items",
-                "url": "/column-menu/#customising-the-menu-items"
+                "url": "./column-menu/#customising-the-menu-items"
             }
         },
         "suppressHeaderMenuButton": {
             "more": {
                 "name": "Customising the Column Menu",
-                "url": "/column-menu/#customising-the-column-menu"
+                "url": "./column-menu/#customising-the-column-menu"
             }
         },
         "suppressHeaderFilterButton": {
             "more": {
                 "name": "Customising the Column Menu",
-                "url": "/column-menu/#customising-the-column-menu"
+                "url": "./column-menu/#customising-the-column-menu"
             }
         },
         "suppressHeaderContextMenu": {
             "more": {
                 "name": "Customising the Column Menu",
-                "url": "/column-menu/#customising-the-column-menu"
+                "url": "./column-menu/#customising-the-column-menu"
             }
         },
         "suppressHeaderKeyboardEvent": {
             "more": {
                 "name": "Suppress Keyboard Events",
-                "url": "/keyboard-navigation/#suppressheaderkeyboardevent"
+                "url": "./keyboard-navigation/#suppressheaderkeyboardevent"
             }
         },
         "headerCheckboxSelection": {
             "more": {
                 "name": "Header Checkbox Selection",
-                "url": "/row-selection/#header-checkbox-selection"
+                "url": "./row-selection/#header-checkbox-selection"
             }
         },
         "headerCheckboxSelectionFilteredOnly": {
             "more": {
                 "name": "Select Everything or Just Filtered",
-                "url": "/row-selection/#select-everything-or-just-filtered"
+                "url": "./row-selection/#select-everything-or-just-filtered"
             }
         },
         "headerCheckboxSelectionCurrentPageOnly": {
             "more": {
                 "name": "Select Everything on the Current Page",
-                "url": "/row-selection/#select-only-the-current-page"
+                "url": "./row-selection/#select-only-the-current-page"
             }
         },
         "suppressFloatingFilterButton": {
             "more": {
                 "name": "Floating Filters",
-                "url": "/floating-filters/"
+                "url": "./floating-filters/"
             }
         }
     },
@@ -231,7 +231,7 @@
         "useValueFormatterForExport": {
             "more": {
                 "name": "Using Value Formatters with Other Grid Features",
-                "url": "/value-formatters/#use-value-formatter-for-export"
+                "url": "./value-formatters/#use-value-formatter-for-export"
             }
         }
     },
@@ -240,7 +240,7 @@
             "displayName": "Columns: Width",
             "page": {
                 "name": "Column Sizing",
-                "url": "/column-sizing/"
+                "url": "./column-sizing/"
             }
         },
         "width": {},
@@ -250,7 +250,7 @@
         "flex": {
             "more": {
                 "name": "Column Flex",
-                "url": "/column-sizing/#column-flex"
+                "url": "./column-sizing/#column-flex"
             }
         },
         "initialFlex": {},
@@ -263,7 +263,7 @@
             "displayName": "Columns: Pinned",
             "page": {
                 "name": "Column Pinning",
-                "url": "/column-pinning/"
+                "url": "./column-pinning/"
             }
         },
         "pinned": {},
@@ -285,38 +285,38 @@
         "cellStyle": {
             "more": {
                 "name": "Cell Style",
-                "url": "/cell-styles/#cell-style"
+                "url": "./cell-styles/#cell-style"
             }
         },
         "cellClass": {
             "more": {
                 "name": "Cell Class",
-                "url": "/cell-styles/#cell-class"
+                "url": "./cell-styles/#cell-class"
             }
         },
         "cellClassRules": {
             "more": {
                 "name": "Cell Class Rules",
-                "url": "/cell-styles/#cell-class-rules"
+                "url": "./cell-styles/#cell-class-rules"
             }
         },
         "cellRenderer": {
             "description": "Provide your own cell Renderer component for this column's cells.",
             "more": {
                 "name": "Cell Renderer",
-                "url": "/component-cell-renderer/"
+                "url": "./component-cell-renderer/"
             }
         },
         "cellRendererParams": {
             "more": {
                 "name": "Cell Renderer Params",
-                "url": "/component-cell-renderer/#custom-props"
+                "url": "./component-cell-renderer/#custom-props"
             }
         },
         "cellRendererSelector": {
             "more": {
                 "name": "Many Renderers One Column",
-                "url": "/component-cell-renderer/#dynamic-selection"
+                "url": "./component-cell-renderer/#dynamic-selection"
             }
         },
         "autoHeight": {},
@@ -329,7 +329,7 @@
             "displayName": "Columns: Sort",
             "page": {
                 "name": "Row Sorting",
-                "url": "/row-sorting/"
+                "url": "./row-sorting/"
             }
         },
         "sortable": {},
@@ -346,20 +346,20 @@
             "displayName": "Columns: Filter",
             "page": {
                 "name": "Filtering",
-                "url": "/filtering-overview/"
+                "url": "./filtering-overview/"
             }
         },
         "filter": {
             "description": "Filter component to use for this column. <br/>Set to `true` to use the default filter. <br/>Set to the name of a [Provided Filter](./filtering/#column-filter-types) or set to a `IFilterComp`.",
             "more": {
                 "name": "Column Filters",
-                "url": "/filtering/"
+                "url": "./filtering/"
             }
         },
         "filterParams": {
             "more": {
                 "name": "Filter Parameters",
-                "url": "/filtering/"
+                "url": "./filtering/"
             }
         },
         "filterValueGetter": {
@@ -368,25 +368,25 @@
         "getQuickFilterText": {
             "more": {
                 "name": "Overriding the Quick Filter Value",
-                "url": "/filter-quick/#overriding-the-quick-filter-value"
+                "url": "./filter-quick/#overriding-the-quick-filter-value"
             }
         },
         "floatingFilter": {
             "more": {
                 "name": "Floating Filter",
-                "url": "/floating-filters"
+                "url": "./floating-filters"
             }
         },
         "floatingFilterComponent": {
             "more": {
                 "name": "Floating Filter Component",
-                "url": "/component-floating-filter/"
+                "url": "./component-floating-filter/"
             }
         },
         "floatingFilterComponentParams": {
             "more": {
                 "name": "Floating Filter Parameters",
-                "url": "/component-floating-filter/#example-custom-floating-filter"
+                "url": "./component-floating-filter/#example-custom-floating-filter"
             }
         },
         "suppressFiltersToolPanel": {}
@@ -396,7 +396,7 @@
             "displayName": "Columns: Editing",
             "page": {
                 "name": "Cell Editing",
-                "url": "/cell-editing/"
+                "url": "./cell-editing/"
             }
         },
         "editable": {},
@@ -404,28 +404,28 @@
             "description": "Function or [expression](./cell-expressions/#column-definition-expressions). Custom function to modify your data based off the new value for saving. Return `true` if the data changed.",
             "more": {
                 "name": "Saving Values",
-                "url": "/value-setters/"
+                "url": "./value-setters/"
             }
         },
         "valueParser": {
             "description": "Function or [expression](./cell-expressions/#column-definition-expressions). Parses the value for saving.",
             "more": {
                 "name": "Parsing Values",
-                "url": "/value-parsers/"
+                "url": "./value-parsers/"
             }
         },
         "cellEditor": {
             "description": "Provide your own cell editor component for this column's cells.",
             "more": {
                 "name": "Cell Editors",
-                "url": "/cell-editors/"
+                "url": "./cell-editors/"
             }
         },
         "cellEditorParams": {},
         "cellEditorSelector": {
             "more": {
                 "name": "Many Editors One Column",
-                "url": "/cell-editors/#many-editors-one-column"
+                "url": "./cell-editors/#many-editors-one-column"
             }
         },
         "cellEditorPopup": {},
@@ -434,7 +434,7 @@
         "useValueParserForImport": {
             "more": {
                 "name": "Using Value Parsers with Other Grid Features",
-                "url": "/value-parsers/#use-value-parser-for-import"
+                "url": "./value-parsers/#use-value-parser-for-import"
             }
         }
     },
@@ -451,7 +451,7 @@
         "showRowGroup": {
             "more": {
                 "name": "Custom Group Columns",
-                "url": "/grouping-custom-group-columns/"
+                "url": "./grouping-custom-group-columns/"
             }
         },
         "enableValue": {},
@@ -477,7 +477,7 @@
             "displayName": "Columns: Row Dragging",
             "page": {
                 "name": "Row Dragging",
-                "url": "/row-dragging/"
+                "url": "./row-dragging/"
             }
         },
         "rowDrag": {},
@@ -501,7 +501,7 @@
             "description": "For column groups, the property `children` is mandatory. When the grid sees `children` it knows it's a column group.",
             "page": {
                 "name": "Column Groups",
-                "url": "/column-groups/"
+                "url": "./column-groups/"
             }
         },
         "children": {
@@ -520,7 +520,7 @@
             "description": "Provide your own tooltip component for the column group.",
             "more": {
                 "name": "Tooltip Component",
-                "url": "/tooltips"
+                "url": "./tooltips"
             }
         },
         "tooltipComponentParams": {}
@@ -530,7 +530,7 @@
             "displayName": "Groups:  Header",
             "page": {
                 "name": "Column Headers",
-                "url": "/column-headers/"
+                "url": "./column-headers/"
             }
         },
         "headerName": {},
@@ -540,7 +540,7 @@
             "description": "The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used.",
             "more": {
                 "name": "Header Group Component",
-                "url": "/column-headers/"
+                "url": "./column-headers/"
             }
         },
         "headerGroupComponentParams": {}

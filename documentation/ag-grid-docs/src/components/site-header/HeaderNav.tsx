@@ -8,6 +8,7 @@ import { pathJoin } from '@utils/pathJoin';
 import classnames from 'classnames';
 import { type ReactElement, useState } from 'react';
 
+import { DarkModeToggle } from './DarkModeToggle';
 import { Collapsible } from '../Collapsible';
 import { Icon } from '../icon/Icon';
 
@@ -83,6 +84,9 @@ const HeaderLinks = ({
                 );
             })}
 
+            
+            <DarkModeToggle />
+            
             {children}
         </ul>
     );

@@ -50,7 +50,7 @@
         "getRoute": {
             "more": {
                 "name": "Server-Side Model: Open by Default",
-                "url": "/server-side-model-grouping/#open-by-default"
+                "url": "./server-side-model-grouping/#open-by-default"
             }
         }
     },
@@ -78,13 +78,13 @@
         "setData": {
             "more": {
                 "name": "Client-Side Single Row Update",
-                "url": "/data-update-single-row-cell/"
+                "url": "./data-update-single-row-cell/"
             }
         },
         "setDataValue": {
             "more": {
                 "name": "Client-Side Single Cell Update",
-                "url": "/data-update-single-row-cell/"
+                "url": "./data-update-single-row-cell/"
             }
         }
     },

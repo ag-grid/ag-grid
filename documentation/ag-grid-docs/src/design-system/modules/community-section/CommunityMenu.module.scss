@@ -1,0 +1,36 @@
+@use '../../core' as *;
+
+.communityMenu {
+    position: fixed;
+    z-index: 1;
+    display: flex;
+    padding-top: $spacing-size-4;
+    padding-bottom: $spacing-size-4;
+    list-style-type: none;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 0;
+    background: var(--color-util-gray-200);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid var(--color-border-primary);
+}
+
+.community-menu-item {
+    margin-top: $spacing-size-2;
+    padding: $spacing-size-2;
+    cursor: pointer;
+
+    a {
+        color: var(--color-fg-secondary);
+    }
+
+    &.selected {
+        background-color: var(--color-bg-secondary);
+        border-radius: var(--radius-4xl);
+    }
+
+    &:last-child {
+        margin-bottom: $spacing-size-2;
+    }
+}

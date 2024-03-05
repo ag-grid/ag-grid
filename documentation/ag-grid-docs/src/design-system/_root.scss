@@ -262,6 +262,9 @@
     --shadow-xl: 0 20px 25px -5px color-mix(in srgb, var(--color-gray-950) 10%, transparent),
         0 8px 10px -6px color-mix(in srgb, var(--color-gray-950) 10%, transparent);
     --shadow-2xl: 0 25px 50px -12px color-mix(in srgb, var(--color-gray-950) 25%, transparent);
+
+
+    --dark-icon: url('/images/moon.svg');
 }
 
 html[data-dark-mode='true'] {
@@ -354,4 +357,6 @@ html[data-dark-mode='true'] {
     --color-util-gray-500: var(--color-gray-500);
     --color-util-gray-600: var(--color-gray-400);
     --color-util-gray-700: var(--color-gray-300);
+
+    --dark-icon: url('/images/sun.svg');
 }

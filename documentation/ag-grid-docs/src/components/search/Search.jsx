@@ -16,7 +16,7 @@ const Search = () => {
     const internalFramework = useStore($internalFramework);
     const currentFramework = useMemo(() => getFrameworkFromInternalFramework(internalFramework), [internalFramework]);
     const [isOpen, setOpen] = useState(false);
-    const [isMac, setMac] = useState(false);
+    const [isMac, setMac] = useState(undefined);
     
     // done inside effect as window won't be available for SSR.
     useEffect(() => {
@@ -74,7 +74,7 @@ const Search = () => {
         >
             <Icon name="search" svgClasses={styles.searchIcon}/>
             <span className={styles.placeholder}>Search...</span>
-            <span className={styles.kbdShortcut}>{ isMac ? `⌘ K` : `Ctrl K` }</span>
+            { isMac !== undefined && <span className={styles.kbdShortcut}>{ isMac ? `⌘ K` : `Ctrl K` }</span> }
         </div>
         
         <SearchModal isOpen={isOpen} currentFramework={currentFramework} closeModal={setModalOpenFnc(false)} />

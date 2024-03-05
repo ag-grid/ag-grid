@@ -4,23 +4,19 @@
         "axis": {
             "more": {
                 "name": "SparklineAxisOptions",
-                "url": "/sparklines-area-customisation/#sparklineaxisoptions"
+                "url": "./sparklines-area-customisation/#sparklineaxisoptions"
             }
         },
         "marker": {
             "more": {
                 "name": "SparklineMarkerOptions",
-                "url": "/sparklines-area-customisation/#sparklinemarkeroptions"
+                "url": "./sparklines-area-customisation/#sparklinemarkeroptions"
             }
         }
     },
     "SparklineMarkerOptions": {
         "shape": {
-            "options": [
-                "circle",
-                "diamond",
-                "square"
-            ]
+            "options": ["circle", "diamond", "square"]
         }
     }
 }
