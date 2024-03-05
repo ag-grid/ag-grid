@@ -60,7 +60,7 @@ const DocsExampleRunnerInner = ({ name, title, exampleType, exampleHeight, frame
         isError: contentsIsError,
         data: [contents, exampleFileHtml] = [],
     } = useQuery(
-        ['docsExampleContents', internalFramework, pageName, exampleName],
+        ['docsExampleContents', internalFramework, pageName, exampleName, importType],
         () => {
             const getContents = fetch(
                 getExampleContentsUrl({
@@ -105,7 +105,7 @@ const DocsExampleRunnerInner = ({ name, title, exampleType, exampleHeight, frame
                 importType,
             })
         );
-    }, [internalFramework, pageName, exampleName]);
+    }, [internalFramework, pageName, exampleName, importType]);
 
     useEffect(() => {
         if (!contents || contentsIsLoading || contentsIsError) {
@@ -132,7 +132,7 @@ const DocsExampleRunnerInner = ({ name, title, exampleType, exampleHeight, frame
                 importType,
             })
         );
-    }, [internalFramework, pageName, exampleName]);
+    }, [internalFramework, pageName, exampleName, importType]);
 
     useEffect(() => {
         if (!contents || contentsIsLoading || contentsIsError || !exampleFileHtml) {
