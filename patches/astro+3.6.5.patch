@@ -1,0 +1,22 @@
+diff --git a/node_modules/astro/dist/core/build/static-build.js b/node_modules/astro/dist/core/build/static-build.js
+index 9e1a859..939b409 100644
+--- a/node_modules/astro/dist/core/build/static-build.js
++++ b/node_modules/astro/dist/core/build/static-build.js
+@@ -265,7 +265,7 @@ async function runPostBuildHooks(container, ssrReturn, clientReturn) {
+   const config = container.options.settings.config;
+   const build = container.options.settings.config.build;
+   for (const [fileName, mutation] of mutations) {
+-    const root = isServerLikeOutput(config) ? mutation.targets.includes("server") ? build.server : build.client : config.outDir;
++    const root = isServerLikeOutput(config) ? mutation.targets.includes("server") ? build.server : build.client : getOutDirWithinCwd(config.outDir);
+     const fullPath = path.join(fileURLToPath(root), fileName);
+     const fileURL = pathToFileURL(fullPath);
+     await fs.promises.mkdir(new URL("./", fileURL), { recursive: true });
+@@ -329,7 +329,7 @@ async function cleanServerOutput(opts) {
+     removeEmptyDirs(out);
+   }
+   if (out.toString() !== opts.settings.config.outDir.toString()) {
+-    await copyFiles(out, opts.settings.config.outDir);
++    await copyFiles(out, opts.settings.config.outDir, true);
+     await fs.promises.rm(out, { recursive: true });
+     return;
+   }
