@@ -4,7 +4,7 @@ import { AgCartesianAxisType, AgCharts, AgChartOptions, AgPolarAxisType } from "
 import { ChartController } from "../chartController";
 import { ChartMenuUtils } from "../menu/chartMenuUtils";
 import { AgChartActual } from "../utils/integration";
-import { deepMerge, get, set } from "../utils/object";
+import { get, set } from "../utils/object";
 import { ChartSeriesType, VALID_SERIES_TYPES } from "../utils/seriesTypeMapper";
 
 type ChartAxis = NonNullable<AgChartActual['axes']>[number];
@@ -50,22 +50,18 @@ export class ChartOptionsService extends BeanStub {
         return get(this.getChart(), expression, undefined) as T;
     }
 
-    private setChartOptions<T = string>(values: {expression: string, value: T}[]): void {
+    private setChartOptions<T = string>(properties: {expression: string, value: T}[]): void {
         const chartSeriesTypes = this.chartController.getChartSeriesTypes();
         if (this.chartController.isComboChart()) {
             chartSeriesTypes.push('common');
         }
 
         // combine the options into a single merged object
-        let chartOptions: AgChartOptions = {};
-        for (const { expression, value } of values) {
+        const chartOptions: AgChartOptions = this.createChartOptions();
+        for (const { expression, value } of properties) {
             // we need to update chart options on each series type for combo charts
             for (const seriesType of chartSeriesTypes) {
-                chartOptions = deepMerge(chartOptions, this.createChartOptions<T>({
-                    seriesType,
-                    expression,
-                    value
-                }));
+                this.updateChartOptionsThemeOverrides(chartOptions, seriesType, expression, value);
             }
         }
 
@@ -94,7 +90,7 @@ export class ChartOptionsService extends BeanStub {
         const chart = this.getChart();
 
         // combine the options into a single merged object
-        let chartOptions: AgChartOptions = {};
+        let chartOptions = this.createChartOptions();
         for (const { expression, value } of properties) {
             // Only apply the property to axes that declare the property on their prototype chain
             const relevantAxes = chart.axes?.filter((axis) => {
@@ -110,9 +106,10 @@ export class ChartOptionsService extends BeanStub {
             });
             if (!relevantAxes) continue;
 
-            for (const axis of relevantAxes) {
-                chartOptions = deepMerge(chartOptions, this.getUpdateAxisOptions<T>(axis, null, expression, value));
+            for (const axis of relevantAxes)  {
+                this.updateChartAxisThemeOverride(chartOptions, axis, null, expression, value);
             }
+            
         }
 
         this.applyChartOptions(chartOptions);
@@ -131,16 +128,14 @@ export class ChartOptionsService extends BeanStub {
         if (!chartAxis) return;
 
         // combine the axis options into a single merged object
-        let chartOptions: AgChartOptions = {};
+        let chartOptions = this.createChartOptions();
         for (const { expression, value } of properties) {
-            chartOptions = deepMerge(
+            this.updateChartAxisThemeOverride(
                 chartOptions,
-                this.getUpdateAxisOptions<T>(
-                    chartAxis,
-                    axisType === 'yAxis' ? ['left', 'right'] : ['bottom', 'top'],
-                    expression,
-                    value,
-                ),
+                chartAxis,
+                axisType === 'yAxis' ? ['left', 'right'] : ['bottom', 'top'],
+                expression,
+                value,
             );
         }
 
@@ -166,13 +161,14 @@ export class ChartOptionsService extends BeanStub {
 
     private setSeriesOptions<T = string>(seriesType: ChartSeriesType, properties: { expression: string, value: T }[]): void {
         // combine the series options into a single merged object
-        let chartOptions: AgChartOptions = {};
+        let chartOptions = this.createChartOptions();
         for (const { expression, value } of properties) {
-            chartOptions = deepMerge(chartOptions, this.createChartOptions<T>({
+            this.updateChartOptionsThemeOverrides(
+                chartOptions,
                 seriesType,
-                expression: `series.${expression}`,
+                `series.${expression}`,
                 value
-            }));
+            );
         }
 
         this.applyChartOptions(chartOptions);
@@ -191,40 +187,41 @@ export class ChartOptionsService extends BeanStub {
         return chart.axes ?? [];
     }
 
-    private getUpdateAxisOptions<T = string>(
+    private updateChartAxisThemeOverride<T = string>(
+        chartOptions: AgChartOptions,
         chartAxis: ChartAxis,
         axisPositions: ('left' | 'right' | 'top' | 'bottom')[] | null,
-        expression: string, value: T,
-    ): AgChartOptions {
+        expression: string,
+        value: T,
+    ): void {
         const chartSeriesTypes = this.chartController.getChartSeriesTypes();
         if (this.chartController.isComboChart()) {
             chartSeriesTypes.push('common');
         }
 
         const validAxisTypes: (AgCartesianAxisType | AgPolarAxisType)[] = ['number', 'category', 'time', 'grouped-category', 'angle-category', 'angle-number', 'radius-category', 'radius-number'];
-        if (!validAxisTypes.includes(chartAxis.type)) return {};
+        if (!validAxisTypes.includes(chartAxis.type)) return;
 
         // combine the axis options into a single merged object with entries for each series type
-        let chartOptions: AgChartOptions = {};
         for (const seriesType of chartSeriesTypes) {
             if (axisPositions) {
                 for (const axisPosition of axisPositions) {
-                    chartOptions = deepMerge(chartOptions, this.createChartOptions<T>({
+                    this.updateChartOptionsThemeOverrides(
+                        chartOptions,
                         seriesType,
-                        expression: `axes.${chartAxis.type}.${axisPosition}.${expression}`,
+                        `axes.${chartAxis.type}.${axisPosition}.${expression}`,
                         value
-                    }));
+                    );
                 }
             } else {
-                chartOptions = deepMerge(chartOptions, this.createChartOptions<T>({
+                this.updateChartOptionsThemeOverrides(
+                    chartOptions,
                     seriesType,
-                    expression: `axes.${chartAxis.type}.${expression}`,
+                    `axes.${chartAxis.type}.${expression}`,
                     value
-                }));
+                );
             }
         }
-
-        return chartOptions;
     }
 
     public getChartType(): ChartType {
@@ -241,20 +238,25 @@ export class ChartOptionsService extends BeanStub {
         AgCharts.updateDelta(chartRef, chartOptions);
     }
 
-    private createChartOptions<T>({ seriesType, expression, value }: {
-        seriesType: ChartSeriesType,
-        expression: string,
-        value: T
-    }): AgChartOptions {
-        const overrides = {};
+    private createChartOptions(): AgChartOptions {
         const chartOptions = {
             theme: {
-                overrides
+                overrides: {}
             }
         };
-        set(overrides, `${seriesType}.${expression}`, value);
-
         return chartOptions;
+    }
+
+    private updateChartOptionsThemeOverrides<T>(
+        chartOptions: AgChartOptions, 
+        seriesType: ChartSeriesType,
+        expression: string,
+        value: T,
+    ): void {
+        if (typeof chartOptions.theme !== 'object') chartOptions.theme = {};
+        const { theme } = chartOptions;
+        if (typeof theme.overrides !== 'object') theme.overrides = {};
+        set(theme.overrides, `${seriesType}.${expression}`, value);
     }
 
     private raiseChartOptionsChangedEvent(): void {
