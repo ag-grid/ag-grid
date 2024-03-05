@@ -70,26 +70,25 @@ The grid comes with some Cell Components out of the box. These Provided Cell Com
 The Cell Component for a Column is set via `colDef.cellRenderer` and can be any of the following types:
 
 {% if isFramework("javascript") %}
-1. `String`: The name of a cell renderer component.*
-1. `Class`: Direct reference to a cell renderer component.
+1. `String`: The name of a registered Cell Component.*
+1. `Class`: Direct reference to a Cell Component.
 1. `Function`: A function that returns either an HTML string or DOM element for display.
 {% /if %}
 
 {% if isFramework("angular") %}
-1. `String`: The name of a cell renderer component.*
-1. `Class`: Direct reference to a cell renderer component.
+1. `String`: The name of a registered Cell Component.*
+1. `Class`: Direct reference to a Cell Component.
 1. `Function`: A function that returns either an HTML string or DOM element for display.
 {% /if %}
 
 {% if isFramework("vue") %}
-1. `String`: The name of a registered Vue cell renderer component.*
+1. `String`: The name of a registered Cell Component.*
 1. `Function`: A function that returns either an HTML string or DOM element for display.
 {% /if %}
 
 {% if isFramework("react") %}
-1. `String`: The name of a cell renderer component.*
-1. `Class`: Direct reference to a cell renderer component.
-1. `Function`: A function that returns JSX for display.
+1. `String`: The name of a registered Cell Component.*
+1. `Class` / `Function`: Direct reference to a Cell Component.
 {% /if %}
 
 \*If referenced by name then the Cell Component must [first be registered](./components/#registering-custom-components).
@@ -164,12 +163,12 @@ const gridOptions = {
             field: 'sport',
             cellRenderer: MyCustomCellRendererClass,
         },
-        // 3 - Function - A function that returns a JSX element for display
+        // 3 - Inlined Component
         {
             field: 'year',
-            cellRenderer: params => {
+            cellRenderer: props => {
                 // put the value in bold
-                // return <&gt;Value is <b&gt; {params.value} </b&gt; </&gt;;
+                return <>Value is <b>{params.value}</b></>;
             }
         }
     ]
