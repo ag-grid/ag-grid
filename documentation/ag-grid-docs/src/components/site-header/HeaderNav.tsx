@@ -84,9 +84,9 @@ const HeaderLinks = ({
                 );
             })}
 
-            <li class:list={[siteHeaderStyles.navItem, siteHeaderStyles.buttonItem, 'darkModeItem']}>
-                <DarkModeToggle />
-            </li>
+            
+            <DarkModeToggle />
+            
             {children}
         </ul>
     );
