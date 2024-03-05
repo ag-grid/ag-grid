@@ -1,7 +1,7 @@
 @use "ag";
 @use "./material-variables";
 
-.ag-theme-material {
+.ag-theme-material, .ag-theme-material-dark, .ag-theme-material-auto-dark  {
     .ag-filter-toolpanel-header,
     .ag-filter-toolpanel-search,
     .ag-status-bar,

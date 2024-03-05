@@ -9,9 +9,9 @@
     --ag-foreground-color: rgba(0, 0, 0, 0.87);
     --ag-secondary-foreground-color: rgba(0, 0, 0, 0.54);
     --ag-disabled-foreground-color: rgba(0, 0, 0, 0.38);
-    --ag-background-color: #fff;
-    --ag-header-background-color: #fff;
-    --ag-tooltip-background-color: #fff;
+    --ag-background-color: #f
+    --ag-header-background-color: #f
+    --ag-tooltip-background-color: #f
     --ag-subheader-background-color: #eee;
     --ag-subheader-toolbar-background-color: rgba(238, 238, 238, 0.5);
     --ag-header-cell-hover-background-color: #f2f2f2;
@@ -77,48 +77,48 @@
 };
 
 @mixin -dark-vars {
-    --ag-background-color: #121212ff;
-    --ag-foreground-color: #f5f5f5ff;
-    --ag-active-color: #bb86fcff;
-    --ag-data-color: #f5f5f5ff;
-    --ag-header-cell-hover-background-color: #646464ff;
-    --ag-advanced-filter-join-pill-color: #f08e8dff;
-    --ag-advanced-filter-column-pill-color: #a6e194ff;
-    --ag-advanced-filter-option-pill-color: #f3c08bff;
-    --ag-advanced-filter-value-pill-color: #85c0e4ff;
-    --ag-input-disabled-border-color: #68686eff;
-    --ag-input-disabled-background-color: #f5f5f50f;
+    --ag-background-color: #121212
+    --ag-foreground-color: #ffffff
+    --ag-active-color: #bb86fc
+    --ag-data-color: #f5f5f5
+    --ag-header-cell-hover-background-color: #999999
+    --ag-advanced-filter-join-pill-color: #7a3a37
+    --ag-advanced-filter-column-pill-color: #355f2d
+    --ag-advanced-filter-option-pill-color: #5a3168
+    --ag-advanced-filter-value-pill-color: #374c86
+    --ag-input-disabled-border-color: #3a434e
+    --ag-input-disabled-background-color: #68686e12;
     --ag-selected-row-background-color: #bb86fc33;
     --ag-row-hover-color: #bb86fc33;
-    --ag-column-hover-color: #bb86fc0d;
-    --ag-input-focus-border-color: #bb86fcff;
-    --ag-range-selection-background-color: #bb86fc33;
+    --ag-column-hover-color: #f5f5f50d;
+    --ag-input-focus-border-color: #bb86fc
+    --ag-range-selection-background-color: #bb86fc14;
     --ag-range-selection-background-color-2: #bb86fc5c;
     --ag-range-selection-background-color-3: #bb86fc7d;
     --ag-range-selection-background-color-4: #bb86fc96;
-    --ag-border-color: #383838ff;
-    --ag-secondary-border-color: #383838ff;
-    --ag-header-background-color: #121212ff;
-    --ag-tooltip-background-color: #222628ff;
-    --ag-odd-row-background-color: #121212ff;
-    --ag-control-panel-background-color: #222628ff;
+    --ag-border-color: #383838
+    --ag-secondary-border-color: #383838
+    --ag-header-background-color: #121212
+    --ag-tooltip-background-color: #212b38
+    --ag-odd-row-background-color: #121212
+    --ag-control-panel-background-color: #28313e
     --ag-subheader-background-color: #ffffff0d;
-    --ag-subheader-toolbar-background-color: #383838ff;
-    --ag-invalid-color: #e02525ff;
-    --ag-checkbox-unchecked-color: #ffffffff;
-    --ag-checkbox-background-color: #121212ff;
-    --ag-checkbox-checked-color: #bb86fcff;
-    --ag-range-selection-border-color: #bb86fcff;
-    --ag-secondary-foreground-color: #f5f5f5ff;
-    --ag-input-border-color: #383838ff;
-    --ag-input-border-color-invalid: #e02525ff;
+    --ag-subheader-toolbar-background-color: #383838
+    --ag-invalid-color: #e02525
+    --ag-checkbox-unchecked-color: #797e87
+    --ag-checkbox-background-color: #121212
+    --ag-checkbox-checked-color: #bb86fc
+    --ag-range-selection-border-color: #3f51b5
+    --ag-secondary-foreground-color: #f5f5f5
+    --ag-input-border-color: #383838
+    --ag-input-border-color-invalid: #e02525
     --ag-disabled-foreground-color: #f5f5f580;
     --ag-chip-background-color: #22262812;
-    --ag-side-button-selected-background-color: #00000000;
-    --ag-selected-tab-underline-color: #bb86fcff;
+    --ag-side-button-selected-background-color: #424a54
+    --ag-selected-tab-underline-color: #2196f3
     --ag-modal-overlay-background-color: #121212a8;
     --ag-value-change-delta-up-color: #43a047a8;
-    --ag-value-change-delta-down-color: #e53935ff;
+    --ag-value-change-delta-down-color: #e53935
 
     color-scheme: dark;
 }
