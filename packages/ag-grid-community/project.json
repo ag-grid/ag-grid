@@ -10,6 +10,14 @@
       "outputs": [],
       "dependsOn": ["build:types", "build:package", "build:umd", "build:copy-styles"]
     },
+    "build:updateWithCoreExports": {
+      "dependsOn": ["@ag-grid-community/core:build"],
+      "cache": true,
+      "command": "node updateMainTsWithCoreExports.js",
+      "options": {
+        "cwd": "packages/ag-grid-community"
+      }
+    },
     "build:umd": {
       "executor": "@nx/webpack:webpack",
       "inputs": [],
@@ -20,7 +28,7 @@
         "outputFileName": "overridden in webpack config but required by nx"
       },
       "cache": true,
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build", "build:updateWithCoreExports"]
     },
     "build:copy-styles": {
       "dependsOn": [],
@@ -31,15 +39,18 @@
       }
     },
     "build:types": {
-      "executor": "@nx/js:tsc",
+      "executor": "nx:run-commands",
       "dependsOn": ["^build:types"],
-      "inputs": ["tsDefaults"],
-      "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "packages/ag-grid-community/dist/types",
-        "main": "packages/ag-grid-community/src/main.ts",
-        "tsConfig": "packages/ag-grid-community/tsconfig.types.json",
-        "compiler": "tsc"
+        "parallel": true,
+        "commands": [
+          "mkdir -p dist/types && rsync -r ../../community-modules/core/dist/types/src/ --delete dist/types/core",
+          "mkdir -p dist/types && rsync -r ../../community-modules/client-side-row-model/dist/types/src/ --delete dist/types/client-side-row-model",
+          "mkdir -p dist/types && rsync -r ../../community-modules/infinite-row-model/dist/types/src/ --delete dist/types/infinite-row-model",
+          "mkdir -p dist/types && rsync -r ../../community-modules/csv-export/dist/types/src/ --delete dist/types/csv-export",
+          "mkdir -p dist/types && cp main.d.ts.src dist/types/main.d.ts"
+        ],
+        "cwd": "packages/ag-grid-community"
       },
       "cache": true,
       "configurations": {
@@ -52,6 +63,7 @@
     "build:package": {
       "executor": "@nx/esbuild:esbuild",
       "dependsOn": [
+        "build:updateWithCoreExports",
         "@ag-grid-community/core:build",
         "@ag-grid-community/client-side-row-model:build",
         "@ag-grid-community/csv-export:build",

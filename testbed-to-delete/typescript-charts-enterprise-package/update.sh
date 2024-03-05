@@ -24,8 +24,8 @@ function packModules() {
   done
 }
 
-COMMUNITY_MODULES=("core" "client-side-row-model" "styles" "vue")
-packModules "../../community-modules" "${COMMUNITY_MODULES[@]}"
+PACKAGES=("ag-grid-community" "ag-grid-charts-enterprise")
+packModules "../../packages" "${PACKAGES[@]}"
 
 if [ -d "./node_modules" ]; then
   cd "./node_modules"
