@@ -40,7 +40,9 @@
             app: {
                 defaultExtension: 'js'
             },
-            '@ag-grid-community/vue': {
+            '@ag-grid-community/vue3': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
                 format: 'cjs',
             },
             '@ag-grid-community/core': {
@@ -116,15 +118,23 @@
                 format: 'cjs',
             },
             'ag-grid-community': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
                 format: 'cjs',
             },
             'ag-grid-enterprise': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
                 format: 'cjs',
             },
             'ag-grid-charts-enterprise': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
                 format: 'cjs',
             },
             'ag-grid-vue3': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
                 format: 'cjs',
             },
         }
