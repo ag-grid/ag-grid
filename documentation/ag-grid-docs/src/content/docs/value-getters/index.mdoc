@@ -75,8 +75,6 @@ value will be used to display the cell value, however it can additionally be use
 to an aggregation function when grouping.
 {% /note %}
 
-### Example Value Getters
-
 The example below demonstrates `valueGetter`. The following can be noted from the demo:
 
 * Columns A and B are simple columns using `field`
@@ -92,7 +90,7 @@ The example below demonstrates `valueGetter`. The following can be noted from th
 
 {% gridExampleRunner title="Value Getters" name="value-getters" /%}
 
-### Header Value Getters
+## Header Value Getters
 
 Use `headerValueGetter` instead of `colDef.headerName` to allow dynamic header names.
 
@@ -104,9 +102,3 @@ The parameters for `headerValueGetter` differ from standard `valueGetter` as fol
 * Parameter `location` allows you to have different column names depending on where the column is appearing, eg you might want to have a different name when the column is in the column drop zone or the toolbar.
 
 See the [Column Tool Panel Example](./tool-panel-columns/#columns-tool-panel-example) for an example of `headerValueGetter` used in different locations, where you can change the header name depending on where the name appears.
-
-### Filter Value Getters
-
-By default, the values supplied to the filter are retrieved from the data based on the `field` attribute. This can be overridden by providing a `filterValueGetter` in the Column Definition as shown below. This is similar to using a normal Value Getter, but is specific to the filter.
-
-{% apiDocumentation source="column-properties/properties.json" section="filtering" names=["filterValueGetter"] /%}
