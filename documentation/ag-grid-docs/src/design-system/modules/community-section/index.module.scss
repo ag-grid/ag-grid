@@ -1,0 +1,33 @@
+.sectionContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; // Align items vertically in the center
+}
+
+.sectionHeader {
+    display: flex;
+    flex-direction: column;
+}
+
+.sectionHeading {
+    display: flex;
+    justify-content: space-between;
+}
+
+.sectionTitle, .sectionDescription {
+    text-align: left;
+}
+
+.sectionLink {
+    display: flex;
+    align-items: center;
+    text-align: right;
+}
+
+.linkIcon {
+    margin-right: 8px;
+}
+
+.sectionDescription {
+    margin-bottom: 24px !important;
+}
