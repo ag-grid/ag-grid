@@ -51,4 +51,16 @@
     margin-left: auto;
     opacity: 0.8;
     font-size: var(--text-fs-sm);
+
+    animation: fadeIn 0.2s;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
