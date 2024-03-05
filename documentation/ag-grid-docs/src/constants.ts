@@ -1,5 +1,9 @@
 import type { Framework, ImportType, InternalFramework } from './types/ag-grid';
 
+// Speed up the builds by only building some of the frameworks/pages
+const quickBuildPages = import.meta.env?.QUICK_BUILD_PAGES;
+export const QUICK_BUILD_PAGES: string[] = quickBuildPages ? quickBuildPages.split(',') : undefined;
+
 export const FRAMEWORKS: readonly Framework[] = ['react', 'angular', 'vue', 'javascript'] as const;
 export const DEFAULT_FRAMEWORK: Framework = FRAMEWORKS[0];
 
