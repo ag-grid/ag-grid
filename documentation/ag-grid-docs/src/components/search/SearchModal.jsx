@@ -73,6 +73,7 @@ const Modal = ({ isOpen, closeModal, children }) => {
             className={`${styles.backdrop} ${(isOpen ? styles.backdropEnter : styles.backdropExit)}`}
             onAnimationEnd={onAnimationEnd}
             onKeyDown={evt => evt.key === 'Tab' && evt.preventDefault()}
+            onClick={closeModal}
         >
             <div
                 className={styles.container}
