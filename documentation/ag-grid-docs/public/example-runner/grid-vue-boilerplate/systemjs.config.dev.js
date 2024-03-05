@@ -1,9 +1,14 @@
 (function (global) {
+    var sjsPaths = {};
+    if (typeof systemJsPaths !== 'undefined') {
+        sjsPaths = systemJsPaths;
+    }
     System.config({
         transpiler: 'plugin-babel',
         defaultExtension: 'js',
         paths: {
-            'npm:': 'https://cdn.jsdelivr.net/npm/'
+            'npm:': 'https://cdn.jsdelivr.net/npm/',
+            ...sjsPaths,
         },
         map: {
             // babel transpiler

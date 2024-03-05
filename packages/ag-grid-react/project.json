@@ -67,7 +67,7 @@
         "outputPath": "packages/ag-grid-react/dist/package",
         "main": "packages/ag-grid-react/src/index.ts",
         "tsConfig": "packages/ag-grid-react/tsconfig.lib.json",
-        "external": ["@ag-grid-community/core", "react", "react-dom"],
+        "external": ["ag-grid-community", "react", "react-dom"],
         "esbuildConfig": "esbuild.config.cjs",
         "platform": "browser",
         "target": "es6",
@@ -98,7 +98,7 @@
         "bundle": true,
         "thirdParty": true,
         "skipTypeCheck": true,
-        "external": ["@ag-grid-community/core", "react", "react-dom"],
+        "external": ["ag-grid-community", "react", "react-dom"],
         "format": ["cjs"],
         "sourcemap": true
       },

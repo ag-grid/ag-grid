@@ -85,7 +85,7 @@
         "tsConfig": "packages/ag-grid-vue/tsconfig.lib.json",
         "esbuildConfig": "esbuild.config.cjs",
         "external": [
-          "@ag-grid-community/core",
+          "ag-grid-community",
           "vue",
           "vue-property-decorator",
           "vue-class-component"
