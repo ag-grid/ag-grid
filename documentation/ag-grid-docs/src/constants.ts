@@ -116,6 +116,6 @@ export const getIsImplemented = ({
 }) => {
     return (
         (importType === 'modules' && internalFramework !== 'vanilla') || // packages are not implemented yet
-        (importType === 'packages' && internalFramework == 'vanilla') // javascript is packages only
+        importType === 'packages'
     );
 };
