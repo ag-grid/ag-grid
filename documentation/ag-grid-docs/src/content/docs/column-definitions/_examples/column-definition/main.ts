@@ -20,17 +20,11 @@ const gridOptions: GridOptions<IOlympicData> = {
 
         // using date and non-editable column types
         { field: 'date', type: ['dateColumn', 'nonEditableColumn'], width: 220 },
-        {
-            headerName: 'Medals',
-            groupId: 'medalsGroup',
-            children: [
-                // using medal column type
-                { headerName: 'Gold', field: 'gold', type: 'medalColumn' },
-                { headerName: 'Silver', field: 'silver', type: 'medalColumn' },
-                { headerName: 'Bronze', field: 'bronze', type: 'medalColumn' },
-                { headerName: 'Total', field: 'total', type: 'medalColumn', columnGroupShow: 'closed' }
-            ]
-        }
+        
+        { headerName: 'Gold', field: 'gold', type: 'medalColumn' },
+        { headerName: 'Silver', field: 'silver', type: 'medalColumn' },
+        { headerName: 'Bronze', field: 'bronze', type: 'medalColumn' },
+        { headerName: 'Total', field: 'total', type: 'medalColumn', columnGroupShow: 'closed' }
     ],
 
     // default ColDef, gets applied to every column
@@ -40,16 +34,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         // make every column editable
         editable: true,
         // make every column use 'text' filter by default
-        filter: 'agTextColumnFilter',
-        // enable floating filters by default
-        floatingFilter: true,
-        // disable cell data types
-        cellDataType: false,
-    },
-
-    // default ColGroupDef, get applied to every column group
-    defaultColGroupDef: {
-        marryChildren: true
+        filter: 'agTextColumnFilter'
     },
 
     // define specific column types
