@@ -117,13 +117,12 @@ export async function generateFiles(options: ExecutorOptions) {
         gridOptionsTypes
     );
 
+    const isIntegratedCharts = typedBindings.imports.some((m) =>
+        m.module.includes('@ag-grid-enterprise/charts-enterprise')
+    );
 
-    const isIntegratedCharts = typedBindings.imports.some(m => m.module.includes('@ag-grid-enterprise/charts-enterprise'));
-
-    for (const internalFramework of FRAMEWORKS) { 
-
-
-        if(exampleConfig.supportedFrameworks && !exampleConfig.supportedFrameworks.includes(internalFramework)) {
+    for (const internalFramework of FRAMEWORKS) {
+        if (exampleConfig.supportedFrameworks && !exampleConfig.supportedFrameworks.includes(internalFramework)) {
             continue;
         }
 
@@ -144,7 +143,8 @@ export async function generateFiles(options: ExecutorOptions) {
         const mainFileName = getMainFileName(internalFramework)!;
         const provideFrameworkFiles = frameworkProvidedExamples[internalFramework];
 
-        const importTypes = internalFramework === 'vanilla' ? ['packages'] as const : ['modules', 'packages'] as const; 
+        const importTypes =
+            internalFramework === 'vanilla' ? (['packages'] as const) : (['modules', 'packages'] as const);
         for (const importType of importTypes) {
             const packageJson = getPackageJson({
                 isEnterprise,
@@ -156,26 +156,37 @@ export async function generateFiles(options: ExecutorOptions) {
                 ...exampleConfig,
                 ...(provideFrameworkFiles ? provideFrameworkFiles['exampleConfig.json'] : {}),
             };
-            const { files, scriptFiles } =
-                provideFrameworkFiles === undefined
-                    ? await getFrameworkFiles({
-                          entryFile,
-                          indexHtml,
-                          isEnterprise,
-                          bindings,
-                          typedBindings,
-                          componentScriptFiles,
-                          otherScriptFiles,
-                          ignoreDarkMode: false,
-                          isDev,
-                          importType,
-                          exampleConfig: frameworkExampleConfig,
-                      })
-                    : {
-                        files: {},
-                        // NOTE: Vanilla is the only framework where for provided examples, we need to include the entryfile
-                        scriptFiles: internalFramework === 'vanilla' ? [entryFileName] : []
-                    };
+
+            let files = {};
+            let scriptFiles = [];
+            if (provideFrameworkFiles === undefined) {
+                const result = await getFrameworkFiles({
+                    entryFile,
+                    indexHtml,
+                    isEnterprise,
+                    bindings,
+                    typedBindings,
+                    componentScriptFiles,
+                    otherScriptFiles,
+                    ignoreDarkMode: false,
+                    isDev,
+                    importType,
+                    exampleConfig: frameworkExampleConfig,
+                });
+                files = result.files;
+                scriptFiles = result.scriptFiles;
+            } else {
+                if (internalFramework === 'vanilla') {
+                    // NOTE: Vanilla provided examples, we need to include the entryfile
+                    scriptFiles = [entryFileName];
+                }
+                if (internalFramework === 'vue3' || internalFramework === 'vue') {
+                    // Vue provided examples, we need to include the script files
+                    scriptFiles = Object.keys(otherScriptFiles).filter((fileName) => {
+                        return fileName.endsWith('.js') && fileName !== entryFileName;
+                    });
+                }
+            }
 
             const result: GeneratedContents = {
                 isEnterprise,
