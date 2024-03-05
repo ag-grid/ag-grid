@@ -46,3 +46,27 @@
         }
     }
 }
+
+.frameworkLogoInline,
+.frameworkLogoInDropdown {
+    height: 20px; /* Adjust based on your design */
+    margin-right: 8px; /* Gives some space between the logo and the text */
+    vertical-align: middle; /* Aligns logo with the text */
+}
+
+.frameworkItem {
+    font-size: var(--text-fs-base);
+}
+
+.dropdownItem {
+    display: flex;
+    flex-direction: row;
+    height: 40px;
+    border-radius: var(--radius-md);
+    align-items: center;
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.1);
+        cursor: pointer;
+    }
+}
