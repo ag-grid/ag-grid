@@ -1,3 +1,5 @@
+import { SHOW_DEBUG_LOGS } from '@constants';
+
 import { extractInterfaces } from './documentation-helpers';
 import type { Config, DocEntryMap, InterfaceEntry, PropertyType } from './types';
 
@@ -162,11 +164,23 @@ export const getAllSectionHeadingLinks = ({
     return getAllSectionPropertyEntries({
         propertiesFromFiles,
         suppressSort,
-    }).map(([key, property]) => {
-        const title = (property.meta && property.meta.displayName) || key;
-        return {
-            title,
-            id: `reference-${key}`,
-        };
-    });
+    })
+        .map(([key, property]) => {
+            const title = (property.meta && property.meta.displayName) || key;
+            const numNonMetaKeys = Object.keys(property).length - 1;
+
+            // No entries for the property, so it can be filtered out
+            if (numNonMetaKeys === 0) {
+                if (SHOW_DEBUG_LOGS) {
+                    console.warn(`Reference documentation '${key}' does not have any properties`);
+                }
+                return undefined;
+            }
+
+            return {
+                title,
+                id: `reference-${key}`,
+            };
+        })
+        .filter(Boolean);
 };
