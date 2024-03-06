@@ -25,7 +25,7 @@ const path = Astro.url.pathname;
 const { title, enterprise, hideSideMenu, hidePageMenu } = page.data;
 
 const { Content } = await page.render();
-const headings = getHeadings({
+const headings = await getHeadings({
     title,
     markdocContent: page.body,
     framework: currentFramework,
