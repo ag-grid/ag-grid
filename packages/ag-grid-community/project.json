@@ -39,26 +39,12 @@
       }
     },
     "build:types": {
-      "executor": "nx:run-commands",
       "dependsOn": ["^build:types"],
+      "command": "npx gulp copy-from-module-source && cp main.d.ts.src dist/types/main.d.ts",
       "options": {
-        "parallel": true,
-        "commands": [
-          "mkdir -p dist/types && rsync -r ../../community-modules/core/dist/types/src/ --delete dist/types/core",
-          "mkdir -p dist/types && rsync -r ../../community-modules/client-side-row-model/dist/types/src/ --delete dist/types/client-side-row-model",
-          "mkdir -p dist/types && rsync -r ../../community-modules/infinite-row-model/dist/types/src/ --delete dist/types/infinite-row-model",
-          "mkdir -p dist/types && rsync -r ../../community-modules/csv-export/dist/types/src/ --delete dist/types/csv-export",
-          "mkdir -p dist/types && cp main.d.ts.src dist/types/main.d.ts"
-        ],
         "cwd": "packages/ag-grid-community"
       },
-      "cache": true,
-      "configurations": {
-        "watch": {
-          "tsConfig": "packages/ag-grid-community/tsconfig.types.watch.json"
-        },
-        "production": {}
-      }
+      "cache": true
     },
     "build:package": {
       "executor": "@nx/esbuild:esbuild",

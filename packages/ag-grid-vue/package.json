@@ -35,6 +35,8 @@
     "lint": "npx vue-cli-service lint"
   },
   "devDependencies": {
+    "gulp": "^4.0.0",
+    "gulp-replace": "^1.0.0",
     "@ag-grid-community/core": "31.1.0",
     "@types/node": "18.19.10",
     "@vue/cli-plugin-typescript": "^3.11.0",

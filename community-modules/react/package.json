@@ -3,9 +3,14 @@
   "version": "31.1.0",
   "description": "AG Grid React Component",
   "main": "./dist/package/index.cjs.js",
-  "module": "./dist/package/index.esm.mjs",
-  "type": "module",
   "types": "./dist/types/src/index.d.ts",
+  "module": "./dist/package/index.esm.mjs",
+  "exports": {
+    "import": "./dist/package/index.esm.mjs",
+    "require": "./dist/package/index.cjs.js",
+    "types": "./dist/types/src/index.d.ts",
+    "default": "./dist/package/index.cjs.js"
+  },
   "scripts": {
     "cypress:open": "npx cross-env NODE_ENV=test cypress open",
     "cypress:e2e": "npx cross-env NODE_ENV=test cypress run --spec 'cypress/integration/*spec.js'",

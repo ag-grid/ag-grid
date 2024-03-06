@@ -11,4 +11,12 @@ tsconfig.json
 tsconfig-lib.json
 tslint.json
 vue.config.js
+project.json
+tsconfig.lib.json
+tsconfig.spec.json
+tsconfig.types.json
+tsconfig.watch.json
+tsconfig.types.watch.json
 !dist
+!dist/types/src
+

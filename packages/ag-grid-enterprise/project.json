@@ -25,37 +25,9 @@
       }
     },
     "build:types": {
-      "executor": "nx:run-commands",
       "dependsOn": ["^build:types"],
-      "inputs": [],
+      "command": "npx gulp copy-from-module-source && cp main.d.ts.src dist/types/main.d.ts",
       "options": {
-        "parallel": true,
-        "commands": [
-          "mkdir -p dist/types && rsync -r ../../community-modules/core/dist/types/src/ --delete dist/types/core",
-          "mkdir -p dist/types && rsync -r ../../community-modules/client-side-row-model/dist/types/src/ --delete dist/types/client-side-row-model",
-          "mkdir -p dist/types && rsync -r ../../community-modules/infinite-row-model/dist/types/src/ --delete dist/types/infinite-row-model",
-          "mkdir -p dist/types && rsync -r ../../community-modules/csv-export/dist/types/src/ --delete dist/types/csv-export",
-          "mkdir -p dist/types && rsync -r ../../enterprise-modules/core/dist/types/src/ --delete dist/types/enterprise-core",
-          "mkdir -p dist/types && rsync -r ../../enterprise-modules/advanced-filter/dist/types/src/ --delete dist/types/advanced-filter",
-          "mkdir -p dist/types && rsync -r ../../enterprise-modules/charts/dist/types/src/ --delete dist/types/charts",
-          "mkdir -p dist/types && rsync -r ../../enterprise-modules/clipboard/dist/types/src/ --delete dist/types/clipboard",
-          "mkdir -p dist/types && rsync -r ../../enterprise-modules/column-tool-panel/dist/types/src/ --delete dist/types/column-tool-panel",
-          "mkdir -p dist/types && rsync -r ../../enterprise-modules/excel-export/dist/types/src/ --delete dist/types/excel-export",
-          "mkdir -p dist/types && rsync -r ../../enterprise-modules/filter-tool-panel/dist/types/src/ --delete dist/types/filter-tool-panel",
-          "mkdir -p dist/types && rsync -r ../../enterprise-modules/master-detail/dist/types/src/ --delete dist/types/master-detail",
-          "mkdir -p dist/types && rsync -r ../../enterprise-modules/menu/dist/types/src/ --delete dist/types/menu",
-          "mkdir -p dist/types && rsync -r ../../enterprise-modules/multi-filter/dist/types/src/ --delete dist/types/multi-filter",
-          "mkdir -p dist/types && rsync -r ../../enterprise-modules/range-selection/dist/types/src/ --delete dist/types/range-selection",
-          "mkdir -p dist/types && rsync -r ../../enterprise-modules/rich-select/dist/types/src/ --delete dist/types/rich-select",
-          "mkdir -p dist/types && rsync -r ../../enterprise-modules/row-grouping/dist/types/src/ --delete dist/types/row-grouping",
-          "mkdir -p dist/types && rsync -r ../../enterprise-modules/server-side-row-model/dist/types/src/ --delete dist/types/server-side-row-model",
-          "mkdir -p dist/types && rsync -r ../../enterprise-modules/set-filter/dist/types/src/ --delete dist/types/set-filter",
-          "mkdir -p dist/types && rsync -r ../../enterprise-modules/side-bar/dist/types/src/ --delete dist/types/side-bar",
-          "mkdir -p dist/types && rsync -r ../../enterprise-modules/sparklines/dist/types/src/ --delete dist/types/sparklines",
-          "mkdir -p dist/types && rsync -r ../../enterprise-modules/status-bar/dist/types/src/ --delete dist/types/status-bar",
-          "mkdir -p dist/types && rsync -r ../../enterprise-modules/viewport-row-model/dist/types/src/ --delete dist/types/viewport-row-model",
-          "mkdir -p dist/types && cp main.d.ts.src dist/types/main.d.ts"
-        ],
         "cwd": "packages/ag-grid-enterprise"
       },
       "cache": true
