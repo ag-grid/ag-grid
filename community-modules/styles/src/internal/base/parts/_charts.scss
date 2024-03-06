@@ -228,17 +228,21 @@
         display: block;
     }
 
-    .ag-chart .ag-chart-tool-panel-button-enable .ag-chart-menu {
-        display: flex;
-        flex-direction: row;
-        top: 8px;
-        gap: 20px;
-        width: auto;
+    .ag-chart {
+        .ag-chart-tool-panel-button-enable, .ag-chart-menu-wrapper {
+            .ag-chart-menu {
+                display: flex;
+                flex-direction: row;
+                top: 8px;
+                gap: 20px;
+                width: auto;
 
-        @include ag.unthemed-rtl((
-            right: calc(var(--ag-cell-horizontal-padding) + var(--ag-grid-size) - 4px),
-            justify-content: right
-        ));
+                @include ag.unthemed-rtl((
+                    right: calc(var(--ag-cell-horizontal-padding) + var(--ag-grid-size) - 4px),
+                    justify-content: right
+                ));
+            }
+        }
     }
 
     .ag-chart-menu-close {

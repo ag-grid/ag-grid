@@ -105,7 +105,7 @@ export class TabbedChartMenu extends Component {
     }
 
     public focusHeader(): void {
-        this.tabbedLayout?.focusHeader();
+        this.tabbedLayout?.focusHeader(true);
     }
 
     protected destroy(): void {

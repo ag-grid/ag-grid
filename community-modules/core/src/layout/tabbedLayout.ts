@@ -138,8 +138,8 @@ export class TabbedLayout extends TabGuardComp {
         }
     }
 
-    public focusHeader(): void {
-        this.activeItem.eHeaderButton.focus();
+    public focusHeader(preventScroll?: boolean): void {
+        this.activeItem.eHeaderButton.focus({ preventScroll });
     }
 
     private focusBody(fromBottom?: boolean): void {

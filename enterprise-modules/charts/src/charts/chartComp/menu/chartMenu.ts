@@ -106,11 +106,14 @@ export class ChartMenu extends Component {
 
         this.refreshMenuClasses();
 
-        if (!this.legacyFormat || (!this.gridOptionsService.get('suppressChartToolPanelsButton') && this.panels.length > 0)) {
+        if (this.legacyFormat && !this.gridOptionsService.get('suppressChartToolPanelsButton') && this.panels.length > 0) {
             this.getGui().classList.add('ag-chart-tool-panel-button-enable');
             if (this.eHideButton) {
                 this.addManagedListener(this.eHideButton, 'click', this.toggleMenu.bind(this));
             }
+        }
+        if (!this.legacyFormat) {
+            this.getGui().classList.add('ag-chart-menu-wrapper');
         }
 
         this.addManagedListener(this.chartController, ChartController.EVENT_CHART_API_UPDATE, this.refreshToolbarAndPanels.bind(this));
@@ -206,10 +209,14 @@ export class ChartMenu extends Component {
             const defaultToolPanel = this.gridOptionsService.get('chartToolPanelsDef')?.defaultToolPanel;
             this.defaultPanel = (defaultToolPanel && CHART_TOOL_PANEL_MENU_OPTIONS[defaultToolPanel]) || this.panels[0];
 
-            this.chartToolbarOptions = this.panels.length > 0 && this.legacyFormat
-                // Only one panel is required to display menu icon in toolbar
-                ? [this.panels[0], ...chartToolbarOptions]
-                : chartToolbarOptions;
+            if (this.legacyFormat) {
+                this.chartToolbarOptions = this.panels.length > 0
+                    // Only one panel is required to display menu icon in toolbar
+                    ? [this.panels[0], ...chartToolbarOptions]
+                    : chartToolbarOptions;
+            } else {
+                this.chartToolbarOptions = this.panels.length ? chartToolbarOptions : chartToolbarOptions.filter(option => option !== 'chartMenu');
+            }
         } else { // To be deprecated in future. Toolbar options will be different to chart tool panels.
             let tabOptions: ChartMenuOptions[] = [
                 'chartSettings',
