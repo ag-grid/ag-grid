@@ -45,6 +45,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   },
   rowData: null,
   columnDefs: columnDefs,
+  tooltipShowDelay: 500,
 }
 
 // setup the grid after the page has finished loading
