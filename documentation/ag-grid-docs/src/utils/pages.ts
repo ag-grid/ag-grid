@@ -4,7 +4,6 @@ import glob from 'glob';
 import {readFileSync} from 'node:fs';
 
 import {
-    integratedChartsUsesChartsEnterprise,
     SITE_BASE_URL,
     USE_PACKAGES,
     USE_PUBLISHED_PACKAGES

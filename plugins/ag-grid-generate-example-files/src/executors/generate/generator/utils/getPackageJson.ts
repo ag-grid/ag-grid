@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs';
 
-import { integratedChartsUsesChartsEnterprise } from '../constants';
+import { getEnterprisePackageName } from '../constants';
 import type { InternalFramework } from '../types';
 import ModuleConfig from '../_copiedFromCore/modules.json';
 
@@ -84,7 +84,7 @@ function addPackageJson(isEnterprise, framework, importType) {
         }
         addDependency('ag-grid-community', agGridVersion);
         addDependency(
-            `ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise`,
+            getEnterprisePackageName(),
             agGridEnterpriseVersion
         );
     }
