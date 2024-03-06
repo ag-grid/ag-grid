@@ -10,7 +10,6 @@ import {
     Events,
     GetChartToolbarItemsParams,
     PostConstruct,
-    RefSelector,
     WithoutGridCommon,
     ChartToolPanelName
 } from "@ag-grid-community/core";
@@ -63,14 +62,10 @@ export class ChartMenu extends Component {
     private panels: ChartToolPanelMenuOptions[] = [];
     private defaultPanel: ChartToolPanelMenuOptions;
 
-    private static TEMPLATE = /* html */ `<div>
-        <button class="ag-button ag-chart-menu-close" ref="eHideButton">
-            <span class="ag-icon ag-icon-contracted" ref="eHideButtonIcon"></span>
-        </button>
-    </div>`;
-    @RefSelector("eHideButton") private eHideButton: HTMLButtonElement;
-    @RefSelector("eHideButtonIcon") private eHideButtonIcon: HTMLSpanElement;
+    private static TEMPLATE = /* html */ `<div></div>`;
 
+    private eHideButton: HTMLButtonElement;
+    private eHideButtonIcon: HTMLSpanElement;
     private chartToolbar: ChartToolbar;
     private tabbedMenu: TabbedChartMenu;
     private menuPanel?: AgPanel;
@@ -90,9 +85,13 @@ export class ChartMenu extends Component {
     private postConstruct(): void {
         this.legacyFormat = this.gridOptionsService.get('legacyChartsMenu');
 
+        
         this.chartToolbar = this.createManagedBean(new ChartToolbar());
-        this.getGui().insertAdjacentElement('afterbegin', this.chartToolbar.getGui());
-
+        this.getGui().appendChild(this.chartToolbar.getGui());
+        if (this.legacyFormat) {
+            this.createLegacyToggleButton();
+        }
+        
         this.refreshToolbarAndPanels();
 
         this.addManagedListener(this.eventService, Events.EVENT_CHART_CREATED, (e: ChartCreated) => {
@@ -109,7 +108,9 @@ export class ChartMenu extends Component {
 
         if (!this.legacyFormat || (!this.gridOptionsService.get('suppressChartToolPanelsButton') && this.panels.length > 0)) {
             this.getGui().classList.add('ag-chart-tool-panel-button-enable');
-            this.addManagedListener(this.eHideButton, 'click', this.toggleMenu.bind(this));
+            if (this.eHideButton) {
+                this.addManagedListener(this.eHideButton, 'click', this.toggleMenu.bind(this));
+            }
         }
 
         this.addManagedListener(this.chartController, ChartController.EVENT_CHART_API_UPDATE, this.refreshToolbarAndPanels.bind(this));
@@ -133,6 +134,16 @@ export class ChartMenu extends Component {
         }
 
         return result;
+    }
+
+    private createLegacyToggleButton(): void {
+        const eDocument = this.gridOptionsService.getDocument();
+        this.eHideButton = eDocument.createElement('button');
+        this.eHideButton.classList.add('ag-button', 'ag-chart-menu-close');
+        this.eHideButtonIcon = eDocument.createElement('span');
+        this.eHideButtonIcon.classList.add('ag-icon', 'ag-icon-contracted');
+        this.eHideButton.appendChild(this.eHideButtonIcon);
+        this.getGui().appendChild(this.eHideButton);
     }
 
     private refreshToolbarAndPanels(): void {

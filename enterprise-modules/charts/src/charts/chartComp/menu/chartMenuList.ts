@@ -15,11 +15,13 @@ import {
 } from '@ag-grid-community/core';
 import { ChartController } from '../chartController';
 import { ChartMenuService } from '../services/chartMenuService';
+import { ChartTranslationService } from '../services/chartTranslationService';
 
 @Bean('chartMenuListFactory')
 export class ChartMenuListFactory extends BeanStub {
     @Autowired('popupService') private readonly popupService: PopupService;
     @Autowired('chartMenuService') private readonly chartMenuService: ChartMenuService;
+    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
     private activeChartMenuList?: ChartMenuList;
 
@@ -78,11 +80,11 @@ export class ChartMenuListFactory extends BeanStub {
         showMenu: () => void
     ): (MenuItemDef | string)[] {
         return [
-            this.createMenuItem('Edit Chart', 'chart', showMenu),
+            this.createMenuItem(this.chartTranslationService.translate('chartEdit'), 'chart', showMenu),
             chartController.isChartLinked()
-                ? this.createMenuItem('Unlink from Grid', 'unlinked', () => this.chartMenuService.toggleLinked(chartController))
-                : this.createMenuItem('Link to Grid', 'linked', () => this.chartMenuService.toggleLinked(chartController)),
-            this.createMenuItem('Download Chart', 'save', () => this.chartMenuService.downloadChart(chartController))
+                ? this.createMenuItem(this.chartTranslationService.translate('chartUnlink'), 'unlinked', () => this.chartMenuService.toggleLinked(chartController))
+                : this.createMenuItem(this.chartTranslationService.translate('chartLink'), 'linked', () => this.chartMenuService.toggleLinked(chartController)),
+            this.createMenuItem(this.chartTranslationService.translate('chartDownload'), 'save', () => this.chartMenuService.downloadChart(chartController))
         ];
     }
 
