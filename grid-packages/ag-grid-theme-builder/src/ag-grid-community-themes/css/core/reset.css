@@ -1,4 +1,4 @@
-:where([class^='ag-']) {
+[class^='ag-'] {
   &*,
   &:focus,
   &::after,

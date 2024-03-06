@@ -3,7 +3,6 @@ import { presetParamName } from '../theme-utils';
 export type PartMeta = {
   partId: string;
   params?: ParamMeta[];
-  presets?: PresetMeta[];
   iconsFile?: string;
 };
 
