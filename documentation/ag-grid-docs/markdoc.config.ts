@@ -106,6 +106,9 @@ export default defineMarkdocConfig({
                 section: { type: String },
                 names: { type: Array },
                 config: { type: Object },
+
+                // For `getHeadings` parsing
+                __apiDocumentationHeadings: { type: Boolean },
             },
         },
         interfaceDocumentation: {

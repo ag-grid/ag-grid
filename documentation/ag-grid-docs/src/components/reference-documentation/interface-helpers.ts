@@ -151,3 +151,22 @@ export const getSectionProperties = ({
         properties: mergeObjects(processed),
     };
 };
+
+export const getAllSectionHeadingLinks = ({
+    propertiesFromFiles,
+    suppressSort,
+}: {
+    propertiesFromFiles: unknown;
+    suppressSort: boolean;
+}) => {
+    return getAllSectionPropertyEntries({
+        propertiesFromFiles,
+        suppressSort,
+    }).map(([key, property]) => {
+        const title = (property.meta && property.meta.displayName) || key;
+        return {
+            title,
+            id: `reference-${key}`,
+        };
+    });
+};
