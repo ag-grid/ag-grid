@@ -11,28 +11,38 @@
     width: 100%;
     padding: 0;
     margin-top: $spacing-size-5;
+    gap: 8px;
+}
+.community-menu {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    padding: 0;
 }
 
 .community-menu-item {
-    margin-top: $spacing-size-2;
     padding: $spacing-size-2;
     padding-left: $spacing-size-4;
     padding-right: $spacing-size-4;
     cursor: pointer;
     opacity: 0.7;
+    transition:
+        background-color 0.2s,
+        opacity 0.2s;
+    display: inline-block;
+    border-radius: var(--radius-4xl);
 
+    margin-bottom: 0;
     a {
         color: var(--color-fg-secondary);
+        text-decoration: none;
+        display: block;
     }
 
+    &:hover,
     &.selected {
-        background-color: var(--color-util-brand-100);
-        border-radius: var(--radius-4xl);
-        color: var(--color-fg-primary);
         opacity: 1;
-    }
-
-    &:last-child {
-        margin-bottom: $spacing-size-2;
+        background-color: var(--color-util-brand-100);
+        color: var(--color-fg-primary);
     }
 }

@@ -14,6 +14,7 @@
 
     p {
         color: var(--color-text-tertiary);
+        text-align: center;
     }
     .description {
         text-align: center;
@@ -43,5 +44,5 @@ section {
     width: 100vw;
     background: linear-gradient(transparent, var(--color-bg-brand-solid));
     opacity: 0.05;
-    top: 264px;
+    top: 250px;
 }

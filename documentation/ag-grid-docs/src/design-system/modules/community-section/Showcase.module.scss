@@ -38,18 +38,19 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: $spacing-size-4;
+    margin-bottom: $spacing-size-2;
     gap: $spacing-size-4;
 }
 
 .title {
-    color: var(--color-button-tertiary-fg);
+    color: var(--color-text-primary);
     font-size: var(--text-fs-base);
     font-weight: bold;
     margin-bottom: 0px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    padding-top: $spacing-size-4;
 }
 
 .body {
@@ -68,7 +69,7 @@
 .description {
     font-size: var(--text-fs-base);
     font-weight: var(--text-regular);
-    color: var(--color-text-primary);
+    color: var(--color-text-tertiary);
     display: -webkit-box;
     -webkit-box-orient: vertical;
     overflow: hidden;
@@ -104,7 +105,7 @@
     align-items: center;
     background: transparent;
     font-weight: var(--text-regular);
-    border: 1px solid var(--color-border-primary);
+    border: 1px solid var(--color-border-secondary);
     border-radius: var(--radius-2xl);
     padding: $spacing-size-1 $spacing-size-2;
     font-size: var(--text-fs-xs);

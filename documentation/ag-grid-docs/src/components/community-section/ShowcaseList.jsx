@@ -47,11 +47,11 @@ const ShowcaseList = ({ favouritesOnly = false, maxItems = -1 }) => {
                             </div>
                         )}
                         <div className={styles.body}>
+                            <a target="_blank" href={product.repo}>
+                                <GitHubDetails favouritesOnly={favouritesOnly} repo={product.repo} />
+                            </a>
                             <div className={styles.titleContainer}>
                                 <p className={styles.title}>{product.title}</p>
-                                <a target="_blank" href={product.repo}>
-                                    <GitHubDetails favouritesOnly={favouritesOnly} repo={product.repo} />
-                                </a>
                             </div>
                             <p className={styles.description}>{product.description}</p>
                         </div>
