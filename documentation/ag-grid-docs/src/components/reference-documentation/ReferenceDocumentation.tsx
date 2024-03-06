@@ -267,10 +267,10 @@ export const ApiDocumentation: FunctionComponent<ApiDocumentationProps> = ({
                 const prop = x[key];
                 if (!prop) {
                     console.warn(
-                        `<api-documentation>: Could not find a prop ${key} under source ${source} and section ${section}!`
+                        `<api-documentation>: Could not find a prop ${key} under sources ${sources} and section ${section}!`
                     );
                     throw new Error(
-                        `<api-documentation>: Could not find a prop ${key} under source ${source} and section ${section}!`
+                        `<api-documentation>: Could not find a prop ${key} under sources ${sources} and section ${section}!`
                     ); //spl todo
                 }
                 return prop;
