@@ -27,6 +27,7 @@ export class ChartTranslationService extends BeanStub {
         thickness: 'Thickness',
         preferredLength: 'Preferred Length',
         xType: 'X Type',
+        axisType: 'Axis Type',
         automatic: 'Automatic',
         category: 'Category',
         number: 'Number',

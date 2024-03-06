@@ -280,6 +280,7 @@ const AG_GRID_LOCALE_EN = {
     thickness: 'Thickness',
     preferredLength: 'Preferred Length',
     xType: 'X Type',
+    axisType: 'Axis Type',
     automatic: 'Automatic',
     category: 'Category',
     number: 'Number',

@@ -280,6 +280,7 @@ export const AG_GRID_LOCALE_EN: Record<string,string> = {
     thickness: 'Thickness',
     preferredLength: 'Preferred Length',
     xType: 'X Type',
+    axisType: 'Axis Type',
     automatic: 'Automatic',
     category: 'Category',
     number: 'Number',

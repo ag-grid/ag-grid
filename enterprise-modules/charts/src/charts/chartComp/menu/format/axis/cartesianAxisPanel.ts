@@ -3,7 +3,10 @@ import {
     AgCheckbox,
     AgGroupComponent,
     AgGroupComponentParams,
+    AgSelect,
+    AgSelectParams,
     AgSlider,
+    AgSliderParams,
     Autowired,
     Component,
     PostConstruct,
@@ -17,23 +20,30 @@ import { FormatPanelOptions } from "../formatPanel";
 import { AgAngleSelect } from "../../../../../widgets/agAngleSelect";
 import { ChartMenuUtils } from "../../chartMenuUtils";
 import { ChartOptionsProxy } from '../../../services/chartOptionsService';
+import { isPolar } from '../../../utils/seriesTypeMapper';
+import { AgColorPickerParams } from '../../../../../widgets/agColorPicker';
 
 export class CartesianAxisPanel extends Component {
 
     public static TEMPLATE = /* html */
         `<div>
             <ag-group-component ref="axisGroup">
+                <ag-select ref="axisTypeSelect"></ag-select>
+                <ag-select ref="axisPositionSelect"></ag-select>
                 <ag-color-picker ref="axisColorInput"></ag-color-picker>
                 <ag-slider ref="axisLineWidthSlider"></ag-slider>
             </ag-group-component>
         </div>`;
 
     @RefSelector('axisGroup') private axisGroup: AgGroupComponent;
+    @RefSelector('axisTypeSelect') private axisTypeSelect: AgSelect;
+    @RefSelector('axisPositionSelect') private axisPositionSelect: AgSelect;
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
     private readonly axisType: 'xAxis' | 'yAxis';
     private readonly chartController: ChartController;
+    private readonly chartAxisOptionsProxy: ChartOptionsProxy;
     private readonly chartAxisThemeOverridesProxy: ChartOptionsProxy;
     private readonly isExpandedOnInit: boolean;
 
@@ -47,6 +57,7 @@ export class CartesianAxisPanel extends Component {
 
         this.axisType = axisType;
         this.chartController = chartController;
+        this.chartAxisOptionsProxy = chartOptionsService.getCartesianAxisOptionsProxy(axisType);
         this.chartAxisThemeOverridesProxy = chartOptionsService.getCartesianAxisThemeOverridesProxy(axisType);
         this.isExpandedOnInit = isExpandedOnInit;
     }
@@ -62,10 +73,79 @@ export class CartesianAxisPanel extends Component {
             suppressEnabledCheckbox: true
         };
 
+        const chartAxisOptions = this.createManagedBean(new ChartMenuUtils(this.chartAxisOptionsProxy));
         const chartAxisThemeOverrides = this.createManagedBean(new ChartMenuUtils(this.chartAxisThemeOverridesProxy));
-        
-        const axisColorInputParams = chartAxisThemeOverrides.getDefaultColorPickerParams('line.color');
 
+        const axisTypeSelectParams = this.getAxisTypeSelectParams(chartAxisOptions, chartAxisThemeOverrides);
+        const axisPositionSelectParams = this.getAxisPositionSelectParams(chartAxisOptions);
+        const axisColorInputParams = this.getAxisColorInputParams(chartAxisThemeOverrides);
+        const axisLineWidthSliderParams = this.getAxisLineWidthSliderParams(chartAxisThemeOverrides);
+
+        this.setTemplate(CartesianAxisPanel.TEMPLATE, {
+            axisGroup: axisGroupParams,
+            axisTypeSelect: axisTypeSelectParams ?? undefined,
+            axisPositionSelect: axisPositionSelectParams ?? undefined,
+            axisColorInput: axisColorInputParams,
+            axisLineWidthSlider: axisLineWidthSliderParams
+        });
+
+        if (!axisTypeSelectParams) this.removeTemplateComponent(this.axisTypeSelect);
+        if (!axisPositionSelectParams) this.removeTemplateComponent(this.axisPositionSelect);
+
+        this.initAxisTicks(chartAxisThemeOverrides);
+        this.initAxisLabels(chartAxisThemeOverrides);
+
+        const updateAxisLabelRotations = () => this.axisLabelUpdateFuncs.forEach(func => func());
+        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, updateAxisLabelRotations);
+    }
+
+    private getAxisTypeSelectParams(chartAxisOptions: ChartMenuUtils, chartAxisThemeOverrides: ChartMenuUtils): AgSelectParams | null {
+        const axisTypeSelectOptions = ((chartType, axisType) => {
+            if (isPolar(chartType)) return null;
+            switch (axisType) {
+                case 'xAxis': return [
+                    { value: 'category', text: this.translate('category') },
+                    { value: 'number', text: this.translate('number') },
+                    { value: 'time', text: this.translate('time') },
+                ];
+                case 'yAxis': return null;
+            }
+        })(this.chartController.getChartType(), this.axisType);
+        if (!axisTypeSelectOptions) return null;
+        return chartAxisOptions.getDefaultSelectParams(
+            'type',
+            'axisType',
+            axisTypeSelectOptions,
+        );
+    }
+
+    private getAxisPositionSelectParams(chartAxisOptions: ChartMenuUtils): AgSelectParams | null {
+        const axisPositionSelectOptions = ((chartType, axisType) => {
+            if (isPolar(chartType)) return null;
+            switch (axisType) {
+                case 'xAxis': return [
+                    { value: 'top', text: this.translate('top') },
+                    { value: 'bottom', text: this.translate('bottom') },
+                ];
+                case 'yAxis': return [
+                    { value: 'left', text: this.translate('left') },
+                    { value: 'right', text: this.translate('right') },
+                ];
+            }
+        })(this.chartController.getChartType(), this.axisType);
+        if (!axisPositionSelectOptions) return null;
+        return chartAxisOptions.getDefaultSelectParams(
+            'position',
+            'position',
+            axisPositionSelectOptions,
+        );
+    }
+
+    private getAxisColorInputParams(chartAxisThemeOverrides: ChartMenuUtils): AgColorPickerParams {
+        return chartAxisThemeOverrides.getDefaultColorPickerParams('line.color');
+    }
+
+    private getAxisLineWidthSliderParams(chartAxisThemeOverrides: ChartMenuUtils): AgSliderParams {
         // Note that there is no separate checkbox for enabling/disabling the axis line. Whenever the line width is
         // changed, the value for `line.enabled` is inferred based on the whether the `line.width` value is non-zero.
         const getAxisLineWidth = (): number | null => {
@@ -87,18 +167,7 @@ export class CartesianAxisPanel extends Component {
         axisLineWidthSliderParams.onValueChange = (newValue) => {
             setAxisLineWidth(newValue === 0 ? null : newValue);
         };
-
-        this.setTemplate(CartesianAxisPanel.TEMPLATE, {
-            axisGroup: axisGroupParams,
-            axisColorInput: axisColorInputParams,
-            axisLineWidthSlider: axisLineWidthSliderParams
-        });
-
-        this.initAxisTicks(chartAxisThemeOverrides);
-        this.initAxisLabels(chartAxisThemeOverrides);
-
-        const updateAxisLabelRotations = () => this.axisLabelUpdateFuncs.forEach(func => func());
-        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, updateAxisLabelRotations);
+        return axisLineWidthSliderParams;
     }
 
     private initAxisTicks(chartAxisThemeOverrides: ChartMenuUtils) {
@@ -224,6 +293,11 @@ export class CartesianAxisPanel extends Component {
 
     private translate(key: ChartTranslationKey) {
         return this.chartTranslationService.translate(key);
+    }
+
+    private removeTemplateComponent(component: Component): void {
+        _.removeFromParent(component.getGui());
+        this.destroyBean(component);
     }
 
     private destroyActivePanels(): void {
