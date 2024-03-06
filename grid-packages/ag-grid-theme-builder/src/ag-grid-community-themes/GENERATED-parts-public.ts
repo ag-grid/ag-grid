@@ -340,7 +340,7 @@ export const quartzIcons = definePart<QuartzIconsParam>({
 
 export type ParamTypes = {
   /**
-   * Background colour of the grid. The default is white - if you override this, ensure that there is enough contrast between the foreground and background.
+   * Background colour of the grid.
    *
    * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
    *
@@ -349,7 +349,7 @@ export type ParamTypes = {
   backgroundColor: string;
 
   /**
-   * Foreground colour of the grid, and default text colour. The default is black - if you override this, ensure that there is enough contrast between the foreground and background.
+   * Foreground colour of the grid, and default text colour.
    *
    * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
    *

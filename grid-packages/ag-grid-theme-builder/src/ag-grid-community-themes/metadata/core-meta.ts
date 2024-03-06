@@ -6,13 +6,13 @@ export const coreMeta = definePartMeta({
     {
       property: 'backgroundColor',
       type: 'color',
-      docs: 'Background colour of the grid. The default is white - if you override this, ensure that there is enough contrast between the foreground and background.',
+      docs: 'Background colour of the grid.',
       defaultValue: '#FFF',
     },
     {
       property: 'foregroundColor',
       type: 'color',
-      docs: 'Foreground colour of the grid, and default text colour. The default is black - if you override this, ensure that there is enough contrast between the foreground and background.',
+      docs: 'Foreground colour of the grid, and default text colour.',
       defaultValue: '#181d1f',
     },
     {
