@@ -4,6 +4,7 @@ import { templatePlaceholder } from './grid-vanilla-src-parser';
 import {
     addBindingImports,
     addEnterprisePackage,
+    addLicenseManager,
     convertFunctionToConstProperty,
     getActiveTheme,
     getFunctionName,
@@ -31,9 +32,7 @@ function getModuleImports(
         "import { AgGridReact } from '@ag-grid-community/react';",
     ];
 
-    if (exampleConfig.licenseKey) {
-        imports.push("import { LicenseManager } from '@ag-grid-enterprise/core';");
-    }
+    addLicenseManager(imports, exampleConfig, false);
 
     imports.push("import '@ag-grid-community/styles/ag-grid.css';");
     // to account for the (rare) example that has more than one class...just default to quartz if it does
@@ -77,9 +76,7 @@ function getPackageImports(
     ];
 
     addEnterprisePackage(imports, bindings);
-    if (exampleConfig.licenseKey) {
-        imports.push("import { LicenseManager } from 'ag-grid-enterprise';");
-    }
+    addLicenseManager(imports, exampleConfig, true);
 
     imports.push("import 'ag-grid-community/styles/ag-grid.css';");
 

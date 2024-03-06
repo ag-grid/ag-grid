@@ -3,8 +3,8 @@ import { ExampleConfig, ParsedBindings, ImportType } from '../types';
 import { templatePlaceholder } from './grid-vanilla-src-parser';
 import {
     addBindingImports,
-    addEnterprisePackage,
     addGenericInterfaceImport,
+    addLicenseManager,
     convertFunctionToConstPropertyTs,
     getActiveTheme,
     getFunctionName,
@@ -24,6 +24,7 @@ import {
 
 function getModuleImports(
     bindings: ParsedBindings,
+    exampleConfig: ExampleConfig,
     componentFilenames: string[],
     extraCoreTypes: string[],
     allStylesheets: string[]
@@ -55,6 +56,8 @@ function getModuleImports(
         imports: [...propertyInterfaces, ...extraCoreTypes],
     });
 
+    addLicenseManager(imports, exampleConfig, false);
+
     if (bImports.length > 0) {
         addBindingImports(bImports, imports, false, true);
     }
@@ -74,6 +77,7 @@ function getModuleImports(
 
 function getPackageImports(
     bindings: ParsedBindings,
+    exampleConfig: ExampleConfig,
     componentFilenames: string[],
     extraCoreTypes: string[],
     allStylesheets: string[]
@@ -86,7 +90,7 @@ function getPackageImports(
         "import { AgGridReact } from 'ag-grid-react';",
     ];
 
-    addEnterprisePackage(imports, bindings);
+    addLicenseManager(imports, exampleConfig, true);
 
     imports.push("import 'ag-grid-community/styles/ag-grid.css';");
 
@@ -122,15 +126,16 @@ function getPackageImports(
 
 function getImports(
     bindings: ParsedBindings,
+    exampleConfig: ExampleConfig,
     componentFileNames: string[],
     importType: ImportType,
     extraCoreTypes: string[],
     allStylesheets: string[]
 ): string[] {
     if (importType === 'packages') {
-        return getPackageImports(bindings, componentFileNames, extraCoreTypes, allStylesheets);
+        return getPackageImports(bindings, exampleConfig, componentFileNames, extraCoreTypes, allStylesheets);
     } else {
-        return getModuleImports(bindings, componentFileNames, extraCoreTypes, allStylesheets);
+        return getModuleImports(bindings, exampleConfig, componentFileNames, extraCoreTypes, allStylesheets);
     }
 }
 
@@ -235,7 +240,7 @@ export function vanillaToReactFunctionalTs(
             extraCoreTypes = ['GridReadyEvent'];
         }
 
-        const imports = getImports(bindings, componentFilenames, importType, extraCoreTypes, allStylesheets);
+        const imports = getImports(bindings, exampleConfig, componentFilenames, importType, extraCoreTypes, allStylesheets);
 
         const components: { [componentName: string]: string } = extractComponentInformation(
             properties,

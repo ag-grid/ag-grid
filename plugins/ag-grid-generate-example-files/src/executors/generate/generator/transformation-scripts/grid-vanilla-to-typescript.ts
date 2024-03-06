@@ -1,7 +1,6 @@
 import { ExampleConfig, ParsedBindings, ImportType } from '../types';
 import {
     addBindingImports,
-    addEnterprisePackage,
     addGenericInterfaceImport,
     getIntegratedDarkModeCode,
     removeModuleRegistration,
@@ -54,8 +53,6 @@ function getModuleImports(bindings: ParsedBindings): string[] {
 function getPackageImports(bindings: ParsedBindings): string[] {
     const { inlineGridStyles, imports: bindingImports, properties } = bindings;
     const imports = [];
-
-    addEnterprisePackage(imports, bindings);
 
     imports.push("import 'ag-grid-community/styles/ag-grid.css';");
 

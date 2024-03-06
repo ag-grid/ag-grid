@@ -1,4 +1,4 @@
-import {integratedChartsUsesChartsEnterprise, PUBLISHED_UMD_URLS, USE_PUBLISHED_PACKAGES} from '../constants';
+import {getEnterprisePackageName, PUBLISHED_UMD_URLS, USE_PUBLISHED_PACKAGES} from '../constants';
 import { pathJoin } from './pathJoin';
 
 export const getGridScriptPath = (sitePrefix?: string) => {
@@ -14,7 +14,7 @@ export const getGridEnterpriseScriptPath = (sitePrefix?: string) => {
         return PUBLISHED_UMD_URLS['ag-grid-enterprise'];
     }
     const sitePrefixUrl = sitePrefix ? sitePrefix : '';
-    return pathJoin(sitePrefixUrl, `/files/ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise/dist/ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise.js`);
+    return pathJoin(sitePrefixUrl, `/files/${getEnterprisePackageName()}/dist/${getEnterprisePackageName()}.js`);
 };
 
 export const getCacheBustingUrl = (url: string, timestamp: number) => `${url}?t=${timestamp}`;

@@ -1,5 +1,5 @@
 const fs = require('fs');
-const coreExports = require('../ag-grid-community/dist/package/main.cjs');
+const coreExports = require('../../community-modules/core/dist/package/main.cjs');
 const {EOL} = require("os");
 
 const chartInterfaceExclusions = ['__FORCE_MODULE_DETECTION',
@@ -21,7 +21,7 @@ function updateBetweenStrings(
 const exportsToAdd = [];
 Object.keys(coreExports).forEach(function (exportName) {
     if (!chartInterfaceExclusions.some(exclusion => exclusion === exportName)) {
-        exportsToAdd.push(`export {${exportName}} from "ag-grid-community";`);
+        exportsToAdd.push(`export {${exportName}} from "@ag-grid-community/core";`);
     }
 });
 

@@ -5,7 +5,6 @@ import { ModuleRegistry } from "@ag-grid-community/core";
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-
 const columnDefs: ColDef[] = [
   {
     field: 'athlete',
@@ -24,7 +23,7 @@ const columnDefs: ColDef[] = [
     },
   },
   {
-    field: 'age',
+    field: 'country',
     cellRendererSelector: (params) => {
       if (params.node.rowPinned) {
         return {
@@ -39,19 +38,14 @@ const columnDefs: ColDef[] = [
       }
     },
   },
-  { field: 'country' },
-  { field: 'year' },
-  { field: 'date' },
-  { field: 'sport' },
+  { field: 'sport' }
 ]
 
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
-    width: 200,
-    filter: true,
-    cellDataType: false,
+    flex: 1
   },
   columnDefs: columnDefs,
   rowData: null,
@@ -61,22 +55,14 @@ const gridOptions: GridOptions<IOlympicData> = {
     }
   },
   // no rows to pin to start with
-  pinnedTopRowData: createData(1, 'Top'),
-  pinnedBottomRowData: createData(1, 'Bottom'),
-}
-
-function onPinnedRowTopCount() {
-  var headerRowsToFloat = (document.getElementById('top-row-count') as any).value
-  var count = Number(headerRowsToFloat)
-  var rows = createData(count, 'Top')
-  gridApi!.setGridOption('pinnedTopRowData', rows)
-}
-
-function onPinnedRowBottomCount() {
-  var footerRowsToFloat = (document.getElementById('bottom-row-count') as any).value
-  var count = Number(footerRowsToFloat)
-  var rows = createData(count, 'Bottom')
-  gridApi!.setGridOption('pinnedBottomRowData', rows)
+  pinnedTopRowData: [
+    {athlete: 'TOP 1 (athlete)', country: 'TOP 1 (country)', sport: 'TOP 1 (sport)'},
+    {athlete: 'TOP 2 (athlete)', country: 'TOP 2 (country)', sport: 'TOP 2 (sport)'}
+  ],
+  pinnedBottomRowData: [
+    {athlete: 'BOTTOM 1 (athlete)', country: 'BOTTOM 1 (country)', sport: 'BOTTOM 1 (sport)'},
+    {athlete: 'BOTTOM 2 (athlete)', country: 'BOTTOM 2 (country)', sport: 'BOTTOM 2 (sport)'}
+  ]
 }
 
 function createData(count: number, prefix: string): any[] {
