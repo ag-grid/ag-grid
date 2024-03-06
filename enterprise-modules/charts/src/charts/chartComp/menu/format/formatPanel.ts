@@ -8,6 +8,7 @@ import {
     PostConstruct
 } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController";
+import { ChartMenuUtils } from '../chartMenuUtils';
 import { LegendPanel } from "./legend/legendPanel";
 import { AnimationPanel } from './animation/animationPanel';
 import { CartesianAxisPanel } from "./axis/cartesianAxisPanel";
@@ -24,6 +25,8 @@ import { ZoomPanel } from './zoom/zoomPanel';
 export interface FormatPanelOptions {
     chartController: ChartController,
     chartOptionsService: ChartOptionsService,
+    chartMenuUtils: ChartMenuUtils,
+    chartAxisMenuUtils: ChartMenuUtils,
     isExpandedOnInit?: boolean,
     seriesType?: ChartSeriesType,
 }
@@ -44,14 +47,26 @@ const DefaultFormatPanelDef: ChartFormatPanel = {
 export class FormatPanel extends Component {
     public static TEMPLATE = /* html */ `<div class="ag-chart-format-wrapper"></div>`;
 
+    private readonly chartController: ChartController;
+    private readonly chartOptionsService: ChartOptionsService;
+    private readonly chartMenuUtils: ChartMenuUtils;
+    private readonly chartAxisMenuUtils: ChartMenuUtils;
+
     private chartType: ChartType;
     private isGrouping: boolean;
     private panels: Component[] = [];
 
-    constructor(
-        private readonly chartController: ChartController,
-        private readonly chartOptionsService: ChartOptionsService) {
+    constructor(options: {
+        chartController: ChartController,
+        chartOptionsService: ChartOptionsService,
+        chartMenuUtils: ChartMenuUtils,
+        chartAxisMenuUtils: ChartMenuUtils,
+    }) {
         super(FormatPanel.TEMPLATE);
+        this.chartController = options.chartController;
+        this.chartOptionsService = options.chartOptionsService;
+        this.chartMenuUtils = options.chartMenuUtils;
+        this.chartAxisMenuUtils = options.chartAxisMenuUtils;
     }
 
     @PostConstruct
@@ -84,6 +99,8 @@ export class FormatPanel extends Component {
             const opts: FormatPanelOptions = {
                 chartController: this.chartController,
                 chartOptionsService: this.chartOptionsService,
+                chartMenuUtils: this.chartMenuUtils,
+                chartAxisMenuUtils: this.chartAxisMenuUtils,
                 isExpandedOnInit: groupDef.isOpen,
                 seriesType
             };

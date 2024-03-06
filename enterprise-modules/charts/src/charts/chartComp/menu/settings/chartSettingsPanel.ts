@@ -39,10 +39,12 @@ export class ChartSettingsPanel extends Component {
 
     private isAnimating: boolean;
 
-    constructor(chartController: ChartController) {
+    constructor(options: {
+        chartController: ChartController,
+    }) {
         super(ChartSettingsPanel.TEMPLATE);
 
-        this.chartController = chartController;
+        this.chartController = options.chartController;
     }
 
     @PostConstruct

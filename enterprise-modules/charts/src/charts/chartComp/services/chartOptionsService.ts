@@ -1,11 +1,16 @@
-import { _, BeanStub, ChartOptionsChanged, ChartType, Events, WithoutGridCommon, PostConstruct } from "@ag-grid-community/core";
-import { AgCartesianAxisType, AgCharts, AgChartOptions, AgPolarAxisType, AgCartesianChartOptions, AgPolarChartOptions } from "ag-charts-community";
+import { _, BeanStub, ChartOptionsChanged, ChartType, Events, WithoutGridCommon } from "@ag-grid-community/core";
+import { AgCartesianAxisType, AgCharts, AgChartOptions, AgPolarAxisType } from "ag-charts-community";
 
 import { ChartController } from "../chartController";
-import { ChartMenuUtils } from "../menu/chartMenuUtils";
 import { AgChartActual } from "../utils/integration";
 import { get, set } from "../utils/object";
 import { ChartSeriesType, VALID_SERIES_TYPES } from "../utils/seriesTypeMapper";
+
+export interface ChartOptionsProxy {
+    getValue<T = string>(expression: string, calculated?: boolean): T;
+    setValue<T = string>(expression: string, value: T): void;
+    setValues<T = string>(properties: { expression: string, value: T }[]): void;
+}
 
 type ChartAxis = NonNullable<AgChartActual['axes']>[number];
 type SupportedSeries = AgChartActual['series'][number];
@@ -13,53 +18,53 @@ type AgChartAxisOptions<T extends AgChartOptions = AgChartOptions> =
     T extends { axes?: infer V }
     ? V | undefined
     : undefined;
+
 export class ChartOptionsService extends BeanStub {
     private readonly chartController: ChartController;
-
-    private chartThemeOverridesMenuUtil: ChartMenuUtils;
-    private axisThemeOverridesMenuUtil: ChartMenuUtils;
-    private xAxisOptionsMenuUtil: ChartMenuUtils;
-    private xAxisThemeOverridesMenuUtil: ChartMenuUtils;
-    private yAxisOptionsMenuUtil: ChartMenuUtils;
-    private yAxisThemeOverridesMenuUtil: ChartMenuUtils;
 
     constructor(chartController: ChartController) {
         super();
         this.chartController = chartController;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
-        this.chartThemeOverridesMenuUtil = this.createManagedBean(new ChartMenuUtils({
+    public getChartThemeOverridesProxy(): ChartOptionsProxy {
+        return {
             getValue: (expression) => this.getChartOption(expression),
             setValue: (expression, value) => this.setChartThemeOverrides([{ expression, value }]),
             setValues: (properties) => this.setChartThemeOverrides(properties),
-        }, this));
-        this.axisThemeOverridesMenuUtil = this.createManagedBean(new ChartMenuUtils({
+        };
+    }
+
+    public getAxisThemeOverridesProxy(): ChartOptionsProxy {
+        return {
             getValue: (expression) => this.getAxisProperty(expression),
             setValue: (expression, value) => this.setAxisThemeOverrides([{ expression, value }]),
             setValues: (properties) => this.setAxisThemeOverrides(properties),
-        }, this));
-        this.xAxisOptionsMenuUtil = this.createManagedBean(new ChartMenuUtils({
-            getValue: (expression) => this.getCartesianAxisProperty('xAxis', expression),
-            setValue: (expression, value) => this.setCartesianAxisOptions('xAxis', [{ expression, value }]),
-            setValues: (properties) => this.setCartesianAxisOptions('xAxis', properties),
-        }, this));
-        this.xAxisThemeOverridesMenuUtil = this.createManagedBean(new ChartMenuUtils({
-            getValue: (expression) => this.getCartesianAxisProperty('xAxis', expression),
-            setValue: (expression, value) => this.setCartesianAxisThemeOverrides('xAxis', [{ expression, value }]),
-            setValues: (properties) => this.setCartesianAxisThemeOverrides('xAxis', properties),
-        }, this));
-        this.yAxisOptionsMenuUtil = this.createManagedBean(new ChartMenuUtils({
-            getValue: e => this.getCartesianAxisProperty('yAxis', e),
-            setValue: (expression, value) => this.setCartesianAxisOptions('yAxis', [{ expression, value }]),
-            setValues: (properties) => this.setCartesianAxisOptions('yAxis', properties),
-        }, this));
-        this.yAxisThemeOverridesMenuUtil = this.createManagedBean(new ChartMenuUtils({
-            getValue: e => this.getCartesianAxisProperty('yAxis', e),
-            setValue: (expression, value) => this.setCartesianAxisThemeOverrides('yAxis', [{ expression, value }]),
-            setValues: (properties) => this.setCartesianAxisThemeOverrides('yAxis', properties),
-        }, this));
+        };
+    }
+
+    public getCartesianAxisOptionsProxy(axisType: 'xAxis' | 'yAxis'): ChartOptionsProxy {
+        return {
+            getValue: (expression) => this.getCartesianAxisProperty(axisType, expression),
+            setValue: (expression, value) => this.setCartesianAxisOptions(axisType, [{ expression, value }]),
+            setValues: (properties) => this.setCartesianAxisOptions(axisType, properties),
+        };
+    }
+
+    public getCartesianAxisThemeOverridesProxy(axisType: 'xAxis' | 'yAxis' ): ChartOptionsProxy {
+        return {
+            getValue: (expression) => this.getCartesianAxisProperty(axisType, expression),
+            setValue: (expression, value) => this.setCartesianAxisThemeOverrides(axisType, [{ expression, value }]),
+            setValues: (properties) => this.setCartesianAxisThemeOverrides(axisType, properties),
+        };
+    }
+
+    public getSeriesOptionsProxy(getSelectedSeries: () => ChartSeriesType): ChartOptionsProxy {
+        return {
+            getValue: (expression, calculated) => this.getSeriesOption(getSelectedSeries(), expression, calculated),
+            setValue: (expression, value) => this.setSeriesOptions(getSelectedSeries(), [{ expression, value }]),
+            setValues: (properties) => this.setSeriesOptions(getSelectedSeries(), properties),
+        };
     }
 
     private getChartOption<T = string>(expression: string): T {
@@ -327,36 +332,6 @@ export class ChartOptionsService extends BeanStub {
         };
 
         this.eventService.dispatchEvent(event);
-    }
-
-    public getChartOptionMenuUtils(): ChartMenuUtils {
-        return this.chartThemeOverridesMenuUtil;
-    }
-
-    public getAxisThemeOverridesMenuUtils(): ChartMenuUtils {
-        return this.axisThemeOverridesMenuUtil;
-    }
-
-    public getCartesianAxisThemeOverridesMenuUtils(axisType: 'xAxis' | 'yAxis'): ChartMenuUtils {
-        switch (axisType) {
-            case 'xAxis': return this.xAxisThemeOverridesMenuUtil;
-            case 'yAxis': return this.yAxisThemeOverridesMenuUtil;
-        }
-    }
-
-    public getCartesianAxisOptionsMenuUtils(axisType: 'xAxis' | 'yAxis'): ChartMenuUtils {
-        switch (axisType) {
-            case 'xAxis': return this.xAxisOptionsMenuUtil;
-            case 'yAxis': return this.yAxisOptionsMenuUtil;
-        }
-    }
-
-    public getSeriesOptionMenuUtils(getSelectedSeries: () => ChartSeriesType): ChartMenuUtils {
-        return this.createManagedBean(new ChartMenuUtils({
-            getValue: (expression, calculated) => this.getSeriesOption(getSelectedSeries(), expression, calculated),
-            setValue: (expression, value) => this.setSeriesOptions(getSelectedSeries(), [{ expression, value }]),
-            setValues: (properties) => this.setSeriesOptions(getSelectedSeries(), properties),
-        }, this));
     }
 
     private static isMatchingSeries(seriesType: ChartSeriesType, series: SupportedSeries): boolean {

@@ -9,11 +9,21 @@ import {
     TabbedLayout
 } from "@ag-grid-community/core";
 import { ChartController } from "../chartController";
+import { ChartMenuUtils } from './chartMenuUtils';
 import { ChartDataPanel } from "./data/chartDataPanel";
 import { FormatPanel } from "./format/formatPanel";
 import { ChartSettingsPanel } from "./settings/chartSettingsPanel";
 import { ChartTranslationKey, ChartTranslationService } from "../services/chartTranslationService";
 import { ChartOptionsService } from "../services/chartOptionsService";
+
+type TabbedPanelConstructor = new (
+    options: {
+        chartController: ChartController,
+        chartOptionsService: ChartOptionsService,
+        chartMenuUtils: ChartMenuUtils,
+        chartAxisMenuUtils: ChartMenuUtils,
+    }
+) => Component;
 
 export class TabbedChartMenu extends Component {
     public static TAB_DATA = 'data';
@@ -25,21 +35,27 @@ export class TabbedChartMenu extends Component {
     private tabs: TabbedItem[] = [];
     private readonly chartController: ChartController;
     private readonly chartOptionsService: ChartOptionsService;
+    private readonly chartMenuUtils: ChartMenuUtils;
+    private readonly chartAxisMenuUtils: ChartMenuUtils;
 
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
     constructor(params: {
-        controller: ChartController,
         type: ChartType,
         panels: ChartMenuOptions[];
+        chartController: ChartController,
         chartOptionsService: ChartOptionsService;
+        chartMenuUtils: ChartMenuUtils;
+        chartAxisMenuUtils: ChartMenuUtils;
     }) {
         super();
 
-        const { controller, panels, chartOptionsService } = params;
+        const { chartController, chartMenuUtils, chartAxisMenuUtils, panels, chartOptionsService } = params;
 
-        this.chartController = controller;
+        this.chartController = chartController;
         this.chartOptionsService = chartOptionsService;
+        this.chartMenuUtils = chartMenuUtils;
+        this.chartAxisMenuUtils = chartAxisMenuUtils;
         this.panels = panels;
     }
 
@@ -66,12 +82,17 @@ export class TabbedChartMenu extends Component {
     private createTab(
         name: ChartMenuOptions,
         title: ChartTranslationKey,
-        TabPanelClass: new (controller: ChartController, chartOptionsService: ChartOptionsService) => Component
+        TabPanelClass: TabbedPanelConstructor,
     ): { comp: Component, tab: TabbedItem; } {
         const eWrapperDiv = document.createElement('div');
         eWrapperDiv.classList.add('ag-chart-tab', `ag-chart-${title}`);
 
-        const comp = new TabPanelClass(this.chartController, this.chartOptionsService);
+        const comp = new TabPanelClass({
+            chartController: this.chartController,
+            chartOptionsService: this.chartOptionsService,
+            chartMenuUtils: this.chartMenuUtils,
+            chartAxisMenuUtils: this.chartAxisMenuUtils,
+        });
         this.getContext().createBean(comp);
 
         eWrapperDiv.appendChild(comp.getGui());
@@ -115,7 +136,7 @@ export class TabbedChartMenu extends Component {
         super.destroy();
     }
 
-    private getPanelClass(panelType: string) {
+    private getPanelClass(panelType: string): TabbedPanelConstructor {
         switch (panelType) {
             case TabbedChartMenu.TAB_DATA:
                 return ChartDataPanel;

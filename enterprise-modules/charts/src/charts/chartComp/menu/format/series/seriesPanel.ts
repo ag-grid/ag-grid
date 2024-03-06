@@ -29,6 +29,7 @@ import { WhiskersPanel } from "./whiskersPanel";
 import { SeriesItemsPanel } from "./seriesItemsPanel";
 import { TileSpacingPanel } from "./tileSpacingPanel";
 import { ChartMenuUtils } from "../../chartMenuUtils";
+import { ChartOptionsService } from '../../../services/chartOptionsService';
 
 export class SeriesPanel extends Component {
 
@@ -43,9 +44,10 @@ export class SeriesPanel extends Component {
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
     private readonly chartController: ChartController;
+    private readonly chartOptionsService: ChartOptionsService;
     private readonly isExpandedOnInit: boolean;
-    private readonly chartMenuUtils: ChartMenuUtils;
-
+    
+    private chartMenuUtils: ChartMenuUtils;
     private seriesSelectOptions: Map<ChartSeriesType, ListOption>;
 
     private activePanels: Component[] = [];
@@ -104,9 +106,9 @@ export class SeriesPanel extends Component {
         super();
 
         this.chartController = chartController;
+        this.chartOptionsService = chartOptionsService;
         this.seriesType = seriesType || this.getChartSeriesType();
         this.isExpandedOnInit = isExpandedOnInit;
-        this.chartMenuUtils = chartOptionsService.getSeriesOptionMenuUtils(() => this.seriesType)
     }
 
     @PostConstruct
@@ -120,6 +122,10 @@ export class SeriesPanel extends Component {
         };
         this.setTemplate(SeriesPanel.TEMPLATE, {seriesGroup: seriesGroupParams});
 
+        this.chartMenuUtils = this.createManagedBean(new ChartMenuUtils(
+            this.chartOptionsService.getSeriesOptionsProxy(() => this.seriesType)
+        ));
+        
         this.addManagedListener(this.chartController, ChartController.EVENT_CHART_SERIES_CHART_TYPE_CHANGED, this.refreshWidgets.bind(this));
 
         this.refreshWidgets();
@@ -306,7 +312,7 @@ export class SeriesPanel extends Component {
     }
 
     private initMarkers() {
-        const markersPanelComp = this.createBean(new MarkersPanel(this.chartMenuUtils));
+        const markersPanelComp = this.createBean(new MarkersPanel(this.chartOptionsService, this.chartMenuUtils));
         this.addWidget(markersPanelComp);
     }
 

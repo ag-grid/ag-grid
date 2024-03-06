@@ -24,16 +24,23 @@ const DefaultDataPanelDef: ChartDataPanelType = {
 export class ChartDataPanel extends Component {
     public static TEMPLATE = /* html */ `<div class="ag-chart-data-wrapper ag-scrollable-container"></div>`;
 
+    private readonly chartController: ChartController;
+    private readonly chartOptionsService: ChartOptionsService;
+
     private autoScrollService: AutoScrollService;
     private chartType?: ChartType;
     private categoriesDataPanel: CategoriesDataPanel;
     private seriesDataPanel: SeriesDataPanel;
     private seriesChartTypePanel?: SeriesChartTypePanel;
 
-    constructor(
-        private readonly chartController: ChartController,
-        private readonly chartOptionsService: ChartOptionsService) {
+    constructor(options: {
+        chartController: ChartController,
+        chartOptionsService: ChartOptionsService,
+    }) {
         super(ChartDataPanel.TEMPLATE);
+
+        this.chartController = options.chartController;
+        this.chartOptionsService = options.chartOptionsService;
     }
 
     @PostConstruct
