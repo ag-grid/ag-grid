@@ -46,7 +46,7 @@ export class CartesianAxisPanel extends Component {
 
         this.axisType = axisType;
         this.chartController = chartController;
-        this.chartMenuUtils = chartOptionsService.getCartesianAxisPropertyMenuUtils(axisType);
+        this.chartMenuUtils = chartOptionsService.getCartesianAxisThemeOverridesMenuUtils(axisType);
         this.isExpandedOnInit = isExpandedOnInit;
     }
 

@@ -28,7 +28,7 @@ export class CrosshairPanel extends Component {
     constructor({ chartOptionsService, isExpandedOnInit = false }: FormatPanelOptions) {
         super();
 
-        this.chartMenuUtils = chartOptionsService.getAxisPropertyMenuUtils();
+        this.chartMenuUtils = chartOptionsService.getAxisThemeOverridesMenuUtils();
         this.isExpandedOnInit = isExpandedOnInit;
     }
 

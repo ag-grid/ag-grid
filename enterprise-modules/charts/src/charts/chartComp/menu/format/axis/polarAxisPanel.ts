@@ -39,7 +39,7 @@ export class PolarAxisPanel extends Component {
         super();
 
         this.chartController = chartController;
-        this.chartMenuUtils = chartOptionsService.getAxisPropertyMenuUtils();
+        this.chartMenuUtils = chartOptionsService.getAxisThemeOverridesMenuUtils();
         this.isExpandedOnInit = isExpandedOnInit;
     }
 
