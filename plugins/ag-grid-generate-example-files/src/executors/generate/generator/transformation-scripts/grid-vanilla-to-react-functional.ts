@@ -77,7 +77,7 @@ function getPackageImports(
     ];
 
     addEnterprisePackage(imports, bindings);
-    addLicenseManager(imports, exampleConfig);
+    addLicenseManager(imports, exampleConfig, true);
 
     imports.push("import 'ag-grid-community/styles/ag-grid.css';");
 
