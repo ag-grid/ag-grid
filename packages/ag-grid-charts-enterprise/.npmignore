@@ -1,9 +1,10 @@
 !dist
-
-src/**/*.ts
+src
 .npmignore
 project.json
 tsconfig.json
 tsconfig.lib.json
 tsconfig.umd.json
 webpack.config.js
+main.d.ts.src
+updateMainTsWithCoreExports.js

@@ -1,5 +1,5 @@
 // const { NxWebpackPlugin } = require('@nx/webpack');
-const { join } = require('path');
+const { join, resolve} = require('path');
 
 const minify = false;
 module.exports = {
@@ -11,6 +11,11 @@ module.exports = {
         filename: 'ag-grid-enterprise.js',
         library: "agGrid",
         libraryTarget: "umd"
+    },
+    resolve: {
+        alias: {
+            '@ag-grid-community/core': resolve(__dirname, '../../node_modules/@ag-grid-community/core'),
+        }
     },
     module: {
         rules: [
