@@ -6,10 +6,13 @@
   "types": "./dist/types/main.d.ts",
   "module": "./dist/package/main.esm.mjs",
   "exports": {
-    "import": "./dist/package/main.esm.mjs",
-    "require": "./dist/package/main.cjs.js",
-    "types": "./dist/types/main.d.ts",
-    "default": "./dist/package/main.cjs.js"
+    ".": {
+      "import": "./dist/package/main.esm.mjs",
+      "require": "./dist/package/main.cjs.js",
+      "types": "./dist/types/main.d.ts",
+      "default": "./dist/package/main.cjs.js"
+    },
+    "./styles/*": "./styles/*"
   },
   "repository": {
     "type": "git",
@@ -48,6 +51,9 @@
   ],
   "homepage": "https://www.ag-grid.com/",
   "devDependencies": {
+    "gulp": "^4.0.0",
+    "gulp-replace": "^1.0.0",
+    "gulp-rename": "^2.0.0",
     "@ag-grid-community/client-side-row-model": "31.1.0",
     "@ag-grid-community/core": "31.1.0",
     "@ag-grid-community/csv-export": "31.1.0",

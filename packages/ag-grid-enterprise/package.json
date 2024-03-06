@@ -5,6 +5,15 @@
   "main": "./dist/package/main.cjs.js",
   "types": "./dist/types/main.d.ts",
   "module": "./dist/package/main.esm.mjs",
+  "exports": {
+    ".": {
+      "import": "./dist/package/main.esm.mjs",
+      "require": "./dist/package/main.cjs.js",
+      "types": "./dist/types/main.d.ts",
+      "default": "./dist/package/main.cjs.js"
+    },
+    "./styles/*": "./styles/*"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/ag-grid/ag-grid.git"

@@ -8,5 +8,7 @@ tsconfig.types.json
 tsconfig.types.watch.json
 tsconfig.watch.json
 !dist
+!dist/types/src
 dist/**/*.test.*
 project.json
+jest.config.js

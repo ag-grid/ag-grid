@@ -58,6 +58,7 @@
         "{projectRoot}/package.json",
         "{projectRoot}/src/**/*",
         "{projectRoot}/tsconfig.*.json",
+        "{projectRoot}/gulpfile.js",
         "tsDeclarations",
         "sharedGlobals",
         "defaultExcludes"
