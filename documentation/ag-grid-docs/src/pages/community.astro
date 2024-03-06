@@ -6,6 +6,7 @@ import LayoutStyles from '@design-system/modules/community-section/Layout.module
 import styles from '@design-system/modules/community-section/index.module.scss';
 import FeaturedNews from '@components/community-section/news-updates/FeaturedNews';
 import Events from '@components/community-section/news-updates/Events';
+import EventsNew from '@components/community-section/EventsNew';
 import ShowcaseList from '@components/community-section/ShowcaseList';
 import Support from '@components/community-section/landing-page/Support';
 import Socials from '@components/community-section/landing-page/Socials';
@@ -27,7 +28,7 @@ import ToolsExtensions from '@components/community-section/tools-extensions/Tool
                     <section>
                         <div class={styles.sectionContainer}>
                             <div class={styles.sectionHeader}>
-                                <h3 class={styles.sectionTitle}>Featured News</h3>
+                                <h3 class={styles.sectionTitle}>News & Updates</h3>
                                 <!-- <p class={styles.sectionDescription}>
                                     The latest content from the AG Grid team, including releases, new features, events,
                                     and more
@@ -39,6 +40,23 @@ import ToolsExtensions from '@components/community-section/tools-extensions/Tool
                             </a>
                         </div>
                         <FeaturedNews client:only />
+                    </section>
+                    <!-- Events -->
+                    <section>
+                        <div class={styles.sectionContainer}>
+                            <div class={styles.sectionHeader}>
+                                <h3 class={styles.sectionTitle}>Events</h3>
+                                <!-- <p class={styles.sectionDescription}>
+                                    The latest content from the AG Grid team, including releases, new features, events,
+                                    and more
+                                </p> -->
+                            </div>
+                            <a href="/community/events" class={styles.sectionLink}>
+                                <span class={styles.linkIcon}>View all</span>
+                                <Icon name="arrowRight" />
+                            </a>
+                        </div>
+                        <Events client:only />
                     </section>
                     <!-- Showcase -->
                     <section>
