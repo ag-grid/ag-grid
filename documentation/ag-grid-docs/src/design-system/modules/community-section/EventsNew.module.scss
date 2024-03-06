@@ -1,7 +1,6 @@
 @use '../../core/' as *;
 
 .container {
-    
 }
 
 .tabContainer {
@@ -53,7 +52,7 @@
     gap: $spacing-size-4;
     margin-bottom: $spacing-size-4;
 
-    p { 
+    p {
         margin: 0px;
     }
 }
@@ -65,7 +64,8 @@
 
 .title {
     font-size: var(--text-fs-xl);
-    font-weight: var(--text-bold);
+    font-weight: var(--text-semibold);
+    color: var(--color-text-primary);
 }
 
 .date {
@@ -123,7 +123,7 @@
 }
 
 .eventItemRightColumn {
-    width: var(--layout-width-2-6)
+    width: var(--layout-width-2-6);
 }
 
 .eventImage {
