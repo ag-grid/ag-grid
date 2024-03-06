@@ -65,7 +65,7 @@
     },
     {
         "title": "ng-conf",
-        "description": "ng-conf 2024 is a two-day double track conference focused on building the Angular community.",
+        "description": "ng-conf 2023 was the 10th anniversary edition of the conference, so it was only right that AG Grid once again opted for Platinum sponsorship",
         "location": "Salt Lake City, USA",
         "framework": "Angular",
         "organiserLogo": "ng-conf-logo.webp",
@@ -78,6 +78,176 @@
         "recording": "https://www.youtube.com/watch?v=ELRCT7ooNCU",
         "images": [
             "generic/ngconf.jpg"
+        ]
+    },
+    {
+        "title": "React Summit",
+        "description": "",
+        "location": "Amsterdam, NL",
+        "framework": "React",
+        "organiserLogo": "react-summit-logo.svg",
+        "startDate": "2023-06-17",
+        "endDate": "2023-06-18",
+        "video": "",
+        "countryIcon": "netherlands.png",
+        "coverImage": "generic/react-summit.png",
+        "eventPage": "https://reactsummit.com/",
+        "recording": "",
+        "images": [
+            "generic/react-summit.png"
+        ]
+    },
+    {
+        "title": "React Advanced",
+        "description": "",
+        "location": "London, UK",
+        "framework": "React",
+        "organiserLogo": "react-advanced-logo.svg",
+        "countryIcon": "united-kingdom.png",
+        "startDate": "2023-10-28",
+        "endDate": "2023-10-28",
+        "video": "",
+        "eventPage": "https://reactadvanced.com/",
+        "coverImage": "generic/react-advanced.jpg",
+        "recording": "",
+        "images": [
+            ""
+        ]
+    },
+    {
+        "title": "React Summit",
+        "description": "",
+        "location": "New Jersey, USA",
+        "framework": "React",
+        "organiserLogo": "react-summit-logo.svg",
+        "countryIcon": "us.png",
+        "startDate": "2023-11-13",
+        "endDate": "2023-11-15",
+        "video": "",
+        "coverImage": "generic/react-summit-us.png",
+        "eventPage": "https://reactsummit.us/",
+        "recording": "",
+        "images": [
+            ""
+        ]
+    },
+    {
+        "title": "JS Nation",
+        "description": "",
+        "location": "",
+        "framework": "",
+        "organiserLogo": "",
+        "countryIcon": "",
+        "startDate": "2022-",
+        "endDate": "2022-",
+        "video": "",
+        "coverImage": "",
+        "eventPage": "",
+        "recording": "",
+        "images": [
+            ""
+        ]
+    },
+    {
+        "title": "React Summit",
+        "description": "",
+        "location": "",
+        "framework": "",
+        "organiserLogo": "",
+        "countryIcon": "",
+        "startDate": "2022-",
+        "endDate": "2022-",
+        "video": "",
+        "coverImage": "",
+        "eventPage": "",
+        "recording": "",
+        "images": [
+            ""
+        ]
+    },
+    {
+        "title": "React Global Online Summit",
+        "description": "",
+        "location": "",
+        "framework": "",
+        "organiserLogo": "",
+        "countryIcon": "",
+        "startDate": "2022-",
+        "endDate": "2022-",
+        "video": "",
+        "coverImage": "",
+        "eventPage": "",
+        "recording": "",
+        "images": [
+            ""
+        ]
+    },
+    {
+        "title": "TBD",
+        "description": "",
+        "location": "",
+        "framework": "",
+        "organiserLogo": "",
+        "countryIcon": "",
+        "startDate": "2021-",
+        "endDate": "2021-",
+        "video": "",
+        "coverImage": "",
+        "eventPage": "",
+        "recording": "",
+        "images": [
+            ""
+        ]
+    },
+    {
+        "title": "TBD",
+        "description": "",
+        "location": "",
+        "framework": "",
+        "organiserLogo": "",
+        "countryIcon": "",
+        "startDate": "2020-",
+        "endDate": "2020-",
+        "video": "",
+        "coverImage": "",
+        "eventPage": "",
+        "recording": "",
+        "images": [
+            ""
+        ]
+    },
+    {
+        "title": "TBD",
+        "description": "",
+        "location": "",
+        "framework": "",
+        "organiserLogo": "",
+        "countryIcon": "",
+        "startDate": "2019-",
+        "endDate": "2019-",
+        "video": "",
+        "coverImage": "",
+        "eventPage": "",
+        "recording": "",
+        "images": [
+            ""
+        ]
+    },
+    {
+        "title": "TBD",
+        "description": "",
+        "location": "",
+        "framework": "",
+        "organiserLogo": "",
+        "countryIcon": "",
+        "startDate": "2018-",
+        "endDate": "2018-",
+        "video": "",
+        "coverImage": "",
+        "eventPage": "",
+        "recording": "",
+        "images": [
+            ""
         ]
     }
 ]
