@@ -4,34 +4,20 @@ import React from 'react';
 import featuredNews from '../../../content/community/news-updates/featured-news.json';
 
 const FeaturedNews = () => {
+    const allArticles = [featuredNews.major_article, ...featuredNews.minor_articles];
+
     return (
-        <div class={styles.gridContainer}>
-            <div class={styles.leftColumn}>
-                <a href={featuredNews.major_article.link} target="_blank" className={styles.linkWrapper}>
+        <div className={styles.gridContainer}>
+            {allArticles.map((article, index) => (
+                <a href={article.link} target="_blank" className={styles.linkWrapper} key={index}>
                     <div className={styles.card}>
-                        <img src={featuredNews.major_article.image} alt="Image Description" />
+                        <img src={article.image} alt="Image Description" className={styles.articleImage} />
                         <div className={styles.content}>
-                            <h2>{featuredNews.major_article.title}</h2>
-                            <span className={styles.leftColumnDescription}>{featuredNews.major_article.description}</span>
-                                <a target="_blank" href={featuredNews.major_article.link}>
-                                    Learn More
-                                </a>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            {featuredNews.minor_articles.map((article, index) => (
-                <a href={article.link} target="_blank" className={styles.linkWrapper}>
-                    <div class={styles.rightColumn}>
-                        <div key={index} className={`${styles.card} ${styles.horizontal}`}>
-                            <img src={article.image} className={styles.minorArticleImage} alt="Image Description" />
-                            <div className={styles.content}>
-                                <h2 className={styles.rightColumnTitle}>{article.title}</h2>
-                                <p className={styles.rightColumnDescription}>{article.description}</p>
-                                <a target="_blank" href={article.link} className={styles.rightColumnLink}>
-                                    Learn More
-                                </a>
-                            </div>
+                            <h2 className={styles.articleTitle}>{article.title}</h2>
+                            <p className={styles.articleDescription}>{article.description}</p>
+                            <a target="_blank" href={article.link} className={styles.learnMoreLink}>
+                                Read article
+                            </a>
                         </div>
                     </div>
                 </a>
