@@ -96,7 +96,7 @@ export class AdvancedFilterHeaderComp extends Component {
     }
 
     private setAriaRowIndex(): void {
-        _.setAriaRowIndex(this.getGui(), this.columnModel.getHeaderRowCount());
+        _.setAriaRowIndex(this.getGui(), this.headerNavigationService.getHeaderRowCount());
     }
 
     private onGridColumnsChanged(): void {

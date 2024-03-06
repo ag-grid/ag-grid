@@ -338,7 +338,7 @@ export class FocusService extends BeanStub {
 
         if (allowUserOverride) {
             const currentPosition = this.getFocusedHeader();
-            const headerRowCount = this.columnModel.getHeaderRowCount();
+            const headerRowCount = this.headerNavigationService.getHeaderRowCount();
 
             if (fromTab) {
                 const userFunc = this.gridOptionsService.getCallback('tabToNextHeader');
@@ -407,7 +407,7 @@ export class FocusService extends BeanStub {
     }
 
     public focusLastHeader(event?: KeyboardEvent): boolean {
-        const headerRowIndex = this.columnModel.getHeaderRowCount() - 1;
+        const headerRowIndex = this.headerNavigationService.getHeaderRowCount() - 1;
         const column = last(this.columnModel.getAllDisplayedColumns());
 
         return this.focusHeaderPosition({

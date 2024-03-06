@@ -17,6 +17,7 @@ import { RowCtrl } from "../rendering/row/rowCtrl";
 import { warnOnce, throttle } from "../utils/function";
 import { RowPosition, RowPositionUtils } from "../entities/rowPositionUtils";
 import { RowRenderer } from "../rendering/rowRenderer";
+import { HeaderNavigationService } from "../headerRendering/common/headerNavigationService";
 import { CellNavigationService } from "../cellNavigationService";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
 import { NavigateToNextCellParams, TabToNextCellParams } from "../interfaces/iCallbackParams";
@@ -49,6 +50,7 @@ export class NavigationService extends BeanStub {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('ctrlsService') public ctrlsService: CtrlsService;
     @Autowired('rowRenderer') public rowRenderer: RowRenderer;
+    @Autowired('headerNavigationService') public headerNavigationService: HeaderNavigationService;
     @Autowired("rowPositionUtils") private rowPositionUtils: RowPositionUtils;
     @Autowired("cellNavigationService") private cellNavigationService: CellNavigationService;
     @Autowired("pinnedRowModel") private pinnedRowModel: PinnedRowModel;
@@ -573,7 +575,7 @@ export class NavigationService extends BeanStub {
             if (!nextPosition) { return null; }
 
             if (nextPosition.rowIndex < 0) {
-                const headerLen = this.columnModel.getHeaderRowCount();
+                const headerLen = this.headerNavigationService.getHeaderRowCount();
 
                 this.focusService.focusHeaderPosition({
                     headerPosition: {
@@ -720,7 +722,7 @@ export class NavigationService extends BeanStub {
         if (!nextCell) { return; }
 
         if (nextCell.rowIndex < 0) {
-            const headerLen = this.columnModel.getHeaderRowCount();
+            const headerLen = this.headerNavigationService.getHeaderRowCount();
 
             this.focusService.focusHeaderPosition({
                 headerPosition: { headerRowIndex: headerLen + (nextCell.rowIndex), column: currentCell.column },
