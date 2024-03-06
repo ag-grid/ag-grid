@@ -1,5 +1,4 @@
 import { basename } from 'path';
-import { getEnterprisePackageName } from '../constants';
 import { ExampleConfig, ParsedBindings, ImportType } from '../types';
 import { templatePlaceholder } from './grid-vanilla-src-parser';
 import {

@@ -3,7 +3,6 @@ import { ExampleConfig, ParsedBindings, ImportType } from '../types';
 import { templatePlaceholder } from './grid-vanilla-src-parser';
 import {
     addBindingImports,
-    addEnterprisePackage,
     addGenericInterfaceImport,
     addLicenseManager,
     convertFunctionToConstPropertyTs,
@@ -91,7 +90,6 @@ function getPackageImports(
         "import { AgGridReact } from 'ag-grid-react';",
     ];
 
-    addEnterprisePackage(imports, bindings);
     addLicenseManager(imports, exampleConfig, true);
 
     imports.push("import 'ag-grid-community/styles/ag-grid.css';");
@@ -242,7 +240,7 @@ export function vanillaToReactFunctionalTs(
             extraCoreTypes = ['GridReadyEvent'];
         }
 
-        const imports = getImports(bindings, componentFilenames, importType, extraCoreTypes, allStylesheets);
+        const imports = getImports(bindings, exampleConfig, componentFilenames, importType, extraCoreTypes, allStylesheets);
 
         const components: { [componentName: string]: string } = extractComponentInformation(
             properties,

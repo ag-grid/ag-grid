@@ -500,8 +500,6 @@ export function addBindingImports(
     const workingImports = {};
     const namespacedImports = [];
 
-    const chartsEnterprise = bindingImports.some((i) => i.module.includes('ag-charts-enterprise'));
-
     bindingImports.forEach((i: BindingImport) => {
         const path = convertImportPath(i.module, convertToPackage);
         if (!i.module.includes('_typescript') || !ignoreTsImports) {
@@ -552,10 +550,6 @@ export function addBindingImports(
     });
     if (hasEnterpriseModules && convertToPackage) {
         imports.push(`import '${getEnterprisePackageName()}';`);
-    }
-
-    if (chartsEnterprise) {
-        imports.push(`import 'ag-charts-enterprise';`);
     }
 }
 

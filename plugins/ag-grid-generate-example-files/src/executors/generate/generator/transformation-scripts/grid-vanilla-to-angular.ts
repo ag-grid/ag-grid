@@ -3,7 +3,6 @@ import { convertTemplate, getImport, toConst, toInput, toMemberWithValue, toOutp
 import { templatePlaceholder } from './grid-vanilla-src-parser';
 import {
     addBindingImports,
-    addEnterprisePackage,
     addGenericInterfaceImport,
     addLicenseManager,
     getActiveTheme,
@@ -95,7 +94,6 @@ function addPackageImports(imports: string[], bindings: ParsedBindings, exampleC
     const { inlineGridStyles, imports: bindingImports, properties } = bindings;
 
     imports.push("import { AgGridAngular } from 'ag-grid-angular';");
-    addEnterprisePackage(imports, bindings);
     addLicenseManager(imports, exampleConfig, true);
 
     imports.push("import 'ag-grid-community/styles/ag-grid.css';");
