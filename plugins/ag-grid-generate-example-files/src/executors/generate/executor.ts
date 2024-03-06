@@ -6,7 +6,7 @@ import { readFile, readJSONFile, writeFile } from '../../executors-utils';
 import gridVanillaSrcParser from './generator/transformation-scripts/grid-vanilla-src-parser';
 import { ExampleConfig, ExampleType, FRAMEWORKS, GeneratedContents } from './generator/types';
 
-import { SOURCE_ENTRY_FILE_NAME } from './generator/constants';
+import { getEnterprisePackageName, SOURCE_ENTRY_FILE_NAME } from './generator/constants';
 import {
     getBoilerPlateFiles,
     getEntryFileName,
@@ -20,6 +20,7 @@ import { getStyleFiles } from './generator/utils/getStyleFiles';
 import { getOtherScriptFiles } from './generator/utils/getOtherScriptFiles';
 import { frameworkFilesGenerator } from './generator/utils/frameworkFilesGenerator';
 import { getPackageJson } from './generator/utils/getPackageJson';
+import { removeModuleRegistration } from './generator/transformation-scripts/parser-utils';
 
 export type ExecutorOptions = {
     mode: 'dev' | 'prod';
@@ -185,6 +186,40 @@ export async function generateFiles(options: ExecutorOptions) {
                     scriptFiles = Object.keys(otherScriptFiles).filter((fileName) => {
                         return fileName.endsWith('.js') && fileName !== entryFileName;
                     });
+                }
+
+                let entryFileContent = provideFrameworkFiles[entryFileName];
+                if (entryFileContent && importType === 'packages') {
+                    const isEnterprise = entryFileContent.includes('-enterprise');
+
+                    // Remove the original import statements that contain modules
+                    entryFileContent = entryFileContent.replace(/import ((.|\n)[^}]*?\wModule(.|\n)*?)from.*\n/g, '');
+
+                    entryFileContent = removeModuleRegistration(entryFileContent);
+                    // Remove ModuleRegistry import if by itself
+                    entryFileContent = entryFileContent.replace(
+                        /import ((.|\n)[^{,]*?ModuleRegistry(.|\n)*?)from.*\n/g,
+                        ''
+                    );
+                    // Remove if ModuleRegistry is with other imports
+                    entryFileContent = entryFileContent.replace(/ModuleRegistry(,)?/g, '');
+
+                    entryFileContent = entryFileContent
+                        .replace(/@ag-grid-community\/core/g, 'ag-grid-community')
+                        .replace(/@ag-grid-community\/react/g, 'ag-grid-react')
+                        .replace(/@ag-grid-community\/angular/g, 'ag-grid-angular')
+                        .replace(/@ag-grid-community\/vue/g, 'ag-grid-vue')
+                        .replace(/@ag-grid-community\/vue3/g, 'ag-grid-vue3')
+                        .replace(/@ag-grid-community\/styles/g, 'ag-grid-community/styles');
+
+                    if (isEnterprise) {
+                        entryFileContent = entryFileContent.replace(
+                            "from 'ag-grid-community';",
+                            `from 'ag-grid-community';\nimport '${getEnterprisePackageName()}';\n`
+                        );
+                    }
+
+                    provideFrameworkFiles[entryFileName] = entryFileContent;
                 }
             }
 
