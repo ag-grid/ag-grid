@@ -1,8 +1,9 @@
+import { get } from 'http';
 import { transform } from 'sucrase';
 import ts from 'typescript';
 
 import { getEnterprisePackageName } from '../constants';
-import { BindingImport, ParsedBindings } from '../types';
+import { BindingImport, ExampleConfig, ParsedBindings } from '../types';
 
 export function readAsJsFile(srcFile, options: { includeImports: boolean } = undefined) {
     const tsFile = srcFile
@@ -237,6 +238,12 @@ export function extractImportStatements(srcFile: ts.SourceFile): BindingImport[]
     return allImports;
 }
 
+export function addLicenseManager(imports: any[], exampleConfig: ExampleConfig, usePackages: boolean) {
+    if (exampleConfig.licenseKey) {
+        imports.push(`import { LicenseManager } from '${ usePackages ? getEnterprisePackageName() : '@ag-grid-enterprise/core'}';`);
+    }
+}
+
 export function addEnterprisePackage(imports: any[], bindings: ParsedBindings) {
     const isEnterprise = bindings.imports.some((i) => i.module.includes('-enterprise'));
     if (isEnterprise) {
@@ -458,7 +465,7 @@ export function convertImportPath(modulePackage: string, convertToPackage: boole
             return `'ag-grid-community'`;
         }
         if (modulePackage.includes('@ag-grid-enterprise')) {
-            return `'ag-grid-enterprise'`;
+            return `'${getEnterprisePackageName()}'`;
         }
     }
     return modulePackage.replace('_typescript', '').replace(/"/g, `'`);
@@ -544,7 +551,7 @@ export function addBindingImports(
         }
     });
     if (hasEnterpriseModules && convertToPackage) {
-        imports.push(`import 'ag-grid-enterprise';`);
+        imports.push(`import '${getEnterprisePackageName()}';`);
     }
 
     if (chartsEnterprise) {
