@@ -2,7 +2,7 @@ import {
     AgGroupComponentParams,
     Autowired,
     Component,
-    PostConstruct
+    PostConstruct,
 } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { FormatPanelOptions } from "../formatPanel";
@@ -52,6 +52,7 @@ export class NavigatorPanel extends Component {
         navigatorMinSliderParams.step = 0.05;
         const navigatorMaxSliderParams = this.chartMenuUtils.getDefaultSliderParams("navigator.max", "rangeEnd", 1);
         navigatorMaxSliderParams.step = 0.05;
+
         this.setTemplate(NavigatorPanel.TEMPLATE, {
             navigatorGroup: navigatorGroupParams,
             navigatorHeightSlider: navigatorHeightSliderParams,
