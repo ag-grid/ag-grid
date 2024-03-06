@@ -17,7 +17,7 @@
     },
     {
         "title": "React Summit",
-        "description": "React Summit is an annual conference on all things React, gathering thousands of Front-end and Full-stack engineers from around the world.",
+        "description": "React Summit is an annual conference on all things React, gathering thousands of Front-end and Full-stack engineers from around the world.\n\nWe'll be presenting a lightning (20-min) talk this year, watch this space to find out more as we approach June...",
         "location": "Amsterdam, NL",
         "framework": "React",
         "organiserLogo": "react-summit-logo.svg",
