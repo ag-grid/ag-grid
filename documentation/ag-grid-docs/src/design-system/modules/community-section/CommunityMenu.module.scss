@@ -19,15 +19,17 @@
     padding-left: $spacing-size-4;
     padding-right: $spacing-size-4;
     cursor: pointer;
+    opacity: 0.7;
 
     a {
         color: var(--color-fg-secondary);
     }
 
     &.selected {
-        background-color: var(--color-bg-secondary);
+        background-color: var(--color-util-brand-100);
         border-radius: var(--radius-4xl);
         color: var(--color-fg-primary);
+        opacity: 1;
     }
 
     &:last-child {

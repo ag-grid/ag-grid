@@ -8,6 +8,13 @@
     padding: 32px 0px 32px 0px;
     margin: 64px 0px 0px 0px;
 
+    h1 {
+        margin-bottom: $spacing-size-2;
+    }
+
+    p {
+        color: var(--color-text-tertiary);
+    }
     .description {
         text-align: center;
         margin: 0px $spacing-size-48 0px $spacing-size-48;
@@ -19,7 +26,7 @@
     flex-direction: column;
 }
 
-.content { 
+.content {
     h3 {
         margin-top: 24px;
     }
@@ -28,4 +35,13 @@
 section {
     margin-top: $spacing-size-12;
     margin-bottom: $spacing-size-32;
+}
+
+.gradient {
+    position: absolute;
+    height: 100px;
+    width: 100vw;
+    background: linear-gradient(transparent, var(--color-bg-brand-solid));
+    opacity: 0.05;
+    top: 264px;
 }
