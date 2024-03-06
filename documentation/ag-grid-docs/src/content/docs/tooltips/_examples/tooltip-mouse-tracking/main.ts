@@ -37,6 +37,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     flex: 1,
     minWidth: 100
   },
+  tooltipShowDelay: 500,
   tooltipMouseTrack: true,
   rowData: null,
   columnDefs: columnDefs,

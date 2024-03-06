@@ -538,6 +538,10 @@
                                 "path": "column-definitions"
                             },
                             {
+                                "title": "Updating Definitions",
+                                "path": "column-updating-definitions"
+                            },
+                            {
                                 "title": "Column Headers",
                                 "path": "column-headers"
                             },
@@ -564,10 +568,6 @@
                             {
                                 "title": "Advanced",
                                 "items": [
-                                    {
-                                        "title": "Updating Definitions",
-                                        "path": "column-updating-definitions"
-                                    },
                                     {
                                         "title": "Column State",
                                         "path": "column-state"
@@ -616,22 +616,22 @@
                                 "path": "row-pagination"
                             },
                             {
-                                "title": "Row Dragging",
-                                "path": "row-dragging",
-                                "items": [
-                                    {
-                                        "title": "External DropZone",
-                                        "path": "row-dragging-to-external-dropzone"
-                                    },
-                                    {
-                                        "title": "Grid to Grid",
-                                        "path": "row-dragging-to-grid"
-                                    }
-                                ]
-                            },
-                            {
                                 "title": "Advanced",
-                                "items": [
+                                "items": [                                    
+                                    {
+                                        "title": "Row Dragging",
+                                        "path": "row-dragging",
+                                        "items": [
+                                            {
+                                                "title": "External DropZone",
+                                                "path": "row-dragging-to-external-dropzone"
+                                            },
+                                            {
+                                                "title": "Grid to Grid",
+                                                "path": "row-dragging-to-grid"
+                                            }
+                                        ]
+                                    },
                                     {
                                         "title": "Displayed Rows",
                                         "path": "rendering-api"

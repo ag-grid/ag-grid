@@ -15,12 +15,12 @@ const toolTipValueGetter = (params: ITooltipParams) => params.value == null || p
 
 const columnDefs: ColDef[] = [
   {
-    headerName: 'Athlete - Blank Cells No Tooltip',
+    headerName: 'A - Missing Value, NO Tooltip',
     field: 'athlete',
     tooltipField: 'athlete',
   },
   {
-    headerName: 'Athlete - Blank Cells Show Tooltip',
+    headerName: 'B - Missing Value, WITH Tooltip',
     field: 'athlete',
     tooltipValueGetter: toolTipValueGetter,
   }
@@ -33,6 +33,7 @@ const gridOptions: GridOptions = {
     flex: 1,
     minWidth: 100
   },
+  tooltipShowDelay: 500,
   rowData: null,
   columnDefs: columnDefs,
 }
