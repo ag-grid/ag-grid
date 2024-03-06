@@ -1,0 +1,83 @@
+[
+    {
+        "title": "ng-conf",
+        "description": "ng-conf 2024 is a two-day double track conference focused on building the Angular community. AG Grid has been a platinum sponsor of ng-conf for a number of years and will be a platinum sponsor once again in 2024. \n\nIn addition one of our senior engineers, Stephen Cooper, will be giving a talk titled: 'Perfecting your Profiling Skills' which will show how you can use Angular Dev Tools alongside the standard Dev Tools to identify and resolve performance issues, whilst unearthing some hidden gems in the process.",
+        "location": "Salt Lake City, USA",
+        "framework": "Angular",
+        "organiserLogo": "ng-conf-logo.webp",
+        "startDate": "2024-03-20",
+        "endDate": "2024-03-21",
+        "video": "",
+        "coverImage": "generic/ngconf.jpg",
+        "countryIcon": "us.png",
+        "eventPage": "https://ng-conf.org/",
+        "images": [
+            "generic/ngconf.jpg"
+        ]
+    },
+    {
+        "title": "React Summit",
+        "description": "React Summit is an annual conference on all things React, gathering thousands of Front-end and Full-stack engineers from around the world.",
+        "location": "Amsterdam, NL",
+        "framework": "React",
+        "organiserLogo": "react-summit-logo.svg",
+        "startDate": "2024-06-17",
+        "endDate": "2024-06-18",
+        "video": "",
+        "countryIcon": "netherlands.png",
+        "coverImage": "generic/react-summit.png",
+        "eventPage": "https://reactsummit.com/",
+        "images": [
+            "generic/react-summit.png"
+        ]
+    },
+    {
+        "title": "React Advanced",
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+        "location": "London, UK",
+        "framework": "React",
+        "organiserLogo": "react-advanced-logo.svg",
+        "countryIcon": "united-kingdom.png",
+        "startDate": "2024-10-28",
+        "endDate": "2024-10-28",
+        "video": "",
+        "eventPage": "https://reactadvanced.com/",
+        "coverImage": "generic/react-advanced.jpg",
+        "images": [
+            ""
+        ]
+    },
+    {
+        "title": "React Summit",
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+        "location": "New Jersey, USA",
+        "framework": "React",
+        "organiserLogo": "react-summit-logo.svg",
+        "countryIcon": "us.png",
+        "startDate": "2024-11-13",
+        "endDate": "2024-11-15",
+        "video": "",
+        "coverImage": "generic/react-summit-us.png",
+        "eventPage": "https://reactsummit.us/",
+        "images": [
+            ""
+        ]
+    },
+    {
+        "title": "ng-conf",
+        "description": "ng-conf 2024 is a two-day double track conference focused on building the Angular community.",
+        "location": "Salt Lake City, USA",
+        "framework": "Angular",
+        "organiserLogo": "ng-conf-logo.webp",
+        "startDate": "2023-06-14",
+        "endDate": "2023-06-15",
+        "video": "",
+        "coverImage": "generic/ngconf.jpg",
+        "countryIcon": "us.png",
+        "eventPage": "https://ng-conf.org/",
+        "recording": "https://www.youtube.com/watch?v=ELRCT7ooNCU",
+        "images": [
+            "generic/ngconf.jpg"
+        ]
+    }
+]
