@@ -99,17 +99,19 @@ export const FILES_PATH_MAP: Record<string, string | GlobConfig> = {
     //     sourceFolder: 'enterprise-modules',
     //     fileNameGlob: '*/dist/**/*.{cjs,js,map}',
     // },
-
-    // Hero grid
-    '@ag-grid-community/styles/ag-theme-alpine.css': 'community-modules/styles/ag-theme-alpine.css',
 };
 if(USE_PACKAGES) {
     // packages
+    FILES_PATH_MAP['ag-grid-community/styles/**'] = `packages/ag-grid-community/styles/**/*.css`;
     FILES_PATH_MAP['ag-grid-community/dist/**'] = `packages/ag-grid-community/dist/**/*.{cjs,js,map}`;
+    FILES_PATH_MAP['ag-grid-enterprise/styles/**'] = `packages/ag-grid-enterprise/styles/**/*.css`;
     FILES_PATH_MAP[`ag-grid-enterprise/dist/**`] = `packages/ag-grid-enterprise/dist/**/*.{cjs,js,map}`;
+    FILES_PATH_MAP['ag-grid-charts-enterprise/styles/**'] = `packages/ag-grid-charts-enterprise/styles/**/*.css`;
     FILES_PATH_MAP[`ag-grid-charts-enterprise/dist/**`] = `packages/ag-grid-charts-enterprise/dist/**/*.{cjs,js,map}`;
     FILES_PATH_MAP['ag-grid-react/dist/**'] = `packages/ag-grid-react/dist/**/*.{cjs,js,map}`;
     FILES_PATH_MAP['ag-grid-angular/fesm2015/ag-grid-angular.mjs'] = 'packages/ag-grid-angular/dist/ag-grid-angular/fesm2015/ag-grid-angular.mjs'
+    FILES_PATH_MAP['ag-grid-vue/dist/**'] = 'packages/ag-grid-vue/dist/**/*.{cjs,mjs,js,map}'
+    FILES_PATH_MAP['ag-grid-vue3/dist/**'] = 'packages/ag-grid-vue3/dist/**/*.{cjs,mjs,js,map}'
 }
 
 type FileKey = keyof typeof FILES_PATH_MAP;

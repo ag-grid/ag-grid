@@ -7,8 +7,7 @@ class SimpleGrid {
     constructor() {
         this.gridOptions = {
             columnDefs: this.createColumnDefs(),
-            rowData: this.createRowData(),
-            enableRangeSelection: true
+            rowData: this.createRowData()
         };
 
         let eGridDiv: HTMLElement = <HTMLElement>document.querySelector('#myGrid');

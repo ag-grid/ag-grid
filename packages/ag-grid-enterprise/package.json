@@ -3,12 +3,12 @@
   "version": "31.1.0",
   "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
   "main": "./dist/package/main.cjs.js",
-  "types": "./dist/types/src/main.d.ts",
+  "types": "./dist/types/main.d.ts",
   "module": "./dist/package/main.esm.mjs",
   "exports": {
     "import": "./dist/package/main.esm.mjs",
     "require": "./dist/package/main.cjs.js",
-    "types": "./dist/types/src/main.d.ts",
+    "types": "./dist/types/main.d.ts",
     "default": "./dist/package/main.cjs.js"
   },
   "repository": {
@@ -48,10 +48,7 @@
   ],
   "homepage": "https://www.ag-grid.com/",
   "devDependencies": {
-    "@ag-grid-community/client-side-row-model": "31.1.0",
-    "@ag-grid-community/core": "31.1.0",
-    "@ag-grid-community/csv-export": "31.1.0",
-    "@ag-grid-community/infinite-row-model": "31.1.0",
+    "ag-grid-community": "31.1.0",
     "@ag-grid-community/styles": "31.1.0",
     "@ag-grid-enterprise/advanced-filter": "31.1.0",
     "@ag-grid-enterprise/charts": "31.1.0",

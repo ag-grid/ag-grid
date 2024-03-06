@@ -114,8 +114,7 @@
           "while (test \"${BUILD_PACKAGES}\" != \"0\" && test \"${BUILD_FWS}\" != \"0\") ; do nx watch -p ag-grid-angular,ag-grid-react,ag-grid-vue,ag-grid-vue3 -- nx run \\${NX_PROJECT_NAME}:build ; done",
           "while true ; do nx watch -p ag-grid-docs-* -- nx build \\${NX_PROJECT_NAME}:generate; done",
           "while true ; do nx watch -p ag-grid-docs -- {projectRoot}/dev.sh \\${NX_PROJECT_NAME}; done",
-          "if (test \"${BUILD_PACKAGES}\" == \"1\"); then nx run ag-grid-docs:dev:all; fi",
-          "if (test \"${BUILD_PACKAGES}\" == \"0\"); then nx run ag-grid-docs:dev; fi"
+          "nx run ag-grid-docs:dev"
         ]
       },
       "configurations": {
@@ -145,7 +144,8 @@
         "commands": ["nx run-many -t test --parallel 1"]
       }
     },
-    "clean": { "command": "rimraf dist/ 'community-modules/*/dist/' 'community-modules/styles/*.css' 'enterprise-modules/*/dist/' 'documentation/*/dist/'" },
+    "clean": { "command": "rimraf dist/ 'community-modules/*/dist/' 'community-modules/styles/*.css' 'enterprise-modules/*/dist/' 'packages/*/dist/' 'documentation/*/dist/'",
+    },
     "generate-examples": {
       "executor": "nx:noop",
       "dependsOn": ["^generate-example"],

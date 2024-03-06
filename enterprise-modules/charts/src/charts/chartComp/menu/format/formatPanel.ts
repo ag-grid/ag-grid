@@ -19,6 +19,7 @@ import { CrosshairPanel } from './crosshair/crosshairPanel';
 import { SeriesPanel } from "./series/seriesPanel";
 import { ChartSeriesType, getSeriesType, hasGradientLegend, isPolar } from "../../utils/seriesTypeMapper";
 import { GradientLegendPanel } from './legend/gradientLegendPanel';
+import { ZoomPanel } from './zoom/zoomPanel';
 
 export interface FormatPanelOptions {
     chartController: ChartController,
@@ -34,6 +35,7 @@ const DefaultFormatPanelDef: ChartFormatPanel = {
         { type: 'series' },
         { type: 'axis' },
         { type: 'navigator' },
+        { type: 'zoom' },
         { type: 'animation' },
         { type: 'crosshair' },
     ]
@@ -100,6 +102,8 @@ export class FormatPanel extends Component {
                 this.addComponent(new SeriesPanel(opts));
             } else if (group === 'navigator') {
                 this.addComponent(new NavigatorPanel(opts));
+            } else if (group === 'zoom') {
+                this.addComponent(new ZoomPanel(opts));
             } else if (group === 'animation') {
                 this.addComponent(new AnimationPanel(opts));
             } else if (group === 'crosshair') {
@@ -122,7 +126,7 @@ export class FormatPanel extends Component {
         // Determine whether the given panel group is shown depending on the active series type
 
         // These panel groups are always shown regardless of series type
-        const commonGroupPanels = ['chart', 'legend', 'series', 'animation'];
+        const commonGroupPanels = ['chart', 'legend', 'series', 'zoom', 'animation'];
         if (commonGroupPanels.includes(group)) {
             return true;
         }
