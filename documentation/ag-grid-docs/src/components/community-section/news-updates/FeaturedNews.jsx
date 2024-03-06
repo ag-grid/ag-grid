@@ -13,10 +13,12 @@ const FeaturedNews = () => {
                     <div className={styles.card}>
                         <img src={article.image} alt="Image Description" className={styles.articleImage} />
                         <div className={styles.content}>
-                            <h2 className={styles.articleTitle}>{article.title}</h2>
-                            <p className={styles.articleDescription}>{article.description}</p>
+                            <div class={styles.headerTitleDescription}>
+                                <h2 className={styles.articleTitle}>{article.title}</h2>
+                                <p className={styles.articleDescription}>{article.description}</p>
+                            </div>
                             <a target="_blank" href={article.link} className={styles.learnMoreLink}>
-                                Read article
+                                Read article →
                             </a>
                         </div>
                     </div>
