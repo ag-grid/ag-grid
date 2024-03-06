@@ -45,6 +45,7 @@ export class CartesianAxisPanel extends Component {
     private readonly chartController: ChartController;
     private readonly chartAxisOptionsProxy: ChartOptionsProxy;
     private readonly chartAxisThemeOverridesProxy: ChartOptionsProxy;
+    private readonly chartAxisAppliedThemeOverridesProxy: ChartOptionsProxy;
     private readonly isExpandedOnInit: boolean;
 
     private activePanels: Component[] = [];
@@ -59,6 +60,7 @@ export class CartesianAxisPanel extends Component {
         this.chartController = chartController;
         this.chartAxisOptionsProxy = chartOptionsService.getCartesianAxisOptionsProxy(axisType);
         this.chartAxisThemeOverridesProxy = chartOptionsService.getCartesianAxisThemeOverridesProxy(axisType);
+        this.chartAxisAppliedThemeOverridesProxy = chartOptionsService.getCartesianAxisAppliedThemeOverridesProxy(axisType);
         this.isExpandedOnInit = isExpandedOnInit;
     }
 
@@ -76,7 +78,7 @@ export class CartesianAxisPanel extends Component {
         const chartAxisOptions = this.createManagedBean(new ChartMenuUtils(this.chartAxisOptionsProxy));
         const chartAxisThemeOverrides = this.createManagedBean(new ChartMenuUtils(this.chartAxisThemeOverridesProxy));
 
-        const axisTypeSelectParams = this.getAxisTypeSelectParams(chartAxisOptions, chartAxisThemeOverrides);
+        const axisTypeSelectParams = this.getAxisTypeSelectParams(chartAxisOptions, this.chartAxisAppliedThemeOverridesProxy);
         const axisPositionSelectParams = this.getAxisPositionSelectParams(chartAxisOptions);
         const axisColorInputParams = this.getAxisColorInputParams(chartAxisThemeOverrides);
         const axisLineWidthSliderParams = this.getAxisLineWidthSliderParams(chartAxisThemeOverrides);
@@ -99,7 +101,7 @@ export class CartesianAxisPanel extends Component {
         this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, updateAxisLabelRotations);
     }
 
-    private getAxisTypeSelectParams(chartAxisOptions: ChartMenuUtils, chartAxisThemeOverrides: ChartMenuUtils): AgSelectParams | null {
+    private getAxisTypeSelectParams(chartAxisOptions: ChartMenuUtils, chartAxisAppliedThemeOverrides: ChartOptionsProxy): AgSelectParams | null {
         const axisTypeSelectOptions = ((chartType, axisType) => {
             if (isPolar(chartType)) return null;
             switch (axisType) {
@@ -112,11 +114,23 @@ export class CartesianAxisPanel extends Component {
             }
         })(this.chartController.getChartType(), this.axisType);
         if (!axisTypeSelectOptions) return null;
-        return chartAxisOptions.getDefaultSelectParams(
+        const params = chartAxisOptions.getDefaultSelectParams(
             'type',
             'axisType',
             axisTypeSelectOptions,
         );
+        params.onValueChange = ((onValueChange) => (value) => {
+            const previousAxisType = chartAxisOptions.getValue('type');
+            if (value === previousAxisType) return;
+            // If the axis type is changed, we need to carry over all the accumulated theme overrides
+            // that have been applied to the existing axis type so far
+            const previousAxisThemeOverrides = chartAxisAppliedThemeOverrides.getValue('*');
+            // Update the axis type
+            onValueChange?.(value);
+            // Reapply the previous theme overrides to the new axis type
+            chartAxisAppliedThemeOverrides.setValue('*', previousAxisThemeOverrides);
+        })(params.onValueChange);
+        return params;
     }
 
     private getAxisPositionSelectParams(chartAxisOptions: ChartMenuUtils): AgSelectParams | null {
