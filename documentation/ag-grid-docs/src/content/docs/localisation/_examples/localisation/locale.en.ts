@@ -295,6 +295,7 @@ export const AG_GRID_LOCALE_EN: Record<string,string> = {
     perpendicular: 'Perpendicular',
     radiusAxisPosition: 'Position',
     ticks: 'Ticks',
+    gridLines: 'Grid Lines',
     width: 'Width',
     height: 'Height',
     length: 'Length',

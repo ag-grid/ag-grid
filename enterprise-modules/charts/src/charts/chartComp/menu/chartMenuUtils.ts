@@ -15,7 +15,11 @@ export class ChartMenuUtils extends BeanStub {
 
     public getDefaultColorPickerParams(
         expression: string,
-        labelKey?: ChartTranslationKey
+        labelKey?: ChartTranslationKey,
+        options?: {
+            parseInputValue: (value: any) => any;
+            formatInputValue: (value: any) => any;
+        },
     ): AgColorPickerParams {
         return this.addValueParams(
             expression,
@@ -23,7 +27,8 @@ export class ChartMenuUtils extends BeanStub {
                 label: this.chartTranslationService.translate(labelKey ?? 'color'),
                 labelWidth: 'flex',
                 inputWidth: 'flex',
-            }
+            },
+            options,
         );
     }
 

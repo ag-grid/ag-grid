@@ -295,6 +295,7 @@ const AG_GRID_LOCALE_EN = {
     perpendicular: 'Perpendicular',
     radiusAxisPosition: 'Position',
     ticks: 'Ticks',
+    gridLines: 'Grid Lines',
     width: 'Width',
     height: 'Height',
     length: 'Length',

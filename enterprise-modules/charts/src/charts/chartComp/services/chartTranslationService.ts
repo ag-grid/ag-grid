@@ -42,6 +42,7 @@ export class ChartTranslationService extends BeanStub {
         perpendicular: 'Perpendicular',
         radiusAxisPosition: 'Position',
         ticks: 'Ticks',
+        gridLines: 'Grid Lines',
         width: 'Width',
         height: 'Height',
         length: 'Length',

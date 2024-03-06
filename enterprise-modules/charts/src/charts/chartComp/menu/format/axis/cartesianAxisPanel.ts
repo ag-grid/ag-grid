@@ -17,6 +17,7 @@ import { AxisTicksPanel } from "./axisTicksPanel";
 import { FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslationKey, ChartTranslationService } from "../../../services/chartTranslationService";
 import { FormatPanelOptions } from "../formatPanel";
+import { GridLinePanel } from '../gridLine/gridLinePanel';
 import { AgAngleSelect } from "../../../../../widgets/agAngleSelect";
 import { ChartMenuUtils } from "../../chartMenuUtils";
 import { ChartOptionsProxy } from '../../../services/chartOptionsService';
@@ -94,6 +95,7 @@ export class CartesianAxisPanel extends Component {
         if (!axisTypeSelectParams) this.removeTemplateComponent(this.axisTypeSelect);
         if (!axisPositionSelectParams) this.removeTemplateComponent(this.axisPositionSelect);
 
+        this.initGridLines(chartAxisThemeOverrides);
         this.initAxisTicks(chartAxisThemeOverrides);
         this.initAxisLabels(chartAxisThemeOverrides);
 
@@ -182,6 +184,12 @@ export class CartesianAxisPanel extends Component {
             setAxisLineWidth(newValue === 0 ? null : newValue);
         };
         return axisLineWidthSliderParams;
+    }
+
+    private initGridLines(chartAxisThemeOverrides: ChartMenuUtils) {
+        const gridLineComp = this.createBean(new GridLinePanel(chartAxisThemeOverrides));
+        this.axisGroup.addItem(gridLineComp);
+        this.activePanels.push(gridLineComp);
     }
 
     private initAxisTicks(chartAxisThemeOverrides: ChartMenuUtils) {
