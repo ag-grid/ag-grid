@@ -76,9 +76,9 @@ export const defineTheme = <P extends AnyPart, V extends object = ParamTypes>(
     }
   }
 
-  // render variable defaults using :where(html) to ensure lowest specificity so that
+  // render variable defaults using :where(:root) to ensure lowest specificity so that
   // `html { --ag-foreground-color: red; }` will override this
-  let variableDefaults = ':where(html) {\n';
+  let variableDefaults = ':where(:root), .ag-shadow-root {\n';
   for (const name of Object.keys(mergedParams)) {
     let value = mergedParams[name];
     if (isBorderParam(name)) {
@@ -173,15 +173,17 @@ const flattenParts = (parts: readonly AnyPart[]): Part[] => {
   return result;
 };
 
-export const installTheme = (theme: Theme) => {
+export const installTheme = (theme: Theme, container?: HTMLElement | null) => {
   const id = 'ag-injected-style';
-  const head = document.querySelector('head');
-  if (!head) throw new Error("Can't install theme before document head is created");
-  let style = head.querySelector(`#${id}`) as HTMLStyleElement;
+  if (!container) {
+    container = document.querySelector('head');
+    if (!container) throw new Error("Can't install theme before document head is created");
+  }
+  let style = container.querySelector(`#${id}`) as HTMLStyleElement;
   if (!style) {
     style = document.createElement('style');
     style.setAttribute('id', id);
-    head.insertBefore(style, head.firstChild);
+    container.insertBefore(style, container.firstChild);
   }
   style.textContent = theme.css;
 };

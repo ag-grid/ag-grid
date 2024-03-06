@@ -38,6 +38,7 @@
     "react-collapse": "^5.1.1",
     "react-collapsed": "^4.1.2",
     "react-dom": "18.2.0",
+    "react-shadow": "^20.4.0",
     "throttle-debounce": "^5.0.0"
   },
   "devDependencies": {

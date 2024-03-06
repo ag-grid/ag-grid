@@ -111,49 +111,6 @@ const StateAndIconButton: FC<{
   </Stack>
 );
 
-// type ExpandingParamsEditorProps = PartEditorProps & {
-//   show: boolean;
-//   onHide: () => void;
-// };
-
-// const ExpandingParamsEditor = memoWithSameType(
-//   ({ partId, show, onHide }: ExpandingParamsEditorProps) => {
-//     const setValue = useSetAtom(getPartAtom(partId));
-//     return (
-//       <PartParamsEditorCell>
-//         <AnimateAppear>
-//           {show && (
-//             <Card sx={{ gap: 1, padding: 1.5, paddingBottom: 1 }}>
-//               <ParamsEditor partId={partId} />
-//               <Box>
-//                 <Link
-//                   component="button"
-//                   variant="plain"
-//                   color="danger"
-//                   onClick={() => {
-//                     if (confirm(`Reset ${titleCase(partId).toLowerCase()} to default values?`)) {
-//                       setValue(getPart(partId).defaultPresetId);
-//                       onHide();
-//                     }
-//                   }}
-//                   sx={{ borderRadius: '4px', gap: 1 }}
-//                 >
-//                   <Reset /> Reset to defaults
-//                 </Link>
-//               </Box>
-//             </Card>
-//           )}
-//         </AnimateAppear>
-//       </PartParamsEditorCell>
-//     );
-//   },
-// );
-
-// const PartParamsEditorCell = styled('div')`
-//   grid-column-end: span 2;
-//   margin-bottom: 10px;
-// `;
-
 const PartsMenuButton = styled(MenuButton)`
   font-weight: 500;
 `;

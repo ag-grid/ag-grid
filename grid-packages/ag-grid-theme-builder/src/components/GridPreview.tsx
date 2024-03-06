@@ -13,12 +13,13 @@ import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
 import { styled } from '@mui/joy';
-// import 'ag-charts-enterprise';
-import { useAtomValue } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { memo, useMemo, useState } from 'react';
+import root from 'react-shadow';
 import { withErrorBoundary } from '../components/ErrorBoundary';
 import { gridConfigAtom } from '../features/grid-config/grid-config-atom';
 import { buildGridOptions } from '../model/grid-options';
+import { shadowDomContainerAtom } from '../model/rendered-theme';
 
 ModuleRegistry.registerModules([
   ClientSideRowModelModule,
@@ -49,40 +50,46 @@ const GridPreview = () => {
     internalState.prevConfig = config;
   }
 
+  const [containerEl, setContainerEl] = useAtom(shadowDomContainerAtom);
+
   return (
     <Wrapper>
-      <AgGridReact
-        onGridReady={({ api }) => {
-          if (config.showIntegratedChartPopup) {
-            api.createRangeChart({
-              cellRange: {
-                rowStartIndex: 0,
-                rowEndIndex: 14,
-                columns: ['model', 'year', 'price'],
-              },
-              chartType: 'groupedColumn',
-              chartThemeOverrides: {
-                common: {
-                  title: {
-                    enabled: true,
-                    text: 'Top 5 Medal Winners',
+      <root.div style={{ height: '100%' }}>
+        <div ref={setContainerEl} style={{ height: '100%' }} className="ag-shadow-root">
+          <AgGridReact
+            onGridReady={({ api }) => {
+              if (config.showIntegratedChartPopup) {
+                api.createRangeChart({
+                  cellRange: {
+                    rowStartIndex: 0,
+                    rowEndIndex: 14,
+                    columns: ['model', 'year', 'price'],
                   },
-                },
-              },
-            });
-            setTimeout(() => {
-              document
-                .querySelector('.ag-chart .ag-icon-expanded')
-                ?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-            }, 1);
-          }
-          if (config.showOverlay) {
-            api.showLoadingOverlay();
-          }
-        }}
-        key={internalState.id}
-        {...options}
-      />
+                  chartType: 'groupedColumn',
+                  chartThemeOverrides: {
+                    common: {
+                      title: {
+                        enabled: true,
+                        text: 'Top 5 Medal Winners',
+                      },
+                    },
+                  },
+                });
+                setTimeout(() => {
+                  document
+                    .querySelector('.ag-chart .ag-icon-expanded')
+                    ?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+                }, 1);
+              }
+              if (config.showOverlay) {
+                api.showLoadingOverlay();
+              }
+            }}
+            key={internalState.id}
+            {...options}
+          />
+        </div>
+      </root.div>
     </Wrapper>
   );
 };
@@ -94,4 +101,13 @@ export { GridPreviewWrapped as GridPreview };
 const Wrapper = styled('div')`
   width: 100%;
   height: 100%;
+
+  /* These styles should not be applied to the grid because we render in a Shadow DOM */
+  .ag-root-wrapper {
+    border: 10px red dashed !important;
+    &::before {
+      font-size: 30px;
+      content: 'Warning: page styles are leaking into the grid';
+    }
+  }
 `;
