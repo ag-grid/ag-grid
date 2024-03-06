@@ -213,7 +213,6 @@ export const GRID_OPTION_DEFAULTS = {
     groupLockGroupColumns: 0,
     serverSideEnableClientSideSort: false,
     pivotMaxGeneratedColumns: -1,
-    legacyChartsMenu: true,
 } as const;
 /**
  * Used simply to type check the default grid options.
