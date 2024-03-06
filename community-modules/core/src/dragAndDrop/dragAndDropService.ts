@@ -16,7 +16,7 @@ import { IRowNode } from "../interfaces/iRowNode";
 import { IAggFunc } from "../entities/colDef";
 import { HorizontalDirection, VerticalDirection } from "../constants/direction";
 
-export interface DragItem {
+export interface DragItem<TValue = any> {
     /**
      * When dragging a row, this contains the row node being dragged
      * When dragging multiple rows, this contains the row that started the drag.
@@ -38,16 +38,21 @@ export interface DragItem {
         rowGroup?: boolean;
         aggFunc?: string | IAggFunc | null;
     } };
+
+    /** Additional state */
+    value?: TValue;
 }
 
 export enum DragSourceType { ToolPanel, HeaderCell, RowDrag, ChartPanel, AdvancedFilterBuilder }
 
-export interface DragSource {
+export interface DragSource{
     /**
      * The type of the drag source, used by the drop target to know where the
      * drag originated from.
      */
     type: DragSourceType;
+    /** Can be used to identify a specific component as the source */
+    sourceId?: string;
     /**
      * Element which, when dragged, will kick off the DnD process
      */

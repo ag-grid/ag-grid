@@ -425,9 +425,15 @@ export const AG_GRID_LOCALE_EN: Record<string,string> = {
     chartLinkToolbarTooltip: 'Linked to Grid',
     chartUnlinkToolbarTooltip: 'Unlinked from Grid',
     chartDownloadToolbarTooltip: 'Download Chart',
+    chartEdit: 'Edit Chart',
+    chartLink: 'Link to Grid',
+    chartUnlink: 'Unlink from Grid',
+    chartDownload: 'Download Chart',
     seriesChartType: 'Series Chart Type',
     seriesType: 'Series Type',
     secondaryAxis: 'Secondary Axis',
+    seriesAdd: 'Add a series',
+    categoryAdd: 'Add a category',
 
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Level ${variable}. Press ENTER to edit.',

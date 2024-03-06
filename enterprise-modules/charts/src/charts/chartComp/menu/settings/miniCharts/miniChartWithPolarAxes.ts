@@ -1,6 +1,7 @@
 import { PostConstruct } from '@ag-grid-community/core';
 import { MiniChart } from './miniChart';
 import { _Scene } from 'ag-charts-community';
+import { ChartTranslationKey } from '../../../services/chartTranslationService';
 
 export abstract class MiniChartWithPolarAxes extends MiniChart {
     private readonly stroke = 'gray';
@@ -8,7 +9,7 @@ export abstract class MiniChartWithPolarAxes extends MiniChart {
     protected showRadiusAxisLine: boolean = true;
     protected showAngleAxisLines: boolean = true;
 
-    constructor(container: HTMLElement, tooltipName: string) {
+    constructor(container: HTMLElement, tooltipName: ChartTranslationKey) {
         super(container, tooltipName);
     }
 

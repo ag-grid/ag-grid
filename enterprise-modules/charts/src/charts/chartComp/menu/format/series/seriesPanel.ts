@@ -16,7 +16,7 @@ import {
 import type { AgRangeBarSeriesLabelPlacement } from 'ag-charts-community';
 import { ShadowPanel } from "./shadowPanel";
 import { FontPanel } from "../fontPanel";
-import { ChartTranslationService } from "../../../services/chartTranslationService";
+import { ChartTranslationKey, ChartTranslationService } from "../../../services/chartTranslationService";
 import { FormatPanelOptions } from "../formatPanel";
 import { MarkersPanel } from "./markersPanel";
 import { ChartController } from "../../../chartController";
@@ -371,25 +371,25 @@ export class SeriesPanel extends Component {
         if (!this.seriesSelectOptions) {
             // lazy init options as they are only required for combo charts
             this.seriesSelectOptions = new Map<ChartSeriesType, ListOption>([
-                ['area', {value: 'area', text: this.translate('area', 'Area')}],
-                ['bar', {value: 'bar', text: this.translate('bar', 'Bar')}],
-                ['column', {value: 'column', text: this.translate('column', 'Column')}],
-                ['line', {value: 'line', text: this.translate('line', 'Line')}],
-                ['scatter', {value: 'scatter', text: this.translate('scatter', 'Scatter')}],
-                ['histogram', {value: 'histogram', text: this.translate('histogram', 'Histogram')}],
-                ['radial-column', {value: 'radial-column', text: this.translate('radialColumn', 'Radial Column')}],
-                ['radial-bar', {value: 'radial-bar', text: this.translate('radialBar', 'Radial Bar')}],
-                ['radar-line', {value: 'radar-line', text: this.translate('radarLine', 'Radar Line')}],
-                ['radar-area', {value: 'radar-area', text: this.translate('radarArea', 'Radar Area')}],
-                ['nightingale', {value: 'nightingale', text: this.translate('nightingale', 'Nightingale')}],
-                ['range-bar', {value: 'range-bar', text: this.translate('rangeBar', 'Range Bar')}],
-                ['range-area', {value: 'range-area', text: this.translate('rangeArea', 'Range Area')}],
-                ['treemap', {value: 'treemap', text: this.translate('treemap', 'Treemap')}],
-                ['sunburst', {value: 'sunburst', text: this.translate('sunburst', 'Sunburst')}],
-                ['waterfall', {value: 'waterfall', text: this.translate('waterfall', 'Waterfall')}],
-                ['box-plot', {value: 'box-plot', text: this.translate('boxPlot', 'Box Plot')}],
-                ['pie', {value: 'pie', text: this.translate('pie', 'Pie')}],
-                ['donut', {value: 'donut', text: this.translate('donut', 'Donut')}],
+                ['area', {value: 'area', text: this.translate('area')}],
+                ['bar', {value: 'bar', text: this.translate('bar')}],
+                ['column', {value: 'column', text: this.translate('column')}],
+                ['line', {value: 'line', text: this.translate('line')}],
+                ['scatter', {value: 'scatter', text: this.translate('scatter')}],
+                ['histogram', {value: 'histogram', text: this.translate('histogram')}],
+                ['radial-column', {value: 'radial-column', text: this.translate('radialColumn')}],
+                ['radial-bar', {value: 'radial-bar', text: this.translate('radialBar')}],
+                ['radar-line', {value: 'radar-line', text: this.translate('radarLine')}],
+                ['radar-area', {value: 'radar-area', text: this.translate('radarArea')}],
+                ['nightingale', {value: 'nightingale', text: this.translate('nightingale')}],
+                ['range-bar', {value: 'range-bar', text: this.translate('rangeBar')}],
+                ['range-area', {value: 'range-area', text: this.translate('rangeArea')}],
+                ['treemap', {value: 'treemap', text: this.translate('treemap')}],
+                ['sunburst', {value: 'sunburst', text: this.translate('sunburst')}],
+                ['waterfall', {value: 'waterfall', text: this.translate('waterfall')}],
+                ['box-plot', {value: 'box-plot', text: this.translate('boxPlot')}],
+                ['pie', {value: 'pie', text: this.translate('pie')}],
+                ['donut', {value: 'donut', text: this.translate('donut')}],
             ]);
         }
 
@@ -409,8 +409,8 @@ export class SeriesPanel extends Component {
         }
     }
 
-    private translate(key: string, defaultText?: string) {
-        return this.chartTranslationService.translate(key, defaultText);
+    private translate(key: ChartTranslationKey) {
+        return this.chartTranslationService.translate(key);
     }
 
     private destroyActivePanels(): void {

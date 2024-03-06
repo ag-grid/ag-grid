@@ -12,14 +12,14 @@ export interface ListOption<TValue = string> {
     text?: string;
 }
 
-export class AgList extends Component {
+export class AgList<TValue = string> extends Component {
     public static EVENT_ITEM_SELECTED = 'selectedItem';
     private static ACTIVE_CLASS = 'ag-active-item';
 
-    private options: ListOption[] = [];
+    private options: ListOption<TValue>[] = [];
     private itemEls: HTMLElement[] = [];
     private highlightedEl: HTMLElement | null;
-    private value: string | null;
+    private value: TValue | null;
     private displayValue: string | null;
 
     constructor(private readonly cssIdentifier = 'default', private readonly unFocusable: boolean = false) {
@@ -65,14 +65,14 @@ export class AgList extends Component {
         }
     }
 
-    public addOptions(listOptions: ListOption[]): this {
+    public addOptions(listOptions: ListOption<TValue>[]): this {
         listOptions.forEach(listOption => this.addOption(listOption));
         return this;
     }
 
-    public addOption(listOption: ListOption): this {
+    public addOption(listOption: ListOption<TValue>): this {
         const { value, text } = listOption;
-        const sanitisedText = escapeString(text || value);
+        const sanitisedText = escapeString(text || value as any);
 
         this.options.push({ value, text: sanitisedText! });
         this.renderOption(value, sanitisedText!);
@@ -90,7 +90,7 @@ export class AgList extends Component {
         });
     }
 
-    private renderOption(value: string, text: string): void {
+    private renderOption(value: TValue, text: string): void {
         const eDocument = this.gridOptionsService.getDocument();
         const itemEl = eDocument.createElement('div');
 
@@ -119,7 +119,7 @@ export class AgList extends Component {
         this.getGui().appendChild(itemEl);
     }
 
-    public setValue(value?: string | null, silent?: boolean): this {
+    public setValue(value?: TValue | null, silent?: boolean): this {
         if (this.value === value) {
             this.fireItemSelected();
             return this;
@@ -136,7 +136,7 @@ export class AgList extends Component {
             const option = this.options[idx];
 
             this.value = option.value;
-            this.displayValue = option.text != null ? option.text : option.value;
+            this.displayValue = option.text!;
             this.highlightItem(this.itemEls[idx]);
 
             if (!silent) {
@@ -151,7 +151,7 @@ export class AgList extends Component {
         return this.setValue(this.options[idx].value);
     }
 
-    public getValue(): string | null {
+    public getValue(): TValue | null {
         return this.value;
     }
 

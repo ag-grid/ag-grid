@@ -10,7 +10,7 @@ import {
     RefSelector,
     AgSelectParams
 } from "@ag-grid-community/core";
-import { ChartTranslationService } from "../../../services/chartTranslationService";
+import { ChartTranslationKey, ChartTranslationService } from "../../../services/chartTranslationService";
 import { FontPanel } from "../fontPanel";
 import { ChartMenuUtils } from "../../chartMenuUtils";
 
@@ -83,7 +83,7 @@ export class SeriesItemsPanel extends Component {
         this.initItemLabels(itemType);
     }
 
-    private initSlider(labelKey: string, maxValue: number, seriesOptionKey: string, step: number = 1, isArray: boolean = false) {
+    private initSlider(labelKey: ChartTranslationKey, maxValue: number, seriesOptionKey: string, step: number = 1, isArray: boolean = false) {
         const params = this.chartMenuUtils.getDefaultSliderParams(
             seriesOptionKey,
             labelKey,

@@ -3,7 +3,6 @@ import {
     AgDialog,
     Autowired,
     CellRange,
-    CHART_TOOL_PANEL_MENU_OPTIONS,
     ChartCreated,
     ChartDestroyed,
     ChartModel,
@@ -22,7 +21,7 @@ import {
 } from "@ag-grid-community/core";
 
 import {AgChartInstance, AgChartThemeOverrides, AgChartThemePalette} from "ag-charts-community";
-import {ChartMenu} from "./menu/chartMenu";
+import {ChartMenu, CHART_TOOL_PANEL_MENU_OPTIONS} from "./menu/chartMenu";
 import {TitleEdit} from "./chartTitle/titleEdit";
 import {ChartController, DEFAULT_THEMES} from "./chartController";
 import {ChartDataModel, ChartModelParams} from "./model/chartDataModel";
@@ -40,7 +39,7 @@ import {TreemapChartProxy} from "./chartProxies/hierarchical/treemapChartProxy";
 import {SunburstChartProxy} from "./chartProxies/hierarchical/sunburstChartProxy";
 import {HeatmapChartProxy} from './chartProxies/specialized/heatmapChartProxy';
 import {WaterfallChartProxy} from './chartProxies/cartesian/waterfallChartProxy';
-import {ChartTranslationService} from "./services/chartTranslationService";
+import {ChartTranslationKey, ChartTranslationService} from "./services/chartTranslationService";
 import {ChartCrossFilterService} from "./services/chartCrossFilterService";
 import {CrossFilteringContext} from "../chartService";
 import {ChartOptionsService} from "./services/chartOptionsService";
@@ -149,11 +148,6 @@ export class GridChartComp extends Component {
 
         this.addManagedPropertyListeners(['chartThemeOverrides', 'chartThemes'], this.reactivePropertyUpdate.bind(this));
 
-        if (this.chartMenu) {
-            // chart menu may not exist, i.e. cross filtering
-            this.addManagedListener(this.chartMenu, ChartMenu.EVENT_DOWNLOAD_CHART, () => this.downloadChart());
-        }
-
         this.update();
         this.raiseChartCreatedEvent();
     }
@@ -192,7 +186,7 @@ export class GridChartComp extends Component {
             chartOptionsToRestore: this.params.chartOptionsToRestore,
             chartPaletteToRestore: this.params.chartPaletteToRestore,
             seriesChartTypes: this.chartController.getSeriesChartTypes(),
-            translate: (toTranslate: string, defaultText?: string) => this.chartTranslationService.translate(toTranslate, defaultText),
+            translate: (toTranslate: ChartTranslationKey) => this.chartTranslationService.translate(toTranslate),
         };
 
         // ensure 'restoring' options are not reused when switching chart types

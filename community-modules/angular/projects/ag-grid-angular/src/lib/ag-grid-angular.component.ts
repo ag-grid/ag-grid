@@ -677,6 +677,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * @initial
          */
     @Input() public chartToolPanelsDef: ChartToolPanelsDef | undefined = undefined;
+    /** Enables the legacy format of the Integrated Charts Menu and Tool Panels.
+         * @default true
+         * @initial
+         */
+    @Input() public legacyChartsMenu: boolean | undefined = undefined;
     /** Provide your own loading cell renderer to use when data is loading via a DataSource.
          * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details.
          */
@@ -1986,5 +1991,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_masterDetail: boolean | null | '';
     static ngAcceptInputType_treeData: boolean | null | '';
     static ngAcceptInputType_suppressGroupMaintainValueType: boolean | null | '';
+    static ngAcceptInputType_legacyChartsMenu: boolean | null | '';
     // @END@
 }
