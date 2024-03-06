@@ -13,7 +13,7 @@ import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
 import { styled } from '@mui/joy';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { memo, useMemo, useState } from 'react';
 import root from 'react-shadow';
 import { withErrorBoundary } from '../components/ErrorBoundary';
@@ -50,12 +50,12 @@ const GridPreview = () => {
     internalState.prevConfig = config;
   }
 
-  const [containerEl, setContainerEl] = useAtom(shadowDomContainerAtom);
+  const setContainerEl = useSetAtom(shadowDomContainerAtom);
 
   return (
     <Wrapper>
       <root.div style={{ height: '100%' }}>
-        <div ref={setContainerEl} style={{ height: '100%' }} className="ag-shadow-root">
+        <div ref={setContainerEl} style={{ height: '100%' }}>
           <AgGridReact
             onGridReady={({ api }) => {
               if (config.showIntegratedChartPopup) {
