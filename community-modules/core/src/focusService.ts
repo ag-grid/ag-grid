@@ -611,7 +611,7 @@ export class FocusService extends BeanStub {
             return this.focusHeaderPosition({
                 headerPosition: {
                     column: column,
-                    headerRowIndex: this.columnModel.getHeaderRowCount() - 1
+                    headerRowIndex: this.headerNavigationService.getHeaderRowCount() - 1
                 }
             });
         } else {
