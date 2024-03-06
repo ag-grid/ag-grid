@@ -8,7 +8,6 @@ import { ColumnModel, ISizeColumnsToFitParams } from "../columns/columnModel";
 import { ScrollVisibleService } from "./scrollVisibleService";
 import { GridBodyScrollFeature } from "./gridBodyScrollFeature";
 import { getInnerWidth, isElementChildOfClass, isVerticalScrollShowing } from "../utils/dom";
-import { HeaderNavigationService } from "../headerRendering/common/headerNavigationService";
 import { RowDragFeature } from "./rowDragFeature";
 import { DragAndDropService } from "../dragAndDrop/dragAndDropService";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
@@ -59,7 +58,6 @@ export class GridBodyCtrl extends BeanStub {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
     @Autowired('menuService') private menuService: MenuService;
-    @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
@@ -238,7 +236,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     public updateRowCount(): void {
-        const headerCount = this.headerNavigationService.getHeaderRowCount() + this.filterManager.getHeaderRowCount();
+        const headerCount = this.columnModel.getHeaderRowCount() + this.filterManager.getHeaderRowCount();
 
         const rowCount = this.rowModel.isLastRowIndexKnown() ? this.rowModel.getRowCount() : -1;
         const total = rowCount === -1 ? -1 : (headerCount + rowCount);

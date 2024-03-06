@@ -1633,7 +1633,7 @@ export class RowCtrl extends BeanStub {
 
     private updateRowIndexes(gui?: RowGui): void {
         const rowIndexStr = this.rowNode.getRowIndexString();
-        const headerRowCount = this.beans.headerNavigationService.getHeaderRowCount() + this.beans.filterManager.getHeaderRowCount();
+        const headerRowCount = this.beans.columnModel.getHeaderRowCount() + this.beans.filterManager.getHeaderRowCount();
         const rowIsEven = this.rowNode.rowIndex! % 2 === 0;
         const ariaRowIndex = headerRowCount + this.rowNode.rowIndex! + 1;
 

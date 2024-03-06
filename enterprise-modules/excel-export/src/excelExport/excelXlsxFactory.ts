@@ -123,41 +123,6 @@ export class ExcelXlsxFactory {
         this.buildSheetImageMap(currentSheetIndex, calculatedImage);
     }
 
-    private static getColumnsDepth(
-        columnModel: ColumnModel,
-    ): number {
-        let columnsTreeDepth = 0;
-        const checkLeafsDepth = (column: ColDef | ColGroupDef, leafLevel: number) => {
-            const colAsAny = column as any;
-            if (Array.isArray(colAsAny.children) && colAsAny.children.length > 0) {
-                const colAsColGroupDef = colAsAny as ColGroupDef;
-                colAsColGroupDef.children.forEach(
-                    item => checkLeafsDepth(item, leafLevel + 1)
-                );
-
-                columnsTreeDepth = Math.max(columnsTreeDepth, leafLevel + 1);
-            }
-        };
-
-        const allDisplayedColumns = columnModel.getAllDisplayedColumns();
-        columnModel.getColumnDefs()?.forEach((column: ColDef | ColGroupDef) => {
-            const colAsAny = column as any;
-            if (Array.isArray(colAsAny.children) && colAsAny.children.length > 0) {
-                // Col group def (with children): We always use them for the depth calculation.
-                checkLeafsDepth(column, 0);
-                return;
-            } else {
-                // For columns that are not group def: We only use them for the depth calculation
-                // if they are displayed in the grid.
-                if (allDisplayedColumns.find(col => col.getColId() === colAsAny.colId)) {
-                    checkLeafsDepth(column, 0);
-                }
-            }
-        });
-
-        return columnsTreeDepth;
-    }
-
     private static processTableConfig(
         worksheet: ExcelWorksheet,
         config: ExcelGridSerializingParams
@@ -172,9 +137,9 @@ export class ExcelXlsxFactory {
         );
 
         const sheetIndex = this.sheetNames.length - 1;
-        const columnsTreeDepth = this.getColumnsDepth(config.columnModel);
 
-        const tableHeaderRowIndex: number = columnsTreeDepth; // Assuming that header starts at row 0
+        const headerRowCount = config.columnModel.getHeaderRowCount();
+        const tableHeaderRowIndex: number = headerRowCount - 1; // Assuming that header starts at row 0
         const tableRowCount = worksheet.table.rows.length;
         const tableColumns = worksheet.table.columns.map(col => col.displayName || '');
 
@@ -188,7 +153,7 @@ export class ExcelXlsxFactory {
             displayName: tableName,
             columns: tableColumns,
             headerRowIndex: tableHeaderRowIndex,
-            rowCount: tableRowCount - columnsTreeDepth - 1,
+            rowCount: tableRowCount - headerRowCount,
         });
     }
 

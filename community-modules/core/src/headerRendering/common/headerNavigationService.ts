@@ -1,3 +1,4 @@
+import { ColumnModel } from "../../columns/columnModel";
 import { BeanStub } from "../../context/beanStub";
 import { Autowired, Bean, PostConstruct } from "../../context/context";
 import { CtrlsService } from "../../ctrlsService";
@@ -21,6 +22,7 @@ export class HeaderNavigationService extends BeanStub {
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('headerPositionUtils') private headerPositionUtils: HeaderPositionUtils;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
+    @Autowired('columnModel') private columnModel: ColumnModel;
 
     private gridBodyCon: GridBodyCtrl;
     private currentHeaderRowWithoutSpan: number = -1;
@@ -35,11 +37,6 @@ export class HeaderNavigationService extends BeanStub {
         this.addManagedListener(eDocument, 'mousedown', () => this.setCurrentHeaderRowWithoutSpan(-1));
     }
 
-    public getHeaderRowCount(): number {
-        const centerHeaderContainer = this.ctrlsService.getHeaderRowContainerCtrl();
-        return centerHeaderContainer ? centerHeaderContainer.getRowCount() : 0;
-    }
-
     /*
      * This method navigates grid header vertically
      * @return {boolean} true to preventDefault on the event that caused this navigation.
@@ -52,7 +49,7 @@ export class HeaderNavigationService extends BeanStub {
         if (!fromHeader) { return false; }
 
         const { headerRowIndex, column } = fromHeader;
-        const rowLen = this.getHeaderRowCount();
+        const rowLen = this.columnModel.getHeaderRowCount();
         const isUp = direction === HeaderNavigationDirection.UP;
 
         let { headerRowIndex: nextRow, column: nextFocusColumn, headerRowIndexWithoutSpan } = isUp
@@ -142,7 +139,7 @@ export class HeaderNavigationService extends BeanStub {
             }
         } else {
             nextRowIndex = currentIndex + 1;
-            if (this.currentHeaderRowWithoutSpan < this.getHeaderRowCount()) {
+            if (this.currentHeaderRowWithoutSpan < this.columnModel.getHeaderRowCount()) {
                 this.currentHeaderRowWithoutSpan += 1;
             } else {
                 this.setCurrentHeaderRowWithoutSpan(-1);

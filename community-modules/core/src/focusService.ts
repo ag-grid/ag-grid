@@ -338,7 +338,7 @@ export class FocusService extends BeanStub {
 
         if (allowUserOverride) {
             const currentPosition = this.getFocusedHeader();
-            const headerRowCount = this.headerNavigationService.getHeaderRowCount();
+            const headerRowCount = this.columnModel.getHeaderRowCount();
 
             if (fromTab) {
                 const userFunc = this.gridOptionsService.getCallback('tabToNextHeader');
@@ -407,7 +407,7 @@ export class FocusService extends BeanStub {
     }
 
     public focusLastHeader(event?: KeyboardEvent): boolean {
-        const headerRowIndex = this.headerNavigationService.getHeaderRowCount() - 1;
+        const headerRowIndex = this.columnModel.getHeaderRowCount() - 1;
         const column = last(this.columnModel.getAllDisplayedColumns());
 
         return this.focusHeaderPosition({
@@ -611,7 +611,7 @@ export class FocusService extends BeanStub {
             return this.focusHeaderPosition({
                 headerPosition: {
                     column: column,
-                    headerRowIndex: this.headerNavigationService.getHeaderRowCount() - 1
+                    headerRowIndex: this.columnModel.getHeaderRowCount() - 1
                 }
             });
         } else {
