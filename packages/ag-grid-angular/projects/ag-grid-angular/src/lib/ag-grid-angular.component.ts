@@ -678,7 +678,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          */
     @Input() public chartToolPanelsDef: ChartToolPanelsDef | undefined = undefined;
     /** Enables the legacy format of the Integrated Charts Menu and Tool Panels.
-         * @default true
+         * Defaults to `true` when using AG Charts Community and `false` when using AG Charts Enterprise.
          * @initial
          */
     @Input() public legacyChartsMenu: boolean | undefined = undefined;
