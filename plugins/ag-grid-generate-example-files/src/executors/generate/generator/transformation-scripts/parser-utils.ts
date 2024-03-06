@@ -1,7 +1,7 @@
 import { transform } from 'sucrase';
 import ts from 'typescript';
 
-import { integratedChartsUsesChartsEnterprise } from '../constants';
+import { getEnterprisePackageName } from '../constants';
 import { BindingImport, ParsedBindings } from '../types';
 
 export function readAsJsFile(srcFile, options: { includeImports: boolean } = undefined) {
@@ -241,7 +241,7 @@ export function addEnterprisePackage(imports: any[], bindings: ParsedBindings) {
     const isEnterprise = bindings.imports.some((i) => i.module.includes('-enterprise'));
     if (isEnterprise) {
         imports.push(
-            `import 'ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise';`
+            `import ${getEnterprisePackageName()};`
         );
     }
 }
