@@ -12,62 +12,15 @@ Each column in the grid is defined using a Column Definition (`ColDef`). Columns
 {% /videoSection %}
 {% /if %}
 
-```js {% frameworkTransform=true %}
-const gridOptions = {
-
-    // some Column Definitions
-    columnDefs: [
-        { field: 'athlete' },
-        { field: 'sport' },
-        { field: 'age' },
-
-        { // specify Column Group using 'children'
-            headerName: 'Medals',
-            children: [
-                { field: 'gold' },
-                { field: 'silver' },
-                { field: 'bronze' }
-            ]
-        }
-    ]
-}
-```
+{% gridExampleRunner title="Simple Definitions" name="simple" /%}
 
 See [Column Properties](./column-properties/) for all available properties.
 
-See [Column Groups](./column-groups/) for more on Column Groups.
-
 ## Column Defaults {% #default-column-definitions %}
 
-Use `defaultColDef` to set properties across ALL Columns. Use `defaultColGroupDef` to set properties accross all Column Groups.
+Use `defaultColDef` to set properties across ALL Columns.
 
-```js {% frameworkTransform=true spaceBetweenProperties=true %}
-const gridOptions = {
-    // properties for ALL Columns
-    defaultColDef: {
-        width: 100,
-        editable: true
-    },
-    // propertis for ALL Column Groups
-    defaultColGroupDef: {
-      marryChildren: true
-    },
-    columnDefs: [
-        // will be width=100 and editable=true
-        { field: 'a'},
-        // will be width=120 and editable=false
-        { field: 'b', width: 120, editable: false},
-        { 
-            // will have marryChildren=true
-            headerName: 'Group',
-            children: [
-                { field: 'c' },
-                { field: 'd' }
-            ]
-        }
-    ]
-}
-```
+{% gridExampleRunner title="Default Col Def" name="default-col-def" /%}
 
 ## Column Types
 

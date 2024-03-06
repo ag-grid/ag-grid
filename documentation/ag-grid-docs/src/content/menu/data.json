@@ -475,62 +475,6 @@
                 "title": "Core Features",
                 "items": [
                     {
-                        "title": "Cells",
-                        "items": [
-                            {
-                                "title": "Cell Content",
-                                "path": "cell-content",
-                                "items": [
-                                    {
-                                        "title": "Getting Values",
-                                        "path": "value-getters"
-                                    },
-                                    {
-                                        "title": "Text Formatting",
-                                        "path": "value-formatters"
-                                    },
-                                    {
-                                        "title": "Cell Components",
-                                        "path": "component-cell-renderer"
-                                    },
-                                    {
-                                        "title": "Cell Data Types",
-                                        "path": "cell-data-types"
-                                    }
-                                ]
-                            },
-                            {
-                                "title": "Styling Cells",
-                                "path": "cell-styles"
-                            },
-                            {
-                                "title": "Highlighting Changes",
-                                "path": "change-cell-renderers"
-                            },
-                            {
-                                "title": "Tooltips",
-                                "path": "tooltips"
-                            },
-                            {
-                                "title": "Advanced",
-                                "items": [
-                                    {
-                                        "title": "Expressions",
-                                        "path": "cell-expressions"
-                                    },
-                                    {
-                                        "title": "View Refresh",
-                                        "path": "view-refresh"
-                                    },
-                                    {
-                                        "title": "Reference Data",
-                                        "path": "reference-data"
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
                         "title": "Columns",
                         "items": [
                             {
@@ -604,10 +548,6 @@
                                 "path": "row-height"
                             },
                             {
-                                "title": "Row Animation",
-                                "path": "row-animation"
-                            },
-                            {
                                 "title": "Styling Rows",
                                 "path": "row-styles"
                             },
@@ -648,6 +588,62 @@
                             }
                         ]
                     },
+                    {
+                        "title": "Cells",
+                        "items": [
+                            {
+                                "title": "Cell Content",
+                                "path": "cell-content",
+                                "items": [
+                                    {
+                                        "title": "Getting Values",
+                                        "path": "value-getters"
+                                    },
+                                    {
+                                        "title": "Text Formatting",
+                                        "path": "value-formatters"
+                                    },
+                                    {
+                                        "title": "Cell Components",
+                                        "path": "component-cell-renderer"
+                                    },
+                                    {
+                                        "title": "Cell Data Types",
+                                        "path": "cell-data-types"
+                                    }
+                                ]
+                            },
+                            {
+                                "title": "Styling Cells",
+                                "path": "cell-styles"
+                            },
+                            {
+                                "title": "Highlighting Changes",
+                                "path": "change-cell-renderers"
+                            },
+                            {
+                                "title": "Tooltips",
+                                "path": "tooltips"
+                            },
+                            {
+                                "title": "Advanced",
+                                "items": [
+                                    {
+                                        "title": "Expressions",
+                                        "path": "cell-expressions"
+                                    },
+                                    {
+                                        "title": "View Refresh",
+                                        "path": "view-refresh"
+                                    },
+                                    {
+                                        "title": "Reference Data",
+                                        "path": "reference-data"
+                                    }
+                                ]
+                            }
+                        ]
+                    },                    
                     {
                         "title": "Grid",
                         "items": [
@@ -1445,6 +1441,10 @@
                             {
                                 "title": "Change Detection",
                                 "path": "change-detection"
+                            },
+                            {
+                                "title": "Row Animation",
+                                "path": "row-animation"
                             },
                             {
                                 "title": "Massive Row Count",

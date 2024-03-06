@@ -19,15 +19,15 @@ const gridOptions: GridOptions<IOlympicData> = {
     { field: 'gold' },
     { field: 'silver' },
     { field: 'bronze' },
-    { field: 'total' },
+    { field: 'total' }
   ],
   defaultColDef: {
     flex: 1,
     minWidth: 100,
-    filter: true,
+    filter: true
   },
   pagination: true,
-  paginationAutoPageSize: true,
+  paginationAutoPageSize: true
 }
 
 function getDisplayedRowAtIndex() {
