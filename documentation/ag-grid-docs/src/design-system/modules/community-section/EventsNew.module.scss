@@ -6,6 +6,7 @@
 .tabContainer {
     display: flex;
     gap: $spacing-size-4;
+    margin: $spacing-size-8 0px;
 }
 
 .tabButton {
@@ -41,7 +42,6 @@
     display: flex;
     flex-direction: column;
     gap: $spacing-size-8;
-    margin: $spacing-size-8 0px;
 }
 
 .eventItemContainer {
