@@ -1,5 +1,5 @@
 import { extractInterfaces } from './documentation-helpers';
-import type { Config, ICallSignature, InterfaceEntry, PropertyType } from './types';
+import type { Config, DocEntryMap, InterfaceEntry, PropertyType } from './types';
 
 export const getInterfacesToWrite = (name, definition, config) => {
     let interfacesToWrite = [];
@@ -94,4 +94,60 @@ export function getPropertyType(type: string | PropertyType, config: Config) {
 
 export const mergeObjects = (objects) => {
     return objects.reduce((result, value) => Object.assign(result, value), {});
+};
+
+function getPropertyEntries({ properties, suppressSort }: { properties: DocEntryMap; suppressSort: boolean }) {
+    const entries = Object.entries(properties).filter(([key]) => key !== '_config_');
+    if (!suppressSort) {
+        entries.sort(([k1, v1], [k2, v2]) => {
+            const getName = (k, v) => (v.meta && v.meta.displayName) || k;
+            return getName(k1, v1) < getName(k2, v2) ? -1 : 1;
+        });
+    }
+
+    return entries;
+}
+
+export const getAllSectionPropertyEntries = ({
+    propertiesFromFiles,
+    suppressSort,
+}: {
+    propertiesFromFiles: unknown;
+    suppressSort: boolean;
+}) => {
+    const properties: DocEntryMap = mergeObjects(propertiesFromFiles);
+    const entries = getPropertyEntries({
+        properties,
+        suppressSort,
+    });
+
+    return entries;
+};
+
+export const getSectionProperties = ({
+    section,
+    propertiesFromFiles,
+}: {
+    section: string;
+    propertiesFromFiles: unknown;
+}) => {
+    const keys = section.split('.');
+    const title = keys[keys.length - 1];
+    const processed = keys.reduce(
+        (current, key) =>
+            current.map((x) => {
+                const prop = x[key];
+                if (!prop) {
+                    console.warn(`<api-documentation>: Could not find a prop ${key} under section ${section}!`);
+                    throw new Error(`<api-documentation>: Could not find a prop ${key} under section ${section}!`); //spl todo
+                }
+                return prop;
+            }),
+        propertiesFromFiles
+    );
+
+    return {
+        title,
+        properties: mergeObjects(processed),
+    };
 };
