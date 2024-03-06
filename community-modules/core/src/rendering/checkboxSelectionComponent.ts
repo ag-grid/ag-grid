@@ -141,9 +141,14 @@ export class CheckboxSelectionComponent extends Component {
         if (selectable) {
             if (typeof isVisible === 'function') {
                 const extraParams = this.overrides?.callbackParams;
-                const params = this.column?.createColumnFunctionCallbackParams(this.rowNode);
 
-                selectable = params ? isVisible({ ...extraParams, ...params }) : false;
+                if (!this.column) {
+                    // full width row
+                    selectable = isVisible({ ...extraParams, node: this.rowNode, data: this.rowNode.data });
+                } else {
+                    const params = this.column.createColumnFunctionCallbackParams(this.rowNode);
+                    selectable = isVisible({ ...extraParams, ...params });
+                }
             } else {
                 selectable = isVisible ?? false;
             }
