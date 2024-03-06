@@ -241,7 +241,7 @@ export function addEnterprisePackage(imports: any[], bindings: ParsedBindings) {
     const isEnterprise = bindings.imports.some((i) => i.module.includes('-enterprise'));
     if (isEnterprise) {
         imports.push(
-            `import ${getEnterprisePackageName()};`
+            `import '${getEnterprisePackageName()}';`
         );
     }
 }
