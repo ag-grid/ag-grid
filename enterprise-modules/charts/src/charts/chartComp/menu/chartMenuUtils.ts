@@ -1,7 +1,7 @@
 import { AgFieldParams, AgCheckboxParams, AgInputNumberFieldParams, AgSelectParams, AgSliderParams, Autowired, BeanStub } from "@ag-grid-community/core";
 import { AgColorPickerParams } from "../../../widgets/agColorPicker";
 import { ChartOptionsService } from "../services/chartOptionsService";
-import { ChartTranslationService } from "../services/chartTranslationService";
+import { ChartTranslationKey, ChartTranslationService } from "../services/chartTranslationService";
 import { FontPanelParams } from "./format/fontPanel";
 
 interface ChartOptionsProxy {
@@ -21,7 +21,7 @@ export class ChartMenuUtils extends BeanStub {
 
     public getDefaultColorPickerParams(
         expression: string,
-        labelKey?: string
+        labelKey?: ChartTranslationKey
     ): AgColorPickerParams {
         return this.addValueParams(
             expression,
@@ -35,7 +35,7 @@ export class ChartMenuUtils extends BeanStub {
 
     public getDefaultNumberInputParams(
         expression: string,
-        labelKey: string,
+        labelKey: ChartTranslationKey,
         options?: {
             precision?: number,
             step?: number,
@@ -68,7 +68,7 @@ export class ChartMenuUtils extends BeanStub {
 
     public getDefaultSliderParams(
         expression: string,
-        labelKey: string,
+        labelKey: ChartTranslationKey,
         defaultMaxValue: number,
         isArray?: boolean
     ): AgSliderParams {
@@ -83,7 +83,7 @@ export class ChartMenuUtils extends BeanStub {
 
     public getDefaultSliderParamsWithoutValueParams(
         value: number,
-        labelKey: string,
+        labelKey: ChartTranslationKey,
         defaultMaxValue: number
     ): AgSliderParams {
         return {
@@ -97,7 +97,7 @@ export class ChartMenuUtils extends BeanStub {
 
     public getDefaultCheckboxParams(
         expression: string,
-        labelKey: string,
+        labelKey: ChartTranslationKey,
         options?: {
             readOnly?: boolean,
             passive?: boolean,
@@ -123,7 +123,7 @@ export class ChartMenuUtils extends BeanStub {
                 label: this.chartTranslationService.translate('position'),
                 labelWidth: "flex",
                 inputWidth: 'flex',
-                options: ['top', 'right', 'bottom', 'left'].map(position => ({
+                options: ['top', 'right', 'bottom', 'left'].map((position: ChartTranslationKey) => ({
                     value: position,
                     text: this.chartTranslationService.translate(position)
                 })),
@@ -133,7 +133,7 @@ export class ChartMenuUtils extends BeanStub {
 
     public getDefaultFontPanelParams(
         expression: string,
-        labelKey: string
+        labelKey: ChartTranslationKey
     ): FontPanelParams {
         const keyMapper = (key: string) => `${expression}.${key}`;
         return this.addEnableParams<FontPanelParams>(

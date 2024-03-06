@@ -1371,5 +1371,9 @@
   "reactiveCustomComponents": {
     "typeName": "boolean",
     "typesToInclude": []
+  },
+  "legacyChartsMenu": {
+    "typeName": "boolean",
+    "typesToInclude": []
   }
 }

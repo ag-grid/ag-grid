@@ -2,6 +2,7 @@ import { MiniChartWithAxes } from "../miniChartWithAxes";
 import { _Scene } from "ag-charts-community";
 import { ChartType } from "@ag-grid-community/core";
 import { ThemeTemplateParameters } from "../../miniChartsContainer";
+import { ChartTranslationKey } from "../../../../services/chartTranslationService";
 
 export class MiniStackedBar extends MiniChartWithAxes {
 
@@ -22,7 +23,7 @@ export class MiniStackedBar extends MiniChartWithAxes {
         _isCustomTheme: boolean,
         data = MiniStackedBar.data,
         xScaleDomain = [0, 16],
-        tooltipName = "stackedBarTooltip") {
+        tooltipName: ChartTranslationKey = "stackedBarTooltip") {
         super(container, tooltipName);
 
         const size = this.size;

@@ -1,46 +1,28 @@
 import {
     _,
-    Autowired,
     Column,
-    ColumnModel,
     ColumnPivotChangeRequestEvent,
     DragAndDropService,
     DraggingEvent,
     Events,
     ITooltipParams,
-    LoggerFactory,
     PostConstruct,
     WithoutGridCommon
 } from "@ag-grid-community/core";
 import { BaseDropZonePanel } from "./baseDropZonePanel";
 
 export class PivotDropZonePanel extends BaseDropZonePanel {
-
-    @Autowired('columnModel') private columnModel: ColumnModel;
-
-    @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
-    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-
     constructor(horizontal: boolean) {
         super(horizontal, 'pivot');
     }
 
     @PostConstruct
     private passBeansUp(): void {
-        super.setBeans({
-            gridOptionsService: this.gridOptionsService,
-            eventService: this.eventService,
-            context: this.getContext(),
-            loggerFactory: this.loggerFactory,
-            dragAndDropService: this.dragAndDropService
-        });
-
         const localeTextFunc = this.localeService.getLocaleTextFunc();
         const emptyMessage = localeTextFunc('pivotColumnsEmptyMessage', 'Drag here to set column labels');
         const title = localeTextFunc('pivots', 'Column Labels');
 
         super.init({
-            dragAndDropIcon: DragAndDropService.ICON_GROUP,
             icon: _.createIconNoSpan('pivotPanel', this.gridOptionsService, null)!,
             emptyMessage: emptyMessage,
             title: title
@@ -96,14 +78,14 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
         }
     }
 
-    protected isColumnDroppable(column: Column, draggingEvent: DraggingEvent): boolean {
+    protected isItemDroppable(column: Column, draggingEvent: DraggingEvent): boolean {
         // we never allow grouping of secondary columns
         if (this.gridOptionsService.get('functionsReadOnly') || !column.isPrimary()) { return false; }
 
         return column.isAllowPivot() && (!column.isPivotActive() || this.isSourceEventFromTarget(draggingEvent));
     }
 
-    protected updateColumns(columns: Column[]): void {
+    protected updateItems(columns: Column[]): void {
         if (this.gridOptionsService.get('functionsPassive')) {
             const event: WithoutGridCommon<ColumnPivotChangeRequestEvent> = {
                 type: Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST,
@@ -117,10 +99,10 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
     }
 
     protected getIconName(): string {
-        return this.isPotentialDndColumns() ? DragAndDropService.ICON_PIVOT : DragAndDropService.ICON_NOT_ALLOWED;
+        return this.isPotentialDndItems() ? DragAndDropService.ICON_PIVOT : DragAndDropService.ICON_NOT_ALLOWED;
     }
 
-    protected getExistingColumns(): Column[] {
+    protected getExistingItems(): Column[] {
         return this.columnModel.getPivotColumns();
     }
 }

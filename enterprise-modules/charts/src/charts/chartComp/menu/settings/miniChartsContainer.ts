@@ -6,7 +6,6 @@ import {
     ChartGroupsDef,
     ChartType,
     Component,
-    DEFAULT_CHART_GROUPS,
     PostConstruct
 } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController";
@@ -126,6 +125,61 @@ const miniChartMapping: MiniChartMenuMapping = {
     },
 };
 
+const DEFAULT_CHART_GROUPS: ChartGroupsDef = {
+    columnGroup: [
+        'column',
+        'stackedColumn',
+        'normalizedColumn',
+    ],
+    barGroup: [
+        'bar',
+        'stackedBar',
+        'normalizedBar'
+    ],
+    pieGroup: [
+        'pie',
+        'donut',
+    ],
+    lineGroup: [
+        'line',
+    ],
+    scatterGroup: [
+        'scatter',
+        'bubble',
+    ],
+    areaGroup: [
+        'area',
+        'stackedArea',
+        'normalizedArea',
+    ],
+    polarGroup: [
+        'radarLine',
+        'radarArea',
+        'nightingale',
+        'radialColumn',
+        'radialBar',
+    ],
+    statisticalGroup: [
+        'boxPlot',
+        'histogram',
+        'rangeBar',
+        'rangeArea',
+    ],
+    hierarchicalGroup: [
+        'treemap',
+        'sunburst',
+    ],
+    specializedGroup: [
+        'heatmap',
+        'waterfall',
+    ],
+    combinationGroup: [
+        'columnLineCombo',
+        'areaColumnCombo',
+        'customCombo',
+    ]
+};
+
 export class MiniChartsContainer extends Component {
     static TEMPLATE = /* html */ `<div class="ag-chart-settings-mini-wrapper"></div>`;
 
@@ -160,7 +214,7 @@ export class MiniChartsContainer extends Component {
 
         // Determine the set of chart types that are specified by the chartGroupsDef config, filtering out any entries
         // that are invalid for the current chart configuration (pivot/range) and license type
-        const displayedMenuGroups = Object.keys(this.chartGroups).map((group) => {
+        const displayedMenuGroups = Object.keys(this.chartGroups).map((group: keyof ChartGroupsDef) => {
             const menuGroup = group in miniChartMapping
                 ? miniChartMapping[group as keyof typeof miniChartMapping]
                 : undefined;

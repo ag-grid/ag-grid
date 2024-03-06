@@ -164,7 +164,7 @@ export class FontPanel extends Component {
         const weight = this.getInitialFontValue('fontWeight') ?? 'normal';
         const style = this.getInitialFontValue('fontStyle') ?? 'normal';
 
-        const weightStyles: { name: string, weight: string, style: string }[] = [
+        const weightStyles: { name: 'normal' | 'bold' | 'italic' | 'boldItalic' | 'predefined', weight: string, style: string }[] = [
             { name: 'normal', weight: 'normal', style: 'normal' },
             { name: 'bold', weight: 'bold', style: 'normal' },
             { name: 'italic', weight: 'normal', style: 'italic' },

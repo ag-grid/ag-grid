@@ -603,4 +603,24 @@
         padding-left: var(--ag-cell-horizontal-padding);
         padding-right: var(--ag-cell-horizontal-padding);
     }
+
+    .ag-pill-select {
+        .ag-column-drop {
+            border-bottom: 0;
+            min-height: unset;
+        }
+
+        .ag-column-drop-list {
+            padding: 0;
+        }
+
+        .ag-select {
+            padding-top: var(--ag-grid-size);
+        }
+
+        .ag-picker-field-wrapper {
+            background-color: transparent;
+            border: 0;
+        }
+    }
 }

@@ -5,7 +5,7 @@ import {
     Component,
     PostConstruct,
 } from "@ag-grid-community/core";
-import { ChartTranslationService } from "../../../services/chartTranslationService";
+import { ChartTranslationKey, ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartMenuUtils } from "../../chartMenuUtils";
 
 export class TileSpacingPanel extends Component {
@@ -47,7 +47,7 @@ export class TileSpacingPanel extends Component {
         });
     }
 
-    private getSliderParams(labelKey: string, key: string): AgSliderParams {
+    private getSliderParams(labelKey: ChartTranslationKey, key: string): AgSliderParams {
         return this.chartMenuUtils.getDefaultSliderParams(key, labelKey, 10);
     }
 }

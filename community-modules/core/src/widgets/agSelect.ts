@@ -4,18 +4,19 @@ import { Events } from "../eventKeys";
 import { KeyCode } from "../constants/keyCode";
 import { setAriaControls } from "../utils/aria";
 
-export interface AgSelectParams extends Omit<AgPickerFieldParams, 'pickerType' | 'pickerAriaLabelKey' | 'pickerAriaLabelValue'> {
-    options?: ListOption[];
+export interface AgSelectParams<TValue = string> extends Omit<AgPickerFieldParams, 'pickerType' | 'pickerAriaLabelKey' | 'pickerAriaLabelValue'> {
+    options?: ListOption<TValue>[];
     pickerType?: string;
     pickerAriaLabelKey?: string;
     pickerAriaLabelValue?: string;
+    placeholder?: string;
 }
 
-export class AgSelect extends AgPickerField<string | null, AgSelectParams & AgPickerFieldParams, AgList> {
+export class AgSelect<TValue = string | null> extends AgPickerField<TValue, AgSelectParams<TValue> & AgPickerFieldParams, AgList<TValue>> {
     public static EVENT_ITEM_SELECTED = 'selectedItem';
-    protected listComponent: AgList | undefined;
+    protected listComponent: AgList<TValue> | undefined;
 
-    constructor(config?: AgSelectParams) {
+    constructor(config?: AgSelectParams<TValue>) {
         super({
             pickerAriaLabelKey: 'ariaLabelSelectField',
             pickerAriaLabelValue: 'Select Field',
@@ -32,13 +33,16 @@ export class AgSelect extends AgPickerField<string | null, AgSelectParams & AgPi
         this.createListComponent();
         this.eWrapper.tabIndex = this.gridOptionsService.get('tabIndex');
 
-        const { options, value } = this.config;
+        const { options, value, placeholder } = this.config;
         if (options != null) {
             this.addOptions(options);
         }
         if (value != null) {
             // need to reapply value after list component created
             this.setValue(value, true);
+        }
+        if (placeholder && value == null) {
+            this.eDisplayField.textContent = placeholder;
         }
 
         this.addManagedListener(this.eWrapper, 'focusout', this.onWrapperFocusOut.bind(this));
@@ -104,19 +108,19 @@ export class AgSelect extends AgPickerField<string | null, AgSelectParams & AgPi
         this.listComponent.refreshHighlighted();
     }
 
-    public addOptions(options: ListOption[]): this {
+    public addOptions(options: ListOption<TValue>[]): this {
         options.forEach(option => this.addOption(option));
 
         return this;
     }
 
-    public addOption(option: ListOption): this {
+    public addOption(option: ListOption<TValue>): this {
         this.listComponent!.addOption(option);
 
         return this;
     }
 
-    public setValue(value?: string | null , silent?: boolean, fromPicker?: boolean): this {
+    public setValue(value?: TValue, silent?: boolean, fromPicker?: boolean): this {
         if (this.value === value || !this.listComponent) { return this; }
 
         if (!fromPicker) {

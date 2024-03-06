@@ -143,7 +143,7 @@ export class ChartDataModel extends BeanStub {
         }
     }
 
-    public updateCellRanges(updatedColState?: ColState): void {
+    public updateCellRanges(updatedColState?: ColState, resetOrder?: boolean): void {
         if (this.valueCellRange) {
             this.referenceCellRange = this.valueCellRange;
         }
@@ -152,7 +152,7 @@ export class ChartDataModel extends BeanStub {
         const allColsFromRanges = this.getAllColumnsFromRanges();
 
         if (updatedColState) {
-            this.updateColumnState(updatedColState);
+            this.updateColumnState(updatedColState, resetOrder);
         }
 
         this.setDimensionCellRange(dimensionCols, allColsFromRanges, updatedColState);
@@ -346,7 +346,7 @@ export class ChartDataModel extends BeanStub {
         });
     }
 
-    private updateColumnState(updatedCol: ColState): void {
+    private updateColumnState(updatedCol: ColState, resetOrder?: boolean): void {
         const idsMatch = (cs: ColState) => cs.colId === updatedCol.colId;
         const { dimensionColState, valueColState } = this;
 
@@ -378,22 +378,24 @@ export class ChartDataModel extends BeanStub {
         const allColumns = [...dimensionColState, ...valueColState];
         const orderedColIds: string[] = [];
 
-        // calculate new order
-        allColumns.forEach((col: ColState, i: number) => {
-            if (i === updatedCol.order) {
-                orderedColIds.push(updatedCol.colId);
-            }
+        if (!resetOrder) {
+            // calculate new order
+            allColumns.forEach((col: ColState, i: number) => {
+                if (i === updatedCol.order) {
+                    orderedColIds.push(updatedCol.colId);
+                }
 
-            if (col.colId !== updatedCol.colId) {
-                orderedColIds.push(col.colId);
-            }
-        });
+                if (col.colId !== updatedCol.colId) {
+                    orderedColIds.push(col.colId);
+                }
+            });
 
-        // update col state with new order
-        allColumns.forEach(col => {
-            const order = orderedColIds.indexOf(col.colId);
-            col.order = order >= 0 ? orderedColIds.indexOf(col.colId) : allColumns.length - 1;
-        });
+            // update col state with new order
+            allColumns.forEach(col => {
+                const order = orderedColIds.indexOf(col.colId);
+                col.order = order >= 0 ? orderedColIds.indexOf(col.colId) : allColumns.length - 1;
+            });
+        }
 
         this.reorderColState();
     }
