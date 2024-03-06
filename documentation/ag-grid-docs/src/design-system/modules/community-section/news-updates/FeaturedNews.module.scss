@@ -16,11 +16,11 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between; /* This ensures top and bottom alignment */
-    background: #fff;
+    background: var(--color-bg-primary);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-xs);
     border: 1px solid var(--color-border-secondary);
-    height: 350px; /* Set a fixed height for each card */
+    height: 350px;
     overflow: hidden;
 }
 
