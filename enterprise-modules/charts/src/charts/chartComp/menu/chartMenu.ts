@@ -83,9 +83,8 @@ export class ChartMenu extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-        this.legacyFormat = this.gridOptionsService.get('legacyChartsMenu');
+        this.legacyFormat = this.chartMenuService.isLegacyFormat();
 
-        
         this.chartToolbar = this.createManagedBean(new ChartToolbar());
         this.getGui().appendChild(this.chartToolbar.getGui());
         if (this.legacyFormat) {

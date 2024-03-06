@@ -5,6 +5,7 @@ import {
     RefSelector,
     _
 } from "@ag-grid-community/core";
+import { ChartMenuService } from "../services/chartMenuService";
 import { ChartTranslationKey, ChartTranslationService } from "../services/chartTranslationService";
 
 interface ChartToolbarButton {
@@ -14,7 +15,8 @@ interface ChartToolbarButton {
 }
 
 export class ChartToolbar extends Component {
-    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
+    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    @Autowired('chartMenuService') private readonly chartMenuService: ChartMenuService;
     @RefSelector("eMenu") private eMenu: HTMLButtonElement;
 
     private buttonListenersDestroyFuncs: ((() => null) | undefined)[] = [];
@@ -63,7 +65,7 @@ export class ChartToolbar extends Component {
         )!;
         buttonEl.classList.add('ag-chart-menu-icon');
 
-        if (!this.gridOptionsService.get('legacyChartsMenu')) {
+        if (!this.chartMenuService.isLegacyFormat()) {
             buttonEl = this.wrapButton(buttonEl);
         }
 

@@ -15,11 +15,13 @@ import { ColState } from "../../model/chartDataModel";
 import { ChartTranslationService } from "../../services/chartTranslationService";
 import { ChartOptionsService } from "../../services/chartOptionsService";
 import { DragDataPanel } from "./dragDataPanel";
+import { ChartMenuService } from "../../services/chartMenuService";
 
 export class SeriesDataPanel extends DragDataPanel {
     private static TEMPLATE = /* html */`<div id="seriesGroup"></div>`;
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    @Autowired('chartMenuService') private readonly chartMenuService: ChartMenuService;
 
     private seriesGroupComp: AgGroupComponent;
     private seriesSelect?: AgPillSelect<ColState>;
@@ -58,7 +60,7 @@ export class SeriesDataPanel extends DragDataPanel {
             }));
             this.seriesGroupComp.addItem(pairedModeToggle);
         }
-        if (this.gridOptionsService.get('legacyChartsMenu')) {
+        if (this.chartMenuService.isLegacyFormat()) {
             this.createLegacySeriesGroup(this.valueCols);
         } else {
             this.createSeriesGroup(this.valueCols);
@@ -67,7 +69,7 @@ export class SeriesDataPanel extends DragDataPanel {
     }
 
     public refresh(valueCols: ColState[]): void {
-        if (this.gridOptionsService.get('legacyChartsMenu')) {
+        if (this.chartMenuService.isLegacyFormat()) {
             const canRefresh = this.refreshColumnComps(valueCols);
             if (canRefresh) {
                 if (this.chartController.isActiveXYChart()) {

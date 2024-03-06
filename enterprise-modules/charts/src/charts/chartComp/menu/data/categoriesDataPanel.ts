@@ -14,6 +14,7 @@ import {
 import { AgPillSelect } from "../../../../widgets/agPillSelect";
 import { ChartController } from "../../chartController";
 import { ColState } from "../../model/chartDataModel";
+import { ChartMenuService } from "../../services/chartMenuService";
 import { ChartTranslationService } from "../../services/chartTranslationService";
 import { isHierarchical } from "../../utils/seriesTypeMapper";
 import { DragDataPanel } from "./dragDataPanel";
@@ -22,6 +23,7 @@ export class CategoriesDataPanel extends DragDataPanel {
     private static TEMPLATE = /* html */`<div id="categoriesGroup"></div>`;
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+    @Autowired('chartMenuService') private readonly chartMenuService: ChartMenuService;
 
     private categoriesGroupComp: AgGroupComponent;
     private categoriesSelect?: AgPillSelect<ColState>;
@@ -45,7 +47,7 @@ export class CategoriesDataPanel extends DragDataPanel {
             cssIdentifier: 'charts-data',
             expanded: this.isOpen
         }));
-        if (this.gridOptionsService.get('legacyChartsMenu')) {
+        if (this.chartMenuService.isLegacyFormat()) {
             this.createLegacyCategoriesGroup(this.dimensionCols);
         } else {
             this.createCategoriesGroup(this.dimensionCols);
@@ -54,7 +56,7 @@ export class CategoriesDataPanel extends DragDataPanel {
     }
 
     public refresh(dimensionCols: ColState[]): void {
-        if (this.gridOptionsService.get('legacyChartsMenu')) {
+        if (this.chartMenuService.isLegacyFormat()) {
             if (!this.refreshColumnComps(dimensionCols)) {
                 this.recreate(dimensionCols);
             }

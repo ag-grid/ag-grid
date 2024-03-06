@@ -610,7 +610,7 @@ export interface GridOptions<TData = any> {
     chartToolPanelsDef?: ChartToolPanelsDef;
     /**
      * Enables the legacy format of the Integrated Charts Menu and Tool Panels.
-     * @default true
+     * Defaults to `true` when using AG Charts Community and `false` when using AG Charts Enterprise.
      * @initial
      */
     legacyChartsMenu?: boolean;
