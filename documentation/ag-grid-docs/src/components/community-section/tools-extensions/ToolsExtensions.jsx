@@ -16,30 +16,30 @@ const ToolsExtensions = ({ limit = -1 }) => {
     const [filteredTools, setFilteredTools] = useState(tools);
     const [selectedFramework, setSelectedFramework] = useState();
     const frameworks = [
-        "JavaScript",
-        "TypeScript",
-        "React",
-        "Angular",
-        "Vue",
-        "Python",
-        "Svelte",
-        "Laravel",
-        ".NET",
-        "Rust"
-    ]
+        'JavaScript',
+        'TypeScript',
+        'React',
+        'Angular',
+        'Vue',
+        'Python',
+        'Svelte',
+        'Laravel',
+        '.NET',
+        'Rust',
+    ];
 
     const filterFrameworks = (framework) => {
-        let filter = framework ? tools.filter(item => item.frameworks?.includes(framework)): tools
+        let filter = framework ? tools.filter((item) => item.frameworks?.includes(framework)) : tools;
         setSelectedFramework(framework);
-        setFilteredTools(filter)
-    }
+        setFilteredTools(filter);
+    };
 
     return (
         <div className={styles.container}>
             <div className={styles.filterContainer}>
                 <div className={styles.filterPanel}>
                     <div className={styles.header}>
-                        <span className={styles.title}>Filters</span>
+                        {/* <span className={styles.title}>Filters</span> */}
                         {selectedFramework && (
                             <img
                                 onClick={() => filterFrameworks(null)}
@@ -57,7 +57,10 @@ const ToolsExtensions = ({ limit = -1 }) => {
                                         {...(selectedFramework === framework ? { active: 'true' } : {})}
                                         onClick={() => filterFrameworks(framework)}
                                     >
-                                        <img src={`/community/frameworks/${framework.toLowerCase()}.svg`} alt={`${framework}`} />
+                                        <img
+                                            src={`/community/frameworks/${framework.toLowerCase()}.svg`}
+                                            alt={`${framework}`}
+                                        />
                                         {framework}
                                     </button>
                                 ))}

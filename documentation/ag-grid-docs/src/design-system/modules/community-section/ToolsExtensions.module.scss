@@ -93,8 +93,8 @@
 
 .filterPanel {
     border-radius: var(--radius-2xl);
-    border: 1px solid var(--color-border-primary);
-    padding: $spacing-size-4;
+    padding: $spacing-size-2;
+    padding-top: 0;
 }
 
 .header {
