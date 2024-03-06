@@ -8,12 +8,12 @@ import '@ag-grid-community/styles/ag-theme-quartz.css';
 import './styles.css';
 import MoodEditor from './moodEditor.jsx';
 import NumericCellEditor from './numericCellEditor.jsx';
+import { getData } from './data.jsx';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
-
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ColumnsToolPanelModule, RichSelectModule])
 

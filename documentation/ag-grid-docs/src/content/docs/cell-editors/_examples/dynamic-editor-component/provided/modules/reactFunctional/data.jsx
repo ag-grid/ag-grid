@@ -1,9 +1,5 @@
 
-
-
-
-
-function getData() {
+export function getData() {
     return [
         { value: 14, type: 'age' },
         { value: 'Female', type: 'gender' },
