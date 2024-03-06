@@ -55,19 +55,18 @@
 
         .yearFiltersContainer {
             display: flex;
-            justify-content: center;
+            justify-content: flex-start;
             gap: 2px;
-            margin-top: 24px;
             margin-bottom: 24px;
 
             .yearFilter {
                 background-color: transparent;
                 border: none;
                 border-bottom: 1px solid #7f7e7e;
-                color: #fff;
+                color: var(--color-text-primary);
                 padding: 10px 20px;
                 cursor: pointer;
-                font-weight: 300;
+                font-weight: 200;
                 border-bottom-width: 1px;
                 border-bottom-left-radius: 0px;
                 border-bottom-right-radius: 0px;
@@ -81,7 +80,7 @@
                 border-bottom-width: 1px;
                 border-bottom-left-radius: 0px;
                 border-bottom-right-radius: 0px;
-                color: #fff;
+                color: var(--color-text-primary);
             }
         }
 
@@ -96,6 +95,7 @@
                 padding: 12px;
                 display: flex;
                 flex-direction: column;
+                flex: 1;
 
                 .title {
                     font-weight: 800;
@@ -104,6 +104,11 @@
 
                 .description {
                     padding-top: 12px;
+                    display: -webkit-box;
+                    -webkit-line-clamp: 4;
+                    -webkit-box-orient: vertical;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
                 }
 
                 .location {
