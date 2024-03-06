@@ -6,30 +6,7 @@ Columns can be grouped in the grid's header using Column Groups. This can be com
 
 Column Groups are configured by providing a hierachy of Column Definitions. If a Column Definition contains the `children` attribute then the grid treats it as a Column Group.
 
-```js {% frameworkTransform=true %}
-const gridOptions = {
-    columnDefs: [
-        {
-            headerName: 'Athlete Details',
-            children: [
-                { field: 'athlete' },
-                { field: 'age' },
-                { field: 'country' },
-            ]
-        },
-        {
-            headerName: 'Sports Results',
-            children: [
-                { field: 'sport' },
-                { field: 'total', columnGroupShow: 'closed' },
-                { field: 'gold', columnGroupShow: 'open' },
-                { field: 'silver', columnGroupShow: 'open' },
-                { field: 'bronze', columnGroupShow: 'open' },
-            ]
-        }
-    ],
-}
-```
+{% gridExampleRunner title="Basic Grouping" name="basic-grouping"  exampleHeight=550 /%}
 
 Set the attribute `columnGroupShow` on groups children to set the expand and collapse policy as follows:
 
@@ -37,7 +14,11 @@ Set the attribute `columnGroupShow` on groups children to set the expand and col
 * **`closed`:** The child is only shown when the group is closed.
 * **`null`, `undefined`:** The child is always shown.
 
-{% gridExampleRunner title="Basic Grouping" name="basic-grouping"  exampleHeight=550 /%}
+## Group Defaults
+
+Use `defaultColGroupDef` to set properties accross all Column Groups.
+
+{% gridExampleRunner title="Default Props" name="defaults"  exampleHeight=550 /%}
 
 ## Selecting Components
 

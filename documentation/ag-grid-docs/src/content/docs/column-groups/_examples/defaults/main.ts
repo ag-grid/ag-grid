@@ -7,14 +7,12 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const columnDefs: (ColDef | ColGroupDef)[] = [
   { 
-    headerName: 'Name & Country',
     children: [
       { field: 'athlete' },
       { field: 'country' }
     ]
   },
   {
-    headerName: 'Sports Results',
     children: [
       { columnGroupShow: 'closed', field: 'total' },
       { columnGroupShow: 'open', field: 'gold' },
@@ -27,6 +25,10 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
+  defaultColGroupDef: {
+    headerName: 'A shared prop for all Groups'
+  },
+  // debug: true,
   columnDefs: columnDefs,
   rowData: null,
 }

@@ -11,12 +11,15 @@ let gridApi: GridApi;
 const gridOptions: GridOptions = {
     // define grid columns
     columnDefs: [
-        { field: 'name' },
+        { headerName: 'Name (field)', field: 'name' },
         // Using dot notation to access nested property
-        { field: 'medals.gold', headerName: 'Gold' },
+        { headerName: 'Country (field & dot notation)', field: 'person.country' },
         // Show default header name 
-        { field: 'person.age' },
+        { headerName: 'Total Medals (valueGetter)', valueGetter: p => p.data.medals.gold + p.data.medals.silver + p.data.medals.bronze},
     ],
+    defaultColDef: {
+        flex: 1
+    },
     rowData: getData(),
 };
 
