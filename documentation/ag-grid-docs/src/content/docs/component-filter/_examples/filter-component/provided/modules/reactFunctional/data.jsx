@@ -1,4 +1,4 @@
-function getData() {
+export function getData() {
     return [
         { row: 'Row 1', name: 'Michael Phelps' },
         { row: 'Row 2', name: 'Natalie Coughlin' },

@@ -87,7 +87,7 @@ function createDataItem(name, distro, laptop, city, value, idToUse = undefined) 
     }
 }
 
-function getData() {
+export function getData() {
     var myRowData = []
     for (var i = 0; i < 10000; i++) {
         var name =
