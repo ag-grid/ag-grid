@@ -239,10 +239,9 @@ export function extractImportStatements(srcFile: ts.SourceFile): BindingImport[]
 
 export function addEnterprisePackage(imports: any[], bindings: ParsedBindings) {
     const isEnterprise = bindings.imports.some((i) => i.module.includes('-enterprise'));
-    const isChartsEnterprise = bindings.imports.some((i) => i.module.includes('charts-enterprise'));
     if (isEnterprise) {
         imports.push(
-            `import 'ag-grid-${integratedChartsUsesChartsEnterprise && isChartsEnterprise ? 'charts-' : ''}enterprise';`
+            `import 'ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise';`
         );
     }
 }

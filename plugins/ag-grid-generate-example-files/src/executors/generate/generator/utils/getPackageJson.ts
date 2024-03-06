@@ -84,7 +84,7 @@ function addPackageJson(isEnterprise, framework, importType) {
         }
         addDependency('ag-grid-community', agGridVersion);
         addDependency(
-            `ag-grid-enterprise${integratedChartsUsesChartsEnterprise ? '-charts-enterprise' : ''}`,
+            `ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise`,
             agGridEnterpriseVersion
         );
     }
