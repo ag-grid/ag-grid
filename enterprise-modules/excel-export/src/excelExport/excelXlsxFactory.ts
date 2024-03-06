@@ -256,8 +256,8 @@ export class ExcelXlsxFactory {
         return createXmlPart(officeThemeFactory.getTemplate());
     }
 
-    public static createTable(dataTable: ExcelDataTable): string {
-        return createXmlPart(tableFactory.getTemplate(dataTable));
+    public static createTable(dataTable: ExcelDataTable, index?: number): string {
+        return createXmlPart(tableFactory.getTemplate(dataTable, index));
     }
 
     public static createWorkbookRels(sheetLen: number): string {

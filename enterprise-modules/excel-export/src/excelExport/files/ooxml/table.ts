@@ -20,10 +20,11 @@ const tableFactory: ExcelOOXMLTemplate = {
         } = dataTable;
 
         const firstRow = headerRowIndex + 1;
-        const id: string = "1"; // We assume that there is only 1 table per sheet with id: 1
+        const id: string = (idx + 1).toString();
         const firstCell = `A${firstRow}`;
         const lastCell = `${String.fromCharCode(64 + columns.length)}${firstRow + rowCount}`;
         const ref = `${firstCell}:${lastCell}`;
+        const displayNameToUse = idx ? `${displayName}_${idx + 1}` : displayName;
 
         return {
             name: "table",
@@ -35,7 +36,7 @@ const tableFactory: ExcelOOXMLTemplate = {
                     "xmlns:xr": "http://schemas.microsoft.com/office/spreadsheetml/2014/revision",
                     "xmlns:xr3": "http://schemas.microsoft.com/office/spreadsheetml/2016/revision3",
                     "name": name,
-                    "displayName": displayName,
+                    "displayName": displayNameToUse,
                     "ref": ref,
                     "totalsRowShown": 0,
                     "id": id,

@@ -96,7 +96,7 @@ const createExcelXmlTables = (): void => {
 
         ZipContainer.addFile(
             `xl/tables/${dataTable.name}.xml`,
-            ExcelXlsxFactory.createTable(dataTable),
+            ExcelXlsxFactory.createTable(dataTable, i),
         );
     }
 }

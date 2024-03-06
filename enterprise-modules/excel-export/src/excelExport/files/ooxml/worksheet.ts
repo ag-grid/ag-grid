@@ -404,7 +404,7 @@ const worksheetFactory: ExcelOOXMLTemplate = {
             addPageSetup(pageSetup),
             addHeaderFooter(headerFooterConfig),
             addDrawingRel(currentSheet),
-            addExcelTableParts(worksheetExcelTables),
+            addExcelTableParts(worksheetExcelTables, currentSheet),
         );
 
         const children = createWorksheetChildren([]);
