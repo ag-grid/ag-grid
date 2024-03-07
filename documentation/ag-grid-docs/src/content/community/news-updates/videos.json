@@ -18,6 +18,24 @@
         "id": "ELRCT7ooNCU"
     },
     {
+        "title": "Rendering: To Sync or Not to Sync?",
+        "link": "https://www.youtube.com/embed/69d3QIDVKDc",
+        "description": "Let’s dive deep into React rendering and evaluate the implication of Concurrent Rendering and automated batching on code that previously relied on the synchronous nature of v17. Does it always make things better? With a real world case study, we evaluate useSyncExternalStore and flushSync as tools to restore synchronous rendering to avoid “visual tearing”. Working through the trade-offs of these approaches will give us new insights into React rendering and hints on how we can optimise our applications.",
+        "author": "Stephen Cooper",
+        "type": "Video",
+        "published": "11/2023",
+        "id": "69d3QIDVKDc"
+    },
+    {
+        "title": "Patterns for Performance",
+        "link": "https://www.youtube.com/embed/qR608qHWTCA",
+        "description": "When working with React it is important that we use the right tool for the right job. If not we will be missing out on the best performance and developer experience. While optimising AG Grid React Table we discovered a number of patterns that made significant improvements to the tables performance.",
+        "author": "Stephen Cooper",
+        "type": "Video",
+        "published": "12/2023",
+        "id": "qR608qHWTCA"
+    },
+    {
         "title": "AGGrid: High-Performance DOM Updates w/ Niall Crosby",
         "link": "https://www.youtube.com/embed/QRtrS_SvR4w",
         "description": "SolidJS's ecosystem has been growing at a rapid rate. The latest addition is AGGrid, a high-performance table library. Niall Crosby, creator of AGGrid, joins me on stream to talk about what AGGrid is, how we can use it with Solid, and where things are going in the future.",
