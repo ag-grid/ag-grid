@@ -1,15 +1,7 @@
 ---
 import { VideoSection } from './VideoSection';
-
-const slotHtml = await Astro.slots.render('default');
-
-// Remove `p` tags around content, so that it is styled correctly
-const regex = /^<p>(.*)<\/p>$/;
-const substitution = '$1';
-
-const html = slotHtml.replace(regex, substitution);
 ---
 
 <VideoSection client:load {...Astro.props}>
-    <Fragment set:html={html} />
+    <slot />
 </VideoSection>
