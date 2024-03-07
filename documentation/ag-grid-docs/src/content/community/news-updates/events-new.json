@@ -1,7 +1,7 @@
 [
     {
         "title": "ng-conf",
-        "description": "ng-conf 2024 is a two-day double track conference focused on building the Angular community. AG Grid has been a platinum sponsor of ng-conf for a number of years and will be a platinum sponsor once again in 2024. \n\nIn addition one of our senior engineers, Stephen Cooper, will be giving a talk titled: 'Perfecting your Profiling Skills' which will show how you can use Angular Dev Tools alongside the standard Dev Tools to identify and resolve performance issues, whilst unearthing some hidden gems in the process.",
+        "description": "ng-conf 2024 is a two-day double track conference focused on building the Angular community. AG Grid has been a platinum sponsor of ng-conf for a number of years and will be a platinum sponsor once again in 2024. \n\nOne of our senior engineers, Stephen Cooper, will be giving a talk titled: 'Perfecting your Profiling Skills' which will show how you can use Angular Dev Tools alongside the standard Dev Tools to identify and resolve performance issues, whilst unearthing some hidden gems in the process.",
         "location": "Salt Lake City, USA",
         "framework": "Angular",
         "organiserLogo": "ng-conf-logo.webp",
@@ -73,6 +73,7 @@
         "location": "Salt Lake City, USA",
         "framework": "Angular",
         "organiserLogo": "ng-conf-logo.webp",
+        "organiserLogoLight": "",
         "startDate": "2023-06-14",
         "endDate": "2023-06-15",
         "video": "",
@@ -90,6 +91,7 @@
         "location": "Amsterdam, NL",
         "framework": "React",
         "organiserLogo": "react-summit-logo.svg",
+        "organiserLogoLight": "",
         "startDate": "2023-06-17",
         "endDate": "2023-06-18",
         "video": "",
@@ -107,6 +109,7 @@
         "location": "London, UK",
         "framework": "React",
         "organiserLogo": "react-advanced-logo.svg",
+        "organiserLogoLight": "",
         "countryIcon": "united-kingdom.png",
         "startDate": "2023-10-28",
         "endDate": "2023-10-28",
@@ -124,6 +127,7 @@
         "location": "New Jersey, USA",
         "framework": "React",
         "organiserLogo": "react-summit-logo.svg",
+        "organiserLogoLight": "",
         "countryIcon": "us.png",
         "startDate": "2023-11-13",
         "endDate": "2023-11-15",
@@ -136,11 +140,12 @@
         ]
     },
     {
-        "title": "JS Nation",
+        "title": "ng-conf",
         "description": "",
         "location": "",
         "framework": "",
         "organiserLogo": "",
+        "organiserLogoLight": "",
         "countryIcon": "",
         "startDate": "2022-",
         "endDate": "2022-",
@@ -153,11 +158,30 @@
         ]
     },
     {
+        "title": "JS Nation",
+        "description": "JSNation is a 2-day 2-track event focusing exclusively on JavaScript development.\n\nTalk: Automatically maintaining thousands of code demos across multiple framework variations - At AG Grid, we maintain thousands of code demos, with the same demo in Angular, React, Vue, and Vanilla JS. Additionally, each framework has different variations covering JavaScript, TypeScript, Modules, Packages, Hooks, Classes, Vue 2, and Vue 3. How do we do it? We automate. This session will explain how we start with a single TypeScript version and automatically convert it to every combination we need and finally use Cypress to test the converted example.",
+        "location": "Amsterdam, NL",
+        "framework": "",
+        "organiserLogo": "",
+        "organiserLogoLight": "",
+        "countryIcon": "netherlands.png",
+        "startDate": "2022-06-16",
+        "endDate": "2022-06-17",
+        "video": "",
+        "coverImage": "",
+        "eventPage": "https://jsnation.com/2022/",
+        "recording": "https://portal.gitnation.org/contents/automatically-maintaining-thousands-of-code-demos-across-multiple-framework-variations",
+        "images": [
+            ""
+        ]
+    },
+    {
         "title": "React Summit",
         "description": "",
         "location": "",
         "framework": "",
         "organiserLogo": "",
+        "organiserLogoLight": "",
         "countryIcon": "",
         "startDate": "2022-",
         "endDate": "2022-",
@@ -175,6 +199,7 @@
         "location": "",
         "framework": "",
         "organiserLogo": "",
+        "organiserLogoLight": "",
         "countryIcon": "",
         "startDate": "2022-",
         "endDate": "2022-",
@@ -182,6 +207,24 @@
         "coverImage": "",
         "eventPage": "",
         "recording": "",
+        "images": [
+            ""
+        ]
+    },
+    {
+        "title": "FinJS",
+        "description": "Talk: AG Grid - Behind the frameworks",
+        "location": "London, UK",
+        "framework": "JavaScript",
+        "organiserLogo": "",
+        "organiserLogoLight": "",
+        "countryIcon": "united-kingdom.png",
+        "startDate": "2022-11-02",
+        "endDate": "2022-11-02",
+        "video": "",
+        "coverImage": "",
+        "eventPage": "",
+        "recording": "https://www.youtube.com/watch?v=iUsYl3Ux_Hc",
         "images": [
             ""
         ]
