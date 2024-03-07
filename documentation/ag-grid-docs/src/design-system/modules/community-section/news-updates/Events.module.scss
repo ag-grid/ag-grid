@@ -226,7 +226,7 @@
     text-overflow: ellipsis;
 }
 .location {
-    --color-icon: var(--color-text-primary);
+    --color-icon: var(--color-fg-primary);
     --icon-size: 20px;
     color: var(--color-text-primary);
     font-weight: var(--text-semibold);
@@ -243,4 +243,8 @@
     display: flex;
     justify-content: center;
     gap: 8px;
+    font-size: var(--text-fs-base);
+    #{$selector-darkmode} & {
+        background-color: color-mix(in srgb, var(--color-bg-primary), var(--color-fg-primary) 10%);
+    }
 }
