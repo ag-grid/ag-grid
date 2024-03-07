@@ -83,6 +83,18 @@ The following example demonstrates different ways to expand / collapse row group
 
 {% gridExampleRunner title="Expand / Collapse Groups via API" name="expand-collapse-api"  exampleHeight=515 /%}
 
+
+## Expanding Groups & Vertical Scroll Location
+
+Depending on your scroll position the last item's group data may not be visible when clicking on the expand icon.
+
+You can resolve this by using the function `api.ensureIndexVisible()`. This ensures the index is visible, scrolling the table if needed.
+
+In the example below, if you expand a group at the bottom, the grid will scroll so all the children of the group are visible.
+
+{% gridExampleRunner title="Row Group Scroll" name="row-group-scroll" /%}
+
+
 ## Next Up
 
 Continue to the next section to learn about grouping with [Complex Objects](./grouping-complex-objects/).
