@@ -10,6 +10,8 @@
     border-radius: 8px;
     display: flex;
     gap: $spacing-size-8;
+    color: var(--color-text-primary);
+    cursor: pointer;
 }
 
 .podcastDetailsContainer {
@@ -17,6 +19,7 @@
     flex-direction: column;
     margin-bottom: $spacing-size-8;
     gap: $spacing-size-2;
+    font-weight: var(--text-regular);
 }
 
 .titleContainer {
@@ -52,4 +55,10 @@
     audio {
         mix-blend-mode: luminosity;
     }
+}
+
+.publicationLogo {
+    width: 25px;
+    height: auto;
+    border-radius: 50%;
 }
