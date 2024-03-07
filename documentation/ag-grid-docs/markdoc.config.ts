@@ -106,6 +106,9 @@ export default defineMarkdocConfig({
                 section: { type: String },
                 names: { type: Array },
                 config: { type: Object },
+
+                // For `getHeadings` parsing
+                __apiDocumentationHeadings: { type: Boolean },
             },
         },
         interfaceDocumentation: {
@@ -160,6 +163,13 @@ export default defineMarkdocConfig({
                 alt: { type: String, required: true },
                 autoPlay: { type: Boolean },
                 wrapped: { type: Boolean },
+            },
+        },
+        iframe: {
+            render: 'iframe',
+            attributes: {
+                src: { type: String, required: true },
+                style: { type: String },
             },
         },
         iconsPanel: {
@@ -272,6 +282,14 @@ export default defineMarkdocConfig({
                 id: { type: String },
                 title: { type: String },
                 showHeader: { type: Boolean },
+            },
+        },
+        openInCTA: {
+            render: component('./src/components/open-in-cta/OpenInCTA.astro'),
+            attributes: {
+                type: { type: String, required: true },
+                href: { type: String, required: true },
+                text: { type: String },
             },
         },
     },

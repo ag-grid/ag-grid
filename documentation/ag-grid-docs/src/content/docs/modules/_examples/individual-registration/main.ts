@@ -1,6 +1,3 @@
-import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-quartz.css";
-
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';

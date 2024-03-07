@@ -24,12 +24,13 @@ import {
 import {
     applyInterfaceInclusions,
     formatJson,
+    getAllSectionPropertyEntries,
     getInterfaceName,
     getInterfacesToWrite,
     getPropertyType,
+    getSectionProperties,
     isCallSig,
     isGridOptionEvent,
-    mergeObjects,
 } from './interface-helpers';
 import type {
     ChildDocEntry,
@@ -246,43 +247,22 @@ export const ApiDocumentation: FunctionComponent<ApiDocumentationProps> = ({
     config = { ...config, lookupRoot, lookups, codeSrcProvided };
 
     if (section == null) {
-        const properties: DocEntryMap = mergeObjects(propertiesFromFiles);
+        const entries = getAllSectionPropertyEntries({ propertiesFromFiles, suppressSort: config.suppressSort });
 
-        const entries = Object.entries(properties).filter(([key]) => key !== '_config_');
-        if (!config.suppressSort) {
-            entries.sort(([k1, v1], [k2, v2]) => {
-                const getName = (k, v) => (v.meta && v.meta.displayName) || k;
-                return getName(k1, v1) < getName(k2, v2) ? -1 : 1;
-            });
-        }
-        return entries.map(([key, value]) => (
-            <Section key={key} framework={framework} title={key} properties={value} config={config} />
+        return entries.map(([key, properties]) => (
+            <Section key={key} framework={framework} title={key} properties={properties} config={config} />
         ));
     }
 
-    const keys = section.split('.');
-    const processed = keys.reduce(
-        (current, key) =>
-            current.map((x) => {
-                const prop = x[key];
-                if (!prop) {
-                    console.warn(
-                        `<api-documentation>: Could not find a prop ${key} under source ${source} and section ${section}!`
-                    );
-                    throw new Error(
-                        `<api-documentation>: Could not find a prop ${key} under source ${source} and section ${section}!`
-                    ); //spl todo
-                }
-                return prop;
-            }),
-        propertiesFromFiles
-    );
-    const properties = mergeObjects(processed);
+    const { title, properties } = getSectionProperties({
+        section,
+        propertiesFromFiles,
+    });
 
     return (
         <Section
             framework={framework}
-            title={keys[keys.length - 1]}
+            title={title}
             properties={properties}
             config={{ ...config, isSubset: true }}
             names={names}

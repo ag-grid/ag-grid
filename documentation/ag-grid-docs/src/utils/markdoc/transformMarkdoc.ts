@@ -8,10 +8,18 @@ import markdocConfig from '../../../markdoc.config';
 interface Params {
     framework: Framework;
     markdocContent: string;
+    /**
+     * Transform the AST before it transforms to the render tree
+     */
+    transformAst?: (ast: Node) => void;
 }
 
-export function transformMarkdoc({ framework, markdocContent }: Params) {
-    const ast = Markdoc.parse(markdocContent);
+export function transformMarkdoc({ framework, markdocContent, transformAst }: Params) {
+    let ast = Markdoc.parse(markdocContent);
+    if (transformAst) {
+        transformAst(ast);
+    }
+
     const headingSlugger = new Slugger();
     const config = {
         ...markdocConfig,
