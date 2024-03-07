@@ -330,8 +330,13 @@
         color: var(--ag-foreground-color);
     }
 
-    .ag-pill-select .ag-column-drop {
-        min-height: unset;
+    .ag-pill-select {
+        .ag-column-drop {
+            min-height: unset;
+        }
+        .ag-picker-field-display {
+            font-weight: 500;
+        }
     }
 
     .ag-status-bar {

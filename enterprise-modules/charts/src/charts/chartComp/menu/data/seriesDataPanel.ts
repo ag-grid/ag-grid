@@ -4,27 +4,23 @@ import {
     AgToggleButton,
     AutoScrollService,
     Autowired,
+    ChartType,
     DragAndDropService,
     DropTarget,
     PostConstruct,
     _
 } from "@ag-grid-community/core";
-import { AgPillSelect } from "../../../../widgets/agPillSelect";
 import { ChartController } from "../../chartController";
 import { ColState } from "../../model/chartDataModel";
-import { ChartTranslationService } from "../../services/chartTranslationService";
 import { ChartOptionsService } from "../../services/chartOptionsService";
 import { DragDataPanel } from "./dragDataPanel";
 import { ChartMenuService } from "../../services/chartMenuService";
+import { canOnlyHaveSingleSeries } from "../../utils/seriesTypeMapper";
 
 export class SeriesDataPanel extends DragDataPanel {
     private static TEMPLATE = /* html */`<div id="seriesGroup"></div>`;
 
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
     @Autowired('chartMenuService') private readonly chartMenuService: ChartMenuService;
-
-    private seriesGroupComp: AgGroupComponent;
-    private seriesSelect?: AgPillSelect<ColState>;
 
     constructor(
         chartController: ChartController,
@@ -38,7 +34,7 @@ export class SeriesDataPanel extends DragDataPanel {
 
     @PostConstruct
     private init() {
-        this.seriesGroupComp = this.createBean(new AgGroupComponent({
+        this.groupComp = this.createBean(new AgGroupComponent({
             title: this.getSeriesGroupTitle(),
             enabled: true,
             suppressEnabledCheckbox: true,
@@ -47,7 +43,7 @@ export class SeriesDataPanel extends DragDataPanel {
             expanded: this.isOpen
         }));
         if (this.chartController.isActiveXYChart()) {
-            const pairedModeToggle = this.seriesGroupComp.createManagedBean(new AgToggleButton({
+            const pairedModeToggle = this.groupComp.createManagedBean(new AgToggleButton({
                 label: this.chartTranslationService.translate('paired'),
                 labelAlignment: 'left',
                 labelWidth: 'flex',
@@ -58,14 +54,14 @@ export class SeriesDataPanel extends DragDataPanel {
                     this.chartController.updateForGridChange();
                 }
             }));
-            this.seriesGroupComp.addItem(pairedModeToggle);
+            this.groupComp.addItem(pairedModeToggle);
         }
         if (this.chartMenuService.isLegacyFormat()) {
             this.createLegacySeriesGroup(this.valueCols);
         } else {
             this.createSeriesGroup(this.valueCols);
         }
-        this.getGui().appendChild(this.seriesGroupComp.getGui());
+        this.getGui().appendChild(this.groupComp.getGui());
     }
 
     public refresh(valueCols: ColState[]): void {
@@ -73,7 +69,7 @@ export class SeriesDataPanel extends DragDataPanel {
             const canRefresh = this.refreshColumnComps(valueCols);
             if (canRefresh) {
                 if (this.chartController.isActiveXYChart()) {
-                    const getSeriesLabel = this.generateGetSeriesLabel();
+                    const getSeriesLabel = this.generateGetSeriesLabel(valueCols);
         
                     valueCols.forEach(col => {
                         this.columnComps.get(col.colId)!.setLabel(getSeriesLabel(col));
@@ -83,53 +79,47 @@ export class SeriesDataPanel extends DragDataPanel {
                 this.recreate(valueCols);
             }
         } else {
-            this.seriesSelect?.setValueFormatter(this.generateGetSeriesLabel());
-            this.seriesSelect?.setValues(valueCols, valueCols.filter(col => col.selected));
+            this.valuePillSelect?.setValueFormatter(this.generateGetSeriesLabel(valueCols));
+            this.valuePillSelect?.setValues(valueCols, valueCols.filter(col => col.selected));
+            this.refreshValueSelect(valueCols);
         }
     }
 
     private recreate(valueCols: ColState[]): void {
-        this.isOpen = this.seriesGroupComp.isExpanded();
+        this.isOpen = this.groupComp.isExpanded();
         _.clearElement(this.getGui());
-        this.destroyBean(this.seriesGroupComp);
+        this.destroyBean(this.groupComp);
         this.valueCols = valueCols;
         this.init();
     }
 
-    private createSeriesGroup(columns: ColState[]): void {
-        const getSeriesLabel = this.generateGetSeriesLabel();
+    protected canHaveMultipleValues(chartType: ChartType): boolean {
+        return !canOnlyHaveSingleSeries(chartType);
+    }
 
-        const selectedValueList = columns.filter(col => col.selected);
-        this.seriesSelect = this.seriesGroupComp.createManagedBean(new AgPillSelect<ColState>({
-            valueList: columns,
-            selectedValueList,
-            valueFormatter: getSeriesLabel,
-            selectPlaceholder: this.chartTranslationService.translate('seriesAdd'),
-            dragSourceId: 'seriesSelect',
-            onValuesChange: params => this.onValueChange(params)
-        }));
-        this.seriesGroupComp.addItem(this.seriesSelect);
+    private createSeriesGroup(columns: ColState[]): void {
+        this.createGroup(columns, this.generateGetSeriesLabel(columns), 'seriesAdd', 'seriesSelect');
     }
 
     private createLegacySeriesGroup(columns: ColState[]): void {
-        const getSeriesLabel = this.generateGetSeriesLabel();
+        const getSeriesLabel = this.generateGetSeriesLabel(columns);
 
         columns.forEach(col => {
             const label = getSeriesLabel(col);
-            const comp = this.seriesGroupComp.createManagedBean(new AgCheckbox({
+            const comp = this.groupComp.createManagedBean(new AgCheckbox({
                 label,
                 value: col.selected
             }));
             comp.addCssClass('ag-data-select-checkbox');
 
             this.addChangeListener(comp, col);
-            this.seriesGroupComp.addItem(comp);
+            this.groupComp.addItem(comp);
             this.columnComps.set(col.colId, comp);
 
             this.addDragHandle(comp, col);
         });
 
-        const seriesGroupGui = this.seriesGroupComp.getGui();
+        const seriesGroupGui = this.groupComp.getGui();
 
         const dropTarget: DropTarget = {
             getIconName: () => DragAndDropService.ICON_MOVE,
@@ -144,14 +134,15 @@ export class SeriesDataPanel extends DragDataPanel {
         this.addDestroyFunc(() => this.dragAndDropService.removeDropTarget(dropTarget));
     }
 
-    private generateGetSeriesLabel(): (col: ColState) => string {
+    private generateGetSeriesLabel(valueCols: ColState[]): (col: ColState) => string {
         if (!this.chartController.isActiveXYChart()) {
             return col => _.escapeString(col.displayName)!;
         }
 
+        const selectedCols = valueCols.filter(col => col.selected);
+
         const isBubble = this.chartController.getChartType() === 'bubble';
         const isInPairedMode = this.chartOptionsService.getPairedMode();
-        let selectedValuesCount = 0;
 
         const indexToAxisLabel = new Map<number, string>();
         indexToAxisLabel.set(0, 'X');
@@ -165,19 +156,21 @@ export class SeriesDataPanel extends DragDataPanel {
                 return escapedLabel;
             }
 
+            const index = selectedCols.indexOf(col);
+
+            if (index === -1) { return escapedLabel; }
+
             let axisLabel;
 
             if (isInPairedMode) {
-                axisLabel = indexToAxisLabel.get(selectedValuesCount % (isBubble ? 3 : 2));
+                axisLabel = indexToAxisLabel.get(index % (isBubble ? 3 : 2));
             } else {
-                if (selectedValuesCount === 0) {
+                if (index === 0) {
                     axisLabel = 'X';
                 } else {
-                    axisLabel = isBubble && selectedValuesCount % 2 === 0 ? 'size' : 'Y';
+                    axisLabel = isBubble && index % 2 === 0 ? 'size' : 'Y';
                 }
             }
-
-            selectedValuesCount++;
 
             return `${escapedLabel} (${axisLabel})`;
         };
@@ -188,8 +181,7 @@ export class SeriesDataPanel extends DragDataPanel {
     }
 
     protected destroy(): void {
-        this.seriesGroupComp = this.destroyBean(this.seriesGroupComp)!;
-        this.seriesSelect = undefined;
+        this.groupComp = this.destroyBean(this.groupComp)!;
         super.destroy();
     }
 }
