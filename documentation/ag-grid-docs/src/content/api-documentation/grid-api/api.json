@@ -713,15 +713,6 @@
         "setRowCount": {},
         "getCacheBlockState": {}
     },
-    "viewportRowModel": {
-        "meta": {
-            "displayName": "RowModel: Viewport",
-            "page": {
-                "name": "Viewport Row Model",
-                "url": "./viewport/"
-            }
-        }
-    },
     "overlays": {
         "meta": {
             "displayName": "Overlays",
