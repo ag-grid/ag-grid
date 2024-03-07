@@ -12,6 +12,7 @@ export function ExternalLinks({
     initialSelectedFile,
     plunkrHtmlUrl,
     codeSandboxHtmlUrl,
+    isDev,
 }: {
     title: string;
     internalFramework: InternalFramework;
@@ -22,6 +23,7 @@ export function ExternalLinks({
 
     plunkrHtmlUrl?: string;
     codeSandboxHtmlUrl?: string;
+    isDev: boolean;
 }) {
     return (
         <>
@@ -34,6 +36,7 @@ export function ExternalLinks({
                         internalFramework={internalFramework}
                         boilerPlateFiles={exampleBoilerPlateFiles}
                         packageJson={packageJson!}
+                        isDev={isDev}
                     />
                 </li>
             ) : undefined}
@@ -46,6 +49,7 @@ export function ExternalLinks({
                         boilerPlateFiles={exampleBoilerPlateFiles}
                         packageJson={packageJson!}
                         fileToOpen={initialSelectedFile!}
+                        isDev={isDev}
                     />
                 </li>
             ) : undefined}
