@@ -10,22 +10,35 @@
 }
 
 .tabButton {
-    background: transparent;
+    padding: 8px;
+    padding-left: 16px;
+    padding-right: 16px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition:
+        background-color 0.2s,
+        opacity 0.2s;
+    display: inline-block;
+    border-radius: var(--radius-4xl);
+    margin-bottom: 0;
+    cursor: pointer;
+    color: var(--color-text-secondary);
+    transition: background-color 0.3s ease;
+    background-color: var(--color-bg-primary);
     border: none;
-    border-bottom: 1px solid var(--color-util-gray-200);
-    border-bottom-left-radius: 0px;
-    border-bottom-right-radius: 0px;
-    font-weight: 200;
-    color: var(--color-fg-primary);
+    box-shadow: none;
+    &:hover {
+        background-color: var(--color-util-brand-100);
+        color: var(--color-text-secondary);
+    }
 }
 
 .active {
-    border: none;
-    border-bottom: 1px solid var(--color-brand-400);
-    border-bottom-left-radius: 0px;
-    border-bottom-right-radius: 0px;
     color: var(--color-fg-primary);
-    font-weight: 800;
+    padding: 8px;
+    padding-left: 16px;
+    padding-right: 16px;
+    background-color: var(--color-util-brand-100);
 }
 
 .filterContainer {
@@ -35,7 +48,6 @@
 }
 
 .filterDropdown {
-    
 }
 
 .eventsContainer {
@@ -53,7 +65,6 @@
     border: 1px solid var(--color-border-secondary);
     overflow: hidden;
 }
-
 
 .eventItemLeftColumn {
     width: var(--layout-width-4-6);
