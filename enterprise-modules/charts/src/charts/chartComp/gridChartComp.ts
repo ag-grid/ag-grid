@@ -45,6 +45,7 @@ import {CrossFilteringContext} from "../chartService";
 import {ChartOptionsService} from "./services/chartOptionsService";
 import {ComboChartProxy} from "./chartProxies/combo/comboChartProxy";
 import {getCanonicalChartType, isHierarchical} from "./utils/seriesTypeMapper";
+import { ChartMenuUtils } from './menu/chartMenuUtils';
 
 export interface GridChartParams {
     chartId: string;
@@ -94,6 +95,8 @@ export class GridChartComp extends Component {
 
     private chartController: ChartController;
     private chartOptionsService: ChartOptionsService;
+    private chartMenuUtils: ChartMenuUtils;
+    private chartAxisMenuUtils: ChartMenuUtils;
 
     private chartProxy: ChartProxy;
     private chartType: ChartType;
@@ -207,8 +210,11 @@ export class GridChartComp extends Component {
         }
 
         this.chartController.setChartProxy(this.chartProxy);
-        this.chartOptionsService = this.createManagedBean(new ChartOptionsService(this.chartController));
-        this.titleEdit && this.titleEdit.refreshTitle(this.chartController, this.chartOptionsService.getChartOptionMenuUtils());
+        const chartOptionsService = this.createManagedBean(new ChartOptionsService(this.chartController));
+        this.chartOptionsService = chartOptionsService;
+        this.chartMenuUtils = this.createManagedBean(new ChartMenuUtils(chartOptionsService.getChartThemeOverridesProxy()));
+        this.chartAxisMenuUtils = this.createManagedBean(new ChartMenuUtils(chartOptionsService.getAxisThemeOverridesProxy()));
+        this.titleEdit && this.titleEdit.refreshTitle(this.chartController, this.chartOptionsService, this.chartMenuUtils);
     }
     
     private getChartThemeName(): string {
@@ -325,7 +331,14 @@ export class GridChartComp extends Component {
 
     private addMenu(): void {
         if (!this.params.crossFiltering) {
-            this.chartMenu = this.createBean(new ChartMenu(this.eChartContainer, this.eMenuContainer, this.chartController, this.chartOptionsService));
+            this.chartMenu = this.createBean(new ChartMenu(
+                this.eChartContainer,
+                this.eMenuContainer,
+                this.chartController,
+                this.chartOptionsService,
+                this.chartMenuUtils,
+                this.chartAxisMenuUtils,
+            ));
             this.eChartContainer.appendChild(this.chartMenu.getGui());
         }
     }
@@ -334,7 +347,7 @@ export class GridChartComp extends Component {
         this.titleEdit = this.createBean(new TitleEdit(this.chartMenu));
         this.eTitleEditContainer.appendChild(this.titleEdit.getGui());
         if (this.chartProxy) {
-            this.titleEdit.refreshTitle(this.chartController, this.chartOptionsService.getChartOptionMenuUtils());
+            this.titleEdit.refreshTitle(this.chartController, this.chartOptionsService, this.chartMenuUtils);
         }
     }
 
@@ -381,7 +394,7 @@ export class GridChartComp extends Component {
             this.chartController.raiseChartUpdatedEvent();
         });
 
-        this.titleEdit.refreshTitle(this.chartController, this.chartOptionsService.getChartOptionMenuUtils());
+        this.titleEdit.refreshTitle(this.chartController, this.chartOptionsService, this.chartMenuUtils);
     }
 
     private chartTypeChanged(updateParams?: UpdateChartParams): boolean {

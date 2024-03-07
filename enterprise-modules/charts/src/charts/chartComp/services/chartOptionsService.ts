@@ -1,60 +1,122 @@
-import { _, BeanStub, ChartOptionsChanged, ChartType, Events, WithoutGridCommon, PostConstruct } from "@ag-grid-community/core";
+import { _, BeanStub, ChartOptionsChanged, ChartType, Events, WithoutGridCommon } from "@ag-grid-community/core";
 import { AgCartesianAxisType, AgCharts, AgChartOptions, AgPolarAxisType } from "ag-charts-community";
 
 import { ChartController } from "../chartController";
-import { ChartMenuUtils } from "../menu/chartMenuUtils";
-import { flatMap } from '../utils/array';
 import { AgChartActual } from "../utils/integration";
-import { deepMerge, get, set } from "../utils/object";
+import { get, set } from "../utils/object";
 import { ChartSeriesType, VALID_SERIES_TYPES } from "../utils/seriesTypeMapper";
+
+export interface ChartOptionsProxy {
+    getValue<T = string>(expression: string, calculated?: boolean): T;
+    setValue<T = string>(expression: string, value: T): void;
+    setValues<T = string>(properties: { expression: string, value: T }[]): void;
+}
 
 type ChartAxis = NonNullable<AgChartActual['axes']>[number];
 type SupportedSeries = AgChartActual['series'][number];
+type AgChartAxisOptions<T extends AgChartOptions = AgChartOptions> =
+    T extends { axes?: infer V }
+    ? V | undefined
+    : undefined;
+
 export class ChartOptionsService extends BeanStub {
     private readonly chartController: ChartController;
-
-    private chartOptionMenuUtil: ChartMenuUtils;
-    private axisPropertyMenuUtil: ChartMenuUtils;
 
     constructor(chartController: ChartController) {
         super();
         this.chartController = chartController;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
-        this.chartOptionMenuUtil = this.createManagedBean(new ChartMenuUtils({
-            getValue: e => this.getChartOption(e),
-            setValue: (e, v) => this.setChartOption(e, v),
-        }, this));
-        this.axisPropertyMenuUtil = this.createManagedBean(new ChartMenuUtils({
-            getValue: e => this.getAxisProperty(e),
-            setValue: (e, v) => this.setAxisProperty(e, v),
-        }, this));
+    public getChartThemeOverridesProxy(): ChartOptionsProxy {
+        return {
+            getValue: (expression) => this.getChartOption(expression),
+            setValue: (expression, value) => this.setChartThemeOverrides([{ expression, value }]),
+            setValues: (properties) => this.setChartThemeOverrides(properties),
+        };
+    }
+
+    public getAxisThemeOverridesProxy(): ChartOptionsProxy {
+        return {
+            getValue: (expression) => this.getAxisProperty(expression),
+            setValue: (expression, value) => this.setAxisThemeOverrides([{ expression, value }]),
+            setValues: (properties) => this.setAxisThemeOverrides(properties),
+        };
+    }
+
+    public getCartesianAxisOptionsProxy(axisType: 'xAxis' | 'yAxis'): ChartOptionsProxy {
+        return {
+            getValue: (expression) => this.getCartesianAxisProperty(axisType, expression),
+            setValue: (expression, value) => this.setCartesianAxisOptions(axisType, [{ expression, value }]),
+            setValues: (properties) => this.setCartesianAxisOptions(axisType, properties),
+        };
+    }
+
+    public getCartesianAxisThemeOverridesProxy(axisType: 'xAxis' | 'yAxis' ): ChartOptionsProxy {
+        return {
+            getValue: (expression) => this.getCartesianAxisProperty(axisType, expression),
+            setValue: (expression, value) => this.setCartesianAxisThemeOverrides(axisType, [{ expression, value }]),
+            setValues: (properties) => this.setCartesianAxisThemeOverrides(axisType, properties),
+        };
+    }
+
+    public getCartesianAxisAppliedThemeOverridesProxy(axisType: 'xAxis' | 'yAxis' ): ChartOptionsProxy {
+        return {
+            getValue: (expression) => this.getCartesianAxisThemeOverride(
+                axisType,
+                // Allow the caller to specify a wildcard expression to retrieve the whole set of overrides
+                expression === '*' ? null : expression,
+            )!,
+            setValue: (expression, value) => this.setCartesianAxisThemeOverrides(
+                axisType,
+                // Allow the caller to specify a wildcard expression to set the whole set of overrides
+                [{ expression: expression === '*' ? null : expression, value }],
+            ),
+            setValues: (properties) => this.setCartesianAxisThemeOverrides(axisType, properties),
+        };
+    }
+
+    public getSeriesOptionsProxy(getSelectedSeries: () => ChartSeriesType): ChartOptionsProxy {
+        return {
+            getValue: (expression, calculated) => this.getSeriesOption(getSelectedSeries(), expression, calculated),
+            setValue: (expression, value) => this.setSeriesOptions(getSelectedSeries(), [{ expression, value }]),
+            setValues: (properties) => this.setSeriesOptions(getSelectedSeries(), properties),
+        };
     }
 
     private getChartOption<T = string>(expression: string): T {
         return get(this.getChart(), expression, undefined) as T;
     }
 
-    private setChartOption<T = string>(expression: string, value: T): void {
+    private setChartThemeOverrides<T = string>(properties: {expression: string, value: T}[]): void {
         const chartSeriesTypes = this.chartController.getChartSeriesTypes();
         if (this.chartController.isComboChart()) {
             chartSeriesTypes.push('common');
         }
 
-        let chartOptions = {};
-        // we need to update chart options on each series type for combo charts
-        chartSeriesTypes.forEach(seriesType => {
-            chartOptions = deepMerge(chartOptions, this.createChartOptions<T>({
-                seriesType,
-                expression,
-                value
-            }));
-        });
+        // combine the options into a single merged object
+        const chartOptions: AgChartOptions = this.createChartOptions();
+        for (const { expression, value } of properties) {
+            // we need to update chart options on each series type for combo charts
+            for (const seriesType of chartSeriesTypes) {
+                this.updateChartOptionsThemeOverride(chartOptions, seriesType, expression, value);
+            }
+        }
 
+        this.applyChartOptions(chartOptions);
+    }
+
+    private applyChartOptions(chartOptions: AgChartOptions, options?: { silent?: boolean }): void {
+        if (Object.keys(chartOptions).length === 0) return;
         this.updateChart(chartOptions);
-        this.raiseChartOptionsChangedEvent();
+        const shouldRaiseEvent = !options?.silent;
+        if (shouldRaiseEvent) this.raiseChartOptionsChangedEvent();
+    }
+
+    private getChartAxisOptions(): AgChartAxisOptions | undefined {
+        const chart = this.getChart();
+        const options = chart.getOptions();
+        if ('axes' in options) return options.axes;
+        return undefined;
     }
 
     public awaitChartOptionUpdate(func: () => void) {
@@ -64,16 +126,16 @@ export class ChartOptionsService extends BeanStub {
     }
 
     private getAxisProperty<T = string>(expression: string): T {
+        // Assume the property exists on the first axis
         return get(this.getChart().axes?.[0], expression, undefined);
     }
 
-    private setAxisProperty<T = string>(expression: string, value: T) {
-        this.setAxisProperties([{ expression, value }]);
-    }
-
-    public setAxisProperties<T = string>(properties: Array<{ expression: string, value: T }>) {
+    private setAxisThemeOverrides<T = string>(properties: { expression: string, value: T }[]): void {
         const chart = this.getChart();
-        const chartOptions = flatMap(properties, ({ expression, value }) => {
+
+        // combine the options into a single merged object
+        let chartOptions = this.createChartOptions();
+        for (const { expression, value } of properties) {
             // Only apply the property to axes that declare the property on their prototype chain
             const relevantAxes = chart.axes?.filter((axis) => {
                 const parts = expression.split('.');
@@ -86,37 +148,94 @@ export class ChartOptionsService extends BeanStub {
                 }
                 return true;
             });
-            if (!relevantAxes) return [];
-            return relevantAxes.map((axis) => this.getUpdateAxisOptions<T>(axis, expression, value));
-        })
-        // Combine all property updates into a single merged object
-        .reduce(
-            (chartOptions, axisOptions): AgChartOptions => deepMerge(chartOptions, axisOptions),
-            {} as AgChartOptions
+            if (!relevantAxes) continue;
+
+            for (const axis of relevantAxes)  {
+                this.updateChartAxisThemeOverride(chartOptions, axis, null, expression, value);
+            }
+            
+        }
+
+        this.applyChartOptions(chartOptions);
+    }
+
+    private getCartesianAxisProperty<T = string | undefined>(axisType: 'xAxis' | 'yAxis', expression: string): T {
+        const axes = this.getChartAxes();
+        const axis = this.getCartesianAxis(axes, axisType);
+        return get(axis, expression, undefined);
+    }
+
+    private getCartesianAxisThemeOverride<T = string>(
+        axisType: 'xAxis' | 'yAxis',
+        expression: string | null,
+    ): T | undefined {
+        const axes = this.getChartAxes();
+        const chartAxis = this.getCartesianAxis(axes, axisType);
+        if (!chartAxis) return undefined;
+        const chartOptions = this.getChart().getOptions();
+        return this.retrieveChartAxisThemeOverride(
+            chartOptions,
+            chartAxis,
+            axisType === 'yAxis' ? ['left', 'right'] : ['bottom', 'top'],
+            expression,
         );
-    
-        if (Object.keys(chartOptions).length > 0) {
-            this.updateChart(chartOptions);
-            this.raiseChartOptionsChangedEvent();
+    }
+
+    private setCartesianAxisThemeOverrides<T = string>(
+        axisType: 'xAxis' | 'yAxis',
+        properties: Array<{ expression: string | null, value: T }>,
+    ): void {
+        const axes = this.getChartAxes();
+        const chartAxis = this.getCartesianAxis(axes, axisType);
+        if (!chartAxis) return;
+
+        // combine the axis options into a single merged object
+        let chartOptions = this.createChartOptions();
+        for (const { expression, value } of properties) {
+            this.updateChartAxisThemeOverride(
+                chartOptions,
+                chartAxis,
+                axisType === 'yAxis' ? ['left', 'right'] : ['bottom', 'top'],
+                expression,
+                value,
+            );
+        }
+
+        this.applyChartOptions(chartOptions);
+    }
+
+    private setCartesianAxisOptions<T = string>(
+        axisType: 'xAxis' | 'yAxis',
+        properties: Array<{ expression: string, value: T }>,
+    ): void {
+        // Take a snapshot of all updated axis options
+        const axisOptions = this.getChartAxisOptions();
+        if (!axisOptions) return;
+
+        const axes = this.getChartAxes();
+        const chartAxis = this.getCartesianAxis(axes, axisType);
+        if (!chartAxis) return;
+
+        // combine the axis options into a single merged object
+        let chartOptions = this.createChartOptions();
+        (chartOptions as Extract<AgChartOptions, { axes?: any }>).axes = axisOptions;
+        const axisIndex = axes.indexOf(chartAxis);
+        for (const { expression, value } of properties) {
+            this.updateChartOption(chartOptions, `axes.${axisIndex}.${expression}`, value);
+        }
+
+        this.applyChartOptions(chartOptions);
+    }
+
+    private getCartesianAxis(axes: ChartAxis[], axisType: 'xAxis' | 'yAxis'): ChartAxis | undefined {
+        if (axes.length < 2) { return undefined; }
+        switch (axisType) {
+            case 'xAxis': return (axes[0].direction === 'x') ? axes[0] : axes[1];
+            case 'yAxis': return (axes[1].direction === 'y') ? axes[1] : axes[0];
         }
     }
 
-    // These should be removed along with `setAxisProperties`, and proper handling added for getting/updating a single axis vs all axes
-    public getLabelRotation(axisType: 'xAxis' | 'yAxis'): number {
-        const axis = this.getAxis(axisType);
-        return get(axis, 'label.rotation', undefined);
-    }
-
-    public setLabelRotation(axisType: 'xAxis' | 'yAxis', value: number | undefined) {
-        const chartAxis = this.getAxis(axisType);
-        if (chartAxis) {
-            const chartOptions = this.getUpdateAxisOptions(chartAxis, 'label.rotation', value);
-            this.updateChart(chartOptions);
-            this.raiseChartOptionsChangedEvent();
-        }
-    }
-
-    private getSeriesOption<T = string>(expression: string, seriesType: ChartSeriesType, calculated?: boolean): T {
+    private getSeriesOption<T = string>(seriesType: ChartSeriesType, expression: string, calculated?: boolean): T {
         // N.B. 'calculated' here refers to the fact that the property exists on the internal series object itself,
         // rather than the properties object. This is due to us needing to reach inside the chart itself to retrieve
         // the value, and will likely be cleaned up in a future release
@@ -124,15 +243,19 @@ export class ChartOptionsService extends BeanStub {
         return get(calculated ? series : series?.properties.toJson(), expression, undefined) as T;
     }
 
-    private setSeriesOption<T = string>(expression: string, value: T, seriesType: ChartSeriesType): void {
-        const chartOptions = this.createChartOptions<T>({
-            seriesType,
-            expression: `series.${expression}`,
-            value
-        });
-        this.updateChart(chartOptions);
+    private setSeriesOptions<T = string>(seriesType: ChartSeriesType, properties: { expression: string, value: T }[]): void {
+        // combine the series options into a single merged object
+        let chartOptions = this.createChartOptions();
+        for (const { expression, value } of properties) {
+            this.updateChartOptionsThemeOverride(
+                chartOptions,
+                seriesType,
+                `series.${expression}`,
+                value
+            );
+        }
 
-        this.raiseChartOptionsChangedEvent();
+        this.applyChartOptions(chartOptions);
     }
 
     public getPairedMode(): boolean {
@@ -143,35 +266,85 @@ export class ChartOptionsService extends BeanStub {
         this.chartController.getChartProxy().setPaired(paired);
     }
 
-    private getAxis(axisType: string): ChartAxis | undefined {
+    private getChartAxes(): Array<ChartAxis> {
         const chart = this.getChart();
-        if (!chart.axes || chart.axes.length < 1) { return undefined; }
-
-        if (axisType === 'xAxis') {
-            return (chart.axes && chart.axes[0].direction === 'x') ? chart.axes[0] : chart.axes[1];
-        }
-        return (chart.axes && chart.axes[1].direction === 'y') ? chart.axes[1] : chart.axes[0];
+        return chart.axes ?? [];
     }
 
-    private getUpdateAxisOptions<T = string>(chartAxis: ChartAxis, expression: string, value: T): AgChartOptions {
+    private retrieveChartAxisThemeOverride<T = string>(
+        chartOptions: AgChartOptions,
+        chartAxis: ChartAxis,
+        axisPositions: ('left' | 'right' | 'top' | 'bottom')[] | null,
+        expression: string | null,
+    ): T | undefined {
+        if (!this.isValidAxisType(chartAxis)) return;
+
         const chartSeriesTypes = this.chartController.getChartSeriesTypes();
         if (this.chartController.isComboChart()) {
             chartSeriesTypes.push('common');
         }
 
-        const validAxisTypes: (AgCartesianAxisType | AgPolarAxisType)[] = ['number', 'category', 'time', 'grouped-category', 'angle-category', 'angle-number', 'radius-category', 'radius-number'];
+        // retrieve the first matching value
+        for (const seriesType of chartSeriesTypes) {
+            if (axisPositions) {
+                for (const axisPosition of axisPositions) {
+                    const value = this.retrieveChartOptionsThemeOverride<T>(
+                        chartOptions,
+                        seriesType,
+                        ['axes', chartAxis.type, axisPosition, ...expression ? [expression] : []].join('.'),
+                    );
+                    if (value !== undefined) return value;
+                }
+            } else {
+                const value = this.retrieveChartOptionsThemeOverride<T>(
+                    chartOptions,
+                    seriesType,
+                    ['axes', chartAxis.type, ...expression ? [expression] : []].join('.'),
+                );
+                if (value !== undefined) return value;
+            }
+        }
+    }
 
-        if (!validAxisTypes.includes(chartAxis.type)) {
-            return {};
+    private updateChartAxisThemeOverride<T = string>(
+        chartOptions: AgChartOptions,
+        chartAxis: ChartAxis,
+        axisPositions: ('left' | 'right' | 'top' | 'bottom')[] | null,
+        expression: string | null,
+        value: T,
+    ): void {
+        if (!this.isValidAxisType(chartAxis)) return;
+
+        const chartSeriesTypes = this.chartController.getChartSeriesTypes();
+        if (this.chartController.isComboChart()) {
+            chartSeriesTypes.push('common');
         }
 
-        return chartSeriesTypes
-            .map((seriesType) => this.createChartOptions<T>({
-                seriesType,
-                expression: `axes.${chartAxis.type}.${expression}`,
-                value,
-            }))
-            .reduce((combinedOptions, options) => deepMerge(combinedOptions, options));
+        // combine the axis options into a single merged object with entries for each series type
+        for (const seriesType of chartSeriesTypes) {
+            if (axisPositions) {
+                for (const axisPosition of axisPositions) {
+                    this.updateChartOptionsThemeOverride(
+                        chartOptions,
+                        seriesType,
+                        ['axes', chartAxis.type, axisPosition, ...expression ? [expression] : []].join('.'),
+                        value
+                    );
+                }
+            } else {
+                this.updateChartOptionsThemeOverride(
+                    chartOptions,
+                    seriesType,
+                    ['axes', chartAxis.type, ...expression ? [expression] : []].join('.'),
+                    value
+                );
+            }
+        }
+    }
+
+    private isValidAxisType(chartAxis: ChartAxis): boolean {
+        const validAxisTypes: (AgCartesianAxisType | AgPolarAxisType)[] = ['number', 'category', 'time', 'grouped-category', 'angle-category', 'angle-number', 'radius-category', 'radius-number'];
+        return validAxisTypes.includes(chartAxis.type);
     }
 
     public getChartType(): ChartType {
@@ -188,20 +361,52 @@ export class ChartOptionsService extends BeanStub {
         AgCharts.updateDelta(chartRef, chartOptions);
     }
 
-    private createChartOptions<T>({ seriesType, expression, value }: {
-        seriesType: ChartSeriesType,
-        expression: string,
-        value: T
-    }): AgChartOptions {
-        const overrides = {};
+    private createChartOptions(): AgChartOptions {
         const chartOptions = {
             theme: {
-                overrides
+                overrides: {}
             }
         };
-        set(overrides, `${seriesType}.${expression}`, value);
-
         return chartOptions;
+    }
+
+    private retrieveChartOptionsThemeOverride<T>(
+        chartOptions: AgChartOptions, 
+        seriesType: ChartSeriesType,
+        expression: string | null,
+    ): T | undefined {
+        return this.retrieveChartOption(
+            chartOptions,
+            ['theme', 'overrides', seriesType, ...expression ? [expression] : []].join('.'),
+        );
+    }
+
+    private updateChartOptionsThemeOverride<T>(
+        chartOptions: AgChartOptions, 
+        seriesType: ChartSeriesType,
+        expression: string | null,
+        value: T,
+    ): void {
+        this.updateChartOption(
+            chartOptions,
+            ['theme', 'overrides', seriesType, ...expression ? [expression] : []].join('.'),
+            value,
+        );
+    }
+
+    private retrieveChartOption<T>(
+        chartOptions: AgChartOptions, 
+        expression: string,
+    ): T | undefined {
+        return get(chartOptions, expression, undefined);
+    }
+
+    private updateChartOption<T>(
+        chartOptions: AgChartOptions, 
+        expression: string,
+        value: T,
+    ): void {
+        set(chartOptions, expression, value);
     }
 
     private raiseChartOptionsChangedEvent(): void {
@@ -216,21 +421,6 @@ export class ChartOptionsService extends BeanStub {
         };
 
         this.eventService.dispatchEvent(event);
-    }
-
-    public getChartOptionMenuUtils(): ChartMenuUtils {
-        return this.chartOptionMenuUtil;
-    }
-
-    public getAxisPropertyMenuUtils(): ChartMenuUtils {
-        return this.axisPropertyMenuUtil;
-    }
-
-    public getSeriesOptionMenuUtils(getSelectedSeries: () => ChartSeriesType): ChartMenuUtils {
-        return this.createManagedBean(new ChartMenuUtils({
-            getValue: (expression, calculated) => this.getSeriesOption(expression, getSelectedSeries(), calculated),
-            setValue: (expression, value) => this.setSeriesOption(expression, value, getSelectedSeries()),
-        }, this));
     }
 
     private static isMatchingSeries(seriesType: ChartSeriesType, series: SupportedSeries): boolean {

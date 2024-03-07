@@ -8,6 +8,7 @@ import {
     PostConstruct
 } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController";
+import { ChartMenuUtils } from '../chartMenuUtils';
 import { LegendPanel } from "./legend/legendPanel";
 import { AnimationPanel } from './animation/animationPanel';
 import { CartesianAxisPanel } from "./axis/cartesianAxisPanel";
@@ -24,6 +25,8 @@ import { ZoomPanel } from './zoom/zoomPanel';
 export interface FormatPanelOptions {
     chartController: ChartController,
     chartOptionsService: ChartOptionsService,
+    chartMenuUtils: ChartMenuUtils,
+    chartAxisMenuUtils: ChartMenuUtils,
     isExpandedOnInit?: boolean,
     seriesType?: ChartSeriesType,
 }
@@ -50,7 +53,10 @@ export class FormatPanel extends Component {
 
     constructor(
         private readonly chartController: ChartController,
-        private readonly chartOptionsService: ChartOptionsService) {
+        private readonly chartOptionsService: ChartOptionsService,
+        private readonly chartMenuUtils: ChartMenuUtils,
+        private readonly chartAxisMenuUtils: ChartMenuUtils,
+    ) {
         super(FormatPanel.TEMPLATE);
     }
 
@@ -84,6 +90,8 @@ export class FormatPanel extends Component {
             const opts: FormatPanelOptions = {
                 chartController: this.chartController,
                 chartOptionsService: this.chartOptionsService,
+                chartMenuUtils: this.chartMenuUtils,
+                chartAxisMenuUtils: this.chartAxisMenuUtils,
                 isExpandedOnInit: groupDef.isOpen,
                 seriesType
             };
@@ -95,9 +103,13 @@ export class FormatPanel extends Component {
                 const panel = hasGradientLegend(chartType) ? new GradientLegendPanel(opts) : new LegendPanel(opts);
                 this.addComponent(panel);
             } else if (group === 'axis') {
-                // Polar charts have different axis options from cartesian charts, so choose the appropriate panel
-                const panel = isPolar(chartType) ? new PolarAxisPanel(opts) : new CartesianAxisPanel(opts);
-                this.addComponent(panel);
+                // Polar charts have different axis options from cartesian charts, so choose the appropriate panels
+                if (isPolar(chartType)) {
+                    this.addComponent(new PolarAxisPanel(opts));
+                } else {
+                    this.addComponent(new CartesianAxisPanel('xAxis', opts));
+                    this.addComponent(new CartesianAxisPanel('yAxis', opts));
+                }
             } else if (group === 'series') {
                 this.addComponent(new SeriesPanel(opts));
             } else if (group === 'navigator') {

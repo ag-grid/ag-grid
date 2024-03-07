@@ -35,11 +35,11 @@ export class PolarAxisPanel extends Component {
     private readonly chartMenuUtils: ChartMenuUtils;
     private readonly isExpandedOnInit: boolean;
 
-    constructor({ chartController, chartOptionsService, isExpandedOnInit = false }: FormatPanelOptions) {
+    constructor({ chartController, chartAxisMenuUtils, isExpandedOnInit = false }: FormatPanelOptions) {
         super();
 
         this.chartController = chartController;
-        this.chartMenuUtils = chartOptionsService.getAxisPropertyMenuUtils();
+        this.chartMenuUtils = chartAxisMenuUtils;
         this.isExpandedOnInit = isExpandedOnInit;
     }
 

@@ -27,10 +27,10 @@ export class ZoomPanel extends Component {
     private readonly chartMenuUtils: ChartMenuUtils;
     private readonly isExpandedOnInit: boolean;
 
-    constructor({ chartOptionsService, isExpandedOnInit = false }: FormatPanelOptions) {
+    constructor({ chartMenuUtils, isExpandedOnInit = false }: FormatPanelOptions) {
         super();
 
-        this.chartMenuUtils = chartOptionsService.getChartOptionMenuUtils();
+        this.chartMenuUtils = chartMenuUtils;
         this.isExpandedOnInit = isExpandedOnInit;
     }
 
