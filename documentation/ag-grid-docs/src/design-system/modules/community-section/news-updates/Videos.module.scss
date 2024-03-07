@@ -52,4 +52,5 @@
     object-fit: cover;
     width: 220px;
     height: auto;
+    clip-path: inset(22px 0); /* Adjust the 5px value as needed to remove the black lines */
 }
