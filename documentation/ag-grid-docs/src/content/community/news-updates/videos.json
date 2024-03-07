@@ -9,6 +9,15 @@
         "id": "ELRCT7ooNCU"
     },
     {
+        "title": "The Future of AG Grid & AG Charts",
+        "link": "https://www.youtube.com/embed/JxOtSAXFQ6c",
+        "description": "In this short video the founder of AG Grid, Niall Crosby, shares how AG Grid became the leading JavaScript data grid for enterprise applications. An inspiring story, worth watching for anyone interested in enterprise architecture and how to grow a successful software company! ",
+        "author": "Niall Crosby",
+        "type": "Video",
+        "published": "02/2024",
+        "id": "JxOtSAXFQ6c"
+    },
+    {
         "title": "AGGrid: High-Performance DOM Updates w/ Niall Crosby",
         "link": "https://www.youtube.com/embed/QRtrS_SvR4w",
         "description": "SolidJS's ecosystem has been growing at a rapid rate. The latest addition is AGGrid, a high-performance table library. Niall Crosby, creator of AGGrid, joins me on stream to talk about what AGGrid is, how we can use it with Solid, and where things are going in the future.",
@@ -83,7 +92,7 @@
     {
         "title": "The Angular Report",
         "link": "https://www.youtube.com/embed/jG7aM8ZVLmc",
-        "description": "",
+        "description": "In this Dev Life edition of the Angular Plus Show, Preston Lamb, Jason Warner and Stephen Cooper talk about some of the highlights of Angular’s version 15 release. They cover several pieces of the update that excite them or that give the developer experience a boost.",
         "author": "Stephen Cooper, Preston Lamb, & Jason Warner",
         "type": "Video",
         "published": "03/2023",

@@ -2,7 +2,7 @@
     {
         "link": "https://www.adaptabletools.com/",
         "title": "Adaptable",
-        "description": "AdapTable for AG Grid is a powerful, cutting-edge extension for the market-leading AG Grid Data Grid. AdapTable extends the powerful functionality provided by AG Grid to enable you to build data management applications unparalleled in power and sophistication, with features not previously available.",
+        "description": "AdapTable for AG Grid is a powerful extension for the market-leading AG Grid Data Grid. AdapTable extends the powerful functionality provided by AG Grid to enable you to build data management applications unparalleled in power and sophistication, with features not previously available.",
         "open_source": false,
         "type": "Extension",
         "ag_grid_usage": "Extends AG Grid functionality and exposes additional APIs",
@@ -40,7 +40,7 @@
     {
         "link": "https://ag-grid-svelte.michael.kim/guide",
         "title": "AG Grid Svelte",
-        "description": "An unofficial Svelte wrapper for AG Grid.",
+        "description": "An unofficial Svelte wrapper for AG Grid, designed to provide a seamless AG Grid integration to any Svelte project. This wrapper exposes all grid options and is fully compatible with AG Grid, up to v30.",
         "repo": "https://github.com/MichaelKim/ag-grid-svelte",
         "type": "Wrapper",
         "open_source": true,

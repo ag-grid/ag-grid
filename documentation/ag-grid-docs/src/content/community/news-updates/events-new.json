@@ -69,17 +69,16 @@
     },
     {
         "title": "ng-conf",
-        "description": "ng-conf 2023 was the 10th anniversary edition of the conference, so it was only right that AG Grid once again opted for Platinum sponsorship",
+        "description": "ng-conf is an event we've sponsored for a number of years, and 2023 was no different. We've always had an affinity for the angular community, and as always, it was a pleasure to meet up face-to-face again earlier this year. Of course, it wouldn't be complete without mentioning the talk from Stephen Cooper, who presented 'Typing the not so secret to customisation ngTemplateOutlet' - A walk through of the changes required to introduce types to ngTemplateOutlets using new Angular features.",
         "location": "Salt Lake City, USA",
         "framework": "Angular",
         "organiserLogo": "ng-conf-logo.webp",
-        "organiserLogoLight": "",
+        "organiserLogoLight": "ng-conf-logo.webp",
         "startDate": "2023-06-14",
         "endDate": "2023-06-15",
-        "video": "",
         "coverImage": "generic/ngconf.jpg",
         "countryIcon": "us.png",
-        "eventPage": "https://ng-conf.org/",
+        "eventPage": "https://2023.ng-conf.org/",
         "recording": "https://www.youtube.com/watch?v=ELRCT7ooNCU",
         "images": [
             "generic/ngconf.jpg"
@@ -87,54 +86,51 @@
     },
     {
         "title": "React Summit",
-        "description": "",
+        "description": "This event was the European counter-part to the NY event held on June 6th, where again, Stephen presented a talk. This talk was entitled: 'Supercharged Code Refactoring via Abstract Syntax Trees' in which Stephen introduced AST’s and showed how they can be used to reason about / generate code.",
         "location": "Amsterdam, NL",
         "framework": "React",
         "organiserLogo": "react-summit-logo.svg",
-        "organiserLogoLight": "",
+        "organiserLogoLight": "react-summit-logo-light.svg",
         "startDate": "2023-06-17",
         "endDate": "2023-06-18",
-        "video": "",
+        "recording": "https://portal.gitnation.org/contents/visualising-data-with-react-ag-grid-and-ag-charts",
         "countryIcon": "netherlands.png",
         "coverImage": "generic/react-summit.png",
-        "eventPage": "https://reactsummit.com/",
-        "recording": "",
+        "eventPage": "https://reactsummit.com/2023/",
         "images": [
             "generic/react-summit.png"
         ]
     },
     {
         "title": "React Advanced",
-        "description": "",
+        "description": "We were platinum sponsors of this event, which took place in October and gathered over 700 React developers from around the world. We had a great time meeting with the React community, showcasing our product and getting valuable feedback. One of our senior engineers, Stephen Cooper, also gave a talk on 'Patterns for Performance', where he shared his tips and tricks for optimizing AG Grid using React hooks.",
         "location": "London, UK",
         "framework": "React",
         "organiserLogo": "react-advanced-logo.svg",
-        "organiserLogoLight": "",
+        "organiserLogoLight": "react-advanced-logo-light.svg",
         "countryIcon": "united-kingdom.png",
         "startDate": "2023-10-28",
         "endDate": "2023-10-28",
-        "video": "",
-        "eventPage": "https://reactadvanced.com/",
+        "recording": "https://www.youtube.com/watch?v=qR608qHWTCA",
+        "eventPage": "https://reactadvanced.com/2023/",
         "coverImage": "generic/react-advanced.jpg",
-        "recording": "",
         "images": [
             ""
         ]
     },
     {
         "title": "React Summit",
-        "description": "",
+        "description": "We also sponsored this event, which was held in November at the Liberty Science Center in Jersey City. It was another amazing opportunity to connect with React developers and enthusiasts, and to learn from some of the best speakers in the field. We also had a booth and Stephen gave another talk, 'To Sync or Not To Sync' - A dive deep into React rendering and the implication of Concurrent Rendering & automated batching on code that previously relied on the synchronous nature of v17.",
         "location": "New Jersey, USA",
         "framework": "React",
         "organiserLogo": "react-summit-logo.svg",
-        "organiserLogoLight": "",
+        "organiserLogoLight": "react-summit-logo-light.svg",
         "countryIcon": "us.png",
         "startDate": "2023-11-13",
         "endDate": "2023-11-15",
-        "video": "",
+        "recording": "https://www.youtube.com/watch?v=69d3QIDVKDc",
         "coverImage": "generic/react-summit-us.png",
-        "eventPage": "https://reactsummit.us/",
-        "recording": "",
+        "eventPage": "https://reactsummit.us/2023/",
         "images": [
             ""
         ]
