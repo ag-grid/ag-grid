@@ -92,41 +92,6 @@
                 display: flex;
                 flex-direction: column;
                 flex: 1;
-
-                .title {
-                    font-weight: var(--text-semibold);
-                    font-size: var(--text-fs-lg);
-                    margin-bottom: 4px;
-                    color: var(--color-fg-primary);
-                    padding-top: 8px;
-                }
-
-                .description {
-                    display: -webkit-box;
-                    -webkit-line-clamp: 4;
-                    -webkit-box-orient: vertical;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                }
-                .location {
-                    --color-icon: var(--color-text-primary);
-                    --icon-size: 20px;
-                    color: var(--color-text-primary);
-                    font-weight: var(--text-semibold);
-                    opacity: 0.8;
-                    margin-bottom: 4px;
-                    border: 1px solid var(--color-border-secondary);
-                    width: fit-content;
-                    border-radius: var(--radius-2xl);
-                    padding-left: 8px;
-                    padding-right: 8px;
-                    padding-top: 4px;
-                    padding-bottom: 4px;
-                    background-color: var(--color-util-brand-100);
-                    display: flex;
-                    justify-content: center;
-                    gap: 8px;
-                }
             }
         }
     }
@@ -197,8 +162,6 @@
     border-radius: var(--radius-md);
     padding: $spacing-size-4;
     background: var(--color-bg-primary);
-    box-shadow: var(--shadow-xs);
-    border: 1px solid var(--color-border-secondary);
     overflow: hidden;
     gap: $spacing-size-2;
 }
@@ -217,12 +180,6 @@
 
 .title {
     font-weight: 800;
-}
-
-.location {
-    font-style: italic;
-    font-weight: 200;
-    font-size: var(--text-fs-xs);
 }
 
 .flagContainer {
@@ -254,4 +211,38 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+.title {
+    font-weight: var(--text-semibold);
+    font-size: var(--text-fs-lg);
+    margin-bottom: 4px;
+    color: var(--color-fg-primary);
+    padding-top: 8px;
+}
+
+.description {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.location {
+    --color-icon: var(--color-text-primary);
+    --icon-size: 20px;
+    color: var(--color-text-primary);
+    font-weight: var(--text-semibold);
+    opacity: 0.8;
+    margin-bottom: 4px;
+    border: 1px solid var(--color-border-secondary);
+    width: fit-content;
+    border-radius: var(--radius-2xl);
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    background-color: var(--color-util-brand-100);
+    display: flex;
+    justify-content: center;
+    gap: 8px;
 }
