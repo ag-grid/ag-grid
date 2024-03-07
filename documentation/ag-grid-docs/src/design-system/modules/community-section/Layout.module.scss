@@ -45,4 +45,7 @@ section {
     background: linear-gradient(transparent, var(--color-bg-brand-solid));
     opacity: 0.05;
     top: 250px;
+    #{$selector-darkmode} & {
+        background: linear-gradient(transparent, var(--color-fg-primary));
+    }
 }
