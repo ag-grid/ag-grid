@@ -152,7 +152,7 @@
                 "Public Health"
             ],
             "frameworks": [
-                "JavaScript"
+                "React"
             ],
             "products": [
                 "Grid"
@@ -167,7 +167,16 @@
             "type": "Integration",
             "link": "allianz.github.io/ng-aquila/",
             "img": "allianz-ng.png",
-            "favourite": true
+            "favourite": true,
+            "tags": [
+                "Components"
+            ],
+            "frameworks": [
+                "Angular"
+            ],
+            "products": [
+                "Grid"
+            ]
         },
         {
             "title": "Microsoft MDR Gamut",
@@ -178,7 +187,16 @@
             "type": "Product",
             "link": "https://microsoft.github.io/msrgamut/",
             "favourite": true,
-            "img": "mdr-gamut.png"
+            "img": "mdr-gamut.png",
+            "tags": [
+                "Demo"
+            ],
+            "frameworks": [
+                "React"
+            ],
+            "products": [
+                "Grid"
+            ]
         },
         {
             "title": "Siemens IX",
@@ -189,7 +207,13 @@
             "type": "Integration",
             "link": "https://ix.siemens.io/",
             "favourite": true,
-            "img": "siemens.png"
+            "img": "siemens.png",
+            "frameworks": [
+                "React", "Angular", "Vue"
+            ],
+            "products": [
+                "Grid"
+            ]
         },
         {
             "title": "NASA Aerie UI",
@@ -201,19 +225,16 @@
             "link": "https://nasa-ammos.github.io/aerie-docs/",
             "favourite": true,
             "img": "nasa-eerie.png",
-            "companyLogo": "nasa.svg"
-        },
-        {
-            "title": "AWS Network Orchestration",
-            "description": "The Network Orchestration for AWS Transit Gateway solution automates the process of setting up and managing transit networks in distributed AWS environments.",
-            "repo": "https://github.com/aws-solutions/network-orchestration-for-aws-transit-gateway",
-            "open_source": true,
-            "stars": 100,
-            "type": "Product",
-            "link": "https://aws.amazon.com/solutions/implementations/serverless-transit-network-orchestrator/",
-            "favourite": true,
-            "img": "aws-no.png",
-            "companyLogo": "aws.svg"
+            "companyLogo": "nasa.svg",
+            "tags": [
+                "Science"
+            ],
+            "frameworks": [
+                "Svelte"
+            ],
+            "products": [
+                "Grid"
+            ]
         },
         {
             "title": "MongoDB Compass",
@@ -229,23 +250,12 @@
                 "Database"
             ],
             "frameworks": [
-                "React"
+                "Angular"
             ],
             "products": [
                 "Grid"
             ]
-        },
-        {
-            "title": "Timely",
-            "description": "Timely is a time series database application that provides secure access to time series data.",
-            "repo": "https://github.com/NationalSecurityAgency/timely",
-            "open_source": true,
-            "stars": 370,
-            "type": "Product",
-            "link": "https://code.nsa.gov/timely/",
-            "favourite": true,
-            "img": "nsa-timely.png"
-        },       
+        },   
         {
             "link": "https://marmelab.com/react-admin/",
             "repo": "https://github.com/marmelab/react-admin",
