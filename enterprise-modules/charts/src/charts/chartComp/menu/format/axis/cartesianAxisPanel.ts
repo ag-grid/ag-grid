@@ -122,7 +122,7 @@ export class CartesianAxisPanel extends Component {
             axisTypeSelectOptions,
         );
         params.onValueChange = ((onValueChange) => (value) => {
-            const previousAxisType = chartAxisOptions.getValue('type');
+            const previousAxisType = chartAxisOptions.getChartOptions().getValue('type');
             if (value === previousAxisType) return;
             // If the axis type is changed, we need to carry over all the accumulated theme overrides
             // that have been applied to the existing axis type so far
@@ -162,15 +162,16 @@ export class CartesianAxisPanel extends Component {
     }
 
     private getAxisLineWidthSliderParams(chartAxisThemeOverrides: ChartMenuUtils): AgSliderParams {
+        const chartOptions = chartAxisThemeOverrides.getChartOptions();
         // Note that there is no separate checkbox for enabling/disabling the axis line. Whenever the line width is
         // changed, the value for `line.enabled` is inferred based on the whether the `line.width` value is non-zero.
         const getAxisLineWidth = (): number | null => {
-            const isAxisLineEnabled = chartAxisThemeOverrides.getValue<boolean>('line.enabled');
+            const isAxisLineEnabled = chartOptions.getValue<boolean>('line.enabled');
             if (!isAxisLineEnabled) return null;
-            return chartAxisThemeOverrides.getValue<number>('line.width');
+            return chartOptions.getValue<number>('line.width');
         };
         const setAxisLineWidth = (value: number | null): void => {
-            chartAxisThemeOverrides.setValues<number | boolean>([
+            chartOptions.setValues<number | boolean>([
                 { expression: 'line.enabled', value: value != null },
                 { expression: 'line.width', value: value ?? 0},
             ]);
@@ -241,11 +242,13 @@ export class CartesianAxisPanel extends Component {
     }
 
     private initLabelRotation(rotationComp: AgAngleSelect, chartAxisThemeOverrides: ChartMenuUtils) {
+        const chartOptions = chartAxisThemeOverrides.getChartOptions();
+
         const getLabelRotationValue = (): number | undefined => {
-            return chartAxisThemeOverrides.getValue<number | undefined>('label.rotation');
+            return chartOptions.getValue<number | undefined>('label.rotation');
         };
         const getLabelAutoRotateValue = (): boolean => {
-            return chartAxisThemeOverrides.getValue<boolean>('label.autoRotate');
+            return chartOptions.getValue<boolean>('label.autoRotate');
         };
 
         const updateAutoRotate = (autoRotate: boolean) => {
@@ -253,7 +256,7 @@ export class CartesianAxisPanel extends Component {
             if (autoRotate) this.prevRotation = getLabelRotationValue();
 
             // For the autoRotate option to take effect, we need to additionally clear the rotation option value
-            chartAxisThemeOverrides.setValues<boolean | number | undefined>([
+            chartOptions.setValues<boolean | number | undefined>([
                 { expression: "label.autoRotate", value: autoRotate },
                 // Clear the rotation option when activating auto-rotate, reinstate the previous value when deactivating
                 { expression: "label.rotation", value: autoRotate ? undefined : this.prevRotation }
@@ -278,11 +281,13 @@ export class CartesianAxisPanel extends Component {
     }
 
     private createRotationWidget(labelKey: ChartTranslationKey, chartAxisThemeOverrides: ChartMenuUtils) {
+        const chartOptions = chartAxisThemeOverrides.getChartOptions();
+
         const getLabelRotationValue = (): number | undefined => {
-            return chartAxisThemeOverrides.getValue<number | undefined>('label.rotation');
+            return chartOptions.getValue<number | undefined>('label.rotation');
         };
         const setLabelRotationValue = (value: number | undefined): void => {
-            return chartAxisThemeOverrides.setValue<number | undefined>('label.rotation', value);
+            return chartOptions.setValue<number | undefined>('label.rotation', value);
         };
 
         const degreesSymbol = String.fromCharCode(176);

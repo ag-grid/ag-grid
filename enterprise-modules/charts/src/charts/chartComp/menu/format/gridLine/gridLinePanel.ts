@@ -1,5 +1,6 @@
 import { AgGroupComponentParams, AgSliderParams, Autowired, Component, PostConstruct } from '@ag-grid-community/core';
 import { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
+import { ChartOptionsProxy } from '../../../services/chartOptionsService';
 import { ChartMenuUtils } from '../../chartMenuUtils';
 import { AgAxisGridLineOptions } from 'ag-charts-community';
 import { AgColorPickerParams } from '../../../../../widgets/agColorPicker';
@@ -15,8 +16,11 @@ export class GridLinePanel extends Component {
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
+    private readonly chartOptions: ChartOptionsProxy;
+
     constructor(private readonly chartMenuUtils: ChartMenuUtils) {
         super();
+        this.chartOptions = chartMenuUtils.getChartOptions();
     }
 
     @PostConstruct
@@ -48,7 +52,7 @@ export class GridLinePanel extends Component {
                     return value?.[0]?.stroke;
                 },
                 parseInputValue: (value: string) => {
-                    const styles = this.chartMenuUtils.getValue<AgAxisGridLineOptions['style']>('gridLine.style') ?? [];
+                    const styles = this.chartOptions.getValue<AgAxisGridLineOptions['style']>('gridLine.style') ?? [];
                     if (styles.length === 0) return [{ stroke: value, lineDash: [] }];
                     return [{ ...styles[0], stroke: value }];
                 },
@@ -61,7 +65,7 @@ export class GridLinePanel extends Component {
     }
 
     private getGridLineDashSliderParams(labelKey: ChartTranslationKey): AgSliderParams {
-        const initialStyles = this.chartMenuUtils.getValue<AgAxisGridLineOptions['style']>('gridLine.style');
+        const initialStyles = this.chartOptions.getValue<AgAxisGridLineOptions['style']>('gridLine.style');
         const initialValue = initialStyles?.[0]?.lineDash?.[0];
         const params = this.chartMenuUtils.getDefaultSliderParamsWithoutValueParams(
             initialValue ?? 0,
@@ -69,8 +73,8 @@ export class GridLinePanel extends Component {
             30,
         );
         params.onValueChange = (value: number): void => {
-            const stroke = this.chartMenuUtils.getValue('gridLine.style.0.stroke');
-            this.chartMenuUtils.setValue<AgAxisGridLineOptions['style']>(
+            const stroke = this.chartOptions.getValue('gridLine.style.0.stroke');
+            this.chartOptions.setValue<AgAxisGridLineOptions['style']>(
                 'gridLine.style',
                 [{ lineDash: [value], stroke }],
             );

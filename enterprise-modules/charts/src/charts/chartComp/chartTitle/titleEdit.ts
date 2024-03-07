@@ -3,7 +3,7 @@ import { ChartMenu } from "../menu/chartMenu";
 import { ChartTranslationService } from "../services/chartTranslationService";
 import { ChartController } from "../chartController";
 import { ChartMenuUtils } from "../menu/chartMenuUtils";
-import { ChartOptionsService } from '../services/chartOptionsService';
+import { ChartOptionsProxy, ChartOptionsService } from '../services/chartOptionsService';
 
 interface BBox { x: number; y: number; width: number; height: number }
 
@@ -19,7 +19,7 @@ export class TitleEdit extends Component {
     private destroyableChartListeners: (() => void)[] = [];
     private chartController: ChartController;
     private chartOptionsService: ChartOptionsService;
-    private chartMenuUtils: ChartMenuUtils;
+    private chartMenuUtils: ChartOptionsProxy;
     private editing: boolean = false;
 
     constructor(private readonly chartMenu: ChartMenu) {
@@ -50,7 +50,7 @@ export class TitleEdit extends Component {
     ) {
         this.chartController = chartController;
         this.chartOptionsService = chartOptionsService;
-        this.chartMenuUtils = chartMenuUtils;
+        this.chartMenuUtils = chartMenuUtils.getChartOptions();
 
         for (const destroyFn of this.destroyableChartListeners) {
             destroyFn();

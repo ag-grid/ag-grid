@@ -29,7 +29,7 @@ import { WhiskersPanel } from "./whiskersPanel";
 import { SeriesItemsPanel } from "./seriesItemsPanel";
 import { TileSpacingPanel } from "./tileSpacingPanel";
 import { ChartMenuUtils } from "../../chartMenuUtils";
-import { ChartOptionsService } from '../../../services/chartOptionsService';
+import { ChartOptionsProxy, ChartOptionsService } from '../../../services/chartOptionsService';
 
 export class SeriesPanel extends Component {
 
@@ -48,6 +48,7 @@ export class SeriesPanel extends Component {
     private readonly isExpandedOnInit: boolean;
     
     private chartMenuUtils: ChartMenuUtils;
+    private chartOptions: ChartOptionsProxy;
     private seriesSelectOptions: Map<ChartSeriesType, ListOption>;
 
     private activePanels: Component[] = [];
@@ -125,6 +126,7 @@ export class SeriesPanel extends Component {
         this.chartMenuUtils = this.createManagedBean(new ChartMenuUtils(
             this.chartOptionsService.getSeriesOptionsProxy(() => this.seriesType)
         ));
+        this.chartOptions = this.chartMenuUtils.getChartOptions();
         
         this.addManagedListener(this.chartController, ChartController.EVENT_CHART_SERIES_CHART_TYPE_CHANGED, this.refreshWidgets.bind(this));
 
@@ -319,7 +321,7 @@ export class SeriesPanel extends Component {
     private initBins() {
         const params = this.chartMenuUtils.getDefaultSliderParams('binCount', 'histogramBinCount', 20);
         // this needs fixing
-        const value = (this.chartMenuUtils.getValue<any>("bins") ?? this.chartMenuUtils.getValue<any>("calculatedBins", true)).length;
+        const value = (this.chartOptions.getValue<any>("bins") ?? this.chartOptions.getValue<any>("calculatedBins", true)).length;
         params.value = `${value}`;
         params.maxValue = Math.max(value, 20);
         const seriesBinCountSlider = this.createBean(new AgSlider(params));

@@ -194,15 +194,7 @@ export class ChartMenuUtils extends BeanStub {
         return params;
     }
 
-    public getValue<T = string>(expression: string, calculated?: boolean): T {
-        return this.chartOptionsProxy.getValue(expression, calculated);
-    }
-
-    public setValue<T = string>(expression: string, value: T): void {
-        this.chartOptionsProxy.setValue(expression, value);
-    }
-
-    public setValues<T = string>(properties: {expression: string, value: T}[]): void {
-        this.chartOptionsProxy.setValues(properties);
+    public getChartOptions(): ChartOptionsProxy {
+        return this.chartOptionsProxy;
     }
 }
