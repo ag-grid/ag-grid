@@ -32,7 +32,8 @@ export class ChartDataPanel extends Component {
 
     constructor(
         private readonly chartController: ChartController,
-        private readonly chartOptionsService: ChartOptionsService) {
+        private readonly chartOptionsService: ChartOptionsService,
+    ) {
         super(ChartDataPanel.TEMPLATE);
     }
 

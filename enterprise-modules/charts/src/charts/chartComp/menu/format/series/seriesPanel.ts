@@ -29,6 +29,7 @@ import { WhiskersPanel } from "./whiskersPanel";
 import { SeriesItemsPanel } from "./seriesItemsPanel";
 import { TileSpacingPanel } from "./tileSpacingPanel";
 import { ChartMenuUtils } from "../../chartMenuUtils";
+import { ChartOptionsProxy, ChartOptionsService } from '../../../services/chartOptionsService';
 
 export class SeriesPanel extends Component {
 
@@ -43,9 +44,11 @@ export class SeriesPanel extends Component {
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
     private readonly chartController: ChartController;
+    private readonly chartOptionsService: ChartOptionsService;
     private readonly isExpandedOnInit: boolean;
-    private readonly chartMenuUtils: ChartMenuUtils;
-
+    
+    private chartMenuUtils: ChartMenuUtils;
+    private chartOptions: ChartOptionsProxy;
     private seriesSelectOptions: Map<ChartSeriesType, ListOption>;
 
     private activePanels: Component[] = [];
@@ -104,9 +107,9 @@ export class SeriesPanel extends Component {
         super();
 
         this.chartController = chartController;
+        this.chartOptionsService = chartOptionsService;
         this.seriesType = seriesType || this.getChartSeriesType();
         this.isExpandedOnInit = isExpandedOnInit;
-        this.chartMenuUtils = chartOptionsService.getSeriesOptionMenuUtils(() => this.seriesType)
     }
 
     @PostConstruct
@@ -120,6 +123,11 @@ export class SeriesPanel extends Component {
         };
         this.setTemplate(SeriesPanel.TEMPLATE, {seriesGroup: seriesGroupParams});
 
+        this.chartMenuUtils = this.createManagedBean(new ChartMenuUtils(
+            this.chartOptionsService.getSeriesOptionsProxy(() => this.seriesType)
+        ));
+        this.chartOptions = this.chartMenuUtils.getChartOptions();
+        
         this.addManagedListener(this.chartController, ChartController.EVENT_CHART_SERIES_CHART_TYPE_CHANGED, this.refreshWidgets.bind(this));
 
         this.refreshWidgets();
@@ -306,14 +314,14 @@ export class SeriesPanel extends Component {
     }
 
     private initMarkers() {
-        const markersPanelComp = this.createBean(new MarkersPanel(this.chartMenuUtils));
+        const markersPanelComp = this.createBean(new MarkersPanel(this.chartOptionsService, this.chartMenuUtils));
         this.addWidget(markersPanelComp);
     }
 
     private initBins() {
         const params = this.chartMenuUtils.getDefaultSliderParams('binCount', 'histogramBinCount', 20);
         // this needs fixing
-        const value = (this.chartMenuUtils.getValue<any>("bins") ?? this.chartMenuUtils.getValue<any>("calculatedBins", true)).length;
+        const value = (this.chartOptions.getValue<any>("bins") ?? this.chartOptions.getValue<any>("calculatedBins", true)).length;
         params.value = `${value}`;
         params.maxValue = Math.max(value, 20);
         const seriesBinCountSlider = this.createBean(new AgSlider(params));

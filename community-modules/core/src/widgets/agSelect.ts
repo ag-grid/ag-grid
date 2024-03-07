@@ -120,6 +120,12 @@ export class AgSelect<TValue = string | null> extends AgPickerField<TValue, AgSe
         return this;
     }
 
+    public clearOptions(): this {
+        this.listComponent?.clearOptions();
+
+        return this;
+    }
+
     public setValue(value?: TValue, silent?: boolean, fromPicker?: boolean): this {
         if (this.value === value || !this.listComponent) { return this; }
 
@@ -131,7 +137,12 @@ export class AgSelect<TValue = string | null> extends AgPickerField<TValue, AgSe
 
         if (newValue === this.getValue()) { return this; }
 
-        this.eDisplayField.innerHTML = this.listComponent.getDisplayValue()!;
+        let displayValue = this.listComponent.getDisplayValue();
+        if (displayValue == null && this.config.placeholder) {
+            displayValue = this.config.placeholder;
+        }
+
+        this.eDisplayField.innerHTML = displayValue!;
 
         return super.setValue(value, silent);
     }

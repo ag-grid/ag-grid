@@ -2,5 +2,6 @@
   "extras": [
     "jquery",
     "jqueryui"
-  ]
+  ],
+  "supportedFrameworks": ["typescript", "vanilla"]
 }

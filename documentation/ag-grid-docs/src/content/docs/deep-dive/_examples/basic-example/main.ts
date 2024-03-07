@@ -1,8 +1,5 @@
-import { createGrid, ColDef, GridApi, GridOptions } from '@ag-grid-community/core';
-import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-quartz.css";
-import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { createGrid, GridApi, GridOptions, ModuleRegistry } from '@ag-grid-community/core';
 ModuleRegistry.registerModules([ ClientSideRowModelModule ]);
 
 // Row Data Interface

@@ -2,6 +2,7 @@ import { OpenInCTA } from '@components/open-in-cta/OpenInCTA';
 import type { FileContents } from '@features/example-generator/types';
 import { stripOutDarkModeCode } from '@features/example-runner/components/CodeViewer';
 import { fetchTextFile } from '@utils/fetchTextFile';
+import { replaceUrlPrefixWithWindowLocation } from '@utils/replaceUrlPrefixWithWindowLocation';
 import type { FunctionComponent } from 'react';
 
 import { openPlunker } from '../utils/plunkr';
@@ -13,6 +14,7 @@ interface Props {
     boilerPlateFiles?: FileContents;
     packageJson: Record<string, any>;
     fileToOpen: string;
+    isDev: boolean;
 }
 
 export const OpenInPlunkr: FunctionComponent<Props> = ({
@@ -22,19 +24,21 @@ export const OpenInPlunkr: FunctionComponent<Props> = ({
     boilerPlateFiles,
     packageJson,
     fileToOpen,
+    isDev,
 }) => {
     return (
         <OpenInCTA
             type="plunker"
             onClick={async () => {
                 const html = await fetchTextFile(htmlUrl);
+                const indexHtml = isDev ? replaceUrlPrefixWithWindowLocation(html) : html;
                 const localFiles = { ...files };
                 stripOutDarkModeCode(localFiles);
                 const plunkrExampleFiles = {
                     ...localFiles,
                     ...boilerPlateFiles,
                     'package.json': JSON.stringify(packageJson, null, 2),
-                    'index.html': html,
+                    'index.html': indexHtml,
                 };
                 openPlunker({
                     title,

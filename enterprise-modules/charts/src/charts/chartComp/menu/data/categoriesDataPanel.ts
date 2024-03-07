@@ -3,30 +3,24 @@ import {
     AgCheckboxParams,
     AgGroupComponent,
     AgRadioButton,
-    AgSelect,
     AutoScrollService,
     Autowired,
+    ChartType,
     DragAndDropService,
     DropTarget,
     PostConstruct,
     _
 } from "@ag-grid-community/core";
-import { AgPillSelect } from "../../../../widgets/agPillSelect";
 import { ChartController } from "../../chartController";
 import { ColState } from "../../model/chartDataModel";
 import { ChartMenuService } from "../../services/chartMenuService";
-import { ChartTranslationService } from "../../services/chartTranslationService";
 import { isHierarchical } from "../../utils/seriesTypeMapper";
 import { DragDataPanel } from "./dragDataPanel";
 
 export class CategoriesDataPanel extends DragDataPanel {
     private static TEMPLATE = /* html */`<div id="categoriesGroup"></div>`;
 
-    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
     @Autowired('chartMenuService') private readonly chartMenuService: ChartMenuService;
-
-    private categoriesGroupComp: AgGroupComponent;
-    private categoriesSelect?: AgPillSelect<ColState>;
 
     constructor(
         chartController: ChartController,
@@ -39,7 +33,7 @@ export class CategoriesDataPanel extends DragDataPanel {
 
     @PostConstruct
     private init() {
-        this.categoriesGroupComp = this.createBean(new AgGroupComponent({
+        this.groupComp = this.createBean(new AgGroupComponent({
             title: this.getCategoryGroupTitle(),
             enabled: true,
             suppressEnabledCheckbox: true,
@@ -52,7 +46,7 @@ export class CategoriesDataPanel extends DragDataPanel {
         } else {
             this.createCategoriesGroup(this.dimensionCols);
         }
-        this.getGui().appendChild(this.categoriesGroupComp.getGui());
+        this.getGui().appendChild(this.groupComp.getGui());
     }
 
     public refresh(dimensionCols: ColState[]): void {
@@ -61,63 +55,29 @@ export class CategoriesDataPanel extends DragDataPanel {
                 this.recreate(dimensionCols);
             }
         } else {
-            this.categoriesSelect?.setValues(dimensionCols, dimensionCols.filter(col => col.selected));
+            this.valuePillSelect?.setValues(dimensionCols, dimensionCols.filter(col => col.selected));
+            this.refreshValueSelect(dimensionCols);
         }
     }
 
     private recreate(dimensionCols: ColState[]): void {
-        this.isOpen = this.categoriesGroupComp.isExpanded();
+        this.isOpen = this.groupComp.isExpanded();
         _.clearElement(this.getGui());
-        this.destroyBean(this.categoriesGroupComp);
+        this.destroyBean(this.groupComp);
         this.dimensionCols = dimensionCols;
         this.init();
     }
 
-    private createCategoriesGroup(columns: ColState[]): void {
-        const chartType = this.chartController.getChartType();
-        const supportsMultipleCategoryColumns = isHierarchical(chartType);
+    protected canHaveMultipleValues(chartType: ChartType): boolean {
+        return isHierarchical(chartType);
+    }
 
-        if (supportsMultipleCategoryColumns) {
-            const selectedValueList = columns.filter(col => col.selected);
-            const comp = this.categoriesGroupComp.createManagedBean(new AgPillSelect<ColState>({
-                valueList: columns,
-                selectedValueList,
-                valueFormatter: (col) => _.escapeString(col?.displayName)!,
-                selectPlaceholder: this.chartTranslationService.translate('categoryAdd'),
-                dragSourceId: 'categorySelect',
-                onValuesChange: params => this.onValueChange(params)
-            }));
-            this.categoriesGroupComp.addItem(comp);
-        } else {
-            let selectedValue: ColState;
-            const options = columns.map(value => {
-                const text = _.escapeString(value.displayName)!;
-                if (value.selected) {
-                    selectedValue = value;
-                }
-                return {
-                    value,
-                    text
-                }
-            });
-            const onValueChange = (newValue: ColState) => {
-                columns.forEach(col => {
-                    col.selected = false;
-                });
-                newValue.selected = true;
-                this.chartController.updateForPanelChange(newValue);
-            };
-            const comp = this.categoriesGroupComp.createManagedBean(new AgSelect<ColState>({
-                options,
-                value: selectedValue!,
-                onValueChange
-            }));
-            this.categoriesGroupComp.addItem(comp);
-        }
+    private createCategoriesGroup(columns: ColState[]): void {
+        this.createGroup(columns, (col) => _.escapeString(col?.displayName)!, 'categoryAdd', 'categorySelect');
     }
 
     private createLegacyCategoriesGroup(columns: ColState[]): void {
-        const inputName = `chartDimension${this.categoriesGroupComp.getCompId()}`;
+        const inputName = `chartDimension${this.groupComp.getCompId()}`;
 
         // Display either radio buttons or checkboxes
         // depending on whether the current chart type supports multiple category columns
@@ -130,7 +90,7 @@ export class CategoriesDataPanel extends DragDataPanel {
                 value: col.selected,
                 inputName
             };
-            const comp: AgCheckbox | AgRadioButton = this.categoriesGroupComp!.createManagedBean(
+            const comp: AgCheckbox | AgRadioButton = this.groupComp!.createManagedBean(
                 supportsMultipleCategoryColumns
                     ? (() => {
                         const checkboxComp = new AgCheckbox(params);
@@ -141,14 +101,14 @@ export class CategoriesDataPanel extends DragDataPanel {
             );
 
             this.addChangeListener(comp, col);
-            this.categoriesGroupComp!.addItem(comp);
+            this.groupComp!.addItem(comp);
             this.columnComps.set(col.colId, comp);
 
             if (supportsMultipleCategoryColumns) this.addDragHandle(comp, col);
         });
 
         if (supportsMultipleCategoryColumns) {
-            const categoriesGroupGui = this.categoriesGroupComp.getGui();
+            const categoriesGroupGui = this.groupComp.getGui();
             
             const dropTarget: DropTarget = {
                 getIconName: () => DragAndDropService.ICON_MOVE,
@@ -169,8 +129,7 @@ export class CategoriesDataPanel extends DragDataPanel {
     }
 
     protected destroy(): void {
-        this.categoriesGroupComp = this.destroyBean(this.categoriesGroupComp)!;
-        this.categoriesSelect = undefined;
+        this.groupComp = this.destroyBean(this.groupComp)!;
         super.destroy();
     }
 }

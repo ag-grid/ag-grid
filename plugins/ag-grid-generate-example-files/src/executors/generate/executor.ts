@@ -4,7 +4,7 @@ import fs from 'fs/promises';
 
 import { readFile, readJSONFile, writeFile } from '../../executors-utils';
 import gridVanillaSrcParser from './generator/transformation-scripts/grid-vanilla-src-parser';
-import { ExampleConfig, ExampleType, FRAMEWORKS, GeneratedContents } from './generator/types';
+import { ExampleConfig, ExampleType, FRAMEWORKS, GeneratedContents, ImportType, InternalFramework } from './generator/types';
 
 import { getEnterprisePackageName, SOURCE_ENTRY_FILE_NAME } from './generator/constants';
 import {
@@ -124,6 +124,9 @@ export async function generateFiles(options: ExecutorOptions) {
 
     for (const internalFramework of FRAMEWORKS) {
         if (exampleConfig.supportedFrameworks && !exampleConfig.supportedFrameworks.includes(internalFramework)) {
+            const result = {excluded: true} as any;
+            writeContents(options, 'packages', internalFramework, result);
+            writeContents(options, 'modules', internalFramework, result);
             continue;
         }
 
@@ -160,6 +163,7 @@ export async function generateFiles(options: ExecutorOptions) {
 
             let files = {};
             let scriptFiles = [];
+            let mergedStyleFiles = {...styleFiles};
             if (provideFrameworkFiles === undefined) {
                 const result = await getFrameworkFiles({
                     entryFile,
@@ -188,21 +192,28 @@ export async function generateFiles(options: ExecutorOptions) {
                     });
                 }
 
+                Object.keys(provideFrameworkFiles).forEach((fileName) => {
+                    if (fileName.endsWith('.css')) {
+                        mergedStyleFiles[fileName] = provideFrameworkFiles[fileName];
+                    }
+                }); 
+
                 let entryFileContent = provideFrameworkFiles[entryFileName];
                 if (entryFileContent && importType === 'packages') {
                     const isEnterprise = entryFileContent.includes('-enterprise');
 
                     // Remove the original import statements that contain modules
-                    entryFileContent = entryFileContent.replace(/import ((.|\n)[^}]*?\wModule(.|\n)*?)from.*\n/g, '');
+                    entryFileContent = entryFileContent
+                        .replace(/import ((.|\n)[^}]*?\wModule(.|\n)*?)from.*\n/g, '')
+                        // Remove ModuleRegistry import if by itself
+                        .replace(
+                            /import ((.|\n)[^{,]*?ModuleRegistry(.|\n)*?)from.*\n/g,
+                            ''
+                        )
+                        // Remove if ModuleRegistry is with other imports
+                        .replace(/ModuleRegistry(,)?/g, '');
 
                     entryFileContent = removeModuleRegistration(entryFileContent);
-                    // Remove ModuleRegistry import if by itself
-                    entryFileContent = entryFileContent.replace(
-                        /import ((.|\n)[^{,]*?ModuleRegistry(.|\n)*?)from.*\n/g,
-                        ''
-                    );
-                    // Remove if ModuleRegistry is with other imports
-                    entryFileContent = entryFileContent.replace(/ModuleRegistry(,)?/g, '');
 
                     entryFileContent = entryFileContent
                         .replace(/@ag-grid-community\/core/g, 'ag-grid-community')
@@ -219,7 +230,7 @@ export async function generateFiles(options: ExecutorOptions) {
                         );
                     }
 
-                    provideFrameworkFiles[entryFileName] = entryFileContent;
+                    provideFrameworkFiles[entryFileName] = entryFileContent;                       
                 }
             }
 
@@ -229,10 +240,10 @@ export async function generateFiles(options: ExecutorOptions) {
                 entryFileName,
                 mainFileName,
                 scriptFiles: scriptFiles!,
-                styleFiles: Object.keys(styleFiles),
+                styleFiles: Object.keys(mergedStyleFiles),
                 sourceFileList,
                 // Replace files with provided examples
-                files: { ...styleFiles, ...files, ...provideFrameworkFiles },
+                files: { ...mergedStyleFiles, ...files, ...provideFrameworkFiles },
                 // Files without provided examples
                 generatedFiles: files,
                 boilerPlateFiles,
@@ -241,18 +252,22 @@ export async function generateFiles(options: ExecutorOptions) {
                 ...frameworkExampleConfig,
             };
 
-            const outputPath = path.join(options.outputPath, importType, internalFramework, 'contents.json');
-            await writeFile(outputPath, JSON.stringify(result));
-
-            for (const name in result.generatedFiles) {
-                if (typeof result.generatedFiles[name] !== 'string') {
-                    throw new Error(`${outputPath}: non-string file content`);
-                }
-            }
+            await writeContents(options, importType, internalFramework, result);
         }
     }
 }
 
+
+async function writeContents(options: ExecutorOptions, importType: ImportType, internalFramework: InternalFramework, result: GeneratedContents) {
+    const outputPath = path.join(options.outputPath, importType, internalFramework, 'contents.json');
+    await writeFile(outputPath, JSON.stringify(result));
+
+    for (const name in result.generatedFiles) {
+        if (typeof result.generatedFiles[name] !== 'string') {
+            throw new Error(`${outputPath}: non-string file content`);
+        }
+    }
+}
 //  node --inspect-brk ./plugins/ag-grid-generate-example-files/dist/src/executors/generate/executor.js
 // console.log('should generate')
 // generateFiles({

@@ -1,27 +1,25 @@
-import { AgFieldParams, AgCheckboxParams, AgInputNumberFieldParams, AgSelectParams, AgSliderParams, Autowired, BeanStub } from "@ag-grid-community/core";
+import { AgFieldParams, AgCheckboxParams, AgInputNumberFieldParams, AgSelectParams, AgSliderParams, Autowired, BeanStub, ListOption } from "@ag-grid-community/core";
 import { AgColorPickerParams } from "../../../widgets/agColorPicker";
-import { ChartOptionsService } from "../services/chartOptionsService";
+import { ChartOptionsProxy } from "../services/chartOptionsService";
 import { ChartTranslationKey, ChartTranslationService } from "../services/chartTranslationService";
 import { FontPanelParams } from "./format/fontPanel";
-
-interface ChartOptionsProxy {
-    getValue<T = string>(expression: string, calculated?: boolean): T;
-    setValue<T = string>(expression: string, value: T): void;
-}
 
 export class ChartMenuUtils extends BeanStub {
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
     constructor(
         private readonly chartOptionsProxy: ChartOptionsProxy,
-        private readonly chartOptionsService: ChartOptionsService
     ) {
         super();
     }
 
     public getDefaultColorPickerParams(
         expression: string,
-        labelKey?: ChartTranslationKey
+        labelKey?: ChartTranslationKey,
+        options?: {
+            parseInputValue: (value: any) => any;
+            formatInputValue: (value: any) => any;
+        },
     ): AgColorPickerParams {
         return this.addValueParams(
             expression,
@@ -29,7 +27,8 @@ export class ChartMenuUtils extends BeanStub {
                 label: this.chartTranslationService.translate(labelKey ?? 'color'),
                 labelWidth: 'flex',
                 inputWidth: 'flex',
-            }
+            },
+            options,
         );
     }
 
@@ -116,6 +115,32 @@ export class ChartMenuUtils extends BeanStub {
         return params;
     }
 
+    public getDefaultSelectParams(
+        expression: string,
+        labelKey: ChartTranslationKey,
+        dropdownOptions: Array<ListOption>,
+        options?: {
+            pickerType?: string;
+            pickerAriaLabelKey?: string;
+            pickerAriaLabelValue?: string;
+        },
+    ): AgSelectParams {
+        const value = this.chartOptionsProxy.getValue(expression);
+        const params: AgSelectParams = {
+            label: this.chartTranslationService.translate(labelKey),
+            value,
+            options: dropdownOptions,
+            pickerType: options?.pickerType,
+            pickerAriaLabelKey: options?.pickerAriaLabelKey,
+            pickerAriaLabelValue: options?.pickerAriaLabelValue,
+        };
+        params.onValueChange = (value) => {
+            this.chartOptionsProxy.setValue(expression, value);
+        };
+        return params;
+    }
+
+
     public getDefaultLegendParams(expression: string): AgSelectParams {
         return this.addValueParams(
             expression,
@@ -169,15 +194,7 @@ export class ChartMenuUtils extends BeanStub {
         return params;
     }
 
-    public getValue<T = string>(expression: string, calculated?: boolean): T {
-        return this.chartOptionsProxy.getValue(expression, calculated);
-    }
-
-    public setValue<T = string>(expression: string, value: T): void {
-        this.chartOptionsProxy.setValue(expression, value);
-    }
-
-    public getChartOptionsService(): ChartOptionsService {
-        return this.chartOptionsService;
+    public getChartOptions(): ChartOptionsProxy {
+        return this.chartOptionsProxy;
     }
 }

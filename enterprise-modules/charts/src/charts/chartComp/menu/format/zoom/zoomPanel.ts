@@ -1,6 +1,6 @@
 import {
     AgGroupComponentParams,
-    AgInputNumberField,
+    AgSlider,
     Autowired,
     Component,
     PostConstruct,
@@ -15,22 +15,22 @@ export class ZoomPanel extends Component {
             <ag-group-component ref="zoomGroup">
                 <ag-checkbox ref="zoomAxisDraggingCheckbox"></ag-checkbox>
                 <ag-checkbox ref="zoomScrollingCheckbox"></ag-checkbox>
-                <ag-input-number-field ref="zoomScrollingStepInput"></ag-input-number-field>
+                <ag-slider ref="zoomScrollingStepInput"></ag-slider>
                 <ag-checkbox ref="zoomSelectingCheckbox"></ag-checkbox>
             </ag-group-component>
         </div>`;
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
-    @RefSelector('zoomScrollingStepInput') private readonly zoomScrollingStepInput: AgInputNumberField;
+    @RefSelector('zoomScrollingStepInput') private readonly zoomScrollingStepInput: AgSlider;
 
     private readonly chartMenuUtils: ChartMenuUtils;
     private readonly isExpandedOnInit: boolean;
 
-    constructor({ chartOptionsService, isExpandedOnInit = false }: FormatPanelOptions) {
+    constructor({ chartMenuUtils, isExpandedOnInit = false }: FormatPanelOptions) {
         super();
 
-        this.chartMenuUtils = chartOptionsService.getChartOptionMenuUtils();
+        this.chartMenuUtils = chartMenuUtils;
         this.isExpandedOnInit = isExpandedOnInit;
     }
 
@@ -52,31 +52,30 @@ export class ZoomPanel extends Component {
             'zoom.enableScrolling',
             'scrollingZoom'
         );
-        const zoomScrollingStepInputParams = this.chartMenuUtils.getDefaultNumberInputParams(
+        const zoomScrollingStepSliderParams = this.chartMenuUtils.getDefaultSliderParams(
             'zoom.scrollingStep',
             'scrollingStep',
-            {
-                step: 0.01,
-                max: 1,
-            }
+            1,
         );
+        zoomScrollingStepSliderParams.step = 0.01;
+        zoomScrollingStepSliderParams.minValue = zoomScrollingStepSliderParams.step;
         const zoomSelectingCheckboxParams = this.chartMenuUtils.getDefaultCheckboxParams(
             'zoom.enableSelecting',
             'selectingZoom'
         );
 
         // Enable/disable the scrolling step input according to whether the scrolling checkbox is checked
-        zoomScrollingCheckboxParams.onValueChange = ((onValueChange) => (value: any) => {
+        zoomScrollingCheckboxParams.onValueChange = ((onValueChange) => (value: boolean) => {
             if (!onValueChange) return;
             onValueChange(value);
-            this.zoomScrollingStepInput.setDisabled(value);
+            this.zoomScrollingStepInput.setDisabled(!value);
         })(zoomScrollingCheckboxParams.onValueChange);
 
         this.setTemplate(ZoomPanel.TEMPLATE, {
             zoomGroup: zoomGroupParams,
             zoomAxisDraggingCheckbox: zoomAxisDraggingCheckboxParams,
             zoomScrollingCheckbox: zoomScrollingCheckboxParams,
-            zoomScrollingStepInput: zoomScrollingStepInputParams,
+            zoomScrollingStepInput: zoomScrollingStepSliderParams,
             zoomSelectingCheckbox: zoomSelectingCheckboxParams,
         });
 

@@ -7,6 +7,7 @@ import mkcert from 'vite-plugin-mkcert';
 import svgr from 'vite-plugin-svgr';
 
 import agHotModuleReload from './plugins/agHotModuleReload';
+import agHtaccessGen from './plugins/agHtaccessGen';
 
 const { NODE_ENV } = process.env;
 const DEFAULT_BASE_URL = '/';
@@ -21,6 +22,7 @@ const {
     PUBLIC_HTTPS_SERVER = '1',
     ENABLE_GENERATE_DEBUG_PAGES = '1',
     SHOW_DEBUG_LOGS,
+    HTACCESS = 'false',
 
     // Speed up builds by only building comma separated pages
     QUICK_BUILD_PAGES,
@@ -36,6 +38,7 @@ console.log(
             USE_PACKAGES,
             ENABLE_GENERATE_DEBUG_PAGES,
             SHOW_DEBUG_LOGS,
+            HTACCESS,
             QUICK_BUILD_PAGES,
         },
         null,
@@ -53,5 +56,5 @@ export default defineConfig({
             https: !['0', 'false'].includes(PUBLIC_HTTPS_SERVER),
         },
     },
-    integrations: [react(), markdoc()],
+    integrations: [react(), markdoc(), agHtaccessGen({ include: HTACCESS === 'true' })],
 });
