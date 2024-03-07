@@ -6,25 +6,13 @@ export const QUICK_BUILD_PAGES: string[] = quickBuildPages ? quickBuildPages.spl
 
 export const FRAMEWORKS: readonly Framework[] = ['react', 'angular', 'vue', 'javascript'] as const;
 export const DEFAULT_FRAMEWORK: Framework = FRAMEWORKS[0];
+export const DEFAULT_INTERNAL_FRAMEWORK: InternalFramework = 'reactFunctional';
 
 export const USE_PACKAGES = true; // process.env?.USE_PACKAGES ?? false;
 
-export const INTERNAL_FRAMEWORKS: readonly InternalFramework[] = USE_PACKAGES ? [
-    'vanilla',
-    'typescript',
-    'reactFunctional',
-    'reactFunctionalTs',
-    'angular',
-    'vue',
-    'vue3',
-] : [
-    'typescript',
-    'reactFunctional',
-    'reactFunctionalTs',
-    'angular',
-    'vue',
-    'vue3',
-] as const;
+export const INTERNAL_FRAMEWORKS: readonly InternalFramework[] = USE_PACKAGES
+    ? ['vanilla', 'typescript', 'reactFunctional', 'reactFunctionalTs', 'angular', 'vue', 'vue3']
+    : (['typescript', 'reactFunctional', 'reactFunctionalTs', 'angular', 'vue', 'vue3'] as const);
 
 export const FRAMEWORK_DISPLAY_TEXT: Record<Framework, string> = {
     javascript: 'JavaScript',
@@ -61,7 +49,8 @@ export const DOCS_TAB_ITEM_ID_PREFIX = 'reference-';
 // whether integrated charts includes ag-charts-enterprise or just ag-charts-community
 // also need to update plugins/ag-grid-generate-example-files/src/executors/generate/generator/constants.ts if this value is changed
 export const integratedChartsUsesChartsEnterprise = true;
-export const getEnterprisePackageName = () => `ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise`;
+export const getEnterprisePackageName = () =>
+    `ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise`;
 
 /**
  * Site base URL
