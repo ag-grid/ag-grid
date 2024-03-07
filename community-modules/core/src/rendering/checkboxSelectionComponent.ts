@@ -53,10 +53,11 @@ export class CheckboxSelectionComponent extends Component {
         const translate = this.localeService.getLocaleTextFunc();
         const state = this.rowNode.isSelected();
         const stateName = getAriaCheckboxStateName(translate, state);
-        const ariaLabel = translate('ariaRowToggleSelection', 'Press Space to toggle row selection');
+        const [ariaKey, ariaLabel] = this.rowNode.selectable ? ['ariaRowToggleSelection', 'Press Space to toggle row selection'] : ['ariaRowSelectionDisabled', 'Row Selection is disabled for this row'];
+        const translatedLabel = translate(ariaKey, ariaLabel);
 
         this.eCheckbox.setValue(state, true);
-        this.eCheckbox.setInputAriaLabel(`${ariaLabel} (${stateName})`);
+        this.eCheckbox.setInputAriaLabel(`${translatedLabel} (${stateName})`);
     }
 
     private onClicked(newValue: boolean, groupSelectsFiltered: boolean | undefined, event: MouseEvent): number {
