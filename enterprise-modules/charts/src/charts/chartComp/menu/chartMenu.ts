@@ -17,6 +17,7 @@ import {
 import { TabbedChartMenu } from "./tabbedChartMenu";
 import { ChartController } from "../chartController";
 import { ChartOptionsService } from "../services/chartOptionsService";
+import { ChartMenuUtils } from './chartMenuUtils';
 import { ExtraPaddingDirection } from "../chartProxies/chartProxy";
 import { ChartMenuListFactory } from "./chartMenuList";
 import { ChartToolbar } from "./chartToolbar";
@@ -77,7 +78,10 @@ export class ChartMenu extends Component {
         private readonly eChartContainer: HTMLElement,
         private readonly eMenuPanelContainer: HTMLElement,
         private readonly chartController: ChartController,
-        private readonly chartOptionsService: ChartOptionsService) {
+        private readonly chartOptionsService: ChartOptionsService,
+        private readonly chartMenuUtils: ChartMenuUtils,
+        private readonly chartAxisMenuUtils: ChartMenuUtils,
+    ) {
         super(ChartMenu.TEMPLATE);
     }
 
@@ -300,10 +304,12 @@ export class ChartMenu extends Component {
         this.eMenuPanelContainer.appendChild(menuPanel.getGui());
 
         this.tabbedMenu = this.createBean(new TabbedChartMenu({
-            controller: this.chartController,
             type: this.chartController.getChartType(),
             panels: this.panels,
-            chartOptionsService: this.chartOptionsService
+            chartController: this.chartController,
+            chartOptionsService: this.chartOptionsService,
+            chartMenuUtils: this.chartMenuUtils,
+            chartAxisMenuUtils: this.chartAxisMenuUtils,
         }));
 
         this.addManagedListener(
