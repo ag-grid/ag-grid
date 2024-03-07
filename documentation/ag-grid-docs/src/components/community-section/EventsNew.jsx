@@ -37,10 +37,6 @@ const EventItem = ({ event }) => {
         <div className={styles.eventItemContainer}>
             <div className={styles.eventItemLeftColumn}>
                 <div className={styles.titleContainer}>
-                    <img
-                        className={styles.organiserLogo}
-                        src={`/community/events/organiser-logos/${darkMode ? event.organiserLogo : event.organiserLogoLight}`}
-                    />
                     <p className={styles.title}>{event.title}</p>
                     <p className={styles.date}>
                         {new Date(event.startDate).toLocaleDateString('en-US', {
@@ -79,7 +75,7 @@ const EventItem = ({ event }) => {
                 </div>
             </div>
             <div className={styles.eventItemRightColumn}>
-                <img className={styles.eventImage} src={`/community/events/${event.coverImage}`} />
+                <img className={event.images?.length > 0 ? styles.eventImage : styles.eventLogo} src={`/community/events/${darkMode ? event.coverImage : event.coverImageLight}`} />
             </div>
         </div>
     );

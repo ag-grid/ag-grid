@@ -9,12 +9,11 @@
         "startDate": "2024-03-20",
         "endDate": "2024-03-21",
         "video": "",
-        "coverImage": "generic/ngconf.jpg",
+        "coverImage": "organiser-logos/ng-conf-logo.webp",
+        "coverImageLight": "organiser-logos/ng-conf-logo.webp",
         "countryIcon": "us.png",
         "eventPage": "https://ng-conf.org/",
-        "images": [
-            "generic/ngconf.jpg"
-        ]
+        "images": []
     },
     {
         "title": "React Summit",
@@ -27,11 +26,10 @@
         "endDate": "2024-06-18",
         "video": "",
         "countryIcon": "netherlands.png",
-        "coverImage": "generic/react-summit.png",
+        "coverImage": "organiser-logos/react-summit-logo.svg",
+        "coverImageLight": "organiser-logos/react-summit-logo-light.svg",
         "eventPage": "https://reactsummit.com/",
-        "images": [
-            "generic/react-summit.png"
-        ]
+        "images": []
     },
     {
         "title": "React Advanced",
@@ -45,10 +43,9 @@
         "endDate": "2024-10-28",
         "video": "",
         "eventPage": "https://reactadvanced.com/",
-        "coverImage": "generic/react-advanced.jpg",
-        "images": [
-            ""
-        ]
+        "coverImage": "organiser-logos/react-advanced-logo.svg",
+        "coverImageLight": "organiser-logos/react-advanced-logo-light.svg",
+        "images": []
     },
     {
         "title": "React Summit",
@@ -61,11 +58,10 @@
         "startDate": "2024-11-13",
         "endDate": "2024-11-15",
         "video": "",
-        "coverImage": "generic/react-summit-us.png",
+        "coverImage": "organiser-logos/react-summit-logo.svg",
+        "coverImageLight": "organiser-logos/react-summit-logo-light.svg",
         "eventPage": "https://reactsummit.us/",
-        "images": [
-            ""
-        ]
+        "images": []
     },
     {
         "title": "ng-conf",
