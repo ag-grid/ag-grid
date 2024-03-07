@@ -233,10 +233,6 @@
                 "title": "Layout & Styling",
                 "items": [
                     {
-                        "title": "Design System",
-                        "path": "ag-grid-design-system"
-                    },
-                    {
                         "title": "Theming",
                         "items": [
                             {
@@ -302,6 +298,10 @@
                                 "path": "global-style-customisation-sass"
                             }
                         ]
+                    },
+                    {
+                        "title": "Design System",
+                        "path": "ag-grid-design-system"
                     },
                     {
                         "title": "Grid Size",
