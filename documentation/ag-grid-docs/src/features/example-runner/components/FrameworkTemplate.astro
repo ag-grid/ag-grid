@@ -51,7 +51,7 @@ const isDev = getIsDev();
 
 const library = 'grid';
 
-const { entryFileName, files, scriptFiles, styleFiles, isEnterprise, extras, isIntegratedCharts, supportedFrameworks } = generatedContents || {};
+const { entryFileName, files, scriptFiles, styleFiles, isEnterprise, extras, isIntegratedCharts } = generatedContents || {};
 const indexFragment = files && files['index.html'];
 const appLocation = relativePath ? '' : exampleUrl;
 const boilerPlateUrl = relativePath
@@ -65,13 +65,14 @@ const timeNow = Date.now();
 const title = `${toTitle(pageName)} - ${toTitle(exampleName)}`;
 
 const shouldShowTemplate = (framework: InternalFramework) => {
-    if(supportedFrameworks === undefined) {
-        return internalFramework === framework;
-    }
-    return internalFramework === framework && supportedFrameworks.includes(framework);
+    return internalFramework === framework;
 }
 
+
 ---
+{generatedContents.excluded && (
+    <h3 data-testid='excluded-framework'>PLACEHODER</h3><p>Example not generated as exampleConfig.json has supportedFrameworks specified but not including this one.</p>
+)}
 
 {
     !generatedContents && (
