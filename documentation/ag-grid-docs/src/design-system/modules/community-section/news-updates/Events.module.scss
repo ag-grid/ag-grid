@@ -251,8 +251,11 @@
 
 .conferenceIcon {
     margin-top: 16px;
-    background-color: red;
     height: 32px;
     width: 32px;
-    border-radius: var(--radius-lg);
+}
+
+.date {
+    padding-top: $spacing-size-3;
+    opacity: 0.7;
 }

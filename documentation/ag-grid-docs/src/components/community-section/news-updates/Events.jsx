@@ -89,6 +89,27 @@ const Events = ({ enableFilters = false }) => {
         );
     };
 
+    // Function to format date
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        const formattedDate = new Intl.DateTimeFormat('en-US', options).format(date);
+
+        // Append 'st', 'nd', 'rd' or 'th' to the day number
+        const day = date.getDate();
+        let suffix = 'th';
+        if (day % 10 === 1 && day !== 11) {
+            suffix = 'st';
+        } else if (day % 10 === 2 && day !== 12) {
+            suffix = 'nd';
+        } else if (day % 10 === 3 && day !== 13) {
+            suffix = 'rd';
+        }
+
+        // Replace the numeric day with the day + suffix
+        return formattedDate.replace(/(\d+)(,)/, `$1${suffix},`);
+    };
+
     return (
         <div className={styles.container}>
             <div className={styles.eventDetailsContainer}>
@@ -113,9 +134,15 @@ const Events = ({ enableFilters = false }) => {
                                 <Icon className={styles.locationIcon} name="mapPin" />
                                 {event.location}
                             </span>
-                            <span className={styles.conferenceIcon}></span>
+                            <span className={styles.conferenceIcon}>
+                                <img
+                                    className={styles.organiserLogo}
+                                    src={`/community/events/organiser-logos/${darkMode ? event.organiserLogo : event.organiserLogoLight}`}
+                                />
+                            </span>
                             <span className={styles.title}>{event.title}</span>
                             <span className={styles.description}>{event.description}</span>
+                            <span className={styles.date}>{formatDate(event.startDate)}</span>
                         </div>
                     ))}
                 </div>
