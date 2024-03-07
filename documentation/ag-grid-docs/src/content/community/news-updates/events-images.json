@@ -94,5 +94,45 @@
     {
         "src": "2023/react-summit-nyc-11.jpg",
         "alt": ""
+    },
+    {
+        "src": "misc/misc-conf-image-1.png",
+        "alt": ""
+    },
+    {
+        "src": "misc/misc-conf-image-2.png",
+        "alt": ""
+    },
+    {
+        "src": "misc/misc-conf-image-3.png",
+        "alt": ""
+    },
+    {
+        "src": "misc/misc-conf-image-4.png",
+        "alt": ""
+    },
+    {
+        "src": "misc/misc-conf-image-5.png",
+        "alt": ""
+    },
+    {
+        "src": "misc/misc-conf-image-6.png",
+        "alt": ""
+    },
+    {
+        "src": "generic/ngconf.jpg",
+        "alt": ""
+    },
+    {
+        "src": "generic/react-advanced.jpg",
+        "alt": ""
+    },
+    {
+        "src": "generic/react-summit-us.png",
+        "alt": ""
+    },
+    {
+        "src": "generic/react-summit.png",
+        "alt": ""
     }
 ]
