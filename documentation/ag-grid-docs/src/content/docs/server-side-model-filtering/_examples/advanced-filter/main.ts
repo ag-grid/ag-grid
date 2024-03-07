@@ -1,10 +1,9 @@
 import { GridApi, createGrid, GridOptions, IServerSideDatasource } from '@ag-grid-community/core';
-declare let FakeServer: any;
 import { AdvancedFilterModule } from '@ag-grid-enterprise/advanced-filter';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
 import { ModuleRegistry } from "@ag-grid-community/core";
-
+import { FakeServer } from './fakeServer';
 ModuleRegistry.registerModules([AdvancedFilterModule, MenuModule, ServerSideRowModelModule]);
 
 let gridApi: GridApi<IOlympicData>;

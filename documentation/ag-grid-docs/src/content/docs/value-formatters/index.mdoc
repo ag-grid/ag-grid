@@ -4,6 +4,13 @@ title: "Text Formatting"
 
 Use a Value Formatter to provide text formatting of values.
 
+In the example below:
+* Columns `A` and `B` display the value of the `field` property
+* Columns `£A` and `£B` use a `currencyFormatter` to display the value as a currency
+* Columns`(A)` and `(B)` use a `bracketsFormatter` to display the value inside brackets
+
+{% gridExampleRunner title="Value Formatters" name="value-formatters" /%}
+
 ```js {% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     columnDefs: [
@@ -31,14 +38,6 @@ If using [Cell Data Types](./cell-data-types/), value formatters are set by defa
 {% /note %}
 
 If you want more than text formatting, e.g. you need Buttons in the Cell, then use a [Cell Component](./component-cell-renderer/).
-
-The example below shows value formatters in action.
-
-* Columns `A` and `B` display the value of the `field` property
-* Columns `£A` and `£B` use a `currencyFormatter` to display the value as a currency
-* Columns`(A)` and `(B)` use a `bracketsFormatter` to display the value inside brackets
-
-{% gridExampleRunner title="Value Formatters" name="value-formatters" /%}
 
 ## Formating for Export
 

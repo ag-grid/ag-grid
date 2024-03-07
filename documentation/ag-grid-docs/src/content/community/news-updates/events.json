@@ -1,0 +1,106 @@
+{
+    "2018": [
+        {
+            "title": "TBC",
+            "description": "...",
+            "location": "TBD",
+            "framework": "TBD"
+        }
+    ],
+    "2019": [
+        {
+            "title": "TBC",
+            "description": "...",
+            "location": "TBD",
+            "framework": "TBD"
+        }
+    ],
+    "2020": [
+        {
+            "title": "TBC",
+            "description": "...",
+            "location": "TBD",
+            "framework": "TBD"
+        }
+    ],
+    "2021": [
+        {
+            "title": "TBC",
+            "description": "...",
+            "location": "TBD",
+            "framework": "TBD"
+        }
+    ],
+    "2022": [
+        {
+            "title": "JS Nation",
+            "description": "...",
+            "location": "Amsterdam, NL",
+            "framework": "JavaScript"
+        },
+        {
+            "title": "React Summit",
+            "description": "...",
+            "location": "Amsterdam, NL",
+            "framework": "React"
+        },
+        {
+            "title": "React Global Online Summit",
+            "description": "...",
+            "location": "Online, Global",
+            "framework": "React"
+        }
+    ],
+    "2023": [
+        {
+            "title": "NGConf",
+            "description": "...",
+            "location": "Salt Lake City, USA",
+            "framework": "React"
+        },
+        {
+            "title": "React Summit",
+            "description": "...",
+            "location": "Amsterdam, NL",
+            "framework": "React"
+        },
+        {
+            "title": "React Advanced",
+            "description": "...",
+            "location": "London, UK",
+            "framework": "React"
+        },
+        {
+            "title": "React Summit",
+            "description": "...",
+            "location": "New Jersey, USA",
+            "framework": "React"
+        }
+    ],
+    "2024": [
+        {
+            "title": "NGConf",
+            "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+            "location": "Salt Lake City, USA",
+            "framework": "Angular"
+        },
+        {
+            "title": "React Summit",
+            "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+            "location": "Amsterdam, NL",
+            "framework": "React"
+        },
+        {
+            "title": "React Advanced",
+            "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+            "location": "London, UK",
+            "framework": "React"
+        },
+        {
+            "title": "React Summit",
+            "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+            "location": "New Jersey, USA",
+            "framework": "React"
+        }
+    ]
+}

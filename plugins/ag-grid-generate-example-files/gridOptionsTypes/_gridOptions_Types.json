@@ -323,6 +323,10 @@
     "typeName": "'legacy' | 'new'",
     "typesToInclude": []
   },
+  "tooltipShowMode": {
+    "typeName": "'standard' | 'whenTruncated'",
+    "typesToInclude": []
+  },
   "rowHeight": {
     "typeName": "number",
     "typesToInclude": []
@@ -1365,6 +1369,10 @@
     "typesToInclude": []
   },
   "reactiveCustomComponents": {
+    "typeName": "boolean",
+    "typesToInclude": []
+  },
+  "legacyChartsMenu": {
     "typeName": "boolean",
     "typesToInclude": []
   }

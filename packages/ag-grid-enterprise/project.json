@@ -8,10 +8,16 @@
       "executor": "nx:noop",
       "inputs": [],
       "outputs": [],
-      "dependsOn": ["build:types", "build:package", "build:umd", "build:copy-styles"]
+      "dependsOn": [
+        "build:types",
+        "build:package",
+        "build:umd"
+      ]
     },
     "build:updateWithCoreExports": {
-      "dependsOn": ["@ag-grid-community/core:build"],
+      "dependsOn": [
+        "ag-grid-community:build"
+      ],
       "cache": true,
       "command": "node updateMainTsWithCoreExports.js",
       "options": {
@@ -19,40 +25,34 @@
       }
     },
     "build:types": {
-      "executor": "@nx/js:tsc",
       "dependsOn": ["^build:types"],
-      "inputs": ["tsDefaults"],
-      "outputs": ["{options.outputPath}"],
+      "command": "npx gulp copy-from-module-source && cp main.d.ts.src dist/types/main.d.ts",
       "options": {
-        "outputPath": "packages/ag-grid-enterprise/dist/types",
-        "main": "packages/ag-grid-enterprise/src/main.ts",
-        "tsConfig": "packages/ag-grid-enterprise/tsconfig.types.json",
-        "compiler": "tsc"
+        "cwd": "packages/ag-grid-enterprise"
       },
-      "cache": true,
-      "configurations": {
-        "watch": {
-          "tsConfig": "packages/ag-grid-enterprise/tsconfig.types.watch.json"
-        },
-        "production": {}
-      }
+      "cache": true
     },
     "build:umd": {
       "executor": "@nx/webpack:webpack",
-      "dependsOn": ["^build", "build:updateWithCoreExports"],
+      "inputs": [],
+      "outputs": [
+        "{projectRoot}/dist/ag-grid-enterprise.js"
+      ],
+      "dependsOn": [
+        "^build",
+        "build:updateWithCoreExports",
+        "build:copy-styles"
+      ],
       "options": {
         "webpackConfig": "packages/ag-grid-enterprise/webpack.config.js",
-        "outputPath":  "overridden in webpack config but required by nx",
+        "outputPath": "overridden in webpack config but required by nx",
         "outputFileName": "overridden in webpack config but required by nx"
       },
       "cache": true
     },
     "build:copy-styles": {
       "dependsOn": [],
-      "inputs": [
-        "^production",
-        "production"
-      ],
+      "inputs": [],
       "cache": true,
       "command": "rsync -r ../../community-modules/styles/*.*css --delete styles",
       "options": {
@@ -61,17 +61,28 @@
     },
     "build:package": {
       "executor": "@nx/esbuild:esbuild",
-      "dependsOn": ["^build", "build:updateWithCoreExports"],
-      "inputs": ["tsDefaults"],
-      "outputs": ["{options.outputPath}"],
+      "dependsOn": [
+        "^build",
+        "build:updateWithCoreExports"
+      ],
+      "inputs": [
+        "tsDefaults"
+      ],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "packages/ag-grid-enterprise/dist/package",
         "main": "packages/ag-grid-enterprise/src/main.ts",
         "tsConfig": "packages/ag-grid-enterprise/tsconfig.lib.json",
+        "external": ["ag-grid-community"],
         "esbuildConfig": "esbuild.config.cjs",
         "platform": "browser",
         "target": "es6",
-        "format": ["cjs", "esm"],
+        "format": [
+          "cjs",
+          "esm"
+        ],
         "sourcemap": true
       },
       "configurations": {
@@ -85,15 +96,23 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
+      "outputs": [
+        "{options.outputFile}"
+      ]
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
       "options": {
         "jestConfig": "community-modules/jest.config.ts"
       }
     }
   },
-  "tags": ["package:enterprise", "package", "enterprise"]
+  "tags": [
+    "package:enterprise",
+    "package",
+    "enterprise"
+  ]
 }

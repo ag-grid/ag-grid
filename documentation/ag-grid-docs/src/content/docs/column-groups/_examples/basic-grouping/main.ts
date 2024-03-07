@@ -6,50 +6,20 @@ import { ModuleRegistry } from "@ag-grid-community/core";
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const columnDefs: (ColDef | ColGroupDef)[] = [
-  {
-    headerName: 'Athlete Details',
+  { 
+    headerName: 'Name & Country',
     children: [
-      {
-        field: 'athlete',
-        width: 180,
-        filter: 'agTextColumnFilter',
-      },
-      {
-        field: 'age',
-        width: 90,
-        filter: 'agNumberColumnFilter',
-      },
-      { headerName: 'Country', field: 'country', width: 140 },
-    ],
+      { field: 'athlete' },
+      { field: 'country' }
+    ]
   },
   {
     headerName: 'Sports Results',
     children: [
-      { field: 'sport', width: 140 },
-      {
-        columnGroupShow: 'closed',
-        field: 'total',
-        width: 100,
-        filter: 'agNumberColumnFilter',
-      },
-      {
-        columnGroupShow: 'open',
-        field: 'gold',
-        width: 100,
-        filter: 'agNumberColumnFilter',
-      },
-      {
-        columnGroupShow: 'open',
-        field: 'silver',
-        width: 100,
-        filter: 'agNumberColumnFilter',
-      },
-      {
-        columnGroupShow: 'open',
-        field: 'bronze',
-        width: 100,
-        filter: 'agNumberColumnFilter',
-      },
+      { columnGroupShow: 'closed', field: 'total' },
+      { columnGroupShow: 'open', field: 'gold' },
+      { columnGroupShow: 'open', field: 'silver' },
+      { columnGroupShow: 'open', field: 'bronze' },
     ],
   },
 ]
@@ -57,10 +27,6 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
-  defaultColDef: {
-    filter: true,
-  },
-  // debug: true,
   columnDefs: columnDefs,
   rowData: null,
 }

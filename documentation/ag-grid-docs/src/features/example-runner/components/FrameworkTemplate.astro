@@ -51,7 +51,7 @@ const isDev = getIsDev();
 
 const library = 'grid';
 
-const { entryFileName, files, scriptFiles, styleFiles, isEnterprise, extras } = generatedContents || {};
+const { entryFileName, files, scriptFiles, styleFiles, isEnterprise, extras, isIntegratedCharts } = generatedContents || {};
 const indexFragment = files && files['index.html'];
 const appLocation = relativePath ? '' : exampleUrl;
 const boilerPlateUrl = relativePath
@@ -63,7 +63,16 @@ const boilerPlateUrl = relativePath
 
 const timeNow = Date.now();
 const title = `${toTitle(pageName)} - ${toTitle(exampleName)}`;
+
+const shouldShowTemplate = (framework: InternalFramework) => {
+    return internalFramework === framework;
+}
+
+
 ---
+{generatedContents.excluded && (
+    <h3 data-testid='excluded-framework'>PLACEHODER</h3><p>Example not generated as exampleConfig.json has supportedFrameworks specified but not including this one.</p>
+)}
 
 {
     !generatedContents && (
@@ -74,12 +83,13 @@ const title = `${toTitle(pageName)} - ${toTitle(exampleName)}`;
 }
 
 {
-    internalFramework === 'vanilla' && (
+    shouldShowTemplate('vanilla') && (
         <JavascriptTemplate
             isDev={isDev}
             title={title}
             modifiedTimeMs={timeNow}
             isEnterprise={isEnterprise}
+            isIntegratedCharts={isIntegratedCharts}
             scriptFiles={scriptFiles}
             styleFiles={styleFiles}
             indexFragment={indexFragment!}
@@ -93,7 +103,7 @@ const title = `${toTitle(pageName)} - ${toTitle(exampleName)}`;
 }
 
 {
-    internalFramework === 'typescript' && (
+    shouldShowTemplate('typescript') && (
         <TypescriptTemplate
             isDev={isDev}
             title={title}
@@ -113,7 +123,7 @@ const title = `${toTitle(pageName)} - ${toTitle(exampleName)}`;
 }
 
 {
-    ['reactFunctional', 'reactFunctionalTs'].includes(internalFramework) && (
+    (shouldShowTemplate('reactFunctional') || shouldShowTemplate('reactFunctionalTs')) && (
         <ReactTemplate
             isDev={isDev}
             title={title}
@@ -135,7 +145,7 @@ const title = `${toTitle(pageName)} - ${toTitle(exampleName)}`;
 }
 
 {
-    internalFramework === 'angular' && (
+    shouldShowTemplate('angular') && (
         <AngularTemplate
             isDev={isDev}
             title={title}
@@ -155,7 +165,7 @@ const title = `${toTitle(pageName)} - ${toTitle(exampleName)}`;
 }
 
 {
-    (internalFramework === 'vue' || internalFramework === 'vue3') && (
+    (shouldShowTemplate('vue') || shouldShowTemplate('vue3')) && (
         <VueTemplate
             isDev={isDev}
             title={title}

@@ -142,6 +142,8 @@ export const iconNameClassMap: { [key: string]: string; } = {
     advancedFilterBuilderAdd: 'plus',
     // shown on Advanced Filter Builder rows to remove row
     advancedFilterBuilderRemove: 'minus',
+    // shown in Integrated Charts menu add fields
+    chartsMenuAdd: 'plus',
 };
 
 /**

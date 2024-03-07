@@ -1,9 +1,10 @@
 import { Bean, BeanStub } from "@ag-grid-community/core";
 
+export type ChartTranslationKey = keyof typeof ChartTranslationService.DEFAULT_TRANSLATIONS;
+
 @Bean("chartTranslationService")
 export class ChartTranslationService extends BeanStub {
-
-    private static DEFAULT_TRANSLATIONS: { [name: string]: string; } = {
+    public static readonly DEFAULT_TRANSLATIONS = {
         pivotChartTitle: 'Pivot Chart',
         rangeChartTitle: 'Range Chart',
         settings: 'Settings',
@@ -17,7 +18,9 @@ export class ChartTranslationService extends BeanStub {
         axis: 'Axis',
         radiusAxis: 'Radius Axis',
         navigator: 'Navigator',
+        zoom: 'Zoom',
         animation: 'Animation',
+        crosshair: 'Crosshair',
         color: 'Color',
         thickness: 'Thickness',
         preferredLength: 'Preferred Length',
@@ -83,7 +86,13 @@ export class ChartTranslationService extends BeanStub {
         lineWidth: 'Line Width',
         lineDash: 'Line Dash',
         lineDashOffset: 'Dash Offset',
+        axisDragging: 'Dragging an Axis',
+        scrollingZoom: 'Scrolling',
+        scrollingStep: 'Scrolling Step',
+        selectingZoom: 'Selecting',
         durationMillis: 'Duration (ms)',
+        crosshairLabel: 'Crosshair Label',
+        crosshairSnap: 'Snap to node',
         normal: 'Normal',
         bold: 'Bold',
         italic: 'Italic',
@@ -163,15 +172,44 @@ export class ChartTranslationService extends BeanStub {
         chartLinkToolbarTooltip: 'Linked to Grid',
         chartUnlinkToolbarTooltip: 'Unlinked from Grid',
         chartDownloadToolbarTooltip: 'Download Chart',
+        chartMenuToolbarTooltip: 'Menu',
+        chartEdit: 'Edit Chart',
+        chartLink: 'Link to Grid',
+        chartUnlink: 'Unlink from Grid',
+        chartDownload: 'Download Chart',
         histogramFrequency: "Frequency",
         seriesChartType: 'Series Chart Type',
         seriesType: 'Series Type',
         secondaryAxis: 'Secondary Axis',
+        seriesAdd: 'Add a series',
+        categoryAdd: 'Add a category',
+        area: 'Area',
+        bar: 'Bar',
+        column: 'Column',
+        line: 'Line',
+        scatter: 'Scatter',
+        histogram: 'Histogram',
+        radialColumn: 'Radial Column',
+        radialBar: 'Radial Bar',
+        radarLine: 'Radar Line',
+        radarArea: 'Radar Area',
+        nightingale: 'Nightingale',
+        rangeBar: 'Range Bar',
+        rangeArea: 'Range Area',
+        treemap: 'Treemap',
+        sunburst: 'Sunburst',
+        waterfall: 'Waterfall',
+        boxPlot: 'Box Plot',
+        pie: 'Pie',
+        donut: 'Donut',
+        stackedArea: 'StackedArea',
+        groupedColumn: 'Grouped Column',
+        stackedColumn: 'Stacked Column',
     };
 
-    public translate(toTranslate: string, defaultText?: string): string {
+    public translate(toTranslate: ChartTranslationKey): string {
         const translate = this.localeService.getLocaleTextFunc();
-        const defaultTranslation = ChartTranslationService.DEFAULT_TRANSLATIONS[toTranslate] || defaultText;
-        return translate(toTranslate, defaultTranslation as string);
+        const defaultTranslation = ChartTranslationService.DEFAULT_TRANSLATIONS[toTranslate];
+        return translate(toTranslate, defaultTranslation);
     }
 }

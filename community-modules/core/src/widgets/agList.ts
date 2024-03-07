@@ -4,21 +4,22 @@ import { escapeString } from "../utils/string";
 import { KeyCode } from '../constants/keyCode';
 import { setAriaPosInSet, setAriaRole, setAriaSelected, setAriaSetSize } from '../utils/aria';
 import { Events } from "../eventKeys";
-import { isVisible } from "../utils/dom";
+import { getInnerWidth, isVisible } from "../utils/dom";
+import { TooltipFeature } from "./tooltipFeature";
 
 export interface ListOption<TValue = string> {
     value: TValue;
     text?: string;
 }
 
-export class AgList extends Component {
+export class AgList<TValue = string> extends Component {
     public static EVENT_ITEM_SELECTED = 'selectedItem';
     private static ACTIVE_CLASS = 'ag-active-item';
 
-    private options: ListOption[] = [];
+    private options: ListOption<TValue>[] = [];
     private itemEls: HTMLElement[] = [];
     private highlightedEl: HTMLElement | null;
-    private value: string | null;
+    private value: TValue | null;
     private displayValue: string | null;
 
     constructor(private readonly cssIdentifier = 'default', private readonly unFocusable: boolean = false) {
@@ -64,14 +65,14 @@ export class AgList extends Component {
         }
     }
 
-    public addOptions(listOptions: ListOption[]): this {
+    public addOptions(listOptions: ListOption<TValue>[]): this {
         listOptions.forEach(listOption => this.addOption(listOption));
         return this;
     }
 
-    public addOption(listOption: ListOption): this {
+    public addOption(listOption: ListOption<TValue>): this {
         const { value, text } = listOption;
-        const sanitisedText = escapeString(text || value);
+        const sanitisedText = escapeString(text || value as any);
 
         this.options.push({ value, text: sanitisedText! });
         this.renderOption(value, sanitisedText!);
@@ -89,12 +90,15 @@ export class AgList extends Component {
         });
     }
 
-    private renderOption(value: string, text: string): void {
-        const itemEl = document.createElement('div');
+    private renderOption(value: TValue, text: string): void {
+        const eDocument = this.gridOptionsService.getDocument();
+        const itemEl = eDocument.createElement('div');
 
         setAriaRole(itemEl, 'option');
         itemEl.classList.add('ag-list-item', `ag-${this.cssIdentifier}-list-item`);
-        itemEl.innerHTML = `<span>${text}</span>`;
+        const span = eDocument.createElement('span');
+        itemEl.appendChild(span);
+        span.innerText = text;
 
         if (!this.unFocusable) {
             itemEl.tabIndex = -1;
@@ -104,11 +108,18 @@ export class AgList extends Component {
 
         this.addManagedListener(itemEl, 'mousemove', () => this.highlightItem(itemEl));
         this.addManagedListener(itemEl, 'mousedown', (e) => { e.preventDefault(); this.setValue(value) });
+        this.createManagedBean(new TooltipFeature({
+            getTooltipValue: () => text,
+            getGui:  () => itemEl,
+            getLocation: () => 'UNKNOWN',
+            // only show tooltips for items where the text cannot be fully displayed
+            shouldShowTooltip: () => span.scrollWidth > getInnerWidth(itemEl)
+        }));
 
         this.getGui().appendChild(itemEl);
     }
 
-    public setValue(value?: string | null, silent?: boolean): this {
+    public setValue(value?: TValue | null, silent?: boolean): this {
         if (this.value === value) {
             this.fireItemSelected();
             return this;
@@ -125,7 +136,7 @@ export class AgList extends Component {
             const option = this.options[idx];
 
             this.value = option.value;
-            this.displayValue = option.text != null ? option.text : option.value;
+            this.displayValue = option.text!;
             this.highlightItem(this.itemEls[idx]);
 
             if (!silent) {
@@ -140,7 +151,7 @@ export class AgList extends Component {
         return this.setValue(this.options[idx].value);
     }
 
-    public getValue(): string | null {
+    public getValue(): TValue | null {
         return this.value;
     }
 

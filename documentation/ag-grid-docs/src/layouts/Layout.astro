@@ -28,14 +28,14 @@ const canonicalUrl = new URL(Astro.url.pathname, metadata.canonicalUrlBase);
 const { title, description = metadata.description, showSearchBar, showDocsNav, hideHeader, hideFooter } = Astro.props;
 
 const path = Astro.url.pathname;
-const socialImage = urlWithBaseUrl('/images/ag-grid-social.png');
+const socialImage = urlWithBaseUrl(metadata.socialImage);
 ---
 
 <!doctype html>
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <meta name="description" content="Astro description" />
+        <meta name="description" content={description} />
         <meta name="viewport" content="width=device-width" />
         {
             getFavIconsData().map(({ size, icon }: any) => (
@@ -88,6 +88,10 @@ const socialImage = urlWithBaseUrl('/images/ag-grid-social.png');
             const isOSDarkmode = (
                 window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
             ).toString();
+
+            if (localDarkmode === undefined) {
+              localStorage.setItem("documentation:darkmode", isOSDarkmode);
+            }
 
             htmlEl.classList.add('no-transitions');
             htmlEl.dataset.darkMode = localDarkmode !== undefined ? localDarkmode : isOSDarkmode;

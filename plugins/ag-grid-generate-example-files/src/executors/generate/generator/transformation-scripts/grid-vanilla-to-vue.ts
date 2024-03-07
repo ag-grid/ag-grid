@@ -8,6 +8,7 @@ import {
 } from './grid-vanilla-to-vue-common';
 import {
     addEnterprisePackage,
+    addLicenseManager,
     getActiveTheme,
     getIntegratedDarkModeCode,
     preferParamsApi,
@@ -56,9 +57,7 @@ function getModuleImports(
 
     let imports = ["import Vue from 'vue';", "import { AgGridVue } from '@ag-grid-community/vue';"];
 
-    if (exampleConfig.licenseKey) {
-        imports.push("import { LicenseManager } from '@ag-grid-enterprise/core';");
-    }
+    addLicenseManager(imports, exampleConfig, false);
 
     imports.push("import '@ag-grid-community/styles/ag-grid.css';");
     // to account for the (rare) example that has more than one class...just default to quartz if it does
@@ -75,6 +74,15 @@ function getModuleImports(
         imports.push(...componentFileNames.map((componentFileName) => getImport(componentFileName, 'Vue', '')));
     }
 
+    if (bindings.moduleRegistration) {
+        bindings.imports.forEach((importStatement) => {
+            if(importStatement.imports.some(m => m.includes('Module'))){
+                imports.push(`import { ${importStatement.imports.join(', ')} } from ${importStatement.module};`)
+            }
+        })
+        imports.push(bindings.moduleRegistration);
+    }
+
     return imports;
 }
 
@@ -89,9 +97,7 @@ function getPackageImports(
     const imports = ["import Vue from 'vue';", "import { AgGridVue } from 'ag-grid-vue';"];
 
     addEnterprisePackage(imports, bindings);
-    if (exampleConfig.licenseKey) {
-        imports.push("import { LicenseManager } from 'ag-grid-enterprise';");
-    }
+    addLicenseManager(imports, exampleConfig, true);
 
     imports.push("import 'ag-grid-community/styles/ag-grid.css';");
 

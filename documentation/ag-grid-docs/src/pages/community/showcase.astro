@@ -1,0 +1,34 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CommunityMenu from '@components/community-section/Menu';
+import LayoutStyles from '@design-system/modules/community-section/Layout.module.scss';
+import ShowcaseList from "@components/community-section/ShowcaseList"
+import ShowcaseTable from "@components/community-section/ShowcaseTable"
+---
+
+<Layout title="AG Grid">
+    <div class="layout-max-width-large">
+        <CommunityMenu path={Astro.url.pathname} client:only/>
+        <div class="layout-max-width-small">
+            <div class={LayoutStyles.container}>
+                <header class={LayoutStyles.header}>
+                    <h1>Showcase</h1>
+                    <p class={LayoutStyles.description}>AG Grid's products are used by thousands of developers, totalling over 15 million NPM downloads per month.</p>
+                    <p class={LayoutStyles.description}>The majority of these projects are internal or closed-source but we've hand-picked some open-source examples to help inspire your next project with AG Grid</p>
+                    
+                </header>
+                <div class={LayoutStyles.content}>
+                    <section>
+                        <h2>Our Favourites</h2>
+                        <ShowcaseList favouritesOnly={true}  client:only/>
+                    </section>
+                    <section>
+                        <h2>Full Showcase</h2>
+                        <ShowcaseList client:only/>
+                    </section>
+                    <!-- <ShowcaseTable client:only/> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</Layout>

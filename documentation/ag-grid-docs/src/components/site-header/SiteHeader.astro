@@ -7,7 +7,6 @@ import styles from '@design-system/modules/SiteHeader.module.scss';
 import { SiteLogo } from './SiteLogo';
 import Search from '../search/Search';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
-import { DarkModeToggle } from './DarkModeToggle';
 import { ProductDropdown } from '@components/product-dropdown/ProductDropdown';
 import { getApiPaths } from '@utils/apiMenuPath';
 
@@ -51,31 +50,29 @@ const dropdownItems = [
         <ProductDropdown client:load items={dropdownItems} children={null} />
 
         {
-            showDocsNav && (
+            (showDocsNav || showSearchBar) && (
                 <div class={styles.docsNavBtnSearchContainer}>
-                    <button
-                        id="top-bar-docs-button"
-                        class:list={[styles.mobileNavButton, 'button-secondary']}
-                        type="button"
-                        data-toggle="collapse"
-                        data-target="#side-nav"
-                        aria-controls="side-nav"
-                        aria-expanded="false"
-                        aria-label="Toggle docs page navigation"
-                    >
-                        <span>Docs</span>
-                        <Icon name="collapseCategories" />
-                    </button>
+                    {showDocsNav && (
+                        <button
+                            id="top-bar-docs-button"
+                            class:list={[styles.mobileNavButton, 'button-secondary']}
+                            type="button"
+                            data-toggle="collapse"
+                            data-target="#side-nav"
+                            aria-controls="side-nav"
+                            aria-expanded="false"
+                            aria-label="Toggle docs page navigation"
+                        >
+                            <span>Docs</span>
+                            <Icon name="collapseCategories" />
+                        </button>
+                    )}
 
                     {showSearchBar && <Search client:load />}
                 </div>
             )
         }
 
-        <HeaderNav currentPath={pathname} items={topNavItems} allPaths={allPaths} apiPaths={apiPaths} client:load>
-            <li class:list={[styles.navItem, styles.buttonItem, 'darkModeItem']}>
-                <DarkModeToggle client:only />
-            </li>
-        </HeaderNav>
+        <HeaderNav currentPath={pathname} items={topNavItems} allPaths={allPaths} apiPaths={apiPaths} client:load />
     </div>
 </header>

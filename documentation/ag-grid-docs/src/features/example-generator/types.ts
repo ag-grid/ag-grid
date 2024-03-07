@@ -15,12 +15,14 @@ export interface GeneratedContents {
     scriptFiles: string[];
     styleFiles: string[];
     isEnterprise: boolean;
+    isIntegratedCharts: boolean;
     sourceFileList: string[];
     boilerPlateFiles: FileContents;
     providedExamples: FileContents;
     generatedFiles: FileContents;
     packageJson: Record<string, string>;
     extras?: string[];
+    supportedFrameworks?: InternalFramework[];
 }
 
 export type InternalFramework =

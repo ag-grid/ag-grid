@@ -228,17 +228,21 @@
         display: block;
     }
 
-    .ag-chart .ag-chart-tool-panel-button-enable .ag-chart-menu {
-        display: flex;
-        flex-direction: row;
-        top: 8px;
-        gap: 20px;
-        width: auto;
+    .ag-chart {
+        .ag-chart-tool-panel-button-enable, .ag-chart-menu-wrapper {
+            .ag-chart-menu {
+                display: flex;
+                flex-direction: row;
+                top: 8px;
+                gap: 20px;
+                width: auto;
 
-        @include ag.unthemed-rtl((
-            right: calc(var(--ag-cell-horizontal-padding) + var(--ag-grid-size) - 4px),
-            justify-content: right
-        ));
+                @include ag.unthemed-rtl((
+                    right: calc(var(--ag-cell-horizontal-padding) + var(--ag-grid-size) - 4px),
+                    justify-content: right
+                ));
+            }
+        }
     }
 
     .ag-chart-menu-close {
@@ -342,6 +346,13 @@
         }
     }
 
+    .ag-chart-menu-toolbar-button {
+        border: 0;
+        background-color: unset;
+        padding: 0 2px;
+        border-radius: 1px;
+    }
+
     .ag-chart-mini-thumbnail {
         border: 1px solid var(--ag-secondary-border-color);
         border-radius: 5px;
@@ -370,13 +381,20 @@
     .ag-charts-data-group-title-bar,
     .ag-charts-format-top-level-group-title-bar {
         border-top: var(--ag-borders-secondary) var(--ag-secondary-border-color);
+        position: relative;
     }
+
+    @include ag.keyboard-focus((ag-charts-settings-group-title-bar, ag-charts-data-group-title-bar, ag-charts-format-top-level-group-title-bar), -4px);
 
     .ag-charts-data-group-container {
         padding: calc(var(--ag-widget-container-vertical-padding) * 0.5) var(--ag-widget-container-horizontal-padding);
 
-        .ag-charts-data-group-item:not(.ag-charts-format-sub-level-group) {
+        .ag-charts-data-group-item:not(.ag-charts-format-sub-level-group):not(.ag-pill-select):not(.ag-select) {
             height: var(--ag-list-item-height);
+        }
+
+        .ag-charts-data-group-item.ag-picker-field {
+            margin-top: var(--ag-grid-size);
         }
 
         @include ag.list-item-hovered();

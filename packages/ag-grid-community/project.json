@@ -10,15 +10,25 @@
       "outputs": [],
       "dependsOn": ["build:types", "build:package", "build:umd", "build:copy-styles"]
     },
+    "build:updateWithCoreExports": {
+      "dependsOn": ["@ag-grid-community/core:build"],
+      "cache": true,
+      "command": "node updateMainTsWithCoreExports.js",
+      "options": {
+        "cwd": "packages/ag-grid-community"
+      }
+    },
     "build:umd": {
       "executor": "@nx/webpack:webpack",
+      "inputs": [],
+      "outputs": ["{projectRoot}/dist/ag-grid-community.js"],
       "options": {
         "webpackConfig": "packages/ag-grid-community/webpack.config.js",
         "outputPath":  "overridden in webpack config but required by nx",
         "outputFileName": "overridden in webpack config but required by nx"
       },
       "cache": true,
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build", "build:updateWithCoreExports"]
     },
     "build:copy-styles": {
       "dependsOn": [],
@@ -29,27 +39,17 @@
       }
     },
     "build:types": {
-      "executor": "@nx/js:tsc",
       "dependsOn": ["^build:types"],
-      "inputs": ["tsDefaults"],
-      "outputs": ["{options.outputPath}"],
+      "command": "npx gulp copy-from-module-source && cp main.d.ts.src dist/types/main.d.ts",
       "options": {
-        "outputPath": "packages/ag-grid-community/dist/types",
-        "main": "packages/ag-grid-community/src/main.ts",
-        "tsConfig": "packages/ag-grid-community/tsconfig.types.json",
-        "compiler": "tsc"
+        "cwd": "packages/ag-grid-community"
       },
-      "cache": true,
-      "configurations": {
-        "watch": {
-          "tsConfig": "packages/ag-grid-community/tsconfig.types.watch.json"
-        },
-        "production": {}
-      }
+      "cache": true
     },
     "build:package": {
       "executor": "@nx/esbuild:esbuild",
       "dependsOn": [
+        "build:updateWithCoreExports",
         "@ag-grid-community/core:build",
         "@ag-grid-community/client-side-row-model:build",
         "@ag-grid-community/csv-export:build",
@@ -85,17 +85,6 @@
         "production": {
           "sourcemap": false
         }
-      }
-    },
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
-    },
-    "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
-      "options": {
-        "jestConfig": "community-modules/jest.config.ts"
       }
     }
   },

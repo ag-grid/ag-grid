@@ -1,5 +1,5 @@
 const fs = require('fs');
-const coreExports = require('../../community-modules/core/dist/package/main.cjs.js');
+const coreExports = require('../../community-modules/core/dist/package/main.cjs');
 const {EOL} = require("os");
 
 const chartInterfaceExclusions = ['__FORCE_MODULE_DETECTION',

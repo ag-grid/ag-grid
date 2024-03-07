@@ -168,12 +168,12 @@ export const LicensePricing = () => {
 
                         <div className={styles.videoPrompt}>
                             <a
-                                href="https://www.youtube.com/watch?v=xacx_attYuo"
+                                href="https://www.youtube.com/watch?v=VPr__OKxH50"
                                 target="_blank"
                                 className={styles.thumbnail}
                             >
                                 <img
-                                    src="https://img.youtube.com/vi/xacx_attYuo/hqdefault.jpg"
+                                    src="https://img.youtube.com/vi/VPr__OKxH50/hqdefault.jpg"
                                     alt="AG Grid license explained video"
                                 />
                             </a>
@@ -181,7 +181,7 @@ export const LicensePricing = () => {
                             <div>
                                 <h3>Which licenses do I need?</h3>
                                 <p>
-                                    <a href="https://www.youtube.com/watch?v=xacx_attYuo" target="_blank">
+                                    <a href="https://www.youtube.com/watch?v=VPr__OKxH50" target="_blank">
                                         <span className="icon"></span>
                                         Watch our short explainer video
                                     </a>

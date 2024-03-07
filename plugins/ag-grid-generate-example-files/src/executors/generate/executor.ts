@@ -4,9 +4,9 @@ import fs from 'fs/promises';
 
 import { readFile, readJSONFile, writeFile } from '../../executors-utils';
 import gridVanillaSrcParser from './generator/transformation-scripts/grid-vanilla-src-parser';
-import { ExampleConfig, ExampleType, FRAMEWORKS, GeneratedContents } from './generator/types';
+import { ExampleConfig, ExampleType, FRAMEWORKS, GeneratedContents, ImportType, InternalFramework } from './generator/types';
 
-import { SOURCE_ENTRY_FILE_NAME } from './generator/constants';
+import { getEnterprisePackageName, SOURCE_ENTRY_FILE_NAME } from './generator/constants';
 import {
     getBoilerPlateFiles,
     getEntryFileName,
@@ -20,6 +20,7 @@ import { getStyleFiles } from './generator/utils/getStyleFiles';
 import { getOtherScriptFiles } from './generator/utils/getOtherScriptFiles';
 import { frameworkFilesGenerator } from './generator/utils/frameworkFilesGenerator';
 import { getPackageJson } from './generator/utils/getPackageJson';
+import { removeModuleRegistration } from './generator/transformation-scripts/parser-utils';
 
 export type ExecutorOptions = {
     mode: 'dev' | 'prod';
@@ -117,7 +118,18 @@ export async function generateFiles(options: ExecutorOptions) {
         gridOptionsTypes
     );
 
+    const isIntegratedCharts = typedBindings.imports.some((m) =>
+        m.module.includes('@ag-grid-enterprise/charts-enterprise')
+    );
+
     for (const internalFramework of FRAMEWORKS) {
+        if (exampleConfig.supportedFrameworks && !exampleConfig.supportedFrameworks.includes(internalFramework)) {
+            const result = {excluded: true} as any;
+            writeContents(options, 'packages', internalFramework, result);
+            writeContents(options, 'modules', internalFramework, result);
+            continue;
+        }
+
         const [otherScriptFiles, componentScriptFiles] = await getOtherScriptFiles({
             folderPath,
             sourceFileList,
@@ -135,7 +147,9 @@ export async function generateFiles(options: ExecutorOptions) {
         const mainFileName = getMainFileName(internalFramework)!;
         const provideFrameworkFiles = frameworkProvidedExamples[internalFramework];
 
-        for (const importType of ['modules', 'packages'] as const) {
+        const importTypes =
+            internalFramework === 'vanilla' ? (['packages'] as const) : (['modules', 'packages'] as const);
+        for (const importType of importTypes) {
             const packageJson = getPackageJson({
                 isEnterprise,
                 internalFramework,
@@ -146,36 +160,90 @@ export async function generateFiles(options: ExecutorOptions) {
                 ...exampleConfig,
                 ...(provideFrameworkFiles ? provideFrameworkFiles['exampleConfig.json'] : {}),
             };
-            const { files, scriptFiles } =
-                provideFrameworkFiles === undefined
-                    ? await getFrameworkFiles({
-                          entryFile,
-                          indexHtml,
-                          isEnterprise,
-                          bindings,
-                          typedBindings,
-                          componentScriptFiles,
-                          otherScriptFiles,
-                          ignoreDarkMode: false,
-                          isDev,
-                          importType,
-                          exampleConfig: frameworkExampleConfig,
-                      })
-                    : {
-                        files: {},
-                        // NOTE: Vanilla is the only framework where for provided examples, we need to include the entryfile
-                        scriptFiles: internalFramework === 'vanilla' ? [entryFileName] : []
-                    };
+
+            let files = {};
+            let scriptFiles = [];
+            let mergedStyleFiles = {...styleFiles};
+            if (provideFrameworkFiles === undefined) {
+                const result = await getFrameworkFiles({
+                    entryFile,
+                    indexHtml,
+                    isEnterprise,
+                    bindings,
+                    typedBindings,
+                    componentScriptFiles,
+                    otherScriptFiles,
+                    ignoreDarkMode: false,
+                    isDev,
+                    importType,
+                    exampleConfig: frameworkExampleConfig,
+                });
+                files = result.files;
+                scriptFiles = result.scriptFiles;
+            } else {
+                if (internalFramework === 'vanilla') {
+                    // NOTE: Vanilla provided examples, we need to include the entryfile
+                    scriptFiles = [entryFileName];
+                }
+                if (internalFramework === 'vue3' || internalFramework === 'vue') {
+                    // Vue provided examples, we need to include the script files
+                    scriptFiles = Object.keys(otherScriptFiles).filter((fileName) => {
+                        return fileName.endsWith('.js') && fileName !== entryFileName;
+                    });
+                }
+
+                Object.keys(provideFrameworkFiles).forEach((fileName) => {
+                    if (fileName.endsWith('.css')) {
+                        mergedStyleFiles[fileName] = provideFrameworkFiles[fileName];
+                    }
+                }); 
+
+                let entryFileContent = provideFrameworkFiles[entryFileName];
+                if (entryFileContent && importType === 'packages') {
+                    const isEnterprise = entryFileContent.includes('-enterprise');
+
+                    // Remove the original import statements that contain modules
+                    entryFileContent = entryFileContent
+                        .replace(/import ((.|\n)[^}]*?\wModule(.|\n)*?)from.*\n/g, '')
+                        // Remove ModuleRegistry import if by itself
+                        .replace(
+                            /import ((.|\n)[^{,]*?ModuleRegistry(.|\n)*?)from.*\n/g,
+                            ''
+                        )
+                        // Remove if ModuleRegistry is with other imports
+                        .replace(/ModuleRegistry(,)?/g, '');
+
+                    entryFileContent = removeModuleRegistration(entryFileContent);
+
+                    entryFileContent = entryFileContent
+                        .replace(/@ag-grid-community\/core/g, 'ag-grid-community')
+                        .replace(/@ag-grid-community\/react/g, 'ag-grid-react')
+                        .replace(/@ag-grid-community\/angular/g, 'ag-grid-angular')
+                        .replace(/@ag-grid-community\/vue/g, 'ag-grid-vue')
+                        .replace(/@ag-grid-community\/vue3/g, 'ag-grid-vue3')
+                        .replace(/@ag-grid-community\/styles/g, 'ag-grid-community/styles');
+
+                    if (isEnterprise) {
+                        entryFileContent = entryFileContent.replace(
+                            "from 'ag-grid-community';",
+                            `from 'ag-grid-community';\nimport '${getEnterprisePackageName()}';\n`
+                        );
+                    }
+
+                    provideFrameworkFiles[entryFileName] = entryFileContent;                       
+                }
+            }
 
             const result: GeneratedContents = {
                 isEnterprise,
+                isIntegratedCharts,
                 entryFileName,
                 mainFileName,
                 scriptFiles: scriptFiles!,
-                styleFiles: Object.keys(styleFiles),
+                styleFiles: Object.keys(mergedStyleFiles),
                 sourceFileList,
                 // Replace files with provided examples
-                files: { ...styleFiles, ...files, ...provideFrameworkFiles },
+                files: { ...mergedStyleFiles, ...files, ...provideFrameworkFiles },
                 // Files without provided examples
                 generatedFiles: files,
                 boilerPlateFiles,
@@ -184,18 +252,22 @@ export async function generateFiles(options: ExecutorOptions) {
                 ...frameworkExampleConfig,
             };
 
-            const outputPath = path.join(options.outputPath, importType, internalFramework, 'contents.json');
-            await writeFile(outputPath, JSON.stringify(result));
-
-            for (const name in result.generatedFiles) {
-                if (typeof result.generatedFiles[name] !== 'string') {
-                    throw new Error(`${outputPath}: non-string file content`);
-                }
-            }
+            await writeContents(options, importType, internalFramework, result);
         }
     }
 }
 
+
+async function writeContents(options: ExecutorOptions, importType: ImportType, internalFramework: InternalFramework, result: GeneratedContents) {
+    const outputPath = path.join(options.outputPath, importType, internalFramework, 'contents.json');
+    await writeFile(outputPath, JSON.stringify(result));
+
+    for (const name in result.generatedFiles) {
+        if (typeof result.generatedFiles[name] !== 'string') {
+            throw new Error(`${outputPath}: non-string file content`);
+        }
+    }
+}
 //  node --inspect-brk ./plugins/ag-grid-generate-example-files/dist/src/executors/generate/executor.js
 // console.log('should generate')
 // generateFiles({

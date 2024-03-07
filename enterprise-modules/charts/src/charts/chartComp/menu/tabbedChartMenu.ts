@@ -12,7 +12,7 @@ import { ChartController } from "../chartController";
 import { ChartDataPanel } from "./data/chartDataPanel";
 import { FormatPanel } from "./format/formatPanel";
 import { ChartSettingsPanel } from "./settings/chartSettingsPanel";
-import { ChartTranslationService } from "../services/chartTranslationService";
+import { ChartTranslationKey, ChartTranslationService } from "../services/chartTranslationService";
 import { ChartOptionsService } from "../services/chartOptionsService";
 
 export class TabbedChartMenu extends Component {
@@ -46,7 +46,7 @@ export class TabbedChartMenu extends Component {
     @PostConstruct
     public init(): void {
         this.panels.forEach(panel => {
-            const panelType = panel.replace('chart', '').toLowerCase();
+            const panelType = panel.replace('chart', '').toLowerCase() as 'settings' | 'data' | 'format';
             const { comp, tab } = this.createTab(panel, panelType, this.getPanelClass(panelType));
 
             this.tabs.push(tab);
@@ -56,14 +56,16 @@ export class TabbedChartMenu extends Component {
         this.tabbedLayout = new TabbedLayout({
             items: this.tabs,
             cssClass: 'ag-chart-tabbed-menu',
-            keepScrollPosition: true
+            keepScrollPosition: true,
+            suppressFocusBodyOnOpen: true,
+            suppressTrapFocus: true
         });
         this.getContext().createBean(this.tabbedLayout);
     }
 
     private createTab(
         name: ChartMenuOptions,
-        title: string,
+        title: ChartTranslationKey,
         TabPanelClass: new (controller: ChartController, chartOptionsService: ChartOptionsService) => Component
     ): { comp: Component, tab: TabbedItem; } {
         const eWrapperDiv = document.createElement('div');
@@ -100,6 +102,10 @@ export class TabbedChartMenu extends Component {
 
     public getGui(): HTMLElement {
         return this.tabbedLayout && this.tabbedLayout.getGui();
+    }
+
+    public focusHeader(): void {
+        this.tabbedLayout?.focusHeader(true);
     }
 
     protected destroy(): void {

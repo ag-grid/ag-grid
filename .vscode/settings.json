@@ -32,7 +32,6 @@
         "**/.git": true,
         "**/.DS_Store": true,
         "**/node_modules": true,
-        "packages": true
     },
     "[scss]": {
         "editor.detectIndentation": false,
@@ -84,12 +83,28 @@
                         }
                     },
                     "noStyle": {
-                        "const": true,                        
+                        "const": true,
                         "description": "If true, the example will not include style attribute on the <div id='myGrid'> element."
                     },
                     "licenseKey": {
-                        "const": true,                        
+                        "const": true,
                         "description": "If true, the license manager will be included in the example."
+                    },
+                    "supportedFrameworks": {
+                        "type": "array",
+                        "description": "The frameworks that this example supports. Options are defined in .vscode/settings.json to match those supported in Extras.tsx",
+                        "items": {
+                            "type": "string",
+                            "enum": [
+                                "vanilla",
+                                "typescript",
+                                "reactFunctional",
+                                "reactFunctionalTs",
+                                "angular",
+                                "vue",
+                                "vue3",
+                            ],
+                        }
                     },
                 }
             }

@@ -5,30 +5,20 @@ title: "Row Pinning"
 Pinned rows appear either above or below the normal rows of a table.
 This feature in other grids is also known as **Frozen Rows** or **Floating Rows**.
 
-To put pinned rows into your grid, set `pinnedTopRowData` or `pinnedBottomRowData`
-in the same way as you would set normal data into `rowData`.
-After the grid is created, you can update the pinned rows by calling `api.setGridOption('pinnedTopRowData', rows)`
-and `api.setGridOption('pinnedBottomRowData', rows)`.
+{% gridExampleRunner title="Simple Tow Pinning" name="simple-pinning"  exampleHeight=580 /%}
+
+Set Pinned Rows using grid attributes `pinnedTopRowData` and `pinnedBottomRowData`.
+
+{% if isFramework("javascript") %}
+Update the pinned rows using `api.setGridOption('pinnedTopRowData', rows)` and `api.setGridOption('pinnedBottomRowData', rows)`.
+{% /if %}
 
 {% apiDocumentation source="grid-options/properties.json" section="rowPinning" names=["pinnedTopRowData", "pinnedBottomRowData"] /%}
 
-## Cell Editing
+## Cell Components
 
-Cell editing can take place as normal on pinned rows.
-
-## Cell Rendering
-
-Cell rendering can take place as normal on pinned rows. If you want to use a different
-Cell Renderer for pinned rows vs normal rows, use `colDef.cellRendererSelector` to specify
-different Cell Renderers for different rows.
-
-{% apiDocumentation source="column-properties/properties.json" section="styling" names=["cellRendererSelector"] /%}
-
-## Example
-
-The example below shows pinned rows. Select the number of rows you want to pin at the top and the bottom using the selection above the grid.
-
-In this example we're using Components to render custom pinned row values for Athlete and Age (colour blue and italics respectively).
+Cell Components are shared between Pinned and non-Pinned rows. To have different Cell Components
+for Pinned vs non-Pinned, use a `cellRendererSelector`.
 
 {% gridExampleRunner title="Row Pinning" name="row-pinning"  exampleHeight=580 /%}
 

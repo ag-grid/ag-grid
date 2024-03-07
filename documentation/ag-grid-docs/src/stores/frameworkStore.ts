@@ -45,6 +45,13 @@ export const setInternalFramework = (internalFramework: InternalFramework) => {
 };
 
 /**
+ * Set import type
+ */
+export const setImportType = (importType: ImportType) => {
+    $frameworkContext.setKey('importType', importType);
+};
+
+/**
  * Get framework context key converting from localstorage string to
  * boolean value
  */

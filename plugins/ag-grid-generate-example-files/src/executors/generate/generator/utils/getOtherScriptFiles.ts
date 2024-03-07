@@ -18,7 +18,10 @@ const getOtherTsGeneratedFiles = async ({
     const otherTsFiles = sourceFileList
         .filter((fileName) => fileName.endsWith('.ts'))
         // Exclude source entry file, as it is used to generate framework entry file
-        .filter((fileName) => fileName !== SOURCE_ENTRY_FILE_NAME);
+        .filter((fileName) => fileName !== SOURCE_ENTRY_FILE_NAME)
+        // Exclude angular and react functional ts files as they will be handled separately
+        // We do let _typescript files through as they are used for vanilla and need to be readAsJsFile
+        .filter((fileName) => !['angular', 'reactFunctionalTs'].some(framework => fileName.includes('_'+ framework)));
 
     const tsFileContents = await getFileList({
         folderPath,
@@ -33,7 +36,13 @@ const getOtherTsGeneratedFiles = async ({
             generatedFiles[tsxFileName] = srcFile;
         } else if (transformTsFileExt === undefined) {
             generatedFiles[tsFileName] = srcFile;
-        } else {
+        } else if(transformTsFileExt === '.js') {
+            let jsFileName = tsFileName.replace('.ts', transformTsFileExt);
+            // For provided typescript component files, automatically generate vanilla js files
+            jsFileName = jsFileName.replace('_typescript', '_vanilla');
+            generatedFiles[jsFileName] = readAsJsFile(srcFile);
+        }
+        else {
             const jsFileName = tsFileName.replace('.ts', transformTsFileExt);
             generatedFiles[jsFileName] = readAsJsFile(srcFile);
         }
@@ -49,10 +58,59 @@ const getOtherJsFiles = ({
     folderPath: string;
     sourceFileList: string[];
 }): Promise<FileContents> => {
-    const otherJsFiles = sourceFileList.filter((fileName) => fileName.endsWith('.js'));
+    const otherJsFiles = sourceFileList.filter((fileName) => fileName.endsWith('.js') && !fileName.includes('_vue'));
     return getFileList({
         folderPath,
         fileList: otherJsFiles,
+    });
+};
+
+/**
+ * 
+ * @param file Get the suffix for the file based on the framework i.e colourCellRenderer_vue.js
+ * @param framework 
+ * @returns 
+ */
+const getComponentSuffix = (file: string, framework: InternalFramework) => {
+    if(framework === 'vue3') {
+        // Let vue3 share vue files
+        if(file.includes('_vue.' )){
+            return '_vue'
+        };
+        if(file.includes('_vue3.' )){
+            return '_vue3'
+        }
+    }
+    else if(file.includes('_' + framework + '.')){
+        return '_' + framework;
+    }
+    return undefined;
+};
+
+const isValidFrameworkFile = (internalFramework: InternalFramework, framework: InternalFramework) => {
+    if(internalFramework === framework){
+        return true;
+    }
+    if(internalFramework === 'vue3' && framework === 'vue'){
+        // Let vue3 share vue files
+        return true;
+    }
+    return false;
+};
+
+const getComponentFiles = ({
+    folderPath,
+    sourceFileList,
+    internalFramework,
+}: {
+    folderPath: string;
+    sourceFileList: string[];
+    internalFramework: InternalFramework;
+}): Promise<FileContents> => {
+    const frameworkComponents = sourceFileList.filter((fileName) => getComponentSuffix(fileName, internalFramework) !== undefined);
+    return getFileList({
+        folderPath,
+        fileList: frameworkComponents,
     });
 };
 
@@ -65,7 +123,7 @@ export const getOtherScriptFiles = async ({
     folderPath: string;
     sourceFileList: string[];
     transformTsFileExt?: TransformTsFileExt;
-    internalFramework: string;
+    internalFramework: InternalFramework;
 }) => {
     const otherTsGeneratedFileContents = await getOtherTsGeneratedFiles({
         folderPath,
@@ -76,18 +134,26 @@ export const getOtherScriptFiles = async ({
         folderPath,
         sourceFileList,
     });
+    const componentFiles = await getComponentFiles({
+        folderPath,
+        sourceFileList,
+        internalFramework,
+    });
 
-    const contents = Object.assign({}, otherTsGeneratedFileContents, otherJsFileContents) as FileContents;
-    const frameworkComponentSuffix = (framework: InternalFramework) => framework === 'vue' || framework === 'vue3' ? 'Vue' : ''; 
+    const contents = { ...otherTsGeneratedFileContents, ...otherJsFileContents, ...componentFiles } as FileContents;
+    const frameworkComponentSuffix = (framework: InternalFramework) =>
+        framework === 'vue' || framework === 'vue3' ? 'Vue' : '';
     const filteredToFramework = {};
-    const others = {}
+    const others = {};
     Object.entries(contents).forEach(([file, content]) => {
         let isFrameworkFile = false;
         FRAMEWORKS.forEach((framework) => {
-            const suffix = '_' + framework;
-            if (file.includes(suffix)) {
-                if(internalFramework === framework) {
+            const suffix = getComponentSuffix(file, framework);
+            if (suffix !== undefined) {
+                if (isValidFrameworkFile(internalFramework, framework)) {
                     filteredToFramework[file.replace(suffix, frameworkComponentSuffix(framework))] = content;
+                }else{
+                    // Is a framework file, but not the current framework so we don't want to include it
                 }
                 isFrameworkFile = true;
             }

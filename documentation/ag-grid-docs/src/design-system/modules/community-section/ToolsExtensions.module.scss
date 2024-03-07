@@ -1,0 +1,145 @@
+@use '../../core/' as *;
+
+.container {
+    display: flex;
+    gap: $spacing-size-8;
+}
+
+.listContainer {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-4;
+}
+
+.linkWrapper {
+    all: unset;
+    cursor: pointer;
+}
+
+.itemContainer {
+    display: flex;
+    background-color: var(--color-util-gray-200);
+    border: 1px solid var(--color-border-secondary);
+    border-radius: var(--radius-2xl);
+}
+
+.image,
+.content {
+    img {
+        width: 100%;
+        object-fit: cover; 
+        border-radius: var(--radius-2xl);
+    }
+}
+
+.image {
+    justify-content: center;
+    padding: $spacing-size-4;
+    flex: 0 1 33%;
+}
+
+.content {
+    flex: 0 1 67%;
+    padding: 1rem; // Padding inside the content area
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; // Aligns header and description at the top and tags at the bottom
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: bold;
+    margin-bottom: 0.5rem; // Space between header and description
+}
+
+.logoContainer {
+    display: flex;
+    justify-content: space-between;
+    gap: $spacing-size-6;
+}
+
+.frameworkLogo {
+    width: 24px;
+    height: 24px;
+}
+
+.description {
+    flex-grow: 1; // Allows description to fill available space, pushing tags to the bottom
+    margin-right: $spacing-size-8;
+}
+
+.tagContainer {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $spacing-size-4;
+}
+
+.tag {
+    display: flex;
+    align-items: center;
+    background: transparent; 
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-2xl);
+    padding: $spacing-size-1 $spacing-size-2; 
+    font-size: var(--text-fs-xs); 
+}
+
+.filterPanel {
+    border-radius: var(--radius-2xl);
+    border: 1px solid var(--color-border-primary);
+    padding: $spacing-size-4;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.title {
+    font-weight: var(--text-bold);
+    font-size: var(--text-fs-base);
+}
+
+.img {
+    width: 24px;
+    height: 24px;
+}
+
+.filterButtonContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: $spacing-size-4;
+
+    .filterButton {
+        background: transparent;
+        background: none;
+        border: none;
+        text-align: start;
+        font-weight: 400;
+        padding-left: 0px;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        color: var(---color-util-gray-200);
+
+        img {
+            width: 32px;
+            height: 32px;
+            margin-right: 12px;
+            padding: 4px;
+            object-fit: contain;
+        }
+
+        &[active='true'] {
+            color: var(--color-button-tertiary-fg);
+        }
+    }
+}
+
+.divider {
+
+}

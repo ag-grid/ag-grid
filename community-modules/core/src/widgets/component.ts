@@ -12,10 +12,10 @@ import {
     setDisplayed
 } from '../utils/dom';
 import { getFunctionName } from '../utils/function';
-import { CustomTooltipFeature } from "./customTooltipFeature";
 import { ITooltipParams } from "../rendering/tooltipComponent";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { CssClassManager } from "../rendering/cssClassManager";
+import { TooltipFeature } from "./tooltipFeature";
 
 const compIdSequence = new NumberSequence();
 
@@ -48,8 +48,8 @@ export class Component extends BeanStub {
     private cssClassManager: CssClassManager;
 
     protected usingBrowserTooltips: boolean;
-    private tooltipText: string | undefined;
-    private tooltipFeature: CustomTooltipFeature | undefined;
+    private tooltipText: string | null | undefined;
+    private tooltipFeature: TooltipFeature | undefined;
 
     constructor(template?: string) {
         super();
@@ -78,35 +78,21 @@ export class Component extends BeanStub {
     }
 
     public setTooltip(newTooltipText?: string | null, showDelayOverride?: number, hideDelayOverride?: number): void {
+        const getTooltipValue = () => this.tooltipText;
 
-        const removeTooltip = () => {
-            if (this.usingBrowserTooltips) {
-                this.getGui().removeAttribute('title');
-            } else {
-                this.tooltipFeature = this.destroyBean(this.tooltipFeature);
-            }
-        };
+        if (!this.tooltipFeature && newTooltipText != null) {
+            this.tooltipFeature = this.createBean(new TooltipFeature({
+                getTooltipValue,
+                getGui: () => this.getGui(),
+                getLocation: () => 'UNKNOWN',
+                getTooltipShowDelayOverride: showDelayOverride != null ? (() => showDelayOverride) : undefined,
+                getTooltipHideDelayOverride: hideDelayOverride != null ? (() => hideDelayOverride) : undefined
+            }));
+        }
 
-        const addTooltip = () => {
-            if (this.usingBrowserTooltips) {
-                this.getGui().setAttribute('title', this.tooltipText!);
-            } else {
-                this.tooltipFeature = this.createBean(new CustomTooltipFeature(this, showDelayOverride, hideDelayOverride));
-            }
-        };
-
-        if (this.tooltipText != newTooltipText) {
-            if (this.tooltipText) {
-                removeTooltip();
-            }
-
-            if (newTooltipText != null) {
-                this.tooltipText = newTooltipText;
-
-                if (this.tooltipText) {
-                    addTooltip();
-                }
-            }
+        if (this.tooltipFeature && this.tooltipText !== newTooltipText) {
+            this.tooltipText = newTooltipText;
+            this.tooltipFeature.refreshToolTip();
         }
     }
 
@@ -350,10 +336,6 @@ export class Component extends BeanStub {
     }
 
     protected destroy(): void {
-        if (this.tooltipFeature) {
-            this.tooltipFeature = this.destroyBean(this.tooltipFeature);
-        }
-
         if (this.parentComponent) {
             this.parentComponent = undefined;
         }

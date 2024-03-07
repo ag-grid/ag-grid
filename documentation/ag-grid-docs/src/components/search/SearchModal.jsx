@@ -69,8 +69,18 @@ const Modal = ({ isOpen, closeModal, children }) => {
     };
 
     return (
-        <div className={styles.backdrop + ' ' + (isOpen ? styles.backdropEnter : styles.backdropExit)} onClick={closeModal} role="button" tabIndex="0" onAnimationEnd={onAnimationEnd}>
-            <div className={styles.container} onClick={evt => evt.stopPropagation()} role="button" tabIndex="0">
+        <div
+            className={`${styles.backdrop} ${(isOpen ? styles.backdropEnter : styles.backdropExit)}`}
+            onAnimationEnd={onAnimationEnd}
+            onKeyDown={evt => evt.key === 'Tab' && evt.preventDefault()}
+            onClick={closeModal}
+        >
+            <div
+                className={styles.container}
+                onClick={evt => evt.stopPropagation()}
+                role="presentation"
+                aria-modal="true"
+            >
                 {children}
             </div>
         </div>
@@ -91,64 +101,63 @@ export default ({ currentFramework, closeModal, isOpen }) => {
 
 const SearchComponent = ({ closeModal }) => {
     const { status } = useInstantSearch();
-    /**
-     * Note for whoever...
-     * status === 'loading' means the search is loading
-     * status === 'stalled' means the search is loading, but slower than expected
-     * status === 'error'   means the search failed
-     * status === 'idle'    means the search is done
-     * 
-     * currently none of this has been considered, and probably should be, so I have left it here.
-     */
-    const {
-        query,
-    } = useSearchBox();
-
+    const { query } = useSearchBox();
     const { hits } = useHits();
     const structuredHits = useMemo(() => getAllCrumbs(hits), [hits]);
     const flattenedHits = useMemo(() => flattenStructure(structuredHits), [structuredHits]);
 
+    const [selectedHit, setSelectedHit] = useState(0);
     useEffect(() => {
         // when hits change, also reset the selected hit
         setSelectedHit(0);
     }, [hits]);
 
-    const [selectedHit, setSelectedHit] = useState(0);
+    const selectHit = (idx) => {
+        setSelectedHit(idx);
+
+        let block = 'nearest';
+        if (idx === 0) {
+            block = 'end';
+        } else if (idx === hits.length - 1) {
+            block = 'start';
+        }
+
+        const hitEl = document.querySelector(`[data-hit-index="${idx}"]`);
+        if (hitEl) {
+            hitEl.scrollIntoView({ behavior: 'smooth', block });
+        }
+    }
 
     const onKeyDown = (evt) => {
-        switch (evt.key) {
-            case 'PageUp':
-                const topIdx = 0;
-                setSelectedHit(topIdx);
-                document.querySelector(`[data-hit-index="${topIdx}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                break;
-            case 'PageDown':
-                const bottomIdx = hits.length - 1;
-                setSelectedHit(bottomIdx);
-                document.querySelector(`[data-hit-index="${bottomIdx}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                break;
-            case 'ArrowUp':
-                const belowIdx = selectedHit - 1 >= 0 ? selectedHit - 1 : hits.length - 1;
-                setSelectedHit(belowIdx);
-                // small hack, if index === 0, we force scroll to go a bit further by specifying end, allowing the breadcrumb to scroll in too
-                document.querySelector(`[data-hit-index="${belowIdx}"]`)?.scrollIntoView({ behavior: 'smooth', block: belowIdx === 0 ? 'end' : 'nearest' });
-                break;
-            case 'ArrowDown':
-                const aboveIdx = (selectedHit + 1) % hits.length;
-                setSelectedHit(aboveIdx);
-                // small hack, if index === 0, we force scroll to go a bit further by specifying end, allowing the breadcrumb to scroll in too
-                document.querySelector(`[data-hit-index="${aboveIdx}"]`)?.scrollIntoView({ behavior: 'smooth', block: aboveIdx === 0 ? 'end' : 'nearest' });
-                break;
-            case 'Enter':
-                window.location = (flattenedHits[selectedHit].path);
-                // close modal, if link was same page we don't want to keep the modal open.
-                closeModal();
+        if (hits.length === 0) {
+            return;
         }
+
+        if (evt.key === 'Enter') {
+            window.location = (flattenedHits[selectedHit].path);
+            // close modal, if link was same page we don't want to keep the modal open.
+            closeModal();
+            return;
+        }
+
+        const newIdx = {
+            'PageUp': 0,
+            'PageDown': hits.length - 1,
+            'ArrowUp': (selectedHit - 1 + hits.length) % hits.length,
+            'ArrowDown': (selectedHit + 1) % hits.length,
+            'Tab': (selectedHit + (evt.shiftKey ? -1 : 1) + hits.length) % hits.length,
+        }[evt.key];
+
+        if (newIdx === undefined) {
+            return;
+        }
+        evt.preventDefault();
+        selectHit(newIdx);
     }
 
     return (
         <div onKeyDown={onKeyDown}>
-            <SearchBox />
+            <SearchBox selectedHit={selectedHit} />
             {
                 status === 'idle' && !!query.length && <>
                     <Hits

@@ -330,6 +330,10 @@
         color: var(--ag-foreground-color);
     }
 
+    .ag-pill-select .ag-column-drop {
+        min-height: unset;
+    }
+
     .ag-status-bar {
         font-weight: normal;
     }

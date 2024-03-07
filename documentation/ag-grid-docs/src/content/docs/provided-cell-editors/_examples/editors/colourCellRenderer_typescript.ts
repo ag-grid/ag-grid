@@ -10,7 +10,7 @@ export class ColourCellRenderer implements ICellRendererComp {
 
         const { value } = params;
         const colorSpan = document.createElement('span');
-        const text = document.createTextNode(value ?? '');
+        const text = document.createTextNode(value || '');
 
         if (value != null) {
             colorSpan.style.borderLeft = '10px solid ' + params.value;

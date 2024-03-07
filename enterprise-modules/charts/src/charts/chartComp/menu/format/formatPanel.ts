@@ -15,9 +15,11 @@ import { PolarAxisPanel } from "./axis/polarAxisPanel";
 import { NavigatorPanel } from "./navigator/navigatorPanel";
 import { ChartPanel } from "./chart/chartPanel";
 import { ChartOptionsService } from "../../services/chartOptionsService";
+import { CrosshairPanel } from './crosshair/crosshairPanel';
 import { SeriesPanel } from "./series/seriesPanel";
 import { ChartSeriesType, getSeriesType, hasGradientLegend, isPolar } from "../../utils/seriesTypeMapper";
 import { GradientLegendPanel } from './legend/gradientLegendPanel';
+import { ZoomPanel } from './zoom/zoomPanel';
 
 export interface FormatPanelOptions {
     chartController: ChartController,
@@ -33,7 +35,9 @@ const DefaultFormatPanelDef: ChartFormatPanel = {
         { type: 'series' },
         { type: 'axis' },
         { type: 'navigator' },
+        { type: 'zoom' },
         { type: 'animation' },
+        { type: 'crosshair' },
     ]
 };
 
@@ -98,8 +102,12 @@ export class FormatPanel extends Component {
                 this.addComponent(new SeriesPanel(opts));
             } else if (group === 'navigator') {
                 this.addComponent(new NavigatorPanel(opts));
+            } else if (group === 'zoom') {
+                this.addComponent(new ZoomPanel(opts));
             } else if (group === 'animation') {
                 this.addComponent(new AnimationPanel(opts));
+            } else if (group === 'crosshair') {
+                this.addComponent(new CrosshairPanel(opts));
             } else {
                 console.warn(`AG Grid: invalid charts format panel group name supplied: '${groupDef.type}'`);
             }
@@ -118,33 +126,33 @@ export class FormatPanel extends Component {
         // Determine whether the given panel group is shown depending on the active series type
 
         // These panel groups are always shown regardless of series type
-        const commonGroupPanels = ['chart', 'legend', 'series', 'animation'];
+        const commonGroupPanels = ['chart', 'legend', 'series', 'zoom', 'animation'];
         if (commonGroupPanels.includes(group)) {
             return true;
         }
 
         // These panel groups depend on the selected series type
         const extendedGroupPanels: { [T in ChartSeriesType]?: Array<ChartFormatPanelGroup> } = {
-            'bar': ['axis', 'navigator'],
-            'column': ['axis', 'navigator'],
-            'line': ['axis', 'navigator'],
-            'area': ['axis', 'navigator'],
-            'scatter': ['axis', 'navigator'],
-            'bubble': ['axis', 'navigator'],
-            'histogram': ['axis', 'navigator'],
-            'cartesian': ['axis', 'navigator'],
+            'bar': ['axis', 'navigator', 'crosshair'],
+            'column': ['axis', 'navigator', 'crosshair'],
+            'line': ['axis', 'navigator', 'crosshair'],
+            'area': ['axis', 'navigator', 'crosshair'],
+            'scatter': ['axis', 'navigator', 'crosshair'],
+            'bubble': ['axis', 'navigator', 'crosshair'],
+            'histogram': ['axis', 'navigator', 'crosshair'],
+            'cartesian': ['axis', 'navigator', 'crosshair'],
             'radial-column': ['axis'],
             'radial-bar': ['axis'],
             'radar-line': ['axis'],
             'radar-area': ['axis'],
             'nightingale': ['axis'],
-            'range-bar': ['axis', 'navigator'],
-            'range-area': ['axis', 'navigator'],
+            'range-bar': ['axis', 'navigator', 'crosshair'],
+            'range-area': ['axis', 'navigator', 'crosshair'],
             'treemap': [],
             'sunburst': [],
             'heatmap': ['axis'],
-            'waterfall': ['axis', 'navigator'],
-            'box-plot': ['axis', 'navigator'],
+            'waterfall': ['axis', 'navigator', 'crosshair'],
+            'box-plot': ['axis', 'navigator', 'crosshair'],
         };
         return extendedGroupPanels[seriesType]?.includes(group) ?? false;
     }

@@ -52,15 +52,12 @@ Setting delays will have no effect if using Browser Tooltips as Browser Tooltips
 
 ## Blank Values
 
-The grid will not show a tooltip if there is no value to show. This is the default behaviour as the simplest form of tooltip will show the value it is provided without any additional information. In this case, it would be strange to show the tooltip with no value as that would show as a blank box.
+Tooltips are not shown for the missing values `undefined`, `null` and `""` (empty String). To display tooltips for missing values, provide a `tooltipValueGetter` to return something that is not empty.
 
-This can be a problem if you wish a tooltip to display for blank values. For example, you might want to display a tooltip saying "This cell has no value" instead. To achieve this, you should utilise `tooltipValueGetter` to return something different when the value is blank.
-
-The example below shows both displaying and not displaying the tooltip for blank values. Note the following:
-
-* The first three rows have athlete values of `undefined`, `null` and `''` (empty string).
-* The first Column uses `tooltipField` for the tooltip field. When there is no value (the first three rows) no tooltip is displayed.
-* The second Column uses `tooltipValueGetter` for the tooltip field. The value getter will return a value (an object) regardless of whether the value to display is empty or not. This ensures the tooltip gets displayed even when no cell value is present.
+In the example below:
+* The data has missign values `undefined`, `null` and `''` (empty String) as the first three rows.
+* Column A uses `tooltipField`, no tooltip is shown.
+* Column B uses `tooltipValueGetter` to return an object, tooltip is shown.
 
 {% gridExampleRunner title="Blank Values" name="blank-values" /%}
 

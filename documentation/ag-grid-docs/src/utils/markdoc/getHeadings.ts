@@ -1,13 +1,15 @@
 import { type Framework } from '@ag-grid-types';
-import Markdoc, { type ConfigType, type Node } from '@markdoc/markdoc';
+import { getPropertiesFromSource } from '@components/reference-documentation/getPropertiesFromSource';
+import { getAllSectionHeadingLinks } from '@components/reference-documentation/interface-helpers';
+import Markdoc, { type Node, type RenderableTreeNode } from '@markdoc/markdoc';
 import { type MarkdownHeading } from 'astro';
 import Slugger from 'github-slugger';
 
-import markdocConfig from '../../../markdoc.config';
 import { transformMarkdoc } from './transformMarkdoc';
 
 const TABS_TAG_NAME = 'tabs';
 const TAB_ITEM_TAG_NAME = 'tabItem';
+const API_DOC_HEADINGS_ATTR_NAME = '__apiDocumentationHeadings';
 
 function isTabsTag({ tag, type }: Node) {
     return type === 'tag' && tag === TABS_TAG_NAME;
@@ -28,6 +30,44 @@ function isHeadingTag(node: Node) {
         node.attributes.__collectHeading === true &&
         typeof node.attributes.level === 'number'
     );
+}
+
+// Only show ApiDocumentation headings if it's not showing a section
+function isApiDocsHeadingNode(node: Node) {
+    return node.tag === 'apiDocumentation' && !node.attributes.section;
+}
+
+function hasApiDocsHeadingAttribute(node: Node) {
+    return node.attributes[API_DOC_HEADINGS_ATTR_NAME];
+}
+
+function addAttributeToNode({ node, name, value }: { node: Node; name: string; value: any }) {
+    node.attributes[name] = value;
+    node.annotations.push({
+        type: 'attribute',
+        name,
+        value,
+    });
+}
+
+function createHeadingRenderableNode({
+    level,
+    id,
+    text,
+}: {
+    level: number;
+    id: string;
+    text: string;
+}): RenderableTreeNode {
+    return {
+        $$mdtype: 'Tag',
+        attributes: {
+            id,
+            __collectHeading: true,
+            level,
+        },
+        children: [text],
+    };
 }
 
 /**
@@ -88,11 +128,39 @@ function addTabsToHeadings({
     return headingsClone;
 }
 
+async function transformRenderTreeWithReferenceHeadings(renderTree: RenderableTreeNode) {
+    const childrenPromises = renderTree!.children.map(async (node) => {
+        if (hasApiDocsHeadingAttribute(node)) {
+            const { source, sources, config = {} } = node.attributes;
+
+            const { propertiesFromFiles } = await getPropertiesFromSource({
+                source,
+                sources,
+            });
+
+            const headingLinks = getAllSectionHeadingLinks({
+                propertiesFromFiles,
+                suppressSort: config.suppressSort,
+            });
+            const headingNodes = headingLinks.map(({ title, id }) => {
+                return createHeadingRenderableNode({ level: 2, id, text: title });
+            });
+
+            return headingNodes;
+        } else {
+            return node;
+        }
+    });
+    const children = (await Promise.all(childrenPromises)).flat();
+
+    renderTree!.children = children;
+}
+
 /**
  * Get headings within markdoc content, resolving headings shown based on framework and adding
  * tab headings
  */
-export function getHeadings({
+export async function getHeadings({
     title,
     markdocContent,
     framework,
@@ -102,11 +170,21 @@ export function getHeadings({
     markdocContent: string;
     framework: Framework;
     getTabItemSlug: (id: string) => string;
-}): MarkdownHeading[] {
-    const { ast, renderTree } = transformMarkdoc({ framework, markdocContent });
+}): Promise<MarkdownHeading[]> {
+    const transformAst = (ast: Node) => {
+        ast.children = ast.children.map((node) => {
+            if (isApiDocsHeadingNode(node)) {
+                addAttributeToNode({ node, name: API_DOC_HEADINGS_ATTR_NAME, value: true });
+            }
+            return node;
+        });
+    };
+    const { ast, renderTree } = transformMarkdoc({ framework, markdocContent, transformAst });
     if (!renderTree) {
         return [];
     }
+
+    await transformRenderTreeWithReferenceHeadings(renderTree);
 
     const renderTreeHeadings = renderTree['children']?.filter(isHeadingTag).map((node) => {
         const { id: slug, level: depth } = node.attributes;

@@ -11,6 +11,7 @@ import {
 } from './grid-vanilla-to-vue-common';
 import {
     addEnterprisePackage,
+    addLicenseManager,
     convertFunctionToConstProperty,
     getActiveTheme,
     getFunctionName,
@@ -251,9 +252,7 @@ function getModuleImports(
         "import { AgGridVue } from '@ag-grid-community/vue3';",
     ];
 
-    if (exampleConfig.licenseKey) {
-        imports.push("import { LicenseManager } from '@ag-grid-enterprise/core';");
-    }
+    addLicenseManager(imports, exampleConfig, false);
 
     imports.push("import '@ag-grid-community/styles/ag-grid.css';");
     // to account for the (rare) example that has more than one class...just default to quartz if it does
@@ -268,6 +267,15 @@ function getModuleImports(
 
     if (componentFileNames) {
         imports.push(...componentFileNames.map((componentFileName) => getImport(componentFileName, 'Vue', '')));
+    }
+
+    if (bindings.moduleRegistration) {
+        bindings.imports.forEach((importStatement) => {
+            if(importStatement.imports.some(m => m.includes('Module'))){
+                imports.push(`import { ${importStatement.imports.join(', ')} } from ${importStatement.module};`)
+            }
+        })
+        imports.push(bindings.moduleRegistration);
     }
 
     return imports;
@@ -287,9 +295,7 @@ function getPackageImports(
     ];
 
     addEnterprisePackage(imports, bindings);
-    if (exampleConfig.licenseKey) {
-        imports.push("import { LicenseManager } from 'ag-grid-enterprise';");
-    }
+    addLicenseManager(imports, exampleConfig, true);
 
     imports.push("import 'ag-grid-community/styles/ag-grid.css';");
 

@@ -1,12 +1,8 @@
 import {
     _,
-    AgEvent,
     AgPanel,
     AgPromise,
     Autowired,
-    CHART_TOOL_PANEL_ALLOW_LIST,
-    CHART_TOOL_PANEL_MENU_OPTIONS,
-    CHART_TOOLBAR_ALLOW_LIST,
     ChartCreated,
     ChartMenuOptions,
     ChartToolPanelMenuOptions,
@@ -14,52 +10,68 @@ import {
     Events,
     GetChartToolbarItemsParams,
     PostConstruct,
-    RefSelector,
-    WithoutGridCommon
+    WithoutGridCommon,
+    ChartToolPanelName
 } from "@ag-grid-community/core";
 
 import { TabbedChartMenu } from "./tabbedChartMenu";
 import { ChartController } from "../chartController";
-import { ChartTranslationService } from "../services/chartTranslationService";
 import { ChartOptionsService } from "../services/chartOptionsService";
 import { ExtraPaddingDirection } from "../chartProxies/chartProxy";
+import { ChartMenuListFactory } from "./chartMenuList";
+import { ChartToolbar } from "./chartToolbar";
+import { ChartMenuService } from "../services/chartMenuService";
 
 type ChartToolbarButtons = {
-    [key in ChartMenuOptions]: [string, (e: MouseEvent) => any | void]
+    [key in ChartMenuOptions]: {
+        iconName: string, callback: (eventSource: HTMLElement) => void
+    }
 };
 
-export class ChartMenu extends Component {
-    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
+const CHART_TOOL_PANEL_ALLOW_LIST: ChartToolPanelMenuOptions[] = [
+    'chartSettings', 
+    'chartData', 
+    'chartFormat'
+];
+const CHART_TOOLBAR_ALLOW_LIST: ChartMenuOptions[] = [
+    'chartUnlink',
+    'chartLink',
+    'chartDownload'
+];
 
-    public static EVENT_DOWNLOAD_CHART = "downloadChart";
+export const CHART_TOOL_PANEL_MENU_OPTIONS: { [key in ChartToolPanelName]: ChartToolPanelMenuOptions } = {
+    settings: "chartSettings",
+    data: "chartData",
+    format: "chartFormat"
+}
+
+export class ChartMenu extends Component {
+    @Autowired('chartMenuService') private chartMenuService: ChartMenuService;
+    @Autowired('chartMenuListFactory') private chartMenuListFactory: ChartMenuListFactory;
 
     private buttons: ChartToolbarButtons = {
-        chartSettings: ['menu', () => this.showMenu(this.defaultPanel)],
-        chartData: ['menu', () => this.showMenu("chartData")],
-        chartFormat: ['menu', () => this.showMenu("chartFormat")],
-        chartLink: ['linked', e => this.toggleDetached(e)],
-        chartUnlink: ['unlinked', e => this.toggleDetached(e)],
-        chartDownload: ['save', () => this.saveChart()]
+        chartSettings: { iconName: 'menu', callback: () => this.showMenu(this.defaultPanel) },
+        chartData: { iconName: 'menu', callback: () => this.showMenu("chartData") },
+        chartFormat: { iconName: 'menu', callback: () => this.showMenu("chartFormat") },
+        chartLink: { iconName: 'linked', callback: () => this.chartMenuService.toggleLinked(this.chartController) },
+        chartUnlink: { iconName: 'unlinked', callback: () => this.chartMenuService.toggleLinked(this.chartController) },
+        chartDownload: { iconName: 'save', callback: () => this.chartMenuService.downloadChart(this.chartController) },
+        chartMenu: { iconName: 'menuAlt', callback: (eventSource: HTMLElement) => this.showMenuList(eventSource) }
     };
 
     private panels: ChartToolPanelMenuOptions[] = [];
     private defaultPanel: ChartToolPanelMenuOptions;
-    private buttonListenersDestroyFuncs: any[] = []
 
-    private static TEMPLATE = /* html */ `<div>
-        <div class="ag-chart-menu" ref="eMenu"></div>
-        <button class="ag-button ag-chart-menu-close" ref="eHideButton">
-            <span class="ag-icon ag-icon-contracted" ref="eHideButtonIcon"></span>
-        </button>
-    </div>`;
-    @RefSelector("eMenu") private eMenu: HTMLButtonElement;
-    @RefSelector("eHideButton") private eHideButton: HTMLButtonElement;
-    @RefSelector("eHideButtonIcon") private eHideButtonIcon: HTMLSpanElement;
+    private static TEMPLATE = /* html */ `<div></div>`;
 
+    private eHideButton: HTMLButtonElement;
+    private eHideButtonIcon: HTMLSpanElement;
+    private chartToolbar: ChartToolbar;
     private tabbedMenu: TabbedChartMenu;
     private menuPanel?: AgPanel;
     private menuVisible = false;
     private chartToolbarOptions: ChartMenuOptions[];
+    private legacyFormat: boolean;
 
     constructor(
         private readonly eChartContainer: HTMLElement,
@@ -71,25 +83,39 @@ export class ChartMenu extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-        this.createButtons();
+        this.legacyFormat = this.chartMenuService.isLegacyFormat();
+
+        this.chartToolbar = this.createManagedBean(new ChartToolbar());
+        this.getGui().appendChild(this.chartToolbar.getGui());
+        if (this.legacyFormat) {
+            this.createLegacyToggleButton();
+        }
+        
+        this.refreshToolbarAndPanels();
 
         this.addManagedListener(this.eventService, Events.EVENT_CHART_CREATED, (e: ChartCreated) => {
             if (e.chartId === this.chartController.getChartId()) {
                 const showDefaultToolPanel = Boolean(this.gridOptionsService.get('chartToolPanelsDef')?.defaultToolPanel);
                 if (showDefaultToolPanel) {
-                    this.showMenu(this.defaultPanel, false);
+                    this.showMenu(this.defaultPanel, false, true);
                 }
             }
         });
+        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_LINKED_CHANGED, this.refreshToolbarAndPanels.bind(this));
 
         this.refreshMenuClasses();
 
-        if (!this.gridOptionsService.get('suppressChartToolPanelsButton') && this.panels.length > 0) {
+        if (this.legacyFormat && !this.gridOptionsService.get('suppressChartToolPanelsButton') && this.panels.length > 0) {
             this.getGui().classList.add('ag-chart-tool-panel-button-enable');
-            this.addManagedListener(this.eHideButton, 'click', this.toggleMenu.bind(this));
+            if (this.eHideButton) {
+                this.addManagedListener(this.eHideButton, 'click', this.toggleMenu.bind(this));
+            }
+        }
+        if (!this.legacyFormat) {
+            this.getGui().classList.add('ag-chart-menu-wrapper');
         }
 
-        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_API_UPDATE, this.createButtons.bind(this));
+        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_API_UPDATE, this.refreshToolbarAndPanels.bind(this));
     }
 
     public isVisible(): boolean {
@@ -112,26 +138,48 @@ export class ChartMenu extends Component {
         return result;
     }
 
-    private getToolbarOptions(): ChartMenuOptions[] {
-        const useChartToolPanelCustomisation = Boolean(this.gridOptionsService.get('chartToolPanelsDef'))
+    private createLegacyToggleButton(): void {
+        const eDocument = this.gridOptionsService.getDocument();
+        this.eHideButton = eDocument.createElement('button');
+        this.eHideButton.classList.add('ag-button', 'ag-chart-menu-close');
+        this.eHideButtonIcon = eDocument.createElement('span');
+        this.eHideButtonIcon.classList.add('ag-icon', 'ag-icon-contracted');
+        this.eHideButton.appendChild(this.eHideButtonIcon);
+        this.getGui().appendChild(this.eHideButton);
+    }
+
+    private refreshToolbarAndPanels(): void {
+        this.initToolbarOptionsAndPanels();
+        this.updateToolbar();
+    }
+
+    private initToolbarOptionsAndPanels(): void {
+        const useChartToolPanelCustomisation = Boolean(this.gridOptionsService.get('chartToolPanelsDef')) || !this.legacyFormat;
 
         if (useChartToolPanelCustomisation) {
-            const defaultChartToolbarOptions: ChartMenuOptions[] = [
+            const defaultChartToolbarOptions: ChartMenuOptions[] = this.legacyFormat ? [
                 this.chartController.isChartLinked() ? 'chartLink' : 'chartUnlink',
                 'chartDownload'
+            ] : [
+                'chartMenu'
             ];
     
             const toolbarItemsFunc = this.gridOptionsService.getCallback('getChartToolbarItems');
             const params: WithoutGridCommon<GetChartToolbarItemsParams> = {
                 defaultItems: defaultChartToolbarOptions
             };
-            let chartToolbarOptions = toolbarItemsFunc
+            const chartToolbarOptions = toolbarItemsFunc
                 ? toolbarItemsFunc(params).filter(option => {
-                    if (!CHART_TOOLBAR_ALLOW_LIST.includes(option)) {
-                        const msg = CHART_TOOL_PANEL_ALLOW_LIST.includes(option as any)
-                            ? `AG Grid: '${option}' is a Chart Tool Panel option and will be ignored since 'chartToolPanelsDef' is used. Please use 'chartToolPanelsDef.panels' grid option instead`
-                            : `AG Grid: '${option}' is not a valid Chart Toolbar Option`;
-                        console.warn(msg);
+                    if (!(this.legacyFormat ? CHART_TOOLBAR_ALLOW_LIST : [...CHART_TOOLBAR_ALLOW_LIST, 'chartMenu']).includes(option)) {
+                        let msg;
+                        if (CHART_TOOL_PANEL_ALLOW_LIST.includes(option as any)) {
+                            msg = `'${option}' is a Chart Tool Panel option and will be ignored since 'chartToolPanelsDef' is used. Please use 'chartToolPanelsDef.panels' grid option instead`
+                        } else if (option === 'chartMenu') {
+                            msg = `'chartMenu' is only allowed as a Chart Toolbar Option when 'legacyChartsMenu' is set to false`;
+                        } else {
+                            msg = `'${option}' is not a valid Chart Toolbar Option`;
+                        }
+                        _.warnOnce(msg);
                         return false;
                     }
 
@@ -143,7 +191,7 @@ export class ChartMenu extends Component {
                 ?.map(panel => {
                     const menuOption = CHART_TOOL_PANEL_MENU_OPTIONS[panel]
                     if (!menuOption) {
-                        console.warn(`AG Grid - invalid panel in chartToolPanelsDef.panels: '${panel}'`);
+                        _.warnOnce(`Invalid panel in chartToolPanelsDef.panels: '${panel}'`);
                     }
                     return menuOption;
                 })
@@ -160,10 +208,14 @@ export class ChartMenu extends Component {
             const defaultToolPanel = this.gridOptionsService.get('chartToolPanelsDef')?.defaultToolPanel;
             this.defaultPanel = (defaultToolPanel && CHART_TOOL_PANEL_MENU_OPTIONS[defaultToolPanel]) || this.panels[0];
 
-            return this.panels.length > 0
-                // Only one panel is required to display menu icon in toolbar
-                ? [this.panels[0], ...chartToolbarOptions]
-                : chartToolbarOptions;
+            if (this.legacyFormat) {
+                this.chartToolbarOptions = this.panels.length > 0
+                    // Only one panel is required to display menu icon in toolbar
+                    ? [this.panels[0], ...chartToolbarOptions]
+                    : chartToolbarOptions;
+            } else {
+                this.chartToolbarOptions = this.panels.length ? chartToolbarOptions : chartToolbarOptions.filter(option => option !== 'chartMenu');
+            }
         } else { // To be deprecated in future. Toolbar options will be different to chart tool panels.
             let tabOptions: ChartMenuOptions[] = [
                 'chartSettings',
@@ -183,14 +235,14 @@ export class ChartMenu extends Component {
     
                 tabOptions = toolbarItemsFunc(params).filter(option => {
                     if (!this.buttons[option]) {
-                        console.warn(`AG Grid: '${option}' is not a valid Chart Toolbar Option`);
+                        _.warnOnce(`'${option}' is not a valid Chart Toolbar Option`);
                         return false;
                     } 
                     // If not legacy, remove chart tool panel options here,
                     // and add them all in one go below
                     else if (!isLegacyToolbar && CHART_TOOL_PANEL_ALLOW_LIST.includes(option as any)) {
-                        const msg = `AG Grid: '${option}' is a Chart Tool Panel option and will be ignored. Please use 'chartToolPanelsDef.panels' grid option instead`;
-                        console.warn(msg);
+                        const msg = `'${option}' is a Chart Tool Panel option and will be ignored. Please use 'chartToolPanelsDef.panels' grid option instead`;
+                        _.warnOnce(msg);
                         return false;
                     }
     
@@ -213,62 +265,23 @@ export class ChartMenu extends Component {
             this.panels = tabOptions.filter(option => ignoreOptions.indexOf(option) === -1) as ChartToolPanelMenuOptions[];
             this.defaultPanel = this.panels[0];
     
-            return tabOptions.filter(value =>
+            this.chartToolbarOptions =  tabOptions.filter(value =>
                 ignoreOptions.indexOf(value) !== -1 ||
                 (this.panels.length && value === this.panels[0])
             );
         }
     }
 
-    private toggleDetached(e: MouseEvent): void {
-        const target = e.target as HTMLElement;
-        const active = target.classList.contains('ag-icon-linked');
-
-        target.classList.toggle('ag-icon-linked', !active);
-        target.classList.toggle('ag-icon-unlinked', active);
-
-        const tooltipKey = active ? 'chartUnlinkToolbarTooltip' : 'chartLinkToolbarTooltip';
-        const tooltipTitle = this.chartTranslationService.translate(tooltipKey);
-        if (tooltipTitle) {
-            target.title = tooltipTitle;
-        }
-
-        this.chartController.detachChartRange();
-    }
-
-    private createButtons(): void {
-        this.buttonListenersDestroyFuncs.forEach(func => func());
-        this.buttonListenersDestroyFuncs = [];
-
-        this.chartToolbarOptions = this.getToolbarOptions();
-        const menuEl = this.eMenu;
-        _.clearElement(menuEl);
-
-        this.chartToolbarOptions.forEach(button => {
-            const buttonConfig = this.buttons[button];
-            const [iconName, callback] = buttonConfig;
-            const buttonEl = _.createIconNoSpan(
+    private updateToolbar(): void {
+        const buttons = this.chartToolbarOptions.map(buttonName => {
+            const { iconName, callback } = this.buttons[buttonName];
+            return {
+                buttonName,
                 iconName,
-                this.gridOptionsService,
-                undefined,
-                true
-            )!;
-            buttonEl.classList.add('ag-chart-menu-icon');
-
-            const tooltipTitle = this.chartTranslationService.translate(button + 'ToolbarTooltip');
-            if (tooltipTitle && buttonEl instanceof HTMLElement) {
-                buttonEl.title = tooltipTitle;
-            }
-
-            this.buttonListenersDestroyFuncs.push(this.addManagedListener(buttonEl, 'click', callback));
-
-            menuEl.appendChild(buttonEl);
+                callback
+            };
         });
-    }
-
-    private saveChart() {
-        const event: AgEvent = { type: ChartMenu.EVENT_DOWNLOAD_CHART };
-        this.dispatchEvent(event);
+        this.chartToolbar.updateParams({ buttons });
     }
 
     private createMenuPanel(defaultTab: number): AgPromise<AgPanel> {
@@ -304,33 +317,38 @@ export class ChartMenu extends Component {
                 menuPanel.setBodyComponent(this.tabbedMenu);
                 this.tabbedMenu.showTab(defaultTab);
                 res(menuPanel);
-                this.addManagedListener(
-                    this.eChartContainer,
-                    'click',
-                    (event: MouseEvent) => {
-                        if (this.getGui().contains(event.target as HTMLElement)) {
-                            return;
-                        }
+                if (this.legacyFormat) {
+                    this.addManagedListener(
+                        this.eChartContainer,
+                        'click',
+                        (event: MouseEvent) => {
+                            if (this.getGui().contains(event.target as HTMLElement)) {
+                                return;
+                            }
 
-                        if (this.menuVisible) {
-                            this.hideMenu();
+                            if (this.menuVisible) {
+                                this.hideMenu();
+                            }
                         }
-                    }
-                );
+                    );
+                }
             }, 100);
         });
     }
 
-    private showContainer() {
+    private showContainer(suppressFocus?: boolean) {
         if (!this.menuPanel) { return; }
 
         this.menuVisible = true;
         this.showParent(this.menuPanel.getWidth()!);
         this.refreshMenuClasses();
+        if (!suppressFocus) {
+            this.tabbedMenu.focusHeader();
+        }
     }
 
     private toggleMenu() {
-        this.menuVisible ? this.hideMenu() : this.showMenu();
+        this.menuVisible ? this.hideMenu(this.legacyFormat) : this.showMenu(undefined, this.legacyFormat);
     }
 
     public showMenu(
@@ -341,14 +359,15 @@ export class ChartMenu extends Component {
         /**
          * Whether to animate the menu opening
          */
-        animate: boolean = true
+        animate: boolean = true,
+        suppressFocus?: boolean
     ): void {
         if (!animate) {
             this.eMenuPanelContainer.classList.add('ag-no-transition');
         }
 
         if (this.menuPanel && !panel) {
-            this.showContainer();
+            this.showContainer(suppressFocus);
         } else {
             const menuPanel = panel || this.defaultPanel;
             let tab = this.panels.indexOf(menuPanel);
@@ -359,9 +378,9 @@ export class ChartMenu extends Component {
     
             if (this.menuPanel) {
                 this.tabbedMenu.showTab(tab);
-                this.showContainer();
+                this.showContainer(suppressFocus);
             } else {
-                this.createMenuPanel(tab).then(this.showContainer.bind(this));
+                this.createMenuPanel(tab).then(() => this.showContainer(suppressFocus));
             }
         }
 
@@ -375,12 +394,18 @@ export class ChartMenu extends Component {
         }
     }
 
-    public hideMenu(): void {
+    public hideMenu(animate: boolean = true): void {
+        if (!animate) {
+            this.eMenuPanelContainer.classList.add('ag-no-transition');
+        }
         this.hideParent();
 
         window.setTimeout(() => {
             this.menuVisible = false;
             this.refreshMenuClasses();
+            if (!animate) {
+                this.eMenuPanelContainer.classList.remove('ag-no-transition');
+            }
         }, 500);
     }
 
@@ -388,7 +413,7 @@ export class ChartMenu extends Component {
         this.eChartContainer.classList.toggle('ag-chart-menu-visible', this.menuVisible);
         this.eChartContainer.classList.toggle('ag-chart-menu-hidden', !this.menuVisible);
 
-        if (!this.gridOptionsService.get('suppressChartToolPanelsButton')) {
+        if (this.legacyFormat && !this.gridOptionsService.get('suppressChartToolPanelsButton')) {
             this.eHideButtonIcon.classList.toggle('ag-icon-contracted', this.menuVisible);
             this.eHideButtonIcon.classList.toggle('ag-icon-expanded', !this.menuVisible);
         }
@@ -400,6 +425,14 @@ export class ChartMenu extends Component {
 
     private hideParent(): void {
         this.eMenuPanelContainer.style.minWidth = '0';
+    }
+
+    private showMenuList(eventSource: HTMLElement): void {
+        this.chartMenuListFactory.showMenuList({
+            eventSource,
+            showMenu: () => this.showMenu(undefined, false),
+            chartController: this.chartController
+        });
     }
 
     protected destroy() {

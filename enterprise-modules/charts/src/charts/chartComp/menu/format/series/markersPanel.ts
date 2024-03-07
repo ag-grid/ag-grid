@@ -9,7 +9,7 @@ import {
     RefSelector,
     AgSelectParams
 } from "@ag-grid-community/core";
-import { ChartTranslationService } from "../../../services/chartTranslationService";
+import { ChartTranslationKey, ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartMenuUtils } from "../../chartMenuUtils";
 
 export class MarkersPanel extends Component {
@@ -111,7 +111,7 @@ export class MarkersPanel extends Component {
         );
     }
 
-    private getSliderParams(expression: string, labelKey: string, defaultMaxValue: number): AgSliderParams {
+    private getSliderParams(expression: string, labelKey: ChartTranslationKey, defaultMaxValue: number): AgSliderParams {
         return this.chartMenuUtils.getDefaultSliderParams(
             expression,
             labelKey,

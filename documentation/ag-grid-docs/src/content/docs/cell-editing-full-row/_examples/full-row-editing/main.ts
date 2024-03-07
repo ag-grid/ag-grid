@@ -5,7 +5,7 @@ import {
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 
-import { NumericEditor } from './numericCellEditor';
+import { NumericCellEditor } from './numericCellEditor';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, MenuModule]);
 
@@ -23,7 +23,7 @@ const gridOptions: GridOptions = {
     },
     { field: 'model' },
     { field: 'field4', headerName: 'Read Only', editable: false },
-    { field: 'price', cellEditor: NumericEditor },
+    { field: 'price', cellEditor: NumericCellEditor },
     {
       headerName: 'Suppress Navigable',
       field: 'field5',

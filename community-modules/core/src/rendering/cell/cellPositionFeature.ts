@@ -34,9 +34,6 @@ export class CellPositionFeature extends BeanStub {
 
         this.column = ctrl.getColumn();
         this.rowNode = ctrl.getRowNode();
-
-        this.setupColSpan();
-        this.setupRowSpan();
     }
 
     private setupRowSpan(): void {
@@ -47,6 +44,12 @@ export class CellPositionFeature extends BeanStub {
 
     public setComp(eGui: HTMLElement): void {
         this.eGui = eGui;
+
+        // add event handlers only after GUI is attached,
+        // so we don't get events before we are ready
+        this.setupColSpan();
+        this.setupRowSpan();
+
         this.onLeftChanged();
         this.onWidthChanged();
         this.applyRowSpan();

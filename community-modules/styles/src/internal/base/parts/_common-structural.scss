@@ -1786,6 +1786,15 @@
         }
     }
 
+    .ag-pill-select {
+        display: flex;
+        flex-direction: column;
+
+        .ag-column-drop {
+            flex: unset;
+        }
+    }
+
     .ag-ltr {
         direction: ltr;
         .ag-body, .ag-floating-top, .ag-floating-bottom, .ag-header, .ag-sticky-top, .ag-body-viewport, .ag-body-horizontal-scroll {

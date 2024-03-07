@@ -40,6 +40,8 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
     private suppressExpandablePivotGroupsLastTime: GridOptions['suppressExpandablePivotGroups'];
     private removePivotHeaderRowWhenSingleValueColumnLastTime: GridOptions['removePivotHeaderRowWhenSingleValueColumn'];
 
+    private lastTimeFailed = false;
+
     private maxUniqueValues: number = -1;
     private static EXCEEDED_MAX_UNIQUE_VALUES = 'Exceeded maximum allowed pivot column count.';
 
@@ -82,6 +84,7 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
                     message: e.message,
                 };
                 this.eventService.dispatchEvent(event);
+                this.lastTimeFailed = true;
                 return;
             }
             throw e;
@@ -117,7 +120,7 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
         this.suppressExpandablePivotGroupsLastTime = suppressExpandablePivotGroups;
         this.removePivotHeaderRowWhenSingleValueColumnLastTime = removePivotHeaderRowWhenSingleValueColumn;
 
-        if (uniqueValuesChanged || aggregationColumnsChanged || groupColumnsChanged || aggregationFuncsChanged || anyGridOptionsChanged) {
+        if (this.lastTimeFailed || uniqueValuesChanged || aggregationColumnsChanged || groupColumnsChanged || aggregationFuncsChanged || anyGridOptionsChanged) {
             const {pivotColumnGroupDefs, pivotColumnDefs} = this.pivotColDefService.createPivotColumnDefs(this.uniqueValues);
             this.pivotColumnDefs = pivotColumnDefs;
             this.columnModel.setSecondaryColumns(pivotColumnGroupDefs, "rowModelUpdated");
@@ -127,6 +130,7 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
                 changedPath.setInactive();
             }
         }
+        this.lastTimeFailed = false;
     }
 
     private setUniqueValues(newValues: any): boolean {

@@ -13,7 +13,7 @@ import {
 } from '@ag-grid-community/core';
 import {ChartController} from '../../../chartController';
 import {FontPanel, FontPanelParams} from '../fontPanel';
-import {ChartTranslationService} from '../../../services/chartTranslationService';
+import {ChartTranslationKey, ChartTranslationService} from '../../../services/chartTranslationService';
 import {FormatPanelOptions} from '../formatPanel';
 import {isPolar, isRadial} from '../../../utils/seriesTypeMapper';
 import { ChartMenuUtils } from '../../chartMenuUtils';
@@ -75,7 +75,7 @@ export class PolarAxisPanel extends Component {
             ];
 
             this.axisGroup.addItem(this.createSelect({
-                label: 'shape',
+                labelKey: 'shape',
                 options: options,
                 property: 'shape'
             }));
@@ -114,7 +114,7 @@ export class PolarAxisPanel extends Component {
         ];
 
         return this.createSelect({
-            label: 'orientation',
+            labelKey: 'orientation',
             options,
             property: 'label.orientation'
         });
@@ -151,7 +151,7 @@ export class PolarAxisPanel extends Component {
     }
 
     private createSlider(config: {
-        labelKey: string;
+        labelKey: ChartTranslationKey;
         defaultMaxValue: number;
         step?: number;
         property: string;
@@ -163,15 +163,15 @@ export class PolarAxisPanel extends Component {
     }
 
     private createSelect(config: {
-        label: string;
+        labelKey: ChartTranslationKey;
         options: Array<ListOption>;
         property: string
     }): AgSelect {
-        const { label, options, property } = config;
+        const { labelKey: label, options, property } = config;
         return this.createManagedBean(new AgSelect(this.chartMenuUtils.addValueParams<AgSelectParams>(
             property,
             {
-                label: this.translate(label),
+                label: this.chartTranslationService.translate(label),
                 labelAlignment: 'left',
                 labelWidth: 'flex',
                 inputWidth: 'flex',
@@ -180,7 +180,7 @@ export class PolarAxisPanel extends Component {
         )));
     }
 
-    private translate(key: string, defaultText?: string) {
-        return this.chartTranslationService.translate(key, defaultText);
+    private translate(key: ChartTranslationKey) {
+        return this.chartTranslationService.translate(key);
     }
 }

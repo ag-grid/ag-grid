@@ -3,8 +3,8 @@ import { convertTemplate, getImport, toConst, toInput, toMemberWithValue, toOutp
 import { templatePlaceholder } from './grid-vanilla-src-parser';
 import {
     addBindingImports,
-    addEnterprisePackage,
     addGenericInterfaceImport,
+    addLicenseManager,
     getActiveTheme,
     getIntegratedDarkModeCode,
     getPropertyInterfaces,
@@ -52,7 +52,7 @@ function getOnGridReadyCode(
     }
 }
 
-function addModuleImports(imports: string[], bindings: ParsedBindings, allStylesheets: string[]): string[] {
+function addModuleImports(imports: string[], bindings: ParsedBindings, exampleConfig: ExampleConfig, allStylesheets: string[]): string[] {
     const { inlineGridStyles, imports: bindingImports, properties } = bindings;
 
     imports.push("import { AgGridAngular } from '@ag-grid-community/angular';");
@@ -77,6 +77,8 @@ function addModuleImports(imports: string[], bindings: ParsedBindings, allStyles
         imports: [...propertyInterfaces, 'GridReadyEvent', 'GridApi'],
     });
 
+    addLicenseManager(imports, exampleConfig, false);
+
     if (bImports.length > 0) {
         addBindingImports(bImports, imports, false, true);
     }
@@ -88,11 +90,11 @@ function addModuleImports(imports: string[], bindings: ParsedBindings, allStyles
     return imports;
 }
 
-function addPackageImports(imports: string[], bindings: ParsedBindings, allStylesheets: string[]): string[] {
+function addPackageImports(imports: string[], bindings: ParsedBindings, exampleConfig: ExampleConfig, allStylesheets: string[]): string[] {
     const { inlineGridStyles, imports: bindingImports, properties } = bindings;
 
     imports.push("import { AgGridAngular } from 'ag-grid-angular';");
-    addEnterprisePackage(imports, bindings);
+    addLicenseManager(imports, exampleConfig, true);
 
     imports.push("import 'ag-grid-community/styles/ag-grid.css';");
 
@@ -123,6 +125,7 @@ function addPackageImports(imports: string[], bindings: ParsedBindings, allStyle
 
 function getImports(
     bindings: ParsedBindings,
+    exampleConfig: ExampleConfig,
     componentFileNames: string[],
     importType: ImportType,
     allStylesheets: string[]
@@ -134,9 +137,9 @@ function getImports(
     }
 
     if (importType === 'packages') {
-        addPackageImports(imports, bindings, allStylesheets);
+        addPackageImports(imports, bindings, exampleConfig, allStylesheets);
     } else {
-        addModuleImports(imports, bindings, allStylesheets);
+        addModuleImports(imports, bindings, exampleConfig, allStylesheets);
     }
 
     if (componentFileNames) {
@@ -185,7 +188,7 @@ export function vanillaToAngular(
     const genericParams = rowDataType !== 'any' ? `<${rowDataType}>` : '';
 
     return (importType) => {
-        const imports = getImports(bindings, componentFileNames, importType, allStylesheets);
+        const imports = getImports(bindings, exampleConfig, componentFileNames, importType, allStylesheets);
         const propertyAttributes = [];
         const propertyVars = [];
         const propertyAssignments = [];

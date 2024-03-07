@@ -6,13 +6,51 @@
   "targets": {
     "build": {
       "executor": "nx:noop",
-      "dependsOn": ["build:styles"],
+      "dependsOn": [
+        "build:styles"
+      ],
       "inputs": [],
       "outputs": []
     },
     "build:styles": {
-      "outputs": ["{projectRoot}/*.css", "{projectRoot}/_css-content.scss"],
-      "inputs": ["{projectRoot}/*.scss", "{projectRoot}/*.js"],
+      "outputs": [
+        "{projectRoot}/ag-grid.css",
+        "{projectRoot}/ag-grid-no-native-widgets.css",
+        "{projectRoot}/ag-theme-alpine.css",
+        "{projectRoot}/ag-theme-alpine-no-font.css",
+        "{projectRoot}/ag-theme-balham.css",
+        "{projectRoot}/ag-theme-balham-no-font.css",
+        "{projectRoot}/ag-theme-material.css",
+        "{projectRoot}/ag-theme-material-no-font.css",
+        "{projectRoot}/ag-theme-quartz.css",
+        "{projectRoot}/ag-theme-quartz-no-font.css",
+        "{projectRoot}/agGridAlpineFont.css",
+        "{projectRoot}/agGridBalhamFont.css",
+        "{projectRoot}/agGridClassicFont.css",
+        "{projectRoot}/agGridMaterialFont.css",
+        "{projectRoot}/agGridQuartzFont.css",
+        "{projectRoot}/ag-grid.min.css",
+        "{projectRoot}/ag-grid-no-native-widgets.min.css",
+        "{projectRoot}/ag-theme-alpine.min.css",
+        "{projectRoot}/ag-theme-alpine-no-font.min.css",
+        "{projectRoot}/ag-theme-balham.min.css",
+        "{projectRoot}/ag-theme-balham-no-font.min.css",
+        "{projectRoot}/ag-theme-material.min.css",
+        "{projectRoot}/ag-theme-material-no-font.min.css",
+        "{projectRoot}/ag-theme-quartz.min.css",
+        "{projectRoot}/ag-theme-quartz-no-font.min.css",
+        "{projectRoot}/agGridAlpineFont.min.css",
+        "{projectRoot}/agGridBalhamFont.min.css",
+        "{projectRoot}/agGridClassicFont.min.css",
+        "{projectRoot}/agGridMaterialFont.min.css",
+        "{projectRoot}/agGridQuartzFont.min.css",
+        "{projectRoot}/_css-content.scss"
+      ],
+      "inputs": [
+        "{projectRoot}/*.scss",
+        "{projectRoot}/*.js",
+        "!{projectRoot}/_css-content.scss"
+      ],
       "options": {
         "options": {
           "cwd": "community-modules/styles",
@@ -30,10 +68,15 @@
         "commands": [
           "stylelint --formatter unix --config stylelint-config-scss.js 'src/**/*.scss' '*.scss'",
           "stylelint --formatter unix --config stylelint-config-css.js '*.css'",
-          "sass test/test.scss"]
+          "sass test/test.scss"
+        ]
       }
     }
-
   },
-  "tags": ["module:community", "module", "community", "styles"]
+  "tags": [
+    "module:community",
+    "module",
+    "community",
+    "styles"
+  ]
 }

@@ -4,7 +4,8 @@
         transpiler: 'plugin-babel',
         defaultExtension: 'js',
         paths: {
-            'npm:': 'https://cdn.jsdelivr.net/npm/'
+            'npm:': 'https://cdn.jsdelivr.net/npm/',
+            ...systemJsPaths
         },
         map: {
             // css: boilerplatePath + "css.js",
