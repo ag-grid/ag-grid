@@ -1,5 +1,6 @@
 import styles from '@design-system/modules/community-section/EventsNew.module.scss';
 import React, { useEffect, useRef, useState } from 'react';
+import { useDarkmode } from '@utils/hooks/useDarkmode';
 
 import eventImages from '../../content/community/news-updates/events-images.json';
 import events from '../../content/community/news-updates/events-new.json';
@@ -31,13 +32,14 @@ function extractUniqueYears(events) {
 }
 
 const EventItem = ({ event }) => {
+    const [darkMode] = useDarkmode();
     return (
         <div className={styles.eventItemContainer}>
             <div className={styles.eventItemLeftColumn}>
                 <div className={styles.titleContainer}>
                     <img
                         className={styles.organiserLogo}
-                        src={`/community/events/organiser-logos/${event.organiserLogo}`}
+                        src={`/community/events/organiser-logos/${darkMode ? event.organiserLogo : event.organiserLogoLight}`}
                     />
                     <p className={styles.title}>{event.title}</p>
                     <p className={styles.date}>

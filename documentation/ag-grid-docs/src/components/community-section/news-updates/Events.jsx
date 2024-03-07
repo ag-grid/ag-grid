@@ -1,4 +1,5 @@
 import styles from '@design-system/modules/community-section/news-updates/Events.module.scss';
+import { useDarkmode } from '@utils/hooks/useDarkmode';
 import React, { useEffect, useRef, useState } from 'react';
 
 import eventImages from '../../../content/community/news-updates/events-images.json';
@@ -71,7 +72,8 @@ function extractUniqueYears(events) {
     return Array.from(years);
 }
 
-const Events = () => {
+const Events = ({ enableFilters = false }) => {
+    const [darkMode] = useDarkmode();
     const { upcomingEvents } = separateEventsByDate(events);
     const [currEvents, setCurrEvents] = useState(upcomingEvents);
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
@@ -89,23 +91,39 @@ const Events = () => {
     return (
         <div className={styles.container}>
             <div className={styles.eventDetailsContainer}>
-                <div className={styles.yearFiltersContainer}>
-                    {extractUniqueYears(events).map((year, index) => (
-                        <button
-                            key={index}
-                            className={`${styles.yearFilter} ${year == selectedYear ? styles.active : ''}`}
-                            onClick={() => filterYears(year)}
-                        >
-                            {year}
-                        </button>
-                    ))}
-                </div>
+                {enableFilters && (
+                    <div className={styles.yearFiltersContainer}>
+                        {extractUniqueYears(events).map((year, index) => (
+                            <button
+                                key={index}
+                                className={`${styles.yearFilter} ${year == selectedYear ? styles.active : ''}`}
+                                onClick={() => filterYears(year)}
+                            >
+                                {year}
+                            </button>
+                        ))}
+                    </div>
+                )}
                 <ScrollingGallery />
                 <div className={styles.eventTilesContainer}>
                     {currEvents.map((event, index) => (
                         <div key={index} className={styles.eventTile}>
-                            <span className={styles.location}>{event.location}</span>
-                            <span className={styles.title}>{event.title}</span>
+                            <div className={styles.headerContainer}>
+                                <div className={styles.organizerLogoContainer}>
+                                    <img
+                                        src={`/community/events/organiser-logos/${darkMode ? event.organiserLogo : event.organiserLogoLight}`}
+                                        className={styles.organiserLogo}
+                                    />
+                                </div>
+                                <div className={styles.titleContainer}>
+                                    <span className={styles.title}>{event.title}</span>
+                                    <span className={styles.location}>{event.location}</span>
+                                </div>
+                                <div className={styles.flagContainer}>
+                                    <img className={styles.flag} src={`/example-assets/flags/${event.countryIcon}`} />
+                                </div>
+                            </div>
+                            <hr></hr>
                             <span className={styles.description}>{event.description}</span>
                         </div>
                     ))}

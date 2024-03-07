@@ -45,7 +45,7 @@ import ToolsExtensions from '@components/community-section/tools-extensions/Tool
                     <section>
                         <div class={styles.sectionContainer}>
                             <div class={styles.sectionHeader}>
-                                <h3 class={styles.sectionTitle}>Events</h3>
+                                <h3 class={styles.sectionTitle}>2024 Events</h3>
                                 <!-- <p class={styles.sectionDescription}>
                                     The latest content from the AG Grid team, including releases, new features, events,
                                     and more
@@ -56,7 +56,7 @@ import ToolsExtensions from '@components/community-section/tools-extensions/Tool
                                 <Icon name="arrowRight" />
                             </a>
                         </div>
-                        <Events client:only />
+                        <Events enableFilters={false} client:only />
                     </section>
                     <!-- Showcase -->
                     <section>
