@@ -5,14 +5,18 @@ import BoldChevronDown from '@images/inline-svgs/bold-chevron-down.svg?react';
 import BoldChevronLeft from '@images/inline-svgs/bold-chevron-left.svg?react';
 import BoldChevronRight from '@images/inline-svgs/bold-chevron-right.svg?react';
 import BoldChevronUp from '@images/inline-svgs/bold-chevron-up.svg?react';
+import CodeResult from '@images/inline-svgs/code-result.svg?react';
 import CodeSandboxIcon from '@images/inline-svgs/codesandbox.svg?react';
 import ColumnsIcon from '@images/inline-svgs/columns.svg?react';
 import CrossIcon from '@images/inline-svgs/cross.svg?react';
 import EnterpriseIcon from '@images/inline-svgs/enterprise.svg?react';
+import EscapeIcon from '@images/inline-svgs/escape.svg?react';
+import HeadingResult from '@images/inline-svgs/heading-result.svg?react';
 import IntegratedChartsIcon from '@images/inline-svgs/integrated-chart.svg?react';
 import maximizeIcon from '@images/inline-svgs/maximize.svg?react';
 import minimizeIcon from '@images/inline-svgs/minimize.svg?react';
 import NewTabIcon from '@images/inline-svgs/new-tab.svg?react';
+import PageResult from '@images/inline-svgs/page-result.svg?react';
 import PlunkerIcon from '@images/inline-svgs/plunker.svg?react';
 import ReplayDemoIcon from '@images/inline-svgs/replay-demo-icon.svg?react';
 import RowsIcon from '@images/inline-svgs/rows.svg?react';
@@ -20,10 +24,6 @@ import StackBlitzIcon from '@images/inline-svgs/stack-blitz.svg?react';
 import TakeControlIcon from '@images/inline-svgs/take-control-icon.svg?react';
 import TickIcon from '@images/inline-svgs/tick.svg?react';
 import XLogoIcon from '@images/inline-svgs/x-logo.svg?react';
-import EscapeIcon from '@images/inline-svgs/escape.svg?react'
-import PageResult from '@images/inline-svgs/page-result.svg?react'
-import CodeResult from '@images/inline-svgs/code-result.svg?react'
-import HeadingResult from '@images/inline-svgs/heading-result.svg?react'
 import classNames from 'classnames';
 
 // Uses IBM Carbon Design System icons as a base
@@ -122,6 +122,7 @@ export const ICON_MAP = {
     arrowLeft: CarbonIcon.ArrowLeft,
     return: CarbonIcon.Return,
     link: CarbonIcon.Link,
+    mapPin: CarbonIcon.LocationFilled,
     chevronUp: BoldChevronUp,
     chevronRight: BoldChevronRight,
     chevronDown: BoldChevronDown,

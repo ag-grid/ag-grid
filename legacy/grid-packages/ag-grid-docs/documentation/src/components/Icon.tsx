@@ -117,6 +117,7 @@ export const ICON_MAP = {
     arrowDown: CarbonIcon.ArrowDown,
     arrowLeft: CarbonIcon.ArrowLeft,
     link: CarbonIcon.Link,
+    mapPin: CarbonIcon.LocationFilled,
     chevronUp: BoldChevronUp,
     chevronRight: BoldChevronRight,
     chevronDown: BoldChevronDown,
@@ -143,7 +144,7 @@ export const ICON_MAP = {
     ...SOCIALS_ICON_MAP,
     ...DOCS_CATEGORIES_ICON_MAP,
     ...HOMEPAGE_FEATURES_ICON_MAP,
-    ...CHARTS_ICON_MAP
+    ...CHARTS_ICON_MAP,
 };
 
 export type IconName = keyof typeof ICON_MAP;

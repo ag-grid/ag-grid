@@ -1,3 +1,4 @@
+import { Icon } from '@components/icon/Icon';
 import styles from '@design-system/modules/community-section/news-updates/Events.module.scss';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import React, { useEffect, useRef, useState } from 'react';
@@ -108,22 +109,11 @@ const Events = ({ enableFilters = false }) => {
                 <div className={styles.eventTilesContainer}>
                     {currEvents.map((event, index) => (
                         <div key={index} className={styles.eventTile}>
-                            <div className={styles.headerContainer}>
-                                <div className={styles.organizerLogoContainer}>
-                                    <img
-                                        src={`/community/events/organiser-logos/${darkMode ? event.organiserLogo : event.organiserLogoLight}`}
-                                        className={styles.organiserLogo}
-                                    />
-                                </div>
-                                <div className={styles.titleContainer}>
-                                    <span className={styles.title}>{event.title}</span>
-                                    <span className={styles.location}>{event.location}</span>
-                                </div>
-                                <div className={styles.flagContainer}>
-                                    <img className={styles.flag} src={`/example-assets/flags/${event.countryIcon}`} />
-                                </div>
-                            </div>
-                            <hr></hr>
+                            <span className={styles.location}>
+                                <Icon className={styles.locationIcon} name="mapPin" />
+                                {event.location}
+                            </span>
+                            <span className={styles.title}>{event.title}</span>
                             <span className={styles.description}>{event.description}</span>
                         </div>
                     ))}
