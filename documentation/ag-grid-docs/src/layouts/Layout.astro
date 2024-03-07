@@ -28,7 +28,7 @@ const canonicalUrl = new URL(Astro.url.pathname, metadata.canonicalUrlBase);
 const { title, description = metadata.description, showSearchBar, showDocsNav, hideHeader, hideFooter } = Astro.props;
 
 const path = Astro.url.pathname;
-const socialImage = urlWithBaseUrl('/images/ag-grid-social.png');
+const socialImage = urlWithBaseUrl(metadata.socialImage);
 ---
 
 <!doctype html>
