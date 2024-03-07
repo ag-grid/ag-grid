@@ -18,7 +18,7 @@ const FeaturedNews = () => {
                                 <p className={styles.articleDescription}>{article.description}</p>
                             </div>
                             <a target="_blank" href={article.link} className={styles.learnMoreLink}>
-                                Read article →
+                                {article.linkText} →
                             </a>
                         </div>
                     </div>

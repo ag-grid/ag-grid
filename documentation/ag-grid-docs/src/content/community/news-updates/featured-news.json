@@ -4,6 +4,7 @@
         "description": "Integrated Charting has been enhanced in v31.1 so that it now also contains all of the features & series types available in AG Charts Enterprise, our new enterprise-grade charting library. Read this blog to learn more about the differences between Integrated Community & Enterprise Charts",
         "image": "https://i.ibb.co/swcYn5L/Frame-1.png",
         "link": "https://blog.ag-grid.com/enhancing-ag-grid-enterprise-with-ag-charts-enterprise/",
+        "linkText": "Read article",
         "type": "Blog",
         "author": "James Swinton-Bland"
     },
@@ -13,6 +14,7 @@
             "description": "What's New in AG Charts 9.1 - Enterprise Charts are integrated into AG Grid, Synchronized Charts, Mini Chart in Navigator, Asynchronous Data Loading",
             "image": "https://i.ibb.co/F7zMV8b/Frame-1.png",
             "link": "https://blog.ag-grid.com/whats-new-in-ag-charts-9-1/",
+            "linkText": "Read article",
             "type": "Blog",
             "author": "David Glickman"
         },
@@ -21,6 +23,7 @@
             "description": "What's New in AG Grid 31.1 - integrated Enterprise Charts, Column Menu Redesign, Custom Menu Item Components, Compression of Excel files and more",
             "image": "https://i.ibb.co/YbxvjW9/Frame-2.png",
             "link": "https://blog.ag-grid.com/whats-new-in-ag-grid-31-1/",
+            "linkText": "Read article",
             "type": "Blog",
             "author": "Kiril Matev"
         },
@@ -29,6 +32,7 @@
             "description": "Learn how to export AG Grid to PDF using the PDF library pdfMake. Get the samples in JavaScript, React, Angular and Vue to integrate this in your projects.",
             "image": "https://i.ibb.co/WsB2Zhn/Frame-4.png",
             "link": "https://blog.ag-grid.com/exporting-ag-grid-to-pdf/",
+            "linkText": "Read article",
             "type": "Blog",
             "author": "Abi Glazier"
         }

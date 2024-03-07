@@ -35,7 +35,7 @@
     },
     {
         "title": "React Advanced",
-        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+        "description": "AG Grid is once again the top sponsor of React Advanced London, as we were in 2023. This event holds a special place in our hearts, given that London is where AG Grid was born. We look forward to seeing you there again later this year - keep an eye on this page more more updates as we get closer to October",
         "location": "London, UK",
         "framework": "React",
         "organiserLogo": "react-advanced-logo.svg",
@@ -52,7 +52,7 @@
     },
     {
         "title": "React Summit",
-        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+        "description": "Our last (but by no means least) event of 2024. It's still early stages yet, but we can confirm that we'll be sponsoring React Summit US again this year, following its successful inaugural event in 2023.",
         "location": "New Jersey, USA",
         "framework": "React",
         "organiserLogo": "react-summit-logo.svg",
