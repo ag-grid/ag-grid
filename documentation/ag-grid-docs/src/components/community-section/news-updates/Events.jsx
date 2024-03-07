@@ -73,16 +73,18 @@ function extractUniqueYears(events) {
 
 const Events = () => {
     const { upcomingEvents } = separateEventsByDate(events);
-    const [currEvents, setCurrEvents] = useState(upcomingEvents)
+    const [currEvents, setCurrEvents] = useState(upcomingEvents);
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
     const filterYears = (year) => {
         setSelectedYear(year);
-        setCurrEvents(events.filter(event => {
-            const eventYear = new Date(event.startDate).getFullYear();
-            return eventYear == year;
-        }));
-    }
+        setCurrEvents(
+            events.filter((event) => {
+                const eventYear = new Date(event.startDate).getFullYear();
+                return eventYear == year;
+            })
+        );
+    };
 
     return (
         <div className={styles.container}>
@@ -102,9 +104,8 @@ const Events = () => {
                 <div className={styles.eventTilesContainer}>
                     {currEvents.map((event, index) => (
                         <div key={index} className={styles.eventTile}>
-                            <span className={styles.title}>{event.title}</span>
                             <span className={styles.location}>{event.location}</span>
-                            <hr></hr>
+                            <span className={styles.title}>{event.title}</span>
                             <span className={styles.description}>{event.description}</span>
                         </div>
                     ))}

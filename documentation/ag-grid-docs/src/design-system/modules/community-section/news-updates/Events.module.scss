@@ -17,9 +17,10 @@
 
         &:before {
             left: 0;
+
             background: linear-gradient(
                 to right,
-                color-mix(in srgb, var(--color-gray-800), var(--color-gray-900) 50%) 0%,
+                color-mix(in srgb, var(--color-bg-primary), var(--color-bg-primary) 50%) 0%,
                 transparent 100%
             );
         }
@@ -28,14 +29,14 @@
             right: 0;
             background: linear-gradient(
                 to left,
-                color-mix(in srgb, var(--color-gray-800), var(--color-gray-900) 50%) 0%,
+                color-mix(in srgb, var(--color-bg-primary), var(--color-bg-primary) 50%) 0%,
                 transparent 100%
             );
         }
 
         .scrollingGalleryContainer {
             display: flex;
-            overflow-x: auto;
+            overflow-x: hidden;
             scrollbar-width: none;
             margin-bottom: 12px;
 
@@ -60,27 +61,35 @@
             margin-bottom: 24px;
 
             .yearFilter {
-                background-color: transparent;
-                border: none;
-                border-bottom: 1px solid #7f7e7e;
-                color: var(--color-text-primary);
-                padding: 10px 20px;
+                padding: 8px;
+                padding-left: 16px;
+                padding-right: 16px;
                 cursor: pointer;
-                font-weight: 200;
-                border-bottom-width: 1px;
-                border-bottom-left-radius: 0px;
-                border-bottom-right-radius: 0px;
+                opacity: 0.7;
+                transition:
+                    background-color 0.2s,
+                    opacity 0.2s;
+                display: inline-block;
+                border-radius: var(--radius-4xl);
+                margin-bottom: 0;
+                cursor: pointer;
+                color: var(--color-text-secondary);
                 transition: background-color 0.3s ease;
+                background-color: var(--color-bg-primary);
+                border: none;
+                box-shadow: none;
+
+                &:hover {
+                    background-color: var(--color-util-brand-100);
+                }
             }
 
             .active {
-                border: none;
-                font-weight: 600;
-                border-bottom: 1px solid #007bff;
-                border-bottom-width: 1px;
-                border-bottom-left-radius: 0px;
-                border-bottom-right-radius: 0px;
-                color: var(--color-text-primary);
+                color: var(--color-fg-primary);
+                padding: 8px;
+                padding-left: 16px;
+                padding-right: 16px;
+                background-color: var(--color-util-brand-100);
             }
         }
 
@@ -98,12 +107,13 @@
                 flex: 1;
 
                 .title {
-                    font-weight: 800;
+                    font-weight: var(--text-semibold);
+                    font-size: var(--text-fs-lg);
                     margin-bottom: 4px;
+                    color: var(--color-fg-primary);
                 }
 
                 .description {
-                    padding-top: 12px;
                     display: -webkit-box;
                     -webkit-line-clamp: 4;
                     -webkit-box-orient: vertical;
@@ -112,10 +122,16 @@
                 }
 
                 .location {
-                    font-style: italic;
-                    font-weight: 200;
-                    font-size: 12px;
+                    color: var(--color-text-tertiary);
+                    opacity: 0.8;
                     margin-bottom: 4px;
+                    border: 1px solid var(--color-border-secondary);
+                    width: fit-content;
+                    border-radius: var(--radius-xl);
+                    padding-left: 8px;
+                    padding-right: 8px;
+                    padding-top: 4px;
+                    padding-bottom: 4px;
                 }
             }
         }
