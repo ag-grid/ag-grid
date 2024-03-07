@@ -25,7 +25,7 @@
         "repo": "https://github.com/plotly/dash-ag-grid",
         "title": "Dash AG Grid",
         "description": "Dash AG Grid is a high-performance and highly customizable component that wraps AG Grid, designed for creating rich datagrids.",
-        "link": "dash.plotly.com/dash-ag-grid",
+        "link": "https://dash.plotly.com/dash-ag-grid",
         "type": "Wrapper",
         "open_source": true,
         "stars": 120,

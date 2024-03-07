@@ -73,7 +73,7 @@ const ToolsExtensions = ({ limit = -1 }) => {
                 {filteredTools.slice(0, limit == -1 ? tools.length : limit).map(
                     (tool, index) =>
                         (selectedFramework == undefined || tool.frameworks?.includes(selectedFramework)) && (
-                            <a href={tool.link} className={styles.linkWrapper}>
+                            <a href={tool.link} target='_blank' className={styles.linkWrapper}>
                                 <div key={index} className={styles.itemContainer}>
                                     <div className={styles.image}>
                                         <img src={`/community/tools-extensions/${tool.img || 'sample.png'}`} />
