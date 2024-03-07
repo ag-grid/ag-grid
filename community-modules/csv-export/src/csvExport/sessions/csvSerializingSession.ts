@@ -80,7 +80,7 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
         if (index != 0) {
             this.result += this.columnSeparator;
         }
-        this.result += this.putInQuotes(this.extractHeaderValue(column, index));
+        this.result += this.putInQuotes(this.extractHeaderValue(column));
     }
 
     public onNewBodyRow(): RowAccumulator {
