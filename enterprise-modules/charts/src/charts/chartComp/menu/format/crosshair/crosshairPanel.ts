@@ -25,10 +25,10 @@ export class CrosshairPanel extends Component {
     private readonly chartMenuUtils: ChartMenuUtils;
     private readonly isExpandedOnInit: boolean;
 
-    constructor({ chartOptionsService, isExpandedOnInit = false }: FormatPanelOptions) {
+    constructor({ chartAxisMenuUtils, isExpandedOnInit = false }: FormatPanelOptions) {
         super();
 
-        this.chartMenuUtils = chartOptionsService.getAxisPropertyMenuUtils();
+        this.chartMenuUtils = chartAxisMenuUtils;
         this.isExpandedOnInit = isExpandedOnInit;
     }
 

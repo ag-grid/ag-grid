@@ -27,13 +27,13 @@ export class ChartPanel extends Component {
 
     constructor({
         chartController,
-        chartOptionsService,
+        chartMenuUtils,
         isExpandedOnInit = false
     }: FormatPanelOptions) {
         super();
 
         this.chartController = chartController;
-        this.chartMenuUtils = chartOptionsService.getChartOptionMenuUtils();
+        this.chartMenuUtils = chartMenuUtils;
         this.isExpandedOnInit = isExpandedOnInit;
     }
 
