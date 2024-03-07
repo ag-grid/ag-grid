@@ -4,14 +4,20 @@ title: "Column Headers"
 
 Column Headers by default use the Provided Header Component. The default can be overridden with Custom Header Component. This page explains how to use the Provided Header Component, create your own Custom Header Component, and general Header configuration.
 
-This example shows a Custom Header Component. Note the following:
+When no header name is provided, the grid will derieve the header name from the provided `field`. The grid will assume the field is Camel Case and will reverse engineer the readable name.
 
-* Column moving and resizing works without custom logic.
-* Use of `suppressMenu=true` to supporess the menu.
-* Use of `sortable=false` to suppress sorting.
-* Configurable menu icon.
-
-{% gridExampleRunner title="Header component" name="header-component" /%}
+```js {% frameworkTransform=true suppressFrameworkContext=true spaceBetweenProperties=true %}
+const gridOptions = {
+    columnDefs: [
+        // header name will be 'Athlete'
+        { field: 'athlete' },
+        // header name will be 'First Name'
+        { field: 'firstName' },
+        // header name will be 'foo'
+        { headerName: 'foo', field: 'bar' }
+    ]
+}
+```
 
 ## Selecting Components
 
@@ -23,6 +29,15 @@ Specify the Header Component using the Column Definition `headerComponent`.
 See [Registering Components](./components/) for an overview of registering componnets.
 
 ## Custom Component
+
+This example shows a Custom Header Component. Note the following:
+
+* Column moving and resizing works without custom logic.
+* Use of `suppressMenu=true` to supporess the menu.
+* Use of `sortable=false` to suppress sorting.
+* Configurable menu icon.
+
+{% gridExampleRunner title="Header component" name="header-component" /%}
 
 {% if isFramework("javascript", "angular", "vue") %}
 The interface for a custom header component is:
