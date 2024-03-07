@@ -248,3 +248,11 @@
         background-color: color-mix(in srgb, var(--color-bg-primary), var(--color-fg-primary) 10%);
     }
 }
+
+.conferenceIcon {
+    margin-top: 16px;
+    background-color: red;
+    height: 32px;
+    width: 32px;
+    border-radius: var(--radius-lg);
+}

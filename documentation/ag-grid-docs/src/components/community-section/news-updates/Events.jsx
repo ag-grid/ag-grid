@@ -113,6 +113,7 @@ const Events = ({ enableFilters = false }) => {
                                 <Icon className={styles.locationIcon} name="mapPin" />
                                 {event.location}
                             </span>
+                            <span className={styles.conferenceIcon}></span>
                             <span className={styles.title}>{event.title}</span>
                             <span className={styles.description}>{event.description}</span>
                         </div>
