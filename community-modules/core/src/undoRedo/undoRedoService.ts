@@ -199,31 +199,34 @@ export class UndoRedoService extends BeanStub {
     }
 
     private processRange(ranges: (CellRange | undefined)[]) {
-        let lastFocusedCell: LastFocusedCell;
-
         this.rangeService.removeAllCellRanges(true);
         ranges.forEach((range, idx) => {
             if (!range) { return; }
 
+            const startColumn = range.startColumn;
             const startRow = range.startRow;
             const endRow = range.endRow;
 
-            if (idx === ranges.length - 1) {
-                lastFocusedCell = {
-                    rowPinned: startRow!.rowPinned,
-                    rowIndex: startRow!.rowIndex,
-                    columnId: range.startColumn.getColId()
-                };
+            if (!startRow || !endRow) { return; }
 
-                this.setLastFocusedCell(lastFocusedCell);
+            if (idx === ranges.length - 1) {
+                const lastFocusedCell: LastFocusedCell | null = startColumn
+                    ? {
+                        rowPinned: startRow.rowPinned,
+                        rowIndex: startRow.rowIndex,
+                        columnId: startColumn.getColId(),
+                    }
+                    : null;
+
+                if (lastFocusedCell) this.setLastFocusedCell(lastFocusedCell);
             }
 
             const cellRangeParams: CellRangeParams = {
-                rowStartIndex: startRow!.rowIndex,
-                rowStartPinned: startRow!.rowPinned,
-                rowEndIndex: endRow!.rowIndex,
-                rowEndPinned: endRow!.rowPinned,
-                columnStart: range.startColumn,
+                rowStartIndex: startRow.rowIndex,
+                rowStartPinned: startRow.rowPinned,
+                rowEndIndex: endRow.rowIndex,
+                rowEndPinned: endRow.rowPinned,
+                columnStart: startColumn,
                 columns: range.columns
             };
 

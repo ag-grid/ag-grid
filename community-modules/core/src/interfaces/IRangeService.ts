@@ -55,8 +55,8 @@ export interface CellRange {
     endRow?: RowPosition;
     /** The columns in the range */
     columns: Column[];
-    /** The start column for the range */
-    startColumn: Column;
+    /** The start column for the range (undefined if the range contains no columns ) */
+    startColumn: Column | undefined;
 }
 
 export interface CellRangeParams {

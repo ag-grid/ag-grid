@@ -215,7 +215,7 @@ export class RangeService extends BeanStub implements IRangeService {
 
     public updateRangeEnd(cellRange: CellRange, cellPosition: CellPosition, silent = false): void {
         const endColumn = cellPosition.column;
-        const colsToAdd = this.calculateColumnsBetween(cellRange.startColumn, endColumn);
+        const colsToAdd = cellRange.startColumn && this.calculateColumnsBetween(cellRange.startColumn, endColumn);
 
         if (!colsToAdd || this.isLastCellOfRange(cellRange, cellPosition)) {
             return;
@@ -430,7 +430,7 @@ export class RangeService extends BeanStub implements IRangeService {
         const newRange = this.createCellRangeFromCellRangeParams(params);
 
         if (newRange) {
-            if (newRange.startRow) {
+            if (newRange.startColumn && newRange.startRow) {
                 this.setNewestRangeStartCell({
                     rowIndex: newRange.startRow.rowIndex,
                     rowPinned: newRange.startRow.rowPinned,

@@ -20,7 +20,7 @@ export interface RangeSelectionCellState {
     /** The columns in the range */
     colIds: string[];
     /** The start column for the range */
-    startColId: string;
+    startColId: string | undefined;
 }
 
 export interface RangeSelectionState {

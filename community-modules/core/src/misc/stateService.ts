@@ -483,7 +483,7 @@ export class StateService extends BeanStub {
                 startRow,
                 endRow,
                 colIds: columns.map(column => column.getColId()),
-                startColId: startColumn.getColId()
+                startColId: startColumn?.getColId()
             }
         });
         return cellRanges?.length ? { cellRanges } : undefined;
@@ -494,7 +494,9 @@ export class StateService extends BeanStub {
         const cellRanges = rangeSelectionState.cellRanges.map(cellRange => ({
             ...cellRange,
             columns: cellRange.colIds.map(colId => this.columnModel.getGridColumn(colId)!),
-            startColumn: this.columnModel.getGridColumn(cellRange.startColId)!
+            startColumn: cellRange.startColId === undefined
+                ? undefined
+                : this.columnModel.getGridColumn(cellRange.startColId) ?? undefined,
         }));
         this.rangeService?.setCellRanges(cellRanges);
     }
