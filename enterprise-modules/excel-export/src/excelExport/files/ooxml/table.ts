@@ -3,21 +3,11 @@ import { ExcelDataTable } from '../../assets/excelInterfaces';
 
 const tableFactory: ExcelOOXMLTemplate = {
     getTemplate(dataTable: ExcelDataTable, idx: number) {
-        if (
-            typeof dataTable !== 'object' || !dataTable ||
-            !dataTable.name || !Array.isArray(dataTable.columns) || !dataTable.columns.length ||
-            !dataTable.rowCount
-        ) {
+        const { name, columns, rowCount, displayName, headerRowIndex } = dataTable || {};
+
+        if (!dataTable || !name || !Array.isArray(columns) || !columns.length || !rowCount) {
             return { name: "table" };
         }
-
-        const {
-            name,
-            displayName,
-            columns,
-            rowCount,
-            headerRowIndex,
-        } = dataTable;
 
         const firstRow = headerRowIndex + 1;
         const id: string = (idx + 1).toString();
