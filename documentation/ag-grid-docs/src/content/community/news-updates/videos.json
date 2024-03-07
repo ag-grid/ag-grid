@@ -1,14 +1,5 @@
 [
     {
-        "title": "Typing: The not so secret to customisation ngTemplateOutlet",
-        "link": "https://www.youtube.com/embed/ELRCT7ooNCU",
-        "description": "ngTemplateOutlets are no longer a secret and continue to be an immensely powerful feature for customising our applications. But they were held back by a lack of template typings. This is no longer the case. We can now type them!",
-        "author": "Stephen Cooper",
-        "type": "Video",
-        "published": "10/2023",
-        "id": "ELRCT7ooNCU"
-    },
-    {
         "title": "The Future of AG Grid & AG Charts",
         "link": "https://www.youtube.com/embed/JxOtSAXFQ6c",
         "description": "In this short video the founder of AG Grid, Niall Crosby, shares how AG Grid became the leading JavaScript data grid for enterprise applications. An inspiring story, worth watching for anyone interested in enterprise architecture and how to grow a successful software company! ",
@@ -16,6 +7,15 @@
         "type": "Video",
         "published": "02/2024",
         "id": "JxOtSAXFQ6c"
+    },
+    {
+        "title": "Typing: The not so secret to customisation ngTemplateOutlet",
+        "link": "https://www.youtube.com/embed/ELRCT7ooNCU",
+        "description": "ngTemplateOutlets are no longer a secret and continue to be an immensely powerful feature for customising our applications. But they were held back by a lack of template typings. This is no longer the case. We can now type them!",
+        "author": "Stephen Cooper",
+        "type": "Video",
+        "published": "10/2023",
+        "id": "ELRCT7ooNCU"
     },
     {
         "title": "AGGrid: High-Performance DOM Updates w/ Niall Crosby",
