@@ -234,12 +234,7 @@
                 "items": [
                     {
                         "title": "Design System",
-                        "items": [
-                            {
-                                "title": "Getting Started",
-                                "path": "ag-grid-design-system"
-                            }
-                        ]
+                        "path": "ag-grid-design-system"
                     },
                     {
                         "title": "Theming",
@@ -307,6 +302,10 @@
                                 "path": "global-style-customisation-sass"
                             }
                         ]
+                    },
+                    {
+                        "title": "Grid Size",
+                        "path": "grid-size"
                     }
                 ]
             },
@@ -644,24 +643,6 @@
                             }
                         ]
                     },                    
-                    {
-                        "title": "Grid",
-                        "items": [
-                            {
-                                "title": "Grid Size",
-                                "path": "grid-size"
-                            },
-                            {
-                                "title": "Printing",
-                                "path": "printing"
-                            },
-                            {
-                                "title": "Custom Components",
-                                "path": "components"
-                            }
-
-                        ]
-                    },
                     {
                         "title": "Filtering",
                         "items": [
@@ -1417,6 +1398,10 @@
                                 "path": "drag-and-drop"
                             },
                             {
+                                "title": "Printing",
+                                "path": "printing"
+                            },
+                            {
                                 "title": "See Also",
                                 "items": [
                                     {
@@ -1493,6 +1478,10 @@
                                 "title": "Testing Async",
                                 "path": "testing-async",
                                 "frameworks": ["angular"]
+                            },
+                            {
+                                "title": "Custom Components",
+                                "path": "components"
                             },
                             {
                                 "title": "Security",
