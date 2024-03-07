@@ -165,6 +165,13 @@ export default defineMarkdocConfig({
                 wrapped: { type: Boolean },
             },
         },
+        iframe: {
+            render: 'iframe',
+            attributes: {
+                src: { type: String, required: true },
+                style: { type: String },
+            },
+        },
         iconsPanel: {
             render: component('./src/components/icon/IconsPanel.astro'),
         },
@@ -275,6 +282,14 @@ export default defineMarkdocConfig({
                 id: { type: String },
                 title: { type: String },
                 showHeader: { type: Boolean },
+            },
+        },
+        openInCTA: {
+            render: component('./src/components/open-in-cta/OpenInCTA.astro'),
+            attributes: {
+                type: { type: String, required: true },
+                href: { type: String, required: true },
+                text: { type: String },
             },
         },
     },
