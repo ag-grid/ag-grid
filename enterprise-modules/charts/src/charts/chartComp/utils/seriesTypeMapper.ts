@@ -204,3 +204,7 @@ export function isPieChartSeries(seriesType: ChartSeriesType): seriesType is Pie
             return false;
     }
 }
+
+export function canOnlyHaveSingleSeries(chartType: ChartType): boolean {
+    return chartType === 'pie' || chartType === 'waterfall';
+}

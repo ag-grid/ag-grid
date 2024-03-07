@@ -4,7 +4,7 @@ import { escapeString } from "../utils/string";
 import { KeyCode } from '../constants/keyCode';
 import { setAriaPosInSet, setAriaRole, setAriaSelected, setAriaSetSize } from '../utils/aria';
 import { Events } from "../eventKeys";
-import { getInnerWidth, isVisible } from "../utils/dom";
+import { getInnerWidth, isVisible, removeFromParent } from "../utils/dom";
 import { TooltipFeature } from "./tooltipFeature";
 
 export interface ListOption<TValue = string> {
@@ -82,6 +82,15 @@ export class AgList<TValue = string> extends Component {
         return this;
     }
 
+    public clearOptions(): void {
+        this.options = [];
+        this.reset(true);
+        this.itemEls.forEach(itemEl => {
+            removeFromParent(itemEl);
+        });
+        this.itemEls = [];
+    }
+
     private updateIndices(): void {
         const options = this.getGui().querySelectorAll('.ag-list-item');
         options.forEach((option: HTMLElement, idx) => {
@@ -126,7 +135,7 @@ export class AgList<TValue = string> extends Component {
         }
 
         if (value == null) {
-            this.reset();
+            this.reset(silent);
             return this;
         }
 
@@ -168,11 +177,13 @@ export class AgList<TValue = string> extends Component {
         }
     }
 
-    private reset(): void {
+    private reset(silent?: boolean): void {
         this.value = null;
         this.displayValue = null;
         this.clearHighlighted();
-        this.fireChangeEvent();
+        if (!silent) {
+            this.fireChangeEvent();
+        }
     }
 
     private highlightItem(el: HTMLElement): void {
