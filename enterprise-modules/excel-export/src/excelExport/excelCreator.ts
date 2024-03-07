@@ -60,27 +60,36 @@ const createExcelXmlWorksheets = (data: string[]): void => {
         const hasImages = ExcelXlsxFactory.images.size > 0 && ExcelXlsxFactory.worksheetImages.has(idx);
         const hasTables = ExcelXlsxFactory.worksheetDataTables.size > 0 && ExcelXlsxFactory.worksheetDataTables.has(idx);
 
-        if (hasImages && hasTables) {
-            createTableAndImageRelationsForSheet(idx, tableRelationCounter, imageRelationCounter);
-            tableRelationCounter++;
-            imageRelationCounter++;
+        let tableIndex: number | undefined;
+        let drawingIndex: number | undefined;
 
-            return;
+        if (hasImages) {
+            createExcelXmlDrawings(idx, imageRelationCounter);
+            drawingIndex = imageRelationCounter;
+            imageRelationCounter++;
         }
 
         if (hasTables) {
-            createTableRelationsForSheet(idx, tableRelationCounter);
-            tableRelationCounter++
-            return;
+            tableIndex = tableRelationCounter;
+            tableRelationCounter++;
         }
 
-        if (hasImages) {
-            createImageRelationsForSheet(idx, imageRelationCounter);
-            imageRelationCounter++;
-            return;
-        }
+        const worksheetRelFile = `xl/worksheets/_rels/sheet${idx + 1}.xml.rels`;
+        ZipContainer.addFile(
+            worksheetRelFile,
+            ExcelXlsxFactory.createRelationships({ tableIndex, drawingIndex }),
+        );
     });
 }
+
+const createExcelXmlDrawings = (sheetIndex: number, drawingIndex: number): void => {
+    const drawingFolder = 'xl/drawings';
+    const drawingFileName = `${drawingFolder}/drawing${drawingIndex + 1}.xml`;
+    const relFileName = `${drawingFolder}/_rels/drawing${drawingIndex + 1}.xml.rels`;
+
+    ZipContainer.addFile(relFileName, ExcelXlsxFactory.createDrawingRel(sheetIndex));
+    ZipContainer.addFile(drawingFileName, ExcelXlsxFactory.createDrawing(sheetIndex));
+};
 
 const createExcelXmlTables = (): void => {
     const tablesDataByWorksheet = ExcelXlsxFactory.worksheetDataTables;
@@ -178,40 +187,6 @@ export const exportMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetPara
         }
     });
 };
-
-const createImageRelationsForSheet = (sheetIndex: number, currentRelationIndex: number) => {
-    const drawingFolder = 'xl/drawings';
-    const drawingFileName = `${drawingFolder}/drawing${currentRelationIndex + 1}.xml`;
-    const relFileName = `${drawingFolder}/_rels/drawing${currentRelationIndex + 1}.xml.rels`;
-    const worksheetRelFile = `xl/worksheets/_rels/sheet${sheetIndex + 1}.xml.rels`;
-
-    ZipContainer.addFile(relFileName, ExcelXlsxFactory.createDrawingRel(sheetIndex));
-    ZipContainer.addFile(drawingFileName, ExcelXlsxFactory.createDrawing(sheetIndex));
-    ZipContainer.addFile(worksheetRelFile, ExcelXlsxFactory.createWorksheetDrawingRel(currentRelationIndex));
-};
-
-const createTableRelationsForSheet = (sheetIndex: number, currentRelationIndex: number) => {
-    const worksheetRelFile = `xl/worksheets/_rels/sheet${sheetIndex + 1}.xml.rels`;
-    ZipContainer.addFile(worksheetRelFile, ExcelXlsxFactory.createWorksheetTableRel(currentRelationIndex));
-};
-
-const createTableAndImageRelationsForSheet = (
-    sheetIndex: number,
-    currentTableRelationIndex: number,
-    currentImageRelationIndex: number,
-) => {
-    const drawingFolder = 'xl/drawings';
-    const drawingFileName = `${drawingFolder}/drawing${currentImageRelationIndex + 1}.xml`;
-    const relFileName = `${drawingFolder}/_rels/drawing${currentImageRelationIndex + 1}.xml.rels`;
-    const worksheetRelFile = `xl/worksheets/_rels/sheet${sheetIndex + 1}.xml.rels`;
-
-    ZipContainer.addFile(relFileName, ExcelXlsxFactory.createDrawingRel(sheetIndex));
-    ZipContainer.addFile(drawingFileName, ExcelXlsxFactory.createDrawing(sheetIndex));
-    ZipContainer.addFile(worksheetRelFile, ExcelXlsxFactory.createWorksheetDrawingAndTableRel(
-        currentTableRelationIndex,
-        currentImageRelationIndex
-    ));
-}
 
 @Bean('excelCreator')
 export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSession, ExcelExportParams> implements IExcelCreator {

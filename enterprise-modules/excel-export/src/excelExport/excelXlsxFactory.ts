@@ -327,22 +327,37 @@ export class ExcelXlsxFactory {
         return createXmlPart(rs);
     }
 
-    public static createWorksheetDrawingAndTableRel(
-        currentDrawRelationIndex: number,
-        currentTableRelationIndex: number
-    ) {
-        const tableId = this.getTableNameFromIndex(currentTableRelationIndex);
-        const tableRelId = this.getTableRelIdFromIndex(currentTableRelationIndex);
-        const rs = relationshipsFactory.getTemplate([{
-            Id: 'rId1',
-            Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing',
-            Target: `../drawings/drawing${currentDrawRelationIndex + 1}.xml`
-        }, {
-            Id: tableRelId,
-            Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/table',
-            Target: `../tables/${tableId}.xml`
-        }]);
+    public static createRelationships({
+        drawingIndex,
+        tableIndex,
+    } : {
+        drawingIndex?: number,
+        tableIndex?: number,
+    } = {}) {
+        if (drawingIndex === undefined && tableIndex === undefined) {
+            return '';
+        }
 
+        const config = [];
+        if (typeof drawingIndex === 'number') {
+            config.push({
+                Id: 'rId1',
+                Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing',
+                Target: `../drawings/drawing${drawingIndex + 1}.xml`
+            });
+        }
+
+        if (typeof tableIndex === 'number') {
+            const tableId = this.getTableNameFromIndex(tableIndex);
+            const tableRelId = this.getTableRelIdFromIndex(tableIndex);
+            config.push({
+                Id: tableRelId,
+                Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/table',
+                Target: `../tables/${tableId}.xml`
+            });
+        }
+
+        const rs = relationshipsFactory.getTemplate(config);
         return createXmlPart(rs);
     }
 
