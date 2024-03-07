@@ -16,15 +16,6 @@ import { ChartSettingsPanel } from "./settings/chartSettingsPanel";
 import { ChartTranslationKey, ChartTranslationService } from "../services/chartTranslationService";
 import { ChartOptionsService } from "../services/chartOptionsService";
 
-type TabbedPanelConstructor = new (
-    options: {
-        chartController: ChartController,
-        chartOptionsService: ChartOptionsService,
-        chartMenuUtils: ChartMenuUtils,
-        chartAxisMenuUtils: ChartMenuUtils,
-    }
-) => Component;
-
 export class TabbedChartMenu extends Component {
     public static TAB_DATA = 'data';
     public static TAB_FORMAT = 'format';
@@ -63,10 +54,17 @@ export class TabbedChartMenu extends Component {
     public init(): void {
         this.panels.forEach(panel => {
             const panelType = panel.replace('chart', '').toLowerCase() as 'settings' | 'data' | 'format';
-            const { comp, tab } = this.createTab(panel, panelType, this.getPanelClass(panelType));
+            const panelComp = this.createPanel(
+                panelType,
+                this.chartController,
+                this.chartOptionsService,
+                this.chartMenuUtils,
+                this.chartAxisMenuUtils,
+            );
+            const tabItem = this.createTab(panel, panelType, panelComp);
 
-            this.tabs.push(tab);
-            this.addDestroyFunc(() => this.destroyBean(comp));
+            this.tabs.push(tabItem);
+            this.addDestroyFunc(() => this.destroyBean(panelComp));
         });
 
         this.tabbedLayout = new TabbedLayout({
@@ -82,37 +80,28 @@ export class TabbedChartMenu extends Component {
     private createTab(
         name: ChartMenuOptions,
         title: ChartTranslationKey,
-        TabPanelClass: TabbedPanelConstructor,
-    ): { comp: Component, tab: TabbedItem; } {
+        panelComp: Component,
+    ): TabbedItem {
         const eWrapperDiv = document.createElement('div');
         eWrapperDiv.classList.add('ag-chart-tab', `ag-chart-${title}`);
 
-        const comp = new TabPanelClass({
-            chartController: this.chartController,
-            chartOptionsService: this.chartOptionsService,
-            chartMenuUtils: this.chartMenuUtils,
-            chartAxisMenuUtils: this.chartAxisMenuUtils,
-        });
-        this.getContext().createBean(comp);
+        this.getContext().createBean(panelComp);
 
-        eWrapperDiv.appendChild(comp.getGui());
+        eWrapperDiv.appendChild(panelComp.getGui());
 
         const titleEl = document.createElement('div');
         const translatedTitle = this.chartTranslationService.translate(title);
         titleEl.innerText = translatedTitle;
 
         return {
-            comp,
-            tab: {
-                title: titleEl,
-                titleLabel: translatedTitle,
-                bodyPromise: AgPromise.resolve(eWrapperDiv),
-                getScrollableContainer: () => {
-                    const scrollableContainer = eWrapperDiv.querySelector('.ag-scrollable-container');
-                    return (scrollableContainer || eWrapperDiv) as HTMLElement;
-                },
-                name
-            }
+            title: titleEl,
+            titleLabel: translatedTitle,
+            bodyPromise: AgPromise.resolve(eWrapperDiv),
+            getScrollableContainer: () => {
+                const scrollableContainer = eWrapperDiv.querySelector('.ag-scrollable-container');
+                return (scrollableContainer || eWrapperDiv) as HTMLElement;
+            },
+            name
         };
     }
 
@@ -136,14 +125,20 @@ export class TabbedChartMenu extends Component {
         super.destroy();
     }
 
-    private getPanelClass(panelType: string): TabbedPanelConstructor {
+    private createPanel(
+        panelType: string,
+        chartController: ChartController,
+        chartOptionsService: ChartOptionsService,
+        chartMenuUtils: ChartMenuUtils,
+        chartAxisMenuUtils: ChartMenuUtils,
+    ): Component {
         switch (panelType) {
             case TabbedChartMenu.TAB_DATA:
-                return ChartDataPanel;
+                return new ChartDataPanel(chartController, chartOptionsService);
             case TabbedChartMenu.TAB_FORMAT:
-                return FormatPanel;
+                return new FormatPanel(chartController, chartOptionsService, chartMenuUtils, chartAxisMenuUtils);
             default:
-                return ChartSettingsPanel;
+                return new ChartSettingsPanel(chartController);
         }
     }
 }

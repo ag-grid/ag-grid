@@ -31,20 +31,16 @@ export class ChartSettingsPanel extends Component {
     private miniChartsContainers: MiniChartsContainer[] = [];
     private cardItems: HTMLElement[] = [];
 
-    private readonly chartController: ChartController;
-
     private activePaletteIndex = 0;
     private palettes: AgChartThemePalette[] = [];
     private themes: string[] = [];
 
     private isAnimating: boolean;
 
-    constructor(options: {
-        chartController: ChartController,
-    }) {
+    constructor(
+        private readonly chartController: ChartController,
+    ) {
         super(ChartSettingsPanel.TEMPLATE);
-
-        this.chartController = options.chartController;
     }
 
     @PostConstruct

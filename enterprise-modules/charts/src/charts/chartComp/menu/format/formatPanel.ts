@@ -47,26 +47,17 @@ const DefaultFormatPanelDef: ChartFormatPanel = {
 export class FormatPanel extends Component {
     public static TEMPLATE = /* html */ `<div class="ag-chart-format-wrapper"></div>`;
 
-    private readonly chartController: ChartController;
-    private readonly chartOptionsService: ChartOptionsService;
-    private readonly chartMenuUtils: ChartMenuUtils;
-    private readonly chartAxisMenuUtils: ChartMenuUtils;
-
     private chartType: ChartType;
     private isGrouping: boolean;
     private panels: Component[] = [];
 
-    constructor(options: {
-        chartController: ChartController,
-        chartOptionsService: ChartOptionsService,
-        chartMenuUtils: ChartMenuUtils,
-        chartAxisMenuUtils: ChartMenuUtils,
-    }) {
+    constructor(
+        private readonly chartController: ChartController,
+        private readonly chartOptionsService: ChartOptionsService,
+        private readonly chartMenuUtils: ChartMenuUtils,
+        private readonly chartAxisMenuUtils: ChartMenuUtils,
+    ) {
         super(FormatPanel.TEMPLATE);
-        this.chartController = options.chartController;
-        this.chartOptionsService = options.chartOptionsService;
-        this.chartMenuUtils = options.chartMenuUtils;
-        this.chartAxisMenuUtils = options.chartAxisMenuUtils;
     }
 
     @PostConstruct
