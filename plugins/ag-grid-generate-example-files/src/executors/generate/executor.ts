@@ -193,16 +193,17 @@ export async function generateFiles(options: ExecutorOptions) {
                     const isEnterprise = entryFileContent.includes('-enterprise');
 
                     // Remove the original import statements that contain modules
-                    entryFileContent = entryFileContent.replace(/import ((.|\n)[^}]*?\wModule(.|\n)*?)from.*\n/g, '');
+                    entryFileContent = entryFileContent
+                        .replace(/import ((.|\n)[^}]*?\wModule(.|\n)*?)from.*\n/g, '')
+                        // Remove ModuleRegistry import if by itself
+                        .replace(
+                            /import ((.|\n)[^{,]*?ModuleRegistry(.|\n)*?)from.*\n/g,
+                            ''
+                        )
+                        // Remove if ModuleRegistry is with other imports
+                        .replace(/ModuleRegistry(,)?/g, '');
 
                     entryFileContent = removeModuleRegistration(entryFileContent);
-                    // Remove ModuleRegistry import if by itself
-                    entryFileContent = entryFileContent.replace(
-                        /import ((.|\n)[^{,]*?ModuleRegistry(.|\n)*?)from.*\n/g,
-                        ''
-                    );
-                    // Remove if ModuleRegistry is with other imports
-                    entryFileContent = entryFileContent.replace(/ModuleRegistry(,)?/g, '');
 
                     entryFileContent = entryFileContent
                         .replace(/@ag-grid-community\/core/g, 'ag-grid-community')
