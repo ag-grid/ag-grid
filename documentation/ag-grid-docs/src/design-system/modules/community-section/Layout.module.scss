@@ -5,8 +5,8 @@
     justify-content: center;
     flex-direction: column;
     align-items: center;
-    padding: 32px 0px 32px 0px;
-    margin: 64px 0px 0px 0px;
+    padding: $spacing-size-4 0px;
+    margin: $spacing-size-8 0px 0px 0px;
 
     h1 {
         margin-bottom: $spacing-size-2;
@@ -17,8 +17,11 @@
         text-align: center;
     }
     .description {
+        min-height: 75px;
+        display: flex;
+        align-items: center;
         text-align: center;
-        margin: 0px $spacing-size-48 0px $spacing-size-48;
+        margin: 0px $spacing-size-48;
     }
 }
 
@@ -44,7 +47,7 @@ section {
     width: 100vw;
     background: linear-gradient(transparent, var(--color-bg-brand-solid));
     opacity: 0.05;
-    top: 250px;
+    top: 240px;
     #{$selector-darkmode} & {
         background: linear-gradient(transparent, var(--color-fg-primary));
     }
