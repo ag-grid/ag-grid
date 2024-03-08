@@ -19,7 +19,7 @@ import { ChartTranslationKey, ChartTranslationService } from "../../../services/
 import { FormatPanelOptions } from "../formatPanel";
 import { GridLinePanel } from '../gridLine/gridLinePanel';
 import { AgAngleSelect } from "../../../../../widgets/agAngleSelect";
-import { ChartMenuUtils } from "../../chartMenuUtils";
+import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
 import { ChartOptionsProxy } from '../../../services/chartOptionsService';
 import { isPolar } from '../../../utils/seriesTypeMapper';
 import { AgColorPickerParams } from '../../../../../widgets/agColorPicker';
@@ -76,8 +76,8 @@ export class CartesianAxisPanel extends Component {
             suppressEnabledCheckbox: true
         };
 
-        const chartAxisOptions = this.createManagedBean(new ChartMenuUtils(this.chartAxisOptionsProxy));
-        const chartAxisThemeOverrides = this.createManagedBean(new ChartMenuUtils(this.chartAxisThemeOverridesProxy));
+        const chartAxisOptions = this.createManagedBean(new ChartMenuParamsFactory(this.chartAxisOptionsProxy));
+        const chartAxisThemeOverrides = this.createManagedBean(new ChartMenuParamsFactory(this.chartAxisThemeOverridesProxy));
 
         const axisTypeSelectParams = this.getAxisTypeSelectParams(chartAxisOptions, this.chartAxisAppliedThemeOverridesProxy);
         const axisPositionSelectParams = this.getAxisPositionSelectParams(chartAxisOptions);
@@ -103,7 +103,7 @@ export class CartesianAxisPanel extends Component {
         this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, updateAxisLabelRotations);
     }
 
-    private getAxisTypeSelectParams(chartAxisOptions: ChartMenuUtils, chartAxisAppliedThemeOverrides: ChartOptionsProxy): AgSelectParams | null {
+    private getAxisTypeSelectParams(chartAxisOptions: ChartMenuParamsFactory, chartAxisAppliedThemeOverrides: ChartOptionsProxy): AgSelectParams | null {
         const axisTypeSelectOptions = ((chartType, axisType) => {
             if (isPolar(chartType)) return null;
             switch (axisType) {
@@ -135,7 +135,7 @@ export class CartesianAxisPanel extends Component {
         return params;
     }
 
-    private getAxisPositionSelectParams(chartAxisOptions: ChartMenuUtils): AgSelectParams | null {
+    private getAxisPositionSelectParams(chartAxisOptions: ChartMenuParamsFactory): AgSelectParams | null {
         const axisPositionSelectOptions = ((chartType, axisType) => {
             if (isPolar(chartType)) return null;
             switch (axisType) {
@@ -157,11 +157,11 @@ export class CartesianAxisPanel extends Component {
         );
     }
 
-    private getAxisColorInputParams(chartAxisThemeOverrides: ChartMenuUtils): AgColorPickerParams {
+    private getAxisColorInputParams(chartAxisThemeOverrides: ChartMenuParamsFactory): AgColorPickerParams {
         return chartAxisThemeOverrides.getDefaultColorPickerParams('line.color');
     }
 
-    private getAxisLineWidthSliderParams(chartAxisThemeOverrides: ChartMenuUtils): AgSliderParams {
+    private getAxisLineWidthSliderParams(chartAxisThemeOverrides: ChartMenuParamsFactory): AgSliderParams {
         const chartOptions = chartAxisThemeOverrides.getChartOptions();
         // Note that there is no separate checkbox for enabling/disabling the axis line. Whenever the line width is
         // changed, the value for `line.enabled` is inferred based on the whether the `line.width` value is non-zero.
@@ -187,13 +187,13 @@ export class CartesianAxisPanel extends Component {
         return axisLineWidthSliderParams;
     }
 
-    private initGridLines(chartAxisThemeOverrides: ChartMenuUtils) {
+    private initGridLines(chartAxisThemeOverrides: ChartMenuParamsFactory) {
         const gridLineComp = this.createBean(new GridLinePanel(chartAxisThemeOverrides));
         this.axisGroup.addItem(gridLineComp);
         this.activePanels.push(gridLineComp);
     }
 
-    private initAxisTicks(chartAxisThemeOverrides: ChartMenuUtils) {
+    private initAxisTicks(chartAxisThemeOverrides: ChartMenuParamsFactory) {
         if (!this.hasConfigurableAxisTicks()) return;
         const axisTicksComp = this.createBean(new AxisTicksPanel(chartAxisThemeOverrides));
         this.axisGroup.addItem(axisTicksComp);
@@ -215,7 +215,7 @@ export class CartesianAxisPanel extends Component {
         }
     }
 
-    private initAxisLabels(chartAxisThemeOverrides: ChartMenuUtils) {
+    private initAxisLabels(chartAxisThemeOverrides: ChartMenuParamsFactory) {
         const params: FontPanelParams = {
             name: this.translate("labels"),
             enabled: true,
@@ -231,7 +231,7 @@ export class CartesianAxisPanel extends Component {
         this.addAdditionalLabelComps(labelPanelComp, chartAxisThemeOverrides);
     }
 
-    private addAdditionalLabelComps(labelPanelComp: FontPanel, chartAxisThemeOverrides: ChartMenuUtils) {
+    private addAdditionalLabelComps(labelPanelComp: FontPanel, chartAxisThemeOverrides: ChartMenuParamsFactory) {
         this.addLabelPadding(labelPanelComp, chartAxisThemeOverrides);
 
         const rotationComp = this.createRotationWidget('labelRotation', chartAxisThemeOverrides);
@@ -241,7 +241,7 @@ export class CartesianAxisPanel extends Component {
         labelPanelComp.addCompToPanel(rotationComp);
     }
 
-    private initLabelRotation(rotationComp: AgAngleSelect, chartAxisThemeOverrides: ChartMenuUtils) {
+    private initLabelRotation(rotationComp: AgAngleSelect, chartAxisThemeOverrides: ChartMenuParamsFactory) {
         const chartOptions = chartAxisThemeOverrides.getChartOptions();
 
         const getLabelRotationValue = (): number | undefined => {
@@ -280,7 +280,7 @@ export class CartesianAxisPanel extends Component {
         return autoRotateCheckbox;
     }
 
-    private createRotationWidget(labelKey: ChartTranslationKey, chartAxisThemeOverrides: ChartMenuUtils) {
+    private createRotationWidget(labelKey: ChartTranslationKey, chartAxisThemeOverrides: ChartMenuParamsFactory) {
         const chartOptions = chartAxisThemeOverrides.getChartOptions();
 
         const getLabelRotationValue = (): number | undefined => {
@@ -308,7 +308,7 @@ export class CartesianAxisPanel extends Component {
         return this.createBean(angleSelect);
     }
 
-    private addLabelPadding(labelPanelComp: FontPanel, chartAxisThemeOverrides: ChartMenuUtils) {
+    private addLabelPadding(labelPanelComp: FontPanel, chartAxisThemeOverrides: ChartMenuParamsFactory) {
         const labelPaddingSlider = this.createBean(new AgSlider(chartAxisThemeOverrides.getDefaultSliderParams(
             "label.padding",
             "padding",

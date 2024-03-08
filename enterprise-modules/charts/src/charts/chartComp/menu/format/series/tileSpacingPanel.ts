@@ -6,7 +6,7 @@ import {
     PostConstruct,
 } from "@ag-grid-community/core";
 import { ChartTranslationKey, ChartTranslationService } from "../../../services/chartTranslationService";
-import { ChartMenuUtils } from "../../chartMenuUtils";
+import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
 
 export class TileSpacingPanel extends Component {
 
@@ -24,7 +24,7 @@ export class TileSpacingPanel extends Component {
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
-    constructor(private readonly chartMenuUtils: ChartMenuUtils) {
+    constructor(private readonly chartMenuUtils: ChartMenuParamsFactory) {
         super();
     }
 

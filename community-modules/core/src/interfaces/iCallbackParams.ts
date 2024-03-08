@@ -24,6 +24,11 @@ export interface GetMainMenuItemsParams<TData = any, TContext = any> extends AgG
     defaultItems: string[];
 }
 
+export interface GetChartMenuItemsParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    /** List of the items that would be displayed by default */
+    defaultItems: string[];
+}
+
 export interface ProcessUnpinnedColumnsParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     columns: Column[],
     viewportWidth: number

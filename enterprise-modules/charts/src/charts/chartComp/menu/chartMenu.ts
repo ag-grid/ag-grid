@@ -16,12 +16,11 @@ import {
 
 import { TabbedChartMenu } from "./tabbedChartMenu";
 import { ChartController } from "../chartController";
-import { ChartOptionsService } from "../services/chartOptionsService";
-import { ChartMenuUtils } from './chartMenuUtils';
 import { ExtraPaddingDirection } from "../chartProxies/chartProxy";
 import { ChartMenuListFactory } from "./chartMenuList";
 import { ChartToolbar } from "./chartToolbar";
 import { ChartMenuService } from "../services/chartMenuService";
+import { ChartMenuContext } from "./chartMenuContext";
 
 type ChartToolbarButtons = {
     [key in ChartMenuOptions]: {
@@ -50,13 +49,15 @@ export class ChartMenu extends Component {
     @Autowired('chartMenuService') private chartMenuService: ChartMenuService;
     @Autowired('chartMenuListFactory') private chartMenuListFactory: ChartMenuListFactory;
 
+    private readonly chartController: ChartController;
+
     private buttons: ChartToolbarButtons = {
         chartSettings: { iconName: 'menu', callback: () => this.showMenu(this.defaultPanel) },
         chartData: { iconName: 'menu', callback: () => this.showMenu("chartData") },
         chartFormat: { iconName: 'menu', callback: () => this.showMenu("chartFormat") },
-        chartLink: { iconName: 'linked', callback: () => this.chartMenuService.toggleLinked(this.chartController) },
-        chartUnlink: { iconName: 'unlinked', callback: () => this.chartMenuService.toggleLinked(this.chartController) },
-        chartDownload: { iconName: 'save', callback: () => this.chartMenuService.downloadChart(this.chartController) },
+        chartLink: { iconName: 'linked', callback: () => this.chartMenuService.toggleLinked(this.chartMenuContext) },
+        chartUnlink: { iconName: 'unlinked', callback: () => this.chartMenuService.toggleLinked(this.chartMenuContext) },
+        chartDownload: { iconName: 'save', callback: () => this.chartMenuService.downloadChart(this.chartMenuContext) },
         chartMenu: { iconName: 'menuAlt', callback: (eventSource: HTMLElement) => this.showMenuList(eventSource) }
     };
 
@@ -77,12 +78,10 @@ export class ChartMenu extends Component {
     constructor(
         private readonly eChartContainer: HTMLElement,
         private readonly eMenuPanelContainer: HTMLElement,
-        private readonly chartController: ChartController,
-        private readonly chartOptionsService: ChartOptionsService,
-        private readonly chartMenuUtils: ChartMenuUtils,
-        private readonly chartAxisMenuUtils: ChartMenuUtils,
+        private readonly chartMenuContext: ChartMenuContext
     ) {
         super(ChartMenu.TEMPLATE);
+        this.chartController = chartMenuContext.chartController;
     }
 
     @PostConstruct
@@ -303,14 +302,10 @@ export class ChartMenu extends Component {
         menuPanel.setParentComponent(this);
         this.eMenuPanelContainer.appendChild(menuPanel.getGui());
 
-        this.tabbedMenu = this.createBean(new TabbedChartMenu({
-            type: this.chartController.getChartType(),
-            panels: this.panels,
-            chartController: this.chartController,
-            chartOptionsService: this.chartOptionsService,
-            chartMenuUtils: this.chartMenuUtils,
-            chartAxisMenuUtils: this.chartAxisMenuUtils,
-        }));
+        this.tabbedMenu = this.createBean(new TabbedChartMenu(
+            this.panels,
+            this.chartMenuContext
+        ));
 
         this.addManagedListener(
             menuPanel,
@@ -437,7 +432,7 @@ export class ChartMenu extends Component {
         this.chartMenuListFactory.showMenuList({
             eventSource,
             showMenu: () => this.showMenu(undefined, false),
-            chartController: this.chartController
+            chartMenuContext: this.chartMenuContext
         });
     }
 

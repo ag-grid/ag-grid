@@ -5,8 +5,7 @@ import {
     PostConstruct
 } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { FormatPanelOptions } from "../formatPanel";
-import { ChartMenuUtils } from "../../chartMenuUtils";
+import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
 
 export class CrosshairPanel extends Component {
     public static TEMPLATE = /* html */ `<div>
@@ -22,52 +21,45 @@ export class CrosshairPanel extends Component {
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
-    private readonly chartMenuUtils: ChartMenuUtils;
-    private readonly isExpandedOnInit: boolean;
-
-    constructor({ chartAxisMenuUtils, isExpandedOnInit = false }: FormatPanelOptions) {
+    constructor(private readonly chartMenuParamsFactory: ChartMenuParamsFactory) {
         super();
-
-        this.chartMenuUtils = chartAxisMenuUtils;
-        this.isExpandedOnInit = isExpandedOnInit;
     }
 
     @PostConstruct
     private init() {
-        const crosshairGroupParams = this.chartMenuUtils.addEnableParams<AgGroupComponentParams>('crosshair.enabled', {
-            cssIdentifier: 'charts-format-top-level',
+        const crosshairGroupParams = this.chartMenuParamsFactory.addEnableParams<AgGroupComponentParams>('crosshair.enabled', {
+            cssIdentifier: 'charts-advanced-settings-top-level',
             direction: 'vertical',
+            suppressOpenCloseIcons: true,
             title: this.chartTranslationService.translate('crosshair'),
             suppressEnabledCheckbox: false,
-            suppressToggleExpandOnEnableChange: true,
-            expanded: this.isExpandedOnInit,
         });
-        const crosshairLabelCheckboxParams = this.chartMenuUtils.getDefaultCheckboxParams(
+        const crosshairLabelCheckboxParams = this.chartMenuParamsFactory.getDefaultCheckboxParams(
             'crosshair.label.enabled',
             'crosshairLabel'
         );
-        const crosshairSnapCheckboxParams = this.chartMenuUtils.getDefaultCheckboxParams(
+        const crosshairSnapCheckboxParams = this.chartMenuParamsFactory.getDefaultCheckboxParams(
             'crosshair.snap',
             'crosshairSnap'
         );
-        const crosshairStrokeWidthSliderParams = this.chartMenuUtils.getDefaultSliderParams(
+        const crosshairStrokeWidthSliderParams = this.chartMenuParamsFactory.getDefaultSliderParams(
             'crosshair.strokeWidth',
             'lineWidth',
             10
         );
-        const crosshairLineDashSliderParams = this.chartMenuUtils.getDefaultSliderParams(
+        const crosshairLineDashSliderParams = this.chartMenuParamsFactory.getDefaultSliderParams(
             'crosshair.lineDash',
             'lineDash',
             30,
             true
         );
-        const crosshairLineOpacitySliderParams = this.chartMenuUtils.getDefaultSliderParams(
+        const crosshairLineOpacitySliderParams = this.chartMenuParamsFactory.getDefaultSliderParams(
             'crosshair.strokeOpacity',
             'strokeOpacity',
             1
         );
         crosshairLineOpacitySliderParams.step = 0.05;
-        const crosshairStrokeColorPickerParams = this.chartMenuUtils.getDefaultColorPickerParams(
+        const crosshairStrokeColorPickerParams = this.chartMenuParamsFactory.getDefaultColorPickerParams(
             'crosshair.stroke',
             'strokeColor'
         );

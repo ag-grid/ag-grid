@@ -142,6 +142,10 @@ export const iconNameClassMap: { [key: string]: string; } = {
     advancedFilterBuilderAdd: 'plus',
     // shown on Advanced Filter Builder rows to remove row
     advancedFilterBuilderRemove: 'minus',
+    // Edit Chart menu item shown in Integrated Charts menu
+    chartsMenuEdit: 'chart',
+    // Advanced Settings menu item shown in Integrated Charts menu
+    chartsMenuAdvancedSettings: 'eye',
     // shown in Integrated Charts menu add fields
     chartsMenuAdd: 'plus',
 };

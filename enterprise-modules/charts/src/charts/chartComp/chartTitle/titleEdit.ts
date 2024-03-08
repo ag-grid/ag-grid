@@ -2,8 +2,8 @@ import { Autowired, Component, PostConstruct } from "@ag-grid-community/core";
 import { ChartMenu } from "../menu/chartMenu";
 import { ChartTranslationService } from "../services/chartTranslationService";
 import { ChartController } from "../chartController";
-import { ChartMenuUtils } from "../menu/chartMenuUtils";
 import { ChartOptionsProxy, ChartOptionsService } from '../services/chartOptionsService';
+import { ChartMenuContext } from "../menu/chartMenuContext";
 
 interface BBox { x: number; y: number; width: number; height: number }
 
@@ -44,13 +44,11 @@ export class TitleEdit extends Component {
 
     /* should be called when the containing component changes to a new chart proxy */
     public refreshTitle(
-        chartController: ChartController,
-        chartOptionsService: ChartOptionsService,
-        chartMenuUtils: ChartMenuUtils,
+        chartMenuContext: ChartMenuContext
     ) {
-        this.chartController = chartController;
-        this.chartOptionsService = chartOptionsService;
-        this.chartMenuUtils = chartMenuUtils.getChartOptions();
+        this.chartController = chartMenuContext.chartController;
+        this.chartOptionsService = chartMenuContext.chartOptionsService;
+        this.chartMenuUtils = chartMenuContext.chartMenuParamsFactory.getChartOptions();
 
         for (const destroyFn of this.destroyableChartListeners) {
             destroyFn();
