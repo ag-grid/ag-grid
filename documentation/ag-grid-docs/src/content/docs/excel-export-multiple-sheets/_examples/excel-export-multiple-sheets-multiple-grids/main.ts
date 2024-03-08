@@ -4,7 +4,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
 
-ModuleRegistry.registerModules([ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ExcelExportModule])]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ExcelExportModule])]);
 
 class SportRenderer implements ICellRendererComp {
     eGui!: HTMLElement;

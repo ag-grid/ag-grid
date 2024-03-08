@@ -14,7 +14,7 @@ import './styles.css';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 
-ModuleRegistry.registerModules([ModuleRegistry.registerModules([ClientSideRowModelModule, SetFilterModule, MenuModule, FiltersToolPanelModule])]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, SetFilterModule, MenuModule, FiltersToolPanelModule])]);
 
 const colourCellRenderer = props => {
     if (!props.value || props.value === '(Select All)') {

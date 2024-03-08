@@ -11,7 +11,7 @@ import { AgGridAngular } from '@ag-grid-community/angular';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 
-ModuleRegistry.registerModules([ModuleRegistry.registerModules([ClientSideRowModelModule, ExcelExportModule, MenuModule])]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, ExcelExportModule, MenuModule])]);
 
 @Component({
     standalone: true,

@@ -14,7 +14,7 @@ import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-ModuleRegistry.registerModules([ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule])]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule])]);
 
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);

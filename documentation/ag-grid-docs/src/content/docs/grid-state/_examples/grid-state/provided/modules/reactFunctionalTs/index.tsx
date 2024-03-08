@@ -15,7 +15,7 @@ import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
 
-ModuleRegistry.registerModules([ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, FiltersToolPanelModule, SetFilterModule, RangeSelectionModule])]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, FiltersToolPanelModule, SetFilterModule, RangeSelectionModule])]);
 
 const GridExample = () => {
     const gridRef = useRef<AgGridReact<IOlympicData>>(null);
