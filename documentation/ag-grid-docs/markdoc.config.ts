@@ -171,7 +171,11 @@ export default defineMarkdocConfig({
                 /**
                  * Source file relative to example folder
                  */
-                src: { type: String, required: true },
+                src: { type: String },
+                /**
+                 * Source file url
+                 */
+                url: { type: String },
                 language: { type: String },
                 lineNumbers: { type: Boolean },
             },

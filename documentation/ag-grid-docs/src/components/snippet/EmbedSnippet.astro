@@ -4,19 +4,25 @@ import Code, { type Language } from '../Code';
 import { getExamplesPath } from '@features/docs/utils/filesData';
 import path from 'path';
 import { readFileSync } from 'node:fs';
+import { SnippetFromRemoteUrl } from './SnippetFromRemoteUrl';
 
 interface Props {
     src: string;
+    url: string;
     language: Language;
     lineNumbers: boolean;
 }
 
 const pageName = getPageNameFromPath(Astro.url.pathname);
-const { src, language, lineNumbers } = Astro.props;
+const { src, url, language, lineNumbers } = Astro.props;
 
-const examplePath = getExamplesPath({ pageName });
-const file = path.join(examplePath, src);
-const snippet = readFileSync(file).toString();
+let snippet;
+if (src) {
+    const examplePath = getExamplesPath({ pageName });
+    const file = path.join(examplePath, src);
+    snippet = readFileSync(file).toString();
+}
 ---
 
-<Code code={snippet} language={language} lineNumbers={lineNumbers} />
+{snippet && <Code code={snippet} language={language} lineNumbers={lineNumbers} />}
+{url && <SnippetFromRemoteUrl client:only url={url} language={language} lineNumbers={lineNumbers} />}
