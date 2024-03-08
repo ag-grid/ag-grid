@@ -24,6 +24,13 @@ export const getExamplePageUrl = ({ framework, path }: { framework: Framework; p
     return pathJoin(SITE_BASE_URL, frameworkPath, path) + '/';
 };
 
+export interface UrlParams {
+    internalFramework: InternalFramework;
+    pageName: string;
+    exampleName: string;
+    importType: ImportType;
+}
+
 /**
  * Dynamic path where examples are
  */
@@ -32,12 +39,7 @@ export const getExampleUrl = ({
     pageName,
     exampleName,
     importType,
-}: {
-    internalFramework: InternalFramework;
-    pageName: string;
-    exampleName: string;
-    importType: ImportType;
-}) => {
+}: UrlParams) => {
     return pathJoin(SITE_BASE_URL, 'examples', pageName, exampleName, importType, internalFramework);
 };
 
@@ -49,12 +51,7 @@ export const getExampleRunnerExampleUrl = ({
     pageName,
     exampleName,
     importType,
-}: {
-    internalFramework: InternalFramework;
-    pageName: string;
-    exampleName: string;
-    importType: ImportType;
-}) => {
+}: UrlParams) => {
     const exampleUrl = getExampleUrl({
         internalFramework,
         pageName,
@@ -72,12 +69,7 @@ export const getExamplePlunkrUrl = ({
     pageName,
     exampleName,
     importType,
-}: {
-    internalFramework: InternalFramework;
-    pageName: string;
-    exampleName: string;
-    importType: ImportType;
-}) => {
+}: UrlParams) => {
     const exampleUrl = getExampleUrl({
         internalFramework,
         pageName,
@@ -95,12 +87,7 @@ export const getExampleCodeSandboxUrl = ({
     pageName,
     exampleName,
     importType,
-}: {
-    internalFramework: InternalFramework;
-    pageName: string;
-    exampleName: string;
-    importType: ImportType;
-}) => {
+}: UrlParams) => {
     const exampleUrl = getExampleUrl({
         internalFramework,
         pageName,
@@ -118,12 +105,7 @@ export const getExampleContentsUrl = ({
     pageName,
     exampleName,
     importType,
-}: {
-    internalFramework: InternalFramework;
-    pageName: string;
-    exampleName: string;
-    importType: ImportType;
-}) => {
+}: UrlParams) => {
     const exampleUrl = getExampleUrl({
         internalFramework,
         pageName,
@@ -133,6 +115,9 @@ export const getExampleContentsUrl = ({
     return pathJoin(exampleUrl, 'contents.json');
 };
 
+export interface ExampleFileUrlParams extends UrlParams {
+    fileName: string;
+}
 /**
  * Dynamic path where example files are
  */
@@ -142,13 +127,7 @@ export const getExampleFileUrl = ({
     exampleName,
     importType,
     fileName,
-}: {
-    internalFramework: InternalFramework;
-    pageName: string;
-    exampleName: string;
-    importType: ImportType;
-    fileName: string;
-}) => {
+}: ExampleFileUrlParams) => {
     const exampleUrl = getExampleUrl({
         internalFramework,
         pageName,
