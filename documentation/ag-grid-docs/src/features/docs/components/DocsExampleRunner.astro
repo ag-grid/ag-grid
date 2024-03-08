@@ -1,6 +1,5 @@
 ---
 import { DocsExampleRunner } from './DocsExampleRunner';
-import type { ExampleType } from '@features/example-generator/types';
 import ExampleRunnerContainer from '@features/example-runner/components/ExampleRunnerContainer.astro';
 import { getPageNameFromPath } from '@features/docs/utils/urlPaths';
 import { getFrameworkFromPath } from '@features/docs/utils/urlPaths';
@@ -9,7 +8,6 @@ import { getIsDev } from '@utils/env';
 interface Props {
     title: string;
     name: string;
-    type: ExampleType;
     exampleHeight?: number;
 }
 
@@ -25,7 +23,6 @@ const isDev = getIsDev();
         client:only
         title={title}
         name={name}
-        exampleType={type ?? 'generated'}
         exampleHeight={exampleHeight}
         framework={framework}
         pageName={pageName}

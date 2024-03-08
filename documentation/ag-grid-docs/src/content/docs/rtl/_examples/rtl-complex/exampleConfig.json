@@ -2,5 +2,5 @@
   "extras": [
     "fontawesome"
   ],
-  "supportedFrameworks": ["typescript", "vanilla"]
+  "supportedFrameworks": ["typescript"]
 }

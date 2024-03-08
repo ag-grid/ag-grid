@@ -1,6 +1,6 @@
 import * as cheerio from 'cheerio';
 import ts from 'typescript';
-import { ExampleType, GridOptionsType, InlineGridStyles, ParsedBindings } from '../types';
+import { GridOptionsType, InlineGridStyles, ParsedBindings } from '../types';
 import { Events } from '../_copiedFromCore/eventKeys';
 import { PropertyKeys } from '../_copiedFromCore/propertyKeys';
 import {
@@ -61,46 +61,33 @@ function tsNodeIsSimpleFetchRequest(node) {
     }
 }
 
-function processColDefsForFunctionalReactOrVue(propertyName: string, exampleType, providedExamples) {
+function processColDefsForFunctionalReactOrVue(propertyName: string, providedExamples) {
     if (propertyName === 'columnDefs') {
-        return (
-            exampleType === 'generated' ||
-            (exampleType === 'mixed' &&
-                !(providedExamples['reactFunctional'] && providedExamples['vue'] && providedExamples['vue3']))
-        );
+        return !(providedExamples['reactFunctional'] && providedExamples['vue'] && providedExamples['vue3']);
     }
 
     return false;
 }
 
-function processComponentsForVue(propertyName: string, exampleType, providedExamples) {
+function processComponentsForVue(propertyName: string, providedExamples) {
     if (propertyName === 'components') {
-        return (
-            exampleType === 'generated' ||
-            (exampleType === 'mixed' && !(providedExamples['vue'] && providedExamples['vue3']))
-        );
+        return !(providedExamples['vue'] && providedExamples['vue3']);
     }
 
     return false;
 }
 
-function processVueProperties(propertyName: string, exampleType, providedExamples) {
+function processVueProperties(propertyName: string, providedExamples) {
     if (propertyName === 'statusBar' || propertyName === 'sideBar') {
-        return (
-            exampleType === 'generated' ||
-            (exampleType === 'mixed' && !(providedExamples['vue'] && providedExamples['vue3']))
-        );
+        return !(providedExamples['vue'] && providedExamples['vue3']);
     }
 
     return false;
 }
 
-function processDefaultColumnDefForVue(propertyName: string, exampleType, providedExamples) {
+function processDefaultColumnDefForVue(propertyName: string, providedExamples) {
     if (propertyName === 'defaultColDef') {
-        return (
-            exampleType === 'generated' ||
-            (exampleType === 'mixed' && !(providedExamples['vue'] && providedExamples['vue3']))
-        );
+        return !(providedExamples['vue'] && providedExamples['vue3']);
     }
 
     return false;
@@ -108,12 +95,9 @@ function processDefaultColumnDefForVue(propertyName: string, exampleType, provid
 
 const GLOBAL_COMPONENTS = ['dateComponent', 'loadingCellRenderer', 'loadingOverlayComponent', 'noRowsOverlayComponent'];
 
-function processGlobalComponentsForVue(propertyName: string, exampleType, providedExamples) {
+function processGlobalComponentsForVue(propertyName: string, providedExamples) {
     if (GLOBAL_COMPONENTS.indexOf(propertyName) !== -1) {
-        return (
-            exampleType === 'generated' ||
-            (exampleType === 'mixed' && !(providedExamples['vue'] && providedExamples['vue3']))
-        );
+        return !(providedExamples['vue'] && providedExamples['vue3']);
     }
 
     return false;
@@ -124,7 +108,14 @@ interface Collector {
     apply: (bindings: ParsedBindings, node: any) => void;
 }
 
-function internalParser(examplePath: string, srcFile: string, includeTypes: boolean, gridOptionsTypes: Record<string, GridOptionsType>, html: string, exampleType: ExampleType, providedExamples) {
+function internalParser(
+    examplePath: string,
+    srcFile: string,
+    includeTypes: boolean,
+    gridOptionsTypes: Record<string, GridOptionsType>,
+    html: string,
+    providedExamples
+) {
     const domTree = cheerio.load(html, null, false);
     domTree('style').remove();
     const domEventHandlers = extractEventHandlers(domTree, recognizedDomEvents);
@@ -383,7 +374,7 @@ function internalParser(examplePath: string, srcFile: string, includeTypes: bool
             matches: (node) => tsNodeIsGlobalVarWithName(node, propertyName),
             apply: (bindings, node) => {
                 try {
-                    if (processColDefsForFunctionalReactOrVue(propertyName, exampleType, providedExamples)) {
+                    if (processColDefsForFunctionalReactOrVue(propertyName, providedExamples)) {
                         if (ts.isVariableDeclaration(node) && ts.isArrayLiteralExpression(node.initializer)) {
                             bindings.parsedColDefs = tsExtractAndParseColDefs(node.initializer);
                         }
@@ -404,7 +395,7 @@ function internalParser(examplePath: string, srcFile: string, includeTypes: bool
         tsGridOptionsCollectors.push({
             matches: (node: ts.Node) => tsNodeIsPropertyWithName(node, propertyName),
             apply: (bindings, node: ts.PropertyAssignment) => {
-                if (processColDefsForFunctionalReactOrVue(propertyName, exampleType, providedExamples)) {
+                if (processColDefsForFunctionalReactOrVue(propertyName, providedExamples)) {
                     const parent = node;
                     if (ts.isPropertyAssignment(parent) && parent.initializer) {
                         const initializer = parent.initializer;
@@ -413,7 +404,7 @@ function internalParser(examplePath: string, srcFile: string, includeTypes: bool
                         }
                     }
                 }
-                if (processComponentsForVue(propertyName, exampleType, providedExamples)) {
+                if (processComponentsForVue(propertyName, providedExamples)) {
                     const compsNode = node.initializer;
                     if (ts.isObjectLiteralExpression(compsNode)) {
                         for (const componentDefinition of compsNode.properties) {
@@ -427,7 +418,7 @@ function internalParser(examplePath: string, srcFile: string, includeTypes: bool
                         }
                     }
                 }
-                if (processVueProperties(propertyName, exampleType, providedExamples)) {
+                if (processVueProperties(propertyName, providedExamples)) {
                     if (ts.isObjectLiteralExpression(node.initializer)) {
                         const props = [];
                         for (const property of node.initializer.properties) {
@@ -445,7 +436,7 @@ function internalParser(examplePath: string, srcFile: string, includeTypes: bool
                     }
                 }
                 if (
-                    processDefaultColumnDefForVue(propertyName, exampleType, providedExamples) &&
+                    processDefaultColumnDefForVue(propertyName, providedExamples) &&
                     node.initializer &&
                     ts.isObjectLiteralExpression(node.initializer)
                 ) {
@@ -453,7 +444,7 @@ function internalParser(examplePath: string, srcFile: string, includeTypes: bool
                 }
 
                 if (
-                    processGlobalComponentsForVue(propertyName, exampleType, providedExamples) &&
+                    processGlobalComponentsForVue(propertyName, providedExamples) &&
                     ts.isIdentifier(node)
                 ) {
                     bindings.globalComponents.push(tsGenerate(node, tsTree));
@@ -557,17 +548,22 @@ function internalParser(examplePath: string, srcFile: string, includeTypes: bool
     return tsBindings;
 }
 
-export function parser(examplePath, srcFile, html, exampleType: ExampleType, providedExamples, gridOptionsTypes: Record<string, GridOptionsType>) {
+export function parser(
+    examplePath,
+    srcFile,
+    html,
+    providedExamples,
+    gridOptionsTypes: Record<string, GridOptionsType>
+) {
     const typedBindings = internalParser(
         examplePath,
         srcFile,
         true,
         gridOptionsTypes,
         html,
-        exampleType,
         providedExamples
     );
-    const bindings = internalParser(examplePath, srcFile, false, gridOptionsTypes, html, exampleType, providedExamples);
+    const bindings = internalParser(examplePath, srcFile, false, gridOptionsTypes, html, providedExamples);
     // We need to copy the imports from the typed bindings to the non-typed bindings
     bindings.imports = typedBindings.imports;
     return { bindings, typedBindings };
