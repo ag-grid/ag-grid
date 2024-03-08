@@ -892,6 +892,10 @@
                                 "enterprise": true
                             },
                             {
+                                "name": "[Excel Tables](./excel-export-tables)",
+                                "enterprise": true
+                            },
+                            {
                                 "name": "[Multiple Sheets](./excel-export-multiple-sheets)",
                                 "enterprise": true
                             },
