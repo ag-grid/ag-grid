@@ -53,9 +53,7 @@ Properties can also be updated by calling either `api.setGridOption` or `api.upd
 
 {% if isFramework("react") %}
 Simply update your state and the grid will respond to the new value. In this example all the rows will be redrawn with the new height.
-{% /if %}
 
-{% if isFramework("react") %}
 ```jsx
 const [rowHeight, setRowHeight] = useState(25);
 
@@ -66,9 +64,7 @@ const updateHeight = () => setRowHeight(50);
    rowHeight={rowHeight}
 />
 ```
-{% /if %}
 
-{% if isFramework("react") %}
 We recommend updating options via `AgGridReact` props but it is also possible to updated a property via `api.setGridOption` or `api.updateGridOptions`.
 {% /if %}
 
