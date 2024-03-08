@@ -1352,6 +1352,11 @@
                                         "isEnterprise": true
                                     },
                                     {
+                                        "title": "Excel Tables",
+                                        "path": "excel-export-tables",
+                                        "isEnterprise": true
+                                    },
+                                    {
                                         "title": "Multiple Sheets",
                                         "path": "excel-export-multiple-sheets",
                                         "isEnterprise": true

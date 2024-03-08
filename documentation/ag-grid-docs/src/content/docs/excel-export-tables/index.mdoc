@@ -1,0 +1,43 @@
+---
+title: "Excel Export - Excel Tables"
+enterprise: true
+---
+
+Excel Export provides a way to export grid data as an Excel table, which would instantly enable the user to filter,
+sort, and analyze the data in Excel. You can instruct AG Grid to automatically create an Excel table containing the
+grid data when exporting to Excel.
+
+## How It Works
+
+In order to create an Excel table for the exported data, you should include the `tableSetup` property in the Excel
+export parameters passed to `exportDataAsExcel()`, `getDataAsExcel()` or `getSheetDataForExcel()`.
+
+The exported Excel file will contain a sheet with a table surrounding the exported data. When you select a cell
+within the table, Excel will show you the `Table` tab, which provides options to filter, sort, and analyze the data.
+
+This is how the exported Excel file wth Table looks when opened in Excel:
+
+{% imageCaption imagePath="resources/excel-table-export.png" alt="Table in Excel" centered=true /%}
+
+## Exporting A Single Sheet as Excel Table
+
+The following example demonstrates how to export the grid data as an Excel table. The Excel table will be created
+automatically when the exported file is opened in Excel.
+
+{% gridExampleRunner title="Excel Export - Exporting A Single Sheet as Excel Table" name="excel-export-table-single-sheet" /%}
+
+
+## Exporting Grouped Columns In Excel Table
+
+When your data contains grouped columns, only the leaf columns will be included in the Excel table. The
+grouped columns will be exported as normal columns, but they won't be part of the Excel table.
+
+The following example demonstrates that:
+
+{% gridExampleRunner title="Excel Export - Exporting Grouped Columns In Excel Table" name="excel-export-table-grouped-columns" /%}
+
+## Multiple Sheets With Images And Excel Tables
+
+The following example demonstrates how to export multiple sheets with images and Excel tables.
+
+{% gridExampleRunner title="Excel Export - Multiple Sheets With Images And Excel Tables" name="excel-export-table-multiple-sheets" /%}
