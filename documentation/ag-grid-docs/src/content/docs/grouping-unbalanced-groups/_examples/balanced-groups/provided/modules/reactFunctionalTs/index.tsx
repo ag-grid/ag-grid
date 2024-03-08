@@ -12,7 +12,6 @@ import './styles.css';
 
 import { getData } from "./data";
 
-// Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
 const COUNTRY_CODES: Record<string, string> = {

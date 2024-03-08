@@ -13,7 +13,6 @@ import './styles.css';
 import { countries } from './countries.jsx';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
-// Register the required feature modules with the Grid
 ModuleRegistry.registerModules([InfiniteRowModelModule, SetFilterModule, MenuModule, ColumnsToolPanelModule]);
 
 const filterParams = { values: countries() };

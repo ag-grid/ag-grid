@@ -3,7 +3,6 @@ import { AgGridReact } from "@ag-grid-community/react";
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
-// Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const DetailCellRenderer = ({ data, node, api }) => {

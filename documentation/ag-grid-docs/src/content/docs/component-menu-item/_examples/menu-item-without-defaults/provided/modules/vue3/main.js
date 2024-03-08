@@ -11,8 +11,7 @@ import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
 import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
 import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
 
-// Register the required feature modules with the Grid
-ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ExcelExportModule, RangeSelectionModule, ClipboardModule])
+ModuleRegistry.registerModules([ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ExcelExportModule, RangeSelectionModule, ClipboardModule])]);
 
 const VueExample = {
     template: `
