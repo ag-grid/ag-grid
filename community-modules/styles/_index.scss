@@ -173,6 +173,7 @@ $-theme-css-files: (
     "balham": "ag-theme-balham-no-font.css",
     "balham-dark": "ag-theme-balham-no-font.css",
     "material": "ag-theme-material-no-font.css",
+    "material-dark": "ag-theme-material-no-font.css",
 );
 
 $-theme-fonts: (
@@ -183,6 +184,7 @@ $-theme-fonts: (
     "balham": "agGridBalham",
     "balham-dark": "agGridBalham",
     "material": "agGridMaterial",
+    "material-dark": "agGridMaterial",
 );
 
 @function -is-provided-theme($theme-name) {
