@@ -57,12 +57,17 @@ async function getDocsExampleNameParts({ pages }: { pages: DocsPage[] }) {
         : internalFrameworkExamples;
 
     return filteredInternalFrameworkExamples.flatMap((example) => {
-        const frameworkSupported = (example.supportedFrameworks === undefined || example.supportedFrameworks.has(example.internalFramework));
+        const frameworkSupported =
+            example.supportedFrameworks === undefined || example.supportedFrameworks.has(example.internalFramework);
+
         return IMPORT_TYPES.map((importType) => {
+            const importTypeSupported =
+                example.supportedImportTypes === undefined || example.supportedImportTypes.has(importType);
+            const isSupported = frameworkSupported && importTypeSupported;
             return {
                 ...example,
                 importType,
-                isSupported: frameworkSupported && (example.supportedImportTypes === undefined || example.supportedImportTypes.has(importType)),
+                isSupported,
             };
         });
     });
@@ -86,32 +91,34 @@ export async function getDocsExamplePages({ pages }: { pages: DocsPage[] }) {
 
 export async function getDocExampleFiles({ pages }: { pages: DocsPage[] }) {
     const examples = await getDocsExampleNameParts({ pages });
-    const exampleFilesPromises = examples.flatMap(async ({ internalFramework, pageName, exampleName, importType, isSupported }) => {
-        try {
-            const filesList = await getGeneratedContentsFileList({
-                type: 'docs',
-                framework: internalFramework,
-                pageName,
-                exampleName,
-                importType,
-                isSupported: isSupported,
-            });
-            return filesList.map((fileName) => {
-                return {
-                    internalFramework,
+    const exampleFilesPromises = examples.flatMap(
+        async ({ internalFramework, pageName, exampleName, importType, isSupported }) => {
+            try {
+                const filesList = await getGeneratedContentsFileList({
+                    type: 'docs',
+                    framework: internalFramework,
                     pageName,
                     exampleName,
                     importType,
-                    fileName,
-                };
-            });
-        } catch (error) {
-            if (SHOW_DEBUG_LOGS) {
-                console.error('File not generated - ', error.message);
+                    isSupported,
+                });
+                return filesList.map((fileName) => {
+                    return {
+                        internalFramework,
+                        pageName,
+                        exampleName,
+                        importType,
+                        fileName,
+                    };
+                });
+            } catch (error) {
+                if (SHOW_DEBUG_LOGS) {
+                    console.error('File not generated - ', error.message);
+                }
+                return [];
             }
-            return [];
         }
-    });
+    );
 
     const exampleFiles = (await Promise.all(exampleFilesPromises)).flat(2);
 

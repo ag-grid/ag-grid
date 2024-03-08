@@ -71,8 +71,8 @@ export const getInternalFrameworkExamples = async ({
                     'utf-8'
                 );
                 const exampleConfigJson = JSON.parse(exampleConfig);
-                supportedFrameworks = new Set(exampleConfigJson.supportedFrameworks ?? []);
-                supportedImportTypes = new Set(exampleConfigJson.supportedImportTypes ?? []);
+                supportedFrameworks = exampleConfigJson.supportedFrameworks ? new Set(exampleConfigJson.supportedFrameworks) : undefined;
+                supportedImportTypes = exampleConfigJson.supportedImportTypes ? new Set(exampleConfigJson.supportedImportTypes) : undefined;
             }
 
             return (INTERNAL_FRAMEWORKS).map((internalFramework) => {
