@@ -4,101 +4,98 @@ import React, { useEffect, useReducer, useState } from 'react';
 
 import tools from '../../../content/community/tools-extensions.json';
 
-const FilterPanel = () => {
-    return <></>;
-};
-
-const List = () => {
-    return <></>;
-};
+const frameworks = [
+    'JavaScript',
+    'TypeScript',
+    'React',
+    'Angular',
+    'Vue',
+    'Python',
+    'Svelte',
+    'Laravel',
+    '.NET',
+    'Rust',
+];
 
 const ToolsExtensions = ({ limit = -1 }) => {
-    const [filteredTools, setFilteredTools] = useState(tools);
-    const [selectedFramework, setSelectedFramework] = useState();
-    const frameworks = [
-        'JavaScript',
-        'TypeScript',
-        'React',
-        'Angular',
-        'Vue',
-        'Python',
-        'Svelte',
-        'Laravel',
-        '.NET',
-        'Rust',
-    ];
-
+    const applyLimit = (arr) => arr?.slice(0, limit == -1 ? tools.length : limit);
     const filterFrameworks = (framework) => {
         let filter = framework ? tools.filter((item) => item.frameworks?.includes(framework)) : tools;
         setSelectedFramework(framework);
-        setFilteredTools(filter);
+        setFilteredTools(applyLimit(filter));
     };
+
+    const [filteredTools, setFilteredTools] = useState(applyLimit(tools));
+    const [selectedFramework, setSelectedFramework] = useState();
 
     return (
         <div className={styles.container}>
-            <div className={styles.filterContainer}>
+            <div>
                 <div className={styles.filterPanel}>
-                    <div className={styles.header}>
-                        {/* <span className={styles.title}>Filters</span> */}
-                        {selectedFramework && (
-                            <img
-                                onClick={() => filterFrameworks(null)}
-                                className={styles.img}
-                                src={'/community/tools-extensions/clear-filter.svg'}
-                            />
-                        )}
-                    </div>
-                    <div className={styles.body}>
-                        <div className={styles.filterSection}>
-                            <div className={styles.filterButtonContainer}>
-                                {frameworks.map((framework, index) => (
-                                    <button
-                                        className={styles.filterButton}
-                                        {...(selectedFramework === framework ? { active: 'true' } : {})}
-                                        onClick={() => filterFrameworks(framework)}
-                                    >
-                                        <img
-                                            src={`/community/frameworks/${framework.toLowerCase()}.svg`}
-                                            alt={`${framework}`}
-                                        />
-                                        {framework}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
+                    <div className={styles.filterButtonContainer}>
+                        {/* Default / Reset Filter */}
+                        <button
+                            className={styles.filterButton}
+                            {...(!selectedFramework ? { active: 'true' } : {})}
+                            onClick={() => filterFrameworks(null)}
+                        >
+                            <Icon alt={`... logo`} name="listBoxes" svgClasses={styles.filterIcon} />
+                            All
+                        </button>
+
+                        {/* Display all frameworks */}
+                        {frameworks.map((framework, index) => (
+                            <button
+                                className={styles.filterButton}
+                                {...(selectedFramework === framework ? { active: 'true' } : {})}
+                                onClick={() => filterFrameworks(framework)}
+                            >
+                                <img
+                                    src={`/community/frameworks/${framework.toLowerCase()}.svg`}
+                                    alt={`${framework}`}
+                                />
+                                {framework}
+                            </button>
+                        ))}
                     </div>
                 </div>
             </div>
+
             <div className={styles.listContainer}>
-                {filteredTools.slice(0, limit == -1 ? tools.length : limit).map(
+                {filteredTools.map(
                     (tool, index) =>
-                        (selectedFramework == undefined || tool.frameworks?.includes(selectedFramework)) && (
-                            <a href={tool.link} target='_blank' className={styles.linkWrapper}>
+                        (!selectedFramework || tool.frameworks?.includes(selectedFramework)) && (
+                            <a href={tool.link} target="_blank" className={styles.linkWrapper}>
                                 <div key={index} className={styles.itemContainer}>
                                     <div className={styles.image}>
                                         <img src={`/community/tools-extensions/${tool.img || 'sample.png'}`} />
                                     </div>
                                     <div className={styles.content}>
-                                        <div className={styles.header}>
-                                            <span className={styles.title}>{tool.title}</span>
-                                            <div className={styles.logoContainer}>
-                                                {tool.repo && (
-                                                    <a href={tool.repo}>
-                                                        <img
-                                                            src={`/community/support/github-white.svg`}
-                                                            className={styles.frameworkLogo}
+                                        <div className={styles.toolHeader}>
+                                            <span className={styles.title}>
+                                                {tool.title}
+                                            </span>
+                                            {tool.repo && (
+                                                <a target="_blank" href={tool.repo}>
+                                                    <div className={styles.logoContainer}>
+                                                        <Icon
+                                                            alt={`GitHub logo`}
+                                                            name="github"
+                                                            svgClasses={styles.githubIcon}
                                                         />
-                                                    </a>
-                                                )}
-                                            </div>
+                                                    </div>
+                                                </a>
+                                            )}
                                         </div>
-                                        <span className={styles.description}>{tool.description}</span>
+                                        <span className={styles.description}>
+                                            {tool.description}
+                                        </span>
                                         <div className={styles.tagContainer}>
                                             {tool?.frameworks?.map((framework, index) => (
                                                 <span key={index} className={styles.tag}>
                                                     <img
                                                         src={`/community/frameworks/${framework.toLowerCase()}.svg`}
-                                                        style={{ width: 18, height: 18, marginRight: 6 }}
+                                                        className={styles.frameworkLogo}
                                                     />
                                                     {framework}
                                                 </span>
@@ -113,7 +110,8 @@ const ToolsExtensions = ({ limit = -1 }) => {
                                 </div>
                             </a>
                         )
-                )}
+                    )
+                }   
             </div>
         </div>
     );

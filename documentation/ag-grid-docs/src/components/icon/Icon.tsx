@@ -164,6 +164,7 @@ export const ICON_MAP = {
     pageResult: PageResult,
     codeResult: CodeResult,
     headingResult: HeadingResult,
+    listBoxes: CarbonIcon.List,
     ...SOCIALS_ICON_MAP,
     ...DOCS_CATEGORIES_ICON_MAP,
     ...HOMEPAGE_FEATURES_ICON_MAP,
