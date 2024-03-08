@@ -372,8 +372,8 @@ export class ChartController extends BeanStub {
         return this.model.comboChartModel.seriesChartTypes;
     }
 
-    public isComboChart(): boolean {
-        return this.model.isComboChart();
+    public isComboChart(chartType?: ChartType): boolean {
+        return this.model.isComboChart(chartType);
     }
 
     public updateSeriesChartType(colId: string, chartType?: ChartType, secondaryAxis?: boolean): void {
@@ -426,9 +426,9 @@ export class ChartController extends BeanStub {
         return this.getSeriesChartTypes().filter(s => selectedColIds.includes(s.colId));
     }
 
-    public getChartSeriesTypes(): ChartSeriesType[] {
+    public getChartSeriesTypes(chartType?: ChartType): ChartSeriesType[] {
         const supportedComboSeriesTypes: ChartSeriesType[] = ['line', 'bar', 'area'];
-        return this.isComboChart() ? supportedComboSeriesTypes : [getSeriesType(this.getChartType())];
+        return this.isComboChart(chartType) ? supportedComboSeriesTypes : [getSeriesType(chartType ?? this.getChartType())];
     }
 
     public isEnterprise = () => _ModuleSupport.enterpriseModule.isEnterprise;

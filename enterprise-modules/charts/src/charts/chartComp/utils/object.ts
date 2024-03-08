@@ -85,6 +85,8 @@ function isSpecial(value: any): boolean {
     return stringValue === '[object RegExp]' || stringValue === '[object Date]';
 }
 
+export function deepMerge<T>(target: T, source: T, options?: any): T;
+export function deepMerge(target: any, source: any, options?: any): any;
 export function deepMerge(target: any, source: any, options?: any): any {
     options = options || {};
     options.arrayMerge = options.arrayMerge || defaultArrayMerge;
