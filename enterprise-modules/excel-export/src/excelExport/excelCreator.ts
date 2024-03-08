@@ -16,7 +16,7 @@ import {
     CssClassApplier,
     ColumnGroup,
     ValueFormatterService,
-    ValueParserService
+    ValueParserService,
 } from '@ag-grid-community/core';
 import { ExcelXlsxFactory } from './excelXlsxFactory';
 import { BaseCreator, Downloader, GridSerializer, RowType, ZipContainer } from "@ag-grid-community/csv-export";
@@ -52,13 +52,66 @@ const createExcelXMLCoreFolderStructure = (): void => {
 
 const createExcelXmlWorksheets = (data: string[]): void => {
     let imageRelationCounter = 0;
+    let tableRelationCounter = 0;
 
-    data.forEach((value, idx) => {
-        ZipContainer.addFile(`xl/worksheets/sheet${idx + 1}.xml`, value, false);
-        if (ExcelXlsxFactory.images.size && ExcelXlsxFactory.worksheetImages.get(idx)) {
-            createImageRelationsForSheet(idx, imageRelationCounter++);
+    for (let i = 0; i < data.length; i++) {
+        const value = data[i];
+        ZipContainer.addFile(`xl/worksheets/sheet${i + 1}.xml`, value, false);
+
+        const hasImages = ExcelXlsxFactory.images.size > 0 && ExcelXlsxFactory.worksheetImages.has(i);
+        const hasTables = ExcelXlsxFactory.worksheetDataTables.size > 0 && ExcelXlsxFactory.worksheetDataTables.has(i);
+
+        if (!hasImages && !hasTables) { continue; }
+
+        let tableIndex: number | undefined;
+        let drawingIndex: number | undefined;
+
+        if (hasImages) {
+            createExcelXmlDrawings(i, imageRelationCounter);
+            drawingIndex = imageRelationCounter;
+            imageRelationCounter++;
         }
-    });
+
+        if (hasTables) {
+            tableIndex = tableRelationCounter;
+            tableRelationCounter++;
+        }
+
+        const worksheetRelFile = `xl/worksheets/_rels/sheet${i + 1}.xml.rels`;
+        ZipContainer.addFile(
+            worksheetRelFile,
+            ExcelXlsxFactory.createRelationships({ tableIndex, drawingIndex }),
+        );
+    }
+
+}
+
+const createExcelXmlDrawings = (sheetIndex: number, drawingIndex: number): void => {
+    const drawingFolder = 'xl/drawings';
+    const drawingFileName = `${drawingFolder}/drawing${drawingIndex + 1}.xml`;
+    const relFileName = `${drawingFolder}/_rels/drawing${drawingIndex + 1}.xml.rels`;
+
+    ZipContainer.addFile(relFileName, ExcelXlsxFactory.createDrawingRel(sheetIndex));
+    ZipContainer.addFile(drawingFileName, ExcelXlsxFactory.createDrawing(sheetIndex));
+};
+
+const createExcelXmlTables = (): void => {
+    const tablesDataByWorksheet = ExcelXlsxFactory.worksheetDataTables;
+    const worksheetKeys = Array.from(tablesDataByWorksheet.keys());
+
+    for (let i = 0; i < worksheetKeys.length; i++) {
+        const sheetIndex = worksheetKeys[i];
+        const dataTable = tablesDataByWorksheet.get(sheetIndex);
+
+        if (!dataTable) {
+            continue;
+        }
+
+        ZipContainer.addFile(
+            `xl/tables/${dataTable.name}.xml`,
+            ExcelXlsxFactory.createTable(dataTable, i),
+        );
+    }
 }
 
 const createExcelXmlCoreSheets = (fontSize: number, author: string, sheetLen: number): void => {
@@ -72,19 +125,30 @@ const createExcelXmlCoreSheets = (fontSize: number, author: string, sheetLen: nu
     ZipContainer.addFile('_rels/.rels', ExcelXlsxFactory.createRels());
 }
 
-const createExcelFileForExcel = (data: string[], fontSize: number = 11, author: string = 'AG Grid'): boolean  => {
-    if (data && data.length > 0) {
-        createExcelXMLCoreFolderStructure();
-        createExcelXmlWorksheets(data);
-        createExcelXmlCoreSheets(fontSize, author, data.length);
-    } else {
-        console.warn("AG Grid: Invalid params supplied to getMultipleSheetsAsExcel() - `ExcelExportParams.data` is empty.");
+const createExcelFileForExcel = (data: string[], options: {
+    tableName?: string,
+    columns?: string[],
+    rowCount?: number,
+    fontSize?: number
+    author?: string,
+} = {}): boolean  => {
+    if (!data || data.length === 0) {
+        console.warn("AG Grid: Invalid params supplied to createExcelFileForExcel() - `ExcelExportParams.data` is empty.");
+        ExcelXlsxFactory.resetFactory();
+        return false;
     }
 
-    // reset the internal variables of the Excel Factory
-    ExcelXlsxFactory.resetFactory();
-    if (!data || data.length === 0) { return false; }
+    const {
+        fontSize = 11,
+        author = 'AG Grid',
+    } = options;
 
+    createExcelXMLCoreFolderStructure();
+    createExcelXmlTables();
+    createExcelXmlWorksheets(data);
+    createExcelXmlCoreSheets(fontSize, author, data.length);
+
+    ExcelXlsxFactory.resetFactory();
     return true;
 }
 
@@ -92,7 +156,11 @@ const getMultipleSheetsAsExcelCompressed = (params: ExcelExportMultipleSheetPara
     const { data, fontSize, author } = params;
     const mimeType = params.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
-    if (!createExcelFileForExcel(data, fontSize, author)) { return Promise.resolve(undefined); }
+    if (!createExcelFileForExcel(data, {
+        author,
+        fontSize,
+        tableName: params.tableSetup?.name,
+    })) { return Promise.resolve(undefined); }
 
     return ZipContainer.getZipFile(mimeType);
 };
@@ -101,7 +169,11 @@ export const getMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams)
     const { data, fontSize, author } = params;
     const mimeType = params.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
-    if (!createExcelFileForExcel(data, fontSize, author)) { return; }
+    if (!createExcelFileForExcel(data, {
+        author,
+        fontSize,
+        tableName: params.tableSetup?.name,
+    })) { return; }
 
     return ZipContainer.getUncompressedZipFile(mimeType);
 };
@@ -118,17 +190,6 @@ export const exportMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetPara
             Downloader.download(downloadFileName, contents);
         }
     });
-};
-
-const createImageRelationsForSheet = (sheetIndex: number, currentRelationIndex: number) => {
-    const drawingFolder = 'xl/drawings';
-    const drawingFileName = `${drawingFolder}/drawing${currentRelationIndex + 1}.xml`;
-    const relFileName = `${drawingFolder}/_rels/drawing${currentRelationIndex + 1}.xml.rels`;
-    const worksheetRelFile = `xl/worksheets/_rels/sheet${sheetIndex + 1}.xml.rels`;
-
-    ZipContainer.addFile(relFileName, ExcelXlsxFactory.createDrawingRel(sheetIndex));
-    ZipContainer.addFile(drawingFileName, ExcelXlsxFactory.createDrawing(sheetIndex));
-    ZipContainer.addFile(worksheetRelFile, ExcelXlsxFactory.createWorksheetDrawingRel(currentRelationIndex));
 };
 
 @Bean('excelCreator')
@@ -169,7 +230,8 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
             data: [data],
             fontSize: mergedParams.fontSize,
             author: mergedParams.author,
-            mimeType: mergedParams.mimeType
+            mimeType: mergedParams.mimeType,
+            tableSetup: mergedParams.tableSetup,
         };
 
         this.packageCompressedFile(exportParams).then(packageFile => {
@@ -196,7 +258,8 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
             data: [data],
             fontSize: mergedParams.fontSize,
             author: mergedParams.author,
-            mimeType: mergedParams.mimeType
+            mimeType: mergedParams.mimeType,
+            tableSetup: mergedParams.tableSetup,
         };
 
         return this.packageFile(exportParams);
@@ -212,9 +275,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
 
     public getSheetDataForExcel(params: ExcelExportParams): string {
         const mergedParams = this.getMergedParams(params);
-        const data = this.getData(mergedParams);
-
-        return data;
+        return this.getData(mergedParams);
     }
 
     public getMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): Blob | undefined {
