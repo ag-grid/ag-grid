@@ -4,7 +4,7 @@ import { ChartOptionsProxy } from "../services/chartOptionsService";
 import { ChartTranslationKey, ChartTranslationService } from "../services/chartTranslationService";
 import { FontPanelParams } from "./format/fontPanel";
 
-export class ChartMenuUtils extends BeanStub {
+export class ChartMenuParamsFactory extends BeanStub {
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
     constructor(

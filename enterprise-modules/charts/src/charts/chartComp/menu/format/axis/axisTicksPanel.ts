@@ -5,7 +5,7 @@ import {
     PostConstruct
 } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { ChartMenuUtils } from "../../chartMenuUtils";
+import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
 
 export class AxisTicksPanel extends Component {
 
@@ -20,7 +20,7 @@ export class AxisTicksPanel extends Component {
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
-    constructor(private readonly chartMenuUtils: ChartMenuUtils) {
+    constructor(private readonly chartMenuUtils: ChartMenuParamsFactory) {
         super();
     }
 

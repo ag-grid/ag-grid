@@ -9,7 +9,7 @@ import {
     RefSelector
 } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../services/chartTranslationService";
-import { ChartMenuUtils } from "../chartMenuUtils";
+import { ChartMenuParamsFactory } from "../chartMenuParamsFactory";
 import { ChartOptionsProxy } from '../../services/chartOptionsService';
 
 interface Font {
@@ -25,7 +25,7 @@ export interface FontPanelParams {
     enabled: boolean;
     suppressEnabledCheckbox?: boolean;
     onEnableChange?: (enabled: boolean) => void;
-    chartMenuUtils: ChartMenuUtils,
+    chartMenuUtils: ChartMenuParamsFactory,
     keyMapper: (key: string) => string
 }
 

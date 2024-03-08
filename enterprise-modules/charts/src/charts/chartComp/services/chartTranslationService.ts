@@ -176,6 +176,7 @@ export class ChartTranslationService extends BeanStub {
         chartDownloadToolbarTooltip: 'Download Chart',
         chartMenuToolbarTooltip: 'Menu',
         chartEdit: 'Edit Chart',
+        chartAdvancedSettings: 'Advanced Settings',
         chartLink: 'Link to Grid',
         chartUnlink: 'Unlink from Grid',
         chartDownload: 'Download Chart',
@@ -207,6 +208,7 @@ export class ChartTranslationService extends BeanStub {
         stackedArea: 'StackedArea',
         groupedColumn: 'Grouped Column',
         stackedColumn: 'Stacked Column',
+        advancedSettings: 'Advanced Settings',
     };
 
     public translate(toTranslate: ChartTranslationKey): string {

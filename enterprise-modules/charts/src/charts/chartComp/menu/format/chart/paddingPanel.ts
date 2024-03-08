@@ -10,7 +10,7 @@ import {
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { AgChartPaddingOptions } from "ag-charts-community";
 import { ChartController } from "../../../chartController";
-import { ChartMenuUtils } from "../../chartMenuUtils";
+import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
 
 export class PaddingPanel extends Component {
 
@@ -28,7 +28,7 @@ export class PaddingPanel extends Component {
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
-    constructor(private readonly chartMenuUtils: ChartMenuUtils, private readonly chartController: ChartController) {
+    constructor(private readonly chartMenuUtils: ChartMenuParamsFactory, private readonly chartController: ChartController) {
         super();
     }
 

@@ -5,8 +5,7 @@ import {
     PostConstruct,
 } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { FormatPanelOptions } from "../formatPanel";
-import { ChartMenuUtils } from "../../chartMenuUtils";
+import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
 
 export class NavigatorPanel extends Component {
 
@@ -22,35 +21,28 @@ export class NavigatorPanel extends Component {
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
-    private readonly chartMenuUtils: ChartMenuUtils;
-    private readonly isExpandedOnInit: boolean;
-
-    constructor({ chartMenuUtils, isExpandedOnInit = false }: FormatPanelOptions) {
+    constructor(private readonly chartMenuParamsFactory: ChartMenuParamsFactory) {
         super();
-
-        this.chartMenuUtils = chartMenuUtils;
-        this.isExpandedOnInit = isExpandedOnInit;
     }
 
     @PostConstruct
     private init() {
-        const navigatorGroupParams = this.chartMenuUtils.addEnableParams<AgGroupComponentParams>(
+        const navigatorGroupParams = this.chartMenuParamsFactory.addEnableParams<AgGroupComponentParams>(
             'navigator.enabled',
             {
-                cssIdentifier: 'charts-format-top-level',
+                cssIdentifier: 'charts-advanced-settings-top-level',
                 direction: 'vertical',
+                suppressOpenCloseIcons: true,
                 title: this.chartTranslationService.translate("navigator"),
                 suppressEnabledCheckbox: false,
-                suppressToggleExpandOnEnableChange: true,
-                expanded: this.isExpandedOnInit
             }
         );
-        const navigatorHeightSliderParams = this.chartMenuUtils.getDefaultSliderParams("navigator.height", "height", 60);
+        const navigatorHeightSliderParams = this.chartMenuParamsFactory.getDefaultSliderParams("navigator.height", "height", 60);
         navigatorHeightSliderParams.minValue = 10;
-        const navigatorMiniChartCheckboxParams = this.chartMenuUtils.getDefaultCheckboxParams("navigator.miniChart.enabled", "miniChart");
-        const navigatorMinSliderParams = this.chartMenuUtils.getDefaultSliderParams("navigator.min", "rangeStart", 1);
+        const navigatorMiniChartCheckboxParams = this.chartMenuParamsFactory.getDefaultCheckboxParams("navigator.miniChart.enabled", "miniChart");
+        const navigatorMinSliderParams = this.chartMenuParamsFactory.getDefaultSliderParams("navigator.min", "rangeStart", 1);
         navigatorMinSliderParams.step = 0.05;
-        const navigatorMaxSliderParams = this.chartMenuUtils.getDefaultSliderParams("navigator.max", "rangeEnd", 1);
+        const navigatorMaxSliderParams = this.chartMenuParamsFactory.getDefaultSliderParams("navigator.max", "rangeEnd", 1);
         navigatorMaxSliderParams.step = 0.05;
 
         this.setTemplate(NavigatorPanel.TEMPLATE, {
