@@ -26,8 +26,8 @@ const Videos = () => {
         </div>
       </div>
       <div className={styles.videoContainer}>
-        {videos.slice(1,videos.length).map((video, index) => (
-          <div key={index} onClick={() => handleVideoSelect(video)} className={styles.video}>
+        {videos.map((video, index) => (
+          <div key={index} onClick={() => handleVideoSelect(video)} className={`${styles.video} ${videos.indexOf(currentVideo) === index ? styles.active : ""}`}>
             <img src={`https://img.youtube.com/vi/${video.id}/0.jpg`} alt="Video thumbnail" className={styles.videoThumbnail} />
           </div>
         ))}

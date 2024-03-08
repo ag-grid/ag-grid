@@ -40,12 +40,13 @@
 .videoContainer {
     display: flex;
     overflow-x: scroll !important;
-    gap: $spacing-size-4;
+    gap: $spacing-size-4;    
+    padding-bottom: $spacing-size-6; 
 }
 
 .video {
-    margin-right: $spacing-size-4;
     cursor: pointer;
+    padding: 0px $spacing-size-4;
 }
 
 .videoThumbnail {
@@ -53,4 +54,19 @@
     width: 220px;
     height: auto;
     clip-path: inset(22px 0); /* Adjust the 5px value as needed to remove the black lines */
+}
+
+.active {
+    transform: scale(1.15);
+    &::after {
+        content: "";
+        display: block;
+        width: 25px; // Size of the circle
+        height: 2px; // Size of the circle
+        background-color: var(--color-util-brand-400); // Color of the circle
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: -5px; // Adjusts the position below the div
+      }
 }
