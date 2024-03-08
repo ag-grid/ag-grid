@@ -592,6 +592,69 @@ export function preferParamsApi(code: string): string {
     return code.replace(/([\s\(!])gridApi(\W)/g, '$1params.api$2');
 }
 
+export function getInterfaceFileContents(tsBindings: ParsedBindings, currentFile) {
+    let interfaces = [];
+    // If the example has an existing interface file then merge that with our globally shared interfaces
+    if (currentFile) {
+        interfaces.push(currentFile);
+    }
+    if (tsBindings.tData && !interfaces.some(i => i?.includes(tsBindings.tData))) {
+        interfaces.push(getGenericInterface(tsBindings.tData));
+    }
+    if (interfaces.length > 0) {
+        return interfaces.join('\n');
+    }
+    return undefined;
+}
+
+function getGenericInterface(tData) {
+    let interfaceStr = '';
+    switch (tData) {
+        case 'IOlympicDataWithId':
+            interfaceStr = `
+export interface IOlympicDataWithId extends IOlympicData {
+    id: number;
+}
+`// purposefully fall through to IOlympicData
+        case 'IOlympicData':
+            interfaceStr = interfaceStr + `
+export interface IOlympicData {
+    athlete: string,
+    age: number,
+    country: string,
+    year: number,
+    date: string,
+    sport: string,
+    gold: number,
+    silver: number,
+    bronze: number,
+    total: number
+}`
+            break;
+        case 'IAccount':
+            interfaceStr = interfaceStr + `
+export interface ICallRecord {
+    name: string;
+    callId: number;
+    duration: number;
+    switchCode: string;
+    direction: string;
+    number: string;
+}
+
+export interface IAccount {
+    name: string;
+    account: number;
+    calls: number;
+    minutes: number;
+    callRecords: ICallRecord[];
+}`;
+            break;
+    }
+
+    return interfaceStr;
+}
+
 export const DARK_MODE_START = '/** DARK MODE START **/';
 export const DARK_MODE_END = '/** DARK MODE END **/';
 export const DARK_INTEGRATED_START = '/** DARK INTEGRATED START **/';
