@@ -1,8 +1,8 @@
-import type { InternalFramework } from '@ag-grid-types';
+import type { ImportType, InternalFramework } from '@ag-grid-types';
 import Code from '@components/Code';
 import { Icon } from '@components/icon/Icon';
 import styles from '@design-system/modules/CodeViewer.module.scss';
-import type { ExampleType, FileContents } from '@features/example-generator/types';
+import type { FileContents } from '@features/example-generator/types';
 import { doOnEnter } from '@utils/doOnEnter';
 import classnames from 'classnames';
 import { useEffect, useState } from 'react';
@@ -74,17 +74,19 @@ export const CodeViewer = ({
     isActive,
     files,
     initialSelectedFile,
-    exampleType,
     internalFramework,
     hideInternalFrameworkSelection,
+    supportedFrameworks,
+    supportedImportTypes
 }: {
     id: string;
     isActive?: boolean;
     files: FileContents;
     initialSelectedFile: string;
     internalFramework: InternalFramework;
-    exampleType: ExampleType;
     hideInternalFrameworkSelection?: boolean;
+    supportedFrameworks: InternalFramework[];
+    supportedImportTypes: ImportType[];
 }) => {
     const [activeFile, setActiveFile] = useState(initialSelectedFile);
     const [showFiles, setShowFiles] = useState(true);
@@ -138,7 +140,7 @@ export const CodeViewer = ({
                         ))}
                     </ul>
                     {!hideInternalFrameworkSelection && (
-                        <CodeOptions id={id} internalFramework={internalFramework} />
+                        <CodeOptions id={id} internalFramework={internalFramework} supportedFrameworks={supportedFrameworks} supportedImportTypes={supportedImportTypes} />
                     )}
                 </div>
                 <div className={styles.code}>

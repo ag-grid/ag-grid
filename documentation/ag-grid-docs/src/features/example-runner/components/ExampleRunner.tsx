@@ -1,8 +1,8 @@
-import type { InternalFramework } from '@ag-grid-types';
+import type { ImportType, InternalFramework } from '@ag-grid-types';
 import { Icon } from '@components/icon/Icon';
 import { OpenInCTA } from '@components/open-in-cta/OpenInCTA';
 import styles from '@design-system/modules/ExampleRunner.module.scss';
-import type { ExampleType, FileContents } from '@features/example-generator/types';
+import type { FileContents } from '@features/example-generator/types';
 import classnames from 'classnames';
 import { type FunctionComponent, type ReactElement, useState } from 'react';
 
@@ -13,7 +13,6 @@ interface Props {
     id: string;
     exampleUrl?: string;
     exampleRunnerExampleUrl?: string;
-    exampleType?: ExampleType;
     externalLinks?: ReactElement;
     exampleHeight?: number;
     exampleFiles?: FileContents;
@@ -21,6 +20,8 @@ interface Props {
     internalFramework: InternalFramework;
     hideInternalFrameworkSelection?: boolean;
     loadingIFrameId: string;
+    supportedFrameworks: InternalFramework[];
+    supportedImportTypes: ImportType[];
 }
 
 const DEFAULT_HEIGHT = 500;
@@ -29,7 +30,6 @@ export const ExampleRunner: FunctionComponent<Props> = ({
     id,
     exampleUrl,
     exampleRunnerExampleUrl,
-    exampleType,
     externalLinks,
     exampleHeight: initialExampleHeight,
     exampleFiles,
@@ -37,11 +37,12 @@ export const ExampleRunner: FunctionComponent<Props> = ({
     internalFramework,
     hideInternalFrameworkSelection,
     loadingIFrameId,
+    supportedFrameworks,
+    supportedImportTypes
 }) => {
     const [showCode, setShowCode] = useState(false);
 
     const exampleHeight = initialExampleHeight || DEFAULT_HEIGHT;
-
     return (
         <div id={id} className={styles.exampleOuter}>
             <div className={styles.tabsContainer}>
@@ -62,9 +63,10 @@ export const ExampleRunner: FunctionComponent<Props> = ({
                             isActive={showCode}
                             files={exampleFiles}
                             initialSelectedFile={initialSelectedFile!}
-                            exampleType={exampleType!}
                             internalFramework={internalFramework}
                             hideInternalFrameworkSelection={hideInternalFrameworkSelection}
+                            supportedFrameworks={supportedFrameworks}
+                            supportedImportTypes={supportedImportTypes}
                         />
                     )}
                 </div>

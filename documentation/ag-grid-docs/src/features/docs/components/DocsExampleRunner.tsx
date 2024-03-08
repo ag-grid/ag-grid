@@ -1,12 +1,11 @@
-import type { Framework, ImportType } from '@ag-grid-types';
-import { type ExampleType, TYPESCRIPT_INTERNAL_FRAMEWORKS } from '@features/example-generator/types';
+import type { Framework, ImportType, InternalFramework } from '@ag-grid-types';
 import { ExampleRunner } from '@features/example-runner/components/ExampleRunner';
 import { ExternalLinks } from '@features/example-runner/components/ExternalLinks';
 import { getLoadingIFrameId } from '@features/example-runner/utils/getLoadingLogoId';
 import { useStore } from '@nanostores/react';
 import { $internalFramework } from '@stores/frameworkStore';
 import { useImportType } from '@utils/hooks/useImportType';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
 
 import {
@@ -15,12 +14,12 @@ import {
     getExamplePlunkrUrl,
     getExampleRunnerExampleUrl,
     getExampleUrl,
+    type UrlParams
 } from '../utils/urlPaths';
 
 interface Props {
     name: string;
     title: string;
-    exampleType?: ExampleType;
     exampleHeight?: number;
     framework: Framework;
     pageName: string;
@@ -39,104 +38,73 @@ const queryOptions = {
     refetchOnReconnect: false,
 };
 
-const DocsExampleRunnerInner = ({ name, title, exampleType, exampleHeight, framework, pageName, isDev }: Props) => {
-    const docsInternalFramework = useStore($internalFramework);
-    const internalFramework = exampleType === 'typescript' ? 'typescript' : docsInternalFramework;
-    const importType = useImportType();
-    const [initialSelectedFile, setInitialSelectedFile] = useState();
-    const [exampleUrl, setExampleUrl] = useState<string>();
-    const [exampleRunnerExampleUrl, setExampleRunnerExampleUrl] = useState<string>();
-    const [codeSandboxHtmlUrl, setCodeSandboxHtmlUrl] = useState<string>();
-    const [plunkrHtmlUrl, setPlunkrHtmlUrl] = useState<string>();
-    const [exampleFiles, setExampleFiles] = useState();
-    const [exampleBoilerPlateFiles, setExampleBoilerPlateFiles] = useState();
-    const [packageJson, setPackageJson] = useState();
+const getInternalFramework = (docsInternalFramework: InternalFramework, supportedFrameworks: InternalFramework[] | undefined): InternalFramework => {
+    if (supportedFrameworks && supportedFrameworks.length > 0) {
+        if (supportedFrameworks.includes(docsInternalFramework)) {
+            return docsInternalFramework;
+        }
+        const bestAlternative: Record<InternalFramework, InternalFramework[]> = {
+            vanilla: ['typescript'],
+            typescript: ['vanilla'],
+            reactFunctional: ['reactFunctionalTs', 'typescript', 'vanilla'],
+            reactFunctionalTs: ['reactFunctional', 'typescript', 'vanilla'],
+            angular: ['typescript', 'vanilla'],
+            vue: ['typescript', 'vanilla'],
+            vue3: ['typescript', 'vanilla'],
+        };
+        const alternatives = bestAlternative[docsInternalFramework];
+        const alternative = alternatives.find((alternative) => supportedFrameworks.includes(alternative));
+        if (alternative) {
+            return alternative;
+        }
+    }
 
+    return docsInternalFramework;
+};
+
+const getImportType = (docsImportType: ImportType, supportedImportTypes: ImportType[] | undefined): ImportType => {
+    if (supportedImportTypes === undefined || supportedImportTypes.length === 0) {
+        return docsImportType;
+    }
+    if (supportedImportTypes.includes(docsImportType)) {
+        return docsImportType;
+    }
+    return supportedImportTypes[0];
+};
+
+const DocsExampleRunnerInner = ({ name, title, exampleHeight, pageName, isDev }: Props) => {
     const exampleName = name;
     const id = `example-${name}`;
     const loadingIFrameId = getLoadingIFrameId({ pageName, exampleName: name });
 
-    const {
-        isLoading: contentsIsLoading,
-        isError: contentsIsError,
-        data: [contents, exampleFileHtml] = [],
-    } = useQuery(
-        ['docsExampleContents', internalFramework, pageName, exampleName, importType],
-        () => {
-            const getContents = fetch(
-                getExampleContentsUrl({
-                    internalFramework,
-                    pageName,
-                    exampleName,
-                    importType,
-                })
-            ).then((res) => res.json());
+    const [exampleFiles, setExampleFiles] = useState();
+    const [supportedFrameworks, setSupportedFrameworks] = useState<InternalFramework[] | undefined>(undefined);
+    const [supportedImportTypes, setSupportedImportTypes] = useState<ImportType[] | undefined>(undefined);
 
-            const getExampleFileHtml = fetch(
-                getExampleUrl({
-                    internalFramework,
-                    pageName,
-                    exampleName,
-                    importType,
-                })
-            ).then((res) => res.text());
-            return Promise.all([getContents, getExampleFileHtml]);
-        },
+    const internalFramework = getInternalFramework(useStore($internalFramework), supportedFrameworks);
+    const importType = getImportType(useImportType(), supportedImportTypes);
+    const urlConfig: UrlParams = useMemo(() => ({ internalFramework, pageName, exampleName, importType }),
+        [internalFramework, pageName, exampleName, importType]);
+
+    const {
+        data: [contents, exampleFileHtml] = [undefined, undefined],
+    } = useQuery(
+        ['docsExampleContents', pageName, exampleName, internalFramework, importType],
+        () => Promise.all([
+            fetch(getExampleContentsUrl(urlConfig)).then((res) => res.json()),
+            fetch(getExampleUrl(urlConfig)).then((res) => res.text())
+        ]),
         queryOptions
     );
+    const urls = {
+        exampleRunnerExampleUrl: getExampleRunnerExampleUrl(urlConfig),
+        exampleUrl: getExampleUrl(urlConfig),
+        plunkrHtmlUrl: getExamplePlunkrUrl(urlConfig),
+        codeSandboxHtmlUrl: getExampleCodeSandboxUrl(urlConfig)
+    };
 
     useEffect(() => {
-        if (!exampleName) {
-            return;
-        }
-
-        setExampleUrl(
-            getExampleUrl({
-                internalFramework,
-                pageName,
-                exampleName,
-                importType,
-            })
-        );
-        setExampleRunnerExampleUrl(
-            getExampleRunnerExampleUrl({
-                internalFramework,
-                pageName,
-                exampleName,
-                importType,
-            })
-        );
-    }, [internalFramework, pageName, exampleName, importType]);
-
-    useEffect(() => {
-        if (!contents || contentsIsLoading || contentsIsError) {
-            return;
-        }
-        setInitialSelectedFile(contents?.mainFileName);
-    }, [contents, contentsIsLoading, contentsIsError]);
-
-    useEffect(() => {
-        setCodeSandboxHtmlUrl(
-            getExampleCodeSandboxUrl({
-                internalFramework,
-                pageName,
-                exampleName,
-                importType,
-            })
-        );
-
-        setPlunkrHtmlUrl(
-            getExamplePlunkrUrl({
-                internalFramework,
-                pageName,
-                exampleName,
-                importType,
-            })
-        );
-    }, [internalFramework, pageName, exampleName, importType]);
-
-    useEffect(() => {
-        if (!contents || contentsIsLoading || contentsIsError || !exampleFileHtml) {
+        if (!contents || !exampleFileHtml) {
             return;
         }
         const files = {
@@ -145,40 +113,43 @@ const DocsExampleRunnerInner = ({ name, title, exampleType, exampleHeight, frame
             // exampleFiles endpoint only gets the index html fragment
             'index.html': exampleFileHtml,
         };
-
         setExampleFiles(files);
-        setPackageJson(contents.packageJson);
-        setExampleBoilerPlateFiles(contents.boilerPlateFiles);
-    }, [contents, contentsIsLoading, contentsIsError, exampleFileHtml]);
 
-    const externalLinks = (
+        // If not provided we set to an empty array to finish rendering
+        setSupportedFrameworks(contents.supportedFrameworks ?? []);
+        setSupportedImportTypes(contents.supportedImportTypes ?? []);
+    }, [contents, exampleFileHtml]);
+
+    const externalLinks = exampleFiles && contents ? (
         <ExternalLinks
             title={title}
             internalFramework={internalFramework}
             exampleFiles={exampleFiles}
-            exampleBoilerPlateFiles={exampleBoilerPlateFiles}
-            packageJson={packageJson}
-            initialSelectedFile={initialSelectedFile}
-            plunkrHtmlUrl={plunkrHtmlUrl}
-            codeSandboxHtmlUrl={codeSandboxHtmlUrl}
+            exampleBoilerPlateFiles={contents.exampleBoilerPlateFiles}
+            packageJson={contents.packageJson}
+            initialSelectedFile={contents.mainFileName}
+            plunkrHtmlUrl={urls.plunkrHtmlUrl}
+            codeSandboxHtmlUrl={urls.codeSandboxHtmlUrl}
             isDev={isDev}
         />
-    );
+    ) : undefined;
 
-    return (
-        <ExampleRunner
-            id={id}
-            exampleUrl={exampleUrl}
-            exampleRunnerExampleUrl={exampleRunnerExampleUrl}
-            exampleType={exampleType}
-            exampleHeight={exampleHeight}
-            exampleFiles={exampleFiles}
-            initialSelectedFile={initialSelectedFile}
-            internalFramework={internalFramework}
-            externalLinks={externalLinks}
-            loadingIFrameId={loadingIFrameId}
-        />
-    );
+    const validFramework = supportedFrameworks && (supportedFrameworks.length == 0 || supportedFrameworks?.length > 0 && supportedFrameworks?.includes(internalFramework));
+    const validImportType = supportedImportTypes && (supportedImportTypes.length == 0 || supportedImportTypes?.length > 0 && supportedImportTypes?.includes(importType));
+    return validFramework && validImportType ? <ExampleRunner
+        id={id}
+        exampleUrl={urls.exampleUrl}
+        exampleRunnerExampleUrl={urls.exampleRunnerExampleUrl}
+        exampleHeight={exampleHeight}
+        exampleFiles={exampleFiles}
+        initialSelectedFile={contents?.mainFileName}
+        internalFramework={internalFramework}
+        externalLinks={externalLinks}
+        loadingIFrameId={loadingIFrameId}
+        supportedFrameworks={supportedFrameworks}
+        supportedImportTypes={supportedImportTypes}
+    /> : null;
+
 };
 
 export const DocsExampleRunner = (props: Props) => {
