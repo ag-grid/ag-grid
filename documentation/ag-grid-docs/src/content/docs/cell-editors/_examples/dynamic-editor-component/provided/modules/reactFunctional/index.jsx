@@ -14,7 +14,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
-ModuleRegistry.registerModules([ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ColumnsToolPanelModule, RichSelectModule])]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ColumnsToolPanelModule, RichSelectModule])]);
 
 const cellEditorSelector = (params) => {
     if (params.data.type === 'age') {
