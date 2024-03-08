@@ -35,6 +35,8 @@ const SOCIALS_ICON_MAP = {
     xLogo: XLogoIcon,
     youtube: CarbonIcon.LogoYoutube,
     linkedin: CarbonIcon.LogoLinkedin,
+    email: CarbonIcon.Email,
+    blog: CarbonIcon.Blog
 };
 
 const DOCS_CATEGORIES_ICON_MAP = {
