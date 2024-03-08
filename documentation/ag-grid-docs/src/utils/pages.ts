@@ -22,6 +22,7 @@ export interface InternalFrameworkExample {
     internalFramework: InternalFramework;
     pageName: string;
     exampleName: string;
+    isSupported: boolean;
 }
 
 export interface ExtraFileRoute {
