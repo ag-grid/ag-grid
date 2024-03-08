@@ -1,10 +1,11 @@
 /* eslint-disable no-console */
 import path from 'path';
 import fs from 'fs/promises';
+import prettier from 'prettier';
 
 import { readFile, readJSONFile, writeFile } from '../../executors-utils';
 import gridVanillaSrcParser from './generator/transformation-scripts/grid-vanilla-src-parser';
-import { ExampleConfig, ExampleType, FRAMEWORKS, GeneratedContents, ImportType, InternalFramework } from './generator/types';
+import { ExampleConfig, ExampleType, FRAMEWORKS, GeneratedContents, ImportType, InternalFramework, TYPESCRIPT_INTERNAL_FRAMEWORKS } from './generator/types';
 
 import { getEnterprisePackageName, SOURCE_ENTRY_FILE_NAME } from './generator/constants';
 import {
@@ -225,9 +226,14 @@ export async function generateFiles(options: ExecutorOptions) {
 
                     if (isEnterprise) {
                         entryFileContent = entryFileContent.replace(
-                            "from 'ag-grid-community';",
-                            `from 'ag-grid-community';\nimport '${getEnterprisePackageName()}';\n`
+                            "import 'ag-grid-community",
+                            `import '${getEnterprisePackageName()}';\nimport 'ag-grid-community`
                         );
+                    }
+
+                    if(!isDev){
+                        const parser = TYPESCRIPT_INTERNAL_FRAMEWORKS.includes(internalFramework) ? 'typescript' : 'babel';
+                        entryFileContent = await prettier.format(entryFileContent, { parser });
                     }
 
                     provideFrameworkFiles[entryFileName] = entryFileContent;                       
