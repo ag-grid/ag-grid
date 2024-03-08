@@ -5,8 +5,7 @@ import {
     PostConstruct
 } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { FormatPanelOptions } from "../formatPanel";
-import { ChartMenuUtils } from "../../chartMenuUtils";
+import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
 
 export class AnimationPanel extends Component {
 
@@ -19,30 +18,23 @@ export class AnimationPanel extends Component {
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
-    private readonly chartMenuUtils: ChartMenuUtils;
-    private readonly isExpandedOnInit: boolean;
-
-    constructor({ chartMenuUtils, isExpandedOnInit = false }: FormatPanelOptions) {
+    constructor(private readonly chartMenuParamsFactory: ChartMenuParamsFactory) {
         super();
-
-        this.chartMenuUtils = chartMenuUtils;
-        this.isExpandedOnInit = isExpandedOnInit;
     }
 
     @PostConstruct
     private init() {
-        const animationGroupParams = this.chartMenuUtils.addEnableParams<AgGroupComponentParams>(
+        const animationGroupParams = this.chartMenuParamsFactory.addEnableParams<AgGroupComponentParams>(
             'animation.enabled',
             {
-                cssIdentifier: 'charts-format-top-level',
+                cssIdentifier: 'charts-advanced-settings-top-level',
                 direction: 'vertical',
+                suppressOpenCloseIcons: true,
                 title: this.chartTranslationService.translate("animation"),
                 suppressEnabledCheckbox: false,
-                suppressToggleExpandOnEnableChange: true,
-                expanded: this.isExpandedOnInit
             }
         );
-        const animationHeightInputParams = this.chartMenuUtils.getDefaultNumberInputParams("animation.duration", "durationMillis", {
+        const animationHeightInputParams = this.chartMenuParamsFactory.getDefaultNumberInputParams("animation.duration", "durationMillis", {
             min: 0,
         });
         this.setTemplate(AnimationPanel.TEMPLATE, {

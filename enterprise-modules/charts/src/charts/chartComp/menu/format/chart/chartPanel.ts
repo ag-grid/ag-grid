@@ -10,7 +10,7 @@ import { BackgroundPanel } from "./backgroundPanel";
 import TitlePanel from "./titlePanel";
 import { FormatPanelOptions } from "../formatPanel";
 import { ChartController } from "../../../chartController";
-import { ChartMenuUtils } from "../../chartMenuUtils";
+import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
 
 export class ChartPanel extends Component {
 
@@ -21,13 +21,13 @@ export class ChartPanel extends Component {
 
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
-    private readonly chartMenuUtils: ChartMenuUtils;
+    private readonly chartMenuUtils: ChartMenuParamsFactory;
     private readonly chartController: ChartController;
     private readonly isExpandedOnInit: boolean;
 
     constructor({
         chartController,
-        chartMenuUtils,
+        chartMenuParamsFactory: chartMenuUtils,
         isExpandedOnInit = false
     }: FormatPanelOptions) {
         super();

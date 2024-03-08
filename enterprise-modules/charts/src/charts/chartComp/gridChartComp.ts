@@ -45,7 +45,8 @@ import {CrossFilteringContext} from "../chartService";
 import {ChartOptionsService} from "./services/chartOptionsService";
 import {ComboChartProxy} from "./chartProxies/combo/comboChartProxy";
 import {getCanonicalChartType, isHierarchical} from "./utils/seriesTypeMapper";
-import { ChartMenuUtils } from './menu/chartMenuUtils';
+import { ChartMenuParamsFactory } from './menu/chartMenuParamsFactory';
+import { ChartMenuContext } from "./menu/chartMenuContext";
 
 export interface GridChartParams {
     chartId: string;
@@ -94,9 +95,7 @@ export class GridChartComp extends Component {
     private chartDialog: AgDialog;
 
     private chartController: ChartController;
-    private chartOptionsService: ChartOptionsService;
-    private chartMenuUtils: ChartMenuUtils;
-    private chartAxisMenuUtils: ChartMenuUtils;
+    private chartMenuContext: ChartMenuContext;
 
     private chartProxy: ChartProxy;
     private chartType: ChartType;
@@ -210,13 +209,23 @@ export class GridChartComp extends Component {
         }
 
         this.chartController.setChartProxy(this.chartProxy);
-        const chartOptionsService = this.createManagedBean(new ChartOptionsService(this.chartController));
-        this.chartOptionsService = chartOptionsService;
-        this.chartMenuUtils = this.createManagedBean(new ChartMenuUtils(chartOptionsService.getChartThemeOverridesProxy()));
-        this.chartAxisMenuUtils = this.createManagedBean(new ChartMenuUtils(chartOptionsService.getAxisThemeOverridesProxy()));
-        this.titleEdit && this.titleEdit.refreshTitle(this.chartController, this.chartOptionsService, this.chartMenuUtils);
+        this.createMenuContext();
+        this.titleEdit && this.titleEdit.refreshTitle(this.chartMenuContext);
     }
-    
+
+    private createMenuContext(): void {
+        if (this.chartMenuContext) { return; }
+        const chartOptionsService = this.createManagedBean(new ChartOptionsService(this.chartController));
+        const chartMenuParamsFactory = this.createManagedBean(new ChartMenuParamsFactory(chartOptionsService.getChartThemeOverridesProxy()));
+        const chartAxisMenuParamsFactory = this.createManagedBean(new ChartMenuParamsFactory(chartOptionsService.getAxisThemeOverridesProxy()));
+        this.chartMenuContext = {
+            chartController: this.chartController,
+            chartOptionsService,
+            chartMenuParamsFactory,
+            chartAxisMenuParamsFactory
+        }
+    }
+
     private getChartThemeName(): string {
         return this.chartController.getChartThemeName();
     }
@@ -334,10 +343,7 @@ export class GridChartComp extends Component {
             this.chartMenu = this.createBean(new ChartMenu(
                 this.eChartContainer,
                 this.eMenuContainer,
-                this.chartController,
-                this.chartOptionsService,
-                this.chartMenuUtils,
-                this.chartAxisMenuUtils,
+                this.chartMenuContext
             ));
             this.eChartContainer.appendChild(this.chartMenu.getGui());
         }
@@ -347,7 +353,7 @@ export class GridChartComp extends Component {
         this.titleEdit = this.createBean(new TitleEdit(this.chartMenu));
         this.eTitleEditContainer.appendChild(this.titleEdit.getGui());
         if (this.chartProxy) {
-            this.titleEdit.refreshTitle(this.chartController, this.chartOptionsService, this.chartMenuUtils);
+            this.titleEdit.refreshTitle(this.chartMenuContext);
         }
     }
 
@@ -394,7 +400,7 @@ export class GridChartComp extends Component {
             this.chartController.raiseChartUpdatedEvent();
         });
 
-        this.titleEdit.refreshTitle(this.chartController, this.chartOptionsService, this.chartMenuUtils);
+        this.titleEdit.refreshTitle(this.chartMenuContext);
     }
 
     private chartTypeChanged(updateParams?: UpdateChartParams): boolean {

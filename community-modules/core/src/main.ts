@@ -498,7 +498,8 @@ export {
     LoadingCellRendererSelectorFunc,
     LoadingCellRendererSelectorResult,
     DomLayoutType,
-    UseGroupFooter
+    UseGroupFooter,
+    GetChartMenuItems
 } from "./entities/gridOptions";
 
 export {

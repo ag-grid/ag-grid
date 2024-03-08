@@ -427,6 +427,7 @@ export const AG_GRID_LOCALE_EN: Record<string,string> = {
     chartUnlinkToolbarTooltip: 'Unlinked from Grid',
     chartDownloadToolbarTooltip: 'Download Chart',
     chartEdit: 'Edit Chart',
+    chartAdvancedSettings: 'Advanced Settings',
     chartLink: 'Link to Grid',
     chartUnlink: 'Unlink from Grid',
     chartDownload: 'Download Chart',
@@ -435,6 +436,7 @@ export const AG_GRID_LOCALE_EN: Record<string,string> = {
     secondaryAxis: 'Secondary Axis',
     seriesAdd: 'Add a series',
     categoryAdd: 'Add a category',
+    advancedSettings: 'Advanced Settings',
 
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Level ${variable}. Press ENTER to edit.',

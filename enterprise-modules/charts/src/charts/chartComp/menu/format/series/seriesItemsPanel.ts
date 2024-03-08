@@ -12,7 +12,7 @@ import {
 } from "@ag-grid-community/core";
 import { ChartTranslationKey, ChartTranslationService } from "../../../services/chartTranslationService";
 import { FontPanel } from "../fontPanel";
-import { ChartMenuUtils } from "../../chartMenuUtils";
+import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
 
 type SeriesItemType = 'positive' | 'negative';
 
@@ -31,7 +31,7 @@ export class SeriesItemsPanel extends Component {
 
     private activePanels: Component[] = [];
 
-    constructor(private readonly chartMenuUtils: ChartMenuUtils) {
+    constructor(private readonly chartMenuUtils: ChartMenuParamsFactory) {
         super();
     }
 

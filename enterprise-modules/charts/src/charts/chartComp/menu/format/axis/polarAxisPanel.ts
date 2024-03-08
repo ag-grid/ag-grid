@@ -16,7 +16,7 @@ import {FontPanel, FontPanelParams} from '../fontPanel';
 import {ChartTranslationKey, ChartTranslationService} from '../../../services/chartTranslationService';
 import {FormatPanelOptions} from '../formatPanel';
 import {isPolar, isRadial} from '../../../utils/seriesTypeMapper';
-import { ChartMenuUtils } from '../../chartMenuUtils';
+import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class PolarAxisPanel extends Component {
     public static TEMPLATE = /* html */
@@ -32,10 +32,10 @@ export class PolarAxisPanel extends Component {
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
     private readonly chartController: ChartController;
-    private readonly chartMenuUtils: ChartMenuUtils;
+    private readonly chartMenuUtils: ChartMenuParamsFactory;
     private readonly isExpandedOnInit: boolean;
 
-    constructor({ chartController, chartAxisMenuUtils, isExpandedOnInit = false }: FormatPanelOptions) {
+    constructor({ chartController, chartAxisMenuParamsFactory: chartAxisMenuUtils, isExpandedOnInit = false }: FormatPanelOptions) {
         super();
 
         this.chartController = chartController;

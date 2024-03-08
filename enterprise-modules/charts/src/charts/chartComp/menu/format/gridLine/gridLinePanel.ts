@@ -1,7 +1,7 @@
 import { AgGroupComponentParams, AgSliderParams, Autowired, Component, PostConstruct } from '@ag-grid-community/core';
 import { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import { ChartOptionsProxy } from '../../../services/chartOptionsService';
-import { ChartMenuUtils } from '../../chartMenuUtils';
+import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 import { AgAxisGridLineOptions } from 'ag-charts-community';
 import { AgColorPickerParams } from '../../../../../widgets/agColorPicker';
 
@@ -18,7 +18,7 @@ export class GridLinePanel extends Component {
 
     private readonly chartOptions: ChartOptionsProxy;
 
-    constructor(private readonly chartMenuUtils: ChartMenuUtils) {
+    constructor(private readonly chartMenuUtils: ChartMenuParamsFactory) {
         super();
         this.chartOptions = chartMenuUtils.getChartOptions();
     }

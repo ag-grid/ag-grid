@@ -16,6 +16,7 @@ import {
 import { ChartController } from '../chartController';
 import { ChartMenuService } from '../services/chartMenuService';
 import { ChartTranslationService } from '../services/chartTranslationService';
+import { ChartMenuContext } from './chartMenuContext';
 
 @Bean('chartMenuListFactory')
 export class ChartMenuListFactory extends BeanStub {
@@ -28,10 +29,11 @@ export class ChartMenuListFactory extends BeanStub {
     public showMenuList(params: {
         eventSource: HTMLElement,
         showMenu: () => void,
-        chartController: ChartController
+        chartMenuContext: ChartMenuContext
     }) {
-        const { eventSource, showMenu, chartController } = params;
-        const chartMenuList = this.createBean(new ChartMenuList(this.getMenuItems(chartController, showMenu)));
+        const { eventSource, showMenu, chartMenuContext } = params;
+        const menuItems = this.mapWithStockItems(this.getMenuItems(chartMenuContext.chartController), chartMenuContext, showMenu, eventSource);
+        const chartMenuList = this.createBean(new ChartMenuList(menuItems));
         this.activeChartMenuList = chartMenuList;
 
         let multiplier = -1;
@@ -75,17 +77,81 @@ export class ChartMenuListFactory extends BeanStub {
         });
     }
 
-    private getMenuItems(
-        chartController: ChartController,
-        showMenu: () => void
-    ): (MenuItemDef | string)[] {
-        return [
-            this.createMenuItem(this.chartTranslationService.translate('chartEdit'), 'chart', showMenu),
-            chartController.isChartLinked()
-                ? this.createMenuItem(this.chartTranslationService.translate('chartUnlink'), 'unlinked', () => this.chartMenuService.toggleLinked(chartController))
-                : this.createMenuItem(this.chartTranslationService.translate('chartLink'), 'linked', () => this.chartMenuService.toggleLinked(chartController)),
-            this.createMenuItem(this.chartTranslationService.translate('chartDownload'), 'save', () => this.chartMenuService.downloadChart(chartController))
+    private getMenuItems(chartController: ChartController): (MenuItemDef | string)[] {
+        const defaultItems = [
+            'chartEdit',
+            ...(chartController.isEnterprise() ? ['chartAdvancedSettings'] : []),
+            chartController.isChartLinked() ? 'chartUnlink' : 'chartLink',
+            'chartDownload'
         ];
+        const chartMenuItems = this.gridOptionsService.get('chartMenuItems');
+        if (!chartMenuItems) {
+            return defaultItems;
+        } else if (Array.isArray(chartMenuItems)) {
+            return chartMenuItems;
+        } else {
+            return chartMenuItems(this.gridOptionsService.addGridCommonParams({
+                defaultItems
+            }));
+        }
+    }
+
+    private mapWithStockItems(originalList: (MenuItemDef | string)[], chartMenuContext: ChartMenuContext, showMenu: () => void, eventSource: HTMLElement): MenuItemDef[] {
+        if (!originalList) {
+            return [];
+        }
+        const resultList: MenuItemDef[] = [];
+
+        originalList.forEach(menuItemOrString => {
+            let result: MenuItemDef | null;
+            if (typeof menuItemOrString === 'string') {
+                result = this.getStockMenuItem(menuItemOrString, chartMenuContext, showMenu, eventSource);
+            } else {
+                result = { ...menuItemOrString };
+            }
+            if (!result) { return; }
+
+            const { subMenu } = result;
+            if (Array.isArray(subMenu)) {
+                result.subMenu = this.mapWithStockItems(subMenu, chartMenuContext, showMenu, eventSource);
+            }
+
+            resultList.push(result);
+        });
+
+        return resultList;
+    }
+
+    private getStockMenuItem(key: string, chartMenuContext: ChartMenuContext, showMenu: () => void, eventSource: HTMLElement): MenuItemDef | null {
+        switch (key) {
+            case 'chartEdit':
+                return this.createMenuItem(this.chartTranslationService.translate('chartEdit'), 'chartsMenuEdit', showMenu);
+            case 'chartAdvancedSettings':
+                return this.createMenuItem(
+                    this.chartTranslationService.translate('chartAdvancedSettings'),
+                    'chartsMenuAdvancedSettings',
+                    () => this.chartMenuService.openAdvancedSettings(chartMenuContext, eventSource)
+                );
+            case 'chartUnlink':
+                return this.createMenuItem(
+                    this.chartTranslationService.translate('chartUnlink'),
+                    'unlinked',
+                    () => this.chartMenuService.toggleLinked(chartMenuContext)
+                );
+            case 'chartLink':
+                return this.createMenuItem(
+                    this.chartTranslationService.translate('chartLink'),
+                    'linked',
+                    () => this.chartMenuService.toggleLinked(chartMenuContext)
+                );
+            case 'chartDownload':
+                return this.createMenuItem(
+                    this.chartTranslationService.translate('chartDownload'),
+                    'save',
+                    () => this.chartMenuService.downloadChart(chartMenuContext)
+                );
+        }
+        return null;
     }
 
     private createMenuItem(name: string, iconName: string, action: () => void): MenuItemDef {
