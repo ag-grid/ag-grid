@@ -16,8 +16,8 @@ const GitHubDetails = ({ favouritesOnly, repo }) => {
         );
     } else {
         return (
-            <div className={styles.imageButton}>
-                <Icon name="github" />
+            <div className={styles.gitHubDetails}>
+                <Icon name="github" svgClasses={styles.gibHubIcon }/>
             </div>
         );
     }
@@ -32,7 +32,7 @@ const ShowcaseList = ({ favouritesOnly = false, maxItems = -1 }) => {
         <div className={styles.cardContainer}>
             {products.map((product, index) => (
                 <a key={index} target="_blank" href={product.link}>
-                    <div className={styles.card}>
+                    <div className={`${styles.card} ${favouritesOnly ? "" : styles.smallCard}`}>
                         {favouritesOnly && (
                             <div className={styles.header}>
                                 <img
@@ -55,7 +55,7 @@ const ShowcaseList = ({ favouritesOnly = false, maxItems = -1 }) => {
                             </div>
                             <p className={styles.description}>{product.description}</p>
                         </div>
-                        <div className={styles.footer}>
+                        {favouritesOnly && <div className={styles.footer}>
                             {product.frameworks?.map((framework, index) => (
                                 <span key={'framework-' + index} className={styles.tags}>
                                     <img
@@ -70,7 +70,7 @@ const ShowcaseList = ({ favouritesOnly = false, maxItems = -1 }) => {
                                     {tag}
                                 </span>
                             ))}
-                        </div>
+                        </div>}
                     </div>
                 </a>
             ))}

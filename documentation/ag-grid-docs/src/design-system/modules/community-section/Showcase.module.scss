@@ -16,7 +16,12 @@
     box-shadow: var(--shadow-xs);
     border: 1px solid var(--color-border-secondary);
     min-height: 375px;
-    overflow: hidden; /* Ensures that anything going beyond the bounds of the card, such as the image, is clipped */
+    overflow: hidden; 
+}
+
+.smallCard {
+    height: 185px;
+    min-height: 0px;
 }
 
 .header {
@@ -32,6 +37,10 @@
     display: flex;
     gap: $spacing-size-4;
     align-items: center;
+}
+
+.gibHubIcon { 
+    fill: var(--color-fg-primary);
 }
 
 .titleContainer {
