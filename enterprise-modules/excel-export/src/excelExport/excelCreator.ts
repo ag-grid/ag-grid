@@ -54,17 +54,20 @@ const createExcelXmlWorksheets = (data: string[]): void => {
     let imageRelationCounter = 0;
     let tableRelationCounter = 0;
 
-    data.forEach((value, idx) => {
-        ZipContainer.addFile(`xl/worksheets/sheet${idx + 1}.xml`, value, false);
+    for (let i = 0; i < data.length; i++) {
+        const value = data[i];
+        ZipContainer.addFile(`xl/worksheets/sheet${i + 1}.xml`, value, false);
 
-        const hasImages = ExcelXlsxFactory.images.size > 0 && ExcelXlsxFactory.worksheetImages.has(idx);
-        const hasTables = ExcelXlsxFactory.worksheetDataTables.size > 0 && ExcelXlsxFactory.worksheetDataTables.has(idx);
+        const hasImages = ExcelXlsxFactory.images.size > 0 && ExcelXlsxFactory.worksheetImages.has(i);
+        const hasTables = ExcelXlsxFactory.worksheetDataTables.size > 0 && ExcelXlsxFactory.worksheetDataTables.has(i);
+
+        if (!hasImages && !hasTables) { continue; }
 
         let tableIndex: number | undefined;
         let drawingIndex: number | undefined;
 
         if (hasImages) {
-            createExcelXmlDrawings(idx, imageRelationCounter);
+            createExcelXmlDrawings(i, imageRelationCounter);
             drawingIndex = imageRelationCounter;
             imageRelationCounter++;
         }
@@ -74,12 +77,13 @@ const createExcelXmlWorksheets = (data: string[]): void => {
             tableRelationCounter++;
         }
 
-        const worksheetRelFile = `xl/worksheets/_rels/sheet${idx + 1}.xml.rels`;
+        const worksheetRelFile = `xl/worksheets/_rels/sheet${i + 1}.xml.rels`;
         ZipContainer.addFile(
             worksheetRelFile,
             ExcelXlsxFactory.createRelationships({ tableIndex, drawingIndex }),
         );
-    });
+    }
+
 }
 
 const createExcelXmlDrawings = (sheetIndex: number, drawingIndex: number): void => {
