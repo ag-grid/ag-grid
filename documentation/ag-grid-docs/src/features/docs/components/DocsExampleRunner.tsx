@@ -16,6 +16,7 @@ import {
     getExampleUrl,
     type UrlParams
 } from '../utils/urlPaths';
+import type { FileContents, GeneratedContents } from '@features/example-generator/types';
 
 interface Props {
     name: string;
@@ -77,7 +78,7 @@ const DocsExampleRunnerInner = ({ name, title, exampleHeight, pageName, isDev }:
     const id = `example-${name}`;
     const loadingIFrameId = getLoadingIFrameId({ pageName, exampleName: name });
 
-    const [exampleFiles, setExampleFiles] = useState();
+    const [exampleFiles, setExampleFiles] = useState<FileContents>();
     const [supportedFrameworks, setSupportedFrameworks] = useState<InternalFramework[] | undefined>(undefined);
     const [supportedImportTypes, setSupportedImportTypes] = useState<ImportType[] | undefined>(undefined);
 
@@ -93,7 +94,7 @@ const DocsExampleRunnerInner = ({ name, title, exampleHeight, pageName, isDev }:
         () => Promise.all([
             fetch(getExampleContentsUrl(urlConfig)).then((res) => res.json()),
             fetch(getExampleUrl(urlConfig)).then((res) => res.text())
-        ]),
+        ]) as Promise<[GeneratedContents, string]>,
         queryOptions
     );
     const urls = {
@@ -119,13 +120,13 @@ const DocsExampleRunnerInner = ({ name, title, exampleHeight, pageName, isDev }:
         setSupportedFrameworks(contents.supportedFrameworks ?? []);
         setSupportedImportTypes(contents.supportedImportTypes ?? []);
     }, [contents, exampleFileHtml]);
-
+    
     const externalLinks = exampleFiles && contents ? (
         <ExternalLinks
             title={title}
             internalFramework={internalFramework}
             exampleFiles={exampleFiles}
-            exampleBoilerPlateFiles={contents.exampleBoilerPlateFiles}
+            exampleBoilerPlateFiles={contents.boilerPlateFiles}
             packageJson={contents.packageJson}
             initialSelectedFile={contents.mainFileName}
             plunkrHtmlUrl={urls.plunkrHtmlUrl}
