@@ -1,29 +1,36 @@
 .container {
-
     .blurContainer {
         position: relative;
         overflow: hidden;
-        margin-left: 0.5%; 
+        margin-left: 0.5%;
         margin-right: 0.5%;
-      
+
         &:before,
         &:after {
-          content: '';
-          position: absolute;
-          top: 0;
-          bottom: 0;
-          width: 100px;
-          pointer-events: none; 
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100px;
+            pointer-events: none;
         }
-      
+
         &:before {
-          left: 0;
-          background: linear-gradient(to right, color-mix(in srgb, var(--color-gray-800), var(--color-gray-900) 50%) 0%, transparent 100%);
+            left: 0;
+            background: linear-gradient(
+                to right,
+                color-mix(in srgb, var(--color-gray-800), var(--color-gray-900) 50%) 0%,
+                transparent 100%
+            );
         }
-      
+
         &:after {
-          right: 0;
-          background: linear-gradient(to left, color-mix(in srgb, var(--color-gray-800), var(--color-gray-900) 50%) 0%, transparent 100%);
+            right: 0;
+            background: linear-gradient(
+                to left,
+                color-mix(in srgb, var(--color-gray-800), var(--color-gray-900) 50%) 0%,
+                transparent 100%
+            );
         }
 
         .scrollingGalleryContainer {
@@ -31,16 +38,16 @@
             overflow-x: auto;
             scrollbar-width: none;
             margin-bottom: 12px;
-    
+
             .galleryImage {
                 flex: 0 0 auto;
                 scroll-snap-align: start;
-                width: auto; 
-                margin-right: 10px; 
-                height: 150px; 
+                width: auto;
+                margin-right: 10px;
+                height: 150px;
             }
-          }
-      }
+        }
+    }
 
     .eventDetailsContainer {
         // TODO: Add  container around tabs
@@ -56,7 +63,7 @@
                 background-color: transparent;
                 border: none;
                 border-bottom: 1px solid #7f7e7e;
-                color: #FFF; 
+                color: #fff;
                 padding: 10px 20px;
                 cursor: pointer;
                 font-weight: 300;
@@ -75,7 +82,6 @@
                 border-bottom-right-radius: 0px;
                 color: #fff;
             }
-
         }
 
         .eventTilesContainer {
@@ -105,10 +111,7 @@
                     font-size: 12px;
                     margin-bottom: 4px;
                 }
-
             }
-
         }
     }
-
 }

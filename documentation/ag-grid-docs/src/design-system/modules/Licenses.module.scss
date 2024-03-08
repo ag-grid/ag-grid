@@ -122,7 +122,6 @@ p.name {
     font-weight: var(--text-bold);
     letter-spacing: -0.05em;
 
-
     &.freePrice {
         margin-bottom: 18px;
     }
@@ -176,7 +175,6 @@ p.name {
     }
 }
 
-
 .fromText {
     margin-top: -25px;
     color: var(--color-text-tertiary);
@@ -219,7 +217,6 @@ p.name {
         border-right: none;
     }
 
-
     .mobileFeatureMatrix {
         display: none;
         padding-top: $spacing-size-4;
@@ -237,12 +234,12 @@ p.name {
 }
 
 @media screen and (max-width: $breakpoint-pricing-medium) {
-.toggleFeatureBreakdownButton {
-    display: block;
-    text-align: center;
-    color: var(--color-link);
-    font-weight: var(--text-semibold);
-    cursor: pointer;
-    user-select: none;
-}
+    .toggleFeatureBreakdownButton {
+        display: block;
+        text-align: center;
+        color: var(--color-link);
+        font-weight: var(--text-semibold);
+        cursor: pointer;
+        user-select: none;
+    }
 }
