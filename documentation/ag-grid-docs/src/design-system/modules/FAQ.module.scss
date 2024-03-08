@@ -7,7 +7,7 @@
     line-height: var(--text-lh-xl);
     font-weight: var(--text-semibold);
     color: var(--color-text-secondary);
-    
+
     @media screen and (max-width: $breakpoint-pricing-large) {
         text-align: left;
     }
@@ -29,7 +29,6 @@
     opacity: 0.8;
     text-align: left;
 }
-
 
 .chevronDown {
     --icon-size: 24px;
