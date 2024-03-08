@@ -72,7 +72,7 @@
         "organiserLogoLight": "ng-conf-logo.webp",
         "startDate": "2023-06-14",
         "endDate": "2023-06-15",
-        "coverImage": "generic/ngconf.jpg",
+        "coverImage": "collages/ng-conf-2023.jpg",
         "countryIcon": "us.png",
         "eventPage": "https://2023.ng-conf.org/",
         "recording": "https://www.youtube.com/watch?v=ELRCT7ooNCU",
@@ -91,7 +91,7 @@
         "endDate": "2023-06-18",
         "recording": "https://portal.gitnation.org/contents/visualising-data-with-react-ag-grid-and-ag-charts",
         "countryIcon": "netherlands.png",
-        "coverImage": "generic/react-summit.png",
+        "coverImage": "collages/react-summit-amsterdam-2023.png",
         "eventPage": "https://reactsummit.com/2023/",
         "images": [
             "generic/react-summit.png"
@@ -109,7 +109,7 @@
         "endDate": "2023-10-28",
         "recording": "https://www.youtube.com/watch?v=qR608qHWTCA",
         "eventPage": "https://reactadvanced.com/2023/",
-        "coverImage": "generic/react-advanced.jpg",
+        "coverImage": "collages/react-advanced-london-2023.jpg",
         "images": [
             ""
         ]
@@ -125,7 +125,7 @@
         "startDate": "2023-11-13",
         "endDate": "2023-11-15",
         "recording": "https://www.youtube.com/watch?v=69d3QIDVKDc",
-        "coverImage": "generic/react-summit-us.png",
+        "coverImage": "collages/react-summit-us-2023.jpg",
         "eventPage": "https://reactsummit.us/2023/",
         "images": [
             ""

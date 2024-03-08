@@ -120,15 +120,23 @@
         "alt": ""
     },
     {
-        "src": "generic/ngconf.jpg",
+        "src": "2023/ng-conf-1.jpeg",
         "alt": ""
     },
     {
-        "src": "generic/react-summit-us.png",
+        "src": "2023/ng-conf-2.jpeg",
         "alt": ""
     },
     {
-        "src": "generic/react-summit.png",
+        "src": "2023/ng-conf-3.jpeg",
+        "alt": ""
+    },
+    {
+        "src": "2023/ng-conf-4.jpg",
+        "alt": ""
+    },
+    {
+        "src": "2023/ng-conf-5.png",
         "alt": ""
     }
 ]
