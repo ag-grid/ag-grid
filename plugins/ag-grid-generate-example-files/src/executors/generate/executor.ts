@@ -21,7 +21,7 @@ import { getStyleFiles } from './generator/utils/getStyleFiles';
 import { getOtherScriptFiles } from './generator/utils/getOtherScriptFiles';
 import { frameworkFilesGenerator } from './generator/utils/frameworkFilesGenerator';
 import { getPackageJson } from './generator/utils/getPackageJson';
-import { removeModuleRegistration } from './generator/transformation-scripts/parser-utils';
+import { getInterfaceFileContents, removeModuleRegistration } from './generator/transformation-scripts/parser-utils';
 
 export type ExecutorOptions = {
     mode: 'dev' | 'prod';
@@ -120,6 +120,18 @@ export async function generateFiles(options: ExecutorOptions) {
         m.module.includes('@ag-grid-enterprise/charts-enterprise')
     );
 
+    let interfaceFile = undefined;
+    if(sourceFileList.includes("interfaces.ts")) {
+        interfaceFile = await readFile(path.join(folderPath, 'interfaces.ts'));
+    }
+    const interfaces = getInterfaceFileContents(typedBindings, interfaceFile);
+    let interfaceContents = undefined;
+    if(interfaces) {
+        interfaceContents = {
+            'interfaces.ts': interfaces,
+        };
+    }    
+
     for (const internalFramework of FRAMEWORKS) {
         if (exampleConfig.supportedFrameworks && !exampleConfig.supportedFrameworks.includes(internalFramework)) {
             const result = {excluded: true, ...exampleConfig} as any;
@@ -212,7 +224,7 @@ export async function generateFiles(options: ExecutorOptions) {
                 styleFiles: Object.keys(mergedStyleFiles),
                 sourceFileList,
                 // Replace files with provided examples
-                files: { ...mergedStyleFiles, ...files, ...provideFrameworkFiles },
+                files: { ...mergedStyleFiles, ...files, ...provideFrameworkFiles, ...interfaceContents },
                 // Files without provided examples
                 generatedFiles: files,
                 boilerPlateFiles,
