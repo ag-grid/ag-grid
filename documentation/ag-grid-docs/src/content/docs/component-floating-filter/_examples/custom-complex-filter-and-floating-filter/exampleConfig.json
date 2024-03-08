@@ -3,5 +3,5 @@
     "jquery",
     "jqueryui"
   ],
-  "supportedFrameworks": ["typescript", "vanilla"]
+  "supportedFrameworks": ["typescript"]
 }

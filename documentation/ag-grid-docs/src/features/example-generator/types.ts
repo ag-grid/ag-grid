@@ -1,5 +1,3 @@
-export type ExampleType = 'generated' | 'typescript';
-
 export type TransformTsFileExt = undefined | '.js' | '.tsx';
 
 export interface ExampleSettings {
