@@ -1,5 +1,8 @@
 import {
     Column,
+    ColGroupDef,
+    ColDef,
+    ColumnModel,
     ExcelFactoryMode,
     ExcelImage,
     ExcelRelationship,
@@ -12,6 +15,7 @@ import {
 import coreFactory from './files/ooxml/core';
 import contentTypesFactory from './files/ooxml/contentTypes';
 import drawingFactory from './files/ooxml/drawing';
+import tableFactory from './files/ooxml/table';
 import officeThemeFactory from './files/ooxml/themes/office';
 import sharedStringsFactory from './files/ooxml/sharedStrings';
 import stylesheetFactory, { registerStyles } from './files/ooxml/styles/stylesheet';
@@ -20,7 +24,7 @@ import worksheetFactory from './files/ooxml/worksheet';
 import relationshipsFactory from './files/ooxml/relationships';
 
 import { setExcelImageTotalHeight, setExcelImageTotalWidth, createXmlPart } from './assets/excelUtils';
-import { ImageIdMap, ExcelCalculatedImage } from './assets/excelInterfaces';
+import { ImageIdMap, ExcelCalculatedImage, ExcelDataTable } from './assets/excelInterfaces';
 import { ExcelGridSerializingParams } from './excelSerializingSession';
 
 /**
@@ -41,6 +45,10 @@ export class ExcelXlsxFactory {
     public static workbookImageIds: ImageIdMap = new Map();
     /** Maps all sheet images to unique Ids */
     public static worksheetImageIds: Map<number, ImageIdMap> = new Map();
+    /** Maps all sheet tables to unique Ids */
+    public static worksheetDataTables: Map<number, ExcelDataTable> = new Map();
+    /** Default name to be used for tables when no name is provided */
+    public static defaultTableDisplayName = 'AG-GRID-Table';
 
     public static factoryMode: ExcelFactoryMode = ExcelFactoryMode.SINGLE_SHEET;
 
@@ -52,7 +60,31 @@ export class ExcelXlsxFactory {
         this.addSheetName(worksheet);
         registerStyles(styles, this.sheetNames.length);
 
+        this.processTableConfig(worksheet, config);
         return this.createWorksheet(worksheet, config);
+    }
+
+    public static getTableNameFromIndex(idx: number) {
+        return `table${idx + 1}`;
+    }
+
+    public static getTableRelIdFromIndex(idx: number) {
+        return `tableRelId${idx + 1}`;
+    }
+
+    public static getSanitizedTableName(name: string) {
+        return name.replace(/^[^a-zA-Z_]+/, '_')
+                   .replace(/\s/g, '_')
+                   .replace(/[^a-zA-Z0-9_]/g, '_')
+    }
+
+    public static addTableToSheet(sheetIndex: number, table: ExcelDataTable): void {
+        if (this.worksheetDataTables.has(sheetIndex)) {
+            console.warn('Unable to add data table to Excel sheet: A table already exists.');
+            return;
+        }
+
+        this.worksheetDataTables.set(sheetIndex, table);
     }
 
     public static buildImageMap(image: ExcelImage, rowIndex: number, col: Column, columnsToExport: Column[], rowHeight?: number | ((params: RowHeightCallbackParams) => number)): void {
@@ -89,6 +121,40 @@ export class ExcelXlsxFactory {
         }
 
         this.buildSheetImageMap(currentSheetIndex, calculatedImage);
+    }
+
+    private static processTableConfig(
+        worksheet: ExcelWorksheet,
+        config: ExcelGridSerializingParams
+    ) {
+        if (!config.tableSetup) {
+            return;
+        }
+
+        const { name: nameFromConfig } = config.tableSetup;
+        const tableName = this.getSanitizedTableName(
+            nameFromConfig || ExcelXlsxFactory.defaultTableDisplayName
+        );
+
+        const sheetIndex = this.sheetNames.length - 1;
+
+        const headerRowCount = config.columnModel.getHeaderRowCount();
+        const tableHeaderRowIndex: number = headerRowCount - 1; // Assuming that header starts at row 0
+        const tableRowCount = worksheet.table.rows.length;
+        const tableColumns = worksheet.table.columns.map(col => col.displayName || '');
+
+        if (!tableColumns || !tableColumns.length || !tableRowCount || !tableName) {
+            console.warn('Unable to add data table to Excel sheet: Missing required parameters.');
+            return;
+        }
+
+        this.addTableToSheet(sheetIndex, {
+            name: this.getTableNameFromIndex(sheetIndex),
+            displayName: tableName,
+            columns: tableColumns,
+            headerRowIndex: tableHeaderRowIndex,
+            rowCount: tableRowCount - headerRowCount,
+        });
     }
 
     private static buildSheetImageMap(sheetIndex: number, image: ExcelCalculatedImage): void {
@@ -146,6 +212,7 @@ export class ExcelXlsxFactory {
 
         this.workbookImageIds = new Map();
         this.worksheetImageIds = new Map();
+        this.worksheetDataTables = new Map();
 
         this.sheetNames = [];
         this.factoryMode = ExcelFactoryMode.SINGLE_SHEET;
@@ -187,6 +254,10 @@ export class ExcelXlsxFactory {
 
     public static createTheme(): string {
         return createXmlPart(officeThemeFactory.getTemplate());
+    }
+
+    public static createTable(dataTable: ExcelDataTable, index?: number): string {
+        return createXmlPart(tableFactory.getTemplate(dataTable, index));
     }
 
     public static createWorkbookRels(sheetLen: number): string {
@@ -241,6 +312,52 @@ export class ExcelXlsxFactory {
             Target: `../drawings/drawing${currentRelationIndex + 1}.xml`
         }]);
 
+        return createXmlPart(rs);
+    }
+
+    public static createWorksheetTableRel(currentRelationIndex: number) {
+        const tableId = this.getTableNameFromIndex(currentRelationIndex);
+        const tableRelId = this.getTableRelIdFromIndex(currentRelationIndex);
+        const rs = relationshipsFactory.getTemplate([{
+            Id: tableRelId,
+            Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/table',
+            Target: `../tables/${tableId}.xml`
+        }]);
+
+        return createXmlPart(rs);
+    }
+
+    public static createRelationships({
+        drawingIndex,
+        tableIndex,
+    } : {
+        drawingIndex?: number,
+        tableIndex?: number,
+    } = {}) {
+        if (drawingIndex === undefined && tableIndex === undefined) {
+            return '';
+        }
+
+        const config = [];
+        if (typeof drawingIndex === 'number') {
+            config.push({
+                Id: 'rId1',
+                Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing',
+                Target: `../drawings/drawing${drawingIndex + 1}.xml`
+            });
+        }
+
+        if (typeof tableIndex === 'number') {
+            const tableId = this.getTableNameFromIndex(tableIndex);
+            const tableRelId = this.getTableRelIdFromIndex(tableIndex);
+            config.push({
+                Id: tableRelId,
+                Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/table',
+                Target: `../tables/${tableId}.xml`
+            });
+        }
+
+        const rs = relationshipsFactory.getTemplate(config);
         return createXmlPart(rs);
     }
 

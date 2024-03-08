@@ -12,6 +12,7 @@ import {
     ExcelFont,
     _
 } from '@ag-grid-community/core';
+import { ExcelDataTable } from '../../assets/excelInterfaces';
 
 import columnFactory from './column';
 import rowFactory from './row';
@@ -293,6 +294,34 @@ const addHeaderFooter = (headerFooterConfig?: ExcelHeaderFooterConfig) => {
     };
 };
 
+const addExcelTableParts = (excelTable?: ExcelDataTable, index?: number) => {
+    if (!excelTable) {
+        return (children: XmlElement[]) => children;
+    }
+
+    const rId = ExcelXlsxFactory.getTableRelIdFromIndex(index || 0);
+    return (children: XmlElement[]) => {
+        children.push({
+            name: 'tableParts',
+            properties: {
+                rawMap: {
+                    count: '1',
+                }
+            },
+            children: [{
+                name: 'tablePart',
+                properties: {
+                    rawMap: {
+                        'r:id': rId,
+                    }
+                }
+            }],
+        });
+
+        return children;
+    };
+};
+
 const addDrawingRel = (currentSheet: number) => {
     return (children: XmlElement[]) => {
         if (ExcelXlsxFactory.worksheetImages.get(currentSheet)) {
@@ -363,6 +392,8 @@ const worksheetFactory: ExcelOOXMLTemplate = {
         const { rows, columns } = table;
         const mergedCells = (columns && columns.length) ? getMergedCellsAndAddColumnGroups(rows, columns, !!suppressColumnOutline) : [];
 
+        const worksheetExcelTables = ExcelXlsxFactory.worksheetDataTables.get(currentSheet);
+
         const createWorksheetChildren = _.compose(
             addSheetPr(),
             addSheetFormatPr(rows),
@@ -372,7 +403,8 @@ const worksheetFactory: ExcelOOXMLTemplate = {
             addPageMargins(margins),
             addPageSetup(pageSetup),
             addHeaderFooter(headerFooterConfig),
-            addDrawingRel(currentSheet)
+            addDrawingRel(currentSheet),
+            addExcelTableParts(worksheetExcelTables, currentSheet),
         );
 
         const children = createWorksheetChildren([]);
