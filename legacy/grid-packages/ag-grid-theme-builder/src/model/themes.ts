@@ -33,7 +33,7 @@ export const balhamTheme: Theme = {
 export const materialTheme: Theme = {
   name: 'ag-theme-material',
   extends: baseTheme,
-  colorSchemes: ['light'],
+  colorSchemes: ['light', 'dark', 'auto'],
 };
 
 export const allThemes: ReadonlyArray<Theme> = [

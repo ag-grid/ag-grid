@@ -963,7 +963,7 @@ const ExampleInner = ({ darkMode }) => {
     let themeClass = gridTheme;
     if (!themeClass.startsWith('ag-theme-')) {
         themeClass = 'ag-theme-' + themeClass;
-        if (darkMode && themesWithDarkVariant.includes(themeClass)) {
+        if (darkMode) {
             themeClass += '-dark';
         }
     }
@@ -1011,8 +1011,6 @@ const ExampleInner = ({ darkMode }) => {
         </>
     );
 };
-
-const themesWithDarkVariant = ['ag-theme-quartz', 'ag-theme-alpine', 'ag-theme-balham'];
 
 const Example = () => {
     const [darkMode] = useDarkmode();
