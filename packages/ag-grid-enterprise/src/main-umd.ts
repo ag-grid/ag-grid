@@ -37,7 +37,7 @@ import '@ag-grid-community/styles/agGridClassicFont.css';
 import '@ag-grid-community/styles/agGridMaterialFont.css';
 import '@ag-grid-community/styles/agGridQuartzFont.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule,
+ModuleRegistry.__registerModules([ClientSideRowModelModule,
     InfiniteRowModelModule,
     CsvExportModule,
     AdvancedFilterModule,
@@ -58,7 +58,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule,
     SparklinesModule,
     StatusBarModule,
     ViewportRowModelModule
-]);
+], false, undefined);
 
 // do not export from "ag-grid-community" - this is handled below
 /** AUTO_GENERATED_START **/

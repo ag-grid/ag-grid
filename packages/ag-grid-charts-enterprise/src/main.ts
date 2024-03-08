@@ -21,7 +21,7 @@ import {SparklinesModule} from "@ag-grid-enterprise/sparklines";
 import {StatusBarModule} from "@ag-grid-enterprise/status-bar";
 import {ViewportRowModelModule} from "@ag-grid-enterprise/viewport-row-model";
 
-ModuleRegistry.registerModules([ClientSideRowModelModule,
+ModuleRegistry.__registerModules([ClientSideRowModelModule,
     InfiniteRowModelModule,
     CsvExportModule,
     AdvancedFilterModule,
@@ -42,7 +42,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule,
     SparklinesModule,
     StatusBarModule,
     ViewportRowModelModule
-]);
+], false, undefined);
 
 // do not export from "ag-grid-community" - this is handled below
 /** AUTO_GENERATED_START **/
