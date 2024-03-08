@@ -124,7 +124,7 @@ export async function generateFiles(options: ExecutorOptions) {
 
     for (const internalFramework of FRAMEWORKS) {
         if (exampleConfig.supportedFrameworks && !exampleConfig.supportedFrameworks.includes(internalFramework)) {
-            const result = {excluded: true} as any;
+            const result = {excluded: true, ...exampleConfig} as any;
             writeContents(options, 'packages', internalFramework, result);
             writeContents(options, 'modules', internalFramework, result);
             continue;
@@ -202,6 +202,7 @@ export async function generateFiles(options: ExecutorOptions) {
                 if (entryFileContent && importType === 'packages') {
                     const isEnterprise = entryFileContent.includes('-enterprise');
 
+                    entryFileContent = removeModuleRegistration(entryFileContent);
                     // Remove the original import statements that contain modules
                     entryFileContent = entryFileContent
                         .replace(/import ((.|\n)[^}]*?\wModule(.|\n)*?)from.*\n/g, '')
@@ -213,7 +214,6 @@ export async function generateFiles(options: ExecutorOptions) {
                         // Remove if ModuleRegistry is with other imports
                         .replace(/ModuleRegistry(,)?/g, '');
 
-                    entryFileContent = removeModuleRegistration(entryFileContent);
 
                     entryFileContent = entryFileContent
                         .replace(/@ag-grid-community\/core/g, 'ag-grid-community')

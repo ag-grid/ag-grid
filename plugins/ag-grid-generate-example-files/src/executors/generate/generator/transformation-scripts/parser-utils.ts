@@ -554,7 +554,7 @@ export function addBindingImports(
 }
 
 export function removeModuleRegistration(code: string) {
-    return code.replace(/ModuleRegistry.*]\)(;?)/g, '');
+    return code.replace(/ModuleRegistry\.registerModules.*]\)(;?)/g, '');
 }
 
 export function handleRowGenericInterface(fileTxt: string, tData: string): string {
