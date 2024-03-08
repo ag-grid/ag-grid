@@ -76,7 +76,7 @@ const EventItem = ({ event }) => {
                     </div>
                 </div>
                 <div className={styles.eventItemRightColumn}>
-                    <img className={event.images?.length > 0 ? styles.eventImage : styles.eventLogo} src={`/community/events/${darkMode ? event.coverImage : event.coverImageLight}`} />
+                    <img className={event.images?.length > 0 ? styles.eventImage : styles.eventLogo} src={`/community/events/${darkMode || !event.coverImageLight ? event.coverImage : event.coverImageLight}`} />
                 </div>
             </div>
         </a>
