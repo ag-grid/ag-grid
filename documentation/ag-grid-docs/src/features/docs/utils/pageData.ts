@@ -69,13 +69,14 @@ async function getDocsExampleNameParts({ pages }: { pages: DocsPage[] }) {
 export async function getDocsExamplePages({ pages }: { pages: DocsPage[] }) {
     const examples = await getDocsExampleNameParts({ pages });
 
-    return examples.map(({ internalFramework, pageName, exampleName, importType }) => {
+    return examples.map(({ internalFramework, pageName, exampleName, importType, isSupported }) => {
         return {
             params: {
                 internalFramework,
                 pageName,
                 exampleName,
                 importType,
+                isSupported: isSupported.toString(),
             },
         };
     });
@@ -83,7 +84,7 @@ export async function getDocsExamplePages({ pages }: { pages: DocsPage[] }) {
 
 export async function getDocExampleFiles({ pages }: { pages: DocsPage[] }) {
     const examples = await getDocsExampleNameParts({ pages });
-    const exampleFilesPromises = examples.flatMap(async ({ internalFramework, pageName, exampleName, importType }) => {
+    const exampleFilesPromises = examples.flatMap(async ({ internalFramework, pageName, exampleName, importType, isSupported }) => {
         try {
             const filesList = await getGeneratedContentsFileList({
                 type: 'docs',
@@ -91,6 +92,7 @@ export async function getDocExampleFiles({ pages }: { pages: DocsPage[] }) {
                 pageName,
                 exampleName,
                 importType,
+                isSupported: isSupported,
             });
             return filesList.map((fileName) => {
                 return {

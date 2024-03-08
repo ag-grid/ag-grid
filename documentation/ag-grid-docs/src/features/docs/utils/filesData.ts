@@ -1,3 +1,4 @@
+import type { InternalFramework } from '@ag-grid-types';
 import {
     type DocsPage,
     type InternalFrameworkExample,
@@ -5,7 +6,7 @@ import {
     getExampleRootFileUrl,
 } from '@utils/pages';
 import type { ImageMetadata } from 'astro';
-import fs from 'fs/promises';
+import fs, { readFile, readdir } from 'fs/promises';
 import path from 'path';
 
 // NOTE: These imports can't be aliases because it is used by `astro.config.mjs`
@@ -49,25 +50,40 @@ export const getInternalFrameworkExamples = async ({
 }: {
     pages: DocsPage[];
 }): Promise<InternalFrameworkExample[]> => {
-    const internalFrameworkPageNames = INTERNAL_FRAMEWORKS.flatMap((internalFramework) => {
-        return pages.map((page) => {
-            return { internalFramework, pageName: page.slug };
-        });
-    });
-
-    const examplePromises = internalFrameworkPageNames.map(async ({ internalFramework, pageName }) => {
+    const examplePromises = pages.map(async (page) => {
+        const pageName = page.slug;
         const docsExamplesPath = getExamplesPath({
             pageName,
         });
-
         const examples = await getFolders(docsExamplesPath);
-        return examples.map((exampleName) => {
-            return {
-                internalFramework,
-                pageName,
-                exampleName,
-            };
+
+        const exampleDirs = examples.flatMap(async (exampleName) => {
+
+            //const exampleDir = existsSync(path.join(docsExamplesPath, exampleName, 'exampleConfig.json'));
+            const exampleDir = await readdir(path.join(docsExamplesPath, exampleName));
+            const hasExampleConfig = exampleDir.includes('exampleConfig.json');
+
+            let supportedFrameworks: Set<InternalFramework> | undefined = undefined;
+            if (hasExampleConfig) {
+                const exampleConfig = await readFile(
+                    path.join(docsExamplesPath, exampleName, 'exampleConfig.json'),
+                    'utf-8'
+                );
+                const exampleConfigJson = JSON.parse(exampleConfig);
+                supportedFrameworks = new Set(exampleConfigJson.supportedFrameworks ?? []);
+            }
+
+            return (INTERNAL_FRAMEWORKS).map((internalFramework) => {
+                return {
+                    internalFramework,
+                    pageName,
+                    exampleName,
+                    isSupported: supportedFrameworks === undefined || supportedFrameworks.has(internalFramework),
+                };
+            });
         });
+
+        return (await Promise.all(exampleDirs)).flat();
     });
     const examples = (await Promise.all(examplePromises)).flat();
     return examples;
