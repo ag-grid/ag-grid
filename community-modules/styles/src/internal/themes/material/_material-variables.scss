@@ -81,7 +81,7 @@
     --ag-foreground-color: #ffffffff;
     --ag-active-color: #bb86fcff;
     --ag-data-color: #f5f5f5ff;
-    --ag-header-cell-hover-background-color: #999999ff;
+    --ag-header-cell-hover-background-color: #000000ff;
     --ag-advanced-filter-join-pill-color: #7a3a37ff;
     --ag-advanced-filter-column-pill-color: #355f2dff;
     --ag-advanced-filter-option-pill-color: #5a3168ff;
@@ -114,12 +114,12 @@
     --ag-input-border-color-invalid: #e02525ff;
     --ag-disabled-foreground-color: #f5f5f580;
     --ag-chip-background-color: #22262812;
-    --ag-side-button-selected-background-color: #121212ff;
-    --ag-selected-tab-underline-color: #2196f3ff;
+    --ag-side-button-selected-background-color: #2c2c2cff;
+    --ag-selected-tab-underline-color: #3f51b5ff;
     --ag-modal-overlay-background-color: #121212a8;
     --ag-value-change-delta-up-color: #43a047a8;
     --ag-value-change-delta-down-color: #e53935ff;
-    --ag-menu-background-color: #28313eff;
+    --ag-menu-background-color: #2c2c2cff;
 
     color-scheme: dark;
 }
