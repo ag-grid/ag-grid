@@ -24,6 +24,10 @@ import StackBlitzIcon from '@images/inline-svgs/stack-blitz.svg?react';
 import TakeControlIcon from '@images/inline-svgs/take-control-icon.svg?react';
 import TickIcon from '@images/inline-svgs/tick.svg?react';
 import XLogoIcon from '@images/inline-svgs/x-logo.svg?react';
+import ZendeskIcon from '@images/inline-svgs/zendesk.svg?react';
+import ZendeskMonochromeIcon from '@images/inline-svgs/zendesk-monochrome.svg?react';
+import StackOverflowIcon from '@images/inline-svgs/stack-overflow.svg?react';
+import StackOverflowMonochromeIcon from '@images/inline-svgs/stack-overflow-monochrome.svg?react';
 import classNames from 'classnames';
 
 // Uses IBM Carbon Design System icons as a base
@@ -36,7 +40,11 @@ const SOCIALS_ICON_MAP = {
     youtube: CarbonIcon.LogoYoutube,
     linkedin: CarbonIcon.LogoLinkedin,
     email: CarbonIcon.Email,
-    blog: CarbonIcon.Blog
+    blog: CarbonIcon.Blog,
+    stackoverflow: StackOverflowIcon,
+    stackoverflowMonochrome: StackOverflowMonochromeIcon,
+    zendesk: ZendeskIcon,
+    zendeskMonochrome: ZendeskMonochromeIcon
 };
 
 const DOCS_CATEGORIES_ICON_MAP = {
