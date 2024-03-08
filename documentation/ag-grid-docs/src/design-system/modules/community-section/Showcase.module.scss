@@ -3,7 +3,7 @@
 .cardContainer {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    column-gap:  $spacing-size-4;
+    column-gap: $spacing-size-4;
     row-gap: $spacing-size-6;
 }
 
@@ -15,14 +15,14 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    height: 100%;    
+    height: 100%;
 }
 
 .header {
     .image {
         width: 100%;
-        height: 150px; 
-        object-fit: cover; 
+        height: 150px;
+        object-fit: cover;
         object-position: top;
     }
 }
@@ -31,7 +31,6 @@
     display: flex;
     gap: $spacing-size-4;
     align-items: center;
-
 }
 
 .titleContainer {
@@ -54,28 +53,28 @@
 
 .body {
     padding: $spacing-size-4;
-    flex-grow: 1; 
+    flex-grow: 1;
 }
 
 .imageButton {
-    width: auto; 
-    height: $spacing-size-8; 
-    cursor: pointer; 
+    width: auto;
+    height: $spacing-size-8;
+    cursor: pointer;
     margin-left: $spacing-size-4;
     fill: var(--color-fg-primary);
 }
 
 .description {
-    font-size: var(--text-fs-base); 
+    font-size: var(--text-fs-base);
     font-weight: var(--text-regular);
-    color: var(--color-text-primary); 
+    color: var(--color-text-primary);
     display: -webkit-box;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-    -webkit-line-clamp: 3; 
+    -webkit-line-clamp: 3;
     line-height: 1.4;
-    max-height: calc(1.4em * 3); 
+    max-height: calc(1.4em * 3);
 }
 
 .footer {
@@ -93,7 +92,7 @@
     background: transparent;
     font-weight: var(--text-regular);
     border-radius: var(--radius-2xl);
-    padding: $spacing-size-1 $spacing-size-2; 
+    padding: $spacing-size-1 $spacing-size-2;
     font-size: var(--text-size-2xs);
     color: var(--color-text-primary);
     margin-bottom: 0px;
@@ -106,7 +105,7 @@
     font-weight: var(--text-regular);
     border: 1px solid var(--color-border-primary);
     border-radius: var(--radius-2xl);
-    padding: $spacing-size-1 $spacing-size-2; 
-    font-size: var(--text-fs-xs); 
+    padding: $spacing-size-1 $spacing-size-2;
+    font-size: var(--text-fs-xs);
     color: var(--color-text-primary);
 }

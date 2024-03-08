@@ -27,7 +27,7 @@
 .content {
     img {
         width: 100%;
-        object-fit: cover; 
+        object-fit: cover;
         border-radius: var(--radius-2xl);
     }
 }
@@ -80,11 +80,11 @@
 .tag {
     display: flex;
     align-items: center;
-    background: transparent; 
+    background: transparent;
     border: 1px solid var(--color-border-primary);
     border-radius: var(--radius-2xl);
-    padding: $spacing-size-1 $spacing-size-2; 
-    font-size: var(--text-fs-xs); 
+    padding: $spacing-size-1 $spacing-size-2;
+    font-size: var(--text-fs-xs);
 }
 
 .filterPanel {
@@ -141,5 +141,4 @@
 }
 
 .divider {
-
 }
