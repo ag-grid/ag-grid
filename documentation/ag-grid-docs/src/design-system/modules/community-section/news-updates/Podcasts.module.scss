@@ -42,7 +42,7 @@
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
-    font-style: italic;
+    color: var(--color-text-secondary);
     gap: $spacing-size-4;
     font-weight: 200;
 }
