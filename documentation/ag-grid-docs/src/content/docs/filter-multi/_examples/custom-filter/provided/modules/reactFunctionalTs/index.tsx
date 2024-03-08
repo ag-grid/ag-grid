@@ -18,7 +18,7 @@ import { MenuModule } from '@ag-grid-enterprise/menu';
 import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, MultiFilterModule, SetFilterModule, MenuModule, ClipboardModule, FiltersToolPanelModule])]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, MultiFilterModule, SetFilterModule, MenuModule, ClipboardModule, FiltersToolPanelModule]);
 
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);

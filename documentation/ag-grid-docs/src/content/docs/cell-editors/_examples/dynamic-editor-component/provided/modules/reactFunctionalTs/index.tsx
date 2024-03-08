@@ -16,7 +16,7 @@ import { MenuModule } from '@ag-grid-enterprise/menu';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ColumnsToolPanelModule, RichSelectModule])]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ColumnsToolPanelModule, RichSelectModule]);
 
 const cellEditorSelector: (params: ICellEditorParams<IRow>) => CellEditorSelectorResult | undefined = (params: ICellEditorParams<IRow>) => {
     if (params.data.type === 'age') {
