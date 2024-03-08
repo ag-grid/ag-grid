@@ -100,7 +100,7 @@
         {
             "repo": "https://github.com/mlflow/mlflow/tree/master",
             "title": "MLFlow",
-            "description": "Open source platform for the machine learning lifecycle",
+            "description": "MLflow is a platform to streamline machine learning development, including tracking experiments, packaging code into reproducible runs, and sharing and deploying models.",
             "link": "https://mlflow.org",
             "type": "Product",
             "open_source": true,
@@ -160,7 +160,7 @@
         },
         {
             "title": "Allianz NG-Aquila",
-            "description": "Angular UI Component library for the Open Insurance Platform",
+            "description": "Aquila is an open-source component library provided by the Allianz Global Digital Factory (GDF).",
             "repo": "https://github.com/allianz/ng-aquila",
             "open_source": true,
             "stars": 200,
@@ -217,7 +217,7 @@
         },
         {
             "title": "NASA Aerie UI",
-            "description": "The client application for Aerie.",
+            "description": "The client application for Aerie, a software framework for modeling spacecraft",
             "repo": "https://github.com/NASA-AMMOS/aerie-ui",
             "open_source": true,
             "stars": 30,
@@ -238,7 +238,7 @@
         },
         {
             "title": "MongoDB Compass",
-            "description": "The GUI for MongoDB.",
+            "description": "Compass is a free interactive tool for querying, optimizing, and analyzing your MongoDB data. Get key insights, drag and drop to build pipelines, and more.",
             "repo": "https://github.com/mongodb-js/compass",
             "open_source": true,
             "stars": 1000,
@@ -296,7 +296,7 @@
         },
         {
             "title": "Cube",
-            "description": "Cube — The Semantic Layer for Building Data Applications",
+            "description": "Cube is the semantic layer for building data applications. It helps data engineers and application developers access data from modern data stores, organize it into consistent definitions, and deliver it to every application.",
             "repo": "https://github.com/cube-js/cube",
             "open_source": true,
             "stars": 16900,
