@@ -153,10 +153,15 @@
     gap: $spacing-size-8;
 }
 
+.linkWrapper {
+    all: unset;
+    flex: 1;
+    cursor: pointer;
+}
+
 .eventTile {
     display: flex;
     flex-direction: column;
-    flex: 1;
     border-radius: var(--radius-md);
     padding: $spacing-size-4;
     background: var(--color-bg-primary);

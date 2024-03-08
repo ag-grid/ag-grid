@@ -47,13 +47,16 @@
     margin: $spacing-size-8 0px;
 }
 
-.filterDropdown {
-}
-
 .eventsContainer {
     display: flex;
     flex-direction: column;
     gap: $spacing-size-8;
+}
+
+
+.linkWrapper {
+    all: unset;
+    cursor: pointer;
 }
 
 .eventItemContainer {
@@ -100,7 +103,7 @@
     text-align: end;
     flex-grow: 1;
     font-weight: 200;
-    font-style: italic;
+    color: var(--color-text-secondary);
 }
 
 .description {

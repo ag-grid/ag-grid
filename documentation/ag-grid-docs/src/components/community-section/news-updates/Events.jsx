@@ -129,21 +129,23 @@ const Events = ({ enableFilters = false }) => {
                 <ScrollingGallery />
                 <div className={styles.eventTilesContainer}>
                     {currEvents.map((event, index) => (
-                        <div key={index} className={styles.eventTile}>
-                            <span className={styles.location}>
-                                <Icon className={styles.locationIcon} name="mapPin" />
-                                {event.location}
-                            </span>
-                            <span className={styles.conferenceIcon}>
-                                <img
-                                    className={styles.organiserLogo}
-                                    src={`/community/events/organiser-logos/${darkMode ? event.organiserLogo : event.organiserLogoLight}`}
-                                />
-                            </span>
-                            <span className={styles.title}>{event.title}</span>
-                            <span className={styles.description}>{event.description}</span>
-                            <span className={styles.date}>{formatDate(event.startDate)}</span>
-                        </div>
+                        <a href={event.eventPage} target='_blank' className={styles.linkWrapper}>
+                            <div key={index} className={styles.eventTile}>
+                                <span className={styles.location}>
+                                    <Icon className={styles.locationIcon} name="mapPin" />
+                                    {event.location}
+                                </span>
+                                <span className={styles.conferenceIcon}>
+                                    <img
+                                        className={styles.organiserLogo}
+                                        src={`/community/events/organiser-logos/${darkMode ? event.organiserLogo : event.organiserLogoLight}`}
+                                    />
+                                </span>
+                                <span className={styles.title}>{event.title}</span>
+                                <span className={styles.description}>{event.description}</span>
+                                <span className={styles.date}>{formatDate(event.startDate)}</span>
+                            </div>
+                        </a>
                     ))}
                 </div>
             </div>

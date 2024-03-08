@@ -34,50 +34,52 @@ function extractUniqueYears(events) {
 const EventItem = ({ event }) => {
     const [darkMode] = useDarkmode();
     return (
-        <div className={styles.eventItemContainer}>
-            <div className={styles.eventItemLeftColumn}>
-                <div className={styles.titleContainer}>
-                    <p className={styles.title}>{event.title}</p>
-                    <p className={styles.date}>
-                        {new Date(event.startDate).toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                        })}
-                    </p>
+        <a href={event.eventPage} target='_blank' className={styles.linkWrapper}>
+            <div className={styles.eventItemContainer}>
+                <div className={styles.eventItemLeftColumn}>
+                    <div className={styles.titleContainer}>
+                        <p className={styles.title}>{event.title}</p>
+                        <p className={styles.date}>
+                            {new Date(event.startDate).toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                            })}
+                        </p>
+                    </div>
+                    <p className={styles.description}>{event.description}</p>
+                    <div className={styles.footer}>
+                        <div className={styles.locationContainer}>
+                            <img className={styles.flag} src={`/example-assets/flags/${event.countryIcon}`} />
+                            <p className={styles.location}>{event.location}</p>
+                        </div>
+                        <div className={styles.ctaContainer}>
+                            {event.eventPage && (
+                                <a
+                                    href={event.eventPage}
+                                    target="_blank"
+                                    className={event.recording ? styles.secondaryCta : styles.primaryCta}
+                                >
+                                    View Event
+                                </a>
+                            )}
+                            {event.recording && (
+                                <a
+                                    href={event.recording}
+                                    target="_blank"
+                                    className={event.eventPage ? styles.primaryCta : styles.secondaryCta}
+                                >
+                                    Watch Recording
+                                </a>
+                            )}
+                        </div>
+                    </div>
                 </div>
-                <p className={styles.description}>{event.description}</p>
-                <div className={styles.footer}>
-                    <div className={styles.locationContainer}>
-                        <img className={styles.flag} src={`/example-assets/flags/${event.countryIcon}`} />
-                        <p className={styles.location}>{event.location}</p>
-                    </div>
-                    <div className={styles.ctaContainer}>
-                        {event.eventPage && (
-                            <a
-                                href={event.eventPage}
-                                target="_blank"
-                                className={event.recording ? styles.secondaryCta : styles.primaryCta}
-                            >
-                                View Event
-                            </a>
-                        )}
-                        {event.recording && (
-                            <a
-                                href={event.recording}
-                                target="_blank"
-                                className={event.eventPage ? styles.primaryCta : styles.secondaryCta}
-                            >
-                                Watch Recording
-                            </a>
-                        )}
-                    </div>
+                <div className={styles.eventItemRightColumn}>
+                    <img className={event.images?.length > 0 ? styles.eventImage : styles.eventLogo} src={`/community/events/${darkMode ? event.coverImage : event.coverImageLight}`} />
                 </div>
             </div>
-            <div className={styles.eventItemRightColumn}>
-                <img className={event.images?.length > 0 ? styles.eventImage : styles.eventLogo} src={`/community/events/${darkMode ? event.coverImage : event.coverImageLight}`} />
-            </div>
-        </div>
+        </a>
     );
 };
 
