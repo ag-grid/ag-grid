@@ -1,4 +1,4 @@
-import type { InternalFramework } from '@ag-grid-types';
+import type { ImportType, InternalFramework } from '@ag-grid-types';
 import {
     type DocsPage,
     type InternalFrameworkExample,
@@ -64,6 +64,7 @@ export const getInternalFrameworkExamples = async ({
             const hasExampleConfig = exampleDir.includes('exampleConfig.json');
 
             let supportedFrameworks: Set<InternalFramework> | undefined = undefined;
+            let supportedImportTypes: Set<ImportType> | undefined = undefined;
             if (hasExampleConfig) {
                 const exampleConfig = await readFile(
                     path.join(docsExamplesPath, exampleName, 'exampleConfig.json'),
@@ -71,6 +72,7 @@ export const getInternalFrameworkExamples = async ({
                 );
                 const exampleConfigJson = JSON.parse(exampleConfig);
                 supportedFrameworks = new Set(exampleConfigJson.supportedFrameworks ?? []);
+                supportedImportTypes = new Set(exampleConfigJson.supportedImportTypes ?? []);
             }
 
             return (INTERNAL_FRAMEWORKS).map((internalFramework) => {
@@ -78,7 +80,8 @@ export const getInternalFrameworkExamples = async ({
                     internalFramework,
                     pageName,
                     exampleName,
-                    isSupported: supportedFrameworks === undefined || supportedFrameworks.has(internalFramework),
+                    supportedFrameworks,
+                    supportedImportTypes,
                 };
             });
         });
