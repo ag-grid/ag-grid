@@ -54,7 +54,8 @@
 
     .ag-charts-settings-group-title-bar,
     .ag-charts-data-group-title-bar,
-    .ag-charts-format-top-level-group-title-bar {
+    .ag-charts-format-top-level-group-title-bar,
+    .ag-charts-advanced-settings-top-level-group-title-bar {
         padding: var(--ag-grid-size) calc(var(--ag-grid-size) * 2);
         line-height: calc(var(--ag-icon-size) + var(--ag-grid-size) - 2px);
     }
@@ -71,7 +72,8 @@
         @include ag.theme-rtl((margin-right: var(--ag-grid-size)))
     }
 
-    .ag-charts-format-top-level-group-toolbar {
+    .ag-charts-format-top-level-group-toolbar,
+    .ag-charts-advanced-settings-top-level-group-toolbar {
         margin-top: var(--ag-grid-size);
         @include ag.theme-rtl((padding-left: calc(var(--ag-icon-size) * 0.5 + var(--ag-grid-size) * 2)));
     }

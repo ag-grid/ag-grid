@@ -28,7 +28,7 @@ import { ConnectorLinePanel } from "./connectorLinePanel";
 import { WhiskersPanel } from "./whiskersPanel";
 import { SeriesItemsPanel } from "./seriesItemsPanel";
 import { TileSpacingPanel } from "./tileSpacingPanel";
-import { ChartMenuUtils } from "../../chartMenuUtils";
+import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
 import { ChartOptionsProxy, ChartOptionsService } from '../../../services/chartOptionsService';
 
 export class SeriesPanel extends Component {
@@ -47,7 +47,7 @@ export class SeriesPanel extends Component {
     private readonly chartOptionsService: ChartOptionsService;
     private readonly isExpandedOnInit: boolean;
     
-    private chartMenuUtils: ChartMenuUtils;
+    private chartMenuUtils: ChartMenuParamsFactory;
     private chartOptions: ChartOptionsProxy;
     private seriesSelectOptions: Map<ChartSeriesType, ListOption>;
 
@@ -123,7 +123,7 @@ export class SeriesPanel extends Component {
         };
         this.setTemplate(SeriesPanel.TEMPLATE, {seriesGroup: seriesGroupParams});
 
-        this.chartMenuUtils = this.createManagedBean(new ChartMenuUtils(
+        this.chartMenuUtils = this.createManagedBean(new ChartMenuParamsFactory(
             this.chartOptionsService.getSeriesOptionsProxy(() => this.seriesType)
         ));
         this.chartOptions = this.chartMenuUtils.getChartOptions();

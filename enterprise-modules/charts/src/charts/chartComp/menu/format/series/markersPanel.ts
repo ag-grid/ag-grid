@@ -10,7 +10,7 @@ import {
     AgSelectParams
 } from "@ag-grid-community/core";
 import { ChartTranslationKey, ChartTranslationService } from "../../../services/chartTranslationService";
-import { ChartMenuUtils } from "../../chartMenuUtils";
+import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
 import { ChartOptionsService } from '../../../services/chartOptionsService';
 
 export class MarkersPanel extends Component {
@@ -31,7 +31,7 @@ export class MarkersPanel extends Component {
 
     constructor(
         private readonly chartOptionsService: ChartOptionsService,
-        private readonly chartMenuUtils: ChartMenuUtils,
+        private readonly chartMenuUtils: ChartMenuParamsFactory,
     ) {
         super();
     }

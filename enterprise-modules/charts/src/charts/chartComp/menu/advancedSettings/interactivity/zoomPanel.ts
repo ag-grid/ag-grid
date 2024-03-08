@@ -7,8 +7,7 @@ import {
     RefSelector,
 } from '@ag-grid-community/core';
 import { ChartTranslationService } from '../../../services/chartTranslationService';
-import { FormatPanelOptions } from '../formatPanel';
-import { ChartMenuUtils } from '../../chartMenuUtils';
+import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class ZoomPanel extends Component {
     public static TEMPLATE = /* html */ `<div>
@@ -24,42 +23,35 @@ export class ZoomPanel extends Component {
 
     @RefSelector('zoomScrollingStepInput') private readonly zoomScrollingStepInput: AgSlider;
 
-    private readonly chartMenuUtils: ChartMenuUtils;
-    private readonly isExpandedOnInit: boolean;
-
-    constructor({ chartMenuUtils, isExpandedOnInit = false }: FormatPanelOptions) {
+    constructor(private readonly chartMenuParamsFactory: ChartMenuParamsFactory) {
         super();
-
-        this.chartMenuUtils = chartMenuUtils;
-        this.isExpandedOnInit = isExpandedOnInit;
     }
 
     @PostConstruct
     private init() {
-        const zoomGroupParams = this.chartMenuUtils.addEnableParams<AgGroupComponentParams>('zoom.enabled', {
-            cssIdentifier: 'charts-format-top-level',
+        const zoomGroupParams = this.chartMenuParamsFactory.addEnableParams<AgGroupComponentParams>('zoom.enabled', {
+            cssIdentifier: 'charts-advanced-settings-top-level',
             direction: 'vertical',
+            suppressOpenCloseIcons: true,
             title: this.chartTranslationService.translate('zoom'),
             suppressEnabledCheckbox: false,
-            suppressToggleExpandOnEnableChange: true,
-            expanded: this.isExpandedOnInit,
         });
-        const zoomAxisDraggingCheckboxParams = this.chartMenuUtils.getDefaultCheckboxParams(
+        const zoomAxisDraggingCheckboxParams = this.chartMenuParamsFactory.getDefaultCheckboxParams(
             'zoom.enableAxisDragging',
             'axisDragging'
         );
-        const zoomScrollingCheckboxParams = this.chartMenuUtils.getDefaultCheckboxParams(
+        const zoomScrollingCheckboxParams = this.chartMenuParamsFactory.getDefaultCheckboxParams(
             'zoom.enableScrolling',
             'scrollingZoom'
         );
-        const zoomScrollingStepSliderParams = this.chartMenuUtils.getDefaultSliderParams(
+        const zoomScrollingStepSliderParams = this.chartMenuParamsFactory.getDefaultSliderParams(
             'zoom.scrollingStep',
             'scrollingStep',
             1,
         );
         zoomScrollingStepSliderParams.step = 0.01;
         zoomScrollingStepSliderParams.minValue = zoomScrollingStepSliderParams.step;
-        const zoomSelectingCheckboxParams = this.chartMenuUtils.getDefaultCheckboxParams(
+        const zoomSelectingCheckboxParams = this.chartMenuParamsFactory.getDefaultCheckboxParams(
             'zoom.enableSelecting',
             'selectingZoom'
         );

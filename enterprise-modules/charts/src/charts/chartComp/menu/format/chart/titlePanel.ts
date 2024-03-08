@@ -11,7 +11,7 @@ import {
 import { FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartOptionsProxy } from '../../../services/chartOptionsService';
-import { ChartMenuUtils } from "../../chartMenuUtils";
+import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
 
 export default class TitlePanel extends Component {
 
@@ -24,7 +24,7 @@ export default class TitlePanel extends Component {
     private activePanels: Component[] = [];
     private titlePlaceholder: string;
 
-    constructor(private readonly chartMenuUtils: ChartMenuUtils) {
+    constructor(private readonly chartMenuUtils: ChartMenuParamsFactory) {
         super(TitlePanel.TEMPLATE);
         this.chartOptions = chartMenuUtils.getChartOptions();
     }

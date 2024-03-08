@@ -166,13 +166,15 @@
     .ag-charts-settings-group-title-bar,
     .ag-charts-data-group-title-bar,
     .ag-charts-format-top-level-group-title-bar,
+    .ag-charts-advanced-settings-top-level-group-title-bar,
     .ag-charts-settings-group-container {
         border-top: none;
         padding: 0 calc(var(--ag-grid-size) * 1.5);
         font-weight: 500;
     }
 
-    .ag-charts-format-top-level-group-item {
+    .ag-charts-format-top-level-group-item,
+    .ag-charts-advanced-settings-top-level-group-item {
         padding-bottom: 12px;
     }
 
@@ -185,23 +187,27 @@
         @include ag.theme-rtl((padding-right: 0));
     }
 
-    .ag-charts-format-top-level-group-toolbar {
+    .ag-charts-format-top-level-group-toolbar,
+    .ag-charts-advanced-settings-top-level-group-toolbar {
         margin-top: var(--ag-grid-size);
         @include ag.theme-rtl((padding-left: calc(var(--ag-grid-size) * 2)));
     }
     
     .ag-charts-settings-group-title-bar,
     .ag-charts-data-group-title-bar,
-    .ag-charts-format-top-level-group-title-bar {
+    .ag-charts-format-top-level-group-title-bar,
+    .ag-charts-advanced-settings-top-level-group-title-bar {
         margin-top: calc(var(--ag-grid-size) * 2);
     }
 
-    .ag-charts-format-top-level-group-container {
+    .ag-charts-format-top-level-group-container,
+    .ag-charts-advanced-settings-top-level-group-container {
         padding: 0;
         @include ag.theme-rtl((padding-left: 0, padding-right: var(--ag-widget-container-horizontal-padding)));
     }
 
-    .ag-charts-format-top-level-group-item {
+    .ag-charts-format-top-level-group-item,
+    .ag-charts-advanced-settings-top-level-group-item {
         margin-top: calc(var(--ag-grid-size) * 2);
         margin-bottom: 0;
     }

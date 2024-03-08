@@ -191,7 +191,8 @@
     }
 
     .ag-chart-data-wrapper,
-    .ag-chart-format-wrapper {
+    .ag-chart-format-wrapper,
+    .ag-chart-advanced-settings-wrapper {
         display: flex;
         flex-direction: column;
         position: relative;
@@ -199,13 +200,19 @@
         padding-bottom: 16px;
     }
 
-    .ag-chart-data-wrapper {
+    .ag-chart-data-wrapper,
+    .ag-chart-advanced-settings-wrapper {
         height: 100%;
         overflow-y: auto;
     }
 
+    .ag-chart-advanced-settings-wrapper, .ag-chart-advanced-settings {
+        width: 100%;
+    }
+
     .ag-chart-data-section,
-    .ag-chart-format-section {
+    .ag-chart-format-section,
+    .ag-chart-advanced-settings-section {
         display: flex;
         margin: 0;
     }
@@ -379,12 +386,18 @@
 
     .ag-charts-settings-group-title-bar,
     .ag-charts-data-group-title-bar,
-    .ag-charts-format-top-level-group-title-bar {
+    .ag-charts-format-top-level-group-title-bar,
+    .ag-charts-advanced-settings-top-level-group-title-bar {
         border-top: var(--ag-borders-secondary) var(--ag-secondary-border-color);
         position: relative;
     }
 
-    @include ag.keyboard-focus((ag-charts-settings-group-title-bar, ag-charts-data-group-title-bar, ag-charts-format-top-level-group-title-bar), -4px);
+    @include ag.keyboard-focus((
+        ag-charts-settings-group-title-bar,
+        ag-charts-data-group-title-bar,
+        ag-charts-format-top-level-group-title-bar,
+        ag-charts-advanced-settings-top-level-group-title-bar
+    ), -4px);
 
     .ag-charts-data-group-container {
         padding: calc(var(--ag-widget-container-vertical-padding) * 0.5) var(--ag-widget-container-horizontal-padding);
@@ -400,12 +413,14 @@
         @include ag.list-item-hovered();
     }
 
-    .ag-charts-format-top-level-group-container {
+    .ag-charts-format-top-level-group-container,
+    .ag-charts-advanced-settings-top-level-group-container {
         margin-left: calc(var(--ag-grid-size) * 2);
         padding: var(--ag-grid-size);
     }
 
-    .ag-charts-format-top-level-group-item {
+    .ag-charts-format-top-level-group-item,
+    .ag-charts-advanced-settings-top-level-group-item {
         margin: var(--ag-grid-size) 0;
     }
 
@@ -429,12 +444,6 @@
         .ag-chart-mini-thumbnail:nth-child(3n+3) {
             grid-column: 5;
         }
-    }
-
-    .ag-chart-data-section,
-    .ag-chart-format-section {
-        display: flex;
-        margin: 0;
     }
 
     .ag-chart-menu-panel {
