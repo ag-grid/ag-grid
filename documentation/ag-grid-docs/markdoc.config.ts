@@ -165,6 +165,17 @@ export default defineMarkdocConfig({
                 wrapped: { type: Boolean },
             },
         },
+        embedSnippet: {
+            render: component('./src/components/snippet/EmbedSnippet.astro'),
+            attributes: {
+                /**
+                 * Source file relative to example folder
+                 */
+                src: { type: String, required: true },
+                language: { type: String },
+                lineNumbers: { type: Boolean },
+            },
+        },
         iframe: {
             render: 'iframe',
             attributes: {

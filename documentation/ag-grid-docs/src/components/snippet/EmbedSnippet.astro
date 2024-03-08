@@ -1,0 +1,22 @@
+---
+import { getPageNameFromPath } from '@features/docs/utils/urlPaths';
+import Code, { type Language } from '../Code';
+import { getExamplesPath } from '@features/docs/utils/filesData';
+import path from 'path';
+import { readFileSync } from 'node:fs';
+
+interface Props {
+    src: string;
+    language: Language;
+    lineNumbers: boolean;
+}
+
+const pageName = getPageNameFromPath(Astro.url.pathname);
+const { src, language, lineNumbers } = Astro.props;
+
+const examplePath = getExamplesPath({ pageName });
+const file = path.join(examplePath, src);
+const snippet = readFileSync(file).toString();
+---
+
+<Code code={snippet} language={language} lineNumbers={lineNumbers} />
