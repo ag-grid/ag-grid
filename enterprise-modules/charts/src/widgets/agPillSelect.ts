@@ -6,6 +6,7 @@ import {
     DragItem,
     DragSourceType,
     DropTarget,
+    ListOption,
     PillDragComp,
     PillDropZonePanel,
     PostConstruct,
@@ -79,7 +80,7 @@ export class AgPillSelect<TValue = string | null> extends Component {
             refreshSelect = true;
         }
         this.valueList = valueList;
-        this.updateValues(selectedValues, refreshSelect);
+        this.updateValues(selectedValues, refreshSelect, true);
         return this;
     }
 
@@ -89,13 +90,13 @@ export class AgPillSelect<TValue = string | null> extends Component {
     }
 
     private initSelect(): boolean {
-        const { selectPlaceholder: placeholder } = this.config;
-        const filteredValueList = this.valueList.filter(value => !this.selectedValues.includes(value));
-        if (!filteredValueList.length) {
+        const options = this.createSelectOptions();
+        if (!options.length) {
             return false;
         }
+        const { selectPlaceholder: placeholder } = this.config;
         this.eSelect = this.createBean(new AgSelect({
-            options: filteredValueList?.map(value => ({value, text: this.valueFormatter(value)})),
+            options,
             placeholder,
             onValueChange: value => this.addValue(value),
             pickerIcon: 'chartsMenuAdd'
@@ -104,26 +105,42 @@ export class AgPillSelect<TValue = string | null> extends Component {
         return true;
     }
 
+    private createSelectOptions(): ListOption<TValue>[] {
+        const options: ListOption<TValue>[] = [];
+        this.valueList.forEach(value => {
+            if (!this.selectedValues.includes(value)) {
+                options.push({ value, text: this.valueFormatter(value) });
+            }
+        })
+        return options;
+    }
+
     private addValue(value: TValue): void {
         this.dropZonePanel.addItem(value);
     }
 
-    private updateValues(values: TValue[], forceRefreshSelect?: boolean): void {
+    private updateValues(values: TValue[], forceRefreshSelect?: boolean, silent?: boolean): void {
         const previousSelectedValues = this.selectedValues;
         this.selectedValues = values;
         const changes = this.getChanges(previousSelectedValues, values);
         const refreshSelect = forceRefreshSelect || changes.added.length || changes.removed.length;
         const activeElement = this.gridOptionsService.getDocument().activeElement;
-        let hasFocus = this.eSelect?.getGui().contains(activeElement);
-        this.onValuesChange?.(changes);
+        const selectHasFocus = this.eSelect?.getGui().contains(activeElement);
+        const dropZoneHasFocus = this.dropZonePanel?.getGui().contains(activeElement);
+        if (!silent) {
+            this.onValuesChange?.(changes);
+        }
         const emptyRefreshedSelect = refreshSelect ? !this.refreshSelect() : false;
         this.dropZonePanel.refreshGui();
-        if (refreshSelect && hasFocus) {
+        if (refreshSelect && selectHasFocus) {
             if (emptyRefreshedSelect) {
                 this.dropZonePanel.focusList(true);
             } else {
                 this.eSelect?.getFocusableElement().focus();
             }
+        }
+        if (dropZoneHasFocus && !values.length) {
+            this.eSelect?.getFocusableElement().focus();
         }
     }
 
@@ -135,11 +152,17 @@ export class AgPillSelect<TValue = string | null> extends Component {
     }
 
     private refreshSelect(): boolean {
-        if (this.eSelect) {
-            _.removeFromParent(this.eSelect.getGui());
-            this.destroyBean(this.eSelect);
+        if (!this.eSelect) {
+            return this.initSelect();
         }
-        return this.initSelect();
+        const options = this.createSelectOptions();
+        if (!options.length) {
+            _.removeFromParent(this.eSelect.getGui());
+            this.eSelect = this.destroyBean(this.eSelect);
+            return false;
+        }
+        this.eSelect.clearOptions().addOptions(options).setValue(undefined, true);
+        return true;
     }
 
     protected destroy(): void {

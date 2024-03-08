@@ -12,6 +12,7 @@ import { DOCS_TAB_ITEM_ID_PREFIX } from '@constants';
 import { getFilteredMenuSections } from '@features/pages-navigation/utils/getFilteredMenuSections';
 import { getHeadings } from '@utils/markdoc/getHeadings';
 import { isApiMenuPath } from '@utils/apiMenuPath';
+import styles from '@design-system/modules/docs.module.scss';
 
 export async function getStaticPaths() {
     const pages = await getCollection('docs');
@@ -55,7 +56,7 @@ const isApiPage = isApiMenuPath({
     showSearchBar={true}
     showDocsNav={true}
 >
-    <div class:list={[hidePageMenu && 'noLeftMenu', 'contentViewport', 'layout-grid']}>
+    <div class:list={[hidePageMenu && styles.noLeftMenu, styles.contentViewport, 'layout-grid']}>
         {
             !hidePageMenu && (
                 <PagesNavigation
@@ -69,16 +70,16 @@ const isApiPage = isApiMenuPath({
         <div
             id="doc-content"
             class:list={[
-                'docPage',
+                styles.docPage,
                 {
-                    noSideMenu: hideSideMenu,
+                    noSideMenu: styles.hideSideMenu,
                 },
             ]}
         >
             <Header client:load title={title} framework={currentFramework} isEnterprise={enterprise} path={path} />
 
             {/* Wrapping div is a hack to target "intro" section of docs page */}
-            <div class="pageSections">
+            <div class={styles.pageSections}>
                 <Content framework={currentFramework} page={page} />
             </div>
         </div>
@@ -86,35 +87,3 @@ const isApiPage = isApiMenuPath({
         {!hideSideMenu && <SideNavigation client:load headings={headings} />}
     </div>
 </Layout>
-
-<style lang="scss">
-    @use '../../design-system' as *;
-    @import '../../design-system/modules/docs.module.scss';
-
-    .contentViewport {
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-
-        @media (min-width: $breakpoint-docs-nav-medium) {
-            flex-direction: row;
-        }
-
-        &.noLeftMenu .docPage {
-            width: 100%;
-        }
-
-        @media (min-width: $breakpoint-docs-nav-large) {
-            &.noLeftMenu .docPage {
-                width: var(--layout-width-9-12);
-            }
-        }
-
-        @media (min-width: $breakpoint-docs-nav-extra-large) {
-            &.noLeftMenu .docPage {
-                width: var(--layout-width-6-12);
-                margin-left: calc(var(--layout-width-3-12) + var(--layout-gap));
-            }
-        }
-    }
-</style>

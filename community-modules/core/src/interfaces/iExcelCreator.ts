@@ -202,6 +202,7 @@ export interface ExcelColumn {
     s?: number;
     hidden?: boolean;
     bestFit?: boolean;
+    displayName?: string;
 }
 
 export interface ExcelRow {
@@ -397,6 +398,8 @@ export interface ExcelExportParams extends ExportParams<ExcelRow[]> {
     margins?: ExcelSheetMargin;
     /** Allows you to setup the page orientation and size. */
     pageSetup?: ExcelSheetPageSetup;
+    /** Used to add Excel table to the spreadsheet. Only one table is supported per sheet. */
+    tableSetup?: ExcelTableSetup,
     /** The configuration for header and footers. */
     headerFooterConfig?: ExcelHeaderFooterConfig;
     /**
@@ -453,6 +456,10 @@ export interface ExcelExportMultipleSheetParams {
      * @default 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
      */
     mimeType?: string;
+    /**
+     * Use to export the data as a table within each sheet of the Excel document.
+     **/
+    tableSetup?: ExcelTableSetup,
 }
 
 export interface ExcelHeaderFooterConfig {
@@ -539,4 +546,9 @@ export interface ExcelSheetPageSetup {
      * @default 'Letter'
      */
     pageSize?: 'Letter' | 'Letter Small' | 'Tabloid' | 'Ledger' | 'Legal' | 'Statement' | 'Executive' | 'A3' | 'A4' | 'A4 Small' | 'A5' | 'A6' | 'B4' | 'B5' | 'Folio' | 'Envelope' | 'Envelope DL' | 'Envelope C5' | 'Envelope B5' | 'Envelope C3' | 'Envelope C4' | 'Envelope C6' | 'Envelope Monarch' | 'Japanese Postcard' | 'Japanese Double Postcard';
+}
+
+export interface ExcelTableSetup {
+    /** This property is used to set the table name. It should be an alphanumeric string with no special characters. */
+    name: string;
 }

@@ -4,7 +4,6 @@ import Layout from '../layouts/Layout.astro';
 import { PagesNavigationFromLocalStorage } from '@features/pages-navigation/components/PagesNavigationFromLocalStorage';
 import { getDocsPages } from '../features/docs/utils/pageData';
 import type { Framework, MenuSection } from '@ag-grid-types';
-import { getFilteredMenuSections } from '@features/pages-navigation/utils/getFilteredMenuSections';
 import { Pipeline } from '@components/pipeline/Pipeline';
 
 export async function getStaticPaths() {
@@ -12,25 +11,15 @@ export async function getStaticPaths() {
     return getDocsPages(pages);
 }
 
-const currentFramework = Astro.params.framework as Framework;
 const pageName = Astro.params.pageName as Framework;
 
 const { data: menu } = await getEntry('menu', 'data');
-
-const frameworkMenuSections: MenuSection[] = getFilteredMenuSections({
-    menuSections: menu.main.sections,
-    framework: currentFramework,
-});
+const allMenuSections = menu.main.sections as MenuSection[];
 ---
 
 <Layout title={'AG Grid Pipeline'} showDocsNav={true} showSearchBar={true}>
     <div class:list={['contentViewport layout-grid']}>
-        <PagesNavigationFromLocalStorage
-            client:load
-            menuSections={frameworkMenuSections}
-            framework={currentFramework}
-            pageName={pageName}
-        />
+        <PagesNavigationFromLocalStorage client:load allMenuSections={allMenuSections} pageName={pageName} />
 
         <main is="div">
             <Pipeline client:only />

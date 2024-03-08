@@ -1,24 +1,49 @@
 @use '../core' as *;
 
-:global {
-    .pageSections article {
-        > h2 {
-            margin-top: $spacing-size-12;
-        }
+.contentViewport {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
 
-        > h3,
-        > h4 {
-            margin-top: $spacing-size-8;
-        }
+    @media (min-width: $breakpoint-docs-nav-medium) {
+        flex-direction: row;
+    }
 
-        p,
-        > ul,
-        > ol,
-        > table,
-        > pre {
-            font-size: var(--text-fs-base);
-            line-height: var(--text-lh-xs);
+    &.noLeftMenu .docPage {
+        width: 100%;
+    }
+
+    @media (min-width: $breakpoint-docs-nav-large) {
+        &.noLeftMenu .docPage {
+            width: var(--layout-width-9-12);
         }
+    }
+
+    @media (min-width: $breakpoint-docs-nav-extra-large) {
+        &.noLeftMenu .docPage {
+            width: var(--layout-width-6-12);
+            margin-left: calc(var(--layout-width-3-12) + var(--layout-gap));
+        }
+    }
+}
+
+.pageSections article {
+    > h2 {
+        margin-top: $spacing-size-12;
+    }
+
+    > h3,
+    > h4 {
+        margin-top: $spacing-size-8;
+    }
+
+    p,
+    > ul,
+    > ol,
+    > table,
+    > pre {
+        font-size: var(--text-fs-base);
+        line-height: var(--text-lh-xs);
     }
 }
 

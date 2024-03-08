@@ -1,4 +1,5 @@
 import type { Framework, ImportType, InternalFramework } from '@ag-grid-types';
+import { DEFAULT_INTERNAL_FRAMEWORK } from '@constants';
 import { persistentAtom, persistentMap } from '@nanostores/persistent';
 import { getInternalFramework } from '@utils/framework';
 
@@ -9,7 +10,6 @@ export type FrameworkContext = {
 };
 
 const LOCALSTORAGE_PREFIX = 'documentation';
-const DEFAULT_INTERNAL_FRAMEWORK: InternalFramework = 'typescript';
 
 export const $internalFramework = persistentAtom<InternalFramework>(
     `${LOCALSTORAGE_PREFIX}:internalFramework`,

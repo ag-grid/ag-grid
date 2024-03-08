@@ -25,6 +25,7 @@ interface Props {
     framework: Framework;
     pageName: string;
     importType: ImportType;
+    isDev: boolean;
 }
 
 // NOTE: Not on the layout level, as that is generated at build time, and queryClient needs to be
@@ -38,7 +39,7 @@ const queryOptions = {
     refetchOnReconnect: false,
 };
 
-const DocsExampleRunnerInner = ({ name, title, exampleType, exampleHeight, framework, pageName }: Props) => {
+const DocsExampleRunnerInner = ({ name, title, exampleType, exampleHeight, framework, pageName, isDev }: Props) => {
     const docsInternalFramework = useStore($internalFramework);
     const internalFramework = exampleType === 'typescript' ? 'typescript' : docsInternalFramework;
     const importType = useImportType();
@@ -160,6 +161,7 @@ const DocsExampleRunnerInner = ({ name, title, exampleType, exampleHeight, frame
             initialSelectedFile={initialSelectedFile}
             plunkrHtmlUrl={plunkrHtmlUrl}
             codeSandboxHtmlUrl={codeSandboxHtmlUrl}
+            isDev={isDev}
         />
     );
 

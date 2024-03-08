@@ -287,7 +287,7 @@ export class AgGroupComponent extends Component {
     }
 
     private refreshDisabledStyles() {
-        this.addOrRemoveCssClass('ag-disabled', !this.enabled);
+        this.eContainer.classList.toggle('ag-disabled', !this.enabled);
 
         if (this.suppressEnabledCheckbox && !this.enabled) {
             this.eTitleBar.classList.add('ag-disabled-group-title-bar');
