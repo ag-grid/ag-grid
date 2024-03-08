@@ -7,7 +7,6 @@ import MedalCellRenderer from './medalCellRendererVue.js';
 import TotalValueRenderer from './totalValueRendererVue.js';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
-// Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const VueExample = {

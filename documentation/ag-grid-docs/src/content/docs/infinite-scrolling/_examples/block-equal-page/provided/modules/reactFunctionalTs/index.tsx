@@ -13,7 +13,6 @@ import './styles.css';
 import { countries } from './countries';
 
 
-// Register the required feature modules with the Grid
 ModuleRegistry.registerModules([InfiniteRowModelModule, SetFilterModule, MenuModule, ColumnsToolPanelModule]);
 
 const filterParams = { values: countries() };

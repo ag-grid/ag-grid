@@ -9,7 +9,6 @@ import "@ag-grid-community/styles/ag-theme-quartz.css";
 import './styles.css';
 
 
-// Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const SportRenderer = (props: CustomCellRendererProps) => {

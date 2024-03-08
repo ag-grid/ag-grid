@@ -9,7 +9,6 @@ import "@ag-grid-community/styles/ag-theme-quartz.css";
 import DetailCellRenderer from './detailCellRendererVue.js';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
-// Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule, MasterDetailModule, MenuModule, ColumnsToolPanelModule]);
 
 const VueExample = {

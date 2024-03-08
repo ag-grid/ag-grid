@@ -9,7 +9,6 @@ import { SetFilterModule } from "@ag-grid-enterprise/set-filter"
 import { createApp, onBeforeMount, ref } from "vue"
 import "./styles.css"
 
-// Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule, SetFilterModule, FiltersToolPanelModule]);
 
 const VueExample = {

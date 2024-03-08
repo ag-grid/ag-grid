@@ -10,7 +10,6 @@ import ParamsRenderer from './paramsRendererVue.js';
 import SquareRenderer from './squareRendererVue.js';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
-// Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const VueExample = {

@@ -11,7 +11,6 @@ import { ColDef, ColumnApi, GridPreDestroyedEvent, GridReadyEvent } from '@ag-gr
 
 import {TAthlete, getDataSet} from './data';
 
-// Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 interface ColumnWidth {

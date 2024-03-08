@@ -10,7 +10,6 @@ import MoodEditor from './moodEditorVue.js';
 import NumericCellEditor from './numericCellEditorVue.js';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
-// Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ColumnsToolPanelModule, RichSelectModule]);
 
 const VueExample = {

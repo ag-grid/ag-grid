@@ -11,7 +11,6 @@ import './styles.css';
 
 
 import { ModuleRegistry } from '@ag-grid-community/core';
-// Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule, CsvExportModule, ExcelExportModule]);
 
 const SportRenderer = props => {
