@@ -57,10 +57,12 @@ async function getDocsExampleNameParts({ pages }: { pages: DocsPage[] }) {
         : internalFrameworkExamples;
 
     return filteredInternalFrameworkExamples.flatMap((example) => {
+        const frameworkSupported = (example.supportedFrameworks === undefined || example.supportedFrameworks.has(example.internalFramework));
         return IMPORT_TYPES.map((importType) => {
             return {
                 ...example,
                 importType,
+                isSupported: frameworkSupported && (example.supportedImportTypes === undefined || example.supportedImportTypes.has(importType)),
             };
         });
     });

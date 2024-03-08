@@ -1,4 +1,4 @@
-import type {InternalFramework, Library} from '@ag-grid-types';
+import type {ImportType, InternalFramework, Library} from '@ag-grid-types';
 import type {CollectionEntry} from 'astro:content';
 import glob from 'glob';
 import {readFileSync} from 'node:fs';
@@ -22,7 +22,8 @@ export interface InternalFrameworkExample {
     internalFramework: InternalFramework;
     pageName: string;
     exampleName: string;
-    isSupported: boolean;
+    supportedFrameworks: Set<InternalFramework> | undefined;
+    supportedImportTypes: Set<ImportType> | undefined;
 }
 
 export interface ExtraFileRoute {

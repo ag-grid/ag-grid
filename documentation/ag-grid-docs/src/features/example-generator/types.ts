@@ -1,3 +1,5 @@
+import type { ImportType } from "@ag-grid-types";
+
 export type TransformTsFileExt = undefined | '.js' | '.tsx';
 
 export interface ExampleSettings {
@@ -21,6 +23,7 @@ export interface GeneratedContents {
     packageJson: Record<string, string>;
     extras?: string[];
     supportedFrameworks?: InternalFramework[];
+    supportedImportTypes?: ImportType[];
 }
 
 export type InternalFramework =
