@@ -1,23 +1,14 @@
 {
     "major_article": {
-        "title": "Enhancing AG Grid Enterprise with AG Charts Enterprise",
-        "description": "Integrated Charting has been enhanced in v31.1 so that it now also contains all of the features & series types available in AG Charts Enterprise, our new enterprise-grade charting library. Read this blog to learn more about the differences between Integrated Community & Enterprise Charts",
+        "title": "Introducing AG Charts Enterprise",
+        "description": "Learn about the background of AG Charts, how we arrived where we are today, and what you can expect from our brand-new enterprise product.",
         "image": "https://i.ibb.co/swcYn5L/Frame-1.png",
-        "link": "https://blog.ag-grid.com/enhancing-ag-grid-enterprise-with-ag-charts-enterprise/",
+        "link": "https://blog.ag-grid.com/introducing-ag-charts-enterprise/",
         "linkText": "Read article",
         "type": "Blog",
         "author": "James Swinton-Bland"
     },
     "minor_articles": [
-        {
-            "title": "Whats New in AG Charts 9.1",
-            "description": "What's New in AG Charts 9.1 - Enterprise Charts are integrated into AG Grid, Synchronized Charts, Mini Chart in Navigator, Asynchronous Data Loading",
-            "image": "https://i.ibb.co/F7zMV8b/Frame-1.png",
-            "link": "https://blog.ag-grid.com/whats-new-in-ag-charts-9-1/",
-            "linkText": "Read article",
-            "type": "Blog",
-            "author": "David Glickman"
-        },
         {
             "title": "Whats New in AG Grid 31.1",
             "description": "What's New in AG Grid 31.1 - integrated Enterprise Charts, Column Menu Redesign, Custom Menu Item Components, Compression of Excel files and more",
@@ -28,13 +19,22 @@
             "author": "Kiril Matev"
         },
         {
-            "title": "Exporting AG Grid to PDF with pdfMake",
-            "description": "Learn how to export AG Grid to PDF using the PDF library pdfMake. Get the samples in JavaScript, React, Angular and Vue to integrate this in your projects.",
+            "title": "AG Grid: A look back on 2023",
+            "description": "A look back on 2023, reflecting on our achievements and to thank our community for their unwavering support",
             "image": "https://i.ibb.co/WsB2Zhn/Frame-4.png",
-            "link": "https://blog.ag-grid.com/exporting-ag-grid-to-pdf/",
+            "link": "https://blog.ag-grid.com/ag-grid-a-look-back-on-2023/",
             "linkText": "Read article",
             "type": "Blog",
-            "author": "Abi Glazier"
+            "author": "James Swinton-Bland"
+        },
+        {
+            "title": "Whats New in AG Charts 9.1",
+            "description": "What's New in AG Charts 9.1 - Enterprise Charts are integrated into AG Grid, Synchronized Charts, Mini Chart in Navigator, Asynchronous Data Loading",
+            "image": "https://i.ibb.co/F7zMV8b/Frame-1.png",
+            "link": "https://blog.ag-grid.com/whats-new-in-ag-charts-9-1/",
+            "linkText": "Read article",
+            "type": "Blog",
+            "author": "David Glickman"
         }
     ]
 }
