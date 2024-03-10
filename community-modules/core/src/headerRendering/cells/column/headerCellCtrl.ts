@@ -196,8 +196,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
                 this.beans.sortController.setSortForColumn(this.column, sort, !!multiSort, "uiColumnSorted");
             },
             eGridHeader: this.getGui(),
-            setTooltip: (value: string, shouldShowTooltip: () => boolean) => {
-                this.setupTooltip(value, shouldShowTooltip);
+            setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
+                this.setupTooltip(value, shouldDisplayTooltip);
             }
         });
 
@@ -266,18 +266,17 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
         this.setActiveHeader(false);
     }
 
-    private setupTooltip(value?: string, shouldShowTooltip?: () => boolean): void {
+    private setupTooltip(value?: string, shouldDisplayTooltip?: () => boolean): void {
         if (this.tooltipFeature) {
             this.tooltipFeature = this.destroyBean(this.tooltipFeature);
         }
 
         const isTooltipWhenTruncated = this.gridOptionsService.get('tooltipShowMode') === 'whenTruncated';
         const eGui = this.eGui;
-
         const colDef = this.column.getColDef();
 
-        if (!shouldShowTooltip && isTooltipWhenTruncated && !colDef.headerComponent) {
-            shouldShowTooltip = () => {
+        if (!shouldDisplayTooltip && isTooltipWhenTruncated && !colDef.headerComponent) {
+            shouldDisplayTooltip = () => {
                 const textEl = eGui.querySelector('.ag-header-cell-text');
                 if (!textEl) { return true; }
 
@@ -298,7 +297,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
                 const res = this.column.getColDef().headerTooltip;
                 return res;
             },
-            shouldShowTooltip
+            shouldDisplayTooltip
         };
 
         const tooltipFeature = this.createManagedBean(new TooltipFeature(tooltipCtrl));

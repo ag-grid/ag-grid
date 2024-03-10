@@ -162,7 +162,7 @@ export class CellCtrl extends BeanStub {
         }
     }
 
-    private enableTooltipFeature(value?: string, shouldShowTooltip?: () => boolean): void {
+    private enableTooltipFeature(value?: string, shouldDisplayTooltip?: () => boolean): void {
         const getTooltipValue = () => {
             const colDef = this.column.getColDef();
             const data = this.rowNode.data;
@@ -191,8 +191,8 @@ export class CellCtrl extends BeanStub {
 
         const isTooltipWhenTruncated = this.beans.gridOptionsService.get('tooltipShowMode') === 'whenTruncated';
 
-        if (!shouldShowTooltip && isTooltipWhenTruncated && !this.isCellRenderer()) {
-            shouldShowTooltip = () => {
+        if (!shouldDisplayTooltip && isTooltipWhenTruncated && !this.isCellRenderer()) {
+            shouldDisplayTooltip = () => {
                 const eGui = this.getGui()
                 const textEl = eGui.children.length === 0 ? eGui : eGui.querySelector('.ag-cell-value');
                 if (!textEl) { return true; }
@@ -212,7 +212,7 @@ export class CellCtrl extends BeanStub {
 
             // this makes no sense, why is the cell formatted value passed to the tooltip???
             getValueFormatted: () => this.valueFormatted,
-            shouldShowTooltip
+            shouldDisplayTooltip
         };
 
         this.tooltipFeature = new TooltipFeature(tooltipCtrl, this.beans);
@@ -563,11 +563,11 @@ export class CellCtrl extends BeanStub {
             eParentOfValue: this.cellComp.getParentOfValue()!,
 
             registerRowDragger: (rowDraggerElement: HTMLElement, dragStartPixels: number, value?: string, suppressVisibilityChange?: boolean) => this.registerRowDragger(rowDraggerElement, dragStartPixels, suppressVisibilityChange),
-            setTooltip: (value: string, shouldShowTooltip: () => boolean) => {
+            setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
                 if (this.tooltipFeature) {
                     this.disableTooltipFeature();
                 }
-                this.enableTooltipFeature(value, shouldShowTooltip);
+                this.enableTooltipFeature(value, shouldDisplayTooltip);
                 this.refreshToolTip();
             }
 

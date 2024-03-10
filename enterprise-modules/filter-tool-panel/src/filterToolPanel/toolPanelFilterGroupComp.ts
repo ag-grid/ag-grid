@@ -88,10 +88,10 @@ export class ToolPanelFilterGroupComp extends Component {
         if (!this.showingColumn) { return; }
 
         const isTooltipWhenTruncated = this.gridOptionsService.get('tooltipShowMode') === 'whenTruncated';
-        let shouldShowTooltip: (() => boolean) | undefined;
+        let shouldDisplayTooltip: (() => boolean) | undefined;
 
         if (isTooltipWhenTruncated) {
-            shouldShowTooltip = () => {
+            shouldDisplayTooltip = () => {
                 const eGui = this.filterGroupComp.getGui();
                 const eTitle = eGui.querySelector('.ag-group-title');
 
@@ -102,7 +102,7 @@ export class ToolPanelFilterGroupComp extends Component {
 
         const refresh = () => {
             const newTooltipText = (this.columnGroup as Column).getColDef().headerTooltip;
-            this.setTooltip({ newTooltipText, shouldShowTooltip });
+            this.setTooltip({ newTooltipText, shouldDisplayTooltip });
         };
 
         refresh();

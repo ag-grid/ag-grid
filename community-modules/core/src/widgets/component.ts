@@ -82,9 +82,9 @@ export class Component extends BeanStub {
         showDelayOverride?: number;
         hideDelayOverride?: number; 
         location?: TooltipLocation;
-        shouldShowTooltip?: () => boolean
+        shouldDisplayTooltip?: () => boolean
     }): void {
-        const { newTooltipText, showDelayOverride, hideDelayOverride, location, shouldShowTooltip } = params;
+        const { newTooltipText, showDelayOverride, hideDelayOverride, location, shouldDisplayTooltip } = params;
         const getTooltipValue = () => this.tooltipText;
 
         if (!this.tooltipFeature && newTooltipText != null) {
@@ -94,7 +94,7 @@ export class Component extends BeanStub {
                 getLocation: () => location ?? 'UNKNOWN',
                 getTooltipShowDelayOverride: showDelayOverride != null ? (() => showDelayOverride) : undefined,
                 getTooltipHideDelayOverride: hideDelayOverride != null ? (() => hideDelayOverride) : undefined,
-                shouldShowTooltip
+                shouldDisplayTooltip
             }));
         }
 

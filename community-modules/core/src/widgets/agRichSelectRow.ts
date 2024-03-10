@@ -98,7 +98,7 @@ export class RichSelectRow<TValue> extends Component {
         this.renderValueWithoutRenderer(parsedValue);
         this.setTooltip ({
             newTooltipText: this.parsedValue,
-            shouldShowTooltip: () => span.scrollWidth > span.clientWidth
+            shouldDisplayTooltip: () => span.scrollWidth > span.clientWidth
         });
     }
 
@@ -118,8 +118,8 @@ export class RichSelectRow<TValue> extends Component {
             userCompDetails = this.userComponentFactory.getCellRendererDetails(this.params, {
                 value,
                 valueFormatted,
-                setTooltip: (value: string, shouldShowTooltip: () => boolean) => {
-                    this.setTooltip({ newTooltipText: value, shouldShowTooltip });
+                setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
+                    this.setTooltip({ newTooltipText: value, shouldDisplayTooltip });
                 },
             } as ICellRendererParams);
             

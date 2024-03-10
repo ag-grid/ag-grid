@@ -1101,7 +1101,7 @@ export class RowCtrl extends BeanStub {
             getGui: () => this.fullWidthGui!.element,
             getTooltipValue: () => value,
             getLocation: () => 'fullWidthRow',
-            shouldShowTooltip: shouldDisplayTooltip
+            shouldDisplayTooltip
         }
 
         if (this.tooltipFeature) {

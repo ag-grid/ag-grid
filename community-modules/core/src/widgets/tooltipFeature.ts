@@ -23,7 +23,7 @@ export interface ITooltipFeatureCtrl {
     getValueFormatted?(): string;
     getTooltipShowDelayOverride?(): number;
     getTooltipHideDelayOverride?(): number;
-    shouldShowTooltip?(): boolean;
+    shouldDisplayTooltip?(): boolean;
 }
 
 export class TooltipFeature extends BeanStub {
@@ -78,7 +78,7 @@ export class TooltipFeature extends BeanStub {
             parent,
             this.ctrl.getTooltipShowDelayOverride?.(),
             this.ctrl.getTooltipHideDelayOverride?.(),
-            this.ctrl.shouldShowTooltip
+            this.ctrl.shouldDisplayTooltip
         ), this.beans.context);
     }
 
