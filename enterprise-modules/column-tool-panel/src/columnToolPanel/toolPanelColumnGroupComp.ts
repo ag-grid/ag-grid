@@ -129,7 +129,7 @@ export class ToolPanelColumnGroupComp extends Component {
 
         const refresh = () => {
             const newTooltipText = colGroupDef.headerTooltip;
-            this.setTooltip({ newTooltipText, shouldDisplayTooltip });
+            this.setTooltip({ newTooltipText, location: 'columnToolPanelColumnGroup', shouldDisplayTooltip });
         };
 
         refresh();

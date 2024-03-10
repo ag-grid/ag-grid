@@ -102,7 +102,7 @@ export class ToolPanelFilterGroupComp extends Component {
 
         const refresh = () => {
             const newTooltipText = (this.columnGroup as Column).getColDef().headerTooltip;
-            this.setTooltip({ newTooltipText, shouldDisplayTooltip });
+            this.setTooltip({ newTooltipText, location: 'filterToolPanelColumnGroup', shouldDisplayTooltip });
         };
 
         refresh();

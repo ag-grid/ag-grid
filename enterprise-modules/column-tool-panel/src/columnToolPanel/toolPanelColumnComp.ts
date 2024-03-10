@@ -116,7 +116,7 @@ export class ToolPanelColumnComp extends Component {
         }
         const refresh = () => {
             const newTooltipText = this.column.getColDef().headerTooltip;
-            this.setTooltip({ newTooltipText, shouldDisplayTooltip });
+            this.setTooltip({ newTooltipText, location: 'columnToolPanelColumn', shouldDisplayTooltip });
         };
 
         refresh();
