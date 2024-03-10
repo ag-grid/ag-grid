@@ -87,9 +87,22 @@ export class ToolPanelFilterGroupComp extends Component {
         // maybe the group shouldn't contain the children form a DOM perspective.
         if (!this.showingColumn) { return; }
 
+        const isTooltipWhenTruncated = this.gridOptionsService.get('tooltipShowMode') === 'whenTruncated';
+        let shouldShowTooltip: (() => boolean) | undefined;
+
+        if (isTooltipWhenTruncated) {
+            shouldShowTooltip = () => {
+                const eGui = this.filterGroupComp.getGui();
+                const eTitle = eGui.querySelector('.ag-group-title');
+
+                if (!eTitle) { return true; } // show tooltip by default
+                return eTitle.scrollWidth > eTitle.clientWidth;
+            }
+        }
+
         const refresh = () => {
             const newTooltipText = (this.columnGroup as Column).getColDef().headerTooltip;
-            this.setTooltip(newTooltipText);
+            this.setTooltip({ newTooltipText, shouldShowTooltip });
         };
 
         refresh();

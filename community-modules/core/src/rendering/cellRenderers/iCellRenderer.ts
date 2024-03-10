@@ -43,6 +43,12 @@ export interface ICellRendererParams<TData = any, TValue = any, TContext = any> 
      * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.
      */
     registerRowDragger: (rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void;
+    /**
+     * setTooltip
+     * @param value The value to be displayed by the tooltip
+     * @param shouldDisplayTooltip A function returning a boolean that allows the tooltip to be displayed conditionally
+     */
+    setTooltip: (value: string, shouldDisplayTooltip?: () => boolean) => void;
 }
 
 export interface ISetFilterCellRendererParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
@@ -53,6 +59,12 @@ export interface ISetFilterCellRendererParams<TData = any, TContext = any> exten
     colDef?: ColDef;
     /** The cell's column. */
     column?: Column;
+    /**
+     * setTooltip
+     * @param value The value to be displayed by the tooltip
+     * @param shouldDisplayTooltip A function returning a boolean that allows the tooltip to be displayed conditionally
+     */
+    setTooltip: (value: string, shouldDisplayTooltip?: () => boolean) => void;
 }
 
 export interface ICellRenderer<TData = any> {

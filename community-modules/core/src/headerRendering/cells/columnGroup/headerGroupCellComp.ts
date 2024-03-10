@@ -47,7 +47,6 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
     }
 
     private afterHeaderCompCreated(headerGroupComp: IHeaderGroupComp): void {
-
         const destroyFunc = () => this.destroyBean(headerGroupComp);
 
         if (!this.isAlive()) {

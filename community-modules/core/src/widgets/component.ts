@@ -12,7 +12,7 @@ import {
     setDisplayed
 } from '../utils/dom';
 import { getFunctionName } from '../utils/function';
-import { ITooltipParams } from "../rendering/tooltipComponent";
+import { ITooltipParams, TooltipLocation } from "../rendering/tooltipComponent";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { CssClassManager } from "../rendering/cssClassManager";
 import { TooltipFeature } from "./tooltipFeature";
@@ -77,16 +77,24 @@ export class Component extends BeanStub {
         };
     }
 
-    public setTooltip(newTooltipText?: string | null, showDelayOverride?: number, hideDelayOverride?: number): void {
+    public setTooltip(params: {
+        newTooltipText?: string | null;
+        showDelayOverride?: number;
+        hideDelayOverride?: number; 
+        location?: TooltipLocation;
+        shouldShowTooltip?: () => boolean
+    }): void {
+        const { newTooltipText, showDelayOverride, hideDelayOverride, location, shouldShowTooltip } = params;
         const getTooltipValue = () => this.tooltipText;
 
         if (!this.tooltipFeature && newTooltipText != null) {
             this.tooltipFeature = this.createBean(new TooltipFeature({
                 getTooltipValue,
                 getGui: () => this.getGui(),
-                getLocation: () => 'UNKNOWN',
+                getLocation: () => location ?? 'UNKNOWN',
                 getTooltipShowDelayOverride: showDelayOverride != null ? (() => showDelayOverride) : undefined,
-                getTooltipHideDelayOverride: hideDelayOverride != null ? (() => hideDelayOverride) : undefined
+                getTooltipHideDelayOverride: hideDelayOverride != null ? (() => hideDelayOverride) : undefined,
+                shouldShowTooltip
             }));
         }
 

@@ -136,7 +136,10 @@ export class AdvancedFilterComp extends Component {
     private onValidChanged(isValid: boolean, validationMessage: string | null): void {
         this.isApplyDisabled = !isValid || this.advancedFilterService.isCurrentExpressionApplied();
         _.setDisabled(this.eApplyFilterButton, this.isApplyDisabled);
-        this.setTooltip(validationMessage, 1000);
+        this.setTooltip({ 
+            newTooltipText: validationMessage,
+            showDelayOverride: 1000
+        });
     }
 
     private generateAutocompleteListParams(position: number): AutocompleteListParams {

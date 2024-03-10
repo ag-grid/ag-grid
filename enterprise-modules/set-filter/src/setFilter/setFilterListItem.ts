@@ -313,9 +313,20 @@ export class SetFilterListItem<V> extends Component {
     }
 
     private setTooltipAndCellRendererParams(value: V | null | (() => string), formattedValue: string | null): void {
-        if (this.params.showTooltips) {
-            const tooltipValue = formattedValue != null ? formattedValue : _.toStringOrNull(value);
-            this.setTooltip(tooltipValue);
+        const isTooltipWhenTruncated = this.gridOptionsService.get('tooltipShowMode') === 'whenTruncated';
+
+        if (this.params.showTooltips && (!isTooltipWhenTruncated || !this.cellRendererComponent)) {
+            const newTooltipText = formattedValue != null ? formattedValue : _.toStringOrNull(value);
+            let shouldShowTooltip: (() => boolean) | undefined;
+
+            if (isTooltipWhenTruncated) {
+                shouldShowTooltip = () => {
+                    const el = this.eCheckbox.getGui().querySelector('.ag-label');
+                    if (!el) { return true; } // show label by default
+                    return el.scrollWidth > el.clientWidth;
+                }
+            }
+            this.setTooltip({ newTooltipText, shouldShowTooltip });
         }
 
         this.cellRendererParams = this.gridOptionsService.addGridCommonParams({
@@ -323,6 +334,9 @@ export class SetFilterListItem<V> extends Component {
             valueFormatted: formattedValue,
             colDef: this.params.colDef,
             column: this.params.column,
+            setTooltip: (value: string, shouldShowTooltip: () => boolean) => {
+                this.setTooltip({ newTooltipText: value, shouldShowTooltip });
+            }
         });
     }
 
