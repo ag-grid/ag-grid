@@ -271,12 +271,12 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             this.tooltipFeature = this.destroyBean(this.tooltipFeature);
         }
 
-        const isTooltipTruncated = this.gridOptionsService.get('tooltipShowMode') === 'whenTruncated';
+        const isTooltipWhenTruncated = this.gridOptionsService.get('tooltipShowMode') === 'whenTruncated';
         const eGui = this.eGui;
 
         const colDef = this.column.getColDef();
 
-        if (!shouldShowTooltip && !colDef.headerComponent && isTooltipTruncated) {
+        if (!shouldShowTooltip && isTooltipWhenTruncated && !colDef.headerComponent) {
             shouldShowTooltip = () => {
                 const textEl = eGui.querySelector('.ag-header-cell-text');
                 if (!textEl) { return true; }

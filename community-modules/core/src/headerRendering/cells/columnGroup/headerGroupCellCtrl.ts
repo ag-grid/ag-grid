@@ -221,10 +221,10 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
         }
 
         const colGroupDef = this.column.getColGroupDef();
-        const isTooltipTruncated = this.gridOptionsService.get('tooltipShowMode') === 'whenTruncated';
+        const isTooltipWhenTruncated = this.gridOptionsService.get('tooltipShowMode') === 'whenTruncated';
         const eGui = this.eGui;
 
-        if (!shouldShowTooltip && !colGroupDef?.headerGroupComponent && isTooltipTruncated) {
+        if (!shouldShowTooltip && isTooltipWhenTruncated && !colGroupDef?.headerGroupComponent) {
             shouldShowTooltip = () => {
                 const textEl = eGui.querySelector('.ag-header-group-text');
                 if (!textEl) { return true; }
