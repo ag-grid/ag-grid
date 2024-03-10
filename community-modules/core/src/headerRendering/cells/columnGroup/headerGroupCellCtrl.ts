@@ -182,8 +182,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
             setExpanded: (expanded: boolean) => {
                 this.beans.columnModel.setColumnGroupOpened(this.column.getProvidedColumnGroup(), expanded, "gridInitializing");
             },
-            setTooltip: (value: string, shouldShowTooltip: () => boolean) => {
-                this.setupTooltip(value, shouldShowTooltip);
+            setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
+                this.setupTooltip(value, shouldDisplayTooltip);
             }
         });
 
@@ -215,7 +215,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
         this.eventService.dispatchEvent(event);
     }
 
-    private setupTooltip(value?: string, shouldShowTooltip?: () => boolean): void {
+    private setupTooltip(value?: string, shouldDisplayTooltip?: () => boolean): void {
         if (this.tooltipFeature) {
             this.tooltipFeature = this.destroyBean(this.tooltipFeature);
         }
@@ -224,8 +224,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
         const isTooltipWhenTruncated = this.gridOptionsService.get('tooltipShowMode') === 'whenTruncated';
         const eGui = this.eGui;
 
-        if (!shouldShowTooltip && isTooltipWhenTruncated && !colGroupDef?.headerGroupComponent) {
-            shouldShowTooltip = () => {
+        if (!shouldDisplayTooltip && isTooltipWhenTruncated && !colGroupDef?.headerGroupComponent) {
+            shouldDisplayTooltip = () => {
                 const textEl = eGui.querySelector('.ag-header-group-text');
                 if (!textEl) { return true; }
 
@@ -238,7 +238,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
             getGui: () => eGui,
             getLocation: () => 'headerGroup',
             getTooltipValue: () => value ?? (colGroupDef && colGroupDef.headerTooltip),
-            shouldShowTooltip
+            shouldDisplayTooltip
         };
 
         if (colGroupDef) {

@@ -121,15 +121,15 @@ export class ToolPanelColumnGroupComp extends Component {
 
         const isTooltipWhenTruncated = this.gridOptionsService.get('tooltipShowMode') === 'whenTruncated';
 
-        let shouldShowTooltip: (() => boolean) | undefined;
+        let shouldDisplayTooltip: (() => boolean) | undefined;
 
         if (isTooltipWhenTruncated) {
-            shouldShowTooltip = () => this.eLabel.scrollWidth > this.eLabel.clientWidth;
+            shouldDisplayTooltip = () => this.eLabel.scrollWidth > this.eLabel.clientWidth;
         }
 
         const refresh = () => {
             const newTooltipText = colGroupDef.headerTooltip;
-            this.setTooltip({ newTooltipText, shouldShowTooltip });
+            this.setTooltip({ newTooltipText, shouldDisplayTooltip });
         };
 
         refresh();
