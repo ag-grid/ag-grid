@@ -82,6 +82,13 @@ export interface IHeaderParams<TData = any, TContext = any> extends AgGridCommon
      * eg add ARIA tags, or add keyboard event listener (as focus goes here when navigating to the header).
      */
     eGridHeader: HTMLElement;
+
+    /**
+     * setTooltip
+     * @param value The value to be displayed by the tooltip
+     * @param shouldDisplayTooltip A function returning a boolean that allows the tooltip to be displayed conditionally. This option does not work when `enableBrowserTooltips={true}`.
+     */
+    setTooltip: (value: string, shouldDisplayTooltip?: () => boolean) => void;
 }
 
 export interface IHeader {

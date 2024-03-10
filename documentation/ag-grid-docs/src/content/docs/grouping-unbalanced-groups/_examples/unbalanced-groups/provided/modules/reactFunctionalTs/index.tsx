@@ -12,7 +12,6 @@ import './styles.css';
 import { getData } from "./data";
 
 import { ColDef, ModuleRegistry, ValueParserParams } from '@ag-grid-community/core';
-// Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
 const COUNTRY_CODES: Record<string, string> = {

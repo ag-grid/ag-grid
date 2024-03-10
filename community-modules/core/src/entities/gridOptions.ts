@@ -140,7 +140,8 @@ import {
     TabToNextHeaderParams,
     GetGroupAggFilteringParams,
     GetGroupIncludeFooterParams,
-    ProcessUnpinnedColumnsParams
+    ProcessUnpinnedColumnsParams,
+    GetChartMenuItemsParams
 } from "../interfaces/iCallbackParams";
 
 import { SideBarDef } from "../interfaces/iSideBar";
@@ -233,7 +234,7 @@ export interface GridOptions<TData = any> {
     /**
      * This defines when tooltip will show up for Cells, Headers and SetFilter Items.
      *  - `standard` - The tooltip always shows up when the items configured with Tooltips are hovered.
-     * - `whenTruncated` - The tooltip will only be displayed when the items hovered have truncated (showing ellipsis) values.
+     * - `whenTruncated` - The tooltip will only be displayed when the items hovered have truncated (showing ellipsis) values. This property does not work when `enableBrowserTooltips={true}`.
      * @default `standard`
      */
     tooltipShowMode?: 'standard' | 'whenTruncated'
@@ -614,6 +615,10 @@ export interface GridOptions<TData = any> {
      * @initial
      */
     legacyChartsMenu?: boolean;
+    /**
+     * Get chart menu items. Only applies when `legacyChartsMenu = false`.
+     */
+    chartMenuItems?: (string | MenuItemDef)[] | GetChartMenuItems<TData>;
 
     // *** Loading Cell Renderers *** //
     /**
@@ -2312,6 +2317,10 @@ export interface GetChartToolbarItems {
 
 export interface GetMainMenuItems<TData = any, TContext = any> {
     (params: GetMainMenuItemsParams<TData, TContext>): (string | MenuItemDef<TData, TContext>)[];
+}
+
+export interface GetChartMenuItems<TData = any, TContext = any> {
+    (params: GetChartMenuItemsParams<TData, TContext>): (string | MenuItemDef<TData, TContext>)[];
 }
 
 export interface GetRowNodeIdFunc<TData = any> {

@@ -1,7 +1,7 @@
 @use "ag";
 @use "./material-variables";
 
-.ag-theme-material {
+.ag-theme-material, .ag-theme-material-dark, .ag-theme-material-auto-dark  {
     .ag-filter-toolpanel-header,
     .ag-filter-toolpanel-search,
     .ag-status-bar,
@@ -105,7 +105,8 @@
     }
 
     .ag-chart-data-section,
-    .ag-chart-format-section {
+    .ag-chart-format-section,
+    .ag-chart-advanced-settings-section {
         padding-bottom: calc(var(--ag-grid-size) * 0.5);
     }
 

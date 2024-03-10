@@ -10,7 +10,8 @@ import {
 } from "@ag-grid-community/core";
 import { FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { ChartMenuUtils } from "../../chartMenuUtils";
+import { ChartOptionsProxy } from '../../../services/chartOptionsService';
+import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
 
 export default class TitlePanel extends Component {
 
@@ -18,11 +19,14 @@ export default class TitlePanel extends Component {
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
+    private readonly chartOptions: ChartOptionsProxy;
+
     private activePanels: Component[] = [];
     private titlePlaceholder: string;
 
-    constructor(private readonly chartMenuUtils: ChartMenuUtils) {
+    constructor(private readonly chartMenuUtils: ChartMenuParamsFactory) {
         super(TitlePanel.TEMPLATE);
+        this.chartOptions = chartMenuUtils.getChartOptions();
     }
 
     @PostConstruct
@@ -32,7 +36,7 @@ export default class TitlePanel extends Component {
     }
 
     private hasTitle(): boolean {
-        const title: any = this.chartMenuUtils.getValue('title');
+        const title: any = this.chartOptions.getValue('title');
         return title && title.enabled && title.text && title.text.length > 0;
     }
 
@@ -48,15 +52,15 @@ export default class TitlePanel extends Component {
             onEnableChange: (enabled) => {
                 if (this.toolbarExists()) {
                     // extra padding is only included when the toolbar is present
-                    const topPadding: number = this.chartMenuUtils.getValue('padding.top');
-                    this.chartMenuUtils.setValue('padding.top', enabled ? topPadding - 20 : topPadding + 20);
+                    const topPadding: number = this.chartOptions.getValue('padding.top');
+                    this.chartOptions.setValue('padding.top', enabled ? topPadding - 20 : topPadding + 20);
                 }
 
-                this.chartMenuUtils.setValue('title.enabled', enabled);
-                const currentTitleText = this.chartMenuUtils.getValue('title.text');
+                this.chartOptions.setValue('title.enabled', enabled);
+                const currentTitleText = this.chartOptions.getValue('title.text');
                 const replaceableTitleText = currentTitleText === 'Title' || currentTitleText?.trim().length === 0;
                 if (enabled && replaceableTitleText) {
-                    this.chartMenuUtils.setValue('title.text', this.titlePlaceholder);
+                    this.chartOptions.setValue('title.text', this.titlePlaceholder);
                 }
             }
         };

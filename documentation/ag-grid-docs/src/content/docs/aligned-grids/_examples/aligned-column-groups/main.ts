@@ -1,8 +1,7 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { GridApi, ColGroupDef, createGrid, GridOptions, ModuleRegistry } from '@ag-grid-community/core';
 
-// Register the required feature modules with the Grid
-ModuleRegistry.registerModules([ClientSideRowModelModule])
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const columnDefs: ColGroupDef[] = [
     {

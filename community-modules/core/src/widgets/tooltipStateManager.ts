@@ -64,7 +64,7 @@ export class TooltipStateManager extends BeanStub {
         private parentComp: TooltipParentComp,
         private tooltipShowDelayOverride?: number,
         private tooltipHideDelayOverride?: number,
-        private shouldShowTooltip?: () => boolean
+        private shouldDisplayTooltip?: () => boolean
     ) {
         super();
     }
@@ -259,7 +259,7 @@ export class TooltipStateManager extends BeanStub {
             ...this.parentComp.getTooltipParams(),
         };
 
-        if (!exists(params.value) || (this.shouldShowTooltip && !this.shouldShowTooltip())) {
+        if (!exists(params.value) || (this.shouldDisplayTooltip && !this.shouldDisplayTooltip())) {
             this.setToDoNothing();
             return;
         }

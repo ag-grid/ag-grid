@@ -9,7 +9,8 @@ import {
     RefSelector
 } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../services/chartTranslationService";
-import { ChartMenuUtils } from "../chartMenuUtils";
+import { ChartMenuParamsFactory } from "../chartMenuParamsFactory";
+import { ChartOptionsProxy } from '../../services/chartOptionsService';
 
 interface Font {
     fontFamily?: string;
@@ -24,7 +25,7 @@ export interface FontPanelParams {
     enabled: boolean;
     suppressEnabledCheckbox?: boolean;
     onEnableChange?: (enabled: boolean) => void;
-    chartMenuUtils: ChartMenuUtils,
+    chartMenuUtils: ChartMenuParamsFactory,
     keyMapper: (key: string) => string
 }
 
@@ -46,12 +47,14 @@ export class FontPanel extends Component {
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
-    private params: FontPanelParams;
+    private readonly params: FontPanelParams;
+    private readonly chartOptions: ChartOptionsProxy;
     private activeComps: Component[] = [];
 
     constructor(params: FontPanelParams) {
         super();
         this.params = params;
+        this.chartOptions = params.chartMenuUtils.getChartOptions();
     }
 
     @PostConstruct
@@ -213,16 +216,16 @@ export class FontPanel extends Component {
     }
 
     private setFont(font: Font): void {
-        const { chartMenuUtils: chartOptionsProxy, keyMapper } = this.params;
+        const { keyMapper } = this.params;
         Object.entries(font).forEach(([fontKey, value]: [keyof Font, any]) => {
             if (value) {
-                chartOptionsProxy.setValue(keyMapper(fontKey), value);
+                this.chartOptions.setValue(keyMapper(fontKey), value);
             }
         });
     }
 
     private getInitialFontValue<K extends keyof Font>(fontKey: K): Font[K] {
-        const { chartMenuUtils: chartOptionsProxy, keyMapper } = this.params;
-        return chartOptionsProxy.getValue(keyMapper(fontKey));
+        const { keyMapper } = this.params;
+        return this.chartOptions.getValue(keyMapper(fontKey));
     }
 }

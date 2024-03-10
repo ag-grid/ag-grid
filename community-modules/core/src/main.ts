@@ -81,6 +81,7 @@ export {
     ExcelStyle,
     ExcelTable,
     ExcelWorksheet,
+    ExcelTableSetup,
     ExcelSheetNameGetter,
     ExcelSheetNameGetterParams,
 } from "./interfaces/iExcelCreator";
@@ -497,7 +498,8 @@ export {
     LoadingCellRendererSelectorFunc,
     LoadingCellRendererSelectorResult,
     DomLayoutType,
-    UseGroupFooter
+    UseGroupFooter,
+    GetChartMenuItems
 } from "./entities/gridOptions";
 
 export {

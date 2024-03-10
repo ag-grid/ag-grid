@@ -14,8 +14,7 @@ import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
 import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
 import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
 
-// Register the required feature modules with the Grid
-ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ExcelExportModule, RangeSelectionModule, ClipboardModule])
+ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ExcelExportModule, RangeSelectionModule, ClipboardModule]);
 
 const GridExample = () => {    
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);

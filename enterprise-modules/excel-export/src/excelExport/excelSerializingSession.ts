@@ -12,6 +12,7 @@ import {
     ExcelSheetMargin,
     ExcelStyle,
     ExcelWorksheet,
+    ExcelTableSetup,
     RowHeightCallbackParams,
     RowNode,
     _,
@@ -52,6 +53,7 @@ export interface ExcelGridSerializingParams extends GridSerializingParams {
     rowHeight?: number | ((params: RowHeightCallbackParams) => number);
     margins?: ExcelSheetMargin;
     pageSetup?: ExcelSheetPageSetup;
+    tableSetup?: ExcelTableSetup;
     sheetName: string;
     suppressColumnOutline?: boolean;
     suppressRowOutline?: boolean;
@@ -224,23 +226,29 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
 
     private convertColumnToExcel(column: Column | null, index: number): ExcelColumn {
         const columnWidth = this.config.columnWidth;
+        const isTableHeader = this.config.tableSetup !== undefined;
+        const headerValue = column ? this.extractHeaderValue(column, index, isTableHeader) : undefined;
+        const displayName = headerValue ? headerValue : `Column${index + 1}`;
         if (columnWidth) {
             if (typeof columnWidth === 'number') {
-                return { width: columnWidth };
+                return { width: columnWidth, displayName };
             }
-            return { width: columnWidth({ column, index }) };
+
+            return { width: columnWidth({ column, index }), displayName };
         }
 
         if (column) {
             const smallestUsefulWidth = 75;
-            return { width: Math.max(column.getActualWidth(), smallestUsefulWidth) };
+            return { width: Math.max(column.getActualWidth(), smallestUsefulWidth), displayName };
         }
-        return {};
+
+        return {displayName};
     }
 
     private onNewHeaderColumn(rowIndex: number, currentCells: ExcelCell[]): (column: Column, index: number, node: RowNode) => void {
         return (column, index) => {
-            const nameForCol = this.extractHeaderValue(column);
+            const isTableHeader = this.config.tableSetup !== undefined;
+            const nameForCol = this.extractHeaderValue(column, index, isTableHeader);
             const styleIds: string[] = this.config.styleLinker({ rowType: RowType.HEADER, rowIndex, value: nameForCol, column });
             currentCells.push(this.createCell(this.getStyleId(styleIds), this.getDataTypeForValue('string'), nameForCol));
         };

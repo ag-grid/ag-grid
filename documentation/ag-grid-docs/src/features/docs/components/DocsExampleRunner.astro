@@ -1,14 +1,13 @@
 ---
 import { DocsExampleRunner } from './DocsExampleRunner';
-import type { ExampleType } from '@features/example-generator/types';
 import ExampleRunnerContainer from '@features/example-runner/components/ExampleRunnerContainer.astro';
 import { getPageNameFromPath } from '@features/docs/utils/urlPaths';
 import { getFrameworkFromPath } from '@features/docs/utils/urlPaths';
+import { getIsDev } from '@utils/env';
 
 interface Props {
     title: string;
     name: string;
-    type: ExampleType;
     exampleHeight?: number;
 }
 
@@ -16,6 +15,7 @@ const { title, name, type, exampleHeight } = Astro.props as Props;
 
 const framework = getFrameworkFromPath(Astro.url.pathname);
 const pageName = getPageNameFromPath(Astro.url.pathname);
+const isDev = getIsDev();
 ---
 
 <ExampleRunnerContainer exampleHeight={exampleHeight} pageName={pageName} exampleName={name}>
@@ -23,9 +23,9 @@ const pageName = getPageNameFromPath(Astro.url.pathname);
         client:only
         title={title}
         name={name}
-        exampleType={type ?? 'generated'}
         exampleHeight={exampleHeight}
         framework={framework}
         pageName={pageName}
+        isDev={isDev}
     />
 </ExampleRunnerContainer>

@@ -13,8 +13,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
 import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
 
-// Register the required feature modules with the Grid
-ModuleRegistry.registerModules([ClientSideRowModelModule, StatusBarModule, RangeSelectionModule])
+ModuleRegistry.registerModules([ClientSideRowModelModule, StatusBarModule, RangeSelectionModule]);
 
 export interface IClickableStatusBar extends IStatusPanel {
     setVisible(visible: boolean): void;

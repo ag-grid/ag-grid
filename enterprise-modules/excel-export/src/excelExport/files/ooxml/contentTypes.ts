@@ -12,6 +12,7 @@ const contentTypesFactory: ExcelOOXMLTemplate = {
         }));
 
         const sheetsWithImages = ExcelXlsxFactory.worksheetImages.size;
+        const sheetsWithTables = ExcelXlsxFactory.worksheetDataTables.size;
         const imageTypesObject: { [ key: string ]: boolean} = {};
 
         ExcelXlsxFactory.workbookImageIds.forEach((v) => {
@@ -22,6 +23,12 @@ const contentTypesFactory: ExcelOOXMLTemplate = {
             name: 'Override',
             ContentType: 'application/vnd.openxmlformats-officedocument.drawing+xml',
             PartName: `/xl/drawings/drawing${i + 1}.xml`
+        }));
+
+        const tableDocs = new Array(sheetsWithTables).fill(undefined).map((v, i) => ({
+            name: 'Override',
+            ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml',
+            PartName: `/xl/tables/${ExcelXlsxFactory.getTableNameFromIndex(i)}.xml`
         }));
 
         const imageTypes = Object.keys(imageTypesObject).map(ext => ({
@@ -60,6 +67,7 @@ const contentTypesFactory: ExcelOOXMLTemplate = {
                 PartName: '/xl/sharedStrings.xml'
             },
             ...imageDocs,
+            ...tableDocs,
             {
                 name: 'Override',
                 ContentType: 'application/vnd.openxmlformats-package.core-properties+xml',

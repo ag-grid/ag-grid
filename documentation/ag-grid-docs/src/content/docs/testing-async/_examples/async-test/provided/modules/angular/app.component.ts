@@ -9,7 +9,7 @@ import { getData } from './data';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-ModuleRegistry.registerModules([ClientSideRowModelModule])
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 @Component({
     standalone: true,

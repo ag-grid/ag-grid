@@ -1,6 +1,4 @@
-import type { ExampleType, InternalFramework } from './types';
-
-export const EXAMPLE_TYPES: ExampleType[] = ['generated', 'mixed', 'typescript'];
+import type { InternalFramework } from './types';
 
 /**
  * The source entry file to generate framework code from

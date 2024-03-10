@@ -2,7 +2,8 @@ import { Autowired, Component, PostConstruct } from "@ag-grid-community/core";
 import { ChartMenu } from "../menu/chartMenu";
 import { ChartTranslationService } from "../services/chartTranslationService";
 import { ChartController } from "../chartController";
-import { ChartMenuUtils } from "../menu/chartMenuUtils";
+import { ChartOptionsProxy, ChartOptionsService } from '../services/chartOptionsService';
+import { ChartMenuContext } from "../menu/chartMenuContext";
 
 interface BBox { x: number; y: number; width: number; height: number }
 
@@ -17,7 +18,8 @@ export class TitleEdit extends Component {
 
     private destroyableChartListeners: (() => void)[] = [];
     private chartController: ChartController;
-    private chartMenuUtils: ChartMenuUtils;
+    private chartOptionsService: ChartOptionsService;
+    private chartMenuUtils: ChartOptionsProxy;
     private editing: boolean = false;
 
     constructor(private readonly chartMenu: ChartMenu) {
@@ -41,9 +43,12 @@ export class TitleEdit extends Component {
     }
 
     /* should be called when the containing component changes to a new chart proxy */
-    public refreshTitle(chartController: ChartController, chartMenuUtils: ChartMenuUtils) {
-        this.chartController = chartController;
-        this.chartMenuUtils = chartMenuUtils;
+    public refreshTitle(
+        chartMenuContext: ChartMenuContext
+    ) {
+        this.chartController = chartMenuContext.chartController;
+        this.chartOptionsService = chartMenuContext.chartOptionsService;
+        this.chartMenuUtils = chartMenuContext.chartMenuParamsFactory.getChartOptions();
 
         for (const destroyFn of this.destroyableChartListeners) {
             destroyFn();
@@ -156,10 +161,10 @@ export class TitleEdit extends Component {
         this.chartMenuUtils.setValue('title.color', transparentColor);
 
         // 3 - trigger 'end editing' - this will update the chart with the new title
-        this.chartMenuUtils.getChartOptionsService().awaitChartOptionUpdate(() => this.endEditing());
+        this.chartOptionsService.awaitChartOptionUpdate(() => this.endEditing());
 
         // 4 - restore title color to its original value
-        this.chartMenuUtils.getChartOptionsService().awaitChartOptionUpdate(() => {
+        this.chartOptionsService.awaitChartOptionUpdate(() => {
             this.chartMenuUtils.setValue('title.color', titleColor)
         });
     }
@@ -181,7 +186,7 @@ export class TitleEdit extends Component {
         this.getGui().classList.remove('currently-editing');
 
         // await chart updates so `chartTitleEdit` event consumers can read the new state correctly
-        this.chartMenuUtils.getChartOptionsService().awaitChartOptionUpdate(() => {
+        this.chartOptionsService.awaitChartOptionUpdate(() => {
             this.eventService.dispatchEvent({type: 'chartTitleEdit'});
         });
     }

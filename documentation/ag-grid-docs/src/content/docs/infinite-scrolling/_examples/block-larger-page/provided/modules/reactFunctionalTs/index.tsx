@@ -11,7 +11,6 @@ import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 import { countries } from './countries';
 
-// Register the required feature modules with the Grid
 ModuleRegistry.registerModules([InfiniteRowModelModule, SetFilterModule, MenuModule, ColumnsToolPanelModule]);
 
 const filterParams = { values: countries() };

@@ -8,7 +8,6 @@ import { CellClassParams, CellClassRules, ColDef, ModuleRegistry, ValueParserPar
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
 
-// Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const ragCellClassRules: CellClassRules = {

@@ -1,7 +1,0 @@
-.grid-container {
-    height: 100%;
-}
-
-#myGrid {
-     height: calc(100% - 35px);
-}

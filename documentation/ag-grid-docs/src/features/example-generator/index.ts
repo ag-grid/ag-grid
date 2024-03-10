@@ -18,6 +18,7 @@ type DocsExampleParams = {
     framework: InternalFramework;
     pageName: string;
     importType: ImportType;
+    isSupported: boolean;
 };
 
 const getFolderPath = (params: GeneratedExampleParams) => {

@@ -14,8 +14,7 @@ import './styles.css';
 
 import { getData } from "./data";
 
-// Register the required feature modules with the Grid
-ModuleRegistry.registerModules([ClientSideRowModelModule, SetFilterModule, MenuModule, FiltersToolPanelModule])
+ModuleRegistry.registerModules([ClientSideRowModelModule, SetFilterModule, MenuModule, FiltersToolPanelModule]);
 
 const colourCellRenderer = (props: CustomCellRendererProps) => {
     if (!props.value || props.value === '(Select All)') {

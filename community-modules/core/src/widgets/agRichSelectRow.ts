@@ -12,7 +12,6 @@ import { escapeString } from "../utils/string";
 import { exists } from "../utils/generic";
 import { setAriaActiveDescendant, setAriaSelected } from "../utils/aria";
 import { VirtualList } from "./virtualList";
-import { TooltipFeature } from "./tooltipFeature";
 
 export class RichSelectRow<TValue> extends Component {
 
@@ -97,13 +96,10 @@ export class RichSelectRow<TValue> extends Component {
 
         eGui.appendChild(span);
         this.renderValueWithoutRenderer(parsedValue);
-
-        this.createManagedBean(new TooltipFeature({
-            getGui: () => eGui,
-            getLocation: () => 'UNKNOWN',
-            getTooltipValue: () => this.parsedValue,
-            shouldShowTooltip: () => span.scrollWidth > getInnerWidth(eGui)
-        }));
+        this.setTooltip ({
+            newTooltipText: this.parsedValue,
+            shouldDisplayTooltip: () => span.scrollWidth > span.clientWidth
+        });
     }
 
     private renderValueWithoutRenderer(value: string | null): void {
@@ -121,7 +117,10 @@ export class RichSelectRow<TValue> extends Component {
         if (this.params.cellRenderer) {
             userCompDetails = this.userComponentFactory.getCellRendererDetails(this.params, {
                 value,
-                valueFormatted
+                valueFormatted,
+                setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
+                    this.setTooltip({ newTooltipText: value, shouldDisplayTooltip });
+                },
             } as ICellRendererParams);
             
         }

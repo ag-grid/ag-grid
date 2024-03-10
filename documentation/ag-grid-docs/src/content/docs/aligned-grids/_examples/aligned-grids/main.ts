@@ -2,8 +2,7 @@ import { ColDef, ColGroupDef, createGrid, GridOptions } from '@ag-grid-community
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
-// Register the required feature modules with the Grid
-ModuleRegistry.registerModules([ClientSideRowModelModule])
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const columnDefs: (ColDef | ColGroupDef)[] = [
     { field: "athlete" },

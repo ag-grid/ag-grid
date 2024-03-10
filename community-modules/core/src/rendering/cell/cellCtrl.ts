@@ -162,8 +162,7 @@ export class CellCtrl extends BeanStub {
         }
     }
 
-    private enableTooltipFeature(): void {
-        const isTooltipStandard = this.beans.gridOptionsService.get('tooltipShowMode') === 'standard';
+    private enableTooltipFeature(value?: string, shouldDisplayTooltip?: () => boolean): void {
         const getTooltipValue = () => {
             const colDef = this.column.getColDef();
             const data = this.rowNode.data;
@@ -190,6 +189,18 @@ export class CellCtrl extends BeanStub {
             return null;
         };
 
+        const isTooltipWhenTruncated = this.beans.gridOptionsService.get('tooltipShowMode') === 'whenTruncated';
+
+        if (!shouldDisplayTooltip && isTooltipWhenTruncated && !this.isCellRenderer()) {
+            shouldDisplayTooltip = () => {
+                const eGui = this.getGui()
+                const textEl = eGui.children.length === 0 ? eGui : eGui.querySelector('.ag-cell-value');
+                if (!textEl) { return true; }
+
+                return textEl.scrollWidth > textEl.clientWidth;
+            }
+        }
+
         const tooltipCtrl: ITooltipFeatureCtrl = {
             getColumn: () => this.column,
             getColDef: () => this.column.getColDef(),
@@ -197,17 +208,11 @@ export class CellCtrl extends BeanStub {
             getRowNode: () => this.rowNode,
             getGui: () => this.getGui(),
             getLocation: () => 'cell',
-            getTooltipValue: getTooltipValue,
+            getTooltipValue: value != null ? () => value : getTooltipValue,
 
             // this makes no sense, why is the cell formatted value passed to the tooltip???
             getValueFormatted: () => this.valueFormatted,
-            shouldShowTooltip: isTooltipStandard ? undefined : () => {
-                const eGui = this.getGui()
-                const textEl = eGui.children.length === 0 ? eGui : eGui.querySelector('.ag-cell-value');
-                if (!textEl) { return true; }
-
-                return textEl.scrollWidth > textEl.clientWidth;
-            }
+            shouldDisplayTooltip
         };
 
         this.tooltipFeature = new TooltipFeature(tooltipCtrl, this.beans);
@@ -541,7 +546,6 @@ export class CellCtrl extends BeanStub {
     }
 
     private createCellRendererParams(): ICellRendererParams {
-
         const res: ICellRendererParams = this.beans.gridOptionsService.addGridCommonParams({
             value: this.value,
             valueFormatted: this.valueFormatted,
@@ -559,6 +563,13 @@ export class CellCtrl extends BeanStub {
             eParentOfValue: this.cellComp.getParentOfValue()!,
 
             registerRowDragger: (rowDraggerElement: HTMLElement, dragStartPixels: number, value?: string, suppressVisibilityChange?: boolean) => this.registerRowDragger(rowDraggerElement, dragStartPixels, suppressVisibilityChange),
+            setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
+                if (this.tooltipFeature) {
+                    this.disableTooltipFeature();
+                }
+                this.enableTooltipFeature(value, shouldDisplayTooltip);
+                this.refreshToolTip();
+            }
 
         });
 

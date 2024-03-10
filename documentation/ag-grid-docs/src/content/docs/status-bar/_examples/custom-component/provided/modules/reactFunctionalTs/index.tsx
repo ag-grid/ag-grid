@@ -14,8 +14,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
 import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
 
-// Register the required feature modules with the Grid
-ModuleRegistry.registerModules([ClientSideRowModelModule, StatusBarModule, RangeSelectionModule])
+ModuleRegistry.registerModules([ClientSideRowModelModule, StatusBarModule, RangeSelectionModule]);
 
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);

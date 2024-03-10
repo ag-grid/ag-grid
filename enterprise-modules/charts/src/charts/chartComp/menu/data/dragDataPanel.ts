@@ -1,8 +1,12 @@
 import {
     AgCheckbox,
+    AgGroupComponent,
     AgRadioButton,
+    AgSelect,
+    AgSelectParams,
     AutoScrollService,
     Autowired,
+    ChartType,
     Column,
     Component,
     DragAndDropService,
@@ -10,18 +14,26 @@ import {
     DragSource,
     DragSourceType,
     Events,
+    ListOption,
     _
 } from "@ag-grid-community/core";
-import { AgPillSelectChangeParams } from "../../../../widgets/agPillSelect";
+import { AgPillSelect, AgPillSelectChangeParams } from "../../../../widgets/agPillSelect";
 import { ChartController } from "../../chartController";
 import { ColState } from "../../model/chartDataModel";
+import { ChartTranslationKey, ChartTranslationService } from "../../services/chartTranslationService";
 
 export abstract class DragDataPanel extends Component {
     @Autowired('dragAndDropService') protected dragAndDropService: DragAndDropService;
+    @Autowired('chartTranslationService') protected readonly chartTranslationService: ChartTranslationService;
 
     private lastHoveredItem?: { comp: AgCheckbox, position: 'top' | 'bottom' };
     private lastDraggedColumn?: Column;
     protected columnComps: Map<string, AgRadioButton | AgCheckbox> = new Map<string, AgRadioButton | AgCheckbox>();
+    protected groupComp: AgGroupComponent;
+    protected valuePillSelect?: AgPillSelect<ColState>;
+    protected valueSelect?: AgSelect<ColState>;
+
+    protected abstract canHaveMultipleValues(chartType: ChartType): boolean;
 
     constructor(
         protected readonly chartController: ChartController,
@@ -41,6 +53,65 @@ export abstract class DragDataPanel extends Component {
         });
 
         return true;
+    }
+
+    protected createGroup(
+        columns: ColState[],
+        valueFormatter: (colState: ColState) => string,
+        selectLabelKey: ChartTranslationKey,
+        dragSourceId: string
+    ): void {
+        const chartType = this.chartController.getChartType();
+        if (this.canHaveMultipleValues(chartType)) {
+            const selectedValueList = columns.filter(col => col.selected);
+            this.valuePillSelect = this.groupComp.createManagedBean(new AgPillSelect<ColState>({
+                valueList: columns,
+                selectedValueList,
+                valueFormatter,
+                selectPlaceholder: this.chartTranslationService.translate(selectLabelKey),
+                dragSourceId,
+                onValuesChange: params => this.onValueChange(params)
+            }));
+            this.groupComp.addItem(this.valuePillSelect);
+        } else {
+            const params: AgSelectParams<ColState> = this.createValueSelectParams(columns);
+            params.onValueChange = (newValue: ColState) => {
+                columns.forEach(col => {
+                    col.selected = false;
+                });
+                newValue.selected = true;
+                this.chartController.updateForPanelChange(newValue);
+            };
+            this.valueSelect = this.groupComp.createManagedBean(new AgSelect<ColState>(params));
+            this.groupComp.addItem(this.valueSelect);
+        }
+    }
+
+    protected refreshValueSelect(columns: ColState[]): void {
+        if (!this.valueSelect) { return; }
+        const { options, value } = this.createValueSelectParams(columns);
+        this.valueSelect.clearOptions().addOptions(options).setValue(value, true);
+    }
+
+    private createValueSelectParams(columns: ColState[]): {
+        options: ListOption<ColState>[],
+        value: ColState
+    } {
+        let selectedValue: ColState;
+        const options = columns.map(value => {
+            const text = _.escapeString(value.displayName)!;
+            if (value.selected) {
+                selectedValue = value;
+            }
+            return {
+                value,
+                text
+            }
+        });
+        return {
+            options,
+            value: selectedValue!,
+        };
     }
 
     protected onDragging(draggingEvent: DraggingEvent): void {
@@ -153,21 +224,31 @@ export abstract class DragDataPanel extends Component {
     protected onValueChange({ added, updated, removed, selected }: AgPillSelectChangeParams<ColState>) {
         let colState: ColState | undefined;
         let resetOrder: boolean | undefined
+        const updateOrder = () => {
+            selected.forEach((col, index) => {
+                col.order = index;
+            });
+            resetOrder = true;
+        }
         if (added.length) {
             colState = added[0];
             colState.selected = true;
+            updateOrder();
         } else if (removed.length) {
             colState = removed[0];
             colState.selected = false;
         } else if (updated.length) {
-            selected.forEach((col, index) => {
-                col.order = index;
-            });
+            updateOrder();
             colState = updated[0];
-            resetOrder = true;
         }
         if (colState) {
             this.chartController.updateForPanelChange(colState, resetOrder);
         }
+    }
+
+    protected destroy(): void {
+        this.valuePillSelect = undefined;
+        this.valueSelect = undefined;
+        super.destroy();
     }
 }

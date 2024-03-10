@@ -12,7 +12,7 @@ import {
     setDisplayed
 } from '../utils/dom';
 import { getFunctionName } from '../utils/function';
-import { ITooltipParams } from "../rendering/tooltipComponent";
+import { ITooltipParams, TooltipLocation } from "../rendering/tooltipComponent";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { CssClassManager } from "../rendering/cssClassManager";
 import { TooltipFeature } from "./tooltipFeature";
@@ -77,22 +77,34 @@ export class Component extends BeanStub {
         };
     }
 
-    public setTooltip(newTooltipText?: string | null, showDelayOverride?: number, hideDelayOverride?: number): void {
+    public setTooltip(params: {
+        newTooltipText?: string | null;
+        showDelayOverride?: number;
+        hideDelayOverride?: number; 
+        location?: TooltipLocation;
+        shouldDisplayTooltip?: () => boolean
+    }): void {
+        const { newTooltipText, showDelayOverride, hideDelayOverride, location, shouldDisplayTooltip } = params;
+
+        if (this.tooltipFeature) {
+            this.tooltipFeature = this.destroyBean(this.tooltipFeature);
+        }
+
         const getTooltipValue = () => this.tooltipText;
 
-        if (!this.tooltipFeature && newTooltipText != null) {
+        if (newTooltipText != null) {
             this.tooltipFeature = this.createBean(new TooltipFeature({
                 getTooltipValue,
                 getGui: () => this.getGui(),
-                getLocation: () => 'UNKNOWN',
+                getLocation: () => location ?? 'UNKNOWN',
                 getTooltipShowDelayOverride: showDelayOverride != null ? (() => showDelayOverride) : undefined,
-                getTooltipHideDelayOverride: hideDelayOverride != null ? (() => hideDelayOverride) : undefined
+                getTooltipHideDelayOverride: hideDelayOverride != null ? (() => hideDelayOverride) : undefined,
+                shouldDisplayTooltip
             }));
         }
 
-        if (this.tooltipFeature && this.tooltipText !== newTooltipText) {
+        if (this.tooltipText !== newTooltipText) {
             this.tooltipText = newTooltipText;
-            this.tooltipFeature.refreshToolTip();
         }
     }
 
@@ -338,6 +350,10 @@ export class Component extends BeanStub {
     protected destroy(): void {
         if (this.parentComponent) {
             this.parentComponent = undefined;
+        }
+
+        if (this.tooltipFeature) {
+            this.tooltipFeature = this.destroyBean(this.tooltipFeature)
         }
 
         const eGui = this.eGui as any;

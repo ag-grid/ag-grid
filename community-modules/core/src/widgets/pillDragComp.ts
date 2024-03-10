@@ -99,7 +99,7 @@ export abstract class PillDragComp<TItem> extends Component {
     private setupTooltip(): void {
         const refresh = () => {
             const newTooltipText = this.getTooltip();
-            this.setTooltip(newTooltipText);
+            this.setTooltip({ newTooltipText });
         };
 
         refresh();

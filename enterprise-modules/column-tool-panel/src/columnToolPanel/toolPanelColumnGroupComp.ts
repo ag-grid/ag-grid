@@ -119,9 +119,17 @@ export class ToolPanelColumnGroupComp extends Component {
 
         if (!colGroupDef) { return; }
 
+        const isTooltipWhenTruncated = this.gridOptionsService.get('tooltipShowMode') === 'whenTruncated';
+
+        let shouldDisplayTooltip: (() => boolean) | undefined;
+
+        if (isTooltipWhenTruncated) {
+            shouldDisplayTooltip = () => this.eLabel.scrollWidth > this.eLabel.clientWidth;
+        }
+
         const refresh = () => {
             const newTooltipText = colGroupDef.headerTooltip;
-            this.setTooltip(newTooltipText);
+            this.setTooltip({ newTooltipText, location: 'columnToolPanelColumnGroup', shouldDisplayTooltip });
         };
 
         refresh();

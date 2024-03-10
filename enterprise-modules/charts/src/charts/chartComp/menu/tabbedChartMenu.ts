@@ -2,55 +2,42 @@ import {
     AgPromise,
     Autowired,
     ChartMenuOptions,
-    ChartType,
     Component,
     PostConstruct,
     TabbedItem,
     TabbedLayout
 } from "@ag-grid-community/core";
-import { ChartController } from "../chartController";
 import { ChartDataPanel } from "./data/chartDataPanel";
 import { FormatPanel } from "./format/formatPanel";
 import { ChartSettingsPanel } from "./settings/chartSettingsPanel";
 import { ChartTranslationKey, ChartTranslationService } from "../services/chartTranslationService";
-import { ChartOptionsService } from "../services/chartOptionsService";
+import { ChartMenuContext } from "./chartMenuContext";
 
 export class TabbedChartMenu extends Component {
     public static TAB_DATA = 'data';
     public static TAB_FORMAT = 'format';
 
     private tabbedLayout: TabbedLayout;
-
-    private panels: ChartMenuOptions[];
     private tabs: TabbedItem[] = [];
-    private readonly chartController: ChartController;
-    private readonly chartOptionsService: ChartOptionsService;
 
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
-    constructor(params: {
-        controller: ChartController,
-        type: ChartType,
-        panels: ChartMenuOptions[];
-        chartOptionsService: ChartOptionsService;
-    }) {
+    constructor(
+        private readonly panels: ChartMenuOptions[],
+        private readonly chartMenuContext: ChartMenuContext
+    ) {
         super();
-
-        const { controller, panels, chartOptionsService } = params;
-
-        this.chartController = controller;
-        this.chartOptionsService = chartOptionsService;
-        this.panels = panels;
     }
 
     @PostConstruct
     public init(): void {
         this.panels.forEach(panel => {
             const panelType = panel.replace('chart', '').toLowerCase() as 'settings' | 'data' | 'format';
-            const { comp, tab } = this.createTab(panel, panelType, this.getPanelClass(panelType));
+            const panelComp = this.createPanel(panelType);
+            const tabItem = this.createTab(panel, panelType, panelComp);
 
-            this.tabs.push(tab);
-            this.addDestroyFunc(() => this.destroyBean(comp));
+            this.tabs.push(tabItem);
+            this.addDestroyFunc(() => this.destroyBean(panelComp));
         });
 
         this.tabbedLayout = new TabbedLayout({
@@ -66,32 +53,28 @@ export class TabbedChartMenu extends Component {
     private createTab(
         name: ChartMenuOptions,
         title: ChartTranslationKey,
-        TabPanelClass: new (controller: ChartController, chartOptionsService: ChartOptionsService) => Component
-    ): { comp: Component, tab: TabbedItem; } {
+        panelComp: Component,
+    ): TabbedItem {
         const eWrapperDiv = document.createElement('div');
         eWrapperDiv.classList.add('ag-chart-tab', `ag-chart-${title}`);
 
-        const comp = new TabPanelClass(this.chartController, this.chartOptionsService);
-        this.getContext().createBean(comp);
+        this.getContext().createBean(panelComp);
 
-        eWrapperDiv.appendChild(comp.getGui());
+        eWrapperDiv.appendChild(panelComp.getGui());
 
         const titleEl = document.createElement('div');
         const translatedTitle = this.chartTranslationService.translate(title);
         titleEl.innerText = translatedTitle;
 
         return {
-            comp,
-            tab: {
-                title: titleEl,
-                titleLabel: translatedTitle,
-                bodyPromise: AgPromise.resolve(eWrapperDiv),
-                getScrollableContainer: () => {
-                    const scrollableContainer = eWrapperDiv.querySelector('.ag-scrollable-container');
-                    return (scrollableContainer || eWrapperDiv) as HTMLElement;
-                },
-                name
-            }
+            title: titleEl,
+            titleLabel: translatedTitle,
+            bodyPromise: AgPromise.resolve(eWrapperDiv),
+            getScrollableContainer: () => {
+                const scrollableContainer = eWrapperDiv.querySelector('.ag-scrollable-container');
+                return (scrollableContainer || eWrapperDiv) as HTMLElement;
+            },
+            name
         };
     }
 
@@ -115,14 +98,15 @@ export class TabbedChartMenu extends Component {
         super.destroy();
     }
 
-    private getPanelClass(panelType: string) {
+    private createPanel(panelType: string): Component {
+        const { chartController, chartOptionsService } = this.chartMenuContext;
         switch (panelType) {
             case TabbedChartMenu.TAB_DATA:
-                return ChartDataPanel;
+                return new ChartDataPanel(chartController, chartOptionsService);
             case TabbedChartMenu.TAB_FORMAT:
-                return FormatPanel;
+                return new FormatPanel(this.chartMenuContext);
             default:
-                return ChartSettingsPanel;
+                return new ChartSettingsPanel(chartController);
         }
     }
 }

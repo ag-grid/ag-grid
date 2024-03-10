@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" class="menu-icon" width="36" height="36" viewBox="0 0 36 36">
-  <style>
-    .menu-icon rect { fill: #fff; }
-  </style>
-
-  <g class="top"> <rect  x="2" y="7" width="32" height="2"/> </g>
-  <g class="middle"> <rect x="2" y="17" width="32" height="2"/> </g>
-  <g class="bottom"> <rect x="2" y="27" width="32" height="2"/> </g>
-</svg>

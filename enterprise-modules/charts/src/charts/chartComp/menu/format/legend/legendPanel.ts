@@ -9,7 +9,7 @@ import {
 import { FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslationKey, ChartTranslationService } from "../../../services/chartTranslationService";
 import { FormatPanelOptions } from "../formatPanel";
-import { ChartMenuUtils } from "../../chartMenuUtils";
+import { ChartMenuParamsFactory } from "../../chartMenuParamsFactory";
 
 export class LegendPanel extends Component {
 
@@ -28,13 +28,13 @@ export class LegendPanel extends Component {
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
-    private readonly chartMenuUtils: ChartMenuUtils;
+    private readonly chartMenuUtils: ChartMenuParamsFactory;
     private readonly isExpandedOnInit: boolean;
 
-    constructor({ chartOptionsService, isExpandedOnInit = false }: FormatPanelOptions) {
+    constructor({ chartMenuParamsFactory: chartMenuUtils, isExpandedOnInit = false }: FormatPanelOptions) {
         super();
 
-        this.chartMenuUtils = chartOptionsService.getChartOptionMenuUtils();
+        this.chartMenuUtils = chartMenuUtils;
         this.isExpandedOnInit = isExpandedOnInit;
     }
 

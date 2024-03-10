@@ -314,6 +314,11 @@ button.navLink {
     }
 }
 
+button.navLink {
+    display: flex;
+    align-items: center;
+}
+
 .githubItem {
     order: 2;
 }
@@ -323,7 +328,8 @@ button.navLink {
         display: none;
     }
 
-    svg:global(.icon), .pseudoIcon {
+    svg:global(.icon),
+    .pseudoIcon {
         --icon-size: 24px;
 
         margin-right: 4px;
@@ -341,12 +347,14 @@ button.navLink {
             padding-right: 12px;
         }
 
-        svg, .pseudoIcon {
+        svg,
+        .pseudoIcon {
             margin-right: 0;
             transition: box-shadow 0.33s ease-in-out;
         }
 
-        .navLink:hover svg, .navLink:hover .pseudoIcon {
+        .navLink:hover svg,
+        .navLink:hover .pseudoIcon {
             box-shadow:
                 0 0 0 4px var(--color-bg-site-header),
                 0 0 0 6px rgba(white, 0.3);

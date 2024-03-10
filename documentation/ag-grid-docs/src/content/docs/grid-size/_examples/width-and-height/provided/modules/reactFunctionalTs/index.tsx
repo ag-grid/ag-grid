@@ -8,8 +8,7 @@ import { AgGridReact } from '@ag-grid-community/react';
 import React, { useEffect, useRef, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-// Register the required feature modules with the Grid
-ModuleRegistry.registerModules([ClientSideRowModelModule])
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const GridExample = () => {
     const gridRef = useRef<AgGridReact>(null);

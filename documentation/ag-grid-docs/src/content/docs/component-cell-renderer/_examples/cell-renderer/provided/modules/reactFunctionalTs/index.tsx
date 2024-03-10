@@ -9,7 +9,6 @@ import { createRoot } from 'react-dom/client';
 import { CustomCellRendererProps } from '@ag-grid-community/react';
 import './styles.css';
 
-// Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 export interface ImageCellRendererParams extends CustomCellRendererProps {

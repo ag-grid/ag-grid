@@ -1,4 +1,5 @@
 import type { Framework, ImportType, InternalFramework } from '@ag-grid-types';
+import { DEFAULT_INTERNAL_FRAMEWORK, INTERNAL_FRAMEWORKS } from '@constants';
 import { persistentAtom, persistentMap } from '@nanostores/persistent';
 import { getInternalFramework } from '@utils/framework';
 
@@ -9,7 +10,6 @@ export type FrameworkContext = {
 };
 
 const LOCALSTORAGE_PREFIX = 'documentation';
-const DEFAULT_INTERNAL_FRAMEWORK: InternalFramework = 'typescript';
 
 export const $internalFramework = persistentAtom<InternalFramework>(
     `${LOCALSTORAGE_PREFIX}:internalFramework`,
@@ -41,14 +41,26 @@ export const setInternalFramework = (internalFramework: InternalFramework) => {
         $frameworkContext.setKey('useVue3', 'true');
     }
 
-    $internalFramework.set(internalFramework);
+    if(INTERNAL_FRAMEWORKS.includes(internalFramework)) {
+        $internalFramework.set(internalFramework);
+    }else{
+        console.error('Unsupported internal framework', internalFramework);
+        $internalFramework.set(DEFAULT_INTERNAL_FRAMEWORK);
+    }
 };
 
 /**
  * Set import type
  */
 export const setImportType = (importType: ImportType) => {
-    $frameworkContext.setKey('importType', importType);
+    if (importType === 'packages') {
+        $frameworkContext.setKey('importType', importType);
+    } else if (importType === 'modules') {
+        $frameworkContext.setKey('importType', importType);
+    } else {
+        console.error('Unsupported import type', importType);
+        $frameworkContext.setKey('importType', 'modules');
+    }
 };
 
 /**

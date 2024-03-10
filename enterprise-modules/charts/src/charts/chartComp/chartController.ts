@@ -22,7 +22,7 @@ import {
 import { ChartDataModel, ChartModelParams, ColState } from "./model/chartDataModel";
 import { ChartProxy, UpdateParams } from "./chartProxies/chartProxy";
 import { _Theme, AgChartThemePalette, _ModuleSupport } from "ag-charts-community";
-import { ChartSeriesType, getSeriesType, isHierarchical } from "./utils/seriesTypeMapper";
+import { canOnlyHaveSingleSeries, ChartSeriesType, getSeriesType, isHierarchical } from "./utils/seriesTypeMapper";
 import { isStockTheme } from "./chartProxies/chartTheme";
 import { UpdateParamsValidator } from "./utils/UpdateParamsValidator";
 
@@ -207,19 +207,27 @@ export class ChartController extends BeanStub {
     }
 
     public setChartType(chartType: ChartType): void {
-        // If we are changing from a multi-dimensional chart type to a single-dimensional chart type,
-        // ensure that only the first selected dimension column remains selected
         const previousChartType = this.model.chartType;
-        if (isHierarchical(previousChartType) && !isHierarchical(chartType)) {
-            let hasSelectedDimension = false;
-            for (const colState of this.model.dimensionColState) {
+
+        // If we are changing from a multi-category/series chart type to a single-category/series chart type,
+        // ensure that only the first selected category/series column remains selected
+        const updateMultiValueToSingleValue = (columns: ColState[]) => {
+            let hasSelectedValue = false;
+            for (const colState of columns) {
                 if (!colState.selected) continue;
-                if (hasSelectedDimension) colState.selected = false;
-                hasSelectedDimension = true;
+                if (hasSelectedValue) colState.selected = false;
+                hasSelectedValue = true;
             }
-            if (!hasSelectedDimension) {
-                this.model.dimensionColState[0].selected = true;
+            if (!hasSelectedValue) {
+                columns[0].selected = true;
             }
+        }
+
+        if (isHierarchical(previousChartType) && !isHierarchical(chartType)) {
+            updateMultiValueToSingleValue(this.model.dimensionColState);
+        }
+        if (!canOnlyHaveSingleSeries(previousChartType) && canOnlyHaveSingleSeries(chartType)) {
+            updateMultiValueToSingleValue(this.model.valueColState);
         }
 
         this.model.chartType = chartType;
