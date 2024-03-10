@@ -1,79 +1,87 @@
+<style>
 
+    .customExpandButton{
+        float:right;
+        margin-top: 2px;
+        margin-left: 3px;
+    }
 
-    <style>
+    .expanded {
+        animation-name: toExpanded;
+        animation-duration: 1s;
+        -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */
+        transform: rotate(180deg);
+    }
 
-        .customExpandButton{
-            float:right;
-            margin-top: 2px;
-            margin-left: 3px;
-        }
+    .fa-arrow-right {
+        color: cornflowerblue;
+    }
 
-        .expanded {
-            animation-name: toExpanded;
-            animation-duration: 1s;
-            -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */
-            transform: rotate(180deg);
-        }
+    .collapsed {
+        animation-name: toCollapsed;
+        animation-duration: 1s;
+        -webkit-transform: rotate(0deg); /* Chrome, Safari, Opera */
+        transform: rotate(0deg);
+    }
 
-        .fa-arrow-right {
-            color: cornflowerblue;
-        }
+    .ag-header-group-cell-label {
+        display: flex;
+        gap: 0.25rem;
+        overflow: hidden;
+    }
 
-        .collapsed {
-            animation-name: toCollapsed;
-            animation-duration: 1s;
+    .customHeaderLabel {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .customHeaderMenuButton,
+    .customHeaderLabel,
+    .customSortDownLabel,
+    .customSortUpLabel,
+    .customSortRemoveLabel
+    {
+        margin-top: 2px;
+        margin-left: 4px;
+        float: left;
+    }
+
+    .customSortDownLabel{
+        margin-left: 10px;
+    }
+
+    .customSortUpLabel{
+        margin-left: 1px;
+    }
+
+    .customSortRemoveLabel{
+        float: left;
+        font-size: 11px;
+    }
+
+    @keyframes  toExpanded{
+        from {
             -webkit-transform: rotate(0deg); /* Chrome, Safari, Opera */
             transform: rotate(0deg);
         }
-
-        .customHeaderMenuButton,
-        .customHeaderLabel,
-        .customHeaderLabel,
-        .customSortDownLabel,
-        .customSortUpLabel,
-        .customSortRemoveLabel
-        {
-            margin-top: 2px;
-            margin-left: 4px;
-            float: left;
+        to {
+            -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */
+            transform: rotate(180deg);
         }
+    }
 
-        .customSortDownLabel{
-            margin-left: 10px;
+    @keyframes toCollapsed{
+        from {
+            -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */
+            transform: rotate(180deg);
         }
-
-        .customSortUpLabel{
-            margin-left: 1px;
+        to {
+            -webkit-transform: rotate(0deg); /* Chrome, Safari, Opera */
+            transform: rotate(0deg);
         }
+    }
 
-        .customSortRemoveLabel{
-            float: left;
-            font-size: 11px;
-        }
-
-        @keyframes  toExpanded{
-            from {
-                -webkit-transform: rotate(0deg); /* Chrome, Safari, Opera */
-                transform: rotate(0deg);
-            }
-            to {
-                -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */
-                transform: rotate(180deg);
-            }
-        }
-
-        @keyframes toCollapsed{
-            from {
-                -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */
-                transform: rotate(180deg);
-            }
-            to {
-                -webkit-transform: rotate(0deg); /* Chrome, Safari, Opera */
-                transform: rotate(0deg);
-            }
-        }
-
-    </style>
+</style>
 
 
 

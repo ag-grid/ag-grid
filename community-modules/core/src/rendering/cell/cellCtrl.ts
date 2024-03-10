@@ -189,7 +189,9 @@ export class CellCtrl extends BeanStub {
             return null;
         };
 
-        if (!shouldShowTooltip && !this.isCellRenderer() && this.beans.gridOptionsService.get('tooltipShowMode') === 'whenTruncated') {
+        const isTooltipWhenTruncated = this.beans.gridOptionsService.get('tooltipShowMode') === 'whenTruncated';
+
+        if (!shouldShowTooltip && isTooltipWhenTruncated && !this.isCellRenderer()) {
             shouldShowTooltip = () => {
                 const eGui = this.getGui()
                 const textEl = eGui.children.length === 0 ? eGui : eGui.querySelector('.ag-cell-value');
@@ -566,6 +568,7 @@ export class CellCtrl extends BeanStub {
                     this.disableTooltipFeature();
                 }
                 this.enableTooltipFeature(value, shouldShowTooltip);
+                this.refreshToolTip();
             }
 
         });
