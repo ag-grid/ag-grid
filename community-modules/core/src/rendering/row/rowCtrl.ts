@@ -6,14 +6,14 @@ import { CellPosition } from "../../entities/cellPositionUtils";
 import { Column, ColumnPinnedType } from "../../entities/column";
 import { RowClassParams, RowStyle } from "../../entities/gridOptions";
 import { RowNode } from "../../entities/rowNode";
-import { DataChangedEvent, IRowNode, RowHighlightPosition, VerticalScrollPosition } from "../../interfaces/iRowNode";
+import { DataChangedEvent, IRowNode, RowHighlightPosition } from "../../interfaces/iRowNode";
 import { RowPosition } from "../../entities/rowPositionUtils";
 import { AgEventListener, CellFocusedEvent, Events, RowClickedEvent, RowDoubleClickedEvent, RowEditingStartedEvent, RowEditingStoppedEvent, RowEvent, RowValueChangedEvent, VirtualRowRemovedEvent } from "../../events";
 import { RowContainerType } from "../../gridBodyComp/rowContainer/rowContainerCtrl";
 import { IFrameworkOverrides } from "../../interfaces/iFrameworkOverrides";
 import { ModuleNames } from "../../modules/moduleNames";
 import { ModuleRegistry } from "../../modules/moduleRegistry";
-import { setAriaExpanded, setAriaLabel, setAriaRowIndex, setAriaSelected } from "../../utils/aria";
+import { setAriaExpanded, setAriaRowIndex, setAriaSelected } from "../../utils/aria";
 import { isElementChildOfClass } from "../../utils/dom";
 import { isStopPropagationForAgGrid } from "../../utils/event";
 import { warnOnce, executeNextVMTurn } from "../../utils/function";
@@ -25,6 +25,7 @@ import { ICellRenderer, ICellRendererParams } from "../cellRenderers/iCellRender
 import { RowCssClassCalculatorParams } from "./rowCssClassCalculator";
 import { RowDragComp } from "./rowDragComp";
 import { GridOptionsService } from "../../gridOptionsService";
+import { ITooltipFeatureCtrl, TooltipFeature } from "../../widgets/tooltipFeature";
 
 enum RowType {
     Normal = 'Normal',
@@ -73,6 +74,7 @@ export class RowCtrl extends BeanStub {
     // The RowCtrl is never Wired, so it needs its own access
     // to the gridOptionsService to be able to call `addManagedPropertyListener`
     protected readonly gridOptionsService: GridOptionsService;
+    private tooltipFeature: TooltipFeature | undefined;
 
     private rowType: RowType;
 
@@ -709,6 +711,9 @@ export class RowCtrl extends BeanStub {
 
         this.addDestroyFunc(() => {
             this.destroyBeans(this.rowDragComps, this.beans.context);
+            if (this.tooltipFeature) {
+                this.tooltipFeature = this.destroyBean(this.tooltipFeature, this.beans.context);
+            }
         });
         this.addManagedPropertyListeners(['rowDragEntireRow'], () => {
             const useRowDragEntireRow = this.gridOptionsService.get('rowDragEntireRow');
@@ -1073,7 +1078,8 @@ export class RowCtrl extends BeanStub {
             eParentOfValue: eRow,
             pinned: pinned,
             addRenderedRowListener: this.addEventListener.bind(this),
-            registerRowDragger: (rowDraggerElement, dragStartPixels, value, suppressVisibilityChange) => this.addFullWidthRowDragging(rowDraggerElement, dragStartPixels, value, suppressVisibilityChange)
+            registerRowDragger: (rowDraggerElement, dragStartPixels, value, suppressVisibilityChange) => this.addFullWidthRowDragging(rowDraggerElement, dragStartPixels, value, suppressVisibilityChange),
+            setTooltip: (value, shouldDisplayTooltip) => this.refreshRowTooltip(value, shouldDisplayTooltip)
         } as WithoutGridCommon<ICellRendererParams>);
 
         switch (this.rowType) {
@@ -1088,6 +1094,23 @@ export class RowCtrl extends BeanStub {
         }
     }
 
+    private refreshRowTooltip(value: string, shouldDisplayTooltip?: () => boolean) {
+        if (!this.fullWidthGui) { return; }
+
+        const tooltipParams: ITooltipFeatureCtrl = {
+            getGui: () => this.fullWidthGui!.element,
+            getTooltipValue: () => value,
+            getLocation: () => 'fullWidthRow',
+            shouldShowTooltip: shouldDisplayTooltip
+        }
+
+        if (this.tooltipFeature) {
+            this.destroyBean(this.tooltipFeature, this.beans.context);
+        }
+
+        this.tooltipFeature = this.createBean(new TooltipFeature(tooltipParams, this.beans));
+    }
+
     private addFullWidthRowDragging(
         rowDraggerElement?: HTMLElement,
         dragStartPixels?: number,
@@ -1097,7 +1120,11 @@ export class RowCtrl extends BeanStub {
         if (!this.isFullWidth()) { return; }
 
         const rowDragComp = new RowDragComp(() => value, this.rowNode, undefined, rowDraggerElement, dragStartPixels, suppressVisibilityChange);
-        this.createManagedBean(rowDragComp, this.beans.context);
+        this.createBean(rowDragComp, this.beans.context);
+
+        this.addDestroyFunc(() =>{
+            this.destroyBean(rowDragComp, this.beans.context);
+        });
     }
 
     private onUiLevelChanged(): void {
@@ -1637,7 +1664,7 @@ export class RowCtrl extends BeanStub {
         const rowIsEven = this.rowNode.rowIndex! % 2 === 0;
         const ariaRowIndex = headerRowCount + this.rowNode.rowIndex! + 1;
 
-        this.forEachGui(gui, c => {            
+        this.forEachGui(gui, c => {
             c.rowComp.setRowIndex(rowIndexStr);
             c.rowComp.addOrRemoveCssClass('ag-row-even', rowIsEven);
             c.rowComp.addOrRemoveCssClass('ag-row-odd', !rowIsEven);

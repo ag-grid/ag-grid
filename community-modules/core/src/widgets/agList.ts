@@ -122,7 +122,7 @@ export class AgList<TValue = string> extends Component {
             getGui:  () => itemEl,
             getLocation: () => 'UNKNOWN',
             // only show tooltips for items where the text cannot be fully displayed
-            shouldShowTooltip: () => span.scrollWidth > getInnerWidth(itemEl)
+            shouldShowTooltip: () => span.scrollWidth > span.clientWidth
         }));
 
         this.getGui().appendChild(itemEl);

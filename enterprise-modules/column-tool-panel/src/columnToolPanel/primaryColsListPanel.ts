@@ -60,7 +60,6 @@ export class PrimaryColsListPanel extends Component {
     private groupsExist: boolean;
 
     private virtualList: VirtualList;
-    private colsListPanelItemDragFeature: PrimaryColsListPanelItemDragFeature;
 
     private allColsTree: ColumnModelItem[];
     private displayedColsList: ColumnModelItem[];
@@ -130,7 +129,7 @@ export class PrimaryColsListPanel extends Component {
 
         if (this.params.suppressColumnMove) { return; }
         
-        this.colsListPanelItemDragFeature = this.createManagedBean(
+        this.createManagedBean(
             new PrimaryColsListPanelItemDragFeature(this, this.virtualList)
         );
     }

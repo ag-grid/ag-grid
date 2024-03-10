@@ -47,6 +47,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
 
     private userHeaderClasses: Set<string> = new Set();
     private ariaDescriptionProperties = new Map<HeaderAriaDescriptionKey, string>();
+    private tooltipFeature: TooltipFeature | undefined;
 
     constructor(column: Column, beans: Beans, parentRowCtrl: HeaderRowCtrl) {
         super(column, beans, parentRowCtrl);
@@ -194,7 +195,10 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             setSort: (sort: SortDirection, multiSort?: boolean) => {
                 this.beans.sortController.setSortForColumn(this.column, sort, !!multiSort, "uiColumnSorted");
             },
-            eGridHeader: this.getGui()
+            eGridHeader: this.getGui(),
+            setTooltip: (value: string, shouldShowTooltip: () => boolean) => {
+                this.setupTooltip(value, shouldShowTooltip);
+            }
         });
 
         return params;
@@ -262,9 +266,24 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
         this.setActiveHeader(false);
     }
 
-    private setupTooltip(): void {
-        const isTooltipStandard = this.gridOptionsService.get('tooltipShowMode') === 'standard';
+    private setupTooltip(value?: string, shouldShowTooltip?: () => boolean): void {
+        if (this.tooltipFeature) {
+            this.tooltipFeature = this.destroyBean(this.tooltipFeature);
+        }
+
+        const isTooltipTruncated = this.gridOptionsService.get('tooltipShowMode') === 'whenTruncated';
         const eGui = this.eGui;
+
+        const colDef = this.column.getColDef();
+
+        if (!shouldShowTooltip && !colDef.headerComponent && isTooltipTruncated) {
+            shouldShowTooltip = () => {
+                const textEl = eGui.querySelector('.ag-header-cell-text');
+                if (!textEl) { return true; }
+
+                return textEl.scrollWidth > textEl.clientWidth;
+            }
+        }
 
         const tooltipCtrl: ITooltipFeatureCtrl = {
             getColumn: () => this.column,
@@ -272,15 +291,14 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             getGui: () => eGui,
             getLocation: () => 'header',
             getTooltipValue: () => {
+                if (value != null) {
+                    return value;
+                }
+
                 const res = this.column.getColDef().headerTooltip;
                 return res;
             },
-            shouldShowTooltip: isTooltipStandard ? undefined : () => {
-                const textEl = eGui.querySelector('.ag-header-cell-text');
-                if (!textEl) { return true; }
-
-                return textEl.scrollWidth > textEl.clientWidth;
-            }
+            shouldShowTooltip
         };
 
         const tooltipFeature = this.createManagedBean(new TooltipFeature(tooltipCtrl));

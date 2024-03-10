@@ -97,13 +97,10 @@ export class RichSelectRow<TValue> extends Component {
 
         eGui.appendChild(span);
         this.renderValueWithoutRenderer(parsedValue);
-
-        this.createManagedBean(new TooltipFeature({
-            getGui: () => eGui,
-            getLocation: () => 'UNKNOWN',
-            getTooltipValue: () => this.parsedValue,
-            shouldShowTooltip: () => span.scrollWidth > getInnerWidth(eGui)
-        }));
+        this.setTooltip ({
+            newTooltipText: this.parsedValue,
+            shouldShowTooltip: () => span.scrollWidth > span.clientWidth
+        });
     }
 
     private renderValueWithoutRenderer(value: string | null): void {
@@ -121,7 +118,10 @@ export class RichSelectRow<TValue> extends Component {
         if (this.params.cellRenderer) {
             userCompDetails = this.userComponentFactory.getCellRendererDetails(this.params, {
                 value,
-                valueFormatted
+                valueFormatted,
+                setTooltip(value, shouldDisplayTooltip) {
+                    this.setTooltip(value, undefined, undefined, shouldDisplayTooltip);
+                },
             } as ICellRendererParams);
             
         }

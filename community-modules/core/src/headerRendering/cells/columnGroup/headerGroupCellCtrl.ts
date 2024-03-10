@@ -43,6 +43,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
 
     private expandable: boolean;
     private displayName: string | null;
+    private tooltipFeature: TooltipFeature | undefined;
 
     constructor(columnGroup: ColumnGroup, beans: Beans, parentRowCtrl: HeaderRowCtrl) {
         super(columnGroup, beans, parentRowCtrl);
@@ -59,6 +60,11 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
         this.setupMovingCss();
         this.setupExpandable();
         this.setupTooltip();
+        this.addDestroyFunc(() => {
+            if (this.tooltipFeature) {
+                this.tooltipFeature = this.destroyBean(this.tooltipFeature);
+            }
+        })
         this.setupUserComp();
         this.addHeaderMouseListeners();
 
@@ -175,6 +181,9 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
             columnGroup: this.column,
             setExpanded: (expanded: boolean) => {
                 this.beans.columnModel.setColumnGroupOpened(this.column.getProvidedColumnGroup(), expanded, "gridInitializing");
+            },
+            setTooltip: (value: string, shouldShowTooltip: () => boolean) => {
+                this.setupTooltip(value, shouldShowTooltip);
             }
         });
 
@@ -206,29 +215,37 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
         this.eventService.dispatchEvent(event);
     }
 
-    private setupTooltip(): void {
+    private setupTooltip(value?: string, shouldShowTooltip?: () => boolean): void {
+        if (this.tooltipFeature) {
+            this.tooltipFeature = this.destroyBean(this.tooltipFeature);
+        }
+
         const colGroupDef = this.column.getColGroupDef();
-        const isTooltipStandard = this.gridOptionsService.get('tooltipShowMode') === 'standard';
+        const isTooltipTruncated = this.gridOptionsService.get('tooltipShowMode') === 'whenTruncated';
         const eGui = this.eGui;
 
-        const tooltipCtrl: ITooltipFeatureCtrl = {
-            getColumn: () => this.column,
-            getGui: () => eGui,
-            getLocation: () => 'headerGroup',
-            getTooltipValue: () => colGroupDef && colGroupDef.headerTooltip,
-            shouldShowTooltip: isTooltipStandard ? undefined : () => {
+        if (!shouldShowTooltip && !colGroupDef?.headerGroupComponent && isTooltipTruncated) {
+            shouldShowTooltip = () => {
                 const textEl = eGui.querySelector('.ag-header-group-text');
                 if (!textEl) { return true; }
 
                 return textEl.scrollWidth > textEl.clientWidth;
             }
+        }
+
+        const tooltipCtrl: ITooltipFeatureCtrl = {
+            getColumn: () => this.column,
+            getGui: () => eGui,
+            getLocation: () => 'headerGroup',
+            getTooltipValue: () => value ?? (colGroupDef && colGroupDef.headerTooltip),
+            shouldShowTooltip
         };
 
         if (colGroupDef) {
             tooltipCtrl.getColDef = () => colGroupDef;
         }
 
-        this.createManagedBean(new TooltipFeature(tooltipCtrl));
+        this.createBean(new TooltipFeature(tooltipCtrl));
     }
 
     private setupExpandable(): void {
@@ -279,7 +296,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
         const providedColumnGroup = this.column.getProvidedColumnGroup();
         const leafColumns = providedColumnGroup.getLeafColumns();
 
-        // this function adds or removes the moving css, based on if the col is moving.
+        // function adds or removes the moving css, based on if the col is moving.
         // this is what makes the header go dark when it is been moved (gives impression to
         // user that the column was picked up).
         const listener = () => this.comp.addOrRemoveCssClass('ag-header-cell-moving', this.column.isMoving());
