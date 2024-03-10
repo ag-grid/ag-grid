@@ -12,7 +12,6 @@ import { escapeString } from "../utils/string";
 import { exists } from "../utils/generic";
 import { setAriaActiveDescendant, setAriaSelected } from "../utils/aria";
 import { VirtualList } from "./virtualList";
-import { TooltipFeature } from "./tooltipFeature";
 
 export class RichSelectRow<TValue> extends Component {
 
@@ -119,8 +118,8 @@ export class RichSelectRow<TValue> extends Component {
             userCompDetails = this.userComponentFactory.getCellRendererDetails(this.params, {
                 value,
                 valueFormatted,
-                setTooltip(value, shouldDisplayTooltip) {
-                    this.setTooltip(value, undefined, undefined, shouldDisplayTooltip);
+                setTooltip: (value: string, shouldShowTooltip: () => boolean) => {
+                    this.setTooltip({ newTooltipText: value, shouldShowTooltip });
                 },
             } as ICellRendererParams);
             
