@@ -315,7 +315,7 @@ export class SetFilterListItem<V> extends Component {
     private setTooltipAndCellRendererParams(value: V | null | (() => string), formattedValue: string | null): void {
         const isTooltipWhenTruncated = this.gridOptionsService.get('tooltipShowMode') === 'whenTruncated';
 
-        if (this.params.showTooltips && (!isTooltipWhenTruncated || !this.cellRendererComponent)) {
+        if (this.params.showTooltips && (!isTooltipWhenTruncated || !this.params.cellRenderer)) {
             const newTooltipText = formattedValue != null ? formattedValue : _.toStringOrNull(value);
             let shouldDisplayTooltip: (() => boolean) | undefined;
 
@@ -326,7 +326,7 @@ export class SetFilterListItem<V> extends Component {
                     return el.scrollWidth > el.clientWidth;
                 }
             }
-            this.setTooltip({ newTooltipText, shouldDisplayTooltip });
+            this.setTooltip({ newTooltipText, location: 'setFilterValue', shouldDisplayTooltip });
         }
 
         this.cellRendererParams = this.gridOptionsService.addGridCommonParams({
@@ -335,7 +335,7 @@ export class SetFilterListItem<V> extends Component {
             colDef: this.params.colDef,
             column: this.params.column,
             setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
-                this.setTooltip({ newTooltipText: value, shouldDisplayTooltip });
+                this.setTooltip({ newTooltipText: value, location:'setFilterValue', shouldDisplayTooltip });
             }
         });
     }
