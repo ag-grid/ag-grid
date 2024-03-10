@@ -70,7 +70,8 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
 
         // As unique values creates one column per aggregation column, divide max columns by number of aggregation columns
         // to get the max number of unique values.
-        this.maxUniqueValues = this.gridOptionsService.get('pivotMaxGeneratedColumns') / numberOfAggregationColumns;
+        const configuredMaxCols = this.gridOptionsService.get('pivotMaxGeneratedColumns');
+        this.maxUniqueValues = configuredMaxCols === -1 ? -1 : configuredMaxCols / numberOfAggregationColumns;
         let uniqueValues;
         try {
             // try catch is used to force execution to stop when the max count is exceeded.
