@@ -114,6 +114,8 @@ const gridOptions = {
 
 {% note %}
 The selected chart determines which groups are displayed. For example, a pie chart does not have an axis so **Axis** groups will not be shown even if they are listed in `chartToolPanelsDef.formatPanel.groups`.
+
+For chart types that have both horizontal and vertical axes, the `axis` group can be replaced with the more specific `horizontalAxis` and `verticalAxis` groups to control these options independently.
 {% /note %}
 
 The following example shows some Format Panel customisations. Note the following:

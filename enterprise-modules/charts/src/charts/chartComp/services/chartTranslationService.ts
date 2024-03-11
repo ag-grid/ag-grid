@@ -18,6 +18,7 @@ export class ChartTranslationService extends BeanStub {
         axis: 'Axis',
         xAxis: 'Horizontal Axis',
         yAxis: 'Vertical Axis',
+        polarAxis: 'Polar Axis',
         radiusAxis: 'Radius Axis',
         navigator: 'Navigator',
         zoom: 'Zoom',

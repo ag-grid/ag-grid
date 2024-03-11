@@ -271,6 +271,7 @@ export const AG_GRID_LOCALE_EN: Record<string,string> = {
     axis: 'Axis',
     xAxis: 'Horizontal Axis',
     yAxis: 'Vertical Axis',
+    polarAxis: 'Polar Axis',
     radiusAxis: 'Radius Axis',
     navigator: 'Navigator',
     zoom: 'Zoom',
