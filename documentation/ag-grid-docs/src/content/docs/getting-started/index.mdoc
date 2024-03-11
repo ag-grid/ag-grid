@@ -1,5 +1,5 @@
 ---
-title: 'Quick Start'
+title: "Quick Start" 
 ---
 
 Welcome to the AG Grid documentation. After reading this page you will have an overview of the key concepts of AG Grid that you will use on a daily basis.
@@ -13,33 +13,27 @@ Add AG Grid to your application in these steps:
 {% /if %}
 
 {% if isFramework("react") %}
-
 <!-- Install React -->
 
 ```bash
 npm install ag-grid-react
 ```
-
 {% /if %}
 
 {% if isFramework("angular") %}
-
 <!-- Install Angular -->
 
 ```bash
 npm install ag-grid-angular
 ```
-
 {% /if %}
 
 {% if isFramework("vue") %}
-
 <!-- Install Vue3 -->
 
 ```bash
 npm install ag-grid-vue3
 ```
-
 {% /if %}
 
 {% if isFramework("javascript") %}
@@ -51,14 +45,14 @@ Load the AG Grid library and create a blank container div:
 
 ```html
 <html lang="en">
-    <head>
-        <!-- Includes all JS & CSS for AG Grid -->
-        <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
-    </head>
-    <body>
-        <!-- Your grid container -->
-        <div id="myGrid"></div>
-    </body>
+ <head>
+   <!-- Includes all JS & CSS for AG Grid -->
+   <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
+ </head>
+ <body>
+   <!-- Your grid container -->
+   <div id="myGrid"></div>
+ </body>
 </html>
 ```
 
@@ -80,14 +74,19 @@ agGrid.createGrid(myGridElement, gridOptions);
 ```js
 // Grid Options: Contains all of the grid configurations
 const gridOptions = {
-    // Row Data: The data to be displayed.
-    rowData: [
-        { make: 'Tesla', model: 'Model Y', price: 64950, electric: true },
-        { make: 'Ford', model: 'F-Series', price: 33850, electric: false },
-        { make: 'Toyota', model: 'Corolla', price: 29600, electric: false },
-    ],
-    // Column Definitions: Defines the columns to be displayed.
-    columnDefs: [{ field: 'make' }, { field: 'model' }, { field: 'price' }, { field: 'electric' }],
+ // Row Data: The data to be displayed.
+ rowData: [
+   { make: "Tesla", model: "Model Y", price: 64950, electric: true },
+   { make: "Ford", model: "F-Series", price: 33850, electric: false },
+   { make: "Toyota", model: "Corolla", price: 29600, electric: false },
+ ],
+ // Column Definitions: Defines the columns to be displayed.
+ columnDefs: [
+   { field: "make" },
+   { field: "model" },
+   { field: "price" },
+   { field: "electric" }
+ ]
 };
 ```
 
@@ -99,46 +98,41 @@ Add the `ag-theme-quartz` CSS class to your grid container div to apply the grid
 <!-- Your grid container -->
 <div id="myGrid" class="ag-theme-quartz" style="height: 500px"></div>
 ```
-
 {% /if %}
 
 {% if isFramework("react") %}
-
 <!-- Create React -->
 
 **2. Import the Grid**
 
 ```js
-// AG Grid Component
-import 'ag-grid-community/styles/ag-grid.css';
-// Mandatory CSS required by the grid
-import 'ag-grid-community/styles/ag-theme-quartz.css';
-import { AgGridReact } from 'ag-grid-react';
-
-// Optional Theme applied to the grid
+import { AgGridReact } from 'ag-grid-react'; // AG Grid Component
+import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the grid
+import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the grid
 ```
 
 **3. Define Rows and Columns**
 
 ```js
 const GridExample = () => {
-    // Row Data: The data to be displayed.
-    const [rowData, setRowData] = useState([
-        { make: 'Tesla', model: 'Model Y', price: 64950, electric: true },
-        { make: 'Ford', model: 'F-Series', price: 33850, electric: false },
-        { make: 'Toyota', model: 'Corolla', price: 29600, electric: false },
-    ]);
+ // Row Data: The data to be displayed.
+ const [rowData, setRowData] = useState([
+   { make: "Tesla", model: "Model Y", price: 64950, electric: true },
+   { make: "Ford", model: "F-Series", price: 33850, electric: false },
+   { make: "Toyota", model: "Corolla", price: 29600, electric: false },
+ ]);
+ 
+ // Column Definitions: Defines the columns to be displayed.
+ const [colDefs, setColDefs] = useState([
+   { field: "make" },
+   { field: "model" },
+   { field: "price" },
+   { field: "electric" }
+ ]);
 
-    // Column Definitions: Defines the columns to be displayed.
-    const [colDefs, setColDefs] = useState([
-        { field: 'make' },
-        { field: 'model' },
-        { field: 'price' },
-        { field: 'electric' },
-    ]);
+ // ...
 
-    // ...
-};
+}
 ```
 
 **4. Grid Component**
@@ -160,7 +154,6 @@ return (
  </div>
 )
 ```
-
 {% /if %}
 
 {% if isFramework("angular") %}
@@ -169,12 +162,8 @@ return (
 
 ```js
 import { Component } from '@angular/core';
-
-import { AgGridAngular } from 'ag-grid-angular';
-// AG Grid Component
-import { ColDef } from 'ag-grid-community';
-
-// Column Definition Type Interface
+import { AgGridAngular } from 'ag-grid-angular'; // AG Grid Component
+import { ColDef } from 'ag-grid-community'; // Column Definition Type Interface
 ```
 
 **3. Define Rows and Columns**
@@ -211,13 +200,14 @@ export class AppComponent {
 Rows and Columns are set as `ag-grid-angular` component attributes.
 
 ```js
-template: `
+template:
+`
  <!-- The AG Grid component -->
  <ag-grid-angular
    [rowData]="rowData"
    [columnDefs]="colDefs">
  </ag-grid-angular>
-`;
+`
 ```
 
 **5. Styling the Grid**
@@ -234,9 +224,13 @@ Import the required dependencies into your `styles.css` file.
 Add the `class` and `style` props to the `ag-grid-angular` component.
 
 ```html
-<ag-grid-angular class="ag-theme-quartz" style="height: 500px;" ...> </ag-grid-angular>
+<ag-grid-angular
+ class="ag-theme-quartz"
+ style="height: 500px;"
+ ...
+>
+</ag-grid-angular>
 ```
-
 {% /if %}
 
 {% if isFramework("vue") %}
@@ -247,23 +241,18 @@ Add the `class` and `style` props to the `ag-grid-angular` component.
 <template></template>
 
 <script>
-    import { ref } from 'vue';
+import { ref } from 'vue';
+import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the grid
+import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the grid
+import { AgGridVue } from "ag-grid-vue3"; // AG Grid Component
 
-    import 'ag-grid-community/styles/ag-grid.css';
-    // Mandatory CSS required by the grid
-    import 'ag-grid-community/styles/ag-theme-quartz.css';
-    // Optional Theme applied to the grid
-    import { AgGridVue } from 'ag-grid-vue3';
-
-    // AG Grid Component
-
-    export default {
-        name: 'App',
-        components: {
-            AgGridVue, // Add AG Grid Vue3 component
-        },
-        setup() {},
-    };
+export default {
+ name: "App",
+ components: {
+   AgGridVue, // Add AG Grid Vue3 component
+ },
+ setup() {},
+};
 </script>
 ```
 
@@ -299,11 +288,16 @@ Rows and Columns are set as `ag-grid-vue` component attributes. Styling is appli
 
 ```html
 <template>
-    <!-- The AG Grid component -->
-    <ag-grid-vue :rowData="rowData" :columnDefs="colDefs" style="height: 500px" class="ag-theme-quartz"> </ag-grid-vue>
+ <!-- The AG Grid component -->
+ <ag-grid-vue
+   :rowData="rowData"
+   :columnDefs="colDefs"
+   style="height: 500px"
+   class="ag-theme-quartz"
+ >
+ </ag-grid-vue>
 </template>
 ```
-
 {% /if %}
 
 {% if isFramework("angular") %}
@@ -334,7 +328,10 @@ The `headerName` provides the title for the header. If missing the title is deri
 
 ```js {% frameworkTransform=true %}
 const gridOptions = {
-    columnDefs: [{ headerName: 'Make & Model', valueGetter: (p) => p.make + ' ' + p.model }, { field: 'price' }],
+    columnDefs: [
+        { headerName: "Make & Model", valueGetter: p => p.make + ' ' + p.model},
+        { field: "price" },
+    ],
 };
 ```
 
@@ -344,7 +341,9 @@ Format text for cell content using a [Value Formatter](./value-formatters/).
 
 ```js {% frameworkTransform=true %}
 const gridOptions = {
-    columnDefs: [{ field: 'price', valueFormatter: (p) => '£' + Math.floor(p.value).toLocaleString() }],
+    columnDefs: [
+        { field: "price", valueFormatter: p => '£' + Math.floor(p.value).toLocaleString() },
+    ],
 };
 ```
 
@@ -353,114 +352,107 @@ const gridOptions = {
 Add buttons, checkboxes or images to cells with a [Cell Component](./component-cell-renderer/).
 
 {% if isFramework("react") %}
-
 ```jsx
 const CustomButtonComponent = (props) => {
-return <button onClick={()=> window.alert('clicked') }>Push Me!</button>;
-};
+   return <button onClick={() => window.alert('clicked') }>Push Me!</button>;
+ };
 
 const [colDefs, setColDefs] = useState([
-{ field: "button", cellRenderer: CustomButtonComponent },
-// ...
-]);
+   { field: "button", cellRenderer: CustomButtonComponent },
+   // ...
+ ]);
 ```
-
 {% /if %}
 
 {% if isFramework("javascript") %}
-
 ```js
 class CustomButtonComponent {
-    eGui;
-    eButton;
-    eventListener;
+ eGui;
+ eButton;
+ eventListener;
 
-    init(params) {
-        this.eGui = document.createElement('div');
-        let button = document.createElement('button');
-        button.className = 'btn-simple';
-        button.innerText = 'Push Me!';
-        this.eventListener = () => alert('clicked');
-        button.addEventListener('click', this.eventListener);
-        this.eGui.appendChild(button);
-    }
+ init(params) {
+   this.eGui = document.createElement("div");
+   let button = document.createElement("button");
+   button.className = "btn-simple";
+   button.innerText = "Push Me!";
+   this.eventListener = () => alert("clicked");
+   button.addEventListener("click", this.eventListener);
+   this.eGui.appendChild(button);
+ }
 
-    getGui() {
-        return this.eGui;
-    }
+ getGui() {
+   return this.eGui;
+ }
 
-    refresh(params) {
-        return true;
-    }
+ refresh(params) {
+   return true;
+ }
 
-    destroy() {
-        if (button) {
-            button.removeEventListener('click', this.eventListener);
-        }
-    }
+ destroy() {
+   if (button) {
+     button.removeEventListener("click", this.eventListener);
+   }
+ }
 }
 
+
 const columnDefs = [
-    { field: 'button', cellRenderer: CustomButtonComponent },
-    // ...
+   { field: "button", cellRenderer: CustomButtonComponent },
+   // ...
 ];
 ```
-
 {% /if %}
 
 {% if isFramework("angular") %}
-
 ```js
 @Component({
-standalone: true,
-template: `<button (click)="buttonClicked()">Push Me!</button>`,
+ standalone: true,
+ template: `<button (click)="buttonClicked()">Push Me!</button>`,
 })
 export class CustomButtonComponent implements ICellRendererAngularComp {
-agInit(params: ICellRendererParams): void {}
-refresh(params: ICellRendererParams) {
-return true;
-}
-buttonClicked() {
-alert("clicked");
-}
+ agInit(params: ICellRendererParams): void {}
+ refresh(params: ICellRendererParams) {
+   return true;
+ }
+ buttonClicked() {
+   alert("clicked");
+ }
 }
 
 columnDefs: ColDef[] = [
-{ field: "button", cellRenderer: CustomButtonComponent },
-// ...
+   { field: "button", cellRenderer: CustomButtonComponent },
+   // ...
 ];
 ```
-
 {% /if %}
 
 {% if isFramework("vue") %}
-
 ```js
 // ...
-components: {
-"ag-grid-vue": AgGridVue,
-CustomButtonComponent: {
-template: `
-<button @click="buttonClicked()">Push Me!</button>
-`,
-methods: {
-buttonClicked() {
-alert("clicked");
-},
-},
-},
-},
-data: function () {
-return {
-columnDefs: [
-{ field: "button", cellRenderer: CustomButtonComponent },
-// ...
-],
-};
+ components: {
+   "ag-grid-vue": AgGridVue,
+   CustomButtonComponent: {
+     template: `
+        <button @click="buttonClicked()">Push Me!</button>
+       `,
+     methods: {
+       buttonClicked() {
+         alert("clicked");
+       },
+     },
+   },
+ },
+ data: function () {
+   return {
+   columnDefs: [
+       { field: "button", cellRenderer: CustomButtonComponent },
+       // ...
+   ],
+ };
 },
 // ...
 ```
-
 {% /if %}
 
 ### Resizing Columns
@@ -471,10 +463,10 @@ allow columns to flex to the grid width.
 ```js {% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
-        { field: 'make', flex: 2 }, //This column will be twice as wide as the others
-        { field: 'model', flex: 1 },
-        { field: 'price', flex: 1 },
-        { field: 'electric', flex: 1 },
+        { field: "make", flex: 2 }, //This column will be twice as wide as the others
+        { field: "model", flex: 1 },
+        { field: "price", flex: 1 },
+        { field: "electric", flex: 1 }
     ],
 };
 ```
@@ -487,17 +479,17 @@ This example demonstrates mapping and formatting values, cell components, and re
 
 ## Working with Data
 
-By default, the row data is used to infer the [Cell Data Type](./cell-data-types/). The cell data type allows grid
-features, such as filtering and editing, to work without additional configuration.
+By default, the row data is used to infer the [Cell Data Type](./cell-data-types/). The cell data type allows grid features, such as filtering and editing, to work without additional configuration.
 
 ### Filtering
 
-[Column Filters](./filtering/) are embedded into each column menu. These are enabled using the `filter` attribute. The
-filter type is inferred from the cell data type.
+[Column Filters](./filtering/) are embedded into each column menu. These are enabled using the `filter` attribute. The filter type is inferred from the cell data type.
 
 ```js {% frameworkTransform=true %}
 const gridOptions = {
-    columnDefs: [{ field: 'make', filter: true }],
+    columnDefs: [
+        { field: "make", filter: true },
+    ],
 };
 ```
 
@@ -508,30 +500,32 @@ You can also create your own [Custom Filter](./filter-custom/).
 
 ```js {% frameworkTransform=true %}
 const gridOptions = {
-    columnDefs: [{ field: 'make', filter: true, floatingFilter: true }],
+    columnDefs: [
+        { field: "make", filter: true, floatingFilter: true },
+    ],
 };
 ```
 
 ### Editing
 
-Enable [Editing](./cell-editing/) by setting the `editable` attribute to `true`. The cell editor is inferred from the
-cell data type.
+Enable [Editing](./cell-editing/) by setting the `editable` attribute to `true`. The cell editor is inferred from the cell data type.
 
 ```js {% frameworkTransform=true %}
 const gridOptions = {
-    columnDefs: [{ field: 'make', editable: true }],
+    columnDefs: [
+        { field: "make", editable: true },
+    ],
 };
 ```
 
-Set the cell editor type using the `cellEditor` attribute. There are 7 [Provided Cell Editors](./provided-cell-editors/)
-which can be set through this attribute.
+Set the cell editor type using the `cellEditor` attribute. There are 7 [Provided Cell Editors](./provided-cell-editors/) which can be set through this attribute.
 You can also create your own [Custom Editors](./cell-editors/).
 
 ```js {% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {
-            field: 'make',
+            field: "make",
             editable: true,
             cellEditor: 'agSelectCellEditor',
             cellEditorParams: {
@@ -548,13 +542,14 @@ Data is [Sorted](./row-sorting/) by clicking the column headers. Sorting is enab
 
 ### Row Selection
 
-[Row Selection](./row-selection/) is enabled using the `rowSelection` attribute. Use the `checkboxSelection` column
-definition attribute to render checkboxes for selection.
+[Row Selection](./row-selection/) is enabled using the `rowSelection` attribute. Use the `checkboxSelection` column definition attribute to render checkboxes for selection.
 
 ```js {% frameworkTransform=true %}
 const gridOptions = {
     // Column Definitions: Defines the columns to be displayed.
-    columnDefs: [{ field: 'make', checkboxSelection: true }],
+    columnDefs: [
+        { field: "make", checkboxSelection: true },
+    ],
     rowSelection: 'multiple',
 };
 ```
@@ -587,26 +582,21 @@ To use a theme you need to 1) import the themes CSS and 2) apply the theme to th
 HTML element of the grid.
 
 {% if isFramework("react") %}
-
 ```jsx
 import "ag-grid-community/styles/ag-theme-quartz.css"; // import Quartz theme
 // import "ag-grid-community/styles/ag-theme-alpine.css"; // import Alpine theme, not used here
 ...
 return (
-<div class="ag-theme-quartz"> // set Quartz Theme on parent div
-  <AgGridReact rowData={...} columnDefs={...} />
-</div>
+ <div class="ag-theme-quartz"> // set Quartz Theme on parent div
+   <AgGridReact rowData={...} columnDefs={...} />
+ </div>
 )
 ```
-
 {% /if %}
 
 {% if isFramework("javascript") %}
-
 ```js
-import 'ag-grid-community/styles/ag-theme-quartz.css';
-
-// import Quartz theme
+import "ag-grid-community/styles/ag-theme-quartz.css"; // import Quartz theme
 // import "ag-grid-community/styles/ag-theme-alpine.css"; // import Alpine theme, not used here
 ```
 
@@ -614,45 +604,46 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
 <!-- Your grid container -->
 <div id="myGrid" class="ag-theme-quartz" style="height: 500px"></div>
 ```
-
 {% /if %}
 
 {% if isFramework("angular") %}
-
 ```js
 import "ag-grid-community/styles/ag-theme-quartz.css"; // import Quartz theme
 // import "ag-grid-community/styles/ag-theme-alpine.css"; // import Alpine theme, not used here
 // ...
-template: `<div style="height: 100%; box-sizing: border-box;">
-  <ag-grid-angular // ... [class]="themeClass"></ag-grid-angular>
-</div>`,
+ template: `<div style="height: 100%; box-sizing: border-box;">
+   <ag-grid-angular
+     // ...
+     [class]="themeClass"
+   ></ag-grid-angular>
+ </div>`,
 // ...
 public themeClass: string = "ag-theme-quartz";
 ```
-
 {% /if %}
 
 {% if isFramework("vue") %}
-
 ```js
 import "ag-grid-community/styles/ag-theme-quartz.css"; // import Quartz theme
 // import "ag-grid-community/styles/ag-theme-alpine.css"; // import Alpine theme, not used here
 
 const VueExample = {
-template: `
-<div style="height: 100%">
-  <div style="height: 100%; box-sizing: border-box;">
-    <ag-grid-vue // ... :class="themeClass"></ag-grid-vue>
-  </div>
-</div>
-`,
+ template: `
+       <div style="height: 100%">
+           <div style="height: 100%; box-sizing: border-box;">
+               <ag-grid-vue
+               // ...
+               :class="themeClass"></ag-grid-vue>
+           </div>
+       </div>
+   `,
 // ...
-data: function () {
-return {
-// ...
-themeClass: "ag-theme-quartz",
-};
-},
+ data: function () {
+   return {
+     // ...
+     themeClass: "ag-theme-quartz",
+   };
+ },
 // ...
 ```
 
@@ -711,37 +702,33 @@ themes.
 
 ### Cell Style
 
-Define rules to apply styling to cells using `cellClassRules`. This can be used, for example, to set cell background
-colour based on its value.
+Define rules to apply styling to cells using `cellClassRules`. This can be used, for example, to set cell background colour based on its value.
 
 ```css
 .rag-green {
-    background-color: #33cc3344;
+  background-color: #33cc3344;
 }
 ```
 
 ```js {% frameworkTransform=true %}
 const gridOptions = {
-    columnDefs: [
-        {
-            field: 'electric',
-            cellClassRules: {
-                // apply green to electric cars
-                'rag-green': (params) => params.value === true,
-            },
-        },
-    ],
+    columnDefs: [{
+        field: 'electric',
+        cellClassRules: {
+            // apply green to electric cars
+            'rag-green': params => params.value === true,
+        }
+    }],
 };
 ```
 
 ### Row Style
 
-Define rules to apply styling to rows using and `rowClassRules`. This allows changing style (e.g. row colour) based on
-row values.
+Define rules to apply styling to rows using  and `rowClassRules`. This allows changing style (e.g. row colour) based on row values.
 
 ```css
 .rag-red {
-    background-color: #cc222244;
+  background-color: #cc222244;
 }
 ```
 
@@ -749,7 +736,7 @@ row values.
 const gridOptions = {
     rowClassRules: {
         // apply red to Ford cars
-        'rag-red': (params) => params.data.make === 'Ford',
+        'rag-red': params => params.data.make === 'Ford',
     },
 };
 ```
@@ -762,5 +749,5 @@ This example demonstrates cell style and row style.
 
 ## Next Steps
 
--   Read our [Introductory Tutorial](./deep-dive/).
--   Watch our [Video Tutorials](./videos/).
+* Read our [Introductory Tutorial](./deep-dive/).
+* Watch our [Video Tutorials](./videos/).
