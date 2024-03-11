@@ -1,5 +1,6 @@
 import markdoc from '@astrojs/markdoc';
 import react from '@astrojs/react';
+import sitemap from '@astrojs/sitemap';
 import { defineConfig } from 'astro/config';
 import dotenvExpand from 'dotenv-expand';
 import { loadEnv } from 'vite';
@@ -8,6 +9,7 @@ import svgr from 'vite-plugin-svgr';
 
 import agHotModuleReload from './plugins/agHotModuleReload';
 import agHtaccessGen from './plugins/agHtaccessGen';
+import { getSitemapConfig } from './src/utils/sitemap';
 
 const { NODE_ENV } = process.env;
 const DEFAULT_BASE_URL = '/';
@@ -56,5 +58,5 @@ export default defineConfig({
             https: !['0', 'false'].includes(PUBLIC_HTTPS_SERVER),
         },
     },
-    integrations: [react(), markdoc(), agHtaccessGen({ include: HTACCESS === 'true' })],
+    integrations: [react(), markdoc(), sitemap(getSitemapConfig()), agHtaccessGen({ include: HTACCESS === 'true' })],
 });
