@@ -120,7 +120,7 @@ function internalParser(
     domTree('style').remove();
     const domEventHandlers = extractEventHandlers(domTree, recognizedDomEvents);
 
-    const tsTree = includeTypes ? parseFile(srcFile) : parseFile(readAsJsFile(srcFile));
+    const tsTree = includeTypes ? parseFile(srcFile) : parseFile(readAsJsFile(srcFile, 'vanilla'));
     const gridOpsTypeLookup = includeTypes ? (prop) => gridOptionsTypes[prop] : () => undefined;
 
     const tsCollectors: Collector[] = [];

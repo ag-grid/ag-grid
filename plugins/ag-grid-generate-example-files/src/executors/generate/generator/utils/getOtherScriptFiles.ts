@@ -7,6 +7,7 @@ const getOtherTsGeneratedFiles = async ({
     folderPath,
     sourceFileList,
     transformTsFileExt,
+    internalFramework
 }: {
     folderPath: string;
     sourceFileList: string[];
@@ -14,6 +15,7 @@ const getOtherTsGeneratedFiles = async ({
      * File extension for .ts files to be converted to
      */
     transformTsFileExt?: TransformTsFileExt;
+    internalFramework: InternalFramework;
 }) => {
     const otherTsFiles = sourceFileList
         .filter((fileName) => fileName.endsWith('.ts'))
@@ -40,11 +42,11 @@ const getOtherTsGeneratedFiles = async ({
             let jsFileName = tsFileName.replace('.ts', transformTsFileExt);
             // For provided typescript component files, automatically generate vanilla js files
             jsFileName = jsFileName.replace('_typescript', '_vanilla');
-            generatedFiles[jsFileName] = readAsJsFile(srcFile);
+            generatedFiles[jsFileName] = readAsJsFile(srcFile, internalFramework);
         }
         else {
             const jsFileName = tsFileName.replace('.ts', transformTsFileExt);
-            generatedFiles[jsFileName] = readAsJsFile(srcFile);
+            generatedFiles[jsFileName] = readAsJsFile(srcFile, internalFramework);
         }
     });
 
@@ -131,6 +133,7 @@ export const getOtherScriptFiles = async ({
         folderPath,
         sourceFileList,
         transformTsFileExt,
+        internalFramework,
     });
     const otherJsFileContents = await getOtherJsFiles({
         folderPath,
