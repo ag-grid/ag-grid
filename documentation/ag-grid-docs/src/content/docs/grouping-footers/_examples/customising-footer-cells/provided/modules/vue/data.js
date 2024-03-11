@@ -1,4 +1,4 @@
-function getData() {
+export function getData() {
     return [
         {
             athlete: 'Matt Grevers',

@@ -5,6 +5,7 @@ import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 import MyInnerRenderer from './myInnerRendererVue.js';
+import { getData } from './data.js';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);

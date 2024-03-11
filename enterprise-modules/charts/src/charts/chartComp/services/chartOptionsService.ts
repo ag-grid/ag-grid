@@ -1,10 +1,10 @@
-import { _, BeanStub, ChartOptionsChanged, ChartType, Events, WithoutGridCommon } from "@ag-grid-community/core";
-import { AgCartesianAxisType, AgCharts, AgChartOptions, AgPolarAxisType } from "ag-charts-community";
+import { _, AgChartThemeOverrides, BeanStub, ChartOptionsChanged, ChartType, Events, WithoutGridCommon } from "@ag-grid-community/core";
+import { AgCartesianAxisType, AgCharts, AgChartOptions, AgPolarAxisType, AgBaseThemeableChartOptions, AgBaseCartesianAxisOptions } from "ag-charts-community";
 
 import { ChartController } from "../chartController";
-import { AgChartActual } from "../utils/integration";
+import { AgChartActual, AgChartAxisType } from "../utils/integration";
 import { get, set } from "../utils/object";
-import { ChartSeriesType, VALID_SERIES_TYPES } from "../utils/seriesTypeMapper";
+import { ChartSeriesType, isPolar, VALID_SERIES_TYPES } from "../utils/seriesTypeMapper";
 
 export interface ChartOptionsProxy {
     getValue<T = string>(expression: string, calculated?: boolean): T;
@@ -18,6 +18,12 @@ type AgChartAxisOptions<T extends AgChartOptions = AgChartOptions> =
     T extends { axes?: infer V }
     ? V | undefined
     : undefined;
+
+type AgChartOptionsWithThemeOverrides = AgChartOptions & {
+    theme: NonNullable<Extract<AgChartOptions['theme'], object>> & {
+        overrides: NonNullable<Extract<AgChartOptions['theme'], object>['overrides']>
+    }
+};
 
 export class ChartOptionsService extends BeanStub {
     private readonly chartController: ChartController;
@@ -83,25 +89,80 @@ export class ChartOptionsService extends BeanStub {
         };
     }
 
+    /**
+     * Determine the set of theme overrides that should be retained when transitioning from one chart type to another.
+     */
+    public getPersistedChartThemeOverrides(
+        existingChartOptions: AgChartOptions,
+        existingChartType: ChartType,
+        targetChartType: ChartType,
+    ): AgChartThemeOverrides {
+        // Determine the relevant series type theme override series keys for the existing and updated charts
+        const existingChartSeriesTypes = this.getChartThemeOverridesSeriesTypeKeys(existingChartType);
+        const targetChartSeriesTypes = this.getChartThemeOverridesSeriesTypeKeys(targetChartType);
+
+        // combine the options into a single merged object
+        const targetChartOptions = this.createChartOptions();
+
+        // these theme overrides are persisted across all chart types
+        const UNIVERSAL_PERSISTED_THEME_OVERRIDES: Array<keyof AgBaseThemeableChartOptions> = ['animation', 'zoom', 'navigator'];
+
+        // these axis theme overrides are persisted across all cartesian chart types
+        const PERSISTED_CARTESIAN_AXIS_THEME_OVERRIDES: Array<keyof AgBaseCartesianAxisOptions> = ['crosshair'];
+
+        // other chart options will be retained depending on the specifics of the chart type from/to transition
+        const chartSpecificThemeOverrideKeys = ((previousChartType, updatedChartType) => {
+            const expressions = new Array<string>();
+            if (!isPolar(previousChartType) && !isPolar(updatedChartType)) {
+                const xAxis = this.getCartesianAxis(this.getChartAxes(), 'xAxis');
+                const yAxis = this.getCartesianAxis(this.getChartAxes(), 'yAxis');
+                for (const expression of PERSISTED_CARTESIAN_AXIS_THEME_OVERRIDES) {
+                    if (xAxis) {
+                        expressions.push(
+                            ...['', '.top', '.bottom'].map(position => `axes.${xAxis.type}${position}.${expression}`),
+                        );
+                    }
+                    if (yAxis) {
+                        expressions.push(
+                            ...['', '.left', '.right'].map(position => `axes.${yAxis.type}${position}.${expression}`),
+                        );
+                    }
+                }
+            }
+            return expressions;
+        })(existingChartType, targetChartType);
+        
+        const retainedThemeOverrideKeys = [
+            ...UNIVERSAL_PERSISTED_THEME_OVERRIDES,
+            ...chartSpecificThemeOverrideKeys,
+        ];
+
+        // copy the retained theme overrides from the existing chart options to the target chart options
+        for (const expression of retainedThemeOverrideKeys) {
+            // Locate the first matching value in the existing chart series type theme overrides
+            for (const seriesType of existingChartSeriesTypes) {
+                const value = this.retrieveChartOptionsSeriesThemeOverride(existingChartOptions, seriesType, expression);
+                if (value === undefined) continue;
+                // assign the relevant theme overrides for each series type in the updated chart
+                for (const seriesType of targetChartSeriesTypes) {
+                    this.assignChartOptionsSeriesThemeOverride(targetChartOptions, seriesType, expression, value);
+                }
+            }
+        }
+
+        return targetChartOptions.theme.overrides;
+    }
+
     private getChartOption<T = string>(expression: string): T {
         return get(this.getChart(), expression, undefined) as T;
     }
 
     private setChartThemeOverrides<T = string>(properties: {expression: string, value: T}[]): void {
-        const chartSeriesTypes = this.chartController.getChartSeriesTypes();
-        if (this.chartController.isComboChart()) {
-            chartSeriesTypes.push('common');
-        }
-
         // combine the options into a single merged object
         const chartOptions: AgChartOptions = this.createChartOptions();
         for (const { expression, value } of properties) {
-            // we need to update chart options on each series type for combo charts
-            for (const seriesType of chartSeriesTypes) {
-                this.updateChartOptionsThemeOverride(chartOptions, seriesType, expression, value);
-            }
+            this.assignChartOptionsThemeOverride(chartOptions, expression, value);
         }
-
         this.applyChartOptions(chartOptions);
     }
 
@@ -151,9 +212,9 @@ export class ChartOptionsService extends BeanStub {
             if (!relevantAxes) continue;
 
             for (const axis of relevantAxes)  {
-                this.updateChartAxisThemeOverride(chartOptions, axis, null, expression, value);
+                if (!this.isValidAxisType(axis)) continue;
+                this.assignChartAxisThemeOverride(chartOptions, axis.type, null, expression, value);
             }
-            
         }
 
         this.applyChartOptions(chartOptions);
@@ -173,9 +234,10 @@ export class ChartOptionsService extends BeanStub {
         const chartAxis = this.getCartesianAxis(axes, axisType);
         if (!chartAxis) return undefined;
         const chartOptions = this.getChart().getOptions();
+        if (!this.isValidAxisType(chartAxis)) return undefined;
         return this.retrieveChartAxisThemeOverride(
             chartOptions,
-            chartAxis,
+            chartAxis.type,
             axisType === 'yAxis' ? ['left', 'right'] : ['bottom', 'top'],
             expression,
         );
@@ -187,14 +249,14 @@ export class ChartOptionsService extends BeanStub {
     ): void {
         const axes = this.getChartAxes();
         const chartAxis = this.getCartesianAxis(axes, axisType);
-        if (!chartAxis) return;
+        if (!chartAxis || !this.isValidAxisType(chartAxis)) return;
 
         // combine the axis options into a single merged object
         let chartOptions = this.createChartOptions();
         for (const { expression, value } of properties) {
-            this.updateChartAxisThemeOverride(
+            this.assignChartAxisThemeOverride(
                 chartOptions,
-                chartAxis,
+                chartAxis.type,
                 axisType === 'yAxis' ? ['left', 'right'] : ['bottom', 'top'],
                 expression,
                 value,
@@ -221,7 +283,7 @@ export class ChartOptionsService extends BeanStub {
         (chartOptions as Extract<AgChartOptions, { axes?: any }>).axes = axisOptions;
         const axisIndex = axes.indexOf(chartAxis);
         for (const { expression, value } of properties) {
-            this.updateChartOption(chartOptions, `axes.${axisIndex}.${expression}`, value);
+            this.assignChartOption(chartOptions, `axes.${axisIndex}.${expression}`, value);
         }
 
         this.applyChartOptions(chartOptions);
@@ -247,7 +309,7 @@ export class ChartOptionsService extends BeanStub {
         // combine the series options into a single merged object
         let chartOptions = this.createChartOptions();
         for (const { expression, value } of properties) {
-            this.updateChartOptionsThemeOverride(
+            this.assignChartOptionsSeriesThemeOverride(
                 chartOptions,
                 seriesType,
                 `series.${expression}`,
@@ -273,72 +335,52 @@ export class ChartOptionsService extends BeanStub {
 
     private retrieveChartAxisThemeOverride<T = string>(
         chartOptions: AgChartOptions,
-        chartAxis: ChartAxis,
+        axisType: AgChartAxisType,
         axisPositions: ('left' | 'right' | 'top' | 'bottom')[] | null,
         expression: string | null,
     ): T | undefined {
-        if (!this.isValidAxisType(chartAxis)) return;
-
-        const chartSeriesTypes = this.chartController.getChartSeriesTypes();
-        if (this.chartController.isComboChart()) {
-            chartSeriesTypes.push('common');
-        }
-
-        // retrieve the first matching value
-        for (const seriesType of chartSeriesTypes) {
-            if (axisPositions) {
-                for (const axisPosition of axisPositions) {
-                    const value = this.retrieveChartOptionsThemeOverride<T>(
-                        chartOptions,
-                        seriesType,
-                        ['axes', chartAxis.type, axisPosition, ...expression ? [expression] : []].join('.'),
-                    );
-                    if (value !== undefined) return value;
-                }
-            } else {
+        // Theme overrides can be applied either to all axes simultaneously, or only to axes in a certain orientation
+        // (this allows more fine-grained control for e.g. styling horizontal / vertical axes separately)
+        if (axisPositions) {
+            for (const axisPosition of axisPositions) {
                 const value = this.retrieveChartOptionsThemeOverride<T>(
                     chartOptions,
-                    seriesType,
-                    ['axes', chartAxis.type, ...expression ? [expression] : []].join('.'),
+                    ['axes', axisType, axisPosition, ...expression ? [expression] : []].join('.'),
                 );
-                if (value !== undefined) return value;
+                if (value === undefined) continue;
+                return value;
             }
+        } else {
+            return this.retrieveChartOptionsThemeOverride<T>(
+                chartOptions,
+                ['axes', axisType, ...expression ? [expression] : []].join('.'),
+            );
         }
     }
 
-    private updateChartAxisThemeOverride<T = string>(
+    private assignChartAxisThemeOverride<T = string>(
         chartOptions: AgChartOptions,
-        chartAxis: ChartAxis,
+        axisType: AgChartAxisType,
         axisPositions: ('left' | 'right' | 'top' | 'bottom')[] | null,
         expression: string | null,
         value: T,
     ): void {
-        if (!this.isValidAxisType(chartAxis)) return;
-
-        const chartSeriesTypes = this.chartController.getChartSeriesTypes();
-        if (this.chartController.isComboChart()) {
-            chartSeriesTypes.push('common');
-        }
-
-        // combine the axis options into a single merged object with entries for each series type
-        for (const seriesType of chartSeriesTypes) {
-            if (axisPositions) {
-                for (const axisPosition of axisPositions) {
-                    this.updateChartOptionsThemeOverride(
-                        chartOptions,
-                        seriesType,
-                        ['axes', chartAxis.type, axisPosition, ...expression ? [expression] : []].join('.'),
-                        value
-                    );
-                }
-            } else {
-                this.updateChartOptionsThemeOverride(
+        // Theme overrides can be applied either to all axes simultaneously, or only to axes in a certain orientation
+        // (this allows more fine-grained control for e.g. styling horizontal / vertical axes separately)
+        if (axisPositions) {
+            for (const axisPosition of axisPositions) {
+                this.assignChartOptionsThemeOverride(
                     chartOptions,
-                    seriesType,
-                    ['axes', chartAxis.type, ...expression ? [expression] : []].join('.'),
+                    ['axes', axisType, axisPosition, ...expression ? [expression] : []].join('.'),
                     value
                 );
             }
+        } else {
+            this.assignChartOptionsThemeOverride(
+                chartOptions,
+                ['axes', axisType, ...expression ? [expression] : []].join('.'),
+                value
+            );
         }
     }
 
@@ -361,7 +403,7 @@ export class ChartOptionsService extends BeanStub {
         AgCharts.updateDelta(chartRef, chartOptions);
     }
 
-    private createChartOptions(): AgChartOptions {
+    private createChartOptions(): AgChartOptionsWithThemeOverrides {
         const chartOptions = {
             theme: {
                 overrides: {}
@@ -372,26 +414,67 @@ export class ChartOptionsService extends BeanStub {
 
     private retrieveChartOptionsThemeOverride<T>(
         chartOptions: AgChartOptions, 
+        expression: string | null,
+    ): T | undefined {
+        // Determine the relevant series type theme override series keys for the current chart
+        const chartSeriesTypes = this.getChartThemeOverridesSeriesTypeKeys();
+
+        // Retrieve the first matching value
+        for (const seriesType of chartSeriesTypes) {
+            const value = this.retrieveChartOptionsSeriesThemeOverride<T>(chartOptions, seriesType, expression);
+            if (value === undefined) continue;
+            return value;
+        }
+
+        return undefined;
+    }
+
+    private assignChartOptionsThemeOverride<T>(
+        chartOptions: AgChartOptions, 
+        expression: string | null,
+        value: T,
+    ): void {
+        // Determine the relevant series type theme override series keys for the current chart
+        const chartSeriesTypes = this.getChartThemeOverridesSeriesTypeKeys();
+
+        // assign the relevant theme overrides for each series type
+        for (const seriesType of chartSeriesTypes) {
+            this.assignChartOptionsSeriesThemeOverride(chartOptions, seriesType, expression, value);
+        }
+    }
+
+    private retrieveChartOptionsSeriesThemeOverride<T>(
+        chartOptions: AgChartOptions, 
         seriesType: ChartSeriesType,
         expression: string | null,
     ): T | undefined {
-        return this.retrieveChartOption(
+        return this.retrieveChartOption<T>(
             chartOptions,
             ['theme', 'overrides', seriesType, ...expression ? [expression] : []].join('.'),
         );
     }
 
-    private updateChartOptionsThemeOverride<T>(
+    private assignChartOptionsSeriesThemeOverride<T>(
         chartOptions: AgChartOptions, 
         seriesType: ChartSeriesType,
         expression: string | null,
         value: T,
     ): void {
-        this.updateChartOption(
+        this.assignChartOption<T>(
             chartOptions,
             ['theme', 'overrides', seriesType, ...expression ? [expression] : []].join('.'),
             value,
         );
+    }
+
+    private getChartThemeOverridesSeriesTypeKeys(chartType?: ChartType): ChartSeriesType[] {
+        // In the chart options API, theme overrides are categorized according to series type.
+        // Depending on the chart type, theme overrides may need to be applied to multiple series types.
+        const chartSeriesTypes = this.chartController.getChartSeriesTypes(chartType);
+        if (this.chartController.isComboChart()) {
+            chartSeriesTypes.push('common');
+        }
+        return chartSeriesTypes;
     }
 
     private retrieveChartOption<T>(
@@ -401,7 +484,7 @@ export class ChartOptionsService extends BeanStub {
         return get(chartOptions, expression, undefined);
     }
 
-    private updateChartOption<T>(
+    private assignChartOption<T>(
         chartOptions: AgChartOptions, 
         expression: string,
         value: T,

@@ -507,7 +507,7 @@ export class ChartDataModel extends BeanStub {
         }
     }
 
-    public isComboChart(): boolean {
-        return ['columnLineCombo', 'areaColumnCombo', 'customCombo'].includes(this.chartType);
+    public isComboChart(chartType?: ChartType): boolean {
+        return ['columnLineCombo', 'areaColumnCombo', 'customCombo'].includes(chartType ?? this.chartType);
     }
 }

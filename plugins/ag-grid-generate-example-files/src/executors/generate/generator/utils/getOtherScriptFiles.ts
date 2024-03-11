@@ -1,12 +1,13 @@
 import { SOURCE_ENTRY_FILE_NAME } from '../constants';
 import { readAsJsFile } from '../transformation-scripts/parser-utils';
-import { FileContents, FRAMEWORKS, InternalFramework, TransformTsFileExt } from '../types';
+import { FileContents, FRAMEWORKS, ImportType, InternalFramework, TransformTsFileExt } from '../types';
 import { getFileList } from './fileUtils';
 
 const getOtherTsGeneratedFiles = async ({
     folderPath,
     sourceFileList,
     transformTsFileExt,
+    internalFramework
 }: {
     folderPath: string;
     sourceFileList: string[];
@@ -14,6 +15,7 @@ const getOtherTsGeneratedFiles = async ({
      * File extension for .ts files to be converted to
      */
     transformTsFileExt?: TransformTsFileExt;
+    internalFramework: InternalFramework;
 }) => {
     const otherTsFiles = sourceFileList
         .filter((fileName) => fileName.endsWith('.ts'))
@@ -40,11 +42,11 @@ const getOtherTsGeneratedFiles = async ({
             let jsFileName = tsFileName.replace('.ts', transformTsFileExt);
             // For provided typescript component files, automatically generate vanilla js files
             jsFileName = jsFileName.replace('_typescript', '_vanilla');
-            generatedFiles[jsFileName] = readAsJsFile(srcFile);
+            generatedFiles[jsFileName] = readAsJsFile(srcFile, internalFramework);
         }
         else {
             const jsFileName = tsFileName.replace('.ts', transformTsFileExt);
-            generatedFiles[jsFileName] = readAsJsFile(srcFile);
+            generatedFiles[jsFileName] = readAsJsFile(srcFile, internalFramework);
         }
     });
 
@@ -119,16 +121,19 @@ export const getOtherScriptFiles = async ({
     sourceFileList,
     transformTsFileExt,
     internalFramework,
+    importType,
 }: {
     folderPath: string;
     sourceFileList: string[];
     transformTsFileExt?: TransformTsFileExt;
     internalFramework: InternalFramework;
+    importType: ImportType;
 }) => {
     const otherTsGeneratedFileContents = await getOtherTsGeneratedFiles({
         folderPath,
         sourceFileList,
         transformTsFileExt,
+        internalFramework,
     });
     const otherJsFileContents = await getOtherJsFiles({
         folderPath,
@@ -146,6 +151,11 @@ export const getOtherScriptFiles = async ({
     const filteredToFramework = {};
     const others = {};
     Object.entries(contents).forEach(([file, content]) => {
+
+        if(importType === 'packages'){
+            content = convertModuleToPackageImports(content);
+        }
+
         let isFrameworkFile = false;
         FRAMEWORKS.forEach((framework) => {
             const suffix = getComponentSuffix(file, framework);
@@ -164,3 +174,14 @@ export const getOtherScriptFiles = async ({
     });
     return [others, filteredToFramework];
 };
+
+
+export function convertModuleToPackageImports(file: any) {
+    return file
+        .replace(/@ag-grid-community\/core/g, 'ag-grid-community')
+        .replace(/@ag-grid-community\/react/g, 'ag-grid-react')
+        .replace(/@ag-grid-community\/angular/g, 'ag-grid-angular')
+        .replace(/@ag-grid-community\/vue/g, 'ag-grid-vue')
+        .replace(/@ag-grid-community\/vue3/g, 'ag-grid-vue3')
+        .replace(/@ag-grid-community\/styles/g, 'ag-grid-community/styles');
+}

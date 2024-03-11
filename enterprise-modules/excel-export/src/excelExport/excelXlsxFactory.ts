@@ -131,7 +131,13 @@ export class ExcelXlsxFactory {
             return;
         }
 
-        const { name: nameFromConfig } = config.tableSetup;
+        const {
+            name: nameFromConfig,
+            showColumnStripes,
+            showRowStripes,
+            highlightFirstColumn,
+            highlightLastColumn,
+        } = config.tableSetup;
         const tableName = this.getSanitizedTableName(
             nameFromConfig || ExcelXlsxFactory.defaultTableDisplayName
         );
@@ -154,6 +160,10 @@ export class ExcelXlsxFactory {
             columns: tableColumns,
             headerRowIndex: tableHeaderRowIndex,
             rowCount: tableRowCount - headerRowCount,
+            showRowStripes: showRowStripes ?? true,
+            showColumnStripes: showColumnStripes ?? false,
+            highlightFirstColumn: highlightFirstColumn ?? false,
+            highlightLastColumn: highlightLastColumn ?? false,
         });
     }
 

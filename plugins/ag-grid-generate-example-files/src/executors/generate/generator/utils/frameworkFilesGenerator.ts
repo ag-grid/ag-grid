@@ -7,7 +7,7 @@ import { vanillaToReactFunctionalTs } from '../transformation-scripts/grid-vanil
 import { vanillaToTypescript } from '../transformation-scripts/grid-vanilla-to-typescript';
 import { vanillaToVue } from '../transformation-scripts/grid-vanilla-to-vue';
 import { vanillaToVue3 } from '../transformation-scripts/grid-vanilla-to-vue3';
-import { getIntegratedDarkModeCode, readAsJsFile } from '../transformation-scripts/parser-utils';
+import { getIntegratedDarkModeCode, readAsJsFile, removeModuleRegistration } from '../transformation-scripts/parser-utils';
 import { InternalFramework, ParsedBindings } from '../types';
 import type { FileContents, ExampleConfig } from '../types';
 import { deepCloneObject } from './deepCloneObject';
@@ -76,8 +76,7 @@ const createVueFilesGenerator =
                 [entryFileName]: mainJs,
                 'index.html': indexHtml,
             },
-            // Other files, not including entry file
-            scriptFiles: Object.keys(scriptFiles),
+            // NOTE: `scriptFiles` not required, as system js handles import
         };
     };
 
@@ -85,7 +84,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
     vanilla: async ({ entryFile, indexHtml, componentScriptFiles, otherScriptFiles, isDev }) => {
         const internalFramework: InternalFramework = 'vanilla';
         const entryFileName = getEntryFileName(internalFramework)!;
-        let mainJs = readAsJsFile(entryFile);
+        let mainJs = readAsJsFile(entryFile, 'vanilla');
 
         // replace Typescript createGrid( with Javascript agGrid.createGrid(
         mainJs = mainJs.replace(/createGrid\(/g, 'agGrid.createGrid(');
@@ -94,7 +93,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         mainJs = mainJs.replace(/LicenseManager\.setLicenseKey\(/g, "agGrid.LicenseManager.setLicenseKey(");
         
         // Javascript is packages only
-        mainJs = mainJs.replace(/ModuleRegistry\.registerModules\(.*\)(;)?(\n\r)?/g, "");
+        mainJs = removeModuleRegistration(mainJs);
         
         mainJs = mainJs.replace(/agGrid\.createGrid(.*);/g, `agGrid.createGrid$1; ${getIntegratedDarkModeCode(entryFile, false, 'gridApi')}`);
 
@@ -157,16 +156,14 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
             indexJsx = await prettier.format(indexJsx, { parser: 'babel' });
         }
 
-        const scriptFiles = {...otherScriptFiles, ...componentScriptFiles};
-
         return {
             files: {
-                ...scriptFiles,
+                ...otherScriptFiles,
+                ...componentScriptFiles,
                 [entryFileName]: indexJsx,
                 'index.html': indexHtml,
             },
-            // Other files, not including entry file
-            scriptFiles: Object.keys(scriptFiles),
+            // NOTE: `scriptFiles` not required, as system js handles import
         };
     },
     reactFunctionalTs: async ({ typedBindings, indexHtml, otherScriptFiles, componentScriptFiles, isDev, importType, exampleConfig }) => {
@@ -179,11 +176,10 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
             indexTsx = await prettier.format(indexTsx, { parser: 'typescript' });
         }
 
-        const scriptFiles = {...otherScriptFiles, ...componentScriptFiles};
-
         return {
             files: {
-                ...scriptFiles,
+                ...otherScriptFiles,
+                ...componentScriptFiles,
                 [entryFileName]: indexTsx,
                 'index.html': indexHtml,
             },
@@ -202,11 +198,10 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
             appComponent = await prettier.format(appComponent, { parser: 'typescript' });
         }
 
-        const scriptFiles = {...otherScriptFiles, ...componentScriptFiles};
-
         return {
             files: {
-                ...scriptFiles,
+                ...otherScriptFiles,
+                ...componentScriptFiles,
                 // NOTE: No `index.html` as the contents are generated in the `app.component` file
                 // NOTE: Duplicating entrypoint boilerplate file here, so examples
                 // load from the same directory as these files, rather than

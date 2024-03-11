@@ -10,7 +10,7 @@ import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
 import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 
-import { ColDef, ColumnApi, GetRowIdParams, GridApi, GridReadyEvent, ModuleRegistry } from '@ag-grid-community/core';
+import { ColDef, GetRowIdParams, GridApi, GridReadyEvent, ModuleRegistry } from '@ag-grid-community/core';
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule, StatusBarModule, RangeSelectionModule]);
 
 // creates a unique symbol, eg 'ADG' or 'ZJD'

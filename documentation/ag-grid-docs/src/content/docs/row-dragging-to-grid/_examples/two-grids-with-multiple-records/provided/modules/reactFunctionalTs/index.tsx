@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, ColumnApi, GetRowIdParams, GridApi, GridReadyEvent, ModuleRegistry, RowDragEndEvent } from '@ag-grid-community/core';
+import { ColDef, GetRowIdParams, GridApi, GridReadyEvent, ModuleRegistry, RowDragEndEvent } from '@ag-grid-community/core';
 
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";

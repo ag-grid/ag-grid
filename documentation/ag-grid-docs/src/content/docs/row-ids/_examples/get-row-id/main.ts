@@ -7,11 +7,15 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 
 const columnDefs: ColDef[] = [
-  { headerName: "Row ID", valueGetter: 'node.id' },
+  { field: 'id', headerName: "Row ID" },
   { field: "make" },
   { field: "model" },
   { field: "price" }
 ];
+
+const defaultColDef: ColDef = {
+  flex: 1
+};
 
 // specify the data
 const rowData = [
@@ -27,6 +31,7 @@ let gridApi: GridApi;
 // let the grid know which columns and what data to use
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
+  defaultColDef: defaultColDef,
   rowData: rowData,
   getRowId: (params: GetRowIdParams) => params.data.id
 };

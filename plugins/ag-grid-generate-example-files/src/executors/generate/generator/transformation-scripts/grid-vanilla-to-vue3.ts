@@ -12,6 +12,7 @@ import {
 import {
     addEnterprisePackage,
     addLicenseManager,
+    addRelativeImports,
     convertFunctionToConstProperty,
     getActiveTheme,
     getFunctionName,
@@ -268,6 +269,7 @@ function getModuleImports(
     if (componentFileNames) {
         imports.push(...componentFileNames.map((componentFileName) => getImport(componentFileName, 'Vue', '')));
     }
+    addRelativeImports(bindings, imports, 'js');
 
     if (bindings.moduleRegistration) {
         bindings.imports.forEach((importStatement) => {
@@ -312,6 +314,7 @@ function getPackageImports(
     if (componentFileNames) {
         imports.push(...componentFileNames.map((componentFileName) => getImport(componentFileName, 'Vue', '')));
     }
+    addRelativeImports(bindings, imports, 'js');
 
     return imports;
 }
