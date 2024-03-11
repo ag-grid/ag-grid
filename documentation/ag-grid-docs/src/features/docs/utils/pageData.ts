@@ -25,17 +25,24 @@ export function getDocsPages(pages: DocsPage[]) {
           })
         : frameworkPages;
 
-    return filteredPages.map(({ framework, pageName, page }) => {
-        return {
-            params: {
-                framework,
-                pageName,
-            },
-            props: {
-                page,
-            },
-        };
-    });
+    return filteredPages
+        .map(({ framework, pageName, page }) => {
+            const { frameworks } = page.data;
+            if (frameworks && !frameworks.includes(framework)) {
+                return;
+            }
+
+            return {
+                params: {
+                    framework,
+                    pageName,
+                },
+                props: {
+                    page,
+                },
+            };
+        })
+        .filter(Boolean);
 }
 
 export function getDocsFrameworkPages() {
