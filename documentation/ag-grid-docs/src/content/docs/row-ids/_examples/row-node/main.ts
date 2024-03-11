@@ -1,4 +1,4 @@
-import { GridApi, createGrid, GridOptions, ColDef, GetRowIdParams } from '@ag-grid-community/core';
+import { GridApi, createGrid, GridOptions, RowNode, ColDef, GetRowIdParams } from '@ag-grid-community/core';
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { ModuleRegistry } from "@ag-grid-community/core";
@@ -26,6 +26,28 @@ const rowData = [
   { id: 'c14', make: "Aston Martin", model: "DBX", price: 190000 }
 ];
 
+function getAllRows() {
+  gridApi!.forEachNode( (rowNode: RowNode) => {
+    console.log(`=============== ROW ${rowNode.rowIndex}`)
+    console.log(`id = ${rowNode.id}`)
+    console.log(`rowIndex = ${rowNode.rowIndex}`)
+    console.log(`data = ${JSON.stringify(rowNode.data)}`)
+    console.log(`group = ${rowNode.group}`)
+    console.log(`height = ${rowNode.rowHeight}px`)
+    console.log(`isSelected = ${rowNode.isSelected()}`)
+  });
+  window.alert("Row details printed to developers console");
+}
+
+function getRowById() {
+  const rowNode = gridApi!.getRowNode('c2');
+  if (rowNode && rowNode.id == 'c2') {
+    console.log(`################ Got Row Node C2`);
+    console.log(`data = ${JSON.stringify(rowNode.data)}`);
+  }
+  window.alert("Row details printed to developers console");
+}
+
 let gridApi: GridApi;
 
 // let the grid know which columns and what data to use
@@ -33,6 +55,7 @@ const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   defaultColDef: defaultColDef,
   rowData: rowData,
+  rowSelection: 'multiple',
   getRowId: (params: GetRowIdParams) => params.data.id
 };
 
