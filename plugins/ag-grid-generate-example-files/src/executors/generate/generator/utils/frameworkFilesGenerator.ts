@@ -7,7 +7,7 @@ import { vanillaToReactFunctionalTs } from '../transformation-scripts/grid-vanil
 import { vanillaToTypescript } from '../transformation-scripts/grid-vanilla-to-typescript';
 import { vanillaToVue } from '../transformation-scripts/grid-vanilla-to-vue';
 import { vanillaToVue3 } from '../transformation-scripts/grid-vanilla-to-vue3';
-import { getIntegratedDarkModeCode, readAsJsFile } from '../transformation-scripts/parser-utils';
+import { getIntegratedDarkModeCode, readAsJsFile, removeModuleRegistration } from '../transformation-scripts/parser-utils';
 import { InternalFramework, ParsedBindings } from '../types';
 import type { FileContents, ExampleConfig } from '../types';
 import { deepCloneObject } from './deepCloneObject';
@@ -93,7 +93,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         mainJs = mainJs.replace(/LicenseManager\.setLicenseKey\(/g, "agGrid.LicenseManager.setLicenseKey(");
         
         // Javascript is packages only
-        mainJs = mainJs.replace(/ModuleRegistry\.registerModules\(.*\)(;)?(\n\r)?/g, "");
+        mainJs = removeModuleRegistration(mainJs);
         
         mainJs = mainJs.replace(/agGrid\.createGrid(.*);/g, `agGrid.createGrid$1; ${getIntegratedDarkModeCode(entryFile, false, 'gridApi')}`);
 

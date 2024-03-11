@@ -1,9 +1,9 @@
 import { ColDef, GridApi, createGrid, GridOptions, IRowNode, ExcelExportParams, ModuleRegistry } from '@ag-grid-community/core';
-import { FlagContext } from './interfaces';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+import { IOlympicData, FlagContext } from './interfaces'
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
