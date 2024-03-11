@@ -1,5 +1,6 @@
 import type { ImportType, InternalFramework, Library } from '@ag-grid-types';
 import type { CollectionEntry } from 'astro:content';
+import fs from 'fs/promises';
 import glob from 'glob';
 import { readFileSync } from 'node:fs';
 
@@ -7,6 +8,7 @@ import { SITE_BASE_URL, USE_PACKAGES, USE_PUBLISHED_PACKAGES } from '../constant
 import { type GlobConfig, createFilePathFinder } from './createFilePathFinder';
 import { getIsDev } from './env';
 import { pathJoin } from './pathJoin';
+import { urlWithBaseUrl } from './urlWithBaseUrl';
 
 export type DocsPage =
     | CollectionEntry<'docs'>
@@ -165,6 +167,38 @@ export const getContentRootFileUrl = ({ isDev }: { isDev?: boolean } = {}): URL 
     const websiteRoot = getWebsiteRootUrl({ isDev });
     const contentRoot = pathJoin(websiteRoot, 'src/content');
     return new URL(contentRoot, import.meta.url);
+};
+
+export const getDebugFolderUrl = ({ isDev }: { isDev?: boolean } = {}): URL => {
+    const websiteRoot = getWebsiteRootUrl({ isDev });
+    const contentRoot = pathJoin(websiteRoot, 'src/pages/debug');
+    return new URL(contentRoot, import.meta.url);
+};
+
+export const getDebugPageUrls = async ({
+    allFiles,
+}: {
+    /**
+     * Get all files, by default only returns `.astro` pages
+     */
+    allFiles?: boolean;
+} = {}) => {
+    const debugFolder = getDebugFolderUrl();
+    const pages = await fs.readdir(debugFolder);
+    const filteredPages = allFiles
+        ? pages
+        : pages.filter((pageName) => {
+              return pageName.match(/\.astro$/);
+          });
+
+    const pagePathPromises = filteredPages
+        .map(async (pageName) => {
+            const pageNameWithoutExt = pageName.replace(/\.[^.]+$/, '');
+            return urlWithBaseUrl(pathJoin('/debug', pageNameWithoutExt));
+        })
+        .flat();
+
+    return Promise.all(pagePathPromises);
 };
 
 export const isUsingPublishedPackages = () => USE_PUBLISHED_PACKAGES === true;
