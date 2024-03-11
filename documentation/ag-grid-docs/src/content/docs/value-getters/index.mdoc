@@ -11,7 +11,7 @@ from the Column Definition.
 
 The Column Definition `field` property maps values from the row data object to the Column's Cells.
 
-Dot notation (e.g. `medals.gold`) is supported for embedded objects. Suppress dot notation with the grid propery `suppressFieldDotNotation=true` if the data has dots in the field names.
+The field supports dot notation (e.g. `medals.gold`) to access properties of complex objects.
 
 ```js {% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
@@ -35,10 +35,10 @@ const gridOptions = {
 
 ## Value Getter
 
-A Value Getter is a function that gets called that returns the value.
-Typically `field` is used if it can and `valueGetter` is used when retrieving the data requires more logic.
-Columns with Value Getter's usually have stated Header Name's as the grid cannot derived Header Names from
-Value Getters like it does with Fields.
+A Value Getter is a function that gets called for each row to return the Cell Value for a Column. 
+Typically column cell values are loaded using a `field`, and then a `valueGetter` is used when retrieving 
+the value requires custom logic. Columns with Value Getter's usually have manually provided 
+Header Name's as the grid cannot derive Header Names from Value Getters like it does with Fields.
 
 ```js {% frameworkTransform=true suppressFrameworkContext=true spaceBetweenProperties=true %}
 const gridOptions = {
@@ -78,7 +78,7 @@ The example below demonstrates `valueGetter`. The following can be noted from th
 
 ## Header Value Getters
 
-Use `headerValueGetter` instead of `colDef.headerName` to allow dynamic header names.
+Use `headerValueGetter` instead of `colDef.headerName` to provide column header names dynamically.
 
 {% apiDocumentation source="column-properties/properties.json" section="header" names=["headerValueGetter"] /%}
 
