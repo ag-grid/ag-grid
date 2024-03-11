@@ -28,6 +28,19 @@ const ToolsExtensions = ({ limit = -1 }) => {
     const [filteredTools, setFilteredTools] = useState(applyLimit(tools));
     const [selectedFramework, setSelectedFramework] = useState();
 
+    const getGithubImage = (repo) => {
+        // Extract the 'owner' and 'repo' from the GitHub URL
+        const regex = /github\.com\/([^\/]+)\/([^\/]+)/;
+        const match = repo.match(regex);
+        if (match && match.length >= 3) {
+            const owner = match[1];
+            const repo = match[2];
+            return `https://opengraph.githubassets.com/${new Date().getMilliseconds}/${owner}/${repo}`;
+        } else {
+            throw new Error("Invalid GitHub repository URL.");
+        }
+    }
+
     return (
         <div className={styles.container}>
             <div>
@@ -68,7 +81,9 @@ const ToolsExtensions = ({ limit = -1 }) => {
                             <a href={tool.link} target="_blank" className={styles.linkWrapper}>
                                 <div key={index} className={styles.itemContainer}>
                                     <div className={styles.image}>
-                                        <img src={`/community/tools-extensions/${tool.img || 'sample.png'}`} />
+                                        {
+                                            <img src={`${tool.img ? `/community/tools-extensions/${tool.img}` : getGithubImage(tool.repo)}`} />
+                                        }
                                     </div>
                                     <div className={styles.content}>
                                         <div className={styles.toolHeader}>
