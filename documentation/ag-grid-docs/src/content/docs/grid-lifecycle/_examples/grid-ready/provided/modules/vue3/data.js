@@ -1,17 +1,4 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-function getData() {
+export function getData() {
     return [
         {
             "name": "Michael Phelps",

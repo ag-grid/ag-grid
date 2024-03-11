@@ -1,4 +1,4 @@
-function getData() {
+export function getData() {
     const rowData = [
         {country: 'Ireland', state: null, city: 'Dublin'},
         {country: 'Ireland', state: null, city: 'Galway'},
