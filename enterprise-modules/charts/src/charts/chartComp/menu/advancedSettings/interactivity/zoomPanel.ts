@@ -34,7 +34,8 @@ export class ZoomPanel extends Component {
             direction: 'vertical',
             suppressOpenCloseIcons: true,
             title: this.chartTranslationService.translate('zoom'),
-            suppressEnabledCheckbox: false,
+            suppressEnabledCheckbox: true,
+            useToggle: true
         });
         const zoomAxisDraggingCheckboxParams = this.chartMenuParamsFactory.getDefaultCheckboxParams(
             'zoom.enableAxisDragging',

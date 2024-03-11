@@ -162,6 +162,10 @@
         }
     }
 
+    .ag-chart-advanced-settings-section {
+        padding-top: calc(var(--ag-grid-size) * 2);
+        padding-bottom: calc(var(--ag-grid-size) * 2);
+    }
 
     .ag-charts-settings-group-title-bar,
     .ag-charts-data-group-title-bar,
@@ -173,9 +177,15 @@
         font-weight: 500;
     }
 
-    .ag-charts-format-top-level-group-item,
-    .ag-charts-advanced-settings-top-level-group-item {
+    .ag-charts-format-top-level-group-item {
         padding-bottom: 12px;
+        margin-top: calc(var(--ag-grid-size) * 2);
+        margin-bottom: 0;
+    }
+
+    .ag-charts-advanced-settings-top-level-group-item {
+        margin-top: calc(var(--ag-grid-size) * 2);
+        margin-bottom: 0;
     }
 
     .ag-charts-settings-group-container {
@@ -195,8 +205,7 @@
     
     .ag-charts-settings-group-title-bar,
     .ag-charts-data-group-title-bar,
-    .ag-charts-format-top-level-group-title-bar,
-    .ag-charts-advanced-settings-top-level-group-title-bar {
+    .ag-charts-format-top-level-group-title-bar {
         margin-top: calc(var(--ag-grid-size) * 2);
     }
 
@@ -204,12 +213,6 @@
     .ag-charts-advanced-settings-top-level-group-container {
         padding: 0;
         @include ag.theme-rtl((padding-left: 0, padding-right: var(--ag-widget-container-horizontal-padding)));
-    }
-
-    .ag-charts-format-top-level-group-item,
-    .ag-charts-advanced-settings-top-level-group-item {
-        margin-top: calc(var(--ag-grid-size) * 2);
-        margin-bottom: 0;
     }
 
     .ag-chart-mini-thumbnail {
