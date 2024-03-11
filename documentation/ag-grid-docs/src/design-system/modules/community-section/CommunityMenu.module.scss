@@ -3,21 +3,14 @@
 .communityMenu {
     z-index: 1;
     display: flex;
-    padding-top: $spacing-size-4;
-    padding-bottom: $spacing-size-4;
+    padding: $spacing-size-4 0px;
     list-style-type: none;
     justify-content: center;
     align-items: center;
     width: 100%;
-    padding: 0;
     margin-top: $spacing-size-5;
     gap: 8px;
-}
-.community-menu {
-    display: flex;
-    justify-content: center;
-    list-style: none;
-    padding: 0;
+    flex-wrap: wrap;
 }
 
 .community-menu-item {

@@ -5,6 +5,11 @@
     justify-content: space-between;
     margin-bottom: $spacing-size-8;
     gap: $spacing-size-4;
+
+    @media screen and (max-width: $breakpoint-community-small) {
+        flex-direction: column;
+        gap: $spacing-size-8;
+    }
 }
 
 .leftColumn,
@@ -24,6 +29,10 @@
     margin-left: $spacing-size-4;
     display: flex;
     align-items: center;
+
+    @media screen and (max-width: $breakpoint-community-small) {
+        margin-left: 0px;
+    }
 }
 
 .videoFrame {

@@ -7,15 +7,13 @@ import EventsNew from '@components/community-section/EventsNew';
 
 <Layout title="AG Grid">
     <div class="layout-max-width-large">
-       
+        <header class={LayoutStyles.header}>
+            <h1>Events</h1>
+            <p class={LayoutStyles.description}>AG Grid is a regular sponsor and speaker at some of the biggest conferences in the world. Take a look at where we'll be this year or browse through all the events we've sponsored and held since 2018.</p>
+            <CommunityMenu path={Astro.url.pathname} client:only/>
+        </header>
         <div class="layout-max-width-small">
             <div class={LayoutStyles.container}>
-                <header class={LayoutStyles.header}>
-                    <h1>Events</h1>
-                    <p class={LayoutStyles.description}>AG Grid is a regular sponsor and speaker at some of the biggest conferences in the world. Take a look at where we'll be this year or browse through all the events we've sponsored and held since 2018.</p>
-                    <CommunityMenu path={Astro.url.pathname} client:only/>
-                    <div class={LayoutStyles.gradient}></div>
-                </header>
                 <div class={LayoutStyles.content}>
                     <section>
                         <EventsNew client:only/>

@@ -1,13 +1,13 @@
 .sectionContainer {
     display: flex;
     justify-content: space-between;
-    align-items: center; // Align items vertically in the center
+    align-items: center; 
+    margin-bottom: 32px;
 }
 
 .sectionHeader {
     display: flex;
     flex-direction: column;
-    margin-bottom: 32px;
 }
 
 .sectionHeading {
@@ -42,5 +42,4 @@
 .sectionContainer h3,
 h2 {
     font-size: var(--text-fs-xl);
-    margin-bottom: 8px;
 }

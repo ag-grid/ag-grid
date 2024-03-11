@@ -14,14 +14,14 @@ import ToolsExtensions from '@components/community-section/tools-extensions/Tool
 
 <Layout title="AG Grid">
     <div class="layout-max-width-large">
+        <header class={LayoutStyles.header}>
+            <h1>Our Community</h1>
+            <p class={LayoutStyles.description}>Dedicated to our open-source community. Browse hundreds of open-source projects, find 3rd party tools and extensions, and stay up-to-date with the latest news - all in one place.</p>
+            <CommunityMenu path={Astro.url.pathname} client:only />
+        </header>
         <div class="layout-max-width-small">
             <div class={LayoutStyles.container}>
-                <header class={LayoutStyles.header}>
-                    <h1>Our Community</h1>
-                    <p class={LayoutStyles.description}>Dedicated to our open-source community and the thriving ecosystem of developers. Browse hundreds of open-source projects, find tools and extensions, and stay up-to-date with the latest news - all in one place.</p>
-                    <CommunityMenu path={Astro.url.pathname} client:only />
-                    <div class={LayoutStyles.gradient}></div>
-                </header>
+                
                 <div class={LayoutStyles.content}>
                     <!-- Featured News -->
                     <section>

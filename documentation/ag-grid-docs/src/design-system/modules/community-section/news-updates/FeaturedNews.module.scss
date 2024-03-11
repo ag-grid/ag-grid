@@ -1,56 +1,45 @@
+@use '../../../core/' as *;
+
 .gridContainer {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* Two columns in larger screens */
-    grid-gap: 24px; /* Space between grid items */
-    align-items: start;
-}
-
-@media (min-width: 768px) {
-    /* Adjust based on your design breakpoints */
-    .gridContainer {
-        grid-template-columns: repeat(4, 1fr); /* Four columns for larger screens */
-    }
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    column-gap: $spacing-size-4;
+    row-gap: $spacing-size-6;
 }
 
 .card {
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* This ensures top and bottom alignment */
+    justify-content: space-between;
     background: var(--color-bg-primary);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-xs);
     border: 1px solid var(--color-border-secondary);
-    height: 350px;
     overflow: hidden;
 }
 
 .articleImage {
-    width: 100%; /* Ensures the image covers the full width */
-    height: auto; /* Maintains aspect ratio */
-    margin-bottom: 0px; /* No space between image and the text content */
-    object-fit: cover; /* Ensures the image covers the space; this might crop the image */
-    border-top-left-radius: var(--radius-md); /* Matches the card's top-left radius */
-    border-top-right-radius: var(--radius-md); /* Matches the card's top-right radius */
+    width: 100%; 
+    height: 150px; 
+    margin-bottom: 0px; 
+    object-fit: cover;
+    border-radius: var(--radius-md) 0px 0px;
 }
 
 .content {
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Ensures space distribution */
-    padding: 16px;
-    padding-top: 8px;
-    height: calc(100% - 180px); /* Adjust based on the image height to maintain consistent card content area */
-}
-
-.articleTitle,
-.articleDescription,
-.learnMoreLink {
-    margin: 0px; /* Maintains existing spacing, adjust as needed */
+    justify-content: space-between;
+    padding: $spacing-size-4;
 }
 
 .articleTitle {
-    align-self: flex-start; /* Aligns title to the top */
-    margin-bottom: 5px; /* Adjust as needed */
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    align-self: flex-start; 
     font-size: var(--text-fs-base);
 }
 
@@ -61,12 +50,12 @@
     overflow: hidden;
     text-overflow: ellipsis;
     line-height: 1.6em;
-    height: 3em; /* Adjust based on the desired number of lines */
+    height: 3em; 
 }
 
 .learnMoreLink {
-    align-self: flex-start; /* Pushes link to the bottom */
-    margin-top: 12px; /* Ensures it stays at the bottom */
+    align-self: flex-start;
+    margin-top: 12px;
     text-decoration: none;
     color: var(--color-text-secondary);
     opacity: 0.7;
@@ -76,6 +65,4 @@
 .linkWrapper {
     all: unset;
     cursor: pointer;
-}
-.headerTitleDescription {
 }

@@ -8,16 +8,15 @@ import ShowcaseTable from '@components/community-section/ShowcaseTable';
 
 <Layout title="AG Grid">
     <div class="layout-max-width-large">
+        <header class={LayoutStyles.header}>
+            <h1>Showcase</h1>
+            <p class={LayoutStyles.description}>
+                AG Grid's products are downloaded millions of times per week. Most projects are internal and closed source, but we've hand-picked 200+ open-source examples to help inspire your next project.
+            </p>
+            <CommunityMenu path={Astro.url.pathname} client:only />
+        </header>
         <div class="layout-max-width-small">
             <div class={LayoutStyles.container}>
-                <header class={LayoutStyles.header}>
-                    <h1>Showcase</h1>
-                    <p class={LayoutStyles.description}>
-                        AG Grid's products are downloaded millions of times per week - Most projects are internal and closed source, but we've hand-picked 200+ open-source examples to help inspire your next project.
-                    </p>
-                    <CommunityMenu path={Astro.url.pathname} client:only />
-                    <div class={LayoutStyles.gradient}></div>
-                </header>
                 <div class={LayoutStyles.content}>
                     <section>
                         <h2>Our Favourites</h2>

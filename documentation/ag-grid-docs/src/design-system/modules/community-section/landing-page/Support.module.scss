@@ -5,6 +5,11 @@
     justify-content: space-around;
     gap: $spacing-size-24;
     margin-top: $spacing-size-6;
+
+    @media screen and (max-width: $breakpoint-community-small) {
+        flex-direction: column;
+        gap: $spacing-size-8;
+    }
 }
 
 .supportChannelContainer {

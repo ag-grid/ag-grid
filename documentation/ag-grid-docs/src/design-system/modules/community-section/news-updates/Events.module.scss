@@ -36,64 +36,6 @@
         );
     }
 
-    .eventDetailsContainer {
-        // TODO: Add  container around tabs
-
-        .yearFiltersContainer {
-            display: flex;
-            justify-content: flex-start;
-            gap: 2px;
-            margin-bottom: 24px;
-
-            .yearFilter {
-                padding: 8px;
-                padding-left: 16px;
-                padding-right: 16px;
-                cursor: pointer;
-                opacity: 0.7;
-                transition:
-                    background-color 0.2s,
-                    opacity 0.2s;
-                display: inline-block;
-                border-radius: var(--radius-4xl);
-                margin-bottom: 0;
-                cursor: pointer;
-                color: var(--color-text-secondary);
-                transition: background-color 0.3s ease;
-                background-color: var(--color-bg-primary);
-                border: none;
-                box-shadow: none;
-
-                &:hover {
-                    background-color: var(--color-util-brand-100);
-                }
-            }
-
-            .active {
-                color: var(--color-fg-primary);
-                padding: 8px;
-                padding-left: 16px;
-                padding-right: 16px;
-                background-color: var(--color-util-brand-100);
-            }
-        }
-
-        .eventTilesContainer {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            gap: 24px;
-
-            .eventTile {
-                border-radius: 4px;
-                padding: 12px;
-                display: flex;
-                flex-direction: column;
-                flex: 1;
-            }
-        }
-    }
-
     &:after {
         right: 0;
         background: linear-gradient(to left, var(--color-util-gray-50) 0%, transparent 100%);
@@ -111,7 +53,7 @@
     scroll-snap-align: start;
     width: auto;
     margin-right: $spacing-size-2;
-    height: 150px;
+    height: 225px;
     border-radius: var(--radius-sm);
 }
 
@@ -151,6 +93,11 @@
     flex-direction: row;
     justify-content: space-between;
     gap: $spacing-size-8;
+
+    @media screen and (max-width: $breakpoint-community-medium) {
+        flex-direction: column;
+        gap: $spacing-size-6;
+    }
 }
 
 .linkWrapper {
@@ -230,6 +177,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
 .location {
     --color-icon: var(--color-text-secondary);
     --icon-size: 20px;
