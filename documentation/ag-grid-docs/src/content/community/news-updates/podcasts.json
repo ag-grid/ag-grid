@@ -32,5 +32,16 @@
         "guests": [ "Niall Crosby" ],
         "published": "October, 2021",
         "publicationLogo": "javascript-jabber.png"
+    },
+    {
+        "title": "Bootstrapping a Successful Startup",
+        "website": "https://next.spreaker.com/episode/s2-e12-bootstrapping-a-successful-startup--44633123",
+        "description": "Join the panelists of the Angular Show as we have the opportunity to spend some time with Niall Crosby, the founder, and CEO of AG Grid. Niall shares with us the story of how he got started building AG Grid, some of the early decisions he made, and how he was able to bootstrap and launch a successful startup.",
+        "host": "Brian Love",
+        "publication": "The Angular Plus Show",
+        "guests": [ "Niall Crosby" ],
+        "published": "May, 2021",
+        "publicationLogo": "angular-plus-show.jpeg",
+        "link": "https://api.spreaker.com/v2/episodes/44633123/play.mp3"
     }
 ]
