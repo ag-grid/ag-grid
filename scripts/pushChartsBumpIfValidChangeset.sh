@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-NON_PACKAGE_JSON_COUNT=`git status --porcelain | grep -v package.json | wc -l`
+NON_PACKAGE_JSON_COUNT=`git status --porcelain | grep -v package.json | grep -v yarn.lock | wc -l`
 
 if [ $NON_PACKAGE_JSON_COUNT -ne 0 ];
 then
