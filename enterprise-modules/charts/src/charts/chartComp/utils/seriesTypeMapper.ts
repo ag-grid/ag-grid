@@ -206,5 +206,5 @@ export function isPieChartSeries(seriesType: ChartSeriesType): seriesType is Pie
 }
 
 export function canOnlyHaveSingleSeries(chartType: ChartType): boolean {
-    return chartType === 'pie' || chartType === 'waterfall';
+    return chartType === 'pie' || chartType === 'waterfall' || chartType === 'histogram';
 }

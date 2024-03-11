@@ -143,7 +143,8 @@ export class ChartDataModel extends BeanStub {
         }
     }
 
-    public updateCellRanges(updatedColState?: ColState, resetOrder?: boolean): void {
+    public updateCellRanges(params?: { updatedColState?: ColState, resetOrder?: boolean, maintainColState?: boolean }): void {
+        const { updatedColState, resetOrder, maintainColState } = params ?? {};
         if (this.valueCellRange) {
             this.referenceCellRange = this.valueCellRange;
         }
@@ -158,7 +159,7 @@ export class ChartDataModel extends BeanStub {
         this.setDimensionCellRange(dimensionCols, allColsFromRanges, updatedColState);
         this.setValueCellRange(valueCols, allColsFromRanges, updatedColState);
 
-        if (!updatedColState) {
+        if (!updatedColState && !maintainColState) {
             this.resetColumnState();
             // dimension / category cell range could be out of sync after resetting column state when row grouping
             this.syncDimensionCellRange();
