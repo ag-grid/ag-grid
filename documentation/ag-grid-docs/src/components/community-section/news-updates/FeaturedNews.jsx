@@ -4,11 +4,9 @@ import React from 'react';
 import featuredNews from '../../../content/community/news-updates/featured-news.json';
 
 const FeaturedNews = () => {
-    const allArticles = [featuredNews.major_article, ...featuredNews.minor_articles];
-
     return (
         <div className={styles.gridContainer}>
-            {allArticles.map((article, index) => (
+            {featuredNews.map((article, index) => (
                 <a href={article.link} target="_blank" className={styles.linkWrapper} key={index}>
                     <div className={styles.card}>
                         <img src={article.image} alt="Image Description" className={styles.articleImage} />
