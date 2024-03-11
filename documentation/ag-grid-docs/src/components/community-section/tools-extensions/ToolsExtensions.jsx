@@ -5,9 +5,9 @@ import React, { useEffect, useReducer, useState } from 'react';
 import tools from '../../../content/community/tools-extensions.json';
 
 const frameworks = [
+    'React',
     'JavaScript',
     'TypeScript',
-    'React',
     'Angular',
     'Vue',
     'Python',
