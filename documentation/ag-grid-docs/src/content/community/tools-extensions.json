@@ -109,7 +109,7 @@
         "stars": 20,
         "title": "Sky UX",
         "img": "sky-ux.png",
-        "description": "SKY UX components for Angular",
+        "description": "Blackbaud's open source framework leverages reusable design patterns and components to create impactful, cohesive experiences across web applications.",
         "frameworks": [
             "Angular"
         ],
@@ -136,7 +136,7 @@
     {
         "repo": "https://github.com/widgetti/ipyaggrid",
         "title": "ipyaggrid",
-        "description": "A wrapper for using AG Grid in Jupyter notebooks.",
+        "description": "A wrapper for using AG Grid in Jupyter notebooks. The goal of this ipywidget is to harness the power of the excellent Javascript library ag-Grid",
         "link": "https://widgetti.github.io/ipyaggrid/",
         "type": "Wrapper",
         "open_source": true,
@@ -183,7 +183,7 @@
     {
         "repo": "https://github.com/xh/hoist-react",
         "title": "Hoist UX Toolkit",
-        "description": "A web application development toolkit",
+        "description": "Built on a careful integration of server and client technologies, Hoist provides an opinionated yet flexible foundation for building and operating enterprise web applications.",
         "link": "https://xh.io/#hoist",
         "type": "Integration",
         "open_source": true,
@@ -198,7 +198,7 @@
     {
         "repo": "https://github.com/epicmaxco/vuestic-ui",
         "title": "Vuestic UI",
-        "description": "Free and Open Source UI Library for Vue 3",
+        "description": "Vuestic UI is an OpenSource Vue 3 based UI framework. It is a MIT-licensed UI framework that provides ready-to-use frontend components that are easily configurable and speed up development of responsive and fast-loading web interfaces.",
         "link": "https://ui.vuestic.dev/ui-elements/data-table",
         "type": "Integration",
         "open_source": true,
