@@ -51,6 +51,7 @@
   ],
   "homepage": "https://www.ag-grid.com/",
   "devDependencies": {
+    "source-map-loader": "^5.0.0",
     "gulp": "^4.0.0",
     "gulp-replace": "^1.0.0",
     "gulp-rename": "^2.0.0",

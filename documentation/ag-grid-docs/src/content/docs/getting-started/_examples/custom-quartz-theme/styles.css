@@ -1,0 +1,8 @@
+.ag-theme-quartz, .ag-theme-quartz-dark {
+      /* Changes the color of the grid text */
+      --ag-foreground-color: rgb(163, 64, 64);
+      /* Changes the color of the grid background */
+      --ag-background-color: rgba(215, 245, 231, 0.212);
+      /* Changes the background color of selected rows */
+      --ag-selected-row-background-color: rgba(0, 38, 255, 0.1);
+}

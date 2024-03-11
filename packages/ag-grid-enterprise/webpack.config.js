@@ -1,10 +1,9 @@
-// const { NxWebpackPlugin } = require('@nx/webpack');
 const { join, resolve} = require('path');
 
 const minify = false;
 module.exports = {
     mode: "development",
-    devtool: false,
+    devtool: "inline-source-map",
     entry: join(__dirname, '/src/main-umd.ts'),
     output: {
         path: join(__dirname, 'dist'),
@@ -20,8 +19,12 @@ module.exports = {
     module: {
         rules: [
             {
+                test: /\.cjs.js$/,
+                enforce: "pre",
+                use: ["source-map-loader"],
+            },
+            {
                 test: /\.tsx?$/,
-                // use: 'ts-loader',
                 loader: require.resolve('ts-loader'),
                 exclude: /node_modules/,
                 options: {
@@ -55,27 +58,5 @@ module.exports = {
             }
         ],
 
-    },
-    // plugins: [
-    //     new NxWebpackPlugin({
-    //         main: './src/main.ts',
-    //         tsConfig: './tsconfig.app.json',
-    //         outputHashing: process.env['NODE_ENV'] === 'production' ? 'all' : 'none',
-    //         optimization: process.env['NODE_ENV'] === 'production',
-    //     }),
-    // ],
-    // module: {
-    //     parser: {
-    //         javascript: {
-    //             reexportExportsPresence: false,
-    //         },
-    //     }
-    // }
+    }
 };
-// module.exports = {
-//     mode: 'development',
-//     output: {
-//         library: "agGrid",
-//         libraryTarget: "umd"
-//     }
-// }
