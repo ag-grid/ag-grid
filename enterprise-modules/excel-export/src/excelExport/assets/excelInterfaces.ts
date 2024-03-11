@@ -74,4 +74,8 @@ export interface ExcelDataTable {
     columns: string[];
     headerRowIndex: number;
     rowCount: number;
+    showRowStripes: boolean;
+    showColumnStripes: boolean;
+    highlightFirstColumn: boolean;
+    highlightLastColumn: boolean;
 }

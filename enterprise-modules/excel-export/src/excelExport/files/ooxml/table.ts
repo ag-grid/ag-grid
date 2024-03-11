@@ -3,7 +3,17 @@ import { ExcelDataTable } from '../../assets/excelInterfaces';
 
 const tableFactory: ExcelOOXMLTemplate = {
     getTemplate(dataTable: ExcelDataTable, idx: number) {
-        const { name, columns, rowCount, displayName, headerRowIndex } = dataTable || {};
+        const {
+            name,
+            columns,
+            rowCount,
+            displayName,
+            headerRowIndex,
+            showRowStripes,
+            showColumnStripes,
+            highlightFirstColumn,
+            highlightLastColumn
+        } = dataTable || {};
 
         if (!dataTable || !name || !Array.isArray(columns) || !columns.length || !rowCount) {
             return { name: "table" };
@@ -64,10 +74,10 @@ const tableFactory: ExcelOOXMLTemplate = {
                     properties: {
                         rawMap: {
                             name: "TableStyleLight1",
-                            showFirstColumn: 0,
-                            showLastColumn: 0,
-                            showRowStripes: 1,
-                            showColumnStripes: 0
+                            showFirstColumn: highlightFirstColumn ? 1 : 0,
+                            showLastColumn: highlightLastColumn ? 1 : 0,
+                            showRowStripes: showRowStripes ? 1 : 0,
+                            showColumnStripes: showColumnStripes ? 1 : 0
                         }
                     }
                 }
