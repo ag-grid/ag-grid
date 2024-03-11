@@ -16,7 +16,7 @@ import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-mo
 import { ModuleRegistry } from "@ag-grid-community/core";
 
 ModuleRegistry.registerModules([RowGroupingModule, ServerSideRowModelModule]);
-
+import { data } from './data';
 import { FakeServer } from './fakeServer';
 
 const columnDefs: ColDef[] = [
@@ -53,7 +53,7 @@ const gridOptions: GridOptions = {
   },
   onGridReady: (params: GridReadyEvent) => {
     // setup the fake server
-    const server = FakeServer();
+    const server = FakeServer(data);
 
     // create datasource with a reference to the fake server
     const datasource = getServerSideDatasource(server);

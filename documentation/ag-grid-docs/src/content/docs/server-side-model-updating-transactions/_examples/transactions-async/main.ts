@@ -71,7 +71,7 @@ const gridOptions: GridOptions = {
     disable('#stopUpdates', true);
   
     // setup the fake server
-    const server = FakeServer();
+    const server = FakeServer(data);
   
     // create datasource with a reference to the fake server
     const datasource = getServerSideDatasource(server);

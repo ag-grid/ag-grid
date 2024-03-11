@@ -9,7 +9,7 @@ import "@ag-grid-community/styles/ag-theme-quartz.css";
 import './styles.css';
 
 
-import { ColDef, ColumnApi, GridApi, GridReadyEvent, ModuleRegistry } from '@ag-grid-community/core';
+import { ColDef, GridApi, GridReadyEvent, ModuleRegistry } from '@ag-grid-community/core';
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const GridExample = () => {

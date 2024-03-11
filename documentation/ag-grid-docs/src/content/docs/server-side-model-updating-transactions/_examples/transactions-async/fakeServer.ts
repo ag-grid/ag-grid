@@ -1,6 +1,5 @@
-import { data } from './data';
 
-export function FakeServer() {
+export function FakeServer(data) {
     alasql.options.cache = false;
   
     return {

@@ -1,15 +1,14 @@
 'use strict';
 
-import React, {useCallback, useMemo, useRef, useState, StrictMode} from 'react';
-import {createRoot} from 'react-dom/client';
-import {AgGridReact} from '@ag-grid-community/react';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ColDef, GridApi, GridPreDestroyedEvent, GridReadyEvent, ModuleRegistry } from '@ag-grid-community/core';
+import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import {GridApi, ModuleRegistry} from '@ag-grid-community/core';
-import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
-import { ColDef, ColumnApi, GridPreDestroyedEvent, GridReadyEvent } from '@ag-grid-community/core';
+import React, { StrictMode, useCallback, useMemo, useState } from 'react';
+import { createRoot } from 'react-dom/client';
 
-import {TAthlete, getDataSet} from './data';
+import { getDataSet, TAthlete } from './data';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
