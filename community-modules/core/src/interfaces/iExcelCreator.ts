@@ -551,4 +551,16 @@ export interface ExcelSheetPageSetup {
 export interface ExcelTableSetup {
     /** This property is used to set the table name. It should be an alphanumeric string with no special characters. */
     name: string;
+
+    /** Set this property to `true` to show row stripes. Default is `true`. */
+    showRowStripes?: boolean;
+
+    /** Set this property to `true` to show column stripes. Default is `false`. */
+    showColumnStripes?: boolean;
+
+    /** Set this property to `true` to show the first column in bold/highlighted style. Default is `false`. */
+    highlightFirstColumn?: boolean;
+
+    /** Set this property to `true` to show the last column in bold/highlighted style. Default is `false`. */
+    highlightLastColumn?: boolean;
 }
