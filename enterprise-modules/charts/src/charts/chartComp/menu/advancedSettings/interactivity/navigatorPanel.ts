@@ -34,7 +34,8 @@ export class NavigatorPanel extends Component {
                 direction: 'vertical',
                 suppressOpenCloseIcons: true,
                 title: this.chartTranslationService.translate("navigator"),
-                suppressEnabledCheckbox: false,
+                suppressEnabledCheckbox: true,
+                useToggle: true
             }
         );
         const navigatorHeightSliderParams = this.chartMenuParamsFactory.getDefaultSliderParams("navigator.height", "height", 60);

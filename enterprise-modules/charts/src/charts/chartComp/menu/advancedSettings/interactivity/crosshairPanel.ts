@@ -32,7 +32,8 @@ export class CrosshairPanel extends Component {
             direction: 'vertical',
             suppressOpenCloseIcons: true,
             title: this.chartTranslationService.translate('crosshair'),
-            suppressEnabledCheckbox: false,
+            suppressEnabledCheckbox: true,
+            useToggle: true
         });
         const crosshairLabelCheckboxParams = this.chartMenuParamsFactory.getDefaultCheckboxParams(
             'crosshair.label.enabled',

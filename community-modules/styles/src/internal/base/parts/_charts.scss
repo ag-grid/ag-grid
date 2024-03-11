@@ -210,11 +210,21 @@
         width: 100%;
     }
 
+    .ag-chart-advanced-settings-wrapper {
+        padding-bottom: 0;
+    }
+
     .ag-chart-data-section,
     .ag-chart-format-section,
     .ag-chart-advanced-settings-section {
         display: flex;
         margin: 0;
+    }
+
+    .ag-chart-advanced-settings-section {
+        border-bottom: 1px solid var(--ag-secondary-border-color);
+        padding-top: var(--ag-grid-size);
+        padding-bottom: var(--ag-grid-size);
     }
 
     .ag-chart-empty-text {
@@ -386,10 +396,14 @@
 
     .ag-charts-settings-group-title-bar,
     .ag-charts-data-group-title-bar,
-    .ag-charts-format-top-level-group-title-bar,
-    .ag-charts-advanced-settings-top-level-group-title-bar {
+    .ag-charts-format-top-level-group-title-bar {
         border-top: var(--ag-borders-secondary) var(--ag-secondary-border-color);
         position: relative;
+    }
+
+    .ag-charts-advanced-settings-top-level-group-title-bar {
+        position: relative;
+        background-color: unset;
     }
 
     @include ag.keyboard-focus((
