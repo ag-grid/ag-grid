@@ -4,7 +4,7 @@ import { AgCartesianAxisType, AgCharts, AgChartOptions, AgPolarAxisType, AgBaseT
 import { ChartController } from "../chartController";
 import { AgChartActual, AgChartAxisType } from "../utils/integration";
 import { get, set } from "../utils/object";
-import { ChartSeriesType, isPolar, VALID_SERIES_TYPES } from "../utils/seriesTypeMapper";
+import { ChartSeriesType, isCartesian, VALID_SERIES_TYPES } from "../utils/seriesTypeMapper";
 
 export interface ChartOptionsProxy {
     getValue<T = string>(expression: string, calculated?: boolean): T;
@@ -105,7 +105,10 @@ export class ChartOptionsService extends BeanStub {
         const targetChartOptions = this.createChartOptions();
 
         // these theme overrides are persisted across all chart types
-        const UNIVERSAL_PERSISTED_THEME_OVERRIDES: Array<keyof AgBaseThemeableChartOptions> = ['animation', 'zoom', 'navigator'];
+        const UNIVERSAL_PERSISTED_THEME_OVERRIDES: Array<keyof AgBaseThemeableChartOptions> = ['animation'];
+
+        // these theme overrides are persisted across all cartesian chart types
+        const PERSISTED_CARTESIAN_CHART_THEME_OVERRIDES: Array<keyof AgBaseThemeableChartOptions> = ['zoom', 'navigator'];
 
         // these axis theme overrides are persisted across all cartesian chart types
         const PERSISTED_CARTESIAN_AXIS_THEME_OVERRIDES: Array<keyof AgBaseCartesianAxisOptions> = ['crosshair'];
@@ -113,7 +116,8 @@ export class ChartOptionsService extends BeanStub {
         // other chart options will be retained depending on the specifics of the chart type from/to transition
         const chartSpecificThemeOverrideKeys = ((previousChartType, updatedChartType) => {
             const expressions = new Array<string>();
-            if (!isPolar(previousChartType) && !isPolar(updatedChartType)) {
+            if (isCartesian(previousChartType) && isCartesian(updatedChartType)) {
+                expressions.push(...PERSISTED_CARTESIAN_CHART_THEME_OVERRIDES);
                 const xAxis = this.getCartesianAxis(this.getChartAxes(), 'xAxis');
                 const yAxis = this.getCartesianAxis(this.getChartAxes(), 'yAxis');
                 for (const expression of PERSISTED_CARTESIAN_AXIS_THEME_OVERRIDES) {

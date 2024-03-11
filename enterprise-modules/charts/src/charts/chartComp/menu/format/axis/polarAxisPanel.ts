@@ -15,7 +15,7 @@ import {ChartController} from '../../../chartController';
 import {FontPanel, FontPanelParams} from '../fontPanel';
 import {ChartTranslationKey, ChartTranslationService} from '../../../services/chartTranslationService';
 import {FormatPanelOptions} from '../formatPanel';
-import {isPolar, isRadial} from '../../../utils/seriesTypeMapper';
+import {isRadial} from '../../../utils/seriesTypeMapper';
 import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class PolarAxisPanel extends Component {
@@ -81,7 +81,7 @@ export class PolarAxisPanel extends Component {
             }));
         }
 
-        if (isPolar(chartType)) {
+        if (chartType !== 'pie') {
             this.axisGroup.addItem(this.createSlider({
                 labelKey: 'innerRadius',
                 defaultMaxValue: 1,

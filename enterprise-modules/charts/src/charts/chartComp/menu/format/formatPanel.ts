@@ -12,7 +12,7 @@ import { CartesianAxisPanel } from "./axis/cartesianAxisPanel";
 import { PolarAxisPanel } from "./axis/polarAxisPanel";
 import { ChartPanel } from "./chart/chartPanel";
 import { SeriesPanel } from "./series/seriesPanel";
-import { ChartSeriesType, hasGradientLegend, isPolar } from "../../utils/seriesTypeMapper";
+import { ChartSeriesType, hasGradientLegend, isCartesian, isPolar } from "../../utils/seriesTypeMapper";
 import { GradientLegendPanel } from './legend/gradientLegendPanel';
 import { ChartPanelFeature } from "../chartPanelFeature";
 import { ChartMenuContext } from "../chartMenuContext";
@@ -81,7 +81,7 @@ export class FormatPanel extends Component {
                     // Polar charts have different axis options from cartesian charts, so choose the appropriate panels
                     if (isPolar(chartType)) {
                         this.chartPanelFeature.addComponent(new PolarAxisPanel(opts));
-                    } else {
+                    } else if (isCartesian(chartType)) {
                         this.chartPanelFeature.addComponent(new CartesianAxisPanel('xAxis', opts));
                         this.chartPanelFeature.addComponent(new CartesianAxisPanel('yAxis', opts));
                     }

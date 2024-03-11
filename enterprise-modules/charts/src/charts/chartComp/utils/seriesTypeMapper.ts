@@ -82,8 +82,52 @@ export function isStacked(chartType: ChartType): boolean {
     return stackedChartTypes.has(chartType);
 }
 
+export function isCartesian(chartType: ChartType): boolean {
+    switch (chartType) {
+        case 'area':
+        case 'areaColumnCombo':
+        case 'bar':
+        case 'boxPlot':
+        case 'bubble':
+        case 'column':
+        case 'columnLineCombo':
+        case 'customCombo':
+        case 'groupedBar':
+        case 'groupedColumn':
+        case 'heatmap':
+        case 'histogram':
+        case 'line':
+        case 'normalizedArea':
+        case 'normalizedBar':
+        case 'normalizedColumn':
+        case 'rangeArea':
+        case 'rangeBar':
+        case 'scatter':
+        case 'stackedArea':
+        case 'stackedBar':
+        case 'stackedColumn':
+        case 'waterfall':
+            return true;
+        case 'donut':
+        case 'doughnut':
+        case 'nightingale':
+        case 'pie':
+        case 'radarArea':
+        case 'radarLine':
+        case 'radialColumn':
+        case 'radialBar':
+        case 'sunburst':
+        case 'treemap':
+        default:
+            return false;
+    }
+}
+
 export function isPolar(chartType: ChartType): boolean {
     switch (chartType) {
+        case 'donut':
+        case 'doughnut':
+        case 'pie':
         case 'radialColumn':
         case 'radialBar':
         case 'radarLine':
