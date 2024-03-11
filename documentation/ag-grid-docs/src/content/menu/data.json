@@ -29,6 +29,20 @@
             }
         ]
     },
+    "product": {
+        "items": [
+            {
+                "title": "AG Charts",
+                "description": "Best JavaScript Charts in the World",
+                "url": "https://charts.ag-grid.com"
+            },
+            {
+                "title": "AG Grid",
+                "description": "Best JavaScript Grid in the World",
+                "url": "https://ag-grid.com"
+            }
+        ]
+    },
     "api": {
         "sections": [
             {
@@ -556,7 +570,7 @@
                             },
                             {
                                 "title": "Advanced",
-                                "items": [                                    
+                                "items": [
                                     {
                                         "title": "Row Dragging",
                                         "path": "row-dragging",
@@ -638,7 +652,7 @@
                                 ]
                             }
                         ]
-                    },                    
+                    },
                     {
                         "title": "Filtering",
                         "items": [

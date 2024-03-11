@@ -13,6 +13,7 @@ import { getApiPaths } from '@utils/apiMenuPath';
 const { pathname } = Astro.url;
 const { data: menuData } = await getEntry('menu', 'data');
 const topNavItems = menuData.header.items;
+const productItems = menuData.product.items;
 const frameworkPaths = FRAMEWORKS.map((framework) => ({
     title: 'Docs',
     path: urlWithBaseUrl(framework),
@@ -26,28 +27,13 @@ export interface Props {
 }
 
 const { showSearchBar, showDocsNav } = Astro.props;
-
-const dropdownItems = [
-    {
-        title: 'AG Charts',
-        description: 'Best JavaScript Charts in the World',
-        icon: 'icon',
-        link: 'https://charts.ag-grid.com',
-    },
-    {
-        title: 'AG Grid',
-        description: 'Best JavaScript Grid in the World',
-        icon: 'icon',
-        link: 'https://ag-grid.com',
-    },
-];
 ---
 
 <header class:list={[styles.header, 'site-header']}>
     <div class:list={[styles.headerInner, 'layout-page-max-width']}>
         <SiteLogo client:load />
 
-        <ProductDropdown client:load items={dropdownItems} children={null} />
+        <ProductDropdown client:load items={productItems} children={null} />
 
         {
             (showDocsNav || showSearchBar) && (
