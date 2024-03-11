@@ -56,7 +56,7 @@ export const ProductDropdown = ({ items, children }) => {
             {isOpen && (
                 <div className={styles.customContent}>
                     {items.map((item, index) => (
-                        <a key={index} href={item.link} className={styles.itemsWrapper}>
+                        <a key={index} href={item.url} className={styles.itemsWrapper}>
                             <div className={styles.placeholderIcon}>{getIconComponent(item.title)}</div>
                             <div className={styles.productsWrapper}>
                                 <div className={styles.productTitle}>{item.title}</div>
