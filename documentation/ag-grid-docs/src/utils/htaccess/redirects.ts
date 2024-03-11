@@ -2619,6 +2619,11 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/react-data-grid/component-provide-inject/', to: '/react-data-grid/components/' },
     { from: '/vue-data-grid/component-provide-inject/', to: '/vue-data-grid/components/' },
 
+    { from: '/javascript-data-grid/rendering-api/', to: '/javascript-data-grid/dom-virtualisation/' },
+    { from: '/angular-data-grid/rendering-api/', to: '/angular-data-grid/dom-virtualisation/' },
+    { from: '/react-data-grid/rendering-api/', to: '/react-data-grid/dom-virtualisation/' },
+    { from: '/vue-data-grid/rendering-api/', to: '/vue-data-grid/dom-virtualisation/' },
+
     { from: '/cookies.php', to: '/cookies' },
     { from: '/privacy.php', to: '/privacy' },
     { from: '/about.php', to: '/about' },

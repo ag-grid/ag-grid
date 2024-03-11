@@ -572,10 +572,6 @@
                                         ]
                                     },
                                     {
-                                        "title": "Displayed Rows",
-                                        "path": "rendering-api"
-                                    },
-                                    {
                                         "title": "Full Width Rows",
                                         "path": "full-width-rows"
                                     },
