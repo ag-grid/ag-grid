@@ -15,7 +15,7 @@ import { ModuleRegistry } from "@ag-grid-community/core";
 ModuleRegistry.registerModules([ServerSideRowModelModule]);
 
 import { FakeServer } from './fakeServer';
-import { dataObservers, randomUpdates } from './data';
+import { dataObservers, randomUpdates, data } from './data';
 
 const columnDefs: ColDef[] = [
     { field: 'tradeId' },
