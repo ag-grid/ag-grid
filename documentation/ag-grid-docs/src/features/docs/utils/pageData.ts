@@ -6,7 +6,7 @@ import { getIsDev } from '../../../utils/env';
 import { getGeneratedContentsFileList } from '../../example-generator';
 import { getInternalFrameworkExamples, getPagesList } from './filesData';
 
-const shouldFilterPages = QUICK_BUILD_PAGES && !getIsDev();
+const isQuickBuild = QUICK_BUILD_PAGES && !getIsDev();
 
 export function getDocsPages(pages: DocsPage[]) {
     const frameworkPages = FRAMEWORKS.flatMap((framework) => {
@@ -19,7 +19,7 @@ export function getDocsPages(pages: DocsPage[]) {
         });
     });
 
-    const filteredPages = shouldFilterPages
+    const filteredPages = isQuickBuild
         ? frameworkPages.filter(({ pageName }) => {
               return QUICK_BUILD_PAGES.includes(pageName);
           })
@@ -50,7 +50,7 @@ export function getDocsFrameworkPages() {
 
 async function getDocsExampleNameParts({ pages }: { pages: DocsPage[] }) {
     const internalFrameworkExamples = await getInternalFrameworkExamples({ pages });
-    const filteredInternalFrameworkExamples = shouldFilterPages
+    const filteredInternalFrameworkExamples = isQuickBuild
         ? internalFrameworkExamples.filter(({ pageName }) => {
               return QUICK_BUILD_PAGES.includes(pageName);
           })
