@@ -26287,6 +26287,14 @@ source-map-loader@^3.0.0:
     iconv-lite "^0.6.3"
     source-map-js "^1.0.1"
 
+source-map-loader@^5.0.0:
+  version "5.0.0"
+  resolved "http://52.50.158.57:4873/source-map-loader/-/source-map-loader-5.0.0.tgz#f593a916e1cc54471cfc8851b905c8a845fc7e38"
+  integrity sha512-k2Dur7CbSLcAH73sBcIkV5xjPV4SzqO1NJ7+XaQl8if3VODDUj3FNchNGpqgJSKbvUfJuhVdv8K2Eu8/TNl2eA==
+  dependencies:
+    iconv-lite "^0.6.3"
+    source-map-js "^1.0.2"
+
 source-map-resolve@^0.5.0, source-map-resolve@^0.5.2:
   version "0.5.3"
   resolved "http://52.50.158.57:4873/source-map-resolve/-/source-map-resolve-0.5.3.tgz#190866bece7553e1f8f267a2ee82c606b5509a1a"
