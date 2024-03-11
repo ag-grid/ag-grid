@@ -47,6 +47,7 @@ import {ComboChartProxy} from "./chartProxies/combo/comboChartProxy";
 import {getCanonicalChartType, isHierarchical} from "./utils/seriesTypeMapper";
 import { ChartMenuParamsFactory } from './menu/chartMenuParamsFactory';
 import { ChartMenuContext } from "./menu/chartMenuContext";
+import { deepMerge } from './utils/object';
 
 export interface GridChartParams {
     chartId: string;
@@ -95,6 +96,7 @@ export class GridChartComp extends Component {
     private chartDialog: AgDialog;
 
     private chartController: ChartController;
+    private chartOptionsService: ChartOptionsService;
     private chartMenuContext: ChartMenuContext;
 
     private chartProxy: ChartProxy;
@@ -132,6 +134,7 @@ export class GridChartComp extends Component {
         // only the chart controller interacts with the chart model
         const model = this.createBean(new ChartDataModel(modelParams));
         this.chartController = this.createManagedBean(new ChartController(model));
+        this.chartOptionsService = this.createManagedBean(new ChartOptionsService(this.chartController));
 
         this.validateCustomThemes();
 
@@ -215,12 +218,11 @@ export class GridChartComp extends Component {
 
     private createMenuContext(): void {
         if (this.chartMenuContext) { return; }
-        const chartOptionsService = this.createManagedBean(new ChartOptionsService(this.chartController));
-        const chartMenuParamsFactory = this.createManagedBean(new ChartMenuParamsFactory(chartOptionsService.getChartThemeOverridesProxy()));
-        const chartAxisMenuParamsFactory = this.createManagedBean(new ChartMenuParamsFactory(chartOptionsService.getAxisThemeOverridesProxy()));
+        const chartMenuParamsFactory = this.createManagedBean(new ChartMenuParamsFactory(this.chartOptionsService.getChartThemeOverridesProxy()));
+        const chartAxisMenuParamsFactory = this.createManagedBean(new ChartMenuParamsFactory(this.chartOptionsService.getAxisThemeOverridesProxy()));
         this.chartMenuContext = {
             chartController: this.chartController,
-            chartOptionsService,
+            chartOptionsService: this.chartOptionsService,
             chartMenuParamsFactory,
             chartAxisMenuParamsFactory
         }
@@ -366,13 +368,32 @@ export class GridChartComp extends Component {
             }
         }
 
-        const chartTypeChanged = this.chartTypeChanged(params);
+        const updatedChartType = this.chartTypeChanged(params);
+        // If the chart type has changed, grab the theme overrides from the exisiting chart before destroying it,
+        // so that we can retain any compatible theme overrides across different chart types.
+        const persistedThemeOverrides = updatedChartType
+            ? (((updatedChartType) => {
+                const currentChartType = this.chartType;
+                const targetChartType = updatedChartType;
+                const existingChartOptions = this.chartProxy.getChart()?.getOptions()
+                return this.chartOptionsService.getPersistedChartThemeOverrides(
+                    existingChartOptions,
+                    currentChartType,
+                    targetChartType,
+                );
+            }))(updatedChartType)
+            : undefined;
 
         // recreate chart if chart type has changed
-        if (chartTypeChanged) this.createChart();
+        if (updatedChartType) this.createChart();
+        
+        // combine any provided theme overrides with any retained theme overrides from changing chart type
+        const updatedThemeOverrides = persistedThemeOverrides && params?.chartThemeOverrides
+            ? deepMerge(persistedThemeOverrides, params.chartThemeOverrides)
+            : persistedThemeOverrides || params?.chartThemeOverrides;
 
         // update chart options if chart type hasn't changed or if overrides are supplied
-        this.updateChart(params?.chartThemeOverrides);
+        this.updateChart(updatedThemeOverrides);
 
         if (params?.chartId) {
             this.chartProxy.getChart().waitForUpdate().then(() => {
@@ -403,9 +424,15 @@ export class GridChartComp extends Component {
         this.titleEdit.refreshTitle(this.chartMenuContext);
     }
 
-    private chartTypeChanged(updateParams?: UpdateChartParams): boolean {
+    private chartTypeChanged(updateParams?: UpdateChartParams): ChartType | null {
         const [currentType, updatedChartType] = [this.chartController.getChartType(), updateParams?.chartType];
-        return this.chartType !== currentType || (!!updatedChartType && this.chartType !== getCanonicalChartType(updatedChartType));
+        const targetChartType = updatedChartType ? getCanonicalChartType(updatedChartType) : undefined;
+        // If the grid chart component is out of sync with the existing chart instance type, return the correct chart type
+        if (this.chartType !== currentType) return targetChartType ?? currentType;
+        // If the target chart type is different to the current chart type, return the new chart type
+        if (targetChartType && (currentType !== targetChartType)) return targetChartType;
+        // Otherwise nothing has changed
+        return null;
     }
 
     public getChartModel(): ChartModel {
