@@ -1,7 +1,7 @@
 {
     "favourites": [
         {
-            "link": "https://openbb.co/products/pro",
+            "link": "https://docs.openbb.co/pro/widgets/tabular-data",
             "repo": "https://github.com/OpenBB-finance/OpenBBTerminal",
             "title": "Terminal Pro @ OpenBB",
             "description": "A sleek graphical interface that is intuitive and fully customizable, making it easier for you to access and analyze financial information with ease.",
@@ -25,7 +25,7 @@
             "repo": "https://github.com/windmill-labs/windmill",
             "title": "Windmill",
             "description": "Open-source developer platform to turn scripts into workflows and UIs. Fastest workflow engine (5x vs Airflow). Open-source alternative to Airplane and Retool.",
-            "link": "https://windmill.dev",
+            "link": "https://www.windmill.dev/docs/apps/app_configuration_settings/aggrid_table#aggird-table-input",
             "type": "Product",
             "open_source": true,
             "stars": 8000,
@@ -47,7 +47,7 @@
             "open_source": true,
             "stars": 13100,
             "type": "Product",
-            "link": "https://pinpoint-apm.gitbook.io/",
+            "link": "https://pinpoint-apm.gitbook.io/pinpoint",
             "img": "pinpoint.png",
             "frameworks": [
                 "React", "Angular", "Vue"
@@ -122,7 +122,7 @@
             "repo": "https://github.com/jpmorganchase/salt-ds",
             "title": "J.P.Morgan - Salt DS",
             "description": "React UI components built with a focus on accessibility, customisation and ease-of-use",
-            "link": "https://www.saltdesignsystem.com/salt/index",
+            "link": "https://www.saltdesignsystem.com/salt/components/ag-grid-theme/examples",
             "type": "Integration",
             "open_source": true,
             "stars": 100,
@@ -145,7 +145,7 @@
             "open_source": true,
             "stars": 45,
             "type": "Product",
-            "link": "https://irida.ca",
+            "link": "https://phac-nml.github.io/irida-documentation/user/tutorials/web-upload/",
             "favourite": true,
             "img": "irida.png",
             "tags": [
@@ -165,7 +165,7 @@
             "open_source": true,
             "stars": 200,
             "type": "Integration",
-            "link": "allianz.github.io/ng-aquila/",
+            "link": "https://allianz.github.io/ng-aquila/documentation/ag-grid/overview",
             "img": "allianz-ng.png",
             "favourite": true,
             "tags": [
@@ -205,7 +205,7 @@
             "open_source": true,
             "stars": 140,
             "type": "Integration",
-            "link": "https://ix.siemens.io/",
+            "link": "https://ix.siemens.io/docs/controls/grid",
             "favourite": true,
             "img": "siemens.png",
             "frameworks": [
@@ -257,7 +257,7 @@
             ]
         },   
         {
-            "link": "https://marmelab.com/react-admin/",
+            "link": "https://marmelab.com/react-admin/DatagridAG.html",
             "repo": "https://github.com/marmelab/react-admin",
             "title": "React Admin",
             "description": "A frontend Framework for building data-driven applications running on top of REST/GraphQL APIs, using TypeScript, React and Material Design.",
@@ -276,7 +276,7 @@
             ]
         },
         {
-            "link": "https://tableflow.com/",
+            "link": "https://tableflow.com/docs/introduction",
             "repo": "https://github.com/tableflowhq/csv-import",
             "title": "Tableflow",
             "description": "TableFlow is a data import platform for companies to collect and transform customer data.",
@@ -301,7 +301,7 @@
             "open_source": true,
             "stars": 16900,
             "type": "Product",
-            "link": "https://cube.dev/",
+            "link": "https://react-pivot-table-demo.cube.dev/#/",
             "img": "cube-js.png",
             "tags": [
                 "Library"
