@@ -3,6 +3,8 @@ import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { modDeflateRules, modExpiresRules, modRewriteRules } from '../src/utils/htaccess/htaccessRules';
+
 type Options = {
     include: boolean;
 };
@@ -12,6 +14,10 @@ ErrorDocument 404 /404.html
 
 # add MIME types for serving example files
 AddType text/javascript ts jsx
+
+${modExpiresRules}
+${modDeflateRules}
+${modRewriteRules}
 
 # CORS settings
 Header add Access-Control-Allow-Origin "*"

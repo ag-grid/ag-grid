@@ -1,0 +1,112 @@
+import { SITE_301_REDIRECTS } from './redirects';
+
+export const modExpiresRules = `
+<IfModule mod_expires.c>
+    # Adds caching headers
+    ExpiresActive On
+
+    # Default directive
+    ExpiresDefault "access plus 1 year"
+
+    ExpiresByType application/json "access plus 1 hour"
+    ExpiresByType text/html "access plus 1 hour"
+    ExpiresByType text/plain "access plus 1 hour"
+    ExpiresByType text/richtext "access plus 1 hour"
+    ExpiresByType text/xml "access plus 1 hour"
+    ExpiresByType text/xsd "access plus 1 hour"
+    ExpiresByType text/xsl "access plus 1 hour"
+
+    # CSS
+    ExpiresByType text/css "access plus 1 month"
+</IfModule>
+`;
+
+export const modDeflateRules = `
+<IfModule mod_deflate.c>
+    # Compress HTML, CSS, JavaScript, Text, XML and fonts
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/json
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE application/vnd.ms-fontobject
+    AddOutputFilterByType DEFLATE application/x-font
+    AddOutputFilterByType DEFLATE application/x-font-opentype
+    AddOutputFilterByType DEFLATE application/x-font-otf
+    AddOutputFilterByType DEFLATE application/x-font-truetype
+    AddOutputFilterByType DEFLATE application/x-font-ttf
+    AddOutputFilterByType DEFLATE application/x-javascript
+    AddOutputFilterByType DEFLATE application/xhtml+xml
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE font/opentype
+    AddOutputFilterByType DEFLATE font/otf
+    AddOutputFilterByType DEFLATE font/ttf
+    AddOutputFilterByType DEFLATE image/svg+xml
+    AddOutputFilterByType DEFLATE image/x-icon
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/javascript
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/xml
+
+    # Remove browser bugs (only needed for really old browsers)
+    BrowserMatch ^Mozilla/4 gzip-only-text/html
+    BrowserMatch ^Mozilla/4\\.0[678] no-gzip
+    BrowserMatch \\bMSIE !no-gzip !gzip-only-text/html
+    Header append Vary User-Agent
+</IfModule>
+`;
+
+export const modRewriteRules = `
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Always use https for secure connections
+    # (as it appears on your SSL certificate)
+    RewriteCond %{SERVER_PORT} 80
+    RewriteCond %{REQUEST_URI} !^/\\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
+    RewriteCond %{REQUEST_URI} !^/\\.well-known/cpanel-dcv/[0-9a-zA-Z_-]+$
+    RewriteCond %{REQUEST_URI} !^/\\.well-known/pki-validation/[A-F0-9]{32}\\.txt(?:\\ Comodo\\ DCV)?$
+    RewriteCond %{REQUEST_URI} !^/\\.well-known/pki-validation/(?:\\ Ballot169)?
+    RewriteRule ^(.*)$ https://www.ag-grid.com/$1 [R=301,L]
+
+    # Redirect angulargrid.com to ag-grid.com
+    RewriteCond %{HTTP_HOST} ^angulargrid\\.com$ [OR]
+    RewriteCond %{HTTP_HOST} ^www\\.angulargrid\\.com$
+    RewriteRule ^/?$ "http\\:\\/\\/www\\.ag\\-grid\\.com" [R=301,L]
+
+    # Remove "index.php" from URLs
+    RewriteCond %{REQUEST_URI} !^/\\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
+    RewriteCond %{REQUEST_URI} !^/\\.well-known/cpanel-dcv/[0-9a-zA-Z_-]+$
+    RewriteCond %{REQUEST_URI} !^/\\.well-known/pki-validation/[A-F0-9]{32}\\.txt(?:\\ Comodo\\ DCV)?$
+    RewriteCond %{REQUEST_URI} !^/\\.well-known/pki-validation/(?:\\ Ballot169)?
+    RewriteRule ^index\\.php$ / [R=301,L]
+
+    RewriteCond %{REQUEST_URI} !^/\\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
+    RewriteCond %{REQUEST_URI} !^/\\.well-known/cpanel-dcv/[0-9a-zA-Z_-]+$
+    RewriteCond %{REQUEST_URI} !^/\\.well-known/pki-validation/[A-F0-9]{32}\\.txt(?:\\ Comodo\\ DCV)?$
+    RewriteCond %{REQUEST_URI} !^/\\.well-known/pki-validation/(?:\\ Ballot169)?
+    RewriteRule ^(.*)/index\\.php$ /$1/ [R=301,L]
+
+    # Add trailing slash for directories
+    RewriteCond %{REQUEST_URI} /+[^\\.]+$
+    RewriteRule ^(.+[^/])$ %{REQUEST_URI}/ [R=301,L]
+
+    # Redirect paths after a php file (ie index.php/path/path => index.php)
+    # arguments will be carried over (ie index.php?abc=true will stay as is)
+    RewriteRule ^(.*)\\.php(\\/.+)$ /$1.php [R=301,L]
+
+${SITE_301_REDIRECTS.map((redirect) => {
+    const { from, fromPattern, to } = redirect;
+    if (!to) {
+        console.warn('Missing `to` in redirect', redirect);
+        return;
+    } else if (!from && !fromPattern) {
+        console.warn('Missing `from` in redirect', redirect);
+        return;
+    }
+    return from ? `    Redirect 301 ${from} ${to}` : `    RedirectMatch 301 "${fromPattern}" "${to}"`;
+})
+    .filter(Boolean)
+    .join('\n')}
+
+</IfModule>
+`;
