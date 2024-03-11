@@ -1,4 +1,4 @@
-function getData() {
+export function getData() {
     const rowData = [];
 
     const irelandCities = ['Dublin', 'Galway', 'Cork'];
