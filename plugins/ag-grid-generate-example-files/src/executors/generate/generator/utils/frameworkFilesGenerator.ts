@@ -84,7 +84,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
     vanilla: async ({ entryFile, indexHtml, componentScriptFiles, otherScriptFiles, isDev }) => {
         const internalFramework: InternalFramework = 'vanilla';
         const entryFileName = getEntryFileName(internalFramework)!;
-        let mainJs = readAsJsFile(entryFile);
+        let mainJs = readAsJsFile(entryFile, 'vanilla');
 
         // replace Typescript createGrid( with Javascript agGrid.createGrid(
         mainJs = mainJs.replace(/createGrid\(/g, 'agGrid.createGrid(');

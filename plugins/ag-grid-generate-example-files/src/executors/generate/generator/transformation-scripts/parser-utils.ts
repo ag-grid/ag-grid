@@ -1,19 +1,26 @@
-import { get } from 'http';
 import { transform } from 'sucrase';
 import ts from 'typescript';
 
 import { getEnterprisePackageName } from '../constants';
-import { BindingImport, ExampleConfig, ParsedBindings } from '../types';
+import { BindingImport, ExampleConfig, InternalFramework, ParsedBindings } from '../types';
 
-export function readAsJsFile(srcFile, options: { includeImports: boolean } = undefined) {
-    const tsFile = srcFile
+export function readAsJsFile(
+    srcFile,
+    internalFramework: InternalFramework,
+) {
+    let tsFile = srcFile
         // Remove imports like import 'ag-grid-community/styles/ag-grid.css';
-        .replace(options?.includeImports ? '' : /import ['"].*['"](;?)\n/g, '')
-        // Remove imports that are not required in javascript
+        .replace(/import ['"].*['"](;?)\n/g, '');
+
+    // Remove imports that are not required in javascript
+    if (internalFramework !== 'vanilla') {
         // We leave in the relative imports as they are required for the example to work
-        .replace(options?.includeImports ? '' : /import {((.|\n)*?)} from(?!(\s['"]\.\/)).*\n/g, '');
-    // Remove export statement
-    // .replace(/export /g, '');
+        // e.g import { colors } from './colors'; for non Vanilla examples
+        tsFile = tsFile.replace(/import {((.|\n)*?)} from(?!(\s['"]\.\/)).*\n/g, '');
+    } else {
+        tsFile = tsFile.replace(/import ((.|\n)*?)from.*\n/g, '');
+        tsFile = tsFile.replace(/export /g, '');
+    }
 
     const jsFile = transform(tsFile, { transforms: ['typescript'] }).code; ///disableESTransforms: true
     return jsFile;
@@ -560,16 +567,18 @@ export function addBindingImports(
  */
 export function addRelativeImports(bindings: ParsedBindings, imports: string[], extension: string) {
     const filterOtherFiles = (b) => b.module.includes('./') && !b.module.includes('_');
-    const bImports = [...(bindings.imports.filter(b => filterOtherFiles(b)) || [])];
+    const bImports = [...(bindings.imports.filter((b) => filterOtherFiles(b)) || [])];
     if (bImports.length > 0) {
-        bImports.forEach(b => {
+        bImports.forEach((b) => {
             imports.push(`import { ${b.imports.join(', ')} } from '${b.module.replace(/['"]/g, '')}.${extension}';`);
         });
     }
 }
 
+
+
 export function removeModuleRegistration(code: string) {
-    return code.replace(/ModuleRegistry\.registerModules.*]\)(;?)/g, '');
+    return code.replace(/ModuleRegistry\.registerModules(.|\n)*?]\)(;?)/g, '');
 }
 
 export function handleRowGenericInterface(fileTxt: string, tData: string): string {
