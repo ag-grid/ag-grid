@@ -7,13 +7,15 @@ import { BindingImport, ExampleConfig, ParsedBindings } from '../types';
 
 export function readAsJsFile(srcFile, options: { includeImports: boolean } = undefined) {
     const tsFile = srcFile
+        // Remove imports like import 'ag-grid-community/styles/ag-grid.css';
+        .replace(options?.includeImports ? '' : /import ['"].*['"](;?)\n/g, '')
         // Remove imports that are not required in javascript
-        .replace(options?.includeImports ? '' : /import ((.|\n)*?)from.*\n/g, '')
-        // Remove export statement
-        .replace(/export /g, '');
+        // We leave in the relative imports as they are required for the example to work
+        .replace(options?.includeImports ? '' : /import {((.|\n)*?)} from(?!(\s['"]\.\/)).*\n/g, '');
+    // Remove export statement
+    // .replace(/export /g, '');
 
     const jsFile = transform(tsFile, { transforms: ['typescript'] }).code; ///disableESTransforms: true
-
     return jsFile;
 }
 
@@ -240,16 +242,16 @@ export function extractImportStatements(srcFile: ts.SourceFile): BindingImport[]
 
 export function addLicenseManager(imports: any[], exampleConfig: ExampleConfig, usePackages: boolean) {
     if (exampleConfig.licenseKey) {
-        imports.push(`import { LicenseManager } from '${ usePackages ? getEnterprisePackageName() : '@ag-grid-enterprise/core'}';`);
+        imports.push(
+            `import { LicenseManager } from '${usePackages ? getEnterprisePackageName() : '@ag-grid-enterprise/core'}';`
+        );
     }
 }
 
 export function addEnterprisePackage(imports: any[], bindings: ParsedBindings) {
     const isEnterprise = bindings.imports.some((i) => i.module.includes('-enterprise'));
     if (isEnterprise) {
-        imports.push(
-            `import '${getEnterprisePackageName()}';`
-        );
+        imports.push(`import '${getEnterprisePackageName()}';`);
     }
 }
 
@@ -553,6 +555,19 @@ export function addBindingImports(
     }
 }
 
+/** Add imports such as "import { colors } from './colors.js';"
+ * Does not include the imports for _framework component
+ */
+export function addRelativeImports(bindings: ParsedBindings, imports: string[], extension: string) {
+    const filterOtherFiles = (b) => b.module.includes('./') && !b.module.includes('_');
+    const bImports = [...(bindings.imports.filter(b => filterOtherFiles(b)) || [])];
+    if (bImports.length > 0) {
+        bImports.forEach(b => {
+            imports.push(`import { ${b.imports.join(', ')} } from '${b.module.replace(/['"]/g, '')}.${extension}';`);
+        });
+    }
+}
+
 export function removeModuleRegistration(code: string) {
     return code.replace(/ModuleRegistry\.registerModules.*]\)(;?)/g, '');
 }
@@ -598,7 +613,7 @@ export function getInterfaceFileContents(tsBindings: ParsedBindings, currentFile
     if (currentFile) {
         interfaces.push(currentFile);
     }
-    if (tsBindings.tData && !interfaces.some(i => i?.includes(tsBindings.tData))) {
+    if (tsBindings.tData && !interfaces.some((i) => i?.includes(tsBindings.tData))) {
         interfaces.push(getGenericInterface(tsBindings.tData));
     }
     if (interfaces.length > 0) {
@@ -615,9 +630,11 @@ function getGenericInterface(tData) {
 export interface IOlympicDataWithId extends IOlympicData {
     id: number;
 }
-`// purposefully fall through to IOlympicData
+`; // purposefully fall through to IOlympicData
         case 'IOlympicData':
-            interfaceStr = interfaceStr + `
+            interfaceStr =
+                interfaceStr +
+                `
 export interface IOlympicData {
     athlete: string,
     age: number,
@@ -629,10 +646,12 @@ export interface IOlympicData {
     silver: number,
     bronze: number,
     total: number
-}`
+}`;
             break;
         case 'IAccount':
-            interfaceStr = interfaceStr + `
+            interfaceStr =
+                interfaceStr +
+                `
 export interface ICallRecord {
     name: string;
     callId: number;

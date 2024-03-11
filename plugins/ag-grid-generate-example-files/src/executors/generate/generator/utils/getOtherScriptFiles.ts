@@ -1,6 +1,6 @@
 import { SOURCE_ENTRY_FILE_NAME } from '../constants';
 import { readAsJsFile } from '../transformation-scripts/parser-utils';
-import { FileContents, FRAMEWORKS, InternalFramework, TransformTsFileExt } from '../types';
+import { FileContents, FRAMEWORKS, ImportType, InternalFramework, TransformTsFileExt } from '../types';
 import { getFileList } from './fileUtils';
 
 const getOtherTsGeneratedFiles = async ({
@@ -119,11 +119,13 @@ export const getOtherScriptFiles = async ({
     sourceFileList,
     transformTsFileExt,
     internalFramework,
+    importType,
 }: {
     folderPath: string;
     sourceFileList: string[];
     transformTsFileExt?: TransformTsFileExt;
     internalFramework: InternalFramework;
+    importType: ImportType;
 }) => {
     const otherTsGeneratedFileContents = await getOtherTsGeneratedFiles({
         folderPath,
@@ -146,6 +148,11 @@ export const getOtherScriptFiles = async ({
     const filteredToFramework = {};
     const others = {};
     Object.entries(contents).forEach(([file, content]) => {
+
+        if(importType === 'packages'){
+            content = convertModuleToPackageImports(content);
+        }
+
         let isFrameworkFile = false;
         FRAMEWORKS.forEach((framework) => {
             const suffix = getComponentSuffix(file, framework);
@@ -164,3 +171,14 @@ export const getOtherScriptFiles = async ({
     });
     return [others, filteredToFramework];
 };
+
+
+export function convertModuleToPackageImports(file: any) {
+    return file
+        .replace(/@ag-grid-community\/core/g, 'ag-grid-community')
+        .replace(/@ag-grid-community\/react/g, 'ag-grid-react')
+        .replace(/@ag-grid-community\/angular/g, 'ag-grid-angular')
+        .replace(/@ag-grid-community\/vue/g, 'ag-grid-vue')
+        .replace(/@ag-grid-community\/vue3/g, 'ag-grid-vue3')
+        .replace(/@ag-grid-community\/styles/g, 'ag-grid-community/styles');
+}
