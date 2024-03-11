@@ -55,6 +55,7 @@
     "ag-charts-community": "9.1.1-beta.20240310"
   },
   "devDependencies": {
+    "source-map-loader": "^5.0.0",
     "@ag-grid-community/styles": "31.1.0",
     "@ag-grid-enterprise/advanced-filter": "31.1.0",
     "@ag-grid-enterprise/charts": "31.1.0",

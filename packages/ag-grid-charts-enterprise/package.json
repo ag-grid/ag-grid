@@ -56,9 +56,10 @@
     "ag-charts-enterprise": "9.1.1-beta.20240310"
   },
   "devDependencies": {
+    "source-map-loader": "^5.0.0",
     "@ag-grid-community/styles": "31.1.0",
     "@ag-grid-enterprise/advanced-filter": "31.1.0",
-    "@ag-grid-enterprise/charts": "31.1.0",
+    "@ag-grid-enterprise/charts-enterprise": "31.1.0",
     "@ag-grid-enterprise/clipboard": "31.1.0",
     "@ag-grid-enterprise/column-tool-panel": "31.1.0",
     "@ag-grid-enterprise/core": "31.1.0",
