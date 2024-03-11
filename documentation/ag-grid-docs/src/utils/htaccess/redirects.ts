@@ -2569,11 +2569,6 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/react-data-grid/cell-rendering/', to: '/react-data-grid/component-cell-renderer/' },
     { from: '/vue-data-grid/cell-rendering/', to: '/vue-data-grid/component-cell-renderer/' },
 
-    { from: '/javascript-data-grid/cell-rendering/', to: '/javascript-data-grid/component-cell-renderer/' },
-    { from: '/angular-data-grid/cell-rendering/', to: '/angular-data-grid/component-cell-renderer/' },
-    { from: '/react-data-grid/cell-rendering/', to: '/react-data-grid/component-cell-renderer/' },
-    { from: '/vue-data-grid/cell-rendering/', to: '/vue-data-grid/component-cell-renderer/' },
-
     { from: '/javascript-data-grid/flashing-cells/', to: '/javascript-data-grid/change-cell-renderers/' },
     { from: '/angular-data-grid/flashing-cells/', to: '/angular-data-grid/change-cell-renderers/' },
     { from: '/react-data-grid/flashing-cells/', to: '/react-data-grid/change-cell-renderers/' },
