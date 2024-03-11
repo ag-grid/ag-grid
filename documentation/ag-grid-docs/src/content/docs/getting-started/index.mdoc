@@ -646,9 +646,11 @@ const VueExample = {
  },
 // ...
 ```
+
 {% /if %}
 
-{% flex justifyContent="center" %}
+{% tabs %}
+{% tabItem id="quartz" label="Quartz" %}
 
 {% imageCaption imagePath="resources/themeQuartz.png" alt="AG Theme Quartz" descriptionTop=true %}
 {% flex justifyContent="center" %}**Quartz**{% /flex %}
@@ -658,10 +660,8 @@ const VueExample = {
 {% flex justifyContent="center" %}**Quartz Dark**{% /flex %}
 {% /imageCaption %}
 
-{% /flex %}
-
-
-{% flex justifyContent="center" %}
+{% /tabItem %}
+{% tabItem id="alpine" label="Alpine" %}
 
 {% imageCaption imagePath="resources/themeAlpine.png" alt="AG Theme Alpine" descriptionTop=true %}
 {% flex justifyContent="center" %}**Alpine**{% /flex %}
@@ -670,8 +670,9 @@ const VueExample = {
 {% imageCaption imagePath="resources/themeAlpineDark.png" alt="AG Theme Alpine Dark" descriptionTop=true %}
 {% flex justifyContent="center" %}**Alpine Dark**{% /flex %}
 {% /imageCaption %}
+{% /tabItem %}
 
-{% /flex %}
+{% /tabs %}
 
 ### Customising a Theme
 
@@ -688,13 +689,16 @@ Customise themes using CSS variables.
 }
 ```
 
-{% imageCaption imagePath="resources/customisingThemeExample.png" alt="Customising a Theme with CSS Variables" centered=true constrained=true /%}
+{% gridExampleRunner title="Theming Example" name="custom-quartz-theme" /%}
 
 ### Figma
 
-If you are designing within Figma, you can use the [AG Grid Design System](./ag-grid-design-system/) to replicate the  Quartz and Alpine AG Grid themes within Figma. These default themes can be extended with Figma variables to match any existing visual design or create entirely new AG Grid themes. These can then be exported and generated into new AG Grid themes.
+If you are designing within Figma, you can use the [AG Grid Design System](./ag-grid-design-system/) to replicate the
+Quartz and Alpine AG Grid themes within Figma. These default themes can be extended with Figma variables to match any
+existing visual design or create entirely new AG Grid themes. These can then be exported and generated into new AG Grid
+themes.
 
-{% imageCaption imagePath="resources/FDS-Example.png" alt="Figma Design System with AG Grid" centered=true constrained=true /%}
+{% downloadDSButton /%}
 
 ### Cell Style
 
