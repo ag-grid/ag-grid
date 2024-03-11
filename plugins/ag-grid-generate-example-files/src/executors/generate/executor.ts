@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
-import path from 'path';
 import fs from 'fs/promises';
+import path from 'path';
 import prettier from 'prettier';
 
 import { readFile, readJSONFile, writeFile } from '../../executors-utils';
@@ -15,6 +15,7 @@ import {
 } from './generator/types';
 
 import { getEnterprisePackageName, SOURCE_ENTRY_FILE_NAME } from './generator/constants';
+import { getInterfaceFileContents, removeModuleRegistration } from './generator/transformation-scripts/parser-utils';
 import {
     getBoilerPlateFiles,
     getEntryFileName,
@@ -24,11 +25,10 @@ import {
     getProvidedExampleFolder,
     getTransformTsFileExt,
 } from './generator/utils/fileUtils';
-import { getStyleFiles } from './generator/utils/getStyleFiles';
-import { getOtherScriptFiles, convertModuleToPackageImports } from './generator/utils/getOtherScriptFiles';
 import { frameworkFilesGenerator } from './generator/utils/frameworkFilesGenerator';
+import { convertModuleToPackageImports, getOtherScriptFiles } from './generator/utils/getOtherScriptFiles';
 import { getPackageJson } from './generator/utils/getPackageJson';
-import { getInterfaceFileContents, removeModuleRegistration } from './generator/transformation-scripts/parser-utils';
+import { getStyleFiles } from './generator/utils/getStyleFiles';
 
 export type ExecutorOptions = {
     mode: 'dev' | 'prod';
@@ -209,11 +209,15 @@ export async function generateFiles(options: ExecutorOptions) {
                         mergedStyleFiles[fileName] = provideFrameworkFiles[fileName];
                     } else if (importType === 'packages') {
                         const fileContent = provideFrameworkFiles[fileName];
-                        if (fileContent) { 
-                            provideFrameworkFiles[fileName] = await convertModulesToPackages(fileContent, isDev, internalFramework);
+                        if (fileContent) {
+                            provideFrameworkFiles[fileName] = await convertModulesToPackages(
+                                fileContent,
+                                isDev,
+                                internalFramework
+                            );
                         }
                     }
-                };
+                }
             }
 
             const result: GeneratedContents = {
@@ -241,10 +245,11 @@ async function convertModulesToPackages(fileContent: any, isDev: boolean, intern
     fileContent = removeModuleRegistration(fileContent);
     // Remove the original import statements that contain modules
     fileContent = fileContent
-        .replace(/import ((.|\n)[^}]*?\wModule(.|\n)*?)from.*\n/g, '')
+        // Don't match the HttpClientModule / FormsModule from Angular
+        .replace(/import ((.|\n)[^}]*?\w(?<!(HttpClient|Forms))Module(.|\n)*?)from.*\n/g, '')
         // Remove ModuleRegistry import if by itself
         .replace(/import ((.|\n)[^{,]*?ModuleRegistry(.|\n)*?)from.*\n/g, '')
-        // Remove if ModuleRegistry is with other imports 
+        // Remove if ModuleRegistry is with other imports
         .replace(/ModuleRegistry(,)?/g, '');
 
     fileContent = convertModuleToPackageImports(fileContent);
