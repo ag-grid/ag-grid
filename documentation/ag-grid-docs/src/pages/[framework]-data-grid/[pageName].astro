@@ -55,6 +55,7 @@ const isApiPage = isApiMenuPath({
     description={description}
     showSearchBar={true}
     showDocsNav={true}
+    hasViewTransitions={true}
 >
     <div class:list={[hidePageMenu && styles.noLeftMenu, styles.contentViewport, 'layout-grid']}>
         {
@@ -89,28 +90,51 @@ const isApiPage = isApiMenuPath({
 </Layout>
 
 <script>
+    import { darkModeInit } from '@utils/darkMode/darkModeInit';
+
     /**
      * Retain scroll position between page changes
-     * 
+     *
      * Use session storage to store the scroll position and get it on page load
      */
     const SCROLL_POSITION_LOCALSTORAGE_KEY = 'docs-scroll-position';
     // NOTE: Need page nav to be on page on page load (ie, not generated on client side)
     const NAV_SCROLL_CONTAINER_SELECTOR = '#docs-nav-collapser aside';
+    const hasViewTransitions = Boolean(document.startViewTransition);
 
-    window.addEventListener('load', () => {
+    function scrollNav() {
         const nav = document.querySelector(NAV_SCROLL_CONTAINER_SELECTOR);
         const top = sessionStorage.getItem(SCROLL_POSITION_LOCALSTORAGE_KEY);
         if (nav && top !== null) {
             nav.scrollTop = parseInt(top, 10);
         }
+    }
 
-        window.addEventListener('beforeunload', () => {
-            if (!nav) {
-                return;
-            }
+    function saveScrollPosition() {
+        const nav = document.querySelector(NAV_SCROLL_CONTAINER_SELECTOR);
+        if (!nav) {
+            return;
+        }
 
-            sessionStorage.setItem(SCROLL_POSITION_LOCALSTORAGE_KEY, nav.scrollTop);
+        sessionStorage.setItem(SCROLL_POSITION_LOCALSTORAGE_KEY, nav.scrollTop);
+    }
+
+    if (hasViewTransitions) {
+        document.addEventListener('astro:before-preparation', () => {
+            saveScrollPosition();
         });
-    });
+
+        document.addEventListener('astro:after-swap', () => {
+            darkModeInit();
+            scrollNav();
+        });
+    } else {
+        window.addEventListener('load', () => {
+            scrollNav();
+
+            window.addEventListener('beforeunload', () => {
+                saveScrollPosition();
+            });
+        });
+    }
 </script>

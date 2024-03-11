@@ -8,7 +8,7 @@ import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import Plausible from '@components/Plausible.astro';
 import { Footer } from '@components/footer/Footer';
 import styles from '@design-system/modules/GridIndex.module.scss';
-
+import { ViewTransitions } from 'astro:transitions';
 interface Props {
     title: string;
     description?: string;
@@ -16,6 +16,7 @@ interface Props {
     showDocsNav?: boolean;
     hideHeader?: boolean;
     hideFooter?: boolean;
+    hasViewTransitions?: boolean;
 }
 
 const { data: metadata } = await getEntry('metadata', 'metadata');
@@ -26,7 +27,7 @@ const isStaging = getIsStaging();
 const isDev = getIsDev();
 const canonicalUrl = new URL(Astro.url.pathname, metadata.canonicalUrlBase);
 
-const { title, description = metadata.description, showSearchBar, showDocsNav, hideHeader, hideFooter } = Astro.props;
+const { title, description = metadata.description, showSearchBar, showDocsNav, hideHeader, hideFooter, hasViewTransitions } = Astro.props;
 
 const path = Astro.url.pathname;
 const socialImage = urlWithBaseUrl(metadata.socialImage);
@@ -81,6 +82,7 @@ const socialImage = urlWithBaseUrl(metadata.socialImage);
         </Fragment>}
 
         {isStaging && <Plausible domain="grid-staging.ag-grid.com" />}
+        {hasViewTransitions && <ViewTransitions />}
     </head>
     <body>
         <script is:inline>
