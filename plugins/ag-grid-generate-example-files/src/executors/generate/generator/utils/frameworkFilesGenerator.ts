@@ -76,8 +76,7 @@ const createVueFilesGenerator =
                 [entryFileName]: mainJs,
                 'index.html': indexHtml,
             },
-            // Other files, not including entry file
-            scriptFiles: Object.keys(scriptFiles),
+            // NOTE: `scriptFiles` not required, as system js handles import
         };
     };
 
@@ -157,16 +156,14 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
             indexJsx = await prettier.format(indexJsx, { parser: 'babel' });
         }
 
-        const scriptFiles = {...otherScriptFiles, ...componentScriptFiles};
-
         return {
             files: {
-                ...scriptFiles,
+                ...otherScriptFiles,
+                ...componentScriptFiles,
                 [entryFileName]: indexJsx,
                 'index.html': indexHtml,
             },
-            // Other files, not including entry file
-            scriptFiles: Object.keys(scriptFiles),
+            // NOTE: `scriptFiles` not required, as system js handles import
         };
     },
     reactFunctionalTs: async ({ typedBindings, indexHtml, otherScriptFiles, componentScriptFiles, isDev, importType, exampleConfig }) => {
@@ -179,11 +176,10 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
             indexTsx = await prettier.format(indexTsx, { parser: 'typescript' });
         }
 
-        const scriptFiles = {...otherScriptFiles, ...componentScriptFiles};
-
         return {
             files: {
-                ...scriptFiles,
+                ...otherScriptFiles,
+                ...componentScriptFiles,
                 [entryFileName]: indexTsx,
                 'index.html': indexHtml,
             },
@@ -202,11 +198,10 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
             appComponent = await prettier.format(appComponent, { parser: 'typescript' });
         }
 
-        const scriptFiles = {...otherScriptFiles, ...componentScriptFiles};
-
         return {
             files: {
-                ...scriptFiles,
+                ...otherScriptFiles,
+                ...componentScriptFiles,
                 // NOTE: No `index.html` as the contents are generated in the `app.component` file
                 // NOTE: Duplicating entrypoint boilerplate file here, so examples
                 // load from the same directory as these files, rather than

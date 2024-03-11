@@ -5,6 +5,7 @@ import {
     addBindingImports,
     addEnterprisePackage,
     addLicenseManager,
+    addRelativeImports,
     convertFunctionToConstProperty,
     getActiveTheme,
     getFunctionName,
@@ -51,6 +52,8 @@ function getModuleImports(
         imports.push(...componentFilenames.map(getImport));
     }
 
+    addRelativeImports(bindings, imports, 'js');
+
     if (bindings.moduleRegistration) {
         const moduleImports = bindings.imports.filter((i) => i.imports.find((m) => m.includes('Module')));
         addBindingImports(moduleImports, imports, false, true);
@@ -89,6 +92,8 @@ function getPackageImports(
     if (allStylesheets && allStylesheets.length > 0) {
         allStylesheets.forEach((styleSheet) => imports.push(`import './${basename(styleSheet)}';`));
     }
+ 
+    addRelativeImports(bindings, imports, 'js');
 
     if (componentFilenames) {
         imports.push(...componentFilenames.map(getImport));
