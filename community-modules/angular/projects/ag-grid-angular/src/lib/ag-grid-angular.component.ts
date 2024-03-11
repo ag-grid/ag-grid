@@ -396,7 +396,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public tooltipMouseTrack: boolean | undefined = undefined;
     /** This defines when tooltip will show up for Cells, Headers and SetFilter Items.
          *  - `standard` - The tooltip always shows up when the items configured with Tooltips are hovered.
-         * - `whenTruncated` - The tooltip will only be displayed when the items hovered have truncated (showing ellipsis) values.
+         * - `whenTruncated` - The tooltip will only be displayed when the items hovered have truncated (showing ellipsis) values. This property does not work when `enableBrowserTooltips={true}`.
          * @default `standard`
          */
     @Input() public tooltipShowMode: 'standard' | 'whenTruncated' | undefined = undefined;
