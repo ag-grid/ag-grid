@@ -48,11 +48,25 @@
     padding: 0px $spacing-size-4;
 }
 
+.youtubeThumbnail {
+    object-fit: cover;
+    width: 220px;
+    height: 165px;
+    clip-path: inset(22px 0); /* Adjust the 5px value as needed to remove the black lines */
+}
+
 .videoThumbnail {
     object-fit: cover;
     width: 220px;
+    height: 165px;
     height: auto;
-    clip-path: inset(22px 0); /* Adjust the 5px value as needed to remove the black lines */
+    margin-top: 22px;
+}
+
+.videoThumbnail, .youtubeThumbnail {
+    &:hover {
+        transform: scale(1.05);
+    }
 }
 
 .active {
@@ -60,12 +74,12 @@
     &::after {
         content: "";
         display: block;
-        width: 25px; // Size of the circle
-        height: 2px; // Size of the circle
-        background-color: var(--color-util-brand-400); // Color of the circle
+        width: 50%; 
+        height: 2px; 
+        background-color: var(--color-util-brand-400); 
         position: absolute;
         left: 50%;
         transform: translateX(-50%);
-        bottom: -5px; // Adjusts the position below the div
+        bottom: -5px; 
       }
 }
