@@ -15,7 +15,7 @@ const columnDefs: (ColDef|ColGroupDef)[] = [
   },
   {
     field: 'age',
-    tooltipValueGetter: (p: ITooltipParams) => 'Create any fixed message, eg This is the Athelets Age',
+    tooltipValueGetter: (p: ITooltipParams) => 'Create any fixed message, e.g. This is the Athlete’s Age ',
     headerTooltip: 'Tooltip for Age Column Header',
   },
   {
