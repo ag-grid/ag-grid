@@ -8,14 +8,12 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 const columnDefs: ColDef[] = [
   { field: 'athlete', headerTooltip: "The athlete's name" },
   { field: 'age', headerTooltip: "The athlete's age" },
-  { field: 'country' },
-  { field: 'year' },
   { field: 'date', headerTooltip: 'The date of the Olympics' },
   { field: 'sport', headerTooltip: 'The sport the medal was for' },
   { field: 'gold', headerTooltip: 'How many gold medals' },
   { field: 'silver', headerTooltip: 'How many silver medals' },
   { field: 'bronze', headerTooltip: 'How many bronze medals' },
-  { field: 'total', headerTooltip: 'The total number of medals' },
+  { field: 'total', headerTooltip: 'The total number of medals' }
 ]
 
 let gridApi: GridApi<IOlympicData>;
