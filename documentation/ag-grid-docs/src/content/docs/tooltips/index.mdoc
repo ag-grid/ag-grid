@@ -10,36 +10,6 @@ The following [Column Definition](./column-definitions/) properties set Tooltips
 
 {% interfaceDocumentation interfaceName="ColDef" names=["tooltipField", "tooltipValueGetter","headerTooltip"] config={"description":"", "suppressTypes": ["ColDefField"]} /%}
 
-## Custom Component
-
-The grid does not use the browser's default tooltip, instead it has a rich HTML Tooltip Component. The default Tooltip Component can be replaced with a Custom Tooltip Component using `colDef.tooltipComponent`.
-
-In the example below:
-
-* `tooltipComponent` is set on the Default Column Definition so it applies to all Columns.
-* `tooltipComponentParams` is set on the Athlete Column Definition to provide a Custom Property, in this instance setting the background color.
-
-{% gridExampleRunner title="Custom Tooltip Component" name="custom-tooltip-component" /%}
-
-{% includeMarkdoc file="tooltips/_component-interface-javascript.mdoc" /%}
-{% includeMarkdoc file="tooltips/_component-interface-angular.mdoc" /%}
-{% includeMarkdoc file="tooltips/_component-interface-react.mdoc" /%}
-{% includeMarkdoc file="tooltips/_component-interface-vue.mdoc" /%}
-
-{% if isFramework("javascript", "angular", "vue") %}
-{% interfaceDocumentation interfaceName="ITooltipParams" /%}
-{% /if %}
-
-{% if isFramework("react") %}
-{% interfaceDocumentation interfaceName="CustomTooltipProps" /%}
-{% /if %}
-
-## Browser Tooltip
-
-Set the grid property `enableBrowserTooltips=true` to stop using rich HTML Components and use the browsers native tooltip.
-
-{% gridExampleRunner title="Default Browser Tooltip" name="default-tooltip" /%}
-
 ## Show and Hide Delay
 
 Tooltips show after 2 seconds and hide after 10 seconds. Set `tooltipShowDelay` and `tooltipHideDelay` to override these values. The example below has `tooltipShowDelay=0` (shows immediatly) and `tooltipHideDelay=2000` (hides in 2,000 milliseconds, or 2 seconds).
@@ -73,6 +43,12 @@ The example below enables mouse tracking to demonstrate a scenario where tooltip
 
 {% gridExampleRunner title="Tooltip Mouse Tracking" name="tooltip-mouse-tracking" /%}
 
+## Browser Tooltip
+
+Set the grid property `enableBrowserTooltips=true` to stop using rich HTML Components and use the browsers native tooltip.
+
+{% gridExampleRunner title="Default Browser Tooltip" name="default-tooltip" /%}
+
 ## Interactive Tooltips
 
 By default, it is impossible to click on tooltips and hovering them has no effect. If `tooltipInteraction=true` is set in the gridOptions, the tooltips will not disappear while being hovered and you will be able to click and select the text within the tooltip.
@@ -97,3 +73,28 @@ The example below shows Tooltip Interaction with Custom Tooltips. Note the follo
 * The custom tooltip displays a text input and a Submit button which when clicked, updates the value of the `Athlete` Column cell in the hovered row and then closes itself by calling `hideTooltipCallback()`.
 
 {% gridExampleRunner title="Custom Tooltip Interaction" name="custom-tooltip-interaction" /%}
+
+
+## Custom Component
+
+The grid does not use the browser's default tooltip, instead it has a rich HTML Tooltip Component. The default Tooltip Component can be replaced with a Custom Tooltip Component using `colDef.tooltipComponent`.
+
+In the example below:
+
+* `tooltipComponent` is set on the Default Column Definition so it applies to all Columns.
+* `tooltipComponentParams` is set on the Athlete Column Definition to provide a Custom Property, in this instance setting the background color.
+
+{% gridExampleRunner title="Custom Tooltip Component" name="custom-tooltip-component" /%}
+
+{% includeMarkdoc file="tooltips/_component-interface-javascript.mdoc" /%}
+{% includeMarkdoc file="tooltips/_component-interface-angular.mdoc" /%}
+{% includeMarkdoc file="tooltips/_component-interface-react.mdoc" /%}
+{% includeMarkdoc file="tooltips/_component-interface-vue.mdoc" /%}
+
+{% if isFramework("javascript", "angular", "vue") %}
+{% interfaceDocumentation interfaceName="ITooltipParams" /%}
+{% /if %}
+
+{% if isFramework("react") %}
+{% interfaceDocumentation interfaceName="CustomTooltipProps" /%}
+{% /if %}
