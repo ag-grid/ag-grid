@@ -515,6 +515,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /**
      * Set to `true` to prevent this column from flashing on changes. Only applicable if cell flashing is turned on for the grid.
      * @default false
+     * @deprecated 31.2 Use `enableCellChangeFlash={false}` in the ColDef.
      */
     suppressCellFlash?: boolean;
 

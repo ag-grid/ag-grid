@@ -957,6 +957,7 @@ export interface GridOptions<TData = any> {
     /**
      * Set to `true` to have cells flash after data changes.
      * @default false
+     * @deprecated 31.2 use `enableCellChangeFlash` in the `ColDef` or `defaultColDef` for all columns.
      */
     enableCellChangeFlash?: boolean;
     /**
