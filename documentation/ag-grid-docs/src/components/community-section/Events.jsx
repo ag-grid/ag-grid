@@ -1,6 +1,7 @@
+import ScrollingGallery from '@components/community-section/events/ScrollingGallery';
 import styles from '@design-system/modules/CommunityEvents.module.scss';
-import React, { useState } from 'react';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
+import React, { useState } from 'react';
 
 import events from '../../content/community/news-updates/events-new.json';
 
@@ -33,7 +34,7 @@ function extractUniqueYears(events) {
 const EventItem = ({ event }) => {
     const [darkMode] = useDarkmode();
     return (
-        <div onClick={() => window.open(event.eventPage)} target='_blank' className={styles.linkWrapper}>
+        <div onClick={() => window.open(event.eventPage)} target="_blank" className={styles.linkWrapper}>
             <div className={styles.eventItemContainer}>
                 <div className={styles.eventItemLeftColumn}>
                     <div className={styles.titleContainer}>
@@ -54,7 +55,7 @@ const EventItem = ({ event }) => {
                         </div>
                         <div className={styles.ctaContainer}>
                             {event.eventPage && (
-                                <div 
+                                <div
                                     onClick={() => window.open(event.eventPage)}
                                     target="_blank"
                                     className={event.recording ? styles.secondaryCta : styles.primaryCta}
@@ -75,7 +76,10 @@ const EventItem = ({ event }) => {
                     </div>
                 </div>
                 <div className={styles.eventItemRightColumn}>
-                    <img className={event.images?.length > 0 ? styles.eventImage : styles.eventLogo} src={`/community/events/${darkMode || !event.coverImageLight ? event.coverImage : event.coverImageLight}`} />
+                    <img
+                        className={event.images?.length > 0 ? styles.eventImage : styles.eventLogo}
+                        src={`/community/events/${darkMode || !event.coverImageLight ? event.coverImage : event.coverImageLight}`}
+                    />
                 </div>
             </div>
         </div>
@@ -95,20 +99,24 @@ const Events = () => {
         } else {
             setCurrEvents(pastEvents);
             setActiveTab('past');
-            setCurrEvents(events.filter(event => {
-                const eventYear = new Date(event.startDate).getFullYear();
-                return eventYear == selectedYear;
-            }));
+            setCurrEvents(
+                events.filter((event) => {
+                    const eventYear = new Date(event.startDate).getFullYear();
+                    return eventYear == selectedYear;
+                })
+            );
         }
     };
 
     const filterYears = (year) => {
         setSelectedYear(year);
-        setCurrEvents(events.filter(event => {
-            const eventYear = new Date(event.startDate).getFullYear();
-            return eventYear == year;
-        }));
-    }
+        setCurrEvents(
+            events.filter((event) => {
+                const eventYear = new Date(event.startDate).getFullYear();
+                return eventYear == year;
+            })
+        );
+    };
 
     return (
         <div className={styles.container}>
@@ -139,6 +147,11 @@ const Events = () => {
                             </option>
                         ))}
                     </select>
+                </div>
+            )}
+            {activeTab == 'upcoming' && (
+                <div className={styles.scrollingGalleryContainer}>
+                    <ScrollingGallery />
                 </div>
             )}
             <div className={styles.eventsContainer}>

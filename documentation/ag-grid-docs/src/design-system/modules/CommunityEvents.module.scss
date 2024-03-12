@@ -3,6 +3,10 @@
 .container {
 }
 
+.scrollingGalleryContainer {
+    margin-bottom: $spacing-size-10;
+}
+
 .tabContainer {
     display: flex;
     gap: $spacing-size-4;
@@ -130,19 +134,27 @@
 }
 
 .primaryCta {
-    color: var(--color-brand-400);
+    color: var(--color-brand-600);
     gap: $spacing-size-8;
     margin: 0px;
 
     p {
         font-weight: var(--text-semibold);
     }
+
+    #{$selector-darkmode} & {
+        color: var(--color-brand-300);
+    }
 }
 
 .secondaryCta {
-    color: var(--color-brand-400);
+    color: var(--color-brand-600);
     gap: $spacing-size-8;
     margin: 0px;
+
+    #{$selector-darkmode} & {
+        color: var(--color-brand-300);
+    }
 }
 
 .locationContainer {
