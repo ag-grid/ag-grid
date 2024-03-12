@@ -37,7 +37,7 @@
     white-space: nowrap;
 }
 
-#{$selector-darkmode} .imageCaption.darkmodeFilter {
+#{$selector-darkmode} .imageCaption.darkmodeFilter img {
     filter: invert(1) hue-rotate(180deg) saturate(1.25);
     mix-blend-mode: screen;
 }
