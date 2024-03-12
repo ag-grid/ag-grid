@@ -80,6 +80,8 @@ The Status Bar sizes its height to fit content. When no panels are visible, the 
 
 ## Custom Panels
 
+Applications that are using [Server-side Data](./row-models/) or which require bespoke Status Bar Panels can provide their own custom Status Bar panels.
+
 {% gridExampleRunner title="Custom Panels" name="custom-component" /%}
 
 {% includeMarkdoc file="status-bar/_component-interface-javascript.mdoc" /%}
@@ -118,5 +120,7 @@ Custom Panels can listen to grid events to react to grid changes. An easy way to
 ## Accessing Instances
 
 Use the grid API `getStatusPanel(key)` to access a panel instance. This can be used to expose Custom Panels to the application.
+
+{% apiDocumentation source="grid-api/api.json" section="accessories" names=["getStatusPanel"] /%}
 
 {% gridExampleRunner title="Get Status Bar Panel Instance" name="component-instance" /%}
