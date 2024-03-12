@@ -156,6 +156,16 @@ async function transformRenderTreeWithReferenceHeadings(renderTree: RenderableTr
     renderTree!.children = children;
 }
 
+function getTextFromChildren(node: Node): string {
+    const { children } = node;
+
+    return children
+        .map((child) => {
+            return typeof child === 'string' ? child : getTextFromChildren(child);
+        })
+        .join(' ');
+}
+
 /**
  * Get headings within markdoc content, resolving headings shown based on framework and adding
  * tab headings
@@ -188,7 +198,8 @@ export async function getHeadings({
 
     const renderTreeHeadings = renderTree['children']?.filter(isHeadingTag).map((node) => {
         const { id: slug, level: depth } = node.attributes;
-        const [text] = node.children;
+        const text = getTextFromChildren(node);
+
         return {
             depth,
             slug,

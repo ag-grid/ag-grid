@@ -35,6 +35,8 @@ const GRID_OPTION_DEPRECATIONS: Deprecations<GridOptions> = {
     suppressServerSideInfiniteScroll: { version: '31.1' },
     serverSideSortOnServer: { version: '31.1' },
     serverSideFilterOnServer: { version: '31.1' },
+
+    enableCellChangeFlash: { version: '31.2', message: 'Use `enableCellChangeFlash` in the `ColDef` or `defaultColDef` for all columns.'}
 };
 
 // Leave untyped. so it can be inferred.

@@ -321,8 +321,7 @@
         },
         "autoHeight": {},
         "wrapText": {},
-        "enableCellChangeFlash": {},
-        "suppressCellFlash": {}
+        "enableCellChangeFlash": {}
     },
     "sort": {
         "meta": {

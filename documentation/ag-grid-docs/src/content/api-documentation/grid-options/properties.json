@@ -1047,12 +1047,6 @@
                 "url": "./row-animation/"
             }
         },
-        "enableCellChangeFlash": {
-            "more": {
-                "name": "Flashing Data Changes",
-                "url": "./change-cell-renderers/"
-            }
-        },
         "cellFlashDuration": {
             "more": {
                 "name": "How Flashing Works",
