@@ -8,7 +8,8 @@ import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { getDataSet } from './data.jsx';
+import { getData } from './data.jsx';
+import './styles.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -17,7 +18,7 @@ const GridExample = () => {
     const [gridVisible, setGridVisible] = useState(true);
     const [columnsWidthOnPreDestroyed, setColumnsWidthOnPreDestroyed] = useState([]);
     const [gridApi, setGridApi] = useState();
-    const [rowData, setRowData] = useState(getDataSet());
+    const [rowData, setRowData] = useState(getData());
     const [columnDefs, setColumnDefs] = useState([
         {field: 'name', headerName: 'Athlete'},
         {field: 'medals.gold', headerName: 'Gold Medals'},
