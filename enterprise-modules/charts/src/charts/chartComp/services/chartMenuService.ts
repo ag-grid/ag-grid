@@ -23,4 +23,8 @@ export class ChartMenuService extends BeanStub {
     public openAdvancedSettings(chartMenuContext: ChartMenuContext, eventSource?: HTMLElement): void {
         this.advancedSettingsMenuFactory.showMenu(chartMenuContext, eventSource);
     }
+
+    public hideAdvancedSettings(): void {
+        this.advancedSettingsMenuFactory.hideMenu();
+    }
 }
