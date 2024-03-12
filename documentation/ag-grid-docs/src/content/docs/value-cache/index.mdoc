@@ -10,8 +10,6 @@ If you are not using Value Getters, or you don't have performance problems, then
 
 When the Calue Cache is turned on, each time a Value Getter is executed, its result is stored in the Value Cache. If the data in the grid has not changed since the last time the value getter was used, then the value is retrieved from the cache instead of executing the Value Getter again.
 
-This Value Cache is for advanced users who have time-consuming Value Getters and want to speed up their applications by introducing a cache to reduce the number of times Value Getters get executed.
-
 {% note %}
 One client of AG Grid had 1,000 rows and 20 columns in a grid. A lot of the columns were doing advanced
 maths, using third-party maths API in the valueGetter for 8 of the columns. The client was also grouping
