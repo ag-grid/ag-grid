@@ -29,17 +29,17 @@ export const ProductDropdown = ({ items, children }) => {
 
     const getIconComponent = (title: any) => {
         switch (title) {
+            case 'AG Grid':
+                return (
+                    <>
+                        <GridLight className={styles.iconLight} /> <GridDark className={styles.iconDark} />
+                    </>
+                );
             case 'AG Charts':
                 return (
                     <>
                         <ChartsLight className={styles.iconLight} />
                         <ChartsDark className={styles.iconDark} />
-                    </>
-                );
-            case 'AG Grid':
-                return (
-                    <>
-                        <GridLight className={styles.iconLight} /> <GridDark className={styles.iconDark} />
                     </>
                 );
             default:
