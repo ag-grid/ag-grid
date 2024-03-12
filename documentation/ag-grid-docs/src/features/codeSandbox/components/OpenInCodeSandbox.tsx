@@ -3,7 +3,7 @@ import { OpenInCTA } from '@components/open-in-cta/OpenInCTA';
 import type { FileContents } from '@features/example-generator/types';
 import { stripOutDarkModeCode } from '@features/example-runner/components/CodeViewer';
 import { fetchTextFile } from '@utils/fetchTextFile';
-import { replaceUrlPrefixWithWindowLocation } from '@utils/replaceUrlPrefixWithWindowLocation';
+import { cleanIndexHtml } from '@utils/replaceUrlPrefixWithWindowLocation';
 import type { FunctionComponent } from 'react';
 
 import { openCodeSandbox } from '../utils/codeSandbox';
@@ -32,7 +32,7 @@ export const OpenInCodeSandbox: FunctionComponent<Props> = ({
             type="codesandbox"
             onClick={async () => {
                 const html = await fetchTextFile(htmlUrl);
-                const indexHtml = isDev ? replaceUrlPrefixWithWindowLocation(html) : html;
+                const indexHtml = isDev ? cleanIndexHtml(html) : html;
                 const localFiles = { ...files };
                 stripOutDarkModeCode(localFiles);
                 const sandboxFiles = {
