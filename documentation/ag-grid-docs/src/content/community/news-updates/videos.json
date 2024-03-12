@@ -9,6 +9,15 @@
         "id": "JxOtSAXFQ6c"
     },
     {
+        "title": "AG Grid | ng-conf 2022",
+        "link": "https://www.youtube.com/embed/4dhBnvgb5H0",
+        "description": "AG Grid is ng-conf 2022's Premier Sponsor. Listen in as Niall and Stephen share about AG Grid.",
+        "author": "Niall Crosby & Stephen Cooper",
+        "type": "Video",
+        "published": "10/2022",
+        "id": "4dhBnvgb5H0"
+    },
+    {
         "title": "Patterns for Performance",
         "link": "https://www.youtube.com/embed/qR608qHWTCA",
         "description": "When working with React it is important that we use the right tool for the right job. If not we will be missing out on the best performance and developer experience. While optimising AG Grid React Table we discovered a number of patterns that made significant improvements to the tables performance.",
@@ -97,15 +106,6 @@
         "type": "Video",
         "published": "12/2022",
         "id": "iUsYl3Ux_Hc"
-    },
-    {
-        "title": "AG Grid | ng-conf 2022",
-        "link": "https://www.youtube.com/embed/4dhBnvgb5H0",
-        "description": "AG Grid is ng-conf 2022's Premier Sponsor. Listen in as Niall and Stephen share about AG Grid.",
-        "author": "Niall Crosby & Stephen Cooper",
-        "type": "Video",
-        "published": "10/2022",
-        "id": "4dhBnvgb5H0"
     },
     {
         "title": "AG Grid's New React Rendering Engine",
