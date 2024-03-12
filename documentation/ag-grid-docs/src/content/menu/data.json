@@ -7,11 +7,11 @@
             },
             {
                 "title": "Docs",
-                "path": "/documentation"
+                "path": "./getting-started"
             },
             {
                 "title": "API",
-                "path": "/reference"
+                "path": "./reference"
             },
             {
                 "title": "Community",
