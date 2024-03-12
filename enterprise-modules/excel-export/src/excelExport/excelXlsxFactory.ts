@@ -135,6 +135,7 @@ export class ExcelXlsxFactory {
             name: nameFromConfig,
             showColumnStripes,
             showRowStripes,
+            showFilterButton,
             highlightFirstColumn,
             highlightLastColumn,
         } = config.tableSetup;
@@ -143,11 +144,25 @@ export class ExcelXlsxFactory {
         );
 
         const sheetIndex = this.sheetNames.length - 1;
-
+        const { table } = worksheet;
+        const { rows, columns } = table;
         const headerRowCount = config.columnModel.getHeaderRowCount();
         const tableHeaderRowIndex: number = headerRowCount - 1; // Assuming that header starts at row 0
-        const tableRowCount = worksheet.table.rows.length;
-        const tableColumns = worksheet.table.columns.map(col => col.displayName || '');
+        const tableRowCount = rows.length;
+        const tableColCount = columns.length;
+
+        const tableColumns: string[] = [];
+        const showFilterButtons: boolean[] = [];
+
+        for (let i = 0; i < tableColCount; i++) {
+            const col = columns[i];
+            tableColumns.push(col.displayName || '');
+            showFilterButtons.push(
+                (showFilterButton === 'match' || showFilterButton === undefined)
+                    ? (col.filterAllowed ?? false) // We fall back to the column's filterAllowed property on match
+                    : showFilterButton
+            );
+        }
 
         if (!tableColumns || !tableColumns.length || !tableRowCount || !tableName) {
             console.warn('Unable to add data table to Excel sheet: Missing required parameters.');
@@ -158,6 +173,7 @@ export class ExcelXlsxFactory {
             name: this.getTableNameFromIndex(sheetIndex),
             displayName: tableName,
             columns: tableColumns,
+            showFilterButtons: showFilterButtons,
             headerRowIndex: tableHeaderRowIndex,
             rowCount: tableRowCount - headerRowCount,
             showRowStripes: showRowStripes ?? true,

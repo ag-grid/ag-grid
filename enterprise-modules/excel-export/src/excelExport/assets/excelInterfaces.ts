@@ -72,6 +72,7 @@ export interface ExcelDataTable {
     name: string;
     displayName: string;
     columns: string[];
+    showFilterButtons: boolean[];
     headerRowIndex: number;
     rowCount: number;
     showRowStripes: boolean;
