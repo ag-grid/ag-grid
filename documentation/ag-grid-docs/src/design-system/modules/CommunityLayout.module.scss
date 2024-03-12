@@ -6,7 +6,7 @@
     flex-direction: column;
     align-items: center;
     padding: $spacing-size-4 0px;
-    margin: $spacing-size-8 0px 0px 0px;
+    // margin: $spacing-size-8 0px 0px 0px; Margin for title
     background: linear-gradient(transparent, rgba(14,68,145,0.05));
     #{$selector-darkmode} & {
         background: linear-gradient(transparent, rgba(255, 255, 255, 0.05));
