@@ -7,7 +7,7 @@ const Blogs = () => {
     return (
         <div className={styles.gridContainer}>
             {blogs.map((article, index) => (
-                <div onClick={window.open(article.link)} target="_blank" className={styles.linkWrapper} key={index}>
+                <div onClick={() => window.open(article.link)} target="_blank" className={styles.linkWrapper} key={index}>
                     <div className={styles.card}>
                         <img src={article.image} alt="Image Description" className={styles.articleImage} />
                         <div className={styles.content}>
