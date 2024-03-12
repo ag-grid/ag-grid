@@ -1,13 +1,13 @@
-import styles from '@design-system/modules/CommunityFeaturedNews.module.scss';
+import styles from '@design-system/modules/CommunityBlogs.module.scss';
 import React from 'react';
 
-import featuredNews from '../../../content/community/news-updates/featured-news.json';
+import blogs from '../../../content/community/news-updates/blogs.json';
 
-const FeaturedNews = () => {
+const Blogs = () => {
     return (
         <div className={styles.gridContainer}>
-            {featuredNews.map((article, index) => (
-                <div onClick={() => window.open(article.link)} target="_blank" className={styles.linkWrapper} key={index}>
+            {blogs.map((article, index) => (
+                <div onClick={window.open(article.link)} target="_blank" className={styles.linkWrapper} key={index}>
                     <div className={styles.card}>
                         <img src={article.image} alt="Image Description" className={styles.articleImage} />
                         <div className={styles.content}>
@@ -26,4 +26,4 @@ const FeaturedNews = () => {
     );
 };
 
-export default FeaturedNews;
+export default Blogs;

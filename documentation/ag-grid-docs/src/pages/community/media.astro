@@ -2,7 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import CommunityMenu from '@components/community-section/CommunityMenu';
 import LayoutStyles from '@design-system/modules/CommunityLayout.module.scss';
-import FeaturedNews from '@components/community-section/news-updates/FeaturedNews';
+import Blogs from '@components/community-section/news-updates/Blogs';
 import Podcasts from '@components/community-section/news-updates/Podcasts';
 import Videos from '@components/community-section/news-updates/Videos';
 ---
@@ -26,8 +26,8 @@ import Videos from '@components/community-section/news-updates/Videos';
                         <Podcasts client:only />
                     </section>
                     <section>
-                        <h2>Featured News</h2>
-                        <FeaturedNews client:only />
+                        <h2>Blogs</h2>
+                        <Blogs client:only />
                     </section>
                 </div>
             </div>
