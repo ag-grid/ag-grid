@@ -187,26 +187,36 @@ export class AgGroupComponent extends Component {
     }
 
     public prependItem(item: GroupItem) {
-        this.insertItem(item, this.eContainer.firstChild);
+        this.insertItem(item, true);
     }
 
     public addItem(item: GroupItem) {
-        this.insertItem(item, null);
+        this.insertItem(item, false);
     }
 
-    private insertItem(item: GroupItem, before: Node | null) {
+    private insertItem(item: GroupItem, prepend?: boolean) {
         const container = this.eContainer;
         const el = item instanceof Component ? item.getGui() : item;
 
         el.classList.add('ag-group-item', `ag-${this.cssIdentifier}-group-item`);
 
-        container.insertBefore(el, before);
-        this.items.push(el);
+        if (prepend) {
+            container.insertAdjacentElement('afterbegin', el);
+            this.items.unshift(el);
+        } else {
+            container.appendChild(el);
+            this.items.push(el);
+        }
     }
 
     public hideItem(hide: boolean, index: number) {
         const itemToHide = this.items[index] as HTMLElement;
         setDisplayed(itemToHide, !hide);
+    }
+
+    public getItemIndex(item: GroupItem): number | -1 {
+        const el = item instanceof Component ? item.getGui() : item;
+        return this.items.indexOf(el);
     }
 
     public setTitle(title: string): this {

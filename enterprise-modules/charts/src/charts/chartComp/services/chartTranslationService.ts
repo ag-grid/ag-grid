@@ -33,6 +33,7 @@ export class ChartTranslationService extends BeanStub {
         category: 'Category',
         number: 'Number',
         time: 'Time',
+        timeFormat: 'Time Format',
         autoRotate: 'Auto Rotate',
         labelRotation: 'Rotation',
         circle: 'Circle',
@@ -211,6 +212,16 @@ export class ChartTranslationService extends BeanStub {
         stackedColumn: 'Stacked Column',
         advancedSettings: 'Advanced Settings',
         ariaChartMenuClose: 'Close Chart Edit Menu',
+        timeFormatSlashesDDMMYYYY: 'DD/MM/YYYY',
+        timeFormatSlashesMMDDYYYY: 'MM/DD/YYYY',
+        timeFormatSlashesDDMMYY: 'DD/MM/YY',
+        timeFormatSlashesMMDDYY: 'MM/DD/YY',
+        timeFormatDotsDDMYY: 'DD.M.YY',
+        timeFormatDotsMDDYY: 'M.DD.YY',
+        timeFormatDashesYYYYMMDD: 'YYYY-MM-DD',
+        timeFormatSpacesDDMMMMYYYY: 'DD MMMM YYYY',
+        timeFormatHHMMSS: 'HH:MM:SS',
+        timeFormatHHMMSSAmPm: 'HH:MM:SS AM/PM',
     };
 
     public translate(toTranslate: ChartTranslationKey): string {
