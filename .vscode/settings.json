@@ -4,7 +4,6 @@
     "search.exclude": {
         "**/ag-grid-docs/_dev/**": true,
         "**/ag-grid-docs/.cache/**": true,
-        "**/ag-grid-docs/public/**": true,
         "**/build": true,
         "**/dist": true,
         "**/node_modules": true,
