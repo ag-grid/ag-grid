@@ -2,6 +2,8 @@
 title: "Value Cache"
 ---
 
+The Value Cache is for advanced users who have time-consuming Value Getters and want to reduce the number of times Value Getters get executed.
+
 Each time the grid requires a value from a Value Getter, the Value Getter is executed. For most use cases, this will not be an issue, as Value Getters will execute quickly and not have any noticeable performance implications for your application. However sometimes you might implement time-intensive tasks in your Value Getters. If this is the case, then you can opt to turn on the Value Cache to store the results of the value getters.
 
 If you are not using Value Getters, or you don't have performance problems, then you do not need the Value Cache.
