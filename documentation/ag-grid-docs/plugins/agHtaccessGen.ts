@@ -3,6 +3,7 @@ import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { htaccessChecker } from '../src/utils/htaccess/htaccessChecker';
 import { modDeflateRules, modExpiresRules, modRewriteRules } from '../src/utils/htaccess/htaccessRules';
 
 type Options = {
@@ -30,10 +31,9 @@ export default function createPlugin(options: Options): AstroIntegration {
     return {
         name: 'ag-htaccess-gen',
         hooks: {
-            'astro:build:done': async ({ dir }) => {
+            'astro:build:done': async ({ dir, logger }) => {
                 if (!options.include) {
-                    // eslint-disable-next-line no-console
-                    console.info('[agHtaccessGen] .htaccess generation disabled, skipping');
+                    logger.info('.htaccess generation disabled, skipping');
                     return;
                 }
 
@@ -41,8 +41,10 @@ export default function createPlugin(options: Options): AstroIntegration {
                 const filename = join(destDir, '.htaccess');
                 writeFileSync(filename, HTACCESS_CONTENT);
 
-                // eslint-disable-next-line no-console
-                console.info('[agHtaccessGen] .htaccess generated to: ', filename);
+                logger.info(`.htaccess generated to: ${filename}`);
+
+                const checkLogger = logger.fork('ag-htaccess-gen/htaccessChecker');
+                htaccessChecker({ buildDir: destDir, logger: checkLogger });
             },
         },
     };
