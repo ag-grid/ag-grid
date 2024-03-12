@@ -47,6 +47,7 @@
         "{projectRoot}/_css-content.scss"
       ],
       "inputs": [
+        "{projectRoot}/src/**/*.scss",
         "{projectRoot}/*.scss",
         "{projectRoot}/*.js",
         "!{projectRoot}/_css-content.scss"

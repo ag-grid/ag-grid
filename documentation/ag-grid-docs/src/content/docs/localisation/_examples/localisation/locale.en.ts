@@ -482,6 +482,7 @@ export const AG_GRID_LOCALE_EN: Record<string,string> = {
     ariaVisible: 'visible',
     ariaSearchFilterValues: 'Search filter values',
     ariaPageSizeSelectorLabel: 'Page Size',
+    ariaChartMenuClose: 'Close Chart Edit Menu',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Row Groups',

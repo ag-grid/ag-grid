@@ -486,7 +486,7 @@ export class GridChartComp extends Component {
 
     public openChartToolPanel(panel?: ChartToolPanelName) {
         const menuPanel = panel ? CHART_TOOL_PANEL_MENU_OPTIONS[panel] : panel;
-        this.chartMenu.showMenu(menuPanel);
+        this.chartMenu.showMenu({ panel: menuPanel });
     }
 
     public closeChartToolPanel() {
