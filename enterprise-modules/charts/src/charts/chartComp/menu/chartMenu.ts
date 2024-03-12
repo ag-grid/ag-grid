@@ -52,9 +52,9 @@ export class ChartMenu extends Component {
     private readonly chartController: ChartController;
 
     private buttons: ChartToolbarButtons = {
-        chartSettings: { iconName: 'menu', callback: () => this.showMenu(this.defaultPanel) },
-        chartData: { iconName: 'menu', callback: () => this.showMenu("chartData") },
-        chartFormat: { iconName: 'menu', callback: () => this.showMenu("chartFormat") },
+        chartSettings: { iconName: 'menu', callback: () => this.showMenu({ panel: this.defaultPanel }) },
+        chartData: { iconName: 'menu', callback: () => this.showMenu({ panel: "chartData" }) },
+        chartFormat: { iconName: 'menu', callback: () => this.showMenu({ panel: "chartFormat" }) },
         chartLink: { iconName: 'linked', callback: () => this.chartMenuService.toggleLinked(this.chartMenuContext) },
         chartUnlink: { iconName: 'unlinked', callback: () => this.chartMenuService.toggleLinked(this.chartMenuContext) },
         chartDownload: { iconName: 'save', callback: () => this.chartMenuService.downloadChart(this.chartMenuContext) },
@@ -100,7 +100,7 @@ export class ChartMenu extends Component {
             if (e.chartId === this.chartController.getChartId()) {
                 const showDefaultToolPanel = Boolean(this.gridOptionsService.get('chartToolPanelsDef')?.defaultToolPanel);
                 if (showDefaultToolPanel) {
-                    this.showMenu(this.defaultPanel, false, true);
+                    this.showMenu({ panel: this.defaultPanel, animate: false, suppressFocus: true });
                 }
             }
         });
@@ -307,6 +307,10 @@ export class ChartMenu extends Component {
             this.chartMenuContext
         ));
 
+        this.addManagedListener(this.tabbedMenu, TabbedChartMenu.EVENT_CLOSED, () => {
+            this.hideMenu(false);
+        });
+
         this.addManagedListener(
             menuPanel,
             Component.EVENT_DESTROYED,
@@ -337,22 +341,20 @@ export class ChartMenu extends Component {
         });
     }
 
-    private showContainer(suppressFocus?: boolean) {
+    private showContainer(eventSource?: HTMLElement, suppressFocus?: boolean) {
         if (!this.menuPanel) { return; }
 
         this.menuVisible = true;
         this.showParent(this.menuPanel.getWidth()!);
         this.refreshMenuClasses();
-        if (!suppressFocus) {
-            this.tabbedMenu.focusHeader();
-        }
+        this.tabbedMenu.showMenu(eventSource, suppressFocus);
     }
 
     private toggleMenu() {
-        this.menuVisible ? this.hideMenu(this.legacyFormat) : this.showMenu(undefined, this.legacyFormat);
+        this.menuVisible ? this.hideMenu(this.legacyFormat) : this.showMenu({ animate: this.legacyFormat });
     }
 
-    public showMenu(
+    public showMenu(params: {
         /**
          * Menu panel to show. If empty, shows the existing menu, or creates the default menu if menu panel has not been created
          */
@@ -360,15 +362,17 @@ export class ChartMenu extends Component {
         /**
          * Whether to animate the menu opening
          */
-        animate: boolean = true,
+        animate?: boolean,
+        eventSource?: HTMLElement,
         suppressFocus?: boolean
-    ): void {
+    }): void {
+        const { panel, animate = true, eventSource, suppressFocus } = params;
         if (!animate) {
             this.eMenuPanelContainer.classList.add('ag-no-transition');
         }
 
         if (this.menuPanel && !panel) {
-            this.showContainer(suppressFocus);
+            this.showContainer(eventSource, suppressFocus);
         } else {
             const menuPanel = panel || this.defaultPanel;
             let tab = this.panels.indexOf(menuPanel);
@@ -379,9 +383,9 @@ export class ChartMenu extends Component {
     
             if (this.menuPanel) {
                 this.tabbedMenu.showTab(tab);
-                this.showContainer(suppressFocus);
+                this.showContainer(eventSource, suppressFocus);
             } else {
-                this.createMenuPanel(tab).then(() => this.showContainer(suppressFocus));
+                this.createMenuPanel(tab).then(() => this.showContainer(eventSource, suppressFocus));
             }
         }
 
@@ -431,7 +435,7 @@ export class ChartMenu extends Component {
     private showMenuList(eventSource: HTMLElement): void {
         this.chartMenuListFactory.showMenuList({
             eventSource,
-            showMenu: () => this.showMenu(undefined, false),
+            showMenu: () => this.showMenu({ animate: false, eventSource }),
             chartMenuContext: this.chartMenuContext
         });
     }
