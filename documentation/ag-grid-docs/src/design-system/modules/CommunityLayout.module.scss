@@ -13,6 +13,11 @@
     
     h1 {
         margin-bottom: $spacing-size-2;
+
+        @media screen and (max-width: $breakpoint-community-small) {
+            display: flex;
+            justify-content: center;
+        }
     }
 
     p {
@@ -26,7 +31,8 @@
     font-size: var(--text-fs-xl);
 
     @media screen and (max-width: $breakpoint-community-small) {
-        margin: 0px $spacing-size-12;
+        display: flex;
+        justify-content: center;
     }
 }
 
