@@ -86,6 +86,10 @@ export abstract class ChartProxy {
 
     public abstract update(params: UpdateParams): void;
 
+    public updateThemeOverrides(themeOverrides: AgChartThemeOverrides): void {
+        AgCharts.updateDelta(this.getChartRef(), { theme: { overrides: themeOverrides }});
+    }
+
     public getChart() {
         return deproxy(this.chart);
     }

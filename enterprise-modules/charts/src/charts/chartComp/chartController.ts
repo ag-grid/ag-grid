@@ -152,6 +152,10 @@ export class ChartController extends BeanStub {
         this.raiseChartRangeSelectionChangedEvent();
     }
 
+    public updateThemeOverrides(updatedOverrides: AgChartThemeOverrides): void {
+        this.chartProxy.updateThemeOverrides(updatedOverrides);
+    }
+
     public getChartUpdateParams(updatedOverrides?: AgChartThemeOverrides): UpdateParams {
         const selectedCols = this.getSelectedValueColState();
         const fields = selectedCols.map(c => ({ colId: c.colId, displayName: c.displayName }));
