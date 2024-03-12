@@ -33,6 +33,7 @@ export class AdvancedSettingsMenuFactory extends BeanStub {
             movable: true,
             centered: true,
             closable: true,
+            alwaysOnTop: true,
             afterGuiAttached: () => {
                 this.focusService.findFocusableElements(menu.getGui())[0]?.focus();
             },
